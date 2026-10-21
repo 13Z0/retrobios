@@ -297,10 +297,10 @@
       }
     }
   ],
-  "total_files": 8183,
-  "total_size": 7781860681,
-  "pack_files": 8185,
-  "pack_size": 7781860681,
+  "total_files": 8184,
+  "total_size": 7782909257,
+  "pack_files": 8186,
+  "pack_size": 7782909257,
   "total_omitted": 12,
   "omitted_files": [
     {
@@ -62931,9 +62931,6 @@
         "mame2016",
         "mamearcade",
         "ume2015"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -62946,9 +62943,6 @@
         "mame",
         "mame2015",
         "mame2016"
-      ],
-      "systems": [
-        "panasonic-3do"
       ],
       "alternatives": [
         {
@@ -62984,9 +62978,6 @@
         "mame2015",
         "mame2016"
       ],
-      "systems": [
-        "panasonic-3do"
-      ],
       "alternatives": [
         {
           "sha1": "b6ff66dcb5547bd91760d239ddf428a655631c53",
@@ -63020,9 +63011,6 @@
         "mame2010",
         "mame2015",
         "mame2016"
-      ],
-      "systems": [
-        "panasonic-3do"
       ],
       "alternatives": [
         {
@@ -63569,9 +63557,6 @@
       "repo_path": "bios/Arcade/MAME/kviper.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ],
       "alternatives": [
         {
@@ -65913,9 +65898,6 @@
       "repo_path": "bios/Arcade/MAME/4dparprn.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -66238,9 +66220,6 @@
       "repo_path": "bios/Arcade/Arcade/a2aevm80.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -66251,9 +66230,6 @@
       "repo_path": "bios/Arcade/Arcade/a2ap16.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -66264,9 +66240,6 @@
       "repo_path": "bios/Arcade/Arcade/a2ap16a.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -66277,9 +66250,6 @@
       "repo_path": "bios/Arcade/Arcade/a2aplcrd.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -66303,9 +66273,6 @@
       "repo_path": "bios/Arcade/MAME/a2booti.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -66316,9 +66283,6 @@
       "repo_path": "bios/Arcade/MAME/a2bufgrapplerplus.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -66329,9 +66293,6 @@
       "repo_path": "bios/Arcade/MAME/a2bufgrapplerplus.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -66342,9 +66303,6 @@
       "repo_path": "bios/Arcade/MAME/a2cffa02.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ],
       "alternatives": [
         {
@@ -66366,9 +66324,6 @@
       "repo_path": "bios/Arcade/MAME/a2cffa2.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -66379,9 +66334,6 @@
       "repo_path": "bios/Arcade/Arcade/a2corvus.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -66393,9 +66345,6 @@
       "cores": [
         "mame",
         "mamemess"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -66419,9 +66368,6 @@
       "repo_path": "bios/Arcade/MAME/a2focdrv.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -66432,9 +66378,6 @@
       "repo_path": "bios/Arcade/MAME/a2grappler.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -66445,9 +66388,6 @@
       "repo_path": "bios/Arcade/MAME/a2grapplerplus.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -66458,9 +66398,6 @@
       "repo_path": "bios/Arcade/MAME/a2hsscsi.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -66471,9 +66408,6 @@
       "repo_path": "bios/Arcade/MAME/a2ieee488.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -66510,9 +66444,6 @@
       "repo_path": "bios/Arcade/Arcade/a2memexp.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -66523,9 +66454,6 @@
       "repo_path": "bios/Arcade/MAME/a2mouse.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -66536,9 +66464,6 @@
       "repo_path": "bios/Arcade/MAME/a2parprn.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -66549,9 +66474,6 @@
       "repo_path": "bios/Arcade/MAME/a2pdromdr.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -66562,9 +66484,6 @@
       "repo_path": "bios/Arcade/MAME/a2pic.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -66575,9 +66494,6 @@
       "repo_path": "bios/Arcade/MAME/a2q68.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -66588,9 +66504,6 @@
       "repo_path": "bios/Arcade/MAME/a2q68.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -66601,9 +66514,6 @@
       "repo_path": "bios/Arcade/Arcade/a2ramfac.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -66640,9 +66550,6 @@
       "repo_path": "bios/Arcade/MAME/a2scsi.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -66679,9 +66586,6 @@
       "repo_path": "bios/Arcade/MAME/a2sider1.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -66692,9 +66596,6 @@
       "repo_path": "bios/Arcade/MAME/a2sider2.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -66705,9 +66606,6 @@
       "repo_path": "bios/Arcade/MAME/a2ssc.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -66718,9 +66616,6 @@
       "repo_path": "bios/Arcade/MAME/a2superdrive.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -66770,9 +66665,6 @@
       "repo_path": "bios/Arcade/Arcade/a2thunpl.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -66796,9 +66688,6 @@
       "repo_path": "bios/Arcade/Arcade/a2tmstho.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -66822,9 +66711,6 @@
       "repo_path": "bios/Arcade/Arcade/a2ultrme.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -66835,9 +66721,6 @@
       "repo_path": "bios/Arcade/Arcade/a2ulttrm.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -66848,9 +66731,6 @@
       "repo_path": "bios/Arcade/MAME/a2uniprint.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -66861,9 +66741,6 @@
       "repo_path": "bios/Arcade/MAME/a2vidtrm.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -66887,9 +66764,6 @@
       "repo_path": "bios/Arcade/Arcade/a2vtc1.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -66900,9 +66774,6 @@
       "repo_path": "bios/Arcade/MAME/a2vulcan.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -66913,9 +66784,6 @@
       "repo_path": "bios/Arcade/MAME/a2vulgld.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -66939,9 +66807,6 @@
       "repo_path": "bios/Arcade/MAME/a2zipdrv.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -67511,9 +67376,6 @@
       "repo_path": "bios/Arcade/MAME/ace80.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -67914,9 +67776,6 @@
       "repo_path": "bios/Arcade/Arcade/ap2000.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -67927,9 +67786,6 @@
       "repo_path": "bios/Arcade/MAME/aplcd150.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -67940,9 +67796,6 @@
       "repo_path": "bios/Arcade/MAME/aprissi.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -67953,9 +67806,6 @@
       "repo_path": "bios/Arcade/MAME/arc_a448.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -67966,9 +67816,6 @@
       "repo_path": "bios/Arcade/MAME/arc_a448b.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -67979,9 +67826,6 @@
       "repo_path": "bios/Arcade/MAME/arc_acejoy.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -67992,9 +67836,6 @@
       "repo_path": "bios/Arcade/MAME/arc_armadeus.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -68005,9 +67846,6 @@
       "repo_path": "bios/Arcade/MAME/arc_bbcio_aga30.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -68018,9 +67856,6 @@
       "repo_path": "bios/Arcade/MAME/arc_bbcio_aka10.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -68031,9 +67866,6 @@
       "repo_path": "bios/Arcade/MAME/arc_bbcio_we.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -68044,9 +67876,6 @@
       "repo_path": "bios/Arcade/MAME/arc_eaglem2.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -68057,9 +67886,6 @@
       "repo_path": "bios/Arcade/MAME/arc_ether1_aka25.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -68070,9 +67896,6 @@
       "repo_path": "bios/Arcade/MAME/arc_ether2_aeh50.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -68083,9 +67906,6 @@
       "repo_path": "bios/Arcade/MAME/arc_ether3_aeh54.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -68096,9 +67916,6 @@
       "repo_path": "bios/Arcade/MAME/arc_ethera.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -68109,9 +67926,6 @@
       "repo_path": "bios/Arcade/MAME/arc_etherd.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -68122,9 +67936,6 @@
       "repo_path": "bios/Arcade/MAME/arc_etherr.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -68135,9 +67946,6 @@
       "repo_path": "bios/Arcade/MAME/arc_faxpack.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -68148,9 +67956,6 @@
       "repo_path": "bios/Arcade/MAME/arc_greyhawk.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -68161,9 +67966,6 @@
       "repo_path": "bios/Arcade/MAME/arc_hdisc_akd52.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -68174,9 +67976,6 @@
       "repo_path": "bios/Arcade/MAME/arc_hdisc_cw.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -68187,9 +67986,6 @@
       "repo_path": "bios/Arcade/MAME/arc_hdisc_morley.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -68200,9 +67996,6 @@
       "repo_path": "bios/Arcade/MAME/arc_hdisc_we.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -68213,9 +68006,6 @@
       "repo_path": "bios/Arcade/MAME/arc_ide_be.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -68226,9 +68016,6 @@
       "repo_path": "bios/Arcade/MAME/arc_ide_rdev.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -68239,9 +68026,6 @@
       "repo_path": "bios/Arcade/MAME/arc_iomidi_aka15.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -68252,9 +68036,6 @@
       "repo_path": "bios/Arcade/MAME/arc_lark.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -68265,9 +68046,6 @@
       "repo_path": "bios/Arcade/MAME/arc_lbp4.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -68278,9 +68056,6 @@
       "repo_path": "bios/Arcade/MAME/arc_midi2.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -68291,9 +68066,6 @@
       "repo_path": "bios/Arcade/MAME/arc_midi_aka16.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -68304,9 +68076,6 @@
       "repo_path": "bios/Arcade/MAME/arc_midimax.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -68317,9 +68086,6 @@
       "repo_path": "bios/Arcade/MAME/arc_midimax2.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -68330,9 +68096,6 @@
       "repo_path": "bios/Arcade/MAME/arc_nexus_a500.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -68343,9 +68106,6 @@
       "repo_path": "bios/Arcade/MAME/arc_rom_aka05.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -68356,9 +68116,6 @@
       "repo_path": "bios/Arcade/MAME/arc_rom_r225.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -68369,9 +68126,6 @@
       "repo_path": "bios/Arcade/MAME/arc_rs423.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -68382,9 +68136,6 @@
       "repo_path": "bios/Arcade/MAME/arc_scan256.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -68395,9 +68146,6 @@
       "repo_path": "bios/Arcade/MAME/arc_scanjunior.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -68408,9 +68156,6 @@
       "repo_path": "bios/Arcade/MAME/arc_scanjunior3.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -68421,9 +68166,6 @@
       "repo_path": "bios/Arcade/MAME/arc_scanlight.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -68434,9 +68176,6 @@
       "repo_path": "bios/Arcade/MAME/arc_scanvideo.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -68447,9 +68186,6 @@
       "repo_path": "bios/Arcade/MAME/arc_scsi_aka30.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -68460,9 +68196,6 @@
       "repo_path": "bios/Arcade/MAME/arc_scsi_aka31.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -68473,9 +68206,6 @@
       "repo_path": "bios/Arcade/MAME/arc_scsi_aka32.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -68486,9 +68216,6 @@
       "repo_path": "bios/Arcade/MAME/arc_scsi_cumana.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -68499,9 +68226,6 @@
       "repo_path": "bios/Arcade/MAME/arc_scsi_ling.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -68512,9 +68236,6 @@
       "repo_path": "bios/Arcade/MAME/arc_scsi_morley.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -68525,9 +68246,6 @@
       "repo_path": "bios/Arcade/MAME/arc_scsi_oak.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -68538,9 +68256,6 @@
       "repo_path": "bios/Arcade/MAME/arc_scsi_vti.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -68551,9 +68266,6 @@
       "repo_path": "bios/Arcade/MAME/arc_serial.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -68564,9 +68276,6 @@
       "repo_path": "bios/Arcade/MAME/arc_spectra.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -68577,9 +68286,6 @@
       "repo_path": "bios/Arcade/MAME/arc_ua_morley.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -68590,9 +68296,6 @@
       "repo_path": "bios/Arcade/MAME/arc_uma_morley.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -68603,9 +68306,6 @@
       "repo_path": "bios/Arcade/MAME/arc_upa_hccs.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -68616,9 +68316,6 @@
       "repo_path": "bios/Arcade/MAME/arc_upmidi_aka12.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -68655,9 +68352,6 @@
       "repo_path": "bios/Arcade/MAME/at_mb.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -68668,9 +68362,6 @@
       "repo_path": "bios/Arcade/MAME/atari1050.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -68681,9 +68372,6 @@
       "repo_path": "bios/Arcade/MAME/atari810.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -68816,9 +68504,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_m87.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -68829,9 +68514,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_m87.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -68907,9 +68589,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_autoprom.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -68920,9 +68599,6 @@
       "repo_path": "bios/Arcade/Arcade/bbc_beebspch.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -68933,9 +68609,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_m87.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -68946,9 +68619,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_chameleon.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -69037,9 +68707,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_datacentre.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -69063,9 +68730,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_m87.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -69102,9 +68766,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_magazzino.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -69128,9 +68789,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_mertec.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -69141,9 +68799,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_morleyaa.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -69154,9 +68809,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_multiform.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -69206,9 +68858,6 @@
       "repo_path": "bios/Arcade/Arcade/beebsid.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -69232,9 +68881,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_opusa.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -69245,9 +68891,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_pdram.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -69258,9 +68901,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_pms64k.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -69271,9 +68911,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_m87.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -69440,9 +69077,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_tube_32016.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -69453,9 +69087,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_tube_32016l.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -69466,9 +69097,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_tube_6502.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -69479,9 +69107,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_tube_6502e.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -69505,9 +69130,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_tube_65c102.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -69518,9 +69140,6 @@
       "repo_path": "bios/Arcade/Arcade/bbc_tube_80286.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -69531,9 +69150,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_tube_a500.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -69544,9 +69160,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_tube_a500d.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -69557,9 +69170,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_tube_arm.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -69570,9 +69180,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_tube_arm7.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -69609,9 +69216,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_tube_matchbox.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -69622,9 +69226,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_tube_pcplus.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -69635,9 +69236,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_tube_rc6502.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -69648,9 +69246,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_tube_rc65816.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -69674,9 +69269,6 @@
       "repo_path": "bios/Arcade/Arcade/bbc_tube_z80.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -69687,9 +69279,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_tube_z80w.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -69726,9 +69315,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_tube_zep100m.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -69765,9 +69351,6 @@
       "repo_path": "bios/Arcade/MAME/voicebox.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -69843,9 +69426,6 @@
       "repo_path": "bios/Arcade/MAME/bk_altpro.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -69856,9 +69436,6 @@
       "repo_path": "bios/Arcade/MAME/bk_kmd.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -69869,9 +69446,6 @@
       "repo_path": "bios/Arcade/MAME/bk_samara.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -70194,9 +69768,6 @@
       "repo_path": "bios/Arcade/Arcade/c2031.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -70207,9 +69778,6 @@
       "repo_path": "bios/Arcade/MAME/c2040.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -70220,9 +69788,6 @@
       "repo_path": "bios/Arcade/Arcade/c8050fdc.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -70233,9 +69798,6 @@
       "repo_path": "bios/Arcade/Arcade/c3040.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -70246,9 +69808,6 @@
       "repo_path": "bios/Arcade/Arcade/c4023.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -70259,9 +69818,6 @@
       "repo_path": "bios/Arcade/Arcade/c4040.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -70389,9 +69945,6 @@
       "repo_path": "bios/Arcade/Arcade/c8050.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -70402,9 +69955,6 @@
       "repo_path": "bios/Arcade/Arcade/c8050fdc.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -70415,9 +69965,6 @@
       "repo_path": "bios/Arcade/Arcade/c8050.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -70441,9 +69988,6 @@
       "repo_path": "bios/Arcade/Arcade/c8280.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -70545,9 +70089,6 @@
       "repo_path": "bios/Arcade/MAME/ccs7710.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -70558,9 +70099,6 @@
       "repo_path": "bios/Arcade/Arcade/cd6809_fdc.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -70610,9 +70148,6 @@
       "repo_path": "bios/Arcade/MAME/cdd2000.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -70623,9 +70158,6 @@
       "repo_path": "bios/Arcade/MAME/cdr4210.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -70636,9 +70168,6 @@
       "repo_path": "bios/Arcade/MAME/cdrn820s.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -70649,9 +70178,6 @@
       "repo_path": "bios/Arcade/MAME/cdu415.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -70662,9 +70188,6 @@
       "repo_path": "bios/Arcade/MAME/cdu561_25.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -70675,9 +70198,6 @@
       "repo_path": "bios/Arcade/MAME/cdu75s.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -70740,9 +70260,6 @@
       "repo_path": "bios/Arcade/MAME/cfp1080s.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -70871,9 +70388,6 @@
       "repo_path": "bios/Arcade/MAME/chessmachine.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -71053,9 +70567,6 @@
       "repo_path": "bios/Arcade/MAME/cmsscsi.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -71066,9 +70577,6 @@
       "repo_path": "bios/Arcade/MAME/coco_dcmodem.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -71079,9 +70587,6 @@
       "repo_path": "bios/Arcade/Arcade/coco_orch90.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -71092,9 +70597,6 @@
       "repo_path": "bios/Arcade/MAME/coco_psg.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -71105,9 +70607,6 @@
       "repo_path": "bios/Arcade/MAME/coco_rs232.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -71118,9 +70617,6 @@
       "repo_path": "bios/Arcade/MAME/coco_scii.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -71131,9 +70627,6 @@
       "repo_path": "bios/Arcade/Arcade/coco_ssc.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -71144,9 +70637,6 @@
       "repo_path": "bios/Arcade/MAME/coco_t4426.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -71157,9 +70647,6 @@
       "repo_path": "bios/Arcade/MAME/coco_wpk.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -71170,9 +70657,6 @@
       "repo_path": "bios/Arcade/MAME/coco_wpk.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -71183,9 +70667,6 @@
       "repo_path": "bios/Arcade/MAME/coco_wpk.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -71261,9 +70742,6 @@
       "repo_path": "bios/Arcade/Arcade/comx_pl80.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -71313,9 +70791,6 @@
       "repo_path": "bios/Arcade/MAME/cp2024.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -71339,9 +70814,6 @@
       "repo_path": "bios/Arcade/Arcade/cp450_fdc.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -71508,9 +70980,6 @@
       "repo_path": "bios/Arcade/MAME/crd254sh.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -71625,9 +71094,6 @@
       "repo_path": "bios/Arcade/MAME/cw7501.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -71639,9 +71105,6 @@
       "cores": [
         "mame",
         "mamemess"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -71652,9 +71115,6 @@
       "repo_path": "bios/Arcade/Arcade/d9060.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -71665,9 +71125,6 @@
       "repo_path": "bios/Arcade/Arcade/d9060.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -72003,9 +71460,6 @@
       "repo_path": "bios/Arcade/Arcade/dragon_fdc.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -72016,9 +71470,6 @@
       "repo_path": "bios/Arcade/Arcade/dragon_jcbsnd.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -72029,9 +71480,6 @@
       "repo_path": "bios/Arcade/MAME/dragon_jcbspch.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -72042,9 +71490,6 @@
       "repo_path": "bios/Arcade/MAME/dragon_serial.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -72055,9 +71500,6 @@
       "repo_path": "bios/Arcade/MAME/dragon_sprites.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -72081,9 +71523,6 @@
       "repo_path": "bios/Arcade/MAME/dsd4432.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -72133,9 +71572,6 @@
       "repo_path": "bios/Arcade/MAME/dsp56362.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -72159,9 +71595,6 @@
       "repo_path": "bios/Arcade/MAME/dvk_kmd.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -72211,9 +71644,6 @@
       "repo_path": "bios/Arcade/MAME/econet_e01.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -72224,9 +71654,6 @@
       "repo_path": "bios/Arcade/MAME/econet_e01s.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -72250,9 +71677,6 @@
       "repo_path": "bios/Arcade/Arcade/ef9365.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -72328,9 +71752,6 @@
       "repo_path": "bios/Arcade/MAME/electron_ap1.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -72341,9 +71762,6 @@
       "repo_path": "bios/Arcade/MAME/electron_ap6.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -72354,9 +71772,6 @@
       "repo_path": "bios/Arcade/MAME/electron_elksd128.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -72367,9 +71782,6 @@
       "repo_path": "bios/Arcade/MAME/electron_elksd64.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -72380,9 +71792,6 @@
       "repo_path": "bios/Arcade/MAME/electron_m2105.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -72393,9 +71802,6 @@
       "repo_path": "bios/Arcade/MAME/electron_mc68k.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -72406,9 +71812,6 @@
       "repo_path": "bios/Arcade/MAME/electron_mode7.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -72419,9 +71822,6 @@
       "repo_path": "bios/Arcade/Arcade/electron_pwrjoy.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -72432,9 +71832,6 @@
       "repo_path": "bios/Arcade/MAME/electron_romboxp.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -72445,9 +71842,6 @@
       "repo_path": "bios/Arcade/MAME/electron_mode7.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -72458,9 +71852,6 @@
       "repo_path": "bios/Arcade/MAME/voicebox.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -72471,9 +71862,6 @@
       "repo_path": "bios/Arcade/MAME/enetlc.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -72484,9 +71872,6 @@
       "repo_path": "bios/Arcade/MAME/enetlctp.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -72497,9 +71882,6 @@
       "repo_path": "bios/Arcade/MAME/enetnbtp.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -72536,9 +71918,6 @@
       "repo_path": "bios/Arcade/MAME/epson_fx80.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -72549,9 +71928,6 @@
       "repo_path": "bios/Arcade/MAME/epson_jx80.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -72588,9 +71964,6 @@
       "repo_path": "bios/Arcade/MAME/epson_rx80.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -72757,9 +72130,6 @@
       "repo_path": "bios/Arcade/Arcade/ex800.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -73056,9 +72426,6 @@
       "repo_path": "bios/Arcade/Arcade/hardbox.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -73069,9 +72436,6 @@
       "repo_path": "bios/Arcade/MAME/gpib_mshark.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -73082,9 +72446,6 @@
       "repo_path": "bios/Arcade/MAME/gpib_softbox.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -73121,9 +72482,6 @@
       "repo_path": "bios/Arcade/MAME/gunsense.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -73225,9 +72583,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_lcd.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -73290,9 +72645,6 @@
       "repo_path": "bios/Arcade/MAME/heath_gp19_tlb.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -73355,9 +72707,6 @@
       "repo_path": "bios/Arcade/MAME/heath_imaginator_tlb.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -73368,9 +72717,6 @@
       "repo_path": "bios/Arcade/MAME/heath_super19_tlb.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -73381,9 +72727,6 @@
       "repo_path": "bios/Arcade/MAME/heath_superset_tlb.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -73394,9 +72737,6 @@
       "repo_path": "bios/Arcade/MAME/heath_tlb.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -73407,9 +72747,6 @@
       "repo_path": "bios/Arcade/MAME/heath_ultra_tlb.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -73420,9 +72757,6 @@
       "repo_path": "bios/Arcade/MAME/heath_watz_tlb.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -73485,9 +72819,6 @@
       "repo_path": "bios/Arcade/Arcade/hp9122c.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -73498,9 +72829,6 @@
       "repo_path": "bios/Arcade/MAME/hp9133.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -73563,9 +72891,6 @@
       "repo_path": "bios/Arcade/Arcade/hp9895.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -73654,9 +72979,6 @@
       "repo_path": "bios/Arcade/MAME/ibsap2.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -73680,9 +73002,6 @@
       "repo_path": "bios/Arcade/Arcade/a2232.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -73693,9 +73012,6 @@
       "repo_path": "bios/Arcade/Arcade/ie15kbd.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -74096,9 +73412,6 @@
       "repo_path": "bios/Sega/Hikaru/jvs13551.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -74109,9 +73422,6 @@
       "repo_path": "bios/Arcade/Arcade/k573_dio.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -74122,9 +73432,6 @@
       "repo_path": "bios/Arcade/MAME/k573kara.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -74135,9 +73442,6 @@
       "repo_path": "bios/Arcade/Arcade/k573mcr.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -74148,9 +73452,6 @@
       "repo_path": "bios/Arcade/Arcade/k573msu.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -74655,9 +73956,6 @@
       "repo_path": "bios/Arcade/Arcade/lx800.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -74668,9 +73966,6 @@
       "repo_path": "bios/Arcade/Arcade/lx810l.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -74733,9 +74028,6 @@
       "repo_path": "bios/Arcade/Arcade/m50458.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -74759,9 +74051,6 @@
       "repo_path": "bios/Arcade/Arcade/m68705p3.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -74837,9 +74126,6 @@
       "repo_path": "bios/Apple/Macintosh/mackbd_m0110a.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -74850,9 +74136,6 @@
       "repo_path": "bios/Apple/Macintosh/mackbd_m0110a.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -74863,9 +74146,6 @@
       "repo_path": "bios/Apple/Macintosh/mackbd_m0110.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -74876,9 +74156,6 @@
       "repo_path": "bios/Apple/Macintosh/mackbd_m0110.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -74889,9 +74166,6 @@
       "repo_path": "bios/Apple/Macintosh/mackbd_m0110.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -74902,9 +74176,6 @@
       "repo_path": "bios/Apple/Macintosh/mackbd_m0110.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -74915,9 +74186,6 @@
       "repo_path": "bios/Arcade/Arcade/mackbd.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -74980,9 +74248,6 @@
       "repo_path": "bios/Arcade/MAME/mcx128.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -75071,9 +74336,6 @@
       "repo_path": "bios/Arcade/MAME/microtouch.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -75097,9 +74359,6 @@
       "repo_path": "bios/Arcade/Arcade/mie.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -75162,9 +74421,6 @@
       "repo_path": "bios/Arcade/Arcade/mm5740.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -75175,9 +74431,6 @@
       "repo_path": "bios/Arcade/MAME/mockingboardd.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -75890,9 +75143,6 @@
       "repo_path": "bios/Arcade/MAME/mz1p16.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -76339,9 +75589,6 @@
       "repo_path": "bios/Arcade/Arcade/nb_aenet.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -76352,9 +75599,6 @@
       "repo_path": "bios/Arcade/Arcade/nb_amc3b.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -76365,9 +75609,6 @@
       "repo_path": "bios/Arcade/Arcade/nb_btbug.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -76378,9 +75619,6 @@
       "repo_path": "bios/Arcade/Arcade/nb_c264.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -76391,9 +75629,6 @@
       "repo_path": "bios/Arcade/MAME/nb_laserview.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -76404,9 +75639,6 @@
       "repo_path": "bios/Arcade/Arcade/nb_m2hr.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -76417,9 +75649,6 @@
       "repo_path": "bios/Arcade/Arcade/nb_m2vc.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -76430,9 +75659,6 @@
       "repo_path": "bios/Grundy/NewBrain/nb_48gc.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -76443,9 +75669,6 @@
       "repo_path": "bios/Arcade/MAME/nb_pcs8.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -76456,9 +75679,6 @@
       "repo_path": "bios/Arcade/Arcade/nb_qdlink.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -76469,9 +75689,6 @@
       "repo_path": "bios/Arcade/Arcade/nb_rtpd.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -76482,9 +75699,6 @@
       "repo_path": "bios/Arcade/Arcade/nb_sp8s3.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -76495,9 +75709,6 @@
       "repo_path": "bios/Arcade/Arcade/nb_spdq.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -76508,9 +75719,6 @@
       "repo_path": "bios/Arcade/MAME/nb_thungx.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -76534,9 +75742,6 @@
       "repo_path": "bios/Arcade/Arcade/nb_vikbw.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -76547,9 +75752,6 @@
       "repo_path": "bios/Arcade/MAME/nb_wkstn.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -76560,9 +75762,6 @@
       "repo_path": "bios/Arcade/Arcade/nb_wspt.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -76638,9 +75837,6 @@
       "repo_path": "bios/Arcade/MAME/nlq401.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -76690,9 +75886,6 @@
       "repo_path": "bios/Arcade/MAME/.variants/nss_tvinterface.zip.36ef365e",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -76872,9 +76065,6 @@
       "repo_path": "bios/Arcade/Arcade/p72.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -76937,9 +76127,6 @@
       "repo_path": "bios/Arcade/MAME/pc6022.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -76950,9 +76137,6 @@
       "repo_path": "bios/Arcade/MAME/pc80s31.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -77158,9 +76342,6 @@
       "repo_path": "bios/Arcade/Arcade/pd3_30hr.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -77171,9 +76352,6 @@
       "repo_path": "bios/Arcade/Arcade/pd3_30hr.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -77184,9 +76362,6 @@
       "repo_path": "bios/Arcade/Arcade/pd3_c264.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -77197,9 +76372,6 @@
       "repo_path": "bios/Arcade/Arcade/pd3_lviw.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -77210,9 +76382,6 @@
       "repo_path": "bios/Arcade/Arcade/pd3_mclr.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -77223,9 +76392,6 @@
       "repo_path": "bios/Arcade/Arcade/pd3_mclr.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -77236,9 +76402,6 @@
       "repo_path": "bios/Arcade/Arcade/pd3_pc16.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -77249,9 +76412,6 @@
       "repo_path": "bios/Arcade/MAME/pd3_pcs8.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -77288,9 +76448,6 @@
       "repo_path": "bios/Arcade/MAME/pds30_emac.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -77301,9 +76458,6 @@
       "repo_path": "bios/Arcade/MAME/pds_hyper.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -77314,9 +76468,6 @@
       "repo_path": "bios/Arcade/Arcade/pds_sefp.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -77327,9 +76478,6 @@
       "repo_path": "bios/Arcade/MAME/pdslc_macconlc.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -77457,9 +76605,6 @@
       "repo_path": "bios/Arcade/Arcade/premier_fdc.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -77626,9 +76771,6 @@
       "repo_path": "bios/Arcade/MAME/px320a.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -77639,9 +76781,6 @@
       "repo_path": "bios/Arcade/MAME/qg640.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -77899,9 +77038,6 @@
       "repo_path": "bios/Arcade/MAME/qsound.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -77912,9 +77048,6 @@
       "repo_path": "bios/Arcade/MAME/qts1.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -78393,9 +77526,6 @@
       "repo_path": "bios/Arcade/MAME/s97801_device.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -78406,9 +77536,6 @@
       "repo_path": "bios/Arcade/MAME/s97801_kbd.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -78419,9 +77546,6 @@
       "repo_path": "bios/Arcade/MAME/s_smp.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -78640,9 +77764,6 @@
       "repo_path": "bios/Arcade/MAME/scorpion_ic.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -78653,9 +77774,6 @@
       "repo_path": "bios/Arcade/Arcade/sdtandy_fdc.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -78731,9 +77849,6 @@
       "repo_path": "bios/Arcade/MAME/sega837_14438.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -78757,9 +77872,6 @@
       "repo_path": "bios/Arcade/MAME/segabill.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -78770,9 +77882,6 @@
       "repo_path": "bios/Arcade/MAME/segadimm.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -78783,9 +77892,6 @@
       "repo_path": "bios/Arcade/Arcade/seganetw.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -78822,9 +77928,6 @@
       "repo_path": "bios/Arcade/MAME/sfd1001.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -79004,9 +78107,6 @@
       "repo_path": "bios/Arcade/MAME/smoc501.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -79927,9 +79027,6 @@
       "repo_path": "bios/Arcade/MAME/swtpc8212_device.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -80278,9 +79375,6 @@
       "repo_path": "bios/Arcade/MAME/tdl12.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -80370,9 +79464,6 @@
       "cores": [
         "mame",
         "mamemess"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -80384,9 +79475,6 @@
       "cores": [
         "mame",
         "mamemess"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -80398,9 +79486,6 @@
       "cores": [
         "mame",
         "mamemess"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -80412,9 +79497,6 @@
       "cores": [
         "mame",
         "mamemess"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -80426,9 +79508,6 @@
       "cores": [
         "mame",
         "mamemess"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -80440,9 +79519,6 @@
       "cores": [
         "mame",
         "mamemess"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -80454,9 +79530,6 @@
       "cores": [
         "mame",
         "mamemess"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -80468,9 +79541,6 @@
       "cores": [
         "mame",
         "mamemess"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -80482,9 +79552,6 @@
       "cores": [
         "mame",
         "mamemess"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -80496,9 +79563,6 @@
       "cores": [
         "mame",
         "mamemess"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -80510,9 +79574,6 @@
       "cores": [
         "mame",
         "mamemess"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -80524,9 +79585,6 @@
       "cores": [
         "mame",
         "mamemess"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -80537,9 +79595,6 @@
       "repo_path": "bios/Arcade/MAME/ti99_thermal.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -80551,9 +79606,6 @@
       "cores": [
         "mame",
         "mamemess"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -80565,9 +79617,6 @@
       "cores": [
         "mame",
         "mamemess"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -80917,9 +79966,6 @@
       "repo_path": "bios/Arcade/Arcade/upd7220.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -81216,9 +80262,6 @@
       "repo_path": "bios/Arcade/MAME/votraxtnt.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -81244,9 +80287,6 @@
       "cores": [
         "mame",
         "mamemess"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -81270,9 +80310,6 @@
       "repo_path": "bios/Arcade/MAME/vtech_fdc.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -81283,9 +80320,6 @@
       "repo_path": "bios/Arcade/MAME/vtech_rs232.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -81296,9 +80330,6 @@
       "repo_path": "bios/Arcade/Arcade/vtech_rtty.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -81309,9 +80340,6 @@
       "repo_path": "bios/Arcade/MAME/vtech_sdloader.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -81322,9 +80350,6 @@
       "repo_path": "bios/Arcade/Arcade/vtech_wordpro.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -81738,9 +80763,6 @@
       "repo_path": "bios/Arcade/MAME/zip100_ide.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "panasonic-3do"
       ]
     },
     {
@@ -87602,6 +86624,19 @@
       "repo_path": "bios/Commodore/C64/nl10-cbm",
       "cores": [
         "x64sdl"
+      ]
+    },
+    {
+      "dest": "Complex_4627.bin",
+      "sha1": "3944392c954cfb176d4210544e88353b3c5d36b1",
+      "sha256": "3d5fae186cb31b5a6331155e532ef63e493afd85d7af8576fb52c95d0ce0362c",
+      "size": 1048576,
+      "repo_path": "bios/Microsoft/Xbox/Complex_4627.bin",
+      "cores": [
+        "xemu"
+      ],
+      "systems": [
+        "xbox"
       ]
     },
     {

@@ -28,7 +28,7 @@
   "counts": {
     "kept": 2021,
     "added": 37,
-    "not_added": 934,
+    "not_added": 965,
     "not_kept": 0
   },
   "changes": [
@@ -8642,7 +8642,9 @@
       "destination": "bios/epd19hft.rom",
       "verdict": "candidate",
       "reason": "no profile of a core the platform runs names it",
-      "cores_examined": [],
+      "cores_examined": [
+        "mame"
+      ],
       "unresolved_cores": []
     },
     {
@@ -8651,7 +8653,9 @@
       "destination": "bios/zt18hfnt.rom",
       "verdict": "candidate",
       "reason": "no profile of a core the platform runs names it",
-      "cores_examined": [],
+      "cores_examined": [
+        "mame"
+      ],
       "unresolved_cores": []
     },
     {
@@ -9520,6 +9524,7 @@
       "verdict": "candidate",
       "reason": "no profile of a core the platform runs names it",
       "cores_examined": [
+        "mame",
         "vecx"
       ],
       "unresolved_cores": []
@@ -9531,6 +9536,7 @@
       "verdict": "candidate",
       "reason": "no profile of a core the platform runs names it",
       "cores_examined": [
+        "mame",
         "vecx"
       ],
       "unresolved_cores": []
@@ -9565,6 +9571,18 @@
       "reason": "no profile of a core the platform runs names it",
       "cores_examined": [
         "mame"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "xbox",
+      "name": "Complex_4627v1.03.bin",
+      "destination": "bios/Complex_4627v1.03.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "directxbox",
+        "xemu"
       ],
       "unresolved_cores": []
     },

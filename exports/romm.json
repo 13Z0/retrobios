@@ -1648,6 +1648,17 @@
       "unresolved_cores": []
     },
     {
+      "system": "tg16",
+      "name": "gecard.pce",
+      "destination": "tg16/gecard.pce",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "mednafen_pce"
+      ],
+      "unresolved_cores": []
+    },
+    {
       "system": "pc-9800-series",
       "name": "itf.rom",
       "destination": "pc-9800-series/itf.rom",

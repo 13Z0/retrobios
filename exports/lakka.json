@@ -10,7 +10,7 @@
   "counts": {
     "kept": 516,
     "added": 141,
-    "not_added": 847,
+    "not_added": 1069,
     "not_kept": 0
   },
   "changes": [
@@ -2929,7 +2929,9 @@
       "destination": "zt18hfnt.rom",
       "verdict": "candidate",
       "reason": "no profile of a core the platform runs names it",
-      "cores_examined": [],
+      "cores_examined": [
+        "mame"
+      ],
       "unresolved_cores": []
     },
     {
@@ -2938,7 +2940,9 @@
       "destination": "ep128emu/roms/epd19hft.rom",
       "verdict": "candidate",
       "reason": "no profile of a core the platform runs names it",
-      "cores_examined": [],
+      "cores_examined": [
+        "mame"
+      ],
       "unresolved_cores": []
     },
     {
@@ -2947,7 +2951,9 @@
       "destination": "ep128emu/roms/zt19hfnt.rom",
       "verdict": "candidate",
       "reason": "no profile of a core the platform runs names it",
-      "cores_examined": [],
+      "cores_examined": [
+        "mame"
+      ],
       "unresolved_cores": []
     },
     {

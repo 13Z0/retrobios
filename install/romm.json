@@ -25,7 +25,7 @@
   "total_size": 872654387,
   "pack_files": 467,
   "pack_size": 872654387,
-  "total_omitted": 743,
+  "total_omitted": 746,
   "omitted_files": [
     {
       "dest": "32X_G_BIOS.BIN",
@@ -982,6 +982,36 @@
       "name": "msx-japanese.rom",
       "system": "microsoft-msx",
       "required": false,
+      "reason": "below_platform_folder",
+      "cores": [
+        "Clock Signal (CLK)"
+      ]
+    },
+    {
+      "dest": "MSX/msx.rom",
+      "name": "msx.rom",
+      "system": "microsoft-msx",
+      "required": true,
+      "reason": "below_platform_folder",
+      "cores": [
+        "Clock Signal (CLK)"
+      ]
+    },
+    {
+      "dest": "MSX/msx2.rom",
+      "name": "msx2.rom",
+      "system": "microsoft-msx2",
+      "required": true,
+      "reason": "below_platform_folder",
+      "cores": [
+        "Clock Signal (CLK)"
+      ]
+    },
+    {
+      "dest": "MSX/msx2ext.rom",
+      "name": "msx2ext.rom",
+      "system": "microsoft-msx2",
+      "required": true,
       "reason": "below_platform_folder",
       "cores": [
         "Clock Signal (CLK)"
@@ -7981,7 +8011,8 @@
       "uzdoom"
     ],
     "enterprise-64-128": [
-      "clk"
+      "clk",
+      "mame"
     ],
     "fairchild-channel-f": [
       "bizhawk",

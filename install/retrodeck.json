@@ -1258,6 +1258,10 @@
       "mame",
       "xroar"
     ],
+    "enterprise-64-128": [
+      "clk",
+      "mame"
+    ],
     "epoch-scv": [
       "emuscv",
       "mame"
@@ -1727,6 +1731,7 @@
     ],
     "vectrex": [
       "bizhawk",
+      "mame",
       "vecx"
     ],
     "vtech-vsmile": [
@@ -102283,11 +102288,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -102327,11 +102334,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -102349,11 +102358,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -103151,11 +103162,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -103174,11 +103187,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -103197,11 +103212,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -103220,11 +103237,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -103243,11 +103262,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -103266,11 +103287,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -103289,11 +103312,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -103312,11 +103337,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -103335,11 +103362,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -103358,11 +103387,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -103381,11 +103412,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -103404,11 +103437,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -103427,11 +103462,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -103450,11 +103487,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -103473,11 +103512,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -103496,11 +103537,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -103519,11 +103562,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -103542,11 +103587,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -103565,11 +103612,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -103587,11 +103636,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -103603,18 +103654,6 @@
       "repo_path": "bios/Arcade/MAME/a2focdrv.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "coco",
-        "dragon64",
-        "epoch-scv",
-        "hartung-game-master",
-        "philips-cdi",
-        "tiger-game-com",
-        "triforce",
-        "vtech-vsmile"
       ]
     },
     {
@@ -103625,18 +103664,6 @@
       "repo_path": "bios/Arcade/MAME/a2hsscsi.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "coco",
-        "dragon64",
-        "epoch-scv",
-        "hartung-game-master",
-        "philips-cdi",
-        "tiger-game-com",
-        "triforce",
-        "vtech-vsmile"
       ]
     },
     {
@@ -103653,11 +103680,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -103675,11 +103704,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -103691,18 +103722,6 @@
       "repo_path": "bios/Arcade/Arcade/a2memexp.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "coco",
-        "dragon64",
-        "epoch-scv",
-        "hartung-game-master",
-        "philips-cdi",
-        "tiger-game-com",
-        "triforce",
-        "vtech-vsmile"
       ]
     },
     {
@@ -103713,18 +103732,6 @@
       "repo_path": "bios/Arcade/MAME/a2mouse.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "coco",
-        "dragon64",
-        "epoch-scv",
-        "hartung-game-master",
-        "philips-cdi",
-        "tiger-game-com",
-        "triforce",
-        "vtech-vsmile"
       ]
     },
     {
@@ -103735,18 +103742,6 @@
       "repo_path": "bios/Arcade/MAME/a2parprn.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "coco",
-        "dragon64",
-        "epoch-scv",
-        "hartung-game-master",
-        "philips-cdi",
-        "tiger-game-com",
-        "triforce",
-        "vtech-vsmile"
       ]
     },
     {
@@ -103757,18 +103752,6 @@
       "repo_path": "bios/Arcade/MAME/a2pdromdr.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "coco",
-        "dragon64",
-        "epoch-scv",
-        "hartung-game-master",
-        "philips-cdi",
-        "tiger-game-com",
-        "triforce",
-        "vtech-vsmile"
       ]
     },
     {
@@ -103779,18 +103762,6 @@
       "repo_path": "bios/Arcade/MAME/a2pic.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "coco",
-        "dragon64",
-        "epoch-scv",
-        "hartung-game-master",
-        "philips-cdi",
-        "tiger-game-com",
-        "triforce",
-        "vtech-vsmile"
       ]
     },
     {
@@ -103807,11 +103778,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -103829,11 +103802,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -103845,18 +103820,6 @@
       "repo_path": "bios/Arcade/MAME/ace80.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "coco",
-        "dragon64",
-        "epoch-scv",
-        "hartung-game-master",
-        "philips-cdi",
-        "tiger-game-com",
-        "triforce",
-        "vtech-vsmile"
       ]
     },
     {
@@ -103873,11 +103836,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -103895,11 +103860,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -103917,11 +103884,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -103939,11 +103908,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -103955,18 +103926,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_tube_32016.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "coco",
-        "dragon64",
-        "epoch-scv",
-        "hartung-game-master",
-        "philips-cdi",
-        "tiger-game-com",
-        "triforce",
-        "vtech-vsmile"
       ]
     },
     {
@@ -103977,18 +103936,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_tube_32016l.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "coco",
-        "dragon64",
-        "epoch-scv",
-        "hartung-game-master",
-        "philips-cdi",
-        "tiger-game-com",
-        "triforce",
-        "vtech-vsmile"
       ]
     },
     {
@@ -103999,18 +103946,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_tube_6502.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "coco",
-        "dragon64",
-        "epoch-scv",
-        "hartung-game-master",
-        "philips-cdi",
-        "tiger-game-com",
-        "triforce",
-        "vtech-vsmile"
       ]
     },
     {
@@ -104021,18 +103956,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_tube_6502e.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "coco",
-        "dragon64",
-        "epoch-scv",
-        "hartung-game-master",
-        "philips-cdi",
-        "tiger-game-com",
-        "triforce",
-        "vtech-vsmile"
       ]
     },
     {
@@ -104049,11 +103972,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -104065,18 +103990,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_tube_65c102.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "coco",
-        "dragon64",
-        "epoch-scv",
-        "hartung-game-master",
-        "philips-cdi",
-        "tiger-game-com",
-        "triforce",
-        "vtech-vsmile"
       ]
     },
     {
@@ -104087,18 +104000,6 @@
       "repo_path": "bios/Arcade/Arcade/bbc_tube_80286.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "coco",
-        "dragon64",
-        "epoch-scv",
-        "hartung-game-master",
-        "philips-cdi",
-        "tiger-game-com",
-        "triforce",
-        "vtech-vsmile"
       ]
     },
     {
@@ -104109,18 +104010,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_tube_a500.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "coco",
-        "dragon64",
-        "epoch-scv",
-        "hartung-game-master",
-        "philips-cdi",
-        "tiger-game-com",
-        "triforce",
-        "vtech-vsmile"
       ]
     },
     {
@@ -104131,18 +104020,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_tube_a500d.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "coco",
-        "dragon64",
-        "epoch-scv",
-        "hartung-game-master",
-        "philips-cdi",
-        "tiger-game-com",
-        "triforce",
-        "vtech-vsmile"
       ]
     },
     {
@@ -104153,18 +104030,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_tube_arm.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "coco",
-        "dragon64",
-        "epoch-scv",
-        "hartung-game-master",
-        "philips-cdi",
-        "tiger-game-com",
-        "triforce",
-        "vtech-vsmile"
       ]
     },
     {
@@ -104175,18 +104040,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_tube_arm7.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "coco",
-        "dragon64",
-        "epoch-scv",
-        "hartung-game-master",
-        "philips-cdi",
-        "tiger-game-com",
-        "triforce",
-        "vtech-vsmile"
       ]
     },
     {
@@ -104203,11 +104056,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -104225,11 +104080,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -104241,18 +104098,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_tube_matchbox.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "coco",
-        "dragon64",
-        "epoch-scv",
-        "hartung-game-master",
-        "philips-cdi",
-        "tiger-game-com",
-        "triforce",
-        "vtech-vsmile"
       ]
     },
     {
@@ -104263,18 +104108,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_tube_pcplus.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "coco",
-        "dragon64",
-        "epoch-scv",
-        "hartung-game-master",
-        "philips-cdi",
-        "tiger-game-com",
-        "triforce",
-        "vtech-vsmile"
       ]
     },
     {
@@ -104285,18 +104118,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_tube_rc6502.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "coco",
-        "dragon64",
-        "epoch-scv",
-        "hartung-game-master",
-        "philips-cdi",
-        "tiger-game-com",
-        "triforce",
-        "vtech-vsmile"
       ]
     },
     {
@@ -104307,18 +104128,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_tube_rc65816.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "coco",
-        "dragon64",
-        "epoch-scv",
-        "hartung-game-master",
-        "philips-cdi",
-        "tiger-game-com",
-        "triforce",
-        "vtech-vsmile"
       ]
     },
     {
@@ -104335,11 +104144,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -104351,18 +104162,6 @@
       "repo_path": "bios/Arcade/Arcade/bbc_tube_z80.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "coco",
-        "dragon64",
-        "epoch-scv",
-        "hartung-game-master",
-        "philips-cdi",
-        "tiger-game-com",
-        "triforce",
-        "vtech-vsmile"
       ]
     },
     {
@@ -104373,18 +104172,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_tube_z80w.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "coco",
-        "dragon64",
-        "epoch-scv",
-        "hartung-game-master",
-        "philips-cdi",
-        "tiger-game-com",
-        "triforce",
-        "vtech-vsmile"
       ]
     },
     {
@@ -104401,11 +104188,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -104423,11 +104212,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -104439,18 +104230,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_tube_zep100m.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "coco",
-        "dragon64",
-        "epoch-scv",
-        "hartung-game-master",
-        "philips-cdi",
-        "tiger-game-com",
-        "triforce",
-        "vtech-vsmile"
       ]
     },
     {
@@ -104463,16 +104242,7 @@
         "mame"
       ],
       "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "coco",
-        "dragon64",
-        "epoch-scv",
-        "hartung-game-master",
-        "philips-cdi",
-        "tiger-game-com",
-        "triforce",
-        "vtech-vsmile"
+        "dragon64"
       ]
     },
     {
@@ -104489,11 +104259,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -104511,11 +104283,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -104533,11 +104307,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -104555,11 +104331,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -104577,11 +104355,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -104599,11 +104379,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -104621,11 +104403,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -104643,11 +104427,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -104665,11 +104451,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -104687,11 +104475,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -104709,11 +104499,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -104731,11 +104523,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -104753,11 +104547,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -104775,11 +104571,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -104791,18 +104589,6 @@
       "repo_path": "bios/Arcade/Arcade/hardbox.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "coco",
-        "dragon64",
-        "epoch-scv",
-        "hartung-game-master",
-        "philips-cdi",
-        "tiger-game-com",
-        "triforce",
-        "vtech-vsmile"
       ]
     },
     {
@@ -104813,18 +104599,6 @@
       "repo_path": "bios/Arcade/MAME/gpib_mshark.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "coco",
-        "dragon64",
-        "epoch-scv",
-        "hartung-game-master",
-        "philips-cdi",
-        "tiger-game-com",
-        "triforce",
-        "vtech-vsmile"
       ]
     },
     {
@@ -104835,18 +104609,6 @@
       "repo_path": "bios/Arcade/MAME/gpib_softbox.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "coco",
-        "dragon64",
-        "epoch-scv",
-        "hartung-game-master",
-        "philips-cdi",
-        "tiger-game-com",
-        "triforce",
-        "vtech-vsmile"
       ]
     },
     {
@@ -104863,11 +104625,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -104885,11 +104649,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -104901,18 +104667,6 @@
       "repo_path": "bios/Arcade/MAME/ibsap2.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "coco",
-        "dragon64",
-        "epoch-scv",
-        "hartung-game-master",
-        "philips-cdi",
-        "tiger-game-com",
-        "triforce",
-        "vtech-vsmile"
       ]
     },
     {
@@ -104929,11 +104683,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -104951,11 +104707,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -104973,11 +104731,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -104995,11 +104755,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -105017,11 +104779,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -105039,11 +104803,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -105061,11 +104827,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -105083,11 +104851,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -105105,11 +104875,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -105127,11 +104899,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -105149,11 +104923,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -105171,11 +104947,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -105193,11 +104971,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -105215,11 +104995,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -105237,11 +105019,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -105259,11 +105043,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -105281,11 +105067,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -105299,16 +105087,8 @@
         "mame"
       ],
       "systems": [
-        "3do",
-        "apple-macintosh-ii",
         "coco",
-        "dragon64",
-        "epoch-scv",
-        "hartung-game-master",
-        "philips-cdi",
-        "tiger-game-com",
-        "triforce",
-        "vtech-vsmile"
+        "dragon64"
       ]
     },
     {
@@ -105325,11 +105105,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -105347,11 +105129,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -105369,11 +105153,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -105391,11 +105177,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -105413,11 +105201,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -105435,11 +105225,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -105457,11 +105249,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -105479,11 +105273,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -105497,16 +105293,9 @@
         "mame"
       ],
       "systems": [
-        "3do",
         "apple-macintosh-ii",
         "coco",
-        "dragon64",
-        "epoch-scv",
-        "hartung-game-master",
-        "philips-cdi",
-        "tiger-game-com",
-        "triforce",
-        "vtech-vsmile"
+        "dragon64"
       ]
     },
     {
@@ -105519,16 +105308,9 @@
         "mame"
       ],
       "systems": [
-        "3do",
         "apple-macintosh-ii",
         "coco",
-        "dragon64",
-        "epoch-scv",
-        "hartung-game-master",
-        "philips-cdi",
-        "tiger-game-com",
-        "triforce",
-        "vtech-vsmile"
+        "dragon64"
       ]
     },
     {
@@ -105545,11 +105327,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -105567,11 +105351,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -105589,11 +105375,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -105611,11 +105399,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -105633,11 +105423,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -105655,11 +105447,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -105677,11 +105471,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -105699,11 +105495,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -105721,11 +105519,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -105743,11 +105543,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -105765,11 +105567,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -105787,11 +105591,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -105809,11 +105615,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -105831,11 +105639,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -105853,11 +105663,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -105875,11 +105687,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -105897,11 +105711,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -105919,11 +105735,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -105941,11 +105759,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -105963,11 +105783,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -105985,11 +105807,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -106007,11 +105831,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -106029,11 +105855,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -106045,18 +105873,6 @@
       "repo_path": "bios/Arcade/MAME/ti99_thermal.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "coco",
-        "dragon64",
-        "epoch-scv",
-        "hartung-game-master",
-        "philips-cdi",
-        "tiger-game-com",
-        "triforce",
-        "vtech-vsmile"
       ]
     },
     {
@@ -106073,11 +105889,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -106095,11 +105913,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -106117,11 +105937,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -106139,11 +105961,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -106161,11 +105985,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -106183,11 +106009,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -106205,11 +106033,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -106227,11 +106057,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -106249,11 +106081,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -106271,11 +106105,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -106293,11 +106129,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -106315,11 +106153,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },
@@ -106337,11 +106177,13 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
+        "enterprise-64-128",
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
         "tiger-game-com",
         "triforce",
+        "vectrex",
         "vtech-vsmile"
       ]
     },

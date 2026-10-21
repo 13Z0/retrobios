@@ -10,7 +10,7 @@
   "counts": {
     "kept": 692,
     "added": 138,
-    "not_added": 1410,
+    "not_added": 1642,
     "not_kept": 0
   },
   "changes": [
@@ -2179,7 +2179,8 @@
       "verdict": "undetermined",
       "reason": "a core the platform names has no profile yet",
       "cores_examined": [
-        "clk"
+        "clk",
+        "mame"
       ],
       "unresolved_cores": [
         "duckstation-legacy",
@@ -2194,7 +2195,8 @@
       "verdict": "undetermined",
       "reason": "a core the platform names has no profile yet",
       "cores_examined": [
-        "clk"
+        "clk",
+        "mame"
       ],
       "unresolved_cores": [
         "duckstation-legacy",
@@ -2209,7 +2211,8 @@
       "verdict": "undetermined",
       "reason": "a core the platform names has no profile yet",
       "cores_examined": [
-        "clk"
+        "clk",
+        "mame"
       ],
       "unresolved_cores": [
         "duckstation-legacy",
@@ -2224,7 +2227,8 @@
       "verdict": "undetermined",
       "reason": "a core the platform names has no profile yet",
       "cores_examined": [
-        "clk"
+        "clk",
+        "mame"
       ],
       "unresolved_cores": [
         "duckstation-legacy",
@@ -2239,7 +2243,8 @@
       "verdict": "undetermined",
       "reason": "a core the platform names has no profile yet",
       "cores_examined": [
-        "clk"
+        "clk",
+        "mame"
       ],
       "unresolved_cores": [
         "duckstation-legacy",
@@ -2254,7 +2259,8 @@
       "verdict": "undetermined",
       "reason": "a core the platform names has no profile yet",
       "cores_examined": [
-        "clk"
+        "clk",
+        "mame"
       ],
       "unresolved_cores": [
         "duckstation-legacy",
@@ -2269,7 +2275,8 @@
       "verdict": "undetermined",
       "reason": "a core the platform names has no profile yet",
       "cores_examined": [
-        "clk"
+        "clk",
+        "mame"
       ],
       "unresolved_cores": [
         "duckstation-legacy",
@@ -2284,7 +2291,8 @@
       "verdict": "undetermined",
       "reason": "a core the platform names has no profile yet",
       "cores_examined": [
-        "clk"
+        "clk",
+        "mame"
       ],
       "unresolved_cores": [
         "duckstation-legacy",
@@ -2922,7 +2930,8 @@
       "verdict": "undetermined",
       "reason": "a core the platform names has no profile yet",
       "cores_examined": [
-        "clk"
+        "clk",
+        "mame"
       ],
       "unresolved_cores": [
         "duckstation-legacy",
@@ -2937,7 +2946,8 @@
       "verdict": "undetermined",
       "reason": "a core the platform names has no profile yet",
       "cores_examined": [
-        "clk"
+        "clk",
+        "mame"
       ],
       "unresolved_cores": [
         "duckstation-legacy",

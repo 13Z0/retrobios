@@ -94,7 +94,9 @@
       "destination": "zt18hfnt.rom",
       "verdict": "undetermined",
       "reason": "a core the platform names has no profile yet",
-      "cores_examined": [],
+      "cores_examined": [
+        "mame"
+      ],
       "unresolved_cores": [
         "beetle-lynx",
         "beetle-ngp",
@@ -131,7 +133,9 @@
       "destination": "ep128emu/roms/epd19hft.rom",
       "verdict": "undetermined",
       "reason": "a core the platform names has no profile yet",
-      "cores_examined": [],
+      "cores_examined": [
+        "mame"
+      ],
       "unresolved_cores": [
         "beetle-lynx",
         "beetle-ngp",
@@ -168,7 +172,9 @@
       "destination": "ep128emu/roms/zt19hfnt.rom",
       "verdict": "undetermined",
       "reason": "a core the platform names has no profile yet",
-      "cores_examined": [],
+      "cores_examined": [
+        "mame"
+      ],
       "unresolved_cores": [
         "beetle-lynx",
         "beetle-ngp",
