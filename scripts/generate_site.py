@@ -4138,6 +4138,30 @@ def _render_problem_files(
     return lines
 
 
+def _platform_lists_sentence(total: int, verified: int, untested: int, missing: int) -> str:
+    """The platforms' own lists in one sentence, every count said.
+
+    Four tiles opened the page: "Verified (100%)" for 5,437 of 5,438 and
+    "Missing 0", above a table of red cells, on the page about what is
+    missing. The gaps are in the files the emulators load, and the sentence
+    says so.
+    """
+    def _is(count: int) -> str:
+        return "is" if count == 1 else "are"
+
+    parts = [f"{verified:,} {_is(verified)} held and pass the platform's own check"]
+    if untested:
+        parts.append(f"{untested:,} {_is(untested)} held but not verified "
+                     "(listed under Untested below)")
+    parts.append(f"{missing:,} {_is(missing)} missing")
+    listed = ", ".join(parts[:-1]) + f" and {parts[-1]}"
+    return (
+        f"Of the {total:,} files on the platforms' own BIOS lists, {listed}. "
+        "The files the emulators load beyond those lists are counted per "
+        "platform in the table below."
+    )
+
+
 def generate_gap_analysis(
     profiles: dict,
     coverages: dict,
@@ -4198,44 +4222,19 @@ def generate_gap_analysis(
                     "path": d.get("path") or "",
                 })
 
-    pct_verified = (
-        f"{total_verified / total_files_verify * 100:.0f}%"
-        if total_files_verify
-        else "0%"
-    )
-
     lines = [
         "# Gap analysis",
         "",
-        "Unified view of BIOS verification, file provenance, and coverage gaps.",
+        "What each platform and its emulators still lack, and where the "
+        "collection's copies come from.",
         "",
         "[Download gaps CSV](downloads/gaps.csv){ .md-button } "
         "[Open gaps API](api/v1/gaps.json){ .md-button } "
         "[All data exports](data.md){ .md-button }",
         "",
-        '<div class="rb-stats" markdown>',
-        "",
-        '<div class="rb-stat" markdown>',
-        f'<span class="rb-stat-value">{total_files_verify:,}</span>',
-        '<span class="rb-stat-label">Total files (all platforms)</span>',
-        "</div>",
-        "",
-        '<div class="rb-stat" markdown>',
-        f'<span class="rb-stat-value">{total_verified:,}</span>',
-        f'<span class="rb-stat-label">Verified ({pct_verified})</span>',
-        "</div>",
-        "",
-        '<div class="rb-stat" markdown>',
-        f'<span class="rb-stat-value">{total_untested:,}</span>',
-        '<span class="rb-stat-label">Untested</span>',
-        "</div>",
-        "",
-        '<div class="rb-stat" markdown>',
-        f'<span class="rb-stat-value">{total_missing_verify:,}</span>',
-        '<span class="rb-stat-label">Missing</span>',
-        "</div>",
-        "",
-        "</div>",
+        _platform_lists_sentence(
+            total_files_verify, total_verified, total_untested, total_missing_verify
+        ),
         "",
     ]
 

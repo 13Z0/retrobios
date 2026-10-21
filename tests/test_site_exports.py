@@ -882,6 +882,23 @@ class NestedProfileBlocksRenderAsLists(unittest.TestCase):
         self.assertIn("name: a.bin, size: 2", html)
 
 
+class TheGapPageOpensOnCounts(unittest.TestCase):
+    """The page opened on a slogan and on tiles reading "Verified (100%)"
+    for 5,437 of 5,438 files and "Missing 0", above a table of red cells."""
+
+    def test_every_count_is_said(self):
+        import generate_site  # noqa: PLC0415
+
+        text = generate_site._platform_lists_sentence(5438, 5437, 1, 0)
+        self.assertIn("Of the 5,438 files", text)
+        self.assertIn("5,437 are held", text)
+        self.assertIn("1 is held but not verified", text)
+        self.assertIn("0 are missing", text)
+        self.assertNotIn("%", text)
+        source = (Path(__file__).resolve().parents[1] / "scripts" / "generate_site.py").read_text()
+        self.assertNotIn("Unified view of BIOS verification", source)
+
+
 class EveryPageLinksItsOwnData(unittest.TestCase):
     """An emulator page linked its YAML and JSON. A platform page linked
     nothing, and a tool had to download platforms.json (2.8 MB) and filter
