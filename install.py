@@ -2576,6 +2576,7 @@ def _download_one(
     resumable = expected_size >= RESUME_FROM_SIZE
     reason = "download failed"
     refused = False
+    full_partial = False
     for attempt in range(1, MAX_RETRIES + 1):
         tmp_path: Path | None = None
         counted = 0
@@ -2594,7 +2595,17 @@ def _download_one(
                     tmp_path = None
                 else:
                     offset = os.fstat(partial.fileno()).st_size
-                    if offset >= expected_size:
+                    if offset >= expected_size and _NO_RENAME_WHILE_OPEN:
+                        # The run that verified this copy releases its lock
+                        # to rename it: truncating it there destroyed that
+                        # copy and failed the rename. It is left alone and
+                        # this run writes a private file.
+                        partial.close()
+                        partial = None
+                        tmp_path = None
+                        offset = 0
+                        full_partial = True
+                    elif offset >= expected_size:
                         partial.truncate(0)
                         offset = 0
             request = urllib.request.Request(url)
@@ -2665,11 +2676,15 @@ def _download_one(
             # written with sudo has to stay readable by the emulator's user.
             os.chmod(tmp_path, (0o777 if f.get("executable") else 0o666) & ~_UMASK)
             _clear_read_only(dest)
-            if partial is not None and os.name == "nt":
+            if partial is not None and _NO_RENAME_WHILE_OPEN:
                 # Windows renames no open file. Elsewhere the lock is held
                 # until the copy has its final name.
                 partial.close()
-            os.replace(tmp_path, dest)
+                _replace_released(tmp_path, dest, expected)
+            else:
+                os.replace(tmp_path, dest)
+            if full_partial:
+                _drop_full_partial(dest, expected_size)
             return f["dest"], True, ""
 
         except _Interrupted:
@@ -2737,6 +2752,71 @@ def _download_one(
             return f["dest"], False, "stopped"
 
     return f["dest"], False, reason
+
+
+# Windows renames no file another handle holds open, and Python opens files
+# without FILE_SHARE_DELETE: a locked partial copy is closed before its rename.
+_NO_RENAME_WHILE_OPEN = os.name == "nt"
+# Seconds a closed partial copy waits for a sharing violation to clear: a
+# second run closing it again, or a scanner reading the new file.
+RELEASE_WAIT = 30.0
+_SHARING_VIOLATIONS = (32, 33)
+
+
+def _replace_released(source: Path, dest: Path, expected: dict[str, str]) -> None:
+    """Rename a verified copy whose lock was just released.
+
+    Another run may open the copy in that moment, which refuses the rename
+    with a sharing violation until it lets go. When the copy is gone, that
+    run placed the same file and removed it: the destination is checked
+    against the manifest's hashes before it counts as installed.
+    """
+    deadline = time.monotonic() + RELEASE_WAIT
+    while True:
+        try:
+            os.replace(source, dest)
+            return
+        except FileNotFoundError:
+            if expected and dest.is_file() and _digest_file(dest, tuple(expected)) == expected:
+                return
+            raise
+        except PermissionError as exc:
+            if (getattr(exc, "winerror", None) not in _SHARING_VIOLATIONS
+                    or time.monotonic() >= deadline):
+                raise
+            time.sleep(0.2)
+
+
+def _drop_full_partial(dest: Path, expected_size: int) -> None:
+    """Remove a complete partial copy this run left alone.
+
+    A copy at full size that nothing holds is what a run stopped between its
+    check and its rename leaves behind. The destination now holds the
+    verified file, so the copy is only clutter. One another run holds is
+    left to it.
+    """
+    path = dest.parent / f".{dest.name}.part"
+    if not path.is_file():
+        return
+    try:
+        handle = _claim_partial(path)
+    except OSError:
+        return
+    if handle is None:
+        return
+    with handle:
+        complete = os.fstat(handle.fileno()).st_size >= expected_size
+    if complete:
+        try:
+            path.unlink()
+        except OSError:
+            pass  # another run opened it meanwhile and finishes with it
+    else:
+        try:
+            if path.stat().st_size == 0:
+                path.unlink()
+        except OSError:
+            pass  # created by the claim and taken since by another run
 
 
 def _partial_size(path: Path) -> int:
@@ -2823,6 +2903,10 @@ NOT_WRITABLE = "folder not writable"
 
 
 def _write_refused(exc: OSError) -> bool:
+    # A sharing violation is a file another process holds open, which a
+    # later attempt can find released: no refusal of the folder.
+    if getattr(exc, "winerror", None) in _SHARING_VIOLATIONS:
+        return False
     return isinstance(exc, PermissionError) or exc.errno == errno.EROFS
 
 

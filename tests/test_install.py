@@ -3586,5 +3586,99 @@ class DestAloneFollowsWhatIsFoundHere(unittest.TestCase):
         self.assertIn("Which platform's files go to /media/card?", out)
 
 
+class _FakeResponse:
+    """What urlopen returns, serving one payload from its start."""
+
+    def __init__(self, payload: bytes) -> None:
+        self.status = 200
+        self.headers = {"Content-Length": str(len(payload))}
+        self._body = io.BytesIO(payload)
+
+    def __enter__(self) -> _FakeResponse:
+        return self
+
+    def __exit__(self, *_exc: object) -> None:
+        return None
+
+    def read(self, size: int = -1) -> bytes:
+        return self._body.read(size)
+
+
+def _sharing_violation() -> PermissionError:
+    exc = PermissionError(13, "The process cannot access the file")
+    exc.winerror = 32
+    return exc
+
+
+class ACompletePartialIsHandedOffOnWindows(unittest.TestCase):
+    """Windows renames no open file, so the run that verified a large copy
+    released its lock before the rename. A second run claimed the copy in
+    that moment, found it complete and truncated it, and the first run's
+    rename failed with a sharing violation reported as "folder not
+    writable"."""
+
+    PAYLOAD = bytes(range(256)) * 200
+    ENTRY = {
+        "dest": "big.bin", "repo_path": "bios/big.bin", "size": len(PAYLOAD),
+        "sha256": hashlib.sha256(PAYLOAD).hexdigest(),
+    }
+
+    def _run(self, tmp: Path, seen: list[int]):
+        part = tmp / ".big.bin.part"
+
+        def urlopen(request, timeout=None):
+            seen.append(part.stat().st_size if part.exists() else -1)
+            return _FakeResponse(self.PAYLOAD)
+
+        with unittest.mock.patch.object(install, "RESUME_FROM_SIZE", 1024), \
+                unittest.mock.patch.object(install, "_NO_RENAME_WHILE_OPEN", True), \
+                unittest.mock.patch.object(install.urllib.request, "urlopen", urlopen):
+            return install._download_one(dict(self.ENTRY), tmp)
+
+    def test_the_other_runs_copy_is_left_whole(self):
+        tmp = Path(_tempdir(self))
+        (tmp / ".big.bin.part").write_bytes(self.PAYLOAD)
+        seen: list[int] = []
+        self.assertEqual(self._run(tmp, seen), ("big.bin", True, ""))
+        # The download ran while the complete copy was still whole.
+        self.assertEqual(seen, [len(self.PAYLOAD)])
+        self.assertEqual((tmp / "big.bin").read_bytes(), self.PAYLOAD)
+        # Nothing held it afterwards: it was a leftover, now removed.
+        self.assertFalse((tmp / ".big.bin.part").exists())
+
+    def test_the_rename_waits_for_the_other_run_to_let_go(self):
+        tmp = Path(_tempdir(self))
+        source = tmp / "copy"
+        source.write_bytes(b"x")
+        real_replace = os.replace
+        calls = []
+
+        def replace(src, dst):
+            calls.append(src)
+            if len(calls) < 3:
+                raise _sharing_violation()
+            return real_replace(src, dst)
+
+        with unittest.mock.patch.object(install.os, "replace", replace), \
+                unittest.mock.patch.object(install.time, "sleep"):
+            install._replace_released(source, tmp / "dest", {})
+        self.assertEqual(len(calls), 3)
+        self.assertEqual((tmp / "dest").read_bytes(), b"x")
+
+    def test_a_copy_the_other_run_placed_counts_once_verified(self):
+        tmp = Path(_tempdir(self))
+        dest = tmp / "dest"
+        dest.write_bytes(self.PAYLOAD)
+        expected = {"sha256": self.ENTRY["sha256"]}
+        install._replace_released(tmp / "gone", dest, expected)
+        dest.write_bytes(b"other bytes")
+        with self.assertRaises(FileNotFoundError):
+            install._replace_released(tmp / "gone", dest, expected)
+
+    def test_a_sharing_violation_is_no_refused_folder(self):
+        self.assertFalse(install._write_refused(_sharing_violation()))
+        self.assertTrue(install._write_refused(PermissionError(13, "denied")))
+
+
 if __name__ == "__main__":
     unittest.main()
