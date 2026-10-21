@@ -87,34 +87,60 @@ class ReadersFollowTheDataTrees(unittest.TestCase):
     """Dolphin names codehandler.bin without a hash. The pack takes it from
     data/dolphin-sys, and the site credited Dolphin and Triforce with the
     Dolphin-MMJR copy, another revision, because the consumers resolved
-    without the data trees. Reads the repository."""
+    without the data trees."""
 
-    def test_dolphin_does_not_read_the_mmjr_copy(self):
+    def setUp(self):
         import os
 
-        from common import load_database, load_emulator_profiles
+        self._previous = os.getcwd()
+        self._tree = tempfile.TemporaryDirectory()
+        root = Path(self._tree.name)
+        fork = root / "bios" / "Other" / "dolphin-mmjr" / "codehandler.bin"
+        fork.parent.mkdir(parents=True)
+        fork.write_bytes(b"dolphin-mmjr codehandler")
+        own = root / "data" / "dolphin-sys" / "codehandler.bin"
+        own.parent.mkdir(parents=True)
+        own.write_bytes(b"dolphin codehandler")
+        self.fork_sha1 = hashlib.sha1(fork.read_bytes()).hexdigest()
+        self.db = {
+            "files": {self.fork_sha1: {
+                "name": "codehandler.bin", "sha1": self.fork_sha1,
+                "path": "bios/Other/dolphin-mmjr/codehandler.bin",
+                "md5": hashlib.md5(fork.read_bytes()).hexdigest(),
+                "size": fork.stat().st_size,
+            }},
+            "indexes": {
+                "by_name": {"codehandler.bin": [self.fork_sha1]},
+                "by_md5": {}, "by_path_suffix": {},
+            },
+        }
+        self.registry = {"dolphin-sys": {"local_cache": str(own.parent)}}
+        self.profiles = {"dolphin": {"type": "standalone + libretro", "files": [
+            {"name": "codehandler.bin", "path": None, "mode": "libretro"},
+        ]}}
+        os.chdir(root)
 
-        if not (REPO_ROOT / "database.json").is_file() or not (
-            REPO_ROOT / "data" / "dolphin-sys" / "codehandler.bin"
-        ).is_file():
-            self.skipTest("database.json or data/dolphin-sys is absent")
-        previous = os.getcwd()
-        os.chdir(REPO_ROOT)
-        try:
-            db = load_database("database.json")
-            profiles = load_emulator_profiles("emulators")
-            consumers = FileConsumers(db)
-            consumers.add_emulators({"dolphin": profiles["dolphin"]})
-        finally:
-            os.chdir(previous)
-        mmjr = next(
-            (sha1 for sha1, entry in db["files"].items()
-             if entry["path"] == "bios/Other/dolphin-mmjr/codehandler.bin"),
-            None,
-        )
-        if mmjr is None:
-            self.skipTest("the Dolphin-MMJR copy is not collected")
-        self.assertNotIn("dolphin", consumers.emulators.get(mmjr, set()))
+    def tearDown(self):
+        import os
+
+        from common import forget_data_dir_index
+
+        os.chdir(self._previous)
+        forget_data_dir_index()
+        self._tree.cleanup()
+
+    def _readers(self, registry: dict) -> set[str]:
+        consumers = FileConsumers(self.db, data_dir_registry=registry)
+        consumers.add_emulators(self.profiles)
+        return consumers.emulators.get(self.fork_sha1, set())
+
+    def test_dolphin_does_not_read_the_mmjr_copy(self):
+        self.assertNotIn("dolphin", self._readers(self.registry))
+
+    def test_without_the_data_trees_the_name_step_takes_the_fork_copy(self):
+        """The case above has to reach the data trees to pass: resolved
+        without them, the name alone hands Dolphin the fork's copy."""
+        self.assertIn("dolphin", self._readers({}))
 
 
 def tearDownModule():

@@ -195,14 +195,19 @@ jobs:
 
       # install.py stays on Python 3.8: the suite runs it end to end under a
       # real 3.8 interpreter, which import-only and grammar checks miss. 3.9
-      # is the floor pipeline.py states for the build scripts, compiled under
-      # a real 3.9. The last version listed is the default python.
+      # is the floor pipeline.py states for the build scripts: a real 3.9
+      # imports every module under scripts/, so it needs their dependencies.
+      # jsonschema 4.26 requires 3.10, 4.25.1 is the last release for 3.9.
+      # The last version listed is the default python.
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7
         with:
           python-version: |
             3.8
             3.9
             3.12
+
+      - name: Install the build scripts' dependencies for Python 3.9
+        run: python3.9 -m pip install pyyaml "jsonschema[format-nongpl]==4.25.1"
 
       # markdown: the site validation test renders a wiki line to prove the
       # heading guard's premise, and skipped on every run without it. The docs
@@ -226,7 +231,14 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      # docs/ is gitignored, and the tests that read the rendered pages fail
+      # in CI without it. The suite runs whatever this step returned, so a
+      # generator that stops still leaves every other test reporting.
+      - name: Generate the site
+        run: python scripts/generate_site.py
+
       - name: Run test suite
+        if: ${{ !cancelled() }}
         # No test downloads a release asset: 252 MB files fetched into the
         # shared cache filled the runner's disk and changed what later tests
         # resolved. The download tests mock the network and clear it.
@@ -241,7 +253,6 @@ jobs:
       - name: Build the site
         if: ${{ !cancelled() }}
         run: |
-          python scripts/generate_site.py
           mkdocs build --strict
           python scripts/validate_site.py
 

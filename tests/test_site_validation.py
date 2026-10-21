@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 import re
 import sys
 import tempfile
@@ -216,8 +217,10 @@ class EveryTestDependencyIsInstalledInCi(unittest.TestCase):
         }
         workflow = (root / ".github" / "workflows" / "validate.yml").read_text()
         job = workflow[workflow.index("run-tests:"):]
+        # The suite runs on the default python: a line that installs into
+        # another interpreter (python3.9 -m pip) does not count.
         install_line = next(
-            line for line in job.splitlines() if "pip install" in line
+            line for line in job.splitlines() if "run: pip install" in line
         )
         missing = sorted(
             m for m in third_party if self.PACKAGES.get(m, m) not in install_line
@@ -289,6 +292,8 @@ class PlatformPagesPrintTheDeclaredCrc32(unittest.TestCase):
     def test_the_rendered_page(self):
         page = ROOT / "docs" / "platforms" / "retroarch.md"
         if not page.is_file():
+            if os.environ.get("CI"):
+                self.fail("CI generates docs/ before the suite")
             self.skipTest("site not generated")
         self.assertIn("CRC32: `91e93107`", page.read_text(encoding="utf-8"))
 

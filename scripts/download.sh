@@ -66,7 +66,19 @@ normalize() {
     printf '%s' "$1" | tr '[:upper:]' '[:lower:]' | tr -cd 'a-z0-9'
 }
 
+# The anonymous quota is 60 calls an hour per address. The token goes to
+# GitHub's API only: RETROBIOS_API can name any host. The header is read
+# from stdin so the token stays out of the process list.
 fetch_release() {
+    case "$API_BASE" in
+        https://api.github.com|https://api.github.com/)
+            if [ -n "${GITHUB_TOKEN:-}" ]; then
+                printf 'Authorization: Bearer %s\n' "$GITHUB_TOKEN" |
+                    curl -fsSL -H @- "$API"
+                return
+            fi
+            ;;
+    esac
     curl -fsSL "$API"
 }
 

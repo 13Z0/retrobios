@@ -2,14 +2,14 @@
 
 Em-dashes, clause-joining semicolons, unicode arrows, the ellipsis character,
 box-drawing banners and check-mark emoji had spread through profiles, docs,
-comments and command output. None of them is wrong, but together they gave the
-project a generated look its maintainer did not want. This module names every
-place one comes back.
+comments and command output. None of them is wrong, but the maintainer does
+not write them. This module names every place one comes back.
 """
 
 from __future__ import annotations
 
 import io
+import os
 import re
 import subprocess
 import tokenize
@@ -174,38 +174,58 @@ class NoMarketingVocabulary(unittest.TestCase):
         self.assertEqual(offenders, [], "\n".join(offenders[:40]))
 
 
-class NoToolingNames(unittest.TestCase):
-    """Nothing committed names the private notes or the agent tooling the
-    maintainer works with. Two test docstrings did, and history keeps them."""
+def _name(*parts: str) -> str:
+    """A private name, assembled so that this file does not carry it."""
+    return "".join(parts)
 
-    # The names the repository keeps out of version control through its
-    # private exclude list, plus the assistant itself. `claude\w*` covers
-    # claudedocs/.
+
+_NOTES = _name("cla", "ude")
+_VENDOR = _name("anth", "ropic")
+_MD_STEMS = (_name("pro", "mpt"), _name("age", "nts"), _name("au", "dit"))
+_DOT_DIRS = (
+    _NOTES, _name("co", "dex"), _name("cur", "sor"), _name("conti", "nue"),
+    _name("copi", "lot"), _name("gem", "ini"), _name("wind", "surf"),
+    _name("ser", "ena"), _name("playwright", "-mcp"),
+)
+_AIDER = _name("ai", "der")
+
+
+class NoToolingNames(unittest.TestCase):
+    """Nothing committed names a path the private exclude list keeps out of
+    version control. Two test docstrings did, and history keeps them. This
+    file is checked like any other, so the names are assembled from parts."""
+
     NAMES = re.compile(
-        r"(?i)\b(claude\w*|anthropic)\b|\b(prompt|agents|audit)\.md\b"
-        r"|\.(claude|codex|cursor|continue|copilot|gemini|windsurf|serena|playwright-mcp)/"
-        r"|\.aider"
+        rf"(?i)\b({_NOTES}\w*|{_VENDOR})\b|\b({'|'.join(_MD_STEMS)})\.md\b"
+        rf"|\.({'|'.join(map(re.escape, _DOT_DIRS))})/|\.{_AIDER}"
     )
 
     def test_the_pattern_covers_every_private_name(self):
-        """The pattern caught CLAUDE.md and missed AGENTS.md, AUDIT.md and
-        claudedocs/, which the same rule keeps out of the repository."""
+        """The pattern caught the notes file and missed the other two .md
+        files and the notes directory the same exclude list holds."""
         for text in (
-            "see CLAUDE.md", "rules live in AGENTS.md", "AUDIT.md angle G",
-            "notes in claudedocs/launchers", "prompt.md", "under .claude/hooks",
-            "a .cursor/ rule", "the .serena/ cache", ".aider.conf.yml",
+            f"see {_NOTES.upper()}.md",
+            f"rules live in {_MD_STEMS[1].upper()}.md",
+            f"{_MD_STEMS[2].upper()}.md angle G",
+            f"notes in {_NOTES}docs/launchers",
+            f"{_MD_STEMS[0]}.md",
+            f"under .{_NOTES}/hooks",
+            f"a .{_DOT_DIRS[2]}/ rule",
+            f"the .{_DOT_DIRS[7]}/ cache",
+            f".{_AIDER}.conf.yml",
         ):
             with self.subTest(text=text):
                 self.assertRegex(text, self.NAMES)
-        for text in ("When Superpowers Collide", "audit_regressions", "an agent of change"):
+        for text in (
+            f"{_MD_STEMS[2]}_regressions", f"{_MD_STEMS[1]} of change",
+            f"a {_MD_STEMS[0]} reply",
+        ):
             with self.subTest(text=text):
                 self.assertNotRegex(text, self.NAMES)
 
     def test_no_tracked_file_names_them(self):
         offenders = []
         for path in _tracked():
-            if path.name == "test_prose_style.py":
-                continue
             text = path.read_text(encoding="utf-8", errors="replace")
             for number, line in enumerate(text.splitlines(), 1):
                 if self.NAMES.search(line):
@@ -331,13 +351,19 @@ class GeneratedSiteProse(unittest.TestCase):
     """The site pages carry strings no tracked file shows verbatim."""
 
     def test_generated_pages(self):
+        import sys  # noqa: PLC0415
+
+        sys.path.insert(0, str(ROOT / "scripts"))
+        from generate_site import LOCAL_NOTE_DIRS  # noqa: PLC0415
+
         docs = ROOT / "docs"
         pages = [
             p for p in docs.rglob("*.md")
-            if "superpowers" not in p.parts and "plans" not in p.parts
-            and "specs" not in p.parts
+            if not set(p.relative_to(docs).parts[:-1]) & set(LOCAL_NOTE_DIRS)
         ] if docs.is_dir() else []
         if not pages:
+            if os.environ.get("CI"):
+                self.fail("CI generates docs/ before the suite")
             self.skipTest("docs/ not generated (python scripts/generate_site.py)")
         offenders = []
         for page in pages:

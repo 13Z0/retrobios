@@ -380,7 +380,6 @@ class Scraper(BaseScraper):
                     if system is None:
                         continue
 
-                    # Resolve path
                     paths_raw = entry.get("paths")
                     if isinstance(paths_raw, str):
                         resolved = _resolve_path(paths_raw)

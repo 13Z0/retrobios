@@ -3962,7 +3962,6 @@ def do_standalone_copies(
                     break
             continue
 
-        # Resolve source files
         if "pattern" in entry:
             sources = [
                 f for f in bios_path.rglob("*")

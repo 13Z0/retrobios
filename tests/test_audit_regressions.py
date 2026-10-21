@@ -110,11 +110,12 @@ class ReadmeRegressions(unittest.TestCase):
         self.assertEqual(proc.returncode, 1)
         self.assertIn("needs Python 3.9", proc.stderr)
 
-    def test_the_floor_interpreter_compiles_every_script(self):
-        """The floor said 3.12 for a reason the code no longer carried: every
-        script compiled under 3.9, and only the guard refused it. Checked
-        with a real interpreter of the floor version, as the installer's 3.8
-        floor is."""
+    def test_the_floor_interpreter_imports_every_script(self):
+        """Every module under scripts/ is loaded by a real interpreter of the
+        floor version, as the installer's 3.8 floor is proven by running it.
+        Compiling only checks the grammar: a module-level alias such as
+        `tuple[int, int | None]` compiles under 3.9 and raises TypeError
+        when the module loads."""
         import shutil  # noqa: PLC0415
 
         floor = re.search(
@@ -128,21 +129,62 @@ class ReadmeRegressions(unittest.TestCase):
                 self.fail(f"CI must provide {name}")
             self.skipTest(f"no {name} on PATH")
         check = (
-            "import pathlib, sys\n"
-            "bad = []\n"
+            "import importlib, json, pathlib, sys\n"
+            "sys.path.insert(0, '.')\n"
+            "failed = {}\n"
             "for p in sorted(pathlib.Path('scripts').rglob('*.py')):\n"
+            "    if '__pycache__' in p.parts:\n"
+            "        continue\n"
+            "    parts = p.with_suffix('').parts\n"
+            "    if parts[-1] == '__init__':\n"
+            "        parts = parts[:-1]\n"
             "    try:\n"
-            "        compile(p.read_text(encoding='utf-8'), str(p), 'exec')\n"
-            "    except SyntaxError as e:\n"
-            "        bad.append(f'{p}:{e.lineno}')\n"
-            "print(bad)\n"
-            "sys.exit(1 if bad else 0)\n"
+            "        importlib.import_module('.'.join(parts))\n"
+            "    except BaseException as e:\n"
+            "        failed[str(p)] = [type(e).__name__, getattr(e, 'name', None), str(e)]\n"
+            "print(json.dumps(failed))\n"
         )
         proc = subprocess.run(
             [interpreter, "-I", "-c", check], cwd=ROOT, capture_output=True,
-            text=True, timeout=300, check=False,
+            text=True, timeout=600, check=False,
+            env={**os.environ, "RETROBIOS_OFFLINE": "1"},
         )
         self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+        failed = json.loads(proc.stdout.strip().splitlines()[-1])
+        # pyyaml for every build script, jsonschema for validate_schemas:
+        # without them the floor interpreter cannot load the modules, which
+        # proves nothing either way.
+        absent = sorted({
+            err[1] for err in failed.values()
+            if err[0] == "ModuleNotFoundError" and err[1] in ("yaml", "jsonschema")
+        })
+        if absent:
+            message = f"{name} lacks {', '.join(absent)}"
+            if os.environ.get("CI"):
+                self.fail(message)
+            self.skipTest(message)
+        self.assertEqual(failed, {})
+
+
+class AModuleRunAloneHasItsScratchDirectory(unittest.TestCase):
+    """About forty modules write under tmp/, which git does not track. Only
+    three created it, as an import side effect, so a module run alone on a
+    fresh clone raised FileNotFoundError. The test package creates it."""
+
+    def test_importing_the_package_creates_tmp(self):
+        with tempfile.TemporaryDirectory(dir=TMP_ROOT) as directory:
+            clone = Path(directory)
+            (clone / "tests").mkdir()
+            (clone / "tests" / "__init__.py").write_bytes(
+                (ROOT / "tests" / "__init__.py").read_bytes()
+            )
+            proc = subprocess.run(
+                [sys.executable, "-I", "-c",
+                 "import sys; sys.path.insert(0, '.'); import tests"],
+                cwd=clone, capture_output=True, text=True, timeout=60, check=False,
+            )
+            self.assertEqual(proc.returncode, 0, proc.stderr)
+            self.assertTrue((clone / "tmp" / "tests").is_dir())
 
 
 class ReleaseSigningRegressions(unittest.TestCase):
@@ -4864,6 +4906,8 @@ class NullReadsAsNone(unittest.TestCase):
     def test_the_rendered_site_has_no_python_none(self):
         docs = ROOT / "docs"
         if not docs.is_dir():
+            if os.environ.get("CI"):
+                self.fail("CI generates docs/ before the suite")
             self.skipTest("docs/ not generated")
         pattern = re.compile(r"\| None \||: None$|: None \|", re.M)
         from scripts.generate_site import LOCAL_NOTE_DIRS
@@ -6398,9 +6442,16 @@ class CommentsSayWhy(unittest.TestCase):
     REASON = re.compile(r"\b(for|only|so|because|if|when|unless|before|after)\b")
 
     def test_no_label_comment_restates_the_next_line(self):
+        """Three scripts were read, and 22 labels stood in 13 others."""
+        tracked = subprocess.run(
+            ["git", "ls-files", "--", "scripts/*.py", "scripts/**/*.py", "install.py"],
+            cwd=ROOT, capture_output=True, text=True, check=True,
+        ).stdout.split()
+        self.assertIn("install.py", tracked)
+        self.assertIn("scripts/scraper/mame_parser.py", tracked)
         found = []
-        for name in ("verify.py", "generate_site.py", "generate_truth.py"):
-            lines = (ROOT / "scripts" / name).read_text(encoding="utf-8").splitlines()
+        for name in sorted(set(tracked)):
+            lines = (ROOT / name).read_text(encoding="utf-8").splitlines()
             for index, line in enumerate(lines):
                 if not self.LABEL.match(line) or self.REASON.search(line):
                     continue

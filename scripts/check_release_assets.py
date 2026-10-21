@@ -22,6 +22,7 @@ import re
 import subprocess
 import sys
 from collections.abc import Iterable
+from typing import NamedTuple
 
 sys.path.insert(0, os.path.dirname(__file__))
 from common import composition_tier, load_database
@@ -32,7 +33,14 @@ from largefiles import (
     registered_paths,
 )
 
-Finding = tuple[str, str, int, int | None]
+
+class AssetFinding(NamedTuple):
+    """A difference between the release and the collection."""
+
+    kind: str
+    path: str
+    size: int
+    published: int | None
 
 
 def expected_assets(db: dict, gitignore_text: str) -> dict[str, int]:
@@ -61,7 +69,7 @@ def compare(
     registered: Iterable[str] | None = None,
     expected_digests: dict[str, str] | None = None,
     asset_digests: dict[str, str] | None = None,
-) -> list[Finding]:
+) -> list[AssetFinding]:
     """Files the release lacks or serves at another size, sorted by kind.
 
     At the same size, the sha256 the release lists for an asset is held
@@ -74,9 +82,9 @@ def compare(
     matches what render_notes() would write is a finding of its own: the
     page is what a reader checks a download against.
     """
-    findings: list[Finding] = []
+    findings: list[AssetFinding] = []
     if not notes_current:
-        findings.append(("notes", "release description", 0, None))
+        findings.append(AssetFinding("notes", "release description", 0, None))
     names = asset_names([*(registered or ()), *expected])
     for path, size in sorted(expected.items()):
         served = next(
@@ -84,14 +92,14 @@ def compare(
         )
         published = assets[served] if served else None
         if published is None:
-            findings.append(("missing", path, size, None))
+            findings.append(AssetFinding("missing", path, size, None))
         elif published != size:
-            findings.append(("size", path, size, published))
+            findings.append(AssetFinding("size", path, size, published))
         else:
             ours = (expected_digests or {}).get(path)
             theirs = (asset_digests or {}).get(served)
             if ours and theirs and ours != theirs:
-                findings.append(("content", path, size, published))
+                findings.append(AssetFinding("content", path, size, published))
     return sorted(findings)
 
 

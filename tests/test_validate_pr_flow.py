@@ -7,7 +7,9 @@ cannot hold has to be an action the contributor can take.
 
 from __future__ import annotations
 
+import json
 import os
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -117,6 +119,31 @@ class OversizedFileAdvice(unittest.TestCase):
         self.assertTrue(
             (REPO_ROOT / ".github" / "ISSUE_TEMPLATE" / template).is_file(), template
         )
+
+
+class RunFromAnyDirectory(unittest.TestCase):
+    """database.json, platforms/ and emulators/ were read from the current
+    directory. Run from elsewhere, scph5501.bin came back referenced by no
+    platform and not under bios/, with rc 0."""
+
+    def test_the_report_is_the_one_the_root_gives(self):
+        path = REPO_ROOT / "bios" / "Sony" / "PlayStation" / "scph5501.bin"
+        self.assertTrue(path.is_file(), path)
+        reports = {}
+        with tempfile.TemporaryDirectory() as elsewhere:
+            for cwd, arg in ((REPO_ROOT, "bios/Sony/PlayStation/scph5501.bin"),
+                             (Path(elsewhere), str(path))):
+                proc = subprocess.run(
+                    [sys.executable, str(REPO_ROOT / "scripts" / "validate_pr.py"),
+                     "--json", arg],
+                    cwd=cwd, capture_output=True, text=True, timeout=120, check=False,
+                )
+                self.assertEqual(proc.returncode, 0, proc.stderr)
+                reports[cwd == REPO_ROOT] = json.loads(proc.stdout)[0]["checks"]
+        self.assertEqual(reports[False], reports[True])
+        messages = [c["message"] for c in reports[False]]
+        self.assertIn("SHA1 matches known platform requirement", messages)
+        self.assertIn("Already in the database at this path", messages)
 
 
 if __name__ == "__main__":

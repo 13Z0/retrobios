@@ -711,7 +711,9 @@ def contributing_text(
 ## Add a BIOS file
 
 1. Fork this repository
-2. Place the file in `bios/Manufacturer/Console/filename`
+2. Place the file in `bios/Manufacturer/Console/filename`.
+   `python scripts/validate_pr.py path/to/file` names the folder its system
+   is kept in, and whether a platform or an emulator profile declares it
 3. Variants (alternate hashes for the same file): `bios/Manufacturer/Console/.variants/`
 4. Open a pull request. Its hashes are checked automatically and reported in a comment
 
