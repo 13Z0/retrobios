@@ -29,7 +29,8 @@ notes: |
   directory, it is loaded automatically. No hash or size validation is
   performed on the BIOS file.
 
-  The .info declares firmware_count=1 (U only), missing the PAL BIOS.
+  The .info declares one firmware, the U BIOS. The code also opens the E BIOS
+  for PAL cartridges (core/libretro.c:581-582).
 
 files:
   - name: "7800 BIOS (U).rom"

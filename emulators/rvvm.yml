@@ -76,5 +76,5 @@ notes:
     OpenSBI: https://github.com/riscv-software-src/opensbi/releases.
     Pre-built images for RVVM: https://github.com/LekKit/RVVM/wiki/Running
   info_firmware_count: >
-    .info declares 0 firmware. Correct: the core loads firmware via
+    .info declares 0 firmware. The core loads firmware via
     user-specified paths in the .rvvm config, not from system_dir.

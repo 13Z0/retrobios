@@ -17,7 +17,7 @@ notes: >
   DTV has its own color system (viciidtv-color.c), and external palette loading
   is disabled. JiffyDOS is not supported (excluded from build conditionals).
   The .info declares 4 JiffyDOS firmware (firmware_count=4) but the code
-  never loads them for this core. The .info also omits dtvrom.bin.
+  never loads them for this core. The .info does not list dtvrom.bin.
 
 files:
   - name: "dtvrom.bin"

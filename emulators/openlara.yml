@@ -26,6 +26,6 @@ notes: >
   subdirectories as .ogg/.mp3/.wav files or cdaudio.wad (src/gameflow.h:1272-1356).
   System directory used only for shader cache at {system_dir}/openlara/cache/
   (src/platform/libretro/main.cpp:177-197). No BIOS, firmware, or engine data files required in
-  system directory. .info omits sat from supported_extensions (code declares it).
+  system directory. The code declares the sat extension, which the .info supported_extensions does not list.
 
 files: []

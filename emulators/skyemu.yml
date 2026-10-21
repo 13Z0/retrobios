@@ -23,7 +23,7 @@ notes: |
   stub firmware (NDS), and HLE boot skip (GB/GBC). BIOS loading controlled by core options
   (default: on). Files loaded from system_dir/SkyEmu/ subdirectory.
   Standalone validates exact BIOS file size, while libretro only rejects files exceeding buffer.
-  .info missing gb_bios.bin (gb.h:1603).
+  The .info does not list gb_bios.bin, which the code reads (gb.h:1603).
 
 files:
   - name: cgb_boot.bin

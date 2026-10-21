@@ -225,12 +225,33 @@ class ProfilesStateFactsAboutOtherProjects(unittest.TestCase):
         re.IGNORECASE,
     )
 
+    # A line that names another project's file grades it when it calls the
+    # file correct or accurate, says it still declares something, or that an
+    # entry is missing from it or omitted. prosystem, retrodream,
+    # fbalpha2012_neogeo and seven more profiles wrote it that way.
+    OTHER_FILE = re.compile(r"(\.info\b|core-info|System\.dat)", re.IGNORECASE)
+    GRADES = re.compile(
+        r"\b(?:is (?:correct|accurate|inaccurate|outdated|stale)|accurate here|"
+        r"correct:|still (?:declares|lists)|omits|missing (?:the|from))|"
+        r"\.info missing",
+        re.IGNORECASE,
+    )
+
     def test_profile_prose_and_comments(self):
         offenders = [
             f"{path.relative_to(ROOT)}: {line.strip()[:100]}"
             for path in sorted((ROOT / "emulators").glob("*.yml"))
             for line in _yaml_prose(path.read_text(encoding="utf-8")).splitlines()
             if self.VERDICTS.search(line)
+        ]
+        self.assertEqual(offenders, [], "\n".join(offenders[:40]))
+
+    def test_no_grade_on_another_projects_file(self):
+        offenders = [
+            f"{path.relative_to(ROOT)}: {line.strip()[:100]}"
+            for path in sorted((ROOT / "emulators").glob("*.yml"))
+            for line in path.read_text(encoding="utf-8").splitlines()
+            if self.OTHER_FILE.search(line) and self.GRADES.search(line)
         ]
         self.assertEqual(offenders, [], "\n".join(offenders[:40]))
 

@@ -52,8 +52,8 @@ notes: |
   neogeo.zip is a parent ROM set, loaded from g_rom_dir alongside game ZIPs.
   g_system_dir is set (src/burner/libretro/libretro.cpp:3016) but never used for file loading.
 
-  The .info note "BIOS files must be inside the ROM directory" is accurate here:
-  neogeo.zip must be in the same directory as game ROM ZIPs.
+  neogeo.zip is read from the same directory as the game ROM ZIPs, as the .info
+  note "BIOS files must be inside the ROM directory" states.
 
 files: []
 
