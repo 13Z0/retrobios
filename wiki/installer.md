@@ -62,8 +62,13 @@ the same way: waiting five minutes settles it. Any change to `install.py`
 therefore means recomputing that pin in both wrappers.
 
 They locate a Python 3.8 or newer interpreter (`python3` then `python` on
-POSIX, `py -3` then `python3` then `python` on Windows) and refuse to continue
-without one. `install.sh` needs `curl` or `wget` and `sha256sum` or `shasum`.
+POSIX, `py -3` then `python3` then `python` on Windows). Without one,
+`install.sh` names the command that installs it on the system it runs on
+(`pkg install python` in Termux, which it offers to run since Termux installs
+without root, `xcode-select --install` on macOS, apt, dnf, pacman, zypper or apk
+from `/etc/os-release`), and `install.ps1` at a console offers to run `winget
+install Python.Python.3.12`, then reads the new PATH and carries on.
+`install.sh` needs `curl` or `wget` (GNU or BusyBox) and `sha256sum` or `shasum`.
 Windows PowerShell 5.1 still negotiates SSL 3.0 and TLS 1.0 by default and
 GitHub refuses both, so `install.ps1` raises the floor to TLS 1.2 before
 downloading, and `install.sh` pins the same floor with `curl --tlsv1.2`.

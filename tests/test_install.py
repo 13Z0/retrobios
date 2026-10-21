@@ -2415,6 +2415,52 @@ class NoPythonNamesThisSystemsCommand(unittest.TestCase):
         self.assertNotIn("apt", proc.stderr)
 
 
+@unittest.skipUnless(shutil.which("pwsh") and shutil.which("script"), "needs PowerShell and a terminal")
+class WindowsWithoutPythonIsOfferedWinget(unittest.TestCase):
+    """A Windows machine without Python was told to install it, open a new
+    window and run the command again, while winget, present on Windows 10
+    and 11, could do it from the bootstrap."""
+
+    def _folder(self) -> tuple[Path, Path]:
+        folder = Path(_tempdir(self))
+        shutil.copy(REPO_ROOT / "install.ps1", folder / "install.ps1")
+        (folder / "install.py").write_text("print('installer ran')\n")
+        fake_bin = folder / "bin"
+        fake_bin.mkdir()
+        python = shutil.which("python3") or sys.executable
+        (fake_bin / "winget").write_text(
+            f"#!/bin/sh\necho \"winget $*\"\n{shutil.which('ln')} -s {shlex.quote(python)} "
+            f"{shlex.quote(str(fake_bin / 'python3'))}\n"
+        )
+        (fake_bin / "winget").chmod(0o755)
+        return folder, fake_bin
+
+    def _run(self, folder: Path, fake_bin: Path, answer: str) -> subprocess.CompletedProcess:
+        pwsh = shutil.which("pwsh")
+        command = (f"{shlex.quote(pwsh)} -NoProfile -File "
+                   f"{shlex.quote(str(folder / 'install.ps1'))}")
+        return subprocess.run(
+            [shutil.which("script"), "-qec", command, "/dev/null"], input=answer,
+            env={**os.environ, "PATH": f"{fake_bin}{os.pathsep}/usr/bin/nonexistent"},
+            capture_output=True, text=True, timeout=120, check=False,
+        )
+
+    def test_yes_installs_and_carries_on(self):
+        folder, fake_bin = self._folder()
+        proc = self._run(folder, fake_bin, "y\n")
+        self.assertIn("Install Python 3.12 now with winget?", proc.stdout)
+        self.assertIn("winget install --id Python.Python.3.12", proc.stdout)
+        self.assertIn("installer ran", proc.stdout)
+        self.assertEqual(proc.returncode, 0, proc.stdout)
+
+    def test_no_names_the_command(self):
+        folder, fake_bin = self._folder()
+        proc = self._run(folder, fake_bin, "n\n")
+        self.assertNotIn("installer ran", proc.stdout)
+        self.assertIn("winget install Python.Python.3.12", proc.stdout)
+        self.assertFalse((fake_bin / "python3").exists())
+
+
 class ThePowerShellWrapperPassesTheStatusOn(unittest.TestCase):
     """Every non-zero exit became a red "installer failed" exception and
     code 1: a --check that found work read as a crash, 2 and 130 were lost."""
