@@ -5598,6 +5598,52 @@ class AnUnansweredSearchIsNotANotFound(unittest.TestCase):
         self.assertEqual(result["stats"]["errors"], 0)
 
 
+class AutoFetchProvesEveryHashItIsGiven(unittest.TestCase):
+    """auto_fetch checked a download by sha1 or md5 only: RetroDECK's
+    dsifirmware.bin, pinned by sha256 alone, was announced as searched and
+    could never be accepted."""
+
+    DATA = b"firmware bytes"
+
+    def test_sha256_and_crc32_with_size_prove_a_download(self):
+        import hashlib
+        import zlib
+
+        from scripts import auto_fetch
+
+        sha256 = {"sha256": hashlib.sha256(self.DATA).hexdigest()}
+        self.assertTrue(auto_fetch.verify_content(self.DATA, sha256))
+        self.assertFalse(auto_fetch.verify_content(b"other", sha256))
+        crc = {"crc32": f"{zlib.crc32(self.DATA):08X}", "size": len(self.DATA)}
+        self.assertTrue(auto_fetch.verify_content(self.DATA, crc))
+        self.assertFalse(auto_fetch.verify_content(self.DATA, dict(crc, size=1)))
+        self.assertFalse(auto_fetch.verifiable({"crc32": crc["crc32"]}))
+
+    def test_a_held_sha256_is_found_in_the_database(self):
+        from scripts import auto_fetch
+
+        db = {"files": {"s": {"path": "bios/x/dsi.bin", "size": 3}},
+              "indexes": {"by_sha256": {"f" * 64: "s"}}}
+        self.assertEqual(
+            auto_fetch.step1_crossref_db({"sha256": "F" * 64}, db), "bios/x/dsi.bin"
+        )
+
+    def test_an_entry_without_a_hash_is_not_searched(self):
+        from unittest import mock
+
+        from scripts import auto_fetch
+
+        entry = {"name": "DICROM.ROM", "system": "fujitsu-fm7"}
+        out = io.StringIO()
+        with mock.patch.object(auto_fetch, "step2_scan_branches") as branches, \
+                contextlib.redirect_stdout(out):
+            result = auto_fetch.fetch_missing([entry], {"files": {}}, "bios", dry_run=True)
+        branches.assert_not_called()
+        self.assertEqual(result["stats"]["unverifiable"], 1)
+        self.assertNotIn("Would search", out.getvalue())
+        self.assertIn("not searched", out.getvalue())
+
+
 class AForcedRehashIsCheckedAgainstTheLastOne(unittest.TestCase):
     """This host has computed a wrong SHA-1 under load. The pipeline's forced
     rebuild threw the previous digests away and wrote whatever it read."""

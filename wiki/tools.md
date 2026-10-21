@@ -653,7 +653,7 @@ python scripts/refresh_stale.py --only platforms,targets --jobs 6
 | `region_audit.py` | Confront every profile `region:` with the regions No-Intro names for the same dump (`--json`, `--db`, `--emulators-dir`). An opinion, never an authority: the code decides, and a disagreement is a line to read in the emulator's source |
 | `validate_pr.py` | Validate BIOS files in pull requests, post markdown report |
 | `validate_schemas.py` | Validate the data contracts: schemas and semantic invariants. `--source-only` checks `emulators/` and `platforms/` alone, which is what PR validation runs |
-| `auto_fetch.py` | Fetch missing BIOS files from known sources (4-step pipeline) |
+| `auto_fetch.py` | Fetch missing BIOS files from known sources (4-step pipeline). A download is accepted by the sha1, sha256 or md5 the entry declares, or its crc32 with the size. An entry with none of them is reported and not searched |
 | `list_platforms.py` | List active platforms (`--include-archived` adds the archived ones, used by CI) |
 | `download.py` | Download a pack from GitHub releases, every part checked (Python, stdlib only) |
 | `download.sh` | Same, as a shell one-liner (`curl` + `unzip`) |

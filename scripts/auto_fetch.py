@@ -25,6 +25,7 @@ import sys
 import urllib.error
 import urllib.parse
 import urllib.request
+import zlib
 from pathlib import Path
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -101,6 +102,8 @@ def find_missing(config: dict, db: dict) -> list[dict]:
                 "system": sys_id,
                 "sha1": file_entry.get("sha1"),
                 "md5": file_entry.get("md5"),
+                "sha256": file_entry.get("sha256"),
+                "crc32": file_entry.get("crc32"),
                 "size": file_entry.get("size"),
                 "destination": file_entry.get("destination", name),
             })
@@ -112,7 +115,9 @@ def find_missing(config: dict, db: dict) -> list[dict]:
             "system": u.get("system") or "",
             "sha1": u.get("sha1"),
             "md5": u.get("md5"),
-            "size": None,
+            "sha256": u.get("sha256"),
+            "crc32": u.get("crc32"),
+            "size": u.get("size"),
             "destination": u.get("path") or u["name"],
             "emulator": u.get("emulator", ""),
         })
@@ -131,14 +136,45 @@ def _accepted(entry: dict, field: str) -> set[str]:
     return {str(v).strip().lower() for v in values if str(v).strip()}
 
 
+def _crc32s(entry: dict) -> set[str]:
+    return {value.removeprefix("0x").zfill(8) for value in _accepted(entry, "crc32")}
+
+
+def _size(entry: dict) -> int | None:
+    try:
+        return int(entry["size"]) if entry.get("size") is not None else None
+    except (TypeError, ValueError):
+        return None
+
+
+def verifiable(entry: dict) -> bool:
+    """Whether a download can be proved to be this file.
+
+    A sha1, sha256 or md5 proves it, a crc32 only with the size beside it,
+    the way the resolver accepts one. Without any of them a search can find
+    a file of that name and never accept it.
+    """
+    if any(_accepted(entry, field) for field in ("sha1", "sha256", "md5")):
+        return True
+    return bool(_crc32s(entry)) and _size(entry) is not None
+
+
 def verify_content(data: bytes, expected: dict) -> bool:
-    """Verify downloaded content matches one of the expected hashes."""
-    sha1s = _accepted(expected, "sha1")
-    if sha1s:
-        return hashlib.sha1(data).hexdigest() in sha1s
-    md5s = _accepted(expected, "md5")
-    if md5s:
-        return hashlib.md5(data).hexdigest() in md5s
+    """Verify downloaded content matches one of the expected hashes.
+
+    The strongest hash the entry declares decides.
+    """
+    for field, digest in (
+        ("sha1", hashlib.sha1),
+        ("sha256", hashlib.sha256),
+        ("md5", hashlib.md5),
+    ):
+        accepted = _accepted(expected, field)
+        if accepted:
+            return digest(data).hexdigest() in accepted
+    crcs, size = _crc32s(expected), _size(expected)
+    if crcs and size is not None:
+        return len(data) == size and f"{zlib.crc32(data) & 0xFFFFFFFF:08x}" in crcs
     return False
 
 
@@ -158,11 +194,20 @@ def step1_crossref_db(entry: dict, db: dict) -> str | None:
     for sha1 in sorted(_accepted(entry, "sha1")):
         if sha1 in files:
             return files[sha1]["path"]
-    by_md5 = db.get("indexes", {}).get("by_md5", {})
-    for md5 in sorted(_accepted(entry, "md5")):
-        sha1_match = by_md5.get(md5)
-        if sha1_match and sha1_match in files:
-            return files[sha1_match]["path"]
+    indexes = db.get("indexes", {})
+    for field, index in (("sha256", "by_sha256"), ("md5", "by_md5")):
+        by_hash = indexes.get(index, {})
+        for value in sorted(_accepted(entry, field)):
+            sha1_match = by_hash.get(value)
+            if sha1_match and sha1_match in files:
+                return files[sha1_match]["path"]
+    size = _size(entry)
+    if size is not None:
+        by_crc32 = indexes.get("by_crc32", {})
+        for crc in sorted(_crc32s(entry)):
+            sha1_match = by_crc32.get(crc)
+            if sha1_match in files and files[sha1_match].get("size") == size:
+                return files[sha1_match]["path"]
     return None
 
 
@@ -352,7 +397,7 @@ def fetch_missing(
     dry_run: bool = False,
 ) -> dict:
     """Run the 5-step auto-fetch pipeline for missing files."""
-    stats = {"found": 0, "not_found": 0, "errors": 0}
+    stats = {"found": 0, "not_found": 0, "errors": 0, "unverifiable": 0}
     still_missing = []
 
     for entry in missing:
@@ -364,6 +409,14 @@ def fetch_missing(
         if existing:
             print(f"    [1] Found in database at: {existing}")
             stats["found"] += 1
+            continue
+
+        if not verifiable(entry):
+            # Searched, a file of that name could only ever be refused.
+            print("    [-] No sha1, sha256, md5 or crc32 with size to check a "
+                  "download against: not searched")
+            still_missing.append(entry)
+            stats["unverifiable"] += 1
             continue
 
         if dry_run:
@@ -511,7 +564,8 @@ def main() -> None:
         stats = result["stats"]
         print(
             f"\n  Results: {stats['found']} found, {stats['not_found']} not found, "
-            f"{stats['errors']} not fully searched"
+            f"{stats['errors']} not fully searched, "
+            f"{stats['unverifiable']} without a hash to search by"
         )
 
     if args.create_issues and all_still_missing:
