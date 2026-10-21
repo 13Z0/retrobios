@@ -5605,19 +5605,50 @@ class AutoFetchProvesEveryHashItIsGiven(unittest.TestCase):
 
     DATA = b"firmware bytes"
 
-    def test_sha256_and_crc32_with_size_prove_a_download(self):
+    def test_a_sha256_proves_a_download(self):
         import hashlib
-        import zlib
 
         from scripts import auto_fetch
 
         sha256 = {"sha256": hashlib.sha256(self.DATA).hexdigest()}
         self.assertTrue(auto_fetch.verify_content(self.DATA, sha256))
         self.assertFalse(auto_fetch.verify_content(b"other", sha256))
-        crc = {"crc32": f"{zlib.crc32(self.DATA):08X}", "size": len(self.DATA)}
-        self.assertTrue(auto_fetch.verify_content(self.DATA, crc))
-        self.assertFalse(auto_fetch.verify_content(self.DATA, dict(crc, size=1)))
-        self.assertFalse(auto_fetch.verifiable({"crc32": crc["crc32"]}))
+
+    def test_every_declared_cryptographic_hash_must_match(self):
+        import hashlib
+
+        from scripts import auto_fetch
+
+        both = {"sha256": hashlib.sha256(self.DATA).hexdigest(), "md5": "0" * 32}
+        self.assertFalse(auto_fetch.verify_content(self.DATA, both))
+        both["md5"] = hashlib.md5(self.DATA).hexdigest()
+        self.assertTrue(auto_fetch.verify_content(self.DATA, both))
+
+    def test_crc32_and_size_never_accept_a_download(self):
+        """A crc32 can be forged: bytes a source crafts to it would land in
+        bios/."""
+        import urllib.request
+        import zlib
+        from unittest import mock
+
+        from scripts import auto_fetch
+
+        crc = {"name": "forged.bin", "system": "test-system",
+               "crc32": f"{zlib.crc32(self.DATA):08X}", "size": len(self.DATA)}
+        self.assertFalse(auto_fetch.verify_content(self.DATA, crc))
+        self.assertFalse(auto_fetch.verifiable(crc))
+
+        served = io.BytesIO(self.DATA)
+        with tempfile.TemporaryDirectory() as bios, \
+                mock.patch.object(urllib.request, "urlopen", lambda *a, **k: served), \
+                mock.patch.object(auto_fetch, "step2_scan_branches",
+                                  lambda e: self.DATA), \
+                contextlib.redirect_stdout(io.StringIO()) as out:
+            result = auto_fetch.fetch_missing([crc], {"files": {}}, bios)
+            self.assertEqual(list(Path(bios).rglob("*")), [])
+        self.assertEqual(result["stats"]["found"], 0)
+        self.assertEqual(result["stats"]["unverifiable"], 1)
+        self.assertIn("declares no cryptographic hash", out.getvalue())
 
     def test_a_held_sha256_is_found_in_the_database(self):
         from scripts import auto_fetch
@@ -5641,7 +5672,7 @@ class AutoFetchProvesEveryHashItIsGiven(unittest.TestCase):
         branches.assert_not_called()
         self.assertEqual(result["stats"]["unverifiable"], 1)
         self.assertNotIn("Would search", out.getvalue())
-        self.assertIn("not searched", out.getvalue())
+        self.assertIn("Not searched", out.getvalue())
 
 
 class AForcedRehashIsCheckedAgainstTheLastOne(unittest.TestCase):

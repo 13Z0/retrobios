@@ -25,7 +25,6 @@ import sys
 import urllib.error
 import urllib.parse
 import urllib.request
-import zlib
 from pathlib import Path
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -147,35 +146,38 @@ def _size(entry: dict) -> int | None:
         return None
 
 
-def verifiable(entry: dict) -> bool:
-    """Whether a download can be proved to be this file.
+CRYPTO_HASHES = (
+    ("sha256", hashlib.sha256),
+    ("sha1", hashlib.sha1),
+    ("md5", hashlib.md5),
+)
 
-    A sha1, sha256 or md5 proves it, a crc32 only with the size beside it,
-    the way the resolver accepts one. Without any of them a search can find
-    a file of that name and never accept it.
+
+def verifiable(entry: dict) -> bool:
+    """Whether a network download can be proved to be this file.
+
+    Only a cryptographic hash proves it. A crc32 and a size can be met by
+    crafted bytes, so they identify a file the database already holds
+    (step 1) and never accept one a remote source serves.
     """
-    if any(_accepted(entry, field) for field in ("sha1", "sha256", "md5")):
-        return True
-    return bool(_crc32s(entry)) and _size(entry) is not None
+    return any(_accepted(entry, field) for field, _digest in CRYPTO_HASHES)
 
 
 def verify_content(data: bytes, expected: dict) -> bool:
-    """Verify downloaded content matches one of the expected hashes.
+    """Whether downloaded bytes match every cryptographic hash declared.
 
-    The strongest hash the entry declares decides.
+    Each declared field must hold the bytes' digest among its accepted
+    values. An entry declaring none is refused.
     """
-    for field, digest in (
-        ("sha1", hashlib.sha1),
-        ("sha256", hashlib.sha256),
-        ("md5", hashlib.md5),
-    ):
-        accepted = _accepted(expected, field)
-        if accepted:
-            return digest(data).hexdigest() in accepted
-    crcs, size = _crc32s(expected), _size(expected)
-    if crcs and size is not None:
-        return len(data) == size and f"{zlib.crc32(data) & 0xFFFFFFFF:08x}" in crcs
-    return False
+    declared = [
+        (accepted, digest)
+        for field, digest in CRYPTO_HASHES
+        for accepted in [_accepted(expected, field)]
+        if accepted
+    ]
+    return bool(declared) and all(
+        digest(data).hexdigest() in accepted for accepted, digest in declared
+    )
 
 
 def _read_limited(
@@ -413,8 +415,8 @@ def fetch_missing(
 
         if not verifiable(entry):
             # Searched, a file of that name could only ever be refused.
-            print("    [-] No sha1, sha256, md5 or crc32 with size to check a "
-                  "download against: not searched")
+            print("    [-] Cannot be verified from the network: declares no "
+                  "cryptographic hash. Not searched, nothing written")
             still_missing.append(entry)
             stats["unverifiable"] += 1
             continue
@@ -565,7 +567,7 @@ def main() -> None:
         print(
             f"\n  Results: {stats['found']} found, {stats['not_found']} not found, "
             f"{stats['errors']} not fully searched, "
-            f"{stats['unverifiable']} without a hash to search by"
+            f"{stats['unverifiable']} without a cryptographic hash"
         )
 
     if args.create_issues and all_still_missing:
