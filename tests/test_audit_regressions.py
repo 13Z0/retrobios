@@ -6147,7 +6147,6 @@ class SkipPacksHelpSaysWhatRuns(unittest.TestCase):
         self.assertEqual(skipped, {"4", "4b", "4c", "6"})
 
 
-<<<<<<< HEAD
 class AmigaCdDriversLiveInTheExtendedRom(unittest.TestCase):
     """WinUAE starts without the CD32 or CDTV extended ROM, but cd.device,
     cdtv.device, cdfs.library and cdstrap are resident modules of those ROMs
@@ -6186,8 +6185,6 @@ class BizHawkListsEveryDsiNandSlot(unittest.TestCase):
                 self.assertNotIn("sha1", entry)
 
 
-||||||| 1a41e6a9
-=======
 class CommentsSayWhy(unittest.TestCase):
     """A one-line comment that names the next statement ("# Load registry",
     "# Build cross-reference indexes") repeats the code. A comment that
@@ -6216,6 +6213,5 @@ class CommentsSayWhy(unittest.TestCase):
         self.assertEqual(found, [])
 
 
->>>>>>> worktree-agent-acbb69a80d49db676
 if __name__ == "__main__":
     unittest.main()
