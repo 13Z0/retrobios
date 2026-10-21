@@ -2588,6 +2588,7 @@ def _run_verify_packs(args: argparse.Namespace) -> None:
     )
 
     verified = 0
+    failing: list[str] = []
     for platform_name in platforms:
         found = sorted(expected[platform_name] & on_disk)
         verified += len(found)
@@ -2601,6 +2602,7 @@ def _run_verify_packs(args: argparse.Namespace) -> None:
                     f"generate_pack.py --platform {platform_name} --output-dir {args.output_dir})"
                 )
                 all_ok = False
+                failing.append(f"{platform_name} (no pack)")
             else:
                 print(f"  {platform_name}: SKIP (no pack in {args.output_dir})")
             continue
@@ -2646,7 +2648,17 @@ def _run_verify_packs(args: argparse.Namespace) -> None:
                 for err in errors:
                     print(f"    {err}")
                 all_ok = False
+                failing.append(f"{platform_name} ({pack_name})")
 
+    if failing:
+        # Named at the end, where the log is read, and on stderr, as the
+        # build path does: a failing pack sat among its own error lines.
+        print(
+            f"ERROR: packs failed verification: {', '.join(failing)}",
+            file=sys.stderr,
+        )
+    elif verified:
+        print(f"Verified {verified} pack{'s' if verified != 1 else ''}: all OK")
     if not verified:
         # Every platform skipped is no check at all: a mistyped or purged
         # output directory read as a passed integrity check.
