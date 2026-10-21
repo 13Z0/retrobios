@@ -297,8 +297,8 @@ without `--target`.
 
 Truth data is ground truth generated from emulator profiles. It represents what each
 core actually needs based on source code analysis, independent of what platform
-scrapers declare. The purpose is gap analysis: finding files that platforms miss
-or declare incorrectly.
+scrapers declare. The purpose is gap analysis: finding the files the code loads that a platform
+list does not name, and the values that differ from the code.
 
 ### Generate truth
 

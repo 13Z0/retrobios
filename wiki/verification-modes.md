@@ -57,10 +57,11 @@ the actual hash is compared against only its first N characters.
 
 ### md5_composite (Recalbox ZIP verification)
 
-Recalbox computes `Zip::Md5Composite` for ZIP files: the MD5 of the concatenation of all
-inner file MD5s (sorted by filename). `verify.py` replicates this with `md5_composite()`
-from `common.py`. When a ZIP file's direct MD5 does not match, the composite is tried
-before reporting a mismatch.
+Recalbox hashes a ZIP with `Zip::Md5Composite` (`es-core/src/utils/Zip.cpp:71-96` in
+recalbox-emulationstation at `f4cd0ae4`): one MD5 over the contents of every member,
+read in filename order. The members' own MD5s are not involved. `verify.py` computes
+the same value with `md5_composite()` (`scripts/hashing.py`). When a ZIP file's direct
+MD5 does not match, the composite is tried before reporting a mismatch.
 
 ### Multi-hash (Recalbox)
 
@@ -70,14 +71,24 @@ listed hash is OK.
 
 ### Mandatory levels (Recalbox)
 
-Recalbox uses three severity levels derived from two YAML fields (`mandatory` and
-`hashMatchMandatory`):
+Recalbox colours each entry of `es_bios.xml` from two attributes, `mandatory` and
+`hashMatchMandatory`, both true unless written `"false"`
+(`es-app/src/bios/Bios.cpp:162-163` in recalbox-emulationstation at `f4cd0ae4`,
+colours set by `Bios::Scan` at lines 84-108). The platform YAML carries them as
+`required` and, when the attribute is written, `hash_match_mandatory`.
 
-| mandatory | hashMatchMandatory | Color  | verify.py mapping |
-|-----------|--------------------|--------|-------------------|
-| true      | true               | RED    | CRITICAL          |
-| true      | false              | YELLOW | WARNING           |
-| false     | (any)              | GREEN  | WARNING           |
+| File | mandatory | hashMatchMandatory | Recalbox | verify.py |
+|------|-----------|--------------------|----------|-----------|
+| hash matches | (any) | (any) | GREEN | OK |
+| missing | true | (any) | RED | CRITICAL |
+| missing | false | (any) | YELLOW | WARNING |
+| hash differs | true | true | RED | WARNING |
+| hash differs | true | false | YELLOW | WARNING |
+| hash differs | false | (any) | YELLOW | WARNING |
+
+`verify.py` applies the MD5-mode table above and does not read
+`hash_match_mandatory`, so a present file whose hash differs is a WARNING where
+Recalbox shows RED for a mandatory entry with `hashMatchMandatory`.
 
 ### checkInsideZip (Batocera zippedFile)
 
@@ -154,8 +165,15 @@ from `validation.py`. This layer uses data from emulator profiles (YAML files in
 
 ### Validation index
 
-`_build_validation_index()` reads all emulator profiles and builds a per-filename
-index of validation rules. When multiple emulators reference the same file, checks
+`_build_validation_index()` (`validation.py`) builds a per-filename index of
+validation rules from the profiles it is given. A platform report, its pack and
+its install manifest pass only the profiles `resolve_platform_cores` resolves for
+that platform (`verify.py`, `verify_platform`). A profile that does not run on the
+platform has nothing to say about its pack: standalone ZEsarUX reads a 48 KB
+`cpc6128.rom` of its own, and its size check reported cap32's 32 KB file in the
+RetroArch pack as a mismatch while every profile was indexed. The same holds for
+`hle_fallback`, which is read from the same set of profiles. A report or pack for `--emulator` or `--system` indexes the
+profiles it selected. When multiple emulators reference the same file, checks
 are merged (union of all check types). Conflicting expected values are kept as sets
 (e.g., multiple accepted CRC32 values for different ROM versions).
 
@@ -256,12 +274,8 @@ A path or filename is never allowed to mask a declared strong hash: the
 identity steps run first, and a path or name is accepted only when no content
 hash was declared or when the content agrees with the one that was.
 
-What the pack does with a `hash_mismatch` follows the platform's own mode. An
-MD5 or SHA1 platform would reject those bytes, so the file is left out and
-counted as an unsafe exclusion, distinct from a file the collection does not
-have. An existence platform reads no bytes at all, so the file is packed and
-the divergence is printed as a discrepancy: a value in an upstream BIOS list that
-differs from the emulator source must not remove a file the frontend would load.
+What the pack does with a `hash_mismatch` is set by the platform's mode, as
+[discrepancy detection](#discrepancy-detection) describes.
 
 
 ## Discrepancy detection
@@ -272,10 +286,11 @@ accepted.
 
 A local file that contradicts a declared hash is handled by the platform's
 own mode, never by one global rule. An existence frontend never reads the
-bytes, so the file is packed and the disagreement reported: a stale hash in
-System.dat must not remove a file RetroArch would have loaded. An md5 or sha1
-frontend would reject it, so it is left out of the pack and counted as
-`unsafe excluded`, which is distinct from `missing`. The pack builder and the
+bytes, so the file is packed and the difference reported: a hash in System.dat
+that differs from the local dump must not remove a file RetroArch would have
+loaded. An md5 or sha1 frontend would reject it, so it is left out of the pack
+and counted as `unsafe excluded`, which is distinct from `missing`. The pack
+report and the installer manifest both record it. The pack builder and the
 pack verification apply the same rule.
 
 ### Variant search

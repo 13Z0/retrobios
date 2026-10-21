@@ -102,6 +102,31 @@ class InstallerOutputExample(unittest.TestCase):
         self.assertEqual(menu.groups(), (count, size))
 
 
+class OneResolutionChain(unittest.TestCase):
+    """architecture.md drew path_suffix as the first step, before SHA1, while
+    the code and verification-modes.md try it after every hash."""
+
+    ORDER = ("SHA1", "SHA256", "CRC32", "MD5", "Path suffix")
+
+    def test_the_table_follows_the_code(self):
+        import common
+
+        source = inspect.getsource(common.resolve_local_file)
+        steps = re.findall(r"# \d+[a-z]?\. (SHA1|SHA256|CRC32|MD5|Path suffix)", source)
+        self.assertEqual(tuple(dict.fromkeys(steps)), self.ORDER)
+        table = _table_rows(_section(_page("verification-modes.md"), "File resolution chain"))
+        methods = [row[1] for row in table[: len(self.ORDER)]]
+        self.assertEqual(
+            [next(m for m in self.ORDER if method.startswith(m)) for method in methods],
+            list(self.ORDER),
+        )
+
+    def test_architecture_links_instead_of_drawing_a_second_one(self):
+        section = _section(_page("architecture.md"), "File resolution chain")
+        self.assertNotIn("```mermaid", section)
+        self.assertIn("verification-modes.md#file-resolution-chain", section)
+
+
 class ReleaseRefPromise(unittest.TestCase):
     """RETROBIOS_REF was said to pin a reproducible file set, while every
     release deletes the previous tags and large files come from one fixed
@@ -122,6 +147,30 @@ class ReleaseRefPromise(unittest.TestCase):
             for paragraph in page.read_text(encoding="utf-8").split("\n\n"):
                 if "RETROBIOS_REF" in paragraph:
                     self.assertNotIn("reproducible", paragraph, page.name)
+
+
+class RequirementFieldsTable(unittest.TestCase):
+    """The table stopped at native_id: native_path, mirror_of, alt_md5 and
+    the native dict, the fields that make a platform YAML reversible, were
+    named nowhere a scraper author reads first."""
+
+    def test_every_field_and_native_key_is_listed(self):
+        from dataclasses import fields
+
+        from scraper.base_scraper import BiosRequirement
+
+        section = _section(_page("adding-a-platform.md"), "BiosRequirement fields")
+        listed = {row[0].strip("`") for row in _table_rows(section)}
+        self.assertEqual(listed, {f.name for f in fields(BiosRequirement)})
+        native_row = next(row for row in _table_rows(section) if row[0] == "`native`")[2]
+        keys: set[str] = set()
+        for path in (ROOT / "scripts" / "scraper").glob("*_scraper.py"):
+            source = path.read_text(encoding="utf-8")
+            keys |= set(re.findall(r'native\["(\w+)"\]', source))
+            keys |= set(re.findall(r'native(?:: dict\[str, object\])?\s*=\s*\{"(\w+)"', source))
+        self.assertTrue(keys)
+        for key in keys:
+            self.assertIn(f"`{key}`", native_row)
 
 
 class ReleaseCommitCarriesTheManifests(unittest.TestCase):
@@ -168,6 +217,108 @@ class NoHedgedRules(unittest.TestCase):
             if self.FILLER.search(line)
         ]
         self.assertEqual(offenders, [], "\n".join(offenders))
+
+
+class PeerToneTowardPlatforms(unittest.TestCase):
+    """Platform lists were called wrong, stale or corrected on public pages
+    that their maintainers read."""
+
+    WORDS = re.compile(
+        r"(?i)\bgets wrong\b|\bstale (hash|entries|entry)\b|<their file>|\bpatch their\b"
+        r"|, corrected\b|\bcorrected in place\b|\bdeclare incorrectly\b|\blist error\b"
+    )
+
+    def test_published_pages(self):
+        offenders = [
+            f"{page.name}: {line[:80]}"
+            for page in PUBLISHED
+            for line in page.read_text(encoding="utf-8").splitlines()
+            if self.WORDS.search(line)
+        ]
+        self.assertEqual(offenders, [], "\n".join(offenders))
+
+
+class RecalboxSeverity(unittest.TestCase):
+    """The table gave verify.py a mapping from hashMatchMandatory that the
+    code never reads, and called a missing optional file GREEN."""
+
+    def test_the_verify_column_is_what_compute_severity_returns(self):
+        from verify import Status, compute_severity
+
+        section = _section(_page("verification-modes.md"), "Mandatory levels (Recalbox)")
+        rows = _table_rows(section)
+        self.assertTrue(rows)
+        status = {"hash matches": Status.OK, "missing": Status.MISSING, "hash differs": Status.UNTESTED}
+        for state, mandatory, _hash_match, _colour, expected in rows:
+            for required in ((True, False) if mandatory == "(any)" else (mandatory == "true",)):
+                self.assertEqual(
+                    compute_severity(status[state], required, "md5").upper(), expected,
+                    f"{state} mandatory={mandatory}",
+                )
+        self.assertNotIn("severity levels", _page("tools.md"))
+
+
+class Md5CompositeDefinition(unittest.TestCase):
+    """The page described the MD5 of the members' MD5s, the code hashes the
+    members' contents in name order."""
+
+    def test_page_and_code_agree(self):
+        from hashing import md5_composite_of
+
+        buffer = io.BytesIO()
+        with zipfile.ZipFile(buffer, "w") as zf:
+            zf.writestr("b.rom", b"BBBB")
+            zf.writestr("a.rom", b"AAAA")
+        buffer.seek(0)
+        self.assertEqual(md5_composite_of(buffer), hashlib.md5(b"AAAABBBB").hexdigest())
+        section = _section(_page("verification-modes.md"), "md5_composite (Recalbox ZIP verification)")
+        self.assertIn("contents of every member", section)
+        self.assertNotIn("inner file MD5s", section)
+
+
+class ValidationIndexScope(unittest.TestCase):
+    """The page said the index reads every profile. verify and the builder
+    pass it only the profiles the platform resolves."""
+
+    def test_page_names_the_scope_the_code_uses(self):
+        import verify
+
+        source = inspect.getsource(verify.verify_platform)
+        self.assertRegex(source, r"plat_cores = resolve_platform_cores\(config, profiles\)")
+        self.assertIn("_build_validation_index(platform_profiles)", source)
+        section = _section(_page("verification-modes.md"), "Validation index")
+        self.assertIn("resolve_platform_cores", section)
+        self.assertNotIn("reads all emulator profiles", section)
+
+
+class CoreResolutionWrittenOnce(unittest.TestCase):
+    """architecture.md and adding-a-platform.md each stated the core
+    resolution rule, and only one knew that a list naming retroarch takes
+    every libretro profile. Neither said built_by profiles stay out."""
+
+    def test_one_statement_matching_the_platforms_and_the_code(self):
+        import yaml
+
+        import common
+
+        self.assertNotIn("cores: [list]", _page("architecture.md"))
+        source = inspect.getsource(common.resolve_platform_cores)
+        self.assertIn('not p.get("built_by")', source)
+        self.assertIn('"retroarch" in core_set', source)
+        naming = set()
+        for path in (ROOT / "platforms").glob("*.yml"):
+            config = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+            cores = config.get("cores")
+            if isinstance(cores, list) and "retroarch" in map(str, cores):
+                naming.add(str(config.get("platform") or path.stem).lower())
+        section = _section(_page("adding-a-platform.md"), "Required fields")
+        bullet = next(p for p in section.split("\n- ") if p.startswith("**Explicit list**"))
+        used_by = re.search(r"Used by ([^.]+)\.", bullet.replace("\n", " ")).group(1)
+        names = [n.strip().lower() for n in used_by.split(",")]
+        self.assertIn("the last\n  four", bullet)
+        self.assertEqual(set(names[-4:]), naming)
+        libretro = next(p for p in section.split("\n- ") if p.startswith("**all_libretro**"))
+        self.assertIn("built_by", libretro)
 
 
 class ExitStatusTable(unittest.TestCase):
