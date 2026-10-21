@@ -939,6 +939,10 @@ class ProfileReport:
     # Repositories whose pin is no ancestor of the branch the profile
     # tracks: history was rewritten, or the pin lies on another branch.
     orphaned: list[str] = field(default_factory=list)
+    # Repositories the forge answers under another owner/name: renamed or
+    # transferred. The redirect is followed in silence, so the move is named
+    # and counted as review work, since a renamed project is re-profiled.
+    moved_repos: list[str] = field(default_factory=list)
     # A profile off any forge names the page announcing its releases
     # (version_source): the version read there, beside the one declared.
     declared_version: str | None = None
@@ -950,6 +954,10 @@ class ProfileReport:
     # review, or the triage read "0 to review" on a profile whose pin could
     # not move (blastem, xenia-edge, lindbergh-loader).
     stale_prose: list[str] | None = None
+    # --check-version on a forge: core_version against the latest tag and
+    # release, kept on the report so every output carries it.
+    version: VersionReport | None = None
+    version_warning: str | None = None
 
     # Skips that say the profile cannot be checked as written: a repository
     # that no longer answers, no pin to read, a death the forge contradicts.
@@ -972,6 +980,7 @@ class ProfileReport:
             sum(counts.get(status, 0) for status in REVIEW_STATUSES)
             + len(self.orphaned)
             + len(self.stale_prose or ())
+            + len(self.moved_repos)
         )
 
 
@@ -1328,6 +1337,25 @@ def _path_roles(refs: list) -> dict[str, set[str]]:
     return roles
 
 
+def moved_repositories(
+    views: list[RepoView], cache_dir: str, offline: bool
+) -> list[str]:
+    """Declared repositories the forge now answers under another name."""
+    moved = []
+    seen: set[tuple[str, str]] = set()
+    for view in views:
+        key = (view.repo.host, view.repo.slug)
+        if key in seen:
+            continue
+        seen.add(key)
+        current = upstream.current_slug(view.repo, cache_dir, offline)
+        if current and current.lower() != view.repo.slug.lower():
+            moved.append(
+                f"{view.repo.slug} answers as {current} (renamed or transferred)"
+            )
+    return moved
+
+
 def build_report(
     name: str, profile: dict, cache_dir: str, offline: bool = False,
     text: str | None = None,
@@ -1447,6 +1475,7 @@ def build_report(
             report.upstream_pin = view.pin
             report.upstream_head = view.head
             report.upstream_origin = view.origin
+    report.moved_repos = moved_repositories(views, cache_dir, offline)
     # A profile can hold its pin on purpose, documenting a build that is that
     # revision. Comparing it to HEAD says nothing and recaling would repoint
     # its refs at code the build never had, so it is judged like a frozen tag:
@@ -1969,6 +1998,8 @@ def format_report(report: ProfileReport, changed_only: bool = False) -> str:
         lines.append(f"  not read (unsupported host): {url}")
     for line in report.orphaned:
         lines.append(f"  orphaned pin: {line}")
+    for line in report.moved_repos:
+        lines.append(f"  moved repository: {line}")
     if report.declared_version or report.page_version:
         lines.append(
             f"  version page: declared {report.declared_version or '-'}, "
@@ -1977,6 +2008,15 @@ def format_report(report: ProfileReport, changed_only: bool = False) -> str:
                if report.page_version and report.page_version == report.no_genuine_copy
                else "")
         )
+    if report.version:
+        version = report.version
+        lines.append(
+            f"  version: declared {version.declared}, "
+            f"latest tag {version.latest_tag}, "
+            f"latest release {version.latest_release} ({version.release_date})"
+        )
+    if report.version_warning:
+        lines.append(f"  {report.version_warning}")
     if report.skipped:
         lines.append(f"  skipped: {report.skipped}")
         return "\n".join(lines)
@@ -3346,6 +3386,20 @@ def build_parser() -> argparse.ArgumentParser:
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--emulator", help="a single profile")
     group.add_argument("--all", action="store_true", help="every profile")
+    group.add_argument(
+        "--changed", action="store_true",
+        help="the profiles the branch adds or edits against --base, "
+        "uncommitted ones included",
+    )
+    group.add_argument(
+        "--added", action="store_true",
+        help="the profiles the branch adds against --base, as CI checks them",
+    )
+    parser.add_argument(
+        "--base", default="origin/main",
+        help="revision --changed and --added compare with, through its merge "
+        "base with HEAD (default: %(default)s)",
+    )
     parser.add_argument(
         "--emulators-dir", default="emulators",
         help="emulator profile directory (default: %(default)s)",
@@ -3460,8 +3514,51 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
+def _git_lines(args: list[str]) -> list[str]:
+    result = subprocess.run(
+        ["git", *args], capture_output=True, text=True, check=False
+    )
+    if result.returncode:
+        detail = result.stderr.strip() or f"exit {result.returncode}"
+        raise SystemExit(f"ERROR: git {' '.join(args)}: {detail}")
+    return [line for line in result.stdout.splitlines() if line]
+
+
+def branch_profiles(emulators_dir: str, base: str, added_only: bool) -> list[str]:
+    """Names of the profiles the branch adds (or edits) against ``base``.
+
+    The diff starts at the merge base, so commits main gained since the
+    branch point are not counted, and ends at the working tree, so a
+    profile not yet committed is checked too. A rename reads as an addition.
+    """
+    merge_base = _git_lines(["merge-base", base, "HEAD"])[0]
+    paths = _git_lines([
+        "diff", "--name-only", "--no-renames",
+        "--diff-filter=A" if added_only else "--diff-filter=AM",
+        merge_base, "--", emulators_dir,
+    ])
+    paths += _git_lines([
+        "ls-files", "--others", "--exclude-standard", "--full-name",
+        "--", emulators_dir,
+    ])
+    top = Path(_git_lines(["rev-parse", "--show-toplevel"])[0])
+    root = Path(emulators_dir).resolve()
+    return sorted({
+        full.stem
+        for path in paths
+        if (full := (top / path).resolve()).suffix == ".yml" and full.parent == root
+    })
+
+
 def select_profiles(profiles: dict, args: argparse.Namespace) -> dict:
     """Profiles matching the selection flags."""
+    if args.changed or args.added:
+        names = branch_profiles(args.emulators_dir, args.base, args.added)
+        selected = {name: profiles[name] for name in names if name in profiles}
+        if not selected:
+            verb = "adds" if args.added else "adds or edits"
+            print(f"the branch {verb} no profile against {args.base}", file=sys.stderr)
+        return selected
     if args.emulator:
         if args.emulator not in profiles:
             # Suggested from what the listing it names shows: counted over the
@@ -3515,9 +3612,9 @@ def _check_quota(count: int, offline: bool) -> None:
     """Refuse a run the anonymous quota cannot carry to completion."""
     if offline or github_token():
         return
-    if count * 4 > ANON_QUOTA:
+    if count * 5 > ANON_QUOTA:
         print(
-            f"{count} profiles need roughly {count * 4} API calls, the anonymous "
+            f"{count} profiles need roughly {count * 5} API calls, the anonymous "
             f"quota is {ANON_QUOTA} per hour. Log in with `gh auth login`, set "
             "GITHUB_TOKEN, or use --offline.",
             file=sys.stderr,
@@ -3651,23 +3748,6 @@ def _cited_paths(report: ProfileReport) -> list[str]:
     )
 
 
-def _print_version(
-    args: argparse.Namespace, profile: dict, report: ProfileReport,
-    repo: upstream.Repo,
-) -> None:
-    version = check_version(profile, repo, args.cache_dir, args.offline)
-    if version is None:
-        return
-    print(
-        f"  version: declared {version.declared}, "
-        f"latest tag {version.latest_tag}, "
-        f"latest release {version.latest_release} ({version.release_date})"
-    )
-    warning = version_warning(version, report.pin)
-    if warning:
-        print(f"  {warning}")
-
-
 def _print_detection(
     args: argparse.Namespace, profile: dict, report: ProfileReport,
     repo: upstream.Repo,
@@ -3701,6 +3781,27 @@ def _print_detection(
                 print(f"  new {kind}: {path}  {value}")
 
 
+def _attach_version(
+    args: argparse.Namespace, profile: dict, report: ProfileReport
+) -> None:
+    """Record core_version against the forge's latest tag and release.
+
+    Kept on the report rather than printed, so --json carries it as the text
+    report does. A forge that refuses is named on the profile's own line.
+    """
+    repo = select_repo(profile) if report.head else None
+    if repo is None:
+        return
+    try:
+        report.version = check_version(profile, repo, args.cache_dir, args.offline)
+    except upstream.RateLimitError:
+        raise
+    except upstream.UpstreamError as exc:
+        print(f"{report.name}: version check skipped: {exc}", file=sys.stderr)
+        return
+    report.version_warning = version_warning(report.version, report.pin)
+
+
 def _print_extras(
     args: argparse.Namespace, profile: dict, report: ProfileReport
 ) -> None:
@@ -3712,8 +3813,7 @@ def _print_extras(
     stops everything.
     """
     wants = (
-        args.check_version
-        or args.detect_new_files
+        args.detect_new_files
         or args.watch_hashes
         or args.full_diff
         or args.tree_diff
@@ -3735,8 +3835,6 @@ def _print_extras_from(
     args: argparse.Namespace, profile: dict, report: ProfileReport,
     repo: upstream.Repo,
 ) -> None:
-    if args.check_version:
-        _print_version(args, profile, report, repo)
     if args.detect_new_files or args.watch_hashes:
         _print_detection(args, profile, report, repo)
     if args.full_diff:
@@ -3883,9 +3981,13 @@ def _refuse_flag_combinations(args: argparse.Namespace) -> None:
             ("--triage", args.triage),
         ) if on
     ]
+    # The version check lives on the report, so the outputs built from the
+    # report (text, --json, --markdown) carry it. A URL list and a ranking
+    # do not.
+    lists_only = args.fetch_plan or args.triage
     extras = [
         flag for flag, on in (
-            ("--check-version", args.check_version),
+            ("--check-version", args.check_version and lists_only),
             ("--detect-new-files", args.detect_new_files),
             ("--watch-hashes", args.watch_hashes),
             ("--full-diff", args.full_diff),
@@ -3982,6 +4084,8 @@ def main() -> None:
             report.page_version = page_version(profile, args.cache_dir, args.offline)
             report.no_genuine_copy = str(
                 profile["version_source"].get("no_genuine_copy") or "") or None
+        if args.check_version:
+            _attach_version(args, profile, report)
         reports.append(report)
         if writes:
             try:

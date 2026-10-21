@@ -276,7 +276,7 @@ class WorkflowRegressions(unittest.TestCase):
         self.assertTrue(runs, "no job confronts profiles with their upstream")
         for name, body in runs:
             self.assertIn("--strict", body)
-            self.assertIn("--diff-filter=A", body)
+            self.assertIn("--added", body)
             self.assertIsNone(workflow["jobs"][name].get("if"), f"{name} must run on push too")
 
     def test_both_events_watch_the_same_paths(self):
@@ -6147,6 +6147,7 @@ class SkipPacksHelpSaysWhatRuns(unittest.TestCase):
         self.assertEqual(skipped, {"4", "4b", "4c", "6"})
 
 
+<<<<<<< HEAD
 class AmigaCdDriversLiveInTheExtendedRom(unittest.TestCase):
     """WinUAE starts without the CD32 or CDTV extended ROM, but cd.device,
     cdtv.device, cdfs.library and cdstrap are resident modules of those ROMs
@@ -6185,5 +6186,36 @@ class BizHawkListsEveryDsiNandSlot(unittest.TestCase):
                 self.assertNotIn("sha1", entry)
 
 
+||||||| 1a41e6a9
+=======
+class CommentsSayWhy(unittest.TestCase):
+    """A one-line comment that names the next statement ("# Load registry",
+    "# Build cross-reference indexes") repeats the code. A comment that
+    stays says why (for, only, so, because)."""
+
+    LABEL = re.compile(
+        r"^\s*# (Load|Build|Collect|Determine|Resolve|Group|Copy|Count|Append|"
+        r"Filter|Separate|Compute|Create|Get|Check|Generate|Write|Read|Parse|Sort)"
+        r"\b[^.:;,()]{0,60}$"
+    )
+    REASON = re.compile(r"\b(for|only|so|because|if|when|unless|before|after)\b")
+
+    def test_no_label_comment_restates_the_next_line(self):
+        found = []
+        for name in ("verify.py", "generate_site.py", "generate_truth.py"):
+            lines = (ROOT / "scripts" / name).read_text(encoding="utf-8").splitlines()
+            for index, line in enumerate(lines):
+                if not self.LABEL.match(line) or self.REASON.search(line):
+                    continue
+                around = (lines[index - 1].strip(), lines[index + 1].strip())
+                if any(neighbour.startswith("#") for neighbour in around):
+                    continue
+                if not line.startswith(" "):
+                    continue
+                found.append(f"{name}:{index + 1}: {line.strip()}")
+        self.assertEqual(found, [])
+
+
+>>>>>>> worktree-agent-acbb69a80d49db676
 if __name__ == "__main__":
     unittest.main()

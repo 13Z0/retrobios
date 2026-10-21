@@ -14,7 +14,7 @@ from __future__ import annotations
 
 from collections.abc import Callable, Iterator
 
-from artifacts import _build_timestamp
+from artifacts import _build_timestamp, set_plain_mode
 import argparse
 import contextlib
 import functools
@@ -242,6 +242,7 @@ def _writing_pack(zip_path: str) -> Iterator[zipfile.ZipFile]:
     try:
         with zipfile.ZipFile(scratch, "w", zipfile.ZIP_DEFLATED) as zf:
             yield zf
+        set_plain_mode(scratch)
         os.replace(scratch, zip_path)
     except BaseException:
         Path(scratch).unlink(missing_ok=True)
@@ -4617,6 +4618,7 @@ def inject_manifest(zip_path: str, manifest: dict) -> None:
                         continue
                     dst.writestr(item, src.read(item.filename))
                 _write_generated_member(dst, "manifest.json", manifest_json)
+        set_plain_mode(scratch)
         os.replace(scratch, zip_path)
     except BaseException:
         Path(scratch).unlink(missing_ok=True)

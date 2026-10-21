@@ -25,7 +25,7 @@ import urllib.request
 import zipfile
 from collections.abc import Iterator
 from pathlib import Path
-from artifacts import file_lock as _file_lock
+from artifacts import file_lock as _file_lock, set_plain_mode
 from common import github_token, platform_arg, require_platform, yaml_load
 
 try:
@@ -133,6 +133,7 @@ def _save_versions(
         with os.fdopen(handle, "w") as f:
             json.dump(versions, f, indent=2, sort_keys=True)
             f.write("\n")
+        set_plain_mode(scratch)
         os.replace(scratch, path)
     except BaseException:
         with contextlib.suppress(OSError):

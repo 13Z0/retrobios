@@ -66,6 +66,16 @@ class TestParseRepo(unittest.TestCase):
             "/-/raw/abc123/source/Engine.cpp",
         )
 
+    def test_voidpoint_is_a_gitlab(self):
+        """eduke32 and fury were skipped as an unsupported host."""
+        repo = parse_repo("https://voidpoint.io/terminx/eduke32")
+        self.assertEqual(repo.family, "gitlab")
+        self.assertEqual(repo.api_base, "https://voidpoint.io/api/v4")
+        self.assertEqual(
+            raw_url(repo, "abc123", "source/build/src/build.cpp"),
+            "https://voidpoint.io/terminx/eduke32/-/raw/abc123/source/build/src/build.cpp",
+        )
+
     def test_libretro_gitlab_is_a_gitlab(self):
         repo = parse_repo("https://git.libretro.com/libretro/wqxemu.git")
         self.assertEqual(repo.family, "gitlab")
@@ -803,6 +813,30 @@ class TestGiteaCommitAt(unittest.TestCase):
         self.assertIsNone(
             upstream.resolve_commit_at(repo, "2020-01-01", self.tmp.name)
         )
+
+
+
+class TestCurrentSlug(unittest.TestCase):
+    """The name a forge answers under, read from the repository payload."""
+
+    def test_github_and_gitlab_payloads(self):
+        answers = {
+            "https://api.github.com/repos/AloysHF/NicaiEmu": {
+                "full_name": "AloysHF/CoolbarEmu"
+            },
+            "https://gitlab.com/api/v4/projects/g%2Fsub%2Fp": {
+                "path_with_namespace": "g/sub/p"
+            },
+        }
+        with tempfile.TemporaryDirectory() as tmp, \
+                mock.patch.object(upstream, "_http_json", side_effect=answers.get):
+            github = parse_repo("https://github.com/AloysHF/NicaiEmu")
+            gitlab = parse_repo("https://gitlab.com/g/sub/p")
+            self.assertEqual(upstream.current_slug(github, tmp), "AloysHF/CoolbarEmu")
+            self.assertEqual(upstream.current_slug(gitlab, tmp), "g/sub/p")
+            self.assertIsNone(
+                upstream.current_slug(parse_repo("https://github.com/a/b"), tmp)
+            )
 
 
 if __name__ == "__main__":

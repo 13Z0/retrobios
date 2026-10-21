@@ -2805,6 +2805,8 @@ from artifacts import (  # noqa: E402,F401
     write_if_changed,
     write_text_atomic,
     copy_file_atomic,
+    plain_file_mode,
+    set_plain_mode,
     ArtifactLockBusy,
     artifact_lock,
     hold_artifact_lock,

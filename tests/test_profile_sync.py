@@ -1163,6 +1163,13 @@ class TestBuildReport(unittest.TestCase):
             profile_sync.upstream._http_json,
             profile_sync.upstream._http_text,
             profile_sync.upstream.list_gitlinks,
+            profile_sync.upstream.current_slug,
+        )
+        self.current_slugs: dict[str, str] = {}
+        profile_sync.upstream.current_slug = (
+            lambda repo, cache_dir, offline=False: self.current_slugs.get(
+                repo.slug, repo.slug
+            )
         )
         self.tags: list[str] = []
         self.gitlinks: dict[str, dict[str, str]] = {}
@@ -1218,6 +1225,7 @@ class TestBuildReport(unittest.TestCase):
             profile_sync.upstream._http_json,
             profile_sync.upstream._http_text,
             profile_sync.upstream.list_gitlinks,
+            profile_sync.upstream.current_slug,
         ) = self._orig
         self.tmp.cleanup()
 
@@ -1231,6 +1239,25 @@ class TestBuildReport(unittest.TestCase):
                 for i, ref in enumerate(refs)
             ],
         }
+
+    def test_a_renamed_repository_is_review_work(self):
+        """AloysHF/NicaiEmu answers as AloysHF/CoolbarEmu: the redirect was
+        followed in silence and the profile read as up to date."""
+        self.files[("pinsha", "a.c")] = ["x", "y"]
+        self.files[("headsha", "a.c")] = ["x", "y"]
+        self.current_slugs["o/n"] = "o/renamed"
+        report = build_report("test", self._profile(["a.c:2"]), self.dir)
+        self.assertEqual(len(report.moved_repos), 1)
+        self.assertIn("o/renamed", report.moved_repos[0])
+        self.assertGreaterEqual(report.needs_review(), 1)
+        self.assertIn("moved repository", profile_sync.format_report(report))
+
+    def test_a_repository_under_its_own_name_is_not_moved(self):
+        self.files[("pinsha", "a.c")] = ["x", "y"]
+        self.files[("headsha", "a.c")] = ["x", "y"]
+        self.current_slugs["o/n"] = "O/N"
+        report = build_report("test", self._profile(["a.c:2"]), self.dir)
+        self.assertEqual(report.moved_repos, [])
 
     def test_a_refusing_forge_reads_as_unread_not_gone(self):
         """git.eden-emu.dev answers 403 to scripts: the muted repository's
@@ -4047,7 +4074,20 @@ class TestOutputModesApplyTheirFlags(unittest.TestCase):
         self.assertIn("prose under an older pin", out)
 
     def test_extras_are_refused_with_json(self):
-        code, _, err = self._main("--json", "--check-version")
+        code, _, err = self._main("--json", "--detect-new-files")
+        self.assertEqual(code, 1)
+        self.assertIn("--detect-new-files", err)
+
+    def test_json_carries_the_version_check(self):
+        """check_freshness asks for --json --check-version: refused, its
+        profile row read an empty report as unreadable on every run."""
+        code, out, err = self._main("--json", "--check-version")
+        self.assertEqual(code, 0, err)
+        rows = json.loads(out)
+        self.assertTrue(all("version" in row and "page_version" in row for row in rows))
+
+    def test_rankings_refuse_the_version_check(self):
+        code, _, err = self._main("--triage", "--check-version")
         self.assertEqual(code, 1)
         self.assertIn("--check-version", err)
 
@@ -4246,8 +4286,9 @@ class TestSelectionNamesWhatMatchedNothing(unittest.TestCase):
     }
 
     def _args(self, **values):
-        base = {"emulator": None, "system": None, "type_": None,
-                "stale_before": None, "limit": None}
+        base = {"emulator": None, "changed": False, "added": False,
+                "system": None, "type_": None, "stale_before": None,
+                "limit": None}
         return argparse.Namespace(**{**base, **values})
 
     def test_a_misspelt_system_stops_and_suggests(self):
@@ -4593,6 +4634,73 @@ class TheTriageCountsWhatBlocksThePin(unittest.TestCase):
         self.assertIn("0 to review", lines[2])
         self.assertEqual(lines[-1], "2 profiles, 1 with something to review")
         self.assertEqual(len(err.getvalue().splitlines()), 1, err.getvalue())
+
+
+class TestBranchProfiles(unittest.TestCase):
+    """--changed and --added name the profiles a branch brings, not by hand."""
+
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self._tmp.cleanup)
+        self.root = Path(self._tmp.name)
+        self._cwd = os.getcwd()
+        self.addCleanup(os.chdir, self._cwd)
+        os.chdir(self.root)
+        env = {**os.environ, "GIT_AUTHOR_NAME": "t", "GIT_AUTHOR_EMAIL": "t@t",
+               "GIT_COMMITTER_NAME": "t", "GIT_COMMITTER_EMAIL": "t@t"}
+        self.env = env
+        self._git("init", "-q", "-b", "main")
+        (self.root / "emulators").mkdir()
+        (self.root / "emulators" / "kept.yml").write_text("a: 1\n")
+        (self.root / "emulators" / "edited.yml").write_text("a: 1\n")
+        self._git("add", "emulators")
+        self._git("commit", "-q", "--no-verify", "-m", "base")
+        self._git("checkout", "-q", "-b", "topic")
+        (self.root / "emulators" / "edited.yml").write_text("a: 2\n")
+        (self.root / "emulators" / "new.yml").write_text("a: 1\n")
+        self._git("add", "emulators")
+        self._git("commit", "-q", "--no-verify", "-m", "topic")
+        (self.root / "emulators" / "draft.yml").write_text("a: 1\n")
+        (self.root / "emulators" / "notes.txt").write_text("x\n")
+
+    def _git(self, *args):
+        subprocess.run(["git", *args], cwd=self.root, env=self.env, check=True)
+
+    def test_changed_takes_added_edited_and_uncommitted(self):
+        self.assertEqual(
+            profile_sync.branch_profiles("emulators", "main", added_only=False),
+            ["draft", "edited", "new"],
+        )
+
+    def test_added_leaves_edited_profiles_out(self):
+        self.assertEqual(
+            profile_sync.branch_profiles("emulators", "main", added_only=True),
+            ["draft", "new"],
+        )
+
+    def test_the_flag_selects_those_profiles(self):
+        args = profile_sync.build_parser().parse_args(["--changed", "--base", "main"])
+        profiles = {"kept": {}, "edited": {}, "new": {}, "draft": {}}
+        self.assertEqual(
+            list(profile_sync.select_profiles(profiles, args)),
+            ["draft", "edited", "new"],
+        )
+
+
+class TestBranchCheckIsWired(unittest.TestCase):
+    """CONTRIBUTING and CI name the branch's profiles through the flag."""
+
+    def test_contributing_and_ci_use_the_flags(self):
+        root = Path(__file__).resolve().parents[1]
+        sys.path.insert(0, str(root / "scripts"))
+        import generate_readme  # noqa: PLC0415
+
+        text = generate_readme.generate_contributing()
+        self.assertIn("profile_sync.py --changed --strict", text)
+        self.assertNotIn("--emulator NAME --strict", text)
+        workflow = (root / ".github" / "workflows" / "validate.yml").read_text()
+        self.assertIn("profile_sync.py --added --base", workflow)
+        self.assertNotIn('--emulator "$name"', workflow)
 
 
 if __name__ == "__main__":

@@ -103,9 +103,10 @@ every emulator profile against `schemas/emulator.schema.json`. Both schemas set
 `additionalProperties: false`, so a typo in a field name fails the job instead
 of being silently ignored.
 
-**check-new-profiles.** Runs `profile_sync.py --emulator NAME --strict` on
-each profile the change adds (the files `git diff --diff-filter=A` names
-against the pull request base, or against the commit a push moved main from).
+**check-new-profiles.** Runs `profile_sync.py --added --base BASE --strict`,
+which checks each profile the change adds (the files `git diff --diff-filter=A`
+names against the pull request base, or against the commit a push moved main
+from).
 A profile written from a clone can cite lines that do not hold the value it
 declares while schemas and tests pass it. This job confronts it with its
 upstream. An edited profile is not held to it.

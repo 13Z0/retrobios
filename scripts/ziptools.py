@@ -14,6 +14,7 @@ import sys
 import tempfile
 import zipfile
 
+from artifacts import set_plain_mode
 from hashing import md5sum
 
 
@@ -141,6 +142,7 @@ def _write_member_cache(path: str, data: dict[str, list[list]]) -> None:
     try:
         with os.fdopen(fd, "w", encoding="utf-8") as fh:
             json.dump(data, fh, separators=(",", ":"))
+        set_plain_mode(scratch)
         os.replace(scratch, path)
     except OSError as exc:
         print(f"warning: could not write {path}: {exc}", file=sys.stderr)

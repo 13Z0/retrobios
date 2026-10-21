@@ -129,5 +129,90 @@ class TheNativeIndexKeepsEveryPlatform(unittest.TestCase):
             self.assertEqual(recorded.get("batocera/file"), "https://a")
             self.assertEqual((root / "batocera" / "file").read_bytes(), b"payload")
 
+class ScratchFilesGetThePlainMode(unittest.TestCase):
+    """mkstemp makes its file 0600 and the rename kept it: database.json,
+    the manifests and the packs came out readable by their owner only."""
+
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self._tmp.cleanup)
+        self.dir = Path(self._tmp.name)
+        previous = os.umask(0o022)
+        self.addCleanup(os.umask, previous)
+
+    def _mode(self, path: Path) -> int:
+        return path.stat().st_mode & 0o777
+
+    def test_text_and_bytes_writers(self):
+        artifacts.write_text_atomic(str(self.dir / "a.json"), "{}")
+        artifacts.write_bytes_atomic(str(self.dir / "b.bin"), b"x")
+        self.assertEqual(self._mode(self.dir / "a.json"), 0o644)
+        self.assertEqual(self._mode(self.dir / "b.bin"), 0o644)
+
+    def test_the_umask_decides(self):
+        os.umask(0o002)
+        artifacts.write_text_atomic(str(self.dir / "a.json"), "{}")
+        self.assertEqual(self._mode(self.dir / "a.json"), 0o664)
+
+    def test_packs_and_their_manifest(self):
+        import zipfile  # noqa: PLC0415
+
+        import generate_pack  # noqa: PLC0415
+
+        pack = self.dir / "Pack.zip"
+        with generate_pack._writing_pack(str(pack)) as zf:
+            zf.writestr("a.bin", b"x")
+        self.assertEqual(self._mode(pack), 0o644)
+        os.chmod(pack, 0o600)
+        generate_pack.inject_manifest(str(pack), {"files": []})
+        self.assertEqual(self._mode(pack), 0o644)
+        with zipfile.ZipFile(pack) as zf:
+            self.assertIn("manifest.json", zf.namelist())
+
+    def test_every_renamed_scratch_gets_the_mode(self):
+        """A function that renames a mkstemp file into place sets its mode.
+
+        copy_file_atomic is the one exception: copy2 gives the scratch the
+        source file's own mode.
+        """
+        import ast  # noqa: PLC0415
+
+        def name_of(node: ast.AST) -> str | None:
+            return node.id if isinstance(node, ast.Name) else None
+
+        def callee(call: ast.Call) -> str:
+            func = call.func
+            return func.attr if isinstance(func, ast.Attribute) else name_of(func) or ""
+
+        unset = []
+        for path in sorted((REPO_ROOT / "scripts").rglob("*.py")):
+            tree = ast.parse(path.read_text(encoding="utf-8"))
+            for func in ast.walk(tree):
+                if not isinstance(func, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                    continue
+                if func.name == "copy_file_atomic":
+                    continue
+                scratches: set[str] = set()
+                for node in ast.walk(func):
+                    if (isinstance(node, ast.Assign) and isinstance(node.value, ast.Call)
+                            and callee(node.value) == "mkstemp"
+                            and isinstance(node.targets[0], ast.Tuple)):
+                        scratch = name_of(node.targets[0].elts[1])
+                        if scratch:
+                            scratches.add(scratch)
+                calls = [n for n in ast.walk(func) if isinstance(n, ast.Call)]
+                moded = {
+                    name_of(c.args[0]) for c in calls
+                    if callee(c) in ("set_plain_mode", "chmod") and c.args
+                }
+                for call in calls:
+                    if callee(call) != "replace" or not call.args:
+                        continue
+                    first = name_of(call.args[0])
+                    if first in scratches and first not in moded:
+                        unset.append(f"{path.name}:{call.lineno} {func.name}")
+        self.assertEqual(unset, [])
+
+
 if __name__ == "__main__":
     unittest.main()

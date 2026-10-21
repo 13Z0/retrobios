@@ -227,6 +227,70 @@ class PlatformMultiHash(unittest.TestCase):
         self.assertEqual(pair_entries(truth, list(scraped.values())), {0: 0})
 
 
+class ACompositeZipMd5IsNoContainerMd5(unittest.TestCase):
+    """Recalbox hashes a .zip by its members. Its neocdz.zip md5 was set
+    against geolith's container md5 and reported as a mismatch the export,
+    which reads the same mark, never corrects."""
+
+    TRUTH = {"files": [{"name": "neocdz.zip", "md5": "b31a246b69493c35194fe0bac120dc37"}]}
+
+    def _scraped(self, **mark):
+        return {"files": [{"name": "neocdz.zip", "md5": "f39572af7584cb5b3f70ae8cc848aba2",
+                           **mark}]}
+
+    def test_a_composite_md5_contradicts_nothing(self):
+        self.assertEqual(_diff_system(self.TRUTH, self._scraped(zip_digest="composite")), {})
+
+    def test_a_container_md5_still_does(self):
+        result = _diff_system(self.TRUTH, self._scraped())
+        self.assertEqual([m["name"] for m in result["hash_mismatch"]], ["neocdz.zip"])
+
+
+class OneSlotUnderSeveralNames(unittest.TestCase):
+    """kronos opens saturn_bios.bin, then sega_101.bin as a fallback. Ymir
+    reads either name, so the sega_101.bin entry answers for saturn_bios.bin
+    too. kronos sat in that entry's _cores and out of its _required_by while
+    its saturn_bios.bin entry had it requiring the file."""
+
+    PROFILES = {
+        "kronos": {
+            "emulator": "Kronos", "type": "libretro", "systems": ["sega-saturn"],
+            "files": [
+                {"name": "saturn_bios.bin", "path": "kronos/saturn_bios.bin",
+                 "required": True, "size": 524288},
+                {"name": "sega_101.bin", "required": False, "size": 524288},
+            ],
+        },
+        "ymir": {
+            "emulator": "Ymir", "type": "libretro", "systems": ["sega-saturn"],
+            "files": [
+                {"name": "sega_101.bin", "required": True, "size": 524288,
+                 "aliases": ["saturn_bios.bin"]},
+            ],
+        },
+        "other": {
+            "emulator": "Other", "type": "libretro", "systems": ["sega-saturn"],
+            "files": [{"name": "saturn_bios.bin", "required": True, "size": 524288}],
+        },
+    }
+
+    def _files(self) -> dict[str, dict]:
+        cores = ["kronos", "ymir", "other"]
+        model = generate_platform_truth("p", {"cores": cores}, {}, self.PROFILES)
+        return {f["name"]: f for f in model["systems"]["sega-saturn"]["files"]}
+
+    def test_a_reader_requiring_an_alias_requires_the_entry(self):
+        sega = self._files()["sega_101.bin"]
+        self.assertEqual(sega["_cores"], ["kronos", "ymir"])
+        self.assertEqual(sega["_required_by"], ["kronos", "ymir"])
+
+    def test_no_reader_is_added(self):
+        """other requires saturn_bios.bin but never opens sega_101.bin."""
+        sega = self._files()["sega_101.bin"]
+        self.assertNotIn("other", sega["_required_by"])
+        self.assertTrue(set(sega["_required_by"]) <= set(sega["_cores"]))
+
+
 class OnlySystemDirectoryEntries(unittest.TestCase):
     """The truth kept files read from the save, content or working directory:
     diff_truth listed Cemu's mlc01 certificates, panda3ds's seeddb.bin and

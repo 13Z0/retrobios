@@ -21,6 +21,8 @@ from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 
+from artifacts import set_plain_mode
+
 USER_AGENT = "retrobios-profile-sync/1.0"
 # Where fetched upstream files live, shared by every reader of this cache.
 CACHE_DIR = ".cache/upstream"
@@ -45,6 +47,12 @@ _HOSTS: dict[str, tuple[str, str, str]] = {
         "gitlab",
         "https://git.libretro.com/api/v4",
         "https://git.libretro.com",
+    ),
+    # EDuke32 and its forks (eduke32, fury) are developed on this GitLab.
+    "voidpoint.io": (
+        "gitlab",
+        "https://voidpoint.io/api/v4",
+        "https://voidpoint.io",
     ),
     "codeberg.org": (
         "forgejo",
@@ -337,6 +345,7 @@ def write_cache(target: Path, text: str) -> None:
     try:
         with os.fdopen(fd, "w", encoding="utf-8") as fh:
             fh.write(text)
+        set_plain_mode(scratch)
         os.replace(scratch, target)
     except OSError:
         Path(scratch).unlink(missing_ok=True)
@@ -453,6 +462,25 @@ def _first_sha(payload: object) -> str | None:
         if isinstance(head, dict):
             return head.get("sha") or head.get("id")
     return None
+
+
+def current_slug(repo: Repo, cache_dir: str, offline: bool = False) -> str | None:
+    """The owner/name the forge answers for a repository today.
+
+    A renamed or transferred repository keeps answering under its old name:
+    GitHub redirects (AloysHF/NicaiEmu answers as AloysHF/CoolbarEmu), GitLab
+    and Gitea do the same. Every later call follows the redirect, so only the
+    name in the payload tells the project moved.
+    """
+    if repo.family == "gitlab":
+        url, key = f"{repo.api_base}/projects/{_project(repo)}", "path_with_namespace"
+    else:
+        url, key = f"{repo.api_base}/repos/{repo.slug}", "full_name"
+    payload = _api(url, cache_dir, offline, MOVING_TTL)
+    if not isinstance(payload, dict):
+        return None
+    value = payload.get(key)
+    return str(value) if value else None
 
 
 def resolve_head(

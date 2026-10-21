@@ -272,5 +272,20 @@ class ContributorChecksMatchCi(unittest.TestCase):
         )
 
 
+class PagesOpenOnTheirContent(unittest.TestCase):
+    """The download page said "This page picks the right pack for a setup"
+    before saying anything about a pack."""
+
+    def test_no_paragraph_announces_its_page(self):
+        import generate_site  # noqa: PLC0415
+
+        text = generate_site.generate_which_pack()
+        announcing = [
+            line for line in text.splitlines()
+            if re.match(r"(This|The) (page|section) ", line)
+        ]
+        self.assertEqual(announcing, [])
+
+
 if __name__ == "__main__":
     unittest.main()
