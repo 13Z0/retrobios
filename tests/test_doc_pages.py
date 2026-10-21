@@ -581,5 +581,24 @@ class ResolutionSkipsNamesForUnheldFiles(unittest.TestCase):
         self.assertIn("restore_large_files.py", section)
 
 
+class CiTriggersPointToTheirLists(unittest.TestCase):
+    """The CI table listed six directories for validate.yml, which also runs
+    on the installer, wiki/ and every other site input: a contributor
+    touching only wiki/ read that no check would run."""
+
+    def test_the_table_does_not_copy_a_path_list(self):
+        import yaml
+
+        section = _section(_page("architecture.md"), "CI workflows")
+        self.assertNotRegex(section, r"on bios/, platforms/|\(platforms, emulators, wiki, scripts\)")
+        self.assertIn("`paths:`", section)
+        self.assertIn("test_workflow_paths.py", section)
+        workflow = yaml.safe_load((ROOT / ".github/workflows/validate.yml").read_text(encoding="utf-8"))
+        paths = workflow.get("on", workflow.get(True))["pull_request"]["paths"]
+        for named in ("wiki/**", "install.sh"):
+            self.assertIn(named, paths)
+            self.assertIn(f"`{named.rstrip('*')}`", section)
+
+
 if __name__ == "__main__":
     unittest.main()

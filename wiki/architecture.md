@@ -450,8 +450,14 @@ pattern and how to add a test.
 
 | Workflow | File | Trigger | Role |
 |----------|------|---------|------|
-| Deploy Site | `deploy-site.yml` | push to main (platforms, emulators, wiki, scripts) + manual | validate contracts, generate site, build with MkDocs, validate rendered HTML, deploy to Pages |
-| Validation | `validate.yml` | pull request and push to main on bios/, platforms/, emulators/, schemas/, scripts/, tests/ | schema check and full test suite on both, BIOS hash validation and auto-label on pull requests |
+| Deploy Site | `deploy-site.yml` | push to main on any input of the site build, and manual | validate contracts, generate site, build with MkDocs, validate rendered HTML, deploy to Pages |
+| Validation | `validate.yml` | pull request and push to main on the collection, profiles, schemas, scripts, tests, the installer and every input of the site build | schema check and full test suite on both, BIOS hash validation and auto-label on pull requests |
+
+Each workflow's `paths:` list is the exact set of files that starts it.
+`tests/test_workflow_paths.py` holds the Deploy Site list to the scripts the build
+imports, and the Validation list to every input of the site build, so a change that
+would fail the deploy fails the pull request first. A change to `wiki/`, to
+`install.sh` or to any other path in that list runs the full suite.
 
 Releases are not built in CI: the packs are generated and checked on the
 maintainer's machine and uploaded with `gh`, see the
