@@ -110,5 +110,60 @@ class GapReportSources(unittest.TestCase):
         )
 
 
+class PlatformScopedEntries(unittest.TestCase):
+    """Under --platform the report reads the platform's scoping fields
+    through the functions verify and the builder call: blastem's cdbios.bin
+    is never opened by RetroBat (unread_on), touchHLE's fonts are not in
+    ROCKNIX's package (not_bundled_on), fMSX's fonts come with Recalbox's
+    (installed_on)."""
+
+    PROFILES = {"emu": {"emulator": "Emu", "systems": ["sys"], "files": [
+        {"name": "skipped.bin", "required": True, "unread_on": ["plat"]},
+        {"name": "font.ttf", "required": True, "bundled": True,
+         "not_bundled_on": ["plat"]},
+        {"name": "held.fnt", "installed_on": ["plat"]},
+    ]}}
+    DB = {"files": {"a" * 40: {"path": "bios/held.fnt", "name": "held.fnt"}},
+          "indexes": {"by_name": {"held.fnt": ["a" * 40]}, "by_md5": {},
+                      "by_crc32": {}, "by_sha256": {}, "by_path_suffix": {}}}
+
+    def _gaps(self, platform: str) -> dict[str, dict]:
+        report = cross_reference(self.PROFILES, {}, self.DB, platform=platform)
+        return {g["name"]: g for g in report["emu"]["gap_details"]}
+
+    def test_an_entry_the_platform_never_opens_is_not_a_gap(self):
+        self.assertNotIn("skipped.bin", self._gaps("plat"))
+        self.assertIn("skipped.bin", self._gaps("other"))
+        self.assertIn("skipped.bin", self._gaps(""))
+
+    def test_bundled_follows_the_platform_package(self):
+        gaps = self._gaps("plat")
+        self.assertFalse(gaps["font.ttf"]["bundled"])
+        self.assertTrue(gaps["held.fnt"]["bundled"])
+        gaps = self._gaps("other")
+        self.assertTrue(gaps["font.ttf"]["bundled"])
+        self.assertFalse(gaps["held.fnt"]["bundled"])
+
+    def test_a_held_bundled_file_is_not_announced_as_available(self):
+        import contextlib
+        import io
+
+        report = cross_reference(self.PROFILES, {}, self.DB, platform="plat")
+        with contextlib.redirect_stdout(io.StringIO()) as out:
+            print_report(report)
+        text = out.getvalue()
+        self.assertIn("held.fnt [BUNDLED]", text)
+        self.assertIn("0 available", text)
+        self.assertIn("1 missing (need to be sourced)", text)
+
+    def test_the_report_reads_the_shared_rules(self):
+        """One rule, one function: a local `bool(f.get("bundled"))` answered
+        differently from verify for every installed_on/not_bundled_on entry."""
+        source = (REPO_ROOT / "scripts" / "cross_reference.py").read_text()
+        self.assertNotIn('bool(f.get("bundled"))', source)
+        self.assertIn("installed_with_emulator(f, platform)", source)
+        self.assertIn("unread_on(f, platform)", source)
+
+
 if __name__ == "__main__":
     unittest.main()
