@@ -1754,6 +1754,8 @@ def _check_omission(entry: dict, dest: str) -> None:
         raise ValueError(f"invalid omitted required flag for {dest}")
     if entry.get("reason") not in OMISSION_REASONS:
         raise ValueError(f"invalid omission reason for {dest}")
+    if "held" in entry and entry["held"] is not True:
+        raise ValueError(f"invalid omitted held flag for {dest}")
     cores = entry.get("cores")
     if cores is not None and (
         not isinstance(cores, list)
@@ -2516,8 +2518,10 @@ def narrow(
         omitted = _filter_by_target(omitted, cores)
     if regions:
         # The builder's held set: what the collection serves. An omission
-        # answers the request but takes no installable file's place.
-        held = {f["dest"] for f in files}
+        # answers the request but takes no installable file's place, unless
+        # the builder holds it (held: true) and only this download lacks it:
+        # the pack drops the fallback it displaces, and so does this.
+        held = {f["dest"] for f in files} | {o["dest"] for o in omitted if o.get("held")}
         dropped = region_drops(files + omitted, regions, systems, held)
         files = [f for f in files if f["dest"] not in dropped]
         omitted = [o for o in omitted if o["dest"] not in dropped]

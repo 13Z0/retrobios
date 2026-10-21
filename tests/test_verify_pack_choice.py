@@ -63,7 +63,12 @@ class VerifyPackChoice(unittest.TestCase):
 
         def record(zip_path, platform_name, *a, **kw):
             checked.append((platform_name, os.path.basename(zip_path)))
+            self.variants.append(
+                (kw.get("source", "full"), kw.get("required_only", False))
+            )
             return _ok_result()
+
+        self.variants: list[tuple[str, bool]] = []
 
         with mock.patch.object(self.gp, "verify_pack_against_platform", record):
             self.gp._run_verify_packs(args)
@@ -94,26 +99,22 @@ class VerifyPackChoice(unittest.TestCase):
             self._run(self._args())
         self.assertEqual(ctx.exception.code, 1)
 
-    def test_all_variants_names_every_variant_it_built(self):
-        """After --all-variants the check opened the full pack only: the five
-        narrowed packs the same run wrote passed without a line."""
-        import contextlib
-        import io
-
-        names = []
+    def test_all_variants_checks_every_variant_as_it_was_built(self):
+        """After --all-variants the check opened the full pack only, and then
+        said "hashes checked during the build" for the five narrowed packs:
+        one missing a file its narrowed list requires passed. Each is now
+        held to the platform's list narrowed the same way."""
+        names = {}
         for source, required in self.gp.ALL_VARIANTS:
             tags = "".join(
                 tag for tag, _ in self.gp._narrowings(source, None, None, False, required)
             )
-            names.append(f"{self.stem}{tags}_BIOS_Pack.zip")
-            self._touch(names[-1])
-        out = io.StringIO()
-        with contextlib.redirect_stdout(out):
-            checked = self._run(self._args(all_variants=True))
-        self.assertEqual(checked, [("retroarch", f"{self.stem}_BIOS_Pack.zip")])
-        printed = out.getvalue()
-        for name in names[1:]:
-            self.assertIn(f"[{name}]: hashes checked during the build", printed)
+            names[f"{self.stem}{tags}_BIOS_Pack.zip"] = (source, required)
+            self._touch(f"{self.stem}{tags}_BIOS_Pack.zip")
+        checked = self._run(self._args(all_variants=True))
+        self.assertEqual(
+            dict(zip((name for _p, name in checked), self.variants)), names
+        )
 
     def test_the_run_ends_on_a_summary(self):
         """A failing pack was named only above its own error lines, and the

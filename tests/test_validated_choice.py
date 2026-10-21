@@ -97,9 +97,28 @@ class ValidatedChoice(unittest.TestCase):
                 for call in ast.walk(node)
             )
         }
-        self.assertLessEqual(
-            {"generate_pack", "generate_manifest", "_manifest_core_entries"}, callers
+        self.assertLessEqual({"generate_pack", "generate_manifest"}, callers)
+        # The manifest's core extras go through the builder's own lookup,
+        # which reads validated_choice (packextras.ExtraResolver).
+        resolvers = {
+            node.name
+            for node in ast.walk(tree)
+            if isinstance(node, ast.FunctionDef)
+            and any(
+                isinstance(call, ast.Call) and getattr(call.func, "id", None) == "ExtraResolver"
+                for call in ast.walk(node)
+            )
+        }
+        self.assertLessEqual({"generate_pack", "_manifest_core_entries"}, resolvers)
+        extras = ast.parse((REPO_ROOT / "scripts" / "packextras.py").read_text(encoding="utf-8"))
+        resolve = next(
+            node for node in ast.walk(extras)
+            if isinstance(node, ast.FunctionDef) and node.name == "resolve"
         )
+        self.assertTrue(any(
+            isinstance(call, ast.Call) and getattr(call.func, "id", None) == "validated_choice"
+            for call in ast.walk(resolve)
+        ))
 
     def test_core_extras_are_judged_too(self):
         """The baseline loop judged a platform's own files while the core-extras loop

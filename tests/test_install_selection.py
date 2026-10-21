@@ -124,6 +124,45 @@ class TheRegionRuleIsTheBuilders(unittest.TestCase):
                     {o["dest"] for o in omitted} - drops,
                 )
 
+    def test_narrow_counts_what_the_builder_holds(self):
+        """A file the builder holds and the installer cannot download sits in
+        omitted_files. Counted unheld, it left the installer a fallback the
+        pack drops. The manifest marks it held, and narrow replays the
+        builder's held set: installable files plus held omissions."""
+        rng = random.Random(20261021)
+        replayed = 0
+        for trial in range(500):
+            groups, index, entries, requested, held = self._case(rng)
+            pack_only = {dest for dest in held if rng.random() < 0.3}
+            files = [dict(e, size=1, cores=None) for e in entries
+                     if e["dest"] in held - pack_only]
+            omitted = [dict(e, cores=None, **({"held": True} if e["dest"] in pack_only else {}))
+                       for e in entries if e["dest"] not in held - pack_only]
+            kept, still_omitted = install.narrow(files, omitted, [], [], requested)
+            drops = region.resolve_region_drops(groups, index, requested, held)
+            unheld = region.resolve_region_drops(
+                groups, index, requested, held - pack_only
+            )
+            replayed += drops != unheld
+            with self.subTest(trial=trial):
+                self.assertEqual(
+                    {f["dest"] for f in kept},
+                    {f["dest"] for f in files} - drops,
+                )
+                self.assertEqual(
+                    {o["dest"] for o in still_omitted},
+                    {o["dest"] for o in omitted} - drops,
+                )
+        # The cases where counting them unheld answers otherwise exist.
+        self.assertGreater(replayed, 0)
+
+    def test_the_held_flag_is_checked_at_the_boundary(self):
+        entry = {"name": "a.bin", "system": "s", "required": True,
+                 "reason": "not_found", "cores": None}
+        install._check_omission({**entry, "held": True}, "a.bin")
+        with self.assertRaises(ValueError):
+            install._check_omission({**entry, "held": "yes"}, "a.bin")
+
     def test_a_lone_core_file_leaves_its_systems_drop(self):
         """Dolphin's GC/EUR/IPL.bin is a core extra no system names, plus the
         GameCube's own declaration. The builder skips the one-file group, so
@@ -707,6 +746,77 @@ class InstallMatchesATargetManifest(unittest.TestCase):
                     {o["dest"] for o in built["omitted_files"]},
                 )
 
+
+
+class AHeldFileTheInstallerCannotFetch(unittest.TestCase):
+    """The builder holds a release asset the manifest run had no copy of: it
+    counts in the builder's groups and displaces the American fallback for
+    --region japan, while the manifest can only list it as omitted. Counted
+    unheld there, the installer kept the fallback the pack drops."""
+
+    def setUp(self):
+        import common
+        import generate_db
+        import generate_pack
+
+        self.gp = generate_pack
+        tmp = tempfile.TemporaryDirectory(dir=REPO_ROOT / "tmp")
+        self.addCleanup(tmp.cleanup)
+        previous = os.getcwd()
+        os.chdir(tmp.name)
+        self.addCleanup(os.chdir, previous)
+        Path("bios/Sys").mkdir(parents=True)
+        Path("bios/Sys/us.bin").write_bytes(b"us")
+        sha1 = hashlib.sha1(b"us").hexdigest()
+        files = {sha1: {"path": "bios/Sys/us.bin", "name": "us.bin", "size": 2,
+                        "sha1": sha1, "md5": hashlib.md5(b"us").hexdigest(),
+                        "sha256": hashlib.sha256(b"us").hexdigest(),
+                        "crc32": "00000001"}}
+        self.db = {"files": files, "indexes": generate_db.build_indexes(files, {})}
+        Path("platforms").mkdir()
+        Path("platforms/p.yml").write_text(json.dumps({
+            "platform": "P", "verification_mode": "existence", "cores": ["core"],
+            "systems": {"sys": {"files": []}},
+        }))
+        Path("platforms/_registry.yml").write_text(
+            json.dumps({"platforms": {"p": {"status": "active"}}})
+        )
+        Path("emulators").mkdir()
+        Path("emulators/core.yml").write_text(json.dumps({
+            "emulator": "core", "type": "libretro", "systems": ["sys"], "files": [
+                # A release asset: held by the builder whether or not this
+                # run has a copy to describe.
+                {"name": "jp.bin", "system": "sys", "region": ["japan"],
+                 "storage": "large_file", "required": True},
+                {"name": "us.bin", "system": "sys", "region": ["north-america"],
+                 "required": True},
+            ]}))
+        common._platform_config_cache.clear()
+        common._emulator_profiles_cache.clear()
+        self.addCleanup(common._platform_config_cache.clear)
+        self.addCleanup(common._emulator_profiles_cache.clear)
+        self.profiles = common.load_emulator_profiles("emulators")
+
+    def _manifest(self, regions):
+        return self.gp.generate_manifest(
+            "p", "platforms", self.db, "bios", "platforms/_registry.yml",
+            emulators_dir="emulators", emu_profiles=self.profiles,
+            regions=regions, offline=True,
+        )
+
+    def test_the_installer_drops_the_fallback_the_pack_drops(self):
+        full = self._manifest(None)
+        omitted = {o["dest"]: o for o in full["omitted_files"]}
+        self.assertTrue(omitted["jp.bin"].get("held"))
+        built = self._manifest(["japan"])
+        self.assertNotIn("us.bin", {f["dest"] for f in built["files"]})
+        files, still = install.narrow(
+            full["files"], full["omitted_files"], [], [], ["japan"]
+        )
+        self.assertEqual({f["dest"] for f in files}, {f["dest"] for f in built["files"]})
+        self.assertEqual(
+            {o["dest"] for o in still}, {o["dest"] for o in built["omitted_files"]}
+        )
 
 
 class ACoreWithNothingHeldIsAnOmission(unittest.TestCase):

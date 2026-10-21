@@ -178,7 +178,10 @@ class ExtraResolver:
         validation_index: dict,
         validation_owners: dict | None,
         offline: bool | None = True,
+        *,
+        profiles: dict,
     ) -> None:
+        self.profiles = profiles
         self.db = db
         self.bios_dir = bios_dir
         self.zip_contents = zip_contents
@@ -190,7 +193,7 @@ class ExtraResolver:
     def resolve(self, fe: dict, dest: str) -> tuple[str | None, str, str]:
         """(local copy or None, resolver status, the core's disagreement)."""
         from packresolve import resolve_file
-        from validation import validated_choice
+        from validation import core_size_refusal, extra_alternatives, validated_choice
 
         local_path, status = resolve_file(
             fe, self.db, self.bios_dir, self.zip_contents,
@@ -203,6 +206,12 @@ class ExtraResolver:
             fe, local_path, self.db, self.validation_index, self.bios_dir, None,
             dest, self.validation_owners,
         )
+        # The platform never reads the bytes, the core does: a copy it turns
+        # away by its own size check is not its file, on any platform.
+        if core_size_refusal(
+            fe, local_path, extra_alternatives(fe, self.profiles)
+        ):
+            return None, "not_found", ""
         return local_path, status, disagreement
 
 
@@ -220,6 +229,8 @@ def hidden_extras(
     placed_kind: dict[str, str] | None = None,
     placed_local: dict[str, str] | None = None,
     system_ids: list[str] | None = None,
+    include_all: bool = False,
+    required_only: bool = False,
 ) -> dict[tuple[str, str, str], str]:
     """Report entries the builder holds and still leaves out, with the reason.
 
@@ -243,7 +254,9 @@ def hidden_extras(
     ``system_ids`` replays a pack built with --system: the extras collected
     without the platform's paths, then those the systems own.
     ``resolver`` is the builder's lookup. An extra it cannot resolve is
-    skipped and takes no path, as the builder skips it.
+    skipped and takes no path, as the builder skips it. ``include_all`` and
+    ``required_only`` are the builder's for a --source truth or a
+    --required-only pack: an optional extra is skipped before it takes a path.
     """
     from packpaths import _register_path, placement_block
 
@@ -263,11 +276,14 @@ def hidden_extras(
     hidden: dict[tuple[str, str, str], str] = {}
     extras = _collect_emulator_extras(
         config, emulators_dir, db, set() if system_ids else set(shipped),
-        base_dest, profiles, target_cores=target_cores, undeclared=report,
+        base_dest, profiles, target_cores=target_cores, include_all=include_all,
+        undeclared=report,
     )
     if system_ids:
         extras = extras_for_systems(extras, system_ids)
     for fe in extras:
+        if required_only and fe.get("required") is False:
+            continue
         dest = sanitize_pack_path(fe.get("destination", fe.get("name", "")))
         if not dest or (region_drops and dest in region_drops):
             continue

@@ -87,5 +87,106 @@ class CoreFilesAsTheBuilderPlacesThem(unittest.TestCase):
         )
 
 
+class NarrowedPacksAgainstTheirOwnList(unittest.TestCase):
+    """--verify-packs after --all-variants said "hashes checked during the
+    build" for the five narrowed packs and compared none of them: a narrowed
+    pack missing a file its narrowed list requires passed. Each variant is
+    now held to the platform list narrowed the way it was built."""
+
+    def setUp(self):
+        import common
+        import generate_db
+        import generate_pack
+
+        self.gp = generate_pack
+        tmp = tempfile.TemporaryDirectory(dir=REPO_ROOT / "tmp")
+        self.addCleanup(tmp.cleanup)
+        previous = os.getcwd()
+        os.chdir(tmp.name)
+        self.addCleanup(os.chdir, previous)
+        files: dict = {}
+        for rel in ("bios/p/req.bin", "bios/p/opt.bin", "bios/c/core.bin", "bios/c/extra.bin"):
+            payload = rel.encode()
+            Path(rel).parent.mkdir(parents=True, exist_ok=True)
+            Path(rel).write_bytes(payload)
+            sha1 = hashlib.sha1(payload).hexdigest()
+            files[sha1] = {"path": rel, "name": Path(rel).name, "size": len(payload),
+                           "sha1": sha1, "md5": hashlib.md5(payload).hexdigest(),
+                           "sha256": hashlib.sha256(payload).hexdigest(),
+                           "crc32": "00000001"}
+        self.db = {"files": files, "indexes": generate_db.build_indexes(files, {})}
+        Path("platforms").mkdir()
+        config = {"platform": "P", "verification_mode": "existence", "cores": ["c"],
+                  "systems": {"s": {"files": [
+                      {"name": "req.bin", "destination": "req.bin", "required": True},
+                      {"name": "opt.bin", "destination": "opt.bin", "required": False},
+                  ]}}}
+        Path("platforms/p.yml").write_text(yaml.safe_dump(config), encoding="utf-8")
+        Path("platforms/_registry.yml").write_text(
+            yaml.safe_dump({"platforms": {"p": {"status": "active"}}}), encoding="utf-8"
+        )
+        Path("emulators").mkdir()
+        Path("emulators/c.yml").write_text(yaml.safe_dump({
+            "emulator": "c", "type": "libretro", "systems": ["s"], "files": [
+                {"name": "core.bin", "path": "core.bin", "required": True},
+                {"name": "extra.bin", "path": "extra.bin", "required": False},
+            ]}), encoding="utf-8")
+        common._platform_config_cache.clear()
+        common._emulator_profiles_cache.clear()
+        self.addCleanup(common._platform_config_cache.clear)
+        self.addCleanup(common._emulator_profiles_cache.clear)
+        self.profiles = common.load_emulator_profiles("emulators")
+
+    def _build(self, source: str, required: bool) -> tuple[str, set[str]]:
+        zip_path = self.gp.generate_pack(
+            "p", "platforms", self.db, "bios", "out", emulators_dir="emulators",
+            emu_profiles=self.profiles, source=source, required_only=required,
+            offline=True,
+        )
+        with zipfile.ZipFile(zip_path) as zf:
+            return zip_path, set(zf.namelist()) - {"README.txt"}
+
+    def _check(self, zip_path: str, source: str, required: bool) -> tuple:
+        return packverify.verify_pack_against_platform(
+            zip_path, "p", "platforms", self.db, emulators_dir="emulators",
+            emu_profiles=self.profiles, source=source, required_only=required,
+        )
+
+    def test_every_variant_passes_as_built(self):
+        expected = {
+            ("full", False): {"req.bin", "opt.bin", "core.bin", "extra.bin"},
+            ("full", True): {"req.bin", "core.bin"},
+            ("platform", False): {"req.bin", "opt.bin"},
+            ("platform", True): {"req.bin"},
+            ("truth", False): {"core.bin", "extra.bin"},
+            ("truth", True): {"core.bin"},
+        }
+        for (source, required), members in expected.items():
+            with self.subTest(source=source, required=required):
+                zip_path, held = self._build(source, required)
+                self.assertEqual(held, members)
+                ok, _c, _p, errors, *_rest = self._check(zip_path, source, required)
+                self.assertTrue(ok, errors)
+                self.assertEqual(
+                    self.gp._pack_variant(os.path.basename(zip_path)), (source, required)
+                )
+
+    def test_a_narrowed_pack_missing_a_required_file_fails(self):
+        for source, required, lost in (
+            ("full", True, "core.bin"), ("platform", True, "req.bin"),
+            ("truth", False, "extra.bin"), ("truth", True, "core.bin"),
+        ):
+            with self.subTest(source=source, required=required):
+                zip_path, held = self._build(source, required)
+                with zipfile.ZipFile(zip_path) as zf:
+                    kept = {n: zf.read(n) for n in held if n != lost}
+                with zipfile.ZipFile(zip_path, "w") as zf:
+                    for name, data in kept.items():
+                        zf.writestr(name, data)
+                ok, _c, _p, errors, *_rest = self._check(zip_path, source, required)
+                self.assertFalse(ok)
+                self.assertTrue(any(lost in e for e in errors), errors)
+
+
 if __name__ == "__main__":
     unittest.main()

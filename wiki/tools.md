@@ -126,6 +126,7 @@ python scripts/verify.py --platform batocera --system psx  # one system of a pla
 python scripts/verify.py --platform retroarch --target switch  # filter by hardware
 python scripts/verify.py --platform recalbox --region us   # regional priority list
 python scripts/verify.py --all --destinations tmp/paths.json  # also write the paths each pack holds
+python scripts/verify.py --all --offline             # a release asset the cache lacks counts missing, as in an offline build
 python scripts/verify.py --list-emulators          # list all emulators
 python scripts/verify.py --list-systems            # list all systems
 python scripts/verify.py --platform retroarch --list-targets  # list available targets

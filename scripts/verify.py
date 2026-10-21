@@ -106,6 +106,8 @@ from validation import (
     unread_on,
     outside_gap_scope,
     with_archive_members,
+    core_size_refusal,
+    same_slot_entries,
 )
 
 DEFAULT_DB = "database.json"
@@ -148,6 +150,11 @@ class Status:
     OK = "ok"
     UNTESTED = "untested"  # file present, hash not confirmed: a warning, never --strict
     MISSING = "missing"
+
+
+# A declaration whose file is a release asset the cache does not hold yet:
+# an online build fetches it, verify reads the database record instead.
+RELEASE_ASSET_PENDING = "release_asset_pending"
 
 
 class Severity:
@@ -694,6 +701,17 @@ def find_undeclared_files(
                         in_repo = _st != "not_found" and _lp is not None
                         if in_repo and _st == "hash_mismatch" and shipped_on_mismatch:
                             in_repo = False
+                    if in_repo and "size" in _parse_validation(f.get("validation")):
+                        # On any platform the core measures what it opens: a
+                        # copy it turns away by its own size check is not
+                        # held for it, the rule the builder's lookup applies
+                        # (packextras.ExtraResolver). The Apple IIGS' 128 KB
+                        # ROM is not Basilisk II's ROM.
+                        _lp, _st = resolve_local_file(f, db, dest_hint=dest)
+                        if core_size_refusal(
+                            f, _lp, same_slot_entries(profile.get("files"), fname, dest)
+                        ):
+                            in_repo = False
 
                 checks = _parse_validation(f.get("validation"))
                 entry = {
@@ -1066,7 +1084,7 @@ def _resolve_for_platform(
     disk and the large-file cache: verify never downloads. A frontend that
     never reads the bytes takes the filename-free core's own image.
     """
-    from packresolve import resolve_declaration
+    from packresolve import pending_release_asset, resolve_declaration, run_is_offline
 
     override = slot_overrides.get(
         sanitize_pack_path(file_entry.get("destination", file_entry.get("name", "")))
@@ -1075,6 +1093,12 @@ def _resolve_for_platform(
         file_entry, db, DEFAULT_BIOS_DIR, zip_contents, data_dir_registry,
         override, offline=True,
     )
+    if status in ("not_found", "hash_mismatch") and not run_is_offline():
+        # Not in the cache, and the release holds a copy that answers the
+        # declaration: an online build fetches and packs it (resolve_file).
+        asset = pending_release_asset(file_entry, db)
+        if asset:
+            return asset, RELEASE_ASSET_PENDING
     if status == "not_found" and not reads_file_contents(mode):
         found = agnostic_substitute(file_entry, sys_id, db, platform_profiles)
         if found:
@@ -1230,7 +1254,23 @@ def verify_platform(
                 file_entry.get("destination", file_entry.get("name", ""))
             )
             stored = _storage_verdict(file_entry, emulator_pack=False)
-            if stored is not None:
+            if resolve_status == RELEASE_ASSET_PENDING:
+                # Counted as an online build counts it, which fetches the
+                # asset. Under --offline the builder cannot, and neither
+                # does this report (_resolve_for_platform).
+                result = {
+                    "name": file_entry.get("name", ""),
+                    "required": file_entry.get("required", True),
+                    "status": Status.OK,
+                    "release_asset": local_path,
+                    "reason": "release asset, fetched when the pack is built",
+                }
+                packed_order.append((
+                    sys_id, f"{base_dest}/{destination}" if base_dest else destination, None,
+                ))
+                shipped_keys.add(_dest_key(file_entry, sys_id))
+                local_path = None
+            elif stored is not None:
                 result = stored
                 local_path = None
                 # The builder keeps the slot: instructions for a user_provided
@@ -1364,7 +1404,7 @@ def verify_platform(
         region_drops, report_for_builder,
         ExtraResolver(
             db, DEFAULT_BIOS_DIR, zip_contents, data_dir_registry, validation_index,
-            validation_owners,
+            validation_owners, profiles=profiles,
         ),
         placed_kind,
         system_filter,
@@ -1749,6 +1789,12 @@ def print_platform_result(
         if missing:
             parts.append(f"{missing} missing")
     print(f"{label}: {', '.join(parts)} [{mode}]")
+    fetched = sorted({d["name"] for d in result["details"] if d.get("release_asset")})
+    if fetched:
+        # Counted present: an online build downloads them. --offline counts
+        # them missing, as an offline build leaves them out.
+        shown = ", ".join(fetched[:10]) + (f" (+{len(fetched) - 10})" if len(fetched) > 10 else "")
+        print(f"  Release assets fetched when the pack is built ({len(fetched)}): {shown}")
     fallbacks = result.get("region_fallbacks") or []
     if fallbacks:
         from packreadme import _group_label
@@ -2445,6 +2491,7 @@ def _refuse_listing_narrowings(
         ("--strict", args.strict),
         ("--verbose", args.verbose),
         ("--destinations", args.destinations),
+        ("--offline", args.offline),
     ):
         if on:
             parser.error(f"{flag} is incompatible with {listing}")
@@ -2466,6 +2513,8 @@ def _refuse_mode_flags(args: argparse.Namespace, parser: argparse.ArgumentParser
          "--destinations describes the full pack and is incompatible with --system"),
         (args.destinations and not (args.platform or args.all),
          "--destinations requires --platform or --all"),
+        (args.offline and not (args.platform or args.all),
+         "--offline requires --platform or --all"),
         (args.destinations and getattr(args, "region", None),
          "--destinations describes the full pack and is incompatible with --region"),
     ):
@@ -2546,6 +2595,11 @@ def _main(held: contextlib.ExitStack) -> None:
     )
     parser.add_argument("--json", action="store_true", help="JSON output")
     parser.add_argument(
+        "--offline", action="store_true",
+        help="Report as an offline build packs: a release asset the cache "
+        "lacks is missing. Without it, it counts as fetched at build time",
+    )
+    parser.add_argument(
         "--destinations", metavar="FILE",
         help="With --platform or --all, also write the paths each pack holds "
         "according to this report to FILE (JSON), for comparison with the archive",
@@ -2561,6 +2615,10 @@ def _main(held: contextlib.ExitStack) -> None:
     work_from_repo_root(args, parser, ["db", "platforms_dir", "emulators_dir"])
     if args.platform:
         require_platform(args.platform, args.platforms_dir)
+    if args.offline:
+        import packresolve
+
+        packresolve.set_offline(True)
 
     requested_regions: list[str] = []
     if getattr(args, "region", None):
@@ -2718,7 +2776,9 @@ def _json_details(details: list[dict], verbose: bool) -> list[dict]:
     used to be accepted beside --json and dropped, the output byte for byte
     the same, so a script asking for the passing entries got nothing.
     """
-    return list(details) if verbose else [d for d in details if d["status"] != Status.OK]
+    return list(details) if verbose else [
+        d for d in details if d["status"] != Status.OK or d.get("release_asset")
+    ]
 
 
 def _exit_if_strict(strict: bool, results: list[dict]) -> None:

@@ -96,6 +96,7 @@ from validation import (
     deliverable,
     filter_files_by_mode,
     with_archive_members,
+    extra_alternatives,
 )
 
 yaml = require_yaml()
@@ -595,14 +596,7 @@ def _matches_an_alternative(fe: dict, local_path: str, profiles: dict) -> bool:
     of Raze's table, eduke32's demo and retail NWINTER.GRP). The extra
     carries the first, and the held copy matching a sibling is no mismatch.
     """
-    profile = profiles.get(fe.get("source_profile") or "", {})
-    name = fe.get("source_name") or fe.get("name")
-    path = fe.get("source_path") or name
-    siblings = [
-        entry for entry in profile.get("files") or []
-        if isinstance(entry, dict) and entry.get("name") == name
-        and (entry.get("path") or name) == path
-    ]
+    siblings = extra_alternatives(fe, profiles)
     if len(siblings) < 2:
         return False
     actual = compute_hashes(local_path, frozenset({"sha1", "md5", "crc32"}))
@@ -1050,7 +1044,7 @@ def generate_pack(
       core_count = 0
       extra_resolver = ExtraResolver(
           db, bios_dir, zip_contents, data_registry, validation_index,
-          validation_owners, offline,
+          validation_owners, offline, profiles=emu_profiles,
       )
       for fe in core_files:
           if required_only and fe.get("required") is False:
@@ -2615,16 +2609,15 @@ def _run_verify_packs(args: argparse.Namespace) -> None:
         # A group pack and a pack built for the platform alone can both be
         # present, and each one is a pack of this platform.
         for pack_name in found:
-            if _narrows_contents(pack_name):
-                # Only reached after an --all-variants build, whose stage 1
-                # re-hashed every member against the collection above. The
-                # platform's list describes the full pack, so a narrowed one
-                # is not compared to it.
+            variant = _pack_variant(pack_name)
+            if variant is None:
+                # One BIOS per slot: the slot choice is not replayed here.
                 print(
                     f"  {platform_name} [{pack_name}]: hashes checked during the build; "
-                    "narrowed by design, so not compared to the platform's full list"
+                    "one per slot by design, so not compared to the platform's full list"
                 )
                 continue
+            source, required_only = variant
             zip_path = os.path.join(args.output_dir, pack_name)
             result = verify_pack_against_platform(
                 zip_path,
@@ -2636,6 +2629,8 @@ def _run_verify_packs(args: argparse.Namespace) -> None:
                 regions=verify_regions,
                 data_registry=verify_data_registry,
                 target_cores=tc,
+                source=source,
+                required_only=required_only,
             )
             (ok, _checked, _present, errors, bl_checked, bl_present,
              core_checked, core_present, bl_excluded) = result
@@ -3749,6 +3744,7 @@ def _manifest_core_entries(
     validation_index: dict | None = None,
     owners: dict | None = None,
     data_registry: dict | None = None,
+    profiles: dict | None = None,
 ) -> int:
     """Add the files a platform's cores need but its list does not name.
 
@@ -3759,6 +3755,10 @@ def _manifest_core_entries(
     """
     total_size = 0
     extras_pfx = _detect_extras_prefix(config, base_dest)
+    resolver = ExtraResolver(
+        db, bios_dir, zip_contents, data_registry, validation_index or {},
+        owners, offline, profiles=profiles,
+    )
     for fe in core_files:
         if required_only and fe.get("required") is False:
             continue
@@ -3804,20 +3804,12 @@ def _manifest_core_entries(
         ):
             continue
 
-        dest_hint = fe.get("destination", "")
-        # Resolved with the data directories, as the builder resolves the
-        # same extra: without them blueMSX's MSX2P.rom named a different
-        # dump than the one its pack carried.
-        local_path, status = resolve_file(
-            fe,
-            db,
-            bios_dir,
-            zip_contents,
-            dest_hint=dest_hint,
-            data_dir_registry=data_registry,
-            offline=offline,
-        )
-        if status in ("not_found", "external", "user_provided") or not local_path:
+        # The builder's own lookup (ExtraResolver): the data directories, the
+        # copy the emulator accepts, and the size its code checks. Without
+        # the data directories blueMSX's MSX2P.rom named a different dump
+        # than the one its pack carried.
+        local_path, status, _disagreement = resolver.resolve(fe, dest)
+        if not local_path:
             source_emu = fe.get("source_profile") or fe.get("source_emulator", "")
             if not _claim_platform_omission(
                 omitted_by_destination.get(full_dest), source_emu
@@ -3831,10 +3823,6 @@ def _manifest_core_entries(
                     [source_emu] if source_emu else [],
                 )
             continue
-        # The copy the emulator accepts, as the pack ships it.
-        local_path, _disagreement = validated_choice(
-            fe, local_path, db, validation_index or {}, bios_dir, None, dest, owners,
-        )
 
         source_emu = fe.get("source_profile") or fe.get("source_emulator", "")
 
@@ -3873,7 +3861,7 @@ def _manifest_core_entries(
             # without the cores served here leaves the slot to it, missing,
             # and the installer narrowing to those cores has to say so too.
             entry.setdefault("absent_claims", []).append(
-                {k: v for k, v in displaced.items() if k != "dest"}
+                {k: v for k, v in displaced.items() if k not in ("dest", "held")}
             )
         total_size += file_size
         seen_destinations.add(full_dest)
@@ -3920,8 +3908,9 @@ def _manifest_selection(
     required_only: bool,
     regions: list[str] | None,
     undeclared: list[dict] | None = None,
-) -> tuple[set[str], SelectionIndex]:
-    """Destinations a region list removes, and the groups the installer replays.
+) -> tuple[set[str], SelectionIndex, set[str]]:
+    """Destinations a region list removes, the groups the installer replays,
+    and the destinations the builder holds.
 
     Grouped as the pack groups them, so a region the installer applies to
     the full manifest withdraws what `--region` withdraws from the pack.
@@ -3953,7 +3942,7 @@ def _manifest_selection(
     )
     return drops, SelectionIndex.build(
         region_groups, region_index, pack_systems, extras, required_only
-    )
+    ), held
 
 
 def _record_absent(
@@ -4115,6 +4104,9 @@ def generate_manifest(
         reason: str,
         cores: list[str] | None,
     ) -> None:
+        bare = sanitize_pack_path(
+            file_entry.get("destination", file_entry.get("name", ""))
+        )
         omitted_by_destination[full_destination] = {
             "dest": manifest_destination(full_destination),
             "name": str(file_entry.get("name") or ""),
@@ -4122,14 +4114,14 @@ def generate_manifest(
             "required": bool(file_entry.get("required", True)),
             "reason": reason,
             "cores": cores,
-            # The builder counts an unavailable regional file in its groups:
-            # the installer must too, or it keeps a fallback the pack drops.
-            **selection.fields(
-                sanitize_pack_path(
-                    file_entry.get("destination", file_entry.get("name", ""))
-                ),
-                str(file_entry.get("name") or ""),
-            ),
+            # An omission keeps its region groups, as the builder groups it:
+            # a requested file the collection lacks answers the request
+            # without displacing a held fallback (resolve_region_drops,
+            # held). One the builder holds and the installer cannot fetch
+            # does displace it in the pack, so it says so, and the installer
+            # drops the same fallback.
+            **selection.fields(bare, str(file_entry.get("name") or "")),
+            **({"held": True} if bare in builder_held else {}),
         }
 
     # Read by the region grouping and by phase 2 with the same arguments.
@@ -4141,7 +4133,7 @@ def generate_manifest(
         if source != "platform"
         else None
     )
-    region_drops, selection = _manifest_selection(
+    region_drops, selection, builder_held = _manifest_selection(
         config, pack_systems, emulators_dir, db, base_dest, emu_profiles,
         target_cores, source, required_only, regions, undeclared=undeclared,
     )
@@ -4353,6 +4345,7 @@ def generate_manifest(
         seen_destinations, seen_lower, seen_parents, manifest_files,
         omitted_by_destination, record_omission, pack_only_sizes, selection,
         required_only, manifest_validation, manifest_owners, data_registry,
+        emu_profiles,
     )
     for key, (entry, full_dest, dest) in platform_entries.items():
         declared = declared_by.get(full_dest, set())
@@ -4713,6 +4706,30 @@ def _narrows_contents(pack_name: str) -> bool:
     a hardware target is passed the same way.
     """
     return any(f"{tag}_" in pack_name for tag in _CONTENT_NARROWING_TAGS)
+
+
+def _pack_variant(pack_name: str) -> tuple[str, bool] | None:
+    """The (source, required_only) a pack was built as, read from its name.
+
+    None for a one-per-slot pack, whose slot choice the check does not
+    replay. The tags come from the name builder, as for _narrows_contents.
+    """
+    def tagged(**dimension: object) -> bool:
+        tags = [
+            tag for tag, _label in _narrowings(
+                str(dimension.get("source", "full")), None, None,
+                bool(dimension.get("one_per_slot", False)),
+                bool(dimension.get("required_only", False)),
+            )
+        ]
+        return all(f"{tag}_" in pack_name for tag in tags)
+
+    if tagged(one_per_slot=True):
+        return None
+    source = next(
+        (s for s in ("platform", "truth") if tagged(source=s)), "full"
+    )
+    return source, tagged(required_only=True)
 
 
 def _pack_archives(output_dir: str) -> list[str]:
