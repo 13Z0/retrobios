@@ -10,7 +10,7 @@ BIOS and firmware files for Batocera, BizHawk, EmuDeck, Lakka, MiSTer FPGA, ROCK
 
 A pack holds the files its emulators read, as their source code names them, and leaves out what the emulators install themselves.
 
-## Quick Install
+## Quick install
 
 Copy one command into your terminal:
 
@@ -34,11 +34,12 @@ The script auto-detects your platform, downloads only missing files, and verifie
 ## Download BIOS packs
 
 One pack per platform, and it holds everything the platform runs: its own BIOS list plus every file its emulator cores load. Pick your platform, download the ZIP, extract to the BIOS path. The installer above does the same file by file. At a terminal it asks whether to install everything or to choose systems, cores and regions, and `--system`, `--core`, `--region` and `--target` make the same choice without questions. For a bare minimum, build your own pack below.
-Files is how many the pack holds once extracted, the figure a file manager shows for the folder. It differs from one platform to the next because a pack carries only what that platform's emulators load. The size is what the files occupy once extracted, and the ZIP itself downloads smaller.
 
 A pack over 2 GB comes in several parts (`Pack.part1of2.zip`, `Pack.part2of2.zip`), and every part is needed. Each part is an ordinary ZIP: extract them all into the same folder.
 
 Every release ships `SHA256SUMS.txt` and a detached signature of it, checkable against `allowed_signers` in this repository: [verifying a release](https://abdess.github.io/retrobios/wiki/release-process/#verifying-a-release).
+
+The Files column counts what a pack holds once extracted, the figure a file manager shows for the folder. It differs from one platform to the next because a pack carries only what that platform's emulators load. The size is what the files occupy once extracted, and the ZIP itself downloads smaller.
 
 | Platform | Files | Extracted size | Extract to | Download |
 |----------|------:|---------------:|-----------|----------|
@@ -69,14 +70,14 @@ Each file is checked the way your platform checks it. Most compare a checksum, t
 - **936 files** the platforms' emulators load are still to be found, and 136 more cannot be sourced at all (per-user keys, user-filled slots, dumps nobody has made). Both are named in the [gap analysis](https://abdess.github.io/retrobios/gaps/)
 - **12 platforms** supported with platform-specific verification
 - **606 emulators** profiled from source (RetroArch cores + standalone)
-- **534 systems** handled by those emulators (NES, SNES, PlayStation, Saturn, Dreamcast, ...)
-- **19,529 files in the collection**, each with its SHA1, MD5, SHA256, CRC32 and Adler-32 fingerprints: 5,746 system files, 2,851 arcade ROM sets, 10,932 game and engine data files. That is every platform and emulator together, so no pack holds them all: each carries what its own emulators load, counted in the download table
-- **555 of 5,746 system files** matched to dump-preservation catalogs (No-Intro, Redump, TOSEC). Arcade sets and engine data fall outside what those catalogs index
+- **533 systems** handled by those emulators (NES, SNES, PlayStation, Saturn, Dreamcast, ...)
+- **19,526 files in the collection**, each with its SHA1, MD5, SHA256, CRC32 and Adler-32 fingerprints: 5,743 system files, 2,851 arcade ROM sets, 10,932 game and engine data files. That is every platform and emulator together, so no pack holds them all: each carries what its own emulators load, counted in the download table
+- **555 of 5,743 system files** matched to dump-preservation catalogs (No-Intro, Redump, TOSEC). Arcade sets and engine data fall outside what those catalogs index
 - **16011 MB** total collection size
 
 ## Supported systems
 
-NES, SNES, Nintendo 64, GameCube, Wii, Game Boy, Game Boy Advance, Nintendo DS, Nintendo 3DS, Switch, PlayStation, PlayStation 2, PlayStation 3, PSP, PS Vita, Mega Drive, Saturn, Dreamcast, Game Gear, Master System, Neo Geo, Atari 2600, Atari 7800, Atari Lynx, Atari ST, MSX, PC Engine, TurboGrafx-16, ColecoVision, Intellivision, Commodore 64, Amiga, ZX Spectrum, Arcade (MAME), and 500+ more.
+NES, SNES, Nintendo 64, GameCube, Wii, Game Boy, Game Boy Advance, Nintendo DS, Nintendo 3DS, Switch, PlayStation, PlayStation 2, PlayStation 3, PSP, PS Vita, Mega Drive, Saturn, Dreamcast, Game Gear, Master System, Neo Geo, Atari 2600, Atari 7800, Atari Lynx, Atari ST, MSX, PC Engine, TurboGrafx-16, ColecoVision, Intellivision, Commodore 64, Amiga, ZX Spectrum, Arcade (MAME), and 499+ more.
 
 Full list with per-file details: **[https://abdess.github.io/retrobios/](https://abdess.github.io/retrobios/)**
 
@@ -86,14 +87,14 @@ Full list with per-file details: **[https://abdess.github.io/retrobios/](https:/
 |----------|-----------------:|-------------------------:|------------|
 | Batocera | 353/353 | 13,921/15,009 | MD5 hash |
 | BizHawk | 118/118 | - | SHA1 hash |
-| EmuDeck | 168/168 | 8,038/8,112 | MD5 hash |
+| EmuDeck | 168/168 | 8,037/8,111 | MD5 hash |
 | Lakka | 532/532 | 7,473/7,531 | file presence |
 | MiSTer FPGA | 81/81 | - | MD5 hash |
-| ROCKNIX | 38/38 | 6,964/8,233 | MD5 hash |
+| ROCKNIX | 38/38 | 6,963/8,232 | MD5 hash |
 | Recalbox | 351/351 | 2,748/2,911 | MD5 hash |
-| RetroArch | 526/526 | 7,502/7,543 | file presence |
-| RetroBat | 348/348 | 4,698/9,165 | MD5 hash |
-| RetroDECK | 2,007/2,008 | 6,241/6,491 | MD5 hash |
+| RetroArch | 526/526 | 7,481/7,522 | file presence |
+| RetroBat | 348/348 | 4,732/9,196 | MD5 hash |
+| RetroDECK | 2,007/2,008 | 6,240/6,490 | MD5 hash |
 | RetroPie * | 532/532 | 7,748/12,264 | file presence |
 | RomM | 383/383 | 83/843 | MD5 hash |
 
@@ -130,7 +131,7 @@ python scripts/verify.py --emulator flycast
 python scripts/verify.py --platform retroarch --verbose  # emulator ground truth
 ```
 
-Requires Python 3.12 and `pyyaml`. The one-line installer alone runs on Python 3.8.
+Requires Python 3.9 or newer and `pyyaml`. The one-line installer alone runs on Python 3.8.
 
 ## Documentation site
 
@@ -179,4 +180,4 @@ The scripts and tooling are released under the [MIT License](LICENSE).
 The BIOS and firmware files are not covered by that license: they are third-party system software, preserved and provided for personal backup, archival, and interoperability with emulation software. [NOTICE](NOTICE) sets out their status and how to ask for a file to be removed.
 The reasoning, and where it is weakest, is in the [FAQ](https://abdess.github.io/retrobios/wiki/faq/#is-this-legal).
 
-*Auto-generated on 2026-10-21T04:16:36Z*
+*Auto-generated on 2026-10-21T05:58:35Z*

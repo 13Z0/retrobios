@@ -5,7 +5,7 @@
   "platform": "retropie",
   "display_name": "RetroPie",
   "version": "1.0",
-  "generated": "2026-10-21T04:12:31Z",
+  "generated": "2026-10-21T04:49:38Z",
   "base_destination": "BIOS",
   "detect": [
     {
@@ -16,9 +16,9 @@
   ],
   "standalone_copies": [],
   "total_files": 8494,
-  "total_size": 8906218653,
+  "total_size": 8905956509,
   "pack_files": 11050,
-  "pack_size": 8939585723,
+  "pack_size": 8939323579,
   "total_omitted": 214,
   "omitted_files": [
     {
@@ -12596,6 +12596,7 @@
         "sony-playstation"
       ],
       "regions": [
+        "latin-america",
         "north-america"
       ],
       "region_groups": [
@@ -12954,6 +12955,7 @@
         "sony-playstation"
       ],
       "regions": [
+        "latin-america",
         "north-america"
       ],
       "region_system_groups": [
@@ -16286,6 +16288,7 @@
         "sony-playstation"
       ],
       "regions": [
+        "latin-america",
         "north-america"
       ],
       "region_groups": [
@@ -16306,6 +16309,7 @@
         "sony-playstation"
       ],
       "regions": [
+        "latin-america",
         "north-america"
       ],
       "region_groups": [
@@ -16365,6 +16369,7 @@
         "sony-playstation"
       ],
       "regions": [
+        "latin-america",
         "north-america"
       ],
       "region_groups": [
@@ -16385,6 +16390,7 @@
         "sony-playstation"
       ],
       "regions": [
+        "latin-america",
         "north-america"
       ],
       "region_groups": [
@@ -16608,6 +16614,7 @@
         "sony-playstation"
       ],
       "regions": [
+        "latin-america",
         "north-america"
       ],
       "region_groups": [
@@ -16628,6 +16635,7 @@
         "sony-playstation"
       ],
       "regions": [
+        "latin-america",
         "north-america"
       ],
       "region_groups": [
@@ -16648,6 +16656,7 @@
         "sony-playstation"
       ],
       "regions": [
+        "latin-america",
         "north-america"
       ],
       "region_groups": [
@@ -16771,6 +16780,7 @@
         "sony-playstation"
       ],
       "regions": [
+        "latin-america",
         "north-america"
       ],
       "region_groups": [
@@ -16791,6 +16801,7 @@
         "sony-playstation"
       ],
       "regions": [
+        "latin-america",
         "north-america"
       ],
       "region_groups": [
@@ -16893,6 +16904,7 @@
         "sony-playstation"
       ],
       "regions": [
+        "latin-america",
         "north-america"
       ],
       "region_groups": [
@@ -16933,6 +16945,7 @@
         "sony-playstation"
       ],
       "regions": [
+        "latin-america",
         "north-america"
       ],
       "region_groups": [
@@ -16974,6 +16987,7 @@
         "sony-playstation"
       ],
       "regions": [
+        "latin-america",
         "north-america"
       ],
       "region_groups": [
@@ -17035,6 +17049,7 @@
         "sony-playstation"
       ],
       "regions": [
+        "latin-america",
         "north-america"
       ],
       "region_groups": [
@@ -17219,6 +17234,7 @@
         "sony-playstation"
       ],
       "regions": [
+        "latin-america",
         "north-america"
       ],
       "region_groups": [
@@ -17239,6 +17255,7 @@
         "sony-playstation"
       ],
       "regions": [
+        "latin-america",
         "north-america"
       ],
       "region_groups": [
@@ -17319,6 +17336,7 @@
         "sony-playstation"
       ],
       "regions": [
+        "latin-america",
         "north-america"
       ],
       "region_groups": [
@@ -17339,6 +17357,7 @@
         "sony-playstation"
       ],
       "regions": [
+        "latin-america",
         "north-america"
       ],
       "region_groups": [
@@ -17504,6 +17523,7 @@
         "sony-playstation"
       ],
       "regions": [
+        "latin-america",
         "north-america"
       ],
       "region_groups": [
@@ -17544,6 +17564,7 @@
         "sony-playstation"
       ],
       "regions": [
+        "latin-america",
         "north-america"
       ],
       "region_groups": [
@@ -17707,6 +17728,7 @@
         "sony-playstation"
       ],
       "regions": [
+        "latin-america",
         "north-america"
       ],
       "region_groups": [
@@ -17727,6 +17749,7 @@
         "sony-playstation"
       ],
       "regions": [
+        "latin-america",
         "north-america"
       ],
       "region_groups": [
@@ -17808,6 +17831,7 @@
         "sony-playstation"
       ],
       "regions": [
+        "latin-america",
         "north-america"
       ],
       "region_groups": [
@@ -17909,6 +17933,7 @@
         "sony-playstation"
       ],
       "regions": [
+        "latin-america",
         "north-america"
       ],
       "region_groups": [
@@ -17929,6 +17954,7 @@
         "sony-playstation"
       ],
       "regions": [
+        "latin-america",
         "north-america"
       ],
       "region_groups": [
@@ -18010,6 +18036,7 @@
         "sony-playstation"
       ],
       "regions": [
+        "latin-america",
         "north-america"
       ],
       "region_groups": [
@@ -79659,24 +79686,24 @@
     },
     {
       "dest": "kick13.rom",
-      "sha1": "90933936cce43ca9bc6bf375662c076b27e3c458",
-      "sha256": "1d68ba18412501d2a4b307a0a632b94a50b839c2c7c5ff2df6de2c38b99a921f",
-      "size": 524288,
-      "repo_path": "bios/Commodore/Amiga/kick13.rom",
+      "sha1": "891e9a547772fe0c6c19b610baf8bc4ea7fcb785",
+      "sha256": "ee05862d8102a08436ac4056da7d549db31625c7d47b24dfb7b3c9a5c113ca53",
+      "size": 262144,
+      "repo_path": "bios/Commodore/Amiga/Kickstart-v1.3-rev34.5-1987-Commodore-A500-A1000-A2000-CDTV.rom",
       "cores": [
-        "amiberry"
+        "fs-uae"
       ],
       "systems": [
         "commodore-amiga"
       ],
       "alternatives": [
         {
-          "sha1": "891e9a547772fe0c6c19b610baf8bc4ea7fcb785",
-          "sha256": "ee05862d8102a08436ac4056da7d549db31625c7d47b24dfb7b3c9a5c113ca53",
-          "size": 262144,
-          "repo_path": "bios/Commodore/Amiga/Kickstart-v1.3-rev34.5-1987-Commodore-A500-A1000-A2000-CDTV.rom",
+          "sha1": "90933936cce43ca9bc6bf375662c076b27e3c458",
+          "sha256": "1d68ba18412501d2a4b307a0a632b94a50b839c2c7c5ff2df6de2c38b99a921f",
+          "size": 524288,
+          "repo_path": "bios/Commodore/Amiga/kick13.rom",
           "cores": [
-            "fs-uae"
+            "amiberry"
           ]
         }
       ]
@@ -83927,13 +83954,8 @@
       "size": 57375,
       "repo_path": "bios/Arcade/MAME/atarisy1.zip",
       "cores": [
+        "fbneo",
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "epoch-scv",
-        "philips-cdi"
       ],
       "alternatives": [
         {
@@ -83964,15 +83986,6 @@
           "repo_path": "bios/Arcade/Arcade/atarisy1.zip",
           "cores": [
             "ume2015"
-          ]
-        },
-        {
-          "sha1": "0c9bc4b948bd1816ebe13e2acb97931cbcc6ea15",
-          "sha256": "ae8c41b3d0107c6f0634730267af569a51e49f5df1bdb2c1e6c591bb6251b7d3",
-          "size": 57375,
-          "repo_path": "bios/Arcade/MAME/atarisy1.zip",
-          "cores": [
-            "fbneo"
           ]
         }
       ]
@@ -84363,9 +84376,9 @@
       "size": 6800,
       "repo_path": "bios/Bally/Astrocade/astrocde.zip",
       "cores": [
+        "fbneo",
         "mame",
-        "mamemess",
-        "fbneo"
+        "mamemess"
       ]
     },
     {
@@ -105870,8 +105883,8 @@
       "size": 262144,
       "repo_path": "bios/Nintendo/NES/StudyBox.bin",
       "cores": [
-        "mesen",
-        "mesence"
+        "mesence",
+        "mesen"
       ],
       "systems": [
         "nintendo-nes"

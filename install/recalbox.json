@@ -5,7 +5,7 @@
   "platform": "recalbox",
   "display_name": "Recalbox",
   "version": "1.0",
-  "generated": "2026-10-21T04:12:31Z",
+  "generated": "2026-10-21T04:49:38Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -5730,6 +5730,7 @@
         "sony-playstation"
       ],
       "regions": [
+        "latin-america",
         "north-america"
       ],
       "region_groups": [
@@ -5799,6 +5800,7 @@
         "sony-playstation"
       ],
       "regions": [
+        "latin-america",
         "north-america"
       ],
       "region_groups": [
@@ -5830,6 +5832,7 @@
         "sony-playstation"
       ],
       "regions": [
+        "latin-america",
         "north-america"
       ],
       "region_groups": [
@@ -5862,6 +5865,7 @@
         "sony-playstation"
       ],
       "regions": [
+        "latin-america",
         "north-america"
       ],
       "region_groups": [
@@ -6629,8 +6633,8 @@
       "repo_path": "bios/Sony/PlayStation/psxonpsp660.bin",
       "cores": [
         "beetle_psx",
-        "pcsx_rearmed",
-        "swanstation"
+        "swanstation",
+        "pcsx_rearmed"
       ],
       "systems": [
         "sony-playstation"
@@ -10955,6 +10959,7 @@
         "sony-playstation"
       ],
       "regions": [
+        "latin-america",
         "north-america"
       ],
       "region_groups": [
@@ -10995,6 +11000,7 @@
         "sony-playstation"
       ],
       "regions": [
+        "latin-america",
         "north-america"
       ],
       "region_groups": [
@@ -11116,6 +11122,7 @@
         "sony-playstation"
       ],
       "regions": [
+        "latin-america",
         "north-america"
       ],
       "region_groups": [
@@ -11136,6 +11143,7 @@
         "sony-playstation"
       ],
       "regions": [
+        "latin-america",
         "north-america"
       ],
       "region_groups": [
@@ -11359,6 +11367,7 @@
         "sony-playstation"
       ],
       "regions": [
+        "latin-america",
         "north-america"
       ],
       "region_groups": [
@@ -11379,6 +11388,7 @@
         "sony-playstation"
       ],
       "regions": [
+        "latin-america",
         "north-america"
       ],
       "region_groups": [
@@ -11399,6 +11409,7 @@
         "sony-playstation"
       ],
       "regions": [
+        "latin-america",
         "north-america"
       ],
       "region_groups": [
@@ -11522,6 +11533,7 @@
         "sony-playstation"
       ],
       "regions": [
+        "latin-america",
         "north-america"
       ],
       "region_groups": [
@@ -11542,6 +11554,7 @@
         "sony-playstation"
       ],
       "regions": [
+        "latin-america",
         "north-america"
       ],
       "region_groups": [
@@ -11644,6 +11657,7 @@
         "sony-playstation"
       ],
       "regions": [
+        "latin-america",
         "north-america"
       ],
       "region_groups": [
@@ -11684,6 +11698,7 @@
         "sony-playstation"
       ],
       "regions": [
+        "latin-america",
         "north-america"
       ],
       "region_groups": [
@@ -11725,6 +11740,7 @@
         "sony-playstation"
       ],
       "regions": [
+        "latin-america",
         "north-america"
       ],
       "region_groups": [
@@ -11786,6 +11802,7 @@
         "sony-playstation"
       ],
       "regions": [
+        "latin-america",
         "north-america"
       ],
       "region_groups": [
@@ -11970,6 +11987,7 @@
         "sony-playstation"
       ],
       "regions": [
+        "latin-america",
         "north-america"
       ],
       "region_groups": [
@@ -11990,6 +12008,7 @@
         "sony-playstation"
       ],
       "regions": [
+        "latin-america",
         "north-america"
       ],
       "region_groups": [
@@ -12070,6 +12089,7 @@
         "sony-playstation"
       ],
       "regions": [
+        "latin-america",
         "north-america"
       ],
       "region_groups": [
@@ -12090,6 +12110,7 @@
         "sony-playstation"
       ],
       "regions": [
+        "latin-america",
         "north-america"
       ],
       "region_groups": [
@@ -12255,6 +12276,7 @@
         "sony-playstation"
       ],
       "regions": [
+        "latin-america",
         "north-america"
       ],
       "region_groups": [
@@ -12295,6 +12317,7 @@
         "sony-playstation"
       ],
       "regions": [
+        "latin-america",
         "north-america"
       ],
       "region_groups": [
@@ -12458,6 +12481,7 @@
         "sony-playstation"
       ],
       "regions": [
+        "latin-america",
         "north-america"
       ],
       "region_groups": [
@@ -12478,6 +12502,7 @@
         "sony-playstation"
       ],
       "regions": [
+        "latin-america",
         "north-america"
       ],
       "region_groups": [
@@ -12559,6 +12584,7 @@
         "sony-playstation"
       ],
       "regions": [
+        "latin-america",
         "north-america"
       ],
       "region_groups": [
@@ -12660,6 +12686,7 @@
         "sony-playstation"
       ],
       "regions": [
+        "latin-america",
         "north-america"
       ],
       "region_groups": [
@@ -12680,6 +12707,7 @@
         "sony-playstation"
       ],
       "regions": [
+        "latin-america",
         "north-america"
       ],
       "region_groups": [
@@ -12761,6 +12789,7 @@
         "sony-playstation"
       ],
       "regions": [
+        "latin-america",
         "north-america"
       ],
       "region_groups": [
@@ -30713,6 +30742,7 @@
       "size": 2240738,
       "repo_path": "bios/Arcade/Arcade/pgm.zip",
       "cores": [
+        "fbneo",
         "advancemame",
         "fba2x",
         "mame0258",
@@ -30721,8 +30751,7 @@
         "mame2003_plus",
         "mame2010",
         "mame2015",
-        "mame2016",
-        "fbneo"
+        "mame2016"
       ]
     },
     {
@@ -30810,6 +30839,7 @@
       "size": 22379,
       "repo_path": "bios/Arcade/Arcade/decocass.zip",
       "cores": [
+        "fbneo",
         "advancemame",
         "mame0258",
         "mame0278",
@@ -30818,8 +30848,7 @@
         "mame2003_plus",
         "mame2010",
         "mame2015",
-        "mame2016",
-        "fbneo"
+        "mame2016"
       ]
     },
     {
@@ -30889,6 +30918,7 @@
       "size": 924762,
       "repo_path": "bios/Arcade/Arcade/skns.zip",
       "cores": [
+        "fbneo",
         "advancemame",
         "mame0258",
         "mame0278",
@@ -30912,8 +30942,7 @@
           "cores": [
             "mame2010",
             "mame2015",
-            "mame2016",
-            "fbneo"
+            "mame2016"
           ]
         }
       ]
@@ -33712,16 +33741,9 @@
       "size": 57375,
       "repo_path": "bios/Arcade/MAME/atarisy1.zip",
       "cores": [
+        "fbneo",
         "mame0258",
         "mame0278"
-      ],
-      "systems": [
-        "3do",
-        "apple2gs",
-        "cdi",
-        "naomi2",
-        "stv",
-        "ti994a"
       ],
       "alternatives": [
         {
@@ -33734,15 +33756,6 @@
             "mame2015",
             "mame2016"
           ]
-        },
-        {
-          "sha1": "0c9bc4b948bd1816ebe13e2acb97931cbcc6ea15",
-          "sha256": "ae8c41b3d0107c6f0634730267af569a51e49f5df1bdb2c1e6c591bb6251b7d3",
-          "size": 57375,
-          "repo_path": "bios/Arcade/MAME/atarisy1.zip",
-          "cores": [
-            "fbneo"
-          ]
         }
       ]
     },
@@ -33753,19 +33766,11 @@
       "size": 7950,
       "repo_path": "bios/Arcade/Arcade/bubsys.zip",
       "cores": [
+        "fbneo",
         "mame0258",
         "mame0278",
         "mame2015",
-        "mame2016",
-        "fbneo"
-      ],
-      "systems": [
-        "3do",
-        "apple2gs",
-        "cdi",
-        "naomi2",
-        "stv",
-        "ti994a"
+        "mame2016"
       ]
     },
     {
@@ -34188,19 +34193,11 @@
       "size": 10207,
       "repo_path": "bios/Arcade/Arcade/isgsm.zip",
       "cores": [
+        "fbneo",
         "mame0258",
         "mame0278",
         "mame2015",
-        "mame2016",
-        "fbneo"
-      ],
-      "systems": [
-        "3do",
-        "apple2gs",
-        "cdi",
-        "naomi2",
-        "stv",
-        "ti994a"
+        "mame2016"
       ]
     },
     {

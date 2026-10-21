@@ -5,13 +5,19 @@
   "platform": "romm",
   "display_name": "RomM",
   "version": "1.0",
-  "generated": "2026-10-21T04:12:31Z",
+  "generated": "2026-10-21T04:49:38Z",
   "base_destination": "bios",
   "detect": [
     {
       "os": "linux",
       "method": "path_exists",
       "path": "/romm/library/bios"
+    },
+    {
+      "os": "linux",
+      "method": "path_exists",
+      "path": "/romm/config/config.yml",
+      "bios_path": "/romm/library/bios"
     }
   ],
   "standalone_copies": [],
@@ -11694,6 +11700,7 @@
         "sony-playstation"
       ],
       "regions": [
+        "latin-america",
         "north-america"
       ],
       "region_system_groups": [
@@ -11733,6 +11740,7 @@
         "sony-playstation"
       ],
       "regions": [
+        "latin-america",
         "north-america"
       ],
       "region_system_groups": [
@@ -11833,6 +11841,7 @@
         "sony-playstation"
       ],
       "regions": [
+        "latin-america",
         "north-america"
       ],
       "region_system_groups": [
@@ -11886,6 +11895,7 @@
         "sony-playstation"
       ],
       "regions": [
+        "latin-america",
         "north-america"
       ],
       "region_system_groups": [
@@ -11914,6 +11924,7 @@
         "sony-playstation"
       ],
       "regions": [
+        "latin-america",
         "north-america"
       ],
       "region_system_groups": [

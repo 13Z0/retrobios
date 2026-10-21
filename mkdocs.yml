@@ -485,7 +485,7 @@ nav:
     - yabause: emulators/yabause.md
     - yaps2: emulators/yaps2.md
     - ymir: emulators/ymir.md
-  - Pure libretro (53):
+  - Pure libretro (52):
     - 00_example: emulators/00_example.md
     - '2048': emulators/2048.md
     - 3DEngine: emulators/3dengine.md
@@ -512,7 +512,6 @@ nav:
     - Mu: emulators/mu.md
     - Native32Emu: emulators/native32emu.md
     - NeoCD: emulators/neocd.md
-    - NicaiEmu: emulators/nicaiemu.md
     - Pascal Pong: emulators/pascal_pong.md
     - PlaydiaEmu: emulators/playdiaemu.md
     - PocketCDG: emulators/pocketcdg.md
@@ -682,7 +681,7 @@ nav:
     - Triforce: emulators/triforce.md
     - xm6pro68k: emulators/xm6pro68k.md
     - xm6typeg: emulators/xm6typeg.md
-  - Frozen snapshots (49):
+  - Frozen snapshots (50):
     - AdvanceMAME 0.94: emulators/advmame-0.94.md
     - AdvanceMAME 1.4: emulators/advmame-1.4.md
     - bnes: emulators/bnes.md
@@ -717,6 +716,7 @@ nav:
     - mednafen_gba: emulators/mednafen_gba.md
     - mednafen_snes: emulators/mednafen_snes.md
     - MESS 2015: emulators/mess2015.md
+    - NicaiEmu: emulators/nicaiemu.md
     - PCSX2 Legacy: emulators/pcsx2-legacy.md
     - PiSNES: emulators/pisnes.md
     - PPSSPP 1.5.4: emulators/ppsspp-1.5.4.md
