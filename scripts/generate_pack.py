@@ -51,6 +51,9 @@ from common import (
     group_identical_platforms,
     list_emulator_profiles,
     list_platform_system_ids,
+    platform_system_names,
+    resolve_system_arg,
+    select_systems,
     canonical_target_name,
     platform_files_target,
     list_registered_platforms,
@@ -72,7 +75,7 @@ from common import (
 import packresolve
 from refresh_data_dirs import cache_lock, hold_data_dirs
 import region as region_mod
-from manifestselect import SelectionIndex, native_system_names
+from manifestselect import SelectionIndex
 import slot as slot_mod
 import slots
 import split_pack
@@ -718,14 +721,7 @@ def generate_pack(
     )
 
     if system_filter:
-        from common import _norm_system_id
-
-        norm_filter = {_norm_system_id(s) for s in system_filter}
-        filtered = {
-            sid: sys_data
-            for sid, sys_data in pack_systems.items()
-            if sid in system_filter or _norm_system_id(sid) in norm_filter
-        }
+        filtered = select_systems(pack_systems, system_filter)
         if not filtered:
             hint = suggest_names(
                 system_filter,
@@ -1876,24 +1872,6 @@ def _group_systems_by_manufacturer(
     return groups
 
 
-def _extras_for_systems(extras: list[dict], system_ids: list[str]) -> list[dict]:
-    """Core extras owned by one of the given systems.
-
-    Extras carry their profile/system identity directly. Display labels are
-    presentation only and must never drive routing.
-    """
-    from common import _norm_system_id
-
-    wanted = set(system_ids) | {_norm_system_id(s) for s in system_ids}
-    return [
-        fe for fe in extras
-        if (
-            set(_extra_system_ids(fe))
-            | {_norm_system_id(s) for s in _extra_system_ids(fe)}
-        ) & wanted
-    ]
-
-
 def generate_split_packs(
     platform_name: str,
     platforms_dir: str,
@@ -2309,37 +2287,36 @@ def generate_target_manifests(targets_dir: str, output_dir: str) -> None:
     print(f"Generated {count} target manifest(s) in {output_dir}")
 
 
-def _refuse_unknown_systems(
-    system_filter: list[str],
-    platforms: list[str],
-    platforms_dir: str,
-    parser: argparse.ArgumentParser,
-) -> None:
-    """Refuse a --system no selected platform declares, before any work.
+def _resolve_systems(args: argparse.Namespace, parser: argparse.ArgumentParser) -> None:
+    """Turn --system into the platform's system ids, before any work.
 
-    The name is known once the config is loaded. Checked inside the build, a
-    typo cost the lock and a refresh of every data directory first, then
-    ended on a WARNING and exit 1.
+    With --platform the platform's own names count too (Batocera's psx), the
+    mapping the install manifest carries. With --all each name must be one
+    of our ids some platform declares. Checked inside the build, a typo cost
+    the lock and a refresh of every data directory first, then ended on a
+    WARNING and exit 1, and a list with one known name ignored the others.
     """
-    from common import _norm_system_id
-
-    wanted = {_norm_system_id(s) for s in system_filter}
-    declared: set[str] = set()
-    for name in platforms:
-        systems = load_platform_config(name, platforms_dir).get("systems", {})
-        if any(sid in system_filter or _norm_system_id(sid) in wanted for sid in systems):
-            return
-        declared.update(systems)
-    where = f"--platform {platforms[0]}" if len(platforms) == 1 else "--all"
-    hint = suggest_names(
-        system_filter,
-        sorted(declared),
-        f"--platform {platforms[0]} --list-systems" if len(platforms) == 1
-        else "--platform <name> --list-systems",
-    )
-    parser.error(
-        f"--system {','.join(system_filter)} matches no system of {where}. {hint}"
-    )
+    if not args.system or not (args.platform or args.all):
+        return
+    if args.platform:
+        config = load_platform_config(args.platform, args.platforms_dir)
+        systems = list(config.get("systems", {}))
+        listing = f"--platform {args.platform} --list-systems"
+    else:
+        config = None
+        systems = sorted({
+            sid
+            for name in list_registered_platforms(
+                args.platforms_dir,
+                include_archived=args.include_archived or args.manifest,
+            )
+            for sid in load_platform_config(name, args.platforms_dir).get("systems", {})
+        })
+        listing = "--platform <name> --list-systems"
+    try:
+        args.system_ids = resolve_system_arg(args.system, systems, config, listing)
+    except ValueError as exc:
+        parser.error(f"--system {args.system}: {exc}")
 
 
 def _refuse_for_verify_packs(args: argparse.Namespace, parser: argparse.ArgumentParser) -> None:
@@ -3241,6 +3218,7 @@ def _main(held: contextlib.ExitStack) -> None:
         return
 
     _validate_args(args, parser)
+    _resolve_systems(args, parser)
     # Unset until every refusal has run, so a typed default value is seen.
     args.source = args.source or "full"
     args.group_by = args.group_by or "system"
@@ -3338,11 +3316,7 @@ def _main(held: contextlib.ExitStack) -> None:
             sys.exit(1)
         return
 
-    system_filter = (
-        [s.strip() for s in args.system.split(",") if s.strip()]
-        if args.system
-        else None
-    )
+    system_filter = getattr(args, "system_ids", None)
 
     # Platform mode
     if args.all:
@@ -3359,9 +3333,6 @@ def _main(held: contextlib.ExitStack) -> None:
     else:
         parser.error("Specify --platform or --all")
         return
-
-    if system_filter:
-        _refuse_unknown_systems(system_filter, platforms, args.platforms_dir, parser)
 
     data_registry = load_data_dir_registry(args.platforms_dir)
     # The output directory is claimed before the data directory refresh: a
@@ -4457,7 +4428,7 @@ def generate_manifest(
         "system_cores": system_cores,
         # The names the platform itself gives its systems (Batocera's psx),
         # which --system accepts beside the ids.
-        "system_names": native_system_names(config, list(pack_systems)),
+        "system_names": platform_system_names(config, list(pack_systems)),
         "files": manifest_files,
     }
     if data_directories:
@@ -4874,6 +4845,7 @@ from packextras import (  # noqa: E402,F401
     _map_emulator_to_slug,
     _collect_emulator_extras,
     _extra_system_ids,
+    extras_for_systems as _extras_for_systems,
     platform_region_groups,
     emulator_region_drops,
     _emulator_region_group,

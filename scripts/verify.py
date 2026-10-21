@@ -62,6 +62,8 @@ from common import (
     load_database,
     load_emulator_profiles,
     load_platform_config,
+    resolve_system_arg,
+    select_systems,
     md5sum,
     require_yaml,
     resolve_local_file,
@@ -897,6 +899,7 @@ def _mark_hidden(
     report: list[dict] | None = None,
     resolver: object | None = None,
     placed_kind: dict[str, str] | None = None,
+    system_ids: list[str] | None = None,
 ) -> set[str]:
     """What the builder holds but cannot place beside the files it packed.
 
@@ -912,6 +915,7 @@ def _mark_hidden(
         emu_profiles if emu_profiles is not None
         else load_emulator_profiles(emulators_dir),
         shipped, target_cores, region_drops, placed, report, resolver, placed_kind,
+        system_ids=system_ids,
     )
     for u in undeclared:
         reason = hidden.get(
@@ -1086,11 +1090,14 @@ def verify_platform(
     target_cores: set[str] | None = None,
     data_dir_registry: dict | None = None,
     regions: list[str] | None = None,
+    system_filter: list[str] | None = None,
 ) -> dict:
     """Verify all BIOS files for a platform, including cross-reference gaps.
 
     A region priority list narrows the report to the files a pack built with the
     same list would carry, using the same selection function as the builder.
+    ``system_filter`` does the same for a pack built with --system: the
+    systems it keeps and the core extras those systems own.
     """
     # Normalized once: a typo in a platform YAML must not verify with one
     # mode and be scored with another.
@@ -1148,6 +1155,8 @@ def verify_platform(
         target_cores,
         platform_cores=plat_cores,
     )
+    if system_filter:
+        verify_systems = select_systems(verify_systems, system_filter)
 
     details = []
     file_status: dict[str, str] = {}
@@ -1332,6 +1341,11 @@ def verify_platform(
     # The builder's own pass reads the same report: computed once here and
     # handed over as it stands now, before the markings below.
     report_for_builder = [dict(u) for u in undeclared]
+    if system_filter:
+        # A system pack carries the extras its systems own.
+        from packextras import report_owned_by_systems
+
+        undeclared = report_owned_by_systems(undeclared, system_filter)
     if region_drops:
         undeclared = [
             u
@@ -1353,6 +1367,7 @@ def verify_platform(
             validation_owners,
         ),
         placed_kind,
+        system_filter,
     )
     # What the builder places from the cores, one per pack path, by category:
     # several entries claim one path (rom.key from three Amiga cores) and the
@@ -1434,6 +1449,7 @@ def verify_platform(
 
     return {
         "platform": platform,
+        **({"systems": sorted(verify_systems)} if system_filter else {}),
         "verification_mode": mode,
         "total_files": total,
         "pack_destinations": pack_destinations,
@@ -1707,6 +1723,8 @@ def print_platform_result(
     total = result["total_files"]
     c = result["severity_counts"]
     label = " / ".join(group)
+    if result.get("systems"):
+        label += f" ({', '.join(result['systems'])})"
     ok_count = c[Severity.OK]
     problems = total - ok_count
 
@@ -2437,11 +2455,15 @@ def _refuse_mode_flags(args: argparse.Namespace, parser: argparse.ArgumentParser
     for refused, message in (
         (args.standalone and not (args.emulator or args.system),
          "--standalone requires --emulator or --system"),
+        (args.standalone and args.platform,
+         "--standalone is incompatible with --platform"),
         (args.include_archived and not args.all, "--include-archived requires --all"),
         (args.target and not (args.platform or args.all),
          "--target requires --platform or --all"),
-        (args.target and (args.emulator or args.system),
+        (args.target and (args.emulator or (args.system and not args.platform)),
          "--target is incompatible with --emulator and --system"),
+        (args.destinations and args.system,
+         "--destinations describes the full pack and is incompatible with --system"),
         (args.destinations and not (args.platform or args.all),
          "--destinations requires --platform or --all"),
         (args.destinations and getattr(args, "region", None),
@@ -2554,7 +2576,9 @@ def _main(held: contextlib.ExitStack) -> None:
         _run_listing(args, parser)
         return
 
-    modes = sum(1 for x in (args.platform, args.all, args.emulator, args.system) if x)
+    # --system beside --platform narrows that platform, as in generate_pack.
+    system_mode = bool(args.system) and not args.platform
+    modes = sum(1 for x in (args.platform, args.all, args.emulator, system_mode) if x)
     if modes == 0:
         parser.error("Specify --platform, --all, --emulator, or --system")
     if modes > 1:
@@ -2562,6 +2586,16 @@ def _main(held: contextlib.ExitStack) -> None:
             "--platform, --all, --emulator, and --system are mutually exclusive"
         )
     _refuse_mode_flags(args, parser)
+    platform_systems: list[str] | None = None
+    if args.platform and args.system:
+        config = load_platform_config(args.platform, args.platforms_dir)
+        try:
+            platform_systems = resolve_system_arg(
+                args.system, list(config.get("systems", {})), config,
+                f"--platform {args.platform} --list-systems",
+            )
+        except ValueError as exc:
+            parser.error(f"--system {args.system}: {exc}")
     # The trees stay put while names resolve against them and files are read.
     from refresh_data_dirs import hold_data_dirs
 
@@ -2583,7 +2617,7 @@ def _main(held: contextlib.ExitStack) -> None:
         _exit_if_strict_emulator(args.strict, result)
         return
 
-    if args.system:
+    if system_mode:
         system_ids = [s.strip() for s in args.system.split(",") if s.strip()]
         result = verify_system(
             system_ids, args.emulators_dir, db, args.standalone,
@@ -2643,6 +2677,7 @@ def _main(held: contextlib.ExitStack) -> None:
             target_cores=tc,
             data_dir_registry=data_registry,
             regions=requested_regions,
+            system_filter=platform_systems,
         )
         names = [
             load_platform_config(p, args.platforms_dir).get("platform", p)

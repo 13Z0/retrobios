@@ -17,10 +17,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-import re
-
 import region as region_mod
-from common import _norm_system_id, native_layer, sanitize_pack_path
+from common import _norm_system_id, sanitize_pack_path
 from packextras import _extra_system_ids, _kept, extra_region_groups, system_spellings
 
 
@@ -120,36 +118,3 @@ class SelectionIndex:
         if priority is not None:
             out["priority"] = priority
         return out
-
-
-def _name_key(name: str) -> str:
-    """Letters and digits only, as the installer compares names."""
-    return re.sub(r"[^a-z0-9]", "", name.lower())
-
-
-def native_system_names(config: dict, systems: list[str]) -> dict[str, list[str]]:
-    """Per platform system, the names the platform's own file gives it.
-
-    A Batocera user knows PlayStation as `psx`, the folder under roms/, and
-    the platform YAML records that name as `native_system` on each file it
-    transcribes. Only the platform's own entries count (`native_layer`), a
-    name spelled like the system id adds nothing, and a name the platform
-    gives to two systems, or that reads as another system's id, names
-    neither.
-    """
-    native = native_layer(config) or {}
-    by_name: dict[str, set[str]] = {}
-    for sys_id, system in native.get("systems", {}).items():
-        if sys_id not in systems:
-            continue
-        for entry in system.get("files", []):
-            name = entry.get("native_system")
-            if isinstance(name, str) and name.strip():
-                by_name.setdefault(name.strip(), set()).add(sys_id)
-    ids = {_name_key(sys_id) for sys_id in systems}
-    out: dict[str, list[str]] = {}
-    for name, owners in by_name.items():
-        if len(owners) != 1 or _name_key(name) in ids:
-            continue
-        out.setdefault(next(iter(owners)), []).append(name)
-    return {sys_id: sorted(names) for sys_id, names in sorted(out.items())}
