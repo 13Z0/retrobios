@@ -81,6 +81,20 @@ class Exporter(BaseExporter):
             return bool(self.single_value(fe, "md5"))
         return super().states(fe, field_name)
 
+    def __init__(self) -> None:
+        super().__init__()
+        # Additions render did not write: another entry holds their path.
+        self._merged: set[int] = set()
+
+    @staticmethod
+    def _path(fe: NativeFile) -> str:
+        declared = fe.native("native_path", "")
+        return str(declared) if declared else f"bios/{fe.destination}"
+
+    def lands(self, fe: NativeFile) -> bool:
+        """An addition lands only where render wrote it."""
+        return self.writable(fe) and id(fe) not in self._merged
+
     def render(
         self,
         systems: dict[str, NativeSystem],
@@ -103,6 +117,7 @@ class Exporter(BaseExporter):
                     "fetch it again with --refresh-cache"
                 ) from exc
 
+        self._merged = set()
         exportable = {
             system.native_id: (system, files)
             for system, files in self.exportable(systems, require="md5")
@@ -117,12 +132,19 @@ class Exporter(BaseExporter):
                 continue
             system, files = exportable[key]
             ours: OrderedDict[str, OrderedDict[str, str]] = OrderedDict()
+            # The checker reads one md5 per biosFiles item and reports the
+            # item by its path, so a path holds one item. An addition whose
+            # path the platform or an earlier addition holds is not written.
+            claimed = {self._path(fe) for fe in files if fe.platform is not None}
             for fe in files:
+                path = self._path(fe)
+                if fe.platform is None and (path in claimed or path in ours):
+                    self._merged.add(id(fe))
+                    continue
                 entry: OrderedDict[str, str] = OrderedDict()
                 entry["md5"] = self.single_value(fe, "md5")
-                declared = fe.native("native_path", "")
-                entry["file"] = str(declared) if declared else f"bios/{fe.destination}"
-                ours.setdefault(entry["file"], entry)
+                entry["file"] = path
+                ours.setdefault(path, entry)
             bios_files = []
             for theirs in (base.get(key) or {}).get("biosFiles", []):
                 bios_files.append(ours.pop(theirs.get("file"), theirs))
@@ -165,7 +187,6 @@ class Exporter(BaseExporter):
                 continue
             declared = {bios.get("file") for bios in entry.get("biosFiles", [])}
             for fe in files:
-                path = str(fe.native("native_path", "")) or f"bios/{fe.destination}"
-                if path not in declared:
+                if self._path(fe) not in declared:
                     issues.append(f"absent: {system.native_id}/{fe.name}")
         return issues

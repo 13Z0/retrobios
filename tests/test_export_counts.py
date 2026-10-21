@@ -204,6 +204,40 @@ class RetroBatKeepsWhatWeDoNotModel(unittest.TestCase):
         ])
 
 
+class RetroBatCountsOneAdditionPerPath(unittest.TestCase):
+    """Two cores each gave the truth a psx/scph5501.bin at one destination.
+    The render writes one biosFiles item per path, yet both were counted
+    added: 78 additions announced for 75 items written."""
+
+    def test_an_addition_at_a_held_path_does_not_land(self):
+        from export_native import landed_changes  # noqa: PLC0415
+
+        theirs = NativeFile("scph1001.bin", "scph1001.bin", "psx",
+                            platform={"md5": A}, truth={"md5": A})
+        first = NativeFile("scph5501.bin", "scph5501.bin", "psx", truth={"md5": B})
+        second = NativeFile("scph5501.bin", "scph5501.bin", "psx", truth={"md5": B})
+        over = NativeFile("scph1001.bin", "scph1001.bin", "psx", truth={"md5": C})
+        systems = {"psx": NativeSystem("psx", files=[first, theirs, second, over])}
+        original = {"psx": {"name": "Sony Playstation", "biosFiles": [
+            {"md5": A, "file": "bios/scph1001.bin"},
+        ]}}
+        exporter = RetroBat()
+        produced = json.loads(exporter.render(
+            systems, Report(), {"batocera-systems.json": json.dumps(original)},
+        )["batocera-systems.json"])
+        self.assertEqual(produced["psx"]["biosFiles"], [
+            {"md5": A, "file": "bios/scph1001.bin"},
+            {"md5": B, "file": "bios/scph5501.bin"},
+        ])
+        added = [r for r in landed_changes(exporter, systems).records
+                 if r["kind"] == "added"]
+        self.assertEqual([r["name"] for r in added], ["scph5501.bin"])
+        self.assertEqual(
+            [exporter.lands(fe) for fe in (first, theirs, second, over)],
+            [True, True, False, False],
+        )
+
+
 class PureDataExportsKeepWhatWeDoNotModel(unittest.TestCase):
     """Recalbox's es_bios.xml and libretro's System.dat were rebuilt from our
     model too: an entry the platform added or renamed after our scrape left
