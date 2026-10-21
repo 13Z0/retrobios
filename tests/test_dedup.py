@@ -309,5 +309,37 @@ class TheNoDedupListIsPinned(unittest.TestCase):
         self.assertEqual(expected - set(NODEDUP_DIRS), set())
 
 
+class OnlyFilesSharingASizeAreHashed(_Bios):
+    """Equal files have equal sizes. Hashing all 9 442 files with five
+    digests took 33 s for 278 groups that a sha1 of the 4 543 files sharing
+    a size finds the same."""
+
+    def test_a_file_alone_at_its_size_is_not_read(self):
+        from unittest import mock
+
+        self.write("A/one.bin")
+        self.write("B/one.bin")
+        self.write("C/other.bin", b"a payload of its own length")
+        self.write("D/same_size.bin", b"IDENTICAL PAYLOAX")
+        calls: list[tuple[str, frozenset | None]] = []
+        real = dedup.compute_hashes
+
+        def spy(path, algorithms=None, cache=True):
+            calls.append((os.path.relpath(path, self.bios), algorithms))
+            return real(path, algorithms, cache)
+
+        with mock.patch.object(dedup, "compute_hashes", spy):
+            groups = dedup.scan_duplicates(str(self.bios))
+        self.assertEqual(
+            sorted(path for path, _algos in calls),
+            sorted(os.path.join(*p.split("/")) for p in ("A/one.bin", "B/one.bin", "D/same_size.bin")),
+        )
+        self.assertTrue(all(algos == frozenset({"sha1"}) for _path, algos in calls))
+        multi = [paths for paths in groups.values() if len(paths) > 1]
+        self.assertEqual(len(multi), 1)
+        self.assertEqual(sorted(os.path.relpath(p, self.bios) for p in multi[0]),
+                         sorted(os.path.join(*p.split("/")) for p in ("A/one.bin", "B/one.bin")))
+
+
 if __name__ == "__main__":
     unittest.main()
