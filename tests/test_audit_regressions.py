@@ -6165,5 +6165,25 @@ class AmigaCdDriversLiveInTheExtendedRom(unittest.TestCase):
                 self.assertNotIn("hle_fallback", entries[name])
 
 
+class BizHawkListsEveryDsiNandSlot(unittest.TestCase):
+    """FirmwareDatabase.cs:405-410 declares six DSi NAND slots, each a
+    placeholder hash and 251658240 + 64 bytes, and DecideNAND
+    (MelonDS.cs:684-706) stops a DSi load when none is set. The profile
+    listed DSi_Firmware.bin, a placeholder slot of the same kind, and left
+    the NANDs out."""
+
+    def test_the_six_regional_nands_are_declared(self):
+        profile = yaml.safe_load(
+            (ROOT / "emulators" / "bizhawk.yml").read_text(encoding="utf-8")
+        )
+        entries = {f["name"]: f for f in profile["files"]}
+        for region_code in ("JPN", "EUR", "USA", "AUS", "CHN", "KOR"):
+            with self.subTest(region=region_code):
+                entry = entries[f"DSi_Nand_{region_code}.bin"]
+                self.assertEqual(entry["size"], 251658240 + 64)
+                self.assertIs(entry["required"], False)
+                self.assertNotIn("sha1", entry)
+
+
 if __name__ == "__main__":
     unittest.main()
