@@ -1,11 +1,11 @@
 # Release process
 
-This page documents the CI/CD pipeline: what each workflow does, how releases
-are built, and how to run the process manually.
+Two GitHub workflows check pull requests and publish the site. Releases are
+built, checked and uploaded from the maintainer's machine.
 
 ## CI workflows overview
 
-The project uses 2 GitHub Actions workflows. All use only official GitHub
+Both workflows use only official GitHub
 actions (`actions/checkout`, `actions/setup-python`, `actions/upload-pages-artifact`,
 `actions/deploy-pages`). No third-party actions.
 
@@ -237,8 +237,12 @@ python scripts/check_release.py --tag "v${DATE}" --sums dist/SHA256SUMS.txt \
   && gh release edit "v${DATE}" --draft=false --latest
 
 #    The record and the pages it feeds go to main with the release, so the
-#    table never describes a pack other than the one the link serves.
-git add release.json README.md mkdocs.yml
+#    table never describes a pack other than the one the link serves. The
+#    install manifests go too: step 1 regenerated them, and their pack_files
+#    and pack_size describe the packs just built. git status names anything
+#    else the run rewrote.
+git status --short
+git add release.json README.md mkdocs.yml install/*.json install/targets/*.json
 git commit -m "chore: record release v${DATE}" && git push
 
 # 6. Keep only the new release plus large-files: an older pack carries hashes

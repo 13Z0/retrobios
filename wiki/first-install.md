@@ -1,8 +1,7 @@
 # First install
 
 One path, from an empty BIOS folder to files the emulator can read. Every step
-shows what the screen looks like when it worked, so there is never a moment of
-wondering.
+shows what the screen looks like when it worked.
 
 If something on this page does not match what happens, the last section covers
 the cases that come up.
@@ -154,10 +153,16 @@ its BIOS folder, see [Getting started](getting-started.md).
 
 ### Error: Python 3.8 or newer is required.
 
-Python is missing from the machine. The message names the command that installs
-it, `sudo apt install python3` on Debian and Ubuntu. On a handheld running Batocera or Recalbox it is already there, so
+No Python 3.8 or newer was found: Python is missing, or older. The message
+names the command that installs it, `sudo apt install python3` on Debian and
+Ubuntu. On a handheld running Batocera or Recalbox it is already there, so
 this message usually means the command ran on the computer rather than on the
 console.
+
+A stock RetroPie 4.8 image is Debian Buster, where `python3` is 3.7.3 and apt
+has nothing newer, so the same command changes nothing. The RetroPie pack from
+the [releases page](https://github.com/Abdess/retrobios/releases/latest),
+extracted into `~/RetroPie/BIOS/`, installs the same files.
 
 ### Error: the downloaded installer does not match its expected fingerprint.
 

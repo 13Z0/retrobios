@@ -78,6 +78,79 @@ class TestSkeletonReadsTheResultShape(unittest.TestCase):
             self.assertIn(key.value, result)
 
 
+class InstallerOutputExample(unittest.TestCase):
+    """The page showed a run with no `Not installable:` line while the
+    RetroArch manifest left eleven entries out, and a count that the menu
+    example below it no longer shared."""
+
+    def test_run_and_menu_show_one_dated_run_of_the_manifest(self):
+        import install
+
+        text = _page("installer.md")
+        intro, run = re.search(r"(?s)\n([^\n]*)\n\n```\n(Fetching file index.*?)```", text).groups()
+        self.assertRegex(intro, r"\d{4}-\d{2}-\d{2}", "an output example says when it was taken")
+        manifest = json.loads((ROOT / "install" / "retroarch.json").read_text(encoding="utf-8"))
+        omitted = re.search(r"Not installable: \d+ files? \(\d+ required, (.*)\)\.", run)
+        if manifest.get("omitted_files"):
+            self.assertIsNotNone(omitted, "the manifest omits files and the run shows no line for it")
+        if omitted:
+            for part in omitted.group(1).split(", "):
+                self.assertIn(part.rsplit(":", 1)[0], install.OMISSION_REASONS.values())
+        count, size = re.search(r"\n  (\d+) files \(([\d.]+ [KMG]B)\)", run).groups()
+        self.assertIn(f"0/{count} present", run)
+        menu = re.search(r"Retroarch: (\d+) files, ([\d.]+ [KMG]B)\.", text)
+        self.assertEqual(menu.groups(), (count, size))
+
+
+class ReleaseRefPromise(unittest.TestCase):
+    """RETROBIOS_REF was said to pin a reproducible file set, while every
+    release deletes the previous tags and large files come from one fixed
+    release whatever the ref."""
+
+    def test_the_page_says_what_a_tag_does_not_pin(self):
+        import install
+
+        self.assertIn("/large-files/", install.RELEASE_URL)
+        self.assertIn("--cleanup-tag", _page("release-process.md"))
+        row = next(
+            line for line in _page("installer.md").splitlines()
+            if line.startswith("| `RETROBIOS_REF`")
+        )
+        self.assertIn("`large-files`", row)
+        self.assertIn("next release", row)
+        for page in PUBLISHED:
+            for paragraph in page.read_text(encoding="utf-8").split("\n\n"):
+                if "RETROBIOS_REF" in paragraph:
+                    self.assertNotIn("reproducible", paragraph, page.name)
+
+
+class ReleaseCommitCarriesTheManifests(unittest.TestCase):
+    """The documented release commit left out install/*.json, which the
+    release pipeline regenerates: v2026.10.10 added three by hand."""
+
+    def test_the_commit_step_adds_what_the_pipeline_rewrites(self):
+        pipeline = (ROOT / "scripts" / "pipeline.py").read_text(encoding="utf-8")
+        self.assertIn('"--manifest"', pipeline)
+        block = _section(_page("release-process.md"), "Cutting a release")
+        add = next(line for line in block.splitlines() if line.startswith("git add "))
+        self.assertIn("install/*.json", add.split())
+
+
+class PageOpenings(unittest.TestCase):
+    """Four pages opened by announcing what they cover."""
+
+    META = re.compile(r"(?i)\bthis (page|guide) (covers|documents|explains|describes|picks)\b|^Diagnosis guide")
+
+    def test_no_page_announces_itself(self):
+        offenders = [
+            f"{page.name}: {line[:80]}"
+            for page in PUBLISHED
+            for line in FENCED.sub("", page.read_text(encoding="utf-8")).splitlines()
+            if self.META.search(line)
+        ]
+        self.assertEqual(offenders, [], "\n".join(offenders))
+
+
 class NoHedgedRules(unittest.TestCase):
     """The profiling guide and the verification discipline turned rules into
     wishes ("it's worth", "Ideally", "something to look into")."""
@@ -97,6 +170,22 @@ class NoHedgedRules(unittest.TestCase):
         self.assertEqual(offenders, [], "\n".join(offenders))
 
 
+class ExitStatusTable(unittest.TestCase):
+    """Code 2 was documented as 'every file failed' only, while argparse
+    exits 2 on every refused option, and the 141 example named an option
+    that does not exist."""
+
+    def test_codes_and_options_are_the_installers(self):
+        source = (ROOT / "install.py").read_text(encoding="utf-8")
+        section = _section(_page("installer.md"), "Exit status")
+        documented = {int(row[0].strip("`")) for row in _table_rows(section)}
+        raised = {int(code) for code in re.findall(r"sys\.exit\((\d+)\)", source)}
+        self.assertEqual(documented, raised | {2})
+        self.assertIn("install.py: error:", section)
+        for option in set(re.findall(r"(--[a-z][a-z-]+)", section)):
+            self.assertIn(f'"{option}"', source, option)
+
+
 class ProfileFieldsRequired(unittest.TestCase):
     """The table marked source, profiled_date, core_version and systems as
     required and called the schema authoritative, which requires none."""
@@ -113,6 +202,20 @@ class ProfileFieldsRequired(unittest.TestCase):
             if row[1].startswith(("yes", "for `type"))
         }
         self.assertEqual(marked, required)
+
+
+class PythonFloorOnRetroPie(unittest.TestCase):
+    """The page offered `apt install python3` to a RetroPie 4.8 image, where
+    python3 is 3.7.3 and apt has nothing newer."""
+
+    def test_both_pages_name_the_case(self):
+        install_sh = (ROOT / "install.sh").read_text(encoding="utf-8")
+        self.assertIn("(3, 8)", install_sh)
+        first = _section(_page("first-install.md"), "Error: Python 3.8 or newer is required.")
+        self.assertIn("RetroPie 4.8", first)
+        self.assertIn("3.7.3", first)
+        changing = _section(_page("installer.md"), "Changing the installer")
+        self.assertIn("3.7.3", changing)
 
 
 if __name__ == "__main__":
