@@ -897,6 +897,13 @@ The Amiga Kickstart chip pairs and TOSEC's split C64 and VES ROMs are found
 this way: 67 entries on the current snapshots, recorded in `derivable.json`
 by pipeline step 1b.
 
+A missing entry that is a file an emulator profile reads and the collection
+lacks is listed first, with `needed by <emulator> as <name>` and whether the
+profile requires it. The match is by hash when the profile declares one, by
+name and size when it declares a size or size range and no hash (XM7's
+`DICROM.ROM`, which No-Intro lists for the FM77AV40SX). `--emulators-dir`
+names the profiles read.
+
 | Catalog | Acquisition | Notes |
 |---------|------------|-------|
 | Redump | direct fetch from redump.info `/static/bios` | 4 BIOS DATs. redump.org serves stale DATs |
