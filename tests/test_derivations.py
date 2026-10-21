@@ -13,6 +13,7 @@ import shutil
 import sys
 import tempfile
 import unittest
+import unittest.mock
 import zlib
 from pathlib import Path
 
@@ -101,6 +102,48 @@ class ARomsetMemberIsASource(unittest.TestCase):
                 zlib.crc32(a + b),
             )
 
+
+
+class OneContentIsTransformedOnce(unittest.TestCase):
+    """A MAME chip sits in many archives: 18 924 reads for 7 407 contents, and
+    each read went through every transform again."""
+
+    def test_a_repeated_chip_is_transformed_once_and_keeps_its_first_path(self):
+        import zipfile
+
+        root = Path(tempfile.mkdtemp(dir=REPO_ROOT / "tmp"))
+        self.addCleanup(shutil.rmtree, root, True)
+        chip = os.urandom(64)
+        files = {}
+        for name in ("a.zip", "b.zip", "c.zip"):
+            archive = root / name
+            with zipfile.ZipFile(archive, "w") as zf:
+                zf.writestr("chip.rom", chip)
+            files[name] = {"path": str(archive), "size": archive.stat().st_size}
+        calls = []
+
+        def counted(transform):
+            def run(data):
+                calls.append(data)
+                return transform(data)
+            return run
+
+        transforms = tuple((name, size, counted(fn)) for name, size, fn in derivations.TRANSFORMS)
+        swapped = derivations._swap16(chip)
+        with unittest.mock.patch.object(derivations, "TRANSFORMS", transforms):
+            found = derivations.derivable([_wanted(swapped)], {"files": files})
+        self.assertEqual(found[hashlib.sha1(swapped).hexdigest()]["from"],
+                         [f"{root / 'a.zip'}/chip.rom"])
+        useful = [t for t in transforms if t[1](len(chip)) == len(chip)]
+        self.assertEqual(len(calls), len(useful))
+
+    def test_the_shared_power_operators_compose_to_zlib_for_every_bit(self):
+        a = os.urandom(17)
+        for size in [1 << bit for bit in range(25)] + [(1 << 25) - 1, 3624, 5]:
+            with self.subTest(size=size):
+                b = os.urandom(size)
+                self.assertEqual(derivations.crc32_combine(zlib.crc32(a), zlib.crc32(b), size),
+                                 zlib.crc32(b, zlib.crc32(a)))
 
 
 class CombineMatchesZlib(unittest.TestCase):
