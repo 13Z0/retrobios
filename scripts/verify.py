@@ -904,8 +904,10 @@ def _builder_placement(
     The builder walks the systems in name order and skips a path that a
     written file blocks as a directory, or the reverse: RetroArch declares
     SGB1.sfc and SGB1.sfc/program.rom, and only the first is in the pack.
-    Returns (path -> local copy written there, path -> copy or None for each
-    slot kept, a user_provided or external one included).
+    An entry without a destination (EmuDeck's system:md5 whitelist) is
+    judged but takes no path. Returns (path -> local copy written there,
+    path -> copy or None for each slot kept, a user_provided or external one
+    included).
     """
     from packpaths import _has_path_conflict, _register_path
 
@@ -915,6 +917,9 @@ def _builder_placement(
     folded: set[str] = set()
     parents: set[str] = set()
     for _sys_id, full, local in sorted(packed_order, key=lambda item: item[0]):
+        # EmuDeck's system:md5 entries name no file: the builder writes none.
+        if not full or full.endswith("/"):
+            continue
         if (
             full in occupied
             or (case_insensitive and full.lower() in folded)

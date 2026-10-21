@@ -869,10 +869,11 @@ def _collect_emulator_extras(
     # BIOS root before Solarus, which pins its own by sha1, and fbalpha2012's
     # hashless hiscore.dat took RetroDECK's over mame2015's sha1. Profile
     # order decides only between claims of equal proof.
-    rank = _ClaimRanks(undeclared, placement, db)
-    undeclared = sorted(
-        undeclared, key=lambda u: (-rank.of_entry(u), not _names_content(u))
+    undeclared = sorted(undeclared, key=lambda u: not _names_content(u))
+    rank = _ClaimRanks(
+        undeclared, placement, db, bool(config.get("case_insensitive_fs", False))
     )
+    undeclared = rank.ordered(undeclared)
     extras = []
     seen_dests: set[str] = set(seen)
     # Destination -> the extra that took it, to record later claimants on.
@@ -1056,8 +1057,12 @@ class _ClaimRanks:
     where two claims meet: a destination one core asks for has no contest.
     """
 
-    def __init__(self, undeclared: list[dict], placement: ExtraPlacement, db: dict) -> None:
+    def __init__(
+        self, undeclared: list[dict], placement: ExtraPlacement, db: dict, fold: bool,
+    ) -> None:
         self._db = db
+        # Two spellings of one path are one file where the filesystem folds case.
+        self._key = (lambda dest: dest.lower()) if fold else (lambda dest: dest)
         self._placed: dict[int, tuple[str, str] | None] = {}
         counts: dict[str, int] = {}
         for u in undeclared:
@@ -1067,14 +1072,13 @@ class _ClaimRanks:
             )
             self._placed[id(u)] = placed
             if placed is not None:
-                counts[placed[1]] = counts.get(placed[1], 0) + 1 + len(
-                    u.get("other_claims", [])
-                )
+                key = self._key(placed[1])
+                counts[key] = counts.get(key, 0) + 1 + len(u.get("other_claims", []))
         self._contested = {dest for dest, n in counts.items() if n > 1}
         self._cache: dict[tuple, int] = {}
 
     def of_extra(self, extra: dict, full_dest: str) -> int:
-        if full_dest not in self._contested:
+        if self._key(full_dest) not in self._contested:
             return 0
         key = (extra.get("source_profile"), extra.get("source_name"),
                extra.get("source_path"), full_dest)
@@ -1093,9 +1097,25 @@ class _ClaimRanks:
             )
         return self._cache[key]
 
+    def ordered(self, undeclared: list[dict]) -> list[dict]:
+        """The entries in their order, the claims on one contested path
+        reordered among themselves by proof. Nothing else moves, so the
+        pack and the manifest keep their order."""
+        first: dict[str, int] = {}
+        keys: list[tuple[int, int, int]] = []
+        for position, u in enumerate(undeclared):
+            placed = self._placed.get(id(u))
+            if placed is None or self._key(placed[1]) not in self._contested:
+                keys.append((position, 0, position))
+                continue
+            group = first.setdefault(self._key(placed[1]), position)
+            keys.append((group, -self.of_entry(u), position))
+        order = sorted(range(len(undeclared)), key=keys.__getitem__)
+        return [undeclared[i] for i in order]
+
     def of_entry(self, u: dict) -> int:
         placed = self._placed.get(id(u))
-        if placed is None or placed[1] not in self._contested:
+        if placed is None or self._key(placed[1]) not in self._contested:
             return 0
         name = u.get("archive") or u["name"]
         return max(

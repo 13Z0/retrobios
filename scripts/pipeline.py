@@ -919,6 +919,7 @@ def main() -> None:
         # Counts can agree while the paths differ, both ways at once.
         ok = check_pack_destinations(destinations_file, pack_output) and ok
         ok = check_emulator_packs() and ok
+        print(f"--- 5/8 consistency check, counts and paths: {'OK' if ok else 'FAILED'} ---")
         results["consistency"] = ok
         all_ok = all_ok and ok
     else:

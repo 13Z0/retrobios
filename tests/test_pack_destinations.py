@@ -108,6 +108,20 @@ class AUserProvidedSlot(_Fixture):
         self.assertEqual(report["pack_destinations"], [])
 
 
+class AnEntryWithoutAFileTakesNoPath(unittest.TestCase):
+    """EmuDeck's system:md5 entries name no file. verify credited the bare
+    base destination as a pack path, and the comparison failed on ''."""
+
+    def test_it_is_left_out(self):
+        from verify import _builder_placement
+
+        shipped, occupied = _builder_placement(
+            [("s", "bios/", None), ("s", "", "x"), ("s", "bios/a.bin", "bios/a.bin")], False
+        )
+        self.assertEqual(shipped, {"bios/a.bin": "bios/a.bin"})
+        self.assertEqual(set(occupied), {"bios/a.bin"})
+
+
 class ThePipelineComparesPaths(unittest.TestCase):
     """Equal counts, other paths: the comparison fails and names both sides."""
 
