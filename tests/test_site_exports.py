@@ -882,6 +882,50 @@ class NestedProfileBlocksRenderAsLists(unittest.TestCase):
         self.assertIn("name: a.bin, size: 2", html)
 
 
+class TheOneLinerIsWhereUsersLand(unittest.TestCase):
+    """The download page had no Android line and no Windows form with
+    options, and the platform and system pages offered only ZIP parts."""
+
+    def test_download_page(self):
+        import generate_site  # noqa: PLC0415
+
+        page = generate_site.generate_which_pack()
+        self.assertIn("Android (Termux", page)
+        self.assertIn("install.ps1))) --check", page)
+        self.assertIn("--platform retroarch --dest", page)
+
+    def test_platform_and_system_pages(self):
+        import generate_site  # noqa: PLC0415
+        from cross_reference import FileConsumers  # noqa: PLC0415
+
+        cov = {"platform": "Batocera", "mode": "md5", "present": 0, "total": 0,
+               "verified": 0, "missing": 0, "details": [], "config": {"systems": {}}}
+        page = generate_site.generate_platform_page("batocera", cov)
+        self.assertIn("install.sh | sh -s -- --platform batocera", page)
+        self.assertIn("install.ps1))) --platform batocera", page)
+        self.assertLess(page.index("--platform batocera"), page.index("md-button"))
+
+        entry = {"name": "a.bin", "sha1": "a" * 40, "md5": "b" * 32, "size": 3,
+                 "path": "bios/Recalbox/MSX/a.bin"}
+        page = generate_site.generate_system_page(
+            "Microsoft", {"MSX": [entry]}, FileConsumers({"files": {}}),
+            {"MSX": [("recalbox", "msx1,msx2,msxturbor"), ("batocera", "msx1")]})
+        self.assertIn("--platform recalbox --system msx1,msx2,msxturbor\n", page)
+        self.assertIn("--platform batocera --system msx1", page)
+
+    def test_a_system_is_offered_only_where_the_manifest_records_it(self):
+        import generate_site  # noqa: PLC0415
+        import siterender  # noqa: PLC0415
+
+        saved = dict(siterender._system_page_map)
+        self.addCleanup(siterender.set_system_page_map, saved)
+        siterender.set_system_page_map({"sony-playstation": ("sony", "PlayStation"),
+                                        "nowhere": ("sony", "PlayStation")})
+        cov = {"retroarch": {"config": {"systems": {"sony-playstation": {}, "nowhere": {}}}}}
+        choices = generate_site.system_install_choices(cov)
+        self.assertEqual(choices["sony"]["PlayStation"], [("retroarch", "sony-playstation")])
+
+
 class TheGapPageOpensOnCounts(unittest.TestCase):
     """The page opened on a slogan and on tiles reading "Verified (100%)"
     for 5,437 of 5,438 files and "Missing 0", above a table of red cells."""

@@ -20,6 +20,7 @@ import io
 import json
 import os
 import re
+import shlex
 import shutil
 import sqlite3
 import sys
@@ -2157,6 +2158,7 @@ def generate_platform_page(
                 f"| Contributed by | [@{username}](https://github.com/{username}):"
                 f" {contribution}{pr_link} |"
             )
+    lines.extend(["", *_platform_install_block(name, display)])
     lines.extend(
         [
             "",
@@ -2842,11 +2844,46 @@ def _card_title(text: str, anchor: str) -> str:
     return f"#### {text} {{ {attributes} }}"
 
 
+def system_install_choices(coverages: dict) -> dict[str, dict[str, list[tuple[str, str]]]]:
+    """slug -> console -> the (platform, system id) pairs linked to it.
+
+    Read through the same table as every system link, so a command sits in
+    the section the platform's system links to. Only a system the
+    platform's install manifest records is offered: --system refuses any
+    other name.
+    """
+    from siterender import _page_by_norm  # noqa: PLC0415
+
+    choices: dict[str, dict[str, list[tuple[str, str]]]] = {}
+    for name, cov in sorted(coverages.items()):
+        manifest = _REPO_ROOT / "install" / f"{name}.json"
+        if not manifest.is_file():
+            continue
+        document = json.loads(manifest.read_text(encoding="utf-8"))
+        recorded = {
+            str(system)
+            for entry in (document.get("files") or []) + (document.get("omitted_files") or [])
+            for system in entry.get("systems") or []
+        }
+        for sys_id in sorted(set(cov["config"].get("systems") or {}) & recorded):
+            page = _system_page_map.get(sys_id) or _page_by_norm(sys_id)
+            if page:
+                slug, console = page
+                choices.setdefault(slug, {}).setdefault(console, []).append((name, sys_id))
+    return choices
+
+
 def generate_system_page(
     manufacturer: str,
     consoles: dict[str, list],
     consumers: FileConsumers,
+    installs: dict[str, list[tuple[str, str]]] | None = None,
 ) -> str:
+    """One manufacturer's page, a section per console.
+
+    ``installs`` gives, per console, the (platform, system id) pairs whose
+    install command the section offers.
+    """
     slug = manufacturer.lower().replace(" ", "-")
     lines = [
         f"# {manufacturer}",
@@ -2862,6 +2899,7 @@ def generate_system_page(
         icon_md = system_icon_markdown(manufacturer, console_name)
         lines.append(f"## {icon_md}{console_name}")
         lines.append("")
+        lines.extend(_console_install_block(console_name, (installs or {}).get(console_name, [])))
         main_files = [f for f in files if "/.variants/" not in f["path"]]
         variant_files = [f for f in files if "/.variants/" in f["path"]]
 
@@ -3477,6 +3515,37 @@ def _render_metadata_rows(profile: dict) -> list[str]:
     return lines
 
 
+INSTALL_BASE = "https://raw.githubusercontent.com/Abdess/retrobios/main"
+
+
+def install_command(shell: str, args: str = "") -> str:
+    """The one-liner for a shell, with installer options when given.
+
+    PowerShell passes options only through a scriptblock: `irm ... | iex`
+    takes none.
+    """
+    if shell == "sh":
+        return f"curl -fsSL {INSTALL_BASE}/install.sh | sh" + (f" -s -- {args}" if args else "")
+    if args:
+        return f"&([scriptblock]::Create((irm {INSTALL_BASE}/install.ps1))) {args}"
+    return f"irm {INSTALL_BASE}/install.ps1 | iex"
+
+
+def install_commands(args: str = "", indent: str = "") -> list[str]:
+    """The same install for each place a user runs it: one generator for the
+    download page and the platform, system and emulator pages, so none of
+    them loses the Android or Windows form."""
+    lines = []
+    for label, shell in (
+        ("Linux, macOS, Steam Deck:", "sh"),
+        ("Windows (PowerShell):", "powershell"),
+        ("Android (Termux, after `pkg install python` and `termux-setup-storage`):", "sh"),
+    ):
+        lines += [f"{indent}{label}", "", f"{indent}```{shell}",
+                  f"{indent}{install_command(shell, args)}", f"{indent}```", ""]
+    return lines
+
+
 def _install_block(name: str, profile: dict) -> list[str]:
     """One command that installs this emulator's files where it reads them.
 
@@ -3486,26 +3555,49 @@ def _install_block(name: str, profile: dict) -> list[str]:
     """
     if profile.get("type") in ("alias", "launcher", "test"):
         return []
-    base = "https://raw.githubusercontent.com/Abdess/retrobios/main"
     return [
         '??? tip "Install this emulator\'s files"',
         "",
         "    The installer finds your platform and its BIOS folder, then downloads "
         "only the files this emulator reads there and checks each one.",
         "",
-        "    Linux, macOS, Steam Deck:",
+        *install_commands(f"--emulator {name}", "    "),
+    ]
+
+
+def _platform_install_block(name: str, display: str) -> list[str]:
+    """The platform's pack, installed file by file: what the ZIP holds, with
+    resume, verification and only what is missing."""
+    return [
+        '???+ tip "Install with one command"',
+        "",
+        f"    The installer downloads the files of the {display} pack that are "
+        "missing or differ from it, checks each one, and resumes where it "
+        "stopped. Add `--system` with the ids of the systems overview below "
+        "to install fewer systems.",
+        "",
+        *install_commands(f"--platform {name}", "    "),
+    ]
+
+
+def _console_install_block(console: str, declared: list[tuple[str, str]]) -> list[str]:
+    """Each platform's command for one console, by the system id it gives it."""
+    if not declared:
+        return []
+    lines = [
+        f'??? tip "Install the {console} files"',
+        "",
+        "    Each platform names the system its own way. On Windows, run the "
+        "same options through `&([scriptblock]::Create((irm "
+        f"{INSTALL_BASE}/install.ps1)))`.",
         "",
         "    ```sh",
-        f"    curl -fsSL {base}/install.sh | sh -s -- --emulator {name}",
-        "    ```",
-        "",
-        "    Windows (PowerShell):",
-        "",
-        "    ```powershell",
-        f"    &([scriptblock]::Create((irm {base}/install.ps1))) --emulator {name}",
-        "    ```",
-        "",
     ]
+    lines += [
+        f"    {install_command('sh', f'--platform {platform} --system {shlex.quote(system)}')}"
+        for platform, system in declared
+    ]
+    return lines + ["    ```", ""]
 
 
 def _render_platform_details(profile: dict) -> list[str]:
@@ -5045,6 +5137,10 @@ def _mkdocs_config(docs: Path, text: str) -> tuple[Path, str]:
 def generate_which_pack() -> str:
     """Generate the 'Which pack?' decision page."""
     rel = RELEASE_URL
+    quick = "\n".join(install_commands())
+    check_sh, check_ps = install_command("sh", "--check"), install_command("powershell", "--check")
+    sd_card = install_command(
+        "sh", "--platform retroarch --dest /path/to/sdcard/retroarch/cores/system")
     return _link_pack_cells(f"""\
 # Download
 
@@ -5063,18 +5159,7 @@ incorrect files, verifies their hashes, and installs them atomically. The small
 bootstrap checks the Python installer against an embedded SHA-256 before running
 it, and the installer reads its file list from that same revision.
 
-**Linux / Mac / Steam Deck:**
-
-```sh
-curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh
-```
-
-**Windows (PowerShell):**
-
-```powershell
-irm https://raw.githubusercontent.com/Abdess/retrobios/main/install.ps1 | iex
-```
-
+{quick}
 That is the complete default flow. Extra copies into detected standalone
 emulator directories are deliberately opt-in with `--standalone-copies`, so
 automatic setup never writes outside the selected platform tree unexpectedly.
@@ -5082,7 +5167,19 @@ Adding `--check` reads the BIOS folder, hashes what is there and writes
 nothing:
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh -s -- --check
+{check_sh}
+```
+
+```powershell
+{check_ps}
+```
+
+An SD card mounted on a PC is installed with `--platform` and `--dest`, the
+BIOS folder on the card (RetroArch on Switch: `retroarch/cores/system`, on
+Android: `RetroArch/system`):
+
+```sh
+{sd_card}
 ```
 
 Options, environment overrides, how each platform is detected and what the
@@ -5488,11 +5585,12 @@ def _generate(args: argparse.Namespace) -> None:
     write_if_changed(
         str(docs / "systems" / "index.md"), generate_systems_index(manufacturers)
     )
+    console_installs = system_install_choices(coverages)
     (docs / "files").mkdir(parents=True, exist_ok=True)
     write_if_changed(str(docs / "files" / "index.md"), generate_files_page())
     for mfr, consoles in manufacturers.items():
         slug = mfr.lower().replace(" ", "-")
-        page = generate_system_page(mfr, consoles, consumers)
+        page = generate_system_page(mfr, consoles, consumers, console_installs.get(slug))
         PAGE_DATA[f"systems/{slug}.md"] = system_structured_data(slug, consoles)
         write_single_item(
             docs / "api" / "v1" / "systems" / f"{slug}.json", "systems",
