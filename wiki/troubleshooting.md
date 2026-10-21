@@ -272,6 +272,10 @@ The installer needs write access to the target directory.
 - On Linux/macOS: check directory ownership (`ls -la`) and run with appropriate
   permissions. Avoid running as root unless the target directory requires it.
 - On Windows: run PowerShell as Administrator if installing to a protected directory.
+- A file system mounted read-only refuses root too, so the installer does not
+  suggest sudo for it. Linux remounts a card or drive read-only after an error
+  (an unclean removal, for one): check it (`fsck`, or `chkdsk` on Windows) and
+  mount it read-write again.
 
 A file already in the BIOS folder with the read-only attribute is replaced
 like any other: on Windows the installer clears the attribute before putting

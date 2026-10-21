@@ -3186,6 +3186,20 @@ class Invocation:
 _INVOCATION = Invocation()
 
 
+def _on_read_only_mount(path: Path) -> bool:
+    """Whether the file system holding path, or the folder it would go in,
+    is mounted read-only (a card Linux remounts read-only after an error)."""
+    if not hasattr(os, "statvfs"):
+        return False
+    probe = path
+    while not probe.exists() and probe.parent != probe:
+        probe = probe.parent
+    try:
+        return bool(os.statvfs(probe).f_flag & os.ST_RDONLY)
+    except OSError:
+        return False
+
+
 def _write_advice(path: Path, assumed: bool, plat: str = "") -> str:
     """What to do about a folder this run could not write.
 
@@ -3193,8 +3207,16 @@ def _write_advice(path: Path, assumed: bool, plat: str = "") -> str:
     machine it would create that folder on the wrong disk: a platform named
     but not found here is a card or share mounted elsewhere, named by --dest.
     Windows has no sudo, and Termux reaches shared storage once
-    termux-setup-storage has run.
+    termux-setup-storage has run. A read-only mount refuses root as well,
+    so sudo is never offered for it.
     """
+    if _on_read_only_mount(path):
+        again = f"\n    {_INVOCATION.command(plat, path)}" if plat else ""
+        return (f"  {path} is on a file system mounted read-only, which no user can "
+                "write, sudo included. Mount it read-write again (a card or drive "
+                "the system switched to read-only after an error needs a check "
+                "first: fsck, or chkdsk on Windows), then run the same command "
+                f"again.{again}")
     if assumed:
         return (f"  {path} is where the platform keeps its BIOS on its own system, "
                 "and it was not found here. If this machine prepares its card or "

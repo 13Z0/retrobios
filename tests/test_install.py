@@ -2425,6 +2425,23 @@ class SudoAdviceNamesTheFolder(unittest.TestCase):
         source = (REPO_ROOT / "install.py").read_text(encoding="utf-8")
         self.assertIn("platform_of={path: plat for plat, path in platforms}", source)
 
+    @unittest.skipUnless(hasattr(os, "statvfs"), "statvfs reads mount flags")
+    def test_a_read_only_mount_is_not_sent_to_sudo(self):
+        """A card Linux mounted read-only after a dirty unplug was answered
+        with 'run it again with sudo', which fails the same way."""
+        real = os.statvfs(".")
+        flags = SimpleNamespace(f_flag=real.f_flag | os.ST_RDONLY)
+        for plat in ("retroarch", ""):
+            with self.subTest(platform=plat), \
+                    unittest.mock.patch.object(install.os, "statvfs", return_value=flags):
+                advice = install._write_advice(Path("/media/card/bios"), False, plat)
+            self.assertIn("mounted read-only", advice)
+            self.assertNotIn("Run it again with sudo", advice)
+            self.assertNotIn("sudo python3", advice)
+        writable = SimpleNamespace(f_flag=real.f_flag & ~os.ST_RDONLY)
+        with unittest.mock.patch.object(install.os, "statvfs", return_value=writable):
+            self.assertIn("sudo", install._write_advice(Path("/media/card/bios"), False, "retroarch"))
+
 
 
 class CaseVariants(unittest.TestCase):
