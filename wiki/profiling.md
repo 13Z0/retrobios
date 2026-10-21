@@ -55,17 +55,15 @@ a system_dir lookup) are expected. What matters are file additions the
 port introduces, files the port dropped, or hash values that differ
 between the two codebases.
 
-If the source is hosted outside GitHub, it's worth exploring further. Emulator
-source on GitLab, Codeberg, SourceForge, Bitbucket, archive.org
-snapshots, and community mirror tarballs. Inspecting copyright headers
-or license strings in the libretro fork often points to the original
-author's site. The upstream code exists somewhere, so it's worth continuing the search before concluding the source is unavailable.
+Source hosted outside GitHub is searched on GitLab, Codeberg, SourceForge,
+Bitbucket, archive.org snapshots and community mirror tarballs. Copyright
+headers and license strings in the libretro fork often name the original
+author's site. A source not found yet is a search not finished, and the
+profile waits for it.
 
-One thing worth noting: even when the same repository was analyzed for
-a related profile (e.g., fbneo for arcade systems), it helps to do a
-fresh pass for each new profile. When fbneo_neogeo was profiled, the
-NeoGeo subset referenced BIOS files that the main arcade analysis
-hadn't encountered. A fresh look avoids carrying over blind spots.
+Each profile gets its own reading of the code, even when the same repository
+was read for a related profile (`fbneo`, then `fbneo_neogeo`). The earlier
+reading says what that profile loads, not what the new one loads.
 
 A declared upstream that answers 404 is not proof the project is gone. The
 account can differ from the Android package id (`aenu.aps3e` lives at
@@ -470,19 +468,23 @@ even if documentation mentions it.
 
 ### Profile fields
 
-The authoritative version of this table is `schemas/emulator.schema.json`,
-which CI validates every profile against.
+`schemas/emulator.schema.json` is the contract CI validates every profile
+against. It requires `emulator` and `type`, then `files`, or `alias_of` for an
+alias. A profile also carries `source_commit` or `profiled_date`: without
+either, profile_sync has no revision to read the `source_ref` lines at and
+reports the profile as uncheckable, and the CI job that runs
+`profile_sync.py --strict` on each profile a pull request adds fails on it.
 
 | Field | Required | Description |
 |-------|----------|-------------|
 | `emulator` | yes | display name |
 | `type` | yes | `libretro`, `standalone`, `standalone + libretro`, `alias`, `launcher`, `game`, `utility`, `test` |
 | `core_classification` | no | `pure_libretro`, `official_port`, `community_fork`, `frozen_snapshot`, `enhanced_fork`, `game_engine`, `embedded_hle`, `launcher`, `alias`, `other` |
-| `source` | yes | libretro core repository URL. A dict when the core ships under several repos |
+| `source` | no | libretro core repository URL. A dict when the core ships under several repos |
 | `upstream` | no | original emulator repository URL |
-| `profiled_date` | yes | date of source analysis. Quote it, or YAML parses it as a date object |
-| `core_version` | yes | version analyzed |
-| `source_commit` | no | commit SHA of `source` the code was read at. Anchors every `source_ref` line number |
+| `profiled_date` | see above | date of source analysis. Quote it, or YAML parses it as a date object |
+| `core_version` | no | version analyzed |
+| `source_commit` | see above | commit SHA of `source` the code was read at. Anchors every `source_ref` line number |
 | `upstream_commit` | no | same, for `upstream` |
 | `source_branch` | no | branch `source` was read from when it is not the default one (a port living on a pull request branch). profile_sync follows it |
 | `built_by` | no | platforms that ship this build under its core name, compiled by them or installed from the project's own release (Recalbox's `mame0278`, the GSplus legacy build). On those platforms the name resolves to this profile, never through `all_libretro`: the buildbot does not publish it |
@@ -490,7 +492,7 @@ which CI validates every profile against.
 | `bios_directory` | no | the folder an agnostic core scans, relative to the system directory (`pcsx2/bios/`). A scan never seeds from files outside it |
 | `display_name` | no | full display name (e.g. "Sega - Mega Drive (BlastEm)") |
 | `logo` | no | image URL used on the emulator page |
-| `systems` | yes | list of system IDs this core handles |
+| `systems` | no | list of system IDs this core handles |
 | `cores` | no | every upstream name the core is known by, for buildbot/target matching |
 | `alias_of` | for `type: alias` | profile key this one aliases. The alias carries no `files` |
 | `mode` | no | default mode: `standalone`, `libretro`, or `both` |

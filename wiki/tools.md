@@ -129,7 +129,7 @@ Verification modes per platform:
 |----------|------|-------|
 | RetroArch, Lakka, RetroPie | existence | file present = OK |
 | Batocera, RetroBat | md5 | MD5 hash match, plus `checkInsideZip` for `zippedFile` entries |
-| Recalbox | md5 | MD5 multi-hash, `md5_composite` for ZIPs, 3 severity levels |
+| Recalbox | md5 | MD5 multi-hash, `md5_composite` for ZIPs |
 | EmuDeck | md5 | MD5 whitelist per system |
 | RetroDECK | md5 | MD5 per file via component manifests |
 | RomM | md5 | size + any hash (MD5/SHA1/CRC32), no ZIP inspection |
@@ -203,12 +203,8 @@ Packs include platform baseline files plus files required by the platform's core
 When a file passes platform verification but fails emulator validation,
 the tool searches for a variant that satisfies both.
 If none exists, the platform version is kept and the discrepancy is reported.
-What happens when a declared hash and the local dump disagree follows the
-platform's own verification mode. A hash platform would reject the file, so it
-is omitted and recorded in the pack report and the installer manifest. An
-existence platform reads no bytes, so the file is packed and the divergence is
-reported instead: an upstream list error must not remove a file the frontend
-would have loaded.
+A declared hash that the local dump contradicts is settled by the platform's
+own verification mode ([discrepancy detection](verification-modes.md#discrepancy-detection)).
 
 ### Granular options
 
@@ -292,7 +288,7 @@ python scripts/export_native.py --all --refresh-cache
 A list is written in the order the code looks: `priority:` first (lowest
 wins), then the profile's own declaration order. What a format cannot
 state is reported rather than written: EmuDeck's arrays are shared
-between emulators its file does not name, so a hash is corrected in place
+between emulators its file does not name, so a hash is updated in place
 and never added.
 
 `exports/<platform>.json` lists every change under `changes`, each with

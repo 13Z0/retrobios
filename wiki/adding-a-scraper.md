@@ -425,19 +425,19 @@ be missing from the round trip.
 # Scrape upstream -> platform YAML
 python -m scripts.scraper.myplatform_scraper --output platforms/myplatform.yml
 
-# Rewrite the platform's own file, corrected
+# Rewrite the platform's own file with the changes applied
 python scripts/export_native.py --platform myplatform --fetch \
     --output-dir tmp/native
 
 # Compare with the file upstream publishes, cached by --fetch
-diff .cache/upstream-native/myplatform/<their file> \
-     tmp/native/myplatform/<their file>
+diff .cache/upstream-native/myplatform/<original file> \
+     tmp/native/myplatform/<original file>
 ```
 
-Every line in that diff should be a correction you can defend. A line that
-merely reshapes their formatting means the scraper lost something the
-exporter then had to invent: add it to the requirement instead, through
-`native_path`, `native_system` or the `native` dict.
+Every line of that diff is a change the emulator source supports. A line that
+only reshapes the original formatting means the scraper lost something the
+exporter then had to invent: record it in the requirement instead, through
+the fields listed in [BiosRequirement fields](adding-a-platform.md#biosrequirement-fields).
 
 ### Common issues
 

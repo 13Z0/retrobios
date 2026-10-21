@@ -67,7 +67,21 @@ def validate_format(self, raw_data: str) -> bool:
 | `destination` | `str` | Relative path within the BIOS directory |
 | `required` | `bool` | Whether the platform considers this file mandatory |
 | `zipped_file` | `str \| None` | If set, the hash refers to a ROM inside a ZIP |
-| `native_id` | `str \| None` | Original system name before normalization |
+| `native_id` | `str \| None` | The platform's own system id, written as `native_system` |
+| `sha256` | `str \| None` | SHA256 hash if available |
+| `alt_md5` | `str \| None` | A second accepted MD5 (Batocera and ROCKNIX `altmd5`) |
+| `native_path` | `str \| None` | The file reference as the platform writes it, kept when it differs from `name`. libretro writes `iplromco.dat` bare although the file lives under `keropi/`, and `ep128emu/roms/cpc464.rom` with its directory |
+| `mirror_of` | `str \| None` | The native system whose entry this one repeats under another system. The platform's own file does not carry the copy, so the export skips it |
+| `native` | `dict` | Fields the platform declares that the model has no place for, written back unchanged by the export: `native_name`, `core`, `note`, `description`, `hash_match_mandatory`, `mandatory_declared`, `alt_paths`, `component`, `required_label` |
+
+`requirement_entry()` in `base_scraper.py` is the single serializer from a
+requirement to a platform YAML entry, and every scraper goes through it.
+Anything an export writes back is recorded by the scraper, never rebuilt by the
+exporter: several native systems can fall onto one slug (Recalbox files
+`pcengine`, `pcenginecd` and `supergrafx` under `nec-pc-engine`), and a path
+or a label the YAML does not hold cannot be derived. When an export needs a
+value the YAML lacks, the scraper and `schemas/platform.schema.json` gain it,
+then the platform is scraped again.
 
 ### System ID mapping
 
@@ -147,16 +161,22 @@ none is edited by hand: RetroPie inherits RetroArch's file set and its scraper
 writes the packages it builds, read from the `rp_module_id` of each
 scriptmodule, and any manual change is overwritten on the next scrape.
 
-The `cores` field determines which emulator profiles are resolved for this platform.
-Three strategies exist:
+The `cores` field determines which emulator profiles are resolved for this
+platform (`resolve_platform_cores` in `common.py`). Alias profiles are never
+resolved. Three strategies exist:
 
 - **Explicit list**: `cores: [beetle_psx, dolphin, ...]` - match by profile key name
-  or by any name in a profile's `cores:`. Used by Batocera, Recalbox, RetroBat, RomM,
-  RetroPie, EmuDeck, RetroDECK, ROCKNIX. A list that names `retroarch` (the last four)
-  also takes every libretro profile.
-- **all_libretro**: `cores: all_libretro` - include every profile with `type: libretro`
-  or `type: standalone + libretro`. Used by RetroArch and Lakka.
-- **Omitted**: fallback to system ID intersection.
+  or by any name in a profile's `cores:`. When a profile's `built_by` names this
+  platform, that profile answers for the name. Used by Batocera, Recalbox, RetroBat,
+  RomM, RetroPie, EmuDeck, RetroDECK, ROCKNIX. A list that names `retroarch` (the last
+  four) also takes every libretro profile, as `all_libretro` does. An empty list
+  (BizHawk, MiSTer FPGA) resolves no profile, and the pack holds the platform's own
+  files.
+- **all_libretro**: `cores: all_libretro` - every profile whose `type` contains
+  `libretro`, except those that carry `built_by`: a build a platform compiles itself
+  is absent from the buildbot and is reached only by its name (Recalbox's `mame0258`
+  and `mame0278`). Used by RetroArch and Lakka.
+- **Omitted**: fallback to system ID intersection, `built_by` profiles excluded.
 
 Two lists say how each resolved emulator is laid out. `standalone_cores` names the
 ones the platform launches as standalone apps: their files go to `standalone_path`.
@@ -397,17 +417,13 @@ class Exporter(BaseExporter):
 
 ### Round-trip validation
 
-```bash
-python -m scripts.scraper.myplatform_scraper --output platforms/myplatform.yml
-python scripts/export_native.py --platform myplatform --fetch --output-dir tmp/native
-diff .cache/upstream-native/myplatform/<their file> \
-     tmp/native/myplatform/<their file>
-```
-
-The export must not lose anything the platform already declares. If your
+The scraper and the exporter are checked against each other as
+[round-trip testing](adding-a-scraper.md#round-trip-testing) describes. The
+export must not lose anything the platform already declares. If your
 format carries code as well as data (a script, a C# database, a manifest
 whose BIOS list sits beside launch configuration), say so with
-`needs_original()` and patch their file rather than writing a new one. An
+`needs_original()` and patch the platform's original file rather than writing
+a new one. An
 exporter that regenerates such a file from BIOS data alone hands the
 maintainer something that no longer runs.
 

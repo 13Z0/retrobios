@@ -103,14 +103,15 @@ macOS.
    rest.
 7. Copies into standalone emulator directories, only with `--standalone-copies`.
 
-A run looks like this:
+A RetroArch run into an empty folder printed this on 2026-10-21:
 
 ```
 Fetching file index for retroarch...
-  5865 files (5.7 GB)
+  8069 files (6.5 GB)
+  Not installable: 11 files (1 required, not found: 11).
 
 Checking existing files...
-  0/5865 present (0 verified, 0 wrong hash)
+  0/8069 present (0 verified, 0 wrong hash)
 ```
 
 When the manifest leaves entries out (a file the collection cannot supply, or
@@ -126,9 +127,9 @@ By default the installer fetches everything the platform runs. At a terminal,
 after detection, it asks:
 
 ```
-RetroArch: 5865 files, 5.7 GB.
+RetroArch: 8069 files, 6.5 GB.
   Enter) install everything
-  i) only what the installed cores read: 102 files, 44.5 MB
+  i) only what the installed cores read: 100 files, 44.2 MB
   c) choose systems, cores and regions
   q) quit
 ```
@@ -259,7 +260,7 @@ Files the list does not name are never read, moved or deleted.
 
 | Variable | Effect |
 |----------|--------|
-| `RETROBIOS_REF` | Branch or tag the file list and the payloads are read from. Defaults to `main`, and a release tag pins a reproducible file set |
+| `RETROBIOS_REF` | Branch or tag the file list and the files committed to the repository are read from. Defaults to `main`. Files the manifest marks `release_asset` always come from the `large-files` release, whatever the ref, and that release replaces an asset in place when it is rebuilt. Each release deletes the previous release tags ([release process](release-process.md#cutting-a-release)), so a tag holds a file list until the next release |
 | `RETROBIOS_BASE_URL` | Base URL for the manifest and the files it declares. HTTPS only, plain HTTP allowed to loopback for end-to-end tests. Whoever controls this base controls the expected hashes, hence the check. A file list that cannot be fetched names the address, and this variable when it is set |
 | `RETROBIOS_OS` | Names the host outright (`linux`, `wsl`, `windows`, `darwin`, `android`) instead of detecting it |
 | `EXTERNAL_STORAGE` | Android only, the shared storage root RetroArch builds its default directories from. Defaults to `/storage/emulated/0` |
@@ -483,8 +484,12 @@ followed.
 
 ## Changing the installer
 
-`install.py` runs on the user's machine, often an older handheld or a stock
-RetroPie image, so it stays on Python 3.8 and the standard library alone.
+`install.py` runs on the user's machine, often an older handheld, so it stays
+on Python 3.8 and the standard library alone. The RetroPie 4.8 images
+(`retropie-buster-4.8-*.img.gz`) are Debian Buster, whose `python3` is 3.7.3:
+there the bootstrap stops before running anything, and the RetroPie pack from
+the releases page is the way to install
+([first install](first-install.md#error-python-38-or-newer-is-required)).
 Tests refuse any 3.9 syntax or API, and one runs the installer end to end under
 a real 3.8 interpreter, which CI installs beside 3.12 so the check cannot skip.
 The build scripts need 3.12 and are not bound by this.
@@ -503,9 +508,9 @@ fields, the installer refuses to narrow rather than install everything.
 |------|---------|
 | `0` | everything asked for is installed or already up to date |
 | `1` | a failure: the one-liner could not download or verify `install.py`, or found no Python 3.8 (nothing was run), an unusable base URL, an unknown platform or target, `--installed-cores` with no core found, a manifest that fails validation, a fetch that never succeeded, no platform to install for in a non-interactive run, some files failed while others installed, or `--check` found files to fetch |
-| `2` | nothing was installed: every file the run tried failed (a BIOS folder that cannot be written, for one) |
+| `2` | nothing was installed: every file the run tried failed (a BIOS folder that cannot be written, for one). Also an option the installer refused before any download: an unknown option, `--jobs` outside 1 to 32, `--target` with `--every-board`. The message then starts with `install.py: error:` |
 | `130` | stopped with Ctrl+C, or with Ctrl+C or Ctrl+D at a question. Run the same command again to carry on |
-| `141` | the output was piped to a reader that closed early (`--list \| head`) |
+| `141` | the output was piped to a reader that closed early (`--list-platforms \| head`) |
 
 `install.ps1` passes the installer's code on unchanged: run as a file it exits
 with it, run through `irm \| iex` it sets `$LASTEXITCODE` (an `exit` there

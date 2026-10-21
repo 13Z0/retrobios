@@ -1,7 +1,5 @@
 # Troubleshooting
 
-Diagnosis guide organized by symptom. Each section describes what to check and how to fix it.
-
 ## Game won't start / black screen
 
 Most launch failures are caused by a missing or incorrect BIOS file.
@@ -308,9 +306,9 @@ The one-line bootstrap verifies the downloaded installer before running it, and
 the installer reads its manifests from the same revision. A platform name is
 checked before anything is downloaded, so a "No file list" message comes from
 the revision: `RETROBIOS_REF` naming a tag that does not exist, or one older
-than the platform. Unset it, or pick a tag from the releases page.
-`RETROBIOS_REF` pins an installation to a published tag when a reproducible
-file set matters more than the newest one.
+than the platform. Unset it, or pick a tag from the releases page. What a tag
+holds and for how long is under
+[environment overrides](installer.md#environment-overrides).
 
 ### Manual pack not found in release
 

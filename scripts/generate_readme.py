@@ -380,7 +380,7 @@ def generate_readme(db: dict, platforms_dir: str) -> str:
         "A pack holds the files its emulators read, as their source code names"
         " them, and leaves out what the emulators install themselves.",
         "",
-        "## Quick Install",
+        "## Quick install",
         "",
         "Copy one command into your terminal:",
         "",
@@ -404,12 +404,6 @@ def generate_readme(db: dict, platforms_dir: str) -> str:
         "## Download BIOS packs",
         "",
         "One pack per platform, and it holds everything the platform runs: its own BIOS list plus every file its emulator cores load. Pick your platform, download the ZIP, extract to the BIOS path. The installer above does the same file by file. At a terminal it asks whether to install everything or to choose systems, cores and regions, and `--system`, `--core`, `--region` and `--target` make the same choice without questions. For a bare minimum, build your own pack below.",
-        "Files is how many the pack holds once extracted, the figure a file"
-        " manager shows for the folder. It differs from one platform to the"
-        " next because a pack carries only what that platform's emulators"
-        " load."
-        " The size is what the files occupy once extracted, and the ZIP itself"
-        " downloads smaller.",
         "",
         "A pack over 2 GB comes in several parts (`Pack.part1of2.zip`,"
         " `Pack.part2of2.zip`), and every part is needed. Each part is an"
@@ -420,6 +414,12 @@ def generate_readme(db: dict, platforms_dir: str) -> str:
         " [verifying a release]"
         "(https://abdess.github.io/retrobios/wiki/release-process/"
         "#verifying-a-release).",
+        "",
+        "The Files column counts what a pack holds once extracted, the figure a"
+        " file manager shows for the folder. It differs from one platform to"
+        " the next because a pack carries only what that platform's emulators"
+        " load. The size is what the files occupy once extracted, and the ZIP"
+        " itself downloads smaller.",
         "",
     ]
 

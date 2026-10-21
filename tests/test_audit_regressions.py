@@ -54,7 +54,7 @@ class ReadmeRegressions(unittest.TestCase):
 
     def _quick_install(self) -> str:
         readme = (ROOT / "README.md").read_text(encoding="utf-8")
-        return readme.split("## Quick Install", 1)[1].split(
+        return readme.split("## Quick install", 1)[1].split(
             "## Download BIOS packs", 1
         )[0]
 
