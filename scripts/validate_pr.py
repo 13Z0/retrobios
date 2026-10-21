@@ -20,6 +20,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import subprocess
 import sys
 
@@ -413,20 +414,67 @@ def _git_lines(*args: str) -> list[str] | None:
     return [line for line in result.stdout.splitlines() if line]
 
 
+PROJECT_URLS = (
+    "https://github.com/Abdess/retrobios",
+    "https://github.com/Abdess/retroarch_system",
+)
+
+
+def _repo_key(url: str) -> str:
+    """owner/name of a clone URL, whatever its scheme."""
+    path = url.strip().rstrip("/").removesuffix(".git")
+    return "/".join(re.split(r"[/:]", path)[-2:]).casefold()
+
+
+def _project_main_line() -> str | None:
+    """The project's main line, fetched when no remote of this clone names it.
+
+    A fork's clone has origin alone. Once the commit is pushed to the fork's
+    main, origin/main is HEAD and the diff against it was empty, so --changed
+    found nothing and exited 0. None leaves the upstream/ and origin/ lines
+    in charge: a remote of that name names the project, or the clone has no
+    remote at all and only its uncommitted files can be read.
+    """
+    remotes = _git_lines("remote") or []
+    if not remotes:
+        return None
+    project = {_repo_key(url) for url in PROJECT_URLS}
+    for remote in remotes:
+        urls = _git_lines("remote", "get-url", "--all", remote) or []
+        if any(_repo_key(url) in project for url in urls):
+            return None if remote in ("upstream", "origin") else f"{remote}/main"
+    fetched = subprocess.run(
+        ["git", "fetch", "--quiet", "--no-tags", PROJECT_URLS[0], "main"],
+        capture_output=True, text=True, check=False,
+    )
+    if fetched.returncode != 0:
+        raise RuntimeError(
+            f"no remote of this clone is {PROJECT_URLS[0]}, and fetching its "
+            f"main failed: {fetched.stderr.strip()}"
+        )
+    return "FETCH_HEAD"
+
+
 def get_changed_files() -> list[str]:
     """BIOS files this checkout changes against the project's main line.
 
-    Committed changes are read against upstream/<base> first, then
-    origin/<base>: on a fork whose main carries the commit, origin/main is
-    HEAD and the diff was empty. Uncommitted and untracked files count too,
+    Committed changes are read against the project's main line: the remote
+    that names the project (upstream/<base> first, then origin/<base>), or
+    the project's main fetched when no remote does. Uncommitted and
+    untracked files count too,
     since CONTRIBUTING has the file copied into bios/ before any commit.
     A git that fails outright is an error, never "nothing changed".
     """
     changed: list[str] = []
     compared = False
-    for remote in ("upstream", "origin"):
-        for base in ("main", "master", "v2"):
-            committed = _git_lines("diff", "--name-only", f"{remote}/{base}...HEAD")
+    project_base = _project_main_line()
+    remotes = [[project_base]] if project_base else [
+        [f"{remote}/{base}" for base in ("main", "master", "v2")]
+        for remote in ("upstream", "origin")
+    ]
+    for candidates in remotes:
+        for line in candidates:
+            committed = _git_lines("diff", "--name-only", f"{line}...HEAD")
             if committed is None:
                 continue
             compared = True

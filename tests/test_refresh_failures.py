@@ -87,6 +87,51 @@ class ChangesNotYetCommittedAreRead(unittest.TestCase):
         self.assertIn("bios/new.bin", proc.stdout)
 
 
+class AForkPushedToItsOwnMain(unittest.TestCase):
+    """A fork's clone has origin alone. Once the commit was pushed to the
+    fork's main, origin/main was HEAD, the diff was empty, and --changed
+    said "No changed BIOS files detected" with rc 0."""
+
+    GIT = ["git", "-c", "user.email=a@b", "-c", "user.name=a",
+           "-c", "init.defaultBranch=main"]
+
+    def _git(self, *args: str, cwd: str | None = None) -> None:
+        subprocess.run([*self.GIT, *args], cwd=cwd, check=True, capture_output=True)
+
+    def _changed(self, clone: str, project: str) -> subprocess.CompletedProcess:
+        return subprocess.run(
+            [sys.executable, "-c", (
+                f"import sys; sys.path.insert(0, {str(REPO_ROOT / 'scripts')!r}); "
+                "import validate_pr; "
+                f"validate_pr.PROJECT_URLS = ({project!r},); "
+                "print(validate_pr.get_changed_files())"
+            )],
+            cwd=clone, capture_output=True, text=True, timeout=60, check=False,
+        )
+
+    def test_the_project_main_is_fetched_and_compared(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            project, fork, clone = (str(Path(tmp, n)) for n in ("project", "fork", "clone"))
+            self._git("init", "-q", project)
+            Path(project, "README").write_text("x")
+            self._git("add", "README", cwd=project)
+            self._git("commit", "-qm", "init", cwd=project)
+            self._git("clone", "-q", "--bare", project, fork)
+            self._git("clone", "-q", fork, clone)
+            Path(clone, "bios").mkdir()
+            Path(clone, "bios", "new.bin").write_bytes(b"x")
+            self._git("add", "bios/new.bin", cwd=clone)
+            self._git("commit", "-qm", "add", cwd=clone)
+            self._git("push", "-q", "origin", "main", cwd=clone)
+            proc = self._changed(clone, project)
+            self.assertEqual(proc.returncode, 0, proc.stderr)
+            self.assertIn("bios/new.bin", proc.stdout)
+            # A project that cannot be reached is an error, never "nothing".
+            missing = self._changed(clone, str(Path(tmp, "absent")))
+        self.assertNotEqual(missing.returncode, 0)
+        self.assertIn("fetching its main failed", missing.stderr)
+
+
 class RefreshFailuresAreFailures(unittest.TestCase):
     def test_a_failed_refresh_is_returned_and_exits_nonzero(self):
         report = {"entries": [{"status": "UPDATED", "key": "dolphin-sys"},
