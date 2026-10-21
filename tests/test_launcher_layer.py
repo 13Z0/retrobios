@@ -250,6 +250,50 @@ class LauncherLayerTest(unittest.TestCase):
         self.assertNotIn("core.bin", {u["name"] for u in self._report()})
         self.assertNotIn("core.bin", self._pack_names())
 
+    def test_the_default_name_a_launcher_replaces_is_not_packed(self) -> None:
+        """EmuDeck passes Complex_4627v1.03.bin to xemu, which then never
+        opens Complex_4627.bin: the pack carried both, one read by nobody."""
+        report = {u["path"]: u for u in self._report()}
+        self.assertIn("sub/fix.bin", report)
+        self.assertNotIn("core.bin", report)
+        self.assertNotIn("core.bin", self._pack_names())
+
+    def test_a_link_of_a_named_file_is_a_place(self) -> None:
+        """ROCKNIX links /storage/roms/bios/nds_bios_arm9.bin into DraStic's
+        system folder (start_drastic.sh:37-41): the file goes where the
+        link reads it, not under the emulator's own folder."""
+        self.config["launchers"][2].update(
+            kind="links", names=["fix.bin"], search_dir="/storage/roms/bios",
+        )
+        places = [p for p in launcher_places(self.config) if p.kind == "links"]
+        self.assertEqual([p.paths for p in places], [("fix.bin",)])
+        self.assertTrue(places[0].stands_for_default)
+        report = {u["path"]: u for u in self._report()}
+        self.assertIn("fix.bin", report)
+        self.assertNotIn("core.bin", report)
+
+    def test_a_link_of_a_directory_is_no_place(self) -> None:
+        self.config["launchers"][2].update(
+            kind="links", names=[], search_dir="/userdata/bios/sub",
+        )
+        self.assertFalse([p for p in launcher_places(self.config) if p.kind == "links"])
+
+    def test_the_platform_spelling_of_the_bios_folder_is_a_root(self) -> None:
+        """RetroPie names $biosdir, EmuDeck ${biosPath}, RetroDECK $bios_path:
+        read as no folder at all, every place of those platforms was dropped."""
+        for spelling in ("$biosdir", "${biosPath}", "$bios_path", "$HOME/RetroPie/bios"):
+            self.config["launchers"][2]["search_dir"] = f"{spelling}/sub"
+            with self.subTest(spelling=spelling):
+                self.assertEqual(launcher_places(self.config)[2].paths, ("sub/sub/fix.bin",))
+
+    def test_every_extractor_spelling_of_the_bios_folder_is_known(self) -> None:
+        import launchers
+        from scraper import emudeck_launchers, retrodeck_launchers, retropie_launchers
+
+        for token in (emudeck_launchers.BIOS, retrodeck_launchers.BIOS,
+                      retropie_launchers.BIOSDIR):
+            self.assertIn(token, launchers.BIOS_ROOT_TOKENS)
+
     def test_no_place_is_filled_twice(self) -> None:
         added = [u["path"] for u in self._report() if u.get("launcher")]
         self.assertEqual(sorted(added), ["e.bin", "sub/fix.bin"])
