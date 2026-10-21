@@ -282,16 +282,25 @@ Windows refuses that too, which a file owned by another account can cause.
 
 ### Platform not detected
 
-`install.py` auto-detects your platform by checking for known config files. If
-detection fails, specify the platform manually:
+The installer finds your platform from the config files it knows. If it finds
+none, name the platform and its BIOS folder.
+
+Linux, macOS, Android (Termux):
 
 ```bash
-python install.py --platform retroarch --dest ~/RetroArch/system/
-python install.py --platform batocera --dest /userdata/bios/
+curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh -s -- --platform retroarch --dest ~/.config/retroarch/system
+curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh -s -- --platform batocera --dest /userdata/bios
 ```
 
-`python install.py --list-platforms` lists the platforms the installer knows
-and the ones it detects here, and `--help` lists the options.
+Windows (PowerShell):
+
+```powershell
+&([scriptblock]::Create((irm https://raw.githubusercontent.com/Abdess/retrobios/main/install.ps1))) `
+  --platform retroarch --dest C:\RetroArch-Win64\system
+```
+
+`--list-platforms` lists the platforms the installer knows and the ones it
+finds here, and `--help` lists the options with examples.
 
 ### Manifest or file not found
 

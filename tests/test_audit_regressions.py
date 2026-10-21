@@ -3784,12 +3784,15 @@ class TheInstallerNamesWhatItSkipped(unittest.TestCase):
     def test_count_agrees_and_required_files_are_named(self):
         one = install._omission_lines(1, [{"name": "diabdat.mpq", "required": True}])
         self.assertTrue(one[0].startswith("1 file was not installed"))
-        self.assertIn("diabdat.mpq", one[1])
+        self.assertTrue(any("diabdat.mpq" in line for line in one[1:]))
         many = install._omission_lines(
-            12, [{"name": f"f{i:02}", "required": True} for i in range(12)]
+            12,
+            [{"name": f"f{i:02}", "required": True, "system": f"s{i:02}",
+              "cores": ["core"]} for i in range(12)],
         )
         self.assertTrue(many[0].startswith("12 files were not installed"))
-        self.assertIn("and 2 more", many[1])
+        self.assertIn("    s00 (core): f00", many)
+        self.assertTrue(any("and 4 more systems" in line for line in many))
 
 
 

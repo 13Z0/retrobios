@@ -18,7 +18,7 @@ esac
 TEMP_INSTALLER=""
 TEMP_DIRECTORY=""
 DEFAULT_INSTALL_URL="https://raw.githubusercontent.com/Abdess/retrobios/main/install.py"
-DEFAULT_INSTALL_SHA256="22737fbb470a63a8d3630f52ffee1535e57f96a2f1fea969e58368e06ca35f06"
+DEFAULT_INSTALL_SHA256="376edf794195d74f21e598854b5f3e90fb1955513835264bc9326ad4d2acf9c9"
 MAX_INSTALLER_BYTES=2097152
 
 cleanup() {
@@ -91,6 +91,18 @@ if [ -z "$INSTALLER" ] || [ ! -f "$INSTALLER" ]; then
   if [ "$actual" != "$expected" ]; then
     echo "Error: the downloaded installer does not match its expected fingerprint." >&2
     echo "  Nothing was run and nothing was written." >&2
+    overrides=""
+    [ -n "${RETROBIOS_INSTALL_URL:-}" ] && overrides="RETROBIOS_INSTALL_URL"
+    if [ -n "${RETROBIOS_INSTALL_SHA256:-}" ]; then
+      overrides="${overrides:+$overrides and }RETROBIOS_INSTALL_SHA256"
+    fi
+    if [ -n "$overrides" ]; then
+      # A pin or a URL of the user's own refuses the installer: retrying,
+      # as the advice below says, would never help.
+      echo "  $overrides is set in this environment and decides which installer is" >&2
+      echo "  accepted: unset it to use the installer this script names, or set it to match." >&2
+      exit 1
+    fi
     echo "  The download was most likely cut short: try again. Within minutes of an update" >&2
     echo "  of this project the two files can come from caches of different ages." >&2
     echo "  Waiting five minutes settles that." >&2
@@ -116,6 +128,12 @@ fi
 # Piped from curl, standard input is this script, not the terminal: the
 # installer would skip every question it can ask. Hand it the terminal when
 # there is one.
+# A downloaded installer is a temporary copy the user cannot run again: its
+# hints rebuild the one-line command instead.
+if [ -n "$TEMP_INSTALLER" ]; then
+  RETROBIOS_BOOTSTRAP=sh
+  export RETROBIOS_BOOTSTRAP
+fi
 if [ ! -t 0 ] && (: </dev/tty) 2>/dev/null; then
   "$PYTHON" "$INSTALLER" "$@" </dev/tty
 else

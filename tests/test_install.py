@@ -1735,7 +1735,8 @@ class TestManualPlatformPrompt(unittest.TestCase):
         self.assertIn("or q to quit", out.getvalue())
 
     def test_windows_hint_shows_the_one_liner_with_arguments(self):
-        hint = "\n".join(install._manual_usage_hint("windows"))
+        with unittest.mock.patch.dict(os.environ, {"RETROBIOS_BOOTSTRAP": "ps1"}):
+            hint = "\n".join(install._manual_usage_hint("windows"))
         self.assertIn("--platform retroarch --dest", hint)
         self.assertIn("install.ps1", hint)
 
@@ -1809,7 +1810,7 @@ class TestLaunchboxDetectionPowershell(unittest.TestCase):
 
     def _assert_resolved(self, proc, ra_dir):
         self.assertIn("Found LaunchBox", proc.stdout)
-        self.assertIn("Found Retroarch at", proc.stdout)
+        self.assertIn("Found RetroArch at", proc.stdout)
         self.assertIn(str(ra_dir), proc.stdout)
         self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
         self.assertIn("Done.", proc.stdout)
@@ -1850,7 +1851,7 @@ class TestLaunchboxDetectionPowershell(unittest.TestCase):
             seed=seed,
         )
         self.assertIn("Found LaunchBox", proc.stdout)
-        self.assertIn("Found Retroarch at", proc.stdout)
+        self.assertIn("Found RetroArch at", proc.stdout)
         self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
         self.assertIn(str(ra_dir / "bios"), proc.stdout)
 
@@ -2313,7 +2314,7 @@ class SudoAdviceNamesTheFolder(unittest.TestCase):
     def test_the_advice_carries_platform_and_folder(self):
         advice = install._write_advice(Path("/media/card/Emulation/bios"), False, "emudeck")
         self.assertIn("--platform emudeck", advice)
-        self.assertIn("--dest '/media/card/Emulation/bios'", advice)
+        self.assertIn("--dest /media/card/Emulation/bios", advice)
 
     def test_the_closing_report_passes_the_platform(self):
         source = (REPO_ROOT / "install.py").read_text(encoding="utf-8")
@@ -3181,6 +3182,408 @@ class EveryStandaloneCopyNamesItsMacFolder(unittest.TestCase):
             if entry.get("targets") and "darwin" not in entry["targets"]
         ]
         self.assertEqual(missing, [])
+
+
+
+class _LoopbackRun:
+    """install.py against the repository's own manifests over loopback."""
+
+    def serve(self, test: unittest.TestCase) -> dict:
+        handler = functools.partial(
+            http.server.SimpleHTTPRequestHandler, directory=str(REPO_ROOT)
+        )
+        handler.log_message = lambda *args: None
+        httpd = http.server.ThreadingHTTPServer(("127.0.0.1", 0), handler)
+        threading.Thread(target=httpd.serve_forever, daemon=True).start()
+        test.addCleanup(httpd.server_close)
+        test.addCleanup(httpd.shutdown)
+        self.home = Path(_tempdir(test))
+        return {
+            **os.environ, "HOME": str(self.home), "RETROBIOS_OS": "linux",
+            "RETROBIOS_BASE_URL": f"http://127.0.0.1:{httpd.server_address[1]}",
+        }
+
+
+def _install_run(env: dict, *argv: str, **kwargs) -> subprocess.CompletedProcess:
+    return subprocess.run(
+        [sys.executable, "install.py", *argv], cwd=REPO_ROOT, env=env,
+        capture_output=True, text=True, timeout=300, check=False, **kwargs,
+    )
+
+
+class ATypoGetsTheClosestName(unittest.TestCase):
+    """--platform batocra, --system playstation or --core swanstaton were
+    answered with every name the platform has, up to 400 on one line, and
+    MiSTer FPGA as the site writes it was refused."""
+
+    def test_the_names_the_site_writes_are_platforms(self):
+        self.assertEqual(install.normalize_platform("MiSTer FPGA"), "misterfpga")
+        self.assertEqual(install.normalize_platform("RetroArch "), "retroarch")
+        self.assertEqual(install.normalize_platform("RetroDECK"), "retrodeck")
+
+    def test_a_platform_typo_is_answered_with_one_name(self):
+        err = io.StringIO()
+        with contextlib.redirect_stderr(err), self.assertRaises(SystemExit) as raised:
+            install.normalize_platform("batocra")
+        self.assertEqual(raised.exception.code, 1)
+        self.assertIn("Did you mean: batocera?", err.getvalue())
+        self.assertNotIn("recalbox", err.getvalue())
+
+    def test_a_system_is_found_inside_its_full_id(self):
+        known = ["3do", "nintendo-gba", "sega-saturn", "sony-playstation", "sony-playstation-2"]
+        with self.assertRaises(ValueError) as raised:
+            install.resolve_choices(["playstation"], known, "system")
+        text = str(raised.exception)
+        self.assertIn("unknown system: playstation", text)
+        self.assertIn("sony-playstation", text)
+        self.assertIn("--list-systems", text)
+        self.assertNotIn("3do", text)
+
+    def test_a_core_typo_points_at_the_listing(self):
+        known = [f"core{i}" for i in range(200)] + ["swanstation"]
+        with self.assertRaises(ValueError) as raised:
+            install.resolve_choices(["swanstaton"], known, "core")
+        text = str(raised.exception)
+        self.assertIn("Did you mean: swanstation?", text)
+        self.assertIn("--list-cores lists all 201", text)
+        self.assertNotIn("core17", text)
+
+    def test_a_name_spelled_as_the_site_writes_it(self):
+        known = ["sony-playstation", "sony-playstation-2"]
+        self.assertEqual(
+            install.resolve_choices(["Sony PlayStation"], known, "system"),
+            ["sony-playstation"],
+        )
+
+    def test_a_target_typo(self):
+        err = io.StringIO()
+        with contextlib.redirect_stderr(err):
+            install._unknown_target("swich", "retroarch", {"switch": {}, "desktop": {}})
+        self.assertIn("Did you mean: switch?", err.getvalue())
+        self.assertIn("--list-targets", err.getvalue())
+
+
+class PlatformsAreNamedAsTheyNameThemselves(unittest.TestCase):
+    """str.capitalize() printed Retroarch, Retrodeck and Misterfpga on the
+    first screen a user sees."""
+
+    def test_the_table_is_the_manifests(self):
+        for plat in install.AVAILABLE_PLATFORMS:
+            manifest = json.loads((REPO_ROOT / "install" / f"{plat}.json").read_text())
+            with self.subTest(plat=plat):
+                self.assertEqual(install.PLATFORM_NAMES[plat], manifest["display_name"])
+
+    def test_the_menus_use_them(self):
+        out = io.StringIO()
+        with unittest.mock.patch("builtins.input", lambda _prompt="": "1"), \
+                contextlib.redirect_stdout(out):
+            install._prompt_platform_choice(
+                [("misterfpga", Path("/m")), ("retrodeck", Path("/r"))])
+        self.assertIn("MiSTer FPGA (/m)", out.getvalue())
+        self.assertIn("RetroDECK (/r)", out.getvalue())
+        self.assertEqual(install.display_name("romm", {"display_name": "RomM"}), "RomM")
+        self.assertEqual(install.display_name("romm", {"display_name": "\x1b[2J"}), "RomM")
+
+
+class HintsGiveTheUsersOwnCommandBack(unittest.TestCase):
+    """A one-liner user was told to run python3 install.py, a file they do
+    not have, and the write advice dropped --system, turning a retry of 2
+    files into 8069, with sudo on Windows."""
+
+    def setUp(self):
+        patcher = unittest.mock.patch.object(install, "_INVOCATION", install.Invocation())
+        patcher.start()
+        self.addCleanup(patcher.stop)
+
+    def _record(self, *argv: str) -> None:
+        args = SimpleNamespace(
+            system=None, core=None, emulator=None, region=None, target=None,
+            cores_dir=None, every_board=False, installed_cores=False,
+            standalone_copies=False, check=False, dry_run=False,
+        )
+        flags = list(argv)
+        while flags:
+            flag = flags.pop(0)
+            attr = flag[2:].replace("-", "_")
+            if attr in ("system", "core", "emulator", "region"):
+                setattr(args, attr, [*(getattr(args, attr) or []), flags.pop(0)])
+            else:
+                setattr(args, attr, True)
+        install._INVOCATION.record(args)
+
+    def test_the_shell_one_liner_is_rebuilt(self):
+        with unittest.mock.patch.dict(os.environ, {"RETROBIOS_BOOTSTRAP": "sh"}):
+            hint = "\n".join(install._manual_usage_hint("linux"))
+        self.assertIn("install.sh | sh -s -- --platform retroarch", hint)
+        self.assertNotIn("python3 install.py", hint)
+        self.assertIn(install.INSTALLER_PAGE, hint)
+
+    def test_a_clone_keeps_python(self):
+        with unittest.mock.patch.dict(os.environ, {"RETROBIOS_BOOTSTRAP": ""}):
+            hint = "\n".join(install._manual_usage_hint("linux"))
+        self.assertIn("python3 install.py --platform retroarch", hint)
+
+    def test_the_write_advice_keeps_the_narrowing(self):
+        self._record("--system", "atari-lynx", "--region", "us")
+        install._INVOCATION.os_type = "linux"
+        with unittest.mock.patch.dict(os.environ, {"RETROBIOS_BOOTSTRAP": "sh"}):
+            advice = install._write_advice(Path("/media/ro"), False, "retroarch")
+        self.assertIn("| sudo sh -s -- --platform retroarch --dest /media/ro "
+                      "--system atari-lynx --region us", advice)
+
+    def test_windows_has_no_sudo(self):
+        self._record("--system", "atari-lynx")
+        install._INVOCATION.os_type = "windows"
+        with unittest.mock.patch.dict(os.environ, {"RETROBIOS_BOOTSTRAP": "ps1"}):
+            advice = install._write_advice(Path("C:/Program Files/RetroArch/system"),
+                                           False, "retroarch")
+        self.assertNotIn("sudo", advice)
+        self.assertIn("administrator", advice)
+        self.assertIn("install.ps1", advice)
+        self.assertIn("--system atari-lynx", advice)
+
+    def test_a_full_drive_keeps_the_platform(self):
+        install._INVOCATION.os_type = "linux"
+        err = io.StringIO()
+        with unittest.mock.patch.object(install.shutil, "disk_usage",
+                                        return_value=SimpleNamespace(free=1)), \
+                contextlib.redirect_stderr(err), self.assertRaises(SystemExit):
+            install._check_free_space(Path(_tempdir(self)), 10, "batocera")
+        self.assertIn("--platform batocera --dest <folder on another drive>", err.getvalue())
+
+    def test_the_one_liner_tells_the_installer_how_it_was_started(self):
+        scratch = REPO_ROOT / "tmp" / "tests"
+        scratch.mkdir(parents=True, exist_ok=True)
+        with tempfile.TemporaryDirectory(dir=scratch) as directory:
+            root = Path(directory)
+            probe = root / "probe.py"
+            probe.write_text("import os\nprint('bootstrap:', os.environ.get('RETROBIOS_BOOTSTRAP'))\n")
+            fake_bin = root / "bin"
+            fake_bin.mkdir()
+            (fake_bin / "curl").write_text(
+                "#!/bin/sh\noutput=\n"
+                "while [ \"$#\" -gt 0 ]; do\n"
+                "  if [ \"$1\" = --output ]; then output=$2; shift 2; else shift; fi\n"
+                "done\n"
+                f"cp -- {shlex.quote(str(probe))} \"$output\"\n")
+            (fake_bin / "curl").chmod(0o755)
+            env = {**os.environ, "PATH": f"{fake_bin}{os.pathsep}{os.environ['PATH']}",
+                   "TMPDIR": str(root),
+                   "RETROBIOS_INSTALL_URL": "https://example.invalid/install.py",
+                   "RETROBIOS_INSTALL_SHA256": hashlib.sha256(probe.read_bytes()).hexdigest()}
+            proc = subprocess.run(["sh", "-s"], cwd=root, env=env, capture_output=True,
+                                  input=(REPO_ROOT / "install.sh").read_text(),
+                                  text=True, timeout=30, check=False)
+        self.assertIn("bootstrap: sh", proc.stdout, proc.stderr)
+
+    def test_the_help_has_examples_and_the_page(self):
+        env = {**os.environ, "RETROBIOS_BOOTSTRAP": "sh"}
+        proc = _install_run(env, "--help")
+        self.assertEqual(proc.returncode, 0)
+        self.assertIn("examples:", proc.stdout)
+        self.assertIn("install.sh | sh -s -- --platform batocera --dest", proc.stdout)
+        self.assertIn(install.INSTALLER_PAGE, proc.stdout)
+
+
+class AnOverrideIsNamedWhenItIsTheCause(unittest.TestCase):
+    """A RETROBIOS_INSTALL_SHA256 of the user's own read as a cut download,
+    and a dead RETROBIOS_BASE_URL as a network fault naming no host."""
+
+    def test_an_unreachable_base_url_is_named(self):
+        error = install.urllib.error.URLError("timed out")
+        with unittest.mock.patch.dict(os.environ, {"RETROBIOS_BASE_URL": "https://mirror.invalid"}), \
+                unittest.mock.patch.object(install, "_fetch_json", side_effect=error), \
+                contextlib.redirect_stderr(io.StringIO()) as err, \
+                self.assertRaises(SystemExit):
+            install.fetch_manifest("retroarch")
+        text = err.getvalue()
+        self.assertIn("Address: " + install.MANIFEST_URL.format(platform="retroarch"), text)
+        self.assertIn("RETROBIOS_BASE_URL is set", text)
+
+    def test_a_pinned_fingerprint_is_named(self):
+        scratch = REPO_ROOT / "tmp" / "tests"
+        scratch.mkdir(parents=True, exist_ok=True)
+        with tempfile.TemporaryDirectory(dir=scratch) as directory:
+            root = Path(directory)
+            fake_bin = root / "bin"
+            fake_bin.mkdir()
+            (fake_bin / "curl").write_text(
+                "#!/bin/sh\noutput=\n"
+                "while [ \"$#\" -gt 0 ]; do\n"
+                "  if [ \"$1\" = --output ]; then output=$2; shift 2; else shift; fi\n"
+                "done\n"
+                "echo 'print(1)' > \"$output\"\n")
+            (fake_bin / "curl").chmod(0o755)
+            env = {**os.environ, "PATH": f"{fake_bin}{os.pathsep}{os.environ['PATH']}",
+                   "TMPDIR": str(root), "RETROBIOS_INSTALL_SHA256": "0" * 64}
+            proc = subprocess.run(["sh", "-s"], cwd=root, env=env, capture_output=True,
+                                  input=(REPO_ROOT / "install.sh").read_text(),
+                                  text=True, timeout=30, check=False)
+        self.assertEqual(proc.returncode, 1)
+        self.assertIn("RETROBIOS_INSTALL_SHA256 is set", proc.stderr)
+        self.assertNotIn("cut short", proc.stderr)
+        ps1 = (REPO_ROOT / "install.ps1").read_text()
+        self.assertIn('"RETROBIOS_INSTALL_URL", "RETROBIOS_INSTALL_SHA256"', ps1)
+
+
+@unittest.skipUnless(shutil.which("pwsh"), "needs PowerShell")
+class ThePowerShellOneLinerLeavesTheSessionAlone(unittest.TestCase):
+    """irm | iex left $ErrorActionPreference = Stop and the script's
+    variables in the user's session: their next error stopped everything."""
+
+    def test_nothing_is_left_behind(self):
+        script = (
+            "Get-Content install.ps1 -Raw | Invoke-Expression; "
+            "\"EAP=$ErrorActionPreference temporary=[$temporary] installer=[$installer] "
+            "bootstrap=[$env:RETROBIOS_BOOTSTRAP]\""
+        )
+        # Refused before any request, so the run needs no network.
+        env = {**os.environ, "RETROBIOS_INSTALL_URL": "http://127.0.0.1/install.py"}
+        env.pop("RETROBIOS_BOOTSTRAP", None)
+        proc = subprocess.run(["pwsh", "-NoProfile", "-Command", script], cwd=REPO_ROOT,
+                              env=env, capture_output=True, text=True, timeout=120)
+        self.assertIn("must use HTTPS", proc.stderr)
+        self.assertIn("EAP=Continue temporary=[] installer=[] bootstrap=[]", proc.stdout)
+
+
+class AQuestionLeftWithCtrlDOrCtrlCIsAStop(unittest.TestCase):
+    """Ctrl+C or Ctrl+D at a question left with 0, so `install.sh && retroarch`
+    carried on with no BIOS, while the page documents 130."""
+
+    def test_eof_raises_the_stop(self):
+        def closed(_prompt=""):
+            raise EOFError
+
+        with unittest.mock.patch("builtins.input", closed), \
+                contextlib.redirect_stdout(io.StringIO()), \
+                self.assertRaises(KeyboardInterrupt):
+            install._ask("> ")
+
+    @unittest.skipIf(os.name == "nt", "needs a pseudo-terminal")
+    def test_ctrl_d_at_the_platform_question_exits_130(self):
+        import pty  # noqa: PLC0415
+        import time  # noqa: PLC0415
+
+        home = Path(_tempdir(self))
+        master, slave = pty.openpty()
+        proc = subprocess.Popen(
+            [sys.executable, "install.py"], cwd=REPO_ROOT, stdin=slave,
+            stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True,
+            env={**os.environ, "HOME": str(home), "RETROBIOS_OS": "linux"},
+        )
+        os.close(slave)
+        self.addCleanup(os.close, master)
+        time.sleep(3)
+        os.write(master, b"\x04")
+        out, _ = proc.communicate(timeout=60)
+        if "Choose the platform" not in out:
+            self.skipTest("a platform was detected on this machine")
+        self.assertEqual(proc.returncode, 130, out)
+        self.assertIn("Stopped", out)
+
+
+class WhatTheCollectionLacksSaysForWhom(unittest.TestCase):
+    """Required files the installer cannot supply were listed by bare name:
+    DARK.GOB, Data.rsdk, ... and 69 more, with no system and no emulator."""
+
+    def test_grouped_by_system_with_its_emulators(self):
+        entries = [
+            {"dest": "DARK.GOB", "system": "dark-forces", "cores": ["theforceengine"]},
+            {"dest": "SOUNDS.GOB", "system": "dark-forces", "cores": ["theforceengine"]},
+            {"dest": "Data.rsdk", "system": "sonic-mania", "cores": ["sonicmania"]},
+        ]
+        lines = install._needed_lines(entries, "Needed to start an emulator")
+        self.assertIn("    dark-forces (theforceengine): DARK.GOB, SOUNDS.GOB", lines)
+        self.assertIn("    sonic-mania (sonicmania): Data.rsdk", lines)
+        self.assertIn("(3 files)", lines[0])
+        self.assertIn(f"{install.SITE_URL}emulators/", lines[-1])
+
+
+class RunsAgainstTheRealLists(unittest.TestCase, _LoopbackRun):
+    """Behaviour read end to end over loopback."""
+
+    def setUp(self):
+        self.env = self.serve(self)
+
+    def test_a_wrong_hash_is_listed_first(self):
+        dest = self.home / "system"
+        dest.mkdir()
+        (dest / "scph5501.bin").write_bytes(b"junk")
+        proc = _install_run(self.env, "--platform", "retroarch", "--dest", str(dest),
+                            "--check", "--no-input")
+        self.assertEqual(proc.returncode, 1, proc.stderr)
+        listing = proc.stdout.split("to download:\n", 1)[1].splitlines()
+        self.assertEqual(listing[0].strip(), "wrong hash: scph5501.bin")
+
+    def test_a_dry_run_counts_the_data_trees_and_ends_on_its_last_line(self):
+        proc = _install_run(self.env, "--platform", "retroarch", "--dest",
+                            str(self.home / "s"), "--dry-run", "--no-input")
+        self.assertEqual(proc.returncode, 0, proc.stderr)
+        lines = [line for line in proc.stdout.splitlines() if line.strip()]
+        self.assertIn("Nothing was written", lines[-1])
+        header = next(line for line in lines if line.startswith("Would download"))
+        self.assertIn("data files", header)
+
+    def test_dest_alone_says_whose_list_it_is(self):
+        proc = _install_run(self.env, "--dest", str(self.home / "card"), "--dry-run",
+                            "--no-input", "--system", "atari-lynx")
+        self.assertEqual(proc.returncode, 0, proc.stderr)
+        self.assertIn("File list: RetroArch", proc.stdout)
+        self.assertIn("--platform", proc.stdout)
+
+    def test_a_cores_folder_can_be_named(self):
+        cores = self.home / "cores"
+        cores.mkdir()
+        (cores / "handy_libretro.so").write_bytes(b"")
+        proc = _install_run(self.env, "--platform", "retroarch", "--dest",
+                            str(self.home / "s"), "--cores-dir", str(cores),
+                            "--dry-run", "--no-input")
+        self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+        self.assertIn("to the installed cores", proc.stdout)
+
+    def test_no_core_found_says_how_to_go_on(self):
+        proc = _install_run(self.env, "--platform", "retroarch", "--dest",
+                            str(self.home / "s"), "--installed-cores", "--dry-run",
+                            "--no-input")
+        self.assertEqual(proc.returncode, 1)
+        self.assertIn("--cores-dir <cores folder>", proc.stderr)
+        self.assertIn("without --installed-cores", proc.stderr)
+
+
+class DestAloneFollowsWhatIsFoundHere(unittest.TestCase):
+    """--dest without --platform always meant RetroArch's list, even on a
+    machine where Batocera was found, and nothing said so."""
+
+    def _pick(self, found, interactive=False, answer=""):
+        out = io.StringIO()
+        with unittest.mock.patch.object(install, "detect_platforms", return_value=found), \
+                unittest.mock.patch("builtins.input", lambda _prompt="": answer), \
+                contextlib.redirect_stdout(out), contextlib.redirect_stderr(out):
+            try:
+                return install._platform_for_dest("linux", Path("/media/card"), interactive), out.getvalue()
+            except SystemExit as exc:
+                return exc, out.getvalue()
+
+    def test_nothing_found_is_retroarch_said_aloud(self):
+        plat, out = self._pick([])
+        self.assertEqual(plat, "retroarch")
+        self.assertIn("File list: RetroArch (nothing was detected here)", out)
+
+    def test_the_one_platform_found_is_used(self):
+        plat, out = self._pick([("batocera", Path("/userdata/bios"))])
+        self.assertEqual(plat, "batocera")
+        self.assertIn("File list: Batocera", out)
+
+    def test_several_found_without_a_terminal_is_refused(self):
+        result, out = self._pick([("emudeck", Path("/e")), ("retroarch", Path("/r"))])
+        self.assertIsInstance(result, SystemExit)
+        self.assertEqual(result.code, 1)
+        self.assertIn("--platform", out)
+
+    def test_a_terminal_asks_and_enter_keeps_the_one_found(self):
+        plat, out = self._pick([("batocera", Path("/userdata/bios"))], interactive=True)
+        self.assertEqual(plat, "batocera")
+        self.assertIn("Which platform's files go to /media/card?", out)
 
 
 if __name__ == "__main__":

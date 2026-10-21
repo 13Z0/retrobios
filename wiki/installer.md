@@ -115,9 +115,10 @@ Checking existing files...
 
 When the manifest leaves entries out (a file the collection cannot supply, or
 one that failed its hash check), a `Not installable:` line under the index count
-says how many and why. `--check` also names the required ones missing from the
-folder. They do not change its exit code, since no run of the installer can
-fetch them.
+says how many and why. `--check` and the closing report also name the required
+ones, grouped by system with the emulators that read them, and point at the
+emulator pages. They do not change the exit code of `--check`, since no run of
+the installer can fetch them.
 
 ## Choosing what to install
 
@@ -125,7 +126,7 @@ By default the installer fetches everything the platform runs. At a terminal,
 after detection, it asks:
 
 ```
-Retroarch: 5865 files, 5.7 GB.
+RetroArch: 5865 files, 5.7 GB.
   Enter) install everything
   i) only what the installed cores read: 102 files, 44.5 MB
   c) choose systems, cores and regions
@@ -188,14 +189,20 @@ frontend only checks the path, the core's copy is installed while that core
 is, and otherwise the platform's answer, read from the first declaring
 system that stays.
 
+With `--dest` and no `retroarch.cfg` beside the folder, nothing names the cores
+folder: `--cores-dir` names it, and the refusal prints the command with it.
+
 Batocera, Recalbox and the other distributions ship their cores with the
 system, so the option is refused there, as it is when no core is found or
 when the file list predates the mapping: carrying on would install
 everything while the option asked for less.
 
-A name the platform does not have is refused with the list of the ones it
-has, before anything is downloaded: carrying on would install something other
-than what was asked. A system name that itself contains commas, as Recalbox's
+A name the platform does not have is refused before anything is downloaded,
+since carrying on would install something other than what was asked. The
+refusal suggests the closest names (`playstation` gives `sony-playstation`) and
+the option that lists them all. Names are matched on letters and digits, so
+`--platform "MiSTer FPGA"` and `--system "Sony PlayStation"` are read as the
+site writes them. A system name that itself contains commas, as Recalbox's
 `msx1,msx2,msxturbor` does, is read as one name.
 
 The region rule is the one `generate_pack.py --region` applies, and a test
@@ -216,10 +223,11 @@ what the options name, everything by default.
 | Option | Effect |
 |--------|--------|
 | `--platform NAME` | Install for this platform instead of the detected one. Unknown names are refused with the available list |
-| `--dest PATH` | Destination directory, overriding detection. With `--dest` alone the file list is RetroArch's |
+| `--dest PATH` | Destination directory, overriding detection. Without `--platform`, the file list is the platform detected here: at a terminal the installer asks, Enter taking the one found, and otherwise it uses the one found, RetroArch's when nothing is found, and refuses when several are. The run prints whose list it is |
 | `--target NAME` | Keep only the files the cores of that hardware target need, and the systems they emulate. An unknown target is refused rather than ignored, since carrying on would install everything. On Batocera, Recalbox, ROCKNIX and Lakka the board is read from the system (`batocera.arch`, `recalbox.arch`, `HW_DEVICE`, `LIBREELEC_DEVICE` or `LIBREELEC_PROJECT`) and applied when no `--target` is given |
 | `--every-board` | Install the files of every board instead of the one the system names, for a card that moves between devices |
 | `--installed-cores` | Keep only what the cores already installed read (RetroArch, Lakka, RetroPie). See [Installed cores](#installed-cores) |
+| `--cores-dir PATH` | The folder RetroArch loads its cores from, for `--installed-cores` when it is not found. Implies `--installed-cores` |
 | `--system NAMES` | Install only these systems. Comma-separated or repeated. `--list-systems` prints the names, `other` included |
 | `--core NAMES` | Keep the platform's own list and only the extra files these cores load. `--list-cores` prints the names |
 | `--emulator NAMES` | Install what these emulators read on the detected platform, and nothing else: their own files and the platform's files of the systems they run. Each emulator page on the site gives this command. `--list-cores` prints the names |
@@ -237,10 +245,12 @@ what the options name, everything by default.
 | `--jobs N`, `-j N` | Parallel downloads, 1 to 32, default 8 |
 | `--verbose`, `-v` | Print per-attempt failures and hash mismatches |
 | `--standalone-copies` | Also copy into detected standalone emulator directories |
-| `--help`, `-h` | Print the option list and exit |
+| `--help`, `-h` | Print the option list, a few examples in the form the run was started with, and the address of this page |
 
 `--check` reads the same file list, hashes the destination and exits, with
-code 1 when a file is missing or does not match and 0 when every one does. Without
+code 1 when a file is missing or does not match and 0 when every one does. Files
+with a wrong hash are listed first and in full, then the first ten missing ones
+(`--verbose` lists them all). `--dry-run` counts the data trees in its total. Without
 it, a file already present with the expected hash is left untouched, and one
 whose contents do not match is re-downloaded and replaced by the verified copy.
 Files the list does not name are never read, moved or deleted.
@@ -250,11 +260,12 @@ Files the list does not name are never read, moved or deleted.
 | Variable | Effect |
 |----------|--------|
 | `RETROBIOS_REF` | Branch or tag the file list and the payloads are read from. Defaults to `main`, and a release tag pins a reproducible file set |
-| `RETROBIOS_BASE_URL` | Base URL for the manifest and the files it declares. HTTPS only, plain HTTP allowed to loopback for end-to-end tests. Whoever controls this base controls the expected hashes, hence the check |
+| `RETROBIOS_BASE_URL` | Base URL for the manifest and the files it declares. HTTPS only, plain HTTP allowed to loopback for end-to-end tests. Whoever controls this base controls the expected hashes, hence the check. A file list that cannot be fetched names the address, and this variable when it is set |
 | `RETROBIOS_OS` | Names the host outright (`linux`, `wsl`, `windows`, `darwin`, `android`) instead of detecting it |
 | `EXTERNAL_STORAGE` | Android only, the shared storage root RetroArch builds its default directories from. Defaults to `/storage/emulated/0` |
 | `RETROBIOS_INSTALL_URL` | Where the bootstrap fetches `install.py`. HTTPS only |
-| `RETROBIOS_INSTALL_SHA256` | The SHA-256 the bootstrap requires of that installer, 64 hex characters |
+| `RETROBIOS_INSTALL_SHA256` | The SHA-256 the bootstrap requires of that installer, 64 hex characters. When either of these two is set and the fingerprint does not match, the error names the variable instead of suggesting a retry |
+| `RETROBIOS_BOOTSTRAP` | Set by `install.sh` (`sh`) and `install.ps1` (`ps1`) for the temporary installer they run, so that its hints give back the one-line command rather than `python3 install.py` |
 | `NO_COLOR` | Plain text, no colour, even at a terminal. `TERM=dumb` also turns the live progress line off |
 | `HTTPS_PROXY`, `NO_PROXY` | Honoured for every download through the standard library's default proxy handling: one names the proxy, the other the hosts to reach directly |
 
@@ -362,7 +373,9 @@ relying on that.
 
 With nothing detected, the installer lists the platforms and asks. With several
 detected, it asks which one. Both prompts need a terminal: piped into a script
-with no platform to install for, it prints the manual invocation and exits 1.
+with no platform to install for, it prints the manual invocation, in the form
+the run was started with (the one-line command for a one-liner user), and
+exits 1.
 
 ## Standalone copies
 
@@ -491,12 +504,14 @@ fields, the installer refuses to narrow rather than install everything.
 | `0` | everything asked for is installed or already up to date |
 | `1` | a failure: the one-liner could not download or verify `install.py`, or found no Python 3.8 (nothing was run), an unusable base URL, an unknown platform or target, `--installed-cores` with no core found, a manifest that fails validation, a fetch that never succeeded, no platform to install for in a non-interactive run, some files failed while others installed, or `--check` found files to fetch |
 | `2` | nothing was installed: every file the run tried failed (a BIOS folder that cannot be written, for one) |
-| `130` | stopped with Ctrl+C. Run the same command again to carry on |
+| `130` | stopped with Ctrl+C, or with Ctrl+C or Ctrl+D at a question. Run the same command again to carry on |
 | `141` | the output was piped to a reader that closed early (`--list \| head`) |
 
 `install.ps1` passes the installer's code on unchanged: run as a file it exits
 with it, run through `irm \| iex` it sets `$LASTEXITCODE` (an `exit` there
-would close the PowerShell window).
+would close the PowerShell window). Its body runs in a script block of its own,
+so `irm \| iex` leaves neither its variables nor its `$ErrorActionPreference`
+in the session.
 
 Failures that are per-file, such as a download exhausting its three attempts,
 are counted and reported at the end.

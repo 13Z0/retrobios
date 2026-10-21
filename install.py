@@ -24,6 +24,7 @@ import json
 import os
 import platform
 import re
+import shlex
 import shutil
 import stat
 import subprocess
@@ -155,6 +156,22 @@ AVAILABLE_PLATFORMS = (
     "lakka", "retrodeck", "rocknix", "romm", "bizhawk", "misterfpga",
     "retropie",
 )
+
+# The names the frontends give themselves, as each manifest's display_name
+# spells them (a test holds the two equal). Detection and the platform menu
+# come before any manifest is fetched, and str.capitalize() wrote Retroarch,
+# Retrodeck and Misterfpga.
+PLATFORM_NAMES = {
+    "retroarch": "RetroArch", "batocera": "Batocera", "recalbox": "Recalbox",
+    "retrobat": "RetroBat", "emudeck": "EmuDeck", "lakka": "Lakka",
+    "retrodeck": "RetroDECK", "rocknix": "ROCKNIX", "romm": "RomM",
+    "bizhawk": "BizHawk", "misterfpga": "MiSTer FPGA", "retropie": "RetroPie",
+}
+
+SITE_URL = "https://abdess.github.io/retrobios/"
+INSTALLER_PAGE = f"{SITE_URL}wiki/installer/"
+TROUBLESHOOTING_PAGE = f"{SITE_URL}wiki/troubleshooting/"
+BOOTSTRAP_URL = "https://raw.githubusercontent.com/Abdess/retrobios/main/install"
 
 # Fallback BIOS destination per platform when --platform is forced
 # but auto-detection finds nothing on the machine.
@@ -1374,15 +1391,64 @@ def installed_cores(dirs: list[Path]) -> list[str]:
     return sorted(names)
 
 
+def display_name(plat: str, manifest: dict | None = None) -> str:
+    """A platform's name as the frontend writes it, the manifest's when it has one."""
+    named = (manifest or {}).get("display_name")
+    if isinstance(named, str) and named.strip().isprintable() and 0 < len(named.strip()) <= 40:
+        return named.strip()
+    return PLATFORM_NAMES.get(plat, plat)
+
+
+def _name_key(name: str) -> str:
+    """Letters and digits only: MiSTer FPGA, misterfpga and Mister-FPGA are one name."""
+    return re.sub(r"[^a-z0-9]", "", name.lower())
+
+
+# A list this short is printed whole rather than pointed at.
+SHORT_LIST = 12
+
+
+def did_you_mean(typed: list[str], known: list[str], listing: str) -> str:
+    """The closest known names to what was typed, and the option listing them all.
+
+    A typo was answered with every name the platform has, up to 400 on one
+    line, with no hint that playstation is sony-playstation.
+    """
+    import difflib  # noqa: PLC0415
+
+    by_key: dict[str, str] = {}
+    for name in known:
+        by_key.setdefault(_name_key(name), name)
+    close: list[str] = []
+    for word in typed:
+        key = _name_key(word)
+        if not key:
+            continue
+        matches = difflib.get_close_matches(key, list(by_key), n=3, cutoff=0.6)
+        if len(key) >= 4:
+            matches += sorted(k for k in by_key if key in k and k not in matches)
+        close += [by_key[k] for k in matches if by_key[k] not in close]
+    if close:
+        return f"Did you mean: {', '.join(close[:3])}? {listing} lists all {len(known)}."
+    if len(known) <= SHORT_LIST:
+        return f"Known: {', '.join(known)}."
+    return f"{listing} lists all {len(known)}."
+
+
 def normalize_platform(name: str) -> str:
-    """Return the canonical platform id for user-supplied input."""
-    plat = name.strip().lower()
-    if plat not in AVAILABLE_PLATFORMS:
-        print(f"Unknown platform '{name}'. Available platforms:", file=sys.stderr)
-        for p in AVAILABLE_PLATFORMS:
-            print(f"  {p}", file=sys.stderr)
-        sys.exit(1)
-    return plat
+    """Return the canonical platform id for user-supplied input.
+
+    The site writes MiSTer FPGA and RetroArch: letters and digits decide,
+    as they do for verify.py and generate_pack.py.
+    """
+    key = _name_key(name)
+    for plat in AVAILABLE_PLATFORMS:
+        if key and key in (_name_key(plat), _name_key(display_name(plat))):
+            return plat
+    print(f"Unknown platform '{name.strip()}'. "
+          + did_you_mean([name], list(AVAILABLE_PLATFORMS), "--list-platforms"),
+          file=sys.stderr)
+    sys.exit(1)
 
 
 def _read_limited_json(
@@ -1862,7 +1928,21 @@ def _validate_targets(data: object) -> dict[str, dict]:
 
 
 NETWORK_ADVICE = ("  Check the connection, and HTTPS_PROXY if this network needs a "
-                  "proxy, then run the same command again.")
+                  "proxy, then run the same command again.\n"
+                  f"  More help: {TROUBLESHOOTING_PAGE}")
+
+
+def _address_lines(url: str) -> list[str]:
+    """The address that failed, and the override that chose it if one did.
+
+    A RETROBIOS_BASE_URL left from a mirror that is down read as a network
+    fault: neither the host nor the variable was named.
+    """
+    lines = [f"  Address: {url}"]
+    if os.environ.get("RETROBIOS_BASE_URL"):
+        lines.append("  RETROBIOS_BASE_URL is set in this environment and chose that "
+                     "address: unset it to read from the project itself.")
+    return lines
 
 
 def _fetch_json(url: str, limit: int, label: str) -> object:
@@ -1904,6 +1984,11 @@ def fetch_manifest(plat: str) -> dict:
         print(f"  The file list for {plat} is not valid: {exc}", file=sys.stderr)
         sys.exit(1)
     except urllib.error.HTTPError as exc:
+        if exc.code == 404 and os.environ.get("RETROBIOS_BASE_URL"):
+            print(f"  No file list for {plat} there.", file=sys.stderr)
+            for line in _address_lines(url):
+                print(line, file=sys.stderr)
+            sys.exit(1)
         if exc.code == 404:
             # Asked once, a 4xx being final. The name was checked before any
             # request, so the revision is what has no such list.
@@ -1917,11 +2002,15 @@ def fetch_manifest(plat: str) -> dict:
                       "again in a few minutes.", file=sys.stderr)
             sys.exit(1)
         print(f"  Could not fetch the file list for {plat}: HTTP {exc.code}", file=sys.stderr)
+        for line in _address_lines(url):
+            print(line, file=sys.stderr)
         print(NETWORK_ADVICE, file=sys.stderr)
         sys.exit(1)
     except (urllib.error.URLError, OSError) as exc:
         print(f"  Could not fetch the file list for {plat} after {MAX_RETRIES} "
               f"attempts: {getattr(exc, 'reason', None) or exc}", file=sys.stderr)
+        for line in _address_lines(url):
+            print(line, file=sys.stderr)
         print(NETWORK_ADVICE, file=sys.stderr)
         sys.exit(1)
 
@@ -1940,6 +2029,8 @@ def fetch_targets(plat: str) -> "dict | None":
         if exc.code == 404:
             return {}
         print(f"  Error: failed to fetch targets for {plat}: {exc}", file=sys.stderr)
+        for line in _address_lines(url):
+            print(line, file=sys.stderr)
         print(NETWORK_ADVICE, file=sys.stderr)
         return None
     except ValueError as exc:
@@ -1948,6 +2039,8 @@ def fetch_targets(plat: str) -> "dict | None":
     except (urllib.error.URLError, OSError) as exc:
         print(f"  Error: failed to fetch targets for {plat}: "
               f"{getattr(exc, 'reason', None) or exc}", file=sys.stderr)
+        for line in _address_lines(url):
+            print(line, file=sys.stderr)
         print(NETWORK_ADVICE, file=sys.stderr)
         return None
 
@@ -2270,6 +2363,12 @@ def resolve_choices(values: list[str], known: list[str], label: str) -> list[str
     carrying on would install something other than what was asked.
     """
     by_lower = {name.lower(): name for name in known}
+    # Spelled as the site writes it (Sony PlayStation), a name is still one
+    # name when no other one reads the same once case and spacing go.
+    by_key: dict[str, str | None] = {}
+    for name in known:
+        key = _name_key(name)
+        by_key[key] = None if key in by_key else name
     chosen: list[str] = []
     unknown: list[str] = []
     for value in values:
@@ -2278,15 +2377,17 @@ def resolve_choices(values: list[str], known: list[str], label: str) -> list[str
         for token in (t.strip() for t in tokens):
             if not token:
                 continue
-            name = by_lower.get(token.lower())
+            name = by_lower.get(token.lower()) or by_key.get(_name_key(token))
             if name is None:
                 unknown.append(token)
             elif name not in chosen:
                 chosen.append(name)
     if unknown:
-        available = ", ".join(known) if known else "none"
+        if not known:
+            raise ValueError(f"unknown {label}: {', '.join(unknown)}. This list records none.")
+        listing = "--list-systems" if label == "system" else "--list-cores"
         raise ValueError(
-            f"unknown {label}: {', '.join(unknown)} (available: {available})"
+            f"unknown {label}: {', '.join(unknown)}. {did_you_mean(unknown, known, listing)}"
         )
     if values and not chosen:
         raise ValueError(f"--{label} needs at least one name")
@@ -2739,24 +2840,120 @@ def _folder_writable(path: Path) -> bool:
     return os.access(probe, os.W_OK)
 
 
+# Options that take a value, as a hint gives them back.
+_VALUED_OPTIONS = ("--system", "--core", "--emulator", "--region", "--target", "--cores-dir")
+
+
+class Invocation:
+    """How this run was started, so that a hint gives the command back whole.
+
+    A one-liner user has no install.py to run: install.sh and install.ps1 run
+    a temporary copy and say so in RETROBIOS_BOOTSTRAP. And a hint that
+    dropped --system turned a retry of 2 files into one of 8069.
+    """
+
+    def __init__(self) -> None:
+        self.os_type = ""
+        self.options: list[tuple[str, str | None]] = []
+        # Per platform, what was chosen at the questions.
+        self.chosen: dict[str, list[tuple[str, str | None]]] = {}
+
+    def record(self, args: argparse.Namespace) -> None:
+        """Keep every option that decides what a run installs or reports."""
+        options: list[tuple[str, str | None]] = []
+        for flag in _VALUED_OPTIONS:
+            value = getattr(args, flag[2:].replace("-", "_"), None)
+            values = value if isinstance(value, list) else [value] if value else []
+            options += [(flag, str(v)) for v in values]
+        for flag, on in (
+            ("--every-board", args.every_board),
+            ("--installed-cores", args.installed_cores and not args.cores_dir),
+            ("--standalone-copies", args.standalone_copies),
+            ("--check", args.check),
+            ("--dry-run", args.dry_run),
+        ):
+            if on:
+                options.append((flag, None))
+        self.options = options
+
+    def powershell(self) -> bool:
+        return os.environ.get("RETROBIOS_BOOTSTRAP") == "ps1" or self.os_type == "windows"
+
+    def launcher(self, elevated: bool = False) -> str:
+        """The command without its options, as the user typed it."""
+        bootstrap = os.environ.get("RETROBIOS_BOOTSTRAP", "")
+        if bootstrap == "ps1":
+            return f"&([scriptblock]::Create((irm {BOOTSTRAP_URL}.ps1)))"
+        if bootstrap == "sh":
+            return f"curl -fsSL {BOOTSTRAP_URL}.sh | {'sudo ' if elevated else ''}sh -s --"
+        python = "python" if self.os_type == "windows" else "python3"
+        return f"{'sudo ' if elevated else ''}{python} install.py"
+
+    def word(self, value: str) -> str:
+        if self.powershell():
+            # A comma makes an array and @ a splat in PowerShell arguments.
+            if re.fullmatch(r"[A-Za-z0-9_./:\\-]+", value):
+                return value
+            return "'" + value.replace("'", "''") + "'"
+        return shlex.quote(value)
+
+    def command(
+        self, plat: str, dest: Path | str | None, elevated: bool = False,
+        without: tuple[str, ...] = (),
+    ) -> str:
+        """The full command for plat and dest, a str dest being a placeholder."""
+        words = [self.launcher(elevated)]
+        if plat:
+            words += ["--platform", plat]
+        if isinstance(dest, Path):
+            words += ["--dest", self.word(str(dest.absolute()))]
+        elif dest:
+            words += ["--dest", dest]
+        for flag, value in [*self.options, *self.chosen.get(plat, [])]:
+            if flag in without:
+                continue
+            words += [flag] if value is None else [flag, self.word(value)]
+        return " ".join(words)
+
+
+_INVOCATION = Invocation()
+
+
 def _write_advice(path: Path, assumed: bool, plat: str = "") -> str:
     """What to do about a folder this run could not write.
 
     sudo fixes a root-owned BIOS folder on the console itself. On another
     machine it would create that folder on the wrong disk: a platform named
     but not found here is a card or share mounted elsewhere, named by --dest.
+    Windows has no sudo, and Termux reaches shared storage once
+    termux-setup-storage has run.
     """
     if assumed:
         return (f"  {path} is where the platform keeps its BIOS on its own system, "
                 "and it was not found here. If this machine prepares its card or "
-                "share, run the same command with --dest pointing at that folder.")
+                "share, run it again with --dest pointing at that folder:\n"
+                f"    {_INVOCATION.command(plat, '<that folder>')}")
+    if plat and _INVOCATION.os_type == "windows":
+        return ("  This user cannot write there. Run it again from a PowerShell window "
+                "opened as administrator:\n"
+                f"    {_INVOCATION.command(plat, path)}\n"
+                "  Or choose another folder with --dest.")
+    if plat and _INVOCATION.os_type == "android":
+        return ("  This user cannot write there. Run termux-setup-storage once to give "
+                "Termux the shared storage, then run it again:\n"
+                f"    {_INVOCATION.command(plat, path)}\n"
+                "  Or choose another folder with --dest.")
     if plat:
         # sudo resets HOME to root's on Debian, Ubuntu, Arch and SteamOS:
         # the same command detected nothing there, fell back to a folder
         # under /root and reported success.
         return ("  This user cannot write there. Run it again with sudo, naming the "
-                f"folder so root does not look in its own home: --platform {plat} "
-                f"--dest '{path.absolute()}'. Or choose another folder with --dest.")
+                "folder so root does not look in its own home:\n"
+                f"    {_INVOCATION.command(plat, path, elevated=True)}\n"
+                "  Or choose another folder with --dest.")
+    if _INVOCATION.os_type == "windows":
+        return ("  This user cannot write there: run the same command from a PowerShell "
+                "window opened as administrator, or choose another folder with --dest.")
     return ("  This user cannot write there: run the same command with sudo, "
             "or choose another folder with --dest.")
 
@@ -2866,17 +3063,14 @@ def _omission_lines(count: int, entries: list[dict]) -> list[str]:
     lines = [f"{_plural(count, 'file')} {'was' if one else 'were'} not installed: "
              f"the collection does not hold {'it' if one else 'them'}, or its copy "
              f"fails {'its' if one else 'their'} check."]
-    required = sorted({e["name"] for e in entries if e.get("required")})
-    if required:
-        shown = ", ".join(required[:10])
-        more = f" and {len(required) - 10} more" if len(required) > 10 else ""
-        lines.append(f"  Needed to start an emulator: {shown}{more}.")
+    lines += _needed_lines([e for e in entries if e.get("required")],
+                           "Needed to start an emulator")
     return lines
 
 
-def _absent_required(omitted: list[dict], bios_path: Path) -> list[str]:
-    """Required files the manifest leaves out that the user has not placed."""
-    names = set()
+def _absent_required(omitted: list[dict], bios_path: Path) -> list[dict]:
+    """Required entries the manifest leaves out that the user has not placed."""
+    absent = []
     for entry in omitted:
         dest = entry.get("dest") or entry.get("name", "")
         if not entry.get("required", True) or not dest:
@@ -2886,8 +3080,35 @@ def _absent_required(omitted: list[dict], bios_path: Path) -> list[str]:
         except ValueError:
             placed = False  # a path climbing out of the folder is never one we read
         if not placed:
-            names.add(dest)
-    return sorted(names)
+            absent.append(entry)
+    return absent
+
+
+def _needed_lines(entries: list[dict], heading: str, every: bool = False) -> list[str]:
+    """Required files the collection lacks, by system with the emulators reading them.
+
+    A bare list (DARK.GOB, Data.rsdk, ... and 69 more) left a Batocera user
+    unable to tell whether their PlayStation was concerned.
+    """
+    by_system: dict[str, tuple[set[str], set[str]]] = {}
+    for entry in entries:
+        system = str(entry.get("system") or ", ".join(entry_systems(entry)) or OTHER_SYSTEMS)
+        names, cores = by_system.setdefault(system, (set(), set()))
+        names.add(str(entry.get("dest") or entry.get("name")))
+        cores.update(str(core) for core in entry.get("cores") or [])
+    if not by_system:
+        return []
+    count = sum(len(names) for names, _cores in by_system.values())
+    lines = [f"  {heading} ({_plural(count, 'file')}):"]
+    systems = sorted(by_system)
+    for system in systems if every else systems[:8]:
+        names, cores = by_system[system]
+        readers = f" ({', '.join(sorted(cores))})" if cores else ""
+        lines.append(f"    {system}{readers}: {', '.join(sorted(names))}")
+    if not every and len(systems) > 8:
+        lines.append(f"    ... and {len(systems) - 8} more systems (--check --verbose lists them all)")
+    lines.append(f"  Each emulator's page says what these files are: {SITE_URL}emulators/")
+    return lines
 
 
 # Asked before, in an interactive run: past this size a download is worth a
@@ -2913,14 +3134,30 @@ def _confirm(prompt: str) -> bool:
     return not (answer.startswith("n") or answer in _REFUSALS)
 
 
-def _print_plan(to_download: list[dict], bios_path: Path, term: Terminal) -> None:
-    """What a real run would fetch, by system, and nothing written."""
+def _print_plan(
+    to_download: list[dict], bios_path: Path, term: Terminal,
+    trees: list[tuple[dict, dict[str, dict]]] = (),
+) -> None:
+    """What a real run would fetch, by system, and nothing written.
+
+    The data trees count in the total and come before the closing line:
+    printed after it, they left 2636 RetroArch files out of the figure a
+    user plans an SD card from.
+    """
     total = sum(f.get("size", 0) for f in to_download)
-    if not to_download:
+    trees = [(entry, needed) for entry, needed in trees if needed]
+    tree_files = sum(len(needed) for _entry, needed in trees)
+    tree_size = sum(meta.get("size", 0) for _entry, needed in trees for meta in needed.values())
+    if not to_download and not trees:
         print("\n  All files up to date. A real run would download nothing.")
         return
-    print(f"\nWould download {_plural(len(to_download), 'file')} "
-          f"({format_size(total)}) to {bios_path}:")
+    parts = []
+    if to_download:
+        parts.append(f"{_plural(len(to_download), 'file')} ({format_size(total)})")
+    if trees:
+        parts.append(f"{_plural(tree_files, 'data file')} ({format_size(tree_size)}, "
+                     f"extracted from {_plural(len(trees), 'archive')})")
+    print(f"\nWould download {' and '.join(parts)} to {bios_path}:")
     by_system: dict[str, list[dict]] = {}
     for entry in to_download:
         system = ", ".join(entry_systems(entry)) or "other"
@@ -2931,10 +3168,13 @@ def _print_plan(to_download: list[dict], bios_path: Path, term: Terminal) -> Non
             print(f"    {entry['dest']}  {term.dim(format_size(entry.get('size', 0)))}")
         if len(by_system[system]) > 8:
             print(f"    ... and {len(by_system[system]) - 8} more")
+    for entry, needed in trees:
+        print(f"  {term.bold(entry['ref'] + ' data')}  {_sized(list(needed.values()))}, "
+              f"from {entry['url']}")
     print("\n  Nothing was written. Run without --dry-run to install.")
 
 
-def _check_free_space(bios_path: Path, needed: int) -> None:
+def _check_free_space(bios_path: Path, needed: int, plat: str = "") -> None:
     """Stop before writing when the volume cannot hold the download.
 
     Reported against the nearest existing ancestor, since the destination
@@ -2952,8 +3192,15 @@ def _check_free_space(bios_path: Path, needed: int) -> None:
     print(f"\nNot enough space on the drive holding {bios_path}.", file=sys.stderr)
     print(f"  Needed: {format_size(needed)}. Free: {format_size(free)}.",
           file=sys.stderr)
-    print(f"  Free up {format_size(needed - free)}, or use --dest to install "
-          "to another drive.", file=sys.stderr)
+    if not plat:
+        print(f"  Free up {format_size(needed - free)}, or use --dest to install "
+              "to another drive.", file=sys.stderr)
+        sys.exit(1)
+    # --dest alone used to mean RetroArch's list: the platform is named, so
+    # a Batocera install moved to a USB drive stays Batocera's.
+    print(f"  Free up {format_size(needed - free)}, or install to another drive:\n"
+          f"    {_INVOCATION.command(plat, '<folder on another drive>')}",
+          file=sys.stderr)
     sys.exit(1)
 
 
@@ -3280,40 +3527,40 @@ def format_size(n: int) -> str:
     return f"{n / (1024 * 1024 * 1024):.1f} GB"
 
 
-def _prompt_manual_platform(os_type: str) -> list[tuple[str, Path]]:
-    """Ask for a platform and a BIOS directory when nothing was detected."""
-    print("\nChoose the platform to install for:")
+def _choose_platform(title: str, default: str = "") -> str:
+    """One platform from the numbered list, Enter taking the default."""
+    print(f"\n{title}")
     for i, name in enumerate(AVAILABLE_PLATFORMS, 1):
-        print(f"  {i}) {name}")
+        print(f"  {i}) {display_name(name)}")
     print("  q) quit")
     print()
-    plat = ""
-    while not plat:
-        try:
-            choice = input("> ").strip().lower()
-        except (EOFError, KeyboardInterrupt):
-            print()
-            sys.exit(0)
-        if choice == "q":
+    prompt = f"> [Enter for {display_name(default)}] " if default else "> "
+    while True:
+        choice = _ask(prompt)
+        if not choice and default:
+            return default
+        if choice.lower() == "q":
             sys.exit(0)
         if choice.isdigit() and 1 <= int(choice) <= len(AVAILABLE_PLATFORMS):
-            plat = AVAILABLE_PLATFORMS[int(choice) - 1]
-        elif choice in AVAILABLE_PLATFORMS:
-            plat = choice
-        else:
-            print(f"  Type a number from 1 to {len(AVAILABLE_PLATFORMS)}, a platform name, "
-                  "or q to quit.")
+            return AVAILABLE_PLATFORMS[int(choice) - 1]
+        key = _name_key(choice)
+        for plat in AVAILABLE_PLATFORMS:
+            if key and key in (_name_key(plat), _name_key(display_name(plat))):
+                return plat
+        print(f"  Type a number from 1 to {len(AVAILABLE_PLATFORMS)}, a platform name, "
+              "or q to quit.")
+
+
+def _prompt_manual_platform(os_type: str) -> list[tuple[str, Path]]:
+    """Ask for a platform and a BIOS directory when nothing was detected."""
+    plat = _choose_platform("Choose the platform to install for:")
     default_dest = _default_dest(os_type, plat)
     raw = ""
     while not raw:
-        try:
-            raw = input(
-                f"BIOS directory [{default_dest}]: " if default_dest
-                else "BIOS directory (no default on this system): "
-            ).strip()
-        except (EOFError, KeyboardInterrupt):
-            print()
-            sys.exit(0)
+        raw = _ask(
+            f"BIOS directory [{default_dest}]: " if default_dest
+            else "BIOS directory (no default on this system): "
+        )
         if default_dest is not None:
             break
     dest = Path(raw).expanduser() if raw else default_dest
@@ -3355,23 +3602,21 @@ def _default_dest(os_type: str, platform_name: str) -> Path | None:
 
 
 def _manual_usage_hint(os_type: str) -> list[str]:
-    """How to name the platform and directory when nothing is detected."""
-    if os_type == "windows":
-        return [
-            "  Use --platform and --dest to specify manually, for example:",
-            "    & ([ScriptBlock]::Create((iwr -useb "
-            "https://raw.githubusercontent.com/Abdess/retrobios/main/install.ps1))) "
-            "--platform retroarch --dest 'C:\\RetroArch\\system'",
-        ]
-    if os_type == "android":
-        return [
-            "  Use --platform and --dest to specify manually, for example:",
-            "    python3 install.py --platform retroarch "
-            "--dest /storage/emulated/0/RetroArch/system",
-        ]
+    """How to name the platform and directory when nothing is detected.
+
+    In the form the run was started with: a one-liner user has no
+    install.py, and `python3 install.py` failed with "can't open file".
+    """
+    example = {
+        "windows": "C:\\RetroArch-Win64\\system",
+        "android": "/storage/emulated/0/RetroArch/system",
+    }.get(os_type, "~/.config/retroarch/system")
+    hint = Invocation()
+    hint.os_type, hint.options = os_type, _INVOCATION.options
     return [
         "  Use --platform and --dest to specify manually, for example:",
-        "    python3 install.py --platform retroarch --dest ~/.config/retroarch/system",
+        f"    {hint.command('retroarch', example)}",
+        f"  Where each platform keeps its BIOS: {INSTALLER_PAGE}",
     ]
 
 
@@ -3381,7 +3626,7 @@ def _prompt_platform_choice(
     """Prompt user to choose among detected platforms."""
     print("\nInstall for:")
     for i, (name, path) in enumerate(platforms, 1):
-        print(f"  {i}) {name.capitalize()} ({path})")
+        print(f"  {i}) {display_name(name)} ({path})")
     last = len(platforms) + (1 if len(platforms) > 1 else 0)
     if len(platforms) > 1:
         print(f"  {last}) All")
@@ -3403,11 +3648,16 @@ def _prompt_platform_choice(
 
 
 def _ask(prompt: str) -> str:
+    """An answer, or a stop: Ctrl+D at a question is Ctrl+C.
+
+    Both used to leave with 0, so `install.sh && retroarch` went on with no
+    BIOS. They now end where Ctrl+C ends everywhere else, on 130.
+    """
     try:
         return input(prompt).strip()
-    except (EOFError, KeyboardInterrupt):
+    except EOFError:
         print()
-        sys.exit(0)
+        raise KeyboardInterrupt from None
 
 
 def _sized(files: list[dict]) -> str:
@@ -3445,6 +3695,7 @@ INSTALLED_ONLY = "installed"
 def _prompt_custom_selection(
     plat: str, files: list[dict], omitted: list[dict],
     installed: tuple[list[dict], list[dict]] | None = None,
+    name: str = "",
 ) -> tuple[list[str], list[str], list[str]] | str | None:
     """Offer to narrow the install by system, core and region.
 
@@ -3453,7 +3704,7 @@ def _prompt_custom_selection(
     installed read) holds, or the three choices. Each empty list keeps
     everything on its axis.
     """
-    print(f"\n{plat.capitalize()}: {_sized(files)}.")
+    print(f"\n{name or display_name(plat)}: {_sized(files)}.")
     print("  Enter) install everything")
     if installed is not None:
         print(f"  i) only what the installed cores read: {_sized(installed[0])}")
@@ -3623,11 +3874,33 @@ def _requested_narrowing(
     return systems, cores, regions
 
 
+def _help_epilog() -> str:
+    """Examples in the form the run was started with, and where the rest is."""
+    run = _INVOCATION.launcher()
+    card = "E:\\bios" if _INVOCATION.powershell() else "/media/SHARE/bios"
+    examples = (
+        ("install for the platforms found here", run),
+        ("prepare a card or a share for another device",
+         f"{run} --platform batocera --dest {card}"),
+        ("only some systems (names: --list-systems)",
+         f"{run} --platform retroarch --system sony-playstation,nintendo-gba"),
+        ("check what is installed, writing nothing", f"{run} --check"),
+    )
+    lines = ["examples:"]
+    for what, command in examples:
+        lines += [f"  {what}", f"    {command}"]
+    lines += ["", f"Every option, the environment variables and the exit codes: {INSTALLER_PAGE}"]
+    return "\n".join(lines)
+
+
 def main() -> None:
     """Entry point."""
+    _INVOCATION.os_type = detect_os()
     parser = argparse.ArgumentParser(
         allow_abbrev=False,
         description="Download missing BIOS files for retrogaming emulators.",
+        epilog=_help_epilog(),
+        formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     parser.add_argument(
         "--platform",
@@ -3636,7 +3909,9 @@ def main() -> None:
     parser.add_argument(
         "--dest",
         type=Path,
-        help="override BIOS destination directory",
+        help="BIOS folder to install into. Without --platform, the file list is "
+             "the platform detected here, asked at a terminal, RetroArch's when "
+             "nothing is detected",
     )
     parser.add_argument(
         "--target",
@@ -3691,6 +3966,13 @@ def main() -> None:
         action="store_true",
         help="install only what the cores already installed read "
              "(RetroArch, Lakka, RetroPie)",
+    )
+    parser.add_argument(
+        "--cores-dir",
+        type=Path,
+        metavar="PATH",
+        help="the folder RetroArch loads its cores from, when it is not found "
+             "(implies --installed-cores)",
     )
     parser.add_argument(
         "--system",
@@ -3750,6 +4032,9 @@ def main() -> None:
     )
 
     args = parser.parse_args()
+    if args.cores_dir:
+        args.installed_cores = True
+    _INVOCATION.record(args)
     if not 1 <= args.jobs <= 32:
         parser.error("--jobs must be between 1 and 32")
     if args.region:
@@ -3788,6 +4073,64 @@ def main() -> None:
     finally:
         if sys.stdout is captured:
             sys.stdout = real_stdout
+
+
+def _no_core_found(plat: str, bios_path: Path, searched: list[Path], dest_given: bool) -> None:
+    """Refuse --installed-cores with no core, and say how to point at them.
+
+    With --dest, detection does not run, and without a retroarch.cfg beside
+    the folder nothing names the cores folder: the run stopped on "no known
+    directory" with no way forward.
+    """
+    where = (f"none in {', '.join(map(str, searched))}" if searched
+             else f"no retroarch.cfg was found for {bios_path} to name their folder")
+    print(f"Error: no installed core found for {display_name(plat)}: {where}.",
+          file=sys.stderr)
+    print("  Name the folder RetroArch loads cores from (libretro_directory in "
+          "retroarch.cfg, cores/ beside RetroArch by default):", file=sys.stderr)
+    command = _INVOCATION.command(plat, bios_path, without=("--installed-cores", "--cores-dir"))
+    print(f"    {command} --cores-dir <cores folder>", file=sys.stderr)
+    if dest_given:
+        print("  Or run it without --dest: detection reads retroarch.cfg, which names "
+              "that folder.", file=sys.stderr)
+    print("  Or run it without --installed-cores to install every file.", file=sys.stderr)
+    sys.exit(1)
+
+
+def _platform_for_dest(os_type: str, dest: Path, interactive: bool) -> str:
+    """The file list for a --dest given without --platform.
+
+    A folder says where, not for whom, and a card is often prepared on a PC
+    for a console: --dest alone installed RetroArch's names and layout into
+    a Batocera share. The platforms detected here are the evidence. At a
+    terminal the user picks, Enter taking the one found. Otherwise the one
+    found is used, RetroArch when none is, and several found are refused.
+    """
+    print("Detecting platform...")
+    found = list(dict.fromkeys(name for name, _path in detect_platforms(os_type)))
+    default = found[0] if len(found) == 1 else "" if found else "retroarch"
+    if interactive:
+        plat = _choose_platform(f"Which platform's files go to {dest}?", default)
+        print(f"  File list: {display_name(plat)}. Same choice without questions: "
+              f"--platform {plat}")
+        return plat
+    if not default:
+        print(f"Error: {' and '.join(display_name(n) for n in found)} found here. "
+              f"Name the platform {dest} is for with --platform.", file=sys.stderr)
+        sys.exit(1)
+    why = "the platform found here" if found else "nothing was detected here"
+    print(f"  File list: {display_name(default)} ({why}). For another platform's "
+          "list, add --platform (--list-platforms names them).")
+    return default
+
+
+def _unknown_target(target: str, plat: str, targets: dict) -> None:
+    print(f"Error: unknown target '{target}' for {plat}.", file=sys.stderr)
+    if targets:
+        print("  " + did_you_mean([target], sorted(targets), "--list-targets"),
+              file=sys.stderr)
+    else:
+        print(f"  {plat} publishes no target list", file=sys.stderr)
 
 
 def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
@@ -3859,7 +4202,8 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
             assumed_dests.add(default_dest)
     elif args.dest:
         print(f"  Using destination: {args.dest}")
-        platforms = [("retroarch", args.dest)]
+        platforms = [(_platform_for_dest(os_type, args.dest, interactive and not listing),
+                      args.dest)]
     else:
         print("Detecting platform...")
         frontends = detect_frontends(os_type)
@@ -3876,7 +4220,7 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                 sys.exit(1)
             platforms = _prompt_manual_platform(os_type)
         for name, path in platforms:
-            print(f"  Found {name.capitalize()} at {path}")
+            print(f"  Found {display_name(name)} at {path}")
 
     if len(platforms) > 1 and not listing and interactive:
         platforms = _prompt_platform_choice(platforms)
@@ -3905,13 +4249,7 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                 sys.exit(1)
             target_lists[plat_name] = targets
             if args.target not in targets:
-                print(f"Error: unknown target '{args.target}' for {plat_name}.",
-                      file=sys.stderr)
-                print(
-                    f"  available: {', '.join(sorted(targets))}" if targets
-                    else f"  {plat_name} publishes no target list",
-                    file=sys.stderr,
-                )
+                _unknown_target(args.target, plat_name, targets)
                 if len(platforms) > 1:
                     print("  Nothing was installed. Name one platform with "
                           "--platform to install it alone.", file=sys.stderr)
@@ -3922,7 +4260,7 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
     cores_found: dict[tuple[str, Path], list[str]] = {}
     for plat_name, bios_path in platforms:
         if plat_name in CORE_PLATFORMS:
-            searched = core_dirs(plat_name, bios_path)
+            searched = [args.cores_dir] if args.cores_dir else core_dirs(plat_name, bios_path)
             cores_found[(plat_name, bios_path)] = installed_cores(searched)
         elif args.installed_cores:
             print(
@@ -3932,12 +4270,7 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
             )
             sys.exit(1)
         if args.installed_cores and not cores_found[(plat_name, bios_path)]:
-            print(
-                f"Error: no installed core found for {plat_name} in: "
-                f"{', '.join(map(str, searched)) or 'no known directory'}",
-                file=sys.stderr,
-            )
-            sys.exit(1)
+            _no_core_found(plat_name, bios_path, searched, bool(args.dest))
 
     for plat_name, bios_path in platforms:
         if bios_path not in installed_paths:
@@ -3999,18 +4332,7 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                 # Carrying on would install every file, which is the opposite
                 # of what a filter was asked for: a 4 GB download instead of
                 # the subset the target needs. Refuse rather than ignore.
-                print(
-                    f"Error: unknown target '{target}' for {plat_name}.",
-                    file=sys.stderr,
-                )
-                if targets:
-                    print(
-                        f"  available: {', '.join(sorted(targets))}", file=sys.stderr
-                    )
-                else:
-                    print(
-                        f"  {plat_name} publishes no target list", file=sys.stderr
-                    )
+                _unknown_target(target, plat_name, targets)
                 sys.exit(1)
             elif target_info.get("cores") is None:
                 print(
@@ -4062,16 +4384,24 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                 if found_cores and not args.installed_cores else None
             )
             selection = _prompt_custom_selection(
-                plat_name, files, omitted_files, installed
+                plat_name, files, omitted_files, installed,
+                display_name(plat_name, manifest),
             )
             if selection == INSTALLED_ONLY:
                 files, omitted_files = installed
                 print("\n  Same choice without questions: "
                       f"--platform {plat_name} --installed-cores")
+                _INVOCATION.chosen[plat_name] = [("--installed-cores", None)]
                 selection = None
             elif selection is not None:
                 print("\n  Same choice without questions: "
                       + _same_choice_hint(plat_name, *selection))
+                systems, cores, regions = selection
+                _INVOCATION.chosen[plat_name] = [
+                    *(("--system", name) for name in systems),
+                    *(("--core", name) for name in cores),
+                    *([("--region", ",".join(regions))] if regions else []),
+                ]
         if selection is not None:
             before = len(files)
             files, omitted_files = narrow(files, omitted_files, *selection)
@@ -4138,14 +4468,18 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
             if to_download:
                 # Named, not only counted: a user looking for the one bad
                 # BIOS learned "1 files need downloading" and nothing else.
+                # A wrong hash comes first and always in full: listed after
+                # 8000 missing files, it hid behind "... and 8059 more".
                 wrong = {id(entry) for entry in mismatched}
-                shown = to_download if args.verbose else to_download[:10]
+                missing = [entry for entry in to_download if id(entry) not in wrong]
+                shown = missing if args.verbose else missing[:10]
                 print(f"\n  {_plural(len(to_download), 'file')} to download:")
+                for entry in mismatched:
+                    print(f"    wrong hash: {entry['dest']}")
                 for entry in shown:
-                    state = "wrong hash" if id(entry) in wrong else "missing"
-                    print(f"    {state}: {entry['dest']}")
-                if len(shown) < len(to_download):
-                    print(f"    ... and {len(to_download) - len(shown)} more "
+                    print(f"    missing: {entry['dest']}")
+                if len(shown) < len(missing):
+                    print(f"    ... and {len(missing) - len(shown)} more missing "
                           "(--verbose lists them all)")
                 print("  Run the same command without --check to fetch them; "
                       "a file with a wrong hash is replaced.")
@@ -4153,13 +4487,14 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
             else:
                 print("\n  All files up to date.")
             absent = _absent_required(omitted_files, bios_path)
-            if absent:
-                # The collection cannot supply these, so they leave the exit
-                # code alone, but a user asking why a game will not start
-                # needs their names.
-                print(f"  Not in the collection and absent here, needed to start "
-                      f"an emulator: {', '.join(absent[:10])}"
-                      + (f" and {len(absent) - 10} more" if len(absent) > 10 else ""))
+            # The collection cannot supply these, so they leave the exit
+            # code alone, but a user asking why a game will not start needs
+            # their names, and which system and emulator each one is for.
+            for line in _needed_lines(
+                absent, "Not in the collection and absent here, needed to start an emulator",
+                every=args.verbose,
+            ):
+                print(line)
             for entry in data_dirs:
                 _root, needed, present = data_directory_state(entry, bios_path)
                 if needed:
@@ -4169,10 +4504,9 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
             continue
 
         if args.dry_run:
-            _print_plan(to_download, bios_path, term)
-            for entry in data_dirs:
-                print(f"  and the {entry['ref']} tree ({len(entry['files'])} files) "
-                      f"from {entry['url']}")
+            _print_plan(to_download, bios_path, term, [
+                (entry, data_directory_state(entry, bios_path)[1]) for entry in data_dirs
+            ])
             continue
 
         if to_download:
@@ -4205,7 +4539,7 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                 # as when it exists read-only; 1 once an earlier platform
                 # of the run installed something.
                 sys.exit(1 if total_downloaded else 2)
-            _check_free_space(bios_path, dl_size)
+            _check_free_space(bios_path, dl_size, plat_name)
             progress = Progress(len(to_download), dl_size, term)
             failed, interrupted = download_files(
                 to_download, bios_path, jobs=args.jobs, verbose=args.verbose,
