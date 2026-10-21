@@ -18,22 +18,31 @@ from pathlib import Path
 from scripts.common import yaml_load
 from scripts.scraper._hash_merge import (
     DEVICE_SECTION,
+    SOFTLIST_SECTION,
     mame_ref_role,
     merge_mame_devices,
     merge_mame_profile,
+    merge_mame_support,
 )
 from scripts.scraper.mame_devices import (
     ABSENT,
     AMBIGUOUS,
     NO_FILE,
     MachineLinks,
+    attribute_softlists,
     attribute_systems,
+    default_floppy_samples,
+    drive_form_factor,
     find_rom_block,
+    floppy_drives,
+    floppy_sample_systems,
     locate_sources,
     open_listxml,
+    platform_seeds,
     profile_seeds,
     scan_device_sets,
     scan_release,
+    selected_form_factor,
     source_path,
 )
 
@@ -429,7 +438,10 @@ class TheListxmlSaysWhoLoadsASet(unittest.TestCase):
 
     def test_links(self):
         machines = _release().machines
-        self.assertEqual(machines["mslugj"], MachineLinks("mslug", False, ("cart_dev",)))
+        self.assertEqual(
+            machines["mslugj"],
+            MachineLinks("mslug", False, ("cart_dev",), (), "snk/neogeo.cpp"),
+        )
         self.assertEqual(machines["apple2gs"].uses, ("a2diskii", "a2ssc"))
         # A device's ROMs are searched in its parent ROM device's set too.
         self.assertEqual(machines["cart_dev"].uses, ("cart_base",))
@@ -631,6 +643,333 @@ class APickReadsTheEntrySystems(unittest.TestCase):
         self.assertEqual(
             validate_schemas._systems_outside_profile(root / "emulators" / "x.yml", listed), []
         )
+
+
+SUPPORT_LISTXML = b"""<?xml version="1.0"?>
+<mame build="0.289 (mame0289)" debug="no" mameconfig="10">
+\t<machine name="bbcb" sourcefile="acorn/bbcb.cpp">
+\t\t<device_ref tag=":fdc:0:525qd" name="floppy_525_qd"/>
+\t\t<softwarelist tag="flop_ls" name="bbc_flop" status="original"/>
+\t</machine>
+\t<machine name="bbcbus" sourcefile="acorn/bbcb.cpp" cloneof="bbcb" romof="bbcb">
+\t\t<softwarelist tag="flop_ls" name="bbc_flop_us" status="original"/>
+\t</machine>
+\t<machine name="apple2gs" sourcefile="apple/apple2gs.cpp">
+\t\t<slot name="sl6">
+\t\t\t<slotoption name="disk" devname="a2disk35"/>
+\t\t</slot>
+\t</machine>
+\t<machine name="a2disk35" sourcefile="devices/bus/a2bus/a2disk35.cpp" isdevice="yes" runnable="no">
+\t\t<device_ref tag=":0:35dd" name="floppy_35_dd"/>
+\t\t<softwarelist tag="flop35" name="apple2gs_flop" status="original"/>
+\t</machine>
+\t<machine name="pcw" sourcefile="amstrad/pcw.cpp">
+\t\t<device_ref tag=":0:3" name="floppy_3_sssd"/>
+\t</machine>
+\t<machine name="ibm5150" sourcefile="ibm/ibmpc.cpp">
+\t\t<device_ref tag=":0:8" name="floppy_8_sssd"/>
+\t\t<softwarelist tag="flop" name="ibm5150" status="original"/>
+\t</machine>
+\t<machine name="floppy_525_qd" sourcefile="devices/imagedev/floppy.cpp" isdevice="yes" runnable="no">
+\t\t<device_ref tag=":flopsnd" name="flopsnd"/>
+\t</machine>
+\t<machine name="floppy_35_dd" sourcefile="devices/imagedev/floppy.cpp" isdevice="yes" runnable="no">
+\t\t<device_ref tag=":flopsnd" name="flopsnd"/>
+\t</machine>
+\t<machine name="floppy_3_sssd" sourcefile="devices/imagedev/floppy.cpp" isdevice="yes" runnable="no">
+\t\t<device_ref tag=":flopsnd" name="flopsnd"/>
+\t</machine>
+\t<machine name="floppy_8_sssd" sourcefile="devices/imagedev/floppy.cpp" isdevice="yes" runnable="no">
+\t\t<device_ref tag=":flopsnd" name="flopsnd"/>
+\t</machine>
+\t<machine name="flopsnd" sourcefile="devices/imagedev/floppy.cpp" isdevice="yes" runnable="no">
+\t</machine>
+</mame>
+"""
+
+SUPPORT_SEEDS = {"bbcb": "acorn-bbc-micro", "apple2gs": "apple2gs", "pcw": "pcw"}
+
+FLOPPY_CPP = """\
+floppy_sound_device::floppy_sound_device(const machine_config &mconfig, const char *tag)
+\t: samples_device(mconfig, FLOPPYSOUND, tag, owner, clock),
+\tm_spin_kind(floppy_sound_samples::QUIET)
+{
+\t// m_default_samples.add_spin_sample("commented_out", 0);
+\tm_default_samples.set_form_factor(floppy_image::FF_35, "floppy");
+\tm_default_samples.add_spin_sample("35_spin", floppy_sound_samples::START_EMPTY);
+\tm_default_samples.add_seek_sample("35_seek", 2, 3);
+\tm_default_samples.set_form_factor(floppy_image::FF_525, "floppy");
+\tm_default_samples.add_step_sample("525_step");
+}
+
+DEFINE_DEVICE_TYPE(FLOPPY_35_DD, floppy_35_dd, "floppy_35_dd", "3.5 inch drive")
+DEFINE_DEVICE_TYPE(FLOPPY_525_QD, floppy_525_qd, "floppy_525_qd", "5.25 inch drive")
+DEFINE_DEVICE_TYPE(FLOPPY_3_SSSD, floppy_3_sssd, "floppy_3_sssd", "3 inch drive")
+DEFINE_DEVICE_TYPE(FLOPPY_8_SSSD, floppy_8_sssd, "floppy_8_sssd", "8 inch drive")
+
+void floppy_35_dd::setup_characteristics()
+{
+\tm_form_factor = floppy_image::FF_35;
+}
+
+void floppy_525_qd::setup_characteristics()
+{
+\tm_form_factor = floppy_image::FF_525;
+}
+
+void floppy_3_sssd::setup_characteristics()
+{
+\tm_form_factor = floppy_image::FF_3;
+}
+
+void floppy_8_sssd::setup_characteristics()
+{
+\tm_form_factor = floppy_image::FF_8;
+}
+"""
+
+
+def _support():
+    machines = scan_release(io.BytesIO(SUPPORT_LISTXML)).machines
+    return machines, attribute_systems(machines, SUPPORT_SEEDS)
+
+
+class SoftwareListsFollowTheMachinesThatDeclareThem(unittest.TestCase):
+    """software_list_device::parse opens <list>.xml for each list a machine
+    declares: a --system pick needs the lists of that system's machines."""
+
+    def test_the_scan_keeps_lists_and_source_files(self):
+        machines = scan_release(io.BytesIO(SUPPORT_LISTXML)).machines
+        self.assertEqual(machines["bbcb"].softlists, ("bbc_flop",))
+        self.assertEqual(machines["a2disk35"].sourcefile, "devices/bus/a2bus/a2disk35.cpp")
+
+    def test_lists_of_machines_clones_and_slot_cards(self):
+        lists = attribute_softlists(*_support())
+        self.assertEqual(lists["bbc_flop"], ["acorn-bbc-micro"])
+        self.assertEqual(lists["bbc_flop_us"], ["acorn-bbc-micro"])
+        self.assertEqual(lists["apple2gs_flop"], ["apple2gs"])
+        # No entry places the PC: its list serves no system of the profile.
+        self.assertNotIn("ibm5150", lists)
+
+
+class FloppySamplesFollowTheDrives(unittest.TestCase):
+    """Every drive adds a floppy sound device that loads the default list of
+    the form factor its drive selects (floppy.cpp:1428-1473, 1709-1738)."""
+
+    def test_default_list_by_form_factor(self):
+        self.assertEqual(
+            default_floppy_samples(FLOPPY_CPP),
+            {"35_spin": "FF_35", "35_seek": "FF_35", "525_step": "FF_525"},
+        )
+
+    def test_drive_form_factor(self):
+        self.assertEqual(drive_form_factor(FLOPPY_CPP, "floppy_35_dd"), "FF_35")
+        self.assertEqual(drive_form_factor(FLOPPY_CPP, "floppy_3_sssd"), "FF_3")
+        self.assertEqual(drive_form_factor(FLOPPY_CPP, "missing"), "")
+
+    def test_select_falls_back_like_the_code(self):
+        available = {"FF_35", "FF_525"}
+        self.assertEqual(selected_form_factor("FF_35", available), "FF_35")
+        self.assertEqual(selected_form_factor("FF_3", available), "FF_35")
+        self.assertEqual(selected_form_factor("FF_8", available), "FF_525")
+        self.assertEqual(selected_form_factor("FF_TWIG", available), "FF_525")
+        self.assertEqual(selected_form_factor("FF_3", {"FF_525"}), "FF_525")
+        self.assertEqual(selected_form_factor("FF_35", set()), "")
+
+    def test_samples_go_to_the_systems_of_the_drives(self):
+        machines, systems = _support()
+        self.assertEqual(
+            floppy_drives(machines),
+            ["floppy_35_dd", "floppy_3_sssd", "floppy_525_qd", "floppy_8_sssd"],
+        )
+        samples = default_floppy_samples(FLOPPY_CPP)
+        form_factors = {d: drive_form_factor(FLOPPY_CPP, d) for d in floppy_drives(machines)}
+        found = floppy_sample_systems(machines, systems, samples, form_factors)
+        self.assertEqual(found["35_spin"], ["apple2gs", "pcw"])
+        self.assertEqual(found["525_step"], ["acorn-bbc-micro"])
+
+    def test_an_unread_form_factor_loads_every_list(self):
+        machines, systems = _support()
+        samples = default_floppy_samples(FLOPPY_CPP)
+        found = floppy_sample_systems(machines, systems, samples, {})
+        self.assertEqual(found["525_step"], ["acorn-bbc-micro", "apple2gs", "pcw"])
+
+
+class PlatformFilesSeedMachines(unittest.TestCase):
+
+    def test_a_platform_statement_seeds_a_machine(self):
+        machines = scan_release(io.BytesIO(SUPPORT_LISTXML)).machines
+        seeds, conflicts = platform_seeds(
+            [
+                ("bbcb.zip", "acorn-bbc-micro"),
+                ("bbcb.zip", "bbcmicro"),  # not a system of the profile
+                ("ibm5150.zip", "ibm-pc"),  # idem
+                ("a2disk35.zip", "apple2gs"),  # a device, not a machine
+                ("pcw.zip", "pcw"),  # written by the profile
+                ("apple2gs.zip", "apple2gs"),
+                ("apple2gs.zip", "acorn-bbc-micro"),
+                ("missing.zip", "pcw"),
+                ("bbcb.rom", "acorn-bbc-micro"),
+            ],
+            machines,
+            ["acorn-bbc-micro", "apple2gs", "pcw"],
+            {"pcw": "pcw"},
+        )
+        self.assertEqual(seeds, {"bbcb": "acorn-bbc-micro"})
+        self.assertEqual(conflicts, {"apple2gs": ["acorn-bbc-micro", "apple2gs"]})
+
+
+SUPPORT_PROFILE = """emulator: MAME
+source: "https://github.com/libretro/mame"
+upstream: "https://github.com/mamedev/mame"
+systems:
+  - acorn-bbc-micro
+  - apple2gs
+files:
+  - name: "hash/"
+    path: "mame/hash/"
+    type: directory
+    mode: libretro
+    category: game_data
+    required: false
+
+  - name: "hash/"
+    path: "hash/"
+    type: directory
+    mode: standalone
+    category: game_data
+    required: false
+    bundled: true
+
+  - name: "35_spin.wav"
+    path: "mame/samples/floppy/35_spin.wav"
+    mode: libretro
+    category: game_data
+    required: false
+    size: 4
+
+  - name: "525_step.wav"
+    path: "mame/samples/floppy/525_step.wav"
+    mode: libretro
+    category: game_data
+    system: pcw
+    required: false
+
+  - name: neogeo.zip
+    required: true
+    category: bios_zip
+    system: acorn-bbc-micro
+"""
+
+
+class TheSupportMergeWritesListsAndSamples(unittest.TestCase):
+
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.path = Path(self._tmp.name) / "mame.yml"
+        self.path.write_text(
+            SUPPORT_PROFILE + "\n" + DEVICE_SECTION + "\n\n  - name: ym2610.zip\n"
+            "    required: false\n    category: bios_zip\n",
+            encoding="utf-8",
+        )
+        self.lists = {"bbc_flop": ["acorn-bbc-micro"], "apple2gs_flop": ["acorn-bbc-micro", "apple2gs"]}
+        self.samples = {"35_spin": ["apple2gs"]}
+
+    def tearDown(self):
+        self._tmp.cleanup()
+
+    def _merge(self) -> dict:
+        return merge_mame_support(str(self.path), self.lists, self.samples, write=True)
+
+    def _entries(self) -> list[dict]:
+        return yaml_load(self.path.read_text(encoding="utf-8"))["files"]
+
+    def test_one_entry_per_list_under_the_delivered_tree(self):
+        self._merge()
+        text = self.path.read_text(encoding="utf-8")
+        self.assertLess(text.index(SOFTLIST_SECTION), text.index(DEVICE_SECTION))
+        lists = [e for e in self._entries() if str(e["name"]).endswith(".xml")]
+        self.assertEqual(
+            [(e["name"], e["mode"], e.get("system"), e.get("systems")) for e in lists],
+            [
+                ("apple2gs_flop.xml", "libretro", None, ["acorn-bbc-micro", "apple2gs"]),
+                ("bbc_flop.xml", "libretro", "acorn-bbc-micro", None),
+            ],
+        )
+        self.assertFalse(any(str(e.get("path")).startswith("hash/") and e["name"] != "hash/"
+                             for e in self._entries()))
+        self.assertIn("upstream src/emu/softlist_dev.cpp:281-313", text)
+
+    def test_samples_get_the_systems_of_their_drives(self):
+        self._merge()
+        entries = {e["name"]: e for e in self._entries()}
+        self.assertEqual(entries["35_spin.wav"]["system"], "apple2gs")
+        self.assertEqual(entries["35_spin.wav"]["size"], 4)
+        # No drive of a profile system loads it any more: it serves them all.
+        self.assertNotIn("system", entries["525_step.wav"])
+        self.assertEqual(entries["neogeo.zip"]["system"], "acorn-bbc-micro")
+
+    def test_a_refresh_rewrites_the_section(self):
+        self._merge()
+        self.lists = {"bbc_flop": ["apple2gs"]}
+        self._merge()
+        names = [e["name"] for e in self._entries()]
+        self.assertNotIn("apple2gs_flop.xml", names)
+        self.assertEqual(names.count("bbc_flop.xml"), 1)
+        self.assertEqual(names[-1], "ym2610.zip")
+        self.lists = {}
+        self._merge()
+        self.assertNotIn(SOFTLIST_SECTION, self.path.read_text(encoding="utf-8"))
+
+    def test_a_second_run_changes_nothing(self):
+        self._merge()
+        first = self.path.read_text(encoding="utf-8")
+        report = self._merge()
+        self.assertEqual(report["changed"], [])
+        self.assertEqual(report["samples"], [])
+        self.assertEqual(self.path.read_text(encoding="utf-8"), first)
+
+    def test_new_bios_roots_and_seeds_stay_ahead_of_the_sections(self):
+        self._merge()
+        text = self.path.read_text(encoding="utf-8")
+        self.assertEqual(profile_seeds(text), {"neogeo": "acorn-bbc-micro"})
+
+    def test_a_pick_takes_its_lists_and_leaves_the_others(self):
+        from scripts.common import entry_serves_systems, expand_directory_entries
+
+        self._merge()
+        profile = yaml_load(self.path.read_text(encoding="utf-8"))
+        db = {"files": {}, "indexes": {"by_path_suffix": {}}}
+        for index, dest in enumerate(
+            ["mame/hash/bbc_flop.xml", "mame/hash/apple2gs_flop.xml", "mame/hash/nes.xml"]
+        ):
+            sha1 = f"{index:040d}"
+            db["files"][sha1] = {"path": f"bios/Other/{dest}", "name": dest.rsplit("/", 1)[1]}
+            db["indexes"]["by_path_suffix"][dest] = [sha1]
+        files = [e for e in profile["files"] if e.get("mode") != "standalone"]
+        files = expand_directory_entries(files, db)
+        picked = sorted(
+            str(e.get("path"))
+            for e in files
+            if str(e.get("path", "")).startswith("mame/hash/")
+            and entry_serves_systems(e, profile, ["apple2gs"])
+        )
+        self.assertEqual(picked, ["mame/hash/apple2gs_flop.xml", "mame/hash/nes.xml"])
+
+
+class TheRepositoryProfile(unittest.TestCase):
+    """mame.yml as committed: every list filed is one the hash tree holds."""
+
+    def test_generated_lists_sit_inside_the_hash_tree(self):
+        path = Path(__file__).resolve().parents[1] / "emulators" / "mame.yml"
+        text = path.read_text(encoding="utf-8")
+        start = text.find(SOFTLIST_SECTION)
+        self.assertNotEqual(start, -1)
+        section = yaml_load("files:\n" + text[start:text.index(DEVICE_SECTION)])["files"]
+        self.assertTrue(section)
+        for entry in section:
+            self.assertEqual(entry["path"], "mame/hash/" + entry["name"])
+            self.assertTrue(entry.get("system") or entry.get("systems"), entry["name"])
 
 
 class Cli(unittest.TestCase):

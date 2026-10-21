@@ -23,7 +23,14 @@ from typing import Any
 
 import yaml
 
-from common import github_token, source_yaml_paths, write_text_atomic, yaml_load
+from common import (
+    github_token,
+    list_registered_platforms,
+    load_platform_config,
+    source_yaml_paths,
+    write_text_atomic,
+    yaml_load,
+)
 
 import upstream
 
@@ -33,13 +40,21 @@ from ._hash_merge import (
     compute_diff,
     merge_mame_devices,
     merge_mame_profile,
+    merge_mame_support,
 )
 from .mame_devices import (
+    attribute_softlists,
     attribute_systems,
+    default_floppy_samples,
+    drive_form_factor,
+    floppy_drives,
+    floppy_sample_systems,
     locate_sources,
     open_listxml,
+    platform_seeds,
     profile_seeds,
     scan_release,
+    source_path,
 )
 from .mame_parser import parse_mame_source_tree
 
@@ -51,6 +66,8 @@ _CACHE_PATH = _ROOT / "data" / "mame-hashes.json"
 # release by a second run while the first was still parsing it.
 _CLONE_DIR = _ROOT / "tmp" / f"mame-{os.getpid()}"
 _EMULATORS_DIR = _ROOT / "emulators"
+_PLATFORMS_DIR = _ROOT / "platforms"
+_FLOPPY_SOURCE = "src/devices/imagedev/floppy.cpp"
 _REPO_URL = "https://github.com/mamedev/mame.git"
 _STALE_HOURS = 24
 
@@ -474,6 +491,17 @@ def _write_release(args: argparse.Namespace) -> None:
     print(f"{args.profile}: {len(profile['files'])} BIOS root sets at {args.release}")
 
 
+def _platform_archives() -> list[tuple[str, str]]:
+    """(file name, system) for every file a registered platform declares."""
+    stated: list[tuple[str, str]] = []
+    for name in list_registered_platforms(str(_PLATFORMS_DIR), include_archived=True):
+        config = load_platform_config(name, str(_PLATFORMS_DIR))
+        for system, data in (config.get("systems") or {}).items():
+            for entry in (data or {}).get("files") or []:
+                stated.append((str(entry.get("name") or ""), str(system)))
+    return stated
+
+
 def _merge_devices(args: argparse.Namespace) -> None:
     """Document the device ROM sets of the release mame.yml is pinned on.
 
@@ -498,14 +526,38 @@ def _merge_devices(args: argparse.Namespace) -> None:
             f"{tag} is {commit}, mame.yml upstream_commit is "
             f"{profile.get('upstream_commit')}"
         )
-    unplaced = locate_sources(
-        devices,
-        lambda path: upstream.fetch_file(repo, commit, path, upstream.CACHE_DIR),
+
+    def fetch(path: str) -> list[str] | None:
+        return upstream.fetch_file(repo, commit, path, upstream.CACHE_DIR)
+
+    unplaced = locate_sources(devices, fetch)
+    written = profile_seeds(text)
+    stated, conflicts = platform_seeds(
+        _platform_archives(), machines, profile.get("systems") or [], written
     )
-    systems = attribute_systems(machines, profile_seeds(text))
+    systems = attribute_systems(machines, {**stated, **written})
     for set_name, device in devices.items():
         device["systems"] = systems.get(set_name, [])
     report = merge_mame_devices(str(profile_path), devices, write=not args.dry_run)
+
+    shipped = upstream.list_directory(repo, commit, "hash", upstream.CACHE_DIR)
+    if shipped is None:
+        raise RuntimeError(f"hash/ of {repo.slug} at {commit} could not be listed")
+    present = {name[:-4] for name in shipped if name.endswith(".xml")}
+    declared = attribute_softlists(machines, systems)
+    lists = {name: found for name, found in declared.items() if name in present}
+    floppy = fetch(_FLOPPY_SOURCE)
+    if floppy is None:
+        raise RuntimeError(f"{_FLOPPY_SOURCE} is absent at {commit}")
+    samples = default_floppy_samples("\n".join(floppy))
+    form_factors: dict[str, str] = {}
+    for drive in floppy_drives(machines):
+        lines = fetch(source_path(machines[drive].sourcefile))
+        form_factors[drive] = drive_form_factor("\n".join(lines or []), drive)
+    sample_systems = floppy_sample_systems(machines, systems, samples, form_factors)
+    support = merge_mame_support(
+        str(profile_path), lists, sample_systems, write=not args.dry_run
+    )
 
     print(f"mame-devices: {len(devices)} device ROM sets in the {tag} listxml")
     print(f"  {profile_path.name}:")
@@ -518,9 +570,27 @@ def _merge_devices(args: argparse.Namespace) -> None:
     print(
         f"  systems: {by_count[1]} sets under one system, "
         f"{sum(n for k, n in by_count.items() if k > 1)} under several, "
-        f"{by_count[0]} loaded by no machine a profile entry places "
+        f"{by_count[0]} loaded by no placed machine "
         "(they serve every system of the profile)"
     )
+    print(
+        f"  seeds: {len(written)} written in {profile_path.name}, "
+        f"{len(stated)} from platform files"
+    )
+    for set_name, found in sorted(conflicts.items()):
+        print(f"    {set_name}.zip stated under {', '.join(found)}, left unseeded")
+    print(
+        f"  software lists: {len(lists)} filed under their systems, "
+        f"{len(present) - len(lists)} declared by no placed machine stay with hash/, "
+        f"{len(set(declared) - present)} placed lists absent from hash/"
+    )
+    unread = sorted(drive for drive, found in form_factors.items() if not found)
+    print(
+        f"  floppy samples: {len(sample_systems)} of {len(samples)} filed, "
+        f"{len(support['samples'])} entries rewritten"
+    )
+    for drive in unread:
+        print(f"    {drive}: no form factor read, taken to load every list")
     if unplaced:
         print(f"  {len(unplaced)} without source lines:")
         for set_name, reason in sorted(unplaced.items()):

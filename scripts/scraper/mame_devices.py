@@ -10,7 +10,10 @@ at the release tag. A set whose block cannot be told apart is left without
 lines and reported.
 
 The same document says which machines load each set, so a set is filed under
-the systems of those machines (attribute_systems).
+the systems of those machines (attribute_systems). It also names the software
+lists each machine declares and the floppy drives it can instantiate, which
+files hash/<list>.xml (attribute_softlists) and the floppy sound samples
+(floppy_sample_systems) the same way.
 """
 
 from __future__ import annotations
@@ -19,7 +22,7 @@ import html
 import io
 import re
 import zipfile
-from collections.abc import Callable, Iterator
+from collections.abc import Callable, Collection, Iterable, Iterator
 from concurrent.futures import ThreadPoolExecutor
 from contextlib import contextmanager
 from pathlib import Path
@@ -27,7 +30,7 @@ from typing import NamedTuple
 
 from common import yaml_load
 
-from ._hash_merge import _device_section_start
+from ._hash_merge import generated_start
 from .mame_parser import _collect_rom_macros, _expand_macros, _parse_rom_entries
 
 LISTXML_CHUNK = 8 * 1024 * 1024
@@ -40,6 +43,7 @@ _BIOSSET = re.compile(rb"<biosset\b([^>]*)>")
 _ROM = re.compile(rb"<rom\b([^>]*)>")
 _DEVICE_REF = re.compile(rb'<device_ref\b[^>]*\bname="([^"]+)"')
 _SLOT_OPTION = re.compile(rb'<slotoption\b[^>]*\bdevname="([^"]+)"')
+_SOFTWARE_LIST = re.compile(rb'<softwarelist\b[^>]*\bname="([^"]+)"')
 
 _ROM_START = re.compile(r"ROM_START\s*\(\s*(\w+)\s*\)")
 _ROM_END = re.compile(r"\bROM_END\b")
@@ -112,12 +116,15 @@ class MachineLinks(NamedTuple):
     *romof* is the parent the element names. *uses* are the devices it can
     instantiate: every subdevice of its default configuration, each device a
     selectable slot option adds, and for a device its parent ROM device,
-    whose set the device's ROMs are also searched in.
+    whose set the device's ROMs are also searched in. *softlists* are the
+    software lists the element declares, *sourcefile* the file defining it.
     """
 
     romof: str
     isdevice: bool
     uses: tuple[str, ...]
+    softlists: tuple[str, ...] = ()
+    sourcefile: str = ""
 
 
 class Release(NamedTuple):
@@ -134,8 +141,9 @@ def scan_release(stream: io.BufferedIOBase) -> Release:
     driver's parent (src/frontend/mame/infoxml.cpp:761-765) or a device's
     parent ROM device (856-858), device_ref every subdevice of the default
     configuration (786, 1010-1015), slotoption each selectable card of a
-    slot (2129-2172). device_t::searchpath puts the parent ROM device after
-    the device itself (src/emu/device.cpp:140-152).
+    slot (2129-2172), softwarelist each software list device of the
+    configuration (2184-2198). device_t::searchpath puts the parent ROM
+    device after the device itself (src/emu/device.cpp:140-152).
     """
     tag = ""
     devices: dict[str, dict] = {}
@@ -162,7 +170,11 @@ def scan_release(stream: io.BufferedIOBase) -> Release:
             if isdevice and romof:
                 uses.add(romof)
             uses.discard(name)
-            machines[name] = MachineLinks(romof, isdevice, tuple(sorted(uses)))
+            softlists = {found.decode() for found in _SOFTWARE_LIST.findall(body)}
+            machines[name] = MachineLinks(
+                romof, isdevice, tuple(sorted(uses)), tuple(sorted(softlists)),
+                attrs.get("sourcefile", ""),
+            )
             if isdevice:
                 roms = _device_roms(body)
                 if roms:
@@ -187,13 +199,14 @@ def scan_device_sets(stream: io.BufferedIOBase) -> tuple[str, dict[str, dict]]:
 
 
 def profile_seeds(text: str) -> dict[str, str]:
-    """Set name to system, for the bios_zip entries above the device section.
+    """Set name to system, for the bios_zip entries before the generated ones.
 
     These are the entries a reader wrote, the seeds attribute_systems starts
-    from. The generated section is left out: its systems derive from these,
-    and reading them back would carry a previous release's answer forward.
+    from. The generated sections are left out: their systems derive from
+    these, and reading them back would carry a previous release's answer
+    forward.
     """
-    start = _device_section_start(text)
+    start = generated_start(text)
     written = yaml_load(text if start is None else text[:start]) or {}
     seeds: dict[str, str] = {}
     for entry in written.get("files") or []:
@@ -257,6 +270,157 @@ def attribute_systems(
         for name in seen:
             systems.setdefault(name, set()).add(system)
     return {name: sorted(found) for name, found in systems.items()}
+
+
+def platform_seeds(
+    stated: Iterable[tuple[str, str]],
+    machines: dict[str, MachineLinks],
+    systems: Collection[str],
+    written: dict[str, str],
+) -> tuple[dict[str, str], dict[str, list[str]]]:
+    """Seeds a platform file states, and the sets it states two ways.
+
+    *stated* are (archive name, system) pairs a platform declares. A pair
+    seeds a set when the archive is a machine of the release, not a device,
+    the system is one the profile lists, and the profile has not written
+    the set itself. A set stated under two of the profile's systems seeds
+    nothing and is returned with them.
+    """
+    found: dict[str, set[str]] = {}
+    listed = set(systems)
+    for archive, system in stated:
+        if not archive.endswith(".zip") or system not in listed:
+            continue
+        name = archive[:-4]
+        links = machines.get(name)
+        if name in written or links is None or links.isdevice:
+            continue
+        found.setdefault(name, set()).add(system)
+    seeds = {name: next(iter(s)) for name, s in found.items() if len(s) == 1}
+    conflicts = {name: sorted(s) for name, s in found.items() if len(s) > 1}
+    return seeds, conflicts
+
+
+def attribute_softlists(
+    machines: dict[str, MachineLinks], placed: dict[str, list[str]]
+) -> dict[str, list[str]]:
+    """Systems whose machines declare each software list.
+
+    *placed* is what attribute_systems returns. A list goes to the systems
+    of every element declaring it: a machine writes the lists of its whole
+    configuration and a slot card its own (infoxml.cpp:2184-2198).
+    software_list_device::parse opens <list>.xml from the hash path
+    (src/emu/softlist_dev.cpp:281-313).
+    """
+    lists: dict[str, set[str]] = {}
+    for name, systems in placed.items():
+        links = machines.get(name)
+        for listed in links.softlists if links else ():
+            lists.setdefault(listed, set()).update(systems)
+    return {name: sorted(found) for name, found in lists.items()}
+
+
+# floppy_image_device adds its sound device under this shortname
+# (src/devices/imagedev/floppy.cpp:50, 2076-2082).
+FLOPPY_SOUND = "flopsnd"
+
+_FORM_FACTOR = re.compile(r"\bm_form_factor\s*=\s*floppy_image::(FF_\w+)")
+_SAMPLE_FORM_FACTOR = re.compile(
+    r"\bm_default_samples\.set_form_factor\s*\(\s*floppy_image::(FF_\w+)"
+    r"|\bm_default_samples\.add_\w+_sample\s*\(\s*\"([^\"]+)\""
+)
+
+
+def default_floppy_samples(text: str) -> dict[str, str]:
+    """Each sample of floppy_sound_device's default list, to its form factor.
+
+    The constructor sets a form factor, then adds the samples recorded for
+    it (src/devices/imagedev/floppy.cpp:1656-1686).
+    """
+    body = re.search(
+        r"floppy_sound_device::floppy_sound_device\s*\([^)]*\)[^{]*\{(.*?)\n\}",
+        blank_comments(text),
+        re.S,
+    )
+    samples: dict[str, str] = {}
+    current = ""
+    for match in _SAMPLE_FORM_FACTOR.finditer(body.group(1) if body else ""):
+        if match.group(1):
+            current = match.group(1)
+        elif current:
+            samples[match.group(2)] = current
+    return samples
+
+
+def drive_form_factor(text: str, shortname: str) -> str:
+    """Form factor a floppy drive type sets in setup_characteristics, or ""."""
+    text = blank_comments(text)
+    declaration = re.search(
+        r"DEFINE_DEVICE_TYPE\w*\s*\(\s*\w+\s*,\s*(\w+)\s*,\s*\"" + re.escape(shortname) + '"',
+        text,
+    )
+    if declaration is None:
+        return ""
+    body = re.search(
+        rf"\b{re.escape(declaration.group(1))}::setup_characteristics\s*\(\s*\)\s*\{{(.*?)\n\}}",
+        text,
+        re.S,
+    )
+    found = _FORM_FACTOR.search(body.group(1)) if body else None
+    return found.group(1) if found else ""
+
+
+def selected_form_factor(form_factor: str, available: Collection[str]) -> str:
+    """The list floppy_sound_samples::select takes for a drive's form factor.
+
+    3" falls back to 3.5", anything else to 5.25", and a form factor no list
+    answers takes none (src/devices/imagedev/floppy.cpp:1428-1473).
+    """
+    while form_factor not in available:
+        if form_factor == "FF_3":
+            form_factor = "FF_35"
+        elif form_factor != "FF_525":
+            form_factor = "FF_525"
+        else:
+            return ""
+    return form_factor
+
+
+def floppy_drives(machines: dict[str, MachineLinks]) -> list[str]:
+    """Device types that instantiate the floppy sound device."""
+    return sorted(
+        name for name, links in machines.items()
+        if links.isdevice and FLOPPY_SOUND in links.uses
+    )
+
+
+def floppy_sample_systems(
+    machines: dict[str, MachineLinks],
+    placed: dict[str, list[str]],
+    samples: dict[str, str],
+    form_factors: dict[str, str],
+) -> dict[str, list[str]]:
+    """Systems whose machines load each floppy sound sample.
+
+    Every drive starts a floppy sound device, which loads the default list
+    of the form factor its drive selects (floppy.cpp:1709-1738,
+    1759-1767). *samples* maps a sample to its form factor
+    (default_floppy_samples), *form_factors* a drive to its own
+    (drive_form_factor). A drive whose form factor is unknown is taken to
+    load every list.
+    """
+    available = set(samples.values())
+    found: dict[str, set[str]] = {}
+    for drive in floppy_drives(machines):
+        systems = placed.get(drive)
+        if not systems:
+            continue
+        own = form_factors.get(drive, "")
+        chosen = {selected_form_factor(own, available)} if own else available
+        for sample, form_factor in samples.items():
+            if form_factor in chosen:
+                found.setdefault(sample, set()).update(systems)
+    return {name: sorted(s) for name, s in found.items()}
 
 
 def source_path(sourcefile: str) -> str:

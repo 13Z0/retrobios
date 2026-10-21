@@ -598,6 +598,36 @@ class TestCompare(unittest.TestCase):
         upstream._http_json, upstream._http_text = self._orig
         self.tmp.cleanup()
 
+    def test_list_directory_reads_one_tree(self):
+        seen: list[str] = []
+
+        def answer(url):
+            seen.append(url)
+            return {
+                "truncated": False,
+                "tree": [
+                    {"path": "b.xml", "type": "blob"},
+                    {"path": "a.xml", "type": "blob"},
+                    {"path": "sub", "type": "tree"},
+                ],
+            }
+
+        upstream._http_json = answer
+        self.assertEqual(
+            upstream.list_directory(self.repo, "abc", "hash/", self.dir), ["a.xml", "b.xml"]
+        )
+        self.assertTrue(seen[0].endswith("/repos/o/n/git/trees/abc:hash"))
+        # Cached: offline, the same answer without a request.
+        self.assertEqual(
+            upstream.list_directory(self.repo, "abc", "hash", self.dir, offline=True),
+            ["a.xml", "b.xml"],
+        )
+        self.assertEqual(len(seen), 1)
+        upstream._http_json = lambda url: {"truncated": True, "tree": []}
+        self.assertIsNone(upstream.list_directory(self.repo, "def", "hash", self.dir))
+        gitlab = parse_repo("https://gitlab.com/o/n")
+        self.assertIsNone(upstream.list_directory(gitlab, "abc", "hash", self.dir))
+
     def test_renamed_file_carries_previous_path(self):
         self.payload = {
             "files": [
