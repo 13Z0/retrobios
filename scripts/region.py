@@ -47,6 +47,17 @@ REGION_TREE: dict[str, frozenset[str]] = {
     "oceania": frozenset({"australia", "new-zealand"}),
 }
 
+# Hardware areas that fuse territory and signal standard, with the territories
+# the code serves through them. Mednafen's Saturn SMPC area 0x2 is "For TAIWAN
+# and PHILIPINES" and its area option offers it as "Taiwan", area 0xA as
+# "China" (mednafen/ss/ss.cpp:1119, 2363-2364 in the mednafen_stv port).
+# kronos tags the ST-V BIOS epr-19854.ic8 taiwan and mednafen_stv tags it
+# asia-ntsc: a request in either spelling has to reach the other.
+AREA_TERRITORIES: dict[str, frozenset[str]] = {
+    "asia-ntsc": frozenset({"taiwan"}),
+    "asia-pal": frozenset({"china"}),
+}
+
 _PARENT: dict[str, str] = {
     member: parent for parent, members in REGION_TREE.items() for member in members
 }
@@ -96,8 +107,15 @@ def _canonical(raw: str) -> str:
 
 
 def comparable(a: str, b: str) -> bool:
-    """True when two regions are equal or in a parent/child relation."""
-    return a == b or _PARENT.get(a) == b or _PARENT.get(b) == a
+    """True when two regions are equal, parent and child, or an area and a
+    territory it serves."""
+    return (
+        a == b
+        or _PARENT.get(a) == b
+        or _PARENT.get(b) == a
+        or a in AREA_TERRITORIES.get(b, ())
+        or b in AREA_TERRITORIES.get(a, ())
+    )
 
 
 def normalize_declared(raw: str | list | None) -> set[str]:

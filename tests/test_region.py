@@ -58,6 +58,17 @@ class TestComparable(unittest.TestCase):
     def test_saturn_fused_slug_is_under_asia(self):
         self.assertTrue(region.comparable("asia", "asia-ntsc"))
 
+    def test_an_area_matches_the_territory_it_serves(self):
+        """kronos tags the ST-V BIOS epr-19854.ic8 taiwan, mednafen_stv tags
+        it asia-ntsc, the SMPC area Mednafen names for Taiwan."""
+        self.assertTrue(region.comparable("taiwan", "asia-ntsc"))
+        self.assertTrue(region.comparable("asia-ntsc", "taiwan"))
+        self.assertTrue(region.comparable("china", "asia-pal"))
+
+    def test_an_area_does_not_match_other_territories(self):
+        self.assertFalse(region.comparable("japan", "asia-ntsc"))
+        self.assertFalse(region.comparable("taiwan", "asia-pal"))
+
 
 class TestNormalizeDeclared(unittest.TestCase):
     def test_none_is_empty(self):
@@ -889,6 +900,9 @@ class RegionalRequestsKeepWhatTheCodeLoads(unittest.TestCase):
         ("ace-dl", ["france"], "private/firmware/Amstrad_s4.cpr"),
         ("duckstation", ["brazil"], "scph5501.bin"),
         ("duckstation", ["south-korea"], "scph5500.bin"),
+        ("mednafen_stv", ["taiwan", "north-america"], "epr-19854.ic8"),
+        ("kronos", ["asia-ntsc", "north-america"], "epr-19854.ic8"),
+        ("beetle_saturn", ["taiwan", "north-america"], "sega_101.bin"),
         ("pcsx_rearmed", ["brazil", "japan"], "scph5501.bin"),
         ("pcsx_rearmed", ["brazil", "japan"], "scph1001.bin"),
         ("blastem", ["australia", "north-america"], "bios_CD_E.bin"),

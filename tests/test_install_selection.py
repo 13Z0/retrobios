@@ -40,6 +40,7 @@ class OneRegionVocabulary(unittest.TestCase):
 
     def test_the_copy_matches(self):
         self.assertEqual(install.REGION_TREE, dict(region.REGION_TREE))
+        self.assertEqual(install.AREA_TERRITORIES, dict(region.AREA_TERRITORIES))
         self.assertEqual(install.REGION_ALIASES, region.ALIASES)
         self.assertEqual(install.WORLD_REGION, region.WORLD)
         self.assertEqual(install.REGIONS, region.REGIONS)
@@ -49,7 +50,8 @@ class TheRegionRuleIsTheBuilders(unittest.TestCase):
     """Random groups, both implementations, one answer."""
 
     POOL = ["north-america", "europe", "japan", "uk", "canada", "brazil",
-            "south-korea", "world", "asia", "oceania"]
+            "south-korea", "world", "asia", "oceania", "taiwan", "asia-ntsc",
+            "china", "asia-pal"]
 
     def _case(self, rng: random.Random):
         groups: dict[str, list[tuple[str, str]]] = {}
@@ -79,7 +81,8 @@ class TheRegionRuleIsTheBuilders(unittest.TestCase):
             if not entry["regions"]:
                 del entry["regions"], entry["region_groups"]
                 entry.pop("priority", None)
-        requested = rng.sample(["north-america", "europe", "japan", "uk", "canada"],
+        requested = rng.sample(["north-america", "europe", "japan", "uk", "canada",
+                                "taiwan", "asia-ntsc", "china", "asia-pal"],
                                rng.randint(1, 3))
         return groups, index, list(entries.values()), requested
 
