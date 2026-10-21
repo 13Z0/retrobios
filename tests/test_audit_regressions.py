@@ -1206,6 +1206,30 @@ class OneBaselineVerdict(unittest.TestCase):
                 ("frontend_digest_exact", None),
             )
 
+    def test_a_composite_only_archive_ignores_its_raw_md5(self):
+        """Recalbox hashes a .zip by its members (Bios.cpp:64-68), and the
+        pack check accepted the container's own md5 before the composite:
+        neocd.bin shipped as neocdz.zip passed while Recalbox marks it red."""
+        import hashlib
+
+        from scripts.common import md5_composite
+        from scripts.validation import digest_verdict
+
+        with tempfile.TemporaryDirectory(dir=TMP_ROOT) as directory:
+            archive = self._archive(Path(directory), "rom.bin")
+            raw = hashlib.md5(Path(archive).read_bytes()).hexdigest()
+            members = md5_composite(archive)
+            for declared, accepted in ((raw, False), (members, True)):
+                entry = {"name": "dragon32.zip", "md5": declared, "zip_digest": "composite"}
+                with self.subTest(declared=declared):
+                    self.assertIs(
+                        digest_verdict(entry, 0, lambda: {"md5": raw}, "md5", "",
+                                       lambda: members),
+                        accepted,
+                    )
+            plain = {"name": "dragon32.zip", "md5": raw}
+            self.assertTrue(digest_verdict(plain, 0, lambda: {"md5": raw}, "md5"))
+
     def test_a_release_asset_keeps_its_answer(self):
         from scripts.slots import apply_override
 

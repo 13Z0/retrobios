@@ -322,6 +322,18 @@ class Md5CompositeDefinition(unittest.TestCase):
         self.assertIn("contents of every member", section)
         self.assertNotIn("inner file MD5s", section)
 
+    def test_composite_only_is_read_by_both_checks(self):
+        """The page said the direct MD5 is tried before the composite, which
+        Recalbox never does for a .zip, and the pack check did the same."""
+        import common
+        import validation
+
+        section = _section(_page("verification-modes.md"), "md5_composite (Recalbox ZIP verification)")
+        self.assertIn("zip_digest: composite", section)
+        self.assertNotIn("is tried before reporting a mismatch", section)
+        for function in (common.resolve_local_file, validation.digest_verdict):
+            self.assertIn('get("zip_digest") == "composite"', inspect.getsource(function))
+
 
 class ValidationIndexScope(unittest.TestCase):
     """The page said the index reads every profile. verify and the builder

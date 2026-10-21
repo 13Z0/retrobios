@@ -793,7 +793,12 @@ def digest_verdict(
     actual = hashes()[algorithm].lower()
     if algorithm != "md5":
         return actual in declared
-    if any(actual == d or (len(d) < 32 and actual.startswith(d)) for d in declared):
+    # Recalbox hashes a .zip by its members only (Bios.cpp:64-68), so the
+    # container's own md5 answers nothing there.
+    composite_only = file_entry.get("zip_digest") == "composite"
+    if not composite_only and any(
+        actual == d or (len(d) < 32 and actual.startswith(d)) for d in declared
+    ):
         return True
     member_digest = composite()
     return bool(member_digest) and member_digest.lower() in declared

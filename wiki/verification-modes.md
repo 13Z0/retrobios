@@ -60,9 +60,16 @@ characters by prefix, and only for a file whose name the entry also names.
 
 Recalbox hashes a ZIP with `Zip::Md5Composite` (`es-core/src/utils/Zip.cpp:71-96` in
 recalbox-emulationstation at `f4cd0ae4`): one MD5 over the contents of every member,
-read in filename order. The members' own MD5s are not involved. `verify.py` computes
-the same value with `md5_composite()` (`scripts/hashing.py`). When a ZIP file's direct
-MD5 does not match, the composite is tried before reporting a mismatch.
+read in filename order. The members' own MD5s are not involved, and neither is the
+MD5 of the ZIP file itself: `Bios::Scan` takes the composite for every `.zip`
+(`es-app/src/bios/Bios.cpp:64-68`). `verify.py` computes the same value with
+`md5_composite()` (`scripts/hashing.py`).
+
+The registry gives Recalbox `zip_digest: composite`. For a platform so marked, a
+`.zip` entry is checked against its composite alone, by the resolver
+(`resolve_local_file`) and by the pack check (`digest_verdict` in
+`scripts/validation.py`). On other platforms the ZIP file's direct MD5 is tried first
+and the composite after it.
 
 ### Multi-hash (Recalbox)
 
