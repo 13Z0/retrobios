@@ -666,6 +666,17 @@ def find_undeclared_files(
                             path_base, by_name, by_path_suffix, data_names,
                             by_name_lower,
                         )
+                    if in_repo and not any(
+                        f.get(h) for h in ("sha1", "md5", "crc32", "sha256")
+                    ):
+                        # A name alone answers nothing when every copy of that
+                        # name fails the size the code checks: the resolver
+                        # rejects them all. NanoBoyAdvance's 16 KB bios.bin met
+                        # only PCem's and QEMU's PC BIOS images of that name.
+                        # The fallback below then decides as for any mismatch.
+                        _lp, _st = resolve_local_file(f, db, dest_hint=dest)
+                        if _st == "hash_mismatch":
+                            in_repo = False
                     if not in_repo:
                         # Hash fallback: the repo may hold the content under a
                         # different filename (exos21.rom vs exos21.bin).

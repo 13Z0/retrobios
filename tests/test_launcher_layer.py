@@ -231,6 +231,25 @@ class LauncherLayerTest(unittest.TestCase):
         self.assertIn("v103.bin", report)
         self.assertIn("boot.bin", report)
 
+    def test_a_name_whose_copies_fail_the_size_is_not_held(self) -> None:
+        """NanoBoyAdvance reads a 16 KB bios.bin, and the collection's
+        bios.bin files are PCem's and QEMU's PC BIOS images. Counted held by
+        name, the entry escaped the launcher layer, which settles only what
+        the collection lacks, and the ROCKNIX pack carried PCem's 64 KB image
+        beside the gba_bios.bin its launcher passes."""
+        profile = {
+            "emulator": "FixEmu", "type": "standalone", "systems": ["test-sys"],
+            "files": [{"name": "core.bin", "required": True,
+                       "size": len(CONTENT["plain.bin"]), "validation": ["size"]}],
+        }
+        with open(os.path.join(self.emulators_dir, "fixemu.yml"), "w") as fh:
+            yaml.dump(profile, fh)
+        self.config["launchers"][2]["names"] = ["plain.bin"]
+        _emulator_profiles_cache.clear()
+        self.profiles = load_emulator_profiles(self.emulators_dir)
+        self.assertNotIn("core.bin", {u["name"] for u in self._report()})
+        self.assertNotIn("core.bin", self._pack_names())
+
     def test_no_place_is_filled_twice(self) -> None:
         added = [u["path"] for u in self._report() if u.get("launcher")]
         self.assertEqual(sorted(added), ["e.bin", "sub/fix.bin"])
