@@ -108,6 +108,45 @@ class DeploySiteTriggers(unittest.TestCase):
         self.assertIn("scripts/sourceref.py", closure(["generate_site.py"]))
 
 
+class ThePullRequestBuildsTheSite(unittest.TestCase):
+    """mkdocs was installed by deploy-site.yml alone, which runs after the
+    merge, and validate.yml did not watch wiki/: a dead link or a line read as
+    a second heading passed every check and failed the deploy on main."""
+
+    @staticmethod
+    def _workflow(name: str) -> dict:
+        return yaml.safe_load(
+            (REPO_ROOT / ".github/workflows" / name).read_text(encoding="utf-8")
+        )
+
+    def test_the_test_job_runs_the_deploy_build(self):
+        steps = self._workflow("validate.yml")["jobs"]["run-tests"]["steps"]
+        runs = "\n".join(str(step.get("run", "")) for step in steps)
+        for command in (
+            "python scripts/generate_site.py",
+            "mkdocs build --strict",
+            "python scripts/validate_site.py",
+        ):
+            with self.subTest(command=command):
+                self.assertIn(command, runs)
+        for package in ("mkdocs-material", "pymdown-extensions"):
+            with self.subTest(package=package):
+                self.assertIn(package, runs)
+
+    def test_every_site_input_triggers_validation(self):
+        deploy = self._workflow("deploy-site.yml")
+        validate = self._workflow("validate.yml")
+        watched = set(validate.get("on", validate.get(True))["push"]["paths"])
+        inputs = {
+            path
+            for path in deploy.get("on", deploy.get(True))["push"]["paths"]
+            if not path.startswith(("scripts/", ".github/"))
+        }
+        self.assertIn("wiki/**", inputs)
+        self.assertEqual(sorted(inputs - watched), [])
+        self.assertIn("scripts/**", watched)
+
+
 class DocumentedSteps(unittest.TestCase):
     def test_the_profiling_reference_names_every_profile_field(self):
         """built_by, source_branch, bios_mode, standalone_path and

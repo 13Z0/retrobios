@@ -299,8 +299,10 @@ files it points at gives the installer a 404.
 
 The `validate.yml` workflow runs `python -m unittest discover -s tests -t . -v` on both
 roads into main: every pull request, and every direct push, that touches
-`bios/`, `platforms/`, `emulators/`, `schemas/`, `scripts/`, `tests/` or
-`install.py`. Work reaches main by push as often as by pull request, so a suite
+`bios/`, `platforms/`, `emulators/`, `schemas/`, `scripts/`, `tests/`,
+`install.py` or an input of the site build such as `wiki/`. The same job then
+builds the site with `mkdocs build --strict`, so a page that would fail the
+deploy fails the pull request. Work reaches main by push as often as by pull request, so a suite
 wired to pull requests alone would guard the road nobody takes. The test job
 (`run-tests`) runs in parallel with schema validation, and on a pull request
 with BIOS validation and auto-labeling too. Those two read pull request context
