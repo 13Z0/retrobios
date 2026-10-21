@@ -151,18 +151,7 @@ files:
       stand in for the default, and a .gz or archive is unpacked first. The
       program exits when no image loads and none is picked in the settings
       dialog (src/options.c:1937-1940, src/configuration.c:489,
-      src/tos.c:983, src/main.c:191-201). The aliases are the names the platform launchers
-      give it. Batocera passes tos<version><language>.img from the BIOS
-      root, trying the chosen version then each machine's list and the
-      languages us, uk, de, es, fr, it, nl, ru, se and none in turn
-      (configgen generators/hatari/hatariGenerator.py:74-75, 158-193).
-      Recalbox writes atarist/st.img, ste.img, megaste.img, tt.img or
-      falcon.img by machine, then tos.img, then emutos.img, and emutos.img
-      for any content whose path names emutos
-      (configgen generators/hatari/hatariGenerator.py:151-167). RetroBat
-      writes hatari/tos/ followed by the hatari_tos option, tos206.img,
-      tos106.img, tos104.img, tos102.img or emutos.img, and tos.img at the
-      BIOS root otherwise (emulatorlauncher Generators/Hatari.Generator.cs:144-154).
+      src/tos.c:983, src/main.c:191-201).
 
   - name: "tos.sym"
     path: "tos.sym"

@@ -9,6 +9,7 @@ check left out lets through a file the emulator refuses.
 
 from __future__ import annotations
 
+import re
 import sys
 import tempfile
 import unittest
@@ -375,6 +376,41 @@ class FbAlpha2012HiscoreFromSaveDir(unittest.TestCase):
                     f for f in _profile(emulator)["files"] if f["name"] == "hiscore.dat"
                 )
                 self.assertFalse(read_from_system_dir(entry))
+
+
+_LAUNCHER_CODE = re.compile(
+    r"Generator\.(py|cs)|configgen|emulatorlauncher|libretroCores\.py|LibRetro\.CoreOptions",
+    re.IGNORECASE,
+)
+
+
+def _prose(node: object) -> list[str]:
+    if isinstance(node, dict):
+        return [
+            text
+            for key, value in node.items()
+            for text in ([value] if key in ("note", "notes") and isinstance(value, str)
+                         else _prose(value))
+        ]
+    if isinstance(node, list):
+        return [text for item in node for text in _prose(item)]
+    return []
+
+
+class HatariTosNamesLiveWithTheLaunchers(unittest.TestCase):
+    """The TOS names Batocera, Recalbox and RetroBat pass to Hatari are
+    recorded under each platform's launchers: since 8dc485dc. The tos.img
+    notes kept describing those generators and an aliases field the entry
+    no longer had."""
+
+    def test_no_launcher_in_the_profiles(self):
+        for emulator in ("hatari", "hatarib"):
+            with self.subTest(emulator=emulator):
+                profile = _profile(emulator)
+                tos = next(f for f in profile["files"] if f["name"] == "tos.img")
+                self.assertNotIn("aliases", tos)
+                cited = [t for t in _prose(profile) if _LAUNCHER_CODE.search(t)]
+                self.assertEqual(cited, [])
 
 
 if __name__ == "__main__":
