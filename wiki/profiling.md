@@ -301,7 +301,10 @@ only hold at one revision, so a few rules keep them checkable.
   it.
 - **A frozen line is pinned to its tag.** A profile documenting a release that
   lives as a tag in a still active repository (`pcsx2-legacy` at PCSX2 v1.6.0)
-  is checked against its own revision and never rebased onto the head.
+  is checked against its own revision and never rebased onto the head. An
+  `upstream` whose pin is the tag `core_version` names (GroovyMAME's base,
+  `mame0289`) is read at that tag the same way, while the port itself is still
+  compared with its head, and a bump leaves `upstream_commit` on the tag.
 - **A fork's base comes from the forge.** `upstream_commit` of a fork is the
   merge base the compare API returns. A vendored `version.h` can name the
   project the fork once came from. When a package ships prebuilt binaries

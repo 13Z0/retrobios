@@ -4,9 +4,10 @@ core_classification: enhanced_fork
 source: "https://github.com/antonioginer/GroovyMAME"
 upstream: "https://github.com/mamedev/mame"
 source_commit: "953db38f4aaab1d75faa4ac79e1b45686214f987"
+upstream_commit: "f34f02505e32c1993c6a782b6814232cbfc74e36"
 logo: "https://raw.githubusercontent.com/mamedev/mame/master/docs/source/images/MAMElogo.svg"
 profiled_date: "2026-08-08"
-core_version: "0.288"
+core_version: "0.289"
 display_name: "Arcade (GroovyMAME)"
 
 cores:
@@ -122,13 +123,14 @@ systems:
 
 notes: |
   MAME fork adding Switchres 2.2.2 for CRT modeline generation, frame delay
-  and low latency vsync. Branch groovymame0288, BARE_BUILD_VERSION 0.288
-  (makefile:1508). TARGET := mame with no SUBTARGET override (makefile:274-282),
+  and low latency vsync. Branch groovymame0289, BARE_BUILD_VERSION 0.289
+  (makefile:1513). TARGET := mame with no SUBTARGET override (makefile:274-282),
   so the build carries the full machine set.
 
-  src/mame and src/devices are byte identical to mamedev/mame tag mame0288,
-  so ROM requirements are MAME 0.288's. The fork's changes sit in src/osd and
-  3rdparty/switchres and pull in no external data file: monitor presets are
+  src/mame and src/devices are byte identical to mamedev/mame tag mame0289,
+  so ROM requirements are MAME 0.289's. The fork's changes sit in src/osd,
+  src/emu, src/frontend, 3rdparty/switchres, 3rdparty/emusync and
+  3rdparty/lz4, and pull in no external data file: monitor presets are
   compiled in (3rdparty/switchres/monitor.cpp:124-145), and switchres.ini plus
   display#.ini are optional user configuration read only when the switchres_ini
   option is set (src/osd/modules/switchres/switchres_module.cpp:166,173).

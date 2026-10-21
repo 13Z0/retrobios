@@ -6,6 +6,7 @@ upstream: "https://github.com/mamedev/mame/tree/mame0174"
 logo: "https://raw.githubusercontent.com/mamedev/mame/master/docs/source/images/MAMElogo.svg"
 profiled_date: "2026-03-22"
 source_commit: "ae07c2f88ff2482ba9f50ffc8c9e7e6fbfe97d0a"
+upstream_commit: "68785dccfee3208163c8169abc5c6d01becf36d4"
 core_version: "0.174"
 
 cores:

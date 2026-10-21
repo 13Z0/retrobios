@@ -5,6 +5,7 @@ source: "https://github.com/johndoe6345789/azahar_libretro"
 upstream: "https://github.com/azahar-emu/azahar"
 profiled_date: "2026-03-23"
 source_commit: "9dd12da328c753806cbd4f2b0e048fced97ae97d"
+upstream_commit: "9b045bf8370d035cacd99e5ad19a082df9e3b262"
 core_version: "Git"
 display_name: "Nintendo - 3DS (Azahar)"
 cores: [azahar]

@@ -5,6 +5,7 @@ source: "https://github.com/libretro/easyrpg-libretro"
 upstream: "https://github.com/EasyRPG/Player"
 profiled_date: "2026-03-23"
 source_commit: "a3fbb7c24fd5a39fd95388d09135256a6b19f1e4"
+upstream_commit: "8acd2e17c6a8a0a75cb7ce95625c6bdc89aebe1a"
 core_version: "0.8.1.0"
 display_name: "RPG Maker 2000/2003 (EasyRPG)"
 cores:

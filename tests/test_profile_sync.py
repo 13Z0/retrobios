@@ -1691,6 +1691,49 @@ class TestBuildReport(unittest.TestCase):
         report = build_report("test", self._versioned("v0.78"), self.dir)
         self.assertEqual(report.pinned_tag, "0.78")
 
+    def test_an_upstream_on_its_release_tag_does_not_freeze_the_port(self):
+        """GroovyMAME declares 0.289 and its upstream_commit is the mame0289
+        tag. Reading that as a frozen profile stopped every comparison and
+        bump of the port, which keeps moving. The upstream is read at its tag,
+        the port against its HEAD."""
+        self.files[("portpin", "src/p.c")] = ["x", "load p.bin", "y"]
+        self.files[("porthead", "src/p.c")] = ["x", "load p.bin", "y"]
+        self.files[("uppin", "src/u.c")] = ["x", "ROM_LOAD(u.bin)", "y"]
+        self.files[("uphead", "src/u.c")] = ["x", "", "", "", "y"]
+        heads = {"o/port": "porthead", "o/up": "uphead"}
+        profile_sync.upstream.resolve_head = (
+            lambda repo, cache, offline=False, branch=None: heads[repo.slug]
+        )
+        # A tag off the tracked branch is not an orphaned pin.
+        profile_sync.upstream.compare = (
+            lambda repo, base, head, cache_dir, offline=False: CompareResult(
+                [], False, repo.slug == "o/up"
+            )
+        )
+        self.tag_commits = {"0.289": "uppin"}
+        profile = {
+            "emulator": "Port",
+            "source": "https://github.com/o/port",
+            "upstream": "https://github.com/o/up",
+            "source_commit": "portpin",
+            "upstream_commit": "uppin",
+            "core_version": "0.289",
+            "files": [
+                {"name": "p.bin", "source_ref": "source src/p.c:2"},
+                {"name": "u.bin", "source_ref": "upstream src/u.c:2"},
+            ],
+        }
+        report = build_report("port", profile, self.dir)
+        self.assertIsNone(report.pinned_tag)
+        self.assertEqual(report.upstream_tag, "0.289")
+        self.assertEqual(report.orphaned, [])
+        self.assertEqual(
+            [entry.status for entry in report.entries], ["ANCHORED", "ANCHORED"]
+        )
+        self.assertIn(
+            "upstream pinned to tag 0.289", profile_sync.format_report(report)
+        )
+
     def test_a_tag_pointing_elsewhere_is_not_flagged(self):
         self.files[("pinsha", "a.c")] = ["x", "hit"]
         self.files[("headsha", "a.c")] = ["x", "hit"]
@@ -2942,6 +2985,24 @@ class TestBumpCommit(unittest.TestCase):
         self.assertNotIn("newhead", self.path.read_text())
         self.assertEqual(rebase_refs(self.path, report), ["a.c:10-12 -> a.c:30-32"])
         self.assertTrue(bump_commit(self.path, report))
+
+    def test_an_upstream_on_its_release_tag_stays_there(self):
+        """GroovyMAME's upstream_commit is the mame0289 tag it merged: a bump
+        of the port must not carry it to mamedev HEAD, another program."""
+        part = PartResult(
+            RefPart("a.c", 10, 12, "a.c:10-12"), "ANCHORED", None, 10, 12, []
+        )
+        report = ProfileReport(
+            name="p", repo="o/n", pin="pin", head="newhead",
+            entries=[EntryReport("a.bin", "a.c:10-12", "ANCHORED", [part])],
+            counts={"ANCHORED": 1},
+            upstream_pin="uptag", upstream_head="uphead",
+            upstream_origin="upstream_commit", upstream_tag="mame0289",
+        )
+        self.assertTrue(bump_commit(self.path, report))
+        written = yaml.safe_load(self.path.read_text())
+        self.assertEqual(written["source_commit"], "newhead")
+        self.assertNotIn("upstream_commit", written)
 
     def test_upstream_pin_moves_with_source_pin(self):
         """A recale onto upstream HEAD lines must advance upstream_commit too."""

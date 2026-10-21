@@ -4,6 +4,7 @@ core_classification: enhanced_fork
 source: "https://github.com/DirtBagXon/hypseus-singe"
 upstream: "https://github.com/mirror/daphne-emu"
 source_commit: "cda87965fe0a031d027b2253c6715d37cca6b56a"
+upstream_commit: "cd214c6046365047704f8a0563928970b30444e6"
 profiled_date: "2026-08-08"
 core_version: "v3.0.0"
 display_name: "Arcade (Hypseus Singe)"

@@ -68,7 +68,7 @@ files:
     hle_fallback: true
     size: 2097152
     note: "Dreamcast boot ROM. HLE BIOS (reios) used as fallback. Code searches prefix + boot.bin, boot.bin.bin, bios.bin, bios.bin.bin sequentially."
-    source_ref: "upstream core/hw/holly/sb_mem.cpp:219, 55-57"
+    source_ref: "source core/hw/holly/sb_mem.cpp:219, 55-57"
 
   - name: "dc_nvmem.bin"
     path: "dc/dc_nvmem.bin"
@@ -78,14 +78,14 @@ files:
     hle_fallback: true
     size: 131072
     note: "Dreamcast flash memory / NVRAM. Created if not found. Code searches prefix + nvmem.bin, flash_wb.bin, flash.bin, flash.bin.bin sequentially."
-    source_ref: "upstream core/hw/holly/sb_mem.cpp:231, 196-213"
+    source_ref: "source core/hw/holly/sb_mem.cpp:231, 196-213"
 
   - name: "font.bin"
     path: "dc/font.bin"
     system: sega-dreamcast
     required: false
     note: "Dreamcast system font for HLE BIOS text rendering. Built-in font used as fallback."
-    source_ref: "upstream core/reios/reios.cpp:737-753"
+    source_ref: "source core/reios/reios.cpp:737-753"
 
   # -------------------------------------------------------
   # Sega NAOMI
@@ -97,7 +97,7 @@ files:
     required: false
     size: 2097152
     note: "NAOMI boot ROM (flat binary). Alternative to naomi.zip. epr-21576d.bin is searched without prefix."
-    source_ref: "upstream core/hw/holly/sb_mem.cpp:219, 58-59"
+    source_ref: "source core/hw/holly/sb_mem.cpp:219, 58-59"
 
   - name: "naomi.zip"
     path: "dc/naomi.zip"
@@ -169,7 +169,7 @@ files:
     system: sega-atomiswave
     required: true
     note: "Atomiswave system BIOS archive (MAME format). Contains bios0.ic23 (Sammy, 128 KB)."
-    source_ref: "upstream core/hw/naomi/naomi_roms.h:87-94"
+    source_ref: "source core/hw/naomi/naomi_roms.h:87-94"
     contents:
       - name: "bios0.ic23"
         size: 131072
