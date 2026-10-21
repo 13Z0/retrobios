@@ -409,5 +409,50 @@ class ALooseEntryNamingItsArchive(unittest.TestCase):
         self.assertEqual(report["total_files"], 1)
 
 
+class ArchiveMembersIndexOnce(unittest.TestCase):
+    """with_archive_members asks once per entry of a profile: scanning the
+    whole list for each walked 38 million entries in one verify --all."""
+
+    class CountingList(list):
+        walks = 0
+
+        def __iter__(self):
+            type(self).walks += 1
+            return super().__iter__()
+
+    def entries(self) -> list[dict]:
+        files = self.CountingList()
+        self.CountingList.walks = 0
+        for n in range(300):
+            files.append({"name": f"m{n}.rom", "archive": f"set{n % 30}.zip",
+                          "crc32": f"{n:08X}", "required": n % 3 != 0})
+        files.append({"name": "loose.bin", "crc32": "deadbeef"})
+        files.append({"name": "nocrc.rom", "archive": "set0.zip"})
+        return files
+
+    @staticmethod
+    def scanned(archive, files) -> list[dict]:
+        return [{"crc32": str(f["crc32"]).lower(), "required": bool(f.get("required", True))}
+                for f in list.__iter__(files) if f.get("archive") == archive and f.get("crc32")]
+
+    def test_a_profile_list_is_walked_once_and_answers_as_a_scan(self):
+        from common import archive_members
+
+        files = self.entries()
+        for archive in [f"set{n}.zip" for n in range(30)] + ["absent.zip", "", None]:
+            with self.subTest(archive=archive):
+                self.assertEqual(archive_members(archive, files), self.scanned(archive, files))
+        self.assertEqual(self.CountingList.walks, 1)
+
+    def test_a_list_that_grew_is_indexed_again(self):
+        from common import archive_members
+
+        files = self.entries()
+        archive_members("set1.zip", files)
+        files.append({"name": "late.rom", "archive": "set1.zip", "crc32": "ABCDEF01"})
+        self.assertEqual(archive_members("set1.zip", files), self.scanned("set1.zip", files))
+        self.assertIn({"crc32": "abcdef01", "required": True}, archive_members("set1.zip", files))
+
+
 if __name__ == "__main__":
     unittest.main()
