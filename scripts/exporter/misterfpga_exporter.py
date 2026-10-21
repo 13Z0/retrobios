@@ -126,7 +126,7 @@ class Exporter(BaseExporter):
                 # no file, and the entry is left as MiSTer wrote it.
                 continue
             size = fe.size()
-            if md5 != entry.get("hash") and not size:
+            if md5 != entry.get("hash") and entry.get("size") and not size:
                 # Downloader refuses an entry without an integer size
                 # (db_entity.py:187) and compares it after each fetch
                 # (fetch_file_worker.py:127). The old size beside the new
