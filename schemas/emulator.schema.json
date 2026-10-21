@@ -279,6 +279,10 @@
           "destination": {
             "type": "string"
           },
+          "required": {
+            "type": "boolean",
+            "description": "false when the core runs without the tree; --required-only leaves it out"
+          },
           "mode": {
             "type": "string",
             "enum": [

@@ -5794,5 +5794,59 @@ class AFileTheLauncherNeverOpens(unittest.TestCase):
         self.assertIn('unread_on(f, config.get("_key", ""))', source)
 
 
+class RequiredOnlyReachesDataDirectories(unittest.TestCase):
+    """--required-only filtered files and packed every data tree anyway: the
+    Required RetroArch pack still carried the 90 FreeIntv overlays, which the
+    core reads only with its multi-screen option and replaces by a drawn
+    keypad when absent (FreeIntv src/libretro.c:294-296, 350-369)."""
+
+    def _members(self, required_only: bool) -> list[str]:
+        from scripts import generate_pack as gp
+
+        with tempfile.TemporaryDirectory(dir=TMP_ROOT) as tmp:
+            for key in ("needed", "optional"):
+                Path(tmp, key).mkdir()
+                Path(tmp, key, f"{key}.bin").write_bytes(b"x")
+            registry = {
+                key: {"local_cache": str(Path(tmp, key))}
+                for key in ("needed", "optional")
+            }
+            systems = {
+                "sys": {
+                    "data_directories": [
+                        {"ref": "needed", "destination": "a"},
+                        {"ref": "optional", "destination": "b", "required": False},
+                    ]
+                }
+            }
+            return [
+                dest
+                for _src, dest in gp._data_directory_members(
+                    systems, registry, "retroarch", "", False, set(), set(), set(),
+                    required_only=required_only,
+                )
+            ]
+
+    def test_an_optional_tree_leaves_the_required_pack(self):
+        self.assertEqual(self._members(False), ["a/needed.bin", "b/optional.bin"])
+        self.assertEqual(self._members(True), ["a/needed.bin"])
+
+    def test_every_tree_walk_reads_the_flag(self):
+        source = (ROOT / "scripts" / "generate_pack.py").read_text(encoding="utf-8")
+        self.assertEqual(
+            source.count('if required_only and dd.get("required") is False:'), 2
+        )
+        self.assertIn("seen_parents, required_only=required_only,", source)
+        self.assertIn("data_refs, required_only=required_only,", source)
+
+    def test_the_overlays_are_declared_optional(self):
+        retroarch = yaml.safe_load((ROOT / "platforms" / "retroarch.yml").read_text())
+        trees = retroarch["systems"]["mattel-intellivision"]["data_directories"]
+        self.assertEqual(trees, [
+            {"ref": "freeintv-overlays", "destination": "freeintv_overlays",
+             "required": False},
+        ])
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -383,6 +383,7 @@ def _data_directory_members(
     seen_lower: set,
     seen_parents: set,
     refs_out: dict | None = None,
+    required_only: bool = False,
 ) -> Iterator[tuple[str, str]]:
     """Yield (source, destination) for the cached data directories a
     platform's systems declare.
@@ -394,12 +395,16 @@ def _data_directory_members(
     trees an emulator reads, refreshed from upstream, so what ships is
     whatever the cache holds. The pack and the install manifest both read
     this, the first to write the files and the second to count them.
+    ``required_only`` leaves out a tree declared ``required: false``, one the
+    core runs without, as it leaves out such a file.
     """
     # Data directories from _data_dirs.yml
     for sys_id, system in sorted(pack_systems.items()):
         for dd in system.get("data_directories", []):
             ref_key = dd.get("ref", "")
             if not ref_key or not data_registry or ref_key not in data_registry:
+                continue
+            if required_only and dd.get("required") is False:
                 continue
             if ref_key in installed_data_refs(platform_name):
                 continue
@@ -455,12 +460,14 @@ def _pack_data_directories(
     seen_destinations: set,
     seen_lower: set,
     seen_parents: set,
+    required_only: bool = False,
 ) -> int:
     """Add the data directories to the pack. Returns how many files went in."""
     added = 0
     for src, full in _data_directory_members(
         pack_systems, data_registry, platform_name, base_dest,
         case_insensitive, seen_destinations, seen_lower, seen_parents,
+        required_only=required_only,
     ):
         _add_pack_member(zf, src, _flat(full, base_dest, flatten))
         added += 1
@@ -1142,7 +1149,7 @@ def generate_pack(
       total_files += _pack_data_directories(
           zf, pack_systems, data_registry, platform_name, base_dest,
           flatten, case_insensitive, seen_destinations, seen_lower,
-          seen_parents,
+          seen_parents, required_only=required_only,
       )
 
       # README.txt for users: personalized step-by-step per platform
@@ -1682,6 +1689,8 @@ def generate_emulator_pack(
             for dd in deliverable(
                 profile.get("data_directories", []), standalone
             ):
+                if required_only and dd.get("required") is False:
+                    continue
                 ref_key = dd.get("ref", "")
                 if not ref_key or not data_registry or ref_key not in data_registry:
                     if ref_key:
@@ -4264,7 +4273,7 @@ def generate_manifest(
     data_members = list(_data_directory_members(
         pack_systems, data_registry, platform_name, base_dest,
         case_insensitive, seen_destinations, seen_lower, seen_parents,
-        data_refs,
+        data_refs, required_only=required_only,
     ))
     data_sizes = pack_only_sizes + [os.path.getsize(src) for src, _dest in data_members]
     data_directories = _manifest_data_directories(

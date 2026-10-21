@@ -213,7 +213,8 @@ would have loaded.
 ### Granular options
 
 - `--system` with `--platform`: filter to specific systems within a platform pack
-- `--required-only`: exclude optional files, keep only required
+- `--required-only`: exclude optional files and the data directories declared
+  `required: false`, keep only required
 - `--split`: generate one ZIP per system instead of one big pack
 - `--split --group-by manufacturer`: group split packs by manufacturer (Sony, Nintendo, Sega...)
 - `--from-md5`: look up a hash in the database, or build a custom pack with `--platform`/`--emulator`
