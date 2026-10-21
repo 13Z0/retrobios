@@ -2314,6 +2314,39 @@ def generate_target_manifests(targets_dir: str, output_dir: str) -> None:
     print(f"Generated {count} target manifest(s) in {output_dir}")
 
 
+def _refuse_unknown_systems(
+    system_filter: list[str],
+    platforms: list[str],
+    platforms_dir: str,
+    parser: argparse.ArgumentParser,
+) -> None:
+    """Refuse a --system no selected platform declares, before any work.
+
+    The name is known once the config is loaded. Checked inside the build, a
+    typo cost the lock and a refresh of every data directory first, then
+    ended on a WARNING and exit 1.
+    """
+    from common import _norm_system_id
+
+    wanted = {_norm_system_id(s) for s in system_filter}
+    declared: set[str] = set()
+    for name in platforms:
+        systems = load_platform_config(name, platforms_dir).get("systems", {})
+        if any(sid in system_filter or _norm_system_id(sid) in wanted for sid in systems):
+            return
+        declared.update(systems)
+    where = f"--platform {platforms[0]}" if len(platforms) == 1 else "--all"
+    hint = suggest_names(
+        system_filter,
+        sorted(declared),
+        f"--platform {platforms[0]} --list-systems" if len(platforms) == 1
+        else "--platform <name> --list-systems",
+    )
+    parser.error(
+        f"--system {','.join(system_filter)} matches no system of {where}. {hint}"
+    )
+
+
 def _refuse_for_verify_packs(args: argparse.Namespace, parser: argparse.ArgumentParser) -> None:
     """What --verify-packs cannot be combined with, refused before any lock.
 
@@ -3331,6 +3364,9 @@ def _main(held: contextlib.ExitStack) -> None:
     else:
         parser.error("Specify --platform or --all")
         return
+
+    if system_filter:
+        _refuse_unknown_systems(system_filter, platforms, args.platforms_dir, parser)
 
     data_registry = load_data_dir_registry(args.platforms_dir)
     # The output directory is claimed before the data directory refresh: a

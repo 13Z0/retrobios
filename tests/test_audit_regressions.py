@@ -6296,6 +6296,34 @@ class ATargetTypoIsAnErrorInEveryTool(unittest.TestCase):
                 self.assertIn("verify.py --platform retroarch --list-targets", output)
 
 
+class AnUnknownSystemIsRefusedBeforeAnyWork(unittest.TestCase):
+    """generate_pack checked --system inside the build: a typo took the
+    output lock and refreshed every data directory, then ended on a WARNING."""
+
+    def test_refused_before_the_lock_and_the_refresh(self):
+        with tempfile.TemporaryDirectory(dir=ROOT / "tmp") as tmp:
+            out = Path(tmp) / "never"
+            with mock.patch.dict(os.environ, {"RETROBIOS_OFFLINE": ""}):
+                proc = subprocess.run(
+                    [sys.executable, "scripts/generate_pack.py", "--platform", "batocera",
+                     "--system", "playstaton-nothing", "--output-dir", str(out)],
+                    cwd=ROOT, capture_output=True, text=True, timeout=120,
+                )
+            self.assertEqual(proc.returncode, 2, proc.stdout + proc.stderr)
+            self.assertIn("error: --system playstaton-nothing matches no system", proc.stderr)
+            self.assertFalse(out.exists())
+
+    def test_a_known_system_passes_the_early_check(self):
+        import argparse
+
+        import generate_pack
+
+        parser = argparse.ArgumentParser()
+        generate_pack._refuse_unknown_systems(
+            ["sony-playstation"], ["retroarch"], str(ROOT / "platforms"), parser
+        )
+
+
 class NoArchiveRepeatsAMemberName(unittest.TestCase):
     """s8k_cpu.zip held three member names twice (MAME reuses them across
     two ROM_SYSTEM_BIOS of one device). Every pack build printed raw zipfile
