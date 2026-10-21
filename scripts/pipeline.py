@@ -92,6 +92,19 @@ class StepResults(dict):
 # Steps that report without failing the run.
 NON_BLOCKING = frozenset({"check_buildbot"})
 
+def _output_dir(typed: str | None) -> str:
+    """The pack directory as an absolute path.
+
+    Every step runs from the repository root, while the lock and the purge
+    of stale packs ran here, against the caller's directory: started from
+    scripts/, the run locked and purged scripts/dist/ and wrote its packs to
+    dist/. A directory the caller typed is read from where they typed it.
+    """
+    if typed is None:
+        return str(Path(__file__).resolve().parent.parent / "dist")
+    return str(Path(typed).resolve())
+
+
 def run(cmd: list[str], label: str) -> tuple[bool, str]:
     """Run a command, echoing its output as it comes. Returns (success, output).
 
@@ -425,7 +438,8 @@ def main() -> None:
         "assets already in .cache/large/"
     )
     parser.add_argument(
-        "--output-dir", default="dist", help="Pack output directory (default: dist/)"
+        "--output-dir",
+        help="Pack output directory (default: dist/ at the repository root)",
     )
     parser.add_argument("--target", "-t", help="Hardware target (e.g., switch, rpi4)")
     parser.add_argument(
@@ -455,6 +469,7 @@ def main() -> None:
     )
     args = parser.parse_args()
     _refuse_unapplied_flags(parser, args)
+    args.output_dir = _output_dir(args.output_dir)
 
     # A second run on the same output directory is refused before any work:
     # the database rebuild alone takes minutes, and the reader holding the

@@ -5975,5 +5975,25 @@ class ErrorsGoToStderr(unittest.TestCase):
             self.assertGreater(seen, 0, script)
 
 
+class PipelineOutputDirIsTheOneItWrites(unittest.TestCase):
+    """Started from scripts/, the pipeline locked and purged scripts/dist/
+    while every step, run from the repository root, wrote to dist/."""
+
+    def test_the_default_is_the_root_dist_wherever_the_run_starts(self):
+        previous = os.getcwd()
+        self.addCleanup(os.chdir, previous)
+        os.chdir(ROOT / "scripts")
+        self.assertEqual(pipeline._output_dir(None), str(ROOT / "dist"))
+        self.assertEqual(pipeline._output_dir("out"), str(ROOT / "scripts" / "out"))
+
+    def test_main_resolves_it_before_the_lock(self):
+        source = (ROOT / "scripts" / "pipeline.py").read_text(encoding="utf-8")
+        body = source[source.index("def main("):]
+        self.assertLess(
+            body.index("args.output_dir = _output_dir(args.output_dir)"),
+            body.index("hold_artifact_lock(args.output_dir)"),
+        )
+
+
 if __name__ == "__main__":
     unittest.main()
