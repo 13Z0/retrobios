@@ -70,6 +70,18 @@ class BeforeOpeningAPullRequest(unittest.TestCase):
         workflow = (REPO_ROOT / ".github" / "workflows" / "validate.yml").read_text(encoding="utf-8")
         self.assertIn("validate_schemas.py --source-only", workflow)
 
+    def test_it_installs_the_packages_the_site_render_needs(self):
+        """Without mkdocs-material and pymdown-extensions the pipeline's
+        render step (8b) is skipped for every contributor."""
+        deploy = (REPO_ROOT / ".github" / "workflows" / "deploy-site.yml").read_text(
+            encoding="utf-8"
+        )
+        specs = re.findall(r'"((?:mkdocs-material|pymdown-extensions)[^"]*)"', deploy)
+        self.assertEqual(len(specs), 2)
+        text = generate_readme.generate_contributing()
+        for spec in specs:
+            self.assertIn(f'"{spec}"', text)
+
 
 if __name__ == "__main__":
     unittest.main()
