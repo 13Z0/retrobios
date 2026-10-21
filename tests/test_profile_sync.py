@@ -378,6 +378,15 @@ class TestAnchorBlock(unittest.TestCase):
         self.assertEqual(result.status, "CHANGED")
         self.assertEqual(result.start, 3)
 
+    def test_rows_edited_in_place_keep_their_own_line(self):
+        rows = [f'{{"ipl{i}", 0x{i:02x}}}' for i in range(8)]
+        pin = ["a", "b", *rows, "z"]
+        head = ["a", "b", *[row + ", false" for row in rows], "z"]
+        for line in (3, 5, 10):
+            result = anchor_block(pin, head, line, line)
+            self.assertEqual(result.status, "CHANGED")
+            self.assertEqual(result.start, line)
+
     def test_gone_when_content_vanished(self):
         result = anchor_block(["a", "unique marker", "b"], ["x"] * 200, 2, 2)
         self.assertEqual(result.status, "GONE")

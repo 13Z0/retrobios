@@ -488,9 +488,17 @@ def _find_all(haystack: list[str], needle: list[str]) -> list[int]:
 def _map_index(
     opcodes: list[tuple[str, int, int, int, int]], index: int
 ) -> int | None:
+    """Line of HEAD that a pinned line became.
+
+    A replace block of equal size edits each line in place (a column added to
+    every row of a table), so its lines map one to one like an equal block.
+    Collapsed onto the first line, eight refs citing eight rows all landed on
+    the first row.
+    """
     for tag, i1, i2, j1, j2 in opcodes:
         if i1 <= index < i2:
-            return j1 + (index - i1) if tag == "equal" else j1
+            in_place = tag == "equal" or (tag == "replace" and i2 - i1 == j2 - j1)
+            return j1 + (index - i1) if in_place else j1
     return None
 
 
