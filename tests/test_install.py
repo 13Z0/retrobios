@@ -3446,6 +3446,19 @@ class HintsGiveTheUsersOwnCommandBack(unittest.TestCase):
             hint = "\n".join(install._manual_usage_hint("linux"))
         self.assertIn("python3 install.py --platform retroarch", hint)
 
+    def test_a_listing_hint_keeps_the_listing(self):
+        """--list-systems with nothing detected was answered with a full
+        install command: the listing flag gone, a --dest added."""
+        home = Path(_tempdir(self))
+        env = {**os.environ, "HOME": str(home), "RETROBIOS_OS": "linux",
+               "RETROBIOS_BOOTSTRAP": ""}
+        for flag in ("--list-systems", "--list-cores", "--list-emulators", "--list-targets"):
+            with self.subTest(flag=flag):
+                proc = _install_run(env, flag, "--no-input")
+                self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
+                self.assertIn(f"python3 install.py --platform retroarch {flag}", proc.stdout)
+                self.assertNotIn("--dest", proc.stdout)
+
     def test_the_write_advice_keeps_the_narrowing(self):
         self._record("--system", "atari-lynx", "--region", "us")
         install._INVOCATION.os_type = "linux"

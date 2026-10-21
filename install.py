@@ -3968,7 +3968,7 @@ def _default_dest(os_type: str, platform_name: str) -> Path | None:
     return DEFAULT_DESTS.get(platform_name)
 
 
-def _manual_usage_hint(os_type: str) -> list[str]:
+def _manual_usage_hint(os_type: str, listing: str = "") -> list[str]:
     """How to name the platform and directory when nothing is detected.
 
     In the form the run was started with: a one-liner user has no
@@ -3980,6 +3980,15 @@ def _manual_usage_hint(os_type: str) -> list[str]:
     }.get(os_type, "~/.config/retroarch/system")
     hint = Invocation()
     hint.os_type, hint.options = os_type, _INVOCATION.options
+    if listing:
+        # A listing reads a platform's list and writes nothing: --dest is
+        # not needed, and a rebuilt install command dropped the listing
+        # and started a 6.5 GB download.
+        return [
+            "  Name the platform whose list to print, for example:",
+            f"    {hint.command('retroarch', None)} {listing}",
+            f"  The platforms: {hint.launcher()} --list-platforms",
+        ]
     return [
         "  Use --platform and --dest to specify manually, for example:",
         f"    {hint.command('retroarch', example)}",
@@ -4743,7 +4752,12 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
         if not platforms:
             print("  No supported platform detected.")
             if not interactive or listing:
-                for line in _manual_usage_hint(os_type):
+                asked = next((flag for flag, on in (
+                    ("--list-systems", args.list_systems), ("--list-cores", args.list_cores),
+                    ("--list-emulators", args.list_emulators),
+                    ("--list-targets", args.list_targets),
+                ) if on), "")
+                for line in _manual_usage_hint(os_type, asked):
                     print(line)
                 sys.exit(1)
             platforms = _prompt_manual_platform(os_type)
