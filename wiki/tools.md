@@ -1,6 +1,6 @@
 # Tools
 
-All tools are Python scripts in `scripts/`. They need Python 3.12 and `pyyaml`,
+All tools are Python scripts in `scripts/`. They need Python 3.9 or newer and `pyyaml`,
 and only `validate_schemas.py` also needs `jsonschema[format-nongpl]`. `install.py`
 alone runs on Python 3.8.
 

@@ -108,7 +108,41 @@ class ReadmeRegressions(unittest.TestCase):
             cwd=ROOT, capture_output=True, text=True, timeout=60, check=False,
         )
         self.assertEqual(proc.returncode, 1)
-        self.assertIn("needs Python 3.12", proc.stderr)
+        self.assertIn("needs Python 3.9", proc.stderr)
+
+    def test_the_floor_interpreter_compiles_every_script(self):
+        """The floor said 3.12 for a reason the code no longer carried: every
+        script compiled under 3.9, and only the guard refused it. Checked
+        with a real interpreter of the floor version, as the installer's 3.8
+        floor is."""
+        import shutil  # noqa: PLC0415
+
+        floor = re.search(
+            r"sys\.version_info < \((\d+), (\d+)\)",
+            (ROOT / "scripts" / "pipeline.py").read_text(encoding="utf-8"),
+        )
+        name = f"python{floor.group(1)}.{floor.group(2)}"
+        interpreter = shutil.which(name)
+        if interpreter is None:
+            if os.environ.get("CI"):
+                self.fail(f"CI must provide {name}")
+            self.skipTest(f"no {name} on PATH")
+        check = (
+            "import pathlib, sys\n"
+            "bad = []\n"
+            "for p in sorted(pathlib.Path('scripts').rglob('*.py')):\n"
+            "    try:\n"
+            "        compile(p.read_text(encoding='utf-8'), str(p), 'exec')\n"
+            "    except SyntaxError as e:\n"
+            "        bad.append(f'{p}:{e.lineno}')\n"
+            "print(bad)\n"
+            "sys.exit(1 if bad else 0)\n"
+        )
+        proc = subprocess.run(
+            [interpreter, "-I", "-c", check], cwd=ROOT, capture_output=True,
+            text=True, timeout=300, check=False,
+        )
+        self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
 
 
 class ReleaseSigningRegressions(unittest.TestCase):

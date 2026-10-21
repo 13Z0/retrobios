@@ -131,7 +131,7 @@ python scripts/verify.py --emulator flycast
 python scripts/verify.py --platform retroarch --verbose  # emulator ground truth
 ```
 
-Requires Python 3.12 and `pyyaml`. The one-line installer alone runs on Python 3.8.
+Requires Python 3.9 or newer and `pyyaml`. The one-line installer alone runs on Python 3.8.
 
 ## Documentation site
 
@@ -180,4 +180,4 @@ The scripts and tooling are released under the [MIT License](LICENSE).
 The BIOS and firmware files are not covered by that license: they are third-party system software, preserved and provided for personal backup, archival, and interoperability with emulation software. [NOTICE](NOTICE) sets out their status and how to ask for a file to be removed.
 The reasoning, and where it is weakest, is in the [FAQ](https://abdess.github.io/retrobios/wiki/faq/#is-this-legal).
 
-*Auto-generated on 2026-10-20T20:53:07Z*
+*Auto-generated on 2026-10-21T03:32:18Z*
