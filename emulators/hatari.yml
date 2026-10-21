@@ -4,9 +4,9 @@ core_classification: official_port
 source: "https://github.com/libretro/hatari"
 upstream: "https://github.com/hatari/hatari"
 logo: "https://raw.githubusercontent.com/hatari/hatari/main/share/icons/hicolor/scalable/apps/hatari.svg"
-profiled_date: "2026-09-17"
-source_commit: "5831f66e05ae19435bd9d8ef1c6f9c93998ff6f4"
-upstream_commit: "51ed9991101fdc4623b3b38ec16e5a170cf2dffa"
+profiled_date: "2026-10-21"
+source_commit: "50929946d196f431906932420c55e1b3593dacc5"
+upstream_commit: "90949cfa04acbd48ba28c48430fdb58cd82b9053"
 core_version: "2.6.1-devel"
 display_name: "Atari - ST/STE/TT/Falcon (Hatari)"
 cores:
@@ -20,26 +20,30 @@ systems:
 notes: |
   The main branch of libretro/hatari is the upstream Hatari tree with its
   experimental libretro target in src/retro, which upstream added in
-  January 2026, plus the port commits that follow the merge base recorded
-  as upstream_commit: VFS, disk control, core options and hard disk
-  loading. It builds as hatari_libretro (.gitlab-ci-libretro.yml:10-11,
-  src/CMakeLists.txt:371-404), reports library_name hatari and the
-  HATARI_VERSION string 2.6.1-devel (src/retro/main_retro.c:218-219,
-  src/includes/version.h:8). The .info shipped in the tree declares no
-  firmware (share/libretro/info/libretro-hatari.info). The
+  January 2026, plus the port commits that follow their merge base,
+  51ed9991: VFS, disk control, core options, hard disk loading, the
+  virtual keyboard, drive LEDs and the floppy drive sound. It builds as
+  hatari_libretro (.gitlab-ci-libretro.yml:10-11, src/CMakeLists.txt:371-404),
+  reports library_name hatari and the HATARI_VERSION string 2.6.1-devel
+  (src/retro/main_retro.c:223-224, src/includes/version.h:8). The .info
+  shipped in the tree declares no firmware
+  (share/libretro/info/libretro-hatari.info). The
   hatari_libretro.info in libretro-core-info took that file's metadata on
   2026-09-16 and keeps a tos.img firmware entry with the TOS 1.02 US MD5,
   which this code never checks.
 
   retro_init builds <system>/tos.img, records whether it exists and passes
-  it as --tos (src/retro/main_retro.c:157-207). When it is absent a
-  frontend message is shown and retro_run only refreshes the framebuffer
-  (src/retro/main_retro.c:186-189, src/retro/main_retro.c:250-261). The
+  it as --tos (src/retro/main_retro.c:160-211). It first reads floppy.raw
+  from the system directory as the floppy drive sample
+  (src/retro/main_retro.c:185, src/retro/floppy_sound.c:146-186). When
+  tos.img is absent a frontend message is shown and retro_run only
+  refreshes the framebuffer (src/retro/main_retro.c:190-193,
+  src/retro/main_retro.c:286-299). The
   name is fixed by that check: the .rom and .tos fallbacks of File_Read
   (src/tos.c:60-66, src/file.c:312-353, src/file.c:544-583) are never
   reached under a frontend. A missing --tos file fails option parsing
   (src/options.c:1026-1079, src/options.c:1937-1945), but Main_ErrorExit only
-  raises the quit flag in this build (src/retro/main_retro.c:478-490), so
+  raises the quit flag in this build (src/retro/main_retro.c:529-541), so
   Main_Init carries on with bUseTos cleared and TOS_InitImage installs the
   built-in test stub of faketosData.c instead of reading a ROM
   (src/tos.c:43, src/tos.c:1112-1131, src/tos.c:1151-1162). Without a
@@ -53,7 +57,7 @@ notes: |
   coerces machine type and CPU to the TOS version unless the image is a
   512 KB or larger EmuTOS (src/tos.c:976-1097, src/tos.c:838-969). ROM
   patches apply when the hatari_patch_tos option is on and the image is
-  not EmuTOS (src/retro/options.c:250-263, src/retro/options.c:784,
+  not EmuTOS (src/retro/options.c:252-265, src/retro/options.c:877,
   src/tos.c:1220-1222). No TOS is embedded. Because nSymbolsAutoLoad
   defaults to SYM_AUTOLOAD_DEBUGGER (src/configuration.c:621,
   src/includes/configuration.h:29-31), every TOS load also reads a
@@ -69,7 +73,7 @@ notes: |
   src/configuration.c:1061-1071, CMakeLists.txt:444-461). The boot core
   options are applied right after the command line, so the machine, DSP,
   CPU, FPU, memory and hatari_patch_tos keys of hatari.cfg are overwritten
-  by them (src/main.c:328-330, src/retro/options.c:724-789). Every other
+  by them (src/main.c:328-330, src/retro/options.c:817-882). Every other
   section is honoured: the cartridge image (src/configuration.c:487-493),
   floppy images, GEMDOS directories and ACSI, SCSI and IDE images
   (src/configuration.c:362-364, src/configuration.c:375-483), MIDI, printer,
@@ -89,14 +93,14 @@ notes: |
   Content is a floppy image, an .m3u list parsed relative to its own
   directory (src/retro/disk_control.c:94-182), an .ide image put on the
   IDE master, a .vhd image put on ACSI 0 or a .gem marker naming a GEMDOS
-  directory (src/retro/main_retro.c:369-427, src/retro/harddisk.c:32-129).
+  directory (src/retro/main_retro.c:420-478, src/retro/harddisk.c:32-129).
   With a .gem, <system>/hatari/BOOT.ST is inserted into drive A when it
   exists (src/retro/harddisk.c:105-127). A disk whose name ends in A pulls
   the sibling ending in B into drive B (src/floppy.c:300-343,
   src/floppy.c:385-388), and an STX image reads its .wd1772 overlay from
   the same directory (src/floppies/stx.c:807-827). Savestates pass through
   hatari_savestate.tmp in the system directory
-  (src/retro/main_retro.c:41, src/retro/main_retro.c:292-359). IPF support
+  (src/retro/main_retro.c:44, src/retro/main_retro.c:343-410). IPF support
   is compiled in from rsn8887/capsimg when ENABLE_STATIC_CAPSIMAGE is on
   (cmake/BuildDependencies.cmake:93-126). The Windows jobs build with it
   since September 2026 (.gitlab-ci-libretro.yml:101,
@@ -125,12 +129,14 @@ notes: |
   home directory, or from the file -c names (src/main.c:256-278,
   src/configuration.c:862-867, src/options.c:1283-1289). hatari.nvram and
   auto.sav, restored only when bAutoSave is on, are kept there
-  (src/falcon/nvram.c:282-294, src/configuration.c:727-733). The window
-  icon is hatari-icon.bmp in the data directory (src/sdl/screen.c:707-716).
+  (src/configuration.c:727-733). The window icon is hatari-icon.bmp in the
+  data directory (src/sdl/screen.c:711-720).
   --lilo boots a Linux kernel instead of TOS, vmlinuz and initrd in the data
   directory by default (src/configuration.c:816-824, src/options.c:2309-2323).
-  IPF, RAW and CTR images need the capsimage library found at build time
-  (CMakeLists.txt:185-188).
+  IPF images are decoded by the built-in reader unless the capsimage
+  library is found at build time, which then reads them, and RAW and CTR
+  images need that library (src/CMakeLists.txt:70-74,
+  CMakeLists.txt:185-188).
 
 files:
   - name: "tos.img"
@@ -140,7 +146,7 @@ files:
     min_size: 64
     max_size: 1048576
     validation: [size]
-    source_ref: "source src/retro/main_retro.c:157-207, source src/retro/main_retro.c:250-261, source src/options.c:1937-1945, source src/configuration.c:489, source src/tos.c:60-66, source src/tos.c:976-1097, source src/tos.c:838-969, source src/file.c:312-353, upstream src/configuration.c:810-812, upstream src/paths.c:316-330, upstream CMakeLists.txt:383-394, upstream src/main.c:191-201, upstream src/reset.c:66-68, upstream src/file.c:275-308, upstream src/file.c:481-520, upstream src/CMakeLists.txt:74, upstream src/CMakeLists.txt:386-393"
+    source_ref: "source src/retro/main_retro.c:160-211, source src/retro/main_retro.c:286-299, source src/options.c:1937-1945, source src/configuration.c:489, source src/tos.c:60-66, source src/tos.c:976-1097, source src/tos.c:838-969, source src/file.c:312-353, upstream src/configuration.c:810-812, upstream src/paths.c:316-330, upstream CMakeLists.txt:383-394, upstream src/main.c:191-201, upstream src/reset.c:66-68, upstream src/file.c:275-308, upstream src/file.c:481-520, upstream src/CMakeLists.txt:79, upstream src/CMakeLists.txt:391-398"
     note: >
       Any TOS 1.00 to 4.04, TOS 0.00, a RAM TOS or EmuTOS. The file must
       carry this exact name in the libretro build: retro_init only enables
@@ -151,18 +157,7 @@ files:
       stand in for the default, and a .gz or archive is unpacked first. The
       program exits when no image loads and none is picked in the settings
       dialog (src/options.c:1937-1940, src/configuration.c:489,
-      src/tos.c:983, src/main.c:191-201). The aliases are the names the platform launchers
-      give it. Batocera passes tos<version><language>.img from the BIOS
-      root, trying the chosen version then each machine's list and the
-      languages us, uk, de, es, fr, it, nl, ru, se and none in turn
-      (configgen generators/hatari/hatariGenerator.py:74-75, 158-193).
-      Recalbox writes atarist/st.img, ste.img, megaste.img, tt.img or
-      falcon.img by machine, then tos.img, then emutos.img, and emutos.img
-      for any content whose path names emutos
-      (configgen generators/hatari/hatariGenerator.py:151-167). RetroBat
-      writes hatari/tos/ followed by the hatari_tos option, tos206.img,
-      tos106.img, tos104.img, tos102.img or emutos.img, and tos.img at the
-      BIOS root otherwise (emulatorlauncher Generators/Hatari.Generator.cs:144-154).
+      src/tos.c:983, src/main.c:191-201).
 
   - name: "tos.sym"
     path: "tos.sym"
@@ -170,7 +165,7 @@ files:
     required: false
     storage: user_provided
     unsourceable: "one table per TOS build, valid only beside the image it was linked with: each EmuTOS release archive carries the table of its ROM, etos512k.sym beside etos512k.img, and Atari TOS has none"
-    source_ref: "source src/tos.c:1094, source src/debug/symbols.c:1095-1113, source src/debug/symbols.c:1002-1020, source src/debug/symbols.c:372-407, source src/configuration.c:621, source src/includes/configuration.h:29-31, source src/retro/main_retro.c:182-194"
+    source_ref: "source src/tos.c:1094, source src/debug/symbols.c:1095-1113, source src/debug/symbols.c:1002-1020, source src/debug/symbols.c:372-407, source src/configuration.c:621, source src/includes/configuration.h:29-31, source src/retro/main_retro.c:186-198"
     note: >
       The name is the TOS image path with its last three characters
       replaced by sym, and the image path is always tos.img here: retro_init
@@ -182,6 +177,24 @@ files:
       name the same way from the image it opens, tos.sym beside the default
       tos.img in its data directory. The symbols serve the built-in
       debugger.
+
+  - name: "floppy.raw"
+    path: "floppy.raw"
+    mode: libretro
+    description: "Floppy drive sample, signed 16-bit little-endian stereo at 44100 Hz, no header"
+    required: false
+    has_builtin: true
+    min_size: 4
+    max_size: 16777216
+    validation: [size]
+    storage: user_provided
+    unsourceable: "any headerless s16le stereo 44100 Hz sample the user records, with no name or version the code expects beyond the filename"
+    source_ref: "source src/retro/floppy_sound.c:146-186, source src/retro/floppy_sound.c:130-143, source src/retro/main_retro.c:185, source src/retro/statusbar.c:129-130, source src/retro/options.c:369-383, source src/retro/options.c:914-916"
+    note: >
+      Read whole at retro_init when its size is between 4 bytes and 16 MB,
+      and resampled to the core's audio rate. Otherwise the built-in
+      synthesised sound plays (src/retro/floppy_sound.c:48-101). Played when
+      a drive LED comes on while hatari_floppy_sound is enabled, its default.
 
   - name: "cartridge ROM"
     path: null
@@ -206,7 +219,7 @@ files:
     description: "Boot floppy inserted with GEMDOS hard disk folders"
     required: false
     mode: libretro
-    source_ref: "source src/retro/harddisk.c:78-129, source src/retro/main_retro.c:391-395"
+    source_ref: "source src/retro/harddisk.c:78-129, source src/retro/main_retro.c:442-446"
     note: "Inserted into drive A when the content is a .gem file."
 
   - name: "hatari.cfg"
@@ -263,7 +276,7 @@ files:
     sha1: 48be1de23a980bca15a8ed3cb92917340e43bbee
     sha256: 0e083a340ad2e522de94e5121565a4730f99d6ee3638c74f5a2c3be579529155
     crc32: 1639262c
-    source_ref: "upstream src/sdl/screen.c:707-716, upstream src/CMakeLists.txt:386-389"
+    source_ref: "upstream src/sdl/screen.c:711-720, upstream src/CMakeLists.txt:391-394"
     note: >
       Loaded with SDL_LoadBMP from the data directory when the window is
       created. Without it the window keeps the default icon. Installed
