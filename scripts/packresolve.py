@@ -6,9 +6,14 @@ and the offline switch that forbids reaching for the network."""
 
 from __future__ import annotations
 
-import re
-from largefiles import fetch_large_file
+import hashlib
 import os
+import re
+import urllib.error
+import urllib.request
+from pathlib import Path
+
+from largefiles import fetch_large_file
 from common import (
     declared_hash_verdict,
     resolution_is_hash_exact,
@@ -25,6 +30,60 @@ def set_offline(value: bool) -> None:
     """Forbid every network reach for the rest of the run."""
     global _OFFLINE
     _OFFLINE = value
+
+
+def scratch_dir() -> str:
+    """The repository's tmp/, never the system /tmp (a 4 GB tmpfs on WSL)."""
+    path = Path(__file__).resolve().parent.parent / "tmp"
+    path.mkdir(exist_ok=True)
+    return str(path)
+
+
+def download_external(
+    file_entry: dict, dest_path: str, offline: bool | None = None
+) -> bool:
+    """Download a `storage: external` file, verify its hash, write dest_path.
+
+    The run's network policy applies: under --offline nothing is fetched and
+    the entry stays missing, as verify reports it. The body is streamed to
+    dest_path and hashed on the way, and removed when the hash disagrees.
+    """
+    url = file_entry.get("source_url")
+    if not url:
+        return False
+    name = file_entry.get("name", url)
+    declared = next(
+        (
+            (algo, str(file_entry[algo]).lower())
+            for algo in ("sha256", "sha1", "md5")
+            if file_entry.get(algo)
+        ),
+        None,
+    )
+    if declared is None:
+        print(f"    WARNING: no hash for {name}, skipping unverifiable download")
+        return False
+    if _OFFLINE if offline is None else offline:
+        print(f"    WARNING: {name} is external and the run is offline, not fetched")
+        return False
+    algo, expected = declared
+    digest = hashlib.new(algo)
+    Path(dest_path).parent.mkdir(parents=True, exist_ok=True)
+    try:
+        req = urllib.request.Request(url, headers={"User-Agent": "retrobios-pack-gen/1.0"})
+        with urllib.request.urlopen(req, timeout=120) as resp, open(dest_path, "wb") as out:
+            for chunk in iter(lambda: resp.read(1 << 20), b""):
+                digest.update(chunk)
+                out.write(chunk)
+    except (urllib.error.URLError, OSError) as exc:
+        print(f"    WARNING: Failed to download {url}: {exc}")
+        Path(dest_path).unlink(missing_ok=True)
+        return False
+    if digest.hexdigest() != expected:
+        print(f"    WARNING: {algo.upper()} mismatch for {name}")
+        Path(dest_path).unlink(missing_ok=True)
+        return False
+    return True
 
 def _values(raw: object) -> list[str]:
     """A hash field's values: one, a list, or a comma-separated string."""

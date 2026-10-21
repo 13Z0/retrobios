@@ -6215,5 +6215,67 @@ class CommentsSayWhy(unittest.TestCase):
         self.assertEqual(found, [])
 
 
+class ExternalDownloadsFollowTheRunPolicy(unittest.TestCase):
+    """download_external lived outside packresolve and fetched under
+    --offline, into the system /tmp, holding the whole body in memory."""
+
+    ENTRY = {"name": "ext.bin", "source_url": "https://example.invalid/ext.bin",
+             "sha1": hashlib.sha1(b"payload").hexdigest()}
+
+    def _response(self, body: bytes):
+        stream = io.BytesIO(body)
+        response = mock.MagicMock()
+        response.__enter__.return_value = stream
+        response.__exit__.return_value = False
+        return response
+
+    def test_offline_never_reaches_the_network(self):
+        import packresolve
+
+        with tempfile.TemporaryDirectory() as tmp, \
+                mock.patch.object(packresolve.urllib.request, "urlopen") as urlopen, \
+                contextlib.redirect_stdout(io.StringIO()):
+            ok = packresolve.download_external(self.ENTRY, f"{tmp}/x", offline=True)
+        self.assertFalse(ok)
+        urlopen.assert_not_called()
+
+    def test_the_run_switch_is_inherited(self):
+        import packresolve
+
+        saved = packresolve._OFFLINE
+        packresolve.set_offline(True)
+        try:
+            with tempfile.TemporaryDirectory() as tmp, \
+                    mock.patch.object(packresolve.urllib.request, "urlopen") as urlopen, \
+                    contextlib.redirect_stdout(io.StringIO()):
+                self.assertFalse(packresolve.download_external(self.ENTRY, f"{tmp}/x"))
+            urlopen.assert_not_called()
+        finally:
+            packresolve.set_offline(saved)
+
+    def test_a_verified_body_lands_and_a_wrong_one_is_removed(self):
+        import packresolve
+
+        with tempfile.TemporaryDirectory() as tmp:
+            target = Path(tmp) / "x"
+            with mock.patch.object(packresolve.urllib.request, "urlopen",
+                                   return_value=self._response(b"payload")):
+                self.assertTrue(packresolve.download_external(self.ENTRY, str(target), offline=False))
+            self.assertEqual(target.read_bytes(), b"payload")
+            target.unlink()
+            with mock.patch.object(packresolve.urllib.request, "urlopen",
+                                   return_value=self._response(b"other")), \
+                    contextlib.redirect_stdout(io.StringIO()):
+                self.assertFalse(packresolve.download_external(self.ENTRY, str(target), offline=False))
+            self.assertFalse(target.exists())
+
+    def test_scratch_files_stay_in_the_repository(self):
+        source = (ROOT / "scripts" / "generate_pack.py").read_text(encoding="utf-8")
+        self.assertNotIn("def download_external", source)
+        self.assertNotIn("urlopen", source)
+        for call in re.findall(r"NamedTemporaryFile\(([^)]*)\)", source):
+            self.assertIn("dir=", call)
+
+
 if __name__ == "__main__":
     unittest.main()

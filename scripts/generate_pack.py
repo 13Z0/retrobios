@@ -25,8 +25,6 @@ import re
 import shutil
 import sys
 import tempfile
-import urllib.error
-import urllib.request
 import zipfile
 from pathlib import Path
 
@@ -343,68 +341,6 @@ def _platform_pack_stem(
         for p in group_platforms
     ]
     return "_".join(_name_part(n) for n in names) + version_tag
-
-
-
-
-
-
-
-def download_external(file_entry: dict, dest_path: str) -> bool:
-    """Download an external BIOS file, verify hash, save to dest_path."""
-    url = file_entry.get("source_url")
-    if not url:
-        return False
-
-    sha256 = file_entry.get("sha256")
-    sha1 = file_entry.get("sha1")
-    md5 = file_entry.get("md5")
-
-    if not (sha256 or sha1 or md5):
-        print(
-            f"    WARNING: no hash for {file_entry['name']}, skipping unverifiable download"
-        )
-        return False
-
-    try:
-        req = urllib.request.Request(
-            url, headers={"User-Agent": "retrobios-pack-gen/1.0"}
-        )
-        with urllib.request.urlopen(req, timeout=120) as resp:
-            data = resp.read()
-    except urllib.error.URLError as e:
-        print(f"    WARNING: Failed to download {url}: {e}")
-        return False
-
-    if sha256:
-        actual = hashlib.sha256(data).hexdigest()
-        if actual != sha256:
-            print(f"    WARNING: SHA256 mismatch for {file_entry['name']}")
-            return False
-    elif sha1:
-        actual = hashlib.sha1(data).hexdigest()
-        if actual != sha1:
-            print(f"    WARNING: SHA1 mismatch for {file_entry['name']}")
-            return False
-    elif md5:
-        actual = hashlib.md5(data).hexdigest()
-        if actual != md5:
-            print(f"    WARNING: MD5 mismatch for {file_entry['name']}")
-            return False
-
-    os.makedirs(os.path.dirname(dest_path), exist_ok=True)
-    with open(dest_path, "wb") as f:
-        f.write(data)
-    return True
-
-
-
-
-
-
-
-
-
 
 
 # What the builder writes into a platform pack beside the files it carries.
@@ -952,7 +888,7 @@ def generate_pack(
                 if status == "external":
                     file_ext = os.path.splitext(file_entry["name"])[1] or ""
                     with tempfile.NamedTemporaryFile(
-                        delete=False, suffix=file_ext
+                        delete=False, suffix=file_ext, dir=packresolve.scratch_dir()
                     ) as tmp:
                         tmp_path = tmp.name
 
@@ -1709,7 +1645,7 @@ def generate_emulator_pack(
                 if how == "external":
                     file_ext = os.path.splitext(fe["name"])[1] or ""
                     with tempfile.NamedTemporaryFile(
-                        delete=False, suffix=file_ext
+                        delete=False, suffix=file_ext, dir=packresolve.scratch_dir()
                     ) as tmp:
                         tmp_path = tmp.name
                     try:
@@ -4926,6 +4862,7 @@ from packresolve import (  # noqa: E402,F401
     parse_hash_file,
     lookup_hashes,
     resolve_file,
+    download_external,
 )
 
 if __name__ == "__main__":
