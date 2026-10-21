@@ -19,22 +19,52 @@ FEATURES = ".emulationstation/es_features.cfg"
 
 SOURCE_FILES = (
     f"{GENERATORS}/Amiberry.Generator.cs",
+    f"{GENERATORS}/ArcadeDuck.Database.cs",
+    f"{GENERATORS}/ArcadeDuck.Generator.cs",
     f"{GENERATORS}/Ares.Generator.cs",
+    f"{GENERATORS}/Bizhawk.CoreOptions.cs",
     f"{GENERATORS}/Bizhawk.Generator.cs",
+    f"{GENERATORS}/Blastem.Generator.cs",
+    f"{GENERATORS}/Demul.Generator.cs",
+    f"{GENERATORS}/Desmume.Generator.cs",
+    f"{GENERATORS}/Dolphin.Generator.cs",
+    f"{GENERATORS}/DosBoxPure.Generator.cs",
+    f"{GENERATORS}/DosBoxStaging.Generator.cs",
     f"{GENERATORS}/Duckstation.Generator.cs",
+    f"{GENERATORS}/Eka2l1.Generator.cs",
+    f"{GENERATORS}/Fbneo.Generator.cs",
+    f"{GENERATORS}/Flycast.Generator.cs",
+    f"{GENERATORS}/GsPlus.Generator.cs",
     f"{GENERATORS}/Hatari.Generator.cs",
     f"{GENERATORS}/Jgenesis.Generator.cs",
+    f"{GENERATORS}/Jzintv.Generator.cs",
     f"{GENERATORS}/KegaFusion.Generator.cs",
+    f"{GENERATORS}/Kronos.Generator.cs",
     f"{GENERATORS}/LibRetro.CoreOptions.cs",
+    f"{GENERATORS}/LibRetro.Generator.cs",
+    f"{GENERATORS}/Mame64.Generator.cs",
     f"{GENERATORS}/Mednafen.Generator.cs",
     f"{GENERATORS}/MelonDS.Generator.cs",
     f"{GENERATORS}/Mesen.Generator.cs",
+    f"{GENERATORS}/MessSystem.cs",
     f"{GENERATORS}/Mupen64.Generator.cs",
     f"{GENERATORS}/OpenMSX.Generator.cs",
+    f"{GENERATORS}/PSXMame.Generator.cs",
     f"{GENERATORS}/Pcsx2.Generator.cs",
+    f"{GENERATORS}/PortsLauncher.Configuration.cs",
     f"{GENERATORS}/Project64.Generator.cs",
+    f"{GENERATORS}/Raine.Generator.cs",
+    f"{GENERATORS}/Rpcs3.Generator.cs",
+    f"{GENERATORS}/SSF.Generator.cs",
+    f"{GENERATORS}/ScummVm.Generator.cs",
+    f"{GENERATORS}/Snes9x.Generator.cs",
+    f"{GENERATORS}/Tsugaru.Generator.cs",
     f"{GENERATORS}/Uae.Generator.cs",
     f"{GENERATORS}/Xemu.Generator.cs",
+    f"{GENERATORS}/Xm6pro.Generator.cs",
+    f"{GENERATORS}/Xroar.Generator.cs",
+    f"{GENERATORS}/Yabasanshiro.Generator.cs",
+    f"{GENERATORS}/Ymir.Generator.cs",
     f"{GENERATORS}/mGBA.Generator.cs",
     FEATURES,
 )
@@ -61,6 +91,8 @@ class Source:
         self._starts = [0] + [m.end() for m in re.finditer(r"\n", text)]
         self._blocks: list[tuple[int, int]] | None = None
         self._ends: list[int] | None = None
+        self.code: str | None = None
+        self.bare: str | None = None
 
     def line(self, offset: int) -> int:
         return bisect.bisect_right(self._starts, offset)
@@ -1291,7 +1323,7 @@ def _root_writes(src: Source, emulator: str) -> list[Record]:
             continue
         method = root_reach[0]
         for write in re.compile(
-            rf'(\w+)\.WriteValue\("([^"]*)", "([^"]+)", {root.group(1)}\);'
+            rf'(\w+)\.WriteValue\("([^"]*)", "([^"]+)", (?:"\'" \+ )?{root.group(1)}(?: \+ "\'")?\);'
         ).finditer(src.text, root.end(), method[1]):
             reached = _conditions(src, write.start())
             if reached is None:
@@ -1397,20 +1429,1678 @@ def guarded_writes(sources: dict[str, Source]) -> list[Record]:
     ]
 
 
+# Expression rendering for the generators below: a path expression becomes
+# bios/<folders>/<name>, <x> for AppConfig.GetFullPath("x"), <emulator> for
+# the emulator's own folder, and None when it is built from anything else.
+
+_PATH_PARAMS = {"path": "<emulator>", "emulatorPath": "<emulator>", "_path": "<emulator>"}
+_KNOWN = {
+    "Path.GetDirectoryName(rom)": "<rom directory>",
+    "Path.GetDirectoryName(Path.GetFullPath(rom))": "<rom directory>",
+    "rom": "<rom>",
+}
+_WRAPPERS = ("EnsureDirectoryExists",)
+
+Rendered = tuple[str, list[tuple[int, int]]]
+
+
+def _comment_spans(text: str) -> Iterator[tuple[int, int]]:
+    """Offsets of the comments of C# code, string and char literals skipped."""
+    i, n = 0, len(text)
+    while i < n:
+        if text.startswith("//", i):
+            end = text.find("\n", i)
+            end = n if end < 0 else end
+            yield i, end
+            i = end
+        elif text.startswith("/*", i):
+            close = text.find("*/", i + 2)
+            end = n if close < 0 else close + 2
+            yield i, end
+            i = end
+        elif text.startswith('@"', i):
+            i += 2
+            while i < n and not (text[i] == '"' and not text.startswith('""', i)):
+                i += 2 if text.startswith('""', i) else 1
+            i += 1
+        elif text[i] in "\"'":
+            quote = text[i]
+            i += 1
+            while i < n and text[i] != quote and text[i] != "\n":
+                i += 2 if text[i] == "\\" else 1
+            i += 1
+        else:
+            i += 1
+
+
+def _code(src: Source) -> str:
+    """The text with comments blanked, offsets and lines unchanged."""
+    if src.code is None:
+        chars = list(src.text)
+        for start, end in _comment_spans(src.text):
+            for i in range(start, end):
+                if chars[i] != "\n":
+                    chars[i] = " "
+        src.code = "".join(chars)
+    return src.code
+
+
+def _split_top(text: str, separator: str) -> list[str]:
+    """text split on separator outside strings, parentheses and braces."""
+    code = {offset for offset, _ in _code_chars(text)}
+    parts, depth, start = [], 0, 0
+    for i, char in enumerate(text):
+        if i not in code:
+            continue
+        if char in "([{":
+            depth += 1
+        elif char in ")]}":
+            depth -= 1
+        elif depth == 0 and text.startswith(separator, i):
+            parts.append(text[start:i].strip())
+            start = i + len(separator)
+    parts.append(text[start:].strip())
+    return parts
+
+
+def _wrapped(expr: str, opener: str) -> str | None:
+    """The inside of opener(...) when the parentheses span the whole expression."""
+    if not expr.startswith(opener + "(") or not expr.endswith(")"):
+        return None
+    inner = expr[len(opener) + 1 : -1]
+    depth = 0
+    for offset, char in _code_chars(inner):
+        depth += {"(": 1, ")": -1}.get(char, 0)
+        if depth < 0:
+            return None
+    return inner
+
+
+def _method_of(src: Source, offset: int) -> tuple[int, int]:
+    for block in sorted((b for b in src.blocks() if b[0] < offset < b[1]), reverse=True):
+        if _METHOD.match(src.header(block)):
+            return block
+    raise LauncherPatternMissing(src.path, f"method around line {src.line(offset)}")
+
+
+def _bare(src: Source) -> str:
+    """The code with comments and the inside of literals blanked."""
+    if src.bare is None:
+        chars = [" " if c != "\n" else c for c in src.text]
+        for offset, char in _code_chars(src.text):
+            chars[offset] = char
+        src.bare = "".join(chars)
+    return src.bare
+
+
+def _statement_start(src: Source, offset: int) -> int:
+    code = _bare(src)
+    found = max(code.rfind(";", 0, offset), code.rfind("{", 0, offset), code.rfind("}", 0, offset))
+    start = found + 1
+    while start < offset and code[start].isspace():
+        start += 1
+    return start
+
+
+def _statement_end(src: Source, offset: int) -> int:
+    """Offset of the semicolon that ends the statement running at offset."""
+    depth = 0
+    for position, char in _code_chars(src.text[offset:]):
+        if char in "([{":
+            depth += 1
+        elif char in ")]}":
+            depth -= 1
+        elif char == ";" and depth == 0:
+            return offset + position
+    raise LauncherPatternMissing(src.path, f"end of the statement at line {src.line(offset)}")
+
+
+_ATOM = r"!?[\w.]+(?:\((?:[^()]|\([^()]*\))*\))?"
+
+
+def _negated(condition: str) -> str:
+    """not condition, written as a C# reader would."""
+    if re.fullmatch(_ATOM, condition):
+        return condition[1:] if condition.startswith("!") else f"!{condition}"
+    return _negate(condition)
+
+
+def _owner_condition(src: Source, start: int) -> str | None:
+    """Condition of the if whose statement or block ends just before start."""
+    code = _code(src)
+    before = code[:start].rstrip()
+    if before.endswith("}"):
+        block = max(b for b in src.blocks() if b[1] == len(before))
+        owner = _IF.fullmatch(src.header(block))
+        return owner.group(1) if owner else None
+    if not before.endswith(";"):
+        return None
+    owner_start = _statement_start(src, len(before) - 1)
+    head = re.match(r"(?:else\s+)?if\s*\(", code[owner_start:])
+    if head is None:
+        return None
+    return " ".join(_call_args(src, owner_start + head.end() - 1).split())
+
+
+def _braceless_if(src: Source, offset: int) -> str | None:
+    """Condition of an if or else without braces that owns the statement at offset."""
+    code = _code(src)
+    start = _statement_start(src, offset)
+    if re.fullmatch(r"else\s*", code[start:offset]):
+        owner = _owner_condition(src, start)
+        return _negated(owner) if owner else None
+    head = re.search(r"(?:else\s+)?if\s*\(", code[start:offset])
+    if head is None or head.start() != 0:
+        return None
+    paren = start + head.end() - 1
+    condition = _call_args(src, paren)
+    rest = code[paren + len(condition) + 2 : offset]
+    if rest.strip():
+        return None
+    return " ".join(condition.split())
+
+
+def _render(src: Source, expr: str, scope: int, before: int) -> Rendered | None:
+    """A path expression as text, with the lines of the declarations it read."""
+    expr = " ".join(expr.split())
+    if re.fullmatch(_BIOS_ROOT, expr):
+        return "bios", []
+    changed = re.fullmatch(r'Path\.ChangeExtension\(exe, "(\.\w+)"\)', expr)
+    if changed:
+        return f"<exe>{changed.group(1)}", []
+    named = re.fullmatch(r'(?:Program\.)?AppConfig\.GetFullPath\("([\w.-]+)"\)', expr)
+    if named:
+        return f"<{named.group(1)}>", []
+    if expr in _KNOWN:
+        return _KNOWN[expr], []
+    replaced = re.fullmatch(rf"(.+)\.Replace\({STRING}, {STRING}\)", expr)
+    if replaced:
+        return _render(src, replaced.group(1), scope, before)
+    for wrapper in _WRAPPERS:
+        inner = _wrapped(expr, wrapper)
+        if inner is not None:
+            return _render(src, inner, scope, before)
+    ternary = _split_top(expr, "?")
+    if len(ternary) == 2:
+        branches = _split_top(ternary[1], ":")
+        if len(branches) == 2:
+            first = _render(src, branches[0], scope, before)
+            second = _render(src, branches[1], scope, before)
+            if first is None or second is None:
+                return None
+            return f"{first[0]} when {ternary[0]}, else {second[0]}", first[1] + second[1]
+    terms = _split_top(expr, " + ")
+    if len(terms) > 1:
+        while terms and terms[0] == '"\\""':
+            terms = terms[1:]
+        while terms and terms[-1] in ('"\\""', '"\\\\"'):
+            terms = terms[:-1]
+        pieces, spans = [], []
+        for term in terms:
+            if term == '";"':
+                pieces.append(";")
+                continue
+            done = _render(src, term, scope, before)
+            if done is None:
+                return None
+            pieces.append(done[0])
+            spans += done[1]
+        return "".join(pieces), spans
+    combine = _wrapped(expr, "Path.Combine")
+    if combine is not None:
+        base, *rest = _split_top(combine, ",")
+        root = _render(src, base, scope, before)
+        literals = [re.fullmatch(STRING, part) for part in rest]
+        if root is None or not all(literals):
+            return None
+        return "/".join([root[0], *(_unescape(m.group(1)) for m in literals if m)]), root[1]
+    if expr in _PATH_PARAMS:
+        return _PATH_PARAMS[expr], []
+    if re.fullmatch(r"\w+", expr):
+        code = _code(src)
+        decls = list(re.compile(rf"(?:string|var)\s+{expr}\s*=\s*").finditer(code, scope, before))
+        if not decls:
+            return (_PATH_PARAMS[expr], []) if expr in _PATH_PARAMS else None
+        decl = decls[-1]
+        decl_end = _statement_end(src, decl.end())
+        base = _render(src, src.text[decl.end() : decl_end], scope, decl.start())
+        if base is None:
+            return None
+        text, spans = base[0], [*base[1], src.lines(decl.start(), decl_end)]
+        for again in re.compile(rf"(?<![\w.]){expr}\s*=(?!=)\s*").finditer(code, decl_end, before):
+            again_end = _statement_end(src, again.end())
+            value = _render(src, src.text[again.end() : again_end], scope, again.start())
+            if value is None:
+                return None
+            condition = _braceless_if(src, again.start())
+            text += f", or {value[0]}" + (f" when {_readable(condition)}" if condition else "")
+            spans += [*value[1], src.lines(_statement_start(src, again.start()), again_end)]
+        return text, spans
+    return None
+
+
+_OPTION_FORMS = (
+    (r'SystemConfig\.isOptSet\("(\w+)"\) && SystemConfig\.getOptBoolean\("\1"\)', r"\1 on"),
+    (
+        r'SystemConfig\.isOptSet\("(\w+)"\) && !string\.IsNullOrEmpty\(SystemConfig\["\1"\]\)',
+        r"\1 set",
+    ),
+    (r'SystemConfig\.getOptBoolean\("(\w+)"\)', r"\1 on"),
+    (r'SystemConfig\["(\w+)"\]', r"\1"),
+)
+
+
+def _readable(condition: str) -> str:
+    text = " ".join(condition.split())
+    for pattern, replacement in _OPTION_FORMS:
+        text = re.sub(pattern, replacement, text)
+    return text
+
+
+# Early returns taken when the emulator itself is not installed.
+_EMULATOR_MISSING = (
+    r"!File\.Exists\(exe\)|!Directory\.Exists\(path\)|string\.IsNullOrEmpty\((?:path|exe)\)"
+)
+
+
+def _when(src: Source, offset: int) -> tuple[list[str], list[tuple[int, int]]]:
+    """Conditions under which the statement at offset runs, outermost first,
+    with the lines of the early returns among them.
+
+    A braceless if, every enclosing if, else and loop up to the method, and
+    the early returns at the top of the method.
+    """
+    found: list[str] = []
+    own = _braceless_if(src, offset)
+    if own:
+        found.append(_readable(own))
+    for block in sorted((b for b in src.blocks() if b[0] < offset < b[1]), reverse=True):
+        header = src.header(block)
+        if _METHOD.match(header):
+            returns, spans = [], []
+            code = _code(src)
+            for early in re.finditer(r"\bif \(", code[block[0] : offset]):
+                paren = block[0] + early.end() - 1
+                if src.enclosing(paren) != block:
+                    continue
+                cond = _call_args(src, paren)
+                tail = re.compile(r"\s*return\b[^;]*;").match(code, paren + len(cond) + 2)
+                cond = " ".join(cond.split())
+                if tail and not re.fullmatch(_EMULATOR_MISSING, cond):
+                    returns.append(_readable(_negated(cond)))
+                    spans.append(src.lines(block[0] + early.start(), tail.end()))
+            return returns + found[::-1], spans
+        condition = _IF.fullmatch(header)
+        if condition:
+            found.append(_readable(condition.group(1)))
+        elif header == "else":
+            previous = max(b for b in src.blocks() if b[1] <= block[0])
+            owner = _IF.fullmatch(src.header(previous))
+            found.append(f"not ({_readable(owner.group(1))})" if owner else "else")
+        elif not _TRANSPARENT.fullmatch(header) and not header.startswith(("catch", "lock")):
+            found.append(header)
+    raise LauncherPatternMissing(src.path, f"method around line {src.line(offset)}")
+
+
+def _argument_of(src: Source, method: tuple[int, int], parameter: str) -> Rendered | None:
+    """A parameter of method, rendered from the argument its one caller passes."""
+    header = src.header(method)
+    signature = re.search(r"(\w+)\s*\((.*)\)\s*$", header)
+    if signature is None:
+        return None
+    names = [part.split("=")[0].split()[-1] for part in _split_top(signature.group(2), ",")]
+    if parameter not in names:
+        return None
+    code = _code(src)
+    calls = [
+        call
+        for call in re.finditer(rf"(?<![\w.]){signature.group(1)}\(", code)
+        if not _statement_start(src, method[0]) <= call.start() < method[1]
+    ]
+    if len(calls) != 1:
+        return None
+    arguments = _split_top(_call_args(src, calls[0].end() - 1), ",")
+    caller = _method_of(src, calls[0].start())
+    return _render(src, arguments[names.index(parameter)], caller[0], calls[0].start())
+
+
+def _config_label(src: Source, offset: int, writer: str) -> str:
+    """The file the writer variable opens, as a path under the emulator folder."""
+    method = _method_of(src, offset)
+    code = _code(src)
+    for scope in (method, (0, len(code))):
+        for opened in re.finditer(
+            rf"\b{writer}\s*=\s*(?:\w+\.FromFile|\w+\.Load|new \w+)\(", code[scope[0] : scope[1]]
+        ):
+            paren = scope[0] + opened.end() - 1
+            target = _split_top(_call_args(src, paren), ",")[0]
+            rendered = _render(src, target, _method_of(src, paren)[0], paren)
+            if rendered is None:
+                rendered = _argument_of(src, _method_of(src, paren), target)
+            if rendered is not None:
+                return rendered[0].replace("<emulator>/", "")
+    raise LauncherPatternMissing(src.path, f"configuration file opened as {writer}")
+
+
+def _bios_lines(src: Source) -> list[int]:
+    code = _code(src)
+    return sorted(
+        {
+            src.line(m.start())
+            for m in re.finditer(r'AppConfig\.GetFullPath\("bios"\)|AppConfig\["bios"\]', code)
+        }
+    )
+
+
+def _covered(src: Source, records: list[Record], skip: tuple[str, ...] = ()) -> list[Record]:
+    """records, once every line of src that names the bios folder is in one.
+
+    A line no record cites and no skip pattern describes is a construct the
+    extractors do not read, and stops the scrape.
+    """
+    covered: set[int] = set()
+    for record in records:
+        for part in str(record["source_ref"]).split(", "):
+            path, _, span = part.rpartition(":") if ":" in part else (src.path, "", part)
+            if path and path != src.path:
+                continue
+            first, _, last = span.partition("-")
+            covered.update(range(int(first), int(last or first) + 1))
+    lines = src.text.split("\n")
+    for line in _bios_lines(src):
+        if line in covered or any(re.search(p, lines[line - 1]) for p in skip):
+            continue
+        raise LauncherPatternMissing(src.path, f"reader for the bios reference at line {line}")
+    return records
+
+
+def _path_parts(src: Source, *spans: tuple[int, int]) -> str:
+    return source_ref((src.path, list(spans)))
+
+
+def _option_path_in(src: Source, features: Source, emulator: str) -> list[Record]:
+    """A default name under bios that an option replaces before it is written."""
+    code = _code(src)
+    override = src.find(
+        rf"(?:string )?(\w+) = Path\.Combine\({_BIOS_ROOT}, SystemConfig\[\"(\w+)\"\]\);",
+        "path taken from an option",
+    )
+    var, option = override.groups()
+    method = _method_of(src, override.start())
+    gate = src.find(
+        rf'if \(SystemConfig\.isOptSet\("{option}"\)', f"{option} gate", method[0], override.start()
+    )
+    gate_block = src.block_at(gate.end())
+    if not gate_block[0] < override.start() < gate_block[1]:
+        raise LauncherPatternMissing(
+            src.path, f"{option} block around line {src.line(override.start())}"
+        )
+    write = re.compile(
+        rf'(\w+)\.WriteValue\("([^"]*)", "([^"]+)", ([^;\n]*\b{var}\b[^;\n]*)\);'
+    ).search(code, override.end(), method[1])
+    if write is None:
+        raise LauncherPatternMissing(src.path, f"write of {var}")
+    writer, section, key = write.group(1), _unescape(write.group(2)), _unescape(write.group(3))
+    guarded = re.compile(rf"if \(File\.Exists\({var}\)[^\n]*\)\s*$").search(
+        code, method[0], write.start()
+    )
+    skipped = re.findall(
+        rf'SystemConfig\["{option}"\] != "(\w+)"', code[gate.start() : write.end()]
+    )
+    config = _config_label(src, write.start(), writer)
+    target = f"{config} [{section}] {key}" if section else f"{config} {key}"
+    suffix = ", only if the file exists" if guarded else ", written without an existence check"
+    fails = f"{key} not written" if guarded else "path written without an existence check"
+    write_span = src.lines(_statement_start(src, write.start()), write.end())
+    choices, choice_lines = feature_choices(features, emulator, option)
+    records = []
+    default = list(
+        re.compile(rf'string {var} = Path\.Combine\({_BIOS_ROOT}, "([^"]+)"\);').finditer(
+            code, method[0], gate.start()
+        )
+    )
+    if default:
+        records.append(
+            _record(
+                emulator,
+                "standalone",
+                "fixed_name",
+                [default[-1].group(1)],
+                _path_parts(src, src.lines(default[-1].start(), default[-1].end()), write_span),
+                case_insensitive=True,
+                search_dir="bios",
+                passes_to=target + suffix,
+                fails_when_missing=fails,
+                depends_on_option=f"{option} unset",
+            )
+        )
+    records.append(
+        _record(
+            emulator,
+            "standalone",
+            "core_option",
+            [c for c in choices if c not in skipped],
+            source_ref(
+                (src.path, [src.lines(gate.start(), gate_block[1]), write_span]),
+                (features.path, [choice_lines]),
+            ),
+            case_insensitive=True,
+            search_dir="bios",
+            passes_to=f"{target} = <bios>/<value>{suffix}",
+            fails_when_missing=fails,
+            depends_on_option=option,
+        )
+    )
+    return records + _root_writes(src, emulator)
+
+
+OPTION_PATHS = {
+    f"{GENERATORS}/Kronos.Generator.cs": "kronos",
+    f"{GENERATORS}/SSF.Generator.cs": "ssf",
+    f"{GENERATORS}/Yabasanshiro.Generator.cs": "yabasanshiro",
+    f"{GENERATORS}/Ymir.Generator.cs": "ymir",
+}
+
+
+def option_paths(sources: dict[str, Source]) -> list[Record]:
+    """Saturn emulators: a default BIOS name an option replaces before the write."""
+    return [
+        record
+        for path, emulator in OPTION_PATHS.items()
+        for record in _covered(
+            sources[path], _option_path_in(sources[path], sources[FEATURES], emulator)
+        )
+    ]
+
+
+def _name_of(src: Source, var: str, offset: int) -> tuple[str, str, list[tuple[int, int]]]:
+    """A variable holding bios/<folders>/<name>, as (folder, name, lines)."""
+    method = _method_of(src, offset)
+    rendered = _render(src, var, method[0], offset)
+    if rendered is None or not rendered[0].startswith("bios/") or ", " in rendered[0]:
+        raise LauncherPatternMissing(
+            src.path, f"bios path held by {var} at line {src.line(offset)}"
+        )
+    folder, _, name = rendered[0].rpartition("/")
+    return folder, name, rendered[1]
+
+
+def desmume(sources: dict[str, Source]) -> list[Record]:
+    src = sources[f"{GENERATORS}/Desmume.Generator.cs"]
+    code = _code(src)
+    pair = src.find(
+        r"if \(File\.Exists\((\w+)\) && File\.Exists\((\w+)\)\)\s*\{", "BIOS pair check"
+    )
+    block = src.block_at(pair.end() - 1)
+    keys = {
+        value: key
+        for key, value in re.findall(
+            r'\w+\.WriteValue\("\w+", "(\w+)", (\w+)\);', code[block[0] : block[1]]
+        )
+    }
+    flag = re.search(r'\w+\.WriteValue\("(\w+)", "(\w+)", "1"\);', code[block[0] : block[1]])
+    if flag is None or any(var not in keys for var in pair.groups()):
+        raise LauncherPatternMissing(src.path, "BIOS pair writes")
+    names, spans = [], []
+    for var in pair.groups():
+        folder, name, lines = _name_of(src, var, pair.start())
+        names.append(name)
+        spans += lines
+    conditions, returns = _when(src, pair.start())
+    config = _config_label(src, pair.start(), "ini")
+    records = [
+        _record(
+            "desmume",
+            "standalone",
+            "fixed_name",
+            names,
+            _path_parts(src, *returns, *spans, src.lines(pair.start(), block[1])),
+            case_insensitive=True,
+            search_dir=folder,
+            passes_to=f"{config} [{flag.group(1)}] "
+            + ", ".join(keys[var] for var in pair.groups())
+            + ", only if every listed file exists",
+            fails_when_missing=f"{flag.group(2)} left at 0",
+            depends_on_option=", ".join(conditions) or None,
+        )
+    ]
+    firmware = src.find(
+        rf'string (\w+) = Path\.Combine\({_BIOS_ROOT}, "([^"]+)"\);\s*'
+        r'if \(SystemConfig\.isOptSet\("(\w+)"\)[^\n]*\)\s*\{\s*'
+        r'string (\w+) = SystemConfig\["\3"\];\s*if \(File\.Exists\(\4\)\)\s*\1 = \4;\s*\}\s*'
+        r"if \(File\.Exists\(\1\)\)\s*\{",
+        "firmware default and user file",
+    )
+    fw_block = src.block_at(firmware.end() - 1)
+    fw_write = src.find(
+        rf'\w+\.WriteValue\("(\w+)", "(\w+)", {firmware.group(1)}\);',
+        "firmware write",
+        fw_block[0],
+        fw_block[1],
+    )
+    fw_flag = src.find(
+        rf'\w+\.WriteValue\("{fw_write.group(1)}", "(\w+)", "1"\);',
+        "firmware flag",
+        fw_block[0],
+        fw_block[1],
+    )
+    conditions, returns = _when(src, firmware.start())
+    records.append(
+        _record(
+            "desmume",
+            "standalone",
+            "fixed_name",
+            [firmware.group(2)],
+            _path_parts(src, *returns, src.lines(firmware.start(), fw_flag.end())),
+            case_insensitive=True,
+            search_dir="bios",
+            passes_to=f"{config} [{fw_write.group(1)}] {fw_write.group(2)}, only if the file exists",
+            fails_when_missing=f"{fw_flag.group(1)} left at 0",
+            depends_on_option=", ".join(
+                [*conditions, f"{firmware.group(3)} unset or not an existing file"]
+            ),
+        )
+    )
+    return _covered(src, records)
+
+
+def melonds_dsi(sources: dict[str, Source]) -> list[Record]:
+    src = sources[f"{GENERATORS}/MelonDS.Generator.cs"]
+    features = sources[FEATURES]
+    code = _code(src)
+    check = src.find(
+        r"if \(((?:!File\.Exists\(\w+\)(?: \|\| )?)+)\)\s*throw new ApplicationException",
+        "DSi files check",
+    )
+    message, throw_line = _throw_message(src, check.start(), len(src.text))
+    method = _method_of(src, check.start())
+    variables = re.findall(r"!File\.Exists\((\w+)\)", check.group(1))
+    writes = {
+        var: key
+        for section, key, var in re.findall(
+            r'\w+\.WriteValue\("(\w+)", "(\w+)", "\\"" \+ (\w+)\.Replace',
+            code[check.end() : method[1]],
+        )
+        if section == "DSi"
+    }
+    if set(variables) - set(writes):
+        raise LauncherPatternMissing(src.path, "DSi path writes")
+    names, spans = [], []
+    folders = set()
+    for var in variables:
+        decl = src.find(
+            rf'string {var} = Path\.Combine\((\w+), "([^"]+)"\);',
+            f"{var} declaration",
+            method[0],
+            check.start(),
+        )
+        root = _render(src, decl.group(1), method[0], decl.start())
+        if root is None or not root[0].startswith("bios"):
+            raise LauncherPatternMissing(src.path, f"bios folder of {var}")
+        folders.add(root[0])
+        names.append(decl.group(2))
+        spans += [*root[1], src.lines(decl.start(), decl.end())]
+    if len(folders) != 1:
+        raise LauncherPatternMissing(src.path, "one folder for the DSi files")
+    folder = folders.pop()
+    last_write = (
+        max(
+            m.end()
+            for m in re.finditer(
+                r'\w+\.WriteValue\("DSi", "\w+", [^;]+;', code[check.end() : method[1]]
+            )
+        )
+        + check.end()
+    )
+    dsi = src.find(
+        r'bool (\w+) = SystemConfig\.isOptSet\("(\w+)"\) && SystemConfig\["\2"\] == "(\w+)";',
+        "DSi console option",
+        method[0],
+        check.start(),
+    )
+    boot = src.find(
+        r'bool (\w+) = Path\.GetExtension\(rom\)\.ToLowerInvariant\(\) == "([^"]+)";',
+        "DSi NAND boot extension",
+    )
+    forced = src.find(
+        rf"if \({boot.group(1)}\)\s*{dsi.group(1)} = true;", "NAND boot forces DSi", dsi.end()
+    )
+    mode = f'{dsi.group(2)} == "{dsi.group(3)}" || rom extension "{boot.group(2)}"'
+    region = src.find(
+        r'if \(SystemConfig\.isOptSet\("(\w+)"\)[^\n]*\)\s*\{\s*string (\w+) = SystemConfig\["\1"\];\s*'
+        r'string (\w+) = Directory\.GetFiles\((\w+), "([^"]+)"\)\s*'
+        r"\.FirstOrDefault\(f => Path\.GetFileNameWithoutExtension\(f\)\s*"
+        r"\.IndexOf\(\2, StringComparison\.OrdinalIgnoreCase\) >= 0\);\s*"
+        r"if \(\3 != null\)\s*(\w+) = \3;",
+        "DSi NAND region match",
+        method[0],
+        check.start(),
+    )
+    region_block = src.block_at(region.start())
+    choices, choice_lines = feature_choices(features, "melonds", region.group(1))
+    stem, _, extension = region.group(5).rpartition(".")
+    nand_name = names[variables.index(region.group(6))]
+    config = _config_label(src, check.start(), "ini")
+    records = [
+        _record(
+            "melonds",
+            "standalone",
+            "fixed_name",
+            names,
+            _path_parts(
+                src,
+                src.lines(boot.start(), boot.end()),
+                src.lines(dsi.start(), forced.end()),
+                *spans,
+                (src.line(check.start()), throw_line),
+                src.lines(check.end(), last_write),
+            ),
+            case_insensitive=True,
+            search_dir=folder,
+            passes_to=f"{config} [DSi] " + ", ".join(writes[v] for v in variables),
+            fails_when_missing=message,
+            depends_on_option=mode,
+        ),
+        _record(
+            "melonds",
+            "standalone",
+            "scans_dir",
+            [f"{stem}{{region}}*.{extension}"],
+            source_ref(
+                (src.path, [src.statement_span(region_block)]),
+                (features.path, [choice_lines]),
+            ),
+            expands={"region": choices},
+            case_insensitive=True,
+            search_dir=folder,
+            passes_to=f"{config} [DSi] {writes[region.group(6)]}, first file whose name holds the region",
+            fails_when_missing=f"falls back to {nand_name}",
+            depends_on_option=(
+                f'{dsi.group(2)} == "{dsi.group(3)}", {region.group(1)} set,'
+                f' rom extension not "{boot.group(2)}"'
+            ),
+        ),
+    ]
+    return records
+
+
+def jzintv(sources: dict[str, Source]) -> list[Record]:
+    src = sources[f"{GENERATORS}/Jzintv.Generator.cs"]
+    check = src.find(
+        r"if \(!File\.Exists\((\w+)\) \|\| !File\.Exists\((\w+)\)\)\s*throw new ApplicationException",
+        "exec and grom check",
+    )
+    message, throw_line = _throw_message(src, check.start(), len(src.text))
+    passed = []
+    for var in check.groups():
+        add = src.find(
+            rf'commandArray\.Add\("(-\w+)"\);\s*commandArray\.Add\("\\"" \+ {var} \+ "\\""\);',
+            f"flag passing {var}",
+            check.end(),
+        )
+        folder, name, lines = _name_of(src, var, check.start())
+        passed.append((add.start(), add.group(1), name, lines, add.end()))
+    passed.sort()
+    records = [
+        _record(
+            "jzintv",
+            "standalone",
+            "fixed_name",
+            [name for _, _, name, _, _ in passed],
+            _path_parts(
+                src,
+                *[span for p in passed for span in p[3]],
+                (src.line(check.start()), throw_line),
+                src.lines(passed[0][0], passed[-1][4]),
+            ),
+            case_insensitive=True,
+            search_dir=folder,
+            passes_to="command line "
+            + " ".join(f"{flag} <bios>/{name}" for _, flag, name, _, _ in passed),
+            fails_when_missing=message,
+        )
+    ]
+    ecs = src.find(
+        rf'string (\w+) = Path\.Combine\({_BIOS_ROOT}, "([^"]+)"\);\s*if \(File\.Exists\(\1\)\)\s*\{{\s*'
+        r'commandArray\.Add\("(-\w+)"\);',
+        "ECS ROM",
+    )
+    warning = src.find(
+        r'Warning\("([^"]+)"\);\s*commandArray\.Add\("(-\w+)"\);', "ECS warning", ecs.end()
+    )
+    option = src.find(
+        r'if \(SystemConfig\.getOptBoolean\("(\w+)"\)\)\s*\{', "ECS option", 0, ecs.start()
+    )
+    commands = src.find(
+        r'string commandFile = rom\.Replace\(Path\.GetExtension\(rom\), "([^"]+)"\);\s*'
+        r'if \(!File\.Exists\(commandFile\)\)\s*commandFile = Path\.Combine\(AppConfig\.GetFullPath\("(\w+)"\),\s*"([^"]+)", "([^"]+)"\);\s*'
+        r"if \(File\.Exists\(commandFile\)\)",
+        "command file lookup",
+    )
+    records.append(
+        _record(
+            "jzintv",
+            "standalone",
+            "fixed_name",
+            [ecs.group(2)],
+            _path_parts(
+                src,
+                src.lines(commands.start(), commands.end()),
+                src.lines(option.start(), warning.end()),
+            ),
+            case_insensitive=True,
+            search_dir="bios",
+            passes_to=f"command line {ecs.group(3)} <bios>/{ecs.group(2)}, only if the file exists",
+            fails_when_missing=f"warning '{warning.group(1)}', {warning.group(2)} passed",
+            depends_on_option=(
+                f"{option.group(1)} on, no <rom>{commands.group(1)} and no "
+                f"{commands.group(2)}/{commands.group(3)}/{commands.group(4)}"
+            ),
+        )
+    )
+    return _covered(src, records)
+
+
+def blastem(sources: dict[str, Source]) -> list[Record]:
+    src = sources[f"{GENERATORS}/Blastem.Generator.cs"]
+    helper = src.find(
+        r"private static void SetBiosPath\(\w+ (\w+), string (\w+), string (\w+), string (\w+)\)",
+        "SetBiosPath",
+    )
+    body = src.block_at(helper.end())
+    node, key, folder, name = helper.groups()
+    src.find(
+        rf"string (\w+) = Path\.Combine\({folder}, {name}\);\s*if \(File\.Exists\(\1\)\)\s*{node}\[{key}\] = \1;",
+        "SetBiosPath guarded write",
+        body[0],
+        body[1],
+    )
+    section = src.find(r'var (\w+) = cfg\.GetOrCreateSection\("(system)"\);', "system section")
+    config = src.find(
+        r'string targetCfg = Path\.Combine\(path, "([^"]+)"\);', "BlastEm config file"
+    )
+    records = []
+    for call in src.find_all(
+        r'SetBiosPath\((\w+), "(\w+)", (\w+), "([^"]+)"\);', "SetBiosPath call"
+    ):
+        root = _render(src, call.group(3), _method_of(src, call.start())[0], call.start())
+        if root is None or root[0] != "bios":
+            raise LauncherPatternMissing(
+                src.path, f"bios folder passed at line {src.line(call.start())}"
+            )
+        records.append(
+            _record(
+                "blastem",
+                "standalone",
+                "fixed_name",
+                [call.group(4)],
+                _path_parts(
+                    src,
+                    *root[1],
+                    src.lines(call.start(), call.end()),
+                    (src.line(helper.start()), src.lines(*body)[1]),
+                ),
+                case_insensitive=True,
+                search_dir="bios",
+                passes_to=f"{config.group(1)} {section.group(2)}.{call.group(2)}, only if the file exists",
+                fails_when_missing=f"info log, {call.group(2)} left as it is",
+            )
+        )
+    return _covered(src, records)
+
+
+def _value_writes(
+    src: Source, emulator: str, build: str, start: int = 0, end: int | None = None
+) -> list[Record]:
+    """Configuration values that resolve under the bios folder.
+
+    A directory becomes passes_path, a file fixed_name, guarded or not by a
+    File.Exists on the variable it writes.
+    """
+    code = _code(src)
+    records = []
+    for write in re.compile(r"(\w+)\.WriteValue\(").finditer(
+        code, start, len(code) if end is None else end
+    ):
+        args = _split_top(_call_args(src, write.end() - 1), ",")
+        if len(args) != 3 or not re.fullmatch(rf"@?{STRING}|null", args[0]):
+            continue
+        key_literal = re.fullmatch(STRING, args[1])
+        if key_literal is None:
+            continue
+        writer, section, value = write.group(1), args[0].lstrip("@"), args[2]
+        key = _unescape(key_literal.group(1))
+        method = _method_of(src, write.start())
+        rendered = _render(src, value, method[0], write.start())
+        if rendered is None or not rendered[0].startswith("bios"):
+            continue
+        conditions, returns = _when(src, write.start())
+        section = _unescape(section[1:-1]) if section != "null" else ""
+        target = f"{_config_label(src, write.start(), writer)} " + (
+            f"[{section}] {key}" if section else key
+        )
+        span = src.lines(
+            _statement_start(src, write.start()),
+            write.end() + len(_call_args(src, write.end() - 1)),
+        )
+        ref = _path_parts(src, *returns, *rendered[1], span)
+        depends = ", ".join(conditions) or None
+        folder, _, name = rendered[0].rpartition("/")
+        if "." not in name or ", " in rendered[0]:
+            records.append(
+                _record(
+                    emulator,
+                    build,
+                    "passes_path",
+                    [],
+                    ref,
+                    search_dir=rendered[0],
+                    passes_to=f"{target} = {rendered[0]}",
+                    fails_when_missing=False,
+                    depends_on_option=depends,
+                )
+            )
+            continue
+        variable = value.strip()
+        guarded = any(c == f"File.Exists({variable})" for c in conditions)
+        if guarded:
+            depends = ", ".join(c for c in conditions if c != f"File.Exists({variable})") or None
+        records.append(
+            _record(
+                emulator,
+                build,
+                "fixed_name",
+                [name],
+                ref,
+                case_insensitive=True,
+                search_dir=folder,
+                passes_to=target
+                + (
+                    ", only if the file exists"
+                    if guarded
+                    else ", written without an existence check"
+                ),
+                fails_when_missing=f"{key} not written"
+                if guarded
+                else "path written without an existence check",
+                depends_on_option=depends,
+            )
+        )
+    return records
+
+
+def dolphin(sources: dict[str, Source]) -> list[Record]:
+    src = sources[f"{GENERATORS}/Dolphin.Generator.cs"]
+    records = _value_writes(src, "dolphin", "standalone")
+    if not records:
+        raise LauncherPatternMissing(src.path, "GBA BIOS write")
+    method = src.find(r"private void CopySegaBoot\(string path\)", "CopySegaBoot")
+    body = src.block_at(method.end())
+    target = src.find(
+        r"string target = (Path\.Combine\(path, [^;]+\));", "segaboot target", body[0], body[1]
+    )
+    array = src.find(
+        r"string\[\] candidates = new string\[\]\s*\{", "segaboot candidates", body[0], body[1]
+    )
+    block = src.block_at(array.end() - 1)
+    names = []
+    for item in _split_top(src.text[block[0] + 1 : block[1] - 1].strip(), ","):
+        rendered = _render(src, item, body[0], block[0])
+        if rendered is None or not rendered[0].startswith("bios/"):
+            raise LauncherPatternMissing(src.path, f"segaboot candidate {item}")
+        names.append(rendered[0][len("bios/") :])
+    src.find(
+        r"candidates\.FirstOrDefault\(f => File\.Exists\(f\)\)",
+        "first existing candidate",
+        block[1],
+        body[1],
+    )
+    warning = src.find(r'Warning\("([^"]+)"\);', "segaboot warning", block[1], body[1])
+    src.find(
+        r"if \(dst\.Exists && dst\.Length == src\.Length && dst\.LastWriteTimeUtc >= src\.LastWriteTimeUtc\)",
+        "up-to-date check",
+        block[1],
+        body[1],
+    )
+    call = src.find(r"CopySegaBoot\(path\);", "CopySegaBoot call")
+    conditions, returns = _when(src, call.start())
+    destination = _render(src, target.group(1), body[0], target.start())
+    records.append(
+        _record(
+            "dolphin",
+            "standalone",
+            "copies",
+            names,
+            _path_parts(
+                src,
+                *returns,
+                src.lines(_statement_start(src, call.start()), call.end()),
+                src.lines(method.start(), body[1]),
+            ),
+            case_insensitive=True,
+            search_dir="bios",
+            passes_to=f"first found copied to {destination[0] if destination else target.group(1)},"
+            " skipped when the target is as large and not older",
+            fails_when_missing=f"warning '{_unescape(warning.group(1))}' when the target is absent too",
+            depends_on_option=", ".join(conditions) or None,
+        )
+    )
+    return _covered(src, records, skip=(r"DolphinTool\.exe",))
+
+
+def raine(sources: dict[str, Source]) -> list[Record]:
+    src = sources[f"{GENERATORS}/Raine.Generator.cs"]
+    records = _value_writes(src, "raine", "standalone")
+    if not any(r["kind"] == "fixed_name" for r in records):
+        raise LauncherPatternMissing(src.path, "neocd_bios write")
+    return _covered(src, records)
+
+
+def gsplus(sources: dict[str, Source]) -> list[Record]:
+    src = sources[f"{GENERATORS}/GsPlus.Generator.cs"]
+    records = _value_writes(src, "gsplus", "standalone")
+    if not records:
+        raise LauncherPatternMissing(src.path, "ROM path write")
+    return _covered(src, records)
+
+
+def _copies_if_absent(
+    src: Source, emulator: str, build: str, within: tuple[int, int] | None = None
+) -> list[Record]:
+    """File.Copy(source, target) when the target is absent and the source exists,
+    one record per method and target folder."""
+    code = _code(src)
+    start, end = within or (0, len(code))
+    groups: dict[
+        tuple[tuple[int, int], str], list[tuple[int, str, str, list[tuple[int, int]]]]
+    ] = {}
+    for copy in re.compile(
+        r"if \(!File\.Exists\((\w+)\) && File\.Exists\((\w+)\)\)\s*(?:\{\s*)?try \{ File\.Copy\(\2, \1\); \}"
+    ).finditer(code, start, end):
+        target_var, source_var = copy.groups()
+        method = _method_of(src, copy.start())
+        source = _render(src, source_var, method[0], copy.start())
+        target = _render(src, target_var, method[0], copy.start())
+        if source is None or target is None or not source[0].startswith("bios/"):
+            raise LauncherPatternMissing(src.path, f"copy at line {src.line(copy.start())}")
+        folder, _, name = source[0].rpartition("/")
+        destination = target[0].rpartition("/")[0]
+        spans = [*source[1], *target[1], src.lines(copy.start(), copy.end())]
+        groups.setdefault((method, destination), []).append((copy.start(), folder, name, spans))
+    records = []
+    for (_, destination), copies in groups.items():
+        folders = {folder for _, folder, _, _ in copies}
+        if len(folders) != 1:
+            raise LauncherPatternMissing(src.path, f"one source folder for {destination}")
+        conditions, returns = _when(src, copies[0][0])
+        records.append(
+            _record(
+                emulator,
+                build,
+                "copies",
+                [name for _, _, name, _ in copies],
+                _path_parts(src, *returns, *[s for c in copies for s in c[3]]),
+                case_insensitive=True,
+                search_dir=folders.pop(),
+                passes_to=f"copied to {destination}/<name>, only when the target does not exist",
+                fails_when_missing=False,
+                depends_on_option=", ".join(conditions) or None,
+            )
+        )
+    if not records:
+        raise LauncherPatternMissing(src.path, "copy when the target is absent")
+    return records
+
+
+def dosbox_copies(sources: dict[str, Source]) -> list[Record]:
+    """MT-32 ROMs and SoundFonts copied from bios/scummvm/extra."""
+    return [
+        record
+        for path, emulator in (
+            (f"{GENERATORS}/DosBoxPure.Generator.cs", "dosbox-pure"),
+            (f"{GENERATORS}/DosBoxStaging.Generator.cs", "dosbox-staging"),
+        )
+        for record in _covered(
+            sources[path], _copies_if_absent(sources[path], emulator, "standalone")
+        )
+    ]
+
+
+def capsimg(sources: dict[str, Source]) -> list[Record]:
+    """capsimg.dll copied next to RetroArch for the cores that read .ipf images."""
+    src = sources[f"{GENERATORS}/LibRetro.Generator.cs"]
+    cores = src.find(
+        r"static readonly List<string> (capsimgCore) = new List<string>\(\) \{", "capsimg core list"
+    )
+    names, core_lines = _array_at(src, cores.end() - 1)
+    gate = src.find(
+        rf"if \(core != null && rom != null && {cores.group(1)}\.Contains\(core\) && "
+        r'Path\.GetExtension\(rom\)\.ToLowerInvariant\(\) == "([^"]+)"\)',
+        "capsimg gate",
+    )
+    block = src.block_at(gate.end())
+    [record] = _copies_if_absent(src, ", ".join(names), "libretro", block)
+    record["source_ref"] = source_ref(
+        (src.path, [(src.line(cores.start()), core_lines[1]), src.statement_span(block)])
+    )
+    record["depends_on_option"] = f'core in {cores.group(1)}, rom extension "{gate.group(1)}"'
+    return [record]
+
+
+def tsugaru(sources: dict[str, Source]) -> list[Record]:
+    """The FM Towns ROM folder, chosen by where FMT_SYS.ROM is."""
+    src = sources[f"{GENERATORS}/Tsugaru.Generator.cs"]
+    code = _code(src)
+    first = src.find(
+        rf'if \(Directory\.Exists\((Path\.Combine\({_BIOS_ROOT}, "[^"]+"\))\)\)\s*(\w+) = \1;',
+        "first FM Towns folder",
+    )
+    var = first.group(2)
+    method = _method_of(src, first.start())
+    unset = src.find(rf"string {var} = null;", f"{var} declaration", method[0], first.start())
+    folders = [_render(src, first.group(1), method[0], first.start())]
+    names, end = set(), first.end()
+    step = re.compile(
+        rf'\s*if \(!File\.Exists\(Path\.Combine\({var}, "([^"]+)"\)\)\)\s*{var} = ([^;]+);'
+    )
+    while more := step.match(code, end):
+        names.add(more.group(1))
+        folders.append(_render(src, more.group(2), method[0], more.start()))
+        end = more.end()
+    final = re.compile(
+        rf'\s*if \(!File\.Exists\(Path\.Combine\({var}, "([^"]+)"\)\)\)\s*\{{'
+    ).match(code, end)
+    if final is None or any(folder is None for folder in folders):
+        raise LauncherPatternMissing(src.path, "FMT_SYS.ROM folder chain")
+    names.add(final.group(1))
+    block = src.block_at(final.end() - 1)
+    info = re.search(r'Info\("([^"]+)"\);\s*return null;', code[block[0] : block[1]])
+    cmos = src.find(
+        rf'commandArray\.Add\({var}\);\s*commandArray\.Add\("(-\w+)"\);\s*'
+        rf'commandArray\.Add\(Path\.Combine\({var}, "([^"]+)"\)\);',
+        "folder and CMOS arguments",
+        block[1],
+        method[1],
+    )
+    if info is None or len(names) != 1:
+        raise LauncherPatternMissing(src.path, "FMT_SYS.ROM missing branch")
+    record = _record(
+        "tsugaru",
+        "standalone",
+        "passes_path",
+        sorted(names),
+        _path_parts(
+            src, src.lines(unset.start(), unset.end()), src.lines(first.start(), cmos.end())
+        ),
+        case_insensitive=True,
+        search_dir=", then ".join(folder[0] for folder in folders if folder),
+        passes_to=(
+            "command line: first argument <folder found>,"
+            f" {cmos.group(1)} <folder found>/{cmos.group(2)}"
+        ),
+        fails_when_missing=f"info '{info.group(1)}', no launch",
+        depends_on_option=(
+            f"{folders[0][0] if folders[0] else ''} is a directory"
+            f" ({var} stays null otherwise when {final.group(1)} is checked)"
+        ),
+    )
+    return _covered(src, [record])
+
+
+def rpcs3(sources: dict[str, Source]) -> list[Record]:
+    src = sources[f"{GENERATORS}/Rpcs3.Generator.cs"]
+    marker = src.find(
+        rf"string (\w+) = (Path\.Combine\(path, [^;]+\));\s*string \w+ = {_BIOS_ROOT};",
+        "installed firmware marker",
+    )
+    pup = src.find(
+        rf'string (\w+) = {_BIOS_ROOT};\s*string (\w+) = Path\.Combine\(\1, "([^"]+)"\);',
+        "PS3 update file",
+        marker.start(),
+    )
+    method = _method_of(src, pup.start())
+    check = src.find(
+        rf"if \(!File\.Exists\({marker.group(1)}\) && !File\.Exists\({pup.group(2)}\)\)\s*throw",
+        "firmware check",
+        pup.end(),
+    )
+    message, _ = _throw_message(src, check.start(), method[1])
+    install = src.find(
+        rf'"(--\w+)",\s*StringExtensions\.QuoteString\({pup.group(2)}\)',
+        "firmware install argument",
+        check.end(),
+    )
+    returned = src.find(r"return new ProcessStartInfo\(\)", "install launch", install.end())
+    installed = _render(src, marker.group(2), method[0], marker.start())
+    record = _record(
+        "rpcs3",
+        "standalone",
+        "fixed_name",
+        [pup.group(3)],
+        _path_parts(src, src.lines(marker.start(), src.block_at(returned.end())[1])),
+        case_insensitive=True,
+        search_dir="bios",
+        passes_to=(
+            f"command line {install.group(1)} <bios>/{pup.group(3)}, launched instead of the game"
+        ),
+        fails_when_missing=message,
+        depends_on_option=f"{installed[0] if installed else marker.group(2)} absent",
+    )
+    return _covered(src, [record])
+
+
+def _indexer_writes(src: Source, emulator: str, writer: str) -> list[Record]:
+    """writer["key"] = value, for each value that resolves to a folder under bios."""
+    code = _code(src)
+    records = []
+    for write in re.compile(rf'\b{writer}\["([^"]+)"\] = ([^;]+);').finditer(code):
+        method = _method_of(src, write.start())
+        rendered = _render(src, src.text[write.start(2) : write.end(2)], method[0], write.start())
+        if rendered is None or not rendered[0].startswith("bios"):
+            continue
+        conditions, returns = _when(src, write.start())
+        records.append(
+            _record(
+                emulator,
+                "standalone",
+                "passes_path",
+                [],
+                _path_parts(src, *returns, *rendered[1], src.lines(write.start(), write.end())),
+                search_dir=rendered[0],
+                passes_to=(
+                    f"{_config_label(src, write.start(), writer)} {write.group(1)} = {rendered[0]}"
+                ),
+                fails_when_missing=False,
+                depends_on_option=", ".join(conditions) or None,
+            )
+        )
+    if not records:
+        raise LauncherPatternMissing(src.path, f"{writer}[...] write of a bios folder")
+    return records
+
+
+def eka2l1(sources: dict[str, Source]) -> list[Record]:
+    src = sources[f"{GENERATORS}/Eka2l1.Generator.cs"]
+    return _covered(src, _indexer_writes(src, "eka2l1", "yml"))
+
+
+def fbneo(sources: dict[str, Source]) -> list[Record]:
+    src = sources[f"{GENERATORS}/Fbneo.Generator.cs"]
+    return _covered(src, _indexer_writes(src, "fbneo", "cfg"))
+
+
+def bizhawk_gb(sources: dict[str, Source]) -> list[Record]:
+    """Game Boy BIOS switches: the core reads the file only when the launcher saw it."""
+    src = sources[f"{GENERATORS}/Bizhawk.CoreOptions.cs"]
+    config = sources[f"{GENERATORS}/Bizhawk.Generator.cs"].find(
+        r'string configFile = Path\.Combine\(path, "([^"]+)"\);', "BizHawk config file"
+    )
+    code = _code(src)
+    records = []
+    for flag in src.find_all(
+        r'if \(File\.Exists\((\w+)\) && SystemConfig\.getOptBoolean\("(\w+)"\)\)\s*'
+        r'(\w+)\["(\w+)"\] = "(\w+)";\s*else\s*\3\["\4"\] = "(\w+)";',
+        "GB BIOS switch",
+    ):
+        var, option, node, key, on, off = flag.groups()
+        method = _method_of(src, flag.start())
+        core = src.find(r'if \(core != "(\w+)"\)\s*return;', "core guard", method[0], flag.start())
+        container = src.find(
+            rf'var {node} = \w+\.GetOrCreateContainer\("([^"]+)"\);',
+            "sync settings container",
+            method[0],
+            flag.start(),
+        )
+        default = src.find(
+            rf'string {var} = Path\.Combine\({_BIOS_ROOT}, "([^"]+)"\);',
+            "default GB BIOS",
+            method[0],
+            flag.start(),
+        )
+        chosen = list(
+            re.compile(
+                rf'(?:else )?if \(system == "(\w+)"\)\s*'
+                rf'{var} = Path\.Combine\({_BIOS_ROOT}, "([^"]+)"\);'
+            ).finditer(code, default.end(), flag.start())
+        )
+        if code[default.end() : flag.start()].count(f"{var} =") != len(chosen):
+            raise LauncherPatternMissing(
+                src.path, f"{var} choice at line {src.line(default.start())}"
+            )
+        ref = _path_parts(
+            src, src.lines(core.start(), core.end()), src.lines(default.start(), flag.end())
+        )
+        others = " && ".join(f'system != "{m.group(1)}"' for m in chosen)
+        slots = [("other systems", default.group(1), others)]
+        slots += [(m.group(1), m.group(2), f'system == "{m.group(1)}"') for m in chosen]
+        for slot, name, system in slots:
+            records.append(
+                _record(
+                    "bizhawk",
+                    "standalone",
+                    "fixed_name",
+                    [name],
+                    ref,
+                    slot=slot,
+                    case_insensitive=True,
+                    search_dir="bios",
+                    passes_to=(
+                        f"{config.group(1)} {container.group(1)} {key} = {on},"
+                        " only if the file exists, the path itself is not written"
+                    ),
+                    fails_when_missing=f"{key} = {off}",
+                    depends_on_option=", ".join(
+                        c for c in (f'core == "{core.group(1)}"', f"{option} on", system) if c
+                    ),
+                )
+            )
+    return _covered(
+        src,
+        records,
+        # A DSi NAND boot copies the game itself to bios/dsi_nand.bin.
+        skip=(r'string biosPath = AppConfig\.GetFullPath\("bios"\);',),
+    )
+
+
+def _argument_paths(src: Source, emulator: str, build: str) -> list[tuple[Record, list[str]]]:
+    """commandArray.Add(<path under bios>) after its flag, with its conditions."""
+    code = _code(src)
+    found = []
+    for add in re.finditer(r"commandArray\.Add\(", code):
+        expr = _call_args(src, add.end() - 1)
+        end = add.end() + len(expr) + 1
+        if re.fullmatch(STRING, expr.strip()):
+            continue
+        method = _method_of(src, add.start())
+        rendered = _render(src, expr, method[0], add.start())
+        if rendered is None or not rendered[0].startswith("bios"):
+            continue
+        flags = list(re.finditer(r'"(-[\w-]+)"', code[method[0] : add.start()]))
+        if not flags:
+            raise LauncherPatternMissing(src.path, f"flag before line {src.line(add.start())}")
+        flag_at = method[0] + flags[-1].start()
+        conditions, returns = _when(src, add.start())
+        found.append(
+            (
+                _record(
+                    emulator,
+                    build,
+                    "passes_path",
+                    [],
+                    _path_parts(
+                        src,
+                        *returns,
+                        *rendered[1],
+                        src.lines(flag_at, flag_at + 1),
+                        src.lines(_statement_start(src, add.start()), end),
+                    ),
+                    search_dir=rendered[0],
+                    passes_to=f"command line {flags[-1].group(1)} {rendered[0]}",
+                    fails_when_missing=False,
+                ),
+                conditions,
+            )
+        )
+    return found
+
+
+def _with_conditions(record: Record, conditions: list[str]) -> Record:
+    out = {key: value for key, value in record.items() if key != "source_ref"}
+    if conditions:
+        out["depends_on_option"] = ", ".join(conditions)
+    out["source_ref"] = record["source_ref"]
+    return out
+
+
+_BIOS_GUARD = r'string\.IsNullOrEmpty\(AppConfig\["bios"\]\)'
+
+
+def mame(sources: dict[str, Source]) -> list[Record]:
+    """MAME folders: the standalone build's own, and those of the MESS systems
+    that the standalone build and the libretro core share."""
+    own = sources[f"{GENERATORS}/Mame64.Generator.cs"]
+    found = _argument_paths(own, "mame64", "standalone")
+    if not found:
+        raise LauncherPatternMissing(own.path, "MAME folder arguments")
+    records = _covered(
+        own,
+        [_with_conditions(record, conditions) for record, conditions in found],
+        # The bezel artwork folder is read by the launcher, not passed.
+        skip=(_BIOS_GUARD, r"ConfigureBezels\("),
+    )
+    mess = sources[f"{GENERATORS}/MessSystem.cs"]
+    found = _argument_paths(mess, "mame64", "standalone")
+    if not found:
+        raise LauncherPatternMissing(mess.path, "MESS folder arguments")
+    shared = []
+    for record, conditions in found:
+        if "standalone" in conditions:
+            shared.append(_with_conditions(record, [c for c in conditions if c != "standalone"]))
+            continue
+        shared.append(_with_conditions(record, conditions))
+        libretro = dict(record, emulator="mame", build="libretro", names=[])
+        shared.append(_with_conditions(libretro, conditions))
+    return records + _covered(
+        mess,
+        shared,
+        # The softlist file and the Lua autoboot script are named after the game.
+        skip=(
+            _BIOS_GUARD,
+            r'"hash", (?:SystemConfig\["force_softlist"\]|romMedia) \+ "\.xml"',
+            r'"autoboot_scripts"',
+        ),
+    )
+
+
+def psxmame(sources: dict[str, Source]) -> list[Record]:
+    src = sources[f"{GENERATORS}/PSXMame.Generator.cs"]
+    found = _argument_paths(src, "psxmame", "standalone")
+    if not found:
+        raise LauncherPatternMissing(src.path, "rompath argument")
+    return _covered(src, [_with_conditions(record, conditions) for record, conditions in found])
+
+
+def xroar(sources: dict[str, Source]) -> list[Record]:
+    src = sources[f"{GENERATORS}/Xroar.Generator.cs"]
+    found = _argument_paths(src, "xroar", "standalone")
+    if not found:
+        raise LauncherPatternMissing(src.path, "rompath argument")
+    records = [_with_conditions(record, conditions) for record, conditions in found]
+    line = src.find(r'string (\w+) = ("rompath (?:[^"\\\n]|\\.)*");', "config rompath line")
+    written = _unescape(line.group(2)[1:-1])
+    relative = re.fullmatch(r'rompath "(.*)"', written)
+    method = _method_of(src, line.start())
+    setup = src.find(r'string setupPath = Path\.Combine\(path, "([^"]+)"\);', "xroar config file")
+    use = src.find(rf"lines\[i\] = {line.group(1)};", "rompath replacement", line.end(), method[1])
+    parts = [p for p in re.split(r"\\+", relative.group(1) if relative else "") if p]
+    if "bios" not in parts:
+        raise LauncherPatternMissing(src.path, "bios in the config rompath")
+    records.append(
+        _record(
+            "xroar",
+            "standalone",
+            "passes_path",
+            [],
+            _path_parts(
+                src, src.lines(line.start(), line.end()), src.lines(use.start(), use.end())
+            ),
+            search_dir="/".join(parts[parts.index("bios") :]),
+            passes_to=f"{setup.group(1)} {written}",
+            fails_when_missing=False,
+        )
+    )
+    return _covered(src, records)
+
+
+def snes9x(sources: dict[str, Source]) -> list[Record]:
+    src = sources[f"{GENERATORS}/Snes9x.Generator.cs"]
+    entry = src.find(rf'\{{ "([^"]+)", (Path\.Combine\({_BIOS_ROOT}\)) \}}', "bios folder entry")
+    loop = src.find(
+        r"foreach \(KeyValuePair<string, string> pair in (\w+)\)", "path loop", entry.end()
+    )
+    body = src.block_at(loop.end())
+    write = src.find(
+        r'(\w+)\.WriteValue\(@?"([^"]+)", pair\.Key, pair\.Value\);',
+        "path write",
+        body[0],
+        body[1],
+    )
+    config = _config_label(src, write.start(), write.group(1))
+    record = _record(
+        "snes9x",
+        "standalone",
+        "passes_path",
+        [],
+        _path_parts(src, src.lines(entry.start(), entry.end()), src.lines(loop.start(), body[1])),
+        search_dir="bios",
+        passes_to=f"{config} [{write.group(2)}] {entry.group(1)} = bios",
+        fails_when_missing=False,
+    )
+    return _covered(src, [record])
+
+
+def value_folders(sources: dict[str, Source]) -> list[Record]:
+    """Configuration keys given a folder under bios."""
+    records = []
+    for path, emulator, skip in (
+        # VMU saves are synchronised with the libretro core's bios/dc.
+        (f"{GENERATORS}/Flycast.Generator.cs", "flycast", (r"string libretroPath = ",)),
+        (f"{GENERATORS}/ScummVm.Generator.cs", "scummvm", ()),
+    ):
+        found = _value_writes(sources[path], emulator, "standalone")
+        if not found:
+            raise LauncherPatternMissing(path, "bios folder write")
+        records += _covered(sources[path], found, skip=skip)
+    return records
+
+
+def demul(sources: dict[str, Source]) -> list[Record]:
+    src = sources[f"{GENERATORS}/Demul.Generator.cs"]
+    listing = src.find(r"var (\w+) = new List<string>\s*\{", "rom paths list")
+    block = src.block_at(listing.end() - 1)
+    loop = src.find(
+        rf"for \(int i = 0; i < {listing.group(1)}\.Count; i\+\+\)\s*"
+        rf'(\w+)\.WriteValue\("(\w+)", "(\w+)" \+ i, {listing.group(1)}\[i\]\);',
+        "rom paths write",
+        block[1],
+    )
+    method = _method_of(src, listing.start())
+    config = _config_label(src, loop.start(), loop.group(1))
+    records = []
+    for index, item in enumerate(_split_top(src.text[block[0] + 1 : block[1] - 1].strip(), ",")):
+        rendered = _render(src, item, method[0], listing.start())
+        if rendered is None:
+            raise LauncherPatternMissing(src.path, f"rom path {item}")
+        if not rendered[0].startswith("bios"):
+            continue
+        records.append(
+            _record(
+                "demul",
+                "standalone",
+                "passes_path",
+                [],
+                _path_parts(
+                    src,
+                    *rendered[1],
+                    src.lines(listing.start(), block[1]),
+                    src.lines(loop.start(), loop.end()),
+                ),
+                search_dir=rendered[0],
+                passes_to=f"{config} [{loop.group(2)}] {loop.group(3)}{index} = {rendered[0]}",
+                fails_when_missing=False,
+            )
+        )
+    return _covered(src, records)
+
+
+def bsyndrome(sources: dict[str, Source]) -> list[Record]:
+    src = sources[f"{GENERATORS}/PortsLauncher.Configuration.cs"]
+    records = []
+    for arg in src.find_all(
+        r'string (\w+) = "(--\w+)=\\"" \+ (\w+) \+ "\\"";\s*commandArray\.Add\(\1\);',
+        "path argument",
+    ):
+        method = _method_of(src, arg.start())
+        rendered = _render(src, arg.group(3), method[0], arg.start())
+        if rendered is None or not rendered[0].startswith("bios"):
+            continue
+        conditions, returns = _when(src, arg.start())
+        records.append(
+            _record(
+                "bsyndrome",
+                "standalone",
+                "passes_path",
+                [],
+                _path_parts(src, *returns, *rendered[1], src.lines(arg.start(), arg.end())),
+                search_dir=rendered[0],
+                passes_to=f"command line {arg.group(2)}={rendered[0]}",
+                fails_when_missing=False,
+                depends_on_option=", ".join(conditions) or None,
+            )
+        )
+    if not records:
+        raise LauncherPatternMissing(src.path, "bios folder argument")
+    return _covered(src, records)
+
+
+def xm6pro(sources: dict[str, Source]) -> list[Record]:
+    src = sources[f"{GENERATORS}/Xm6pro.Generator.cs"]
+    method = src.find(r"private void CopyBiosFiles\(string (\w+)\)", "CopyBiosFiles")
+    body = src.block_at(method.end())
+    loop = src.find(r"foreach \(string (\w+) in (\w+)\)", "copy loop", body[0], body[1])
+    table = src.find(
+        rf"static readonly string\[\] {loop.group(2)} = new string\[\] \{{", "X68000 BIOS list"
+    )
+    names, lines = _array_at(src, table.end() - 1)
+    copy = src.find(
+        rf"string (\w+) = Path\.Combine\((\w+), {loop.group(1)}\);\s*"
+        rf"string (\w+) = Path\.Combine\({method.group(1)}, {loop.group(1)}\);\s*"
+        r"if \(File\.Exists\(\1\) && !File\.Exists\(\3\)\)",
+        "copy when the target is absent",
+        loop.end(),
+        body[1],
+    )
+    folder = _render(src, copy.group(2), body[0], copy.start())
+    if folder is None or not folder[0].startswith("bios/"):
+        raise LauncherPatternMissing(src.path, "keropi folder")
+    conditions, _ = _when(src, loop.start())
+    record = _record(
+        "xm6pro",
+        "standalone",
+        "copies",
+        names,
+        _path_parts(src, (src.line(table.start()), lines[1]), src.lines(method.start(), body[1])),
+        case_insensitive=True,
+        search_dir=folder[0],
+        passes_to="copied to <emulator>/<name>, only when the target does not exist",
+        fails_when_missing=False,
+        depends_on_option=", ".join(conditions) or None,
+    )
+    return _covered(src, [record])
+
+
+def arcadeduck(sources: dict[str, Source]) -> list[Record]:
+    """The BIOS archive ArcadeDuck's own database names for the game's system."""
+    src = sources[f"{GENERATORS}/ArcadeDuck.Generator.cs"]
+    db = sources[f"{GENERATORS}/ArcadeDuck.Database.cs"]
+    database = db.find(
+        r'string dbFile = Path\.Combine\(emulatorPath, ((?:"[^"]+"(?:, )?)+)\);', "database file"
+    )
+    lookup = db.find(r"public string GetBiosArchive\(string systemId\)", "GetBiosArchive")
+    lookup_body = db.block_at(lookup.end())
+    fixed = db.find(
+        r'if \(systemId == "(\w+)"\)\s*return "([^"]+)";',
+        "built-in archive",
+        lookup_body[0],
+        lookup_body[1],
+    )
+    method = src.find(r"private string GetBiosPath\(string rom, string biosRoot\)", "GetBiosPath")
+    body = src.block_at(method.end())
+    src.find(
+        r"var candidates = new List<string> \{ Path\.GetDirectoryName\(Path\.GetFullPath\(rom\)\) \};",
+        "game folder first",
+        body[0],
+        body[1],
+    )
+    src.find(r"candidates\.Add\(biosRoot\);", "bios folder second", body[0], body[1])
+    message, _ = _throw_message(src, body[0], body[1])
+    root = src.find(rf"string biosPath = {_BIOS_ROOT};", "bios root")
+    write = src.find(r'ini\.WriteValue\("(\w+)", "(\w+)", biosPath\);', "SearchDirectory write")
+    config = _config_label(src, write.start(), "ini")
+    target = f"{config} [{write.group(1)}] {write.group(2)}"
+    database_file = "/".join(_strings(database.group(1)))
+    ref = source_ref(
+        (
+            src.path,
+            [
+                src.lines(root.start(), root.end()),
+                src.lines(method.start(), body[1]),
+                src.lines(write.start(), write.end()),
+            ],
+        ),
+        (
+            db.path,
+            [db.lines(database.start(), database.end()), db.lines(fixed.start(), fixed.end())],
+        ),
+    )
+    records = [
+        _record(
+            "arcadeduck",
+            "standalone",
+            "names_searched",
+            [f"<bios archive of the game's system in {database_file}>"],
+            ref,
+            case_insensitive=False,
+            search_dir="<rom directory>, then bios",
+            passes_to=f"{target} = <folder found>",
+            fails_when_missing=message,
+        ),
+        _record(
+            "arcadeduck",
+            "standalone",
+            "names_searched",
+            [fixed.group(2)],
+            ref,
+            slot=fixed.group(1),
+            case_insensitive=False,
+            search_dir="<rom directory>, then bios",
+            passes_to=f"{target} = <folder found>",
+            fails_when_missing=message,
+            depends_on_option=f"{database_file} names no archive for {fixed.group(1)}",
+        ),
+        _record(
+            "arcadeduck",
+            "standalone",
+            "passes_path",
+            [],
+            ref,
+            search_dir="bios",
+            passes_to=f"{target} = bios",
+            fails_when_missing=False,
+            depends_on_option="no bios archive known for the game's system",
+        ),
+    ]
+    return _covered(src, records)
+
+
 EXTRACTORS: tuple[Callable[[dict[str, Source]], list[Record]], ...] = (
     amiberry,
+    arcadeduck,
     ares,
+    bizhawk_gb,
+    blastem,
+    bsyndrome,
+    capsimg,
+    demul,
+    desmume,
+    dolphin,
+    dosbox_copies,
     duckstation,
+    eka2l1,
+    fbneo,
+    gsplus,
     guarded_writes,
     hatari,
     hatari_libretro,
+    jzintv,
+    mame,
+    melonds_dsi,
     mesen,
     openmsx,
+    option_paths,
     pcsx2,
     pcsx2_libretro,
     psx_cascades,
+    psxmame,
+    raine,
+    rpcs3,
+    snes9x,
+    tsugaru,
+    value_folders,
     winuae,
     xemu,
+    xm6pro,
+    xroar,
 )
 
 
