@@ -360,5 +360,22 @@ class ClkMasterSystemBios(unittest.TestCase):
         self.assertEqual(drops, {"MasterSystem/japanese-bios.sms"})
 
 
+class FbAlpha2012HiscoreFromSaveDir(unittest.TestCase):
+    """HiscoreInit opens <g_save_dir>/hiscore.dat in the libretro build
+    (svn-current/trunk/src/burn/hiscore.cpp:411 at 0ce31536, and :116 of the
+    CPS-3 core at 57f8015c). Read as a system file, the entry took the
+    bios/hiscore.dat slot that MAME cores read on RetroDECK and RetroBat."""
+
+    def test_hiscore_is_not_a_system_file(self):
+        from validation import read_from_system_dir
+
+        for emulator in ("fbalpha2012", "fbalpha2012_cps3"):
+            with self.subTest(emulator=emulator):
+                entry = next(
+                    f for f in _profile(emulator)["files"] if f["name"] == "hiscore.dat"
+                )
+                self.assertFalse(read_from_system_dir(entry))
+
+
 if __name__ == "__main__":
     unittest.main()

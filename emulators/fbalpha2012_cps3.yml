@@ -54,6 +54,7 @@ notes: |
 files:
   - name: "hiscore.dat"
     description: "High score persistence database"
+    load_from: save_dir
     required: false
     source_ref: "svn-current/trunk/src/burn/hiscore.cpp:116-118"
     note: "Loaded from save directory (g_save_dir)"

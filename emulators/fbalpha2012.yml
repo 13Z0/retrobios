@@ -56,6 +56,7 @@ notes: |
 files:
   - name: "hiscore.dat"
     description: "High score persistence database"
+    load_from: save_dir
     required: false
     system: arcade
     source_ref: "svn-current/trunk/src/burn/hiscore.cpp:386-394, 411, svn-current/trunk/src/burn/burn.cpp:619"
