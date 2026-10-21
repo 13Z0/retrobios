@@ -3890,6 +3890,8 @@ class EveryToolRefusesAFlagItWouldDrop(unittest.TestCase):
             ["--offline", "--skip-packs", "--source", "truth"],
             ["--offline", "--skip-packs", "--all-variants"],
             ["--offline", "--all-variants", "--source", "platform"],
+            ["--offline", "--all-variants", "--source", "full"],
+            ["--offline", "--skip-packs", "--source", "full"],
         ],
     }
 

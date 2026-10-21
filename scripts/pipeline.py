@@ -560,13 +560,18 @@ def _refuse_unapplied_flags(
     --all-variants builds every source itself, so a --source beside it is
     dropped; --skip-packs builds none, so both are.
     """
-    if args.all_variants and args.source != "full":
+    # --source defaults to None so a typed `--source full` is seen: compared
+    # with its default value, it went through beside the modes that refuse it.
+    source_given = args.source is not None
+    if args.all_variants and source_given:
         parser.error("--source is incompatible with --all-variants")
     if args.skip_packs:
-        for flag, on in (("--source", args.source != "full"),
+        for flag, on in (("--source", source_given),
                          ("--all-variants", args.all_variants)):
             if on:
                 parser.error(f"{flag} is incompatible with --skip-packs")
+    if args.source is None:
+        args.source = "full"
 
 
 def _truth_steps(args: argparse.Namespace, results: dict) -> bool:
@@ -661,9 +666,9 @@ def main() -> None:
     )
     parser.add_argument("--target", "-t", help="Hardware target (e.g., switch, rpi4)")
     parser.add_argument(
-        "--source", choices=["platform", "truth", "full"], default="full",
+        "--source", choices=["platform", "truth", "full"], default=None,
         help="packs to build: the platform list, the profiles, or both (default: "
-             "%(default)s)",
+             "full)",
     )
     parser.add_argument(
         "--all-variants", action="store_true",

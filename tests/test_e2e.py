@@ -6016,6 +6016,18 @@ struct BurnDriver BurnDrvneogeo = {
              "refuse"),
             (["--platform", "retroarch", "--all-variants"], ["--required-only"],
              "refuse"),
+            # The default value typed out is still the flag: compared with its
+            # default, `--source full` and `--group-by system` went through.
+            (["--platform", "retroarch", "--all-variants"], ["--source", "full"],
+             "refuse"),
+            (["--manifest-targets"], ["--source", "full"], "refuse"),
+            (["--emulator", "handy"], ["--source", "full"], "refuse"),
+            (["--platform", "retroarch", "--from-md5", "d8f1"],
+             ["--source", "full"], "refuse"),
+            (["--platform", "retroarch", "--offline"], ["--group-by", "system"],
+             "refuse"),
+            (["--platform", "retroarch", "--verify-packs"], ["--group-by", "system"],
+             "refuse"),
             (["--emulator", "duckstation"], ["--all-variants"], "refuse"),
             (["--system", "sony-playstation"], ["--all-variants"], "refuse"),
             (["--emulator", "duckstation", "--verify-packs"], ["--all-variants"],

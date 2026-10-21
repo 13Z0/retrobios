@@ -2433,7 +2433,7 @@ def _validate_args(args: argparse.Namespace, parser: argparse.ArgumentParser) ->
         parser.error("--split requires --platform or --all")
     if args.split and has_emulator:
         parser.error("--split is incompatible with --emulator")
-    if args.group_by != "system" and not args.split:
+    if args.group_by is not None and not args.split:
         parser.error("--group-by requires --split")
     if args.target and not (has_platform or has_all):
         parser.error("--target requires --platform or --all")
@@ -2450,7 +2450,9 @@ def _validate_args(args: argparse.Namespace, parser: argparse.ArgumentParser) ->
     # A mode either applies a narrowing flag or refuses it. Swallowing one
     # answers about an artifact the caller did not ask for, and the name on
     # disk then asserts a narrowing the contents do not carry.
-    source_given = getattr(args, "source", "full") != "full"
+    # --source and --group-by default to None so a typed default value is
+    # seen: compared with "full", `--emulator X --source full` went through.
+    source_given = getattr(args, "source", None) is not None
     if source_given and (has_emulator or (has_system and not has_platform)):
         parser.error("--source requires --platform or --all")
     if has_from_md5:
@@ -2920,7 +2922,7 @@ def _refuse_for_all_variants(args: argparse.Namespace, parser: argparse.Argument
     # or --required-only beside it would be overridden, and the modes that
     # build one pack (emulator, system, hashes) never read it.
     for flag, given in (
-        ("--source", args.source != "full"),
+        ("--source", args.source is not None),
         ("--required-only", args.required_only),
         ("--emulator", args.emulator),
         ("--from-md5", args.from_md5 or args.from_md5_file),
@@ -3029,7 +3031,7 @@ def _given_flags(args: argparse.Namespace) -> set[str]:
         "--system": args.system,
         "--standalone": args.standalone,
         "--split": args.split,
-        "--group-by": args.group_by != "system",
+        "--group-by": args.group_by is not None,
         "--manifest": args.manifest,
         "--manifest-targets": args.manifest_targets,
         "--verify-packs": args.verify_packs,
@@ -3037,7 +3039,7 @@ def _given_flags(args: argparse.Namespace) -> set[str]:
         "--from-md5": args.from_md5,
         "--from-md5-file": args.from_md5_file,
         "--required-only": args.required_only,
-        "--source": args.source != "full",
+        "--source": args.source is not None,
         "--target": args.target,
         "--region": args.region,
         "--one-per-slot": args.one_per_slot,
@@ -3142,9 +3144,9 @@ def _main(held: contextlib.ExitStack) -> None:
     parser.add_argument(
         "--source",
         choices=["platform", "truth", "full"],
-        default="full",
+        default=None,
         help="File source: platform (YAML only), truth (emulator profiles), full "
-             "(both)",
+             "(both, the default)",
     )
     parser.add_argument(
         "--all-variants",
@@ -3157,7 +3159,7 @@ def _main(held: contextlib.ExitStack) -> None:
     parser.add_argument(
         "--group-by",
         choices=["system", "manufacturer"],
-        default="system",
+        default=None,
         help="Grouping for --split (default: system)",
     )
     parser.add_argument("--target", "-t", help="Hardware target (e.g., switch, rpi4)")
@@ -3257,6 +3259,9 @@ def _main(held: contextlib.ExitStack) -> None:
         return
 
     _validate_args(args, parser)
+    # Unset until every refusal has run, so a typed default value is seen.
+    args.source = args.source or "full"
+    args.group_by = args.group_by or "system"
 
     # Hash lookup / pack mode
     # A platform run may refresh the trees below, under the exclusive lock:
