@@ -414,6 +414,9 @@ class TestArbitration(unittest.TestCase):
     def test_the_reported_line_gives_the_ground_for_the_decision(self):
         kept = slots.format_decision(slots.arbitrate(self._conflict(), "md5"))
         self.assertIn("verifies content", kept)
+        # A fact about each layer, no verdict on the platform's list.
+        self.assertIn("the file dolphin reads", kept)
+        self.assertNotIn("wrong", slots.__loader__.get_source("slots").lower())
         served = slots.format_decision(slots.arbitrate(self._conflict(), "existence"))
         self.assertIn("both are satisfied", served)
 

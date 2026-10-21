@@ -1,8 +1,8 @@
 """Who decides what goes at a destination.
 
 A destination is a slot. Two layers can claim it: the platform YAML, scraped
-from what the frontend declares and therefore able to carry an upstream error,
-and the emulator profile, read from the emulator's own source. Until this
+from what the frontend declares, which can pin another file than the emulator
+reads, and the emulator profile, read from the emulator's own source. Until this
 module existed nothing compared the two: the builder resolves the platform
 entry first and drops the profile entry on a bare filename match, so a profile
 that names the right file for a slot could never win and never even be heard.
@@ -614,8 +614,8 @@ def arbitrate(
     In ``existence`` mode the frontend only looks for a path, so the emulator's
     file satisfies both sides at once and there is nothing to trade away. In a
     content-checking mode the two answers cannot share one path, and the pack's
-    addressee decides. The loss is reported rather than absorbed, because the
-    cause is an upstream declaration that needs fixing at its source.
+    addressee decides. The loss is reported rather than absorbed: only the
+    platform's own list can change what its frontend accepts there.
     """
     profile = _strongest(conflict.profile_claims)
     if addressee == "emulator":
@@ -659,10 +659,11 @@ def format_decision(decision: Decision) -> str:
             f"{conflict.destination}: serve {decision.winner.local_path}, "
             "the pack answers to the emulator"
         )
+    expected = ", ".join(conflict.emulators) or "the profile"
     return (
         f"{conflict.destination}: keep {decision.winner.local_path}, the frontend "
         f"verifies content and would reject "
-        f"{conflict.profile_claims[0].local_path}; upstream declaration is wrong"
+        f"{conflict.profile_claims[0].local_path}, the file {expected} reads"
     )
 
 
@@ -692,8 +693,8 @@ def find_collisions(
     One path holds one file, so whichever declaration the builder reaches
     first decides in silence. Declaring an archive several times to name its
     inner ROMs is the documented zipped_file pattern and resolves to one
-    archive. Two declarations landing on two files is a contradiction the
-    upstream list carries. RetroDECK aims a PC-88 disk subsystem ROM and a
+    archive. Two declarations landing on two files name two files for one
+    path. RetroDECK aims a PC-88 disk subsystem ROM and a
     CoCo disk ROM at one bios/disk.rom.
     """
     fold = bool(config.get("case_insensitive_fs", False))
@@ -1020,13 +1021,13 @@ def main() -> int:
         doubled = sum(len(c) for c in collided.values())
         print(
             f"\n{total} contested destinations. {fixable} the pack settles on "
-            f"its own, {total - fixable} rest on an upstream declaration. "
+            f"its own, {total - fixable} follow the platform's list. "
             f"{doubled} destinations declared twice."
         )
         if not args.strict and (total or doubled):
             print(
-                "Reported, not failed: the remainder needs the upstream list "
-                "corrected, which no build can do. Use --strict to gate on them."
+                "Reported, not failed: the remainder changes when the platform's "
+                "list does, which no build can do. Use --strict to gate on them."
             )
 
     return 1 if ((found or collided) and args.strict) else 0
