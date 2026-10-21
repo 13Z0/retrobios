@@ -1,8 +1,11 @@
 """Scraper for EmuDeck emulator targets.
 
 Sources:
-  SteamOS: dragoonDorise/EmuDeck, functions/EmuScripts/*.sh
-  Windows: EmuDeck/emudeck-we, functions/EmuScripts/*.ps1
+  SteamOS: dragoonDorise/EmuDeck, functions/EmuScripts/*.sh, read at the
+           revision platforms/emudeck.yml was scraped at
+  Windows: EmuDeck/emudeck-we, functions/EmuScripts/*.ps1, default branch:
+           the platform file is read from dragoonDorise/EmuDeck alone and
+           pins no emudeck-we revision
 """
 
 from __future__ import annotations
@@ -90,8 +93,18 @@ def _script_to_core(filename: str) -> str | None:
 class Scraper(BaseTargetScraper):
     """Fetches emulator lists for EmuDeck SteamOS and Windows targets."""
 
-    def __init__(self, url: str = "https://github.com/dragoonDorise/EmuDeck") -> None:
+    def __init__(
+        self, url: str = "https://github.com/dragoonDorise/EmuDeck", revision: str | None = None
+    ) -> None:
         super().__init__(url=url)
+        self._revision = revision
+
+    @property
+    def revision(self) -> str:
+        """The checkBIOS.sh commit platforms/emudeck.yml was read at."""
+        if self._revision is None:
+            self._revision = self.pinned_revision(PLATFORM_NAME)
+        return self._revision
 
     def _fetch_cores_for_target(
         self, api_url: str, label: str, arch: str = "x86_64"
@@ -142,7 +155,9 @@ class Scraper(BaseTargetScraper):
         raise RuntimeError(f"no {arch} core list in {target_path}")
 
     def fetch_targets(self) -> dict:
-        steamos_cores = self._fetch_cores_for_target(STEAMOS_API, "SteamOS")
+        steamos_cores = self._fetch_cores_for_target(
+            f"{STEAMOS_API}?ref={self.revision}", "SteamOS"
+        )
         windows_cores = self._fetch_cores_for_target(WINDOWS_API, "Windows")
 
         targets: dict[str, dict] = {}
@@ -159,7 +174,7 @@ class Scraper(BaseTargetScraper):
 
         return {
             "platform": "emudeck",
-            "source": self.url,
+            "source": f"{self.url}/tree/{self.revision}",
             "scraped_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
             "targets": targets,
         }

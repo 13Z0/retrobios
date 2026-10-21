@@ -43,6 +43,7 @@ class BaseTargetScraper(ABC):
             r"^https://raw\.githubusercontent\.com/[^/]+/[^/]+/([^/]+)/",
             r"^https://github\.com/[^/]+/[^/]+/(?:blob|tree)/([^/]+)/",
             r"^https://gitlab\.com/.+?/-/(?:raw|blob|tree)/([^/]+)/",
+            r"^https://codeload\.github\.com/[^/]+/[^/]+/(?:tar\.gz|zip)/([^/]+)$",
         ):
             match = re.match(pattern, source)
             if match:

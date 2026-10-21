@@ -307,7 +307,7 @@ class RetroPieModuleFlags(unittest.TestCase):
         }
 
         def fake_fetch(url, **_kwargs):
-            section = url.rstrip("/").rsplit("/", 1)[-1]
+            section = url.split("?", 1)[0].rstrip("/").rsplit("/", 1)[-1]
             if section in listings:
                 return json.dumps(listings[section])
             return modules[url.split("scriptmodules/", 1)[1]]
@@ -319,6 +319,40 @@ class RetroPieModuleFlags(unittest.TestCase):
         )
         self.assertEqual(targets["x86_64"]["cores"], ["beetle_psx", "dosbox", "dosbox-staging"])
 
+
+
+class TargetsReadThePlatformRevision(unittest.TestCase):
+    """A target list read on master filtered packages by flags the pinned
+    package list does not have: every request names the platform's pin."""
+
+    def _urls(self, module, scraper) -> list[str]:
+        seen: list[str] = []
+
+        def record(url, **_kwargs):
+            seen.append(url)
+            if "contents" in url:
+                return json.dumps([{"name": "lr-mgba.sh"}])
+            return 'rp_module_id="lr-mgba"'
+
+        with mock.patch.object(module, "_fetch", record):
+            scraper.fetch_targets()
+        return seen
+
+    def test_retropie_reads_its_codeload_pin(self):
+        pin = retropie_targets_scraper.Scraper.pinned_revision("retropie")
+        self.assertRegex(pin, r"^[0-9a-f]{40}$")
+        urls = self._urls(retropie_targets_scraper, retropie_targets_scraper.Scraper())
+        self.assertTrue(urls)
+        self.assertTrue(all(pin in url for url in urls), urls)
+
+    def test_emudeck_steamos_reads_its_pin(self):
+        pin = emudeck_targets_scraper.Scraper.pinned_revision("emudeck")
+        scraper = emudeck_targets_scraper.Scraper()
+        with mock.patch.object(scraper, "_load_retroarch_cores", return_value=[]):
+            urls = self._urls(emudeck_targets_scraper, scraper)
+        steamos = [u for u in urls if "dragoonDorise" in u]
+        self.assertTrue(steamos)
+        self.assertTrue(all(u.endswith(f"?ref={pin}") for u in steamos), steamos)
 
 
 class HashScrapersRefuseAnUnknownVersion(unittest.TestCase):
