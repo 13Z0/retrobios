@@ -37,6 +37,22 @@ PAYLOAD_B = b"B" * (256 * 1024)
 # network, so it is cleared here.
 _ONLINE = mock.patch.dict(os.environ, {"RETROBIOS_OFFLINE": ""})
 
+# The names these tests fetch, registered as .gitignore registers an asset:
+# a bare name no registered path carries is never asked of the release.
+TEST_REGISTERED = [
+    "bios/Test/asset.bin",
+    "bios/Test/big.bin",
+    "bios/Sony/PlayStation 3/PS3UPDAT.PUP",
+]
+
+
+def _test_registry(case: unittest.TestCase) -> None:
+    patcher = mock.patch.object(
+        largefiles, "load_registered_paths", return_value=TEST_REGISTERED
+    )
+    patcher.start()
+    case.addCleanup(patcher.stop)
+
 
 def setUpModule():
     _ONLINE.start()
@@ -71,6 +87,7 @@ class _SlowResponse(io.BytesIO):
 
 class LargeFileCacheTest(unittest.TestCase):
     def setUp(self):
+        _test_registry(self)
         self.dir = tempfile.mkdtemp()
         self._urlopen = largefiles.urllib.request.urlopen
 
@@ -236,6 +253,9 @@ class LargeFileCacheTest(unittest.TestCase):
 
 class TheOfflineSwitchHoldsEverywhere(unittest.TestCase):
     """RETROBIOS_OFFLINE stops a download whatever the caller asked."""
+
+    def setUp(self):
+        _test_registry(self)
 
     def test_no_request_is_made(self):
         with tempfile.TemporaryDirectory() as tmp, mock.patch.dict(
@@ -600,7 +620,7 @@ class DownloadFailuresAndRevisions(unittest.TestCase):
         largefiles.urllib.request.urlopen = lambda *_a, **_k: _StalledResponse()
         result = largefiles.fetch_large_file(
             "big.bin", self.dir, expected_md5=hashlib.md5(PAYLOAD_A).hexdigest(),
-            registered=[],
+            registered=TEST_REGISTERED,
         )
         self.assertIsNone(result)
         self.assertEqual(os.listdir(self.dir), [])
@@ -613,7 +633,7 @@ class DownloadFailuresAndRevisions(unittest.TestCase):
         )
         result = largefiles.fetch_large_file(
             "PS3UPDAT.PUP", self.dir, expected_md5=hashlib.md5(PAYLOAD_B).hexdigest(),
-            registered=[],
+            registered=TEST_REGISTERED,
         )
         self.assertIsNone(result)
         self.assertTrue(cached.exists())
@@ -627,6 +647,20 @@ class DownloadFailuresAndRevisions(unittest.TestCase):
             largefiles.asset_candidates("PS3UPDAT.PUP", registered),
             ["PS3UPDAT.PUP", "PS3UPDAT.PUP.ed8ab192"],
         )
+
+
+class AnUnregisteredNameIsNoAsset(unittest.TestCase):
+    """aes.zip and five others are in no .gitignore line: each online build
+    asked the release for them and printed an HTTP 404 per name."""
+
+    def test_no_candidate_and_no_request(self):
+        self.assertEqual(largefiles.asset_candidates("aes.zip", TEST_REGISTERED), [])
+        with tempfile.TemporaryDirectory() as tmp, \
+                mock.patch.object(largefiles.urllib.request, "urlopen") as urlopen:
+            self.assertIsNone(largefiles.fetch_large_file(
+                "aes.zip", dest_dir=tmp, offline=False, registered=TEST_REGISTERED,
+            ))
+        urlopen.assert_not_called()
 
 
 class GameDataHasOneDefinition(unittest.TestCase):
