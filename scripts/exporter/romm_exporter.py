@@ -74,6 +74,21 @@ class Exporter(BaseExporter):
         """
         return native_id in SLUG_MAP
 
+    def _addable(self, fe: NativeFile) -> bool:
+        """An addition RomM can look up.
+
+        RomM lists the platform's firmware folder without recursing
+        (firmware_handler.get_firmware, base_handler.list_files) and looks
+        each file up as f"{platform_slug}:{file_name}" (models/firmware.py),
+        so a key whose file name holds a directory is never read.
+        """
+        return (
+            "/" not in fe.name
+            and (fe.native_system, fe.name) not in self._platform_keys
+            and self._verifiable(fe)
+            and self._known_platform(fe.native_system)
+        )
+
     def writable(self, fe: NativeFile, require: str = "") -> bool:  # noqa: ARG002
         """What RomM already ships stays. The conditions gate additions.
 
@@ -85,11 +100,9 @@ class Exporter(BaseExporter):
         """
         if fe.platform is not None:
             return True
+        if not self._addable(fe):
+            return False
         key = (fe.native_system, fe.name)
-        if key in self._platform_keys:
-            return False
-        if not (self._verifiable(fe) and self._known_platform(fe.native_system)):
-            return False
         # Two additions under one key: the second would overwrite the first
         # in the dict and both were counted landed. The first one in render
         # order is written, the other is not.
@@ -123,14 +136,10 @@ class Exporter(BaseExporter):
         self.normalized_values: list[tuple[NativeFile, str, str, str]] = []
         for system in sorted(systems.values(), key=lambda s: s.native_id):
             for fe in sorted(system.files, key=lambda f: f.name):
-                key = (fe.native_system, fe.name)
-                if (
-                    fe.platform is None
-                    and key not in self._platform_keys
-                    and self._verifiable(fe)
-                    and self._known_platform(fe.native_system)
-                ):
-                    self._first_addition.setdefault(key, id(fe))
+                if fe.platform is None and self._addable(fe):
+                    self._first_addition.setdefault(
+                        (fe.native_system, fe.name), id(fe)
+                    )
 
         for system in sorted(systems.values(), key=lambda s: s.native_id):
             for fe in sorted(system.files, key=lambda f: f.name):

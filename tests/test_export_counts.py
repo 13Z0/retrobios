@@ -622,6 +622,28 @@ class RommWritesOneEntryPerKey(unittest.TestCase):
         )
 
 
+class RommKeysHoldABareFileName(unittest.TestCase):
+    """fuse declares fuse/48.rom: the export wrote zxs:fuse/48.rom, a key
+    RomM never looks up, since it lists the platform folder without
+    recursing and looks each file up as slug:file_name."""
+
+    def test_an_addition_named_with_a_directory_is_not_written(self):
+        nested = NativeFile("fuse/48.rom", "fuse/48.rom", "zxs",
+                            truth={"size": 16384, "md5": A})
+        bare = NativeFile("plus2.rom", "plus2.rom", "zxs",
+                          truth={"size": 32768, "md5": B})
+        exporter = Romm()
+        produced = exporter.render(
+            {"zxs": NativeSystem("zxs", files=[nested, bare])}, None, {}, None
+        )
+        self.assertEqual(
+            list(json.loads(produced[exporter.native_filename()])), ["zxs:plus2.rom"]
+        )
+        self.assertEqual(
+            [exporter.writable(nested), exporter.writable(bare)], [False, True]
+        )
+
+
 class RetroPieProposals(unittest.TestCase):
     def test_required_is_read_for_the_package_core(self):
         fe = NativeFile("scph5501.bin", "scph5501.bin", "psx",
