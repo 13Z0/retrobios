@@ -178,20 +178,27 @@ def _resolve_source(
     or ``None`` (not available anywhere).
 
     A name hit whose size contradicts a size the emulator verifies is not the
-    file, so it does not count as available.
+    file, so it does not count as available. Nor is one whose bytes carry
+    none of the hashes the entry declares: a name never wins over a declared
+    hash, and zquestclassic's ending.mid read as held because Hydra Castle
+    Labyrinth has another file of that name.
     """
+    declared = _declared_content(file_entry or {})
 
-    def _name_hit(name: str) -> bool:
-        """Whether the files indexed under *name* can be this entry."""
+    def _can_be(sha1s: list | str) -> bool:
         if not file_entry or db_files is None:
             return True
-        sha1s = by_name.get(name) or []
         if not isinstance(sha1s, list):
             sha1s = [sha1s]
         return any(
             name_match_size_ok(file_entry, db_files.get(sha1, {}).get("size"))
+            and _record_carries(sha1, db_files.get(sha1, {}), declared)
             for sha1 in sha1s
         )
+
+    def _name_hit(name: str) -> bool:
+        """Whether the files indexed under *name* can be this entry."""
+        return _can_be(by_name.get(name) or [])
 
     # bios/ via database.json by_name
     if fname in by_name and _name_hit(fname):
@@ -209,7 +216,7 @@ def _resolve_source(
         ):
             return "bios"
     # bios/ via by_path_suffix (regional variants)
-    if by_path_suffix and fname in by_path_suffix:
+    if by_path_suffix and fname in by_path_suffix and _can_be(by_path_suffix[fname]):
         return "bios"
     # bios/ under the canonical MAME set name, as resolve_local_file does:
     # a renamed archive is held once, under the name the dedup kept.
@@ -250,6 +257,23 @@ def _data_hit(
 
 
 _HASH_FIELDS = ("sha1", "md5", "sha256", "crc32")
+
+
+def _record_carries(sha1: str, record: dict, declared: dict[str, set[str]]) -> bool:
+    """Whether a database record has one of the declared hashes, or none is declared."""
+    if not declared:
+        return True
+    actual = {
+        "sha1": sha1.lower(),
+        **{field: str(record.get(field) or "").lower() for field in ("md5", "sha256", "crc32")},
+    }
+    return any(
+        actual[field] and (
+            actual[field] in values
+            or (field == "md5" and any(len(v) < 32 and actual[field].startswith(v) for v in values))
+        )
+        for field, values in declared.items()
+    )
 
 
 def _declared_content(file_entry: dict) -> dict[str, set[str]]:
@@ -444,6 +468,7 @@ def entry_source(f: dict, index: dict) -> str | None:
         {"indexes": {"by_path_suffix": by_path_suffix}}, path_field or fname
     ):
         return "bios"
+    found = None
     for candidate in [fname, *([path_field] if path_field != fname else []),
                       *(f.get("aliases") or [])]:
         if not candidate:
@@ -452,12 +477,15 @@ def entry_source(f: dict, index: dict) -> str | None:
             candidate, by_name, by_name_lower, data_names, by_path_suffix, f, db_files,
             index.get("bios_dir"),
         )
-        if source is not None:
+        if source == "bios":
             return source
+        found = found or source
 
     def values(field: str) -> list[str]:
         return parse_hash_list(f.get(field))
 
+    # The declared content anywhere in bios/ comes before a data/ copy, as in
+    # the resolver: the hash steps run before the data directories.
     held = (
         any(index["by_md5"].get(v) for v in parse_md5_list(f.get("md5")))
         or any(v in db_files for v in values("sha1"))
@@ -465,7 +493,7 @@ def entry_source(f: dict, index: dict) -> str | None:
         or any(v in index["by_sha256"] for v in values("sha256"))
         or any(index["by_crc32"].get(v) for v in values("crc32"))
     )
-    return "bios" if held else None
+    return "bios" if held else found
 
 
 def _resolve_archive_source(

@@ -38,6 +38,22 @@ class GapReportSources(unittest.TestCase):
         entry = {"name": "wave1.bin", "sha256": "AB" * 32}
         self.assertEqual(entry_source(entry, _index(by_sha256={"ab" * 32: "s"})), "bios")
 
+    def test_a_name_never_wins_over_a_declared_hash(self):
+        """zquestclassic pins ending.mid by sha1, the collection holds only
+        Hydra Castle Labyrinth's ending.mid: the report called it held."""
+        other = "9" * 40
+        index = _index(
+            by_name={"ending.mid": [other]}, by_name_lower={"ending.mid": "ending.mid"},
+            by_path_suffix={"data/midi/ending.mid": [other]},
+            db_files={other: {"path": "bios/hcl/ending.mid", "md5": "1" * 32, "size": 9}},
+        )
+        pinned = {"name": "ending.mid", "sha1": "5" * 40}
+        self.assertIsNone(entry_source(pinned, index))
+        self.assertIsNone(entry_source({**pinned, "path": "data/midi/ending.mid"}, index))
+        self.assertEqual(entry_source({"name": "ending.mid"}, index), "bios")
+        self.assertEqual(entry_source({"name": "ending.mid", "sha1": other}, index), "bios")
+        self.assertEqual(entry_source({"name": "ending.mid", "md5": "1" * 32}, index), "bios")
+
     def test_a_directory_does_not_stand_for_a_file(self):
         with tempfile.TemporaryDirectory(dir=REPO_ROOT / "tmp") as tmp:
             (Path(tmp) / "bios" / "cpcemu" / "ROM").mkdir(parents=True)
