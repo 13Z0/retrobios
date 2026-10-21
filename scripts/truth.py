@@ -200,6 +200,36 @@ def _same_file(files: list[dict], file_entry: dict, emu_name: str) -> dict | Non
     )
 
 
+def _require_by_slot(files: list[dict]) -> None:
+    """A core that requires a name an entry answers for requires the entry.
+
+    Merged by name, one core's alternatives land in several entries. Ymir
+    reads sega_101.bin, mpr-17933.bin or saturn_bios.bin, so the sega_101.bin
+    entry carries those aliases. kronos, yabause and yabasanshiro open
+    saturn_bios.bin first and sega_101.bin as a fallback: they sat in that
+    entry's _cores, out of its _required_by, while their saturn_bios.bin entry
+    had them requiring it, and a platform line paired through the alias read
+    them as optional. A core already among the entry's readers that requires
+    one of its aliases, as another entry of the system, is one of its
+    requirers. No reader is added.
+    """
+    required_by_name: dict[str, set[str]] = {}
+    for entry in files:
+        required_by_name.setdefault(entry["name"].lower(), set()).update(
+            entry.get("_required_by", ())
+        )
+    for entry in files:
+        # Only the aliases: entries sharing the entry's own name are other
+        # files that name already kept apart (pak0.pak under each game).
+        names = {str(alias).lower() for alias in entry.get("aliases") or ()}
+        names.discard(entry["name"].lower())
+        requirers = set().union(*(required_by_name.get(n, set()) for n in names))
+        added = (requirers & entry.get("_cores", set())) - entry.get("_required_by", set())
+        if added:
+            entry["_required_by"] = entry.get("_required_by", set()) | added
+            entry["required"] = True
+
+
 def _brought(file_entry: dict, emu_name: str) -> set[str]:
     """The core and build that need the file brought, empty when the
     emulator installs it. An entry read without layer (a test, a caller of
@@ -665,6 +695,9 @@ def generate_platform_truth(
                 },
             )
             sys_cov["unprofiled"].add(emu_name)
+
+    for sys_data in systems.values():
+        _require_by_slot(sys_data.get("files", []))
 
     # Drop files with no exploitable data AFTER all cores have contributed.
     # A file declared by one core without hash/size/path may be enriched by
