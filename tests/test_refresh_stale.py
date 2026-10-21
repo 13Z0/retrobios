@@ -30,8 +30,8 @@ def finding(area: str, subject: str, status: str = "STALE") -> dict:
 
 
 class Planning(unittest.TestCase):
-    def _plan(self, *findings: dict):
-        return rs.plan_jobs(list(findings), REGISTRY)
+    def _plan(self, *findings: dict, parents: dict | None = None):
+        return rs.plan_jobs(list(findings), REGISTRY, parents or {})
 
     def test_a_stale_platform_is_rescraped_then_its_original_is_refreshed(self):
         jobs, surfaced, _ = self._plan(finding("platforms", "retrobat"))
@@ -47,8 +47,27 @@ class Planning(unittest.TestCase):
             [list(c[1:]) for c in jobs[0].then],
             [["scripts/generate_truth.py", "--platform", "retrobat"],
              ["scripts/export_native.py", "--platform", "retrobat", "--refresh-cache"],
-             ["scripts/export_native.py", "--platform", "retrobat"]],
+             ["scripts/export_native.py", "--platform", "retrobat"],
+             ["scripts/verify.py", "--platform", "retrobat"]],
         )
+
+    def test_a_child_waits_for_its_rescraped_parent(self):
+        """retropie inherits retroarch: run beside the parent's rescrape, its
+        truth read the old parent and its export was refused as stale."""
+        registry = dict(REGISTRY, retroarch={"scraper": "libretro"},
+                        retropie={"scraper": "retropie"})
+        parents = {"retropie": "retroarch", "lakka": "retroarch"}
+        jobs, _, _ = rs.plan_jobs(
+            [finding("platforms", "retroarch"), finding("platforms", "retropie"),
+             finding("platforms", "retrobat")],
+            registry, parents,
+        )
+        after = {(j.area, j.subject): j.after for j in jobs}
+        self.assertEqual(after[("platforms", "retroarch")], frozenset())
+        self.assertEqual(after[("platforms", "retrobat")], frozenset())
+        self.assertEqual(after[("platforms", "retropie")], frozenset({"retroarch"}))
+        # lakka has no row and no scraper: its export follows the parent's.
+        self.assertEqual(after[("native", "lakka")], frozenset({"retroarch"}))
 
     def test_a_native_row_of_a_rescraped_platform_is_not_a_second_job(self):
         """Two jobs would race: the refresh must follow the scrape."""
@@ -132,6 +151,33 @@ class Planning(unittest.TestCase):
 
 
 class Running(unittest.TestCase):
+    def test_a_child_starts_after_its_parent_ends(self):
+        with tempfile.TemporaryDirectory() as directory:
+            order = Path(directory) / "order"
+            def job(area, subject, after=()):
+                code = f"open({str(order)!r}, 'a').write({subject!r} + chr(10))"
+                if subject == "parent":
+                    code = "import time; time.sleep(0.5); " + code
+                return rs.Job(area, subject, [sys.executable, "-c", code],
+                              Path(directory) / f"{subject}.log", (), frozenset(after))
+            rs.run_jobs([job("native", "child", ["parent"]),
+                         job("platforms", "parent")], {}, 4)
+            self.assertEqual(order.read_text().split(), ["parent", "child"])
+
+    def test_the_report_prints_verify_after_a_rescrape(self):
+        (REPO_ROOT / "tmp").mkdir(exist_ok=True)
+        with tempfile.TemporaryDirectory(dir=REPO_ROOT / "tmp") as directory:
+            log = Path(directory) / "x.log"
+            log.write_text(
+                "$ python -m scripts.scraper.x_scraper\nscraped\n"
+                "$ python scripts/verify.py --platform x\n"
+                "X: 10/12 OK, 2 missing [md5]\n"
+            )
+            job = rs.Job("platforms", "x", ["true"], log)
+            text = rs.render([rs.JobResult(job, 0, 1.0, "")], [], [])
+        self.assertIn("X: 10/12 OK, 2 missing [md5]", text)
+        self.assertIn("python scripts/verify.py --platform x", text)
+
     def _job(self, directory: str, command: list[str], then=()) -> rs.Job:
         return rs.Job("platforms", "x", command, Path(directory) / "x.log", then)
 

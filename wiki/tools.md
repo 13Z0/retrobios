@@ -611,8 +611,8 @@ committed.
 
 | Stale row | Command |
 |-----------|---------|
-| `platforms/<name>` | the platform scraper, then the `native` refresh for the same platform |
-| `native/<name>` | `export_native.py --platform <name> --refresh-cache` |
+| `platforms/<name>` | the platform scraper, then the `native` refresh for the same platform, then `verify.py --platform <name>` |
+| `native/<name>` | `generate_truth.py --platform <name>`, `export_native.py --platform <name> --refresh-cache`, then the export itself |
 | `targets/<name>` | the target scraper |
 | `data/<key>` | `refresh_data_dirs.py --key <key> --force` |
 | `catalogs/mame recipes`, `catalogs/fbneo recipes` | `scraper/romset_dat_importer.py --source <source> --fetch` |
@@ -622,6 +622,13 @@ profile, a new `.info` file, the Redump, No-Intro and TOSEC packs, the CI
 pins, and `profile_sync`. A failed scraper leaves its cached original
 untouched. Each job writes its output to `tmp/refresh_stale/`, and a GitHub
 token is taken from `GITHUB_TOKEN` or from `gh auth token`.
+
+A platform that inherits from a rescraped one (`lakka` and `retropie` from
+`retroarch`) reads the parent's file, so its jobs start once the parent's have
+ended, and its export is rewritten even when no row named it. A rescrape can
+add systems whose files the collection lacks: the report ends with the
+`verify.py --platform` summary of every rescraped platform, to read before
+keeping the new YAML.
 
 ```bash
 python scripts/refresh_stale.py --dry-run
