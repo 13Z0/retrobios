@@ -181,6 +181,27 @@ class ThePipelineCountsItsRealSteps(unittest.TestCase):
         self.assertEqual(title, f"8b render site [{total}/{total}]")
         self.assertNotIn("/8", pipeline.step_title(pipeline.STEP_LABELS["verify"]))
 
+    def test_a_skipped_schema_check_says_how_to_run_it(self):
+        """Step 0 said only "jsonschema not installed", then the run read
+        COMPLETE and the schema failed in PR validation."""
+        argv = ["pipeline.py", "--offline", "--skip-packs", "--skip-docs"]
+        out = io.StringIO()
+        real_find_spec = pipeline.importlib.util.find_spec
+        with mock.patch.object(sys, "argv", argv), mock.patch.object(
+            pipeline, "run", return_value=(True, "")
+        ), mock.patch.object(
+            pipeline.importlib.util, "find_spec",
+            side_effect=lambda name, *a: None if name == "jsonschema"
+            else real_find_spec(name, *a),
+        ), contextlib.redirect_stdout(out), contextlib.suppress(SystemExit):
+            pipeline.main()
+        line = next(
+            row for row in out.getvalue().splitlines()
+            if "0 validate schemas" in row and "SKIPPED" in row
+        )
+        self.assertIn('pip install "jsonschema[format-nongpl]"', line)
+        self.assertIn("PR validation runs this check", line)
+
     def test_an_offline_buildbot_check_has_a_summary_row(self):
         argv = ["pipeline.py", "--offline", "--check-buildbot", "--skip-packs",
                 "--skip-docs"]

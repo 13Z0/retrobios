@@ -721,7 +721,13 @@ def main() -> None:
     # `cores: [81]` unquoted passed the whole pipeline and failed CI on push.
     # jsonschema is tooling only, so its absence skips the step.
     if importlib.util.find_spec("jsonschema") is None:
-        skip_notice("validate_schemas", "jsonschema not installed")
+        # The skip names the install and what still runs the check, or a
+        # contributor read SKIPPED, then COMPLETE, and met the failure on push.
+        skip_notice(
+            "validate_schemas",
+            "jsonschema not installed. PR validation runs this check: "
+            'pip install "jsonschema[format-nongpl]"',
+        )
         results["validate_schemas"] = SKIPPED
     else:
         ok, _ = run(
