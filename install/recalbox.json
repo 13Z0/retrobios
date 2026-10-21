@@ -5,7 +5,7 @@
   "platform": "recalbox",
   "display_name": "Recalbox",
   "version": "1.0",
-  "generated": "2026-10-21T08:36:42Z",
+  "generated": "2026-10-21T11:20:26Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -3217,7 +3217,7 @@
       "sha1": "77339a6db2593aadc638bed77b8e9bed5d9d87e3",
       "sha256": "fac1a4367c7fc67bdfab2ecfb2c59e37283b564e04bffcdb6717478a6c613afa",
       "size": 8192,
-      "repo_path": "bios/Microsoft/MSX/SEGA - SF-7000/sf7000.rom",
+      "repo_path": "bios/Sega/SF-7000/sf7000.rom",
       "cores": null,
       "systems": [
         "microsoft-msx"
@@ -37017,7 +37017,8 @@
         "kronos",
         "mednafen_stv",
         "yabasanshiro",
-        "yabause"
+        "yabause",
+        "ymir"
       ],
       "systems": [
         "sega-saturn"
@@ -39030,7 +39031,8 @@
       "repo_path": "bios/Sega/Saturn/sega_100.bin",
       "cores": [
         "yabasanshiro",
-        "yabause"
+        "yabause",
+        "ymir"
       ],
       "systems": [
         "sega-saturn"

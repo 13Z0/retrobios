@@ -5,7 +5,7 @@
   "platform": "retroarch",
   "display_name": "RetroArch",
   "version": "1.0",
-  "generated": "2026-10-21T08:36:42Z",
+  "generated": "2026-10-21T11:20:26Z",
   "base_destination": "system",
   "detect": [
     {
@@ -9822,7 +9822,8 @@
             "kronos",
             "mednafen_stv",
             "yabasanshiro",
-            "yabause"
+            "yabause",
+            "ymir"
           ]
         }
       ]
@@ -9906,7 +9907,8 @@
           "repo_path": "bios/Sega/Saturn/sega_100.bin",
           "cores": [
             "yabasanshiro",
-            "yabause"
+            "yabause",
+            "ymir"
           ]
         }
       ]
@@ -31897,26 +31899,6 @@
       ]
     },
     {
-      "dest": "mame/hash/3do.xml",
-      "sha1": "8a93cedb471056c325a3ee14e91d6ba121baa3eb",
-      "sha256": "12224458d8f30affb3e3d2fb708c53a78fad0855057acf17d0792208db512e3f",
-      "size": 3729,
-      "repo_path": "bios/Other/mame/hash/3do.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
       "dest": "mame/hash/3do_m2.xml",
       "sha1": "0c7df38a0d55e1d8b17d5f7c8f37d83d1224199c",
       "sha256": "8e12d26f3fac13a6bec7221a440b3999b58719abd8060c2dcfbb8e5000971e23",
@@ -32042,66 +32024,6 @@
       "sha256": "49f12f952a3760d25ca9dc76306bc793dcbcc0e1459b5ad4c4987faff83ac1bd",
       "size": 127364,
       "repo_path": "bios/Other/mame/hash/a7800.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/a800.xml",
-      "sha1": "080988deb5771cf6d1dfc061a1756620d44d3346",
-      "sha256": "bdc8eb79b6b2b816dab0ada4d1eab5365d54099495a5dab83183e9f543ef9e2c",
-      "size": 269515,
-      "repo_path": "bios/Other/mame/hash/a800.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/a800_cass.xml",
-      "sha1": "10046dde15756c9d903aaca96284c4d0edb0db87",
-      "sha256": "816d6485abd60c842eacbf70e42348f2e29110bc43234aeab8a78ec4cf76cf41",
-      "size": 1717,
-      "repo_path": "bios/Other/mame/hash/a800_cass.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/a800_flop.xml",
-      "sha1": "8bab8c6b2b1c36d56f4f2214017149ba6c3ba023",
-      "sha256": "e369de9d8e740f1702cfef6eedaa8e371800b7a640b0cbef2dd064c991194526",
-      "size": 38722,
-      "repo_path": "bios/Other/mame/hash/a800_flop.xml",
       "cores": [
         "mame",
         "mamearcade",
@@ -32357,91 +32279,11 @@
       ]
     },
     {
-      "dest": "mame/hash/adam_cart.xml",
-      "sha1": "6a06b04d5d9f3802729951d730598222da7c78e8",
-      "sha256": "2ff2a8d403a6c71b44e45660cd4b024ce9139a29dc8aabaff5740aa1d6945540",
-      "size": 6596,
-      "repo_path": "bios/Other/mame/hash/adam_cart.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/adam_cass.xml",
-      "sha1": "64ba79aa895e7e2bcb2bd556c0f4db1bee1355f8",
-      "sha256": "a7c239a5369cc3afcfa8d2d0c00b24d284399e9fb29cd08fb5812676bcd5725c",
-      "size": 33914,
-      "repo_path": "bios/Other/mame/hash/adam_cass.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/adam_flop.xml",
-      "sha1": "50bd0c65de5786c8673ef80eb88d6637018c35cb",
-      "sha256": "daef46d20cb067d17e0fe8e7ef5e1cf8efde09a6008db0c51fdfb1c4f84de8c9",
-      "size": 625845,
-      "repo_path": "bios/Other/mame/hash/adam_flop.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
       "dest": "mame/hash/advantage.xml",
       "sha1": "cf4a6170c0495069e688eeb24e5f15ed54131d0d",
       "sha256": "bdc580dae29f7e29a08a44a00c40b4bf20b346c8eb62608828900cfaeee400e4",
       "size": 5914,
       "repo_path": "bios/Other/mame/hash/advantage.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/advision.xml",
-      "sha1": "d7a3e0d8d9ac45789eee73b1ede6ef56e7ba86d9",
-      "sha256": "3fd646c297160448b56a58c7d65b452ab5a11b2c353b9a56e8dd39e13ca30195",
-      "size": 2281,
-      "repo_path": "bios/Other/mame/hash/advision.xml",
       "cores": [
         "mame",
         "mamearcade",
@@ -32937,46 +32779,6 @@
       ]
     },
     {
-      "dest": "mame/hash/apfimag_cass.xml",
-      "sha1": "8fa6a80cee34b1aa4d7859770c8921cd142bf2f8",
-      "sha256": "6853abda8816f01c3f7f2de30e03eb826da8a8d00faa58900a31bf0ba84015d4",
-      "size": 43143,
-      "repo_path": "bios/Other/mame/hash/apfimag_cass.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/apfm1000.xml",
-      "sha1": "6bd93e6d7ce86fe1c935bbba84a5104b493796e3",
-      "sha256": "8c03e74774bc04757b63562f462a3d11111ed8308e8415b77a74b8ec419a3672",
-      "size": 9759,
-      "repo_path": "bios/Other/mame/hash/apfm1000.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
       "dest": "mame/hash/apogee.xml",
       "sha1": "791fd073cc7230cd60a397c773147aa21c8af468",
       "sha256": "b0c50abe725284c03d69026ab8328985565a2c162d553e39927e774e9c4c5f91",
@@ -33057,131 +32859,11 @@
       ]
     },
     {
-      "dest": "mame/hash/apple2_flop_clcracked.xml",
-      "sha1": "aea343bffa28aa4c3b4dc58d28c5a757256add1e",
-      "sha256": "a029e7e7dc36308f42dc693df464392be59ef3acd616c3a0c6be865f05964758",
-      "size": 2899755,
-      "repo_path": "bios/Other/mame/hash/apple2_flop_clcracked.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/apple2_flop_misc.xml",
-      "sha1": "d9eab8a0481058673971cf4e9750f70b2e521f60",
-      "sha256": "8da441b01de1d2fc2b3230c2e57bf0ee3032966c0a4999fce219255e6f81ef13",
-      "size": 308001,
-      "repo_path": "bios/Other/mame/hash/apple2_flop_misc.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/apple2_flop_orig.xml",
-      "sha1": "a0cee4e27c80ce45c3dc3aa9cd2c7dc85cc82293",
-      "sha256": "2b64e363497eb3353f3d4c110550a9aa9cf12ccd5fae70143e94fd234efb302c",
-      "size": 2077439,
-      "repo_path": "bios/Other/mame/hash/apple2_flop_orig.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
       "dest": "mame/hash/apple2_rom.xml",
       "sha1": "b91856423f0ed127b874e070c9893d41f034c34d",
       "sha256": "87fe699bbbbd72aa6fe29ea149991fdf722fd8cd16c6afbe9c512aa439006330",
       "size": 1709,
       "repo_path": "bios/Other/mame/hash/apple2_rom.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/apple2gs_flop_clcracked.xml",
-      "sha1": "18cddb95e68a0d84ed3f47b9be1c8e481ade7155",
-      "sha256": "4f15e6567abd8a2d7e8be7b27e52ae3aa96c4ea33dab6adfd71bb69c6e37d464",
-      "size": 162549,
-      "repo_path": "bios/Other/mame/hash/apple2gs_flop_clcracked.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/apple2gs_flop_misc.xml",
-      "sha1": "bb2bea1c669877b987b080ff016502f4073c4f5a",
-      "sha256": "6516446961503c4ff7f6a9b78eef76241d55f552ad3c8eec1f0c38feddac76b7",
-      "size": 296955,
-      "repo_path": "bios/Other/mame/hash/apple2gs_flop_misc.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/apple2gs_flop_orig.xml",
-      "sha1": "ff353ecda02e5c2ebfa0edb4765943799fda3e1b",
-      "sha256": "acfc26e4e6c0e7f17af89e4d2f98b58df1c10d9847c6e24ebe21692e63bef139",
-      "size": 234778,
-      "repo_path": "bios/Other/mame/hash/apple2gs_flop_orig.xml",
       "cores": [
         "mame",
         "mamearcade",
@@ -33357,86 +33039,6 @@
       ]
     },
     {
-      "dest": "mame/hash/archimedes.xml",
-      "sha1": "1e2aaed486974f3c008065ad93ca5c0a90863bfa",
-      "sha256": "7b215cbc57f967c49ea7bb1205ee303c632bfca1409c7c36b9fb0b11d23dfd27",
-      "size": 271056,
-      "repo_path": "bios/Other/mame/hash/archimedes.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/archimedes_hdd.xml",
-      "sha1": "8f8498d993e6a5011708ae8c0c47626d1e984153",
-      "sha256": "48dd296ef0085029615bff662e6d51a7b4e902940d3f29fe3ad07867257bcb69",
-      "size": 549,
-      "repo_path": "bios/Other/mame/hash/archimedes_hdd.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/archimedes_rom.xml",
-      "sha1": "44a59d13a23eeea6a514bc1f4ce8445052863c16",
-      "sha256": "5a3a7d8892fe5f30d720b5d17decf446228b78175dd1414ea5c75b560b536d71",
-      "size": 2409,
-      "repo_path": "bios/Other/mame/hash/archimedes_rom.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/astrocde.xml",
-      "sha1": "55095d44ff509be5502e3a9ca6ec20e32880de8c",
-      "sha256": "3bd514aecc3bacb5ee538b6b6c6e908d4d82f2bfd8443dcf6bfa3f64db1ec0a9",
-      "size": 56504,
-      "repo_path": "bios/Other/mame/hash/astrocde.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
       "dest": "mame/hash/atom_cass.xml",
       "sha1": "028258c61adf0e1e0e3f96d112950c2fb39e82da",
       "sha256": "d446f3184ae58df34c9ea55af1704953e5dfd71536251fda3c76eac11fd22596",
@@ -33577,371 +33179,11 @@
       ]
     },
     {
-      "dest": "mame/hash/bbc_cass.xml",
-      "sha1": "13326f70d33f8b6c6257b43041f668a876b12f01",
-      "sha256": "d5319cfbb48e518cd2d9388482f2368700bd42217a791c2df52c25d50ba46997",
-      "size": 736181,
-      "repo_path": "bios/Other/mame/hash/bbc_cass.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/bbc_flop_32016.xml",
-      "sha1": "df4c4c458d64099f57ebe815912eb182a7c7666f",
-      "sha256": "42ce2fa0f994461ac16de863f7796d72573ac11f3ada99352b00ac88bc60f3ba",
-      "size": 8282,
-      "repo_path": "bios/Other/mame/hash/bbc_flop_32016.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/bbc_flop_6502.xml",
-      "sha1": "0f6665ac53257138d6cb4e540b9b68e1ae2ca0a0",
-      "sha256": "a7e32d123b53f4d58e58e7192504cb99344915c208dc168119e4142ec5bf0712",
-      "size": 6281,
-      "repo_path": "bios/Other/mame/hash/bbc_flop_6502.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/bbc_flop_68000.xml",
-      "sha1": "7042cba37006e482aaa1bd8ecd6cd0c05d49d38d",
-      "sha256": "6c69ad5b70ef44618efa6cf9afc5aa0f7d3bd50132b5f98a4d2d40458ba31dba",
-      "size": 1770,
-      "repo_path": "bios/Other/mame/hash/bbc_flop_68000.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/bbc_flop_80186.xml",
-      "sha1": "642c2544bf5188b896e5339d5a7f71a734bf2eea",
-      "sha256": "75056a08176c09166e9aa6cef49144dd8d09b1cd62087d99c08bce3b5587a28d",
-      "size": 7946,
-      "repo_path": "bios/Other/mame/hash/bbc_flop_80186.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/bbc_flop_arm.xml",
-      "sha1": "c9116468779d1d9765afb7626616e9337e175a68",
-      "sha256": "090e4f382719d19b08d0c7dad8893ab6a502dfd1a30ddaf966f747e98c3efcab",
-      "size": 11609,
-      "repo_path": "bios/Other/mame/hash/bbc_flop_arm.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/bbc_flop_hybrid.xml",
-      "sha1": "0a8fdb7f8a9b2e5aacf88e76b554d999e388f197",
-      "sha256": "514fdd5afe51a432ebdc7b40fcdd79bffbeae160cfca07c9e01ace3b37686852",
-      "size": 40742,
-      "repo_path": "bios/Other/mame/hash/bbc_flop_hybrid.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/bbc_flop_torch.xml",
-      "sha1": "a6e0460b80310babc1258ccbdf6eb4501ecb2b18",
-      "sha256": "ce6b478d939d074f06176ac32c4520f63321c5bc9c91e657e3b8e011205325e6",
-      "size": 19139,
-      "repo_path": "bios/Other/mame/hash/bbc_flop_torch.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/bbc_flop_z80.xml",
-      "sha1": "0ba1bb3d57ad8c8af1ca2439f454b63b3a69009c",
-      "sha256": "a3c623a5d29933af4c1417fa550184021e33291ad0e7df14551594e400ec68b8",
-      "size": 7743,
-      "repo_path": "bios/Other/mame/hash/bbc_flop_z80.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/bbc_hdd.xml",
-      "sha1": "a761b0c84e15a94cf68cf7a8a05d5e42e98a4cae",
-      "sha256": "a7f9042d188946583926349bbca2fdea3a9df847f6a62dc96fca3ebe105a1c9f",
-      "size": 2639,
-      "repo_path": "bios/Other/mame/hash/bbc_hdd.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/bbc_rom.xml",
-      "sha1": "26a0bad5f427ad5acd24961e84a77b9bb01a9175",
-      "sha256": "cf5d7b07e4b865b10b8018766d964be1bad7231bb29c2c72e31a1ab251b69ceb",
-      "size": 502371,
-      "repo_path": "bios/Other/mame/hash/bbc_rom.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/bbc_vsm.xml",
-      "sha1": "d2d1991ec0695a9af4b15139e3ef4f6758ddca0d",
-      "sha256": "b7b43510c1ebe07d79584589997756a260940156038dac317760d278b95ca020",
-      "size": 2571,
-      "repo_path": "bios/Other/mame/hash/bbc_vsm.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/bbcb_flop.xml",
-      "sha1": "6790486b7e30e243e0f8605e7bd8d1d456c2fa96",
-      "sha256": "83f676df203854c4cae6427f07602cb2a2310b553754f0d18cc162ad2f734b9c",
-      "size": 124846,
-      "repo_path": "bios/Other/mame/hash/bbcb_flop.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/bbcb_flop_orig.xml",
-      "sha1": "7aa5e8309d3823875226bf424a5923f433c23d18",
-      "sha256": "b00e30d4b0d6db45c40d6dc81055470d7fdfa7a546eb9aac869554cdb284bdff",
-      "size": 158528,
-      "repo_path": "bios/Other/mame/hash/bbcb_flop_orig.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/bbcb_flop_us.xml",
-      "sha1": "890926793ac5340eec1146333ed24ea443b2eb39",
-      "sha256": "722b3c08f2316f5db3af201b744c9a6bb32cb46c3bffd14c0105e8f8b58a2766",
-      "size": 743,
-      "repo_path": "bios/Other/mame/hash/bbcb_flop_us.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
       "dest": "mame/hash/bbcbc.xml",
       "sha1": "d45844044357ba17475d08fb3d42bfb8a1e42332",
       "sha256": "9697f872ade8b2f8459134a6cbe3e617cc11198f5d592ccd5613204edc5f1256",
       "size": 5189,
       "repo_path": "bios/Other/mame/hash/bbcbc.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/bbcm_cart.xml",
-      "sha1": "385301c4b4a448270eec2a53491a29c64431d481",
-      "sha256": "6206e58d3d9d17bba6a7554b986966be139da4e76eb3c622315202c99e1b22ee",
-      "size": 11115,
-      "repo_path": "bios/Other/mame/hash/bbcm_cart.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/bbcm_flop.xml",
-      "sha1": "f37902a2adca066e249edf9fcc78e924452bf8e9",
-      "sha256": "189b9d7c9d5a14e335d5b8f5513b81e698ca0ad09b53ce92d61164632007668a",
-      "size": 5301,
-      "repo_path": "bios/Other/mame/hash/bbcm_flop.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/bbcmc_flop.xml",
-      "sha1": "59a6b71e33f0809808d5159bfe796e94397288b9",
-      "sha256": "0f5cc148600fcfbfbdcedc5d4bae04528a267d073b210fa776061a2cade5c801",
-      "size": 17528,
-      "repo_path": "bios/Other/mame/hash/bbcmc_flop.xml",
       "cores": [
         "mame",
         "mamearcade",
@@ -34002,26 +33244,6 @@
       "sha256": "883b6bc553c94d6f3a8e849cedc251bbc660f5c1ee5f8bbaf171ca8b3e9b23c8",
       "size": 1244,
       "repo_path": "bios/Other/mame/hash/bingobear.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/bk0010.xml",
-      "sha1": "3af80662322728522a7e0a5a1c33e67c8224eb28",
-      "sha256": "348b642b900707196ad42f6612089af4508e07b5c9d19033d3316e0bfb3912d4",
-      "size": 49493,
-      "repo_path": "bios/Other/mame/hash/bk0010.xml",
       "cores": [
         "mame",
         "mamearcade",
@@ -34457,46 +33679,6 @@
       ]
     },
     {
-      "dest": "mame/hash/camplynx_cass.xml",
-      "sha1": "4f458181e3b733530bbbdad3cc219a9d0644f8fc",
-      "sha256": "54f1dffd648c0afd5f2cead29f9fe9ab5687f402a998df083e251c026f9501cf",
-      "size": 37656,
-      "repo_path": "bios/Other/mame/hash/camplynx_cass.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/camplynx_flop.xml",
-      "sha1": "b8fe55f812c377fcac6141b8b0c833b1b7a07bb7",
-      "sha256": "b66cc7f70fd192c3d0875bd3ebf5c472365ca6685167d3e13787c009a3367d99",
-      "size": 13892,
-      "repo_path": "bios/Other/mame/hash/camplynx_flop.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
       "dest": "mame/hash/carbeena.xml",
       "sha1": "e14b39dafde2b6bda562dea3be27a886b43b6210",
       "sha256": "c8ce03651a6e3d8cc29b6ebace58c92ff46b110cc6cdc8567eca2c0e09993702",
@@ -34522,26 +33704,6 @@
       "sha256": "01955e19645f10b137fd1d32f656a0eaa478e375131a642aea72e28621eb128c",
       "size": 72987,
       "repo_path": "bios/Other/mame/hash/casio_rompack.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/casloopy.xml",
-      "sha1": "ebb045cc8cecb8be6fdd4e3e47db9cbc8f0b9721",
-      "sha256": "a7ae4baa5d930f6cbf4114da56871c361af003cb986af517be556a78cc97cab2",
-      "size": 7085,
-      "repo_path": "bios/Other/mame/hash/casloopy.xml",
       "cores": [
         "mame",
         "mamearcade",
@@ -34682,26 +33844,6 @@
       "sha256": "139fe5b5e0df5c5ffe57bb8f4d38a14b77d0419009e9117eea72c01af3e1c91a",
       "size": 73479,
       "repo_path": "bios/Other/mame/hash/cd32.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/cdi.xml",
-      "sha1": "3be5701114684f66f410a13ea63a3a4e1f158c4a",
-      "sha256": "0a83d61e5b6f5a2a2509aa9f75521e8504ffa1363943a93df9c93039ab28186d",
-      "size": 541705,
-      "repo_path": "bios/Other/mame/hash/cdi.xml",
       "cores": [
         "mame",
         "mamearcade",
@@ -34937,86 +34079,6 @@
       ]
     },
     {
-      "dest": "mame/hash/coco_cart.xml",
-      "sha1": "35c6819f1307b933021ce12970d1ede9f7b36135",
-      "sha256": "59e203dea371afa3631123d1a0309d545c5cc7ea77a0c4d502e9070f61f039b0",
-      "size": 57803,
-      "repo_path": "bios/Other/mame/hash/coco_cart.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/coco_flop.xml",
-      "sha1": "644c95725d7da64fe61c151f6e98949c66561cff",
-      "sha256": "e7502ab0467121a6cd7e44ef9962a656f8bd2ef6d7c1965deaa8f92092ca305a",
-      "size": 81301,
-      "repo_path": "bios/Other/mame/hash/coco_flop.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/coleco.xml",
-      "sha1": "6ca4fc7b30be55d9eedb78b78925e766bc294361",
-      "sha256": "2e026cf8ea73914f56fb2479859ad64e49286b74db83377818dd3bc88416d1f4",
-      "size": 153128,
-      "repo_path": "bios/Other/mame/hash/coleco.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/coleco_homebrew.xml",
-      "sha1": "a673af9a2e00785a3b491317fd7613fb003357cc",
-      "sha256": "1577ffb13f0c4bbb14716cc74ba9debf228200015c97f4680e5513b80a14fbe1",
-      "size": 89593,
-      "repo_path": "bios/Other/mame/hash/coleco_homebrew.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
       "dest": "mame/hash/compclr2_flop.xml",
       "sha1": "4582e27c53854f2f1f11360630a2ba85a83e9466",
       "sha256": "66cf1bf9675cba9aa3fb6c2671088fe1919a558a5ac54fb16a7472736b92e3fc",
@@ -35142,26 +34204,6 @@
       "sha256": "72744a349834684c67a7065539faca8d0cba6e0e8f0f7ede83b4714789593144",
       "size": 12700511,
       "repo_path": "bios/Other/mame/hash/cpc_flop.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/crvision.xml",
-      "sha1": "6f3a43f520e1666d4a598e8621b91081337e03a2",
-      "sha256": "f53ba1c21f95e061ba03e524976167264250f6cf0bea59aac7998f53c0111867",
-      "size": 29061,
-      "repo_path": "bios/Other/mame/hash/crvision.xml",
       "cores": [
         "mame",
         "mamearcade",
@@ -35317,26 +34359,6 @@
       ]
     },
     {
-      "dest": "mame/hash/dgnalpha_flop.xml",
-      "sha1": "104a0081bdac938daa4afee353a1c2ad47ae3702",
-      "sha256": "fce60dc7654958dbd4efbacf358b4d18346d11f35ee1aefdd4337fc7043a7c44",
-      "size": 6812,
-      "repo_path": "bios/Other/mame/hash/dgnalpha_flop.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
       "dest": "mame/hash/dgnbeta_flop.xml",
       "sha1": "4b08ae633c1a982a0dd0f09a3dea9e13d18e8574",
       "sha256": "42c29b8f0839f5cae9d5c18fcd523da0286e473b31972b9e4a0766adb42b2666",
@@ -35457,131 +34479,11 @@
       ]
     },
     {
-      "dest": "mame/hash/dragon_cart.xml",
-      "sha1": "b558546fb4c28c17e064515ae26d237c8cada885",
-      "sha256": "f46e13bb3c1babb6a9cced090128647e3e666dabed34c7ee2342d7f62e9d2a43",
-      "size": 19887,
-      "repo_path": "bios/Other/mame/hash/dragon_cart.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/dragon_cass.xml",
-      "sha1": "0a7c81779b4eefa9432a452bd1fc53effbe42011",
-      "sha256": "f564489665764b23775cb9ba373b1fb399bdeec7857d7e39a41f61957559ea13",
-      "size": 452453,
-      "repo_path": "bios/Other/mame/hash/dragon_cass.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/dragon_flex.xml",
-      "sha1": "4c5cebcdb9c190d1c7966a0e32e94e444eebfbcc",
-      "sha256": "dfe70bf44c56054a75c019138f478df7d700c7b31a53b32b6dde9276ba77d647",
-      "size": 11710,
-      "repo_path": "bios/Other/mame/hash/dragon_flex.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/dragon_flop.xml",
-      "sha1": "0b72fa74b0a9a874180d60e5e110beda4d638259",
-      "sha256": "8e310430c2460e18b3b70dfda42e00d77d3d1cc1a9989205c571aa64911a210f",
-      "size": 78876,
-      "repo_path": "bios/Other/mame/hash/dragon_flop.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/dragon_os9.xml",
-      "sha1": "ef0cffe7a7fa9821f76073f97da58932eae412d5",
-      "sha256": "b024a5aa19dfb0e1c9d45551dbdce7b5c229160d8f4dafcfc91534c401134f1f",
-      "size": 7566,
-      "repo_path": "bios/Other/mame/hash/dragon_os9.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
       "dest": "mame/hash/duelmast_cart.xml",
       "sha1": "0ffc9adeab1896cf8442c4b59d495139218aeada",
       "sha256": "3db894de4bb4f9131becff0d89ee302106cfef1dd83006344499494f3ca526ef",
       "size": 1148,
       "repo_path": "bios/Other/mame/hash/duelmast_cart.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/e01_flop.xml",
-      "sha1": "38383747d4d286ab2a61bef1733b5f68776ebb0f",
-      "sha256": "45ef2a554bcf87bc3e91e56ef58ecbc9223ce70b8bc80a78a4b230da0e235690",
-      "size": 972,
-      "repo_path": "bios/Other/mame/hash/e01_flop.xml",
       "cores": [
         "mame",
         "mamearcade",
@@ -35697,151 +34599,11 @@
       ]
     },
     {
-      "dest": "mame/hash/electron_cart.xml",
-      "sha1": "ee322936f29534da4719aadc0bf2db92e90ce3ec",
-      "sha256": "5caa2242045ce6933709e50af7eaeccf629514391ce0dd690c6588d30657cadd",
-      "size": 22690,
-      "repo_path": "bios/Other/mame/hash/electron_cart.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/electron_cass.xml",
-      "sha1": "3c9c0a0e867e0b282667b4d6f39b3415db99e92b",
-      "sha256": "7ad50f44558a6d559167dada0f332c04b104a0008a896289531259af2d0d806e",
-      "size": 270749,
-      "repo_path": "bios/Other/mame/hash/electron_cass.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/electron_flop.xml",
-      "sha1": "4a17008e80c205645180f2a4d8cd71523b5d0cee",
-      "sha256": "327a96e64bebceba9de916460f76a195dc86be07b1d007556ccbb8efbeb7f0a0",
-      "size": 105636,
-      "repo_path": "bios/Other/mame/hash/electron_flop.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/electron_rom.xml",
-      "sha1": "2765d899808597a3350c7ff36e6c1238b061ef73",
-      "sha256": "4fc4c9709ff18faf20802a4576b127b44775ed5aa64bc2d886349139a6418b81",
-      "size": 36576,
-      "repo_path": "bios/Other/mame/hash/electron_rom.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
       "dest": "mame/hash/entex_sag.xml",
       "sha1": "6681e03849aab15b58efc8533b9feb3da6d8df94",
       "sha256": "60fc217aaabf6c3eae2fc7949866114ac3f7a4b6e4aca64848a296d2e2c9e312",
       "size": 3620,
       "repo_path": "bios/Other/mame/hash/entex_sag.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/ep64_cart.xml",
-      "sha1": "49fa675ab297af0a0d93c73a24bb39c8595b88fd",
-      "sha256": "c907cca84040b03dd39f7429598d966e5cd1cb1228c282605dc38533b573d8b3",
-      "size": 6240,
-      "repo_path": "bios/Other/mame/hash/ep64_cart.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/ep64_cass.xml",
-      "sha1": "62d93feca4b03cace7449ca7e7b165d026106942",
-      "sha256": "9a540f4a62c062bc25fecbfaff0532822703c7f61ad71004ab0ef6720d0e17af",
-      "size": 1272,
-      "repo_path": "bios/Other/mame/hash/ep64_cass.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/ep64_flop.xml",
-      "sha1": "adf9fd30932af0c85ca6b4a0e2f1a62cc1e010e3",
-      "sha256": "63ba3aef25b3328eaeea8d805c32ca45ae30a28a263b2a4357788187b0712ab1",
-      "size": 73009,
-      "repo_path": "bios/Other/mame/hash/ep64_flop.xml",
       "cores": [
         "mame",
         "mamearcade",
@@ -36097,86 +34859,6 @@
       ]
     },
     {
-      "dest": "mame/hash/fm77av.xml",
-      "sha1": "8bae8312472270ebba5162905453df5c4ac66759",
-      "sha256": "e38573e412e2cb6539e1c6d3a55bcb53910eb64e8de086a4b2ce11829331f363",
-      "size": 56002,
-      "repo_path": "bios/Other/mame/hash/fm77av.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/fm7_cass.xml",
-      "sha1": "c161d8ecb4cd1b8d880642512767ebc4e8f0b54c",
-      "sha256": "4e55068fd4ab6212ba4e5e2dac5378d7daa01d047dec1fccde7f497dcfe60f47",
-      "size": 84996,
-      "repo_path": "bios/Other/mame/hash/fm7_cass.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/fm7_disk.xml",
-      "sha1": "2c9418731916b4b1f179ff77ee5339e834672b16",
-      "sha256": "42652fdb670b031f3bec0c57eed3cbc052bb212de52d401c32a840bcdba90861",
-      "size": 94601,
-      "repo_path": "bios/Other/mame/hash/fm7_disk.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/fm8_cass.xml",
-      "sha1": "6dc2c01d428d9871770b068b812eea0039c0b0e3",
-      "sha256": "9d93889b2491b6d664ef25d52b09c82ddf4cf1bea231f35201f3a773ffcd1fc7",
-      "size": 13963,
-      "repo_path": "bios/Other/mame/hash/fm8_cass.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
       "dest": "mame/hash/fmtowns_cd.xml",
       "sha1": "560b94679000cff81846bba3c9ce6016d6db6d41",
       "sha256": "b4a8c73c30b9f1469b81e91eadfeb62716d6d0cf854bed426865a7a89d60ac98",
@@ -36317,51 +34999,11 @@
       ]
     },
     {
-      "dest": "mame/hash/gamate.xml",
-      "sha1": "91db9aaf4bbbc0b9deb0826270b5097f52d65687",
-      "sha256": "74f4efcd49c312418fd1e080688b36464921dfd8930d9dbe57b33f65c71ebee1",
-      "size": 27468,
-      "repo_path": "bios/Other/mame/hash/gamate.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
       "dest": "mame/hash/gameboy.xml",
       "sha1": "4dc16cec80bfd8e363ef332c87cfffdc6b850fe1",
       "sha256": "f1df424ac31abb9595f3bca9228e0c8cd8ed9991c963c20ac8d7663adb4c528c",
       "size": 1136450,
       "repo_path": "bios/Other/mame/hash/gameboy.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/gamecom.xml",
-      "sha1": "b2a70ebc23ed5012d9e9b68eead7a2ba2416978e",
-      "sha256": "fdef269da4ba050c66d90ab14039a98e307d53a03aaa2a0a9e0aaf76d615c94d",
-      "size": 10648,
-      "repo_path": "bios/Other/mame/hash/gamecom.xml",
       "cores": [
         "mame",
         "mamearcade",
@@ -36422,26 +35064,6 @@
       "sha256": "61037d1c8b17754fab6db62aea1fc421b46934f9441017bd19f235376a5fa6b6",
       "size": 4399,
       "repo_path": "bios/Other/mame/hash/gameking3.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/gamepock.xml",
-      "sha1": "da8a4f625a966350d165c648314378eea47ac71e",
-      "sha256": "91e5c8ae6bf1df5bf921861a3af7fcbfd0a3ca630bfe55e9d933f572583acdbf",
-      "size": 2708,
-      "repo_path": "bios/Other/mame/hash/gamepock.xml",
       "cores": [
         "mame",
         "mamearcade",
@@ -36802,46 +35424,6 @@
       "sha256": "6cedb3268ade9edd73d717ad12888aa917050b757441113e9baa188f0dc93efd",
       "size": 609,
       "repo_path": "bios/Other/mame/hash/gls.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/gmaster.xml",
-      "sha1": "fbbb36f305198babd53e8aa0dc9fd3ce7906b52f",
-      "sha256": "2ae8c1f8dd96dbecc4478860d2d470aa55495fe1700104870e795ded38345c7b",
-      "size": 7077,
-      "repo_path": "bios/Other/mame/hash/gmaster.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/gp32.xml",
-      "sha1": "fbc9a2eafc548ffbcd8443b819a49282422c5dcd",
-      "sha256": "2bea066a75a209b3efd4212f5dd31311ef040d70e5e5b97a981ebed5dc84e357",
-      "size": 20073,
-      "repo_path": "bios/Other/mame/hash/gp32.xml",
       "cores": [
         "mame",
         "mamearcade",
@@ -37362,26 +35944,6 @@
       "sha256": "17c1803343f279815ce1cd59d8f20841c809b9917dc11eb48a6904828498c785",
       "size": 1967,
       "repo_path": "bios/Other/mame/hash/ibm5140.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/ibm5150.xml",
-      "sha1": "0b5ca1da47d90bc64a612478e8487885a622c753",
-      "sha256": "851cdf45cbb5e71f7595761a4991ebd87e9e558c62d46a53a71b239ba521de84",
-      "size": 824234,
-      "repo_path": "bios/Other/mame/hash/ibm5150.xml",
       "cores": [
         "mame",
         "mamearcade",
@@ -38417,46 +36979,6 @@
       ]
     },
     {
-      "dest": "mame/hash/laser2001_cart.xml",
-      "sha1": "8fc1c7443d544136ed44fefa52f18d8e37f29ca2",
-      "sha256": "c32da473fca80f2a9860faffc57288d4175fa643ae671d98b5d96c55bc47d51f",
-      "size": 729,
-      "repo_path": "bios/Other/mame/hash/laser2001_cart.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/laser2001_flop.xml",
-      "sha1": "49bdb74c08aeb2e2c16f263c9ce09e0a6dc65b50",
-      "sha256": "9aca7cbd44e620fedd82486d534b49ddbb80d7a356a59352dd7673781bdfebd8",
-      "size": 587,
-      "repo_path": "bios/Other/mame/hash/laser2001_flop.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
       "dest": "mame/hash/leapfrog_didj_cart.xml",
       "sha1": "b50f95451ad1c202de8187d596d224b3541e6b08",
       "sha256": "6c033c8c253d1281f2255252eb7a9c6fd74789eebea1635e6bb9541f3c2ea4d8",
@@ -38857,126 +37379,6 @@
       ]
     },
     {
-      "dest": "mame/hash/mac_cdrom.xml",
-      "sha1": "da356c9ea2eb4aa0d434e2710e8a5b7758f6b471",
-      "sha256": "3125730817dd15346ed6b86ea5cf9d669e72bc42b79b1cb0cce7e3682ae8d960",
-      "size": 9773,
-      "repo_path": "bios/Other/mame/hash/mac_cdrom.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/mac_flop.xml",
-      "sha1": "18c01ae591502484d717cd242f5f89274d440d30",
-      "sha256": "bcd3dd71ec6f0217a730666075358d0afc79878975597b4b1aeeca2dfab276df",
-      "size": 9064,
-      "repo_path": "bios/Other/mame/hash/mac_flop.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/mac_flop_clcracked.xml",
-      "sha1": "f53a2effa689a17945995963abea57aef889e83e",
-      "sha256": "2344baaad00c3ac6b03d2b9795452844135d40067eed1245995e113a9385b33e",
-      "size": 131047,
-      "repo_path": "bios/Other/mame/hash/mac_flop_clcracked.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/mac_flop_orig.xml",
-      "sha1": "86490fc5f36b7a572f4bdf0946426492b23b9601",
-      "sha256": "7d007699ded7f41d42adba52eecab7f4224beeb410b2d60d228c88af6612b419",
-      "size": 199535,
-      "repo_path": "bios/Other/mame/hash/mac_flop_orig.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/mac_hdd.xml",
-      "sha1": "5e08d4eb6702de1590558667127625523ffd9189",
-      "sha256": "d456afb7833d1dba49db564340527710f94ab9e02daf2e01ed60b3369286cedd",
-      "size": 3737,
-      "repo_path": "bios/Other/mame/hash/mac_hdd.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/mac_hdflop.xml",
-      "sha1": "d977eca69ec4f6765c55cf5174e5a1862de93808",
-      "sha256": "5798c6e6434220d500c16d8210337e3cacb7336c630b913620bd7478167e2d31",
-      "size": 329807,
-      "repo_path": "bios/Other/mame/hash/mac_hdflop.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
       "dest": "mame/hash/mbc200.xml",
       "sha1": "f8917f93f190abfa432a1814b4ba959e23ab10ce",
       "sha256": "d9d4ab914138eb281366cb3d9c904a39dc4539122a3fe9d3c7fd8e25d3381102",
@@ -39082,26 +37484,6 @@
       "sha256": "c1be42dba6072a14f84f1e7918f082d1ce278120639d1aa82e2646d99b80897a",
       "size": 64816,
       "repo_path": "bios/Other/mame/hash/mbee_quik.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/mc10.xml",
-      "sha1": "d4a01a75deeb4c9126eea86864e462f2fd88963c",
-      "sha256": "6fe42244d1a9510e3a80e745ab40a2d59da5d0b27b29afd0dff27340e75bedf2",
-      "size": 52188,
-      "repo_path": "bios/Other/mame/hash/mc10.xml",
       "cores": [
         "mame",
         "mamearcade",
@@ -39242,26 +37624,6 @@
       "sha256": "885893f79d2150165497cdefecf8b820f0db104ef66f3188e89c67c55cc9fbc7",
       "size": 1756,
       "repo_path": "bios/Other/mame/hash/megapc.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/megatech.xml",
-      "sha1": "3409f16fccf5e37d5bda6bc5f61db6c01c98d3fa",
-      "sha256": "b924bd7b650cc6fb5f736fd6f9e76ae079eda9c96d22aad73aaa2cff88f7ca0d",
-      "size": 31502,
-      "repo_path": "bios/Other/mame/hash/megatech.xml",
       "cores": [
         "mame",
         "mamearcade",
@@ -40777,26 +39139,6 @@
       ]
     },
     {
-      "dest": "mame/hash/neogeo.xml",
-      "sha1": "9db1d49f2e64da0e3880b6654305da8b0108d3a3",
-      "sha256": "f2b78a6a5f64e1fa146298878e83e0ef4b472a4dae85437708fd2d8768082326",
-      "size": 861636,
-      "repo_path": "bios/Other/mame/hash/neogeo.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
       "dest": "mame/hash/nes.hsi",
       "sha1": "91e14b3cda5a2d8a8ad69e56919fa564f53e6511",
       "sha256": "0cc6d2ad39bd7e98a1f3b64f75c2ecddbf96139c41e2c98a271c8aceb1f99bf9",
@@ -41757,66 +40099,6 @@
       ]
     },
     {
-      "dest": "mame/hash/pc8001_flop.xml",
-      "sha1": "3abab1b5f5225a2d4e660efa435635e1130433df",
-      "sha256": "15baf8edd9d9e4a23505cd1f3e817d17f6f220b99d34df1cdd9f4573aa0a33c7",
-      "size": 131233,
-      "repo_path": "bios/Other/mame/hash/pc8001_flop.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/pc8001mk2_flop.xml",
-      "sha1": "640b5c9992d4c123a99f84a26d37fa6abc5a4fc0",
-      "sha256": "a9bb08822756014f0377ced51ca7afc8a76366d9568881b9be54e7083882a3d1",
-      "size": 10373,
-      "repo_path": "bios/Other/mame/hash/pc8001mk2_flop.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/pc8001mk2sr_flop.xml",
-      "sha1": "d37f0fac53cd9f14c320e41db1ed872a79a7dd97",
-      "sha256": "c92a467def7493b6453b63fb2f29fa5eafd0b23b3120f66167b6a21a2df7d266",
-      "size": 7003,
-      "repo_path": "bios/Other/mame/hash/pc8001mk2sr_flop.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
       "dest": "mame/hash/pc8201.xml",
       "sha1": "ff367ad76578e5e60a9517a042f31a4f7a3e733f",
       "sha256": "8033418d1762301f07d745e1c8833e778b6ea7eb0da0fdfd3191027b660cceb7",
@@ -42137,26 +40419,6 @@
       ]
     },
     {
-      "dest": "mame/hash/pcw.xml",
-      "sha1": "d212d60fc23abb3ce417085780d2ca0fab155a83",
-      "sha256": "8c2e3871e37edb7d9a14c524ddb4273eb5caba9b7af207ada9c673221c148010",
-      "size": 74002,
-      "repo_path": "bios/Other/mame/hash/pcw.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
       "dest": "mame/hash/pcw16.xml",
       "sha1": "d6c7af97143b06f67424ea748205ff169702d8d9",
       "sha256": "f758345572830cf18b9cba7f6e6a0bd849883198d92d851ccf78c9d71b28e82d",
@@ -42242,26 +40504,6 @@
       "sha256": "2a6a4520d84beceae1ded3737005dfe7eedd343a267f1f35c08a6a0ed892e3f0",
       "size": 3816,
       "repo_path": "bios/Other/mame/hash/pecom_cass.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/pegasus_cart.xml",
-      "sha1": "e851df95788d1853a694da59b88dcf6458dc4a4c",
-      "sha256": "0487e1316f53fe4555e9bdcd98052a89beba2ad96ecdf564ee235d51f41ae6eb",
-      "size": 8532,
-      "repo_path": "bios/Other/mame/hash/pegasus_cart.xml",
       "cores": [
         "mame",
         "mamearcade",
@@ -42442,26 +40684,6 @@
       "sha256": "3b328566dcddb3a6cf643326be8c73315a469e6185db75d44c90e3f0c077abf7",
       "size": 12548,
       "repo_path": "bios/Other/mame/hash/phc25_cass.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/photo_cd.xml",
-      "sha1": "64a081198c3286f3dcecf83417c99a57f9736f8f",
-      "sha256": "415ff74aaffce31b8ce29861c0535e5bb7ea6969dd0a227f04f5e0408e6df26b",
-      "size": 1400,
-      "repo_path": "bios/Other/mame/hash/photo_cd.xml",
       "cores": [
         "mame",
         "mamearcade",
@@ -43017,26 +41239,6 @@
       ]
     },
     {
-      "dest": "mame/hash/pro128s_flop.xml",
-      "sha1": "38813ca4103a694b9d1953d58df53ad9b86f4ce9",
-      "sha256": "facea42c4c08ae6ef45f3dc0add1d27ef52c30ee26aa800e530b807c0e4a7561",
-      "size": 14348,
-      "repo_path": "bios/Other/mame/hash/pro128s_flop.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
       "dest": "mame/hash/prof180.xml",
       "sha1": "77cca1272632c5b6d412061c97fd91cdcf9927ab",
       "sha256": "a68f800ba9903ddaa11a1bb96e6850c0b7fda62d72936f1b6efce8fb76676d11",
@@ -43242,26 +41444,6 @@
       "sha256": "4fb2510bf0ff7ec7094fc01f09564fc921d00293a195a0f1dcbd12dc26bdec91",
       "size": 12768,
       "repo_path": "bios/Other/mame/hash/pv1000.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/pv2000.xml",
-      "sha1": "9b7a8ef86d583a65571aa3d47136836f5b39897d",
-      "sha256": "f96d28924d5607634934a5eb04dcb2292cdc6a50bf866a101ae073899557dcbd",
-      "size": 11468,
-      "repo_path": "bios/Other/mame/hash/pv2000.xml",
       "cores": [
         "mame",
         "mamearcade",
@@ -43602,46 +41784,6 @@
       "sha256": "3902eb69c7c52e443aa597e919b97b607ea0e3764139d52e92cde4f457d76ec8",
       "size": 1090,
       "repo_path": "bios/Other/mame/hash/rwtrntcs.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/rx78_cart.xml",
-      "sha1": "3f2afe73a973600783925d71d01d9f88b3b3cc9c",
-      "sha256": "0129a427c5f93d318842a14f0e381597b23dbb669a64ff35881cf26e89210360",
-      "size": 20435,
-      "repo_path": "bios/Other/mame/hash/rx78_cart.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/rx78_cass.xml",
-      "sha1": "12d74a218e9fcbc385e14dd6d127efe6880f8607",
-      "sha256": "8beaf2e546a307d3f2b03546a0e36750efdc3f18a33f08419ef0c405743a723a",
-      "size": 1469,
-      "repo_path": "bios/Other/mame/hash/rx78_cass.xml",
       "cores": [
         "mame",
         "mamearcade",
@@ -44017,26 +42159,6 @@
       ]
     },
     {
-      "dest": "mame/hash/scv.xml",
-      "sha1": "147cfee3971d0b82fbc7974256cd1d1de7335cc8",
-      "sha256": "d90ddcd90cc57009806e6cbf3ea60c75f4a5743373d7738217e21b84665b5a44",
-      "size": 15177,
-      "repo_path": "bios/Other/mame/hash/scv.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
       "dest": "mame/hash/sd132_flop.xml",
       "sha1": "bb179c34b5bcd4498c329397aeb34bfe0739bfde",
       "sha256": "908e366ec829cbafe2eb5fb30988679b173b5ca8896359066f842d2e0a7a2aa7",
@@ -44082,46 +42204,6 @@
       "sha256": "f7cb6658d0683f69c0605f72117e5568f7c78b643b939c0d1486d2dead252362",
       "size": 1175,
       "repo_path": "bios/Other/mame/hash/sdk85.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/sega_beena_cart.xml",
-      "sha1": "b4c7d1159ff576411c78e71e33f6d1cb2229331f",
-      "sha256": "95592b15844b9f261f90a2a78f35fab1ccaa456fb26706a665c20fd33a892391",
-      "size": 210730,
-      "repo_path": "bios/Other/mame/hash/sega_beena_cart.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/segaai.xml",
-      "sha1": "13514df769bc93ad3694f20b7b41ff3de7e1d178",
-      "sha256": "07fefa73313258cf33129947215dd305c69d06746e7f92d1eb17a5b78a2a5625",
-      "size": 34327,
-      "repo_path": "bios/Other/mame/hash/segaai.xml",
       "cores": [
         "mame",
         "mamearcade",
@@ -44482,26 +42564,6 @@
       "sha256": "5f45e8cffac77dad466dce23ee3c292bf31bcbc07c97850557925884ff273780",
       "size": 5704,
       "repo_path": "bios/Other/mame/hash/snspell.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/socrates.xml",
-      "sha1": "f1f7594cb700755335d9b50f11982c871df99a01",
-      "sha256": "fcabc90101fe382278a062effa92d378471dee182bd19dca1366f70a9e3e093d",
-      "size": 4963,
-      "repo_path": "bios/Other/mame/hash/socrates.xml",
       "cores": [
         "mame",
         "mamearcade",
@@ -45077,26 +43139,6 @@
       ]
     },
     {
-      "dest": "mame/hash/stv.xml",
-      "sha1": "cafb2ce4b7f597189ccaaded95d749a7e5a92a21",
-      "sha256": "77208bab8698b69428601966420a8959f57a189a2ba9166ed394cc74563e0126",
-      "size": 89130,
-      "repo_path": "bios/Other/mame/hash/stv.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
       "dest": "mame/hash/sun_sparc.xml",
       "sha1": "f452bfd5d026f0814c72d0ac9cc6dda43e2b1d93",
       "sha256": "02149d2c7c445b343e70c5163172618661807524dc635848c64b57a5064847cb",
@@ -45657,26 +43699,6 @@
       ]
     },
     {
-      "dest": "mame/hash/ti99_cart.xml",
-      "sha1": "1d01689b8d55dd10a2962acad5f60362e138650e",
-      "sha256": "efa7a94d47417f02c5f4086c0840dfa932773121609cf431e1efae54ed7dbb57",
-      "size": 229953,
-      "repo_path": "bios/Other/mame/hash/ti99_cart.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
       "dest": "mame/hash/tiki100.xml",
       "sha1": "acb91d1f5565768e0d508f61cebceab327b1fde7",
       "sha256": "f220358e32df5bb40ace0acb818ccf7e138a6e5e668e5d567ec48b3f315dcf31",
@@ -45957,66 +43979,6 @@
       ]
     },
     {
-      "dest": "mame/hash/trs80_cass.xml",
-      "sha1": "3bbe1e18d83b30fd9ce820edf9d175e91c8adb3b",
-      "sha256": "8700cce2167d1df18fea0ba2932039a08164356edf190d775a376f00e445adbb",
-      "size": 32516,
-      "repo_path": "bios/Other/mame/hash/trs80_cass.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/trs80_flop.xml",
-      "sha1": "b7ef88d726e91dc583da14f1245c6384393d1dd0",
-      "sha256": "c6ca801643db2d2c0ab4253e017c92e2465965a98505644d9487a45167189990",
-      "size": 2661,
-      "repo_path": "bios/Other/mame/hash/trs80_flop.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/trs80_quik.xml",
-      "sha1": "c398975f9487a07eb82e42642e1cfe036cc46d6d",
-      "sha256": "b7087ce74fe9ade23818523125bbd34df10e2a0cbd7d225f90f44cbf0f60e622",
-      "size": 40444,
-      "repo_path": "bios/Other/mame/hash/trs80_quik.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
       "dest": "mame/hash/trs80m2.xml",
       "sha1": "c1892d8af5617a8dadb445fbaa688720b71cd608",
       "sha256": "3bc92cc9830320f725a66b64dcad056db44da6a010a7d1812a31b0117f00f0c3",
@@ -46102,26 +44064,6 @@
       "sha256": "d616e3cd4722ac2e196f19b43ec735aa684d51c1d9b48562864a4466dd47c9a8",
       "size": 607,
       "repo_path": "bios/Other/mame/hash/turboextreme_cart.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/tutor.xml",
-      "sha1": "b2f507e7b37c9145fa43a7cf4ff9923acfee0a41",
-      "sha256": "db39d0d24812c8b74342c689d476c8f7cc730e08eebc3b51becefcea5342e363",
-      "size": 17761,
-      "repo_path": "bios/Other/mame/hash/tutor.xml",
       "cores": [
         "mame",
         "mamearcade",
@@ -46497,51 +44439,11 @@
       ]
     },
     {
-      "dest": "mame/hash/vectrex.xml",
-      "sha1": "12e3c7a758f43065d68e2e523392dfa10f2647eb",
-      "sha256": "ef694846a26b056716caf97eb433548513d4db876475e0c994c762b753b779d1",
-      "size": 34697,
-      "repo_path": "bios/Other/mame/hash/vectrex.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
       "dest": "mame/hash/vfxsd_flop.xml",
       "sha1": "2c4e36298981421b34fc7f6a3358348b380a44e7",
       "sha256": "21e8ab56b6e331e94dd98fdcf792f010ea676cc2d9015912ab9c8d00837f98b2",
       "size": 994,
       "repo_path": "bios/Other/mame/hash/vfxsd_flop.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/vg5k.xml",
-      "sha1": "06f7b1ce9b8f2935b3882c7a6d01aff04923a178",
-      "sha256": "ccf4ab0172e94afa3bf02d1ea53dc53edbdd7136bc251587a94bf04e0ff7e89f",
-      "size": 30437,
-      "repo_path": "bios/Other/mame/hash/vg5k.xml",
       "cores": [
         "mame",
         "mamearcade",
@@ -46777,26 +44679,6 @@
       ]
     },
     {
-      "dest": "mame/hash/vis.xml",
-      "sha1": "80cdc1b32b4cca11d9269d2d3ffaa3beb0c0c702",
-      "sha256": "4d45178d55e56e662c2ae691bcef2bb9a63a0996708e64752df84df6a62b4f8a",
-      "size": 61330,
-      "repo_path": "bios/Other/mame/hash/vis.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
       "dest": "mame/hash/visicom.xml",
       "sha1": "a89b734d2c1ea514e3459e3939c8225e1cd00826",
       "sha256": "39d596f003535590618950322b650b11fada225ce98b55e21f04dfed1f725b9c",
@@ -46837,26 +44719,6 @@
       ]
     },
     {
-      "dest": "mame/hash/vsmile_cart.xml",
-      "sha1": "20146a46dd905dd3ca4833c8c65d86256b2280a0",
-      "sha256": "d7b5f9db5ddc6705c1d8b8db53988568c4544ba6c77d9700840e5f2538162af8",
-      "size": 284343,
-      "repo_path": "bios/Other/mame/hash/vsmile_cart.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
       "dest": "mame/hash/vsmile_cd.xml",
       "sha1": "32b63df9f09756384f4204db2a363bd0d4c5ff7b",
       "sha256": "7e22b1849ed5d997235a9e941569e4b7c711ae94f9782e7032bbc21bef7beee7",
@@ -46882,26 +44744,6 @@
       "sha256": "231eecb70c21023ed4405fb7cf318fef816ce8f97e4071b995cc97828defe9e4",
       "size": 20217,
       "repo_path": "bios/Other/mame/hash/vsmileb_cart.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/vsmilem_cart.xml",
-      "sha1": "1419190f1741f1669882160c7cc4ab6dd072d534",
-      "sha256": "27d279d356a2e363fa30b454a277e06b12b3024fa0bc8816c4046ec432999da2",
-      "size": 84670,
-      "repo_path": "bios/Other/mame/hash/vsmilem_cart.xml",
       "cores": [
         "mame",
         "mamearcade",
@@ -46982,46 +44824,6 @@
       "sha256": "b8f20dd4647de9117d330f1a45a493eb0e234b2d503f786579ea9e7585c55221",
       "size": 13859,
       "repo_path": "bios/Other/mame/hash/vtech_storio_cart.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/vz_cass.xml",
-      "sha1": "dd2d8d3c8cf5179e2075db8f93a7f8faf8c2d545",
-      "sha256": "2007f521c66b0f82a306a9d83476ca67d486786f884ac51eaeb373990864bfd3",
-      "size": 8941,
-      "repo_path": "bios/Other/mame/hash/vz_cass.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/vz_snap.xml",
-      "sha1": "0f72fe81ab12985c86765d21446056a97af71b22",
-      "sha256": "a11b340ef467f1b3ec775a636a04cf6f25be71c549dd12414c26ecbb1117eb68",
-      "size": 63700,
-      "repo_path": "bios/Other/mame/hash/vz_snap.xml",
       "cores": [
         "mame",
         "mamearcade",
@@ -47322,26 +45124,6 @@
       "sha256": "6504308c255e3f4674b77816c8e4ec47ba7f252092157c22333121cad2f4e382",
       "size": 1441600,
       "repo_path": "bios/Other/mame/hash/x68k_flop.xml",
-      "cores": [
-        "mame",
-        "mamearcade",
-        "mamemess"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ]
-    },
-    {
-      "dest": "mame/hash/xegs.xml",
-      "sha1": "d4c29b43cbacc21ae391f33e8df897470689720f",
-      "sha256": "d2eb7500968dc2f2c6613a37a236c075a696e3e10be2cfe0058705d19fff800d",
-      "size": 23925,
-      "repo_path": "bios/Other/mame/hash/xegs.xml",
       "cores": [
         "mame",
         "mamearcade",
@@ -48987,12 +46769,8 @@
         "mamemess"
       ],
       "systems": [
-        "3do",
         "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
+        "enterprise-64-128"
       ]
     },
     {
@@ -49006,12 +46784,8 @@
         "mamemess"
       ],
       "systems": [
-        "3do",
         "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
+        "enterprise-64-128"
       ]
     },
     {
@@ -49025,12 +46799,8 @@
         "mamemess"
       ],
       "systems": [
-        "3do",
         "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
+        "enterprise-64-128"
       ]
     },
     {
@@ -49044,12 +46814,8 @@
         "mamemess"
       ],
       "systems": [
-        "3do",
         "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
+        "enterprise-64-128"
       ]
     },
     {
@@ -49063,12 +46829,8 @@
         "mamemess"
       ],
       "systems": [
-        "3do",
         "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
+        "enterprise-64-128"
       ]
     },
     {
@@ -49082,12 +46844,8 @@
         "mamemess"
       ],
       "systems": [
-        "3do",
         "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
+        "enterprise-64-128"
       ]
     },
     {
@@ -49101,12 +46859,8 @@
         "mamemess"
       ],
       "systems": [
-        "3do",
         "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
+        "enterprise-64-128"
       ]
     },
     {
@@ -49120,12 +46874,8 @@
         "mamemess"
       ],
       "systems": [
-        "3do",
         "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
+        "enterprise-64-128"
       ]
     },
     {
@@ -49139,12 +46889,8 @@
         "mamemess"
       ],
       "systems": [
-        "3do",
         "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
+        "enterprise-64-128"
       ]
     },
     {
@@ -49158,12 +46904,8 @@
         "mamemess"
       ],
       "systems": [
-        "3do",
         "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
+        "enterprise-64-128"
       ]
     },
     {
@@ -49177,12 +46919,8 @@
         "mamemess"
       ],
       "systems": [
-        "3do",
         "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
+        "elektronika-bk"
       ]
     },
     {
@@ -49196,12 +46934,8 @@
         "mamemess"
       ],
       "systems": [
-        "3do",
         "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
+        "elektronika-bk"
       ]
     },
     {
@@ -49215,12 +46949,8 @@
         "mamemess"
       ],
       "systems": [
-        "3do",
         "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
+        "elektronika-bk"
       ]
     },
     {
@@ -49234,12 +46964,8 @@
         "mamemess"
       ],
       "systems": [
-        "3do",
         "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
+        "elektronika-bk"
       ]
     },
     {
@@ -49253,12 +46979,8 @@
         "mamemess"
       ],
       "systems": [
-        "3do",
         "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
+        "elektronika-bk"
       ]
     },
     {
@@ -49272,12 +46994,8 @@
         "mamemess"
       ],
       "systems": [
-        "3do",
         "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
+        "elektronika-bk"
       ]
     },
     {
@@ -49291,12 +47009,8 @@
         "mamemess"
       ],
       "systems": [
-        "3do",
         "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
+        "elektronika-bk"
       ]
     },
     {
@@ -49310,12 +47024,8 @@
         "mamemess"
       ],
       "systems": [
-        "3do",
         "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
+        "elektronika-bk"
       ]
     },
     {
@@ -49329,12 +47039,8 @@
         "mamemess"
       ],
       "systems": [
-        "3do",
         "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
+        "elektronika-bk"
       ]
     },
     {
@@ -49426,6 +47132,1671 @@
       ],
       "systems": [
         "arcade"
+      ]
+    },
+    {
+      "dest": "mame/hash/3do.xml",
+      "sha1": "8a93cedb471056c325a3ee14e91d6ba121baa3eb",
+      "sha256": "12224458d8f30affb3e3d2fb708c53a78fad0855057acf17d0792208db512e3f",
+      "size": 3729,
+      "repo_path": "bios/Other/mame/hash/3do.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/a800.xml",
+      "sha1": "080988deb5771cf6d1dfc061a1756620d44d3346",
+      "sha256": "bdc8eb79b6b2b816dab0ada4d1eab5365d54099495a5dab83183e9f543ef9e2c",
+      "size": 269515,
+      "repo_path": "bios/Other/mame/hash/a800.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/a800_cass.xml",
+      "sha1": "10046dde15756c9d903aaca96284c4d0edb0db87",
+      "sha256": "816d6485abd60c842eacbf70e42348f2e29110bc43234aeab8a78ec4cf76cf41",
+      "size": 1717,
+      "repo_path": "bios/Other/mame/hash/a800_cass.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/a800_flop.xml",
+      "sha1": "8bab8c6b2b1c36d56f4f2214017149ba6c3ba023",
+      "sha256": "e369de9d8e740f1702cfef6eedaa8e371800b7a640b0cbef2dd064c991194526",
+      "size": 38722,
+      "repo_path": "bios/Other/mame/hash/a800_flop.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/adam_cart.xml",
+      "sha1": "6a06b04d5d9f3802729951d730598222da7c78e8",
+      "sha256": "2ff2a8d403a6c71b44e45660cd4b024ce9139a29dc8aabaff5740aa1d6945540",
+      "size": 6596,
+      "repo_path": "bios/Other/mame/hash/adam_cart.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/adam_cass.xml",
+      "sha1": "64ba79aa895e7e2bcb2bd556c0f4db1bee1355f8",
+      "sha256": "a7c239a5369cc3afcfa8d2d0c00b24d284399e9fb29cd08fb5812676bcd5725c",
+      "size": 33914,
+      "repo_path": "bios/Other/mame/hash/adam_cass.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/adam_flop.xml",
+      "sha1": "50bd0c65de5786c8673ef80eb88d6637018c35cb",
+      "sha256": "daef46d20cb067d17e0fe8e7ef5e1cf8efde09a6008db0c51fdfb1c4f84de8c9",
+      "size": 625845,
+      "repo_path": "bios/Other/mame/hash/adam_flop.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/advision.xml",
+      "sha1": "d7a3e0d8d9ac45789eee73b1ede6ef56e7ba86d9",
+      "sha256": "3fd646c297160448b56a58c7d65b452ab5a11b2c353b9a56e8dd39e13ca30195",
+      "size": 2281,
+      "repo_path": "bios/Other/mame/hash/advision.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/apfimag_cass.xml",
+      "sha1": "8fa6a80cee34b1aa4d7859770c8921cd142bf2f8",
+      "sha256": "6853abda8816f01c3f7f2de30e03eb826da8a8d00faa58900a31bf0ba84015d4",
+      "size": 43143,
+      "repo_path": "bios/Other/mame/hash/apfimag_cass.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/apfm1000.xml",
+      "sha1": "6bd93e6d7ce86fe1c935bbba84a5104b493796e3",
+      "sha256": "8c03e74774bc04757b63562f462a3d11111ed8308e8415b77a74b8ec419a3672",
+      "size": 9759,
+      "repo_path": "bios/Other/mame/hash/apfm1000.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/apple2_flop_clcracked.xml",
+      "sha1": "aea343bffa28aa4c3b4dc58d28c5a757256add1e",
+      "sha256": "a029e7e7dc36308f42dc693df464392be59ef3acd616c3a0c6be865f05964758",
+      "size": 2899755,
+      "repo_path": "bios/Other/mame/hash/apple2_flop_clcracked.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/apple2_flop_misc.xml",
+      "sha1": "d9eab8a0481058673971cf4e9750f70b2e521f60",
+      "sha256": "8da441b01de1d2fc2b3230c2e57bf0ee3032966c0a4999fce219255e6f81ef13",
+      "size": 308001,
+      "repo_path": "bios/Other/mame/hash/apple2_flop_misc.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/apple2_flop_orig.xml",
+      "sha1": "a0cee4e27c80ce45c3dc3aa9cd2c7dc85cc82293",
+      "sha256": "2b64e363497eb3353f3d4c110550a9aa9cf12ccd5fae70143e94fd234efb302c",
+      "size": 2077439,
+      "repo_path": "bios/Other/mame/hash/apple2_flop_orig.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/apple2gs_flop_clcracked.xml",
+      "sha1": "18cddb95e68a0d84ed3f47b9be1c8e481ade7155",
+      "sha256": "4f15e6567abd8a2d7e8be7b27e52ae3aa96c4ea33dab6adfd71bb69c6e37d464",
+      "size": 162549,
+      "repo_path": "bios/Other/mame/hash/apple2gs_flop_clcracked.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/apple2gs_flop_misc.xml",
+      "sha1": "bb2bea1c669877b987b080ff016502f4073c4f5a",
+      "sha256": "6516446961503c4ff7f6a9b78eef76241d55f552ad3c8eec1f0c38feddac76b7",
+      "size": 296955,
+      "repo_path": "bios/Other/mame/hash/apple2gs_flop_misc.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/apple2gs_flop_orig.xml",
+      "sha1": "ff353ecda02e5c2ebfa0edb4765943799fda3e1b",
+      "sha256": "acfc26e4e6c0e7f17af89e4d2f98b58df1c10d9847c6e24ebe21692e63bef139",
+      "size": 234778,
+      "repo_path": "bios/Other/mame/hash/apple2gs_flop_orig.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/archimedes.xml",
+      "sha1": "1e2aaed486974f3c008065ad93ca5c0a90863bfa",
+      "sha256": "7b215cbc57f967c49ea7bb1205ee303c632bfca1409c7c36b9fb0b11d23dfd27",
+      "size": 271056,
+      "repo_path": "bios/Other/mame/hash/archimedes.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/archimedes_hdd.xml",
+      "sha1": "8f8498d993e6a5011708ae8c0c47626d1e984153",
+      "sha256": "48dd296ef0085029615bff662e6d51a7b4e902940d3f29fe3ad07867257bcb69",
+      "size": 549,
+      "repo_path": "bios/Other/mame/hash/archimedes_hdd.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/archimedes_rom.xml",
+      "sha1": "44a59d13a23eeea6a514bc1f4ce8445052863c16",
+      "sha256": "5a3a7d8892fe5f30d720b5d17decf446228b78175dd1414ea5c75b560b536d71",
+      "size": 2409,
+      "repo_path": "bios/Other/mame/hash/archimedes_rom.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/astrocde.xml",
+      "sha1": "55095d44ff509be5502e3a9ca6ec20e32880de8c",
+      "sha256": "3bd514aecc3bacb5ee538b6b6c6e908d4d82f2bfd8443dcf6bfa3f64db1ec0a9",
+      "size": 56504,
+      "repo_path": "bios/Other/mame/hash/astrocde.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/bbc_cass.xml",
+      "sha1": "13326f70d33f8b6c6257b43041f668a876b12f01",
+      "sha256": "d5319cfbb48e518cd2d9388482f2368700bd42217a791c2df52c25d50ba46997",
+      "size": 736181,
+      "repo_path": "bios/Other/mame/hash/bbc_cass.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/bbc_flop_32016.xml",
+      "sha1": "df4c4c458d64099f57ebe815912eb182a7c7666f",
+      "sha256": "42ce2fa0f994461ac16de863f7796d72573ac11f3ada99352b00ac88bc60f3ba",
+      "size": 8282,
+      "repo_path": "bios/Other/mame/hash/bbc_flop_32016.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/bbc_flop_6502.xml",
+      "sha1": "0f6665ac53257138d6cb4e540b9b68e1ae2ca0a0",
+      "sha256": "a7e32d123b53f4d58e58e7192504cb99344915c208dc168119e4142ec5bf0712",
+      "size": 6281,
+      "repo_path": "bios/Other/mame/hash/bbc_flop_6502.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/bbc_flop_68000.xml",
+      "sha1": "7042cba37006e482aaa1bd8ecd6cd0c05d49d38d",
+      "sha256": "6c69ad5b70ef44618efa6cf9afc5aa0f7d3bd50132b5f98a4d2d40458ba31dba",
+      "size": 1770,
+      "repo_path": "bios/Other/mame/hash/bbc_flop_68000.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/bbc_flop_80186.xml",
+      "sha1": "642c2544bf5188b896e5339d5a7f71a734bf2eea",
+      "sha256": "75056a08176c09166e9aa6cef49144dd8d09b1cd62087d99c08bce3b5587a28d",
+      "size": 7946,
+      "repo_path": "bios/Other/mame/hash/bbc_flop_80186.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/bbc_flop_arm.xml",
+      "sha1": "c9116468779d1d9765afb7626616e9337e175a68",
+      "sha256": "090e4f382719d19b08d0c7dad8893ab6a502dfd1a30ddaf966f747e98c3efcab",
+      "size": 11609,
+      "repo_path": "bios/Other/mame/hash/bbc_flop_arm.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/bbc_flop_hybrid.xml",
+      "sha1": "0a8fdb7f8a9b2e5aacf88e76b554d999e388f197",
+      "sha256": "514fdd5afe51a432ebdc7b40fcdd79bffbeae160cfca07c9e01ace3b37686852",
+      "size": 40742,
+      "repo_path": "bios/Other/mame/hash/bbc_flop_hybrid.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/bbc_flop_torch.xml",
+      "sha1": "a6e0460b80310babc1258ccbdf6eb4501ecb2b18",
+      "sha256": "ce6b478d939d074f06176ac32c4520f63321c5bc9c91e657e3b8e011205325e6",
+      "size": 19139,
+      "repo_path": "bios/Other/mame/hash/bbc_flop_torch.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/bbc_flop_z80.xml",
+      "sha1": "0ba1bb3d57ad8c8af1ca2439f454b63b3a69009c",
+      "sha256": "a3c623a5d29933af4c1417fa550184021e33291ad0e7df14551594e400ec68b8",
+      "size": 7743,
+      "repo_path": "bios/Other/mame/hash/bbc_flop_z80.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/bbc_hdd.xml",
+      "sha1": "a761b0c84e15a94cf68cf7a8a05d5e42e98a4cae",
+      "sha256": "a7f9042d188946583926349bbca2fdea3a9df847f6a62dc96fca3ebe105a1c9f",
+      "size": 2639,
+      "repo_path": "bios/Other/mame/hash/bbc_hdd.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/bbc_rom.xml",
+      "sha1": "26a0bad5f427ad5acd24961e84a77b9bb01a9175",
+      "sha256": "cf5d7b07e4b865b10b8018766d964be1bad7231bb29c2c72e31a1ab251b69ceb",
+      "size": 502371,
+      "repo_path": "bios/Other/mame/hash/bbc_rom.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/bbc_vsm.xml",
+      "sha1": "d2d1991ec0695a9af4b15139e3ef4f6758ddca0d",
+      "sha256": "b7b43510c1ebe07d79584589997756a260940156038dac317760d278b95ca020",
+      "size": 2571,
+      "repo_path": "bios/Other/mame/hash/bbc_vsm.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/bbcb_flop.xml",
+      "sha1": "6790486b7e30e243e0f8605e7bd8d1d456c2fa96",
+      "sha256": "83f676df203854c4cae6427f07602cb2a2310b553754f0d18cc162ad2f734b9c",
+      "size": 124846,
+      "repo_path": "bios/Other/mame/hash/bbcb_flop.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/bbcb_flop_orig.xml",
+      "sha1": "7aa5e8309d3823875226bf424a5923f433c23d18",
+      "sha256": "b00e30d4b0d6db45c40d6dc81055470d7fdfa7a546eb9aac869554cdb284bdff",
+      "size": 158528,
+      "repo_path": "bios/Other/mame/hash/bbcb_flop_orig.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/bbcb_flop_us.xml",
+      "sha1": "890926793ac5340eec1146333ed24ea443b2eb39",
+      "sha256": "722b3c08f2316f5db3af201b744c9a6bb32cb46c3bffd14c0105e8f8b58a2766",
+      "size": 743,
+      "repo_path": "bios/Other/mame/hash/bbcb_flop_us.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/bbcm_cart.xml",
+      "sha1": "385301c4b4a448270eec2a53491a29c64431d481",
+      "sha256": "6206e58d3d9d17bba6a7554b986966be139da4e76eb3c622315202c99e1b22ee",
+      "size": 11115,
+      "repo_path": "bios/Other/mame/hash/bbcm_cart.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/bbcm_flop.xml",
+      "sha1": "f37902a2adca066e249edf9fcc78e924452bf8e9",
+      "sha256": "189b9d7c9d5a14e335d5b8f5513b81e698ca0ad09b53ce92d61164632007668a",
+      "size": 5301,
+      "repo_path": "bios/Other/mame/hash/bbcm_flop.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/bbcmc_flop.xml",
+      "sha1": "59a6b71e33f0809808d5159bfe796e94397288b9",
+      "sha256": "0f5cc148600fcfbfbdcedc5d4bae04528a267d073b210fa776061a2cade5c801",
+      "size": 17528,
+      "repo_path": "bios/Other/mame/hash/bbcmc_flop.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/bk0010.xml",
+      "sha1": "3af80662322728522a7e0a5a1c33e67c8224eb28",
+      "sha256": "348b642b900707196ad42f6612089af4508e07b5c9d19033d3316e0bfb3912d4",
+      "size": 49493,
+      "repo_path": "bios/Other/mame/hash/bk0010.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/camplynx_cass.xml",
+      "sha1": "4f458181e3b733530bbbdad3cc219a9d0644f8fc",
+      "sha256": "54f1dffd648c0afd5f2cead29f9fe9ab5687f402a998df083e251c026f9501cf",
+      "size": 37656,
+      "repo_path": "bios/Other/mame/hash/camplynx_cass.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/camplynx_flop.xml",
+      "sha1": "b8fe55f812c377fcac6141b8b0c833b1b7a07bb7",
+      "sha256": "b66cc7f70fd192c3d0875bd3ebf5c472365ca6685167d3e13787c009a3367d99",
+      "size": 13892,
+      "repo_path": "bios/Other/mame/hash/camplynx_flop.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/casloopy.xml",
+      "sha1": "ebb045cc8cecb8be6fdd4e3e47db9cbc8f0b9721",
+      "sha256": "a7ae4baa5d930f6cbf4114da56871c361af003cb986af517be556a78cc97cab2",
+      "size": 7085,
+      "repo_path": "bios/Other/mame/hash/casloopy.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/cdi.xml",
+      "sha1": "3be5701114684f66f410a13ea63a3a4e1f158c4a",
+      "sha256": "0a83d61e5b6f5a2a2509aa9f75521e8504ffa1363943a93df9c93039ab28186d",
+      "size": 541705,
+      "repo_path": "bios/Other/mame/hash/cdi.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/coco_cart.xml",
+      "sha1": "35c6819f1307b933021ce12970d1ede9f7b36135",
+      "sha256": "59e203dea371afa3631123d1a0309d545c5cc7ea77a0c4d502e9070f61f039b0",
+      "size": 57803,
+      "repo_path": "bios/Other/mame/hash/coco_cart.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/coco_flop.xml",
+      "sha1": "644c95725d7da64fe61c151f6e98949c66561cff",
+      "sha256": "e7502ab0467121a6cd7e44ef9962a656f8bd2ef6d7c1965deaa8f92092ca305a",
+      "size": 81301,
+      "repo_path": "bios/Other/mame/hash/coco_flop.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/coleco.xml",
+      "sha1": "6ca4fc7b30be55d9eedb78b78925e766bc294361",
+      "sha256": "2e026cf8ea73914f56fb2479859ad64e49286b74db83377818dd3bc88416d1f4",
+      "size": 153128,
+      "repo_path": "bios/Other/mame/hash/coleco.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/coleco_homebrew.xml",
+      "sha1": "a673af9a2e00785a3b491317fd7613fb003357cc",
+      "sha256": "1577ffb13f0c4bbb14716cc74ba9debf228200015c97f4680e5513b80a14fbe1",
+      "size": 89593,
+      "repo_path": "bios/Other/mame/hash/coleco_homebrew.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/crvision.xml",
+      "sha1": "6f3a43f520e1666d4a598e8621b91081337e03a2",
+      "sha256": "f53ba1c21f95e061ba03e524976167264250f6cf0bea59aac7998f53c0111867",
+      "size": 29061,
+      "repo_path": "bios/Other/mame/hash/crvision.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/dgnalpha_flop.xml",
+      "sha1": "104a0081bdac938daa4afee353a1c2ad47ae3702",
+      "sha256": "fce60dc7654958dbd4efbacf358b4d18346d11f35ee1aefdd4337fc7043a7c44",
+      "size": 6812,
+      "repo_path": "bios/Other/mame/hash/dgnalpha_flop.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/dragon_cart.xml",
+      "sha1": "b558546fb4c28c17e064515ae26d237c8cada885",
+      "sha256": "f46e13bb3c1babb6a9cced090128647e3e666dabed34c7ee2342d7f62e9d2a43",
+      "size": 19887,
+      "repo_path": "bios/Other/mame/hash/dragon_cart.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/dragon_cass.xml",
+      "sha1": "0a7c81779b4eefa9432a452bd1fc53effbe42011",
+      "sha256": "f564489665764b23775cb9ba373b1fb399bdeec7857d7e39a41f61957559ea13",
+      "size": 452453,
+      "repo_path": "bios/Other/mame/hash/dragon_cass.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/dragon_flex.xml",
+      "sha1": "4c5cebcdb9c190d1c7966a0e32e94e444eebfbcc",
+      "sha256": "dfe70bf44c56054a75c019138f478df7d700c7b31a53b32b6dde9276ba77d647",
+      "size": 11710,
+      "repo_path": "bios/Other/mame/hash/dragon_flex.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/dragon_flop.xml",
+      "sha1": "0b72fa74b0a9a874180d60e5e110beda4d638259",
+      "sha256": "8e310430c2460e18b3b70dfda42e00d77d3d1cc1a9989205c571aa64911a210f",
+      "size": 78876,
+      "repo_path": "bios/Other/mame/hash/dragon_flop.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/dragon_os9.xml",
+      "sha1": "ef0cffe7a7fa9821f76073f97da58932eae412d5",
+      "sha256": "b024a5aa19dfb0e1c9d45551dbdce7b5c229160d8f4dafcfc91534c401134f1f",
+      "size": 7566,
+      "repo_path": "bios/Other/mame/hash/dragon_os9.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/e01_flop.xml",
+      "sha1": "38383747d4d286ab2a61bef1733b5f68776ebb0f",
+      "sha256": "45ef2a554bcf87bc3e91e56ef58ecbc9223ce70b8bc80a78a4b230da0e235690",
+      "size": 972,
+      "repo_path": "bios/Other/mame/hash/e01_flop.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/electron_cart.xml",
+      "sha1": "ee322936f29534da4719aadc0bf2db92e90ce3ec",
+      "sha256": "5caa2242045ce6933709e50af7eaeccf629514391ce0dd690c6588d30657cadd",
+      "size": 22690,
+      "repo_path": "bios/Other/mame/hash/electron_cart.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/electron_cass.xml",
+      "sha1": "3c9c0a0e867e0b282667b4d6f39b3415db99e92b",
+      "sha256": "7ad50f44558a6d559167dada0f332c04b104a0008a896289531259af2d0d806e",
+      "size": 270749,
+      "repo_path": "bios/Other/mame/hash/electron_cass.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/electron_flop.xml",
+      "sha1": "4a17008e80c205645180f2a4d8cd71523b5d0cee",
+      "sha256": "327a96e64bebceba9de916460f76a195dc86be07b1d007556ccbb8efbeb7f0a0",
+      "size": 105636,
+      "repo_path": "bios/Other/mame/hash/electron_flop.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/electron_rom.xml",
+      "sha1": "2765d899808597a3350c7ff36e6c1238b061ef73",
+      "sha256": "4fc4c9709ff18faf20802a4576b127b44775ed5aa64bc2d886349139a6418b81",
+      "size": 36576,
+      "repo_path": "bios/Other/mame/hash/electron_rom.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/ep64_cart.xml",
+      "sha1": "49fa675ab297af0a0d93c73a24bb39c8595b88fd",
+      "sha256": "c907cca84040b03dd39f7429598d966e5cd1cb1228c282605dc38533b573d8b3",
+      "size": 6240,
+      "repo_path": "bios/Other/mame/hash/ep64_cart.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/ep64_cass.xml",
+      "sha1": "62d93feca4b03cace7449ca7e7b165d026106942",
+      "sha256": "9a540f4a62c062bc25fecbfaff0532822703c7f61ad71004ab0ef6720d0e17af",
+      "size": 1272,
+      "repo_path": "bios/Other/mame/hash/ep64_cass.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/ep64_flop.xml",
+      "sha1": "adf9fd30932af0c85ca6b4a0e2f1a62cc1e010e3",
+      "sha256": "63ba3aef25b3328eaeea8d805c32ca45ae30a28a263b2a4357788187b0712ab1",
+      "size": 73009,
+      "repo_path": "bios/Other/mame/hash/ep64_flop.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/fm77av.xml",
+      "sha1": "8bae8312472270ebba5162905453df5c4ac66759",
+      "sha256": "e38573e412e2cb6539e1c6d3a55bcb53910eb64e8de086a4b2ce11829331f363",
+      "size": 56002,
+      "repo_path": "bios/Other/mame/hash/fm77av.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/fm7_cass.xml",
+      "sha1": "c161d8ecb4cd1b8d880642512767ebc4e8f0b54c",
+      "sha256": "4e55068fd4ab6212ba4e5e2dac5378d7daa01d047dec1fccde7f497dcfe60f47",
+      "size": 84996,
+      "repo_path": "bios/Other/mame/hash/fm7_cass.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/fm7_disk.xml",
+      "sha1": "2c9418731916b4b1f179ff77ee5339e834672b16",
+      "sha256": "42652fdb670b031f3bec0c57eed3cbc052bb212de52d401c32a840bcdba90861",
+      "size": 94601,
+      "repo_path": "bios/Other/mame/hash/fm7_disk.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/fm8_cass.xml",
+      "sha1": "6dc2c01d428d9871770b068b812eea0039c0b0e3",
+      "sha256": "9d93889b2491b6d664ef25d52b09c82ddf4cf1bea231f35201f3a773ffcd1fc7",
+      "size": 13963,
+      "repo_path": "bios/Other/mame/hash/fm8_cass.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/gamate.xml",
+      "sha1": "91db9aaf4bbbc0b9deb0826270b5097f52d65687",
+      "sha256": "74f4efcd49c312418fd1e080688b36464921dfd8930d9dbe57b33f65c71ebee1",
+      "size": 27468,
+      "repo_path": "bios/Other/mame/hash/gamate.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/gamecom.xml",
+      "sha1": "b2a70ebc23ed5012d9e9b68eead7a2ba2416978e",
+      "sha256": "fdef269da4ba050c66d90ab14039a98e307d53a03aaa2a0a9e0aaf76d615c94d",
+      "size": 10648,
+      "repo_path": "bios/Other/mame/hash/gamecom.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/gamepock.xml",
+      "sha1": "da8a4f625a966350d165c648314378eea47ac71e",
+      "sha256": "91e5c8ae6bf1df5bf921861a3af7fcbfd0a3ca630bfe55e9d933f572583acdbf",
+      "size": 2708,
+      "repo_path": "bios/Other/mame/hash/gamepock.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/gmaster.xml",
+      "sha1": "fbbb36f305198babd53e8aa0dc9fd3ce7906b52f",
+      "sha256": "2ae8c1f8dd96dbecc4478860d2d470aa55495fe1700104870e795ded38345c7b",
+      "size": 7077,
+      "repo_path": "bios/Other/mame/hash/gmaster.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/gp32.xml",
+      "sha1": "fbc9a2eafc548ffbcd8443b819a49282422c5dcd",
+      "sha256": "2bea066a75a209b3efd4212f5dd31311ef040d70e5e5b97a981ebed5dc84e357",
+      "size": 20073,
+      "repo_path": "bios/Other/mame/hash/gp32.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/ibm5150.xml",
+      "sha1": "0b5ca1da47d90bc64a612478e8487885a622c753",
+      "sha256": "851cdf45cbb5e71f7595761a4991ebd87e9e558c62d46a53a71b239ba521de84",
+      "size": 824234,
+      "repo_path": "bios/Other/mame/hash/ibm5150.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/laser2001_cart.xml",
+      "sha1": "8fc1c7443d544136ed44fefa52f18d8e37f29ca2",
+      "sha256": "c32da473fca80f2a9860faffc57288d4175fa643ae671d98b5d96c55bc47d51f",
+      "size": 729,
+      "repo_path": "bios/Other/mame/hash/laser2001_cart.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/laser2001_flop.xml",
+      "sha1": "49bdb74c08aeb2e2c16f263c9ce09e0a6dc65b50",
+      "sha256": "9aca7cbd44e620fedd82486d534b49ddbb80d7a356a59352dd7673781bdfebd8",
+      "size": 587,
+      "repo_path": "bios/Other/mame/hash/laser2001_flop.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/mac_cdrom.xml",
+      "sha1": "da356c9ea2eb4aa0d434e2710e8a5b7758f6b471",
+      "sha256": "3125730817dd15346ed6b86ea5cf9d669e72bc42b79b1cb0cce7e3682ae8d960",
+      "size": 9773,
+      "repo_path": "bios/Other/mame/hash/mac_cdrom.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/mac_flop.xml",
+      "sha1": "18c01ae591502484d717cd242f5f89274d440d30",
+      "sha256": "bcd3dd71ec6f0217a730666075358d0afc79878975597b4b1aeeca2dfab276df",
+      "size": 9064,
+      "repo_path": "bios/Other/mame/hash/mac_flop.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/mac_flop_clcracked.xml",
+      "sha1": "f53a2effa689a17945995963abea57aef889e83e",
+      "sha256": "2344baaad00c3ac6b03d2b9795452844135d40067eed1245995e113a9385b33e",
+      "size": 131047,
+      "repo_path": "bios/Other/mame/hash/mac_flop_clcracked.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/mac_flop_orig.xml",
+      "sha1": "86490fc5f36b7a572f4bdf0946426492b23b9601",
+      "sha256": "7d007699ded7f41d42adba52eecab7f4224beeb410b2d60d228c88af6612b419",
+      "size": 199535,
+      "repo_path": "bios/Other/mame/hash/mac_flop_orig.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/mac_hdd.xml",
+      "sha1": "5e08d4eb6702de1590558667127625523ffd9189",
+      "sha256": "d456afb7833d1dba49db564340527710f94ab9e02daf2e01ed60b3369286cedd",
+      "size": 3737,
+      "repo_path": "bios/Other/mame/hash/mac_hdd.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/mac_hdflop.xml",
+      "sha1": "d977eca69ec4f6765c55cf5174e5a1862de93808",
+      "sha256": "5798c6e6434220d500c16d8210337e3cacb7336c630b913620bd7478167e2d31",
+      "size": 329807,
+      "repo_path": "bios/Other/mame/hash/mac_hdflop.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/mc10.xml",
+      "sha1": "d4a01a75deeb4c9126eea86864e462f2fd88963c",
+      "sha256": "6fe42244d1a9510e3a80e745ab40a2d59da5d0b27b29afd0dff27340e75bedf2",
+      "size": 52188,
+      "repo_path": "bios/Other/mame/hash/mc10.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/megatech.xml",
+      "sha1": "3409f16fccf5e37d5bda6bc5f61db6c01c98d3fa",
+      "sha256": "b924bd7b650cc6fb5f736fd6f9e76ae079eda9c96d22aad73aaa2cff88f7ca0d",
+      "size": 31502,
+      "repo_path": "bios/Other/mame/hash/megatech.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/neogeo.xml",
+      "sha1": "9db1d49f2e64da0e3880b6654305da8b0108d3a3",
+      "sha256": "f2b78a6a5f64e1fa146298878e83e0ef4b472a4dae85437708fd2d8768082326",
+      "size": 861636,
+      "repo_path": "bios/Other/mame/hash/neogeo.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/pc8001_flop.xml",
+      "sha1": "3abab1b5f5225a2d4e660efa435635e1130433df",
+      "sha256": "15baf8edd9d9e4a23505cd1f3e817d17f6f220b99d34df1cdd9f4573aa0a33c7",
+      "size": 131233,
+      "repo_path": "bios/Other/mame/hash/pc8001_flop.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/pc8001mk2_flop.xml",
+      "sha1": "640b5c9992d4c123a99f84a26d37fa6abc5a4fc0",
+      "sha256": "a9bb08822756014f0377ced51ca7afc8a76366d9568881b9be54e7083882a3d1",
+      "size": 10373,
+      "repo_path": "bios/Other/mame/hash/pc8001mk2_flop.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/pc8001mk2sr_flop.xml",
+      "sha1": "d37f0fac53cd9f14c320e41db1ed872a79a7dd97",
+      "sha256": "c92a467def7493b6453b63fb2f29fa5eafd0b23b3120f66167b6a21a2df7d266",
+      "size": 7003,
+      "repo_path": "bios/Other/mame/hash/pc8001mk2sr_flop.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/pcw.xml",
+      "sha1": "d212d60fc23abb3ce417085780d2ca0fab155a83",
+      "sha256": "8c2e3871e37edb7d9a14c524ddb4273eb5caba9b7af207ada9c673221c148010",
+      "size": 74002,
+      "repo_path": "bios/Other/mame/hash/pcw.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/pegasus_cart.xml",
+      "sha1": "e851df95788d1853a694da59b88dcf6458dc4a4c",
+      "sha256": "0487e1316f53fe4555e9bdcd98052a89beba2ad96ecdf564ee235d51f41ae6eb",
+      "size": 8532,
+      "repo_path": "bios/Other/mame/hash/pegasus_cart.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/photo_cd.xml",
+      "sha1": "64a081198c3286f3dcecf83417c99a57f9736f8f",
+      "sha256": "415ff74aaffce31b8ce29861c0535e5bb7ea6969dd0a227f04f5e0408e6df26b",
+      "size": 1400,
+      "repo_path": "bios/Other/mame/hash/photo_cd.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/pro128s_flop.xml",
+      "sha1": "38813ca4103a694b9d1953d58df53ad9b86f4ce9",
+      "sha256": "facea42c4c08ae6ef45f3dc0add1d27ef52c30ee26aa800e530b807c0e4a7561",
+      "size": 14348,
+      "repo_path": "bios/Other/mame/hash/pro128s_flop.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/pv2000.xml",
+      "sha1": "9b7a8ef86d583a65571aa3d47136836f5b39897d",
+      "sha256": "f96d28924d5607634934a5eb04dcb2292cdc6a50bf866a101ae073899557dcbd",
+      "size": 11468,
+      "repo_path": "bios/Other/mame/hash/pv2000.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/rx78_cart.xml",
+      "sha1": "3f2afe73a973600783925d71d01d9f88b3b3cc9c",
+      "sha256": "0129a427c5f93d318842a14f0e381597b23dbb669a64ff35881cf26e89210360",
+      "size": 20435,
+      "repo_path": "bios/Other/mame/hash/rx78_cart.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/rx78_cass.xml",
+      "sha1": "12d74a218e9fcbc385e14dd6d127efe6880f8607",
+      "sha256": "8beaf2e546a307d3f2b03546a0e36750efdc3f18a33f08419ef0c405743a723a",
+      "size": 1469,
+      "repo_path": "bios/Other/mame/hash/rx78_cass.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/scv.xml",
+      "sha1": "147cfee3971d0b82fbc7974256cd1d1de7335cc8",
+      "sha256": "d90ddcd90cc57009806e6cbf3ea60c75f4a5743373d7738217e21b84665b5a44",
+      "size": 15177,
+      "repo_path": "bios/Other/mame/hash/scv.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/sega_beena_cart.xml",
+      "sha1": "b4c7d1159ff576411c78e71e33f6d1cb2229331f",
+      "sha256": "95592b15844b9f261f90a2a78f35fab1ccaa456fb26706a665c20fd33a892391",
+      "size": 210730,
+      "repo_path": "bios/Other/mame/hash/sega_beena_cart.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/segaai.xml",
+      "sha1": "13514df769bc93ad3694f20b7b41ff3de7e1d178",
+      "sha256": "07fefa73313258cf33129947215dd305c69d06746e7f92d1eb17a5b78a2a5625",
+      "size": 34327,
+      "repo_path": "bios/Other/mame/hash/segaai.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/socrates.xml",
+      "sha1": "f1f7594cb700755335d9b50f11982c871df99a01",
+      "sha256": "fcabc90101fe382278a062effa92d378471dee182bd19dca1366f70a9e3e093d",
+      "size": 4963,
+      "repo_path": "bios/Other/mame/hash/socrates.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/stv.xml",
+      "sha1": "cafb2ce4b7f597189ccaaded95d749a7e5a92a21",
+      "sha256": "77208bab8698b69428601966420a8959f57a189a2ba9166ed394cc74563e0126",
+      "size": 89130,
+      "repo_path": "bios/Other/mame/hash/stv.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/ti99_cart.xml",
+      "sha1": "1d01689b8d55dd10a2962acad5f60362e138650e",
+      "sha256": "efa7a94d47417f02c5f4086c0840dfa932773121609cf431e1efae54ed7dbb57",
+      "size": 229953,
+      "repo_path": "bios/Other/mame/hash/ti99_cart.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/trs80_cass.xml",
+      "sha1": "3bbe1e18d83b30fd9ce820edf9d175e91c8adb3b",
+      "sha256": "8700cce2167d1df18fea0ba2932039a08164356edf190d775a376f00e445adbb",
+      "size": 32516,
+      "repo_path": "bios/Other/mame/hash/trs80_cass.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/trs80_flop.xml",
+      "sha1": "b7ef88d726e91dc583da14f1245c6384393d1dd0",
+      "sha256": "c6ca801643db2d2c0ab4253e017c92e2465965a98505644d9487a45167189990",
+      "size": 2661,
+      "repo_path": "bios/Other/mame/hash/trs80_flop.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/trs80_quik.xml",
+      "sha1": "c398975f9487a07eb82e42642e1cfe036cc46d6d",
+      "sha256": "b7087ce74fe9ade23818523125bbd34df10e2a0cbd7d225f90f44cbf0f60e622",
+      "size": 40444,
+      "repo_path": "bios/Other/mame/hash/trs80_quik.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/tutor.xml",
+      "sha1": "b2f507e7b37c9145fa43a7cf4ff9923acfee0a41",
+      "sha256": "db39d0d24812c8b74342c689d476c8f7cc730e08eebc3b51becefcea5342e363",
+      "size": 17761,
+      "repo_path": "bios/Other/mame/hash/tutor.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/vectrex.xml",
+      "sha1": "12e3c7a758f43065d68e2e523392dfa10f2647eb",
+      "sha256": "ef694846a26b056716caf97eb433548513d4db876475e0c994c762b753b779d1",
+      "size": 34697,
+      "repo_path": "bios/Other/mame/hash/vectrex.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/vg5k.xml",
+      "sha1": "06f7b1ce9b8f2935b3882c7a6d01aff04923a178",
+      "sha256": "ccf4ab0172e94afa3bf02d1ea53dc53edbdd7136bc251587a94bf04e0ff7e89f",
+      "size": 30437,
+      "repo_path": "bios/Other/mame/hash/vg5k.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/vis.xml",
+      "sha1": "80cdc1b32b4cca11d9269d2d3ffaa3beb0c0c702",
+      "sha256": "4d45178d55e56e662c2ae691bcef2bb9a63a0996708e64752df84df6a62b4f8a",
+      "size": 61330,
+      "repo_path": "bios/Other/mame/hash/vis.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/vsmile_cart.xml",
+      "sha1": "20146a46dd905dd3ca4833c8c65d86256b2280a0",
+      "sha256": "d7b5f9db5ddc6705c1d8b8db53988568c4544ba6c77d9700840e5f2538162af8",
+      "size": 284343,
+      "repo_path": "bios/Other/mame/hash/vsmile_cart.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/vsmilem_cart.xml",
+      "sha1": "1419190f1741f1669882160c7cc4ab6dd072d534",
+      "sha256": "27d279d356a2e363fa30b454a277e06b12b3024fa0bc8816c4046ec432999da2",
+      "size": 84670,
+      "repo_path": "bios/Other/mame/hash/vsmilem_cart.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/vz_cass.xml",
+      "sha1": "dd2d8d3c8cf5179e2075db8f93a7f8faf8c2d545",
+      "sha256": "2007f521c66b0f82a306a9d83476ca67d486786f884ac51eaeb373990864bfd3",
+      "size": 8941,
+      "repo_path": "bios/Other/mame/hash/vz_cass.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/vz_snap.xml",
+      "sha1": "0f72fe81ab12985c86765d21446056a97af71b22",
+      "sha256": "a11b340ef467f1b3ec775a636a04cf6f25be71c549dd12414c26ecbb1117eb68",
+      "size": 63700,
+      "repo_path": "bios/Other/mame/hash/vz_snap.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
+      ]
+    },
+    {
+      "dest": "mame/hash/xegs.xml",
+      "sha1": "d4c29b43cbacc21ae391f33e8df897470689720f",
+      "sha256": "d2eb7500968dc2f2c6613a37a236c075a696e3e10be2cfe0058705d19fff800d",
+      "size": 23925,
+      "repo_path": "bios/Other/mame/hash/xegs.xml",
+      "cores": [
+        "mamearcade",
+        "mamemess",
+        "mame"
+      ],
+      "systems": [
+        "philips-cdi"
       ]
     },
     {
@@ -79091,7 +78462,7 @@
       "sha1": "77339a6db2593aadc638bed77b8e9bed5d9d87e3",
       "sha256": "fac1a4367c7fc67bdfab2ecfb2c59e37283b564e04bffcdb6717478a6c613afa",
       "size": 8192,
-      "repo_path": "bios/Microsoft/MSX/SEGA - SF-7000/sf7000.rom",
+      "repo_path": "bios/Sega/SF-7000/sf7000.rom",
       "cores": [
         "bluemsx"
       ]
@@ -85980,7 +85351,8 @@
         "mame"
       ],
       "systems": [
-        "elektronika-bk"
+        "elektronika-bk",
+        "enterprise-64-128"
       ]
     },
     {
@@ -86788,14 +86160,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_acorn1770.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
       ]
     },
     {
@@ -86806,14 +86170,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_acorn8271.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
       ]
     },
     {
@@ -86824,14 +86180,6 @@
       "repo_path": "bios/Arcade/Arcade/bbc_ams3.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
       ]
     },
     {
@@ -86842,14 +86190,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_ariesb20.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
       ]
     },
     {
@@ -86860,14 +86200,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_ariesb32.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
       ]
     },
     {
@@ -86918,14 +86250,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_cisco.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
       ]
     },
     {
@@ -86936,14 +86260,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_cms6502.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
       ]
     },
     {
@@ -86954,14 +86270,6 @@
       "repo_path": "bios/Arcade/Arcade/bbc_cumana1.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
       ]
     },
     {
@@ -86972,14 +86280,6 @@
       "repo_path": "bios/Arcade/Arcade/bbc_cumana2.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
       ]
     },
     {
@@ -86990,14 +86290,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_cumana68k.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
       ]
     },
     {
@@ -87008,14 +86300,6 @@
       "repo_path": "bios/Arcade/Arcade/bbc_cv1797.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
       ]
     },
     {
@@ -87064,14 +86348,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_integrab.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
       ]
     },
     {
@@ -87082,14 +86358,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_kenda.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
       ]
     },
     {
@@ -87110,14 +86378,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_memexb20.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
       ]
     },
     {
@@ -87158,14 +86418,6 @@
       "repo_path": "bios/Arcade/Arcade/bbc_opus1770.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
       ]
     },
     {
@@ -87176,14 +86428,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_opus2791.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
       ]
     },
     {
@@ -87194,14 +86438,6 @@
       "repo_path": "bios/Arcade/Arcade/bbc_opus2793.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
       ]
     },
     {
@@ -87222,14 +86458,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_opus8272.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
       ]
     },
     {
@@ -87280,14 +86508,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_raven20.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
       ]
     },
     {
@@ -87298,14 +86518,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_stl1770_1.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
       ]
     },
     {
@@ -87316,14 +86528,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_stl1770_2.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
       ]
     },
     {
@@ -87334,14 +86538,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_stl2m128.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
       ]
     },
     {
@@ -87352,14 +86548,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_stl4m32.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
       ]
     },
     {
@@ -87370,14 +86558,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_stldfdc_1.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
       ]
     },
     {
@@ -87388,14 +86568,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_stlswr16.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
       ]
     },
     {
@@ -87406,14 +86578,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_stlswr16.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
       ]
     },
     {
@@ -87424,14 +86588,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_stlswr16.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
       ]
     },
     {
@@ -87442,14 +86598,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_stlswr16.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
       ]
     },
     {
@@ -87460,14 +86608,6 @@
       "repo_path": "bios/Arcade/MAME/voicebox.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
       ]
     },
     {
@@ -87478,14 +86618,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_tube_16032.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
       ]
     },
     {
@@ -87536,14 +86668,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_tube_6502p.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
       ]
     },
     {
@@ -87614,14 +86738,6 @@
       "repo_path": "bios/Arcade/Arcade/bbc_tube_casper.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
       ]
     },
     {
@@ -87632,14 +86748,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_tube_cms6809.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
       ]
     },
     {
@@ -87690,14 +86798,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_tube_x25.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
       ]
     },
     {
@@ -87728,14 +86828,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_tube_zep100.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
       ]
     },
     {
@@ -87746,14 +86838,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_tube_zep100l.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
       ]
     },
     {
@@ -87774,14 +86858,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_tube_zep100w.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
       ]
     },
     {
@@ -87792,14 +86868,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_udm.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
       ]
     },
     {
@@ -87820,14 +86888,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_we32kram.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
       ]
     },
     {
@@ -87838,14 +86898,6 @@
       "repo_path": "bios/Arcade/Arcade/bbc_weddb2.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
       ]
     },
     {
@@ -87856,14 +86908,6 @@
       "repo_path": "bios/Arcade/Arcade/bbc_weddb3.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
       ]
     },
     {
@@ -89196,7 +88240,8 @@
         "mame"
       ],
       "systems": [
-        "elektronika-bk"
+        "elektronika-bk",
+        "enterprise-64-128"
       ]
     },
     {
@@ -89423,14 +88468,6 @@
       "repo_path": "bios/Arcade/MAME/cms_4080term.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
       ]
     },
     {
@@ -89643,7 +88680,8 @@
         "mame"
       ],
       "systems": [
-        "elektronika-bk"
+        "elektronika-bk",
+        "enterprise-64-128"
       ]
     },
     {
@@ -91173,7 +90211,8 @@
         "mame"
       ],
       "systems": [
-        "elektronika-bk"
+        "elektronika-bk",
+        "enterprise-64-128"
       ]
     },
     {
@@ -91186,7 +90225,8 @@
         "mame"
       ],
       "systems": [
-        "elektronika-bk"
+        "elektronika-bk",
+        "enterprise-64-128"
       ]
     },
     {
@@ -91235,7 +90275,8 @@
         "mame"
       ],
       "systems": [
-        "elektronika-bk"
+        "elektronika-bk",
+        "enterprise-64-128"
       ]
     },
     {
@@ -91464,7 +90505,8 @@
         "mame"
       ],
       "systems": [
-        "elektronika-bk"
+        "elektronika-bk",
+        "enterprise-64-128"
       ]
     },
     {
@@ -92158,7 +91200,8 @@
       ],
       "systems": [
         "apple-macintosh-ii",
-        "elektronika-bk"
+        "elektronika-bk",
+        "enterprise-64-128"
       ]
     },
     {
@@ -92244,7 +91287,8 @@
       ],
       "systems": [
         "apple-macintosh-ii",
-        "elektronika-bk"
+        "elektronika-bk",
+        "enterprise-64-128"
       ]
     },
     {
@@ -92258,7 +91302,8 @@
       ],
       "systems": [
         "apple-macintosh-ii",
-        "elektronika-bk"
+        "elektronika-bk",
+        "enterprise-64-128"
       ]
     },
     {
@@ -92272,7 +91317,8 @@
       ],
       "systems": [
         "apple-macintosh-ii",
-        "elektronika-bk"
+        "elektronika-bk",
+        "enterprise-64-128"
       ]
     },
     {
@@ -92286,7 +91332,8 @@
       ],
       "systems": [
         "apple-macintosh-ii",
-        "elektronika-bk"
+        "elektronika-bk",
+        "enterprise-64-128"
       ]
     },
     {
@@ -92300,7 +91347,8 @@
       ],
       "systems": [
         "apple-macintosh-ii",
-        "elektronika-bk"
+        "elektronika-bk",
+        "enterprise-64-128"
       ]
     },
     {
@@ -92314,7 +91362,8 @@
       ],
       "systems": [
         "apple-macintosh-ii",
-        "elektronika-bk"
+        "elektronika-bk",
+        "enterprise-64-128"
       ]
     },
     {
@@ -92638,7 +91687,8 @@
       ],
       "systems": [
         "apple-macintosh-ii",
-        "elektronika-bk"
+        "elektronika-bk",
+        "enterprise-64-128"
       ]
     },
     {
@@ -92652,7 +91702,8 @@
       ],
       "systems": [
         "apple-macintosh-ii",
-        "elektronika-bk"
+        "elektronika-bk",
+        "enterprise-64-128"
       ]
     },
     {
@@ -93939,7 +92990,8 @@
         "mame"
       ],
       "systems": [
-        "elektronika-bk"
+        "elektronika-bk",
+        "enterprise-64-128"
       ]
     },
     {
@@ -93952,7 +93004,8 @@
         "mame"
       ],
       "systems": [
-        "elektronika-bk"
+        "elektronika-bk",
+        "enterprise-64-128"
       ]
     },
     {
@@ -94557,7 +93610,8 @@
       ],
       "systems": [
         "apple-macintosh-ii",
-        "elektronika-bk"
+        "elektronika-bk",
+        "enterprise-64-128"
       ]
     },
     {
@@ -94571,7 +93625,8 @@
       ],
       "systems": [
         "apple-macintosh-ii",
-        "elektronika-bk"
+        "elektronika-bk",
+        "enterprise-64-128"
       ]
     },
     {
@@ -95556,7 +94611,8 @@
         "mame"
       ],
       "systems": [
-        "elektronika-bk"
+        "elektronika-bk",
+        "enterprise-64-128"
       ]
     },
     {
@@ -96456,7 +95512,8 @@
         "mame"
       ],
       "systems": [
-        "elektronika-bk"
+        "elektronika-bk",
+        "enterprise-64-128"
       ]
     },
     {
@@ -96524,7 +95581,8 @@
       ],
       "systems": [
         "apple-macintosh-ii",
-        "elektronika-bk"
+        "elektronika-bk",
+        "enterprise-64-128"
       ]
     },
     {
@@ -96771,7 +95829,8 @@
         "mame"
       ],
       "systems": [
-        "elektronika-bk"
+        "elektronika-bk",
+        "enterprise-64-128"
       ]
     },
     {
@@ -96856,7 +95915,8 @@
         "mame"
       ],
       "systems": [
-        "elektronika-bk"
+        "elektronika-bk",
+        "enterprise-64-128"
       ]
     },
     {
@@ -98769,7 +97829,8 @@
       ],
       "systems": [
         "apple-macintosh-ii",
-        "elektronika-bk"
+        "elektronika-bk",
+        "enterprise-64-128"
       ]
     },
     {
@@ -98783,7 +97844,8 @@
       ],
       "systems": [
         "apple-macintosh-ii",
-        "elektronika-bk"
+        "elektronika-bk",
+        "enterprise-64-128"
       ]
     },
     {
@@ -99095,7 +98157,8 @@
       ],
       "systems": [
         "apple-macintosh-ii",
-        "elektronika-bk"
+        "elektronika-bk",
+        "enterprise-64-128"
       ]
     },
     {
@@ -100821,7 +99884,8 @@
       ],
       "systems": [
         "apple-macintosh-ii",
-        "elektronika-bk"
+        "elektronika-bk",
+        "enterprise-64-128"
       ]
     },
     {
@@ -102463,7 +101527,8 @@
       ],
       "systems": [
         "apple-macintosh-ii",
-        "elektronika-bk"
+        "elektronika-bk",
+        "enterprise-64-128"
       ]
     },
     {
@@ -102497,7 +101562,8 @@
       ],
       "systems": [
         "apple-macintosh-ii",
-        "elektronika-bk"
+        "elektronika-bk",
+        "enterprise-64-128"
       ]
     },
     {

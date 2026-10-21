@@ -5,7 +5,7 @@
   "platform": "retrodeck",
   "display_name": "RetroDECK",
   "version": "1.0",
-  "generated": "2026-10-21T08:36:42Z",
+  "generated": "2026-10-21T11:20:26Z",
   "base_destination": "",
   "detect": [
     {
@@ -286,10 +286,10 @@
       "source": "bios/dc/dc_nvmem.bin"
     }
   ],
-  "total_files": 8558,
-  "total_size": 8587594071,
-  "pack_files": 8560,
-  "pack_size": 8587594071,
+  "total_files": 8559,
+  "total_size": 8588043578,
+  "pack_files": 8561,
+  "pack_size": 8588043578,
   "total_omitted": 33,
   "omitted_files": [
     {
@@ -38710,7 +38710,8 @@
             "kronos",
             "mednafen_stv",
             "yabasanshiro",
-            "yabause"
+            "yabause",
+            "ymir"
           ]
         }
       ]
@@ -38805,7 +38806,8 @@
           "repo_path": "bios/Sega/Saturn/sega_100.bin",
           "cores": [
             "yabasanshiro",
-            "yabause"
+            "yabause",
+            "ymir"
           ]
         }
       ]
@@ -99445,6 +99447,16 @@
       ]
     },
     {
+      "dest": "bios/cemu/keys.txt",
+      "sha1": "9edc52be45201ec99f6e4ceb5dc6abfc633c4eae",
+      "sha256": "c5b9ee2a14cf6a0effb3b2f0f4b93be75823da80ebf5f0ca6a0f2be8b5aa5bfd",
+      "size": 449507,
+      "repo_path": "bios/Nintendo/Wii U/keys.txt",
+      "cores": [
+        "cemu"
+      ]
+    },
+    {
       "dest": "bios/kick13.rom",
       "sha1": "90933936cce43ca9bc6bf375662c076b27e3c458",
       "sha256": "1d68ba18412501d2a4b307a0a632b94a50b839c2c7c5ff2df6de2c38b99a921f",
@@ -103878,20 +103890,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_cms6502.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "coco",
-        "dragon64",
-        "enterprise-64-128",
-        "epoch-scv",
-        "hartung-game-master",
-        "philips-cdi",
-        "tiger-game-com",
-        "triforce",
-        "vectrex",
-        "vtech-vsmile"
       ]
     },
     {
@@ -103966,20 +103964,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_tube_6502p.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "coco",
-        "dragon64",
-        "enterprise-64-128",
-        "epoch-scv",
-        "hartung-game-master",
-        "philips-cdi",
-        "tiger-game-com",
-        "triforce",
-        "vectrex",
-        "vtech-vsmile"
       ]
     },
     {
@@ -104050,20 +104034,6 @@
       "repo_path": "bios/Arcade/Arcade/bbc_tube_casper.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "coco",
-        "dragon64",
-        "enterprise-64-128",
-        "epoch-scv",
-        "hartung-game-master",
-        "philips-cdi",
-        "tiger-game-com",
-        "triforce",
-        "vectrex",
-        "vtech-vsmile"
       ]
     },
     {
@@ -104074,20 +104044,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_tube_cms6809.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "coco",
-        "dragon64",
-        "enterprise-64-128",
-        "epoch-scv",
-        "hartung-game-master",
-        "philips-cdi",
-        "tiger-game-com",
-        "triforce",
-        "vectrex",
-        "vtech-vsmile"
       ]
     },
     {
@@ -104138,20 +104094,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_tube_x25.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "coco",
-        "dragon64",
-        "enterprise-64-128",
-        "epoch-scv",
-        "hartung-game-master",
-        "philips-cdi",
-        "tiger-game-com",
-        "triforce",
-        "vectrex",
-        "vtech-vsmile"
       ]
     },
     {
@@ -104182,20 +104124,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_tube_zep100.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "coco",
-        "dragon64",
-        "enterprise-64-128",
-        "epoch-scv",
-        "hartung-game-master",
-        "philips-cdi",
-        "tiger-game-com",
-        "triforce",
-        "vectrex",
-        "vtech-vsmile"
       ]
     },
     {
@@ -104206,20 +104134,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_tube_zep100l.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "coco",
-        "dragon64",
-        "enterprise-64-128",
-        "epoch-scv",
-        "hartung-game-master",
-        "philips-cdi",
-        "tiger-game-com",
-        "triforce",
-        "vectrex",
-        "vtech-vsmile"
       ]
     },
     {
@@ -104253,20 +104167,6 @@
       "repo_path": "bios/Arcade/MAME/bbc_we32kram.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "coco",
-        "dragon64",
-        "enterprise-64-128",
-        "epoch-scv",
-        "hartung-game-master",
-        "philips-cdi",
-        "tiger-game-com",
-        "triforce",
-        "vectrex",
-        "vtech-vsmile"
       ]
     },
     {
@@ -104277,20 +104177,6 @@
       "repo_path": "bios/Arcade/Arcade/bbc_weddb2.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "coco",
-        "dragon64",
-        "enterprise-64-128",
-        "epoch-scv",
-        "hartung-game-master",
-        "philips-cdi",
-        "tiger-game-com",
-        "triforce",
-        "vectrex",
-        "vtech-vsmile"
       ]
     },
     {
@@ -104301,20 +104187,6 @@
       "repo_path": "bios/Arcade/Arcade/bbc_weddb3.zip",
       "cores": [
         "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "coco",
-        "dragon64",
-        "enterprise-64-128",
-        "epoch-scv",
-        "hartung-game-master",
-        "philips-cdi",
-        "tiger-game-com",
-        "triforce",
-        "vectrex",
-        "vtech-vsmile"
       ]
     },
     {
@@ -105088,7 +104960,8 @@
       ],
       "systems": [
         "coco",
-        "dragon64"
+        "dragon64",
+        "enterprise-64-128"
       ]
     },
     {
@@ -105295,7 +105168,8 @@
       "systems": [
         "apple-macintosh-ii",
         "coco",
-        "dragon64"
+        "dragon64",
+        "enterprise-64-128"
       ]
     },
     {
@@ -105310,7 +105184,8 @@
       "systems": [
         "apple-macintosh-ii",
         "coco",
-        "dragon64"
+        "dragon64",
+        "enterprise-64-128"
       ]
     },
     {

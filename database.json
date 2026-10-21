@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-21T08:36:42Z",
+  "generated_at": "2026-10-21T11:20:26Z",
   "total_files": 19526,
   "total_size": 16788235292,
   "bios_dir": "bios",
@@ -126758,23 +126758,6 @@
         }
       }
     },
-    "77339a6db2593aadc638bed77b8e9bed5d9d87e3": {
-      "path": "bios/Microsoft/MSX/SEGA - SF-7000/sf7000.rom",
-      "name": "sf7000.rom",
-      "size": 8192,
-      "sha1": "77339a6db2593aadc638bed77b8e9bed5d9d87e3",
-      "md5": "561b362f9aa4cbcb240461abf83c2e0d",
-      "sha256": "fac1a4367c7fc67bdfab2ecfb2c59e37283b564e04bffcdb6717478a6c613afa",
-      "crc32": "d76810b8",
-      "adler32": "7cec6d1e",
-      "provenance": {
-        "tosec": {
-          "dat": "Sega Super Control Station - Firmware",
-          "name": "Sega Super Control Station IPL (198x)(Sega).bin",
-          "description": "Sega Super Control Station IPL (198x)(Sega)"
-        }
-      }
-    },
     "07758272df475e5e06187aa3574241df1b14035b": {
       "path": "bios/Microsoft/MSX/SVI - Spectravideo SVI-318/svi318.rom",
       "name": "svi318.rom",
@@ -192986,6 +192969,23 @@
       "crc32": "48decddc",
       "adler32": "1dd14fb4"
     },
+    "77339a6db2593aadc638bed77b8e9bed5d9d87e3": {
+      "path": "bios/Sega/SF-7000/sf7000.rom",
+      "name": "sf7000.rom",
+      "size": 8192,
+      "sha1": "77339a6db2593aadc638bed77b8e9bed5d9d87e3",
+      "md5": "561b362f9aa4cbcb240461abf83c2e0d",
+      "sha256": "fac1a4367c7fc67bdfab2ecfb2c59e37283b564e04bffcdb6717478a6c613afa",
+      "crc32": "d76810b8",
+      "adler32": "7cec6d1e",
+      "provenance": {
+        "tosec": {
+          "dat": "Sega Super Control Station - Firmware",
+          "name": "Sega Super Control Station IPL (198x)(Sega).bin",
+          "description": "Sega Super Control Station IPL (198x)(Sega)"
+        }
+      }
+    },
     "06860d96923b81afbc21e0ad32ee19487d8ff6e7": {
       "path": "bios/Sega/ST-V/epr-17740.ic8",
       "name": "epr-17740.ic8",
@@ -212975,7 +212975,6 @@
       "8514a6af538e0fadbe660a206dcb5652": "2f997e8a57528518c82ab3693fdae243dbbcc508",
       "403cdea1cbd2bb24fae506941f8f655e": "7fd2a28c4fdaeb140f3c8c8fb90271b1472c97b9",
       "279efd1eae0d358eecd4edc7d9adedf3": "7aec0134ad6a5177f4056fcb6047083e8e00529b",
-      "561b362f9aa4cbcb240461abf83c2e0d": "77339a6db2593aadc638bed77b8e9bed5d9d87e3",
       "ee6ad7ea29e791b03a28a9443e622648": "07758272df475e5e06187aa3574241df1b14035b",
       "2cebd1db9dda475a011b7bce65c984a2": "7d8daf52f78371ca2c9443e04827c8e1f98c8f2c",
       "82f7bc9c08f43db1d79bcb565a0de12b": "ed45cb0e9bd18a9d7bd74f87e620f016a7ae840f",
@@ -219433,6 +219432,7 @@
       "ddb4e23db15dda67539eee24de23de4b": "b44ed959fe2948a03d81b98e67ca32f2b4c37e78",
       "48e8821fb9087ab60a2a3b1465ee5124": "12de390be2595ad17015310085eaec57ad2b953f",
       "52adbcbef759756a5b97cafda75b922c": "c983bfa2f4c6d077e70e6ff9c7ed59b72368e355",
+      "561b362f9aa4cbcb240461abf83c2e0d": "77339a6db2593aadc638bed77b8e9bed5d9d87e3",
       "a36acd9ac53b668bebbd98bd192c43e9": "06860d96923b81afbc21e0ad32ee19487d8ff6e7",
       "6193c4357b39916066d810bc0b2cb153": "f9b282fd27693e9891843597b2e1823da3d23c7b",
       "4c51a40cd3d0eec13c3b25c6b70ad632": "cc41d30de06160083d77e0dc5d69e61fec7fdcb5",
@@ -252761,9 +252761,6 @@
         "7aec0134ad6a5177f4056fcb6047083e8e00529b",
         "4e9384c9d137f0ab65ffc5a78f04cd8c9df6c8b7"
       ],
-      "sf7000.rom": [
-        "77339a6db2593aadc638bed77b8e9bed5d9d87e3"
-      ],
       "svi318.rom": [
         "07758272df475e5e06187aa3574241df1b14035b"
       ],
@@ -268304,6 +268301,9 @@
         "12de390be2595ad17015310085eaec57ad2b953f",
         "c983bfa2f4c6d077e70e6ff9c7ed59b72368e355"
       ],
+      "sf7000.rom": [
+        "77339a6db2593aadc638bed77b8e9bed5d9d87e3"
+      ],
       "epr-17740.ic8": [
         "06860d96923b81afbc21e0ad32ee19487d8ff6e7"
       ],
@@ -272059,6 +272059,9 @@
       "BIOSNDS7.ROM": [
         "24f67bdea115a2c847c8813a262502ee1607b7df"
       ],
+      "nds_bios_arm7.bin": [
+        "24f67bdea115a2c847c8813a262502ee1607b7df"
+      ],
       "nds9.bin": [
         "bfaac75f101c135e32e2aaf541de6b1be4c8c62d"
       ],
@@ -272069,6 +272072,9 @@
         "bfaac75f101c135e32e2aaf541de6b1be4c8c62d"
       ],
       "BIOSNDS9.ROM": [
+        "bfaac75f101c135e32e2aaf541de6b1be4c8c62d"
+      ],
+      "nds_bios_arm9.bin": [
         "bfaac75f101c135e32e2aaf541de6b1be4c8c62d"
       ],
       "cx4.data.rom": [
@@ -276806,6 +276812,9 @@
       ],
       "cgb_agb_boot.bin": [
         "80e3ee82416c1a74827a5459fde32f04bf51a1f6"
+      ],
+      "nds_firmware.bin": [
+        "87dae2500e889737af51f4a5b5845770a62482f5"
       ],
       "nds_sd_card.bin": [
         "3b71f43ff30f4b15b5cd85dd9e95ebc7e84eb5a3"
@@ -289334,7 +289343,6 @@
       "4532c882": "2f997e8a57528518c82ab3693fdae243dbbcc508",
       "1bda68a3": "7fd2a28c4fdaeb140f3c8c8fb90271b1472c97b9",
       "ab6874f8": "7aec0134ad6a5177f4056fcb6047083e8e00529b",
-      "d76810b8": "77339a6db2593aadc638bed77b8e9bed5d9d87e3",
       "98d48655": "07758272df475e5e06187aa3574241df1b14035b",
       "709904e9": "7d8daf52f78371ca2c9443e04827c8e1f98c8f2c",
       "850bc232": "ed45cb0e9bd18a9d7bd74f87e620f016a7ae840f",
@@ -295791,6 +295799,7 @@
       "76b28f83": "b44ed959fe2948a03d81b98e67ca32f2b4c37e78",
       "62fb7d82": "12de390be2595ad17015310085eaec57ad2b953f",
       "48decddc": "c983bfa2f4c6d077e70e6ff9c7ed59b72368e355",
+      "d76810b8": "77339a6db2593aadc638bed77b8e9bed5d9d87e3",
       "5c5aa63d": "06860d96923b81afbc21e0ad32ee19487d8ff6e7",
       "3e23c81f": "f9b282fd27693e9891843597b2e1823da3d23c7b",
       "4166c663": "cc41d30de06160083d77e0dc5d69e61fec7fdcb5",
@@ -308861,7 +308870,6 @@
       "921d35edf143f1fde8e53570f92f85e05854610d6a5ea76cce881f2f9040cd9c": "2f997e8a57528518c82ab3693fdae243dbbcc508",
       "62e646cc9f0d50422016f12a77995be5547649b5961b58c883ff4d48baac280f": "7fd2a28c4fdaeb140f3c8c8fb90271b1472c97b9",
       "4df4236ea4687fc729eba6c5bf57a9ac1eceda0c012c5bbe5170b8d722ab9387": "7aec0134ad6a5177f4056fcb6047083e8e00529b",
-      "fac1a4367c7fc67bdfab2ecfb2c59e37283b564e04bffcdb6717478a6c613afa": "77339a6db2593aadc638bed77b8e9bed5d9d87e3",
       "75b7d8fb77591e903650c0a9773fe0dd501901a651b419ea5244fd5407b6b272": "07758272df475e5e06187aa3574241df1b14035b",
       "f26339802bccd3c09657a8c1de89005570c3a23bcf8a5e8d4b5b23904c2f2e29": "7d8daf52f78371ca2c9443e04827c8e1f98c8f2c",
       "55ce22eba820e6b6abebebf1a37b43d82d175e7dd6e8e6bd4d362671ed40be4e": "ed45cb0e9bd18a9d7bd74f87e620f016a7ae840f",
@@ -315319,6 +315327,7 @@
       "cf7555ca86e8640ee5bbb8e0c0897b073fc86647a93eda10b05065227610478c": "b44ed959fe2948a03d81b98e67ca32f2b4c37e78",
       "942ca934f6d43bc81677d3355cf8c795322661c8784b58e78d62951b6a033c2b": "12de390be2595ad17015310085eaec57ad2b953f",
       "258b08eafabed889970445adadcc483f91c31205e8c9a75dfa2efceab2f1c43f": "c983bfa2f4c6d077e70e6ff9c7ed59b72368e355",
+      "fac1a4367c7fc67bdfab2ecfb2c59e37283b564e04bffcdb6717478a6c613afa": "77339a6db2593aadc638bed77b8e9bed5d9d87e3",
       "4ae07c0e28741b17b5b7cc05ff870d415d48d70174d31cb137311f34b9131509": "06860d96923b81afbc21e0ad32ee19487d8ff6e7",
       "803f42cbb36beef66ec620ef17f950c8228fb216c709205a9d66101e177aa0ec": "f9b282fd27693e9891843597b2e1823da3d23c7b",
       "944101e07d17cd06e1eabe5886a747d5fd459453e8d968b25ce825b2b08aaa6d": "cc41d30de06160083d77e0dc5d69e61fec7fdcb5",
@@ -473282,15 +473291,6 @@
       "MSX/RS232.ROM": [
         "7aec0134ad6a5177f4056fcb6047083e8e00529b"
       ],
-      "Microsoft/MSX/SEGA - SF-7000/sf7000.rom": [
-        "77339a6db2593aadc638bed77b8e9bed5d9d87e3"
-      ],
-      "MSX/SEGA - SF-7000/sf7000.rom": [
-        "77339a6db2593aadc638bed77b8e9bed5d9d87e3"
-      ],
-      "SEGA - SF-7000/sf7000.rom": [
-        "77339a6db2593aadc638bed77b8e9bed5d9d87e3"
-      ],
       "Microsoft/MSX/SVI - Spectravideo SVI-318/svi318.rom": [
         "07758272df475e5e06187aa3574241df1b14035b"
       ],
@@ -553805,6 +553805,12 @@
       ],
       "SC-3000/sc3000.zip": [
         "c983bfa2f4c6d077e70e6ff9c7ed59b72368e355"
+      ],
+      "Sega/SF-7000/sf7000.rom": [
+        "77339a6db2593aadc638bed77b8e9bed5d9d87e3"
+      ],
+      "SF-7000/sf7000.rom": [
+        "77339a6db2593aadc638bed77b8e9bed5d9d87e3"
       ],
       "Sega/ST-V/epr-17740.ic8": [
         "06860d96923b81afbc21e0ad32ee19487d8ff6e7"

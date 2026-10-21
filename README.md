@@ -89,17 +89,17 @@ Full list with per-file details: **[https://abdess.github.io/retrobios/](https:/
 
 | Platform | On its BIOS list | Files its emulators load | Checked by |
 |----------|-----------------:|-------------------------:|------------|
-| Batocera | 353/353 | 13,913/15,002 | MD5 hash |
+| Batocera | 353/353 | 13,909/14,998 | MD5 hash |
 | BizHawk | 118/118 | - | SHA1 hash |
-| EmuDeck | 168/168 | 8,025/8,100 | MD5 hash |
-| Lakka | 532/532 | 7,458/7,516 | file presence |
+| EmuDeck | 168/168 | 8,140/8,217 | MD5 hash |
+| Lakka | 532/532 | 7,569/7,627 | file presence |
 | MiSTer FPGA | 81/81 | - | MD5 hash |
-| ROCKNIX | 38/38 | 6,950/8,220 | MD5 hash |
+| ROCKNIX | 38/38 | 7,059/8,328 | MD5 hash |
 | Recalbox | 351/351 | 2,746/2,909 | MD5 hash |
-| RetroArch | 526/526 | 7,466/7,507 | file presence |
-| RetroBat | 348/348 | 4,733/9,199 | MD5 hash |
-| RetroDECK | 2,007/2,008 | 6,240/6,491 | MD5 hash |
-| RetroPie * | 532/532 | 7,733/12,251 | file presence |
+| RetroArch | 526/526 | 7,577/7,618 | file presence |
+| RetroBat | 348/348 | 4,727/9,193 | MD5 hash |
+| RetroDECK | 2,007/2,008 | 6,241/6,492 | MD5 hash |
+| RetroPie * | 532/532 | 7,845/12,363 | file presence |
 | RomM | 383/383 | 83/846 | MD5 hash |
 
 Each fraction is what the pack has over what is needed, counting required and optional files alike since both ship. The first column is the BIOS list the platform publishes. The second counts files its emulators load that this list never mentions, found by reading their source code, and it is routinely several times larger. A short fraction means files are still missing, and they are named in the [gap analysis](https://abdess.github.io/retrobios/gaps/).
@@ -183,4 +183,4 @@ The scripts and tooling are released under the [MIT License](LICENSE).
 The BIOS and firmware files are not covered by that license: they are third-party system software, preserved and provided for personal backup, archival, and interoperability with emulation software. [NOTICE](NOTICE) sets out their status and how to ask for a file to be removed.
 The reasoning, and where it is weakest, is in the [FAQ](https://abdess.github.io/retrobios/wiki/faq/#is-this-legal).
 
-*Auto-generated on 2026-10-21T10:33:03Z*
+*Auto-generated on 2026-10-21T11:49:25Z*
