@@ -7,7 +7,7 @@ Steps, numbered as the run prints them:
   1b   provenance_report.py         dump-catalog coverage, derivable.json
   1c   romset_recipes.py            archive identification, reconstruction targets
   2    refresh_data_dirs.py         Dolphin Sys, PPSSPP assets and the other trees
-  2a   mame_hash_scraper            MAME BIOS hashes from the driver source
+  2a   mame_hash_scraper            MAME BIOS hashes, and device sets on a new release
   2a2  fbneo_hash_scraper           FBNeo BIOS hashes
   2b   check_buildbot_system.py     buildbot freshness (--check-buildbot)
   2b2  check_release_assets.py      large-files release vs gitignored files
@@ -68,6 +68,7 @@ from common import (
     artifact_lock,
     github_token,
     hold_artifact_lock,
+    hold_repository_outputs,
     load_data_dir_registry,
 )
 from refresh_data_dirs import hold_data_dirs
@@ -700,13 +701,20 @@ def main() -> None:
     # hold lasts until this process exits: taken step by step, it let another
     # run purge the packs between the build and the integrity check, which
     # then reported every platform SKIP and passed.
+    # database.json, install/, README.md and docs/ sit at fixed paths, so
+    # every run holds them too: a run on a scratch --output-dir otherwise
+    # rewrote them beside the run on dist/.
     held = contextlib.ExitStack()
-    if not args.skip_packs:
-        try:
+    try:
+        held.enter_context(
+            hold_repository_outputs(str(Path(__file__).resolve().parent.parent))
+        )
+        if not args.skip_packs:
             held.enter_context(hold_artifact_lock(args.output_dir))
-        except ArtifactLockBusy as exc:
-            print(f"ERROR: {exc}", file=sys.stderr)
-            sys.exit(1)
+    except ArtifactLockBusy as exc:
+        held.close()
+        print(f"ERROR: {exc}", file=sys.stderr)
+        sys.exit(1)
 
     all_ok = True
     total_start = time.monotonic()

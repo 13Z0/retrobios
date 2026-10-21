@@ -99,11 +99,13 @@ def hold_data_dirs(stack: contextlib.ExitStack, registry: dict) -> None:
     later. A refresh swapping the tree in between shipped bytes nobody
     verified, or died on a file the new tree no longer has. A refresh waits
     for the holders. Never called before a refresh in the same process:
-    the exclusive lock would wait on this one.
+    the exclusive lock would wait on this one. A cache not yet on disk is
+    held too: the lock sits beside the tree, and skipped, a refresh could
+    install the tree after verify ran and before the packs read it.
     """
     for entry in registry.values():
         cache = entry.get("local_cache", "")
-        if cache and os.path.isdir(cache):
+        if cache:
             stack.enter_context(cache_lock(cache, shared=True))
 
 

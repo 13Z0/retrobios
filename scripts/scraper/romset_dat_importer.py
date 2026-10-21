@@ -11,6 +11,7 @@ in its repository, so both are fetched without a browser:
     python -m scripts.scraper.romset_dat_importer --source mame --fetch
     python -m scripts.scraper.romset_dat_importer --source mame --fetch mame0289
     python -m scripts.scraper.romset_dat_importer --source fbneo --fetch
+    python -m scripts.scraper.romset_dat_importer --source fbneo --fetch v1.0.0.02
     python -m scripts.scraper.romset_dat_importer --source mame --pack local.dat
 
 Only sets the collection has a reason to know are kept, so the committed
@@ -33,6 +34,7 @@ import os
 import re
 import shutil
 import sys
+import urllib.parse
 import urllib.request
 import zipfile
 from collections.abc import Callable, Iterator
@@ -374,7 +376,7 @@ MAME_LISTXML_URL = (
     "https://github.com/mamedev/mame/releases/download/{tag}/{tag}lx.zip"
 )
 MAME_LATEST_API = "https://api.github.com/repos/mamedev/mame/releases/latest"
-FBNEO_DATS_API = "https://api.github.com/repos/libretro/FBNeo/contents/dats"
+FBNEO_API = "https://api.github.com/repos/libretro/FBNeo"
 
 
 def _api_json(url: str) -> object:
@@ -400,12 +402,17 @@ def latest_mame_tag() -> str:
 
 
 def fetch_tag(source: str, requested: str) -> str:
-    """The tag a ``--fetch`` names: bare, the newest MAME release."""
+    """The revision a ``--fetch`` names: bare, the newest MAME release or
+    the tip of FBNeo's default branch."""
     if source == "mame" and requested == "latest":
         tag = latest_mame_tag()
         print(f"  Derniere release MAME : {tag}")
         return tag
     return requested
+
+
+class BlobMismatchError(ValueError):
+    """A downloaded DAT is not the blob the repository listing names."""
 
 
 def git_blob_sha(data: bytes) -> str:
@@ -452,7 +459,15 @@ def fetch_pack(
             {},
         )
 
-    listing = _api_json(FBNEO_DATS_API)
+    # The revision is resolved to a commit first and everything is read at
+    # that commit: a branch URL is served through a CDN cache, so the bytes
+    # could predate the listing that named their blob.
+    ref = "HEAD" if tag == "latest" else urllib.parse.quote(tag, safe="")
+    commit = _api_json(f"{FBNEO_API}/commits/{ref}")
+    sha = commit.get("sha") if isinstance(commit, dict) else None
+    if not sha:
+        raise BlobMismatchError(f"libretro/FBNeo has no revision {tag}")
+    listing = _api_json(f"{FBNEO_API}/contents/dats?ref={sha}")
     target = cache_dir / "fbneo-dats"
     target.mkdir(parents=True, exist_ok=True)
     blobs: dict[str, str] = {}
@@ -465,7 +480,17 @@ def fetch_pack(
         if destination.is_file() and git_blob_sha(destination.read_bytes()) != item["sha"]:
             destination.unlink()
         _download(item["download_url"], destination)
+        if git_blob_sha(destination.read_bytes()) != item["sha"]:
+            destination.unlink()
+            raise BlobMismatchError(
+                f"{item['name']} downloaded from {item['download_url']} is not "
+                f"blob {item['sha']} of libretro/FBNeo {sha}"
+            )
         blobs[item["name"]] = item["sha"]
+    # A DAT the revision does not carry is not read from an older fetch.
+    for stale in target.glob("*"):
+        if stale.is_file() and stale.name not in blobs:
+            stale.unlink()
     return target, blobs
 
 
@@ -509,8 +534,9 @@ def main() -> int:
         "--fetch",
         nargs="?",
         const="latest",
-        help="download upstream instead of using --pack "
-        "(a MAME tag such as mame0289, or bare for the newest release)",
+        help="download upstream instead of using --pack: a MAME tag such as "
+        "mame0289 or an FBNeo tag, branch or commit; bare, the newest MAME "
+        "release or the tip of FBNeo's default branch",
     )
     parser.add_argument(
         "--cache-dir", default=".cache/dats",
@@ -547,11 +573,24 @@ def main() -> int:
     args = parser.parse_args()
 
     blobs: dict[str, str] = {}
+    # FBNeo's DAT headers keep one version across commits, so a DAT read at
+    # a named revision is labelled with it: under the bare header name it
+    # merged into the tip's recipes. Its blobs describe that revision, not
+    # the upstream state the freshness check compares with, and are not
+    # recorded.
+    revision = ""
     if args.fetch:
-        pack, blobs = fetch_pack(
-            args.source, fetch_tag(args.source, args.fetch), Path(args.cache_dir)
-        )
+        try:
+            pack, blobs = fetch_pack(
+                args.source, fetch_tag(args.source, args.fetch), Path(args.cache_dir)
+            )
+        except BlobMismatchError as exc:
+            print(f"ERROR: {exc}", file=sys.stderr)
+            return 1
         print(f"  Recupere {pack}")
+        if args.source == "fbneo" and args.fetch != "latest":
+            revision = args.fetch
+            blobs = {}
     elif args.pack:
         pack = Path(args.pack)
     else:
@@ -596,6 +635,8 @@ def main() -> int:
         if not dat.roms:
             skipped += 1
             continue
+        if revision:
+            dat.name = f"{dat.name or member} @ {revision}"
         found = recipe_entries(dat, keep, targets)
         if not found:
             continue

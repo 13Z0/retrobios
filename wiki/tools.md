@@ -88,8 +88,11 @@ alone, run `python scripts/check_buildbot_system.py`.
   rewrites nothing, so a diff on a generated file always means content.
 - **One run per output directory.** Pack generation takes a lock on
   `<output-dir>/.lock`, and a second run on the same folder stops at once
-  rather than read a half-written ZIP. Experiments use a scratch
-  `--output-dir` under `tmp/`.
+  rather than read a half-written ZIP. Pack experiments with
+  `generate_pack.py` use a scratch `--output-dir` under `tmp/`. A pipeline
+  run also writes `database.json`, `install/`, `README.md` and `docs/` at
+  fixed paths, so it holds the repository's `.lock` as well, and a second
+  pipeline is refused whatever its `--output-dir`.
 - **Read the exit status before the output.** A generator that crashed leaves
   the previous artifact in place, which reads exactly like a run that changed
   nothing.
@@ -597,8 +600,14 @@ python scripts/check_freshness.py --offline      # local ages only
 python scripts/check_freshness.py --record-coreinfo virtualjaguar  # .info read, record it
 ```
 
-The exit code is non-zero when anything is stale. Emulator profiles are the
-one layer left to `profile_sync.py`, which the `--profiles` flag folds in.
+The exit code is non-zero when anything is stale or an upstream asked could
+not be read (`UNKNOWN`), so a run that reached no remote does not pass for a
+fresh collection. `--offline` asks no upstream and its rows are `SKIPPED`.
+Emulator profiles are the one layer left to `profile_sync.py`, which the
+`--profiles` flag folds in. A profile skipped by nature (upstream declared
+gone, a host no forge API serves, no `source_ref`) is `SKIPPED`, one no
+declared repository answers is `UNKNOWN`. When rows are stale, the summary
+names `refresh_stale.py`, which runs the refresher behind each of them.
 
 ### refresh_stale.py
 
@@ -608,8 +617,8 @@ committed.
 
 | Stale row | Command |
 |-----------|---------|
-| `platforms/<name>` | the platform scraper, then the `native` refresh for the same platform |
-| `native/<name>` | `export_native.py --platform <name> --refresh-cache` |
+| `platforms/<name>` | the platform scraper, then the `native` refresh for the same platform, then `verify.py --platform <name>` |
+| `native/<name>` | `generate_truth.py --platform <name>`, `export_native.py --platform <name> --refresh-cache`, then the export itself |
 | `targets/<name>` | the target scraper |
 | `data/<key>` | `refresh_data_dirs.py --key <key> --force` |
 | `catalogs/mame recipes`, `catalogs/fbneo recipes` | `scraper/romset_dat_importer.py --source <source> --fetch` |
@@ -619,6 +628,13 @@ profile, a new `.info` file, the Redump, No-Intro and TOSEC packs, the CI
 pins, and `profile_sync`. A failed scraper leaves its cached original
 untouched. Each job writes its output to `tmp/refresh_stale/`, and a GitHub
 token is taken from `GITHUB_TOKEN` or from `gh auth token`.
+
+A platform that inherits from a rescraped one (`lakka` and `retropie` from
+`retroarch`) reads the parent's file, so its jobs start once the parent's have
+ended, and its export is rewritten even when no row named it. A rescrape can
+add systems whose files the collection lacks: the report ends with the
+`verify.py --platform` summary of every rescraped platform, to read before
+keeping the new YAML.
 
 ```bash
 python scripts/refresh_stale.py --dry-run
@@ -637,7 +653,7 @@ python scripts/refresh_stale.py --only platforms,targets --jobs 6
 | `region_audit.py` | Confront every profile `region:` with the regions No-Intro names for the same dump (`--json`, `--db`, `--emulators-dir`). An opinion, never an authority: the code decides, and a disagreement is a line to read in the emulator's source |
 | `validate_pr.py` | Validate BIOS files in pull requests, post markdown report |
 | `validate_schemas.py` | Validate the data contracts: schemas and semantic invariants. `--source-only` checks `emulators/` and `platforms/` alone, which is what PR validation runs |
-| `auto_fetch.py` | Fetch missing BIOS files from known sources (4-step pipeline) |
+| `auto_fetch.py` | Fetch missing BIOS files from known sources (4-step pipeline). A download is accepted only when every cryptographic hash the entry declares (sha256, sha1, md5) matches. crc32 and size find a file the database already holds, never accept a download. An entry with no cryptographic hash is reported and not searched |
 | `list_platforms.py` | List active platforms (`--include-archived` adds the archived ones, used by CI) |
 | `download.py` | Download a pack from GitHub releases, every part checked (Python, stdlib only) |
 | `download.sh` | Same, as a shell one-liner (`curl` + `unzip`) |
@@ -648,7 +664,7 @@ python scripts/refresh_stale.py --only platforms,targets --jobs 6
 | `generate_site.py` | Generate all MkDocs site pages (this documentation) |
 | `validate_site.py` | Validate rendered metadata, headings, image alternatives, JSON-LD, local resources, links and fragments |
 | `romset_recipes.py` | Identify which emulator version an arcade archive matches, and rebuild a pinned archive from ROMs already held |
-| `scraper/romset_dat_importer.py` | Fetch and import per-set recipes from MAME `-listxml` or FBNeo DATs into `recipes/`. `--fetch` alone takes the newest MAME release, and FBNeo DATs are refreshed by git blob sha |
+| `scraper/romset_dat_importer.py` | Fetch and import per-set recipes from MAME `-listxml` or FBNeo DATs into `recipes/`. `--fetch` alone takes the newest MAME release, and FBNeo DATs are refreshed by git blob sha. `--fetch <revision>` reads FBNeo at that tag, branch or commit |
 | `deterministic_zip.py` | Rebuild MAME BIOS ZIPs deterministically (same ROMs = same hash) |
 | `torrentzip.py` | Build TorrentZip archives for MAME/FBNeo ROM sets (archive bytes depend only on contents) |
 | `crypto_verify.py` | 3DS RSA signature and AES crypto verification |
@@ -678,7 +694,7 @@ Further options, by script:
 | `provenance_report.py` | `--provenance-dir`, `--write-derivable PATH` (with `--derive`, and the pipeline writes `derivable.json`) |
 | `refresh_stale.py` | `--freshness-arg FLAG` passes a flag through to `check_freshness.py`, repeatable |
 | `bundled_only.py` | `--strict` (exit 1 while a collected file only an emulator install provides remains, pipeline step 4d), `--json`, `--install-dir`. Lists every copy of such a file, the database keeping one path per content |
-| `release_record.py` | `--install-dir` (manifests the archives are held against), `--output` |
+| `release_record.py` | `--install-dir` (manifests the archives are held against), `--platforms-dir` (registry the full pack names are rebuilt from: any other pack in the directory is refused), `--output` |
 | `release_notes.py` | `--whats-new FILE` (required, appended as written), `--record`, `--platforms-dir`, `--output` |
 | `restore_large_files.py` | `--cache` (downloaded assets), `--gitignore`, `--db` |
 | `romset_recipes.py` | `--dat-recipes PATH`, a snapshot or a directory of them (default `recipes/`) |
@@ -753,7 +769,16 @@ FBNeo keeps its DATs in the repository.
 python -m scripts.scraper.romset_dat_importer --source mame --fetch mame0289
 python -m scripts.scraper.romset_dat_importer --source mame --fetch mame0250
 python -m scripts.scraper.romset_dat_importer --source fbneo --fetch
+python -m scripts.scraper.romset_dat_importer --source fbneo --fetch v1.0.0.02
 ```
+
+FBNeo DATs are read at one commit: the revision named (tag, branch or commit,
+the default branch when bare) is resolved first, and every DAT downloaded is
+held against the blob sha the listing gives, so a cached branch URL cannot
+serve older bytes. Their headers keep one version across commits, so DATs read
+at a named revision are labelled `<DAT name> @ <revision>` and accumulate
+beside the tip's. Only an import of the tip records the blobs the freshness
+check compares with.
 
 Snapshots land in `recipes/`, not `provenance/`: the latter holds dump catalogues
 and a recipe is not one. Versions accumulate rather than replace each other,
@@ -829,6 +854,10 @@ go under the `Device ROM sets (generated from MAME -listxml)` comment at the end
 of `files:` with `required: false`. A set the profile already lists keeps every
 field a reader wrote and only gets its contents refreshed.
 
+A plain run (pipeline step 2a) that moves `mame.yml` to a new release
+downloads that release's `-listxml` into `.cache/dats/` and runs the device
+merge itself, so the BIOS root sets and the device sets name one release.
+
 ```bash
 python -m scripts.scraper.mame_hash_scraper --devices --listxml .cache/dats/mame0289lx.zip --dry-run
 python -m scripts.scraper.mame_hash_scraper --devices --listxml .cache/dats/mame0289lx.zip
@@ -871,6 +900,13 @@ or not), swapping bytes, mirroring, or joining two files of one directory.
 The Amiga Kickstart chip pairs and TOSEC's split C64 and VES ROMs are found
 this way: 67 entries on the current snapshots, recorded in `derivable.json`
 by pipeline step 1b.
+
+A missing entry that is a file an emulator profile reads and the collection
+lacks is listed first, with `needed by <emulator> as <name>` and whether the
+profile requires it. The match is by hash when the profile declares one, by
+name and size when it declares a size or size range and no hash (XM7's
+`DICROM.ROM`, which No-Intro lists for the FM77AV40SX). `--emulators-dir`
+names the profiles read.
 
 | Catalog | Acquisition | Notes |
 |---------|------------|-------|

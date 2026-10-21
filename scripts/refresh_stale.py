@@ -11,7 +11,10 @@ Mapping (stale -> command):
     platforms/<name>        python -m scripts.scraper.<module>_scraper
                             -o platforms/<name>.yml
                             then the native refresh below: the original
-                            the export patches must be the one just scraped
+                            the export patches must be the one just scraped,
+                            then python scripts/verify.py --platform <name>,
+                            whose summary the report prints: a rescrape can
+                            add systems whose files are missing
     native/<name>           python scripts/generate_truth.py --platform <name>, then
                             python scripts/export_native.py --platform <name>
                             --refresh-cache, then the export itself, which
@@ -24,6 +27,10 @@ Mapping (stale -> command):
                             --source mame --fetch
     catalogs/fbneo recipes  python -m scripts.scraper.romset_dat_importer
                             --source fbneo --fetch
+
+A platform that inherits from a rescraped one (retropie and lakka from
+retroarch) reads the parent's file: its jobs start once the parent's chain
+has ended, and its export is rewritten even when no row named it.
 
 Surfaced only (no refresh): data rows that are not a _data_dirs.yml key
 (the registry itself, buildbot assets it does not track), coreinfo gaps, redump/no-intro/tosec packs,
@@ -45,7 +52,7 @@ import re
 import subprocess
 import sys
 import time
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from concurrent.futures import FIRST_COMPLETED, ThreadPoolExecutor, wait
 from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
@@ -72,6 +79,8 @@ class Job:
     log_path: Path
     # Commands run after `command`, in order, only while each one succeeds.
     then: tuple[tuple[str, ...], ...] = ()
+    # Platforms whose rescrape job must end before this one starts.
+    after: frozenset[str] = frozenset()
 
 
 @dataclass(frozen=True)
@@ -92,6 +101,30 @@ def _load_platform_registry() -> dict[str, dict]:
 
     with PLATFORMS_REGISTRY.open(encoding="utf-8") as fh:
         return (yaml.safe_load(fh) or {}).get("platforms") or {}
+
+
+def _platform_parents(registry: dict[str, dict]) -> dict[str, str]:
+    """Platform to the platform its YAML inherits from."""
+    import yaml
+
+    parents: dict[str, str] = {}
+    for name in registry:
+        path = REPO_ROOT / "platforms" / f"{name}.yml"
+        if not path.is_file():
+            continue
+        with path.open(encoding="utf-8") as fh:
+            parent = (yaml.safe_load(fh) or {}).get("inherits")
+        if parent:
+            parents[name] = str(parent)
+    return parents
+
+
+def _ancestors(platform: str, parents: dict[str, str]) -> set[str]:
+    found: set[str] = set()
+    while platform in parents and parents[platform] not in found:
+        platform = parents[platform]
+        found.add(platform)
+    return found
 
 
 @lru_cache(maxsize=1)
@@ -129,15 +162,21 @@ def _slug(subject: str) -> str:
 
 
 def plan_jobs(
-    findings: list[dict], registry: dict[str, dict]
+    findings: list[dict],
+    registry: dict[str, dict],
+    parents: dict[str, str] | None = None,
 ) -> tuple[list[Job], list[dict], list[dict]]:
     """Split findings into (refreshable jobs, surfaced-only, ignored).
 
     Surfaced-only entries carry stale state that only a human can resolve
     (new .info file, manual DAT download, PyPI bump). Ignored entries are
     anything not STALE (OK, SKIPPED, UNKNOWN, ERROR). ERROR is also surfaced
-    so the final report mentions it.
+    so the final report mentions it. ``parents`` maps a platform to the one
+    it inherits from: a child's jobs wait for its rescraped ancestors, and a
+    child no row names gets its export rewritten after them.
     """
+    if parents is None:
+        parents = _platform_parents(registry)
     jobs: list[Job] = []
     seen: set[tuple[str, str]] = set()
     surfaced: list[dict] = []
@@ -189,14 +228,90 @@ def plan_jobs(
                 tuple(_truth_refresh(subject)),
                 tuple(_native_refresh(subject)),
                 tuple(_export_refresh(subject)),
+                tuple(_verify(subject)),
             )
         elif area == "native":
             then = (tuple(_native_refresh(subject)), tuple(_export_refresh(subject)))
+        after: frozenset[str] = frozenset()
+        if area in ("platforms", "native"):
+            after = frozenset(_ancestors(subject, parents) & rescraped)
         jobs.append(
-            Job(area=area, subject=subject, command=command, log_path=log, then=then)
+            Job(area=area, subject=subject, command=command, log_path=log,
+                then=then, after=after)
         )
 
+    # The export of a child is built from its parent's file: rewritten once
+    # the parent is, or the next check reports it stale.
+    covered = {j.subject for j in jobs if j.area in ("platforms", "native")}
+    for child in sorted(parents):
+        after = frozenset(_ancestors(child, parents) & rescraped)
+        if not after or child in covered:
+            continue
+        jobs.append(Job(
+            area="native",
+            subject=child,
+            command=_truth_refresh(child),
+            log_path=LOG_DIR / f"native__{_slug(child)}.log",
+            then=(tuple(_native_refresh(child)), tuple(_export_refresh(child))),
+            after=after,
+        ))
+
     return jobs, surfaced, ignored
+
+
+def _verify(platform: str) -> list[str]:
+    """The check a rescraped platform file is read with before it is kept."""
+    return [sys.executable, "scripts/verify.py", "--platform", platform]
+
+
+VERIFY_MARK = "scripts/verify.py --platform"
+
+
+def verify_summary(path: Path) -> str:
+    """First line verify printed in a job log, empty when it did not run."""
+    try:
+        text = path.read_text(encoding="utf-8", errors="replace")
+    except OSError:
+        return ""
+    lines = text.splitlines()
+    for index, line in enumerate(lines):
+        if line.startswith("$ ") and VERIFY_MARK in line:
+            return next(
+                (rest.strip() for rest in lines[index + 1:]
+                 if rest.strip() and not rest.startswith("$ ")),
+                "",
+            )
+    return ""
+
+
+def run_jobs(jobs: list[Job], env: dict[str, str], workers: int) -> list[JobResult]:
+    """Run jobs in parallel, each once the rescrapes it waits for have ended.
+
+    A failed parent still releases its children: its file is unchanged, and
+    the child reads it as it is.
+    """
+    results: list[JobResult] = []
+    ended: set[str] = set()
+    waiting = list(jobs)
+    with ThreadPoolExecutor(max_workers=max(1, workers)) as pool:
+        running: dict = {}
+        while waiting or running:
+            ready = [job for job in waiting if job.after <= ended]
+            for job in ready:
+                waiting.remove(job)
+                running[pool.submit(run_job, job, env)] = job
+            if not running:
+                raise RuntimeError(
+                    "jobs wait on rescrapes that are not planned: "
+                    + ", ".join(sorted(j.subject for j in waiting))
+                )
+            done, _ = wait(running, return_when=FIRST_COMPLETED)
+            for future in done:
+                job = running.pop(future)
+                results.append(future.result())
+                if job.area == "platforms":
+                    ended.add(job.subject)
+    return results
 
 
 def _truth_refresh(platform: str) -> list[str]:
@@ -380,6 +495,22 @@ def render(
             if r.returncode != 0 and r.tail:
                 lines.append(f"           -> {r.tail}")
 
+        rescraped = sorted(
+            (r for r in results if r.job.area == "platforms" and r.returncode == 0),
+            key=lambda r: r.job.subject,
+        )
+        if rescraped:
+            lines.append(
+                "\n[verify] a rescrape can add systems: read each report "
+                "before keeping platforms/<name>.yml"
+            )
+            for r in rescraped:
+                summary = verify_summary(r.job.log_path) or "(no verify output)"
+                lines.append(f"  {r.job.subject:12} {summary}")
+                lines.append(
+                    f"  {'':12} python scripts/verify.py --platform {r.job.subject}"
+                )
+
     if surfaced:
         lines.append("\n[manual review needed]")
         for f in surfaced:
@@ -439,7 +570,9 @@ def main() -> int:
         areas = tuple(a.strip() for a in args.only.split(",") if a.strip())
         unknown = sorted(set(areas) - set(all_areas))
         if unknown:
-            parser.error(f"unknown area: {', '.join(unknown)}")
+            parser.error(
+                f"unknown area: {', '.join(unknown)}. Areas: {', '.join(all_areas)}"
+            )
     else:
         areas = all_areas
 
@@ -457,6 +590,8 @@ def main() -> int:
               f"{len(ignored)} already clean/skipped")
         for job in sorted(jobs, key=lambda j: (j.area, j.subject)):
             print(f"  {job.area:10} {job.subject:28}  {' '.join(job.command)}")
+            if job.after:
+                print(f"  {'':10} {'':28}  after {', '.join(sorted(job.after))}")
             for command in job.then:
                 print(f"  {'':10} {'':28}  then {' '.join(command)}")
         if surfaced:
@@ -468,11 +603,7 @@ def main() -> int:
 
     LOG_DIR.mkdir(parents=True, exist_ok=True)
     env = _github_token_env()
-    results: list[JobResult] = []
-    with ThreadPoolExecutor(max_workers=max(1, args.jobs)) as pool:
-        futures = [pool.submit(run_job, job, env) for job in jobs]
-        for future in as_completed(futures):
-            results.append(future.result())
+    results = run_jobs(jobs, env, args.jobs)
 
     if args.json:
         payload = {

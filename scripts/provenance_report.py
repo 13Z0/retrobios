@@ -10,6 +10,10 @@ Usage:
     python scripts/provenance_report.py
     python scripts/provenance_report.py --missing
     python scripts/provenance_report.py --json
+
+A missing dump that is a file an emulator profile reads and the collection
+lacks is named with that profile: by hash when the profile declares one, by
+name and size when it declares a size and no hash.
 """
 
 from __future__ import annotations
@@ -26,9 +30,116 @@ sys.path.insert(0, os.path.dirname(__file__))
 from common import (
     DEFAULT_PROVENANCE_DIR,
     load_database,
+    load_emulator_profiles,
     load_provenance_snapshots,
     write_if_changed,
 )
+
+HASH_FIELDS = ("sha1", "md5", "sha256")
+
+
+def _values(entry: dict, field: str) -> set[str]:
+    """Every value a profile or catalog entry gives for a hash field."""
+    value = entry.get(field)
+    values = value if isinstance(value, list) else str(value or "").split(",")
+    return {str(v).strip().lower() for v in values if str(v).strip()}
+
+
+def _crc_key(value: str) -> str:
+    return value.removeprefix("0x").zfill(8)
+
+
+def _fits(size: int | None, entry: dict) -> bool:
+    """Whether a size meets what a profile entry states about it."""
+    if size is None:
+        return False
+    declared = entry.get("size")
+    if declared is not None:
+        accepted = declared if isinstance(declared, list) else [declared]
+        return size in {int(value) for value in accepted}
+    low, high = entry.get("min_size"), entry.get("max_size")
+    return (low is None or size >= int(low)) and (high is None or size <= int(high))
+
+
+def profile_needs(profiles: dict, db: dict) -> dict:
+    """The files emulator profiles read that the collection does not hold.
+
+    Keyed by every hash a profile accepts, and, for an entry that declares
+    a size and no hash, by its names casefolded. An entry with neither
+    cannot be told apart from any same-named dump and is left out.
+    """
+    files = db.get("files", {})
+    indexes = db.get("indexes", {})
+    held_hashes = {
+        "sha1": set(files),
+        "md5": set(indexes.get("by_md5", {})),
+        "sha256": set(indexes.get("by_sha256", {})),
+    }
+    held_crc = {
+        (_crc_key(str(f.get("crc32", "")).lower()), f.get("size"))
+        for f in files.values() if f.get("crc32")
+    }
+    sizes_by_name: dict[str, set[int]] = {}
+    for record in files.values():
+        sizes_by_name.setdefault(str(record.get("name", "")).casefold(), set()).add(
+            record.get("size")
+        )
+
+    by_hash: dict[tuple, list[dict]] = {}
+    by_name: dict[str, list[tuple[dict, dict]]] = {}
+    for emulator, profile in sorted(profiles.items()):
+        for entry in profile.get("files", []) or []:
+            name = str(entry.get("name", ""))
+            if not name or name.endswith("/"):
+                continue
+            need = {"emulator": emulator, "name": name,
+                    "required": bool(entry.get("required"))}
+            hashes = {(field, v) for field in HASH_FIELDS for v in _values(entry, field)}
+            crcs = {_crc_key(v) for v in _values(entry, "crc32")}
+            declared = entry.get("size")
+            sizes = [] if declared is None else (
+                declared if isinstance(declared, list) else [declared]
+            )
+            crc_keys = {(crc, int(size)) for crc in crcs for size in sizes}
+            if hashes or crc_keys:
+                if any(v in held_hashes[field] for field, v in hashes) or (
+                    crc_keys & held_crc
+                ):
+                    continue
+                for key in hashes | {("crc32", crc, size) for crc, size in crc_keys}:
+                    by_hash.setdefault(key, []).append(need)
+                continue
+            if all(entry.get(k) is None for k in ("size", "min_size", "max_size")):
+                continue
+            names = [name, *(entry.get("aliases") or [])]
+            if any(
+                _fits(held, entry)
+                for alias in names
+                for held in sizes_by_name.get(str(alias).casefold(), ())
+            ):
+                continue
+            for alias in names:
+                by_name.setdefault(str(alias).casefold(), []).append((need, entry))
+    return {"by_hash": by_hash, "by_name": by_name}
+
+
+def needs_filled(entry: dict, needs: dict) -> list[dict]:
+    """The profile needs a catalog dump answers, required ones first."""
+    found: dict[tuple[str, str], dict] = {}
+    keys = [(field, v) for field in HASH_FIELDS for v in _values(entry, field)]
+    if entry.get("size") is not None:
+        keys += [("crc32", _crc_key(v), entry["size"]) for v in _values(entry, "crc32")]
+    for key in keys:
+        for need in needs["by_hash"].get(key, []):
+            found.setdefault((need["emulator"], need["name"]), {**need, "by": key[0]})
+    size = entry.get("size")
+    name = str(entry.get("name", "")).casefold()
+    for need, declared in needs["by_name"].get(name, []):
+        if _fits(size, declared):
+            found.setdefault(
+                (need["emulator"], need["name"]), {**need, "by": "name and size"}
+            )
+    return sorted(found.values(), key=lambda n: (not n["required"], n["emulator"], n["name"]))
 
 
 def archive_members(db: dict) -> dict[tuple[str, int], list[tuple[str, str]]]:
@@ -153,6 +264,7 @@ def build_report(
     snapshots: dict,
     members: dict | None = None,
     romsets: dict | None = None,
+    needs: dict | None = None,
 ) -> dict:
     """Compare each snapshot against the collection.
 
@@ -213,6 +325,9 @@ def build_report(
             holders = romsets_holding(entry, romsets)
             if holders:
                 entry["romsets"] = holders
+            filled = needs_filled(entry, needs) if needs else []
+            if filled:
+                entry["needed_by"] = filled
         out_of_scope = len({
             dump_identity(e) for e in unmatched if e.get("dat", "") not in covered_dats
         })
@@ -246,6 +361,10 @@ def main() -> int:
     )
     parser.add_argument("--json", action="store_true", help="Full report as JSON")
     parser.add_argument(
+        "--emulators-dir", default="emulators",
+        help="profiles whose unheld files a missing dump answers (default: %(default)s)",
+    )
+    parser.add_argument(
         "--write-derivable",
         metavar="PATH",
         help="With --derive, record the derivable entries for the site "
@@ -261,7 +380,8 @@ def main() -> int:
         print(f"No provenance snapshots in {args.provenance_dir}/")
         return 0
 
-    report = build_report(db, snapshots, archive_members(db))
+    needs = profile_needs(load_emulator_profiles(args.emulators_dir), db)
+    report = build_report(db, snapshots, archive_members(db), needs=needs)
     derived: dict[str, dict] = {}
     if args.derive:
         from derivations import derivable  # noqa: PLC0415
@@ -299,7 +419,8 @@ def main() -> int:
                 f"does not cover, not counted as targets"
             )
         if args.missing:
-            for entry in data["missing"]:
+            # A dump an emulator reads comes first: it fills a hole in a pack.
+            for entry in sorted(data["missing"], key=lambda e: not e.get("needed_by")):
                 label = entry.get("description") or entry["name"]
                 source = derived.get(entry.get("sha1", ""))
                 if source:
@@ -307,6 +428,10 @@ def main() -> int:
                           f"of {' + '.join(source['from'])}")
                 else:
                     print(f"    MISSING {entry['name']} ({label}) sha1={entry.get('sha1')}")
+                for need in entry.get("needed_by", []):
+                    print(f"      needed by {need['emulator']} as {need['name']} "
+                          f"({'required' if need['required'] else 'optional'}, "
+                          f"matched by {need['by']})")
                 for hit in entry.get("romsets", []):
                     versions = hit["dats"][0] if len(hit["dats"]) == 1 else (
                         f"{hit['dats'][0]} to {hit['dats'][-1]}"
@@ -320,6 +445,13 @@ def main() -> int:
         if args.derive:
             line += f", {len(derived)} of them derivable from held dumps"
         print(line)
+        needed = {
+            dump_identity(e)
+            for data in report.values() for e in data["missing"] if e.get("needed_by")
+        }
+        if needed:
+            print(f"  {len(needed)} of them a profile reads and the collection lacks"
+                  + ("" if args.missing else " (--missing names them)"))
     return 0
 
 

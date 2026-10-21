@@ -14,6 +14,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import re
 import sys
 from pathlib import Path
 
@@ -37,16 +38,25 @@ def _display(pack: str) -> str:
 
 def _extract_folders(record: dict, platforms_dir: str) -> dict[str, str]:
     """Pack name to the folder the registry says it extracts into."""
+    registry = load_platform_registry(platforms_dir)
     folders: dict[str, str] = {}
-    for key, entry in sorted(load_platform_registry(platforms_dir).items()):
-        if not entry.get("extract_to"):
-            continue
-        needle = release_record._match_key(key)
-        for name in sorted(record.get("packs", {})):
-            # The name a pack starts with: RetroArch_Lakka is RetroArch's.
-            if needle and release_record._match_key(name).startswith(needle):
-                folders.setdefault(name, entry["extract_to"])
+    for name, pack in sorted(record.get("packs", {}).items()):
+        # A shared pack extracts where the platform it is named after does:
+        # RetroArch_Lakka is RetroArch's.
+        key = _match_key(name)
+        for platform in sorted(
+            pack.get("platforms", ()), key=lambda p: key.find(_match_key(p)) % (len(key) + 1)
+        ):
+            folder = registry.get(platform, {}).get("extract_to")
+            if folder:
+                folders[name] = folder
+                break
     return folders
+
+
+def _match_key(value: str) -> str:
+    """Letters and digits only: the platform is `misterfpga`, the pack MiSTer_FPGA."""
+    return re.sub(r"[^a-z0-9]", "", value.lower())
 
 
 def _links(tag: str, assets: list[str]) -> str:

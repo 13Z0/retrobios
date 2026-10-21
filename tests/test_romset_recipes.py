@@ -694,6 +694,88 @@ class AnOversizedDatIsNamed(unittest.TestCase):
 
 
 
+FBNEO_DAT = (
+    b'<?xml version="1.0"?>\n<datafile><header><name>FinalBurn Neo - Demo</name>'
+    b"<version>1.0.0.03</version></header>"
+    b'<game name="demobios"><description>Demo BIOS</description>'
+    b'<rom name="a.bin" size="17" crc="' + _crc(ROM_A).encode() + b'"/></game>'
+    b"</datafile>\n"
+)
+
+
+class FbneoFetchReadsOneRevision(unittest.TestCase):
+    """The FBNeo import listed blobs at the tip but downloaded branch URLs a
+    CDN caches, and --fetch <revision> read the tip whatever was named."""
+
+    def setUp(self):
+        from scripts.scraper import romset_dat_importer as importer
+
+        self.importer = importer
+        self._tmp = tempfile.TemporaryDirectory(dir=TMP_ROOT)
+        self.dir = Path(self._tmp.name)
+        self.calls: list[str] = []
+        self.served = FBNEO_DAT
+
+    def tearDown(self):
+        self._tmp.cleanup()
+
+    def _api(self, url: str) -> object:
+        self.calls.append(url)
+        if "/commits/" in url:
+            return {"sha": "c0ffee"}
+        return [{
+            "type": "file", "name": "Demo.dat",
+            "sha": self.importer.git_blob_sha(FBNEO_DAT),
+            "download_url": "https://raw.githubusercontent.com/libretro/FBNeo/c0ffee/dats/Demo.dat",
+        }]
+
+    def _download(self, url: str, destination: Path) -> Path:
+        destination.write_bytes(self.served)
+        return destination
+
+    def _patched(self):
+        from unittest import mock
+
+        return mock.patch.multiple(
+            self.importer, _api_json=self._api, _download=self._download
+        )
+
+    def test_bytes_that_are_not_the_listed_blob_are_refused(self):
+        self.served = FBNEO_DAT.replace(b"1.0.0.03", b"1.0.0.02")
+        with self._patched(), self.assertRaises(self.importer.BlobMismatchError):
+            self.importer.fetch_pack("fbneo", "latest", self.dir)
+        self.assertFalse((self.dir / "fbneo-dats" / "Demo.dat").exists())
+
+    def test_the_named_revision_is_the_one_listed(self):
+        with self._patched():
+            target, blobs = self.importer.fetch_pack("fbneo", "v1.0.0.02", self.dir)
+        self.assertEqual(
+            self.calls,
+            [f"{self.importer.FBNEO_API}/commits/v1.0.0.02",
+             f"{self.importer.FBNEO_API}/contents/dats?ref=c0ffee"],
+        )
+        self.assertEqual(list(blobs), ["Demo.dat"])
+
+    def test_a_revision_import_is_labelled_and_leaves_the_tip_blobs(self):
+        import contextlib
+        import io
+        from unittest import mock
+
+        output = self.dir / "fbneo.json"
+        output.write_text(json.dumps({"upstream": {"blobs": {"Demo.dat": "tip"}}}))
+        argv = ["romset_dat_importer", "--source", "fbneo", "--fetch", "v1.0.0.02",
+                "--all", "--cache-dir", str(self.dir), "--output", str(output)]
+        with self._patched(), mock.patch.object(sys, "argv", argv), \
+                contextlib.redirect_stdout(io.StringIO()):
+            self.assertEqual(self.importer.main(), 0)
+        snapshot = json.loads(output.read_text())
+        self.assertEqual(snapshot["upstream"]["blobs"], {"Demo.dat": "tip"})
+        self.assertEqual(
+            [entry["dat"] for entry in snapshot["entries"]],
+            ["FinalBurn Neo - Demo @ v1.0.0.02"],
+        )
+
+
 class LooseRomsAreAtoms(unittest.TestCase):
     """AtomPool read only ZIP members: nmk004.zip stayed unidentified while
     its one ROM sat loose in bios/Arcade/FBNeo/nmk004.bin."""

@@ -373,5 +373,48 @@ class Cli(unittest.TestCase):
         self.assertEqual(raised.exception.code, 2)
 
 
+class TheDevicesFollowTheRelease(unittest.TestCase):
+    """Pipeline step 2a moved mame.yml to a new release and left the device
+    sets on the lines of the previous one: the profile named two releases."""
+
+    def _run(self, moves: bool, dry_run: bool = False) -> list:
+        import argparse
+        from unittest import mock
+
+        from scripts.scraper import mame_hash_scraper as scraper
+
+        with tempfile.TemporaryDirectory() as directory:
+            profile = Path(directory) / "mame.yml"
+            profile.write_text('core_version: "0.289"\nfiles: []\n')
+
+            def merge(path, *_args, **_kwargs):
+                if moves:
+                    profile.write_text('core_version: "0.290"\nfiles: []\n')
+
+            merged = []
+            with mock.patch.multiple(
+                scraper,
+                _EMULATORS_DIR=Path(directory),
+                _fetch_hashes=lambda force: {"bios_sets": {}, "version": "0.290"},
+                _find_mame_profiles=lambda: [profile],
+                compute_diff=lambda *a, **k: {"updated": ["x"], "added": []},
+                _format_diff=lambda *a, **k: [],
+                merge_mame_profile=merge,
+                fetch_release_listxml=lambda version: Path(f"mame{version}lx.zip"),
+                _merge_devices=merged.append,
+            ), mock.patch("sys.stdout", new=io.StringIO()):
+                scraper._run(argparse.Namespace(force=False, json=False, dry_run=dry_run))
+            return merged
+
+    def test_a_moved_pin_merges_that_release_devices(self):
+        (args,) = self._run(moves=True)
+        self.assertEqual(args.listxml, Path("mame0.290lx.zip"))
+        self.assertFalse(args.dry_run)
+
+    def test_an_unmoved_pin_leaves_the_devices(self):
+        self.assertEqual(self._run(moves=False), [])
+        self.assertEqual(self._run(moves=True, dry_run=True), [])
+
+
 if __name__ == "__main__":
     unittest.main()

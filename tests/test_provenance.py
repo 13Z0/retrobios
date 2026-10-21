@@ -554,6 +554,55 @@ class OneDumpIsCountedOnce(unittest.TestCase):
         self.assertEqual(provenance_report.distinct_missing(twice), 1)
 
 
+class AMissingDumpNamesTheProfileItFills(unittest.TestCase):
+    """XM7 requires DICROM.ROM and the collection lacks it, yet the report
+    listed No-Intro's dump at the rank of a Kickstart beta no core reads."""
+
+    PROFILES = {
+        "xm7": {"files": [
+            {"name": "DICROM.ROM", "required": True, "min_size": 262144},
+            {"name": "held.rom", "required": True, "size": 16},
+        ]},
+        "hashed": {"files": [{"name": "x.bin", "sha1": "c" * 40}]},
+    }
+
+    def _report(self, db):
+        from scripts import provenance_report  # noqa: PLC0415
+
+        snapshots = {"no-intro": {"entries": [
+            {"dat": "FM-7", "name": "DICROM.rom", "sha1": "a" * 40, "size": 262144},
+            {"dat": "FM-7", "name": "held.rom", "sha1": "b" * 40, "size": 16},
+            {"dat": "FM-7", "name": "Other Name.rom", "sha1": "c" * 40, "size": 8},
+            {"dat": "FM-7", "name": "unread.rom", "sha1": "d" * 40, "size": 8},
+        ]}}
+        needs = provenance_report.profile_needs(self.PROFILES, db)
+        return provenance_report.build_report(db, snapshots, {}, {}, needs)
+
+    def test_a_dump_a_profile_reads_names_it(self):
+        db = {"files": {"b" * 40: {"name": "held.rom", "md5": "", "size": 16}}}
+        missing = {e["name"]: e.get("needed_by") for e in self._report(db)["no-intro"]["missing"]}
+        self.assertEqual(missing["DICROM.rom"], [
+            {"emulator": "xm7", "name": "DICROM.ROM", "required": True,
+             "by": "name and size"},
+        ])
+        self.assertEqual(missing["Other Name.rom"][0]["by"], "sha1")
+        self.assertIsNone(missing["unread.rom"])
+
+    def test_a_size_outside_the_profile_range_fills_nothing(self):
+        from scripts import provenance_report  # noqa: PLC0415
+
+        needs = provenance_report.profile_needs(self.PROFILES, {"files": {}})
+        small = {"name": "DICROM.rom", "size": 1024}
+        self.assertEqual(provenance_report.needs_filled(small, needs), [])
+
+    def test_a_need_the_collection_answers_is_not_one(self):
+        from scripts import provenance_report  # noqa: PLC0415
+
+        db = {"files": {"e" * 40: {"name": "dicrom.rom", "size": 262144}}}
+        needs = provenance_report.profile_needs(self.PROFILES, db)
+        self.assertNotIn("dicrom.rom", needs["by_name"])
+
+
 class TheWantedPageAsksOnlyForWhatCannotBeMade(unittest.TestCase):
     """The site's Wanted page asked the public for 79 dumps the collection
     already produces (a Kickstart's odd bytes, a character ROM's halves)."""

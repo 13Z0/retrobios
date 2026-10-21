@@ -18,39 +18,70 @@ from __future__ import annotations
 
 import argparse
 import json
-import re
 import sys
 import zipfile
 from pathlib import Path
 
 import split_pack
-from common import ArtifactLockBusy, artifact_lock, write_text_atomic
+from common import (
+    ArtifactLockBusy,
+    artifact_lock,
+    list_registered_platforms,
+    write_text_atomic,
+)
 
 RECORD = "release.json"
-
-
-def _match_key(value: str) -> str:
-    """Letters and digits only: the platform is `misterfpga`, the pack MiSTer_FPGA."""
-    return re.sub(r"[^a-z0-9]", "", value.lower())
 
 
 class UnfinishedSplitError(Exception):
     """A pack lies beside its own parts: a split is running or was killed."""
 
 
-def build_record(dist: Path, tag: str) -> dict:
+class NotAReleasePackError(Exception):
+    """A pack in the directory is not the full pack of a registered platform."""
+
+
+def release_owners(platforms_dir: str = "platforms") -> dict[str, list[str]]:
+    """Full pack file name to the platforms it serves, as the builder names it.
+
+    Rebuilt from the name builder, never matched by substring: matched by
+    substring, RetroArch_v1.22.2_AndroidArm64V8A_BIOS_Pack.zip sorts before
+    the full pack and was taken for the RetroArch pack.
+    """
+    import generate_pack
+
+    platforms = list_registered_platforms(platforms_dir, include_archived=True)
+    owners: dict[str, list[str]] = {}
+    for platform, names in generate_pack._expected_pack_names(
+        platforms, platforms_dir, None, None
+    ).items():
+        for name in names:
+            owners.setdefault(name, []).append(platform)
+    return {name: sorted(serves) for name, serves in owners.items()}
+
+
+def build_record(
+    dist: Path,
+    tag: str,
+    platforms_dir: str = "platforms",
+    owners: dict[str, list[str]] | None = None,
+) -> dict:
     """Read every pack of a directory, parts counted once across them.
 
     Read under the shared artifact lock, so a split that is reading its parts
     back cannot be recorded half done. A pack still beside its parts after
     that is a split that never finished: summed, it doubled the download size
-    and named an asset that is never published.
+    and named an asset that is never published. Each pack carries the
+    platforms it serves, so a reader finds a platform's pack by that list
+    after a later version or grouping has renamed the pack main would build.
     """
+    if owners is None:
+        owners = release_owners(platforms_dir)
     with artifact_lock(str(dist), exclusive=False):
-        return _read_record(Path(dist), tag)
+        return _read_record(Path(dist), tag, owners)
 
 
-def _read_record(dist: Path, tag: str) -> dict:
+def _read_record(dist: Path, tag: str, owners: dict[str, list[str]]) -> dict:
     assets: dict[str, list[Path]] = {}
     for path in sorted(dist.glob("*_BIOS_Pack*.zip")):
         assets.setdefault(split_pack.pack_of(path.name), []).append(path)
@@ -60,6 +91,12 @@ def _read_record(dist: Path, tag: str) -> dict:
             raise UnfinishedSplitError(
                 f"{whole[0].name} lies beside its parts: the split did not finish"
             )
+    foreign = sorted(name for name in assets if name not in owners)
+    if foreign:
+        raise NotAReleasePackError(
+            f"not the full pack of a registered platform: {', '.join(foreign)}"
+            " (a narrowed or older build left in the directory)"
+        )
 
     packs = {}
     for name, paths in sorted(assets.items()):
@@ -73,6 +110,7 @@ def _read_record(dist: Path, tag: str) -> dict:
             "extracted_size": sum(members.values()),
             "download_size": sum(path.stat().st_size for path in paths),
             "assets": [path.name for path in paths],
+            "platforms": owners[name],
         }
     return {"tag": tag, "packs": packs}
 
@@ -86,15 +124,18 @@ def load_record(path: str | Path = RECORD) -> dict:
         return {}
 
 
+def pack_name_for(platform: str, record: dict) -> str | None:
+    """Name of the release pack that serves a platform, if it has one."""
+    for name, pack in sorted(record.get("packs", {}).items()):
+        if platform in pack.get("platforms", ()):
+            return name
+    return None
+
+
 def pack_for(platform: str, record: dict) -> dict | None:
     """The pack of the release that serves a platform, if it has one."""
-    needle = _match_key(platform)
-    if not needle:
-        return None
-    for name, pack in sorted(record.get("packs", {}).items()):
-        if needle in _match_key(name):
-            return pack
-    return None
+    name = pack_name_for(platform, record)
+    return record["packs"][name] if name else None
 
 
 def manifest_mismatches(record: dict, install_dir: str | Path) -> list[str]:
@@ -103,17 +144,15 @@ def manifest_mismatches(record: dict, install_dir: str | Path) -> list[str]:
     for manifest_path in sorted(Path(install_dir).glob("*.json")):
         manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
         expected = manifest.get("pack_files")
-        if expected is None:
+        name = pack_name_for(manifest_path.stem, record)
+        if expected is None or name is None:
             continue
-        for name, pack in sorted(record.get("packs", {}).items()):
-            if _match_key(manifest_path.stem) not in _match_key(name):
-                continue
-            if pack["files"] != expected:
-                found.append(
-                    f"{name} holds {pack['files']} files, "
-                    f"install/{manifest_path.name} expects {expected}"
-                )
-            break
+        pack = record["packs"][name]
+        if pack["files"] != expected:
+            found.append(
+                f"{name} holds {pack['files']} files, "
+                f"install/{manifest_path.name} expects {expected}"
+            )
     return found
 
 
@@ -132,14 +171,18 @@ def main() -> int:
         help="manifests the archives are compared with (default: %(default)s)",
     )
     parser.add_argument(
+        "--platforms-dir", default="platforms",
+        help="registry the pack names are rebuilt from (default: %(default)s)",
+    )
+    parser.add_argument(
         "--output", default=RECORD, type=Path,
         help="record to write (default: %(default)s)",
     )
     args = parser.parse_args()
 
     try:
-        record = build_record(args.dist, args.tag)
-    except (UnfinishedSplitError, ArtifactLockBusy) as exc:
+        record = build_record(args.dist, args.tag, args.platforms_dir)
+    except (UnfinishedSplitError, NotAReleasePackError, ArtifactLockBusy) as exc:
         print(f"Error: {exc}", file=sys.stderr)
         return 1
     if not record["packs"]:

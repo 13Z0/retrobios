@@ -334,6 +334,8 @@ def _run(args: argparse.Namespace) -> None:
         print("  no profiles with mamedev/mame upstream found")
         return
 
+    main_profile = _EMULATORS_DIR / "mame.yml"
+    pinned_before = _pinned_version(main_profile)
     for profile_path in profiles:
         is_main = profile_path.name == "mame.yml"
         diff = compute_diff(str(profile_path), str(_CACHE_PATH), mode="mame")
@@ -356,6 +358,34 @@ def _run(args: argparse.Namespace) -> None:
     print()
     if args.dry_run:
         print("(dry run, no files modified)")
+        return
+    pinned_after = _pinned_version(main_profile)
+    if pinned_after != pinned_before:
+        # The device sets describe the release mame.yml is pinned on: left
+        # behind, the profile names two releases at once.
+        print(f"mame.yml moved from {pinned_before} to {pinned_after}: "
+              "merging the device ROM sets of that release")
+        _merge_devices(argparse.Namespace(
+            listxml=fetch_release_listxml(pinned_after), dry_run=False,
+        ))
+
+
+def _pinned_version(profile_path: Path) -> str:
+    profile = yaml_load(profile_path.read_text(encoding="utf-8")) if profile_path.is_file() else {}
+    return str((profile or {}).get("core_version") or "")
+
+
+def fetch_release_listxml(version: str) -> Path:
+    """The -listxml MAME publishes for a release, in the DAT importer's cache.
+
+    0.289 is the tag mame0289 and the asset mame0289lx.zip.
+    """
+    from .romset_dat_importer import MAME_LISTXML_URL, _download
+
+    tag = "mame" + version.replace(".", "")
+    return _download(
+        MAME_LISTXML_URL.format(tag=tag), _ROOT / ".cache" / "dats" / f"{tag}lx.zip"
+    )
 
 
 def release_profile(

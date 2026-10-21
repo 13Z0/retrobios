@@ -18,7 +18,12 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
-from common import ArtifactLockBusy, artifact_lock, hold_artifact_lock  # noqa: E402
+from common import (  # noqa: E402
+    ArtifactLockBusy,
+    artifact_lock,
+    hold_artifact_lock,
+    hold_repository_outputs,
+)
 
 
 def _tempdir(test: unittest.TestCase) -> str:
@@ -198,6 +203,29 @@ class PackLockCliTest(unittest.TestCase):
             )
         self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
         self.assertIn("is in use by another run", proc.stderr)
+
+
+class PipelineHoldsItsFixedOutputs(unittest.TestCase):
+    """A pipeline on a scratch --output-dir still rewrites database.json,
+    install/, README.md and docs/: only the output directory was locked."""
+
+    def test_a_second_pipeline_is_refused_whatever_its_output_dir(self):
+        scratch = _tempdir(self)
+        with hold_repository_outputs(str(REPO_ROOT)):
+            proc = subprocess.run(
+                [sys.executable, "scripts/pipeline.py", "--offline", "--skip-docs",
+                 "--output-dir", scratch],
+                capture_output=True, text=True, cwd=str(REPO_ROOT), timeout=120,
+            )
+        self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
+        self.assertIn("another pipeline run is writing database.json", proc.stderr)
+        self.assertNotIn("generate database", proc.stdout.lower())
+
+    def test_two_holds_of_the_repository_exclude_each_other(self):
+        with hold_repository_outputs(str(REPO_ROOT)), \
+                self.assertRaises(ArtifactLockBusy):
+            with hold_repository_outputs(str(REPO_ROOT)):
+                pass
 
 
 class HeldLockTest(unittest.TestCase):

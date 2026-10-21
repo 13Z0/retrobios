@@ -377,7 +377,8 @@ class ProfileSummaryTests(unittest.TestCase):
             {"name": "a", "pin": "1" * 40, "head": "1" * 40, "needs_review": 0},
             {"name": "b", "pin": "1" * 40, "head": "2" * 40, "needs_review": 0},
             {"name": "c", "pin": "1" * 40, "head": "2" * 40, "needs_review": 3},
-            {"name": "d", "skipped": "host does not resolve"},
+            {"name": "d", "skipped": "no declared repository answers"},
+            {"name": "e", "skipped": "upstream gone (declared): archived 2019"},
         ]
         findings = cf.summarize_profile_sync(report)
         by_subject = {f.subject: f for f in findings}
@@ -385,6 +386,8 @@ class ProfileSummaryTests(unittest.TestCase):
         self.assertEqual(by_subject["profile_sync"].local, "1 at tip, 1 anchored past the tip")
         self.assertEqual(by_subject["c"].status, cf.STALE)
         self.assertEqual(by_subject["d"].status, cf.UNKNOWN)
+        # Never checkable by nature: it does not hold the exit code.
+        self.assertEqual(by_subject["e"].status, cf.SKIPPED)
         self.assertNotIn("a", by_subject)
         self.assertNotIn("b", by_subject)
 
@@ -441,6 +444,31 @@ class RepositoryWiringTests(unittest.TestCase):
         self.assertIn("FRESHNESS: 1 stale, 1 unknown, 1 ok", text)
         self.assertIn("[ci]", text)
         self.assertIn("[data]", text)
+
+    def test_an_unanswered_upstream_is_not_fresh(self):
+        """With no network every data row was unknown and the run exited 0,
+        the answer of a collection with nothing to refresh."""
+        self.assertEqual(cf.exit_code([cf.Finding("data", "a", cf.UNKNOWN)]), 1)
+        self.assertEqual(cf.exit_code([cf.Finding("data", "a", cf.SKIPPED),
+                                       cf.Finding("data", "b", cf.OK)]), 0)
+
+    def test_stale_rows_name_the_command_that_refreshes_them(self):
+        text = cf.render([cf.Finding("native", "batocera", cf.STALE)])
+        self.assertIn("refresh_stale.py", text)
+        self.assertNotIn("refresh_stale.py", cf.render([cf.Finding("ci", "a", cf.OK)]))
+
+    def test_a_stale_original_names_its_platform(self):
+        """The hint refetched the originals of all twelve platforms to fix
+        one, and wrote no export."""
+        source = Path(cf.__file__).read_text(encoding="utf-8")
+        hint = source.index('" fetches it, then the export is written again"')
+        self.assertIn("--platform {name} --refresh-cache", source[hint - 120:hint])
+
+    def test_an_unknown_area_names_the_valid_ones(self):
+        message = cf.unknown_areas_message(["platform"])
+        self.assertIn("did you mean platforms?", message)
+        for area in cf.AREAS:
+            self.assertIn(area, message)
 
     def test_a_target_of_every_declared_core_does_not_age(self):
         """RetroBat, RetroDECK and RomM name one target that runs every core

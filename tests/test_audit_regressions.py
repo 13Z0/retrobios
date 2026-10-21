@@ -3761,6 +3761,21 @@ class ADataDirectoryIsHeldWhileRead(unittest.TestCase):
             self.assertFalse(exclusive_free())
         self.assertTrue(exclusive_free())
 
+    def test_a_cache_not_yet_on_disk_is_held_too(self):
+        """Skipped while absent, a tree a refresh installed mid-run was
+        missing for verify and present for the packs of the same run."""
+        import fcntl
+
+        from scripts import refresh_data_dirs
+
+        cache = self.tmp / "absent"
+        lock = cache.with_name(f".{cache.name}.lock")
+        with contextlib.ExitStack() as held:
+            refresh_data_dirs.hold_data_dirs(held, {"absent": {"local_cache": str(cache)}})
+            self.assertFalse(cache.exists())
+            with open(lock, "a") as handle, self.assertRaises(BlockingIOError):
+                fcntl.flock(handle, fcntl.LOCK_EX | fcntl.LOCK_NB)
+
     def test_both_entry_points_hold_the_trees(self):
         pack = (ROOT / "scripts" / "generate_pack.py").read_text()
         verify_src = (ROOT / "scripts" / "verify.py").read_text()
@@ -5446,7 +5461,8 @@ class ReportsHoldTheDataTrees(unittest.TestCase):
     def test_each_entry_point_holds_them(self):
         import ast
 
-        for script in ("generate_readme.py", "generate_site.py", "slots.py"):
+        for script in ("generate_readme.py", "generate_site.py", "slots.py",
+                       "export_native.py", "cross_reference.py"):
             tree = ast.parse((ROOT / "scripts" / script).read_text(encoding="utf-8"))
             main = next(
                 node for node in tree.body
@@ -5580,6 +5596,83 @@ class AnUnansweredSearchIsNotANotFound(unittest.TestCase):
         result = self._fetch(urllib.error.HTTPError("u", 404, "missing", {}, None))
         self.assertEqual(len(result["still_missing"]), 1)
         self.assertEqual(result["stats"]["errors"], 0)
+
+
+class AutoFetchProvesEveryHashItIsGiven(unittest.TestCase):
+    """auto_fetch checked a download by sha1 or md5 only: RetroDECK's
+    dsifirmware.bin, pinned by sha256 alone, was announced as searched and
+    could never be accepted."""
+
+    DATA = b"firmware bytes"
+
+    def test_a_sha256_proves_a_download(self):
+        import hashlib
+
+        from scripts import auto_fetch
+
+        sha256 = {"sha256": hashlib.sha256(self.DATA).hexdigest()}
+        self.assertTrue(auto_fetch.verify_content(self.DATA, sha256))
+        self.assertFalse(auto_fetch.verify_content(b"other", sha256))
+
+    def test_every_declared_cryptographic_hash_must_match(self):
+        import hashlib
+
+        from scripts import auto_fetch
+
+        both = {"sha256": hashlib.sha256(self.DATA).hexdigest(), "md5": "0" * 32}
+        self.assertFalse(auto_fetch.verify_content(self.DATA, both))
+        both["md5"] = hashlib.md5(self.DATA).hexdigest()
+        self.assertTrue(auto_fetch.verify_content(self.DATA, both))
+
+    def test_crc32_and_size_never_accept_a_download(self):
+        """A crc32 can be forged: bytes a source crafts to it would land in
+        bios/."""
+        import urllib.request
+        import zlib
+        from unittest import mock
+
+        from scripts import auto_fetch
+
+        crc = {"name": "forged.bin", "system": "test-system",
+               "crc32": f"{zlib.crc32(self.DATA):08X}", "size": len(self.DATA)}
+        self.assertFalse(auto_fetch.verify_content(self.DATA, crc))
+        self.assertFalse(auto_fetch.verifiable(crc))
+
+        served = io.BytesIO(self.DATA)
+        with tempfile.TemporaryDirectory() as bios, \
+                mock.patch.object(urllib.request, "urlopen", lambda *a, **k: served), \
+                mock.patch.object(auto_fetch, "step2_scan_branches",
+                                  lambda e: self.DATA), \
+                contextlib.redirect_stdout(io.StringIO()) as out:
+            result = auto_fetch.fetch_missing([crc], {"files": {}}, bios)
+            self.assertEqual(list(Path(bios).rglob("*")), [])
+        self.assertEqual(result["stats"]["found"], 0)
+        self.assertEqual(result["stats"]["unverifiable"], 1)
+        self.assertIn("declares no cryptographic hash", out.getvalue())
+
+    def test_a_held_sha256_is_found_in_the_database(self):
+        from scripts import auto_fetch
+
+        db = {"files": {"s": {"path": "bios/x/dsi.bin", "size": 3}},
+              "indexes": {"by_sha256": {"f" * 64: "s"}}}
+        self.assertEqual(
+            auto_fetch.step1_crossref_db({"sha256": "F" * 64}, db), "bios/x/dsi.bin"
+        )
+
+    def test_an_entry_without_a_hash_is_not_searched(self):
+        from unittest import mock
+
+        from scripts import auto_fetch
+
+        entry = {"name": "DICROM.ROM", "system": "fujitsu-fm7"}
+        out = io.StringIO()
+        with mock.patch.object(auto_fetch, "step2_scan_branches") as branches, \
+                contextlib.redirect_stdout(out):
+            result = auto_fetch.fetch_missing([entry], {"files": {}}, "bios", dry_run=True)
+        branches.assert_not_called()
+        self.assertEqual(result["stats"]["unverifiable"], 1)
+        self.assertNotIn("Would search", out.getvalue())
+        self.assertIn("Not searched", out.getvalue())
 
 
 class AForcedRehashIsCheckedAgainstTheLastOne(unittest.TestCase):
