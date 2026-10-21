@@ -769,10 +769,14 @@ def generate_pack(
             if sid in system_filter or _norm_system_id(sid) in norm_filter
         }
         if not filtered:
-            available = sorted(pack_systems.keys())[:10]
+            hint = suggest_names(
+                system_filter,
+                sorted(pack_systems),
+                f"--platform {platform_name} --list-systems",
+            )
             print(
-                f"  WARNING: no systems matched filter {system_filter} "
-                f"(available: {', '.join(available)})"
+                f"  WARNING: {platform_name} has no system matching "
+                f"{', '.join(system_filter)}. {hint}"
             )
             return None
         pack_systems = filtered

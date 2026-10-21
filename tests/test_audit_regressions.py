@@ -5884,5 +5884,27 @@ class InstallerJsonKindsNeverOverwriteEachOther(unittest.TestCase):
         self.assertEqual(after, before)
 
 
+class PlatformSystemTypoGetsTheClosestNames(unittest.TestCase):
+    """--platform retroarch --system sony-playstaton listed the first ten
+    systems of the alphabet, 3do to coleco-colecovision."""
+
+    def test_the_hint_names_the_close_systems(self):
+        from scripts import generate_pack as gp
+
+        out = io.StringIO()
+        with tempfile.TemporaryDirectory(dir=TMP_ROOT) as tmp, \
+                contextlib.redirect_stdout(out):
+            result = gp.generate_pack(
+                "retroarch", str(ROOT / "platforms"), {"files": {}, "indexes": {}},
+                str(ROOT / "bios"), tmp, emulators_dir=str(ROOT / "emulators"),
+                system_filter=["sony-playstaton"], offline=True,
+            )
+        self.assertIsNone(result)
+        printed = out.getvalue()
+        self.assertIn("Did you mean: sony-playstation", printed)
+        self.assertIn("--platform retroarch --list-systems", printed)
+        self.assertNotIn("3do", printed)
+
+
 if __name__ == "__main__":
     unittest.main()
