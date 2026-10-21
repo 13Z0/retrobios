@@ -356,7 +356,8 @@ class TheScraperClonesTheReleaseItLabels(unittest.TestCase):
         with mock.patch.object(scraper, "_get_release_tag", return_value="mame0289"), \
                 mock.patch.object(scraper, "_run_git",
                                   side_effect=lambda args, cwd=None: calls.append(args)), \
-                mock.patch.object(scraper, "parse_mame_source_tree", return_value={}), \
+                mock.patch.object(scraper, "parse_mame_source_tree",
+                                  return_value={"neogeo": {"roms": []}}), \
                 mock.patch.object(scraper, "_get_commit", return_value="c" * 40), \
                 mock.patch.object(scraper, "_write_cache"), \
                 mock.patch.object(scraper, "_cleanup"), \
