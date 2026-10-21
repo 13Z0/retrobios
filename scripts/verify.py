@@ -1816,6 +1816,7 @@ def verify_emulator(
     `system_ids` keeps the entries of those systems, as the system pack does.
     """
     from packextras import expand_agnostic_entries
+    from packresolve import resolve_file
     from packpaths import (
         _archive_destination,
         _register_path,
@@ -1846,6 +1847,10 @@ def verify_emulator(
     file_severity: dict[str, str] = {}
     dest_to_name: dict[str, str] = {}
     data_dir_notices: list[str] = []
+    # The paths the emulator pack writes a profile file to. A copy whose hash
+    # the profile contradicts is written too (UNTESTED here, a DISCREPANCY in
+    # the pack), so the status alone does not say what the pack holds.
+    packed_dests: set[str] = set()
 
     # The emulator pack withdraws these, and the report withdraws the same.
     region_drops: set[str] = set()
@@ -1936,11 +1941,13 @@ def verify_emulator(
             archive = file_entry.get("archive")
             if archive and archive not in seen_archives:
                 seen_archives.add(archive)
-                local_path, resolve_status = resolve_local_file(
+                local_path, resolve_status = resolve_file(
                     archive_entry(archive, files),
                     db,
+                    DEFAULT_BIOS_DIR,
                     zip_contents,
                     data_dir_registry=data_registry,
+                    offline=True,
                 )
                 required = any(
                     f.get("archive") == archive and f.get("required", True)
@@ -1997,6 +2004,7 @@ def verify_emulator(
                         )
                 elif local_path:
                     occupy(dest, local_path, emu_name)
+                    packed_dests.add(dest)
                 dest_to_name[dest] = archive
                 cur = result["status"]
                 prev = file_status.get(dest)
@@ -2023,13 +2031,18 @@ def verify_emulator(
                 continue
 
             dest_hint = file_entry.get("path", "")
-            local_path, resolve_status = resolve_local_file(
+            # The emulator pack's resolution, release assets included.
+            local_path, resolve_status = resolve_file(
                 {**with_archive_members(file_entry, files), "source_profile": emu_name},
                 db,
+                DEFAULT_BIOS_DIR,
                 zip_contents,
                 dest_hint=dest_hint,
                 data_dir_registry=data_registry,
+                offline=True,
             )
+            if resolve_status in ("not_found", "user_provided", "external"):
+                local_path = None
             name = file_entry.get("name", "")
             required = file_entry.get("required", True)
             hle = file_entry.get("hle_fallback", False)
@@ -2159,6 +2172,7 @@ def verify_emulator(
                     block_reason = f"the pack holds {owner}'s {other_dest} at this path"
             elif not block and packed is not None:
                 occupy(dest, packed, emu_name)
+                packed_dests.add(dest)
             for result, required, hle in alternatives:
                 if block_reason and result["status"] != Status.MISSING:
                     result["status"] = Status.MISSING
@@ -2226,9 +2240,7 @@ def verify_emulator(
         "total_files": total,
         # The paths the emulator pack fills with the profile's files, for the
         # pipeline's comparison with the pack built in memory.
-        "pack_destinations": sorted(
-            dest for dest, status in file_status.items() if status == Status.OK
-        ),
+        "pack_destinations": sorted(packed_dests),
         "severity_counts": counts,
         "status_counts": status_counts,
         "details": details,

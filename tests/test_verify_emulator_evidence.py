@@ -52,6 +52,23 @@ def _db(path: Path, name: str) -> dict:
     }
 
 
+def _pack_files(root: Path, emulators: Path, db: dict) -> set[str]:
+    """The paths the emulator pack writes, built in memory as the pipeline does."""
+    import generate_pack
+
+    record = generate_pack.PackRecord()
+    cwd = os.getcwd()
+    os.chdir(root)
+    try:
+        generate_pack.generate_emulator_pack(
+            ["demo"], str(emulators), db, "bios", "", False, {}, offline=True,
+            record=record,
+        )
+    finally:
+        os.chdir(cwd)
+    return set(record.files)
+
+
 class HashMismatchIsNotCoverage(unittest.TestCase):
     def setUp(self):
         self._tmp = tempfile.TemporaryDirectory()
@@ -112,6 +129,17 @@ class HashMismatchIsNotCoverage(unittest.TestCase):
         )
         self.assertIn("reason", detail)
         self.assertIn("hash", detail["reason"].lower())
+
+    def test_the_contradicted_copy_the_pack_writes_is_a_pack_destination(self):
+        """The pack writes it with a DISCREPANCY, so verify's list of what
+        the pack holds names it too: step 5 compared the two and failed."""
+        self._profile("f" * 32)
+        result = self._run()
+        self.assertEqual(result["pack_destinations"], ["shared.rom"])
+        self.assertEqual(
+            set(result["pack_destinations"]),
+            _pack_files(self.root, self.emulators, self.db),
+        )
 
     def test_a_matching_hash_is_still_ok(self):
         self._profile(hashlib.md5(self.rom.read_bytes()).hexdigest())
@@ -228,6 +256,15 @@ class ArchiveHashMismatchIsNotCoverage(unittest.TestCase):
             verify.Status.OK,
             statuses,
             "an archive whose bytes contradict its declared hash counted as covered",
+        )
+
+    def test_the_contradicted_archive_the_pack_writes_is_a_pack_destination(self):
+        self._profile("f" * 32)
+        result = self._run()
+        self.assertEqual(result["pack_destinations"], ["romset.zip"])
+        self.assertEqual(
+            set(result["pack_destinations"]),
+            _pack_files(self.root, self.emulators, self.db),
         )
 
     def test_a_matching_container_hash_is_still_ok(self):
