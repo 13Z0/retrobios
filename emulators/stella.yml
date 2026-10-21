@@ -1,18 +1,87 @@
 emulator: Stella
-type: alias
-alias_of: stella2014
-source: "https://github.com/libretro/stella-libretro"
-profiled_date: "2026-03-25"
-core_version: "3.9.3"
+type: standalone + libretro
+core_classification: official_port
+source: "https://github.com/stella-emu/stella"
+profiled_date: "2026-10-21"
+source_commit: "2c3d7023e9136f75c789803b44f119d8749dc104"
+core_version: "8.0_pre"
 display_name: "Atari - 2600 (Stella)"
 cores:
   - stella
 systems:
   - atari-2600
 
-note: |
-  Identical codebase to stella2014-libretro. Both repos share the same HEAD
-  commit and produce a binary reporting library_name "Stella 2014". The
-  stella_libretro.info lists display_version "6.6", and the binary reports
-  3.9.3. See stella2014.yml for firmware requirements
-  and KidVid audio files.
+notes: |
+  The libretro core is built from stella-emu/stella, the tree of the
+  standalone emulator, with its wrapper in src/os/libretro. The binary
+  reports library_name "Stella" (src/os/libretro/StellaLIBRETRO.hxx:59)
+  and the version of src/common/Version.hxx:35. The stella_libretro.info
+  lists display_version "6.6".
+
+  The Atari 2600 has no BIOS ROM: TIA, RIOT and 6507 CPU are emulated in
+  software. The SuperCharger (Starpath) BIOS is replaced by built-in code
+  (ourDummyROMCode in src/emucore/CartAR.cxx:635).
+
+  The libretro core reads the system directory (src/os/libretro/libretro.cxx:1716-1724)
+  but nothing reads the path it stores. Its base directory is a stella
+  folder under the save directory, or ./ without one
+  (src/os/libretro/OSystemLIBRETRO.hxx:71-79). The standalone base
+  directory is the configuration directory, $XDG_CONFIG_HOME/stella on
+  Linux and the application data folder on Windows
+  (src/os/unix/OSystemUNIX.cxx:79, src/os/windows/OSystemWINDOWS.cxx:32).
+
+  KidVid Voice Module tapes: the tape the game selects and KVSHARED.WAV are
+  looked up in KidVidAudio.zip in the base directory, then loose in the
+  base directory, and both must be present (src/emucore/KidVid.cxx:255-268).
+  The archive holds the same seven files listed below.
+  The libretro build compiles with SOUND_SUPPORT and ZIP_SUPPORT
+  (src/os/libretro/Makefile:599) and plays them (src/os/libretro/SoundLIBRETRO.hxx:127-133).
+  Without them the game runs on a timing-based fallback with a beep
+  (src/emucore/KidVid.cxx:343-348).
+
+  EEPROM save data for AtariVox and SaveKey peripherals is managed as
+  NVRAM, not user-supplied.
+
+files:
+  - name: KVS1.WAV
+    description: "KidVid Voice Module audio tape 1 (Smurfs Save the Day)"
+    required: false
+    load_from: {libretro: save_dir, standalone: config_dir}
+    category: game_data
+    source_ref: "src/emucore/KidVid.cxx:246-248, src/emucore/KidVid.cxx:255-268"
+  - name: KVS2.WAV
+    description: "KidVid Voice Module audio tape 2 (Smurfs Save the Day)"
+    required: false
+    load_from: {libretro: save_dir, standalone: config_dir}
+    category: game_data
+    source_ref: "src/emucore/KidVid.cxx:246-248, src/emucore/KidVid.cxx:255-268"
+  - name: KVS3.WAV
+    description: "KidVid Voice Module audio tape 3 (Smurfs Save the Day)"
+    required: false
+    load_from: {libretro: save_dir, standalone: config_dir}
+    category: game_data
+    source_ref: "src/emucore/KidVid.cxx:246-248, src/emucore/KidVid.cxx:255-268"
+  - name: KVB1.WAV
+    description: "KidVid Voice Module audio tape 1 (Berenstain Bears)"
+    required: false
+    load_from: {libretro: save_dir, standalone: config_dir}
+    category: game_data
+    source_ref: "src/emucore/KidVid.cxx:246-248, src/emucore/KidVid.cxx:255-268"
+  - name: KVB2.WAV
+    description: "KidVid Voice Module audio tape 2 (Berenstain Bears)"
+    required: false
+    load_from: {libretro: save_dir, standalone: config_dir}
+    category: game_data
+    source_ref: "src/emucore/KidVid.cxx:246-248, src/emucore/KidVid.cxx:255-268"
+  - name: KVB3.WAV
+    description: "KidVid Voice Module audio tape 3 (Berenstain Bears)"
+    required: false
+    load_from: {libretro: save_dir, standalone: config_dir}
+    category: game_data
+    source_ref: "src/emucore/KidVid.cxx:246-248, src/emucore/KidVid.cxx:255-268"
+  - name: KVSHARED.WAV
+    description: "KidVid Voice Module shared audio samples"
+    required: false
+    load_from: {libretro: save_dir, standalone: config_dir}
+    category: game_data
+    source_ref: "src/emucore/KidVid.cxx:255-268, src/emucore/KidVid.cxx:329-331"
