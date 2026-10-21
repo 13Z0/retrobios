@@ -56,6 +56,7 @@ from common import (  # noqa: E402
     list_registered_platforms,
     load_emulator_profiles,
     upstream_profile_index,
+    write_text_atomic,
     yaml_load,
 )
 from exporter import discover_exporters  # noqa: E402
@@ -65,6 +66,8 @@ from scripts.scraper.targets import discover_target_scrapers  # noqa: E402
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 CORE_INFO_REPO = "https://github.com/libretro/libretro-core-info"
+# The git blob of every .info as last reviewed: `--record-coreinfo` writes it.
+CORE_INFO_RECORD = REPO_ROOT / "platforms" / "_core_info.json"
 NO_INTRO_MIRROR = "https://github.com/hugo19941994/auto-datfile-generator"
 NO_INTRO_RELEASE = "Daily_Rebuild"
 NO_INTRO_ASSET = "no-intro.zip"
@@ -697,8 +700,9 @@ def _age_days(stamp: str, now: datetime) -> int | None:
 # --- core-info --------------------------------------------------------------
 
 
-def core_info_names(cache_dir: str, offline: bool) -> list[str] | None:
-    """Every core the libretro core-info repository describes."""
+def core_info_blobs(cache_dir: str, offline: bool) -> dict[str, str] | None:
+    """Every core the libretro core-info repository describes, with the git
+    blob of its .info."""
     repo = upstream.parse_repo(CORE_INFO_REPO)
     if repo is None:
         return None
@@ -710,12 +714,54 @@ def core_info_names(cache_dir: str, offline: bool) -> list[str] | None:
     )
     if not isinstance(payload, list):
         return None
-    names = []
+    blobs = {}
     for entry in payload:
         name = entry.get("name", "") if isinstance(entry, dict) else ""
         if name.endswith("_libretro.info"):
-            names.append(name[: -len("_libretro.info")])
-    return sorted(names)
+            blobs[name[: -len("_libretro.info")]] = str(entry.get("sha") or "")
+    return dict(sorted(blobs.items()))
+
+
+def core_info_names(cache_dir: str, offline: bool) -> list[str] | None:
+    """Every core the libretro core-info repository describes."""
+    blobs = core_info_blobs(cache_dir, offline)
+    return None if blobs is None else list(blobs)
+
+
+def load_core_info_record(path: Path = CORE_INFO_RECORD) -> dict[str, str] | None:
+    if not path.is_file():
+        return None
+    return dict((json.loads(path.read_text(encoding="utf-8")) or {}).get("blobs") or {})
+
+
+def record_core_info(
+    blobs: dict[str, str], names: list[str], path: Path = CORE_INFO_RECORD
+) -> list[str]:
+    """Record the current blob of *names* (every .info when empty) as reviewed.
+
+    Naming the cores keeps a change nobody read out of the record.
+    """
+    unknown = sorted(set(names) - set(blobs))
+    if unknown:
+        raise ValueError(f"no such .info in core-info: {', '.join(unknown)}")
+    recorded = load_core_info_record(path) or {}
+    recorded.update({n: blobs[n] for n in (names or blobs)})
+    payload = {"repository": CORE_INFO_REPO, "blobs": dict(sorted(recorded.items()))}
+    write_text_atomic(str(path), json.dumps(payload, indent=2) + "\n")
+    return sorted(names or blobs)
+
+
+def coreinfo_drift(
+    blobs: dict[str, str], recorded: dict[str, str], profiles: dict[str, dict]
+) -> list[str]:
+    """Profiled cores whose .info is not the one recorded as reviewed.
+
+    The .info is no authority, but a new firmwareN_path in it is the
+    cheapest sign that a profile needs reading again.
+    """
+    index = {key.casefold() for key in profile_name_index(profiles)}
+    return [n for n, sha in blobs.items()
+            if n.casefold() in index and recorded.get(n) != sha]
 
 
 def coreinfo_gaps(
@@ -745,10 +791,14 @@ def coreinfo_gaps(
     return unprofiled, standalone
 
 
-def check_coreinfo(profiles: dict[str, dict], cache_dir: str, offline: bool) -> list[Finding]:
-    names = core_info_names(cache_dir, offline)
-    if names is None:
+def check_coreinfo(
+    profiles: dict[str, dict], cache_dir: str, offline: bool,
+    record_path: Path = CORE_INFO_RECORD,
+) -> list[Finding]:
+    blobs = core_info_blobs(cache_dir, offline)
+    if blobs is None:
         return [Finding("coreinfo", "libretro-core-info", UNKNOWN, detail="listing unavailable")]
+    names = list(blobs)
     unprofiled, standalone = coreinfo_gaps(names, profiles)
     findings = [
         Finding(
@@ -772,6 +822,22 @@ def check_coreinfo(profiles: dict[str, dict], cache_dir: str, offline: bool) -> 
             detail="core-info describes a libretro build of it",
         )
         for name, key in standalone
+    )
+    recorded = load_core_info_record(record_path)
+    if recorded is None:
+        findings.append(Finding(
+            "coreinfo", "reviewed .info", UNKNOWN,
+            detail=f"no {record_path.name}: run check_freshness.py --record-coreinfo",
+        ))
+        return findings
+    findings.extend(
+        Finding(
+            "coreinfo", name, STALE,
+            local=(recorded.get(name) or "not recorded")[:12], remote=blobs[name][:12],
+            detail=(".info changed since reviewed: read its firmware, then "
+                    f"check_freshness.py --record-coreinfo {name}"),
+        )
+        for name in coreinfo_drift(blobs, recorded, profiles)
     )
     return findings
 
@@ -1310,7 +1376,20 @@ def main() -> int:
         "--emulators-dir", default="emulators",
         help="emulator profile directory (default: %(default)s)",
     )
+    parser.add_argument(
+        "--record-coreinfo", nargs="*", metavar="CORE",
+        help="record the current .info of CORE (every core when none is named) "
+             f"as reviewed in {CORE_INFO_RECORD.relative_to(REPO_ROOT)}, then exit",
+    )
     args = parser.parse_args()
+
+    if args.record_coreinfo is not None:
+        blobs = core_info_blobs(args.cache_dir, args.offline)
+        if not blobs:
+            raise RuntimeError("core-info listing unavailable: nothing recorded")
+        done = record_core_info(blobs, args.record_coreinfo)
+        print(f"recorded {len(done)} .info file(s) as reviewed")
+        return 0
 
     areas = tuple(a.strip() for a in args.only.split(",")) if args.only else AREAS
     unknown = sorted(set(areas) - set(AREAS))

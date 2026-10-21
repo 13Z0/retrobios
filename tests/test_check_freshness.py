@@ -266,6 +266,36 @@ class CoreResolutionTests(unittest.TestCase):
         self.assertEqual(unprofiled, ["wqxemu"])
         self.assertEqual(standalone, [("eka2l1", "eka2l1")])
 
+    def test_a_changed_info_of_a_profiled_core_is_stale(self):
+        """A firmwareN_path added to a profiled core's .info changes its blob:
+        the names alone said OK."""
+        blobs = {"mednafen_psx": "new", "eka2l1": "same", "wqxemu": "other"}
+        recorded = {"mednafen_psx": "old", "eka2l1": "same"}
+        with tempfile.TemporaryDirectory() as tmp:
+            record = Path(tmp) / "_core_info.json"
+            record.write_text(cf.json.dumps({"blobs": recorded}))
+            with mock.patch.object(cf, "core_info_blobs", return_value=blobs):
+                rows = cf.check_coreinfo(self.PROFILES, "", True, record)
+        stale = {r.subject: r for r in rows if r.status == cf.STALE}
+        self.assertIn("mednafen_psx", stale)
+        self.assertIn("--record-coreinfo mednafen_psx", stale["mednafen_psx"].detail)
+        self.assertNotIn(".info changed", stale["eka2l1"].detail)
+        self.assertEqual(cf.coreinfo_drift(blobs, recorded, self.PROFILES), ["mednafen_psx"])
+
+    def test_recording_a_core_leaves_the_others_unread(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            record = Path(tmp) / "_core_info.json"
+            record.write_text(cf.json.dumps({"blobs": {"a": "1", "b": "1"}}))
+            cf.record_core_info({"a": "2", "b": "2"}, ["a"], record)
+            self.assertEqual(cf.load_core_info_record(record), {"a": "2", "b": "1"})
+            with self.assertRaises(ValueError):
+                cf.record_core_info({"a": "2"}, ["ghost"], record)
+
+    def test_the_committed_record_holds_git_blobs(self):
+        recorded = cf.load_core_info_record()
+        self.assertIsNotNone(recorded)
+        self.assertTrue(all(len(sha) == 40 for sha in recorded.values()))
+
 
 class PinParsingTests(unittest.TestCase):
     WORKFLOW = """

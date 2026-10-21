@@ -553,7 +553,10 @@ today, and answer with one row per subject. Platform and target files are
 re-scraped through the scrapers' own write path into a throwaway copy and
 diffed against the committed file, so the diff decides rather than a version
 string. Core-info is listed and compared with the profiles (a core with no
-profile, a profile that calls standalone a core libretro now builds). Data
+profile, a profile that calls standalone a core libretro now builds, a
+profiled core whose `.info` git blob differs from the one recorded in
+`platforms/_core_info.json`). Once the changed `.info` is read against the
+profile, `--record-coreinfo <core>` records its blob as reviewed. Data
 directories are checked against their upstream, dump catalogs and romset
 snapshots against the catalog they were read from (Redump DAT versions, the
 No-Intro daily rebuild, the newest TOSEC pack, the newest MAME release, the
@@ -571,6 +574,7 @@ python scripts/check_freshness.py --only platforms,targets
 python scripts/check_freshness.py --json
 python scripts/check_freshness.py --profiles     # also runs profile_sync (slow)
 python scripts/check_freshness.py --offline      # local ages only
+python scripts/check_freshness.py --record-coreinfo virtualjaguar  # .info read, record it
 ```
 
 The exit code is non-zero when anything is stale. Emulator profiles are the
