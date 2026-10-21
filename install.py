@@ -717,6 +717,28 @@ _BOARD_SOURCES: dict[str, tuple[str, str]] = {
 }
 
 
+# A derivative installed under a platform's name, with its own board file.
+# Knulli moves /usr/share/batocera to /usr/share/knulli (knulli-linux
+# 57afa662, board/scripts/post-build-script.sh:264-278) and writes its board
+# to knulli.arch (package/system/knulli-system/knulli-system.mk:98-99). Its
+# packages are its own, so Batocera's per-board core lists do not apply.
+_DERIVATIVE_BOARDS: dict[str, tuple[str, str]] = {
+    "batocera": ("Knulli", "/usr/share/knulli/knulli.arch"),
+}
+
+
+def derivative_board(platform: str) -> tuple[str, str] | None:
+    """(derivative, board) when a derivative of the platform names its board."""
+    name, where = _DERIVATIVE_BOARDS.get(platform, ("", ""))
+    if not where:
+        return None
+    try:
+        board = Path(where).read_text(encoding="utf-8", errors="replace").strip().lower()
+    except OSError:
+        return None
+    return (name, board) if board else None
+
+
 def detect_board(platform: str) -> str | None:
     """The board this system was built for, or None where it names none."""
     kind, where = _BOARD_SOURCES.get(platform, ("", ""))
@@ -767,16 +789,22 @@ def _parse_ps1_var(path: Path, key: str) -> str | None:
     return None
 
 
-# Embedded systems, first match wins: Knulli also carries the Batocera
-# markers. The registry publishes the same rules as each manifest's
-# `detect`, and a test holds the two equal. MiSTer is a path rule below.
+# Embedded systems, first match wins. The registry publishes the same rules
+# as each manifest's `detect`, and a test holds the two equal. MiSTer is a
+# path rule below.
 _EMBEDDED_RULES: tuple[tuple[str, str, tuple[str, ...], str], ...] = (
     # ROCKNIX writes OS_NAME and no ID since 2025 (scripts/image). Older
     # images wrote ID=rocknix.
     ("rocknix", "os_release", ("OS_NAME=rocknix", "ID=rocknix"), "/storage/roms/bios"),
-    ("batocera", "file_exists", ("/etc/knulli-release",), "/userdata/bios"),
+    # Knulli (knulli-linux 57afa662): OS_NAME in os-release
+    # (board/scripts/post-build-script.sh:233-236) and knulli.version
+    # (package/system/knulli-system/knulli-system.mk:98-102).
+    ("batocera", "os_release", ("OS_NAME=knulli",), "/userdata/bios"),
+    ("batocera", "file_exists", ("/usr/share/knulli/knulli.version",), "/userdata/bios"),
     ("lakka", "os_release", ("ID=lakka",), "/storage/system"),
-    ("batocera", "file_exists", ("/etc/batocera-version",), "/userdata/bios"),
+    # batocera.linux 38845725, batocera-system.mk:21-22 (the same lines in
+    # batocera-30): batocera.arch and batocera.version.
+    ("batocera", "file_exists", ("/usr/share/batocera/batocera.version",), "/userdata/bios"),
     ("recalbox", "file_exists", ("/recalbox/recalbox.version",), "/recalbox/share/bios"),
     ("recalbox", "file_exists", ("/usr/bin/recalbox-settings",), "/recalbox/share/bios"),
     ("retroarch", "file_exists", ("/opt/muos",), "/run/muos/storage/bios"),
@@ -4633,6 +4661,15 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                 if board in known:
                     target = board
                     print(f"  Board {board} detected (--every-board installs all boards)")
+                else:
+                    print(f"  Board {board} has no {PLATFORM_NAMES.get(plat_name, plat_name)} "
+                          "core list: installing the files of every board")
+            else:
+                derived = derivative_board(plat_name)
+                if derived:
+                    print(f"  {derived[0]} board {derived[1]} detected. {derived[0]} "
+                          "builds its own set of cores and publishes no core list "
+                          "per board: installing the files of every board")
         if target:
             targets = target_lists.get(plat_name)
             if targets is None:

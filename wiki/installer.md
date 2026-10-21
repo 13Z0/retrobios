@@ -279,9 +279,9 @@ wins, since a machine is only one of them.
 | Evidence | Platform | BIOS directory |
 |----------|----------|----------------|
 | `/etc/os-release` `OS_NAME=ROCKNIX` (or `ID=rocknix` on images before 2025) | ROCKNIX | `/storage/roms/bios` |
-| `/etc/knulli-release` | Batocera | `/userdata/bios` |
+| `/etc/os-release` `OS_NAME=knulli` or `/usr/share/knulli/knulli.version` | Batocera (Knulli) | `/userdata/bios` |
 | `/etc/os-release` `ID=lakka` | Lakka | `/storage/system` |
-| `/etc/batocera-version` | Batocera | `/userdata/bios` |
+| `/usr/share/batocera/batocera.version` | Batocera | `/userdata/bios` |
 | `/recalbox/recalbox.version` or `/usr/bin/recalbox-settings` | Recalbox | `/recalbox/share/bios` |
 | `/opt/muos` | RetroArch (muOS) | `system_directory` of `/opt/muos/share/info/config/retroarch.cfg`, else of the default it is copied from: `/run/muos/storage/bios`, which muOS binds to `MUOS/bios` on the second card when that card holds one, else the first. Cores are read from that config's `libretro_directory` (`/opt/muos/share/core`) |
 | `/mnt/mmc/MUOS/` | RetroArch | `/mnt/mmc/MUOS/bios` |
@@ -290,7 +290,10 @@ wins, since a machine is only one of them.
 
 Batocera, Recalbox, ROCKNIX and Lakka also name the board they were built for, and
 that board narrows the install unless `--target` or `--every-board` says
-otherwise (see the options above).
+otherwise (see the options above). A board with no core list of its own is
+named and gets the files of every board. Knulli names its board in
+`/usr/share/knulli/knulli.arch` but builds its own set of cores, so Batocera's
+per-board lists are not applied to it and the run says so.
 
 Some platforms keep their BIOS in a fixed directory, and that directory is the
 evidence. They are looked for after the configurations below, for a platform

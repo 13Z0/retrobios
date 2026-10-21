@@ -1028,7 +1028,8 @@ class DetectionFollowsTheRegistry(unittest.TestCase):
         with unittest.mock.patch.object(install, "_parse_os_release", return_value={}), \
                 unittest.mock.patch.object(
                     Path, "exists",
-                    lambda p: str(p) in ("/etc/knulli-release", "/etc/batocera-version"),
+                    lambda p: str(p) in ("/usr/share/knulli/knulli.version",
+                                       "/usr/share/batocera/batocera.version"),
                 ):
             self.assertEqual(install._detect_embedded(), [("batocera", Path("/userdata/bios"))])
         # What ROCKNIX writes since 2025: OS_NAME and HW_DEVICE, no ID.
@@ -3950,6 +3951,44 @@ class MuOsIsReadFromItsRetroArchConfig(unittest.TestCase):
     def test_without_a_config_the_bound_folder_is_used(self):
         rule = next(r for r in install._EMBEDDED_RULES if r[2] == ("/opt/muos",))
         self.assertEqual(rule[3], "/run/muos/storage/bios")
+
+
+class BatoceraAndKnulliByWhatTheirBuildsWrite(unittest.TestCase):
+    """No Batocera build writes /etc/batocera-version (batocera-system.mk
+    writes /usr/share/batocera/batocera.version), and Knulli writes no
+    /etc/knulli-release and removes /usr/share/batocera: neither was
+    detected, and a Knulli board got every board's files without a word."""
+
+    def _detect(self, release: dict, files: tuple[str, ...]):
+        with unittest.mock.patch.object(install, "_parse_os_release", return_value=release), \
+                unittest.mock.patch.object(Path, "exists", lambda p: str(p) in files):
+            return install._detect_embedded()
+
+    def test_batocera_by_its_version_file(self):
+        self.assertEqual(self._detect({}, ("/usr/share/batocera/batocera.version",)),
+                         [("batocera", Path("/userdata/bios"))])
+        self.assertEqual(self._detect({}, ("/etc/batocera-version",)), [])
+
+    def test_knulli_by_its_os_release_or_version_file(self):
+        self.assertEqual(self._detect({"OS_NAME": "knulli"}, ()),
+                         [("batocera", Path("/userdata/bios"))])
+        self.assertEqual(self._detect({}, ("/usr/share/knulli/knulli.version",)),
+                         [("batocera", Path("/userdata/bios"))])
+
+    def test_a_knulli_board_is_named_and_not_narrowed(self):
+        board = Path(_tempdir(self)) / "knulli.arch"
+        board.write_text("a133")
+        with unittest.mock.patch.dict(install._DERIVATIVE_BOARDS,
+                                      {"batocera": ("Knulli", str(board))}):
+            self.assertEqual(install.derivative_board("batocera"), ("Knulli", "a133"))
+            self.assertIsNone(install.derivative_board("recalbox"))
+
+    def test_the_run_says_why_every_board_is_installed(self):
+        source = (REPO_ROOT / "install.py").read_text(encoding="utf-8")
+        block = source[source.index("board = detect_board(plat_name)"):]
+        block = block[:block.index("if target:")]
+        self.assertIn("has no", block)
+        self.assertIn("derivative_board(plat_name)", block)
 
 
 if __name__ == "__main__":

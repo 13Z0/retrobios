@@ -313,14 +313,22 @@ platforms:
     target_source: https://github.com/batocera-linux/batocera.linux
     install:
       detect:
-      # Knulli is a Batocera derivative and carries its markers too.
+      # Knulli, a Batocera derivative (knulli-cfw/knulli-linux 57afa662):
+      # OS_NAME in os-release (board/scripts/post-build-script.sh:233-236),
+      # and knulli.version (package/system/knulli-system/knulli-system.mk:98-102).
       - os: linux
-        method: file_exists
-        file: /etc/knulli-release
+        method: os_release
+        match: [OS_NAME=knulli]
         bios_path: /userdata/bios
       - os: linux
         method: file_exists
-        file: /etc/batocera-version
+        file: /usr/share/knulli/knulli.version
+        bios_path: /userdata/bios
+      # batocera.linux 38845725, package/batocera/core/batocera-system/
+      # batocera-system.mk:21-22 writes batocera.arch and batocera.version.
+      - os: linux
+        method: file_exists
+        file: /usr/share/batocera/batocera.version
         bios_path: /userdata/bios
       standalone_copies: *standalone_copies
   recalbox:
