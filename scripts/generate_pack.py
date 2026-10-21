@@ -2081,8 +2081,6 @@ def generate_md5_pack(
 ) -> str | None:
     """Build a pack from an explicit list of hashes with layout context."""
     files_db = db.get("files", {})
-    by_md5 = db.get("indexes", {}).get("by_md5", {})
-    by_crc32 = db.get("indexes", {}).get("by_crc32", {})
     if zip_contents is None:
         zip_contents = {}
 
@@ -2143,15 +2141,8 @@ def generate_md5_pack(
 
     with _writing_pack(zip_path) as zf:
         for hash_type, hash_val in hashes:
-            sha1 = None
-            if hash_type == "sha1" and hash_val in files_db:
-                sha1 = hash_val
-            elif hash_type == "md5":
-                sha1 = by_md5.get(hash_val)
-            elif hash_type == "crc32":
-                sha1 = by_crc32.get(hash_val)
-
-            if not sha1 or sha1 not in files_db:
+            sha1 = sha1_for_hash(hash_type, hash_val, db)
+            if not sha1:
                 not_in_db.append(hash_val)
                 continue
 
@@ -3146,9 +3137,13 @@ def _main(held: contextlib.ExitStack) -> None:
         help="List available targets for the platform",
     )
     parser.add_argument(
-        "--from-md5", help="Hash(es) to look up or pack (comma-separated)"
+        "--from-md5",
+        help="Hash(es) to look up or pack, comma-separated: CRC32, MD5, SHA-1 or SHA-256",
     )
-    parser.add_argument("--from-md5-file", help="File with hashes (one per line)")
+    parser.add_argument(
+        "--from-md5-file",
+        help="File with hashes, one per line, alone or beside a file name as md5sum writes it",
+    )
     parser.add_argument(
         "--manifest",
         action="store_true",
@@ -3223,13 +3218,20 @@ def _main(held: contextlib.ExitStack) -> None:
         hold_data_dirs(held, load_data_dir_registry(args.platforms_dir))
     has_from_md5 = bool(args.from_md5 or getattr(args, "from_md5_file", None))
     if has_from_md5:
-        hashes = (
-            parse_hash_input(args.from_md5)
-            if args.from_md5
-            else parse_hash_file(args.from_md5_file)
-        )
+        try:
+            hashes = (
+                parse_hash_input(args.from_md5)
+                if args.from_md5
+                else parse_hash_file(args.from_md5_file)
+            )
+        except ValueError as exc:
+            print(f"ERROR: {exc}", file=sys.stderr)
+            sys.exit(1)
         if not hashes:
-            print("No valid hashes found in input", file=sys.stderr)
+            print(
+                f"ERROR: no hash in the input. Accepted: {ACCEPTED_HASHES}",
+                file=sys.stderr,
+            )
             sys.exit(1)
         db = load_database(args.db)
         if not args.platform and not args.emulator:
@@ -4855,7 +4857,9 @@ from packverify import (  # noqa: E402,F401
 # _OFFLINE is deliberately not re-exported: importing a value copies it, so a
 # facade name would keep saying False after set_offline() changed the flag.
 from packresolve import (  # noqa: E402,F401
+    ACCEPTED_HASHES,
     _detect_hash_type,
+    sha1_for_hash,
     preferred_entries as _preferred_entries,
     parse_hash_input,
     parse_hash_file,

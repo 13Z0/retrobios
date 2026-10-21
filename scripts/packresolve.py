@@ -7,7 +7,6 @@ and the offline switch that forbids reaching for the network."""
 from __future__ import annotations
 
 import re
-_HEX_RE = re.compile(r"\b([0-9a-fA-F]{8,40})\b")
 from largefiles import fetch_large_file
 import os
 from common import (
@@ -81,42 +80,100 @@ def _verified_asset(
     return None
 
 
-def _detect_hash_type(h: str) -> str:
-    n = len(h)
-    if n == 40:
-        return "sha1"
-    if n == 32:
-        return "md5"
-    if n == 8:
-        return "crc32"
-    return "md5"
+# Digest length in hex digits -> kind. 29 is the MD5 Batocera writes with
+# its last three digits cut, matched by prefix as the resolver does.
+_HASH_KINDS = {8: "crc32", 29: "md5", 32: "md5", 40: "sha1", 64: "sha256"}
+_HEX_DIGITS = re.compile(r"[0-9a-f]+")
+_WORD = re.compile(r"[0-9A-Za-z]+")
+ACCEPTED_HASHES = (
+    "CRC32 (8 hex digits), MD5 (32, or the 29 Batocera writes), "
+    "SHA-1 (40) or SHA-256 (64)"
+)
+
+
+def _detect_hash_type(h: str) -> str | None:
+    """The digest a hex string is, by its length, or None."""
+    return _HASH_KINDS.get(len(h))
+
+
+def _hash_token(token: str) -> tuple[str, str] | None:
+    """(kind, value) when a token is a whole digest of a known length."""
+    value = token.strip().lower().removeprefix("*").removeprefix("0x")
+    kind = _detect_hash_type(value)
+    if kind and _HEX_DIGITS.fullmatch(value):
+        return kind, value
+    return None
+
+
+def _refuse(rejected: list[str]) -> None:
+    shown = ", ".join(rejected[:5]) + (", ..." if len(rejected) > 5 else "")
+    raise ValueError(f"not a hash: {shown}. Accepted: {ACCEPTED_HASHES}")
+
 
 def parse_hash_input(raw: str) -> list[tuple[str, str]]:
-    """Parse comma-separated hash string into (type, hash) tuples."""
+    """Parse a comma-separated hash string into (type, hash) tuples.
+
+    A part that is no digest is refused rather than dropped: a 12-digit
+    value was looked up as an MD5 and reported NOT FOUND, and a SHA-256
+    vanished without a word.
+    """
     results: list[tuple[str, str]] = []
+    rejected: list[str] = []
     for part in raw.split(","):
-        part = part.strip().lower()
-        if not part:
+        if not part.strip():
             continue
-        m = _HEX_RE.search(part)
-        if m:
-            h = m.group(1)
-            results.append((_detect_hash_type(h), h))
+        parsed = _hash_token(part)
+        if parsed:
+            results.append(parsed)
+        else:
+            rejected.append(part.strip())
+    if rejected:
+        _refuse(rejected)
     return results
 
+
 def parse_hash_file(path: str) -> list[tuple[str, str]]:
-    """Parse hash file (one per line, comments with #, mixed formats)."""
+    """Parse a hash file: one hash per line, alone or beside a file name as
+    md5sum writes it, ``#`` for comments. A line holding no digest is
+    refused with its line number."""
     results: list[tuple[str, str]] = []
+    rejected: list[str] = []
     with open(path) as f:
-        for line in f:
+        for number, line in enumerate(f, 1):
             line = line.strip()
             if not line or line.startswith("#"):
                 continue
-            m = _HEX_RE.search(line.lower())
-            if m:
-                h = m.group(1)
-                results.append((_detect_hash_type(h), h))
+            parsed = next(
+                (h for h in map(_hash_token, _WORD.findall(line)) if h), None
+            )
+            if parsed:
+                results.append(parsed)
+            else:
+                rejected.append(f"line {number} ({line[:40]})")
+    if rejected:
+        _refuse(rejected)
     return results
+
+
+def sha1_for_hash(hash_type: str, hash_val: str, db: dict) -> str | None:
+    """The database key a looked-up hash names, or None."""
+    files_db = db.get("files", {})
+    indexes = db.get("indexes", {})
+    if hash_type == "sha1":
+        sha1 = hash_val
+    elif hash_type == "crc32":
+        sha1 = indexes.get("by_crc32", {}).get(hash_val)
+    elif hash_type == "md5":
+        by_md5 = indexes.get("by_md5", {})
+        sha1 = by_md5.get(hash_val)
+        if sha1 is None and len(hash_val) < 32:
+            prefixed = {v for k, v in by_md5.items() if k.startswith(hash_val)}
+            sha1 = prefixed.pop() if len(prefixed) == 1 else None
+    else:
+        sha1 = next(
+            (k for k, e in files_db.items() if e.get("sha256") == hash_val), None
+        )
+    return sha1 if sha1 in files_db else None
 
 def lookup_hashes(
     hashes: list[tuple[str, str]],
@@ -128,19 +185,10 @@ def lookup_hashes(
     """Print diagnostic info for each hash and return how many were not found."""
     missing = 0
     files_db = db.get("files", {})
-    by_md5 = db.get("indexes", {}).get("by_md5", {})
-    by_crc32 = db.get("indexes", {}).get("by_crc32", {})
 
     for hash_type, hash_val in hashes:
-        sha1 = None
-        if hash_type == "sha1" and hash_val in files_db:
-            sha1 = hash_val
-        elif hash_type == "md5":
-            sha1 = by_md5.get(hash_val)
-        elif hash_type == "crc32":
-            sha1 = by_crc32.get(hash_val)
-
-        if not sha1 or sha1 not in files_db:
+        sha1 = sha1_for_hash(hash_type, hash_val, db)
+        if not sha1:
             print(f"\n{hash_type.upper()}: {hash_val}")
             print("  NOT FOUND in database")
             missing += 1

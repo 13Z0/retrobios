@@ -5906,5 +5906,44 @@ class PlatformSystemTypoGetsTheClosestNames(unittest.TestCase):
         self.assertNotIn("3do", printed)
 
 
+class HashInputNamesWhatItAccepts(unittest.TestCase):
+    """A 12-digit value was looked up as an MD5 and reported NOT FOUND, a
+    SHA-256 vanished from the input, and the run said only "No valid hashes
+    found in input"."""
+
+    def test_digests_are_read_by_length(self):
+        from scripts.packresolve import parse_hash_input
+
+        sha256 = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        self.assertEqual(parse_hash_input(f"0x1A2B3C4D,{sha256}"), [
+            ("crc32", "1a2b3c4d"), ("sha256", sha256),
+        ])
+        self.assertEqual(parse_hash_input("a" * 29), [("md5", "a" * 29)])
+
+    def test_anything_else_is_refused_with_the_formats(self):
+        from scripts.packresolve import parse_hash_file, parse_hash_input
+
+        for raw in ("1234567890ab", "zz", "490f666e1afb15b7362b406ed1cea246,zz"):
+            with self.subTest(raw=raw), self.assertRaises(ValueError) as ctx:
+                parse_hash_input(raw)
+            self.assertIn("SHA-256 (64)", str(ctx.exception))
+        with tempfile.TemporaryDirectory(dir=TMP_ROOT) as tmp:
+            listing = Path(tmp, "hashes.txt")
+            listing.write_text("# list\n490f666e1afb15b7362b406ed1cea246  a.bin\nb.bin\n")
+            with self.assertRaises(ValueError) as ctx:
+                parse_hash_file(str(listing))
+        self.assertIn("line 3 (b.bin)", str(ctx.exception))
+
+    def test_a_sha256_finds_its_file(self):
+        from scripts.packresolve import sha1_for_hash
+
+        db = json.loads((ROOT / "database.json").read_text(encoding="utf-8"))
+        sha1, entry = next(
+            (k, e) for k, e in db["files"].items() if e.get("sha256")
+        )
+        self.assertEqual(sha1_for_hash("sha256", entry["sha256"], db), sha1)
+        self.assertEqual(sha1_for_hash("md5", entry["md5"][:29], db), sha1)
+
+
 if __name__ == "__main__":
     unittest.main()

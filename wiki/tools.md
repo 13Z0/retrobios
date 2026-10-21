@@ -217,10 +217,14 @@ would have loaded.
   `required: false`, keep only required
 - `--split`: generate one ZIP per system instead of one big pack
 - `--split --group-by manufacturer`: group split packs by manufacturer (Sony, Nintendo, Sega...)
-- `--from-md5`: look up a hash in the database, or build a custom pack with `--platform`/`--emulator`
-- `--from-md5-file`: same, reading hashes from a file: one MD5, SHA-1 or CRC32
-  per line, alone or beside a file name as `md5sum` writes it, `#` for comments.
-  A lookup exits 1 when a hash is not in the database
+- `--from-md5`: look up a hash in the database, or build a custom pack with
+  `--platform`/`--emulator`. Any digest is read by its length: CRC32 (8 hex
+  digits), MD5 (32, or the 29 Batocera writes), SHA-1 (40), SHA-256 (64).
+  Anything else is refused with the value that is not a hash
+- `--from-md5-file`: same, reading hashes from a file: one per line, alone or
+  beside a file name as `md5sum` writes it, `#` for comments. A line with no
+  hash is refused with its number. A lookup exits 1 when a hash is not in the
+  database
 - `--target`: filter by hardware target (e.g. `switch`, `rpi4`, `x86_64`)
 - `--region`: ordered priority list, best first. Regions nest, a system with no
   regional split keeps everything, and a group with no candidate in any named
