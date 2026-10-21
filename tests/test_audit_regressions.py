@@ -3560,7 +3560,8 @@ class TriageSurvivesAForgeRefusal(unittest.TestCase):
                 contextlib.redirect_stdout(out), \
                 contextlib.redirect_stderr(io.StringIO()):
             profile_sync._print_triage(args, selected, reports)
-        lines = out.getvalue().splitlines()
+        # A header row and a closing count frame the ranking.
+        lines = out.getvalue().splitlines()[1:-1]
         self.assertEqual(len(lines), 2)
         self.assertTrue(any("eden" in l and "unreachable" in l for l in lines))
 

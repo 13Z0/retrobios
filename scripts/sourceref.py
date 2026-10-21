@@ -39,6 +39,10 @@ class RefPart:
     start: int | None
     end: int | None
     raw: str = ""
+    # The repository the part names (`upstream src/a.c:5`), empty when it
+    # names none. Carried per part: one profile cites the same path in both
+    # repositories, hypseus-singe's lair.cpp under `source` and `upstream`.
+    role: str = ""
 
     @property
     def last(self) -> int | None:
@@ -247,6 +251,19 @@ def _prose_external(
     return not lead or lead[-1] in _PROSE_LIST_DELIMITERS
 
 
+def _prose_role(line: str, path_start: int) -> str:
+    """The role word written right before a prose path, empty when none.
+
+    Prose follows the source_ref convention: `(upstream retro_host.c:196)`
+    names the original emulator, `ref: source src/devices/floppy.cpp:1656`
+    the repository declared as source. Read as a linking word or a project
+    name, the word was dropped or made the citation external.
+    """
+    before = line[:path_start].rstrip()
+    word = before[max(before.rfind(" "), before.rfind("\t"), before.rfind("(")) + 1:]
+    return word if word in REPO_ROLES else ""
+
+
 def resolve_project_word(path: str, trees: Iterable[list[str] | None]) -> str | None:
     """Path of `project file` inside a declared tree, None when out of reach.
 
@@ -333,7 +350,8 @@ def _prose_runs(
             ):
                 path_start -= 1
                 path = "." + path
-            if _prose_external(line, path_start, known):
+            role = _prose_role(line, path_start)
+            if not role and _prose_external(line, path_start, known):
                 # Kept with its project word, the source_ref convention: the
                 # report looks for the project inside the declared trees
                 # (mupen64plus-ae vendors `rice Config.cpp`) and calls the
@@ -358,7 +376,7 @@ def _prose_runs(
             for lo, hi in spans:
                 rng = line[lo:hi]
                 a, _, b = rng.partition("-")
-                parts.append(RefPart(path, int(a), int(b or a), rng))
+                parts.append(RefPart(path, int(a), int(b or a), rng, role))
             yield (
                 number, path_span, tuple(spans), tuple(parts),
                 line[path_start:end], end > boundary,

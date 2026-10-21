@@ -2473,6 +2473,28 @@ class TestWriteDryRun(unittest.TestCase):
         )
         self.assertIn([(repo, "old", "new")], readings)
 
+    def test_a_pin_of_another_repository_is_no_writing_pin(self):
+        """xenia-edge: source_commit named the has207/xenia-edge sha until it
+        became a dict whose libretro key pins a GitLab port. Read for that
+        mode, the old string passed for a pin of the port that moved under
+        unchanged prose, and the bump stayed refused for good."""
+        edge = "https://github.com/has207/xenia-edge"
+        port = "https://gitlab.com/x/xenia-libretro"
+        modes = {"standalone": edge, "libretro": port}
+        revisions = [
+            ("c2", {"source": modes, "notes": "x",
+                    "source_commit": {"standalone": "e1", "libretro": "p1"}}),
+            ("c1", {"source": edge, "notes": "x", "source_commit": "e1"}),
+        ]
+        document = dict(revisions[0][1])
+        repos = [("source", mode, profile_sync.upstream.parse_repo(url))
+                 for mode, url in modes.items()]
+        readings, ambiguous = profile_sync._writing_pairs(
+            document, repos, revisions, "c1"
+        )
+        self.assertEqual(readings, [[]])
+        self.assertEqual(ambiguous, [])
+
     def test_stale_prose_holds_the_pin(self):
         """boom3: a note written at an older pin is not anchored from this one."""
         before = self.path.read_text()
@@ -3823,6 +3845,46 @@ class TestRealignProse(unittest.TestCase):
         self.assertTrue(all(m.startswith("read again: notes:") for m in messages))
         self.assertIn("(a.c:10)", self.path.read_text())
 
+    def _repo_with_a_broken_revision(self, broken_pin: str):
+        self._git("init", "-q")
+        self._git("config", "user.email", "t@t")
+        self._git("config", "user.name", "t")
+        written = PROSE_SAMPLE.replace('"pin"', '"oldpin"')
+        self._commit(written, "profile")
+        broken = PROSE_SAMPLE.replace('"pin"', f'"{broken_pin}"')
+        self._commit(broken + "files: [\n", "invalid yaml")
+        self._commit(written, "repair")
+        self.path.write_text(PROSE_SAMPLE, encoding="utf-8")
+        self.files[("oldpin", "a.c")] = ["x"] * 9 + ["subject"]
+        self.files[("pin", "a.c")] = ["x"] * 13 + ["subject"]
+        self.files[("oldpin", "b.c")] = list("pqrstuvwx")
+        self.files[("pin", "b.c")] = list("pqrstuvwx")
+
+    def test_a_revision_that_does_not_parse_is_passed_over(self):
+        """lindbergh-loader committed invalid YAML once, repaired the same
+        day under the same pin. Every older note was reported unreadable
+        and the recale stayed refused for good."""
+        self._repo_with_a_broken_revision("oldpin")
+        messages = profile_sync.realign_prose(self.path, self.tmp.name, dry_run=True)
+        self.assertFalse(any("unreadable" in m for m in messages), messages)
+        self.assertTrue(any("would recale" in m for m in messages), messages)
+
+    def test_a_revision_that_does_not_parse_still_blocks_when_it_can_matter(self):
+        """The pins differ across the gap and the note's citations changed:
+        the text may have come in there under either pin."""
+        self._git("init", "-q")
+        self._git("config", "user.email", "t@t")
+        self._git("config", "user.name", "t")
+        self._commit(
+            PROSE_SAMPLE.replace('"pin"', '"older"').replace("a.c:10", "a.c:3"),
+            "profile",
+        )
+        self._commit(PROSE_SAMPLE + "files: [\n", "invalid yaml")
+        self._commit(PROSE_SAMPLE.replace('"pin"', '"oldpin"'), "repair")
+        self.path.write_text(PROSE_SAMPLE, encoding="utf-8")
+        messages = profile_sync.realign_prose(self.path, self.tmp.name, dry_run=True)
+        self.assertTrue(any("unreadable" in m for m in messages), messages)
+
     def test_scalar_written_at_the_current_pin_is_left_alone(self):
         self._git("init", "-q")
         self._git("config", "user.email", "t@t")
@@ -3939,6 +4001,25 @@ class TestOutputModesApplyTheirFlags(unittest.TestCase):
         with mock.patch.object(ProfileReport, "needs_review", return_value=0):
             code, _, _ = self._main("--strict")
         self.assertEqual(code, 0)
+
+    def test_strict_fails_on_prose_that_blocks_the_pin(self):
+        """blastem read "0 to review" while its prose refused every bump."""
+        from unittest import mock
+
+        with tempfile.TemporaryDirectory() as tmp:
+            for name in ("clean", "drift"):
+                (Path(tmp) / f"{name}.yml").write_text("emulator: x\n")
+            stale = {"clean": ["read again: notes: a.c:5 (pin moved)"], "drift": []}
+            with mock.patch.object(
+                profile_sync, "realign_prose",
+                side_effect=lambda path, *a, **k: stale[path.stem],
+            ):
+                code, out, _ = self._main(
+                    "--changed-only", "--strict", "--emulators-dir", tmp,
+                )
+        self.assertEqual(code, 1)
+        self.assertIn("clean", out)
+        self.assertIn("prose under an older pin", out)
 
     def test_extras_are_refused_with_json(self):
         code, _, err = self._main("--json", "--check-version")
@@ -4338,6 +4419,155 @@ class EachCitationNamesTheCodeThatAsks(unittest.TestCase):
 
     def test_a_written_role_is_followed(self):
         self.assertEqual(self._attribute("source emu/memory.c:2"), "source emu/memory.c:2")
+
+
+class ARoleIsReadPerPart(unittest.TestCase):
+    """The role a part writes (`source a.c:3`) was stored per path, first met
+    first kept: hypseus-singe's `upstream lair.cpp` decided where every later
+    `source lair.cpp` was read, and correct refs were reported MOVED."""
+
+    setUp = TestBuildReport.setUp
+    tearDown = TestBuildReport.tearDown
+    MD5A = "0123456789abcdef0123456789abcdef"
+    MD5B = "fedcba9876543210fedcba9876543210"
+
+    def _report(self, files: str, notes: str = "") -> ProfileReport:
+        # The port inserted two lines above its copy of the table since its
+        # pin, while the original sits on HEAD with the same table.
+        trees = {
+            ("libretro/x", "pins"): {"a.c": ["pad", "pad", f"rom {self.MD5B}"]},
+            ("libretro/x", "heads"): {"a.c": ["pad", "pad", "new", "new",
+                                              f"rom {self.MD5B}"]},
+            ("alek/x", "pinu"): {"a.c": [f"rom {self.MD5A}", "x",
+                                         f"rom {self.MD5B}"]},
+        }
+        profile_sync.upstream.fetch_file = (
+            lambda repo, sha, path, cache_dir, offline=False:
+            trees.get((repo.slug, sha), {}).get(path)
+        )
+        profile_sync.upstream.list_tree = (
+            lambda repo, sha, cache_dir, offline=False:
+            (sorted(trees.get((repo.slug, sha), {})), False)
+        )
+        profile_sync.upstream.resolve_head = (
+            lambda repo, cache_dir, offline=False, branch=None:
+            "heads" if repo.owner == "libretro" else "pinu"
+        )
+        profile_sync.upstream.compare = (
+            lambda repo, base, head, cache_dir, offline=False:
+            profile_sync.CompareResult([], False)
+        )
+        text = (
+            'emulator: T\n'
+            'source: "https://github.com/libretro/x"\n'
+            'upstream: "https://github.com/alek/x"\n'
+            'source_commit: "pins"\n'
+            'upstream_commit: "pinu"\n'
+            + (f"notes: |\n  {notes}\n" if notes else "")
+            + "files:\n" + files
+        )
+        profile = yaml.safe_load(text)
+        with contextlib.redirect_stderr(io.StringIO()):
+            return build_report("t", profile, self.dir, text=text)
+
+    def test_a_part_naming_its_repository_is_judged_there(self):
+        report = self._report(
+            "  - name: a.rom\n"
+            f"    md5: {self.MD5A}\n"
+            '    source_ref: "upstream a.c:1"\n'
+            "  - name: b.rom\n"
+            f"    md5: {self.MD5B}\n"
+            '    source_ref: "source a.c:3"\n'
+        )
+        parts = {e.name: e.parts[0] for e in report.entries}
+        self.assertEqual(parts["a.rom"].status, "ANCHORED")
+        self.assertEqual(parts["a.rom"].repo, "alek/x")
+        # Read in the original, where line 3 still holds the table, the
+        # port's own move went unseen.
+        self.assertEqual(parts["b.rom"].status, "SHIFTED")
+        self.assertEqual(parts["b.rom"].start, 5)
+        self.assertIsNone(parts["b.rom"].repo)
+
+    def test_a_prose_source_word_is_a_role_not_a_project(self):
+        report = self._report(
+            "  - name: b.rom\n"
+            f"    md5: {self.MD5B}\n"
+            '    source_ref: "source a.c:3"\n',
+            notes="ref: source a.c:3, more",
+        )
+        prose = [e for e in report.entries if e.kind == "prose"]
+        self.assertEqual(len(prose), 1)
+        self.assertNotEqual(prose[0].parts[0].status, "EXTERNAL")
+        self.assertEqual(prose[0].parts[0].part.role, "source")
+
+    def test_a_prose_upstream_word_names_the_repository(self):
+        report = self._report(
+            "  - name: b.rom\n"
+            f"    md5: {self.MD5B}\n"
+            '    source_ref: "source a.c:3"\n',
+            notes="the original reads it (upstream a.c:1).",
+        )
+        prose = [e for e in report.entries if e.kind == "prose"]
+        self.assertEqual(prose[0].parts[0].part.role, "upstream")
+        self.assertEqual(prose[0].parts[0].repo, "alek/x")
+
+    def test_the_prose_grammar_keeps_the_role(self):
+        from sourceref import _prose_runs
+
+        runs = list(_prose_runs(
+            "# ref: source src/a.cpp:1656-1685, 1709-1738, upstream b.c:5"
+        ))
+        roles = [(p.path, p.role) for run in runs for p in run[3]]
+        self.assertEqual(roles, [
+            ("src/a.cpp", "source"), ("src/a.cpp", "source"), ("b.c", "upstream"),
+        ])
+
+
+class TheTriageCountsWhatBlocksThePin(unittest.TestCase):
+    """Prose written under an older pin refuses the recale and the bump, yet
+    the triage, --changed-only and --strict read "0 to review" on blastem,
+    xenia-edge and lindbergh-loader. And one stderr notice per profile put
+    254 lines above an unlabelled ranking."""
+
+    def _report(self, name: str, paths: int, stale: list[str] | None = None):
+        entries = [
+            EntryReport(f"f{i}", f"d/{i}.c:1", "ANCHORED", [
+                PartResult(RefPart(f"d/{i}.c", 1, 1, "1"), "ANCHORED",
+                           None, None, None, [])
+            ])
+            for i in range(paths)
+        ]
+        return ProfileReport(
+            name=name, pin="p", head="h", entries=entries,
+            counts={"ANCHORED": paths}, stale_prose=stale,
+        )
+
+    def test_stale_prose_is_review_work(self):
+        report = self._report("b", 1, ["read again: notes: a.c:5 (pin moved)"])
+        self.assertEqual(report.needs_review(), 1)
+        self.assertIn("prose under an older pin", format_report(report))
+        self.assertEqual(report_to_dict(report)["needs_review"], 1)
+
+    def test_the_ranking_is_labelled_and_the_sampling_said_once(self):
+        reports = [
+            self._report("clean", 7),
+            self._report("stuck", 7, ["read again: notes: a.c:5 (pin moved)"]),
+        ]
+        selected = {r.name: {"source": "https://github.com/o/n"} for r in reports}
+        args = argparse.Namespace(cache_dir="unused", offline=True)
+        out, err = io.StringIO(), io.StringIO()
+        with mock.patch.object(profile_sync, "check_version", return_value=None), \
+                mock.patch.object(profile_sync.upstream, "commits_touching",
+                                  return_value=0), \
+                contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+            profile_sync._print_triage(args, selected, reports)
+        lines = out.getvalue().splitlines()
+        self.assertIn("profile", lines[0])
+        self.assertIn("stuck", lines[1])
+        self.assertIn("1 to review, 1 prose under an older pin", lines[1])
+        self.assertIn("0 to review", lines[2])
+        self.assertEqual(lines[-1], "2 profiles, 1 with something to review")
+        self.assertEqual(len(err.getvalue().splitlines()), 1, err.getvalue())
 
 
 if __name__ == "__main__":

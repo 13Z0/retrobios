@@ -945,6 +945,11 @@ class ProfileReport:
     page_version: str | None = None
     # An announced version searched for and found only rebuilt or re-signed.
     no_genuine_copy: str | None = None
+    # What realign_prose has to settle before a recale or a bump can run:
+    # prose written under an older pin. None when not looked at. Counted to
+    # review, or the triage read "0 to review" on a profile whose pin could
+    # not move (blastem, xenia-edge, lindbergh-loader).
+    stale_prose: list[str] | None = None
 
     # Skips that say the profile cannot be checked as written: a repository
     # that no longer answers, no pin to read, a death the forge contradicts.
@@ -963,8 +968,10 @@ class ProfileReport:
 
     def needs_review(self) -> int:
         counts = self.counts or {}
-        return sum(counts.get(status, 0) for status in REVIEW_STATUSES) + len(
-            self.orphaned
+        return (
+            sum(counts.get(status, 0) for status in REVIEW_STATUSES)
+            + len(self.orphaned)
+            + len(self.stale_prose or ())
         )
 
 
@@ -1305,10 +1312,20 @@ def _resolve_project_words(
                 if part.path not in resolved:
                     resolved[part.path] = resolve_project_word(part.path, tree_order())
                 if resolved[part.path]:
-                    part = RefPart(resolved[part.path], part.start, part.end, part.raw)
+                    part = replace(part, path=resolved[part.path])
             rewritten.append(part)
         out.append((display, ref, tokens, hashes, rewritten, citation))
     return out
+
+
+def _path_roles(refs: list) -> dict[str, set[str]]:
+    """The roles each cited path is written under across the profile."""
+    roles: dict[str, set[str]] = {}
+    for *_, parts, _citation in refs:
+        for part in parts:
+            if part.role:
+                roles.setdefault(part.path, set()).add(part.role)
+    return roles
 
 
 def build_report(
@@ -1328,20 +1345,20 @@ def build_report(
         if (repo := upstream.parse_repo(url)) is not None
     )
     refs = []
-    # The repository a part says its lines are in (`upstream src/a.c:5`).
-    cited_roles: dict[str, str] = {}
     for citation in collect_citations(profile, text):
         if citation.kind == "ref":
-            for p in split_source_ref(citation.ref):
-                role, _bare = ref_role(p.path)
-                if role:
-                    cited_roles.setdefault(strip_repo_word(p.path, known), role)
             entry = citation.entry
             display = str(entry.get("name") or "") or citation.field
             if citation.label:
                 display += f" [{citation.label}]"
+            # The repository a part says its lines are in (`upstream
+            # src/a.c:5`) stays on that part: the same path can be cited
+            # under both roles in one profile.
             parts = [
-                RefPart(strip_repo_word(p.path, known), p.start, p.end, p.raw)
+                RefPart(
+                    strip_repo_word(p.path, known), p.start, p.end, p.raw,
+                    ref_role(p.path)[0],
+                )
                 for p in split_source_ref(citation.ref)
             ]
             refs.append((
@@ -1353,6 +1370,19 @@ def build_report(
                 citation.field, citation.ref, [], [],
                 list(citation.parts), citation,
             ))
+    # A part that names no repository is looked up first where its path is
+    # cited elsewhere: a note citing `src/a.c:12` beside source_refs that
+    # all read `upstream src/a.c` means that tree.
+    # A path cited under both roles lends neither, and such a part is
+    # compared in every repository rather than in whichever comes first.
+    path_roles = _path_roles(refs)
+
+    def role_of(part: RefPart) -> str:
+        if part.role:
+            return part.role
+        lent = path_roles.get(part.path, ())
+        return next(iter(lent)) if len(lent) == 1 else ""
+
     # Directories the profile already cites, deepest first, to settle a bare
     # filename that several trees of one repository carry.
     cited_dirs: set[str] = set()
@@ -1448,7 +1478,7 @@ def build_report(
     pin_trees: dict[str, list[str] | None] = {}
 
     def _locate(
-        path: str, start: int | None = None, tokens: tuple = ()
+        path: str, start: int | None = None, tokens: tuple = (), wanted: str = ""
     ) -> tuple[RepoView, str]:
         """Repository and real path carrying a cited path, HEAD before pin.
 
@@ -1539,7 +1569,6 @@ def build_report(
             return 1 if line.strip() else 0
 
         # A part that names its repository is looked up there first.
-        wanted = cited_roles.get(path, "")
         ordered = sorted(views, key=lambda v: _view_role(v) != wanted) if wanted else views
         best = None
         for candidate in candidates:
@@ -1572,11 +1601,11 @@ def build_report(
         return (best[1], best[2]) if best else (primary, path)
 
     def resolve_path(
-        path: str, start: int | None = None, tokens: tuple = ()
+        path: str, start: int | None = None, tokens: tuple = (), role: str = ""
     ) -> tuple[RepoView, str]:
-        key = (path, start, tokens)
+        key = (path, start, tokens, role)
         if key not in owners:
-            owners[key] = _locate(path, start, tokens)
+            owners[key] = _locate(path, start, tokens, role)
         return owners[key]
 
     def _pin_tree_for(view: RepoView) -> list[str] | None:
@@ -1634,14 +1663,14 @@ def build_report(
                 )
         return context[key]
 
-    def rename_getter(path: str) -> tuple[str | None, list[str]]:
+    def rename_getter(path: str, role: str = "") -> tuple[str | None, list[str]]:
         """Resolved only when a cited file has vanished, then memoised.
 
         Every declared repository is searched, not just the one that owns the
         path: a profile citing both a port and its upstream may point at a file
         that only the other one carries.
         """
-        owner, actual = resolve_path(path)
+        owner, actual = resolve_path(path, role=role)
         ordered = [owner] + [v for v in views if v is not owner]
         candidates: list[str] = []
         for view in ordered:
@@ -1673,6 +1702,7 @@ def build_report(
         start: int | None = None,
         tokens: Iterable[str] = (),
         forced: RepoView | None = None,
+        role: str = "",
     ) -> list[str] | None:
         """Lines for one path at one revision, read once per run.
 
@@ -1680,10 +1710,11 @@ def build_report(
         on identity.
         """
         tokens = tuple(tokens)
-        key = (which, path, start, tokens, forced and forced.repo.slug)
+        key = (which, path, start, tokens, forced and forced.repo.slug, role)
         if key not in lines_cache:
             view, actual = (
-                (forced, path) if forced else resolve_path(path, start, tokens)
+                (forced, path) if forced
+                else resolve_path(path, start, tokens, role)
             )
             sha = view.pin if which == PIN else view.head
             found = fetch_from(view.repo, sha, actual)
@@ -1701,9 +1732,11 @@ def build_report(
         start: int | None = None,
         tokens: Iterable[str] = (),
         forced: RepoView | None = None,
+        role: str = "",
     ) -> tuple[str | None, str, str]:
         view, actual = (
-            (forced, path) if forced else resolve_path(path, start, tuple(tokens))
+            (forced, path) if forced
+            else resolve_path(path, start, tuple(tokens), role)
         )
         slug = view.repo.slug if view is not primary else None
         return slug, upstream.raw_url(view.repo, view.head, actual), actual
@@ -1715,12 +1748,20 @@ def build_report(
         both mamedev/mame and its libretro fork hold, with the same delimited
         token on the cited line, so no single attribution can be right for all
         of them. Taking the best outcome across repositories settles it.
+        A part that names its repository is judged there alone when that
+        repository carries the path: hypseus-singe cites lair.cpp under
+        `source` for one entry and `upstream` for the next.
         """
-        owner, _actual = resolve_path(part.path, part.start, tuple(tokens))
+        owner, _actual = resolve_path(
+            part.path, part.start, tuple(tokens), role_of(part)
+        )
         carrying = [
             view for view in views
             if fetch_from(view.repo, view.pin, part.path) is not None
         ]
+        named = [view for view in carrying if _view_role(view) == part.role]
+        if part.role and named:
+            carrying = named
         live = {
             id(view) for view in carrying
             if fetch_from(view.repo, view.head, part.path) is not None
@@ -1732,7 +1773,7 @@ def build_report(
                 lambda which, path, start=None, toks=(), _v=view: fetch(
                     which, path, start, toks, _v
                 ),
-                rename_getter,
+                lambda path: rename_getter(path, role_of(part)),
                 lambda path, start=None, toks=(), _v=view: describe(
                     path, start, toks, _v
                 ),
@@ -1753,7 +1794,15 @@ def build_report(
             if best is None or rank < best[0] or (rank == best[0] and view is owner):
                 best = (rank, result)
         return best[1] if best else anchor_part(
-            part, fetch, rename_getter, describe, tokens
+            part,
+            lambda which, path, start=None, toks=(): fetch(
+                which, path, start, toks, role=role_of(part)
+            ),
+            lambda path: rename_getter(path, role_of(part)),
+            lambda path, start=None, toks=(): describe(
+                path, start, toks, role=role_of(part)
+            ),
+            tokens,
         )
 
     # Comparing a revision with itself anchors every ref whatever it cites, so
@@ -1763,7 +1812,9 @@ def build_report(
     def self_checked(part: RefPart, tokens: Sequence[str]) -> bool:
         if report.pinned_tag:
             return True
-        view, _ = resolve_path(part.path, part.start, tuple(tokens))
+        if not part.role and len(path_roles.get(part.path, ())) > 1:
+            return all(view.pin == view.head for view in views)
+        view, _ = resolve_path(part.path, part.start, tuple(tokens), role_of(part))
         return view.pin == view.head
 
     def judge(
@@ -1779,11 +1830,15 @@ def build_report(
             )
         if flag:
             result = verify_at_pin(
-                part, fetch(PIN, part.path, part.start, tokens), tokens, hashes
+                part,
+                fetch(PIN, part.path, part.start, tokens, role=role_of(part)),
+                tokens, hashes,
             )
             # Checked at its own revision, the part still lies in one tree:
             # the report names it, as a comparison does.
-            owner, _actual = resolve_path(part.path, part.start, tuple(tokens))
+            owner, _actual = resolve_path(
+                part.path, part.start, tuple(tokens), role_of(part)
+            )
             if result.repo is None and owner is not primary:
                 result = replace(result, repo=owner.repo.slug)
         else:
@@ -1791,7 +1846,9 @@ def build_report(
         # A forge that refused the request said nothing about the file:
         # git.eden-emu.dev answers 403 to scripts, and nine citations of
         # eden-nightly read "absent at HEAD" for a file that exists.
-        owner, _actual = resolve_path(part.path, part.start, tuple(tokens))
+        owner, _actual = resolve_path(
+            part.path, part.start, tuple(tokens), role_of(part)
+        )
         if (
             result.status in ("GONE", "AMBIGUOUS")
             and (owner.repo.host, owner.repo.slug) in mute
@@ -1914,6 +1971,8 @@ def format_report(report: ProfileReport, changed_only: bool = False) -> str:
         f"{count} {status.lower()}" for status, count in sorted(report.counts.items())
     )
     lines.append(f"  {len(report.entries)} refs: {summary}")
+    for line in report.stale_prose or ():
+        lines.append(f"  prose under an older pin: {line}")
     lines.append(f"  {report.needs_review()} to review")
     return "\n".join(lines)
 
@@ -2150,6 +2209,12 @@ def drift_score(
     """Rank profiles by how far they have drifted from their pin."""
     counts = report.counts or {}
     score = sum(DRIFT_WEIGHTS.get(k, 0) * v for k, v in counts.items())
+    # Prose a reader has to settle weighs as an ambiguous ref, prose
+    # --realign-prose moves by itself as a shifted one.
+    score += sum(
+        DRIFT_WEIGHTS["SHIFTED" if line.startswith("would recale") else "AMBIGUOUS"]
+        for line in report.stale_prose or ()
+    )
     if version is not None and not version.tag_matches_declared:
         if version.latest_release and version.latest_release != version.declared:
             score += 10
@@ -2827,12 +2892,41 @@ def _scalar_values(document: dict) -> dict[str, str]:
     }
 
 
-def _pin_of(document: dict, field: str, mode: str = "") -> str | None:
-    """A pin as the profile records it, read for one build mode when keyed."""
+def _pin_of(
+    document: dict, field: str, mode: str = "",
+    repo: upstream.Repo | None = None,
+) -> str | None:
+    """A pin as the profile records it, read for one build mode when keyed.
+
+    With `repo`, a pin the document declares for another repository under
+    the field and mode does not count. A past revision can pin another
+    repository under the same field: xenia-edge's source_commit named the
+    has207/xenia-edge sha until the field became a dict keyed by mode, and
+    read for the libretro mode that old string passed for a pin of the
+    GitLab port that moved under unchanged prose.
+    """
     value = document.get(field)
     if isinstance(value, dict):
         value = value.get(mode) if mode else None
-    return value if isinstance(value, str) and value else None
+    if not (isinstance(value, str) and value):
+        return None
+    if repo is not None:
+        url_field = field.removesuffix("_commit")
+        declared = {
+            (mode_key, url)
+            for name, mode_key, url in declared_repositories(document)
+            if name == url_field
+        }
+        url = next(
+            (u for m, u in declared if m == mode),
+            next((u for m, u in declared if not m), None),
+        )
+        owner = upstream.parse_repo(url) if url else None
+        if owner is not None and (owner.host, owner.slug.lower()) != (
+            repo.host, repo.slug.lower()
+        ):
+            return None
+    return value
 
 
 _CITATION_RUN_RE = re.compile(
@@ -2856,7 +2950,8 @@ def _scalar_citations(text: str | None) -> tuple[str, ...] | None:
 
 
 def _writing_pins(
-    revisions: list[tuple[str, dict]], intro_sha: str, field: str, mode: str = ""
+    revisions: list[tuple[str, dict]], intro_sha: str, field: str, mode: str = "",
+    repo: upstream.Repo | None = None,
 ) -> list[str]:
     """Distinct pins committed while the scalar held its current text.
 
@@ -2875,7 +2970,7 @@ def _writing_pins(
         return []
     pins: list[str] = []
     for position in range(index, -1, -1):
-        value = _pin_of(revisions[position][1], field, mode)
+        value = _pin_of(revisions[position][1], field, mode, repo)
         if value and value not in pins:
             pins.append(value)
     return pins
@@ -2988,7 +3083,9 @@ def _writing_pairs(
         current = _pin_of(document, f"{pin_field}_commit", mode)
         if not current:
             continue
-        written = _writing_pins(revisions, intro_sha, f"{pin_field}_commit", mode)
+        written = _writing_pins(
+            revisions, intro_sha, f"{pin_field}_commit", mode, repo
+        )
         if attested in written:
             written = [attested]
         if len(written) > 1:
@@ -3096,13 +3193,34 @@ def realign_prose(
     # Fields whose writing pin lies past a revision that cannot be read:
     # where their text came in is unknown, so they are not moved.
     unknown: dict[str, str] = {}
+    # A revision that does not parse is passed over unless the pins differ
+    # on its two sides while the field's citations changed across it: then
+    # the text may have come in there under either pin. Otherwise nothing
+    # it could hold changes the reading. lindbergh-loader
+    # committed invalid YAML once (df7346b3), fixed the same day, and every
+    # note older than that commit stayed blocked for good.
+    gap: str | None = None
     for sha in history:
         if not any(alive.values()):
             break
         past = _git_file_at(path, sha)
         if past is None:
-            unknown = {field: sha for field, live in alive.items() if live}
-            break
+            gap = gap or sha
+            continue
+        if gap:
+            newer = revisions[-1][1] if revisions else document
+            moved = any(
+                newer.get(pin) != past.get(pin)
+                for pin in ("source_commit", "upstream_commit")
+            )
+            values = _scalar_values(past)
+            for field, live in alive.items():
+                if live and moved and _scalar_citations(values.get(field)) != (
+                    _scalar_citations(current_values.get(field))
+                ):
+                    unknown[field] = gap
+                    alive[field] = False
+            gap = None
         revisions.append((sha, past))
         values = _scalar_values(past)
         for field in fields:
@@ -3114,6 +3232,10 @@ def realign_prose(
                 intro[field] = sha
             else:
                 alive[field] = False
+    if gap:
+        # The oldest revisions do not parse: where the text came in is past
+        # what can be read.
+        unknown.update({field: gap for field, live in alive.items() if live})
 
     messages: list[str] = []
     jobs: list[tuple[Citation, dict]] = []
@@ -3384,14 +3506,21 @@ def _check_quota(count: int, offline: bool) -> None:
         raise SystemExit(1)
 
 
-def _stale_prose_blocks(name: str, path: Path, args: argparse.Namespace) -> bool:
+def _stale_prose_blocks(
+    name: str, path: Path, args: argparse.Namespace,
+    known: list[str] | None = None,
+) -> bool:
     """Whether prose written under an older pin has to move first.
 
     Anchored from the current pin, a recale or a bump follows someone else's
     code (boom3 FileSystem.cpp:2125, written at b810234e, an unrelated
     OpenFileRead at 132dfddb). It moves first, from the pin it was written at.
+    `known` is the answer the report already holds for the same text.
     """
-    stale = realign_prose(path, args.cache_dir, args.offline, dry_run=True)
+    stale = (
+        known if known is not None
+        else realign_prose(path, args.cache_dir, args.offline, dry_run=True)
+    )
     if stale:
         print(
             f"{name}: {len(stale)} prose citation(s) written under an older pin; "
@@ -3399,6 +3528,28 @@ def _stale_prose_blocks(name: str, path: Path, args: argparse.Namespace) -> bool
             file=sys.stderr,
         )
     return bool(stale)
+
+
+def _read_stale_prose(
+    name: str, path: Path, args: argparse.Namespace, failed: set[str]
+) -> list[str]:
+    """What --realign-prose would do or refuse on this profile, as a report.
+
+    Read on every pass, not only before a write: prose that blocks the pin
+    is review work whether or not this run tries to move it.
+    """
+    try:
+        return realign_prose(path, args.cache_dir, args.offline, dry_run=True)
+    except upstream.RateLimitError:
+        raise
+    except upstream.NotCachedError as exc:
+        # Unread offline, as a report is: not clean, and not a failure.
+        return [f"not read offline: {exc}"]
+    except upstream.UpstreamError as exc:
+        # Not read is not clean: the bump would refuse on the same error.
+        print(f"{name}: prose not read, {exc}", file=sys.stderr)
+        failed.add(name)
+        return [f"not read: {exc}"]
 
 
 def _backfill(
@@ -3434,7 +3585,11 @@ def _apply_writes(
             if not args.dry_run:
                 path.write_bytes(target.read_bytes())
         return
-    if not (args.rebase_refs or args.bump_commit) or _stale_prose_blocks(name, path, args):
+    # A backfill has just written a pin: the report's reading predates it.
+    known = None if args.backfill_commits else report.stale_prose
+    if not (args.rebase_refs or args.bump_commit) or _stale_prose_blocks(
+        name, path, args, known
+    ):
         return
     with tempfile.TemporaryDirectory() as scratch:
         # Always work on a copy. A dry run reports what it left there, a real
@@ -3600,6 +3755,7 @@ def _print_triage(
 ) -> None:
     """Profiles ranked by drift, worst first."""
     ranked = []
+    sampled = 0
     for report in reports:
         profile = selected[report.name]
         version = None
@@ -3621,20 +3777,31 @@ def _print_triage(
                 refused = "commit history unreachable"
                 print(f"{report.name}: {exc}", file=sys.stderr)
             if len(paths) > TRIAGE_PATH_SAMPLE and not refused:
-                print(
-                    f"{report.name}: commit count sampled on "
-                    f"{TRIAGE_PATH_SAMPLE} of {len(paths)} paths",
-                    file=sys.stderr,
-                )
+                sampled += 1
         ranked.append((drift_score(report, version, commits), report, refused))
+    if sampled:
+        # One line for the run: a notice per profile buried the ranking
+        # under 254 lines of stderr.
+        print(
+            f"commit count sampled on {TRIAGE_PATH_SAMPLE} cited paths for "
+            f"{sampled} profiles citing more",
+            file=sys.stderr,
+        )
+    print(f"{'score':>5s}  {'profile':30s}  state (worst first)")
+    pending = 0
     for score, report, refused in sorted(ranked, key=lambda item: -item[0]):
         state = report.skipped or f"{report.needs_review()} to review"
+        stale = len(report.stale_prose or ())
+        if stale and not report.skipped:
+            state += f", {stale} prose under an older pin"
         unchecked = (report.counts or {}).get("UNCHECKED", 0)
         if unchecked and not report.skipped:
             state += f", {unchecked} unchecked"
         if refused:
             state += f", {refused}"
+        pending += bool(report.needs_review())
         print(f"{score:5d}  {report.name:30s}  {state}")
+    print(f"{len(ranked)} profiles, {pending} with something to review")
 
 
 def _refuse_flag_combinations(args: argparse.Namespace) -> None:
@@ -3789,6 +3956,8 @@ def main() -> None:
                 name=name, entries=[], counts={}, skipped=f"upstream error: {exc}"
             )
             failed.add(name)
+        if not report.skipped and profile_path.is_file():
+            report.stale_prose = _read_stale_prose(name, profile_path, args, failed)
         if args.check_version and profile.get("version_source"):
             report.declared_version = str(profile.get("core_version") or "") or None
             report.page_version = page_version(profile, args.cache_dir, args.offline)

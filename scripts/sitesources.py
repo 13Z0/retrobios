@@ -261,6 +261,10 @@ def link_prose_citations(profile: dict, text: str) -> str:
                 continue
             if "/" not in path and path not in structured:
                 continue
+            role = parts[0].role
+            if role and (role_sources(profile).get(role) or (None,))[0] != repo:
+                # `upstream a.c:5` names a repository this link would not reach.
+                continue
             if any(lo <= path_span[0] < hi for lo, hi in guarded):
                 continue
             for index, ((lo, hi), part) in enumerate(zip(spans, parts)):
