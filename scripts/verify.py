@@ -1595,8 +1595,11 @@ def _print_undeclared_section(result: dict, verbose: bool) -> None:
     core_missing_req = len(req_not_in_repo) + len(req_hle_not_in_repo)
     core_missing_opt = len(opt_not_in_repo)
 
+    # Required gaps are always named below, the optional ones on request.
+    listed = "" if verbose or not core_missing_opt else " (--verbose lists them)"
     print(
-        f"  Core files: {core_in_pack} in pack, {core_missing_req} required missing, {core_missing_opt} optional missing"
+        f"  Core files: {core_in_pack} in pack, {core_missing_req} required missing, "
+        f"{core_missing_opt} optional missing{listed}"
     )
     if bundled:
         names = ", ".join(sorted({u["name"] for u in bundled}))
@@ -1608,6 +1611,9 @@ def _print_undeclared_section(result: dict, verbose: bool) -> None:
         _print_undeclared_entry(u, "MISSING (required)", verbose)
     for u in req_hle_not_in_repo:
         _print_undeclared_entry(u, "MISSING (required, HLE fallback)", verbose)
+    if verbose:
+        for u in opt_not_in_repo:
+            _print_undeclared_entry(u, "MISSING (optional)", verbose)
 
     if game_data:
         gd_missing = [u for u in game_data if not u["in_repo"]]
@@ -1617,7 +1623,11 @@ def _print_undeclared_section(result: dict, verbose: bool) -> None:
         )
         gd_unplaced = [u for u in game_data if u["in_repo"] and not u.get("in_pack", True)]
         if gd_missing or gd_packed or gd_unplaced:
-            print(f"  Game data: {gd_packed} in pack, {len(gd_missing)} missing")
+            listed = "" if verbose or not gd_missing else " (--verbose lists them)"
+            print(f"  Game data: {gd_packed} in pack, {len(gd_missing)} missing{listed}")
+        if verbose:
+            for u in gd_missing:
+                _print_undeclared_entry(u, "MISSING (game data)", verbose)
         if gd_unplaced:
             print(
                 f"  Game data held but not packed: {len(gd_unplaced)} "
