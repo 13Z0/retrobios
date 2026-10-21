@@ -4500,11 +4500,9 @@ class ToolReferenceCountsMatchTheirArtifacts(unittest.TestCase):
         stated = [int(group.replace(",", "")) for group in match.groups()]
         self.assertEqual(stated, [len(versions), listed, len(store["entries"])])
 
-    def test_derivable_count(self):
-        derivable = json.loads((ROOT / "derivable.json").read_text(encoding="utf-8"))
-        match = re.search(r"(\d+) entries on the current snapshots", self.text)
-        self.assertIsNotNone(match)
-        self.assertEqual(int(match.group(1)), len(derivable))
+    def test_no_derivable_count(self):
+        """The count now lives in derivable.json alone, which step 1b rewrites."""
+        self.assertNotRegex(self.text, r"\d+ entries on the current snapshots")
 
 
 
