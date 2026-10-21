@@ -6,6 +6,7 @@ was written against, so a permalink is pinned, never guessed."""
 from __future__ import annotations
 
 import re
+import urllib.parse
 import urllib.request
 
 import upstream
@@ -48,6 +49,47 @@ def _repo_pins(profile: dict, field: str, label: str) -> list[tuple[str, str, st
         if raw.get(key)
     ]
 
+# Forges the pages link into but upstream.py does not read from. Each is
+# reached by browser only, so the Repo carries no API or raw base.
+_BROWSE_ONLY = {
+    "voidpoint.io": "gitlab",
+    "bitbucket.org": "bitbucket",
+    "sourceforge.net": "sourceforge",
+    "archive.softwareheritage.org": "swh",
+}
+
+
+def _browse_repo(url: str) -> upstream.Repo | None:
+    """The repository a profile URL names, on any forge the pages can link.
+
+    Profiles pinned on SourceForge, voidpoint.io, Bitbucket or Software
+    Heritage showed no revision and no linked citation: parse_repo knows
+    only the forges profile_sync fetches from.
+    """
+    repo = upstream.parse_repo(url)
+    if repo is not None or not url:
+        return repo
+    parts = urllib.parse.urlsplit(url.strip())
+    family = _BROWSE_ONLY.get(parts.netloc)
+    segments = [seg for seg in parts.path.split("/") if seg]
+    if family == "gitlab":
+        if "-" in segments:
+            segments = segments[: segments.index("-")]
+        if len(segments) < 2:
+            return None
+        owner, name = "/".join(segments[:-1]), segments[-1]
+    elif family == "bitbucket" and len(segments) >= 2:
+        owner, name = segments[0], segments[1]
+    elif family == "sourceforge" and len(segments) >= 3 and segments[0] == "p":
+        owner, name = segments[1], segments[2]
+    elif family == "swh":
+        # A revision URL names no project: the pin alone addresses the tree.
+        owner, name = "softwareheritage", "revision"
+    else:
+        return None
+    return upstream.Repo(parts.netloc, family, "", "", owner, name.removesuffix(".git"))
+
+
 def _forge_sources(profile: dict, label: str = "") -> list[tuple[upstream.Repo, str]]:
     """Supported source repositories and immutable revisions for a profile."""
     candidates: list[tuple[upstream.Repo, str]] = []
@@ -56,7 +98,7 @@ def _forge_sources(profile: dict, label: str = "") -> list[tuple[upstream.Repo, 
 
     for field in ("source", "upstream"):
         for value, pin, fallback in _repo_pins(profile, field, label):
-            repo = upstream.parse_repo(value)
+            repo = _browse_repo(value)
             if repo is None:
                 continue
             repo_key = (repo.host, repo.slug)
@@ -77,6 +119,19 @@ def _source_permalink(repo: upstream.Repo, pin: str, path: str,
     """Forge-specific browser URL for one file at one immutable revision."""
     quoted_path = urllib.parse.quote(path, safe="/@:+-._~")
     base = f"https://{repo.host}/{repo.owner}/{repo.name}"
+    if repo.family == "bitbucket":
+        url = f"{base}/src/{pin}/{quoted_path}"
+        if start is not None:
+            url += f"#lines-{start}" + (f":{end}" if end is not None and end != start else "")
+        return url
+    if repo.family == "sourceforge":
+        # The Allura code browser takes no line range: the file at the pin.
+        return f"https://{repo.host}/p/{repo.owner}/{repo.name}/ci/{pin}/tree/{quoted_path}"
+    if repo.family == "swh":
+        url = f"https://{repo.host}/browse/revision/{pin}/?path={quoted_path}"
+        if start is not None:
+            url += f"#L{start}" + (f"-L{end}" if end is not None and end != start else "")
+        return url
     if repo.family == "github":
         url = f"{base}/blob/{pin}/{quoted_path}"
     elif repo.family == "gitlab":
@@ -99,6 +154,12 @@ def _commit_url(repo: upstream.Repo, pin: str) -> str:
     base = f"https://{repo.host}/{repo.owner}/{repo.name}"
     if repo.family == "gitlab":
         return f"{base}/-/commit/{pin}"
+    if repo.family == "bitbucket":
+        return f"{base}/commits/{pin}"
+    if repo.family == "sourceforge":
+        return f"https://{repo.host}/p/{repo.owner}/{repo.name}/ci/{pin}/"
+    if repo.family == "swh":
+        return f"https://{repo.host}/browse/revision/{pin}/"
     return f"{base}/commit/{pin}"
 
 
@@ -109,7 +170,8 @@ def revision_markdown(profile: dict) -> str:
     refers to sat in the YAML alone, for 178 profiles.
     """
     links = [
-        f"[{repo.slug}@{pin[:12]}]({_commit_url(repo, pin)})"
+        f"[{'Software Heritage' if repo.family == 'swh' else repo.slug}@{pin[:12]}]"
+        f"({_commit_url(repo, pin)})"
         for repo, pin in _forge_sources(profile)
     ]
     branch = profile.get("source_branch")
@@ -143,7 +205,7 @@ def role_sources(profile: dict, label: str = "") -> dict[str, tuple[upstream.Rep
     found: dict[str, tuple[upstream.Repo, str]] = {}
     for field in ("source", "upstream"):
         for value, pin, _fallback in _repo_pins(profile, field, label):
-            repo = upstream.parse_repo(value)
+            repo = _browse_repo(value)
             if repo is not None and pin and field not in found:
                 found[field] = (repo, pin)
     return found

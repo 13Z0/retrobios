@@ -269,5 +269,45 @@ class AnAliasTreeIsListedOnItsParentsPage(unittest.TestCase):
         self.assertEqual([t["ref"] for t in trees], ["freeintv-overlays"])
 
 
+class ForgesUpstreamDoesNotRead(unittest.TestCase):
+    """Profiles pinned on SourceForge, voidpoint.io, Bitbucket or Software
+    Heritage showed no revision, and their citations were plain code."""
+
+    def links(self, url: str, ref: str, **extra: str) -> tuple[str, str]:
+        import sitesources
+
+        profile = {"source": url, "source_commit": "f6c00044" + "0" * 32, **extra}
+        return (sitesources.revision_markdown(profile),
+                sitesources._source_ref_markdown(profile, ref))
+
+    def test_bitbucket(self):
+        revision, ref = self.links("https://bitbucket.org/linuxwolf6/splitwolf",
+                                   "id_lwmp.cpp:1831-1868", source_branch="scrubbed")
+        pin = "f6c00044" + "0" * 32
+        self.assertEqual(revision, f"[linuxwolf6/splitwolf@{pin[:12]}]"
+                         f"(https://bitbucket.org/linuxwolf6/splitwolf/commits/{pin}), "
+                         "branch `scrubbed`")
+        self.assertIn(f"(https://bitbucket.org/linuxwolf6/splitwolf/src/{pin}/"
+                      "id_lwmp.cpp#lines-1831:1868)", ref)
+
+    def test_a_gitlab_instance(self):
+        _revision, ref = self.links("https://voidpoint.io/terminx/eduke32",
+                                    "source/duke3d/src/common.cpp:36")
+        self.assertIn("https://voidpoint.io/terminx/eduke32/-/blob/f6c00044", ref)
+        self.assertIn("/source/duke3d/src/common.cpp#L36)", ref)
+
+    def test_sourceforge(self):
+        revision, ref = self.links("https://sourceforge.net/p/dgen/dgen", "rc.cpp:12")
+        self.assertIn("(https://sourceforge.net/p/dgen/dgen/ci/f6c00044", revision)
+        self.assertRegex(ref, r"\(https://sourceforge\.net/p/dgen/dgen/ci/f6c00044\w+/tree/rc\.cpp\)")
+
+    def test_software_heritage(self):
+        revision, ref = self.links(
+            "https://archive.softwareheritage.org/browse/revision/f6c00044/",
+            "app/src/os.cpp:35-36")
+        self.assertTrue(revision.startswith("[Software Heritage@f6c000440000]"))
+        self.assertIn("/browse/revision/f6c00044" + "0" * 32 + "/?path=app/src/os.cpp#L35-L36)", ref)
+
+
 if __name__ == "__main__":
     unittest.main()
