@@ -919,6 +919,10 @@ class RegionalRequestsKeepWhatTheCodeLoads(unittest.TestCase):
         ("bizhawk", ["north-america"], "DSi_Nand_USA.bin"),
         ("bizhawk", ["oceania"], "DSi_Nand_AUS.bin"),
         ("bizhawk", ["china", "japan"], "DSi_Nand_CHN.bin"),
+        ("genesis_plus_gx", ["australia", "japan"], "bios_U.sms"),
+        ("genesis_plus_gx", ["brazil", "japan"], "bios_U.sms"),
+        ("genesis_plus_gx_wide", ["australia", "japan"], "bios_U.sms"),
+        ("genesis_plus_gx_expanded", ["brazil", "japan"], "bios_U.sms"),
     )
 
     def test_each_request_keeps_its_file(self):

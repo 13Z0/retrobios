@@ -68,9 +68,9 @@ files:
 
   - name: bios_U.sms
     system: sega-mastersystem
-    region: [north-america, europe]
+    region: [north-america, latin-america, europe, oceania]
     required: false
-    note: "Master System (NTSC-U) boot ROM, loaded for REGION_USA when the bios option is on."
+    note: "Master System (NTSC-U) boot ROM, loaded for REGION_USA when the bios option is on. REGION_USA is the default of sms_cart_region_detect for any export header outside its CRC list, so European, Australian and Brazilian cartridges outside that list load it too (core/cart_hw/sms_cart.c:865-866)."
     source_ref: "source core/loadrom.c:510"
 
   - name: bios_E.sms
