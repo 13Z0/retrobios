@@ -3711,5 +3711,41 @@ class ACompletePartialIsHandedOffOnWindows(unittest.TestCase):
         self.assertTrue(install._write_refused(PermissionError(13, "denied")))
 
 
+class TheEmulatorNamesHaveTheirOwnListing(unittest.TestCase, _LoopbackRun):
+    """--emulator nope said "--list-cores lists all 441" and --list-cores
+    printed 189: the buildbot names --emulator accepts were listed nowhere."""
+
+    def setUp(self):
+        self.env = self.serve(self)
+
+    def test_the_hint_counts_what_the_listing_prints(self):
+        proc = _install_run(self.env, "--platform", "retroarch", "--no-input",
+                            "--emulator", "nope")
+        self.assertEqual(proc.returncode, 1, proc.stdout)
+        found = re.search(r"--list-emulators lists all (\d+)\.", proc.stderr)
+        self.assertIsNotNone(found, proc.stderr)
+        listing = _install_run(self.env, "--platform", "retroarch", "--no-input",
+                               "--list-emulators")
+        self.assertEqual(listing.returncode, 0, listing.stderr)
+        names = [re.split(r"\s{2,}", line.strip())[0]
+                 for line in listing.stdout.splitlines() if line.startswith("  ")]
+        manifest = json.loads((REPO_ROOT / "install" / "retroarch.json").read_text())
+        accepted = install.emulator_names(
+            manifest, manifest["files"], manifest.get("omitted_files", []))
+        self.assertEqual(int(found.group(1)), len(accepted))
+        self.assertTrue(set(accepted) <= set(names), set(accepted) - set(names))
+        self.assertIn("mednafen_psx", accepted)
+        self.assertRegex(listing.stdout, r"mednafen_psx\s+same as beetle_psx")
+
+    def test_every_listed_name_is_accepted(self):
+        manifest = {"core_names": {"beetle_psx": ["mednafen_psx"]}}
+        files = [{"dest": "a", "cores": ["pcsx_rearmed"]}]
+        names = install.emulator_names(manifest, files, [])
+        self.assertEqual(names, {"beetle_psx": "beetle_psx", "mednafen_psx": "beetle_psx",
+                                 "pcsx_rearmed": "pcsx_rearmed"})
+        self.assertEqual(install.resolve_choices(["MEDNAFEN_PSX"], sorted(names), "emulator"),
+                         ["mednafen_psx"])
+
+
 if __name__ == "__main__":
     unittest.main()

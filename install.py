@@ -2408,7 +2408,8 @@ def resolve_choices(values: list[str], known: list[str], label: str) -> list[str
     if unknown:
         if not known:
             raise ValueError(f"unknown {label}: {', '.join(unknown)}. This list records none.")
-        listing = "--list-systems" if label == "system" else "--list-cores"
+        listing = {"system": "--list-systems", "emulator": "--list-emulators"}.get(
+            label, "--list-cores")
         raise ValueError(
             f"unknown {label}: {', '.join(unknown)}. {did_you_mean(unknown, known, listing)}"
         )
@@ -3923,6 +3924,33 @@ def _print_choices(
         print(f"  {name:<{width}}  {_sized(held)}")
 
 
+def emulator_names(manifest: dict, files: list[dict], omitted: list[dict]) -> dict[str, str]:
+    """Every name --emulator accepts, with the profile each one stands for.
+
+    A profile answers to its own name and to the names its core is built
+    under (core_names: beetle_psx and mednafen_psx). A core named by a file
+    and by no profile stands for itself.
+    """
+    names = {core: core for core in available_choices(files, omitted)["cores"]}
+    for profile, aliases in (manifest.get("core_names") or {}).items():
+        names[profile] = profile
+        for alias in aliases:
+            names.setdefault(alias, profile)
+    return names
+
+
+def _print_emulators(plat: str, manifest: dict, files: list[dict], omitted: list[dict]) -> None:
+    """What --emulator accepts for a platform, one name per line."""
+    names = emulator_names(manifest, files, omitted)
+    if not names:
+        print(f"  {plat} records no emulators")
+        return
+    width = min(max(len(name) for name in names), 40)
+    for name in sorted(names):
+        profile = names[name]
+        print(f"  {name:<{width}}  {'' if profile == name else 'same as ' + profile}".rstrip())
+
+
 def _older_list_advice() -> str:
     """How to reach a file list that records what an option needs.
 
@@ -3952,11 +3980,7 @@ def _narrow_to_emulators(
               "which systems, which --emulator needs.", file=sys.stderr)
         print(_older_list_advice(), file=sys.stderr)
         sys.exit(1)
-    known = sorted({
-        name
-        for profile, aliases in (manifest.get("core_names") or {}).items()
-        for name in [profile, *aliases]
-    } | set(available_choices(files, omitted)["cores"]))
+    known = sorted(emulator_names(manifest, files, omitted))
     try:
         chosen = resolve_choices(names, known, "emulator")
     except ValueError as exc:
@@ -4093,7 +4117,7 @@ def main() -> None:
         action="append",
         metavar="NAME",
         help="install what these emulators read on the platform, as a pack "
-             "built for them carries (names: --list-cores)",
+             "built for them carries (names: --list-emulators)",
     )
     parser.add_argument(
         "--installed-cores",
@@ -4137,6 +4161,11 @@ def main() -> None:
         "--list-cores",
         action="store_true",
         help="list the cores whose extra files a platform installs and exit",
+    )
+    parser.add_argument(
+        "--list-emulators",
+        action="store_true",
+        help="list every name --emulator accepts for a platform and exit",
     )
     parser.add_argument(
         "--no-input",
@@ -4183,7 +4212,7 @@ def main() -> None:
             parser.error(f"{option} needs at least one name")
     if args.quiet and (
         args.check or args.dry_run or args.list_platforms or args.list_targets
-        or args.list_systems or args.list_cores
+        or args.list_systems or args.list_cores or args.list_emulators
     ):
         parser.error("--quiet applies to an install, not to --check, --dry-run or a listing")
     if args.every_board and args.target:
@@ -4271,7 +4300,8 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
     """One run of the installer, once the options are read."""
     term = Terminal(real_stdout, quiet=args.quiet)
     interactive = sys.stdin.isatty() and not args.no_input and not args.quiet
-    listing = args.list_targets or args.list_systems or args.list_cores
+    listing = (args.list_targets or args.list_systems or args.list_cores
+               or args.list_emulators)
     print(f"{term.bold('RetroBIOS')} {term.dim(installer_id())}\n")
 
     os_type = detect_os()
@@ -4499,6 +4529,10 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                 manifest, found_cores, files, omitted_files
             )
             print(f"  Narrowed {before} -> {len(files)} files to the installed cores")
+
+        if args.list_emulators:
+            _print_emulators(plat_name, manifest, files, omitted_files)
+            continue
 
         if args.emulator:
             files, omitted_files = _narrow_to_emulators(

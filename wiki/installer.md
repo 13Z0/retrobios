@@ -230,10 +230,11 @@ what the options name, everything by default.
 | `--cores-dir PATH` | The folder RetroArch loads its cores from, for `--installed-cores` when it is not found. Implies `--installed-cores` |
 | `--system NAMES` | Install only these systems. Comma-separated or repeated. `--list-systems` prints the names, `other` included |
 | `--core NAMES` | Keep the platform's own list and only the extra files these cores load. `--list-cores` prints the names |
-| `--emulator NAMES` | Install what these emulators read on the detected platform, and nothing else: their own files and the platform's files of the systems they run. Each emulator page on the site gives this command. `--list-cores` prints the names |
+| `--emulator NAMES` | Install what these emulators read on the detected platform, and nothing else: their own files and the platform's files of the systems they run. Each emulator page on the site gives this command. `--list-emulators` prints the names, buildbot names such as `mednafen_psx` included |
 | `--region LIST` | Preferred regions, best first (`us,eu,jp`): keep one BIOS per region where a system has several. Accepts the names and aliases of `generate_pack.py --region` |
 | `--list-systems` | Print a platform's systems with the files and size each holds |
 | `--list-cores` | Print the cores whose extra files a platform installs |
+| `--list-emulators` | Print every name `--emulator` accepts, each buildbot name beside the emulator it stands for |
 | `--no-input` | Never ask a question, even at a terminal |
 | `--check` | Report and exit without writing |
 | `--dry-run` | Show what would be downloaded, by system and with sizes, without writing anything |
