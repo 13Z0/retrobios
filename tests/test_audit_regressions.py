@@ -6296,5 +6296,26 @@ class ATargetTypoIsAnErrorInEveryTool(unittest.TestCase):
                 self.assertIn("verify.py --platform retroarch --list-targets", output)
 
 
+class NoArchiveRepeatsAMemberName(unittest.TestCase):
+    """s8k_cpu.zip held three member names twice (MAME reuses them across
+    two ROM_SYSTEM_BIOS of one device). Every pack build printed raw zipfile
+    warnings and Info-ZIP stops on an interactive replace? at extraction."""
+
+    def test_member_names_are_unique(self):
+        archives = sorted((ROOT / "bios").rglob("*.zip"))
+        if not archives:
+            self.skipTest("no archive under bios/")
+        repeated = []
+        for path in archives:
+            try:
+                with zipfile.ZipFile(path) as zf:
+                    names = zf.namelist()
+            except (zipfile.BadZipFile, OSError):
+                continue
+            if len(names) != len(set(names)):
+                repeated.append(str(path.relative_to(ROOT)))
+        self.assertEqual(repeated, [])
+
+
 if __name__ == "__main__":
     unittest.main()
