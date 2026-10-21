@@ -64,7 +64,9 @@ _PARENT: dict[str, str] = {
 
 REGIONS: frozenset[str] = frozenset({WORLD} | set(REGION_TREE) | set(_PARENT))
 
-# Accepted on the CLI and for legacy profile values.
+# Accepted on the CLI and for legacy profile values. Every territory also
+# answers to its ISO 3166-1 code: `au` alone was unknown, and the closest
+# spelling offered first was `auto`, which means world.
 ALIASES: dict[str, str] = {
     "jp": "japan",
     "ntsc-j": "japan",
@@ -78,6 +80,30 @@ ALIASES: dict[str, str] = {
     "korea": "south-korea",
     "auto": WORLD,
     "gb": "uk",
+    "ca": "canada",
+    "br": "brazil",
+    "mx": "mexico",
+    "ar": "argentina",
+    "fr": "france",
+    "de": "germany",
+    "it": "italy",
+    "es": "spain",
+    "nl": "netherlands",
+    "pt": "portugal",
+    "gr": "greece",
+    "pl": "poland",
+    "ru": "russia",
+    "se": "sweden",
+    "no": "norway",
+    "dk": "denmark",
+    "fi": "finland",
+    "cn": "china",
+    "tw": "taiwan",
+    "hk": "hong-kong",
+    "sg": "singapore",
+    "in": "india",
+    "au": "australia",
+    "nz": "new-zealand",
 }
 
 

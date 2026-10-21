@@ -400,6 +400,11 @@ class Exporter(BaseExporter):
             return self.writable(fe)
         return id(fe) in getattr(self, "_named", set())
 
+    def names_anew(self, fe: NativeFile) -> bool:
+        """flycast's naomi2.zip is in the RetroArch list RetroPie inherits,
+        yet no flycast help sentence named it: the render adds it there."""
+        return fe.platform is not None and id(fe) in getattr(self, "_named", set())
+
     def outcome(
         self,
         systems: dict[str, NativeSystem],

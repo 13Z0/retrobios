@@ -155,6 +155,13 @@ class BaseExporter(ABC):
         the render learned from the platform's own file."""
         return self.writable(fe)
 
+    def names_anew(self, fe: NativeFile) -> bool:
+        """Whether the render wrote, for the first time, a file the platform
+        layer already declares. Only a format whose unit is not the entry
+        does: a RetroPie help sentence can lack a name the inherited RetroArch
+        list carries."""
+        return False
+
     @classmethod
     def writable(cls, fe: NativeFile, require: str = "") -> bool:
         """Whether this format can carry the entry.

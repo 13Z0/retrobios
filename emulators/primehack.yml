@@ -36,11 +36,11 @@ files:
   - name: "IPL.bin"
     path: "GC/USA/IPL.bin"
     system: nintendo-gamecube
-    region: [north-america]
+    region: [north-america, latin-america]
     size: 2097152
     required: false
     hle_fallback: true
-    note: "GameCube NTSC-U boot ROM. HLE available but real IPL needed for GC menu boot and accurate fonts"
+    note: "GameCube NTSC-U boot ROM. HLE available but real IPL needed for GC menu boot and accurate fonts. Discs with the Brazilian country code B and SYSCONF countries of the Americas map to NTSC-U, so Latin America reads this directory too (Source/Core/DiscIO/Enums.cpp:198-199, 249-251)."
     source_ref: "upstream Source/Core/Common/CommonPaths.h:138, source Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp:109-110"
 
   - name: "IPL.bin"

@@ -115,7 +115,7 @@ files:
     path: "GC/USA/IPL_TRI.bin"
     description: "Triforce boot ROM, NTSC-U directory"
     system: sega-triforce
-    region: [north-america]
+    region: [north-america, latin-america]
     size: 2097152
     crc32: "d1883221"
     validation: [crc32]
@@ -199,12 +199,12 @@ files:
     path: "GC/USA/IPL.bin"
     description: "GameCube NTSC-U boot ROM"
     system: nintendo-gamecube
-    region: [north-america]
+    region: [north-america, latin-america]
     size: 2097152
     required: false
     hle_fallback: true
     source_ref: "source Source/Core/Common/CommonPaths.h:148, source Source/Core/Core/Config/MainSettings.cpp:627-630, source Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp:109-118, 182-183"
-    note: "Needed to boot the GameCube menu and to take the fonts from a real dump."
+    note: "Needed to boot the GameCube menu and to take the fonts from a real dump. Discs with the Brazilian country code B and SYSCONF countries of the Americas map to NTSC-U, so Latin America reads this directory too (Source/Core/DiscIO/Enums.cpp:198-199, 249-251)."
 
   - name: "IPL.bin"
     path: "GC/EUR/IPL.bin"

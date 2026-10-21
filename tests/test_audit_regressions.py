@@ -3247,15 +3247,16 @@ class TheDatabaseCacheIsWrittenWhole(unittest.TestCase):
 class KidVidTapesStayWithTheContent(unittest.TestCase):
     """Stella opens its KidVid tapes by bare name (stella2014, from the
     working directory) or from its base directory (stella2023, the content
-    folder): never the system directory. Without load_from every Linux pack
-    put about 68 MB of WAVs at the BIOS root, in two cases."""
+    folder, and stella, a folder under the save directory): never the system
+    directory. Without load_from every Linux pack put about 68 MB of WAVs at
+    the BIOS root, in two cases."""
 
     def test_no_pack_places_them_in_the_system_directory(self):
         from scripts.common import load_emulator_profiles
         from scripts.validation import outside_gap_scope
 
         profiles = load_emulator_profiles(str(ROOT / "emulators"))
-        for name in ("stella2014", "stella2023"):
+        for name in ("stella", "stella2014", "stella2023"):
             tapes = [f for f in profiles[name]["files"]
                      if f["name"].lower().endswith(".wav")]
             with self.subTest(profile=name):

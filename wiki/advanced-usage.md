@@ -76,8 +76,9 @@ fall back to Japan. It does not mean "keep all three": when a US BIOS exists for
 a system, the European and Japanese ones are dropped.
 
 Accepted names are territory slugs (`japan`, `north-america`, `europe`,
-`south-korea`, `taiwan`, `brazil`, `france`...) plus short aliases (`jp`, `us`,
-`eu`, `kr`) and the signal spellings (`ntsc-j`, `ntsc-u`, `pal`). Territories
+`south-korea`, `taiwan`, `brazil`, `france`...) plus short aliases (`us`, `eu`,
+and the ISO 3166 code of each territory: `jp`, `kr`, `au`, `br`, `fr`...) and
+the signal spellings (`ntsc-j`, `ntsc-u`, `pal`). Territories
 nest, so `--region europe` keeps a BIOS declared `[france]`, and `--region france`
 keeps one declared `[europe]`.
 

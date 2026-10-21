@@ -119,13 +119,13 @@ files:
     system: nintendo-gamecube
     required: false
     hle_fallback: true
-    region: [north-america]
+    region: [north-america, latin-america]
     size: 2097152
     crc32: ["6dac1f2a", "d5e6feea", "86573808", "667d0b64"]
     validation: [crc32]
     on_mismatch: warn
     description: "GameCube boot ROM, NTSC-U directory"
-    note: "Read whole into a 2 MiB buffer with no size check, then descrambled from 0x100 for 0x1afe00 bytes. The crc32 gate runs when the IPL itself is booted and only warns: the four non-PAL dumps, the Brazilian MPAL one included, pass here without complaint."
+    note: "Read whole into a 2 MiB buffer with no size check, then descrambled from 0x100 for 0x1afe00 bytes. The crc32 gate runs when the IPL itself is booted and only warns: the four non-PAL dumps, the Brazilian MPAL one included, pass here without complaint. Discs with the Brazilian country code B and SYSCONF countries of the Americas map to NTSC-U, so Latin America reads this directory too (Source/Core/DiscIO/Enums.cpp:172-173, 223-225)."
     source_ref: "source Source/Core/Core/Config/MainSettings.cpp:594-600, source Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp:105-113, source Source/Core/Core/HW/EXI/EXI_DeviceIPL.h:43, upstream Source/Core/Core/Boot/Boot.cpp:408-442, source Source/Core/Core/Boot/Boot.cpp:444-449"
 
   - name: IPL.bin
