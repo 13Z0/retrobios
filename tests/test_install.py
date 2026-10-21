@@ -3180,8 +3180,9 @@ class NoFallbackOutsideWhatAPlatformReads(unittest.TestCase):
         self.assertIsNone(install._default_dest("windows", "batocera"))
         self.assertIsNone(install._default_dest("windows", "retropie"))
         self.assertEqual(install._default_dest("linux", "batocera"), Path("/userdata/bios"))
+        # emudeck-we functions/all.ps1:12-14, not the profile folder.
         self.assertEqual(
-            install._default_dest("windows", "emudeck"), install.DEFAULT_DESTS["emudeck"]
+            install._default_dest("windows", "emudeck"), install._host_path("C:/Emulation/bios")
         )
 
     def test_a_forced_platform_without_a_folder_is_refused(self):
@@ -3845,6 +3846,60 @@ class RetroBatIsFoundWhereItSaysItIs(unittest.TestCase):
             self.assertEqual(install._host_path(value.rstrip("\\")),
                              Path("/mnt/d/Games/RetroBat"))
         self.assertEqual(run.call_args[0][0][:2], ["reg.exe", "query"])
+
+
+class EmuDeckWindowsIsFoundAsItsScriptsFindIt(unittest.TestCase):
+    """EmuDeck's Windows scripts read %APPDATA%\\EmuDeck\\settings.ps1, else
+    %USERPROFILE%\\EmuDeck\\settings.ps1, and take C:\\Emulation when neither
+    names a folder (functions/all.ps1:4-14). Only the first was read, and a
+    forced --platform emudeck wrote into %USERPROFILE%\\Emulation\\bios."""
+
+    def _env(self) -> tuple[Path, Path]:
+        root = Path(_tempdir(self))
+        appdata, profile = root / "appdata", root / "profile"
+        patcher = unittest.mock.patch.dict(
+            os.environ, {"APPDATA": str(appdata), "USERPROFILE": str(profile)})
+        patcher.start()
+        self.addCleanup(patcher.stop)
+        return appdata, profile
+
+    @staticmethod
+    def _settings(folder: Path, text: str, encoding: str = "utf-8-sig") -> None:
+        (folder / "EmuDeck").mkdir(parents=True, exist_ok=True)
+        (folder / "EmuDeck" / "settings.ps1").write_bytes(text.encode(encoding))
+
+    def test_the_profile_settings_are_read_when_appdata_has_none(self):
+        _appdata, profile = self._env()
+        self._settings(profile, '\n$emulationPath="/games/Emulation"\n')
+        self.assertEqual(install._emudeck_windows_bios(), Path("/games/Emulation/bios"))
+
+    def test_appdata_comes_first(self):
+        appdata, profile = self._env()
+        self._settings(profile, '$emulationPath="/b/Emulation"\n')
+        self._settings(appdata, '$emulationPath="/a/Emulation"\n', "utf-16")
+        self.assertEqual(install._emudeck_windows_bios(), Path("/a/Emulation/bios"))
+
+    def test_settings_naming_no_folder_mean_c_emulation(self):
+        appdata, _profile = self._env()
+        self._settings(appdata, '$device="Windows"\n')
+        self.assertEqual(install._emudeck_windows_bios(),
+                         install._host_path("C:\\Emulation") / "bios")
+
+    def test_a_network_install_is_its_share(self):
+        appdata, _profile = self._env()
+        self._settings(appdata, '$networkInstallation="true"\n'
+                       '$VolName="/nas/games"\n'
+                       '$emulationPath=$testdrive.ToString() + ":\\Emulation"\n')
+        self.assertEqual(install._emudeck_windows_bios(),
+                         Path("/nas/games\\Emulation") / "bios")
+
+    def test_no_settings_detects_nothing(self):
+        self._env()
+        self.assertIsNone(install._emudeck_windows_bios())
+
+    def test_a_forced_platform_falls_back_to_c_emulation(self):
+        self.assertEqual(install._default_dest("windows", "emudeck"),
+                         install._host_path("C:/Emulation/bios"))
 
 
 if __name__ == "__main__":

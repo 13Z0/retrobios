@@ -392,9 +392,16 @@ platforms:
       - os: linux
         method: path_exists
         path: $HOME/Emulation/bios
+      # functions/all.ps1:4-14 (emudeck-we 037460ef): the APPDATA settings,
+      # else the profile ones, and C:\Emulation when neither names a folder.
       - os: windows
         method: config_file
         config: '%APPDATA%\EmuDeck\settings.ps1'
+        parse_key: $emulationPath
+        bios_subdir: bios
+      - os: windows
+        method: config_file
+        config: '%USERPROFILE%\EmuDeck\settings.ps1'
         parse_key: $emulationPath
         bios_subdir: bios
       standalone_copies: *standalone_copies

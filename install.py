@@ -206,6 +206,9 @@ def _os_default_dests(os_type: str) -> dict[str, Path]:
             "retroarch": _host_path("C:/RetroArch-Win64/system"),
             # RetroBat's installer defaults to C:\RetroBat (installer.iss).
             "retrobat": _host_path("C:/RetroBat/bios"),
+            # EmuDeck's Windows edition: C:\Emulation when its settings name
+            # no folder (emudeck-we functions/all.ps1:12-14).
+            "emudeck": _host_path("C:/Emulation/bios"),
         }
     if os_type == "wsl":
         # RetroArch may be the Linux one inside the distribution, while RetroBat
@@ -749,7 +752,11 @@ def _parse_ps1_var(path: Path, key: str) -> str | None:
         return None
     normalized = key.lstrip("$")
     try:
-        for line in path.read_text(encoding="utf-8", errors="replace").splitlines():
+        raw = path.read_bytes()
+        # Windows PowerShell's Out-File writes UTF-16, Set-Content -Encoding
+        # UTF8 a byte order mark: EmuDeck's settings.ps1 passes through both.
+        encoding = "utf-16" if raw[:2] in (b"\xff\xfe", b"\xfe\xff") else "utf-8-sig"
+        for line in raw.decode(encoding, errors="replace").splitlines():
             line = line.strip()
             check = line.lstrip("$")
             if check.startswith(f"{normalized}="):
@@ -1231,13 +1238,9 @@ def detect_platforms(os_type: str) -> list[tuple[str, Path]]:
                 break
 
     if os_type in ("windows", "wsl"):
-        # EmuDeck Windows
-        home = Path.home()
-        emudeck_ps1 = Path(os.environ.get("APPDATA", "")) / "EmuDeck" / "settings.ps1"
-        if emudeck_ps1.exists():
-            emu_path = _parse_ps1_var(emudeck_ps1, "$emulationPath")
-            if emu_path:
-                found.append(("emudeck", Path(emu_path) / "bios"))
+        emudeck = _emudeck_windows_bios()
+        if emudeck is not None:
+            found.append(("emudeck", emudeck))
 
         # RetroArch Windows: open_default_config_file reads retroarch.cfg
         # beside the exe, then under %APPDATA%\RetroArch, and a value left at
@@ -1300,6 +1303,27 @@ def detect_platforms(os_type: str) -> list[tuple[str, Path]]:
     _detect_by_registry(os_type, found)
     _detect_by_path(os_type, found)
     return found
+
+
+def _emudeck_windows_bios() -> Path | None:
+    """The BIOS folder of EmuDeck's Windows edition, as its scripts find it.
+
+    functions/all.ps1:4-14 (emudeck-we 037460ef) loads
+    %APPDATA%\\EmuDeck\\settings.ps1, else %USERPROFILE%\\EmuDeck\\settings.ps1,
+    and takes C:\\Emulation when neither sets $emulationPath. A network
+    install sets it through a drive mapped to $VolName in that session
+    (JSONtoPS1.ps1:166-172), which is the share itself here.
+    """
+    candidates = [Path(os.environ[var]) / "EmuDeck" / "settings.ps1"
+                  for var in ("APPDATA", "USERPROFILE") if os.environ.get(var)]
+    settings = next((path for path in candidates if path.is_file()), None)
+    if settings is None:
+        return None
+    emu_path = _parse_ps1_var(settings, "$emulationPath")
+    if emu_path and ("$" in emu_path or "+" in emu_path):
+        share = _parse_ps1_var(settings, "$VolName")
+        emu_path = f"{share.rstrip(chr(92))}\\Emulation" if share else None
+    return _host_path(emu_path or "C:\\Emulation") / "bios"
 
 
 # Identity Name in pkg/msvc-uwp/RetroArch-msvcUWP/Package.appxmanifest.
@@ -3828,8 +3852,7 @@ def _default_dest(os_type: str, platform_name: str) -> Path | None:
     if own is not None:
         return own
     if os_type == "windows":
-        # EmuDeck's Windows edition keeps the same folder under the profile.
-        return DEFAULT_DESTS["emudeck"] if platform_name == "emudeck" else None
+        return None
     if platform_name == "retrobat":
         return None
     return DEFAULT_DESTS.get(platform_name)
