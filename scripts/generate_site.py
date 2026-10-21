@@ -2978,6 +2978,83 @@ def _first_hash_value(entry: dict) -> str:
     return ""
 
 
+_LOAD_FROM = {
+    "system_dir": "the system (BIOS) directory",
+    "save_dir": "the save directory, not the BIOS directory",
+    "content_dir": "the folder of the loaded content, not the BIOS directory",
+    "working_directory": "the working directory, not the BIOS directory",
+    "data_dir": "the emulator's data directory, not the BIOS directory",
+    "hdd_image": "inside the emulated hard disk image, not the BIOS directory",
+    "internal_storage": "the app's internal storage, not the BIOS directory",
+}
+
+
+def _by_build(value: object, words: Callable[[str], str]) -> str:
+    """A field keyed by build, said per build, or a plain value said once."""
+    if isinstance(value, dict):
+        return ", ".join(f"{words(str(v))} ({mode} build)" for mode, v in value.items() if v)
+    return words(str(value)) if value else ""
+
+
+def _load_from_text(value: object) -> str:
+    """Where the code reads a file, in words.
+
+    The card showed the Path alone: Dolphin's libretro core reads
+    gba_bios.bin from its save directory, and a reader put it under system/.
+    """
+    if value in (None, "", "system_dir"):
+        return ""
+    return _by_build(value, lambda v: _LOAD_FROM.get(v, _code(v)))
+
+
+def _found_by_text(value: object) -> str:
+    """How the code finds a file: by the name it opens, or by content."""
+    words = {
+        "name": "file name (the code opens this name)",
+        "content": "content (the code scans the folder and identifies the file "
+                   "by its hash, any file name works)",
+    }
+    return _by_build(value, lambda v: words.get(v, _code(v)))
+
+
+def _on_mismatch_lines(value: object) -> list[str]:
+    """What the code does when a declared check fails, where it is not reject."""
+    said = {"warn": "warns and runs with the file", "reject": "rejects the file"}
+    if value == "warn":
+        return [f"On a failed check: {said['warn']}"]
+    if isinstance(value, dict):
+        return [f"On a failed {check} check: {said.get(str(how), _code(str(how)))}"
+                for check, how in value.items()]
+    return []
+
+
+def _build_rows(profile: dict) -> list[str]:
+    """Meta card rows for who ships the build, how its files are found, why
+    its revision is held and where its releases are announced."""
+    rows = []
+    built_by = profile.get("built_by") or []
+    if built_by:
+        names = ", ".join(f"[{p}](../platforms/{p}.md)" for p in map(str, built_by))
+        rows.append(f"| Built by | {names}, under its core name. The libretro "
+                    "buildbot does not publish this build. |")
+    found = _found_by_text(profile.get("found_by"))
+    if found:
+        rows.append(f"| Files found by | {found} |")
+    frozen = profile.get("pin_frozen")
+    if frozen:
+        held = _escape_tags(' '.join(str(frozen).split())).replace('|', r'\|')
+        rows.append(f"| Revision held | {held} |")
+    announced = profile.get("version_source")
+    if isinstance(announced, dict) and announced.get("url"):
+        url = str(announced["url"])
+        row = f"| Releases announced at | [{url}]({url})"
+        if announced.get("no_genuine_copy"):
+            row += (f" (version {_escape_tags(str(announced['no_genuine_copy']))} "
+                    "announced there, found only as rebuilt copies)")
+        rows.append(row + " |")
+    return rows
+
+
 def _render_emulator_file(
     f: dict,
     profile: dict,
@@ -3042,6 +3119,12 @@ def _render_emulator_file(
         # under Firmware/, and a page naming only the core's path sent its
         # users to the wrong folder.
         details.append(f"Standalone path: `{standalone_path}`")
+    read_from = _load_from_text(f.get("load_from"))
+    if read_from:
+        details.append(f"Read from: {read_from}")
+    found = _found_by_text(f.get("found_by"))
+    if found:
+        details.append(f"Found by: {found}")
     if fsystem:
         details.append(f"System: {_system_link(fsystem, '../')}")
     if size:
@@ -3099,6 +3182,7 @@ def _render_emulator_file(
         elif isinstance(validation, dict):
             for scope, checks in validation.items():
                 details.append(f"Validation ({scope}): {', '.join(checks)}")
+    details.extend(_on_mismatch_lines(f.get("on_mismatch")))
     if f.get("installed_on"):
         details.append("Installed by the platform's own package on: "
                        + ", ".join(sorted(f["installed_on"])))
@@ -3622,6 +3706,7 @@ def generate_emulator_page(
     revision = revision_markdown(profile)
     if revision:
         lines.append(f"| Revision | {revision} |")
+    lines.extend(_build_rows(profile))
     lines.append(f"| Profiled | {profiled} |")
     # The YAML is the reusable document this site renders, and the JSON is the
     # same profile for a program.
