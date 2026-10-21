@@ -15,9 +15,10 @@ Three things, and a few minutes:
   computer.
 - `curl` or `wget`, and Python 3.8 or newer. The command below checks for both
   and stops with a message if either is absent.
-- Room on the drive. A full RetroArch set is 5.5 GB, Batocera 4.0 GB, MiSTer
-  FPGA 24 MB. The installer measures the free space and refuses before writing
-  anything if there is not enough.
+- Room on the drive. The size depends on the platform and changes with each
+  release: the run prints it before downloading (Step 3), and asks first when it
+  reaches 1 GB. The installer also measures the free space and refuses before
+  writing anything if there is not enough.
 
 Nothing is written outside the BIOS folder, and games and saves are never
 touched.
@@ -76,46 +77,73 @@ keeps its BIOS files, stop with Ctrl+C and see the last section.
 
 ## Step 3. Let it work
 
+The examples on this page follow the Batocera list as published on 2026-10-21.
+The figures change with each release.
+
 Two phases follow. The first reads what is already in the folder, which takes a
 few minutes on a memory card because every file is hashed:
 
 ```
 Fetching file index for batocera...
-  12893 files (8.6 GB)
+  14481 files (9.1 GB)
+  Not installable: 399 files (79 required, not found: 399).
 
 Checking existing files...
-  0/12893 present (0 verified, 0 wrong hash)
+  0/14481 present (0 verified, 0 wrong hash)
 ```
+
+`Not installable` counts the files of the list that the collection does not
+hold. They are named at the end of the run (Step 4).
 
 On a first install the present count is zero, which is expected, not a fault.
 On a later run it counts what is already there, and only the rest is
 downloaded. A download of 1 GB or more is confirmed first
-(`Download 8.6 GB to /userdata/bios? [Y/n]`).
+(`Download 9.1 GB to /userdata/bios? [Y/n]`).
 
 The second phase downloads what is missing, one line per file:
 
 ```
-Downloading 12893 files (8.6 GB)...
+Downloading 14481 files (9.1 GB)...
   Press Ctrl+C to stop. Running the same command again carries on from here.
-  [1/12893] 3do_arcade_saot.bin ok
-  [2/12893] 3dobios.zip ok
+  [1/14481] 3do_arcade_saot.bin ok
+  [2/14481] 3dobios.zip ok
 ```
 
 Ctrl+C is safe at any point. Files already installed stay, and running the
 command again picks up where it stopped.
 
-## Step 4. Read the last three lines
+## Step 4. Read the end of the run
 
 This is what a finished run looks like:
 
 ```
-Done. 12893 files installed, 0 files already up to date.
+Done. 14481 files installed, 0 files already up to date.
 Location: /userdata/bios
+399 files were not installed: the collection does not hold them, or its copy fails their check.
+  Needed to start an emulator (79 files):
+    dark-forces (theforceengine): DARK.GOB, SOUNDS.GOB, SPRITES.GOB, TEXTURES.GOB
+    dark-forces-ii (openjkdf2): openjkdf2/episode/JK1.gob, openjkdf2/episode/JK1CTF.gob, openjkdf2/episode/JK1MP.gob, openjkdf2/resource/Res1hi.gob, openjkdf2/resource/Res2.gob
+    diablo (devilutionx): devilutionx/diabdat.mpq
+    doom3 (dhewm3): base/pak000.pk4, base/pak002.pk4, base/pak003.pk4, base/pak004.pk4
+    droidworks (openjkdf2): dwCD.GOB, dwHD.GOB, dwMin.GOB, dwStream.GOB
+    fallout (fallout1-ce): fallout1-ce/critter.dat, fallout1-ce/master.dat
+    fallout2 (fallout2-ce): fallout2-ce/critter.dat, fallout2-ce/master.dat
+    fury (fury): fury.grp
+    ... and 9 more systems (--check --verbose lists them all)
+  Each emulator's page says what these files are: https://abdess.github.io/retrobios/emulators/
 To check this later, run the same command with --check.
 ```
 
-The word `Done` and a location are the confirmation. Any other ending means
-something was left undone, and the run says which case it was.
+The word `Done` and a location are the confirmation. Any other ending (`Stopped`,
+`Finished with errors`, `Nothing was installed`) means something was left undone,
+and the run says which case it was.
+
+The lines between `Location:` and the `--check` hint name the files of the list
+that the collection does not hold. `Needed to start an emulator` gives, for each
+system, the emulators that read it and the files they cannot start without. On
+the run above, all 79 belong to games (Dark Forces, Diablo, Doom 3, Tomb Raider
+and the others): the engine reads them from a copy of the game itself. The
+other 320 are optional, and the emulators reading them start without them.
 
 ## Step 5. Confirm it later
 
@@ -127,12 +155,13 @@ curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | 
 
 ```
 Checking existing files...
-  72/72 present (72 verified, 0 wrong hash)
+  14481/14481 present (14481 verified, 0 wrong hash)
 
   All files up to date.
 ```
 
-`0 wrong hash` is the line that matters. A number there means a file is present
+The files the collection does not hold are listed after it again, as long as
+they are absent from the folder. `0 wrong hash` is the line that matters. A number there means a file is present
 whose contents the platform will reject, and running the install again replaces
 it.
 
@@ -140,8 +169,12 @@ it.
 
 ### No supported platform detected.
 
-The command was piped from the internet, so it cannot stop and ask a question.
-Name the platform and the folder instead:
+At a terminal, a menu follows that line. The platform is picked by its number,
+then the run asks for the BIOS folder, offering the platform's usual folder on
+this system as the default when it has one.
+
+Without a terminal, or with `--no-input`, the run stops there and prints the
+command to use instead, with the platform and the folder named:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh \

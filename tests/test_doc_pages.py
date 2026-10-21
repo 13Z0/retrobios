@@ -668,5 +668,63 @@ class PublishedNumbersShareOneFormat(unittest.TestCase):
         self.assertEqual(re.findall(r"\*\*\d{4,}\b[^*]*\*\*", readme), [])
 
 
+class FirstInstallWalkthrough(unittest.TestCase):
+    """First install showed a Batocera run of 12893 files with no omission
+    line and said any other ending meant work left undone, while every
+    Batocera run printed 399 files not installed. Its disk sizes (Batocera
+    4.0 GB) contradicted its own example (8.6 GB), and its no-platform case
+    said a piped command cannot ask, where install.sh hands it the terminal
+    and the installer shows a menu."""
+
+    def setUp(self):
+        self.text = _page("first-install.md")
+
+    def test_no_hand_kept_size_before_the_run(self):
+        import install
+
+        section = _section(self.text, "Before starting")
+        # The confirmation threshold is a constant of the installer, not a pack size.
+        self.assertEqual(install.CONFIRM_FROM_BYTES, 1024 ** 3)
+        self.assertIn("reaches 1 GB", section)
+        self.assertNotRegex(section.replace("reaches 1 GB", ""), r"\d+(\.\d+)? ?[KMG]B\b")
+
+    def test_the_run_is_dated_and_consistent_with_the_manifest(self):
+        import install
+
+        self.assertRegex(self.text, r"published on \d{4}-\d{2}-\d{2}")
+        step3 = _section(self.text, "Step 3. Let it work")
+        step4 = _section(self.text, "Step 4. Read the end of the run")
+        step5 = _section(self.text, "Step 5. Confirm it later")
+        count, size = re.search(r"\n  (\d+) files \(([\d.]+ [KMG]B)\)", step3).groups()
+        self.assertIn(f"0/{count} present", step3)
+        self.assertIn(f"Downloading {count} files ({size})", step3)
+        self.assertIn(f"Done. {count} files installed", step4)
+        self.assertIn(f"{count}/{count} present ({count} verified", step5)
+        manifest = json.loads((ROOT / "install" / "batocera.json").read_text(encoding="utf-8"))
+        omitted = re.search(r"Not installable: (\d+) files \((\d+) required", step3)
+        if manifest.get("omitted_files"):
+            self.assertIsNotNone(omitted, "the manifest omits files and the run shows no line for it")
+        if omitted:
+            total, required = map(int, omitted.groups())
+            first, needed = install._omission_lines(
+                total, [{"required": True, "dest": str(i)} for i in range(required)]
+            )[:2]
+            self.assertIn(first, step4)
+            self.assertIn(needed.split(":")[0], step4)
+            self.assertIn(f"all {required} belong", step4)
+            self.assertIn(f"other {total - required} are optional", step4)
+
+    def test_no_platform_detected_reads_like_the_installer(self):
+        source = (ROOT / "install.py").read_text(encoding="utf-8")
+        branch = source.split('print("  No supported platform detected.")', 1)[1][:400]
+        self.assertIn("if not interactive or listing:", branch)
+        self.assertIn("_prompt_manual_platform(os_type)", branch)
+        self.assertIn('"$INSTALLER" "$@" </dev/tty', (ROOT / "install.sh").read_text(encoding="utf-8"))
+        section = _section(self.text, "No supported platform detected.")
+        self.assertIn("a menu follows", section)
+        self.assertIn("--no-input", section)
+        self.assertNotIn("cannot stop and ask", section)
+
+
 if __name__ == "__main__":
     unittest.main()
