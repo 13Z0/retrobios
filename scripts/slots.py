@@ -329,6 +329,29 @@ def _archive_claims(
     return claims
 
 
+def checked_by_path(mode: str, entry: dict, rule: str = "") -> bool:
+    """Whether the frontend checks this declaration by its path alone.
+
+    Whether a frontend reads the bytes is a property of the platform, but
+    what it compares them with is the entry's: Batocera skips an empty md5
+    (batocera-systems:1088), and EmuDeck declares neocdz.zip with no hash at
+    all. Such an entry is a path, in an md5 platform as in an existence one.
+    A member pinned inside an archive is content.
+    """
+    if not nativemode.reads_file_contents(mode):
+        return True
+    if entry.get("zipped_file"):
+        return False
+    if rule == nativemode.SIZE_AND_ANY_HASH:
+        fields: tuple[str, ...] = ("md5", "sha1", "crc32")
+    else:
+        fields = (nativemode.digest_algorithm(mode) or "",)
+    return not any(
+        parse_md5_list(entry.get(name)) if name == "md5" else entry.get(name)
+        for name in fields
+    )
+
+
 def _claim_rank(claim: Claim) -> int:
     """How strongly a platform claim speaks for what the pack ships."""
     if resolution_is_hash_exact(claim.status):
@@ -382,10 +405,10 @@ def _slot_claims(
     # matches, asserts nothing about content. Where the frontend never reads
     # the bytes, a proven profile claim then decides: RetroArch's neocdz.zip
     # pins an md5 nobody holds, and the primary shipped without the 000-lo.lo
-    # geolith and FBNeo read inside it.
-    path_only = not nativemode.reads_file_contents(
-        config.get("verification_mode", "existence")
-    )
+    # geolith and FBNeo read inside it. Decided per entry: EmuDeck, an md5
+    # platform, declares the same archive with no hash.
+    mode = config.get("verification_mode", "existence")
+    rule = config.get("hash_rule", "")
     by_slot: dict[str, list[Claim]] = {}
     for claim in profile_claims(
         profiles, db, base_dest, standalone_cores, zip_contents, data_dir_registry,
@@ -401,7 +424,9 @@ def _slot_claims(
         ):
             # A size proves a claim only against a file of another size.
             continue
-        if not platform.is_proven and not (path_only and platform.local_path):
+        if not platform.is_proven and not (
+            platform.local_path and checked_by_path(mode, platform.entry, rule)
+        ):
             continue
         by_slot.setdefault(key, []).append(claim)
 
@@ -518,8 +543,8 @@ def slot_choices(
     recorded whole in the install manifest, so a target narrowed from the
     full manifest gets the bytes the target's own pack carries.
     """
-    if nativemode.reads_file_contents(config.get("verification_mode", "existence")):
-        return {}
+    mode = config.get("verification_mode", "existence")
+    rule = config.get("hash_rule", "")
     platform_profiles = {
         name: profiles[name] for name in resolve_platform_cores(config, profiles)
     }
@@ -535,6 +560,9 @@ def slot_choices(
     choices: dict[str, list[tuple[str, str | None]]] = {}
     for key, claims in sorted(by_slot.items()):
         platform = by_dest[key]
+        # Where the frontend compares a hash, the platform's file stays.
+        if not checked_by_path(mode, platform.entry, rule):
+            continue
         agree = [_satisfies(c, platform, db) for c in claims]
         agreeing = [c for c, ok in zip(claims, agree) if ok]
         others = sorted(
@@ -573,7 +601,9 @@ def _strongest(claims: list[Claim]) -> Claim:
     return max(claims, key=lambda claim: (_claim_rank(claim), -claims.index(claim)))
 
 
-def arbitrate(conflict: Conflict, mode: str, addressee: str = "platform") -> Decision:
+def arbitrate(
+    conflict: Conflict, mode: str, addressee: str = "platform", rule: str = "",
+) -> Decision:
     """Decide a contested destination for the pack being built.
 
     A pack answers to whoever asked for it. A platform pack must leave the
@@ -590,7 +620,7 @@ def arbitrate(conflict: Conflict, mode: str, addressee: str = "platform") -> Dec
     profile = _strongest(conflict.profile_claims)
     if addressee == "emulator":
         return Decision(conflict, profile, ADDRESSEE)
-    if not nativemode.reads_file_contents(mode):
+    if checked_by_path(mode, conflict.platform_claim.entry, rule):
         return Decision(conflict, profile, SERVES_BOTH)
     return Decision(conflict, conflict.platform_claim, FRONTEND_CHECKS_CONTENT)
 
@@ -977,7 +1007,7 @@ def main() -> int:
             mode = config.get("verification_mode", "existence")
             print(f"{platform}: {len(conflicts)} contradicted [{mode}]")
             for conflict in conflicts:
-                decision = arbitrate(conflict, mode)
+                decision = arbitrate(conflict, mode, rule=config.get("hash_rule", ""))
                 fixable += decision.serves_both
                 print(f"  {format_decision(decision)}")
         total = sum(len(c) for c in found.values())

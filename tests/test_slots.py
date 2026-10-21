@@ -349,6 +349,7 @@ class TestArbitration(unittest.TestCase):
     def _conflict(self):
         platform = slots.Claim(
             "platform", "GC/JAP/IPL.bin", "IPL.bin",
+            entry={"md5": "m" * 32, "sha1": "a" * 40},
             local_path="bios/Console/GC/USA/IPL.bin", status="md5_exact",
         )
         profile = slots.Claim(
@@ -375,6 +376,40 @@ class TestArbitration(unittest.TestCase):
         decision = slots.arbitrate(self._conflict(), "md5", addressee="emulator")
         self.assertEqual(decision.winner.origin, "profile")
         self.assertFalse(decision.serves_both)
+
+    def test_a_hashless_entry_is_a_path_in_an_md5_platform(self):
+        """EmuDeck declares neocdz.zip with no md5 and checkBIOS.sh never
+        names it: the frontend checks nothing there, so the core's file
+        serves both."""
+        conflict = self._conflict()
+        conflict.platform_claim.entry = {"name": "IPL.bin"}
+        for mode in ("md5", "sha1"):
+            with self.subTest(mode=mode):
+                self.assertTrue(slots.arbitrate(conflict, mode).serves_both)
+        # RomM compares size then any hash: a hash of another kind is content.
+        conflict.platform_claim.entry = {"name": "IPL.bin", "sha1": "a" * 40, "size": 3}
+        self.assertFalse(
+            slots.arbitrate(conflict, "md5", rule="size_and_any_hash").serves_both
+        )
+        conflict.platform_claim.entry = {"name": "x.zip", "zipped_file": "IPL.bin"}
+        self.assertFalse(slots.arbitrate(conflict, "md5").serves_both)
+
+    def test_the_pack_serves_the_proven_file_at_a_hashless_md5_entry(self):
+        config = {
+            "verification_mode": "md5",
+            "cores": ["dolphin"],
+            "systems": {"console": {"files": [
+                {"name": "IPL.bin", "destination": "IPL.bin"},
+                {"name": "IPL.bin", "destination": "hashed/IPL.bin", "md5": "m" * 32},
+            ]}},
+        }
+        profiles = {"dolphin": {"type": "libretro", "systems": ["console"], "files": [
+            {"name": "IPL.bin", "md5": "n" * 32},
+            {"name": "IPL.bin", "path": "hashed/IPL.bin", "md5": "n" * 32},
+        ]}}
+        overrides = slots.pack_overrides(config, profiles, REGIONS_DB)
+        # The hashed declaration keeps the file the frontend checks.
+        self.assertEqual(overrides, {"IPL.bin": "bios/Console/GC/JAP/IPL.bin"})
 
     def test_the_reported_line_gives_the_ground_for_the_decision(self):
         kept = slots.format_decision(slots.arbitrate(self._conflict(), "md5"))
