@@ -3538,7 +3538,9 @@ def do_standalone_copies(
 
     Returns (copied, skipped, failed): skipped is a target directory that
     does not exist, failed a copy the system refused (permission, disk
-    full, read-only mount), which used to be counted as "dir not found".
+    full, read-only mount) or a name leading out of the folder, which used
+    to be counted as "dir not found". A link already at a file's name is
+    replaced by the file, never written through.
     Each failure is also appended to failures, by absolute path, for the
     summary to name.
     """
@@ -3603,14 +3605,23 @@ def do_standalone_copies(
             resolved_dir = target_dir.resolve()
             for src in sources:
                 dest = target_dir / src.name
-                # A symlink already sitting at the destination would redirect
-                # the write outside the directory the user opted into, and a
-                # crafted source name would climb out of it.
-                if dest.is_symlink() or not _within(dest, resolved_dir):
-                    skipped += 1
+                linked = dest.is_symlink()
+                # A crafted source name would climb out of the directory.
+                if not linked and not _within(dest, resolved_dir):
+                    print(f"  ERROR: {dest}: {OUTSIDE_TARGET}")
+                    failed += 1
+                    if failures is not None:
+                        failures.append((str(dest), OUTSIDE_TARGET))
                     continue
                 try:
-                    shutil.copy2(src, dest)
+                    if linked:
+                        # Writing through a link already at the name would
+                        # leave the folder the user opted into. The link
+                        # itself gives way to the file.
+                        _replace_with_copy(src, dest)
+                        print(f"  {dest}: link replaced by the file")
+                    else:
+                        shutil.copy2(src, dest)
                     copied += 1
                 except OSError as exc:
                     print(f"  ERROR: {dest}: {exc.strerror or exc}")
@@ -3621,6 +3632,22 @@ def do_standalone_copies(
                         failures.append((str(dest), reason))
 
     return copied, skipped, failed
+
+
+OUTSIDE_TARGET = "name leads outside the emulator folder"
+
+
+def _replace_with_copy(src: Path, dest: Path) -> None:
+    """Put a copy of src at dest's name without following what is there."""
+    fd, scratch = tempfile.mkstemp(dir=dest.parent, prefix=f".{dest.name}.", suffix=".part")
+    os.close(fd)
+    try:
+        shutil.copy2(src, scratch)
+        os.replace(scratch, dest)
+    except OSError:
+        if os.path.lexists(scratch):
+            os.unlink(scratch)
+        raise
 
 
 def format_size(n: int) -> str:

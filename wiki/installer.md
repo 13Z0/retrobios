@@ -404,9 +404,10 @@ run rather than a file to copy.
 
 Targets are per OS, WSL falling back to the Linux ones. A directory that does
 not exist is skipped rather than created, so nothing is copied for an emulator
-that is not installed. A destination that is already a symbolic link is skipped
-too: the copy leaves the tree the user opted into, and a link there would
-redirect the write somewhere else again.
+that is not installed. A destination that is already a symbolic link is
+replaced by the file rather than written through: a write through the link
+would land outside the folder the user opted into. The summary counts each
+copy as copied, skipped (folder absent) or failed, and names every failure.
 
 ## Android
 
@@ -478,8 +479,8 @@ user's own layout, and EmuDeck links `bios/shadps4/sys_modules` into shadPS4's
 data directory where the emulator actually reads it. The boundary is lexical,
 not a resolved-path comparison, which is what keeps that case working.
 Standalone copies are stricter, since they write outside the tree the user
-selected: a symlink already sitting at the destination is skipped rather than
-followed.
+selected: a symlink already sitting at the destination is replaced by the
+file rather than followed.
 
 ## Changing the installer
 

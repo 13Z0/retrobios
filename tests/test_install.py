@@ -1608,6 +1608,9 @@ class TestStandaloneCopyTargetsAreUntrusted(unittest.TestCase):
         self.assertIsInstance(install._validate_manifest(manifest, "retroarch"), dict)
 
     def test_symlinked_destination_is_not_written_through(self):
+        """A link at the name was skipped in silence and counted as "dir
+        not found" while the folder existed: the emulator kept whatever the
+        link pointed at. The link now gives way to the file."""
         bios = Path(_tempdir(self))
         (bios / "boot.bin").write_text("rom")
         target = Path(_tempdir(self))
@@ -1615,12 +1618,17 @@ class TestStandaloneCopyTargetsAreUntrusted(unittest.TestCase):
         outside.write_text("untouched")
         (target / "boot.bin").symlink_to(outside)
 
-        copied, skipped, _ = install.do_standalone_copies(
-            self._manifest(str(target)), bios, "linux"
-        )
-        self.assertEqual(copied, 0)
-        self.assertEqual(skipped, 1)
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            copied, skipped, failed = install.do_standalone_copies(
+                self._manifest(str(target)), bios, "linux"
+            )
+        self.assertEqual((copied, skipped, failed), (1, 0, 0))
         self.assertEqual(outside.read_text(), "untouched")
+        self.assertFalse((target / "boot.bin").is_symlink())
+        self.assertEqual((target / "boot.bin").read_text(), "rom")
+        self.assertIn("link replaced", out.getvalue())
+        self.assertEqual(sorted(p.name for p in target.iterdir()), ["boot.bin"])
 
 
 @unittest.skipUnless(shutil.which("pwsh"), "pwsh not available")
