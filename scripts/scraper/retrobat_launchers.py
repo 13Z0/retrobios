@@ -23,13 +23,19 @@ SOURCE_FILES = (
     f"{GENERATORS}/Bizhawk.Generator.cs",
     f"{GENERATORS}/Duckstation.Generator.cs",
     f"{GENERATORS}/Hatari.Generator.cs",
+    f"{GENERATORS}/Jgenesis.Generator.cs",
+    f"{GENERATORS}/KegaFusion.Generator.cs",
     f"{GENERATORS}/LibRetro.CoreOptions.cs",
     f"{GENERATORS}/Mednafen.Generator.cs",
+    f"{GENERATORS}/MelonDS.Generator.cs",
     f"{GENERATORS}/Mesen.Generator.cs",
+    f"{GENERATORS}/Mupen64.Generator.cs",
     f"{GENERATORS}/OpenMSX.Generator.cs",
     f"{GENERATORS}/Pcsx2.Generator.cs",
+    f"{GENERATORS}/Project64.Generator.cs",
     f"{GENERATORS}/Uae.Generator.cs",
     f"{GENERATORS}/Xemu.Generator.cs",
+    f"{GENERATORS}/mGBA.Generator.cs",
     FEATURES,
 )
 
@@ -54,6 +60,7 @@ class Source:
         self.text = text
         self._starts = [0] + [m.end() for m in re.finditer(r"\n", text)]
         self._blocks: list[tuple[int, int]] | None = None
+        self._ends: list[int] | None = None
 
     def line(self, offset: int) -> int:
         return bisect.bisect_right(self._starts, offset)
@@ -106,6 +113,15 @@ class Source:
         if not holding:
             raise LauncherPatternMissing(self.path, f"block around line {self.line(offset)}")
         return max(holding)
+
+    def header(self, block: tuple[int, int]) -> str:
+        """The statement that owns a block's opening brace, comments removed."""
+        if self._ends is None:
+            self._ends = [o for o, c in _code_chars(self.text) if c in ";{}"]
+        previous = bisect.bisect_left(self._ends, block[0]) - 1
+        start = self._ends[previous] + 1 if previous >= 0 else 0
+        text = re.sub(r"//[^\n]*|/\*.*?\*/", "", self.text[start : block[0]], flags=re.S)
+        return " ".join(text.split())
 
     def statement_span(self, block: tuple[int, int]) -> tuple[int, int]:
         """Lines of a block, from the statement that owns its opening brace."""
@@ -1169,10 +1185,223 @@ def duckstation(sources: dict[str, Source]) -> list[Record]:
     ]
 
 
+# Generators that write each BIOS path into the emulator's configuration
+# only when the file exists: string x = Path.Combine(bios, ..., "name");
+# if (File.Exists(x)) ini.WriteValue("section", "key", x).
+GUARDED_WRITES = {
+    f"{GENERATORS}/Jgenesis.Generator.cs": "jgenesis",
+    f"{GENERATORS}/KegaFusion.Generator.cs": "kega-fusion",
+    f"{GENERATORS}/MelonDS.Generator.cs": "melonds",
+    f"{GENERATORS}/Mupen64.Generator.cs": "mupen64",
+    f"{GENERATORS}/Project64.Generator.cs": "project64",
+    f"{GENERATORS}/mGBA.Generator.cs": "mgba",
+}
+
+_METHOD = re.compile(
+    r"(?:(?:public|private|protected|internal|static|override|virtual)\s+)+[\w<>\[\],. ]+\s\w+\s*\("
+)
+_TRANSPARENT = re.compile(r"(?:using\s*\(.*\)|try)")
+_IF = re.compile(r"(?:else\s+)?if\s*\((.*)\)")
+_GUARD = re.compile(
+    r'if \(File\.Exists\((\w+)\)\)\s*(\w+)\.WriteValue\("([^"]*)", "([^"]+)", ([^;\n]+)\);'
+)
+_BIOS_ROOT = r'(?:Program\.)?AppConfig\.GetFullPath\("bios"\)'
+
+
+def _negate(condition: str) -> str:
+    """The condition under which an early return is not taken.
+
+    A conjunction of inequalities becomes the disjunction of equalities,
+    anything else is wrapped in not (...).
+    """
+    tests = condition.split(" && ")
+    compared = [re.fullmatch(rf"(\w+) != ({STRING})", t) for t in tests]
+    if all(compared):
+        return " || ".join(f"{m.group(1)} == {m.group(2)}" for m in compared)
+    return f"not ({condition})"
+
+
+Reach = tuple[tuple[int, int], list[str], list[tuple[int, int]]]
+
+
+def _conditions(src: Source, offset: int) -> Reach | None:
+    """The method holding offset, the conditions under which it is reached,
+    and the lines of the early returns among them.
+
+    Each enclosing if adds its condition, and an early return at the top of
+    the method adds the condition that does not return. None when a block in
+    between is not an if, a using or a try: a loop or an else would need its
+    own reading.
+    """
+    enclosing: list[str] = []
+    for block in sorted((b for b in src.blocks() if b[0] < offset < b[1]), reverse=True):
+        header = src.header(block)
+        if _METHOD.match(header):
+            returns, spans = [], []
+            for found in re.finditer(r"\bif \(", src.text[block[0] : offset]):
+                paren = block[0] + found.end() - 1
+                if src.enclosing(paren) != block:
+                    continue
+                cond = _call_args(src, paren)
+                tail = re.compile(r"\s*return\b[^;]*;").match(src.text, paren + len(cond) + 2)
+                if tail:
+                    returns.append(_negate(" ".join(cond.split())))
+                    spans.append(src.lines(block[0] + found.start(), tail.end()))
+            return block, returns + enclosing[::-1], spans
+        condition = _IF.fullmatch(header)
+        if condition:
+            text = " ".join(condition.group(1).split())
+            switch = re.fullmatch(
+                r'SystemConfig\.isOptSet\("(\w+)"\) && SystemConfig\.getOptBoolean\("\1"\)', text
+            )
+            enclosing.append(f"{switch.group(1)} on" if switch else text)
+        elif not _TRANSPARENT.fullmatch(header):
+            return None
+    return None
+
+
+def _config_name(src: Source, method: tuple[int, int], writer: str) -> str:
+    """The file the writer variable opens, read in its method or else in the file."""
+    opener = r"(\w+)\s*=\s*(?:\w+\.FromFile|new \w+)\((\w+)"
+    declared = {
+        m.group(1): "/".join(_strings(m.group(2)))
+        for m in re.finditer(
+            r'string (\w+) = Path\.Combine\(path, ((?:"[^"]+"(?:, )?)+)\);', src.text
+        )
+    }
+    local = [
+        m.group(2)
+        for m in re.finditer(opener, src.text[method[0] : method[1]])
+        if m.group(1) == writer and m.group(2) in declared
+    ]
+    if local:
+        return declared[local[0]]
+    files = {declared[m.group(2)] for m in re.finditer(opener, src.text) if m.group(2) in declared}
+    if len(files) != 1:
+        raise LauncherPatternMissing(src.path, f"configuration file opened as {writer}")
+    return files.pop()
+
+
+def _root_writes(src: Source, emulator: str) -> list[Record]:
+    """Configuration keys that receive the bios folder itself."""
+    records = []
+    for root in re.finditer(rf"string (\w+) = {_BIOS_ROOT};", src.text):
+        root_reach = _conditions(src, root.start())
+        if root_reach is None:
+            continue
+        method = root_reach[0]
+        for write in re.compile(
+            rf'(\w+)\.WriteValue\("([^"]*)", "([^"]+)", {root.group(1)}\);'
+        ).finditer(src.text, root.end(), method[1]):
+            reached = _conditions(src, write.start())
+            if reached is None:
+                continue
+            writer, section, key = write.groups()
+            target = f"[{section}] {key}" if section else key
+            records.append(
+                _record(
+                    emulator,
+                    "standalone",
+                    "passes_path",
+                    [],
+                    source_ref(
+                        (
+                            src.path,
+                            [
+                                *reached[2],
+                                src.lines(root.start(), root.end()),
+                                src.lines(write.start(), write.end()),
+                            ],
+                        )
+                    ),
+                    search_dir="bios",
+                    passes_to=f"{_config_name(src, method, writer)} {target} = bios",
+                    fails_when_missing=False,
+                    depends_on_option=", ".join(reached[1]) or None,
+                )
+            )
+    return records
+
+
+def _guarded_write(src: Source, emulator: str, guard: re.Match[str]) -> Record | None:
+    """The record of one guarded write, None when its shape is another one.
+
+    The written value must be the checked path itself (quoted or with its
+    separators replaced), the path a literal under the bios folder that
+    nothing reassigns before the check, and every block around the write an
+    if, a using or a try.
+    """
+    var, writer, section, key, value = guard.groups()
+    if not re.fullmatch(
+        rf"(?:{STRING} \+ )?{var}(?:\.Replace\({STRING}, {STRING}\))?(?: \+ {STRING})?",
+        value.strip(),
+    ):
+        return None
+    reached = _conditions(src, guard.start())
+    if reached is None:
+        return None
+    method, conditions, returns = reached
+    decls = list(
+        re.compile(
+            rf"string {var} = Path\.Combine\((\w+|{_BIOS_ROOT}), ((?:{STRING}, )*{STRING})\);"
+        ).finditer(src.text, method[0], guard.start())
+    )
+    if not decls or re.search(rf"\b{var}\s*=[^=]", src.text[decls[-1].end() : guard.start()]):
+        return None
+    decl = decls[-1]
+    root = decl.group(1)
+    if not re.fullmatch(_BIOS_ROOT, root) and not re.search(
+        rf"string {root} = {_BIOS_ROOT};", src.text[method[0] : decl.start()]
+    ):
+        return None
+    *folders, name = _strings(decl.group(2))
+    target = f"[{section}] {key}" if section else key
+    return _record(
+        emulator,
+        "standalone",
+        "fixed_name",
+        [name],
+        source_ref(
+            (
+                src.path,
+                [
+                    *returns,
+                    src.lines(decl.start(), decl.end()),
+                    src.lines(guard.start(), guard.end()),
+                ],
+            )
+        ),
+        case_insensitive=True,
+        search_dir="/".join(["bios", *folders]),
+        passes_to=f"{_config_name(src, method, writer)} {target}, only if the file exists",
+        fails_when_missing=f"{key} not written",
+        depends_on_option=", ".join(conditions) or None,
+    )
+
+
+def guarded_writes_in(src: Source, emulator: str) -> list[Record]:
+    """Every guarded write of one generator, then the keys given the bios folder."""
+    found = [_guarded_write(src, emulator, guard) for guard in _GUARD.finditer(src.text)]
+    records = [record for record in found if record is not None]
+    if not records:
+        raise LauncherPatternMissing(src.path, "File.Exists guarded WriteValue")
+    return records + _root_writes(src, emulator)
+
+
+def guarded_writes(sources: dict[str, Source]) -> list[Record]:
+    """One fixed name per configuration key, written only when the file exists."""
+    return [
+        record
+        for path, emulator in GUARDED_WRITES.items()
+        for record in guarded_writes_in(sources[path], emulator)
+    ]
+
+
 EXTRACTORS: tuple[Callable[[dict[str, Source]], list[Record]], ...] = (
     amiberry,
     ares,
     duckstation,
+    guarded_writes,
     hatari,
     hatari_libretro,
     mesen,

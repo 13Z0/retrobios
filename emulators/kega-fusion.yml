@@ -37,13 +37,6 @@ notes: |
   file names the binary fixes. Each file is opened with fopen "rb" and read
   with a fixed count, no length, checksum or header is compared.
 
-  RetroBat's generator writes SCDEURBIOS, SCDUSABIOS and SCDJAPBIOS as
-  bios_CD_E.bin, bios_CD_U.bin and bios_CD_J.bin, and the three 32X keys as
-  32X_G_BIOS.BIN, 32X_M_BIOS.BIN and 32X_S_BIOS.BIN in its bios folder, each
-  only when the file exists. GenesisBIOS receives the bios folder itself, so
-  the fopen fails and no TMSS ROM is loaded. The 8-bit keys are not written.
-  ref: emulatorlauncher Generators/KegaFusion.Generator.cs:99-128
-
   CDTray.raw, Cursor_8.raw, STATIC_8.RAW and gg_nor.all are looked up by name
   in an archive embedded in the executable (0x47a530), not on disk. Plugins
   (*.rpi) and the KGV1 video codec ship with the program. Fusion.ini, battery

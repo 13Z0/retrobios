@@ -201,6 +201,94 @@ HATARI_FEATURES = """
 """
 
 
+KEGA = """
+    private void SetupConfiguration(string path, string system)
+    {
+        string iniFile = Path.Combine(path, "Fusion.ini");
+
+        using (var ini = IniFile.FromFile(iniFile))
+        {
+            string biosPath = AppConfig.GetFullPath("bios");
+            if (!Directory.Exists(biosPath)) try { Directory.CreateDirectory(biosPath); }
+                catch { }
+
+            ini.WriteValue("", "GenesisBIOS", biosPath);
+
+            // BIOS
+            string euBios = Path.Combine(biosPath, "bios_CD_E.bin");
+            if (File.Exists(euBios))
+                ini.WriteValue("", "SCDEURBIOS", euBios);
+
+            string bios32Xg = Path.Combine(biosPath, "32X_G_BIOS.BIN");
+            if (File.Exists(bios32Xg))
+                ini.WriteValue("", "32XM68KBIOS", bios32Xg);
+        }
+    }
+"""
+
+JGENESIS = """
+    private void SetupTomlConfiguration(string path)
+    {
+        string settingsFile = Path.Combine(path, "jgenesis-config.toml");
+        using (IniFileJGenesis ini = new IniFileJGenesis(settingsFile, IniOptionsJGenesis.UseSpaces))
+        {
+            ConfigureGenesis(ini, system);
+        }
+    }
+
+    private void ConfigureGenesis(IniFileJGenesis ini, string system)
+    {
+        if (system != "genesis" && system != "sega_cd")
+            return;
+
+        if (system == "sega_cd")
+        {
+            string segaCdBios = Path.Combine(AppConfig.GetFullPath("bios"), "bios_CD_U.bin");
+
+            ini.WriteValue("sega_cd", "per_region_bios", "true");
+
+            if (File.Exists(segaCdBios))
+                ini.WriteValue("sega_cd", "bios_path", "'" + segaCdBios + "'");
+        }
+    }
+"""
+
+MELONDS = """
+    private void SetupConfiguration(string path, string rom)
+    {
+        string settingsFile = Path.Combine(path, "melonDS.toml");
+
+        using (IniTomlFile ini = IniTomlFile.FromFile(settingsFile, IniTomlOptions.UseSpaces))
+        {
+            if (SystemConfig.isOptSet("melonds_externalBIOS") && SystemConfig.getOptBoolean("melonds_externalBIOS"))
+            {
+                string bios7 = Path.Combine(AppConfig.GetFullPath("bios"), "bios7.bin");
+
+                if (File.Exists(bios7))
+                    ini.WriteValue("DS", "BIOS7Path", "\\"" + bios7.Replace("\\\\", "/") + "\\"");
+            }
+        }
+    }
+"""
+
+# Kronos: the path is replaced by an option before the check, so the name
+# checked is not the literal.
+REASSIGNED = """
+    private void SetupConfiguration(string path)
+    {
+        string conf = Path.Combine(path, "kronos.ini");
+        using (var ini = IniFile.FromFile(conf))
+        {
+            string bios = Path.Combine(AppConfig.GetFullPath("bios"), "saturn_bios.bin");
+            if (SystemConfig.isOptSet("kronos_force_bios"))
+                bios = Path.Combine(AppConfig.GetFullPath("bios"), SystemConfig["kronos_force_bios"]);
+            if (File.Exists(bios))
+                ini.WriteValue("1.0", "General\\\\Bios", bios.Replace("\\\\", "/"));
+        }
+    }
+"""
+
+
 def _psx_sources() -> dict[str, rl.Source]:
     return _sources(
         **{
@@ -312,6 +400,68 @@ class NamesInLauncherOrder(unittest.TestCase):
         self.assertEqual(fixed["source_ref"], f"{G}/Hatari.Generator.cs:1-9")
         self.assertEqual(option["names"], ["tos206.img", "tos102.img"])
         self.assertEqual(option["search_dir"], "bios/hatari/tos")
+
+
+def _one(text: str, emulator: str, path: str = f"{G}/X.Generator.cs") -> list[dict]:
+    return rl.guarded_writes_in(_sources(**{path: text})[path], emulator)
+
+
+class GuardedConfigWrites(unittest.TestCase):
+    def test_kega_fusion_one_record_per_key(self):
+        records = _one(KEGA, "kega-fusion")
+        fixed = [r for r in records if r["kind"] == "fixed_name"]
+        self.assertEqual(
+            [(r["names"], r["passes_to"], r["fails_when_missing"]) for r in fixed],
+            [
+                (["bios_CD_E.bin"], "Fusion.ini SCDEURBIOS, only if the file exists",
+                 "SCDEURBIOS not written"),
+                (["32X_G_BIOS.BIN"], "Fusion.ini 32XM68KBIOS, only if the file exists",
+                 "32XM68KBIOS not written"),
+            ],
+        )
+        self.assertEqual(fixed[0]["source_ref"], f"{G}/X.Generator.cs:14-16")
+        self.assertTrue(all(r["search_dir"] == "bios" and r["case_insensitive"] for r in fixed))
+        self.assertNotIn("depends_on_option", fixed[0])
+
+    def test_kega_fusion_genesis_key_receives_the_folder(self):
+        (folder,) = [r for r in _one(KEGA, "kega-fusion") if r["kind"] == "passes_path"]
+        self.assertEqual(folder["names"], [])
+        self.assertEqual(folder["passes_to"], "Fusion.ini GenesisBIOS = bios")
+        self.assertEqual(folder["source_ref"], f"{G}/X.Generator.cs:7, 11")
+
+    def test_early_return_and_enclosing_if_are_conditions(self):
+        (record,) = _one(JGENESIS, "jgenesis")
+        self.assertEqual(
+            record["depends_on_option"],
+            'system == "genesis" || system == "sega_cd", system == "sega_cd"',
+        )
+        self.assertEqual(
+            record["passes_to"], "jgenesis-config.toml [sega_cd] bios_path, only if the file exists"
+        )
+        self.assertEqual(record["source_ref"], f"{G}/X.Generator.cs:12-13, 17, 21-22")
+
+    def test_option_switch_is_named(self):
+        (record,) = _one(MELONDS, "melonds")
+        self.assertEqual(record["names"], ["bios7.bin"])
+        self.assertEqual(record["depends_on_option"], "melonds_externalBIOS on")
+        self.assertEqual(
+            record["passes_to"], "melonDS.toml [DS] BIOS7Path, only if the file exists"
+        )
+
+    def test_reassigned_path_is_not_a_fixed_name(self):
+        with self.assertRaises(rl.LauncherPatternMissing):
+            _one(REASSIGNED, "kronos")
+
+    def test_write_inside_a_loop_is_not_read(self):
+        looped = KEGA.replace("// BIOS", "foreach (var x in xs)\n            {").replace(
+            '"32XM68KBIOS", bios32Xg);', '"32XM68KBIOS", bios32Xg);\n            }'
+        )
+        with self.assertRaises(rl.LauncherPatternMissing):
+            _one(looped, "kega-fusion")
+
+    def test_pinned_kega_fusion_generator_is_read(self):
+        self.assertIn(f"{G}/KegaFusion.Generator.cs", rl.SOURCE_FILES)
+        self.assertEqual(rl.GUARDED_WRITES[f"{G}/KegaFusion.Generator.cs"], "kega-fusion")
 
 
 class AbsentConstructStopsTheScrape(unittest.TestCase):
