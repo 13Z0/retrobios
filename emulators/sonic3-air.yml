@@ -110,9 +110,10 @@ files:
       package that cannot be opened closes the application, unless the
       data is present unpacked (data/images/icon.png exists). The engine
       then checks for oxygen_icon.png in the engine data and stops when it
-      is absent (EngineMain.cpp:584-593). Shipped under data/ in the
-      v26.03.28.0 Windows zip, Linux tar.gz and APK. Batocera installs
-      data/ unpacked from the source tree instead (sonic3-air.mk:40).
+      is absent
+      (Oxygen/oxygenengine/source/oxygen/engine/EngineMain.cpp:584-593).
+      Shipped under data/ in the v26.03.28.0 Windows zip, Linux tar.gz
+      and APK.
 
   - name: "gamedata.bin"
     path: "sonic3-air/data/gamedata.bin"
@@ -130,8 +131,7 @@ files:
       rawdata, sprites). A required package that cannot be opened closes
       the application, unless the data is present unpacked
       (data/images/icon.png exists). Shipped under data/ in the
-      v26.03.28.0 Windows zip, Linux tar.gz and APK. Batocera installs
-      data/ unpacked from the source tree instead (sonic3-air.mk:40).
+      v26.03.28.0 Windows zip, Linux tar.gz and APK.
 
   - name: "audiodata.bin"
     path: "sonic3-air/data/audiodata.bin"
@@ -149,8 +149,7 @@ files:
       required package that cannot be opened closes the application,
       unless the data is present unpacked (data/images/icon.png exists).
       Shipped under data/ in the v26.03.28.0 Windows zip, Linux tar.gz
-      and APK. Batocera installs data/ unpacked from the source tree
-      instead (sonic3-air.mk:40).
+      and APK.
 
   - name: "audioremaster.bin"
     path: "sonic3-air/data/audioremaster.bin"
