@@ -13,6 +13,7 @@ from collections.abc import Callable, Iterator, Mapping
 
 from common import (
     adler32_of,
+    archive_members,
     compute_hashes,
     name_match_size_ok,
     sanitize_pack_path,
@@ -510,6 +511,20 @@ def declaration_settles(
         ):
             return True
     return False
+
+
+def with_archive_members(entry: dict, files: list[dict]) -> dict:
+    """A loose entry resolved as the archive its profile reads members from.
+
+    gngeopi declares neogeo.zip and, apart, the ROMs it opens inside it. The
+    members decide which same-named copy is the archive: resolved by name
+    alone, the loose entry took another copy than the archive pass and the
+    profile blocked its own archive.
+    """
+    if entry.get("archive"):
+        return entry
+    members = archive_members(entry.get("name", ""), files)
+    return {**entry, "members": members} if members else entry
 
 
 def opens_by_name(file_entry: dict, profile: dict, standalone: bool = False) -> bool:

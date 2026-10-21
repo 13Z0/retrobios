@@ -94,6 +94,7 @@ from validation import (
     _build_validation_index,
     deliverable,
     filter_files_by_mode,
+    with_archive_members,
 )
 
 yaml = require_yaml()
@@ -1572,7 +1573,7 @@ def generate_emulator_pack(
                 refused_path: str | None = None
                 for fe in alternatives:
                     local_path, status = resolve_file(
-                        {**fe, "source_profile": emu_name},
+                        {**with_archive_members(fe, files), "source_profile": emu_name},
                         db,
                         bios_dir,
                         zip_contents,

@@ -37,7 +37,7 @@ from common import (
     variant_base_name,
 )
 from packresolve import preferred_entries
-from validation import outside_gap_scope
+from validation import outside_gap_scope, with_archive_members
 
 if TYPE_CHECKING:
     from packextras import ExtraPlacement
@@ -241,7 +241,10 @@ def profile_claims(
                     full = placed[1]
                 # The owner's own copy is the one the builder ships.
                 local, status = resolve_local_file(
-                    {**entry, "source_profile": emu_name},
+                    {
+                        **with_archive_members(entry, profile.get("files") or []),
+                        "source_profile": emu_name,
+                    },
                     db,
                     zip_contents,
                     dest_hint=dest,

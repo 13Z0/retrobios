@@ -100,6 +100,7 @@ from validation import (
     installed_with_emulator,
     unread_on,
     outside_gap_scope,
+    with_archive_members,
 )
 
 DEFAULT_DB = "database.json"
@@ -683,6 +684,9 @@ def find_undeclared_files(
                 }
                 if f.get("contents"):
                     entry["contents"] = f["contents"]
+                members = with_archive_members(f, profile.get("files", [])).get("members")
+                if members:
+                    entry["members"] = members
                 if launcher_layer:
                     launcher_candidates.append((emu_name, is_standalone, f, entry))
                 if duplicate:
@@ -1887,7 +1891,7 @@ def verify_emulator(
 
             dest_hint = file_entry.get("path", "")
             local_path, resolve_status = resolve_local_file(
-                {**file_entry, "source_profile": emu_name},
+                {**with_archive_members(file_entry, files), "source_profile": emu_name},
                 db,
                 zip_contents,
                 dest_hint=dest_hint,

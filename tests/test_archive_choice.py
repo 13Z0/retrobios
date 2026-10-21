@@ -349,5 +349,65 @@ class AnArchiveRankedByWhatItHolds(unittest.TestCase):
         self.assertIn('entry["contents"] = f["contents"]', report)
 
 
+class ALooseEntryNamingItsArchive(unittest.TestCase):
+    """gngeopi declares neogeo.zip loose and, apart, the ROMs it opens inside.
+    The archive pass took the copy holding them, the loose entry resolved by
+    name alone to another copy, and the profile blocked its own archive:
+    verify said missing, the pack said missing, and the ZIP held it."""
+
+    def test_verify_and_the_pack_ship_the_archive_once(self):
+        import io
+        from contextlib import redirect_stdout
+
+        import yaml
+
+        from common import _emulator_profiles_cache
+        from generate_pack import generate_emulator_pack
+        from verify import verify_emulator
+
+        _emulator_profiles_cache.clear()
+        (REPO_ROOT / "tmp").mkdir(exist_ok=True)
+        root = Path(tempfile.mkdtemp(dir=REPO_ROOT / "tmp"))
+        self.addCleanup(shutil.rmtree, root, True)
+        previous = os.getcwd()
+        os.chdir(root)
+        self.addCleanup(os.chdir, previous)
+        roms = {"bios.rom": b"B" * 32, "lo.lo": b"L" * 32, "rev.rom": b"R" * 32}
+        files, by_name = {}, {}
+        # Two revisions, neither holding the other: index order picks A.
+        for path, members in (("bios/A/set.zip", ["bios.rom", "rev.rom"]),
+                              ("bios/B/set.zip", ["bios.rom", "lo.lo"])):
+            Path(path).parent.mkdir(parents=True)
+            with zipfile.ZipFile(path, "w") as zf:
+                for member in members:
+                    zf.writestr(member, roms[member])
+            sha1 = hashlib.sha1(Path(path).read_bytes()).hexdigest()
+            files[sha1] = {"path": path, "name": "set.zip", "sha1": sha1, "size": 1}
+            by_name.setdefault("set.zip", []).append(sha1)
+        db = {"files": files, "indexes": {"by_name": by_name, "by_md5": {},
+                                          "by_path_suffix": {}, "by_crc32": {}}}
+        Path("emulators").mkdir()
+        Path("emulators/neo.yml").write_text(yaml.safe_dump({
+            "emulator": "Neo", "type": "libretro", "systems": ["snk-neogeo-mvs"],
+            "files": [{"name": "set.zip", "required": True, "category": "bios_zip"}] + [
+                {"name": name, "archive": "set.zip", "required": True,
+                 "crc32": format(zlib.crc32(data), "08x")}
+                for name, data in roms.items() if name != "rev.rom"
+            ],
+        }))
+        report = verify_emulator(["neo"], "emulators", db, platforms_dir="platforms")
+        with redirect_stdout(io.StringIO()) as out:
+            zip_path = generate_emulator_pack(
+                ["neo"], "emulators", db, "bios", "out", offline=True,
+                platforms_dir="platforms",
+            )
+        with zipfile.ZipFile(zip_path) as zf, zf.open("set.zip") as inner:
+            held = zipfile.ZipFile(io.BytesIO(inner.read())).namelist()
+        self.assertEqual(sorted(held), ["bios.rom", "lo.lo"])
+        self.assertNotIn("missing", out.getvalue())
+        self.assertEqual({d["status"] for d in report["details"]}, {"ok"})
+        self.assertEqual(report["total_files"], 1)
+
+
 if __name__ == "__main__":
     unittest.main()
