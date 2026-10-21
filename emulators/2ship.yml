@@ -1,8 +1,8 @@
 emulator: 2 Ship 2 Harkinian
 type: standalone
 core_classification: game_engine
-source: "https://github.com/HarbourMasters/2ship2harkinian"
-upstream: "https://github.com/HarbourMasters/2ship2harkinian"
+source: "https://github.com/2ship2harkinian/2ship2harkinian"
+upstream: "https://github.com/2ship2harkinian/2ship2harkinian"
 source_commit: "8a24047fbce8915993804e7819f4df4fa591551f"
 profiled_date: "2026-10-20"
 core_version: "5.0.1"

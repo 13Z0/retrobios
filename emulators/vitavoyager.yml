@@ -2,7 +2,7 @@ emulator: vitavoyager
 type: libretro
 core_classification: community_fork
 source: "https://github.com/libretro/vitavoyager"
-upstream: "https://github.com/zturtleman/lilium-voyager"
+upstream: "https://github.com/clover-moe/lilium-voyager"
 profiled_date: "2026-03-25"
 source_commit: "58b70dd7ea891c2e8ddc37d03a5d58116b0ea118"
 core_version: "git"

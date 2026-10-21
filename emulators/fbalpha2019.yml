@@ -1,7 +1,7 @@
 emulator: "FB Alpha 2019"
 type: libretro
 core_classification: frozen_snapshot
-source: "https://github.com/libretro/fbalpha"
+source: "https://github.com/libretro/beetle-finalarcade2019"
 upstream: "https://github.com/barry65536/FBAlpha"
 profiled_date: "2026-10-17"
 source_commit: "0581797db6fdffd826086b053ced4b6b29bb6678"

@@ -1,8 +1,8 @@
 emulator: Reicast
 type: standalone
 core_classification: community_fork
-source: "https://github.com/reicast/reicast-emulator"
-upstream: "https://github.com/reicast/reicast-emulator"
+source: "https://github.com/skmp/reicast-emulator"
+upstream: "https://github.com/skmp/reicast-emulator"
 profiled_date: "2026-10-17"
 source_commit: "ad61f95dd6b4c6218846a25de6194550311a5d28"
 pin_frozen: "Recalbox 10.1.1 builds this revision (package/reicast/reicast.mk REICAST_VERSION). Later commits on reicast-emulator are not part of that build."
@@ -61,4 +61,4 @@ files:
     validation: [size]
     description: "Dreamcast flash memory"
     source_ref: "core/hw/holly/sb_mem.cpp:22-23, 37-48, 58-64, core/types.h:212, 217"
-    note: "Written back as dc_nvmem.bin on exit. Missing, LoadRomFiles() fails even with a boot ROM present and the HLE BIOS runs."
+    note: "Tried as dc_nvmem.bin, dc_flash_wb.bin, dc_flash.bin, then dc_flash.bin.bin. Written back as dc_nvmem.bin on exit. Missing, LoadRomFiles() fails even with a boot ROM present and the HLE BIOS runs."

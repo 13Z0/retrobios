@@ -1,8 +1,8 @@
 emulator: Wolf4SDL
 type: standalone
 core_classification: game_engine
-source: "https://github.com/AryanWolf3D/Wolf4SDL"
-upstream: "https://github.com/AryanWolf3D/Wolf4SDL"
+source: "https://github.com/KS-Presto/Wolf4SDL"
+upstream: "https://github.com/KS-Presto/Wolf4SDL"
 profiled_date: "2026-10-20"
 source_commit: "dc8b250af35fb0ace68db5eb879490b50068c20e"
 core_version: "2.0"

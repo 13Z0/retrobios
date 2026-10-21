@@ -1,10 +1,10 @@
 emulator: Perfect Dark (PC port)
 type: standalone
 core_classification: game_engine
-source: "https://github.com/fgsfdsfgs/perfect_dark"
-upstream: "https://github.com/fgsfdsfgs/perfect_dark"
+source: "https://github.com/perfect-dark-pc-port/perfect_dark"
+upstream: "https://github.com/perfect-dark-pc-port/perfect_dark"
 source_branch: port
-source_commit: "618a1f33865cc98c6fff95c9a5df8162443a643c"
+source_commit: "32a1cb9f268dd3ac73016801025c6bbbfa20130f"
 profiled_date: "2026-10-20"
 core_version: "port 2025-06-14"
 display_name: "Perfect Dark (PC port)"
@@ -28,9 +28,8 @@ notes: |
 
   Files are read from the base directory: --basedir, else data beside the
   executable in portable mode, else ./data when it exists, else data under
-  the home path (port/src/fs.c:18, 96-121). At this revision the home path
-  test reads a failed size lookup as success, so data beside the executable
-  is not reached outside portable mode. RetroBat starts the port from its
+  the home path when it exists, else data beside the executable
+  (port/src/fs.c:18, 96-121). RetroBat starts the port from its
   install folder, where ./data exists. The ROM is pd.<romid>.z64 there unless
   --rom-file names another path. A missing ROM, an archive, a size other
   than 33554432 bytes, or a header whose game code and title do not match
@@ -41,7 +40,7 @@ notes: |
   size, title, licensee and checksum bytes. When it passes, the game acts
   as if the cartridge sat in a Transfer Pak, which unlocks the cheats tied
   to it (port/src/romdata.c:53-54, 404-448, port/src/main.c:112,
-  src/game/pak.c:5992-6007, src/game/cheats.c:406, 436).
+  src/game/pak.c:5992-6007, src/game/cheats.c:430, 460).
 
 files:
   - name: "pd.ntsc-final.z64"

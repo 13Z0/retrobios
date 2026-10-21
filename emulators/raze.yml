@@ -66,7 +66,6 @@ files:
     note: "I_FatalError(\"Cannot find raze.pk3\") if absent. Built from the tree at each release. The hash is the copy in the 1.11.0b Windows zip."
 
   - name: "raze.sf2"
-    aliases: ["Roland_SC-55.sf2"]
     category: game_data
     path: "soundfonts/raze.sf2"
     required: false

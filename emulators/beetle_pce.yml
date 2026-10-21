@@ -55,5 +55,4 @@ files:
     description: "Games Express CD Card"
     required: false
     source_ref: "libretro.cpp:1057-1058, mednafen/settings.cpp:41, mednafen/pce/pce.cpp:374-411"
-    aliases: ["gecard.pce"]
     note: "pce_cdbios = 'Games Express' or auto-detected via DetectGECD()."

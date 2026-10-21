@@ -2,7 +2,7 @@ emulator: ClownMDEmu
 type: standalone + libretro
 core_classification: official_port
 source: "https://github.com/Clownacy/clownmdemu-libretro"
-upstream: "https://github.com/Clownacy/clownmdemu"
+upstream: "https://github.com/Clownacy/clownmdemu-core"
 profiled_date: "2026-03-23"
 source_commit: "d43c2708b0a31c285ce16724b6c4a2e92af07346"
 # The core the port vendors at source_commit (common -> core submodule).

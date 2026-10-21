@@ -2,16 +2,16 @@ emulator: ymir
 type: standalone + libretro
 core_classification: community_fork
 source:
-  standalone: "https://github.com/StrikerX3/Ymir"
+  standalone: "https://github.com/ymir-emu/Ymir"
   libretro: "https://github.com/warmenhoven/Emir/tree/libretro"
-upstream: "https://github.com/StrikerX3/Ymir"
-profiled_date: "2026-03-26"
+upstream: "https://github.com/ymir-emu/Ymir"
+profiled_date: "2026-10-21"
 source_commit:
-  standalone: "5e9310410baa47cb7da5b068f399c9e4a34eedbc"
-  libretro: "5d99cbbf813206736f38b3574ecca7a8aedc07e5"
+  standalone: "8cdf0a530ec1927f44bf3cd02c6ab51a586c4407"
+  libretro: "8174cbbeea4070654841cdd4604361b3eee8fdd1"
 core_version:
-  standalone: "v0.2.1"
-  libretro: "PR#746"
+  standalone: "v0.4.1-1-g8cdf0a53"
+  libretro: "libretro branch"
 display_name: "Sega - Saturn (Ymir)"
 cores:
   - ymir
@@ -21,7 +21,9 @@ systems:
 
 notes: |
   Ymir is a Sega Saturn emulator by StrikerX3. The libretro port by
-  warmenhoven wraps the shared ymir-core library (PR #746, not yet merged).
+  warmenhoven wraps the shared ymir-core library on the libretro branch of
+  warmenhoven/Emir, which the buildbot builds (include_core_ymir in
+  libretro-super). PR #746 was closed unmerged.
   No .info file exists in libretro-core-info.
 
   Standalone: scans configured directories recursively for files matching
@@ -29,8 +31,14 @@ notes: |
   by XXH128 hash from an internal database (19 IPL variants, 4 CD Block
   versions, 2 ROM carts). Unknown files are accepted if size matches.
 
-  Libretro: searches {system}/sega_101.bin, mpr-17933.bin, saturn_bios.bin
-  in order. First file found with exact 512 KiB size wins.
+  Libretro: reads {system}/sega_101.bin, mpr-17933.bin and saturn_bios.bin,
+  each kept when it is exactly 512 KiB. A candidate's region comes from the
+  IPL database, else from two hashes the port knows (sega_101.bin Japan,
+  mpr-17933.bin North America and Europe). The ymir_region option picks the
+  candidate of its region, else the first found, and once the disc is loaded
+  a candidate whose region matches the disc's area code replaces it.
+  ref: apps/ymir-libretro/src/libretro.cpp:305-309, 584-712,
+       apps/ymir-libretro/src/libretro.cpp:1228-1238, 1285-1306
 
   Batocera standalone: configgen maps IPLROMImages to /userdata/bios,
   CDBlockROMImages to /userdata/roms/saturn/cdb/, ROMCartImages to
@@ -56,8 +64,8 @@ files:
     aliases: [mpr-17933.bin, saturn_bios.bin]
     description: "Saturn IPL ROM (BIOS). Any region accepted."
     source_ref:
-      standalone: "apps/ymir-sdl3/src/util/rom_loader.cpp:9-22, apps/ymir-sdl3/src/app/rom_manager.cpp:14-56, libs/ymir-core/include/ymir/sys/memory_defs.hpp:9"
-      libretro: "apps/ymir-libretro/src/libretro.cpp:260-263,534-558"
+      standalone: "apps/ymir-sdl3/src/util/rom_loader.cpp:9-22, apps/ymir-sdl3/src/app/rom_manager.cpp:14-53, libs/ymir-core/include/ymir/sys/memory_defs.hpp:9"
+      libretro: "apps/ymir-libretro/src/libretro.cpp:305-309, apps/ymir-libretro/src/libretro.cpp:651-690, apps/ymir-libretro/src/libretro.cpp:692-703"
 
   # IPL images named by the standalone XXH128 database. The md5 is that of
   # the image whose seeded XXH128 matches the database row.
@@ -71,7 +79,7 @@ files:
     description: "Saturn IPL ROM 1.00 (1994-09-21), Japan."
     note: "Picked up by the recursive IPL scan like any 512 KiB file and identified by its XXH128 row."
     source_ref:
-      standalone: "libs/ymir-core/src/ymir/db/ipl_db.cpp:9, libs/ymir-core/include/ymir/sys/memory_defs.hpp:10, apps/ymir-sdl3/src/app/rom_manager.cpp:14-56"
+      standalone: "libs/ymir-core/src/ymir/db/ipl_db.cpp:9, libs/ymir-core/include/ymir/sys/memory_defs.hpp:10, apps/ymir-sdl3/src/app/rom_manager.cpp:14-53"
 
   - name: "sega_101.bin"
     system: sega-saturn
@@ -83,7 +91,7 @@ files:
     description: "Saturn IPL ROM 1.01 (1994-12-28), Japan."
     note: "Picked up by the recursive IPL scan like any 512 KiB file and identified by its XXH128 row."
     source_ref:
-      standalone: "libs/ymir-core/src/ymir/db/ipl_db.cpp:10, libs/ymir-core/include/ymir/sys/memory_defs.hpp:10, apps/ymir-sdl3/src/app/rom_manager.cpp:14-56"
+      standalone: "libs/ymir-core/src/ymir/db/ipl_db.cpp:10, libs/ymir-core/include/ymir/sys/memory_defs.hpp:10, apps/ymir-sdl3/src/app/rom_manager.cpp:14-53"
 
   - name: "SAT_1.00a-(U+E).bin"
     system: sega-saturn
@@ -95,7 +103,7 @@ files:
     description: "Saturn IPL ROM 1.00a (1994-11-15), North America and Europe."
     note: "Picked up by the recursive IPL scan like any 512 KiB file and identified by its XXH128 row."
     source_ref:
-      standalone: "libs/ymir-core/src/ymir/db/ipl_db.cpp:11, libs/ymir-core/include/ymir/sys/memory_defs.hpp:10, apps/ymir-sdl3/src/app/rom_manager.cpp:14-56"
+      standalone: "libs/ymir-core/src/ymir/db/ipl_db.cpp:11, libs/ymir-core/include/ymir/sys/memory_defs.hpp:10, apps/ymir-sdl3/src/app/rom_manager.cpp:14-53"
 
   - name: "mpr-17933.bin"
     system: sega-saturn
@@ -107,7 +115,7 @@ files:
     description: "Saturn IPL ROM 1.01a (1994-11-15), North America and Europe."
     note: "Picked up by the recursive IPL scan like any 512 KiB file and identified by its XXH128 row."
     source_ref:
-      standalone: "libs/ymir-core/src/ymir/db/ipl_db.cpp:12, libs/ymir-core/include/ymir/sys/memory_defs.hpp:10, apps/ymir-sdl3/src/app/rom_manager.cpp:14-56"
+      standalone: "libs/ymir-core/src/ymir/db/ipl_db.cpp:12, libs/ymir-core/include/ymir/sys/memory_defs.hpp:10, apps/ymir-sdl3/src/app/rom_manager.cpp:14-53"
 
   - name: "hisaturn.bin"
     system: sega-saturn
@@ -119,7 +127,7 @@ files:
     description: "HiSaturn IPL ROM 1.01 (1995-01-30), Japan."
     note: "Picked up by the recursive IPL scan like any 512 KiB file and identified by its XXH128 row."
     source_ref:
-      standalone: "libs/ymir-core/src/ymir/db/ipl_db.cpp:14, libs/ymir-core/include/ymir/sys/memory_defs.hpp:10, apps/ymir-sdl3/src/app/rom_manager.cpp:14-56"
+      standalone: "libs/ymir-core/src/ymir/db/ipl_db.cpp:14, libs/ymir-core/include/ymir/sys/memory_defs.hpp:10, apps/ymir-sdl3/src/app/rom_manager.cpp:14-53"
 
   - name: "mpr-18100.bin"
     system: sega-saturn
@@ -131,7 +139,7 @@ files:
     description: "HiSaturn IPL ROM 1.02 (1995-05-19), Japan."
     note: "Picked up by the recursive IPL scan like any 512 KiB file and identified by its XXH128 row."
     source_ref:
-      standalone: "libs/ymir-core/src/ymir/db/ipl_db.cpp:15, libs/ymir-core/include/ymir/sys/memory_defs.hpp:10, apps/ymir-sdl3/src/app/rom_manager.cpp:14-56"
+      standalone: "libs/ymir-core/src/ymir/db/ipl_db.cpp:15, libs/ymir-core/include/ymir/sys/memory_defs.hpp:10, apps/ymir-sdl3/src/app/rom_manager.cpp:14-53"
 
   - name: "hisaturn_v103.bin"
     system: sega-saturn
@@ -143,7 +151,7 @@ files:
     description: "HiSaturn IPL ROM 1.03 (1995-07-20), Japan."
     note: "Picked up by the recursive IPL scan like any 512 KiB file and identified by its XXH128 row."
     source_ref:
-      standalone: "libs/ymir-core/src/ymir/db/ipl_db.cpp:16, libs/ymir-core/include/ymir/sys/memory_defs.hpp:10, apps/ymir-sdl3/src/app/rom_manager.cpp:14-56"
+      standalone: "libs/ymir-core/src/ymir/db/ipl_db.cpp:16, libs/ymir-core/include/ymir/sys/memory_defs.hpp:10, apps/ymir-sdl3/src/app/rom_manager.cpp:14-53"
 
   - name: "vsaturn.bin"
     system: sega-saturn
@@ -155,7 +163,7 @@ files:
     description: "V-Saturn IPL ROM 1.01 (1995-07-03), Japan."
     note: "Picked up by the recursive IPL scan like any 512 KiB file and identified by its XXH128 row."
     source_ref:
-      standalone: "libs/ymir-core/src/ymir/db/ipl_db.cpp:17, libs/ymir-core/include/ymir/sys/memory_defs.hpp:10, apps/ymir-sdl3/src/app/rom_manager.cpp:14-56"
+      standalone: "libs/ymir-core/src/ymir/db/ipl_db.cpp:17, libs/ymir-core/include/ymir/sys/memory_defs.hpp:10, apps/ymir-sdl3/src/app/rom_manager.cpp:14-53"
 
   - name: "cdb/cdb_rom.bin"
     system: sega-saturn
@@ -165,8 +173,8 @@ files:
     validation: [size]
     description: "SH1 CD Block ROM for low-level CD drive emulation. Scans cdb/ subdirectory for any matching file."
     source_ref:
-      standalone: "apps/ymir-sdl3/src/util/rom_loader.cpp:25-38, apps/ymir-sdl3/src/app/rom_manager.cpp:58-93, libs/ymir-core/include/ymir/hw/sh1/sh1_defs.hpp:7"
-      libretro: "apps/ymir-libretro/src/libretro.cpp:565-591"
+      standalone: "apps/ymir-sdl3/src/util/rom_loader.cpp:25-38, apps/ymir-sdl3/src/app/rom_manager.cpp:55-91, libs/ymir-core/include/ymir/hw/sh1/sh1_defs.hpp:7"
+      libretro: "apps/ymir-libretro/src/libretro.cpp:720-737"
 
   - name: "mpr-18811-mx.ic1"
     system: sega-saturn
@@ -176,8 +184,8 @@ files:
     validation: [size]
     description: "ROM cartridge for The King of Fighters '95."
     source_ref:
-      standalone: "apps/ymir-sdl3/src/app/rom_manager.cpp:96-131, libs/ymir-core/include/ymir/db/rom_cart_db.hpp:19-22"
-      libretro: "apps/ymir-libretro/src/libretro.cpp:621, 598-618"
+      standalone: "apps/ymir-sdl3/src/app/rom_manager.cpp:93-130, libs/ymir-core/include/ymir/db/rom_cart_db.hpp:19-22"
+      libretro: "apps/ymir-libretro/src/libretro.cpp:760, apps/ymir-libretro/src/libretro.cpp:744-756"
 
   - name: "mpr-19367-mx.ic1"
     system: sega-saturn
@@ -187,8 +195,8 @@ files:
     validation: [size]
     description: "ROM cartridge for Ultraman: Hikari no Kyojin Densetsu."
     source_ref:
-      standalone: "apps/ymir-sdl3/src/app/rom_manager.cpp:96-131, libs/ymir-core/include/ymir/db/rom_cart_db.hpp:25-28"
-      libretro: "apps/ymir-libretro/src/libretro.cpp:622, 598-618"
+      standalone: "apps/ymir-sdl3/src/app/rom_manager.cpp:93-130, libs/ymir-core/include/ymir/db/rom_cart_db.hpp:25-28"
+      libretro: "apps/ymir-libretro/src/libretro.cpp:761, apps/ymir-libretro/src/libretro.cpp:744-756"
 
   - name: "gamecontrollerdb.txt"
     system: sega-saturn
@@ -206,4 +214,4 @@ files:
       v0.2.1 Linux and macOS packages and, with CRLF line ends, the Windows
       zips.
     source_ref:
-      standalone: "apps/ymir-sdl3/src/app/settings.hpp:41, apps/ymir-sdl3/src/app/app.cpp:5084-5119, apps/ymir-sdl3/src/app/profile.cpp:36-41, .github/workflows/build.yaml:198-230"
+      standalone: "apps/ymir-sdl3/src/app/settings.hpp:42, apps/ymir-sdl3/src/app/services/rom_service.cpp:33-68, apps/ymir-sdl3/src/app/profile.cpp:36-46, .github/workflows/build.yaml:202-236"

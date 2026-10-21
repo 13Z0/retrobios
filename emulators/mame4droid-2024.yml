@@ -1,7 +1,7 @@
 emulator: MAME4droid 2024
 type: standalone
 core_classification: community_fork
-source: "https://github.com/seleuco/MAME4droid-2024"
+source: "https://github.com/seleuco/MAME4droid-Current"
 upstream: "https://github.com/mamedev/mame/tree/mame0289"
 logo: "https://raw.githubusercontent.com/mamedev/mame/master/docs/source/images/MAMElogo.svg"
 profiled_date: "2026-08-11"

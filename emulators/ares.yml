@@ -57,8 +57,7 @@ notes: |
   (desktop-ui/emulator/emulators.cpp).
 
   Firmware identification uses SHA256 hashes. Filenames are user-defined: ares
-  scans a configured directory and matches by hash. EmuDeck installs ares as
-  Flatpak (dev.ares.ares), configures biosPath in settings.bml.
+  scans a configured directory and matches by hash.
   ref: desktop-ui/settings/firmware.cpp:116-136
 
   Firmware path resolution: settings.paths.firmware (user override) or
@@ -83,10 +82,18 @@ notes: |
   after loading.
   ref: mia/system/neo-geo-aes.cpp:12-30, mia/system/neo-geo-mvs.cpp:12-30
 
-  SFC subsystem ROMs (SuFami Turbo, Satellaview, Super Game Boy): loaded as
-  game cartridges via CLI args, not through the firmware system. EmuDeck creates
-  launcher shortcuts that pass these alongside game ROMs.
-  ref: emuDeckares.sh (EmuDeck repo)
+  SFC base cartridges (Super Game Boy, Satellaview BS-X, Sufami Turbo) are
+  games, not firmware: the file opened as the Super Famicom game is the base
+  cartridge, and the cartridge it describes then asks for the Game Boy, BS
+  Memory or Sufami Turbo medium through its slot. Each medium comes from the
+  load queue, then the command line, then a file dialog, so ares names none of
+  these files. mia identifies the base cartridge by the SHA-256 of its ROM in
+  the Super Famicom database, else by its header: the BANDAI SFC-ADX
+  signature makes a Sufami Turbo board, serial ZBSJ a BS-X board, serial 042J
+  or cartridge type 0xE3 a Super Game Boy board.
+  ref: desktop-ui/emulator/super-famicom.cpp:158-217,
+       desktop-ui/emulator/emulator.cpp:155-186,
+       mia/medium/super-famicom.cpp:88-95, mia/medium/super-famicom.cpp:570-602
 
   Systems with no firmware: Arcade, Atari 2600, Famicom, MyVision, PC Engine,
   SuperGrafx, SG-1000, SC-3000.
@@ -418,26 +425,34 @@ files:
     system: super-famicom
     required: false
     category: game_data
-    description: "Super Game Boy cartridge ROM. Loaded via CLI as SFC cartridge alongside GB game."
-    source_ref: "EmuDeck emuDeckares.sh (launcher)"
+    description: "Super Game Boy cartridge ROM, opened as the Super Famicom game. The SGB1 boot ROM is embedded and appended when the image lacks it."
+    note: >-
+      Without its own boot ROM the image gets the embedded SGB1 boot ROM appended before hashing, so the database SHA-256 (4d7fc331, SYS-SGB-2) is that of the 256 KiB ROM followed by the 256-byte boot ROM.
+    source_ref: "desktop-ui/emulator/super-famicom.cpp:179-187, mia/medium/super-famicom.cpp:42-62, mia/medium/super-famicom.cpp:88-95, mia/medium/super-famicom.cpp:891-895"
 
   - name: SGB2.sfc
     system: super-famicom
     required: false
     category: game_data
-    description: "Super Game Boy 2 cartridge ROM. Loaded via CLI as SFC cartridge alongside GB game."
-    source_ref: "EmuDeck emuDeckares.sh (launcher)"
+    description: "Super Game Boy 2 cartridge ROM, opened as the Super Famicom game. The SGB2 boot ROM is embedded and appended when the image lacks it."
+    note: >-
+      Identified by serial 042J or the label Super GAMEBOY2. Without its own boot ROM the image gets the embedded SGB2 boot ROM appended before hashing, so the database SHA-256 (e1db895a, SYS-SGB2-10) is that of the 512 KiB ROM followed by the 256-byte boot ROM, and the board carries its own 20971520 Hz oscillator.
+    source_ref: "desktop-ui/emulator/super-famicom.cpp:179-187, mia/medium/super-famicom.cpp:42-62, mia/medium/super-famicom.cpp:88-95, mia/medium/super-famicom.cpp:590-592, mia/medium/super-famicom.cpp:891-895"
 
   - name: STBIOS.bin
     system: super-famicom
     required: false
     category: game_data
-    description: "SuFami Turbo adapter BIOS. Loaded via CLI as SFC cartridge alongside SuFami games."
-    source_ref: "EmuDeck emuDeckares.sh (launcher)"
+    description: "Sufami Turbo base cartridge ROM, opened as the Super Famicom game. Its two slots then ask for Sufami Turbo cartridges."
+    note: >-
+      Identified by the BANDAI SFC-ADX signature at offset 0, since another game shares its serial A9PJ. The database lists the 256 KiB ROM as SHVC-A9PJ-0 (SHA-256 edacb453).
+    source_ref: "desktop-ui/emulator/super-famicom.cpp:199-217, mia/medium/super-famicom.cpp:570-576"
 
   - name: BS-X.bin
     system: super-famicom
     required: false
     category: game_data
-    description: "Satellaview BS-X Town cartridge ROM. Loaded via CLI as SFC cartridge for BS games."
-    source_ref: "EmuDeck emuDeckares.sh (launcher)"
+    description: "Satellaview BS-X cartridge ROM, opened as the Super Famicom game. Its slot then asks for a BS Memory pack."
+    note: >-
+      Identified by serial ZBSJ, which gives the BS-MCC board. The database lists the 1 MiB ROM as SHVC-ZBSJ-1 (SHA-256 3ce32149).
+    source_ref: "desktop-ui/emulator/super-famicom.cpp:189-197, mia/medium/super-famicom.cpp:587-589"

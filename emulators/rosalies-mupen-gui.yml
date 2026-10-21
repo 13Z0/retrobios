@@ -121,7 +121,7 @@ files:
     source_ref: "Source/RMG-Core/MediaLoader.cpp:47-74, Source/RMG-Core/Settings.cpp:284-286, Source/3rdParty/mupen64plus-core/src/main/main.c:1189-1254, Source/3rdParty/mupen64plus-core/src/device/dd/disk.c:434-445"
 
   - name: "64DD_IPL_US.n64"
-    aliases: ["64DD_IPL_USA.bin", "IPL_USA.n64"]
+    aliases: ["64DD_IPL_USA.bin"]
     system: nintendo-64dd
     region: [north-america]
     required: true
@@ -134,7 +134,7 @@ files:
     source_ref: "Source/RMG-Core/MediaLoader.cpp:54-56, Source/RMG-Core/Settings.cpp:287-289, Source/3rdParty/mupen64plus-core/src/main/main.c:1189-1254, Source/3rdParty/mupen64plus-core/src/device/dd/disk.c:434-445"
 
   - name: "64DD_IPL_DEV.n64"
-    aliases: ["64DD_IPL_DEV.bin", "IPL_DEV.n64"]
+    aliases: ["64DD_IPL_DEV.bin"]
     system: nintendo-64dd
     required: true
     description: "64DD IPL ROM (Japanese development)"
