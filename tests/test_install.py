@@ -3902,5 +3902,55 @@ class EmuDeckWindowsIsFoundAsItsScriptsFindIt(unittest.TestCase):
                          install._host_path("C:/Emulation/bios"))
 
 
+class MuOsIsReadFromItsRetroArchConfig(unittest.TestCase):
+    """muOS wrote to /mnt/mmc/MUOS/bios while RetroArch reads
+    /run/muos/storage/bios, bound to the second card when it holds MUOS/bios,
+    and --installed-cores found no core in /opt/muos/share/core."""
+
+    def _muos(self, *, user_config: bool) -> tuple[Path, Path]:
+        root = Path(_tempdir(self))
+        muos = root / "opt" / "muos"
+        system_dir, cores = root / "run" / "bios", root / "core"
+        cores.mkdir(parents=True)
+        configs = (muos / "share/info/config/retroarch.cfg",
+                   muos / "share/emulator/retroarch/retroarch.default.cfg")
+        default = configs[1]
+        default.parent.mkdir(parents=True)
+        default.write_text(f'libretro_directory = "{cores}"\n'
+                           f'system_directory = "{root / "default-bios"}"\n')
+        if user_config:
+            configs[0].parent.mkdir(parents=True)
+            configs[0].write_text(f'libretro_directory = "{cores}"\n'
+                                  f'system_directory = "{system_dir}"\n')
+        for patcher in (
+            unittest.mock.patch.object(install, "MUOS_ROOT", muos),
+            unittest.mock.patch.object(install, "MUOS_RETROARCH_CONFIGS", configs),
+            unittest.mock.patch.object(
+                install, "_detect_embedded",
+                lambda: [("retroarch", Path("/run/muos/storage/bios"))]),
+            unittest.mock.patch.dict(os.environ, {"HOME": str(root / "home")}),
+            unittest.mock.patch.dict(install._RETROARCH_CONFIGS, clear=True),
+        ):
+            patcher.start()
+            self.addCleanup(patcher.stop)
+        return (system_dir if user_config else root / "default-bios"), cores
+
+    def test_the_users_config_decides(self):
+        system_dir, cores = self._muos(user_config=True)
+        found = install.detect_platforms("linux")
+        self.assertIn(("retroarch", system_dir), found)
+        self.assertNotIn(("retroarch", Path("/run/muos/storage/bios")), found)
+        self.assertIn(cores, install.core_dirs("retroarch", system_dir))
+
+    def test_before_the_first_launch_the_default_does(self):
+        system_dir, cores = self._muos(user_config=False)
+        self.assertIn(("retroarch", system_dir), install.detect_platforms("linux"))
+        self.assertIn(cores, install.core_dirs("retroarch", system_dir))
+
+    def test_without_a_config_the_bound_folder_is_used(self):
+        rule = next(r for r in install._EMBEDDED_RULES if r[2] == ("/opt/muos",))
+        self.assertEqual(rule[3], "/run/muos/storage/bios")
+
+
 if __name__ == "__main__":
     unittest.main()

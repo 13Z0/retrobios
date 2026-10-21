@@ -283,7 +283,8 @@ wins, since a machine is only one of them.
 | `/etc/os-release` `ID=lakka` | Lakka | `/storage/system` |
 | `/etc/batocera-version` | Batocera | `/userdata/bios` |
 | `/recalbox/recalbox.version` or `/usr/bin/recalbox-settings` | Recalbox | `/recalbox/share/bios` |
-| `/opt/muos` or `/mnt/mmc/MUOS/` | RetroArch | `/mnt/mmc/MUOS/bios` |
+| `/opt/muos` | RetroArch (muOS) | `system_directory` of `/opt/muos/share/info/config/retroarch.cfg`, else of the default it is copied from: `/run/muos/storage/bios`, which muOS binds to `MUOS/bios` on the second card when that card holds one, else the first. Cores are read from that config's `libretro_directory` (`/opt/muos/share/core`) |
+| `/mnt/mmc/MUOS/` | RetroArch | `/mnt/mmc/MUOS/bios` |
 | `/home/ark` and `/opt/system` | RetroArch | `/roms/bios` |
 | `/mnt/vendor/bin/dmenu.bin` | RetroArch | `/mnt/mmc/bios` |
 

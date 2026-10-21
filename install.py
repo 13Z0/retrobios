@@ -779,7 +779,7 @@ _EMBEDDED_RULES: tuple[tuple[str, str, tuple[str, ...], str], ...] = (
     ("batocera", "file_exists", ("/etc/batocera-version",), "/userdata/bios"),
     ("recalbox", "file_exists", ("/recalbox/recalbox.version",), "/recalbox/share/bios"),
     ("recalbox", "file_exists", ("/usr/bin/recalbox-settings",), "/recalbox/share/bios"),
-    ("retroarch", "file_exists", ("/opt/muos",), "/mnt/mmc/MUOS/bios"),
+    ("retroarch", "file_exists", ("/opt/muos",), "/run/muos/storage/bios"),
     ("retroarch", "file_exists", ("/mnt/mmc/MUOS",), "/mnt/mmc/MUOS/bios"),
     ("retroarch", "file_exists", ("/home/ark", "/opt/system"), "/roms/bios"),
     ("retroarch", "file_exists", ("/mnt/vendor/bin/dmenu.bin",), "/mnt/mmc/bios"),
@@ -801,6 +801,30 @@ def _detect_embedded() -> list[tuple[str, Path]]:
         if matched:
             return [(platform_name, Path(bios))]
     return []
+
+
+# muOS runs RetroArch on the config it copies from its default on first launch
+# (internal f41f4a89, script/control/retroarch.sh:8-20). The default names
+# /run/muos/storage/bios, a bind mount of MUOS/bios on the second card when
+# that card holds one, else on the first (script/device/bind.sh:4,116-150),
+# and loads cores from /opt/muos/share/core (retroarch.default.cfg:2806,3151).
+MUOS_ROOT = Path("/opt/muos")
+MUOS_RETROARCH_CONFIGS = (
+    MUOS_ROOT / "share" / "info" / "config" / "retroarch.cfg",
+    MUOS_ROOT / "share" / "emulator" / "retroarch" / "retroarch.default.cfg",
+)
+
+
+def _muos_system_dir() -> Path | None:
+    """The system directory of muOS's RetroArch, read from its config, which
+    also records the config for finding the installed cores."""
+    if not MUOS_ROOT.is_dir():
+        return None
+    for cfg in MUOS_RETROARCH_CONFIGS:
+        system_dir = _parse_retroarch_system_dir(cfg)
+        if system_dir is not None:
+            return system_dir
+    return None
 
 
 def _android_storage_root() -> Path:
@@ -1175,7 +1199,9 @@ def detect_platforms(os_type: str) -> list[tuple[str, Path]]:
         found.extend(_detect_android())
 
     if os_type in ("linux", "wsl"):
-        found.extend(_detect_embedded())
+        embedded = _detect_embedded()
+        muos = _muos_system_dir() if embedded and embedded[0][0] == "retroarch" else None
+        found.extend([("retroarch", muos)] if muos else embedded)
 
         # EmuDeck (Linux/SteamOS)
         home = Path.home()

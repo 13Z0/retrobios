@@ -269,10 +269,23 @@ platforms:
         parse_key: system_directory
       # Handheld firmwares that run RetroArch as their frontend: muOS,
       # ArkOS, and the stock Linux of Anbernic devices (dmenu).
+      # muOS copies its default config on first launch and RetroArch reads
+      # /run/muos/storage/bios, bound to MUOS/bios on the second card when
+      # it holds one, else the first (MustardOS/internal f41f4a89,
+      # script/control/retroarch.sh:8-20, script/device/bind.sh:4,116-150,
+      # share/emulator/retroarch/retroarch.default.cfg:2806,3151).
+      - os: linux
+        method: config_file
+        config: /opt/muos/share/info/config/retroarch.cfg
+        parse_key: system_directory
+      - os: linux
+        method: config_file
+        config: /opt/muos/share/emulator/retroarch/retroarch.default.cfg
+        parse_key: system_directory
       - os: linux
         method: file_exists
         file: /opt/muos
-        bios_path: /mnt/mmc/MUOS/bios
+        bios_path: /run/muos/storage/bios
       - os: linux
         method: file_exists
         file: /mnt/mmc/MUOS
