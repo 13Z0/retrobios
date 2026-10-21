@@ -120,6 +120,18 @@
         "uniqueItems": true
       }
     },
+    "system_names": {
+      "description": "Each platform system with the names the platform's own file gives it (native_system), which the installer accepts for --system.",
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "minLength": 1
+        },
+        "uniqueItems": true
+      }
+    },
     "omitted_files": {
       "type": "array",
       "items": {

@@ -1559,17 +1559,23 @@ def _name_key(name: str) -> str:
 SHORT_LIST = 12
 
 
-def did_you_mean(typed: list[str], known: list[str], listing: str) -> str:
+def did_you_mean(
+    typed: list[str], known: list[str], listing: str,
+    aliases: dict[str, str] | None = None,
+) -> str:
     """The closest known names to what was typed, and the option listing them all.
 
     A typo was answered with every name the platform has, up to 400 on one
-    line, with no hint that playstation is sony-playstation.
+    line, with no hint that playstation is sony-playstation. An alias close
+    to what was typed suggests the name it stands for.
     """
     import difflib  # noqa: PLC0415
 
     by_key: dict[str, str] = {}
     for name in known:
         by_key.setdefault(_name_key(name), name)
+    for alias, name in (aliases or {}).items():
+        by_key.setdefault(_name_key(alias), name)
     close: list[str] = []
     for word in typed:
         key = _name_key(word)
@@ -1983,7 +1989,7 @@ def _validate_manifest(data: object, plat: str) -> dict:
     ):
         raise ValueError("manifest total_omitted does not match omitted_files")
 
-    for field in ("core_names", "system_cores"):
+    for field in ("core_names", "system_cores", "system_names"):
         mapping = data.get(field)
         if mapping is None:
             continue
@@ -2532,21 +2538,31 @@ def available_choices(files: list[dict], omitted: list[dict]) -> dict[str, list[
     }
 
 
-def resolve_choices(values: list[str], known: list[str], label: str) -> list[str]:
+def resolve_choices(
+    values: list[str], known: list[str], label: str,
+    aliases: dict[str, str] | None = None,
+) -> list[str]:
     """Names given on the command line, matched without regard to case.
 
     Each value is one name or a comma-separated list. A whole value that is
     itself a name wins over splitting it: Recalbox names one system
     `msx1,msx2,msxturbor`. An unknown name is refused, never ignored, since
     carrying on would install something other than what was asked.
+    aliases maps another name of a known one to it, as Batocera's `psx`
+    stands for sony-playstation. A known name always wins over an alias.
     """
+    aliases = {alias: name for alias, name in (aliases or {}).items() if name in known}
     by_lower = {name.lower(): name for name in known}
+    for alias, name in aliases.items():
+        by_lower.setdefault(alias.lower(), name)
     # Spelled as the site writes it (Sony PlayStation), a name is still one
     # name when no other one reads the same once case and spacing go.
     by_key: dict[str, str | None] = {}
     for name in known:
         key = _name_key(name)
         by_key[key] = None if key in by_key else name
+    for alias, name in aliases.items():
+        by_key.setdefault(_name_key(alias), name)
     chosen: list[str] = []
     unknown: list[str] = []
     for value in values:
@@ -2566,7 +2582,8 @@ def resolve_choices(values: list[str], known: list[str], label: str) -> list[str
         listing = {"system": "--list-systems", "emulator": "--list-emulators"}.get(
             label, "--list-cores")
         raise ValueError(
-            f"unknown {label}: {', '.join(unknown)}. {did_you_mean(unknown, known, listing)}"
+            f"unknown {label}: {', '.join(unknown)}. "
+            f"{did_you_mean(unknown, known, listing, aliases)}"
         )
     if values and not chosen:
         raise ValueError(f"--{label} needs at least one name")
@@ -4120,8 +4137,24 @@ def _same_choice_hint(plat: str, systems: list[str], cores: list[str], regions: 
     return " ".join(parts)
 
 
+def system_aliases(manifest: dict | None) -> dict[str, str]:
+    """The platform's own names for its systems, each with the system id."""
+    return {
+        alias: system
+        for system, names in ((manifest or {}).get("system_names") or {}).items()
+        for alias in names
+    }
+
+
+def _system_label(name: str, manifest: dict | None) -> str:
+    """A system id with the names the platform gives it: nintendo-gba (gba)."""
+    names = ((manifest or {}).get("system_names") or {}).get(name)
+    return f"{name} ({', '.join(names)})" if names else name
+
+
 def _print_choices(
-    plat: str, files: list[dict], omitted: list[dict], systems: bool
+    plat: str, files: list[dict], omitted: list[dict], systems: bool,
+    manifest: dict | None = None,
 ) -> None:
     """What --system or --core accepts for a platform, with what each holds."""
     choices = available_choices(files, omitted)
@@ -4129,14 +4162,15 @@ def _print_choices(
     if not names:
         print(f"  {plat} records no {'systems' if systems else 'cores'}")
         return
-    width = min(max(len(name) for name in names), 40)
+    labels = {name: _system_label(name, manifest) if systems else name for name in names}
+    width = min(max(len(label) for label in labels.values()), 40)
     for name in names:
         held = (
             [f for f in files if _chosen(f, {name})]
             if systems
             else _filter_by_target([f for f in files if f.get("cores") is not None], [name])
         )
-        print(f"  {name:<{width}}  {_sized(held)}")
+        print(f"  {labels[name]:<{width}}  {_sized(held)}")
 
 
 def emulator_names(manifest: dict, files: list[dict], omitted: list[dict]) -> dict[str, str]:
@@ -4326,7 +4360,8 @@ def _narrow_to_emulators(
 
 
 def _requested_narrowing(
-    args: argparse.Namespace, plat: str, files: list[dict], omitted: list[dict]
+    args: argparse.Namespace, plat: str, files: list[dict], omitted: list[dict],
+    manifest: dict | None = None,
 ) -> tuple[list[str], list[str], list[str]] | None:
     """The systems, cores and regions named on the command line, checked."""
     if not (args.system or args.core or args.region):
@@ -4343,7 +4378,9 @@ def _requested_narrowing(
         sys.exit(1)
     choices = available_choices(files, omitted)
     try:
-        systems = resolve_choices(args.system or [], choices["systems"], "system")
+        systems = resolve_choices(
+            args.system or [], choices["systems"], "system", system_aliases(manifest)
+        )
         cores = resolve_choices(args.core or [], choices["cores"], "core")
         regions = resolve_regions(args.region or [])
     except ValueError as exc:
@@ -4887,7 +4924,7 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                 args.emulator, manifest, plat_name, files, omitted_files
             )
 
-        selection = _requested_narrowing(args, plat_name, files, omitted_files)
+        selection = _requested_narrowing(args, plat_name, files, omitted_files, manifest)
         if (
             selection is None
             and interactive
@@ -4924,7 +4961,7 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
             print(f"  Narrowed {before} -> {len(files)} files")
 
         if args.list_systems or args.list_cores:
-            _print_choices(plat_name, files, omitted_files, args.list_systems)
+            _print_choices(plat_name, files, omitted_files, args.list_systems, manifest)
             continue
 
         total_size = sum(f.get("size", 0) for f in files)

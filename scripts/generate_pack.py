@@ -74,7 +74,7 @@ from common import (
 import packresolve
 from refresh_data_dirs import cache_lock, hold_data_dirs
 import region as region_mod
-from manifestselect import SelectionIndex
+from manifestselect import SelectionIndex, native_system_names
 import slot as slot_mod
 import slots
 import split_pack
@@ -4465,6 +4465,9 @@ def generate_manifest(
         ),
         "core_names": core_names,
         "system_cores": system_cores,
+        # The names the platform itself gives its systems (Batocera's psx),
+        # which --system accepts beside the ids.
+        "system_names": native_system_names(config, list(pack_systems)),
         "files": manifest_files,
     }
     if data_directories:
