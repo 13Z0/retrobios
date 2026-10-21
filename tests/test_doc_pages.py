@@ -416,5 +416,55 @@ class PythonFloorOnRetroPie(unittest.TestCase):
         self.assertIn("3.7.3", changing)
 
 
+class ToolsRunOnTheStatedFloor(unittest.TestCase):
+    """tools.md and testing-guide.md state Python 3.9 for every script, and
+    check_release_assets.py built `int | None` at import: a TypeError on 3.9
+    before any argument was read, in check_release.py too. CI runs 3.12 only,
+    so this test reads the source for what 3.9 cannot evaluate."""
+
+    TYPES = {"int", "str", "float", "bytes", "bool", "dict", "list", "tuple", "set", "type"}
+
+    def _type_like(self, node: ast.AST) -> bool:
+        if isinstance(node, ast.Constant) and node.value is None:
+            return True
+        if isinstance(node, ast.Subscript):
+            node = node.value
+        if isinstance(node, ast.BinOp) and isinstance(node.op, ast.BitOr):
+            return self._type_like(node.left) or self._type_like(node.right)
+        return isinstance(node, ast.Name) and node.id in self.TYPES
+
+    def _runtime_unions(self, tree: ast.AST) -> list[int]:
+        annotations = set()
+        for node in ast.walk(tree):
+            for field in ("annotation", "returns"):
+                value = getattr(node, field, None)
+                if value is not None:
+                    annotations.update(id(n) for n in ast.walk(value))
+        return [
+            node.lineno for node in ast.walk(tree)
+            if id(node) not in annotations
+            and (isinstance(node, ast.Match)
+                 or isinstance(node, ast.BinOp) and isinstance(node.op, ast.BitOr)
+                 and (self._type_like(node.left) or self._type_like(node.right)))
+        ]
+
+    def test_pages_state_the_floor(self):
+        self.assertIn("Python 3.9 or newer", _page("tools.md"))
+        self.assertIn("Python 3.9 or newer", _page("testing-guide.md"))
+
+    def test_no_script_evaluates_310_syntax(self):
+        offenders = [
+            f"{path.relative_to(ROOT)}:{line}"
+            for path in sorted((ROOT / "scripts").rglob("*.py"))
+            for line in self._runtime_unions(ast.parse(path.read_text(encoding="utf-8")))
+        ]
+        self.assertEqual(offenders, [], "\n".join(offenders))
+
+    def test_the_check_catches_the_alias(self):
+        self.assertTrue(self._runtime_unions(ast.parse("F = tuple[str, int | None]")))
+        self.assertFalse(self._runtime_unions(ast.parse("def f(x: int | None) -> str | None: ...")))
+        self.assertFalse(self._runtime_unions(ast.parse("mask = flags | other")))
+
+
 if __name__ == "__main__":
     unittest.main()

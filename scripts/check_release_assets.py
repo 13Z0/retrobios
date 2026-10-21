@@ -22,6 +22,7 @@ import re
 import subprocess
 import sys
 from collections.abc import Iterable
+from typing import Optional, Tuple
 
 sys.path.insert(0, os.path.dirname(__file__))
 from common import composition_tier, load_database
@@ -32,7 +33,8 @@ from largefiles import (
     registered_paths,
 )
 
-Finding = tuple[str, str, int, int | None]
+# Evaluated at import, where `int | None` needs Python 3.10.
+Finding = Tuple[str, str, int, Optional[int]]
 
 
 def expected_assets(db: dict, gitignore_text: str) -> dict[str, int]:
