@@ -1615,11 +1615,14 @@ def dataset_structured_data(exports: list[dict], db: dict) -> dict:
 def emulator_file_anchors(files: list[dict]) -> list[str]:
     """The id of each file card on an emulator page, in profile order.
 
-    A path declared once keeps its plain anchor. One declared for several
-    versions (raze's nine DUKE3D.GRP) takes what tells the version apart:
-    its hash, else its size, else, when even the size is shared, its
-    description. The page and its JSON-LD both read this, so a structured
-    part links to its card.
+    An entry that declares a hash is addressed by it: its anchor depends on
+    its own content, never on the entries beside it, and a second version
+    added under the same path moves nothing. An entry without one keeps
+    its plain anchor when its path is declared once, and otherwise takes
+    its size, else, when even the size is shared, its description. The
+    page and its JSON-LD both read this, so a structured part links to its
+    card. The plain anchor of a hashed card stays reachable through
+    emulator_file_aliases.
     """
     bases = [
         "file-" + (
@@ -1638,12 +1641,15 @@ def emulator_file_anchors(files: list[dict]) -> list[str]:
             return digest[:8]
         return f"{f['size']}b" if f.get("size") else ""
 
-    keys = [(b, _version_key(f)) if b in repeated else (b, "") for f, b in zip(files, bases)]
+    keys = [
+        (b, _version_key(f)) if b in repeated or _first_hash_value(f) else (b, "")
+        for f, b in zip(files, bases)
+    ]
     used: dict[str, int] = {}
     anchors = []
     for f, (base, key) in zip(files, keys):
         anchor = f"{base}-{key}" if key else base
-        if base in repeated and keys.count((base, key)) > 1 and f.get("description"):
+        if keys.count((base, key)) > 1 and f.get("description"):
             described = re.sub(r"[^a-z0-9]+", "-", str(f["description"]).lower()).strip("-")
             anchor = f"{anchor}-{described[:40].strip('-')}"
         used[anchor] = used.get(anchor, 0) + 1
@@ -1651,6 +1657,30 @@ def emulator_file_anchors(files: list[dict]) -> list[str]:
             anchor = f"{anchor}-{used[anchor]}"
         anchors.append(anchor)
     return anchors
+
+
+def emulator_file_aliases(files: list[dict], anchors: list[str]) -> list[str]:
+    """The plain file-<path> id each card also answers to, or "".
+
+    A link cited as emulators/raze/#file-duke3d-grp must still land once the
+    card is addressed by its hash: the first card of that path keeps the
+    plain id, unless another card already is it.
+    """
+    taken = set(anchors)
+    aliases = []
+    for f, anchor in zip(files, anchors):
+        base = "file-" + (
+            re.sub(
+                r"[^a-z0-9]+", "-",
+                str(f.get("path") or f.get("standalone_path") or f.get("name", "")).lower(),
+            ).strip("-") or "entry"
+        )
+        if base in taken or anchor == base:
+            aliases.append("")
+        else:
+            taken.add(base)
+            aliases.append(base)
+    return aliases
 
 
 def emulator_structured_data(profile: dict) -> dict:
@@ -3087,10 +3117,12 @@ def _render_emulator_file(
     _file_available: Callable[[dict], bool],
     anchor: str = "",
     owner: str = "",
+    alias: str = "",
 ) -> list[str]:
     """Render one row of an emulator profile's file table.
 
-    `anchor` is the card's id on the page, so one file can be cited by URL.
+    `anchor` is the card's id on the page, so one file can be cited by URL,
+    and `alias` a second id it answers to.
 
     Split out of generate_emulator_page, where it was a 228-line loop body
     carrying most of that function's branching: thirty-odd optional fields,
@@ -3128,7 +3160,8 @@ def _render_emulator_file(
     badge_str = " ".join(badges)
     lines.append('<div class="rb-file-entry" markdown>')
     lines.append("")
-    lines.append(_card_title(f"{_code(fname)} {badge_str}", anchor))
+    marker = f'<span id="{alias}"></span>' if alias else ""
+    lines.append(_card_title(f"{marker}{_code(fname)} {badge_str}", anchor))
     lines.append("")
     if desc:
         lines.extend([_escape_tags(str(desc)), ""])
@@ -3782,10 +3815,12 @@ def generate_emulator_page(
 
         lines.extend(_emulator_file_summary(files, _file_available))
 
-        for f, anchor in zip(files, emulator_file_anchors(files)):
+        anchors = emulator_file_anchors(files)
+        for f, anchor, alias in zip(files, anchors, emulator_file_aliases(files, anchors)):
             lines.extend(
                 _render_emulator_file(
-                    f, profile, consumers, files, _file_available, anchor, name
+                    f, profile, consumers, files, _file_available, anchor, name,
+                    alias,
                 )
             )
 

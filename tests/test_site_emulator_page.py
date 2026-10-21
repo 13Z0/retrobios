@@ -69,6 +69,31 @@ class WhoShipsTheBuildAndWhy(unittest.TestCase):
                       "found only as rebuilt copies) |", page)
 
 
+class ACardKeepsItsAddress(unittest.TestCase):
+    """emulators/raze/#file-duke3d-grp stopped pointing at its card once a
+    second version of the path was declared: the anchor of the first one
+    became file-duke3d-grp-<hash>."""
+
+    def test_a_second_version_moves_nothing(self):
+        one = {"name": "DUKE3D.GRP", "md5": "aaaa1111bbbb"}
+        two = {"name": "DUKE3D.GRP", "md5": "cccc2222dddd"}
+        before = gs.emulator_file_anchors([one])
+        after = gs.emulator_file_anchors([two, one])
+        self.assertEqual(before, ["file-duke3d-grp-aaaa1111"])
+        self.assertEqual(after[1], before[0])
+
+    def test_the_plain_address_still_lands(self):
+        files = [{"name": "DUKE3D.GRP", "md5": "aaaa1111bbbb"}]
+        page = _page("raze", {"type": "standalone", "files": files})
+        self.assertIn('<span id="file-duke3d-grp"></span>', page)
+        self.assertIn("{ #file-duke3d-grp-aaaa1111 .rb-file-title }", page)
+        # A card already holding the plain id gives it to no one else.
+        files = [{"name": "x.bin"}, {"name": "x.bin", "sha1": "ab" * 20}]
+        anchors = gs.emulator_file_anchors(files)
+        self.assertEqual(anchors, ["file-x-bin", "file-x-bin-abababab"])
+        self.assertEqual(gs.emulator_file_aliases(files, anchors), ["", ""])
+
+
 class WhatASearchSnippetSays(unittest.TestCase):
     def test_a_core_loading_no_file_promises_no_hash(self):
         """152 pages of cores that load no file announced paths and hashes."""
