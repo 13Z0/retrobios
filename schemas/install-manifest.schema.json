@@ -170,6 +170,10 @@
               "below_platform_folder"
             ]
           },
+          "held": {
+            "description": "The pack builder holds this file and the installer cannot download it. Region narrowing counts it held, as the builder does, so it displaces the same fallback.",
+            "const": true
+          },
           "cores": {
             "oneOf": [
               {

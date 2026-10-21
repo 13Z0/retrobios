@@ -3890,7 +3890,7 @@ def _manifest_core_entries(
             # without the cores served here leaves the slot to it, missing,
             # and the installer narrowing to those cores has to say so too.
             entry.setdefault("absent_claims", []).append(
-                {k: v for k, v in displaced.items() if k != "dest"}
+                {k: v for k, v in displaced.items() if k not in ("dest", "held")}
             )
         total_size += file_size
         seen_destinations.add(full_dest)
@@ -3937,8 +3937,9 @@ def _manifest_selection(
     required_only: bool,
     regions: list[str] | None,
     undeclared: list[dict] | None = None,
-) -> tuple[set[str], SelectionIndex]:
-    """Destinations a region list removes, and the groups the installer replays.
+) -> tuple[set[str], SelectionIndex, set[str]]:
+    """Destinations a region list removes, the groups the installer replays,
+    and the destinations the builder holds.
 
     Grouped as the pack groups them, so a region the installer applies to
     the full manifest withdraws what `--region` withdraws from the pack.
@@ -3970,7 +3971,7 @@ def _manifest_selection(
     )
     return drops, SelectionIndex.build(
         region_groups, region_index, pack_systems, extras, required_only
-    )
+    ), held
 
 
 def _record_absent(
@@ -4132,6 +4133,9 @@ def generate_manifest(
         reason: str,
         cores: list[str] | None,
     ) -> None:
+        bare = sanitize_pack_path(
+            file_entry.get("destination", file_entry.get("name", ""))
+        )
         omitted_by_destination[full_destination] = {
             "dest": manifest_destination(full_destination),
             "name": str(file_entry.get("name") or ""),
@@ -4139,14 +4143,14 @@ def generate_manifest(
             "required": bool(file_entry.get("required", True)),
             "reason": reason,
             "cores": cores,
-            # The builder counts an unavailable regional file in its groups:
-            # the installer must too, or it keeps a fallback the pack drops.
-            **selection.fields(
-                sanitize_pack_path(
-                    file_entry.get("destination", file_entry.get("name", ""))
-                ),
-                str(file_entry.get("name") or ""),
-            ),
+            # An omission keeps its region groups, as the builder groups it:
+            # a requested file the collection lacks answers the request
+            # without displacing a held fallback (resolve_region_drops,
+            # held). One the builder holds and the installer cannot fetch
+            # does displace it in the pack, so it says so, and the installer
+            # drops the same fallback.
+            **selection.fields(bare, str(file_entry.get("name") or "")),
+            **({"held": True} if bare in builder_held else {}),
         }
 
     # Read by the region grouping and by phase 2 with the same arguments.
@@ -4158,7 +4162,7 @@ def generate_manifest(
         if source != "platform"
         else None
     )
-    region_drops, selection = _manifest_selection(
+    region_drops, selection, builder_held = _manifest_selection(
         config, pack_systems, emulators_dir, db, base_dest, emu_profiles,
         target_cores, source, required_only, regions, undeclared=undeclared,
     )
