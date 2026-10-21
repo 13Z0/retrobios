@@ -204,7 +204,11 @@ refusal suggests the closest names (`playstation` gives `sony-playstation`) and
 the option that lists them all. Names are matched on letters and digits, so
 `--platform "MiSTer FPGA"` and `--system "Sony PlayStation"` are read as the
 site writes them. A system name that itself contains commas, as Recalbox's
-`msx1,msx2,msxturbor` does, is read as one name.
+`msx1,msx2,msxturbor` does, is read as one name. The name a platform gives a
+system itself is accepted too: on Batocera `--system psx` is
+`sony-playstation` and `--system gba` is `nintendo-gba`, the names its
+`roms/` folders carry. They come from the platform's own file, and
+`--list-systems` prints them beside each system (`nintendo-gba (gba)`).
 
 The region rule is the one `generate_pack.py --region` applies, and a test
 holds the two to the same file list. In each group of regional alternatives
