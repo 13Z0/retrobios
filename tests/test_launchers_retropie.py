@@ -269,6 +269,47 @@ class CommandLines(unittest.TestCase):
             rl.extract_launchers(files)
 
 
+DRASTIC = module("drastic", """
+    function configure_drastic() {
+        mkRomDir "nds"
+
+        addEmulator 1 "$md_id" "nds" "$md_inst/drastic.sh %ROM%"
+        addSystem "nds"
+
+        [[ "$md_mode" == "remove" ]] && return
+
+        isPlatform "kms" && ! isPlatform "x11" && setBackend "$md_id" "x11"
+
+        cat > "$md_inst/drastic.sh" << _EOF_
+    #!/bin/bash
+    pushd "$md_conf_root/nds/drastic"
+    $md_inst/drastic "\\$1"
+    popd
+    _EOF_
+        chmod +x "$md_inst/drastic.sh"
+    }
+""", 36)
+
+
+class WorkingDirectory(unittest.TestCase):
+    def test_drastic_reads_below_the_folder_its_script_enters(self):
+        found = records({f"{EMULATORS}/drastic.sh": DRASTIC}, "drastic")
+        entered = [r for r in found if r["kind"] == "passes_path"]
+        self.assertEqual(
+            [(r["search_dir"], r["passes_to"], r["source_ref"]) for r in entered],
+            [(
+                "$md_conf_root/nds/drastic",
+                "working directory of $md_inst/drastic.sh",
+                f"{EMULATORS}/drastic.sh:48",
+            )],
+        )
+
+    def test_a_launch_script_that_no_longer_enters_a_folder_raises(self):
+        files = {f"{EMULATORS}/drastic.sh": DRASTIC.replace('pushd "', 'echo "')}
+        with self.assertRaises(rl.LauncherPatternMissing):
+            rl.extract_launchers(files)
+
+
 class LaunchScripts(unittest.TestCase):
     def test_fs_uae_refuses_to_start_without_kick13(self):
         files = {f"{EMULATORS}/fs-uae.sh": FS_UAE, f"{EMULATORS}/fs-uae/fs-uae.sh": FS_UAE_LAUNCHER}

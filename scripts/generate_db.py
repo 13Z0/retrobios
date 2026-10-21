@@ -614,9 +614,12 @@ def _collect_all_aliases(files: dict) -> dict:
         ["sgb2_bios.bin", "sgb2_boot.bin", "sgb2.boot.rom"],
         ["sgb1.program.rom", "SGB1.sfc/program.rom"],
         ["sgb2.program.rom", "SGB2.sfc/program.rom"],
-        # Nintendo DS
-        ["bios7.bin", "nds7.bin"],
-        ["bios9.bin", "nds9.bin"],
+        # Nintendo DS. DraStic opens nds_bios_arm9.bin, nds_bios_arm7.bin
+        # and nds_firmware.bin and checks their size only: the collection
+        # answers those names with its DS dumps.
+        ["NDS_Bios7.bin", "bios7.bin", "nds7.bin", "nds_bios_arm7.bin"],
+        ["NDS_Bios9.bin", "bios9.bin", "nds9.bin", "nds_bios_arm9.bin"],
+        ["NDS_Lite_Firmware.bin", "nds_firmware.bin"],
         ["dsi_sd_card.bin", "nds_sd_card.bin"],
         # MSX
         ["MSX.ROM", "MSX.rom", "Machines/Shared Roms/MSX.rom"],
