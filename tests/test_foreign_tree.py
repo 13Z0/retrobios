@@ -113,5 +113,31 @@ class AReleaseNamedAfterTheTree(unittest.TestCase):
         self.assertIn("cxbxreloaded", _owner_tokens({"source_profile": "cxbx-reloaded-2023"}))
 
 
+class AnotherMachinesRomIsNotServed(unittest.TestCase):
+    """np2pi reads a 16 KB PC-98 SCSI BIOS as scsi.rom. The only copy of that
+    size was Clock Signal's Apple II SCSI card ROM, and the name step served
+    it. Reads the repository."""
+
+    def test_np2pi_does_not_receive_the_apple_ii_rom(self):
+        import yaml
+
+        from common import load_database
+
+        if not (REPO_ROOT / "database.json").is_file():
+            self.skipTest("database.json is absent")
+        profile = yaml.safe_load((REPO_ROOT / "emulators" / "np2pi.yml").read_text())
+        entry = next(f for f in profile["files"] if f.get("name") == "scsi.rom")
+        previous = os.getcwd()
+        os.chdir(REPO_ROOT)
+        try:
+            db = load_database("database.json")
+            local, _status = resolve_local_file(
+                {**entry, "source_profile": "np2pi"}, db, {}, dest_hint=entry["path"]
+            )
+        finally:
+            os.chdir(previous)
+        self.assertFalse(local and "Clock Signal" in local, local)
+
+
 if __name__ == "__main__":
     unittest.main()
