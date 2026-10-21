@@ -4735,6 +4735,7 @@ ZIP: extract them all into the same folder.
 | [RetroBat](https://www.retrobat.org/) | Windows frontend with EmulationStation, includes RetroArch and standalone emulators | [RetroBat]({rel}) | The `bios` folder inside the RetroBat installation |
 | [BizHawk](https://tasvideos.org/BizHawk) | Accuracy-focused multi-system emulator, popular for speedruns and TAS | [BizHawk]({rel}) | The `Firmware` folder inside the BizHawk installation |
 | [LaunchBox](https://www.launchbox-app.com/) | Game library manager and launcher, uses RetroArch or standalone emulators behind the scenes | [RetroArch]({rel}) | Open RetroArch (via LaunchBox) > Settings > Directory > System |
+| [EmuDeck](https://www.emudeck.com/) | Installs and configures multiple emulators with ES-DE | [EmuDeck]({rel}) | `bios` in the Emulation folder chosen in EmuDeck, `C:\\Emulation\\bios\\` by default |
 
 ### Linux
 
@@ -4750,6 +4751,7 @@ ZIP: extract them all into the same folder.
 | Setup | What it is | Pack | Extract to |
 |-------|-----------|------|-----------|
 | [RetroArch](https://www.retroarch.com/) | Multi-system emulator | [RetroArch]({rel}) | `~/Library/Application Support/RetroArch/system/` |
+| [EmuDeck](https://www.emudeck.com/) | Installs and configures multiple emulators with ES-DE | [EmuDeck]({rel}) | `~/Emulation/bios/` |
 
 ### Raspberry Pi and single-board computers
 
@@ -4778,7 +4780,7 @@ ZIP: extract them all into the same folder.
 
 | Setup | What it is | Pack | Extract to |
 |-------|-----------|------|-----------|
-| [RomM](https://github.com/rommapp/romm) | Web-based ROM manager, plays games in the browser via EmulatorJS | [RomM]({rel}) | The `bios` folder in the RomM library, one subfolder per system |
+| [RomM](https://github.com/rommapp/romm) | Web-based ROM manager, plays games in the browser via EmulatorJS | [RomM]({rel}) | `bios/` in the RomM library, one subfolder per platform. With `firmware: "{{platform}}/bios"` in `config.yml`, each subfolder goes to `<platform>/bios/` instead |
 
 ---
 

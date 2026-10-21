@@ -34,13 +34,10 @@ class GuidesPointAtTheReadPath(unittest.TestCase):
     def test_unguided_platforms_name_the_registry_path(self):
         registry = yaml.safe_load((REPO_ROOT / "platforms" / "_registry.yml").read_text())
         for name, data in registry["platforms"].items():
-            paths = [
-                str(d.get("bios_path", ""))
-                for d in (data.get("install", {}) or {}).get("detect", [])
-            ]
-            if not any(paths):
+            detect = (data.get("install", {}) or {}).get("detect", [])
+            if not any(d.get("bios_path") for d in detect):
                 continue
-            text = _build_readme(name, name, "", 1, 1, bios_paths=paths)
+            text = _build_readme(name, name, "", 1, 1, detect=detect)
             with self.subTest(platform=name):
                 self.assertFalse(
                     any("your BIOS directory" in line for line in _extract_lines(text))
@@ -54,6 +51,57 @@ class GuidesNameShippedInstallers(unittest.TestCase):
         for name in set(re.findall(r"install\.(?:bat|ps1|sh|py)", source)):
             with self.subTest(installer=name):
                 self.assertTrue((REPO_ROOT / name).is_file())
+
+def _registry() -> dict:
+    return yaml.safe_load((REPO_ROOT / "platforms" / "_registry.yml").read_text())
+
+
+def _guide(name: str) -> str:
+    install = _registry()["platforms"][name].get("install") or {}
+    return _build_readme(name, name, "", 1, 1, detect=install.get("detect", []),
+                         standalone_copies=install.get("standalone_copies", []))
+
+
+class TheOneLinerFollowsTheRegistry(unittest.TestCase):
+    """The guides were written per platform by hand: ROCKNIX and MiSTer,
+    which the installer detects, had no one-line install, EmuDeck's
+    Windows edition was told to open Konsole, and every RomM user was sent
+    to library/bios/ whatever its firmware template."""
+
+    def test_every_detected_system_gets_its_command(self):
+        for name, data in _registry()["platforms"].items():
+            systems = {rule["os"] for rule in (data.get("install") or {}).get("detect", [])}
+            if not systems:
+                continue
+            text = _guide(name)
+            with self.subTest(platform=name):
+                self.assertEqual("install.sh | sh" in text, bool(systems - {"windows"}))
+                self.assertEqual("install.ps1 | iex" in text, "windows" in systems)
+
+    def test_rocknix_and_mister_run_it_on_the_device(self):
+        for name in ("rocknix", "misterfpga"):
+            with self.subTest(platform=name):
+                self.assertIn(f"On the machine running {name}", _guide(name))
+
+    def test_emudeck_is_not_steam_deck_only(self):
+        text = _guide("emudeck")
+        self.assertNotIn("Steam Deck / Linux", text)
+        self.assertNotIn("Konsole", text)
+        self.assertIn("install.ps1 | iex", text)
+        self.assertIn("C:\\Emulation\\bios", text)
+        self.assertIn("--standalone-copies", text)
+
+    def test_romm_names_both_firmware_layouts(self):
+        text = _guide("romm")
+        self.assertIn("library/bios/", text)
+        self.assertIn("library/psx/bios/", text)
+        self.assertIn("--romm-firmware", text)
+
+    def test_the_commands_are_written_once(self):
+        source = (REPO_ROOT / "scripts" / "packreadme.py").read_text(encoding="utf-8")
+        self.assertEqual(source.count("main/install.sh"), 1)
+        self.assertEqual(source.count("main/install.ps1"), 1)
+
 
 if __name__ == "__main__":
     unittest.main()

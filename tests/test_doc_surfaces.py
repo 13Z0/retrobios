@@ -71,6 +71,26 @@ def _which_pack() -> str:
         return generate_site.generate_which_pack()
 
 
+class TheDownloadTablesFollowTheRegistry(unittest.TestCase):
+    """EmuDeck has a Windows edition the installer detects, and the Windows
+    table of the download page left it out."""
+
+    def test_every_detected_system_lists_the_platform(self):
+        import yaml  # noqa: PLC0415
+
+        registry = yaml.safe_load(_read("platforms/_registry.yml"))
+        names = {"retroarch": "RetroArch", "retrobat": "RetroBat", "emudeck": "EmuDeck",
+                 "bizhawk": "BizHawk"}
+        page = _which_pack()
+        for os_name, heading in (("windows", "### Windows"), ("darwin", "### macOS")):
+            table = _section(page, heading)
+            for platform, entry in registry["platforms"].items():
+                systems = {rule["os"] for rule in (entry.get("install") or {}).get("detect", [])}
+                if os_name in systems:
+                    with self.subTest(os=os_name, platform=platform):
+                        self.assertIn(f"[{names[platform]}](", table)
+
+
 class DownloadLinksNameTheFile(unittest.TestCase):
     def test_a_whole_pack_links_its_asset(self):
         self.assertEqual(

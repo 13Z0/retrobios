@@ -1229,12 +1229,12 @@ def generate_pack(
           undecidable_slots=slot_undecidable,
           narrowings=narrowings,
           system_filter=system_filter,
-          bios_paths=[
-              str(detect.get("bios_path", ""))
-              for detect in (
-                  _pack_registry.get(platform_name, {}).get("install", {}) or {}
-              ).get("detect", [])
-          ],
+          detect=(
+              _pack_registry.get(platform_name, {}).get("install", {}) or {}
+          ).get("detect", []),
+          standalone_copies=(
+              _pack_registry.get(platform_name, {}).get("install", {}) or {}
+          ).get("standalone_copies", []),
       )
       _write_generated_member(zf, "README.txt", readme_text)
 
