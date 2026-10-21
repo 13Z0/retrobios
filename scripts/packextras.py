@@ -1296,11 +1296,12 @@ def emulator_region_drops(
     """
     import region as region_mod
     from packpaths import _resolve_destination
-    from validation import filter_files_by_mode
+    from validation import _build_validation_index, filter_files_by_mode
 
     region_index = region_mod.build_region_index(dict(selected))
     region_groups: dict[str, list[tuple[str, str]]] = {}
     held: set[str] | None = set() if db is not None else None
+    validation_index = _build_validation_index(dict(selected)) if db is not None else {}
     for emu_name, profile in sorted(selected):
         # Decided over what the pack keeps, as on the platform side: an
         # optional winner removed afterwards left its slot empty.
@@ -1312,11 +1313,33 @@ def emulator_region_drops(
                 region_groups.setdefault(group_id, []).append(
                     (dest, fe.get("name", ""))
                 )
-                if held is not None and resolve_local_file(
-                    dict(fe, source_profile=emu_name), db, dest_hint=dest
-                )[0]:
+                if held is not None and _emulator_ships(
+                    fe, emu_name, profile, db, dest, validation_index
+                ):
                     held.add(dest)
     return region_mod.resolve_region_drops(region_groups, region_index, regions, held)
+
+
+def _emulator_ships(
+    file_entry: dict, emu_name: str, profile: dict, db: dict, dest: str,
+    validation_index: dict,
+) -> bool:
+    """Whether the emulator pack ships this entry: held, and not refused by
+    the core's own check, the test _ships applies on the platform side.
+    """
+    from validation import validated_choice, with_archive_members
+
+    local, _status = resolve_local_file(
+        {**with_archive_members(file_entry, profile.get("files", [])),
+         "source_profile": emu_name},
+        db, dest_hint=dest,
+    )
+    if not local:
+        return False
+    _chosen, disagreement = validated_choice(
+        file_entry, local, db, validation_index, "bios", None, emulators={emu_name},
+    )
+    return disagreement is None
 
 
 def _emulator_region_group(
