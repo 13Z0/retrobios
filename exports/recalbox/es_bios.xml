@@ -20,7 +20,6 @@
     <bios path="whdboot/save-data/Kickstarts/kick40068.A1200.RTB" md5="547b42b7b070c7f227ea45e0986d57a1" core="libretro/amiberry" mandatory="false" />
     <bios path="whdboot/save-data/Kickstarts/kick40068.A4000.RTB" md5="f89f19b858ea6b1a04327c6f71ee1600" core="libretro/amiberry" mandatory="false" />
     <bios path="whdboot/save-data/Kickstarts/kick31034.A1000.RTB" md5="c5ba6165df42fc69b32942b248fca725" core="libretro/amiberry" mandatory="false" />
-    <bios path="amiga-os-310.rom" md5="730888fb1bd9a3606d51f772ed136528" core="amiberry" mandatory="false" />
     <bios path="uae_data/drive_click_A500.wav" md5="6c5b44c1a2bcee664129f850bfe4ed8a" core="libretro/puae,libretro/puae2021" mandatory="false" />
     <bios path="uae_data/drive_spin_A500.wav" md5="7401f854a75f9ede18769168ab896a2a" core="libretro/puae,libretro/puae2021" mandatory="false" />
     <bios path="uae_data/drive_spinnd_A500.wav" md5="f9d954879fee8e96baa93d6139077cdb" core="libretro/puae,libretro/puae2021" mandatory="false" />

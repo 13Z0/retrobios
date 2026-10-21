@@ -5,7 +5,7 @@
   "platform": "recalbox",
   "display_name": "Recalbox",
   "version": "1.0",
-  "generated": "2026-10-20T19:45:33Z",
+  "generated": "2026-10-20T20:05:06Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -270,10 +270,10 @@
       }
     }
   ],
-  "total_files": 3371,
-  "total_size": 4406469294,
-  "pack_files": 3373,
-  "pack_size": 4406469294,
+  "total_files": 3369,
+  "total_size": 4405420718,
+  "pack_files": 3371,
+  "pack_size": 4405420718,
   "total_omitted": 13,
   "omitted_files": [
     {
@@ -36803,32 +36803,6 @@
         "amiberry",
         "puae",
         "puae2021"
-      ],
-      "systems": [
-        "commodore-amiga"
-      ]
-    },
-    {
-      "dest": "kick02019.AROS",
-      "sha1": "f1952b97e0fa7661e99efb4954e0a86371952c1d",
-      "sha256": "2bca61323950fbbe2472bb1cdab99311a5df6a78c8f7ae6a8819656629bf9dd2",
-      "size": 524288,
-      "repo_path": "bios/Commodore/Amiga/kick02019.AROS",
-      "cores": [
-        "amiberry"
-      ],
-      "systems": [
-        "commodore-amiga"
-      ]
-    },
-    {
-      "dest": "kick02019.AROS.ext",
-      "sha1": "8b193a6515e0c8b3555ef4142417208dbbdb025e",
-      "sha256": "ba7965b27c553a517de3c7c81988a6bb6b3a12ceef465a0a4f6d30a6ff811b7c",
-      "size": 524288,
-      "repo_path": "bios/Commodore/Amiga/kick02019.AROS.ext",
-      "cores": [
-        "amiberry"
       ],
       "systems": [
         "commodore-amiga"

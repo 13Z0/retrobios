@@ -15,28 +15,8 @@
         "file": "bios/goldstar.bin"
       },
       {
-        "md5": "05435442e0b7a91a121eef6e91b112de",
-        "file": "bios/panafz1_dev_0.9.bin"
-      },
-      {
-        "md5": "5fa312e8b1315e840221c658dd71f7a5",
-        "file": "bios/panafz1_dev.bin"
-      },
-      {
-        "md5": "ba3eda87fde9bd7f09c2b9db3dbb9887",
-        "file": "bios/panafz1e.bin"
-      },
-      {
-        "md5": "7d5f8489f70455e5439eb7c4d5bbf609",
-        "file": "bios/panafz1e-unencrypted.bin"
-      },
-      {
         "md5": "a496cfdded3da562759be3561317b605",
         "file": "bios/panafz1j.bin"
-      },
-      {
-        "md5": "f6c71de7470d16abe4f71b1444883dc8",
-        "file": "bios/panafz1j - norsa.bin"
       },
       {
         "md5": "1477bda80dc33731a65468c1f5bcbee9",
@@ -51,32 +31,12 @@
         "file": "bios/panafz10e-anvil-norsa.bin"
       },
       {
-        "md5": "20706f726c22d79d3c385e215d7428e2",
-        "file": "bios/panafz10j.bin"
-      },
-      {
-        "md5": "b42a2207226a669415886007a9dbcad5",
-        "file": "bios/goldstar_fc1_enc.bin"
-      },
-      {
         "md5": "35fa1a1ebaaeea286dc5cd15487c13ea",
         "file": "bios/sanyotry.bin"
       },
       {
-        "md5": "4ca4a976237b6c8fd3abfb393d072469",
-        "file": "bios/sanyo_hc21_b3_unenc.bin"
-      },
-      {
-        "md5": "99ba550f1a284da0bea7f380b6e4b436",
-        "file": "bios/sanyo_hc21_alpha.bin"
-      },
-      {
         "md5": "8970fc987ab89a7f64da9f8a8c4333ff",
         "file": "bios/3do_arcade_saot.bin"
-      },
-      {
-        "md5": "45a010f04b1df9c072983378c318b259",
-        "file": "bios/3do_devkit_1.0fc2.bin"
       },
       {
         "md5": "b8dc97f778a6245c58e064b0312e8281",
@@ -239,54 +199,6 @@
         "file": "bios/whdboot/save-data/Kickstarts/kick31034.A1000.RTB"
       },
       {
-        "md5": "730888fb1bd9a3606d51f772ed136528",
-        "file": "bios/amiga-os-310.rom"
-      },
-      {
-        "md5": "82a21c1890cae844b3df741f2762d48d",
-        "file": "bios/amiga-os-130.rom"
-      },
-      {
-        "md5": "85ad74194e87c08904327de1a9443b7a",
-        "file": "bios/amiga-os-120.rom"
-      },
-      {
-        "md5": "e40a5dfb3d017ba8779faba30cbd1c8e",
-        "file": "bios/amiga-os-310-a600.rom"
-      },
-      {
-        "md5": "465646c9b6729f77eea5314d1f057951",
-        "file": "bios/amiga-os-205-a600.rom"
-      },
-      {
-        "md5": "dc10d7bdd1b6f450773dfb558477c230",
-        "file": "bios/amiga-os-204.rom"
-      },
-      {
-        "md5": "646773759326fbac3b2311fd8c8793ee",
-        "file": "bios/amiga-os-310-a1200.rom"
-      },
-      {
-        "md5": "b7cc148386aa631136f510cd29e42fc3",
-        "file": "bios/amiga-os-300-a1200.rom"
-      },
-      {
-        "md5": "9bdedde6a4f33555b4a270c8ca53297d",
-        "file": "bios/amiga-os-310-a4000.rom"
-      },
-      {
-        "md5": "9b8bdd5a3fd32c2a5a6f5b1aefc799a5",
-        "file": "bios/amiga-os-300-a4000.rom"
-      },
-      {
-        "md5": "e873c43040b4d7a9c65f37cf2da2158f",
-        "file": "bios/amiga-os-310-a4000t.rom"
-      },
-      {
-        "md5": "5f8924d013dd57a89cf349f4cdedc6b1",
-        "file": "bios/amiga-os-310-cd32.rom"
-      },
-      {
         "md5": "6c5b44c1a2bcee664129f850bfe4ed8a",
         "file": "bios/uae_data/drive_click_A500.wav"
       },
@@ -417,11 +329,11 @@
         "file": "bios/d2fdc.zip"
       },
       {
-        "md5": "2020aa1413ff77fe29353f3ee72dc295",
+        "md5": "",
         "file": "bios/AppleIIe_DiskII.rom"
       },
       {
-        "md5": "38063e08c778503fc03ecebb979769e9",
+        "md5": "",
         "file": "bios/AppleIIe.rom"
       },
       {
@@ -617,7 +529,7 @@
         "file": "bios/ProSystem.dat"
       },
       {
-        "md5": "c8a73288ab97226c52602204ab894286",
+        "md5": "",
         "file": "bios/A78_highscore.bin"
       }
     ]
@@ -1285,10 +1197,6 @@
       {
         "md5": "32fbbd84168d3482956eb3c5051637f5",
         "file": "bios/gb_bios.bin"
-      },
-      {
-        "md5": "71a378e71ff30b2d8a1f02bf5c7896aa",
-        "file": "bios/GB_mgb.bin"
       }
     ]
   },
@@ -1299,10 +1207,6 @@
       {
         "md5": "a860e8c0b6d573d191e4ec7db1b1e4f6",
         "file": "bios/gba_bios.bin"
-      },
-      {
-        "md5": "e60e599135009129b288988a1cba91df",
-        "file": "bios/GBA_bios_Debug-(J).rom"
       },
       {
         "md5": "a860e8c0b6d573d191e4ec7db1b1e4f6",
@@ -1317,18 +1221,6 @@
       {
         "md5": "dbfce9db9deaa2567f6a84fde55f9680",
         "file": "bios/gbc_bios.bin"
-      },
-      {
-        "md5": "48991ee7b1813d0cba5b099df6578668",
-        "file": "bios/GBC_cgbE.bin"
-      },
-      {
-        "md5": "e6cefb5f7d352fab6681989763917c73",
-        "file": "bios/GBC_agb.bin"
-      },
-      {
-        "md5": "a3bdf3d628e58cf6821fe87d3efd51a9",
-        "file": "bios/GBC_agb0.bin"
       }
     ]
   },
@@ -1511,24 +1403,12 @@
     "name": "Master System",
     "biosFiles": [
       {
-        "md5": "840481177270d5642a14ca71ee72844c",
+        "md5": "",
         "file": "bios/[BIOS] Sega Master System (USA, Europe) (v1.3).sms"
       },
       {
-        "md5": "24a519c53f67b00640d0048ef7089105",
+        "md5": "",
         "file": "bios/[BIOS] Sega Master System (Japan) (v2.1).sms"
-      },
-      {
-        "md5": "626b3453613e43d5a47908a8944ba583",
-        "file": "bios/SMS_us_1.0b.sms"
-      },
-      {
-        "md5": "3153447d155fb8bfc66a4d1c41e399b9",
-        "file": "bios/SMS_m404.sms"
-      },
-      {
-        "md5": "e49e63328c78fe3d24ae32bf903583e0",
-        "file": "bios/SMS_kr.sms"
       }
     ]
   },
@@ -1587,18 +1467,6 @@
       {
         "md5": "42af93619160ef2116416f74a6cb12f2",
         "file": "bios/openMSX/share/systemroms/yrw801.rom"
-      },
-      {
-        "md5": "8514a6af538e0fadbe660a206dcb5652",
-        "file": "bios/MSX_cbios_main_msx1.rom"
-      },
-      {
-        "md5": "95c94878c0ecf0b4c0d8bc8deaa9d7f3",
-        "file": "bios/MSX_1.0.rom"
-      },
-      {
-        "md5": "9218f6dd89f7ba01e3090d44721b4260",
-        "file": "bios/MSX_jpn.rom"
       }
     ]
   },
@@ -1817,14 +1685,6 @@
         "file": "bios/dsi_firmware.bin"
       },
       {
-        "md5": "b8c0b3f620410591f47dafd5866760e0",
-        "file": "bios/NDS_Firmware_2.bin"
-      },
-      {
-        "md5": "3c704824663ce26b6a1ed4d85238ae5b",
-        "file": "bios/NDS_Lite_Firmware.bin"
-      },
-      {
         "md5": "df692a80a5b1bc90728bc3dfc76cd948",
         "file": "bios/BIOSNDS7.ROM"
       },
@@ -2041,10 +1901,6 @@
       {
         "md5": "38179df8f4ac870017db21ebcbf53114",
         "file": "bios/syscard3.pce"
-      },
-      {
-        "md5": "6d2cb14fc3e1f65ceb135633d1694122",
-        "file": "bios/PCECD_gecard.pce"
       }
     ]
   },
@@ -2057,12 +1913,8 @@
         "file": "bios/pcfx.rom"
       },
       {
-        "md5": "430e9745f9235c515bc8e652d6ca3004",
+        "md5": "",
         "file": "bios/fx-scsi.rom"
-      },
-      {
-        "md5": "e2fb7c7220e3a7838c2dd7e401a7f3d8",
-        "file": "bios/PCFX_v101.bin"
       }
     ]
   },
@@ -2147,42 +1999,6 @@
       {
         "md5": "fed4d8242cfbed61343d53d48432aced",
         "file": "bios/BS-X.bin"
-      },
-      {
-        "md5": "fed4d8242cfbed61343d53d48432aced",
-        "file": "bios/Satellaview_BS-X.sfc"
-      },
-      {
-        "md5": "a859f13ed1a497e34f94d80e49861fa4",
-        "file": "bios/Satellaview_Mahjong.sfc"
-      },
-      {
-        "md5": "c87f0ed9f204464bb03200cea5bd290f",
-        "file": "bios/Satellaview_GNEXT.sfc"
-      },
-      {
-        "md5": "12f1e82f2251eee4b754611887e89821",
-        "file": "bios/Satellaview_RPG_Tsukuru.sfc"
-      },
-      {
-        "md5": "35a61b2ec6e63d16799c09e1957fcdb4",
-        "file": "bios/Satellaview_SameGame.sfc"
-      },
-      {
-        "md5": "e1a6cfe35640ee9eb661c2239ccc0717",
-        "file": "bios/Satellaview_Derby_Stallion_96.sfc"
-      },
-      {
-        "md5": "5797c69fdc9e92284089128d6794efe4",
-        "file": "bios/Satellaview_Ongaku_Tsukuru.sfc"
-      },
-      {
-        "md5": "92504988268c3888f0e7041a1f9567ae",
-        "file": "bios/Satellaview_SoundNovel_Tsukuru.sfc"
-      },
-      {
-        "md5": "b6aecd4135d37c402a9e4512615c6b6b",
-        "file": "bios/Satellaview_Bass_Tsuri.sfc"
       }
     ]
   },
@@ -2213,58 +2029,6 @@
       {
         "md5": "af5828fdff51384f99b3c4926be27762",
         "file": "bios/kronos/saturn_bios.bin"
-      },
-      {
-        "md5": "f273555d7d91e8a5a6bfd9bcf066331c",
-        "file": "bios/SAT_1.00a-(U+E).bin"
-      },
-      {
-        "md5": "a36acd9ac53b668bebbd98bd192c43e9",
-        "file": "bios/SAT_STV_17740-(J).bin"
-      },
-      {
-        "md5": "6193c4357b39916066d810bc0b2cb153",
-        "file": "bios/SAT_STV_17740A-(J).bin"
-      },
-      {
-        "md5": "4bee9b193799bd221a7482c7d7765295",
-        "file": "bios/SAT_STV_17951A-(J).bin"
-      },
-      {
-        "md5": "099c908e4af55d6602bb5fddbbc2d0b3",
-        "file": "bios/SAT_STV_19730-(J).bin"
-      },
-      {
-        "md5": "34175c7ad31acbe44f2baccc7ea065c7",
-        "file": "bios/SAT_STV_20091-(J).bin"
-      },
-      {
-        "md5": "202226db8648ef036b57bc64a4180c92",
-        "file": "bios/SAT_STV_23603-(J).bin"
-      },
-      {
-        "md5": "858fc8d8ad62059ea912ec09e9a38111",
-        "file": "bios/SAT_STV_17742A-(T).bin"
-      },
-      {
-        "md5": "251f89478034d93abdf54d05b43c16c0",
-        "file": "bios/SAT_STV_17953A-(T).bin"
-      },
-      {
-        "md5": "fa6117a16a7df94dcc6e9e12896c66f2",
-        "file": "bios/SAT_STV_19854-(T).bin"
-      },
-      {
-        "md5": "4c51a40cd3d0eec13c3b25c6b70ad632",
-        "file": "bios/SAT_STV_17741A-(U).bin"
-      },
-      {
-        "md5": "249b67334cfae53810c1d1e3b93957a3",
-        "file": "bios/SAT_STV_17952A-(U).bin"
-      },
-      {
-        "md5": "ba2cb634c15e59d7ea5552729306f2ef",
-        "file": "bios/SAT_STV_17954A-(E).bin"
       }
     ]
   },
@@ -2305,15 +2069,15 @@
     "name": "Sega 32X",
     "biosFiles": [
       {
-        "md5": "6a5433f6a132a2b683635819a6dcf085",
+        "md5": "",
         "file": "bios/32X_G_BIOS.BIN"
       },
       {
-        "md5": "f88354ec482be09aeccd76a97bb75868",
+        "md5": "",
         "file": "bios/32X_M_BIOS.BIN"
       },
       {
-        "md5": "7f041b6a55cd7423a6c08a219335269e",
+        "md5": "",
         "file": "bios/32X_S_BIOS.BIN"
       }
     ]
@@ -2475,12 +2239,8 @@
     "name": "Vectrex",
     "biosFiles": [
       {
-        "md5": "ba9260bb961d60e718378cc16a8051d7",
+        "md5": "",
         "file": "bios/Vectrex_Bios.bin"
-      },
-      {
-        "md5": "ab082fa8c8e632dd68589a8c7741388f",
-        "file": "bios/VEC_Minestorm.vec"
       }
     ]
   },

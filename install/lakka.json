@@ -5,7 +5,7 @@
   "platform": "lakka",
   "display_name": "Lakka",
   "version": "1.0",
-  "generated": "2026-10-20T19:45:33Z",
+  "generated": "2026-10-20T20:05:06Z",
   "base_destination": "system",
   "detect": [
     {
@@ -19,9 +19,9 @@
   ],
   "standalone_copies": [],
   "total_files": 8052,
-  "total_size": 6850001407,
+  "total_size": 6849715131,
   "pack_files": 8362,
-  "pack_size": 6871894291,
+  "pack_size": 6871608015,
   "total_omitted": 11,
   "omitted_files": [
     {
@@ -105535,40 +105535,6 @@
       ]
     },
     {
-      "dest": "hiscore.dat",
-      "sha1": "7381472bf046126257e51a0124e4553282f020e5",
-      "sha256": "9d44fc928c0df41debad1b86739bd6ca96a5891b3b499f6fb3d7e9ea95ca8de5",
-      "size": 322458,
-      "repo_path": "bios/Arcade/Arcade/hiscore.dat",
-      "cores": [
-        "fbalpha2012",
-        "fbalpha2012_cps3"
-      ],
-      "systems": [
-        "arcade"
-      ],
-      "alternatives": [
-        {
-          "sha1": "21ddda0c61bd4f1cc04fb9d09e16d403d620f9e8",
-          "sha256": "045da3c1124ba1726738db704a8132590ea2c42fdb327392cff05fc124f8ad3b",
-          "size": 36182,
-          "repo_path": "bios/Arcade/Arcade/.variants/hiscore.dat.21ddda0c",
-          "cores": [
-            "mame2000"
-          ]
-        },
-        {
-          "sha1": "68e94fb579f46f3255ef7c34c0322f3f0f3c8e20",
-          "sha256": "c470a579d8836299e64b835012f7c536115aac695ba9ae10ecd4d168bede54ca",
-          "size": 216250,
-          "repo_path": "bios/Arcade/Arcade/.variants/hiscore.dat.68e94fb5",
-          "cores": [
-            "mame2015"
-          ]
-        }
-      ]
-    },
-    {
       "dest": "fbalpha2012/hiscore.dat",
       "sha1": "7381472bf046126257e51a0124e4553282f020e5",
       "sha256": "9d44fc928c0df41debad1b86739bd6ca96a5891b3b499f6fb3d7e9ea95ca8de5",
@@ -106143,6 +106109,30 @@
         "apple-macintosh-ii",
         "epoch-scv",
         "philips-cdi"
+      ]
+    },
+    {
+      "dest": "hiscore.dat",
+      "sha1": "21ddda0c61bd4f1cc04fb9d09e16d403d620f9e8",
+      "sha256": "045da3c1124ba1726738db704a8132590ea2c42fdb327392cff05fc124f8ad3b",
+      "size": 36182,
+      "repo_path": "bios/Arcade/Arcade/.variants/hiscore.dat.21ddda0c",
+      "cores": [
+        "mame2000"
+      ],
+      "systems": [
+        "arcade"
+      ],
+      "alternatives": [
+        {
+          "sha1": "68e94fb579f46f3255ef7c34c0322f3f0f3c8e20",
+          "sha256": "c470a579d8836299e64b835012f7c536115aac695ba9ae10ecd4d168bede54ca",
+          "size": 216250,
+          "repo_path": "bios/Arcade/Arcade/.variants/hiscore.dat.68e94fb5",
+          "cores": [
+            "mame2015"
+          ]
+        }
       ]
     },
     {
