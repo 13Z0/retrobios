@@ -21,6 +21,7 @@ from cross_reference import (  # noqa: E402
     _build_supplemental_index,
     cross_reference,
     entry_source,
+    print_report,
 )
 
 
@@ -53,6 +54,28 @@ class GapReportSources(unittest.TestCase):
         self.assertEqual(entry_source({"name": "ending.mid"}, index), "bios")
         self.assertEqual(entry_source({"name": "ending.mid", "sha1": other}, index), "bios")
         self.assertEqual(entry_source({"name": "ending.mid", "md5": "1" * 32}, index), "bios")
+
+    def test_the_heading_and_the_total_count_bundled_files_alike(self):
+        """abuse printed "Gaps: 3 missing" above three [BUNDLED] files and
+        "0 missing (need to be sourced)" below."""
+        import contextlib
+        import io
+
+        report = {"abuse": {
+            "emulator": "Abuse", "systems": [], "gaps": 3, "total_files": 3,
+            "platform_covered": 0, "gap_missing": 3,
+            "gap_details": [
+                {"name": f"f{i}", "required": True, "source": "missing", "bundled": True,
+                 "note": ""}
+                for i in range(3)
+            ],
+        }}
+        with contextlib.redirect_stdout(io.StringIO()) as out:
+            print_report(report)
+        text = out.getvalue()
+        self.assertIn("Gaps: 3 bundled", text)
+        self.assertNotIn("3 missing", text)
+        self.assertIn("0 missing (need to be sourced)", text)
 
     def test_a_directory_does_not_stand_for_a_file(self):
         with tempfile.TemporaryDirectory(dir=REPO_ROOT / "tmp") as tmp:

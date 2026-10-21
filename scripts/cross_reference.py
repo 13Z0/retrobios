@@ -809,11 +809,16 @@ def print_report(
         if gaps == 0 and not show_clean:
             continue
 
-        parts = []
-        for key in ("bios", "data", "large_file", "missing"):
-            count = data.get(f"gap_{key}", 0)
-            if count:
-                parts.append(f"{count} {key}")
+        # Counted once, for the heading and the total alike: a file bundled
+        # with its emulator is not one to source.
+        emulator_bundled = sum(
+            1 for g in data["gap_details"]
+            if g.get("bundled") and g.get("source") == "missing"
+        )
+        counts = {key: data.get(f"gap_{key}", 0) for key in totals}
+        counts["missing"] -= emulator_bundled
+        counts["bundled"] = emulator_bundled
+        parts = [f"{count} {key}" for key, count in counts.items() if count]
         status = ", ".join(parts) if parts else "OK"
 
         systems = ", ".join(data["systems"])
@@ -842,13 +847,8 @@ def print_report(
 
         total_gaps += gaps
         for key in totals:
-            totals[key] += data.get(f"gap_{key}", 0)
-        emulator_bundled = sum(
-            1 for g in data["gap_details"]
-            if g.get("bundled") and g.get("source") == "missing"
-        )
+            totals[key] += counts[key]
         bundled += emulator_bundled
-        totals["missing"] -= emulator_bundled
 
     print(f"\n{'=' * 60}")
     print(f"Total: {total_gaps} undeclared files across {scope}")
