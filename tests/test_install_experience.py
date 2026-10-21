@@ -377,5 +377,61 @@ class ReviewCases(unittest.TestCase):
         progress.add(40)
         self.assertEqual(progress.transferred(), 40)
 
+class WindowsMandatoryLock(unittest.TestCase):
+    """Issue 82: on Windows the partial copy's lock is mandatory, so hashing
+    it by reopening its path failed with a sharing violation, and every file
+    of 16 MB or more was reported as "folder not writable"."""
+
+    def test_the_locked_partial_is_hashed_through_its_handle(self):
+        real_open = open
+
+        def locked_open(path, *args, **kwargs):
+            if str(path).endswith(".part"):
+                raise PermissionError(33, "The process cannot access the file")
+            return real_open(path, *args, **kwargs)
+
+        with _Server(), tempfile.TemporaryDirectory() as tmp, \
+                mock.patch.object(install, "RESUME_FROM_SIZE", 1024), \
+                mock.patch("builtins.open", locked_open):
+            dest, ok, reason = install._download_one(dict(ENTRY), Path(tmp))
+        self.assertEqual((dest, ok, reason), ("big.bin", True, ""))
+
+    def test_a_read_only_file_in_place_is_named_as_such(self):
+        with _Server(), tempfile.TemporaryDirectory() as tmp, \
+                mock.patch.object(install.os, "replace",
+                                  side_effect=PermissionError(5, "Access is denied")), \
+                mock.patch.object(install, "_read_only_file", return_value=True):
+            _dest, ok, reason = install._download_one(dict(ENTRY), Path(tmp))
+        self.assertFalse(ok)
+        self.assertEqual(reason, install.READ_ONLY)
+
+    def test_a_read_only_file_in_place_is_made_writable_on_windows(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            dest = Path(tmp) / "big.bin"
+            dest.write_bytes(b"old")
+            os.chmod(dest, 0o444)
+            with mock.patch.object(install.os, "name", "nt"):
+                install._clear_read_only(dest)
+            self.assertTrue(os.access(dest, os.W_OK))
+
+    def test_elsewhere_the_attribute_is_left_alone(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            dest = Path(tmp) / "big.bin"
+            dest.write_bytes(b"old")
+            os.chmod(dest, 0o444)
+            with mock.patch.object(install.os, "name", "posix"):
+                install._clear_read_only(dest)
+            self.assertFalse(os.access(dest, os.W_OK))
+            os.chmod(dest, 0o644)
+
+    def test_a_refused_folder_keeps_its_own_reason(self):
+        with _Server(), tempfile.TemporaryDirectory() as tmp, \
+                mock.patch.object(install.os, "replace",
+                                  side_effect=PermissionError(13, "Permission denied")), \
+                mock.patch.object(install, "_read_only_file", return_value=False):
+            _dest, ok, reason = install._download_one(dict(ENTRY), Path(tmp))
+        self.assertEqual((ok, reason), (False, install.NOT_WRITABLE))
+
+
 if __name__ == "__main__":
     unittest.main()

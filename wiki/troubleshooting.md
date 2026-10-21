@@ -256,6 +256,11 @@ The installer needs write access to the target directory.
   permissions. Avoid running as root unless the target directory requires it.
 - On Windows: run PowerShell as Administrator if installing to a protected directory.
 
+A file already in the BIOS folder with the read-only attribute is replaced
+like any other: on Windows the installer clears the attribute before putting
+the verified copy in place. `file in place is read-only` only appears when
+Windows refuses that too, which a file owned by another account can cause.
+
 ### Platform not detected
 
 `install.py` auto-detects your platform by checking for known config files. If

@@ -2339,11 +2339,17 @@ def _digest_file(path: Path, algorithms: tuple[str, ...]) -> dict[str, str]:
     every file twice, single threaded. Hashing is cheap next to the I/O, so
     the read is what has to happen once.
     """
-    hashers = {name: hashlib.new(name) for name in algorithms}
     with open(path, "rb") as fh:
-        for chunk in iter(lambda: fh.read(1024 * 1024), b""):
-            for hasher in hashers.values():
-                hasher.update(chunk)
+        return _digest_handle(fh, algorithms)
+
+
+def _digest_handle(fh: BinaryIO, algorithms: tuple[str, ...]) -> dict[str, str]:
+    """Digests of an open file, read from its start."""
+    hashers = {name: hashlib.new(name) for name in algorithms}
+    fh.seek(0)
+    for chunk in iter(lambda: fh.read(1024 * 1024), b""):
+        for hasher in hashers.values():
+            hasher.update(chunk)
     return {name: hasher.hexdigest() for name, hasher in hashers.items()}
 
 
@@ -2512,12 +2518,21 @@ def _download_one(
                         f"downloaded {downloaded} bytes, expected {expected_size}"
                     )
 
-            expected_sha256 = f.get("sha256", "")
-            expected_sha1 = f.get("sha1", "")
-            if expected_sha256 and _sha256_file(tmp_path) != expected_sha256.lower():
+            expected = {
+                name: f[name].lower() for name in ("sha256", "sha1") if f.get(name)
+            }
+            # A large file is hashed through the handle that holds its lock.
+            # On Windows that lock is mandatory: reopening the path to read
+            # it failed with a sharing violation, which read as an unwritable
+            # folder for every file of 16 MB or more (issue 82).
+            if partial is not None:
+                actual = _digest_handle(partial, tuple(expected))
+            else:
+                actual = _digest_file(tmp_path, tuple(expected))
+            if "sha256" in expected and actual["sha256"] != expected["sha256"]:
                 reason = "SHA-256 mismatch"
                 raise _Corrupt()
-            if expected_sha1 and _sha1_file(tmp_path) != expected_sha1.lower():
+            if "sha1" in expected and actual["sha1"] != expected["sha1"]:
                 reason = "SHA-1 mismatch"
                 raise _Corrupt()
 
@@ -2525,6 +2540,7 @@ def _download_one(
             # file is: the temporary file is private, and a BIOS folder
             # written with sudo has to stay readable by the emulator's user.
             os.chmod(tmp_path, (0o777 if f.get("executable") else 0o666) & ~_UMASK)
+            _clear_read_only(dest)
             if partial is not None and os.name == "nt":
                 # Windows renames no open file. Elsewhere the lock is held
                 # until the copy has its final name.
@@ -2571,8 +2587,10 @@ def _download_one(
         except (urllib.error.URLError, OSError, ValueError, http.client.HTTPException) as exc:
             if (isinstance(exc, OSError) and not isinstance(exc, urllib.error.URLError)
                     and _write_refused(exc)):
-                # No attempt can change a refused write.
-                reason, refused = NOT_WRITABLE, True
+                # No attempt can change a refused write. A read-only file in
+                # place is not a folder this user cannot write.
+                reason = READ_ONLY if _read_only_file(dest) else NOT_WRITABLE
+                refused = True
             else:
                 reason = str(getattr(exc, "reason", "") or exc)
             if verbose:
@@ -2684,6 +2702,33 @@ def _write_refused(exc: OSError) -> bool:
     return isinstance(exc, PermissionError) or exc.errno == errno.EROFS
 
 
+# A file already at the destination, marked read-only, whose content differs,
+# and whose attribute could not be cleared: replacing it is refused while its
+# folder stays writable.
+READ_ONLY = "file in place is read-only"
+
+
+def _clear_read_only(dest: Path) -> None:
+    """Let the verified copy replace a read-only file the user already has.
+
+    Windows refuses to replace a file carrying the read-only attribute
+    (WinError 5) even in a writable folder. The file is about to be replaced
+    by the copy the manifest names, so its attribute is cleared first.
+    Elsewhere a rename only needs the folder to be writable.
+    """
+    if os.name != "nt":
+        return
+    try:
+        if dest.is_file() and not os.access(dest, os.W_OK):
+            os.chmod(dest, stat.S_IREAD | stat.S_IWRITE)
+    except OSError:
+        pass  # the replace that follows reports the refusal with its reason
+
+
+def _read_only_file(dest: Path) -> bool:
+    return dest.is_file() and not os.access(dest, os.W_OK) and _folder_writable(dest.parent)
+
+
 def _folder_writable(path: Path) -> bool:
     """Whether a file can be created under path, read from its nearest
     existing folder: a BIOS folder not created yet is as writable as the
@@ -2779,6 +2824,9 @@ def _report_outcome(
         Path(dest).parent for dest, reason in failures or []
         if Path(dest).is_absolute() and reason == NOT_WRITABLE
     })]
+    if any(reason == READ_ONLY for _dest, reason in failures or []):
+        advice.append("  Files marked read-only are in the way: clear that attribute "
+                      "(or delete them), then run again.")
     paths = paths + [folder for folder in elsewhere if folder not in paths]
 
     if errors and not downloaded:
