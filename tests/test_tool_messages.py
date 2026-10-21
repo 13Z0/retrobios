@@ -172,6 +172,24 @@ class OneSpellingPerOption(unittest.TestCase):
         self.assertEqual(missing, [])
 
 
+class ThePipelineRefreshesTheCommittedExport(unittest.TestCase):
+    """Step 2e wrote to <output-dir>/upstream while exports/ is the copy the
+    site and the platforms read, so a green run left it stale."""
+
+    def test_the_export_step_writes_the_default_directory(self):
+        import ast
+
+        source = (REPO_ROOT / "scripts" / "pipeline.py").read_text(encoding="utf-8")
+        for node in ast.walk(ast.parse(source)):
+            if (isinstance(node, ast.Assign)
+                    and any(getattr(t, "id", "") == "export_cmd" for t in node.targets)):
+                words = [getattr(e, "value", None) for e in node.value.elts]
+                self.assertIn("scripts/export_native.py", words)
+                self.assertNotIn("--output-dir", words)
+                return
+        self.fail("no export_cmd in pipeline.py")
+
+
 class ThePipelineCountsItsRealSteps(unittest.TestCase):
     """Labels read N/8 for a run of 24 steps, and the summary used keys
     the log never printed."""

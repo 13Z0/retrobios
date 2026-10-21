@@ -622,8 +622,9 @@ def _truth_steps(args: argparse.Namespace, results: dict) -> bool:
             sys.executable,
             "scripts/export_native.py",
             "--all",
-            "--output-dir",
-            str(Path(args.output_dir) / "upstream"),
+            # exports/ is committed with the code, like README.md and
+            # install/: written under the pack directory it went stale on
+            # every green run.
             "--truth-dir",
             str(Path(args.output_dir) / "truth"),
         ]
