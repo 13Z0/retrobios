@@ -190,3 +190,4 @@ files:
     hle_fallback: true
     note: "Read when a SCSI disk is attached, 0x4000 bytes. Otherwise the built-in stub is copied."
     source_ref: "cbus/scsiio.c:208-233"
+    unsourceable: "PC-98 SCSI BIOS image the collection does not hold, and a same-named ROM of another machine must not stand in"

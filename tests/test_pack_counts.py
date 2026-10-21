@@ -551,5 +551,41 @@ class TheReleaseNotesReadTheRecord(unittest.TestCase):
         self.assertIn("scripts/release_notes.py", page)
 
 
+class CoreCopiesKeepTheirCategory(unittest.TestCase):
+    """The second pass copies a file the platform declares to the path a core
+    reads it from. Its extra named no gap report entry, so verify looked its
+    category up by an empty key and counted RetroArch's six hiscore.dat
+    copies, game data, under core files."""
+
+    def test_a_copy_counts_as_its_entry_says(self):
+        from packextras import _collect_emulator_extras, hidden_extras
+
+        with tempfile.TemporaryDirectory(dir=REPO_ROOT / "tmp") as tmp:
+            held = Path(tmp) / "x.dat"
+            held.write_bytes(b"data")
+            sha1 = hashlib.sha1(b"data").hexdigest()
+            config = {"platform": "P", "_key": "p", "cores": ["demo"], "systems": {
+                "s": {"files": [{"name": "x.dat", "destination": "x.dat"}]}}}
+            profiles = {"demo": {
+                "emulator": "Demo", "type": "libretro", "cores": ["demo"],
+                "systems": ["s"],
+                "files": [{"name": "x.dat", "path": "core/x.dat",
+                           "category": "game_data"}],
+            }}
+            db = {"files": {sha1: {"path": str(held), "name": "x.dat", "sha1": sha1}},
+                  "indexes": {"by_name": {"x.dat": [sha1]}, "by_path_suffix": {}}}
+            (extra,) = _collect_emulator_extras(
+                config, "emulators", db, {"x.dat"}, "", profiles
+            )
+            self.assertEqual(
+                (extra["source_name"], extra["source_path"], extra["category"]),
+                ("x.dat", "core/x.dat", "game_data"),
+            )
+            kinds: dict[str, str] = {}
+            hidden_extras(config, "emulators", db, profiles, {"x.dat": str(held)},
+                          report=[], placed_kind=kinds)
+        self.assertEqual(kinds, {"core/x.dat": "game_data"})
+
+
 if __name__ == "__main__":
     unittest.main()

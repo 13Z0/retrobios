@@ -578,20 +578,6 @@ def slot_choices(
     return choices
 
 
-def apply_override(
-    override: str | None, local_path: str | None, status: str
-) -> tuple[str | None, str]:
-    """The file a pack serves at a destination once its slot is settled.
-
-    An entry the platform stores outside the collection, or a release asset
-    fetched for its declared hash, keeps its own answer. The builder and the
-    install manifest both read this.
-    """
-    if override and status not in ("external", "release_asset"):
-        return override, "slot_arbitrated"
-    return local_path, status
-
-
 def _strongest(claims: list[Claim]) -> Claim:
     """The profile claim with the strongest proof, the first emulator breaking ties.
 

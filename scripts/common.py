@@ -936,11 +936,21 @@ def _affinity_tokens(text: str) -> set[str]:
 
 
 def _owner_tokens(file_entry: dict) -> set[str]:
-    """Tokens naming the profile that asks for the file."""
+    """Tokens naming the profile that asks for the file.
+
+    A profile named after another with a suffix (cxbx-reloaded-2023,
+    mame4droid-2024) is a release of that emulator, and the tree named by
+    the shorter name is its own: cxbx-reloaded-2023 was served xemu's
+    encrypted EEPROM because bios/Other/cxbx-reloaded/ read as foreign.
+    Only whole leading words count, so dolphin-mmjr2 is not dolphin-mmjr.
+    """
     tokens: set[str] = set()
     for owner in (file_entry.get("source_profile"), file_entry.get("source_emulator")):
         if owner:
             tokens |= _affinity_tokens(str(owner).replace(" ", ""))
+    profile = str(file_entry.get("source_profile") or "").casefold()
+    words = [word for word in re.split(r"[^0-9a-z]+", profile) if word]
+    tokens |= {"".join(words[:end]) for end in range(1, len(words))}
     return tokens
 
 
@@ -1105,6 +1115,10 @@ def _holding_members(paths: list[str], members: list[dict]) -> list[str]:
 
     scores = {path: held(path) for path in paths}
     best = max(scores.values(), default=(0, 0))
+    if best == (0, 0):
+        # Not one declared member in any copy: the name is all that matches,
+        # and galgames.zip holding only an assembler listing is not the set.
+        return []
     return [path for path in paths if scores[path] == best]
 
 

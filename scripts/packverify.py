@@ -10,10 +10,7 @@ from collections import Counter
 
 from auto_fetch import DEFAULT_BIOS_DIR
 from artifacts import _build_timestamp
-from packextras import _collect_emulator_extras
-from packextras import _detect_extras_prefix
 from packpaths import _has_path_conflict
-from packpaths import _register_path
 from ziptools import build_zip_contents_index
 from ziptools import check_inside_zip
 from nativemode import digest_algorithm
@@ -525,6 +522,81 @@ def _structural_errors(zf: zipfile.ZipFile, zip_set: set) -> list[str]:
     return errors
 
 
+def _builder_extras(
+    config: dict,
+    emulators_dir: str,
+    db: dict,
+    emu_profiles: dict,
+    baseline_groups: dict[str, list[dict]],
+    base_dest: str,
+    is_flat: bool,
+    zip_set: set[str],
+    zip_lower: dict[str, str],
+    target_cores: set[str] | None,
+    region_drops: set[str],
+    data_registry: dict | None,
+) -> dict[str, str]:
+    """{full destination: local copy} of each core extra the builder writes.
+
+    The platform's paths come first, as in the builder: a destination the
+    pack holds whose declarations resolve to a file, or that the platform
+    keeps for a user_provided or external entry. One whose declarations
+    resolve to nothing is left free, since the builder then places a core's
+    file there.
+    """
+    from packextras import ExtraResolver, hidden_extras
+    from packresolve import resolve_declaration
+    from validation import _build_validation_index, destination_owners
+
+    shipped: dict[str, str | None] = {}
+    for expected, declarations in baseline_groups.items():
+        if expected not in zip_set and expected.lower() not in zip_lower:
+            continue
+        unflat = (
+            f"{base_dest}/{expected}"
+            if is_flat and base_dest and not expected.startswith(f"{base_dest}/")
+            else expected
+        )
+        if any(fe.get("storage") in ("user_provided", "external") for fe in declarations):
+            shipped[unflat] = None
+            continue
+        local = next(
+            (
+                found for fe in declarations
+                if (found := resolve_declaration(
+                    fe, db, DEFAULT_BIOS_DIR, None, data_registry, None, offline=True,
+                )[0])
+            ),
+            None,
+        )
+        if local:
+            shipped[unflat] = local
+    platform_profiles = {
+        name: emu_profiles[name] for name in resolve_platform_cores(config, emu_profiles)
+    }
+    placed_local: dict[str, str] = {}
+    hidden_extras(
+        config, emulators_dir, db, emu_profiles, shipped, target_cores,
+        region_drops or None,
+        resolver=ExtraResolver(
+            db, DEFAULT_BIOS_DIR, build_zip_contents_index(db), data_registry,
+            _build_validation_index(platform_profiles),
+            destination_owners(platform_profiles), True,
+        ),
+        placed_local=placed_local,
+    )
+    return placed_local
+
+
+def _same_content(zf: zipfile.ZipFile, member: str, local: str) -> bool:
+    """Whether a pack member carries the bytes of a local copy, or the
+    members of an archive the builder normalized."""
+    with open(local, "rb") as handle:
+        if zf.read(member) == handle.read():
+            return True
+    return local.lower().endswith(".zip") and _same_members(zf, member, local)
+
+
 def verify_pack_against_platform(
     zip_path: str,
     platform_name: str,
@@ -707,66 +779,33 @@ def verify_pack_against_platform(
                 ):
                     errors.append(member_errors[0])
 
-        # 2. Core extras presence (files from emulator profiles, in repo)
-        #    Mirror the pack builder's skip logic: only count files that
-        #    can actually be resolved and don't have path conflicts.
+        # 2. Core extras: the builder's own placement replayed
+        #    (packextras.hidden_extras, which verify reads too), after the
+        #    platform files it wrote. Each placed extra must sit at its path
+        #    with the bytes the builder resolved: an empty seen set and a
+        #    presence test credited a core file at a path where the pack
+        #    holds the platform's other dump.
         core_checked = 0
         core_present = 0
         if db is not None:
-            core_files = _collect_emulator_extras(
-                config,
-                emulators_dir,
-                db,
-                set(),
-                base_dest,
-                emu_profiles,
-                target_cores=target_cores,
+            placed_local = _builder_extras(
+                config, emulators_dir, db, emu_profiles, baseline_groups,
+                base_dest, is_flat, zip_set, zip_lower, target_cores,
+                region_drops, data_registry,
             )
-            seen_conformance: set[str] = set(zip_set)
-            seen_parents: set[str] = set()
-            for n in zip_set:
-                parts = n.split("/")
-                for i in range(1, len(parts)):
-                    seen_parents.add("/".join(parts[:i]))
-            extras_pfx = _detect_extras_prefix(config, base_dest)
-            for fe in core_files:
-                raw_dest = fe.get("destination", fe.get("name", ""))
-                dest = sanitize_pack_path(raw_dest)
-                if not dest:
-                    continue
-                if region_drops and sanitize_pack_path(dest) in region_drops:
-                    continue
-                # The builder's own placement: the prefix, then the flattening
-                # of a pack written at the BIOS root. A destination that
-                # already starts with the prefix (aethersx2's bios/<image>)
-                # lands at the root of a flat pack, not under bios/.
-                if extras_pfx and not dest.startswith(f"{extras_pfx}/"):
-                    full = f"{extras_pfx}/{dest}"
-                else:
-                    full = dest
-                full = _flat(full, base_dest, is_flat)
-                # Skip path conflicts (same logic as pack builder)
-                if _has_path_conflict(full, seen_conformance, seen_parents):
-                    continue
-                # Skip unresolvable files (game_data dirs, etc.)
-                local_path, status = resolve_file(
-                    fe,
-                    db,
-                    "bios",
-                    {},
-                    dest_hint=raw_dest,
-                    data_dir_registry=data_registry,
-                    offline=True,
-                )
-                if status in ("not_found", "external", "user_provided"):
-                    continue
+            for full, local in sorted(placed_local.items()):
                 core_checked += 1
-                if full in zip_set or full.lower() in zip_lower:
-                    core_present += 1
-                    seen_conformance.add(full)
-                    _register_path(full, seen_conformance, seen_parents)
-                else:
+                member = _flat(full, base_dest, is_flat)
+                member = member if member in zip_set else zip_lower.get(member.lower())
+                if member is None:
                     errors.append(f"core missing: {full}")
+                elif not _same_content(zf, member, local):
+                    errors.append(
+                        f"core file differs: {member} is not the {os.path.basename(local)}"
+                        " the builder places there"
+                    )
+                else:
+                    core_present += 1
 
         checked = baseline_checked + core_checked
         present = baseline_present + core_present

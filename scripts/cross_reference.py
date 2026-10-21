@@ -45,7 +45,13 @@ from common import (
     select_emulator_profiles,
 )
 from hashing import parse_hash_list
-from validation import case_folded_slots, declaration_settles, outside_gap_scope
+from validation import (
+    case_folded_slots,
+    declaration_settles,
+    installed_with_emulator,
+    outside_gap_scope,
+    unread_on,
+)
 
 yaml = require_yaml()
 
@@ -429,7 +435,11 @@ class FileConsumers:
         for name, config in configs.items():
             for system_id, system in config.get("systems", {}).items():
                 for entry in system.get("files", []):
-                    sha1 = self.sha1_of(entry, entry.get("destination", ""))
+                    # No destination hint, as the builder, the manifest and
+                    # verify resolve a declaration: with one, RetroBat's 63
+                    # mame/hash lists credited another revision than the one
+                    # its manifest installs.
+                    sha1 = self.sha1_of(entry)
                     if sha1:
                         self.platforms.setdefault(sha1, set()).add(name)
                         self.platform_systems.setdefault(sha1, {}).setdefault(
@@ -606,8 +616,14 @@ def _cross_reference_profile(
     report: dict,
     index: dict,
     standalone_cores: set[str] | None = None,
+    platform: str = "",
 ) -> None:
     """Compare one emulator profile against what the platforms declare.
+
+    *platform* is the platform key under --platform, empty for the whole
+    tree. It decides, through the functions verify reads, which entries the
+    platform's launcher never opens and which ones its emulator package
+    already installs.
 
     Split out of cross_reference, where it was a 200-line loop body that
     carried the whole function's branching: every file is resolved by name,
@@ -667,7 +683,7 @@ def _cross_reference_profile(
         if len(layouts) > 1:
             # One file read at one path by both builds counts once.
             seen_key = (effective_path.casefold(), seen_key)
-        if not fname or seen_key in seen_files:
+        if not fname or seen_key in seen_files or unread_on(f, platform):
             continue
 
         # Collect unsourceable files separately (documented, not a gap)
@@ -759,7 +775,7 @@ def _cross_reference_profile(
             "name": fname,
             "path": effective_path,
             "required": f.get("required", False),
-            "bundled": bool(f.get("bundled")),
+            "bundled": installed_with_emulator(f, platform),
             "note": f.get("note", ""),
             "source_ref": f.get("source_ref", ""),
             "in_platform": False,
@@ -798,6 +814,7 @@ def cross_reference(
     all_declared: dict[str, list[tuple[int | None, str]]] | None = None,
     standalone_cores: set[str] | None = None,
     folded_slots: frozenset[str] = frozenset(),
+    platform: str = "",
 ) -> dict:
     """Compare emulator profiles against platform declarations.
 
@@ -839,7 +856,8 @@ def cross_reference(
     }
     for emu_name, profile in profiles.items():
         _cross_reference_profile(
-            emu_name, profile, declared, report, index, standalone_cores
+            emu_name, profile, declared, report, index, standalone_cores,
+            platform,
         )
 
     return report
@@ -870,14 +888,14 @@ def print_report(
         if gaps == 0 and not show_clean:
             continue
 
-        # Counted once, for the heading and the total alike: a file bundled
-        # with its emulator is not one to source.
-        emulator_bundled = sum(
-            1 for g in data["gap_details"]
-            if g.get("bundled") and g.get("source") == "missing"
-        )
+        # Counted once, for the heading and the total alike: a file installed
+        # with its emulator is neither one to source nor one the pack brings,
+        # held or not (validation.deliverable leaves it out of every pack).
+        bundled_gaps = [g for g in data["gap_details"] if g.get("bundled")]
+        emulator_bundled = len(bundled_gaps)
         counts = {key: data.get(f"gap_{key}", 0) for key in totals}
-        counts["missing"] -= emulator_bundled
+        for g in bundled_gaps:
+            counts[g.get("source", "missing")] -= 1
         counts["bundled"] = emulator_bundled
         parts = [f"{count} {key}" for key, count in counts.items() if count]
         status = ", ".join(parts) if parts else "OK"
@@ -894,7 +912,7 @@ def print_report(
         for g in data["gap_details"]:
             req = "*" if g["required"] else " "
             src = g.get("source", "missing").upper()
-            if g.get("bundled") and g.get("source") == "missing":
+            if g.get("bundled"):
                 src = "BUNDLED"
             # One line per file: a note spanning lines fell to column 0
             # between entries and read as an emulator heading.
@@ -918,7 +936,7 @@ def print_report(
           f"large_file: {totals['large_file']})")
     print(f"  {totals['missing']} missing (need to be sourced)")
     if bundled:
-        print(f"  {bundled} bundled with their emulator, not collected")
+        print(f"  {bundled} bundled with their emulator, not packed")
 
 
 def main() -> None:
@@ -1035,6 +1053,7 @@ def main() -> None:
         all_declared=declared_names(args.platforms_dir, selected, db),
         standalone_cores=standalone_cores,
         folded_slots=folded_declared_slots(args.platforms_dir, selected, db),
+        platform=config.get("_key", args.platform) if args.platform else "",
     )
 
     if args.json:

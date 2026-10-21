@@ -316,6 +316,20 @@ class AnArchiveRankedByWhatItHolds(unittest.TestCase):
             for name in ("epr-21330.ic27", "epr-21332.ic27")]}
         self.assertEqual(self._resolve(entry, db), "bios/MAME/hod2bios.zip")
 
+    def test_a_copy_holding_no_declared_member_is_not_the_archive(self):
+        """galgames.zip held only an assembler listing and none of the six
+        ROMs MAME declares: the name step served it as the BIOS set."""
+        from common import resolve_local_file
+
+        db = self._db([("bios/MAME/hod2bios.zip", ["listing.lst"])])
+        entry = {"name": "hod2bios.zip", "contents": [
+            {"name": name, "crc32": format(zlib.crc32(self.roms[name]), "08x")}
+            for name in ("epr-21330.ic27", "epr-21332.ic27")]}
+        path, status = resolve_local_file(entry, db)
+        self.assertEqual(status, "hash_mismatch")
+        self.assertEqual(Path(path).relative_to(self.root).as_posix(),
+                         "bios/MAME/hod2bios.zip")
+
     def test_without_a_layout_a_superset_primary_wins(self):
         db = self._db([("bios/Arcade/hod2bios.zip", ["epr-21330.ic27"]),
                        ("bios/MAME/hod2bios.zip", list(self.roms))])

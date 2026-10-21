@@ -345,6 +345,46 @@ def resolve_file(
     return None, "not_found"
 
 
+def apply_override(
+    override: str | None, local_path: str | None, status: str
+) -> tuple[str | None, str]:
+    """The file a pack serves at a destination once its slot is settled.
+
+    An entry the platform stores outside the collection, or a release asset
+    fetched for its declared hash, keeps its own answer.
+    """
+    if override and status not in ("external", "release_asset"):
+        return override, "slot_arbitrated"
+    return local_path, status
+
+
+def resolve_declaration(
+    file_entry: dict,
+    db: dict,
+    bios_dir: str,
+    zip_contents: dict | None,
+    data_dir_registry: dict | None,
+    override: str | None,
+    *,
+    offline: bool | None = None,
+) -> tuple[str | None, str]:
+    """The file a platform pack serves for one of the platform's declarations.
+
+    Read by the builder, the install manifest, verify and the region pass.
+    verify resolved with common.resolve_local_file and put the slot override
+    first: without the release-asset tier a gitignored file absent from bios/
+    read as missing there while the pack shipped the cached asset.
+    """
+    return apply_override(override, *resolve_file(
+        file_entry,
+        db,
+        bios_dir,
+        zip_contents,
+        data_dir_registry=data_dir_registry,
+        offline=offline,
+    ))
+
+
 def preferred_entries(
     pack_systems: dict,
     db: dict,

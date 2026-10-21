@@ -872,17 +872,14 @@ def generate_pack(
                     total_files += 1
                     continue
 
-                local_path, status = resolve_file(
+                local_path, status = resolve_declaration(
                     file_entry,
                     db,
                     bios_dir,
                     zip_contents,
-                    data_dir_registry=data_registry,
+                    data_registry,
+                    slot_overrides.get(full_dest),
                     offline=offline,
-                )
-
-                local_path, status = slots.apply_override(
-                    slot_overrides.get(full_dest), local_path, status
                 )
 
                 if status == "external":
@@ -4235,14 +4232,15 @@ def generate_manifest(
             file_entry: dict, sys_id: str, dest: str, override: str | None
         ) -> tuple[str | None, str]:
             """The file served once the slot is settled, or None and why not."""
-            local_path, status = slots.apply_override(override, *resolve_file(
+            local_path, status = resolve_declaration(
                 file_entry,
                 db,
                 bios_dir,
                 zip_contents,
-                data_dir_registry=data_registry,
+                data_registry,
+                override,
                 offline=offline,
-            ))
+            )
             if status == "not_found" and not reads_file_contents(verification_mode):
                 found = agnostic_substitute(file_entry, sys_id, db, manifest_profiles)
                 if found:
@@ -4909,6 +4907,7 @@ from packresolve import (  # noqa: E402,F401
     parse_hash_input,
     parse_hash_file,
     lookup_hashes,
+    resolve_declaration,
     resolve_file,
     download_external,
 )
