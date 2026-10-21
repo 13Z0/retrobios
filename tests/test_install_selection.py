@@ -43,6 +43,7 @@ class OneRegionVocabulary(unittest.TestCase):
         self.assertEqual(install.REGION_ALIASES, region.ALIASES)
         self.assertEqual(install.WORLD_REGION, region.WORLD)
         self.assertEqual(install.REGIONS, region.REGIONS)
+        self.assertEqual(install.FILE_GROUP, region.FILE_GROUP)
 
 
 class TheRegionRuleIsTheBuilders(unittest.TestCase):
@@ -72,26 +73,68 @@ class TheRegionRuleIsTheBuilders(unittest.TestCase):
                     index[dest] = {"regions": regions,
                                    "has_untagged": not regions, "emulators": [],
                                    "priorities": {priority}}
-                groups.setdefault(f"g{g}", []).append((dest, dest))
-                if f"g{g}" not in entries[dest]["region_groups"]:
-                    entries[dest]["region_groups"].append(f"g{g}")
+                # A lone core file no system names gets a group of its own.
+                group = f"g{g}" if rng.random() < 0.85 else f"e{region.FILE_GROUP}{dest}"
+                groups.setdefault(group, []).append((dest, dest))
+                if group not in entries[dest]["region_groups"]:
+                    entries[dest]["region_groups"].append(group)
         for entry in entries.values():
             if not entry["regions"]:
                 del entry["regions"], entry["region_groups"]
                 entry.pop("priority", None)
         requested = rng.sample(["north-america", "europe", "japan", "uk", "canada"],
                                rng.randint(1, 3))
-        return groups, index, list(entries.values()), requested
+        held = {dest for dest in entries if rng.random() < 0.7}
+        return groups, index, list(entries.values()), requested, held
 
     def test_two_thousand_random_platforms(self):
         rng = random.Random(20261010)
         for trial in range(2000):
-            groups, index, entries, requested = self._case(rng)
+            groups, index, entries, requested, held = self._case(rng)
             with self.subTest(trial=trial):
                 self.assertEqual(
                     install.region_drops(entries, requested),
                     region.resolve_region_drops(groups, index, requested),
                 )
+                self.assertEqual(
+                    install.region_drops(entries, requested, held=held),
+                    region.resolve_region_drops(groups, index, requested, held),
+                )
+
+    def test_narrow_passes_the_installable_files_as_held(self):
+        """The builder passes what the collection holds (generate_pack
+        _select_variants). An omission is the installer's unheld file."""
+        rng = random.Random(20261021)
+        for trial in range(500):
+            groups, index, entries, requested, held = self._case(rng)
+            files = [dict(e, size=1, cores=None) for e in entries if e["dest"] in held]
+            omitted = [dict(e, cores=None) for e in entries if e["dest"] not in held]
+            kept, still_omitted = install.narrow(files, omitted, [], [], requested)
+            drops = region.resolve_region_drops(groups, index, requested, held)
+            with self.subTest(trial=trial):
+                self.assertEqual(
+                    {f["dest"] for f in kept},
+                    {f["dest"] for f in files} - drops,
+                )
+                self.assertEqual(
+                    {o["dest"] for o in still_omitted},
+                    {o["dest"] for o in omitted} - drops,
+                )
+
+    def test_a_lone_core_file_leaves_its_systems_drop(self):
+        """Dolphin's GC/EUR/IPL.bin is a core extra no system names, plus the
+        GameCube's own declaration. The builder skips the one-file group, so
+        --region us drops it."""
+        entries = [
+            {"dest": "GC/USA/IPL.bin", "regions": ["north-america"],
+             "region_system_groups": ["nintendo-gamecube"]},
+            {"dest": "GC/EUR/IPL.bin", "regions": ["europe"],
+             "region_groups": [f"dolphin{region.FILE_GROUP}GC/EUR/IPL.bin"],
+             "region_system_groups": ["nintendo-gamecube"]},
+        ]
+        self.assertEqual(
+            install.region_drops(entries, ["north-america"]), {"GC/EUR/IPL.bin"}
+        )
 
 
 class Narrowing(unittest.TestCase):
@@ -138,11 +181,20 @@ class Narrowing(unittest.TestCase):
         self.assertIn("scph5501.bin", files)
         self.assertEqual(omitted, [])
 
-    def test_an_unavailable_match_still_wins_as_the_builder_counts_it(self):
+    def test_an_unavailable_match_never_displaces_a_held_file(self):
+        """The builder keeps the held BIOS when the requested one is missing
+        (region.resolve_region_drops, held). The missing one stays reported."""
         files, omitted = self._dests([], [], ["europe"])
-        self.assertNotIn("scph5500.bin", files)
-        self.assertNotIn("scph5501.bin", files)
+        self.assertIn("scph5500.bin", files)
+        self.assertIn("scph5501.bin", files)
         self.assertEqual(omitted, ["scph5502.bin"])
+
+    def test_a_missing_japanese_bios_keeps_the_american_one(self):
+        files = [dict(self.FILES[1])]
+        omitted = [dict(self.OMITTED[0], dest="scph5500.bin", regions=["japan"])]
+        kept, still = install.narrow(files, omitted, [], [], ["japan"])
+        self.assertEqual([f["dest"] for f in kept], ["scph5501.bin"])
+        self.assertEqual([o["dest"] for o in still], ["scph5500.bin"])
 
     def test_no_match_keeps_every_regional_file(self):
         files, _ = self._dests([], [], ["brazil"])

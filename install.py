@@ -142,6 +142,8 @@ _REGION_PARENT = {
     member: parent for parent, members in REGION_TREE.items() for member in members
 }
 REGIONS = frozenset({WORLD_REGION} | set(REGION_TREE) | set(_REGION_PARENT))
+# Marks a region group named after one file that no system names.
+FILE_GROUP = ":file:"
 MAX_SELECTION_TAGS = 1000
 SELECTION_FIELDS = ("systems", "regions", "region_groups", "region_system_groups")
 # The files cores load for systems the platform does not list (game engines,
@@ -2220,7 +2222,10 @@ def _region_rank(file_regions: set[str], requested: list[str]) -> int:
 
 
 def region_drops(
-    entries: list[dict], requested: list[str], systems: list[str] | None = None
+    entries: list[dict],
+    requested: list[str],
+    systems: list[str] | None = None,
+    held: set[str] | None = None,
 ) -> set[str]:
     """Destinations a region priority list withdraws.
 
@@ -2228,10 +2233,16 @@ def region_drops(
     groups the manifest records. Per group, the best-ranked regional file
     stays. A world file beats unmatched regional ones the code does not search
     before it (`priority`, lower first). When nothing matches and no world
-    file exists, every regional file stays, so a group is never emptied. A file with no region never competes and always stays.
+    file exists, every regional file stays, so a group is never emptied. A
+    file with no region never competes and always stays.
 
     A core extra competes whatever systems are chosen, while a platform's own
     declaration competes only when its system is kept, as in the pack.
+
+    ``held`` names the destinations the manifest can install. A match it
+    lacks never displaces a held file: the American BIOS stays under
+    --region japan when the Japanese one is missing. A group named after a
+    single file (FILE_GROUP) competes with nothing and keeps nothing.
     """
     if not requested:
         return set()
@@ -2253,7 +2264,9 @@ def region_drops(
             groups.setdefault(group, []).append((set(regions), entry["dest"], priority))
     keep: set[str] = set()
     drop: set[str] = set()
-    for members in groups.values():
+    for group_id, members in groups.items():
+        if FILE_GROUP in group_id:
+            continue
         world = {dest for regions, dest, _p in members if WORLD_REGION in regions}
         ranks = {dest: priority for _regions, dest, priority in members}
         regional = [
@@ -2265,12 +2278,19 @@ def region_drops(
         if not regional:
             continue
         matched = [(rank, dest) for rank, dest in regional if rank < len(requested)]
-        if matched:
-            best = min(rank for rank, _dest in matched)
-            keep |= {dest for rank, dest in matched if rank == best}
-            drop |= {dest for _rank, dest in regional}
-        elif world:
-            world_ranks = [ranks[dest] for dest in world]
+        winners, rivals = matched, world
+        if held is not None:
+            winners = [(rank, dest) for rank, dest in matched if dest in held]
+            rivals = world & held
+        if winners:
+            best = min(rank for rank, _dest in winners)
+            keep |= {
+                dest for rank, dest in matched
+                if rank == best or (rank < best and dest not in (held or ()))
+            }
+            drop |= {dest for _rank, dest in regional if dest not in keep}
+        elif rivals:
+            world_ranks = [ranks[dest] for dest in rivals]
             best_world = min(world_ranks) if None not in world_ranks else None
             for _rank, dest in regional:
                 ours = ranks[dest]
@@ -2310,7 +2330,10 @@ def narrow(
         files = _filter_by_target(files, cores)
         omitted = _filter_by_target(omitted, cores)
     if regions:
-        dropped = region_drops(files + omitted, regions, systems)
+        # The builder's held set: what the collection serves. An omission
+        # answers the request but takes no installable file's place.
+        held = {f["dest"] for f in files}
+        dropped = region_drops(files + omitted, regions, systems, held)
         files = [f for f in files if f["dest"] not in dropped]
         omitted = [o for o in omitted if o["dest"] not in dropped]
     if systems:
