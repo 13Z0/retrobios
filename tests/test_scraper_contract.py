@@ -941,5 +941,66 @@ class HashScraperRefusesAnEmptyRead(unittest.TestCase):
                 self.assertTrue(f._is_cache_fresh())
 
 
+
+class EmptyScrapeWritesNothing(unittest.TestCase):
+    """An upstream that changed shape parses to nothing: the run fails and
+    the committed platform file stays as it was."""
+
+    def _run(self, scraper_class, output: Path) -> int:
+        from scraper.base_scraper import scraper_cli  # noqa: PLC0415
+
+        argv = ["scraper", "-o", str(output)]
+        with mock.patch.object(sys, "argv", argv), \
+                mock.patch("sys.stderr", new_callable=io.StringIO):
+            try:
+                scraper_cli(scraper_class)
+            except SystemExit as exc:
+                return int(exc.code or 0)
+        return 0
+
+    def test_no_requirement_exits_non_zero(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            output = Path(tmp) / "platform.yml"
+            output.write_text("systems:\n  a:\n    files:\n    - name: x\n")
+            self.assertEqual(self._run(_StubScraper, output), 1)
+            self.assertIn("name: x", output.read_text())
+
+    def test_a_generated_file_without_files_exits_non_zero(self):
+        class NoSystems(_StubScraper):
+            def __init__(self):
+                super().__init__([BiosRequirement(name="a.bin", system="s")])
+
+            def generate_platform_yaml(self) -> dict:
+                return {"platform": "x", "systems": {}}
+
+        with tempfile.TemporaryDirectory() as tmp:
+            output = Path(tmp) / "platform.yml"
+            self.assertEqual(self._run(NoSystems, output), 1)
+            self.assertFalse(output.exists())
+
+    def test_a_platform_that_inherits_its_files_may_list_none(self):
+        class CoresOnly(_StubScraper):
+            lists_files = False
+
+            def generate_platform_yaml(self) -> dict:
+                return {"inherits": "retroarch", "cores": ["mgba"]}
+
+        with tempfile.TemporaryDirectory() as tmp:
+            output = Path(tmp) / "platform.yml"
+            with mock.patch("sys.stdout", new_callable=io.StringIO):
+                self.assertEqual(self._run(CoresOnly, output), 0)
+            self.assertIn("mgba", output.read_text())
+
+    def test_retropie_without_a_package_raises(self):
+        archive = RetroPiePackageList._archive(
+            {"scriptmodules/supplementary/autostart.sh": 'rp_module_id="autostart"\n'}
+        )
+        from scraper.retropie_scraper import Scraper  # noqa: PLC0415
+
+        scraper = Scraper(url="https://codeload.github.com/RetroPie/RetroPie-Setup/tar.gz/" + "0" * 40)
+        with self.assertRaises(ValueError):
+            scraper.module_ids(archive)
+
+
 if __name__ == "__main__":
     unittest.main()
