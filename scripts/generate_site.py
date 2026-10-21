@@ -4671,8 +4671,7 @@ Without them, the emulator either refuses to start the game or runs it with
 reduced accuracy. RetroBIOS maps those requirements to source-traced emulator
 profiles and verifies local content against the evidence each platform exposes.
 
-This page picks the right pack for a setup. For BIOS directory paths per
-platform, verification, and the CLI, see
+BIOS directory paths per platform, verification and the CLI are in
 [Getting started](wiki/getting-started.md).
 
 ## Quick install
