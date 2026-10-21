@@ -9,6 +9,7 @@ profiled_date: "2026-09-17"
 source_commit:
   standalone: "20f497c9620a7f4e55b7752e1d22734f9d7492fa"
   libretro: "4c4e069f16a8ad6ed79e046046c56d51558c7daf"
+upstream_commit: "fabc9a62174f8734a113df6d244f5539ef6b8fcf"
 core_version:
   standalone: "2.2.1"
   libretro: "2.0.0"
