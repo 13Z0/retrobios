@@ -58,6 +58,17 @@ class TestComparable(unittest.TestCase):
     def test_saturn_fused_slug_is_under_asia(self):
         self.assertTrue(region.comparable("asia", "asia-ntsc"))
 
+    def test_an_area_matches_the_territory_it_serves(self):
+        """kronos tags the ST-V BIOS epr-19854.ic8 taiwan, mednafen_stv tags
+        it asia-ntsc, the SMPC area Mednafen names for Taiwan."""
+        self.assertTrue(region.comparable("taiwan", "asia-ntsc"))
+        self.assertTrue(region.comparable("asia-ntsc", "taiwan"))
+        self.assertTrue(region.comparable("china", "asia-pal"))
+
+    def test_an_area_does_not_match_other_territories(self):
+        self.assertFalse(region.comparable("japan", "asia-ntsc"))
+        self.assertFalse(region.comparable("taiwan", "asia-pal"))
+
 
 class TestNormalizeDeclared(unittest.TestCase):
     def test_none_is_empty(self):
@@ -889,6 +900,13 @@ class RegionalRequestsKeepWhatTheCodeLoads(unittest.TestCase):
         ("ace-dl", ["france"], "private/firmware/Amstrad_s4.cpr"),
         ("duckstation", ["brazil"], "scph5501.bin"),
         ("duckstation", ["south-korea"], "scph5500.bin"),
+        ("mednafen_stv", ["taiwan", "north-america"], "epr-19854.ic8"),
+        ("kronos", ["asia-ntsc", "north-america"], "epr-19854.ic8"),
+        ("beetle_saturn", ["taiwan", "north-america"], "sega_101.bin"),
+        ("pcsx_rearmed", ["brazil", "japan"], "scph5501.bin"),
+        ("pcsx_rearmed", ["brazil", "japan"], "scph1001.bin"),
+        ("blastem", ["australia", "north-america"], "bios_CD_E.bin"),
+        ("kega-fusion", ["australia", "north-america"], "eu_mcd1_9210.bin"),
     )
 
     def test_each_request_keeps_its_file(self):
@@ -1092,6 +1110,60 @@ class MegaCdAmericasIsOneCode(unittest.TestCase):
                         and "latin-america" not in regions:
                     narrow.append(f"{path.stem}: {entry.get('name')}")
         self.assertEqual(narrow, [])
+
+
+class MegaCdEuropeServesOceania(unittest.TestCase):
+    """A Mega CD disc carries one PAL code for Europe and Australia, so every
+    emulator picking the European BIOS by that code picks it for an
+    Australian disc too. blastem and kega-fusion tagged it europe alone, and a
+    --region au,us pack dropped the BIOS those discs boot with."""
+
+    def test_a_european_mega_cd_bios_includes_oceania(self):
+        import yaml
+
+        root = Path(__file__).resolve().parents[1]
+        narrow = []
+        for path in sorted((root / "emulators").glob("*.yml")):
+            profile = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+            for entry in profile.get("files") or []:
+                system = str(entry.get("system", ""))
+                regions = entry.get("region") or []
+                if system in ("sega-megacd", "mega-cd") and "europe" in regions \
+                        and "oceania" not in regions:
+                    narrow.append(f"{path.stem}: {entry.get('name')}")
+        self.assertEqual(narrow, [])
+
+
+class PcsxRearmedUsSlotIsTheDefault(unittest.TestCase):
+    """CheckCdrom sets PSX_REGION_US before reading the licence and only
+    "Inc." or "Euro pe" move it (libpcsxcore/misc.c:422-453): a disc of any
+    other market boots the US slot."""
+
+    def test_every_us_slot_bios_includes_latin_america(self):
+        from common import load_emulator_profiles
+
+        tagged = [
+            f for f in load_emulator_profiles("emulators")["pcsx_rearmed"]["files"]
+            if "north-america" in (f.get("region") or [])
+        ]
+        self.assertEqual(len(tagged), 4)
+        for entry in tagged:
+            with self.subTest(name=entry["name"]):
+                self.assertIn("latin-america", entry["region"])
+
+
+class FusionSmsExportBiosFollowsTheSetting(unittest.TestCase):
+    """Kega Fusion tells a Japanese Master System cart from an export one by
+    the header, then picks USA or EUR from its CountryOrder setting or a CRC32
+    list. Neither export BIOS is chosen for a territory the cart names."""
+
+    def test_the_export_bioses_are_unregioned(self):
+        from common import load_emulator_profiles
+
+        files = {f["name"]: f for f in load_emulator_profiles("emulators")["kega-fusion"]["files"]}
+        for name in ("bios_U.sms", "bios_E.sms"):
+            with self.subTest(name=name):
+                self.assertNotIn("region", files[name])
 
 
 class NoMarketStopsAtAustralia(unittest.TestCase):

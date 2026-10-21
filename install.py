@@ -138,6 +138,10 @@ REGION_ALIASES: dict[str, str] = {
     "auto": WORLD_REGION,
     "gb": "uk",
 }
+AREA_TERRITORIES: dict[str, frozenset] = {
+    "asia-ntsc": frozenset({"taiwan"}),
+    "asia-pal": frozenset({"china"}),
+}
 _REGION_PARENT = {
     member: parent for parent, members in REGION_TREE.items() for member in members
 }
@@ -2209,7 +2213,13 @@ def canonical_region(raw: str) -> str:
 
 
 def _region_comparable(a: str, b: str) -> bool:
-    return a == b or _REGION_PARENT.get(a) == b or _REGION_PARENT.get(b) == a
+    return (
+        a == b
+        or _REGION_PARENT.get(a) == b
+        or _REGION_PARENT.get(b) == a
+        or a in AREA_TERRITORIES.get(b, ())
+        or b in AREA_TERRITORIES.get(a, ())
+    )
 
 
 def _region_rank(file_regions: set[str], requested: list[str]) -> int:

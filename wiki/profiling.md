@@ -186,7 +186,10 @@ What does not, and why each trap is easy to fall into:
   `env.Loader.ReqSpec == "PAL"`, a video specification, and the Atari 2600 has
   no region lock. There is no signal field: drop `region:` rather than map it.
   The exception is hardware that fuses both axes in one register, such as the
-  Saturn SMPC area codes behind `asia-ntsc` and `asia-pal`.
+  Saturn SMPC area codes behind `asia-ntsc` and `asia-pal`. Mednafen names
+  them for Taiwan and China, so a `--region taiwan` request reaches an
+  `asia-ntsc` file and a `--region china` request an `asia-pal` one, and the
+  other way round (`AREA_TERRITORIES` in `scripts/region.py`).
 - **A single-region system.** When every file of a system shares one region,
   the pack filter keeps them all anyway, so annotating adds nothing.
 - **A language without a territory.** Arabic MSX variants, CJK fonts. The
