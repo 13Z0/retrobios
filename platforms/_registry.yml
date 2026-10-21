@@ -269,10 +269,23 @@ platforms:
         parse_key: system_directory
       # Handheld firmwares that run RetroArch as their frontend: muOS,
       # ArkOS, and the stock Linux of Anbernic devices (dmenu).
+      # muOS copies its default config on first launch and RetroArch reads
+      # /run/muos/storage/bios, bound to MUOS/bios on the second card when
+      # it holds one, else the first (MustardOS/internal f41f4a89,
+      # script/control/retroarch.sh:8-20, script/device/bind.sh:4,116-150,
+      # share/emulator/retroarch/retroarch.default.cfg:2806,3151).
+      - os: linux
+        method: config_file
+        config: /opt/muos/share/info/config/retroarch.cfg
+        parse_key: system_directory
+      - os: linux
+        method: config_file
+        config: /opt/muos/share/emulator/retroarch/retroarch.default.cfg
+        parse_key: system_directory
       - os: linux
         method: file_exists
         file: /opt/muos
-        bios_path: /mnt/mmc/MUOS/bios
+        bios_path: /run/muos/storage/bios
       - os: linux
         method: file_exists
         file: /mnt/mmc/MUOS
@@ -300,14 +313,22 @@ platforms:
     target_source: https://github.com/batocera-linux/batocera.linux
     install:
       detect:
-      # Knulli is a Batocera derivative and carries its markers too.
+      # Knulli, a Batocera derivative (knulli-cfw/knulli-linux 57afa662):
+      # OS_NAME in os-release (board/scripts/post-build-script.sh:233-236),
+      # and knulli.version (package/system/knulli-system/knulli-system.mk:98-102).
       - os: linux
-        method: file_exists
-        file: /etc/knulli-release
+        method: os_release
+        match: [OS_NAME=knulli]
         bios_path: /userdata/bios
       - os: linux
         method: file_exists
-        file: /etc/batocera-version
+        file: /usr/share/knulli/knulli.version
+        bios_path: /userdata/bios
+      # batocera.linux 38845725, package/batocera/core/batocera-system/
+      # batocera-system.mk:21-22 writes batocera.arch and batocera.version.
+      - os: linux
+        method: file_exists
+        file: /usr/share/batocera/batocera.version
         bios_path: /userdata/bios
       standalone_copies: *standalone_copies
   recalbox:
@@ -351,6 +372,14 @@ platforms:
     target_source: null
     install:
       detect:
+      # RetroBat.exe writes its own folder there on every start, wherever it
+      # was installed (retrobat-executable 702da66a,
+      # RetroBat/RetroBat/Program.cs:57 and 99, RegistryTools.cs:15-50).
+      - os: windows
+        method: registry
+        key: 'HKCU\SOFTWARE\RetroBat'
+        value: LatestKnownInstallPath
+        bios_subdir: bios
       # installer.iss: DefaultDirName=C:\RetroBat, the first place to look.
       - os: windows
         method: path_exists
@@ -384,9 +413,16 @@ platforms:
       - os: linux
         method: path_exists
         path: $HOME/Emulation/bios
+      # functions/all.ps1:4-14 (emudeck-we 037460ef): the APPDATA settings,
+      # else the profile ones, and C:\Emulation when neither names a folder.
       - os: windows
         method: config_file
         config: '%APPDATA%\EmuDeck\settings.ps1'
+        parse_key: $emulationPath
+        bios_subdir: bios
+      - os: windows
+        method: config_file
+        config: '%USERPROFILE%\EmuDeck\settings.ps1'
         parse_key: $emulationPath
         bios_subdir: bios
       standalone_copies: *standalone_copies
@@ -475,6 +511,14 @@ platforms:
       - os: linux
         method: path_exists
         path: /romm/library/bios
+      # RomM 5.4 places firmware by filesystem.structure.firmware in this
+      # file, relative to /romm/library (rommapp/romm 5.4.0,
+      # backend/config/config_manager.py:58,101-109,264-265,564-568): a
+      # {platform}/bios library has no library/bios to find.
+      - os: linux
+        method: path_exists
+        path: /romm/config/config.yml
+        bios_path: /romm/library/bios
     cores:
     - atari800
     - clk

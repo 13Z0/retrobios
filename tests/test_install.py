@@ -19,6 +19,7 @@ import threading
 import unittest
 from types import SimpleNamespace
 import unittest.mock
+import urllib.error
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -1027,7 +1028,8 @@ class DetectionFollowsTheRegistry(unittest.TestCase):
         with unittest.mock.patch.object(install, "_parse_os_release", return_value={}), \
                 unittest.mock.patch.object(
                     Path, "exists",
-                    lambda p: str(p) in ("/etc/knulli-release", "/etc/batocera-version"),
+                    lambda p: str(p) in ("/usr/share/knulli/knulli.version",
+                                       "/usr/share/batocera/batocera.version"),
                 ):
             self.assertEqual(install._detect_embedded(), [("batocera", Path("/userdata/bios"))])
         # What ROCKNIX writes since 2025: OS_NAME and HW_DEVICE, no ID.
@@ -1623,6 +1625,9 @@ class TestStandaloneCopyTargetsAreUntrusted(unittest.TestCase):
         self.assertIsInstance(install._validate_manifest(manifest, "retroarch"), dict)
 
     def test_symlinked_destination_is_not_written_through(self):
+        """A link at the name was skipped in silence and counted as "dir
+        not found" while the folder existed: the emulator kept whatever the
+        link pointed at. The link now gives way to the file."""
         bios = Path(_tempdir(self))
         (bios / "boot.bin").write_text("rom")
         target = Path(_tempdir(self))
@@ -1630,12 +1635,17 @@ class TestStandaloneCopyTargetsAreUntrusted(unittest.TestCase):
         outside.write_text("untouched")
         (target / "boot.bin").symlink_to(outside)
 
-        copied, skipped, _ = install.do_standalone_copies(
-            self._manifest(str(target)), bios, "linux"
-        )
-        self.assertEqual(copied, 0)
-        self.assertEqual(skipped, 1)
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            copied, skipped, failed = install.do_standalone_copies(
+                self._manifest(str(target)), bios, "linux"
+            )
+        self.assertEqual((copied, skipped, failed), (1, 0, 0))
         self.assertEqual(outside.read_text(), "untouched")
+        self.assertFalse((target / "boot.bin").is_symlink())
+        self.assertEqual((target / "boot.bin").read_text(), "rom")
+        self.assertIn("link replaced", out.getvalue())
+        self.assertEqual(sorted(p.name for p in target.iterdir()), ["boot.bin"])
 
 
 @unittest.skipUnless(shutil.which("pwsh"), "pwsh not available")
@@ -2281,6 +2291,29 @@ class ThePowerShellWrapperPassesTheStatusOn(unittest.TestCase):
                 )
                 self.assertEqual(proc.returncode, code, proc.stderr)
                 self.assertNotIn("installer failed", proc.stdout + proc.stderr)
+
+
+class ThePowerShellWrapperPassesEveryArgument(unittest.TestCase):
+    """A [Parameter()] attribute made install.ps1 an advanced script, whose
+    common parameters took -v (as -Verbose), -vb, -d and -ea: the documented
+    `-v` never reached install.py."""
+
+    @unittest.skipUnless(shutil.which("pwsh"), "needs PowerShell")
+    def test_short_flags_reach_the_installer(self):
+        folder = Path(_tempdir(self))
+        shutil.copy(REPO_ROOT / "install.ps1", folder / "install.ps1")
+        (folder / "install.py").write_text(
+            "import json, sys\nprint(json.dumps(sys.argv[1:]))\n"
+        )
+        for args in (["-v", "--check"], ["-vb"], ["-Verbose"], ["-d", "-ea", "x"],
+                     ["--platform", "a b"], []):
+            with self.subTest(args=args):
+                proc = subprocess.run(
+                    ["pwsh", "-NoProfile", "-File", str(folder / "install.ps1"), *args],
+                    capture_output=True, text=True, timeout=120,
+                )
+                self.assertEqual(proc.returncode, 0, proc.stderr)
+                self.assertEqual(json.loads(proc.stdout), args)
 
 
 @unittest.skipIf(os.name == "nt" or os.geteuid() == 0, "needs a folder this user cannot write")
@@ -3163,8 +3196,9 @@ class NoFallbackOutsideWhatAPlatformReads(unittest.TestCase):
         self.assertIsNone(install._default_dest("windows", "batocera"))
         self.assertIsNone(install._default_dest("windows", "retropie"))
         self.assertEqual(install._default_dest("linux", "batocera"), Path("/userdata/bios"))
+        # emudeck-we functions/all.ps1:12-14, not the profile folder.
         self.assertEqual(
-            install._default_dest("windows", "emudeck"), install.DEFAULT_DESTS["emudeck"]
+            install._default_dest("windows", "emudeck"), install._host_path("C:/Emulation/bios")
         )
 
     def test_a_forced_platform_without_a_folder_is_refused(self):
@@ -3599,6 +3633,472 @@ class DestAloneFollowsWhatIsFoundHere(unittest.TestCase):
         plat, out = self._pick([("batocera", Path("/userdata/bios"))], interactive=True)
         self.assertEqual(plat, "batocera")
         self.assertIn("Which platform's files go to /media/card?", out)
+
+
+class _FakeResponse:
+    """What urlopen returns, serving one payload from its start."""
+
+    def __init__(self, payload: bytes) -> None:
+        self.status = 200
+        self.headers = {"Content-Length": str(len(payload))}
+        self._body = io.BytesIO(payload)
+
+    def __enter__(self) -> _FakeResponse:
+        return self
+
+    def __exit__(self, *_exc: object) -> None:
+        return None
+
+    def read(self, size: int = -1) -> bytes:
+        return self._body.read(size)
+
+
+def _sharing_violation() -> PermissionError:
+    exc = PermissionError(13, "The process cannot access the file")
+    exc.winerror = 32
+    return exc
+
+
+class ACompletePartialIsHandedOffOnWindows(unittest.TestCase):
+    """Windows renames no open file, so the run that verified a large copy
+    released its lock before the rename. A second run claimed the copy in
+    that moment, found it complete and truncated it, and the first run's
+    rename failed with a sharing violation reported as "folder not
+    writable"."""
+
+    PAYLOAD = bytes(range(256)) * 200
+    ENTRY = {
+        "dest": "big.bin", "repo_path": "bios/big.bin", "size": len(PAYLOAD),
+        "sha256": hashlib.sha256(PAYLOAD).hexdigest(),
+    }
+
+    def _run(self, tmp: Path, seen: list[int]):
+        part = tmp / ".big.bin.part"
+
+        def urlopen(request, timeout=None):
+            seen.append(part.stat().st_size if part.exists() else -1)
+            return _FakeResponse(self.PAYLOAD)
+
+        with unittest.mock.patch.object(install, "RESUME_FROM_SIZE", 1024), \
+                unittest.mock.patch.object(install, "_NO_RENAME_WHILE_OPEN", True), \
+                unittest.mock.patch.object(install.urllib.request, "urlopen", urlopen):
+            return install._download_one(dict(self.ENTRY), tmp)
+
+    def test_the_other_runs_copy_is_left_whole(self):
+        tmp = Path(_tempdir(self))
+        (tmp / ".big.bin.part").write_bytes(self.PAYLOAD)
+        seen: list[int] = []
+        self.assertEqual(self._run(tmp, seen), ("big.bin", True, ""))
+        # The download ran while the complete copy was still whole.
+        self.assertEqual(seen, [len(self.PAYLOAD)])
+        self.assertEqual((tmp / "big.bin").read_bytes(), self.PAYLOAD)
+        # Nothing held it afterwards: it was a leftover, now removed.
+        self.assertFalse((tmp / ".big.bin.part").exists())
+
+    def test_the_rename_waits_for_the_other_run_to_let_go(self):
+        tmp = Path(_tempdir(self))
+        source = tmp / "copy"
+        source.write_bytes(b"x")
+        real_replace = os.replace
+        calls = []
+
+        def replace(src, dst):
+            calls.append(src)
+            if len(calls) < 3:
+                raise _sharing_violation()
+            return real_replace(src, dst)
+
+        with unittest.mock.patch.object(install.os, "replace", replace), \
+                unittest.mock.patch.object(install.time, "sleep"):
+            install._replace_released(source, tmp / "dest", {})
+        self.assertEqual(len(calls), 3)
+        self.assertEqual((tmp / "dest").read_bytes(), b"x")
+
+    def test_a_copy_the_other_run_placed_counts_once_verified(self):
+        tmp = Path(_tempdir(self))
+        dest = tmp / "dest"
+        dest.write_bytes(self.PAYLOAD)
+        expected = {"sha256": self.ENTRY["sha256"]}
+        install._replace_released(tmp / "gone", dest, expected)
+        dest.write_bytes(b"other bytes")
+        with self.assertRaises(FileNotFoundError):
+            install._replace_released(tmp / "gone", dest, expected)
+
+    def test_a_sharing_violation_is_no_refused_folder(self):
+        self.assertFalse(install._write_refused(_sharing_violation()))
+        self.assertTrue(install._write_refused(PermissionError(13, "denied")))
+
+
+class TheEmulatorNamesHaveTheirOwnListing(unittest.TestCase, _LoopbackRun):
+    """--emulator nope said "--list-cores lists all 441" and --list-cores
+    printed 189: the buildbot names --emulator accepts were listed nowhere."""
+
+    def setUp(self):
+        self.env = self.serve(self)
+
+    def test_the_hint_counts_what_the_listing_prints(self):
+        proc = _install_run(self.env, "--platform", "retroarch", "--no-input",
+                            "--emulator", "nope")
+        self.assertEqual(proc.returncode, 1, proc.stdout)
+        found = re.search(r"--list-emulators lists all (\d+)\.", proc.stderr)
+        self.assertIsNotNone(found, proc.stderr)
+        listing = _install_run(self.env, "--platform", "retroarch", "--no-input",
+                               "--list-emulators")
+        self.assertEqual(listing.returncode, 0, listing.stderr)
+        names = [re.split(r"\s{2,}", line.strip())[0]
+                 for line in listing.stdout.splitlines() if line.startswith("  ")]
+        manifest = json.loads((REPO_ROOT / "install" / "retroarch.json").read_text())
+        accepted = install.emulator_names(
+            manifest, manifest["files"], manifest.get("omitted_files", []))
+        self.assertEqual(int(found.group(1)), len(accepted))
+        self.assertTrue(set(accepted) <= set(names), set(accepted) - set(names))
+        self.assertIn("mednafen_psx", accepted)
+        self.assertRegex(listing.stdout, r"mednafen_psx\s+same as beetle_psx")
+
+    def test_every_listed_name_is_accepted(self):
+        manifest = {"core_names": {"beetle_psx": ["mednafen_psx"]}}
+        files = [{"dest": "a", "cores": ["pcsx_rearmed"]}]
+        names = install.emulator_names(manifest, files, [])
+        self.assertEqual(names, {"beetle_psx": "beetle_psx", "mednafen_psx": "beetle_psx",
+                                 "pcsx_rearmed": "pcsx_rearmed"})
+        self.assertEqual(install.resolve_choices(["MEDNAFEN_PSX"], sorted(names), "emulator"),
+                         ["mednafen_psx"])
+
+
+class ANetworkFailureNamesTheNetwork(unittest.TestCase):
+    """Every transfer cut by the connection ended on "Location that was being
+    written to" and "once that is resolved", naming the folder and nothing
+    about the connection or the proxy."""
+
+    def _fail(self, error: BaseException) -> str:
+        def urlopen(*_args, **_kwargs):
+            raise error
+
+        entry = {"dest": "a.bin", "repo_path": "bios/a.bin", "size": 10,
+                 "sha256": "0" * 64}
+        with unittest.mock.patch.object(install.urllib.request, "urlopen", urlopen), \
+                unittest.mock.patch.object(install, "_retry_delay", return_value=0):
+            _dest, ok, reason = install._download_one(entry, Path(_tempdir(self)))
+        self.assertFalse(ok)
+        return reason
+
+    def test_cuts_and_refusals_are_network_failures(self):
+        import http.client
+        import socket
+
+        for error in (
+            urllib.error.URLError(socket.gaierror(-2, "Name or service not known")),
+            http.client.IncompleteRead(b"abc", 10),
+            ConnectionResetError(104, "Connection reset by peer"),
+            socket.timeout("timed out"),
+            urllib.error.HTTPError("u", 503, "Service Unavailable", None, None),
+        ):
+            with self.subTest(error=error):
+                self.assertIsInstance(self._fail(error), install.NetworkReason)
+
+    def test_a_full_disk_and_a_missing_file_are_not(self):
+        import errno
+
+        for error in (OSError(errno.ENOSPC, "No space left on device"),
+                      urllib.error.HTTPError("u", 404, "Not Found", None, None)):
+            with self.subTest(error=error):
+                self.assertNotIsInstance(self._fail(error), install.NetworkReason)
+
+    def test_the_summary_points_at_the_connection(self):
+        failures = [("a.bin", install.NetworkReason("timed out")),
+                    ("b.bin", install.NetworkReason("Connection reset by peer"))]
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out), self.assertRaises(SystemExit) as raised:
+            install._report_outcome([Path("/bios")], 0, 0, 2, 0, False, failures=failures)
+        self.assertEqual(raised.exception.code, 2)
+        text = out.getvalue()
+        self.assertIn("HTTPS_PROXY", text)
+        self.assertIn("Destination: /bios", text)
+        self.assertNotIn("being written to", text)
+
+
+class RetroBatIsFoundWhereItSaysItIs(unittest.TestCase):
+    """RetroBat on D:\\RetroBat was not detected, and --platform retrobat
+    wrote 7.6 GB into C:\\RetroBat\\bios, a folder it does not read.
+    RetroBat.exe writes its folder to the registry on every start."""
+
+    def test_the_table_is_the_registry(self):
+        import yaml  # noqa: PLC0415
+
+        registry = yaml.safe_load((REPO_ROOT / "platforms" / "_registry.yml").read_text())
+        rules = {
+            (rule["os"], name, rule["key"], rule["value"], rule["bios_subdir"])
+            for name, entry in registry["platforms"].items()
+            for rule in (entry.get("install") or {}).get("detect", [])
+            if rule["method"] == "registry"
+        }
+        self.assertEqual(set(install._REGISTRY_RULES), rules)
+
+    def test_the_registry_folder_wins_over_the_default(self):
+        folder = Path(_tempdir(self))
+        with unittest.mock.patch.object(install, "_read_registry",
+                                        return_value=str(folder) + "\\"):
+            found: list = []
+            install._detect_by_registry("windows", found)
+        self.assertEqual(found, [("retrobat", folder / "bios")])
+
+    def test_a_folder_since_removed_is_passed_over(self):
+        gone = Path(_tempdir(self)) / "moved"
+        with unittest.mock.patch.object(install, "_read_registry", return_value=str(gone)):
+            found: list = []
+            install._detect_by_registry("windows", found)
+        self.assertEqual(found, [])
+
+    def test_wsl_reads_it_through_reg_exe(self):
+        output = ("\nHKEY_CURRENT_USER\\SOFTWARE\\RetroBat\n"
+                  "    LatestKnownInstallPath    REG_SZ    D:\\Games\\RetroBat\\\n\n")
+        with unittest.mock.patch.dict(install._WSL, {"active": True, "root": "/mnt"}), \
+                unittest.mock.patch.object(install.os, "name", "posix"), \
+                unittest.mock.patch.object(
+                    install.subprocess, "run",
+                    return_value=SimpleNamespace(stdout=output, returncode=0)) as run:
+            value = install._read_registry("HKCU\\SOFTWARE\\RetroBat", "LatestKnownInstallPath")
+            self.assertEqual(value, "D:\\Games\\RetroBat\\")
+            self.assertEqual(install._host_path(value.rstrip("\\")),
+                             Path("/mnt/d/Games/RetroBat"))
+        self.assertEqual(run.call_args[0][0][:2], ["reg.exe", "query"])
+
+
+class EmuDeckWindowsIsFoundAsItsScriptsFindIt(unittest.TestCase):
+    """EmuDeck's Windows scripts read %APPDATA%\\EmuDeck\\settings.ps1, else
+    %USERPROFILE%\\EmuDeck\\settings.ps1, and take C:\\Emulation when neither
+    names a folder (functions/all.ps1:4-14). Only the first was read, and a
+    forced --platform emudeck wrote into %USERPROFILE%\\Emulation\\bios."""
+
+    def _env(self) -> tuple[Path, Path]:
+        root = Path(_tempdir(self))
+        appdata, profile = root / "appdata", root / "profile"
+        patcher = unittest.mock.patch.dict(
+            os.environ, {"APPDATA": str(appdata), "USERPROFILE": str(profile)})
+        patcher.start()
+        self.addCleanup(patcher.stop)
+        return appdata, profile
+
+    @staticmethod
+    def _settings(folder: Path, text: str, encoding: str = "utf-8-sig") -> None:
+        (folder / "EmuDeck").mkdir(parents=True, exist_ok=True)
+        (folder / "EmuDeck" / "settings.ps1").write_bytes(text.encode(encoding))
+
+    def test_the_profile_settings_are_read_when_appdata_has_none(self):
+        _appdata, profile = self._env()
+        self._settings(profile, '\n$emulationPath="/games/Emulation"\n')
+        self.assertEqual(install._emudeck_windows_bios(), Path("/games/Emulation/bios"))
+
+    def test_appdata_comes_first(self):
+        appdata, profile = self._env()
+        self._settings(profile, '$emulationPath="/b/Emulation"\n')
+        self._settings(appdata, '$emulationPath="/a/Emulation"\n', "utf-16")
+        self.assertEqual(install._emudeck_windows_bios(), Path("/a/Emulation/bios"))
+
+    def test_settings_naming_no_folder_mean_c_emulation(self):
+        appdata, _profile = self._env()
+        self._settings(appdata, '$device="Windows"\n')
+        self.assertEqual(install._emudeck_windows_bios(),
+                         install._host_path("C:\\Emulation") / "bios")
+
+    def test_a_network_install_is_its_share(self):
+        appdata, _profile = self._env()
+        self._settings(appdata, '$networkInstallation="true"\n'
+                       '$VolName="/nas/games"\n'
+                       '$emulationPath=$testdrive.ToString() + ":\\Emulation"\n')
+        self.assertEqual(install._emudeck_windows_bios(),
+                         Path("/nas/games\\Emulation") / "bios")
+
+    def test_no_settings_detects_nothing(self):
+        self._env()
+        self.assertIsNone(install._emudeck_windows_bios())
+
+    def test_a_forced_platform_falls_back_to_c_emulation(self):
+        self.assertEqual(install._default_dest("windows", "emudeck"),
+                         install._host_path("C:/Emulation/bios"))
+
+
+class MuOsIsReadFromItsRetroArchConfig(unittest.TestCase):
+    """muOS wrote to /mnt/mmc/MUOS/bios while RetroArch reads
+    /run/muos/storage/bios, bound to the second card when it holds MUOS/bios,
+    and --installed-cores found no core in /opt/muos/share/core."""
+
+    def _muos(self, *, user_config: bool) -> tuple[Path, Path]:
+        root = Path(_tempdir(self))
+        muos = root / "opt" / "muos"
+        system_dir, cores = root / "run" / "bios", root / "core"
+        cores.mkdir(parents=True)
+        configs = (muos / "share/info/config/retroarch.cfg",
+                   muos / "share/emulator/retroarch/retroarch.default.cfg")
+        default = configs[1]
+        default.parent.mkdir(parents=True)
+        default.write_text(f'libretro_directory = "{cores}"\n'
+                           f'system_directory = "{root / "default-bios"}"\n')
+        if user_config:
+            configs[0].parent.mkdir(parents=True)
+            configs[0].write_text(f'libretro_directory = "{cores}"\n'
+                                  f'system_directory = "{system_dir}"\n')
+        for patcher in (
+            unittest.mock.patch.object(install, "MUOS_ROOT", muos),
+            unittest.mock.patch.object(install, "MUOS_RETROARCH_CONFIGS", configs),
+            unittest.mock.patch.object(
+                install, "_detect_embedded",
+                lambda: [("retroarch", Path("/run/muos/storage/bios"))]),
+            unittest.mock.patch.dict(os.environ, {"HOME": str(root / "home")}),
+            unittest.mock.patch.dict(install._RETROARCH_CONFIGS, clear=True),
+        ):
+            patcher.start()
+            self.addCleanup(patcher.stop)
+        return (system_dir if user_config else root / "default-bios"), cores
+
+    def test_the_users_config_decides(self):
+        system_dir, cores = self._muos(user_config=True)
+        found = install.detect_platforms("linux")
+        self.assertIn(("retroarch", system_dir), found)
+        self.assertNotIn(("retroarch", Path("/run/muos/storage/bios")), found)
+        self.assertIn(cores, install.core_dirs("retroarch", system_dir))
+
+    def test_before_the_first_launch_the_default_does(self):
+        system_dir, cores = self._muos(user_config=False)
+        self.assertIn(("retroarch", system_dir), install.detect_platforms("linux"))
+        self.assertIn(cores, install.core_dirs("retroarch", system_dir))
+
+    def test_without_a_config_the_bound_folder_is_used(self):
+        rule = next(r for r in install._EMBEDDED_RULES if r[2] == ("/opt/muos",))
+        self.assertEqual(rule[3], "/run/muos/storage/bios")
+
+
+class BatoceraAndKnulliByWhatTheirBuildsWrite(unittest.TestCase):
+    """No Batocera build writes /etc/batocera-version (batocera-system.mk
+    writes /usr/share/batocera/batocera.version), and Knulli writes no
+    /etc/knulli-release and removes /usr/share/batocera: neither was
+    detected, and a Knulli board got every board's files without a word."""
+
+    def _detect(self, release: dict, files: tuple[str, ...]):
+        with unittest.mock.patch.object(install, "_parse_os_release", return_value=release), \
+                unittest.mock.patch.object(Path, "exists", lambda p: str(p) in files):
+            return install._detect_embedded()
+
+    def test_batocera_by_its_version_file(self):
+        self.assertEqual(self._detect({}, ("/usr/share/batocera/batocera.version",)),
+                         [("batocera", Path("/userdata/bios"))])
+        self.assertEqual(self._detect({}, ("/etc/batocera-version",)), [])
+
+    def test_knulli_by_its_os_release_or_version_file(self):
+        self.assertEqual(self._detect({"OS_NAME": "knulli"}, ()),
+                         [("batocera", Path("/userdata/bios"))])
+        self.assertEqual(self._detect({}, ("/usr/share/knulli/knulli.version",)),
+                         [("batocera", Path("/userdata/bios"))])
+
+    def test_a_knulli_board_is_named_and_not_narrowed(self):
+        board = Path(_tempdir(self)) / "knulli.arch"
+        board.write_text("a133")
+        with unittest.mock.patch.dict(install._DERIVATIVE_BOARDS,
+                                      {"batocera": ("Knulli", str(board))}):
+            self.assertEqual(install.derivative_board("batocera"), ("Knulli", "a133"))
+            self.assertIsNone(install.derivative_board("recalbox"))
+
+    def test_the_run_says_why_every_board_is_installed(self):
+        source = (REPO_ROOT / "install.py").read_text(encoding="utf-8")
+        block = source[source.index("board = detect_board(plat_name)"):]
+        block = block[:block.index("if target:")]
+        self.assertIn("has no", block)
+        self.assertIn("derivative_board(plat_name)", block)
+
+
+class RomMFirmwareFollowsItsTemplate(unittest.TestCase):
+    """RomM 5.4 reads firmware where filesystem.structure.firmware says, and
+    a {platform}/roms library is told to declare "{platform}/bios". The
+    installer only wrote bios/<platform>/, where such a library lists none."""
+
+    CONFIG = (
+        "# RomM\n"
+        "exclude:\n"
+        "  platforms: []\n"
+        "filesystem:\n"
+        "  structure:\n"
+        "    default: \"{platform}/roms/{game}\"\n"
+        "    firmware: \"{platform}/bios\"  # as RomM suggests\n"
+        "system:\n"
+        "  firmware: elsewhere\n"
+    )
+
+    def _romm(self, config: str | None) -> Path:
+        base = Path(_tempdir(self))
+        library = base / "library"
+        (library / "psx" / "roms").mkdir(parents=True)
+        if config is not None:
+            (base / "config").mkdir()
+            (base / "config" / "config.yml").write_text(config)
+        return library / "bios"
+
+    def test_templates_parse_as_romm_parses_them(self):
+        self.assertEqual(install.parse_romm_firmware("bios/{platform}"), (("bios",), ()))
+        self.assertEqual(install.parse_romm_firmware("{platform}/bios"), ((), ("bios",)))
+        self.assertEqual(install.parse_romm_firmware("/a/{platform}/b/c/"),
+                         (("a",), ("b", "c")))
+        for bad in ("", "bios", "{platform}/{game}", "{region}/{platform}",
+                    "../{platform}", "{platform}/{platform}"):
+            with self.subTest(template=bad), self.assertRaises(ValueError):
+                install.parse_romm_firmware(bad)
+
+    def test_the_template_is_read_from_config_yml(self):
+        bios = self._romm(self.CONFIG)
+        layout = install.romm_firmware_layout(bios, None)
+        self.assertEqual(layout, ((), ("bios",)))
+        files = [{"dest": "psx/scph5501.bin"}, {"dest": "3do/panafz1.bin"}]
+        moved, root = install.romm_relayout(files, bios, *layout)
+        self.assertEqual(root, bios.parent)
+        self.assertEqual([f["dest"] for f in moved],
+                         ["psx/bios/scph5501.bin", "3do/bios/panafz1.bin"])
+
+    def test_the_default_keeps_the_pack_layout(self):
+        bios = self._romm("filesystem:\n  structure:\n    firmware: bios/{platform}\n")
+        files = [{"dest": "psx/scph5501.bin"}]
+        self.assertEqual(install.romm_relayout(files, bios, *install.romm_firmware_layout(
+            bios, None)), (files, bios))
+
+    def test_a_platform_first_library_without_a_template_is_refused(self):
+        bios = self._romm(None)
+        with self.assertRaises(ValueError) as raised:
+            install.romm_firmware_layout(bios, None)
+        self.assertIn('--romm-firmware "{platform}/bios"', str(raised.exception))
+        self.assertEqual(install.romm_firmware_layout(bios, "{platform}/bios"),
+                         ((), ("bios",)))
+
+    def test_the_option_is_refused_where_romm_is_not_installed(self):
+        err = io.StringIO()
+        with unittest.mock.patch.object(install, "detect_os", return_value="linux"), \
+                unittest.mock.patch("sys.argv", [
+                    "install.py", "--platform", "batocera", "--dest", _tempdir(self),
+                    "--romm-firmware", "{platform}/bios", "--no-input"]), \
+                contextlib.redirect_stdout(io.StringIO()), \
+                contextlib.redirect_stderr(err), self.assertRaises(SystemExit) as caught:
+            install.main()
+        self.assertEqual(caught.exception.code, 1)
+        self.assertIn("--romm-firmware applies to RomM", err.getvalue())
+
+
+class RomMFirmwareInstallsUnderItsTemplate(unittest.TestCase, _LoopbackRun):
+    """The whole run, over loopback: config.yml beside the library decides."""
+
+    def setUp(self):
+        self.env = self.serve(self)
+
+    def test_lynx_lands_in_its_platform_folder(self):
+        base = self.home / "romm"
+        (base / "library" / "lynx" / "roms").mkdir(parents=True)
+        (base / "config").mkdir()
+        (base / "config" / "config.yml").write_text(
+            "filesystem:\n  structure:\n    default: \"{platform}/roms/{game}\"\n"
+            "    firmware: \"{platform}/bios\"\n")
+        proc = _install_run(self.env, "--platform", "romm", "--dest",
+                            str(base / "library" / "bios"), "--system", "atari-lynx",
+                            "--no-input")
+        self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+        self.assertTrue((base / "library" / "lynx" / "bios" / "lynxboot.img").is_file())
+        self.assertFalse((base / "library" / "bios").exists())
+        self.assertIn("{platform}/bios", proc.stdout)
 
 
 if __name__ == "__main__":

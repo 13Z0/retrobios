@@ -231,10 +231,12 @@ what the options name, everything by default.
 | `--cores-dir PATH` | The folder RetroArch loads its cores from, for `--installed-cores` when it is not found. Implies `--installed-cores` |
 | `--system NAMES` | Install only these systems. Comma-separated or repeated. `--list-systems` prints the names, `other` included |
 | `--core NAMES` | Keep the platform's own list and only the extra files these cores load. `--list-cores` prints the names |
-| `--emulator NAMES` | Install what these emulators read on the detected platform, and nothing else: their own files and the platform's files of the systems they run. Each emulator page on the site gives this command. `--list-cores` prints the names |
+| `--emulator NAMES` | Install what these emulators read on the detected platform, and nothing else: their own files and the platform's files of the systems they run. Each emulator page on the site gives this command. `--list-emulators` prints the names, buildbot names such as `mednafen_psx` included |
 | `--region LIST` | Preferred regions, best first (`us,eu,jp`): keep one BIOS per region where a system has several. Accepts the names and aliases of `generate_pack.py --region` |
 | `--list-systems` | Print a platform's systems with the files and size each holds |
 | `--list-cores` | Print the cores whose extra files a platform installs |
+| `--list-emulators` | Print every name `--emulator` accepts, each buildbot name beside the emulator it stands for |
+| `--romm-firmware TEMPLATE` | RomM: where each platform's firmware goes in the library, as `filesystem.structure.firmware` in RomM's `config.yml` says (`{platform}/bios` for a library laid out as `{platform}/roms`). Read from `config.yml` beside the library when it is there. See [RomM firmware layout](#romm-firmware-layout) |
 | `--no-input` | Never ask a question, even at a terminal |
 | `--check` | Report and exit without writing |
 | `--dry-run` | Show what would be downloaded, by system and with sizes, without writing anything |
@@ -279,17 +281,21 @@ wins, since a machine is only one of them.
 | Evidence | Platform | BIOS directory |
 |----------|----------|----------------|
 | `/etc/os-release` `OS_NAME=ROCKNIX` (or `ID=rocknix` on images before 2025) | ROCKNIX | `/storage/roms/bios` |
-| `/etc/knulli-release` | Batocera | `/userdata/bios` |
+| `/etc/os-release` `OS_NAME=knulli` or `/usr/share/knulli/knulli.version` | Batocera (Knulli) | `/userdata/bios` |
 | `/etc/os-release` `ID=lakka` | Lakka | `/storage/system` |
-| `/etc/batocera-version` | Batocera | `/userdata/bios` |
+| `/usr/share/batocera/batocera.version` | Batocera | `/userdata/bios` |
 | `/recalbox/recalbox.version` or `/usr/bin/recalbox-settings` | Recalbox | `/recalbox/share/bios` |
-| `/opt/muos` or `/mnt/mmc/MUOS/` | RetroArch | `/mnt/mmc/MUOS/bios` |
+| `/opt/muos` | RetroArch (muOS) | `system_directory` of `/opt/muos/share/info/config/retroarch.cfg`, else of the default it is copied from: `/run/muos/storage/bios`, which muOS binds to `MUOS/bios` on the second card when that card holds one, else the first. Cores are read from that config's `libretro_directory` (`/opt/muos/share/core`) |
+| `/mnt/mmc/MUOS/` | RetroArch | `/mnt/mmc/MUOS/bios` |
 | `/home/ark` and `/opt/system` | RetroArch | `/roms/bios` |
 | `/mnt/vendor/bin/dmenu.bin` | RetroArch | `/mnt/mmc/bios` |
 
 Batocera, Recalbox, ROCKNIX and Lakka also name the board they were built for, and
 that board narrows the install unless `--target` or `--every-board` says
-otherwise (see the options above).
+otherwise (see the options above). A board with no core list of its own is
+named and gets the files of every board. Knulli names its board in
+`/usr/share/knulli/knulli.arch` but builds its own set of cores, so Batocera's
+per-board lists are not applied to it and the run says so.
 
 Some platforms keep their BIOS in a fixed directory, and that directory is the
 evidence. They are looked for after the configurations below, for a platform
@@ -302,6 +308,7 @@ not already found that way.
 | `~/Emulation/bios` | EmuDeck | the same |
 | `~/.var/app/net.retrodeck.retrodeck` | RetroDECK | `~/retrodeck` |
 | `/romm/library/bios` | RomM | the same |
+| `/romm/config/config.yml` | RomM | `/romm/library/bios`, laid out by its firmware template |
 | `~/RetroPie/BIOS` | RetroPie | the same |
 | `%USERPROFILE%\BizHawk\Firmware` | BizHawk | the same |
 | `EmuHawk.exe` or `EmuHawkMono.sh` in a `BizHawk*` folder of the home folder or one level down (`~/Games/BizHawk-2.11.1`), the newest | BizHawk | `Firmware` beside it |
@@ -318,8 +325,9 @@ WSL does not pass them. A forced `--platform retrobat` falls back to
 
 | Evidence | Platform | BIOS directory |
 |----------|----------|----------------|
+| `HKCU\SOFTWARE\RetroBat` `LatestKnownInstallPath`, which `RetroBat.exe` writes on every start (read through `reg.exe` under WSL) | RetroBat | that folder + `\bios`, before the fixed folders above |
 | `~/.config/EmuDeck/settings.sh` | EmuDeck | `emulationPath` + `/bios` |
-| `%APPDATA%\EmuDeck\settings.ps1` | EmuDeck | `$emulationPath` + `\bios` |
+| `%APPDATA%\EmuDeck\settings.ps1`, else `%USERPROFILE%\EmuDeck\settings.ps1` | EmuDeck | `$emulationPath` + `\bios`, `C:\Emulation\bios` when it names none (a network install: the `$VolName` share + `\Emulation\bios`) |
 | `~/.var/app/net.retrodeck.retrodeck/config/retrodeck/retrodeck.json` | RetroDECK | `paths.rd_home_path`, falling back to the pre-migration `retrodeck.cfg` and its `rdhome` |
 | `~/.var/app/org.libretro.RetroArch/config/retroarch/retroarch.cfg` | RetroArch (Flatpak) | `system_directory` |
 | `~/snap/retroarch/current/.config/retroarch/retroarch.cfg` | RetroArch (Snap) | `system_directory` |
@@ -362,7 +370,7 @@ When a platform named with `--platform` is not found on the machine, the
 destination falls back to the directory its detection looks for:
 `/userdata/bios` for Batocera, `/recalbox/share/bios` for Recalbox,
 `/storage/system` for Lakka, `~/retrodeck` for RetroDECK, `~/Emulation/bios`
-for EmuDeck, `/storage/roms/bios` for ROCKNIX, `/media/fat/games` for MiSTer,
+for EmuDeck (`C:\Emulation\bios` on Windows), `/storage/roms/bios` for ROCKNIX, `/media/fat/games` for MiSTer,
 `~/RetroPie/BIOS` for RetroPie, `/romm/library/bios` for RomM,
 `C:\RetroBat\bios` for RetroBat, and RetroArch's own default system
 directory for RetroArch. BizHawk has no such folder: it reads `Firmware`
@@ -405,9 +413,27 @@ run rather than a file to copy.
 
 Targets are per OS, WSL falling back to the Linux ones. A directory that does
 not exist is skipped rather than created, so nothing is copied for an emulator
-that is not installed. A destination that is already a symbolic link is skipped
-too: the copy leaves the tree the user opted into, and a link there would
-redirect the write somewhere else again.
+that is not installed. A destination that is already a symbolic link is
+replaced by the file rather than written through: a write through the link
+would land outside the folder the user opted into. The summary counts each
+copy as copied, skipped (folder absent) or failed, and names every failure.
+
+## RomM firmware layout
+
+RomM 5.4 places each platform's firmware where `filesystem.structure.firmware`
+in its `config.yml` says, relative to the library: `bios/{platform}` by
+default, the layout of the pack. A library laid out as `{platform}/roms` makes
+RomM stop until `config.yml` declares its templates, and RomM suggests
+`firmware: "{platform}/bios"` for it.
+
+The installer reads that value from `config.yml` in the `config` folder beside
+the library, `/romm/config/config.yml` inside the container, and places each
+file accordingly: with `{platform}/bios`, `psx/scph5501.bin` goes to
+`library/psx/bios/scph5501.bin`. `--dest` still names the library's `bios`
+folder, whose parent is the library. Run from the host of a container, where
+`config.yml` sits elsewhere, `--romm-firmware` gives the same value. A
+library laid out as `{platform}/roms` with no template found is refused
+rather than filled in the wrong place, and the message gives the command.
 
 ## Android
 
@@ -479,8 +505,8 @@ user's own layout, and EmuDeck links `bios/shadps4/sys_modules` into shadPS4's
 data directory where the emulator actually reads it. The boundary is lexical,
 not a resolved-path comparison, which is what keeps that case working.
 Standalone copies are stricter, since they write outside the tree the user
-selected: a symlink already sitting at the destination is skipped rather than
-followed.
+selected: a symlink already sitting at the destination is replaced by the
+file rather than followed.
 
 ## Changing the installer
 
@@ -514,7 +540,9 @@ fields, the installer refuses to narrow rather than install everything.
 
 `install.ps1` passes the installer's code on unchanged: run as a file it exits
 with it, run through `irm \| iex` it sets `$LASTEXITCODE` (an `exit` there
-would close the PowerShell window). Its body runs in a script block of its own,
+would close the PowerShell window). It declares no parameter of its own, so
+every argument reaches `install.py` as typed, short forms such as `-v`
+included. Its body runs in a script block of its own,
 so `irm \| iex` leaves neither its variables nor its `$ErrorActionPreference`
 in the session.
 

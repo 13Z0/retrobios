@@ -26,6 +26,7 @@ import platform
 import re
 import shlex
 import shutil
+import socket
 import stat
 import subprocess
 import sys
@@ -146,6 +147,8 @@ _REGION_PARENT = {
     member: parent for parent, members in REGION_TREE.items() for member in members
 }
 REGIONS = frozenset({WORLD_REGION} | set(REGION_TREE) | set(_REGION_PARENT))
+# Marks a region group named after one file that no system names.
+FILE_GROUP = ":file:"
 MAX_SELECTION_TAGS = 1000
 SELECTION_FIELDS = ("systems", "regions", "region_groups", "region_system_groups")
 # The files cores load for systems the platform does not list (game engines,
@@ -207,6 +210,9 @@ def _os_default_dests(os_type: str) -> dict[str, Path]:
             "retroarch": _host_path("C:/RetroArch-Win64/system"),
             # RetroBat's installer defaults to C:\RetroBat (installer.iss).
             "retrobat": _host_path("C:/RetroBat/bios"),
+            # EmuDeck's Windows edition: C:\Emulation when its settings name
+            # no folder (emudeck-we functions/all.ps1:12-14).
+            "emudeck": _host_path("C:/Emulation/bios"),
         }
     if os_type == "wsl":
         # RetroArch may be the Linux one inside the distribution, while RetroBat
@@ -715,6 +721,28 @@ _BOARD_SOURCES: dict[str, tuple[str, str]] = {
 }
 
 
+# A derivative installed under a platform's name, with its own board file.
+# Knulli moves /usr/share/batocera to /usr/share/knulli (knulli-linux
+# 57afa662, board/scripts/post-build-script.sh:264-278) and writes its board
+# to knulli.arch (package/system/knulli-system/knulli-system.mk:98-99). Its
+# packages are its own, so Batocera's per-board core lists do not apply.
+_DERIVATIVE_BOARDS: dict[str, tuple[str, str]] = {
+    "batocera": ("Knulli", "/usr/share/knulli/knulli.arch"),
+}
+
+
+def derivative_board(platform: str) -> tuple[str, str] | None:
+    """(derivative, board) when a derivative of the platform names its board."""
+    name, where = _DERIVATIVE_BOARDS.get(platform, ("", ""))
+    if not where:
+        return None
+    try:
+        board = Path(where).read_text(encoding="utf-8", errors="replace").strip().lower()
+    except OSError:
+        return None
+    return (name, board) if board else None
+
+
 def detect_board(platform: str) -> str | None:
     """The board this system was built for, or None where it names none."""
     kind, where = _BOARD_SOURCES.get(platform, ("", ""))
@@ -750,7 +778,11 @@ def _parse_ps1_var(path: Path, key: str) -> str | None:
         return None
     normalized = key.lstrip("$")
     try:
-        for line in path.read_text(encoding="utf-8", errors="replace").splitlines():
+        raw = path.read_bytes()
+        # Windows PowerShell's Out-File writes UTF-16, Set-Content -Encoding
+        # UTF8 a byte order mark: EmuDeck's settings.ps1 passes through both.
+        encoding = "utf-16" if raw[:2] in (b"\xff\xfe", b"\xfe\xff") else "utf-8-sig"
+        for line in raw.decode(encoding, errors="replace").splitlines():
             line = line.strip()
             check = line.lstrip("$")
             if check.startswith(f"{normalized}="):
@@ -761,19 +793,25 @@ def _parse_ps1_var(path: Path, key: str) -> str | None:
     return None
 
 
-# Embedded systems, first match wins: Knulli also carries the Batocera
-# markers. The registry publishes the same rules as each manifest's
-# `detect`, and a test holds the two equal. MiSTer is a path rule below.
+# Embedded systems, first match wins. The registry publishes the same rules
+# as each manifest's `detect`, and a test holds the two equal. MiSTer is a
+# path rule below.
 _EMBEDDED_RULES: tuple[tuple[str, str, tuple[str, ...], str], ...] = (
     # ROCKNIX writes OS_NAME and no ID since 2025 (scripts/image). Older
     # images wrote ID=rocknix.
     ("rocknix", "os_release", ("OS_NAME=rocknix", "ID=rocknix"), "/storage/roms/bios"),
-    ("batocera", "file_exists", ("/etc/knulli-release",), "/userdata/bios"),
+    # Knulli (knulli-linux 57afa662): OS_NAME in os-release
+    # (board/scripts/post-build-script.sh:233-236) and knulli.version
+    # (package/system/knulli-system/knulli-system.mk:98-102).
+    ("batocera", "os_release", ("OS_NAME=knulli",), "/userdata/bios"),
+    ("batocera", "file_exists", ("/usr/share/knulli/knulli.version",), "/userdata/bios"),
     ("lakka", "os_release", ("ID=lakka",), "/storage/system"),
-    ("batocera", "file_exists", ("/etc/batocera-version",), "/userdata/bios"),
+    # batocera.linux 38845725, batocera-system.mk:21-22 (the same lines in
+    # batocera-30): batocera.arch and batocera.version.
+    ("batocera", "file_exists", ("/usr/share/batocera/batocera.version",), "/userdata/bios"),
     ("recalbox", "file_exists", ("/recalbox/recalbox.version",), "/recalbox/share/bios"),
     ("recalbox", "file_exists", ("/usr/bin/recalbox-settings",), "/recalbox/share/bios"),
-    ("retroarch", "file_exists", ("/opt/muos",), "/mnt/mmc/MUOS/bios"),
+    ("retroarch", "file_exists", ("/opt/muos",), "/run/muos/storage/bios"),
     ("retroarch", "file_exists", ("/mnt/mmc/MUOS",), "/mnt/mmc/MUOS/bios"),
     ("retroarch", "file_exists", ("/home/ark", "/opt/system"), "/roms/bios"),
     ("retroarch", "file_exists", ("/mnt/vendor/bin/dmenu.bin",), "/mnt/mmc/bios"),
@@ -795,6 +833,30 @@ def _detect_embedded() -> list[tuple[str, Path]]:
         if matched:
             return [(platform_name, Path(bios))]
     return []
+
+
+# muOS runs RetroArch on the config it copies from its default on first launch
+# (internal f41f4a89, script/control/retroarch.sh:8-20). The default names
+# /run/muos/storage/bios, a bind mount of MUOS/bios on the second card when
+# that card holds one, else on the first (script/device/bind.sh:4,116-150),
+# and loads cores from /opt/muos/share/core (retroarch.default.cfg:2806,3151).
+MUOS_ROOT = Path("/opt/muos")
+MUOS_RETROARCH_CONFIGS = (
+    MUOS_ROOT / "share" / "info" / "config" / "retroarch.cfg",
+    MUOS_ROOT / "share" / "emulator" / "retroarch" / "retroarch.default.cfg",
+)
+
+
+def _muos_system_dir() -> Path | None:
+    """The system directory of muOS's RetroArch, read from its config, which
+    also records the config for finding the installed cores."""
+    if not MUOS_ROOT.is_dir():
+        return None
+    for cfg in MUOS_RETROARCH_CONFIGS:
+        system_dir = _parse_retroarch_system_dir(cfg)
+        if system_dir is not None:
+            return system_dir
+    return None
 
 
 def _android_storage_root() -> Path:
@@ -1042,6 +1104,9 @@ _PATH_RULES: tuple[tuple[str, str, str, str | None], ...] = (
     ("linux", "emudeck", "$HOME/Emulation/bios", None),
     ("linux", "retrodeck", "$HOME/.var/app/net.retrodeck.retrodeck", "$HOME/retrodeck"),
     ("linux", "romm", "/romm/library/bios", None),
+    # A library laid out as {platform}/bios has no library/bios: RomM's
+    # config folder is the evidence (config_manager.py:264-265).
+    ("linux", "romm", "/romm/config/config.yml", "/romm/library/bios"),
     ("linux", "retropie", "$HOME/RetroPie/BIOS", None),
     ("windows", "bizhawk", "%USERPROFILE%\\BizHawk\\Firmware", None),
     ("linux", "misterfpga", "/media/fat/MiSTer", "/media/fat/games"),
@@ -1093,6 +1158,64 @@ def _detect_by_executable(os_type: str, found: list[tuple[str, Path]]) -> None:
             found.append((platform_name, newest.parent / subdir))
 
 
+# The registry's registry rules: (os, platform, key, value, BIOS folder under
+# the folder the value names). RetroBat.exe writes its own folder there on
+# every start (retrobat-executable 702da66a, RetroBat/RetroBat/Program.cs:57
+# and 99, RegistryTools.cs:15-50), wherever it was installed. The path rules
+# only knew C:\RetroBat and the profile folder.
+_REGISTRY_RULES: tuple[tuple[str, str, str, str, str], ...] = (
+    ("windows", "retrobat", "HKCU\\SOFTWARE\\RetroBat", "LatestKnownInstallPath", "bios"),
+)
+
+
+def _read_registry(key: str, value: str) -> str | None:
+    """A string value of the Windows registry, read natively or, under WSL,
+    through reg.exe. None when the key, the value or the means is missing."""
+    if os.name == "nt":
+        import winreg  # noqa: PLC0415
+
+        hive, _, subkey = key.partition("\\")
+        roots = {"HKCU": winreg.HKEY_CURRENT_USER, "HKLM": winreg.HKEY_LOCAL_MACHINE}
+        try:
+            with winreg.OpenKey(roots[hive], subkey) as handle:
+                data, _kind = winreg.QueryValueEx(handle, value)
+        except (OSError, KeyError):
+            return None
+        return data.strip() if isinstance(data, str) and data.strip() else None
+    if not _WSL["active"]:
+        return None
+    try:
+        result = subprocess.run(
+            ["reg.exe", "query", key, "/v", value],
+            capture_output=True, text=True, errors="replace", timeout=10,
+            stdin=subprocess.DEVNULL, cwd="/mnt/c" if Path("/mnt/c").is_dir() else None,
+        )
+    except (OSError, subprocess.SubprocessError):
+        return None
+    match = re.search(
+        rf"^\s*{re.escape(value)}\s+REG_(?:EXPAND_)?SZ\s+(.+?)\s*$", result.stdout, re.M
+    )
+    return match.group(1) if match else None
+
+
+def _detect_by_registry(os_type: str, found: list[tuple[str, Path]]) -> None:
+    """Add a platform whose own program names its folder in the registry.
+
+    A folder since moved or removed is passed over, so the path rules still
+    get their turn.
+    """
+    systems = ("windows",) if os_type in ("windows", "wsl") else ()
+    for rule_os, platform_name, key, value, subdir in _REGISTRY_RULES:
+        if rule_os not in systems or any(name == platform_name for name, _ in found):
+            continue
+        folder = _read_registry(key, value)
+        if not folder:
+            continue
+        base = _host_path(folder.rstrip("\\/") or folder)
+        if base.is_dir():
+            found.append((platform_name, base / subdir))
+
+
 def _detect_by_path(os_type: str, found: list[tuple[str, Path]]) -> None:
     """Add what a registry path rule finds, for a platform not found yet."""
     systems = ("linux", "windows") if os_type == "wsl" else (os_type,)
@@ -1111,7 +1234,9 @@ def detect_platforms(os_type: str) -> list[tuple[str, Path]]:
         found.extend(_detect_android())
 
     if os_type in ("linux", "wsl"):
-        found.extend(_detect_embedded())
+        embedded = _detect_embedded()
+        muos = _muos_system_dir() if embedded and embedded[0][0] == "retroarch" else None
+        found.extend([("retroarch", muos)] if muos else embedded)
 
         # EmuDeck (Linux/SteamOS)
         home = Path.home()
@@ -1174,13 +1299,9 @@ def detect_platforms(os_type: str) -> list[tuple[str, Path]]:
                 break
 
     if os_type in ("windows", "wsl"):
-        # EmuDeck Windows
-        home = Path.home()
-        emudeck_ps1 = Path(os.environ.get("APPDATA", "")) / "EmuDeck" / "settings.ps1"
-        if emudeck_ps1.exists():
-            emu_path = _parse_ps1_var(emudeck_ps1, "$emulationPath")
-            if emu_path:
-                found.append(("emudeck", Path(emu_path) / "bios"))
+        emudeck = _emudeck_windows_bios()
+        if emudeck is not None:
+            found.append(("emudeck", emudeck))
 
         # RetroArch Windows: open_default_config_file reads retroarch.cfg
         # beside the exe, then under %APPDATA%\RetroArch, and a value left at
@@ -1240,8 +1361,30 @@ def detect_platforms(os_type: str) -> list[tuple[str, Path]]:
             found.append(("bizhawk", bizhawk))
 
     _detect_by_executable(os_type, found)
+    _detect_by_registry(os_type, found)
     _detect_by_path(os_type, found)
     return found
+
+
+def _emudeck_windows_bios() -> Path | None:
+    """The BIOS folder of EmuDeck's Windows edition, as its scripts find it.
+
+    functions/all.ps1:4-14 (emudeck-we 037460ef) loads
+    %APPDATA%\\EmuDeck\\settings.ps1, else %USERPROFILE%\\EmuDeck\\settings.ps1,
+    and takes C:\\Emulation when neither sets $emulationPath. A network
+    install sets it through a drive mapped to $VolName in that session
+    (JSONtoPS1.ps1:166-172), which is the share itself here.
+    """
+    candidates = [Path(os.environ[var]) / "EmuDeck" / "settings.ps1"
+                  for var in ("APPDATA", "USERPROFILE") if os.environ.get(var)]
+    settings = next((path for path in candidates if path.is_file()), None)
+    if settings is None:
+        return None
+    emu_path = _parse_ps1_var(settings, "$emulationPath")
+    if emu_path and ("$" in emu_path or "+" in emu_path):
+        share = _parse_ps1_var(settings, "$VolName")
+        emu_path = f"{share.rstrip(chr(92))}\\Emulation" if share else None
+    return _host_path(emu_path or "C:\\Emulation") / "bios"
 
 
 # Identity Name in pkg/msvc-uwp/RetroArch-msvcUWP/Package.appxmanifest.
@@ -2230,7 +2373,10 @@ def _region_rank(file_regions: set[str], requested: list[str]) -> int:
 
 
 def region_drops(
-    entries: list[dict], requested: list[str], systems: list[str] | None = None
+    entries: list[dict],
+    requested: list[str],
+    systems: list[str] | None = None,
+    held: set[str] | None = None,
 ) -> set[str]:
     """Destinations a region priority list withdraws.
 
@@ -2238,10 +2384,16 @@ def region_drops(
     groups the manifest records. Per group, the best-ranked regional file
     stays. A world file beats unmatched regional ones the code does not search
     before it (`priority`, lower first). When nothing matches and no world
-    file exists, every regional file stays, so a group is never emptied. A file with no region never competes and always stays.
+    file exists, every regional file stays, so a group is never emptied. A
+    file with no region never competes and always stays.
 
     A core extra competes whatever systems are chosen, while a platform's own
     declaration competes only when its system is kept, as in the pack.
+
+    ``held`` names the destinations the manifest can install. A match it
+    lacks never displaces a held file: the American BIOS stays under
+    --region japan when the Japanese one is missing. A group named after a
+    single file (FILE_GROUP) competes with nothing and keeps nothing.
     """
     if not requested:
         return set()
@@ -2263,7 +2415,9 @@ def region_drops(
             groups.setdefault(group, []).append((set(regions), entry["dest"], priority))
     keep: set[str] = set()
     drop: set[str] = set()
-    for members in groups.values():
+    for group_id, members in groups.items():
+        if FILE_GROUP in group_id:
+            continue
         world = {dest for regions, dest, _p in members if WORLD_REGION in regions}
         ranks = {dest: priority for _regions, dest, priority in members}
         regional = [
@@ -2275,12 +2429,19 @@ def region_drops(
         if not regional:
             continue
         matched = [(rank, dest) for rank, dest in regional if rank < len(requested)]
-        if matched:
-            best = min(rank for rank, _dest in matched)
-            keep |= {dest for rank, dest in matched if rank == best}
-            drop |= {dest for _rank, dest in regional}
-        elif world:
-            world_ranks = [ranks[dest] for dest in world]
+        winners, rivals = matched, world
+        if held is not None:
+            winners = [(rank, dest) for rank, dest in matched if dest in held]
+            rivals = world & held
+        if winners:
+            best = min(rank for rank, _dest in winners)
+            keep |= {
+                dest for rank, dest in matched
+                if rank == best or (rank < best and dest not in (held or ()))
+            }
+            drop |= {dest for _rank, dest in regional if dest not in keep}
+        elif rivals:
+            world_ranks = [ranks[dest] for dest in rivals]
             best_world = min(world_ranks) if None not in world_ranks else None
             for _rank, dest in regional:
                 ours = ranks[dest]
@@ -2320,7 +2481,10 @@ def narrow(
         files = _filter_by_target(files, cores)
         omitted = _filter_by_target(omitted, cores)
     if regions:
-        dropped = region_drops(files + omitted, regions, systems)
+        # The builder's held set: what the collection serves. An omission
+        # answers the request but takes no installable file's place.
+        held = {f["dest"] for f in files}
+        dropped = region_drops(files + omitted, regions, systems, held)
         files = [f for f in files if f["dest"] not in dropped]
         omitted = [o for o in omitted if o["dest"] not in dropped]
     if systems:
@@ -2395,7 +2559,8 @@ def resolve_choices(values: list[str], known: list[str], label: str) -> list[str
     if unknown:
         if not known:
             raise ValueError(f"unknown {label}: {', '.join(unknown)}. This list records none.")
-        listing = "--list-systems" if label == "system" else "--list-cores"
+        listing = {"system": "--list-systems", "emulator": "--list-emulators"}.get(
+            label, "--list-cores")
         raise ValueError(
             f"unknown {label}: {', '.join(unknown)}. {did_you_mean(unknown, known, listing)}"
         )
@@ -2563,6 +2728,7 @@ def _download_one(
     resumable = expected_size >= RESUME_FROM_SIZE
     reason = "download failed"
     refused = False
+    full_partial = False
     for attempt in range(1, MAX_RETRIES + 1):
         tmp_path: Path | None = None
         counted = 0
@@ -2581,7 +2747,17 @@ def _download_one(
                     tmp_path = None
                 else:
                     offset = os.fstat(partial.fileno()).st_size
-                    if offset >= expected_size:
+                    if offset >= expected_size and _NO_RENAME_WHILE_OPEN:
+                        # The run that verified this copy releases its lock
+                        # to rename it: truncating it there destroyed that
+                        # copy and failed the rename. It is left alone and
+                        # this run writes a private file.
+                        partial.close()
+                        partial = None
+                        tmp_path = None
+                        offset = 0
+                        full_partial = True
+                    elif offset >= expected_size:
                         partial.truncate(0)
                         offset = 0
             request = urllib.request.Request(url)
@@ -2652,11 +2828,15 @@ def _download_one(
             # written with sudo has to stay readable by the emulator's user.
             os.chmod(tmp_path, (0o777 if f.get("executable") else 0o666) & ~_UMASK)
             _clear_read_only(dest)
-            if partial is not None and os.name == "nt":
+            if partial is not None and _NO_RENAME_WHILE_OPEN:
                 # Windows renames no open file. Elsewhere the lock is held
                 # until the copy has its final name.
                 partial.close()
-            os.replace(tmp_path, dest)
+                _replace_released(tmp_path, dest, expected)
+            else:
+                os.replace(tmp_path, dest)
+            if full_partial:
+                _drop_full_partial(dest, expected_size)
             return f["dest"], True, ""
 
         except _Interrupted:
@@ -2682,6 +2862,8 @@ def _download_one(
             reason = f"HTTP {exc.code}"
             if exc.code in (403, 429):
                 reason += " (GitHub rate limit or access refused)"
+            if exc.code >= 500 or exc.code == 429:
+                reason = NetworkReason(reason)
             if verbose:
                 print(f"    Attempt {attempt} failed: {exc}", file=sys.stderr)
             if tmp_path is not None and partial is None and tmp_path.exists():
@@ -2702,6 +2884,8 @@ def _download_one(
                 # place is not a folder this user cannot write.
                 reason = READ_ONLY if _read_only_file(dest) else NOT_WRITABLE
                 refused = True
+            elif _transfer_failure(exc):
+                reason = NetworkReason(getattr(exc, "reason", "") or exc)
             else:
                 reason = str(getattr(exc, "reason", "") or exc)
             if verbose:
@@ -2724,6 +2908,71 @@ def _download_one(
             return f["dest"], False, "stopped"
 
     return f["dest"], False, reason
+
+
+# Windows renames no file another handle holds open, and Python opens files
+# without FILE_SHARE_DELETE: a locked partial copy is closed before its rename.
+_NO_RENAME_WHILE_OPEN = os.name == "nt"
+# Seconds a closed partial copy waits for a sharing violation to clear: a
+# second run closing it again, or a scanner reading the new file.
+RELEASE_WAIT = 30.0
+_SHARING_VIOLATIONS = (32, 33)
+
+
+def _replace_released(source: Path, dest: Path, expected: dict[str, str]) -> None:
+    """Rename a verified copy whose lock was just released.
+
+    Another run may open the copy in that moment, which refuses the rename
+    with a sharing violation until it lets go. When the copy is gone, that
+    run placed the same file and removed it: the destination is checked
+    against the manifest's hashes before it counts as installed.
+    """
+    deadline = time.monotonic() + RELEASE_WAIT
+    while True:
+        try:
+            os.replace(source, dest)
+            return
+        except FileNotFoundError:
+            if expected and dest.is_file() and _digest_file(dest, tuple(expected)) == expected:
+                return
+            raise
+        except PermissionError as exc:
+            if (getattr(exc, "winerror", None) not in _SHARING_VIOLATIONS
+                    or time.monotonic() >= deadline):
+                raise
+            time.sleep(0.2)
+
+
+def _drop_full_partial(dest: Path, expected_size: int) -> None:
+    """Remove a complete partial copy this run left alone.
+
+    A copy at full size that nothing holds is what a run stopped between its
+    check and its rename leaves behind. The destination now holds the
+    verified file, so the copy is only clutter. One another run holds is
+    left to it.
+    """
+    path = dest.parent / f".{dest.name}.part"
+    if not path.is_file():
+        return
+    try:
+        handle = _claim_partial(path)
+    except OSError:
+        return
+    if handle is None:
+        return
+    with handle:
+        complete = os.fstat(handle.fileno()).st_size >= expected_size
+    if complete:
+        try:
+            path.unlink()
+        except OSError:
+            pass  # another run opened it meanwhile and finishes with it
+    else:
+        try:
+            if path.stat().st_size == 0:
+                path.unlink()
+        except OSError:
+            pass  # created by the claim and taken since by another run
 
 
 def _partial_size(path: Path) -> int:
@@ -2810,6 +3059,10 @@ NOT_WRITABLE = "folder not writable"
 
 
 def _write_refused(exc: OSError) -> bool:
+    # A sharing violation is a file another process holds open, which a
+    # later attempt can find released: no refusal of the folder.
+    if getattr(exc, "winerror", None) in _SHARING_VIOLATIONS:
+        return False
     return isinstance(exc, PermissionError) or exc.errno == errno.EROFS
 
 
@@ -2973,6 +3226,34 @@ def _plural(count: int, word: str) -> str:
     return f"{count} {word}" if count == 1 else f"{count} {word}s"
 
 
+class NetworkReason(str):
+    """A failure the connection caused: cut, timed out, refused by a server
+    or a proxy. The summary names the network instead of the folder."""
+
+
+def _transfer_failure(exc: BaseException) -> bool:
+    """Whether a download error came from the connection, not the disk."""
+    # urlopen raises URLError for the name lookup, the connection and TLS.
+    # A cut read surfaces as a timeout (socket.timeout is no TimeoutError
+    # before 3.10), a reset, an SSL error or a size that does not add up.
+    ssl_error = getattr(sys.modules.get("ssl"), "SSLError", ())
+    if isinstance(exc, (urllib.error.URLError, http.client.HTTPException, ValueError,
+                        ConnectionError, TimeoutError, socket.timeout)):
+        return True
+    if ssl_error and isinstance(exc, ssl_error):
+        return True
+    return isinstance(exc, OSError) and exc.errno in (
+        errno.ECONNRESET, errno.ECONNREFUSED, errno.ECONNABORTED, errno.ETIMEDOUT,
+        errno.EHOSTUNREACH, errno.ENETUNREACH, errno.ENETDOWN, errno.EPIPE,
+    )
+
+
+NETWORK_FAILURE_ADVICE = (
+    "  The transfers were cut or refused on the way: check the connection, and "
+    "HTTPS_PROXY if this network needs a proxy.\n"
+    f"  More help: {TROUBLESHOOTING_PAGE}")
+
+
 def _report_outcome(
     paths: list[Path],
     downloaded: int,
@@ -3034,11 +3315,18 @@ def _report_outcome(
     if any(reason == READ_ONLY for _dest, reason in failures or []):
         advice.append("  Files marked read-only are in the way: clear that attribute "
                       "(or delete them), then run again.")
+    if any(isinstance(reason, NetworkReason) for _dest, reason in failures or []):
+        advice.append(NETWORK_FAILURE_ADVICE)
     paths = paths + [folder for folder in elsewhere if folder not in paths]
 
     if errors and not downloaded:
         print(f"\nNothing was installed. {_plural(errors, 'file')} failed.")
-        print(f"Location that was being written to: {_locations(paths)}")
+        if failures and all(isinstance(r, NetworkReason) for _d, r in failures):
+            # The folder was never the problem: naming it as the place being
+            # written to sent people looking at their disk.
+            print(f"Destination: {_locations(paths)}")
+        else:
+            print(f"Location that was being written to: {_locations(paths)}")
         for line in advice:
             print(line)
         print("Run the same command again once that is resolved. "
@@ -3441,7 +3729,9 @@ def do_standalone_copies(
 
     Returns (copied, skipped, failed): skipped is a target directory that
     does not exist, failed a copy the system refused (permission, disk
-    full, read-only mount), which used to be counted as "dir not found".
+    full, read-only mount) or a name leading out of the folder, which used
+    to be counted as "dir not found". A link already at a file's name is
+    replaced by the file, never written through.
     Each failure is also appended to failures, by absolute path, for the
     summary to name.
     """
@@ -3506,14 +3796,23 @@ def do_standalone_copies(
             resolved_dir = target_dir.resolve()
             for src in sources:
                 dest = target_dir / src.name
-                # A symlink already sitting at the destination would redirect
-                # the write outside the directory the user opted into, and a
-                # crafted source name would climb out of it.
-                if dest.is_symlink() or not _within(dest, resolved_dir):
-                    skipped += 1
+                linked = dest.is_symlink()
+                # A crafted source name would climb out of the directory.
+                if not linked and not _within(dest, resolved_dir):
+                    print(f"  ERROR: {dest}: {OUTSIDE_TARGET}")
+                    failed += 1
+                    if failures is not None:
+                        failures.append((str(dest), OUTSIDE_TARGET))
                     continue
                 try:
-                    shutil.copy2(src, dest)
+                    if linked:
+                        # Writing through a link already at the name would
+                        # leave the folder the user opted into. The link
+                        # itself gives way to the file.
+                        _replace_with_copy(src, dest)
+                        print(f"  {dest}: link replaced by the file")
+                    else:
+                        shutil.copy2(src, dest)
                     copied += 1
                 except OSError as exc:
                     print(f"  ERROR: {dest}: {exc.strerror or exc}")
@@ -3524,6 +3823,22 @@ def do_standalone_copies(
                         failures.append((str(dest), reason))
 
     return copied, skipped, failed
+
+
+OUTSIDE_TARGET = "name leads outside the emulator folder"
+
+
+def _replace_with_copy(src: Path, dest: Path) -> None:
+    """Put a copy of src at dest's name without following what is there."""
+    fd, scratch = tempfile.mkstemp(dir=dest.parent, prefix=f".{dest.name}.", suffix=".part")
+    os.close(fd)
+    try:
+        shutil.copy2(src, scratch)
+        os.replace(scratch, dest)
+    except OSError:
+        if os.path.lexists(scratch):
+            os.unlink(scratch)
+        raise
 
 
 def format_size(n: int) -> str:
@@ -3604,8 +3919,7 @@ def _default_dest(os_type: str, platform_name: str) -> Path | None:
     if own is not None:
         return own
     if os_type == "windows":
-        # EmuDeck's Windows edition keeps the same folder under the profile.
-        return DEFAULT_DESTS["emudeck"] if platform_name == "emudeck" else None
+        return None
     if platform_name == "retrobat":
         return None
     return DEFAULT_DESTS.get(platform_name)
@@ -3799,6 +4113,138 @@ def _print_choices(
         print(f"  {name:<{width}}  {_sized(held)}")
 
 
+def emulator_names(manifest: dict, files: list[dict], omitted: list[dict]) -> dict[str, str]:
+    """Every name --emulator accepts, with the profile each one stands for.
+
+    A profile answers to its own name and to the names its core is built
+    under (core_names: beetle_psx and mednafen_psx). A core named by a file
+    and by no profile stands for itself.
+    """
+    names = {core: core for core in available_choices(files, omitted)["cores"]}
+    for profile, aliases in (manifest.get("core_names") or {}).items():
+        names[profile] = profile
+        for alias in aliases:
+            names.setdefault(alias, profile)
+    return names
+
+
+def _print_emulators(plat: str, manifest: dict, files: list[dict], omitted: list[dict]) -> None:
+    """What --emulator accepts for a platform, one name per line."""
+    names = emulator_names(manifest, files, omitted)
+    if not names:
+        print(f"  {plat} records no emulators")
+        return
+    width = min(max(len(name) for name in names), 40)
+    for name in sorted(names):
+        profile = names[name]
+        print(f"  {name:<{width}}  {'' if profile == name else 'same as ' + profile}".rstrip())
+
+
+# RomM 5.4 places each platform's firmware by `filesystem.structure.firmware`
+# in config.yml, "bios/{platform}" by default, relative to the library
+# (rommapp/romm 5.4.0 68f71259, backend/config/config_manager.py:58,101-109,
+# 205-225,564-568). The library and config.yml both sit under the RomM base
+# folder (config/__init__.py:46-48, config_manager.py:264-265). A library
+# laid out as {platform}/roms makes RomM stop until config.yml declares its
+# templates, and RomM suggests firmware: "{platform}/bios" there
+# (config_manager.py:1105-1124).
+
+
+def parse_romm_firmware(template: str) -> tuple[tuple[str, ...], tuple[str, ...]]:
+    """The literal folders before and after {platform}, as RomM parses them."""
+    sections = [section for section in template.strip().split("/") if section]
+    if not sections:
+        raise ValueError("the RomM firmware template is empty")
+
+    def macro(section: str) -> str | None:
+        if section.startswith("{") and section.endswith("}"):
+            return section[1:-1].strip()
+        return None
+
+    if any(section in (".", "..") for section in sections):
+        raise ValueError(f"the RomM firmware template {template!r} climbs out of the library")
+    platform_at = [i for i, section in enumerate(sections) if macro(section) == "platform"]
+    if len(platform_at) != 1:
+        raise ValueError(f"the RomM firmware template {template!r} needs one '{{platform}}'")
+    before, after = sections[:platform_at[0]], sections[platform_at[0] + 1:]
+    if any(macro(section) is not None for section in before + after):
+        raise ValueError(f"the RomM firmware template {template!r} takes literal folder "
+                         "names around '{platform}'")
+    return tuple(before), tuple(after)
+
+
+def _romm_configured_firmware(config: Path) -> str | None:
+    """filesystem.structure.firmware from RomM's config.yml, read without a
+    YAML library: only that nested scalar is needed."""
+    try:
+        lines = config.read_text(encoding="utf-8", errors="replace").splitlines()
+    except OSError:
+        return None
+    path: list[tuple[int, str]] = []
+    for line in lines:
+        stripped = line.split(" #", 1)[0].rstrip()
+        if not stripped.strip() or stripped.lstrip().startswith(("#", "-")):
+            continue
+        indent = len(stripped) - len(stripped.lstrip())
+        key, sep, value = stripped.strip().partition(":")
+        if not sep:
+            continue
+        while path and path[-1][0] >= indent:
+            path.pop()
+        keys = [name for _indent, name in path] + [key.strip().strip("'\"")]
+        if keys == ["filesystem", "structure", "firmware"] and value.strip():
+            return value.strip().strip("'\"")
+        path.append((indent, key.strip().strip("'\"")))
+    return None
+
+
+def romm_firmware_layout(
+    bios_path: Path, template: str | None
+) -> tuple[tuple[str, ...], tuple[str, ...]] | None:
+    """Where RomM reads each platform's firmware, relative to its library.
+
+    bios_path is the folder the default template names, so its parent is the
+    library. The template comes from --romm-firmware, else from config.yml
+    beside the library. None keeps the pack's own bios/<platform> layout.
+    """
+    library = bios_path.parent
+    if template is None:
+        template = _romm_configured_firmware(library.parent / "config" / "config.yml")
+    if template is not None:
+        return parse_romm_firmware(template)
+    platform_first = not (library / "roms").is_dir() and any(
+        path.is_dir() for path in library.glob("*/roms")
+    )
+    if platform_first:
+        raise ValueError(
+            f"{library} keeps its roms inside each platform folder, and RomM then "
+            "reads firmware where filesystem.structure.firmware in its config.yml "
+            "says, which was not found here. RomM suggests \"{platform}/bios\" for "
+            "this layout: run again with --romm-firmware \"{platform}/bios\", or "
+            "with the value config.yml holds."
+        )
+    return None
+
+
+def romm_relayout(
+    files: list[dict], bios_path: Path,
+    before: tuple[str, ...], after: tuple[str, ...],
+) -> tuple[list[dict], Path]:
+    """The manifest's bios/<platform>/<file> entries under RomM's template,
+    with the library as the root they are relative to."""
+    if (before, after) == (("bios",), ()):
+        return files, bios_path
+    moved = []
+    for entry in files:
+        slug, _, rest = str(entry["dest"]).partition("/")
+        if not rest:
+            # Firmware of no platform: RomM lists none, the default place stays.
+            moved.append({**entry, "dest": f"bios/{slug}"})
+            continue
+        moved.append({**entry, "dest": "/".join((*before, slug, *after, rest))})
+    return moved, bios_path.parent
+
+
 def _older_list_advice() -> str:
     """How to reach a file list that records what an option needs.
 
@@ -3828,11 +4274,7 @@ def _narrow_to_emulators(
               "which systems, which --emulator needs.", file=sys.stderr)
         print(_older_list_advice(), file=sys.stderr)
         sys.exit(1)
-    known = sorted({
-        name
-        for profile, aliases in (manifest.get("core_names") or {}).items()
-        for name in [profile, *aliases]
-    } | set(available_choices(files, omitted)["cores"]))
+    known = sorted(emulator_names(manifest, files, omitted))
     try:
         chosen = resolve_choices(names, known, "emulator")
     except ValueError as exc:
@@ -3969,7 +4411,7 @@ def main() -> None:
         action="append",
         metavar="NAME",
         help="install what these emulators read on the platform, as a pack "
-             "built for them carries (names: --list-cores)",
+             "built for them carries (names: --list-emulators)",
     )
     parser.add_argument(
         "--installed-cores",
@@ -4013,6 +4455,18 @@ def main() -> None:
         "--list-cores",
         action="store_true",
         help="list the cores whose extra files a platform installs and exit",
+    )
+    parser.add_argument(
+        "--romm-firmware",
+        metavar="TEMPLATE",
+        help="RomM: where each platform's firmware goes in the library, as "
+             "filesystem.structure.firmware in its config.yml (default: read "
+             "from config.yml, else bios/{platform})",
+    )
+    parser.add_argument(
+        "--list-emulators",
+        action="store_true",
+        help="list every name --emulator accepts for a platform and exit",
     )
     parser.add_argument(
         "--no-input",
@@ -4059,7 +4513,7 @@ def main() -> None:
             parser.error(f"{option} needs at least one name")
     if args.quiet and (
         args.check or args.dry_run or args.list_platforms or args.list_targets
-        or args.list_systems or args.list_cores
+        or args.list_systems or args.list_cores or args.list_emulators
     ):
         parser.error("--quiet applies to an install, not to --check, --dry-run or a listing")
     if args.every_board and args.target:
@@ -4147,7 +4601,8 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
     """One run of the installer, once the options are read."""
     term = Terminal(real_stdout, quiet=args.quiet)
     interactive = sys.stdin.isatty() and not args.no_input and not args.quiet
-    listing = args.list_targets or args.list_systems or args.list_cores
+    listing = (args.list_targets or args.list_systems or args.list_cores
+               or args.list_emulators)
     print(f"{term.bold('RetroBIOS')} {term.dim(installer_id())}\n")
 
     os_type = detect_os()
@@ -4265,6 +4720,18 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                           "--platform to install it alone.", file=sys.stderr)
                 sys.exit(1)
 
+    if args.romm_firmware is not None:
+        # Applied or refused, never ignored.
+        if not any(name == "romm" for name, _path in platforms):
+            print("Error: --romm-firmware applies to RomM, which this run does not "
+                  "install for.", file=sys.stderr)
+            sys.exit(1)
+        try:
+            parse_romm_firmware(args.romm_firmware)
+        except ValueError as exc:
+            print(f"Error: {exc}", file=sys.stderr)
+            sys.exit(1)
+
     # Every check --installed-cores makes before anything is written: a
     # refusal for the second platform must not follow an install of the first.
     cores_found: dict[tuple[str, Path], list[str]] = {}
@@ -4331,6 +4798,15 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                 if board in known:
                     target = board
                     print(f"  Board {board} detected (--every-board installs all boards)")
+                else:
+                    print(f"  Board {board} has no {PLATFORM_NAMES.get(plat_name, plat_name)} "
+                          "core list: installing the files of every board")
+            else:
+                derived = derivative_board(plat_name)
+                if derived:
+                    print(f"  {derived[0]} board {derived[1]} detected. {derived[0]} "
+                          "builds its own set of cores and publishes no core list "
+                          "per board: installing the files of every board")
         if target:
             targets = target_lists.get(plat_name)
             if targets is None:
@@ -4375,6 +4851,10 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                 manifest, found_cores, files, omitted_files
             )
             print(f"  Narrowed {before} -> {len(files)} files to the installed cores")
+
+        if args.list_emulators:
+            _print_emulators(plat_name, manifest, files, omitted_files)
+            continue
 
         if args.emulator:
             files, omitted_files = _narrow_to_emulators(
@@ -4441,6 +4921,20 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
             )
             total_omitted += len(omitted_files)
             omitted_seen.extend(omitted_files)
+
+        if plat_name == "romm":
+            try:
+                layout = romm_firmware_layout(bios_path, args.romm_firmware)
+            except ValueError as exc:
+                print(f"Error: {exc}", file=sys.stderr)
+                sys.exit(1)
+            if layout is not None:
+                files, library = romm_relayout(files, bios_path, *layout)
+                if library != bios_path:
+                    installed_paths[installed_paths.index(bios_path)] = library
+                    print(f"  Firmware laid out as {'/'.join(layout[0] + ('{platform}',) + layout[1])} "
+                          f"under {library}")
+                    bios_path = library
 
         print("\nChecking existing files...")
         to_download, up_to_date, mismatched = check_local(
