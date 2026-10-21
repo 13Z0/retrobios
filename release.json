@@ -9,6 +9,9 @@
         "Batocera_43.1_BIOS_Pack.part1of3.zip",
         "Batocera_43.1_BIOS_Pack.part2of3.zip",
         "Batocera_43.1_BIOS_Pack.part3of3.zip"
+      ],
+      "platforms": [
+        "batocera"
       ]
     },
     "BizHawk_2.11.1_BIOS_Pack.zip": {
@@ -17,6 +20,9 @@
       "download_size": 1469752558,
       "assets": [
         "BizHawk_2.11.1_BIOS_Pack.zip"
+      ],
+      "platforms": [
+        "bizhawk"
       ]
     },
     "EmuDeck_2.7EA_BIOS_Pack.zip": {
@@ -25,6 +31,9 @@
       "download_size": 1939696164,
       "assets": [
         "EmuDeck_2.7EA_BIOS_Pack.zip"
+      ],
+      "platforms": [
+        "emudeck"
       ]
     },
     "MiSTer_FPGA_2026-09-29_BIOS_Pack.zip": {
@@ -33,6 +42,9 @@
       "download_size": 18787872,
       "assets": [
         "MiSTer_FPGA_2026-09-29_BIOS_Pack.zip"
+      ],
+      "platforms": [
+        "misterfpga"
       ]
     },
     "ROCKNIX_20261001_BIOS_Pack.zip": {
@@ -42,6 +54,9 @@
       "assets": [
         "ROCKNIX_20261001_BIOS_Pack.part1of2.zip",
         "ROCKNIX_20261001_BIOS_Pack.part2of2.zip"
+      ],
+      "platforms": [
+        "rocknix"
       ]
     },
     "Recalbox_10.1.1_BIOS_Pack.zip": {
@@ -51,6 +66,9 @@
       "assets": [
         "Recalbox_10.1.1_BIOS_Pack.part1of2.zip",
         "Recalbox_10.1.1_BIOS_Pack.part2of2.zip"
+      ],
+      "platforms": [
+        "recalbox"
       ]
     },
     "RetroArch_Lakka_v1.22.2_BIOS_Pack.zip": {
@@ -60,6 +78,10 @@
       "assets": [
         "RetroArch_Lakka_v1.22.2_BIOS_Pack.part1of2.zip",
         "RetroArch_Lakka_v1.22.2_BIOS_Pack.part2of2.zip"
+      ],
+      "platforms": [
+        "lakka",
+        "retroarch"
       ]
     },
     "RetroBat_8.2.1_BIOS_Pack.zip": {
@@ -70,6 +92,9 @@
         "RetroBat_8.2.1_BIOS_Pack.part1of3.zip",
         "RetroBat_8.2.1_BIOS_Pack.part2of3.zip",
         "RetroBat_8.2.1_BIOS_Pack.part3of3.zip"
+      ],
+      "platforms": [
+        "retrobat"
       ]
     },
     "RetroDECK_0.10.10b_BIOS_Pack.zip": {
@@ -80,6 +105,9 @@
         "RetroDECK_0.10.10b_BIOS_Pack.part1of3.zip",
         "RetroDECK_0.10.10b_BIOS_Pack.part2of3.zip",
         "RetroDECK_0.10.10b_BIOS_Pack.part3of3.zip"
+      ],
+      "platforms": [
+        "retrodeck"
       ]
     },
     "RetroPie_4.8.12_BIOS_Pack.zip": {
@@ -90,6 +118,9 @@
         "RetroPie_4.8.12_BIOS_Pack.part1of3.zip",
         "RetroPie_4.8.12_BIOS_Pack.part2of3.zip",
         "RetroPie_4.8.12_BIOS_Pack.part3of3.zip"
+      ],
+      "platforms": [
+        "retropie"
       ]
     },
     "RomM_5.3.1_BIOS_Pack.zip": {
@@ -98,6 +129,9 @@
       "download_size": 973353236,
       "assets": [
         "RomM_5.3.1_BIOS_Pack.zip"
+      ],
+      "platforms": [
+        "romm"
       ]
     }
   }

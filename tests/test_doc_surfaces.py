@@ -40,12 +40,14 @@ SPLIT_RECORD = {
                 "Batocera_1_BIOS_Pack.part1of2.zip",
                 "Batocera_1_BIOS_Pack.part2of2.zip",
             ],
+            "platforms": ["batocera"],
         },
         "RomM_1_BIOS_Pack.zip": {
             "files": 1,
             "extracted_size": 1024**2,
             "download_size": 1024**2,
             "assets": ["RomM_1_BIOS_Pack.zip"],
+            "platforms": ["romm"],
         },
     },
 }
@@ -244,7 +246,7 @@ class SizesComeFromTheRecord(unittest.TestCase):
         tag, platform, download, extracted = quoted.groups()
         if tag != RECORD.get("tag"):
             self.skipTest(f"release.json records {RECORD.get('tag')}, not {tag}")
-        pack = release_record.pack_for(platform, RECORD)
+        pack = release_record.pack_for(platform.lower(), RECORD)
         self.assertEqual(download, format_size(pack["download_size"]))
         self.assertEqual(extracted, format_size(pack["extracted_size"]))
 

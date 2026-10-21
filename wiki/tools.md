@@ -678,7 +678,7 @@ Further options, by script:
 | `provenance_report.py` | `--provenance-dir`, `--write-derivable PATH` (with `--derive`, and the pipeline writes `derivable.json`) |
 | `refresh_stale.py` | `--freshness-arg FLAG` passes a flag through to `check_freshness.py`, repeatable |
 | `bundled_only.py` | `--strict` (exit 1 while a collected file only an emulator install provides remains, pipeline step 4d), `--json`, `--install-dir`. Lists every copy of such a file, the database keeping one path per content |
-| `release_record.py` | `--install-dir` (manifests the archives are held against), `--output` |
+| `release_record.py` | `--install-dir` (manifests the archives are held against), `--platforms-dir` (registry the full pack names are rebuilt from: any other pack in the directory is refused), `--output` |
 | `release_notes.py` | `--whats-new FILE` (required, appended as written), `--record`, `--platforms-dir`, `--output` |
 | `restore_large_files.py` | `--cache` (downloaded assets), `--gitignore`, `--db` |
 | `romset_recipes.py` | `--dat-recipes PATH`, a snapshot or a directory of them (default `recipes/`) |

@@ -283,12 +283,14 @@ RECORD = {
                 "RetroArch_Lakka_v1.22.2_BIOS_Pack.zip.001",
                 "RetroArch_Lakka_v1.22.2_BIOS_Pack.zip.002",
             ],
+            "platforms": ["lakka", "retroarch"],
         },
         "MiSTer_FPGA_2026-08-29_BIOS_Pack.zip": {
             "files": 74,
             "extracted_size": 17000000,
             "download_size": 16769418,
             "assets": ["MiSTer_FPGA_2026-08-29_BIOS_Pack.zip"],
+            "platforms": ["misterfpga"],
         },
     },
 }
@@ -340,6 +342,11 @@ class TheTableDescribesTheRelease(unittest.TestCase):
 
 
 class ReleaseRecord(unittest.TestCase):
+    OWNERS = {
+        "Whole_1.0_BIOS_Pack.zip": ["whole"],
+        "Demo_2.0_BIOS_Pack.zip": ["demo"],
+    }
+
     def setUp(self):
         self._tmp = tempfile.TemporaryDirectory()
         self.dist = Path(self._tmp.name) / "dist"
@@ -364,7 +371,7 @@ class ReleaseRecord(unittest.TestCase):
         return path
 
     def test_a_pack_in_parts_is_counted_once_across_them(self):
-        record = release_record.build_record(self.dist, "v1")
+        record = release_record.build_record(self.dist, "v1", owners=self.OWNERS)
         self.assertEqual(record["tag"], "v1")
         demo = record["packs"]["Demo_2.0_BIOS_Pack.zip"]
         self.assertEqual(demo["files"], 6)
@@ -378,7 +385,7 @@ class ReleaseRecord(unittest.TestCase):
     def test_a_pack_that_disagrees_with_its_manifest_is_named(self):
         """The count main predicts and the count the archive holds are two
         computations of one thing. Apart, one of them is wrong."""
-        record = release_record.build_record(self.dist, "v1")
+        record = release_record.build_record(self.dist, "v1", owners=self.OWNERS)
         (self.install / "demo.json").write_text(json.dumps({"pack_files": 6}))
         (self.install / "whole.json").write_text(json.dumps({"pack_files": 5}))
         self.assertEqual(
@@ -395,12 +402,38 @@ class ReleaseRecord(unittest.TestCase):
             {f"dir/file{n}.bin": bytes([n]) * 700 + bytes(range(256)) for n in range(6)},
         )
         with self.assertRaises(release_record.UnfinishedSplitError):
-            release_record.build_record(self.dist, "v1")
+            release_record.build_record(self.dist, "v1", owners=self.OWNERS)
+
+    def test_a_narrowed_pack_is_refused_not_recorded(self):
+        """A pack that sorts before the full one (Android targets, Asia) was
+        taken for the platform's pack by a substring match."""
+        self._pack("Whole_1.0_Asia_BIOS_Pack.zip", {"a.bin": b"a"})
+        with self.assertRaises(release_record.NotAReleasePackError) as raised:
+            release_record.build_record(self.dist, "v1", owners=self.OWNERS)
+        self.assertIn("Whole_1.0_Asia_BIOS_Pack.zip", str(raised.exception))
+
+    def test_a_platform_finds_the_pack_that_serves_it_by_name(self):
+        record = release_record.build_record(self.dist, "v1", owners=self.OWNERS)
+        record["packs"]["Whole_1.0_AAA_BIOS_Pack.zip"] = dict(
+            record["packs"]["Whole_1.0_BIOS_Pack.zip"], files=99, platforms=["other"]
+        )
+        self.assertEqual(
+            release_record.pack_name_for("whole", record), "Whole_1.0_BIOS_Pack.zip"
+        )
+        self.assertEqual(release_record.pack_for("whole", record)["files"], 2)
+
+    def test_the_owners_are_the_full_pack_names_the_builder_writes(self):
+        owners = release_record.release_owners(str(REPO_ROOT / "platforms"))
+        retroarch = [name for name, serves in owners.items() if "retroarch" in serves]
+        self.assertEqual(len(retroarch), 1, retroarch)
+        for tags in ("_AndroidArm64V8A", "_Asia", "_Required"):
+            narrowed = retroarch[0].replace("_BIOS_Pack.zip", f"{tags}_BIOS_Pack.zip")
+            self.assertNotIn(narrowed, owners)
 
     def test_a_directory_being_written_is_not_read(self):
         with common.artifact_lock(str(self.dist)), \
                 self.assertRaises(common.ArtifactLockBusy):
-            release_record.build_record(self.dist, "v1")
+            release_record.build_record(self.dist, "v1", owners=self.OWNERS)
 
 
 class TheCollectionTotalNamesTheCollection(unittest.TestCase):
@@ -483,10 +516,11 @@ class TheReleaseNotesReadTheRecord(unittest.TestCase):
         "RetroArch_Lakka_v1.22.2_BIOS_Pack.zip": {
             "files": 8504, "extracted_size": 6_400_000_000, "download_size": 4_000_000_000,
             "assets": ["RetroArch_Lakka_v1.22.2_BIOS_Pack.part1of2.zip",
-                       "RetroArch_Lakka_v1.22.2_BIOS_Pack.part2of2.zip"]},
+                       "RetroArch_Lakka_v1.22.2_BIOS_Pack.part2of2.zip"],
+            "platforms": ["lakka", "retroarch"]},
         "EmuDeck_2.7EA_BIOS_Pack.zip": {
             "files": 620, "extracted_size": 3_500_000_000, "download_size": 3_000_000_000,
-            "assets": ["EmuDeck_2.7EA_BIOS_Pack.zip"]},
+            "assets": ["EmuDeck_2.7EA_BIOS_Pack.zip"], "platforms": ["emudeck"]},
     }}
 
     def render(self, record=None):

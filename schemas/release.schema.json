@@ -15,8 +15,14 @@
       "additionalProperties": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["files", "extracted_size", "download_size", "assets"],
+        "required": ["files", "extracted_size", "download_size", "assets", "platforms"],
         "properties": {
+          "platforms": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": { "type": "string" }
+          },
           "files": { "type": "integer", "minimum": 1 },
           "extracted_size": { "type": "integer", "minimum": 0 },
           "download_size": { "type": "integer", "minimum": 1 },
