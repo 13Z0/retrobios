@@ -5977,6 +5977,7 @@ files:
   - name: 4dparprn.zip
     required: false
     category: bios_zip
+    system: apple2gs
     source_ref: "upstream src/devices/bus/a2bus/a2parprn.cpp:105-109"
     note: >-
       Device ROM set, loaded when a machine instantiates `Fourth Dimension
@@ -6313,6 +6314,7 @@ files:
   - name: a2aevm80.zip
     required: false
     category: bios_zip
+    system: apple2gs
     source_ref: "upstream src/devices/bus/a2bus/a2videoterm.cpp:91-97"
     note: >-
       Device ROM set, loaded when a machine instantiates `Applied Engineering
@@ -6330,6 +6332,7 @@ files:
   - name: a2ap16.zip
     required: false
     category: bios_zip
+    system: apple2gs
     source_ref: "upstream src/devices/bus/a2bus/a2videoterm.cpp:66-72"
     note: >-
       Device ROM set, loaded when a machine instantiates `IBS AP-16 80 column
@@ -6347,6 +6350,7 @@ files:
   - name: a2ap16a.zip
     required: false
     category: bios_zip
+    system: apple2gs
     source_ref: "upstream src/devices/bus/a2bus/a2videoterm.cpp:74-80"
     note: >-
       Device ROM set, loaded when a machine instantiates `IBS AP-16 80 column
@@ -6364,6 +6368,7 @@ files:
   - name: a2aplcrd.zip
     required: false
     category: bios_zip
+    system: apple2gs
     source_ref: "upstream src/devices/bus/a2bus/a2applicard.cpp:28-31"
     note: >-
       Device ROM set, loaded when a machine instantiates `PCPI Appli-Card`.
@@ -6389,6 +6394,7 @@ files:
   - name: a2booti.zip
     required: false
     category: bios_zip
+    system: apple2gs
     source_ref: "upstream src/devices/bus/a2bus/booti.cpp:33-36"
     note: >-
       Device ROM set, loaded when a machine instantiates `Booti Card`.
@@ -6401,6 +6407,7 @@ files:
   - name: a2bufgrapplerplus.zip
     required: false
     category: bios_zip
+    system: apple2gs
     source_ref: "upstream src/devices/bus/a2bus/grappler.cpp:34-51"
     note: >-
       Device ROM set, loaded when a machine instantiates `Orange Micro
@@ -6418,6 +6425,7 @@ files:
   - name: a2bufgrapplerplusa.zip
     required: false
     category: bios_zip
+    system: apple2gs
     source_ref: "upstream src/devices/bus/a2bus/grappler.cpp:34-51"
     note: >-
       Device ROM set, loaded when a machine instantiates `Orange Micro
@@ -6435,6 +6443,7 @@ files:
   - name: a2cffa02.zip
     required: false
     category: bios_zip
+    system: apple2gs
     source_ref: "upstream src/devices/bus/a2bus/a2cffa.cpp:33-36"
     note: >-
       Device ROM set, loaded when a machine instantiates `CFFA 2.0 Compact
@@ -6448,6 +6457,7 @@ files:
   - name: a2cffa2.zip
     required: false
     category: bios_zip
+    system: apple2gs
     source_ref: "upstream src/devices/bus/a2bus/a2cffa.cpp:28-31"
     note: >-
       Device ROM set, loaded when a machine instantiates `CFFA 2.0 Compact
@@ -6461,6 +6471,7 @@ files:
   - name: a2corvus.zip
     required: false
     category: bios_zip
+    system: apple2gs
     source_ref: "upstream src/devices/bus/a2bus/a2corvus.cpp:61-64"
     note: >-
       Device ROM set, loaded when a machine instantiates `Corvus Flat Cable
@@ -6474,6 +6485,7 @@ files:
   - name: a2diskiing.zip
     required: false
     category: bios_zip
+    system: apple2gs
     source_ref: "upstream src/devices/bus/a2bus/a2diskiing.cpp:40-43"
     note: >-
       Device ROM set, loaded when a machine instantiates `Apple Disk II NG
@@ -6503,6 +6515,7 @@ files:
   - name: a2focdrv.zip
     required: false
     category: bios_zip
+    system: apple2gs
     source_ref: "upstream src/devices/bus/a2bus/a2zipdrive.cpp:86-89"
     note: >-
       Device ROM set, loaded when a machine instantiates `Parsons Engineering
@@ -6516,6 +6529,7 @@ files:
   - name: a2grappler.zip
     required: false
     category: bios_zip
+    system: apple2gs
     source_ref: "upstream src/devices/bus/a2bus/grappler.cpp:15-18"
     note: >-
       Device ROM set, loaded when a machine instantiates `Orange Micro
@@ -6529,6 +6543,7 @@ files:
   - name: a2grapplerplus.zip
     required: false
     category: bios_zip
+    system: apple2gs
     source_ref: "upstream src/devices/bus/a2bus/grappler.cpp:21-31"
     note: >-
       Device ROM set, loaded when a machine instantiates `Orange Micro
@@ -6548,6 +6563,7 @@ files:
   - name: a2hsscsi.zip
     required: false
     category: bios_zip
+    system: apple2gs
     source_ref: "upstream src/devices/bus/a2bus/a2hsscsi.cpp:59-62"
     note: >-
       Device ROM set, loaded when a machine instantiates `Apple II High-Speed
@@ -6561,6 +6577,7 @@ files:
   - name: a2ieee488.zip
     required: false
     category: bios_zip
+    system: apple2gs
     source_ref: "upstream src/devices/bus/a2bus/a2ieee488.cpp:183-186"
     note: >-
       Device ROM set, loaded when a machine instantiates `Apple II IEEE-488
@@ -6600,6 +6617,7 @@ files:
   - name: a2memexp.zip
     required: false
     category: bios_zip
+    system: apple2gs
     source_ref: "upstream src/devices/bus/a2bus/a2memexp.cpp:23-26"
     note: >-
       Device ROM set, loaded when a machine instantiates `Apple II Memory
@@ -6613,6 +6631,7 @@ files:
   - name: a2mouse.zip
     required: false
     category: bios_zip
+    system: apple2gs
     source_ref: "upstream src/devices/bus/a2bus/mouse.cpp:144-154"
     note: >-
       Device ROM set, loaded when a machine instantiates `Apple II Mouse
@@ -6638,6 +6657,7 @@ files:
   - name: a2parprn.zip
     required: false
     category: bios_zip
+    system: apple2gs
     source_ref: "upstream src/devices/bus/a2bus/a2parprn.cpp:100-103"
     note: >-
       Device ROM set, loaded when a machine instantiates `Apple II Parallel
@@ -6652,6 +6672,7 @@ files:
   - name: a2pdromdr.zip
     required: false
     category: bios_zip
+    system: apple2gs
     source_ref: "upstream src/devices/bus/a2bus/prodosromdrive.cpp:76-79"
     note: >-
       Device ROM set, loaded when a machine instantiates `ProDOS ROM Drive`.
@@ -6664,6 +6685,7 @@ files:
   - name: a2pic.zip
     required: false
     category: bios_zip
+    system: apple2gs
     source_ref: "upstream src/devices/bus/a2bus/a2pic.cpp:86-89"
     note: >-
       Device ROM set, loaded when a machine instantiates `Apple II Parallel
@@ -6677,6 +6699,7 @@ files:
   - name: a2q68.zip
     required: false
     category: bios_zip
+    system: apple2gs
     source_ref: "upstream src/devices/bus/a2bus/q68.cpp:72-75"
     note: >-
       Device ROM set, loaded when a machine instantiates `Stellation Two
@@ -6690,6 +6713,7 @@ files:
   - name: a2q68plus.zip
     required: false
     category: bios_zip
+    system: apple2gs
     source_ref: "upstream src/devices/bus/a2bus/q68.cpp:72-75"
     note: >-
       Device ROM set, loaded when a machine instantiates `Stellation Two Q-68
@@ -6703,6 +6727,7 @@ files:
   - name: a2ramfac.zip
     required: false
     category: bios_zip
+    system: apple2gs
     source_ref: "upstream src/devices/bus/a2bus/a2memexp.cpp:28-34"
     note: >-
       Device ROM set, loaded when a machine instantiates `Applied Engineering
@@ -6801,6 +6826,7 @@ files:
   - name: a2scsi.zip
     required: false
     category: bios_zip
+    system: apple2gs
     source_ref: "upstream src/devices/bus/a2bus/a2scsi.cpp:57-60"
     note: >-
       Device ROM set, loaded when a machine instantiates `Apple II SCSI Card`.
@@ -6854,6 +6880,7 @@ files:
   - name: a2sider1.zip
     required: false
     category: bios_zip
+    system: apple2gs
     source_ref: "upstream src/devices/bus/a2bus/sider.cpp:99-102"
     note: >-
       Device ROM set, loaded when a machine instantiates `First Class
@@ -6867,6 +6894,7 @@ files:
   - name: a2sider2.zip
     required: false
     category: bios_zip
+    system: apple2gs
     source_ref: "upstream src/devices/bus/a2bus/sider.cpp:94-97"
     note: >-
       Device ROM set, loaded when a machine instantiates `First Class
@@ -6880,6 +6908,7 @@ files:
   - name: a2ssc.zip
     required: false
     category: bios_zip
+    system: apple2gs
     source_ref: "upstream src/devices/bus/a2bus/a2ssc.cpp:88-91"
     note: >-
       Device ROM set, loaded when a machine instantiates `Apple Super Serial
@@ -6893,6 +6922,7 @@ files:
   - name: a2superdrive.zip
     required: false
     category: bios_zip
+    system: apple2gs
     source_ref: "upstream src/devices/bus/a2bus/a2superdrive.cpp:104-107"
     note: >-
       Device ROM set, loaded when a machine instantiates `Apple II 3.5" Disk
@@ -6948,6 +6978,7 @@ files:
   - name: a2thunpl.zip
     required: false
     category: bios_zip
+    system: apple2gs
     source_ref: "upstream src/devices/bus/a2bus/a2thunderclock.cpp:43-46"
     note: >-
       Device ROM set, loaded when a machine instantiates `ThunderWare
@@ -6974,6 +7005,7 @@ files:
   - name: a2tmstho.zip
     required: false
     category: bios_zip
+    system: apple2gs
     source_ref: "upstream src/devices/bus/a2bus/timemasterho.cpp:55-58"
     note: >-
       Device ROM set, loaded when a machine instantiates `Applied Engineering
@@ -7000,6 +7032,7 @@ files:
   - name: a2ultrme.zip
     required: false
     category: bios_zip
+    system: apple2gs
     source_ref: "upstream src/devices/bus/a2bus/a2ultraterm.cpp:101-110"
     note: >-
       Device ROM set, loaded when a machine instantiates `Videx UltraTerm
@@ -7021,6 +7054,7 @@ files:
   - name: a2ulttrm.zip
     required: false
     category: bios_zip
+    system: apple2gs
     source_ref: "upstream src/devices/bus/a2bus/a2ultraterm.cpp:88-97"
     note: >-
       Device ROM set, loaded when a machine instantiates `Videx UltraTerm
@@ -7042,6 +7076,7 @@ files:
   - name: a2uniprint.zip
     required: false
     category: bios_zip
+    system: apple2gs
     source_ref: "upstream src/devices/bus/a2bus/uniprint.cpp:56-59"
     note: >-
       Device ROM set, loaded when a machine instantiates `Videx Uniprint
@@ -7055,6 +7090,7 @@ files:
   - name: a2vidtrm.zip
     required: false
     category: bios_zip
+    system: apple2gs
     source_ref: "upstream src/devices/bus/a2bus/a2videoterm.cpp:44-64"
     note: >-
       Device ROM set, loaded when a machine instantiates `Videx Videoterm 80
@@ -7132,6 +7168,7 @@ files:
   - name: a2vtc1.zip
     required: false
     category: bios_zip
+    system: apple2gs
     source_ref: "upstream src/devices/bus/a2bus/a2videoterm.cpp:82-89"
     note: >-
       Device ROM set, loaded when a machine instantiates `unknown Videoterm
@@ -7153,6 +7190,7 @@ files:
   - name: a2vulcan.zip
     required: false
     category: bios_zip
+    system: apple2gs
     source_ref: "upstream src/devices/bus/a2bus/a2vulcan.cpp:68-71"
     note: >-
       Device ROM set, loaded when a machine instantiates `Applied Engineering
@@ -7166,6 +7204,7 @@ files:
   - name: a2vulgld.zip
     required: false
     category: bios_zip
+    system: apple2gs
     source_ref: "upstream src/devices/bus/a2bus/a2vulcan.cpp:78-81"
     note: >-
       Device ROM set, loaded when a machine instantiates `Applied Engineering
@@ -7192,6 +7231,7 @@ files:
   - name: a2zipdrv.zip
     required: false
     category: bios_zip
+    system: apple2gs
     source_ref: "upstream src/devices/bus/a2bus/a2zipdrive.cpp:81-84"
     note: >-
       Device ROM set, loaded when a machine instantiates `Zip Technologies
@@ -7994,6 +8034,7 @@ files:
   - name: ace80.zip
     required: false
     category: bios_zip
+    system: apple2gs
     source_ref: "upstream src/devices/bus/a2bus/a2applicard.cpp:33-36"
     note: >-
       Device ROM set, loaded when a machine instantiates `Franklin ACE 80 CPU
@@ -8860,6 +8901,22 @@ files:
   - name: ap2000.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
+      - apple2gs
+      - coco
+      - coleco-adam
+      - crvision
+      - dragon64
+      - electron
+      - elektronika-bk
+      - fm7
+      - konami-twinkle
+      - laser310
+      - pc80
+      - trs80
+      - tutor
     source_ref: "upstream src/devices/bus/centronics/epson_lx810l.cpp:75-80"
     note: >-
       Device ROM set, loaded when a machine instantiates `Epson ActionPrinter
@@ -8873,6 +8930,13 @@ files:
   - name: aplcd150.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
+      - apple-macintosh-ii
+      - apple2gs
+      - elektronika-bk
+      - ti99
     source_ref: "upstream src/devices/bus/nscsi/applecd.cpp:80-86"
     note: >-
       Device ROM set, loaded when a machine instantiates `AppleCD 150`.
@@ -8885,6 +8949,7 @@ files:
   - name: aprissi.zip
     required: false
     category: bios_zip
+    system: apple2gs
     source_ref: "upstream src/devices/bus/a2bus/a2ssc.cpp:93-96"
     note: >-
       Device ROM set, loaded when a machine instantiates `Apricorn Super
@@ -8898,6 +8963,7 @@ files:
   - name: arc_a448.zip
     required: false
     category: bios_zip
+    system: acorn-archimedes
     source_ref: "upstream src/devices/bus/archimedes/podule/a448.cpp:76-79"
     note: >-
       Device ROM set, loaded when a machine instantiates `Armadillo Systems
@@ -8911,6 +8977,7 @@ files:
   - name: arc_a448b.zip
     required: false
     category: bios_zip
+    system: acorn-archimedes
     source_ref: "upstream src/devices/bus/archimedes/podule/a448.cpp:81-84"
     note: >-
       Device ROM set, loaded when a machine instantiates `Armadillo Systems
@@ -8924,6 +8991,7 @@ files:
   - name: arc_acejoy.zip
     required: false
     category: bios_zip
+    system: acorn-archimedes
     source_ref: "upstream src/devices/bus/archimedes/podule/acejoy.cpp:51-54"
     note: >-
       Device ROM set, loaded when a machine instantiates `ACE Joy Connect`.
@@ -8936,6 +9004,7 @@ files:
   - name: arc_armadeus.zip
     required: false
     category: bios_zip
+    system: acorn-archimedes
     source_ref: "upstream src/devices/bus/archimedes/podule/armadeus.cpp:56-59"
     note: >-
       Device ROM set, loaded when a machine instantiates `Clares Armadeus
@@ -8949,6 +9018,7 @@ files:
   - name: arc_bbcio_aga30.zip
     required: false
     category: bios_zip
+    system: acorn-archimedes
     source_ref: "upstream src/devices/bus/archimedes/podule/io_morley.cpp:153-157"
     note: >-
       Device ROM set, loaded when a machine instantiates `Acorn AGA30 BBC I/O
@@ -8963,6 +9033,7 @@ files:
   - name: arc_bbcio_aka10.zip
     required: false
     category: bios_zip
+    system: acorn-archimedes
     source_ref: "upstream src/devices/bus/archimedes/podule/io.cpp:191-199"
     note: >-
       Device ROM set, loaded when a machine instantiates `Acorn AKA10 BBC I/O
@@ -8987,6 +9058,7 @@ files:
   - name: arc_bbcio_we.zip
     required: false
     category: bios_zip
+    system: acorn-archimedes
     source_ref: "upstream src/devices/bus/archimedes/podule/io_we.cpp:84-88"
     note: >-
       Device ROM set, loaded when a machine instantiates `Watford Electronics
@@ -9001,6 +9073,7 @@ files:
   - name: arc_eaglem2.zip
     required: false
     category: bios_zip
+    system: acorn-archimedes
     source_ref: "upstream src/devices/bus/archimedes/podule/eaglem2.cpp:79-82"
     note: >-
       Device ROM set, loaded when a machine instantiates `Wild Vision/Computer
@@ -9014,6 +9087,7 @@ files:
   - name: arc_ether1_aka25.zip
     required: false
     category: bios_zip
+    system: acorn-archimedes
     source_ref: "upstream src/devices/bus/archimedes/podule/ether1.cpp:84-87"
     note: >-
       Device ROM set, loaded when a machine instantiates `Acorn AKA25
@@ -9027,6 +9101,7 @@ files:
   - name: arc_ether2_aeh50.zip
     required: false
     category: bios_zip
+    system: acorn-archimedes
     source_ref: "upstream src/devices/bus/archimedes/podule/ether2.cpp:67-70"
     note: >-
       Device ROM set, loaded when a machine instantiates `Acorn AEH50 Ethernet
@@ -9040,6 +9115,7 @@ files:
   - name: arc_ether3_aeh54.zip
     required: false
     category: bios_zip
+    system: acorn-archimedes
     source_ref: "upstream src/devices/bus/archimedes/podule/ether3.cpp:60-63"
     note: >-
       Device ROM set, loaded when a machine instantiates `Acorn AEH54 10Base2
@@ -9053,6 +9129,7 @@ files:
   - name: arc_ethera.zip
     required: false
     category: bios_zip
+    system: acorn-archimedes
     source_ref: "upstream src/devices/bus/archimedes/podule/ethera.cpp:60-63"
     note: >-
       Device ROM set, loaded when a machine instantiates `ANT Ethernet 10base2
@@ -9066,6 +9143,7 @@ files:
   - name: arc_etherd.zip
     required: false
     category: bios_zip
+    system: acorn-archimedes
     source_ref: "upstream src/devices/bus/archimedes/podule/etherd.cpp:63-66"
     note: >-
       Device ROM set, loaded when a machine instantiates `Digital Services
@@ -9079,6 +9157,7 @@ files:
   - name: arc_etherr.zip
     required: false
     category: bios_zip
+    system: acorn-archimedes
     source_ref: "upstream src/devices/bus/archimedes/podule/etherr.cpp:63-66"
     note: >-
       Device ROM set, loaded when a machine instantiates `RISC Developments
@@ -9092,6 +9171,7 @@ files:
   - name: arc_faxpack.zip
     required: false
     category: bios_zip
+    system: acorn-archimedes
     source_ref: "upstream src/devices/bus/archimedes/podule/faxpack.cpp:74-77"
     note: >-
       Device ROM set, loaded when a machine instantiates `Computer Concepts
@@ -9105,6 +9185,7 @@ files:
   - name: arc_greyhawk.zip
     required: false
     category: bios_zip
+    system: acorn-archimedes
     source_ref: "upstream src/devices/bus/archimedes/podule/greyhawk.cpp:67-70"
     note: >-
       Device ROM set, loaded when a machine instantiates `Computer Concepts
@@ -9118,6 +9199,7 @@ files:
   - name: arc_hdisc_akd52.zip
     required: false
     category: bios_zip
+    system: acorn-archimedes
     source_ref: "upstream src/devices/bus/archimedes/podule/hdisc.cpp:61-64"
     note: >-
       Device ROM set, loaded when a machine instantiates `Acorn AKD52 Hard
@@ -9131,6 +9213,7 @@ files:
   - name: arc_hdisc_cw.zip
     required: false
     category: bios_zip
+    system: acorn-archimedes
     source_ref: "upstream src/devices/bus/archimedes/podule/hdisc_cw.cpp:59-62"
     note: >-
       Device ROM set, loaded when a machine instantiates `Computerware Hard
@@ -9144,6 +9227,7 @@ files:
   - name: arc_hdisc_morley.zip
     required: false
     category: bios_zip
+    system: acorn-archimedes
     source_ref: "upstream src/devices/bus/archimedes/podule/hdisc_morley.cpp:61-64"
     note: >-
       Device ROM set, loaded when a machine instantiates `Morley Electronics
@@ -9157,6 +9241,7 @@ files:
   - name: arc_hdisc_we.zip
     required: false
     category: bios_zip
+    system: acorn-archimedes
     source_ref: "upstream src/devices/bus/archimedes/podule/hdisc_we.cpp:62-65"
     note: >-
       Device ROM set, loaded when a machine instantiates `Watford Electronics
@@ -9170,6 +9255,7 @@ files:
   - name: arc_ide_be.zip
     required: false
     category: bios_zip
+    system: acorn-archimedes
     source_ref: "upstream src/devices/bus/archimedes/podule/ide_be.cpp:59-69"
     note: >-
       Device ROM set, loaded when a machine instantiates `Baildon Electronics
@@ -9199,6 +9285,7 @@ files:
   - name: arc_ide_rdev.zip
     required: false
     category: bios_zip
+    system: acorn-archimedes
     source_ref: "upstream src/devices/bus/archimedes/podule/ide_rdev.cpp:58-61"
     note: >-
       Device ROM set, loaded when a machine instantiates `RISC Developments
@@ -9212,6 +9299,7 @@ files:
   - name: arc_iomidi_aka15.zip
     required: false
     category: bios_zip
+    system: acorn-archimedes
     source_ref: "upstream src/devices/bus/archimedes/podule/io.cpp:207-211"
     note: >-
       Device ROM set, loaded when a machine instantiates `Acorn AKA15 MIDI and
@@ -9226,6 +9314,7 @@ files:
   - name: arc_lark.zip
     required: false
     category: bios_zip
+    system: acorn-archimedes
     source_ref: "upstream src/devices/bus/archimedes/podule/lark.cpp:107-111"
     note: >-
       Device ROM set, loaded when a machine instantiates `Wild Vision/Computer
@@ -9240,6 +9329,7 @@ files:
   - name: arc_lbp4.zip
     required: false
     category: bios_zip
+    system: acorn-archimedes
     source_ref: "upstream src/devices/bus/archimedes/podule/laserd.cpp:83-90"
     note: >-
       Device ROM set, loaded when a machine instantiates `Computer Concepts
@@ -9259,6 +9349,7 @@ files:
   - name: arc_midi2.zip
     required: false
     category: bios_zip
+    system: acorn-archimedes
     source_ref: "upstream src/devices/bus/archimedes/podule/midi_emr.cpp:90-94"
     note: >-
       Device ROM set, loaded when a machine instantiates `EMR MIDI 2
@@ -9273,6 +9364,7 @@ files:
   - name: arc_midi_aka16.zip
     required: false
     category: bios_zip
+    system: acorn-archimedes
     source_ref: "upstream src/devices/bus/archimedes/podule/io.cpp:213-221"
     note: >-
       Device ROM set, loaded when a machine instantiates `Acorn AKA16 MIDI
@@ -9297,6 +9389,7 @@ files:
   - name: arc_midimax.zip
     required: false
     category: bios_zip
+    system: acorn-archimedes
     source_ref: "upstream src/devices/bus/archimedes/podule/midimax.cpp:76-82"
     note: >-
       Device ROM set, loaded when a machine instantiates `Wild Vision
@@ -9316,6 +9409,7 @@ files:
   - name: arc_midimax2.zip
     required: false
     category: bios_zip
+    system: acorn-archimedes
     source_ref: "upstream src/devices/bus/archimedes/podule/midimax.cpp:84-88"
     note: >-
       Device ROM set, loaded when a machine instantiates `Wild Vision MidiMax
@@ -9330,6 +9424,7 @@ files:
   - name: arc_nexus_a500.zip
     required: false
     category: bios_zip
+    system: acorn-archimedes
     source_ref: "upstream src/devices/bus/archimedes/podule/nexus.cpp:64-67"
     note: >-
       Device ROM set, loaded when a machine instantiates `SJ Research Nexus
@@ -9343,6 +9438,7 @@ files:
   - name: arc_rom_aka05.zip
     required: false
     category: bios_zip
+    system: acorn-archimedes
     source_ref: "upstream src/devices/bus/archimedes/podule/rom.cpp:84-88"
     note: >-
       Device ROM set, loaded when a machine instantiates `Acorn AKA05 ROM
@@ -9357,6 +9453,7 @@ files:
   - name: arc_rom_r225.zip
     required: false
     category: bios_zip
+    system: acorn-archimedes
     source_ref: "upstream src/devices/bus/archimedes/podule/rom.cpp:90-94"
     note: >-
       Device ROM set, loaded when a machine instantiates `Acorn AKA05 ROM
@@ -9374,6 +9471,7 @@ files:
   - name: arc_rs423.zip
     required: false
     category: bios_zip
+    system: acorn-archimedes
     source_ref: "upstream src/devices/bus/archimedes/podule/rs423.cpp:62-65"
     note: >-
       Device ROM set, loaded when a machine instantiates `Archimedes Dual
@@ -9387,6 +9485,7 @@ files:
   - name: arc_scan256.zip
     required: false
     category: bios_zip
+    system: acorn-archimedes
     source_ref: "upstream src/devices/bus/archimedes/podule/scan256.cpp:62-65"
     note: >-
       Device ROM set, loaded when a machine instantiates `Watford Electronics
@@ -9400,6 +9499,7 @@ files:
   - name: arc_scanjunior.zip
     required: false
     category: bios_zip
+    system: acorn-archimedes
     source_ref: "upstream src/devices/bus/archimedes/podule/scanlight.cpp:137-141"
     note: >-
       Device ROM set, loaded when a machine instantiates `Computer Concepts
@@ -9414,6 +9514,7 @@ files:
   - name: arc_scanjunior3.zip
     required: false
     category: bios_zip
+    system: acorn-archimedes
     source_ref: "upstream src/devices/bus/archimedes/podule/scanlight.cpp:143-147"
     note: >-
       Device ROM set, loaded when a machine instantiates `Computer Concepts
@@ -9428,6 +9529,7 @@ files:
   - name: arc_scanlight.zip
     required: false
     category: bios_zip
+    system: acorn-archimedes
     source_ref: "upstream src/devices/bus/archimedes/podule/scanlight.cpp:131-135"
     note: >-
       Device ROM set, loaded when a machine instantiates `Computer Concepts
@@ -9442,6 +9544,7 @@ files:
   - name: arc_scanvideo.zip
     required: false
     category: bios_zip
+    system: acorn-archimedes
     source_ref: "upstream src/devices/bus/archimedes/podule/scanlight.cpp:149-153"
     note: >-
       Device ROM set, loaded when a machine instantiates `Computer Concepts
@@ -9456,6 +9559,7 @@ files:
   - name: arc_scsi_aka30.zip
     required: false
     category: bios_zip
+    system: acorn-archimedes
     source_ref: "upstream src/devices/bus/archimedes/podule/scsi_acorn.cpp:141-145"
     note: >-
       Device ROM set, loaded when a machine instantiates `Acorn AKA30 SCSI
@@ -9469,6 +9573,7 @@ files:
   - name: arc_scsi_aka31.zip
     required: false
     category: bios_zip
+    system: acorn-archimedes
     source_ref: "upstream src/devices/bus/archimedes/podule/scsi_acorn.cpp:147-151"
     note: >-
       Device ROM set, loaded when a machine instantiates `Acorn AKA31 SCSI
@@ -9482,6 +9587,7 @@ files:
   - name: arc_scsi_aka32.zip
     required: false
     category: bios_zip
+    system: acorn-archimedes
     source_ref: "upstream src/devices/bus/archimedes/podule/scsi_acorn.cpp:153-161"
     note: >-
       Device ROM set, loaded when a machine instantiates `Acorn AKA32 CDFS &
@@ -9506,6 +9612,7 @@ files:
   - name: arc_scsi_cumana.zip
     required: false
     category: bios_zip
+    system: acorn-archimedes
     source_ref: "upstream src/devices/bus/archimedes/podule/scsi_cumana.cpp:74-77"
     note: >-
       Device ROM set, loaded when a machine instantiates `Cumana 16bit SCSI
@@ -9519,6 +9626,7 @@ files:
   - name: arc_scsi_ling.zip
     required: false
     category: bios_zip
+    system: acorn-archimedes
     source_ref: "upstream src/devices/bus/archimedes/podule/scsi_ling.cpp:73-76"
     note: >-
       Device ROM set, loaded when a machine instantiates `Lingenuity SCSI
@@ -9532,6 +9640,7 @@ files:
   - name: arc_scsi_morley.zip
     required: false
     category: bios_zip
+    system: acorn-archimedes
     source_ref: "upstream src/devices/bus/archimedes/podule/scsi_morley.cpp:74-86"
     note: >-
       Device ROM set, loaded when a machine instantiates `Morley Electronics
@@ -9566,6 +9675,7 @@ files:
   - name: arc_scsi_oak.zip
     required: false
     category: bios_zip
+    system: acorn-archimedes
     source_ref: "upstream src/devices/bus/archimedes/podule/scsi_oak.cpp:173-184"
     note: >-
       Device ROM set, loaded when a machine instantiates `Oak Solutions 16 bit
@@ -9594,6 +9704,7 @@ files:
   - name: arc_scsi_vti.zip
     required: false
     category: bios_zip
+    system: acorn-archimedes
     source_ref: "upstream src/devices/bus/archimedes/podule/scsi_vti.cpp:78-81"
     note: >-
       Device ROM set, loaded when a machine instantiates `VTI User Port and
@@ -9607,6 +9718,7 @@ files:
   - name: arc_serial.zip
     required: false
     category: bios_zip
+    system: acorn-archimedes
     source_ref: "upstream src/devices/bus/archimedes/podule/serial.cpp:62-65"
     note: >-
       Device ROM set, loaded when a machine instantiates `Atomwide Serial
@@ -9620,6 +9732,7 @@ files:
   - name: arc_spectra.zip
     required: false
     category: bios_zip
+    system: acorn-archimedes
     source_ref: "upstream src/devices/bus/archimedes/podule/spectra.cpp:62-65"
     note: >-
       Device ROM set, loaded when a machine instantiates `Beebug Spectra
@@ -9633,6 +9746,7 @@ files:
   - name: arc_ua_morley.zip
     required: false
     category: bios_zip
+    system: acorn-archimedes
     source_ref: "upstream src/devices/bus/archimedes/podule/io_morley.cpp:159-163"
     note: >-
       Device ROM set, loaded when a machine instantiates `Morley Electronics
@@ -9647,6 +9761,7 @@ files:
   - name: arc_uma_morley.zip
     required: false
     category: bios_zip
+    system: acorn-archimedes
     source_ref: "upstream src/devices/bus/archimedes/podule/io_morley.cpp:165-169"
     note: >-
       Device ROM set, loaded when a machine instantiates `Morley Electronics
@@ -9661,6 +9776,7 @@ files:
   - name: arc_upa_hccs.zip
     required: false
     category: bios_zip
+    system: acorn-archimedes
     source_ref: "upstream src/devices/bus/archimedes/podule/io_hccs.cpp:62-66"
     note: >-
       Device ROM set, loaded when a machine instantiates `HCCS User/Analogue
@@ -9675,6 +9791,7 @@ files:
   - name: arc_upmidi_aka12.zip
     required: false
     category: bios_zip
+    system: acorn-archimedes
     source_ref: "upstream src/devices/bus/archimedes/podule/io.cpp:201-205"
     note: >-
       Device ROM set, loaded when a machine instantiates `Acorn AKA12 User
@@ -9715,6 +9832,7 @@ files:
   - name: at_keybc.zip
     required: false
     category: bios_zip
+    system: tandy-vis
     source_ref: "upstream src/devices/machine/at_keybc.cpp:102-110"
     note: >-
       Device ROM set, loaded when a machine instantiates `PC/AT Keyboard
@@ -9739,6 +9857,7 @@ files:
   - name: atari1050.zip
     required: false
     category: bios_zip
+    system: xegs
     source_ref: "upstream src/devices/bus/a800/atari1050.cpp:105-117"
     note: >-
       Device ROM set, loaded when a machine instantiates `Atari 1050 Dual
@@ -9773,6 +9892,7 @@ files:
   - name: atari810.zip
     required: false
     category: bios_zip
+    system: xegs
     source_ref: "upstream src/devices/bus/a800/atari810.cpp:100-106"
     note: >-
       Device ROM set, loaded when a machine instantiates `Atari 810 Disk
@@ -9914,6 +10034,9 @@ files:
   - name: bbc_24bbc.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
     source_ref: "upstream src/devices/bus/bbc/1mhzbus/24bbc.cpp:27-30"
     note: >-
       Device ROM set, loaded when a machine instantiates `Sprow 24bBC/RAM Disc
@@ -9927,6 +10050,9 @@ files:
   - name: bbc_2ndserial.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
     source_ref: "upstream src/devices/bus/bbc/1mhzbus/2ndserial.cpp:51-54"
     note: >-
       Device ROM set, loaded when a machine instantiates `Sprow 2nd Serial
@@ -10076,6 +10202,9 @@ files:
   - name: bbc_autoprom.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
     source_ref: "upstream src/devices/bus/bbc/1mhzbus/autoprom.cpp:63-72"
     note: >-
       Device ROM set, loaded when a machine instantiates `ATPL AutoPrommer`.
@@ -10092,6 +10221,11 @@ files:
   - name: bbc_beebspch.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
+      - dragon64
+      - electron
     source_ref: "upstream src/devices/bus/bbc/userport/beebspch.cpp:55-62"
     note: >-
       Device ROM set, loaded when a machine instantiates `Beeb Speech
@@ -10109,6 +10243,9 @@ files:
   - name: bbc_cc500.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
     source_ref: "upstream src/devices/bus/bbc/1mhzbus/cc500.cpp:55-58"
     note: >-
       Device ROM set, loaded when a machine instantiates `CTS Colour Card
@@ -10122,6 +10259,11 @@ files:
   - name: bbc_chameleon.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
+      - dragon64
+      - electron
     source_ref: "upstream src/devices/bus/bbc/userport/palext.cpp:86-89"
     note: >-
       Device ROM set, loaded when a machine instantiates `Micro User Chameleon
@@ -10240,6 +10382,9 @@ files:
   - name: bbc_datacentre.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
     source_ref: "upstream src/devices/bus/bbc/1mhzbus/datacentre.cpp:62-73"
     note: >-
       Device ROM set, loaded when a machine instantiates `RetroClinic
@@ -10274,6 +10419,9 @@ files:
   - name: bbc_ieee488.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
     source_ref: "upstream src/devices/bus/bbc/1mhzbus/ieee488.cpp:35-44"
     note: >-
       Device ROM set, loaded when a machine instantiates `Acorn IEEE-488
@@ -10335,6 +10483,7 @@ files:
   - name: bbc_magazzino.zip
     required: false
     category: bios_zip
+    system: acorn-bbc-micro
     source_ref: "upstream src/devices/bus/bbc/exp/magazzino.cpp:52-55"
     note: >-
       Device ROM set, loaded when a machine instantiates `Magazzino
@@ -10361,6 +10510,7 @@ files:
   - name: bbc_mertec.zip
     required: false
     category: bios_zip
+    system: acorn-bbc-micro
     source_ref: "upstream src/devices/bus/bbc/exp/mertec.cpp:80-83"
     note: >-
       Device ROM set, loaded when a machine instantiates `Mertec Compact
@@ -10374,6 +10524,7 @@ files:
   - name: bbc_morleyaa.zip
     required: false
     category: bios_zip
+    system: acorn-bbc-micro
     source_ref: "upstream src/devices/bus/bbc/internal/morleyaa.cpp:25-28"
     note: >-
       Device ROM set, loaded when a machine instantiates `Morley Electronics
@@ -10387,6 +10538,9 @@ files:
   - name: bbc_multiform.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
     source_ref: "upstream src/devices/bus/bbc/1mhzbus/multiform.cpp:52-58"
     note: >-
       Device ROM set, loaded when a machine instantiates `PEDL Multiform Z80`.
@@ -10468,6 +10622,9 @@ files:
   - name: bbc_opus3.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
     source_ref: "upstream src/devices/bus/bbc/1mhzbus/opus3.cpp:81-90"
     note: >-
       Device ROM set, loaded when a machine instantiates `Opus Challenger
@@ -10510,6 +10667,7 @@ files:
   - name: bbc_opusa.zip
     required: false
     category: bios_zip
+    system: acorn-bbc-micro
     source_ref: "upstream src/devices/bus/bbc/1mhzbus/opus3.cpp:92-97"
     note: >-
       Device ROM set, loaded when a machine instantiates `Opus Challenger
@@ -10524,6 +10682,9 @@ files:
   - name: bbc_pdram.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
     source_ref: "upstream src/devices/bus/bbc/1mhzbus/pdram.cpp:25-28"
     note: >-
       Device ROM set, loaded when a machine instantiates `Micro User Pull Down
@@ -10537,6 +10698,9 @@ files:
   - name: bbc_pms64k.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
     source_ref: "upstream src/devices/bus/bbc/1mhzbus/pms64k.cpp:25-28"
     note: >-
       Device ROM set, loaded when a machine instantiates `PMS 64K Non-Volatile
@@ -10550,6 +10714,9 @@ files:
   - name: bbc_ramdisc.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
     source_ref: "upstream src/devices/bus/bbc/1mhzbus/ramdisc.cpp:87-90"
     note: >-
       Device ROM set, loaded when a machine instantiates `Morley Electronics
@@ -10749,6 +10916,7 @@ files:
   - name: bbc_tube_32016.zip
     required: false
     category: bios_zip
+    system: acorn-bbc-micro
     source_ref: "upstream src/devices/bus/bbc/tube/tube_32016.cpp:129-142"
     note: >-
       Device ROM set, loaded when a machine instantiates `Acorn 32016 2nd
@@ -10788,6 +10956,7 @@ files:
   - name: bbc_tube_32016l.zip
     required: false
     category: bios_zip
+    system: acorn-bbc-micro
     source_ref: "upstream src/devices/bus/bbc/tube/tube_32016.cpp:158-163"
     note: >-
       Device ROM set, loaded when a machine instantiates `Acorn Large 32016
@@ -10807,6 +10976,7 @@ files:
   - name: bbc_tube_6502.zip
     required: false
     category: bios_zip
+    system: acorn-bbc-micro
     source_ref: "upstream src/devices/bus/bbc/tube/tube_6502.cpp:200-209"
     note: >-
       Device ROM set, loaded when a machine instantiates `Acorn 6502 2nd
@@ -10831,6 +11001,7 @@ files:
   - name: bbc_tube_6502e.zip
     required: false
     category: bios_zip
+    system: acorn-bbc-micro
     source_ref: "upstream src/devices/bus/bbc/tube/tube_6502.cpp:223-228"
     note: >-
       Device ROM set, loaded when a machine instantiates `Acorn Extended 6502
@@ -10875,6 +11046,7 @@ files:
   - name: bbc_tube_65c102.zip
     required: false
     category: bios_zip
+    system: acorn-bbc-micro
     source_ref: "upstream src/devices/bus/bbc/tube/tube_6502.cpp:230-239"
     note: >-
       Device ROM set, loaded when a machine instantiates `Acorn 65C102
@@ -10899,6 +11071,7 @@ files:
   - name: bbc_tube_80286.zip
     required: false
     category: bios_zip
+    system: acorn-bbc-micro
     source_ref: "upstream src/devices/bus/bbc/tube/tube_80286.cpp:95-99"
     note: >-
       Device ROM set, loaded when a machine instantiates `Acorn 80286 2nd
@@ -10916,6 +11089,7 @@ files:
   - name: bbc_tube_a500.zip
     required: false
     category: bios_zip
+    system: acorn-bbc-micro
     source_ref: "upstream src/devices/bus/bbc/tube/tube_a500.cpp:138-144"
     note: >-
       Device ROM set, loaded when a machine instantiates `Acorn A500 2nd
@@ -10941,6 +11115,7 @@ files:
   - name: bbc_tube_a500d.zip
     required: false
     category: bios_zip
+    system: acorn-bbc-micro
     source_ref: "upstream src/devices/bus/bbc/tube/tube_a500.cpp:146-152"
     note: >-
       Device ROM set, loaded when a machine instantiates `Acorn A500 (Dual
@@ -10966,6 +11141,7 @@ files:
   - name: bbc_tube_arm.zip
     required: false
     category: bios_zip
+    system: acorn-bbc-micro
     source_ref: "upstream src/devices/bus/bbc/tube/tube_arm.cpp:79-90"
     note: >-
       Device ROM set, loaded when a machine instantiates `ARM Evaluation
@@ -10995,6 +11171,7 @@ files:
   - name: bbc_tube_arm7.zip
     required: false
     category: bios_zip
+    system: acorn-bbc-micro
     source_ref: "upstream src/devices/bus/bbc/tube/tube_arm7.cpp:118-124"
     note: >-
       Device ROM set, loaded when a machine instantiates `Sprow ARM7TDMI
@@ -11056,6 +11233,7 @@ files:
   - name: bbc_tube_matchbox.zip
     required: false
     category: bios_zip
+    system: acorn-bbc-micro
     source_ref: "upstream src/devices/bus/bbc/tube/tube_matchbox.cpp:353-377"
     note: >-
       Device ROM set, loaded when a machine instantiates `Matchbox
@@ -11097,6 +11275,7 @@ files:
   - name: bbc_tube_pcplus.zip
     required: false
     category: bios_zip
+    system: acorn-bbc-micro
     source_ref: "upstream src/devices/bus/bbc/tube/tube_80186.cpp:116-120"
     note: >-
       Device ROM set, loaded when a machine instantiates `Solidisk PC-Plus
@@ -11114,6 +11293,7 @@ files:
   - name: bbc_tube_rc6502.zip
     required: false
     category: bios_zip
+    system: acorn-bbc-micro
     source_ref: "upstream src/devices/bus/bbc/tube/tube_rc6502.cpp:178-185"
     note: >-
       Device ROM set, loaded when a machine instantiates `ReCo6502 (65C02)`.
@@ -11132,6 +11312,7 @@ files:
   - name: bbc_tube_rc65816.zip
     required: false
     category: bios_zip
+    system: acorn-bbc-micro
     source_ref: "upstream src/devices/bus/bbc/tube/tube_rc6502.cpp:187-194"
     note: >-
       Device ROM set, loaded when a machine instantiates `ReCo6502 (65C816)`.
@@ -11171,6 +11352,7 @@ files:
   - name: bbc_tube_z80.zip
     required: false
     category: bios_zip
+    system: acorn-bbc-micro
     source_ref: "upstream src/devices/bus/bbc/tube/tube_z80.cpp:125-129"
     note: >-
       Device ROM set, loaded when a machine instantiates `Acorn Z80 2nd
@@ -11185,6 +11367,7 @@ files:
   - name: bbc_tube_z80w.zip
     required: false
     category: bios_zip
+    system: acorn-bbc-micro
     source_ref: "upstream src/devices/bus/bbc/tube/tube_z80.cpp:131-135"
     note: >-
       Device ROM set, loaded when a machine instantiates `Acorn Z80 2nd
@@ -11251,6 +11434,7 @@ files:
   - name: bbc_tube_zep100m.zip
     required: false
     category: bios_zip
+    system: acorn-bbc-micro
     source_ref: "upstream src/devices/bus/bbc/tube/tube_zep100.cpp:189-198"
     note: >-
       Device ROM set, loaded when a machine instantiates `Torch Z80
@@ -11326,6 +11510,11 @@ files:
   - name: bbc_voicebox.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
+      - dragon64
+      - electron
     source_ref: "upstream src/devices/bus/bbc/userport/voicebox.cpp:51-54"
     note: >-
       Device ROM set, loaded when a machine instantiates `Robin Voice Box`.
@@ -11672,6 +11861,7 @@ files:
   - name: bk_altpro.zip
     required: false
     category: bios_zip
+    system: elektronika-bk
     source_ref: "upstream src/devices/bus/qbus/bk_altpro.cpp:29-38"
     note: >-
       Device ROM set, loaded when a machine instantiates `BK Altpro
@@ -11696,6 +11886,7 @@ files:
   - name: bk_kmd.zip
     required: false
     category: bios_zip
+    system: elektronika-bk
     source_ref: "upstream src/devices/bus/qbus/bk_kmd.cpp:26-35"
     note: >-
       Device ROM set, loaded when a machine instantiates `BK0010 floppy`.
@@ -11719,6 +11910,7 @@ files:
   - name: bk_samara.zip
     required: false
     category: bios_zip
+    system: elektronika-bk
     source_ref: "upstream src/devices/bus/qbus/bk_samara.cpp:26-31"
     note: >-
       Device ROM set, loaded when a machine instantiates `BK Samara
@@ -12204,6 +12396,9 @@ files:
   - name: c2031.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
     source_ref: "upstream src/devices/bus/ieee488/c2031.cpp:105-109"
     note: >-
       Device ROM set, loaded when a machine instantiates `Commodore 2031
@@ -12221,6 +12416,9 @@ files:
   - name: c2040.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
     source_ref: "upstream src/devices/bus/ieee488/c2040.cpp:191-203"
     note: >-
       Device ROM set, loaded when a machine instantiates `Commodore 2040 disk
@@ -12244,6 +12442,9 @@ files:
   - name: c2040_fdc.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
     source_ref: "upstream src/devices/bus/ieee488/c2040fdc.cpp:48-51"
     note: >-
       Device ROM set, loaded when a machine instantiates `Commodore 2040 FDC`.
@@ -12256,6 +12457,9 @@ files:
   - name: c3040.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
     source_ref: "upstream src/devices/bus/ieee488/c2040.cpp:220-227"
     note: >-
       Device ROM set, loaded when a machine instantiates `Commodore 3040 disk
@@ -12277,6 +12481,9 @@ files:
   - name: c4023.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
     source_ref: "upstream src/devices/bus/cbmiec/c1526.cpp:61-64"
     note: >-
       Device ROM set, loaded when a machine instantiates `Commodore 4023
@@ -12290,6 +12497,9 @@ files:
   - name: c4040.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
     source_ref: "upstream src/devices/bus/ieee488/c2040.cpp:244-258"
     note: >-
       Device ROM set, loaded when a machine instantiates `Commodore 4040 disk
@@ -12452,6 +12662,9 @@ files:
   - name: c8050.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
     source_ref: "upstream src/devices/bus/ieee488/c8050.cpp:199-237"
     note: >-
       Device ROM set, loaded when a machine instantiates `Commodore 8050 disk
@@ -12521,6 +12734,9 @@ files:
   - name: c8050fdc.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
     source_ref: "upstream src/devices/bus/ieee488/c8050fdc.cpp:51-54"
     note: >-
       Device ROM set, loaded when a machine instantiates `Commodore 8050 FDC`.
@@ -12533,6 +12749,9 @@ files:
   - name: c8250.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
     source_ref: "upstream src/devices/bus/ieee488/c8050.cpp:199-237"
     note: >-
       Device ROM set, loaded when a machine instantiates `Commodore 8250 disk
@@ -12641,6 +12860,9 @@ files:
   - name: c8280.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
     source_ref: "upstream src/devices/bus/ieee488/c8280.cpp:107-121"
     note: >-
       Device ROM set, loaded when a machine instantiates `Commodore 8280 dual
@@ -12826,6 +13048,7 @@ files:
   - name: ccs7710.zip
     required: false
     category: bios_zip
+    system: apple2gs
     source_ref: "upstream src/devices/bus/a2bus/ccs7710.cpp:169-181"
     note: >-
       Device ROM set, loaded when a machine instantiates `CCS Model 7710
@@ -12865,6 +13088,7 @@ files:
   - name: cd6809_fdc.zip
     required: false
     category: bios_zip
+    system: coco
     source_ref: "upstream src/devices/bus/coco/coco_fdc.cpp:486-489"
     note: >-
       Device ROM set, loaded when a machine instantiates `Codimex CD-6809 Disk
@@ -12929,6 +13153,13 @@ files:
   - name: cdd2000.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
+      - apple-macintosh-ii
+      - apple2gs
+      - elektronika-bk
+      - ti99
     source_ref: "upstream src/devices/bus/nscsi/cdd2000.cpp:53-59"
     note: >-
       Device ROM set, loaded when a machine instantiates `Philips CDD2000
@@ -12948,6 +13179,13 @@ files:
   - name: cdr4210.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
+      - apple-macintosh-ii
+      - apple2gs
+      - elektronika-bk
+      - ti99
     source_ref: "upstream src/devices/bus/nscsi/cw7501.cpp:86-89"
     note: >-
       Device ROM set, loaded when a machine instantiates `Creative Technology
@@ -12961,6 +13199,13 @@ files:
   - name: cdrn820s.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
+      - apple-macintosh-ii
+      - apple2gs
+      - elektronika-bk
+      - ti99
     source_ref: "upstream src/devices/bus/nscsi/cdrn820s.cpp:45-48"
     note: >-
       Device ROM set, loaded when a machine instantiates `Caravelle
@@ -12974,6 +13219,13 @@ files:
   - name: cdu415.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
+      - apple-macintosh-ii
+      - apple2gs
+      - elektronika-bk
+      - ti99
     source_ref: "upstream src/devices/bus/nscsi/cdu415.cpp:51-55"
     note: >-
       Device ROM set, loaded when a machine instantiates `Sony CDU415 CD-R`.
@@ -12986,6 +13238,13 @@ files:
   - name: cdu561_25.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
+      - apple-macintosh-ii
+      - apple2gs
+      - elektronika-bk
+      - ti99
     source_ref: "upstream src/devices/bus/nscsi/cdu561.cpp:74-82"
     note: >-
       Device ROM set, loaded when a machine instantiates `Sony CDU561-25`.
@@ -13009,6 +13268,13 @@ files:
   - name: cdu75s.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
+      - apple-macintosh-ii
+      - apple2gs
+      - elektronika-bk
+      - ti99
     source_ref: "upstream src/devices/bus/nscsi/cdu75s.cpp:62-66"
     note: >-
       Device ROM set, loaded when a machine instantiates `Sony/Apple CDU75S
@@ -13081,6 +13347,13 @@ files:
   - name: cfp1080s.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
+      - apple-macintosh-ii
+      - apple2gs
+      - elektronika-bk
+      - ti99
     source_ref: "upstream src/devices/bus/nscsi/cfp1080s.cpp:88-91"
     note: >-
       Device ROM set, loaded when a machine instantiates `Conner CFP1080S`.
@@ -13225,6 +13498,22 @@ files:
   - name: chessmachine.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
+      - apple2gs
+      - coco
+      - coleco-adam
+      - crvision
+      - dragon64
+      - electron
+      - elektronika-bk
+      - fm7
+      - konami-twinkle
+      - laser310
+      - pc80
+      - trs80
+      - tutor
     source_ref: "upstream src/devices/machine/chessmachine.cpp:158-164"
     note: >-
       Device ROM set, loaded when a machine instantiates `Tasc ChessMachine`.
@@ -13523,6 +13812,7 @@ files:
   - name: cmsscsi.zip
     required: false
     category: bios_zip
+    system: apple2gs
     source_ref: "upstream src/devices/bus/a2bus/cmsscsi.cpp:47-55"
     note: >-
       Device ROM set, loaded when a machine instantiates `CMS SCSI II Card`.
@@ -13541,6 +13831,7 @@ files:
   - name: coco_dcmodem.zip
     required: false
     category: bios_zip
+    system: coco
     source_ref: "upstream src/devices/bus/coco/coco_dcmodem.cpp:108-111"
     note: >-
       Device ROM set, loaded when a machine instantiates `CoCo Direct Connect
@@ -13554,6 +13845,9 @@ files:
   - name: coco_orch90.zip
     required: false
     category: bios_zip
+    systems:
+      - coco
+      - dragon64
     source_ref: "upstream src/devices/bus/coco/coco_orch90.cpp:40-43"
     note: >-
       Device ROM set, loaded when a machine instantiates `CoCo Orch-90 PAK`.
@@ -13566,6 +13860,9 @@ files:
   - name: coco_psg.zip
     required: false
     category: bios_zip
+    systems:
+      - coco
+      - dragon64
     source_ref: "upstream src/devices/bus/coco/coco_psg.cpp:38-41"
     note: >-
       Device ROM set, loaded when a machine instantiates `CoCo PSG`.
@@ -13578,6 +13875,7 @@ files:
   - name: coco_rs232.zip
     required: false
     category: bios_zip
+    system: coco
     source_ref: "upstream src/devices/bus/coco/coco_rs232.cpp:105-108"
     note: >-
       Device ROM set, loaded when a machine instantiates `CoCo Deluxe RS-232
@@ -13591,6 +13889,7 @@ files:
   - name: coco_scii.zip
     required: false
     category: bios_zip
+    system: coco
     source_ref: "upstream src/devices/bus/coco/coco_fdc.cpp:468-479"
     note: >-
       Device ROM set, loaded when a machine instantiates `Disto Super
@@ -13610,6 +13909,9 @@ files:
   - name: coco_ssc.zip
     required: false
     category: bios_zip
+    systems:
+      - coco
+      - dragon64
     source_ref: "upstream src/devices/bus/coco/coco_ssc.cpp:194-199"
     note: >-
       Device ROM set, loaded when a machine instantiates `CoCo S/SC PAK`.
@@ -13626,6 +13928,7 @@ files:
   - name: coco_t4426.zip
     required: false
     category: bios_zip
+    system: coco
     source_ref: "upstream src/devices/bus/coco/coco_t4426.cpp:177-196"
     note: >-
       Device ROM set, loaded when a machine instantiates `Terco CNC
@@ -13671,6 +13974,7 @@ files:
   - name: coco_wpk.zip
     required: false
     category: bios_zip
+    system: coco
     source_ref: "upstream src/devices/bus/coco/coco_wpk.cpp:24-27"
     note: >-
       Device ROM set, loaded when a machine instantiates `CoCo WordPak`.
@@ -13683,6 +13987,7 @@ files:
   - name: coco_wpk2.zip
     required: false
     category: bios_zip
+    system: coco
     source_ref: "upstream src/devices/bus/coco/coco_wpk.cpp:24-27"
     note: >-
       Device ROM set, loaded when a machine instantiates `CoCo WordPak II`.
@@ -13695,6 +14000,7 @@ files:
   - name: coco_wpkrs.zip
     required: false
     category: bios_zip
+    system: coco
     source_ref: "upstream src/devices/bus/coco/coco_wpk.cpp:24-27"
     note: >-
       Device ROM set, loaded when a machine instantiates `CoCo WordPak RS`.
@@ -13809,6 +14115,22 @@ files:
   - name: comx_pl80.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
+      - apple2gs
+      - coco
+      - coleco-adam
+      - crvision
+      - dragon64
+      - electron
+      - elektronika-bk
+      - fm7
+      - konami-twinkle
+      - laser310
+      - pc80
+      - trs80
+      - tutor
     source_ref: "upstream src/devices/bus/centronics/comxpl80.cpp:41-48"
     note: >-
       Device ROM set, loaded when a machine instantiates `COMX PL-80`.
@@ -13878,6 +14200,14 @@ files:
   - name: cp2024.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
+      - apple2gs
+      - coco
+      - coleco-adam
+      - elektronika-bk
+      - ti99
     source_ref: "upstream src/devices/bus/ata/cp2024.cpp:93-96"
     note: >-
       Device ROM set, loaded when a machine instantiates `Conner Peripherals
@@ -13915,6 +14245,7 @@ files:
   - name: cp450_fdc.zip
     required: false
     category: bios_zip
+    system: coco
     source_ref: "upstream src/devices/bus/coco/coco_fdc.cpp:481-484"
     note: >-
       Device ROM set, loaded when a machine instantiates `Prológica CP-450
@@ -14239,6 +14570,13 @@ files:
   - name: crd254sh.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
+      - apple-macintosh-ii
+      - apple2gs
+      - elektronika-bk
+      - ti99
     source_ref: "upstream src/devices/bus/nscsi/crd254sh.cpp:55-58"
     note: >-
       Device ROM set, loaded when a machine instantiates `Sanyo CRD-254SH
@@ -14391,6 +14729,13 @@ files:
   - name: cw7501.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
+      - apple-macintosh-ii
+      - apple2gs
+      - elektronika-bk
+      - ti99
     source_ref: "upstream src/devices/bus/nscsi/cw7501.cpp:76-79"
     note: >-
       Device ROM set, loaded when a machine instantiates `Panasonic CW-7501
@@ -14404,6 +14749,7 @@ files:
   - name: d2fdc.zip
     required: false
     category: bios_zip
+    system: apple2gs
     source_ref: "upstream src/devices/machine/wozfdc.cpp:31-34"
     note: >-
       Device ROM set, loaded when a machine instantiates `Apple Disk II floppy
@@ -14417,6 +14763,9 @@ files:
   - name: d9060.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
     source_ref: "upstream src/devices/bus/ieee488/d9060.cpp:162-185"
     note: >-
       Device ROM set, loaded when a machine instantiates `Commodore D9060 hard
@@ -14479,6 +14828,9 @@ files:
   - name: d9090.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
     source_ref: "upstream src/devices/bus/ieee488/d9060.cpp:162-185"
     note: >-
       Device ROM set, loaded when a machine instantiates `Commodore D9090 hard
@@ -15040,6 +15392,7 @@ files:
   - name: dragon_fdc.zip
     required: false
     category: bios_zip
+    system: dragon64
     source_ref: "upstream src/devices/bus/coco/dragon_fdc.cpp:382-385"
     note: >-
       Device ROM set, loaded when a machine instantiates `Dragon FDC`.
@@ -15052,6 +15405,7 @@ files:
   - name: dragon_jcbsnd.zip
     required: false
     category: bios_zip
+    system: dragon64
     source_ref: "upstream src/devices/bus/coco/dragon_jcbsnd.cpp:24-27"
     note: >-
       Device ROM set, loaded when a machine instantiates `Dragon Sound
@@ -15065,6 +15419,7 @@ files:
   - name: dragon_jcbspch.zip
     required: false
     category: bios_zip
+    system: dragon64
     source_ref: "upstream src/devices/bus/coco/dragon_jcbspch.cpp:22-28"
     note: >-
       Device ROM set, loaded when a machine instantiates `Dragon Speech
@@ -15082,6 +15437,7 @@ files:
   - name: dragon_serial.zip
     required: false
     category: bios_zip
+    system: dragon64
     source_ref: "upstream src/devices/bus/coco/dragon_serial.cpp:59-62"
     note: >-
       Device ROM set, loaded when a machine instantiates `Dragon Peaksoft
@@ -15095,6 +15451,7 @@ files:
   - name: dragon_sprites.zip
     required: false
     category: bios_zip
+    system: dragon64
     source_ref: "upstream src/devices/bus/coco/dragon_sprites.cpp:14-17"
     note: >-
       Device ROM set, loaded when a machine instantiates `Dragon Sprites`.
@@ -15120,6 +15477,7 @@ files:
   - name: dsd4432.zip
     required: false
     category: bios_zip
+    system: elektronika-bk
     source_ref: "upstream src/devices/bus/qbus/dsd4432.cpp:212-250"
     note: >-
       Device ROM set, loaded when a machine instantiates `DSD A4432 Floppy
@@ -15210,6 +15568,7 @@ files:
   - name: dsp56362.zip
     required: false
     category: bios_zip
+    system: sega-chihiro
     source_ref: "upstream src/devices/cpu/dsp563xx/dsp56362.cpp:9-12"
     note: >-
       Device ROM set, loaded when a machine instantiates `Motorola DSP56362`.
@@ -15234,6 +15593,7 @@ files:
   - name: dvk_kmd.zip
     required: false
     category: bios_zip
+    system: elektronika-bk
     source_ref: "upstream src/devices/bus/qbus/dvk_kmd.cpp:127-134"
     note: >-
       Device ROM set, loaded when a machine instantiates `DVK KMD floppy
@@ -15291,6 +15651,9 @@ files:
   - name: econet_e01.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
     source_ref: "upstream src/devices/bus/econet/e01.cpp:94-100"
     note: >-
       Device ROM set, loaded when a machine instantiates `Acorn FileStore
@@ -15308,6 +15671,9 @@ files:
   - name: econet_e01s.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
     source_ref: "upstream src/devices/bus/econet/e01.cpp:107-114"
     note: >-
       Device ROM set, loaded when a machine instantiates `Acorn FileStore
@@ -15339,6 +15705,9 @@ files:
   - name: ef9365.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
     source_ref: "upstream src/devices/video/ef9365.cpp:146-149"
     note: >-
       Device ROM set, loaded when a machine instantiates `Thomson EF9365`.
@@ -15445,6 +15814,7 @@ files:
   - name: electron_ap1.zip
     required: false
     category: bios_zip
+    system: electron
     source_ref: "upstream src/devices/bus/electron/plus1.cpp:43-56"
     note: >-
       Device ROM set, loaded when a machine instantiates `P.R.E.S. Advanced
@@ -15469,6 +15839,7 @@ files:
   - name: electron_ap6.zip
     required: false
     category: bios_zip
+    system: electron
     source_ref: "upstream src/devices/bus/electron/plus1.cpp:58-68"
     note: >-
       Device ROM set, loaded when a machine instantiates `P.R.E.S. Advanced
@@ -15488,6 +15859,7 @@ files:
   - name: electron_elksd128.zip
     required: false
     category: bios_zip
+    system: electron
     source_ref: "upstream src/devices/bus/electron/elksd128.cpp:81-84"
     note: >-
       Device ROM set, loaded when a machine instantiates `ElkSD128 Electron SD
@@ -15501,6 +15873,7 @@ files:
   - name: electron_elksd64.zip
     required: false
     category: bios_zip
+    system: electron
     source_ref: "upstream src/devices/bus/electron/elksd64.cpp:59-63"
     note: >-
       Device ROM set, loaded when a machine instantiates `ElkSD64 Electron SD
@@ -15518,6 +15891,7 @@ files:
   - name: electron_m2105.zip
     required: false
     category: bios_zip
+    system: electron
     source_ref: "upstream src/devices/bus/electron/m2105.cpp:30-54"
     note: >-
       Device ROM set, loaded when a machine instantiates `Acorn M2105
@@ -15591,6 +15965,7 @@ files:
   - name: electron_mc68k.zip
     required: false
     category: bios_zip
+    system: electron
     source_ref: "upstream src/devices/bus/electron/mc68k.cpp:66-76"
     note: >-
       Device ROM set, loaded when a machine instantiates `Electron 68000
@@ -15616,6 +15991,7 @@ files:
   - name: electron_mode7.zip
     required: false
     category: bios_zip
+    system: electron
     source_ref: "upstream src/devices/bus/electron/mode7.cpp:33-39"
     note: >-
       Device ROM set, loaded when a machine instantiates `JAFA Mode 7 Display
@@ -15635,6 +16011,7 @@ files:
   - name: electron_pwrjoy.zip
     required: false
     category: bios_zip
+    system: electron
     source_ref: "upstream src/devices/bus/electron/pwrjoy.cpp:64-68"
     note: >-
       Device ROM set, loaded when a machine instantiates `Power Software
@@ -15648,6 +16025,7 @@ files:
   - name: electron_romboxp.zip
     required: false
     category: bios_zip
+    system: electron
     source_ref: "upstream src/devices/bus/electron/romboxp.cpp:34-55"
     note: >-
       Device ROM set, loaded when a machine instantiates `Slogger Rombox+`.
@@ -15686,6 +16064,7 @@ files:
   - name: electron_sidewndr.zip
     required: false
     category: bios_zip
+    system: electron
     source_ref: "upstream src/devices/bus/electron/sidewndr.cpp:67-70"
     note: >-
       Device ROM set, loaded when a machine instantiates `Wizard Sidewinder
@@ -15699,6 +16078,7 @@ files:
   - name: electron_voxbox.zip
     required: false
     category: bios_zip
+    system: electron
     source_ref: "upstream src/devices/bus/electron/voxbox.cpp:25-28"
     note: >-
       Device ROM set, loaded when a machine instantiates `Millsgrade Voxbox
@@ -15712,6 +16092,7 @@ files:
   - name: enetlc.zip
     required: false
     category: bios_zip
+    system: apple-macintosh-ii
     source_ref: "upstream src/devices/bus/nubus/enetlc.cpp:76-86"
     note: >-
       Device ROM set, loaded when a machine instantiates `Apple Ethernet LC
@@ -15731,6 +16112,7 @@ files:
   - name: enetlctp.zip
     required: false
     category: bios_zip
+    system: apple-macintosh-ii
     source_ref: "upstream src/devices/bus/nubus/enetlc.cpp:55-58"
     note: >-
       Device ROM set, loaded when a machine instantiates `Apple Ethernet LC
@@ -15744,6 +16126,7 @@ files:
   - name: enetnbtp.zip
     required: false
     category: bios_zip
+    system: apple-macintosh-ii
     source_ref: "upstream src/devices/bus/nubus/enetnbtp.cpp:51-54"
     note: >-
       Device ROM set, loaded when a machine instantiates `Apple Ethernet NB
@@ -15822,6 +16205,22 @@ files:
   - name: epson_fx80.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
+      - apple2gs
+      - coco
+      - coleco-adam
+      - crvision
+      - dragon64
+      - electron
+      - elektronika-bk
+      - fm7
+      - konami-twinkle
+      - laser310
+      - pc80
+      - trs80
+      - tutor
     source_ref: "upstream src/devices/bus/centronics/epson_fx80.cpp:103-110"
     note: >-
       Device ROM set, loaded when a machine instantiates `Epson FX-80`.
@@ -15838,6 +16237,22 @@ files:
   - name: epson_jx80.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
+      - apple2gs
+      - coco
+      - coleco-adam
+      - crvision
+      - dragon64
+      - electron
+      - elektronika-bk
+      - fm7
+      - konami-twinkle
+      - laser310
+      - pc80
+      - trs80
+      - tutor
     source_ref: "upstream src/devices/bus/centronics/epson_fx80.cpp:112-118"
     note: >-
       Device ROM set, loaded when a machine instantiates `Epson JX-80`.
@@ -15904,6 +16319,22 @@ files:
   - name: epson_rx80.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
+      - apple2gs
+      - coco
+      - coleco-adam
+      - crvision
+      - dragon64
+      - electron
+      - elektronika-bk
+      - fm7
+      - konami-twinkle
+      - laser310
+      - pc80
+      - trs80
+      - tutor
     source_ref: "upstream src/devices/bus/centronics/epson_rx80.cpp:72-75"
     note: >-
       Device ROM set, loaded when a machine instantiates `Epson RX-80`.
@@ -16084,6 +16515,22 @@ files:
   - name: ex800.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
+      - apple2gs
+      - coco
+      - coleco-adam
+      - crvision
+      - dragon64
+      - electron
+      - elektronika-bk
+      - fm7
+      - konami-twinkle
+      - laser310
+      - pc80
+      - trs80
+      - tutor
     source_ref: "upstream src/devices/bus/centronics/epson_ex800.cpp:181-184"
     note: >-
       Device ROM set, loaded when a machine instantiates `Epson EX-800`.
@@ -16451,6 +16898,9 @@ files:
   - name: gpib_hardbox.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
     source_ref: "upstream src/devices/bus/ieee488/hardbox.cpp:120-143"
     note: >-
       Device ROM set, loaded when a machine instantiates `SSE HardBox`.
@@ -16489,6 +16939,9 @@ files:
   - name: gpib_mshark.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
     source_ref: "upstream src/devices/bus/ieee488/shark.cpp:32-42"
     note: >-
       Device ROM set, loaded when a machine instantiates `Mator SHARK`.
@@ -16521,6 +16974,9 @@ files:
   - name: gpib_softbox.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
     source_ref: "upstream src/devices/bus/ieee488/softbox.cpp:47-59"
     note: >-
       Device ROM set, loaded when a machine instantiates `SSE SoftBox`.
@@ -16591,6 +17047,7 @@ files:
   - name: gunsense.zip
     required: false
     category: bios_zip
+    system: sega-naomi
     source_ref: "upstream src/mame/sega/gunsense.cpp:43-48"
     note: >-
       Device ROM set, loaded when a machine instantiates `Sega 838-13143 Gun
@@ -16725,6 +17182,11 @@ files:
   - name: hd44780.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
+      - dragon64
+      - electron
     source_ref: "upstream src/devices/video/hd44780.cpp:139-145"
     note: >-
       Device ROM set, loaded when a machine instantiates `Hitachi HD44780 LCD
@@ -16817,6 +17279,21 @@ files:
   - name: heath_gp19_tlb.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
+      - apple-macintosh-ii
+      - apple2gs
+      - coco
+      - coleco-adam
+      - dragon64
+      - electron
+      - elektronika-bk
+      - konami-twinkle
+      - laser310
+      - mc10
+      - namco-system573
+      - trs80
     source_ref: "upstream src/devices/bus/heathzenith/h19/tlb.cpp:1035-1049"
     note: >-
       Device ROM set, loaded when a machine instantiates `Heath Terminal Logic
@@ -16935,6 +17412,21 @@ files:
   - name: heath_imaginator_tlb.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
+      - apple-macintosh-ii
+      - apple2gs
+      - coco
+      - coleco-adam
+      - dragon64
+      - electron
+      - elektronika-bk
+      - konami-twinkle
+      - laser310
+      - mc10
+      - namco-system573
+      - trs80
     source_ref: "upstream src/devices/bus/heathzenith/h19/tlb.cpp:1051-1073"
     note: >-
       Device ROM set, loaded when a machine instantiates `Heath Terminal Logic
@@ -16966,6 +17458,21 @@ files:
   - name: heath_super19_tlb.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
+      - apple-macintosh-ii
+      - apple2gs
+      - coco
+      - coleco-adam
+      - dragon64
+      - electron
+      - elektronika-bk
+      - konami-twinkle
+      - laser310
+      - mc10
+      - namco-system573
+      - trs80
     source_ref: "upstream src/devices/bus/heathzenith/h19/tlb.cpp:969-981"
     note: >-
       Device ROM set, loaded when a machine instantiates `Heath Terminal Logic
@@ -16987,6 +17494,21 @@ files:
   - name: heath_superset_tlb.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
+      - apple-macintosh-ii
+      - apple2gs
+      - coco
+      - coleco-adam
+      - dragon64
+      - electron
+      - elektronika-bk
+      - konami-twinkle
+      - laser310
+      - mc10
+      - namco-system573
+      - trs80
     source_ref: "upstream src/devices/bus/heathzenith/h19/tlb.cpp:983-999"
     note: >-
       Device ROM set, loaded when a machine instantiates `Heath Terminal Logic
@@ -17008,6 +17530,21 @@ files:
   - name: heath_tlb.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
+      - apple-macintosh-ii
+      - apple2gs
+      - coco
+      - coleco-adam
+      - dragon64
+      - electron
+      - elektronika-bk
+      - konami-twinkle
+      - laser310
+      - mc10
+      - namco-system573
+      - trs80
     source_ref: "upstream src/devices/bus/heathzenith/h19/tlb.cpp:955-967"
     note: >-
       Device ROM set, loaded when a machine instantiates `Heath Terminal Logic
@@ -17029,6 +17566,21 @@ files:
   - name: heath_ultra_tlb.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
+      - apple-macintosh-ii
+      - apple2gs
+      - coco
+      - coleco-adam
+      - dragon64
+      - electron
+      - elektronika-bk
+      - konami-twinkle
+      - laser310
+      - mc10
+      - namco-system573
+      - trs80
     source_ref: "upstream src/devices/bus/heathzenith/h19/tlb.cpp:1021-1033"
     note: >-
       Device ROM set, loaded when a machine instantiates `Heath Terminal Logic
@@ -17050,6 +17602,21 @@ files:
   - name: heath_watz_tlb.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
+      - apple-macintosh-ii
+      - apple2gs
+      - coco
+      - coleco-adam
+      - dragon64
+      - electron
+      - elektronika-bk
+      - konami-twinkle
+      - laser310
+      - mc10
+      - namco-system573
+      - trs80
     source_ref: "upstream src/devices/bus/heathzenith/h19/tlb.cpp:1001-1019"
     note: >-
       Device ROM set, loaded when a machine instantiates `Heath Terminal Logic
@@ -17129,6 +17696,7 @@ files:
   - name: hp9122c.zip
     required: false
     category: bios_zip
+    system: apple2gs
     source_ref: "upstream src/devices/bus/ieee488/hp9122c.cpp:459-462"
     note: >-
       Device ROM set, loaded when a machine instantiates `HP9122C Dual High
@@ -17142,6 +17710,7 @@ files:
   - name: hp9133.zip
     required: false
     category: bios_zip
+    system: apple2gs
     source_ref: "upstream src/devices/bus/ieee488/hp9133.cpp:866-870"
     note: >-
       Device ROM set, loaded when a machine instantiates `HP9133 Floppy/Fixed
@@ -17208,6 +17777,7 @@ files:
   - name: hp9895.zip
     required: false
     category: bios_zip
+    system: apple2gs
     source_ref: "upstream src/devices/bus/ieee488/hp9895.cpp:954-957"
     note: >-
       Device ROM set, loaded when a machine instantiates `HP9895 floppy
@@ -17302,6 +17872,7 @@ files:
   - name: ibsap2.zip
     required: false
     category: bios_zip
+    system: apple2gs
     source_ref: "upstream src/devices/bus/a2bus/ibsap2.cpp:167-170"
     note: >-
       Device ROM set, loaded when a machine instantiates `IBS Computertechnik
@@ -17332,6 +17903,21 @@ files:
   - name: ie15_device.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
+      - apple-macintosh-ii
+      - apple2gs
+      - coco
+      - coleco-adam
+      - dragon64
+      - electron
+      - elektronika-bk
+      - konami-twinkle
+      - laser310
+      - mc10
+      - namco-system573
+      - trs80
     source_ref: "upstream src/devices/machine/ie15.cpp:676-688"
     note: >-
       Device ROM set, loaded when a machine instantiates `IE15`.
@@ -17354,6 +17940,21 @@ files:
   - name: ie15kbd.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
+      - apple-macintosh-ii
+      - apple2gs
+      - coco
+      - coleco-adam
+      - dragon64
+      - electron
+      - elektronika-bk
+      - konami-twinkle
+      - laser310
+      - mc10
+      - namco-system573
+      - trs80
     source_ref: "upstream src/devices/machine/ie15_kbd.cpp:73-76"
     note: >-
       Device ROM set, loaded when a machine instantiates `15WWW-97-006
@@ -17917,6 +18518,12 @@ files:
   - name: jvs13551.zip
     required: false
     category: bios_zip
+    systems:
+      - sega-chihiro
+      - sega-hikaru
+      - sega-naomi
+      - sega-naomi2
+      - sega-naomigd
     source_ref: "upstream src/mame/sega/jvs13551.cpp:28-41"
     note: >-
       Device ROM set, loaded when a machine instantiates `Sega 837-13551 I/O
@@ -17946,6 +18553,7 @@ files:
   - name: k573_dio.zip
     required: false
     category: bios_zip
+    system: namco-system573
     source_ref: "upstream src/mame/konami/k573dio.cpp:165-168"
     note: >-
       Device ROM set, loaded when a machine instantiates `Konami 573 digital
@@ -17959,6 +18567,7 @@ files:
   - name: k573kara.zip
     required: false
     category: bios_zip
+    system: namco-system573
     source_ref: "upstream src/mame/konami/k573kara.cpp:87-90"
     note: >-
       Device ROM set, loaded when a machine instantiates `Konami 573 karaoke
@@ -17972,6 +18581,7 @@ files:
   - name: k573mcr.zip
     required: false
     category: bios_zip
+    system: namco-system573
     source_ref: "upstream src/mame/konami/k573mcr.cpp:492-495"
     note: >-
       Device ROM set, loaded when a machine instantiates `Konami 573 Memory
@@ -17985,6 +18595,7 @@ files:
   - name: k573msu.zip
     required: false
     category: bios_zip
+    system: namco-system573
     source_ref: "upstream src/mame/konami/k573msu.cpp:84-90"
     note: >-
       Device ROM set, loaded when a machine instantiates `Konami 573 Multi
@@ -18698,6 +19309,22 @@ files:
   - name: lx800.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
+      - apple2gs
+      - coco
+      - coleco-adam
+      - crvision
+      - dragon64
+      - electron
+      - elektronika-bk
+      - fm7
+      - konami-twinkle
+      - laser310
+      - pc80
+      - trs80
+      - tutor
     source_ref: "upstream src/devices/bus/centronics/epson_lx800.cpp:37-40"
     note: >-
       Device ROM set, loaded when a machine instantiates `Epson LX-800`.
@@ -18710,6 +19337,22 @@ files:
   - name: lx810l.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
+      - apple2gs
+      - coco
+      - coleco-adam
+      - crvision
+      - dragon64
+      - electron
+      - elektronika-bk
+      - fm7
+      - konami-twinkle
+      - laser310
+      - pc80
+      - trs80
+      - tutor
     source_ref: "upstream src/devices/bus/centronics/epson_lx810l.cpp:63-68"
     note: >-
       Device ROM set, loaded when a machine instantiates `Epson LX-810L`.
@@ -18780,6 +19423,7 @@ files:
   - name: m50458.zip
     required: false
     category: bios_zip
+    system: nintendo-nss
     source_ref: "upstream src/devices/video/m50458.cpp:50-54"
     note: >-
       Device ROM set, loaded when a machine instantiates `Mitsubishi M50458
@@ -18811,6 +19455,7 @@ files:
   - name: m68705p3.zip
     required: false
     category: bios_zip
+    system: apple2gs
     source_ref: "upstream src/devices/cpu/m6805/m68705.cpp:74-77"
     note: >-
       Device ROM set, loaded when a machine instantiates `Motorola MC68705P3`.
@@ -18905,6 +19550,7 @@ files:
   - name: mackbd_m0110a_f.zip
     required: false
     category: bios_zip
+    system: apple-macintosh-ii
     source_ref: "upstream src/devices/bus/mackbd/pluskbd.cpp:101-104"
     note: >-
       Device ROM set, loaded when a machine instantiates `Macintosh Plus
@@ -18918,6 +19564,7 @@ files:
   - name: mackbd_m0110a_j.zip
     required: false
     category: bios_zip
+    system: apple-macintosh-ii
     source_ref: "upstream src/devices/bus/mackbd/pluskbd.cpp:101-104"
     note: >-
       Device ROM set, loaded when a machine instantiates `Macintosh Plus
@@ -18931,6 +19578,7 @@ files:
   - name: mackbd_m0110b.zip
     required: false
     category: bios_zip
+    system: apple-macintosh-ii
     source_ref: "upstream src/devices/bus/mackbd/keyboard.cpp:228-231"
     note: >-
       Device ROM set, loaded when a machine instantiates `Macintosh Keyboard
@@ -18944,6 +19592,7 @@ files:
   - name: mackbd_m0110f.zip
     required: false
     category: bios_zip
+    system: apple-macintosh-ii
     source_ref: "upstream src/devices/bus/mackbd/keyboard.cpp:228-231"
     note: >-
       Device ROM set, loaded when a machine instantiates `Macintosh Keyboard
@@ -18957,6 +19606,7 @@ files:
   - name: mackbd_m0110j.zip
     required: false
     category: bios_zip
+    system: apple-macintosh-ii
     source_ref: "upstream src/devices/bus/mackbd/keyboard.cpp:228-231"
     note: >-
       Device ROM set, loaded when a machine instantiates `Macintosh Keyboard
@@ -18970,6 +19620,7 @@ files:
   - name: mackbd_m0110t.zip
     required: false
     category: bios_zip
+    system: apple-macintosh-ii
     source_ref: "upstream src/devices/bus/mackbd/keyboard.cpp:228-231"
     note: >-
       Device ROM set, loaded when a machine instantiates `Macintosh Keyboard
@@ -18983,6 +19634,7 @@ files:
   - name: mackbd_m0120p.zip
     required: false
     category: bios_zip
+    system: apple-macintosh-ii
     source_ref: "upstream src/devices/bus/mackbd/keyboard.cpp:228-231"
     note: >-
       Device ROM set, loaded when a machine instantiates `Macintosh Numeric
@@ -19053,6 +19705,7 @@ files:
   - name: mcx128.zip
     required: false
     category: bios_zip
+    system: mc10
     source_ref: "upstream src/devices/bus/mc10/mcx128.cpp:48-57"
     note: >-
       Device ROM set, loaded when a machine instantiates `Darren Atkinson's
@@ -19169,6 +19822,7 @@ files:
   - name: microtouch.zip
     required: false
     category: bios_zip
+    system: commodore-cubo
     source_ref: "upstream src/devices/machine/microtch.cpp:391-399"
     note: >-
       Device ROM set, loaded when a machine instantiates `Microtouch
@@ -19219,6 +19873,11 @@ files:
   - name: mie.zip
     required: false
     category: bios_zip
+    systems:
+      - sega-hikaru
+      - sega-naomi
+      - sega-naomi2
+      - sega-naomigd
     source_ref: "upstream src/mame/sega/mie.cpp:58-61"
     note: >-
       Device ROM set, loaded when a machine instantiates `Sega 315-6146 MIE`.
@@ -19283,6 +19942,21 @@ files:
   - name: mm5740.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
+      - apple-macintosh-ii
+      - apple2gs
+      - coco
+      - coleco-adam
+      - dragon64
+      - electron
+      - elektronika-bk
+      - konami-twinkle
+      - laser310
+      - mc10
+      - namco-system573
+      - trs80
     source_ref: "upstream src/devices/machine/mm5740.cpp:27-30"
     note: >-
       Device ROM set, loaded when a machine instantiates `MM5740 Keyboard
@@ -19296,6 +19970,21 @@ files:
   - name: mockingboardd.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
+      - apple-macintosh-ii
+      - apple2gs
+      - coco
+      - coleco-adam
+      - dragon64
+      - electron
+      - elektronika-bk
+      - konami-twinkle
+      - laser310
+      - mc10
+      - namco-system573
+      - trs80
     source_ref: "upstream src/devices/bus/rs232/mboardd.cpp:29-32"
     note: >-
       Device ROM set, loaded when a machine instantiates `Sweet Micro Systems
@@ -20298,6 +20987,22 @@ files:
   - name: mz1p16.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
+      - apple2gs
+      - coco
+      - coleco-adam
+      - crvision
+      - dragon64
+      - electron
+      - elektronika-bk
+      - fm7
+      - konami-twinkle
+      - laser310
+      - pc80
+      - trs80
+      - tutor
     source_ref: "upstream src/devices/bus/centronics/mz1p16.cpp:214-217"
     note: >-
       Device ROM set, loaded when a machine instantiates `Sharp MZ-1P16
@@ -20755,6 +21460,7 @@ files:
   - name: nb_aenet.zip
     required: false
     category: bios_zip
+    system: apple-macintosh-ii
     source_ref: "upstream src/devices/bus/nubus/nubus_asntmc3b.cpp:40-43"
     note: >-
       Device ROM set, loaded when a machine instantiates `Apple NuBus Ethernet
@@ -20768,6 +21474,7 @@ files:
   - name: nb_amc3b.zip
     required: false
     category: bios_zip
+    system: apple-macintosh-ii
     source_ref: "upstream src/devices/bus/nubus/nubus_asntmc3b.cpp:35-38"
     note: >-
       Device ROM set, loaded when a machine instantiates `Asante MC3NB
@@ -20781,6 +21488,7 @@ files:
   - name: nb_btbug.zip
     required: false
     category: bios_zip
+    system: apple-macintosh-ii
     source_ref: "upstream src/devices/bus/nubus/bootbug.cpp:51-58"
     note: >-
       Device ROM set, loaded when a machine instantiates `Brigent BootBug
@@ -20800,6 +21508,7 @@ files:
   - name: nb_c264.zip
     required: false
     category: bios_zip
+    system: apple-macintosh-ii
     source_ref: "upstream src/devices/bus/nubus/nubus_cb264.cpp:112-116"
     note: >-
       Device ROM set, loaded when a machine instantiates `RasterOps ColorBoard
@@ -20817,6 +21526,7 @@ files:
   - name: nb_laserview.zip
     required: false
     category: bios_zip
+    system: apple-macintosh-ii
     source_ref: "upstream src/devices/bus/nubus/laserview.cpp:87-90"
     note: >-
       Device ROM set, loaded when a machine instantiates `Sigma Designs
@@ -20830,6 +21540,7 @@ files:
   - name: nb_m2hr.zip
     required: false
     category: bios_zip
+    system: apple-macintosh-ii
     source_ref: "upstream src/devices/bus/nubus/nubus_m2hires.cpp:116-119"
     note: >-
       Device ROM set, loaded when a machine instantiates `Apple Macintosh II
@@ -20843,6 +21554,7 @@ files:
   - name: nb_m2vc.zip
     required: false
     category: bios_zip
+    system: apple-macintosh-ii
     source_ref: "upstream src/devices/bus/nubus/nubus_m2video.cpp:99-102"
     note: >-
       Device ROM set, loaded when a machine instantiates `Apple Macintosh II
@@ -20856,6 +21568,7 @@ files:
   - name: nb_mdc48.zip
     required: false
     category: bios_zip
+    system: apple-macintosh-ii
     source_ref: "upstream src/devices/bus/nubus/nubus_48gc.cpp:233-236"
     note: >-
       Device ROM set, loaded when a machine instantiates `Apple Macintosh
@@ -20869,6 +21582,7 @@ files:
   - name: nb_pcs8.zip
     required: false
     category: bios_zip
+    system: apple-macintosh-ii
     source_ref: "upstream src/devices/bus/nubus/pds30_procolor816.cpp:347-350"
     note: >-
       Device ROM set, loaded when a machine instantiates `Lapis ProColor
@@ -20882,6 +21596,7 @@ files:
   - name: nb_qdlink.zip
     required: false
     category: bios_zip
+    system: apple-macintosh-ii
     source_ref: "upstream src/devices/bus/nubus/quadralink.cpp:48-51"
     note: >-
       Device ROM set, loaded when a machine instantiates `Applied Engineering
@@ -20895,6 +21610,7 @@ files:
   - name: nb_rtpd.zip
     required: false
     category: bios_zip
+    system: apple-macintosh-ii
     source_ref: "upstream src/devices/bus/nubus/nubus_radiustpd.cpp:62-65"
     note: >-
       Device ROM set, loaded when a machine instantiates `Radius Two Page
@@ -20908,6 +21624,7 @@ files:
   - name: nb_sp8s3.zip
     required: false
     category: bios_zip
+    system: apple-macintosh-ii
     source_ref: "upstream src/devices/bus/nubus/nubus_spec8.cpp:140-148"
     note: >-
       Device ROM set, loaded when a machine instantiates `SuperMac Spectrum/8
@@ -20927,6 +21644,7 @@ files:
   - name: nb_spdq.zip
     required: false
     category: bios_zip
+    system: apple-macintosh-ii
     source_ref: "upstream src/devices/bus/nubus/nubus_specpdq.cpp:136-139"
     note: >-
       Device ROM set, loaded when a machine instantiates `SuperMac Spectrum
@@ -20940,6 +21658,7 @@ files:
   - name: nb_thungx.zip
     required: false
     category: bios_zip
+    system: apple-macintosh-ii
     source_ref: "upstream src/devices/bus/nubus/thunder4gx.cpp:110-113"
     note: >-
       Device ROM set, loaded when a machine instantiates `Radius Thunder IV GX
@@ -20966,6 +21685,7 @@ files:
   - name: nb_vikbw.zip
     required: false
     category: bios_zip
+    system: apple-macintosh-ii
     source_ref: "upstream src/devices/bus/nubus/nubus_vikbw.cpp:63-66"
     note: >-
       Device ROM set, loaded when a machine instantiates `Moniterm MacViking
@@ -20979,6 +21699,7 @@ files:
   - name: nb_wkstn.zip
     required: false
     category: bios_zip
+    system: apple-macintosh-ii
     source_ref: "upstream src/devices/bus/nubus/nubus_m2hires.cpp:492-495"
     note: >-
       Device ROM set, loaded when a machine instantiates `Macintosh II
@@ -20992,6 +21713,7 @@ files:
   - name: nb_wspt.zip
     required: false
     category: bios_zip
+    system: apple-macintosh-ii
     source_ref: "upstream src/devices/bus/nubus/nubus_m2hires.cpp:413-416"
     note: >-
       Device ROM set, loaded when a machine instantiates `Macintosh II
@@ -21092,6 +21814,22 @@ files:
   - name: nlq401.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
+      - apple2gs
+      - coco
+      - coleco-adam
+      - crvision
+      - dragon64
+      - electron
+      - elektronika-bk
+      - fm7
+      - konami-twinkle
+      - laser310
+      - pc80
+      - trs80
+      - tutor
     source_ref: "upstream src/devices/bus/centronics/nlq401.cpp:298-301"
     note: >-
       Device ROM set, loaded when a machine instantiates `Schneider NLQ 401
@@ -21168,6 +21906,21 @@ files:
   - name: nss_tvinterface.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
+      - apple-macintosh-ii
+      - apple2gs
+      - coco
+      - coleco-adam
+      - dragon64
+      - electron
+      - elektronika-bk
+      - konami-twinkle
+      - laser310
+      - mc10
+      - namco-system573
+      - trs80
     source_ref: "upstream src/devices/bus/rs232/nss_tvinterface.cpp:251-263"
     note: >-
       Device ROM set, loaded when a machine instantiates `Novag Super System
@@ -21573,6 +22326,22 @@ files:
   - name: p72.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
+      - apple2gs
+      - coco
+      - coleco-adam
+      - crvision
+      - dragon64
+      - electron
+      - elektronika-bk
+      - fm7
+      - konami-twinkle
+      - laser310
+      - pc80
+      - trs80
+      - tutor
     source_ref: "upstream src/devices/bus/centronics/nec_p72.cpp:19-22"
     note: >-
       Device ROM set, loaded when a machine instantiates `NEC PinWriter P72`.
@@ -21636,6 +22405,22 @@ files:
   - name: pc6022.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
+      - apple2gs
+      - coco
+      - coleco-adam
+      - crvision
+      - dragon64
+      - electron
+      - elektronika-bk
+      - fm7
+      - konami-twinkle
+      - laser310
+      - pc80
+      - trs80
+      - tutor
     source_ref: "upstream src/devices/bus/centronics/pc6022.cpp:26-29"
     note: >-
       Device ROM set, loaded when a machine instantiates `NEC PC-6022 Color
@@ -21649,6 +22434,7 @@ files:
   - name: pc80s31.zip
     required: false
     category: bios_zip
+    system: pc80
     source_ref: "upstream src/devices/bus/nec_fdd/pc80s31k.cpp:201-213"
     note: >-
       Device ROM set, loaded when a machine instantiates `NEC PC-80S31 Mini
@@ -21927,6 +22713,7 @@ files:
   - name: pd3_30hr.zip
     required: false
     category: bios_zip
+    system: apple-macintosh-ii
     source_ref: "upstream src/devices/bus/nubus/pds30_30hr.cpp:540-543"
     note: >-
       Device ROM set, loaded when a machine instantiates `Micron/XCEED
@@ -21940,6 +22727,7 @@ files:
   - name: pd3_30hrint.zip
     required: false
     category: bios_zip
+    system: apple-macintosh-ii
     source_ref: "upstream src/devices/bus/nubus/pds30_30hr.cpp:540-543"
     note: >-
       Device ROM set, loaded when a machine instantiates `Micron/XCEED
@@ -21953,6 +22741,7 @@ files:
   - name: pd3_c264.zip
     required: false
     category: bios_zip
+    system: apple-macintosh-ii
     source_ref: "upstream src/devices/bus/nubus/pds30_cb264.cpp:71-74"
     note: >-
       Device ROM set, loaded when a machine instantiates `RasterOps ColorBoard
@@ -21966,6 +22755,7 @@ files:
   - name: pd3_lviw.zip
     required: false
     category: bios_zip
+    system: apple-macintosh-ii
     source_ref: "upstream src/devices/bus/nubus/laserview.cpp:314-317"
     note: >-
       Device ROM set, loaded when a machine instantiates `Sigma Designs
@@ -21979,6 +22769,7 @@ files:
   - name: pd3_mclr.zip
     required: false
     category: bios_zip
+    system: apple-macintosh-ii
     source_ref: "upstream src/devices/bus/nubus/pds30_30hr.cpp:605-608"
     note: >-
       Device ROM set, loaded when a machine instantiates `Micron/XCEED
@@ -21992,6 +22783,7 @@ files:
   - name: pd3_mclrint.zip
     required: false
     category: bios_zip
+    system: apple-macintosh-ii
     source_ref: "upstream src/devices/bus/nubus/pds30_30hr.cpp:605-608"
     note: >-
       Device ROM set, loaded when a machine instantiates `Micron/XCEED
@@ -22005,6 +22797,7 @@ files:
   - name: pd3_pc16.zip
     required: false
     category: bios_zip
+    system: apple-macintosh-ii
     source_ref: "upstream src/devices/bus/nubus/pds30_procolor816.cpp:34-37"
     note: >-
       Device ROM set, loaded when a machine instantiates `Lapis ProColor
@@ -22018,6 +22811,7 @@ files:
   - name: pd3_pcs8.zip
     required: false
     category: bios_zip
+    system: apple-macintosh-ii
     source_ref: "upstream src/devices/bus/nubus/pds30_procolor816.cpp:321-324"
     note: >-
       Device ROM set, loaded when a machine instantiates `Lapis ProColor
@@ -22064,6 +22858,7 @@ files:
   - name: pds30_emac.zip
     required: false
     category: bios_zip
+    system: apple-macintosh-ii
     source_ref: "upstream src/devices/bus/nubus/nubus_asntmc3b.cpp:45-48"
     note: >-
       Device ROM set, loaded when a machine instantiates `Farallon EtherMac
@@ -22077,6 +22872,7 @@ files:
   - name: pds_hyper.zip
     required: false
     category: bios_zip
+    system: apple-macintosh-ii
     source_ref: "upstream src/devices/bus/macpds/hyperdrive.cpp:91-95"
     note: >-
       Device ROM set, loaded when a machine instantiates `GCC HyperDrive`.
@@ -22093,6 +22889,7 @@ files:
   - name: pds_sefp.zip
     required: false
     category: bios_zip
+    system: apple-macintosh-ii
     source_ref: "upstream src/devices/bus/macpds/pds_tpdfpd.cpp:44-48"
     note: >-
       Device ROM set, loaded when a machine instantiates `Radius SE Full Page
@@ -22110,6 +22907,7 @@ files:
   - name: pdslc_macconlc.zip
     required: false
     category: bios_zip
+    system: apple-macintosh-ii
     source_ref: "upstream src/devices/bus/nubus/nubus_asntmc3b.cpp:50-53"
     note: >-
       Device ROM set, loaded when a machine instantiates `Asante MacCON i LC
@@ -22284,6 +23082,7 @@ files:
   - name: premier_fdc.zip
     required: false
     category: bios_zip
+    system: dragon64
     source_ref: "upstream src/devices/bus/coco/dragon_fdc.cpp:414-417"
     note: >-
       Device ROM set, loaded when a machine instantiates `Premier FDC`.
@@ -22736,6 +23535,14 @@ files:
   - name: px320a.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
+      - apple2gs
+      - coco
+      - coleco-adam
+      - elektronika-bk
+      - ti99
     source_ref: "upstream src/devices/bus/ata/px320a.cpp:82-94"
     note: >-
       Device ROM set, loaded when a machine instantiates `PleXCombo PX-320A
@@ -22765,6 +23572,7 @@ files:
   - name: qg640.zip
     required: false
     category: bios_zip
+    system: elektronika-bk
     source_ref: "upstream src/devices/bus/qbus/qg640.cpp:96-101"
     note: >-
       Device ROM set, loaded when a machine instantiates `Matrox QG-640 Color
@@ -23187,6 +23995,9 @@ files:
   - name: qsound_hle.zip
     required: false
     category: bios_zip
+    systems:
+      - capcom-zn1
+      - capcom-zn2
     source_ref: "upstream src/devices/sound/qsoundhle.cpp:44-49"
     note: >-
       Device ROM set, loaded when a machine instantiates `QSound (HLE)`.
@@ -23199,6 +24010,7 @@ files:
   - name: qts1.zip
     required: false
     category: bios_zip
+    system: elektronika-bk
     source_ref: "upstream src/devices/bus/qbus/qtx.cpp:142-148"
     note: >-
       Device ROM set, loaded when a machine instantiates `TTI QTS-1 SCSI Host
@@ -24051,6 +24863,21 @@ files:
   - name: s97801_device.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
+      - apple-macintosh-ii
+      - apple2gs
+      - coco
+      - coleco-adam
+      - dragon64
+      - electron
+      - elektronika-bk
+      - konami-twinkle
+      - laser310
+      - mc10
+      - namco-system573
+      - trs80
     source_ref: "upstream src/devices/machine/s97801.cpp:185-194"
     note: >-
       Device ROM set, loaded when a machine instantiates `Siemens 97801
@@ -24072,6 +24899,21 @@ files:
   - name: s97801_kbd.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
+      - apple-macintosh-ii
+      - apple2gs
+      - coco
+      - coleco-adam
+      - dragon64
+      - electron
+      - elektronika-bk
+      - konami-twinkle
+      - laser310
+      - mc10
+      - namco-system573
+      - trs80
     source_ref: "upstream src/devices/machine/s97801_kbd.cpp:150-153"
     note: >-
       Device ROM set, loaded when a machine instantiates `Siemens 97801
@@ -24085,6 +24927,9 @@ files:
   - name: s_smp.zip
     required: false
     category: bios_zip
+    systems:
+      - nintendo-nss
+      - nintendo-sfcbox
     source_ref: "upstream src/devices/machine/s_smp.cpp:39-42"
     note: >-
       Device ROM set, loaded when a machine instantiates `Nintendo/Sony
@@ -24335,6 +25180,21 @@ files:
   - name: scorpion_ic.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
+      - apple-macintosh-ii
+      - apple2gs
+      - coco
+      - coleco-adam
+      - dragon64
+      - electron
+      - elektronika-bk
+      - konami-twinkle
+      - laser310
+      - mc10
+      - namco-system573
+      - trs80
     source_ref: "upstream src/devices/bus/rs232/scorpion.cpp:100-106"
     note: >-
       Device ROM set, loaded when a machine instantiates `Micro-Robotics
@@ -24349,6 +25209,7 @@ files:
   - name: sdtandy_fdc.zip
     required: false
     category: bios_zip
+    system: dragon64
     source_ref: "upstream src/devices/bus/coco/dragon_fdc.cpp:446-449"
     note: >-
       Device ROM set, loaded when a machine instantiates `SDTANDY FDC`.
@@ -24434,6 +25295,7 @@ files:
   - name: sega837_14438.zip
     required: false
     category: bios_zip
+    system: sega-naomi
     source_ref: "upstream src/mame/sega/segashiobd.cpp:111-116"
     note: >-
       Device ROM set, loaded when a machine instantiates `Sega 837-14438 SH
@@ -24468,6 +25330,7 @@ files:
   - name: segabill.zip
     required: false
     category: bios_zip
+    system: sega-stv
     source_ref: "upstream src/mame/sega/segabill.cpp:135-138"
     note: >-
       Device ROM set, loaded when a machine instantiates `Sega Billboard`.
@@ -24480,6 +25343,11 @@ files:
   - name: segadimm.zip
     required: false
     category: bios_zip
+    systems:
+      - sega-chihiro
+      - sega-naomi2
+      - sega-naomigd
+      - sega-triforce
     source_ref: "upstream src/mame/sega/naomigd.cpp:1116-1159"
     note: >-
       Device ROM set, loaded when a machine instantiates `Sega DIMM Board`.
@@ -24561,6 +25429,7 @@ files:
   - name: seganetw.zip
     required: false
     category: bios_zip
+    system: sega-chihiro
     source_ref: "upstream src/mame/sega/chihiro.cpp:1898-1901"
     note: >-
       Device ROM set, loaded when a machine instantiates `Sega Network Board`.
@@ -24599,6 +25468,9 @@ files:
   - name: sfd1001.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
     source_ref: "upstream src/devices/bus/ieee488/c8050.cpp:289-299"
     note: >-
       Device ROM set, loaded when a machine instantiates `Commodore SFD-1001
@@ -24909,6 +25781,13 @@ files:
   - name: smoc501.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
+      - apple-macintosh-ii
+      - apple2gs
+      - elektronika-bk
+      - ti99
     source_ref: "upstream src/devices/bus/nscsi/smoc501.cpp:83-86"
     note: >-
       Device ROM set, loaded when a machine instantiates `Sony SMO-C501 MO
@@ -26331,6 +27210,21 @@ files:
   - name: swtpc8212_device.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
+      - apple-macintosh-ii
+      - apple2gs
+      - coco
+      - coleco-adam
+      - dragon64
+      - electron
+      - elektronika-bk
+      - konami-twinkle
+      - laser310
+      - mc10
+      - namco-system573
+      - trs80
     source_ref: "upstream src/devices/machine/swtpc8212.cpp:486-495"
     note: >-
       Device ROM set, loaded when a machine instantiates `SWTPC8212`.
@@ -26992,6 +27886,7 @@ files:
   - name: tdl12.zip
     required: false
     category: bios_zip
+    system: elektronika-bk
     source_ref: "upstream src/devices/bus/qbus/tdl12.cpp:116-132"
     note: >-
       Device ROM set, loaded when a machine instantiates `TDL-12 SCSI Host
@@ -27114,6 +28009,7 @@ files:
   - name: ti99_arcturus.zip
     required: false
     category: bios_zip
+    system: ti99
     source_ref: "upstream src/devices/bus/ti99/sidecar/arcturus.cpp:74-81"
     note: >-
       Device ROM set, loaded when a machine instantiates `Arcturus sidecar
@@ -27135,6 +28031,7 @@ files:
   - name: ti99_bwg.zip
     required: false
     category: bios_zip
+    system: ti99
     source_ref: "upstream src/devices/bus/ti99/peb/bwg.cpp:597-600"
     note: >-
       Device ROM set, loaded when a machine instantiates `SNUG BwG Floppy
@@ -27148,6 +28045,7 @@ files:
   - name: ti99_ccdcc.zip
     required: false
     category: bios_zip
+    system: ti99
     source_ref: "upstream src/devices/bus/ti99/peb/cc_fdc.cpp:567-571"
     note: >-
       Device ROM set, loaded when a machine instantiates `CorComp Disk
@@ -27165,6 +28063,7 @@ files:
   - name: ti99_ccfdc.zip
     required: false
     category: bios_zip
+    system: ti99
     source_ref: "upstream src/devices/bus/ti99/peb/cc_fdc.cpp:730-734"
     note: >-
       Device ROM set, loaded when a machine instantiates `CorComp Floppy Disk
@@ -27182,6 +28081,7 @@ files:
   - name: ti99_ddcc1.zip
     required: false
     category: bios_zip
+    system: ti99
     source_ref: "upstream src/devices/bus/ti99/peb/myarcfdc.cpp:426-429"
     note: >-
       Device ROM set, loaded when a machine instantiates `Myarc Disk
@@ -27195,6 +28095,7 @@ files:
   - name: ti99_evpc.zip
     required: false
     category: bios_zip
+    system: ti99
     source_ref: "upstream src/devices/bus/ti99/peb/evpc.cpp:453-456"
     note: >-
       Device ROM set, loaded when a machine instantiates `SNUG Enhanced Video
@@ -27208,6 +28109,7 @@ files:
   - name: ti99_fdc.zip
     required: false
     category: bios_zip
+    system: ti99
     source_ref: "upstream src/devices/bus/ti99/peb/ti_fdc.cpp:389-393"
     note: >-
       Device ROM set, loaded when a machine instantiates `TI-99 Standard DSSD
@@ -27225,6 +28127,7 @@ files:
   - name: ti99_gkracker.zip
     required: false
     category: bios_zip
+    system: ti99
     source_ref: "upstream src/devices/bus/ti99/gromport/gkracker.cpp:409-413"
     note: >-
       Device ROM set, loaded when a machine instantiates `Miller's Graphics
@@ -27238,6 +28141,7 @@ files:
   - name: ti99_hfdc.zip
     required: false
     category: bios_zip
+    system: ti99
     source_ref: "upstream src/devices/bus/ti99/peb/hfdc.cpp:1047-1050"
     note: >-
       Device ROM set, loaded when a machine instantiates `Myarc Hard and
@@ -27251,6 +28155,7 @@ files:
   - name: ti99_myarcmem.zip
     required: false
     category: bios_zip
+    system: ti99
     source_ref: "upstream src/devices/bus/ti99/peb/myarcmem.cpp:193-196"
     note: >-
       Device ROM set, loaded when a machine instantiates `Myarc Memory
@@ -27264,6 +28169,7 @@ files:
   - name: ti99_pcode.zip
     required: false
     category: bios_zip
+    system: ti99
     source_ref: "upstream src/devices/bus/ti99/peb/pcode.cpp:322-338"
     note: >-
       Device ROM set, loaded when a machine instantiates `TI-99 P-Code Card`.
@@ -27312,6 +28218,7 @@ files:
   - name: ti99_rs232.zip
     required: false
     category: bios_zip
+    system: ti99
     source_ref: "upstream src/devices/bus/ti99/peb/ti_rs232.cpp:1071-1074"
     note: >-
       Device ROM set, loaded when a machine instantiates `TI-99 RS232/PIO
@@ -27325,6 +28232,7 @@ files:
   - name: ti99_thermal.zip
     required: false
     category: bios_zip
+    system: ti99
     source_ref: "upstream src/devices/bus/ti99/sidecar/thermal.cpp:322-325"
     note: >-
       Device ROM set, loaded when a machine instantiates `TI-99 Thermal
@@ -27338,6 +28246,7 @@ files:
   - name: ti99_tipi.zip
     required: false
     category: bios_zip
+    system: ti99
     source_ref: "upstream src/devices/bus/ti99/peb/tipi.cpp:697-706"
     note: >-
       Device ROM set, loaded when a machine instantiates `TIPI card`.
@@ -27361,6 +28270,7 @@ files:
   - name: ti99_whtscsi.zip
     required: false
     category: bios_zip
+    system: ti99
     source_ref: "upstream src/devices/bus/ti99/peb/scsicard.cpp:473-476"
     note: >-
       Device ROM set, loaded when a machine instantiates `Western Horizon
@@ -27816,6 +28726,7 @@ files:
   - name: upd7220.zip
     required: false
     category: bios_zip
+    system: apple2gs
     source_ref: "upstream src/devices/video/upd7220.cpp:173-176"
     note: >-
       Device ROM set, loaded when a machine instantiates `NEC uPD7220`.
@@ -28172,6 +29083,21 @@ files:
   - name: votraxtnt.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
+      - apple-macintosh-ii
+      - apple2gs
+      - coco
+      - coleco-adam
+      - dragon64
+      - electron
+      - elektronika-bk
+      - konami-twinkle
+      - laser310
+      - mc10
+      - namco-system573
+      - trs80
     source_ref: "upstream src/devices/machine/votraxtnt.cpp:100-103"
     note: >-
       Device ROM set, loaded when a machine instantiates `Votrax Type 'N
@@ -28197,6 +29123,21 @@ files:
   - name: votrsc01a.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
+      - apple-macintosh-ii
+      - apple2gs
+      - coco
+      - coleco-adam
+      - dragon64
+      - electron
+      - elektronika-bk
+      - konami-twinkle
+      - laser310
+      - mc10
+      - namco-system573
+      - trs80
     source_ref: "upstream src/devices/sound/votrax.cpp:49-52"
     note: >-
       Device ROM set, loaded when a machine instantiates `Votrax SC-01-A`.
@@ -28222,6 +29163,7 @@ files:
   - name: vtech_fdc.zip
     required: false
     category: bios_zip
+    system: laser310
     source_ref: "upstream src/devices/bus/vtech/memexp/floppy.cpp:54-57"
     note: >-
       Device ROM set, loaded when a machine instantiates `Laser/VZ Floppy Disk
@@ -28235,6 +29177,7 @@ files:
   - name: vtech_rs232.zip
     required: false
     category: bios_zip
+    system: laser310
     source_ref: "upstream src/devices/bus/vtech/memexp/rs232.cpp:35-42"
     note: >-
       Device ROM set, loaded when a machine instantiates `DSE VZ-200/300
@@ -28254,6 +29197,7 @@ files:
   - name: vtech_rtty.zip
     required: false
     category: bios_zip
+    system: laser310
     source_ref: "upstream src/devices/bus/vtech/memexp/rtty.cpp:36-39"
     note: >-
       Device ROM set, loaded when a machine instantiates `DSE VZ-200/300 RTTY
@@ -28267,6 +29211,7 @@ files:
   - name: vtech_sdloader.zip
     required: false
     category: bios_zip
+    system: laser310
     source_ref: "upstream src/devices/bus/vtech/memexp/sdloader.cpp:117-126"
     note: >-
       Device ROM set, loaded when a machine instantiates `BennVenn SD Loader`.
@@ -28290,6 +29235,7 @@ files:
   - name: vtech_wordpro.zip
     required: false
     category: bios_zip
+    system: laser310
     source_ref: "upstream src/devices/bus/vtech/memexp/wordpro.cpp:34-39"
     note: >-
       Device ROM set, loaded when a machine instantiates `DSE VZ-300 WordPro`.
@@ -28917,6 +29863,14 @@ files:
   - name: zip100_ide.zip
     required: false
     category: bios_zip
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
+      - apple2gs
+      - coco
+      - coleco-adam
+      - elektronika-bk
+      - ti99
     source_ref: "upstream src/devices/bus/ata/zip100.cpp:91-95"
     note: >-
       Device ROM set, loaded when a machine instantiates `Iomega Zip 100MB IDE
