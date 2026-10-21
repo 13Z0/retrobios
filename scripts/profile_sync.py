@@ -936,6 +936,9 @@ class ProfileReport:
     upstream_pin: str | None = None
     upstream_head: str | None = None
     upstream_origin: str | None = None
+    # The release tag the upstream view is pinned on, when it is one. That
+    # view is read at its tag, and a bump leaves upstream_commit there.
+    upstream_tag: str | None = None
     # Repositories whose pin is no ancestor of the branch the profile
     # tracks: history was rewritten, or the pin lies on another branch.
     orphaned: list[str] = field(default_factory=list)
@@ -1291,7 +1294,23 @@ def detect_pinned_tag(
     The declared `core_version` names the tag, which is looked up by name so
     that a repository publishing nightly tags cannot hide an old release behind
     pagination.
+
+    Only the repository of the documented build freezes the profile. An
+    `upstream` a port was cut from sits on a release tag as its base
+    (GroovyMAME on mame0289, triforce on Dolphin 2407) while the port itself
+    keeps moving: that view is judged against its tag by `tag_pinned_views`,
+    and the port is still compared with its HEAD and still bumped.
     """
+    documented = [view for view in views if view.field != "upstream"] or views
+    tagged = tag_pinned_views(profile, documented, cache_dir, offline)
+    return next(iter(tagged.values()), None)
+
+
+def tag_pinned_views(
+    profile: dict, views: list[RepoView], cache_dir: str, offline: bool
+) -> dict[tuple[str, str], str]:
+    """Views whose pin is the tag `core_version` names, keyed by repository."""
+    tagged: dict[tuple[str, str], str] = {}
     for view in views:
         if view.pin == view.head:
             continue
@@ -1299,8 +1318,9 @@ def detect_pinned_tag(
             profile.get("core_version"), view.repo.name
         ):
             if upstream.tag_commit(view.repo, tag, cache_dir, offline) == view.pin:
-                return tag
-    return None
+                tagged[(view.repo.host, view.repo.slug)] = tag
+                break
+    return tagged
 
 
 def _resolve_project_words(
@@ -1484,12 +1504,27 @@ def build_report(
     report.pinned_tag = frozen or detect_pinned_tag(
         profile, views, cache_dir, offline
     )
+    # A repository pinned on its release tag is read at that tag, whichever
+    # role it plays: comparing mame0174 refs with mamedev HEAD says nothing.
+    tagged = tag_pinned_views(profile, views, cache_dir, offline)
+    report.upstream_tag = next(
+        (
+            tagged[(view.repo.host, view.repo.slug)]
+            for view in views
+            if view.field == "upstream" and (view.repo.host, view.repo.slug) in tagged
+        ),
+        None,
+    )
+
+    def on_own_revision(view: RepoView) -> bool:
+        return view.pin == view.head or (view.repo.host, view.repo.slug) in tagged
+
     if not report.pinned_tag:
         # A tag or a held pin is off the tracked branch by design.
         report.orphaned = [
             f"{view.repo.slug}: pin {view.pin[:8]} is no ancestor of {view.head[:8]}"
             for view in views
-            if view.pin != view.head
+            if not on_own_revision(view)
             and upstream.compare(
                 view.repo, view.pin, view.head, cache_dir, offline
             ).diverged
@@ -1842,9 +1877,9 @@ def build_report(
         if report.pinned_tag:
             return True
         if not part.role and len(path_roles.get(part.path, ())) > 1:
-            return all(view.pin == view.head for view in views)
+            return all(on_own_revision(view) for view in views)
         view, _ = resolve_path(part.path, part.start, tuple(tokens), role_of(part))
-        return view.pin == view.head
+        return on_own_revision(view)
 
     def judge(
         part: RefPart, flag: bool, tokens: Sequence[str], hashes: Sequence[str]
@@ -1877,7 +1912,7 @@ def build_report(
                 # port's 305-356 read past the end of the upstream's 345
                 # lines. As in a comparison, a ref fails only everywhere.
                 for view in views:
-                    if view is owner or view.pin != view.head:
+                    if view is owner or not on_own_revision(view):
                         continue
                     lines = fetch_from(view.repo, view.pin, part.path)
                     if lines is None:
@@ -1994,6 +2029,11 @@ def format_report(report: ProfileReport, changed_only: bool = False) -> str:
         )
     elif report.pin and report.pin == report.head:
         lines.append("  pin is HEAD: checked for self-consistency")
+    if report.upstream_tag and not report.pinned_tag:
+        lines.append(
+            f"  upstream pinned to tag {report.upstream_tag}: checked against "
+            "its own revision, not against HEAD"
+        )
     for url in report.unread or []:
         lines.append(f"  not read (unsupported host): {url}")
     for line in report.orphaned:
@@ -2837,8 +2877,12 @@ def bump_commit(
             file=sys.stderr,
         )
         return False
+    # An upstream pinned on a release tag is the base the port was cut from:
+    # its HEAD is another program, so the bump leaves it on the tag.
     upstream_moves = bool(
-        report.upstream_head and report.upstream_pin != report.upstream_head
+        report.upstream_head
+        and report.upstream_pin != report.upstream_head
+        and not report.upstream_tag
     )
     if document.get("source_commit") == report.head and not upstream_moves:
         # Rewriting the pin to the value it already holds is not a bump, and
