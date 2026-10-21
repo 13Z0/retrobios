@@ -178,9 +178,28 @@ class NoToolingNames(unittest.TestCase):
     """Nothing committed names the private notes or the agent tooling the
     maintainer works with. Two test docstrings did, and history keeps them."""
 
+    # The names the repository keeps out of version control through its
+    # private exclude list, plus the assistant itself. `claude\w*` covers
+    # claudedocs/.
     NAMES = re.compile(
-        r"(?i)\b(claude|anthropic)\b|prompt\.md|\.claude/"
+        r"(?i)\b(claude\w*|anthropic)\b|\b(prompt|agents|audit)\.md\b"
+        r"|\.(claude|codex|cursor|continue|copilot|gemini|windsurf|serena|playwright-mcp)/"
+        r"|\.aider"
     )
+
+    def test_the_pattern_covers_every_private_name(self):
+        """The pattern caught CLAUDE.md and missed AGENTS.md, AUDIT.md and
+        claudedocs/, which the same rule keeps out of the repository."""
+        for text in (
+            "see CLAUDE.md", "rules live in AGENTS.md", "AUDIT.md angle G",
+            "notes in claudedocs/launchers", "prompt.md", "under .claude/hooks",
+            "a .cursor/ rule", "the .serena/ cache", ".aider.conf.yml",
+        ):
+            with self.subTest(text=text):
+                self.assertRegex(text, self.NAMES)
+        for text in ("When Superpowers Collide", "audit_regressions", "an agent of change"):
+            with self.subTest(text=text):
+                self.assertNotRegex(text, self.NAMES)
 
     def test_no_tracked_file_names_them(self):
         offenders = []

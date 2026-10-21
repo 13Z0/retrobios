@@ -14,7 +14,7 @@ Budget target: ~175 minutes/month on the GitHub free tier.
 | Workflow | File | Trigger |
 |----------|------|---------|
 | Deploy Site | `deploy-site.yml` | Push to main (platforms, emulators, provenance, wiki, scripts, database.json, mkdocs.yml), manual |
-| Validation | `validate.yml` | PR and push to main touching `bios/**`, `platforms/**`, `emulators/**`, `schemas/**`, `scripts/**`, `tests/**`, `install.py`, `install.sh` or `install.ps1` |
+| Validation | `validate.yml` | PR and push to main touching `bios/**`, `platforms/**`, `emulators/**`, `schemas/**`, `scripts/**`, `tests/**`, `install.py`, `install.sh`, `install.ps1`, or any other input of the site build (`wiki/**`, `docs_assets/**`, `provenance/**`, `exports/**`, `install/**`, `database.json`, `release.json`, `derivable.json`, `mkdocs.yml`) |
 
 Upstream BIOS lists are not scraped on a schedule. A maintainer runs the
 scrapers by hand (see [adding a scraper](adding-a-scraper.md)), reviews the
@@ -110,8 +110,10 @@ A profile written from a clone can cite lines that do not hold the value it
 declares while schemas and tests pass it. This job confronts it with its
 upstream. An edited profile is not held to it.
 
-**run-tests.** Runs `python -m unittest discover -s tests -t . -v`. Must pass before a
-merge, and again on the commit a direct push puts at the head of main.
+**run-tests.** Runs `python -m unittest discover -s tests -t . -v`, then builds the
+site as Deploy Site does (`generate_site.py`, `mkdocs build --strict`,
+`validate_site.py`) whatever the suite returned. Must pass before a merge, and
+again on the commit a direct push puts at the head of main.
 
 **label-pr** (pull requests only). Auto-labels the PR based on changed paths:
 
