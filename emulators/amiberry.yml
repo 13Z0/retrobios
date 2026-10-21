@@ -32,10 +32,12 @@ notes: |
   ref: libretro/libretro.cpp:4390-4428
 
   Standalone ROM path: configurable via amiberry.conf "rom_path" setting.
-  Batocera sets this to /userdata/bios/amiga/. Fallback search order:
-  {home_dir}/roms/kick.rom, {home_dir}/kick.rom, ../shared/rom/kick.rom,
+  kickstart_rom_file and kickstart_ext_rom_file are opened as given, with
+  no hash check. When the main ROM is not found there, the fallback order
+  is {home_dir}/roms/kick.rom, {home_dir}/kick.rom, ../shared/rom/kick.rom,
   ../System/rom/kick.rom, then ROM database guess.
-  ref: src/memory.cpp:2106-2148
+  ref: src/cfgfile.cpp:6442-6443, src/memory.cpp:1833-1856,
+       src/memory.cpp:2106-2148
 
   ROM identification uses SHA1 against the WinUAE ROM database but does
   not reject unknown ROMs. Cloanto encrypted ROMs supported with rom.key.
@@ -169,34 +171,11 @@ files:
     size: 524288
     crc32: "43b6dd22"
     sha1: "c3c481160866e60d085e436a24db3617ff60b5f9"
+    found_by: content
     note: >
       Identified as KS ROM v3.1 (A4000)(Cloanto), ROM id 31, whatever the file
       is called. The A4000 model takes id 16 first and id 31 after it.
     source_ref: "source src/rommgr.cpp:203-204, source src/cfgfile.cpp:9588-9593, source src/cfgfile.cpp:9646"
-
-  # --- Kickstart ROMs named in the configuration ---
-  # kickstart_rom_file and kickstart_ext_rom_file are opened as given, with no
-  # hash check. Recalbox writes kick02019.AROS and kick02019.AROS.ext from
-  # bios/amiga/bios into them for the A600 and A1200 subsystems when none of
-  # its Commodore Kickstarts is present (Recalbox 10.1.1).
-  # ref: src/cfgfile.cpp:6442-6443, src/memory.cpp:2106-2111,
-  #      src/memory.cpp:1833-1856, src/memory.cpp:3138
-  # ref: recalbox projects/configgen/configgen/generators/amiberry/amiberryKickstarts.py:119-126,
-  #      recalbox projects/configgen/configgen/generators/amiberry/amiberryConfig.py:337-345
-
-  - name: kick02019.AROS
-    mode: standalone
-    system: commodore-amiga
-    required: false
-    note: "AROS Kickstart, read through kickstart_rom_file."
-    source_ref: "source src/cfgfile.cpp:6442, source src/memory.cpp:2106-2111"
-
-  - name: kick02019.AROS.ext
-    mode: standalone
-    system: commodore-amiga
-    required: false
-    note: "AROS extended ROM, read through kickstart_ext_rom_file."
-    source_ref: "source src/cfgfile.cpp:6443, source src/memory.cpp:1833-1856, source src/memory.cpp:3138"
 
   # --- AROS replacement ROMs ---
   # ref: src/memory.cpp:1925-1946 find_kickstart_replacement_directory,

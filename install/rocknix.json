@@ -5,7 +5,7 @@
   "platform": "rocknix",
   "display_name": "ROCKNIX",
   "version": "1.0",
-  "generated": "2026-10-20T19:45:33Z",
+  "generated": "2026-10-20T20:05:06Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -19,10 +19,10 @@
     }
   ],
   "standalone_copies": [],
-  "total_files": 7118,
-  "total_size": 8395467125,
-  "pack_files": 7120,
-  "pack_size": 8395467125,
+  "total_files": 7116,
+  "total_size": 8394132273,
+  "pack_files": 7118,
+  "pack_size": 8394132273,
   "total_omitted": 41,
   "omitted_files": [
     {
@@ -20229,6 +20229,27 @@
       "cores": [
         "mame",
         "mamemess"
+      ]
+    },
+    {
+      "dest": "hiscore.dat",
+      "sha1": "21ddda0c61bd4f1cc04fb9d09e16d403d620f9e8",
+      "sha256": "045da3c1124ba1726738db704a8132590ea2c42fdb327392cff05fc124f8ad3b",
+      "size": 36182,
+      "repo_path": "bios/Arcade/Arcade/.variants/hiscore.dat.21ddda0c",
+      "cores": [
+        "mame2000"
+      ],
+      "alternatives": [
+        {
+          "sha1": "68e94fb579f46f3255ef7c34c0322f3f0f3c8e20",
+          "sha256": "c470a579d8836299e64b835012f7c536115aac695ba9ae10ecd4d168bede54ca",
+          "size": 216250,
+          "repo_path": "bios/Arcade/Arcade/.variants/hiscore.dat.68e94fb5",
+          "cores": [
+            "mame2015"
+          ]
+        }
       ]
     },
     {
@@ -48192,26 +48213,6 @@
       ]
     },
     {
-      "dest": "kick02019.AROS",
-      "sha1": "f1952b97e0fa7661e99efb4954e0a86371952c1d",
-      "sha256": "2bca61323950fbbe2472bb1cdab99311a5df6a78c8f7ae6a8819656629bf9dd2",
-      "size": 524288,
-      "repo_path": "bios/Commodore/Amiga/kick02019.AROS",
-      "cores": [
-        "amiberry"
-      ]
-    },
-    {
-      "dest": "kick02019.AROS.ext",
-      "sha1": "8b193a6515e0c8b3555ef4142417208dbbdb025e",
-      "sha256": "ba7965b27c553a517de3c7c81988a6bb6b3a12ceef465a0a4f6d30a6ff811b7c",
-      "size": 524288,
-      "repo_path": "bios/Commodore/Amiga/kick02019.AROS.ext",
-      "cores": [
-        "amiberry"
-      ]
-    },
-    {
       "dest": "rom.key",
       "sha1": "801bbab32e3d37386dd1636d4f1d6fa7e21d5874",
       "sha256": "baf2366ae04337d37e7b37ebfb5cd7af7e4ffddeb6b017bf2e5fec43d87764e0",
@@ -50735,37 +50736,6 @@
           "repo_path": "bios/Nintendo/Game Boy/GB_dmg.bin",
           "cores": [
             "mesence"
-          ]
-        }
-      ]
-    },
-    {
-      "dest": "hiscore.dat",
-      "sha1": "7381472bf046126257e51a0124e4553282f020e5",
-      "sha256": "9d44fc928c0df41debad1b86739bd6ca96a5891b3b499f6fb3d7e9ea95ca8de5",
-      "size": 322458,
-      "repo_path": "bios/Arcade/Arcade/hiscore.dat",
-      "cores": [
-        "fbalpha2012",
-        "fbalpha2012_cps3"
-      ],
-      "alternatives": [
-        {
-          "sha1": "21ddda0c61bd4f1cc04fb9d09e16d403d620f9e8",
-          "sha256": "045da3c1124ba1726738db704a8132590ea2c42fdb327392cff05fc124f8ad3b",
-          "size": 36182,
-          "repo_path": "bios/Arcade/Arcade/.variants/hiscore.dat.21ddda0c",
-          "cores": [
-            "mame2000"
-          ]
-        },
-        {
-          "sha1": "68e94fb579f46f3255ef7c34c0322f3f0f3c8e20",
-          "sha256": "c470a579d8836299e64b835012f7c536115aac695ba9ae10ecd4d168bede54ca",
-          "size": 216250,
-          "repo_path": "bios/Arcade/Arcade/.variants/hiscore.dat.68e94fb5",
-          "cores": [
-            "mame2015"
           ]
         }
       ]

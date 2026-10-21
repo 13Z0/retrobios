@@ -113,14 +113,7 @@ files:
       are selected with the hatarib_tos option. Without tos.img the
       built-in EmuTOS 192uk is the default. A hatarib_tos value that is not
       one of the four special values is opened as a path under the system
-      directory (core/core_config.c:1121-1122), and the aliases are the
-      names the platform launchers write there. RetroBat sets
-      hatarib/tos206.img, tos106.img, tos104.img or tos102.img from its
-      hatarib_tos option (emulatorlauncher Generators/LibRetro.CoreOptions.cs:3167-3195),
-      and emutos.img in system/hatarib/ is listed by the scan like any other
-      image. Recalbox sets atarist/st.img, ste.img, megaste.img, tt.img or
-      falcon.img by machine, falling back to tos.img and the built-in
-      EmuTOS 1024k (configgen generators/libretro/libretroCores.py:211-229).
+      directory (core/core_config.c:1121-1122).
 
   - name: "etos1024k.img"
     description: "EmuTOS 1.4 1024 KB image, all machine types"

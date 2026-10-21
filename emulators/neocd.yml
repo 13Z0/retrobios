@@ -31,7 +31,8 @@ notes: |
   algorithmically, never loaded from file (src/memory.cpp:223-253
   generateYZoomData, CRC32 E09E253C), so the core never opens these files.
 
-  .info firmware_count=12 but 2 are phantoms (Y-ZOOM), effective count=10.
+  .info declares firmware_count=12. The core reads 10 of them and builds
+  the two Y-ZOOM entries itself.
   .info lists uni-bioscd.rom as "Universe BIOS 3.2" but SHA1 matches
   Universe BIOS 3.3 (confirmed by GitHub README).
 

@@ -6,7 +6,7 @@
   "files": [
     "scriptmodules/emulators/quasi88.sh"
   ],
-  "summary": "1 packages updated. Left as is: dgen, gpsp, lr-freechaf, uae4arm, which no profiled core matches. Left as is: lr-fbneo, lr-fmsx, openmsx, pcsx2 and 1 more, whose help text lists no files to add to. Left as is: xm7, whose help text names a file no profile documents yet (dicrom.rom, extsub.rom, fbasic30.rom, fddseek.wav, initiate.rom, relay_on.wav, relayoff.wav, subsys_a.rom, subsys_b.rom, subsys_c.rom, subsyscg.rom). Left as is: sdltrs, whose help text names a file no profile documents yet (level3.rom, level4.rom, level4p.rom). Left as is: lr-opera, whose help text names a file no profile documents yet (panazf10.bin), 108 entries found by content not listed",
+  "summary": "1 packages updated. Left as is: dgen, gpsp, lr-freechaf, uae4arm, which no profiled core matches. Left as is: lr-fbneo, lr-fmsx, openmsx, pcsx2 and 1 more, whose help text lists no files to add to. Left as is: xm7, whose help text names a file no profile documents yet (dicrom.rom, extsub.rom, fbasic30.rom, fddseek.wav, initiate.rom, relay_on.wav, relayoff.wav, subsys_a.rom, subsys_b.rom, subsys_c.rom, subsyscg.rom). Left as is: sdltrs, whose help text names a file no profile documents yet (level3.rom, level4.rom, level4p.rom). Left as is: lr-opera, whose help text names a file no profile documents yet (panazf10.bin), 109 entries found by content not listed",
   "counts": null,
   "changes": [
     {
@@ -419,15 +419,6 @@
       "system": "Commodore - Amiga",
       "name": "kick31.rom",
       "destination": "amiga/kick31.rom",
-      "field": null,
-      "old": null,
-      "new": {}
-    },
-    {
-      "kind": "added",
-      "system": "Commodore - Amiga",
-      "name": "amiga-os-310.rom",
-      "destination": "amiga-os-310.rom",
       "field": null,
       "old": null,
       "new": {}
@@ -12257,7 +12248,7 @@
   "hashes_cleared": [],
   "requirements_corrected": 0,
   "withheld": [],
-  "found_by_content": 108,
+  "found_by_content": 109,
   "removal_candidates": [
     {
       "system": "Dinothawr",

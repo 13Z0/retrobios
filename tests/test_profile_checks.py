@@ -9,6 +9,7 @@ check left out lets through a file the emulator refuses.
 
 from __future__ import annotations
 
+import re
 import sys
 import tempfile
 import unittest
@@ -358,6 +359,120 @@ class ClkMasterSystemBios(unittest.TestCase):
                          ("MasterSystem/japanese-bios.sms", "japanese-bios.sms")]}
         drops = region.resolve_region_drops(group, index, ["brazil"])
         self.assertEqual(drops, {"MasterSystem/japanese-bios.sms"})
+
+
+class FbAlpha2012HiscoreFromSaveDir(unittest.TestCase):
+    """HiscoreInit opens <g_save_dir>/hiscore.dat in the libretro build
+    (svn-current/trunk/src/burn/hiscore.cpp:411 at 0ce31536, and :116 of the
+    CPS-3 core at 57f8015c). Read as a system file, the entry took the
+    bios/hiscore.dat slot that MAME cores read on RetroDECK and RetroBat."""
+
+    def test_hiscore_is_not_a_system_file(self):
+        from validation import read_from_system_dir
+
+        for emulator in ("fbalpha2012", "fbalpha2012_cps3"):
+            with self.subTest(emulator=emulator):
+                entry = next(
+                    f for f in _profile(emulator)["files"] if f["name"] == "hiscore.dat"
+                )
+                self.assertFalse(read_from_system_dir(entry))
+
+
+_LAUNCHER_CODE = re.compile(
+    r"Generator\.(py|cs)|configgen|emulatorlauncher|libretroCores\.py|LibRetro\.CoreOptions",
+    re.IGNORECASE,
+)
+
+
+def _prose(node: object) -> list[str]:
+    if isinstance(node, dict):
+        return [
+            text
+            for key, value in node.items()
+            for text in ([value] if key in ("note", "notes") and isinstance(value, str)
+                         else _prose(value))
+        ]
+    if isinstance(node, list):
+        return [text for item in node for text in _prose(item)]
+    return []
+
+
+class HatariTosNamesLiveWithTheLaunchers(unittest.TestCase):
+    """The TOS names Batocera, Recalbox and RetroBat pass to Hatari are
+    recorded under each platform's launchers: since 8dc485dc. The tos.img
+    notes kept describing those generators and an aliases field the entry
+    no longer had."""
+
+    def test_no_launcher_in_the_profiles(self):
+        for emulator in ("hatari", "hatarib"):
+            with self.subTest(emulator=emulator):
+                profile = _profile(emulator)
+                tos = next(f for f in profile["files"] if f["name"] == "tos.img")
+                self.assertNotIn("aliases", tos)
+                cited = [t for t in _prose(profile) if _LAUNCHER_CODE.search(t)]
+                self.assertEqual(cited, [])
+
+
+def _launcher_citations(profile: dict) -> list[str]:
+    refs = [str(f.get("source_ref") or "") for f in profile.get("files") or []]
+    return [t for t in _prose(profile) + refs if _LAUNCHER_CODE.search(t)]
+
+
+class BizHawkFindsFirmwareByHash(unittest.TestCase):
+    """DoScanAndResolve hashes every file of a known firmware size under
+    the firmware folder and binds each slot to the best present option. A
+    user specification names any file (FirmwareManager.cs:143-222 at
+    bdddf4a5). No file name is opened by the code, so every entry is a
+    label. 38 entries carried the names RetroBat's Bizhawk.Generator.cs
+    writes, and the export added 59 of them to RetroBat's native file."""
+
+    def test_entries_are_labels_named_by_the_firmware_database(self):
+        from validation import opens_by_name
+
+        profile = _profile("bizhawk")
+        named = [f["name"] for f in profile["files"] if opens_by_name(f, profile, True)]
+        self.assertEqual(named, [])
+        self.assertEqual([f["name"] for f in profile["files"] if f.get("aliases")], [])
+        self.assertEqual(_launcher_citations(profile), [])
+
+
+class AmiberryNamesComeFromItsCode(unittest.TestCase):
+    """The standalone ROM scan names every Kickstart by the ROM database
+    whatever the file is called (src/osdep/amiberry_gui.cpp:217-240,
+    src/rommgr.cpp:3172-3241 at 648aeeab), so amiga-os-310.rom is a label.
+    kick02019.AROS and kick02019.AROS.ext are names only Recalbox's configgen
+    writes, and the code has its own AROS (':AROS', src/memory.cpp:2156)."""
+
+    def test_scan_label_and_no_launcher_names(self):
+        from validation import opens_by_name
+
+        profile = _profile("amiberry")
+        entry = next(f for f in profile["files"] if f["name"] == "amiga-os-310.rom")
+        self.assertFalse(opens_by_name(entry, profile, True))
+        names = {f["name"] for f in profile["files"]}
+        self.assertFalse({"kick02019.AROS", "kick02019.AROS.ext"} & names)
+        self.assertEqual(_launcher_citations(profile), [])
+
+
+class WinUaeNamesComeFromItsCode(unittest.TestCase):
+    """get_kickstart_filehandle opens kickstart_rom_file, then kick.rom under
+    the data path, then a scanned ROM of the configured name
+    (memory.cpp:2038-2071 at 7ee16ec5). The scan identifies Kickstarts by
+    content. Every entry carried the names and aliases RetroBat's
+    Uae.Generator.cs searches, and kick.rom was missing."""
+
+    def test_kick_rom_is_read_by_name_and_kickstarts_are_labels(self):
+        from validation import opens_by_name, read_from_system_dir
+
+        profile = _profile("winuae")
+        kick = next(f for f in profile["files"] if f["name"] == "kick.rom")
+        self.assertTrue(opens_by_name(kick, profile, True))
+        self.assertFalse(read_from_system_dir(kick, True))
+        labels = [f for f in profile["files"] if f.get("sha1") and f["name"] != "rom.key"]
+        self.assertTrue(labels)
+        self.assertFalse(any(opens_by_name(f, profile, True) for f in labels))
+        self.assertEqual([f["name"] for f in profile["files"] if f.get("aliases")], [])
+        self.assertEqual(_launcher_citations(profile), [])
 
 
 if __name__ == "__main__":

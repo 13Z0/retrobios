@@ -6,11 +6,11 @@
   "files": [
     "batocera-systems"
   ],
-  "summary": "692 kept, 138 added, 3 hashes corrected, 0 requirements corrected, 1411 additions left out, 115 entries found by content not listed",
+  "summary": "692 kept, 138 added, 3 hashes corrected, 0 requirements corrected, 1410 additions left out, 115 entries found by content not listed",
   "counts": {
     "kept": 692,
     "added": 138,
-    "not_added": 1411,
+    "not_added": 1410,
     "not_kept": 0
   },
   "changes": [

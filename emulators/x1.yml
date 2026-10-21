@@ -40,7 +40,8 @@ systems:
 #   to set the working dir. Fonts may not be found from xmil/ in practice.
 #
 # .info declares firmware_count=2 (IPL ROMs only). Font files are not declared.
-# .info firmware1_desc incorrectly says "8x8 Font ROM" (actually Turbo IPL ROM).
+# .info firmware1_desc reads "8x8 Font ROM". The core loads IPLROM.X1T as the
+# Turbo IPL ROM.
 
 notes: |
   Place all files in: <system_dir>/xmil/

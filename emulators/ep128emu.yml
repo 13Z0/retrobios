@@ -206,7 +206,7 @@ files:
 
   # epd19hft.rom and zt19hfnt.rom: listed in .info (firmware8, firmware9) but
   # NOT referenced in core source code and NOT in builtin_rom map (roms.hpp:46516-46538).
-  # The core never loads these files. Excluded from profile to avoid misleading users.
+  # The core never loads these files, so the profile does not list them.
 
   # ============================================================
   # Videoton TVC

@@ -213,6 +213,28 @@ class NoToolingNames(unittest.TestCase):
         self.assertEqual(offenders, [], "\n".join(offenders[:20]))
 
 
+class ProfilesStateFactsAboutOtherProjects(unittest.TestCase):
+    """A profile says what another project's file declares and what the code
+    does, never a verdict on that file. Ten notes and comments in ten profiles
+    called .info entries "phantom", "misleading" or "incorrectly" written, and
+    the site rendered them on the emulator pages."""
+
+    VERDICTS = re.compile(
+        r"\b(phantoms?|misleading|bogus|typos?|has errors|incorrectly "
+        r"(?:says|lists|declares|states|claims|names|describes))\b",
+        re.IGNORECASE,
+    )
+
+    def test_profile_prose_and_comments(self):
+        offenders = [
+            f"{path.relative_to(ROOT)}: {line.strip()[:100]}"
+            for path in sorted((ROOT / "emulators").glob("*.yml"))
+            for line in _yaml_prose(path.read_text(encoding="utf-8")).splitlines()
+            if self.VERDICTS.search(line)
+        ]
+        self.assertEqual(offenders, [], "\n".join(offenders[:40]))
+
+
 class NoClauseSemicolons(unittest.TestCase):
     def _check(self, files: list[Path], extract) -> None:
         offenders = []

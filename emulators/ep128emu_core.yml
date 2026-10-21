@@ -26,9 +26,9 @@ notes: >-
   auto-detected and determines machine configuration and ROM selection.
   Custom ROM mappings are possible via .ep128cfg config files placed in
   ep128emu/config/ or next to content. The .info declares epd19hft.rom
-  and zt19hfnt.rom which are phantom entries never referenced in code.
-  The .info omits epdos16f.rom and exdos14isdos10uk.rom which are used
-  by the code. SDEXT, ReSID, and MIDI port features are compile-disabled
+  and zt19hfnt.rom, and no code path in the core opens either file. The
+  .info does not list epdos16f.rom and exdos14isdos10uk.rom, which the
+  code loads. SDEXT, ReSID, and MIDI port features are compile-disabled
   in the libretro build.
 
 files:

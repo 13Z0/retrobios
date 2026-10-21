@@ -13,6 +13,6 @@ systems:
 note: |
   Identical codebase to stella2014-libretro. Both repos share the same HEAD
   commit and produce a binary reporting library_name "Stella 2014". The
-  stella_libretro.info incorrectly lists display_version "6.6", while the actual
-  embedded version is 3.9.3. See stella2014.yml for firmware requirements
+  stella_libretro.info lists display_version "6.6", and the binary reports
+  3.9.3. See stella2014.yml for firmware requirements
   and KidVid audio files.

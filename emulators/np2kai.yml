@@ -20,8 +20,9 @@ systems: [pc-98]
 # always has a built-in BIOS simulator. itf.rom loading (bios.c:579) is dead
 # code behind #else of this define and is never executed.
 #
-# .info declares firmware_count=11 but is incomplete: misses IDE, SCSI, SASI,
-# PCI, GPIB ROMs and key.txt. Lists itf.rom which is dead code (phantom).
+# .info declares firmware_count=11. It does not list the IDE, SCSI, SASI,
+# PCI and GPIB ROMs or key.txt, and it lists itf.rom, which the core never
+# loads (see above).
 #
 # The fmgen YM2608 rhythm engine (fmgen_opna.cpp:1415-1444) loads WAV files
 # with uppercase names (2608_BD.WAV), the built-in rhythm engine (rhythmc.c)
