@@ -153,8 +153,7 @@ class TestRepoProfiles(unittest.TestCase):
                 os.path.join(os.path.dirname(__file__), "..", "emulators", "*.yml")
             )
         )
-        if not self.paths:
-            self.skipTest("emulators/ not present")
+        self.assertTrue(self.paths, "emulators/ holds no profile")
         self.profiles = {}
         for path in self.paths:
             with open(path, encoding="utf-8") as fh:
@@ -176,19 +175,19 @@ class TestRepoProfiles(unittest.TestCase):
         number, so on its own scale the US slot resolves to it. The merged
         index is a different story: pcsx1 disagrees, and the conflict test
         below asserts that neither order wins there."""
-        index = slot.build_slot_index(
-            {"duckstation": self.profiles["duckstation"]}
-        )
-        ds = self.profiles.get("duckstation")
-        if not ds:
-            self.skipTest("duckstation profile not present")
+        ds = self.profiles["duckstation"]
+        index = slot.build_slot_index({"duckstation": ds})
+        # Membership, not equality: an image DuckStation selects for several
+        # territories lists north-america beside the others.
         members = [
             (f["name"], f["name"])
             for f in ds["files"]
-            if f.get("region") == ["north-america"] and f.get("priority") is not None
+            if "north-america" in (f.get("region") or [])
+            and f.get("priority") is not None
         ]
-        if len(members) < 2:
-            self.skipTest("no US candidate set to decide")
+        self.assertGreaterEqual(
+            len(members), 2, "DuckStation ranks no US candidates any more"
+        )
         drops, undecidable = slot.resolve_slot_drops(
             {"sony-playstation": members}, index
         )
@@ -201,9 +200,7 @@ class TestRepoProfiles(unittest.TestCase):
         serves both cores, so neither order may drop the other's first pick."""
         index = slot.build_slot_index(self.profiles)
         for name in ("scph1001.bin", "scph5501.bin"):
-            entry = index.get(name)
-            if entry is None:
-                self.skipTest(f"{name} not in any profile")
+            self.assertIn(name, index, f"{name} is in no profile")
         # pcsx1 and DuckStation both rank these and disagree: losing the mark
         # is the failure this test exists for, not a reason to skip it.
         self.assertTrue(index["scph1001.bin"].get("conflict"))
@@ -234,8 +231,7 @@ class TestRepoProfiles(unittest.TestCase):
         """numero is alone on ti-83 and ranks all three ROMs, so this is the
         one slot the repo can currently decide end to end."""
         index = slot.build_slot_index(self.profiles)
-        if "ti83se.rom" not in index:
-            self.skipTest("numero profile not present")
+        self.assertIn("ti83se.rom", index, "numero no longer ranks ti83se.rom")
         drops, undecidable = slot.resolve_slot_drops(
             {"ti-83": _pairs("ti83se.rom", "ti83plus.rom", "ti83.rom")}, index
         )
@@ -245,14 +241,13 @@ class TestRepoProfiles(unittest.TestCase):
     def test_ties_leave_the_group_untouched(self):
         """Japanese PlayStation ties at 5, so nothing may be dropped there."""
         index = slot.build_slot_index(self.profiles)
-        ds = self.profiles.get("duckstation")
-        if not ds:
-            self.skipTest("duckstation profile not present")
+        ds = self.profiles["duckstation"]
         members = [
             (f["name"], f["name"])
             for f in ds["files"]
-            if f.get("region") == ["japan"] and f.get("priority") is not None
+            if "japan" in (f.get("region") or []) and f.get("priority") is not None
         ]
+        self.assertGreaterEqual(len(members), 2)
         drops, undecidable = slot.resolve_slot_drops(
             {"sony-playstation": members}, index
         )
