@@ -216,6 +216,7 @@ def hidden_extras(
     report: list[dict] | None = None,
     resolver: ExtraResolver | None = None,
     placed_kind: dict[str, str] | None = None,
+    placed_local: dict[str, str] | None = None,
 ) -> dict[tuple[str, str, str], str]:
     """Report entries the builder holds and still leaves out, with the reason.
 
@@ -234,7 +235,9 @@ def hidden_extras(
     receives the full destination of each held extra the pack carries, and
     ``placed_kind`` its category, carried by the extra itself: the second
     pass, the archive-prefix pass and the agnostic scan copy files no gap
-    report entry names. ``resolver`` is the builder's lookup. An extra it cannot resolve is
+    report entry names. ``placed_local`` receives the local copy the builder
+    writes at each of those destinations, for the pack integrity check.
+    ``resolver`` is the builder's lookup. An extra it cannot resolve is
     skipped and takes no path, as the builder skips it.
     """
     from packpaths import _register_path, placement_block
@@ -292,6 +295,8 @@ def hidden_extras(
             placed.add(full)
         if placed_kind is not None and local:
             placed_kind[full] = fe.get("category", "bios")
+        if placed_local is not None and local:
+            placed_local[full] = local
     return hidden
 
 
