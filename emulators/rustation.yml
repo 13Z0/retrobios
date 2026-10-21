@@ -17,6 +17,10 @@ notes: >
   then validates the full binary against an internal SHA-256 database
   (lifted from Mednafen). Region must match the loaded disc. Known-bad
   dumps are rejected. No filename requirement. No HLE fallback.
+  The disc region comes from the sector 4 licence string alone: "Inc" is Japan,
+  "America" and "of America" are NorthAmerica, "Europe" is Europe, and any other
+  string refuses the disc (upstream src/cdrom/disc/mod.rs:56-99,
+  source src/lib.rs:71-82, 170-215).
   "Boot to BIOS menu" core option allows booting without a disc.
   Database contains 24 entries (22 good, 2 known-bad rejected)
   covering BIOS versions 1.0 through 4.5.
@@ -40,7 +44,7 @@ files:
 
   - name: "scph5501.bin"
     description: "SCPH-5501 (v3.0 A)"
-    region: [north-america]
+    region: [north-america, latin-america]
     required: true
     size: 524288
     validation: [size, sha256]
@@ -139,7 +143,7 @@ files:
   # North America alternatives
   - name: "scph1001_v20.bin"
     description: "SCPH-1001 (v2.0 A)"
-    region: [north-america]
+    region: [north-america, latin-america]
     required: false
     size: 524288
     validation: [size, sha256]
@@ -148,7 +152,7 @@ files:
 
   - name: "scph1001_v21.bin"
     description: "SCPH-1001 (v2.1 A)"
-    region: [north-america]
+    region: [north-america, latin-america]
     required: false
     size: 524288
     validation: [size, sha256]
@@ -157,7 +161,7 @@ files:
 
   - name: "scph1001.bin"
     description: "SCPH-1001 (v2.2 A)"
-    region: [north-america]
+    region: [north-america, latin-america]
     required: false
     size: 524288
     validation: [size, sha256]
@@ -166,7 +170,7 @@ files:
 
   - name: "scph7001.bin"
     description: "SCPH-7001 (v4.1 A)"
-    region: [north-america]
+    region: [north-america, latin-america]
     required: false
     size: 524288
     validation: [size, sha256]
@@ -175,7 +179,7 @@ files:
 
   - name: "scph101.bin"
     description: "SCPH-101 (v4.5 A)"
-    region: [north-america]
+    region: [north-america, latin-america]
     required: false
     size: 524288
     validation: [size, sha256]

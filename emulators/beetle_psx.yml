@@ -58,7 +58,7 @@ files:
 
   - name: "scph5501.bin"
     description: "SCPH-5501, 5503, 7003 (v3.0 11-18-96 A)"
-    region: [north-america]
+    region: [north-america, latin-america]
     required: true
     hle_fallback: true
     size: 524288
@@ -66,6 +66,7 @@ files:
     md5: "490f666e1afb15b7362b406ed1cea246"
     validation: [sha1]
     mode: both
+    note: "Picked for REGION_NA: a SYSTEM.CNF serial whose third letter is U (SCUS, SLUS), a licence string naming America, and content whose region cannot be read while the region option stays on auto (libretro.c:2172-2174, 2198, 2249-2254, 3171-3185, 4436)."
     source_ref: "libretro.c:613-631"
     aliases:
       - "SCPH5501.bin"
