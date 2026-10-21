@@ -129,7 +129,7 @@ files:
     required: false
     size: 524288
     aliases: [amiga-os-310-cd32.rom, kick40060.CD32]
-    note: "CD32 Kickstart v3.1 rev 40.60"
+    note: "CD32 Kickstart v3.1 rev 40.60. candidates_cd32 tries cd32.rom, amiga-os-310-cd32.rom, kick40060.CD32, kick31.rom, then kick.rom."
     source_ref: "source libretro/libretro.cpp:1811 (candidates_cd32)"
 
   - name: cd32ext.rom
@@ -146,7 +146,7 @@ files:
     system: commodore-cdtv
     required: false
     aliases: [kick34005.CDTV]
-    note: "CDTV extended ROM v1.00, used as kickstart candidate"
+    note: "CDTV extended ROM v1.00, used as kickstart candidate. candidates_cdtv tries cdtv.rom, kick34005.CDTV, kick13.rom, then kick.rom."
     source_ref: "source libretro/libretro.cpp:1812 (candidates_cdtv)"
 
   - name: cdtvext.rom

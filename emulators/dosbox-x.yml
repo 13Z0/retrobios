@@ -535,7 +535,6 @@ files:
     sha1: "1f5f7013f18c08ff50d7942e76c4fbd782412414"
     required: false
     system: ibm-pcjr
-    aliases: ["bios.rom"]
     min_size: 57344
     validation: [size]
     note: >

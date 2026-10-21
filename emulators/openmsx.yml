@@ -152,7 +152,8 @@ files:
     required: true
     description: "Kanji font ROM (shared by FS-A1WSX and FS-A1GT machines)"
     validation: [sha1]
-    source_ref: "share/machines/Boosted_MSX2+_JP.xml:28, share/machines/Boosted_MSXturboR_with_IDE.xml:216"
+    source_ref: "share/machines/Boosted_MSX2+_JP.xml:27-28, share/machines/Panasonic_FS-A1WSX.xml:29-30, share/machines/Boosted_MSXturboR_with_IDE.xml:215-216, share/machines/Panasonic_FS-A1GT.xml:141-142"
+    note: "Panasonic_FS-A1WSX.xml and Boosted_MSX2+_JP.xml name it fs-a1wsx_kanjifont.rom, Panasonic_FS-A1GT.xml and Boosted_MSXturboR_with_IDE.xml name it fs-a1gt_kanjifont.rom, all four with the same sha1."
 
   # -------------------------------------------------------
   # Boosted_MSXturboR_with_IDE (msxturbor)

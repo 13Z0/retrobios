@@ -42,7 +42,6 @@ files:
   - name: "gexpress.pce"
     description: "Games Express CD Card"
     required: false
-    aliases: ["gecard.pce"]
     source_ref: "libretro.c:1906-1907"
     note: "pce_fast_cdbios = 'Games Express'. For unlicensed Games Express titles."
 

@@ -82,7 +82,7 @@ files:
 
   - name: Complex_4627.bin
     path: Complex_4627.bin
-    aliases: [Complex.bin, Complex_4627v1.03.bin, cerbios.bin]
+    aliases: [Complex.bin, cerbios.bin]
     required: true
     size: [262144, 524288, 1048576]
     validation: [size]
@@ -98,12 +98,6 @@ files:
       Complex_4627_v1.03.bin, complex_4627.bin, cerbios.bin, Cerbios.bin,
       bios.bin, xbox_bios.bin and Complex.bin offered as alternatives. The
       core refuses to load when the chosen file is absent.
-      RetroDECK writes the BIOS folder's Complex.bin into flashrom_path of
-      the xemu.toml it prepares. ROCKNIX ships an xemu.toml whose
-      flashrom_path is bios/xemu/bios/Complex_4627v1.03.bin. Batocera writes
-      bios/cerbios.bin into flashrom_path for its chihiro system and
-      bios/Complex_4627.bin for xbox. EmuDeck writes
-      bios/Complex_4627v1.03.bin into flashrom_path.
     source_ref:
       standalone: "system/vl.c:3041-3053, hw/xbox/xbox.c:63-123"
       libretro: "ui/xemu-libretro.c:115-118, ui/xemu-libretro.c:195-196, ui/xemu-libretro.c:210-236"

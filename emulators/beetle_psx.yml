@@ -110,7 +110,7 @@ files:
     mode: libretro
     source_ref: "libretro.c:523-529"
     aliases: ["PSXONPSP660.bin"]
-    note: "override_bios=1. Falls back to region BIOS if not found."
+    note: "override_bios=1. Tried as psxonpsp660.bin, PSXONPSP660.bin, then PSXONPSP660.BIN. Falls back to region BIOS if not found."
 
   - name: "ps1_rom.bin"
     description: "PS3 embedded PS1 BIOS, first 512KB extracted (region-free override)"
@@ -121,7 +121,7 @@ files:
     mode: libretro
     source_ref: "libretro.c:531-537"
     aliases: ["PS1_ROM.bin"]
-    note: "override_bios=2. Falls back to region BIOS if not found."
+    note: "override_bios=2. Tried as ps1_rom.bin, PS1_ROM.bin, then PS1_ROM.BIN. Falls back to region BIOS if not found."
 
   - name: "openbios.bin"
     description: "OpenBIOS (open-source PS1 HLE BIOS, region-free override)"
