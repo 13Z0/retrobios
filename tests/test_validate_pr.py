@@ -99,6 +99,35 @@ class AFileOnlyACoreReadsIsKnown(_Fixture):
                       result.checks)
         self.assertFalse(any("not referenced" in message for _s, message in result.checks))
 
+    def test_a_missing_file_is_told_the_folder_of_its_system(self):
+        """The folder came from platform lists only: a file only a profile
+        declares, absent from the collection, got the generic advice."""
+        import hashlib  # noqa: PLC0415
+
+        held, missing = b"held rom", b"missing rom"
+        emulators = self.tmp / "emulators"
+        emulators.mkdir()
+        (emulators / "engine.yml").write_text(
+            "emulator: Engine\ntype: standalone\nsystems: [x, y]\nfiles:\n"
+            f"  - name: \"a.bin\"\n    system: x\n    sha1: \"{hashlib.sha1(held).hexdigest()}\"\n"
+            f"  - name: \"b.bin\"\n    system: x\n    md5: \"{hashlib.md5(missing).hexdigest()}\"\n"
+        )
+        db = {"files": {hashlib.sha1(held).hexdigest(): {"path": "bios/Maker/Console/a.bin"}},
+              "indexes": {"by_md5": {}, "by_sha256": {}}}
+        known = validate_pr.load_profile_hashes(str(emulators), db)
+        result = validate_pr.validate_file(
+            self._bios_file("Downloads/b.bin", missing), db, EMPTY_HASHES, known,
+        )
+        self.assertIn(
+            ("WARN", "File is not under bios/ yet. Its system's files are in "
+                     "`bios/Maker/Console/`"),
+            result.checks,
+        )
+        placed = validate_pr.validate_file(
+            self._bios_file("bios/Other/Place/b.bin", missing), db, EMPTY_HASHES, known,
+        )
+        self.assertTrue(any("Placed under bios/Other/Place/" in m for _s, m in placed.checks))
+
 
 class ASizeEveryDeclarationRulesOutIsNotAVariant(_Fixture):
     """1024 random bytes named scph5501.bin, a name every declaration sizes

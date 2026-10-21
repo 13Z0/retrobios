@@ -171,18 +171,37 @@ def load_platform_hashes(platforms_dir: str, db: dict | None = None) -> dict:
                     _note_sizes(known["sizes"], [file_entry["name"]], file_entry)
                 for value in (*sha1s, *md5s):
                     systems_of.setdefault(value, set()).add(system_id)
-                held = next((s for s in sha1s if s in files), None) or next(
-                    (by_md5[m] for m in md5s if m in by_md5), None
-                )
-                parts = str(files.get(held, {}).get("path", "")).split("/")
-                if len(parts) >= 4 and parts[0] == "bios" and not parts[2].startswith("."):
-                    folder = "/".join(parts[:3]) + "/"
-                    counts = folders_of.setdefault(system_id, {})
-                    counts[folder] = counts.get(folder, 0) + 1
+                _note_folder(folders_of, system_id, files, by_md5, sha1s, md5s)
 
-    # A system whose files sit under several manufacturers (arcade sets,
-    # computers sharing ROM chips) names no single home: only a system
-    # filed under one manufacturer says where a newcomer belongs.
+    known["folders"] = _system_homes(systems_of, folders_of)
+    return known
+
+
+def _note_folder(
+    folders_of: dict[str, dict[str, int]], system_id: str, files: dict,
+    by_md5: dict, sha1s: list[str], md5s: list[str],
+) -> None:
+    """Count the bios/<Manufacturer>/<Console>/ folder a held file sits in."""
+    held = next((s for s in sha1s if s in files), None) or next(
+        (by_md5[m] for m in md5s if m in by_md5), None
+    )
+    parts = str(files.get(held, {}).get("path", "")).split("/")
+    if len(parts) >= 4 and parts[0] == "bios" and not parts[2].startswith("."):
+        folder = "/".join(parts[:3]) + "/"
+        counts = folders_of.setdefault(system_id, {})
+        counts[folder] = counts.get(folder, 0) + 1
+
+
+def _system_homes(
+    systems_of: dict[str, set[str]], folders_of: dict[str, dict[str, int]]
+) -> dict[str, set[str]]:
+    """Hash value to the folders the collection files its systems under.
+
+    A system whose files sit under several manufacturers (arcade sets,
+    computers sharing ROM chips) names no single home: only a system filed
+    under one manufacturer says where a newcomer belongs.
+    """
+    homes: dict[str, set[str]] = {}
     for value, systems in systems_of.items():
         folders: set[str] = set()
         for system_id in systems:
@@ -190,19 +209,33 @@ def load_platform_hashes(platforms_dir: str, db: dict | None = None) -> dict:
             if len({folder.split("/")[1] for folder in held_in}) == 1:
                 folders.update(held_in)
         if folders:
-            known["folders"][value] = folders
-    return known
+            homes[value] = folders
+    return homes
 
 
-def load_profile_hashes(emulators_dir: str) -> dict[str, dict[str, set[str]]]:
+def load_profile_hashes(
+    emulators_dir: str, db: dict | None = None
+) -> dict[str, dict[str, set[str]]]:
     """Hash value to the emulators whose profile declares it, per algorithm.
 
     A file only a core reads (a standalone emulator's firmware, a game
     engine's data) is in no platform list: the review called every such
-    contribution "not referenced, needs manual review".
+    contribution "not referenced, needs manual review". With the database,
+    `folders` maps each declared hash to the folders the collection files
+    the entry's system under, as load_platform_hashes does: a contributor
+    holding a file only a profile declares was told to pick a
+    bios/Manufacturer/Console/ folder alone.
     """
-    known: dict[str, dict] = {"sha1": {}, "sha256": {}, "md5": {}, "crc32": {}, "sizes": {}}
+    known: dict[str, dict] = {
+        "sha1": {}, "sha256": {}, "md5": {}, "crc32": {}, "sizes": {}, "folders": {},
+    }
+    systems_of: dict[str, set[str]] = {}
+    folders_of: dict[str, dict[str, int]] = {}
+    files = (db or {}).get("files", {})
+    indexes = (db or {}).get("indexes", {})
+    by_md5, by_sha256 = indexes.get("by_md5", {}), indexes.get("by_sha256", {})
     for emulator, profile in load_emulator_profiles(emulators_dir).items():
+        declared_systems = profile.get("systems") or []
         for entry in profile.get("files") or []:
             if not isinstance(entry, dict):
                 continue
@@ -212,9 +245,23 @@ def load_profile_hashes(emulators_dir: str) -> dict[str, dict[str, set[str]]]:
             # sha256), and a crc32 counts only where no stronger hash is
             # declared, bounded by the declared size (626 entries name a
             # file by crc32 alone, clk's Electron os.rom among them).
-            for algo in ("sha1", "sha256", "md5"):
-                for value in parse_hash_list(entry.get(algo)):
+            hashes = {
+                algo: parse_hash_list(entry.get(algo)) for algo in ("sha1", "sha256", "md5")
+            }
+            for algo, values in hashes.items():
+                for value in values:
                     known[algo].setdefault(value, set()).add(emulator)
+            # The entry's own system, or the profile's when it emulates one.
+            system = entry.get("system") or (
+                declared_systems[0] if len(declared_systems) == 1 else None
+            )
+            if isinstance(system, str):
+                for value in (v for values in hashes.values() for v in values):
+                    systems_of.setdefault(value, set()).add(system)
+                sha1s = [*hashes["sha1"], *(
+                    by_sha256[v] for v in hashes["sha256"] if v in by_sha256
+                )]
+                _note_folder(folders_of, system, files, by_md5, sha1s, hashes["md5"])
             if not any(entry.get(algo) for algo in ("sha1", "sha256", "md5")):
                 size = entry.get("size")
                 sizes = [int(v) for v in size] if isinstance(size, list) else (
@@ -224,6 +271,7 @@ def load_profile_hashes(emulators_dir: str) -> dict[str, dict[str, set[str]]]:
                     for accepted in sizes:
                         key = (value.zfill(8), accepted)
                         known["crc32"].setdefault(key, set()).add(emulator)
+    known["folders"] = _system_homes(systems_of, folders_of)
     return known
 
 
@@ -335,14 +383,20 @@ def validate_file(
         )
 
     normalized = os.path.normpath(relative)
-    expected_folders = sorted(
-        platform_hashes.get("folders", {}).get(result.sha1)
-        or platform_hashes.get("folders", {}).get(result.md5) or set()
+    # A platform's declaration first, then a profile's: most files the gaps
+    # page lists are declared by a profile alone.
+    expected = next(
+        (
+            table["folders"][value]
+            for table in (platform_hashes, profile_hashes)
+            for value in (result.sha1, result.md5, hashes.get("sha256", ""))
+            if value in table.get("folders", {})
+        ),
+        set(),
     )
+    expected_folders = sorted(expected)
     if normalized.startswith("bios" + os.sep):
         parts = normalized.split(os.sep)
-        expected = (platform_hashes.get("folders", {}).get(result.sha1)
-                    or platform_hashes.get("folders", {}).get(result.md5) or set())
         here = f"bios/{parts[1]}/{parts[2]}/" if len(parts) >= 4 else ""
         makers = {folder.split("/")[1] for folder in expected}
         if expected and (len(parts) < 4 or parts[1] not in makers):
@@ -578,7 +632,7 @@ def main() -> None:
 
     db = _load_database_if_any(args.db)
     platform_hashes = load_platform_hashes(args.platforms_dir, db)
-    profile_hashes = load_profile_hashes(args.emulators_dir)
+    profile_hashes = load_profile_hashes(args.emulators_dir, db)
 
     results = []
     for f in files:
