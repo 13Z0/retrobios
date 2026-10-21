@@ -125,24 +125,126 @@ CLS_LABELS = {
 }
 
 
+def _copy_places(db: dict) -> dict[str, set[tuple[str, str, str]]]:
+    """sha1 -> every (manufacturer, console, file name) holding a copy.
+
+    The database keeps one path per content, deduplication having left one
+    copy. by_path_suffix still records the other folders a copy is filed in,
+    under the name that folder gives it.
+    """
+    files = db.get("files", {})
+    bios_dir = Path(str(db.get("bios_dir") or "bios"))
+    places: dict[str, set[tuple[str, str, str]]] = {}
+    for sha1, entry in files.items():
+        parts = str(entry.get("path", "")).split("/")
+        if len(parts) >= 3 and parts[0] == "bios":
+            places.setdefault(sha1, set()).add((parts[1], parts[2], parts[-1]))
+    for tail, sha1s in db.get("indexes", {}).get("by_path_suffix", {}).items():
+        parts = tail.split("/")
+        if len(parts) < 3 or parts[1].startswith(".") or len(sha1s) != 1:
+            continue
+        if sha1s[0] in files and (bios_dir / tail).is_file():
+            places.setdefault(sha1s[0], set()).add((parts[0], parts[1], parts[-1]))
+    return places
+
+
+# bios/Other/<emulator> and bios/Arcade/<emulator or board> file a copy by
+# who loads it, not by machine. A copy also filed under a machine's maker
+# places the system there.
+_BUCKET_FOLDERS = frozenset({"Other", "Arcade"})
+
+
+def _slug(manufacturer: str) -> str:
+    return manufacturer.lower().replace(" ", "-")
+
+
+def _names_manufacturer(sys_id: str, manufacturer: str) -> bool:
+    slug = _slug(manufacturer)
+    return sys_id == slug or sys_id.startswith(f"{slug}-")
+
+
+def _copies_by_path(db: dict) -> dict[str, set[tuple[str, str, str]]]:
+    """The copy places of each content, keyed by the path the database keeps."""
+    files = db.get("files", {})
+    return {
+        str(files[sha1].get("path", "")): where
+        for sha1, where in _copy_places(db).items()
+    }
+
+
 def _system_folder(
-    files: list[dict], db: dict, name_consoles: dict[str, set[tuple[str, str]]]
+    files: list[dict],
+    db: dict,
+    name_consoles: dict[str, set[tuple[str, str]]],
+    sys_id: str = "",
+    copies: dict[str, set[tuple[str, str, str]]] | None = None,
 ) -> tuple[str, str] | None:
-    """The bios/<manufacturer>/<console> folder a system's files live in."""
+    """The bios/<manufacturer>/<console> folder a system's files live in.
+
+    A content votes for every folder holding a copy under the name the system
+    declares, not only the one deduplication kept: disksys.rom is kept as
+    Arcade/FBNeo/fdsbios.nes and filed again under Nintendo/Famicom Disk
+    System. A copy filed under another name, outside the manufacturer the id
+    names, is another machine's file and votes only when no copy carries the
+    declared name. An id that names its manufacturer (nintendo-fds) keeps the
+    votes cast inside that manufacturer when there are any, and a maker's
+    folder outranks the folders that file copies by emulator.
+    """
+    if copies is None:
+        copies = _copies_by_path(db)
     votes: dict[tuple[str, str], int] = {}
     for fe in files:
         local, status = resolve_local_file(fe, db)
-        parts = (local or "").split("/")
-        if len(parts) >= 4 and parts[0] == "bios" and resolution_is_hash_exact(status):
-            place = (parts[1], parts[2])
+        if not local or not resolution_is_hash_exact(status):
+            continue
+        held = copies.get(local, set())
+        if not held:
+            parts = local.split("/")
+            if len(parts) >= 4 and parts[0] == "bios":
+                held = {(parts[1], parts[2], parts[-1])}
+        declared = str(fe.get("name", "")).casefold()
+        named = {
+            (m, c) for m, c, base in held
+            if base.casefold() == declared or _names_manufacturer(sys_id, m)
+        }
+        for place in named or {(m, c) for m, c, _ in held}:
             votes[place] = votes.get(place, 0) + 1
     if votes:
-        return max(sorted(votes), key=lambda place: votes[place])
+        own = [place for place in votes if _names_manufacturer(sys_id, place[0])]
+        makers = [place for place in votes if place[0] not in _BUCKET_FOLDERS]
+        candidates = own or makers or list(votes)
+        return max(sorted(candidates), key=lambda place: votes[place])
     for fe in files:
         places = name_consoles.get(fe.get("name", ""), set())
         if len(places) == 1:
             return next(iter(places))
     return None
+
+
+def _folders_by_name(manufacturers: dict) -> dict[str, set[tuple[str, str]]]:
+    """Normalized system name -> the console folders that spell it.
+
+    nintendo-nes, nes and the NES folder normalize alike, as do
+    sega-mastersystem and Sega/Master System.
+    """
+    from common import _norm_system_id
+
+    index: dict[str, set[tuple[str, str]]] = {}
+    for mfr, consoles in manufacturers.items():
+        for console in consoles:
+            spelled = console.lower().replace(" ", "-")
+            for key in {
+                _norm_system_id(f"{_slug(mfr)}-{spelled}"), _norm_system_id(spelled)
+            }:
+                index.setdefault(key, set()).add((mfr, console))
+    return index
+
+
+def _folder_named(sys_id: str, by_name: dict[str, set[tuple[str, str]]]) -> tuple[str, str] | None:
+    from common import _norm_system_id
+
+    places = by_name.get(_norm_system_id(sys_id), set())
+    return next(iter(places)) if len(places) == 1 else None
 
 
 def _system_pages_from_data(
@@ -189,21 +291,28 @@ def _system_pages_from_data(
                 console_norm[key] = entry
 
     # Map system_id -> (manufacturer, console) via platform file entries
+    copies = _copies_by_path(db)
+    folders_by_name = _folders_by_name(manufacturers)
     pages: dict[str, tuple[str, str]] = {}
     for cov in coverages.values():
         config = cov["config"]
         for sys_id, system in config.get("systems", {}).items():
             if sys_id in pages:
                 continue
-            # Strategy 1: the folder holding the files the system declares,
+            # Strategy 1: the one console folder the id spells (nintendo-nes,
+            # NES). A copy of the disk system BIOS in the NES list does not
+            # move the NES to the folder that copy sits in.
+            # Strategy 2: the folder holding the files the system declares,
             # found by content, and most votes win. A bare name stands in only
             # where the collection files it in a single console.
-            place = _system_folder(system.get("files", []), db, name_consoles)
+            place = _folder_named(sys_id, folders_by_name) or _system_folder(
+                system.get("files", []), db, name_consoles, sys_id, copies
+            )
             if place is not None:
                 mfr, console = place
                 pages[sys_id] = (mfr.lower().replace(" ", "-"), console)
                 continue
-            # Strategy 2: fuzzy match system_id against console directory names
+            # Strategy 3: fuzzy match system_id against console directory names
             if sys_id in console_norm:
                 pages[sys_id] = console_norm[sys_id]
             else:
@@ -228,7 +337,9 @@ def _system_pages_from_data(
                 if isinstance(entry, dict)
                 and (entry.get("system") == sys_id or len(systems) == 1)
             ]
-            place = _system_folder(files, db, name_consoles)
+            place = _folder_named(sys_id, folders_by_name) or _system_folder(
+                files, db, name_consoles, sys_id, copies
+            )
             if place is not None:
                 mfr, console = place
                 pages[sys_id] = (mfr.lower().replace(" ", "-"), console)
@@ -2151,21 +2262,9 @@ def _group_by_manufacturer(db: dict) -> dict[str, dict[str, list]]:
     read from the full paths by_path_suffix records.
     """
     files = db.get("files", {})
-    bios_dir = Path(str(db.get("bios_dir") or "bios"))
-    places: dict[str, set[tuple[str, str]]] = {}
-    for sha1, entry in files.items():
-        parts = str(entry.get("path", "")).split("/")
-        if len(parts) >= 3 and parts[0] == "bios":
-            places.setdefault(sha1, set()).add((parts[1], parts[2]))
-    for tail, sha1s in db.get("indexes", {}).get("by_path_suffix", {}).items():
-        parts = tail.split("/")
-        if len(parts) < 3 or parts[1].startswith(".") or len(sha1s) != 1:
-            continue
-        if sha1s[0] in files and (bios_dir / tail).is_file():
-            places.setdefault(sha1s[0], set()).add((parts[0], parts[1]))
     manufacturers: dict[str, dict[str, list]] = {}
-    for sha1, where in places.items():
-        for manufacturer, console in sorted(where):
+    for sha1, where in _copy_places(db).items():
+        for manufacturer, console in sorted({(m, c) for m, c, _ in where}):
             manufacturers.setdefault(manufacturer, {}).setdefault(console, []).append(files[sha1])
     return manufacturers
 

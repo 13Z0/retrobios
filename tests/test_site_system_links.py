@@ -147,6 +147,89 @@ class AnIdNamesOneCardPerPage(unittest.TestCase):
         self.assertEqual(page.count("rb-sys-file"), 2)
 
 
+class ACopyFiledByEmulatorDoesNotMoveAMachine(unittest.TestCase):
+    """The database keeps one path per content, and the system links followed
+    it: nintendo-nes and nintendo-fds led to Arcade > FBNeo, where
+    disksys.rom is kept as fdsbios.nes, sega-mastersystem and
+    sinclair-zx-spectrum to Other > zesarux."""
+
+    def _db(self, tmp: str) -> dict:
+        for rel in ("Arcade/FBNeo/fdsbios.nes", "Nintendo/Famicom Disk System/disksys.rom",
+                    "Nintendo/NES/other.rom"):
+            (Path(tmp) / rel).parent.mkdir(parents=True, exist_ok=True)
+            (Path(tmp) / rel).write_bytes(b"x")
+        return {
+            "bios_dir": tmp,
+            "files": {
+                "d" * 40: {"path": "bios/Arcade/FBNeo/fdsbios.nes", "sha1": "d" * 40,
+                           "name": "fdsbios.nes"},
+                "e" * 40: {"path": "bios/Nintendo/NES/other.rom", "sha1": "e" * 40,
+                           "name": "other.rom"},
+            },
+            "indexes": {
+                "by_sha1": {}, "by_md5": {}, "by_name": {},
+                "by_path_suffix": {
+                    "Arcade/FBNeo/fdsbios.nes": ["d" * 40],
+                    "Nintendo/Famicom Disk System/disksys.rom": ["d" * 40],
+                    "Nintendo/NES/other.rom": ["e" * 40],
+                },
+            },
+        }
+
+    def test_the_copy_under_the_declared_name_places_the_system(self):
+        import tempfile
+
+        with tempfile.TemporaryDirectory(dir=REPO_ROOT / "tmp") as tmp:
+            db = self._db(tmp)
+            files = [{"name": "disksys.rom", "sha1": "d" * 40}]
+            self.assertEqual(
+                gs._system_folder(files, db, {}, "nintendo-fds"),
+                ("Nintendo", "Famicom Disk System"),
+            )
+            # A file named otherwise still finds the maker's copy before the
+            # emulator's folder.
+            files = [{"name": "FDS_disksys-nintendo.rom", "sha1": "d" * 40}]
+            self.assertEqual(
+                gs._system_folder(files, db, {}, "fds"),
+                ("Nintendo", "Famicom Disk System"),
+            )
+
+    def test_an_id_that_spells_a_folder_links_to_it(self):
+        import tempfile
+
+        with tempfile.TemporaryDirectory(dir=REPO_ROOT / "tmp") as tmp:
+            db = self._db(tmp)
+            manufacturers = gs._group_by_manufacturer(db)
+            config = {"systems": {"nintendo-nes": {"files": [
+                {"name": "FDS_disksys-nintendo.rom", "sha1": "d" * 40}]}}}
+            pages = gs._system_pages_from_data(
+                manufacturers, {"p": {"config": config}}, db)
+        self.assertEqual(pages["nintendo-nes"], ("nintendo", "NES"))
+
+    def test_repository_systems(self):
+        if not (REPO_ROOT / "database.json").exists():
+            self.skipTest("database.json is not built")
+        previous = os.getcwd()
+        os.chdir(REPO_ROOT)
+        self.addCleanup(os.chdir, previous)
+        from common import load_database, load_emulator_profiles
+
+        db = load_database("database.json")
+        manufacturers = gs._group_by_manufacturer(db)
+        pages = gs._system_pages_from_data(
+            manufacturers, {}, db, load_emulator_profiles("emulators", skip_aliases=False))
+        expected = {
+            "nintendo-nes": ("nintendo", "NES"),
+            "nintendo-fds": ("nintendo", "Famicom Disk System"),
+            "sega-mastersystem": ("sega", "Master System"),
+            "sinclair-zx-spectrum": ("sinclair", "ZX Spectrum"),
+            "commodore-vic20": ("commodore", "VIC-20"),
+        }
+        for sys_id, page in expected.items():
+            with self.subTest(system=sys_id):
+                self.assertEqual(pages.get(sys_id), page)
+
+
 class SystemEmulatorsWhenNoIdMatches(unittest.TestCase):
     """RetroArch files NAOMI and Atomiswave as sega-dreamcast-arcade and the
     Enterprise as enterprise-64-128, ids no profile uses: the emulator cell
