@@ -535,6 +535,10 @@ def landed_changes(exporter: object, systems: dict) -> LandedChanges:
                         "added", entry, None, None, _added_fields(exporter, entry)
                     ))
                 continue
+            if entry.name and exporter.names_anew(entry):
+                records.append(_change(
+                    "added", entry, None, None, _added_fields(exporter, entry)
+                ))
             # Asked of the exporter: a format that names each entry's cores
             # reads every entry of those cores, not only the paired one.
             if (
