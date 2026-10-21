@@ -1545,6 +1545,31 @@ class TestBuildReport(unittest.TestCase):
         report = build_report("mame", profile, self.dir)
         self.assertEqual(report.entries[0].status, "ANCHORED")
 
+    def test_self_check_reads_every_repository_before_calling_a_range_gone(self):
+        # hatari: the port's src/paths.c runs 365 lines, the upstream's 345,
+        # and a source_ref attributes the path to the upstream. With both on
+        # HEAD, prose citing the port's 305-356 was read in the upstream file
+        # alone and reported beyond its end.
+        self.files[("porthead", "src/p.c")] = [f"port {i}" for i in range(8)]
+        self.files[("uphead", "src/p.c")] = ["a", "load x.bin", "c", "d", "e"]
+        heads = {"o/port": "porthead", "o/up": "uphead"}
+        profile_sync.upstream.resolve_head = (
+            lambda repo, cache, offline=False, branch=None: heads[repo.slug]
+        )
+        profile = {
+            "emulator": "Port",
+            "source": "https://github.com/o/port",
+            "upstream": "https://github.com/o/up",
+            "source_commit": "porthead",
+            "upstream_commit": "uphead",
+            "notes": "The port reads its own file (src/p.c:4-7).",
+            "files": [{"name": "x.bin", "source_ref": "upstream src/p.c:2"}],
+        }
+        report = build_report("port", profile, self.dir)
+        prose = next(e for e in report.entries if e.kind == "prose")
+        self.assertNotEqual(prose.parts[0].status, "GONE")
+        self.assertEqual(report.needs_review(), 0)
+
     def test_an_emptied_upstream_does_not_hide_the_ports_change(self):
         # dosbox-pure moved to Codeberg and emptied its GitHub repository.
         # The rename search run for that repository picked up the port's
