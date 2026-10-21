@@ -1841,6 +1841,25 @@ def build_report(
             )
             if result.repo is None and owner is not primary:
                 result = replace(result, repo=owner.repo.slug)
+            if result.status == "GONE":
+                # The owner is chosen on the cited first line alone. hatari's
+                # port carries a longer src/paths.c than the upstream that a
+                # source_ref attributes the path to, and prose citing the
+                # port's 305-356 read past the end of the upstream's 345
+                # lines. As in a comparison, a ref fails only everywhere.
+                for view in views:
+                    if view is owner or view.pin != view.head:
+                        continue
+                    lines = fetch_from(view.repo, view.pin, part.path)
+                    if lines is None:
+                        continue
+                    found = verify_at_pin(part, lines, tokens, hashes)
+                    if found.status != "GONE":
+                        result = replace(
+                            found,
+                            repo=None if view is primary else view.repo.slug,
+                        )
+                        break
         else:
             result = anchor_across_views(part, tokens)
         # A forge that refused the request said nothing about the file:

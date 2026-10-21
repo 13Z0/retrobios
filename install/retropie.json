@@ -5,7 +5,7 @@
   "platform": "retropie",
   "display_name": "RetroPie",
   "version": "1.0",
-  "generated": "2026-10-20T20:05:06Z",
+  "generated": "2026-10-21T04:12:31Z",
   "base_destination": "BIOS",
   "detect": [
     {

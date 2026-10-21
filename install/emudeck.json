@@ -5,7 +5,7 @@
   "platform": "emudeck",
   "display_name": "EmuDeck",
   "version": "1.0",
-  "generated": "2026-10-20T20:05:06Z",
+  "generated": "2026-10-21T04:12:31Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -279,9 +279,9 @@
     }
   ],
   "total_files": 8184,
-  "total_size": 7838637277,
+  "total_size": 7838984425,
   "pack_files": 8186,
-  "pack_size": 7838637277,
+  "pack_size": 7838984425,
   "total_omitted": 11,
   "omitted_files": [
     {
@@ -1828,9 +1828,9 @@
     },
     {
       "dest": "whdboot/game-data/whdload_db.json",
-      "sha1": "bcb18c1016cbb1c748d39254e7f94fbf875b1c0b",
-      "sha256": "b8236b706395e302702e53da623ece2fdbdd73f04ebc1db80673703b13c008e3",
-      "size": 6680181,
+      "sha1": "6540ae1a35080e3dbeacfba5139e4781eb74ca86",
+      "sha256": "836357cb2f82cfe35e419d0e3dc6f07cff217cda9714dee19a00763547f0af56",
+      "size": 6741053,
       "repo_path": "bios/Commodore/Amiga/whdboot/game-data/whdload_db.json",
       "cores": [
         "amiberry"
@@ -21091,27 +21091,6 @@
       "repo_path": "bios/VTech/CreatiVision/bioscv.rom",
       "cores": [
         "jollycv"
-      ]
-    },
-    {
-      "dest": "hiscore.dat",
-      "sha1": "21ddda0c61bd4f1cc04fb9d09e16d403d620f9e8",
-      "sha256": "045da3c1124ba1726738db704a8132590ea2c42fdb327392cff05fc124f8ad3b",
-      "size": 36182,
-      "repo_path": "bios/Arcade/Arcade/.variants/hiscore.dat.21ddda0c",
-      "cores": [
-        "mame2000"
-      ],
-      "alternatives": [
-        {
-          "sha1": "68e94fb579f46f3255ef7c34c0322f3f0f3c8e20",
-          "sha256": "c470a579d8836299e64b835012f7c536115aac695ba9ae10ecd4d168bede54ca",
-          "size": 216250,
-          "repo_path": "bios/Arcade/Arcade/.variants/hiscore.dat.68e94fb5",
-          "cores": [
-            "mame2015"
-          ]
-        }
       ]
     },
     {
@@ -58754,8 +58733,8 @@
     },
     {
       "dest": "aros-ext.bin",
-      "sha1": "e8b274faca7ffa4c064706ba15318885d8645695",
-      "sha256": "874a9275ff7b39723921eac223a5f461f4eb03bd9ba1976b228ad0f4cfa74505",
+      "sha1": "af84797f89eb906350e82c718dddbf7c96695cc1",
+      "sha256": "29f8e1ffa0a72c14e1fa0c4bc61c491dc4cefb696016ff4b2640d80895cbedbe",
       "size": 524288,
       "repo_path": "bios/Commodore/Amiga/aros-ext.bin",
       "cores": [
@@ -58764,8 +58743,8 @@
     },
     {
       "dest": "aros-rom.bin",
-      "sha1": "7a0168bd3eea08b64acfddc5d1cfc0d538e1ac1e",
-      "sha256": "d583ff8f40c73b1584a1395bb0869a909a96d2366a4ae9f4c15ab6a3d868ea62",
+      "sha1": "a11d51c995610d9028c8958279e602a37fa76050",
+      "sha256": "5de61cb512f15dee5a144a0d95d23ca1cda8a85502dd3163a3a46879347031fb",
       "size": 524288,
       "repo_path": "bios/Commodore/Amiga/aros-rom.bin",
       "cores": [
@@ -61460,6 +61439,37 @@
         "gearsystem",
         "mesence",
         "smsplus"
+      ]
+    },
+    {
+      "dest": "hiscore.dat",
+      "sha1": "7381472bf046126257e51a0124e4553282f020e5",
+      "sha256": "9d44fc928c0df41debad1b86739bd6ca96a5891b3b499f6fb3d7e9ea95ca8de5",
+      "size": 322458,
+      "repo_path": "bios/Arcade/Arcade/hiscore.dat",
+      "cores": [
+        "fbalpha2012",
+        "fbalpha2012_cps3"
+      ],
+      "alternatives": [
+        {
+          "sha1": "21ddda0c61bd4f1cc04fb9d09e16d403d620f9e8",
+          "sha256": "045da3c1124ba1726738db704a8132590ea2c42fdb327392cff05fc124f8ad3b",
+          "size": 36182,
+          "repo_path": "bios/Arcade/Arcade/.variants/hiscore.dat.21ddda0c",
+          "cores": [
+            "mame2000"
+          ]
+        },
+        {
+          "sha1": "68e94fb579f46f3255ef7c34c0322f3f0f3c8e20",
+          "sha256": "c470a579d8836299e64b835012f7c536115aac695ba9ae10ecd4d168bede54ca",
+          "size": 216250,
+          "repo_path": "bios/Arcade/Arcade/.variants/hiscore.dat.68e94fb5",
+          "cores": [
+            "mame2015"
+          ]
+        }
       ]
     },
     {

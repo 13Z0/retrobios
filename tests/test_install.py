@@ -2295,8 +2295,8 @@ class ThePowerShellWrapperPassesTheStatusOn(unittest.TestCase):
 
 class ThePowerShellWrapperPassesEveryArgument(unittest.TestCase):
     """A [Parameter()] attribute made install.ps1 an advanced script, whose
-    common parameters took -v (as -Verbose), -vb, -d and -ea: the documented
-    `-v` never reached install.py."""
+    common parameters took `-v` (read as `-Verbose`), `-vb`, `-d` and `-ea`:
+    the documented `-v` never reached install.py."""
 
     @unittest.skipUnless(shutil.which("pwsh"), "needs PowerShell")
     def test_short_flags_reach_the_installer(self):

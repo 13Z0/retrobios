@@ -5,7 +5,7 @@
   "platform": "batocera",
   "display_name": "Batocera",
   "version": "1.0",
-  "generated": "2026-10-20T20:05:06Z",
+  "generated": "2026-10-21T04:12:31Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -273,9 +273,9 @@
     }
   ],
   "total_files": 14481,
-  "total_size": 9770979038,
+  "total_size": 9771265314,
   "pack_files": 14483,
-  "pack_size": 9770979038,
+  "pack_size": 9771265314,
   "total_omitted": 399,
   "omitted_files": [
     {
@@ -128440,27 +128440,6 @@
       ]
     },
     {
-      "dest": "hiscore.dat",
-      "sha1": "21ddda0c61bd4f1cc04fb9d09e16d403d620f9e8",
-      "sha256": "045da3c1124ba1726738db704a8132590ea2c42fdb327392cff05fc124f8ad3b",
-      "size": 36182,
-      "repo_path": "bios/Arcade/Arcade/.variants/hiscore.dat.21ddda0c",
-      "cores": [
-        "mame2000"
-      ],
-      "alternatives": [
-        {
-          "sha1": "7381472bf046126257e51a0124e4553282f020e5",
-          "sha256": "9d44fc928c0df41debad1b86739bd6ca96a5891b3b499f6fb3d7e9ea95ca8de5",
-          "size": 322458,
-          "repo_path": "bios/Arcade/Arcade/hiscore.dat",
-          "cores": [
-            "visual-pinball"
-          ]
-        }
-      ]
-    },
-    {
       "dest": "mame2003-plus/artwork/blueshrk.zip",
       "sha1": "4317f301d6e4117dfde42b33dfaf73a2b25f43c1",
       "sha256": "1cab240e62d93be9368c9754606de1cdc8076264ab36d1b6d142a7a57342f788",
@@ -171034,6 +171013,36 @@
           "cores": [
             "mame2003_plus",
             "fbneo"
+          ]
+        }
+      ]
+    },
+    {
+      "dest": "hiscore.dat",
+      "sha1": "7381472bf046126257e51a0124e4553282f020e5",
+      "sha256": "9d44fc928c0df41debad1b86739bd6ca96a5891b3b499f6fb3d7e9ea95ca8de5",
+      "size": 322458,
+      "repo_path": "bios/Arcade/Arcade/hiscore.dat",
+      "cores": [
+        "fbalpha2012"
+      ],
+      "alternatives": [
+        {
+          "sha1": "21ddda0c61bd4f1cc04fb9d09e16d403d620f9e8",
+          "sha256": "045da3c1124ba1726738db704a8132590ea2c42fdb327392cff05fc124f8ad3b",
+          "size": 36182,
+          "repo_path": "bios/Arcade/Arcade/.variants/hiscore.dat.21ddda0c",
+          "cores": [
+            "mame2000"
+          ]
+        },
+        {
+          "sha1": "7381472bf046126257e51a0124e4553282f020e5",
+          "sha256": "9d44fc928c0df41debad1b86739bd6ca96a5891b3b499f6fb3d7e9ea95ca8de5",
+          "size": 322458,
+          "repo_path": "bios/Arcade/Arcade/hiscore.dat",
+          "cores": [
+            "visual-pinball"
           ]
         }
       ]
