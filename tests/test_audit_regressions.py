@@ -276,7 +276,7 @@ class WorkflowRegressions(unittest.TestCase):
         self.assertTrue(runs, "no job confronts profiles with their upstream")
         for name, body in runs:
             self.assertIn("--strict", body)
-            self.assertIn("--diff-filter=A", body)
+            self.assertIn("--added", body)
             self.assertIsNone(workflow["jobs"][name].get("if"), f"{name} must run on push too")
 
     def test_both_events_watch_the_same_paths(self):

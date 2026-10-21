@@ -186,14 +186,7 @@ jobs:
           else
             base=$BEFORE
           fi
-          status=0
-          for file in $(git diff --name-only --diff-filter=A "$base" HEAD -- 'emulators/*.yml'); do
-            name=$(basename "$file" .yml)
-            echo "::group::$name"
-            python scripts/profile_sync.py --emulator "$name" --strict || status=1
-            echo "::endgroup::"
-          done
-          exit $status
+          python scripts/profile_sync.py --added --base "$base" --strict
 
   run-tests:
     runs-on: ubuntu-latest

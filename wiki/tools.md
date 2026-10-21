@@ -401,13 +401,18 @@ and `--limit 20`. Output takes `--markdown` (a report written under
 `--report-dir`, `reports/` by default), and `--full-diff` takes `--ref PATH`
 to show one cited file and `--context N` lines around each hunk. `--strict`
 exits 1 when a profile has refs to review, and CI runs it on every profile a change
-adds. `--offline` answers from `--cache-dir` alone.
+adds. `--offline` answers from `--cache-dir` alone. `--changed` selects the
+profiles the branch adds or edits, uncommitted ones included, and `--added`
+the ones it adds, both against the merge base of `--base` (`origin/main` by
+default) and HEAD.
 
 ```bash
 python scripts/profile_sync.py --all --system sega-saturn --changed-only
 python scripts/profile_sync.py --all --stale-before 2026-06-01 --limit 20 --triage
 python scripts/profile_sync.py --emulator vice --full-diff --ref vice/src/c64/c64rom.h --context 6
 python scripts/profile_sync.py --emulator vice --strict
+python scripts/profile_sync.py --changed --strict
+python scripts/profile_sync.py --added --base upstream/main --strict
 ```
 
 Per part of a ref: `ANCHORED` (same content, same lines), `SHIFTED` (same

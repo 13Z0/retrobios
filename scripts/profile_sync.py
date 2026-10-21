@@ -3367,6 +3367,20 @@ def build_parser() -> argparse.ArgumentParser:
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--emulator", help="a single profile")
     group.add_argument("--all", action="store_true", help="every profile")
+    group.add_argument(
+        "--changed", action="store_true",
+        help="the profiles the branch adds or edits against --base, "
+        "uncommitted ones included",
+    )
+    group.add_argument(
+        "--added", action="store_true",
+        help="the profiles the branch adds against --base, as CI checks them",
+    )
+    parser.add_argument(
+        "--base", default="origin/main",
+        help="revision --changed and --added compare with, through its merge "
+        "base with HEAD (default: %(default)s)",
+    )
     parser.add_argument(
         "--emulators-dir", default="emulators",
         help="emulator profile directory (default: %(default)s)",
@@ -3481,8 +3495,51 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
+def _git_lines(args: list[str]) -> list[str]:
+    result = subprocess.run(
+        ["git", *args], capture_output=True, text=True, check=False
+    )
+    if result.returncode:
+        detail = result.stderr.strip() or f"exit {result.returncode}"
+        raise SystemExit(f"ERROR: git {' '.join(args)}: {detail}")
+    return [line for line in result.stdout.splitlines() if line]
+
+
+def branch_profiles(emulators_dir: str, base: str, added_only: bool) -> list[str]:
+    """Names of the profiles the branch adds (or edits) against ``base``.
+
+    The diff starts at the merge base, so commits main gained since the
+    branch point are not counted, and ends at the working tree, so a
+    profile not yet committed is checked too. A rename reads as an addition.
+    """
+    merge_base = _git_lines(["merge-base", base, "HEAD"])[0]
+    paths = _git_lines([
+        "diff", "--name-only", "--no-renames",
+        "--diff-filter=A" if added_only else "--diff-filter=AM",
+        merge_base, "--", emulators_dir,
+    ])
+    paths += _git_lines([
+        "ls-files", "--others", "--exclude-standard", "--full-name",
+        "--", emulators_dir,
+    ])
+    top = Path(_git_lines(["rev-parse", "--show-toplevel"])[0])
+    root = Path(emulators_dir).resolve()
+    return sorted({
+        full.stem
+        for path in paths
+        if (full := (top / path).resolve()).suffix == ".yml" and full.parent == root
+    })
+
+
 def select_profiles(profiles: dict, args: argparse.Namespace) -> dict:
     """Profiles matching the selection flags."""
+    if args.changed or args.added:
+        names = branch_profiles(args.emulators_dir, args.base, args.added)
+        selected = {name: profiles[name] for name in names if name in profiles}
+        if not selected:
+            verb = "adds" if args.added else "adds or edits"
+            print(f"the branch {verb} no profile against {args.base}", file=sys.stderr)
+        return selected
     if args.emulator:
         if args.emulator not in profiles:
             # Suggested from what the listing it names shows: counted over the
