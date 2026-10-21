@@ -454,5 +454,26 @@ class AmiberryNamesComeFromItsCode(unittest.TestCase):
         self.assertEqual(_launcher_citations(profile), [])
 
 
+class WinUaeNamesComeFromItsCode(unittest.TestCase):
+    """get_kickstart_filehandle opens kickstart_rom_file, then kick.rom under
+    the data path, then a scanned ROM of the configured name
+    (memory.cpp:2038-2071 at 7ee16ec5). The scan identifies Kickstarts by
+    content. Every entry carried the names and aliases RetroBat's
+    Uae.Generator.cs searches, and kick.rom was missing."""
+
+    def test_kick_rom_is_read_by_name_and_kickstarts_are_labels(self):
+        from validation import opens_by_name, read_from_system_dir
+
+        profile = _profile("winuae")
+        kick = next(f for f in profile["files"] if f["name"] == "kick.rom")
+        self.assertTrue(opens_by_name(kick, profile, True))
+        self.assertFalse(read_from_system_dir(kick, True))
+        labels = [f for f in profile["files"] if f.get("sha1") and f["name"] != "rom.key"]
+        self.assertTrue(labels)
+        self.assertFalse(any(opens_by_name(f, profile, True) for f in labels))
+        self.assertEqual([f["name"] for f in profile["files"] if f.get("aliases")], [])
+        self.assertEqual(_launcher_citations(profile), [])
+
+
 if __name__ == "__main__":
     unittest.main()
