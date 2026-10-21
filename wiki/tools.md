@@ -922,4 +922,4 @@ Located in `scripts/exporter/`. Each inherits `BaseExporter`, defined in
 | `romm_exporter` | `known_bios_files.json`, every entry with a size and a hash |
 | `bizhawk_exporter` | `FirmwareDatabase.cs`, BizHawk's own C# |
 | `misterfpga_exporter` | hash and size in MiSTer's BiosDB (`bios_db.json`) |
-| `retropie_exporter` | the `rp_module_help` prose of each scriptmodule, by adding a name it lacks |
+| `retropie_exporter` | the `rp_module_help` prose of each scriptmodule, by adding a file name the package's emulator reads |

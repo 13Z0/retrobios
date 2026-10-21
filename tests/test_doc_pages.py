@@ -273,6 +273,7 @@ class PeerToneTowardPlatforms(unittest.TestCase):
     WORDS = re.compile(
         r"(?i)\bgets wrong\b|\bstale (hash|entries|entry)\b|<their file>|\bpatch their\b"
         r"|, corrected\b|\bcorrected in place\b|\bdeclare incorrectly\b|\blist error\b"
+        r"|\btheir syntax\b|\bthe platform lacks\b|\bthe odd one\b|\bmay not match reality\b"
     )
 
     def test_published_pages(self):

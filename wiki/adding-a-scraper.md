@@ -211,7 +211,7 @@ System ID consistency matters for cross-platform operations. The same console mu
   (`_resolve_truncated_md5`), and kept as written otherwise. The resolution layer
   matches what remains by prefix.
 
-Scraped data reflects what the upstream declares, which may not match reality. The scraper's job is faithful transcription of upstream data, not correction. Corrections happen in the emulator profiles (source-verified) and in `_shared.yml` (curated). If a scraper meets a hash or filename that differs from the emulator source, log a warning and still include the upstream value. The divergence will surface during truth diffing.
+Scraped data reflects what the upstream declares, which can differ from what the emulator source reads. The scraper's job is faithful transcription of upstream data, not correction. Corrections happen in the emulator profiles (source-verified) and in `_shared.yml` (curated). If a scraper meets a hash or filename that differs from the emulator source, log a warning and still include the upstream value. The divergence will surface during truth diffing.
 
 A few rules keep that transcription honest:
 

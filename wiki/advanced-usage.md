@@ -331,10 +331,11 @@ The diff reports:
 
 ### Export to native formats
 
-Write a platform's own BIOS file, updated from the emulators' code. The output is the file its
-maintainers keep, not our data in their syntax: hashes the truth can prove
-are applied, entries the truth says nothing about are left alone, and files
-the truth knows and the platform lacks are added.
+Write a platform's own BIOS file with the updates its emulators' source code
+supports. The output is the platform's original file with those updates applied:
+a hash the emulator source states is updated, an entry the source says nothing
+about is kept as written, and a file the platform's emulators read that the list
+does not name yet is added.
 
 ```bash
 python scripts/export_native.py --platform batocera --fetch   # batocera-systems
@@ -355,10 +356,10 @@ patched from the platform's own file, which `--fetch` downloads once into
 `.cache/upstream-native/`. Without it the export fails rather than
 publishing a fragment.
 
-RetroPie is the odd one: it publishes no BIOS list at all, and the only
-declaration is the sentence in each package's `rp_module_help`. The export
-adds a missing file name to a list a maintainer already wrote, never
-removes one, and never drafts a sentence where there was none.
+RetroPie keeps its BIOS information in the `rp_module_help` sentence of each
+package rather than in a list. The export adds a file name to a sentence a
+maintainer already wrote, never removes one, and never drafts a sentence where
+there was none.
 
 The run reports what it changed, and what it had to leave out: an entry a
 format cannot express is named, never written half-formed. `es_bios.xsd`
