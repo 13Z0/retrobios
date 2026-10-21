@@ -241,5 +241,33 @@ class DirectoryMembersNameTheirEmulator(unittest.TestCase):
                                r"\[`bios/Bungie/Marathon/Plugins/`\]\(\.\./systems/bungie\.md#")
 
 
+class AnAliasTreeIsListedOnItsParentsPage(unittest.TestCase):
+    """The 90 FreeIntv overlays were linked to the page of the alias that
+    declares them, which is never generated: every permalink was a 404."""
+
+    PROFILES = {
+        "freeintv": {"type": "libretro"},
+        "freeintv_ts_overlay": {
+            "type": "alias", "alias_of": "freeintv",
+            "data_directories": [{"ref": "freeintv-overlays",
+                                  "destination": "freeintv_overlays"}],
+        },
+    }
+
+    def test_the_permalink_goes_to_a_page_that_exists(self):
+        import generate_site
+
+        members = {"freeintv-overlays": {"a.png": {"sha1": "02" * 20}}}
+        items = generate_site.file_location_items({"files": {}}, self.PROFILES, members)
+        self.assertEqual(items, [{"sha1": "02" * 20,
+                                  "url": "emulators/freeintv/#sha1-020202020202"}])
+
+    def test_the_parent_page_lists_the_tree(self):
+        import generate_site
+
+        trees = generate_site.page_data_directories("freeintv", self.PROFILES)
+        self.assertEqual([t["ref"] for t in trees], ["freeintv-overlays"])
+
+
 if __name__ == "__main__":
     unittest.main()

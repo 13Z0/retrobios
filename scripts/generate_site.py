@@ -2029,11 +2029,37 @@ def data_directory_revisions(data_dir: Path = _REPO_ROOT / "data") -> dict[str, 
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def page_data_directories(name: str, profiles: dict) -> list[dict]:
+    """The data directories an emulator page lists.
+
+    Its own, then those of the aliases that point at it: an alias has no
+    page, and the 90 FreeIntv overlays its profile declares were linked to
+    emulators/freeintv_ts_overlay/, a page that does not exist.
+    """
+    trees = [t for t in profiles[name].get("data_directories") or [] if isinstance(t, dict)]
+    refs = {str(t.get("ref", "")) for t in trees}
+    for alias in sorted(profiles):
+        profile = profiles[alias]
+        if profile.get("type") != "alias" or profile.get("alias_of") != name:
+            continue
+        for tree in profile.get("data_directories") or []:
+            ref = str(tree.get("ref", ""))
+            if isinstance(tree, dict) and ref not in refs:
+                refs.add(ref)
+                trees.append(tree)
+    return trees
+
+
 def _data_member_owners(profiles: dict) -> dict[str, str]:
-    """The emulator page that lists each data directory, the first by name."""
+    """The emulator page that lists each data directory, the first by name.
+
+    Only a profile that has a page can own one.
+    """
     owners: dict[str, str] = {}
     for name in sorted(profiles):
-        for tree in profiles[name].get("data_directories") or []:
+        if profiles[name].get("type") in ("alias", "test"):
+            continue
+        for tree in page_data_directories(name, profiles):
             owners.setdefault(str(tree.get("ref", "")), name)
     return owners
 
@@ -3285,7 +3311,9 @@ def generate_emulator_page(
     consumers: FileConsumers | None = None,
     data_names: set[str] | None = None,
     data_registry: dict | None = None,
+    data_dirs: list[dict] | None = None,
 ) -> str:
+    """One emulator's page. ``data_dirs`` defaults to the profile's own."""
     if profile.get("type") == "alias":
         parent = profile.get("alias_of", profile.get("bios_identical_to", "unknown"))
         return (
@@ -3323,7 +3351,8 @@ def generate_emulator_page(
         str(notes_raw).strip() if notes_raw and not isinstance(notes_raw, dict) else ""
     )
     exclusion = profile.get("exclusion_note", "")
-    data_dirs = profile.get("data_directories", [])
+    if data_dirs is None:
+        data_dirs = profile.get("data_directories", [])
 
     lines = [
         f"# {emu_name}",
@@ -5019,7 +5048,8 @@ def _generate(args: argparse.Namespace) -> None:
             ) + "\n",
         )
         page = generate_emulator_page(
-            name, profile, db, consumers, suppl_names, data_registry
+            name, profile, db, consumers, suppl_names, data_registry,
+            data_dirs=page_data_directories(name, profiles),
         )
         PAGE_DATA[f"emulators/{name}.md"] = emulator_structured_data(profile)
         write_if_changed(str(docs / "emulators" / f"{name}.md"), page)
