@@ -3178,13 +3178,34 @@ def realign_prose(
     # Fields whose writing pin lies past a revision that cannot be read:
     # where their text came in is unknown, so they are not moved.
     unknown: dict[str, str] = {}
+    # A revision that does not parse is passed over unless the pins differ
+    # on its two sides while the field's citations changed across it: then
+    # the text may have come in there under either pin. Otherwise nothing
+    # it could hold changes the reading. lindbergh-loader
+    # committed invalid YAML once (df7346b3), fixed the same day, and every
+    # note older than that commit stayed blocked for good.
+    gap: str | None = None
     for sha in history:
         if not any(alive.values()):
             break
         past = _git_file_at(path, sha)
         if past is None:
-            unknown = {field: sha for field, live in alive.items() if live}
-            break
+            gap = gap or sha
+            continue
+        if gap:
+            newer = revisions[-1][1] if revisions else document
+            moved = any(
+                newer.get(pin) != past.get(pin)
+                for pin in ("source_commit", "upstream_commit")
+            )
+            values = _scalar_values(past)
+            for field, live in alive.items():
+                if live and moved and _scalar_citations(values.get(field)) != (
+                    _scalar_citations(current_values.get(field))
+                ):
+                    unknown[field] = gap
+                    alive[field] = False
+            gap = None
         revisions.append((sha, past))
         values = _scalar_values(past)
         for field in fields:
@@ -3196,6 +3217,10 @@ def realign_prose(
                 intro[field] = sha
             else:
                 alive[field] = False
+    if gap:
+        # The oldest revisions do not parse: where the text came in is past
+        # what can be read.
+        unknown.update({field: gap for field, live in alive.items() if live})
 
     messages: list[str] = []
     jobs: list[tuple[Citation, dict]] = []

@@ -3845,6 +3845,46 @@ class TestRealignProse(unittest.TestCase):
         self.assertTrue(all(m.startswith("read again: notes:") for m in messages))
         self.assertIn("(a.c:10)", self.path.read_text())
 
+    def _repo_with_a_broken_revision(self, broken_pin: str):
+        self._git("init", "-q")
+        self._git("config", "user.email", "t@t")
+        self._git("config", "user.name", "t")
+        written = PROSE_SAMPLE.replace('"pin"', '"oldpin"')
+        self._commit(written, "profile")
+        broken = PROSE_SAMPLE.replace('"pin"', f'"{broken_pin}"')
+        self._commit(broken + "files: [\n", "invalid yaml")
+        self._commit(written, "repair")
+        self.path.write_text(PROSE_SAMPLE, encoding="utf-8")
+        self.files[("oldpin", "a.c")] = ["x"] * 9 + ["subject"]
+        self.files[("pin", "a.c")] = ["x"] * 13 + ["subject"]
+        self.files[("oldpin", "b.c")] = list("pqrstuvwx")
+        self.files[("pin", "b.c")] = list("pqrstuvwx")
+
+    def test_a_revision_that_does_not_parse_is_passed_over(self):
+        """lindbergh-loader committed invalid YAML once, repaired the same
+        day under the same pin. Every older note was reported unreadable
+        and the recale stayed refused for good."""
+        self._repo_with_a_broken_revision("oldpin")
+        messages = profile_sync.realign_prose(self.path, self.tmp.name, dry_run=True)
+        self.assertFalse(any("unreadable" in m for m in messages), messages)
+        self.assertTrue(any("would recale" in m for m in messages), messages)
+
+    def test_a_revision_that_does_not_parse_still_blocks_when_it_can_matter(self):
+        """The pins differ across the gap and the note's citations changed:
+        the text may have come in there under either pin."""
+        self._git("init", "-q")
+        self._git("config", "user.email", "t@t")
+        self._git("config", "user.name", "t")
+        self._commit(
+            PROSE_SAMPLE.replace('"pin"', '"older"').replace("a.c:10", "a.c:3"),
+            "profile",
+        )
+        self._commit(PROSE_SAMPLE + "files: [\n", "invalid yaml")
+        self._commit(PROSE_SAMPLE.replace('"pin"', '"oldpin"'), "repair")
+        self.path.write_text(PROSE_SAMPLE, encoding="utf-8")
+        messages = profile_sync.realign_prose(self.path, self.tmp.name, dry_run=True)
+        self.assertTrue(any("unreadable" in m for m in messages), messages)
+
     def test_scalar_written_at_the_current_pin_is_left_alone(self):
         self._git("init", "-q")
         self._git("config", "user.email", "t@t")
