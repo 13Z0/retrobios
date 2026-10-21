@@ -6,7 +6,7 @@ and file resolution - eliminates DRY violations across scripts.
 
 from __future__ import annotations
 
-from collections.abc import Callable
+from collections.abc import Callable, Iterable
 from collections import Counter
 
 import hashlib
@@ -2249,6 +2249,9 @@ def runs_standalone(
 # Marks, in a platform's standalone set, an emulator it also launches as a
 # libretro core. No core name starts with it.
 DUAL_MODE_PREFIX = "dual:"
+# Marks, in the same set, a whole directory the platform's launcher hands a
+# standalone emulator (launchers.handed_directories), as JSON.
+HANDED_PREFIX = "handed:"
 
 
 def standalone_set(config: dict) -> set[str]:
@@ -2260,7 +2263,58 @@ def standalone_set(config: dict) -> set[str]:
     """
     names = {str(c) for c in config.get("standalone_cores") or []}
     names |= {DUAL_MODE_PREFIX + str(c) for c in config.get("dual_mode_cores") or []}
+    if names:
+        from launchers import handed_directories  # noqa: PLC0415
+
+        names |= {
+            HANDED_PREFIX + json.dumps(
+                [h.emulator, h.folder, h.directory, sorted(h.handles), h.source_ref]
+            )
+            for h in handed_directories(config)
+        }
     return names
+
+
+def _handed(standalone_cores: Iterable[str]) -> list:
+    """The directories a standalone set carries, as launchers built them."""
+    from launchers import HandedDirectory  # noqa: PLC0415
+
+    found = []
+    for tag in standalone_cores:
+        if not tag.startswith(HANDED_PREFIX):
+            continue
+        emulator, folder, directory, handles, ref = json.loads(tag[len(HANDED_PREFIX):])
+        found.append(HandedDirectory(emulator, folder, directory, frozenset(handles), ref))
+    return found
+
+
+def standalone_destination(entry: dict, root: str | None) -> str:
+    """Where a standalone build reads an entry, relative to the BIOS root.
+
+    ``standalone_path`` is relative to the directories the build resolves
+    it against (``standalone_directories``). A platform that hands one of
+    them a folder of its BIOS tree puts the file under that folder:
+    RetroPie and ROCKNIX give Flycast bios/dc, EmuDeck bios/flycast/bios.
+    An entry with no ``standalone_path`` keeps ``path``, the layout both
+    builds share.
+    """
+    own = entry.get("standalone_path")
+    if own and root:
+        return f"{root}/{own}"
+    return own or entry.get("path") or entry.get("name", "")
+
+
+def standalone_root_for(
+    emu_name: str, profile: dict, standalone_cores: Iterable[str]
+) -> str | None:
+    """The folder a platform gives this emulator's standalone layout, or None."""
+    declared = profile.get("standalone_directories") or []
+    if not declared:
+        return None
+    from launchers import standalone_root  # noqa: PLC0415
+
+    names = {emu_name, *(str(c) for c in profile.get("cores") or [])}
+    return standalone_root(names, declared, _handed(standalone_cores))
 
 
 def platform_layouts(
@@ -2275,13 +2329,27 @@ def platform_layouts(
     """
     if not runs_standalone(emu_name, profile, standalone_cores):
         return [(profile, False)]
+    standalone = profile
+    root = standalone_root_for(emu_name, profile, standalone_cores)
+    if root:
+        # The standalone view carries the platform's destination, so every
+        # reader of standalone_path (builder, manifest, verify, slots) places
+        # the file in the folder the platform hands the emulator.
+        standalone = {
+            **profile,
+            "files": [
+                {**f, "standalone_path": standalone_destination(f, root)}
+                if isinstance(f, dict) and f.get("standalone_path") else f
+                for f in profile.get("files") or []
+            ],
+        }
     dual = {c.removeprefix(DUAL_MODE_PREFIX) for c in standalone_cores
             if c.startswith(DUAL_MODE_PREFIX)}
     if "libretro" in str(profile.get("type", "")) and dual & {
         emu_name, *(str(c) for c in profile.get("cores", []))
     }:
-        return [(profile, False), (profile, True)]
-    return [(profile, True)]
+        return [(profile, False), (standalone, True)]
+    return [(standalone, True)]
 
 
 # What identifies a profile entry's content, carried unchanged wherever the

@@ -182,7 +182,14 @@ resolved. Three strategies exist:
 - **Omitted**: fallback to system ID intersection, `built_by` profiles excluded.
 
 Two lists say how each resolved emulator is laid out. `standalone_cores` names the
-ones the platform launches as standalone apps: their files go to `standalone_path`.
+ones the platform launches as standalone apps: their files go to `standalone_path`,
+under the folder the platform hands the emulator when its `launchers:` say so. A
+`links` or `passes_path` record of a whole directory that names one of the profile's
+`standalone_directories` gives that folder (`launchers.standalone_root`): RetroPie
+links Flycast's `~/.local/share/flycast` to `BIOS/dc`, EmuDeck the Flatpak's data
+directory to `bios/flycast/bios`, and ROCKNIX's patched data directory is followed
+through the link its start script makes. Two records giving two folders leave the
+profile's layout.
 `dual_mode_cores` names those it launches both ways (RetroPie packages `lr-hatari`
 and `hatari`): both layouts are packed. A profile without a standalone build keeps
 its libretro layout whatever the platform calls it.

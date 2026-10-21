@@ -231,6 +231,25 @@ def launcher_revision(url: str) -> str:
     return found.group(1)
 
 
+RETROARCH_SCRIPT = "functions/EmuScripts/emuDeckRetroArch.sh"
+
+
+def installed_libretro_cores(script: str) -> list[str]:
+    """The cores RetroArch_installCores downloads, without the _libretro suffix."""
+    body = re.search(r"RetroArch_installCores\(\)\s*\{(.*?)\n\}", script, re.S)
+    array = re.search(r"RAcores=\((.*?)\)", body.group(1), re.S) if body else None
+    if array is None:
+        raise RuntimeError(f"{RETROARCH_SCRIPT}: no RAcores list in RetroArch_installCores")
+    cores = [
+        word.removesuffix("_libretro")
+        for word in array.group(1).replace("\\", " ").split()
+        if word.endswith("_libretro")
+    ]
+    if not cores:
+        raise RuntimeError(f"{RETROARCH_SCRIPT}: RAcores names no core")
+    return cores
+
+
 class Scraper(BaseScraper):
     """Scraper for EmuDeck checkBIOS.sh and CSV cheat sheets."""
 
@@ -451,6 +470,9 @@ class Scraper(BaseScraper):
         version = fetch_github_latest_version("dragoonDorise/EmuDeck")
 
         cores = self._fetch_installed_emulators()
+        standalone = [core for core in cores if core != "retroarch"]
+        tree = RepoTree.github(EMUDECK_REPO, launcher_revision(self.checkbios_url))
+        libretro = set(installed_libretro_cores(tree.read(RETROARCH_SCRIPT)))
 
         return {
             "platform": "EmuDeck",
@@ -469,12 +491,14 @@ class Scraper(BaseScraper):
             # Dolphin, Cemu, xemu, ARMSX2 and Supermodel ran with the libretro
             # layout and lost their standalone-only files. A profile with no
             # standalone build keeps its layout (runs_standalone).
-            "standalone_cores": [core for core in cores if core != "retroarch"],
+            "standalone_cores": standalone,
+            # RetroArch_installCores downloads a libretro build of some of
+            # them (flycast_libretro reads system/dc/ beside the standalone
+            # Flycast's flycast/bios/): both layouts are packed.
+            "dual_mode_cores": [core for core in standalone if core in libretro],
             "systems": systems,
             # Read at the commit checkBIOS.sh comes from.
-            "launchers": extract_launchers(
-                RepoTree.github(EMUDECK_REPO, launcher_revision(self.checkbios_url))
-            ),
+            "launchers": extract_launchers(tree),
         }
 
     def _fetch_installed_emulators(self) -> list[str]:
