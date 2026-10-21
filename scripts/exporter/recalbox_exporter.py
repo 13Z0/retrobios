@@ -222,6 +222,19 @@ class Exporter(BaseExporter):
             return False
         return super().states(fe, field_name)
 
+    def lands(self, fe: NativeFile) -> bool:
+        """An element of theirs the render cannot rewrite is still in the
+        file, written back as Recalbox wrote it."""
+        return self.writable(fe) or id(fe) in getattr(self, "_held_whole", {})
+
+    def withheld(self) -> list[str]:
+        """Each element kept as written because the truth names no md5."""
+        return [
+            f"{label} keeps its md5: the truth accepts another dump and "
+            "names no md5 for it, which es_bios.xsd requires"
+            for label in sorted(getattr(self, "_held_whole", {}).values())
+        ]
+
     @classmethod
     def writable(cls, fe: NativeFile, require: str = "") -> bool:
         """es_bios.xsd makes md5 and core required: without them, no element.
@@ -272,6 +285,21 @@ class Exporter(BaseExporter):
                     for s in root.iter("system")
                 ]
 
+        # Elements of theirs written back as they stand, by (platform, path).
+        held = {
+            (platform, " ".join(child.get("path", "").split()))
+            for platform, _, children in theirs
+            for child in children
+            if isinstance(child, dict)
+        }
+        self._held_whole = {
+            id(fe): f"{system.native_id}/{self._path(fe)}"
+            for system in systems.values()
+            for fe in system.files
+            if fe.platform is not None
+            and not self.writable(fe)
+            and (system.native_id, " ".join(self._path(fe).split())) in held
+        }
         ours: dict[str, tuple[NativeSystem, dict[str, tuple[NativeFile, str]]]] = {}
         for system in systems.values():
             writable = [fe for fe in system.files if self.writable(fe)]

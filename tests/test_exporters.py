@@ -1169,6 +1169,32 @@ class RecalboxExport(unittest.TestCase):
             [("cdimono1.zip", False, True)],
         )
 
+    def test_an_element_kept_as_written_is_not_counted_lost(self):
+        """The truth takes the entry on sha1 and size and names no md5: the
+        element is written back whole, and the run counted it a platform
+        entry the format cannot keep."""
+        scraped = {"systems": {"x": {"native_id": "x", "files": [{
+            "name": "a.bin", "destination": "x/a.bin", "md5": "a" * 32, "size": 100,
+            "native_system": "x", "core": "libretro/foo", "required": True,
+        }]}}}
+        truth = {"systems": {"x": {"files": [{
+            "name": "a.bin", "path": "x/a.bin", "sha1": "b" * 40, "size": 200,
+            "required": True, "_cores": ["foo"],
+        }]}}}
+        element = f'    <bios path="x/a.bin" md5="{"a" * 32}" core="libretro/foo" />'
+        original = (
+            '<?xml version="1.0" encoding="UTF-8"?>\n<biosList>\n'
+            f'  <system fullname="X" platform="x">\n{element}\n  </system>\n</biosList>\n'
+        )
+        systems, report = build_native_model(truth, scraped)
+        exporter = discover_exporters()["recalbox"]()
+        produced = exporter.render(systems, report, {"es_bios.xml": original}, None)
+        self.assertIn(element, produced["es_bios.xml"])
+        fe = next(fe for s in systems.values() for fe in s.files)
+        self.assertTrue(exporter.lands(fe))
+        self.assertEqual(landed_changes(exporter, systems).records, [])
+        self.assertEqual(len(exporter.withheld()), 1)
+
     def test_a_truncated_export_is_reported(self):
         exporter, systems, _ = self._render()
         empty = {
