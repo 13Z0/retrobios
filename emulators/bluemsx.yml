@@ -55,6 +55,10 @@ notes: |
   C-BIOS machines work for cartridge-based games without any copyrighted BIOS.
   For disk/tape support, real BIOS ROMs are required.
 
+  The C-BIOS machines are Machines/ entries too. Without the tree
+  machineCreate finds neither config.ini nor a zip for any machine and the
+  game load fails (Src/Board/Machine.c:637-656, libretro.c:1447-1449).
+
   The libretro core zip holds the library only, and the Machines/ and Databases/
   trees come from the buildbot's blueMSX.zip system files. The standalone
   blueMSXv282full.zip ships both trees, machine ROMs included, so every file
@@ -63,10 +67,10 @@ notes: |
 data_directories:
   # 302 files: 296 in Machines/ (200 machine configs + ROMs) + 6 in Databases/
   # buildbot source: https://buildbot.libretro.com/assets/system/blueMSX.zip
-  # ref: libretro.c:1118-1119: system_dir/Machines/ + system_dir/Databases/
+  # ref: libretro.c:1196-1197: system_dir/Machines/ + system_dir/Databases/
   - ref: bluemsx
     installed_on: [batocera, recalbox, retrobat, retrodeck]
-    source_ref: "libretro.c:1119-1120"
+    source_ref: "libretro.c:1196-1197, 1447-1449, Src/Board/Machine.c:637-656"
 
 files:
   # ============================================================
