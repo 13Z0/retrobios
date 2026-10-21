@@ -28,7 +28,9 @@ from romset_recipes import (  # noqa: E402
     write_reconstructions,
 )
 from scripts.scraper.romset_dat_importer import (  # noqa: E402
+    catalog_targets,
     compact_entries,
+    holds_target,
     listxml_entries,
     git_blob_sha,
     merge_snapshot,
@@ -385,6 +387,32 @@ class ListXmlRecipes(unittest.TestCase):
         self.assertEqual(
             [m["name"] for m in entries[0]["members"]], ["own.rom", "shared.rom"]
         )
+
+    def test_a_set_holding_a_missing_catalog_dump_is_kept(self):
+        """fm7740sx carries three No-Intro dumps the collection lacks. No
+        profile names it, so the missing report named no place to find them."""
+        targets = {(_crc(ROM_B), len(ROM_B)): {""}}
+        entries = listxml_entries(
+            self._opener(self._document()), "MAME 0.289", {"other.zip"}, targets
+        )
+        self.assertEqual([entry["name"] for entry in entries], ["childset.zip"])
+
+    def test_a_catalog_sha1_must_agree(self):
+        member = {"crc32": _crc(ROM_B), "size": len(ROM_B), "sha1": "a" * 40}
+        self.assertFalse(holds_target([member], {(_crc(ROM_B), len(ROM_B)): {"b" * 40}}))
+        self.assertTrue(holds_target([member], {(_crc(ROM_B), len(ROM_B)): {"a" * 40}}))
+
+    def test_catalog_targets_leave_out_what_the_collection_holds(self):
+        with tempfile.TemporaryDirectory(dir=TMP_ROOT) as directory:
+            root = Path(directory)
+            (root / "prov").mkdir()
+            (root / "prov" / "tosec.json").write_text(json.dumps({"source": "tosec", "entries": [
+                {"name": "held.rom", "crc32": "1", "size": 4, "sha1": "a" * 40},
+                {"name": "lacked.rom", "crc32": "2", "size": 4, "sha1": "b" * 40},
+            ]}))
+            (root / "db.json").write_text(json.dumps({"files": {"a" * 40: {}}}))
+            targets = catalog_targets(str(root / "prov"), str(root / "db.json"))
+        self.assertEqual(targets, {("00000002", 4): {"b" * 40}})
 
     def test_upstream_blobs_are_recorded_and_replaced(self):
         """The snapshot names the DAT blobs it was read from, so a later

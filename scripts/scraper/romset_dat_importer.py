@@ -15,7 +15,9 @@ in its repository, so both are fetched without a browser:
 
 Only sets the collection has a reason to know are kept, so the committed
 snapshot stays small: the archive names that emulator profiles or platform
-BIOS lists reference. ``--all`` keeps everything.
+BIOS lists reference, and the sets holding a dump-catalog entry the
+collection lacks (provenance_report names the set as where to find it).
+``--all`` keeps everything.
 
 Members without a CRC32 are undumped. A real romset does not carry them, so
 they are dropped from the recipe rather than disqualifying the whole set.
@@ -42,7 +44,7 @@ from ..common import (
     load_emulator_profiles,
     load_platform_config,
 )
-from ..dumpcatalog import build_snapshot, write_snapshot
+from ..dumpcatalog import build_snapshot, load_provenance_snapshots, write_snapshot
 from .logiqx_parser import LogiqxDat, parse_logiqx
 
 MAX_MEMBER_SIZE = 200 * 1024 * 1024
@@ -74,8 +76,45 @@ def relevant_archives(emulators_dir: str, platforms_dir: str) -> set[str]:
     return names
 
 
+Targets = dict[tuple[str, int], set[str]]
+
+
+def catalog_targets(provenance_dir: str, db_path: str) -> Targets:
+    """(crc32, size) -> sha1 of each dump-catalog entry the collection lacks.
+
+    fm7740sx carries DICROM.rom, EXTSUB.rom and KANJI2.rom, which No-Intro
+    lists and the collection misses: filtered on archive names alone, the
+    snapshot never held the set and the missing report named no source.
+    """
+    with open(db_path, encoding="utf-8") as handle:
+        held = set(json.load(handle).get("files", {}))
+    targets: Targets = {}
+    for snapshot in load_provenance_snapshots(provenance_dir).values():
+        for entry in snapshot.get("entries", []):
+            crc, size = str(entry.get("crc32") or "").lower(), entry.get("size")
+            sha1 = str(entry.get("sha1") or "").lower()
+            if not crc or size is None or (sha1 and sha1 in held):
+                continue
+            targets.setdefault((crc.zfill(8), int(size)), set()).add(sha1)
+    return targets
+
+
+def holds_target(members: list[dict], targets: Targets | None) -> bool:
+    """Whether a set carries a missing catalog dump. A sha1 on both sides
+    must agree: crc32 and size alone collide across 40 000 ROMs."""
+    if not targets:
+        return False
+    for member in members:
+        key = (str(member.get("crc32") or "").lower().zfill(8), int(member.get("size") or 0))
+        wanted = targets.get(key)
+        sha1 = str(member.get("sha1") or "").lower()
+        if wanted is not None and (not sha1 or "" in wanted or sha1 in wanted):
+            return True
+    return False
+
+
 def recipe_entries(
-    dat: LogiqxDat, keep: set[str] | None = None
+    dat: LogiqxDat, keep: set[str] | None = None, targets: Targets | None = None
 ) -> list[dict]:
     """Group a parsed DAT into one recipe per set."""
     by_set: dict[str, list] = {}
@@ -87,7 +126,9 @@ def recipe_entries(
     entries: list[dict] = []
     for set_name, roms in sorted(by_set.items()):
         archive = f"{set_name}.zip"
-        if keep is not None and archive not in keep:
+        if keep is not None and archive not in keep and not holds_target(
+            [{"crc32": r.crc32, "size": r.size, "sha1": r.sha1} for r in roms], targets
+        ):
             continue
         entries.append(
             {
@@ -149,9 +190,12 @@ def _machine_roms(blob: bytes) -> list[dict]:
 
 
 def _scan_listxml(
-    stream: io.BufferedIOBase, selector: Callable[[str], bool]
+    stream: io.BufferedIOBase,
+    selector: Callable[[str], bool],
+    targets: Targets | None = None,
 ) -> dict[str, tuple[str | None, list[dict]]]:
-    """Stream a MAME -listxml document, keeping the machines *selector* wants.
+    """Stream a MAME -listxml document, keeping the machines *selector* wants
+    and those holding one of *targets*.
 
     The document is 311 MB for MAME 0.289, so it is never held whole: the
     reader keeps a sliding window just large enough to close the element it
@@ -170,19 +214,22 @@ def _scan_listxml(
             if end == -1:
                 break
             name = match.group(1).decode()
-            if selector(name):
-                parent = _ROMOF.search(match.group(2).decode())
-                found[name] = (
-                    parent.group(1) if parent else None,
-                    _machine_roms(buffer[match.end() : end]),
-                )
+            wanted = selector(name)
+            if wanted or targets:
+                roms = _machine_roms(buffer[match.end() : end])
+                if wanted or holds_target(roms, targets):
+                    parent = _ROMOF.search(match.group(2).decode())
+                    found[name] = (parent.group(1) if parent else None, roms)
             position = end + len(b"</machine>")
         buffer = buffer[position:] if position else buffer[-(2 * LISTXML_CHUNK) :]
     return found
 
 
 def listxml_entries(
-    open_stream: Callable[[], io.BufferedIOBase], label: str, keep: set[str] | None
+    open_stream: Callable[[], io.BufferedIOBase],
+    label: str,
+    keep: set[str] | None,
+    targets: Targets | None = None,
 ) -> list[dict]:
     """Recipes from a MAME -listxml document, parents resolved.
 
@@ -193,7 +240,7 @@ def listxml_entries(
     """
     with open_stream() as stream:
         wanted = _scan_listxml(
-            stream, lambda name: keep is None or f"{name}.zip" in keep
+            stream, lambda name: keep is None or f"{name}.zip" in keep, targets
         )
     requested = set(wanted)
     parents = {
@@ -485,6 +532,15 @@ def main() -> int:
         "--all", action="store_true", help="keep every set, not only referenced ones"
     )
     parser.add_argument(
+        "--provenance-dir", default="provenance",
+        help="dump catalogs whose missing entries keep the sets holding them "
+             "(default: %(default)s)",
+    )
+    parser.add_argument(
+        "--db", default="database.json",
+        help="collection database the catalogs are compared with (default: %(default)s)",
+    )
+    parser.add_argument(
         "--dry-run", action="store_true",
         help="print what would change and write nothing",
     )
@@ -511,6 +567,7 @@ def main() -> int:
         if args.all
         else relevant_archives(args.emulators_dir, args.platforms_dir)
     )
+    targets = None if args.all else catalog_targets(args.provenance_dir, args.db)
 
     dats: dict[str, str] = {}
     entries: list[dict] = []
@@ -518,7 +575,7 @@ def main() -> int:
 
     if _is_listxml(pack):
         label = f"MAME {pack.stem.replace('lx', '')}"
-        entries = listxml_entries(_listxml_opener(pack), label, keep)
+        entries = listxml_entries(_listxml_opener(pack), label, keep, targets)
         dats[label] = pack.stem
         print(f"  {label}: {len(entries)} sets retenus")
         members = sum(len(entry["members"]) for entry in entries)
@@ -539,7 +596,7 @@ def main() -> int:
         if not dat.roms:
             skipped += 1
             continue
-        found = recipe_entries(dat, keep)
+        found = recipe_entries(dat, keep, targets)
         if not found:
             continue
         dats[dat.name or member] = dat.version

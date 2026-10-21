@@ -738,7 +738,11 @@ python -m scripts.scraper.romset_dat_importer --source fbneo --fetch
 Snapshots land in `recipes/`, not `provenance/`: the latter holds dump catalogues
 and a recipe is not one. Versions accumulate rather than replace each other,
 because a platform pins the archive of whichever version its list was built
-against. Only sets a profile or platform references are kept, a `romof` parent's
+against. Only sets a profile or platform references are kept, plus the sets
+holding a dump-catalog entry the collection lacks (crc32 and size, and sha1
+when both sides carry one), so `provenance_report.py --missing` can name the
+set that ships it: MAME's `fm7740sx` carries the FM77AV40SX `DICROM.rom`,
+`EXTSUB.rom` and `KANJI2.rom` that No-Intro lists. A `romof` parent's
 members are merged into the child, and members with no CRC32 are dropped: those
 are undumped and a real romset does not carry them.
 

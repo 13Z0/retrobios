@@ -1,6 +1,6 @@
 {
   "source": "fbneo",
-  "imported_at": "2026-10-04",
+  "imported_at": "2026-10-21",
   "dats": {
     "FinalBurn Neo - Arcade Games": "1.0.0.03",
     "FinalBurn Neo - Astrocade Home Computer Games": "1.0.0.03",
@@ -1319,6 +1319,41 @@
           "name": "gtg_joy_v3.3_u5.u5",
           "size": 65536,
           "crc32": "983a5c0c",
+          "sha1": ""
+        }
+      ],
+      "dats": [
+        "FinalBurn Neo - Arcade Games"
+      ]
+    },
+    {
+      "dat": "FinalBurn Neo - Arcade Games",
+      "name": "invaders.zip",
+      "set": "invaders",
+      "description": "Space Invaders / Space Invaders M",
+      "members": [
+        {
+          "name": "9316b-0854_m739e.e1",
+          "size": 2048,
+          "crc32": "14e538b0",
+          "sha1": ""
+        },
+        {
+          "name": "9316b-0855_m739f.f1",
+          "size": 2048,
+          "crc32": "0ccead96",
+          "sha1": ""
+        },
+        {
+          "name": "9316b-0856_m739g.g1",
+          "size": 2048,
+          "crc32": "6bfaca4a",
+          "sha1": ""
+        },
+        {
+          "name": "9316b-0869_m739h.h1",
+          "size": 2048,
+          "crc32": "734f5ad8",
           "sha1": ""
         }
       ],
@@ -3529,6 +3564,65 @@
           "name": "nmk004.bin",
           "size": 8192,
           "crc32": "8ae61a09",
+          "sha1": ""
+        }
+      ],
+      "dats": [
+        "FinalBurn Neo - Arcade Games"
+      ]
+    },
+    {
+      "dat": "FinalBurn Neo - Arcade Games",
+      "name": "omegrace.zip",
+      "set": "omegrace",
+      "description": "Omega Race (set 1)",
+      "members": [
+        {
+          "name": "dvgprom.bin",
+          "size": 256,
+          "crc32": "d481e958",
+          "sha1": ""
+        },
+        {
+          "name": "omega.e1",
+          "size": 2048,
+          "crc32": "1d0fdf3a",
+          "sha1": ""
+        },
+        {
+          "name": "omega.f1",
+          "size": 2048,
+          "crc32": "d44c0814",
+          "sha1": ""
+        },
+        {
+          "name": "omega.j7",
+          "size": 4096,
+          "crc32": "8e8d4b54",
+          "sha1": ""
+        },
+        {
+          "name": "omega.k7",
+          "size": 4096,
+          "crc32": "6d10f197",
+          "sha1": ""
+        },
+        {
+          "name": "omega.l7",
+          "size": 4096,
+          "crc32": "edcd7a7d",
+          "sha1": ""
+        },
+        {
+          "name": "omega.m7",
+          "size": 4096,
+          "crc32": "0424d46e",
+          "sha1": ""
+        },
+        {
+          "name": "sound.k5",
+          "size": 2048,
+          "crc32": "7d426017",
           "sha1": ""
         }
       ],
@@ -7705,6 +7799,47 @@
     },
     {
       "dat": "FinalBurn Neo - ColecoVision Games",
+      "name": "omegrace.zip",
+      "set": "omegrace",
+      "description": "Omega Race (USA, Euro)",
+      "members": [
+        {
+          "name": "Omega Race (USA, Euro)(1983)(Coleco).rom",
+          "size": 16384,
+          "crc32": "0a0511c7",
+          "sha1": ""
+        },
+        {
+          "name": "coleco.rom",
+          "size": 8192,
+          "crc32": "3aa93ef3",
+          "sha1": ""
+        },
+        {
+          "name": "colecoa.rom",
+          "size": 8192,
+          "crc32": "39bb16fc",
+          "sha1": ""
+        },
+        {
+          "name": "czz50.rom",
+          "size": 16384,
+          "crc32": "4999abc6",
+          "sha1": ""
+        },
+        {
+          "name": "svi603.rom",
+          "size": 8192,
+          "crc32": "19e91b82",
+          "sha1": ""
+        }
+      ],
+      "dats": [
+        "FinalBurn Neo - ColecoVision Games"
+      ]
+    },
+    {
+      "dat": "FinalBurn Neo - ColecoVision Games",
       "name": "pv2000.zip",
       "set": "pv2000",
       "description": "PV2000 (HB)",
@@ -8117,6 +8252,41 @@
       ]
     },
     {
+      "dat": "FinalBurn Neo - MSX 1 Games",
+      "name": "skydiver.zip",
+      "set": "skydiver",
+      "description": "Sky Diver (Japan)",
+      "members": [
+        {
+          "name": "Sky Diver (Japan, EN)(1984)(Hudson Soft)[BLOAD'CAS-',R].cas",
+          "size": 11734,
+          "crc32": "93a40a2c",
+          "sha1": ""
+        },
+        {
+          "name": "kanji.rom",
+          "size": 262144,
+          "crc32": "1f6406fb",
+          "sha1": ""
+        },
+        {
+          "name": "msx.rom",
+          "size": 32768,
+          "crc32": "a317e6b4",
+          "sha1": ""
+        },
+        {
+          "name": "msxj.rom",
+          "size": 32768,
+          "crc32": "071135e0",
+          "sha1": ""
+        }
+      ],
+      "dats": [
+        "FinalBurn Neo - MSX 1 Games"
+      ]
+    },
+    {
       "dat": "FinalBurn Neo - Megadrive Games",
       "name": "bubsys.zip",
       "set": "bubsys",
@@ -8143,6 +8313,40 @@
           "name": "Fire Shark (Euro)(1991)(Toaplan).bin",
           "size": 524288,
           "crc32": "2351ce61",
+          "sha1": ""
+        }
+      ],
+      "dats": [
+        "FinalBurn Neo - Megadrive Games"
+      ]
+    },
+    {
+      "dat": "FinalBurn Neo - Megadrive Games",
+      "name": "ggenie1.zip",
+      "set": "ggenie1",
+      "description": "Game Genie (Euro, USA)",
+      "members": [
+        {
+          "name": "sgr001+sgr002.bin",
+          "size": 32768,
+          "crc32": "5f293e4c",
+          "sha1": ""
+        }
+      ],
+      "dats": [
+        "FinalBurn Neo - Megadrive Games"
+      ]
+    },
+    {
+      "dat": "FinalBurn Neo - Megadrive Games",
+      "name": "warrior.zip",
+      "set": "warrior",
+      "description": "Warrior of Rome (USA)",
+      "members": [
+        {
+          "name": "warrior of rome (usa).bin",
+          "size": 1048576,
+          "crc32": "5be10c6a",
           "sha1": ""
         }
       ],
@@ -8542,6 +8746,29 @@
           "name": "Donkey Kong Jr. (19xx)(Sir Clive and Mr ZX).z80",
           "size": 10781,
           "crc32": "91569bef",
+          "sha1": ""
+        },
+        {
+          "name": "spectrum.rom",
+          "size": 16384,
+          "crc32": "ddee531f",
+          "sha1": ""
+        }
+      ],
+      "dats": [
+        "FinalBurn Neo - ZX Spectrum Games"
+      ]
+    },
+    {
+      "dat": "FinalBurn Neo - ZX Spectrum Games",
+      "name": "invaders.zip",
+      "set": "invaders",
+      "description": "Invaders (16K)",
+      "members": [
+        {
+          "name": "Invaders 16K (1983)(DK'Tronics).tap",
+          "size": 6795,
+          "crc32": "a6263eb9",
           "sha1": ""
         },
         {
