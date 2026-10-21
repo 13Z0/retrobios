@@ -622,7 +622,15 @@ class APickReadsTheEntrySystems(unittest.TestCase):
         outside = {**base, "files": [{"name": "x.zip", "systems": ["a", "c"]}]}
         found = validate_schemas._systems_outside_profile(root / "emulators" / "x.yml", outside)
         self.assertEqual(len(found), 1)
-        self.assertIn("systems c", found[0])
+        self.assertIn("system c", found[0])
+        single = {**base, "files": [{"name": "x.zip", "system": "c"}]}
+        found = validate_schemas._systems_outside_profile(root / "emulators" / "x.yml", single)
+        self.assertEqual(len(found), 1)
+        self.assertIn("system c", found[0])
+        listed = {**base, "files": [{"name": "x.zip", "system": "a"}]}
+        self.assertEqual(
+            validate_schemas._systems_outside_profile(root / "emulators" / "x.yml", listed), []
+        )
 
 
 class Cli(unittest.TestCase):

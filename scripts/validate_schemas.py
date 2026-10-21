@@ -74,7 +74,7 @@ _CHECK_FIELDS = {
 
 
 def _systems_outside_profile(path: Path, document: object) -> list[str]:
-    """An entry's systems: naming a system its profile does not list.
+    """An entry's system: or systems: naming a system its profile does not list.
 
     A --system pick selects the profile by its systems: and then the entry
     by its own, so a name the profile lacks is one no pick ever reaches.
@@ -86,11 +86,13 @@ def _systems_outside_profile(path: Path, document: object) -> list[str]:
     for index, entry in enumerate(document.get("files") or []):
         if not isinstance(entry, dict):
             continue
-        unknown = [str(s) for s in entry.get("systems") or [] if str(s) not in listed]
+        named = [entry["system"]] if entry.get("system") else []
+        named += list(entry.get("systems") or [])
+        unknown = [str(s) for s in named if str(s) not in listed]
         if unknown:
             out.append(
                 f"{path.relative_to(ROOT)}: files[{index}] ({entry.get('name')}) "
-                f"systems {', '.join(unknown)} not in the profile's systems"
+                f"system {', '.join(unknown)} not in the profile's systems"
             )
     return out
 
