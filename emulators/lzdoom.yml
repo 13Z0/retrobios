@@ -1,7 +1,7 @@
 emulator: LZDoom
 type: standalone
 core_classification: game_engine
-source: "https://github.com/drfrag666/gzdoom"
+source: "https://github.com/drfrag666/lzdoom"
 profiled_date: "2026-10-20"
 source_commit: "4ce19a12164ebd6802b7fb2f94d700a6e736d0fb"
 core_version: "3.88b"

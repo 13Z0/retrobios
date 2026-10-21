@@ -1,8 +1,8 @@
 emulator: The Force Engine
 type: standalone
 core_classification: game_engine
-source: "https://github.com/luciusDXL/TheForceEngine"
-upstream: "https://github.com/luciusDXL/TheForceEngine"
+source: "https://github.com/TheForceEngine/TheForceEngine"
+upstream: "https://github.com/TheForceEngine/TheForceEngine"
 profiled_date: "2026-10-04"
 source_commit: "cc25205cc94c36a396f6f50295772f6ec83069a2"
 core_version: "v1.22.420"

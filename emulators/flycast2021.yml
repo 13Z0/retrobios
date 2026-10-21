@@ -2,7 +2,7 @@ emulator: "Flycast 2021"
 type: libretro
 core_classification: frozen_snapshot
 source: "https://github.com/metallic77/flycast"
-upstream: "https://github.com/libretro/flycast"
+upstream: "https://github.com/libretro/parallel-dc"
 profiled_date: "2026-10-17"
 source_commit: "603814c9f73b773c455d9a497f389d2f93a257fd"
 upstream_commit: "4c293f306bc16a265c2d768af5d0cea138426054"
@@ -20,6 +20,8 @@ notes: |
   The libretro/flycast tree as of April 2022 (merge base 4c293f30), from before
   the libretro fork was rebased on flyinghead's Flycast, with 22 commits by
   metallic77 on top that tune defaults and build flags for low-end handhelds.
+  That repository now answers as libretro/parallel-dc, and its master still
+  descends from 4c293f30.
   ROCKNIX renames the core option prefix from reicast to flycast2021 and
   installs the library as flycast2021_libretro.so.
   ref: core/libretro/libretro.cpp:2296-2300
