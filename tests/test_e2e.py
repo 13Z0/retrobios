@@ -2744,6 +2744,31 @@ class TestE2E(unittest.TestCase):
             self.assertIn("bios/scph5501.bin", names)
             self.assertIn("Custom", os.path.basename(zip_path))
 
+            # A profile displayed under the platform's own name: BizHawk is
+            # both. The two layouts must not write one file.
+            emu_dir = os.path.join(tmpdir, "emulators-md5")
+            os.makedirs(emu_dir)
+            with open(os.path.join(emu_dir, "testplat.yml"), "w") as f:
+                yaml.dump({
+                    "emulator": "TestPlat", "type": "standalone",
+                    "systems": ["sony-playstation"],
+                    "files": [{"name": "scph5501.bin", "md5": h["md5"]}],
+                }, f)
+            emu_zip = generate_md5_pack(
+                hashes=[("md5", h["md5"])],
+                db=db,
+                bios_dir=bios_dir,
+                output_dir=out_dir,
+                zip_contents=zip_contents,
+                emulator_name="testplat",
+                emulators_dir=emu_dir,
+            )
+            self.assertIsNotNone(emu_zip)
+            self.assertNotEqual(os.path.basename(emu_zip), os.path.basename(zip_path))
+            self.assertTrue(os.path.exists(zip_path))
+            with zipfile.ZipFile(emu_zip) as zf:
+                self.assertIn("scph5501.bin", zf.namelist())
+
     def test_143_from_md5_not_in_repo(self):
         """--from-md5 reports files in DB but missing from repo."""
         import contextlib

@@ -2154,6 +2154,11 @@ def generate_md5_pack(
                 plat_file_index.setdefault(alias.lower(), []).append(fe)
 
     context_name = plat_display if platform_name else (emu_display or "Custom")
+    # The selection mode is part of the name, as for --system: BizHawk is
+    # both a platform and a profile display name, and the two layouts
+    # (Firmware/ under the platform, the profile's paths under the core)
+    # wrote one file, the second run replacing the first without a word.
+    mode_part = "_Emulator" if emulator_name and not platform_name else ""
     # --standalone changes the destination layout, so a run with it must not
     # take the name of a run without it.
     custom_tags = "".join(
@@ -2168,7 +2173,8 @@ def generate_md5_pack(
         "\n".join(sorted(f"{kind}:{value.lower()}" for kind, value in hashes)).encode()
     ).hexdigest()[:8]
     zip_name = (
-        f"{_name_part(context_name, '_')}_Custom_{selection}{custom_tags}_BIOS_Pack.zip"
+        f"{_name_part(context_name, '_')}{mode_part}_Custom_{selection}{custom_tags}"
+        "_BIOS_Pack.zip"
     )
     zip_path = os.path.join(output_dir, zip_name)
     os.makedirs(output_dir, exist_ok=True)
