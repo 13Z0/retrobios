@@ -331,7 +331,7 @@ The diff reports:
 
 ### Export to native formats
 
-Rewrite a platform's own BIOS file, corrected. The output is the file its
+Write a platform's own BIOS file, updated from the emulators' code. The output is the file its
 maintainers keep, not our data in their syntax: hashes the truth can prove
 are applied, entries the truth says nothing about are left alone, and files
 the truth knows and the platform lacks are added.
@@ -342,11 +342,11 @@ python scripts/export_native.py --platform recalbox --fetch   # es_bios.xml
 python scripts/export_native.py --all --fetch                # every platform, into exports/
 ```
 
-The corrected files are committed under `exports/<platform>/`, and
+The updated files are committed under `exports/<platform>/`, and
 `exports/<platform>.json` names every change the run made. The site's
 [updated platform files](../exports.md) page is built from those reports:
-one row per platform, a download link, and each corrected hash, filled hash
-and withheld correction listed in full.
+one row per platform, a download link, and each updated hash, added hash
+and change not applied listed in full.
 
 Seven of the formats carry code as well as data: Batocera's and ROCKNIX's
 scripts, EmuDeck's shell library, BizHawk's C# database, RetroDECK's

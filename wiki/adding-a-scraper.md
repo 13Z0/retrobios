@@ -211,6 +211,16 @@ System ID consistency matters for cross-platform operations. The same console mu
 
 Scraped data reflects what the upstream declares, which may not match reality. The scraper's job is faithful transcription of upstream data, not correction. Corrections happen in the emulator profiles (source-verified) and in `_shared.yml` (curated). If a scraper meets a hash or filename that differs from the emulator source, log a warning and still include the upstream value. The divergence will surface during truth diffing.
 
+A few rules keep that transcription honest:
+
+- An entry the upstream file does not carry is marked: `shared_group`,
+  `mirror_of` or `curated`. Unmarked, it would be counted and exported as
+  something the platform declares.
+- A scraper that reads nothing raises. An empty input (a refused API call, a
+  moved file) must not rewrite a platform or target file as empty.
+- Names that YAML would turn into numbers or dates are written quoted, so the
+  next scrape produces the same file.
+
 ## Creating a target scraper
 
 Target scrapers determine which emulator cores are available on each hardware

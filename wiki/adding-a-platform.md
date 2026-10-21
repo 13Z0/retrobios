@@ -328,6 +328,13 @@ If a file already exists at the output path, the CLI preserves fields that the
 scraper does not generate (e.g. `data_directories`, manually added metadata).
 Only the `systems` section is replaced.
 
+The YAML is the scraper's output and is never edited by hand: the next scrape
+would undo the edit, and the file would stop describing the platform. Anything
+an export has to write back (the platform's own system id, path, name) is
+recorded by the scraper and never reconstructed later, because several of the
+platform's systems can fold into one of ours. A rescrape can add systems, so
+read `verify.py --platform` before committing the regenerated YAML.
+
 Verify the result:
 
 ```bash
@@ -450,6 +457,10 @@ additions/removals that the scraper cannot determine automatically.
 For platforms that only run on one target (e.g. RetroBat on Windows, RomM in the
 browser), create a static YAML file in `platforms/targets/` instead of a scraper.
 Set `target_scraper: null` in the registry.
+
+Its target writes `cores: null`, which means every core the platform declares.
+A core list written by hand there falls behind the scraped platform and drops
+cores the pack ships.
 
 ## Step 7: Add install detection (optional)
 

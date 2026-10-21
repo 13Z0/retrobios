@@ -465,6 +465,22 @@ Standalone copies are stricter, since they write outside the tree the user
 selected: a symlink already sitting at the destination is skipped rather than
 followed.
 
+## Changing the installer
+
+`install.py` runs on the user's machine, often an older handheld or a stock
+RetroPie image, so it stays on Python 3.8 and the standard library alone.
+Tests refuse any 3.9 syntax or API, and one runs the installer end to end under
+a real 3.8 interpreter, which CI installs beside 3.12 so the check cannot skip.
+The build scripts need 3.12 and are not bound by this.
+
+Every change to `install.py` recomputes the SHA-256 pinned in `install.sh` and
+`install.ps1` in the same commit. The tests compare the pins with the file.
+
+Narrowing by system, core, region or target replays the pack builder's rules
+from fields the manifest carries, and a parity test compares an installer
+selection with the pack built the same way. Given a manifest without those
+fields, the installer refuses to narrow rather than install everything.
+
 ## Exit status
 
 | Code | Meaning |

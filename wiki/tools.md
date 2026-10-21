@@ -67,6 +67,30 @@ Pipeline flags:
 `--check-buildbot` runs the whole pipeline online. For the freshness check
 alone, run `python scripts/check_buildbot_system.py`.
 
+## Conventions every tool keeps
+
+- **A flag is applied or refused.** A mode that accepts a flag it does not
+  apply leaves the user believing they filtered. Four such cases were found
+  (`verify --emulator --region` among them), and a test now runs every mode
+  against every flag.
+- **Every dimension that narrows an artifact appears in its name.** Region,
+  target, required-only, standalone and source variant are part of the pack
+  and manifest names. `--manifest --target switch` once overwrote the
+  manifest every installer downloads with a narrowed one.
+- **A step that did not run says SKIPPED**, never OK.
+- **verify.py and generate_pack.py read the same functions.** A count that
+  differs between the report and the pack is a defect, which is what step 5
+  checks.
+- **Generators write through `write_if_changed()`.** A new timestamp alone
+  rewrites nothing, so a diff on a generated file always means content.
+- **One run per output directory.** Pack generation takes a lock on
+  `<output-dir>/.lock`, and a second run on the same folder stops at once
+  rather than read a half-written ZIP. Experiments use a scratch
+  `--output-dir` under `tmp/`.
+- **Read the exit status before the output.** A generator that crashed leaves
+  the previous artifact in place, which reads exactly like a run that changed
+  nothing.
+
 ## Individual tools
 
 ### generate_db.py
@@ -238,7 +262,7 @@ python scripts/diff_truth.py --all                        # diff all platforms
 
 ### export_native.py
 
-Rewrite each platform's own BIOS file, corrected: System.dat, es_bios.xml,
+Write each platform's own BIOS file, updated from the emulators' code: System.dat, es_bios.xml,
 batocera-systems, checkBIOS.sh, FirmwareDatabase.cs, the RetroDECK manifests,
 MiSTer's BiosDB, RetroPie's scriptmodules. Every platform in the registry,
 archived included.

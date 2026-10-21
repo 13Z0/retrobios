@@ -67,6 +67,24 @@ fresh pass for each new profile. When fbneo_neogeo was profiled, the
 NeoGeo subset referenced BIOS files that the main arcade analysis
 hadn't encountered. A fresh look avoids carrying over blind spots.
 
+A declared upstream that answers 404 is not proof the project is gone. The
+account can differ from the Android package id (`aenu.aps3e` lives at
+`aenu1/aps3e`), a repository can be renamed, and a live repository can belong
+to the parent project rather than the one that publishes the package. A code
+search on the package id usually names the real repository.
+
+A closed-source emulator is profiled from what it ships: decompiled IL for a
+.NET or Unity build, the string table and import directory of a native binary,
+the debug information a library was not stripped of. A source drop published
+after the fact can be older than every shipped build, so its option and file
+name strings are compared with a genuine binary before it is trusted.
+
+An Android package is fingerprinted before a byte of it is read. Mirrors carry
+rebuilt and re-signed copies of paid emulators, and a profile read from one
+describes someone else's modification. Read the signing certificate, compare
+it with a build known to be genuine, and prefer an older genuine build to a
+newer repack. The profile names the rejected copies.
+
 ### 2. Trace file loading
 
 Read the code flow, tracing from the entry point.
@@ -93,6 +111,23 @@ object. BlastEm reads a list of ROM paths from a configuration
 structure. same_cdi opens CD-i BIOS files through a machine
 initialization routine. The loading flow varies widely between emulators.
 
+Check which build reaches the code. When one tree builds a desktop and an
+Android app, the Android project can remove sources from its compile and wire
+other entry points, so a file the shared code opens may never be read on
+Android. A platform header can also leave a symbol undefined whatever the
+comment above it says. Read the project file and the macro block before
+calling a load path live, and scope the file in its `note:` when only one
+build reads it.
+
+Everything the code opens from outside goes in the profile, not only BIOS
+images: fonts, keyboard maps, NV memory, samples, DSP firmware, game databases,
+data directories, native libraries loaded by name. For a library shipped
+inside a package, the test is whether the emulator's own code names it.
+ArcadeFlashWeb ships a whole Qt deployment, and its profile lists the few files
+its source names, such as the Flash runtime passed on the command line.
+Operating system runtimes (`VCRUNTIME140.dll`) are prerequisites written in
+`notes:`, never files.
+
 ### 3. Determine required vs optional
 
 This is decided by code behavior, not by judgment:
@@ -112,6 +147,11 @@ gives better accuracy, but the core functions without it. These files
 are marked with `hle_fallback: true` and `required: false`. The file
 still ships in packs (better experience for the user), but its absence
 does not raise alarms during verification.
+
+MAME is read the same way. A missing ROM is fatal only when it is neither
+`ROM_OPTIONAL` nor `NO_DUMP` (`src/emu/romload.cpp`), so a set made only of
+`NO_DUMP` entries is not required, and MAME hashes the members of an archive,
+never the archive: those hashes go in `contents:`.
 
 ### 3b. Decide whether the file carries a region
 
@@ -169,6 +209,18 @@ the regions No-Intro gives the same dump. Each disagreement is a line to read
 in the source, not a correction to apply: the field records the code's
 selection, and a Hong Kong PS2 is an NTSC-J console.
 
+### 3c. Record the search order
+
+When several files can fill one slot, `priority:` records the order the code
+looks for them, lowest first, read from the source alone. Two cores can rank
+the same file differently: pcsx1 walks `scph1001`, `scph5501`, `scph7001` in
+that order while DuckStation prefers `scph5501` (5) to `scph1001` (10). The
+two uses of the field then answer differently. Choosing one file per slot
+(`--one-per-slot`) keeps every candidate, since dropping one would drop
+another core's first choice. Ordering a list keeps the best rank any core
+gives and notes the disagreement beside it, because a list drops nothing and
+the file the emulator prefers is the one a reader copies first.
+
 ### 4. Document divergences
 
 When the libretro port differs from the upstream:
@@ -225,6 +277,41 @@ read at. Profiles written before this field existed carry `profiled_date`
 and `core_version` instead. They gain `source_commit` as they are
 re-verified.
 
+### Citations and pins
+
+Every choice in a profile carries a `source_ref` to the original emulator's
+code, and to the wrapper's too when the wrapper changes the path. Line numbers
+only hold at one revision, so a few rules keep them checkable.
+
+- **The pin and the references move together.** A profile rewritten from a
+  reading of the current head records that head's sha in `source_commit` in
+  the same edit. References updated without the pin describe one revision
+  while the pin names another, and the next comparison reads the old code at
+  line numbers that only make sense in the new.
+- **Paths start at the repository root.** `src/xenia/ui/imgui_drawer.cc:39`
+  anchors, `ui/imgui_drawer.cc:39` reports GONE although the file exists, and
+  the failure looks like deleted code. A bare file name anchors only while one
+  file in the tree carries it.
+- **Citations in prose count.** Every `file:line` in notes and free text is
+  checked like a `source_ref`, and a pin does not advance while one of them
+  still describes the old revision.
+- **Line numbers are read, not copied.** Search tools disagree on whether lines
+  count from 0 or 1. Read the cited span at the pinned revision before writing
+  it.
+- **A frozen line is pinned to its tag.** A profile documenting a release that
+  lives as a tag in a still active repository (`pcsx2-legacy` at PCSX2 v1.6.0)
+  is checked against its own revision and never rebased onto the head.
+- **A fork's base comes from the forge.** `upstream_commit` of a fork is the
+  merge base the compare API returns. A vendored `version.h` can name the
+  project the fork once came from. When a package ships prebuilt binaries
+  built from different commits of its own repository, the pin is the revision
+  whose sources describe the shipped bytes, found by hashing each binary
+  against the history.
+- **Upstream moved, the profile is read again.** When the code a profile cites
+  is rewritten or moved, the profile is re-profiled at the new revision. A
+  profile held on a revision nobody ships documents a program that no longer
+  exists.
+
 ### Writing style
 
 Notes in a profile describe what the core does, kept focused on:
@@ -264,6 +351,50 @@ A few field conventions that protect the toolchain:
   the bytes can be extracted and hashed. If the source performs no hash
   check at all, the hash is omitted from the profile. The .info or docs
   may list an MD5, but source confirmation makes it more reliable.
+  A data file the build generates is rebuilt from the tree and compared
+  byte for byte with the official release before its hash is recorded
+  (PrBoom+ builds `prboom-plus.wad` with its own tool). A firmware URL that
+  embeds an MD5, as Sony's update URLs do, names the revision the code
+  expects, and records `md5:` without `validation: [md5]`. A hash that comes
+  from neither the code nor the shipped file is not written, even labelled
+  informative.
+
+- A name a platform's launcher reads (a Batocera generator, a RetroBat
+  launcher) is not an alias: it describes the platform, and the platform's
+  scraper records it under `launchers:`. `aliases:` holds the names the
+  emulator itself opens.
+
+- For a file the code finds by content (`found_by: content`), `name:` is a
+  label. It reuses the name other profiles give that exact dump, so it never
+  collides with another dump's established name: ares labels borrowed from
+  other cores once put its revision on a path where RetroBat pins a different
+  dump.
+
+- `bundled: true` keeps a file out of packs because the user already has it.
+  `not_bundled_on`, `installed_on` and `unread_on` refine that per platform
+  from that platform's own package or launcher, each with the reference that
+  shows it.
+
+- `unsourceable:` stops a different file with the same name from being served
+  in the entry's place. It never means the file cannot be found, and the entry
+  stays an acquisition target. XM7's kanji ROMs carry it because the
+  collection's `KANJI.ROM` files are other machines' fonts.
+
+- `path:` is the full destination, file name included. A directory-only value
+  collapses several entries into one count. On a profile that is
+  `type: standalone`, `mode: standalone` sits at the top only: repeated on each
+  file it hides them from the cross-reference.
+
+- An entry of a multi-system profile carries `system:`, read from the code.
+  The toolchain never guesses it, and an entry without one is counted as
+  unattributed.
+
+- Every name in `cores:`, and every numeric file name, is a quoted string:
+  `name: 01` reads back as `1`. `cores:` lists every name the buildbot and the
+  platforms use for the core, since a name no profile claims is a core that
+  target filtering skips.
+
+- Metadata goes in fields, never in parentheses inside a string.
 
 ### 6. Validate
 
@@ -286,6 +417,19 @@ A schema check alone accepts profiles this rejects: a check declared with no
 value to compare (`validation: [crc32]` and no `crc32`), a `data_directories`
 ref the registry does not name, a `path:` written in this repository's layout
 instead of the emulator's, a citation no declared revision can reach.
+
+Three more checks catch what the schema cannot see:
+
+- `python scripts/profile_sync.py --emulator NAME` reports 0 to re-read. A
+  batch of GONE references on a new profile means the path prefix, not
+  upstream drift.
+- In `python scripts/verify.py --emulator NAME --json`, the status counts add
+  up to the number of entries. An entry the collection was never meant to
+  hold that reports OK is a homonym being served, and needs `unsourceable:`.
+- A profile that becomes `standalone + libretro` joins every RetroArch pack.
+  Generate the RetroArch manifest with and without it into a scratch
+  `--output-dir` and compare the destinations: a standalone layout written
+  into `path:` shows up as files at destinations no core reads.
 
 ### Lessons learned
 
@@ -417,6 +561,6 @@ partitions), and `game_count`.
 | `contents` | structure of files inside a BIOS ZIP (`name`, `description`, `size`, `crc32`) |
 | `storage` | `embedded` (default), `external`, `user_provided`, or `large_file`/`release` for files stored as release assets (listed in `.gitignore`) |
 | `agnostic` | true if any file under the system path within size constraints satisfies the requirement |
-| `unsourceable` | reason why the file cannot be sourced (acknowledged gap) |
+| `unsourceable` | why the collection cannot hold these exact bytes. It stops a different file with the same name from being served in the entry's place, while every hash proof still runs. The entry stays an acquisition target |
 | `destination` | target path within the BIOS directory |
 

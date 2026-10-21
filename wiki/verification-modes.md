@@ -104,6 +104,10 @@ wrong hash beside a right one does not withhold the file. `verify.py`, the
 pack builder and the install manifest apply that rule. ZIP files are not
 opened, only the container is checked.
 
+`verification_mode` answers whether the frontend reads the bytes, and
+`hash_rule` answers which comparison it makes. A frontend whose acceptance is
+not a single digest gets a new `hash_rule` value, never a new mode.
+
 ### ROCKNIX verification
 
 **Source**: `rocknix-systems`, function `checkBios`
@@ -265,6 +269,14 @@ differs from the emulator source must not remove a file the frontend would load.
 When platform verification passes but emulator validation fails, the file has a discrepancy.
 This happens most often in existence-mode platforms where any file with the right name is
 accepted.
+
+A local file that contradicts a declared hash is handled by the platform's
+own mode, never by one global rule. An existence frontend never reads the
+bytes, so the file is packed and the disagreement reported: a stale hash in
+System.dat must not remove a file RetroArch would have loaded. An md5 or sha1
+frontend would reject it, so it is left out of the pack and counted as
+`unsafe excluded`, which is distinct from `missing`. The pack builder and the
+pack verification apply the same rule.
 
 ### Variant search
 

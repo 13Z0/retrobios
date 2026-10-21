@@ -182,7 +182,13 @@ disambiguated by a hash suffix on purpose.
    output or formatting.
 
 5. **Run the full suite.** After adding your test, run `python -m unittest
-   discover tests -v` to verify nothing else broke.
+   discover -s tests -t . -v` to verify nothing else broke. `-t .` imports
+   `tests/__init__.py`, which keeps the suite offline.
+
+A fix comes with a test that fails without it. Write the test first, watch it
+fail on the current code, then fix: a test written after the fix may never
+have exercised the case it names. When a reading of the code finds a fact a
+script could have established, the script gains that check in the same change.
 
 Example skeleton:
 
@@ -239,6 +245,55 @@ The test suite is one layer of verification. The full quality gate is:
 If a change passes tests but breaks the pipeline, it's worth investigating before merging. Similarly, new CRITICAL entries in the verify output after a change usually indicate something to look into. The pipeline is designed so that all steps agree: if verify reports N files for a platform, the pack should contain exactly N files.
 
 Ideally, tests, code, and documentation ship together. When profiles and platform configs are involved, updating them in the same change helps keep everything in sync.
+
+A run that dies with a segmentation fault or an exception the code cannot
+raise is run again once, alone, before anything is investigated. Only a
+failure that reproduces is a defect in the code.
+
+## Prose and tone
+
+`tests/test_prose_style.py` holds every tracked file, and the generated site,
+to the way the project writes:
+
+- No em-dash or en-dash, no semicolon joining two clauses, no unicode arrows,
+  no ellipsis character, no box-drawing banners, no emoji or check marks.
+  Rewrite the sentence rather than swapping the character.
+- None of the marketing vocabulary the test lists, and no superlatives. A
+  number with its criterion says more.
+- Headings in sentence case, never repeating the site name.
+
+Formatting stays: bold labels, lists, tables and admonitions make a page
+easier to use. When markup shows raw on the site, the rendering is fixed and
+the formatting kept.
+
+What the test cannot read is tone. Text that names another project says what
+changes, not who erred: "hash updated to the emulator source", "files added",
+"required flags aligned with the code". No "wrong", "bogus" or "phantom" about
+someone else's work. Notes in a profile say what the core does, nothing about
+what it is not. A reply on an issue or a pull request thanks once, gives the
+facts, describes the script or the file rather than the person, and leaves
+the door open.
+
+## Landing a change
+
+A commit subject is English, 50 characters at most, `type: description` with a
+lowercase word after the colon. The types are `feat`, `refactor`, `chore`,
+`docs` and `fix`. The message does not use bug, regression, revert, dead code,
+broken, wrong, hack, workaround or implement (derived forms included), nor the
+marketing vocabulary above, and carries no Co-Authored-By trailer. A body
+explains the why when the subject cannot: the scenario that failed, the
+upstream `file:line` that decides it, what users will see.
+
+```
+feat: add retrobat platform support
+refactor: extract shared utils to common.py
+```
+
+Files are staged by name, never with `git add -A` or `git add .`, which sweep in
+deletions and work that is not yours. Generated artifacts (`database.json`,
+`install/*.json`, `README.md`, `CONTRIBUTING.md`, `exports/`) are committed
+with the data they derive from, never alone: a manifest committed before the
+files it points at gives the installer a 404.
 
 ## CI integration
 
