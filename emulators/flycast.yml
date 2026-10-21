@@ -36,6 +36,18 @@ notes: |
   (shell/libretro/libretro.cpp:2249-2250). All files below are relative to
   system_dir/dc/.
 
+  The standalone emulator looks for each file in the BIOS paths the user
+  configures, then in its data directory, then in the system data
+  directories, then in the content directories, and writes the flash back to
+  the data directory (core/oslib/oslib.cpp:118-196,
+  core/stdclass.cpp:95-125). The data directory is $XDG_DATA_HOME/flycast/,
+  else ~/.local/share/flycast/, on Linux (core/linux-dist/main.cpp:74-99), and
+  the data/ folder of the configuration directory on Windows, Android and
+  macOS (core/windows/winmain.cpp:73-78, core/windows/winmain.cpp:86-89,
+  shell/android-studio/flycast/src/main/jni/src/Android.cpp:149-159,
+  shell/apple/emulator-osx/emulator-osx/osx-main.mm:97-101).
+  standalone_path is relative to the data directory.
+
   Only the Dreamcast reads flat files. The prefix is dc_ for Dreamcast
   (core/hw/flashrom/nvmem.cpp:35-50), and the boot ROM is searched as
   {prefix}boot.bin then {prefix}bios.bin (core/hw/flashrom/nvmem.cpp:304).
@@ -65,6 +77,7 @@ files:
   # -------------------------------------------------------
   - name: "dc_boot.bin"
     path: "dc/dc_boot.bin"
+    standalone_path: "dc_boot.bin"
     aliases: ["dc_bios.bin"]
     system: sega-dreamcast
     required: false
@@ -75,6 +88,7 @@ files:
 
   - name: "dc_nvmem.bin"
     path: "dc/dc_nvmem.bin"
+    standalone_path: "dc_nvmem.bin"
     system: sega-dreamcast
     required: false
     hle_fallback: true
@@ -87,6 +101,7 @@ files:
   # -------------------------------------------------------
   - name: "naomi.zip"
     path: "dc/naomi.zip"
+    standalone_path: "naomi.zip"
     system: sega-naomi
     required: true
     category: bios_zip
@@ -132,6 +147,7 @@ files:
 
   - name: "airlbios.zip"
     path: "dc/airlbios.zip"
+    standalone_path: "airlbios.zip"
     system: sega-naomi
     required: false
     category: bios_zip
@@ -149,6 +165,7 @@ files:
 
   - name: "f355bios.zip"
     path: "dc/f355bios.zip"
+    standalone_path: "f355bios.zip"
     system: sega-naomi
     required: false
     category: bios_zip
@@ -170,6 +187,7 @@ files:
 
   - name: "f355dlx.zip"
     path: "dc/f355dlx.zip"
+    standalone_path: "f355dlx.zip"
     system: sega-naomi
     required: false
     category: bios_zip
@@ -191,6 +209,7 @@ files:
 
   - name: "hod2bios.zip"
     path: "dc/hod2bios.zip"
+    standalone_path: "hod2bios.zip"
     system: sega-naomi
     required: false
     category: bios_zip
@@ -215,6 +234,7 @@ files:
   # -------------------------------------------------------
   - name: "naomi2.zip"
     path: "dc/naomi2.zip"
+    standalone_path: "naomi2.zip"
     system: sega-naomi2
     required: true
     category: bios_zip
@@ -259,6 +279,7 @@ files:
   # -------------------------------------------------------
   - name: "awbios.zip"
     path: "dc/awbios.zip"
+    standalone_path: "awbios.zip"
     system: sega-atomiswave
     required: true
     category: bios_zip
@@ -274,6 +295,7 @@ files:
   # -------------------------------------------------------
   - name: "segasp.zip"
     path: "dc/segasp.zip"
+    standalone_path: "segasp.zip"
     system: sega-systemsp
     required: true
     category: bios_zip
