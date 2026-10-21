@@ -644,11 +644,10 @@ def find_undeclared_files(
                         entry["required"] = True
                     continue
 
-                # Resolution: storage flag, then name, then path basename
-                storage = f.get("storage", "")
-                if storage in ("release", "large_file"):
-                    in_repo = True
-                elif shipped_on_mismatch and (f.get("md5") or f.get("sha1")):
+                # Resolution: name, then path basename
+                # storage: release names where the bytes are served from, not
+                # that the collection holds them: resolved like any file.
+                if shipped_on_mismatch and (f.get("md5") or f.get("sha1")):
                     # The entry states what its content should be and the builder
                     # drops a copy that contradicts it, so content decides here
                     # too. A name match would not do: generic names collide across

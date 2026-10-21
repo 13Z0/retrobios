@@ -15,6 +15,7 @@ from siterender import WIKI_SRC_DIR
 import argparse
 import csv
 import hashlib
+import html
 import io
 import json
 import os
@@ -48,7 +49,7 @@ from common import (
     yaml_load,
 )
 from artifacts import ArtifactLockBusy, artifact_lock
-from cross_reference import FileConsumers
+from cross_reference import FileConsumers, held_copy
 from nativemode import reads_file_contents
 
 
@@ -3121,18 +3122,21 @@ def _render_emulator_file(
         details.extend(_directory_copies(f, consumers))
     if consumers:
         sha1 = consumers.sha1_of(f, f.get("path") or "", owner=owner)
-        if sha1 and in_repo:
+        held = consumers.path_of(sha1) if sha1 and in_repo else ""
+        parts = held.split("/")
+        if len(parts) >= 3 and parts[0] == "bios":
             # Which copy answers this entry, linked to its collection card
             # (provenance, every hash, download): an entry declaring no hash
             # said "in repo" without naming the file.
-            held = consumers.path_of(sha1)
-            parts = held.split("/")
-            if len(parts) >= 3 and parts[0] == "bios":
-                page = parts[1].lower().replace(" ", "-")
-                details.append(
-                    f"Collection copy: [{_code(held)}]"
-                    f"(../systems/{urllib.parse.quote(page)}.md#sha1-{sha1[:12]})"
-                )
+            page = parts[1].lower().replace(" ", "-")
+            details.append(
+                f"Collection copy: [{_code(held)}]"
+                f"(../systems/{urllib.parse.quote(page)}.md#sha1-{sha1[:12]})"
+            )
+        elif in_repo and not any(d.startswith("Collection copies:") for d in details):
+            copy = held_copy(f)
+            if copy:
+                details.append(_held_copy_line(copy, consumers))
         plat_links = _platform_links(sha1, consumers) if sha1 else []
         if plat_links:
             details.append(f"Platforms: {', '.join(plat_links)}")
@@ -3187,6 +3191,33 @@ def _render_emulator_file(
     lines.append("</div>")
     lines.append("")
     return lines
+
+
+def _held_copy_line(copy: tuple[str, str], consumers: FileConsumers) -> str:
+    """Where a copy the database does not index sits: a ZIP member under
+    bios/, or a file or tree of a data directory the packs fetch."""
+    path, member = copy
+    parts = path.rstrip("/").split("/")
+    if member:
+        archive = _code(path)
+        zsha1 = consumers.sha1_at(path)
+        if zsha1 and len(parts) >= 3 and parts[0] == "bios":
+            page = urllib.parse.quote(parts[1].lower().replace(" ", "-"))
+            archive = f"[{archive}](../systems/{page}.md#sha1-{zsha1[:12]})"
+        return f"Collection copy: member {_code(member)} of {archive}"
+    if parts[0] == "data" and len(parts) >= 2:
+        ref, inside = parts[1], "/".join(parts[2:])
+        if path.endswith("/"):
+            where = _code(inside + "/") if inside else "the tree"
+            return f"Collection copy: {where} in the {_code(ref)} data directory"
+        info = (_DATA_MEMBERS.get(ref) or {}).get(inside) or {}
+        shown = _code(inside)
+        if info.get("sha1"):
+            shown = (f'<a href="../../files/?sha1={info["sha1"]}">'
+                     f"<code>{html.escape(inside)}</code></a>")
+        return f"Collection copy: {shown} in the {_code(ref)} data directory"
+    tree = f"{REPO_URL}/tree/main/{urllib.parse.quote(path.rstrip('/'))}"
+    return f"Collection copy: [{_code(path)}]({tree})"
 
 
 def _directory_copies(entry: dict, consumers: FileConsumers) -> list[str]:
@@ -3425,8 +3456,6 @@ def _availability_check(
         # under the name belongs to another game or release.
         if not f.get("name") or f.get("unsourceable"):
             return False
-        if f.get("storage", "") in ("release", "large_file"):
-            return True
         return entry_source(f, index) is not None
 
     return _file_available

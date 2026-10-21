@@ -361,6 +361,52 @@ def _content_matches(location: tuple[str, str], declared: dict[str, set[str]]) -
     return any(actual[field] in values for field, values in declared.items())
 
 
+_tree_cache: dict[tuple[str, str], list[str]] = {}
+
+
+def _trees(data_root: str, bios_root: str) -> list[str]:
+    """Every directory under data/ and bios/, as a path with a trailing slash."""
+    key = (data_root, bios_root)
+    if key not in _tree_cache:
+        _tree_cache[key] = sorted(
+            f"{path.as_posix()}/"
+            for root in (data_root, bios_root) if Path(root).is_dir()
+            for path in Path(root).rglob("*")
+            if path.is_dir()
+            and not any(p.startswith(".") for p in path.relative_to(root).parts)
+        )
+    return _tree_cache[key]
+
+
+def held_copy(
+    entry: dict, data_root: str = "data", bios_root: str = "bios"
+) -> tuple[str, str] | None:
+    """The data/ file, directory or bios/ ZIP member holding an entry.
+
+    The database indexes the files under bios/, and an entry held otherwise
+    (specmate.rom as a member of spectrum_opus.zip, Dolphin's fonts in its
+    data directory) read as held with no word of where. Returns (path,
+    member), the member empty for a file or a directory. A file entry that
+    declares a hash is held only by a copy carrying it, as _data_hit judges.
+    """
+    names = [entry.get("name", ""), entry.get("path") or "", *(entry.get("aliases") or [])]
+    names = [str(n) for n in names if n]
+    if entry.get("type") == "directory" or any(n.endswith("/") for n in names[:1]):
+        for name in names:
+            tail = "/" + name.strip("/") + "/"
+            for tree in _trees(data_root, bios_root):
+                if tree.endswith(tail):
+                    return tree, ""
+        return None
+    declared = _declared_content(entry)
+    locations = _supplemental_locations(data_root, bios_root)
+    for name in names:
+        for location in locations.get(name.rsplit("/", 1)[-1].lower(), ()):
+            if not declared or _content_matches(location, declared):
+                return location
+    return None
+
+
 class FileConsumers:
     """Who reads each collected file, joined through the resolver.
 
@@ -458,6 +504,10 @@ class FileConsumers:
                 )} - {None, ""}:
                     self.installed.setdefault(sha1, {}).setdefault(
                         platform, set()).add(str(entry.get("dest", "")))
+
+    def sha1_at(self, path: str) -> str | None:
+        """The file the database records at a collection path."""
+        return self._sha1_by_path.get(path)
 
     def path_of(self, sha1: str) -> str:
         """The collection path the database records for a file."""
@@ -742,17 +792,18 @@ def _cross_reference_profile(
             continue
 
         # --- resolve source provenance ---
-        storage = f.get("storage", "")
-        if storage in ("release", "large_file"):
+        # A release asset is held when the database records it, as any other
+        # file: storage says where the bytes are served from, not that the
+        # collection has them (kenji-nx's user-picked firmware package).
+        source = next(
+            (
+                found for version in versions[slot]
+                if (found := entry_source(version, index)) is not None
+            ),
+            "missing",
+        )
+        if source != "missing" and f.get("storage", "") in ("release", "large_file"):
             source = "large_file"
-        else:
-            source = next(
-                (
-                    found for version in versions[slot]
-                    if (found := entry_source(version, index)) is not None
-                ),
-                "missing",
-            )
 
         in_repo = source != "missing"
 
