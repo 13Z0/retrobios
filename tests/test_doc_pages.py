@@ -726,5 +726,22 @@ class FirstInstallWalkthrough(unittest.TestCase):
         self.assertNotIn("cannot stop and ask", section)
 
 
+class RetroArchWindowsSystemFolder(unittest.TestCase):
+    """Getting started gave %APPDATA%\\RetroArch\\system for the Windows
+    installer. RetroArch's default is `:\\system`, the folder of
+    retroarch.exe (platform_win32.c). %APPDATA% is where a retroarch.cfg
+    can live, and install.py reads it there."""
+
+    def test_page_and_installer_agree(self):
+        import install
+
+        source = inspect.getsource(install)
+        self.assertIn('ra_dir or exe_dir / "system"', source)
+        self.assertTrue(str(install._os_default_dests("windows")["retroarch"]).replace("\\", "/").endswith("/system"))
+        section = _section(_page("getting-started.md"), "RetroArch")
+        self.assertNotIn("%APPDATA%\\RetroArch\\system", section)
+        self.assertIn("`system\\` next to `retroarch.exe`", section)
+
+
 if __name__ == "__main__":
     unittest.main()

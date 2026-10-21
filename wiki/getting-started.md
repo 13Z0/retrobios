@@ -108,18 +108,19 @@ RetroArch uses the `system_directory` setting in `retroarch.cfg`. Default locati
 
 | OS | Default path |
 |----|-------------|
-| Windows (installer) | `%APPDATA%\RetroArch\system\` |
-| Windows (portable .7z) | `system\` next to `retroarch.exe` |
+| Windows (installer or portable .7z) | `system\` next to `retroarch.exe` |
+| Windows (UWP/MSIX package) | `%LOCALAPPDATA%\Packages\1e4cf179-f3c2-404f-b9f3-cb2070a5aad8_*\LocalState\system\` |
 | Linux | `~/.config/retroarch/system/` |
 | Linux (Flatpak) | `~/.var/app/org.libretro.RetroArch/config/retroarch/system/` |
 | macOS | `~/Library/Application Support/RetroArch/system/` |
 | Steam Deck (Flatpak) | `~/.var/app/org.libretro.RetroArch/config/retroarch/system/` |
 | Android | `/storage/emulated/0/RetroArch/system/` |
 
-Windows has two layouts because the installer stores its data under `%APPDATA%`
-while the portable archive keeps everything inside the folder you extracted it
-to. If both exist on the machine, the one RetroArch actually reads is the one
-shown in the UI.
+On Windows, `retroarch.cfg` is read beside `retroarch.exe` first, then from
+`%APPDATA%\RetroArch\`. Either way, a `system_directory` left at its default is
+the `system` folder beside `retroarch.exe` (`:\system` in RetroArch's
+`frontend/drivers/platform_win32.c`, where `:` stands for the folder of the
+executable).
 
 To check your actual path: open RetroArch, go to **Settings > Directory > System/BIOS**, or look for `system_directory` in `retroarch.cfg`.
 
