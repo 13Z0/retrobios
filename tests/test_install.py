@@ -3800,5 +3800,52 @@ class ANetworkFailureNamesTheNetwork(unittest.TestCase):
         self.assertNotIn("being written to", text)
 
 
+class RetroBatIsFoundWhereItSaysItIs(unittest.TestCase):
+    """RetroBat on D:\\RetroBat was not detected, and --platform retrobat
+    wrote 7.6 GB into C:\\RetroBat\\bios, a folder it does not read.
+    RetroBat.exe writes its folder to the registry on every start."""
+
+    def test_the_table_is_the_registry(self):
+        import yaml  # noqa: PLC0415
+
+        registry = yaml.safe_load((REPO_ROOT / "platforms" / "_registry.yml").read_text())
+        rules = {
+            (rule["os"], name, rule["key"], rule["value"], rule["bios_subdir"])
+            for name, entry in registry["platforms"].items()
+            for rule in (entry.get("install") or {}).get("detect", [])
+            if rule["method"] == "registry"
+        }
+        self.assertEqual(set(install._REGISTRY_RULES), rules)
+
+    def test_the_registry_folder_wins_over_the_default(self):
+        folder = Path(_tempdir(self))
+        with unittest.mock.patch.object(install, "_read_registry",
+                                        return_value=str(folder) + "\\"):
+            found: list = []
+            install._detect_by_registry("windows", found)
+        self.assertEqual(found, [("retrobat", folder / "bios")])
+
+    def test_a_folder_since_removed_is_passed_over(self):
+        gone = Path(_tempdir(self)) / "moved"
+        with unittest.mock.patch.object(install, "_read_registry", return_value=str(gone)):
+            found: list = []
+            install._detect_by_registry("windows", found)
+        self.assertEqual(found, [])
+
+    def test_wsl_reads_it_through_reg_exe(self):
+        output = ("\nHKEY_CURRENT_USER\\SOFTWARE\\RetroBat\n"
+                  "    LatestKnownInstallPath    REG_SZ    D:\\Games\\RetroBat\\\n\n")
+        with unittest.mock.patch.dict(install._WSL, {"active": True, "root": "/mnt"}), \
+                unittest.mock.patch.object(install.os, "name", "posix"), \
+                unittest.mock.patch.object(
+                    install.subprocess, "run",
+                    return_value=SimpleNamespace(stdout=output, returncode=0)) as run:
+            value = install._read_registry("HKCU\\SOFTWARE\\RetroBat", "LatestKnownInstallPath")
+            self.assertEqual(value, "D:\\Games\\RetroBat\\")
+            self.assertEqual(install._host_path(value.rstrip("\\")),
+                             Path("/mnt/d/Games/RetroBat"))
+        self.assertEqual(run.call_args[0][0][:2], ["reg.exe", "query"])
+
+
 if __name__ == "__main__":
     unittest.main()

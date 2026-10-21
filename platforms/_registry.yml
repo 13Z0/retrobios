@@ -351,6 +351,14 @@ platforms:
     target_source: null
     install:
       detect:
+      # RetroBat.exe writes its own folder there on every start, wherever it
+      # was installed (retrobat-executable 702da66a,
+      # RetroBat/RetroBat/Program.cs:57 and 99, RegistryTools.cs:15-50).
+      - os: windows
+        method: registry
+        key: 'HKCU\SOFTWARE\RetroBat'
+        value: LatestKnownInstallPath
+        bios_subdir: bios
       # installer.iss: DefaultDirName=C:\RetroBat, the first place to look.
       - os: windows
         method: path_exists

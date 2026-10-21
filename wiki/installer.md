@@ -318,6 +318,7 @@ WSL does not pass them. A forced `--platform retrobat` falls back to
 
 | Evidence | Platform | BIOS directory |
 |----------|----------|----------------|
+| `HKCU\SOFTWARE\RetroBat` `LatestKnownInstallPath`, which `RetroBat.exe` writes on every start (read through `reg.exe` under WSL) | RetroBat | that folder + `\bios`, before the fixed folders above |
 | `~/.config/EmuDeck/settings.sh` | EmuDeck | `emulationPath` + `/bios` |
 | `%APPDATA%\EmuDeck\settings.ps1` | EmuDeck | `$emulationPath` + `\bios` |
 | `~/.var/app/net.retrodeck.retrodeck/config/retrodeck/retrodeck.json` | RetroDECK | `paths.rd_home_path`, falling back to the pre-migration `retrodeck.cfg` and its `rdhome` |

@@ -1092,6 +1092,64 @@ def _detect_by_executable(os_type: str, found: list[tuple[str, Path]]) -> None:
             found.append((platform_name, newest.parent / subdir))
 
 
+# The registry's registry rules: (os, platform, key, value, BIOS folder under
+# the folder the value names). RetroBat.exe writes its own folder there on
+# every start (retrobat-executable 702da66a, RetroBat/RetroBat/Program.cs:57
+# and 99, RegistryTools.cs:15-50), wherever it was installed. The path rules
+# only knew C:\RetroBat and the profile folder.
+_REGISTRY_RULES: tuple[tuple[str, str, str, str, str], ...] = (
+    ("windows", "retrobat", "HKCU\\SOFTWARE\\RetroBat", "LatestKnownInstallPath", "bios"),
+)
+
+
+def _read_registry(key: str, value: str) -> str | None:
+    """A string value of the Windows registry, read natively or, under WSL,
+    through reg.exe. None when the key, the value or the means is missing."""
+    if os.name == "nt":
+        import winreg  # noqa: PLC0415
+
+        hive, _, subkey = key.partition("\\")
+        roots = {"HKCU": winreg.HKEY_CURRENT_USER, "HKLM": winreg.HKEY_LOCAL_MACHINE}
+        try:
+            with winreg.OpenKey(roots[hive], subkey) as handle:
+                data, _kind = winreg.QueryValueEx(handle, value)
+        except (OSError, KeyError):
+            return None
+        return data.strip() if isinstance(data, str) and data.strip() else None
+    if not _WSL["active"]:
+        return None
+    try:
+        result = subprocess.run(
+            ["reg.exe", "query", key, "/v", value],
+            capture_output=True, text=True, errors="replace", timeout=10,
+            stdin=subprocess.DEVNULL, cwd="/mnt/c" if Path("/mnt/c").is_dir() else None,
+        )
+    except (OSError, subprocess.SubprocessError):
+        return None
+    match = re.search(
+        rf"^\s*{re.escape(value)}\s+REG_(?:EXPAND_)?SZ\s+(.+?)\s*$", result.stdout, re.M
+    )
+    return match.group(1) if match else None
+
+
+def _detect_by_registry(os_type: str, found: list[tuple[str, Path]]) -> None:
+    """Add a platform whose own program names its folder in the registry.
+
+    A folder since moved or removed is passed over, so the path rules still
+    get their turn.
+    """
+    systems = ("windows",) if os_type in ("windows", "wsl") else ()
+    for rule_os, platform_name, key, value, subdir in _REGISTRY_RULES:
+        if rule_os not in systems or any(name == platform_name for name, _ in found):
+            continue
+        folder = _read_registry(key, value)
+        if not folder:
+            continue
+        base = _host_path(folder.rstrip("\\/") or folder)
+        if base.is_dir():
+            found.append((platform_name, base / subdir))
+
+
 def _detect_by_path(os_type: str, found: list[tuple[str, Path]]) -> None:
     """Add what a registry path rule finds, for a platform not found yet."""
     systems = ("linux", "windows") if os_type == "wsl" else (os_type,)
@@ -1239,6 +1297,7 @@ def detect_platforms(os_type: str) -> list[tuple[str, Path]]:
             found.append(("bizhawk", bizhawk))
 
     _detect_by_executable(os_type, found)
+    _detect_by_registry(os_type, found)
     _detect_by_path(os_type, found)
     return found
 
