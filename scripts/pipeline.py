@@ -873,6 +873,10 @@ def main() -> None:
         verify_cmd.append("--include-archived")
     if args.target:
         verify_cmd.extend(["--target", args.target])
+    if args.offline:
+        # The packs of step 4 fetch no release asset: a missing one is
+        # missing on both sides.
+        verify_cmd.append("--offline")
     ok, verify_output = run(verify_cmd, STEP_LABELS["verify"])
     results["verify"] = ok
     all_ok = all_ok and ok

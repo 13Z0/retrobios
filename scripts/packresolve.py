@@ -139,6 +139,70 @@ def _verified_asset(
     return None
 
 
+def run_is_offline(offline: bool | None = None) -> bool:
+    """Whether this run fetches nothing: --offline, or RETROBIOS_OFFLINE."""
+    return bool(
+        (_OFFLINE if offline is None else offline)
+        or os.environ.get("RETROBIOS_OFFLINE")
+    )
+
+
+_RECORDS_BY_PATH: list[tuple[dict, int, dict[str, dict]]] = []
+
+
+def _records_by_path(db: dict) -> dict[str, dict]:
+    """The database records by path, built once per database."""
+    files = db.get("files", {})
+    if _RECORDS_BY_PATH:
+        cached, size, index = _RECORDS_BY_PATH[0]
+        if cached is files and size == len(files):
+            return index
+    index = {record.get("path"): record for record in files.values()}
+    _RECORDS_BY_PATH[:] = [(files, len(files), index)]
+    return index
+
+
+def pending_release_asset(
+    file_entry: dict, db: dict, registered: list[str] | None = None,
+) -> str | None:
+    """The release asset an online build fetches for an entry, if one does.
+
+    The registered path whose database record carries what the entry
+    declares, read without a download: verify never fetches, and a release
+    asset the cache lacks was reported missing while an online build packed
+    it. ``registered`` is the .gitignore registry (load_registered_paths).
+    """
+    from largefiles import asset_candidates, asset_names, load_registered_paths
+
+    name = file_entry.get("name", "")
+    if not name or name.endswith("/") or file_entry.get("type") == "directory":
+        return None
+    declared = _declared_hashes(file_entry)
+    if file_entry.get("unsourceable") and not any(declared.values()):
+        return None
+    if file_entry.get("zipped_file") and not any(declared.values()):
+        return None
+    if registered is None:
+        registered = load_registered_paths()
+    assets = set(asset_candidates(name, registered))
+    if not assets:
+        return None
+    records = _records_by_path(db)
+    declared_size = file_entry.get("size")
+    for path, asset in sorted(asset_names(registered).items()):
+        record = records.get(path)
+        if asset not in assets or record is None:
+            continue
+        if isinstance(declared_size, int) and record.get("size") != declared_size:
+            continue
+        if all(
+            not values or str(record.get(field, "")).lower() in values
+            for field, values in declared.items()
+        ):
+            return path
+    return None
+
+
 # Digest length in hex digits -> kind. 29 is the MD5 Batocera writes with
 # its last three digits cut, matched by prefix as the resolver does.
 _HASH_KINDS = {8: "crc32", 29: "md5", 32: "md5", 40: "sha1", 64: "sha256"}
