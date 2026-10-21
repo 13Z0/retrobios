@@ -16,6 +16,7 @@ import subprocess
 import sys
 import urllib.error
 import urllib.request
+from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -33,7 +34,13 @@ from ._hash_merge import (
     merge_mame_devices,
     merge_mame_profile,
 )
-from .mame_devices import locate_sources, open_listxml, scan_device_sets
+from .mame_devices import (
+    attribute_systems,
+    locate_sources,
+    open_listxml,
+    profile_seeds,
+    scan_release,
+)
 from .mame_parser import parse_mame_source_tree
 
 log = logging.getLogger(__name__)
@@ -474,9 +481,10 @@ def _merge_devices(args: argparse.Namespace) -> None:
     have to be the lines of the profile's upstream_commit.
     """
     profile_path = _EMULATORS_DIR / "mame.yml"
-    profile = yaml_load(profile_path.read_text(encoding="utf-8")) or {}
+    text = profile_path.read_text(encoding="utf-8")
+    profile = yaml_load(text) or {}
     with open_listxml(args.listxml) as stream:
-        tag, devices = scan_device_sets(stream)
+        tag, devices, machines = scan_release(stream)
     version = _parse_version_tag(tag)
     if str(profile.get("core_version")) != version:
         raise RuntimeError(
@@ -494,6 +502,9 @@ def _merge_devices(args: argparse.Namespace) -> None:
         devices,
         lambda path: upstream.fetch_file(repo, commit, path, upstream.CACHE_DIR),
     )
+    systems = attribute_systems(machines, profile_seeds(text))
+    for set_name, device in devices.items():
+        device["systems"] = systems.get(set_name, [])
     report = merge_mame_devices(str(profile_path), devices, write=not args.dry_run)
 
     print(f"mame-devices: {len(devices)} device ROM sets in the {tag} listxml")
@@ -503,6 +514,13 @@ def _merge_devices(args: argparse.Namespace) -> None:
     print(f"    = {len(report['unchanged'])} unchanged")
     for set_name in report["conflict"]:
         print(f"    ! {set_name}.zip is listed under another category, left as written")
+    by_count = Counter(len(device["systems"]) for device in devices.values())
+    print(
+        f"  systems: {by_count[1]} sets under one system, "
+        f"{sum(n for k, n in by_count.items() if k > 1)} under several, "
+        f"{by_count[0]} loaded by no machine a profile entry places "
+        "(they serve every system of the profile)"
+    )
     if unplaced:
         print(f"  {len(unplaced)} without source lines:")
         for set_name, reason in sorted(unplaced.items()):

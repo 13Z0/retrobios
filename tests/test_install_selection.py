@@ -578,13 +578,16 @@ class InstallMatchesASystemPack(unittest.TestCase):
     """`install.py --system X --region R` against a real `generate_pack.py
     --system X --region R` build. The cases are the ones a review reproduced:
     ColecoVision's extras filed at destinations another system declares, and
-    PicoDrive's Mega CD variant group spread over two systems."""
+    PicoDrive's Mega CD variant group spread over two systems. The last pick
+    holds MAME device sets filed under several systems (systems:), under one,
+    and under none."""
 
     PLATFORM = "retroarch"
     CASES = (
         (["coleco-colecovision"], []),
         (["sega-mega-cd"], ["north-america"]),
         (["sony-playstation"], ["japan"]),
+        (["elektronika-bk"], []),
     )
 
     @classmethod

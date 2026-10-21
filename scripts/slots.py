@@ -26,6 +26,7 @@ from common import (
     archive_entry,
     build_zip_contents_index,
     check_inside_zip,
+    entry_system_ids,
     holds_required_members,
     load_data_dir_registry,
     parse_md5_list,
@@ -234,7 +235,12 @@ def profile_claims(
                     full = f"{base_dest}/{dest}" if base_dest else dest
                 else:
                     placed = placement.place(
-                        {"profile": emu_name, "system": entry.get("system")}, dest
+                        {
+                            "profile": emu_name,
+                            "system": entry.get("system"),
+                            "systems": entry_system_ids(entry, profile),
+                        },
+                        dest,
                     )
                     if placed is None:
                         continue

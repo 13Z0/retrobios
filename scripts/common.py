@@ -1785,16 +1785,29 @@ def profiles_for_systems(
     return matching
 
 
+def entry_system_ids(entry: dict, profile: dict) -> list[str]:
+    """Systems a profile entry serves.
+
+    The entry's own `system:`, else its own `systems:` (a MAME device set
+    the machines of several systems load), else every system of its
+    profile.
+    """
+    own = entry.get("system")
+    if own:
+        return [str(own)]
+    listed = entry.get("systems") or profile.get("systems") or []
+    return [str(sid) for sid in listed]
+
+
 def entry_serves_systems(entry: dict, profile: dict, system_ids: list[str]) -> bool:
     """Whether a profile entry belongs to one of the systems, spelled either way.
 
-    The entry's own `system:` decides. One without it serves every system
-    of its profile, the rule a platform pack applies to core extras.
+    The entry's own `system:` or `systems:` decides. One without either
+    serves every system of its profile, the rule a platform pack applies to
+    core extras.
     """
-    own = entry.get("system")
-    systems = [own] if own else profile.get("systems", [])
     wanted = {_norm_system_id(sid) for sid in system_ids}
-    return bool(wanted & {_norm_system_id(str(sid)) for sid in systems})
+    return bool(wanted & {_norm_system_id(sid) for sid in entry_system_ids(entry, profile)})
 
 
 def select_emulator_profiles(

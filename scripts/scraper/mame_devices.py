@@ -8,6 +8,9 @@ isdevice="yes", its ROMs and the source file defining the device. The lines
 cited for a set are the ROM_START block of that file declaring those ROMs, read
 at the release tag. A set whose block cannot be told apart is left without
 lines and reported.
+
+The same document says which machines load each set, so a set is filed under
+the systems of those machines (attribute_systems).
 """
 
 from __future__ import annotations
@@ -20,7 +23,11 @@ from collections.abc import Callable, Iterator
 from concurrent.futures import ThreadPoolExecutor
 from contextlib import contextmanager
 from pathlib import Path
+from typing import NamedTuple
 
+from common import yaml_load
+
+from ._hash_merge import _device_section_start
 from .mame_parser import _collect_rom_macros, _expand_macros, _parse_rom_entries
 
 LISTXML_CHUNK = 8 * 1024 * 1024
@@ -31,6 +38,8 @@ _ATTR = re.compile(rb'(\w+)="([^"]*)"')
 _DESCRIPTION = re.compile(rb"<description>(.*?)</description>", re.S)
 _BIOSSET = re.compile(rb"<biosset\b([^>]*)>")
 _ROM = re.compile(rb"<rom\b([^>]*)>")
+_DEVICE_REF = re.compile(rb'<device_ref\b[^>]*\bname="([^"]+)"')
+_SLOT_OPTION = re.compile(rb'<slotoption\b[^>]*\bdevname="([^"]+)"')
 
 _ROM_START = re.compile(r"ROM_START\s*\(\s*(\w+)\s*\)")
 _ROM_END = re.compile(r"\bROM_END\b")
@@ -97,14 +106,40 @@ def open_listxml(path: Path) -> Iterator[io.BufferedIOBase]:
             yield stream
 
 
-def scan_device_sets(stream: io.BufferedIOBase) -> tuple[str, dict[str, dict]]:
-    """Release tag of a -listxml document and its device sets with dumped ROMs.
+class MachineLinks(NamedTuple):
+    """What one listxml element says about the sets it loads.
+
+    *romof* is the parent the element names. *uses* are the devices it can
+    instantiate: every subdevice of its default configuration, each device a
+    selectable slot option adds, and for a device its parent ROM device,
+    whose set the device's ROMs are also searched in.
+    """
+
+    romof: str
+    isdevice: bool
+    uses: tuple[str, ...]
+
+
+class Release(NamedTuple):
+    tag: str
+    devices: dict[str, dict]
+    machines: dict[str, MachineLinks]
+
+
+def scan_release(stream: io.BufferedIOBase) -> Release:
+    """Release tag, device sets with dumped ROMs and every element's links.
 
     The document is read through a sliding window, never whole: the 0.289
-    listxml is 311 MB.
+    listxml is 311 MB. The links are what infoxml.cpp writes: romof is the
+    driver's parent (src/frontend/mame/infoxml.cpp:761-765) or a device's
+    parent ROM device (856-858), device_ref every subdevice of the default
+    configuration (786, 1010-1015), slotoption each selectable card of a
+    slot (2129-2172). device_t::searchpath puts the parent ROM device after
+    the device itself (src/emu/device.cpp:140-152).
     """
     tag = ""
     devices: dict[str, dict] = {}
+    machines: dict[str, MachineLinks] = {}
     buffer = b""
     while chunk := stream.read(LISTXML_CHUNK):
         buffer += chunk
@@ -115,13 +150,24 @@ def scan_device_sets(stream: io.BufferedIOBase) -> tuple[str, dict[str, dict]]:
             end = buffer.find(b"</machine>", match.end())
             if end == -1:
                 break
+            name = match.group(1).decode()
             attrs = _attrs(match.group(2))
-            if attrs.get("isdevice") == "yes":
-                body = buffer[match.end() : end]
+            body = buffer[match.end() : end]
+            isdevice = attrs.get("isdevice") == "yes"
+            romof = attrs.get("romof", "")
+            uses = {
+                ref.decode()
+                for ref in (*_DEVICE_REF.findall(body), *_SLOT_OPTION.findall(body))
+            }
+            if isdevice and romof:
+                uses.add(romof)
+            uses.discard(name)
+            machines[name] = MachineLinks(romof, isdevice, tuple(sorted(uses)))
+            if isdevice:
                 roms = _device_roms(body)
                 if roms:
                     description = _DESCRIPTION.search(body)
-                    devices[match.group(1).decode()] = {
+                    devices[name] = {
                         "description": html.unescape(description.group(1).decode())
                         if description else "",
                         "sourcefile": attrs.get("sourcefile", ""),
@@ -131,7 +177,86 @@ def scan_device_sets(stream: io.BufferedIOBase) -> tuple[str, dict[str, dict]]:
         buffer = buffer[position:] if position else buffer[-(2 * LISTXML_CHUNK) :]
     if not tag:
         raise ValueError("no <mame build=...> header: not a MAME -listxml document")
-    return tag, devices
+    return Release(tag, devices, machines)
+
+
+def scan_device_sets(stream: io.BufferedIOBase) -> tuple[str, dict[str, dict]]:
+    """Release tag of a -listxml document and its device sets with dumped ROMs."""
+    release = scan_release(stream)
+    return release.tag, release.devices
+
+
+def profile_seeds(text: str) -> dict[str, str]:
+    """Set name to system, for the bios_zip entries above the device section.
+
+    These are the entries a reader wrote, the seeds attribute_systems starts
+    from. The generated section is left out: its systems derive from these,
+    and reading them back would carry a previous release's answer forward.
+    """
+    start = _device_section_start(text)
+    written = yaml_load(text if start is None else text[:start]) or {}
+    seeds: dict[str, str] = {}
+    for entry in written.get("files") or []:
+        name = str(entry.get("name") or "")
+        if entry.get("category") == "bios_zip" and name.endswith(".zip") and entry.get("system"):
+            seeds[name[:-4]] = str(entry["system"])
+    return seeds
+
+
+def _seed_system(
+    name: str, machines: dict[str, MachineLinks], seeds: dict[str, str]
+) -> str:
+    """System a profile entry gives this element, through its romof chain.
+
+    A clone names its parent and a parent its BIOS root set, so a Neo Geo
+    game reaches neogeo and takes its system. A device is never walked: its
+    romof is a parent ROM device, not the machine it belongs to. The driver
+    file decides nothing: one file holds machines of several systems
+    (neogeo.cpp declares the MVS and the AES, atari400.cpp the 800 and the
+    5200), and filing a machine under the wrong one would take its devices
+    away from its own system.
+    """
+    seen: set[str] = set()
+    while name and name not in seen:
+        seen.add(name)
+        if name in seeds:
+            return seeds[name]
+        links = machines.get(name)
+        if links is None or links.isdevice:
+            return ""
+        name = links.romof
+    return ""
+
+
+def attribute_systems(
+    machines: dict[str, MachineLinks], seeds: dict[str, str]
+) -> dict[str, list[str]]:
+    """Systems whose machines can load each set.
+
+    *seeds* maps a set name to the system a profile entry states for it.
+    Each element _seed_system places passes its system to every device it
+    can instantiate, followed through those devices' own links. One walk per
+    system, so the cost is the size of the graph times the number of
+    systems.
+    """
+    starts: dict[str, list[str]] = {}
+    for name in machines:
+        system = _seed_system(name, machines, seeds)
+        if system:
+            starts.setdefault(system, []).append(name)
+    systems: dict[str, set[str]] = {}
+    for system, nodes in starts.items():
+        seen = set(nodes)
+        stack = list(nodes)
+        while stack:
+            links = machines.get(stack.pop())
+            for used in links.uses if links else ():
+                if used not in seen:
+                    seen.add(used)
+                    stack.append(used)
+        for name in seen:
+            systems.setdefault(name, set()).add(system)
+    return {name: sorted(found) for name, found in systems.items()}
 
 
 def source_path(sourcefile: str) -> str:

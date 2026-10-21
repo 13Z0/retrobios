@@ -71,6 +71,7 @@ from common import (
     runs_standalone,
     standalone_set as platform_standalone_set,
     entry_serves_systems,
+    entry_system_ids,
     sanitize_pack_path,
     select_emulator_profiles,
 )
@@ -618,7 +619,7 @@ def find_undeclared_files(
                         archive_entries[archive_key] = {
                             "profile": emu_name,
                             "emulator": profile.get("emulator", emu_name),
-                            "systems": list(profile.get("systems", [])),
+                            "systems": entry_system_ids(f, profile),
                             "system": f.get("system"),
                             "region": f.get("region"),
                             "variant_group": f.get("variant_group"),
@@ -697,7 +698,7 @@ def find_undeclared_files(
                 entry = {
                     "profile": emu_name,
                     "emulator": profile.get("emulator", emu_name),
-                    "systems": list(profile.get("systems", [])),
+                    "systems": entry_system_ids(f, profile),
                     "system": f.get("system"),
                     "region": f.get("region"),
                     "variant_group": f.get("variant_group"),

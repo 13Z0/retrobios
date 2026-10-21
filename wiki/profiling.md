@@ -525,6 +525,7 @@ partitions), and `game_count`.
 | `name` | filename as the core expects it |
 | `required` | true if the core needs this file to function |
 | `system` | system ID this file belongs to (for multi-system profiles) |
+| `systems` | the systems of the profile this file serves, when it serves several but not all (a MAME device set the machines of two systems load). Never written with `system` |
 | `archive` | ROM set the file lives inside, for arcade entries (e.g. `neogeo.zip`) |
 | `size` | expected size in bytes, or a list when the code accepts several exact sizes |
 | `min_size`, `max_size` | size range when the code accepts a range |

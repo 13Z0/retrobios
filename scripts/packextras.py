@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from collections.abc import Iterable
 
-from common import PROFILE_IDENTITY_FIELDS, _norm_system_id
+from common import PROFILE_IDENTITY_FIELDS, _norm_system_id, entry_system_ids
 from common import archive_members, holds_required_members
 from common import declared_root, expand_platform_declared_names, platform_declarations
 from common import load_emulator_profiles
@@ -128,7 +128,9 @@ def _slug_for(
             {"systems": [own]}, platform_systems, norm_map, sys_to_slug
         )
     emu_name = u.get("profile") or u.get("emulator", "")
-    profile = profiles.get(emu_name, {})
+    # The report carries the entry's own systems: (a MAME device set) or
+    # its profile's, the same list either way when the entry names none.
+    profile = {"systems": u["systems"]} if u.get("systems") else profiles.get(emu_name, {})
     if not profile:
         # The report names the display name where the key failed.
         profile = next(
@@ -477,7 +479,7 @@ def _agnostic_scan_extras(
                         "source_path": f.get("path") or "",
                         "category": f.get("category", "bios"),
                         "source_system": f.get("system"),
-                        "source_systems": list(profile.get("systems", [])),
+                        "source_systems": entry_system_ids(f, profile),
                         "region": f.get("region"),
                         "variant_group": f.get("variant_group"),
                         "agnostic_scan": True,
@@ -633,7 +635,7 @@ def _companion_extras(
             "source_path": seed.get("path") or "",
             "category": seed.get("category", "bios"),
             "source_system": seed.get("system"),
-            "source_systems": list(profile.get("systems", [])),
+            "source_systems": entry_system_ids(seed, profile),
             "region": seed.get("region"),
             "variant_group": seed.get("variant_group"),
             "agnostic_scan": True,
@@ -749,7 +751,7 @@ def _archive_prefix_extras(
                 "source_path": archive_name,
                 "category": archive_entry.get("category", "bios"),
                 "source_system": archive_entry.get("system"),
-                "source_systems": list(profile.get("systems", [])),
+                "source_systems": entry_system_ids(archive_entry, profile),
                 "region": archive_entry.get("region"),
                 "variant_group": archive_entry.get("variant_group"),
             }
@@ -1051,7 +1053,7 @@ def _collect_emulator_extras(
                     "source_path": raw,
                     "category": f.get("category", "bios"),
                     "source_system": f.get("system"),
-                    "source_systems": list(profile.get("systems", [])),
+                    "source_systems": entry_system_ids(f, profile),
                     "region": f.get("region"),
                     "variant_group": f.get("variant_group"),
                 }
