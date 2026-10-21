@@ -4038,6 +4038,24 @@ def generate_gap_analysis(
 
 
 
+def _core_scope_note(config: dict, profiles: dict) -> str:
+    """" (all libretro)" when the platform resolves every libretro core.
+
+    Read from what resolve_platform_cores returns, not from the shape of
+    ``cores:``: RetroPie and RetroDECK name ``retroarch`` in a list, which
+    pulls in every libretro core as ``all_libretro`` does, and the label
+    showed for RetroArch and Lakka only.
+    """
+    every_libretro = resolve_platform_cores({"cores": "all_libretro"}, profiles)
+    resolved = resolve_platform_cores(config, profiles)
+    if not every_libretro or not every_libretro <= resolved:
+        return ""
+    others = len(resolved - every_libretro)
+    if not others:
+        return " (all libretro)"
+    return f" (all libretro, plus {_count(others, 'other core')})"
+
+
 def _render_xref_by_platform(
     coverages: dict, unique: dict
 ) -> list[str]:
@@ -4047,7 +4065,6 @@ def _render_xref_by_platform(
         cov = coverages[pname]
         display = cov["platform"]
         config = cov["config"]
-        platform_cores = config.get("cores", [])
 
         lines.append(f'??? abstract "{display}"')
         lines.append("")
@@ -4066,10 +4083,7 @@ def _render_xref_by_platform(
             if key in unique
         }
 
-        if platform_cores == "all_libretro":
-            lines.append(f"    **{len(matched)} cores** (all libretro)")
-        else:
-            lines.append(f"    **{len(matched)} cores**")
+        lines.append(f"    **{len(matched)} cores**{_core_scope_note(config, unique)}")
         lines.append("")
 
         lines.append("    | Core | Classification | Systems | Files | Upstream |")

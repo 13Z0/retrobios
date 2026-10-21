@@ -44,5 +44,30 @@ class SiteCoreCounts(unittest.TestCase):
                 self.assertEqual(shown[cov["platform"]], expected)
 
 
+class AllLibretroLabel(unittest.TestCase):
+    """RetroPie and RetroDECK pull in every libretro core by naming retroarch
+    in a list, and the label read "(all libretro)" for RetroArch and Lakka
+    only, the two whose cores: is the string."""
+
+    PROFILES = {
+        "a": {"type": "libretro"},
+        "b": {"type": "standalone + libretro"},
+        "sa": {"type": "standalone"},
+    }
+
+    def test_a_list_naming_retroarch_is_labelled(self):
+        note = generate_site._core_scope_note(
+            {"cores": ["retroarch", "sa"]}, self.PROFILES)
+        self.assertEqual(note, " (all libretro, plus 1 other core)")
+
+    def test_the_string_form_is_labelled(self):
+        note = generate_site._core_scope_note({"cores": "all_libretro"}, self.PROFILES)
+        self.assertEqual(note, " (all libretro)")
+
+    def test_a_selection_is_not(self):
+        self.assertEqual(
+            generate_site._core_scope_note({"cores": ["a", "sa"]}, self.PROFILES), "")
+
+
 if __name__ == "__main__":
     unittest.main()
