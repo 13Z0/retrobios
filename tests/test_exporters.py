@@ -1509,9 +1509,17 @@ class RommSizeIsNeverNone(unittest.TestCase):
         produced = exporter.render(systems, report, {}, None)
         return exporter, systems, produced, json.loads(produced["known_bios_files.json"])
 
-    def test_the_platform_size_stands_when_none_is_settled(self):
-        _, _, _, data = self._export(524288)
-        self.assertEqual(data["psx:scph5501.bin"]["size"], "524288")
+    def test_an_entry_the_truth_takes_without_a_size_stays_whole(self):
+        """RomM compares the size before any hash: the new md5 beside the
+        old size never verified, and the report said the size was removed."""
+        from export_native import landed_changes  # noqa: PLC0415
+
+        exporter, systems, _, data = self._export(524288)
+        self.assertEqual(
+            data["psx:scph5501.bin"], {"size": "524288", "md5": "a" * 32}
+        )
+        self.assertEqual(landed_changes(exporter, systems).records, [])
+        self.assertEqual(len(exporter.withheld()), 1)
 
     def test_no_size_is_written_rather_than_none(self):
         exporter, systems, produced, data = self._export(None)

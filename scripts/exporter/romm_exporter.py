@@ -26,6 +26,10 @@ SOURCE_URL = (
 )
 
 
+# Fixture field, model field, in the order RomM writes them.
+_FIELDS = (("size", "size"), ("crc", "crc32"), ("md5", "md5"), ("sha1", "sha1"))
+
+
 class Exporter(BaseExporter):
     """Write RomM's known_bios_files.json, corrected."""
 
@@ -35,6 +39,8 @@ class Exporter(BaseExporter):
         # addition that claims each other key first: both set by render.
         self._platform_keys: set[tuple[str, str]] = set()
         self._first_addition: dict[tuple[str, str], int] = {}
+        # Entries of theirs the truth takes over without a size: left whole.
+        self._unsized: dict[int, str] = {}
 
     @staticmethod
     def platform_name() -> str:
@@ -112,6 +118,7 @@ class Exporter(BaseExporter):
             if fe.platform is not None
         }
         self._first_addition = {}
+        self._unsized = {}
         self.normalized: list[str] = []
         self.normalized_values: list[tuple[NativeFile, str, str, str]] = []
         for system in sorted(systems.values(), key=lambda s: s.native_id):
@@ -133,11 +140,22 @@ class Exporter(BaseExporter):
                 # Their entry keeps its fields and their order, ours fill in.
                 entry: OrderedDict[str, str] = OrderedDict(output.get(key, {}))
                 # The fixture states every value as a string, size included.
-                # Where the model settles no size, RomM's own value stands.
                 # str(None) wrote "None", and RomM's int() on it raised.
                 size = fe.size()
-                if size is None and fe.platform is not None:
-                    size = fe.platform.get("size")
+                if size is None and fe.platform is not None and fe.platform.get("size"):
+                    # The truth took the entry over without a size: RomM's
+                    # size describes the dump the truth rejects, and RomM
+                    # compares the size before any hash, so the new hashes
+                    # beside it never verify. The entry stays as written.
+                    self._unsized[id(fe)] = key
+                    if key not in output:
+                        output[key] = OrderedDict(
+                            (field, value)
+                            for field, name in _FIELDS
+                            if (value := ",".join(_hash_values(fe.platform, name))
+                                if name != "size" else str(fe.platform["size"]))
+                        )
+                    continue
                 if size is not None:
                     self._write(entry, "size", str(int(size)), fe, "size")
                 for field, hash_name in (("crc", "crc32"), ("md5", "md5"), ("sha1", "sha1")):
@@ -159,6 +177,20 @@ class Exporter(BaseExporter):
         """A hash the platform states and the truth, taking the entry over,
         does not keep."""
         return bool(_hash_values(fe.platform or {}, name)) and not fe.hashes(name)
+
+    def states(self, fe: NativeFile, field_name: str) -> bool:
+        """An entry left whole carries none of the truth's values."""
+        if id(fe) in self._unsized:
+            return False
+        return super().states(fe, field_name)
+
+    def withheld(self) -> list[str]:
+        """Each entry kept whole for want of the new dump's size."""
+        return [
+            f"{key} keeps its values: the truth states no size for the new "
+            "dump, and RomM compares the size before any hash"
+            for key in sorted(self._unsized.values())
+        ]
 
     def written(self, fe: NativeFile, field_name: str) -> str:
         """A record holds one value per field, the one record_hash names."""
