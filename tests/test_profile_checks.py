@@ -413,5 +413,28 @@ class HatariTosNamesLiveWithTheLaunchers(unittest.TestCase):
                 self.assertEqual(cited, [])
 
 
+def _launcher_citations(profile: dict) -> list[str]:
+    refs = [str(f.get("source_ref") or "") for f in profile.get("files") or []]
+    return [t for t in _prose(profile) + refs if _LAUNCHER_CODE.search(t)]
+
+
+class BizHawkFindsFirmwareByHash(unittest.TestCase):
+    """DoScanAndResolve hashes every file of a known firmware size under
+    the firmware folder and binds each slot to the best present option; a
+    user specification names any file (FirmwareManager.cs:143-222 at
+    bdddf4a5). No file name is opened by the code, so every entry is a
+    label. 38 entries carried the names RetroBat's Bizhawk.Generator.cs
+    writes, and the export added 59 of them to RetroBat's native file."""
+
+    def test_entries_are_labels_named_by_the_firmware_database(self):
+        from validation import opens_by_name
+
+        profile = _profile("bizhawk")
+        named = [f["name"] for f in profile["files"] if opens_by_name(f, profile, True)]
+        self.assertEqual(named, [])
+        self.assertEqual([f["name"] for f in profile["files"] if f.get("aliases")], [])
+        self.assertEqual(_launcher_citations(profile), [])
+
+
 if __name__ == "__main__":
     unittest.main()
