@@ -53,6 +53,7 @@ class VerifyPackChoice(unittest.TestCase):
             "output_dir": str(self.out),
             "target": None,
             "regions": [],
+            "all_variants": False,
         }
         values.update(overrides)
         return argparse.Namespace(**values)
@@ -92,6 +93,27 @@ class VerifyPackChoice(unittest.TestCase):
         with self.assertRaises(SystemExit) as ctx:
             self._run(self._args())
         self.assertEqual(ctx.exception.code, 1)
+
+    def test_all_variants_names_every_variant_it_built(self):
+        """After --all-variants the check opened the full pack only: the five
+        narrowed packs the same run wrote passed without a line."""
+        import contextlib
+        import io
+
+        names = []
+        for source, required in self.gp.ALL_VARIANTS:
+            tags = "".join(
+                tag for tag, _ in self.gp._narrowings(source, None, None, False, required)
+            )
+            names.append(f"{self.stem}{tags}_BIOS_Pack.zip")
+            self._touch(names[-1])
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            checked = self._run(self._args(all_variants=True))
+        self.assertEqual(checked, [("retroarch", f"{self.stem}_BIOS_Pack.zip")])
+        printed = out.getvalue()
+        for name in names[1:]:
+            self.assertIn(f"[{name}]: hashes checked during the build", printed)
 
     def test_include_archived_reaches_the_archived_pack(self):
         stem = self.gp._platform_pack_stem(["retropie"], "retropie", "platforms")

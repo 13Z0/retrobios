@@ -2392,14 +2392,7 @@ def _run_manifest_mode(
         with open(registry_path) as _rf:
             registry = yaml_load(_rf) or {}
 
-    if args.all_variants:
-        variants = [
-            ("full", False), ("full", True),
-            ("platform", False), ("platform", True),
-            ("truth", False), ("truth", True),
-        ]
-    else:
-        variants = [(args.source, args.required_only)]
+    variants = ALL_VARIANTS if args.all_variants else ((args.source, args.required_only),)
 
     failed: list[str] = []
     for source, required_only in variants:
@@ -2516,8 +2509,14 @@ def _run_verify_packs(args: argparse.Namespace) -> None:
     verify_regions = getattr(args, "regions", None)
     verify_profiles = load_emulator_profiles(args.emulators_dir)
     verify_data_registry = load_data_dir_registry(args.platforms_dir)
+    # After an --all-variants build every variant is named, so none of the
+    # six packs the run wrote passes unmentioned.
     expected = _expected_pack_names(
-        platforms, args.platforms_dir, verify_regions, args.target
+        platforms,
+        args.platforms_dir,
+        verify_regions,
+        args.target,
+        ALL_VARIANTS if args.all_variants else (("full", False),),
     )
     on_disk = (
         set(os.listdir(args.output_dir)) if os.path.isdir(args.output_dir) else set()
@@ -2544,6 +2543,16 @@ def _run_verify_packs(args: argparse.Namespace) -> None:
         # A group pack and a pack built for the platform alone can both be
         # present, and each one is a pack of this platform.
         for pack_name in found:
+            if _narrows_contents(pack_name):
+                # Only reached after an --all-variants build, whose stage 1
+                # re-hashed every member against the collection above. The
+                # platform's list describes the full pack, so a narrowed one
+                # is not compared to it.
+                print(
+                    f"  {platform_name} [{pack_name}]: hashes checked during the build; "
+                    "narrowed by design, so not compared to the platform's full list"
+                )
+                continue
             zip_path = os.path.join(args.output_dir, pack_name)
             result = verify_pack_against_platform(
                 zip_path,
@@ -2580,6 +2589,14 @@ def _run_verify_packs(args: argparse.Namespace) -> None:
         all_ok = False
     if not all_ok:
         sys.exit(1)
+
+
+# The source x required combinations --all-variants builds, in build order.
+ALL_VARIANTS: tuple[tuple[str, bool], ...] = (
+    ("full", False), ("full", True),
+    ("platform", False), ("platform", True),
+    ("truth", False), ("truth", True),
+)
 
 
 def _pack_label(source: str, required_only: bool) -> str:
@@ -2640,14 +2657,7 @@ def _run_platform_packs(
     system_filter: list[str] | None,
 ) -> None:
     """Generate ZIP packs for platform groups and verify."""
-    if args.all_variants:
-        variants = [
-            ("full", False), ("full", True),
-            ("platform", False), ("platform", True),
-            ("truth", False), ("truth", True),
-        ]
-    else:
-        variants = [(args.source, args.required_only)]
+    variants = ALL_VARIANTS if args.all_variants else ((args.source, args.required_only),)
 
     failed: list[str] = []
     for source, required_only in variants:
@@ -4485,22 +4495,31 @@ def _expected_pack_names(
     platforms_dir: str,
     regions: list[str] | None,
     target_name: str | None,
+    variants: tuple[tuple[str, bool], ...] = (("full", False),),
 ) -> dict[str, set[str]]:
     """Exact pack file names --verify-packs may check, per platform.
 
     Rebuilt from the name builder, never matched by substring: a substring
     picks the full pack when a regional or targeted one was asked for, or a
     narrowed pack when the full one was. A platform answers to its own name
-    and to the name of the group it shares a pack with.
+    and to the name of the group it shares a pack with. ``variants`` lists
+    the (source, required_only) combinations the run built.
     """
-    def narrow_tags(platform_name: str) -> str:
+    def narrow_tags(platform_name: str) -> list[str]:
         named = _platform_target(platform_name, target_name, platforms_dir)
-        return "".join(
-            tag for tag, _label in _narrowings("full", regions, named, False, False)
-        )
+        return [
+            "".join(
+                tag
+                for tag, _label in _narrowings(source, regions, named, False, required)
+            )
+            for source, required in variants
+        ]
 
     names: dict[str, set[str]] = {
-        p: {f"{_platform_pack_stem([p], p, platforms_dir)}{narrow_tags(p)}_BIOS_Pack.zip"}
+        p: {
+            f"{_platform_pack_stem([p], p, platforms_dir)}{tags}_BIOS_Pack.zip"
+            for tags in narrow_tags(p)
+        }
         for p in platforms
     }
     # Groups depend on which platforms a run built: --all alone or with
@@ -4523,13 +4542,11 @@ def _expected_pack_names(
         ):
             if len(group) < 2:
                 continue
-            name = (
-                f"{_platform_pack_stem(group, representative, platforms_dir)}"
-                f"{narrow_tags(representative)}_BIOS_Pack.zip"
-            )
-            for p in group:
-                if p in names:
-                    names[p].add(name)
+            stem = _platform_pack_stem(group, representative, platforms_dir)
+            for tags in narrow_tags(representative):
+                for p in group:
+                    if p in names:
+                        names[p].add(f"{stem}{tags}_BIOS_Pack.zip")
     return names
 
 

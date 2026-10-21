@@ -229,7 +229,9 @@ would have loaded.
 - `--db`, `--platforms-dir`, `--emulators-dir`: read another database or source
   tree instead of the repository's
 - `--source {platform,truth,full}`: select file source (platform YAML only, emulator profiles only, or both)
-- `--all-variants`: generate all 6 combinations of source x required_only
+- `--all-variants`: generate all 6 combinations of source x required_only. With
+  `--verify-packs`, the full pack is compared to the platform's list and each
+  narrowed variant is named with the hash check the build ran on its members
 - `--refresh-data`: force re-download all data directories before packing
 - `--no-refresh-data`: pack the data directories as cached, still fetching release assets (what `pipeline.py` does after its own refresh step)
 
