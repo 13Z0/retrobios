@@ -893,13 +893,12 @@ python scripts/provenance_report.py --json     # full report
 ```
 
 A catalog lists chips as they come off the board, the collection often holds
-the image an emulator reads. `--derive` reads the collection (about 90 s) and
+the image an emulator reads. `--derive` reads every file of the collection and
 marks a missing entry DERIVABLE when a held file produces its sha1 by halving,
 quartering, splitting into even and odd bytes or 16-bit words (byte-swapped
 or not), swapping bytes, mirroring, or joining two files of one directory.
 The Amiga Kickstart chip pairs and TOSEC's split C64 and VES ROMs are found
-this way: 67 entries on the current snapshots, recorded in `derivable.json`
-by pipeline step 1b.
+this way. Pipeline step 1b records what it finds in `derivable.json`.
 
 A missing entry that is a file an emulator profile reads and the collection
 lacks is listed first, with `needed by <emulator> as <name>` and whether the
@@ -959,4 +958,4 @@ Located in `scripts/exporter/`. Each inherits `BaseExporter`, defined in
 | `romm_exporter` | `known_bios_files.json`, every entry with a size and a hash |
 | `bizhawk_exporter` | `FirmwareDatabase.cs`, BizHawk's own C# |
 | `misterfpga_exporter` | hash and size in MiSTer's BiosDB (`bios_db.json`) |
-| `retropie_exporter` | the `rp_module_help` prose of each scriptmodule, by adding a name it lacks |
+| `retropie_exporter` | the `rp_module_help` prose of each scriptmodule, by adding a file name the package's emulator reads |

@@ -250,6 +250,9 @@ def format_size(size: int) -> str:
 SITE_URL = "https://abdess.github.io/retrobios/"
 REPO_PATH = "../.."
 REPO = "Abdess/retrobios"
+# GitHub's "Add file > Upload files" page for bios/: a browser upload by
+# someone without write access lands on a fork and opens a pull request.
+UPLOAD_URL = f"https://github.com/{REPO}/upload/main/bios"
 
 
 def _existing_contributor_block(readme_path: str = "README.md") -> list[str]:
@@ -329,7 +332,6 @@ def _catalog_matched_line(db: dict) -> list[str]:
 def generate_readme(db: dict, platforms_dir: str) -> str:
     total_files = db.get("total_files", 0)
     total_size = db.get("total_size", 0)
-    size_mb = total_size / (1024 * 1024)
     ts = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
     platform_names = list_registered_platforms(platforms_dir, include_archived=True)
@@ -397,9 +399,13 @@ def generate_readme(db: dict, platforms_dir: str) -> str:
         "# SD card mounted on a PC: --dest is the BIOS folder on the card",
         "# (RetroArch on Switch: retroarch/cores/system, on Android: RetroArch/system)",
         "curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh -s -- --platform retroarch --dest /path/to/sdcard/retroarch/cores/system",
+        "",
+        "# Options in PowerShell: anything after | iex goes to iex, so the script runs as a block",
+        "&([scriptblock]::Create((irm https://raw.githubusercontent.com/Abdess/retrobios/main/install.ps1))) --check",
         "```",
         "",
         "The script auto-detects your platform, downloads only missing files, and verifies checksums.",
+        f"Every option, and what the installer detects and writes, is on the [installer page]({SITE_URL}wiki/installer/#passing-options).",
         "",
         "## Download BIOS packs",
         "",
@@ -462,16 +468,17 @@ def generate_readme(db: dict, platforms_dir: str) -> str:
             "",
             "Each file is checked the way your platform checks it. Most compare"
             " a checksum, the fingerprint of a file's contents, which catches a"
-            " corrupt or unexpected copy. RetroArch, Lakka and RetroPie only"
-            " look for the filename, because that is all their code does: the"
+            " corrupt or unexpected copy. RetroArch, Lakka and RetroPie check"
+            " that the file is present under its name without reading its"
+            " contents (`path_is_valid` in RetroArch's `core_info.c`): the"
             " Coverage table says which applies to you. Independently of that,"
             " the collection records five fingerprints per file, and wherever"
             " an emulator's code states an expected size or hash, that value is"
             " read from its source and rechecked here.",
             "",
             (
-                f"- **{acquirable_total} files** the platforms' emulators load"
-                f" are still to be found, and {unsourceable_total} more cannot"
+                f"- **{acquirable_total:,} files** the platforms' emulators load"
+                f" are still to be found, and {unsourceable_total:,} more cannot"
                 f" be sourced at all (per-user keys, user-filled slots, dumps"
                 f" nobody has made). Both are named in the"
                 f" [gap analysis]({SITE_URL}gaps/)"
@@ -484,7 +491,7 @@ def generate_readme(db: dict, platforms_dir: str) -> str:
             f"- **{len(system_ids)} systems** handled by those emulators (NES, SNES, PlayStation, Saturn, Dreamcast, ...)",
             collection_line(total_files, comp),
             *_catalog_matched_line(db),
-            f"- **{size_mb:.0f} MB** total collection size",
+            f"- **{format_size(total_size)}** for the whole collection",
             "",
             "## Supported systems",
             "",
@@ -621,10 +628,10 @@ def generate_readme(db: dict, platforms_dir: str) -> str:
             "",
             "## How it works",
             "",
-            "Documentation and metadata can drift from what emulators actually load.",
-            "To keep packs accurate, platform lists are checked against emulator"
-            " source code, file by file where a profile exists. When the two"
-            " disagree, the code wins.",
+            "A platform's BIOS list and an emulator's code are maintained"
+            " separately. Each list is compared with the emulator source code,"
+            " file by file where a profile exists, and where the two differ the"
+            " code decides.",
             "",
             "Hashes document what emulator code loads and accepts, not dump"
             " provenance. That boundary, and how it relates to preservation"
@@ -710,12 +717,21 @@ def contributing_text(
 
 ## Add a BIOS file
 
-1. Fork this repository
-2. Place the file in `bios/Manufacturer/Console/filename`.
-   `python scripts/validate_pr.py path/to/file` names the folder its system
-   is kept in, and whether a platform or an emulator profile declares it
-3. Variants (alternate hashes for the same file): `bios/Manufacturer/Console/.variants/`
-4. Open a pull request. Its hashes are checked automatically and reported in a comment
+One file needs no clone and no local setup:
+
+1. [Upload it into `bios/`]({UPLOAD_URL})
+   from the browser, 25 MB at most per file. GitHub writes it to a fork and
+   opens the pull request.
+2. CI hashes it and looks it up in every platform list and emulator profile.
+   For a file it recognises, it names the folder holding the other files of its
+   system. The report is in the summary of the pull request's Validation run.
+3. The file can be moved to that folder in the same pull request. A file whose
+   hash differs from the one already held under its name goes to that folder's
+   `.variants/`.
+
+From a clone, the file goes to `bios/Manufacturer/Console/filename`, and
+`python scripts/validate_pr.py path/to/file` names that folder for a file still
+outside `bios/`. A file over the browser's 25 MB limit goes in that way.
 
 The [dump provenance]({link("provenance")}) page lists catalogued dumps still
 missing from the collection, with their hashes. A file matching one of those is
@@ -753,7 +769,9 @@ Full walkthrough: [profiling guide]({link("wiki/profiling")}).
 
 ## Before opening a PR
 
-The checks CI runs on a pull request (Python 3.12 or newer):
+A pull request that only adds files under `bios/` needs none of this: the
+validation above is its check. For code, profiles or platform files, these are
+the checks CI runs on a pull request (Python 3.12 or newer):
 
 ```bash
 pip install pyyaml "jsonschema[format-nongpl]" markdown \\
@@ -772,7 +790,9 @@ in `dist/`, which is why maintainers run it before a release.
 
 CI computes SHA1/MD5/CRC32 for every new file, checks them against the platform
 configs, validates the YAML against the schemas, confronts each added profile
-with its upstream source, runs the test suite, and posts a report on the PR.
+with its upstream source and runs the test suite. The BIOS report goes to the
+summary of the Validation run, and also to a comment when the branch lives in
+this repository: a fork's pull request runs with a read-only token.
 
 Contributors who add platform support are credited in the README,
 {site_words}, and in the BIOS packs.

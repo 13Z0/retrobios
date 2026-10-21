@@ -83,5 +83,58 @@ class BeforeOpeningAPullRequest(unittest.TestCase):
             self.assertIn(f'"{spec}"', text)
 
 
+class OneFileThroughTheBrowser(unittest.TestCase):
+    """Adding one BIOS asked for a fork, a 5.5 GB clone, five pip packages,
+    the data directories and the whole suite, and promised a PR comment that
+    a fork's read-only token cannot post. The browser upload into bios/ and
+    the CI report already did the work."""
+
+    def test_the_guide_and_the_issue_chooser_offer_the_upload(self):
+        import yaml
+
+        text = generate_readme.generate_contributing()
+        section = text.split("## Add a BIOS file", 1)[1].split("\n## ", 1)[0]
+        self.assertIn(generate_readme.UPLOAD_URL, section)
+        self.assertNotIn("Fork this repository", section)
+        self.assertNotIn("reported in a comment", text)
+        chooser = yaml.safe_load(
+            (REPO_ROOT / ".github" / "ISSUE_TEMPLATE" / "config.yml").read_text(encoding="utf-8")
+        )
+        self.assertIn(generate_readme.UPLOAD_URL, [link["url"] for link in chooser["contact_links"]])
+
+    def test_ci_comments_only_on_branches_of_this_repository(self):
+        workflow = (REPO_ROOT / ".github" / "workflows" / "validate.yml").read_text(encoding="utf-8")
+        self.assertIn("github.event.pull_request.head.repo.full_name == github.repository", workflow)
+        self.assertIn('>> "$GITHUB_STEP_SUMMARY"', workflow)
+        self.assertIn("summary of the Validation run", generate_readme.generate_contributing())
+
+    def test_an_upload_at_the_bios_root_is_told_its_folder(self):
+        import os
+        import tempfile
+
+        import validate_pr
+
+        scratch = REPO_ROOT / "tmp" / "tests"
+        scratch.mkdir(parents=True, exist_ok=True)
+        with tempfile.TemporaryDirectory(dir=scratch) as directory:
+            (Path(directory) / "bios").mkdir()
+            (Path(directory) / "bios" / "boot.rom").write_bytes(b"boot")
+            from common import compute_hashes
+
+            sha1 = compute_hashes(str(Path(directory) / "bios" / "boot.rom"))["sha1"]
+            hashes = {"sha1": {sha1}, "folders": {sha1: {"bios/Maker/Console/"}}}
+            cwd = os.getcwd()
+            os.chdir(directory)
+            try:
+                result = validate_pr.validate_file("bios/boot.rom", None, hashes)
+            finally:
+                os.chdir(cwd)
+        self.assertTrue(result.passed)
+        self.assertTrue(any(
+            "bios/ root" in message and "`bios/Maker/Console/`" in message
+            for _status, message in result.checks
+        ))
+
+
 if __name__ == "__main__":
     unittest.main()

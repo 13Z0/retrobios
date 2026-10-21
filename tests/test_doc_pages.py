@@ -273,6 +273,8 @@ class PeerToneTowardPlatforms(unittest.TestCase):
     WORDS = re.compile(
         r"(?i)\bgets wrong\b|\bstale (hash|entries|entry)\b|<their file>|\bpatch their\b"
         r"|, corrected\b|\bcorrected in place\b|\bdeclare incorrectly\b|\blist error\b"
+        r"|\btheir syntax\b|\bthe platform lacks\b|\bthe odd one\b|\bmay not match reality\b"
+        r"|\ball their code does\b|\bcan drift from\b"
     )
 
     def test_published_pages(self):
@@ -321,6 +323,18 @@ class Md5CompositeDefinition(unittest.TestCase):
         section = _section(_page("verification-modes.md"), "md5_composite (Recalbox ZIP verification)")
         self.assertIn("contents of every member", section)
         self.assertNotIn("inner file MD5s", section)
+
+    def test_composite_only_is_read_by_both_checks(self):
+        """The page said the direct MD5 is tried before the composite, which
+        Recalbox never does for a .zip, and the pack check did the same."""
+        import common
+        import validation
+
+        section = _section(_page("verification-modes.md"), "md5_composite (Recalbox ZIP verification)")
+        self.assertIn("zip_digest: composite", section)
+        self.assertNotIn("is tried before reporting a mismatch", section)
+        for function in (common.resolve_local_file, validation.digest_verdict):
+            self.assertIn('get("zip_digest") == "composite"', inspect.getsource(function))
 
 
 class ValidationIndexScope(unittest.TestCase):
@@ -414,6 +428,319 @@ class PythonFloorOnRetroPie(unittest.TestCase):
         self.assertIn("3.7.3", first)
         changing = _section(_page("installer.md"), "Changing the installer")
         self.assertIn("3.7.3", changing)
+
+
+class ToolsRunOnTheStatedFloor(unittest.TestCase):
+    """tools.md and testing-guide.md state Python 3.9 for every script, and
+    check_release_assets.py built `int | None` at import: a TypeError on 3.9
+    before any argument was read, in check_release.py too. CI runs 3.12 only,
+    so this test reads the source for what 3.9 cannot evaluate."""
+
+    TYPES = {"int", "str", "float", "bytes", "bool", "dict", "list", "tuple", "set", "type"}
+
+    def _type_like(self, node: ast.AST) -> bool:
+        if isinstance(node, ast.Constant) and node.value is None:
+            return True
+        if isinstance(node, ast.Subscript):
+            node = node.value
+        if isinstance(node, ast.BinOp) and isinstance(node.op, ast.BitOr):
+            return self._type_like(node.left) or self._type_like(node.right)
+        return isinstance(node, ast.Name) and node.id in self.TYPES
+
+    def _runtime_unions(self, tree: ast.AST) -> list[int]:
+        annotations = set()
+        for node in ast.walk(tree):
+            for field in ("annotation", "returns"):
+                value = getattr(node, field, None)
+                if value is not None:
+                    annotations.update(id(n) for n in ast.walk(value))
+        return [
+            node.lineno for node in ast.walk(tree)
+            if id(node) not in annotations
+            and (isinstance(node, ast.Match)
+                 or isinstance(node, ast.BinOp) and isinstance(node.op, ast.BitOr)
+                 and (self._type_like(node.left) or self._type_like(node.right)))
+        ]
+
+    def test_pages_state_the_floor(self):
+        self.assertIn("Python 3.9 or newer", _page("tools.md"))
+        self.assertIn("Python 3.9 or newer", _page("testing-guide.md"))
+
+    def test_no_script_evaluates_310_syntax(self):
+        offenders = [
+            f"{path.relative_to(ROOT)}:{line}"
+            for path in sorted((ROOT / "scripts").rglob("*.py"))
+            for line in self._runtime_unions(ast.parse(path.read_text(encoding="utf-8")))
+        ]
+        self.assertEqual(offenders, [], "\n".join(offenders))
+
+    def test_the_check_catches_the_alias(self):
+        self.assertTrue(self._runtime_unions(ast.parse("F = tuple[str, int | None]")))
+        self.assertFalse(self._runtime_unions(ast.parse("def f(x: int | None) -> str | None: ...")))
+        self.assertFalse(self._runtime_unions(ast.parse("mask = flags | other")))
+
+
+class DeriveFiguresLiveWithTheTool(unittest.TestCase):
+    """tools.md gave --derive about 90 s and 67 entries while its --help said
+    about 35 s: two hand-kept figures for one run, measured at 33 s."""
+
+    def test_the_page_carries_no_duration_or_count(self):
+        paragraph = next(
+            p for p in _page("tools.md").split("\n\n") if "`--derive` reads" in p
+        )
+        self.assertNotRegex(paragraph, r"\d+ ?s\b|\d+ entries")
+        self.assertIn("derivable.json", paragraph)
+
+
+class EmulatorVerboseSample(unittest.TestCase):
+    """advanced-usage.md showed `handy validates size=512 crc32=0x0d973c9d
+    [src/handy/system.h:45]`, a format verify.py does not print and a
+    reference handy.yml does not cite."""
+
+    def test_every_sample_line_is_printed(self):
+        import subprocess
+
+        section = _section(_page("advanced-usage.md"), "Per-emulator checks")
+        sample = [body for lang, body in re.findall(r"(?ms)^```(\w*)\n(.*?)^```", section) if not lang][-1]
+        printed = subprocess.run(
+            [sys.executable, "scripts/verify.py", "--emulator", "handy", "--verbose"],
+            cwd=ROOT, capture_output=True, text=True, check=True,
+        ).stdout.splitlines()
+        for line in sample.splitlines():
+            with self.subTest(line=line):
+                self.assertIn(line, printed)
+
+
+class ShortMd5Handling(unittest.TestCase):
+    """Three pages said some Batocera entries carry 29-character MD5s and show
+    as untested. No platform YAML holds one, since the Batocera scraper
+    completes them, and adding-a-scraper.md said to store them as-is."""
+
+    def test_no_page_claims_short_md5_entries(self):
+        offenders = [
+            page.name for page in PUBLISHED
+            if re.search(r"(?i)29[- ]char|truncated md5 hashes in some entries|store the hash as-is",
+                         page.read_text(encoding="utf-8"))
+        ]
+        self.assertEqual(offenders, [])
+
+    def test_the_page_names_what_the_code_does(self):
+        import common
+        from scraper import batocera_scraper
+
+        scraper = inspect.getsource(batocera_scraper)
+        self.assertIn("md5 = _resolve_truncated_md5(", scraper)
+        resolver = inspect.getsource(common.resolve_local_file)
+        self.assertIn("if len(md5_candidate) < 32:", resolver)
+        self.assertIn("_md5_name_ok(path)", resolver)
+        section = _section(_page("verification-modes.md"), "MD5 shorter than 32 characters (Batocera)")
+        self.assertIn("_resolve_truncated_md5", section)
+
+
+class RegistryKeysDocumented(unittest.TestCase):
+    """zip_digest, firmware_folder_flat and extract_to were read from the
+    registry by the resolver, the pack and the README, and the page that
+    adds a platform named none of them while saying runtime behaviour lives
+    in the platform YAML only."""
+
+    def test_every_registry_key_is_on_the_page(self):
+        import yaml
+
+        registry = yaml.safe_load((ROOT / "platforms" / "_registry.yml").read_text(encoding="utf-8"))
+        keys = {key for entry in registry["platforms"].values() for key in entry}
+        page = _page("adding-a-platform.md")
+        self.assertEqual(sorted(k for k in keys if not re.search(rf"\b{k}\b", page)), [])
+
+    def test_the_page_says_the_registry_reaches_the_config(self):
+        import common
+
+        source = inspect.getsource(common.load_platform_config)
+        self.assertIn("config[key] = val", source)
+        section = _section(_page("adding-a-platform.md"), "Step 2: Register the platform")
+        self.assertIn("copies every registry key", section)
+        self.assertNotIn("belongs to the platform\nYAML", section)
+
+
+class ResolutionSkipsNamesForUnheldFiles(unittest.TestCase):
+    """The resolution table promised name_exact to any entry without a hash,
+    while an unsourceable entry, or one whose indexed path is absent from
+    disk, skips every step that answers by name and returns not_found."""
+
+    def test_the_page_names_both_cases_the_code_guards(self):
+        import common
+
+        source = inspect.getsource(common.resolve_local_file)
+        self.assertIn('unsourceable = bool(file_entry.get("unsourceable")) or own_file_absent', source)
+        for guard in (
+            "if not has_strong_hash and not unsourceable:",
+            "elif not unsourceable:",
+            "if _depth < 3 and not has_strong_hash and not unsourceable:",
+            "if data_dir_registry and (has_strong_hash or not unsourceable):",
+        ):
+            self.assertIn(guard, source)
+        section = _section(_page("verification-modes.md"), "File resolution chain")
+        self.assertIn("`unsourceable:`", section)
+        self.assertIn("restore_large_files.py", section)
+
+
+class CiTriggersPointToTheirLists(unittest.TestCase):
+    """The CI table listed six directories for validate.yml, which also runs
+    on the installer, wiki/ and every other site input: a contributor
+    touching only wiki/ read that no check would run."""
+
+    def test_the_table_does_not_copy_a_path_list(self):
+        import yaml
+
+        section = _section(_page("architecture.md"), "CI workflows")
+        self.assertNotRegex(section, r"on bios/, platforms/|\(platforms, emulators, wiki, scripts\)")
+        self.assertIn("`paths:`", section)
+        self.assertIn("test_workflow_paths.py", section)
+        workflow = yaml.safe_load((ROOT / ".github/workflows/validate.yml").read_text(encoding="utf-8"))
+        paths = workflow.get("on", workflow.get(True))["pull_request"]["paths"]
+        for named in ("wiki/**", "install.sh"):
+            self.assertIn(named, paths)
+            self.assertIn(f"`{named.rstrip('*')}`", section)
+
+
+class ScratchFilesGoToRepoTmp(unittest.TestCase):
+    """adding-a-scraper.md wrote its comparison to /tmp while two other
+    pages say /tmp is a RAM disk and send scratch files to the repo's tmp/."""
+
+    @staticmethod
+    def _code_lines(text: str) -> list[str]:
+        lines, inside = [], False
+        for line in text.splitlines():
+            if line.strip().startswith("```"):
+                inside = not inside
+            elif inside:
+                lines.append(line)
+        return lines
+
+    def test_no_command_writes_to_slash_tmp(self):
+        offenders = [
+            f"{page.name}: {line.strip()}"
+            for page in PUBLISHED
+            for line in self._code_lines(page.read_text(encoding="utf-8"))
+            if re.search(r"(?<![\w.])/tmp/", line)
+        ]
+        self.assertEqual(offenders, [])
+        old = "   ```bash\n   python x.py --output /tmp/test.yml\n   ```\n"
+        self.assertEqual(self._code_lines(old), ["   python x.py --output /tmp/test.yml"])
+        self.assertIn("tmp/", (ROOT / ".gitignore").read_text(encoding="utf-8").splitlines())
+
+
+class ReadmeInstallerOptions(unittest.TestCase):
+    """The README named --system, --region and --check but showed options
+    only after `sh -s --`. Appended to `irm ... | iex`, PowerShell rejects
+    them, and the form that works was on the installer page alone, which the
+    README never linked."""
+
+    def test_quick_install_gives_the_powershell_form_and_the_page(self):
+        import generate_readme
+
+        source = inspect.getsource(generate_readme.generate_readme)
+        self.assertIn("&([scriptblock]::Create((irm https://raw.githubusercontent.com/Abdess/retrobios/main/install.ps1)))", source)
+        self.assertIn("wiki/installer/#passing-options", source)
+        self.assertIn("## Passing options", _page("installer.md"))
+        readme = (ROOT / "README.md").read_text(encoding="utf-8")
+        quick = _section(readme, "Quick install")
+        self.assertIn("[scriptblock]::Create", quick)
+        self.assertIn("wiki/installer/#passing-options", quick)
+        self.assertNotRegex(readme, r"(?m)^irm \S+ \| iex \S")
+
+
+class PublishedNumbersShareOneFormat(unittest.TestCase):
+    """The README gave the collection as `16011 MB` beside `19,526 files`,
+    the site home as 15.6 GB, and the emulators page `10095 files`."""
+
+    def test_generators_format_counts_and_sizes_alike(self):
+        import generate_readme
+        import generate_site
+
+        readme_source = inspect.getsource(generate_readme.generate_readme)
+        self.assertNotIn("size_mb", readme_source)
+        self.assertIn("format_size(total_size)", readme_source)
+        self.assertIn("{total_files:,}", inspect.getsource(generate_site))
+        self.assertEqual(generate_readme.format_size(16011 * 1024 * 1024), "15.6 GB")
+
+    def test_the_readme_has_no_bare_large_count(self):
+        readme = (ROOT / "README.md").read_text(encoding="utf-8")
+        self.assertEqual(re.findall(r"\*\*\d{4,}\b[^*]*\*\*", readme), [])
+
+
+class FirstInstallWalkthrough(unittest.TestCase):
+    """First install showed a Batocera run of 12893 files with no omission
+    line and said any other ending meant work left undone, while every
+    Batocera run printed 399 files not installed. Its disk sizes (Batocera
+    4.0 GB) contradicted its own example (8.6 GB), and its no-platform case
+    said a piped command cannot ask, where install.sh hands it the terminal
+    and the installer shows a menu."""
+
+    def setUp(self):
+        self.text = _page("first-install.md")
+
+    def test_no_hand_kept_size_before_the_run(self):
+        import install
+
+        section = _section(self.text, "Before starting")
+        # The confirmation threshold is a constant of the installer, not a pack size.
+        self.assertEqual(install.CONFIRM_FROM_BYTES, 1024 ** 3)
+        self.assertIn("reaches 1 GB", section)
+        self.assertNotRegex(section.replace("reaches 1 GB", ""), r"\d+(\.\d+)? ?[KMG]B\b")
+
+    def test_the_run_is_dated_and_consistent_with_the_manifest(self):
+        import install
+
+        self.assertRegex(self.text, r"published on \d{4}-\d{2}-\d{2}")
+        step3 = _section(self.text, "Step 3. Let it work")
+        step4 = _section(self.text, "Step 4. Read the end of the run")
+        step5 = _section(self.text, "Step 5. Confirm it later")
+        count, size = re.search(r"\n  (\d+) files \(([\d.]+ [KMG]B)\)", step3).groups()
+        self.assertIn(f"0/{count} present", step3)
+        self.assertIn(f"Downloading {count} files ({size})", step3)
+        self.assertIn(f"Done. {count} files installed", step4)
+        self.assertIn(f"{count}/{count} present ({count} verified", step5)
+        manifest = json.loads((ROOT / "install" / "batocera.json").read_text(encoding="utf-8"))
+        omitted = re.search(r"Not installable: (\d+) files \((\d+) required", step3)
+        if manifest.get("omitted_files"):
+            self.assertIsNotNone(omitted, "the manifest omits files and the run shows no line for it")
+        if omitted:
+            total, required = map(int, omitted.groups())
+            first, needed = install._omission_lines(
+                total, [{"required": True, "dest": str(i)} for i in range(required)]
+            )[:2]
+            self.assertIn(first, step4)
+            self.assertIn(needed.split(":")[0], step4)
+            self.assertIn(f"all {required} belong", step4)
+            self.assertIn(f"other {total - required} are optional", step4)
+
+    def test_no_platform_detected_reads_like_the_installer(self):
+        source = (ROOT / "install.py").read_text(encoding="utf-8")
+        branch = source.split('print("  No supported platform detected.")', 1)[1][:1600]
+        self.assertIn("if not interactive or listing:", branch)
+        self.assertIn("_prompt_manual_platform(os_type)", branch)
+        self.assertIn('"$INSTALLER" "$@" </dev/tty', (ROOT / "install.sh").read_text(encoding="utf-8"))
+        section = _section(self.text, "No supported platform detected.")
+        self.assertIn("a menu follows", section)
+        self.assertIn("--no-input", section)
+        self.assertNotIn("cannot stop and ask", section)
+
+
+class RetroArchWindowsSystemFolder(unittest.TestCase):
+    """Getting started gave %APPDATA%\\RetroArch\\system for the Windows
+    installer. RetroArch's default is `:\\system`, the folder of
+    retroarch.exe (platform_win32.c). %APPDATA% is where a retroarch.cfg
+    can live, and install.py reads it there."""
+
+    def test_page_and_installer_agree(self):
+        import install
+
+        source = inspect.getsource(install)
+        self.assertIn('ra_dir or exe_dir / "system"', source)
+        self.assertTrue(str(install._os_default_dests("windows")["retroarch"]).replace("\\", "/").endswith("/system"))
+        section = _section(_page("getting-started.md"), "RetroArch")
+        self.assertNotIn("%APPDATA%\\RetroArch\\system", section)
+        self.assertIn("`system\\` next to `retroarch.exe`", section)
 
 
 if __name__ == "__main__":

@@ -47,21 +47,29 @@ hashed with MD5, and compared case-insensitively against the expected value.
 If the `resolve_local_file` step already confirmed the MD5 match (status `md5_exact`),
 `verify.py` skips re-hashing and returns OK directly.
 
-### Truncated MD5 (Batocera)
+### MD5 shorter than 32 characters (Batocera)
 
-Some entries in Batocera's system data carry 29-character MD5 strings instead of
-the usual 32. Batocera's script compares the full string (`batocera-systems:1088`), so
-those entries report the file as untested. `verify.py` compares the prefix instead, to
-find the file the entry designates: if the expected hash is shorter than 32 characters,
-the actual hash is compared against only its first N characters.
+Batocera's script compares the full string (`batocera-systems:1088`), so an MD5
+shorter than 32 characters matches no file there. The Batocera scraper completes such
+a value when exactly one MD5 in `database.json` starts with it
+(`_resolve_truncated_md5` in `scripts/scraper/batocera_scraper.py`) and keeps it as
+written otherwise. `resolve_local_file` matches a value still shorter than 32
+characters by prefix, and only for a file whose name the entry also names.
 
 ### md5_composite (Recalbox ZIP verification)
 
 Recalbox hashes a ZIP with `Zip::Md5Composite` (`es-core/src/utils/Zip.cpp:71-96` in
 recalbox-emulationstation at `f4cd0ae4`): one MD5 over the contents of every member,
-read in filename order. The members' own MD5s are not involved. `verify.py` computes
-the same value with `md5_composite()` (`scripts/hashing.py`). When a ZIP file's direct
-MD5 does not match, the composite is tried before reporting a mismatch.
+read in filename order. The members' own MD5s are not involved, and neither is the
+MD5 of the ZIP file itself: `Bios::Scan` takes the composite for every `.zip`
+(`es-app/src/bios/Bios.cpp:64-68`). `verify.py` computes the same value with
+`md5_composite()` (`scripts/hashing.py`).
+
+The registry gives Recalbox `zip_digest: composite`. For a platform so marked, a
+`.zip` entry is checked against its composite alone, by the resolver
+(`resolve_local_file`) and by the pack check (`digest_verdict` in
+`scripts/validation.py`). On other platforms the ZIP file's direct MD5 is tried first
+and the composite after it.
 
 ### Multi-hash (Recalbox)
 
@@ -265,6 +273,20 @@ evidence-compatible match:
 | 11 | Agnostic fallback | `agnostic_fallback` | Size/path constrained lookup only when no content hash was declared |
 
 If no step matches, the result is `(None, "not_found")`.
+
+Two kinds of entry skip every answer given by a name alone: steps 6 and 9, the
+`hash_mismatch` of step 7, and the name lookup of step 10 when no hash is declared.
+
+- An entry whose profile carries `unsourceable:`. The collection cannot hold that
+  file, so a file answering to its name belongs to something else: `kanji.rom`
+  names an FPseNG font, an openMSX font and a 3DO ROM.
+- An entry whose full destination path is in the `by_path_suffix` index while no
+  indexed copy is on disk. That file is a release asset the checkout has not
+  restored (`scripts/restore_large_files.py`), and another file of the same name
+  is not it.
+
+The content steps still apply to both, so collecting the real bytes, or restoring
+the asset, makes the entry resolve.
 
 The `hash_mismatch` status means a file with the right name or path exists but its hash
 does not match. This still resolves to a local path (the file is present), but verification

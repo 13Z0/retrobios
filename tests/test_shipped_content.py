@@ -118,7 +118,7 @@ class ShippedFilesSatisfyTheirDeclaration(unittest.TestCase):
                     digests["md5"].append(common.md5_composite(str(blob_path)))
                 except (zipfile.BadZipFile, OSError):
                     pass
-                # Batocera publishes 29-character prefixes, so compare by prefix.
+                # A declared MD5 can be shorter than 32 characters: compare by prefix.
                 satisfied = any(
                     all(
                         any(

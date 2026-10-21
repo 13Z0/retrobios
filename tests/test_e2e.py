@@ -265,7 +265,7 @@ class TestE2E(unittest.TestCase):
         ).hexdigest()  # sorted: a.rom, b.rom
         multi_wrong = "0000000000000000000000000000000"
         multi_right = f["multi.zip"]["inner_md5s"]["rom.bin"]
-        truncated_md5 = f["truncated.bin"]["md5"][:29]  # Batocera 29-char
+        truncated_md5 = f["truncated.bin"]["md5"][:29]  # shorter than 32 characters
 
         config = {
             "platform": "TestMD5",
@@ -347,7 +347,7 @@ class TestE2E(unittest.TestCase):
                             "zipped_file": "rom.bin",
                             "required": True,
                         },
-                        # Truncated MD5 (Batocera 29 chars)
+                        # MD5 shorter than 32 characters
                         {
                             "name": "truncated.bin",
                             "destination": "truncated.bin",
