@@ -413,6 +413,17 @@ platforms:
       - os: linux
         method: path_exists
         path: $HOME/Emulation/bios
+      # functions/all.sh:3-4,24 and vars.sh:2 (EmuDeck dddb3022): the macOS
+      # build reads the same settings.sh, emulationPath=~/Emulation by
+      # default (settings.sh:79).
+      - os: darwin
+        method: config_file
+        config: $HOME/.config/EmuDeck/settings.sh
+        parse_key: emulationPath
+        bios_subdir: bios
+      - os: darwin
+        method: path_exists
+        path: $HOME/Emulation/bios
       # functions/all.ps1:4-14 (emudeck-we 037460ef): the APPDATA settings,
       # else the profile ones, and C:\Emulation when neither names a folder.
       - os: windows

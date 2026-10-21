@@ -376,8 +376,10 @@ class TestFreeSpaceGuard(unittest.TestCase):
         self.assertEqual((out, code), ("", 0))
 
     def test_short_of_space_names_both_numbers_and_stops(self):
+        """Nothing was installed: code 2, as the exit table says, not the 1
+        of a partial install."""
         out, code = self._run(free=1_000, needed=5_000)
-        self.assertEqual(code, 1)
+        self.assertEqual(code, 2)
         self.assertIn("Needed", out)
         self.assertIn("Free", out)
         self.assertIn("--dest", out)
@@ -385,7 +387,52 @@ class TestFreeSpaceGuard(unittest.TestCase):
     def test_probe_climbs_to_an_existing_ancestor(self):
         missing = self.root / "not" / "created" / "yet"
         out, code = self._run(free=1, needed=2, path=missing)
-        self.assertEqual(code, 1)
+        self.assertEqual(code, 2)
+
+    def test_the_space_check_comes_before_the_folder(self):
+        source = (REPO_ROOT / "install.py").read_text(encoding="utf-8")
+        check = source.index("_check_free_space(bios_path, dl_size")
+        self.assertLess(check, source.index("bios_path.mkdir(parents=True, exist_ok=True)"))
+
+
+class AMissingDestIsSaid(unittest.TestCase):
+    """--dest ~/.config/retroarh/system (a typo) was created with every
+    missing parent and reported done, and --check on it said only
+    "0/7 present"."""
+
+    def _call(self, dest: Path, ask: bool, answer: str = "") -> tuple[str, object]:
+        out = io.StringIO()
+        code = None
+        with contextlib.redirect_stdout(out), \
+                unittest.mock.patch("builtins.input", return_value=answer):
+            try:
+                install._missing_dest(dest, ask)
+            except SystemExit as exc:
+                code = exc.code
+        return out.getvalue(), code
+
+    def test_an_existing_folder_says_nothing(self):
+        root = Path(_tempdir(self))
+        self.assertEqual(self._call(root, True), ("", None))
+
+    def test_a_deep_missing_path_is_asked_and_no_is_the_default(self):
+        root = Path(_tempdir(self))
+        dest = root / "retroarh" / "system"
+        out, code = self._call(dest, True, "")
+        self.assertEqual(code, 2)
+        self.assertIn(f"The nearest folder that does: {root}", out)
+        self.assertFalse((root / "retroarh").exists())
+        self.assertEqual(self._call(dest, True, "y")[1], None)
+
+    def test_one_missing_level_or_no_terminal_is_said_not_asked(self):
+        root = Path(_tempdir(self))
+        # A "no" that was asked would stop the run with 2.
+        out, code = self._call(root / "bios", True, "n")
+        self.assertIsNone(code)
+        self.assertIn("does not exist", out)
+        out, code = self._call(root / "a" / "b", False, "n")
+        self.assertIsNone(code)
+        self.assertIn("does not exist", out)
 
 
 class AFolderThatRefusesWritesIsNamed(unittest.TestCase):
@@ -1109,6 +1156,21 @@ class DetectionFollowsTheRegistry(unittest.TestCase):
         found = [("emudeck", home / "elsewhere" / "bios")]
         install._detect_by_path("linux", found)
         self.assertEqual(found, [("emudeck", home / "elsewhere" / "bios")])
+
+    def test_emudeck_on_macos_is_found_by_its_settings(self):
+        """EmuDeck's macOS build reads ~/.config/EmuDeck/settings.sh as the
+        Linux one does (functions/all.sh:3-4,24, vars.sh:2): a Mac with
+        EmuDeck detected nothing and was offered RetroArch's folder."""
+        home = self._home()
+        settings = home / ".config" / "EmuDeck" / "settings.sh"
+        settings.parent.mkdir(parents=True)
+        settings.write_text(f"emulationPath={home / 'Games' / 'Emulation'}\n")
+        self.assertIn(("emudeck", home / "Games" / "Emulation" / "bios"),
+                      install.detect_platforms("darwin"))
+        settings.unlink()
+        (home / "Emulation" / "bios").mkdir(parents=True)
+        self.assertIn(("emudeck", home / "Emulation" / "bios"),
+                      install.detect_platforms("darwin"))
 
 
 class RetroArchIsFoundWhereWindowsInstallsPutIt(unittest.TestCase):
@@ -2071,6 +2133,48 @@ class TestAvailablePlatforms(unittest.TestCase):
             self.assertTrue(marker.is_file(), "piped bootstrap did not download install.py")
             self.assertIn("retroarch", proc.stdout)
 
+    def test_busybox_wget_downloads_the_installer(self):
+        """BusyBox wget, the only one in the RomM image, refuses
+        --https-only: with no curl the one-liner always failed and blamed
+        the network."""
+        scratch = REPO_ROOT / "tmp" / "tests"
+        scratch.mkdir(parents=True, exist_ok=True)
+        with tempfile.TemporaryDirectory(dir=scratch) as directory:
+            root = Path(directory)
+            fake_bin = root / "bin"
+            fake_bin.mkdir()
+            for tool in ("mktemp", "wc", "tr", "sha256sum", "awk", "rm", "rmdir",
+                         "grep", "tail", "cp", "dirname", "cat", "python3"):
+                found = shutil.which(tool)
+                if found:
+                    (fake_bin / tool).symlink_to(found)
+            (fake_bin / "wget").write_text(
+                "#!/bin/sh\n"
+                "output=\n"
+                "for arg in \"$@\"; do\n"
+                "  case \"$arg\" in\n"
+                "    --help) echo 'Usage: wget [-cqS] [-O FILE] [-T SEC] URL' >&2; exit 1 ;;\n"
+                "    --https-only) echo \"wget: unrecognized option '$arg'\" >&2; exit 1 ;;\n"
+                "    --output-document=*) output=${arg#--output-document=} ;;\n"
+                "  esac\n"
+                "done\n"
+                "cp -- \"$FAKE_INSTALLER_SOURCE\" \"$output\"\n",
+                encoding="utf-8",
+            )
+            (fake_bin / "wget").chmod(0o755)
+            env = {
+                "PATH": str(fake_bin), "HOME": str(root), "TMPDIR": str(root),
+                "RETROBIOS_INSTALL_URL": "https://example.invalid/install.py",
+                "FAKE_INSTALLER_SOURCE": str(REPO_ROOT / "install.py"),
+            }
+            proc = subprocess.run(
+                ["/bin/sh", "-s", "--", "--list-platforms"], cwd=root, env=env,
+                input=(REPO_ROOT / "install.sh").read_text(encoding="utf-8"),
+                capture_output=True, text=True, timeout=60, check=False,
+            )
+        self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+        self.assertIn("retroarch", proc.stdout)
+
     def test_a_failed_download_says_so_in_one_message(self):
         """Offline, the one-liner printed curl's progress table and
         "curl: (6) ...", then exited 6, a code the table does not list."""
@@ -2274,6 +2378,89 @@ class RetroArchWhereItReallyLives(unittest.TestCase):
             self.assertIn(("retroarch", support / "system"), found)
 
 
+class NoPythonNamesThisSystemsCommand(unittest.TestCase):
+    """Without Python the bootstrap said `sudo apt install python3` on every
+    system: Termux has no sudo and installs with `pkg install python`, and
+    macOS has no apt."""
+
+    def _run(self, extra_env: dict, uname: str = "Linux") -> subprocess.CompletedProcess:
+        root = Path(_tempdir(self))
+        fake_bin = root / "bin"
+        fake_bin.mkdir()
+        for tool in ("sed", "tr", "dirname", "cat"):
+            found = shutil.which(tool)
+            if found:
+                (fake_bin / tool).symlink_to(found)
+        (fake_bin / "uname").write_text(f"#!/bin/sh\necho {uname}\n", encoding="utf-8")
+        (fake_bin / "uname").chmod(0o755)
+        # No terminal: the Termux offer is a question asked on /dev/tty.
+        return subprocess.run(
+            ["/bin/sh", str(REPO_ROOT / "install.sh")], cwd=root,
+            env={"PATH": str(fake_bin), "HOME": str(root), **extra_env},
+            capture_output=True, text=True, timeout=30, check=False,
+            start_new_session=True,
+        )
+
+    def test_termux_is_told_pkg(self):
+        proc = self._run({"TERMUX_VERSION": "0.118",
+                          "PREFIX": "/data/data/com.termux/files/usr"})
+        self.assertEqual(proc.returncode, 1)
+        self.assertIn("Install it with: pkg install python", proc.stderr)
+        self.assertNotIn("sudo", proc.stderr)
+
+    def test_macos_is_told_xcode_select(self):
+        proc = self._run({}, uname="Darwin")
+        self.assertEqual(proc.returncode, 1)
+        self.assertIn("Install it with: xcode-select --install", proc.stderr)
+        self.assertNotIn("apt", proc.stderr)
+
+
+@unittest.skipUnless(shutil.which("pwsh") and shutil.which("script"), "needs PowerShell and a terminal")
+class WindowsWithoutPythonIsOfferedWinget(unittest.TestCase):
+    """A Windows machine without Python was told to install it, open a new
+    window and run the command again, while winget, present on Windows 10
+    and 11, could do it from the bootstrap."""
+
+    def _folder(self) -> tuple[Path, Path]:
+        folder = Path(_tempdir(self))
+        shutil.copy(REPO_ROOT / "install.ps1", folder / "install.ps1")
+        (folder / "install.py").write_text("print('installer ran')\n")
+        fake_bin = folder / "bin"
+        fake_bin.mkdir()
+        python = shutil.which("python3") or sys.executable
+        (fake_bin / "winget").write_text(
+            f"#!/bin/sh\necho \"winget $*\"\n{shutil.which('ln')} -s {shlex.quote(python)} "
+            f"{shlex.quote(str(fake_bin / 'python3'))}\n"
+        )
+        (fake_bin / "winget").chmod(0o755)
+        return folder, fake_bin
+
+    def _run(self, folder: Path, fake_bin: Path, answer: str) -> subprocess.CompletedProcess:
+        pwsh = shutil.which("pwsh")
+        command = (f"{shlex.quote(pwsh)} -NoProfile -File "
+                   f"{shlex.quote(str(folder / 'install.ps1'))}")
+        return subprocess.run(
+            [shutil.which("script"), "-qec", command, "/dev/null"], input=answer,
+            env={**os.environ, "PATH": f"{fake_bin}{os.pathsep}/usr/bin/nonexistent"},
+            capture_output=True, text=True, timeout=120, check=False,
+        )
+
+    def test_yes_installs_and_carries_on(self):
+        folder, fake_bin = self._folder()
+        proc = self._run(folder, fake_bin, "y\n")
+        self.assertIn("Install Python 3.12 now with winget?", proc.stdout)
+        self.assertIn("winget install --id Python.Python.3.12", proc.stdout)
+        self.assertIn("installer ran", proc.stdout)
+        self.assertEqual(proc.returncode, 0, proc.stdout)
+
+    def test_no_names_the_command(self):
+        folder, fake_bin = self._folder()
+        proc = self._run(folder, fake_bin, "n\n")
+        self.assertNotIn("installer ran", proc.stdout)
+        self.assertIn("winget install Python.Python.3.12", proc.stdout)
+        self.assertFalse((fake_bin / "python3").exists())
+
+
 class ThePowerShellWrapperPassesTheStatusOn(unittest.TestCase):
     """Every non-zero exit became a red "installer failed" exception and
     code 1: a --check that found work read as a crash, 2 and 130 were lost."""
@@ -2367,6 +2554,23 @@ class SudoAdviceNamesTheFolder(unittest.TestCase):
     def test_the_closing_report_passes_the_platform(self):
         source = (REPO_ROOT / "install.py").read_text(encoding="utf-8")
         self.assertIn("platform_of={path: plat for plat, path in platforms}", source)
+
+    @unittest.skipUnless(hasattr(os, "statvfs"), "statvfs reads mount flags")
+    def test_a_read_only_mount_is_not_sent_to_sudo(self):
+        """A card Linux mounted read-only after a dirty unplug was answered
+        with 'run it again with sudo', which fails the same way."""
+        real = os.statvfs(".")
+        flags = SimpleNamespace(f_flag=real.f_flag | os.ST_RDONLY)
+        for plat in ("retroarch", ""):
+            with self.subTest(platform=plat), \
+                    unittest.mock.patch.object(install.os, "statvfs", return_value=flags):
+                advice = install._write_advice(Path("/media/card/bios"), False, plat)
+            self.assertIn("mounted read-only", advice)
+            self.assertNotIn("Run it again with sudo", advice)
+            self.assertNotIn("sudo python3", advice)
+        writable = SimpleNamespace(f_flag=real.f_flag & ~os.ST_RDONLY)
+        with unittest.mock.patch.object(install.os, "statvfs", return_value=writable):
+            self.assertIn("sudo", install._write_advice(Path("/media/card/bios"), False, "retroarch"))
 
 
 
@@ -3372,6 +3576,19 @@ class HintsGiveTheUsersOwnCommandBack(unittest.TestCase):
             hint = "\n".join(install._manual_usage_hint("linux"))
         self.assertIn("python3 install.py --platform retroarch", hint)
 
+    def test_a_listing_hint_keeps_the_listing(self):
+        """--list-systems with nothing detected was answered with a full
+        install command: the listing flag gone, a --dest added."""
+        home = Path(_tempdir(self))
+        env = {**os.environ, "HOME": str(home), "RETROBIOS_OS": "linux",
+               "RETROBIOS_BOOTSTRAP": ""}
+        for flag in ("--list-systems", "--list-cores", "--list-emulators", "--list-targets"):
+            with self.subTest(flag=flag):
+                proc = _install_run(env, flag, "--no-input")
+                self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
+                self.assertIn(f"python3 install.py --platform retroarch {flag}", proc.stdout)
+                self.assertNotIn("--dest", proc.stdout)
+
     def test_the_write_advice_keeps_the_narrowing(self):
         self._record("--system", "atari-lynx", "--region", "us")
         install._INVOCATION.os_type = "linux"
@@ -3727,6 +3944,67 @@ class ACompletePartialIsHandedOffOnWindows(unittest.TestCase):
     def test_a_sharing_violation_is_no_refused_folder(self):
         self.assertFalse(install._write_refused(_sharing_violation()))
         self.assertTrue(install._write_refused(PermissionError(13, "denied")))
+
+
+class StandaloneFoldersAreNamedWhenThereAreAny(unittest.TestCase, _LoopbackRun):
+    """'Standalone copies skipped' closed every install, on a machine with
+    no standalone emulator as on one whose DuckStation lacked its BIOS."""
+
+    def setUp(self):
+        self.env = self.serve(self)
+
+    def _run(self) -> str:
+        proc = _install_run(self.env, "--platform", "retroarch", "--dest",
+                            str(self.home / "system"), "--system", "atari-lynx",
+                            "--no-input")
+        self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+        return proc.stdout
+
+    def test_nothing_is_said_without_an_emulator_folder(self):
+        out = self._run()
+        self.assertNotIn("skipped", out)
+        self.assertNotIn("--standalone-copies", out)
+
+    def test_a_found_folder_is_named(self):
+        duckstation = self.home / ".local" / "share" / "duckstation" / "bios"
+        duckstation.mkdir(parents=True)
+        out = self._run()
+        self.assertIn("Standalone emulator folders found here:", out)
+        self.assertIn(str(duckstation), out)
+        self.assertIn("--standalone-copies", out)
+
+
+class StandaloneEmulatorsWithoutAPlatformAreServed(unittest.TestCase, _LoopbackRun):
+    """ES-DE with DuckStation and PCSX2 and no RetroArch: the run said 'No
+    supported platform detected' and offered RetroArch's folder, which no
+    emulator on the machine reads."""
+
+    def setUp(self):
+        self.env = self.serve(self)
+        (self.home / "ES-DE").mkdir()
+        self.duckstation = self.home / ".local" / "share" / "duckstation" / "bios"
+        self.duckstation.mkdir(parents=True)
+
+    def test_the_emulator_folder_is_filled(self):
+        proc = _install_run(self.env, "--no-input", "--dry-run")
+        self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+        self.assertIn("Found standalone emulator folders:", proc.stdout)
+        self.assertIn(f"to {self.duckstation}:", proc.stdout)
+        self.assertNotIn("--platform retroarch --dest", proc.stdout)
+        proc = _install_run(self.env, "--no-input")
+        self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+        names = sorted(path.name for path in self.duckstation.iterdir())
+        self.assertIn("scph5501.bin", names)
+        self.assertTrue(all(name.startswith("scph") for name in names), names)
+        proc = _install_run(self.env, "--no-input", "--check")
+        self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+        self.assertIn("All files up to date.", proc.stdout)
+
+    def test_no_emulator_folder_keeps_the_hint(self):
+        self.duckstation.rmdir()
+        proc = _install_run(self.env, "--no-input")
+        self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
+        self.assertIn("--platform retroarch --dest", proc.stdout)
 
 
 class TheEmulatorNamesHaveTheirOwnListing(unittest.TestCase, _LoopbackRun):

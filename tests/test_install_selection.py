@@ -746,5 +746,47 @@ class AListingNeedsNoInstall(unittest.TestCase):
             self.assertIn("nintendo-gba", proc.stdout)
 
 
+class ThePlatformsOwnSystemNamesAreAccepted(unittest.TestCase):
+    """A Batocera user who typed `--system psx`, the folder under roms/,
+    was told the name is unknown with no suggestion, while the platform
+    file records psx as the native_system of sony-playstation."""
+
+    def test_the_names_come_from_the_platform_file(self):
+        from common import load_platform_config  # noqa: PLC0415
+        from manifestselect import native_system_names  # noqa: PLC0415
+
+        config = load_platform_config("batocera", str(REPO_ROOT / "platforms"))
+        names = native_system_names(config, list(config["systems"]))
+        self.assertEqual(names["sony-playstation"], ["psx"])
+        self.assertEqual(names["nintendo-gba"], ["gba"])
+        # A name spelled like the system id adds nothing.
+        self.assertTrue(all(
+            install._name_key(alias) != install._name_key(system)
+            for system, aliases in names.items() for alias in aliases
+        ))
+
+    def test_the_builder_writes_them_into_the_manifest(self):
+        source = (REPO_ROOT / "scripts" / "generate_pack.py").read_text(encoding="utf-8")
+        self.assertIn('"system_names": native_system_names(config, list(pack_systems))',
+                      source)
+
+    def test_a_native_name_narrows_and_lists(self):
+        with FakeRepository() as repo:
+            path = repo.root / "install" / "retroarch.json"
+            manifest = json.loads(path.read_text())
+            manifest["system_names"] = {"sony-playstation": ["psx"],
+                                        "nintendo-gba": ["gba"]}
+            path.write_text(json.dumps(manifest))
+            proc = repo.run("--system", "psx", "--no-input")
+            self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+            self.assertEqual(repo.installed(),
+                             ["pcsx/extra.bin", "scph5500.bin", "scph5501.bin"])
+            listing = repo.run("--list-systems", "--no-input")
+            self.assertIn("nintendo-gba (gba)", listing.stdout)
+            typo = repo.run("--system", "psxx", "--no-input")
+            self.assertEqual(typo.returncode, 1)
+            self.assertIn("Did you mean: sony-playstation", typo.stderr)
+
+
 if __name__ == "__main__":
     unittest.main()

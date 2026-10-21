@@ -1102,6 +1102,7 @@ _PATH_RULES: tuple[tuple[str, str, str, str | None], ...] = (
     ("windows", "retrobat", "C:\\RetroBat\\bios", None),
     ("windows", "retrobat", "%USERPROFILE%\\RetroBat\\bios", None),
     ("linux", "emudeck", "$HOME/Emulation/bios", None),
+    ("darwin", "emudeck", "$HOME/Emulation/bios", None),
     ("linux", "retrodeck", "$HOME/.var/app/net.retrodeck.retrodeck", "$HOME/retrodeck"),
     ("linux", "romm", "/romm/library/bios", None),
     # A library laid out as {platform}/bios has no library/bios: RomM's
@@ -1238,15 +1239,18 @@ def detect_platforms(os_type: str) -> list[tuple[str, Path]]:
         muos = _muos_system_dir() if embedded and embedded[0][0] == "retroarch" else None
         found.extend([("retroarch", muos)] if muos else embedded)
 
-        # EmuDeck (Linux/SteamOS)
-        home = Path.home()
-        emudeck_settings = home / ".config" / "EmuDeck" / "settings.sh"
+    if os_type in ("linux", "wsl", "darwin"):
+        # EmuDeck on Linux and macOS: functions/all.sh:3-4 and 24 (EmuDeck
+        # dddb3022) reads $emudeckFolder/settings.sh on both, and vars.sh:2
+        # sets emudeckFolder to $HOME/.config/EmuDeck.
+        emudeck_settings = Path.home() / ".config" / "EmuDeck" / "settings.sh"
         if emudeck_settings.exists():
             emu_path = _parse_bash_var(emudeck_settings, "emulationPath")
             if emu_path:
-                bios_dir = Path(emu_path) / "bios"
-                found.append(("emudeck", bios_dir))
+                found.append(("emudeck", Path(emu_path) / "bios"))
 
+    if os_type in ("linux", "wsl"):
+        home = Path.home()
         # RetroDECK: retrodeck.json since the cfg-to-json migration, which
         # renames the old retrodeck.cfg to retrodeck.bak (global.sh:149-153)
         retrodeck_conf_dir = home / ".var" / "app" / "net.retrodeck.retrodeck" / "config" / "retrodeck"
@@ -1555,17 +1559,23 @@ def _name_key(name: str) -> str:
 SHORT_LIST = 12
 
 
-def did_you_mean(typed: list[str], known: list[str], listing: str) -> str:
+def did_you_mean(
+    typed: list[str], known: list[str], listing: str,
+    aliases: dict[str, str] | None = None,
+) -> str:
     """The closest known names to what was typed, and the option listing them all.
 
     A typo was answered with every name the platform has, up to 400 on one
-    line, with no hint that playstation is sony-playstation.
+    line, with no hint that playstation is sony-playstation. An alias close
+    to what was typed suggests the name it stands for.
     """
     import difflib  # noqa: PLC0415
 
     by_key: dict[str, str] = {}
     for name in known:
         by_key.setdefault(_name_key(name), name)
+    for alias, name in (aliases or {}).items():
+        by_key.setdefault(_name_key(alias), name)
     close: list[str] = []
     for word in typed:
         key = _name_key(word)
@@ -1979,7 +1989,7 @@ def _validate_manifest(data: object, plat: str) -> dict:
     ):
         raise ValueError("manifest total_omitted does not match omitted_files")
 
-    for field in ("core_names", "system_cores"):
+    for field in ("core_names", "system_cores", "system_names"):
         mapping = data.get(field)
         if mapping is None:
             continue
@@ -2528,21 +2538,31 @@ def available_choices(files: list[dict], omitted: list[dict]) -> dict[str, list[
     }
 
 
-def resolve_choices(values: list[str], known: list[str], label: str) -> list[str]:
+def resolve_choices(
+    values: list[str], known: list[str], label: str,
+    aliases: dict[str, str] | None = None,
+) -> list[str]:
     """Names given on the command line, matched without regard to case.
 
     Each value is one name or a comma-separated list. A whole value that is
     itself a name wins over splitting it: Recalbox names one system
     `msx1,msx2,msxturbor`. An unknown name is refused, never ignored, since
     carrying on would install something other than what was asked.
+    aliases maps another name of a known one to it, as Batocera's `psx`
+    stands for sony-playstation. A known name always wins over an alias.
     """
+    aliases = {alias: name for alias, name in (aliases or {}).items() if name in known}
     by_lower = {name.lower(): name for name in known}
+    for alias, name in aliases.items():
+        by_lower.setdefault(alias.lower(), name)
     # Spelled as the site writes it (Sony PlayStation), a name is still one
     # name when no other one reads the same once case and spacing go.
     by_key: dict[str, str | None] = {}
     for name in known:
         key = _name_key(name)
         by_key[key] = None if key in by_key else name
+    for alias, name in aliases.items():
+        by_key.setdefault(_name_key(alias), name)
     chosen: list[str] = []
     unknown: list[str] = []
     for value in values:
@@ -2562,7 +2582,8 @@ def resolve_choices(values: list[str], known: list[str], label: str) -> list[str
         listing = {"system": "--list-systems", "emulator": "--list-emulators"}.get(
             label, "--list-cores")
         raise ValueError(
-            f"unknown {label}: {', '.join(unknown)}. {did_you_mean(unknown, known, listing)}"
+            f"unknown {label}: {', '.join(unknown)}. "
+            f"{did_you_mean(unknown, known, listing, aliases)}"
         )
     if values and not chosen:
         raise ValueError(f"--{label} needs at least one name")
@@ -3182,6 +3203,20 @@ class Invocation:
 _INVOCATION = Invocation()
 
 
+def _on_read_only_mount(path: Path) -> bool:
+    """Whether the file system holding path, or the folder it would go in,
+    is mounted read-only (a card Linux remounts read-only after an error)."""
+    if not hasattr(os, "statvfs"):
+        return False
+    probe = path
+    while not probe.exists() and probe.parent != probe:
+        probe = probe.parent
+    try:
+        return bool(os.statvfs(probe).f_flag & os.ST_RDONLY)
+    except OSError:
+        return False
+
+
 def _write_advice(path: Path, assumed: bool, plat: str = "") -> str:
     """What to do about a folder this run could not write.
 
@@ -3189,8 +3224,16 @@ def _write_advice(path: Path, assumed: bool, plat: str = "") -> str:
     machine it would create that folder on the wrong disk: a platform named
     but not found here is a card or share mounted elsewhere, named by --dest.
     Windows has no sudo, and Termux reaches shared storage once
-    termux-setup-storage has run.
+    termux-setup-storage has run. A read-only mount refuses root as well,
+    so sudo is never offered for it.
     """
+    if _on_read_only_mount(path):
+        again = f"\n    {_INVOCATION.command(plat, path)}" if plat else ""
+        return (f"  {path} is on a file system mounted read-only, which no user can "
+                "write, sudo included. Mount it read-write again (a card or drive "
+                "the system switched to read-only after an error needs a check "
+                "first: fsck, or chkdsk on Windows), then run the same command "
+                f"again.{again}")
     if assumed:
         return (f"  {path} is where the platform keeps its BIOS on its own system, "
                 "and it was not found here. If this machine prepares its card or "
@@ -3472,11 +3515,13 @@ def _print_plan(
     print("\n  Nothing was written. Run without --dry-run to install.")
 
 
-def _check_free_space(bios_path: Path, needed: int, plat: str = "") -> None:
+def _check_free_space(bios_path: Path, needed: int, plat: str = "", code: int = 2) -> None:
     """Stop before writing when the volume cannot hold the download.
 
     Reported against the nearest existing ancestor, since the destination
-    itself may have just been created on a volume that is already full.
+    may not exist yet. The run ends with code: 2 when nothing was installed,
+    the status a script reads as "nothing installed", 1 after an earlier
+    platform of the run installed files.
     """
     probe = bios_path
     while not probe.exists() and probe != probe.parent:
@@ -3493,13 +3538,13 @@ def _check_free_space(bios_path: Path, needed: int, plat: str = "") -> None:
     if not plat:
         print(f"  Free up {format_size(needed - free)}, or use --dest to install "
               "to another drive.", file=sys.stderr)
-        sys.exit(1)
+        sys.exit(code)
     # --dest alone used to mean RetroArch's list: the platform is named, so
     # a Batocera install moved to a USB drive stays Batocera's.
     print(f"  Free up {format_size(needed - free)}, or install to another drive:\n"
           f"    {_INVOCATION.command(plat, '<folder on another drive>')}",
           file=sys.stderr)
-    sys.exit(1)
+    sys.exit(code)
 
 
 def download_files(
@@ -3710,6 +3755,165 @@ def select_data_directories(manifest: dict, files: list[dict], narrowed: bool) -
     return [e for e in entries if kept & set(e.get("systems") or [])]
 
 
+def _copy_targets(
+    entry: dict, os_type: str, extra_dirs: dict[str, Path] | None = None,
+) -> list[Path]:
+    """The emulator folders a standalone copy entry names on this OS.
+
+    WSL falls back to the Linux ones, and extra_dirs adds the folder a
+    frontend such as LaunchBox keeps the emulator in.
+    """
+    targets = entry.get("targets", {}).get(os_type, [])
+    if not targets and os_type == "wsl":
+        targets = entry.get("targets", {}).get("linux", [])
+    target_dirs = [Path(os.path.expandvars(os.path.expanduser(t))) for t in targets]
+    extra_root = (extra_dirs or {}).get(entry.get("emulator", ""))
+    if extra_root is not None:
+        subdir = PurePosixPath(entry.get("file", "")).parent
+        extra = extra_root if str(subdir) == "." else extra_root / subdir
+        if extra not in target_dirs:
+            target_dirs.append(extra)
+    return target_dirs
+
+
+def standalone_folders_here(
+    manifest: dict, os_type: str, extra_dirs: dict[str, Path] | None = None,
+) -> list[Path]:
+    """The emulator folders of the manifest's standalone copies that exist
+    on this machine: the ones --standalone-copies would write to."""
+    found: list[Path] = []
+    for entry in manifest.get("standalone_copies", []):
+        if "note" in entry:
+            continue
+        for folder in _copy_targets(entry, os_type, extra_dirs):
+            if folder not in found and folder.is_dir():
+                found.append(folder)
+    return found
+
+
+# The file lists a machine with standalone emulators and no platform is
+# served from: EmuDeck's holds the Switch keys, RetroArch's the PPSSPP atlas
+# and the Flycast flash, and each copy entry names its folders.
+STANDALONE_SOURCES = ("emudeck", "retroarch")
+
+
+def standalone_plan(
+    manifests: list[dict], os_type: str, extra_dirs: dict[str, Path] | None = None,
+) -> list[tuple[Path, list[dict]]]:
+    """What each emulator folder found here receives, by its own file name.
+
+    The standalone copies of the manifests, read as do_standalone_copies
+    reads them, but taken from the file lists rather than from a platform
+    tree already installed: an ES-DE user with DuckStation and PCSX2 and no
+    RetroArch had no tree to copy from. The first list that holds a name for
+    a folder serves it.
+    """
+    from fnmatch import fnmatch  # noqa: PLC0415
+
+    plan: dict[Path, dict[str, dict]] = {}
+    for manifest in manifests:
+        files = manifest.get("files", [])
+        by_dest = {entry["dest"]: entry for entry in files}
+        for copy in manifest.get("standalone_copies", []):
+            if "note" in copy:
+                continue
+            if "pattern" in copy:
+                sources = [entry for entry in files
+                           if fnmatch(PurePosixPath(entry["dest"]).name, copy["pattern"])]
+            else:
+                held = by_dest.get(copy.get("source") or copy["file"])
+                sources = [held] if held else []
+            for folder in _copy_targets(copy, os_type, extra_dirs):
+                if not sources or not folder.is_dir():
+                    continue
+                chosen = plan.setdefault(folder, {})
+                for entry in sources:
+                    name = PurePosixPath(entry["dest"]).name
+                    chosen.setdefault(name, {**entry, "dest": name})
+    return [(folder, list(entries.values())) for folder, entries in plan.items() if entries]
+
+
+def _install_standalone_folders(
+    args: argparse.Namespace, os_type: str, term: Terminal, interactive: bool,
+) -> bool:
+    """Fill the standalone emulator folders found here, with no platform.
+
+    False when this machine has none, the run then going on to the platform
+    question or hint.
+    """
+    manifests = []
+    for plat in STANDALONE_SOURCES:
+        manifests.append(fetch_manifest(plat))
+    lb_root = launchbox_root(os_type)
+    plan = standalone_plan(manifests, os_type,
+                           launchbox_bios_dirs(lb_root) if lb_root else None)
+    if not plan:
+        return False
+    print("  Found standalone emulator folders:")
+    for folder, entries in plan:
+        print(f"    {folder}  {_sized(entries)}")
+    if interactive and not (args.check or args.dry_run or args.yes) and not _confirm(
+        "\nInstall the BIOS files these emulators read into their folders? [Y/n] "
+    ):
+        return False
+    downloaded = up_to_date_count = errors = 0
+    pending = 0
+    failures: list[tuple[str, str]] = []
+    transferred, seconds = 0, 0.0
+    interrupted = False
+    for folder, entries in plan:
+        print(f"\n{folder}:")
+        to_download, up_to_date, mismatched = check_local(entries, folder, jobs=args.jobs)
+        to_download.extend(mismatched)
+        up_to_date_count += len(up_to_date)
+        if args.check:
+            for entry in mismatched:
+                print(f"    wrong hash: {entry['dest']}")
+            wrong = {id(entry) for entry in mismatched}
+            missing = [entry for entry in to_download if id(entry) not in wrong]
+            for entry in missing[:10] if not args.verbose else missing:
+                print(f"    missing: {entry['dest']}")
+            if not args.verbose and len(missing) > 10:
+                print(f"    ... and {len(missing) - 10} more missing (--verbose lists them all)")
+            if not to_download:
+                print("  All files up to date.")
+            pending += len(to_download)
+            continue
+        if args.dry_run:
+            _print_plan(to_download, folder, term)
+            continue
+        if not to_download:
+            print("  All files up to date.")
+            continue
+        size = sum(entry.get("size", 0) for entry in to_download)
+        _check_free_space(folder, size, code=1 if downloaded else 2)
+        progress = Progress(len(to_download), size, term)
+        failed, interrupted = download_files(
+            to_download, folder, jobs=args.jobs, verbose=args.verbose,
+            term=term, progress=progress,
+        )
+        downloaded += len(to_download) - len(failed)
+        errors += len(failed)
+        failures.extend((str(folder / dest), reason) for dest, reason in failed)
+        transferred += progress.transferred()
+        seconds += progress.elapsed()
+        if interrupted:
+            break
+    if args.check:
+        if pending:
+            print("\n  Run the same command without --check to fetch them; "
+                  "a file with a wrong hash is replaced.")
+            sys.exit(1)
+        return True
+    if args.dry_run:
+        return True
+    _report_outcome(
+        [folder for folder, _entries in plan], downloaded, up_to_date_count, errors,
+        0, interrupted, failures=failures, transferred=transferred, seconds=seconds,
+    )
+    return True
+
+
 def do_standalone_copies(
     manifest: dict, bios_path: Path, os_type: str,
     extra_dirs: dict[str, Path] | None = None,
@@ -3774,22 +3978,7 @@ def do_standalone_copies(
         if not sources:
             continue
 
-        # Resolve target directories with WSL fallback
-        targets = entry.get("targets", {}).get(os_type, [])
-        if not targets and os_type == "wsl":
-            targets = entry.get("targets", {}).get("linux", [])
-
-        target_dirs = [
-            Path(os.path.expandvars(os.path.expanduser(t))) for t in targets
-        ]
-        extra_root = (extra_dirs or {}).get(entry.get("emulator", ""))
-        if extra_root is not None:
-            subdir = PurePosixPath(entry.get("file", "")).parent
-            extra = extra_root if str(subdir) == "." else extra_root / subdir
-            if extra not in target_dirs:
-                target_dirs.append(extra)
-
-        for target_dir in target_dirs:
+        for target_dir in _copy_targets(entry, os_type, extra_dirs):
             if not target_dir.is_dir():
                 skipped += len(sources)
                 continue
@@ -3925,7 +4114,7 @@ def _default_dest(os_type: str, platform_name: str) -> Path | None:
     return DEFAULT_DESTS.get(platform_name)
 
 
-def _manual_usage_hint(os_type: str) -> list[str]:
+def _manual_usage_hint(os_type: str, listing: str = "") -> list[str]:
     """How to name the platform and directory when nothing is detected.
 
     In the form the run was started with: a one-liner user has no
@@ -3937,6 +4126,15 @@ def _manual_usage_hint(os_type: str) -> list[str]:
     }.get(os_type, "~/.config/retroarch/system")
     hint = Invocation()
     hint.os_type, hint.options = os_type, _INVOCATION.options
+    if listing:
+        # A listing reads a platform's list and writes nothing: --dest is
+        # not needed, and a rebuilt install command dropped the listing
+        # and started a 6.5 GB download.
+        return [
+            "  Name the platform whose list to print, for example:",
+            f"    {hint.command('retroarch', None)} {listing}",
+            f"  The platforms: {hint.launcher()} --list-platforms",
+        ]
     return [
         "  Use --platform and --dest to specify manually, for example:",
         f"    {hint.command('retroarch', example)}",
@@ -4094,8 +4292,24 @@ def _same_choice_hint(plat: str, systems: list[str], cores: list[str], regions: 
     return " ".join(parts)
 
 
+def system_aliases(manifest: dict | None) -> dict[str, str]:
+    """The platform's own names for its systems, each with the system id."""
+    return {
+        alias: system
+        for system, names in ((manifest or {}).get("system_names") or {}).items()
+        for alias in names
+    }
+
+
+def _system_label(name: str, manifest: dict | None) -> str:
+    """A system id with the names the platform gives it: nintendo-gba (gba)."""
+    names = ((manifest or {}).get("system_names") or {}).get(name)
+    return f"{name} ({', '.join(names)})" if names else name
+
+
 def _print_choices(
-    plat: str, files: list[dict], omitted: list[dict], systems: bool
+    plat: str, files: list[dict], omitted: list[dict], systems: bool,
+    manifest: dict | None = None,
 ) -> None:
     """What --system or --core accepts for a platform, with what each holds."""
     choices = available_choices(files, omitted)
@@ -4103,14 +4317,15 @@ def _print_choices(
     if not names:
         print(f"  {plat} records no {'systems' if systems else 'cores'}")
         return
-    width = min(max(len(name) for name in names), 40)
+    labels = {name: _system_label(name, manifest) if systems else name for name in names}
+    width = min(max(len(label) for label in labels.values()), 40)
     for name in names:
         held = (
             [f for f in files if _chosen(f, {name})]
             if systems
             else _filter_by_target([f for f in files if f.get("cores") is not None], [name])
         )
-        print(f"  {name:<{width}}  {_sized(held)}")
+        print(f"  {labels[name]:<{width}}  {_sized(held)}")
 
 
 def emulator_names(manifest: dict, files: list[dict], omitted: list[dict]) -> dict[str, str]:
@@ -4300,7 +4515,8 @@ def _narrow_to_emulators(
 
 
 def _requested_narrowing(
-    args: argparse.Namespace, plat: str, files: list[dict], omitted: list[dict]
+    args: argparse.Namespace, plat: str, files: list[dict], omitted: list[dict],
+    manifest: dict | None = None,
 ) -> tuple[list[str], list[str], list[str]] | None:
     """The systems, cores and regions named on the command line, checked."""
     if not (args.system or args.core or args.region):
@@ -4317,7 +4533,9 @@ def _requested_narrowing(
         sys.exit(1)
     choices = available_choices(files, omitted)
     try:
-        systems = resolve_choices(args.system or [], choices["systems"], "system")
+        systems = resolve_choices(
+            args.system or [], choices["systems"], "system", system_aliases(manifest)
+        )
         cores = resolve_choices(args.core or [], choices["cores"], "core")
         regions = resolve_regions(args.region or [])
     except ValueError as exc:
@@ -4539,6 +4757,30 @@ def main() -> None:
             sys.stdout = real_stdout
 
 
+def _missing_dest(dest: Path, ask: bool) -> None:
+    """Say that a --dest folder does not exist before anything goes there.
+
+    A typo (~/.config/retroarh/system) was created with every missing
+    parent, filled, and reported done in a folder no platform reads, and
+    --check said only "0/7 present". One missing level is a BIOS folder not
+    made yet and is created. Several make a path that may be mistyped:
+    at a terminal the run asks first, and the answer defaults to no.
+    """
+    if dest.exists():
+        return
+    nearest = dest.absolute()
+    while not nearest.exists() and nearest.parent != nearest:
+        nearest = nearest.parent
+    missing = len(dest.absolute().relative_to(nearest).parts)
+    print(f"  {dest} does not exist. The nearest folder that does: {nearest}")
+    if missing > 1 and ask:
+        answer = _ask(f"  Create {_plural(missing, 'folder')} under {nearest}? [y/N] ")
+        if not answer.strip().lower().startswith("y"):
+            print("  Nothing installed. Check the folder named with --dest, then run "
+                  "the command again.")
+            sys.exit(2)
+
+
 def _no_core_found(plat: str, bios_path: Path, searched: list[Path], dest_given: bool) -> None:
     """Refuse --installed-cores with no core, and say how to point at them.
 
@@ -4679,8 +4921,22 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
         platforms = detect_platforms(os_type)
         if not platforms:
             print("  No supported platform detected.")
+            # Standalone emulators read their BIOS from folders of their own,
+            # which the file lists name: an ES-DE user with DuckStation and
+            # PCSX2 was sent to RetroArch's folder, which nothing here reads.
+            narrowing = (args.system or args.core or args.emulator or args.region
+                         or args.target or args.installed_cores)
+            if not listing and not narrowing and _install_standalone_folders(
+                args, os_type, term, interactive
+            ):
+                return
             if not interactive or listing:
-                for line in _manual_usage_hint(os_type):
+                asked = next((flag for flag, on in (
+                    ("--list-systems", args.list_systems), ("--list-cores", args.list_cores),
+                    ("--list-emulators", args.list_emulators),
+                    ("--list-targets", args.list_targets),
+                ) if on), "")
+                for line in _manual_usage_hint(os_type, asked):
                     print(line)
                 sys.exit(1)
             platforms = _prompt_manual_platform(os_type)
@@ -4689,6 +4945,9 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
 
     if len(platforms) > 1 and not listing and interactive:
         platforms = _prompt_platform_choice(platforms)
+
+    if args.dest is not None and not listing:
+        _missing_dest(args.dest, interactive and not (args.check or args.dry_run or args.yes))
 
     total_downloaded = 0
     total_up_to_date = 0
@@ -4861,7 +5120,7 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                 args.emulator, manifest, plat_name, files, omitted_files
             )
 
-        selection = _requested_narrowing(args, plat_name, files, omitted_files)
+        selection = _requested_narrowing(args, plat_name, files, omitted_files, manifest)
         if (
             selection is None
             and interactive
@@ -4898,7 +5157,7 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
             print(f"  Narrowed {before} -> {len(files)} files")
 
         if args.list_systems or args.list_cores:
-            _print_choices(plat_name, files, omitted_files, args.list_systems)
+            _print_choices(plat_name, files, omitted_files, args.list_systems, manifest)
             continue
 
         total_size = sum(f.get("size", 0) for f in files)
@@ -5031,6 +5290,10 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
             print(f"\nDownloading {len(to_download)} files ({format_size(dl_size)})...")
             print("  Press Ctrl+C to stop. Running the same command again "
                   "carries on from here.")
+            # Checked before the folder is created: a run stopped for space
+            # left an empty BIOS folder behind.
+            _check_free_space(bios_path, dl_size, plat_name, 1 if total_downloaded else 2)
+            created = not bios_path.exists()
             try:
                 bios_path.mkdir(parents=True, exist_ok=True)
             except OSError as exc:
@@ -5043,7 +5306,8 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                 # as when it exists read-only; 1 once an earlier platform
                 # of the run installed something.
                 sys.exit(1 if total_downloaded else 2)
-            _check_free_space(bios_path, dl_size, plat_name)
+            if created:
+                print(f"  Created {bios_path}")
             progress = Progress(len(to_download), dl_size, term)
             failed, interrupted = download_files(
                 to_download, bios_path, jobs=args.jobs, verbose=args.verbose,
@@ -5102,10 +5366,18 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                 )
             total_errors += copy_failed
         elif manifest.get("standalone_copies") and not args.check:
-            print(
-                "\nStandalone copies skipped "
-                "(use --standalone-copies to opt in)."
+            # Said only where it concerns this machine: "skipped" printed on
+            # every run read as an incident, and named no emulator.
+            lb_root = launchbox_root(os_type)
+            folders = standalone_folders_here(
+                manifest, os_type, launchbox_bios_dirs(lb_root) if lb_root else None
             )
+            if folders:
+                print("\nStandalone emulator folders found here:")
+                for folder in folders:
+                    print(f"  {folder}")
+                print("  --standalone-copies also copies the BIOS files and keys "
+                      "they read into them.")
 
     sys.stdout = real_stdout
     # A check scripted as `--check && launch` reads the exit code only.

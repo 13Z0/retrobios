@@ -74,7 +74,7 @@ from common import (
 import packresolve
 from refresh_data_dirs import cache_lock, hold_data_dirs
 import region as region_mod
-from manifestselect import SelectionIndex
+from manifestselect import SelectionIndex, native_system_names
 import slot as slot_mod
 import slots
 import split_pack
@@ -1229,12 +1229,12 @@ def generate_pack(
           undecidable_slots=slot_undecidable,
           narrowings=narrowings,
           system_filter=system_filter,
-          bios_paths=[
-              str(detect.get("bios_path", ""))
-              for detect in (
-                  _pack_registry.get(platform_name, {}).get("install", {}) or {}
-              ).get("detect", [])
-          ],
+          detect=(
+              _pack_registry.get(platform_name, {}).get("install", {}) or {}
+          ).get("detect", []),
+          standalone_copies=(
+              _pack_registry.get(platform_name, {}).get("install", {}) or {}
+          ).get("standalone_copies", []),
       )
       _write_generated_member(zf, "README.txt", readme_text)
 
@@ -4465,6 +4465,9 @@ def generate_manifest(
         ),
         "core_names": core_names,
         "system_cores": system_cores,
+        # The names the platform itself gives its systems (Batocera's psx),
+        # which --system accepts beside the ids.
+        "system_names": native_system_names(config, list(pack_systems)),
         "files": manifest_files,
     }
     if data_directories:

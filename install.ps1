@@ -11,7 +11,7 @@
 
     $ErrorActionPreference = "Stop"
     $defaultInstallUrl = "https://raw.githubusercontent.com/Abdess/retrobios/main/install.py"
-    $defaultInstallSha256 = "1cf3bd0d3985e3a728513be75cb80682fe1e7a9224da6437e8f1cd9b2a3eedb1"
+    $defaultInstallSha256 = "041ac17cefaccb9114393d5aaa811ee4d096bed9279ab279fd7f9561beaabe14"
     $maximumInstallerBytes = 2MB
     $installerExit = 0
     $installer = if ($PSScriptRoot) { Join-Path $PSScriptRoot "install.py" } else { $null }
@@ -64,24 +64,51 @@
             $installer = $temporary
         }
 
-        $launcher = @()
-        $python = Get-Command py -ErrorAction SilentlyContinue
-        if ($python) {
-            $launcher = @("-3")
-        } else {
-            $python = Get-Command python3 -ErrorAction SilentlyContinue
-            if (-not $python) {
-                $python = Get-Command python -ErrorAction SilentlyContinue
+        # The py launcher first, then python3 and python. The Microsoft Store
+        # places a python.exe that only points at the Store: it fails the
+        # version check like a missing one.
+        $findPython = {
+            $found = Get-Command py -ErrorAction SilentlyContinue
+            if ($found) { return ,@($found, @("-3")) }
+            foreach ($name in @("python3", "python")) {
+                $found = Get-Command $name -ErrorAction SilentlyContinue
+                if ($found) { return ,@($found, @()) }
             }
+            return $null
+        }
+        $usable = {
+            param($candidate)
+            if (-not $candidate) { return $false }
+            $arguments = $candidate[1]
+            & $candidate[0].Source @arguments -c "import sys; raise SystemExit(sys.version_info < (3, 8))" | Out-Null
+            return ($LASTEXITCODE -eq 0)
         }
         $needPython = "Python 3.8 or newer is required. Install it with " +
             "'winget install Python.Python.3.12' or from https://www.python.org/downloads/ " +
             "(tick 'Add python.exe to PATH'), then open a new PowerShell window and run this command again."
-        if (-not $python) {
-            throw $needPython
+        $candidate = & $findPython
+        if (-not (& $usable $candidate)) {
+            # winget ships with Windows 10 and 11: at a console the bootstrap
+            # offers to run the install the message names, then carries on.
+            $winget = Get-Command winget -ErrorAction SilentlyContinue
+            if ($winget -and -not [Console]::IsInputRedirected) {
+                $answer = Read-Host "Python 3.8 or newer is required. Install Python 3.12 now with winget? [Y/n]"
+                if ($answer -notmatch '^\s*[nNqQ]') {
+                    & $winget.Source install --id Python.Python.3.12 --exact --source winget `
+                        --accept-package-agreements --accept-source-agreements
+                    # The installer adds Python to the PATH of new sessions:
+                    # this one reads it again from the registry.
+                    if ($env:OS -eq "Windows_NT") {
+                        $env:Path = [Environment]::GetEnvironmentVariable("Path", "Machine") + ";" +
+                            [Environment]::GetEnvironmentVariable("Path", "User")
+                    }
+                    $candidate = & $findPython
+                }
+            }
+            if (-not (& $usable $candidate)) { throw $needPython }
         }
-        & $python.Source @launcher -c "import sys; raise SystemExit(sys.version_info < (3, 8))"
-        if ($LASTEXITCODE -ne 0) { throw $needPython }
+        $python = $candidate[0]
+        $launcher = $candidate[1]
         # The installer rebuilds this command in its hints, and the user has
         # no install.py of their own to run.
         $previousBootstrap = $env:RETROBIOS_BOOTSTRAP

@@ -18,7 +18,7 @@ esac
 TEMP_INSTALLER=""
 TEMP_DIRECTORY=""
 DEFAULT_INSTALL_URL="https://raw.githubusercontent.com/Abdess/retrobios/main/install.py"
-DEFAULT_INSTALL_SHA256="1cf3bd0d3985e3a728513be75cb80682fe1e7a9224da6437e8f1cd9b2a3eedb1"
+DEFAULT_INSTALL_SHA256="041ac17cefaccb9114393d5aaa811ee4d096bed9279ab279fd7f9561beaabe14"
 MAX_INSTALLER_BYTES=2097152
 
 cleanup() {
@@ -58,8 +58,15 @@ if [ -z "$INSTALLER" ] || [ ! -f "$INSTALLER" ]; then
         --connect-timeout 30 --retry 2 "$install_url" --output "$TEMP_INSTALLER"
     }
   elif command -v wget >/dev/null 2>&1; then
+    # BusyBox wget (Alpine, the RomM image) has no --https-only and refuses
+    # the whole command over it (networking/wget.c wget_longopts). The URL
+    # itself is checked to be https above, and the SHA-256 below decides.
+    https_only=""
+    if wget --help 2>&1 | grep -q -- '--https-only'; then
+      https_only="--https-only"
+    fi
     fetch() {
-      wget --quiet --https-only --timeout=30 --tries=3 \
+      wget --quiet ${https_only:+"$https_only"} --timeout=30 --tries=3 \
         --output-document="$TEMP_INSTALLER" "$install_url"
     }
   else
@@ -111,17 +118,65 @@ if [ -z "$INSTALLER" ] || [ ! -f "$INSTALLER" ]; then
   INSTALLER="$TEMP_INSTALLER"
 fi
 
-PYTHON=""
-for command_name in python3 python; do
-  if command -v "$command_name" >/dev/null 2>&1 \
-    && "$command_name" -c 'import sys; raise SystemExit(sys.version_info < (3, 8))' 2>/dev/null; then
-    PYTHON=$command_name
-    break
+find_python() {
+  PYTHON=""
+  for command_name in python3 python; do
+    if command -v "$command_name" >/dev/null 2>&1 \
+      && "$command_name" -c 'import sys; raise SystemExit(sys.version_info < (3, 8))' 2>/dev/null; then
+      PYTHON=$command_name
+      return 0
+    fi
+  done
+  return 1
+}
+
+# The command that installs Python here, named for this system: Termux has
+# no sudo and installs with pkg, macOS has no apt.
+python_install_command() {
+  case "${TERMUX_VERSION:-}:${PREFIX:-}" in
+    ?*:*|*com.termux*) echo "pkg install python"; return ;;
+  esac
+  if [ "$(uname -s 2>/dev/null)" = "Darwin" ]; then
+    echo "xcode-select --install"
+    return
   fi
-done
+  os_ids=""
+  if [ -r /etc/os-release ]; then
+    os_ids=$(sed -n 's/^ID\(_LIKE\)\{0,1\}=//p' /etc/os-release | tr -d '"' | tr '\n' ' ')
+  fi
+  for os_id in $os_ids; do
+    case "$os_id" in
+      debian|ubuntu) echo "sudo apt install python3"; return ;;
+      fedora|rhel|centos) echo "sudo dnf install python3"; return ;;
+      arch) echo "sudo pacman -S python"; return ;;
+      opensuse*|suse) echo "sudo zypper install python3"; return ;;
+      alpine) echo "apk add python3"; return ;;
+    esac
+  done
+  echo ""
+}
+
+if ! find_python; then
+  install_command=$(python_install_command)
+  # Termux installs without root: at a terminal, the bootstrap offers to run it.
+  if [ "$install_command" = "pkg install python" ] && (: </dev/tty) 2>/dev/null; then
+    printf 'Python 3.8 or newer is required. Install it now with "%s"? [Y/n] ' \
+      "$install_command" >/dev/tty
+    read -r answer </dev/tty || answer="n"
+    case "$answer" in
+      [Nn]*) ;;
+      *) pkg install -y python </dev/tty && find_python || true ;;
+    esac
+  fi
+fi
 if [ -z "$PYTHON" ]; then
   echo "Error: Python 3.8 or newer is required." >&2
-  echo "  Install it, then run this command again. On Debian or Ubuntu: sudo apt install python3" >&2
+  if [ -n "$install_command" ]; then
+    echo "  Install it with: $install_command" >&2
+    echo "  Then run this command again." >&2
+  else
+    echo "  Install it with this system's package manager, then run this command again." >&2
+  fi
   exit 1
 fi
 

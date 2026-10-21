@@ -62,8 +62,13 @@ the same way: waiting five minutes settles it. Any change to `install.py`
 therefore means recomputing that pin in both wrappers.
 
 They locate a Python 3.8 or newer interpreter (`python3` then `python` on
-POSIX, `py -3` then `python3` then `python` on Windows) and refuse to continue
-without one. `install.sh` needs `curl` or `wget` and `sha256sum` or `shasum`.
+POSIX, `py -3` then `python3` then `python` on Windows). Without one,
+`install.sh` names the command that installs it on the system it runs on
+(`pkg install python` in Termux, which it offers to run since Termux installs
+without root, `xcode-select --install` on macOS, apt, dnf, pacman, zypper or apk
+from `/etc/os-release`), and `install.ps1` at a console offers to run `winget
+install Python.Python.3.12`, then reads the new PATH and carries on.
+`install.sh` needs `curl` or `wget` (GNU or BusyBox) and `sha256sum` or `shasum`.
 Windows PowerShell 5.1 still negotiates SSL 3.0 and TLS 1.0 by default and
 GitHub refuses both, so `install.ps1` raises the floor to TLS 1.2 before
 downloading, and `install.sh` pins the same floor with `curl --tlsv1.2`.
@@ -204,7 +209,11 @@ refusal suggests the closest names (`playstation` gives `sony-playstation`) and
 the option that lists them all. Names are matched on letters and digits, so
 `--platform "MiSTer FPGA"` and `--system "Sony PlayStation"` are read as the
 site writes them. A system name that itself contains commas, as Recalbox's
-`msx1,msx2,msxturbor` does, is read as one name.
+`msx1,msx2,msxturbor` does, is read as one name. The name a platform gives a
+system itself is accepted too: on Batocera `--system psx` is
+`sony-playstation` and `--system gba` is `nintendo-gba`, the names its
+`roms/` folders carry. They come from the platform's own file, and
+`--list-systems` prints them beside each system (`nintendo-gba (gba)`).
 
 The region rule is the one `generate_pack.py --region` applies, and a test
 holds the two to the same file list. In each group of regional alternatives
@@ -224,7 +233,7 @@ what the options name, everything by default.
 | Option | Effect |
 |--------|--------|
 | `--platform NAME` | Install for this platform instead of the detected one. Unknown names are refused with the available list |
-| `--dest PATH` | Destination directory, overriding detection. Without `--platform`, the file list is the platform detected here: at a terminal the installer asks, Enter taking the one found, and otherwise it uses the one found, RetroArch's when nothing is found, and refuses when several are. The run prints whose list it is |
+| `--dest PATH` | Destination directory, overriding detection. Without `--platform`, the file list is the platform detected here: at a terminal the installer asks, Enter taking the one found, and otherwise it uses the one found, RetroArch's when nothing is found, and refuses when several are. The run prints whose list it is. A folder that does not exist is named with the nearest one that does, then created. When more than its last level is missing (a mistyped path), a run at a terminal asks first, and the answer defaults to no |
 | `--target NAME` | Keep only the files the cores of that hardware target need, and the systems they emulate. An unknown target is refused rather than ignored, since carrying on would install everything. On Batocera, Recalbox, ROCKNIX and Lakka the board is read from the system (`batocera.arch`, `recalbox.arch`, `HW_DEVICE`, `LIBREELEC_DEVICE` or `LIBREELEC_PROJECT`) and applied when no `--target` is given |
 | `--every-board` | Install the files of every board instead of the one the system names, for a card that moves between devices |
 | `--installed-cores` | Keep only what the cores already installed read (RetroArch, Lakka, RetroPie). See [Installed cores](#installed-cores) |
@@ -305,7 +314,7 @@ not already found that way.
 |----------|----------|----------------|
 | `/media/fat/MiSTer` | MiSTer FPGA | `/media/fat/games` |
 | `C:\RetroBat\bios` or `%USERPROFILE%\RetroBat\bios` | RetroBat | the same |
-| `~/Emulation/bios` | EmuDeck | the same |
+| `~/Emulation/bios` (Linux and macOS) | EmuDeck | the same |
 | `~/.var/app/net.retrodeck.retrodeck` | RetroDECK | `~/retrodeck` |
 | `/romm/library/bios` | RomM | the same |
 | `/romm/config/config.yml` | RomM | `/romm/library/bios`, laid out by its firmware template |
@@ -326,7 +335,7 @@ WSL does not pass them. A forced `--platform retrobat` falls back to
 | Evidence | Platform | BIOS directory |
 |----------|----------|----------------|
 | `HKCU\SOFTWARE\RetroBat` `LatestKnownInstallPath`, which `RetroBat.exe` writes on every start (read through `reg.exe` under WSL) | RetroBat | that folder + `\bios`, before the fixed folders above |
-| `~/.config/EmuDeck/settings.sh` | EmuDeck | `emulationPath` + `/bios` |
+| `~/.config/EmuDeck/settings.sh` (Linux and macOS) | EmuDeck | `emulationPath` + `/bios` |
 | `%APPDATA%\EmuDeck\settings.ps1`, else `%USERPROFILE%\EmuDeck\settings.ps1` | EmuDeck | `$emulationPath` + `\bios`, `C:\Emulation\bios` when it names none (a network install: the `$VolName` share + `\Emulation\bios`) |
 | `~/.var/app/net.retrodeck.retrodeck/config/retrodeck/retrodeck.json` | RetroDECK | `paths.rd_home_path`, falling back to the pre-migration `retrodeck.cfg` and its `rdhome` |
 | `~/.var/app/org.libretro.RetroArch/config/retroarch/retroarch.cfg` | RetroArch (Flatpak) | `system_directory` |
@@ -365,6 +374,15 @@ ES-DE and LaunchBox are reported when present and nothing is written to them:
 they reference emulators rather than owning a BIOS directory. ES-DE is looked
 up at `$ESDE_APPDATA_DIR` or `~/ES-DE`, the two locations its own
 `getAppDataDirectory` resolves.
+
+When no platform is found but standalone emulators are (an ES-DE setup with
+DuckStation and PCSX2, for one), the installer fills their own BIOS folders:
+the folders of the [standalone copies](#standalone-copies) list that exist on
+the machine, with the files that list names, taken from the EmuDeck file list
+and then RetroArch's. At a terminal it asks first. `--check` and `--dry-run`
+work as for a platform. With `--system`, `--core`, `--emulator`, `--region` or
+`--target` the run asks for a platform as before, since those name a
+platform's lists.
 
 When a platform named with `--platform` is not found on the machine, the
 destination falls back to the directory its detection looks for:
@@ -417,6 +435,8 @@ that is not installed. A destination that is already a symbolic link is
 replaced by the file rather than written through: a write through the link
 would land outside the folder the user opted into. The summary counts each
 copy as copied, skipped (folder absent) or failed, and names every failure.
+A run without the flag lists the emulator folders of this list that exist on
+the machine, and says nothing when there are none.
 
 ## RomM firmware layout
 
@@ -534,7 +554,7 @@ fields, the installer refuses to narrow rather than install everything.
 |------|---------|
 | `0` | everything asked for is installed or already up to date |
 | `1` | a failure: the one-liner could not download or verify `install.py`, or found no Python 3.8 (nothing was run), an unusable base URL, an unknown platform or target, `--installed-cores` with no core found, a manifest that fails validation, a fetch that never succeeded, no platform to install for in a non-interactive run, some files failed while others installed, or `--check` found files to fetch |
-| `2` | nothing was installed: every file the run tried failed (a BIOS folder that cannot be written, for one). Also an option the installer refused before any download: an unknown option, `--jobs` outside 1 to 32, `--target` with `--every-board`. The message then starts with `install.py: error:` |
+| `2` | nothing was installed: every file the run tried failed (a BIOS folder that cannot be written, for one), the drive has too little free space for the download (checked before any folder is created), or the question about a `--dest` folder that does not exist was answered no. Also an option the installer refused before any download: an unknown option, `--jobs` outside 1 to 32, `--target` with `--every-board`. The message then starts with `install.py: error:` |
 | `130` | stopped with Ctrl+C, or with Ctrl+C or Ctrl+D at a question. Run the same command again to carry on |
 | `141` | the output was piped to a reader that closed early (`--list-platforms \| head`) |
 
