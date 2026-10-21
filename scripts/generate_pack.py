@@ -105,6 +105,22 @@ DEFAULT_BIOS_DIR = "bios"
 
 
 
+# Formats that are already compressed: deflating them again took 28 s of the
+# RetroArch build for 2.1 GB of members and saved 9.6 MB (0.45 %), 16 GB and
+# about 72 MB across all packs. Measured per extension on the 2026-10-20
+# packs; .pk3 (3 %), .jpg (6 %), .avi (44 %) and .jar (60 %) still shrink
+# and stay deflated. Chosen by name alone, so a pack stays a function of its
+# inputs.
+_STORED_EXTENSIONS = frozenset({".7z", ".chd", ".ogg", ".pk4", ".png", ".zip"})
+
+
+def _member_compression(arcname: str) -> int:
+    """ZIP_STORED for a member whose format is already compressed."""
+    if os.path.splitext(arcname)[1].lower() in _STORED_EXTENSIONS:
+        return zipfile.ZIP_STORED
+    return zipfile.ZIP_DEFLATED
+
+
 def _add_pack_member(zf: zipfile.ZipFile, source_path: str, arcname: str) -> None:
     """Add a file to the pack with metadata that does not depend on the build.
 
@@ -117,7 +133,7 @@ def _add_pack_member(zf: zipfile.ZipFile, source_path: str, arcname: str) -> Non
     because some members are firmware images of several hundred megabytes.
     """
     info = zipfile.ZipInfo(filename=arcname, date_time=_FIXED_DATE_TIME)
-    info.compress_type = zipfile.ZIP_DEFLATED
+    info.compress_type = _member_compression(arcname)
     # The executable bit is the one permission worth carrying: the RetroDECK
     # pack ships the two Voxatron engine binaries, and a user who extracts
     # them at 644 cannot run them. Git records the bit, so reading it from
@@ -1218,7 +1234,7 @@ def _extract_zip_to_archive(
             member = zipfile.ZipInfo(
                 filename=target_path, date_time=_FIXED_DATE_TIME
             )
-            member.compress_type = zipfile.ZIP_DEFLATED
+            member.compress_type = _member_compression(target_path)
             member.external_attr = 0o100644 << 16
             target_zf.writestr(member, data)
 

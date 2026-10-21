@@ -413,5 +413,41 @@ class ManifestInjectionIsAtomic(unittest.TestCase):
             )
 
 
+class PackMemberCompression(unittest.TestCase):
+    """A pack deflated every member, archives and PNGs included: 16 GB of
+    already-compressed data deflated again on each full build for 0.18 % of
+    the packs' size."""
+
+    def _pack(self, tmp: Path, name: str) -> Path:
+        from scripts.generate_pack import _add_pack_member
+
+        source = tmp / "member"
+        source.write_bytes(b"\x00" * 4096)
+        pack = tmp / name
+        with zipfile.ZipFile(pack, "w", zipfile.ZIP_DEFLATED) as zf:
+            for arcname in ("bios/a.zip", "bios/b.PNG", "bios/c.bin", "bios/d.pk3"):
+                _add_pack_member(zf, str(source), arcname)
+        return pack
+
+    def test_compressed_formats_are_stored_and_the_rest_deflated(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            pack = self._pack(Path(tmp), "pack.zip")
+            with zipfile.ZipFile(pack) as zf:
+                kinds = {i.filename: i.compress_type for i in zf.infolist()}
+        self.assertEqual(kinds, {
+            "bios/a.zip": zipfile.ZIP_STORED,
+            "bios/b.PNG": zipfile.ZIP_STORED,
+            "bios/c.bin": zipfile.ZIP_DEFLATED,
+            "bios/d.pk3": zipfile.ZIP_DEFLATED,
+        })
+
+    def test_the_pack_stays_byte_reproducible(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            first = self._pack(Path(tmp), "one.zip").read_bytes()
+            time.sleep(1.1)
+            second = self._pack(Path(tmp), "two.zip").read_bytes()
+        self.assertEqual(hashlib.sha256(first).hexdigest(), hashlib.sha256(second).hexdigest())
+
+
 if __name__ == "__main__":
     unittest.main()
