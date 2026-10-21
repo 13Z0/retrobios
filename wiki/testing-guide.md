@@ -266,8 +266,10 @@ to the way the project writes:
   number with its criterion says more.
 - Headings in sentence case, never repeating the site name.
 - In emulator profiles, no verdict on another project's file: "phantom",
-  "misleading", "bogus", "typo", "has errors", "incorrectly says". The note
-  states what that file declares and what the code reads.
+  "misleading", "bogus", "typo", "has errors", "incorrectly says", and on a
+  line naming a .info, core-info or System.dat no "is correct", "is
+  accurate", "still declares", "omits" or "missing". The note states what
+  that file declares and what the code reads.
 
 Formatting stays: bold labels, lists, tables and admonitions make a page
 easier to use. When markup shows raw on the site, the rendering is fixed and

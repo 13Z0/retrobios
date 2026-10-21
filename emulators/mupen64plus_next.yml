@@ -13,8 +13,6 @@ cores: [mupen64plus_next, mupen64plus_next_develop, mupen64plus_next_gles3, mupe
 files:
   - name: "IPL.n64"
     path: "Mupen64plus/IPL.n64"
-    standalone_path: "64DD_IPL.bin"
-    aliases: ["64DD_IPL.bin"]
     size: 4194304
     required: false
     description: "64DD IPL ROM"

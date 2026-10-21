@@ -14,4 +14,4 @@ notes: >
   WebAssembly-based fantasy console. 320x240 screen, 32-color palette,
   256KB memory. The WASM runtime (platform + loader modules) is compiled
   to C via wasm2c and embedded in the binary. No external files required.
-  firmware_count=0 in .info is correct.
+  The .info declares firmware_count=0.

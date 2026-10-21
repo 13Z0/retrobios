@@ -51,7 +51,6 @@ notes: |
 
 files:
   - name: us_scd1_9210.bin
-    aliases: [bios_CD_U.bin]
     system: sega-megacd
     region: [north-america, latin-america]
     required: true
@@ -60,7 +59,6 @@ files:
     source_ref: "Fusion.exe 0x44b662-0x44b670 (default path), 0x478877-0x4788d6 (open, message, fread 0x20000)"
 
   - name: jp_mcd1_9111.bin
-    aliases: [bios_CD_J.bin]
     system: sega-megacd
     region: [japan]
     required: true
@@ -69,7 +67,6 @@ files:
     source_ref: "Fusion.exe 0x44b676 (default path), 0x4788f9-0x478959 (open, message, fread 0x20000)"
 
   - name: eu_mcd1_9210.bin
-    aliases: [bios_CD_E.bin]
     system: sega-megacd
     region: [europe, oceania]
     required: true

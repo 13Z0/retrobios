@@ -17,7 +17,7 @@ notes: |
   All entries are optional: without a class library, the core runs a built-in
   modeless stars demo but cannot execute J2ME software.
   The .info declares firmware_count=8 but the code defines 10 search names
-  (squirreljme-{version}-test.jar and squirreljme-test.jar are missing from .info).
+  (the two not in the .info are squirreljme-{version}-test.jar and squirreljme-test.jar).
 
 files:
   - name: "squirreljme-0.3.0-fast.jar"

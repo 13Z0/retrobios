@@ -91,6 +91,7 @@ notes: |
 files:
   # Data files
   - name: hiscore.dat
+    load_from: working_directory
     installed_on: [recalbox]
     required: false
     category: game_data

@@ -20,8 +20,8 @@ notes: |
 
   The fork sets appdir to the RetroArch system directory root
   (retro_host.c:216-217), unlike the upstream which appends /dc
-  (upstream retro_host.c:196-198). The .info still declares dc/ prefix paths
-  matching the upstream, not this fork.
+  (upstream retro_host.c:196-198). The .info declares dc/ prefix paths, the
+  layout the upstream reads.
 
   boot.bin is validated against four known MD5 hashes (boot.c:25-30).
   Validation failure logs a warning but the core continues via HLE.

@@ -30,18 +30,14 @@ notes: |
   ref: src/platform/core/src/loader/bios.cpp:17-48, src/platform/sdl/main.cpp:177-192,
        src/nba/src/core.cpp:42-44
 
-  ROCKNIX patches config.toml and keymap.toml to /storage/.config/nanoboyadvance/
-  and its config.toml sets bios_path = /storage/roms/bios/gba_bios.bin.
-
 files:
   - name: "bios.bin"
     path: "bios.bin"
-    aliases: ["gba_bios.bin"]
     system: nintendo-gba
     required: true
     size: 16384
     validation: [size]
     config_key: "general.bios_path"
     description: "Game Boy Advance BIOS"
-    note: "Any file name through general.bios_path or --bios, or bios.bin beside the executable when neither is set. ROCKNIX points the key at gba_bios.bin in its BIOS directory."
+    note: "Any file name through general.bios_path or --bios, or bios.bin beside the executable when neither is set."
     source_ref: "src/platform/core/src/loader/bios.cpp:17-48, src/platform/core/src/config.cpp:36, src/platform/sdl/main.cpp:177-192"

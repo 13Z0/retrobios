@@ -5453,6 +5453,109 @@ class AHashScanningCoreContradictsNoPlatform(unittest.TestCase):
         self.assertEqual(claimed, [])
 
 
+class AHashScanLabelNamesNoOtherDump(unittest.TestCase):
+    """A core that finds its firmware by content names no file, so each
+    entry name is a label. ares labelled its Famicom Disk System revision
+    (RP2C33-01, crc32 1c7ae5d5) disksys.rom, the name six NES cores read for
+    the RP2C33A-01A dump: on ROCKNIX the manifest put ares's revision at
+    disksys.rom for all of them. A label that another profile gives a
+    different dump is refused, the two dumps compared through the
+    collection's hash indexes."""
+
+    # Names the core's own code gives the image, not labels.
+    CODE_NAMED = {
+        ("bizhawk", "MSX.rom"):
+            "FirmwareDatabase.cs:362 names the image MSX.rom",
+        ("swanstation", "ps1_rom.bin"):
+            "the whole PS3 image is the file the PS3 itself names ps1_rom.bin, "
+            "beetle_psx reads its first 512 KB under the same name",
+    }
+
+    @staticmethod
+    def _identity(entry: dict, db: dict) -> tuple[set, set]:
+        raw: set = set()
+        sha1s: set = set()
+        indexes = db["indexes"]
+        for field, index in (("sha1", None), ("md5", "by_md5"),
+                             ("crc32", "by_crc32"), ("sha256", "by_sha256")):
+            value = entry.get(field)
+            values = value if isinstance(value, list) else [value] if value else []
+            for item in values:
+                for digest in str(item).lower().split(","):
+                    digest = digest.strip()
+                    if not digest:
+                        continue
+                    raw.add((field, digest))
+                    sha1 = digest if index is None else indexes[index].get(digest)
+                    if sha1 in db["files"]:
+                        sha1s.add(sha1)
+        return raw, sha1s
+
+    def test_labels_are_not_other_dumps_names(self):
+        import json
+
+        from scripts.common import load_emulator_profiles
+
+        if not (ROOT / "database.json").exists():
+            self.skipTest("database.json is not built")
+        db = json.loads((ROOT / "database.json").read_text(encoding="utf-8"))
+        profiles = load_emulator_profiles(str(ROOT / "emulators"))
+        by_name: dict[str, list[tuple[str, dict]]] = {}
+        for emulator, profile in profiles.items():
+            for entry in profile.get("files") or []:
+                for name in [entry.get("name"), *(entry.get("aliases") or [])]:
+                    if name:
+                        by_name.setdefault(str(name).casefold(), []).append((emulator, entry))
+        clashes = []
+        for emulator, profile in profiles.items():
+            if profile.get("found_by") != "content":
+                continue
+            for entry in profile.get("files") or []:
+                raw, sha1s = self._identity(entry, db)
+                if not sha1s:
+                    continue
+                for name in [entry.get("name"), *(entry.get("aliases") or [])]:
+                    if (emulator, name) in self.CODE_NAMED:
+                        continue
+                    for other, other_entry in by_name.get(str(name).casefold(), []):
+                        if other == emulator:
+                            continue
+                        other_raw, other_sha1s = self._identity(other_entry, db)
+                        if other_sha1s and not raw & other_raw and not sha1s & other_sha1s:
+                            clashes.append(f"{emulator} {name} is {other}'s name for another dump")
+        self.assertEqual(sorted(set(clashes)), [])
+
+
+class ANoteOutsideTheSystemDirCarriesLoadFrom(unittest.TestCase):
+    """mame2000 opens hiscore.dat, history.dat and mameinfo.dat from the
+    directory of the loaded content (src/libretro/fileio.c:1002-1014), and
+    mame2014 and mame2015 open hiscore.dat from the working directory
+    (src/emu/hiscore.c:330-337). Their notes said so, but no load_from did:
+    the entries claimed system/hiscore.dat and the RetroArch pack shipped a
+    file neither core opens there. A libretro entry whose note places the
+    read outside the system directory declares where."""
+
+    ELSEWHERE = re.compile(
+        r"\b(?:opened|read|loaded)\b[^.]*?\bfrom (?:the )?(?:working directory|"
+        r"ROM directory|content directory|directory of the loaded content)"
+        r"|IMAMEBASEPATH",
+        re.IGNORECASE,
+    )
+
+    def test_prose_and_load_from_agree(self):
+        offenders = []
+        for path in sorted((ROOT / "emulators").glob("*.yml")):
+            profile = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+            if profile.get("type") != "libretro":
+                continue
+            for entry in profile.get("files") or []:
+                if entry.get("path") or entry.get("load_from") or entry.get("mode") == "standalone":
+                    continue
+                if self.ELSEWHERE.search(str(entry.get("note") or "")):
+                    offenders.append(f"{path.name}: {entry.get('name')}")
+        self.assertEqual(offenders, [])
+
+
 class ReportsHoldTheDataTrees(unittest.TestCase):
     """Run on their own, the README, site and slot reports resolved against
     data/ without the shared hold, so a concurrent refresh could swap a tree
