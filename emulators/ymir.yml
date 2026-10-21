@@ -63,6 +63,7 @@ files:
     validation: [size]
     aliases: [mpr-17933.bin, saturn_bios.bin]
     description: "Saturn IPL ROM (BIOS). Any region accepted."
+    note: "The libretro port reads sega_101.bin, mpr-17933.bin and saturn_bios.bin from its system directory (kBiosFilenames)."
     source_ref:
       standalone: "apps/ymir-sdl3/src/util/rom_loader.cpp:9-22, apps/ymir-sdl3/src/app/rom_manager.cpp:14-53, libs/ymir-core/include/ymir/sys/memory_defs.hpp:9"
       libretro: "apps/ymir-libretro/src/libretro.cpp:305-309, apps/ymir-libretro/src/libretro.cpp:651-690, apps/ymir-libretro/src/libretro.cpp:692-703"
