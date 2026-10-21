@@ -877,6 +877,23 @@ their parent ROM devices. A set loaded by machines of one system gets
 system of the profile. The driver file is never used: `neogeo.cpp` declares
 the MVS and the AES. The output counts the sets in each case.
 
+A machine set no written entry lists is also seeded when a registered platform
+declares `<set>.zip` under one of the profile's systems (Batocera files
+`bbcb.zip` under `acorn-bbc-micro`). The set must be a machine of the release,
+not a device, and a set two platforms state under two different systems seeds
+nothing and is listed.
+
+The same walk files the support trees. Each `hash/<list>.xml` the release
+ships and a placed machine or slot card declares (`softwarelist`) is written
+under the `Software lists (generated from MAME -listxml)` comment, ahead of the
+device section, with the systems of those machines. A list no placed machine
+declares stays a member of the `hash/` entry. Each floppy sound sample gets the
+systems whose machines can instantiate a drive selecting its list: the form
+factor comes from the drive's `setup_characteristics` in the source, 3" drives
+take the 3.5" list and every other drive the 5.25" one, as
+`floppy_sound_samples::select` does. `plugins/` stays unfiled: every machine
+starts the Lua engine.
+
 A plain run (pipeline step 2a) that moves `mame.yml` to a new release
 downloads that release's `-listxml` into `.cache/dats/` and runs the device
 merge itself, so the BIOS root sets and the device sets name one release.

@@ -58,6 +58,13 @@ systems:
   - imax-macs
   - arcade
   - barcrest-mpu4
+  - capcom-zn1
+  - capcom-zn2
+  - konami-gv
+  - super-kaneko-nova
+  - alg-laserdisc
+  - exidy-maxaflex
+  - hyper-neogeo64
 
 notes: |
   Frozen snapshot of MAME 0.139 (mid-2010). Sourced from mame0139s.zip.

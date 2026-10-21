@@ -713,6 +713,28 @@ def _tree_url(repo: Repo, sha: str) -> str | None:
     return f"{repo.api_base}/repos/{repo.slug}/git/trees/{sha}?recursive=1"
 
 
+def list_directory(
+    repo: Repo, sha: str, path: str, cache_dir: str, offline: bool = False
+) -> list[str] | None:
+    """Names of the blobs directly under one directory at one revision.
+
+    One request for the directory alone, where the whole tree of a large
+    repository comes back truncated. None when the forge has no such call
+    or the directory does not exist there.
+    """
+    if repo.family != "github":
+        return None
+    url = f"{repo.api_base}/repos/{repo.slug}/git/trees/{sha}:{path.strip('/')}"
+    payload = _api(url, cache_dir, offline)
+    if not isinstance(payload, dict) or payload.get("truncated"):
+        return None
+    return sorted(
+        entry["path"]
+        for entry in payload.get("tree") or []
+        if isinstance(entry, dict) and entry.get("type") == "blob" and entry.get("path")
+    )
+
+
 TREE_PAGE_SIZE = 100
 MAX_TREE_PAGES = 50
 

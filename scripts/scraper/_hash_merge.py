@@ -21,6 +21,7 @@ from common import PROFILE_BACKUP_SUFFIX, write_text_atomic, yaml_load
 _MAME_RELEASE_RE = re.compile(r"^0\.\d+")
 _MAMEDEV = "https://github.com/mamedev/mame"
 DEVICE_SECTION = "  # --- Device ROM sets (generated from MAME -listxml) ---"
+SOFTLIST_SECTION = "  # --- Software lists (generated from MAME -listxml) ---"
 _FILES_END = re.compile(r"^\S", re.M)
 
 
@@ -553,9 +554,9 @@ def _append_new_entries(text: str, files: list[dict], original: str) -> str:
             lines.append(_format_contents(fe["contents"]))
 
     if lines:
-        # New BIOS root sets go before the generated device section, which
-        # runs to the end of the files list.
-        at = _device_section_start(text)
+        # New BIOS root sets go before the generated sections, which run to
+        # the end of the files list.
+        at = generated_start(text)
         if at is None:
             text = text.rstrip("\n") + "\n" + "\n".join(lines) + "\n"
         else:
@@ -568,6 +569,18 @@ def _device_section_start(text: str) -> int | None:
     """Offset of the generated device section header, if the profile has one."""
     match = re.search(rf"^{re.escape(DEVICE_SECTION)}$", text, re.M)
     return match.start() if match else None
+
+
+def _softlist_section_start(text: str) -> int | None:
+    """Offset of the generated software list section header, if any."""
+    match = re.search(rf"^{re.escape(SOFTLIST_SECTION)}$", text, re.M)
+    return match.start() if match else None
+
+
+def generated_start(text: str) -> int | None:
+    """Offset of the first generated section: what a reader wrote ends there."""
+    found = [at for at in (_softlist_section_start(text), _device_section_start(text)) if at is not None]
+    return min(found) if found else None
 
 
 def _device_contents(roms: list[dict], old: list[dict]) -> list[dict]:
@@ -641,7 +654,11 @@ def _set_section_systems(text: str, systems: dict[str, list[str]]) -> str:
     start = _device_section_start(text)
     if start is None:
         return text
-    head, section = text[:start], text[start:]
+    return text[:start] + _rewrite_systems(text[start:], systems)
+
+
+def _rewrite_systems(section: str, systems: dict[str, list[str]]) -> str:
+    """Rewrite the system fields of the named entries of one stretch of text."""
     out: list[str] = []
     current = ""
     in_list = False
@@ -661,7 +678,7 @@ def _set_section_systems(text: str, systems: dict[str, list[str]]) -> str:
         out.append(line)
         if current in systems and re.match(r"^    category:", line):
             out.extend(_system_lines(systems[current]))
-    return head + "\n".join(out)
+    return "\n".join(out)
 
 
 def _format_device_entry(name: str, device: dict, role: str) -> str:
@@ -760,6 +777,118 @@ def merge_mame_devices(
         shutil.copy2(path, path.with_suffix(PROFILE_BACKUP_SUFFIX))
         write_text_atomic(str(path), patched)
     return report
+
+
+def _softlist_section(profile: dict, lists: dict[str, list[str]], role: str) -> str:
+    """The generated software list section, one entry per list and tree.
+
+    A list takes the fields of each hash/ tree the profile delivers (a
+    bundled tree ships with the emulator, not in a pack) and the path of
+    that tree. Members the section names leave the tree's own entry.
+    """
+    trees = [
+        entry for entry in profile.get("files") or []
+        if entry.get("type") == "directory"
+        and str(entry.get("name")) == "hash/"
+        and not entry.get("bundled")
+    ]
+    blocks: list[str] = []
+    for tree in trees:
+        base = str(tree.get("path") or tree["name"])
+        for name, systems in sorted(lists.items()):
+            lines = [
+                f"  - name: {_yaml_scalar(name + '.xml')}",
+                f"    path: {_yaml_scalar(base + name + '.xml')}",
+            ]
+            if tree.get("mode"):
+                lines.append(f"    mode: {tree['mode']}")
+            lines += [
+                "    category: game_data",
+                "    required: false",
+                *_system_lines(systems),
+            ]
+            blocks.append("\n".join(lines))
+    if not blocks:
+        return ""
+    lead = [
+        SOFTLIST_SECTION,
+        "  # software_list_device::parse opens <list>.xml for each software list a",
+        "  # machine declares. Each list below is filed under the systems whose",
+        "  # machines declare it, a list no such machine declares stays with its",
+        "  # hash/ tree.",
+        f"  # ref: {role}src/emu/softlist_dev.cpp:281-313,",
+        f"  #      {role}src/frontend/mame/infoxml.cpp:2184-2198",
+    ]
+    return "\n".join(lead) + "\n\n" + "\n\n".join(blocks) + "\n"
+
+
+def merge_mame_support(
+    profile_path: str,
+    lists: dict[str, list[str]],
+    samples: dict[str, list[str]],
+    write: bool = False,
+) -> dict[str, list[str]]:
+    """File the software lists and the floppy samples of a MAME profile.
+
+    *lists* maps a software list to the systems whose machines declare it,
+    for the lists the release ships. They are written as the generated
+    software list section, ahead of the device section, and a refresh
+    rewrites the whole section. *samples* maps a floppy sample name to the
+    systems whose drives load it: each written entry named <sample>.wav
+    under a samples/floppy/ path gets them, and one no system loads gets
+    none.
+    """
+    path = Path(profile_path)
+    text = path.read_text(encoding="utf-8")
+    profile = yaml_load(text) or {}
+    role = mame_ref_role(profile)
+
+    original = text
+    start = _softlist_section_start(text)
+    if start is not None:
+        device = _device_section_start(text)
+        if device is not None and device > start:
+            end = device
+        else:
+            end_match = _FILES_END.search(text, text.index("\n", start) + 1)
+            end = end_match.start() if end_match else len(text)
+        text = text[:start] + text[end:]
+    section = _softlist_section(profile, lists, role)
+
+    head_end = generated_start(text)
+    head = text if head_end is None else text[:head_end]
+    written = yaml_load(head) or {}
+    sample_systems: dict[str, list[str]] = {}
+    for entry in written.get("files") or []:
+        name = str(entry.get("name") or "")
+        if "samples/floppy/" not in str(entry.get("path") or "") or not name.endswith(".wav"):
+            continue
+        wanted = samples.get(name[:-4], [])
+        if _entry_systems(entry) != wanted:
+            sample_systems[name] = wanted
+    head = _rewrite_systems(head, sample_systems) if sample_systems else head
+    rest = "" if head_end is None else text[head_end:]
+
+    if section and not rest:
+        files_at = re.search(r"^files:[ \t]*$", head, re.M)
+        if files_at is None or _FILES_END.search(head, files_at.end()):
+            raise ValueError(
+                "files: must be the last top-level key to hold a software list section"
+            )
+    patched = head.rstrip("\n") + "\n"
+    if section:
+        patched += "\n" + section
+    if rest:
+        patched += "\n" + rest
+
+    if write and patched != original:
+        shutil.copy2(path, path.with_suffix(PROFILE_BACKUP_SUFFIX))
+        write_text_atomic(str(path), patched)
+    return {
+        "lists": sorted(lists),
+        "samples": sorted(sample_systems),
+        "changed": [str(path)] if patched != original else [],
+    }
 
 
 def _add_source_refs(text: str, refs: dict[str, str]) -> str:

@@ -117,6 +117,17 @@ and merged into a profile, on an inline listxml and driver source. Covers:
   `systems:` written and rewritten by a refresh, a written entry's system
   kept, and a `--system` pick reading the entry's own systems through the gap
   report and the core extras
+- Seeds a platform file states: a machine of the release under one of the
+  profile's systems, a device, an unlisted system or a set stated two ways
+  seeding nothing
+- Support files: each software list filed under the systems whose machines
+  and slot cards declare it, one entry per list of the delivered `hash/`
+  tree, a pick keeping its lists and the unfiled ones, floppy samples filed
+  through the form factor each drive selects (3" falls back to 3.5", the
+  rest to 5.25"), a refresh rewriting the section and a second run changing
+  nothing
+- An entry's `system:` or `systems:` outside its profile's list refused by
+  the semantic check
 
 **test_fbneo_parser.** Tests the FBNeo C source parser that identifies
 `BDF_BOARDROM` sets. Same inline fixture approach.
@@ -150,8 +161,8 @@ replaced by an injected fetch function.
 
 **test_upstream.** Covers forge URL parsing for GitHub, GitLab and Forgejo,
 the content-addressed cache and its atomic write, revision and tag resolution,
-and tree comparison. The HTTP layer is replaced at module level, so nothing
-leaves the machine.
+tree comparison and the listing of one directory. The HTTP layer is replaced at
+module level, so nothing leaves the machine.
 
 ### Tests that read the working tree
 

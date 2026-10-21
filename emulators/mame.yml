@@ -196,14 +196,30 @@ files:
   # Floppy drive sounds, the default sample list of floppy_sound_device.
   # Each name is tried as <machine>/<name>.flac, floppy/<name>.flac, then the
   # same as .wav, directly or inside floppy.zip. One sample missing and
-  # load_samples fails, so the drives stay silent.
+  # load_samples fails, so the drives stay silent. Every drive adds a floppy
+  # sound device, which loads the list its form factor selects: 3" and 3.5"
+  # drives the 35_ list, the others the 525_ list. Each sample is filed under
+  # the systems whose machines can instantiate such a drive.
   # ref: source src/devices/imagedev/floppy.cpp:1656-1685, 1709-1738,
+  #      source src/devices/imagedev/floppy.cpp:1428-1473, 1759-1767, 2076-2082,
   #      source src/devices/sound/samples.cpp:594-637
 
   - name: "35_spin_start_empty.wav"
     path: "mame/samples/floppy/35_spin_start_empty.wav"
     mode: libretro
     category: game_data
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
+      - apple-macintosh-ii
+      - apple2gs
+      - coco
+      - coleco-adam
+      - dragon64
+      - electron
+      - enterprise-64-128
+      - pcw
+      - ti99
     required: false
     size: 17708
     sha1: "af770fd9261a8efee23d66cd39b27be7b2ab7853"
@@ -219,6 +235,18 @@ files:
     path: "mame/samples/floppy/35_spin_start_loaded.wav"
     mode: libretro
     category: game_data
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
+      - apple-macintosh-ii
+      - apple2gs
+      - coco
+      - coleco-adam
+      - dragon64
+      - electron
+      - enterprise-64-128
+      - pcw
+      - ti99
     required: false
     size: 35308
     sha1: "c82b1714378bf2507ed86dea1e9fe743c380abab"
@@ -229,6 +257,18 @@ files:
     path: "mame/samples/floppy/35_spin_empty.wav"
     mode: libretro
     category: game_data
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
+      - apple-macintosh-ii
+      - apple2gs
+      - coco
+      - coleco-adam
+      - dragon64
+      - electron
+      - enterprise-64-128
+      - pcw
+      - ti99
     required: false
     size: 17708
     sha1: "db04fc097bdd0411cff232f57525ded491b48c6c"
@@ -239,6 +279,18 @@ files:
     path: "mame/samples/floppy/35_spin_loaded.wav"
     mode: libretro
     category: game_data
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
+      - apple-macintosh-ii
+      - apple2gs
+      - coco
+      - coleco-adam
+      - dragon64
+      - electron
+      - enterprise-64-128
+      - pcw
+      - ti99
     required: false
     size: 17708
     sha1: "96ce04a5b02af0da6d311f06fc4906a3cf71c78f"
@@ -249,6 +301,18 @@ files:
     path: "mame/samples/floppy/35_spin_end.wav"
     mode: libretro
     category: game_data
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
+      - apple-macintosh-ii
+      - apple2gs
+      - coco
+      - coleco-adam
+      - dragon64
+      - electron
+      - enterprise-64-128
+      - pcw
+      - ti99
     required: false
     size: 17684
     sha1: "a8901b692de15eb7a9052f61283f0e7a2b63d67d"
@@ -259,6 +323,18 @@ files:
     path: "mame/samples/floppy/35_step_1_1.wav"
     mode: libretro
     category: game_data
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
+      - apple-macintosh-ii
+      - apple2gs
+      - coco
+      - coleco-adam
+      - dragon64
+      - electron
+      - enterprise-64-128
+      - pcw
+      - ti99
     required: false
     size: 6878
     sha1: "40d756d0cb5f7998ca26ac1de142a96a83fa2b97"
@@ -269,6 +345,18 @@ files:
     path: "mame/samples/floppy/35_seek_2ms.wav"
     mode: libretro
     category: game_data
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
+      - apple-macintosh-ii
+      - apple2gs
+      - coco
+      - coleco-adam
+      - dragon64
+      - electron
+      - enterprise-64-128
+      - pcw
+      - ti99
     required: false
     size: 7450
     sha1: "55caafbd19486b8d517e4b33a6fa65250df55e25"
@@ -279,6 +367,18 @@ files:
     path: "mame/samples/floppy/35_seek_6ms.wav"
     mode: libretro
     category: game_data
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
+      - apple-macintosh-ii
+      - apple2gs
+      - coco
+      - coleco-adam
+      - dragon64
+      - electron
+      - enterprise-64-128
+      - pcw
+      - ti99
     required: false
     size: 22230
     sha1: "87e5dec269e67497681c15849777ebfc301131c1"
@@ -289,6 +389,18 @@ files:
     path: "mame/samples/floppy/35_seek_12ms.wav"
     mode: libretro
     category: game_data
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
+      - apple-macintosh-ii
+      - apple2gs
+      - coco
+      - coleco-adam
+      - dragon64
+      - electron
+      - enterprise-64-128
+      - pcw
+      - ti99
     required: false
     size: 26540
     sha1: "c6b34fc61496943134ac45cc836a24e743caf794"
@@ -299,6 +411,18 @@ files:
     path: "mame/samples/floppy/35_seek_20ms.wav"
     mode: libretro
     category: game_data
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
+      - apple-macintosh-ii
+      - apple2gs
+      - coco
+      - coleco-adam
+      - dragon64
+      - electron
+      - enterprise-64-128
+      - pcw
+      - ti99
     required: false
     size: 44144
     sha1: "b2fe4c3a4185146a7d11483d92d4412dd79dbc78"
@@ -309,6 +433,23 @@ files:
     path: "mame/samples/floppy/525_spin_start_empty.wav"
     mode: libretro
     category: game_data
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
+      - apf-m1000
+      - apple-macintosh-ii
+      - apple2gs
+      - camplynx
+      - coco
+      - coleco-adam
+      - dragon64
+      - electron
+      - elektronika-bk
+      - fm7
+      - laser310
+      - pc80
+      - ti99
+      - trs80
     required: false
     size: 11180
     sha1: "b87d89c4b46c36dd78dec3dc5170ca61501e7cd9"
@@ -319,6 +460,23 @@ files:
     path: "mame/samples/floppy/525_spin_start_loaded.wav"
     mode: libretro
     category: game_data
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
+      - apf-m1000
+      - apple-macintosh-ii
+      - apple2gs
+      - camplynx
+      - coco
+      - coleco-adam
+      - dragon64
+      - electron
+      - elektronika-bk
+      - fm7
+      - laser310
+      - pc80
+      - ti99
+      - trs80
     required: false
     size: 17708
     sha1: "510476098848e2b5cdfe9f1608f8dfa3207fe9b4"
@@ -329,6 +487,23 @@ files:
     path: "mame/samples/floppy/525_spin_empty.wav"
     mode: libretro
     category: game_data
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
+      - apf-m1000
+      - apple-macintosh-ii
+      - apple2gs
+      - camplynx
+      - coco
+      - coleco-adam
+      - dragon64
+      - electron
+      - elektronika-bk
+      - fm7
+      - laser310
+      - pc80
+      - ti99
+      - trs80
     required: false
     size: 8864
     sha1: "4b13701d9a7f8ab0f0827f17ba80b5c32b4e0fa7"
@@ -339,6 +514,23 @@ files:
     path: "mame/samples/floppy/525_spin_loaded.wav"
     mode: libretro
     category: game_data
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
+      - apf-m1000
+      - apple-macintosh-ii
+      - apple2gs
+      - camplynx
+      - coco
+      - coleco-adam
+      - dragon64
+      - electron
+      - elektronika-bk
+      - fm7
+      - laser310
+      - pc80
+      - ti99
+      - trs80
     required: false
     size: 17708
     sha1: "875f90538a3ff5db863ad4c384e1808841ddea9b"
@@ -349,6 +541,23 @@ files:
     path: "mame/samples/floppy/525_spin_end.wav"
     mode: libretro
     category: game_data
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
+      - apf-m1000
+      - apple-macintosh-ii
+      - apple2gs
+      - camplynx
+      - coco
+      - coleco-adam
+      - dragon64
+      - electron
+      - elektronika-bk
+      - fm7
+      - laser310
+      - pc80
+      - ti99
+      - trs80
     required: false
     size: 8864
     sha1: "f8d9b94c4d92d35d9ffb1117b693fc74a93f613f"
@@ -359,6 +568,23 @@ files:
     path: "mame/samples/floppy/525_step_1_1.wav"
     mode: libretro
     category: game_data
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
+      - apf-m1000
+      - apple-macintosh-ii
+      - apple2gs
+      - camplynx
+      - coco
+      - coleco-adam
+      - dragon64
+      - electron
+      - elektronika-bk
+      - fm7
+      - laser310
+      - pc80
+      - ti99
+      - trs80
     required: false
     size: 6628
     sha1: "669ee98fb9fac4371c72ed0b60be1bc8470bc7f8"
@@ -369,6 +595,23 @@ files:
     path: "mame/samples/floppy/525_seek_6ms.wav"
     mode: libretro
     category: game_data
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
+      - apf-m1000
+      - apple-macintosh-ii
+      - apple2gs
+      - camplynx
+      - coco
+      - coleco-adam
+      - dragon64
+      - electron
+      - elektronika-bk
+      - fm7
+      - laser310
+      - pc80
+      - ti99
+      - trs80
     required: false
     size: 14860
     sha1: "6f698055fa6e9da6c5ae3fd6fb05de76b92a45a9"
@@ -379,6 +622,23 @@ files:
     path: "mame/samples/floppy/525_seek_12ms.wav"
     mode: libretro
     category: game_data
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
+      - apf-m1000
+      - apple-macintosh-ii
+      - apple2gs
+      - camplynx
+      - coco
+      - coleco-adam
+      - dragon64
+      - electron
+      - elektronika-bk
+      - fm7
+      - laser310
+      - pc80
+      - ti99
+      - trs80
     required: false
     size: 22764
     sha1: "fbbbb5e8724c076d194e66a4443d299d54a8efd6"
@@ -389,6 +649,23 @@ files:
     path: "mame/samples/floppy/525_seek_20ms.wav"
     mode: libretro
     category: game_data
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
+      - apf-m1000
+      - apple-macintosh-ii
+      - apple2gs
+      - camplynx
+      - coco
+      - coleco-adam
+      - dragon64
+      - electron
+      - elektronika-bk
+      - fm7
+      - laser310
+      - pc80
+      - ti99
+      - trs80
     required: false
     size: 30060
     sha1: "b6cd14944454c743861196edb4fcab1cc9b586d4"
@@ -5917,6 +6194,807 @@ files:
         crc32: "604415c8"
         sha1: "6c67c3be1aca03d009b6244e3bd911caaa2ca666"
 
+  # --- Software lists (generated from MAME -listxml) ---
+  # software_list_device::parse opens <list>.xml for each software list a
+  # machine declares. Each list below is filed under the systems whose
+  # machines declare it, a list no such machine declares stays with its
+  # hash/ tree.
+  # ref: upstream src/emu/softlist_dev.cpp:281-313,
+  #      upstream src/frontend/mame/infoxml.cpp:2184-2198
+
+  - name: "3do.xml"
+    path: "mame/hash/3do.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: panasonic-3do
+
+  - name: "a800.xml"
+    path: "mame/hash/a800.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: xegs
+
+  - name: "a800_cass.xml"
+    path: "mame/hash/a800_cass.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: xegs
+
+  - name: "a800_flop.xml"
+    path: "mame/hash/a800_flop.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: xegs
+
+  - name: "adam_cart.xml"
+    path: "mame/hash/adam_cart.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: coleco-adam
+
+  - name: "adam_cass.xml"
+    path: "mame/hash/adam_cass.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: coleco-adam
+
+  - name: "adam_flop.xml"
+    path: "mame/hash/adam_flop.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: coleco-adam
+
+  - name: "advision.xml"
+    path: "mame/hash/advision.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: entex-advision
+
+  - name: "apfimag_cass.xml"
+    path: "mame/hash/apfimag_cass.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: apf-m1000
+
+  - name: "apfm1000.xml"
+    path: "mame/hash/apfm1000.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: apf-m1000
+
+  - name: "apple2_flop_clcracked.xml"
+    path: "mame/hash/apple2_flop_clcracked.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: apple2gs
+
+  - name: "apple2_flop_misc.xml"
+    path: "mame/hash/apple2_flop_misc.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: apple2gs
+
+  - name: "apple2_flop_orig.xml"
+    path: "mame/hash/apple2_flop_orig.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: apple2gs
+
+  - name: "apple2gs_flop_clcracked.xml"
+    path: "mame/hash/apple2gs_flop_clcracked.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: apple2gs
+
+  - name: "apple2gs_flop_misc.xml"
+    path: "mame/hash/apple2gs_flop_misc.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: apple2gs
+
+  - name: "apple2gs_flop_orig.xml"
+    path: "mame/hash/apple2gs_flop_orig.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: apple2gs
+
+  - name: "archimedes.xml"
+    path: "mame/hash/archimedes.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: acorn-archimedes
+
+  - name: "archimedes_hdd.xml"
+    path: "mame/hash/archimedes_hdd.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: acorn-archimedes
+
+  - name: "archimedes_rom.xml"
+    path: "mame/hash/archimedes_rom.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: acorn-archimedes
+
+  - name: "astrocde.xml"
+    path: "mame/hash/astrocde.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: bally-astrocade
+
+  - name: "bbc_cass.xml"
+    path: "mame/hash/bbc_cass.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    systems:
+      - acorn-bbc-micro
+      - electron
+
+  - name: "bbc_flop_32016.xml"
+    path: "mame/hash/bbc_flop_32016.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: acorn-bbc-micro
+
+  - name: "bbc_flop_6502.xml"
+    path: "mame/hash/bbc_flop_6502.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: acorn-bbc-micro
+
+  - name: "bbc_flop_68000.xml"
+    path: "mame/hash/bbc_flop_68000.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: acorn-bbc-micro
+
+  - name: "bbc_flop_80186.xml"
+    path: "mame/hash/bbc_flop_80186.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: acorn-bbc-micro
+
+  - name: "bbc_flop_arm.xml"
+    path: "mame/hash/bbc_flop_arm.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: acorn-bbc-micro
+
+  - name: "bbc_flop_hybrid.xml"
+    path: "mame/hash/bbc_flop_hybrid.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
+
+  - name: "bbc_flop_torch.xml"
+    path: "mame/hash/bbc_flop_torch.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: acorn-bbc-micro
+
+  - name: "bbc_flop_z80.xml"
+    path: "mame/hash/bbc_flop_z80.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
+
+  - name: "bbc_hdd.xml"
+    path: "mame/hash/bbc_hdd.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: acorn-bbc-micro
+
+  - name: "bbc_rom.xml"
+    path: "mame/hash/bbc_rom.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
+
+  - name: "bbc_vsm.xml"
+    path: "mame/hash/bbc_vsm.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: acorn-bbc-micro
+
+  - name: "bbcb_flop.xml"
+    path: "mame/hash/bbcb_flop.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: acorn-bbc-micro
+
+  - name: "bbcb_flop_orig.xml"
+    path: "mame/hash/bbcb_flop_orig.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: acorn-bbc-micro
+
+  - name: "bbcb_flop_us.xml"
+    path: "mame/hash/bbcb_flop_us.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: acorn-bbc-micro
+
+  - name: "bbcm_cart.xml"
+    path: "mame/hash/bbcm_cart.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: acorn-bbc-micro
+
+  - name: "bbcm_flop.xml"
+    path: "mame/hash/bbcm_flop.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: acorn-bbc-micro
+
+  - name: "bbcmc_flop.xml"
+    path: "mame/hash/bbcmc_flop.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: acorn-bbc-micro
+
+  - name: "bk0010.xml"
+    path: "mame/hash/bk0010.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: elektronika-bk
+
+  - name: "camplynx_cass.xml"
+    path: "mame/hash/camplynx_cass.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: camplynx
+
+  - name: "camplynx_flop.xml"
+    path: "mame/hash/camplynx_flop.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: camplynx
+
+  - name: "casloopy.xml"
+    path: "mame/hash/casloopy.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: casio-loopy
+
+  - name: "cdi.xml"
+    path: "mame/hash/cdi.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: philips-cdi
+
+  - name: "coco_cart.xml"
+    path: "mame/hash/coco_cart.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    systems:
+      - coco
+      - dragon64
+
+  - name: "coco_flop.xml"
+    path: "mame/hash/coco_flop.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: coco
+
+  - name: "coleco.xml"
+    path: "mame/hash/coleco.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: coleco-adam
+
+  - name: "coleco_homebrew.xml"
+    path: "mame/hash/coleco_homebrew.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: coleco-adam
+
+  - name: "crvision.xml"
+    path: "mame/hash/crvision.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: crvision
+
+  - name: "dgnalpha_flop.xml"
+    path: "mame/hash/dgnalpha_flop.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: dragon64
+
+  - name: "dragon_cart.xml"
+    path: "mame/hash/dragon_cart.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    systems:
+      - coco
+      - dragon64
+
+  - name: "dragon_cass.xml"
+    path: "mame/hash/dragon_cass.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: dragon64
+
+  - name: "dragon_flex.xml"
+    path: "mame/hash/dragon_flex.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: dragon64
+
+  - name: "dragon_flop.xml"
+    path: "mame/hash/dragon_flop.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: dragon64
+
+  - name: "dragon_os9.xml"
+    path: "mame/hash/dragon_os9.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: dragon64
+
+  - name: "e01_flop.xml"
+    path: "mame/hash/e01_flop.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    systems:
+      - acorn-archimedes
+      - acorn-bbc-micro
+
+  - name: "electron_cart.xml"
+    path: "mame/hash/electron_cart.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: electron
+
+  - name: "electron_cass.xml"
+    path: "mame/hash/electron_cass.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: electron
+
+  - name: "electron_flop.xml"
+    path: "mame/hash/electron_flop.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: electron
+
+  - name: "electron_rom.xml"
+    path: "mame/hash/electron_rom.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: electron
+
+  - name: "ep64_cart.xml"
+    path: "mame/hash/ep64_cart.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: enterprise-64-128
+
+  - name: "ep64_cass.xml"
+    path: "mame/hash/ep64_cass.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: enterprise-64-128
+
+  - name: "ep64_flop.xml"
+    path: "mame/hash/ep64_flop.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: enterprise-64-128
+
+  - name: "fm77av.xml"
+    path: "mame/hash/fm77av.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: fm7
+
+  - name: "fm7_cass.xml"
+    path: "mame/hash/fm7_cass.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: fm7
+
+  - name: "fm7_disk.xml"
+    path: "mame/hash/fm7_disk.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: fm7
+
+  - name: "fm8_cass.xml"
+    path: "mame/hash/fm8_cass.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: fm7
+
+  - name: "gamate.xml"
+    path: "mame/hash/gamate.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: gamate
+
+  - name: "gamecom.xml"
+    path: "mame/hash/gamecom.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: tiger-game-com
+
+  - name: "gamepock.xml"
+    path: "mame/hash/gamepock.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: gamepock
+
+  - name: "gmaster.xml"
+    path: "mame/hash/gmaster.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: hartung-game-master
+
+  - name: "gp32.xml"
+    path: "mame/hash/gp32.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: gamepark-gp32
+
+  - name: "ibm5150.xml"
+    path: "mame/hash/ibm5150.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: acorn-bbc-micro
+
+  - name: "laser2001_cart.xml"
+    path: "mame/hash/laser2001_cart.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: crvision
+
+  - name: "laser2001_flop.xml"
+    path: "mame/hash/laser2001_flop.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: crvision
+
+  - name: "mac_cdrom.xml"
+    path: "mame/hash/mac_cdrom.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: apple-macintosh-ii
+
+  - name: "mac_flop.xml"
+    path: "mame/hash/mac_flop.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: apple-macintosh-ii
+
+  - name: "mac_flop_clcracked.xml"
+    path: "mame/hash/mac_flop_clcracked.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: apple-macintosh-ii
+
+  - name: "mac_flop_orig.xml"
+    path: "mame/hash/mac_flop_orig.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: apple-macintosh-ii
+
+  - name: "mac_hdd.xml"
+    path: "mame/hash/mac_hdd.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: apple-macintosh-ii
+
+  - name: "mac_hdflop.xml"
+    path: "mame/hash/mac_hdflop.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: apple-macintosh-ii
+
+  - name: "mc10.xml"
+    path: "mame/hash/mc10.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: mc10
+
+  - name: "megatech.xml"
+    path: "mame/hash/megatech.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: sega-megatech
+
+  - name: "neogeo.xml"
+    path: "mame/hash/neogeo.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: snk-neogeo-mvs
+
+  - name: "pc8001_flop.xml"
+    path: "mame/hash/pc8001_flop.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: pc80
+
+  - name: "pc8001mk2_flop.xml"
+    path: "mame/hash/pc8001mk2_flop.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: pc80
+
+  - name: "pc8001mk2sr_flop.xml"
+    path: "mame/hash/pc8001mk2sr_flop.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: pc80
+
+  - name: "pcw.xml"
+    path: "mame/hash/pcw.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: pcw
+
+  - name: "pegasus_cart.xml"
+    path: "mame/hash/pegasus_cart.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: pegasus
+
+  - name: "photo_cd.xml"
+    path: "mame/hash/photo_cd.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    systems:
+      - panasonic-3do
+      - philips-cdi
+
+  - name: "pro128s_flop.xml"
+    path: "mame/hash/pro128s_flop.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: acorn-bbc-micro
+
+  - name: "pv2000.xml"
+    path: "mame/hash/pv2000.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: casio-pv2000
+
+  - name: "rx78_cart.xml"
+    path: "mame/hash/rx78_cart.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: bandai-rx78
+
+  - name: "rx78_cass.xml"
+    path: "mame/hash/rx78_cass.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: bandai-rx78
+
+  - name: "scv.xml"
+    path: "mame/hash/scv.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: scv
+
+  - name: "sega_beena_cart.xml"
+    path: "mame/hash/sega_beena_cart.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: sega-beena
+
+  - name: "segaai.xml"
+    path: "mame/hash/segaai.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: sega-ai
+
+  - name: "socrates.xml"
+    path: "mame/hash/socrates.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: vtech-socrates
+
+  - name: "stv.xml"
+    path: "mame/hash/stv.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: sega-stv
+
+  - name: "ti99_cart.xml"
+    path: "mame/hash/ti99_cart.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: ti99
+
+  - name: "trs80_cass.xml"
+    path: "mame/hash/trs80_cass.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: trs80
+
+  - name: "trs80_flop.xml"
+    path: "mame/hash/trs80_flop.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: trs80
+
+  - name: "trs80_quik.xml"
+    path: "mame/hash/trs80_quik.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: trs80
+
+  - name: "tutor.xml"
+    path: "mame/hash/tutor.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: tutor
+
+  - name: "vectrex.xml"
+    path: "mame/hash/vectrex.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: vectrex
+
+  - name: "vg5k.xml"
+    path: "mame/hash/vg5k.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: philips-vg5k
+
+  - name: "vis.xml"
+    path: "mame/hash/vis.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: tandy-vis
+
+  - name: "vsmile_cart.xml"
+    path: "mame/hash/vsmile_cart.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: vtech-vsmile
+
+  - name: "vsmilem_cart.xml"
+    path: "mame/hash/vsmilem_cart.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: vtech-vsmile
+
+  - name: "vz_cass.xml"
+    path: "mame/hash/vz_cass.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: laser310
+
+  - name: "vz_snap.xml"
+    path: "mame/hash/vz_snap.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: laser310
+
+  - name: "xegs.xml"
+    path: "mame/hash/xegs.xml"
+    mode: libretro
+    category: game_data
+    required: false
+    system: xegs
+
   # --- Device ROM sets (generated from MAME -listxml) ---
   - name: 22vp931.zip
     required: false
@@ -8911,6 +9989,7 @@ files:
       - dragon64
       - electron
       - elektronika-bk
+      - enterprise-64-128
       - fm7
       - konami-twinkle
       - laser310
@@ -10066,6 +11145,7 @@ files:
   - name: bbc_acorn1770.zip
     required: false
     category: bios_zip
+    system: acorn-bbc-micro
     source_ref: "upstream src/devices/bus/bbc/fdc/acorn.cpp:79-93"
     note: >-
       Device ROM set, loaded when a machine instantiates `Acorn 1770 FDC`.
@@ -10099,6 +11179,7 @@ files:
   - name: bbc_acorn8271.zip
     required: false
     category: bios_zip
+    system: acorn-bbc-micro
     source_ref: "upstream src/devices/bus/bbc/fdc/acorn.cpp:52-77"
     note: >-
       Device ROM set, loaded when a machine instantiates `Acorn 8721 FDC`.
@@ -10152,6 +11233,7 @@ files:
   - name: bbc_ams3.zip
     required: false
     category: bios_zip
+    system: acorn-bbc-micro
     source_ref: "upstream src/devices/bus/bbc/fdc/ams.cpp:37-45"
     note: >-
       Device ROM set, loaded when a machine instantiates `AMS 3" Microdrive
@@ -10169,6 +11251,7 @@ files:
   - name: bbc_ariesb20.zip
     required: false
     category: bios_zip
+    system: acorn-bbc-micro
     source_ref: "upstream src/devices/bus/bbc/internal/aries.cpp:34-40"
     note: >-
       Device ROM set, loaded when a machine instantiates `Aries-B20 RAM
@@ -10188,6 +11271,7 @@ files:
   - name: bbc_ariesb32.zip
     required: false
     category: bios_zip
+    system: acorn-bbc-micro
     source_ref: "upstream src/devices/bus/bbc/internal/aries.cpp:42-46"
     note: >-
       Device ROM set, loaded when a machine instantiates `Aries-B32 RAM
@@ -10277,6 +11361,7 @@ files:
   - name: bbc_cisco.zip
     required: false
     category: bios_zip
+    system: acorn-bbc-micro
     source_ref: "upstream src/devices/bus/bbc/1mhzbus/cisco.cpp:49-56"
     note: >-
       Device ROM set, loaded when a machine instantiates `Cisco Terminal Data
@@ -10306,6 +11391,7 @@ files:
   - name: bbc_cms6502.zip
     required: false
     category: bios_zip
+    system: acorn-bbc-micro
     source_ref: "upstream src/devices/bus/bbc/tube/cms6502.cpp:66-75"
     note: >-
       Device ROM set, loaded when a machine instantiates `CMS 6502 2nd
@@ -10327,6 +11413,7 @@ files:
   - name: bbc_cumana1.zip
     required: false
     category: bios_zip
+    system: acorn-bbc-micro
     source_ref: "upstream src/devices/bus/bbc/fdc/cumana.cpp:51-56"
     note: >-
       Device ROM set, loaded when a machine instantiates `Cumana QFS 8877A
@@ -10341,6 +11428,7 @@ files:
   - name: bbc_cumana2.zip
     required: false
     category: bios_zip
+    system: acorn-bbc-micro
     source_ref: "upstream src/devices/bus/bbc/fdc/cumana.cpp:58-63"
     note: >-
       Device ROM set, loaded when a machine instantiates `Cumana QFS Issue 2
@@ -10355,6 +11443,7 @@ files:
   - name: bbc_cumana68k.zip
     required: false
     category: bios_zip
+    system: acorn-bbc-micro
     source_ref: "upstream src/devices/bus/bbc/internal/cumana68k.cpp:59-62"
     note: >-
       Device ROM set, loaded when a machine instantiates `Cumana 68008 Upgrade
@@ -10368,6 +11457,7 @@ files:
   - name: bbc_cv1797.zip
     required: false
     category: bios_zip
+    system: acorn-bbc-micro
     source_ref: "upstream src/devices/bus/bbc/fdc/cv1797.cpp:54-60"
     note: >-
       Device ROM set, loaded when a machine instantiates `Computer Village
@@ -10446,6 +11536,7 @@ files:
   - name: bbc_integrab.zip
     required: false
     category: bios_zip
+    system: acorn-bbc-micro
     source_ref: "upstream src/devices/bus/bbc/internal/integrab.cpp:56-64"
     note: >-
       Device ROM set, loaded when a machine instantiates `Computech
@@ -10470,6 +11561,7 @@ files:
   - name: bbc_kenda.zip
     required: false
     category: bios_zip
+    system: acorn-bbc-micro
     source_ref: "upstream src/devices/bus/bbc/fdc/kenda.cpp:64-68"
     note: >-
       Device ROM set, loaded when a machine instantiates `Kenda Professional
@@ -10497,6 +11589,7 @@ files:
   - name: bbc_memexb20.zip
     required: false
     category: bios_zip
+    system: acorn-bbc-micro
     source_ref: "upstream src/devices/bus/bbc/internal/memex.cpp:28-31"
     note: >-
       Device ROM set, loaded when a machine instantiates `Memex-B20 RAM
@@ -10557,6 +11650,7 @@ files:
   - name: bbc_opus1770.zip
     required: false
     category: bios_zip
+    system: acorn-bbc-micro
     source_ref: "upstream src/devices/bus/bbc/fdc/opus.cpp:90-97"
     note: >-
       Device ROM set, loaded when a machine instantiates `Opus D-DOS(B) 1770
@@ -10576,6 +11670,7 @@ files:
   - name: bbc_opus2791.zip
     required: false
     category: bios_zip
+    system: acorn-bbc-micro
     source_ref: "upstream src/devices/bus/bbc/fdc/opus.cpp:68-79"
     note: >-
       Device ROM set, loaded when a machine instantiates `Opus 2791 FDC`.
@@ -10604,6 +11699,7 @@ files:
   - name: bbc_opus2793.zip
     required: false
     category: bios_zip
+    system: acorn-bbc-micro
     source_ref: "upstream src/devices/bus/bbc/fdc/opus.cpp:81-88"
     note: >-
       Device ROM set, loaded when a machine instantiates `Opus 2793 FDC`.
@@ -10649,6 +11745,7 @@ files:
   - name: bbc_opus8272.zip
     required: false
     category: bios_zip
+    system: acorn-bbc-micro
     source_ref: "upstream src/devices/bus/bbc/fdc/opus.cpp:59-66"
     note: >-
       Device ROM set, loaded when a machine instantiates `Opus 8272 FDC`.
@@ -10730,6 +11827,7 @@ files:
   - name: bbc_raven20.zip
     required: false
     category: bios_zip
+    system: acorn-bbc-micro
     source_ref: "upstream src/devices/bus/bbc/internal/raven20.cpp:29-35"
     note: >-
       Device ROM set, loaded when a machine instantiates `Raven-20 RAM
@@ -10749,6 +11847,7 @@ files:
   - name: bbc_stl1770_1.zip
     required: false
     category: bios_zip
+    system: acorn-bbc-micro
     source_ref: "upstream src/devices/bus/bbc/fdc/solidisk.cpp:77-81"
     note: >-
       Device ROM set, loaded when a machine instantiates `Solidisk 1770 DDFS
@@ -10763,6 +11862,7 @@ files:
   - name: bbc_stl1770_2.zip
     required: false
     category: bios_zip
+    system: acorn-bbc-micro
     source_ref: "upstream src/devices/bus/bbc/fdc/solidisk.cpp:83-87"
     note: >-
       Device ROM set, loaded when a machine instantiates `Solidisk 1770 DDFS
@@ -10777,6 +11877,7 @@ files:
   - name: bbc_stl2m128.zip
     required: false
     category: bios_zip
+    system: acorn-bbc-micro
     source_ref: "upstream src/devices/bus/bbc/internal/stl2m128.cpp:45-49"
     note: >-
       Device ROM set, loaded when a machine instantiates `Solidisk Twomeg 128K
@@ -10790,6 +11891,7 @@ files:
   - name: bbc_stl4m32.zip
     required: false
     category: bios_zip
+    system: acorn-bbc-micro
     source_ref: "upstream src/devices/bus/bbc/internal/stl4m32.cpp:49-53"
     note: >-
       Device ROM set, loaded when a machine instantiates `Solidisk Fourmeg 32K
@@ -10804,6 +11906,7 @@ files:
   - name: bbc_stldfdc_1.zip
     required: false
     category: bios_zip
+    system: acorn-bbc-micro
     source_ref: "upstream src/devices/bus/bbc/fdc/solidisk.cpp:89-93"
     note: >-
       Device ROM set, loaded when a machine instantiates `Solidisk 8271/1770
@@ -10818,6 +11921,7 @@ files:
   - name: bbc_stlswr128.zip
     required: false
     category: bios_zip
+    system: acorn-bbc-micro
     source_ref: "upstream src/devices/bus/bbc/internal/stlswr.cpp:30-34"
     note: >-
       Device ROM set, loaded when a machine instantiates `Solidisk SWR128 -
@@ -10832,6 +11936,7 @@ files:
   - name: bbc_stlswr16.zip
     required: false
     category: bios_zip
+    system: acorn-bbc-micro
     source_ref: "upstream src/devices/bus/bbc/internal/stlswr.cpp:30-34"
     note: >-
       Device ROM set, loaded when a machine instantiates `Solidisk SWR16 - 16K
@@ -10846,6 +11951,7 @@ files:
   - name: bbc_stlswr32.zip
     required: false
     category: bios_zip
+    system: acorn-bbc-micro
     source_ref: "upstream src/devices/bus/bbc/internal/stlswr.cpp:30-34"
     note: >-
       Device ROM set, loaded when a machine instantiates `Solidisk SWR32 - 32K
@@ -10860,6 +11966,7 @@ files:
   - name: bbc_stlswr64.zip
     required: false
     category: bios_zip
+    system: acorn-bbc-micro
     source_ref: "upstream src/devices/bus/bbc/internal/stlswr.cpp:30-34"
     note: >-
       Device ROM set, loaded when a machine instantiates `Solidisk SWR64 - 64K
@@ -10874,6 +11981,7 @@ files:
   - name: bbc_sweetalker.zip
     required: false
     category: bios_zip
+    system: acorn-bbc-micro
     source_ref: "upstream src/devices/bus/bbc/vsp/sweetalker.cpp:48-51"
     note: >-
       Device ROM set, loaded when a machine instantiates `Cheetah Sweet Talker
@@ -10887,6 +11995,7 @@ files:
   - name: bbc_tube_16032.zip
     required: false
     category: bios_zip
+    system: acorn-bbc-micro
     source_ref: "upstream src/devices/bus/bbc/tube/tube_32016.cpp:144-156"
     note: >-
       Device ROM set, loaded when a machine instantiates `Acorn 16032 2nd
@@ -11017,6 +12126,7 @@ files:
   - name: bbc_tube_6502p.zip
     required: false
     category: bios_zip
+    system: acorn-bbc-micro
     source_ref: "upstream src/devices/bus/bbc/tube/tube_6502.cpp:211-221"
     note: >-
       Device ROM set, loaded when a machine instantiates `Acorn 6502 2nd
@@ -11191,6 +12301,7 @@ files:
   - name: bbc_tube_casper.zip
     required: false
     category: bios_zip
+    system: acorn-bbc-micro
     source_ref: "upstream src/devices/bus/bbc/tube/tube_casper.cpp:70-78"
     note: >-
       Device ROM set, loaded when a machine instantiates `Casper 68000 2nd
@@ -11216,6 +12327,7 @@ files:
   - name: bbc_tube_cms6809.zip
     required: false
     category: bios_zip
+    system: acorn-bbc-micro
     source_ref: "upstream src/devices/bus/bbc/tube/tube_cms6809.cpp:81-87"
     note: >-
       Device ROM set, loaded when a machine instantiates `CMS 6809 2nd
@@ -11331,6 +12443,7 @@ files:
   - name: bbc_tube_x25.zip
     required: false
     category: bios_zip
+    system: acorn-bbc-micro
     source_ref: "upstream src/devices/bus/bbc/tube/tube_x25.cpp:115-122"
     note: >-
       Device ROM set, loaded when a machine instantiates `Econet X25 Gateway
@@ -11382,6 +12495,7 @@ files:
   - name: bbc_tube_zep100.zip
     required: false
     category: bios_zip
+    system: acorn-bbc-micro
     source_ref: "upstream src/devices/bus/bbc/tube/tube_zep100.cpp:152-167"
     note: >-
       Device ROM set, loaded when a machine instantiates `Torch Z80
@@ -11416,6 +12530,7 @@ files:
   - name: bbc_tube_zep100l.zip
     required: false
     category: bios_zip
+    system: acorn-bbc-micro
     source_ref: "upstream src/devices/bus/bbc/tube/tube_zep100.cpp:169-176"
     note: >-
       Device ROM set, loaded when a machine instantiates `Torch Z80
@@ -11458,6 +12573,7 @@ files:
   - name: bbc_tube_zep100w.zip
     required: false
     category: bios_zip
+    system: acorn-bbc-micro
     source_ref: "upstream src/devices/bus/bbc/tube/tube_zep100.cpp:178-187"
     note: >-
       Device ROM set, loaded when a machine instantiates `Torch Z80
@@ -11481,6 +12597,7 @@ files:
   - name: bbc_udm.zip
     required: false
     category: bios_zip
+    system: acorn-bbc-micro
     source_ref: "upstream src/devices/bus/bbc/fdc/udm.cpp:49-59"
     note: >-
       Device ROM set, loaded when a machine instantiates `United Disk Memories
@@ -11527,6 +12644,7 @@ files:
   - name: bbc_we32kram.zip
     required: false
     category: bios_zip
+    system: acorn-bbc-micro
     source_ref: "upstream src/devices/bus/bbc/internal/we32kram.cpp:27-39"
     note: >-
       Device ROM set, loaded when a machine instantiates `Watford Electronics
@@ -11561,6 +12679,7 @@ files:
   - name: bbc_weddb2.zip
     required: false
     category: bios_zip
+    system: acorn-bbc-micro
     source_ref: "upstream src/devices/bus/bbc/fdc/watford.cpp:53-62"
     note: >-
       Device ROM set, loaded when a machine instantiates `Watford Electronics
@@ -11585,6 +12704,7 @@ files:
   - name: bbc_weddb3.zip
     required: false
     category: bios_zip
+    system: acorn-bbc-micro
     source_ref: "upstream src/devices/bus/bbc/fdc/watford.cpp:64-69"
     note: >-
       Device ROM set, loaded when a machine instantiates `Watford Electronics
@@ -13508,6 +14628,7 @@ files:
       - dragon64
       - electron
       - elektronika-bk
+      - enterprise-64-128
       - fm7
       - konami-twinkle
       - laser310
@@ -13798,6 +14919,7 @@ files:
   - name: cms_4080term.zip
     required: false
     category: bios_zip
+    system: acorn-bbc-micro
     source_ref: "upstream src/devices/bus/acorn/cms/4080term.cpp:96-99"
     note: >-
       Device ROM set, loaded when a machine instantiates `CMS 40/80 Video
@@ -14125,6 +15247,7 @@ files:
       - dragon64
       - electron
       - elektronika-bk
+      - enterprise-64-128
       - fm7
       - konami-twinkle
       - laser310
@@ -16215,6 +17338,7 @@ files:
       - dragon64
       - electron
       - elektronika-bk
+      - enterprise-64-128
       - fm7
       - konami-twinkle
       - laser310
@@ -16247,6 +17371,7 @@ files:
       - dragon64
       - electron
       - elektronika-bk
+      - enterprise-64-128
       - fm7
       - konami-twinkle
       - laser310
@@ -16329,6 +17454,7 @@ files:
       - dragon64
       - electron
       - elektronika-bk
+      - enterprise-64-128
       - fm7
       - konami-twinkle
       - laser310
@@ -16525,6 +17651,7 @@ files:
       - dragon64
       - electron
       - elektronika-bk
+      - enterprise-64-128
       - fm7
       - konami-twinkle
       - laser310
@@ -17289,6 +18416,7 @@ files:
       - dragon64
       - electron
       - elektronika-bk
+      - enterprise-64-128
       - konami-twinkle
       - laser310
       - mc10
@@ -17422,6 +18550,7 @@ files:
       - dragon64
       - electron
       - elektronika-bk
+      - enterprise-64-128
       - konami-twinkle
       - laser310
       - mc10
@@ -17468,6 +18597,7 @@ files:
       - dragon64
       - electron
       - elektronika-bk
+      - enterprise-64-128
       - konami-twinkle
       - laser310
       - mc10
@@ -17504,6 +18634,7 @@ files:
       - dragon64
       - electron
       - elektronika-bk
+      - enterprise-64-128
       - konami-twinkle
       - laser310
       - mc10
@@ -17540,6 +18671,7 @@ files:
       - dragon64
       - electron
       - elektronika-bk
+      - enterprise-64-128
       - konami-twinkle
       - laser310
       - mc10
@@ -17576,6 +18708,7 @@ files:
       - dragon64
       - electron
       - elektronika-bk
+      - enterprise-64-128
       - konami-twinkle
       - laser310
       - mc10
@@ -17612,6 +18745,7 @@ files:
       - dragon64
       - electron
       - elektronika-bk
+      - enterprise-64-128
       - konami-twinkle
       - laser310
       - mc10
@@ -17913,6 +19047,7 @@ files:
       - dragon64
       - electron
       - elektronika-bk
+      - enterprise-64-128
       - konami-twinkle
       - laser310
       - mc10
@@ -17950,6 +19085,7 @@ files:
       - dragon64
       - electron
       - elektronika-bk
+      - enterprise-64-128
       - konami-twinkle
       - laser310
       - mc10
@@ -19319,6 +20455,7 @@ files:
       - dragon64
       - electron
       - elektronika-bk
+      - enterprise-64-128
       - fm7
       - konami-twinkle
       - laser310
@@ -19347,6 +20484,7 @@ files:
       - dragon64
       - electron
       - elektronika-bk
+      - enterprise-64-128
       - fm7
       - konami-twinkle
       - laser310
@@ -19952,6 +21090,7 @@ files:
       - dragon64
       - electron
       - elektronika-bk
+      - enterprise-64-128
       - konami-twinkle
       - laser310
       - mc10
@@ -19980,6 +21119,7 @@ files:
       - dragon64
       - electron
       - elektronika-bk
+      - enterprise-64-128
       - konami-twinkle
       - laser310
       - mc10
@@ -20997,6 +22137,7 @@ files:
       - dragon64
       - electron
       - elektronika-bk
+      - enterprise-64-128
       - fm7
       - konami-twinkle
       - laser310
@@ -21824,6 +22965,7 @@ files:
       - dragon64
       - electron
       - elektronika-bk
+      - enterprise-64-128
       - fm7
       - konami-twinkle
       - laser310
@@ -21916,6 +23058,7 @@ files:
       - dragon64
       - electron
       - elektronika-bk
+      - enterprise-64-128
       - konami-twinkle
       - laser310
       - mc10
@@ -22336,6 +23479,7 @@ files:
       - dragon64
       - electron
       - elektronika-bk
+      - enterprise-64-128
       - fm7
       - konami-twinkle
       - laser310
@@ -22415,6 +23559,7 @@ files:
       - dragon64
       - electron
       - elektronika-bk
+      - enterprise-64-128
       - fm7
       - konami-twinkle
       - laser310
@@ -24873,6 +26018,7 @@ files:
       - dragon64
       - electron
       - elektronika-bk
+      - enterprise-64-128
       - konami-twinkle
       - laser310
       - mc10
@@ -24909,6 +26055,7 @@ files:
       - dragon64
       - electron
       - elektronika-bk
+      - enterprise-64-128
       - konami-twinkle
       - laser310
       - mc10
@@ -25190,6 +26337,7 @@ files:
       - dragon64
       - electron
       - elektronika-bk
+      - enterprise-64-128
       - konami-twinkle
       - laser310
       - mc10
@@ -27220,6 +28368,7 @@ files:
       - dragon64
       - electron
       - elektronika-bk
+      - enterprise-64-128
       - konami-twinkle
       - laser310
       - mc10
@@ -29093,6 +30242,7 @@ files:
       - dragon64
       - electron
       - elektronika-bk
+      - enterprise-64-128
       - konami-twinkle
       - laser310
       - mc10
@@ -29133,6 +30283,7 @@ files:
       - dragon64
       - electron
       - elektronika-bk
+      - enterprise-64-128
       - konami-twinkle
       - laser310
       - mc10
