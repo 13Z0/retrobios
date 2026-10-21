@@ -185,6 +185,36 @@ class ReleaseCommitCarriesTheManifests(unittest.TestCase):
         self.assertIn("install/*.json", add.split())
 
 
+class PublishedHeadings(unittest.TestCase):
+    """README.md kept '## Quick Install', the one Title Case heading left,
+    because the casing test read wiki/ only."""
+
+    def test_readme_and_contributing_use_sentence_case(self):
+        offenders = []
+        for page in (ROOT / "README.md", ROOT / "CONTRIBUTING.md"):
+            text = FENCED.sub("", page.read_text(encoding="utf-8"))
+            for title in re.findall(r"(?m)^#{1,4} (.+)$", text):
+                if _sentence_case(title) != title:
+                    offenders.append(f"{page.name}: {title}")
+        self.assertEqual(offenders, [], "\n".join(offenders))
+
+
+class FilesColumnParagraph(unittest.TestCase):
+    """'Files is how many the pack holds' was glued to the paragraph above
+    it, two paragraphs before the table whose column it described."""
+
+    def test_it_names_the_column_in_its_own_paragraph_before_the_table(self):
+        import generate_readme
+
+        source = inspect.getsource(generate_readme)
+        self.assertNotIn("Files is how many", source)
+        readme = (ROOT / "README.md").read_text(encoding="utf-8")
+        paragraph = next(p for p in readme.split("\n\n") if "The Files column" in p)
+        self.assertNotIn("\n", paragraph.strip())
+        after = readme.split(paragraph, 1)[1].lstrip("\n")
+        self.assertTrue(after.startswith("| Platform | Files |"))
+
+
 class PageOpenings(unittest.TestCase):
     """Four pages opened by announcing what they cover."""
 

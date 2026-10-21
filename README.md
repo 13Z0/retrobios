@@ -10,7 +10,7 @@ BIOS and firmware files for Batocera, BizHawk, EmuDeck, Lakka, MiSTer FPGA, ROCK
 
 A pack holds the files its emulators read, as their source code names them, and leaves out what the emulators install themselves.
 
-## Quick Install
+## Quick install
 
 Copy one command into your terminal:
 
@@ -33,7 +33,6 @@ The script auto-detects your platform, downloads only missing files, and verifie
 ## Download BIOS packs
 
 One pack per platform, and it holds everything the platform runs: its own BIOS list plus every file its emulator cores load. Pick your platform, download the ZIP, extract to the BIOS path. The installer above does the same file by file. At a terminal it asks whether to install everything or to choose systems, cores and regions, and `--system`, `--core`, `--region` and `--target` make the same choice without questions. For a bare minimum, build your own pack below.
-Files is how many the pack holds once extracted, the figure a file manager shows for the folder. It differs from one platform to the next because a pack carries only what that platform's emulators load. The size is what the files occupy once extracted, and the ZIP itself downloads smaller.
 
 A pack over 2 GB comes in several parts, and every part is needed. How to open them depends on their name:
 
@@ -41,6 +40,8 @@ A pack over 2 GB comes in several parts, and every part is needed. How to open t
 - `Pack.zip.001`, `Pack.zip.002` (releases up to v2026.09.04): slices of one ZIP, none of which opens on its own. Put them in one folder and open the `.001` with 7-Zip or PeaZip, or join them first with `cat Pack.zip.0* > Pack.zip` on Linux and macOS, `cmd /c copy /b Pack.zip.001+Pack.zip.002 Pack.zip` on Windows.
 
 Every release ships `SHA256SUMS.txt` and a detached signature of it, checkable against `allowed_signers` in this repository: [verifying a release](https://abdess.github.io/retrobios/wiki/release-process/#verifying-a-release).
+
+The Files column counts what a pack holds once extracted, the figure a file manager shows for the folder. It differs from one platform to the next because a pack carries only what that platform's emulators load. The size is what the files occupy once extracted, and the ZIP itself downloads smaller.
 
 | Platform | Files | Extracted size | Extract to | Download |
 |----------|------:|---------------:|-----------|----------|
