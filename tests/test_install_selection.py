@@ -23,6 +23,7 @@ import sys
 import tempfile
 import threading
 import unittest
+from unittest import mock
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -749,10 +750,14 @@ class InstallMatchesATargetManifest(unittest.TestCase):
 
 
 class AHeldFileTheInstallerCannotFetch(unittest.TestCase):
-    """The builder holds a release asset the manifest run had no copy of: it
-    counts in the builder's groups and displaces the American fallback for
-    --region japan, while the manifest can only list it as omitted. Counted
-    unheld there, the installer kept the fallback the pack drops."""
+    """The builder holds a release asset this offline run has no copy of.
+
+    jp.bin is registered in .gitignore and indexed by the database, as every
+    file of the large-files release is, but neither the checkout nor
+    .cache/large/ holds it. The builder counts it held, so it displaces the
+    American fallback for --region japan, while the manifest can only list
+    it as omitted. Counted unheld there, the installer kept the fallback the
+    pack drops."""
 
     def setUp(self):
         import common
@@ -767,11 +772,22 @@ class AHeldFileTheInstallerCannotFetch(unittest.TestCase):
         self.addCleanup(os.chdir, previous)
         Path("bios/Sys").mkdir(parents=True)
         Path("bios/Sys/us.bin").write_bytes(b"us")
-        sha1 = hashlib.sha1(b"us").hexdigest()
-        files = {sha1: {"path": "bios/Sys/us.bin", "name": "us.bin", "size": 2,
-                        "sha1": sha1, "md5": hashlib.md5(b"us").hexdigest(),
-                        "sha256": hashlib.sha256(b"us").hexdigest(),
-                        "crc32": "00000001"}}
+        files = {}
+        for name, payload in (("us.bin", b"us"), ("jp.bin", b"jp")):
+            sha1 = hashlib.sha1(payload).hexdigest()
+            files[sha1] = {"path": f"bios/Sys/{name}", "name": name,
+                           "size": len(payload), "sha1": sha1,
+                           "md5": hashlib.md5(payload).hexdigest(),
+                           "sha256": hashlib.sha256(payload).hexdigest(),
+                           "crc32": "00000001"}
+        # The registry of release assets: listed there, so a checkout has
+        # no copy, and this offline run fetches none.
+        Path(".gitignore").write_text("bios/Sys/jp.bin\n")
+        registered = mock.patch(
+            "largefiles.load_registered_paths", return_value=["bios/Sys/jp.bin"]
+        )
+        registered.start()
+        self.addCleanup(registered.stop)
         self.db = {"files": files, "indexes": generate_db.build_indexes(files, {})}
         Path("platforms").mkdir()
         Path("platforms/p.yml").write_text(json.dumps({
@@ -784,10 +800,8 @@ class AHeldFileTheInstallerCannotFetch(unittest.TestCase):
         Path("emulators").mkdir()
         Path("emulators/core.yml").write_text(json.dumps({
             "emulator": "core", "type": "libretro", "systems": ["sys"], "files": [
-                # A release asset: held by the builder whether or not this
-                # run has a copy to describe.
                 {"name": "jp.bin", "system": "sys", "region": ["japan"],
-                 "storage": "large_file", "required": True},
+                 "required": True},
                 {"name": "us.bin", "system": "sys", "region": ["north-america"],
                  "required": True},
             ]}))
