@@ -50,7 +50,7 @@ notes: |
   the content directory (shell/libretro/oslib.cpp:118-130). Each ROM inside
   is looked up by CRC, then by file name, in the game archive, its parent,
   then the BIOS archive (core/hw/naomi/naomi_cart.cpp:89-106). The blob of
-  the configured region is mapped first, any region otherwise; a game
+  the configured region is mapped first, any region otherwise, and a game
   whose BIOS cannot be loaded aborts (core/hw/naomi/naomi_cart.cpp:196-207).
   Games whose bios field is naomi2 run as NAOMI 2 and those whose bios
   field is segasp as System SP (core/hw/naomi/naomi_cart.cpp:810-821).
