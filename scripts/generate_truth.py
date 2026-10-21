@@ -72,12 +72,10 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
 def main(argv: list[str] | None = None) -> None:
     args = parse_args(argv)
 
-    # Load registry
     registry_path = os.path.join(args.platforms_dir, "_registry.yml")
     with open(registry_path) as f:
         registry = (yaml_load(f) or {}).get("platforms", {})
 
-    # Load emulator profiles
     profiles = load_emulator_profiles(args.emulators_dir)
 
     # Load database (optional)
@@ -86,7 +84,6 @@ def main(argv: list[str] | None = None) -> None:
     if args.db != DEFAULT_DB_FILE or os.path.exists(args.db):
         db = load_database(args.db)
 
-    # Determine platforms
     if args.all:
         platforms = list_registered_platforms(
             args.platforms_dir,
@@ -108,7 +105,6 @@ def main(argv: list[str] | None = None) -> None:
                 output_dir, [name], args.target, args.platforms_dir
             )
         os.makedirs(output_dir, exist_ok=True)
-        # Resolve target cores
         target_cores: set[str] | None = None
         if args.target:
             try:

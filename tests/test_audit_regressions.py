@@ -6125,5 +6125,33 @@ class SkipPacksHelpSaysWhatRuns(unittest.TestCase):
         self.assertEqual(skipped, {"4", "4b", "4c", "6"})
 
 
+class CommentsSayWhy(unittest.TestCase):
+    """A one-line comment that names the next statement ("# Load registry",
+    "# Build cross-reference indexes") repeats the code. A comment that
+    stays says why (for, only, so, because)."""
+
+    LABEL = re.compile(
+        r"^\s*# (Load|Build|Collect|Determine|Resolve|Group|Copy|Count|Append|"
+        r"Filter|Separate|Compute|Create|Get|Check|Generate|Write|Read|Parse|Sort)"
+        r"\b[^.:;,()]{0,60}$"
+    )
+    REASON = re.compile(r"\b(for|only|so|because|if|when|unless|before|after)\b")
+
+    def test_no_label_comment_restates_the_next_line(self):
+        found = []
+        for name in ("verify.py", "generate_site.py", "generate_truth.py"):
+            lines = (ROOT / "scripts" / name).read_text(encoding="utf-8").splitlines()
+            for index, line in enumerate(lines):
+                if not self.LABEL.match(line) or self.REASON.search(line):
+                    continue
+                around = (lines[index - 1].strip(), lines[index + 1].strip())
+                if any(neighbour.startswith("#") for neighbour in around):
+                    continue
+                if not line.startswith(" "):
+                    continue
+                found.append(f"{name}:{index + 1}: {line.strip()}")
+        self.assertEqual(found, [])
+
+
 if __name__ == "__main__":
     unittest.main()

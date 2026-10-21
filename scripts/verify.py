@@ -144,7 +144,6 @@ class Status:
     MISSING = "missing"
 
 
-# Severity for per-file required/optional distinction
 class Severity:
     CRITICAL = "critical"  # required file missing or bad hash (Recalbox RED)
     WARNING = "warning"  # optional missing or hash mismatch (Recalbox YELLOW)
@@ -378,8 +377,6 @@ def compute_severity(
     return Severity.OK
 
 
-# ZIP content index
-
 # Cross-reference: undeclared files used by cores
 
 
@@ -416,7 +413,6 @@ def _name_in_index(
     basename = name.rsplit("/", 1)[-1] if "/" in name else name
     if basename != name and basename in by_name:
         return True
-    # Case-insensitive by_name lookup
     if by_name_lower:
         key = name.lower()
         if key in by_name_lower:
@@ -508,7 +504,6 @@ def find_undeclared_files(
         config.get("verification_mode")
     )
 
-    # Collect data_directory refs
     declared_dd: set[str] = set()
     for sys_id, system in config.get("systems", {}).items():
         for dd in system.get("data_directories", []):
@@ -601,7 +596,6 @@ def find_undeclared_files(
                 archive = f.get("archive")
                 seen_files.add(seen_key)
 
-                # Archived files are grouped by archive
                 if archive:
                     archive_key = (
                         archive,
@@ -722,7 +716,6 @@ def find_undeclared_files(
         undeclared = [u for u in undeclared if id(u) not in settled]
         undeclared.extend(added)
 
-    # Append grouped archive entries
     for entry in sorted(archive_entries.values(), key=lambda e: e["name"]):
         undeclared.append(entry)
 
@@ -762,7 +755,6 @@ def find_exclusion_notes(
 
         emu_display = profile.get("emulator", emu_name)
 
-        # Launcher excluded entirely
         if profile.get("type") == "launcher":
             notes.append(
                 {
@@ -1088,7 +1080,6 @@ def verify_platform(
     validation_index = _build_validation_index(platform_profiles)
     validation_owners = destination_owners(platform_profiles)
 
-    # Filter systems by target
     if not target_cores:
         plat_cores = None
     verify_systems = filter_systems_by_target(
@@ -1098,9 +1089,7 @@ def verify_platform(
         platform_cores=plat_cores,
     )
 
-    # Per-entry results
     details = []
-    # Per-destination aggregation
     file_status: dict[str, str] = {}
     file_required: dict[str, bool] = {}
     file_severity: dict[str, str] = {}
@@ -1340,7 +1329,6 @@ def verify_platform(
         config, emulators_dir, emu_profiles, target_cores=target_cores
     )
 
-    # Ground truth coverage
     gt_filenames = set(validation_index)
     profiled_names: set[str] = set()
     for profile in profiles.values():
@@ -1630,7 +1618,6 @@ def print_platform_result(
     ok_count = c[Severity.OK]
     problems = total - ok_count
 
-    # Summary line
     if not reads_file_contents(mode):
         if problems:
             missing = c.get(Severity.WARNING, 0) + c.get(Severity.CRITICAL, 0)
@@ -2289,7 +2276,6 @@ def print_emulator_result(result: dict, verbose: bool = False) -> None:
             f"  Note: data directory '{ref}' required but not included (use refresh_data_dirs.py)"
         )
 
-    # Ground truth coverage footer
     gt_cov = result.get("ground_truth_coverage")
     if gt_cov and gt_cov["total"] > 0:
         pct = round(gt_cov["with_validation"] * 100 / gt_cov["total"])
@@ -2449,7 +2435,6 @@ def _main(held: contextlib.ExitStack) -> None:
         _run_listing(args, parser)
         return
 
-    # Mutual exclusion
     modes = sum(1 for x in (args.platform, args.all, args.emulator, args.system) if x)
     if modes == 0:
         parser.error("Specify --platform, --all, --emulator, or --system")

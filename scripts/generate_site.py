@@ -379,7 +379,6 @@ def generate_home(
         ]
     )
 
-    # Emulator classification breakdown
     lines.extend(
         [
             "## Emulator profiles",
@@ -413,7 +412,6 @@ def generate_home(
         ]
     )
 
-    # Quick links
     lines.extend(
         [
             "---",
@@ -1950,7 +1948,6 @@ def generate_platform_page(
             if fname:
                 config_files.setdefault((sys_id, fname), []).append(fe)
 
-    # Group details by system
     by_system: dict[str, list] = {}
     for d in cov["details"]:
         sys_id = d.get("system", "unknown")
@@ -2647,7 +2644,6 @@ def generate_system_page(
         icon_md = system_icon_markdown(manufacturer, console_name)
         lines.append(f"## {icon_md}{console_name}")
         lines.append("")
-        # Separate main files from variants
         main_files = [f for f in files if "/.variants/" not in f["path"]]
         variant_files = [f for f in files if "/.variants/" in f["path"]]
 
@@ -2682,7 +2678,6 @@ def generate_emulators_index(profiles: dict) -> str:
     }
     aliases = {k: v for k, v in profiles.items() if v.get("type") == "alias"}
 
-    # Group by classification
     by_class: dict[str, list[tuple[str, dict]]] = {}
     for name in sorted(unique.keys()):
         p = unique[name]
@@ -4315,7 +4310,6 @@ def _render_xref_by_platform(
                 sys_str += f" +{len(systems) - 3}"
 
             file_count = len(files)
-            # Count mode divergences
             libretro_only = sum(1 for f in files if f.get("mode") == "libretro")
             standalone_only = sum(1 for f in files if f.get("mode") == "standalone")
             file_str = str(file_count)
@@ -4364,7 +4358,6 @@ def _render_xref_by_upstream(
         ]
     )
 
-    # Group profiles by upstream
     by_upstream: dict[str, list[str]] = {}
     for emu_name, p in sorted(unique.items()):
         # A null upstream is the project's own source: grouping it under
@@ -4374,7 +4367,6 @@ def _render_xref_by_upstream(
         if up_str:
             by_upstream.setdefault(up_str, []).append(emu_name)
 
-    # Build platform membership per core
     platform_membership: dict[str, set[str]] = {}
     for pname, cov in coverages.items():
         for key in resolve_platform_cores(cov["config"], unique):
@@ -4857,7 +4849,6 @@ def generate_mkdocs_nav(
         k: v for k, v in profiles.items() if v.get("type") not in ("alias", "test")
     }
 
-    # Group emulators by classification for nav
     by_class: dict[str, list[tuple[str, str]]] = {}
     for name in sorted(unique_profiles.keys()):
         p = unique_profiles[name]
@@ -4865,7 +4856,6 @@ def generate_mkdocs_nav(
         display = p.get("emulator", name)
         by_class.setdefault(cls, []).append((display, f"emulators/{name}.md"))
 
-    # Classification display names
     cls_labels = {
         "pure_libretro": "Pure libretro",
         "official_port": "Official ports",
@@ -4983,7 +4973,6 @@ def _generate(args: argparse.Namespace) -> None:
     for d in GENERATED_DIRS:
         (docs / d).mkdir(parents=True, exist_ok=True)
 
-    # Copy stylesheet if source exists
     css_src = Path("docs_assets") / "extra.css"
     css_dest = docs / "stylesheets" / "extra.css"
     if css_src.exists():
@@ -5000,7 +4989,6 @@ def _generate(args: argparse.Namespace) -> None:
     # the sitemap instead (overrides/main.html).
     (docs / "robots.txt").unlink(missing_ok=True)
 
-    # Copy branding assets
     images_dest = docs / "assets" / "images"
     images_dest.mkdir(parents=True, exist_ok=True)
     assets_src = Path(".github") / "assets"
@@ -5047,7 +5035,6 @@ def _generate(args: argparse.Namespace) -> None:
         f"  {len(profiles)} profiles ({unique_count} unique, {len(profiles) - unique_count} aliases)"
     )
 
-    # Build cross-reference indexes
     consumers = _build_file_consumers(db, coverages, profiles)
     emulator_files = _build_emulator_file_index(profiles)
 
