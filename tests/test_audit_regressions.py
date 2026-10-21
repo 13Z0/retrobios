@@ -6115,8 +6115,12 @@ class SkipPacksHelpSaysWhatRuns(unittest.TestCase):
         self.assertIn("Steps 7 and 8 still rewrite README.md and docs/", text)
 
     def test_every_step_it_names_is_one_it_skips(self):
+        sys.path.insert(0, str(ROOT / "scripts"))
+        import pipeline
+
         source = (ROOT / "scripts" / "pipeline.py").read_text(encoding="utf-8")
-        skipped = set(re.findall(r"--- (\w+)/8 [^\n]*SKIPPED \(--skip-packs\)", source))
+        keys = re.findall(r'skip_notice\("(\w+)", "--skip-packs"\)', source)
+        skipped = {pipeline.step_number(key) for key in keys}
         self.assertEqual(skipped, {"4", "4b", "4c", "6"})
 
 
