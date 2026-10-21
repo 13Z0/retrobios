@@ -164,18 +164,15 @@ def _fetch_asset(
 
     if os.path.isdir(cached):
         return None
+    if os.path.exists(cached) and not (expected_sha1 or expected_md5):
+        return cached
     if os.path.exists(cached):
-        try:
-            hashes = compute_hashes(cached) if (expected_sha1 or expected_md5) else {}
-        except FileNotFoundError:
-            hashes = None
-        if hashes is None:
+        snapshot = _read_once(cached)
+        if snapshot is None:
             pass
-        elif not (expected_sha1 or expected_md5) or _matches(
-            hashes, expected_sha1, expected_md5
-        ):
+        elif _matches(snapshot[0], expected_sha1, expected_md5):
             return cached
-        elif not _replaced_on_release(name, cached, offline):
+        elif not _replaced_on_release(name, snapshot[0]["sha256"], snapshot[1], offline):
             # A copy of this asset that answers another hash: the caller
             # wants a different revision under the same name, and the
             # release still serves this one. Keeping it is what lets the
@@ -249,8 +246,32 @@ def _asset_urls(name: str) -> list[tuple[str, str]]:
     ]
 
 
-def _replaced_on_release(name: str, cached: str, offline: bool) -> bool:
-    """Whether the release now serves other bytes than the cached copy.
+def _read_once(path: str) -> tuple[dict[str, str], int] | None:
+    """Digests and size of the file at *path*, all read from one file, or
+    None when it is gone.
+
+    Every judgement on a cache copy reads this one snapshot. Hashed, then
+    hashed again by path for the release check, a copy another run promoted
+    in between answered the second question: the copy the caller wanted was
+    in the cache and the caller was told there was none.
+    """
+    # A promotion is an os.replace, so it changes the inode: the same inode
+    # on both sides of the read means the digests describe that one file.
+    for _attempt in range(3):
+        try:
+            before = os.stat(path)
+            hashes = compute_hashes(path)
+            after = os.stat(path)
+        except FileNotFoundError:
+            return None
+        if (before.st_ino, before.st_mtime_ns) == (after.st_ino, after.st_mtime_ns):
+            return hashes, after.st_size
+    return None
+
+
+def _replaced_on_release(name: str, sha256: str, size: int, offline: bool) -> bool:
+    """Whether the release now serves other bytes than the cached copy,
+    whose *sha256* and *size* the caller read.
 
     The release lists a sha256 per asset: a dump rebuilt at the same size
     (the eight 251658304-byte DSi NANDs) differs only there, and judged by
@@ -266,9 +287,9 @@ def _replaced_on_release(name: str, cached: str, offline: bool) -> bool:
         None,
     )
     if digest:
-        return compute_hashes(cached, frozenset({"sha256"}))["sha256"] != digest
+        return sha256 != digest
     served = _served_size(name)
-    return served is not None and served != os.path.getsize(cached)
+    return served is not None and served != size
 
 
 _digests_cache: dict[str, str] | None = None
