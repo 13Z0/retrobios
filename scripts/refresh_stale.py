@@ -570,7 +570,9 @@ def main() -> int:
         areas = tuple(a.strip() for a in args.only.split(",") if a.strip())
         unknown = sorted(set(areas) - set(all_areas))
         if unknown:
-            parser.error(f"unknown area: {', '.join(unknown)}")
+            parser.error(
+                f"unknown area: {', '.join(unknown)}. Areas: {', '.join(all_areas)}"
+            )
     else:
         areas = all_areas
 

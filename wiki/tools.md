@@ -600,8 +600,14 @@ python scripts/check_freshness.py --offline      # local ages only
 python scripts/check_freshness.py --record-coreinfo virtualjaguar  # .info read, record it
 ```
 
-The exit code is non-zero when anything is stale. Emulator profiles are the
-one layer left to `profile_sync.py`, which the `--profiles` flag folds in.
+The exit code is non-zero when anything is stale or an upstream asked could
+not be read (`UNKNOWN`), so a run that reached no remote does not pass for a
+fresh collection. `--offline` asks no upstream and its rows are `SKIPPED`.
+Emulator profiles are the one layer left to `profile_sync.py`, which the
+`--profiles` flag folds in. A profile skipped by nature (upstream declared
+gone, a host no forge API serves, no `source_ref`) is `SKIPPED`, one no
+declared repository answers is `UNKNOWN`. When rows are stale, the summary
+names `refresh_stale.py`, which runs the refresher behind each of them.
 
 ### refresh_stale.py
 

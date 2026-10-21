@@ -518,7 +518,10 @@ def check_native(
                 wanted, cache_dir / name, recorded, index, _transcribed_at(platforms_dir, name)
             )
             if reason:
-                reason += ", export_native.py --refresh-cache fetches it"
+                reason += (
+                    f", export_native.py --platform {name} --refresh-cache"
+                    " fetches it, then the export is written again"
+                )
             else:
                 reason = published_export_state(
                     name, exporter_class, truth_dir, platforms_dir, cache_dir, published
@@ -1299,7 +1302,15 @@ def summarize_profile_sync(report: object) -> list[Finding]:
                                     remote=announced, detail=detail))
             continue
         if row.get("skipped"):
-            findings.append(Finding("profiles", name, UNKNOWN, detail=str(row["skipped"])))
+            # A skip profile_sync counts as a defect (no repository answers,
+            # no resolvable pin) is unknown. One that is the profile's nature
+            # (an upstream declared gone, a host no forge API serves, no
+            # source_ref) is never checkable and does not hold the exit code.
+            from profile_sync import ProfileReport
+
+            reason = str(row["skipped"])
+            status = UNKNOWN if reason.startswith(ProfileReport.UNCHECKABLE) else SKIPPED
+            findings.append(Finding("profiles", name, status, detail=reason))
             continue
         review = row.get("needs_review") or 0
         pin, head = str(row.get("pin") or ""), str(row.get("head") or "")
@@ -1360,6 +1371,13 @@ def render(findings: list[Finding]) -> str:
     counts = {status: sum(1 for f in findings if f.status == status) for status in STATUSES}
     summary = ", ".join(f"{n} {status.lower()}" for status, n in counts.items() if n)
     lines.append(f"\nFRESHNESS: {summary}")
+    if counts[STALE]:
+        lines.append(
+            "refresh_stale.py runs the refresher behind every stale row "
+            "(--dry-run lists them first)"
+        )
+    if counts[UNKNOWN]:
+        lines.append("an unknown row is an upstream that could not be read: not up to date")
     return "\n".join(lines)
 
 
@@ -1420,7 +1438,7 @@ def main() -> int:
     areas = tuple(a.strip() for a in args.only.split(",")) if args.only else AREAS
     unknown = sorted(set(areas) - set(AREAS))
     if unknown:
-        parser.error(f"unknown area: {', '.join(unknown)}")
+        parser.error(unknown_areas_message(unknown))
 
     platforms_dir = Path(args.platforms_dir)
     profiles = load_emulator_profiles(args.emulators_dir, skip_aliases=False)
@@ -1455,7 +1473,28 @@ def main() -> int:
         print(json.dumps([asdict(f) for f in findings], indent=2))
     else:
         print(render(findings))
-    return 1 if any(f.status in (STALE, ERROR) for f in findings) else 0
+    return exit_code(findings)
+
+
+def exit_code(findings: list[Finding]) -> int:
+    """Zero only when every upstream asked answered and nothing is stale.
+
+    An unknown row is an upstream that could not be read: a run without
+    network gave 28 of them and exited 0, the answer of a fresh collection.
+    """
+    return 1 if any(f.status in (STALE, ERROR, UNKNOWN) for f in findings) else 0
+
+
+def unknown_areas_message(unknown: list[str]) -> str:
+    """The refusal of --only, naming the areas it accepts."""
+    import difflib
+
+    hints = [
+        f"{name} (did you mean {close[0]}?)" if close else name
+        for name in unknown
+        for close in [difflib.get_close_matches(name, AREAS, n=1)]
+    ]
+    return f"unknown area: {', '.join(hints)}. Areas: {', '.join(AREAS)}"
 
 
 if __name__ == "__main__":
