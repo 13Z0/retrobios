@@ -1253,6 +1253,8 @@ def check_profiles(run: bool, offline: bool) -> list[Finding]:
         "--all",
         "--json",
         "--check-version",
+        "--detect-new-files",
+        "--watch-hashes",
     ]
     if offline:
         cmd.append("--offline")
@@ -1273,7 +1275,9 @@ def summarize_profile_sync(report: object) -> list[Finding]:
     The JSON carries the ref verdicts and the pin against the tip. A profile
     whose refs need review is stale, one the forge could not serve is unknown,
     and one whose upstream moved while every ref still anchors is reported as
-    such without being counted as stale.
+    such without being counted as stale. A cited file that gained a file name
+    since the pin, or a hash the profile does not declare, is stale too: the
+    upstream may load a file the profile does not document.
     """
     if not isinstance(report, list):
         return [Finding("profiles", "profile_sync", ERROR, detail="report is not a list")]
@@ -1303,7 +1307,18 @@ def summarize_profile_sync(report: object) -> list[Finding]:
             continue
         review = row.get("needs_review") or 0
         pin, head = str(row.get("pin") or ""), str(row.get("head") or "")
-        if review:
+        added = sorted({
+            str(item.get("name"))
+            for item in row.get("new_files") or ()
+            if isinstance(item, dict) and item.get("since_pin")
+        })
+        hashes = len(row.get("new_hashes") or ())
+        reasons = [f"{review} refs to review"] if review else []
+        if added:
+            reasons.append(f"new file names since the pin: {', '.join(added)}")
+        if hashes:
+            reasons.append(f"{hashes} undeclared hashes added since the pin")
+        if reasons:
             findings.append(
                 Finding(
                     "profiles",
@@ -1311,7 +1326,7 @@ def summarize_profile_sync(report: object) -> list[Finding]:
                     STALE,
                     local=pin[:8],
                     remote=head[:8],
-                    detail=f"{review} refs to review",
+                    detail=", ".join(reasons),
                 )
             )
         elif pin and head and pin != head:

@@ -966,6 +966,14 @@ class ProfileReport:
     # release, kept on the report so every output carries it.
     version: VersionReport | None = None
     version_warning: str | None = None
+    # --detect-new-files and --watch-hashes, kept on the report so --json
+    # carries them to check_freshness. None when not asked. A new file is
+    # {path, line, name, since_pin}: since_pin when the pinned revision of
+    # the same file does not carry the name. A new hash is {path, kind, value}.
+    new_files: list[dict] | None = None
+    new_files_elided: dict[str, int] = field(default_factory=dict)
+    new_hashes: list[dict] | None = None
+    detection_skipped: str | None = None
 
     # Skips that say the profile cannot be checked as written: a repository
     # that no longer answers, no pin to read, a death the forge contradicts.
@@ -3756,37 +3764,84 @@ def _cited_paths(report: ProfileReport) -> list[str]:
     )
 
 
-def _print_detection(
+def _attach_detection(
+    args: argparse.Namespace, profile: dict, report: ProfileReport
+) -> None:
+    """Record undeclared names and hashes of the cited files on the report.
+
+    Kept on the report rather than printed, so --json carries them as the
+    text report does. A forge that refuses is named on the report: the ref
+    report already muted it, and one refusal must not end a pass over every
+    profile. A quota signal still stops everything.
+    """
+    if not report.head or not (args.detect_new_files or args.watch_hashes):
+        return
+    repo = select_repo(profile)
+    if repo is None:
+        return
+    try:
+        _detect(args, profile, report, repo)
+    except upstream.RateLimitError:
+        raise
+    except upstream.UpstreamError as exc:
+        report.detection_skipped = str(exc)
+
+
+def _detect(
     args: argparse.Namespace, profile: dict, report: ProfileReport,
     repo: upstream.Repo,
 ) -> None:
     names, hashes = declared_names(profile), declared_hashes(profile)
+    new_files: list[dict] = []
+    new_hashes: list[dict] = []
     for path in _cited_paths(report):
         head_lines = upstream.fetch_file(
             repo, report.head, path, args.cache_dir, args.offline
         )
         if head_lines is None:
             continue
+        pin_lines = (
+            upstream.fetch_file(repo, report.pin, path, args.cache_dir, args.offline)
+            or []
+        )
         if args.detect_new_files:
             found, elided = detect_new_files(head_lines, names)
-            for number, name in found:
-                print(f"  new file: {path}:{number}  {name}")
-            if elided:
-                print(f"  new file: {elided} further matches not shown")
-        if args.watch_hashes:
-            pin_lines = (
-                upstream.fetch_file(
-                    repo, report.pin, path, args.cache_dir, args.offline
-                )
-                or []
+            at_pin = {
+                name.casefold()
+                for _, name in detect_new_files(pin_lines, names, cap=sys.maxsize)[0]
+            }
+            new_files.extend(
+                {"path": path, "line": number, "name": name,
+                 "since_pin": name.casefold() not in at_pin}
+                for number, name in found
             )
+            if elided:
+                report.new_files_elided[path] = elided
+        if args.watch_hashes:
             added = [
                 line
                 for line in difflib.unified_diff(pin_lines, head_lines, n=0)
                 if line.startswith("+") and not line.startswith("+++")
             ]
-            for kind, value in watch_hashes(added, hashes):
-                print(f"  new {kind}: {path}  {value}")
+            new_hashes.extend(
+                {"path": path, "kind": kind, "value": value}
+                for kind, value in watch_hashes(added, hashes)
+            )
+    if args.detect_new_files:
+        report.new_files = new_files
+    if args.watch_hashes:
+        report.new_hashes = new_hashes
+
+
+def _print_detection(report: ProfileReport) -> None:
+    if report.detection_skipped:
+        print(f"  extras skipped: {report.detection_skipped}")
+    for item in report.new_files or ():
+        print(f"  new file: {item['path']}:{item['line']}  {item['name']}")
+    for path, elided in report.new_files_elided.items():
+        print(f"  new file: {path}: {elided} further matches not shown")
+    for item in report.new_hashes or ():
+        print(f"  new {item['kind']}: {item['path']}  {item['value']}")
 
 
 def _attach_version(
@@ -3820,13 +3875,8 @@ def _print_extras(
     instead of ending a pass over every profile. A quota signal still
     stops everything.
     """
-    wants = (
-        args.detect_new_files
-        or args.watch_hashes
-        or args.full_diff
-        or args.tree_diff
-    )
-    if not wants or not report.head:
+    _print_detection(report)
+    if not (args.full_diff or args.tree_diff) or not report.head:
         return
     repo = select_repo(profile)
     if repo is None:
@@ -3843,8 +3893,6 @@ def _print_extras_from(
     args: argparse.Namespace, profile: dict, report: ProfileReport,
     repo: upstream.Repo,
 ) -> None:
-    if args.detect_new_files or args.watch_hashes:
-        _print_detection(args, profile, report, repo)
     if args.full_diff:
         for path in _cited_paths(report):
             if args.ref and args.ref not in path:
@@ -3991,13 +4039,15 @@ def _refuse_flag_combinations(args: argparse.Namespace) -> None:
     ]
     # The version check lives on the report, so the outputs built from the
     # report (text, --json, --markdown) carry it. A URL list and a ranking
-    # do not.
+    # do not. Detection lives on the report too, and --json carries it for
+    # check_freshness; the markdown table has no column for it.
     lists_only = args.fetch_plan or args.triage
+    off_json = lists_only or args.markdown
     extras = [
         flag for flag, on in (
             ("--check-version", args.check_version and lists_only),
-            ("--detect-new-files", args.detect_new_files),
-            ("--watch-hashes", args.watch_hashes),
+            ("--detect-new-files", args.detect_new_files and off_json),
+            ("--watch-hashes", args.watch_hashes and off_json),
             ("--full-diff", args.full_diff),
             ("--tree-diff", args.tree_diff),
         ) if on
@@ -4094,6 +4144,7 @@ def main() -> None:
                 profile["version_source"].get("no_genuine_copy") or "") or None
         if args.check_version:
             _attach_version(args, profile, report)
+        _attach_detection(args, profile, report)
         reports.append(report)
         if writes:
             try:

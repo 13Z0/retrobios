@@ -388,6 +388,29 @@ class ProfileSummaryTests(unittest.TestCase):
         self.assertNotIn("a", by_subject)
         self.assertNotIn("b", by_subject)
 
+    def test_new_upstream_names_and_hashes_are_stale(self):
+        """A file name the cited code gained since the pin, or a hash nobody
+        declares, was printed only by the text pass that --profiles never ran."""
+        report = [
+            {"name": "a", "pin": "1" * 40, "head": "2" * 40, "needs_review": 0,
+             "new_files": [
+                 {"path": "x.c", "line": 4, "name": "old.rom", "since_pin": False},
+                 {"path": "x.c", "line": 9, "name": "new.rom", "since_pin": True},
+             ], "new_hashes": []},
+            {"name": "b", "pin": "1" * 40, "head": "2" * 40, "needs_review": 0,
+             "new_files": [], "new_hashes": [{"path": "x.c", "kind": "md5", "value": "0" * 32}]},
+            {"name": "c", "pin": "1" * 40, "head": "2" * 40, "needs_review": 0,
+             "new_files": [
+                 {"path": "x.c", "line": 4, "name": "old.rom", "since_pin": False},
+             ], "new_hashes": []},
+        ]
+        by_subject = {f.subject: f for f in cf.summarize_profile_sync(report)}
+        self.assertEqual(by_subject["a"].status, cf.STALE)
+        self.assertIn("new.rom", by_subject["a"].detail)
+        self.assertNotIn("old.rom", by_subject["a"].detail)
+        self.assertEqual(by_subject["b"].status, cf.STALE)
+        self.assertNotIn("c", by_subject)
+
     def test_profile_sync_accepts_the_command_it_is_given(self):
         """--json with the detection flags was refused, so --profiles read an
         empty stdout and reported "unreadable report" on every run."""
