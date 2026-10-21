@@ -23,6 +23,7 @@ import tempfile
 import urllib.error
 import urllib.request
 import zipfile
+from collections.abc import Iterator
 from pathlib import Path
 from artifacts import file_lock as _file_lock
 from common import platform_arg, require_platform, yaml_load
@@ -61,7 +62,34 @@ def cache_lock(
     swapped the tree shipped part of it, or nothing.
     """
     cache_dir = Path(cache_dir)
-    return _file_lock(cache_dir.with_name(f".{cache_dir.name}.lock"), shared=shared)
+    return _announced_lock(cache_dir.with_name(f".{cache_dir.name}.lock"), shared, cache_dir)
+
+
+@contextlib.contextmanager
+def _announced_lock(lock_path: Path, shared: bool, cache_dir: Path) -> Iterator[None]:
+    """file_lock, saying so when it has to wait.
+
+    A pipeline holds every cache for its whole run: a refresh started beside
+    it waited hours with nothing on screen.
+    """
+    try:
+        import fcntl
+    except ImportError:
+        with _file_lock(lock_path, shared=shared):
+            yield
+        return
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+    mode = fcntl.LOCK_SH if shared else fcntl.LOCK_EX
+    with open(lock_path, "a") as handle:
+        try:
+            fcntl.flock(handle, mode | fcntl.LOCK_NB)
+        except BlockingIOError:
+            log.warning("waiting for %s: another run holds it", cache_dir)
+            fcntl.flock(handle, mode)
+        try:
+            yield
+        finally:
+            fcntl.flock(handle, fcntl.LOCK_UN)
 
 
 def hold_data_dirs(stack: contextlib.ExitStack, registry: dict) -> None:

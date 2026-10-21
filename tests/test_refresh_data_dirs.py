@@ -166,6 +166,33 @@ class EmulatorPackHoldsTheCache(unittest.TestCase):
             self.assertEqual(held, [True])
 
 
+class AWaitIsAnnounced(unittest.TestCase):
+    def test_a_held_tree_is_named_before_the_wait(self):
+        """A pipeline holds every tree for its run: the refresh beside it
+        waited with nothing on screen."""
+        with tempfile.TemporaryDirectory() as tmp:
+            cache = Path(tmp) / "probe"
+            taken = threading.Event()
+
+            def second_run() -> None:
+                with rdd.cache_lock(cache):
+                    taken.set()
+
+            with self.assertLogs(rdd.log, "WARNING") as logs:
+                with rdd.cache_lock(cache):
+                    worker = threading.Thread(target=second_run)
+                    worker.start()
+                    for _ in range(100):
+                        if logs.output:
+                            break
+                        threading.Event().wait(0.05)
+                    self.assertFalse(taken.is_set())
+                worker.join(10)
+            self.assertTrue(taken.is_set())
+            self.assertIn("waiting for", logs.output[0])
+            self.assertIn("probe", logs.output[0])
+
+
 class DryRunReport(unittest.TestCase):
     """What a dry run says: why each entry would be fetched, and how many."""
 

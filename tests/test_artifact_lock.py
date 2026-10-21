@@ -110,6 +110,36 @@ class PackLockCliTest(unittest.TestCase):
         self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
         self.assertIn("is in use by another run", proc.stdout)
 
+    def test_a_held_output_is_refused_before_the_data_refresh(self):
+        """The refresh waits for every run holding a data tree, and a
+        pipeline holds them all for its whole run: probed after the refresh,
+        a second build sat silent for hours instead of being refused."""
+        from refresh_data_dirs import cache_lock  # noqa: PLC0415
+
+        platforms = Path(self.dir) / "platforms"
+        platforms.mkdir()
+        for name in ("_registry.yml", "_shared.yml", "misterfpga.yml"):
+            shutil.copyfile(REPO_ROOT / "platforms" / name, platforms / name)
+        cache = Path(self.dir) / "cache" / "probe"
+        cache.mkdir(parents=True)
+        (platforms / "_data_dirs.yml").write_text(
+            "data_directories:\n  probe:\n    source_type: zip\n"
+            f"    source_url: https://example.invalid/probe.zip\n"
+            f"    local_cache: {cache}\n"
+        )
+        output = Path(self.dir) / "out"
+        with artifact_lock(str(output)), cache_lock(cache):
+            try:
+                proc = subprocess.run(
+                    [sys.executable, "scripts/generate_pack.py", "--platform", "misterfpga",
+                     "--platforms-dir", str(platforms), "--output-dir", str(output)],
+                    capture_output=True, text=True, cwd=str(REPO_ROOT), timeout=120,
+                )
+            except subprocess.TimeoutExpired:
+                self.fail("generate_pack waited on the data tree instead of refusing")
+        self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
+        self.assertIn("is in use by another run", proc.stdout)
+
     def test_every_writing_mode_refuses_a_locked_output(self):
         """Two of seven modes took the lock, and five wrote straight into it.
 
