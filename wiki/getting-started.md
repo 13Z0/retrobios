@@ -65,8 +65,12 @@ mounted on another machine:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh \
-  | sh -s -- --platform retroarch --dest /path/to/sdcard
+  | sh -s -- --platform retroarch --dest /path/to/sdcard/retroarch/cores/system
 ```
+
+`--dest` is the BIOS folder itself, so on a card it names that folder on the
+card: `retroarch/cores/system` for RetroArch on Switch, `RetroArch/system` on
+Android.
 
 PowerShell needs another form, the environment overrides and the detection
 rules are listed per platform, and the trust boundary is described in full on
@@ -91,20 +95,10 @@ against the SHA-256 the release publishes before anything is extracted.
 2. Download the ZIP pack for your platform
 3. Extract to the BIOS directory listed below
 
-A pack over 2 GB comes in several parts, and every part is needed. How to
-open them depends on their name:
-
-- `Pack.part1of2.zip`, `Pack.part2of2.zip`: each part is an ordinary ZIP.
-  Extract them all into the same folder.
-- `Pack.zip.001`, `Pack.zip.002` (releases up to v2026.09.04): slices of one
-  ZIP, none of which opens on its own. Put them in one folder and open the
-  `.001` with 7-Zip or PeaZip, or join them first:
-    - Linux/macOS: `cat Pack.zip.0* > Pack.zip`
-    - Windows: `cmd /c copy /b Pack.zip.001+Pack.zip.002 Pack.zip`
-
-A frontend's own extractor may refuse a slice: Batocera answers `Archive
-type: '001' is not yet supported`. Join the slices from a shell there. See
-[Download](../which-pack.md) for the per-setup instructions.
+A pack over 2 GB comes in several parts (`Pack.part1of2.zip`,
+`Pack.part2of2.zip`), and every part is needed. Each part is an ordinary ZIP:
+extract them all into the same folder. See [Download](../which-pack.md) for
+the per-setup instructions.
 
 ## BIOS directory by platform
 
@@ -249,31 +243,22 @@ Checking existing files...
 whose contents the platform will reject, which is how a wrong revision or a bad
 dump shows up.
 
-`scripts/verify.py` answers a different question, how complete this
-repository's collection is. It reads `database.json`, never your BIOS folder,
-and needs a clone.
-
 The installer's `--check` hashes every file against the list on every
 platform, so it catches a wrong revision even where the frontend would not:
 RetroArch, Lakka and RetroPie only check that a file exists, while Batocera,
 RetroBat, Recalbox, EmuDeck, RetroDECK, RomM, ROCKNIX and MiSTer FPGA compare
-MD5 and BizHawk compares SHA1. To see which emulator reads a file and what it
-expects, `python scripts/verify.py --platform retroarch --verbose` lists the
-ground truth per core, for the collection rather than your folder.
+MD5 and BizHawk compares SHA1.
 
-For a single system:
-
-```bash
-python scripts/verify.py --system sony-playstation
-```
-
-For a single emulator core:
+For a single system, or the files a single emulator core reads (`--list-systems`
+and `--list-cores` give the names):
 
 ```bash
-python scripts/verify.py --emulator beetle_psx
+curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh -s -- --check --system sony-playstation
+curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh -s -- --check --emulator beetle_psx
 ```
 
-See [Tools](tools.md) for the full CLI reference.
+`--verbose` names every file still to fetch, wrong hashes included. See [Installer](installer.md)
+for every option, and [Tools](tools.md) for the repository's own scripts.
 
 ## Next steps
 

@@ -212,13 +212,12 @@ class PartsAreExplainedWhereTheyAreDownloaded(unittest.TestCase):
     def _text(self, relative: str) -> str:
         return (REPO_ROOT / relative).read_text(encoding="utf-8")
 
-    def test_every_page_names_both_layouts(self):
-        """The older release stays downloadable until the next one replaces it."""
+    def test_every_page_names_the_parts(self):
+        """Slices left the pages with the last release that used them
+        (test_doc_surfaces.SlicesLeaveWithTheirRelease)."""
         for page in self.PAGES:
             with self.subTest(page=page):
-                text = self._text(page)
-                self.assertTrue(".part1of2.zip" in text)
-                self.assertTrue(".zip.001" in text)
+                self.assertIn(".part1of2.zip", self._text(page))
 
     def test_the_windows_join_command_runs_from_powershell(self):
         """`copy /b A+B C` is a cmd builtin. Typed into PowerShell, the shell

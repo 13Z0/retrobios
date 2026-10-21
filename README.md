@@ -24,8 +24,9 @@ irm https://raw.githubusercontent.com/Abdess/retrobios/main/install.ps1 | iex
 # Android (Termux, after pkg install python and termux-setup-storage)
 curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh
 
-# Handheld (SD card mounted on PC)
-curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh -s -- --platform retroarch --dest /path/to/sdcard
+# SD card mounted on a PC: --dest is the BIOS folder on the card
+# (RetroArch on Switch: retroarch/cores/system, on Android: RetroArch/system)
+curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh -s -- --platform retroarch --dest /path/to/sdcard/retroarch/cores/system
 ```
 
 The script auto-detects your platform, downloads only missing files, and verifies checksums.
@@ -35,27 +36,24 @@ The script auto-detects your platform, downloads only missing files, and verifie
 One pack per platform, and it holds everything the platform runs: its own BIOS list plus every file its emulator cores load. Pick your platform, download the ZIP, extract to the BIOS path. The installer above does the same file by file. At a terminal it asks whether to install everything or to choose systems, cores and regions, and `--system`, `--core`, `--region` and `--target` make the same choice without questions. For a bare minimum, build your own pack below.
 Files is how many the pack holds once extracted, the figure a file manager shows for the folder. It differs from one platform to the next because a pack carries only what that platform's emulators load. The size is what the files occupy once extracted, and the ZIP itself downloads smaller.
 
-A pack over 2 GB comes in several parts, and every part is needed. How to open them depends on their name:
-
-- `Pack.part1of2.zip`, `Pack.part2of2.zip`: each part is an ordinary ZIP. Extract them all into the same folder.
-- `Pack.zip.001`, `Pack.zip.002` (releases up to v2026.09.04): slices of one ZIP, none of which opens on its own. Put them in one folder and open the `.001` with 7-Zip or PeaZip, or join them first with `cat Pack.zip.0* > Pack.zip` on Linux and macOS, `cmd /c copy /b Pack.zip.001+Pack.zip.002 Pack.zip` on Windows.
+A pack over 2 GB comes in several parts (`Pack.part1of2.zip`, `Pack.part2of2.zip`), and every part is needed. Each part is an ordinary ZIP: extract them all into the same folder.
 
 Every release ships `SHA256SUMS.txt` and a detached signature of it, checkable against `allowed_signers` in this repository: [verifying a release](https://abdess.github.io/retrobios/wiki/release-process/#verifying-a-release).
 
 | Platform | Files | Extracted size | Extract to | Download |
 |----------|------:|---------------:|-----------|----------|
-| Batocera | 12,810 | 7.5 GB | `/userdata/bios/` | [Download](../../releases/latest) |
-| BizHawk | 950 | 2.4 GB | `Firmware/` | [Download](../../releases/latest) |
-| EmuDeck | 620 | 3.2 GB | `~/Emulation/bios/` | [Download](../../releases/latest) |
-| Lakka | 8,504 | 6.0 GB | `/storage/system/` | [Download](../../releases/latest) |
-| MiSTer FPGA | 83 | 29 MB | `/media/fat/games/` | [Download](../../releases/latest) |
-| ROCKNIX | 5,804 | 6.1 GB | `/storage/roms/bios/` | [Download](../../releases/latest) |
-| Recalbox | 3,222 | 3.9 GB | `/recalbox/share/bios/` | [Download](../../releases/latest) |
-| RetroArch | 8,504 | 6.0 GB | `system/` | [Download](../../releases/latest) |
-| RetroBat | 12,399 | 7.9 GB | `bios/` | [Download](../../releases/latest) |
-| RetroDECK | 7,793 | 8.0 GB | `~/retrodeck/` | [Download](../../releases/latest) |
-| RetroPie * | 12,533 | 8.1 GB | `~/RetroPie/BIOS/` | [Download](../../releases/latest) |
-| RomM | 1,087 | 1.5 GB | `library/bios/` | [Download](../../releases/latest) |
+| Batocera | 12,810 | 7.5 GB | `/userdata/bios/` | Download: [part 1 of 3](../../releases/download/v2026.10.10/Batocera_43.1_BIOS_Pack.part1of3.zip), [part 2 of 3](../../releases/download/v2026.10.10/Batocera_43.1_BIOS_Pack.part2of3.zip), [part 3 of 3](../../releases/download/v2026.10.10/Batocera_43.1_BIOS_Pack.part3of3.zip) |
+| BizHawk | 950 | 2.4 GB | `Firmware/` | [Download](../../releases/download/v2026.10.10/BizHawk_2.11.1_BIOS_Pack.zip) |
+| EmuDeck | 620 | 3.2 GB | `~/Emulation/bios/` | [Download](../../releases/download/v2026.10.10/EmuDeck_2.7EA_BIOS_Pack.zip) |
+| Lakka | 8,504 | 6.0 GB | `/storage/system/` | Download: [part 1 of 2](../../releases/download/v2026.10.10/RetroArch_Lakka_v1.22.2_BIOS_Pack.part1of2.zip), [part 2 of 2](../../releases/download/v2026.10.10/RetroArch_Lakka_v1.22.2_BIOS_Pack.part2of2.zip) |
+| MiSTer FPGA | 83 | 29 MB | `/media/fat/games/` | [Download](../../releases/download/v2026.10.10/MiSTer_FPGA_2026-09-29_BIOS_Pack.zip) |
+| ROCKNIX | 5,804 | 6.1 GB | `/storage/roms/bios/` | Download: [part 1 of 2](../../releases/download/v2026.10.10/ROCKNIX_20261001_BIOS_Pack.part1of2.zip), [part 2 of 2](../../releases/download/v2026.10.10/ROCKNIX_20261001_BIOS_Pack.part2of2.zip) |
+| Recalbox | 3,222 | 3.9 GB | `/recalbox/share/bios/` | Download: [part 1 of 2](../../releases/download/v2026.10.10/Recalbox_10.1.1_BIOS_Pack.part1of2.zip), [part 2 of 2](../../releases/download/v2026.10.10/Recalbox_10.1.1_BIOS_Pack.part2of2.zip) |
+| RetroArch | 8,504 | 6.0 GB | `system/` | Download: [part 1 of 2](../../releases/download/v2026.10.10/RetroArch_Lakka_v1.22.2_BIOS_Pack.part1of2.zip), [part 2 of 2](../../releases/download/v2026.10.10/RetroArch_Lakka_v1.22.2_BIOS_Pack.part2of2.zip) |
+| RetroBat | 12,399 | 7.9 GB | `bios/` | Download: [part 1 of 3](../../releases/download/v2026.10.10/RetroBat_8.2.1_BIOS_Pack.part1of3.zip), [part 2 of 3](../../releases/download/v2026.10.10/RetroBat_8.2.1_BIOS_Pack.part2of3.zip), [part 3 of 3](../../releases/download/v2026.10.10/RetroBat_8.2.1_BIOS_Pack.part3of3.zip) |
+| RetroDECK | 7,793 | 8.0 GB | `~/retrodeck/` | Download: [part 1 of 3](../../releases/download/v2026.10.10/RetroDECK_0.10.10b_BIOS_Pack.part1of3.zip), [part 2 of 3](../../releases/download/v2026.10.10/RetroDECK_0.10.10b_BIOS_Pack.part2of3.zip), [part 3 of 3](../../releases/download/v2026.10.10/RetroDECK_0.10.10b_BIOS_Pack.part3of3.zip) |
+| RetroPie * | 12,533 | 8.1 GB | `~/RetroPie/BIOS/` | Download: [part 1 of 3](../../releases/download/v2026.10.10/RetroPie_4.8.12_BIOS_Pack.part1of3.zip), [part 2 of 3](../../releases/download/v2026.10.10/RetroPie_4.8.12_BIOS_Pack.part2of3.zip), [part 3 of 3](../../releases/download/v2026.10.10/RetroPie_4.8.12_BIOS_Pack.part3of3.zip) |
+| RomM | 1,087 | 1.5 GB | `library/bios/` | [Download](../../releases/download/v2026.10.10/RomM_5.3.1_BIOS_Pack.zip) |
 
 The RetroDECK pack already carries its own `bios/` folder, so it extracts into `~/retrodeck/` rather than into the BIOS folder.
 
@@ -124,7 +122,8 @@ python scripts/generate_pack.py --platform retroarch --region us --one-per-slot
 python scripts/generate_pack.py --list-emulators
 python scripts/generate_pack.py --list-systems
 
-# Verify your BIOS collection
+# Coverage of this repository's collection per platform, emulator or system
+# (it reads database.json and bios/: for your own BIOS folder, run the installer with --check)
 python scripts/verify.py --all
 python scripts/verify.py --platform batocera
 python scripts/verify.py --emulator flycast
@@ -180,4 +179,4 @@ The scripts and tooling are released under the [MIT License](LICENSE).
 The BIOS and firmware files are not covered by that license: they are third-party system software, preserved and provided for personal backup, archival, and interoperability with emulation software. [NOTICE](NOTICE) sets out their status and how to ask for a file to be removed.
 The reasoning, and where it is weakest, is in the [FAQ](https://abdess.github.io/retrobios/wiki/faq/#is-this-legal).
 
-*Auto-generated on 2026-10-20T20:53:07Z*
+*Auto-generated on 2026-10-21T02:26:05Z*

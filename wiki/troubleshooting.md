@@ -14,28 +14,34 @@ curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | 
 
 It hashes what is there and writes nothing. Anything counted as needing
 downloading is absent, and a required file that is absent means the core cannot
-start games for that system at all.
-
-`scripts/verify.py` answers a different question, how complete this
-repository's collection is. It reads `database.json`, never your BIOS folder,
-and needs a clone:
+start games for that system at all. `--system` narrows the check to one
+system (`--list-systems` names them):
 
 ```bash
-python scripts/verify.py --platform retroarch --verbose
-python scripts/verify.py --system sony-playstation
+curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh -s -- --check --system sony-playstation --verbose
 ```
 
 ### Check if the hash matches
 
-Look for `untested` entries in the verify output. This means the file exists but
-its hash does not match the expected value. Common causes:
+The count `--check` prints says how many files are present with contents the
+platform does not accept:
+
+```
+Checking existing files...
+  1/109 present (0 verified, 1 wrong hash)
+```
+
+With `--verbose` the list under it names each one (`wrong hash: scph5501.bin`).
+The check hashes every file, on RetroArch too, where the frontend itself only
+looks for the name. Common causes:
 
 - Wrong region (a PAL BIOS instead of NTSC, or vice versa)
 - Wrong hardware revision (e.g. SCPH-5501 vs SCPH-1001 for PlayStation)
 - Corrupted download
 
-Each system page on the site lists the expected hashes. Compare your file's
-MD5 or SHA1 against those values.
+Running the same command without `--check` replaces each file with a wrong
+hash by a verified copy. Each system page on the site also lists the expected
+hashes, to compare against your file's MD5 or SHA1 by hand.
 
 ### Wrong region BIOS
 
@@ -106,23 +112,26 @@ the ones it left out.
 
 ## Hash mismatch / UNTESTED
 
-`verify.py` reports `UNTESTED` for a file.
+This section and the two after it are about this repository's own tools, run
+from a clone. `scripts/verify.py` checks the collection in `bios/` against each
+platform, never your BIOS folder: for that, use `--check` above.
 
-The file exists and was hashed, but the computed hash doesn't match any expected
-value. This means you have a different version of the file than what the platform
-or emulator expects. The reason field shows the expected vs actual hash prefix.
+`verify.py` reports `UNTESTED` for a file of the collection that was hashed
+and does not match what the platform declares. The line gives the reason:
 
-To find the correct version, check the system page on the site. It lists every
-known BIOS file with its expected MD5 and SHA1.
+```
+  UNTESTED (required): nintendo-ds/dsifirmware.bin: declared hash contradicted by the local file
+```
+
+The system page on the site lists every known version of the file with its
+expected MD5 and SHA1.
 
 ### Existence-mode platforms never report UNTESTED
 
-On RetroArch, Lakka and RetroPie, verification only asks whether the file is
-there, so the only outcomes are OK and MISSING. A wrong-region or corrupt file
-still shows as OK. To find out whether the content is right on those platforms,
-run `verify.py --verbose`: it adds the emulator ground truth from the profiles
-and flags a `DISCREPANCY` when the file passes the platform check but fails the
-emulator's own size or hash validation.
+On RetroArch, Lakka and RetroPie, the platform check only asks whether the file
+is there, so the only outcomes are OK and MISSING. `verify.py` adds the emulator
+ground truth from the profiles and flags a `DISCREPANCY` when a file passes the
+platform check but fails the emulator's own size or hash validation.
 
 ### The .variants/ directory
 
@@ -140,8 +149,8 @@ A generated pack doesn't contain all the files you expected.
 
 ### Severity levels
 
-`verify.py` assigns a severity to each issue. Not all missing files are equally
-important:
+`verify.py` assigns a severity to each issue, counted under `severity_counts`
+in its `--json` output. Not all missing files are equally important:
 
 | Severity | Meaning | Action needed |
 |----------|---------|---------------|
@@ -183,23 +192,33 @@ How to read and interpret `verify.py` output.
 
 | Status | Meaning |
 |--------|---------|
-| `ok` | File present, hash matches (or existence check passed) |
-| `untested` | File present, hash not confirmed against expected value |
-| `missing` | File not found in the repository |
-
-Hash and size mismatches are reported as `untested` with a reason field
-showing expected vs actual values (e.g., `expected abc123... got def456...`).
+| `OK` | File present, hash matches (or existence check passed) |
+| `UNTESTED` | File present, hash not confirmed against the expected value |
+| `MISSING` | File not found in the repository |
+| `DISCREPANCY` | The platform check passes, an emulator's own check fails |
 
 ### Reading the output
 
-Each line shows the file path, its status, and severity. In verbose mode, ground
-truth data from emulator profiles is appended, showing which cores reference the
-file and what validations they perform.
+The first line counts the platform's files and names its check. Under it come
+the entries that need attention, one per line as `STATUS (required|optional):
+system/file`, followed by a reason where there is one, then the counts of the
+files the emulator cores add. From `python scripts/verify.py --platform retrodeck`:
 
 ```
-scph5501.bin        ok       [OK]
-dc_boot.bin         missing  [CRITICAL]
-gba_bios.bin        untested [WARNING]
+RetroDECK: 2007/2008 OK, 1 untested [md5]
+  UNTESTED (required): nintendo-ds/dsifirmware.bin: declared hash contradicted by the local file
+  DISCREPANCY: nintendo-snes/sgb2.boot.rom: RetroDECK says OK but supersnes9x says size mismatch: got 524288, accepted [256]
+    supersnes9x [size]
+  Core files: 1495 in pack, 0 required missing, 1 optional missing
+```
+
+`--verbose` also lists the passing entries that an emulator validates, with
+the check and the source lines behind it:
+
+```
+Recalbox: 351/351 OK [md5]
+  OK (required): macintosh/MacII.ROM
+    minivmac validates size=262144 [minivmac/cfg/CNFGRAPI.h:32, minivmac/src/OSGLUERETRO.c:781]
 ```
 
 ### Cross-reference section
@@ -307,26 +326,7 @@ Parts named `Pack.part1of2.zip` are ordinary ZIPs: extract each one into the
 same folder, and check that all of them were downloaded, the name says how
 many there are.
 
-Parts named `Pack.zip.001`, `Pack.zip.002` (releases up to v2026.09.04) are
-slices of one ZIP. None opens on its own, and the error never says a part is
-missing: 7-Zip reports `Unavailable start of archive` on a `.002`, Windows
-has no program for the extension. Put every slice in one folder; 7-Zip and
-PeaZip open the `.001` directly. A frontend's own extractor may refuse it,
-Batocera among them:
-
-```
-Archive type: '001' is not yet supported
-```
-
-The slices are plain byte ranges, so joining them from a shell rebuilds the
-ZIP (`cmd /c copy /b Pack.zip.001+Pack.zip.002 Pack.zip` on Windows):
-
-```bash
-cat Pack.zip.0* > Pack.zip
-unzip Pack.zip -d /userdata/bios/
-rm Pack.zip
-```
-
-`scripts/download.sh` and `scripts/download.py` do this on their own, checksum
-included. Both stage inside the destination directory, never in `/tmp`, which
-is a RAM disk on most of these systems.
+`scripts/download.sh` and `scripts/download.py` download every part and check
+it against the release's checksums before extracting. Both stage inside the
+destination directory, never in `/tmp`, which is a RAM disk on most of these
+systems.

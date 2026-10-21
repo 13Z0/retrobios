@@ -30,8 +30,11 @@ The shell bootstrap forwards everything after `-s --`:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh \
-  | sh -s -- --platform retroarch --dest /path/to/sdcard
+  | sh -s -- --platform retroarch --dest /path/to/sdcard/retroarch/cores/system
 ```
+
+`--dest` is the BIOS folder itself: on a card, `retroarch/cores/system` for
+RetroArch on Switch, `RetroArch/system` on Android.
 
 PowerShell needs another form. `iex` takes the script text as its own argument,
 so anything appended to `irm ... | iex` is read as an argument to `iex` and

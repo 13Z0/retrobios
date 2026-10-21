@@ -298,8 +298,8 @@ release assets, since a lighter pack means a core that fails with no message.
 The release notes are written by `release_notes.py`: the install commands,
 the pack table and its parts sentence come from `release.json`, then what
 changed since the previous tag and the contributors of the closed issues,
-written by hand. A pack has two sizes and they are far apart: Batocera
-downloads as 2.4 GB and extracts to 4.0 GB. Step 4 prints both, and whichever
+written by hand. A pack has two sizes and they are far apart: in v2026.10.10,
+Batocera downloaded as 5.2 GB and extracted to 7.5 GB. Step 4 prints both, and whichever
 one the table carries, the header names it. Someone sizing a USB drive is
 reading that column. The README table is the extracted size of the released
 pack, from `release.json`. `SHA256SUMS.txt` lists the checksums of the files
@@ -318,9 +318,10 @@ Until v2026.09.04 the parts were byte ranges cut by `split`, named
 `.zip.001`, and the sentence explaining them sat under the table. A range
 opened alone is not an archive and no tool says a part is missing, so five
 reports in six months took one for a broken download (issues 45, 51, 66, 77
-and 79). The README, the download page and the troubleshooting page describe
-both layouts for as long as a release cut that way is still published. Once
-step 6 has deleted it, the `.zip.001` paragraph leaves those three pages.
+and 79). The README, the download page and the troubleshooting page described
+both layouts for as long as a release cut that way was still published.
+v2026.09.04 has since been deleted by step 6, and the `.zip.001` paragraph
+left those pages.
 
 The table carries a Files column, the count step 4 prints, and the
 notes never open on the size of the collection. That total covers every

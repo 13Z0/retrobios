@@ -89,16 +89,13 @@ pack cannot do that.
 
 Two approaches:
 
-1. **Run verify.py** for your platform. It lists every expected file with its hash and status.
-2. **Check the project site.** Each platform page lists all required and optional BIOS files per system.
+1. **Ask the installer.** `--dry-run` lists what it would install for your platform and writes nothing, `--list-systems` gives the file count per system, and `--emulator` narrows to what one core reads:
 
-For a specific emulator core:
+    ```bash
+    curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh -s -- --emulator beetle_psx --dry-run
+    ```
 
-```bash
-python scripts/verify.py --emulator beetle_psx --verbose
-```
-
-The `--verbose` flag shows source references and expected values from the emulator's source code.
+2. **Check the project site.** Each platform page lists all required and optional BIOS files per system, and each emulator page the files that core loads, with the source references and expected values.
 
 ## Is piping the installer into a shell safe?
 
@@ -136,8 +133,11 @@ Yes, `--dest` takes any path and the one-liner forwards arguments:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh \
-  | sh -s -- --platform retroarch --dest /path/to/sdcard
+  | sh -s -- --platform retroarch --dest /path/to/sdcard/retroarch/cores/system
 ```
+
+`--dest` is the BIOS folder itself: on a card, `retroarch/cores/system` for
+RetroArch on Switch, `RetroArch/system` on Android.
 
 On Windows the arguments need a script block, since `iex` would read them as
 its own. The form is on the [Installer](installer.md#passing-options) page.

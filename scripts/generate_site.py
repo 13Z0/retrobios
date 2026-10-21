@@ -37,6 +37,7 @@ from common import (
     list_registered_platforms,
     load_database,
     load_emulator_profiles,
+    load_platform_config,
     load_provenance_snapshots,
     native_layer,
     require_yaml,
@@ -59,6 +60,7 @@ yaml = require_yaml()
 from generate_readme import (
     compute_coverage,
     contributing_text,
+    download_links,
     extract_notes,
     extract_targets,
     release_totals,
@@ -335,7 +337,7 @@ def generate_home(
         lines.append(
             f"| {logo_md} | [{display}](platforms/{name}.md) | "
             f"{_released_files(name)} | {mode_label} | "
-            f"[Pack]({RELEASE_URL}){{ .md-button .md-button--primary }} |"
+            f"{_pack_buttons(name)} |"
         )
 
     lines.extend(
@@ -446,6 +448,17 @@ def compute_stats(db: dict, coverages: dict, profiles: dict) -> dict:
         "source": REPO_URL,
         "downloads": RELEASE_URL,
     }
+
+
+def _pack_buttons(platform_name: str, label: str = "Pack") -> str:
+    """Buttons to the files of the platform's pack in the recorded release."""
+    return download_links(
+        platform_name,
+        release_record.load_record(),
+        REPO_URL,
+        label,
+        "{ .md-button .md-button--primary }",
+    )
 
 
 def _released_files(platform_name: str) -> str:
@@ -1673,7 +1686,7 @@ def generate_platform_index(coverages: dict, registry: dict | None = None) -> st
             f"| [{display}]({name}.md) | "
             f"{cov['present']:,} | {_released_files(name)} | "
             f"{mode_html} | {status_html} | "
-            f"[Pack]({RELEASE_URL}){{ .md-button .md-button--primary }} |"
+            f"{_pack_buttons(name)} |"
         )
 
     lines.extend(
@@ -1914,8 +1927,7 @@ def generate_platform_page(
     lines.extend(
         [
             "",
-            f"[Download {display} Pack]({RELEASE_URL})"
-            "{ .md-button .md-button--primary }",
+            _pack_buttons(name, f"Download {display} Pack"),
             "",
         ]
     )
@@ -4439,7 +4451,7 @@ def _mkdocs_config(docs: Path, text: str) -> tuple[Path, str]:
 def generate_which_pack() -> str:
     """Generate the 'Which pack?' decision page."""
     rel = RELEASE_URL
-    return f"""\
+    return _link_pack_cells(f"""\
 # Download
 
 Some retro consoles need firmware files (commonly called BIOS) to run games.
@@ -4473,7 +4485,12 @@ irm https://raw.githubusercontent.com/Abdess/retrobios/main/install.ps1 | iex
 That is the complete default flow. Extra copies into detected standalone
 emulator directories are deliberately opt-in with `--standalone-copies`, so
 automatic setup never writes outside the selected platform tree unexpectedly.
-Use `python install.py --check` from a checkout for a read-only verification.
+Adding `--check` reads the BIOS folder, hashes what is there and writes
+nothing:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh -s -- --check
+```
 
 Options, environment overrides, how each platform is detected and what the
 installer is allowed to write: [Installer](wiki/installer.md).
@@ -4487,16 +4504,9 @@ download it, and extract the files into the BIOS folder listed below.
 The metadata and website can be newer than that release: pack publication is
 manual and only happens after the release gates pass.
 
-A pack over 2 GB comes in several parts, and every part is needed. How to
-open them depends on their name:
-
-- `PackName.part1of2.zip`, `PackName.part2of2.zip`: each part is an ordinary
-  ZIP. Extract them all into the same folder.
-- `PackName.zip.001`, `PackName.zip.002` (releases up to v2026.09.04): slices
-  of one ZIP, none of which opens on its own. Put them in one folder and open
-  the `.001` with 7-Zip or PeaZip, or join them first:
-    - Linux/macOS: `cat PackName.zip.0* > PackName.zip`
-    - Windows: `cmd /c copy /b PackName.zip.001+PackName.zip.002 PackName.zip`
+A pack over 2 GB comes in several parts (`PackName.part1of2.zip`,
+`PackName.part2of2.zip`), and every part is needed. Each part is an ordinary
+ZIP: extract them all into the same folder.
 
 ### Steam Deck
 
@@ -4591,7 +4601,29 @@ but standalone emulators may still need their BIOS path configured.
 If a game still asks for a missing file, check the
 [platforms section](platforms/index.md) for the full file list, or the
 [emulators section](emulators/index.md) for what each core expects.
-"""
+""")
+
+
+def _link_pack_cells(page: str) -> str:
+    """Point each table cell naming a platform's pack at that pack's files.
+
+    The cell names the platform by its display name, resolved through the
+    registry, and the links come from the release record.
+    """
+    record = release_record.load_record()
+    keys = {
+        load_platform_config(key, "platforms").get("platform", key): key
+        for key in list_registered_platforms("platforms", include_archived=True)
+    }
+    cell = re.compile(rf"\| \[([^\]]+)\]\({re.escape(RELEASE_URL)}\) \|")
+
+    def link(match: re.Match[str]) -> str:
+        label = match.group(1)
+        if label not in keys:
+            raise KeyError(f"no registered platform is displayed as {label!r}")
+        return f"| {download_links(keys[label], record, REPO_URL, label)} |"
+
+    return cell.sub(link, page)
 
 
 def generate_mkdocs_nav(

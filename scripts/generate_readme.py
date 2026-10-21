@@ -124,6 +124,34 @@ def release_totals(platform_name: str, record: dict) -> tuple[int | None, int | 
     return pack["files"], pack["extracted_size"]
 
 
+def download_links(
+    platform_name: str, record: dict, repo: str, label: str, attrs: str = ""
+) -> str:
+    """Markdown links to the files of a platform's pack in the recorded release.
+
+    A pack published whole gets one link labelled *label*. A pack in parts
+    gets one link per part, since every part is needed. *repo* is the
+    repository URL, absolute or relative, and *attrs* a MkDocs attribute list
+    put after each link. Without a pack in the record the link falls back to
+    the latest release page.
+    """
+    pack = release_record.pack_for(platform_name, record)
+    tag = record.get("tag")
+    assets = pack.get("assets") if pack else None
+    if not tag or not assets:
+        return f"[{label}]({repo}/releases/latest){attrs}"
+    urls = [f"{repo}/releases/download/{tag}/{asset}" for asset in assets]
+    if len(urls) == 1:
+        return f"[{label}]({urls[0]}){attrs}"
+    parts = [
+        f"[{'P' if attrs else 'p'}art {number} of {len(urls)}]({url}){attrs}"
+        for number, url in enumerate(urls, 1)
+    ]
+    if attrs:
+        return " ".join(parts)
+    return f"{label}: " + ", ".join(parts)
+
+
 def extract_targets(platforms_dir: str) -> list[tuple[str, str]]:
     """(display name, folder) per registered platform, where its pack extracts.
 
@@ -182,7 +210,7 @@ def download_table(
             f"| {display} | {f'{files:,}' if files else '-'} |"
             f" {format_size(size) if size else '-'} |"
             f" {extract_paths.get(cov['platform'], '')} |"
-            f" [Download]({RELEASE_URL}) |"
+            f" {download_links(name, record, REPO_PATH, 'Download')} |"
         )
     return lines
 
@@ -219,7 +247,7 @@ def format_size(size: int) -> str:
 
 
 SITE_URL = "https://abdess.github.io/retrobios/"
-RELEASE_URL = "../../releases/latest"
+REPO_PATH = "../.."
 REPO = "Abdess/retrobios"
 
 
@@ -365,8 +393,9 @@ def generate_readme(db: dict, platforms_dir: str) -> str:
         "# Android (Termux, after pkg install python and termux-setup-storage)",
         "curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh",
         "",
-        "# Handheld (SD card mounted on PC)",
-        "curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh -s -- --platform retroarch --dest /path/to/sdcard",
+        "# SD card mounted on a PC: --dest is the BIOS folder on the card",
+        "# (RetroArch on Switch: retroarch/cores/system, on Android: RetroArch/system)",
+        "curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh -s -- --platform retroarch --dest /path/to/sdcard/retroarch/cores/system",
         "```",
         "",
         "The script auto-detects your platform, downloads only missing files, and verifies checksums.",
@@ -381,16 +410,9 @@ def generate_readme(db: dict, platforms_dir: str) -> str:
         " The size is what the files occupy once extracted, and the ZIP itself"
         " downloads smaller.",
         "",
-        "A pack over 2 GB comes in several parts, and every part is needed."
-        " How to open them depends on their name:",
-        "",
-        "- `Pack.part1of2.zip`, `Pack.part2of2.zip`: each part is an ordinary"
-        " ZIP. Extract them all into the same folder.",
-        "- `Pack.zip.001`, `Pack.zip.002` (releases up to v2026.09.04): slices"
-        " of one ZIP, none of which opens on its own. Put them in one folder"
-        " and open the `.001` with 7-Zip or PeaZip, or join them first with"
-        " `cat Pack.zip.0* > Pack.zip` on Linux and macOS,"
-        " `cmd /c copy /b Pack.zip.001+Pack.zip.002 Pack.zip` on Windows.",
+        "A pack over 2 GB comes in several parts (`Pack.part1of2.zip`,"
+        " `Pack.part2of2.zip`), and every part is needed. Each part is an"
+        " ordinary ZIP: extract them all into the same folder.",
         "",
         "Every release ships `SHA256SUMS.txt` and a detached signature of it,"
         " checkable against `allowed_signers` in this repository:"
@@ -575,7 +597,8 @@ def generate_readme(db: dict, platforms_dir: str) -> str:
             "python scripts/generate_pack.py --list-emulators",
             "python scripts/generate_pack.py --list-systems",
             "",
-            "# Verify your BIOS collection",
+            "# Coverage of this repository's collection per platform, emulator or system",
+            "# (it reads database.json and bios/: for your own BIOS folder, run the installer with --check)",
             "python scripts/verify.py --all",
             "python scripts/verify.py --platform batocera",
             "python scripts/verify.py --emulator flycast",
@@ -734,13 +757,12 @@ pip install pyyaml "jsonschema[format-nongpl]" markdown
 python scripts/validate_pr.py --changed          # the BIOS files the branch adds
 python scripts/validate_schemas.py --source-only # profiles and platform files
 python scripts/profile_sync.py --emulator NAME --strict  # each profile the branch adds
+python scripts/refresh_data_dirs.py  # data directories the pack-building tests read
 python -m unittest discover -s tests -t .
 ```
 
 The full pipeline is not needed for a contribution: it rebuilds every pack
-(about 35 GB in `dist/`) and needs the data directories fetched first
-(`python scripts/refresh_data_dirs.py`), which is why maintainers run it
-before a release.
+in `dist/`, which is why maintainers run it before a release.
 
 ## PR validation
 

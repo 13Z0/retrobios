@@ -50,13 +50,12 @@ pip install pyyaml "jsonschema[format-nongpl]" markdown
 python scripts/validate_pr.py --changed          # the BIOS files the branch adds
 python scripts/validate_schemas.py --source-only # profiles and platform files
 python scripts/profile_sync.py --emulator NAME --strict  # each profile the branch adds
+python scripts/refresh_data_dirs.py  # data directories the pack-building tests read
 python -m unittest discover -s tests -t .
 ```
 
 The full pipeline is not needed for a contribution: it rebuilds every pack
-(about 35 GB in `dist/`) and needs the data directories fetched first
-(`python scripts/refresh_data_dirs.py`), which is why maintainers run it
-before a release.
+in `dist/`, which is why maintainers run it before a release.
 
 ## PR validation
 
