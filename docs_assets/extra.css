@@ -109,6 +109,24 @@
   font-weight: 700;
 }
 
+/* A card's title is a heading so the search lands on it, set as body text */
+.md-typeset .rb-file-title {
+  margin: 0 0 0.3rem;
+  font-size: inherit;
+  font-weight: 400;
+  letter-spacing: normal;
+  scroll-margin-top: 4rem;
+}
+
+.md-typeset .rb-file-title code {
+  font-weight: 700;
+}
+
+/* Lines the search skips continue the card's list */
+.rb-search-skip > ul {
+  margin-top: 0.1rem;
+}
+
 .rb-file-entry ul,
 .rb-sys-file ul {
   margin: 0.3rem 0 0;
@@ -265,8 +283,7 @@
 .rb-permalink:focus {
   opacity: 1;
 }
-.rb-file-entry:target,
-.rb-sys-file:target {
+.rb-file-entry:has(> .rb-file-title:target),
+.rb-sys-file:has(> .rb-file-title:target) {
   background: var(--rb-surface);
-  scroll-margin-top: 4rem;
 }

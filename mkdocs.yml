@@ -82,6 +82,9 @@ markdown_extensions:
 - tables
 - toc:
     permalink: true
+    # File cards are level 4 headings: the search lands on them, and a
+    # page of a hundred cards keeps a readable table of contents.
+    toc_depth: 3
 - pymdownx.details
 - pymdownx.highlight:
     anchor_linenums: true

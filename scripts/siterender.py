@@ -2,12 +2,18 @@
 
 from __future__ import annotations
 
-import re
-
-from pathlib import Path
-from concurrent.futures import ThreadPoolExecutor
 import json
+import re
+import sys
+import urllib.error
+import urllib.parse
 import urllib.request
+from collections.abc import Callable
+from concurrent.futures import ThreadPoolExecutor
+from pathlib import Path
+
+from artifacts import write_text_atomic
+
 WIKI_SRC_DIR = "wiki"  # manually maintained wiki sources
 SYSTEM_ICON_BASE = "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png"
 ICON_CACHE_PATH = Path(".cache") / "system_icons.json"
@@ -67,6 +73,27 @@ def _icon_name(manufacturer: str, console_name: str) -> str:
 def _icon_url(icon_name: str) -> str:
     return f"{SYSTEM_ICON_BASE}/{urllib.parse.quote(icon_name)}.png"
 
+def _read_icon_cache() -> dict[str, bool]:
+    """The recorded icon checks, empty when none were recorded.
+
+    An unreadable file is reported, not taken for an empty cache in silence.
+    """
+    try:
+        text = ICON_CACHE_PATH.read_text(encoding="utf-8")
+    except FileNotFoundError:
+        return {}
+    except OSError as exc:
+        print(f"  WARNING: cannot read {ICON_CACHE_PATH}: {exc}", file=sys.stderr)
+        return {}
+    try:
+        data = json.loads(text)
+    except json.JSONDecodeError as exc:
+        print(f"  WARNING: {ICON_CACHE_PATH} is not valid JSON ({exc}), "
+              "icons are checked again", file=sys.stderr)
+        return {}
+    return {str(k): bool(v) for k, v in data.items()} if isinstance(data, dict) else {}
+
+
 def prime_system_icons(names: set[str]) -> None:
     """Record which system icons upstream actually serves.
 
@@ -74,14 +101,7 @@ def prime_system_icons(names: set[str]) -> None:
     cannot be checked stay unavailable: the site never links an image it has
     not seen answer.
     """
-    cached: dict[str, bool] = {}
-    if ICON_CACHE_PATH.exists():
-        try:
-            with open(ICON_CACHE_PATH) as f:
-                cached = json.load(f)
-        except (json.JSONDecodeError, OSError):
-            cached = {}
-
+    cached = _read_icon_cache()
     unknown = sorted(n for n in names if n not in cached)
     if unknown:
         def check(name: str) -> tuple[str, bool | None]:
@@ -100,13 +120,22 @@ def prime_system_icons(names: set[str]) -> None:
                 return name, None
 
         print(f"Checking {len(unknown)} system icons...")
+        learned: dict[str, bool] = {}
         with ThreadPoolExecutor(max_workers=8) as pool:
             for name, ok in pool.map(check, unknown):
                 if ok is not None:
-                    cached[name] = ok
-        ICON_CACHE_PATH.parent.mkdir(parents=True, exist_ok=True)
-        with open(ICON_CACHE_PATH, "w") as f:
-            json.dump(cached, f, indent=2, sort_keys=True)
+                    learned[name] = ok
+        cached.update(learned)
+        if learned:
+            # Another run may have recorded names meanwhile: merge with what
+            # the file holds now, and replace it whole so a reader never sees
+            # a half-written cache.
+            merged = {**_read_icon_cache(), **learned}
+            ICON_CACHE_PATH.parent.mkdir(parents=True, exist_ok=True)
+            write_text_atomic(
+                str(ICON_CACHE_PATH),
+                json.dumps(merged, indent=2, sort_keys=True) + "\n",
+            )
 
     _icon_available.update(cached)
     missing = sum(1 for n in names if not cached.get(n))
@@ -133,8 +162,27 @@ def _slugify_anchor(text: str) -> str:
     slug = slug.strip("-")
     return slug
 
-_norm_page_cache: dict[str, tuple[str, str] | None] = {}
-_norm_page_size = -1
+_norm_page_map: dict[str, tuple[str, str] | None] = {}
+
+
+def set_system_page_map(mapping: dict[str, tuple[str, str]]) -> None:
+    """Install the system id -> page table every link on the site reads.
+
+    The table replaces the previous one, and the index of other spellings is
+    derived from it here. Kept anywhere else, it outlived a table of the same
+    size and linked to the pages of the previous one.
+    """
+    from common import _norm_system_id
+
+    _system_page_map.clear()
+    _system_page_map.update(mapping)
+    _norm_page_map.clear()
+    for known, page in _system_page_map.items():
+        key = _norm_system_id(known)
+        if _norm_page_map.get(key, page) != page:
+            _norm_page_map[key] = None
+        else:
+            _norm_page_map[key] = page
 
 
 def _page_by_norm(sys_id: str) -> tuple[str, str] | None:
@@ -144,19 +192,9 @@ def _page_by_norm(sys_id: str) -> tuple[str, str] | None:
     keyed by the platforms' spellings: 2,431 of 4,195 cards had no link. A
     spelling two pages share leads nowhere rather than to either.
     """
-    global _norm_page_size
     from common import _norm_system_id
 
-    if _norm_page_size != len(_system_page_map):
-        _norm_page_cache.clear()
-        for known, page in _system_page_map.items():
-            key = _norm_system_id(known)
-            if _norm_page_cache.get(key, page) != page:
-                _norm_page_cache[key] = None
-            else:
-                _norm_page_cache[key] = page
-        _norm_page_size = len(_system_page_map)
-    return _norm_page_cache.get(_norm_system_id(sys_id))
+    return _norm_page_map.get(_norm_system_id(sys_id))
 
 
 def _system_link(sys_id: str, prefix: str = "") -> str:
@@ -175,9 +213,10 @@ def _field_text(key: object, value: object) -> str:
     elif value is None:
         text = "none"
     else:
-        text = str(value)
-        if len(text) > 200:
-            text = text[:200] + "..."
+        # One line: a folded note's second line started at column 0 and
+        # left the admonition it was written in. Never cut: 34 notes lost
+        # their end, and a cut citation links to another line.
+        text = " ".join(str(value).split())
     return f"`{text}`" if key == "source_ref" else text
 
 
@@ -186,12 +225,19 @@ def _field_label(key: object) -> str:
     return str(key).replace("_", " ")
 
 
-def _render_yaml_value(lines: list[str], val: object, indent: int = 4) -> None:
+FieldText = Callable[[object, object], str]
+
+
+def _render_yaml_value(
+    lines: list[str], val: object, indent: int = 4,
+    field_text: FieldText = _field_text,
+) -> None:
     """Render any YAML value as a nested markdown list.
 
     Every level is a list item and its children a sublist four spaces in.
     A key written as a paragraph with its children indented below it read as
     an indented code block: the clownmdemu page showed the raw asterisks.
+    ``field_text`` renders each scalar, so a page can link a source_ref.
     """
     pad = " " * indent
     if isinstance(val, dict):
@@ -199,27 +245,32 @@ def _render_yaml_value(lines: list[str], val: object, indent: int = 4) -> None:
             if isinstance(v, (dict, list)) and v:
                 lines.append(f"{pad}- **{_field_label(k)}:**")
                 lines.append("")
-                _render_yaml_value(lines, v, indent + 4)
+                _render_yaml_value(lines, v, indent + 4, field_text)
             else:
-                lines.append(f"{pad}- **{_field_label(k)}:** {_field_text(k, v)}")
+                lines.append(f"{pad}- **{_field_label(k)}:** {field_text(k, v)}")
         lines.append("")
     elif isinstance(val, list):
         for item in val:
             if isinstance(item, dict):
-                parts = [
-                    f"{_field_label(ik)}: {_field_text(ik, iv)}"
-                    for ik, iv in item.items()
-                    if not isinstance(iv, (dict, list))
-                ]
-                lines.append(f"{pad}- {', '.join(parts)}")
+                # Scalars on the item's line, lists and maps as its children:
+                # cemu's firmware titles lost the files each title carries.
+                scalars = {ik: iv for ik, iv in item.items()
+                           if not (isinstance(iv, (dict, list)) and iv)}
+                nested = {ik: iv for ik, iv in item.items() if ik not in scalars}
+                parts = [f"{_field_label(ik)}: {field_text(ik, iv)}"
+                         for ik, iv in scalars.items()]
+                lines.append(f"{pad}- {', '.join(parts)}".rstrip())
+                if nested:
+                    lines.append("")
+                    _render_yaml_value(lines, nested, indent + 4, field_text)
             else:
-                lines.append(f"{pad}- {_field_text(None, item)}")
+                lines.append(f"{pad}- {field_text(None, item)}")
         lines.append("")
     elif isinstance(val, str) and "\n" in val:
         for line in val.split("\n"):
             lines.append(f"{pad}{line}")
     else:
-        lines.append(f"{pad}{_field_text(None, val)}")
+        lines.append(f"{pad}{field_text(None, val)}")
 
 
 def _platform_link(name: str, display: str, prefix: str = "") -> str:

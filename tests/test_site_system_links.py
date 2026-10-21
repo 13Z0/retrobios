@@ -69,31 +69,40 @@ class OtherSpellingsOfOneSystem(unittest.TestCase):
         self.assertEqual(gs._system_emulators("sega-mega-drive", index), ["genesis_plus_gx"])
         self.assertEqual(gs._system_emulators("nintendo-snes", index), [])
 
+    def _install(self, mapping: dict) -> None:
+        import siterender
+
+        saved = dict(siterender._system_page_map)
+        self.addCleanup(siterender.set_system_page_map, saved)
+        siterender.set_system_page_map(mapping)
+
     def test_a_profile_spelling_links_to_the_platform_page(self):
         import siterender
 
-        saved = dict(siterender._system_page_map)
-        self.addCleanup(lambda: (siterender._system_page_map.clear(),
-                                 siterender._system_page_map.update(saved)))
-        siterender._system_page_map.clear()
-        siterender._system_page_map["sega-mega-drive"] = ("sega", "Mega Drive")
+        self._install({"sega-mega-drive": ("sega", "Mega Drive")})
         self.assertIn("systems/sega.md#mega-drive", siterender._system_link("sega-megadrive"))
-        siterender._system_page_map["megadrive"] = ("other", "Elsewhere")
+        self._install({"sega-mega-drive": ("sega", "Mega Drive"),
+                       "megadrive": ("other", "Elsewhere")})
         self.assertEqual(siterender._system_link("sega-megadrive"), "sega-megadrive")
 
-    def test_a_system_only_profiles_name_is_placed_by_their_files(self):
+    def test_a_table_of_the_same_size_replaces_the_other_spellings(self):
+        """The index of other spellings was kept while the table kept its
+        length, so a second table of one entry linked to the first one's page."""
         import siterender
 
-        saved = dict(siterender._system_page_map)
-        self.addCleanup(lambda: (siterender._system_page_map.clear(),
-                                 siterender._system_page_map.update(saved)))
-        siterender._system_page_map.clear()
+        self._install({"sega-mega-drive": ("sega", "Mega Drive")})
+        self.assertIn("systems/sega.md#", siterender._system_link("sega-megadrive"))
+        self._install({"sega-mega-drive": ("other", "Elsewhere")})
+        self.assertEqual(siterender._system_link("sega-megadrive"),
+                         "[sega-megadrive](systems/other.md#elsewhere)")
+
+    def test_a_system_only_profiles_name_is_placed_by_their_files(self):
         manufacturers = {"Commodore": {"PET": [{"name": "basic4.bin"}]}}
         profiles = {"vice_xpet": {"systems": ["commodore-pet"],
                                   "files": [{"name": "basic4.bin"}]}}
-        gs._build_system_page_map_from_data(
+        pages = gs._system_pages_from_data(
             manufacturers, {}, {"files": {}, "indexes": {}}, profiles)
-        self.assertEqual(siterender._system_page_map["commodore-pet"], ("commodore", "PET"))
+        self.assertEqual(pages["commodore-pet"], ("commodore", "PET"))
 
 
 class ACopyIsOnItsOwnFoldersPage(unittest.TestCase):
@@ -134,7 +143,7 @@ class AnIdNamesOneCardPerPage(unittest.TestCase):
                  "path": "bios/Nintendo/DS/a.bin"}
         page = gs.generate_system_page(
             "Nintendo", {"DS": [entry], "DSi": [entry]}, FileConsumers({"files": {}}))
-        self.assertEqual(page.count('id="sha1-aaaaaaaaaaaa"'), 1)
+        self.assertEqual(page.count("#sha1-aaaaaaaaaaaa .rb-file-title"), 1)
         self.assertEqual(page.count("rb-sys-file"), 2)
 
 

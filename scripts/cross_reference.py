@@ -27,6 +27,7 @@ from common import (
     ProfileSelectionError,
     _norm_system_id,
     directory_members,
+    expand_directory_entries,
     get_mame_clone_map,
     list_emulator_profiles,
     list_registered_platforms,
@@ -341,6 +342,10 @@ class FileConsumers:
         # Where each platform puts the file in its BIOS directory.
         self.platform_destinations: dict[str, dict[str, set[str]]] = {}
         self.emulators: dict[str, set[str]] = {}
+        # The entry that reads each file, by its position in the profile's
+        # files: a link lands on that entry's card, not the page top.
+        self.emulator_entries: dict[str, dict[str, int]] = {}
+        self.emulator_files: dict[str, list] = {}
         # Where each platform's pack installs the file, its cores' files
         # included: the platform's own list names a fraction of them.
         self.installed: dict[str, dict[str, set[str]]] = {}
@@ -401,14 +406,49 @@ class FileConsumers:
         """The collection path the database records for a file."""
         return str(self._db.get("files", {}).get(sha1, {}).get("path", ""))
 
+    def directory_members(self, entry: dict) -> dict[str, str]:
+        """{destination: sha1} of the files a ``type: directory`` entry reads."""
+        if entry.get("type") != "directory":
+            return {}
+        return {
+            member["path"]: member["sha1"]
+            for member in expand_directory_entries([entry], self._db)
+            if member is not entry
+        }
+
     def add_emulators(self, profiles: dict[str, dict]) -> None:
+        """Each file a profile entry resolves to, a directory's members included.
+
+        A directory entry was resolved by its own name and found nothing:
+        11,976 files under alephone's Plugins/, cdogs' and thextech's trees
+        named no emulator on their card.
+        """
         for name, profile in profiles.items():
             if profile.get("type") == "alias":
                 continue
-            for entry in profile.get("files", []):
-                sha1 = self.sha1_of(entry, entry.get("path") or "", owner=name)
-                if sha1:
-                    self.emulators.setdefault(sha1, set()).add(name)
+            files = profile.get("files") or []
+            self.emulator_files[name] = files
+            # A file a profile names keeps its own entry over the directory
+            # that also holds it.
+            order = sorted(
+                (i for i, entry in enumerate(files) if isinstance(entry, dict)),
+                key=lambda i: files[i].get("type") == "directory",
+            )
+            for index in order:
+                entry = files[index]
+                members = self.directory_members(entry)
+                if members:
+                    found = [
+                        self.sha1_of({**entry, "name": dest, "path": dest, "sha1": sha1},
+                                     dest, owner=name)
+                        for dest, sha1 in members.items()
+                    ]
+                else:
+                    found = [self.sha1_of(entry, entry.get("path") or "", owner=name)]
+                for sha1 in found:
+                    if sha1:
+                        self.emulators.setdefault(sha1, set()).add(name)
+                        self.emulator_entries.setdefault(sha1, {}).setdefault(name, index)
 
 
 def entry_source(f: dict, index: dict) -> str | None:

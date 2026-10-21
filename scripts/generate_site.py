@@ -145,13 +145,13 @@ def _system_folder(
     return None
 
 
-def _build_system_page_map_from_data(
+def _system_pages_from_data(
     manufacturers: dict,
     coverages: dict,
     db: dict,
     profiles: dict | None = None,
-) -> None:
-    """Build system_id -> (manufacturer_slug, console_name) mapping.
+) -> dict[str, tuple[str, str]]:
+    """The system_id -> (manufacturer_slug, console_name) table.
 
     Uses platform file paths to trace system_id -> bios directory -> manufacturer page.
     """
@@ -189,10 +189,11 @@ def _build_system_page_map_from_data(
                 console_norm[key] = entry
 
     # Map system_id -> (manufacturer, console) via platform file entries
+    pages: dict[str, tuple[str, str]] = {}
     for cov in coverages.values():
         config = cov["config"]
         for sys_id, system in config.get("systems", {}).items():
-            if sys_id in _system_page_map:
+            if sys_id in pages:
                 continue
             # Strategy 1: the folder holding the files the system declares,
             # found by content, and most votes win. A bare name stands in only
@@ -200,18 +201,18 @@ def _build_system_page_map_from_data(
             place = _system_folder(system.get("files", []), db, name_consoles)
             if place is not None:
                 mfr, console = place
-                _system_page_map[sys_id] = (mfr.lower().replace(" ", "-"), console)
+                pages[sys_id] = (mfr.lower().replace(" ", "-"), console)
                 continue
             # Strategy 2: fuzzy match system_id against console directory names
             if sys_id in console_norm:
-                _system_page_map[sys_id] = console_norm[sys_id]
+                pages[sys_id] = console_norm[sys_id]
             else:
                 # Try partial match: "nintendo-wii" matches "Wii" under "Nintendo"
                 parts = sys_id.split("-")
                 for i in range(len(parts)):
                     suffix = "-".join(parts[i:])
                     if suffix in console_norm:
-                        _system_page_map[sys_id] = console_norm[suffix]
+                        pages[sys_id] = console_norm[suffix]
                         break
 
     # Systems only emulator profiles name (sega-naomi, commodore-pet): placed
@@ -220,7 +221,7 @@ def _build_system_page_map_from_data(
     for profile in (profiles or {}).values():
         systems = [str(sid) for sid in profile.get("systems") or []]
         for sys_id in systems:
-            if sys_id in _system_page_map:
+            if sys_id in pages:
                 continue
             files = [
                 entry for entry in profile.get("files") or []
@@ -230,9 +231,10 @@ def _build_system_page_map_from_data(
             place = _system_folder(files, db, name_consoles)
             if place is not None:
                 mfr, console = place
-                _system_page_map[sys_id] = (mfr.lower().replace(" ", "-"), console)
+                pages[sys_id] = (mfr.lower().replace(" ", "-"), console)
             elif sys_id in console_norm:
-                _system_page_map[sys_id] = console_norm[sys_id]
+                pages[sys_id] = console_norm[sys_id]
+    return pages
 
 
 
@@ -398,7 +400,7 @@ def generate_home(
             "",
             "    Platform lists are checked against emulator source code, file "
             "by file where a profile exists ([how far that reaches](gaps.md)). "
-            "Documentation and metadata can drift from actual runtime behavior, "
+            "Documentation and metadata can differ from actual runtime behavior, "
             "so the source is the primary reference.",
             "",
             "    1. **Upstream emulator source**: what the original project "
@@ -1315,17 +1317,20 @@ def collection_dat(db: dict, generated_at: str) -> str:
     import xml.etree.ElementTree as ET  # noqa: PLC0415
 
     games: dict[str, list[dict]] = {}
-    for entry in db.get("files", {}).values():
-        parts = str(entry.get("path", "")).split("/")
-        if len(parts) < 3 or parts[0] != "bios":
-            continue
-        folder = parts[1:3] if len(parts) > 3 else parts[1:2]
-        # A backslash is how a Logiqx set name writes a subfolder: named
-        # "Sony - PlayStation", the set was looked for beside Sony/, and an
-        # audit of a copy of bios/ found 330 sets missing.
-        games.setdefault("\\".join(folder), []).append(
-            {**entry, "_rom": "\\".join(parts[1 + len(folder):])}
-        )
+    files = db.get("files", {})
+    # Every copy, not the one path the database keeps: an audit of bios/
+    # read the 2,502 others as unknown files, and a fix moved them away
+    # from the engines that read them by path.
+    for sha1, paths in collection_paths(db).items():
+        for path in sorted(paths):
+            parts = path.split("/")
+            folder = parts[1:3] if len(parts) > 3 else parts[1:2]
+            # A backslash is how a Logiqx set name writes a subfolder: named
+            # "Sony - PlayStation", the set was looked for beside Sony/, and an
+            # audit of a copy of bios/ found 330 sets missing.
+            games.setdefault("\\".join(folder), []).append(
+                {**files[sha1], "_rom": "\\".join(parts[1 + len(folder):])}
+            )
     root = ET.Element("datafile")
     header = ET.SubElement(root, "header")
     version = generated_at[:10].replace("-", "")
@@ -1736,16 +1741,19 @@ def _render_platform_systems(
         sys_link = _system_link(sys_id, "../")
 
         anchor = sys_id.replace(" ", "-")
+        # Every system is a heading with the same anchor in both layouts:
+        # emulator cards link here, and the site search splits a page at its
+        # headings. Folded into blocks under one heading, every hash pasted
+        # in the search led to the systems overview of a 100-block page.
         if use_collapsible:
             status_tag = "OK" if ok_count == total else _count(total - ok_count, "issue")
-            lines.append(f'<a id="{anchor}"></a>')
-            lines.append(f'??? note "{sys_id} ({ok_count}/{total} - {status_tag})"')
+            lines.append(f"### {sys_link} {{ #{anchor} }}")
+            lines.append("")
+            lines.append(f'??? note "{_count(total, "file")} ({status_tag})"')
             lines.append("")
             pad = "    "
         else:
-            # The same anchor in both layouts: emulator cards link here.
-            lines.append(f'<a id="{anchor}"></a>')
-            lines.append(f"## {sys_link}")
+            lines.append(f"## {sys_link} {{ #{anchor} }}")
             lines.append("")
             pad = ""
 
@@ -1816,7 +1824,7 @@ def _render_platform_systems(
     return lines
 
 
-# Platforms with a corrected file published by export_native.py.
+# Platforms with an updated file published by export_native.py.
 _EXPORTED: set[str] = set()
 
 
@@ -2039,11 +2047,37 @@ def data_directory_revisions(data_dir: Path = _REPO_ROOT / "data") -> dict[str, 
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def page_data_directories(name: str, profiles: dict) -> list[dict]:
+    """The data directories an emulator page lists.
+
+    Its own, then those of the aliases that point at it: an alias has no
+    page, and the 90 FreeIntv overlays its profile declares were linked to
+    emulators/freeintv_ts_overlay/, a page that does not exist.
+    """
+    trees = [t for t in profiles[name].get("data_directories") or [] if isinstance(t, dict)]
+    refs = {str(t.get("ref", "")) for t in trees}
+    for alias in sorted(profiles):
+        profile = profiles[alias]
+        if profile.get("type") != "alias" or profile.get("alias_of") != name:
+            continue
+        for tree in profile.get("data_directories") or []:
+            ref = str(tree.get("ref", ""))
+            if isinstance(tree, dict) and ref not in refs:
+                refs.add(ref)
+                trees.append(tree)
+    return trees
+
+
 def _data_member_owners(profiles: dict) -> dict[str, str]:
-    """The emulator page that lists each data directory, the first by name."""
+    """The emulator page that lists each data directory, the first by name.
+
+    Only a profile that has a page can own one.
+    """
     owners: dict[str, str] = {}
     for name in sorted(profiles):
-        for tree in profiles[name].get("data_directories") or []:
+        if profiles[name].get("type") in ("alias", "test"):
+            continue
+        for tree in page_data_directories(name, profiles):
             owners.setdefault(str(tree.get("ref", "")), name)
     return owners
 
@@ -2079,6 +2113,28 @@ def file_location_items(
                 items.append({"sha1": sha1,
                               "url": f"emulators/{owners[ref]}/#sha1-{sha1[:12]}"})
     return sorted(items, key=lambda item: item["sha1"])
+
+
+def collection_paths(db: dict) -> dict[str, set[str]]:
+    """Every path under bios/ that holds each file, by sha1.
+
+    The database keeps one path per content. The others are the full tails
+    by_path_suffix records that name a file on disk: RPG Maker, engine
+    trees and the copies filed under several consoles keep 2,502 of them.
+    """
+    files = db.get("files", {})
+    bios_dir = Path(str(db.get("bios_dir") or "bios"))
+    paths: dict[str, set[str]] = {}
+    for sha1, entry in files.items():
+        path = str(entry.get("path", ""))
+        if path.startswith("bios/") and path.count("/") >= 2:
+            paths.setdefault(sha1, set()).add(path)
+    for tail, sha1s in db.get("indexes", {}).get("by_path_suffix", {}).items():
+        if tail.count("/") < 2 or len(sha1s) != 1 or sha1s[0] not in files:
+            continue
+        if (bios_dir / tail).is_file():
+            paths.setdefault(sha1s[0], set()).add(f"bios/{tail}")
+    return paths
 
 
 def _group_by_manufacturer(db: dict) -> dict[str, dict[str, list]]:
@@ -2229,7 +2285,7 @@ def generate_provenance_page(
         'orange (<span class="rb-badge rb-badge-warning">TOSEC</span>) where '
         "TOSEC flags the dump as bad, overdumped, hacked, cracked or fixed. "
         "Arcade ROM sets and engine data "
-        "sit outside what those catalogs index, so they are left out of the "
+        "sit outside what those catalogs index, so they are excluded from the "
         "ratio rather than counted as failures.",
         "",
         "## What the badge means",
@@ -2425,6 +2481,36 @@ def _platform_links(sha1: str, consumers: FileConsumers) -> list[str]:
     return links
 
 
+_card_anchors: dict[str, tuple[list, list[str]]] = {}
+
+
+def _emulator_card_anchor(emulator: str, files: list, index: int) -> str:
+    """The id of a profile entry's card on its emulator page."""
+    cached = _card_anchors.get(emulator)
+    if cached is None or cached[0] is not files:
+        cached = _card_anchors[emulator] = (files, emulator_file_anchors(files))
+    return cached[1][index] if 0 <= index < len(cached[1]) else ""
+
+
+def _emulator_links(sha1: str, consumers: FileConsumers) -> list[str]:
+    """Each emulator reading the file, linked to the entry that reads it.
+
+    The platform links landed on their system section, and the emulator
+    links on the page top: duckstation's scph5501.bin entry, with the line
+    that accepts it, sat 260 lines down a page of 105 entries.
+    """
+    entries = getattr(consumers, "emulator_entries", {}).get(sha1, {})
+    files_of = getattr(consumers, "emulator_files", {})
+    links = []
+    for emulator in sorted(consumers.emulators.get(sha1, ())):
+        index = entries.get(emulator)
+        anchor = (_emulator_card_anchor(emulator, files_of[emulator], index)
+                  if index is not None and emulator in files_of else "")
+        fragment = f"#{anchor}" if anchor else ""
+        links.append(f"[{emulator}](../emulators/{emulator}.md{fragment})")
+    return links
+
+
 def _installed_links(sha1: str, consumers: FileConsumers, declared: set[str]) -> list[str]:
     """Each pack installing the file that its platform's list does not name,
     with the place the pack gives it."""
@@ -2457,22 +2543,18 @@ def _system_file_card(
             anchor = ""
         else:
             anchored.add(anchor)
-    id_attr = f' id="{anchor}"' if anchor else ""
-    lines = [f'<div class="rb-sys-file"{id_attr} markdown>', ""]
-    # The anchor is this page's, the second link is the file's own address,
-    # resolved by content wherever its card moves.
+    lines = ['<div class="rb-sys-file" markdown>', ""]
+    # The heading's own link is this page's, the second link is the file's
+    # own address, resolved by content wherever its card moves.
     permalink = (
-        f' <a class="rb-permalink" href="#{anchor}" title="Link to this card">#</a>'
         f' <a class="rb-permalink" href="../../files/?sha1={sha1_full}" '
         f'title="Permanent link, by content">permalink</a>'
     ) if anchor else ""
-    lines.append(f'**`{name}`** <span class="rb-badge rb-badge-muted">{size}</span>{permalink}')
+    lines.append(_card_title(
+        f'{_code(name)} <span class="rb-badge rb-badge-muted">{size}</span>{permalink}',
+        anchor,
+    ))
     lines.append("")
-    if f.get("path"):
-        # The card named a file, its hashes and provenance, but not where to
-        # get it: a user missing scph5501.bin found the reference and no way
-        # to the bytes.
-        lines.append(f"- Collection path: {_code(f['path'])} ([download]({_fetch_url(f['path'])}))")
     # Every hash in full: the site search indexes text, not a title
     # attribute, so a pasted md5 or crc32 (what clrmamepro, RomVault or an
     # emulator log prints) found nothing behind a 12-character prefix.
@@ -2480,6 +2562,16 @@ def _system_file_card(
                          ("CRC32", f.get("crc32")), ("SHA256", f.get("sha256"))):
         if value and value != "unknown":
             lines.append(f'- {label}: <span class="rb-hash">{_code(value)}</span>')
+    if emus:
+        lines.append(f"- Emulators: {', '.join(_emulator_links(sha1_full, consumers))}")
+    provenance = f.get("provenance", {})
+    if provenance:
+        lines.extend(_provenance_lines(provenance, "../"))
+    if f.get("path"):
+        # The card named a file, its hashes and provenance, but not where to
+        # get it: a user missing scph5501.bin found the reference and no way
+        # to the bytes.
+        lines.append(f"- Collection path: {_code(f['path'])} ([download]({_fetch_url(f['path'])}))")
     if plats:
         # Each link lands on the platform's system section, and says where
         # that platform puts the file: from the card, retrodeck sent the
@@ -2491,13 +2583,51 @@ def _system_file_card(
         # looking up scph5501.bin found every platform but RetroBat, whose
         # pack installs it for six cores.
         lines.append(f"- Also installed by: {', '.join(installed)}")
-    if emus:
-        lines.append(f"- Emulators: {', '.join(_emulator_link(e, '../') for e in emus)}")
-    provenance = f.get("provenance", {})
-    if provenance:
-        lines.extend(_provenance_lines(provenance, "../"))
+    lines[2:] = _search_skipped_apart(lines[2:])
     lines.extend(["", "</div>", ""])
     return lines
+
+
+# Card lines the site search leaves out. They list where a file goes and
+# who cites it, links to other pages that index the same names, and they
+# were 6.6 of the 24.7 MB the browser downloads and indexes before the first
+# result. The name, the hashes, the entry's path and the notes stay
+# searchable.
+SEARCH_SKIPPED = (
+    "- Platforms:", "- Also installed by:", "- Source:", "- Asked for by:",
+    "- Collection path:", "- Collection copy:", "- Collection copies:",
+    "- Installed by the platform's own package on:",
+    "- Not in the platform's package", "- Never opened on these platforms",
+)
+
+
+def _search_skipped_apart(lines: list[str]) -> list[str]:
+    """Card list lines, each run the search skips in a block of its own."""
+    out: list[str] = []
+    skipping = False
+    for line in lines:
+        skip = line.startswith(SEARCH_SKIPPED) or (skipping and line.startswith("    "))
+        if skip and not skipping:
+            out.extend(["", '<div class="rb-search-skip" data-search-exclude markdown>', ""])
+        elif skipping and not skip:
+            out.extend(["", "</div>", ""])
+        skipping = skip
+        out.append(line)
+    if skipping:
+        out.extend(["", "</div>", ""])
+    return out
+
+
+def _card_title(text: str, anchor: str) -> str:
+    """A file card's heading, so the site search lands on the card.
+
+    The search splits a page at its headings: a card titled in bold sent a
+    pasted md5 to the top of a page of a hundred cards. Level 4 stays out
+    of the table of contents (toc_depth 3), and a card without an anchor
+    keeps the id the toc gives it.
+    """
+    attributes = f"#{anchor} .rb-file-title" if anchor else ".rb-file-title"
+    return f"#### {text} {{ {attributes} }}"
 
 
 def generate_system_page(
@@ -2792,14 +2922,13 @@ def _render_emulator_file(
 
     badges = _file_badges(f, in_repo)
     badge_str = " ".join(badges)
-    id_attr = f' id="{anchor}"' if anchor else ""
-    lines.append(f'<div class="rb-file-entry"{id_attr} markdown>')
+    lines.append('<div class="rb-file-entry" markdown>')
     lines.append("")
-    permalink = f' <a class="rb-permalink" href="#{anchor}" title="Link to this file">#</a>' if anchor else ""
-    lines.append(f"**`{fname}`** {badge_str}{permalink}")
+    lines.append(_card_title(f"{_code(fname)} {badge_str}", anchor))
+    lines.append("")
     if desc:
-        lines.append(f"<br>{_escape_tags(str(desc))}")
-    lines.append("")
+        lines.extend([_escape_tags(str(desc)), ""])
+    body_start = len(lines)
 
     details = []
     if fpath and fpath != fname:
@@ -2871,7 +3000,7 @@ def _render_emulator_file(
         details.append("Installed by the platform's own package on: "
                        + ", ".join(sorted(f["installed_on"])))
     if f.get("not_bundled_on"):
-        details.append("Left out by the platform's package, so the pack brings it, on: "
+        details.append("Not in the platform's package, so the pack brings it, on: "
                        + ", ".join(sorted(f["not_bundled_on"])))
     if f.get("unread_on"):
         details.append("Never opened on these platforms, whose launcher names other files: "
@@ -2886,6 +3015,8 @@ def _render_emulator_file(
         details.append(
             f"Source: {_source_ref_markdown(profile, source_ref)}"
         )
+    if consumers and f.get("type") == "directory":
+        details.extend(_directory_copies(f, consumers))
     if consumers:
         sha1 = consumers.sha1_of(f, f.get("path") or "", owner=owner)
         if sha1 and in_repo:
@@ -2949,10 +3080,32 @@ def _render_emulator_file(
                 lines.append(f"    - `{c.get('name', '')}`{extra}")
             else:
                 lines.append(f"    - {c}")
+    lines[body_start:] = _search_skipped_apart(lines[body_start:])
     lines.append("")
     lines.append("</div>")
     lines.append("")
     return lines
+
+
+def _directory_copies(entry: dict, consumers: FileConsumers) -> list[str]:
+    """What the collection holds under a directory entry, and where.
+
+    The card said "in repo" and linked none of the files: alephone's
+    Plugins/ holds 393 of them, each with its own card on a system page.
+    """
+    members = consumers.directory_members(entry)
+    held = sorted({consumers.path_of(sha1) for sha1 in members.values()} - {""})
+    if not held:
+        return []
+    folder = os.path.commonpath(held) if len(held) > 1 else os.path.dirname(held[0])
+    parts = folder.split("/")
+    where = _code(folder + "/")
+    if len(parts) >= 3 and parts[0] == "bios":
+        page = urllib.parse.quote(parts[1].lower().replace(" ", "-"))
+        where = f"[{where}](../systems/{page}.md#{_slugify_anchor(parts[2])})"
+    tree = f"{REPO_URL}/tree/main/{urllib.parse.quote(folder)}"
+    return [f"Collection copies: {_count(len(members), 'file')} under {where} "
+            f"([browse]({tree}))"]
 
 
 def _render_metadata_rows(profile: dict) -> list[str]:
@@ -3065,6 +3218,22 @@ def _plain_value(value: object) -> str:
     return _escape_tags(str(value))
 
 
+def _structured_field_text(profile: dict) -> Callable[[object, object], str]:
+    """Scalars of a structured block, citations linked at the profile's pin.
+
+    The file entries and platform details linked their source_ref, and the
+    analysis and firmware blocks printed 186 of them as plain code.
+    """
+    def text(key: object, value: object) -> str:
+        if key == "source_ref" and isinstance(value, str):
+            return _source_ref_markdown(profile, value)
+        if isinstance(value, str):
+            return link_prose_citations(profile, _field_text(key, value))
+        return _field_text(key, value)
+
+    return text
+
+
 def _render_structured_blocks(profile: dict) -> list[str]:
     """Every remaining structured field, as a collapsible section."""
     lines: list[str] = []
@@ -3100,7 +3269,8 @@ def _render_structured_blocks(profile: dict) -> list[str]:
         lines.append(f'???+ abstract "{label}"')
         lines.append("")
         start = len(lines)
-        _render_yaml_value(lines, val, indent=4)
+        _render_yaml_value(lines, val, indent=4,
+                           field_text=_structured_field_text(profile))
         lines[start:] = [_escape_tags(line) for line in lines[start:]]
         lines.append("")
 
@@ -3225,7 +3395,9 @@ def generate_emulator_page(
     consumers: FileConsumers | None = None,
     data_names: set[str] | None = None,
     data_registry: dict | None = None,
+    data_dirs: list[dict] | None = None,
 ) -> str:
+    """One emulator's page. ``data_dirs`` defaults to the profile's own."""
     if profile.get("type") == "alias":
         parent = profile.get("alias_of", profile.get("bios_identical_to", "unknown"))
         return (
@@ -3263,7 +3435,8 @@ def generate_emulator_page(
         str(notes_raw).strip() if notes_raw and not isinstance(notes_raw, dict) else ""
     )
     exclusion = profile.get("exclusion_note", "")
-    data_dirs = profile.get("data_directories", [])
+    if data_dirs is None:
+        data_dirs = profile.get("data_directories", [])
 
     lines = [
         f"# {emu_name}",
@@ -3815,8 +3988,9 @@ def generate_gap_analysis(
         "only authority for its files.",
         "",
         "The same comparison drives `scripts/exporter/`: each platform's "
-        "corrected list can be regenerated in its native format "
-        "(System.dat, es_bios.xml, batocera-systems.json, ...).",
+        "own file can be regenerated in its native format with these "
+        "differences applied (System.dat, es_bios.xml, "
+        "batocera-systems.json, ...).",
         "",
     ])
 
@@ -3837,7 +4011,9 @@ def generate_gap_analysis(
         gap_report = build_emulator_gap_report(profiles, coverages, db, data_names)
     report_all = gap_report
 
-    src_totals: dict[str, int] = {"bios": 0, "data": 0, "large_file": 0, "missing": 0}
+    src_totals: dict[str, int] = {
+        "bios": 0, "data": 0, "large_file": 0, "bundled": 0, "missing": 0,
+    }
     total_undeclared = 0
     emulator_gaps = []
 
@@ -3845,8 +4021,8 @@ def generate_gap_analysis(
         if data["gaps"] == 0:
             continue
         total_undeclared += data["gaps"]
-        for key in src_totals:
-            src_totals[key] += data.get(f"gap_{key}", 0)
+        for key, count in _gap_sources(data).items():
+            src_totals[key] += count
         emulator_gaps.append((emu_name, data))
 
 
@@ -3864,9 +4040,10 @@ def generate_gap_analysis(
             "## Core complement",
             "",
             f"Files loaded by emulators but not declared by any platform. "
-            f"{total_undeclared:,} files across {len(emulator_gaps)} emulators, "
+            f"{total_undeclared:,} files across {_count(len(emulator_gaps), 'emulator')}, "
             f"{total_available:,} available ({pct_available}), "
-            f"{src_totals['missing']} to source.",
+            f"{src_totals['bundled']:,} installed with their emulator, "
+            f"{src_totals['missing']:,} to source.",
             "",
             "This counts every profiled emulator, including those no platform "
             "ships yet, so it reaches past what the pack tables above measure: "
@@ -3882,17 +4059,20 @@ def generate_gap_analysis(
             f"| data/ | {src_totals['data']} | Data directories (buildbot, GitHub) |",
             f"| release | {src_totals['large_file']} "
             "| GitHub release assets (large files) |",
+            f"| bundled | {src_totals['bundled']} "
+            "| Installed with the emulator's own package, not collected |",
             f"| missing | {src_totals['missing']} | Not available, needs sourcing |",
             "",
             "### Per emulator",
             "",
-            "| Emulator | Undeclared | bios | data | release | Missing |",
-            "|----------|----------:|-----:|-----:|--------:|--------:|",
+            "| Emulator | Undeclared | bios | data | release | Bundled | Missing |",
+            "|----------|----------:|-----:|-----:|--------:|--------:|--------:|",
         ])
 
         for emu_name, data in sorted(emulator_gaps, key=lambda x: -x[1]["gaps"]):
             display = data["emulator"]
-            m = data.get("gap_missing", 0)
+            sources = _gap_sources(data)
+            m = sources["missing"]
             missing_str = (
                 f'<span class="rb-badge rb-badge-danger">{m}</span>'
                 if m > 0
@@ -3901,9 +4081,10 @@ def generate_gap_analysis(
             lines.append(
                 f"| [{display}](emulators/{emu_name}.md) "
                 f"| {data['gaps']} "
-                f"| {data.get('gap_bios', 0)} "
-                f"| {data.get('gap_data', 0)} "
-                f"| {data.get('gap_large_file', 0)} "
+                f"| {sources['bios']} "
+                f"| {sources['data']} "
+                f"| {sources['large_file']} "
+                f"| {sources['bundled']} "
                 f"| {missing_str} |"
             )
         lines.append("")
@@ -4047,6 +4228,41 @@ def generate_gap_analysis(
 
 
 
+def _core_scope_note(config: dict, profiles: dict) -> str:
+    """" (all libretro)" when the platform resolves every libretro core.
+
+    Read from what resolve_platform_cores returns, not from the shape of
+    ``cores:``: RetroPie and RetroDECK name ``retroarch`` in a list, which
+    pulls in every libretro core as ``all_libretro`` does, and the label
+    showed for RetroArch and Lakka only.
+    """
+    every_libretro = resolve_platform_cores({"cores": "all_libretro"}, profiles)
+    resolved = resolve_platform_cores(config, profiles)
+    if not every_libretro or not every_libretro <= resolved:
+        return ""
+    others = len(resolved - every_libretro)
+    if not others:
+        return " (all libretro)"
+    return f" (all libretro, plus {_count(others, 'other core')})"
+
+
+def _gap_sources(data: dict) -> dict[str, int]:
+    """Where each undeclared file of one emulator comes from.
+
+    A file the emulator's own package installs is not one to find. The
+    report's gap_missing counts it, and the gaps page announced 1,356 files
+    to source where 609 are, with a red badge on emulators that have none.
+    """
+    counts = {"bios": 0, "data": 0, "large_file": 0, "bundled": 0, "missing": 0}
+    for gap in data.get("gap_details") or []:
+        source = gap.get("source", "")
+        if source == "missing" and gap.get("bundled"):
+            source = "bundled"
+        if source in counts:
+            counts[source] += 1
+    return counts
+
+
 def _render_xref_by_platform(
     coverages: dict, unique: dict
 ) -> list[str]:
@@ -4056,7 +4272,6 @@ def _render_xref_by_platform(
         cov = coverages[pname]
         display = cov["platform"]
         config = cov["config"]
-        platform_cores = config.get("cores", [])
 
         lines.append(f'??? abstract "{display}"')
         lines.append("")
@@ -4075,10 +4290,7 @@ def _render_xref_by_platform(
             if key in unique
         }
 
-        if platform_cores == "all_libretro":
-            lines.append(f"    **{len(matched)} cores** (all libretro)")
-        else:
-            lines.append(f"    **{len(matched)} cores**")
+        lines.append(f"    **{len(matched)} cores**{_core_scope_note(config, unique)}")
         lines.append("")
 
         lines.append("    | Core | Classification | Systems | Files | Upstream |")
@@ -4865,7 +5077,9 @@ def _generate(args: argparse.Namespace) -> None:
     # Build system_id -> manufacturer page map (needed by all generators)
     print("Building system cross-reference map...")
     manufacturers = _group_by_manufacturer(db)
-    _build_system_page_map_from_data(manufacturers, coverages, db, profiles)
+    set_system_page_map(
+        _system_pages_from_data(manufacturers, coverages, db, profiles)
+    )
     print(f"  {len(_system_page_map)} system IDs mapped to pages")
 
     export_reports = load_export_reports()
@@ -4938,7 +5152,8 @@ def _generate(args: argparse.Namespace) -> None:
             ) + "\n",
         )
         page = generate_emulator_page(
-            name, profile, db, consumers, suppl_names, data_registry
+            name, profile, db, consumers, suppl_names, data_registry,
+            data_dirs=page_data_directories(name, profiles),
         )
         PAGE_DATA[f"emulators/{name}.md"] = emulator_structured_data(profile)
         write_if_changed(str(docs / "emulators" / f"{name}.md"), page)
@@ -5088,6 +5303,9 @@ markdown_extensions:
 - tables
 - toc:
     permalink: true
+    # File cards are level 4 headings: the search lands on them, and a
+    # page of a hundred cards keeps a readable table of contents.
+    toc_depth: 3
 - pymdownx.details
 - pymdownx.highlight:
     anchor_linenums: true
@@ -5157,10 +5375,12 @@ from sitesources import (  # noqa: E402,F401
 from siterender import (  # noqa: E402,F401
     _by_mode,
     _count,
+    _field_text,
     _render_yaml_value,
     _slugify_anchor,
     _system_page_map,
     _system_link,
+    set_system_page_map,
     _platform_link,
     _emulator_link,
     _fmt_size,
