@@ -370,6 +370,15 @@ they reference emulators rather than owning a BIOS directory. ES-DE is looked
 up at `$ESDE_APPDATA_DIR` or `~/ES-DE`, the two locations its own
 `getAppDataDirectory` resolves.
 
+When no platform is found but standalone emulators are (an ES-DE setup with
+DuckStation and PCSX2, for one), the installer fills their own BIOS folders:
+the folders of the [standalone copies](#standalone-copies) list that exist on
+the machine, with the files that list names, taken from the EmuDeck file list
+and then RetroArch's. At a terminal it asks first. `--check` and `--dry-run`
+work as for a platform. With `--system`, `--core`, `--emulator`, `--region` or
+`--target` the run asks for a platform as before, since those name a
+platform's lists.
+
 When a platform named with `--platform` is not found on the machine, the
 destination falls back to the directory its detection looks for:
 `/userdata/bios` for Batocera, `/recalbox/share/bios` for Recalbox,

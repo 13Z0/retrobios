@@ -3891,6 +3891,39 @@ class StandaloneFoldersAreNamedWhenThereAreAny(unittest.TestCase, _LoopbackRun):
         self.assertIn("--standalone-copies", out)
 
 
+class StandaloneEmulatorsWithoutAPlatformAreServed(unittest.TestCase, _LoopbackRun):
+    """ES-DE with DuckStation and PCSX2 and no RetroArch: the run said 'No
+    supported platform detected' and offered RetroArch's folder, which no
+    emulator on the machine reads."""
+
+    def setUp(self):
+        self.env = self.serve(self)
+        (self.home / "ES-DE").mkdir()
+        self.duckstation = self.home / ".local" / "share" / "duckstation" / "bios"
+        self.duckstation.mkdir(parents=True)
+
+    def test_the_emulator_folder_is_filled(self):
+        proc = _install_run(self.env, "--no-input", "--dry-run")
+        self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+        self.assertIn("Found standalone emulator folders:", proc.stdout)
+        self.assertIn(f"to {self.duckstation}:", proc.stdout)
+        self.assertNotIn("--platform retroarch --dest", proc.stdout)
+        proc = _install_run(self.env, "--no-input")
+        self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+        names = sorted(path.name for path in self.duckstation.iterdir())
+        self.assertIn("scph5501.bin", names)
+        self.assertTrue(all(name.startswith("scph") for name in names), names)
+        proc = _install_run(self.env, "--no-input", "--check")
+        self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+        self.assertIn("All files up to date.", proc.stdout)
+
+    def test_no_emulator_folder_keeps_the_hint(self):
+        self.duckstation.rmdir()
+        proc = _install_run(self.env, "--no-input")
+        self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
+        self.assertIn("--platform retroarch --dest", proc.stdout)
+
+
 class TheEmulatorNamesHaveTheirOwnListing(unittest.TestCase, _LoopbackRun):
     """--emulator nope said "--list-cores lists all 441" and --list-cores
     printed 189: the buildbot names --emulator accepts were listed nowhere."""

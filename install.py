@@ -3791,6 +3791,129 @@ def standalone_folders_here(
     return found
 
 
+# The file lists a machine with standalone emulators and no platform is
+# served from: EmuDeck's holds the Switch keys, RetroArch's the PPSSPP atlas
+# and the Flycast flash, and each copy entry names its folders.
+STANDALONE_SOURCES = ("emudeck", "retroarch")
+
+
+def standalone_plan(
+    manifests: list[dict], os_type: str, extra_dirs: dict[str, Path] | None = None,
+) -> list[tuple[Path, list[dict]]]:
+    """What each emulator folder found here receives, by its own file name.
+
+    The standalone copies of the manifests, read as do_standalone_copies
+    reads them, but taken from the file lists rather than from a platform
+    tree already installed: an ES-DE user with DuckStation and PCSX2 and no
+    RetroArch had no tree to copy from. The first list that holds a name for
+    a folder serves it.
+    """
+    from fnmatch import fnmatch  # noqa: PLC0415
+
+    plan: dict[Path, dict[str, dict]] = {}
+    for manifest in manifests:
+        files = manifest.get("files", [])
+        by_dest = {entry["dest"]: entry for entry in files}
+        for copy in manifest.get("standalone_copies", []):
+            if "note" in copy:
+                continue
+            if "pattern" in copy:
+                sources = [entry for entry in files
+                           if fnmatch(PurePosixPath(entry["dest"]).name, copy["pattern"])]
+            else:
+                held = by_dest.get(copy.get("source") or copy["file"])
+                sources = [held] if held else []
+            for folder in _copy_targets(copy, os_type, extra_dirs):
+                if not sources or not folder.is_dir():
+                    continue
+                chosen = plan.setdefault(folder, {})
+                for entry in sources:
+                    name = PurePosixPath(entry["dest"]).name
+                    chosen.setdefault(name, {**entry, "dest": name})
+    return [(folder, list(entries.values())) for folder, entries in plan.items() if entries]
+
+
+def _install_standalone_folders(
+    args: argparse.Namespace, os_type: str, term: Terminal, interactive: bool,
+) -> bool:
+    """Fill the standalone emulator folders found here, with no platform.
+
+    False when this machine has none, the run then going on to the platform
+    question or hint.
+    """
+    manifests = []
+    for plat in STANDALONE_SOURCES:
+        manifests.append(fetch_manifest(plat))
+    lb_root = launchbox_root(os_type)
+    plan = standalone_plan(manifests, os_type,
+                           launchbox_bios_dirs(lb_root) if lb_root else None)
+    if not plan:
+        return False
+    print("  Found standalone emulator folders:")
+    for folder, entries in plan:
+        print(f"    {folder}  {_sized(entries)}")
+    if interactive and not (args.check or args.dry_run or args.yes) and not _confirm(
+        "\nInstall the BIOS files these emulators read into their folders? [Y/n] "
+    ):
+        return False
+    downloaded = up_to_date_count = errors = 0
+    pending = 0
+    failures: list[tuple[str, str]] = []
+    transferred, seconds = 0, 0.0
+    interrupted = False
+    for folder, entries in plan:
+        print(f"\n{folder}:")
+        to_download, up_to_date, mismatched = check_local(entries, folder, jobs=args.jobs)
+        to_download.extend(mismatched)
+        up_to_date_count += len(up_to_date)
+        if args.check:
+            for entry in mismatched:
+                print(f"    wrong hash: {entry['dest']}")
+            wrong = {id(entry) for entry in mismatched}
+            missing = [entry for entry in to_download if id(entry) not in wrong]
+            for entry in missing[:10] if not args.verbose else missing:
+                print(f"    missing: {entry['dest']}")
+            if not args.verbose and len(missing) > 10:
+                print(f"    ... and {len(missing) - 10} more missing (--verbose lists them all)")
+            if not to_download:
+                print("  All files up to date.")
+            pending += len(to_download)
+            continue
+        if args.dry_run:
+            _print_plan(to_download, folder, term)
+            continue
+        if not to_download:
+            print("  All files up to date.")
+            continue
+        size = sum(entry.get("size", 0) for entry in to_download)
+        _check_free_space(folder, size, code=1 if downloaded else 2)
+        progress = Progress(len(to_download), size, term)
+        failed, interrupted = download_files(
+            to_download, folder, jobs=args.jobs, verbose=args.verbose,
+            term=term, progress=progress,
+        )
+        downloaded += len(to_download) - len(failed)
+        errors += len(failed)
+        failures.extend((str(folder / dest), reason) for dest, reason in failed)
+        transferred += progress.transferred()
+        seconds += progress.elapsed()
+        if interrupted:
+            break
+    if args.check:
+        if pending:
+            print("\n  Run the same command without --check to fetch them; "
+                  "a file with a wrong hash is replaced.")
+            sys.exit(1)
+        return True
+    if args.dry_run:
+        return True
+    _report_outcome(
+        [folder for folder, _entries in plan], downloaded, up_to_date_count, errors,
+        0, interrupted, failures=failures, transferred=transferred, seconds=seconds,
+    )
+    return True
+
+
 def do_standalone_copies(
     manifest: dict, bios_path: Path, os_type: str,
     extra_dirs: dict[str, Path] | None = None,
@@ -4798,6 +4921,15 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
         platforms = detect_platforms(os_type)
         if not platforms:
             print("  No supported platform detected.")
+            # Standalone emulators read their BIOS from folders of their own,
+            # which the file lists name: an ES-DE user with DuckStation and
+            # PCSX2 was sent to RetroArch's folder, which nothing here reads.
+            narrowing = (args.system or args.core or args.emulator or args.region
+                         or args.target or args.installed_cores)
+            if not listing and not narrowing and _install_standalone_folders(
+                args, os_type, term, interactive
+            ):
+                return
             if not interactive or listing:
                 asked = next((flag for flag, on in (
                     ("--list-systems", args.list_systems), ("--list-cores", args.list_cores),
