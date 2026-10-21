@@ -885,7 +885,7 @@ def _mark_hidden(
     region_drops: set[str] | None = None,
     report: list[dict] | None = None,
     resolver: object | None = None,
-    placed_by: dict[str, tuple[str, str, str]] | None = None,
+    placed_kind: dict[str, str] | None = None,
 ) -> set[str]:
     """What the builder holds but cannot place beside the files it packed.
 
@@ -900,7 +900,7 @@ def _mark_hidden(
         config, emulators_dir, db,
         emu_profiles if emu_profiles is not None
         else load_emulator_profiles(emulators_dir),
-        shipped, target_cores, region_drops, placed, report, resolver, placed_by,
+        shipped, target_cores, region_drops, placed, report, resolver, placed_kind,
     )
     for u in undeclared:
         reason = hidden.get(
@@ -1333,7 +1333,7 @@ def verify_platform(
     _mark_unplaced(config, undeclared, profiles)
     from packextras import ExtraResolver
 
-    placed_by: dict[str, tuple[str, str, str]] = {}
+    placed_kind: dict[str, str] = {}
     placed = _mark_hidden(
         config, undeclared, emulators_dir, db, emu_profiles, occupied, target_cores,
         region_drops, report_for_builder,
@@ -1341,20 +1341,15 @@ def verify_platform(
             db, DEFAULT_BIOS_DIR, zip_contents, data_dir_registry, validation_index,
             validation_owners,
         ),
-        placed_by,
+        placed_kind,
     )
     # What the builder places from the cores, one per pack path, by category:
     # several entries claim one path (rom.key from three Amiga cores) and the
-    # builder ships one file there.
-    categories = {
-        (u.get("emulator", ""), u.get("name", ""), u.get("path") or ""):
-            u.get("category", "bios")
-        for u in report_for_builder
-    }
+    # builder ships one file there. The category travels on the extra: a copy
+    # the second pass makes has no gap report entry to look it up by.
     packed_extras = {"bios": 0, "game_data": 0}
-    for key in placed_by.values():
-        kind = "game_data" if categories.get(key) == "game_data" else "bios"
-        packed_extras[kind] += 1
+    for category in placed_kind.values():
+        packed_extras["game_data" if category == "game_data" else "bios"] += 1
     if not reads_file_contents(mode):
         # An existence frontend is satisfied by any file at the path, and the
         # builder fills a free platform destination with a core's file.

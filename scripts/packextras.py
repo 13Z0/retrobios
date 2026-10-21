@@ -215,7 +215,7 @@ def hidden_extras(
     placed: set[str] | None = None,
     report: list[dict] | None = None,
     resolver: ExtraResolver | None = None,
-    placed_by: dict[str, tuple[str, str, str]] | None = None,
+    placed_kind: dict[str, str] | None = None,
 ) -> dict[tuple[str, str, str], str]:
     """Report entries the builder holds and still leaves out, with the reason.
 
@@ -231,8 +231,10 @@ def hidden_extras(
     file left out. ``shipped`` maps the full destination of each platform
     file the pack carries to its local copy, or to None for a slot it keeps
     without one (user_provided, external). ``placed``, when given,
-    receives the full destination of each held extra the pack carries.
-    ``resolver`` is the builder's lookup. An extra it cannot resolve is
+    receives the full destination of each held extra the pack carries, and
+    ``placed_kind`` its category, carried by the extra itself: the second
+    pass, the archive-prefix pass and the agnostic scan copy files no gap
+    report entry names. ``resolver`` is the builder's lookup. An extra it cannot resolve is
     skipped and takes no path, as the builder skips it.
     """
     from packpaths import _register_path, placement_block
@@ -288,11 +290,8 @@ def hidden_extras(
             lower.add(full.lower())
         if placed is not None and local:
             placed.add(full)
-        if placed_by is not None and local:
-            placed_by[full] = (
-                fe.get("source_emulator", ""), fe.get("source_name", ""),
-                fe.get("source_path", ""),
-            )
+        if placed_kind is not None and local:
+            placed_kind[full] = fe.get("category", "bios")
     return hidden
 
 
@@ -469,6 +468,9 @@ def _agnostic_scan_extras(
                         "hle_fallback": False,
                         "source_emulator": profile.get("emulator", emu_name),
                         "source_profile": emu_name,
+                        "source_name": fname,
+                        "source_path": f.get("path") or "",
+                        "category": f.get("category", "bios"),
                         "source_system": f.get("system"),
                         "source_systems": list(profile.get("systems", [])),
                         "region": f.get("region"),
@@ -622,6 +624,9 @@ def _companion_extras(
             "hle_fallback": False,
             "source_emulator": profile.get("emulator", emu_name),
             "source_profile": emu_name,
+            "source_name": seed.get("name", ""),
+            "source_path": seed.get("path") or "",
+            "category": seed.get("category", "bios"),
             "source_system": seed.get("system"),
             "source_systems": list(profile.get("systems", [])),
             "region": seed.get("region"),
@@ -734,6 +739,10 @@ def _archive_prefix_extras(
                 "hle_fallback": False,
                 "source_emulator": profile.get("emulator", emu_name),
                 "source_profile": emu_name,
+                # Keyed as the gap report keys an archive: name and path alike.
+                "source_name": archive_name,
+                "source_path": archive_name,
+                "category": archive_entry.get("category", "bios"),
                 "source_system": archive_entry.get("system"),
                 "source_systems": list(profile.get("systems", [])),
                 "region": archive_entry.get("region"),
@@ -1032,6 +1041,10 @@ def _collect_emulator_extras(
                     "hle_fallback": f.get("hle_fallback", False),
                     "source_emulator": profile.get("emulator", emu_name),
                     "source_profile": emu_name,
+                    # The key the gap report gives the same entry.
+                    "source_name": fname,
+                    "source_path": raw,
+                    "category": f.get("category", "bios"),
                     "source_system": f.get("system"),
                     "source_systems": list(profile.get("systems", [])),
                     "region": f.get("region"),
@@ -1161,6 +1174,7 @@ def _report_extra(u: dict, name: str, dest: str) -> dict:
         # the wrong regional variant from the report.
         "source_name": u.get("name", ""),
         "source_path": u.get("path") or "",
+        "category": u.get("category", "bios"),
         "source_system": u.get("system"),
         "source_systems": u.get("systems", []),
         "region": u.get("region"),
