@@ -2697,7 +2697,7 @@ def generate_emulators_index(profiles: dict) -> str:
     lines = [
         "# Emulators",
         "",
-        f"**{len(unique)}** emulator profiles, **{total_files}** files total, **{len(aliases)}** aliases.",
+        f"**{len(unique):,}** emulator profiles, **{total_files:,}** files total, **{len(aliases):,}** aliases.",
         "",
         "| Classification | Count | Description |",
         "|---------------|-------|-------------|",

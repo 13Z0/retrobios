@@ -274,6 +274,7 @@ class PeerToneTowardPlatforms(unittest.TestCase):
         r"(?i)\bgets wrong\b|\bstale (hash|entries|entry)\b|<their file>|\bpatch their\b"
         r"|, corrected\b|\bcorrected in place\b|\bdeclare incorrectly\b|\blist error\b"
         r"|\btheir syntax\b|\bthe platform lacks\b|\bthe odd one\b|\bmay not match reality\b"
+        r"|\ball their code does\b|\bcan drift from\b"
     )
 
     def test_published_pages(self):
@@ -626,6 +627,45 @@ class ScratchFilesGoToRepoTmp(unittest.TestCase):
         old = "   ```bash\n   python x.py --output /tmp/test.yml\n   ```\n"
         self.assertEqual(self._code_lines(old), ["   python x.py --output /tmp/test.yml"])
         self.assertIn("tmp/", (ROOT / ".gitignore").read_text(encoding="utf-8").splitlines())
+
+
+class ReadmeInstallerOptions(unittest.TestCase):
+    """The README named --system, --region and --check but showed options
+    only after `sh -s --`. Appended to `irm ... | iex`, PowerShell rejects
+    them, and the form that works was on the installer page alone, which the
+    README never linked."""
+
+    def test_quick_install_gives_the_powershell_form_and_the_page(self):
+        import generate_readme
+
+        source = inspect.getsource(generate_readme.generate_readme)
+        self.assertIn("&([scriptblock]::Create((irm https://raw.githubusercontent.com/Abdess/retrobios/main/install.ps1)))", source)
+        self.assertIn("wiki/installer/#passing-options", source)
+        self.assertIn("## Passing options", _page("installer.md"))
+        readme = (ROOT / "README.md").read_text(encoding="utf-8")
+        quick = _section(readme, "Quick install")
+        self.assertIn("[scriptblock]::Create", quick)
+        self.assertIn("wiki/installer/#passing-options", quick)
+        self.assertNotRegex(readme, r"(?m)^irm \S+ \| iex \S")
+
+
+class PublishedNumbersShareOneFormat(unittest.TestCase):
+    """The README gave the collection as `16011 MB` beside `19,526 files`,
+    the site home as 15.6 GB, and the emulators page `10095 files`."""
+
+    def test_generators_format_counts_and_sizes_alike(self):
+        import generate_readme
+        import generate_site
+
+        readme_source = inspect.getsource(generate_readme.generate_readme)
+        self.assertNotIn("size_mb", readme_source)
+        self.assertIn("format_size(total_size)", readme_source)
+        self.assertIn("{total_files:,}", inspect.getsource(generate_site))
+        self.assertEqual(generate_readme.format_size(16011 * 1024 * 1024), "15.6 GB")
+
+    def test_the_readme_has_no_bare_large_count(self):
+        readme = (ROOT / "README.md").read_text(encoding="utf-8")
+        self.assertEqual(re.findall(r"\*\*\d{4,}\b[^*]*\*\*", readme), [])
 
 
 if __name__ == "__main__":

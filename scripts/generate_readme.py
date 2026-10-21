@@ -329,7 +329,6 @@ def _catalog_matched_line(db: dict) -> list[str]:
 def generate_readme(db: dict, platforms_dir: str) -> str:
     total_files = db.get("total_files", 0)
     total_size = db.get("total_size", 0)
-    size_mb = total_size / (1024 * 1024)
     ts = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
     platform_names = list_registered_platforms(platforms_dir, include_archived=True)
@@ -397,9 +396,13 @@ def generate_readme(db: dict, platforms_dir: str) -> str:
         "# SD card mounted on a PC: --dest is the BIOS folder on the card",
         "# (RetroArch on Switch: retroarch/cores/system, on Android: RetroArch/system)",
         "curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh -s -- --platform retroarch --dest /path/to/sdcard/retroarch/cores/system",
+        "",
+        "# Options in PowerShell: anything after | iex goes to iex, so the script runs as a block",
+        "&([scriptblock]::Create((irm https://raw.githubusercontent.com/Abdess/retrobios/main/install.ps1))) --check",
         "```",
         "",
         "The script auto-detects your platform, downloads only missing files, and verifies checksums.",
+        f"Every option, and what the installer detects and writes, is on the [installer page]({SITE_URL}wiki/installer/#passing-options).",
         "",
         "## Download BIOS packs",
         "",
@@ -462,16 +465,17 @@ def generate_readme(db: dict, platforms_dir: str) -> str:
             "",
             "Each file is checked the way your platform checks it. Most compare"
             " a checksum, the fingerprint of a file's contents, which catches a"
-            " corrupt or unexpected copy. RetroArch, Lakka and RetroPie only"
-            " look for the filename, because that is all their code does: the"
+            " corrupt or unexpected copy. RetroArch, Lakka and RetroPie check"
+            " that the file is present under its name without reading its"
+            " contents (`path_is_valid` in RetroArch's `core_info.c`): the"
             " Coverage table says which applies to you. Independently of that,"
             " the collection records five fingerprints per file, and wherever"
             " an emulator's code states an expected size or hash, that value is"
             " read from its source and rechecked here.",
             "",
             (
-                f"- **{acquirable_total} files** the platforms' emulators load"
-                f" are still to be found, and {unsourceable_total} more cannot"
+                f"- **{acquirable_total:,} files** the platforms' emulators load"
+                f" are still to be found, and {unsourceable_total:,} more cannot"
                 f" be sourced at all (per-user keys, user-filled slots, dumps"
                 f" nobody has made). Both are named in the"
                 f" [gap analysis]({SITE_URL}gaps/)"
@@ -484,7 +488,7 @@ def generate_readme(db: dict, platforms_dir: str) -> str:
             f"- **{len(system_ids)} systems** handled by those emulators (NES, SNES, PlayStation, Saturn, Dreamcast, ...)",
             collection_line(total_files, comp),
             *_catalog_matched_line(db),
-            f"- **{size_mb:.0f} MB** total collection size",
+            f"- **{format_size(total_size)}** for the whole collection",
             "",
             "## Supported systems",
             "",
@@ -621,10 +625,10 @@ def generate_readme(db: dict, platforms_dir: str) -> str:
             "",
             "## How it works",
             "",
-            "Documentation and metadata can drift from what emulators actually load.",
-            "To keep packs accurate, platform lists are checked against emulator"
-            " source code, file by file where a profile exists. When the two"
-            " disagree, the code wins.",
+            "A platform's BIOS list and an emulator's code are maintained"
+            " separately. Each list is compared with the emulator source code,"
+            " file by file where a profile exists, and where the two differ the"
+            " code decides.",
             "",
             "Hashes document what emulator code loads and accepts, not dump"
             " provenance. That boundary, and how it relates to preservation"
