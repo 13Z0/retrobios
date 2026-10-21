@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-20T19:45:33Z",
+  "generated_at": "2026-10-20T20:05:06Z",
   "total_files": 19529,
   "total_size": 16788599450,
   "bios_dir": "bios",
@@ -269839,8 +269839,7 @@
         "bc32bc0e8902946663998f56aea52be597d9e361"
       ],
       "apple2gs3.rom": [
-        "bc32bc0e8902946663998f56aea52be597d9e361",
-        "e4fc7560b69d062cb2da5b1ffbe11cd1ca03cc37"
+        "bc32bc0e8902946663998f56aea52be597d9e361"
       ],
       "ROM03.ROM": [
         "bc32bc0e8902946663998f56aea52be597d9e361"
@@ -269921,16 +269920,13 @@
         "9a6e4c88533a9eaa4d55cdc040e47443e0226eb2"
       ],
       "tos102uk.img": [
-        "87900a40a890fdf03bd08be6c60cc645855cbce5",
-        "735793fdba07fe8d5295caa03484f6ef3de931f5"
+        "87900a40a890fdf03bd08be6c60cc645855cbce5"
       ],
       "tos104uk.img": [
-        "9526ef63b9cb1d2a7109e278547ae78a5c1db6c6",
-        "735793fdba07fe8d5295caa03484f6ef3de931f5"
+        "9526ef63b9cb1d2a7109e278547ae78a5c1db6c6"
       ],
       "tos106uk.img": [
-        "06f9ea322e74b682df0396acfaee8cb4d9c90cad",
-        "735793fdba07fe8d5295caa03484f6ef3de931f5"
+        "06f9ea322e74b682df0396acfaee8cb4d9c90cad"
       ],
       "score-panel_green.png": [
         "8f627c7d7a1358c0b3f278d05516958c2ed8020d"
@@ -274182,12 +274178,10 @@
         "286b2e1fb21cc79851da01666db6c0b0e88f25e3"
       ],
       "tos106de.img": [
-        "3b8cf5ffa41b252eb67f8824f94608fa4005d6dd",
-        "735793fdba07fe8d5295caa03484f6ef3de931f5"
+        "3b8cf5ffa41b252eb67f8824f94608fa4005d6dd"
       ],
       "tos206us.img": [
-        "ee58768bdfc602c9b14942ce5481e97dd24e7c83",
-        "735793fdba07fe8d5295caa03484f6ef3de931f5"
+        "ee58768bdfc602c9b14942ce5481e97dd24e7c83"
       ],
       "saturn_bios.bin": [
         "2b8cb4f87580683eb4d760e4ed210813d667f0a2"
