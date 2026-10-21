@@ -71,11 +71,11 @@ files:
   - name: eu_mcd1_9210.bin
     aliases: [bios_CD_E.bin]
     system: sega-megacd
-    region: [europe]
+    region: [europe, oceania]
     required: true
     description: "Mega CD (Europe) boot ROM"
-    note: "Opened from SCDEURBIOS for the European region, same 128 KB read and same lock when it is missing, with the EUR message."
-    source_ref: "Fusion.exe 0x44b68a (default path), 0x478979-0x4789d6 (open, message, fread 0x20000)"
+    note: "Opened from SCDEURBIOS for the European region, same 128 KB read and same lock when it is missing, with the EUR message. With country autodetect on (the default), the disc's security byte at 0x20B picks the region: 0x7A USA, 0xA1 JAP, 0x64 EUR. EUR is the only branch that sets the PAL version bits (0xC0) and 50 Hz, so Australian discs take it too."
+    source_ref: "Fusion.exe 0x44b68a (default path), 0x478979-0x4789d6 (open, message, fread 0x20000), 0x44756b-0x44758a and 0x44cfc0-0x44cfe3 (security byte), 0x478963-0x478970 (PAL branch)"
 
   - name: 32X_G_BIOS.bin
     system: sega-32x
@@ -110,11 +110,10 @@ files:
 
   - name: bios_U.sms
     system: sega-mastersystem
-    region: [north-america]
     required: false
     description: "Master System (USA) boot ROM"
-    note: "Read from SMSUSABIOS, up to 512 KB, for the USA region unless SMSBIOSDisable is set. A missing file leaves the cartridge to start directly. No file name is fixed by the code."
-    source_ref: "Fusion.exe 0x47d541-0x47d5b9"
+    note: "Read from SMSUSABIOS, up to 512 KB, for the USA region unless SMSBIOSDisable is set. A missing file leaves the cartridge to start directly. No file name is fixed by the code. The header nibble at 0x7FFF tells Japan from export only: an export cart gets USA or EUR from the CountryOrder setting (USA by default), or from a CRC32 list held in the executable."
+    source_ref: "Fusion.exe 0x47d541-0x47d5b9, 0x45c173-0x45c1f4 (header nibble, CountryOrder), 0x47ce20-0x47ced1 (CRC32 list)"
 
   - name: bios_J.sms
     system: sega-mastersystem
@@ -126,11 +125,10 @@ files:
 
   - name: bios_E.sms
     system: sega-mastersystem
-    region: [europe]
     required: false
     description: "Master System (Europe) boot ROM"
-    note: "Read from SMSEURBIOS for the European region, same rules as the USA image."
-    source_ref: "Fusion.exe 0x47d60c-0x47d659"
+    note: "Read from SMSEURBIOS for the European region, same rules as the USA image. EUR comes from the CountryOrder setting or the CRC32 list, never from the header."
+    source_ref: "Fusion.exe 0x47d60c-0x47d659, 0x45c1a4-0x45c1f4 (CountryOrder), 0x47cea1-0x47ced1 (CRC32 list)"
 
   - name: bios.gg
     system: sega-gamegear

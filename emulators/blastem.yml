@@ -80,10 +80,10 @@ files:
 
   - name: bios_CD_E.bin
     system: sega-megacd
-    region: [europe]
+    region: [europe, oceania]
     required: true
     mode: libretro
-    note: "Mega CD BIOS for discs whose region resolves to E (segacd.c:1587-1588). Same load rules as bios_CD_U.bin."
+    note: "Mega CD BIOS for discs whose region resolves to E (segacd.c:1587-1588). The header code E, or bit 8 of a hex code, is the only PAL value the code reads, so Australian discs take this branch too (romdb.c:176-215). Same load rules as bios_CD_U.bin."
     source_ref: "source libblastem.c:502, source segacd.c:1573-1615"
 
   - name: bios_CD_J.bin
