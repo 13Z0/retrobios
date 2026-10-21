@@ -335,7 +335,9 @@ def collect_originals(
             elif path.exists():
                 payload = path.read_bytes()
             else:
-                missing.append(f"{relative}: absent and fetching is off")
+                missing.append(
+                    f"{relative}: not in {root}; rerun with --fetch to download it"
+                )
                 continue
             if archive:
                 originals.update(_read_archive(unpack, payload))

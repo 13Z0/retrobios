@@ -914,7 +914,9 @@ class CachedOriginal(unittest.TestCase):
     def test_offline_serves_what_is_cached_and_names_what_is_not(self):
         url = self._upstream("v1.txt", "one")
         _, missing = collect_originals(_OneFileExporter(url), {}, self.cache, False)
-        self.assertEqual(missing, ["list.txt: absent and fetching is off"])
+        self.assertEqual(missing, [
+            f"list.txt: not in {self.cache / 'plat'}; rerun with --fetch to download it"
+        ])
         collect_originals(_OneFileExporter(url), {}, self.cache, True)
         originals, missing = collect_originals(
             _OneFileExporter("file:///nowhere/else.txt"), {}, self.cache, False
