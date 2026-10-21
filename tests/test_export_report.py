@@ -289,6 +289,37 @@ class ReportedChangesAreTheDiff(unittest.TestCase):
         }
         self.assertEqual(reported_added, added)
 
+    def test_retropie(self):
+        """Each addition is a name a help sentence gains, and no other: the
+        report counted every file a profiled core reads as added."""
+        from common import load_platform_config, native_layer
+        from exporter import discover_exporters
+        from exporter.baseline import build_native_model
+
+        archive = UPSTREAM_CACHE / "retropie" / "RetroPie-Setup.tar.gz"
+        if not archive.is_file():
+            self.skipTest("no cached original for retropie")
+        config = load_platform_config("retropie", str(ROOT / "platforms"))
+        truth = export_native.current_truth("retropie", config, str(ROOT / "platforms"))
+        scraped = native_layer(config)
+        systems, report = build_native_model(truth, scraped)
+        exporter = discover_exporters()["retropie"]()
+        originals = exporter.unpack(archive.read_bytes())
+        produced = exporter.render(systems, report, originals, scraped)
+        self.assertTrue(produced, "nothing changed, the comparison proves nothing")
+        gained: set[str] = set()
+        for relative, text in produced.items():
+            before = exporter.modules({relative: originals[relative]})[relative][1]
+            after = exporter.modules({relative: text})[relative][1]
+            gained |= exporter._listed(after) - exporter._listed(before)
+        changes = export_native.landed_changes(exporter, systems).records
+        reported = {c["name"].lower() for c in changes if c["kind"] == "added"}
+        self.assertEqual(reported, gained)
+        self.assertEqual(
+            sum(c["kind"] == "added" for c in changes), len(gained),
+            "one name counted under several entries",
+        )
+
 
 class ThePageShowsEachValueBeforeAndAfter(unittest.TestCase):
     """A list of names gave a maintainer nothing to check a correction
