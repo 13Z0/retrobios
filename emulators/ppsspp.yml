@@ -19,7 +19,7 @@ data_directories:
     installed_on: [batocera, emudeck, lakka, recalbox, retrobat, retrodeck, retropie]
     mode: libretro
     destination: ""
-    source_ref: "libretro/libretro.cpp:537, 549"
+    source_ref: "libretro/libretro.cpp:537, 546, 549"
 
 notes: |
   Full HLE emulator. No Sony firmware or BIOS required.
@@ -28,6 +28,12 @@ notes: |
   Assets include replacement PGF fonts (18 files in flash0/font/),
   game compatibility database (compat.ini), language mapping (langregion.ini),
   and post-processing shaders (shaders/).
+  flash0/ is read from system/PPSSPP/flash0/ (libretro/libretro.cpp:546).
+  Without its fonts the font library holds no internal font and
+  sceFontOpen returns ERROR_FONT_INVALID_PARAMETER to the game
+  (Core/HLE/sceFont.cpp:805-864, 984-986), so text a game draws with the
+  PSP system fonts is lost. Without ppge_atlas.zim the system dialogs are
+  not drawn (Core/Util/PPGeDraw.cpp:227-230).
   Libretro fork (2020-03-18) behind upstream.
   PSP_DEFAULT_FIRMWARE = 660 (Core/ConfigValues.h:40).
 

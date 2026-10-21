@@ -386,6 +386,16 @@ notes:
     Fonts can come from three sources: real IPL dump (preferred), standalone font files
     in Sys/GC/, or bundled free alternatives. The free fonts have different padding that
     causes text positioning issues in some games.
+  sys_note: >
+    Without Sys/ the libretro core logs that codehandler.bin is missing and
+    goes on. With no IPL dump the GameCube fonts are read from Sys/GC/, so
+    none is loaded, and a game reading them raises "Games may not show fonts correctly, or
+    crash". The per-game settings in Sys/GameSettings/ and the WiiConnect24
+    files some Wii games expect are skipped too.
+    ref: Source/Core/DolphinLibretro/Boot.cpp:313-340,
+    Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp:128-130, 160-167, 328-340,
+    Source/Core/Core/ConfigManager.cpp:570, 586,
+    Source/Core/Core/WiiRoot.cpp:325-330
   nand_note: >
     Wii NAND content (channels, saves, system menu) is managed by Dolphin internally.
     Users can import a BootMii NAND backup (nand.bin + optional keys.bin) to populate it.

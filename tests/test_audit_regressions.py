@@ -5923,6 +5923,28 @@ class RequiredOnlyReachesDataDirectories(unittest.TestCase):
              "required": False},
         ])
 
+    def test_an_alias_reads_the_trees_of_its_core(self):
+        """An alias is the same binary under another name. FreeIntv declared
+        no overlay tree while its alias freeintv_ts_overlay did, so the
+        emulator pack of the core itself left the overlays out."""
+        profiles = {
+            path.stem: yaml.safe_load(path.read_text(encoding="utf-8"))
+            for path in (ROOT / "emulators").glob("*.yml")
+        }
+
+        def trees(profile: dict) -> dict:
+            return {
+                dd["ref"]: dd.get("required", True)
+                for dd in profile.get("data_directories") or []
+            }
+
+        for name, profile in profiles.items():
+            target = profile.get("alias_of")
+            if not target or target not in profiles:
+                continue
+            with self.subTest(alias=name, core=target):
+                self.assertEqual(trees(profile), trees(profiles[target]))
+
 
 class InstallerJsonKindsNeverOverwriteEachOther(unittest.TestCase):
     """Install manifests and target core lists are both <platform>.json.
@@ -6123,6 +6145,44 @@ class SkipPacksHelpSaysWhatRuns(unittest.TestCase):
         keys = re.findall(r'skip_notice\("(\w+)", "--skip-packs"\)', source)
         skipped = {pipeline.step_number(key) for key in keys}
         self.assertEqual(skipped, {"4", "4b", "4c", "6"})
+
+
+class AmigaCdDriversLiveInTheExtendedRom(unittest.TestCase):
+    """WinUAE starts without the CD32 or CDTV extended ROM, but cd.device,
+    cdtv.device, cdfs.library and cdstrap are resident modules of those ROMs
+    and the Kickstarts carry none. Its AROS replacement stands in only for a
+    missing Kickstart (memory.cpp:3055-3063), so the CDTV ROM has no
+    fallback to downgrade its absence."""
+
+    def test_both_extended_roms_are_required_without_fallback(self):
+        profile = yaml.safe_load(
+            (ROOT / "emulators" / "winuae.yml").read_text(encoding="utf-8")
+        )
+        entries = {f["name"]: f for f in profile["files"]}
+        for name in ("amiga-ext-310-cd32.rom", "amiga-ext-130-cdtv.rom"):
+            with self.subTest(name=name):
+                self.assertIs(entries[name]["required"], True)
+                self.assertNotIn("hle_fallback", entries[name])
+
+
+class BizHawkListsEveryDsiNandSlot(unittest.TestCase):
+    """FirmwareDatabase.cs:405-410 declares six DSi NAND slots, each a
+    placeholder hash and 251658240 + 64 bytes, and DecideNAND
+    (MelonDS.cs:684-706) stops a DSi load when none is set. The profile
+    listed DSi_Firmware.bin, a placeholder slot of the same kind, and left
+    the NANDs out."""
+
+    def test_the_six_regional_nands_are_declared(self):
+        profile = yaml.safe_load(
+            (ROOT / "emulators" / "bizhawk.yml").read_text(encoding="utf-8")
+        )
+        entries = {f["name"]: f for f in profile["files"]}
+        for region_code in ("JPN", "EUR", "USA", "AUS", "CHN", "KOR"):
+            with self.subTest(region=region_code):
+                entry = entries[f"DSi_Nand_{region_code}.bin"]
+                self.assertEqual(entry["size"], 251658240 + 64)
+                self.assertIs(entry["required"], False)
+                self.assertNotIn("sha1", entry)
 
 
 if __name__ == "__main__":

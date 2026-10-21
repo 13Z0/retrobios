@@ -35,7 +35,16 @@ notes: |
   file name matches the configured one (rommgr.cpp:2428-2461). The Kickstart entries below are named after other
   profiles' names for the same dumps: the code opens none of those names.
   kickstart_ext_rom_file is opened as given, and a missing extended ROM
-  only raises a notice (memory.cpp:1833-1849).
+  only raises a notice (memory.cpp:1833-1849). The machine then starts on
+  the Kickstart alone with nothing mapped in place of the extended ROM, and
+  the AROS replacement is used only when the Kickstart itself is missing
+  (memory.cpp:3055-3063). The CD drivers and CD boot code are resident
+  modules of the extended ROMs: cdstrap, cd.device and cdfs.library in the
+  CD32 ROM, cdtv.device, cdfs.library and cdstrap in the CDTV ROM. The CD32
+  and CDTV Kickstarts carry none. The CD32 quickstart model and the base
+  CDTV model have no floppy drive (cfgfile.cpp:9375-9379, 9405-9406), and
+  both ask for the extended ROM (cfgfile.cpp:9390-9395, 9414-9423), so
+  without it no CD is read or booted.
 
   CDTV and A600/A1200 internal devices are enabled with :ENABLED, which needs
   no ROM file. Cloanto encrypted ROMs are decoded with rom.key, searched in the
@@ -126,7 +135,6 @@ files:
   - name: "amiga-ext-130-cdtv.rom"
     system: commodore-cdtv
     required: true
-    hle_fallback: true
     size: 262144
     crc32: "42baa124"
     sha1: "7ba40ffa17e500ed9fed041f3424bd81d9c907be"
