@@ -23,7 +23,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from common import load_emulator_profiles, parse_untrusted_xml
 
 from .base_exporter import BaseExporter
-from .baseline import NativeFile, NativeSystem, Report
+from .baseline import NativeFile, NativeSystem, Report, by_destination, by_name
 
 SOURCE_URL = (
     "https://gitlab.com/recalbox/recalbox/-/raw/master/board/recalbox/fsoverlay"
@@ -165,27 +165,61 @@ class Exporter(BaseExporter):
     def required_value(self, fe: NativeFile) -> bool:
         """Whether the cores the element names need the file.
 
-        An element lists its cores, and the merged flag is true when any
-        core needs the file: cdi/cdibios.zip names libretro/same_cdi, whose
-        driver declares no such set, and became mandatory because MAME
-        requires it. Where none of the element's cores reads the file, the
-        truth says nothing about it and the platform's value stands.
+        The element lists its cores, and each core's own entry for the file,
+        found by name, says whether that core needs it. The md5 pairing
+        takes one entry only: saturn/saturn_bios.bin names yabause,
+        yabasanshiro and kronos, which require it, and its md5 paired it
+        with the beetle_saturn entry. The merged flag is true when any core
+        needs the file: cdi/cdibios.zip names same_cdi, which declares no
+        such set, and became mandatory because MAME requires it. Where none
+        of the element's cores declares the file, the platform's value
+        stands.
         """
-        truth = fe.truth or {}
-        required_by = truth.get("_required_by")
-        readers = truth.get("_cores")
-        if required_by is None or not readers:
+        entries = [fe.truth] if fe.truth else []
+        entries += [
+            e for e in fe.namesakes
+            if e is not fe.truth and self._same_file(e, fe.platform or {})
+        ]
+        if not entries:
             return fe.required
         index = self._profile_keys()
         named = {
             index.get(core.rsplit("/", 1)[-1].replace("-", "_").lower(), "")
             for core in fe.cores()
-        } & set(readers)
-        if not named:
+        } - {""}
+        readers: set[str] = set()
+        requirers: set[str] = set()
+        for entry in entries:
+            cores = set(entry.get("_cores") or ()) & named
+            readers |= cores
+            required_by = entry.get("_required_by")
+            if required_by is None:
+                if entry.get("required") is not False:
+                    requirers |= cores
+            else:
+                requirers |= cores & set(required_by)
+        if not readers:
             if fe.platform is not None and fe.platform.get("required") is not None:
                 return bool(fe.platform["required"])
             return fe.required
-        return bool(named & set(required_by))
+        return bool(requirers)
+
+    @staticmethod
+    def _same_file(entry: dict, declared: dict) -> bool:
+        """Whether a truth entry of that name describes this element's file.
+
+        Its path or its name in the same directory does. A name under an
+        unrelated directory does too: kronos reads kronos/saturn_bios.bin,
+        and Recalbox files the same BIOS under saturn/. A name in another
+        directory of the same tree does not: bluemsx reads
+        Machines/Shared Roms/KANJI.rom, which is not Recalbox's
+        Machines/MSX2+ - European/KANJI.rom.
+        """
+        if by_destination(entry, declared) or by_name(entry, declared):
+            return True
+        theirs = str(declared.get("destination") or declared.get("name", "")).split("/")[:-1]
+        ours = str(entry.get("path") or entry.get("name", "")).split("/")[:-1]
+        return not {d.casefold() for d in theirs} & {d.casefold() for d in ours}
 
     def _bios_element(self, fe: NativeFile, native_id: str) -> str:
         attrs = [f"path={quoteattr(self._path(fe))}"]

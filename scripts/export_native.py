@@ -535,9 +535,10 @@ def landed_changes(exporter: object, systems: dict) -> LandedChanges:
                         "added", entry, None, None, _added_fields(exporter, entry)
                     ))
                 continue
+            # Asked of the exporter: a format that names each entry's cores
+            # reads every entry of those cores, not only the paired one.
             if (
-                (entry.truth or {}).get("required") is not None
-                and entry.platform.get("required") is not None
+                entry.platform.get("required") is not None
                 and exporter.states(entry, "required")
                 and exporter.required_value(entry) != bool(entry.platform["required"])
             ):

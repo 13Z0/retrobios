@@ -1169,6 +1169,57 @@ class RecalboxExport(unittest.TestCase):
             [("cdimono1.zip", False, True)],
         )
 
+    def test_mandatory_reads_the_named_cores_not_the_hash_pairing(self):
+        """saturn/saturn_bios.bin names yabause, yabasanshiro and kronos,
+        which require it. Its md5 paired it with the beetle_saturn entry,
+        which does not, and the element went out mandatory="false"."""
+        md5 = "af5828fdff51384f99b3c4926be27762"
+        scraped = {"systems": {"sega-saturn": {"native_id": "saturn", "files": [{
+            "name": "saturn_bios.bin", "destination": "saturn/saturn_bios.bin",
+            "md5": md5, "native_system": "saturn", "required": True,
+            "core": "libretro/yabause,libretro/kronos",
+        }]}}}
+        truth = {"systems": {"sega-saturn": {"files": [
+            {"name": "saturn_bios.bin", "path": "saturn_bios.bin", "md5": md5,
+             "required": True, "_cores": ["beetle_saturn", "kronos", "yabause"],
+             "_required_by": ["beetle_saturn"]},
+            {"name": "saturn_bios.bin", "path": "kronos/saturn_bios.bin",
+             "required": True, "_cores": ["kronos", "yabause"],
+             "_required_by": ["kronos", "yabause"]},
+        ]}}}
+        systems, report = build_native_model(truth, scraped)
+        exporter = discover_exporters()["recalbox"]()
+        declared = next(fe for s in systems.values() for fe in s.files if fe.platform)
+        self.assertEqual(declared.truth["_required_by"], ["beetle_saturn"])
+        produced = exporter.render(systems, report, {}, None)["es_bios.xml"]
+        element = next(
+            b for b in ET.fromstring(produced).iter("bios")
+            if b.get("path") == "saturn/saturn_bios.bin"
+        )
+        self.assertNotEqual(element.get("mandatory"), "false")
+        self.assertEqual(
+            [c for c in landed_changes(exporter, systems).records
+             if c["kind"] == "requirement_corrected"],
+            [],
+        )
+
+    def test_a_namesake_elsewhere_in_the_same_tree_is_another_file(self):
+        """bluemsx reads Machines/Shared Roms/KANJI.rom, not Recalbox's
+        Machines/MSX2+ - European/KANJI.rom."""
+        scraped = {"systems": {"msx": {"native_id": "msx2", "files": [{
+            "name": "KANJI.rom", "destination": "Machines/MSX2+ - European/KANJI.rom",
+            "md5": "a" * 32, "native_system": "msx2", "required": True,
+            "core": "libretro/bluemsx",
+        }]}}}
+        truth = {"systems": {"msx": {"files": [{
+            "name": "KANJI.rom", "path": "Machines/Shared Roms/KANJI.rom",
+            "md5": "b" * 32, "required": False, "_cores": ["bluemsx"], "_required_by": [],
+        }]}}}
+        systems, _ = build_native_model(truth, scraped)
+        exporter = discover_exporters()["recalbox"]()
+        declared = next(fe for s in systems.values() for fe in s.files if fe.platform)
+        self.assertTrue(exporter.required_value(declared))
+
     def test_an_element_kept_as_written_is_not_counted_lost(self):
         """The truth takes the entry on sha1 and size and names no md5: the
         element is written back whole, and the run counted it a platform

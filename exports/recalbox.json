@@ -7,7 +7,7 @@
   "files": [
     "es_bios.xml"
   ],
-  "summary": "357 kept, 87 added, 2 hashes corrected, 127 requirements corrected, 528 additions left out, 102 entries found by content not listed",
+  "summary": "357 kept, 87 added, 2 hashes corrected, 128 requirements corrected, 528 additions left out, 102 entries found by content not listed",
   "counts": {
     "kept": 357,
     "added": 87,
@@ -714,6 +714,15 @@
     {
       "kind": "requirement_corrected",
       "system": "pc98",
+      "name": "bios.rom",
+      "destination": "np2kai/bios.rom",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "pc98",
       "name": "font.bmp",
       "destination": "np2kai/font.bmp",
       "field": "required",
@@ -773,6 +782,15 @@
       "system": "msx1,msx2",
       "name": "DISK.ROM",
       "destination": "msx/DISK.ROM",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "msx1,msx2",
+      "name": "FMPAC.ROM",
+      "destination": "msx/FMPAC.ROM",
       "field": "required",
       "old": true,
       "new": false
@@ -1908,15 +1926,6 @@
     {
       "kind": "requirement_corrected",
       "system": "saturn",
-      "name": "saturn_bios.bin",
-      "destination": "saturn/saturn_bios.bin",
-      "field": "required",
-      "old": true,
-      "new": false
-    },
-    {
-      "kind": "requirement_corrected",
-      "system": "saturn",
       "name": "mpr-18811-mx.ic1",
       "destination": "saturn/mpr-18811-mx.ic1",
       "field": "required",
@@ -2229,7 +2238,7 @@
   "sizes_corrected": [],
   "sizes_removed": [],
   "hashes_cleared": [],
-  "requirements_corrected": 127,
+  "requirements_corrected": 128,
   "withheld": [],
   "found_by_content": 102,
   "removal_candidates": [

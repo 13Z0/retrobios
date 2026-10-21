@@ -122,6 +122,10 @@ class NativeFile:
     # (Recalbox on a .zip): the truth's md5 describes the container and
     # can be neither compared with it nor written in its place.
     composite_md5: bool = False
+    # Every truth entry of the system that answers to this platform entry's
+    # name, whichever one the pairing took: the element names its cores, and
+    # each core's own entry for the file says whether that core needs it.
+    namesakes: list[dict] = field(default_factory=list)
 
     @property
     def origin(self) -> str:
@@ -563,6 +567,16 @@ def build_native_model(
             if candidate.truth is None
         ]
         pairs = pair_entries(truth_files, [c.platform or {} for c in candidates])
+        for candidate in (
+            c
+            for native_id in target_ids
+            for c in systems.get(native_id, NativeSystem(native_id)).files
+            if c.platform is not None
+        ):
+            own = str(candidate.name).casefold()
+            candidate.namesakes.extend(
+                entry for entry in truth_files if own in _names(entry)
+            )
 
         for t_index, truth_entry in enumerate(truth_files):
             name = str(truth_entry["name"])

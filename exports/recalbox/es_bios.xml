@@ -146,7 +146,7 @@
     <bios path="np2kai/bios.rom"       md5="052f5f6010877522f78803498a625727,0c052b1f1bfd0ece11286d2ff45d296f,
                                             36293e23fe0c86cb115d59b653c13876,3af0ae018c5710eec6e2891064814138,
                                             50274bb5dcb707e4450011b09accffcb,c70ee9df11794bd5cc8aadb3721b4a03,
-                                            cd237e16e7e77c06bb58540e9e9fca68,e246140dec5124c5e404869a84caefce" hashMatchMandatory="false" core="libretro/np2kai" />
+                                            cd237e16e7e77c06bb58540e9e9fca68,e246140dec5124c5e404869a84caefce" hashMatchMandatory="false" core="libretro/np2kai" mandatory="false" />
     <bios path="np2kai/font.bmp"       md5="0c8624e9ced7cca8769e5c7b0dd4279b,7da1e5b7c482d4108d22a5b09631d967" hashMatchMandatory="false" core="libretro/np2kai" mandatory="false" />
     <bios path="np2kai/font.rom"       md5="38d32748ae49d1815b0614970849fd40,fd0b856899aec843cbe69d2940df547f,
                                             4133b0be0d470920da60b9ed28d2614f,693fd1da3239d4bbeafc77d211718fc5,
@@ -205,7 +205,7 @@
     <bios path="msx/CYRILLIC.FNT" md5="85b38e4128bbc300e675f55b278683a8" core="libretro/fmsx" mandatory="false" />
     <bios path="msx/DISK.ROM"     md5="80dcd1ad1a4cf65d64b7ba10504e8190" core="libretro/fmsx" mandatory="false" />
     <bios path="msx/FMPAC16.ROM"  md5="af8537262df8df267072f359399a7635" core="libretro/fmsx" />
-    <bios path="msx/FMPAC.ROM"    md5="6f69cc8b5ed761b03afd78000dfb0e19" core="libretro/fmsx" />
+    <bios path="msx/FMPAC.ROM"    md5="6f69cc8b5ed761b03afd78000dfb0e19" core="libretro/fmsx" mandatory="false" />
     <bios path="msx/ITALIC.FNT"   md5="c83e50e9f33b8dd893c414691822740d" core="libretro/fmsx" mandatory="false" />
     <bios path="msx/KANJI.ROM"    md5="febe8782b466d7c3b16de6d104826b34" core="libretro/fmsx" mandatory="false" />
     <bios path="msx/MSX2EXT.ROM"  md5="2183c2aff17cf4297bdb496de78c2e8a" core="libretro/fmsx" />
@@ -579,7 +579,7 @@
     <bios path="scv/upd7801g.s01" md5="635A978FD40DB9A18EE44EFF449FC126" mandatory="true" core="libretro/emuscv" />
   </system>
   <system fullname="Sega Saturn" platform="saturn">
-    <bios path="saturn/saturn_bios.bin"  md5="af5828fdff51384f99b3c4926be27762" hashMatchMandatory="false" mandatory="false" core="libretro/yabause,libretro/yabasanshiro,libretro/kronos" />
+    <bios path="saturn/saturn_bios.bin"  md5="af5828fdff51384f99b3c4926be27762" hashMatchMandatory="false" mandatory="true" core="libretro/yabause,libretro/yabasanshiro,libretro/kronos" />
     <bios path="saturn/sega_101.bin"     md5="85ec9ca47d8f6807718151cbcca8b964" core="libretro/mednafen_saturn" note="Saturn JP BIOS - Required for JP games" />
     <bios path="saturn/mpr-17933.bin"    md5="3240872c70984b6cbfda1586cab68dbe" core="libretro/mednafen_saturn" note="Saturn US/EU BIOS - Required for US/EU games" />
     <bios path="saturn/mpr-18811-mx.ic1" md5="255113ba943c92a54facd25a10fd780c" core="libretro/mednafen_saturn,libretro/kronos" note="Required for The King of Fighters '95 ROM Cartridge" mandatory="false" />
