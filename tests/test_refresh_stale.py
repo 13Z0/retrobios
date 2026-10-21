@@ -101,6 +101,16 @@ class Planning(unittest.TestCase):
         )
         self.assertEqual([f["subject"] for f in surfaced], ["redump"])
 
+    def test_a_data_row_outside_the_registry_needs_a_human(self):
+        """refresh_data_dirs.py --key 'buildbot system' exits 1 on an unknown
+        key: the row asks for a registry entry, not a refresh."""
+        jobs, surfaced, _ = self._plan(
+            finding("data", "buildbot system"), finding("data", "_data_dirs.yml")
+        )
+        self.assertEqual(jobs, [])
+        self.assertEqual([f["subject"] for f in surfaced],
+                         ["buildbot system", "_data_dirs.yml"])
+
     def test_only_stale_rows_run_and_errors_are_shown(self):
         jobs, surfaced, ignored = self._plan(
             finding("data", "a", "OK"),
