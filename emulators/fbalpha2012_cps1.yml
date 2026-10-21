@@ -28,8 +28,8 @@ notes: |
   ROM path: ROMs are loaded from the content directory (g_rom_dir).
   system_directory (libretro.cpp:2202) is used only for hiscore.dat.
 
-  The .info note "BIOS files must be inside the ROM directory" is misleading:
-  there are no BIOS files for CPS-1. This note is generic across all FBA cores.
+  The .info note "BIOS files must be inside the ROM directory" is the note
+  each FB Alpha 2012 .info carries. CPS-1 loads no BIOS file.
 
   244 ROM sets defined (488 STD_ROM_PICK/FN entries = 244 games).
   is_experimental=false, need_fullpath=true, block_extract=true.

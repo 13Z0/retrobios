@@ -19,12 +19,14 @@ notes: |
   upstream. The Makefile produces freeintv_libretro (TARGET_NAME = freeintv),
   and library_name is "freeintv" (src/libretro.c:1413).
 
-  The FreeIntvTSOverlay_libretro.info in libretro-core-info has errors:
-  wrong overlay directory (claims FreeIntvTS_Overlays, code uses
-  freeintv_overlays), wrong dimensions (claims 300x670, code uses 370x600),
-  phantom external PNG files (controller_base.png, default.png,
-  button_swapscreen.png are either embedded in C headers or nonexistent),
-  and firmware1 key typos (uses firmware0_path/firmware0_opt).
+  FreeIntvTSOverlay_libretro.info asks for 300x670 overlay PNGs in
+  FreeIntvTS_Overlays, next to controller_base.png, default.png and
+  button_swapscreen.png. The code reads
+  <system_dir>/freeintv_overlays/<rom name>.png with a 370x600 default
+  (src/libretro.c, build_overlay_path and overlay_width/overlay_height),
+  decodes the controller frame and the default keypad from
+  src/keypad_frame_graphic.h and src/default_keypad_image.h, and opens no
+  file named button_swapscreen.png.
 
 bios_identical_to: freeintv
 

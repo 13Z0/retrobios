@@ -17,10 +17,10 @@ notes: >
   scpu-dos-*.bin provide the original CMD SuperCPU DOS kernals, loaded from
   system/vice/SCPU64/ when SuperCPU Kernal core option is changed from Internal.
   JiffyDOS requires True Drive Emulation enabled and a non-internal SuperCPU
-  kernal (the internal ROM is not JiffyDOS-compatible). The .info incorrectly
-  declares JiffyDOS_C64.bin (firmware_count=4), but the C64 kernal replacement is
-  only loaded for x64/x64sc/x128, never for xscpu64. Correct firmware_count=5
-  (2 SCPU64 kernals + 3 JiffyDOS drive DOSes).
+  kernal (the internal ROM is not JiffyDOS-compatible). The .info declares
+  JiffyDOS_C64.bin (firmware_count=4). The C64 kernal replacement is loaded
+  for x64/x64sc/x128 only, so xscpu64 reads 5 files: 2 SCPU64 kernals and 3
+  JiffyDOS drive DOSes.
 
 files:
   - name: "scpu-dos-2.04.bin"

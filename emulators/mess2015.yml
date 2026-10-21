@@ -23,7 +23,7 @@ notes: |
 
   Software list support via 375 XML hash files in system_dir/mess2015/hash/.
   Hash files are bundled in the source repo at /hash/. Not on libretro buildbot.
-  .info incorrectly says SYSTEMDIR\ume\hash, the actual path is mess2015/hash.
+  The .info names SYSTEMDIR\ume\hash. The code reads mess2015/hash.
 
   hiscore.c integrated (libretro addition, not in upstream MAME 0.159).
   SAMPLES sound driver disabled in mess.mak.
