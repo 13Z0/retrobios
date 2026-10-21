@@ -5923,6 +5923,28 @@ class RequiredOnlyReachesDataDirectories(unittest.TestCase):
              "required": False},
         ])
 
+    def test_an_alias_reads_the_trees_of_its_core(self):
+        """An alias is the same binary under another name. FreeIntv declared
+        no overlay tree while its alias freeintv_ts_overlay did, so the
+        emulator pack of the core itself left the overlays out."""
+        profiles = {
+            path.stem: yaml.safe_load(path.read_text(encoding="utf-8"))
+            for path in (ROOT / "emulators").glob("*.yml")
+        }
+
+        def trees(profile: dict) -> dict:
+            return {
+                dd["ref"]: dd.get("required", True)
+                for dd in profile.get("data_directories") or []
+            }
+
+        for name, profile in profiles.items():
+            target = profile.get("alias_of")
+            if not target or target not in profiles:
+                continue
+            with self.subTest(alias=name, core=target):
+                self.assertEqual(trees(profile), trees(profiles[target]))
+
 
 class InstallerJsonKindsNeverOverwriteEachOther(unittest.TestCase):
     """Install manifests and target core lists are both <platform>.json.

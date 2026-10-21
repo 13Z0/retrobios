@@ -29,6 +29,16 @@ notes: |
 
   No ECS support. No ecs.bin loading code in the source.
 
+  Per-game controller overlays are read from freeintv_overlays/<rom>.png
+  (or .jpg) in the system directory, only when the multi-screen option is
+  on (src/libretro.c:278-280, 294). Without one the core draws the keypad
+  image embedded in the binary (src/libretro.c:321-325).
+
+data_directories:
+  - ref: freeintv-overlays
+    destination: freeintv_overlays
+    required: false
+
 files:
   - name: "exec.bin"
     system: intellivision
