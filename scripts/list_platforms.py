@@ -7,7 +7,7 @@ Respects the `status` field in _registry.yml:
 
 Usage:
     python scripts/list_platforms.py                # Active platforms (for CI)
-    python scripts/list_platforms.py --all           # All platforms including archived
+    python scripts/list_platforms.py --include-archived  # archived ones too
     python scripts/list_platforms.py >> "$GITHUB_OUTPUT"
 """
 
@@ -31,10 +31,15 @@ def list_platforms(include_archived: bool = False) -> list[str]:
 
 def main() -> None:
     parser = argparse.ArgumentParser(allow_abbrev=False, description="List available platforms")
-    parser.add_argument("--all", action="store_true", help="Include archived platforms")
+    # The name verify, generate_pack, slots and pipeline use. --all is the
+    # older spelling, still read so existing commands keep working.
+    parser.add_argument(
+        "--include-archived", "--all", dest="include_archived", action="store_true",
+        help="include archived platforms",
+    )
     args = parser.parse_args()
 
-    platforms = list_platforms(include_archived=args.all)
+    platforms = list_platforms(include_archived=args.include_archived)
 
     if not platforms:
         print("No platform configs found", file=sys.stderr)

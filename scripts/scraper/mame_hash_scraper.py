@@ -22,7 +22,7 @@ from typing import Any
 
 import yaml
 
-from common import source_yaml_paths, write_text_atomic, yaml_load
+from common import github_token, source_yaml_paths, write_text_atomic, yaml_load
 
 import upstream
 
@@ -144,7 +144,7 @@ def _get_release_tag() -> str:
         "User-Agent": "retrobios-scraper/1.0",
         "Accept": "application/vnd.github.v3+json",
     }
-    token = os.environ.get("GITHUB_TOKEN")
+    token = github_token()
     if token:
         headers["Authorization"] = f"Bearer {token}"
     url = "https://api.github.com/repos/mamedev/mame/releases/latest"

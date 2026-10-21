@@ -818,7 +818,7 @@ class SlotsJudgeWhatVerifyJudged(unittest.TestCase):
     def test_the_pipeline_passes_both_flags(self):
         source = (Path(__file__).resolve().parents[1] / "scripts" / "pipeline.py").read_text()
         step = source[source.index('slots_cmd = [sys.executable, "scripts/slots.py"]'):]
-        step = step[:step.index("3b/8")]
+        step = step[:step.index("3b slot arbitration")]
         self.assertIn('slots_cmd.append("--include-archived")', step)
         self.assertIn('slots_cmd.extend(["--target", args.target])', step)
 

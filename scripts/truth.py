@@ -290,6 +290,7 @@ def _merge_hashes(
             continue
         if not ours:
             existing[h] = theirs
+            existing.setdefault("_hash_by", {})[h] = emu_name
             continue
         t_list = theirs if isinstance(theirs, list) else [theirs]
         o_list = ours if isinstance(ours, list) else [ours]
@@ -305,9 +306,13 @@ def _merge_hashes(
             key = (file_entry["name"], h, str(ours), str(theirs), emu_name)
             if key not in _CONFLICTS_SHOWN:
                 _CONFLICTS_SHOWN.add(key)
+                # Both cores and which value stays: naming only the second
+                # core sent the reader through ten profiles for the first.
+                first = existing.get("_hash_by", {}).get(h, "an earlier core")
                 print(
-                    f"WARNING: hash conflict for {file_entry['name']} "
-                    f"({h}: {ours} vs {theirs}, core {emu_name})",
+                    f"WARNING: hash conflict for {file_entry['name']}: "
+                    f"{h} {ours} ({first}) kept, {theirs} ({emu_name}) "
+                    "left out of the model",
                     file=sys.stderr,
                 )
 
@@ -355,6 +360,9 @@ def _new_truth_entry(file_entry: dict, emu_name: str, db: dict | None) -> dict:
     entry["_source_refs"] = {_serialize_source_ref(sr)} if sr is not None else set()
     if db:
         _enrich_hashes(entry, db)
+    # Which core gave each hash, for the conflict warning. Dropped before
+    # the model is written.
+    entry["_hash_by"] = {h: emu_name for h in _HASH_FIELDS if entry.get(h)}
     return entry
 
 
@@ -685,6 +693,7 @@ def generate_platform_truth(
     # Convert sets to sorted lists for serialization
     for sys_id, sys_data in systems.items():
         for fe in sys_data.get("files", []):
+            fe.pop("_hash_by", None)
             fe["_cores"] = sorted(fe.get("_cores", set()))
             fe["_required_by"] = sorted(fe.get("_required_by", set()))
             fe["_named_by"] = sorted(fe.get("_named_by", set()))
@@ -796,6 +805,7 @@ def _diff_system(truth_sys: dict, scraped_sys: dict) -> dict:
                 missing.append(
                     {
                         "name": t_entry["name"],
+                        "destination": t_entry.get("path") or t_entry["name"],
                         "cores": list(t_entry.get("_cores", [])),
                         "source_refs": list(t_entry.get("_source_refs", [])),
                     }
@@ -804,6 +814,7 @@ def _diff_system(truth_sys: dict, scraped_sys: dict) -> dict:
         s_entry = scraped_files[s_position]
         mismatch = _hash_mismatch(t_entry, s_entry)
         if mismatch:
+            mismatch["destination"] = s_entry.get("destination") or s_entry["name"]
             hash_mismatch.append(mismatch)
         t_req = t_entry.get("required")
         s_req = s_entry.get("required")
@@ -811,6 +822,7 @@ def _diff_system(truth_sys: dict, scraped_sys: dict) -> dict:
             required_mismatch.append(
                 {
                     "name": s_entry["name"],
+                    "destination": s_entry.get("destination") or s_entry["name"],
                     "truth_required": t_req,
                     "scraped_required": s_req,
                 }
@@ -835,7 +847,12 @@ def _diff_system(truth_sys: dict, scraped_sys: dict) -> dict:
         if key in seen_extra:
             continue
         seen_extra.add(key)
-        entry = {"name": s_entry["name"]}
+        # The destination tells apart two declarations of one name: the
+        # report listed six `hiscore.dat` to add beside one to drop.
+        entry = {
+            "name": s_entry["name"],
+            "destination": s_entry.get("destination") or s_entry["name"],
+        }
         if has_unprofiled:
             extra_unprofiled.append(entry)
         else:

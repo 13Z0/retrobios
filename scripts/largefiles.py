@@ -285,8 +285,11 @@ def _served_digests() -> dict[str, str]:
         f"{LARGE_FILES_RELEASE}"
     )
     headers = {"User-Agent": "retrobios/1.0", "Accept": "application/vnd.github+json"}
-    if os.environ.get("GITHUB_TOKEN"):
-        headers["Authorization"] = f"Bearer {os.environ['GITHUB_TOKEN']}"
+    from common import github_token  # noqa: PLC0415 (common imports this module)
+
+    token = github_token()
+    if token:
+        headers["Authorization"] = f"Bearer {token}"
     digests: dict[str, str] = {}
     try:
         with urllib.request.urlopen(

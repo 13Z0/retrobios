@@ -1,0 +1,374 @@
+"""What the maintainer tools print: names a user can act on, counts that add up."""
+
+from __future__ import annotations
+
+import contextlib
+import io
+import os
+import subprocess
+import sys
+import tempfile
+import unittest
+from pathlib import Path
+from unittest import mock
+
+REPO_ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(REPO_ROOT / "scripts"))
+
+import common  # noqa: E402
+import diff_truth  # noqa: E402
+import pipeline  # noqa: E402
+import truth  # noqa: E402
+import verify  # noqa: E402
+
+
+class ABuildbotNameSelectsItsProfile(unittest.TestCase):
+    """`--emulator pcfx` was refused and pointed at two PlayStation cores,
+    though pcfx is in the cores: of beetle_pcfx."""
+
+    PROFILES = {
+        "beetle_pcfx": {"type": "libretro", "cores": ["pcfx"]},
+        "pcsx1": {"type": "libretro"},
+        "pcsx2": {"type": "standalone"},
+        "a": {"type": "libretro", "cores": ["shared"]},
+        "b": {"type": "libretro", "cores": ["shared"]},
+    }
+
+    def test_a_core_name_serves_the_profile(self):
+        selected = common.select_emulator_profiles(["pcfx"], self.PROFILES)
+        self.assertEqual([name for name, _profile in selected], ["beetle_pcfx"])
+
+    def test_a_name_two_profiles_claim_names_both(self):
+        with self.assertRaises(common.ProfileSelectionError) as caught:
+            common.select_emulator_profiles(["shared"], self.PROFILES)
+        self.assertIn("a, b", str(caught.exception))
+
+    def test_an_unknown_name_still_gets_a_hint(self):
+        with self.assertRaises(common.ProfileSelectionError) as caught:
+            common.select_emulator_profiles(["pcsx3"], self.PROFILES)
+        self.assertIn("Did you mean", str(caught.exception))
+
+    def test_cross_reference_reports_the_resolved_profile(self):
+        """cross_reference filtered on the typed name, found no profile under
+        it and answered `pcfx is not run by None`."""
+        def report(name: str) -> subprocess.CompletedProcess:
+            return subprocess.run(
+                [sys.executable, "scripts/cross_reference.py", "--emulator", name],
+                cwd=REPO_ROOT, capture_output=True, text=True, timeout=600,
+            )
+        by_core, by_profile = report("pcfx"), report("beetle_pcfx")
+        self.assertEqual(by_core.returncode, 0, by_core.stderr)
+        self.assertEqual(by_core.stdout, by_profile.stdout)
+
+
+class AMistypedTargetGetsTheClosestName(unittest.TestCase):
+    """`--target swich` printed every target and alias on two lines."""
+
+    def test_did_you_mean(self):
+        with tempfile.TemporaryDirectory(dir=REPO_ROOT / "tmp") as tmp:
+            targets = Path(tmp) / "targets"
+            targets.mkdir()
+            names = [f"board-{n}" for n in range(30)] + ["nintendo-switch"]
+            (targets / "p.yml").write_text(
+                "targets:\n" + "".join(f"  {n}:\n    cores: [a]\n" for n in names)
+            )
+            (targets / "_overrides.yml").write_text(
+                "p:\n  targets:\n    nintendo-switch:\n      aliases: [switch]\n"
+            )
+            with self.assertRaises(ValueError) as caught:
+                common.load_target_config("p", "swich", tmp)
+        message = str(caught.exception)
+        self.assertIn("Did you mean: switch?", message)
+        self.assertIn("lists all 31", message)
+        self.assertNotIn("board-0", message)
+
+
+class TheTruthDiffShowsWhereAndAsksNothing(unittest.TestCase):
+    """The markdown wrote `**Remove** hiscore.dat (phantom)` beside six
+    `**Add** hiscore.dat`, none with a path, for files profiled cores read."""
+
+    def _report(self) -> dict:
+        truth_sys = {"files": [
+            {"name": "hiscore.dat", "path": "mame2003/hiscore.dat",
+             "md5": "a" * 32, "_cores": ["mame2003"]},
+        ], "_coverage": {"cores_unprofiled": []}}
+        scraped_sys = {"files": [
+            {"name": "hiscore.dat", "destination": "fbneo/hiscore.dat", "md5": "b" * 32},
+        ]}
+        report = truth.diff_platform_truth(
+            {"systems": {"arcade": truth_sys}}, {"systems": {"arcade": scraped_sys}}
+        )
+        report["platform"] = "p"
+        return report
+
+    def test_entries_carry_their_destination(self):
+        div = self._report()["divergences"]["arcade"]
+        self.assertEqual(div["extra_phantom"][0]["destination"], "fbneo/hiscore.dat")
+        self.assertEqual(div["missing"][0]["destination"], "mame2003/hiscore.dat")
+
+    def test_neither_format_asks_for_a_removal(self):
+        report = self._report()
+        for text in (diff_truth._format_markdown(report),
+                     diff_truth._format_terminal(report)):
+            self.assertNotIn("Remove", text)
+            self.assertNotIn("phantom", text.lower())
+            self.assertIn("fbneo/hiscore.dat", text)
+            self.assertIn("mame2003/hiscore.dat", text)
+
+
+class TheVerifySummaryCountsDiscrepancies(unittest.TestCase):
+    """19 DISCREPANCY lines above a last line that read clean."""
+
+    def test_the_closing_line_names_them(self):
+        details = [
+            {"system": "arcade", "name": "aes.zip", "status": verify.Status.OK,
+             "discrepancy": "file present (OK) but hash differs"},
+            # Printed as MISSING, so not a second time as a discrepancy.
+            {"system": "arcade", "name": "x.zip", "status": verify.Status.MISSING,
+             "discrepancy": "unmet"},
+            {"system": "arcade", "name": "x.zip", "status": verify.Status.MISSING},
+        ]
+        summary = verify._overall_summary([
+            ({"severity_counts": {}, "details": details}, ["RetroArch"]),
+            ({"severity_counts": {}, "details": []}, ["Batocera"]),
+        ])
+        self.assertIn("1 discrepancy (RetroArch)", summary)
+
+    def test_a_shared_destination_names_the_path_and_both_sides(self):
+        result = {"name": "disk.rom", "status": verify.Status.UNTESTED}
+        entry = {"name": "disk.rom", "md5": "793f8678" + "0" * 24}
+        self.assertTrue(verify._twin_unmet(
+            result, "coco", entry, "nec-pc-88", "bios/disk.rom"
+        ))
+        message = result["discrepancy"]
+        for part in ("bios/disk.rom", "nec-pc-88", "coco", "md5 793f8678"):
+            self.assertIn(part, message)
+
+
+class ThePipelineCountsItsRealSteps(unittest.TestCase):
+    """Labels read N/8 for a run of 24 steps, and the summary used keys
+    the log never printed."""
+
+    def test_every_recorded_step_has_a_label(self):
+        import re  # noqa: PLC0415
+
+        source = (REPO_ROOT / "scripts" / "pipeline.py").read_text(encoding="utf-8")
+        keys = set(re.findall(r'results\["(\w+)"\] =', source))
+        self.assertEqual(keys - set(pipeline.STEP_LABELS), set())
+
+    def test_a_label_written_out_is_one_of_the_list(self):
+        import re  # noqa: PLC0415
+
+        source = (REPO_ROOT / "scripts" / "pipeline.py").read_text(encoding="utf-8")
+        written = re.findall(r'run\([^()]*?, "([^"]+)"\)', source)
+        numbers = {label.split(" ", 1)[0] for label in pipeline.STEP_LABELS.values()}
+        for label in written:
+            with self.subTest(label=label):
+                # A step's own label, or a second command of a listed step.
+                self.assertIn(label.split(" ", 1)[0], numbers)
+
+    def test_progress_comes_from_the_list(self):
+        total = len(pipeline.STEP_LABELS)
+        title = pipeline.step_title(pipeline.STEP_LABELS["render_site"])
+        self.assertEqual(title, f"8b render site [{total}/{total}]")
+        self.assertNotIn("/8", pipeline.step_title(pipeline.STEP_LABELS["verify"]))
+
+    def test_an_offline_buildbot_check_has_a_summary_row(self):
+        argv = ["pipeline.py", "--offline", "--check-buildbot", "--skip-packs",
+                "--skip-docs"]
+        out = io.StringIO()
+        with mock.patch.object(sys, "argv", argv), mock.patch.object(
+            pipeline, "run", return_value=(True, "RetroArch: 1/1 OK\n")
+        ), contextlib.redirect_stdout(out), contextlib.suppress(SystemExit):
+            pipeline.main()
+        summary = out.getvalue().split("=" * 60)[1]
+        self.assertIn("2b   check_buildbot", summary)
+        # The number the run printed for the step leads its summary row.
+        self.assertIn("4d   bundled_only", summary)
+        self.assertTrue(
+            pipeline.step_title(pipeline.STEP_LABELS["bundled_only"]).startswith("4d ")
+        )
+
+
+class AHashConflictNamesBothCores(unittest.TestCase):
+    """The warning named the second core only, and not which value stayed."""
+
+    def test_both_cores_and_the_kept_value(self):
+        truth._CONFLICTS_SHOWN.clear()
+        system: dict = {}
+        err = io.StringIO()
+        with contextlib.redirect_stderr(err):
+            truth._merge_file_into_system(
+                system, {"name": "G.yaml", "path": "r/G.yaml", "sha1": "5e" * 20},
+                "pcsx2", None,
+            )
+            truth._merge_file_into_system(
+                system, {"name": "G.yaml", "path": "r/G.yaml", "sha1": "7e" * 20},
+                "yaps2", None,
+            )
+        self.assertIn(f"{'5e' * 20} (pcsx2) kept", err.getvalue())
+        self.assertIn(f"{'7e' * 20} (yaps2)", err.getvalue())
+
+    def test_the_origin_is_not_written_to_the_model(self):
+        profile = {"type": "libretro", "systems": ["sony-playstation"],
+                   "files": [{"name": "a.bin", "system": "sony-playstation",
+                              "md5": "a" * 32}]}
+        model = truth.generate_platform_truth(
+            "p", {"cores": ["c"], "systems": {}}, {}, {"c": profile}
+        )
+        entries = [f for s in model["systems"].values() for f in s.get("files", [])]
+        self.assertTrue(entries)
+        self.assertFalse(any("_hash_by" in f for f in entries))
+
+
+class HelpTextsWrapBetweenWords(unittest.TestCase):
+    def test_check_freshness_areas(self):
+        proc = subprocess.run(
+            [sys.executable, "scripts/check_freshness.py", "--help"],
+            capture_output=True, text=True, cwd=REPO_ROOT, check=False,
+            env={**os.environ, "COLUMNS": "80"}, timeout=60,
+        )
+        self.assertEqual(proc.returncode, 0, proc.stderr)
+        self.assertIn("coreinfo", " ".join(proc.stdout.split()))
+
+    def test_docstring_descriptions_keep_their_layout(self):
+        """romset_recipes ran its two questions into one paragraph and both
+        help texts printed reST double backquotes."""
+        for script, line in (("romset_recipes.py", "--identify"),
+                              ("validate_site.py", None)):
+            with self.subTest(script=script):
+                proc = subprocess.run(
+                    [sys.executable, f"scripts/{script}", "--help"],
+                    capture_output=True, text=True, cwd=REPO_ROOT, check=False,
+                    env={**os.environ, "COLUMNS": "80"}, timeout=60,
+                )
+                self.assertEqual(proc.returncode, 0, proc.stderr)
+                self.assertNotIn("``", proc.stdout)
+                if line:
+                    self.assertIn(line, proc.stdout.splitlines())
+
+
+class ListPlatformsTakesTheSharedFlag(unittest.TestCase):
+    """verify, generate_pack, slots and pipeline say --include-archived."""
+
+    def test_both_spellings(self):
+        for flag in ("--include-archived", "--all"):
+            with self.subTest(flag=flag):
+                env = {k: v for k, v in os.environ.items() if k != "GITHUB_OUTPUT"}
+                proc = subprocess.run(
+                    [sys.executable, "scripts/list_platforms.py", flag],
+                    capture_output=True, text=True, cwd=REPO_ROOT, check=False,
+                    env=env, timeout=60,
+                )
+                self.assertEqual(proc.returncode, 0, proc.stderr)
+                self.assertIn("retropie", proc.stdout)
+
+    def test_the_pack_list_marks_archived_platforms(self):
+        """generate_pack --list printed retropie like a platform with a
+        release pack."""
+        proc = subprocess.run(
+            [sys.executable, "scripts/generate_pack.py", "--list"],
+            capture_output=True, text=True, cwd=REPO_ROOT, check=False, timeout=120,
+        )
+        self.assertEqual(proc.returncode, 0, proc.stderr)
+        lines = proc.stdout.splitlines()
+        self.assertIn("retropie (archived)", lines)
+        self.assertIn("retroarch", lines)
+
+
+class NoScriptReadsTheTokenOnItsOwn(unittest.TestCase):
+    """Nine scripts read GITHUB_TOKEN from the environment after
+    github_token() existed, and went anonymous when run on their own.
+    download.py is the user's downloader: it runs without the repository and
+    a user's gh session is not its business."""
+
+    READS = ('environ.get("GITHUB_TOKEN"', "environ['GITHUB_TOKEN']",
+             'environ["GITHUB_TOKEN"]', 'environ.get("GH_TOKEN"')
+    OWNERS = {"scripts/common.py", "scripts/download.py"}
+
+    def test_every_reader_asks_github_token(self):
+        for path in sorted((REPO_ROOT / "scripts").rglob("*.py")):
+            relative = path.relative_to(REPO_ROOT).as_posix()
+            if relative in self.OWNERS:
+                continue
+            for number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
+                if " = " in line and line.split(" = ")[0].strip().startswith("env["):
+                    continue
+                with self.subTest(file=relative, line=number):
+                    self.assertFalse(any(read in line for read in self.READS), line.strip())
+
+
+class TheGitHubTokenComesFromGh(unittest.TestCase):
+    """Only refresh_stale asked gh: profile_sync refused the run and the
+    scrapers went anonymous for a maintainer logged in to gh."""
+
+    def setUp(self):
+        common._gh_cli_token.cache_clear()
+        self.addCleanup(common._gh_cli_token.cache_clear)
+        env = {k: v for k, v in os.environ.items()
+               if k not in ("GITHUB_TOKEN", "GH_TOKEN", "RETROBIOS_OFFLINE")}
+        patcher = mock.patch.dict(os.environ, env, clear=True)
+        patcher.start()
+        self.addCleanup(patcher.stop)
+
+    @staticmethod
+    def _gh(token: str = "gho_fromgh", code: int = 0):
+        return mock.patch(
+            "subprocess.run",
+            return_value=subprocess.CompletedProcess(["gh"], code, token, ""),
+        )
+
+    def test_gh_answers_when_the_variable_is_unset(self):
+        with self._gh():
+            self.assertEqual(common.github_token(), "gho_fromgh")
+        # Subprocesses of the run inherit it.
+        self.assertEqual(os.environ.get("GITHUB_TOKEN"), "gho_fromgh")
+
+    def test_the_variable_wins(self):
+        os.environ["GITHUB_TOKEN"] = "set"
+        with self._gh() as run:
+            self.assertEqual(common.github_token(), "set")
+        run.assert_not_called()
+
+    def test_no_gh_means_anonymous(self):
+        with mock.patch("subprocess.run", side_effect=FileNotFoundError("gh")):
+            self.assertEqual(common.github_token(), "")
+        with self._gh("", 1):
+            common._gh_cli_token.cache_clear()
+            self.assertEqual(common.github_token(), "")
+
+    def test_offline_runs_never_ask(self):
+        os.environ["RETROBIOS_OFFLINE"] = "1"
+        with self._gh() as run:
+            self.assertEqual(common.github_token(), "")
+        run.assert_not_called()
+
+    def test_every_api_caller_reads_it(self):
+        import profile_sync  # noqa: PLC0415
+        import upstream  # noqa: PLC0415
+        from scraper import base_scraper  # noqa: PLC0415
+
+        with self._gh():
+            self.assertEqual(
+                upstream._headers("https://api.github.com/repos/o/n")["Authorization"],
+                "token gho_fromgh",
+            )
+        os.environ.pop("GITHUB_TOKEN")
+        with self._gh():
+            self.assertEqual(base_scraper.github_headers()["Authorization"],
+                             "Bearer gho_fromgh")
+        os.environ.pop("GITHUB_TOKEN")
+        with self._gh(), contextlib.redirect_stderr(io.StringIO()):
+            profile_sync._check_quota(606, offline=False)
+
+    def test_another_forge_never_triggers_gh(self):
+        import upstream  # noqa: PLC0415
+
+        with self._gh() as run:
+            headers = upstream._headers("https://gitlab.com/api/v4/projects/1")
+        self.assertNotIn("Authorization", headers)
+        run.assert_not_called()
+
+
+if __name__ == "__main__":
+    unittest.main()

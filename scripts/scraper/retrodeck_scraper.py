@@ -28,7 +28,6 @@ Verification logic (api_data_processing.sh:289-405):
 from __future__ import annotations
 
 import json
-import os
 import re
 import sys
 import urllib.error
@@ -256,7 +255,9 @@ class Scraper(BaseScraper):
 
     def _fetch_remote_manifests(self) -> list[tuple[str, dict]]:
         """Fetch component manifests via GitHub API."""
-        token = os.environ.get("GITHUB_TOKEN", "")
+        from common import github_token  # noqa: PLC0415
+
+        token = github_token()
         headers = {"User-Agent": "retrobios-scraper/1.0"}
         if token:
             headers["Authorization"] = f"token {token}"

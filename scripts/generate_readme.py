@@ -22,6 +22,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 from common import (
     compute_composition,
     count_catalog_matched,
+    github_token,
     list_registered_platforms,
     load_database,
     load_emulator_profiles,
@@ -286,7 +287,7 @@ def fetch_contributors() -> list[dict]:
 
     url = f"https://api.github.com/repos/{REPO}/contributors"
     headers = {"User-Agent": "retrobios-readme/1.0"}
-    token = os.environ.get("GITHUB_TOKEN", "")
+    token = github_token()
     if token:
         headers["Authorization"] = f"token {token}"
     try:

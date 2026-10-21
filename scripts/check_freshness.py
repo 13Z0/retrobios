@@ -1241,7 +1241,12 @@ def render(findings: list[Finding]) -> str:
 
 def main() -> int:
     parser = argparse.ArgumentParser(allow_abbrev=False, description=__doc__.split("\n\n")[0])
-    parser.add_argument("--only", help="comma-separated areas: " + ",".join(AREAS))
+    # Joined with ", " so argparse wraps between names: one comma-joined
+    # token was cut inside "coreinfo".
+    parser.add_argument(
+        "--only", metavar="AREAS",
+        help="comma-separated areas, among: " + ", ".join(AREAS),
+    )
     parser.add_argument("--json", action="store_true", help="machine-readable output")
     parser.add_argument(
         "--profiles", action="store_true",

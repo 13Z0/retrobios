@@ -10,7 +10,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
 import re
 import sys
 import urllib.error
@@ -67,7 +66,9 @@ _MODULE_FLAGS_RE = re.compile(r'rp_module_flags\s*=\s*["\']([^"\']*)["\']')
 
 def _fetch(url: str, accept: str = "text/plain") -> str:
     headers = {"User-Agent": "retrobios-scraper/1.0", "Accept": accept}
-    token = os.environ.get("GITHUB_TOKEN")
+    from common import github_token  # noqa: PLC0415
+
+    token = github_token()
     if token and "api.github.com" in url:
         headers["Authorization"] = f"Bearer {token}"
     try:

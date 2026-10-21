@@ -965,7 +965,7 @@ class PipelineRegressions(unittest.TestCase):
 
     def test_every_refresh_failure_reaches_pipeline_exit_status(self):
         for failed_label in (
-            "2/8 refresh data directories",
+            "2 refresh data directories",
             "2a refresh MAME hashes",
             "2a2 refresh FBNeo hashes",
         ):
@@ -2223,8 +2223,8 @@ class OneRefreshPerOnlineRun(unittest.TestCase):
                 contextlib.redirect_stdout(io.StringIO()), \
                 self.assertRaises(SystemExit):
             pipeline.main()
-        self.assertIn("2/8 refresh data directories", commands)
-        for label in ("4/8 generate packs", "4b/8 generate install manifests"):
+        self.assertIn("2 refresh data directories", commands)
+        for label in ("4 generate packs", "4b generate install manifests"):
             with self.subTest(step=label):
                 self.assertIn("--no-refresh-data", commands[label])
                 self.assertNotIn("--offline", commands[label])
@@ -4484,12 +4484,10 @@ class PipelineDocstringNamesThePrintedSteps(unittest.TestCase):
         source = (ROOT / "scripts" / "pipeline.py").read_text(encoding="utf-8")
         doc = ast.get_docstring(ast.parse(source))
         listed = set(re.findall(r"^  (\d[a-z0-9]*)\s{2,}", doc, re.M))
-        # A step label is "N/8 ..." or a lettered sub-step "2b2 ...".
-        printed = {
-            step
-            for step, of_eight in re.findall(r'(?:"|--- )(\d+[a-z0-9]*)(/8)? [a-zA-Z]', source)
-            if of_eight or not step.isdigit()
-        }
+        sys.path.insert(0, str(ROOT / "scripts"))
+        import pipeline
+
+        printed = {pipeline.step_number(key) for key in pipeline.STEP_LABELS}
         self.assertEqual(listed, printed)
 
 

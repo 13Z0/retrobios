@@ -9,7 +9,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
 import re
 import sys
 import urllib.error
@@ -18,7 +17,7 @@ from datetime import datetime, timezone
 
 import yaml
 
-from common import yaml_load
+from common import github_token, yaml_load
 
 from . import BaseTargetScraper
 
@@ -51,7 +50,7 @@ _SKIP = {"retroarch_maincfg", "retroarch"}
 
 def _fetch(url: str) -> str:
     headers = {"User-Agent": "retrobios-scraper/1.0"}
-    token = os.environ.get("GITHUB_TOKEN")
+    token = github_token()
     if token and "api.github.com" in url:
         headers["Authorization"] = f"Bearer {token}"
     try:

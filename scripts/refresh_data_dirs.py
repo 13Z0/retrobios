@@ -25,7 +25,7 @@ import urllib.request
 import zipfile
 from pathlib import Path
 from artifacts import file_lock as _file_lock
-from common import platform_arg, require_platform, yaml_load
+from common import github_token, platform_arg, require_platform, yaml_load
 
 try:
     import yaml
@@ -159,7 +159,7 @@ def _api_request(url: str) -> dict:
             "Accept": "application/json",
         },
     )
-    token = os.environ.get("GITHUB_TOKEN") or os.environ.get("GH_TOKEN")
+    token = github_token()
     if token and "github" in url:
         req.add_header("Authorization", f"token {token}")
     with urllib.request.urlopen(req, timeout=REQUEST_TIMEOUT) as resp:

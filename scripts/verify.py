@@ -937,17 +937,34 @@ def _resolve_declaration(
     return local_path, "" if held_by else resolve_status, held_by
 
 
-def _twin_unmet(result: dict, held_by: str | None) -> bool:
+def _twin_unmet(
+    result: dict,
+    held_by: str | None,
+    file_entry: dict | None = None,
+    sys_id: str = "",
+    destination: str = "",
+) -> bool:
     """Mark a declaration unmet at a path another declaration holds.
 
     The path is answered by the winner's file, which the pack counts once.
     This declaration's failure is reported, never folded into the
-    destination's status.
+    destination's status. The message names the path, both systems and
+    what this declaration expects: "is not met at the path coco holds"
+    named neither the path nor the file wanted there.
     """
     if held_by is None or result["status"] == Status.OK:
         return False
+    entry = file_entry or {}
+    expects = next(
+        (f" ({h} {str(entry[h]).split(',')[0]})"
+         for h in ("sha1", "md5", "crc32") if entry.get(h)),
+        "",
+    )
+    owner = sys_id or "this"
     result["discrepancy"] = (
-        f"{result.get('name', '')} is not met at the path {held_by} holds"
+        f"{destination or result.get('name', '')} is declared for {owner}"
+        f" and for {held_by}. The {owner} declaration{expects} is not met at"
+        f" the path, which holds the {held_by} file"
     )
     # Read by reports that list entries: the destination itself is held, and
     # a count by destination does not include this one.
@@ -1180,7 +1197,10 @@ def verify_platform(
                     local_path,
                 )
                 shipped_keys.add(_dest_key(file_entry, sys_id))
-            if _twin_unmet(result, held_by):
+            if _twin_unmet(
+                result, held_by, file_entry, sys_id,
+                f"{base_dest}/{destination}" if base_dest else destination,
+            ):
                 continue
 
             # Aggregate by destination, keyed as the builder keys its pack.
@@ -1385,6 +1405,26 @@ def _print_ground_truth(gt: list[dict], verbose: bool) -> None:
             print(f"    {line}")
     else:
         print(f"    {_format_ground_truth_aggregate(gt)}")
+
+
+def _discrepancy_keys(details: list[dict]) -> set[str]:
+    """The DISCREPANCY lines _print_detail_entries prints for these details.
+
+    A file already reported MISSING or UNTESTED on its own ground is not
+    printed again as a discrepancy, and is not counted as one either.
+    """
+    shown = {
+        f"{d['system']}/{d['name']}"
+        for d in details
+        if d["status"] == Status.MISSING
+        or (d["status"] == Status.UNTESTED and not d.get("discrepancy"))
+    }
+    return {
+        key
+        for d in details
+        if d.get("discrepancy")
+        and (key := f"{d['system']}/{d['name']}") not in shown
+    }
 
 
 def _print_detail_entries(details: list[dict], seen: set[str], verbose: bool) -> None:
@@ -2562,6 +2602,14 @@ def _overall_summary(group_results: list[tuple[dict, list[str]]]) -> str:
             for r, group in group_results
         }
         parts.append(f"{sum(counts.values())} {label}{where(counts)}")
+    # Shipped files whose bytes contradict a declaration or a core's own
+    # check: the body printed 19 of them under a last line that read clean.
+    counts = {
+        " / ".join(group): len(_discrepancy_keys(r.get("details", [])))
+        for r, group in group_results
+    }
+    total = sum(counts.values())
+    parts.append(f"{total} {'discrepancy' if total == 1 else 'discrepancies'}{where(counts)}")
     lines = [f"{platforms} platforms: {', '.join(parts)}"]
 
     missing = {

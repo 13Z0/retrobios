@@ -442,21 +442,72 @@ def list_registered_platforms(
 SHORT_LIST = 12
 
 
-def suggest_names(typed: list[str], available: list[str], listing_flag: str) -> str:
+@functools.lru_cache(maxsize=1)
+def _gh_cli_token() -> str:
+    """What `gh auth token` prints, or "" when gh is absent or logged out."""
+    import logging  # noqa: PLC0415
+    import subprocess  # noqa: PLC0415
+
+    log = logging.getLogger(__name__)
+    try:
+        proc = subprocess.run(
+            ["gh", "auth", "token"], capture_output=True, text=True,
+            timeout=10, check=False,
+        )
+    except FileNotFoundError:
+        log.debug("gh is not installed, GitHub API calls go anonymous")
+        return ""
+    except (subprocess.TimeoutExpired, OSError) as exc:
+        log.warning("gh auth token did not answer: %s", exc)
+        return ""
+    if proc.returncode != 0:
+        log.debug("gh auth token: %s", (proc.stderr or "").strip())
+        return ""
+    return (proc.stdout or "").strip()
+
+
+def github_token() -> str:
+    """The token for api.github.com: GITHUB_TOKEN, GH_TOKEN, then gh's own.
+
+    A maintainer logged in to gh had to export GITHUB_TOKEN by hand before
+    profile_sync, the scrapers or an online pipeline, which refused the run
+    or burnt the anonymous quota of 60 calls an hour. The token gh returns
+    is put in the environment, so the subprocesses a run starts and the
+    readers of os.environ get it too. RETROBIOS_OFFLINE runs make no API
+    call and never ask gh.
+    """
+    token = os.environ.get("GITHUB_TOKEN") or os.environ.get("GH_TOKEN") or ""
+    if token or os.environ.get("RETROBIOS_OFFLINE"):
+        return token
+    token = _gh_cli_token()
+    if token:
+        os.environ["GITHUB_TOKEN"] = token
+    return token
+
+
+def suggest_names(
+    typed: list[str],
+    available: list[str],
+    listing_flag: str,
+    listed: int | None = None,
+) -> str:
     """The closest known names to what was typed, and how to see them all.
 
     The hints showed the first ten or twenty names of the alphabet behind a
     "..." whatever was typed: sony-playstaton listed 3do to apple-iie.
+    `listed` is how many entries the listing shows when `available` also
+    holds aliases of them.
     """
     import difflib  # noqa: PLC0415
 
+    total = len(available) if listed is None else listed
     close = sorted({m for name in typed
                     for m in difflib.get_close_matches(name, available, n=3, cutoff=0.6)})
     if close:
-        return f"Did you mean: {', '.join(close)}? {listing_flag} lists all {len(available)}."
+        return f"Did you mean: {', '.join(close)}? {listing_flag} lists all {total}."
     if len(available) <= SHORT_LIST:
         return f"Known: {', '.join(available)}."
-    return f"{listing_flag} lists all {len(available)}."
+    return f"{listing_flag} lists all {total}."
 
 
 def platform_arg(value: str) -> str:
@@ -603,16 +654,14 @@ def load_target_config(
 
     canonical = alias_index.get(target)
     if canonical is None:
-        available = sorted(targets.keys())
-        aliases = []
-        for tname, ovr in overrides.items():
-            for a in ovr.get("aliases", []):
-                aliases.append(f"{a} -> {tname}")
-        msg = f"Unknown target '{target}' for platform '{platform_name}'.\n"
-        msg += f"Available targets: {', '.join(available)}"
-        if aliases:
-            msg += f"\nAliases: {', '.join(sorted(aliases))}"
-        raise ValueError(msg)
+        # A typo got the 30 targets and 18 aliases in two lines to read
+        # through, where a platform or emulator name gets the closest ones.
+        raise ValueError(
+            f"Unknown target '{target}' for platform '{platform_name}'.\n"
+            + suggest_names(
+                [target], sorted(alias_index), "--list-targets", len(targets)
+            )
+        )
 
     declared = (targets[canonical] or {}).get("cores")
     if declared is None:
@@ -1728,6 +1777,20 @@ def select_emulator_profiles(
     """
     selected: list[tuple[str, dict]] = []
     for name in profile_names:
+        if name not in all_profiles:
+            # A buildbot name (pcfx, advmame) lives in a profile's cores:,
+            # and the spelling hints sent pcfx to two PlayStation cores.
+            claimants = sorted(
+                key for key in upstream_profile_index(all_profiles).get(name, ())
+                if all_profiles[key].get("type") not in ("launcher", "test")
+            )
+            if len(claimants) == 1:
+                name = claimants[0]
+            elif claimants:
+                raise ProfileSelectionError(
+                    f"{name} is a core name of {', '.join(claimants)}: "
+                    f"use --emulator with one of them"
+                )
         if name not in all_profiles:
             available = sorted(
                 key

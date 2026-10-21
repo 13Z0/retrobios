@@ -206,9 +206,13 @@ def _headers(url: str, accept_json: bool = False) -> dict[str, str]:
     headers = {"User-Agent": USER_AGENT}
     if accept_json:
         headers["Accept"] = "application/json"
-    token = os.environ.get("GITHUB_TOKEN", "")
-    if token and urllib.parse.urlsplit(url).netloc in GITHUB_HOSTS:
-        headers["Authorization"] = f"token {token}"
+    if urllib.parse.urlsplit(url).netloc in GITHUB_HOSTS:
+        from common import github_token  # noqa: PLC0415
+
+        # GITHUB_TOKEN, else the one gh is logged in with.
+        token = github_token()
+        if token:
+            headers["Authorization"] = f"token {token}"
     return headers
 
 

@@ -20,7 +20,7 @@ from typing import Any
 
 import yaml
 
-from common import source_yaml_paths, write_text_atomic, yaml_load
+from common import github_token, source_yaml_paths, write_text_atomic, yaml_load
 
 from scripts.scraper._hash_merge import compute_diff, merge_fbneo_profile
 from scripts.scraper.fbneo_parser import parse_fbneo_source_tree
@@ -125,7 +125,7 @@ def _version_from_api() -> str:
     import urllib.request
 
     headers = {"User-Agent": "retrobios-scraper/1.0"}
-    token = os.environ.get("GITHUB_TOKEN")
+    token = github_token()
     if token:
         headers["Authorization"] = f"Bearer {token}"
     req = urllib.request.Request(

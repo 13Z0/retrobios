@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import json
-import os
 import re
 import sys
 import time
@@ -16,7 +15,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Callable, NoReturn
 
-from common import write_text_atomic, yaml_load
+from common import github_token, write_text_atomic, yaml_load
 
 
 @dataclass
@@ -273,7 +272,8 @@ def github_headers() -> dict[str, str]:
         "User-Agent": "retrobios-scraper/1.0",
         "Accept": "application/vnd.github.v3+json",
     }
-    token = os.environ.get("GITHUB_TOKEN")
+    # GITHUB_TOKEN, else the token gh is logged in with.
+    token = github_token()
     if token:
         headers["Authorization"] = f"Bearer {token}"
     return headers
@@ -338,10 +338,11 @@ def _exit_on_scrape_error(error: Exception) -> NoReturn:
     """Print what failed and what to try, then exit 1 without a traceback."""
     print(f"Error: {error}", file=sys.stderr)
     refused = re.search(r"\b(403|429)\b|rate limit", str(error), re.I)
-    if refused and not os.environ.get("GITHUB_TOKEN"):
+    if refused and not github_token():
+        # A gh login is read on its own, so the hint is the login itself.
         print(
             "Anonymous GitHub API calls are limited to 60 an hour. "
-            "Run again with GITHUB_TOKEN=$(gh auth token) set.",
+            "Log in with `gh auth login`, or set GITHUB_TOKEN, and run again.",
             file=sys.stderr,
         )
     else:

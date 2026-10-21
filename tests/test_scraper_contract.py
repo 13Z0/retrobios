@@ -664,6 +664,7 @@ class EveryGitHubApiCallerSendsTheToken(unittest.TestCase):
             if "api.github.com" in (source := path.read_text(encoding="utf-8"))
             and "GITHUB_TOKEN" not in source
             and "github_headers(" not in source
+            and "github_token(" not in source
         )
         self.assertEqual(silent, [])
 
@@ -690,6 +691,7 @@ class EveryGitHubApiCallerSendsTheToken(unittest.TestCase):
                     requests
                     and "api.github.com" in body
                     and "github_headers(" not in body
+                    and "github_token(" not in body
                     and "GITHUB_TOKEN" not in body
                 ):
                     silent.append(f"{path.relative_to(scripts)}:{node.name}")

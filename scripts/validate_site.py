@@ -280,7 +280,11 @@ def validate_site(site: Path, config_path: Path) -> list[str]:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(allow_abbrev=False, description=__doc__)
+    parser = argparse.ArgumentParser(
+        allow_abbrev=False,
+        description=__doc__.replace("``", ""),
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
     parser.add_argument(
         "--site-dir", default="site",
         help="the built site (default: %(default)s)",

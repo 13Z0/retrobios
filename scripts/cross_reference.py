@@ -855,16 +855,17 @@ def main() -> None:
         require_platform(args.platform, args.platforms_dir)
 
     profiles = load_emulator_profiles(args.emulators_dir)
-    if args.emulator:
+    emulator = args.emulator
+    if emulator:
         # A typo answered "No emulator profiles found" with exit 0.
         try:
-            select_emulator_profiles(
+            ((emulator, _),) = select_emulator_profiles(
                 [args.emulator],
                 load_emulator_profiles(args.emulators_dir, skip_aliases=False),
             )
         except ProfileSelectionError as exc:
             raise SystemExit(f"ERROR: {exc}") from None
-        profiles = {k: v for k, v in profiles.items() if k == args.emulator}
+        profiles = {k: v for k, v in profiles.items() if k == emulator}
 
     if args.target and not args.platform:
         parser.error("--target requires --platform")
@@ -897,14 +898,14 @@ def main() -> None:
         ))
 
     if not profiles:
-        if args.emulator and args.target and set(args.emulator.split(",")) & run_anywhere:
+        if emulator and args.target and emulator in run_anywhere:
             raise SystemExit(
-                f"ERROR: {args.emulator} is not built for {args.platform}'s "
+                f"ERROR: {emulator} is not built for {args.platform}'s "
                 f"{args.target} target; {args.platform} runs it elsewhere "
                 f"(drop --target to see its files)"
             )
-        if args.emulator:
-            raise SystemExit(f"ERROR: {args.emulator} is not run by {args.platform}")
+        if emulator:
+            raise SystemExit(f"ERROR: {emulator} is not run by {args.platform}")
         print(f"{args.platform or 'The tree'} runs no profiled emulator.", file=sys.stderr)
         return
 
@@ -921,8 +922,8 @@ def main() -> None:
     if args.json:
         print(json.dumps(report, indent=2))
     else:
-        if args.emulator:
-            scope = args.emulator
+        if emulator:
+            scope = emulator
         elif args.platform:
             scope = f"the emulators {args.platform} runs"
         else:

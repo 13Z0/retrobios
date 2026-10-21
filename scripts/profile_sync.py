@@ -30,7 +30,7 @@ import yaml
 sys.path.insert(0, os.path.dirname(__file__))
 
 import upstream
-from common import load_emulator_profiles, suggest_names
+from common import github_token, load_emulator_profiles, suggest_names
 from hashing import parse_hash_list
 from sourceref import (  # noqa: F401  (re-exported for callers and tests)  # noqa: F401  (the prose grammar, re-exported)
     _ANNOTATION_RE,
@@ -3372,12 +3372,13 @@ def select_profiles(profiles: dict, args: argparse.Namespace) -> dict:
 
 def _check_quota(count: int, offline: bool) -> None:
     """Refuse a run the anonymous quota cannot carry to completion."""
-    if offline or os.environ.get("GITHUB_TOKEN"):
+    if offline or github_token():
         return
     if count * 4 > ANON_QUOTA:
         print(
             f"{count} profiles need roughly {count * 4} API calls, the anonymous "
-            f"quota is {ANON_QUOTA} per hour. Set GITHUB_TOKEN or use --offline.",
+            f"quota is {ANON_QUOTA} per hour. Log in with `gh auth login`, set "
+            "GITHUB_TOKEN, or use --offline.",
             file=sys.stderr,
         )
         raise SystemExit(1)

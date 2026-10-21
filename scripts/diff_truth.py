@@ -39,6 +39,11 @@ def _load_truth(truth_dir: str, platform: str) -> dict | None:
         return yaml_load(f) or {}
 
 
+def _where(entry: dict) -> str:
+    """Where a diffed entry sits: one name can be declared at several paths."""
+    return entry.get("destination") or entry["name"]
+
+
 def _format_terminal(report: dict) -> str:
     lines: list[str] = []
     platform = report.get("platform", "unknown")
@@ -56,7 +61,7 @@ def _format_terminal(report: dict) -> str:
     if s["total_missing"]:
         totals.append(f"{s['total_missing']} missing")
     if s["total_extra_phantom"]:
-        totals.append(f"{s['total_extra_phantom']} phantom")
+        totals.append(f"{s['total_extra_phantom']} unpaired")
     if s["total_extra_unprofiled"]:
         totals.append(f"{s['total_extra_unprofiled']} unprofiled")
     if s["total_hash_mismatch"]:
@@ -73,7 +78,7 @@ def _format_terminal(report: dict) -> str:
         if div.get("missing"):
             labels.append(f"MISSING:{len(div['missing'])}")
         if div.get("extra_phantom"):
-            labels.append(f"PHANTOM:{len(div['extra_phantom'])}")
+            labels.append(f"UNPAIRED:{len(div['extra_phantom'])}")
         if div.get("extra_unprofiled"):
             labels.append(f"UNPROF:{len(div['extra_unprofiled'])}")
         if div.get("hash_mismatch"):
@@ -84,19 +89,19 @@ def _format_terminal(report: dict) -> str:
 
         for m in div.get("missing", []):
             cores = ", ".join(m.get("cores", []))
-            lines.append(f"    + {m['name']}  [{cores}]")
+            lines.append(f"    + {_where(m)}  [{cores}]")
         for h in div.get("hash_mismatch", []):
             ht = h["hash_type"]
             lines.append(
-                f"    ~ {h['name']}  {ht}: {h[f'truth_{ht}']} != {h[f'scraped_{ht}']}"
+                f"    ~ {_where(h)}  {ht}: {h[f'truth_{ht}']} != {h[f'scraped_{ht}']}"
             )
         for p in div.get("extra_phantom", []):
-            lines.append(f"    - {p['name']}  (phantom)")
+            lines.append(f"    - {_where(p)}  (no profile entry of this system matches it)")
         for u in div.get("extra_unprofiled", []):
-            lines.append(f"    ? {u['name']}  (unprofiled)")
+            lines.append(f"    ? {_where(u)}  (unprofiled cores)")
         for r in div.get("required_mismatch", []):
             lines.append(
-                f"    ! {r['name']}  required: {r['truth_required']} != {r['scraped_required']}"
+                f"    ! {_where(r)}  required: {r['truth_required']} != {r['scraped_required']}"
             )
 
     uncovered = report.get("uncovered_systems", [])
@@ -121,7 +126,7 @@ def _format_markdown(report: dict) -> str:
     )
     lines.append(
         f"**{s['total_missing']}** missing | "
-        f"**{s['total_extra_phantom']}** phantom | "
+        f"**{s['total_extra_phantom']}** unpaired | "
         f"**{s['total_extra_unprofiled']}** unprofiled | "
         f"**{s['total_hash_mismatch']}** hash | "
         f"**{s['total_required_mismatch']}** required"
@@ -135,19 +140,28 @@ def _format_markdown(report: dict) -> str:
             refs = ""
             if m.get("source_refs"):
                 refs = " " + " ".join(f"`{r}`" for r in m["source_refs"])
-            lines.append(f"- **Add** `{m['name']}`{refs}")
+            lines.append(f"- **Add** `{_where(m)}`{refs}")
         for h in div.get("hash_mismatch", []):
             ht = h["hash_type"]
             lines.append(
-                f"- **Fix hash** `{h['name']}` {ht}: `{h[f'truth_{ht}']}` != `{h[f'scraped_{ht}']}`"
+                f"- **Fix hash** `{_where(h)}` {ht}: `{h[f'truth_{ht}']}` != `{h[f'scraped_{ht}']}`"
             )
+        # Evidence, not a request: an entry leaves a platform's file only on
+        # proof (export_native's removal_candidates). A core can read a
+        # file its profile does not pair with this declaration.
         for p in div.get("extra_phantom", []):
-            lines.append(f"- **Remove** `{p['name']}` (phantom)")
+            lines.append(
+                f"- **Unpaired** `{_where(p)}`: no profile entry of this system matches it "
+                "by path, name or hash"
+            )
         for u in div.get("extra_unprofiled", []):
-            lines.append(f"- **Check** `{u['name']}` (unprofiled cores)")
+            lines.append(
+                f"- **Unpaired** `{_where(u)}`: some cores of this platform "
+                "have no profile yet"
+            )
         for r in div.get("required_mismatch", []):
             lines.append(
-                f"- **Fix required** `{r['name']}`: truth={r['truth_required']}, scraped={r['scraped_required']}"
+                f"- **Fix required** `{_where(r)}`: truth={r['truth_required']}, scraped={r['scraped_required']}"
             )
         lines.append("")
 

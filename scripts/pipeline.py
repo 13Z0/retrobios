@@ -61,6 +61,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 from common import (
     ArtifactLockBusy,
     artifact_lock,
+    github_token,
     hold_artifact_lock,
     load_data_dir_registry,
 )
@@ -92,6 +93,62 @@ class StepResults(dict):
 # Steps that report without failing the run.
 NON_BLOCKING = frozenset({"check_buildbot"})
 
+# Every step in run order, by its results key. The position and the total
+# printed during the run come from this list: hand-written "N/8" labels
+# counted 8 steps in a run of 24, and the eighth came before 8b. The summary
+# prints the same labels the run printed, so a FAILED row is found in the
+# log by its number.
+STEP_LABELS: dict[str, str] = {
+    "validate_schemas": "0 validate schemas",
+    "generate_db": "1 generate database",
+    "provenance": "1b provenance report",
+    "romset_recipes": "1c romset recipes",
+    "refresh_data": "2 refresh data directories",
+    "mame_hashes": "2a refresh MAME hashes",
+    "fbneo_hashes": "2a2 refresh FBNeo hashes",
+    "check_buildbot": "2b check buildbot system",
+    "check_release_assets": "2b2 check release assets",
+    "generate_truth": "2c generate truth",
+    "diff_truth": "2d diff truth",
+    "export_native": "2e export native",
+    "verify": "3 verify all platforms",
+    "identity": "3a file identity",
+    "slots": "3b slot arbitration",
+    "generate_packs": "4 generate packs",
+    "generate_manifests": "4b generate install manifests",
+    "generate_target_manifests": "4c generate target manifests",
+    "bundled_only": "4d copies only an emulator install provides",
+    "consistency": "5 consistency check",
+    "pack_integrity": "6 pack integrity",
+    "generate_readme": "7 generate readme",
+    "generate_site": "8 generate site",
+    "render_site": "8b render site",
+}
+_KEY_BY_LABEL = {label: key for key, label in STEP_LABELS.items()}
+
+
+def step_number(key: str) -> str:
+    """The number a step's progress lines carry ("2b2", "4d")."""
+    return STEP_LABELS[key].split(" ", 1)[0]
+
+
+def step_title(label: str) -> str:
+    """What the run prints for a label: its name and its place in the run.
+
+    A second command of one step ("2c generate truth (export model)") is
+    printed as written.
+    """
+    key = _KEY_BY_LABEL.get(label)
+    if key is None:
+        return label
+    return f"{label} [{list(STEP_LABELS).index(key) + 1}/{len(STEP_LABELS)}]"
+
+
+def skip_notice(key: str, reason: str = "") -> None:
+    """The line a step that does not run prints in place of its output."""
+    because = f" ({reason})" if reason else ""
+    print(f"\n--- {step_title(STEP_LABELS[key])}: SKIPPED{because} ---")
+
 def run(cmd: list[str], label: str) -> tuple[bool, str]:
     """Run a command, echoing its output as it comes. Returns (success, output).
 
@@ -99,7 +156,8 @@ def run(cmd: list[str], label: str) -> tuple[bool, str]:
     after stdout: a twenty-minute pack build showed nothing, and a warning
     landed far from the line it was about. One stream, read line by line.
     """
-    print(f"\n--- {label} ---", flush=True)
+    title = step_title(label)
+    print(f"\n--- {title} ---", flush=True)
     start = time.monotonic()
     repo_root = str(Path(__file__).resolve().parent.parent)
     lines: list[str] = []
@@ -114,7 +172,7 @@ def run(cmd: list[str], label: str) -> tuple[bool, str]:
     elapsed = time.monotonic() - start
 
     ok = returncode == 0
-    print(f"--- {label}: {'OK' if ok else 'FAILED'} ({elapsed:.1f}s) ---")
+    print(f"--- {title}: {'OK' if ok else 'FAILED'} ({elapsed:.1f}s) ---")
     return ok, "".join(lines)
 
 
@@ -248,7 +306,7 @@ def check_consistency(verify_output: str, pack_output: str) -> bool:
     verify_extras = parse_verify_extras(verify_output)
     pack_extras = parse_pack_extras(pack_output)
 
-    print("\n--- 5/8 consistency check ---")
+    print(f"\n--- {step_title(STEP_LABELS['consistency'])} ---")
     all_ok = True
     if not v or not p:
         # Nothing parsed is nothing compared: a changed output format would
@@ -358,7 +416,7 @@ def _truth_steps(args: argparse.Namespace, results: dict) -> bool:
         ]
         if args.target:
             truth_cmd.extend(["--target", args.target])
-        ok, _ = run(truth_cmd, "2c generate truth")
+        ok, _ = run(truth_cmd, STEP_LABELS["generate_truth"])
         # A native file is one per platform, never per target: the export
         # corrects it against the full model, which a targeted run does not
         # write.
@@ -375,7 +433,7 @@ def _truth_steps(args: argparse.Namespace, results: dict) -> bool:
         diff_cmd.extend(["--truth-dir", str(truth_dir)])
         if args.target:
             diff_cmd.extend(["--target", args.target])
-        ok, _ = run(diff_cmd, "2d diff truth")
+        ok, _ = run(diff_cmd, STEP_LABELS["diff_truth"])
         results["diff_truth"] = ok
         all_ok = all_ok and ok
     else:
@@ -397,7 +455,7 @@ def _truth_steps(args: argparse.Namespace, results: dict) -> bool:
         # file has to be in the cache already.
         if not args.offline:
             export_cmd.append("--fetch")
-        ok, _ = run(export_cmd, "2e export native")
+        ok, _ = run(export_cmd, STEP_LABELS["export_native"])
         results["export_native"] = ok
         all_ok = all_ok and ok
     else:
@@ -455,6 +513,11 @@ def main() -> None:
     )
     args = parser.parse_args()
     _refuse_unapplied_flags(parser, args)
+    if not args.offline:
+        # Read once and put in the environment every step inherits: the
+        # scrapers and refresh_data_dirs went anonymous unless the user had
+        # exported GITHUB_TOKEN by hand, though gh was logged in.
+        github_token()
 
     # A second run on the same output directory is refused before any work:
     # the database rebuild alone takes minutes, and the reader holding the
@@ -478,12 +541,12 @@ def main() -> None:
     # `cores: [81]` unquoted passed the whole pipeline and failed CI on push.
     # jsonschema is tooling only, so its absence skips the step.
     if importlib.util.find_spec("jsonschema") is None:
-        print("\n--- 0/8 validate schemas: SKIPPED (jsonschema not installed) ---")
+        skip_notice("validate_schemas", "jsonschema not installed")
         results["validate_schemas"] = SKIPPED
     else:
         ok, _ = run(
             [sys.executable, "scripts/validate_schemas.py", "--source-only"],
-            "0/8 validate schemas",
+            STEP_LABELS["validate_schemas"],
         )
         results["validate_schemas"] = ok
         all_ok = all_ok and ok
@@ -499,7 +562,7 @@ def main() -> None:
             "--output",
             "database.json",
         ],
-        "1/8 generate database",
+        STEP_LABELS["generate_db"],
     )
     results["generate_db"] = ok
     if not ok:
@@ -512,7 +575,7 @@ def main() -> None:
     ok, _ = run(
         [sys.executable, "scripts/provenance_report.py", "--derive",
          "--write-derivable", "derivable.json"],
-        "1b provenance report",
+        STEP_LABELS["provenance"],
     )
     results["provenance"] = ok
     all_ok = all_ok and ok
@@ -522,7 +585,7 @@ def main() -> None:
     # Read-only: writing reconstructions is an explicit --write invocation.
     ok, out = run(
         [sys.executable, "scripts/romset_recipes.py"],
-        "1c romset recipes",
+        STEP_LABELS["romset_recipes"],
     )
     results["romset_recipes"] = ok
     all_ok = all_ok and ok
@@ -531,47 +594,49 @@ def main() -> None:
     if not args.offline:
         ok, out = run(
             [sys.executable, "scripts/refresh_data_dirs.py"],
-            "2/8 refresh data directories",
+            STEP_LABELS["refresh_data"],
         )
         results["refresh_data"] = ok
         all_ok = all_ok and ok
     else:
-        print("\n--- 2/8 refresh data directories: SKIPPED (--offline) ---")
+        skip_notice("refresh_data", "--offline")
         results["refresh_data"] = SKIPPED
 
     # Step 2a: Refresh MAME BIOS hashes
     if not args.offline:
         ok, _ = run(
             [sys.executable, "-m", "scripts.scraper.mame_hash_scraper"],
-            "2a refresh MAME hashes",
+            STEP_LABELS["mame_hashes"],
         )
         results["mame_hashes"] = ok
         all_ok = all_ok and ok
     else:
-        print("\n--- 2a refresh MAME hashes: SKIPPED (--offline) ---")
+        skip_notice("mame_hashes", "--offline")
         results["mame_hashes"] = SKIPPED
 
     # Step 2a2: Refresh FBNeo BIOS hashes
     if not args.offline:
         ok, _ = run(
             [sys.executable, "-m", "scripts.scraper.fbneo_hash_scraper"],
-            "2a2 refresh FBNeo hashes",
+            STEP_LABELS["fbneo_hashes"],
         )
         results["fbneo_hashes"] = ok
         all_ok = all_ok and ok
     else:
-        print("\n--- 2a2 refresh FBNeo hashes: SKIPPED (--offline) ---")
+        skip_notice("fbneo_hashes", "--offline")
         results["fbneo_hashes"] = SKIPPED
 
     # Step 2b: Check buildbot system directory (non-blocking)
     if args.check_buildbot and not args.offline:
         ok, _ = run(
             [sys.executable, "scripts/check_buildbot_system.py"],
-            "2b check buildbot system",
+            STEP_LABELS["check_buildbot"],
         )
         results["check_buildbot"] = ok
-    elif args.check_buildbot:
-        print("\n--- 2b check buildbot system: SKIPPED (--offline) ---")
+    else:
+        if args.check_buildbot:
+            skip_notice("check_buildbot", "--offline")
+        results["check_buildbot"] = SKIPPED
 
     # Step 2b2: The release must serve the bytes the manifests describe. The
     # installer compares Content-Length with the manifest size, so an asset
@@ -579,12 +644,12 @@ def main() -> None:
     if not args.offline:
         ok, _ = run(
             [sys.executable, "scripts/check_release_assets.py"],
-            "2b2 check release assets",
+            STEP_LABELS["check_release_assets"],
         )
         results["check_release_assets"] = ok
         all_ok = all_ok and ok
     else:
-        print("\n--- 2b2 check release assets: SKIPPED (--offline) ---")
+        skip_notice("check_release_assets", "--offline")
         results["check_release_assets"] = SKIPPED
 
     all_ok = _truth_steps(args, results) and all_ok
@@ -603,7 +668,7 @@ def main() -> None:
         verify_cmd.append("--include-archived")
     if args.target:
         verify_cmd.extend(["--target", args.target])
-    ok, verify_output = run(verify_cmd, "3/8 verify all platforms")
+    ok, verify_output = run(verify_cmd, STEP_LABELS["verify"])
     results["verify"] = ok
     all_ok = all_ok and ok
 
@@ -612,7 +677,7 @@ def main() -> None:
     # cannot see a file copied under another machine's name.
     ok, _ = run(
         [sys.executable, "scripts/identity.py", "--strict"],
-        "3a/8 file identity",
+        STEP_LABELS["identity"],
     )
     results["identity"] = ok
     all_ok = all_ok and ok
@@ -629,7 +694,7 @@ def main() -> None:
         slots_cmd.append("--include-archived")
     if args.target:
         slots_cmd.extend(["--target", args.target])
-    ok, _ = run(slots_cmd, "3b/8 slot arbitration")
+    ok, _ = run(slots_cmd, "3b slot arbitration")
     results["slots"] = ok
     all_ok &= ok
 
@@ -679,11 +744,11 @@ def main() -> None:
             pack_cmd.extend(["--source", args.source])
         if args.all_variants:
             pack_cmd.append("--all-variants")
-        ok, pack_output = run(pack_cmd, "4/8 generate packs")
+        ok, pack_output = run(pack_cmd, STEP_LABELS["generate_packs"])
         results["generate_packs"] = ok
         all_ok = all_ok and ok
     else:
-        print("\n--- 4/8 generate packs: SKIPPED (--skip-packs) ---")
+        skip_notice("generate_packs", "--skip-packs")
         results["generate_packs"] = SKIPPED
 
     # Step 4b: Generate install manifests
@@ -706,11 +771,11 @@ def main() -> None:
             manifest_cmd.append("--no-refresh-data")
         if args.target:
             manifest_cmd.extend(["--target", args.target])
-        ok, _ = run(manifest_cmd, "4b/8 generate install manifests")
+        ok, _ = run(manifest_cmd, STEP_LABELS["generate_manifests"])
         results["generate_manifests"] = ok
         all_ok = all_ok and ok
     else:
-        print("\n--- 4b/8 generate install manifests: SKIPPED (--skip-packs) ---")
+        skip_notice("generate_manifests", "--skip-packs")
         results["generate_manifests"] = SKIPPED
 
     # Step 4c: Generate target manifests
@@ -722,11 +787,11 @@ def main() -> None:
             "--output-dir",
             "install/targets",
         ]
-        ok, _ = run(target_cmd, "4c/8 generate target manifests")
+        ok, _ = run(target_cmd, STEP_LABELS["generate_target_manifests"])
         results["generate_target_manifests"] = ok
         all_ok = all_ok and ok
     else:
-        print("\n--- 4c/8 generate target manifests: SKIPPED (--skip-packs) ---")
+        skip_notice("generate_target_manifests", "--skip-packs")
         results["generate_target_manifests"] = SKIPPED
 
     # Step 4d: A collected copy that only an emulator's own install provides.
@@ -735,7 +800,7 @@ def main() -> None:
     # what an installation ships.
     ok, _ = run(
         [sys.executable, "scripts/bundled_only.py", "--strict"],
-        "4d/8 copies only an emulator install provides",
+        STEP_LABELS["bundled_only"],
     )
     results["bundled_only"] = ok
     all_ok &= ok
@@ -745,21 +810,21 @@ def main() -> None:
     # compare it with, and says so instead of failing on an empty parse.
     full_pack_built = args.source == "full" or args.all_variants
     if pack_output and verify_output and not full_pack_built:
-        print("\n--- 5/8 consistency check: SKIPPED (no full pack built) ---")
+        skip_notice("consistency", "no full pack built")
         results["consistency"] = SKIPPED
     elif pack_output and verify_output:
         ok = check_consistency(verify_output, pack_output)
         results["consistency"] = ok
         all_ok = all_ok and ok
     else:
-        print("\n--- 5/8 consistency check: SKIPPED ---")
+        skip_notice("consistency")
         results["consistency"] = SKIPPED
 
     # Step 6: Pack integrity (extract + hash verification)
     if not args.skip_packs and not full_pack_built:
         # The check reads the full pack's name, while a reduced pack holds fewer
         # files than the platform declares by design.
-        print("\n--- 6/8 pack integrity: SKIPPED (no full pack built) ---")
+        skip_notice("pack_integrity", "no full pack built")
         results["pack_integrity"] = SKIPPED
     elif not args.skip_packs:
         integrity_cmd = [
@@ -777,11 +842,11 @@ def main() -> None:
         # the target removed as missing from a pack that was exactly right.
         if args.target:
             integrity_cmd.extend(["--target", args.target])
-        ok, _ = run(integrity_cmd, "6/8 pack integrity")
+        ok, _ = run(integrity_cmd, STEP_LABELS["pack_integrity"])
         results["pack_integrity"] = ok
         all_ok = all_ok and ok
     else:
-        print("\n--- 6/8 pack integrity: SKIPPED (--skip-packs) ---")
+        skip_notice("pack_integrity", "--skip-packs")
         results["pack_integrity"] = SKIPPED
 
     # Step 7: Generate README
@@ -795,36 +860,36 @@ def main() -> None:
                 "--platforms-dir",
                 "platforms",
             ],
-            "7/8 generate readme",
+            STEP_LABELS["generate_readme"],
         )
         results["generate_readme"] = ok
         all_ok = all_ok and ok
     else:
-        print("\n--- 7/8 generate readme: SKIPPED (--skip-docs) ---")
+        skip_notice("generate_readme", "--skip-docs")
         results["generate_readme"] = SKIPPED
 
     # Step 8: Generate site pages
     if not args.skip_docs:
         ok, _ = run(
             [sys.executable, "scripts/generate_site.py"],
-            "8/8 generate site",
+            STEP_LABELS["generate_site"],
         )
         results["generate_site"] = ok
         all_ok = all_ok and ok
     else:
-        print("\n--- 8/8 generate site: SKIPPED (--skip-docs) ---")
+        skip_notice("generate_site", "--skip-docs")
         results["generate_site"] = SKIPPED
 
     # Step 8b: the render the site deploy runs. Generating the pages without
     # rendering them let 20 pages with duplicate ids through to CI.
     if args.skip_docs:
-        print("\n--- 8b render site: SKIPPED (--skip-docs) ---")
+        skip_notice("render_site", "--skip-docs")
         results["render_site"] = SKIPPED
     elif shutil.which("mkdocs") is None:
-        print("\n--- 8b render site: SKIPPED (mkdocs not installed) ---")
+        skip_notice("render_site", "mkdocs not installed")
         results["render_site"] = SKIPPED
     else:
-        ok, _ = run(["mkdocs", "build", "--strict"], "8b render site")
+        ok, _ = run(["mkdocs", "build", "--strict"], STEP_LABELS["render_site"])
         if ok:
             ok, _ = run([sys.executable, "scripts/validate_site.py"], "8b validate site")
         results["render_site"] = ok
@@ -835,8 +900,11 @@ def main() -> None:
     print(f"\n{'=' * 60}")
     warned = []
     for step, outcome in results.items():
+        # The number finds the step's lines in the log, the key is the
+        # name a caller reading the results knows it by.
+        number = step_number(step)
         if outcome is SKIPPED:
-            print(f"  {step:.<40} SKIPPED")
+            print(f"  {number:<4} {step:.<40} SKIPPED")
             continue
         label = "OK" if outcome else "FAILED"
         if not outcome and step in NON_BLOCKING:
@@ -844,8 +912,8 @@ def main() -> None:
             # contradiction: the step reports, it does not stop the run.
             label = "WARN"
             warned.append(step)
-        print(f"  {step:.<40} {label:<7}{results.seconds[step]:>8.1f}s")
-    print(f"  {'total':.<40} {'':<7}{total_elapsed:>8.1f}s")
+        print(f"  {number:<4} {step:.<40} {label:<7}{results.seconds[step]:>8.1f}s")
+    print(f"  {'':<4} {'total':.<40} {'':<7}{total_elapsed:>8.1f}s")
     print(f"{'=' * 60}")
     print(f"  Pipeline {'COMPLETE' if all_ok else 'FINISHED WITH ERRORS'}")
     if warned:

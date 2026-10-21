@@ -3087,8 +3087,10 @@ def _main(held: contextlib.ExitStack) -> None:
             )
         return
     if args.list:
+        # Archived platforms build like the others but have no release pack.
+        active = set(list_registered_platforms(args.platforms_dir))
         for p in list_platforms(args.platforms_dir):
-            print(p)
+            print(p if p in active else f"{p} (archived)")
         return
     if args.list_emulators:
         list_emulator_profiles(args.emulators_dir)

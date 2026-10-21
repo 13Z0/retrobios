@@ -23,11 +23,11 @@ Pipeline steps:
 
 | Step | Description | Skipped by |
 |------|-------------|------------|
-| 0/8 | Validate profiles and platform YAMLs against the schemas | - (no `jsonschema` installed) |
-| 1/8 | Generate database | - |
+| 0 | Validate profiles and platform YAMLs against the schemas | - (no `jsonschema` installed) |
+| 1 | Generate database | - |
 | 1b | Dump-catalog coverage report | - (offline, reads `provenance/`) |
 | 1c | Romset recipes: identify archives, list rebuild targets | - (offline, reads `recipes/`) |
-| 2/8 | Refresh data directories | `--offline` |
+| 2 | Refresh data directories | `--offline` |
 | 2a | Refresh MAME BIOS hashes | `--offline` |
 | 2a2 | Refresh FBNeo BIOS hashes | `--offline` |
 | 2b | Check buildbot staleness | only with `--check-buildbot`, skipped by `--offline` |
@@ -35,17 +35,17 @@ Pipeline steps:
 | 2c | Generate truth YAMLs | only with `--with-truth` / `--with-export` |
 | 2d | Diff truth vs scraped | only with `--with-truth` / `--with-export` |
 | 2e | Export native formats | only with `--with-export` |
-| 3/8 | Verify all platforms (`--strict`) | - |
+| 3 | Verify all platforms (`--strict`) | - |
 | 3a | File identity: one content under two identities (`identity.py --strict`, gates the run) | - |
 | 3b | Slot arbitration: destinations both layers claim (`slots.py`, reports only) | - |
-| 4/8 | Generate packs | `--skip-packs` |
+| 4 | Generate packs | `--skip-packs` |
 | 4b | Generate install manifests | `--skip-packs` |
 | 4c | Generate target manifests | `--skip-packs` |
 | 4d | Collected copies only an emulator install provides (`bundled_only.py --strict`, gates the run) | - |
-| 5/8 | Consistency check | if verify or pack skipped |
-| 6/8 | Pack integrity (extract + hash) | `--skip-packs` |
-| 7/8 | Generate README | `--skip-docs` |
-| 8/8 | Generate site | `--skip-docs` |
+| 5 | Consistency check | if verify or pack skipped |
+| 6 | Pack integrity (extract + hash) | `--skip-packs` |
+| 7 | Generate README | `--skip-docs` |
+| 8 | Generate site | `--skip-docs` |
 | 8b | Render the site with `mkdocs build --strict`, then `validate_site.py`, as the deploy does | `--skip-docs`, or no `mkdocs` installed |
 
 Pipeline flags:
@@ -614,7 +614,7 @@ python scripts/refresh_stale.py --only platforms,targets --jobs 6
 | `validate_pr.py` | Validate BIOS files in pull requests, post markdown report |
 | `validate_schemas.py` | Validate the data contracts: schemas and semantic invariants. `--source-only` checks `emulators/` and `platforms/` alone, which is what PR validation runs |
 | `auto_fetch.py` | Fetch missing BIOS files from known sources (4-step pipeline) |
-| `list_platforms.py` | List active platforms (`--all` includes archived, used by CI) |
+| `list_platforms.py` | List active platforms (`--include-archived` adds the archived ones, used by CI) |
 | `download.py` | Download a pack from GitHub releases, every part checked (Python, stdlib only) |
 | `download.sh` | Same, as a shell one-liner (`curl` + `unzip`) |
 | `split_pack.py` | Cut a pack over the release asset limit into parts that are each a ZIP of whole files, read back before the pack is removed |
