@@ -12,7 +12,6 @@
     <bios path="whdboot/WHDLoad" md5="6670a9571f235ec31b8bbd48fc18f428" core="libretro/amiberry" mandatory="false" />
     <bios path="whdboot/JST" md5="2a3a61bbd7c351751506e22a4354b76a" core="libretro/amiberry" mandatory="false" />
     <bios path="whdboot/AmiQuit" md5="36ab26d3b855e634fdda062c052cd52b" core="libretro/amiberry" mandatory="false" />
-    <bios path="whdboot/boot-data.zip" md5="9e638f3d531eb7cd82594f49a4cf03b7" core="libretro/amiberry" mandatory="false" />
     <bios path="whdboot/game-data/whdload_db.json" md5="14d797815aa9bbc79fe284b244ea75b1" core="libretro/amiberry" mandatory="false" />
     <bios path="whdboot/save-data/Kickstarts/kick33180.A500.RTB" md5="c993feb1eeddec1d2e687aa514231028" core="libretro/amiberry" mandatory="false" />
     <bios path="whdboot/save-data/Kickstarts/kick34005.A500.RTB" md5="7eb13d974af0992d672b67c317a7e0a1" core="libretro/amiberry" mandatory="false" />
@@ -616,7 +615,7 @@
                                  b4519df27a352c2a6e42e06d31330d91,bf00272e7150b31156a8995d60bf185d,
                                  ca66fd463ef7dcab492a6de8ce5f45eb,f4a125538dfd7a8044e025fc5188fb88,
                                  a3b2c9a69c28ad0bd4ea07877b744bbe,00dad01abdbf8ea9e79ad2fe11bdb182" hashMatchMandatory="false" core="libretro/fbneo,libretro/fba2x,libretro/mame2000,libretro/mame2003,libretro/mame2003-plus,libretro/mame2010,libretro/mame2015" />
-    <bios path="neocdz.zip" md5="b31a246b69493c35194fe0bac120dc37" hashMatchMandatory="false" core="libretro/fbneo,libretro/fba2x,libretro/mame2000,libretro/mame2003,libretro/mame2003-plus,libretro/mame2010,libretro/mame2015" />
+    <bios path="neocdz.zip" md5="f39572af7584cb5b3f70ae8cc848aba2,389dbeb0cb857c130414747462cf9d71,c85b8132799f1b2ad3754a97947809d2,b9ab07a79997fc044ca164fc72cd5680" hashMatchMandatory="false" core="libretro/fbneo,libretro/fba2x,libretro/mame2000,libretro/mame2003,libretro/mame2003-plus,libretro/mame2010,libretro/mame2015" />
     <bios path="neocd/neocd.bin"                 md5="f39572af7584cb5b3f70ae8cc848aba2" core="libretro/neocd" mandatory="false" hashMatchMandatory="false" note="CDZ BIOS (MAME)" />
     <bios path="neocd/uni-bioscd.rom"            md5="08ca8b2dba6662e8024f9e789711c6fc" core="libretro/neocd" mandatory="false" hashMatchMandatory="false" note="Universe BIOS CD 3.3" />
     <bios path="neocd/top-sp1.bin"               md5="122aee210324c72e8a11116e6ef9c0d0" core="libretro/neocd" mandatory="false" hashMatchMandatory="false" note="Top Loader BIOS (MAME)" />
@@ -629,7 +628,7 @@
     <bios path="neocd/neocd_f.rom"               md5="8834880c33164ccbe6476b559f3e37de" core="libretro/neocd" mandatory="false" hashMatchMandatory="false" note="Front Loader BIOS" />
     <bios path="neocd/000-lo.lo"                 md5="fc7599f3f871578fe9a0453662d1c966" core="libretro/neocd" mandatory="false" hashMatchMandatory="false" note="ZOOM Rom" />
     <bios path="neocd/ng-lo.rom"                 md5="e255264d85d5765013b1b2fa8109dd53" core="libretro/neocd" mandatory="false" hashMatchMandatory="false" note="ZOOM Rom" />
-    <bios path="geolith/neocd.zip"               md5="006a881532f2caffc3fe9fb5593f2ed5" core="libretro/geolith" mandatory="false" hashMatchMandatory="false" note="Neo-Geo CD Bios" />
+    <bios path="geolith/neocd.zip"               md5="3711783a59ef875c31076512e3f9f0e5" core="libretro/geolith" mandatory="false" hashMatchMandatory="false" note="Neo-Geo CD Bios" />
     <bios path="geolith/neocdz.zip"              md5="724bc64e63d073cf81f986adfb1f1b78" core="libretro/geolith" mandatory="true" hashMatchMandatory="false" note="Neo-Geo CDZ Bios" />
   </system>
   <system fullname="Texas Instrument TI-99/4A" platform="ti994a">

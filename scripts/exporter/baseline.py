@@ -61,6 +61,20 @@ def checked_hashes(entry: dict | None) -> dict | None:
     return {k: v for k, v in entry.items() if k not in HASH_FIELDS or k in kinds}
 
 
+def comparable(entry: dict | None) -> dict:
+    """The entry with only the hashes the truth can be compared with.
+
+    Recalbox hashes a .zip by its members (Bios.cpp:64-68 calls
+    Zip::Md5Composite, which feeds each member's bytes in name order into
+    one md5), never by the container's bytes. Its md5 on an archive is that
+    composite, a digest no profile declares: read as a container md5 it was
+    replaced by geolith's, which Recalbox never computes.
+    """
+    if not entry or entry.get("zip_digest") != "composite":
+        return entry or {}
+    return {k: v for k, v in entry.items() if k != "md5"}
+
+
 def is_label(entry: dict) -> bool:
     """A name only content-scanning cores give: no core opens that file.
 
@@ -104,6 +118,10 @@ class NativeFile:
     # For an addition, each core that wants it as (runs standalone, name the
     # platform gives it), empty when no core the platform runs is named.
     runners: list[tuple[bool, str]] = field(default_factory=list)
+    # The platform reads this file's md5 as a composite of its members
+    # (Recalbox on a .zip): the truth's md5 describes the container and
+    # can be neither compared with it nor written in its place.
+    composite_md5: bool = False
 
     @property
     def origin(self) -> str:
@@ -129,7 +147,9 @@ class NativeFile:
         truth's crc32 beside Batocera's md5 for bios7.bin is one dump, and
         reading it as a contradiction emptied the md5 the frontend checks.
         """
-        truth, plat = _field_sets(self._checked_truth), _field_sets(self.platform)
+        truth, plat = _field_sets(self._checked_truth), _field_sets(comparable(self.platform))
+        if self.composite_md5:
+            truth["md5"] = set()
         if not any(truth.values()):
             return "platform"
         if not any(plat.values()):
@@ -152,6 +172,8 @@ class NativeFile:
         the divergence is recorded, never silently merged: an emulator that
         rejects a file will reject it whatever the platform declares.
         """
+        if field_name == "md5" and self.composite_md5:
+            return _hash_values(self.platform or {}, field_name)
         truth_values = _hash_values(self._checked_truth, field_name)
         platform_values = _hash_values(self.platform or {}, field_name)
         source = self._identity_source()
@@ -186,6 +208,9 @@ class NativeFile:
         chosen among those the truth accepts. A field only the truth names
         is written when it names one value, which is then that dump's.
         """
+        if field_name == "md5" and self.composite_md5:
+            values = _hash_values(self.platform or {}, field_name)
+            return values[0] if values else ""
         source = self._identity_source()
         truth_values = _hash_values(self._checked_truth, field_name)
         platform_values = _hash_values(self.platform or {}, field_name)
@@ -365,11 +390,13 @@ def by_hash(truth_entry: dict, platform_entry: dict) -> bool:
     ours = {v for f in HASH_FIELDS for v in _hash_values(truth_entry, f)}
     if not ours:
         return False
-    return bool(ours & {v for f in HASH_FIELDS for v in _hash_values(platform_entry, f)})
+    theirs = comparable(platform_entry)
+    return bool(ours & {v for f in HASH_FIELDS for v in _hash_values(theirs, f)})
 
 
 def _contradicts(truth_entry: dict, platform_entry: dict) -> bool:
     """A hash both entries declare, without a value in common."""
+    platform_entry = comparable(platform_entry)
     return any(
         (ours := set(_hash_values(truth_entry, f)))
         and (theirs := set(_hash_values(platform_entry, f)))
@@ -445,6 +472,7 @@ def build_native_model(
     systems: dict[str, NativeSystem] = {}
 
     scraped_systems = (scraped or {}).get("systems", {})
+    composite_zips = (scraped or {}).get("zip_digest") == "composite"
 
     # Pass 1: the platform's own file, grouped as the platform groups it.
     for sys_key, sys_data in scraped_systems.items():
@@ -467,6 +495,7 @@ def build_native_model(
                     destination=destination,
                     native_system=native_id,
                     platform=file_entry,
+                    composite_md5=file_entry.get("zip_digest") == "composite",
                 )
             )
             report.files_kept += 1
@@ -545,7 +574,9 @@ def build_native_model(
                 checked = checked_hashes(truth_entry) or {}
                 for field_name in HASH_FIELDS:
                     ours = set(_hash_values(checked, field_name))
-                    theirs = set(_hash_values(matched.platform or {}, field_name))
+                    if field_name == "md5" and matched.composite_md5:
+                        continue
+                    theirs = set(_hash_values(comparable(matched.platform), field_name))
                     if ours and theirs and not ours & theirs:
                         matched.corrections.append(field_name)
                         report.hashes_corrected.append(
@@ -602,6 +633,7 @@ def build_native_model(
                     native_system=native_id,
                     truth=truth_entry,
                     foreign_system=native_id not in platform_ids,
+                    composite_md5=composite_zips and name.lower().endswith(".zip"),
                 )
             )
             report.files_added += 1

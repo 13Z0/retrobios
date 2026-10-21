@@ -43,6 +43,7 @@ from export_native import (  # noqa: E402
     SOURCES_INDEX,
     collect_originals,
     fetch,
+    landed_changes,
     pinned_base,
     source_key,
 )
@@ -1083,6 +1084,62 @@ class RecalboxExport(unittest.TestCase):
             for s in ET.fromstring(produced).iter("system")
         }
         self.assertEqual(blocks, {pentagon: ["3" * 32], scorpion: [new]})
+
+    COMPOSITE_SCRAPED = {
+        "zip_digest": "composite",
+        "systems": {"snk-neogeo-cd": {"native_id": "neogeocd", "files": [{
+            "name": "neocdz.zip", "destination": "neocdz.zip", "md5": "a" * 32,
+            "native_system": "neogeocd", "core": "libretro/fbneo",
+            "required": True, "zip_digest": "composite",
+        }]}},
+    }
+
+    def test_a_composite_md5_is_not_replaced_by_a_container_md5(self):
+        """Recalbox hashes a .zip by its members (Bios.cpp:64-68,
+        Zip::Md5Composite): the truth's container md5 is another digest."""
+        truth = {"systems": {"snk-neogeo-cd": {"files": [
+            {"name": "neocdz.zip", "md5": "b" * 32, "required": True, "_cores": ["geolith"]},
+            {"name": "boot-data.zip", "md5": "c" * 32, "required": False, "_cores": ["geolith"]},
+        ]}}}
+        systems, report = build_native_model(truth, self.COMPOSITE_SCRAPED)
+        exporter = discover_exporters()["recalbox"]()
+        produced = exporter.render(systems, report, {}, None)["es_bios.xml"]
+        md5_of = {b.get("path"): b.get("md5") for b in ET.fromstring(produced).iter("bios")}
+        self.assertEqual(md5_of, {"neocdz.zip": "a" * 32})
+        self.assertEqual(landed_changes(exporter, systems).records, [])
+
+    def test_a_container_md5_never_pairs_with_a_composite(self):
+        """neocd.bin's md5 equals the composite of a neocdz.zip: by hash the
+        two would be read as one renamed file."""
+        truth = {"systems": {"snk-neogeo-cd": {"files": [
+            {"name": "neocd.bin", "md5": "a" * 32, "required": True, "_cores": ["neocd"]},
+        ]}}}
+        systems, _ = build_native_model(truth, self.COMPOSITE_SCRAPED)
+        declared = next(fe for s in systems.values() for fe in s.files if fe.platform)
+        self.assertIsNone(declared.truth)
+
+    def test_the_live_export_keeps_every_zip_md5(self):
+        """No element of es_bios.xml names a .zip under a new md5: none can
+        be stated as the composite Recalbox computes."""
+        path = REPO_ROOT / "exports" / "recalbox" / "es_bios.xml"
+        original = UPSTREAM_CACHE / "recalbox" / "es_bios.xml"
+        if not original.is_file():
+            self.skipTest("no cached original for recalbox")
+
+        def zips(text: str) -> dict[tuple[str, str], str]:
+            return {
+                (s.get("platform"), b.get("path")): ",".join(sorted(
+                    v.strip().lower() for v in b.get("md5", "").split(",")
+                ))
+                for s in ET.fromstring(text).iter("system")
+                for b in s.iter("bios")
+                if b.get("path", "").lower().endswith(".zip")
+            }
+
+        before = zips(original.read_text(encoding="utf-8"))
+        after = zips(path.read_text(encoding="utf-8"))
+        self.assertEqual({k: v for k, v in after.items() if k in before}, before)
+        self.assertEqual(set(after) - set(before), set())
 
     def test_a_truncated_export_is_reported(self):
         exporter, systems, _ = self._render()
