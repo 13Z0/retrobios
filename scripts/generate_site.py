@@ -1373,8 +1373,24 @@ def _plain_markdown(text: str) -> str:
     text = re.sub(r"<[^>]+>", " ", text)
     text = re.sub(r"!\[([^]]*)\]\([^)]*\)", r"\1", text)
     text = re.sub(r"\[([^]]+)\]\([^)]*\)", r"\1", text)
-    text = re.sub(r"[`*_~]", "", text)
+    # Code spans keep their text whole: validate_schemas.py read
+    # validateschemas.py once every underscore was taken for emphasis.
+    pieces = re.split(r"(`[^`]*`)", text)
+    text = "".join(
+        piece.strip("`") if piece.startswith("`")
+        else re.sub(r"(?<!\w)_+|_+(?!\w)", "", re.sub(r"[*~]", "", piece))
+        for piece in pieces
+    )
     return re.sub(r"\s+", " ", text).strip()
+
+
+def _shorten(plain: str, limit: int = 157) -> str:
+    """A description cut at a word, never inside one: six snippets ended
+    in "op..." or "Fo..."."""
+    if len(plain) <= limit:
+        return plain
+    cut = plain[: limit + 1].rsplit(" ", 1)[0] if " " in plain[:limit] else plain[:limit]
+    return cut.rstrip(" ,;:-(.") + "..."
 
 
 def _page_description(markdown: str, relative: Path, title: str) -> str:
@@ -1398,6 +1414,12 @@ def _page_description(markdown: str, relative: Path, title: str) -> str:
         about = PAGE_DATA.get(key, {}).get("about", {})
         pinned = any(a.get("version") for a in (about if isinstance(about, list) else [about]))
         kind = "source-pinned emulator firmware profile" if pinned else "emulator firmware profile"
+        if not PAGE_DATA.get(key, {}).get("hasPart"):
+            # 152 cores that load no file announced paths and hashes.
+            kind = kind.replace(" firmware", "")
+            trees = (" The data directories it reads are listed."
+                     if "\n## Data directories\n" in markdown else "")
+            return f"{title}: {kind}. No BIOS or firmware file is required.{trees}"
         return f"{title}: {kind} with paths, hashes, requirements and validation behavior."
     if key.startswith("systems/") and relative.stem != "index":
         return f"{title}: indexed firmware files, hashes, variants, provenance and platform or emulator usage."
@@ -1412,7 +1434,7 @@ def _page_description(markdown: str, relative: Path, title: str) -> str:
             continue
         plain = _plain_markdown(stripped)
         if len(plain) >= 35:
-            return plain[:157].rstrip(" ,;:-") + ("..." if len(plain) > 157 else "")
+            return _shorten(plain)
     return f"{title}: RetroBIOS source-traced retrogaming firmware reference."
 
 
@@ -1733,7 +1755,9 @@ def decorate_markdown_pages(docs: Path) -> None:
             page_path = "" if len(relative.parts) == 1 else "/".join(relative.parts[:-1]) + "/"
         else:
             page_path = relative.with_suffix("").as_posix() + "/"
-        canonical = urllib.parse.urljoin(SITE_URL, page_path)
+        # Encoded as mkdocs encodes the canonical link and the sitemap:
+        # idtech4a++ named .../idtech4a++/ here and .../idtech4a%2B%2B/ there.
+        canonical = urllib.parse.urljoin(SITE_URL, urllib.parse.quote(page_path))
         schema_type = "WebSite" if relative.as_posix() == "index.md" else "TechArticle"
         if relative.as_posix() == "data.md":
             schema_type = "Dataset"

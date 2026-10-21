@@ -69,5 +69,49 @@ class WhoShipsTheBuildAndWhy(unittest.TestCase):
                       "found only as rebuilt copies) |", page)
 
 
+class WhatASearchSnippetSays(unittest.TestCase):
+    def test_a_core_loading_no_file_promises_no_hash(self):
+        """152 pages of cores that load no file announced paths and hashes."""
+        rel = Path("emulators/lutro.md")
+        saved = dict(gs.PAGE_DATA)
+        self.addCleanup(lambda: (gs.PAGE_DATA.clear(), gs.PAGE_DATA.update(saved)))
+        gs.PAGE_DATA[rel.as_posix()] = {}
+        text = gs._page_description("# Lutro\n", rel, "Lutro")
+        self.assertNotIn("hashes", text)
+        self.assertIn("No BIOS or firmware file is required.", text)
+        gs.PAGE_DATA[rel.as_posix()] = {"hasPart": [{"name": "a.bin"}]}
+        self.assertIn("paths, hashes", gs._page_description("# Lutro\n", rel, "Lutro"))
+
+    def test_a_long_paragraph_is_cut_at_a_word(self):
+        plain = ("files/?sha1= is the address that does not move: it opens the card "
+                 "wherever the file is now, " * 4)
+        text = gs._shorten(plain)
+        self.assertTrue(text.endswith("..."))
+        self.assertLessEqual(len(text), 160)
+        self.assertTrue(plain.startswith(text[:-3]))
+        self.assertIn(plain[len(text) - 3], " ,:")
+
+    def test_code_keeps_its_underscores(self):
+        self.assertEqual(gs._plain_markdown("only `validate_schemas.py` and _this_"),
+                         "only validate_schemas.py and this")
+
+    def test_structured_url_is_encoded_like_the_canonical(self):
+        """mkdocs encodes idtech4a++ as idtech4a%2B%2B in the canonical link
+        and the sitemap, and the JSON-LD named the unencoded URL."""
+        import json
+        import tempfile
+
+        with tempfile.TemporaryDirectory(dir=REPO_ROOT / "tmp") as tmp:
+            page = Path(tmp) / "emulators" / "idtech4a++.md"
+            page.parent.mkdir()
+            page.write_text("# idTech4A++\n\nSome text long enough to be a description.\n")
+            gs.decorate_markdown_pages(Path(tmp))
+            text = page.read_text()
+        data = json.loads(text.split('<script type="application/ld+json">')[1]
+                          .split("</script>")[0].replace("<\\/", "</"))
+        self.assertEqual(data["url"],
+                         "https://abdess.github.io/retrobios/emulators/idtech4a%2B%2B/")
+
+
 if __name__ == "__main__":
     unittest.main()
