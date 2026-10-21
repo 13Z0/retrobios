@@ -274,6 +274,20 @@ evidence-compatible match:
 
 If no step matches, the result is `(None, "not_found")`.
 
+Two kinds of entry skip every answer given by a name alone: steps 6 and 9, the
+`hash_mismatch` of step 7, and the name lookup of step 10 when no hash is declared.
+
+- An entry whose profile carries `unsourceable:`. The collection cannot hold that
+  file, so a file answering to its name belongs to something else: `kanji.rom`
+  names an FPseNG font, an openMSX font and a 3DO ROM.
+- An entry whose full destination path is in the `by_path_suffix` index while no
+  indexed copy is on disk. That file is a release asset the checkout has not
+  restored (`scripts/restore_large_files.py`), and another file of the same name
+  is not it.
+
+The content steps still apply to both, so collecting the real bytes, or restoring
+the asset, makes the entry resolve.
+
 The `hash_mismatch` status means a file with the right name or path exists but its hash
 does not match. This still resolves to a local path (the file is present), but verification
 will report it as UNTESTED with a reason string showing the expected vs actual hash prefix.

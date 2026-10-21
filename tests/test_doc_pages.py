@@ -559,5 +559,27 @@ class RegistryKeysDocumented(unittest.TestCase):
         self.assertNotIn("belongs to the platform\nYAML", section)
 
 
+class ResolutionSkipsNamesForUnheldFiles(unittest.TestCase):
+    """The resolution table promised name_exact to any entry without a hash,
+    while an unsourceable entry, or one whose indexed path is absent from
+    disk, skips every step that answers by name and returns not_found."""
+
+    def test_the_page_names_both_cases_the_code_guards(self):
+        import common
+
+        source = inspect.getsource(common.resolve_local_file)
+        self.assertIn('unsourceable = bool(file_entry.get("unsourceable")) or own_file_absent', source)
+        for guard in (
+            "if not has_strong_hash and not unsourceable:",
+            "elif not unsourceable:",
+            "if _depth < 3 and not has_strong_hash and not unsourceable:",
+            "if data_dir_registry and (has_strong_hash or not unsourceable):",
+        ):
+            self.assertIn(guard, source)
+        section = _section(_page("verification-modes.md"), "File resolution chain")
+        self.assertIn("`unsourceable:`", section)
+        self.assertIn("restore_large_files.py", section)
+
+
 if __name__ == "__main__":
     unittest.main()
