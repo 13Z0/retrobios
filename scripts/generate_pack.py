@@ -1252,16 +1252,10 @@ class DamagedArchiveError(OSError):
 def _normalize_zip_for_pack(
     source_zip: str, dest_path: str, target_zf: zipfile.ZipFile
 ) -> None:
-    """Add a MAME BIOS ZIP to the pack as a deterministic rebuild.
+    """Add a MAME BIOS ZIP to the pack, rebuilt from its ROMs.
 
-    Instead of copying the original ZIP (with non-deterministic metadata),
-    extracts the ROM atoms, rebuilds the ZIP deterministically, and writes
-    the normalized version into the pack.
-
-    This ensures:
-    - Same ROMs -> same ZIP hash in every pack build
-    - No dependency on how the user built their MAME ROM set
-    - Bit-identical ZIPs across platforms and build times
+    The same ROMs give the same archive bytes in every build, whatever
+    metadata the source ZIP carried.
     """
     import tempfile as _tmp
 

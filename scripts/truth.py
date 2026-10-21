@@ -39,27 +39,13 @@ def _serialize_source_ref(sr: object) -> str:
 
 
 def _enrich_hashes(entry: dict, db: dict) -> None:
-    """Fill missing sibling hashes from the database, ground-truth preserving.
+    """Fill the hashes a profile omits from the record its own hash names.
 
-    The profile's hashes come from the emulator source code (ground truth).
-    Any hash of a given file set of bytes is a projection of that same
-    ground truth. sha1, md5 and crc32 all identify the same bytes. If the
-    profile has ONE ground-truth hash, the DB can supply its siblings.
-
-    Lookup order (all are hash-anchored, never name-based):
-      1. SHA1 direct
-      2. MD5 -> SHA1 via indexes.by_md5
-      3. CRC32 -> SHA1 via indexes.by_crc32 (weaker 32-bit anchor,
-         requires size match when profile has size)
-
-    Name-based enrichment is NEVER used: a name alone has no ground-truth
-    anchor, the file in bios/ may not match what the source code expects.
-
-    Multi-hash entries (lists of accepted variants) are left untouched to
-    preserve variant information.
+    The record is found by sha1, then md5, then crc32 with the size when the
+    profile gives one. Never by name: a file in bios/ under the same name may
+    not be the bytes the source code expects. An entry listing several
+    accepted values for a hash is left as is.
     """
-    # Skip multi-hash entries. They express ground truth as "any of these N
-    # variants", enriching with a single sibling would lose that information.
     for h in ("sha1", "md5", "crc32"):
         if isinstance(entry.get(h), list):
             return
@@ -105,7 +91,6 @@ def _enrich_hashes(entry: dict, db: dict) -> None:
         return
 
     # Copy sibling hashes and size from the anchored record.
-    # These are projections of the same ground-truth bytes.
     for field in ("sha1", "md5", "sha256", "crc32"):
         if not entry.get(field) and record.get(field):
             entry[field] = record[field]

@@ -249,6 +249,23 @@ class NoHedgedRules(unittest.TestCase):
         self.assertEqual(offenders, [], "\n".join(offenders))
 
 
+class DocstringsWithoutInsistence(unittest.TestCase):
+    """truth.py shouted ONE and NEVER in an eighteen-line docstring, and
+    generate_pack.py listed three guarantees under 'This ensures:' of which
+    two said the same thing."""
+
+    TICS = re.compile(r"\b(NEVER|ALWAYS|ONE|MUST)\b|This ensures:")
+
+    def test_scripts_and_installer(self):
+        offenders = []
+        paths = sorted((ROOT / "scripts").rglob("*.py")) + [ROOT / "install.py"]
+        for path in paths:
+            for line in _python_prose(path.read_text(encoding="utf-8")).splitlines():
+                if self.TICS.search(line):
+                    offenders.append(f"{path.relative_to(ROOT)}: {line.strip()[:80]}")
+        self.assertEqual(offenders, [], "\n".join(offenders))
+
+
 class PeerToneTowardPlatforms(unittest.TestCase):
     """Platform lists were called wrong, stale or corrected on public pages
     that their maintainers read."""
