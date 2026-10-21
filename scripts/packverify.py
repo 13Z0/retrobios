@@ -314,8 +314,8 @@ def _hash_matches(declared: str, actual: str) -> bool:
     """Compare a declared hash value against an actual hex digest.
 
     Handles comma-separated multi-hash lists and uppercase (Recalbox)
-    and truncated MD5s (Batocera 29-char): a declared value shorter
-    than the digest matches by prefix.
+    and MD5s shorter than 32 characters: a declared value shorter than
+    the digest matches by prefix.
     """
     actual = actual.lower()
     for cand in declared.split(","):

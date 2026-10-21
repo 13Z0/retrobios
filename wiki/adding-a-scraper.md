@@ -206,8 +206,10 @@ System ID consistency matters for cross-platform operations. The same console mu
 - Handle missing hashes gracefully (set to `None`, not empty string).
 - Some platforms provide multiple hash types per entry. Populate whichever fields
   are available.
-- Batocera uses 29-character truncated MD5 hashes in some entries. The resolution
-  layer handles prefix matching, but the scraper should store the hash as-is.
+- An MD5 shorter than 32 characters is completed when exactly one MD5 in
+  `database.json` starts with it, as the Batocera scraper does
+  (`_resolve_truncated_md5`), and kept as written otherwise. The resolution layer
+  matches what remains by prefix.
 
 Scraped data reflects what the upstream declares, which may not match reality. The scraper's job is faithful transcription of upstream data, not correction. Corrections happen in the emulator profiles (source-verified) and in `_shared.yml` (curated). If a scraper meets a hash or filename that differs from the emulator source, log a warning and still include the upstream value. The divergence will surface during truth diffing.
 

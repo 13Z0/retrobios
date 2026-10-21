@@ -86,7 +86,7 @@ class DeclaredHashVerdict(unittest.TestCase):
         )
 
     def test_a_truncated_md5_still_decides(self):
-        """Batocera publishes 29-character prefixes, which are still evidence."""
+        """An MD5 shorter than 32 characters is still evidence, by prefix."""
         self.assertEqual(
             self.verdict(self.right, md5_list=[self.d["md5"][:29]]),
             "data_dir_hash_exact",

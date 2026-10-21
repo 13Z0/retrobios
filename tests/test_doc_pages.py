@@ -497,5 +497,31 @@ class EmulatorVerboseSample(unittest.TestCase):
                 self.assertIn(line, printed)
 
 
+class ShortMd5Handling(unittest.TestCase):
+    """Three pages said some Batocera entries carry 29-character MD5s and show
+    as untested. No platform YAML holds one, since the Batocera scraper
+    completes them, and adding-a-scraper.md said to store them as-is."""
+
+    def test_no_page_claims_short_md5_entries(self):
+        offenders = [
+            page.name for page in PUBLISHED
+            if re.search(r"(?i)29[- ]char|truncated md5 hashes in some entries|store the hash as-is",
+                         page.read_text(encoding="utf-8"))
+        ]
+        self.assertEqual(offenders, [])
+
+    def test_the_page_names_what_the_code_does(self):
+        import common
+        from scraper import batocera_scraper
+
+        scraper = inspect.getsource(batocera_scraper)
+        self.assertIn("md5 = _resolve_truncated_md5(", scraper)
+        resolver = inspect.getsource(common.resolve_local_file)
+        self.assertIn("if len(md5_candidate) < 32:", resolver)
+        self.assertIn("_md5_name_ok(path)", resolver)
+        section = _section(_page("verification-modes.md"), "MD5 shorter than 32 characters (Batocera)")
+        self.assertIn("_resolve_truncated_md5", section)
+
+
 if __name__ == "__main__":
     unittest.main()

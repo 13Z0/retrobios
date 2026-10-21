@@ -372,7 +372,7 @@ platform's own verification mode.
 
 | Case | Handling |
 |------|---------|
-| Batocera truncated MD5 (29 chars) | prefix match in resolution |
+| MD5 shorter than 32 characters | completed by the Batocera scraper when one MD5 in the collection starts with it, matched by prefix in resolution |
 | `zippedFile` entries | MD5 is of the ROM inside the ZIP, not the ZIP itself |
 | Regional variants (same filename) | `by_path_suffix` index disambiguates |
 | MAME BIOS ZIPs | `contents` field documents inner structure |
