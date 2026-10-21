@@ -535,5 +535,29 @@ class ShortMd5Handling(unittest.TestCase):
         self.assertIn("_resolve_truncated_md5", section)
 
 
+class RegistryKeysDocumented(unittest.TestCase):
+    """zip_digest, firmware_folder_flat and extract_to were read from the
+    registry by the resolver, the pack and the README, and the page that
+    adds a platform named none of them while saying runtime behaviour lives
+    in the platform YAML only."""
+
+    def test_every_registry_key_is_on_the_page(self):
+        import yaml
+
+        registry = yaml.safe_load((ROOT / "platforms" / "_registry.yml").read_text(encoding="utf-8"))
+        keys = {key for entry in registry["platforms"].values() for key in entry}
+        page = _page("adding-a-platform.md")
+        self.assertEqual(sorted(k for k in keys if not re.search(rf"\b{k}\b", page)), [])
+
+    def test_the_page_says_the_registry_reaches_the_config(self):
+        import common
+
+        source = inspect.getsource(common.load_platform_config)
+        self.assertIn("config[key] = val", source)
+        section = _section(_page("adding-a-platform.md"), "Step 2: Register the platform")
+        self.assertIn("copies every registry key", section)
+        self.assertNotIn("belongs to the platform\nYAML", section)
+
+
 if __name__ == "__main__":
     unittest.main()

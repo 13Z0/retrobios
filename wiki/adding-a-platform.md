@@ -131,10 +131,13 @@ This fetches from upstream and prints a summary without writing anything.
 
 Add an entry to `platforms/_registry.yml` under the `platforms:` key.
 
-The registry describes *where the data comes from*. How the platform behaves
-at runtime (`verification_mode`, `base_destination`) belongs to the platform
-YAML, because that is what `verify.py` and `generate_pack.py` load. Keeping the
-two apart means a re-scrape can rewrite the YAML without touching the registry.
+The registry describes *where the data comes from*, and the platform YAML
+holds what the upstream file declares, `verification_mode` and
+`base_destination` included. A re-scrape rewrites the YAML without touching the
+registry. `load_platform_config` copies every registry key the YAML does not
+carry into the config that `verify.py` and `generate_pack.py` read, so a runtime
+rule that no upstream file states (`zip_digest`, `firmware_folder_flat`) is
+written in the registry, where the next scrape leaves it in place.
 
 ### Required fields
 
@@ -190,6 +193,11 @@ its libretro layout whatever the platform calls it.
     logo: https://...                # SVG or PNG for UI/docs
     inherits_from: retroarch         # inherit systems/cores from another platform
     case_insensitive_fs: true        # if the platform runs on case-insensitive filesystems
+    extract_to: /userdata/bios/      # folder the pack extracts into, shown in the README,
+                                     # the site and the release notes
+    zip_digest: composite            # the frontend hashes a .zip by its members only
+    firmware_folder_flat: true       # the frontend lists each system folder without
+                                     # descending into it
     source_wiki: https://...         # human-readable upstream reference
     target_scraper: myplatform_targets  # hardware target scraper name, null if static
     target_source: https://...       # target data source URL
@@ -204,6 +212,19 @@ its libretro layout whatever the platform calls it.
         config: $HOME/.config/myplatform/config.ini
         parse_key: bios_directory
 ```
+
+`zip_digest: composite` is set where the frontend's own check takes
+`Zip::Md5Composite` for every `.zip` and never the container's MD5 (Recalbox,
+`Bios.cpp:64-68`). Each `.zip` entry is then checked against its composite alone,
+by the resolver and by the pack check, as
+[verification modes](verification-modes.md#md5_composite-recalbox-zip-verification)
+describes.
+
+`firmware_folder_flat: true` is set where the frontend reads a system's firmware
+folder without descending into it (RomM 5.4.0,
+`backend/handler/filesystem/base_handler.py:1002`, `recursive=False`). On such a platform, a core file whose destination has a
+subfolder is left out of the pack (`nested` in `scripts/packextras.py`), since no
+core would receive it.
 
 ### Platform YAML header
 
