@@ -3288,7 +3288,7 @@ files:
   - name: astrocde.zip
     required: true
     category: bios_zip
-    system: astrocde
+    system: bally-astrocade
     source_ref: "upstream src/mame/bally/astrohome.cpp:295"
     contents:
       - name: astro.bin
@@ -3299,7 +3299,7 @@ files:
   - name: astrocdl.zip
     required: true
     category: bios_zip
-    system: astrocde
+    system: bally-astrocade
     source_ref: "upstream src/mame/bally/astrohome.cpp:296"
     contents:
       - name: ballyhlc.bin
@@ -3310,7 +3310,7 @@ files:
   - name: astrocdw.zip
     required: true
     category: bios_zip
-    system: astrocde
+    system: bally-astrocade
     source_ref: "upstream src/mame/bally/astrohome.cpp:297"
     contents:
       - name: bioswhit.bin

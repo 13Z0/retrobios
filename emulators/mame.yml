@@ -84,6 +84,10 @@ systems:
   - xegs
   - dragon64
   - acorn-archimedes
+  - acorn-bbc-micro
+  - elektronika-bk
+  - enterprise-64-128
+  - vectrex
   - vgmplay
 
 notes: |
@@ -3521,7 +3525,7 @@ files:
   - name: astrocde.zip
     required: true
     category: bios_zip
-    system: astrocde
+    system: bally-astrocade
     source_ref: "upstream src/mame/bally/astrohome.cpp:244-247"
     contents:
       - name: "astro.bin"
@@ -3532,7 +3536,7 @@ files:
   - name: astrocdl.zip
     required: false
     category: bios_zip
-    system: astrocde
+    system: bally-astrocade
     source_ref: "upstream src/mame/bally/astrohome.cpp:249-251"
     contents:
       - name: "ballyhlc.bin"
@@ -3543,7 +3547,7 @@ files:
   - name: astrocdw.zip
     required: false
     category: bios_zip
-    system: astrocde
+    system: bally-astrocade
     source_ref: "upstream src/mame/bally/astrohome.cpp:254-257"
     contents:
       - name: "bioswhit.bin"
