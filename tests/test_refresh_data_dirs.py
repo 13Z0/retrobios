@@ -166,5 +166,36 @@ class EmulatorPackHoldsTheCache(unittest.TestCase):
             self.assertEqual(held, [True])
 
 
+class DryRunReport(unittest.TestCase):
+    """What a dry run says: why each entry would be fetched, and how many."""
+
+    def test_a_quoted_etag_is_cut_without_its_quotes(self):
+        self.assertEqual(rdd._short_tag('"0x8DF0B72EB52A1C0"'), "0x8DF0B72EB5")
+        self.assertEqual(rdd._short_tag('W/"2685251384"'), "2685251384")
+        self.assertEqual(rdd._short_tag(None), "none")
+
+    def test_the_remote_tag_is_shown_beside_the_cached_one(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            versions = Path(tmp) / "versions.json"
+            versions.write_text(json.dumps({"k": {"etag": '"2725165595"'}}))
+            entry = {"source_type": "zip", "source_url": "https://x.invalid/a.zip",
+                     "local_cache": tmp}
+            with mock.patch.object(rdd, "_get_remote_etag", return_value='"2685251384"'), \
+                    self.assertLogs(rdd.log, "INFO") as logs:
+                self.assertTrue(rdd.refresh_entry("k", entry, dry_run=True,
+                                                  versions_path=str(versions)))
+        self.assertIn("cached: 2725165595, remote: 2685251384", logs.output[0])
+
+    def test_a_run_ends_on_its_counts(self):
+        self.assertEqual(
+            rdd.summarize({"a": True, "b": False, "c": False}, dry_run=True),
+            "3 entries: 1 would refresh, 2 up to date",
+        )
+        self.assertEqual(
+            rdd.summarize({"a": True, "b": None}, dry_run=False),
+            "2 entries: 1 refreshed, 0 up to date, 1 failed",
+        )
+
+
 if __name__ == "__main__":
     unittest.main()

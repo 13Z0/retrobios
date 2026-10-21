@@ -383,6 +383,14 @@ def _get_remote_etag(source_url: str) -> str | None:
         return None
 
 
+def _short_tag(tag: str | None) -> str:
+    """A commit sha or ETag cut for a log line, quotes dropped first: a
+    quoted ETag cut at 12 characters kept its opening quote only."""
+    if not tag:
+        return "none"
+    return tag.strip().removeprefix("W/").strip('"')[:12] or "none"
+
+
 def refresh_entry(
     key: str,
     entry: dict,
@@ -431,16 +439,17 @@ def _refresh_entry(
         needs_refresh = remote_tag != cached_tag
 
     if not needs_refresh:
-        log.info("[%s] up to date (tag: %s)", key, (cached_tag or "?")[:12])
+        log.info("[%s] up to date (tag: %s)", key, _short_tag(cached_tag))
         return False
 
     if dry_run:
-        log.info(
-            "[%s] would refresh (type: %s, cached: %s)",
-            key,
-            source_type,
-            cached_tag or "none",
-        )
+        if remote_tag is not None:
+            reason = f"cached: {_short_tag(cached_tag)}, remote: {_short_tag(remote_tag)}"
+        elif force:
+            reason = "forced"
+        else:
+            reason = "not cached"
+        log.info("[%s] would refresh (type: %s, %s)", key, source_type, reason)
         return True
 
     if remote_tag is None:
@@ -516,6 +525,16 @@ def refresh_all(
     return results
 
 
+def summarize(outcomes: dict[str, bool | None], dry_run: bool) -> str:
+    """One closing line: how many entries changed, were current, failed."""
+    refreshed = sum(1 for o in outcomes.values() if o is True)
+    current = sum(1 for o in outcomes.values() if o is False)
+    failed = sum(1 for o in outcomes.values() if o is None)
+    verb = "would refresh" if dry_run else "refreshed"
+    line = f"{len(outcomes)} entries: {refreshed} {verb}, {current} up to date"
+    return f"{line}, {failed} failed" if failed else line
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         allow_abbrev=False,
@@ -567,6 +586,7 @@ def main() -> None:
             registry, force=args.force, dry_run=args.dry_run, platform=args.platform
         )
 
+    log.info(summarize(outcomes, args.dry_run))
     failed = sorted(key for key, outcome in outcomes.items() if outcome is None)
     if failed:
         log.error("refresh failed: %s", ", ".join(failed))
