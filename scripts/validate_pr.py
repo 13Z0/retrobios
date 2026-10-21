@@ -61,6 +61,9 @@ BLOCKED_EXTENSIONS = {
 }
 
 MAX_FILE_SIZE = 100 * 1024 * 1024
+LARGE_FILE_ISSUE_URL = (
+    "https://github.com/Abdess/retrobios/issues/new?template=missing-bios.yml"
+)
 
 
 class ValidationResult:
@@ -259,9 +262,14 @@ def validate_file(
         result.add_check(False, f"Blocked file extension: {ext}")
 
     if result.size > MAX_FILE_SIZE:
+        # GitHub refuses a pushed file over 100 MiB, so a pull request cannot
+        # carry it. Only a maintainer can add an asset to the release.
         result.add_check(
             False,
-            f"File too large for embedded storage ({result.size:,} > {MAX_FILE_SIZE:,} bytes). Use storage: external in platform config.",
+            f"File too large for git ({result.size:,} > {MAX_FILE_SIZE:,} bytes). "
+            "Leave it out of the pull request and open an issue "
+            f"({LARGE_FILE_ISSUE_URL}) with the hashes above and where the file "
+            "can be obtained: a maintainer adds it to the `large-files` release.",
         )
     elif result.size == 0:
         result.add_check(False, "File is empty (0 bytes)")

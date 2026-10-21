@@ -89,8 +89,24 @@ jobs:
           fi
           cat report.md
 
-      - name: Post validation report
+      # The job summary is the report every contributor sees, fork or not:
+      # it needs no write token.
+      - name: Write the report to the job summary
         if: always()
+        run: |
+          if [ -f report.md ]; then
+            cat report.md >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "The validation step stopped before writing a report." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      # A pull request from a fork runs with a read-only GITHUB_TOKEN, so a
+      # comment would fail and turn a valid file red. The comment is posted
+      # only when the branch lives in this repository. pull_request_target is
+      # not an option: it hands a write token to a run that would read the
+      # contributor's files and scripts.
+      - name: Post validation report
+        if: always() && github.event.pull_request.head.repo.full_name == github.repository
         run: |
           gh pr comment "${{ github.event.pull_request.number }}" --body-file report.md
         env:
@@ -99,7 +115,7 @@ jobs:
       - name: Fail when a file did not validate
         if: steps.validate.outputs.rc != '0'
         run: |
-          echo "validate_pr.py exited ${{ steps.validate.outputs.rc }}" >&2
+          echo "::error::validate_pr.py exited ${{ steps.validate.outputs.rc }}. The report is in the job summary of this run."
           exit 1
 
   validate-configs:
@@ -212,7 +228,11 @@ jobs:
         with:
           fetch-depth: 0
 
+      # Labels need a write token, which a pull request from a fork does not
+      # get. The step is skipped there instead of reporting a success that
+      # set nothing.
       - name: Auto-label PR
+        if: github.event.pull_request.head.repo.full_name == github.repository
         run: |
           labels=""
           files=$(gh pr diff "${{ github.event.pull_request.number }}" --name-only)
@@ -231,7 +251,8 @@ jobs:
           fi
 
           for label in $labels; do
-            gh pr edit "${{ github.event.pull_request.number }}" --add-label "$label" 2>/dev/null || true
+            gh pr edit "${{ github.event.pull_request.number }}" --add-label "$label" \
+              || echo "::warning::label $label was not added"
           done
         env:
           GH_TOKEN: ${{ github.token }}
