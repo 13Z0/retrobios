@@ -3849,6 +3849,48 @@ def _held_accepted(discrepancy: str, db: dict | None) -> str:
     return ""
 
 
+_PROBLEM_HASHES = ("sha1", "md5", "sha256", "crc32")
+
+
+def _declared_hashes(config: dict, detail: dict) -> dict[str, list[str]]:
+    """The hashes the platform declares for a reported file, by algorithm.
+
+    The untested table said "declared hash contradicted by the local file"
+    and named neither: the reader could not look for the dump RetroDECK asks
+    for, nor report the difference.
+    """
+    from hashing import parse_hash_list  # noqa: PLC0415
+
+    system = (config.get("systems") or {}).get(detail.get("system", "")) or {}
+    for entry in system.get("files") or []:
+        if isinstance(entry, dict) and entry.get("name") == detail.get("name"):
+            return {
+                algo: parse_hash_list(entry.get(algo))
+                for algo in _PROBLEM_HASHES if parse_hash_list(entry.get(algo))
+            }
+    return {}
+
+
+def _hash_cell(hashes: dict[str, list[str]]) -> str:
+    return "<br>".join(
+        f"{algo} " + ", ".join(_code(v) for v in values) for algo, values in hashes.items()
+    )
+
+
+def _copy_cell(path: str, algos: list[str], db: dict | None) -> str:
+    """The file a path holds, with its hashes in the algorithms declared."""
+    if not path:
+        return "-"
+    record = next(
+        (rec | {"sha1": sha1} for sha1, rec in (db or {}).get("files", {}).items()
+         if rec.get("path") == path),
+        {},
+    )
+    hashes = {algo: [str(record[algo]).lower()] for algo in algos if record.get(algo)}
+    shown = f"[{_code(path)}]({_fetch_url(path)})"
+    return f"{shown}<br>{_hash_cell(hashes)}" if hashes else shown
+
+
 def _render_problem_files(
     platform_problems: list, settled: list | None = None, db: dict | None = None
 ) -> list[str]:
@@ -3877,9 +3919,14 @@ def _render_problem_files(
             if p["required"]:
                 entry["required"] = True
         elif p["status"] == "untested":
-            entry = untested_files.setdefault(fname, {
+            # Keyed by what is declared and what is held: two platforms
+            # asking two dumps under one name are two rows.
+            declared = p.get("declared") or {}
+            key = f"{fname}\0{sorted(declared.items())}\0{p.get('path', '')}"
+            entry = untested_files.setdefault(key, {
                 "name": fname, "required": p["required"],
                 "platforms": [], "reason": p["reason"],
+                "declared": declared, "path": p.get("path", ""),
             })
             entry["platforms"].append(p["platform"])
         if p.get("discrepancy"):
@@ -3920,15 +3967,21 @@ def _render_problem_files(
                 f'### Untested <span class="rb-badge rb-badge-warning">'
                 f"{_count(len(untested_files), 'file')}</span>",
                 "",
-                "Present but hash not verified.",
+                "Present but hash not verified. Declared is what the platform "
+                "asks for, the collection copy is what the path holds.",
                 "",
-                "| File | Platforms | Reason |",
-                "|------|----------|--------|",
+                "| File | Platforms | Reason | Declared | Collection copy |",
+                "|------|----------|--------|----------|-----------------|",
             ])
-            for fname in sorted(untested_files):
-                f = untested_files[fname]
+            for key in sorted(untested_files):
+                f = untested_files[key]
                 plats = ", ".join(sorted(set(f["platforms"])))
-                lines.append(f"| `{fname}` | {plats} | {f['reason']} |")
+                declared = f["declared"]
+                lines.append(
+                    f"| {_code(f['name'])} | {plats} | {f['reason']} "
+                    f"| {_hash_cell(declared) or '-'} "
+                    f"| {_copy_cell(f['path'], list(declared) or ['md5'], db)} |"
+                )
             lines.append("")
 
         if mismatch_files:
@@ -4026,6 +4079,8 @@ def generate_gap_analysis(
                     "reason": d.get("reason", ""),
                     "discrepancy": d.get("discrepancy", ""),
                     "system": d.get("system", ""),
+                    "declared": _declared_hashes(cov.get("config") or {}, d),
+                    "path": d.get("path") or "",
                 })
 
     pct_verified = (
