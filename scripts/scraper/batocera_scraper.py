@@ -444,7 +444,6 @@ class Scraper(BaseScraper):
         """Generate a platform YAML config dict from scraped data."""
         requirements = self.fetch_requirements()
 
-        # Parse source to extract display names per system
         raw = self._fetch_raw()
         source_dict = self._extract_systems_dict(raw)
         display_names: dict[str, str] = {}

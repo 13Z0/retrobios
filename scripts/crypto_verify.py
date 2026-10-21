@@ -250,7 +250,6 @@ def verify_secure_info_a(
     if serial == b"\x00" * 15:
         return False, "invalid: serial_number is all zeros"
 
-    # Get RSA keys
     rsa_keys = keys.get("RSA", {})
     modulus = rsa_keys.get("secureInfoMod")
     exponent = rsa_keys.get("secureInfoExp")

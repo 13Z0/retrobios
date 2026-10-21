@@ -212,11 +212,9 @@ def ecdsa_verify_sha256(
     if len(public_key_xy) != 60:
         return False
 
-    # Parse signature
     r = int.from_bytes(signature_rs[:30], "big")
     s = int.from_bytes(signature_rs[30:], "big")
 
-    # Parse public key
     qx = int.from_bytes(public_key_xy[:30], "big")
     qy = int.from_bytes(public_key_xy[30:], "big")
     q_point = (qx, qy)
@@ -225,21 +223,20 @@ def ecdsa_verify_sha256(
     if not (1 <= r < _N and 1 <= s < _N):
         return False
 
-    # Compute hash
     h = hashlib.sha256(message).digest()
     e = int.from_bytes(h, "big")
     # Truncate to bit length of n
     if 256 > _N_BITLEN:
         e >>= 256 - _N_BITLEN
 
-    # Compute w = s^(-1) mod n
+    # w = s^(-1) mod n
     w = _modinv(s, _N)
 
-    # Compute u1 = e*w mod n, u2 = r*w mod n
+    # u1 = e*w mod n, u2 = r*w mod n
     u1 = (e * w) % _N
     u2 = (r * w) % _N
 
-    # Compute R = u1*G + u2*Q
+    # R = u1*G + u2*Q
     g_point = (_Gx, _Gy)
     r_point = _ec_add(_ec_mul(u1, g_point), _ec_mul(u2, q_point))
 

@@ -3758,7 +3758,6 @@ def do_standalone_copies(
                     break
             continue
 
-        # Resolve source files
         if "pattern" in entry:
             sources = [
                 f for f in bios_path.rglob("*")
@@ -3774,7 +3773,7 @@ def do_standalone_copies(
         if not sources:
             continue
 
-        # Resolve target directories with WSL fallback
+        # WSL installs where Linux does unless the entry names WSL targets.
         targets = entry.get("targets", {}).get(os_type, [])
         if not targets and os_type == "wsl":
             targets = entry.get("targets", {}).get("linux", [])

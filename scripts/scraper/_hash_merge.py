@@ -443,7 +443,6 @@ def _patch_bios_entries(text: str, files: list[dict]) -> str:
     """
     import re
 
-    # Build a lookup of what to patch
     patches: dict[str, dict] = {}
     for fe in files:
         if fe.get("category") != "bios_zip":

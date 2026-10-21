@@ -6242,9 +6242,16 @@ class CommentsSayWhy(unittest.TestCase):
     REASON = re.compile(r"\b(for|only|so|because|if|when|unless|before|after)\b")
 
     def test_no_label_comment_restates_the_next_line(self):
+        """Three scripts were read, and 22 labels stood in 13 others."""
+        tracked = subprocess.run(
+            ["git", "ls-files", "--", "scripts/*.py", "scripts/**/*.py", "install.py"],
+            cwd=ROOT, capture_output=True, text=True, check=True,
+        ).stdout.split()
+        self.assertIn("install.py", tracked)
+        self.assertIn("scripts/scraper/mame_parser.py", tracked)
         found = []
-        for name in ("verify.py", "generate_site.py", "generate_truth.py"):
-            lines = (ROOT / "scripts" / name).read_text(encoding="utf-8").splitlines()
+        for name in sorted(set(tracked)):
+            lines = (ROOT / name).read_text(encoding="utf-8").splitlines()
             for index, line in enumerate(lines):
                 if not self.LABEL.match(line) or self.REASON.search(line):
                     continue

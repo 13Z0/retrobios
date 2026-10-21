@@ -263,7 +263,6 @@ def load_platform_config(platform_name: str, platforms_dir: str = "platforms") -
 
     config, chain = _inherited_yaml(platform_name, platforms_dir)
 
-    # Resolve shared group includes
     shared_path = os.path.join(platforms_dir, "_shared.yml")
     # Merge metadata from _registry.yml. The registry is our curated source,
     # while the scraped YAML may be incomplete (missing cores, metadata fields).

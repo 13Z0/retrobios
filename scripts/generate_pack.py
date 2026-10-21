@@ -993,7 +993,6 @@ def generate_pack(
                             agnostic_resolved = True
 
                     if agnostic_resolved and local_path:
-                        # Write rename README
                         original_name = os.path.basename(local_path)
                         dest_name = file_entry.get("name", "")
                         if original_name != dest_name and agnostic_path:
@@ -1537,7 +1536,6 @@ def generate_emulator_pack(
             if not files and not profile.get("data_directories"):
                 print(f"  No files needed for {profile.get('emulator', emu_name)}")
 
-            # Collect archives as atomic units
             archives: set[str] = set()
             for fe in files:
                 archive = fe.get("archive")
@@ -4103,7 +4101,6 @@ def generate_manifest(
 
     repo_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-    # Filter systems by target
     plat_cores = _platform_cores(config, emu_profiles) if target_cores else None
     pack_systems = filter_systems_by_target(
         config.get("systems", {}),

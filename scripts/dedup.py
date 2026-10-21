@@ -291,7 +291,6 @@ def deduplicate(bios_dir: str, dry_run: bool = False) -> dict:
     if not dry_run and empty_cleaned:
         print(f"Cleaned {empty_cleaned} empty directories")
 
-    # Write MAME clone mapping
     if mame_clones:
         # A group is only visible while both copies are on disk, and this run
         # has just deleted the clone. Writing only what was seen this time

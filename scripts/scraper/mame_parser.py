@@ -372,13 +372,12 @@ def _parse_rom_entries(block: str) -> list[dict]:
         ("rom_load", _ROM_LOAD),
     ]
 
-    # Collect all matches with their positions
     events: list[tuple[int, str, re.Match]] = []
     for tag, pat in token_patterns:
         for m in pat.finditer(block):
             events.append((m.start(), tag, m))
 
-    # Sort by position in block
+    # Walked in source order: a ROM_LOAD belongs to the last ROM_REGION above it.
     events.sort(key=lambda e: e[0])
 
     for _pos, tag, m in events:

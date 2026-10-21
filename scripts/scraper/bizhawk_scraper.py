@@ -214,7 +214,6 @@ def parse_firmware_database(
         r"\s*\)"
     )
 
-    # Collect firmware slots
     firmware_slots: dict[tuple[str, str], str] = {}
     for m in firmware_re.finditer(source):
         system, fw_id, desc = m.group(1), m.group(2), m.group(3)
@@ -252,7 +251,6 @@ def parse_firmware_database(
         slot_key = (system, fw_id)
         slot_options.setdefault(slot_key, []).append((file_entry, status))
 
-    # Build records from FirmwareAndOption one-liners
     records: list[dict] = []
 
     for m in fao_re.finditer(source):

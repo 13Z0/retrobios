@@ -706,7 +706,6 @@ def _cross_reference_profile(
 
         seen_files.add(seen_key)
 
-        # Group archived files by archive name
         if archive:
             archive_key = (
                 archive,
@@ -771,7 +770,6 @@ def _cross_reference_profile(
         }
         gaps.append(entry)
 
-    # Append grouped archive gaps
     for ag in sorted(archive_gaps.values(), key=lambda e: e["name"]):
         gaps.append(ag)
 
