@@ -986,11 +986,16 @@ def main() -> None:
     if args.platform:
         from common import load_target_config, resolve_platform_cores
 
-        target_cores = (
-            load_target_config(args.platform, args.target, args.platforms_dir)
-            if args.target
-            else None
-        )
+        try:
+            target_cores = (
+                load_target_config(args.platform, args.target, args.platforms_dir)
+                if args.target
+                else None
+            )
+        except (FileNotFoundError, ValueError) as exc:
+            # A typo ended in a traceback where verify and slots name the
+            # closest target.
+            parser.error(str(exc))
         config = load_platform_config(args.platform, args.platforms_dir)
         relevant = resolve_platform_cores(config, profiles, target_cores=target_cores)
         run_anywhere = (

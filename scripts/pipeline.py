@@ -382,7 +382,7 @@ def check_consistency(verify_output: str, pack_output: str) -> bool:
             all_ok = False
 
     status = "OK" if all_ok else "FAILED"
-    print(f"--- consistency check: {status} ---")
+    print(f"--- {step_title(STEP_LABELS['consistency'])}, counts: {status} ---")
     return all_ok
 
 
@@ -447,7 +447,7 @@ def check_pack_destinations(
     import json  # noqa: PLC0415
     import zipfile  # noqa: PLC0415
 
-    print("\n--- 5/8 consistency check: destinations ---")
+    print(f"\n--- {step_title(STEP_LABELS['consistency'])}, destinations ---")
     try:
         credited_by = json.loads(Path(destinations_file).read_text())
     except (OSError, ValueError) as exc:
@@ -506,7 +506,7 @@ def check_emulator_packs(
         select_emulator_profiles,
     )
 
-    print("\n--- 5/8 consistency check: emulator packs ---")
+    print(f"\n--- {step_title(STEP_LABELS['consistency'])}, emulator packs ---")
     db = load_database(db_path)
     zip_contents = build_zip_contents_index(db)
     profiles = load_emulator_profiles(emulators_dir, skip_aliases=False)
@@ -561,13 +561,18 @@ def _refuse_unapplied_flags(
     --all-variants builds every source itself, so a --source beside it is
     dropped; --skip-packs builds none, so both are.
     """
-    if args.all_variants and args.source != "full":
+    # --source defaults to None so a typed `--source full` is seen: compared
+    # with its default value, it went through beside the modes that refuse it.
+    source_given = args.source is not None
+    if args.all_variants and source_given:
         parser.error("--source is incompatible with --all-variants")
     if args.skip_packs:
-        for flag, on in (("--source", args.source != "full"),
+        for flag, on in (("--source", source_given),
                          ("--all-variants", args.all_variants)):
             if on:
                 parser.error(f"{flag} is incompatible with --skip-packs")
+    if args.source is None:
+        args.source = "full"
 
 
 def _truth_steps(args: argparse.Namespace, results: dict) -> bool:
@@ -662,9 +667,9 @@ def main() -> None:
     )
     parser.add_argument("--target", "-t", help="Hardware target (e.g., switch, rpi4)")
     parser.add_argument(
-        "--source", choices=["platform", "truth", "full"], default="full",
+        "--source", choices=["platform", "truth", "full"], default=None,
         help="packs to build: the platform list, the profiles, or both (default: "
-             "%(default)s)",
+             "full)",
     )
     parser.add_argument(
         "--all-variants", action="store_true",
@@ -724,7 +729,13 @@ def main() -> None:
     # `cores: [81]` unquoted passed the whole pipeline and failed CI on push.
     # jsonschema is tooling only, so its absence skips the step.
     if importlib.util.find_spec("jsonschema") is None:
-        skip_notice("validate_schemas", "jsonschema not installed")
+        # The skip names the install and what still runs the check, or a
+        # contributor read SKIPPED, then COMPLETE, and met the failure on push.
+        skip_notice(
+            "validate_schemas",
+            "jsonschema not installed. PR validation runs this check: "
+            'pip install "jsonschema[format-nongpl]"',
+        )
         results["validate_schemas"] = SKIPPED
     else:
         ok, _ = run(
@@ -1011,7 +1022,10 @@ def main() -> None:
         # Counts can agree while the paths differ, both ways at once.
         ok = check_pack_destinations(destinations_file, pack_output) and ok
         ok = check_emulator_packs() and ok
-        print(f"--- 5/8 consistency check, counts and paths: {'OK' if ok else 'FAILED'} ---")
+        print(
+            f"--- {step_title(STEP_LABELS['consistency'])}, counts and paths: "
+            f"{'OK' if ok else 'FAILED'} ---"
+        )
         results["consistency"] = ok
         all_ok = all_ok and ok
     else:

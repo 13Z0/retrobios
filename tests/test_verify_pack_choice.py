@@ -115,6 +115,30 @@ class VerifyPackChoice(unittest.TestCase):
         for name in names[1:]:
             self.assertIn(f"[{name}]: hashes checked during the build", printed)
 
+    def test_the_run_ends_on_a_summary(self):
+        """A failing pack was named only above its own error lines, and the
+        log ended on the last platform's OK line."""
+        import contextlib
+        import io
+
+        pack = f"{self.stem}_BIOS_Pack.zip"
+        self._touch(pack)
+        out, err = io.StringIO(), io.StringIO()
+        failed = (False, 0, 0, ["x: missing"], 1, 0, 1, 1, 0)
+        with mock.patch.object(self.gp, "verify_pack_against_platform",
+                               return_value=failed), \
+                contextlib.redirect_stdout(out), contextlib.redirect_stderr(err), \
+                self.assertRaises(SystemExit):
+            self.gp._run_verify_packs(self._args())
+        self.assertEqual(
+            err.getvalue().strip().splitlines()[-1],
+            f"ERROR: packs failed verification: retroarch ({pack})",
+        )
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            self._run(self._args())
+        self.assertEqual(out.getvalue().strip().splitlines()[-1], "Verified 1 pack: all OK")
+
     def test_include_archived_reaches_the_archived_pack(self):
         stem = self.gp._platform_pack_stem(["retropie"], "retropie", "platforms")
         self._touch(f"{stem}_BIOS_Pack.zip")

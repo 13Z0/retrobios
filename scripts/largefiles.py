@@ -98,7 +98,8 @@ def asset_candidates(name: str, registered: Iterable[str]) -> list[str]:
     """Assets that may hold *name*, a registered path or a bare file name.
 
     A bare name shared by several registered paths has one asset per path,
-    and the caller's hash tells them apart.
+    and the caller's hash tells them apart. A bare name no registered path
+    carries has none.
     """
     registered = list(registered)
     if "/" in name:
@@ -114,7 +115,10 @@ def asset_candidates(name: str, registered: Iterable[str]) -> list[str]:
         names[p] for p in sorted(names)
         if "/.variants/" in p and os.path.basename(p).startswith(name + ".")
     ]
-    return matches or [name]
+    # A bare name no registered path carries is no asset: .gitignore is the
+    # registry. Asking the release anyway cost a 404 per name on every
+    # online build and named an upload that never existed.
+    return matches
 
 
 def fetch_large_file(

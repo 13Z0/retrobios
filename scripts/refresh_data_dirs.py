@@ -578,7 +578,9 @@ def main() -> None:
     parser.add_argument(
         "--dry-run", action="store_true", help="Preview without downloading"
     )
-    parser.add_argument("--platform", type=platform_arg, help="Only refresh entries for this platform")
+    parser.add_argument(
+        "--platform", "-p", type=platform_arg, help="Only refresh entries for this platform"
+    )
     parser.add_argument(
         "--registry", default=DEFAULT_REGISTRY, help="Path to _data_dirs.yml"
     )

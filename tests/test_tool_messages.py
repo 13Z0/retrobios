@@ -145,6 +145,33 @@ class TheVerifySummaryCountsDiscrepancies(unittest.TestCase):
             self.assertIn(part, message)
 
 
+class OneSpellingPerOption(unittest.TestCase):
+    """verify.py -p batocera worked and slots.py -p batocera was refused."""
+
+    SHORT = {"--platform": "-p", "--target": "-t"}
+    # migrate.py's --target is the directory files move to, not a hardware target.
+    OTHER_MEANING = {("migrate.py", "--target")}
+
+    def test_every_script_takes_the_short_forms(self):
+        import ast  # noqa: PLC0415
+
+        missing = []
+        for path in sorted((REPO_ROOT / "scripts").rglob("*.py")):
+            tree = ast.parse(path.read_text(encoding="utf-8"))
+            for node in ast.walk(tree):
+                if not (isinstance(node, ast.Call)
+                        and getattr(node.func, "attr", None) == "add_argument"):
+                    continue
+                flags = [a.value for a in node.args
+                         if isinstance(a, ast.Constant) and isinstance(a.value, str)]
+                for long, short in self.SHORT.items():
+                    if (path.name, long) in self.OTHER_MEANING:
+                        continue
+                    if long in flags and short not in flags:
+                        missing.append(f"{path.relative_to(REPO_ROOT)}:{node.lineno} {long}")
+        self.assertEqual(missing, [])
+
+
 class ThePipelineCountsItsRealSteps(unittest.TestCase):
     """Labels read N/8 for a run of 24 steps, and the summary used keys
     the log never printed."""
@@ -167,11 +194,40 @@ class ThePipelineCountsItsRealSteps(unittest.TestCase):
                 # A step's own label, or a second command of a listed step.
                 self.assertIn(label.split(" ", 1)[0], numbers)
 
+    def test_no_title_counts_eight_steps(self):
+        """Three print() headers of step 5 still read "5/8" beside the
+        computed "5 consistency check [20/24]"."""
+        import re  # noqa: PLC0415
+
+        source = (REPO_ROOT / "scripts" / "pipeline.py").read_text(encoding="utf-8")
+        self.assertEqual(re.findall(r'"[^"\n]*---[^"\n]*\b\d+[a-z]?/\d+\b[^"\n]*"', source), [])
+
     def test_progress_comes_from_the_list(self):
         total = len(pipeline.STEP_LABELS)
         title = pipeline.step_title(pipeline.STEP_LABELS["render_site"])
         self.assertEqual(title, f"8b render site [{total}/{total}]")
         self.assertNotIn("/8", pipeline.step_title(pipeline.STEP_LABELS["verify"]))
+
+    def test_a_skipped_schema_check_says_how_to_run_it(self):
+        """Step 0 said only "jsonschema not installed", then the run read
+        COMPLETE and the schema failed in PR validation."""
+        argv = ["pipeline.py", "--offline", "--skip-packs", "--skip-docs"]
+        out = io.StringIO()
+        real_find_spec = pipeline.importlib.util.find_spec
+        with mock.patch.object(sys, "argv", argv), mock.patch.object(
+            pipeline, "run", return_value=(True, "")
+        ), mock.patch.object(
+            pipeline.importlib.util, "find_spec",
+            side_effect=lambda name, *a: None if name == "jsonschema"
+            else real_find_spec(name, *a),
+        ), contextlib.redirect_stdout(out), contextlib.suppress(SystemExit):
+            pipeline.main()
+        line = next(
+            row for row in out.getvalue().splitlines()
+            if "0 validate schemas" in row and "SKIPPED" in row
+        )
+        self.assertIn('pip install "jsonschema[format-nongpl]"', line)
+        self.assertIn("PR validation runs this check", line)
 
     def test_an_offline_buildbot_check_has_a_summary_row(self):
         argv = ["pipeline.py", "--offline", "--check-buildbot", "--skip-packs",

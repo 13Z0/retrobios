@@ -657,8 +657,11 @@ def load_target_config(
         # through, where a platform or emulator name gets the closest ones.
         raise ValueError(
             f"Unknown target '{target}' for platform '{platform_name}'.\n"
+            # Named as a full command: cross_reference.py and slots.py take
+            # --target but have no --list-targets of their own.
             + suggest_names(
-                [target], sorted(alias_index), "--list-targets", len(targets)
+                [target], sorted(alias_index),
+                f"verify.py --platform {platform_name} --list-targets", len(targets),
             )
         )
 

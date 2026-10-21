@@ -25,8 +25,6 @@ import re
 import shutil
 import sys
 import tempfile
-import urllib.error
-import urllib.request
 import zipfile
 from pathlib import Path
 
@@ -343,68 +341,6 @@ def _platform_pack_stem(
         for p in group_platforms
     ]
     return "_".join(_name_part(n) for n in names) + version_tag
-
-
-
-
-
-
-
-def download_external(file_entry: dict, dest_path: str) -> bool:
-    """Download an external BIOS file, verify hash, save to dest_path."""
-    url = file_entry.get("source_url")
-    if not url:
-        return False
-
-    sha256 = file_entry.get("sha256")
-    sha1 = file_entry.get("sha1")
-    md5 = file_entry.get("md5")
-
-    if not (sha256 or sha1 or md5):
-        print(
-            f"    WARNING: no hash for {file_entry['name']}, skipping unverifiable download"
-        )
-        return False
-
-    try:
-        req = urllib.request.Request(
-            url, headers={"User-Agent": "retrobios-pack-gen/1.0"}
-        )
-        with urllib.request.urlopen(req, timeout=120) as resp:
-            data = resp.read()
-    except urllib.error.URLError as e:
-        print(f"    WARNING: Failed to download {url}: {e}")
-        return False
-
-    if sha256:
-        actual = hashlib.sha256(data).hexdigest()
-        if actual != sha256:
-            print(f"    WARNING: SHA256 mismatch for {file_entry['name']}")
-            return False
-    elif sha1:
-        actual = hashlib.sha1(data).hexdigest()
-        if actual != sha1:
-            print(f"    WARNING: SHA1 mismatch for {file_entry['name']}")
-            return False
-    elif md5:
-        actual = hashlib.md5(data).hexdigest()
-        if actual != md5:
-            print(f"    WARNING: MD5 mismatch for {file_entry['name']}")
-            return False
-
-    os.makedirs(os.path.dirname(dest_path), exist_ok=True)
-    with open(dest_path, "wb") as f:
-        f.write(data)
-    return True
-
-
-
-
-
-
-
-
-
 
 
 # What the builder writes into a platform pack beside the files it carries.
@@ -952,7 +888,7 @@ def generate_pack(
                 if status == "external":
                     file_ext = os.path.splitext(file_entry["name"])[1] or ""
                     with tempfile.NamedTemporaryFile(
-                        delete=False, suffix=file_ext
+                        delete=False, suffix=file_ext, dir=packresolve.scratch_dir()
                     ) as tmp:
                         tmp_path = tmp.name
 
@@ -1707,7 +1643,7 @@ def generate_emulator_pack(
                 if how == "external":
                     file_ext = os.path.splitext(fe["name"])[1] or ""
                     with tempfile.NamedTemporaryFile(
-                        delete=False, suffix=file_ext
+                        delete=False, suffix=file_ext, dir=packresolve.scratch_dir()
                     ) as tmp:
                         tmp_path = tmp.name
                     try:
@@ -2152,6 +2088,11 @@ def generate_md5_pack(
                 plat_file_index.setdefault(alias.lower(), []).append(fe)
 
     context_name = plat_display if platform_name else (emu_display or "Custom")
+    # The selection mode is part of the name, as for --system: BizHawk is
+    # both a platform and a profile display name, and the two layouts
+    # (Firmware/ under the platform, the profile's paths under the core)
+    # wrote one file, the second run replacing the first without a word.
+    mode_part = "_Emulator" if emulator_name and not platform_name else ""
     # --standalone changes the destination layout, so a run with it must not
     # take the name of a run without it.
     custom_tags = "".join(
@@ -2166,7 +2107,8 @@ def generate_md5_pack(
         "\n".join(sorted(f"{kind}:{value.lower()}" for kind, value in hashes)).encode()
     ).hexdigest()[:8]
     zip_name = (
-        f"{_name_part(context_name, '_')}_Custom_{selection}{custom_tags}_BIOS_Pack.zip"
+        f"{_name_part(context_name, '_')}{mode_part}_Custom_{selection}{custom_tags}"
+        "_BIOS_Pack.zip"
     )
     zip_path = os.path.join(output_dir, zip_name)
     os.makedirs(output_dir, exist_ok=True)
@@ -2370,6 +2312,39 @@ def generate_target_manifests(targets_dir: str, output_dir: str) -> None:
     print(f"Generated {count} target manifest(s) in {output_dir}")
 
 
+def _refuse_unknown_systems(
+    system_filter: list[str],
+    platforms: list[str],
+    platforms_dir: str,
+    parser: argparse.ArgumentParser,
+) -> None:
+    """Refuse a --system no selected platform declares, before any work.
+
+    The name is known once the config is loaded. Checked inside the build, a
+    typo cost the lock and a refresh of every data directory first, then
+    ended on a WARNING and exit 1.
+    """
+    from common import _norm_system_id
+
+    wanted = {_norm_system_id(s) for s in system_filter}
+    declared: set[str] = set()
+    for name in platforms:
+        systems = load_platform_config(name, platforms_dir).get("systems", {})
+        if any(sid in system_filter or _norm_system_id(sid) in wanted for sid in systems):
+            return
+        declared.update(systems)
+    where = f"--platform {platforms[0]}" if len(platforms) == 1 else "--all"
+    hint = suggest_names(
+        system_filter,
+        sorted(declared),
+        f"--platform {platforms[0]} --list-systems" if len(platforms) == 1
+        else "--platform <name> --list-systems",
+    )
+    parser.error(
+        f"--system {','.join(system_filter)} matches no system of {where}. {hint}"
+    )
+
+
 def _refuse_for_verify_packs(args: argparse.Namespace, parser: argparse.ArgumentParser) -> None:
     """What --verify-packs cannot be combined with, refused before any lock.
 
@@ -2431,7 +2406,7 @@ def _validate_args(args: argparse.Namespace, parser: argparse.ArgumentParser) ->
         parser.error("--split requires --platform or --all")
     if args.split and has_emulator:
         parser.error("--split is incompatible with --emulator")
-    if args.group_by != "system" and not args.split:
+    if args.group_by is not None and not args.split:
         parser.error("--group-by requires --split")
     if args.target and not (has_platform or has_all):
         parser.error("--target requires --platform or --all")
@@ -2448,7 +2423,9 @@ def _validate_args(args: argparse.Namespace, parser: argparse.ArgumentParser) ->
     # A mode either applies a narrowing flag or refuses it. Swallowing one
     # answers about an artifact the caller did not ask for, and the name on
     # disk then asserts a narrowing the contents do not carry.
-    source_given = getattr(args, "source", "full") != "full"
+    # --source and --group-by default to None so a typed default value is
+    # seen: compared with "full", `--emulator X --source full` went through.
+    source_given = getattr(args, "source", None) is not None
     if source_given and (has_emulator or (has_system and not has_platform)):
         parser.error("--source requires --platform or --all")
     if has_from_md5:
@@ -2642,6 +2619,7 @@ def _run_verify_packs(args: argparse.Namespace) -> None:
     )
 
     verified = 0
+    failing: list[str] = []
     for platform_name in platforms:
         found = sorted(expected[platform_name] & on_disk)
         verified += len(found)
@@ -2655,6 +2633,7 @@ def _run_verify_packs(args: argparse.Namespace) -> None:
                     f"generate_pack.py --platform {platform_name} --output-dir {args.output_dir})"
                 )
                 all_ok = False
+                failing.append(f"{platform_name} (no pack)")
             else:
                 print(f"  {platform_name}: SKIP (no pack in {args.output_dir})")
             continue
@@ -2700,7 +2679,17 @@ def _run_verify_packs(args: argparse.Namespace) -> None:
                 for err in errors:
                     print(f"    {err}")
                 all_ok = False
+                failing.append(f"{platform_name} ({pack_name})")
 
+    if failing:
+        # Named at the end, where the log is read, and on stderr, as the
+        # build path does: a failing pack sat among its own error lines.
+        print(
+            f"ERROR: packs failed verification: {', '.join(failing)}",
+            file=sys.stderr,
+        )
+    elif verified:
+        print(f"Verified {verified} pack{'s' if verified != 1 else ''}: all OK")
     if not verified:
         # Every platform skipped is no check at all: a mistyped or purged
         # output directory read as a passed integrity check.
@@ -2918,7 +2907,7 @@ def _refuse_for_all_variants(args: argparse.Namespace, parser: argparse.Argument
     # or --required-only beside it would be overridden, and the modes that
     # build one pack (emulator, system, hashes) never read it.
     for flag, given in (
-        ("--source", args.source != "full"),
+        ("--source", args.source is not None),
         ("--required-only", args.required_only),
         ("--emulator", args.emulator),
         ("--from-md5", args.from_md5 or args.from_md5_file),
@@ -3027,7 +3016,7 @@ def _given_flags(args: argparse.Namespace) -> set[str]:
         "--system": args.system,
         "--standalone": args.standalone,
         "--split": args.split,
-        "--group-by": args.group_by != "system",
+        "--group-by": args.group_by is not None,
         "--manifest": args.manifest,
         "--manifest-targets": args.manifest_targets,
         "--verify-packs": args.verify_packs,
@@ -3035,7 +3024,7 @@ def _given_flags(args: argparse.Namespace) -> set[str]:
         "--from-md5": args.from_md5,
         "--from-md5-file": args.from_md5_file,
         "--required-only": args.required_only,
-        "--source": args.source != "full",
+        "--source": args.source is not None,
         "--target": args.target,
         "--region": args.region,
         "--one-per-slot": args.one_per_slot,
@@ -3140,9 +3129,9 @@ def _main(held: contextlib.ExitStack) -> None:
     parser.add_argument(
         "--source",
         choices=["platform", "truth", "full"],
-        default="full",
+        default=None,
         help="File source: platform (YAML only), truth (emulator profiles), full "
-             "(both)",
+             "(both, the default)",
     )
     parser.add_argument(
         "--all-variants",
@@ -3155,7 +3144,7 @@ def _main(held: contextlib.ExitStack) -> None:
     parser.add_argument(
         "--group-by",
         choices=["system", "manufacturer"],
-        default="system",
+        default=None,
         help="Grouping for --split (default: system)",
     )
     parser.add_argument("--target", "-t", help="Hardware target (e.g., switch, rpi4)")
@@ -3255,6 +3244,9 @@ def _main(held: contextlib.ExitStack) -> None:
         return
 
     _validate_args(args, parser)
+    # Unset until every refusal has run, so a typed default value is seen.
+    args.source = args.source or "full"
+    args.group_by = args.group_by or "system"
 
     # Hash lookup / pack mode
     # A platform run may refresh the trees below, under the exclusive lock:
@@ -3370,6 +3362,9 @@ def _main(held: contextlib.ExitStack) -> None:
     else:
         parser.error("Specify --platform or --all")
         return
+
+    if system_filter:
+        _refuse_unknown_systems(system_filter, platforms, args.platforms_dir, parser)
 
     data_registry = load_data_dir_registry(args.platforms_dir)
     # The output directory is claimed before the data directory refresh: a
@@ -4915,6 +4910,7 @@ from packresolve import (  # noqa: E402,F401
     parse_hash_file,
     lookup_hashes,
     resolve_file,
+    download_external,
 )
 
 if __name__ == "__main__":

@@ -378,6 +378,15 @@ class TestAnchorBlock(unittest.TestCase):
         self.assertEqual(result.status, "CHANGED")
         self.assertEqual(result.start, 3)
 
+    def test_rows_edited_in_place_keep_their_own_line(self):
+        rows = [f'{{"ipl{i}", 0x{i:02x}}}' for i in range(8)]
+        pin = ["a", "b", *rows, "z"]
+        head = ["a", "b", *[row + ", false" for row in rows], "z"]
+        for line in (3, 5, 10):
+            result = anchor_block(pin, head, line, line)
+            self.assertEqual(result.status, "CHANGED")
+            self.assertEqual(result.start, line)
+
     def test_gone_when_content_vanished(self):
         result = anchor_block(["a", "unique marker", "b"], ["x"] * 200, 2, 2)
         self.assertEqual(result.status, "GONE")
@@ -2014,12 +2023,41 @@ class TestExtrasSurviveARefusingForge(unittest.TestCase):
 
         upstream.fetch_file = refuse
         try:
+            report = _sample_report()
+            profile_sync._attach_detection(self._args(), self._profile(), report)
             buffer = io.StringIO()
             with contextlib.redirect_stdout(buffer):
-                profile_sync._print_extras(self._args(), self._profile(), _sample_report())
+                profile_sync._print_extras(self._args(), self._profile(), report)
         finally:
             upstream.fetch_file = original
+        self.assertEqual(report.detection_skipped, "https://x/y: HTTP 403")
         self.assertIn("extras skipped: https://x/y: HTTP 403", buffer.getvalue())
+
+    def test_detection_lands_on_the_report(self):
+        """A name the pinned file already carried is listed, but only a name
+        the pin did not carry is new since the pin."""
+        files = {
+            "pinsha0000": ['load("old.rom");'],
+            "headsha000": ['load("old.rom");', 'load("added.rom"); /* 0xdeadbeef */'],
+        }
+        original = upstream.fetch_file
+        upstream.fetch_file = lambda repo, rev, path, *a, **k: files[rev]
+        args = self._args()
+        args.watch_hashes = True
+        report = _sample_report()
+        try:
+            profile_sync._attach_detection(args, self._profile(), report)
+        finally:
+            upstream.fetch_file = original
+        by_name = {(i["path"], i["name"]): i["since_pin"] for i in report.new_files}
+        self.assertEqual(
+            by_name,
+            {("a.c", "old.rom"): False, ("a.c", "added.rom"): True,
+             ("b.c", "old.rom"): False, ("b.c", "added.rom"): True},
+        )
+        self.assertIn(
+            {"path": "a.c", "kind": "crc32", "value": "deadbeef"}, report.new_hashes
+        )
 
     def test_a_quota_signal_still_stops_the_pass(self):
         original = upstream.fetch_file
@@ -2030,7 +2068,9 @@ class TestExtrasSurviveARefusingForge(unittest.TestCase):
         upstream.fetch_file = quota
         try:
             with self.assertRaises(upstream.RateLimitError):
-                profile_sync._print_extras(self._args(), self._profile(), _sample_report())
+                profile_sync._attach_detection(
+                    self._args(), self._profile(), _sample_report()
+                )
         finally:
             upstream.fetch_file = original
 
@@ -4103,10 +4143,34 @@ class TestOutputModesApplyTheirFlags(unittest.TestCase):
         self.assertIn("clean", out)
         self.assertIn("prose under an older pin", out)
 
-    def test_extras_are_refused_with_json(self):
-        code, _, err = self._main("--json", "--detect-new-files")
+    def test_diffs_are_refused_with_json(self):
+        code, _, err = self._main("--json", "--full-diff")
+        self.assertEqual(code, 1)
+        self.assertIn("--full-diff", err)
+
+    def test_markdown_refuses_detection(self):
+        code, _, err = self._main("--markdown", "--detect-new-files")
         self.assertEqual(code, 1)
         self.assertIn("--detect-new-files", err)
+
+    def test_json_carries_detection(self):
+        """check_freshness reads --json: a new upstream file or hash printed
+        only in the text report stayed a human reading."""
+        from unittest import mock
+
+        def detect(args, profile, report):
+            report.new_files = [
+                {"path": "a.c", "line": 3, "name": "new.rom", "since_pin": True}
+            ]
+            report.new_hashes = [{"path": "a.c", "kind": "md5", "value": "0" * 32}]
+
+        with mock.patch.object(profile_sync, "_attach_detection", side_effect=detect):
+            code, out, err = self._main("--json", "--detect-new-files", "--watch-hashes")
+        self.assertEqual(code, 0, err)
+        rows = json.loads(out)
+        self.assertEqual(rows[0]["new_files"][0]["name"], "new.rom")
+        self.assertTrue(rows[0]["new_files"][0]["since_pin"])
+        self.assertEqual(rows[0]["new_hashes"][0]["kind"], "md5")
 
     def test_json_carries_the_version_check(self):
         """check_freshness asks for --json --check-version: refused, its
@@ -4334,6 +4398,27 @@ class TestSelectionNamesWhatMatchedNothing(unittest.TestCase):
     def test_a_matching_filter_selects(self):
         selected = profile_sync.select_profiles(self.PROFILES, self._args(system="atari-lynx"))
         self.assertEqual(sorted(selected), ["handy", "mednafen_lynx"])
+
+    def test_system_matches_as_the_listing_does(self):
+        """verify.py --list-systems printed `saturn`, which selected 1 profile
+        of 11 because 10 declare sega-saturn."""
+        profiles = {
+            "a": {"type": "libretro", "systems": ["sega-saturn"]},
+            "b": {"type": "libretro", "systems": ["saturn"]},
+        }
+        for spelling in ("saturn", "sega-saturn"):
+            selected = profile_sync.select_profiles(profiles, self._args(system=spelling))
+            self.assertEqual(sorted(selected), ["a", "b"])
+
+    def test_the_hint_counts_what_the_listing_prints(self):
+        profiles = {
+            "a": {"type": "libretro", "systems": ["sega-saturn"]},
+            "b": {"type": "libretro", "systems": ["saturn"]},
+            "c": {"type": "libretro", "systems": ["atari-lynx"]},
+        }
+        with self.assertRaises(SystemExit) as caught:
+            profile_sync.select_profiles(profiles, self._args(system="nothing"))
+        self.assertIn("Known: atari-lynx, sega-saturn.", str(caught.exception.code))
 
 
 

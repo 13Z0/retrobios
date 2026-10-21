@@ -530,8 +530,11 @@ reported as `RENAMED` so `--rebase-refs` cleans the profile.
 `--check-version` compares `core_version` with the latest upstream tag and
 release. `--detect-new-files` lists filename literals at HEAD the profile
 does not declare. `--watch-hashes` lists hash literals added upstream that
-match no entry. `--tree-diff` shows added, removed and renamed files in the
-directories the refs point at.
+match no entry. Both land in the `--json` report (`new_files`, with
+`since_pin` true for a name the pinned file did not carry, and
+`new_hashes`), which `check_freshness.py --profiles` reads: a name gained
+since the pin or an undeclared hash makes the profile stale. `--tree-diff`
+shows added, removed and renamed files in the directories the refs point at.
 
 Writes are explicit and mechanical only. `--backfill-commits` fills a
 missing `source_commit`, `--rebase-refs` recales `SHIFTED` and `RENAMED`

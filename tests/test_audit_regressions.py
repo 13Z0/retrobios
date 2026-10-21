@@ -3975,6 +3975,8 @@ class EveryToolRefusesAFlagItWouldDrop(unittest.TestCase):
             ["--offline", "--skip-packs", "--source", "truth"],
             ["--offline", "--skip-packs", "--all-variants"],
             ["--offline", "--all-variants", "--source", "platform"],
+            ["--offline", "--all-variants", "--source", "full"],
+            ["--offline", "--skip-packs", "--source", "full"],
         ],
     }
 
@@ -6484,6 +6486,136 @@ class CommentsSayWhy(unittest.TestCase):
                     continue
                 found.append(f"{name}:{index + 1}: {line.strip()}")
         self.assertEqual(found, [])
+
+
+class ExternalDownloadsFollowTheRunPolicy(unittest.TestCase):
+    """download_external lived outside packresolve and fetched under
+    --offline, into the system /tmp, holding the whole body in memory."""
+
+    ENTRY = {"name": "ext.bin", "source_url": "https://example.invalid/ext.bin",
+             "sha1": hashlib.sha1(b"payload").hexdigest()}
+
+    def _response(self, body: bytes):
+        stream = io.BytesIO(body)
+        response = mock.MagicMock()
+        response.__enter__.return_value = stream
+        response.__exit__.return_value = False
+        return response
+
+    def test_offline_never_reaches_the_network(self):
+        import packresolve
+
+        with tempfile.TemporaryDirectory() as tmp, \
+                mock.patch.object(packresolve.urllib.request, "urlopen") as urlopen, \
+                contextlib.redirect_stdout(io.StringIO()):
+            ok = packresolve.download_external(self.ENTRY, f"{tmp}/x", offline=True)
+        self.assertFalse(ok)
+        urlopen.assert_not_called()
+
+    def test_the_run_switch_is_inherited(self):
+        import packresolve
+
+        saved = packresolve._OFFLINE
+        packresolve.set_offline(True)
+        try:
+            with tempfile.TemporaryDirectory() as tmp, \
+                    mock.patch.object(packresolve.urllib.request, "urlopen") as urlopen, \
+                    contextlib.redirect_stdout(io.StringIO()):
+                self.assertFalse(packresolve.download_external(self.ENTRY, f"{tmp}/x"))
+            urlopen.assert_not_called()
+        finally:
+            packresolve.set_offline(saved)
+
+    def test_a_verified_body_lands_and_a_wrong_one_is_removed(self):
+        import packresolve
+
+        with tempfile.TemporaryDirectory() as tmp:
+            target = Path(tmp) / "x"
+            with mock.patch.object(packresolve.urllib.request, "urlopen",
+                                   return_value=self._response(b"payload")):
+                self.assertTrue(packresolve.download_external(self.ENTRY, str(target), offline=False))
+            self.assertEqual(target.read_bytes(), b"payload")
+            target.unlink()
+            with mock.patch.object(packresolve.urllib.request, "urlopen",
+                                   return_value=self._response(b"other")), \
+                    contextlib.redirect_stdout(io.StringIO()):
+                self.assertFalse(packresolve.download_external(self.ENTRY, str(target), offline=False))
+            self.assertFalse(target.exists())
+
+    def test_scratch_files_stay_in_the_repository(self):
+        source = (ROOT / "scripts" / "generate_pack.py").read_text(encoding="utf-8")
+        self.assertNotIn("def download_external", source)
+        self.assertNotIn("urlopen", source)
+        for call in re.findall(r"NamedTemporaryFile\(([^)]*)\)", source):
+            self.assertIn("dir=", call)
+
+
+class ATargetTypoIsAnErrorInEveryTool(unittest.TestCase):
+    """cross_reference.py ended a mistyped --target in a traceback, and the
+    hint sent cross_reference and slots users to a flag they do not have."""
+
+    def test_each_tool_names_the_closest_target(self):
+        for script in ("cross_reference.py", "slots.py", "verify.py"):
+            with self.subTest(script=script):
+                proc = subprocess.run(
+                    [sys.executable, f"scripts/{script}", "--platform", "retroarch",
+                     "--target", "swich"],
+                    cwd=ROOT, capture_output=True, text=True, timeout=300,
+                )
+                output = proc.stdout + proc.stderr
+                self.assertNotEqual(proc.returncode, 0)
+                self.assertNotIn("Traceback", output)
+                self.assertIn("Did you mean: switch?", output)
+                self.assertIn("verify.py --platform retroarch --list-targets", output)
+
+
+class AnUnknownSystemIsRefusedBeforeAnyWork(unittest.TestCase):
+    """generate_pack checked --system inside the build: a typo took the
+    output lock and refreshed every data directory, then ended on a WARNING."""
+
+    def test_refused_before_the_lock_and_the_refresh(self):
+        with tempfile.TemporaryDirectory(dir=ROOT / "tmp") as tmp:
+            out = Path(tmp) / "never"
+            with mock.patch.dict(os.environ, {"RETROBIOS_OFFLINE": ""}):
+                proc = subprocess.run(
+                    [sys.executable, "scripts/generate_pack.py", "--platform", "batocera",
+                     "--system", "playstaton-nothing", "--output-dir", str(out)],
+                    cwd=ROOT, capture_output=True, text=True, timeout=120,
+                )
+            self.assertEqual(proc.returncode, 2, proc.stdout + proc.stderr)
+            self.assertIn("error: --system playstaton-nothing matches no system", proc.stderr)
+            self.assertFalse(out.exists())
+
+    def test_a_known_system_passes_the_early_check(self):
+        import argparse
+
+        import generate_pack
+
+        parser = argparse.ArgumentParser()
+        generate_pack._refuse_unknown_systems(
+            ["sony-playstation"], ["retroarch"], str(ROOT / "platforms"), parser
+        )
+
+
+class NoArchiveRepeatsAMemberName(unittest.TestCase):
+    """s8k_cpu.zip held three member names twice (MAME reuses them across
+    two ROM_SYSTEM_BIOS of one device). Every pack build printed raw zipfile
+    warnings and Info-ZIP stops on an interactive replace? at extraction."""
+
+    def test_member_names_are_unique(self):
+        archives = sorted((ROOT / "bios").rglob("*.zip"))
+        if not archives:
+            self.skipTest("no archive under bios/")
+        repeated = []
+        for path in archives:
+            try:
+                with zipfile.ZipFile(path) as zf:
+                    names = zf.namelist()
+            except (zipfile.BadZipFile, OSError):
+                continue
+            if len(names) != len(set(names)):
+                repeated.append(str(path.relative_to(ROOT)))
+        self.assertEqual(repeated, [])
 
 
 if __name__ == "__main__":
