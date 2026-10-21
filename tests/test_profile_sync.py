@@ -4002,6 +4002,25 @@ class TestOutputModesApplyTheirFlags(unittest.TestCase):
             code, _, _ = self._main("--strict")
         self.assertEqual(code, 0)
 
+    def test_strict_fails_on_prose_that_blocks_the_pin(self):
+        """blastem read "0 to review" while its prose refused every bump."""
+        from unittest import mock
+
+        with tempfile.TemporaryDirectory() as tmp:
+            for name in ("clean", "drift"):
+                (Path(tmp) / f"{name}.yml").write_text("emulator: x\n")
+            stale = {"clean": ["read again: notes: a.c:5 (pin moved)"], "drift": []}
+            with mock.patch.object(
+                profile_sync, "realign_prose",
+                side_effect=lambda path, *a, **k: stale[path.stem],
+            ):
+                code, out, _ = self._main(
+                    "--changed-only", "--strict", "--emulators-dir", tmp,
+                )
+        self.assertEqual(code, 1)
+        self.assertIn("clean", out)
+        self.assertIn("prose under an older pin", out)
+
     def test_extras_are_refused_with_json(self):
         code, _, err = self._main("--json", "--check-version")
         self.assertEqual(code, 1)
@@ -4502,6 +4521,53 @@ class ARoleIsReadPerPart(unittest.TestCase):
         self.assertEqual(roles, [
             ("src/a.cpp", "source"), ("src/a.cpp", "source"), ("b.c", "upstream"),
         ])
+
+
+class TheTriageCountsWhatBlocksThePin(unittest.TestCase):
+    """Prose written under an older pin refuses the recale and the bump, yet
+    the triage, --changed-only and --strict read "0 to review" on blastem,
+    xenia-edge and lindbergh-loader. And one stderr notice per profile put
+    254 lines above an unlabelled ranking."""
+
+    def _report(self, name: str, paths: int, stale: list[str] | None = None):
+        entries = [
+            EntryReport(f"f{i}", f"d/{i}.c:1", "ANCHORED", [
+                PartResult(RefPart(f"d/{i}.c", 1, 1, "1"), "ANCHORED",
+                           None, None, None, [])
+            ])
+            for i in range(paths)
+        ]
+        return ProfileReport(
+            name=name, pin="p", head="h", entries=entries,
+            counts={"ANCHORED": paths}, stale_prose=stale,
+        )
+
+    def test_stale_prose_is_review_work(self):
+        report = self._report("b", 1, ["read again: notes: a.c:5 (pin moved)"])
+        self.assertEqual(report.needs_review(), 1)
+        self.assertIn("prose under an older pin", format_report(report))
+        self.assertEqual(report_to_dict(report)["needs_review"], 1)
+
+    def test_the_ranking_is_labelled_and_the_sampling_said_once(self):
+        reports = [
+            self._report("clean", 7),
+            self._report("stuck", 7, ["read again: notes: a.c:5 (pin moved)"]),
+        ]
+        selected = {r.name: {"source": "https://github.com/o/n"} for r in reports}
+        args = argparse.Namespace(cache_dir="unused", offline=True)
+        out, err = io.StringIO(), io.StringIO()
+        with mock.patch.object(profile_sync, "check_version", return_value=None), \
+                mock.patch.object(profile_sync.upstream, "commits_touching",
+                                  return_value=0), \
+                contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+            profile_sync._print_triage(args, selected, reports)
+        lines = out.getvalue().splitlines()
+        self.assertIn("profile", lines[0])
+        self.assertIn("stuck", lines[1])
+        self.assertIn("1 to review, 1 prose under an older pin", lines[1])
+        self.assertIn("0 to review", lines[2])
+        self.assertEqual(lines[-1], "2 profiles, 1 with something to review")
+        self.assertEqual(len(err.getvalue().splitlines()), 1, err.getvalue())
 
 
 if __name__ == "__main__":

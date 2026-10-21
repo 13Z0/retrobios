@@ -415,7 +415,15 @@ not declare, so no revision can confirm it), `UNCHECKED` (a pin equal to
 HEAD is judged on self-consistency, and an entry with neither a hash nor
 a name gives that check nothing to look for). An entry carries the worst
 status of its parts. Only `CHANGED`, `GONE` and `AMBIGUOUS` count as
-needing a re-read. A zero next to a row of `unchecked` is not a proof.
+needing a re-read, with each prose citation `--realign-prose` would move or
+refuse (written under an older pin, it holds the pin back). A zero next to
+a row of `unchecked` is not a proof.
+
+A part opening with `source` or `upstream`, in a source_ref or in prose,
+is read in that repository. The word belongs to the part, not to its path:
+one profile can cite the same file under both. `--triage` prints a header,
+ranks worst first and closes on the number of profiles with something to
+review.
 
 A single cited line is often not distinctive, so the anchor widens by
 steps of ±3, ±6, ±12, ±25 and ±50 lines until it is unique. Three further

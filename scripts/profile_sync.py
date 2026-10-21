@@ -945,6 +945,11 @@ class ProfileReport:
     page_version: str | None = None
     # An announced version searched for and found only rebuilt or re-signed.
     no_genuine_copy: str | None = None
+    # What realign_prose has to settle before a recale or a bump can run:
+    # prose written under an older pin. None when not looked at. Counted to
+    # review, or the triage read "0 to review" on a profile whose pin could
+    # not move (blastem, xenia-edge, lindbergh-loader).
+    stale_prose: list[str] | None = None
 
     # Skips that say the profile cannot be checked as written: a repository
     # that no longer answers, no pin to read, a death the forge contradicts.
@@ -963,8 +968,10 @@ class ProfileReport:
 
     def needs_review(self) -> int:
         counts = self.counts or {}
-        return sum(counts.get(status, 0) for status in REVIEW_STATUSES) + len(
-            self.orphaned
+        return (
+            sum(counts.get(status, 0) for status in REVIEW_STATUSES)
+            + len(self.orphaned)
+            + len(self.stale_prose or ())
         )
 
 
@@ -1964,6 +1971,8 @@ def format_report(report: ProfileReport, changed_only: bool = False) -> str:
         f"{count} {status.lower()}" for status, count in sorted(report.counts.items())
     )
     lines.append(f"  {len(report.entries)} refs: {summary}")
+    for line in report.stale_prose or ():
+        lines.append(f"  prose under an older pin: {line}")
     lines.append(f"  {report.needs_review()} to review")
     return "\n".join(lines)
 
@@ -2200,6 +2209,12 @@ def drift_score(
     """Rank profiles by how far they have drifted from their pin."""
     counts = report.counts or {}
     score = sum(DRIFT_WEIGHTS.get(k, 0) * v for k, v in counts.items())
+    # Prose a reader has to settle weighs as an ambiguous ref, prose
+    # --realign-prose moves by itself as a shifted one.
+    score += sum(
+        DRIFT_WEIGHTS["SHIFTED" if line.startswith("would recale") else "AMBIGUOUS"]
+        for line in report.stale_prose or ()
+    )
     if version is not None and not version.tag_matches_declared:
         if version.latest_release and version.latest_release != version.declared:
             score += 10
@@ -3490,14 +3505,21 @@ def _check_quota(count: int, offline: bool) -> None:
         raise SystemExit(1)
 
 
-def _stale_prose_blocks(name: str, path: Path, args: argparse.Namespace) -> bool:
+def _stale_prose_blocks(
+    name: str, path: Path, args: argparse.Namespace,
+    known: list[str] | None = None,
+) -> bool:
     """Whether prose written under an older pin has to move first.
 
     Anchored from the current pin, a recale or a bump follows someone else's
     code (boom3 FileSystem.cpp:2125, written at b810234e, an unrelated
     OpenFileRead at 132dfddb). It moves first, from the pin it was written at.
+    `known` is the answer the report already holds for the same text.
     """
-    stale = realign_prose(path, args.cache_dir, args.offline, dry_run=True)
+    stale = (
+        known if known is not None
+        else realign_prose(path, args.cache_dir, args.offline, dry_run=True)
+    )
     if stale:
         print(
             f"{name}: {len(stale)} prose citation(s) written under an older pin; "
@@ -3505,6 +3527,28 @@ def _stale_prose_blocks(name: str, path: Path, args: argparse.Namespace) -> bool
             file=sys.stderr,
         )
     return bool(stale)
+
+
+def _read_stale_prose(
+    name: str, path: Path, args: argparse.Namespace, failed: set[str]
+) -> list[str]:
+    """What --realign-prose would do or refuse on this profile, as a report.
+
+    Read on every pass, not only before a write: prose that blocks the pin
+    is review work whether or not this run tries to move it.
+    """
+    try:
+        return realign_prose(path, args.cache_dir, args.offline, dry_run=True)
+    except upstream.RateLimitError:
+        raise
+    except upstream.NotCachedError as exc:
+        # Unread offline, as a report is: not clean, and not a failure.
+        return [f"not read offline: {exc}"]
+    except upstream.UpstreamError as exc:
+        # Not read is not clean: the bump would refuse on the same error.
+        print(f"{name}: prose not read, {exc}", file=sys.stderr)
+        failed.add(name)
+        return [f"not read: {exc}"]
 
 
 def _backfill(
@@ -3540,7 +3584,11 @@ def _apply_writes(
             if not args.dry_run:
                 path.write_bytes(target.read_bytes())
         return
-    if not (args.rebase_refs or args.bump_commit) or _stale_prose_blocks(name, path, args):
+    # A backfill has just written a pin: the report's reading predates it.
+    known = None if args.backfill_commits else report.stale_prose
+    if not (args.rebase_refs or args.bump_commit) or _stale_prose_blocks(
+        name, path, args, known
+    ):
         return
     with tempfile.TemporaryDirectory() as scratch:
         # Always work on a copy. A dry run reports what it left there, a real
@@ -3706,6 +3754,7 @@ def _print_triage(
 ) -> None:
     """Profiles ranked by drift, worst first."""
     ranked = []
+    sampled = 0
     for report in reports:
         profile = selected[report.name]
         version = None
@@ -3727,20 +3776,31 @@ def _print_triage(
                 refused = "commit history unreachable"
                 print(f"{report.name}: {exc}", file=sys.stderr)
             if len(paths) > TRIAGE_PATH_SAMPLE and not refused:
-                print(
-                    f"{report.name}: commit count sampled on "
-                    f"{TRIAGE_PATH_SAMPLE} of {len(paths)} paths",
-                    file=sys.stderr,
-                )
+                sampled += 1
         ranked.append((drift_score(report, version, commits), report, refused))
+    if sampled:
+        # One line for the run: a notice per profile buried the ranking
+        # under 254 lines of stderr.
+        print(
+            f"commit count sampled on {TRIAGE_PATH_SAMPLE} cited paths for "
+            f"{sampled} profiles citing more",
+            file=sys.stderr,
+        )
+    print(f"{'score':>5s}  {'profile':30s}  state (worst first)")
+    pending = 0
     for score, report, refused in sorted(ranked, key=lambda item: -item[0]):
         state = report.skipped or f"{report.needs_review()} to review"
+        stale = len(report.stale_prose or ())
+        if stale and not report.skipped:
+            state += f", {stale} prose under an older pin"
         unchecked = (report.counts or {}).get("UNCHECKED", 0)
         if unchecked and not report.skipped:
             state += f", {unchecked} unchecked"
         if refused:
             state += f", {refused}"
+        pending += bool(report.needs_review())
         print(f"{score:5d}  {report.name:30s}  {state}")
+    print(f"{len(ranked)} profiles, {pending} with something to review")
 
 
 def _refuse_flag_combinations(args: argparse.Namespace) -> None:
@@ -3895,6 +3955,8 @@ def main() -> None:
                 name=name, entries=[], counts={}, skipped=f"upstream error: {exc}"
             )
             failed.add(name)
+        if not report.skipped and profile_path.is_file():
+            report.stale_prose = _read_stale_prose(name, profile_path, args, failed)
         if args.check_version and profile.get("version_source"):
             report.declared_version = str(profile.get("core_version") or "") or None
             report.page_version = page_version(profile, args.cache_dir, args.offline)
