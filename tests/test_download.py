@@ -632,5 +632,52 @@ class AProgressBarOnlyOnATerminal(unittest.TestCase):
         self.assertEqual(out.getvalue().count("\n"), 1)
 
 
+class TheShellDownloaderSendsTheToken(unittest.TestCase):
+    """download.py sent GITHUB_TOKEN to the API and download.sh did not, so
+    past the anonymous quota the shell twin failed with 403 where the Python
+    one succeeded. A curl stand-in records what each call carries."""
+
+    def _calls(self, **env: str) -> str:
+        scratch = Path(_tempdir(self))
+        log = scratch / "calls.log"
+        fake = scratch / "curl"
+        fake.write_text(
+            "#!/bin/sh\n"
+            f'printf "%s\\n" "$*" >> "{log}"\n'
+            'case "$*" in *"-H @-"*) cat >> "' + str(log) + '" ;; esac\n'
+            "printf '{}'\n",
+            encoding="utf-8",
+        )
+        fake.chmod(0o755)
+        base = {k: v for k, v in os.environ.items()
+                if k not in ("GITHUB_TOKEN", "RETROBIOS_API")}
+        proc = subprocess.run(
+            ["bash", str(SHELL), "--list"],
+            env={**base, "PATH": f"{scratch}{os.pathsep}{os.environ['PATH']}", **env},
+            capture_output=True, text=True, timeout=60, check=False,
+        )
+        self.assertEqual(proc.returncode, 0, proc.stderr)
+        return log.read_text(encoding="utf-8")
+
+    def test_the_api_call_carries_the_token(self):
+        calls = self._calls(GITHUB_TOKEN="sekrit")
+        self.assertIn("Authorization: Bearer sekrit", calls)
+        self.assertIn("api.github.com/repos/", calls)
+
+    def test_the_token_stays_out_of_the_command_line(self):
+        calls = self._calls(GITHUB_TOKEN="sekrit")
+        command = calls.splitlines()[0]
+        self.assertNotIn("sekrit", command)
+
+    def test_another_host_never_receives_it(self):
+        calls = self._calls(
+            GITHUB_TOKEN="sekrit", RETROBIOS_API="https://mirror.example"
+        )
+        self.assertNotIn("sekrit", calls)
+
+    def test_no_token_sends_no_header(self):
+        self.assertNotIn("Authorization", self._calls())
+
+
 if __name__ == "__main__":
     unittest.main()

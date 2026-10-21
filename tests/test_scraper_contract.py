@@ -657,10 +657,11 @@ class EveryGitHubApiCallerSendsTheToken(unittest.TestCase):
     refresh_stale had put a token in their environment."""
 
     def test_each_module_naming_the_api_reads_the_token(self):
+        # download.sh is download.py's twin and called the API bare.
         scripts = Path(__file__).resolve().parent.parent / "scripts"
         silent = sorted(
             str(path.relative_to(scripts))
-            for path in scripts.rglob("*.py")
+            for path in [*scripts.rglob("*.py"), *scripts.rglob("*.sh")]
             if "api.github.com" in (source := path.read_text(encoding="utf-8"))
             and "GITHUB_TOKEN" not in source
             and "github_headers(" not in source
