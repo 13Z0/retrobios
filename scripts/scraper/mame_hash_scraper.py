@@ -62,7 +62,7 @@ def _load_cache() -> dict[str, Any] | None:
 
 
 def _is_stale(cache: dict[str, Any] | None) -> bool:
-    if cache is None:
+    if cache is None or not cache.get("bios_sets"):
         return True
     fetched_at = cache.get("fetched_at")
     if not fetched_at:
@@ -292,6 +292,11 @@ def _fetch_hashes(force: bool) -> dict[str, Any]:
         bios_sets = parse_mame_source_tree(str(_CLONE_DIR))
         version = _parse_version_tag(tag)
         commit = _get_commit()
+        if not bios_sets or not commit:
+            # An empty read was cached for a day and every profile entry
+            # came out "out of scope", so nothing was refreshed and the
+            # pipeline step reported OK.
+            raise RuntimeError(f"no BIOS root set read at {tag}")
 
         data: dict[str, Any] = {
             "source": "mamedev/mame",

@@ -880,5 +880,66 @@ class OneNativeIdOneSystem(unittest.TestCase):
                 ids = {_norm_system_id(s) for s in data["systems"]}
                 self.assertEqual(wanted & ids & machines, wanted)
 
+
+class HashScraperRefusesAnEmptyRead(unittest.TestCase):
+    """A source tree that yields no BIOS set is never cached as a result.
+
+    Cached, it was served for a day: every profile entry came out "out of
+    scope", nothing was refreshed and pipeline steps 2a and 2a2 said OK.
+    """
+
+    def _fresh(self, sets: dict) -> dict:
+        from datetime import datetime, timezone  # noqa: PLC0415
+
+        return {"fetched_at": datetime.now(timezone.utc).isoformat(),
+                "commit": "abc", "bios_sets": sets}
+
+    def test_mame_raises_and_writes_no_cache(self):
+        from scraper import mame_hash_scraper as m  # noqa: PLC0415
+
+        with tempfile.TemporaryDirectory() as tmp:
+            cache = Path(tmp) / "mame-hashes.json"
+            with mock.patch.object(m, "_CACHE_PATH", cache), \
+                    mock.patch.object(m, "_get_release_tag", return_value="mame0289"), \
+                    mock.patch.object(m, "_sparse_clone"), \
+                    mock.patch.object(m, "_cleanup"), \
+                    mock.patch.object(m, "_get_commit", return_value="abc"), \
+                    mock.patch.object(m, "parse_mame_source_tree", return_value={}):
+                with self.assertRaises(RuntimeError):
+                    m._fetch_hashes(force=True)
+            self.assertFalse(cache.exists())
+
+    def test_mame_does_not_serve_an_empty_cache(self):
+        from scraper import mame_hash_scraper as m  # noqa: PLC0415
+
+        self.assertTrue(m._is_stale(self._fresh({})))
+        self.assertFalse(m._is_stale(self._fresh({"neogeo": {}})))
+
+    def test_fbneo_raises_and_writes_no_cache(self):
+        from scraper import fbneo_hash_scraper as f  # noqa: PLC0415
+
+        with tempfile.TemporaryDirectory() as tmp:
+            cache = Path(tmp) / "fbneo-hashes.json"
+            with mock.patch.object(f, "CACHE_PATH", cache), \
+                    mock.patch.object(f, "_sparse_clone"), \
+                    mock.patch.object(f, "_cleanup"), \
+                    mock.patch.object(f, "_extract_version", return_value=("v1.0.0.03", "abc")), \
+                    mock.patch.object(f, "parse_fbneo_source_tree", return_value={}):
+                with self.assertRaises(RuntimeError):
+                    f.fetch_and_cache(force=True)
+            self.assertFalse(cache.exists())
+
+    def test_fbneo_does_not_serve_an_empty_cache(self):
+        from scraper import fbneo_hash_scraper as f  # noqa: PLC0415
+
+        with tempfile.TemporaryDirectory() as tmp:
+            cache = Path(tmp) / "fbneo-hashes.json"
+            with mock.patch.object(f, "CACHE_PATH", cache):
+                cache.write_text(json.dumps(self._fresh({})))
+                self.assertFalse(f._is_cache_fresh())
+                cache.write_text(json.dumps(self._fresh({"neogeo": {}})))
+                self.assertTrue(f._is_cache_fresh())
+
+
 if __name__ == "__main__":
     unittest.main()
