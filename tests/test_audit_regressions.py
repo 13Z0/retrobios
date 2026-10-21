@@ -166,6 +166,27 @@ class ReadmeRegressions(unittest.TestCase):
         self.assertEqual(failed, {})
 
 
+class AModuleRunAloneHasItsScratchDirectory(unittest.TestCase):
+    """About forty modules write under tmp/, which git does not track. Only
+    three created it, as an import side effect, so a module run alone on a
+    fresh clone raised FileNotFoundError. The test package creates it."""
+
+    def test_importing_the_package_creates_tmp(self):
+        with tempfile.TemporaryDirectory(dir=TMP_ROOT) as directory:
+            clone = Path(directory)
+            (clone / "tests").mkdir()
+            (clone / "tests" / "__init__.py").write_bytes(
+                (ROOT / "tests" / "__init__.py").read_bytes()
+            )
+            proc = subprocess.run(
+                [sys.executable, "-I", "-c",
+                 "import sys; sys.path.insert(0, '.'); import tests"],
+                cwd=clone, capture_output=True, text=True, timeout=60, check=False,
+            )
+            self.assertEqual(proc.returncode, 0, proc.stderr)
+            self.assertTrue((clone / "tmp" / "tests").is_dir())
+
+
 class ReleaseSigningRegressions(unittest.TestCase):
     """A checksum list published beside its own artifacts proves nothing.
 
