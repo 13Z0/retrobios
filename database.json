@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-21T04:49:38Z",
-  "total_files": 19528,
-  "total_size": 16788657442,
+  "generated_at": "2026-10-21T05:32:20Z",
+  "total_files": 19526,
+  "total_size": 16788241959,
   "bios_dir": "bios",
   "files": {
     "738c7f5fd0c8b57ee2e87ae7a97bf8e21a821d07": {
@@ -147467,16 +147467,6 @@
       "crc32": "94687e89",
       "adler32": "56251282"
     },
-    "6f730abe0d76161336f09229f54e9f9ac7619d63": {
-      "path": "bios/Other/mame4droid-2024/plugins/hiscore/hiscore.dat",
-      "name": "hiscore.dat",
-      "size": 333070,
-      "sha1": "6f730abe0d76161336f09229f54e9f9ac7619d63",
-      "md5": "1dcb41f0885ab1f1c8a09af5351ea556",
-      "sha256": "f272f11991d4370e8495dbaee78dafd7c52932265ad12ca4a45ebd6cf940ce54",
-      "crc32": "fb866c5c",
-      "adler32": "fe50f11e"
-    },
     "51cc84e2cbd9bd61d50a0931cdae0a2ef0a57d6c": {
       "path": "bios/Other/mariani/A2_DOS33.SYM2",
       "name": "A2_DOS33.SYM2",
@@ -157234,16 +157224,6 @@
           "description": "[BIOS] Game Genie (USA, Europe) (Unl)"
         }
       }
-    },
-    "4c1d58f7c1830694933e472ec1289060f7083fa9": {
-      "path": "bios/Other/raine/hiscore.dat",
-      "name": "hiscore.dat",
-      "size": 82413,
-      "sha1": "4c1d58f7c1830694933e472ec1289060f7083fa9",
-      "md5": "c996961db77b48b54a2daa3cda12da0d",
-      "sha256": "17b7b2424c984531b770571f958e71a9d0bbb578cd0f16c7a1a9ecacccd1140d",
-      "crc32": "fa987c32",
-      "adler32": "c8714744"
     },
     "a44f65d6318582501d22e27831eb2b1f0df58f79": {
       "path": "bios/Other/rpix86/4DOS.COM",
@@ -214976,7 +214956,6 @@
       "01fd7e0102b2ffdbe2d781eca0162a78": "d11a9f5eb62ac9382faeabb53926c0b10788cefd",
       "111ccf43b36893fcf4e456ea7de72f3a": "33991a884bdf2131475058cddf535a457ce50233",
       "615619e89122a6374a794d324d012b12": "461eb3301dcc796362094fac901a307b29e7024b",
-      "1dcb41f0885ab1f1c8a09af5351ea556": "6f730abe0d76161336f09229f54e9f9ac7619d63",
       "88bd69906b4b3109b3f31472fb4b47f4": "51cc84e2cbd9bd61d50a0931cdae0a2ef0a57d6c",
       "346bc782c6a08a531c460e33bc03daf4": "61fa9254628e5bb7236fb474006116d67684d747",
       "352fdbcae14c6a8c0398822c7a273309": "f1c779af480b5bda2bdd03950c1201a5c5143bea",
@@ -215950,7 +215929,6 @@
       "0fbe73839da5b944a049715c35410896": "39c950a136786402f02e7321e8b0672bbb49840c",
       "dc9b1b5be4f7df13729ef825e68c3239": "883a1a8d38a26c609273092c97756999006228b7",
       "8d699c97d164d406c2912aece164cd32": "aaa9833c3de2213f2b0326769b715651fd13fd84",
-      "c996961db77b48b54a2daa3cda12da0d": "4c1d58f7c1830694933e472ec1289060f7083fa9",
       "fc3a0078a13d98e611a62c1d6724f8c5": "a44f65d6318582501d22e27831eb2b1f0df58f79",
       "76a2309db9eef5b633c6ebc0243c6a23": "321262242e15dff4bc1f843011ac370e6943d6e3",
       "2f1bdc689878416c12190513ef4ff64f": "6393396eaa10a84b9e9f0cf5930aba73defc5c52",
@@ -220530,9 +220508,7 @@
         "1a2b8740f4672fd9668bfa6f648bb34f4339afb6",
         "f247f8a80c7669df564cf1ac6f42c8100caa406c",
         "579e39c51dc8e72a9389db683802e3dc7de44ab4",
-        "d38572d22721eb5972f671cde54201d752dffe6b",
-        "6f730abe0d76161336f09229f54e9f9ac7619d63",
-        "4c1d58f7c1830694933e472ec1289060f7083fa9"
+        "d38572d22721eb5972f671cde54201d752dffe6b"
       ],
       "hod2bios.zip": [
         "782c303cbdfab1027b04db74a63e27bdad5e0c53",
@@ -291342,7 +291318,6 @@
       "ef56ccf2": "d11a9f5eb62ac9382faeabb53926c0b10788cefd",
       "2c4b2ed4": "33991a884bdf2131475058cddf535a457ce50233",
       "94687e89": "461eb3301dcc796362094fac901a307b29e7024b",
-      "fb866c5c": "6f730abe0d76161336f09229f54e9f9ac7619d63",
       "d7fce7b9": "51cc84e2cbd9bd61d50a0931cdae0a2ef0a57d6c",
       "281592e5": "61fa9254628e5bb7236fb474006116d67684d747",
       "40ad9664": "f1c779af480b5bda2bdd03950c1201a5c5143bea",
@@ -292316,7 +292291,6 @@
       "8769ba00": "39c950a136786402f02e7321e8b0672bbb49840c",
       "7fc967f2": "883a1a8d38a26c609273092c97756999006228b7",
       "1a3a22a1": "aaa9833c3de2213f2b0326769b715651fd13fd84",
-      "fa987c32": "4c1d58f7c1830694933e472ec1289060f7083fa9",
       "8300d4cb": "a44f65d6318582501d22e27831eb2b1f0df58f79",
       "df8ab696": "321262242e15dff4bc1f843011ac370e6943d6e3",
       "3a738aa9": "6393396eaa10a84b9e9f0cf5930aba73defc5c52",
@@ -310871,7 +310845,6 @@
       "ef94fa078d9a451ede98565ed953d3dd6e43a4135b9ca1abcd95172070c85dc4": "d11a9f5eb62ac9382faeabb53926c0b10788cefd",
       "367d8ed92cab8ceba681077eb497497dd7efe0ce451b56dfc7f277c6e120d8bc": "33991a884bdf2131475058cddf535a457ce50233",
       "9026af08979a8a1e40390f61d91267d0a3dc9676fe86765ccd2060be0d3d146f": "461eb3301dcc796362094fac901a307b29e7024b",
-      "f272f11991d4370e8495dbaee78dafd7c52932265ad12ca4a45ebd6cf940ce54": "6f730abe0d76161336f09229f54e9f9ac7619d63",
       "962887daa1168cceb655e9252d31096fac29fdf2cd8e96c10a825033b0b8b8a5": "51cc84e2cbd9bd61d50a0931cdae0a2ef0a57d6c",
       "1fb812584c6633fa16b77b20915986ed1178d1e6fc07a647f7ee8d4e6ab9d40b": "61fa9254628e5bb7236fb474006116d67684d747",
       "74915101a636d92a1505ba6d61ecd9e6226c03577cd61f5ba194cc9cd559016f": "f1c779af480b5bda2bdd03950c1201a5c5143bea",
@@ -311845,7 +311818,6 @@
       "d072cb0a5c3f47cd96fe021c70aec02cdd944a34c99e83b0c1f318f32c9b9c98": "39c950a136786402f02e7321e8b0672bbb49840c",
       "00c23cba41b1f225f53e074ac22818341b06e162351c9b15107dc70252895709": "883a1a8d38a26c609273092c97756999006228b7",
       "503ed886914c5ae1ec0b256515a6b0248f4b27cf78cb7b86fc438410420cdb87": "aaa9833c3de2213f2b0326769b715651fd13fd84",
-      "17b7b2424c984531b770571f958e71a9d0bbb578cd0f16c7a1a9ecacccd1140d": "4c1d58f7c1830694933e472ec1289060f7083fa9",
       "727966e19c97c142633b6b00d4e52c4d87e4f9e3d167a6ea04651443832c8e81": "a44f65d6318582501d22e27831eb2b1f0df58f79",
       "010fd04e1a7b48583685a5554f12ecff8db681c926caa1814f148d552ca53708": "321262242e15dff4bc1f843011ac370e6943d6e3",
       "6c1e5d5ccd280ee01d9f852b60ddec07e719a45699a6220eabd50df9999632c6": "6393396eaa10a84b9e9f0cf5930aba73defc5c52",
@@ -489327,12 +489299,10 @@
         "579e39c51dc8e72a9389db683802e3dc7de44ab4"
       ],
       "plugins/hiscore/hiscore.dat": [
-        "579e39c51dc8e72a9389db683802e3dc7de44ab4",
-        "6f730abe0d76161336f09229f54e9f9ac7619d63"
+        "579e39c51dc8e72a9389db683802e3dc7de44ab4"
       ],
       "hiscore/hiscore.dat": [
-        "579e39c51dc8e72a9389db683802e3dc7de44ab4",
-        "6f730abe0d76161336f09229f54e9f9ac7619d63"
+        "579e39c51dc8e72a9389db683802e3dc7de44ab4"
       ],
       "Other/mame/plugins/hiscore/init.lua": [
         "e4aa6becceb185f44200b14426e964a5c65e82c1"
@@ -489924,12 +489894,6 @@
       ],
       ".variants/history.db.615619e8": [
         "461eb3301dcc796362094fac901a307b29e7024b"
-      ],
-      "Other/mame4droid-2024/plugins/hiscore/hiscore.dat": [
-        "6f730abe0d76161336f09229f54e9f9ac7619d63"
-      ],
-      "mame4droid-2024/plugins/hiscore/hiscore.dat": [
-        "6f730abe0d76161336f09229f54e9f9ac7619d63"
       ],
       "Other/mariani/A2_DOS33.SYM2": [
         "51cc84e2cbd9bd61d50a0931cdae0a2ef0a57d6c"
@@ -501155,12 +501119,6 @@
       ],
       "punes/gamegenie.rom": [
         "aaa9833c3de2213f2b0326769b715651fd13fd84"
-      ],
-      "Other/raine/hiscore.dat": [
-        "4c1d58f7c1830694933e472ec1289060f7083fa9"
-      ],
-      "raine/hiscore.dat": [
-        "4c1d58f7c1830694933e472ec1289060f7083fa9"
       ],
       "Other/rpix86/4DOS.COM": [
         "a44f65d6318582501d22e27831eb2b1f0df58f79"
