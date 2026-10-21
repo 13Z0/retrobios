@@ -1048,6 +1048,24 @@ class UnknownRegionSaysWhatToType(unittest.TestCase):
         self.assertIn("Short forms:", str(caught.exception))
 
 
+class CountryCodesNameTheirTerritory(unittest.TestCase):
+    """`au` was unknown while `jp`, `us`, `kr` and `gb` were aliases, and the
+    first spelling offered for it was `auto`, which means world."""
+
+    def test_au_is_australia(self):
+        self.assertEqual(region.parse_requested("au,jp"), ["australia", "japan"])
+
+    def test_every_territory_answers_to_a_two_letter_code(self):
+        areas = set(region.AREA_TERRITORIES)
+        territories = {
+            member for members in region.REGION_TREE.values() for member in members
+        } - areas
+        coded = {
+            target for alias, target in region.ALIASES.items() if len(alias) == 2
+        } | {slug for slug in territories if len(slug) == 2}
+        self.assertEqual(territories - coded, set())
+
+
 
 class GenesisPlusGxUsBiosServesEurope(unittest.TestCase):
     """sms_cart_region_detect returns REGION_USA for any export header
