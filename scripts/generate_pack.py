@@ -3160,6 +3160,12 @@ def _main(held: contextlib.ExitStack) -> None:
         help="Extract and verify pack integrity (path + hash)",
     )
     args = parser.parse_args()
+    from verify import work_from_repo_root
+
+    work_from_repo_root(
+        args, parser,
+        ["db", "platforms_dir", "bios_dir", "output_dir", "emulators_dir", "from_md5_file"],
+    )
     packresolve.set_offline(bool(args.offline))
     if args.platform:
         require_platform(args.platform, args.platforms_dir)

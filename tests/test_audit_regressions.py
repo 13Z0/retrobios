@@ -5995,5 +5995,36 @@ class PipelineOutputDirIsTheOneItWrites(unittest.TestCase):
         )
 
 
+class ToolsRunFromAnyDirectory(unittest.TestCase):
+    """From scripts/, verify.py and generate_pack.py ended on a
+    FileNotFoundError traceback about platforms/_registry.yml."""
+
+    def _run(self, cwd: Path, *argv: str) -> subprocess.CompletedProcess:
+        return subprocess.run(
+            [sys.executable, *argv], cwd=cwd, capture_output=True, text=True,
+            timeout=600,
+        )
+
+    def test_listing_works_from_scripts(self):
+        for script in ("verify.py", "generate_pack.py"):
+            with self.subTest(script=script):
+                proc = self._run(
+                    ROOT / "scripts", str(ROOT / "scripts" / script),
+                    "--platform", "RetroArch", "--list-systems",
+                )
+                self.assertEqual(proc.returncode, 0, proc.stderr)
+                self.assertNotIn("Traceback", proc.stderr)
+                self.assertIn("sony-playstation", proc.stdout)
+
+    def test_a_typed_path_is_read_from_where_it_was_typed(self):
+        with tempfile.TemporaryDirectory(dir=TMP_ROOT) as tmp:
+            proc = self._run(
+                Path(tmp), str(ROOT / "scripts" / "generate_pack.py"),
+                "--manifest-targets", "--output-dir", "lists",
+            )
+            self.assertEqual(proc.returncode, 0, proc.stderr)
+            self.assertTrue(Path(tmp, "lists", "retroarch.json").is_file())
+
+
 if __name__ == "__main__":
     unittest.main()
