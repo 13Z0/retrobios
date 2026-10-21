@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-20T20:05:06Z",
+  "generated_at": "2026-10-21T04:12:31Z",
   "total_files": 19529,
-  "total_size": 16788599450,
+  "total_size": 16788660322,
   "bios_dir": "bios",
   "files": {
     "738c7f5fd0c8b57ee2e87ae7a97bf8e21a821d07": {
@@ -35166,25 +35166,25 @@
         }
       }
     },
-    "e8b274faca7ffa4c064706ba15318885d8645695": {
+    "af84797f89eb906350e82c718dddbf7c96695cc1": {
       "path": "bios/Commodore/Amiga/aros-ext.bin",
       "name": "aros-ext.bin",
       "size": 524288,
-      "sha1": "e8b274faca7ffa4c064706ba15318885d8645695",
-      "md5": "d2ce6748e8e42222662e14359f68dad5",
-      "sha256": "874a9275ff7b39723921eac223a5f461f4eb03bd9ba1976b228ad0f4cfa74505",
-      "crc32": "20ca1219",
-      "adler32": "a11f40e0"
+      "sha1": "af84797f89eb906350e82c718dddbf7c96695cc1",
+      "md5": "945c364bb9b5f28a04e1003f8b7a469c",
+      "sha256": "29f8e1ffa0a72c14e1fa0c4bc61c491dc4cefb696016ff4b2640d80895cbedbe",
+      "crc32": "487079e6",
+      "adler32": "11a455bd"
     },
-    "7a0168bd3eea08b64acfddc5d1cfc0d538e1ac1e": {
+    "a11d51c995610d9028c8958279e602a37fa76050": {
       "path": "bios/Commodore/Amiga/aros-rom.bin",
       "name": "aros-rom.bin",
       "size": 524288,
-      "sha1": "7a0168bd3eea08b64acfddc5d1cfc0d538e1ac1e",
-      "md5": "48d38fc3fcf2ad7bca5ec5191d02e451",
-      "sha256": "d583ff8f40c73b1584a1395bb0869a909a96d2366a4ae9f4c15ab6a3d868ea62",
-      "crc32": "7fe47845",
-      "adler32": "dba312fd"
+      "sha1": "a11d51c995610d9028c8958279e602a37fa76050",
+      "md5": "69179a8479d1ba279c786094ce343386",
+      "sha256": "5de61cb512f15dee5a144a0d95d23ca1cda8a85502dd3163a3a46879347031fb",
+      "crc32": "e3c46310",
+      "adler32": "981ee96f"
     },
     "c2728eaba6603a0a997697730c0520d3781e1584": {
       "path": "bios/Commodore/Amiga/capsimg.dll",
@@ -35570,15 +35570,15 @@
       "crc32": "16433b36",
       "adler32": "fe6bbf17"
     },
-    "bcb18c1016cbb1c748d39254e7f94fbf875b1c0b": {
+    "6540ae1a35080e3dbeacfba5139e4781eb74ca86": {
       "path": "bios/Commodore/Amiga/whdboot/game-data/whdload_db.json",
       "name": "whdload_db.json",
-      "size": 6680181,
-      "sha1": "bcb18c1016cbb1c748d39254e7f94fbf875b1c0b",
-      "md5": "14d797815aa9bbc79fe284b244ea75b1",
-      "sha256": "b8236b706395e302702e53da623ece2fdbdd73f04ebc1db80673703b13c008e3",
-      "crc32": "52e9ff41",
-      "adler32": "938f756b"
+      "size": 6741053,
+      "sha1": "6540ae1a35080e3dbeacfba5139e4781eb74ca86",
+      "md5": "51d44cd24e16fbb395b1bfefbaacd375",
+      "sha256": "836357cb2f82cfe35e419d0e3dc6f07cff217cda9714dee19a00763547f0af56",
+      "crc32": "d50e6275",
+      "adler32": "5ae989a1"
     },
     "9fa14825c40a2475a2eba5cf325bd483c447e7c1": {
       "path": "bios/Commodore/Amiga CD32/kick40060.CD32.full",
@@ -203958,8 +203958,8 @@
       "e873c43040b4d7a9c65f37cf2da2158f": "b0ec8b84d6768321e01209f11e6248f2f5281a21",
       "5f8924d013dd57a89cf349f4cdedc6b1": "3525be8887f79b5929e017b42380a79edfee542d",
       "730888fb1bd9a3606d51f772ed136528": "c3c481160866e60d085e436a24db3617ff60b5f9",
-      "d2ce6748e8e42222662e14359f68dad5": "e8b274faca7ffa4c064706ba15318885d8645695",
-      "48d38fc3fcf2ad7bca5ec5191d02e451": "7a0168bd3eea08b64acfddc5d1cfc0d538e1ac1e",
+      "945c364bb9b5f28a04e1003f8b7a469c": "af84797f89eb906350e82c718dddbf7c96695cc1",
+      "69179a8479d1ba279c786094ce343386": "a11d51c995610d9028c8958279e602a37fa76050",
       "fee37c387de081d83eaebece4af06e67": "c2728eaba6603a0a997697730c0520d3781e1584",
       "b4cb9124fb2f78daf68417a263cc2637": "6c1889c75ffa990468ca365973a344dae3d39e2c",
       "1c8bbf475d1adf52ef01b24f50becf37": "03ca81c7a7b259cf64bc9582863eca0f6529f435",
@@ -203993,7 +203993,7 @@
       "2a3a61bbd7c351751506e22a4354b76a": "55dd3ecd5086528fa984e82db6474b954fc54ad5",
       "6670a9571f235ec31b8bbd48fc18f428": "c3ecdaf43cc554026c8ef1c440a08c81144f810b",
       "9e638f3d531eb7cd82594f49a4cf03b7": "18a9dba5cfe2f375f111dd5148691ecaecc6293b",
-      "14d797815aa9bbc79fe284b244ea75b1": "bcb18c1016cbb1c748d39254e7f94fbf875b1c0b",
+      "51d44cd24e16fbb395b1bfefbaacd375": "6540ae1a35080e3dbeacfba5139e4781eb74ca86",
       "f2f241bf094168cfb9e7805dc2856433": "9fa14825c40a2475a2eba5cf325bd483c447e7c1",
       "1b1e985ea5325a1f46eb7fd9681707bf": "b1a5b826304d3df2a27d7163c6a81a532e040d32",
       "41c6cc528e9515ffd0ed9b180f8467c0": "d4b79b60cf1eaa399d0932200eb7811e00455249",
@@ -230585,10 +230585,10 @@
         "c3c481160866e60d085e436a24db3617ff60b5f9"
       ],
       "aros-ext.bin": [
-        "e8b274faca7ffa4c064706ba15318885d8645695"
+        "af84797f89eb906350e82c718dddbf7c96695cc1"
       ],
       "aros-rom.bin": [
-        "7a0168bd3eea08b64acfddc5d1cfc0d538e1ac1e"
+        "a11d51c995610d9028c8958279e602a37fa76050"
       ],
       "cd32fmv.rom": [
         "03ca81c7a7b259cf64bc9582863eca0f6529f435"
@@ -230684,7 +230684,7 @@
         "18a9dba5cfe2f375f111dd5148691ecaecc6293b"
       ],
       "whdload_db.json": [
-        "bcb18c1016cbb1c748d39254e7f94fbf875b1c0b"
+        "6540ae1a35080e3dbeacfba5139e4781eb74ca86"
       ],
       "kick40060.CD32.full": [
         "9fa14825c40a2475a2eba5cf325bd483c447e7c1"
@@ -280392,8 +280392,8 @@
       "75932c3a": "b0ec8b84d6768321e01209f11e6248f2f5281a21",
       "1e62d4a5": "3525be8887f79b5929e017b42380a79edfee542d",
       "43b6dd22": "c3c481160866e60d085e436a24db3617ff60b5f9",
-      "20ca1219": "e8b274faca7ffa4c064706ba15318885d8645695",
-      "7fe47845": "7a0168bd3eea08b64acfddc5d1cfc0d538e1ac1e",
+      "487079e6": "af84797f89eb906350e82c718dddbf7c96695cc1",
+      "e3c46310": "a11d51c995610d9028c8958279e602a37fa76050",
       "62210cb4": "c2728eaba6603a0a997697730c0520d3781e1584",
       "c814628f": "6c1889c75ffa990468ca365973a344dae3d39e2c",
       "c35c37bf": "03ca81c7a7b259cf64bc9582863eca0f6529f435",
@@ -280427,7 +280427,7 @@
       "8ff26cf8": "55dd3ecd5086528fa984e82db6474b954fc54ad5",
       "9df148c1": "c3ecdaf43cc554026c8ef1c440a08c81144f810b",
       "16433b36": "18a9dba5cfe2f375f111dd5148691ecaecc6293b",
-      "52e9ff41": "bcb18c1016cbb1c748d39254e7f94fbf875b1c0b",
+      "d50e6275": "6540ae1a35080e3dbeacfba5139e4781eb74ca86",
       "f5d4f3c8": "9fa14825c40a2475a2eba5cf325bd483c447e7c1",
       "dd409902": "b1a5b826304d3df2a27d7163c6a81a532e040d32",
       "fe6cac6d": "d4b79b60cf1eaa399d0932200eb7811e00455249",
@@ -299922,8 +299922,8 @@
       "e5f87ea8953d840db0e05d097362ad1be98a1bf3292cf7f359190af61556d036": "b0ec8b84d6768321e01209f11e6248f2f5281a21",
       "3586355514947b5ab48c8755dc004fab94f188b19e7bce491c8f9693499e830b": "3525be8887f79b5929e017b42380a79edfee542d",
       "a591a46f69d02875e4ff6e8efe8c7e90b63e3ca41ca7cf5715bf7b3b9a25e241": "c3c481160866e60d085e436a24db3617ff60b5f9",
-      "874a9275ff7b39723921eac223a5f461f4eb03bd9ba1976b228ad0f4cfa74505": "e8b274faca7ffa4c064706ba15318885d8645695",
-      "d583ff8f40c73b1584a1395bb0869a909a96d2366a4ae9f4c15ab6a3d868ea62": "7a0168bd3eea08b64acfddc5d1cfc0d538e1ac1e",
+      "29f8e1ffa0a72c14e1fa0c4bc61c491dc4cefb696016ff4b2640d80895cbedbe": "af84797f89eb906350e82c718dddbf7c96695cc1",
+      "5de61cb512f15dee5a144a0d95d23ca1cda8a85502dd3163a3a46879347031fb": "a11d51c995610d9028c8958279e602a37fa76050",
       "0b0faab5bd29634259030bc5327c72e4d6025b1d3199792d71b804ef6cafea18": "c2728eaba6603a0a997697730c0520d3781e1584",
       "c601624e60ed58dfdb93d6d1f599feed5e4153823696de59982304f89e91ed55": "6c1889c75ffa990468ca365973a344dae3d39e2c",
       "680e654880c891a3b03e6107ed30b10903efca16c1dac1b4c8e7835f4e37acb6": "03ca81c7a7b259cf64bc9582863eca0f6529f435",
@@ -299957,7 +299957,7 @@
       "173e866329e4d91e1c03db79687b96f6011b2c4940c358b01ad921f22b5c7112": "55dd3ecd5086528fa984e82db6474b954fc54ad5",
       "5e66d140e12b09769ba0bba87dc5a6f683261fd40eb43b94c390d1c62db1adb5": "c3ecdaf43cc554026c8ef1c440a08c81144f810b",
       "88f9528b168604036afd0091efbb496534cd276fe7b1d3276896d53403ef1837": "18a9dba5cfe2f375f111dd5148691ecaecc6293b",
-      "b8236b706395e302702e53da623ece2fdbdd73f04ebc1db80673703b13c008e3": "bcb18c1016cbb1c748d39254e7f94fbf875b1c0b",
+      "836357cb2f82cfe35e419d0e3dc6f07cff217cda9714dee19a00763547f0af56": "6540ae1a35080e3dbeacfba5139e4781eb74ca86",
       "53c6053fb5ef9068db57d62c6565dfa30365d35349824525f02aa715962c446a": "9fa14825c40a2475a2eba5cf325bd483c447e7c1",
       "2de4d06b4aa2a1b1129cc641a01cbac7e631de362dbd6fe2129eec7336afad53": "b1a5b826304d3df2a27d7163c6a81a532e040d32",
       "4c0277542ec3d4cc93ece8a5c5dcc2a3fedafd3521a3be06f5d2d9ffbde85355": "d4b79b60cf1eaa399d0932200eb7811e00455249",
@@ -343227,16 +343227,16 @@
         "c3c481160866e60d085e436a24db3617ff60b5f9"
       ],
       "Commodore/Amiga/aros-ext.bin": [
-        "e8b274faca7ffa4c064706ba15318885d8645695"
+        "af84797f89eb906350e82c718dddbf7c96695cc1"
       ],
       "Amiga/aros-ext.bin": [
-        "e8b274faca7ffa4c064706ba15318885d8645695"
+        "af84797f89eb906350e82c718dddbf7c96695cc1"
       ],
       "Commodore/Amiga/aros-rom.bin": [
-        "7a0168bd3eea08b64acfddc5d1cfc0d538e1ac1e"
+        "a11d51c995610d9028c8958279e602a37fa76050"
       ],
       "Amiga/aros-rom.bin": [
-        "7a0168bd3eea08b64acfddc5d1cfc0d538e1ac1e"
+        "a11d51c995610d9028c8958279e602a37fa76050"
       ],
       "Commodore/Amiga/capsimg.dll": [
         "c2728eaba6603a0a997697730c0520d3781e1584"
@@ -343479,16 +343479,16 @@
         "18a9dba5cfe2f375f111dd5148691ecaecc6293b"
       ],
       "Commodore/Amiga/whdboot/game-data/whdload_db.json": [
-        "bcb18c1016cbb1c748d39254e7f94fbf875b1c0b"
+        "6540ae1a35080e3dbeacfba5139e4781eb74ca86"
       ],
       "Amiga/whdboot/game-data/whdload_db.json": [
-        "bcb18c1016cbb1c748d39254e7f94fbf875b1c0b"
+        "6540ae1a35080e3dbeacfba5139e4781eb74ca86"
       ],
       "whdboot/game-data/whdload_db.json": [
-        "bcb18c1016cbb1c748d39254e7f94fbf875b1c0b"
+        "6540ae1a35080e3dbeacfba5139e4781eb74ca86"
       ],
       "game-data/whdload_db.json": [
-        "bcb18c1016cbb1c748d39254e7f94fbf875b1c0b"
+        "6540ae1a35080e3dbeacfba5139e4781eb74ca86"
       ],
       "Commodore/Amiga CD32/kick40060.CD32.full": [
         "9fa14825c40a2475a2eba5cf325bd483c447e7c1"

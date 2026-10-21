@@ -3,9 +3,9 @@ type: standalone + libretro
 core_classification: official_port
 source: "https://github.com/BlitterStudio/amiberry"
 upstream: "https://github.com/tonioni/WinUAE"
-profiled_date: "2026-03-26"
-source_commit: "648aeeab6ee1148b6d0176b8f49f6f6e12150cbe"
-core_version: "v8.1.2"
+profiled_date: "2026-10-21"
+source_commit: "2de3bf82280be045ea81dd0c55407061dfdbaa3e"
+core_version: "v8.4.2"
 display_name: "Commodore - Amiga (Amiberry)"
 cores: [amiberry]
 systems:
@@ -21,7 +21,7 @@ notes: |
   Libretro core option "amiberry_kickstart" overrides ROM selection: auto,
   kick.rom, kick13.rom, kick20.rom, kick31.rom, kick205.rom, kick40068.A1200,
   kick40068.A4000, cd32.rom, cdtv.rom. "auto" selects per model.
-  ref: libretro/libretro.cpp:687,754-773
+  ref: libretro/libretro.cpp:694,761-780
 
   Libretro Kickstart directory detection (in order): save_dir/Kickstarts,
   save_dir/whdboot/save-data/Kickstarts, system_dir/Kickstarts,
@@ -29,10 +29,10 @@ notes: |
   system_dir/amiberry/whdboot/save-data/Kickstarts,
   system_dir/save-data/Kickstarts, else system_dir. system_dir stays first
   in the ROM multipath, the detected directory follows it.
-  ref: libretro/libretro.cpp:4390-4428
+  ref: libretro/libretro.cpp:4529-4567
 
   Standalone ROM path: configurable via amiberry.conf "rom_path" setting.
-  Batocera sets this to /userdata/bios/amiga/. Fallback search order:
+  Fallback search order:
   {home_dir}/roms/kick.rom, {home_dir}/kick.rom, ../shared/rom/kick.rom,
   ../System/rom/kick.rom, then ROM database guess.
   ref: src/memory.cpp:2106-2148
@@ -56,27 +56,27 @@ notes: |
   boot-data directory), WHDLoad or JST, AmiQuit, and game-data/whdload_db.json
   with game-data/whdload_db.xml as fallback. These ship with the standalone
   build but must be obtained separately for the libretro core.
-  ref: src/osdep/amiberry_whdbooter.cpp:1563-1565,1714-1733,1776-1785
+  ref: src/osdep/amiberry_whdbooter.cpp:1652-1654,1804-1823,1866-1875
 
 files:
   # --- Kickstart ROMs ---
   # Libretro: find_kickstart_in_system_dir() with per-model candidate lists
   # Standalone: get_kickstart_filehandle() with ROM database + config
-  # ref: libretro/libretro.cpp:1785-1848, src/memory.cpp:2106-2148
+  # ref: libretro/libretro.cpp:1792-1855, src/memory.cpp:2106-2148
 
   - name: kick13.rom
     system: commodore-amiga
     required: true
     size: 262144
     note: "A500 Kickstart v1.3 rev 34.005, default for A500 model"
-    source_ref: "source libretro/libretro.cpp:1799 (candidates_a500)"
+    source_ref: "source libretro/libretro.cpp:1806 (candidates_a500)"
 
   - name: kick12.rom
     system: commodore-amiga
     required: false
     size: 262144
     note: "A500 Kickstart v1.2 rev 33.180, for A500OG model"
-    source_ref: "source libretro/libretro.cpp:1798 (candidates_a500og)"
+    source_ref: "source libretro/libretro.cpp:1805 (candidates_a500og)"
 
   - name: kick20.rom
     system: commodore-amiga
@@ -84,41 +84,41 @@ files:
     size: 524288
     aliases: [kick204.rom]
     note: "A500+ Kickstart v2.04 rev 37.175"
-    source_ref: "source libretro/libretro.cpp:1800 (candidates_a500p)"
+    source_ref: "source libretro/libretro.cpp:1807 (candidates_a500p)"
 
   - name: kick205.rom
     system: commodore-amiga
     required: false
     size: 524288
     note: "A600 Kickstart v2.05 rev 37.350, also used for WHDLoad"
-    source_ref: "source libretro/libretro.cpp:1801 (candidates_a600)"
+    source_ref: "source libretro/libretro.cpp:1808 (candidates_a600)"
 
   - name: kick31.rom
     system: commodore-amiga
     required: false
     size: 524288
     note: "Kickstart v3.1 (generic), first candidate for A1200 and A4000"
-    source_ref: "source libretro/libretro.cpp:1802-1803 (candidate arrays)"
+    source_ref: "source libretro/libretro.cpp:1809-1810 (candidate arrays)"
 
   - name: kick40068.A1200
     system: commodore-amiga
     required: false
     size: 524288
     note: "A1200 Kickstart v3.1 rev 40.68, fallback after kick31.rom"
-    source_ref: "source libretro/libretro.cpp:767 (option label), source libretro/libretro.cpp:1802 (candidates_a1200)"
+    source_ref: "source libretro/libretro.cpp:774 (option label), source libretro/libretro.cpp:1809 (candidates_a1200)"
 
   - name: kick40068.A4000
     system: commodore-amiga
     required: false
     size: 524288
     note: "A4000 Kickstart v3.1 rev 40.68, fallback after kick31.rom"
-    source_ref: "source libretro/libretro.cpp:768 (option label), source libretro/libretro.cpp:1803 (candidates_a4000)"
+    source_ref: "source libretro/libretro.cpp:775 (option label), source libretro/libretro.cpp:1810 (candidates_a4000)"
 
   - name: kick.rom
     system: commodore-amiga
     required: false
     note: "Generic name, any Kickstart ROM. Last resort fallback for all models."
-    source_ref: "source libretro/libretro.cpp:1792-1797 (candidates_generic)"
+    source_ref: "source libretro/libretro.cpp:1799-1804 (candidates_generic)"
 
   # --- CD32 ROMs ---
 
@@ -128,7 +128,7 @@ files:
     size: 524288
     aliases: [amiga-os-310-cd32.rom, kick40060.CD32]
     note: "CD32 Kickstart v3.1 rev 40.60"
-    source_ref: "source libretro/libretro.cpp:1804 (candidates_cd32)"
+    source_ref: "source libretro/libretro.cpp:1811 (candidates_cd32)"
 
   - name: cd32ext.rom
     system: commodore-cd32
@@ -136,7 +136,7 @@ files:
     size: 524288
     aliases: [amiga-ext-310-cd32.rom, "CD32 Extended.ROM"]
     note: "CD32 extended ROM rev 40.60. Not needed if using a combined 1MB ROM."
-    source_ref: "source libretro/libretro.cpp:1862 (candidates_cd32 in find_ext_rom_in_system_dir)"
+    source_ref: "source libretro/libretro.cpp:1869 (candidates_cd32 in find_ext_rom_in_system_dir)"
 
   # --- CDTV ROMs ---
 
@@ -145,22 +145,22 @@ files:
     required: false
     aliases: [kick34005.CDTV]
     note: "CDTV extended ROM v1.00, used as kickstart candidate"
-    source_ref: "source libretro/libretro.cpp:1805 (candidates_cdtv)"
+    source_ref: "source libretro/libretro.cpp:1812 (candidates_cdtv)"
 
   - name: cdtvext.rom
     system: commodore-cdtv
     required: false
     aliases: ["CDTV Extended.ROM"]
     note: "CDTV extended ROM file"
-    source_ref: "source libretro/libretro.cpp:1864 (candidates_cdtv in find_ext_rom_in_system_dir)"
+    source_ref: "source libretro/libretro.cpp:1871 (candidates_cdtv in find_ext_rom_in_system_dir)"
 
   # --- Kickstart ROMs found by the standalone ROM scan ---
   # The scan opens every file under the ROM path whose extension is rom, bin,
   # a1000, a500, a600, a1200, a3000, a4000, cdtv, cd32 or roz and names it by
   # the ROM database. A model then takes the first ROM id on its list that
   # the scan found.
-  # ref: src/osdep/amiberry_gui.cpp:217-240, src/osdep/amiberry_gui.cpp:274-296,
-  #      src/osdep/amiberry_gui.cpp:420-455, src/rommgr.cpp:3172-3241
+  # ref: src/osdep/amiberry_gui.cpp:219-242, src/osdep/amiberry_gui.cpp:276-298,
+  #      src/osdep/amiberry_gui.cpp:422-457, src/rommgr.cpp:3175-3244
 
   - name: amiga-os-310.rom
     mode: standalone
@@ -172,31 +172,31 @@ files:
     note: >
       Identified as KS ROM v3.1 (A4000)(Cloanto), ROM id 31, whatever the file
       is called. The A4000 model takes id 16 first and id 31 after it.
-    source_ref: "source src/rommgr.cpp:203-204, source src/cfgfile.cpp:9588-9593, source src/cfgfile.cpp:9646"
+    source_ref: "source src/rommgr.cpp:203-204, source src/cfgfile.cpp:9749-9754, source src/cfgfile.cpp:9807"
 
   # --- Kickstart ROMs named in the configuration ---
   # kickstart_rom_file and kickstart_ext_rom_file are opened as given, with no
-  # hash check. Recalbox writes kick02019.AROS and kick02019.AROS.ext from
-  # bios/amiga/bios into them for the A600 and A1200 subsystems when none of
-  # its Commodore Kickstarts is present (Recalbox 10.1.1).
-  # ref: src/cfgfile.cpp:6442-6443, src/memory.cpp:2106-2111,
+  # hash check.
+  # ref: src/cfgfile.cpp:6552-6553, src/memory.cpp:2106-2111,
   #      src/memory.cpp:1833-1856, src/memory.cpp:3138
-  # ref: recalbox projects/configgen/configgen/generators/amiberry/amiberryKickstarts.py:119-126,
-  #      recalbox projects/configgen/configgen/generators/amiberry/amiberryConfig.py:337-345
 
-  - name: kick02019.AROS
+  - name: "Kickstart ROM file"
+    path: null
     mode: standalone
     system: commodore-amiga
     required: false
-    note: "AROS Kickstart, read through kickstart_rom_file."
-    source_ref: "source src/cfgfile.cpp:6442, source src/memory.cpp:2106-2111"
+    config_key: kickstart_rom_file
+    note: "Kickstart image, read under the name the setting gives."
+    source_ref: "source src/cfgfile.cpp:6552, source src/memory.cpp:2106-2111"
 
-  - name: kick02019.AROS.ext
+  - name: "Kickstart extended ROM file"
+    path: null
     mode: standalone
     system: commodore-amiga
     required: false
-    note: "AROS extended ROM, read through kickstart_ext_rom_file."
-    source_ref: "source src/cfgfile.cpp:6443, source src/memory.cpp:1833-1856, source src/memory.cpp:3138"
+    config_key: kickstart_ext_rom_file
+    note: "Extended ROM image, read under the name the setting gives."
+    source_ref: "source src/cfgfile.cpp:6553, source src/memory.cpp:1833-1856, source src/memory.cpp:3138"
 
   # --- AROS replacement ROMs ---
   # ref: src/memory.cpp:1925-1946 find_kickstart_replacement_directory,
@@ -223,13 +223,13 @@ files:
     bundled: true
     not_bundled_on: [recalbox, rocknix]
     size: 524288
-    sha1: "e8b274faca7ffa4c064706ba15318885d8645695"
-    md5: "d2ce6748e8e42222662e14359f68dad5"
+    sha1: "af84797f89eb906350e82c718dddbf7c96695cc1"
+    md5: "945c364bb9b5f28a04e1003f8b7a469c"
     note: >
       AROS extended ROM replacement, used when no Kickstart ROM is found. Looked
       up in the configured ROM directories, and only in a directory that also
-      holds aros-rom.bin. Shipped in roms/ of the 8.1.2 Windows zip and deb. The
-      Recalbox and ROCKNIX packages leave it out.
+      holds aros-rom.bin. Shipped in roms/ of the 8.4.2 installs. The Recalbox
+      and ROCKNIX packages leave it out.
     source_ref: "source src/memory.cpp:1933 (paired existence check), source src/memory.cpp:1958-1959 (load)"
 
   - name: aros-rom.bin
@@ -251,13 +251,13 @@ files:
     bundled: true
     not_bundled_on: [recalbox, rocknix]
     size: 524288
-    sha1: "7a0168bd3eea08b64acfddc5d1cfc0d538e1ac1e"
-    md5: "48d38fc3fcf2ad7bca5ec5191d02e451"
+    sha1: "a11d51c995610d9028c8958279e602a37fa76050"
+    md5: "69179a8479d1ba279c786094ce343386"
     note: >
       AROS main ROM replacement, used with aros-ext.bin as Kickstart fallback.
       Looked up in the configured ROM directories, and only in a directory that
-      also holds aros-ext.bin. Shipped in roms/ of the 8.1.2 Windows zip and deb.
-      The Recalbox and ROCKNIX packages leave it out.
+      also holds aros-ext.bin. Shipped in roms/ of the 8.4.2 installs. The
+      Recalbox and ROCKNIX packages leave it out.
     source_ref: "source src/memory.cpp:1934 (paired existence check), source src/memory.cpp:1987-1988 (load)"
 
   # --- Cloanto key ---
@@ -351,8 +351,12 @@ files:
   # database, and the five RTB files the seed check names.
   # Standalone: the Linux, macOS and Windows installs ship the tree, and it is
   # copied into the user WHDBoot directory the same way.
-  # ref: src/osdep/amiberry.cpp:11189-11214, 11510-11544, 11570-11584,
-  #      libretro/libretro.cpp:1452-1468, cmake/linux/install.cmake:196-198
+  # Both builds then replace game-data/whdload_db.json with the one at the
+  # first candidate when its "generated" field is later, keeping the old file
+  # as a backup.
+  # ref: src/osdep/amiberry.cpp:11801-11826, 12145-12179, 12205-12219,
+  #      src/osdep/amiberry.cpp:12221-12287, 12289-12385,
+  #      libretro/libretro.cpp:1459-1475, cmake/linux/install.cmake:196-198
 
   - name: "WHDLoad"
     path: "whdboot/WHDLoad"
@@ -366,7 +370,7 @@ files:
       WHDLoad executable linked into C: of the boot drive the booter builds,
       unless JST is selected. Part of the set the whdboot seed check requires.
       The core zip carries the library alone.
-    source_ref: "source src/osdep/amiberry_whdbooter.cpp:1776-1785, source src/osdep/amiberry.cpp:11510-11544"
+    source_ref: "source src/osdep/amiberry_whdbooter.cpp:1866-1875, source src/osdep/amiberry.cpp:12145-12179"
 
   - name: "JST"
     path: "whdboot/JST"
@@ -380,7 +384,7 @@ files:
       JST loader linked into C: in place of WHDLoad when the
       use_jst_instead_of_whd option is set. Part of the set the whdboot seed
       check requires. The core zip carries the library alone.
-    source_ref: "source src/osdep/amiberry_whdbooter.cpp:1776-1779, source src/osdep/amiberry.cpp:11510-11544"
+    source_ref: "source src/osdep/amiberry_whdbooter.cpp:1866-1869, source src/osdep/amiberry.cpp:12145-12179"
 
   - name: "AmiQuit"
     path: "whdboot/AmiQuit"
@@ -394,7 +398,7 @@ files:
       Quit helper linked into C: and called at the end of the generated startup-
       sequence. Part of the set the whdboot seed check requires. The core zip
       carries the library alone.
-    source_ref: "source src/osdep/amiberry_whdbooter.cpp:1526, source src/osdep/amiberry_whdbooter.cpp:1785, source src/osdep/amiberry.cpp:11510-11544"
+    source_ref: "source src/osdep/amiberry_whdbooter.cpp:1615, source src/osdep/amiberry_whdbooter.cpp:1875, source src/osdep/amiberry.cpp:12145-12179"
 
   - name: "boot-data.zip"
     path: "whdboot/boot-data.zip"
@@ -408,22 +412,23 @@ files:
       Boot volume mounted as DH3. A boot-data directory at the same place is
       used when the zip is absent. Part of the set the whdboot seed check
       requires. The core zip carries the library alone.
-    source_ref: "source src/osdep/amiberry_whdbooter.cpp:1563-1576, source src/osdep/amiberry.cpp:11510-11544"
+    source_ref: "source src/osdep/amiberry_whdbooter.cpp:1652-1665, source src/osdep/amiberry.cpp:12145-12179"
 
   - name: "whdload_db.json"
     path: "whdboot/game-data/whdload_db.json"
     mode: libretro
     system: commodore-amiga
     required: false
-    size: 6680181
-    sha1: "bcb18c1016cbb1c748d39254e7f94fbf875b1c0b"
-    md5: "14d797815aa9bbc79fe284b244ea75b1"
+    size: 6741053
+    sha1: "6540ae1a35080e3dbeacfba5139e4781eb74ca86"
+    md5: "51d44cd24e16fbb395b1bfefbaacd375"
     note: >
-      Per-game slave and hardware settings, matched on the archive name.
+      Per-game slave and hardware settings, matched on the archive SHA1 and
+      then on its name.
       whdload_db.xml in the same folder is read when the JSON is absent. With
       neither, the booter scans the archive for a .slave file. Part of the set
       the whdboot seed check requires. The core zip carries the library alone.
-    source_ref: "source src/osdep/amiberry_whdbooter.cpp:1714-1733, source src/osdep/amiberry_whdbooter.cpp:1736-1750, source src/osdep/amiberry.cpp:11510-11544"
+    source_ref: "source src/osdep/amiberry_whdbooter.cpp:1804-1823, source src/osdep/amiberry_whdbooter.cpp:1061-1079, source src/osdep/amiberry_whdbooter.cpp:1826-1840, source src/osdep/amiberry.cpp:12145-12179, source src/osdep/amiberry.cpp:12289-12385"
 
   - name: "kick33180.A500.RTB"
     path: "whdboot/save-data/Kickstarts/kick33180.A500.RTB"
@@ -439,7 +444,7 @@ files:
       beside the image the booter links there. Part of the set the whdboot seed
       check requires. The core zip carries the library alone. The repository
       ships the same bytes as kick33192.A500.RTB.
-    source_ref: "source src/osdep/amiberry_whdbooter.cpp:331-352, source src/osdep/amiberry_whdbooter.cpp:1786, source src/osdep/amiberry.cpp:11510-11544"
+    source_ref: "source src/osdep/amiberry_whdbooter.cpp:331-352, source src/osdep/amiberry_whdbooter.cpp:1876, source src/osdep/amiberry.cpp:12145-12179"
 
   - name: "kick34005.A500.RTB"
     path: "whdboot/save-data/Kickstarts/kick34005.A500.RTB"
@@ -453,7 +458,7 @@ files:
       WHDLoad relocation table for Kickstart 1.3, read from DEVS:Kickstarts
       beside the image the booter links there. Part of the set the whdboot seed
       check requires. The core zip carries the library alone.
-    source_ref: "source src/osdep/amiberry_whdbooter.cpp:331-352, source src/osdep/amiberry_whdbooter.cpp:1786, source src/osdep/amiberry.cpp:11510-11544"
+    source_ref: "source src/osdep/amiberry_whdbooter.cpp:331-352, source src/osdep/amiberry_whdbooter.cpp:1876, source src/osdep/amiberry.cpp:12145-12179"
 
   - name: "kick40063.A600.RTB"
     path: "whdboot/save-data/Kickstarts/kick40063.A600.RTB"
@@ -467,7 +472,7 @@ files:
       WHDLoad relocation table for Kickstart 3.1 A600, read from DEVS:Kickstarts
       beside the image the booter links there. Part of the set the whdboot seed
       check requires. The core zip carries the library alone.
-    source_ref: "source src/osdep/amiberry_whdbooter.cpp:331-352, source src/osdep/amiberry_whdbooter.cpp:1786, source src/osdep/amiberry.cpp:11510-11544"
+    source_ref: "source src/osdep/amiberry_whdbooter.cpp:331-352, source src/osdep/amiberry_whdbooter.cpp:1876, source src/osdep/amiberry.cpp:12145-12179"
 
   - name: "kick40068.A1200.RTB"
     path: "whdboot/save-data/Kickstarts/kick40068.A1200.RTB"
@@ -481,7 +486,7 @@ files:
       WHDLoad relocation table for Kickstart 3.1 A1200, read from
       DEVS:Kickstarts beside the image the booter links there. Part of the set
       the whdboot seed check requires. The core zip carries the library alone.
-    source_ref: "source src/osdep/amiberry_whdbooter.cpp:331-352, source src/osdep/amiberry_whdbooter.cpp:1786, source src/osdep/amiberry.cpp:11510-11544"
+    source_ref: "source src/osdep/amiberry_whdbooter.cpp:331-352, source src/osdep/amiberry_whdbooter.cpp:1876, source src/osdep/amiberry.cpp:12145-12179"
 
   - name: "kick40068.A4000.RTB"
     path: "whdboot/save-data/Kickstarts/kick40068.A4000.RTB"
@@ -495,7 +500,7 @@ files:
       WHDLoad relocation table for Kickstart 3.1 A4000, read from
       DEVS:Kickstarts beside the image the booter links there. Part of the set
       the whdboot seed check requires. The core zip carries the library alone.
-    source_ref: "source src/osdep/amiberry_whdbooter.cpp:331-352, source src/osdep/amiberry_whdbooter.cpp:1786, source src/osdep/amiberry.cpp:11510-11544"
+    source_ref: "source src/osdep/amiberry_whdbooter.cpp:331-352, source src/osdep/amiberry_whdbooter.cpp:1876, source src/osdep/amiberry.cpp:12145-12179"
 
   - name: "kick31034.A1000.RTB"
     path: "whdboot/save-data/Kickstarts/kick31034.A1000.RTB"
@@ -509,7 +514,7 @@ files:
       WHDLoad relocation table for the A1000 Kickstart 1.1 image, read from
       DEVS:Kickstarts beside the image the booter links there. The core zip
       carries the library alone.
-    source_ref: "source src/osdep/amiberry_whdbooter.cpp:331-345, source src/osdep/amiberry_whdbooter.cpp:1786"
+    source_ref: "source src/osdep/amiberry_whdbooter.cpp:331-345, source src/osdep/amiberry_whdbooter.cpp:1876"
 
   - name: "WHDLoad"
     path: "whdboot/WHDLoad"
@@ -523,7 +528,7 @@ files:
     note: >
       WHDLoad executable linked into C: of the boot drive the booter builds,
       unless JST is selected. Ships in whdboot/ of the installed build.
-    source_ref: "source src/osdep/amiberry_whdbooter.cpp:1776-1785"
+    source_ref: "source src/osdep/amiberry_whdbooter.cpp:1866-1875"
 
   - name: "JST"
     path: "whdboot/JST"
@@ -538,7 +543,7 @@ files:
       JST loader linked into C: in place of WHDLoad when the
       use_jst_instead_of_whd option is set. Ships in whdboot/ of the installed
       build.
-    source_ref: "source src/osdep/amiberry_whdbooter.cpp:1776-1779"
+    source_ref: "source src/osdep/amiberry_whdbooter.cpp:1866-1869"
 
   - name: "AmiQuit"
     path: "whdboot/AmiQuit"
@@ -552,7 +557,7 @@ files:
     note: >
       Quit helper linked into C: and called at the end of the generated startup-
       sequence. Ships in whdboot/ of the installed build.
-    source_ref: "source src/osdep/amiberry_whdbooter.cpp:1526, source src/osdep/amiberry_whdbooter.cpp:1785"
+    source_ref: "source src/osdep/amiberry_whdbooter.cpp:1615, source src/osdep/amiberry_whdbooter.cpp:1875"
 
   - name: "boot-data.zip"
     path: "whdboot/boot-data.zip"
@@ -566,7 +571,7 @@ files:
     note: >
       Boot volume mounted as DH3. A boot-data directory at the same place is
       used when the zip is absent. Ships in whdboot/ of the installed build.
-    source_ref: "source src/osdep/amiberry_whdbooter.cpp:1563-1576"
+    source_ref: "source src/osdep/amiberry_whdbooter.cpp:1652-1665"
 
   - name: "whdload_db.json"
     path: "whdboot/game-data/whdload_db.json"
@@ -574,15 +579,16 @@ files:
     system: commodore-amiga
     required: false
     bundled: true
-    size: 6680181
-    sha1: "bcb18c1016cbb1c748d39254e7f94fbf875b1c0b"
-    md5: "14d797815aa9bbc79fe284b244ea75b1"
+    size: 6741053
+    sha1: "6540ae1a35080e3dbeacfba5139e4781eb74ca86"
+    md5: "51d44cd24e16fbb395b1bfefbaacd375"
     note: >
-      Per-game slave and hardware settings, matched on the archive name.
+      Per-game slave and hardware settings, matched on the archive SHA1 and
+      then on its name.
       whdload_db.xml in the same folder is read when the JSON is absent. With
       neither, the booter scans the archive for a .slave file. Ships in whdboot/
       of the installed build.
-    source_ref: "source src/osdep/amiberry_whdbooter.cpp:1714-1733, source src/osdep/amiberry_whdbooter.cpp:1736-1750"
+    source_ref: "source src/osdep/amiberry_whdbooter.cpp:1804-1823, source src/osdep/amiberry_whdbooter.cpp:1061-1079, source src/osdep/amiberry_whdbooter.cpp:1826-1840, source src/osdep/amiberry.cpp:12289-12385"
 
   - name: "kick33180.A500.RTB"
     path: "whdboot/save-data/Kickstarts/kick33180.A500.RTB"
@@ -599,7 +605,7 @@ files:
       beside the image the booter links there. Ships in whdboot/ of the
       installed build. The repository ships the same bytes as
       kick33192.A500.RTB.
-    source_ref: "source src/osdep/amiberry_whdbooter.cpp:331-352, source src/osdep/amiberry_whdbooter.cpp:1786"
+    source_ref: "source src/osdep/amiberry_whdbooter.cpp:331-352, source src/osdep/amiberry_whdbooter.cpp:1876"
 
   - name: "kick34005.A500.RTB"
     path: "whdboot/save-data/Kickstarts/kick34005.A500.RTB"
@@ -614,7 +620,7 @@ files:
       WHDLoad relocation table for Kickstart 1.3, read from DEVS:Kickstarts
       beside the image the booter links there. Ships in whdboot/ of the
       installed build.
-    source_ref: "source src/osdep/amiberry_whdbooter.cpp:331-352, source src/osdep/amiberry_whdbooter.cpp:1786"
+    source_ref: "source src/osdep/amiberry_whdbooter.cpp:331-352, source src/osdep/amiberry_whdbooter.cpp:1876"
 
   - name: "kick40063.A600.RTB"
     path: "whdboot/save-data/Kickstarts/kick40063.A600.RTB"
@@ -629,7 +635,7 @@ files:
       WHDLoad relocation table for Kickstart 3.1 A600, read from DEVS:Kickstarts
       beside the image the booter links there. Ships in whdboot/ of the
       installed build.
-    source_ref: "source src/osdep/amiberry_whdbooter.cpp:331-352, source src/osdep/amiberry_whdbooter.cpp:1786"
+    source_ref: "source src/osdep/amiberry_whdbooter.cpp:331-352, source src/osdep/amiberry_whdbooter.cpp:1876"
 
   - name: "kick40068.A1200.RTB"
     path: "whdboot/save-data/Kickstarts/kick40068.A1200.RTB"
@@ -644,7 +650,7 @@ files:
       WHDLoad relocation table for Kickstart 3.1 A1200, read from
       DEVS:Kickstarts beside the image the booter links there. Ships in whdboot/
       of the installed build.
-    source_ref: "source src/osdep/amiberry_whdbooter.cpp:331-352, source src/osdep/amiberry_whdbooter.cpp:1786"
+    source_ref: "source src/osdep/amiberry_whdbooter.cpp:331-352, source src/osdep/amiberry_whdbooter.cpp:1876"
 
   - name: "kick40068.A4000.RTB"
     path: "whdboot/save-data/Kickstarts/kick40068.A4000.RTB"
@@ -659,7 +665,7 @@ files:
       WHDLoad relocation table for Kickstart 3.1 A4000, read from
       DEVS:Kickstarts beside the image the booter links there. Ships in whdboot/
       of the installed build.
-    source_ref: "source src/osdep/amiberry_whdbooter.cpp:331-352, source src/osdep/amiberry_whdbooter.cpp:1786"
+    source_ref: "source src/osdep/amiberry_whdbooter.cpp:331-352, source src/osdep/amiberry_whdbooter.cpp:1876"
 
   - name: "kick31034.A1000.RTB"
     path: "whdboot/save-data/Kickstarts/kick31034.A1000.RTB"
@@ -674,4 +680,4 @@ files:
       WHDLoad relocation table for the A1000 Kickstart 1.1 image, read from
       DEVS:Kickstarts beside the image the booter links there. Ships in whdboot/
       of the installed build.
-    source_ref: "source src/osdep/amiberry_whdbooter.cpp:331-345, source src/osdep/amiberry_whdbooter.cpp:1786"
+    source_ref: "source src/osdep/amiberry_whdbooter.cpp:331-345, source src/osdep/amiberry_whdbooter.cpp:1876"
