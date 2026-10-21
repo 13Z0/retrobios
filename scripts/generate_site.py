@@ -1060,6 +1060,35 @@ def _write_sqlite_export(
     os.replace(temp_path, destination)
 
 
+def write_single_item(path: Path, kind: str, item: dict, generated_at: str) -> None:
+    """One item in the envelope of its collection, for a page to link."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    write_if_changed(
+        str(path),
+        json.dumps(
+            {"schema_version": 1, "generated_at": generated_at, "kind": kind,
+             "count": 1, "items": [item]},
+            indent=2, sort_keys=True, ensure_ascii=False, default=str,
+        ) + "\n",
+    )
+
+
+def system_export_item(slug: str, manufacturer: str, consoles: dict[str, list]) -> dict:
+    """A system page's files by console, with the hashes its cards show."""
+    fields = ("name", "path", "size", "sha1", "md5", "sha256", "crc32")
+    return {
+        "id": slug,
+        "name": manufacturer,
+        "consoles": {
+            console: [
+                {field: entry[field] for field in fields if entry.get(field) is not None}
+                for entry in sorted(entries, key=lambda e: (e.get("name", ""), e.get("sha1", "")))
+            ]
+            for console, entries in sorted(consoles.items())
+        },
+    }
+
+
 def generate_data_exports(
     docs: Path,
     db: dict,
@@ -1100,6 +1129,11 @@ def generate_data_exports(
             str(api / filename),
             json.dumps(document, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
         )
+    # One platform without the others, as api/v1/emulators/<id>.json is one
+    # profile: platforms.json is 2.8 MB for twelve platforms.
+    for item in platform_items:
+        write_single_item(api / "platforms" / f"{item['id']}.json",
+                          "platforms", item, generated_at)
     write_if_changed(str(api / "stats.json"), generate_stats(stats))
     write_if_changed(
         str(api / "database.json"),
@@ -1280,7 +1314,9 @@ def generate_data_page(exports: list[dict]) -> str:
         "`api/v1/emulators/<id>.json`, the envelope of `emulators.json` holding "
         "that one item, its `profile` valid against "
         "[`emulator.schema.json`](api/v1/schemas/emulator.schema.json). Each "
-        "emulator page links its own.",
+        "emulator page links its own. `api/v1/platforms/<id>.json` holds one "
+        "platform of `platforms.json`, and `api/v1/systems/<slug>.json` the files "
+        "of one system page by console. Each platform and system page links its own.",
         "",
         "## Bulk downloads",
         "",
@@ -2000,6 +2036,22 @@ def _render_platform_systems(
 _EXPORTED: set[str] = set()
 
 
+def _platform_data_links(name: str) -> str:
+    """The platform's own data, machine-readable: the YAML transcribed from
+    its upstream list, this page's JSON and the manifest the installer reads.
+
+    An emulator page linked its YAML and JSON, a platform page nothing: a
+    tool had to download all twelve platforms in platforms.json and filter.
+    """
+    links = [
+        f"[YAML]({REPO_URL}/blob/main/platforms/{name}.yml)",
+        f"[JSON](../api/v1/platforms/{name}.json)",
+    ]
+    if (_REPO_ROOT / "install" / f"{name}.json").is_file():
+        links.append(f"[install manifest]({REPO_URL}/blob/main/install/{name}.json)")
+    return ", ".join(links)
+
+
 def generate_platform_page(
     name: str,
     cov: dict,
@@ -2093,6 +2145,7 @@ def generate_platform_page(
         lines.append(f"| Transcribed from | <{transcribed}>{note} |")
     if name in _EXPORTED:
         lines.append(f"| Updated file | [Download it and see the changes](../exports.md#{name}) |")
+    lines.append(f"| Data | {_platform_data_links(name)} |")
     contrib_list = (registry or {}).get(name, {}).get("contributed_by", [])
     if contrib_list:
         for cb in contrib_list:
@@ -2101,8 +2154,8 @@ def generate_platform_page(
             pr = cb.get("pr")
             pr_link = f" ([#{pr}]({REPO_URL}/pull/{pr}))" if pr else ""
             lines.append(
-                f"| Contributed by | [@{username}](https://github.com/{username})"
-                f" - {contribution}{pr_link} |"
+                f"| Contributed by | [@{username}](https://github.com/{username}):"
+                f" {contribution}{pr_link} |"
             )
     lines.extend(
         [
@@ -2794,9 +2847,12 @@ def generate_system_page(
     consoles: dict[str, list],
     consumers: FileConsumers,
 ) -> str:
-    manufacturer.lower().replace(" ", "-")
+    slug = manufacturer.lower().replace(" ", "-")
     lines = [
         f"# {manufacturer}",
+        "",
+        f"The files below by console, with every hash, are also published as "
+        f"[JSON](../api/v1/systems/{urllib.parse.quote(slug)}.json).",
         "",
     ]
     anchored: set[str] = set()
@@ -5439,6 +5495,11 @@ def _generate(args: argparse.Namespace) -> None:
         slug = mfr.lower().replace(" ", "-")
         page = generate_system_page(mfr, consoles, consumers)
         PAGE_DATA[f"systems/{slug}.md"] = system_structured_data(slug, consoles)
+        write_single_item(
+            docs / "api" / "v1" / "systems" / f"{slug}.json", "systems",
+            system_export_item(slug, mfr, consoles),
+            str(db.get("generated_at") or _timestamp()),
+        )
         write_if_changed(str(docs / "systems" / f"{slug}.md"), page)
 
     print("Generating emulator pages...")

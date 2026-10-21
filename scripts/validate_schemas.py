@@ -419,7 +419,9 @@ def main() -> int:
             api_dir / name
             for name in ("catalog.json", "platforms.json", "emulators.json", "gaps.json")
             if (api_dir / name).exists()
-        ]
+        ] + sorted((api_dir / "platforms").glob("*.json")) + sorted(
+            (api_dir / "systems").glob("*.json")
+        )
         errors.extend(
             _validate_json_files(envelope_paths, "site-api-envelope.schema.json")
         )

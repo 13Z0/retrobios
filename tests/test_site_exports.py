@@ -882,5 +882,42 @@ class NestedProfileBlocksRenderAsLists(unittest.TestCase):
         self.assertIn("name: a.bin, size: 2", html)
 
 
+class EveryPageLinksItsOwnData(unittest.TestCase):
+    """An emulator page linked its YAML and JSON. A platform page linked
+    nothing, and a tool had to download platforms.json (2.8 MB) and filter
+    it. A system page linked nothing either."""
+
+    def test_platform_and_system_documents(self):
+        import generate_site  # noqa: PLC0415
+        from cross_reference import FileConsumers  # noqa: PLC0415
+
+        cov = {"platform": "Batocera", "mode": "md5", "present": 0, "total": 0,
+               "verified": 0, "missing": 0, "details": [], "config": {"systems": {}}}
+        page = generate_site.generate_platform_page("batocera", cov)
+        self.assertIn("[JSON](../api/v1/platforms/batocera.json)", page)
+        self.assertIn("/blob/main/platforms/batocera.yml)", page)
+
+        entry = {"name": "a.bin", "sha1": "a" * 40, "md5": "b" * 32, "size": 3,
+                 "path": "bios/Sony/PlayStation/a.bin"}
+        page = generate_site.generate_system_page(
+            "Sony", {"PlayStation": [entry]}, FileConsumers({"files": {}}))
+        self.assertIn("[JSON](../api/v1/systems/sony.json)", page)
+
+        item = generate_site.system_export_item("sony", "Sony", {"PlayStation": [entry]})
+        self.assertEqual(item["consoles"]["PlayStation"][0]["sha1"], "a" * 40)
+        with tempfile.TemporaryDirectory(dir=Path(__file__).resolve().parents[1] / "tmp") as tmp:
+            path = Path(tmp) / "sony.json"
+            generate_site.write_single_item(path, "systems", item, "2026-10-21T00:00:00Z")
+            document = json.loads(path.read_text())
+        self.assertEqual(document["count"], 1)
+        try:
+            import jsonschema  # noqa: PLC0415
+        except ImportError:
+            return
+        root = Path(__file__).resolve().parents[1]
+        envelope = json.loads((root / "schemas" / "site-api-envelope.schema.json").read_text())
+        jsonschema.validate(document, envelope)
+
+
 if __name__ == "__main__":
     unittest.main()
