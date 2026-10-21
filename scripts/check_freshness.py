@@ -1253,8 +1253,6 @@ def check_profiles(run: bool, offline: bool) -> list[Finding]:
         "--all",
         "--json",
         "--check-version",
-        "--detect-new-files",
-        "--watch-hashes",
     ]
     if offline:
         cmd.append("--offline")

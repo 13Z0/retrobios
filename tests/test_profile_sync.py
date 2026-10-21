@@ -4022,7 +4022,20 @@ class TestOutputModesApplyTheirFlags(unittest.TestCase):
         self.assertIn("prose under an older pin", out)
 
     def test_extras_are_refused_with_json(self):
-        code, _, err = self._main("--json", "--check-version")
+        code, _, err = self._main("--json", "--detect-new-files")
+        self.assertEqual(code, 1)
+        self.assertIn("--detect-new-files", err)
+
+    def test_json_carries_the_version_check(self):
+        """check_freshness asks for --json --check-version: refused, its
+        profile row read an empty report as unreadable on every run."""
+        code, out, err = self._main("--json", "--check-version")
+        self.assertEqual(code, 0, err)
+        rows = json.loads(out)
+        self.assertTrue(all("version" in row and "page_version" in row for row in rows))
+
+    def test_rankings_refuse_the_version_check(self):
+        code, _, err = self._main("--triage", "--check-version")
         self.assertEqual(code, 1)
         self.assertIn("--check-version", err)
 

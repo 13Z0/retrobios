@@ -388,6 +388,24 @@ class ProfileSummaryTests(unittest.TestCase):
         self.assertNotIn("a", by_subject)
         self.assertNotIn("b", by_subject)
 
+    def test_profile_sync_accepts_the_command_it_is_given(self):
+        """--json with the detection flags was refused, so --profiles read an
+        empty stdout and reported "unreadable report" on every run."""
+        import profile_sync  # noqa: PLC0415
+
+        captured = []
+
+        def run(cmd, **kwargs):
+            captured.append(cmd)
+            return mock.Mock(returncode=0, stdout="[]", stderr="")
+
+        with mock.patch.object(cf.subprocess, "run", side_effect=run):
+            cf.check_profiles(True, offline=True)
+        (cmd,) = captured
+        args = profile_sync.build_parser().parse_args(cmd[2:])
+        profile_sync._refuse_flag_combinations(args)
+        self.assertTrue(args.as_json)
+
     def test_a_non_list_report_is_an_error_not_a_crash(self):
         findings = cf.summarize_profile_sync({"oops": 1})
         self.assertEqual(findings[0].status, cf.ERROR)
