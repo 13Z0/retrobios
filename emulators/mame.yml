@@ -859,6 +859,7 @@ files:
   - name: hod2bios.zip
     required: false
     category: bios_zip
+    system: sega-naomi
     source_ref: "upstream src/mame/sega/naomi.cpp:10918"
     note: "game-specific BIOS for House of the Dead 2"
     contents:
@@ -894,6 +895,7 @@ files:
   - name: f355dlx.zip
     required: false
     category: bios_zip
+    system: sega-naomi
     source_ref: "upstream src/mame/sega/naomi.cpp:10919"
     contents:
       - name: "epr-21864.ic27"
@@ -928,6 +930,7 @@ files:
   - name: f355bios.zip
     required: false
     category: bios_zip
+    system: sega-naomi
     source_ref: "upstream src/mame/sega/naomi.cpp:10920"
     contents:
       - name: "epr-22851.ic27"
@@ -954,6 +957,7 @@ files:
   - name: airlbios.zip
     required: false
     category: bios_zip
+    system: sega-naomi
     source_ref: "upstream src/mame/sega/naomi.cpp:10921"
     contents:
       - name: "epr-21802.ic27"
@@ -1783,6 +1787,7 @@ files:
   - name: kviper.zip
     required: true
     category: bios_zip
+    system: konami-viper
     source_ref: "upstream src/mame/konami/viper.cpp:3213"
     contents:
       - name: "941b01.u25"
