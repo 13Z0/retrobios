@@ -154,8 +154,12 @@ its BIOS folder, see [Getting started](getting-started.md).
 ### Error: Python 3.8 or newer is required.
 
 No Python 3.8 or newer was found: Python is missing, or older. The message
-names the command that installs it, `sudo apt install python3` on Debian and
-Ubuntu. On a handheld running Batocera or Recalbox it is already there, so
+names the command that installs it on the system it runs on: `sudo apt install
+python3` on Debian and Ubuntu, `sudo dnf install python3` on Fedora, `sudo
+pacman -S python` on Arch, `xcode-select --install` on macOS and `pkg install
+python` in Termux, where it offers to run that command itself (Termux installs
+without root). On Windows, `install.ps1` offers to run `winget install
+Python.Python.3.12`. On a handheld running Batocera or Recalbox it is already there, so
 this message usually means the command ran on the computer rather than on the
 console.
 

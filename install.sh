@@ -118,17 +118,65 @@ if [ -z "$INSTALLER" ] || [ ! -f "$INSTALLER" ]; then
   INSTALLER="$TEMP_INSTALLER"
 fi
 
-PYTHON=""
-for command_name in python3 python; do
-  if command -v "$command_name" >/dev/null 2>&1 \
-    && "$command_name" -c 'import sys; raise SystemExit(sys.version_info < (3, 8))' 2>/dev/null; then
-    PYTHON=$command_name
-    break
+find_python() {
+  PYTHON=""
+  for command_name in python3 python; do
+    if command -v "$command_name" >/dev/null 2>&1 \
+      && "$command_name" -c 'import sys; raise SystemExit(sys.version_info < (3, 8))' 2>/dev/null; then
+      PYTHON=$command_name
+      return 0
+    fi
+  done
+  return 1
+}
+
+# The command that installs Python here, named for this system: Termux has
+# no sudo and installs with pkg, macOS has no apt.
+python_install_command() {
+  case "${TERMUX_VERSION:-}:${PREFIX:-}" in
+    ?*:*|*com.termux*) echo "pkg install python"; return ;;
+  esac
+  if [ "$(uname -s 2>/dev/null)" = "Darwin" ]; then
+    echo "xcode-select --install"
+    return
   fi
-done
+  os_ids=""
+  if [ -r /etc/os-release ]; then
+    os_ids=$(sed -n 's/^ID\(_LIKE\)\{0,1\}=//p' /etc/os-release | tr -d '"' | tr '\n' ' ')
+  fi
+  for os_id in $os_ids; do
+    case "$os_id" in
+      debian|ubuntu) echo "sudo apt install python3"; return ;;
+      fedora|rhel|centos) echo "sudo dnf install python3"; return ;;
+      arch) echo "sudo pacman -S python"; return ;;
+      opensuse*|suse) echo "sudo zypper install python3"; return ;;
+      alpine) echo "apk add python3"; return ;;
+    esac
+  done
+  echo ""
+}
+
+if ! find_python; then
+  install_command=$(python_install_command)
+  # Termux installs without root: at a terminal, the bootstrap offers to run it.
+  if [ "$install_command" = "pkg install python" ] && (: </dev/tty) 2>/dev/null; then
+    printf 'Python 3.8 or newer is required. Install it now with "%s"? [Y/n] ' \
+      "$install_command" >/dev/tty
+    read -r answer </dev/tty || answer="n"
+    case "$answer" in
+      [Nn]*) ;;
+      *) pkg install -y python </dev/tty && find_python || true ;;
+    esac
+  fi
+fi
 if [ -z "$PYTHON" ]; then
   echo "Error: Python 3.8 or newer is required." >&2
-  echo "  Install it, then run this command again. On Debian or Ubuntu: sudo apt install python3" >&2
+  if [ -n "$install_command" ]; then
+    echo "  Install it with: $install_command" >&2
+    echo "  Then run this command again." >&2
+  else
+    echo "  Install it with this system's package manager, then run this command again." >&2
+  fi
   exit 1
 fi
 

@@ -2378,6 +2378,43 @@ class RetroArchWhereItReallyLives(unittest.TestCase):
             self.assertIn(("retroarch", support / "system"), found)
 
 
+class NoPythonNamesThisSystemsCommand(unittest.TestCase):
+    """Without Python the bootstrap said `sudo apt install python3` on every
+    system: Termux has no sudo and installs with `pkg install python`, and
+    macOS has no apt."""
+
+    def _run(self, extra_env: dict, uname: str = "Linux") -> subprocess.CompletedProcess:
+        root = Path(_tempdir(self))
+        fake_bin = root / "bin"
+        fake_bin.mkdir()
+        for tool in ("sed", "tr", "dirname", "cat"):
+            found = shutil.which(tool)
+            if found:
+                (fake_bin / tool).symlink_to(found)
+        (fake_bin / "uname").write_text(f"#!/bin/sh\necho {uname}\n", encoding="utf-8")
+        (fake_bin / "uname").chmod(0o755)
+        # No terminal: the Termux offer is a question asked on /dev/tty.
+        return subprocess.run(
+            ["/bin/sh", str(REPO_ROOT / "install.sh")], cwd=root,
+            env={"PATH": str(fake_bin), "HOME": str(root), **extra_env},
+            capture_output=True, text=True, timeout=30, check=False,
+            start_new_session=True,
+        )
+
+    def test_termux_is_told_pkg(self):
+        proc = self._run({"TERMUX_VERSION": "0.118",
+                          "PREFIX": "/data/data/com.termux/files/usr"})
+        self.assertEqual(proc.returncode, 1)
+        self.assertIn("Install it with: pkg install python", proc.stderr)
+        self.assertNotIn("sudo", proc.stderr)
+
+    def test_macos_is_told_xcode_select(self):
+        proc = self._run({}, uname="Darwin")
+        self.assertEqual(proc.returncode, 1)
+        self.assertIn("Install it with: xcode-select --install", proc.stderr)
+        self.assertNotIn("apt", proc.stderr)
+
+
 class ThePowerShellWrapperPassesTheStatusOn(unittest.TestCase):
     """Every non-zero exit became a red "installer failed" exception and
     code 1: a --check that found work read as a crash, 2 and 130 were lost."""
