@@ -5848,5 +5848,41 @@ class RequiredOnlyReachesDataDirectories(unittest.TestCase):
         ])
 
 
+class InstallerJsonKindsNeverOverwriteEachOther(unittest.TestCase):
+    """Install manifests and target core lists are both <platform>.json.
+    --manifest-targets aimed at install/ replaced install/retroarch.json, the
+    file every installer downloads, with a target table, exit 0."""
+
+    def _run(self, *flags: str, held: str) -> tuple:
+        with tempfile.TemporaryDirectory(dir=TMP_ROOT) as tmp:
+            target = Path(tmp, "retroarch.json")
+            before = (ROOT / held).read_text(encoding="utf-8")
+            target.write_text(before, encoding="utf-8")
+            proc = subprocess.run(
+                [sys.executable, "scripts/generate_pack.py", *flags,
+                 "--offline", "--output-dir", tmp],
+                cwd=ROOT, capture_output=True, text=True, timeout=600,
+            )
+            return proc, before, target.read_text(encoding="utf-8")
+
+    def test_target_lists_refuse_a_manifest_directory(self):
+        proc, before, after = self._run(
+            "--manifest-targets", held="install/retroarch.json"
+        )
+        self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
+        self.assertIn("holds install manifests", proc.stderr)
+        self.assertIn("--output-dir", proc.stderr)
+        self.assertEqual(after, before)
+
+    def test_manifests_refuse_a_target_list_directory(self):
+        proc, before, after = self._run(
+            "--manifest", "--platform", "retroarch",
+            held="install/targets/retroarch.json",
+        )
+        self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
+        self.assertIn("holds per-target core lists", proc.stderr)
+        self.assertEqual(after, before)
+
+
 if __name__ == "__main__":
     unittest.main()

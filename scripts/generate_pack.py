@@ -2181,6 +2181,53 @@ def generate_md5_pack(
     return zip_path
 
 
+def _json_artifact_kind(path: Path) -> str | None:
+    """"manifest" for an install manifest, "targets" for a per-target core
+    list, None for anything else. The two share their file names: install.py
+    fetches install/<platform>.json and install/targets/<platform>.json."""
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError):
+        return None
+    if not isinstance(data, dict) or not data:
+        return None
+    if "manifest_version" in data:
+        return "manifest"
+    if all(v is None or isinstance(v, list) for v in data.values()):
+        return "targets"
+    return None
+
+
+def _refuse_mixed_output(output_dir: str, writing: str) -> None:
+    """Stop before one kind of installer JSON overwrites the other.
+
+    Both are named <platform>.json, so --manifest-targets aimed at install/
+    replaced install/retroarch.json, the file every installer downloads, with
+    a target table, and the reverse replaced a target list by a manifest.
+    """
+    directory = Path(output_dir)
+    if not directory.is_dir():
+        return
+    other = "targets" if writing == "manifest" else "manifest"
+    held = sorted(
+        p.name for p in directory.glob("*.json") if _json_artifact_kind(p) == other
+    )
+    if not held:
+        return
+    what = {
+        "manifest": "install manifests (install/ in the repository)",
+        "targets": "per-target core lists (install/targets/ in the repository)",
+    }
+    flag = "--manifest" if writing == "manifest" else "--manifest-targets"
+    print(
+        f"ERROR: {output_dir} holds {what[other]}: {', '.join(held[:3])}"
+        f"{', ...' if len(held) > 3 else ''}. {flag} writes {what[writing]} under the "
+        f"same file names; pass the --output-dir that holds those instead.",
+        file=sys.stderr,
+    )
+    sys.exit(1)
+
+
 def generate_target_manifests(targets_dir: str, output_dir: str) -> None:
     """Convert target YAMLs to installer JSON manifests."""
     os.makedirs(output_dir, exist_ok=True)
@@ -3100,6 +3147,7 @@ def _main(held: contextlib.ExitStack) -> None:
             _run_verify_packs(args)
         return
     if args.manifest_targets:
+        _refuse_mixed_output(args.output_dir, "targets")
         with _pack_output_lock(args.output_dir):
             generate_target_manifests(
                 os.path.join(args.platforms_dir, "targets"), args.output_dir
@@ -3276,6 +3324,7 @@ def _main(held: contextlib.ExitStack) -> None:
     )
 
     if args.manifest:
+        _refuse_mixed_output(args.output_dir, "manifest")
         with _pack_output_lock(args.output_dir):
             _run_manifest_mode(
                 args, groups, db, zip_contents, emu_profiles, target_cores_cache
