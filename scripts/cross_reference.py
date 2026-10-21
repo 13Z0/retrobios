@@ -959,6 +959,15 @@ def main() -> None:
     if args.platform:
         require_platform(args.platform, args.platforms_dir)
 
+    import contextlib
+
+    from refresh_data_dirs import hold_data_dirs
+
+    # Files resolve against data/: the trees stay put until the process
+    # ends, which releases the hold.
+    held = contextlib.ExitStack()
+    hold_data_dirs(held, load_data_dir_registry(args.platforms_dir))
+
     profiles = load_emulator_profiles(args.emulators_dir)
     emulator = args.emulator
     if emulator:

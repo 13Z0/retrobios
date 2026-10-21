@@ -898,6 +898,17 @@ def main() -> None:
         require_platform(args.platform, args.platforms_dir)
         platforms = [args.platform]
 
+    if not args.refresh_cache:
+        import contextlib
+
+        from refresh_data_dirs import hold_data_dirs
+
+        # Removal candidates are proved against data/: a refresh swapping a
+        # tree mid-walk listed entries only that tree holds as removable.
+        # The process exit releases the hold.
+        held = contextlib.ExitStack()
+        hold_data_dirs(held, load_data_dir_registry(args.platforms_dir))
+
     sys.exit(
         run(
             platforms,

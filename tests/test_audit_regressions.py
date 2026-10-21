@@ -3761,6 +3761,21 @@ class ADataDirectoryIsHeldWhileRead(unittest.TestCase):
             self.assertFalse(exclusive_free())
         self.assertTrue(exclusive_free())
 
+    def test_a_cache_not_yet_on_disk_is_held_too(self):
+        """Skipped while absent, a tree a refresh installed mid-run was
+        missing for verify and present for the packs of the same run."""
+        import fcntl
+
+        from scripts import refresh_data_dirs
+
+        cache = self.tmp / "absent"
+        lock = cache.with_name(f".{cache.name}.lock")
+        with contextlib.ExitStack() as held:
+            refresh_data_dirs.hold_data_dirs(held, {"absent": {"local_cache": str(cache)}})
+            self.assertFalse(cache.exists())
+            with open(lock, "a") as handle, self.assertRaises(BlockingIOError):
+                fcntl.flock(handle, fcntl.LOCK_EX | fcntl.LOCK_NB)
+
     def test_both_entry_points_hold_the_trees(self):
         pack = (ROOT / "scripts" / "generate_pack.py").read_text()
         verify_src = (ROOT / "scripts" / "verify.py").read_text()
@@ -5446,7 +5461,8 @@ class ReportsHoldTheDataTrees(unittest.TestCase):
     def test_each_entry_point_holds_them(self):
         import ast
 
-        for script in ("generate_readme.py", "generate_site.py", "slots.py"):
+        for script in ("generate_readme.py", "generate_site.py", "slots.py",
+                       "export_native.py", "cross_reference.py"):
             tree = ast.parse((ROOT / "scripts" / script).read_text(encoding="utf-8"))
             main = next(
                 node for node in tree.body
