@@ -40,6 +40,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+from collections.abc import Iterator
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone
@@ -478,7 +479,7 @@ _MODEL_NOTES = ("WARNING: hash conflict",)
 
 
 @contextlib.contextmanager
-def _without_model_notes():
+def _without_model_notes() -> Iterator[None]:
     """Keep the model build's own notes out of the freshness report.
 
     Anything else written to stderr passes through.
