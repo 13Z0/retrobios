@@ -46,6 +46,12 @@ _HOSTS: dict[str, tuple[str, str, str]] = {
         "https://git.libretro.com/api/v4",
         "https://git.libretro.com",
     ),
+    # EDuke32 and its forks (eduke32, fury) are developed on this GitLab.
+    "voidpoint.io": (
+        "gitlab",
+        "https://voidpoint.io/api/v4",
+        "https://voidpoint.io",
+    ),
     "codeberg.org": (
         "forgejo",
         "https://codeberg.org/api/v1",

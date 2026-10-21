@@ -66,6 +66,16 @@ class TestParseRepo(unittest.TestCase):
             "/-/raw/abc123/source/Engine.cpp",
         )
 
+    def test_voidpoint_is_a_gitlab(self):
+        """eduke32 and fury were skipped as an unsupported host."""
+        repo = parse_repo("https://voidpoint.io/terminx/eduke32")
+        self.assertEqual(repo.family, "gitlab")
+        self.assertEqual(repo.api_base, "https://voidpoint.io/api/v4")
+        self.assertEqual(
+            raw_url(repo, "abc123", "source/build/src/build.cpp"),
+            "https://voidpoint.io/terminx/eduke32/-/raw/abc123/source/build/src/build.cpp",
+        )
+
     def test_libretro_gitlab_is_a_gitlab(self):
         repo = parse_repo("https://git.libretro.com/libretro/wqxemu.git")
         self.assertEqual(repo.family, "gitlab")
