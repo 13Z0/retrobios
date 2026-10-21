@@ -153,5 +153,43 @@ class AnUnreadableSourceStopsTheRun(unittest.TestCase):
         self.assertIn("broken.yml", str(caught.exception))
 
 
+class DrasticNamesTheDSDumps(unittest.TestCase):
+    """DraStic opens nds_bios_arm9.bin, nds_bios_arm7.bin and nds_firmware.bin
+    and checks their size only. Its profile listed nine other names none of
+    its binaries contains, which were the only way the collection answered
+    its own three names."""
+
+    def _aliases(self, files: dict) -> dict:
+        with tempfile.TemporaryDirectory(dir=REPO_ROOT / "tmp") as tmp:
+            previous = os.getcwd()
+            os.chdir(tmp)
+            try:
+                Path("emulators").mkdir()
+                return generate_db._collect_all_aliases(files)
+            finally:
+                os.chdir(previous)
+
+    def test_the_collection_answers_drastic_names(self):
+        files = {
+            "a9": {"name": "NDS_Bios9.bin", "path": "bios/Nintendo/DS/NDS_Bios9.bin", "md5": "m9"},
+            "a7": {"name": "NDS_Bios7.bin", "path": "bios/Nintendo/DS/NDS_Bios7.bin", "md5": "m7"},
+            "fw": {"name": "NDS_Lite_Firmware.bin",
+                   "path": "bios/Nintendo/DS/NDS_Lite_Firmware.bin", "md5": "mf"},
+        }
+        aliases = self._aliases(files)
+        named = {sha: {a["name"] for a in entries} for sha, entries in aliases.items()}
+        self.assertIn("nds_bios_arm9.bin", named["a9"])
+        self.assertIn("nds_bios_arm7.bin", named["a7"])
+        self.assertIn("nds_firmware.bin", named["fw"])
+
+    def test_the_profile_carries_no_name_drastic_never_opens(self):
+        import yaml
+
+        profile = yaml.safe_load((REPO_ROOT / "emulators" / "drastic.yml").read_text())
+        self.assertEqual(
+            [e["name"] for e in profile["files"] if e.get("aliases")], [],
+        )
+
+
 if __name__ == "__main__":
     unittest.main()

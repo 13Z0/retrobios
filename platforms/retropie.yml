@@ -506,6 +506,15 @@ launchers:
   kind: package
   names: []
   source_ref: "scriptmodules/emulators/drastic.sh:12, 40"
+- emulator: drastic
+  package: drastic
+  build: standalone
+  kind: passes_path
+  names: []
+  search_dir: $md_conf_root/nds/drastic
+  passes_to: working directory of $md_inst/drastic.sh
+  fails_when_missing: false
+  source_ref: "scriptmodules/emulators/drastic.sh:48"
 - emulator: fbzx
   package: fbzx
   repo: "git https://github.com/rastersoft/fbzx :_get_branch_fbzx"

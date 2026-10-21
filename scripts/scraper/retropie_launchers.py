@@ -48,6 +48,11 @@ OUTSIDE_BIOS: dict[str, tuple[str, ...]] = {
     "gngeopi": ("-B",),  # gngeo -B/--biospath <directory of neogeo.zip>
 }
 
+# Packages whose emulator reads its system files below the working directory
+# the generated launch script enters with pushd, a folder outside $biosdir:
+# DraStic opens system/<name> under it. Each must still pushd.
+WORKING_DIRECTORY: tuple[str, ...] = ("drastic",)
+
 _FUNCTION = re.compile(r"^function\s+([\w.+-]+)\s*\(\)\s*\{\s*$")
 _ASSIGN = re.compile(r"^(?:local\s+)?([A-Za-z_]\w*)=(.*)$")
 _DECLARE = re.compile(r"^local\s+([A-Za-z_]\w*(?:\s+[A-Za-z_]\w*)*)\s*$")
@@ -518,6 +523,7 @@ class PackageReader:
         if links:
             self._links(links)
         self._outside_bios(events)
+        self._working_directory(events)
         return self.records
 
     @staticmethod
@@ -818,6 +824,32 @@ class PackageReader:
         if missing:
             raise LauncherPatternMissing(
                 self.package.path, f"addEmulator no longer passes {missing}"
+            )
+
+
+    def _working_directory(self, events: list[Event]) -> None:
+        """The folder a generated launch script enters before it runs the emulator."""
+        if self.package.id not in WORKING_DIRECTORY:
+            return
+        found = False
+        for event in events:
+            if not event.heredoc or not event.words or event.words[0] != ["pushd"]:
+                continue
+            script = _redirect_target(event.opener)
+            if script is None or len(event.words) != 2 or len(event.words[1]) != 1:
+                raise LauncherPatternMissing(
+                    f"{event.path}:{event.line}", f"pushd outside a launch script: {event.raw}"
+                )
+            found = True
+            self.record(
+                "passes_path", [], [(event.path, event.line)],
+                search_dir=event.words[1][0].strip("\"'"),
+                passes_to=f"working directory of {script}",
+                fails_when_missing=False, depends_on_option=self._depends(event),
+            )
+        if not found:
+            raise LauncherPatternMissing(
+                self.package.path, "the launch script no longer enters a working directory"
             )
 
 

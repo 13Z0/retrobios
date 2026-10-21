@@ -22,10 +22,23 @@ from dataclasses import dataclass
 
 from common import declared_root, name_match_size_ok, sanitize_pack_path
 
-# The kinds whose names say which file the launcher opens. The others hand
-# over a directory, copy a file the platform already names, or let the
+# The kinds whose names say which file the launcher opens. A link of a named
+# file is one too: ROCKNIX links /storage/roms/bios/nds_bios_arm9.bin into
+# DraStic's system folder, so that is the path the emulator reads. The others
+# hand over a directory, copy a file the platform already names, or let the
 # emulator choose.
-PLACE_KINDS = ("names_searched", "fixed_name", "core_option")
+PLACE_KINDS = ("names_searched", "fixed_name", "core_option", "links")
+
+# How each launcher extractor spells the BIOS directory in search_dir, as the
+# platform's own scripts name it: RetroPie's scriptmodules ($biosdir,
+# retropie_launchers.BIOSDIR), EmuDeck's EmuScripts (${biosPath},
+# emudeck_launchers.BIOS) and RetroDECK's framework ($bios_path,
+# retrodeck_launchers.BIOS).
+BIOS_ROOT_TOKENS = ("$biosdir", "${biosdir}", "${biosPath}", "$bios_path", "${bios_path}")
+
+# A path spelled from a home or filesystem root names the BIOS directory by
+# its base name: /userdata/bios, ~/roms/bios, $HOME/RetroPie/BIOS.
+_ROOTED = ("/", "~/", "$HOME/", "$home/", "${HOME}/")
 
 _LABELLED = re.compile(r"^([^\s()]+\.[A-Za-z0-9]+) \([^()]*\)$")
 _PLACEHOLDER = re.compile(r"\{(\w+)\}")
@@ -68,19 +81,22 @@ class LauncherPlace:
         option or a system leaves that default in use elsewhere, and a core
         option offers a file the user may choose without ever choosing it.
         """
-        return self.kind in ("names_searched", "fixed_name") and not self.conditional
+        return (
+            self.kind in ("names_searched", "fixed_name", "links")
+            and not self.conditional
+        )
 
 
 def _bios_relative(directory: str, base: str) -> str | None:
     """A launcher directory relative to the BIOS root, None when it is not one."""
     directory = directory.strip().rstrip("/")
-    roots = {base, "<system_directory>"}
+    roots = {base, "<system_directory>", *BIOS_ROOT_TOKENS}
     head, _, rest = directory.partition("/")
     if directory in roots:
         return ""
     if head in roots:
         relative = rest
-    elif directory.startswith("/") and base and f"/{base}/" in f"{directory}/":
+    elif directory.startswith(_ROOTED) and base and f"/{base}/" in f"{directory}/":
         relative = f"{directory}/".split(f"/{base}/", 1)[1].rstrip("/")
     else:
         return None
@@ -390,9 +406,18 @@ class LauncherLayer:
                 if isinstance(filled, dict):
                     added.append(filled)
                 if place.stands_for_default:
+                    # The emulator opens the launcher's file instead of its
+                    # own name, so a copy under that name is read by nobody:
+                    # EmuDeck passes Complex_4627v1.03.bin to xemu, which then
+                    # never opens Complex_4627.bin. A held file sitting on one
+                    # of the place's own paths is what fills it.
+                    own = {place.fold(p) for p in place.paths}
                     settled.update(
                         id(report) for _candidate, report in matched
                         if not report.get("in_repo")
+                        or place.fold(sanitize_pack_path(
+                            report.get("path") or report.get("name", "")
+                        )) not in own
                     )
         return added, settled
 

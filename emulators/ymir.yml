@@ -59,14 +59,56 @@ files:
   - name: "sega_101.bin"
     system: sega-saturn
     required: true
+    mode: standalone
     size: 524288
     validation: [size]
-    aliases: [mpr-17933.bin, saturn_bios.bin]
     description: "Saturn IPL ROM (BIOS). Any region accepted."
     note: "The libretro port reads sega_101.bin, mpr-17933.bin and saturn_bios.bin from its system directory (kBiosFilenames)."
     source_ref:
       standalone: "apps/ymir-sdl3/src/util/rom_loader.cpp:9-22, apps/ymir-sdl3/src/app/rom_manager.cpp:14-53, libs/ymir-core/include/ymir/sys/memory_defs.hpp:9"
-      libretro: "apps/ymir-libretro/src/libretro.cpp:305-309, apps/ymir-libretro/src/libretro.cpp:651-690, apps/ymir-libretro/src/libretro.cpp:692-703"
+
+  # The libretro build reads three names in its system directory. The md5 of
+  # the first two is that of the image whose XXH128 is the kLocalBiosHashes
+  # row the port gives a region to.
+  - name: "sega_101.bin"
+    system: sega-saturn
+    region: [japan]
+    priority: 1
+    required: true
+    mode: libretro
+    size: 524288
+    validation: [size]
+    md5: "85ec9ca47d8f6807718151cbcca8b964"
+    description: "Saturn IPL ROM 1.01 (1994-12-28), Japan."
+    note: "First name read. The port gives this image the Japan region, so it is loaded when ymir_region is japan and kept or switched to for a disc whose area code is J. Any other 512 KiB file under this name is read with the region the IPL database gives it, or none."
+    source_ref:
+      libretro: "apps/ymir-libretro/src/libretro.cpp:305-309, apps/ymir-libretro/src/libretro.cpp:596-606, apps/ymir-libretro/src/libretro.cpp:627-648, apps/ymir-libretro/src/libretro.cpp:651-702, apps/ymir-libretro/src/libretro.cpp:1231-1238, apps/ymir-libretro/src/libretro.cpp:1290-1306"
+
+  - name: "mpr-17933.bin"
+    system: sega-saturn
+    region: [north-america, europe, asia-ntsc, asia-pal, brazil, latin-america]
+    priority: 2
+    required: true
+    mode: libretro
+    size: 524288
+    validation: [size]
+    md5: "3240872c70984b6cbfda1586cab68dbe"
+    description: "Saturn IPL ROM 1.01a (1994-11-15), North America and Europe."
+    note: "Second name read. The port gives this image the US_EU region, loaded when ymir_region is north_america or europe and for a disc whose area code is any of T, U, B, A, E and L. Area K maps to the KR region, which neither image carries, so a Korean disc keeps the image already loaded."
+    source_ref:
+      libretro: "apps/ymir-libretro/src/libretro.cpp:305-309, apps/ymir-libretro/src/libretro.cpp:596-606, apps/ymir-libretro/src/libretro.cpp:627-648, apps/ymir-libretro/src/libretro.cpp:651-702, apps/ymir-libretro/src/libretro.cpp:1231-1238, apps/ymir-libretro/src/libretro.cpp:1290-1306, libs/ymir-core/include/ymir/media/media_defs.hpp:17-29"
+
+  - name: "saturn_bios.bin"
+    system: sega-saturn
+    priority: 3
+    required: false
+    mode: libretro
+    size: 524288
+    validation: [size]
+    description: "Saturn IPL ROM, any revision"
+    note: "Third name read. No region comes with the name: the image gets the one the IPL database gives its hash, or none, and is loaded when it is the first candidate found or its region is the one asked for."
+    source_ref:
+      libretro: "apps/ymir-libretro/src/libretro.cpp:305-309, apps/ymir-libretro/src/libretro.cpp:651-702, apps/ymir-libretro/src/libretro.cpp:1231-1238"
 
   # IPL images named by the standalone XXH128 database. The md5 is that of
   # the image whose seeded XXH128 matches the database row.

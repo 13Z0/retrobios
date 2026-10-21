@@ -326,6 +326,10 @@ Each package also gets one `kind: package` record, and that record is what
 maps a package to the profile of the build it compiles: `repo` names the
 project (`minivmac` builds github.com/minivmac/minivmac, Mini vMac 37, not the
 libretro port), so the mapping never rests on stripping `lr-` from a name.
+DraStic reads its BIOS below the folder its generated launch script enters
+(`pushd "$md_conf_root/nds/drastic"`, `drastic.sh:48`), outside `$biosdir`:
+that folder is a `passes_path` record, and the scrape stops if the script no
+longer enters one.
 RetroDECK's records come from each component's `component_prepare.sh`,
 `component_launcher.sh` and `component_functions.sh`, and from the presets
 they copy, with `$bios_path` as the framework names it. In both, every line
@@ -337,17 +341,25 @@ stops with `LauncherPatternMissing`.
 cross-reference both of them consume. A `names_searched` list is one place:
 the names are tried in order and one held file fills it, so a core file the
 launcher would never open once another name of the list is there is not
-reported missing. A `fixed_name` or `core_option` name is a place of its own.
+reported missing. A `fixed_name` or `core_option` name is a place of its own,
+and so is a `links` name: ROCKNIX links `/storage/roms/bios/nds_bios_arm9.bin`
+into DraStic's system folder, so that path is the one DraStic reads.
 Only a record that applies without condition settles the core's own name: a
 core option the user may never set, or a record tied to one system, leaves
-the core's default in use elsewhere.
+the core's default in use elsewhere. Settled, the core's own name is neither
+reported nor packed, held or not: EmuDeck passes `Complex_4627v1.03.bin` to
+xemu, which then never opens `Complex_4627.bin`.
 A place that no declared file and no packed core file fills receives, under
 the launcher's name, a file the core accepts: the file the collection knows
 under that name when the core takes its content, otherwise the copy held for
 the core entry read under that name. Records that only hand over a directory
-(`passes_path`, `scans_dir`) or copy a file the platform already names
-(`links`, `copies`) place nothing, and a `search_dir` the code describes
-rather than names ("directory of the Chihiro BIOS found") is skipped.
+(`passes_path`, `scans_dir`, a `links` record with no names) or copy a file
+the platform already names (`copies`) place nothing, and a `search_dir` the
+code describes rather than names ("directory of the Chihiro BIOS found") is
+skipped. `$biosdir`, `${biosPath}` and `$bios_path` are the BIOS directory as
+RetroPie, EmuDeck and RetroDECK spell it, and a path from a root
+(`/userdata/bios`, `$HOME/RetroPie/BIOS/dc`) is placed by the platform's
+`base_destination`.
 
 ### Inheritance
 

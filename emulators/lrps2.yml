@@ -8,8 +8,9 @@ core_classification: community_fork
 bios_mode: agnostic
 source: "https://github.com/libretro/ps2"
 upstream: "https://github.com/PCSX2/pcsx2"
-profiled_date: "2026-03-25"
-source_commit: "6eabf2242d451ee2e6d52b1e3f10efb77143ed05"
+profiled_date: "2026-10-21"
+source_commit: "6664c60294ee05fe5e8c7645ab7da546dae78ed2"
+upstream_commit: "a81f1aa39fc56ef60dbc913637c74c49c1792033"
 core_version: "Git"
 display_name: "Sony - PlayStation 2 (LRPS2)"
 cores: [lrps2, pcsx2, "ps2"]
@@ -46,7 +47,7 @@ files:
     min_size: 4194304
     max_size: 8388608
     validation: [size]
-    source_ref: "source pcsx2/ps2/BiosTools.cpp:33-34, 63-180, 249-274, 286-348"
+    source_ref: "source pcsx2/ps2/BiosTools.cpp:33-34, 63-180, 250-275, 287-349"
     note: >
       Scans pcsx2/bios/ for any file between 4 MB and 8 MB. Validates via romdir
       structure parsing (RESET + ROMVER entries). User selects BIOS via core option
@@ -57,7 +58,7 @@ files:
     required: false
     max_size: 4194304
     description: "DVD player ROM"
-    source_ref: "source pcsx2/ps2/BiosTools.cpp:189-229, 339"
+    source_ref: "source pcsx2/ps2/BiosTools.cpp:189-230, 340"
     note: >
       DVD player ROM. Tries <biospath>.rom1 (appended) then <biosbase>.rom1
       (extension replaced). Silently skipped if not found.
@@ -67,7 +68,7 @@ files:
     required: false
     max_size: 524288
     description: "Chinese ROM extension"
-    source_ref: "source pcsx2/ps2/BiosTools.cpp:189-229, 340"
+    source_ref: "source pcsx2/ps2/BiosTools.cpp:189-230, 341"
     note: >
       Chinese region ROM extension. Same naming convention as rom1.
       Only present on Chinese region consoles.
@@ -78,7 +79,7 @@ files:
     hle_fallback: true
     size: 1024
     description: "NVRAM / EEPROM data"
-    source_ref: "source pcsx2/CDVD/CDVD.cpp:196-227"
+    source_ref: "source pcsx2/CDVD/CDVD.cpp:194-226"
     note: >
       Console EEPROM data (language, timezone, region, iLink ID, OSD settings).
       Path derived from BIOS path with extension replaced to .nvm.
@@ -90,7 +91,7 @@ files:
     hle_fallback: true
     size: 4
     description: "Mechacon version"
-    source_ref: "source pcsx2/CDVD/CDVD.cpp:229-245"
+    source_ref: "source pcsx2/CDVD/CDVD.cpp:228-243"
     note: >
       Mechacon (disc drive controller) version as u32.
       Auto-created with default 0x00020603 if missing.
@@ -99,7 +100,7 @@ files:
     path: "pcsx2/resources/cheats_ws.zip"
     required: false
     description: "widescreen patches archive"
-    source_ref: "source pcsx2/VMManager.cpp:383-396"
+    source_ref: "source pcsx2/VMManager.cpp:382-395"
     note: >
       ZIP archive of per-game widescreen (16:9) patches in pnach format.
       Only loaded when widescreen patches are enabled via core options.
@@ -109,7 +110,7 @@ files:
     path: "pcsx2/resources/cheats_ni.zip"
     required: false
     description: "no-interlacing patches archive"
-    source_ref: "source pcsx2/VMManager.cpp:418-431"
+    source_ref: "source pcsx2/VMManager.cpp:417-430"
     note: >
       ZIP archive of per-game no-interlacing patches in pnach format.
       Only loaded when no-interlacing patches are enabled via core options.

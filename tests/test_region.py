@@ -1347,5 +1347,37 @@ class ARefusedRegionalFileHoldsNoSlot(unittest.TestCase):
         self.assertIn("rg_jp.bin", report["pack_destinations"])
 
 
+class YmirLibretroRegions(unittest.TestCase):
+    """ymir's libretro port gives sega_101.bin the Japan region and
+    mpr-17933.bin US_EU (apps/ymir-libretro/src/libretro.cpp:596-606) and
+    loads the candidate a region asks for (627-648, 1290-1306). One entry for
+    all three names put no region on any of them."""
+
+    def test_each_name_carries_the_region_the_port_gives_it(self):
+        import yaml
+
+        profile = yaml.safe_load(
+            (Path(__file__).resolve().parents[1] / "emulators" / "ymir.yml").read_text()
+        )
+        libretro = {
+            entry["name"]: entry for entry in profile["files"]
+            if entry.get("mode") == "libretro"
+            and entry["name"] in ("sega_101.bin", "mpr-17933.bin", "saturn_bios.bin")
+        }
+        self.assertEqual(sorted(libretro), ["mpr-17933.bin", "saturn_bios.bin", "sega_101.bin"])
+        self.assertEqual(libretro["sega_101.bin"]["region"], ["japan"])
+        self.assertTrue(
+            {"north-america", "europe"} <= set(libretro["mpr-17933.bin"]["region"])
+        )
+        self.assertNotIn("japan", libretro["mpr-17933.bin"]["region"])
+        self.assertNotIn("region", libretro["saturn_bios.bin"])
+        self.assertEqual(
+            [libretro[n]["priority"] for n in ("sega_101.bin", "mpr-17933.bin", "saturn_bios.bin")],
+            [1, 2, 3],
+        )
+        self.assertFalse(any(e.get("aliases") for e in profile["files"]
+                             if e["name"] == "sega_101.bin"))
+
+
 if __name__ == "__main__":
     unittest.main()
