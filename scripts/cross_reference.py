@@ -30,6 +30,7 @@ from common import (
     get_mame_clone_map,
     list_emulator_profiles,
     list_registered_platforms,
+    load_data_dir_registry,
     load_database,
     load_emulator_profiles,
     load_platform_config,
@@ -325,9 +326,21 @@ class FileConsumers:
     file by the evidence the pack uses, so a homonym is nobody's file.
     """
 
-    def __init__(self, db: dict, zip_contents: dict | None = None) -> None:
+    def __init__(
+        self, db: dict, zip_contents: dict | None = None,
+        data_dir_registry: dict | None = None,
+    ) -> None:
         self._db = db
         self._zip_contents = zip_contents
+        # The builder resolves with the data trees: Dolphin's codehandler.bin
+        # comes from data/dolphin-sys, and without them the name step gave it
+        # Dolphin-MMJR's copy, which the site then said Dolphin reads.
+        self._data_dir_registry = (
+            data_dir_registry if data_dir_registry is not None
+            else load_data_dir_registry(
+                str(Path(__file__).resolve().parent.parent / DEFAULT_PLATFORMS_DIR)
+            )
+        )
         self._sha1_by_path = {
             path: sha1
             for sha1, entry in db.get("files", {}).items()
@@ -357,7 +370,8 @@ class FileConsumers:
         if owner:
             entry = {**entry, "source_profile": owner}
         path, status = resolve_local_file(
-            entry, self._db, self._zip_contents, dest_hint=dest
+            entry, self._db, self._zip_contents, dest_hint=dest,
+            data_dir_registry=self._data_dir_registry,
         )
         if not path or status in ("not_found", "hash_mismatch"):
             return None
