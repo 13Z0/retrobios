@@ -5511,6 +5511,36 @@ class AHashScanLabelNamesNoOtherDump(unittest.TestCase):
         self.assertEqual(sorted(set(clashes)), [])
 
 
+class ANoteOutsideTheSystemDirCarriesLoadFrom(unittest.TestCase):
+    """mame2000 opens hiscore.dat, history.dat and mameinfo.dat from the
+    directory of the loaded content (src/libretro/fileio.c:1002-1014), and
+    mame2014 and mame2015 open hiscore.dat from the working directory
+    (src/emu/hiscore.c:330-337). Their notes said so, but no load_from did:
+    the entries claimed system/hiscore.dat and the RetroArch pack shipped a
+    file neither core opens there. A libretro entry whose note places the
+    read outside the system directory declares where."""
+
+    ELSEWHERE = re.compile(
+        r"\b(?:opened|read|loaded)\b[^.]*?\bfrom (?:the )?(?:working directory|"
+        r"ROM directory|content directory|directory of the loaded content)"
+        r"|IMAMEBASEPATH",
+        re.IGNORECASE,
+    )
+
+    def test_prose_and_load_from_agree(self):
+        offenders = []
+        for path in sorted((ROOT / "emulators").glob("*.yml")):
+            profile = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+            if profile.get("type") != "libretro":
+                continue
+            for entry in profile.get("files") or []:
+                if entry.get("path") or entry.get("load_from") or entry.get("mode") == "standalone":
+                    continue
+                if self.ELSEWHERE.search(str(entry.get("note") or "")):
+                    offenders.append(f"{path.name}: {entry.get('name')}")
+        self.assertEqual(offenders, [])
+
+
 class ReportsHoldTheDataTrees(unittest.TestCase):
     """Run on their own, the README, site and slot reports resolved against
     data/ without the shared hold, so a concurrent refresh could swap a tree

@@ -102,6 +102,7 @@ notes: |
 files:
   # Data files
   - name: hiscore.dat
+    load_from: working_directory
     required: false
     category: game_data
     system: arcade
