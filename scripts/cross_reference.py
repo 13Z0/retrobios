@@ -435,7 +435,11 @@ class FileConsumers:
         for name, config in configs.items():
             for system_id, system in config.get("systems", {}).items():
                 for entry in system.get("files", []):
-                    sha1 = self.sha1_of(entry, entry.get("destination", ""))
+                    # No destination hint, as the builder, the manifest and
+                    # verify resolve a declaration: with one, RetroBat's 63
+                    # mame/hash lists credited another revision than the one
+                    # its manifest installs.
+                    sha1 = self.sha1_of(entry)
                     if sha1:
                         self.platforms.setdefault(sha1, set()).add(name)
                         self.platform_systems.setdefault(sha1, {}).setdefault(

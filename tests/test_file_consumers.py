@@ -83,6 +83,36 @@ class ReadersResolve(unittest.TestCase):
         self.assertNotIn("ioquake3", et)
 
 
+class PlatformReadersResolveAsThePack(unittest.TestCase):
+    """A hashless declaration resolves without its destination in the
+    builder, the manifest and verify. The site passed the destination and
+    credited RetroBat with another revision of its 63 mame/hash lists than
+    the one its manifest installs."""
+
+    def test_the_declared_file_is_the_one_the_pack_ships(self):
+        from packresolve import resolve_declaration
+
+        first, first_entry = _collected("bios/Arcade/MAME/hash/apfm1000.xml", b"one")
+        other, other_entry = _collected("bios/Other/mame/hash/apfm1000.xml", b"two")
+        db = {
+            "files": {first: first_entry, other: other_entry},
+            "indexes": {
+                "by_name": {"apfm1000.xml": [first, other]},
+                "by_path_suffix": {"mame/hash/apfm1000.xml": [other],
+                                   "Other/mame/hash/apfm1000.xml": [other],
+                                   "MAME/hash/apfm1000.xml": [first],
+                                   "Arcade/MAME/hash/apfm1000.xml": [first]},
+            },
+        }
+        entry = {"name": "apfm1000.xml", "destination": "mame/hash/apfm1000.xml"}
+        shipped, _status = resolve_declaration(entry, db, "bios", None, None, None,
+                                               offline=True)
+        consumers = FileConsumers(db, data_dir_registry={})
+        consumers.add_platforms({"plat": {"systems": {"s": {"files": [entry]}}}})
+        self.assertEqual(shipped, first_entry["path"])
+        self.assertEqual(consumers.platforms, {first: {"plat"}})
+
+
 class ReadersFollowTheDataTrees(unittest.TestCase):
     """Dolphin names codehandler.bin without a hash. The pack takes it from
     data/dolphin-sys, and the site credited Dolphin and Triforce with the
