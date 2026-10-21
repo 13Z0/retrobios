@@ -165,6 +165,32 @@ class PlatformDiffTests(unittest.TestCase):
         self.assertEqual(diff.cores_removed, ["b"])
         self.assertIn("+cores 2", diff.summary())
 
+    def test_every_other_scraped_field_is_a_change(self):
+        """launchers feed verify, dual_mode_cores the grouping, a system's
+        data_directories the pack: a rescrape that moves only them is stale."""
+        old = self._platform()
+        old["launchers"] = [{"emulator": "e"}]
+        old["dual_mode_cores"] = ["flycast"]
+        old["systems"]["sys"].update(core="c1", native_id="psx",
+                                     data_directories=[{"ref": "x"}])
+        new = self._platform()
+        new["launchers"] = []
+        new["systems"]["sys"].update(core="c2", native_id="psx")
+        diff = cf.diff_platform(old, new)
+        self.assertTrue(diff.content_changed)
+        self.assertEqual(
+            diff.fields_changed,
+            ["dual_mode_cores", "launchers", "sys/core", "sys/data_directories"],
+        )
+        self.assertIn("~fields 4", diff.summary())
+
+    def test_the_revision_read_alone_is_not_a_change(self):
+        old, new = self._platform(), self._platform()
+        old["source"], new["source"] = "https://x/tar.gz/aaa", "https://x/tar.gz/bbb"
+        old["launchers"] = [{"emulator": "e", "source_ref": "es_features.cfg:11638-11646"}]
+        new["launchers"] = [{"emulator": "e", "source_ref": "es_features.cfg:11649-11657"}]
+        self.assertFalse(cf.diff_platform(old, new).changed)
+
     def test_target_stamp_is_not_a_change(self):
         old = {"scraped_at": "2026-01-01", "targets": {"t": {"cores": ["a"]}}}
         new = {"scraped_at": "2026-02-01", "targets": {"t": {"cores": ["a"]}}}

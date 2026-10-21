@@ -107,6 +107,9 @@ class PlatformDiff:
     files_changed: list[str] = field(default_factory=list)
     cores_added: list[str] = field(default_factory=list)
     cores_removed: list[str] = field(default_factory=list)
+    # Any other field the scrape writes: launchers, dual_mode_cores, a
+    # system's core, native_id or data_directories.
+    fields_changed: list[str] = field(default_factory=list)
 
     @property
     def content_changed(self) -> bool:
@@ -119,6 +122,7 @@ class PlatformDiff:
                 self.files_changed,
                 self.cores_added,
                 self.cores_removed,
+                self.fields_changed,
             )
         )
 
@@ -138,6 +142,7 @@ class PlatformDiff:
             ("~files", self.files_changed),
             ("+cores", self.cores_added),
             ("-cores", self.cores_removed),
+            ("~fields", self.fields_changed),
         ):
             if items:
                 shown = ", ".join(items[:SHOWN_ITEMS]) + (", ..." if len(items) > SHOWN_ITEMS else "")
@@ -177,6 +182,33 @@ def _keyed_files(files: list[dict]) -> dict[str, dict]:
     return keyed
 
 
+# Compared on their own above. `source` is the revision read: it moves with
+# every upstream commit, and what that commit changes is diffed field by field.
+_DIFFED_APART = frozenset({"version", "systems", "cores", "standalone_cores", "source"})
+
+
+def _without_refs(value: object) -> object:
+    """*value* without its `source_ref` lines.
+
+    A launcher cites lines of the revision read, so they shift with any
+    upstream commit above them (es_features.cfg:11638 read as :11649 one
+    RetroBat commit later). The cited content is what is compared.
+    """
+    if isinstance(value, dict):
+        return {k: _without_refs(v) for k, v in value.items() if k != "source_ref"}
+    if isinstance(value, list):
+        return [_without_refs(v) for v in value]
+    return value
+
+
+def _changed_fields(old: dict, new: dict, skip: frozenset[str], prefix: str = "") -> list[str]:
+    return [
+        f"{prefix}{key}"
+        for key in sorted(set(old) | set(new), key=str)
+        if key not in skip and _without_refs(old.get(key)) != _without_refs(new.get(key))
+    ]
+
+
 def diff_platform(old: dict, new: dict) -> PlatformDiff:
     """Compare two platform files the way a reviewer reads the diff.
 
@@ -205,6 +237,11 @@ def diff_platform(old: dict, new: dict) -> PlatformDiff:
             for k in sorted(set(old_files) & set(new_files))
             if old_files[k] != new_files[k]
         )
+        diff.fields_changed.extend(_changed_fields(
+            old_systems[system] or {}, new_systems[system] or {},
+            frozenset({"files"}), f"{system}/",
+        ))
+    diff.fields_changed = _changed_fields(old, new, _DIFFED_APART) + diff.fields_changed
     old_cores, new_cores = _core_names(old), _core_names(new)
     diff.cores_added = sorted(new_cores - old_cores)
     diff.cores_removed = sorted(old_cores - new_cores)
