@@ -466,5 +466,17 @@ class ToolsRunOnTheStatedFloor(unittest.TestCase):
         self.assertFalse(self._runtime_unions(ast.parse("mask = flags | other")))
 
 
+class DeriveFiguresLiveWithTheTool(unittest.TestCase):
+    """tools.md gave --derive about 90 s and 67 entries while its --help said
+    about 35 s: two hand-kept figures for one run, measured at 33 s."""
+
+    def test_the_page_carries_no_duration_or_count(self):
+        paragraph = next(
+            p for p in _page("tools.md").split("\n\n") if "`--derive` reads" in p
+        )
+        self.assertNotRegex(paragraph, r"\d+ ?s\b|\d+ entries")
+        self.assertIn("derivable.json", paragraph)
+
+
 if __name__ == "__main__":
     unittest.main()

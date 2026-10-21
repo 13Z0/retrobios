@@ -864,13 +864,12 @@ python scripts/provenance_report.py --json     # full report
 ```
 
 A catalog lists chips as they come off the board, the collection often holds
-the image an emulator reads. `--derive` reads the collection (about 90 s) and
+the image an emulator reads. `--derive` reads every file of the collection and
 marks a missing entry DERIVABLE when a held file produces its sha1 by halving,
 quartering, splitting into even and odd bytes or 16-bit words (byte-swapped
 or not), swapping bytes, mirroring, or joining two files of one directory.
 The Amiga Kickstart chip pairs and TOSEC's split C64 and VES ROMs are found
-this way: 67 entries on the current snapshots, recorded in `derivable.json`
-by pipeline step 1b.
+this way. Pipeline step 1b records what it finds in `derivable.json`.
 
 | Catalog | Acquisition | Notes |
 |---------|------------|-------|
