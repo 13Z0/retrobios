@@ -3828,7 +3828,9 @@ def generate_gap_analysis(
         gap_report = build_emulator_gap_report(profiles, coverages, db, data_names)
     report_all = gap_report
 
-    src_totals: dict[str, int] = {"bios": 0, "data": 0, "large_file": 0, "missing": 0}
+    src_totals: dict[str, int] = {
+        "bios": 0, "data": 0, "large_file": 0, "bundled": 0, "missing": 0,
+    }
     total_undeclared = 0
     emulator_gaps = []
 
@@ -3836,8 +3838,8 @@ def generate_gap_analysis(
         if data["gaps"] == 0:
             continue
         total_undeclared += data["gaps"]
-        for key in src_totals:
-            src_totals[key] += data.get(f"gap_{key}", 0)
+        for key, count in _gap_sources(data).items():
+            src_totals[key] += count
         emulator_gaps.append((emu_name, data))
 
 
@@ -3855,9 +3857,10 @@ def generate_gap_analysis(
             "## Core complement",
             "",
             f"Files loaded by emulators but not declared by any platform. "
-            f"{total_undeclared:,} files across {len(emulator_gaps)} emulators, "
+            f"{total_undeclared:,} files across {_count(len(emulator_gaps), 'emulator')}, "
             f"{total_available:,} available ({pct_available}), "
-            f"{src_totals['missing']} to source.",
+            f"{src_totals['bundled']:,} installed with their emulator, "
+            f"{src_totals['missing']:,} to source.",
             "",
             "This counts every profiled emulator, including those no platform "
             "ships yet, so it reaches past what the pack tables above measure: "
@@ -3873,17 +3876,20 @@ def generate_gap_analysis(
             f"| data/ | {src_totals['data']} | Data directories (buildbot, GitHub) |",
             f"| release | {src_totals['large_file']} "
             "| GitHub release assets (large files) |",
+            f"| bundled | {src_totals['bundled']} "
+            "| Installed with the emulator's own package, not collected |",
             f"| missing | {src_totals['missing']} | Not available, needs sourcing |",
             "",
             "### Per emulator",
             "",
-            "| Emulator | Undeclared | bios | data | release | Missing |",
-            "|----------|----------:|-----:|-----:|--------:|--------:|",
+            "| Emulator | Undeclared | bios | data | release | Bundled | Missing |",
+            "|----------|----------:|-----:|-----:|--------:|--------:|--------:|",
         ])
 
         for emu_name, data in sorted(emulator_gaps, key=lambda x: -x[1]["gaps"]):
             display = data["emulator"]
-            m = data.get("gap_missing", 0)
+            sources = _gap_sources(data)
+            m = sources["missing"]
             missing_str = (
                 f'<span class="rb-badge rb-badge-danger">{m}</span>'
                 if m > 0
@@ -3892,9 +3898,10 @@ def generate_gap_analysis(
             lines.append(
                 f"| [{display}](emulators/{emu_name}.md) "
                 f"| {data['gaps']} "
-                f"| {data.get('gap_bios', 0)} "
-                f"| {data.get('gap_data', 0)} "
-                f"| {data.get('gap_large_file', 0)} "
+                f"| {sources['bios']} "
+                f"| {sources['data']} "
+                f"| {sources['large_file']} "
+                f"| {sources['bundled']} "
                 f"| {missing_str} |"
             )
         lines.append("")
@@ -4054,6 +4061,23 @@ def _core_scope_note(config: dict, profiles: dict) -> str:
     if not others:
         return " (all libretro)"
     return f" (all libretro, plus {_count(others, 'other core')})"
+
+
+def _gap_sources(data: dict) -> dict[str, int]:
+    """Where each undeclared file of one emulator comes from.
+
+    A file the emulator's own package installs is not one to find. The
+    report's gap_missing counts it, and the gaps page announced 1,356 files
+    to source where 609 are, with a red badge on emulators that have none.
+    """
+    counts = {"bios": 0, "data": 0, "large_file": 0, "bundled": 0, "missing": 0}
+    for gap in data.get("gap_details") or []:
+        source = gap.get("source", "")
+        if source == "missing" and gap.get("bundled"):
+            source = "bundled"
+        if source in counts:
+            counts[source] += 1
+    return counts
 
 
 def _render_xref_by_platform(

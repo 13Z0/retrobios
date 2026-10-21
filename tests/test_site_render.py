@@ -111,5 +111,33 @@ class EveryPageAddressesPlatformsAsPeers(unittest.TestCase):
         self.assertEqual(found, [])
 
 
+class BundledFilesAreNotToSource(unittest.TestCase):
+    """The gaps page summed the report's gap_missing, bundled files included:
+    1,356 files to source where 609 were, and a red badge of 13 on ZQuest
+    Classic, whose 13 missing files all come with its own package."""
+
+    def test_the_summary_and_the_row_count_only_what_must_be_found(self):
+        import generate_site
+
+        gap = {"required": True, "source_ref": "x", "in_repo": False}
+        report = {"zq": {
+            "emulator": "ZQuest Classic", "gaps": 4, "gap_missing": 3, "gap_bios": 1,
+            "unsourceable": [],
+            "gap_details": [
+                {**gap, "name": "a.dll", "source": "missing", "bundled": True},
+                {**gap, "name": "b.dll", "source": "missing", "bundled": True},
+                {**gap, "name": "c.bin", "source": "missing"},
+                {**gap, "name": "d.bin", "source": "bios", "in_repo": True},
+            ],
+        }}
+        page = generate_site.generate_gap_analysis(
+            {"zq": {"emulator": "ZQuest Classic", "files": []}}, {},
+            {"files": {}, "indexes": {}}, gap_report=report)
+        self.assertIn("2 installed with their emulator, 1 to source.", page)
+        self.assertIn("| missing | 1 | Not available, needs sourcing |", page)
+        self.assertIn("| [ZQuest Classic](emulators/zq.md) | 4 | 1 | 0 | 0 | 2 | "
+                      '<span class="rb-badge rb-badge-danger">1</span> |', page)
+
+
 if __name__ == "__main__":
     unittest.main()
