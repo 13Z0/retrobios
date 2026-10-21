@@ -264,7 +264,10 @@ class LauncherLayerTest(unittest.TestCase):
         self.assertIn("LauncherLayer(", inspect.getsource(verify.find_undeclared_files))
         self.assertIn(".settle(", inspect.getsource(verify.find_undeclared_files))
         self.assertIn(
-            "find_undeclared_files(", inspect.getsource(packextras._collect_emulator_extras)
+            "undeclared_report(", inspect.getsource(packextras._collect_emulator_extras)
+        )
+        self.assertIn(
+            "find_undeclared_files(", inspect.getsource(packextras.undeclared_report)
         )
         for module in (generate_pack, packextras, verify):
             source = inspect.getsource(module)
