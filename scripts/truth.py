@@ -316,6 +316,9 @@ def _merge_hashes(
                 existing[h] = [*o_list, *added]
             continue
         if not {str(v).lower() for v in t_list} & {str(v).lower() for v in o_list}:
+            # The value kept is one revision among those the cores accept:
+            # it pairs an entry, it never overrules one (checked_hashes).
+            existing["hash_conflict"] = sorted({*existing.get("hash_conflict", ()), h})
             # Once per process: a run over every platform met the same pair
             # once per platform and opened its output on six copies.
             key = (file_entry["name"], h, str(ours), str(theirs), emu_name)

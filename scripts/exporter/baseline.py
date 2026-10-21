@@ -45,8 +45,17 @@ def checked_hashes(entry: dict | None) -> dict | None:
     MT32_CONTROL.ROM against nine sha1, and the one md5 beside them
     replaced System.dat's, another accepted revision. Such a value still
     pairs a renamed file, it never corrects or fills one.
+
+    `hash_conflict` marks an entry whose cores declare different values: the
+    truth kept the first core's, so its hashes describe one revision among
+    those the cores accept. armsx2 and yaps2 disagree on GameIndex.yaml, and
+    armsx2's revision replaced System.dat's line for LRPS2.
     """
-    if not entry or entry.get("validation") is None:
+    if not entry:
+        return entry
+    if entry.get("hash_conflict"):
+        return {k: v for k, v in entry.items() if k not in HASH_FIELDS}
+    if entry.get("validation") is None:
         return entry
     raw = entry["validation"]
     if isinstance(raw, dict):

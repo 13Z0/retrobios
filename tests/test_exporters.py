@@ -324,6 +324,30 @@ class Reconciliation(unittest.TestCase):
         self.assertEqual(systems["coco"].files[0].hash("md5"), "a" * 32)
         self.assertEqual(report.hashes_corrected, ["coco/bas12.rom md5"])
 
+    def test_a_hash_the_cores_disagree_on_corrects_nothing(self):
+        """armsx2 and yaps2 declare different revisions of GameIndex.yaml.
+        The truth kept armsx2's, and the export wrote it over System.dat's
+        line for LRPS2 as a hash and size correction."""
+        import contextlib  # noqa: PLC0415
+
+        import truth as truth_module  # noqa: PLC0415
+
+        entry = {"name": "GameIndex.yaml", "sha1": "1" * 40, "size": 2690355}
+        with contextlib.redirect_stderr(io.StringIO()):
+            truth_module._merge_hashes(
+                entry, {"name": "GameIndex.yaml", "sha1": "2" * 40}, "yaps2"
+            )
+        self.assertEqual(entry["hash_conflict"], ["sha1"])
+        truth = {"systems": {"sony-playstation-2": {"files": [entry]}}}
+        scraped = {"systems": {"sony-playstation-2": {"native_id": "ps2", "files": [
+            {"name": "GameIndex.yaml", "destination": "pcsx2/resources/GameIndex.yaml",
+             "native_system": "ps2", "sha1": "3" * 40, "size": 1737799},
+        ]}}}
+        systems, report = build_native_model(truth, scraped)
+        line = systems["ps2"].files[0]
+        self.assertEqual((line.hash("sha1"), line.size()), ("3" * 40, 1737799))
+        self.assertEqual(report.hashes_corrected, [])
+
     def test_the_diff_names_no_mismatch_the_code_does_not_check(self):
         from truth import _diff_system
         truth_sys = {"files": [{"name": "scph1001.bin", "md5": "a" * 32,
