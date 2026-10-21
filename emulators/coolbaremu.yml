@@ -1,5 +1,5 @@
 emulator: "CoolbarEmu"
-type: libretro
+type: standalone + libretro
 core_classification: official_port
 source: "https://github.com/AloysHF/CoolbarEmu"
 upstream: "https://github.com/AloysHF/CoolbarEmu"
@@ -34,7 +34,11 @@ notes: |
   the built-in table (crates/coolbaremu-libretro/src/libretro/api.rs:45,
   crates/coolbaremu-libretro/src/libretro/api.rs:369-399,
   crates/coolbaremu-core/src/orientation_profile.rs:31-54). A missing file is
-  logged and the built-in table applies.
+  logged and the built-in table applies. The standalone binary reads and
+  writes only the files named on its command line, --orientation-profile,
+  --screenshot, --save-state and --load-state
+  (crates/coolbaremu/src/main.rs:105-108, crates/coolbaremu/src/main.rs:153-167,
+  crates/coolbaremu/src/main.rs:186-187).
 
 files: []
 

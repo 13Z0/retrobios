@@ -1,6 +1,6 @@
 emulator: NicaiEmu
 type: standalone + libretro
-core_classification: pure_libretro
+core_classification: frozen_snapshot
 source: "https://github.com/AloysHF/CoolbarEmu"
 upstream: "https://github.com/AloysHF/CoolbarEmu"
 profiled_date: "2026-10-21"
@@ -11,7 +11,7 @@ display_name: "MStar - Nicai (NicaiEmu)"
 cores:
   - nicaiemu
 systems:
-  - mstar-nicai
+  - coolbar
 
 notes: |
   Emulator for Nicai/MStar CBE (Cool Bar Engine) phone games written in
@@ -43,8 +43,14 @@ notes: |
   crates/nicaiemu-libretro/src/libretro/api.rs:365-399,
   crates/nicaiemu-core/src/orientation_profile.rs:132-140). A missing file
   is logged and the built-in table applies. The standalone binary reads
-  and writes only the files named by --load-state and --save-state
-  (crates/nicaiemu/src/main.rs:160-166).
+  and writes only the files named on its command line, --orientation-profile,
+  --screenshot, --save-state and --load-state
+  (crates/nicaiemu/src/main.rs:104-107, crates/nicaiemu/src/main.rs:152-166,
+  crates/nicaiemu/src/main.rs:185-186).
+
+  The buildbot publishes nicaiemu_libretro next to coolbaremu_libretro, and
+  the two cores read different system files: nicaiemu_orientation.csv here,
+  coolbaremu_orientation.csv in the coolbaremu core built after the rename.
 
 exclusion_note: "The firmware services are reimplemented in the core, glyphs come from the unifont crate and MIDI is synthesised without a bank. The system directory holds only an optional user-written orientation list, and the .info declares firmware_count = 0."
 files: []

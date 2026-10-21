@@ -2710,6 +2710,36 @@ class TestDeliberatelyFrozenPin(TestBuildReport):
             with self.subTest(profile=name):
                 self.assertTrue(str(profiles[name].get("pin_frozen") or "").strip())
 
+    def test_a_frozen_build_files_its_content_with_the_build_that_follows(self):
+        # AloysHF/NicaiEmu became AloysHF/CoolbarEmu (PR #78). The buildbot
+        # still serves nicaiemu_libretro, built from 4c9b73f7, beside
+        # coolbaremu_libretro. Both read the same .cbe archives, yet the two
+        # profiles named two systems and two build types, so --system for
+        # either missed the other core.
+        from common import load_emulator_profiles  # noqa: PLC0415
+
+        root = Path(__file__).resolve().parents[1] / "emulators"
+        profiles = load_emulator_profiles(str(root))
+        by_source: dict[str, list[str]] = {}
+        for name, profile in profiles.items():
+            source = profile.get("source")
+            if isinstance(source, str):
+                by_source.setdefault(source.rstrip("/").lower(), []).append(name)
+        pairs = 0
+        for names in by_source.values():
+            frozen = [n for n in names if str(profiles[n].get("pin_frozen") or "").strip()]
+            live = [n for n in names if n not in frozen]
+            for old in frozen:
+                for new in live:
+                    pairs += 1
+                    with self.subTest(frozen=old, live=new):
+                        self.assertEqual(
+                            sorted(profiles[old].get("systems") or []),
+                            sorted(profiles[new].get("systems") or []),
+                        )
+                        self.assertEqual(profiles[old].get("type"), profiles[new].get("type"))
+        self.assertGreaterEqual(pairs, 3)
+
     def test_an_ordinary_profile_is_unaffected(self):
         self.files[("pinsha", "a.c")] = ["x", "hit"]
         self.files[("headsha", "a.c")] = ["pad", "x", "hit"]
