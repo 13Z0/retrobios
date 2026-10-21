@@ -4052,7 +4052,7 @@ def _refuse_flag_combinations(args: argparse.Namespace) -> None:
     # The version check lives on the report, so the outputs built from the
     # report (text, --json, --markdown) carry it. A URL list and a ranking
     # do not. Detection lives on the report too, and --json carries it for
-    # check_freshness; the markdown table has no column for it.
+    # check_freshness. The markdown table has no column for it.
     lists_only = args.fetch_plan or args.triage
     off_json = lists_only or args.markdown
     extras = [
