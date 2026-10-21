@@ -1919,7 +1919,7 @@ class BatoceraPatchesValuesNotEntries(unittest.TestCase):
         "    return {}\n"
     )
 
-    def render(self, truth_files):
+    def render(self, truth_files, original=None):
         scraped = {"cores": ["hatari"], "systems": {"atari-st": {"native_id": "atarist", "files": [
             {"name": "tos102.img", "destination": "tos102.img", "native_system": "atarist",
              "native_name": "Atari ST", "native_path": "bios/tos102.img", "md5": "1" * 32},
@@ -1929,7 +1929,8 @@ class BatoceraPatchesValuesNotEntries(unittest.TestCase):
         systems, report = build_native_model({"systems": {"atari-st": {"files": truth_files}}},
                                              scraped)
         exporter = discover_exporters()["batocera"]()
-        return exporter.render(systems, report, {"batocera-systems": self.ORIGINAL}, scraped)[
+        original = original or self.ORIGINAL
+        return exporter.render(systems, report, {"batocera-systems": original}, scraped)[
             "batocera-systems"]
 
     def test_a_corrected_md5_changes_that_value_only(self):
@@ -1947,6 +1948,24 @@ class BatoceraPatchesValuesNotEntries(unittest.TestCase):
                       "    ] },", produced)
         self.assertIn("# ST\n", produced)
         self.assertIn('"file": "bios/tos102.img"},\n\n', produced)
+
+    def test_a_commented_item_does_not_stop_the_patch(self):
+        """atarist keeps seven TOS items behind '#'. Read as live items they
+        matched nothing in the model, and the entry was written again whole
+        for three additions."""
+        commented = '        #{ "md5": "' + "5" * 32 + '", "file": "bios/tos102us.img"},\n'
+        original = self.ORIGINAL.replace("\n\n", "\n" + commented + "\n", 1)
+        produced = self.render([{"name": "tos206.img", "path": "tos206.img",
+                                 "md5": "4" * 32, "_cores": ["hatari"]}], original)
+        self.assertEqual(
+            produced,
+            original.replace(
+                '"file": "bios/tos104.img"}\n',
+                '"file": "bios/tos104.img"},\n'
+                '        { "md5": "' + "4" * 32 + '", "file": "bios/tos206.img",'
+                ' "emulator": "libretro", "core": "hatari"}\n',
+            ),
+        )
 
 
 class BatoceraExport(unittest.TestCase):

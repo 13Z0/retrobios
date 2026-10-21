@@ -26,6 +26,15 @@ _ITEM = re.compile(r"\{[^{}\n]*\}")
 _MD5_VALUE = re.compile(r'("md5"\s*:\s*")[^"]*(")')
 
 
+_STRING = re.compile(r'"(?:[^"\\\n]|\\.)*"')
+
+
+def _commented(text: str, position: int) -> bool:
+    """Whether a '#' outside a string precedes `position` on its line."""
+    line_start = text.rfind("\n", 0, position) + 1
+    return "#" in _STRING.sub("", text[line_start:position])
+
+
 def _note_key(text: str) -> tuple[str, str]:
     """(file, zippedFile) of the item a line holds, ("", "") for none."""
     path = re.search(r'"file"\s*:\s*"([^"]+)"', text)
@@ -316,6 +325,10 @@ class Exporter(BaseExporter):
         last: re.Match[str] | None = None
         consumed: dict[tuple, int] = {}
         for match in _ITEM.finditer(joined):
+            if _commented(joined, match.start()):
+                # '#{ "md5": ..., "file": "bios/tos102us.img"},' is a note
+                # Python never reads, and it stays as written.
+                continue
             try:
                 theirs = ast.literal_eval(match.group(0))
             except (SyntaxError, ValueError):
