@@ -217,6 +217,7 @@ def hidden_extras(
     resolver: ExtraResolver | None = None,
     placed_kind: dict[str, str] | None = None,
     placed_local: dict[str, str] | None = None,
+    system_ids: list[str] | None = None,
 ) -> dict[tuple[str, str, str], str]:
     """Report entries the builder holds and still leaves out, with the reason.
 
@@ -237,6 +238,8 @@ def hidden_extras(
     pass, the archive-prefix pass and the agnostic scan copy files no gap
     report entry names. ``placed_local`` receives the local copy the builder
     writes at each of those destinations, for the pack integrity check.
+    ``system_ids`` replays a pack built with --system: the extras collected
+    without the platform's paths, then those the systems own.
     ``resolver`` is the builder's lookup. An extra it cannot resolve is
     skipped and takes no path, as the builder skips it.
     """
@@ -256,10 +259,13 @@ def hidden_extras(
     lower = set(content) if case_insensitive else set()
     prefix = _detect_extras_prefix(config, base_dest)
     hidden: dict[tuple[str, str, str], str] = {}
-    for fe in _collect_emulator_extras(
-        config, emulators_dir, db, set(shipped), base_dest, profiles,
-        target_cores=target_cores, undeclared=report,
-    ):
+    extras = _collect_emulator_extras(
+        config, emulators_dir, db, set() if system_ids else set(shipped),
+        base_dest, profiles, target_cores=target_cores, undeclared=report,
+    )
+    if system_ids:
+        extras = extras_for_systems(extras, system_ids)
+    for fe in extras:
         dest = sanitize_pack_path(fe.get("destination", fe.get("name", "")))
         if not dest or (region_drops and dest in region_drops):
             continue
@@ -1246,6 +1252,33 @@ def _kept(entries: list[dict], required_only: bool) -> list[dict]:
     if not required_only:
         return entries
     return [e for e in entries if e.get("required") is not False]
+
+
+def extras_for_systems(extras: list[dict], system_ids: list[str]) -> list[dict]:
+    """Core extras owned by one of the given systems.
+
+    Extras carry their profile/system identity directly. Display labels are
+    presentation only and must never drive routing.
+    """
+    wanted = set(system_ids) | {_norm_system_id(s) for s in system_ids}
+    return [
+        fe for fe in extras
+        if (
+            set(_extra_system_ids(fe))
+            | {_norm_system_id(s) for s in _extra_system_ids(fe)}
+        ) & wanted
+    ]
+
+
+def report_owned_by_systems(report: list[dict], system_ids: list[str]) -> list[dict]:
+    """Gap report entries whose extra a pack built with --system carries."""
+    return [
+        u for u in report
+        if extras_for_systems(
+            [{"source_system": u.get("system"), "source_systems": u.get("systems", [])}],
+            system_ids,
+        )
+    ]
 
 
 def _ships(config: dict, file_entry: dict, db: dict) -> bool:

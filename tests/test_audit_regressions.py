@@ -6624,7 +6624,10 @@ class AnUnknownSystemIsRefusedBeforeAnyWork(unittest.TestCase):
                     cwd=ROOT, capture_output=True, text=True, timeout=120,
                 )
             self.assertEqual(proc.returncode, 2, proc.stdout + proc.stderr)
-            self.assertIn("error: --system playstaton-nothing matches no system", proc.stderr)
+            self.assertIn(
+                "error: --system playstaton-nothing: unknown system playstaton-nothing",
+                proc.stderr,
+            )
             self.assertFalse(out.exists())
 
     def test_a_known_system_passes_the_early_check(self):
@@ -6633,9 +6636,13 @@ class AnUnknownSystemIsRefusedBeforeAnyWork(unittest.TestCase):
         import generate_pack
 
         parser = argparse.ArgumentParser()
-        generate_pack._refuse_unknown_systems(
-            ["sony-playstation"], ["retroarch"], str(ROOT / "platforms"), parser
+        args = argparse.Namespace(
+            system="sony-playstation", platform="retroarch", all=False,
+            platforms_dir=str(ROOT / "platforms"), include_archived=False,
+            manifest=False,
         )
+        generate_pack._resolve_systems(args, parser)
+        self.assertEqual(args.system_ids, ["sony-playstation"])
 
 
 class NoArchiveRepeatsAMemberName(unittest.TestCase):

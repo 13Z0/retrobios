@@ -753,10 +753,10 @@ class ThePlatformsOwnSystemNamesAreAccepted(unittest.TestCase):
 
     def test_the_names_come_from_the_platform_file(self):
         from common import load_platform_config  # noqa: PLC0415
-        from manifestselect import native_system_names  # noqa: PLC0415
+        from common import platform_system_names  # noqa: PLC0415
 
         config = load_platform_config("batocera", str(REPO_ROOT / "platforms"))
-        names = native_system_names(config, list(config["systems"]))
+        names = platform_system_names(config, list(config["systems"]))
         self.assertEqual(names["sony-playstation"], ["psx"])
         self.assertEqual(names["nintendo-gba"], ["gba"])
         # A name spelled like the system id adds nothing.
@@ -767,7 +767,7 @@ class ThePlatformsOwnSystemNamesAreAccepted(unittest.TestCase):
 
     def test_the_builder_writes_them_into_the_manifest(self):
         source = (REPO_ROOT / "scripts" / "generate_pack.py").read_text(encoding="utf-8")
-        self.assertIn('"system_names": native_system_names(config, list(pack_systems))',
+        self.assertIn('"system_names": platform_system_names(config, list(pack_systems))',
                       source)
 
     def test_a_native_name_narrows_and_lists(self):
@@ -786,6 +786,178 @@ class ThePlatformsOwnSystemNamesAreAccepted(unittest.TestCase):
             typo = repo.run("--system", "psxx", "--no-input")
             self.assertEqual(typo.returncode, 1)
             self.assertIn("Did you mean: sony-playstation", typo.stderr)
+
+
+
+class ANativeNameSelectsOneSetEverywhere(unittest.TestCase):
+    """`--system psx` was accepted by the installer and refused by
+    generate_pack and verify. The platform's own name now resolves through
+    common.resolve_system_arg in both tools, from the mapping the manifest's
+    system_names is built from, and selects what the system id selects:
+    the same pack, the same verify report, the same installed files."""
+
+    CASES = (
+        ("batocera", "psx", "sony-playstation"),
+        ("recalbox", "msx1,msx2", "microsoft-msx"),
+        ("romm", "acpc", "amstrad-cpc"),
+    )
+
+    @classmethod
+    def setUpClass(cls):
+        db_path = REPO_ROOT / "database.json"
+        if not db_path.exists():
+            raise unittest.SkipTest("database.json is not built")
+        import generate_pack as gp
+        import pipeline
+        import verify
+        from common import load_emulator_profiles
+
+        cls.gp, cls.pipeline, cls.verify = gp, pipeline, verify
+        cls.db = json.loads(db_path.read_text(encoding="utf-8"))
+        cls.profiles = load_emulator_profiles(str(REPO_ROOT / "emulators"))
+
+    def _packed(self, platform: str, systems: list[str]) -> set[str]:
+        import contextlib
+        import io
+        import zipfile
+
+        with tempfile.TemporaryDirectory(dir=REPO_ROOT / "tmp") as out, \
+                contextlib.redirect_stdout(io.StringIO()):
+            zip_path = self.gp.generate_pack(
+                platform, str(REPO_ROOT / "platforms"), self.db,
+                str(REPO_ROOT / "bios"), out,
+                emulators_dir=str(REPO_ROOT / "emulators"),
+                emu_profiles=self.profiles, system_filter=systems, offline=True,
+            )
+            with zipfile.ZipFile(zip_path) as zf:
+                infos = [i for i in zf.infolist() if not i.is_dir()]
+        return {i.filename: i.file_size for i in infos}
+
+    def test_pack_verify_and_installer_agree(self):
+        from common import load_platform_config, resolve_system_arg
+
+        for platform, native, system_id in self.CASES:
+            with self.subTest(platform=platform, name=native):
+                config = load_platform_config(platform, str(REPO_ROOT / "platforms"))
+                systems = list(config["systems"])
+                chosen = resolve_system_arg(native, systems, config)
+                self.assertEqual(chosen, resolve_system_arg(system_id, systems, config))
+                self.assertEqual(chosen, [system_id])
+
+                report = self.verify.verify_platform(
+                    config, self.db, str(REPO_ROOT / "emulators"), self.profiles,
+                    system_filter=chosen,
+                )
+                self.assertEqual(report["systems"], [system_id])
+                credited = set(report["pack_destinations"])
+                trees = self.pipeline._tree_members(platform, str(REPO_ROOT / "platforms"))
+                members = self._packed(platform, chosen)
+                written = {
+                    name for name, size in members.items()
+                    if not self.pipeline._PACK_NOTES.search(name)
+                    and not (trees.get(name) == size and name not in credited)
+                }
+                self.assertTrue(written)
+                self.assertEqual(credited, written)
+
+                manifest = self.gp.generate_manifest(
+                    platform, str(REPO_ROOT / "platforms"), self.db,
+                    str(REPO_ROOT / "bios"),
+                    str(REPO_ROOT / "platforms" / "_registry.yml"),
+                    emulators_dir=str(REPO_ROOT / "emulators"),
+                    emu_profiles=self.profiles, offline=True,
+                )
+                picked = install.resolve_choices(
+                    [native],
+                    install.available_choices(
+                        manifest["files"], manifest["omitted_files"]
+                    )["systems"],
+                    "system", install.system_aliases(manifest),
+                )
+                self.assertEqual(picked, [system_id])
+                files, _omitted = install.narrow(
+                    manifest["files"], manifest["omitted_files"], picked, [], [],
+                )
+                base = config.get("base_destination", "")
+                prefix = f"{base}/" if base else ""
+                packed = {
+                    n[len(prefix):] if prefix and n.startswith(prefix) else n
+                    for n in members
+                }
+                known = {f["dest"] for f in manifest["files"]}
+                self.assertEqual({f["dest"] for f in files}, packed & known)
+
+
+class SystemNamesResolveOneWay(unittest.TestCase):
+    """common.resolve_system_arg, the one reading of --system."""
+
+    CONFIG = {"systems": {
+        "sony-playstation": {"files": [{"name": "a.bin", "native_system": "psx"}]},
+        "microsoft-msx": {"files": [{"name": "b.rom", "native_system": "msx1,msx2"}]},
+        "nintendo-gba": {"files": [{"name": "c.bin", "native_system": "gba"}]},
+        "gb": {"files": [{"name": "d.bin", "native_system": "nintendo-gba"}]},
+    }}
+
+    def _resolve(self, value, config=CONFIG):
+        from common import resolve_system_arg
+
+        return resolve_system_arg(value, list(self.CONFIG["systems"]), config)
+
+    def test_native_names_and_ids(self):
+        self.assertEqual(self._resolve("psx"), ["sony-playstation"])
+        self.assertEqual(self._resolve("PSX"), ["sony-playstation"])
+        self.assertEqual(self._resolve("psx,gb"), ["sony-playstation", "gb"])
+        self.assertEqual(self._resolve("Sony PlayStation"), ["sony-playstation"])
+        self.assertEqual(self._resolve("playstation"), ["sony-playstation"])
+
+    def test_a_name_with_commas_is_one_name(self):
+        self.assertEqual(self._resolve("msx1,msx2"), ["microsoft-msx"])
+
+    def test_an_id_wins_over_another_systems_native_name(self):
+        self.assertEqual(self._resolve("nintendo-gba"), ["nintendo-gba"])
+
+    def test_without_a_platform_only_ids_count(self):
+        with self.assertRaises(ValueError):
+            self._resolve("psx", config=None)
+
+    def test_an_unknown_name_is_refused_with_a_suggestion(self):
+        with self.assertRaises(ValueError) as caught:
+            self._resolve("psx,psxx")
+        self.assertIn("unknown system psxx", str(caught.exception))
+        self.assertIn("Did you mean: psx?", str(caught.exception))
+
+
+class AnUnknownNativeNameIsRefusedBeforeAnyWork(unittest.TestCase):
+    """Both tools answer a typo with the platform's names before reading the
+    database: a missing --db would otherwise be the first error."""
+
+    def test_both_tools(self):
+        missing = str(REPO_ROOT / "tmp" / "no-such-database.json")
+        for script, extra in (
+            ("verify.py", []),
+            ("generate_pack.py", ["--output-dir", str(REPO_ROOT / "tmp" / "never")]),
+        ):
+            with self.subTest(script=script):
+                proc = subprocess.run(
+                    [sys.executable, f"scripts/{script}", "--platform", "batocera",
+                     "--system", "psxx", "--db", missing, *extra],
+                    cwd=REPO_ROOT, capture_output=True, text=True, timeout=300,
+                )
+                self.assertEqual(proc.returncode, 2, proc.stdout + proc.stderr)
+                self.assertIn("unknown system psxx. Did you mean: psx?", proc.stderr)
+                self.assertNotIn("Traceback", proc.stderr)
+        self.assertFalse((REPO_ROOT / "tmp" / "never").exists())
+
+    def test_verify_takes_a_native_name_beside_platform(self):
+        proc = subprocess.run(
+            [sys.executable, "scripts/verify.py", "--platform", "batocera",
+             "--system", "psx", "--json"],
+            cwd=REPO_ROOT, capture_output=True, text=True, timeout=600,
+        )
+        if "database" in proc.stderr and proc.returncode:
+            self.skipTest("database.json is not built")
+        self.assertEqual(proc.returncode, 0, proc.stderr)
+        self.assertEqual(json.loads(proc.stdout)["batocera"]["systems"], ["sony-playstation"])
 
 
 if __name__ == "__main__":

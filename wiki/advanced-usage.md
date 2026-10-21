@@ -46,7 +46,18 @@ Extract only the files for a single system within a platform:
 
 ```bash
 python scripts/generate_pack.py --platform retroarch --system sony-playstation
+python scripts/generate_pack.py --platform batocera --system psx
+python scripts/verify.py --platform batocera --system psx
 ```
+
+Beside `--platform`, `--system` accepts the platform's own name for a system
+as well as our id: `psx` is what Batocera calls `sony-playstation`, and both
+build the same pack. The names come from `native_system` in the platform
+YAML, the mapping the installer reads as `system_names`, and
+`--platform batocera --list-systems` shows them after each id. A comma-separated
+value that is itself one name stays one name (Recalbox's `msx1,msx2`). A name
+the platform does not know is refused with the closest matches before the
+database is read.
 
 ### Required only
 

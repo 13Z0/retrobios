@@ -122,6 +122,7 @@ python scripts/verify.py --emulator dolphin        # single emulator
 python scripts/verify.py --emulator dolphin --standalone  # standalone mode only
 python scripts/verify.py --emulator handy --strict  # exit 1 on a required file missing with no HLE
 python scripts/verify.py --system atari-lynx       # single system
+python scripts/verify.py --platform batocera --system psx  # one system of a platform pack
 python scripts/verify.py --platform retroarch --target switch  # filter by hardware
 python scripts/verify.py --platform recalbox --region us   # regional priority list
 python scripts/verify.py --all --destinations tmp/paths.json  # also write the paths each pack holds
@@ -165,6 +166,7 @@ python scripts/generate_pack.py --system atari-lynx
 
 # Granular options
 python scripts/generate_pack.py --platform retroarch --system sony-playstation
+python scripts/generate_pack.py --platform batocera --system psx
 python scripts/generate_pack.py --platform batocera --required-only
 python scripts/generate_pack.py --platform retroarch --split
 python scripts/generate_pack.py --platform retroarch --split --group-by manufacturer
@@ -215,7 +217,14 @@ own verification mode ([discrepancy detection](verification-modes.md#discrepancy
 
 ### Granular options
 
-- `--system` with `--platform`: filter to specific systems within a platform pack
+- `--system` with `--platform`: filter to specific systems within a platform pack.
+  It takes our system ids (`sony-playstation`) and the platform's own names,
+  read from `native_system` in its YAML (Batocera `psx`, Recalbox `msx1,msx2`).
+  `--platform <name> --list-systems` prints both. `verify.py --platform --system`
+  reports on the same narrowed pack, and the installer's `--system` reads the
+  same mapping from the manifest's `system_names`. An unknown name is refused
+  with the closest matches before any work. Without `--platform`, `--system`
+  takes our ids only.
 - `--required-only`: exclude optional files and the data directories declared
   `required: false`, keep only required
 - `--split`: generate one ZIP per system instead of one big pack

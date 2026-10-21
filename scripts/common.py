@@ -2499,6 +2499,106 @@ def _norm_system_id(sid: str) -> str:
     return s.replace("-", "")
 
 
+def _name_key(name: str) -> str:
+    """Letters and digits only, as the installer compares names."""
+    return re.sub(r"[^a-z0-9]", "", name.lower())
+
+
+def platform_system_names(config: dict, systems: list[str]) -> dict[str, list[str]]:
+    """Per platform system, the names the platform's own file gives it.
+
+    A Batocera user knows PlayStation as `psx`, the folder under roms/, and
+    the platform YAML records that name as `native_system` on each file it
+    transcribes. Only the platform's own entries count (`native_layer`), a
+    name spelled like the system id adds nothing, and a name the platform
+    gives to two systems, or that reads as another system's id, names
+    neither. The install manifest's `system_names` and the `--system` of
+    generate_pack and verify read this one mapping.
+    """
+    native = native_layer(config) or {}
+    by_name: dict[str, set[str]] = {}
+    for sys_id, system in native.get("systems", {}).items():
+        if sys_id not in systems:
+            continue
+        for entry in system.get("files", []):
+            name = entry.get("native_system")
+            if isinstance(name, str) and name.strip():
+                by_name.setdefault(name.strip(), set()).add(sys_id)
+    ids = {_name_key(sys_id) for sys_id in systems}
+    out: dict[str, list[str]] = {}
+    for name, owners in by_name.items():
+        if len(owners) != 1 or _name_key(name) in ids:
+            continue
+        out.setdefault(next(iter(owners)), []).append(name)
+    return {sys_id: sorted(names) for sys_id, names in sorted(out.items())}
+
+
+def select_systems(systems: dict, wanted: list[str]) -> dict:
+    """The systems a --system list keeps, by id or normalized id."""
+    norm = {_norm_system_id(s) for s in wanted}
+    return {
+        sid: data for sid, data in systems.items()
+        if sid in wanted or _norm_system_id(sid) in norm
+    }
+
+
+def resolve_system_arg(
+    value: str,
+    systems: list[str],
+    config: dict | None = None,
+    listing: str = "--list-systems",
+) -> list[str]:
+    """The system ids a --system value names, or ValueError naming the rest.
+
+    With a platform config, the platform's own names count as well (Batocera's
+    `psx` is sony-playstation), the same mapping the install manifest carries
+    as `system_names`. Without one, only our ids do. A whole value that is a
+    name wins over splitting it on commas: Recalbox names one system
+    `msx1,msx2`. An id wins over another system's native name, and a name
+    nothing else matches falls back to the normalized id (`playstation`).
+    An unknown name is refused, never ignored.
+    """
+    names = platform_system_names(config, systems) if config else {}
+    exact: dict[str, list[str]] = {}
+    by_key: dict[str, list[str]] = {}
+    for sid in systems:
+        exact.setdefault(sid.lower(), [sid])
+        by_key.setdefault(_name_key(sid), []).append(sid)
+    for sid, aliases in names.items():
+        for alias in aliases:
+            exact.setdefault(alias.lower(), [sid])
+            if _name_key(alias) not in by_key:
+                by_key[_name_key(alias)] = [sid]
+    by_norm: dict[str, list[str]] = {}
+    for sid in systems:
+        by_norm.setdefault(_norm_system_id(sid), []).append(sid)
+
+    value = value.strip()
+    tokens = [value] if value.lower() in exact else value.split(",")
+    chosen: list[str] = []
+    unknown: list[str] = []
+    for token in (t.strip() for t in tokens):
+        if not token:
+            continue
+        keyed = by_key.get(_name_key(token), [])
+        found = (
+            exact.get(token.lower())
+            or (keyed if len(keyed) == 1 else None)
+            or by_norm.get(_norm_system_id(token))
+        )
+        if not found:
+            unknown.append(token)
+            continue
+        chosen += [sid for sid in found if sid not in chosen]
+    if unknown:
+        known = sorted({*systems, *(a for v in names.values() for a in v)})
+        hint = suggest_names(unknown, known, listing, listed=len(systems))
+        raise ValueError(f"unknown system {', '.join(unknown)}. {hint}")
+    if not chosen:
+        raise ValueError("--system names no system")
+    return chosen
+
+
 def designated_profiles(profiles: dict[str, dict], names: set[str]) -> set[str]:
     """The profiles a list of upstream core names designates.
 
@@ -2759,15 +2859,18 @@ def list_system_ids(emulators_dir: str) -> None:
 
 
 def list_platform_system_ids(platform_name: str, platforms_dir: str) -> None:
-    """Print system IDs from a platform's YAML config."""
+    """Print system IDs from a platform's YAML config, with the platform's
+    own names for them, which --system also accepts."""
     config = load_platform_config(platform_name, platforms_dir)
     systems = config.get("systems", {})
+    names = platform_system_names(config, list(systems))
     for sys_id in sorted(systems):
         file_count = len(systems[sys_id].get("files", []))
         mfr = systems[sys_id].get("manufacturer", "")
         mfr_display = f"  [{mfr.split('|')[0]}]" if mfr else ""
         count = f"({file_count} file{'s' if file_count != 1 else ''})"
-        print(f"  {sys_id:35s} {count:12s}{mfr_display}".rstrip())
+        also = f"  also: {', '.join(names[sys_id])}" if sys_id in names else ""
+        print(f"  {sys_id:35s} {count:12s}{mfr_display}{also}".rstrip())
 
 
 def build_target_cores_cache(
