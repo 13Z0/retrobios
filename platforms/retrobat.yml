@@ -3238,6 +3238,261 @@ launchers:
   fails_when_missing: not checked by the launcher
   depends_on_option: duck_bios
   source_ref: "emulatorLauncher/Generators/Duckstation.Generator.cs:204-209, .emulationstation/es_features.cfg:11638-11646"
+- emulator: jgenesis
+  build: standalone
+  kind: fixed_name
+  names:
+  - gba_bios.bin
+  case_insensitive: true
+  search_dir: bios
+  passes_to: "jgenesis-config.toml [game_boy_advance] bios_path, only if the file\
+    \ exists"
+  fails_when_missing: bios_path not written
+  depends_on_option: system == "game_boy_advance"
+  source_ref: "emulatorLauncher/Generators/Jgenesis.Generator.cs:257-263"
+- emulator: jgenesis
+  build: standalone
+  kind: fixed_name
+  names:
+  - bios_CD_U.bin
+  case_insensitive: true
+  search_dir: bios
+  passes_to: "jgenesis-config.toml [sega_cd] bios_path, only if the file exists"
+  fails_when_missing: bios_path not written
+  depends_on_option: system == "genesis" || system == "sega_cd" || system == "sega_32x",
+    system == "sega_cd"
+  source_ref: "emulatorLauncher/Generators/Jgenesis.Generator.cs:282-283, 317, 323-324"
+- emulator: jgenesis
+  build: standalone
+  kind: fixed_name
+  names:
+  - bios_CD_J.bin
+  case_insensitive: true
+  search_dir: bios
+  passes_to: "jgenesis-config.toml [sega_cd] jp_bios_path, only if the file exists"
+  fails_when_missing: jp_bios_path not written
+  depends_on_option: system == "genesis" || system == "sega_cd" || system == "sega_32x",
+    system == "sega_cd"
+  source_ref: "emulatorLauncher/Generators/Jgenesis.Generator.cs:282-283, 318, 325-326"
+- emulator: jgenesis
+  build: standalone
+  kind: fixed_name
+  names:
+  - bios_CD_E.bin
+  case_insensitive: true
+  search_dir: bios
+  passes_to: "jgenesis-config.toml [sega_cd] eu_bios_path, only if the file exists"
+  fails_when_missing: eu_bios_path not written
+  depends_on_option: system == "genesis" || system == "sega_cd" || system == "sega_32x",
+    system == "sega_cd"
+  source_ref: "emulatorLauncher/Generators/Jgenesis.Generator.cs:282-283, 319, 327-328"
+- emulator: kega-fusion
+  build: standalone
+  kind: fixed_name
+  names:
+  - bios_CD_E.bin
+  case_insensitive: true
+  search_dir: bios
+  passes_to: Fusion.ini SCDEURBIOS, only if the file exists
+  fails_when_missing: SCDEURBIOS not written
+  source_ref: "emulatorLauncher/Generators/KegaFusion.Generator.cs:106-108"
+- emulator: kega-fusion
+  build: standalone
+  kind: fixed_name
+  names:
+  - bios_CD_U.bin
+  case_insensitive: true
+  search_dir: bios
+  passes_to: Fusion.ini SCDUSABIOS, only if the file exists
+  fails_when_missing: SCDUSABIOS not written
+  source_ref: "emulatorLauncher/Generators/KegaFusion.Generator.cs:110-112"
+- emulator: kega-fusion
+  build: standalone
+  kind: fixed_name
+  names:
+  - bios_CD_J.bin
+  case_insensitive: true
+  search_dir: bios
+  passes_to: Fusion.ini SCDJAPBIOS, only if the file exists
+  fails_when_missing: SCDJAPBIOS not written
+  source_ref: "emulatorLauncher/Generators/KegaFusion.Generator.cs:114-116"
+- emulator: kega-fusion
+  build: standalone
+  kind: fixed_name
+  names:
+  - 32X_G_BIOS.BIN
+  case_insensitive: true
+  search_dir: bios
+  passes_to: Fusion.ini 32XM68KBIOS, only if the file exists
+  fails_when_missing: 32XM68KBIOS not written
+  source_ref: "emulatorLauncher/Generators/KegaFusion.Generator.cs:118-120"
+- emulator: kega-fusion
+  build: standalone
+  kind: fixed_name
+  names:
+  - 32X_M_BIOS.BIN
+  case_insensitive: true
+  search_dir: bios
+  passes_to: Fusion.ini 32XMSH2BIOS, only if the file exists
+  fails_when_missing: 32XMSH2BIOS not written
+  source_ref: "emulatorLauncher/Generators/KegaFusion.Generator.cs:122-124"
+- emulator: kega-fusion
+  build: standalone
+  kind: fixed_name
+  names:
+  - 32X_S_BIOS.BIN
+  case_insensitive: true
+  search_dir: bios
+  passes_to: Fusion.ini 32XSSH2BIOS, only if the file exists
+  fails_when_missing: 32XSSH2BIOS not written
+  source_ref: "emulatorLauncher/Generators/KegaFusion.Generator.cs:126-128"
+- emulator: kega-fusion
+  build: standalone
+  kind: passes_path
+  names: []
+  search_dir: bios
+  passes_to: Fusion.ini GenesisBIOS = bios
+  fails_when_missing: false
+  source_ref: "emulatorLauncher/Generators/KegaFusion.Generator.cs:99, 103"
+- emulator: melonds
+  build: standalone
+  kind: fixed_name
+  names:
+  - firmware.bin
+  case_insensitive: true
+  search_dir: bios
+  passes_to: "melonDS.toml [DS] FirmwarePath, only if the file exists"
+  fails_when_missing: FirmwarePath not written
+  depends_on_option: melonds_externalBIOS on
+  source_ref: "emulatorLauncher/Generators/MelonDS.Generator.cs:167, 174-175"
+- emulator: melonds
+  build: standalone
+  kind: fixed_name
+  names:
+  - bios7.bin
+  case_insensitive: true
+  search_dir: bios
+  passes_to: "melonDS.toml [DS] BIOS7Path, only if the file exists"
+  fails_when_missing: BIOS7Path not written
+  depends_on_option: melonds_externalBIOS on
+  source_ref: "emulatorLauncher/Generators/MelonDS.Generator.cs:168, 177-178"
+- emulator: melonds
+  build: standalone
+  kind: fixed_name
+  names:
+  - bios9.bin
+  case_insensitive: true
+  search_dir: bios
+  passes_to: "melonDS.toml [DS] BIOS9Path, only if the file exists"
+  fails_when_missing: BIOS9Path not written
+  depends_on_option: melonds_externalBIOS on
+  source_ref: "emulatorLauncher/Generators/MelonDS.Generator.cs:169, 180-181"
+- emulator: mupen64
+  build: standalone
+  kind: fixed_name
+  names:
+  - IPL_JAP.n64
+  case_insensitive: true
+  search_dir: bios/Mupen64plus
+  passes_to: "Config/mupen64plus.cfg [Rosalie's Mupen GUI Core 64DD] 64DD_JapaneseIPL,\
+    \ only if the file exists"
+  fails_when_missing: 64DD_JapaneseIPL not written
+  source_ref: "emulatorLauncher/Generators/Mupen64.Generator.cs:228-230"
+- emulator: mupen64
+  build: standalone
+  kind: fixed_name
+  names:
+  - IPL_USA.n64
+  case_insensitive: true
+  search_dir: bios/Mupen64plus
+  passes_to: "Config/mupen64plus.cfg [Rosalie's Mupen GUI Core 64DD] 64DD_AmericanIPL,\
+    \ only if the file exists"
+  fails_when_missing: 64DD_AmericanIPL not written
+  source_ref: "emulatorLauncher/Generators/Mupen64.Generator.cs:232-234"
+- emulator: mupen64
+  build: standalone
+  kind: fixed_name
+  names:
+  - IPL_DEV.n64
+  case_insensitive: true
+  search_dir: bios/Mupen64plus
+  passes_to: "Config/mupen64plus.cfg [Rosalie's Mupen GUI Core 64DD] 64DD_DevelopmentIPL,\
+    \ only if the file exists"
+  fails_when_missing: 64DD_DevelopmentIPL not written
+  source_ref: "emulatorLauncher/Generators/Mupen64.Generator.cs:236-238"
+- emulator: project64
+  build: standalone
+  kind: fixed_name
+  names:
+  - IPL_JAP.n64
+  case_insensitive: true
+  search_dir: bios/Mupen64plus
+  passes_to: "Config/Project64.cfg [Settings] Disk IPL ROM Path, only if the file\
+    \ exists"
+  fails_when_missing: Disk IPL ROM Path not written
+  source_ref: "emulatorLauncher/Generators/Project64.Generator.cs:91-93"
+- emulator: project64
+  build: standalone
+  kind: fixed_name
+  names:
+  - IPL_USA.n64
+  case_insensitive: true
+  search_dir: bios/Mupen64plus
+  passes_to: "Config/Project64.cfg [Settings] Disk IPL USA ROM Path, only if the file\
+    \ exists"
+  fails_when_missing: Disk IPL USA ROM Path not written
+  source_ref: "emulatorLauncher/Generators/Project64.Generator.cs:95-97"
+- emulator: project64
+  build: standalone
+  kind: fixed_name
+  names:
+  - IPL_DEV.n64
+  case_insensitive: true
+  search_dir: bios/Mupen64plus
+  passes_to: "Config/Project64.cfg [Settings] Disk IPL TOOL ROM Path, only if the\
+    \ file exists"
+  fails_when_missing: Disk IPL TOOL ROM Path not written
+  source_ref: "emulatorLauncher/Generators/Project64.Generator.cs:99-101"
+- emulator: mgba
+  build: standalone
+  kind: fixed_name
+  names:
+  - gb_bios.bin
+  case_insensitive: true
+  search_dir: bios
+  passes_to: "config.ini [ports.qt] gb.bios, only if the file exists"
+  fails_when_missing: gb.bios not written
+  source_ref: "emulatorLauncher/Generators/mGBA.Generator.cs:112-114"
+- emulator: mgba
+  build: standalone
+  kind: fixed_name
+  names:
+  - sgb2_boot.bin
+  case_insensitive: true
+  search_dir: bios
+  passes_to: "config.ini [ports.qt] sgb.bios, only if the file exists"
+  fails_when_missing: sgb.bios not written
+  source_ref: "emulatorLauncher/Generators/mGBA.Generator.cs:116-118"
+- emulator: mgba
+  build: standalone
+  kind: fixed_name
+  names:
+  - gbc_bios.bin
+  case_insensitive: true
+  search_dir: bios
+  passes_to: "config.ini [ports.qt] gbc.bios, only if the file exists"
+  fails_when_missing: gbc.bios not written
+  source_ref: "emulatorLauncher/Generators/mGBA.Generator.cs:120-122"
+- emulator: mgba
+  build: standalone
+  kind: fixed_name
+  names:
+  - gba_bios.bin
+  case_insensitive: true
+  search_dir: bios
+  passes_to: "config.ini [ports.qt] gba.bios, only if the file exists"
+  fails_when_missing: gba.bios not written
+  source_ref: "emulatorLauncher/Generators/mGBA.Generator.cs:124-126"
 - emulator: hatari
   build: standalone
   kind: fixed_name
