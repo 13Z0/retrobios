@@ -2,12 +2,17 @@
 
 from __future__ import annotations
 
-import re
-
-from pathlib import Path
-from concurrent.futures import ThreadPoolExecutor
 import json
+import re
+import sys
+import urllib.error
+import urllib.parse
 import urllib.request
+from concurrent.futures import ThreadPoolExecutor
+from pathlib import Path
+
+from artifacts import write_text_atomic
+
 WIKI_SRC_DIR = "wiki"  # manually maintained wiki sources
 SYSTEM_ICON_BASE = "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png"
 ICON_CACHE_PATH = Path(".cache") / "system_icons.json"
@@ -67,6 +72,27 @@ def _icon_name(manufacturer: str, console_name: str) -> str:
 def _icon_url(icon_name: str) -> str:
     return f"{SYSTEM_ICON_BASE}/{urllib.parse.quote(icon_name)}.png"
 
+def _read_icon_cache() -> dict[str, bool]:
+    """The recorded icon checks, empty when none were recorded.
+
+    An unreadable file is reported, not taken for an empty cache in silence.
+    """
+    try:
+        text = ICON_CACHE_PATH.read_text(encoding="utf-8")
+    except FileNotFoundError:
+        return {}
+    except OSError as exc:
+        print(f"  WARNING: cannot read {ICON_CACHE_PATH}: {exc}", file=sys.stderr)
+        return {}
+    try:
+        data = json.loads(text)
+    except json.JSONDecodeError as exc:
+        print(f"  WARNING: {ICON_CACHE_PATH} is not valid JSON ({exc}), "
+              "icons are checked again", file=sys.stderr)
+        return {}
+    return {str(k): bool(v) for k, v in data.items()} if isinstance(data, dict) else {}
+
+
 def prime_system_icons(names: set[str]) -> None:
     """Record which system icons upstream actually serves.
 
@@ -74,14 +100,7 @@ def prime_system_icons(names: set[str]) -> None:
     cannot be checked stay unavailable: the site never links an image it has
     not seen answer.
     """
-    cached: dict[str, bool] = {}
-    if ICON_CACHE_PATH.exists():
-        try:
-            with open(ICON_CACHE_PATH) as f:
-                cached = json.load(f)
-        except (json.JSONDecodeError, OSError):
-            cached = {}
-
+    cached = _read_icon_cache()
     unknown = sorted(n for n in names if n not in cached)
     if unknown:
         def check(name: str) -> tuple[str, bool | None]:
@@ -100,13 +119,22 @@ def prime_system_icons(names: set[str]) -> None:
                 return name, None
 
         print(f"Checking {len(unknown)} system icons...")
+        learned: dict[str, bool] = {}
         with ThreadPoolExecutor(max_workers=8) as pool:
             for name, ok in pool.map(check, unknown):
                 if ok is not None:
-                    cached[name] = ok
-        ICON_CACHE_PATH.parent.mkdir(parents=True, exist_ok=True)
-        with open(ICON_CACHE_PATH, "w") as f:
-            json.dump(cached, f, indent=2, sort_keys=True)
+                    learned[name] = ok
+        cached.update(learned)
+        if learned:
+            # Another run may have recorded names meanwhile: merge with what
+            # the file holds now, and replace it whole so a reader never sees
+            # a half-written cache.
+            merged = {**_read_icon_cache(), **learned}
+            ICON_CACHE_PATH.parent.mkdir(parents=True, exist_ok=True)
+            write_text_atomic(
+                str(ICON_CACHE_PATH),
+                json.dumps(merged, indent=2, sort_keys=True) + "\n",
+            )
 
     _icon_available.update(cached)
     missing = sum(1 for n in names if not cached.get(n))
