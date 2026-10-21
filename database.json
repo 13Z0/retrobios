@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-21T04:12:31Z",
-  "total_files": 19529,
-  "total_size": 16788660322,
+  "generated_at": "2026-10-21T04:49:38Z",
+  "total_files": 19528,
+  "total_size": 16788657442,
   "bios_dir": "bios",
   "files": {
     "738c7f5fd0c8b57ee2e87ae7a97bf8e21a821d07": {
@@ -136847,16 +136847,6 @@
       "crc32": "c1f446c6",
       "adler32": "0bf1df9d"
     },
-    "63e0d5b58d41fccf0853e46e7ab2f25262d2db5d": {
-      "path": "bios/Other/dolphin-mmjr/codehandler.bin",
-      "name": "codehandler.bin",
-      "size": 2880,
-      "sha1": "63e0d5b58d41fccf0853e46e7ab2f25262d2db5d",
-      "md5": "5b79fad600c6257c928c108cef7034a7",
-      "sha256": "4e72048c6bd59cc2de556aea4d63ef4c6b21a12d9c6347c52e8eca89ff2150db",
-      "crc32": "4c719966",
-      "adler32": "896a11b8"
-    },
     "7fbbedcc7a1ae00414a4e9e967109cc78be1fe3b": {
       "path": "bios/Other/dolphin-mmjr/font_japanese.bin",
       "name": "font_japanese.bin",
@@ -213924,7 +213914,6 @@
       "3ab3f9386a280de051e82c0f147385ce": "f6b64d7b039a90af956c2c0873b30f6639a59878",
       "2c72c2c8020be91779cf30e6965d6bf8": "a9cd6c37e1da95584eab7f4227da2c98abdb7321",
       "d677421733ba64f4b493c98667d6ab78": "f6a0cbfda6838065065e830ff40f322e6a3b6b00",
-      "5b79fad600c6257c928c108cef7034a7": "63e0d5b58d41fccf0853e46e7ab2f25262d2db5d",
       "a1d3c0e5a40f163f4fb00a5e0774c63c": "7fbbedcc7a1ae00414a4e9e967109cc78be1fe3b",
       "9bef639b7426ef6948602a12b33522a8": "483a17ff25b68a8f18cae691da99f16beefbe370",
       "1f118b8735fcf40c20b38c3184eebfd9": "e6c0050b3c67ee26198488fbbe4a5d019c15b628",
@@ -255258,16 +255247,15 @@
       "wiitdb.txt": [
         "f6a0cbfda6838065065e830ff40f322e6a3b6b00"
       ],
-      "codehandler.bin": [
-        "63e0d5b58d41fccf0853e46e7ab2f25262d2db5d",
-        "e6c0050b3c67ee26198488fbbe4a5d019c15b628",
-        "a681437a28d02a978f70646716978bcc446108ea"
-      ],
       "font_japanese.bin": [
         "7fbbedcc7a1ae00414a4e9e967109cc78be1fe3b"
       ],
       "font_western.bin": [
         "483a17ff25b68a8f18cae691da99f16beefbe370"
+      ],
+      "codehandler.bin": [
+        "e6c0050b3c67ee26198488fbbe4a5d019c15b628",
+        "a681437a28d02a978f70646716978bcc446108ea"
       ],
       "mii.bin": [
         "d2fdfff015d4ce6cfa71fab44fd6b158e32d589c"
@@ -269960,18 +269948,6 @@
       "kick34005.A500": [
         "891e9a547772fe0c6c19b610baf8bc4ea7fcb785"
       ],
-      "kick34005.A500.rom": [
-        "891e9a547772fe0c6c19b610baf8bc4ea7fcb785"
-      ],
-      "Kickstart v1.3 r34.005 (1987-12)(Commodore)(A500-A1000-A2000-CDTV)[!].rom": [
-        "891e9a547772fe0c6c19b610baf8bc4ea7fcb785"
-      ],
-      "Kickstart v1.3 r34.005 (1987-12)(Commodore)(A500-A1000-A2000-CDTV)[o].rom": [
-        "891e9a547772fe0c6c19b610baf8bc4ea7fcb785"
-      ],
-      "Kickstart v1.3 rev 34.5 (1987)(Commodore)(A500-A1000-A2000-CDTV)[!].rom": [
-        "891e9a547772fe0c6c19b610baf8bc4ea7fcb785"
-      ],
       "amiga-os-205.rom": [
         "02843c4253bbd29aba535b0aa3bd9a85034ecde4"
       ],
@@ -269987,15 +269963,6 @@
       "kick40060.CD32": [
         "3525be8887f79b5929e017b42380a79edfee542d"
       ],
-      "kick40060.CD32.rom": [
-        "3525be8887f79b5929e017b42380a79edfee542d"
-      ],
-      "Kickstart v3.1 r40.060 (1993-05)(Commodore)(CD32)[!].rom": [
-        "3525be8887f79b5929e017b42380a79edfee542d"
-      ],
-      "Kickstart v3.1 r40.60 (1993)(Commodore)(CD32).rom": [
-        "3525be8887f79b5929e017b42380a79edfee542d"
-      ],
       "cd32ext.rom": [
         "5bef3d628ce59cc02a66e6e4ae0da48f60e78f7f"
       ],
@@ -270005,46 +269972,16 @@
       "amiga-os-310-cd32-ext.rom": [
         "5bef3d628ce59cc02a66e6e4ae0da48f60e78f7f"
       ],
-      "kick40060.CD32.ext.rom": [
-        "5bef3d628ce59cc02a66e6e4ae0da48f60e78f7f"
-      ],
-      "CD32 Extended-ROM r40.60 (1993)(Commodore)(CD32).rom": [
-        "5bef3d628ce59cc02a66e6e4ae0da48f60e78f7f"
-      ],
       "cdtv.rom": [
         "7ba40ffa17e500ed9fed041f3424bd81d9c907be"
       ],
       "cdtvext.rom": [
         "7ba40ffa17e500ed9fed041f3424bd81d9c907be"
       ],
-      "kick34005.CDTV.rom": [
-        "7ba40ffa17e500ed9fed041f3424bd81d9c907be"
-      ],
-      "amiga-os-130-cdtv-ext.rom": [
-        "7ba40ffa17e500ed9fed041f3424bd81d9c907be",
-        "5bc114bba29f60a614a311745b3e2464bfa06846"
-      ],
-      "CDTV Extended-ROM v1.0 (1991)(Commodore)(CDTV)[!].rom": [
-        "7ba40ffa17e500ed9fed041f3424bd81d9c907be",
-        "5bc114bba29f60a614a311745b3e2464bfa06846"
-      ],
-      "CDTV Extended-ROM v1.0 (1992)(Commodore)(CDTV).rom": [
-        "7ba40ffa17e500ed9fed041f3424bd81d9c907be",
-        "5bc114bba29f60a614a311745b3e2464bfa06846"
-      ],
       "kick20.rom": [
         "c5839f5cb98a7a8947065c3ed2f14f5f42e334a1"
       ],
       "kick37175.A500": [
-        "c5839f5cb98a7a8947065c3ed2f14f5f42e334a1"
-      ],
-      "kick37175.A500.rom": [
-        "c5839f5cb98a7a8947065c3ed2f14f5f42e334a1"
-      ],
-      "Kickstart v2.04 r37.175 (1991-05)(Commodore)(A500+)[!].rom": [
-        "c5839f5cb98a7a8947065c3ed2f14f5f42e334a1"
-      ],
-      "Kickstart v2.04 rev 37.175 (1991)(Commodore)(A500+).rom": [
         "c5839f5cb98a7a8947065c3ed2f14f5f42e334a1"
       ],
       "kick33180.A500": [
@@ -270056,34 +269993,13 @@
       "amiga-os-310-a600.rom": [
         "3b7f1493b27e212830f989f26ca76c02049f09ca"
       ],
-      "kick40063.A600.rom": [
-        "3b7f1493b27e212830f989f26ca76c02049f09ca"
-      ],
-      "Kickstart v3.1 r40.063 (1993-10)(Commodore)(A600HD)[!].rom": [
-        "3b7f1493b27e212830f989f26ca76c02049f09ca"
-      ],
       "kick40068.A1200": [
         "e21545723fe8374e91342617604f1b3d703094f1"
       ],
       "AmigaVision.rom": [
         "e21545723fe8374e91342617604f1b3d703094f1"
       ],
-      "kick40068.A1200.rom": [
-        "e21545723fe8374e91342617604f1b3d703094f1"
-      ],
-      "Kickstart v3.1 r40.068 (1993-12)(Commodore)(A1200)[!].rom": [
-        "e21545723fe8374e91342617604f1b3d703094f1"
-      ],
-      "Kickstart - 391774-01 (USA, Europe) (v3.1 Rev 40.068) (A1200).rom": [
-        "e21545723fe8374e91342617604f1b3d703094f1"
-      ],
       "kick40068.A4000": [
-        "5fe04842d04a489720f0f4bb0e46948199406f49"
-      ],
-      "kick40068.A4000.rom": [
-        "5fe04842d04a489720f0f4bb0e46948199406f49"
-      ],
-      "Kickstart v3.1 r40.068 (1993-12)(Commodore)(A4000)[!].rom": [
         "5fe04842d04a489720f0f4bb0e46948199406f49"
       ],
       "1541 ROM": [
@@ -270351,16 +270267,10 @@
       "sl31253.bin": [
         "81193965a374d77b99b4743d317824b53c3e3c78"
       ],
-      "sl131253.bin": [
-        "81193965a374d77b99b4743d317824b53c3e3c78"
-      ],
       "ChannelF_SL31254.rom": [
         "8f70d1b74483ba3a37e86cf16c849d601a8c3d2c"
       ],
       "sl31254.bin": [
-        "8f70d1b74483ba3a37e86cf16c849d601a8c3d2c"
-      ],
-      "sl131254.bin": [
         "8f70d1b74483ba3a37e86cf16c849d601a8c3d2c"
       ],
       "ChannelF_sl90025.rom": [
@@ -275902,6 +275812,9 @@
       "LA_us_102.bin": [
         "8af162223bb12fc19b414f126022910372790103"
       ],
+      "NDS_Firmware [b3].bin": [
+        "1cf9e67c2c703bb9961bbcdd39cd2c7e319a803b"
+      ],
       "PCFX_v101.bin": [
         "8b662f7548078be52a871565e19511ccca28c5c8"
       ],
@@ -276324,6 +276237,15 @@
       ],
       "Kickstart v1.1 rev 32.34 (1986)(Commodore)(A1000)(PAL).rom": [
         "16df8b5fd524c5a1c7584b2457ac15aff9e3ad6d"
+      ],
+      "amiga-os-130-cdtv-ext.rom": [
+        "5bc114bba29f60a614a311745b3e2464bfa06846"
+      ],
+      "CDTV Extended-ROM v1.0 (1991)(Commodore)(CDTV)[!].rom": [
+        "5bc114bba29f60a614a311745b3e2464bfa06846"
+      ],
+      "CDTV Extended-ROM v1.0 (1992)(Commodore)(CDTV).rom": [
+        "5bc114bba29f60a614a311745b3e2464bfa06846"
       ],
       "SeaBIOS (128 KB)": [
         "f402170ee4f374c304a7ce0b139d6cecb1732aff"
@@ -290358,7 +290280,6 @@
       "dcbd4121": "f6b64d7b039a90af956c2c0873b30f6639a59878",
       "6893a2d1": "a9cd6c37e1da95584eab7f4227da2c98abdb7321",
       "c1f446c6": "f6a0cbfda6838065065e830ff40f322e6a3b6b00",
-      "4c719966": "63e0d5b58d41fccf0853e46e7ab2f25262d2db5d",
       "9ac7f0c7": "7fbbedcc7a1ae00414a4e9e967109cc78be1fe3b",
       "6fe1f772": "483a17ff25b68a8f18cae691da99f16beefbe370",
       "ba8dfa56": "e6c0050b3c67ee26198488fbbe4a5d019c15b628",
@@ -309888,7 +309809,6 @@
       "75600aba867acbdfdb85fcd142b524da769bdc611b855a760aeb0c6e2eaae17a": "f6b64d7b039a90af956c2c0873b30f6639a59878",
       "6ea2c350626d85a22410ad6ad8700388e28166ab8c5c2e88d83d7a696fceb335": "a9cd6c37e1da95584eab7f4227da2c98abdb7321",
       "3c042d3a3bac17f6a3a989c549fe127de1ba38dfdee9ffd6c13d5379238e5c13": "f6a0cbfda6838065065e830ff40f322e6a3b6b00",
-      "4e72048c6bd59cc2de556aea4d63ef4c6b21a12d9c6347c52e8eca89ff2150db": "63e0d5b58d41fccf0853e46e7ab2f25262d2db5d",
       "38f9f59d505bc4e2d86b0196706195f33ad72b7fe9d029cf263072cde19d044f": "7fbbedcc7a1ae00414a4e9e967109cc78be1fe3b",
       "4ad991be2b0aa305f09b90a79fc50f57833b30b008890b5ef1336cc3d9d0bae0": "483a17ff25b68a8f18cae691da99f16beefbe370",
       "2b2ff0716aeb9b806cc61181e559041312957f25f04c435bd7da80a78917b33b": "e6c0050b3c67ee26198488fbbe4a5d019c15b628",
@@ -482793,12 +482713,6 @@
       ],
       "Load/wiitdb.txt": [
         "f6a0cbfda6838065065e830ff40f322e6a3b6b00"
-      ],
-      "Other/dolphin-mmjr/codehandler.bin": [
-        "63e0d5b58d41fccf0853e46e7ab2f25262d2db5d"
-      ],
-      "dolphin-mmjr/codehandler.bin": [
-        "63e0d5b58d41fccf0853e46e7ab2f25262d2db5d"
       ],
       "Other/dolphin-mmjr/font_japanese.bin": [
         "7fbbedcc7a1ae00414a4e9e967109cc78be1fe3b"
