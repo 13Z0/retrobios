@@ -87,6 +87,25 @@ class NativeCacheTests(unittest.TestCase):
         self.assertEqual({r.status for r in rows}, {cf.STALE})
         self.assertIn("batocera", {r.subject for r in rows})
 
+    def test_the_model_build_notes_stay_out_of_the_report(self):
+        """generate_truth reports how two cores' hashes were settled. Under
+        `--only native` they opened the report and named no step to take."""
+        import contextlib
+        import io
+
+        def noisy(truth, scraped):
+            print("WARNING: hash conflict for GameIndex.yaml (sha1: a vs b, core yaps2)",
+                  file=sys.stderr)
+            print("other diagnostic", file=sys.stderr)
+            return {}, None
+
+        err = io.StringIO()
+        with mock.patch.object(cf, "build_native_model", side_effect=noisy), \
+                contextlib.redirect_stderr(err):
+            cf.check_native(REPO_ROOT / "platforms", self.cache, self.cache / "truth")
+        self.assertNotIn("hash conflict", err.getvalue())
+        self.assertIn("other diagnostic", err.getvalue())
+
 
 class PublishedExportTests(unittest.TestCase):
     """exports/ is committed and published, and CI cannot rebuild it."""

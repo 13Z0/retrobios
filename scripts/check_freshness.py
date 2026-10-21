@@ -472,6 +472,27 @@ def _transcribed_at(platforms_dir: Path, platform: str) -> float:
     return newest
 
 
+# How the truth model settles two cores' hashes: generate_truth reports it,
+# and it says nothing about whether a cached original is current.
+_MODEL_NOTES = ("WARNING: hash conflict",)
+
+
+@contextlib.contextmanager
+def _without_model_notes():
+    """Keep the model build's own notes out of the freshness report.
+
+    Anything else written to stderr passes through.
+    """
+    sink = io.StringIO()
+    try:
+        with contextlib.redirect_stderr(sink):
+            yield
+    finally:
+        for line in sink.getvalue().splitlines(keepends=True):
+            if not line.startswith(_MODEL_NOTES):
+                sys.stderr.write(line)
+
+
 def check_native(
     platforms_dir: Path, cache_dir: Path, truth_dir: Path,
     published: Path = Path("exports"),
@@ -484,24 +505,25 @@ def check_native(
         exporter_class = exporters.get(name)
         if not exporter_class:
             continue
-        try:
-            truth, scraped = export_native.load_inputs(name, truth_dir, str(platforms_dir))
-        except export_native.StaleTruth as exc:
-            findings.append(Finding("native", name, STALE, detail=str(exc)))
-            continue
-        systems, _ = build_native_model(truth or {}, scraped)
-        wanted = export_native.wanted_sources(exporter_class(), systems, scraped)
-        reason = native_cache_state(
-            wanted, cache_dir / name, recorded, index, _transcribed_at(platforms_dir, name)
-        )
-        if reason:
-            reason += ", export_native.py --refresh-cache fetches it"
-        else:
-            reason = published_export_state(
-                name, exporter_class, truth_dir, platforms_dir, cache_dir, published
+        with _without_model_notes():
+            try:
+                truth, scraped = export_native.load_inputs(name, truth_dir, str(platforms_dir))
+            except export_native.StaleTruth as exc:
+                findings.append(Finding("native", name, STALE, detail=str(exc)))
+                continue
+            systems, _ = build_native_model(truth or {}, scraped)
+            wanted = export_native.wanted_sources(exporter_class(), systems, scraped)
+            reason = native_cache_state(
+                wanted, cache_dir / name, recorded, index, _transcribed_at(platforms_dir, name)
             )
             if reason:
-                reason += f", export_native.py --platform {name} writes it again"
+                reason += ", export_native.py --refresh-cache fetches it"
+            else:
+                reason = published_export_state(
+                    name, exporter_class, truth_dir, platforms_dir, cache_dir, published
+                )
+                if reason:
+                    reason += f", export_native.py --platform {name} writes it again"
         findings.append(
             Finding(
                 "native",
