@@ -1,7 +1,5 @@
 # Testing guide
 
-This page covers how to run, understand, and extend the test suite.
-
 The suite is discovered dynamically across focused modules, so its exact count
 is reported by the test runner instead of being hand-maintained here. Tests do
 not require network access. Most build synthetic fixtures under the repository's
@@ -46,7 +44,7 @@ Every module in `tests/`, by the area it guards.
 | Installer and downloads | loopback server | `test_check_release`, `test_download`, `test_install`, `test_install_cores`, `test_install_experience`, `test_install_selection` |
 | Truth and native export | synthetic + cached originals | `test_export_counts`, `test_export_native_layer`, `test_export_report`, `test_exporters`, `test_truth_diff`, `test_truth_layout` |
 | Scrapers, upstream and provenance | inline sources, synthetic | `test_check_freshness`, `test_dedup`, `test_fbneo_parser`, `test_find_pinned_revision`, `test_hash_merge`, `test_launchers`, `test_launchers_emudeck`, `test_launchers_recalbox`, `test_launchers_retrobat`, `test_launchers_retrodeck`, `test_launchers_retropie`, `test_launchers_rocknix`, `test_mame_devices`, `test_mame_parser`, `test_mame_ref_audit`, `test_profile_sync`, `test_provenance`, `test_refresh_data_dirs`, `test_refresh_failures`, `test_refresh_stale`, `test_retrodeck_scraper_errors`, `test_romset_recipes`, `test_scraper_contract`, `test_upstream`, `test_upstream_index` |
-| Site, docs and repository contracts | rendered pages, sources | `test_contributing_text`, `test_data_dir_refs`, `test_dataclass_defaults`, `test_optional_dependencies`, `test_prose_style`, `test_site_availability`, `test_site_cores`, `test_site_exports`, `test_site_platform_hashes`, `test_site_system_links`, `test_site_validation`, `test_site_write`, `test_validate_pr`, `test_validate_pr_hashes`, `test_workflow_paths` |
+| Site, docs and repository contracts | rendered pages, sources | `test_contributing_text`, `test_data_dir_refs`, `test_doc_surfaces`, `test_dataclass_defaults`, `test_optional_dependencies`, `test_prose_style`, `test_site_availability`, `test_site_cores`, `test_site_exports`, `test_site_platform_hashes`, `test_site_system_links`, `test_site_validation`, `test_site_write`, `test_validate_pr`, `test_validate_pr_hashes`, `test_workflow_paths` |
 
 ## Test architecture
 
@@ -193,17 +191,19 @@ script could have established, the script gains that check in the same change.
 Example skeleton:
 
 ```python
-def test_42_my_new_behavior(self):
-    # Write minimal fixtures to self.root
-    profile = {"emulator": "test_core", "files": [...]}
+def test_my_new_behavior(self):
+    # Minimal fixtures under self.root
+    profile = {"emulator": "test_core", "type": "libretro", "files": [...]}
     with open(os.path.join(self.emulators_dir, "test_core.yml"), "w") as f:
         yaml.dump(profile, f)
 
-    # Call production code
-    result = verify_platform(self.config, self.db, ...)
+    # The entry point the CLI uses
+    config = load_platform_config("test_md5", self.platforms_dir)
+    result = verify_platform(config, self.db, self.emulators_dir)
 
-    # Assert specific outcomes
-    self.assertEqual(result[0]["status"], Status.OK)
+    # One outcome, read from the per-file details
+    by_name = {d["name"]: d for d in result["details"]}
+    self.assertEqual(by_name["my_file.bin"]["status"], Status.OK)
 ```
 
 ### test_pack_integrity.py
@@ -242,9 +242,13 @@ The test suite is one layer of verification. The full quality gate is:
 5. Pack integrity passes (every declared file extractable with correct hash)
 6. `mkdocs build --strict` and `python scripts/validate_site.py` pass
 
-If a change passes tests but breaks the pipeline, it's worth investigating before merging. Similarly, new CRITICAL entries in the verify output after a change usually indicate something to look into. The pipeline is designed so that all steps agree: if verify reports N files for a platform, the pack should contain exactly N files.
+A change that passes the tests but breaks the pipeline is not merged. A new
+CRITICAL entry in the verify output after a change is explained before the
+change lands. The steps agree with each other: when verify reports N files for
+a platform, the pack holds exactly N files.
 
-Ideally, tests, code, and documentation ship together. When profiles and platform configs are involved, updating them in the same change helps keep everything in sync.
+Tests, code, profiles, platform configs and documentation ship in the same
+change.
 
 A run that dies with a segmentation fault or an exception the code cannot
 raise is run again once, alone, before anything is investigated. Only a
