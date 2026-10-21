@@ -654,14 +654,22 @@ def build_emulator_gap_report(
         for k, v in profiles.items()
         if v.get("type") not in ("alias", "test")
     }
-    from common import standalone_set
+    from common import platform_declarations, standalone_set
+    from validation import case_folded_slots
 
+    # The command line passes these too: without them a RetroBat file named
+    # 32X_G_BIOS.BIN read as missing for a core opening 32X_G_BIOS.bin.
+    folded = frozenset().union(*(
+        case_folded_slots(cov["config"], platform_declarations(cov["config"], db))
+        for cov in coverages.values()
+    ))
     return run_cross_reference(
         unique_profiles, declared, db,
         data_names=data_names, all_declared=all_declared,
         standalone_cores=set().union(
             *(standalone_set(cov["config"]) for cov in coverages.values())
         ),
+        folded_slots=folded,
     )
 
 

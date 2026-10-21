@@ -97,5 +97,25 @@ class TheRunningBuildPlacesTheGap(unittest.TestCase):
         self.assertEqual(self._gap_paths(set()), ["Cemu/keys.txt"])
 
 
+class EveryGapReportFoldsCase(unittest.TestCase):
+    """The command line passed folded_slots and the site did not, so the
+    gaps page listed RetroBat files the CLI report settled."""
+
+    def test_each_cross_reference_call_passes_the_folded_slots(self):
+        import ast
+
+        for script in ("cross_reference.py", "generate_site.py"):
+            source = (REPO_ROOT / "scripts" / script).read_text(encoding="utf-8")
+            calls = [
+                node for node in ast.walk(ast.parse(source))
+                if isinstance(node, ast.Call)
+                and getattr(node.func, "id", "") in ("cross_reference", "run_cross_reference")
+            ]
+            with self.subTest(script=script):
+                self.assertTrue(calls)
+                for call in calls:
+                    self.assertIn("folded_slots", {kw.arg for kw in call.keywords})
+
+
 if __name__ == "__main__":
     unittest.main()
