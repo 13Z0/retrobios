@@ -1141,6 +1141,34 @@ class RecalboxExport(unittest.TestCase):
         self.assertEqual({k: v for k, v in after.items() if k in before}, before)
         self.assertEqual(set(after) - set(before), set())
 
+    def test_mandatory_follows_the_cores_the_element_names(self):
+        """cdi/cdibios.zip names libretro/same_cdi, which does not read the
+        set: MAME requiring it says nothing about that element."""
+        scraped = {"systems": {"philips-cdi": {"native_id": "cdi", "files": [
+            {"name": "cdibios.zip", "destination": "cdi/cdibios.zip", "md5": "a" * 32,
+             "native_system": "cdi", "core": "libretro/same_cdi", "required": False},
+            {"name": "cdimono1.zip", "destination": "cdi/cdimono1.zip", "md5": "b" * 32,
+             "native_system": "cdi", "core": "libretro/same_cdi", "required": False},
+        ]}}}
+        truth = {"systems": {"philips-cdi": {"files": [
+            {"name": "cdibios.zip", "required": True, "_cores": ["mame0278"],
+             "_required_by": ["mame0278"]},
+            {"name": "cdimono1.zip", "required": True, "_cores": ["same_cdi", "mame0278"],
+             "_required_by": ["same_cdi"]},
+        ]}}}
+        systems, report = build_native_model(truth, scraped)
+        exporter = discover_exporters()["recalbox"]()
+        produced = exporter.render(systems, report, {}, None)["es_bios.xml"]
+        mandatory = {
+            b.get("path"): b.get("mandatory") for b in ET.fromstring(produced).iter("bios")
+        }
+        self.assertEqual(mandatory, {"cdi/cdibios.zip": "false", "cdi/cdimono1.zip": None})
+        changes = landed_changes(exporter, systems).records
+        self.assertEqual(
+            [(c["name"], c["old"], c["new"]) for c in changes],
+            [("cdimono1.zip", False, True)],
+        )
+
     def test_a_truncated_export_is_reported(self):
         exporter, systems, _ = self._render()
         empty = {

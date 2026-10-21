@@ -200,6 +200,14 @@ class BaseExporter(ABC):
             return self.single_value(fe, field_name)
         return ",".join(fe.hashes(field_name))
 
+    def required_value(self, fe: NativeFile) -> bool:
+        """The requirement the render writes for an entry.
+
+        The model's flag is true when any core needs the file. A format
+        that names the cores of each entry narrows it to those cores.
+        """
+        return fe.required
+
     def states(self, fe: NativeFile, field_name: str) -> bool:
         """Whether the written file carries this entry's corrected field.
 

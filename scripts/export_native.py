@@ -509,7 +509,7 @@ def _added_fields(exporter: object, entry: object) -> dict:
     if "size" in carried and entry.size() is not None:
         written["size"] = entry.size()
     if "required" in carried:
-        written["required"] = entry.required
+        written["required"] = exporter.required_value(entry)
     return written
 
 
@@ -535,20 +535,24 @@ def landed_changes(exporter: object, systems: dict) -> LandedChanges:
                         "added", entry, None, None, _added_fields(exporter, entry)
                     ))
                 continue
+            if (
+                (entry.truth or {}).get("required") is not None
+                and entry.platform.get("required") is not None
+                and exporter.states(entry, "required")
+                and exporter.required_value(entry) != bool(entry.platform["required"])
+            ):
+                records.append(_change(
+                    "requirement_corrected", entry, "required",
+                    bool(entry.platform["required"]), exporter.required_value(entry),
+                ))
             for field_name in entry.corrections:
-                if not exporter.states(entry, field_name):
+                if field_name == "required" or not exporter.states(entry, field_name):
                     continue
-                if field_name == "required":
-                    records.append(_change(
-                        "requirement_corrected", entry, "required",
-                        bool(entry.platform.get("required")), entry.required,
-                    ))
-                else:
-                    records.append(_change(
-                        "hash_corrected", entry, field_name,
-                        _platform_value(entry, field_name),
-                        exporter.written(entry, field_name),
-                    ))
+                records.append(_change(
+                    "hash_corrected", entry, field_name,
+                    _platform_value(entry, field_name),
+                    exporter.written(entry, field_name),
+                ))
             records.extend(
                 _change("hash_filled", entry, field_name, None,
                         exporter.written(entry, field_name))

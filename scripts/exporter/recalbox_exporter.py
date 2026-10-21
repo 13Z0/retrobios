@@ -20,7 +20,7 @@ from xml.sax.saxutils import quoteattr
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from common import parse_untrusted_xml
+from common import load_emulator_profiles, parse_untrusted_xml
 
 from .base_exporter import BaseExporter
 from .baseline import NativeFile, NativeSystem, Report
@@ -29,6 +29,8 @@ SOURCE_URL = (
     "https://gitlab.com/recalbox/recalbox/-/raw/master/board/recalbox/fsoverlay"
     "/recalbox/share_init/system/.emulationstation/es_bios.xml"
 )
+# Resolved from the file: the profiles say which names each core answers to.
+EMULATORS_DIR = Path(__file__).resolve().parents[2] / "emulators"
 SCHEMA_URL = (
     "https://gitlab.com/recalbox/recalbox/-/raw/master/board/recalbox/fsoverlay"
     "/recalbox/share_init/system/.emulationstation/es_bios.xsd"
@@ -149,12 +151,48 @@ class Exporter(BaseExporter):
             return path
         return fe.destination or fe.name
 
+    def _profile_keys(self) -> dict[str, str]:
+        """Each name a core answers to, as Recalbox writes it, to its profile."""
+        index = getattr(self, "_keys", None)
+        if index is None:
+            index = {}
+            for key, profile in load_emulator_profiles(str(EMULATORS_DIR)).items():
+                for name in (key, *(str(c) for c in profile.get("cores") or [])):
+                    index.setdefault(name.replace("-", "_").lower(), key)
+            self._keys = index
+        return index
+
+    def required_value(self, fe: NativeFile) -> bool:
+        """Whether the cores the element names need the file.
+
+        An element lists its cores, and the merged flag is true when any
+        core needs the file: cdi/cdibios.zip names libretro/same_cdi, whose
+        driver declares no such set, and became mandatory because MAME
+        requires it. Where none of the element's cores reads the file, the
+        truth says nothing about it and the platform's value stands.
+        """
+        truth = fe.truth or {}
+        required_by = truth.get("_required_by")
+        readers = truth.get("_cores")
+        if required_by is None or not readers:
+            return fe.required
+        index = self._profile_keys()
+        named = {
+            index.get(core.rsplit("/", 1)[-1].replace("-", "_").lower(), "")
+            for core in fe.cores()
+        } & set(readers)
+        if not named:
+            if fe.platform is not None and fe.platform.get("required") is not None:
+                return bool(fe.platform["required"])
+            return fe.required
+        return bool(named & set(required_by))
+
     def _bios_element(self, fe: NativeFile, native_id: str) -> str:
         attrs = [f"path={quoteattr(self._path(fe))}"]
         attrs.append(f'md5={quoteattr(",".join(fe.hashes("md5")))}')
         attrs.append(f'core={quoteattr(",".join(fe.cores()))}')
 
-        if not fe.required:
+        if not self.required_value(fe):
             attrs.append('mandatory="false"')
         elif fe.native("mandatory_declared", None) is True:
             attrs.append('mandatory="true"')

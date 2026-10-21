@@ -7,7 +7,7 @@
   "files": [
     "es_bios.xml"
   ],
-  "summary": "357 kept, 87 added, 2 hashes corrected, 129 requirements corrected, 528 additions left out, 102 entries found by content not listed",
+  "summary": "357 kept, 87 added, 2 hashes corrected, 127 requirements corrected, 528 additions left out, 102 entries found by content not listed",
   "counts": {
     "kept": 357,
     "added": 87,
@@ -15,15 +15,6 @@
     "not_kept": 0
   },
   "changes": [
-    {
-      "kind": "requirement_corrected",
-      "system": "amiga600",
-      "name": "kick33180.A500",
-      "destination": "amiga/bios/kick33180.A500",
-      "field": "required",
-      "old": true,
-      "new": false
-    },
     {
       "kind": "requirement_corrected",
       "system": "amiga600",
@@ -317,15 +308,6 @@
         "md5": "40cdf89f35b68cfefd4df5fb0256e02f",
         "required": false
       }
-    },
-    {
-      "kind": "requirement_corrected",
-      "system": "amiga1200",
-      "name": "kick39106.A1200",
-      "destination": "amiga/bios/kick39106.A1200",
-      "field": "required",
-      "old": true,
-      "new": false
     },
     {
       "kind": "requirement_corrected",
@@ -1926,6 +1908,15 @@
     {
       "kind": "requirement_corrected",
       "system": "saturn",
+      "name": "saturn_bios.bin",
+      "destination": "saturn/saturn_bios.bin",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "saturn",
       "name": "mpr-18811-mx.ic1",
       "destination": "saturn/mpr-18811-mx.ic1",
       "field": "required",
@@ -2206,15 +2197,6 @@
       }
     },
     {
-      "kind": "requirement_corrected",
-      "system": "cdi",
-      "name": "cdibios.zip",
-      "destination": "cdi/cdibios.zip",
-      "field": "required",
-      "old": false,
-      "new": true
-    },
-    {
       "kind": "added",
       "system": "scummvm",
       "name": "MT32_CONTROL.ROM",
@@ -2247,7 +2229,7 @@
   "sizes_corrected": [],
   "sizes_removed": [],
   "hashes_cleared": [],
-  "requirements_corrected": 129,
+  "requirements_corrected": 127,
   "withheld": [],
   "found_by_content": 102,
   "removal_candidates": [
