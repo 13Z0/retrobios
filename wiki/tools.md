@@ -651,7 +651,7 @@ python scripts/refresh_stale.py --only platforms,targets --jobs 6
 | `generate_site.py` | Generate all MkDocs site pages (this documentation) |
 | `validate_site.py` | Validate rendered metadata, headings, image alternatives, JSON-LD, local resources, links and fragments |
 | `romset_recipes.py` | Identify which emulator version an arcade archive matches, and rebuild a pinned archive from ROMs already held |
-| `scraper/romset_dat_importer.py` | Fetch and import per-set recipes from MAME `-listxml` or FBNeo DATs into `recipes/`. `--fetch` alone takes the newest MAME release, and FBNeo DATs are refreshed by git blob sha |
+| `scraper/romset_dat_importer.py` | Fetch and import per-set recipes from MAME `-listxml` or FBNeo DATs into `recipes/`. `--fetch` alone takes the newest MAME release, and FBNeo DATs are refreshed by git blob sha. `--fetch <revision>` reads FBNeo at that tag, branch or commit |
 | `deterministic_zip.py` | Rebuild MAME BIOS ZIPs deterministically (same ROMs = same hash) |
 | `torrentzip.py` | Build TorrentZip archives for MAME/FBNeo ROM sets (archive bytes depend only on contents) |
 | `crypto_verify.py` | 3DS RSA signature and AES crypto verification |
@@ -756,7 +756,16 @@ FBNeo keeps its DATs in the repository.
 python -m scripts.scraper.romset_dat_importer --source mame --fetch mame0289
 python -m scripts.scraper.romset_dat_importer --source mame --fetch mame0250
 python -m scripts.scraper.romset_dat_importer --source fbneo --fetch
+python -m scripts.scraper.romset_dat_importer --source fbneo --fetch v1.0.0.02
 ```
+
+FBNeo DATs are read at one commit: the revision named (tag, branch or commit,
+the default branch when bare) is resolved first, and every DAT downloaded is
+held against the blob sha the listing gives, so a cached branch URL cannot
+serve older bytes. Their headers keep one version across commits, so DATs read
+at a named revision are labelled `<DAT name> @ <revision>` and accumulate
+beside the tip's. Only an import of the tip records the blobs the freshness
+check compares with.
 
 Snapshots land in `recipes/`, not `provenance/`: the latter holds dump catalogues
 and a recipe is not one. Versions accumulate rather than replace each other,
