@@ -25,7 +25,8 @@ Mapping (stale -> command):
     catalogs/fbneo recipes  python -m scripts.scraper.romset_dat_importer
                             --source fbneo --fetch
 
-Surfaced only (no refresh): coreinfo gaps, redump/no-intro/tosec packs,
+Surfaced only (no refresh): data rows that are not a _data_dirs.yml key
+(the registry itself, buildbot assets it does not track), coreinfo gaps, redump/no-intro/tosec packs,
 CI pins (install.py SHA-256, PyPI, pinned actions), profile_sync. Each needs
 a human read (new .info file, manual DAT download, PyPI version bump).
 
@@ -46,12 +47,14 @@ import sys
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
+from functools import lru_cache
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 LOG_DIR = REPO_ROOT / "tmp" / "refresh_stale"
 CHECK_FRESHNESS = REPO_ROOT / "scripts" / "check_freshness.py"
 PLATFORMS_REGISTRY = REPO_ROOT / "platforms" / "_registry.yml"
+DATA_DIRS_REGISTRY = REPO_ROOT / "platforms" / "_data_dirs.yml"
 
 AUTO_AREAS = ("platforms", "native", "targets", "data", "catalogs")
 MANUAL_AREAS = ("coreinfo", "ci", "profiles")
@@ -89,6 +92,15 @@ def _load_platform_registry() -> dict[str, dict]:
 
     with PLATFORMS_REGISTRY.open(encoding="utf-8") as fh:
         return (yaml.safe_load(fh) or {}).get("platforms") or {}
+
+
+@lru_cache(maxsize=1)
+def _data_dir_keys() -> frozenset[str]:
+    """The entries refresh_data_dirs.py --key accepts."""
+    import yaml
+
+    with DATA_DIRS_REGISTRY.open(encoding="utf-8") as fh:
+        return frozenset((yaml.safe_load(fh) or {}).get("data_directories") or {})
 
 
 def _run_check_freshness(areas: tuple[str, ...], extra: list[str]) -> list[dict]:
@@ -246,8 +258,9 @@ def _command_for(
         ]
 
     if area == "data":
-        if subject == "_data_dirs.yml":
-            # The registry file itself cannot be refreshed, but its entries can.
+        if subject not in _data_dir_keys():
+            # "_data_dirs.yml" and "buildbot system" name the registry and
+            # what it does not track yet: a human adds the entry.
             return None
         return [
             sys.executable,

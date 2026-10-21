@@ -23,6 +23,7 @@ import tempfile
 import urllib.error
 import urllib.request
 import zipfile
+from collections.abc import Iterator
 from pathlib import Path
 from artifacts import file_lock as _file_lock
 from common import github_token, platform_arg, require_platform, yaml_load
@@ -61,7 +62,34 @@ def cache_lock(
     swapped the tree shipped part of it, or nothing.
     """
     cache_dir = Path(cache_dir)
-    return _file_lock(cache_dir.with_name(f".{cache_dir.name}.lock"), shared=shared)
+    return _announced_lock(cache_dir.with_name(f".{cache_dir.name}.lock"), shared, cache_dir)
+
+
+@contextlib.contextmanager
+def _announced_lock(lock_path: Path, shared: bool, cache_dir: Path) -> Iterator[None]:
+    """file_lock, saying so when it has to wait.
+
+    A pipeline holds every cache for its whole run: a refresh started beside
+    it waited hours with nothing on screen.
+    """
+    try:
+        import fcntl
+    except ImportError:
+        with _file_lock(lock_path, shared=shared):
+            yield
+        return
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+    mode = fcntl.LOCK_SH if shared else fcntl.LOCK_EX
+    with open(lock_path, "a") as handle:
+        try:
+            fcntl.flock(handle, mode | fcntl.LOCK_NB)
+        except BlockingIOError:
+            log.warning("waiting for %s: another run holds it", cache_dir)
+            fcntl.flock(handle, mode)
+        try:
+            yield
+        finally:
+            fcntl.flock(handle, fcntl.LOCK_UN)
 
 
 def hold_data_dirs(stack: contextlib.ExitStack, registry: dict) -> None:
@@ -383,6 +411,14 @@ def _get_remote_etag(source_url: str) -> str | None:
         return None
 
 
+def _short_tag(tag: str | None) -> str:
+    """A commit sha or ETag cut for a log line, quotes dropped first: a
+    quoted ETag cut at 12 characters kept its opening quote only."""
+    if not tag:
+        return "none"
+    return tag.strip().removeprefix("W/").strip('"')[:12] or "none"
+
+
 def refresh_entry(
     key: str,
     entry: dict,
@@ -431,16 +467,17 @@ def _refresh_entry(
         needs_refresh = remote_tag != cached_tag
 
     if not needs_refresh:
-        log.info("[%s] up to date (tag: %s)", key, (cached_tag or "?")[:12])
+        log.info("[%s] up to date (tag: %s)", key, _short_tag(cached_tag))
         return False
 
     if dry_run:
-        log.info(
-            "[%s] would refresh (type: %s, cached: %s)",
-            key,
-            source_type,
-            cached_tag or "none",
-        )
+        if remote_tag is not None:
+            reason = f"cached: {_short_tag(cached_tag)}, remote: {_short_tag(remote_tag)}"
+        elif force:
+            reason = "forced"
+        else:
+            reason = "not cached"
+        log.info("[%s] would refresh (type: %s, %s)", key, source_type, reason)
         return True
 
     if remote_tag is None:
@@ -516,6 +553,16 @@ def refresh_all(
     return results
 
 
+def summarize(outcomes: dict[str, bool | None], dry_run: bool) -> str:
+    """One closing line: how many entries changed, were current, failed."""
+    refreshed = sum(1 for o in outcomes.values() if o is True)
+    current = sum(1 for o in outcomes.values() if o is False)
+    failed = sum(1 for o in outcomes.values() if o is None)
+    verb = "would refresh" if dry_run else "refreshed"
+    line = f"{len(outcomes)} entries: {refreshed} {verb}, {current} up to date"
+    return f"{line}, {failed} failed" if failed else line
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         allow_abbrev=False,
@@ -567,6 +614,7 @@ def main() -> None:
             registry, force=args.force, dry_run=args.dry_run, platform=args.platform
         )
 
+    log.info(summarize(outcomes, args.dry_run))
     failed = sorted(key for key, outcome in outcomes.items() if outcome is None)
     if failed:
         log.error("refresh failed: %s", ", ".join(failed))

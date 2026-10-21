@@ -59,6 +59,8 @@ _PACKAGE_DIRS = _SCRIPT_SECTIONS
 class Scraper(BaseScraper):
     """Scraper for the RetroPie package list."""
 
+    lists_files = False
+
     def __init__(self, url: str | None = None) -> None:
         # The package list is read from master: the commit read is recorded.
         if url is None:
@@ -122,6 +124,8 @@ class Scraper(BaseScraper):
                 else:
                     found.add(match.group(1))
 
+        if not found:
+            raise ValueError(f"{self.url}: no rp_module_id under {SCRIPTMODULES}/")
         self._modules = sorted(found)
         return self._modules
 

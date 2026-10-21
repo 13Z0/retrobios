@@ -163,6 +163,11 @@ def fetch_bytes(
 class BaseScraper(ABC):
     """Abstract base class for platform BIOS requirement scrapers."""
 
+    # False for a platform whose file list is inherited and whose scraper
+    # reads only its core list (RetroPie). Otherwise an empty read is an
+    # upstream that changed shape, never a platform with no file.
+    lists_files: bool = True
+
     def __init__(self, url: str = "") -> None:
         self.url = url
         self._raw_data: str | None = None
@@ -367,6 +372,12 @@ def scraper_cli(
         reqs = scraper.fetch_requirements()
     except (OSError, ValueError, RuntimeError) as e:
         _exit_on_scrape_error(e)
+    if scraper.lists_files and not reqs:
+        # Written, an empty read became a platform with no system that
+        # verify and the pack count 0/0 and call consistent.
+        _exit_on_scrape_error(RuntimeError(
+            f"{scraper_class.__module__}: upstream returned no BIOS entry"
+        ))
 
     if args.dry_run:
         by_system: dict[str, list] = {}
@@ -426,6 +437,12 @@ def scraper_cli(
                 if req.zipped_file:
                     entry["zipped_file"] = req.zipped_file
                 config["systems"][sys_id]["files"].append(entry)
+        if scraper.lists_files and not any(
+            (system or {}).get("files") for system in (config.get("systems") or {}).values()
+        ):
+            _exit_on_scrape_error(RuntimeError(
+                f"{scraper_class.__module__}: the generated platform lists no file"
+            ))
         # Merge into existing YAML: preserve fields the scraper doesn't generate
         # (data_directories, case_insensitive_fs, manually added metadata).
         # The scraper replaces systems + files, everything else is preserved.

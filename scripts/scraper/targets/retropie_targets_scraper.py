@@ -1,6 +1,7 @@
 """Scraper for RetroPie package availability per platform.
 
-Source: https://github.com/RetroPie/RetroPie-Setup/tree/master/scriptmodules
+Source: https://github.com/RetroPie/RetroPie-Setup/tree/<rev>/scriptmodules,
+read at the revision platforms/retropie.yml was scraped at.
 Parses rp_module_id and rp_module_flags from each scriptmodule of the
 package sections the platform list reads (emulators, libretrocores, ports)
 to determine which platforms each package supports.
@@ -26,7 +27,7 @@ GITHUB_API_URL = (
     "https://api.github.com/repos/RetroPie/RetroPie-Setup/contents/scriptmodules"
 )
 RAW_BASE_URL = (
-    "https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/master/scriptmodules/"
+    "https://raw.githubusercontent.com/RetroPie/RetroPie-Setup/{rev}/scriptmodules/"
 )
 # The sections the platform scraper reads: a standalone package missing here
 # is filtered out of every targeted pack.
@@ -114,14 +115,23 @@ def _parse_module(content: str) -> tuple[str | None, str]:
 class Scraper(BaseTargetScraper):
     """Fetches RetroPie package availability by parsing scriptmodules."""
 
-    def __init__(self, url: str = GITHUB_API_URL) -> None:
+    def __init__(self, url: str = GITHUB_API_URL, revision: str | None = None) -> None:
         super().__init__(url=url)
+        self._revision = revision
+
+    @property
+    def revision(self) -> str:
+        """The commit the package list was read at: the flags of another
+        revision filter packages the platform file does not describe."""
+        if self._revision is None:
+            self._revision = self.pinned_revision(PLATFORM_NAME)
+        return self._revision
 
     def _list_scriptmodules(self) -> list[str]:
         """Return section/filename for every .sh of the package sections."""
         names: list[str] = []
         for section in PACKAGE_DIRS:
-            url = f"{self.url}/{section}"
+            url = f"{self.url}/{section}?ref={self.revision}"
             entries = json.loads(_fetch(url, accept="application/vnd.github+json"))
             listed = [
                 f"{section}/{e['name']}" for e in entries if e.get("name", "").endswith(".sh")
@@ -132,7 +142,7 @@ class Scraper(BaseTargetScraper):
         return names
 
     def _fetch_module(self, filename: str) -> str:
-        return _fetch(f"{RAW_BASE_URL}{filename}")
+        return _fetch(f"{RAW_BASE_URL.format(rev=self.revision)}{filename}")
 
     def fetch_targets(self) -> dict:
         print("  listing RetroPie scriptmodules...", file=sys.stderr)
@@ -170,7 +180,7 @@ class Scraper(BaseTargetScraper):
 
         return {
             "platform": "retropie",
-            "source": self.url,
+            "source": f"{self.url}?ref={self.revision}",
             "scraped_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
             "targets": targets,
         }

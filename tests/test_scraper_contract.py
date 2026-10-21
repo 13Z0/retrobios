@@ -882,5 +882,127 @@ class OneNativeIdOneSystem(unittest.TestCase):
                 ids = {_norm_system_id(s) for s in data["systems"]}
                 self.assertEqual(wanted & ids & machines, wanted)
 
+
+class HashScraperRefusesAnEmptyRead(unittest.TestCase):
+    """A source tree that yields no BIOS set is never cached as a result.
+
+    Cached, it was served for a day: every profile entry came out "out of
+    scope", nothing was refreshed and pipeline steps 2a and 2a2 said OK.
+    """
+
+    def _fresh(self, sets: dict) -> dict:
+        from datetime import datetime, timezone  # noqa: PLC0415
+
+        return {"fetched_at": datetime.now(timezone.utc).isoformat(),
+                "commit": "abc", "bios_sets": sets}
+
+    def test_mame_raises_and_writes_no_cache(self):
+        from scraper import mame_hash_scraper as m  # noqa: PLC0415
+
+        with tempfile.TemporaryDirectory() as tmp:
+            cache = Path(tmp) / "mame-hashes.json"
+            with mock.patch.object(m, "_CACHE_PATH", cache), \
+                    mock.patch.object(m, "_get_release_tag", return_value="mame0289"), \
+                    mock.patch.object(m, "_sparse_clone"), \
+                    mock.patch.object(m, "_cleanup"), \
+                    mock.patch.object(m, "_get_commit", return_value="abc"), \
+                    mock.patch.object(m, "parse_mame_source_tree", return_value={}):
+                with self.assertRaises(RuntimeError):
+                    m._fetch_hashes(force=True)
+            self.assertFalse(cache.exists())
+
+    def test_mame_does_not_serve_an_empty_cache(self):
+        from scraper import mame_hash_scraper as m  # noqa: PLC0415
+
+        self.assertTrue(m._is_stale(self._fresh({})))
+        self.assertFalse(m._is_stale(self._fresh({"neogeo": {}})))
+
+    def test_fbneo_raises_and_writes_no_cache(self):
+        from scraper import fbneo_hash_scraper as f  # noqa: PLC0415
+
+        with tempfile.TemporaryDirectory() as tmp:
+            cache = Path(tmp) / "fbneo-hashes.json"
+            with mock.patch.object(f, "CACHE_PATH", cache), \
+                    mock.patch.object(f, "_sparse_clone"), \
+                    mock.patch.object(f, "_cleanup"), \
+                    mock.patch.object(f, "_extract_version", return_value=("v1.0.0.03", "abc")), \
+                    mock.patch.object(f, "parse_fbneo_source_tree", return_value={}):
+                with self.assertRaises(RuntimeError):
+                    f.fetch_and_cache(force=True)
+            self.assertFalse(cache.exists())
+
+    def test_fbneo_does_not_serve_an_empty_cache(self):
+        from scraper import fbneo_hash_scraper as f  # noqa: PLC0415
+
+        with tempfile.TemporaryDirectory() as tmp:
+            cache = Path(tmp) / "fbneo-hashes.json"
+            with mock.patch.object(f, "CACHE_PATH", cache):
+                cache.write_text(json.dumps(self._fresh({})))
+                self.assertFalse(f._is_cache_fresh())
+                cache.write_text(json.dumps(self._fresh({"neogeo": {}})))
+                self.assertTrue(f._is_cache_fresh())
+
+
+
+class EmptyScrapeWritesNothing(unittest.TestCase):
+    """An upstream that changed shape parses to nothing: the run fails and
+    the committed platform file stays as it was."""
+
+    def _run(self, scraper_class, output: Path) -> int:
+        from scraper.base_scraper import scraper_cli  # noqa: PLC0415
+
+        argv = ["scraper", "-o", str(output)]
+        with mock.patch.object(sys, "argv", argv), \
+                mock.patch("sys.stderr", new_callable=io.StringIO):
+            try:
+                scraper_cli(scraper_class)
+            except SystemExit as exc:
+                return int(exc.code or 0)
+        return 0
+
+    def test_no_requirement_exits_non_zero(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            output = Path(tmp) / "platform.yml"
+            output.write_text("systems:\n  a:\n    files:\n    - name: x\n")
+            self.assertEqual(self._run(_StubScraper, output), 1)
+            self.assertIn("name: x", output.read_text())
+
+    def test_a_generated_file_without_files_exits_non_zero(self):
+        class NoSystems(_StubScraper):
+            def __init__(self):
+                super().__init__([BiosRequirement(name="a.bin", system="s")])
+
+            def generate_platform_yaml(self) -> dict:
+                return {"platform": "x", "systems": {}}
+
+        with tempfile.TemporaryDirectory() as tmp:
+            output = Path(tmp) / "platform.yml"
+            self.assertEqual(self._run(NoSystems, output), 1)
+            self.assertFalse(output.exists())
+
+    def test_a_platform_that_inherits_its_files_may_list_none(self):
+        class CoresOnly(_StubScraper):
+            lists_files = False
+
+            def generate_platform_yaml(self) -> dict:
+                return {"inherits": "retroarch", "cores": ["mgba"]}
+
+        with tempfile.TemporaryDirectory() as tmp:
+            output = Path(tmp) / "platform.yml"
+            with mock.patch("sys.stdout", new_callable=io.StringIO):
+                self.assertEqual(self._run(CoresOnly, output), 0)
+            self.assertIn("mgba", output.read_text())
+
+    def test_retropie_without_a_package_raises(self):
+        archive = RetroPiePackageList._archive(
+            {"scriptmodules/supplementary/autostart.sh": 'rp_module_id="autostart"\n'}
+        )
+        from scraper.retropie_scraper import Scraper  # noqa: PLC0415
+
+        scraper = Scraper(url="https://codeload.github.com/RetroPie/RetroPie-Setup/tar.gz/" + "0" * 40)
+        with self.assertRaises(ValueError):
+            scraper.module_ids(archive)
+
+
 if __name__ == "__main__":
     unittest.main()

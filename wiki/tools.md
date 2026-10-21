@@ -561,7 +561,10 @@ today, and answer with one row per subject. Platform and target files are
 re-scraped through the scrapers' own write path into a throwaway copy and
 diffed against the committed file, so the diff decides rather than a version
 string. Core-info is listed and compared with the profiles (a core with no
-profile, a profile that calls standalone a core libretro now builds). Data
+profile, a profile that calls standalone a core libretro now builds, a
+profiled core whose `.info` git blob differs from the one recorded in
+`platforms/_core_info.json`). Once the changed `.info` is read against the
+profile, `--record-coreinfo <core>` records its blob as reviewed. Data
 directories are checked against their upstream, dump catalogs and romset
 snapshots against the catalog they were read from (Redump DAT versions, the
 No-Intro daily rebuild, the newest TOSEC pack, the newest MAME release, the
@@ -579,6 +582,7 @@ python scripts/check_freshness.py --only platforms,targets
 python scripts/check_freshness.py --json
 python scripts/check_freshness.py --profiles     # also runs profile_sync (slow)
 python scripts/check_freshness.py --offline      # local ages only
+python scripts/check_freshness.py --record-coreinfo virtualjaguar  # .info read, record it
 ```
 
 The exit code is non-zero when anything is stale. Emulator profiles are the
@@ -742,11 +746,15 @@ python -m scripts.scraper.romset_dat_importer --source fbneo --fetch
 Snapshots land in `recipes/`, not `provenance/`: the latter holds dump catalogues
 and a recipe is not one. Versions accumulate rather than replace each other,
 because a platform pins the archive of whichever version its list was built
-against. Only sets a profile or platform references are kept, a `romof` parent's
+against. Only sets a profile or platform references are kept, plus the sets
+holding a dump-catalog entry the collection lacks (crc32 and size, and sha1
+when both sides carry one), so `provenance_report.py --missing` can name the
+set that ships it: MAME's `fm7740sx` carries the FM77AV40SX `DICROM.rom`,
+`EXTSUB.rom` and `KANJI2.rom` that No-Intro lists. A `romof` parent's
 members are merged into the child, and members with no CRC32 are dropped: those
 are undumped and a real romset does not carry them.
 
-The store is compacted: 22 MAME versions produce 23,679 entries but only 1,726
+The store is compacted: 22 MAME versions produce 24,101 entries but only 2,148
 distinct recipes, since most sets do not change between releases. Each is kept
 once, `dats` listing every version that agrees and `dat` naming the earliest, so
 an identification reads as "unchanged since that version".

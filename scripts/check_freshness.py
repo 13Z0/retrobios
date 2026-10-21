@@ -40,6 +40,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+from collections.abc import Iterator
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone
@@ -56,6 +57,7 @@ from common import (  # noqa: E402
     list_registered_platforms,
     load_emulator_profiles,
     upstream_profile_index,
+    write_text_atomic,
     yaml_load,
 )
 from exporter import discover_exporters  # noqa: E402
@@ -65,6 +67,8 @@ from scripts.scraper.targets import discover_target_scrapers  # noqa: E402
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 CORE_INFO_REPO = "https://github.com/libretro/libretro-core-info"
+# The git blob of every .info as last reviewed: `--record-coreinfo` writes it.
+CORE_INFO_RECORD = REPO_ROOT / "platforms" / "_core_info.json"
 NO_INTRO_MIRROR = "https://github.com/hugo19941994/auto-datfile-generator"
 NO_INTRO_RELEASE = "Daily_Rebuild"
 NO_INTRO_ASSET = "no-intro.zip"
@@ -107,6 +111,9 @@ class PlatformDiff:
     files_changed: list[str] = field(default_factory=list)
     cores_added: list[str] = field(default_factory=list)
     cores_removed: list[str] = field(default_factory=list)
+    # Any other field the scrape writes: launchers, dual_mode_cores, a
+    # system's core, native_id or data_directories.
+    fields_changed: list[str] = field(default_factory=list)
 
     @property
     def content_changed(self) -> bool:
@@ -119,6 +126,7 @@ class PlatformDiff:
                 self.files_changed,
                 self.cores_added,
                 self.cores_removed,
+                self.fields_changed,
             )
         )
 
@@ -138,6 +146,7 @@ class PlatformDiff:
             ("~files", self.files_changed),
             ("+cores", self.cores_added),
             ("-cores", self.cores_removed),
+            ("~fields", self.fields_changed),
         ):
             if items:
                 shown = ", ".join(items[:SHOWN_ITEMS]) + (", ..." if len(items) > SHOWN_ITEMS else "")
@@ -177,6 +186,33 @@ def _keyed_files(files: list[dict]) -> dict[str, dict]:
     return keyed
 
 
+# Compared on their own above. `source` is the revision read: it moves with
+# every upstream commit, and what that commit changes is diffed field by field.
+_DIFFED_APART = frozenset({"version", "systems", "cores", "standalone_cores", "source"})
+
+
+def _without_refs(value: object) -> object:
+    """*value* without its `source_ref` lines.
+
+    A launcher cites lines of the revision read, so they shift with any
+    upstream commit above them (es_features.cfg:11638 read as :11649 one
+    RetroBat commit later). The cited content is what is compared.
+    """
+    if isinstance(value, dict):
+        return {k: _without_refs(v) for k, v in value.items() if k != "source_ref"}
+    if isinstance(value, list):
+        return [_without_refs(v) for v in value]
+    return value
+
+
+def _changed_fields(old: dict, new: dict, skip: frozenset[str], prefix: str = "") -> list[str]:
+    return [
+        f"{prefix}{key}"
+        for key in sorted(set(old) | set(new), key=str)
+        if key not in skip and _without_refs(old.get(key)) != _without_refs(new.get(key))
+    ]
+
+
 def diff_platform(old: dict, new: dict) -> PlatformDiff:
     """Compare two platform files the way a reviewer reads the diff.
 
@@ -205,6 +241,11 @@ def diff_platform(old: dict, new: dict) -> PlatformDiff:
             for k in sorted(set(old_files) & set(new_files))
             if old_files[k] != new_files[k]
         )
+        diff.fields_changed.extend(_changed_fields(
+            old_systems[system] or {}, new_systems[system] or {},
+            frozenset({"files"}), f"{system}/",
+        ))
+    diff.fields_changed = _changed_fields(old, new, _DIFFED_APART) + diff.fields_changed
     old_cores, new_cores = _core_names(old), _core_names(new)
     diff.cores_added = sorted(new_cores - old_cores)
     diff.cores_removed = sorted(old_cores - new_cores)
@@ -432,6 +473,27 @@ def _transcribed_at(platforms_dir: Path, platform: str) -> float:
     return newest
 
 
+# How the truth model settles two cores' hashes: generate_truth reports it,
+# and it says nothing about whether a cached original is current.
+_MODEL_NOTES = ("WARNING: hash conflict",)
+
+
+@contextlib.contextmanager
+def _without_model_notes() -> Iterator[None]:
+    """Keep the model build's own notes out of the freshness report.
+
+    Anything else written to stderr passes through.
+    """
+    sink = io.StringIO()
+    try:
+        with contextlib.redirect_stderr(sink):
+            yield
+    finally:
+        for line in sink.getvalue().splitlines(keepends=True):
+            if not line.startswith(_MODEL_NOTES):
+                sys.stderr.write(line)
+
+
 def check_native(
     platforms_dir: Path, cache_dir: Path, truth_dir: Path,
     published: Path = Path("exports"),
@@ -444,24 +506,25 @@ def check_native(
         exporter_class = exporters.get(name)
         if not exporter_class:
             continue
-        try:
-            truth, scraped = export_native.load_inputs(name, truth_dir, str(platforms_dir))
-        except export_native.StaleTruth as exc:
-            findings.append(Finding("native", name, STALE, detail=str(exc)))
-            continue
-        systems, _ = build_native_model(truth or {}, scraped)
-        wanted = export_native.wanted_sources(exporter_class(), systems, scraped)
-        reason = native_cache_state(
-            wanted, cache_dir / name, recorded, index, _transcribed_at(platforms_dir, name)
-        )
-        if reason:
-            reason += ", export_native.py --refresh-cache fetches it"
-        else:
-            reason = published_export_state(
-                name, exporter_class, truth_dir, platforms_dir, cache_dir, published
+        with _without_model_notes():
+            try:
+                truth, scraped = export_native.load_inputs(name, truth_dir, str(platforms_dir))
+            except export_native.StaleTruth as exc:
+                findings.append(Finding("native", name, STALE, detail=str(exc)))
+                continue
+            systems, _ = build_native_model(truth or {}, scraped)
+            wanted = export_native.wanted_sources(exporter_class(), systems, scraped)
+            reason = native_cache_state(
+                wanted, cache_dir / name, recorded, index, _transcribed_at(platforms_dir, name)
             )
             if reason:
-                reason += f", export_native.py --platform {name} writes it again"
+                reason += ", export_native.py --refresh-cache fetches it"
+            else:
+                reason = published_export_state(
+                    name, exporter_class, truth_dir, platforms_dir, cache_dir, published
+                )
+                if reason:
+                    reason += f", export_native.py --platform {name} writes it again"
         findings.append(
             Finding(
                 "native",
@@ -660,8 +723,9 @@ def _age_days(stamp: str, now: datetime) -> int | None:
 # --- core-info --------------------------------------------------------------
 
 
-def core_info_names(cache_dir: str, offline: bool) -> list[str] | None:
-    """Every core the libretro core-info repository describes."""
+def core_info_blobs(cache_dir: str, offline: bool) -> dict[str, str] | None:
+    """Every core the libretro core-info repository describes, with the git
+    blob of its .info."""
     repo = upstream.parse_repo(CORE_INFO_REPO)
     if repo is None:
         return None
@@ -673,12 +737,54 @@ def core_info_names(cache_dir: str, offline: bool) -> list[str] | None:
     )
     if not isinstance(payload, list):
         return None
-    names = []
+    blobs = {}
     for entry in payload:
         name = entry.get("name", "") if isinstance(entry, dict) else ""
         if name.endswith("_libretro.info"):
-            names.append(name[: -len("_libretro.info")])
-    return sorted(names)
+            blobs[name[: -len("_libretro.info")]] = str(entry.get("sha") or "")
+    return dict(sorted(blobs.items()))
+
+
+def core_info_names(cache_dir: str, offline: bool) -> list[str] | None:
+    """Every core the libretro core-info repository describes."""
+    blobs = core_info_blobs(cache_dir, offline)
+    return None if blobs is None else list(blobs)
+
+
+def load_core_info_record(path: Path = CORE_INFO_RECORD) -> dict[str, str] | None:
+    if not path.is_file():
+        return None
+    return dict((json.loads(path.read_text(encoding="utf-8")) or {}).get("blobs") or {})
+
+
+def record_core_info(
+    blobs: dict[str, str], names: list[str], path: Path = CORE_INFO_RECORD
+) -> list[str]:
+    """Record the current blob of *names* (every .info when empty) as reviewed.
+
+    Naming the cores keeps a change nobody read out of the record.
+    """
+    unknown = sorted(set(names) - set(blobs))
+    if unknown:
+        raise ValueError(f"no such .info in core-info: {', '.join(unknown)}")
+    recorded = load_core_info_record(path) or {}
+    recorded.update({n: blobs[n] for n in (names or blobs)})
+    payload = {"repository": CORE_INFO_REPO, "blobs": dict(sorted(recorded.items()))}
+    write_text_atomic(str(path), json.dumps(payload, indent=2) + "\n")
+    return sorted(names or blobs)
+
+
+def coreinfo_drift(
+    blobs: dict[str, str], recorded: dict[str, str], profiles: dict[str, dict]
+) -> list[str]:
+    """Profiled cores whose .info is not the one recorded as reviewed.
+
+    The .info is no authority, but a new firmwareN_path in it is the
+    cheapest sign that a profile needs reading again.
+    """
+    index = {key.casefold() for key in profile_name_index(profiles)}
+    return [n for n, sha in blobs.items()
+            if n.casefold() in index and recorded.get(n) != sha]
 
 
 def coreinfo_gaps(
@@ -708,10 +814,14 @@ def coreinfo_gaps(
     return unprofiled, standalone
 
 
-def check_coreinfo(profiles: dict[str, dict], cache_dir: str, offline: bool) -> list[Finding]:
-    names = core_info_names(cache_dir, offline)
-    if names is None:
+def check_coreinfo(
+    profiles: dict[str, dict], cache_dir: str, offline: bool,
+    record_path: Path = CORE_INFO_RECORD,
+) -> list[Finding]:
+    blobs = core_info_blobs(cache_dir, offline)
+    if blobs is None:
         return [Finding("coreinfo", "libretro-core-info", UNKNOWN, detail="listing unavailable")]
+    names = list(blobs)
     unprofiled, standalone = coreinfo_gaps(names, profiles)
     findings = [
         Finding(
@@ -735,6 +845,22 @@ def check_coreinfo(profiles: dict[str, dict], cache_dir: str, offline: bool) -> 
             detail="core-info describes a libretro build of it",
         )
         for name, key in standalone
+    )
+    recorded = load_core_info_record(record_path)
+    if recorded is None:
+        findings.append(Finding(
+            "coreinfo", "reviewed .info", UNKNOWN,
+            detail=f"no {record_path.name}: run check_freshness.py --record-coreinfo",
+        ))
+        return findings
+    findings.extend(
+        Finding(
+            "coreinfo", name, STALE,
+            local=(recorded.get(name) or "not recorded")[:12], remote=blobs[name][:12],
+            detail=(".info changed since reviewed: read its firmware, then "
+                    f"check_freshness.py --record-coreinfo {name}"),
+        )
+        for name in coreinfo_drift(blobs, recorded, profiles)
     )
     return findings
 
@@ -1278,7 +1404,20 @@ def main() -> int:
         "--emulators-dir", default="emulators",
         help="emulator profile directory (default: %(default)s)",
     )
+    parser.add_argument(
+        "--record-coreinfo", nargs="*", metavar="CORE",
+        help="record the current .info of CORE (every core when none is named) "
+             f"as reviewed in {CORE_INFO_RECORD.relative_to(REPO_ROOT)}, then exit",
+    )
     args = parser.parse_args()
+
+    if args.record_coreinfo is not None:
+        blobs = core_info_blobs(args.cache_dir, args.offline)
+        if not blobs:
+            raise RuntimeError("core-info listing unavailable: nothing recorded")
+        done = record_core_info(blobs, args.record_coreinfo)
+        print(f"recorded {len(done)} .info file(s) as reviewed")
+        return 0
 
     areas = tuple(a.strip() for a in args.only.split(",")) if args.only else AREAS
     unknown = sorted(set(areas) - set(AREAS))

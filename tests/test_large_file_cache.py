@@ -691,7 +691,10 @@ class ASameSizeReuploadIsSeen(unittest.TestCase):
     def replaced(self, digests: dict, size: int | None) -> bool:
         with mock.patch.object(largefiles, "_served_digests", lambda: digests), \
                 mock.patch.object(largefiles, "_served_size", lambda name: size):
-            return largefiles._replaced_on_release("dsi_nand.bin", str(self.cached), False)
+            return largefiles._replaced_on_release(
+                "dsi_nand.bin", hashlib.sha256(self.cached.read_bytes()).hexdigest(),
+                self.cached.stat().st_size, False,
+            )
 
     def test_the_digest_decides(self):
         same = hashlib.sha256(b"OLD NAND").hexdigest()
@@ -702,6 +705,30 @@ class ASameSizeReuploadIsSeen(unittest.TestCase):
     def test_without_a_digest_the_size_decides(self):
         self.assertFalse(self.replaced({}, 8))
         self.assertTrue(self.replaced({}, 9))
+
+    def test_a_copy_promoted_during_the_check_is_the_one_judged(self):
+        """Another run promotes the served revision while this one hashes the
+        stale copy: the release check reread the path, found the served
+        bytes, and the caller was told the cache held no such file."""
+        new = b"NEW NAND"
+        real = largefiles.compute_hashes
+
+        def promote_while_hashing(path, *args, **kwargs):
+            result = real(path, *args, **kwargs)
+            if Path(path).read_bytes() != new:
+                promoted = self.dir / "promoted.tmp"
+                promoted.write_bytes(new)
+                os.replace(promoted, self.cached)
+            return result
+
+        digests = {"dsi_nand.bin": hashlib.sha256(new).hexdigest()}
+        with mock.patch.object(largefiles, "compute_hashes", promote_while_hashing), \
+                mock.patch.object(largefiles, "_served_digests", lambda: digests):
+            found = largefiles._fetch_asset(
+                "dsi_nand.bin", str(self.dir), hashlib.sha1(new).hexdigest(), "",
+                offline=False,
+            )
+        self.assertEqual(found, str(self.cached))
 
     def test_the_release_check_compares_digests_at_equal_size(self):
         expected = {"bios/Nintendo/DSi/dsi_nand.bin": 8}

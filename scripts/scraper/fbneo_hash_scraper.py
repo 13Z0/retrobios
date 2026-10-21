@@ -42,6 +42,8 @@ def _is_cache_fresh() -> bool:
         return False
     try:
         data = json.loads(CACHE_PATH.read_text(encoding="utf-8"))
+        if not data.get("bios_sets"):
+            return False
         fetched_at = datetime.fromisoformat(data["fetched_at"])
         return datetime.now(timezone.utc) - fetched_at < timedelta(hours=STALE_HOURS)
     except (json.JSONDecodeError, KeyError, ValueError):
@@ -178,6 +180,10 @@ def fetch_and_cache(force: bool = False) -> dict[str, Any]:
 
         log.info("parsing source tree")
         bios_sets = parse_fbneo_source_tree(str(CLONE_DIR))
+        if not bios_sets or not commit:
+            # An empty read was cached for a day and merged nothing, and
+            # the pipeline step reported OK.
+            raise RuntimeError(f"no BIOS set read at FBNeo {version} ({commit[:12]})")
 
         cache: dict[str, Any] = {
             "source": "finalburnneo/FBNeo",

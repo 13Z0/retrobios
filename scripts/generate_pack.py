@@ -3225,46 +3225,48 @@ def _main(held: contextlib.ExitStack) -> None:
         return
 
     data_registry = load_data_dir_registry(args.platforms_dir)
-    if data_registry and not args.offline and not args.no_refresh_data:
-        from refresh_data_dirs import load_registry, refresh_all
+    # The output directory is claimed before the data directory refresh: a
+    # refresh waits for every run that holds a cache, so a second build
+    # during a pipeline sat silent for hours instead of being refused.
+    with _pack_output_lock(args.output_dir):
+        if data_registry and not args.offline and not args.no_refresh_data:
+            from refresh_data_dirs import load_registry, refresh_all
 
-        registry = load_registry(os.path.join(args.platforms_dir, "_data_dirs.yml"))
-        results = refresh_all(registry, force=args.refresh_data)
-        updated = sum(1 for v in results.values() if v)
-        if updated:
-            print(f"Refreshed {updated} data director{'ies' if updated > 1 else 'y'}")
-        failed = sorted(k for k, v in results.items() if v is None)
-        if failed:
-            print(f"WARNING: data directory refresh failed: {', '.join(failed)}")
-    if data_registry:
-        hold_data_dirs(held, data_registry)
+            registry = load_registry(os.path.join(args.platforms_dir, "_data_dirs.yml"))
+            results = refresh_all(registry, force=args.refresh_data)
+            updated = sum(1 for v in results.values() if v)
+            if updated:
+                print(f"Refreshed {updated} data director{'ies' if updated > 1 else 'y'}")
+            failed = sorted(k for k, v in results.items() if v is None)
+            if failed:
+                print(f"WARNING: data directory refresh failed: {', '.join(failed)}")
+        if data_registry:
+            hold_data_dirs(held, data_registry)
 
-    emu_profiles = load_emulator_profiles(args.emulators_dir)
+        emu_profiles = load_emulator_profiles(args.emulators_dir)
 
-    target_cores_cache: dict[str, set[str] | None] = {}
-    if args.target:
-        try:
-            target_cores_cache, platforms = build_target_cores_cache(
-                platforms,
-                args.target,
-                args.platforms_dir,
-                is_all=args.all,
-            )
-        except (FileNotFoundError, ValueError) as e:
-            print(f"ERROR: {e}", file=sys.stderr)
-            sys.exit(1)
+        target_cores_cache: dict[str, set[str] | None] = {}
+        if args.target:
+            try:
+                target_cores_cache, platforms = build_target_cores_cache(
+                    platforms,
+                    args.target,
+                    args.platforms_dir,
+                    is_all=args.all,
+                )
+            except (FileNotFoundError, ValueError) as e:
+                print(f"ERROR: {e}", file=sys.stderr)
+                sys.exit(1)
 
-    groups = group_identical_platforms(
-        platforms, args.platforms_dir, target_cores_cache if args.target else None
-    )
+        groups = group_identical_platforms(
+            platforms, args.platforms_dir, target_cores_cache if args.target else None
+        )
 
-    if args.manifest:
-        with _pack_output_lock(args.output_dir):
+        if args.manifest:
             _run_manifest_mode(
                 args, groups, db, zip_contents, emu_profiles, target_cores_cache
             )
-    else:
-        with _pack_output_lock(args.output_dir):
+        else:
             _run_platform_packs(
                 args,
                 groups,
@@ -3275,9 +3277,9 @@ def _main(held: contextlib.ExitStack) -> None:
                 target_cores_cache,
                 system_filter,
             )
-        if args.verify_packs:
-            with _pack_output_lock(args.output_dir, exclusive=False):
-                _run_verify_packs(args)
+    if not args.manifest and args.verify_packs:
+        with _pack_output_lock(args.output_dir, exclusive=False):
+            _run_verify_packs(args)
 
 
 # Manifest generation (JSON inventory for install.py)

@@ -87,6 +87,25 @@ class NativeCacheTests(unittest.TestCase):
         self.assertEqual({r.status for r in rows}, {cf.STALE})
         self.assertIn("batocera", {r.subject for r in rows})
 
+    def test_the_model_build_notes_stay_out_of_the_report(self):
+        """generate_truth reports how two cores' hashes were settled. Under
+        `--only native` they opened the report and named no step to take."""
+        import contextlib
+        import io
+
+        def noisy(truth, scraped):
+            print("WARNING: hash conflict for GameIndex.yaml (sha1: a vs b, core yaps2)",
+                  file=sys.stderr)
+            print("other diagnostic", file=sys.stderr)
+            return {}, None
+
+        err = io.StringIO()
+        with mock.patch.object(cf, "build_native_model", side_effect=noisy), \
+                contextlib.redirect_stderr(err):
+            cf.check_native(REPO_ROOT / "platforms", self.cache, self.cache / "truth")
+        self.assertNotIn("hash conflict", err.getvalue())
+        self.assertIn("other diagnostic", err.getvalue())
+
 
 class PublishedExportTests(unittest.TestCase):
     """exports/ is committed and published, and CI cannot rebuild it."""
@@ -165,6 +184,32 @@ class PlatformDiffTests(unittest.TestCase):
         self.assertEqual(diff.cores_removed, ["b"])
         self.assertIn("+cores 2", diff.summary())
 
+    def test_every_other_scraped_field_is_a_change(self):
+        """launchers feed verify, dual_mode_cores the grouping, a system's
+        data_directories the pack: a rescrape that moves only them is stale."""
+        old = self._platform()
+        old["launchers"] = [{"emulator": "e"}]
+        old["dual_mode_cores"] = ["flycast"]
+        old["systems"]["sys"].update(core="c1", native_id="psx",
+                                     data_directories=[{"ref": "x"}])
+        new = self._platform()
+        new["launchers"] = []
+        new["systems"]["sys"].update(core="c2", native_id="psx")
+        diff = cf.diff_platform(old, new)
+        self.assertTrue(diff.content_changed)
+        self.assertEqual(
+            diff.fields_changed,
+            ["dual_mode_cores", "launchers", "sys/core", "sys/data_directories"],
+        )
+        self.assertIn("~fields 4", diff.summary())
+
+    def test_the_revision_read_alone_is_not_a_change(self):
+        old, new = self._platform(), self._platform()
+        old["source"], new["source"] = "https://x/tar.gz/aaa", "https://x/tar.gz/bbb"
+        old["launchers"] = [{"emulator": "e", "source_ref": "es_features.cfg:11638-11646"}]
+        new["launchers"] = [{"emulator": "e", "source_ref": "es_features.cfg:11649-11657"}]
+        self.assertFalse(cf.diff_platform(old, new).changed)
+
     def test_target_stamp_is_not_a_change(self):
         old = {"scraped_at": "2026-01-01", "targets": {"t": {"cores": ["a"]}}}
         new = {"scraped_at": "2026-02-01", "targets": {"t": {"cores": ["a"]}}}
@@ -239,6 +284,36 @@ class CoreResolutionTests(unittest.TestCase):
         unprofiled, standalone = cf.coreinfo_gaps(names, self.PROFILES)
         self.assertEqual(unprofiled, ["wqxemu"])
         self.assertEqual(standalone, [("eka2l1", "eka2l1")])
+
+    def test_a_changed_info_of_a_profiled_core_is_stale(self):
+        """A firmwareN_path added to a profiled core's .info changes its blob:
+        the names alone said OK."""
+        blobs = {"mednafen_psx": "new", "eka2l1": "same", "wqxemu": "other"}
+        recorded = {"mednafen_psx": "old", "eka2l1": "same"}
+        with tempfile.TemporaryDirectory() as tmp:
+            record = Path(tmp) / "_core_info.json"
+            record.write_text(cf.json.dumps({"blobs": recorded}))
+            with mock.patch.object(cf, "core_info_blobs", return_value=blobs):
+                rows = cf.check_coreinfo(self.PROFILES, "", True, record)
+        stale = {r.subject: r for r in rows if r.status == cf.STALE}
+        self.assertIn("mednafen_psx", stale)
+        self.assertIn("--record-coreinfo mednafen_psx", stale["mednafen_psx"].detail)
+        self.assertNotIn(".info changed", stale["eka2l1"].detail)
+        self.assertEqual(cf.coreinfo_drift(blobs, recorded, self.PROFILES), ["mednafen_psx"])
+
+    def test_recording_a_core_leaves_the_others_unread(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            record = Path(tmp) / "_core_info.json"
+            record.write_text(cf.json.dumps({"blobs": {"a": "1", "b": "1"}}))
+            cf.record_core_info({"a": "2", "b": "2"}, ["a"], record)
+            self.assertEqual(cf.load_core_info_record(record), {"a": "2", "b": "1"})
+            with self.assertRaises(ValueError):
+                cf.record_core_info({"a": "2"}, ["ghost"], record)
+
+    def test_the_committed_record_holds_git_blobs(self):
+        recorded = cf.load_core_info_record()
+        self.assertIsNotNone(recorded)
+        self.assertTrue(all(len(sha) == 40 for sha in recorded.values()))
 
 
 class PinParsingTests(unittest.TestCase):
