@@ -1,10 +1,11 @@
 emulator: NicaiEmu
 type: standalone + libretro
 core_classification: pure_libretro
-source: "https://github.com/AloysHF/NicaiEmu"
-upstream: "https://github.com/AloysHF/NicaiEmu"
-profiled_date: "2026-09-03"
-source_commit: "6f2522b1cbbf1f2ceac4ecc06059c59b73ffd1b0"
+source: "https://github.com/AloysHF/CoolbarEmu"
+upstream: "https://github.com/AloysHF/CoolbarEmu"
+profiled_date: "2026-10-21"
+source_commit: "4c9b73f7213b1537d2361a8b1d438857bdcdc798"
+pin_frozen: "the nicaiemu core is this revision, the last one whose .gitlab-ci.yml sets CORENAME: nicaiemu. The next master commit, 7496d513 (PR #78, 2026-10-16), renames the project and its crates to CoolbarEmu and the buildbot recipe to CORENAME: coolbaremu, so later commits build the coolbaremu core, described by coolbaremu.yml."
 core_version: "0.1.0"
 display_name: "MStar - Nicai (NicaiEmu)"
 cores:
@@ -15,30 +16,35 @@ systems:
 notes: |
   Emulator for Nicai/MStar CBE (Cool Bar Engine) phone games written in
   Rust by AloysHF. The libretro core and the nicaiemu standalone binary
-  share the nicaiemu-core crate. A .cbe archive is read whole from its
-  full path (need_fullpath = true,
+  share the nicaiemu-core crate, and the workspace builds the libretro
+  core by default (Cargo.toml:13). The repository was renamed from
+  AloysHF/NicaiEmu to AloysHF/CoolbarEmu with PR #78.
+
+  A .cbe archive is read whole from its full path (need_fullpath = true,
   crates/nicaiemu-libretro/src/libretro/api.rs:181, then load_machine,
-  crates/nicaiemu-libretro/src/libretro/api.rs:360-364, then CbeArchive::load,
-  crates/nicaiemu-core/src/cbe/archive.rs:68-94). Code, scenes, maps,
-  actors, scripts, images and audio are sections of that archive, and
-  installed resource packages are parsed from the same bytes
-  (crates/nicaiemu-core/src/machine/packages.rs).
+  crates/nicaiemu-libretro/src/libretro/api.rs:359-363, then
+  CbeArchive::load, crates/nicaiemu-core/src/cbe/archive.rs:68-94). Files
+  next to the .cbe (pay kernels, save records, update data) are indexed as
+  the guest filesystem (crates/nicaiemu-core/src/machine/mod.rs:1022-1024,
+  crates/nicaiemu-core/src/machine/virtual_fs.rs:58-88), and they belong
+  to the game.
 
   Phone services are implemented in Rust
-  (crates/nicaiemu-core/src/machine/services/). The guest file manager is
-  an in-memory sandbox that never touches the host disk
-  (crates/nicaiemu-core/src/machine/virtual_fs.rs:14-30). Text is decoded
-  as GBK and rasterised from the unifont crate compiled into the core
-  (crates/nicaiemu-core/src/machine/drawing.rs:58,
-  crates/nicaiemu-core/src/machine/drawing.rs:709). MIDI resources are
+  (crates/nicaiemu-core/src/machine/services/). Text is decoded as GBK and
+  rasterised from the unifont crate compiled into the core (Cargo.toml:35,
+  crates/nicaiemu-core/src/machine/drawing.rs:1886). MIDI resources are
   synthesised as decaying sine tones without a sound bank
   (crates/nicaiemu-core/src/audio_engine.rs:270-275), while WAV and MP3 are
   decoded with symphonia.
 
-  The libretro crate asks the frontend for no directory. The standalone
-  binary reads and writes only the files named by --load-state and
-  --save-state (crates/nicaiemu/src/main.rs:162-166). No include_bytes!
-  data is compiled in.
+  The only system directory read is nicaiemu_orientation.csv, an optional
+  user list of CRC32, size and orientation for landscape titles missing
+  from the built-in table (crates/nicaiemu-libretro/src/libretro/api.rs:45,
+  crates/nicaiemu-libretro/src/libretro/api.rs:365-399,
+  crates/nicaiemu-core/src/orientation_profile.rs:132-140). A missing file
+  is logged and the built-in table applies. The standalone binary reads
+  and writes only the files named by --load-state and --save-state
+  (crates/nicaiemu/src/main.rs:160-166).
 
-exclusion_note: "No file is read outside the content: the .cbe archive is the only input, the guest filesystem is in-memory, glyphs come from the unifont crate and MIDI is synthesised without a bank, no directory is requested from the frontend, no data is embedded with include_bytes!, and the .info declares firmware_count = 0."
+exclusion_note: "The firmware services are reimplemented in the core, glyphs come from the unifont crate and MIDI is synthesised without a bank. The system directory holds only an optional user-written orientation list, and the .info declares firmware_count = 0."
 files: []
