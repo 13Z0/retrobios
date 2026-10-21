@@ -209,7 +209,7 @@ def hidden_extras(
     emulators_dir: str,
     db: dict,
     profiles: dict,
-    shipped: dict[str, str],
+    shipped: dict[str, str | None],
     target_cores: set[str] | None = None,
     region_drops: set[str] | None = None,
     placed: set[str] | None = None,
@@ -229,7 +229,8 @@ def hidden_extras(
     while the report counted it in the pack. A twin carrying the same bytes
     serves the core on the filesystem that folds the names, so it is not a
     file left out. ``shipped`` maps the full destination of each platform
-    file the pack carries to its local copy. ``placed``, when given,
+    file the pack carries to its local copy, or to None for a slot it keeps
+    without one (user_provided, external). ``placed``, when given,
     receives the full destination of each held extra the pack carries.
     ``resolver`` is the builder's lookup. An extra it cannot resolve is
     skipped and takes no path, as the builder skips it.

@@ -106,6 +106,20 @@ DEFAULT_BIOS_DIR = "bios"
 
 
 
+class PackRecord:
+    """A pack build kept in memory: the paths it writes, no archive.
+
+    ``members`` is every path written, ``files`` the ones the build counts as
+    the profile's files (archives and loose files, not trees or notes). The
+    pipeline builds every emulator pack this way and compares ``files`` with
+    what verify --emulator credits, without reading or compressing a byte.
+    """
+
+    def __init__(self) -> None:
+        self.members: list[str] = []
+        self.files: list[str] = []
+
+
 def _add_pack_member(zf: zipfile.ZipFile, source_path: str, arcname: str) -> None:
     """Add a file to the pack with metadata that does not depend on the build.
 
@@ -117,6 +131,9 @@ def _add_pack_member(zf: zipfile.ZipFile, source_path: str, arcname: str) -> Non
     two consecutive builds. The content is streamed rather than read whole,
     because some members are firmware images of several hundred megabytes.
     """
+    if isinstance(zf, PackRecord):
+        zf.members.append(arcname)
+        return
     info = zipfile.ZipInfo(filename=arcname, date_time=_FIXED_DATE_TIME)
     info.compress_type = zipfile.ZIP_DEFLATED
     # The executable bit is the one permission worth carrying: the RetroDECK
@@ -143,6 +160,9 @@ def _write_generated_member(zf: zipfile.ZipFile, arcname: str, text: str) -> Non
     a different hash on every run. Pinning them to the epoch the archive
     rebuilder already uses makes a pack a function of its inputs alone.
     """
+    if isinstance(zf, PackRecord):
+        zf.members.append(arcname)
+        return
     info = zipfile.ZipInfo(filename=arcname, date_time=_FIXED_DATE_TIME)
     info.compress_type = zipfile.ZIP_DEFLATED
     info.external_attr = 0o100644 << 16
@@ -895,6 +915,13 @@ def generate_pack(
                     ) as tmp:
                         tmp_path = tmp.name
 
+                    # The slot is the platform's file whether the download
+                    # arrives or not: verify cannot fetch, and a core file
+                    # filling it on a failed download made the two differ.
+                    seen_destinations.add(dedup_key)
+                    _register_path(dedup_key, seen_destinations, seen_parents)
+                    if case_insensitive:
+                        seen_lower.add(dedup_key.lower())
                     try:
                         if download_external(file_entry, tmp_path):
                             extract = file_entry.get("extract", False)
@@ -902,10 +929,6 @@ def generate_pack(
                                 _extract_zip_to_archive(tmp_path, _flat(full_dest, base_dest, flatten), zf)
                             else:
                                 _add_pack_member(zf, tmp_path, _flat(full_dest, base_dest, flatten))
-                            seen_destinations.add(dedup_key)
-                            _register_path(dedup_key, seen_destinations, seen_parents)
-                            if case_insensitive:
-                                seen_lower.add(dedup_key.lower())
                             file_status.setdefault(dedup_key, "ok")
                             total_files += 1
                         else:
@@ -1232,6 +1255,9 @@ def _add_zip_to_pack(
     declare the hash of a ROM inside the ZIP (checkInsideZip), which a
     content-preserving rebuild does not affect.
     """
+    if isinstance(target_zf, PackRecord):
+        target_zf.members.append(dest_path)
+        return
     if (
         file_entry
         and not file_entry.get("zipped_file")
@@ -1379,6 +1405,7 @@ def generate_emulator_pack(
     pack_name: str | None = None,
     system_ids: list[str] | None = None,
     final_dir: str | None = None,
+    record: PackRecord | None = None,
 ) -> str | None:
     """Generate a ZIP pack for specific emulator profiles.
 
@@ -1387,6 +1414,8 @@ def generate_emulator_pack(
     the 255 bytes a file name may hold. `system_ids` keeps only the entries
     of those systems, as a platform pack narrows core extras. `final_dir`
     is where the caller moves the archive, the path the report names.
+    `record` builds the pack in memory instead (PackRecord): nothing is
+    written or read, and the paths are kept on it.
     """
     all_profiles = load_emulator_profiles(emulators_dir, skip_aliases=False)
     if zip_contents is None:
@@ -1411,7 +1440,8 @@ def generate_emulator_pack(
         display_names, [n for n, _p in selected], f"{narrow_tags}_BIOS_Pack.zip"
     )
     zip_path = os.path.join(output_dir, zip_name)
-    os.makedirs(output_dir, exist_ok=True)
+    if record is None:
+        os.makedirs(output_dir, exist_ok=True)
 
     region_drops: set[str] = (
         emulator_region_drops(selected, standalone, regions, required_only, db)
@@ -1449,7 +1479,10 @@ def generate_emulator_pack(
         platforms_dir or os.path.join(os.path.dirname(__file__), "..", "platforms")
     )
 
-    with _writing_pack(zip_path) as zf:
+    with (
+        contextlib.nullcontext(record) if record is not None
+        else _writing_pack(zip_path)
+    ) as zf:
         for emu_name, profile in sorted(selected):
             pack_structure = profile.get("pack_structure")
             files = expand_agnostic_entries(
@@ -1514,6 +1547,8 @@ def generate_emulator_pack(
                     seen_lower.add(archive_dest.lower())
                     packed_at[archive_dest.lower()] = local_path
                     total_files += 1
+                    if record is not None:
+                        record.files.append(archive_dest)
                 else:
                     report_missing(archive_name, archive_dest)
 
@@ -1641,12 +1676,16 @@ def generate_emulator_pack(
                     ) as tmp:
                         tmp_path = tmp.name
                     try:
-                        if download_external(fe, tmp_path):
+                        # Built in memory, nothing is fetched: verify --emulator
+                        # cannot fetch either and reports the file missing.
+                        if record is None and download_external(fe, tmp_path):
                             _add_pack_member(zf, tmp_path, dest)
                             seen_destinations.add(dest)
                             _register_path(dest, seen_destinations, seen_parents)
                             seen_lower.add(dest.lower())
                             total_files += 1
+                            if record is not None:
+                                record.files.append(dest)
                         else:
                             missing_files.append(fe["name"])
                     finally:
@@ -1675,6 +1714,8 @@ def generate_emulator_pack(
                 seen_lower.add(dest.lower())
                 packed_at[dest.lower()] = local_path
                 total_files += 1
+                if record is not None:
+                    record.files.append(dest)
 
             # The trees after the files, as in a platform pack: a dump the
             # profile declares wins over the copy a tree bundles at the same
@@ -1705,7 +1746,9 @@ def generate_emulator_pack(
                 )
 
     # Remove empty ZIP (no files packed and no missing = nothing to ship)
-    if total_files + data_files == 0 and not (missing_files or rejected_files or instruction_files or unsourceable_files):
+    if record is None and total_files + data_files == 0 and not (
+        missing_files or rejected_files or instruction_files or unsourceable_files
+    ):
         os.unlink(zip_path)
 
     # Report. The members of data trees are counted apart: verify --emulator
