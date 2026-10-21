@@ -854,6 +854,10 @@ go under the `Device ROM sets (generated from MAME -listxml)` comment at the end
 of `files:` with `required: false`. A set the profile already lists keeps every
 field a reader wrote and only gets its contents refreshed.
 
+A plain run (pipeline step 2a) that moves `mame.yml` to a new release
+downloads that release's `-listxml` into `.cache/dats/` and runs the device
+merge itself, so the BIOS root sets and the device sets name one release.
+
 ```bash
 python -m scripts.scraper.mame_hash_scraper --devices --listxml .cache/dats/mame0289lx.zip --dry-run
 python -m scripts.scraper.mame_hash_scraper --devices --listxml .cache/dats/mame0289lx.zip

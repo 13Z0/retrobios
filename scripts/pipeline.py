@@ -7,7 +7,7 @@ Steps, numbered as the run prints them:
   1b   provenance_report.py         dump-catalog coverage, derivable.json
   1c   romset_recipes.py            archive identification, reconstruction targets
   2    refresh_data_dirs.py         Dolphin Sys, PPSSPP assets and the other trees
-  2a   mame_hash_scraper            MAME BIOS hashes from the driver source
+  2a   mame_hash_scraper            MAME BIOS hashes, and device sets on a new release
   2a2  fbneo_hash_scraper           FBNeo BIOS hashes
   2b   check_buildbot_system.py     buildbot freshness (--check-buildbot)
   2b2  check_release_assets.py      large-files release vs gitignored files
