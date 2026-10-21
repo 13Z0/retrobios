@@ -284,13 +284,13 @@ files:
   - name: "scph5501.bin"
     system: sony-playstation
     description: "SCPH-5501 / v3.0A BIOS"
-    region: [north-america]
+    region: [north-america, latin-america]
     required: true
     size: 524288
     sha256: "11052b6499e466bbf0a709b1f9cb6834a9418e66680387912451e971cf8a1fef"
     validation: [size, sha256]
     source_ref: "psx/psx.cpp:1764-1769, 1773-1781, 2374, 252"
-    note: "Default of psx.bios_na. The BIOS table carries 24 recognised dumps in total, two of them flagged bad (psx.cpp:228-268)."
+    note: "Default of psx.bios_na. The BIOS table carries 24 recognised dumps in total, two of them flagged bad (psx.cpp:228-268). Picked for REGION_NA: a SYSTEM.CNF serial whose third letter is U, a licence string naming America, and a disc read as Japanese whose system area fails the Japanese BIOS check (psx.cpp:1324-1325, 1372-1376, 1401-1437, 1764-1769)."
 
   - name: "scph5502.bin"
     system: sony-playstation

@@ -26,6 +26,14 @@ notes: |
   ref: src/core/bios.cpp:34-139 (s_image_info_by_hash)
   Each image has: region, region_check, fast_boot_patch type, priority score.
 
+  The console region picks the image, Auto by default. NTSC-U answers the
+  "Sony Computer Entertainment Amer  ica" licence string, a SCUS or SLUS
+  executable, and every disc whose region the detector cannot read
+  (DiscRegion::Other, NonPS1), so a disc of any other market boots an NTSC-U image.
+  ref: src/core/system.cpp:650-662, 926-995, 1723-1724, 1755
+  ref: src/core/bios.cpp:397-436 (FindBIOSImageInDirectory keeps a region match)
+  ref: src/core/settings.h:595 (DEFAULT_CONSOLE_REGION = Auto)
+
   ImageInfo gained a version and an expected_filename field after the previous
   profiling pass. Neither takes part in identification: expected_filename is read
   only by the two settings screens, which fall back to the real filename when it
@@ -58,7 +66,7 @@ files:
 
   - name: "scph1001.bin"
     description: "SCPH-1001, 5003, DTL-H1201, H3001 (v2.2 12-04-95 A)"
-    region: [north-america]
+    region: [north-america, latin-america]
     required: false
     md5: "924e392ed05558ffdb115408c263dccf"
     region_check: false
@@ -118,7 +126,7 @@ files:
 
   - name: "scph1001_v20.bin"
     description: "SCPH-1001, DTL-H1001 (v2.0 05-07-95 A)"
-    region: [north-america]
+    region: [north-america, latin-america]
     required: false
     md5: "dc2b9bf8da62ec93e868cfd29f0d067d"
     region_check: false
@@ -138,7 +146,7 @@ files:
 
   - name: "scph1001_v21.bin"
     description: "SCPH-1001, DTL-H1101 (v2.1 07-17-95 A)"
-    region: [north-america]
+    region: [north-america, latin-america]
     required: false
     md5: "da27e8b6dab242d8f91a9b25d80c63b8"
     region_check: false
@@ -168,7 +176,7 @@ files:
 
   - name: "scph5501.bin"
     description: "SCPH-5501, 5503, 7003 (v3.0 11-18-96 A)"
-    region: [north-america]
+    region: [north-america, latin-america]
     required: true
     md5: "490f666e1afb15b7362b406ed1cea246"
     region_check: false
@@ -208,7 +216,7 @@ files:
 
   - name: "scph7001.bin"
     description: "SCPH-7001, 7501, 7503, 9001, 9003, 9903 (v4.1 12-16-97 A)"
-    region: [north-america]
+    region: [north-america, latin-america]
     required: false
     md5: "1e68c231d0896b7eadcad1d7d8e76129"
     region_check: false
@@ -238,7 +246,7 @@ files:
 
   - name: "scph101_v44.bin"
     description: "SCPH-101 (v4.4 03-24-00 A)"
-    region: [north-america]
+    region: [north-america, latin-america]
     required: false
     md5: "9a09ab7e49b422c007e6d54d7c49b965"
     region_check: false
@@ -248,7 +256,7 @@ files:
 
   - name: "scph101_v45.bin"
     description: "SCPH-101 (v4.5 05-25-00 A)"
-    region: [north-america]
+    region: [north-america, latin-america]
     required: false
     md5: "6e3735ff4c7dc899ee98981385f6f3d0"
     region_check: false
@@ -362,7 +370,7 @@ files:
 
   - name: "ps2_dtlh30001.bin"
     description: "PS2, DTL-H30001 (v5.0 07/27/00 A)"
-    region: [north-america]
+    region: [north-america, latin-america]
     required: false
     md5: "63e6fd9b3c72e0d7b920e80cf76645cd"
     region_check: true
@@ -372,7 +380,7 @@ files:
 
   - name: "ps2_scph30001_0727.bin"
     description: "PS2, SCPH-30001 (v5.0 07/27/00 A)"
-    region: [north-america]
+    region: [north-america, latin-america]
     required: false
     md5: "a20c97c02210f16678ca3010127caf36"
     region_check: true
@@ -382,7 +390,7 @@ files:
 
   - name: "ps2_scph30001_0902.bin"
     description: "PS2, SCPH-30001 (v5.0 09/02/00 A)"
-    region: [north-america]
+    region: [north-america, latin-america]
     required: false
     md5: "8db2fbbac7413bf3e7154c1e0715e565"
     region_check: true
@@ -442,7 +450,7 @@ files:
 
   - name: "ps2_dtlh30101.bin"
     description: "PS2, DTL-H30101 (v5.0 12/28/00 A)"
-    region: [north-america]
+    region: [north-america, latin-america]
     required: false
     md5: "0bf988e9c7aaa4c051805b0fa6eb3387"
     region_check: true
@@ -452,7 +460,7 @@ files:
 
   - name: "ps2_scph30001_35001.bin"
     description: "PS2, SCPH-30001/SCPH-35001 (v5.0 12/28/00 A)"
-    region: [north-america]
+    region: [north-america, latin-america]
     required: false
     md5: "8accc3c49ac45f5ae2c5db0adc854633"
     region_check: true
@@ -502,7 +510,7 @@ files:
 
   - name: "ps2_scph30001r_0427.bin"
     description: "PS2, SCPH-30001R (v5.0 04/27/01 A)"
-    region: [north-america]
+    region: [north-america, latin-america]
     required: false
     md5: "b107b5710042abe887c0f6175f6e94bb"
     region_check: true
@@ -522,7 +530,7 @@ files:
 
   - name: "ps2_scph30001r_0704.bin"
     description: "PS2, SCPH-30001R (v5.0 07/04/01 A)"
-    region: [north-america]
+    region: [north-america, latin-america]
     required: false
     md5: "18bcaadb9ff74ed3add26cdf709fff2e"
     region_check: true
@@ -542,7 +550,7 @@ files:
 
   - name: "ps2_scph30001r_1004.bin"
     description: "PS2, SCPH-30001R (v5.0 10/04/01 A)"
-    region: [north-america]
+    region: [north-america, latin-america]
     required: false
     md5: "7200a03d51cacc4c14fcdfdbc4898431"
     region_check: true
@@ -572,7 +580,7 @@ files:
 
   - name: "ps2_scph39001.bin"
     description: "PS2, SCPH-39001 (v5.0 02/07/02 A)"
-    region: [north-america]
+    region: [north-america, latin-america]
     required: false
     md5: "d5ce2c7d119f563ce04bc04dbc3a323e"
     region_check: true
@@ -662,7 +670,7 @@ files:
 
   - name: "ps2_dtlh50001_0325.bin"
     description: "PS2, DTL-H50001 (v5.0 03/25/03 A)"
-    region: [north-america]
+    region: [north-america, latin-america]
     required: false
     md5: "eb960de68f0c0f7f9fa083e9f79d0360"
     region_check: true
@@ -672,7 +680,7 @@ files:
 
   - name: "ps2_scph50001_0325.bin"
     description: "PS2, SCPH-50001 (v5.0 03/25/03 A)"
-    region: [north-america]
+    region: [north-america, latin-america]
     required: false
     md5: "8aa12ce243210128c5074552d3b86251"
     region_check: true
@@ -712,7 +720,7 @@ files:
 
   - name: "ps2_dtlh50001_0623.bin"
     description: "PS2, DTL-H50001 (v5.0 06/23/03 A)"
-    region: [north-america]
+    region: [north-america, latin-america]
     required: false
     md5: "ab9d49ad40ae49f19856ad187777b1b3"
     region_check: true
@@ -722,7 +730,7 @@ files:
 
   - name: "ps2_scph50001_0623.bin"
     description: "PS2, SCPH-50001/SCPH-50010 (v5.0 06/23/03 A)"
-    region: [north-america]
+    region: [north-america, latin-america]
     required: false
     md5: "35461cecaa51712b300b2d6798825048"
     region_check: true
@@ -802,7 +810,7 @@ files:
 
   - name: "ps2_scph50011.bin"
     description: "PS2, SCPH-50011 (v5.0 03/29/04 A)"
-    region: [north-america]
+    region: [north-america, latin-america]
     required: false
     md5: "81f4336c1de607dd0865011c0447052e"
     region_check: true
@@ -822,7 +830,7 @@ files:
 
   - name: "ps2_scph70001.bin"
     description: "PS2, SCPH-70001/SCPH-70011/SCPH-70012 (v5.0 06/14/04 A)"
-    region: [north-america]
+    region: [north-america, latin-america]
     required: false
     md5: "d333558cc14561c1fdc334c75d5f37b7"
     region_check: true
@@ -902,7 +910,7 @@ files:
 
   - name: "ps2_dtlh75000a.bin"
     description: "PS2, DTL-H75000A (v5.0 06/20/05 A)"
-    region: [north-america]
+    region: [north-america, latin-america]
     required: false
     md5: "9959ad7a8685cad66206e7752ca23f8b"
     region_check: true
@@ -912,7 +920,7 @@ files:
 
   - name: "ps2_scph75001.bin"
     description: "PS2, SCPH-75001/SCPH-75010 (v5.0 06/20/05 A)"
-    region: [north-america]
+    region: [north-america, latin-america]
     required: false
     md5: "929a14baca1776b00869f983aa6e14d2"
     region_check: true
@@ -952,7 +960,7 @@ files:
 
   - name: "ps2_scph77001.bin"
     description: "PS2, SCPH-77001/SCPH-77010 (v5.0 02/10/06 A)"
-    region: [north-america]
+    region: [north-america, latin-america]
     required: false
     md5: "cb801b7920a7d536ba07b6534d2433ca"
     region_check: true
@@ -1002,7 +1010,7 @@ files:
 
   - name: "ps2_dtlh90000_a.bin"
     description: "PS2, DTL-H90000 (v5.0 09/05/06 A)"
-    region: [north-america]
+    region: [north-america, latin-america]
     required: false
     md5: "21fe4cad111f7dc0f9af29477057f88d"
     region_check: true
@@ -1012,7 +1020,7 @@ files:
 
   - name: "ps2_scph79001_90001.bin"
     description: "PS2, SCPH-79001/SCPH-79010/SCPH-90001 (v5.0 09/05/06 A)"
-    region: [north-america]
+    region: [north-america, latin-america]
     required: false
     md5: "40c11c063b3b9409aa5e4058e984e30c"
     region_check: true
@@ -1052,7 +1060,7 @@ files:
 
   - name: "ps2_scph90001_0220.bin"
     description: "PS2, SCPH-90001/SCPH-90010 (v5.0 02/20/08 A)"
-    region: [north-america]
+    region: [north-america, latin-america]
     required: false
     md5: "21038400dc633070a78ad53090c53017"
     region_check: true

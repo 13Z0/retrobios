@@ -28,6 +28,14 @@ notes: |
   ref: src/core/bios.cpp:28-71 (s_image_infos)
   Each entry has: description, region, hash, patch_compatible flag.
 
+  The console region picks the image, Auto by default. NTSC-U answers the
+  "Sony Computer Entertainment Amer  ica" licence string, a SCUS or SLUS
+  executable, a disc whose region the detector cannot read, an image that
+  fails to open and a boot without content.
+  ref: src/core/system.cpp:193-209, 401-456, 592-645
+  ref: src/core/host_interface.cpp:100-183 (FindBIOSImageInDirectory keeps a region match)
+  ref: src/libretro/libretro_core_options.h:82-95 (swanstation_Console_Region, default Auto)
+
   Upstream DuckStation has evolved significantly (105 entries, PS2 BIOS, OpenBIOS,
   priority system). SwanStation is frozen at the fork point.
 
@@ -45,7 +53,7 @@ files:
 
   - name: "scph5501.bin"
     description: "SCPH-5501, 5503, 7003 (v3.0 11-18-96 A)"
-    region: [north-america]
+    region: [north-america, latin-america]
     required: false
     hle_fallback: true
     md5: "490f666e1afb15b7362b406ed1cea246"

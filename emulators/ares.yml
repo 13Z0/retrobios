@@ -379,11 +379,12 @@ files:
   # --- PlayStation ---
   - name: scph5501.bin
     system: sony-playstation
-    region: [north-america]
+    region: [north-america, latin-america]
     required: true
     sha256: "11052b6499e466bbf0a709b1f9cb6834a9418e66680387912451e971cf8a1fef"
     validation: [sha256]
     description: "PlayStation BIOS (US)"
+    note: "Picked for NTSC-U, set by both America licence strings and for an executable. A disc with no recognised licence offers NTSC-U and PAL, and the Boot/Prefer setting picks (mia/medium/playstation.cpp:66-73, 92, desktop-ui/emulator/playstation.cpp:85-92, desktop-ui/emulator/emulator.cpp:40-58)."
     source_ref: "desktop-ui/emulator/playstation.cpp:18, desktop-ui/emulator/playstation.cpp:85-92, mia/medium/playstation.cpp:65-73"
 
   - name: scph5500.bin

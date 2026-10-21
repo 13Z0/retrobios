@@ -907,6 +907,15 @@ class RegionalRequestsKeepWhatTheCodeLoads(unittest.TestCase):
         ("pcsx_rearmed", ["brazil", "japan"], "scph1001.bin"),
         ("blastem", ["australia", "north-america"], "bios_CD_E.bin"),
         ("kega-fusion", ["australia", "north-america"], "eu_mcd1_9210.bin"),
+        ("ares", ["brazil", "japan"], "scph5501.bin"),
+        ("beetle_psx", ["brazil", "japan"], "scph5501.bin"),
+        ("mednafen", ["brazil", "japan"], "scph5501.bin"),
+        ("swanstation", ["brazil", "japan"], "scph5501.bin"),
+        ("rustation", ["brazil", "japan"], "scph5501.bin"),
+        ("rustation", ["brazil", "japan"], "scph101.bin"),
+        ("duckstation", ["brazil", "japan"], "scph5501.bin"),
+        ("duckstation", ["brazil", "japan"], "scph7001.bin"),
+        ("duckstation", ["brazil", "japan"], "ps2_scph39001.bin"),
     )
 
     def test_each_request_keeps_its_file(self):
@@ -1150,6 +1159,35 @@ class PcsxRearmedUsSlotIsTheDefault(unittest.TestCase):
         for entry in tagged:
             with self.subTest(name=entry["name"]):
                 self.assertIn("latin-america", entry["region"])
+
+
+class PlayStationUsImageAnswersTheAmericaLicence(unittest.TestCase):
+    """Every PlayStation core here picks its US image for a disc licensed by
+    Sony Computer Entertainment America, the licence the Americas share:
+    ares (mia/medium/playstation.cpp:66-73), Beetle PSX (libretro.c:2249-2254),
+    Mednafen (psx.cpp:1372-1376), SwanStation and DuckStation
+    (GetRegionFromSystemArea, plus every unread region), Rustation
+    (src/cdrom/disc/mod.rs:81-90). Tagged north-america alone, a --region
+    brazil,japan pack withdrew the image those discs boot with."""
+
+    COUNTS = {"ares": 1, "beetle_psx": 1, "mednafen": 1, "swanstation": 1,
+              "rustation": 6, "duckstation": 28}
+
+    def test_every_us_image_includes_latin_america(self):
+        from common import load_emulator_profiles
+
+        profiles = load_emulator_profiles("emulators")
+        for name, count in self.COUNTS.items():
+            tagged = [
+                f for f in profiles[name]["files"]
+                if "north-america" in (f.get("region") or [])
+                and f.get("system", "sony-playstation") == "sony-playstation"
+            ]
+            with self.subTest(profile=name):
+                self.assertEqual(len(tagged), count)
+            for entry in tagged:
+                with self.subTest(profile=name, name=entry["name"]):
+                    self.assertIn("latin-america", entry["region"])
 
 
 class FusionSmsExportBiosFollowsTheSetting(unittest.TestCase):
