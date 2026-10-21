@@ -4340,5 +4340,107 @@ class EachCitationNamesTheCodeThatAsks(unittest.TestCase):
         self.assertEqual(self._attribute("source emu/memory.c:2"), "source emu/memory.c:2")
 
 
+class ARoleIsReadPerPart(unittest.TestCase):
+    """The role a part writes (`source a.c:3`) was stored per path, first met
+    first kept: hypseus-singe's `upstream lair.cpp` decided where every later
+    `source lair.cpp` was read, and correct refs were reported MOVED."""
+
+    setUp = TestBuildReport.setUp
+    tearDown = TestBuildReport.tearDown
+    MD5A = "0123456789abcdef0123456789abcdef"
+    MD5B = "fedcba9876543210fedcba9876543210"
+
+    def _report(self, files: str, notes: str = "") -> ProfileReport:
+        # The port inserted two lines above its copy of the table since its
+        # pin, while the original sits on HEAD with the same table.
+        trees = {
+            ("libretro/x", "pins"): {"a.c": ["pad", "pad", f"rom {self.MD5B}"]},
+            ("libretro/x", "heads"): {"a.c": ["pad", "pad", "new", "new",
+                                              f"rom {self.MD5B}"]},
+            ("alek/x", "pinu"): {"a.c": [f"rom {self.MD5A}", "x",
+                                         f"rom {self.MD5B}"]},
+        }
+        profile_sync.upstream.fetch_file = (
+            lambda repo, sha, path, cache_dir, offline=False:
+            trees.get((repo.slug, sha), {}).get(path)
+        )
+        profile_sync.upstream.list_tree = (
+            lambda repo, sha, cache_dir, offline=False:
+            (sorted(trees.get((repo.slug, sha), {})), False)
+        )
+        profile_sync.upstream.resolve_head = (
+            lambda repo, cache_dir, offline=False, branch=None:
+            "heads" if repo.owner == "libretro" else "pinu"
+        )
+        profile_sync.upstream.compare = (
+            lambda repo, base, head, cache_dir, offline=False:
+            profile_sync.CompareResult([], False)
+        )
+        text = (
+            'emulator: T\n'
+            'source: "https://github.com/libretro/x"\n'
+            'upstream: "https://github.com/alek/x"\n'
+            'source_commit: "pins"\n'
+            'upstream_commit: "pinu"\n'
+            + (f"notes: |\n  {notes}\n" if notes else "")
+            + "files:\n" + files
+        )
+        profile = yaml.safe_load(text)
+        with contextlib.redirect_stderr(io.StringIO()):
+            return build_report("t", profile, self.dir, text=text)
+
+    def test_a_part_naming_its_repository_is_judged_there(self):
+        report = self._report(
+            "  - name: a.rom\n"
+            f"    md5: {self.MD5A}\n"
+            '    source_ref: "upstream a.c:1"\n'
+            "  - name: b.rom\n"
+            f"    md5: {self.MD5B}\n"
+            '    source_ref: "source a.c:3"\n'
+        )
+        parts = {e.name: e.parts[0] for e in report.entries}
+        self.assertEqual(parts["a.rom"].status, "ANCHORED")
+        self.assertEqual(parts["a.rom"].repo, "alek/x")
+        # Read in the original, where line 3 still holds the table, the
+        # port's own move went unseen.
+        self.assertEqual(parts["b.rom"].status, "SHIFTED")
+        self.assertEqual(parts["b.rom"].start, 5)
+        self.assertIsNone(parts["b.rom"].repo)
+
+    def test_a_prose_source_word_is_a_role_not_a_project(self):
+        report = self._report(
+            "  - name: b.rom\n"
+            f"    md5: {self.MD5B}\n"
+            '    source_ref: "source a.c:3"\n',
+            notes="ref: source a.c:3, more",
+        )
+        prose = [e for e in report.entries if e.kind == "prose"]
+        self.assertEqual(len(prose), 1)
+        self.assertNotEqual(prose[0].parts[0].status, "EXTERNAL")
+        self.assertEqual(prose[0].parts[0].part.role, "source")
+
+    def test_a_prose_upstream_word_names_the_repository(self):
+        report = self._report(
+            "  - name: b.rom\n"
+            f"    md5: {self.MD5B}\n"
+            '    source_ref: "source a.c:3"\n',
+            notes="the original reads it (upstream a.c:1).",
+        )
+        prose = [e for e in report.entries if e.kind == "prose"]
+        self.assertEqual(prose[0].parts[0].part.role, "upstream")
+        self.assertEqual(prose[0].parts[0].repo, "alek/x")
+
+    def test_the_prose_grammar_keeps_the_role(self):
+        from sourceref import _prose_runs
+
+        runs = list(_prose_runs(
+            "# ref: source src/a.cpp:1656-1685, 1709-1738, upstream b.c:5"
+        ))
+        roles = [(p.path, p.role) for run in runs for p in run[3]]
+        self.assertEqual(roles, [
+            ("src/a.cpp", "source"), ("src/a.cpp", "source"), ("b.c", "upstream"),
+        ])
+
+
 if __name__ == "__main__":
     unittest.main()

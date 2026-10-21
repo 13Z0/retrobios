@@ -1305,10 +1305,20 @@ def _resolve_project_words(
                 if part.path not in resolved:
                     resolved[part.path] = resolve_project_word(part.path, tree_order())
                 if resolved[part.path]:
-                    part = RefPart(resolved[part.path], part.start, part.end, part.raw)
+                    part = replace(part, path=resolved[part.path])
             rewritten.append(part)
         out.append((display, ref, tokens, hashes, rewritten, citation))
     return out
+
+
+def _path_roles(refs: list) -> dict[str, set[str]]:
+    """The roles each cited path is written under across the profile."""
+    roles: dict[str, set[str]] = {}
+    for *_, parts, _citation in refs:
+        for part in parts:
+            if part.role:
+                roles.setdefault(part.path, set()).add(part.role)
+    return roles
 
 
 def build_report(
@@ -1328,20 +1338,20 @@ def build_report(
         if (repo := upstream.parse_repo(url)) is not None
     )
     refs = []
-    # The repository a part says its lines are in (`upstream src/a.c:5`).
-    cited_roles: dict[str, str] = {}
     for citation in collect_citations(profile, text):
         if citation.kind == "ref":
-            for p in split_source_ref(citation.ref):
-                role, _bare = ref_role(p.path)
-                if role:
-                    cited_roles.setdefault(strip_repo_word(p.path, known), role)
             entry = citation.entry
             display = str(entry.get("name") or "") or citation.field
             if citation.label:
                 display += f" [{citation.label}]"
+            # The repository a part says its lines are in (`upstream
+            # src/a.c:5`) stays on that part: the same path can be cited
+            # under both roles in one profile.
             parts = [
-                RefPart(strip_repo_word(p.path, known), p.start, p.end, p.raw)
+                RefPart(
+                    strip_repo_word(p.path, known), p.start, p.end, p.raw,
+                    ref_role(p.path)[0],
+                )
                 for p in split_source_ref(citation.ref)
             ]
             refs.append((
@@ -1353,6 +1363,19 @@ def build_report(
                 citation.field, citation.ref, [], [],
                 list(citation.parts), citation,
             ))
+    # A part that names no repository is looked up first where its path is
+    # cited elsewhere: a note citing `src/a.c:12` beside source_refs that
+    # all read `upstream src/a.c` means that tree.
+    # A path cited under both roles lends neither, and such a part is
+    # compared in every repository rather than in whichever comes first.
+    path_roles = _path_roles(refs)
+
+    def role_of(part: RefPart) -> str:
+        if part.role:
+            return part.role
+        lent = path_roles.get(part.path, ())
+        return next(iter(lent)) if len(lent) == 1 else ""
+
     # Directories the profile already cites, deepest first, to settle a bare
     # filename that several trees of one repository carry.
     cited_dirs: set[str] = set()
@@ -1448,7 +1471,7 @@ def build_report(
     pin_trees: dict[str, list[str] | None] = {}
 
     def _locate(
-        path: str, start: int | None = None, tokens: tuple = ()
+        path: str, start: int | None = None, tokens: tuple = (), wanted: str = ""
     ) -> tuple[RepoView, str]:
         """Repository and real path carrying a cited path, HEAD before pin.
 
@@ -1539,7 +1562,6 @@ def build_report(
             return 1 if line.strip() else 0
 
         # A part that names its repository is looked up there first.
-        wanted = cited_roles.get(path, "")
         ordered = sorted(views, key=lambda v: _view_role(v) != wanted) if wanted else views
         best = None
         for candidate in candidates:
@@ -1572,11 +1594,11 @@ def build_report(
         return (best[1], best[2]) if best else (primary, path)
 
     def resolve_path(
-        path: str, start: int | None = None, tokens: tuple = ()
+        path: str, start: int | None = None, tokens: tuple = (), role: str = ""
     ) -> tuple[RepoView, str]:
-        key = (path, start, tokens)
+        key = (path, start, tokens, role)
         if key not in owners:
-            owners[key] = _locate(path, start, tokens)
+            owners[key] = _locate(path, start, tokens, role)
         return owners[key]
 
     def _pin_tree_for(view: RepoView) -> list[str] | None:
@@ -1634,14 +1656,14 @@ def build_report(
                 )
         return context[key]
 
-    def rename_getter(path: str) -> tuple[str | None, list[str]]:
+    def rename_getter(path: str, role: str = "") -> tuple[str | None, list[str]]:
         """Resolved only when a cited file has vanished, then memoised.
 
         Every declared repository is searched, not just the one that owns the
         path: a profile citing both a port and its upstream may point at a file
         that only the other one carries.
         """
-        owner, actual = resolve_path(path)
+        owner, actual = resolve_path(path, role=role)
         ordered = [owner] + [v for v in views if v is not owner]
         candidates: list[str] = []
         for view in ordered:
@@ -1673,6 +1695,7 @@ def build_report(
         start: int | None = None,
         tokens: Iterable[str] = (),
         forced: RepoView | None = None,
+        role: str = "",
     ) -> list[str] | None:
         """Lines for one path at one revision, read once per run.
 
@@ -1680,10 +1703,11 @@ def build_report(
         on identity.
         """
         tokens = tuple(tokens)
-        key = (which, path, start, tokens, forced and forced.repo.slug)
+        key = (which, path, start, tokens, forced and forced.repo.slug, role)
         if key not in lines_cache:
             view, actual = (
-                (forced, path) if forced else resolve_path(path, start, tokens)
+                (forced, path) if forced
+                else resolve_path(path, start, tokens, role)
             )
             sha = view.pin if which == PIN else view.head
             found = fetch_from(view.repo, sha, actual)
@@ -1701,9 +1725,11 @@ def build_report(
         start: int | None = None,
         tokens: Iterable[str] = (),
         forced: RepoView | None = None,
+        role: str = "",
     ) -> tuple[str | None, str, str]:
         view, actual = (
-            (forced, path) if forced else resolve_path(path, start, tuple(tokens))
+            (forced, path) if forced
+            else resolve_path(path, start, tuple(tokens), role)
         )
         slug = view.repo.slug if view is not primary else None
         return slug, upstream.raw_url(view.repo, view.head, actual), actual
@@ -1715,12 +1741,20 @@ def build_report(
         both mamedev/mame and its libretro fork hold, with the same delimited
         token on the cited line, so no single attribution can be right for all
         of them. Taking the best outcome across repositories settles it.
+        A part that names its repository is judged there alone when that
+        repository carries the path: hypseus-singe cites lair.cpp under
+        `source` for one entry and `upstream` for the next.
         """
-        owner, _actual = resolve_path(part.path, part.start, tuple(tokens))
+        owner, _actual = resolve_path(
+            part.path, part.start, tuple(tokens), role_of(part)
+        )
         carrying = [
             view for view in views
             if fetch_from(view.repo, view.pin, part.path) is not None
         ]
+        named = [view for view in carrying if _view_role(view) == part.role]
+        if part.role and named:
+            carrying = named
         live = {
             id(view) for view in carrying
             if fetch_from(view.repo, view.head, part.path) is not None
@@ -1732,7 +1766,7 @@ def build_report(
                 lambda which, path, start=None, toks=(), _v=view: fetch(
                     which, path, start, toks, _v
                 ),
-                rename_getter,
+                lambda path: rename_getter(path, role_of(part)),
                 lambda path, start=None, toks=(), _v=view: describe(
                     path, start, toks, _v
                 ),
@@ -1753,7 +1787,15 @@ def build_report(
             if best is None or rank < best[0] or (rank == best[0] and view is owner):
                 best = (rank, result)
         return best[1] if best else anchor_part(
-            part, fetch, rename_getter, describe, tokens
+            part,
+            lambda which, path, start=None, toks=(): fetch(
+                which, path, start, toks, role=role_of(part)
+            ),
+            lambda path: rename_getter(path, role_of(part)),
+            lambda path, start=None, toks=(): describe(
+                path, start, toks, role=role_of(part)
+            ),
+            tokens,
         )
 
     # Comparing a revision with itself anchors every ref whatever it cites, so
@@ -1763,7 +1805,9 @@ def build_report(
     def self_checked(part: RefPart, tokens: Sequence[str]) -> bool:
         if report.pinned_tag:
             return True
-        view, _ = resolve_path(part.path, part.start, tuple(tokens))
+        if not part.role and len(path_roles.get(part.path, ())) > 1:
+            return all(view.pin == view.head for view in views)
+        view, _ = resolve_path(part.path, part.start, tuple(tokens), role_of(part))
         return view.pin == view.head
 
     def judge(
@@ -1779,11 +1823,15 @@ def build_report(
             )
         if flag:
             result = verify_at_pin(
-                part, fetch(PIN, part.path, part.start, tokens), tokens, hashes
+                part,
+                fetch(PIN, part.path, part.start, tokens, role=role_of(part)),
+                tokens, hashes,
             )
             # Checked at its own revision, the part still lies in one tree:
             # the report names it, as a comparison does.
-            owner, _actual = resolve_path(part.path, part.start, tuple(tokens))
+            owner, _actual = resolve_path(
+                part.path, part.start, tuple(tokens), role_of(part)
+            )
             if result.repo is None and owner is not primary:
                 result = replace(result, repo=owner.repo.slug)
         else:
@@ -1791,7 +1839,9 @@ def build_report(
         # A forge that refused the request said nothing about the file:
         # git.eden-emu.dev answers 403 to scripts, and nine citations of
         # eden-nightly read "absent at HEAD" for a file that exists.
-        owner, _actual = resolve_path(part.path, part.start, tuple(tokens))
+        owner, _actual = resolve_path(
+            part.path, part.start, tuple(tokens), role_of(part)
+        )
         if (
             result.status in ("GONE", "AMBIGUOUS")
             and (owner.repo.host, owner.repo.slug) in mute
