@@ -58,8 +58,15 @@ if [ -z "$INSTALLER" ] || [ ! -f "$INSTALLER" ]; then
         --connect-timeout 30 --retry 2 "$install_url" --output "$TEMP_INSTALLER"
     }
   elif command -v wget >/dev/null 2>&1; then
+    # BusyBox wget (Alpine, the RomM image) has no --https-only and refuses
+    # the whole command over it (networking/wget.c wget_longopts). The URL
+    # itself is checked to be https above, and the SHA-256 below decides.
+    https_only=""
+    if wget --help 2>&1 | grep -q -- '--https-only'; then
+      https_only="--https-only"
+    fi
     fetch() {
-      wget --quiet --https-only --timeout=30 --tries=3 \
+      wget --quiet ${https_only:+"$https_only"} --timeout=30 --tries=3 \
         --output-document="$TEMP_INSTALLER" "$install_url"
     }
   else

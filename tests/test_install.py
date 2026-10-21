@@ -2086,6 +2086,48 @@ class TestAvailablePlatforms(unittest.TestCase):
             self.assertTrue(marker.is_file(), "piped bootstrap did not download install.py")
             self.assertIn("retroarch", proc.stdout)
 
+    def test_busybox_wget_downloads_the_installer(self):
+        """BusyBox wget, the only one in the RomM image, refuses
+        --https-only: with no curl the one-liner always failed and blamed
+        the network."""
+        scratch = REPO_ROOT / "tmp" / "tests"
+        scratch.mkdir(parents=True, exist_ok=True)
+        with tempfile.TemporaryDirectory(dir=scratch) as directory:
+            root = Path(directory)
+            fake_bin = root / "bin"
+            fake_bin.mkdir()
+            for tool in ("mktemp", "wc", "tr", "sha256sum", "awk", "rm", "rmdir",
+                         "grep", "tail", "cp", "dirname", "cat", "python3"):
+                found = shutil.which(tool)
+                if found:
+                    (fake_bin / tool).symlink_to(found)
+            (fake_bin / "wget").write_text(
+                "#!/bin/sh\n"
+                "output=\n"
+                "for arg in \"$@\"; do\n"
+                "  case \"$arg\" in\n"
+                "    --help) echo 'Usage: wget [-cqS] [-O FILE] [-T SEC] URL' >&2; exit 1 ;;\n"
+                "    --https-only) echo \"wget: unrecognized option '$arg'\" >&2; exit 1 ;;\n"
+                "    --output-document=*) output=${arg#--output-document=} ;;\n"
+                "  esac\n"
+                "done\n"
+                "cp -- \"$FAKE_INSTALLER_SOURCE\" \"$output\"\n",
+                encoding="utf-8",
+            )
+            (fake_bin / "wget").chmod(0o755)
+            env = {
+                "PATH": str(fake_bin), "HOME": str(root), "TMPDIR": str(root),
+                "RETROBIOS_INSTALL_URL": "https://example.invalid/install.py",
+                "FAKE_INSTALLER_SOURCE": str(REPO_ROOT / "install.py"),
+            }
+            proc = subprocess.run(
+                ["/bin/sh", "-s", "--", "--list-platforms"], cwd=root, env=env,
+                input=(REPO_ROOT / "install.sh").read_text(encoding="utf-8"),
+                capture_output=True, text=True, timeout=60, check=False,
+            )
+        self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+        self.assertIn("retroarch", proc.stdout)
+
     def test_a_failed_download_says_so_in_one_message(self):
         """Offline, the one-liner printed curl's progress table and
         "curl: (6) ...", then exited 6, a code the table does not list."""
