@@ -316,6 +316,7 @@ class Exporter(BaseExporter):
                     str(a).lower() for a in (fe.native("aliases", []) or [])
                 )
         self._skipped: dict[str, list[str]] = {}
+        self._named: set[int] = set()
         produced: dict[str, str] = {}
 
         def skip(reason: str, module: str) -> None:
@@ -360,7 +361,8 @@ class Exporter(BaseExporter):
                     | {str(a).lower() for a in (fe.native("aliases", []) or [])}) & listed
                 and (slot := self._slot_of(fe)) is not None
             }
-            missing = self._in_search_order(self._one_per_slot(candidates, filled))
+            proposed = self._one_per_slot(candidates, filled)
+            missing = self._in_search_order(proposed)
             if not missing:
                 continue
 
@@ -383,8 +385,20 @@ class Exporter(BaseExporter):
                 f'rp_module_help="{new_help}"',
                 1,
             )
+            self._named.update(id(fe) for fe in proposed)
 
         return produced
+
+    def lands(self, fe: NativeFile) -> bool:
+        """An addition lands only where a help sentence now names it.
+
+        Every file a profiled core reads is writable in principle, yet the
+        render appends names to a handful of sentences: counting the rest
+        listed 1360 additions for one changed scriptmodule.
+        """
+        if fe.platform is not None:
+            return self.writable(fe)
+        return id(fe) in getattr(self, "_named", set())
 
     def outcome(
         self,

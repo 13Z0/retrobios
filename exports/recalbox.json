@@ -7,23 +7,14 @@
   "files": [
     "es_bios.xml"
   ],
-  "summary": "357 kept, 87 added, 4 hashes corrected, 129 requirements corrected, 527 additions left out, 103 entries found by content not listed",
+  "summary": "357 kept, 87 added, 2 hashes corrected, 128 requirements corrected, 528 additions left out, 102 entries found by content not listed",
   "counts": {
     "kept": 357,
     "added": 87,
-    "not_added": 527,
+    "not_added": 528,
     "not_kept": 0
   },
   "changes": [
-    {
-      "kind": "requirement_corrected",
-      "system": "amiga600",
-      "name": "kick33180.A500",
-      "destination": "amiga/bios/kick33180.A500",
-      "field": "required",
-      "old": true,
-      "new": false
-    },
     {
       "kind": "requirement_corrected",
       "system": "amiga600",
@@ -99,18 +90,6 @@
       "old": null,
       "new": {
         "md5": "36ab26d3b855e634fdda062c052cd52b",
-        "required": false
-      }
-    },
-    {
-      "kind": "added",
-      "system": "amiga600",
-      "name": "boot-data.zip",
-      "destination": "whdboot/boot-data.zip",
-      "field": null,
-      "old": null,
-      "new": {
-        "md5": "9e638f3d531eb7cd82594f49a4cf03b7",
         "required": false
       }
     },
@@ -195,6 +174,18 @@
       "old": null,
       "new": {
         "md5": "c5ba6165df42fc69b32942b248fca725",
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "amiga600",
+      "name": "amiga-os-310.rom",
+      "destination": "amiga-os-310.rom",
+      "field": null,
+      "old": null,
+      "new": {
+        "md5": "730888fb1bd9a3606d51f772ed136528",
         "required": false
       }
     },
@@ -317,15 +308,6 @@
         "md5": "40cdf89f35b68cfefd4df5fb0256e02f",
         "required": false
       }
-    },
-    {
-      "kind": "requirement_corrected",
-      "system": "amiga1200",
-      "name": "kick39106.A1200",
-      "destination": "amiga/bios/kick39106.A1200",
-      "field": "required",
-      "old": true,
-      "new": false
     },
     {
       "kind": "requirement_corrected",
@@ -732,6 +714,15 @@
     {
       "kind": "requirement_corrected",
       "system": "pc98",
+      "name": "bios.rom",
+      "destination": "np2kai/bios.rom",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "pc98",
       "name": "font.bmp",
       "destination": "np2kai/font.bmp",
       "field": "required",
@@ -791,6 +782,15 @@
       "system": "msx1,msx2",
       "name": "DISK.ROM",
       "destination": "msx/DISK.ROM",
+      "field": "required",
+      "old": true,
+      "new": false
+    },
+    {
+      "kind": "requirement_corrected",
+      "system": "msx1,msx2",
+      "name": "FMPAC.ROM",
+      "destination": "msx/FMPAC.ROM",
       "field": "required",
       "old": true,
       "new": false
@@ -1942,15 +1942,6 @@
       "new": false
     },
     {
-      "kind": "hash_corrected",
-      "system": "neogeocd",
-      "name": "neocdz.zip",
-      "destination": "neocdz.zip",
-      "field": "md5",
-      "old": "f39572af7584cb5b3f70ae8cc848aba2,389dbeb0cb857c130414747462cf9d71,c85b8132799f1b2ad3754a97947809d2,b9ab07a79997fc044ca164fc72cd5680",
-      "new": "b31a246b69493c35194fe0bac120dc37"
-    },
-    {
       "kind": "requirement_corrected",
       "system": "neogeocd",
       "name": "neocd.bin",
@@ -1958,15 +1949,6 @@
       "field": "required",
       "old": true,
       "new": false
-    },
-    {
-      "kind": "hash_corrected",
-      "system": "neogeocd",
-      "name": "neocd.zip",
-      "destination": "geolith/neocd.zip",
-      "field": "md5",
-      "old": "3711783a59ef875c31076512e3f9f0e5",
-      "new": "006a881532f2caffc3fe9fb5593f2ed5"
     },
     {
       "kind": "requirement_corrected",
@@ -2224,15 +2206,6 @@
       }
     },
     {
-      "kind": "requirement_corrected",
-      "system": "cdi",
-      "name": "cdibios.zip",
-      "destination": "cdi/cdibios.zip",
-      "field": "required",
-      "old": false,
-      "new": true
-    },
-    {
       "kind": "added",
       "system": "scummvm",
       "name": "MT32_CONTROL.ROM",
@@ -2258,8 +2231,6 @@
     }
   ],
   "hashes_corrected": [
-    "neogeocd/neocdz.zip md5",
-    "neogeocd/neocd.zip md5",
     "ti994a/TI-994A.ctg md5",
     "ti994a/ti-disk.ctg md5"
   ],
@@ -2267,9 +2238,9 @@
   "sizes_corrected": [],
   "sizes_removed": [],
   "hashes_cleared": [],
-  "requirements_corrected": 129,
+  "requirements_corrected": 128,
   "withheld": [],
-  "found_by_content": 103,
+  "found_by_content": 102,
   "removal_candidates": [
     {
       "system": "pc98",

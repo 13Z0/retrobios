@@ -913,7 +913,8 @@ class TheSummaryCountsWhatTheFileCarries(unittest.TestCase):
         return NativeFile(
             "scph5501.bin", "scph5501.bin", "psx",
             platform={"size": 524288, "crc32": "deadbeef", "md5": A, "sha1": "1" * 40},
-            truth={"md5": B},
+            # With a size of its own: without one, RomM keeps its entry whole.
+            truth={"md5": B, "size": 524288},
         )
 
     def test_romm_drops_the_hashes_it_counts_cleared(self):

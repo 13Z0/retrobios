@@ -20,15 +20,17 @@ from xml.sax.saxutils import quoteattr
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from common import parse_untrusted_xml
+from common import load_emulator_profiles, parse_untrusted_xml
 
 from .base_exporter import BaseExporter
-from .baseline import NativeFile, NativeSystem, Report
+from .baseline import NativeFile, NativeSystem, Report, by_destination, by_name
 
 SOURCE_URL = (
     "https://gitlab.com/recalbox/recalbox/-/raw/master/board/recalbox/fsoverlay"
     "/recalbox/share_init/system/.emulationstation/es_bios.xml"
 )
+# Resolved from the file: the profiles say which names each core answers to.
+EMULATORS_DIR = Path(__file__).resolve().parents[2] / "emulators"
 SCHEMA_URL = (
     "https://gitlab.com/recalbox/recalbox/-/raw/master/board/recalbox/fsoverlay"
     "/recalbox/share_init/system/.emulationstation/es_bios.xsd"
@@ -149,12 +151,82 @@ class Exporter(BaseExporter):
             return path
         return fe.destination or fe.name
 
+    def _profile_keys(self) -> dict[str, str]:
+        """Each name a core answers to, as Recalbox writes it, to its profile."""
+        index = getattr(self, "_keys", None)
+        if index is None:
+            index = {}
+            for key, profile in load_emulator_profiles(str(EMULATORS_DIR)).items():
+                for name in (key, *(str(c) for c in profile.get("cores") or [])):
+                    index.setdefault(name.replace("-", "_").lower(), key)
+            self._keys = index
+        return index
+
+    def required_value(self, fe: NativeFile) -> bool:
+        """Whether the cores the element names need the file.
+
+        The element lists its cores, and each core's own entry for the file,
+        found by name, says whether that core needs it. The md5 pairing
+        takes one entry only: saturn/saturn_bios.bin names yabause,
+        yabasanshiro and kronos, which require it, and its md5 paired it
+        with the beetle_saturn entry. The merged flag is true when any core
+        needs the file: cdi/cdibios.zip names same_cdi, which declares no
+        such set, and became mandatory because MAME requires it. Where none
+        of the element's cores declares the file, the platform's value
+        stands.
+        """
+        entries = [fe.truth] if fe.truth else []
+        entries += [
+            e for e in fe.namesakes
+            if e is not fe.truth and self._same_file(e, fe.platform or {})
+        ]
+        if not entries:
+            return fe.required
+        index = self._profile_keys()
+        named = {
+            index.get(core.rsplit("/", 1)[-1].replace("-", "_").lower(), "")
+            for core in fe.cores()
+        } - {""}
+        readers: set[str] = set()
+        requirers: set[str] = set()
+        for entry in entries:
+            cores = set(entry.get("_cores") or ()) & named
+            readers |= cores
+            required_by = entry.get("_required_by")
+            if required_by is None:
+                if entry.get("required") is not False:
+                    requirers |= cores
+            else:
+                requirers |= cores & set(required_by)
+        if not readers:
+            if fe.platform is not None and fe.platform.get("required") is not None:
+                return bool(fe.platform["required"])
+            return fe.required
+        return bool(requirers)
+
+    @staticmethod
+    def _same_file(entry: dict, declared: dict) -> bool:
+        """Whether a truth entry of that name describes this element's file.
+
+        Its path or its name in the same directory does. A name under an
+        unrelated directory does too: kronos reads kronos/saturn_bios.bin,
+        and Recalbox files the same BIOS under saturn/. A name in another
+        directory of the same tree does not: bluemsx reads
+        Machines/Shared Roms/KANJI.rom, which is not Recalbox's
+        Machines/MSX2+ - European/KANJI.rom.
+        """
+        if by_destination(entry, declared) or by_name(entry, declared):
+            return True
+        theirs = str(declared.get("destination") or declared.get("name", "")).split("/")[:-1]
+        ours = str(entry.get("path") or entry.get("name", "")).split("/")[:-1]
+        return not {d.casefold() for d in theirs} & {d.casefold() for d in ours}
+
     def _bios_element(self, fe: NativeFile, native_id: str) -> str:
         attrs = [f"path={quoteattr(self._path(fe))}"]
         attrs.append(f'md5={quoteattr(",".join(fe.hashes("md5")))}')
         attrs.append(f'core={quoteattr(",".join(fe.cores()))}')
 
-        if not fe.required:
+        if not self.required_value(fe):
             attrs.append('mandatory="false"')
         elif fe.native("mandatory_declared", None) is True:
             attrs.append('mandatory="true"')
@@ -183,6 +255,19 @@ class Exporter(BaseExporter):
         if fe.platform is not None and not self.writable(fe):
             return False
         return super().states(fe, field_name)
+
+    def lands(self, fe: NativeFile) -> bool:
+        """An element of theirs the render cannot rewrite is still in the
+        file, written back as Recalbox wrote it."""
+        return self.writable(fe) or id(fe) in getattr(self, "_held_whole", {})
+
+    def withheld(self) -> list[str]:
+        """Each element kept as written because the truth names no md5."""
+        return [
+            f"{label} keeps its md5: the truth accepts another dump and "
+            "names no md5 for it, which es_bios.xsd requires"
+            for label in sorted(getattr(self, "_held_whole", {}).values())
+        ]
 
     @classmethod
     def writable(cls, fe: NativeFile, require: str = "") -> bool:
@@ -234,6 +319,21 @@ class Exporter(BaseExporter):
                     for s in root.iter("system")
                 ]
 
+        # Elements of theirs written back as they stand, by (platform, path).
+        held = {
+            (platform, " ".join(child.get("path", "").split()))
+            for platform, _, children in theirs
+            for child in children
+            if isinstance(child, dict)
+        }
+        self._held_whole = {
+            id(fe): f"{system.native_id}/{self._path(fe)}"
+            for system in systems.values()
+            for fe in system.files
+            if fe.platform is not None
+            and not self.writable(fe)
+            and (system.native_id, " ".join(self._path(fe).split())) in held
+        }
         ours: dict[str, tuple[NativeSystem, dict[str, tuple[NativeFile, str]]]] = {}
         for system in systems.values():
             writable = [fe for fe in system.files if self.writable(fe)]

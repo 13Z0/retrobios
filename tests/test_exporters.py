@@ -43,6 +43,7 @@ from export_native import (  # noqa: E402
     SOURCES_INDEX,
     collect_originals,
     fetch,
+    landed_changes,
     pinned_base,
     source_key,
 )
@@ -1084,6 +1085,167 @@ class RecalboxExport(unittest.TestCase):
         }
         self.assertEqual(blocks, {pentagon: ["3" * 32], scorpion: [new]})
 
+    COMPOSITE_SCRAPED = {
+        "zip_digest": "composite",
+        "systems": {"snk-neogeo-cd": {"native_id": "neogeocd", "files": [{
+            "name": "neocdz.zip", "destination": "neocdz.zip", "md5": "a" * 32,
+            "native_system": "neogeocd", "core": "libretro/fbneo",
+            "required": True, "zip_digest": "composite",
+        }]}},
+    }
+
+    def test_a_composite_md5_is_not_replaced_by_a_container_md5(self):
+        """Recalbox hashes a .zip by its members (Bios.cpp:64-68,
+        Zip::Md5Composite): the truth's container md5 is another digest."""
+        truth = {"systems": {"snk-neogeo-cd": {"files": [
+            {"name": "neocdz.zip", "md5": "b" * 32, "required": True, "_cores": ["geolith"]},
+            {"name": "boot-data.zip", "md5": "c" * 32, "required": False, "_cores": ["geolith"]},
+        ]}}}
+        systems, report = build_native_model(truth, self.COMPOSITE_SCRAPED)
+        exporter = discover_exporters()["recalbox"]()
+        produced = exporter.render(systems, report, {}, None)["es_bios.xml"]
+        md5_of = {b.get("path"): b.get("md5") for b in ET.fromstring(produced).iter("bios")}
+        self.assertEqual(md5_of, {"neocdz.zip": "a" * 32})
+        self.assertEqual(landed_changes(exporter, systems).records, [])
+
+    def test_a_container_md5_never_pairs_with_a_composite(self):
+        """neocd.bin's md5 equals the composite of a neocdz.zip: by hash the
+        two would be read as one renamed file."""
+        truth = {"systems": {"snk-neogeo-cd": {"files": [
+            {"name": "neocd.bin", "md5": "a" * 32, "required": True, "_cores": ["neocd"]},
+        ]}}}
+        systems, _ = build_native_model(truth, self.COMPOSITE_SCRAPED)
+        declared = next(fe for s in systems.values() for fe in s.files if fe.platform)
+        self.assertIsNone(declared.truth)
+
+    def test_the_live_export_keeps_every_zip_md5(self):
+        """No element of es_bios.xml names a .zip under a new md5: none can
+        be stated as the composite Recalbox computes."""
+        path = REPO_ROOT / "exports" / "recalbox" / "es_bios.xml"
+        original = UPSTREAM_CACHE / "recalbox" / "es_bios.xml"
+        if not original.is_file():
+            self.skipTest("no cached original for recalbox")
+
+        def zips(text: str) -> dict[tuple[str, str], str]:
+            return {
+                (s.get("platform"), b.get("path")): ",".join(sorted(
+                    v.strip().lower() for v in b.get("md5", "").split(",")
+                ))
+                for s in ET.fromstring(text).iter("system")
+                for b in s.iter("bios")
+                if b.get("path", "").lower().endswith(".zip")
+            }
+
+        before = zips(original.read_text(encoding="utf-8"))
+        after = zips(path.read_text(encoding="utf-8"))
+        self.assertEqual({k: v for k, v in after.items() if k in before}, before)
+        self.assertEqual(set(after) - set(before), set())
+
+    def test_mandatory_follows_the_cores_the_element_names(self):
+        """cdi/cdibios.zip names libretro/same_cdi, which does not read the
+        set: MAME requiring it says nothing about that element."""
+        scraped = {"systems": {"philips-cdi": {"native_id": "cdi", "files": [
+            {"name": "cdibios.zip", "destination": "cdi/cdibios.zip", "md5": "a" * 32,
+             "native_system": "cdi", "core": "libretro/same_cdi", "required": False},
+            {"name": "cdimono1.zip", "destination": "cdi/cdimono1.zip", "md5": "b" * 32,
+             "native_system": "cdi", "core": "libretro/same_cdi", "required": False},
+        ]}}}
+        truth = {"systems": {"philips-cdi": {"files": [
+            {"name": "cdibios.zip", "required": True, "_cores": ["mame0278"],
+             "_required_by": ["mame0278"]},
+            {"name": "cdimono1.zip", "required": True, "_cores": ["same_cdi", "mame0278"],
+             "_required_by": ["same_cdi"]},
+        ]}}}
+        systems, report = build_native_model(truth, scraped)
+        exporter = discover_exporters()["recalbox"]()
+        produced = exporter.render(systems, report, {}, None)["es_bios.xml"]
+        mandatory = {
+            b.get("path"): b.get("mandatory") for b in ET.fromstring(produced).iter("bios")
+        }
+        self.assertEqual(mandatory, {"cdi/cdibios.zip": "false", "cdi/cdimono1.zip": None})
+        changes = landed_changes(exporter, systems).records
+        self.assertEqual(
+            [(c["name"], c["old"], c["new"]) for c in changes],
+            [("cdimono1.zip", False, True)],
+        )
+
+    def test_mandatory_reads_the_named_cores_not_the_hash_pairing(self):
+        """saturn/saturn_bios.bin names yabause, yabasanshiro and kronos,
+        which require it. Its md5 paired it with the beetle_saturn entry,
+        which does not, and the element went out mandatory="false"."""
+        md5 = "af5828fdff51384f99b3c4926be27762"
+        scraped = {"systems": {"sega-saturn": {"native_id": "saturn", "files": [{
+            "name": "saturn_bios.bin", "destination": "saturn/saturn_bios.bin",
+            "md5": md5, "native_system": "saturn", "required": True,
+            "core": "libretro/yabause,libretro/kronos",
+        }]}}}
+        truth = {"systems": {"sega-saturn": {"files": [
+            {"name": "saturn_bios.bin", "path": "saturn_bios.bin", "md5": md5,
+             "required": True, "_cores": ["beetle_saturn", "kronos", "yabause"],
+             "_required_by": ["beetle_saturn"]},
+            {"name": "saturn_bios.bin", "path": "kronos/saturn_bios.bin",
+             "required": True, "_cores": ["kronos", "yabause"],
+             "_required_by": ["kronos", "yabause"]},
+        ]}}}
+        systems, report = build_native_model(truth, scraped)
+        exporter = discover_exporters()["recalbox"]()
+        declared = next(fe for s in systems.values() for fe in s.files if fe.platform)
+        self.assertEqual(declared.truth["_required_by"], ["beetle_saturn"])
+        produced = exporter.render(systems, report, {}, None)["es_bios.xml"]
+        element = next(
+            b for b in ET.fromstring(produced).iter("bios")
+            if b.get("path") == "saturn/saturn_bios.bin"
+        )
+        self.assertNotEqual(element.get("mandatory"), "false")
+        self.assertEqual(
+            [c for c in landed_changes(exporter, systems).records
+             if c["kind"] == "requirement_corrected"],
+            [],
+        )
+
+    def test_a_namesake_elsewhere_in_the_same_tree_is_another_file(self):
+        """bluemsx reads Machines/Shared Roms/KANJI.rom, not Recalbox's
+        Machines/MSX2+ - European/KANJI.rom."""
+        scraped = {"systems": {"msx": {"native_id": "msx2", "files": [{
+            "name": "KANJI.rom", "destination": "Machines/MSX2+ - European/KANJI.rom",
+            "md5": "a" * 32, "native_system": "msx2", "required": True,
+            "core": "libretro/bluemsx",
+        }]}}}
+        truth = {"systems": {"msx": {"files": [{
+            "name": "KANJI.rom", "path": "Machines/Shared Roms/KANJI.rom",
+            "md5": "b" * 32, "required": False, "_cores": ["bluemsx"], "_required_by": [],
+        }]}}}
+        systems, _ = build_native_model(truth, scraped)
+        exporter = discover_exporters()["recalbox"]()
+        declared = next(fe for s in systems.values() for fe in s.files if fe.platform)
+        self.assertTrue(exporter.required_value(declared))
+
+    def test_an_element_kept_as_written_is_not_counted_lost(self):
+        """The truth takes the entry on sha1 and size and names no md5: the
+        element is written back whole, and the run counted it a platform
+        entry the format cannot keep."""
+        scraped = {"systems": {"x": {"native_id": "x", "files": [{
+            "name": "a.bin", "destination": "x/a.bin", "md5": "a" * 32, "size": 100,
+            "native_system": "x", "core": "libretro/foo", "required": True,
+        }]}}}
+        truth = {"systems": {"x": {"files": [{
+            "name": "a.bin", "path": "x/a.bin", "sha1": "b" * 40, "size": 200,
+            "required": True, "_cores": ["foo"],
+        }]}}}
+        element = f'    <bios path="x/a.bin" md5="{"a" * 32}" core="libretro/foo" />'
+        original = (
+            '<?xml version="1.0" encoding="UTF-8"?>\n<biosList>\n'
+            f'  <system fullname="X" platform="x">\n{element}\n  </system>\n</biosList>\n'
+        )
+        systems, report = build_native_model(truth, scraped)
+        exporter = discover_exporters()["recalbox"]()
+        produced = exporter.render(systems, report, {"es_bios.xml": original}, None)
+        self.assertIn(element, produced["es_bios.xml"])
+        fe = next(fe for s in systems.values() for fe in s.files)
+        self.assertTrue(exporter.lands(fe))
+        self.assertEqual(landed_changes(exporter, systems).records, [])
+        self.assertEqual(len(exporter.withheld()), 1)
+
     def test_a_truncated_export_is_reported(self):
         exporter, systems, _ = self._render()
         empty = {
@@ -1424,9 +1586,17 @@ class RommSizeIsNeverNone(unittest.TestCase):
         produced = exporter.render(systems, report, {}, None)
         return exporter, systems, produced, json.loads(produced["known_bios_files.json"])
 
-    def test_the_platform_size_stands_when_none_is_settled(self):
-        _, _, _, data = self._export(524288)
-        self.assertEqual(data["psx:scph5501.bin"]["size"], "524288")
+    def test_an_entry_the_truth_takes_without_a_size_stays_whole(self):
+        """RomM compares the size before any hash: the new md5 beside the
+        old size never verified, and the report said the size was removed."""
+        from export_native import landed_changes  # noqa: PLC0415
+
+        exporter, systems, _, data = self._export(524288)
+        self.assertEqual(
+            data["psx:scph5501.bin"], {"size": "524288", "md5": "a" * 32}
+        )
+        self.assertEqual(landed_changes(exporter, systems).records, [])
+        self.assertEqual(len(exporter.withheld()), 1)
 
     def test_no_size_is_written_rather_than_none(self):
         exporter, systems, produced, data = self._export(None)
@@ -1584,6 +1754,31 @@ class MisterDatabaseComesBackAsWritten(unittest.TestCase):
         with tempfile.TemporaryDirectory(dir=REPO_ROOT / "tmp") as tmp:
             export_native._write_produced(Path(tmp), {"a.zip": b"PK\x03\x04\xff"}, {})
             self.assertEqual((Path(tmp) / "a.zip").read_bytes(), b"PK\x03\x04\xff")
+
+    def test_a_new_hash_without_a_size_leaves_the_entry_whole(self):
+        """The Downloader checks each entry by size (fetch_file_worker.py:127):
+        the old size beside the new hash described no file, and the report
+        announced a size removal the database did not carry."""
+        from export_native import landed_changes  # noqa: PLC0415
+
+        database = {"db_id": "bios_db", "files": {
+            "games/X/boot.rom": {"hash": "a" * 32, "size": 100, "url": "u"},
+        }}
+        original = json.dumps(database)
+        scraped = {"systems": {"x": {"files": [{
+            "name": "boot.rom", "destination": "X/boot.rom",
+            "md5": "a" * 32, "size": 100,
+        }]}}}
+        truth = {"systems": {"x": {"files": [{
+            "name": "boot.rom", "path": "X/boot.rom", "md5": "b" * 32, "_cores": ["x"],
+        }]}}}
+        exporter = discover_exporters()["misterfpga"]()
+        systems, report = build_native_model(truth, scraped)
+        produced = exporter.render(systems, report, {"bios_db.json": original}, scraped)
+        self.assertEqual(produced["bios_db.json"], original)
+        self.assertEqual(landed_changes(exporter, systems).records, [])
+        self.assertEqual(len(exporter.withheld()), 1)
+        self.assertEqual(exporter.validate(systems, produced), [])
 
     def test_an_empty_truth_hands_back_the_database(self):
         archive = UPSTREAM_CACHE / "misterfpga" / "bios_db.json.zip"
