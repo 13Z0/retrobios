@@ -381,7 +381,7 @@ def check_consistency(verify_output: str, pack_output: str) -> bool:
             all_ok = False
 
     status = "OK" if all_ok else "FAILED"
-    print(f"--- consistency check: {status} ---")
+    print(f"--- {step_title(STEP_LABELS['consistency'])}, counts: {status} ---")
     return all_ok
 
 
@@ -446,7 +446,7 @@ def check_pack_destinations(
     import json  # noqa: PLC0415
     import zipfile  # noqa: PLC0415
 
-    print("\n--- 5/8 consistency check: destinations ---")
+    print(f"\n--- {step_title(STEP_LABELS['consistency'])}, destinations ---")
     try:
         credited_by = json.loads(Path(destinations_file).read_text())
     except (OSError, ValueError) as exc:
@@ -505,7 +505,7 @@ def check_emulator_packs(
         select_emulator_profiles,
     )
 
-    print("\n--- 5/8 consistency check: emulator packs ---")
+    print(f"\n--- {step_title(STEP_LABELS['consistency'])}, emulator packs ---")
     db = load_database(db_path)
     zip_contents = build_zip_contents_index(db)
     profiles = load_emulator_profiles(emulators_dir, skip_aliases=False)
@@ -1008,7 +1008,10 @@ def main() -> None:
         # Counts can agree while the paths differ, both ways at once.
         ok = check_pack_destinations(destinations_file, pack_output) and ok
         ok = check_emulator_packs() and ok
-        print(f"--- 5/8 consistency check, counts and paths: {'OK' if ok else 'FAILED'} ---")
+        print(
+            f"--- {step_title(STEP_LABELS['consistency'])}, counts and paths: "
+            f"{'OK' if ok else 'FAILED'} ---"
+        )
         results["consistency"] = ok
         all_ok = all_ok and ok
     else:

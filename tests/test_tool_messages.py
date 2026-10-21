@@ -167,6 +167,14 @@ class ThePipelineCountsItsRealSteps(unittest.TestCase):
                 # A step's own label, or a second command of a listed step.
                 self.assertIn(label.split(" ", 1)[0], numbers)
 
+    def test_no_title_counts_eight_steps(self):
+        """Three print() headers of step 5 still read "5/8" beside the
+        computed "5 consistency check [20/24]"."""
+        import re  # noqa: PLC0415
+
+        source = (REPO_ROOT / "scripts" / "pipeline.py").read_text(encoding="utf-8")
+        self.assertEqual(re.findall(r'"[^"\n]*---[^"\n]*\b\d+[a-z]?/\d+\b[^"\n]*"', source), [])
+
     def test_progress_comes_from_the_list(self):
         total = len(pipeline.STEP_LABELS)
         title = pipeline.step_title(pipeline.STEP_LABELS["render_site"])
