@@ -217,6 +217,33 @@ def hold_artifact_lock(directory: str) -> Iterator[None]:
             else:
                 os.environ[HELD_LOCK_ENV] = previous
 
+
+# What a pipeline run writes at fixed paths, whatever its --output-dir.
+REPOSITORY_OUTPUTS = ("database.json", "install/", "README.md", "CONTRIBUTING.md", "docs/")
+
+
+@contextlib.contextmanager
+def hold_repository_outputs(root: str = ".") -> Iterator[None]:
+    """Hold the outputs a pipeline writes at fixed paths, for the whole run.
+
+    The output-directory lock let a run on tmp/packtest start beside a run
+    on dist/: both rewrote database.json, and the second to reach the
+    manifest step found install/ held after minutes of work, or, when the
+    steps did not overlap, rewrote the committed manifests from its own
+    state. The lock file is the repository root's .lock.
+    """
+    stack = contextlib.ExitStack()
+    try:
+        stack.enter_context(artifact_lock(root))
+    except ArtifactLockBusy as exc:
+        raise ArtifactLockBusy(
+            f"another pipeline run is writing {', '.join(REPOSITORY_OUTPUTS)} "
+            f"(lock: {os.path.join(root, '.lock')}). Wait for it to finish."
+        ) from exc
+    with stack:
+        yield
+
+
 def _build_timestamp(db: dict | None = None) -> str:
     """Timestamp for generated artifacts.
 

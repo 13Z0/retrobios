@@ -2810,6 +2810,7 @@ from artifacts import (  # noqa: E402,F401
     ArtifactLockBusy,
     artifact_lock,
     hold_artifact_lock,
+    hold_repository_outputs,
     _TIMESTAMP_PATTERNS,
     _strip_timestamps,
 )

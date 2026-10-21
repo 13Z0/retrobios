@@ -68,6 +68,7 @@ from common import (
     artifact_lock,
     github_token,
     hold_artifact_lock,
+    hold_repository_outputs,
     load_data_dir_registry,
 )
 from refresh_data_dirs import hold_data_dirs
@@ -700,13 +701,20 @@ def main() -> None:
     # hold lasts until this process exits: taken step by step, it let another
     # run purge the packs between the build and the integrity check, which
     # then reported every platform SKIP and passed.
+    # database.json, install/, README.md and docs/ sit at fixed paths, so
+    # every run holds them too: a run on a scratch --output-dir otherwise
+    # rewrote them beside the run on dist/.
     held = contextlib.ExitStack()
-    if not args.skip_packs:
-        try:
+    try:
+        held.enter_context(
+            hold_repository_outputs(str(Path(__file__).resolve().parent.parent))
+        )
+        if not args.skip_packs:
             held.enter_context(hold_artifact_lock(args.output_dir))
-        except ArtifactLockBusy as exc:
-            print(f"ERROR: {exc}", file=sys.stderr)
-            sys.exit(1)
+    except ArtifactLockBusy as exc:
+        held.close()
+        print(f"ERROR: {exc}", file=sys.stderr)
+        sys.exit(1)
 
     all_ok = True
     total_start = time.monotonic()

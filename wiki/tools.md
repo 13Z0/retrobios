@@ -88,8 +88,11 @@ alone, run `python scripts/check_buildbot_system.py`.
   rewrites nothing, so a diff on a generated file always means content.
 - **One run per output directory.** Pack generation takes a lock on
   `<output-dir>/.lock`, and a second run on the same folder stops at once
-  rather than read a half-written ZIP. Experiments use a scratch
-  `--output-dir` under `tmp/`.
+  rather than read a half-written ZIP. Pack experiments with
+  `generate_pack.py` use a scratch `--output-dir` under `tmp/`. A pipeline
+  run also writes `database.json`, `install/`, `README.md` and `docs/` at
+  fixed paths, so it holds the repository's `.lock` as well, and a second
+  pipeline is refused whatever its `--output-dir`.
 - **Read the exit status before the output.** A generator that crashed leaves
   the previous artifact in place, which reads exactly like a run that changed
   nothing.
