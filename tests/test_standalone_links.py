@@ -166,6 +166,20 @@ class Layout(unittest.TestCase):
         libretro = next(view for view, standalone in views if not standalone)
         self.assertIs(libretro, PROFILE)
 
+    def test_dual_mode_gets_both_layouts(self) -> None:
+        # The libretro build still reads dc/, the standalone build the
+        # linked folder: neither loses a file to the other.
+        cfg = {**config(link("emu", "$biosdir/emu", "$home/.local/share/emu is a symlink to it"),
+                        base="BIOS"), "dual_mode_cores": ["emu"]}
+        views = dict((standalone, view) for view, standalone in
+                     platform_layouts("emu", PROFILE, standalone_set(cfg)))
+        self.assertEqual(
+            [f["path"] for f in views[False]["files"]], ["dc/boot.bin", "dc/set.zip", "dc/shared.bin"]
+        )
+        self.assertEqual(
+            [f.get("standalone_path") for f in views[True]["files"]], ["emu/boot.bin", "emu/set.zip", None]
+        )
+
     def test_union_of_platforms_with_two_folders_keeps_the_profile_layout(self) -> None:
         union = standalone_set(config(self.LINKED, base="BIOS")) | standalone_set(config(
             link("emu", "${biosPath}/emu/bios", "symlink ${biosPath}/emu/bios -> ${HOME}/.local/share/emu"),
@@ -220,7 +234,39 @@ class FlycastOnEachPlatform(unittest.TestCase):
                         )
 
 
+    def test_emudeck_keeps_the_libretro_layout_beside_the_linked_one(self) -> None:
+        # EmuDeck's RetroArch_installCores downloads flycast_libretro, which
+        # reads system/dc/, next to the standalone Flycast in flycast/bios/.
+        cfg = load_platform_config("emudeck", str(REPO_ROOT / "platforms"))
+        self.assertIn("flycast", cfg.get("dual_mode_cores") or [])
+        views = {
+            standalone: view
+            for view, standalone in platform_layouts("flycast", self.profile, standalone_set(cfg))
+        }
+        self.assertEqual(set(views), {False, True})
+        for entry in views[False]["files"]:
+            self.assertTrue(entry["path"].startswith("dc/"), entry["path"])
+        for entry in views[True]["files"]:
+            self.assertTrue(entry["standalone_path"].startswith("flycast/bios/"))
+
+
 class Scrapers(unittest.TestCase):
+    def test_emudeck_installed_libretro_cores(self) -> None:
+        from scraper.emudeck_scraper import installed_libretro_cores
+
+        script = textwrap.dedent("""\
+            RetroArch_installCores(){
+            \tRAcores=(
+            \t\t\t81_libretro \\
+            \t\t\tflycast_libretro \\
+            \t\t\tmesen-s_libretro \\
+            \t\t\t)
+            }
+            """)
+        self.assertEqual(installed_libretro_cores(script), ["81", "flycast", "mesen-s"])
+        with self.assertRaises(RuntimeError):
+            installed_libretro_cores("RetroArch_installCores(){\n}\n")
+
     """The records each platform's scraper writes for these directories."""
 
     def test_rocknix_patched_data_directory(self) -> None:

@@ -66,6 +66,14 @@ standalone_cores:
 - xenia
 - xenianative
 - yuzu
+dual_mode_cores:
+- flycast
+- mame
+- melonds
+- mgba
+- mupen64plus_next
+- ppsspp
+- scummvm
 systems:
   sony-playstation:
     files:
