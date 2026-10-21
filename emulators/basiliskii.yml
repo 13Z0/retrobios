@@ -65,7 +65,6 @@ notes: |
 
 files:
   - name: ROM
-    aliases: [mac.rom]
     required: true
     min_size: 524288
     max_size: 1048576
