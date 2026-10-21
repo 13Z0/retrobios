@@ -8,6 +8,10 @@ out on RetroBat, EmuDeck and RetroDECK.
 
 from __future__ import annotations
 
+import json
+import os
+import random
+import subprocess
 import sys
 import unittest
 from pathlib import Path
@@ -398,6 +402,56 @@ class TruthKnowsWhatTheEmulatorInstalls(unittest.TestCase):
         files = [{"name": "cdbios.bin", "md5": "a" * 32, "unread_on": ["retrobat"]}]
         names = [f["name"] for f in self.truth(files, "retrobat")["systems"]["neogeo"].get("files", [])]
         self.assertEqual(names, [])
+
+
+class TheModelIsAFunctionOfItsInputs(unittest.TestCase):
+    """Two runs on the same inputs wrote dist/truth/<platform>.yml with its
+    systems in two orders. The systems a core covers without a file were
+    added by walking a set, so the hash seed decided where each was written.
+    """
+
+    NAMES = [f"core{i:02d}" for i in range(16)]
+    SCRIPT = (
+        "import json, sys\n"
+        "sys.path.insert(0, sys.argv[1])\n"
+        "from truth import generate_platform_truth\n"
+        "names = [f'core{i:02d}' for i in range(16)]\n"
+        "profiles = {n: {'emulator': n, 'type': 'libretro',\n"
+        "                'systems': [f'maker-system-{n}'], 'files': []} for n in names}\n"
+        "config = {'cores': names,\n"
+        "          'systems': {f'maker-system-{n}': {'files': []} for n in names}}\n"
+        "print(json.dumps(generate_platform_truth('p', config, {}, profiles)))\n"
+    )
+
+    def _model(self, seed: str) -> str:
+        proc = subprocess.run(
+            [sys.executable, "-c", self.SCRIPT, str(REPO_ROOT / "scripts")],
+            env={**os.environ, "PYTHONHASHSEED": seed},
+            capture_output=True, text=True, timeout=120, check=True,
+        )
+        return proc.stdout
+
+    def test_the_hash_seed_changes_nothing(self):
+        first = self._model("0")
+        for seed in ("1", "2", "3", "4"):
+            with self.subTest(seed=seed):
+                self.assertEqual(self._model(seed), first)
+
+    def test_the_profile_order_changes_nothing(self):
+        profiles = {
+            n: {"emulator": n, "type": "libretro", "systems": [f"maker-system-{n}"],
+                "files": [{"name": f"{n}.bin", "system": f"maker-system-{n}",
+                           "md5": f"{i:032x}"}]}
+            for i, n in enumerate(self.NAMES)
+        }
+        config = {"cores": self.NAMES,
+                  "systems": {f"maker-system-{n}": {"files": []} for n in self.NAMES}}
+        expected = json.dumps(generate_platform_truth("p", config, {}, profiles))
+        shuffled = list(profiles.items())
+        random.Random(7).shuffle(shuffled)
+        self.assertEqual(
+            json.dumps(generate_platform_truth("p", config, {}, dict(shuffled))), expected
+        )
 
 
 if __name__ == "__main__":

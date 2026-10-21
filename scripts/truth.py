@@ -550,10 +550,12 @@ def generate_platform_truth(
             if fname:
                 declared_by_name.setdefault(fname, []).append((psid, fe))
 
-    # Normalized ID -> platform system ID
+    # Normalized ID -> platform system ID. Walked in the platform's order,
+    # not the set's: two IDs normalizing alike went to whichever the hash
+    # seed put last.
     norm_to_platform: dict[str, str] = {}
-    for psid in platform_sys_ids:
-        norm_to_platform[_norm_system_id(psid)] = psid
+    for psid in config.get("systems", {}):
+        norm_to_platform.setdefault(_norm_system_id(psid), psid)
 
     def _map_sys_id(profile_sid: str) -> str:
         """Map a profile system ID to the platform's system ID."""
@@ -669,8 +671,9 @@ def generate_platform_truth(
 
     # Ensure all systems of resolved cores have entries (even with 0 files).
     # This documents that the system is covered: the core was analyzed and
-    # needs no external files for this system.
-    for emu_name in cores_profiled:
+    # needs no external files for this system. Sorted: the set's order is
+    # the hash seed's, and it decided where each empty system was written.
+    for emu_name in sorted(cores_profiled):
         profile = profiles[emu_name]
         for prof_sid in profile.get("systems", []):
             sys_id = _map_sys_id(prof_sid)
