@@ -2776,30 +2776,6 @@
     "md5": "85fede415f4294cc777517d7eada482e",
     "sha1": "16375d42ea109b47edded7a16028de7fdb3013a1"
   },
-  "zxs:fuse/48.rom": {
-    "size": "16384",
-    "crc": "ddee531f",
-    "md5": "4c42a2f075212361c3117015b107ff68",
-    "sha1": "5ea7c2b824672e914525d1d5c419d71b84a426a2"
-  },
-  "zxs:fuse/plus3e-0.rom": {
-    "size": "16384",
-    "crc": "7f4a5482",
-    "md5": "bc123f625e245c225f92ef05933ed134",
-    "sha1": "649fbd233490bf58b35350b0123d36caaaa011eb"
-  },
-  "zxs:fuse/plus3e-1.rom": {
-    "size": "16384",
-    "crc": "5aeb4675",
-    "md5": "617364264c587d20c9fc4746c29679f2",
-    "sha1": "f12198108cbb14de4f03c6695bc16d08c85ee214"
-  },
-  "zxs:fuse/plus3e-2.rom": {
-    "size": "16384",
-    "crc": "504755cb",
-    "md5": "c363e95dcd0a90e6e7f847e6e47e0179",
-    "sha1": "773633dce5ba323a9e00d9d0f9e4d8c295df7c87"
-  },
   "zxs:plus2.rom": {
     "size": "32768",
     "crc": "e7a517dc",

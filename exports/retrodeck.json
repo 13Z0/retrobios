@@ -24,7 +24,7 @@
     "xemu/component_manifest.json",
     "xroar/component_manifest.json"
   ],
-  "summary": "2021 kept, 37 added, 1 hash corrected, 52 requirements corrected, 95 hashes filled, 934 additions left out, 107 entries found by content not listed",
+  "summary": "2021 kept, 37 files added, 1 hash updated to the emulator source, 52 required flags aligned with the code, 95 hashes added to an existing entry",
   "counts": {
     "kept": 2021,
     "added": 37,
@@ -8781,6 +8781,20 @@
       "cores_examined": [
         "nekop2",
         "np2kai"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "dreamcast",
+      "name": "naomi_boot.bin",
+      "destination": "bios/dc/naomi_boot.bin",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "flycast",
+        "flycast2021",
+        "redream",
+        "retrodream"
       ],
       "unresolved_cores": []
     },

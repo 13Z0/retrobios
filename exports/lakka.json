@@ -6,11 +6,11 @@
   "files": [
     "System.dat"
   ],
-  "summary": "516 kept, 142 added, 82 hashes corrected, 0 requirements corrected, 25 sizes corrected, 1 size removed, 2 hashes cleared, 848 additions left out, 108 entries found by content not listed",
+  "summary": "516 kept, 141 files added, 79 hashes updated to the emulator source, 24 sizes updated to the emulator source, 1 size removed, 2 hashes removed",
   "counts": {
     "kept": 516,
-    "added": 142,
-    "not_added": 848,
+    "added": 141,
+    "not_added": 847,
     "not_kept": 0
   },
   "changes": [
@@ -74,20 +74,6 @@
       "new": {
         "sha1": "30c6ad697439de7c2158192ecdb48f5edd37478e",
         "md5": "f5cdce5b3749d673ad8f073ccc7371e4"
-      }
-    },
-    {
-      "kind": "added",
-      "system": "Arcade",
-      "name": "hiscore.dat",
-      "destination": "hiscore.dat",
-      "field": null,
-      "old": null,
-      "new": {
-        "sha1": "21ddda0c61bd4f1cc04fb9d09e16d403d620f9e8",
-        "md5": "9b262149ec70cbda741a8ba55784f8e1",
-        "crc32": "cd9f4a9c",
-        "size": 36182
       }
     },
     {
@@ -336,10 +322,10 @@
       "field": null,
       "old": null,
       "new": {
-        "sha1": "bcb18c1016cbb1c748d39254e7f94fbf875b1c0b",
-        "md5": "14d797815aa9bbc79fe284b244ea75b1",
-        "crc32": "52e9ff41",
-        "size": 6680181
+        "sha1": "6540ae1a35080e3dbeacfba5139e4781eb74ca86",
+        "md5": "51d44cd24e16fbb395b1bfefbaacd375",
+        "crc32": "d50e6275",
+        "size": 6741053
       }
     },
     {
@@ -1033,42 +1019,6 @@
         "crc32": "446ec5b2",
         "size": 1048576
       }
-    },
-    {
-      "kind": "hash_corrected",
-      "system": "Sony - PlayStation 2",
-      "name": "GameIndex.yaml",
-      "destination": "pcsx2/resources/GameIndex.yaml",
-      "field": "sha1",
-      "old": "57369df9ca82a460e596cea7835c5a0797dee668",
-      "new": "72bfdf91fa11a86e2810a7c167cdcf11e20418a8"
-    },
-    {
-      "kind": "hash_corrected",
-      "system": "Sony - PlayStation 2",
-      "name": "GameIndex.yaml",
-      "destination": "pcsx2/resources/GameIndex.yaml",
-      "field": "md5",
-      "old": "526291c9c9bae8b184b0e5f4bfa94eb9",
-      "new": "ec65dbfe7379cfac816b4d02259c0ca5"
-    },
-    {
-      "kind": "hash_corrected",
-      "system": "Sony - PlayStation 2",
-      "name": "GameIndex.yaml",
-      "destination": "pcsx2/resources/GameIndex.yaml",
-      "field": "crc32",
-      "old": "20b4ea53",
-      "new": "1a8e4cf7"
-    },
-    {
-      "kind": "size_corrected",
-      "system": "Sony - PlayStation 2",
-      "name": "GameIndex.yaml",
-      "destination": "pcsx2/resources/GameIndex.yaml",
-      "field": "size",
-      "old": 1737799,
-      "new": 2690355
     },
     {
       "kind": "added",
@@ -2854,9 +2804,6 @@
     "Nintendo - Nintendo DSi/dsi_bios9.bin md5",
     "Nintendo - Nintendo DSi/dsi_bios9.bin crc32",
     "SNK - NeoGeo CD/neocdz.zip md5",
-    "Sony - PlayStation 2/GameIndex.yaml sha1",
-    "Sony - PlayStation 2/GameIndex.yaml md5",
-    "Sony - PlayStation 2/GameIndex.yaml crc32",
     "ScummVM/access.dat sha1",
     "ScummVM/access.dat md5",
     "ScummVM/access.dat crc32",
@@ -2930,7 +2877,6 @@
   "hashes_filled": [],
   "sizes_corrected": [
     "Arcade/aes.zip",
-    "Sony - PlayStation 2/GameIndex.yaml",
     "ScummVM/access.dat",
     "ScummVM/cryomni3d.dat",
     "ScummVM/drascula.dat",

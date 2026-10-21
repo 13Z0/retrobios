@@ -5,7 +5,7 @@
   "platform": "retroarch",
   "display_name": "RetroArch",
   "version": "1.0",
-  "generated": "2026-10-21T04:49:38Z",
+  "generated": "2026-10-21T08:36:42Z",
   "base_destination": "system",
   "detect": [
     {
@@ -410,10 +410,10 @@
       }
     }
   ],
-  "total_files": 8059,
-  "total_size": 6942955408,
-  "pack_files": 10697,
-  "pack_size": 6983321180,
+  "total_files": 8055,
+  "total_size": 6877342280,
+  "pack_files": 10693,
+  "pack_size": 6917708052,
   "total_omitted": 11,
   "omitted_files": [
     {
@@ -1623,6 +1623,83 @@
       "xrick"
     ]
   },
+  "system_names": {
+    "3do": [
+      "3DO Company, The - 3DO"
+    ],
+    "apple-macintosh-ii": [
+      "MacII"
+    ],
+    "doom": [
+      "Id Software - Doom"
+    ],
+    "elektronika-bk": [
+      "Elektronika - BK-0010/BK-0011(M)"
+    ],
+    "epoch-scv": [
+      "EPOCH/YENO Super Cassette Vision"
+    ],
+    "nec-pc-88": [
+      "NEC - PC-8801"
+    ],
+    "nec-pc-engine": [
+      "NEC - PC Engine - TurboGrafx 16 - SuperGrafx"
+    ],
+    "nintendo-64dd": [
+      "Nintendo - Nintendo 64DD"
+    ],
+    "nintendo-ds": [
+      "Nintendo - Nintendo DS"
+    ],
+    "nintendo-dsi": [
+      "Nintendo - Nintendo DSi"
+    ],
+    "nintendo-fds": [
+      "Nintendo - Famicom Disk System"
+    ],
+    "nintendo-gb": [
+      "Nintendo - Gameboy"
+    ],
+    "nintendo-gba": [
+      "Nintendo - Game Boy Advance"
+    ],
+    "nintendo-gbc": [
+      "Nintendo - Gameboy Color"
+    ],
+    "nintendo-nes": [
+      "Nintendo - Nintendo Entertainment System"
+    ],
+    "nintendo-sgb": [
+      "Nintendo - Super Game Boy"
+    ],
+    "nintendo-snes": [
+      "Nintendo - Super Nintendo Entertainment System"
+    ],
+    "philips-videopac": [
+      "Phillips - Videopac+"
+    ],
+    "sega-dreamcast-arcade": [
+      "Sega - Dreamcast-based Arcade"
+    ],
+    "sega-master-system": [
+      "Sega - Master System - Mark III"
+    ],
+    "sega-mega-cd": [
+      "Sega - Mega CD - Sega CD"
+    ],
+    "sega-mega-drive": [
+      "Sega - Mega Drive - Genesis"
+    ],
+    "sony-psp": [
+      "Sony - PlayStation Portable"
+    ],
+    "ti-83": [
+      "Texas Instruments TI-83"
+    ],
+    "videoton-tvc": [
+      "Videoton - TV Computer"
+    ]
+  },
   "files": [
     {
       "dest": "3do_arcade_saot.bin",
@@ -2073,20 +2150,12 @@
           ]
         },
         {
-          "sha1": "fc398ab4e13ca6bfef3366ed3391b1050e0eb5e8",
-          "sha256": "d5eb00ce8a584ca185732cbbab7d99665f43023c1ef8d1237154d3431270b907",
-          "size": 1862445,
-          "repo_path": "bios/SNK/Neo Geo/.variants/neogeo.zip.fc398ab4",
-          "cores": [
-            "mame2003_plus"
-          ]
-        },
-        {
           "sha1": "447e23757e5be7ae688885a5ce8ea3da8c8bedc0",
           "sha256": "9a8cf2b88488969d7000028b30474175067f753a649a1fe0c008efd8450d60a0",
           "size": 1952551,
           "repo_path": "bios/Arcade/MAME/neogeo.zip",
           "cores": [
+            "mame2003_plus",
             "mame2009"
           ]
         },
@@ -6413,6 +6482,7 @@
         "nintendo-gamecube"
       ],
       "regions": [
+        "latin-america",
         "north-america"
       ],
       "region_groups": [
@@ -9169,6 +9239,17 @@
       "cores": null,
       "systems": [
         "sega-dreamcast-arcade"
+      ],
+      "alternatives": [
+        {
+          "sha1": "e18c5e9ca21654dfd724aa54e625b386e6ffb2c5",
+          "sha256": "983487f67861b4ec2b7f20cc49b25de0cb6f2160ec741283312deabb199e465e",
+          "size": 702637,
+          "repo_path": "bios/Arcade/Arcade/airlbios.zip",
+          "cores": [
+            "flycast"
+          ]
+        }
       ]
     },
     {
@@ -9295,6 +9376,17 @@
       "cores": null,
       "systems": [
         "sega-dreamcast-arcade"
+      ],
+      "alternatives": [
+        {
+          "sha1": "da79eca49c59f7661737643b5e11e63a73b51fcc",
+          "sha256": "5efc11a37e0b8fe97e0007bb707d8a4f047dd0b8b7ba59293e81cca0443f7993",
+          "size": 7038226,
+          "repo_path": "bios/Arcade/Arcade/naomi2.zip",
+          "cores": [
+            "flycast"
+          ]
+        }
       ]
     },
     {
@@ -9306,6 +9398,17 @@
       "cores": null,
       "systems": [
         "sega-dreamcast-arcade"
+      ],
+      "alternatives": [
+        {
+          "sha1": "de78a0b8df78d5ffdb1a274f80d877a96ef204aa",
+          "sha256": "3bca348667d6ff08fd5efe38eec35100ccbe0de3cd1e0b5dd72ae5c6cc201ee9",
+          "size": 1281424,
+          "repo_path": "bios/Arcade/Arcade/segasp.zip",
+          "cores": [
+            "flycast"
+          ]
+        }
       ]
     },
     {
@@ -9425,7 +9528,9 @@
       ],
       "regions": [
         "europe",
-        "north-america"
+        "latin-america",
+        "north-america",
+        "oceania"
       ],
       "region_groups": [
         "sega-master-system"
@@ -77917,21 +78022,10 @@
       "size": 519984,
       "repo_path": "bios/Sega/Dreamcast/font.bin",
       "cores": [
-        "flycast",
         "flycast2021"
       ],
       "systems": [
         "sega-dreamcast"
-      ]
-    },
-    {
-      "dest": "dc/naomi_boot.bin",
-      "sha1": "6d27d71aec4dfba98f66316ae74a1426d567698a",
-      "sha256": "d821817411834ea0e98ae48b1e2268b12e7d599630556fa5da1792c6e1a2c66f",
-      "size": 2097152,
-      "repo_path": "bios/Sega/Dreamcast/naomi_boot.bin",
-      "cores": [
-        "flycast"
       ]
     },
     {
@@ -96808,9 +96902,9 @@
     },
     {
       "dest": "s8k_cpu.zip",
-      "sha1": "5d5c546570ce42d50ea2b311a4a53e16ee43b3bb",
-      "sha256": "aeead8180d47919f704086b7c96646a06b2f1862a65be3a299120cb873139cec",
-      "size": 38665,
+      "sha1": "f00348425069db620ce0a2730e5d0fac2e897c48",
+      "sha256": "dd55d9824bdc20332d92c29ca1e34cdd7faaceefca7562f8f62711e9eaf70366",
+      "size": 31998,
       "repo_path": "bios/Arcade/MAME/s8k_cpu.zip",
       "cores": [
         "mame"
@@ -101037,32 +101131,6 @@
       "sha256": "f17daa119a32f8482ece883ceddc387f10180aafeed095d3b654e2000b8ca294",
       "size": 7971360,
       "repo_path": "bios/Arcade/MAME/cheat.dat",
-      "cores": [
-        "mame2000"
-      ],
-      "systems": [
-        "arcade"
-      ]
-    },
-    {
-      "dest": "history.dat",
-      "sha1": "42d6d9ac933a7819adfd686f629a8e43aea4e880",
-      "sha256": "e768148656d564487c765ee673b57f5b14f09c062e71eceafd1c9b0610689be8",
-      "size": 38635890,
-      "repo_path": "bios/Arcade/MAME/history.dat",
-      "cores": [
-        "mame2000"
-      ],
-      "systems": [
-        "arcade"
-      ]
-    },
-    {
-      "dest": "mameinfo.dat",
-      "sha1": "65323366553276719c72fb11447de1eaa6931fa8",
-      "sha256": "459157c15abecc73e90a1c564a4f95ef7d7015397abfce11aa13206cfc69d16f",
-      "size": 24837237,
-      "repo_path": "bios/Arcade/MAME/mameinfo.dat",
       "cores": [
         "mame2000"
       ],
@@ -106426,24 +106494,8 @@
           "size": 924762,
           "repo_path": "bios/Arcade/Arcade/skns.zip",
           "cores": [
-            "mame2003"
-          ]
-        },
-        {
-          "sha1": "aabedfebe2cd8cfede8c2a3cb9ff33166f0ef953",
-          "sha256": "190c5fd9d68619eda986d32d03114a5c9239ab5c29e6e0676afe18612e9cd052",
-          "size": 783766,
-          "repo_path": "bios/Arcade/Arcade/.variants/skns.zip.aabedfeb",
-          "cores": [
-            "mame2003_plus"
-          ]
-        },
-        {
-          "sha1": "4257bd14b541fafbd555cb98ba079a3416a45934",
-          "sha256": "6edf22c68e70be06c9b32741e0d1df1aa38cf6fc162c1027c15d6c1d882f621b",
-          "size": 924762,
-          "repo_path": "bios/Arcade/Arcade/skns.zip",
-          "cores": [
+            "mame2003",
+            "mame2003_plus",
             "mame2009",
             "mame2010",
             "mame2015",
@@ -106928,30 +106980,6 @@
         "apple-macintosh-ii",
         "epoch-scv",
         "philips-cdi"
-      ]
-    },
-    {
-      "dest": "hiscore.dat",
-      "sha1": "21ddda0c61bd4f1cc04fb9d09e16d403d620f9e8",
-      "sha256": "045da3c1124ba1726738db704a8132590ea2c42fdb327392cff05fc124f8ad3b",
-      "size": 36182,
-      "repo_path": "bios/Arcade/Arcade/.variants/hiscore.dat.21ddda0c",
-      "cores": [
-        "mame2000"
-      ],
-      "systems": [
-        "arcade"
-      ],
-      "alternatives": [
-        {
-          "sha1": "68e94fb579f46f3255ef7c34c0322f3f0f3c8e20",
-          "sha256": "c470a579d8836299e64b835012f7c536115aac695ba9ae10ecd4d168bede54ca",
-          "size": 216250,
-          "repo_path": "bios/Arcade/Arcade/.variants/hiscore.dat.68e94fb5",
-          "cores": [
-            "mame2015"
-          ]
-        }
       ]
     },
     {

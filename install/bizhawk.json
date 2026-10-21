@@ -5,7 +5,7 @@
   "platform": "bizhawk",
   "display_name": "BizHawk",
   "version": "1.0",
-  "generated": "2026-10-21T04:12:31Z",
+  "generated": "2026-10-21T08:36:42Z",
   "base_destination": "Firmware",
   "detect": [
     {
@@ -41,6 +41,95 @@
   "omitted_files": [],
   "core_names": {},
   "system_cores": {},
+  "system_names": {
+    "atari-7800": [
+      "A78"
+    ],
+    "atari-lynx": [
+      "Lynx"
+    ],
+    "coleco-colecovision": [
+      "Coleco"
+    ],
+    "commodore-amiga": [
+      "Amiga"
+    ],
+    "commodore-c64": [
+      "C64"
+    ],
+    "fairchild-channel-f": [
+      "ChannelF"
+    ],
+    "gce-vectrex": [
+      "VEC"
+    ],
+    "mattel-intellivision": [
+      "INTV"
+    ],
+    "microsoft-msx": [
+      "MSX"
+    ],
+    "nec-pc-engine-cd": [
+      "PCECD"
+    ],
+    "nec-pc-fx": [
+      "PCFX"
+    ],
+    "nintendo-3ds": [
+      "3DS"
+    ],
+    "nintendo-64dd": [
+      "N64DD"
+    ],
+    "nintendo-ds": [
+      "NDS"
+    ],
+    "nintendo-gb": [
+      "GB"
+    ],
+    "nintendo-gba": [
+      "GBA"
+    ],
+    "nintendo-gbc": [
+      "GBC"
+    ],
+    "nintendo-nes": [
+      "NES"
+    ],
+    "nintendo-satellaview": [
+      "BSX"
+    ],
+    "nintendo-snes": [
+      "SNES"
+    ],
+    "philips-videopac": [
+      "O2"
+    ],
+    "sega-32x": [
+      "32X"
+    ],
+    "sega-game-gear": [
+      "GG"
+    ],
+    "sega-master-system": [
+      "SMS"
+    ],
+    "sega-mega-drive": [
+      "GEN"
+    ],
+    "sega-saturn": [
+      "SAT"
+    ],
+    "sinclair-zx-spectrum": [
+      "ZXSpectrum"
+    ],
+    "sony-playstation": [
+      "PSX"
+    ],
+    "texas-instruments-ti-83": [
+      "TI83"
+    ]
+  },
   "files": [
     {
       "dest": "panafz1.bin",

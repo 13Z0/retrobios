@@ -5,7 +5,7 @@
   "platform": "romm",
   "display_name": "RomM",
   "version": "1.0",
-  "generated": "2026-10-21T04:49:38Z",
+  "generated": "2026-10-21T08:36:42Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -8487,6 +8487,135 @@
       "wolf4sdl"
     ]
   },
+  "system_names": {
+    "amstrad-cpc": [
+      "acpc"
+    ],
+    "apple-macintosh-ii": [
+      "mac"
+    ],
+    "atari-400-800": [
+      "atari8bit"
+    ],
+    "atari-lynx": [
+      "lynx"
+    ],
+    "coleco-colecovision": [
+      "colecovision"
+    ],
+    "commodore-amiga": [
+      "amiga"
+    ],
+    "enterprise-64-128": [
+      "enterprise"
+    ],
+    "magnavox-odyssey2": [
+      "odyssey-2-slash-videopac-g7000"
+    ],
+    "mattel-intellivision": [
+      "intellivision"
+    ],
+    "microsoft-msx": [
+      "msx",
+      "msx2"
+    ],
+    "microsoft-xbox": [
+      "xbox"
+    ],
+    "nec-pc-98": [
+      "pc-9800-series"
+    ],
+    "nec-pc-engine": [
+      "tg16"
+    ],
+    "nec-pc-fx": [
+      "pc-fx"
+    ],
+    "nintendo-64dd": [
+      "64dd"
+    ],
+    "nintendo-ds": [
+      "nds"
+    ],
+    "nintendo-fds": [
+      "fds"
+    ],
+    "nintendo-gamecube": [
+      "ngc"
+    ],
+    "nintendo-gb": [
+      "gb"
+    ],
+    "nintendo-gba": [
+      "gba"
+    ],
+    "nintendo-gbc": [
+      "gbc"
+    ],
+    "nintendo-nes": [
+      "nes"
+    ],
+    "nintendo-pokemon-mini": [
+      "pokemon-mini"
+    ],
+    "nintendo-satellaview": [
+      "satellaview"
+    ],
+    "nintendo-sgb": [
+      "super-gb"
+    ],
+    "nintendo-snes": [
+      "snes"
+    ],
+    "nintendo-sufami-turbo": [
+      "sufami-turbo"
+    ],
+    "philips-videopac": [
+      "videopac-g7400"
+    ],
+    "sega-dreamcast": [
+      "dc"
+    ],
+    "sega-game-gear": [
+      "gamegear"
+    ],
+    "sega-master-system": [
+      "sms"
+    ],
+    "sega-mega-cd": [
+      "segacd"
+    ],
+    "sega-mega-drive": [
+      "genesis"
+    ],
+    "sega-saturn": [
+      "saturn"
+    ],
+    "sharp-x1": [
+      "x1"
+    ],
+    "sinclair-zx-spectrum": [
+      "zxs"
+    ],
+    "snk-neogeo-cd": [
+      "neo-geo-cd"
+    ],
+    "sony-playstation": [
+      "psx"
+    ],
+    "sony-playstation-2": [
+      "ps2"
+    ],
+    "sony-psp": [
+      "psp"
+    ],
+    "videoton-tvc": [
+      "tvc"
+    ],
+    "wolfenstein-3d": [
+      "wolfenstein"
+    ]
+  },
   "files": [
     {
       "dest": "3do/3do_arcade_saot.bin",
@@ -10673,7 +10802,9 @@
       ],
       "regions": [
         "europe",
-        "north-america"
+        "latin-america",
+        "north-america",
+        "oceania"
       ],
       "region_system_groups": [
         "sega-master-system"

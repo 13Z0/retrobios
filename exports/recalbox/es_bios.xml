@@ -7,12 +7,12 @@
     <bios path="amiga/bios/kick40063.A600"     md5="e40a5dfb3d017ba8779faba30cbd1c8e" mandatory="false" core="amiberry,libretro/amiberry,libretro/uae,libretro/uae4arm" />
     <bios path="amiga/bios/kick02019.AROS.ext" md5="4fa7042d73d0f77bf5723cf8430989bf" mandatory="false" core="amiberry,libretro/uae,libretro/uae4arm" note="AROS Free bios" />
     <bios path="amiga/bios/kick02019.AROS"     md5="186d23cccd9fbd6336d0f988b39dce4d" mandatory="false" core="amiberry,libretro/uae,libretro/uae4arm" note="AROS Free bios" />
-    <bios path="aros-ext.bin" md5="d2ce6748e8e42222662e14359f68dad5" core="libretro/amiberry,amiberry" mandatory="false" />
-    <bios path="aros-rom.bin" md5="48d38fc3fcf2ad7bca5ec5191d02e451" core="libretro/amiberry,amiberry" mandatory="false" />
+    <bios path="aros-ext.bin" md5="945c364bb9b5f28a04e1003f8b7a469c" core="libretro/amiberry,amiberry" mandatory="false" />
+    <bios path="aros-rom.bin" md5="69179a8479d1ba279c786094ce343386" core="libretro/amiberry,amiberry" mandatory="false" />
     <bios path="whdboot/WHDLoad" md5="6670a9571f235ec31b8bbd48fc18f428" core="libretro/amiberry" mandatory="false" />
     <bios path="whdboot/JST" md5="2a3a61bbd7c351751506e22a4354b76a" core="libretro/amiberry" mandatory="false" />
     <bios path="whdboot/AmiQuit" md5="36ab26d3b855e634fdda062c052cd52b" core="libretro/amiberry" mandatory="false" />
-    <bios path="whdboot/game-data/whdload_db.json" md5="14d797815aa9bbc79fe284b244ea75b1" core="libretro/amiberry" mandatory="false" />
+    <bios path="whdboot/game-data/whdload_db.json" md5="51d44cd24e16fbb395b1bfefbaacd375" core="libretro/amiberry" mandatory="false" />
     <bios path="whdboot/save-data/Kickstarts/kick33180.A500.RTB" md5="c993feb1eeddec1d2e687aa514231028" core="libretro/amiberry" mandatory="false" />
     <bios path="whdboot/save-data/Kickstarts/kick34005.A500.RTB" md5="7eb13d974af0992d672b67c317a7e0a1" core="libretro/amiberry" mandatory="false" />
     <bios path="whdboot/save-data/Kickstarts/kick40063.A600.RTB" md5="3f97c1963d82c808ef29e7c984c4c688" core="libretro/amiberry" mandatory="false" />

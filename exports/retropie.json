@@ -4,9 +4,12 @@
     "RetroPie-Setup.tar.gz": "https://codeload.github.com/RetroPie/RetroPie-Setup/tar.gz/46128cd252cdecae852a4d0bafa2aaf9d03ab563"
   },
   "files": [
-    "scriptmodules/emulators/quasi88.sh"
+    "scriptmodules/emulators/flycast.sh",
+    "scriptmodules/emulators/quasi88.sh",
+    "scriptmodules/libretrocores/lr-flycast-dev.sh",
+    "scriptmodules/libretrocores/lr-flycast.sh"
   ],
-  "summary": "1 packages updated. Left as is: dgen, gpsp, lr-freechaf, uae4arm, which no profiled core matches. Left as is: lr-fbneo, lr-fmsx, openmsx, pcsx2 and 1 more, whose help text lists no files to add to. Left as is: xm7, whose help text names a file no profile documents yet (dicrom.rom, extsub.rom, fbasic30.rom, fddseek.wav, initiate.rom, relay_on.wav, relayoff.wav, subsys_a.rom, subsys_b.rom, subsys_c.rom, subsyscg.rom). Left as is: sdltrs, whose help text names a file no profile documents yet (level3.rom, level4.rom, level4p.rom). Left as is: lr-opera, whose help text names a file no profile documents yet (panazf10.bin), 108 entries found by content not listed",
+  "summary": "4 packages updated. Left as is: dgen, gpsp, lr-freechaf, uae4arm, which no profiled core matches. Left as is: lr-fbneo, lr-fmsx, openmsx, pcsx2 and 1 more, whose help text lists no files to add to. Left as is: xm7, whose help text names a file no profile documents yet (dicrom.rom, extsub.rom, fbasic30.rom, fddseek.wav, initiate.rom, relay_on.wav, relayoff.wav, subsys_a.rom, subsys_b.rom, subsys_c.rom, subsyscg.rom). Left as is: sdltrs, whose help text names a file no profile documents yet (level3.rom, level4.rom, level4p.rom). Left as is: lr-opera, whose help text names a file no profile documents yet (panazf10.bin)",
   "counts": null,
   "changes": [
     {
@@ -14,6 +17,24 @@
       "system": "NEC - PC-8801",
       "name": "N88EXT0.ROM",
       "destination": "rom/N88EXT0.ROM",
+      "field": null,
+      "old": null,
+      "new": {}
+    },
+    {
+      "kind": "added",
+      "system": "Sega - Dreamcast-based Arcade",
+      "name": "naomi2.zip",
+      "destination": "dc/naomi2.zip",
+      "field": null,
+      "old": null,
+      "new": {}
+    },
+    {
+      "kind": "added",
+      "system": "Sega - Dreamcast-based Arcade",
+      "name": "segasp.zip",
+      "destination": "dc/segasp.zip",
       "field": null,
       "old": null,
       "new": {}
@@ -26,7 +47,7 @@
   "hashes_cleared": [],
   "requirements_corrected": 0,
   "withheld": [],
-  "found_by_content": 108,
+  "found_by_content": 109,
   "removal_candidates": [
     {
       "system": "Dinothawr",

@@ -6,11 +6,11 @@
   "files": [
     "checkBIOS.sh"
   ],
-  "summary": "170 kept, 0 added, 0 hashes corrected, 0 requirements corrected, 2634 additions left out, 118 entries found by content not listed",
+  "summary": "170 kept",
   "counts": {
     "kept": 170,
     "added": 0,
-    "not_added": 2634,
+    "not_added": 2633,
     "not_kept": 0
   },
   "changes": [],

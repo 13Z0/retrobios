@@ -217,7 +217,7 @@ nav:
   - sdlpal: systems/sdlpal.md
 - Emulators:
   - Overview: emulators/index.md
-  - Official ports (77):
+  - Official ports (78):
     - amiarcadia: emulators/amiarcadia.md
     - Amiberry: emulators/amiberry.md
     - Ardens: emulators/ardens.md
@@ -287,6 +287,7 @@ nav:
     - skyemu: emulators/skyemu.md
     - snes9x: emulators/snes9x.md
     - SquirrelJME: emulators/squirreljme.md
+    - Stella: emulators/stella.md
     - VaporSpec: emulators/vaporspec.md
     - VBA-M: emulators/vbam.md
     - VeMUlator: emulators/vemulator.md

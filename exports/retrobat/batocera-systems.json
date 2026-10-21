@@ -147,11 +147,11 @@
         "file": "bios/kick40068.A1200"
       },
       {
-        "md5": "d2ce6748e8e42222662e14359f68dad5",
+        "md5": "945c364bb9b5f28a04e1003f8b7a469c",
         "file": "bios/aros-ext.bin"
       },
       {
-        "md5": "48d38fc3fcf2ad7bca5ec5191d02e451",
+        "md5": "69179a8479d1ba279c786094ce343386",
         "file": "bios/aros-rom.bin"
       },
       {
@@ -171,7 +171,7 @@
         "file": "bios/whdboot/boot-data.zip"
       },
       {
-        "md5": "14d797815aa9bbc79fe284b244ea75b1",
+        "md5": "51d44cd24e16fbb395b1bfefbaacd375",
         "file": "bios/whdboot/game-data/whdload_db.json"
       },
       {

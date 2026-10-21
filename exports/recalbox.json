@@ -7,11 +7,11 @@
   "files": [
     "es_bios.xml"
   ],
-  "summary": "357 kept, 87 added, 2 hashes corrected, 128 requirements corrected, 528 additions left out, 102 entries found by content not listed",
+  "summary": "357 kept, 86 files added, 2 hashes updated to the emulator source, 128 required flags aligned with the code",
   "counts": {
     "kept": 357,
-    "added": 87,
-    "not_added": 528,
+    "added": 86,
+    "not_added": 527,
     "not_kept": 0
   },
   "changes": [
@@ -41,7 +41,7 @@
       "field": null,
       "old": null,
       "new": {
-        "md5": "d2ce6748e8e42222662e14359f68dad5",
+        "md5": "945c364bb9b5f28a04e1003f8b7a469c",
         "required": false
       }
     },
@@ -53,7 +53,7 @@
       "field": null,
       "old": null,
       "new": {
-        "md5": "48d38fc3fcf2ad7bca5ec5191d02e451",
+        "md5": "69179a8479d1ba279c786094ce343386",
         "required": false
       }
     },
@@ -101,7 +101,7 @@
       "field": null,
       "old": null,
       "new": {
-        "md5": "14d797815aa9bbc79fe284b244ea75b1",
+        "md5": "51d44cd24e16fbb395b1bfefbaacd375",
         "required": false
       }
     },
@@ -174,18 +174,6 @@
       "old": null,
       "new": {
         "md5": "c5ba6165df42fc69b32942b248fca725",
-        "required": false
-      }
-    },
-    {
-      "kind": "added",
-      "system": "amiga600",
-      "name": "amiga-os-310.rom",
-      "destination": "amiga-os-310.rom",
-      "field": null,
-      "old": null,
-      "new": {
-        "md5": "730888fb1bd9a3606d51f772ed136528",
         "required": false
       }
     },
@@ -2240,7 +2228,7 @@
   "hashes_cleared": [],
   "requirements_corrected": 128,
   "withheld": [],
-  "found_by_content": 102,
+  "found_by_content": 103,
   "removal_candidates": [
     {
       "system": "pc98",

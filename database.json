@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-21T05:32:20Z",
+  "generated_at": "2026-10-21T08:36:42Z",
   "total_files": 19526,
-  "total_size": 16788241959,
+  "total_size": 16788235292,
   "bios_dir": "bios",
   "files": {
     "738c7f5fd0c8b57ee2e87ae7a97bf8e21a821d07": {
@@ -28431,15 +28431,15 @@
       "crc32": "1e27fb72",
       "adler32": "e020202e"
     },
-    "5d5c546570ce42d50ea2b311a4a53e16ee43b3bb": {
+    "f00348425069db620ce0a2730e5d0fac2e897c48": {
       "path": "bios/Arcade/MAME/s8k_cpu.zip",
       "name": "s8k_cpu.zip",
-      "size": 38665,
-      "sha1": "5d5c546570ce42d50ea2b311a4a53e16ee43b3bb",
-      "md5": "1b367d4e165a4e7eef91fdbbe4e42ce7",
-      "sha256": "aeead8180d47919f704086b7c96646a06b2f1862a65be3a299120cb873139cec",
-      "crc32": "e97a3a1c",
-      "adler32": "1124eea1"
+      "size": 31998,
+      "sha1": "f00348425069db620ce0a2730e5d0fac2e897c48",
+      "md5": "1e26ab1f394a91c19529695e5e5fa049",
+      "sha256": "dd55d9824bdc20332d92c29ca1e34cdd7faaceefca7562f8f62711e9eaf70366",
+      "crc32": "c75eae58",
+      "adler32": "71fe7f29"
     },
     "718c47cd37fc894accdee6aee50148d774d5f538": {
       "path": "bios/Arcade/MAME/s8k_cpu10.zip",
@@ -203287,7 +203287,7 @@
       "a58df87846103e177d75688a6000a055": "6c90a9677766d266935d752dbb58be1eaeca979e",
       "b1686ed8bc22312c686fa07ac22e95ab": "fe74fdc1af38e0690fcf8cb11e07729657873678",
       "e39b4752d725981f822ce151f2f439e8": "c79c382175dfd0b9264d6216765d5ff4060a551f",
-      "1b367d4e165a4e7eef91fdbbe4e42ce7": "5d5c546570ce42d50ea2b311a4a53e16ee43b3bb",
+      "1e26ab1f394a91c19529695e5e5fa049": "f00348425069db620ce0a2730e5d0fac2e897c48",
       "5405479df597d9223ed0915c1734a799": "718c47cd37fc894accdee6aee50148d774d5f538",
       "dda098a051b40b438bb7cbd8d30859dc": "365b1176d0fa2e6ddcfed47ca03fc8336c2f6a97",
       "3340c97dd42db189857075184506f33b": "c0f6b0963938b27f2685571a9f439013f07cd5bd",
@@ -228862,7 +228862,7 @@
         "6c90a9677766d266935d752dbb58be1eaeca979e"
       ],
       "s8k_cpu.zip": [
-        "5d5c546570ce42d50ea2b311a4a53e16ee43b3bb"
+        "f00348425069db620ce0a2730e5d0fac2e897c48"
       ],
       "s8k_cpu10.zip": [
         "718c47cd37fc894accdee6aee50148d774d5f538"
@@ -276046,9 +276046,6 @@
       "naomi_bios.bin.bin": [
         "6d27d71aec4dfba98f66316ae74a1426d567698a"
       ],
-      "epr-21576d.bin": [
-        "6d27d71aec4dfba98f66316ae74a1426d567698a"
-      ],
       "naomi2_boot.bin.bin": [
         "a8b7dce572b74e02e65cb949b2c366c87625157f"
       ],
@@ -279649,7 +279646,7 @@
       "0cddb27a": "6c90a9677766d266935d752dbb58be1eaeca979e",
       "0501275f": "fe74fdc1af38e0690fcf8cb11e07729657873678",
       "1e27fb72": "c79c382175dfd0b9264d6216765d5ff4060a551f",
-      "e97a3a1c": "5d5c546570ce42d50ea2b311a4a53e16ee43b3bb",
+      "c75eae58": "f00348425069db620ce0a2730e5d0fac2e897c48",
       "8e3a0ad0": "718c47cd37fc894accdee6aee50148d774d5f538",
       "1ca17309": "365b1176d0fa2e6ddcfed47ca03fc8336c2f6a97",
       "2cacbf63": "c0f6b0963938b27f2685571a9f439013f07cd5bd",
@@ -299176,7 +299173,7 @@
       "91562b6b6b65fe4463cad6c9f32b9388a0766d55bda0e0fb6b7ef97b5718ff9d": "6c90a9677766d266935d752dbb58be1eaeca979e",
       "8e34ae5b9f54b10874b65f08a086fd16bc6401654236287e10657b3a3eb82f0e": "fe74fdc1af38e0690fcf8cb11e07729657873678",
       "9ea32506318d485696f41208feff63567f4d81fc82a73167d3ff3746f92698c5": "c79c382175dfd0b9264d6216765d5ff4060a551f",
-      "aeead8180d47919f704086b7c96646a06b2f1862a65be3a299120cb873139cec": "5d5c546570ce42d50ea2b311a4a53e16ee43b3bb",
+      "dd55d9824bdc20332d92c29ca1e34cdd7faaceefca7562f8f62711e9eaf70366": "f00348425069db620ce0a2730e5d0fac2e897c48",
       "5fb175e191483c4b42d6975ff1c881062fb8dfe9516dac9b330fa3b39bab7188": "718c47cd37fc894accdee6aee50148d774d5f538",
       "5e94981cada1b16c3739bae2db4797ecfb14b4679612baa7231c8ddfdff9678c": "365b1176d0fa2e6ddcfed47ca03fc8336c2f6a97",
       "81f4f0ea627d524a3fa4b70cafe3ddf1d5bc40dddc5039538f73da6b82dd8457": "c0f6b0963938b27f2685571a9f439013f07cd5bd",
@@ -337176,10 +337173,10 @@
         "c79c382175dfd0b9264d6216765d5ff4060a551f"
       ],
       "Arcade/MAME/s8k_cpu.zip": [
-        "5d5c546570ce42d50ea2b311a4a53e16ee43b3bb"
+        "f00348425069db620ce0a2730e5d0fac2e897c48"
       ],
       "MAME/s8k_cpu.zip": [
-        "5d5c546570ce42d50ea2b311a4a53e16ee43b3bb"
+        "f00348425069db620ce0a2730e5d0fac2e897c48"
       ],
       "Arcade/MAME/s8k_cpu10.zip": [
         "718c47cd37fc894accdee6aee50148d774d5f538"
