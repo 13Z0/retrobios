@@ -97,17 +97,27 @@ def _is_mame_dir(path: str) -> bool:
 
 
 def scan_duplicates(bios_dir: str) -> dict[str, list[str]]:
-    """Find all files grouped by SHA1, excluding no-dedup directories."""
-    sha1_to_paths: dict[str, list[str]] = defaultdict(list)
+    """Files grouped by SHA1, excluding no-dedup directories.
 
-    for root, dirs, files in os.walk(bios_dir):
+    Two equal files have the same size, so only files that share a size are
+    read, and for the sha1 alone: hashing the whole tree with every digest
+    took 33 s for a scan that reads a quarter of it. A file alone at its
+    size is in no group of two and is left out.
+    """
+    by_size: dict[int, list[str]] = defaultdict(list)
+    for root, _dirs, files in os.walk(bios_dir):
         for name in files:
             path = os.path.join(root, name)
             if _in_nodedup_dir(path):
                 continue
-            sha1 = compute_hashes(path)["sha1"]
-            sha1_to_paths[sha1].append(path)
+            by_size[os.path.getsize(path)].append(path)
 
+    sha1_to_paths: dict[str, list[str]] = defaultdict(list)
+    for paths in by_size.values():
+        if len(paths) < 2:
+            continue
+        for path in paths:
+            sha1_to_paths[compute_hashes(path, frozenset({"sha1"}))["sha1"]].append(path)
     return sha1_to_paths
 
 

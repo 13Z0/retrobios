@@ -19,6 +19,7 @@ import shutil
 import sys
 import tempfile
 import unittest
+import unittest.mock
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -327,6 +328,45 @@ class KeysFile(unittest.TestCase):
 
     def test_absence_reports_none(self):
         self.assertIsNone(crypto_verify.find_keys_file(self.tmp))
+
+
+class OneFileIsVerifiedOncePerContent(unittest.TestCase):
+    """verify --all ran the 3DS checks of the same five files once per
+    platform: 35 runs of pure-Python curve and RSA work for 5 answers."""
+
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.bios = Path(self._tmp.name)
+        target = self.bios / "Nintendo" / "3DS"
+        target.mkdir(parents=True)
+        (target / "aes_keys.txt").write_text(":AES\n")
+        self.file = target / "otp.bin"
+        self.file.write_bytes(b"\x00" * 0x100)
+        self.calls: list[bytes] = []
+
+        def verifier(path, keys):
+            data = Path(path).read_bytes()
+            self.calls.append(data)
+            return data[0] == 1, "first byte is not 1"
+
+        patcher = unittest.mock.patch.dict(crypto_verify._CRYPTO_VERIFIERS, {"otp.bin": verifier})
+        patcher.start()
+        self.addCleanup(patcher.stop)
+        self.addCleanup(crypto_verify._crypto_cache.clear)
+        self.addCleanup(self._tmp.cleanup)
+
+    def check(self) -> str | None:
+        return crypto_verify.check_crypto_validation(str(self.file), "otp.bin", str(self.bios))
+
+    def test_the_same_file_is_verified_once(self):
+        self.assertEqual([self.check() for _ in range(7)], ["first byte is not 1"] * 7)
+        self.assertEqual(len(self.calls), 1)
+
+    def test_a_rewritten_file_is_verified_again(self):
+        self.assertEqual(self.check(), "first byte is not 1")
+        self.file.write_bytes(b"\x01" + b"\x00" * 0x1FF)
+        self.assertIsNone(self.check())
+        self.assertEqual(len(self.calls), 2)
 
 
 if __name__ == "__main__":

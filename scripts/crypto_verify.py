@@ -490,6 +490,23 @@ _CRYPTO_VERIFIERS: dict[str, Callable] = {
 }
 
 
+def _stat_key(path: str | Path) -> tuple | None:
+    """(path, inode, size, mtime_ns, ctime_ns): the file as compute_hashes
+    keys it, None when it cannot be read."""
+    try:
+        stat = Path(path).stat()
+    except OSError:
+        return None
+    return (str(Path(path).resolve()), stat.st_ino, stat.st_size,
+            stat.st_mtime_ns, stat.st_ctime_ns)
+
+
+# (verifier, file key, keys file key) -> reason or None. verify --all ran the
+# curve and RSA checks of the same five files once per platform, 35 runs for
+# 5 answers: the answer depends on the file's bytes and the keys file alone.
+_crypto_cache: dict[tuple, str | None] = {}
+
+
 def check_crypto_validation(
     local_path: str,
     filename: str,
@@ -508,8 +525,13 @@ def check_crypto_validation(
     if not keys_file:
         return "crypto check skipped: no keys file found"
 
+    file_key, keys_key = _stat_key(local_path), _stat_key(keys_file)
+    key = (filename, file_key, keys_key) if file_key and keys_key else None
+    if key in _crypto_cache:
+        return _crypto_cache[key]
     keys = parse_keys_file(keys_file)
     valid, reason = verifier(local_path, keys)
-    if valid:
-        return None
-    return reason
+    result = None if valid else reason
+    if key is not None:
+        _crypto_cache[key] = result
+    return result

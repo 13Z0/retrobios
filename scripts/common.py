@@ -1018,13 +1018,32 @@ def _rank_tail_candidates(
     )
 
 
+# id(files) -> (files, len(files), {archive: entries with a crc32}). Callers
+# ask once per entry of the same profile: scanning the list each time walked
+# 38 million entries in one verify --all over mame.yml. The list is held so
+# its id is not reused, a list that changed length is indexed again, and the
+# members are read from the entries at each call. Short lists are scanned
+# directly: a fresh default [] per call would only fill the cache.
+_ARCHIVE_INDEX_MIN = 64
+_archive_index: dict[int, tuple[list[dict], int, dict[str | None, list[dict]]]] = {}
+
+
+def _member(f: dict) -> dict:
+    return {"crc32": str(f["crc32"]).lower(), "required": bool(f.get("required", True))}
+
+
 def archive_members(archive: str, files: list[dict]) -> list[dict]:
     """The members a profile reads inside *archive*, with what it requires."""
-    return [
-        {"crc32": str(f["crc32"]).lower(), "required": bool(f.get("required", True))}
-        for f in files
-        if f.get("archive") == archive and f.get("crc32")
-    ]
+    if len(files) < _ARCHIVE_INDEX_MIN:
+        return [_member(f) for f in files if f.get("archive") == archive and f.get("crc32")]
+    cached = _archive_index.get(id(files))
+    if cached is None or cached[0] is not files or cached[1] != len(files):
+        index: dict[str | None, list[dict]] = {}
+        for f in files:
+            if f.get("crc32"):
+                index.setdefault(f.get("archive"), []).append(f)
+        cached = _archive_index[id(files)] = (files, len(files), index)
+    return [_member(f) for f in cached[2].get(archive, ())]
 
 
 def archive_entry(archive: str, files: list[dict]) -> dict:

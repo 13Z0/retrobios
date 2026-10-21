@@ -83,35 +83,35 @@ def crc32_combine(crc1: int, crc2: int, len2: int) -> int:
 
 
 @functools.lru_cache(maxsize=None)
+def _byte_shift(power: int) -> tuple[int, ...]:
+    """The operator for 2**power zero bytes appended, as zlib squares it:
+    three squarings of the one-bit operator give one byte, and each power
+    is the square of the one before."""
+    if power:
+        return tuple(_gf2_square(list(_byte_shift(power - 1))))
+    operator = [0xEDB88320] + [1 << (n - 1) for n in range(1, 32)]
+    for _ in range(3):
+        operator = _gf2_square(operator)
+    return tuple(operator)
+
+
+@functools.lru_cache(maxsize=None)
 def _shift_operator(len2: int) -> tuple[int, ...]:
     """The linear map zlib applies to crc(A) for len2 bytes appended.
 
-    Built once per length, as zlib's crc32_combine walks it: the chain of
-    squared operators depends on len2 alone, so it is squared once and the
-    operators the set bits select are composed. Rebuilding the chain for
-    each of the 32 columns spent 57 s of the provenance step in GF(2)
-    products.
+    The product of the power-of-two operators the set bits of len2 select.
+    Those powers are shared by every length, so each is squared once for the
+    whole pass: squaring the chain again for each of the 3 600 lengths a
+    romset pairs spent most of the crc work in GF(2) products.
     """
-    odd = [0xEDB88320] + [1 << (n - 1) for n in range(1, 32)]
-    even = _gf2_square(odd)
-    odd = _gf2_square(even)
-    selected: list[list[int]] = []
-    while True:
-        even = _gf2_square(odd)
-        if len2 & 1:
-            selected.append(even)
-        len2 >>= 1
-        if not len2:
-            break
-        odd = _gf2_square(even)
-        if len2 & 1:
-            selected.append(odd)
-        len2 >>= 1
-        if not len2:
-            break
     columns = [1 << bit for bit in range(32)]
-    for matrix in selected:
-        columns = [_gf2_times(matrix, column) for column in columns]
+    power = 0
+    while len2:
+        if len2 & 1:
+            matrix = _byte_shift(power)
+            columns = [_gf2_times(matrix, column) for column in columns]
+        len2 >>= 1
+        power += 1
     return tuple(columns)
 
 
@@ -201,6 +201,10 @@ def _derivable(
     found: dict[str, dict] = {}
 
     files = _held_sources(db)
+    # The same chip sits in many archives. Its transforms are a function of
+    # its bytes alone, and the first path read keeps the match, so a content
+    # already transformed has nothing left to find.
+    transformed: set[str] = set()
     for held in files:
         n = held["size"]
         useful = [t for t in TRANSFORMS if t[1](n) in sizes]
@@ -209,31 +213,42 @@ def _derivable(
         data = _read(held, archives)
         if data is None:
             continue
+        content = hashlib.sha1(data).hexdigest()
+        if content in transformed:
+            continue
+        transformed.add(content)
         for name, out_size, transform in useful:
             out = transform(data)
             sha1 = wanted.get((out_size(n), hashlib.sha1(out).hexdigest()))
             if sha1 and sha1 not in found:
                 found[sha1] = {"from": [held["path"]], "transform": name}
 
+    # Romsets repeat the same chip pairs: a combined crc is computed once.
+    combined: dict[tuple[str, str, int], int] = {}
     by_dir: dict[str, list[dict]] = defaultdict(list)
     for held in files:
         if held.get("crc32"):
             by_dir[held["group"]].append(held)
     for group in by_dir.values():
         # A pair is only worth a crc when its sizes add up to a wanted one:
-        # indexed by size, a group is walked once per wanted size instead
-        # of once per member, and a romset of a few hundred chips stays
-        # linear.
+        # indexed by size, a member is paired once per size the group
+        # holds, and a romset of a few hundred chips stays linear.
         by_size: dict[int, list[dict]] = defaultdict(list)
         for held in group:
             by_size[held["size"]].append(held)
         for first in group:
-            for total in sizes:
-                for second in by_size.get(total - first["size"], ()):
+            for second_size, seconds in by_size.items():
+                total = first["size"] + second_size
+                if total not in sizes:
+                    continue
+                for second in seconds:
                     if first is second:
                         continue
-                    crc = crc32_combine(int(first["crc32"], 16),
-                                        int(second["crc32"], 16), second["size"])
+                    key = (first["crc32"], second["crc32"], second["size"])
+                    crc = combined.get(key)
+                    if crc is None:
+                        crc = combined[key] = crc32_combine(
+                            int(first["crc32"], 16), int(second["crc32"], 16), second["size"])
                     candidates = [s for s in by_size_crc.get((total, crc), [])
                                   if s not in found]
                     if not candidates:
