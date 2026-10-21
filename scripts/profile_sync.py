@@ -30,7 +30,13 @@ import yaml
 sys.path.insert(0, os.path.dirname(__file__))
 
 import upstream
-from common import github_token, load_emulator_profiles, suggest_names
+from common import (
+    _norm_system_id,
+    github_token,
+    load_emulator_profiles,
+    suggest_names,
+    system_index,
+)
 from hashing import parse_hash_list
 from sourceref import (  # noqa: F401  (re-exported for callers and tests)  # noqa: F401  (the prose grammar, re-exported)
     _ANNOTATION_RE,
@@ -3589,11 +3595,16 @@ def select_profiles(profiles: dict, args: argparse.Namespace) -> dict:
             )
         return {args.emulator: profiles[args.emulator]}
 
+    # --system matches as verify.py --list-systems lists and --system selects:
+    # by normalized id, so `saturn` reaches the profiles declaring sega-saturn.
+    wanted_system = _norm_system_id(args.system) if args.system else None
     selected = {}
     for name, profile in sorted(profiles.items()):
         if profile.get("type") in ("alias", "test"):
             continue
-        if args.system and args.system not in (profile.get("systems") or []):
+        if wanted_system and wanted_system not in {
+            _norm_system_id(str(s)) for s in profile.get("systems") or []
+        }:
             continue
         if args.type_ and profile.get("type") != args.type_:
             continue
@@ -3615,7 +3626,8 @@ def select_profiles(profiles: dict, args: argparse.Namespace) -> dict:
         )
         hint = ""
         if args.system:
-            systems = sorted({s for p in profiles.values() for s in p.get("systems") or []})
+            # Suggested from the spellings the named listing prints.
+            systems = sorted(spelling for spelling, _ in system_index(profiles).values())
             hint = " " + suggest_names([args.system], systems, "verify.py --list-systems")
         elif args.type_:
             kinds = sorted({str(p.get("type")) for p in profiles.values() if p.get("type")})

@@ -4399,6 +4399,27 @@ class TestSelectionNamesWhatMatchedNothing(unittest.TestCase):
         selected = profile_sync.select_profiles(self.PROFILES, self._args(system="atari-lynx"))
         self.assertEqual(sorted(selected), ["handy", "mednafen_lynx"])
 
+    def test_system_matches_as_the_listing_does(self):
+        """verify.py --list-systems printed `saturn`, which selected 1 profile
+        of 11 because 10 declare sega-saturn."""
+        profiles = {
+            "a": {"type": "libretro", "systems": ["sega-saturn"]},
+            "b": {"type": "libretro", "systems": ["saturn"]},
+        }
+        for spelling in ("saturn", "sega-saturn"):
+            selected = profile_sync.select_profiles(profiles, self._args(system=spelling))
+            self.assertEqual(sorted(selected), ["a", "b"])
+
+    def test_the_hint_counts_what_the_listing_prints(self):
+        profiles = {
+            "a": {"type": "libretro", "systems": ["sega-saturn"]},
+            "b": {"type": "libretro", "systems": ["saturn"]},
+            "c": {"type": "libretro", "systems": ["atari-lynx"]},
+        }
+        with self.assertRaises(SystemExit) as caught:
+            profile_sync.select_profiles(profiles, self._args(system="nothing"))
+        self.assertIn("Known: atari-lynx, sega-saturn.", str(caught.exception.code))
+
 
 
 class TestTreeUrlIntoADirectory(unittest.TestCase):
