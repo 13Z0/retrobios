@@ -436,5 +436,23 @@ class BizHawkFindsFirmwareByHash(unittest.TestCase):
         self.assertEqual(_launcher_citations(profile), [])
 
 
+class AmiberryNamesComeFromItsCode(unittest.TestCase):
+    """The standalone ROM scan names every Kickstart by the ROM database
+    whatever the file is called (src/osdep/amiberry_gui.cpp:217-240,
+    src/rommgr.cpp:3172-3241 at 648aeeab), so amiga-os-310.rom is a label.
+    kick02019.AROS and kick02019.AROS.ext are names only Recalbox's configgen
+    writes, and the code has its own AROS (':AROS', src/memory.cpp:2156)."""
+
+    def test_scan_label_and_no_launcher_names(self):
+        from validation import opens_by_name
+
+        profile = _profile("amiberry")
+        entry = next(f for f in profile["files"] if f["name"] == "amiga-os-310.rom")
+        self.assertFalse(opens_by_name(entry, profile, True))
+        names = {f["name"] for f in profile["files"]}
+        self.assertFalse({"kick02019.AROS", "kick02019.AROS.ext"} & names)
+        self.assertEqual(_launcher_citations(profile), [])
+
+
 if __name__ == "__main__":
     unittest.main()
