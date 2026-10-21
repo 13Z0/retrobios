@@ -309,5 +309,33 @@ class ForgesUpstreamDoesNotRead(unittest.TestCase):
         self.assertIn("/browse/revision/f6c00044" + "0" * 32 + "/?path=app/src/os.cpp#L35-L36)", ref)
 
 
+class TheDatHoldsEveryCopy(unittest.TestCase):
+    """The DAT held one path per content, the database's: auditing bios/
+    with it flagged the 2,502 other copies (RPG Maker, engine trees, a dump
+    filed under two consoles) as unknown, and a fix moved them away."""
+
+    def test_a_second_copy_is_a_rom_of_its_own_folder(self):
+        import generate_site
+
+        sha1 = "9526ef63" + "0" * 32
+        with tempfile.TemporaryDirectory() as tmp:
+            for rel in ("Atari/ST/tos104.img", "Atari/ST/tos104uk.img"):
+                (Path(tmp) / rel).parent.mkdir(parents=True, exist_ok=True)
+                (Path(tmp) / rel).write_bytes(b"x")
+            db = {
+                "bios_dir": tmp,
+                "files": {sha1: {"path": "bios/Atari/ST/tos104.img", "sha1": sha1,
+                                 "size": 1, "name": "tos104.img"}},
+                "indexes": {"by_path_suffix": {
+                    "Atari/ST/tos104.img": [sha1], "ST/tos104.img": [sha1],
+                    "Atari/ST/tos104uk.img": [sha1], "ST/tos104uk.img": [sha1],
+                }},
+            }
+            dat = generate_site.collection_dat(db, "2026-10-21T00:00:00Z")
+        self.assertIn('<rom name="tos104.img" size="1"', dat)
+        self.assertIn('<rom name="tos104uk.img" size="1"', dat)
+        self.assertEqual(dat.count("<rom "), 2)
+
+
 if __name__ == "__main__":
     unittest.main()

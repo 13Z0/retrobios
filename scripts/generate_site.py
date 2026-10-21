@@ -1304,17 +1304,20 @@ def collection_dat(db: dict, generated_at: str) -> str:
     import xml.etree.ElementTree as ET  # noqa: PLC0415
 
     games: dict[str, list[dict]] = {}
-    for entry in db.get("files", {}).values():
-        parts = str(entry.get("path", "")).split("/")
-        if len(parts) < 3 or parts[0] != "bios":
-            continue
-        folder = parts[1:3] if len(parts) > 3 else parts[1:2]
-        # A backslash is how a Logiqx set name writes a subfolder: named
-        # "Sony - PlayStation", the set was looked for beside Sony/, and an
-        # audit of a copy of bios/ found 330 sets missing.
-        games.setdefault("\\".join(folder), []).append(
-            {**entry, "_rom": "\\".join(parts[1 + len(folder):])}
-        )
+    files = db.get("files", {})
+    # Every copy, not the one path the database keeps: an audit of bios/
+    # read the 2,502 others as unknown files, and a fix moved them away
+    # from the engines that read them by path.
+    for sha1, paths in collection_paths(db).items():
+        for path in sorted(paths):
+            parts = path.split("/")
+            folder = parts[1:3] if len(parts) > 3 else parts[1:2]
+            # A backslash is how a Logiqx set name writes a subfolder: named
+            # "Sony - PlayStation", the set was looked for beside Sony/, and an
+            # audit of a copy of bios/ found 330 sets missing.
+            games.setdefault("\\".join(folder), []).append(
+                {**files[sha1], "_rom": "\\".join(parts[1 + len(folder):])}
+            )
     root = ET.Element("datafile")
     header = ET.SubElement(root, "header")
     version = generated_at[:10].replace("-", "")
@@ -2095,6 +2098,28 @@ def file_location_items(
                 items.append({"sha1": sha1,
                               "url": f"emulators/{owners[ref]}/#sha1-{sha1[:12]}"})
     return sorted(items, key=lambda item: item["sha1"])
+
+
+def collection_paths(db: dict) -> dict[str, set[str]]:
+    """Every path under bios/ that holds each file, by sha1.
+
+    The database keeps one path per content. The others are the full tails
+    by_path_suffix records that name a file on disk: RPG Maker, engine
+    trees and the copies filed under several consoles keep 2,502 of them.
+    """
+    files = db.get("files", {})
+    bios_dir = Path(str(db.get("bios_dir") or "bios"))
+    paths: dict[str, set[str]] = {}
+    for sha1, entry in files.items():
+        path = str(entry.get("path", ""))
+        if path.startswith("bios/") and path.count("/") >= 2:
+            paths.setdefault(sha1, set()).add(path)
+    for tail, sha1s in db.get("indexes", {}).get("by_path_suffix", {}).items():
+        if tail.count("/") < 2 or len(sha1s) != 1 or sha1s[0] not in files:
+            continue
+        if (bios_dir / tail).is_file():
+            paths.setdefault(sha1s[0], set()).add(f"bios/{tail}")
+    return paths
 
 
 def _group_by_manufacturer(db: dict) -> dict[str, dict[str, list]]:
