@@ -305,7 +305,7 @@ not already found that way.
 |----------|----------|----------------|
 | `/media/fat/MiSTer` | MiSTer FPGA | `/media/fat/games` |
 | `C:\RetroBat\bios` or `%USERPROFILE%\RetroBat\bios` | RetroBat | the same |
-| `~/Emulation/bios` | EmuDeck | the same |
+| `~/Emulation/bios` (Linux and macOS) | EmuDeck | the same |
 | `~/.var/app/net.retrodeck.retrodeck` | RetroDECK | `~/retrodeck` |
 | `/romm/library/bios` | RomM | the same |
 | `/romm/config/config.yml` | RomM | `/romm/library/bios`, laid out by its firmware template |
@@ -326,7 +326,7 @@ WSL does not pass them. A forced `--platform retrobat` falls back to
 | Evidence | Platform | BIOS directory |
 |----------|----------|----------------|
 | `HKCU\SOFTWARE\RetroBat` `LatestKnownInstallPath`, which `RetroBat.exe` writes on every start (read through `reg.exe` under WSL) | RetroBat | that folder + `\bios`, before the fixed folders above |
-| `~/.config/EmuDeck/settings.sh` | EmuDeck | `emulationPath` + `/bios` |
+| `~/.config/EmuDeck/settings.sh` (Linux and macOS) | EmuDeck | `emulationPath` + `/bios` |
 | `%APPDATA%\EmuDeck\settings.ps1`, else `%USERPROFILE%\EmuDeck\settings.ps1` | EmuDeck | `$emulationPath` + `\bios`, `C:\Emulation\bios` when it names none (a network install: the `$VolName` share + `\Emulation\bios`) |
 | `~/.var/app/net.retrodeck.retrodeck/config/retrodeck/retrodeck.json` | RetroDECK | `paths.rd_home_path`, falling back to the pre-migration `retrodeck.cfg` and its `rdhome` |
 | `~/.var/app/org.libretro.RetroArch/config/retroarch/retroarch.cfg` | RetroArch (Flatpak) | `system_directory` |

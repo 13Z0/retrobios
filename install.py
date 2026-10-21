@@ -1102,6 +1102,7 @@ _PATH_RULES: tuple[tuple[str, str, str, str | None], ...] = (
     ("windows", "retrobat", "C:\\RetroBat\\bios", None),
     ("windows", "retrobat", "%USERPROFILE%\\RetroBat\\bios", None),
     ("linux", "emudeck", "$HOME/Emulation/bios", None),
+    ("darwin", "emudeck", "$HOME/Emulation/bios", None),
     ("linux", "retrodeck", "$HOME/.var/app/net.retrodeck.retrodeck", "$HOME/retrodeck"),
     ("linux", "romm", "/romm/library/bios", None),
     # A library laid out as {platform}/bios has no library/bios: RomM's
@@ -1238,15 +1239,18 @@ def detect_platforms(os_type: str) -> list[tuple[str, Path]]:
         muos = _muos_system_dir() if embedded and embedded[0][0] == "retroarch" else None
         found.extend([("retroarch", muos)] if muos else embedded)
 
-        # EmuDeck (Linux/SteamOS)
-        home = Path.home()
-        emudeck_settings = home / ".config" / "EmuDeck" / "settings.sh"
+    if os_type in ("linux", "wsl", "darwin"):
+        # EmuDeck on Linux and macOS: functions/all.sh:3-4 and 24 (EmuDeck
+        # dddb3022) reads $emudeckFolder/settings.sh on both, and vars.sh:2
+        # sets emudeckFolder to $HOME/.config/EmuDeck.
+        emudeck_settings = Path.home() / ".config" / "EmuDeck" / "settings.sh"
         if emudeck_settings.exists():
             emu_path = _parse_bash_var(emudeck_settings, "emulationPath")
             if emu_path:
-                bios_dir = Path(emu_path) / "bios"
-                found.append(("emudeck", bios_dir))
+                found.append(("emudeck", Path(emu_path) / "bios"))
 
+    if os_type in ("linux", "wsl"):
+        home = Path.home()
         # RetroDECK: retrodeck.json since the cfg-to-json migration, which
         # renames the old retrodeck.cfg to retrodeck.bak (global.sh:149-153)
         retrodeck_conf_dir = home / ".var" / "app" / "net.retrodeck.retrodeck" / "config" / "retrodeck"

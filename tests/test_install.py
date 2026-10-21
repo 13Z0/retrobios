@@ -1110,6 +1110,21 @@ class DetectionFollowsTheRegistry(unittest.TestCase):
         install._detect_by_path("linux", found)
         self.assertEqual(found, [("emudeck", home / "elsewhere" / "bios")])
 
+    def test_emudeck_on_macos_is_found_by_its_settings(self):
+        """EmuDeck's macOS build reads ~/.config/EmuDeck/settings.sh as the
+        Linux one does (functions/all.sh:3-4,24, vars.sh:2): a Mac with
+        EmuDeck detected nothing and was offered RetroArch's folder."""
+        home = self._home()
+        settings = home / ".config" / "EmuDeck" / "settings.sh"
+        settings.parent.mkdir(parents=True)
+        settings.write_text(f"emulationPath={home / 'Games' / 'Emulation'}\n")
+        self.assertIn(("emudeck", home / "Games" / "Emulation" / "bios"),
+                      install.detect_platforms("darwin"))
+        settings.unlink()
+        (home / "Emulation" / "bios").mkdir(parents=True)
+        self.assertIn(("emudeck", home / "Emulation" / "bios"),
+                      install.detect_platforms("darwin"))
+
 
 class RetroArchIsFoundWhereWindowsInstallsPutIt(unittest.TestCase):
     """Program Files\\RetroArch-Win64, a Steam library on another drive and
