@@ -112,12 +112,12 @@ files:
     source_ref: "desktop-ui/emulator/colecovision.cpp:12"
 
   # --- Famicom Disk System ---
-  - name: disksys.rom
+  - name: rp2c33-01.bin
     system: famicom-disk-system
     required: true
     sha256: "fdc1a76e654feea993fcb38366e05ee5f4eb641f86fe6bebaeefd412e112dd72"
     validation: [sha256]
-    description: "Famicom Disk System BIOS"
+    description: "Famicom Disk System BIOS, RP2C33-01 revision"
     source_ref: "desktop-ui/emulator/famicom-disk-system.cpp:19"
 
   # --- Game Boy Advance ---
@@ -202,7 +202,6 @@ files:
 
   # --- Mega LD (LaserActive SEGA PAC) ---
   - name: mega_ld_bios_U.bin
-    aliases: ["[BIOS] LaserActive PAC-S10 (US) (v1.04).bin"]
     system: mega-ld
     region: [north-america]
     required: true
@@ -219,14 +218,6 @@ files:
     validation: [sha256]
     description: "LaserActive SEGA PAC BIOS (Japan), v1.02"
     source_ref: "desktop-ui/emulator/mega-ld.cpp:17"
-
-  - name: "[BIOS] LaserActive PAC-S1 (Japan) (v1.05).bin"
-    system: mega-ld
-    region: [japan]
-    required: false
-    description: "LaserActive SEGA PAC BIOS (Japan), v1.05"
-    note: "Absent from the firmware table, so the scan by hash never assigns it. A path written into the Japanese BIOS slot of settings.bml is read as is, with no hash check. RetroBat writes this name there first and falls back to v1.02."
-    source_ref: "desktop-ui/emulator/mega-ld.cpp:17, desktop-ui/emulator/mega-ld.cpp:54, desktop-ui/settings/firmware.cpp:109, desktop-ui/emulator/emulator.cpp:188-197"
 
   # --- MSX ---
   - name: msx-japanese.rom
@@ -270,7 +261,6 @@ files:
 
   # --- Neo Geo Pocket ---
   - name: ngp_bios.rom
-    aliases: ["[BIOS] SNK Neo Geo Pocket (Japan, Europe) (En,Ja).ngp"]
     system: neo-geo-pocket
     required: true
     sha256: "0293555b21c4fac516d25199df7809b26beeae150e1d4504a050db32264a6ad7"
@@ -280,7 +270,6 @@ files:
 
   # --- Neo Geo Pocket Color ---
   - name: ngpc_bios.rom
-    aliases: ["[BIOS] SNK Neo Geo Pocket (Japan, Europe) (En,Ja).ngp"]
     system: neo-geo-pocket-color
     required: true
     sha256: "8fb845a2f71514cec20728e2f0fecfade69444f8d50898b92c2259f1ba63e10d"
@@ -350,7 +339,6 @@ files:
 
   # --- PC Engine LD (LaserActive NEC PAC) ---
   - name: pac-n10.pce
-    aliases: ["[BIOS] LaserActive PAC-N10 (US) (v1.02).bin"]
     system: pc-engine-ld
     required: true
     sha256: "0e87a3385a27b3a4cac51934819b7eefa5b3d690768d2495633838488cd0e2e4"
@@ -359,7 +347,6 @@ files:
     source_ref: "desktop-ui/emulator/pc-engine-ld.cpp:18"
 
   - name: pac-n1.pce
-    aliases: ["[BIOS] LaserActive PAC-N1 (Japan) (v1.02).bin"]
     system: pc-engine-ld
     required: true
     sha256: "459325690a458baebd77495c91e37c4dddfdd542ba13a821ce954e5bb245627f"
@@ -368,7 +355,6 @@ files:
     source_ref: "desktop-ui/emulator/pc-engine-ld.cpp:19"
 
   - name: pce-lp1.pce
-    aliases: ["[BIOS] LaserActive PCE-LP1 (Japan) (v1.02).bin"]
     system: pc-engine-ld
     required: true
     sha256: "3f43b3b577117d84002e99cb0baeb97b0d65b1d70b4adadc68817185c6a687f0"
