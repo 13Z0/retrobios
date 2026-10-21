@@ -376,8 +376,10 @@ class TestFreeSpaceGuard(unittest.TestCase):
         self.assertEqual((out, code), ("", 0))
 
     def test_short_of_space_names_both_numbers_and_stops(self):
+        """Nothing was installed: code 2, as the exit table says, not the 1
+        of a partial install."""
         out, code = self._run(free=1_000, needed=5_000)
-        self.assertEqual(code, 1)
+        self.assertEqual(code, 2)
         self.assertIn("Needed", out)
         self.assertIn("Free", out)
         self.assertIn("--dest", out)
@@ -385,7 +387,52 @@ class TestFreeSpaceGuard(unittest.TestCase):
     def test_probe_climbs_to_an_existing_ancestor(self):
         missing = self.root / "not" / "created" / "yet"
         out, code = self._run(free=1, needed=2, path=missing)
-        self.assertEqual(code, 1)
+        self.assertEqual(code, 2)
+
+    def test_the_space_check_comes_before_the_folder(self):
+        source = (REPO_ROOT / "install.py").read_text(encoding="utf-8")
+        check = source.index("_check_free_space(bios_path, dl_size")
+        self.assertLess(check, source.index("bios_path.mkdir(parents=True, exist_ok=True)"))
+
+
+class AMissingDestIsSaid(unittest.TestCase):
+    """--dest ~/.config/retroarh/system (a typo) was created with every
+    missing parent and reported done, and --check on it said only
+    "0/7 present"."""
+
+    def _call(self, dest: Path, ask: bool, answer: str = "") -> tuple[str, object]:
+        out = io.StringIO()
+        code = None
+        with contextlib.redirect_stdout(out), \
+                unittest.mock.patch("builtins.input", return_value=answer):
+            try:
+                install._missing_dest(dest, ask)
+            except SystemExit as exc:
+                code = exc.code
+        return out.getvalue(), code
+
+    def test_an_existing_folder_says_nothing(self):
+        root = Path(_tempdir(self))
+        self.assertEqual(self._call(root, True), ("", None))
+
+    def test_a_deep_missing_path_is_asked_and_no_is_the_default(self):
+        root = Path(_tempdir(self))
+        dest = root / "retroarh" / "system"
+        out, code = self._call(dest, True, "")
+        self.assertEqual(code, 2)
+        self.assertIn(f"The nearest folder that does: {root}", out)
+        self.assertFalse((root / "retroarh").exists())
+        self.assertEqual(self._call(dest, True, "y")[1], None)
+
+    def test_one_missing_level_or_no_terminal_is_said_not_asked(self):
+        root = Path(_tempdir(self))
+        # A "no" that was asked would stop the run with 2.
+        out, code = self._call(root / "bios", True, "n")
+        self.assertIsNone(code)
+        self.assertIn("does not exist", out)
+        out, code = self._call(root / "a" / "b", False, "n")
+        self.assertIsNone(code)
+        self.assertIn("does not exist", out)
 
 
 class AFolderThatRefusesWritesIsNamed(unittest.TestCase):

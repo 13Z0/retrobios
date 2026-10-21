@@ -228,7 +228,7 @@ what the options name, everything by default.
 | Option | Effect |
 |--------|--------|
 | `--platform NAME` | Install for this platform instead of the detected one. Unknown names are refused with the available list |
-| `--dest PATH` | Destination directory, overriding detection. Without `--platform`, the file list is the platform detected here: at a terminal the installer asks, Enter taking the one found, and otherwise it uses the one found, RetroArch's when nothing is found, and refuses when several are. The run prints whose list it is |
+| `--dest PATH` | Destination directory, overriding detection. Without `--platform`, the file list is the platform detected here: at a terminal the installer asks, Enter taking the one found, and otherwise it uses the one found, RetroArch's when nothing is found, and refuses when several are. The run prints whose list it is. A folder that does not exist is named with the nearest one that does, then created. When more than its last level is missing (a mistyped path), a run at a terminal asks first, and the answer defaults to no |
 | `--target NAME` | Keep only the files the cores of that hardware target need, and the systems they emulate. An unknown target is refused rather than ignored, since carrying on would install everything. On Batocera, Recalbox, ROCKNIX and Lakka the board is read from the system (`batocera.arch`, `recalbox.arch`, `HW_DEVICE`, `LIBREELEC_DEVICE` or `LIBREELEC_PROJECT`) and applied when no `--target` is given |
 | `--every-board` | Install the files of every board instead of the one the system names, for a card that moves between devices |
 | `--installed-cores` | Keep only what the cores already installed read (RetroArch, Lakka, RetroPie). See [Installed cores](#installed-cores) |
@@ -538,7 +538,7 @@ fields, the installer refuses to narrow rather than install everything.
 |------|---------|
 | `0` | everything asked for is installed or already up to date |
 | `1` | a failure: the one-liner could not download or verify `install.py`, or found no Python 3.8 (nothing was run), an unusable base URL, an unknown platform or target, `--installed-cores` with no core found, a manifest that fails validation, a fetch that never succeeded, no platform to install for in a non-interactive run, some files failed while others installed, or `--check` found files to fetch |
-| `2` | nothing was installed: every file the run tried failed (a BIOS folder that cannot be written, for one). Also an option the installer refused before any download: an unknown option, `--jobs` outside 1 to 32, `--target` with `--every-board`. The message then starts with `install.py: error:` |
+| `2` | nothing was installed: every file the run tried failed (a BIOS folder that cannot be written, for one), the drive has too little free space for the download (checked before any folder is created), or the question about a `--dest` folder that does not exist was answered no. Also an option the installer refused before any download: an unknown option, `--jobs` outside 1 to 32, `--target` with `--every-board`. The message then starts with `install.py: error:` |
 | `130` | stopped with Ctrl+C, or with Ctrl+C or Ctrl+D at a question. Run the same command again to carry on |
 | `141` | the output was piped to a reader that closed early (`--list-platforms \| head`) |
 

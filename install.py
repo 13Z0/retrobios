@@ -3515,11 +3515,13 @@ def _print_plan(
     print("\n  Nothing was written. Run without --dry-run to install.")
 
 
-def _check_free_space(bios_path: Path, needed: int, plat: str = "") -> None:
+def _check_free_space(bios_path: Path, needed: int, plat: str = "", code: int = 2) -> None:
     """Stop before writing when the volume cannot hold the download.
 
     Reported against the nearest existing ancestor, since the destination
-    itself may have just been created on a volume that is already full.
+    may not exist yet. The run ends with code: 2 when nothing was installed,
+    the status a script reads as "nothing installed", 1 after an earlier
+    platform of the run installed files.
     """
     probe = bios_path
     while not probe.exists() and probe != probe.parent:
@@ -3536,13 +3538,13 @@ def _check_free_space(bios_path: Path, needed: int, plat: str = "") -> None:
     if not plat:
         print(f"  Free up {format_size(needed - free)}, or use --dest to install "
               "to another drive.", file=sys.stderr)
-        sys.exit(1)
+        sys.exit(code)
     # --dest alone used to mean RetroArch's list: the platform is named, so
     # a Batocera install moved to a USB drive stays Batocera's.
     print(f"  Free up {format_size(needed - free)}, or install to another drive:\n"
           f"    {_INVOCATION.command(plat, '<folder on another drive>')}",
           file=sys.stderr)
-    sys.exit(1)
+    sys.exit(code)
 
 
 def download_files(
@@ -4611,6 +4613,30 @@ def main() -> None:
             sys.stdout = real_stdout
 
 
+def _missing_dest(dest: Path, ask: bool) -> None:
+    """Say that a --dest folder does not exist before anything goes there.
+
+    A typo (~/.config/retroarh/system) was created with every missing
+    parent, filled, and reported done in a folder no platform reads, and
+    --check said only "0/7 present". One missing level is a BIOS folder not
+    made yet and is created. Several make a path that may be mistyped:
+    at a terminal the run asks first, and the answer defaults to no.
+    """
+    if dest.exists():
+        return
+    nearest = dest.absolute()
+    while not nearest.exists() and nearest.parent != nearest:
+        nearest = nearest.parent
+    missing = len(dest.absolute().relative_to(nearest).parts)
+    print(f"  {dest} does not exist. The nearest folder that does: {nearest}")
+    if missing > 1 and ask:
+        answer = _ask(f"  Create {_plural(missing, 'folder')} under {nearest}? [y/N] ")
+        if not answer.strip().lower().startswith("y"):
+            print("  Nothing installed. Check the folder named with --dest, then run "
+                  "the command again.")
+            sys.exit(2)
+
+
 def _no_core_found(plat: str, bios_path: Path, searched: list[Path], dest_given: bool) -> None:
     """Refuse --installed-cores with no core, and say how to point at them.
 
@@ -4766,6 +4792,9 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
 
     if len(platforms) > 1 and not listing and interactive:
         platforms = _prompt_platform_choice(platforms)
+
+    if args.dest is not None and not listing:
+        _missing_dest(args.dest, interactive and not (args.check or args.dry_run or args.yes))
 
     total_downloaded = 0
     total_up_to_date = 0
@@ -5108,6 +5137,10 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
             print(f"\nDownloading {len(to_download)} files ({format_size(dl_size)})...")
             print("  Press Ctrl+C to stop. Running the same command again "
                   "carries on from here.")
+            # Checked before the folder is created: a run stopped for space
+            # left an empty BIOS folder behind.
+            _check_free_space(bios_path, dl_size, plat_name, 1 if total_downloaded else 2)
+            created = not bios_path.exists()
             try:
                 bios_path.mkdir(parents=True, exist_ok=True)
             except OSError as exc:
@@ -5120,7 +5153,8 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                 # as when it exists read-only; 1 once an earlier platform
                 # of the run installed something.
                 sys.exit(1 if total_downloaded else 2)
-            _check_free_space(bios_path, dl_size, plat_name)
+            if created:
+                print(f"  Created {bios_path}")
             progress = Progress(len(to_download), dl_size, term)
             failed, interrupted = download_files(
                 to_download, bios_path, jobs=args.jobs, verbose=args.verbose,
