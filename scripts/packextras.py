@@ -9,7 +9,7 @@ from __future__ import annotations
 from collections.abc import Iterable
 
 from common import PROFILE_IDENTITY_FIELDS, _norm_system_id
-from common import archive_members
+from common import archive_members, holds_required_members
 from common import declared_root, expand_platform_declared_names, platform_declarations
 from common import load_emulator_profiles
 from common import resolution_is_hash_exact
@@ -863,11 +863,16 @@ def _collect_emulator_extras(
             config, emulators_dir, db, emu_profiles, target_cores=target_cores,
             include_all=include_all, declared_names=yaml_names,
         )
-    # A destination two cores claim goes to the one that names its content:
+    # A destination two cores claim goes to the strongest proof of what the
+    # collection holds for it, then to the one that names its content:
     # hypseus-singe asks for gamecontrollerdb.txt by name alone and took the
-    # BIOS root before Solarus, which pins its own by sha1. Profile order
-    # still decides between claims of the same kind.
-    undeclared = sorted(undeclared, key=lambda u: not _names_content(u))
+    # BIOS root before Solarus, which pins its own by sha1, and fbalpha2012's
+    # hashless hiscore.dat took RetroDECK's over mame2015's sha1. Profile
+    # order decides only between claims of equal proof.
+    rank = _ClaimRanks(undeclared, placement, db)
+    undeclared = sorted(
+        undeclared, key=lambda u: (-rank.of_entry(u), not _names_content(u))
+    )
     extras = []
     seen_dests: set[str] = set(seen)
     # Destination -> the extra that took it, to record later claimants on.
@@ -906,12 +911,18 @@ def _collect_emulator_extras(
             claimants[(u.get("emulator", ""), u.get("name", ""), u.get("path") or "")] = (
                 sanitize_pack_path(dest)
             )
-        extra = _report_extra(u, name, dest)
-        claims = [_report_extra(c, name, dest) for c in u.get("other_claims", [])]
-        # Where the builder meets each claim: the report lists the profiles in
-        # order, archives after the loose files.
-        for item in (extra, *claims):
-            item["claim_order"] = (1, 1 if u.get("archive") else 0, item["source_profile"])
+        candidates = [
+            _report_extra(c, name, dest) for c in (u, *u.get("other_claims", []))
+        ]
+        # Where the builder meets each claim: the strongest proof first, the
+        # report's profile order between equals, archives after loose files.
+        for item in candidates:
+            item["claim_order"] = (
+                1, 1 if u.get("archive") else 0, -rank.of_extra(item, full_dest),
+                item["source_profile"],
+            )
+        candidates.sort(key=lambda item: item["claim_order"])
+        extra, claims = candidates[0], candidates[1:]
         if not _take(extra, full_dest, seen_dests, taken):
             for claim in claims:
                 _another_claim(taken.get(full_dest), claim)
@@ -1035,6 +1046,63 @@ def _collect_emulator_extras(
     )
 
     return extras
+
+class _ClaimRanks:
+    """How strongly each claim on a contested destination proves its file.
+
+    2 a declared hash the collection holds, 1 a path or every member the
+    core requires inside an archive, 0 a name, -1 a copy
+    contradicting the hash the claim declares, -2 nothing held. Resolved only
+    where two claims meet: a destination one core asks for has no contest.
+    """
+
+    def __init__(self, undeclared: list[dict], placement: ExtraPlacement, db: dict) -> None:
+        self._db = db
+        self._placed: dict[int, tuple[str, str] | None] = {}
+        counts: dict[str, int] = {}
+        for u in undeclared:
+            placed = (
+                placement.place(u, _extra_dest(u))
+                if u.get("in_repo") and not u.get("bundled") else None
+            )
+            self._placed[id(u)] = placed
+            if placed is not None:
+                counts[placed[1]] = counts.get(placed[1], 0) + 1 + len(
+                    u.get("other_claims", [])
+                )
+        self._contested = {dest for dest, n in counts.items() if n > 1}
+        self._cache: dict[tuple, int] = {}
+
+    def of_extra(self, extra: dict, full_dest: str) -> int:
+        if full_dest not in self._contested:
+            return 0
+        key = (extra.get("source_profile"), extra.get("source_name"),
+               extra.get("source_path"), full_dest)
+        if key not in self._cache:
+            path, status = resolve_local_file(
+                extra, self._db, dest_hint=extra.get("destination", "")
+            )
+            self._cache[key] = (
+                -2 if not path
+                else -1 if status == "hash_mismatch"
+                else 2 if resolution_is_hash_exact(status)
+                else 1 if status == "path_exact" or (
+                    extra.get("members") and holds_required_members(path, extra["members"])
+                )
+                else 0
+            )
+        return self._cache[key]
+
+    def of_entry(self, u: dict) -> int:
+        placed = self._placed.get(id(u))
+        if placed is None or placed[1] not in self._contested:
+            return 0
+        name = u.get("archive") or u["name"]
+        return max(
+            self.of_extra(_report_extra(c, name, placed[0]), placed[1])
+            for c in (u, *u.get("other_claims", []))
+        )
+
 
 def _names_content(entry: dict) -> bool:
     """Whether a report entry declares the bytes it wants, not only a name."""

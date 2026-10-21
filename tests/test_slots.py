@@ -418,6 +418,31 @@ class TestArbitration(unittest.TestCase):
         self.assertIn("both are satisfied", served)
 
 
+class TheStrongestProofTakesAnUndeclaredPath(unittest.TestCase):
+    """No platform declares RetroDECK's hiscore.dat. fbalpha2012 asks for it
+    by name, mame2015 pins it by sha1: the first in profile order took the
+    path, whatever the proof, and mame2015 received another revision."""
+
+    def test_a_held_hash_beats_a_bare_name_whatever_the_order(self):
+        from packextras import _collect_emulator_extras
+
+        config = {
+            "platform": "P", "verification_mode": "existence",
+            "cores": ["aaa", "zzz"],
+            "systems": {"console": {"files": [{"name": "other.bin", "destination": "other.bin"}]}},
+        }
+        profiles = {
+            "aaa": {"emulator": "Aaa", "type": "libretro", "systems": ["console"],
+                    "files": [{"name": "IPL.bin", "required": True}]},
+            "zzz": {"emulator": "Zzz", "type": "libretro", "systems": ["console"],
+                    "files": [{"name": "IPL.bin", "required": True, "md5": "n" * 32}]},
+        }
+        extras = _collect_emulator_extras(config, "", REGIONS_DB, set(), "", profiles)
+        winner = next(e for e in extras if e["destination"] == "IPL.bin")
+        self.assertEqual(winner["source_profile"], "zzz")
+        self.assertEqual({c["source_profile"] for c in winner["other_claims"]}, {"aaa"})
+
+
 class TestBuilderAndVerifierAgree(unittest.TestCase):
     """The two tools must settle a contested destination the same way."""
 
