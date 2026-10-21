@@ -53,7 +53,7 @@ Pipeline flags:
 | Flag | Effect |
 |------|--------|
 | `--offline` | skip every step that needs the network (2, 2a, 2a2, 2b, 2b2) |
-| `--skip-packs` | skip steps 4, 4b, 4c, 6 and the consistency check |
+| `--skip-packs` | skip steps 4, 4b, 4c, 6 and the consistency check. README and site are still rewritten unless `--skip-docs` is given too |
 | `--skip-docs` | skip steps 7 and 8 |
 | `--include-archived` | include archived platforms in verify, packs, truth and export |
 | `--target TARGET` | filter verify, packs and truth by hardware target |

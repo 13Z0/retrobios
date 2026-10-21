@@ -33,7 +33,7 @@ come from .cache/large/ only.
 Usage:
     python scripts/pipeline.py                    # active platforms
     python scripts/pipeline.py --include-archived # all platforms
-    python scripts/pipeline.py --skip-packs       # steps 1 to 3b, then 7 and 8
+    python scripts/pipeline.py --skip-packs       # steps 0 to 3b, 4d, 7 and 8
     python scripts/pipeline.py --skip-docs        # skip steps 7 and 8
     python scripts/pipeline.py --offline          # no network, see above
 """
@@ -427,7 +427,9 @@ def main() -> None:
     parser.add_argument(
         "--skip-packs",
         action="store_true",
-        help="Only regenerate DB and verify, skip pack generation",
+        help="Skip steps 4 to 6 except 4d: packs, manifests and their checks. "
+        "Steps 7 and 8 still rewrite README.md and docs/, add --skip-docs to "
+        "stop after verify",
     )
     parser.add_argument(
         "--skip-docs", action="store_true", help="Skip README and site generation"

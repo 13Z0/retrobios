@@ -6026,5 +6026,24 @@ class ToolsRunFromAnyDirectory(unittest.TestCase):
             self.assertTrue(Path(tmp, "lists", "retroarch.json").is_file())
 
 
+class SkipPacksHelpSaysWhatRuns(unittest.TestCase):
+    """--help said "Only regenerate DB and verify" while the run went on to
+    rewrite derivable.json, README.md and docs/."""
+
+    def test_the_help_names_the_steps_that_still_run(self):
+        proc = subprocess.run(
+            [sys.executable, "scripts/pipeline.py", "--help"],
+            cwd=ROOT, capture_output=True, text=True, timeout=60, check=True,
+        )
+        text = " ".join(proc.stdout.split())
+        self.assertNotIn("Only regenerate DB and verify", text)
+        self.assertIn("Steps 7 and 8 still rewrite README.md and docs/", text)
+
+    def test_every_step_it_names_is_one_it_skips(self):
+        source = (ROOT / "scripts" / "pipeline.py").read_text(encoding="utf-8")
+        skipped = set(re.findall(r"--- (\w+)/8 [^\n]*SKIPPED \(--skip-packs\)", source))
+        self.assertEqual(skipped, {"4", "4b", "4c", "6"})
+
+
 if __name__ == "__main__":
     unittest.main()
