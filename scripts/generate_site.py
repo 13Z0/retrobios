@@ -2415,6 +2415,36 @@ def _platform_links(sha1: str, consumers: FileConsumers) -> list[str]:
     return links
 
 
+_card_anchors: dict[str, tuple[list, list[str]]] = {}
+
+
+def _emulator_card_anchor(emulator: str, files: list, index: int) -> str:
+    """The id of a profile entry's card on its emulator page."""
+    cached = _card_anchors.get(emulator)
+    if cached is None or cached[0] is not files:
+        cached = _card_anchors[emulator] = (files, emulator_file_anchors(files))
+    return cached[1][index] if 0 <= index < len(cached[1]) else ""
+
+
+def _emulator_links(sha1: str, consumers: FileConsumers) -> list[str]:
+    """Each emulator reading the file, linked to the entry that reads it.
+
+    The platform links landed on their system section, and the emulator
+    links on the page top: duckstation's scph5501.bin entry, with the line
+    that accepts it, sat 260 lines down a page of 105 entries.
+    """
+    entries = getattr(consumers, "emulator_entries", {}).get(sha1, {})
+    files_of = getattr(consumers, "emulator_files", {})
+    links = []
+    for emulator in sorted(consumers.emulators.get(sha1, ())):
+        index = entries.get(emulator)
+        anchor = (_emulator_card_anchor(emulator, files_of[emulator], index)
+                  if index is not None and emulator in files_of else "")
+        fragment = f"#{anchor}" if anchor else ""
+        links.append(f"[{emulator}](../emulators/{emulator}.md{fragment})")
+    return links
+
+
 def _installed_links(sha1: str, consumers: FileConsumers, declared: set[str]) -> list[str]:
     """Each pack installing the file that its platform's list does not name,
     with the place the pack gives it."""
@@ -2482,7 +2512,7 @@ def _system_file_card(
         # pack installs it for six cores.
         lines.append(f"- Also installed by: {', '.join(installed)}")
     if emus:
-        lines.append(f"- Emulators: {', '.join(_emulator_link(e, '../') for e in emus)}")
+        lines.append(f"- Emulators: {', '.join(_emulator_links(sha1_full, consumers))}")
     provenance = f.get("provenance", {})
     if provenance:
         lines.extend(_provenance_lines(provenance, "../"))
@@ -2876,6 +2906,8 @@ def _render_emulator_file(
         details.append(
             f"Source: {_source_ref_markdown(profile, source_ref)}"
         )
+    if consumers and f.get("type") == "directory":
+        details.extend(_directory_copies(f, consumers))
     if consumers:
         sha1 = consumers.sha1_of(f, f.get("path") or "", owner=owner)
         if sha1 and in_repo:
@@ -2943,6 +2975,27 @@ def _render_emulator_file(
     lines.append("</div>")
     lines.append("")
     return lines
+
+
+def _directory_copies(entry: dict, consumers: FileConsumers) -> list[str]:
+    """What the collection holds under a directory entry, and where.
+
+    The card said "in repo" and linked none of the files: alephone's
+    Plugins/ holds 393 of them, each with its own card on a system page.
+    """
+    members = consumers.directory_members(entry)
+    held = sorted({consumers.path_of(sha1) for sha1 in members.values()} - {""})
+    if not held:
+        return []
+    folder = os.path.commonpath(held) if len(held) > 1 else os.path.dirname(held[0])
+    parts = folder.split("/")
+    where = _code(folder + "/")
+    if len(parts) >= 3 and parts[0] == "bios":
+        page = urllib.parse.quote(parts[1].lower().replace(" ", "-"))
+        where = f"[{where}](../systems/{page}.md#{_slugify_anchor(parts[2])})"
+    tree = f"{REPO_URL}/tree/main/{urllib.parse.quote(folder)}"
+    return [f"Collection copies: {_count(len(members), 'file')} under {where} "
+            f"([browse]({tree}))"]
 
 
 def _render_metadata_rows(profile: dict) -> list[str]:

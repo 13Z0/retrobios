@@ -181,5 +181,65 @@ class StructuredBlocks(unittest.TestCase):
         self.assertIn("end.", page)
 
 
+class FileCardsLinkTheReadingEntry(unittest.TestCase):
+    def test_an_emulator_link_lands_on_its_entry(self):
+        """The platform links landed on their section, the emulator links on
+        the top of a page of a hundred entries."""
+        import generate_site
+        from cross_reference import FileConsumers
+
+        consumers = FileConsumers({"files": {}})
+        files = [{"name": "scph1001.bin"}, {"name": "scph5501.bin"},
+                 {"name": "tmss.md", "sha1": "d0fd0c16" + "0" * 32},
+                 {"name": "tmss.md", "sha1": "aa" * 20}]
+        consumers.emulators = {"s": {"duckstation", "other"}, "t": {"blastem"}}
+        consumers.emulator_entries = {"s": {"duckstation": 1}, "t": {"blastem": 2}}
+        consumers.emulator_files = {"duckstation": files, "blastem": files}
+        self.assertEqual(generate_site._emulator_links("s", consumers), [
+            "[duckstation](../emulators/duckstation.md#file-scph5501-bin)",
+            "[other](../emulators/other.md)",
+        ])
+        self.assertEqual(generate_site._emulator_links("t", consumers),
+                         ["[blastem](../emulators/blastem.md#file-tmss-md-d0fd0c16)"])
+
+
+class DirectoryMembersNameTheirEmulator(unittest.TestCase):
+    """The site resolved a ``type: directory`` entry by its own name: 11,976
+    files under alephone's Plugins/, cdogs' and thextech's trees had no
+    emulator on their card, and the directory card linked none of them."""
+
+    SHA1 = "c63078a6c9ccaca7339a726a5d39410983933070"
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        from common import build_zip_contents_index, load_database, load_emulator_profiles
+        from cross_reference import FileConsumers
+
+        cls.db = load_database(str(REPO_ROOT / "database.json"))
+        if cls.SHA1 not in cls.db.get("files", {}):
+            raise unittest.SkipTest("the collection does not hold the alephone plugin")
+        cls.profile = load_emulator_profiles(str(REPO_ROOT / "emulators"))["alephone"]
+        cls.consumers = FileConsumers(cls.db, build_zip_contents_index(cls.db))
+        cls.consumers.add_emulators({"alephone": cls.profile})
+
+    def test_a_member_names_the_emulator_and_its_directory_entry(self):
+        import generate_site
+
+        files = self.profile["files"]
+        index = self.consumers.emulator_entries[self.SHA1]["alephone"]
+        self.assertEqual(files[index].get("type"), "directory")
+        self.assertEqual(generate_site._emulator_links(self.SHA1, self.consumers),
+                         ["[alephone](../emulators/alephone.md#file-marathon-plugins)"])
+
+    def test_the_directory_card_points_at_its_copies(self):
+        import generate_site
+
+        entry = next(f for f in self.profile["files"]
+                     if f.get("type") == "directory" and f.get("path") == "Marathon/Plugins/")
+        line = generate_site._directory_copies(entry, self.consumers)[0]
+        self.assertRegex(line, r"^Collection copies: \d+ files under "
+                               r"\[`bios/Bungie/Marathon/Plugins/`\]\(\.\./systems/bungie\.md#")
+
+
 if __name__ == "__main__":
     unittest.main()
