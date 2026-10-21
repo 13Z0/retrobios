@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import os
 import zipfile
-from collections.abc import Callable, Iterator, Mapping
+from collections.abc import Callable, Iterator, Mapping, Sequence
 
 from common import (
     adler32_of,
@@ -961,3 +961,53 @@ def existence_discrepancy(file_entry: dict, local_path: str, platform_display: s
         f"packed per {platform_display} existence check: declared hash {declared}, "
         f"file md5 {actual['md5']} sha1 {actual['sha1']}"
     )
+
+
+def same_slot_entries(files: list, name: str, path: str) -> list[dict]:
+    """The entries of one profile that name the same file at the same path.
+
+    A profile lists every version its code takes under one name (each GRP
+    of Raze's table, eduke32's demo and retail NWINTER.GRP): any of them
+    fills the slot.
+    """
+    return [
+        entry for entry in files or []
+        if isinstance(entry, dict) and entry.get("name") == name
+        and (entry.get("path") or name) == path
+    ]
+
+
+def extra_alternatives(fe: dict, profiles: Mapping | None) -> list[dict]:
+    """The versions the extra's own profile accepts at the extra's slot."""
+    if not profiles:
+        return []
+    profile = profiles.get(fe.get("source_profile") or "", {})
+    name = fe.get("source_name") or fe.get("name", "")
+    return same_slot_entries(
+        profile.get("files") or [], name, fe.get("source_path") or name
+    )
+
+
+def core_size_refusal(
+    file_entry: dict, local_path: str | None, alternatives: Sequence[dict] = (),
+) -> str | None:
+    """Why the core refuses this copy by the size its own code checks, or None.
+
+    The one rule the builder, the install manifest and verify read for a
+    core's file. An existence platform never opens the bytes, so a copy whose
+    hash disagrees still ships to it, but a core that measures the file turns
+    one of the wrong size away: Basilisk II stops on the Apple IIGS' 128 KB
+    ROM (main_unix.cpp:692), so packing that file for it serves nothing.
+    ``alternatives`` are the other versions the profile accepts at the same
+    slot: a copy any of them takes is not refused.
+    """
+    if not local_path or not os.path.isfile(local_path):
+        return None
+    size = os.path.getsize(local_path)
+    if any(name_match_size_ok(entry, size) for entry in (file_entry, *alternatives)):
+        return None
+    bounds = (
+        f"{file_entry['size']}" if file_entry.get("size") is not None
+        else f"{file_entry.get('min_size', 0)} to {file_entry.get('max_size', 'any')}"
+    )
+    return f"{size} bytes, the core checks for {bounds}"

@@ -103,6 +103,8 @@ from validation import (
     unread_on,
     outside_gap_scope,
     with_archive_members,
+    core_size_refusal,
+    same_slot_entries,
 )
 
 DEFAULT_DB = "database.json"
@@ -691,6 +693,17 @@ def find_undeclared_files(
                         _lp, _st = resolve_local_file(f, db, dest_hint=dest)
                         in_repo = _st != "not_found" and _lp is not None
                         if in_repo and _st == "hash_mismatch" and shipped_on_mismatch:
+                            in_repo = False
+                    if in_repo and "size" in _parse_validation(f.get("validation")):
+                        # On any platform the core measures what it opens: a
+                        # copy it turns away by its own size check is not
+                        # held for it, the rule the builder's lookup applies
+                        # (packextras.ExtraResolver). The Apple IIGS' 128 KB
+                        # ROM is not Basilisk II's ROM.
+                        _lp, _st = resolve_local_file(f, db, dest_hint=dest)
+                        if core_size_refusal(
+                            f, _lp, same_slot_entries(profile.get("files"), fname, dest)
+                        ):
                             in_repo = False
 
                 checks = _parse_validation(f.get("validation"))
@@ -1350,7 +1363,7 @@ def verify_platform(
         region_drops, report_for_builder,
         ExtraResolver(
             db, DEFAULT_BIOS_DIR, zip_contents, data_dir_registry, validation_index,
-            validation_owners,
+            validation_owners, profiles=profiles,
         ),
         placed_kind,
     )

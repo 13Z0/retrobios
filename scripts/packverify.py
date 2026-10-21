@@ -581,7 +581,7 @@ def _builder_extras(
         resolver=ExtraResolver(
             db, DEFAULT_BIOS_DIR, build_zip_contents_index(db), data_registry,
             _build_validation_index(platform_profiles),
-            destination_owners(platform_profiles), True,
+            destination_owners(platform_profiles), True, profiles=emu_profiles,
         ),
         placed_local=placed_local,
     )

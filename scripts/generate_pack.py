@@ -93,6 +93,7 @@ from validation import (
     deliverable,
     filter_files_by_mode,
     with_archive_members,
+    extra_alternatives,
 )
 
 yaml = require_yaml()
@@ -592,14 +593,7 @@ def _matches_an_alternative(fe: dict, local_path: str, profiles: dict) -> bool:
     of Raze's table, eduke32's demo and retail NWINTER.GRP). The extra
     carries the first, and the held copy matching a sibling is no mismatch.
     """
-    profile = profiles.get(fe.get("source_profile") or "", {})
-    name = fe.get("source_name") or fe.get("name")
-    path = fe.get("source_path") or name
-    siblings = [
-        entry for entry in profile.get("files") or []
-        if isinstance(entry, dict) and entry.get("name") == name
-        and (entry.get("path") or name) == path
-    ]
+    siblings = extra_alternatives(fe, profiles)
     if len(siblings) < 2:
         return False
     actual = compute_hashes(local_path, frozenset({"sha1", "md5", "crc32"}))
@@ -1054,7 +1048,7 @@ def generate_pack(
       core_count = 0
       extra_resolver = ExtraResolver(
           db, bios_dir, zip_contents, data_registry, validation_index,
-          validation_owners, offline,
+          validation_owners, offline, profiles=emu_profiles,
       )
       for fe in core_files:
           if required_only and fe.get("required") is False:
@@ -3778,6 +3772,7 @@ def _manifest_core_entries(
     validation_index: dict | None = None,
     owners: dict | None = None,
     data_registry: dict | None = None,
+    profiles: dict | None = None,
 ) -> int:
     """Add the files a platform's cores need but its list does not name.
 
@@ -3788,6 +3783,10 @@ def _manifest_core_entries(
     """
     total_size = 0
     extras_pfx = _detect_extras_prefix(config, base_dest)
+    resolver = ExtraResolver(
+        db, bios_dir, zip_contents, data_registry, validation_index or {},
+        owners, offline, profiles=profiles,
+    )
     for fe in core_files:
         if required_only and fe.get("required") is False:
             continue
@@ -3833,20 +3832,12 @@ def _manifest_core_entries(
         ):
             continue
 
-        dest_hint = fe.get("destination", "")
-        # Resolved with the data directories, as the builder resolves the
-        # same extra: without them blueMSX's MSX2P.rom named a different
-        # dump than the one its pack carried.
-        local_path, status = resolve_file(
-            fe,
-            db,
-            bios_dir,
-            zip_contents,
-            dest_hint=dest_hint,
-            data_dir_registry=data_registry,
-            offline=offline,
-        )
-        if status in ("not_found", "external", "user_provided") or not local_path:
+        # The builder's own lookup (ExtraResolver): the data directories, the
+        # copy the emulator accepts, and the size its code checks. Without
+        # the data directories blueMSX's MSX2P.rom named a different dump
+        # than the one its pack carried.
+        local_path, status, _disagreement = resolver.resolve(fe, dest)
+        if not local_path:
             source_emu = fe.get("source_profile") or fe.get("source_emulator", "")
             if not _claim_platform_omission(
                 omitted_by_destination.get(full_dest), source_emu
@@ -3860,10 +3851,6 @@ def _manifest_core_entries(
                     [source_emu] if source_emu else [],
                 )
             continue
-        # The copy the emulator accepts, as the pack ships it.
-        local_path, _disagreement = validated_choice(
-            fe, local_path, db, validation_index or {}, bios_dir, None, dest, owners,
-        )
 
         source_emu = fe.get("source_profile") or fe.get("source_emulator", "")
 
@@ -4382,6 +4369,7 @@ def generate_manifest(
         seen_destinations, seen_lower, seen_parents, manifest_files,
         omitted_by_destination, record_omission, pack_only_sizes, selection,
         required_only, manifest_validation, manifest_owners, data_registry,
+        emu_profiles,
     )
     for key, (entry, full_dest, dest) in platform_entries.items():
         declared = declared_by.get(full_dest, set())

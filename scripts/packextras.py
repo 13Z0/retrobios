@@ -176,7 +176,10 @@ class ExtraResolver:
         validation_index: dict,
         validation_owners: dict | None,
         offline: bool | None = True,
+        *,
+        profiles: dict,
     ) -> None:
+        self.profiles = profiles
         self.db = db
         self.bios_dir = bios_dir
         self.zip_contents = zip_contents
@@ -188,7 +191,7 @@ class ExtraResolver:
     def resolve(self, fe: dict, dest: str) -> tuple[str | None, str, str]:
         """(local copy or None, resolver status, the core's disagreement)."""
         from packresolve import resolve_file
-        from validation import validated_choice
+        from validation import core_size_refusal, extra_alternatives, validated_choice
 
         local_path, status = resolve_file(
             fe, self.db, self.bios_dir, self.zip_contents,
@@ -201,6 +204,12 @@ class ExtraResolver:
             fe, local_path, self.db, self.validation_index, self.bios_dir, None,
             dest, self.validation_owners,
         )
+        # The platform never reads the bytes, the core does: a copy it turns
+        # away by its own size check is not its file, on any platform.
+        if core_size_refusal(
+            fe, local_path, extra_alternatives(fe, self.profiles)
+        ):
+            return None, "not_found", ""
         return local_path, status, disagreement
 
 
