@@ -478,5 +478,24 @@ class DeriveFiguresLiveWithTheTool(unittest.TestCase):
         self.assertIn("derivable.json", paragraph)
 
 
+class EmulatorVerboseSample(unittest.TestCase):
+    """advanced-usage.md showed `handy validates size=512 crc32=0x0d973c9d
+    [src/handy/system.h:45]`, a format verify.py does not print and a
+    reference handy.yml does not cite."""
+
+    def test_every_sample_line_is_printed(self):
+        import subprocess
+
+        section = _section(_page("advanced-usage.md"), "Per-emulator checks")
+        sample = [body for lang, body in re.findall(r"(?ms)^```(\w*)\n(.*?)^```", section) if not lang][-1]
+        printed = subprocess.run(
+            [sys.executable, "scripts/verify.py", "--emulator", "handy", "--verbose"],
+            cwd=ROOT, capture_output=True, text=True, check=True,
+        ).stdout.splitlines()
+        for line in sample.splitlines():
+            with self.subTest(line=line):
+                self.assertIn(line, printed)
+
+
 if __name__ == "__main__":
     unittest.main()

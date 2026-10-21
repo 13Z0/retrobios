@@ -1465,7 +1465,7 @@ def _format_ground_truth_aggregate(ground_truth: list[dict]) -> str:
 def _format_ground_truth_verbose(ground_truth: list[dict]) -> list[str]:
     """Format ground truth as one line per core with expected values and source ref.
 
-    Example: handy validates size=512,crc32=0d973c9d [rom.h:48-49]
+    Example: handy validates crc32=0d973c9d,size=512 [lynx/rom.h:48-49]
     """
     lines = []
     for gt in ground_truth:

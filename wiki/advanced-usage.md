@@ -377,13 +377,16 @@ python scripts/verify.py --emulator handy
 python scripts/verify.py --emulator handy --verbose
 ```
 
-Default output shows aggregate results per file: the core name and which checks apply.
-With `--verbose`, each file expands to one line per core with the exact validation
-parameters and source code reference:
+The first line counts the files the profile declares and names the checks they
+carry. A file that is missing or fails a check gets a line of its own, followed by
+the cores that check it. `--verbose` also lists the files that pass, each followed
+by one line per core with the values it expects and the source reference the
+profile cites:
 
 ```
-lynxboot.img
-  handy validates size=512 crc32=0x0d973c9d [src/handy/system.h:45]
+handy: 2/2 OK [crc32+existence+size]
+  OK (optional): lynxboot.img
+    handy validates crc32=0d973c9d,size=512 [lynx/rom.h:48-49 (ROM_SIZE=0x200, ROM_CRC32=0x0D973C9D), lynx/rom.cpp:76-129 (CRom constructor), libretro/libretro.cpp:1231-1258 (bios path + CSystem init)]
 ```
 
 ### Per-system checks
