@@ -857,7 +857,7 @@ def main() -> None:
     )
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--all", action="store_true", help="every platform")
-    group.add_argument("--platform", type=platform_arg, help="a single platform")
+    group.add_argument("--platform", "-p", type=platform_arg, help="a single platform")
     parser.add_argument(
         "--output-dir", default="exports",
         help="directory the updated platform files go to (default: %(default)s)",

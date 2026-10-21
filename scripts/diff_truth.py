@@ -182,7 +182,7 @@ def main() -> None:
     group.add_argument(
         "--all", action="store_true", help="diff all registered platforms"
     )
-    group.add_argument("--platform", type=platform_arg, help="diff a single platform")
+    group.add_argument("--platform", "-p", type=platform_arg, help="diff a single platform")
     # One output form: --json beside --format markdown printed JSON and
     # dropped the markdown without a word.
     output = parser.add_mutually_exclusive_group()
@@ -207,7 +207,7 @@ def main() -> None:
         help="platform YAML directory (default: %(default)s)",
     )
     parser.add_argument(
-        "--target",
+        "--target", "-t",
         help="read the models generate_truth --target wrote, each under the "
         "target as its platform files it",
     )

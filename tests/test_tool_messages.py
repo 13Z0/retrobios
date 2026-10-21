@@ -145,6 +145,33 @@ class TheVerifySummaryCountsDiscrepancies(unittest.TestCase):
             self.assertIn(part, message)
 
 
+class OneSpellingPerOption(unittest.TestCase):
+    """verify.py -p batocera worked and slots.py -p batocera was refused."""
+
+    SHORT = {"--platform": "-p", "--target": "-t"}
+    # migrate.py's --target is the directory files move to, not a hardware target.
+    OTHER_MEANING = {("migrate.py", "--target")}
+
+    def test_every_script_takes_the_short_forms(self):
+        import ast  # noqa: PLC0415
+
+        missing = []
+        for path in sorted((REPO_ROOT / "scripts").rglob("*.py")):
+            tree = ast.parse(path.read_text(encoding="utf-8"))
+            for node in ast.walk(tree):
+                if not (isinstance(node, ast.Call)
+                        and getattr(node.func, "attr", None) == "add_argument"):
+                    continue
+                flags = [a.value for a in node.args
+                         if isinstance(a, ast.Constant) and isinstance(a.value, str)]
+                for long, short in self.SHORT.items():
+                    if (path.name, long) in self.OTHER_MEANING:
+                        continue
+                    if long in flags and short not in flags:
+                        missing.append(f"{path.relative_to(REPO_ROOT)}:{node.lineno} {long}")
+        self.assertEqual(missing, [])
+
+
 class ThePipelineCountsItsRealSteps(unittest.TestCase):
     """Labels read N/8 for a run of 24 steps, and the summary used keys
     the log never printed."""

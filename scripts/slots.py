@@ -897,7 +897,7 @@ def main() -> int:
         "the file a platform baseline would ship.",
     )
     parser.add_argument(
-        "--platform", type=platform_arg,
+        "--platform", "-p", type=platform_arg,
         help="one platform instead of all",
     )
     parser.add_argument(
@@ -918,7 +918,7 @@ def main() -> int:
         help="with all platforms, the archived ones too (RetroPie)",
     )
     parser.add_argument(
-        "--target", help="judge only the cores a hardware target builds",
+        "--target", "-t", help="judge only the cores a hardware target builds",
     )
     parser.add_argument(
         "--strict",
