@@ -647,6 +647,46 @@ def gsplus(cg: Configgen) -> list[Launcher]:
     )]
 
 
+# Generators that hand a directory of /userdata/bios to the emulator through
+# its environment, with the module holding their path constants.
+ENVIRONMENT_GENERATORS = (("flycast.flycastGenerator", "flycast/flycastPaths.py"),)
+
+
+def environment_directories(cg: Configgen) -> list[Launcher]:
+    """Command(..., env={KEY: <path under BIOS>}) in the generator."""
+    launchers = []
+    for module, paths_module in ENVIRONMENT_GENERATORS:
+        src = cg.generator(module)
+        constants = dict(cg.paths)
+        for node in cg.source(f"{GENERATORS}/{paths_module}").tree.body:
+            name = _assigned_name(node)
+            value = _path_value(getattr(node, "value", None), constants)
+            if name is not None and value is not None:
+                constants[name] = value
+        prefix = cg.bios.rstrip("/")
+        found = [
+            (key.value, value, key)
+            for call in _calls(src.tree, attr="Command")
+            for keyword in call.keywords
+            if keyword.arg == "env" and isinstance(keyword.value, ast.Dict)
+            for key, item in zip(keyword.value.keys, keyword.value.values)
+            if isinstance(key, ast.Constant)
+            and (value := _path_value(item, constants)) is not None
+            and (value == prefix or value.startswith(prefix + "/"))
+        ]
+        if not found:
+            src.fail("the command environment names no /userdata/bios directory")
+        launchers.extend(
+            Launcher(
+                emulator=cg.emulator(module), build="standalone", kind="passes_path",
+                names=[], search_dir=value, passes_to=f"environment {key}",
+                source_ref=src.ref([(node.lineno, node.end_lineno)]),
+            )
+            for key, value, node in found
+        )
+    return launchers
+
+
 # libretro core options whose value names the BIOS file the core opens.
 FILE_OPTIONS = (("_o2em_options", "o2em_bios"), ("_neocd_options", "neocd_bios"))
 
@@ -701,7 +741,7 @@ def core_file_options(cg: Configgen) -> list[Launcher]:
 
 EXTRACTORS: tuple[Callable[[Configgen], list[Launcher]], ...] = (
     duckstation, duckstation_legacy, hatari, xemu, melonds, mupen64plus,
-    x16emu, gsplus, core_file_options,
+    x16emu, gsplus, environment_directories, core_file_options,
 )
 
 

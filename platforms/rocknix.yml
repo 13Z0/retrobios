@@ -757,6 +757,15 @@ launchers:
   source_ref: "projects/ROCKNIX/packages/emulators/standalone/armsx2-sa/config/S922X/ARMSX2/inis/PCSX2.ini:21,\
     \ 475, projects/ROCKNIX/packages/emulators/standalone/armsx2-sa/config/inputplumber/ARMSX2/inis/PCSX2.ini:21,\
     \ 473, projects/ROCKNIX/packages/emulators/standalone/armsx2-sa/package.mk:117-118"
+- emulator: flycast
+  build: standalone
+  kind: passes_path
+  names: []
+  search_dir: /storage/roms/dreamcast/data
+  passes_to: "find_user_data_dir() in core/linux-dist/main.cpp returns it"
+  fails_when_missing: false
+  source_ref: "projects/ROCKNIX/packages/emulators/standalone/flycast-sa/patches/000-conf-dir.patch:25,\
+    \ 29"
 - emulator: drastic
   build: standalone
   kind: links

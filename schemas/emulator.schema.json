@@ -886,6 +886,13 @@
       "type": "string",
       "description": "Branch the port was read from, when it is not the default one."
     },
+    "standalone_directories": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "What the standalone build resolves standalone_path against, as its code names it: a directory ($XDG_DATA_HOME/flycast), a setting (Dreamcast.BiosPath), an environment variable or the function returning the directory. A platform launcher record that links or passes a folder of its BIOS tree under one of these puts the standalone files in that folder."
+    },
     "prose_written_at": {
       "type": "string",
       "pattern": "^[0-9a-f]{40}$",

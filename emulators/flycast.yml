@@ -18,6 +18,12 @@ systems:
   - sega-naomi2
   - sega-atomiswave
   - sega-systemsp
+standalone_directories:
+  - "Dreamcast.BiosPath"
+  - "find_user_data_dir"
+  - "$XDG_DATA_HOME/flycast"
+  - "$HOME/.local/share/flycast"
+  - "FLYCAST_BIOS_PATH"
 
 notes: |
   The libretro core is built from flyinghead/flycast, the same tree as the
@@ -46,7 +52,11 @@ notes: |
   macOS (core/windows/winmain.cpp:73-78, core/windows/winmain.cpp:86-89,
   shell/android-studio/flycast/src/main/jni/src/Android.cpp:149-159,
   shell/apple/emulator-osx/emulator-osx/osx-main.mm:97-101).
-  standalone_path is relative to the data directory.
+  standalone_path is relative to the data directory. The BIOS paths are the
+  Dreamcast.BiosPath setting (core/cfg/option.cpp:144), the system data
+  directories take $FLYCAST_BIOS_PATH (core/linux-dist/main.cpp:198-202), and
+  find_user_data_dir() returns the data directory
+  (core/linux-dist/main.cpp:74, core/linux-dist/main.cpp:247).
 
   Only the Dreamcast reads flat files. The prefix is dc_ for Dreamcast
   (core/hw/flashrom/nvmem.cpp:35-50), and the boot ROM is searched as

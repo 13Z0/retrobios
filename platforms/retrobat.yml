@@ -3238,6 +3238,14 @@ launchers:
   fails_when_missing: not checked by the launcher
   depends_on_option: duck_bios
   source_ref: "emulatorLauncher/Generators/Duckstation.Generator.cs:204-209, .emulationstation/es_features.cfg:11638-11646"
+- emulator: flycast
+  build: standalone
+  kind: passes_path
+  names: []
+  search_dir: bios/dc
+  passes_to: "emu.cfg [config] Dreamcast.BiosPath = bios/dc"
+  fails_when_missing: false
+  source_ref: "emulatorLauncher/Generators/Flycast.Generator.cs:149, 167"
 - emulator: jgenesis
   build: standalone
   kind: fixed_name

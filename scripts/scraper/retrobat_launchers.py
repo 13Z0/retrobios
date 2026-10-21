@@ -22,6 +22,7 @@ SOURCE_FILES = (
     f"{GENERATORS}/Ares.Generator.cs",
     f"{GENERATORS}/Bizhawk.Generator.cs",
     f"{GENERATORS}/Duckstation.Generator.cs",
+    f"{GENERATORS}/Flycast.Generator.cs",
     f"{GENERATORS}/Hatari.Generator.cs",
     f"{GENERATORS}/Jgenesis.Generator.cs",
     f"{GENERATORS}/KegaFusion.Generator.cs",
@@ -1185,6 +1186,35 @@ def duckstation(sources: dict[str, Source]) -> list[Record]:
     ]
 
 
+def flycast(sources: dict[str, Source]) -> list[Record]:
+    src = sources[f"{GENERATORS}/Flycast.Generator.cs"]
+    folder = src.find(
+        r'string biosPath = Path\.Combine\(' + BIOS + r', "(\w+)"\);', "biosPath under bios"
+    )
+    write = src.find(
+        r'ini\.WriteValue\("(\w+)", "(Dreamcast\.BiosPath)", biosPath\);',
+        "Dreamcast.BiosPath write",
+        folder.end(),
+    )
+    return [
+        _record(
+            "flycast",
+            "standalone",
+            "passes_path",
+            [],
+            source_ref(
+                (
+                    src.path,
+                    [src.lines(folder.start(), folder.end()), src.lines(write.start(), write.end())],
+                )
+            ),
+            search_dir=f"bios/{folder.group(1)}",
+            passes_to=f"emu.cfg [{write.group(1)}] {write.group(2)} = bios/{folder.group(1)}",
+            fails_when_missing=False,
+        )
+    ]
+
+
 # Generators that write each BIOS path into the emulator's configuration
 # only when the file exists: string x = Path.Combine(bios, ..., "name");
 # if (File.Exists(x)) ini.WriteValue("section", "key", x).
@@ -1401,6 +1431,7 @@ EXTRACTORS: tuple[Callable[[dict[str, Source]], list[Record]], ...] = (
     amiberry,
     ares,
     duckstation,
+    flycast,
     guarded_writes,
     hatari,
     hatari_libretro,

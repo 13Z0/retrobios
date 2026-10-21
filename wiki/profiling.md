@@ -493,6 +493,7 @@ reports the profile as uncheckable, and the CI job that runs
 | `built_by` | no | platforms that ship this build under its core name, compiled by them or installed from the project's own release (Recalbox's `mame0278`, the GSplus legacy build). On those platforms the name resolves to this profile, never through `all_libretro`: the buildbot does not publish it |
 | `bios_mode` | no | `agnostic` when the core takes any file of the right shape in its BIOS folder instead of a fixed name (PCSX2). Packs then carry every matching dump, and a `<bios>.bin` placeholder stands for them |
 | `bios_directory` | no | the folder an agnostic core scans, relative to the system directory (`pcsx2/bios/`). A scan never seeds from files outside it |
+| `standalone_directories` | no | what the standalone build resolves `standalone_path` against, as its code names it: a directory (`$XDG_DATA_HOME/flycast`), a setting (`Dreamcast.BiosPath`), an environment variable (`FLYCAST_BIOS_PATH`) or the function returning the directory (`find_user_data_dir`). A platform whose launcher links or passes a folder of its BIOS tree under one of them gets the standalone files in that folder |
 | `display_name` | no | full display name (e.g. "Sega - Mega Drive (BlastEm)") |
 | `logo` | no | image URL used on the emulator page |
 | `systems` | no | list of system IDs this core handles |

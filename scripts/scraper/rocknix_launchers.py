@@ -612,6 +612,52 @@ def links(tree: RepoTree) -> list[Launcher]:
     return records
 
 
+# Packages whose build patch replaces the function an emulator resolves a
+# directory with by a fixed path: ROCKNIX's Flycast returns
+# /storage/roms/dreamcast/data as its data directory, which start_flycast.sh
+# then links to the BIOS tree.
+DIRECTORY_PATCHES = (
+    ("flycast", f"{STANDALONE}/flycast-sa/patches/000-conf-dir.patch", "find_user_data_dir"),
+)
+
+
+def patched_directories(tree: RepoTree) -> list[Launcher]:
+    records = []
+    for emulator, path, function in DIRECTORY_PATCHES:
+        lines = tree.read(path).splitlines()
+        target = next(
+            (line[len("+++ b/"):] for line in lines if line.startswith("+++ b/")), None
+        )
+        start = next(
+            (n for n, line in enumerate(lines, 1) if re.search(rf"\b{function}\(\)", line)),
+            None,
+        )
+        returned = None
+        if target is not None and start is not None:
+            returned = next(
+                (
+                    (n, match.group(1))
+                    for n, line in enumerate(lines[start:], start + 1)
+                    if (match := re.match(r'^\+\s*return "(/[^"]+)";', line))
+                ),
+                None,
+            )
+        if returned is None:
+            raise LauncherPatternMissing(path, f"{function}() patched to return a fixed path")
+        number, directory = returned
+        records.append(Launcher(
+            emulator=emulator,
+            build="standalone",
+            kind="passes_path",
+            names=[],
+            source_ref=source_ref([(path, {start, number})]),
+            search_dir=directory.rstrip("/"),
+            passes_to=f"{function}() in {target} returns it",
+            fails_when_missing=False,
+        ))
+    return records
+
+
 def _existence_guard(script: Script, link: Link) -> int | None:
     """The line of a -e test of the BIOS-side path the link waits for, if any."""
     last = max(link.lines)
@@ -639,6 +685,7 @@ EXTRACTORS: tuple[Callable[[RepoTree], list[Launcher]], ...] = (
     duckstation,
     aethersx2,
     armsx2,
+    patched_directories,
     links,
 )
 

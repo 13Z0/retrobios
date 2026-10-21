@@ -6111,6 +6111,14 @@ launchers:
   fails_when_missing: false
   depends_on_option: gsplus_bios_filename
   source_ref: "package/batocera/core/batocera-configgen/configgen/configgen/generators/gsplus/gsplusGenerator.py:105"
+- emulator: flycast
+  build: standalone
+  kind: passes_path
+  names: []
+  search_dir: /userdata/bios/dc
+  passes_to: environment FLYCAST_BIOS_PATH
+  fails_when_missing: false
+  source_ref: "package/batocera/core/batocera-configgen/configgen/configgen/generators/flycast/flycastGenerator.py:199"
 - emulator: o2em
   build: libretro
   kind: core_option

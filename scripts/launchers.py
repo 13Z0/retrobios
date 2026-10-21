@@ -186,6 +186,134 @@ def launcher_places(config: dict) -> list[LauncherPlace]:
     return places
 
 
+# The names a platform's launch code gives its BIOS root, besides the
+# base_destination _bios_relative reads: RetroPie's scriptmodules set
+# biosdir="$home/RetroPie/BIOS", EmuDeck's scripts ${biosPath}, RetroDECK's
+# component scripts $bios_path.
+BIOS_ROOT_VARIABLES = ("$biosdir", "$home/RetroPie/BIOS", "${biosPath}", "$bios_path")
+
+# The kinds that hand an emulator a whole directory.
+HANDED_KINDS = ("links", "passes_path")
+
+_HOME = re.compile(r"^(?:\$\{HOME\}|\$HOME|\$home|~)(?=/|$)")
+# Flatpak sets XDG_DATA_HOME to ~/.var/app/<id>/data inside the sandbox.
+_FLATPAK_DATA = re.compile(r"^~/\.var/app/[^/]+/data(?=/|$)")
+
+
+def normalize_handle(token: str) -> str:
+    """One spelling for a path, setting or function a launcher record names.
+
+    ``$home``, ``$HOME``, ``${HOME}`` and ``~`` are one directory, and a
+    Flatpak's data directory is its ``$XDG_DATA_HOME``.
+    """
+    token = token.strip().strip("\"'").rstrip(",;").rstrip("/")
+    token = token.removesuffix("()")
+    token = _HOME.sub("~", token)
+    return _FLATPAK_DATA.sub("$XDG_DATA_HOME", token)
+
+
+def _folder_in_bios(directory: str, base: str) -> str | None:
+    """A directory relative to the BIOS root, None when it lies outside."""
+    relative = _bios_relative(directory, base)
+    if relative is not None:
+        return relative
+    directory = directory.strip().rstrip("/")
+    for variable in BIOS_ROOT_VARIABLES:
+        if directory == variable:
+            return ""
+        if directory.startswith(variable + "/"):
+            rest = directory[len(variable) + 1:]
+            return None if re.search(r"[\s<>$:;]", rest) else rest
+    return None
+
+
+@dataclass(frozen=True)
+class HandedDirectory:
+    """A whole directory a platform hands a standalone emulator.
+
+    ``folder`` is the directory relative to the BIOS root, None when it lies
+    outside it. ``handles`` are the paths, settings and functions the record
+    names on the emulator's side: the link's other end, the config key, the
+    function a patch rewrites.
+    """
+
+    emulator: str
+    folder: str | None
+    directory: str
+    handles: frozenset[str]
+    source_ref: str
+
+
+def handed_directories(config: dict) -> list[HandedDirectory]:
+    """Every whole directory a platform links or passes to a standalone build.
+
+    A record naming files (gpsp's gba_bios.bin) or one slot of a directory
+    (RetroDECK's GC/EUR) hands over no whole directory, and a search_dir
+    holding several directories names no single one.
+    """
+    base = str(config.get("base_destination") or "bios")
+    found: list[HandedDirectory] = []
+    for record in config.get("launchers") or []:
+        if record.get("build") != "standalone" or record.get("kind") not in HANDED_KINDS:
+            continue
+        if record.get("names") or record.get("slot"):
+            continue
+        raw = str(record.get("search_dir") or "").strip()
+        if not raw or re.search(r"[\s,:;]", raw):
+            continue
+        directory = normalize_handle(raw)
+        handles = frozenset(
+            handle
+            for token in str(record.get("passes_to") or "").split()
+            if (handle := normalize_handle(token)) and handle != directory
+        )
+        for emulator in (e.strip() for e in str(record.get("emulator", "")).split(",")):
+            found.append(HandedDirectory(
+                emulator=emulator,
+                folder=_folder_in_bios(raw, base),
+                directory=directory,
+                handles=handles,
+                source_ref=str(record.get("source_ref", "")),
+            ))
+    return found
+
+
+def standalone_root(
+    names: Iterable[str], declared: Iterable[str], handed: Iterable[HandedDirectory]
+) -> str | None:
+    """The folder of the BIOS tree a platform gives a standalone build's layout.
+
+    ``declared`` are the directories the build resolves ``standalone_path``
+    against, as its profile names them (``standalone_directories``). A
+    record handing a folder of the BIOS tree under one of them gives it
+    directly: RetroPie points Flycast's ~/.local/share/flycast at bios/dc. A
+    record handing a directory outside the tree under one of them is
+    followed through a link to the tree: ROCKNIX's patched Flycast uses
+    /storage/roms/dreamcast/data, which its start script links to bios/dc.
+
+    None when nothing gives a folder, or when two records give two: the
+    layout is then the profile's, relative to the BIOS root.
+    """
+    names = set(names)
+    wanted = {normalize_handle(d) for d in declared}
+    if not wanted:
+        return None
+    records = [h for h in handed if h.emulator in names]
+    folders: set[str] = set()
+    for record in records:
+        if not record.handles & wanted:
+            continue
+        if record.folder is not None:
+            folders.add(record.folder)
+            continue
+        folders.update(
+            link.folder
+            for link in records
+            if link.folder is not None and record.directory in link.handles
+        )
+    return next(iter(folders)) if len(folders) == 1 else None
+
+
 def declared_destinations(config: dict) -> set[str]:
     """Each destination the platform declares, relative to the core file directory.
 
