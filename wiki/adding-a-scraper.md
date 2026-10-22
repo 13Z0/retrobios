@@ -1,3 +1,7 @@
+---
+level: contribute
+---
+
 # Adding a scraper
 
 How to create or modify a scraper for fetching BIOS requirements from upstream

@@ -1,9 +1,13 @@
-# Installer
+---
+level: explore
+---
+
+# All installer options
 
 Reference for `install.sh`, `install.ps1` and `install.py`: what the one-liner
 runs, what it detects, where the bytes come from and what it is allowed to
-write. For BIOS directory paths per platform, see
-[Getting started](getting-started.md).
+write. For the BIOS folder of each setup, see
+[Get your files](../which-pack.md).
 
 ## One line
 

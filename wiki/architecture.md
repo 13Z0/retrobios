@@ -1,3 +1,7 @@
+---
+level: reference
+---
+
 # Architecture
 
 ## Principles

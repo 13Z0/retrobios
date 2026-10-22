@@ -36,9 +36,11 @@ sys.path.insert(0, os.path.dirname(__file__))
 from common import (
     upstream_profile_index,
     build_zip_contents_index,
+    GAME_DATA_TOPS,
     compute_composition,
     count_catalog_matched,
     list_registered_platforms,
+    load_platform_registry,
     load_database,
     load_emulator_profiles,
     load_platform_config,
@@ -53,7 +55,7 @@ from common import (
 )
 from artifacts import ArtifactLockBusy, artifact_lock
 from cross_reference import FileConsumers, held_copy
-from nativemode import reads_file_contents
+from nativemode import digest_algorithm, reads_file_contents
 
 
 
@@ -71,6 +73,17 @@ from generate_readme import (
 )
 from provenance_report import build_report, distinct_missing
 from siteexports import generate_exports_page, load_export_reports
+from siteguides import (
+    ALSO_RUNS,
+    DEVICE_GROUPS,
+    GROUP_ANCHORS,
+    GUIDES,
+    INSTALL_BASE,
+    install_command,
+    platform_args,
+    terminal_tabs,
+    trust_box,
+)
 import release_record
 
 DOCS_DIR = "docs"
@@ -366,14 +379,27 @@ def _timestamp() -> str:
 # Home page
 
 
-def _extract_table(platforms_dir: str) -> list[str]:
-    """The home page's extraction table, indented for its admonition."""
-    rows = [
-        f"    | {display} | `{folder}` |"
-        for display, folder in extract_targets(platforms_dir)
+def _stat(value: str, label: str) -> list[str]:
+    return [
+        '<div class="rb-stat" markdown>',
+        f'<span class="rb-stat-value">{value}</span>',
+        f'<span class="rb-stat-label">{label}</span>',
+        "</div>",
+        "",
     ]
-    notes = [f"    {note}" for note in extract_notes(platforms_dir)]
-    return ["    | Platform | Extract to |", "    |----------|-----------|", *rows, "", *notes]
+
+
+def _group_members(coverages: dict, registry: dict, group: str) -> list[str]:
+    """Registered platforms of a device group, by display name."""
+    return sorted(
+        (name for name in coverages if registry.get(name, {}).get("device_group") == group),
+        key=lambda name: coverages[name]["platform"].casefold(),
+    )
+
+
+def _next_block(links: list[str]) -> list[str]:
+    """Where to go from here, at the end of a page."""
+    return ['!!! tip "Next"', "", *(f"    - {link}" for link in links), ""]
 
 
 def generate_home(
@@ -383,166 +409,156 @@ def generate_home(
     registry: dict | None = None,
     platforms_dir: str = "platforms",
 ) -> str:
+    """The page someone lands on knowing nothing: what a BIOS file is,
+    whether they need one, and the three steps to get the right ones.
+    Figures about the collection come last."""
+    registry = registry or {}
     total_files = db.get("total_files", 0)
     total_size = db.get("total_size", 0)
-    ts = _timestamp()
-
-    unique = unique_emulator_profiles(profiles)
-    emulator_count = len(unique)
-
-    classifications: dict[str, int] = {}
-    for p in unique.values():
-        cls = p.get("core_classification", "other")
-        if cls not in CLS_LABELS or cls == "unclassified":
-            cls = "other"
-        classifications[cls] = classifications.get(cls, 0) + 1
+    emulator_count = len(unique_emulator_profiles(profiles))
+    names = sorted((cov["platform"] for cov in coverages.values()), key=str.casefold)
 
     lines = [
-        f"# {SITE_NAME}",
+        "# BIOS files for your emulators, in the right folder",
         "",
-        "BIOS and firmware metadata checked the way each platform checks it, "
-        "cross-referenced against revision-pinned emulator source code.",
+        "Many consoles start their games with the help of a small program built "
+        "into the machine, called a BIOS or firmware. An emulator needs a copy of "
+        "that file to start the games of those consoles. RetroBIOS gives you the "
+        "right files for the setup you already have, in the folder where your "
+        "emulators look for them.",
+        "",
+        "[Get your files](which-pack.md){ .md-button .md-button--primary } "
+        "[What is a BIOS file?](wiki/what-are-bios-files.md){ .md-button }",
+        "",
+        f"Free, with no account. It works with {', '.join(names[:-1])} and {names[-1]}.",
+        "",
+        "<!-- image: bios-chain -->",
+        "",
+        "## Do I need this?",
+        "",
+        "- **Yes**, if a game or an emulator says a BIOS file is missing.",
+        "- **Usually yes** for PlayStation, PlayStation 2, Saturn, Dreamcast, Neo "
+        "Geo and many home computers. Details: [the files each system "
+        "needs](systems/index.md).",
+        "- **Usually not** for NES, Super Nintendo and Mega Drive cartridges: those "
+        "consoles start games without a BIOS. Their add-ons do need one, such as "
+        "the Famicom Disk System and the Mega-CD.",
+        "",
+        "## Three steps",
+        "",
+        '<div class="grid cards" markdown>',
+        "",
+        "-   **1. Find your setup**",
+        "",
+        "    Pick your device, or the system you play on. Its page shows the folder "
+        "where the files go.",
+        "",
+        "    [Pick your setup](which-pack.md#pick-your-setup)",
+        "",
+        "-   **2. Get the files**",
+        "",
+        "    One command downloads only what is missing and checks each file. You "
+        "can also download a ZIP pack and extract it yourself.",
+        "",
+        "    [First install, step by step](wiki/first-install.md)",
+        "",
+        "-   **3. Start a game**",
+        "",
+        "    Your emulator finds the files by itself. If a game still does not "
+        "start, the help page goes through the usual causes.",
+        "",
+        "    [When a game does not start](wiki/troubleshooting.md)",
+        "",
+        "</div>",
+        "",
+        "## Pick your device",
+        "",
+        '<div class="grid cards" markdown>',
+        "",
+    ]
+    for group, (label, description) in DEVICE_GROUPS.items():
+        members = _group_members(coverages, registry, group)
+        if not members:
+            continue
+        lines += [
+            f"-   **{label}**",
+            "",
+            f"    {description}",
+            "",
+            "    " + ", ".join(
+                f"[{coverages[name]['platform']}](platforms/{name}.md)" for name in members
+            ),
+            "",
+            f"    [See where the files go](which-pack.md#{GROUP_ANCHORS[group]})",
+            "",
+        ]
+    lines += [
+        "</div>",
+        "",
+        "## Is this safe?",
+        "",
+        "The installer writes only inside your BIOS folder, checks every file "
+        "before saving it, and never touches games or saves. "
+        "[How the command is checked](wiki/faq.md#is-piping-the-installer-into-a-shell-safe).",
+        "",
+        "Laws on copying console firmware differ by country. "
+        "[The project's position](wiki/faq.md#is-this-legal) says where it stands "
+        "and how to ask for a file to be removed.",
+        "",
+        "## Go further",
+        "",
+        "These pages go into detail, for when you want to know more than where the "
+        "files go.",
+        "",
+        '<div class="grid cards" markdown>',
+        "",
+        "-   **Systems**",
+        "",
+        "    What each console and computer needs, file by file.",
+        "",
+        "    Details: [Browse the systems](systems/index.md)",
+        "",
+        "-   **Emulators**",
+        "",
+        "    What each emulator reads, with the source code that reads it.",
+        "",
+        "    Details: [Browse the emulators](emulators/index.md)",
+        "",
+        "-   **How files are checked**",
+        "",
+        "    Each setup checks its files its own way: by name, by MD5 or by SHA1.",
+        "",
+        "    Reference: [How each platform checks files](wiki/verification-modes.md)",
+        "",
+        "-   **Data and API**",
+        "",
+        "    Every file and hash as JSON, CSV and SQLite, for your own tools.",
+        "",
+        "    Reference: [Data and API](data.md)",
+        "",
+        "</div>",
         "",
         '<div class="rb-stats" markdown>',
         "",
-        '<div class="rb-stat" markdown>',
-        f'<span class="rb-stat-value">{total_files:,}</span>',
-        f'<span class="rb-stat-label">{COLLECTION_FILES_LABEL}</span>',
-        "</div>",
-        "",
-        '<div class="rb-stat" markdown>',
-        f'<span class="rb-stat-value">{len(coverages)}</span>',
-        '<span class="rb-stat-label">Platforms</span>',
-        "</div>",
-        "",
-        '<div class="rb-stat" markdown>',
-        f'<span class="rb-stat-value">{emulator_count}</span>',
-        '<span class="rb-stat-label">Emulators profiled</span>',
-        "</div>",
-        "",
-        '<div class="rb-stat" markdown>',
-        f'<span class="rb-stat-value">{_fmt_size(total_size)}</span>',
-        '<span class="rb-stat-label">Total size</span>',
-        "</div>",
-        "",
+        *_stat(f"{total_files:,}", COLLECTION_FILES_LABEL),
+        *_stat(str(len(coverages)), "Setups supported"),
+        *_stat(str(emulator_count), "Emulators documented"),
+        *_stat(_fmt_size(total_size), "Size of the collection"),
         "</div>",
         "",
         composition_sentence(db),
         "",
+        "## Help the project",
+        "",
+        "Files, emulator profiles and corrections are welcome. "
+        "For contributors: [How to contribute](contributing.md).",
+        "",
+        *_next_block([
+            "[Get your files](which-pack.md)",
+            "[What BIOS files are](wiki/what-are-bios-files.md)",
+        ]),
+        f'<div class="rb-timestamp">Generated on {_timestamp()}.</div>',
     ]
-
-    # Platforms FIRST (main action)
-    lines.extend(
-        [
-            "## Platforms",
-            "",
-            "| Icon | Platform | Files in the pack | Checked by | Download |",
-            "|---|----------|------:|-----------|----------|",
-        ]
-    )
-
-    mode_icons = {"md5": "MD5", "sha1": "SHA1", "existence": "exists"}
-
-    for name, cov in sorted(coverages.items(), key=lambda x: x[1]["platform"]):
-        display = cov["platform"]
-        logo_url = (registry or {}).get(name, {}).get("logo", "")
-        logo_md = (
-            f"![{display}]({logo_url}){{ width=20 loading=lazy }}" if logo_url else ""
-        )
-        mode_label = mode_icons.get(cov["mode"], cov["mode"])
-
-        lines.append(
-            f"| {logo_md} | [{display}](platforms/{name}.md) | "
-            f"{_released_files(name)} | {mode_label} | "
-            f"{_pack_buttons(name)} |"
-        )
-
-    lines.extend(
-        [
-            "",
-            "Checked by is the test each platform runs on its own, replicated "
-            "from its source code. RetroArch only looks for the filename, while "
-            "Batocera compares MD5 checksums, the fingerprint of a file's "
-            "contents. "
-            "[How each mode works](wiki/verification-modes.md).",
-        ]
-    )
-
-    catalog_matched = count_catalog_matched(db)
-    if catalog_matched:
-        system_files = compute_composition(db)["systems"]["files"]
-        lines.extend(
-            [
-                "",
-                f"**{catalog_matched:,}** of {system_files:,} system files are "
-                "byte-identical to a dump catalogued by No-Intro, Redump, or "
-                "TOSEC, and say so on their system page. "
-                "[What that means](provenance.md).",
-            ]
-        )
-
-    # Quick start, collapsed: secondary information
-    lines.extend(
-        [
-            "",
-            '??? info "Where to extract"',
-            "",
-            *_extract_table(platforms_dir),
-            "    Every other pack extracts straight into the BIOS folder."
-            " [Full instructions per setup](which-pack.md).",
-            "",
-        ]
-    )
-
-    lines.extend(
-        [
-            "## Emulator profiles",
-            "",
-            "| Classification | Count |",
-            "|---------------|-------|",
-        ]
-    )
-    for cls, count in sorted(classifications.items(), key=lambda x: -x[1]):
-        label = CLS_LABELS.get(cls, cls)
-        lines.append(f"| [{label}](emulators/index.md#{cls}) | {count} |")
-
-    # Methodology (collapsible)
-    lines.extend(
-        [
-            "",
-            '??? abstract "Methodology"',
-            "",
-            "    Platform lists are checked against emulator source code, file "
-            "by file where a profile exists ([how far that reaches](gaps.md)). "
-            "Documentation and metadata can differ from actual runtime behavior, "
-            "so the source is the primary reference.",
-            "",
-            "    1. **Upstream emulator source**: what the original project "
-            "loads (Dolphin, PCSX2, Mednafen...)",
-            "    2. **Libretro core source**: the RetroArch port, which may "
-            "adapt paths or add files",
-            "    3. **`.info` declarations**: metadata that platforms rely on, "
-            "checked for accuracy",
-            "",
-        ]
-    )
-
-    lines.extend(
-        [
-            "---",
-            "",
-            "[Systems](systems/index.md){ .md-button } "
-            "[Emulators](emulators/index.md){ .md-button } "
-            "[Cross-reference](cross-reference.md){ .md-button } "
-            "[Gap analysis](gaps.md){ .md-button } "
-            "[Dump provenance](provenance.md){ .md-button } "
-            "[Data & API](data.md){ .md-button } "
-            "[Contributing](contributing.md){ .md-button .md-button--primary }",
-            "",
-            f'<div class="rb-timestamp">Generated on {ts}.</div>',
-        ]
-    )
-
     return "\n".join(lines) + "\n"
 
 
@@ -1394,10 +1410,10 @@ def _browser_title(relative: Path, title: str) -> str:
         # Material appends " - RetroBIOS": the home title says what the site
         # is, instead of "RetroBIOS - RetroBIOS".
         "index.md": "BIOS and firmware packs for RetroArch, Batocera and more",
-        "platforms/index.md": "Platforms",
+        "platforms/index.md": "Your setup",
         "systems/index.md": "Systems",
         "emulators/index.md": "Emulators",
-        "wiki/index.md": "Guide and methodology",
+        "wiki/index.md": "Reference",
     }
     if key in index_titles:
         return index_titles[key]
@@ -1435,18 +1451,19 @@ def _shorten(plain: str, limit: int = 157) -> str:
 def _page_description(markdown: str, relative: Path, title: str) -> str:
     key = relative.as_posix()
     specific = {
-        "index.md": "Source-traced BIOS and firmware metadata, platform verification, emulator profiles, gaps and reproducible retrogaming data exports.",
+        "index.md": "The BIOS files your emulators need, for RetroArch, Batocera, EmuDeck and more: the folder they go in, one command that installs and checks them, and packs to download.",
         "data.md": "Versioned RetroBIOS JSON API, CSV exports, SQLite snapshot, schemas, checksums and data interpretation guidance.",
         "cross-reference.md": "Cross-reference from retrogaming platforms to emulator cores, systems, upstream projects and profiled firmware files.",
         "gaps.md": "Current RetroBIOS verification gaps, platform-to-emulator divergences, missing files and documented source limitations.",
         "exports.md": "Each platform's own BIOS list (System.dat, batocera-systems, es_bios.xml and the rest) with the hashes and files the emulator source code shows, offered to its maintainers.",
         "provenance.md": "Hash-based comparison of RetroBIOS metadata with No-Intro, Redump and TOSEC catalog snapshots.",
-        "which-pack.md": "One-line automatic RetroBIOS installation and platform-specific pack destinations, with verification and release caveats.",
+        "which-pack.md": "Pick your device or setup and get its BIOS files: the folder they go in, one command that installs and checks them, or a ZIP pack to extract.",
     }
     if key in specific:
         return specific[key]
     if key.startswith("platforms/") and relative.stem != "index":
-        return f"{title}: declared BIOS contract, verification mode, coverage, destinations and emulator complement."
+        return (f"{title}: where the BIOS files go, the command that installs them, the pack, "
+                "and every file by system with its hashes.")
     if key.startswith("emulators/") and relative.stem != "index":
         # Pinned only when the profile names the revision it was read at:
         # 48 pages without one called themselves source-pinned.
@@ -1804,6 +1821,55 @@ def emulator_structured_data(profile: dict) -> dict:
 LOCAL_NOTE_DIRS = ("plans", "specs")
 
 
+# The funnel: who each page is written for, from someone who knows nothing
+# (start) to someone adding to the project (contribute). The label sits above
+# the title, and the search ranks the first two levels higher.
+LEVELS = {
+    "start": "Start here",
+    "setup": "Setup guide",
+    "explore": "Details",
+    "reference": "Reference",
+    "contribute": "For contributors",
+}
+SEARCH_BOOST = {"start": 5, "setup": 3}
+_REFERENCE_PAGES = {
+    "gaps.md", "cross-reference.md", "provenance.md", "exports.md", "data.md",
+    "files/index.md", "wiki/data-model.md",
+}
+
+
+def page_level(relative: Path) -> str:
+    """The level of a generated page. A wiki page states its own."""
+    path = relative.as_posix()
+    if path in ("index.md", "which-pack.md"):
+        return "start"
+    if relative.parts[0] == "platforms":
+        return "setup"
+    if relative.parts[0] in ("systems", "emulators"):
+        return "explore"
+    if path in _REFERENCE_PAGES:
+        return "reference"
+    if path == "contributing.md":
+        return "contribute"
+    return ""
+
+
+def level_label(level: str) -> str:
+    """The visible label of a level, plain text for the theme to style."""
+    return f'<span class="rb-level rb-level-{level}">{LEVELS[level]}</span>'
+
+
+def _front_matter(markdown: str) -> dict:
+    """The YAML front matter of a page, empty when it has none."""
+    if not markdown.startswith("---\n"):
+        return {}
+    end = markdown.find("\n---\n", 4)
+    if end == -1:
+        return {}
+    data = yaml.safe_load(markdown[4:end])
+    return data if isinstance(data, dict) else {}
+
+
 def decorate_markdown_pages(docs: Path) -> None:
     """Add per-page descriptions and machine-readable structured data."""
     for path in sorted(docs.rglob("*.md")):
@@ -1811,11 +1877,14 @@ def decorate_markdown_pages(docs: Path) -> None:
         if any(part in LOCAL_NOTE_DIRS for part in relative.parts[:-1]):
             continue
         markdown = path.read_text(encoding="utf-8")
+        authored = _front_matter(markdown)
         stripped = _undecorated(markdown)
         if stripped is not markdown:
             markdown = stripped
-        elif markdown.startswith("---\n"):
-            continue
+        elif authored:
+            # A wiki page states its own level: keep it, wrap the body.
+            markdown = markdown[markdown.find("\n---\n", 4) + 5:].lstrip("\n")
+        level = authored.get("level") or page_level(relative)
 
         title = _page_title(markdown, relative)
         browser_title = _browser_title(relative, title)
@@ -1851,12 +1920,15 @@ def decorate_markdown_pages(docs: Path) -> None:
             "generated_by: retrobios-site\n"
             f"title: {json.dumps(browser_title, ensure_ascii=False)}\n"
             f"description: {json.dumps(description, ensure_ascii=False)}\n"
+            + (f"level: {level}\n" if level else "")
+            + (f"search:\n  boost: {SEARCH_BOOST[level]}\n" if level in SEARCH_BOOST else "")
             + (f"date_modified: {json.dumps(str(structured['dateModified']))}\n"
                if structured.get("dateModified") else "")
             + "---\n\n"
             '<script type="application/ld+json">\n'
             f"{structured_json}\n"
             "</script>\n\n"
+            + (f"{level_label(level)}\n\n" if level else "")
         )
         write_decorated(path, front_matter + markdown)
 
@@ -1865,13 +1937,39 @@ def decorate_markdown_pages(docs: Path) -> None:
 
 
 def generate_platform_index(coverages: dict, registry: dict | None = None) -> str:
+    """The Your setup tab: every platform by the device it runs on, then the
+    figures of each one under a reference heading."""
+    registry = registry or {}
     total_present = sum(c["present"] for c in coverages.values())
 
     lines = [
-        "# Platforms",
+        "# Your setup",
         "",
-        f"{len(coverages)} supported platforms with "
-        f"{total_present:,} verified files.",
+        "Pick the system you play on. Its page says where the BIOS files go, "
+        "gives the command that installs them and links its pack.",
+        "",
+    ]
+    for group, (label, description) in DEVICE_GROUPS.items():
+        members = _group_members(coverages, registry, group)
+        if not members:
+            continue
+        lines += [f"## {label}", "", description, "", '<div class="grid cards" markdown>', ""]
+        for name in members:
+            guide = GUIDES[name]
+            lines += [
+                f"-   **[{coverages[name]['platform']}]({name}.md)**",
+                "",
+                f"    {guide.summary}",
+                "",
+            ]
+        lines += ["</div>", ""]
+
+    lines += [
+        "## Reference: every platform at a glance { #reference }",
+        "",
+        level_label("reference"),
+        "",
+        f"{len(coverages)} supported platforms with {total_present:,} verified files.",
         "",
         "| Platform | On its BIOS list | Files in the pack | Checked by | Status | Download |",
         "|----------|------:|------:|-----------|--------|----------|",
@@ -1891,7 +1989,7 @@ def generate_platform_index(coverages: dict, registry: dict | None = None) -> st
             cov["mode"],
             f'<span class="rb-badge rb-badge-muted">{cov["mode"]}</span>',
         )
-        status = (registry or {}).get(name, {}).get("status", "active")
+        status = registry.get(name, {}).get("status", "active")
         if status == "archived":
             archived_any = True
             status_html = '<span class="rb-badge rb-badge-muted">archived</span>'
@@ -1902,7 +2000,7 @@ def generate_platform_index(coverages: dict, registry: dict | None = None) -> st
             f"| [{display}]({name}.md) | "
             f"{cov['present']:,} | {_released_files(name)} | "
             f"{mode_html} | {status_html} | "
-            f"{_pack_buttons(name)} |"
+            f"{_pack_cell(name, release_record.load_record(), '../')} |"
         )
 
     lines.extend(
@@ -1912,8 +2010,9 @@ def generate_platform_index(coverages: dict, registry: dict | None = None) -> st
             "files its emulators load and the data directories they read, "
             "which is the count an extraction shows. "
             "Checked by is the test each platform runs on its own, replicated "
-            "from its source code. "
-            "[How each mode works](../wiki/verification-modes.md).",
+            "from its source code.",
+            "",
+            "Reference: [How each platform checks files](../wiki/verification-modes.md).",
         ]
     )
 
@@ -1964,7 +2063,7 @@ def _render_platform_systems(
             lines.append("")
             pad = "    "
         else:
-            lines.append(f"## {sys_link} {{ #{anchor} }}")
+            lines.append(f"### {sys_link} {{ #{anchor} }}")
             lines.append("")
             pad = ""
 
@@ -2127,7 +2226,7 @@ def _core_folders_section(name: str, config: dict) -> list[str]:
     manifest = _REPO_ROOT / "install" / f"{name}.json"
     files = json.loads(manifest.read_text())["files"] if manifest.is_file() else []
     lines = [
-        "## Core folders",
+        "### Core folders",
         "",
         "Each folder below is the one the frontend gives that core. The pack "
         "puts the files the core reads there.",
@@ -2147,18 +2246,137 @@ def _core_folders_section(name: str, config: dict) -> list[str]:
     return lines
 
 
+def _check_sentence(display: str, mode: str, config: dict, no_list: bool) -> str:
+    """What the frontend itself checks, from the mode its code uses."""
+    if no_list:
+        return (f"{display} publishes no BIOS list, so it does not check files "
+                "itself. Each emulator core looks for its own files when a game starts.")
+    if config.get("hash_rule") == "size_and_any_hash":
+        return (f"{display} itself compares the size and a hash (MD5, SHA1 or "
+                "CRC32) of each file with its list, so a file with other contents "
+                "does not count there.")
+    algorithm = digest_algorithm(mode)
+    if algorithm:
+        return (f"{display} itself compares the {algorithm.upper()} of each file "
+                "with its list, so a file with other contents does not count there.")
+    return (f"{display} itself only checks that each file is there, by its name. "
+            "The check above also reads the contents, so it finds a file that has "
+            "the right name and other contents.")
+
+
+def _platform_guide(name: str, display: str, cov: dict, registry: dict, no_list: bool) -> list[str]:
+    """The guide part of a platform page: folder, command, pack, check, next."""
+    guide = GUIDES[name]
+    entry = registry.get(name, {})
+    extract_to = entry.get("extract_to")
+    lines = [
+        "## Where the files go",
+        "",
+        "| Where | BIOS folder |",
+        "|-------|-------------|",
+        *(f"| {label} | {path} |" for label, path in guide.folders),
+    ]
+    if extract_to:
+        lines.append(f"| Extract the pack into | `{extract_to}` |")
+    lines.append("")
+    for note in guide.notes:
+        lines += [note, ""]
+    lines += [line for note in extract_notes("platforms") if f"The {display} pack " in note
+              for line in (note, "")]
+    if name == "retroarch":
+        lines += [
+            "Handheld systems that start RetroArch for their games keep its files "
+            "in the folder below. The command finds it by itself.",
+            "",
+            "| System | BIOS folder |",
+            "|--------|-------------|",
+            *(f"| {system} | `{folder}` |" for system, folder in _retroarch_handhelds(registry)),
+            "",
+        ]
+    lines += [
+        *(["<!-- image: minui-card -->", ""] if guide.on_card else []),
+        "## Install",
+        "",
+        f"The command finds the {display} BIOS folder, downloads the files that "
+        "are missing or differ, checks each one, and resumes where it stopped.",
+        "",
+    ]
+    if guide.on_card:
+        lines += [
+            f"Put the {display} SD card in a computer. On Windows, note its drive "
+            "letter (for example **E:**). Then run the line with the root of the "
+            "card after `--dest`.",
+            "",
+        ]
+    lines += [
+        *terminal_tabs(guide.run, platform_args(name, guide)),
+        *trust_box("../"),
+        "To install fewer systems, add `--system` with the system ids listed in "
+        "the reference below.",
+        "",
+        "## Download",
+        "",
+    ]
+    record = release_record.load_record()
+    pack = release_record.pack_for(name, record)
+    if pack and pack.get("assets"):
+        parts = len(pack["assets"])
+        lines += [
+            _pack_buttons(name, f"Download {display} Pack"),
+            "",
+            f"{_fmt_size(pack['download_size'])} to download"
+            + (f" in {parts} parts" if parts > 1 else "")
+            + f", {_fmt_size(pack['extracted_size'])} once extracted. "
+            + (f"Extract it into `{extract_to}`. " if extract_to else "")
+            + ("Every part is needed: extract them all into the same folder."
+               if parts > 1 else ""),
+            "",
+        ]
+    elif record.get("tag"):
+        lines += [
+            f"The {record['tag']} release has no {display} pack yet. The command "
+            "above installs the same files.",
+            "",
+        ]
+    else:
+        lines += [_pack_buttons(name, f"Download {display} Pack"), ""]
+    check_args = {key: f"{args} --check" for key, args in platform_args(name, guide).items()}
+    lines += [
+        "## How to check",
+        "",
+        "The same command with `--check` reads the BIOS folder, checks every file "
+        "and writes nothing. It ends on a line such as "
+        "`5865/5865 present (5865 verified, 0 wrong hash)`.",
+        "",
+        *terminal_tabs(guide.run, check_args, steps=False),
+        _check_sentence(display, cov["mode"], cov["config"], no_list),
+        "",
+        *_next_block([
+            "[First install, step by step](../wiki/first-install.md), with what "
+            "each step prints",
+            "[When a game does not start](../wiki/troubleshooting.md)",
+            "[Every file by system](#reference-every-file-by-system), further down "
+            "this page",
+        ]),
+    ]
+    return lines
+
+
 def generate_platform_page(
     name: str,
     cov: dict,
     registry: dict | None = None,
     emulator_files: dict | None = None,
 ) -> str:
+    """A guide first (folder, command, pack, check), then every file the
+    platform's list and its emulators need, under a reference heading."""
+    registry = registry or {}
     config = cov["config"]
     display = cov["platform"]
     mode = cov["mode"]
     pct = _pct(cov["present"], cov["total"])
 
-    logo_url = (registry or {}).get(name, {}).get("logo", "")
+    logo_url = registry.get(name, {}).get("logo", "")
     logo_md = (
         f"![{display}]({logo_url}){{ width=48 align=right }}\n\n" if logo_url else ""
     )
@@ -2178,7 +2396,7 @@ def generate_platform_page(
         logo_md,
     ]
 
-    if (registry or {}).get(name, {}).get("status") == "archived":
+    if registry.get(name, {}).get("status") == "archived":
         lines.extend(
             [
                 '!!! warning "Archived platform"',
@@ -2190,7 +2408,23 @@ def generate_platform_page(
             ]
         )
 
-    no_list = not cov["total"] and (registry or {}).get(name, {}).get("native_list") == "none"
+    summary = GUIDES[name].summary if name in GUIDES else ""
+    if summary:
+        lines += [summary + (f" [{display} website]({homepage})." if homepage else ""), ""]
+
+    no_list = not cov["total"] and registry.get(name, {}).get("native_list") == "none"
+    if name in GUIDES:
+        lines += _platform_guide(name, display, cov, registry, no_list)
+
+    lines += [
+        "## Reference: every file by system { #reference-every-file-by-system }",
+        "",
+        level_label("reference"),
+        "",
+        "What follows is for checking the work: the counts, where the list was "
+        "read from, and each file with its hashes.",
+        "",
+    ]
     if no_list:
         # MinUI and its forks hand each core a folder and name no file: a
         # 0/0 coverage band read as "this device is not supported".
@@ -2237,13 +2471,8 @@ def generate_platform_page(
         lines.append(f"| Hash type | {hash_type} |")
     if version:
         lines.append(f"| Version | {version} |")
-    # Where a user puts the pack, from the registry the README and the pack
-    # guide read too. base_destination is only the root the platform's own
-    # list writes its paths from: the pack strips it, so it is no folder to
-    # extract into, and showing it as "BIOS path" sent EmuDeck users to bios/.
-    extract_to = (registry or {}).get(name, {}).get("extract_to")
-    if extract_to:
-        lines.append(f"| Extract the pack into | `{extract_to}` |")
+    # base_destination is only the root the platform's own list writes its
+    # paths from: the pack strips it, so it is no folder to extract into.
     if base_dest:
         lines.append(f"| Paths in the platform's list start at | `{base_dest}/` |")
     if homepage:
@@ -2260,7 +2489,7 @@ def generate_platform_page(
     if name in _EXPORTED:
         lines.append(f"| Updated file | [Download it and see the changes](../exports.md#{name}) |")
     lines.append(f"| Data | {_platform_data_links(name)} |")
-    contrib_list = (registry or {}).get(name, {}).get("contributed_by", [])
+    contrib_list = registry.get(name, {}).get("contributed_by", [])
     if contrib_list:
         for cb in contrib_list:
             username = cb.get("username", "")
@@ -2271,16 +2500,12 @@ def generate_platform_page(
                 f"| Contributed by | [@{username}](https://github.com/{username}):"
                 f" {contribution}{pr_link} |"
             )
-    detect = ((registry or {}).get(name, {}).get("install") or {}).get("detect") or []
-    on_card = any(rule.get("method") == "card_marker" for rule in detect)
-    lines.extend(["", *_platform_install_block(name, display, on_card)])
-    lines.extend(
-        [
-            "",
-            _pack_buttons(name, f"Download {display} Pack"),
-            "",
-        ]
-    )
+    if name not in GUIDES:
+        detect = (registry.get(name, {}).get("install") or {}).get("detect") or []
+        on_card = any(rule.get("method") == "card_marker" for rule in detect)
+        lines.extend(["", *_platform_install_block(name, display, on_card)])
+        lines.extend(["", _pack_buttons(name, f"Download {display} Pack")])
+    lines.append("")
 
     # The declaration behind each detail, by system and name in declaration
     # order: keyed by name alone, the last of MiSTer's 23 boot.rom gave its
@@ -2303,7 +2528,7 @@ def generate_platform_page(
     # System summary table (quick navigation)
     lines.extend(
         [] if no_list and not by_system else [
-            "## Systems overview",
+            "### Systems overview",
             "",
             "| System | Files | Status | Emulators |",
             "|--------|-------|--------|-----------|",
@@ -2512,15 +2737,31 @@ def generate_systems_index(manufacturers: dict) -> str:
         f"{total_mfr} manufacturers, {total_consoles} consoles, "
         f"{total_files:,} files in the repository.",
         "",
-        "| Manufacturer | Consoles | Files |",
-        "|-------------|----------|-------|",
     ]
 
-    for mfr in sorted(manufacturers.keys()):
-        consoles = manufacturers[mfr]
-        file_count = sum(len(files) for files in consoles.values())
-        slug = mfr.lower().replace(" ", "-")
-        lines.append(f"| [{mfr}]({slug}.md) | {len(consoles)} | {file_count} |")
+    machines = [m for m in sorted(manufacturers, key=str.casefold) if m not in GAME_DATA_TOPS]
+    games = [m for m in sorted(manufacturers, key=str.casefold) if m in GAME_DATA_TOPS]
+    for heading, names in (("Consoles and computers", machines),
+                           ("Game engines and PC games", games)):
+        if not names:
+            continue
+        lines += [
+            f"## {heading}",
+            "",
+            "| Manufacturer | Consoles | Files |",
+            "|-------------|----------|-------|",
+        ]
+        for mfr in names:
+            consoles = manufacturers[mfr]
+            file_count = sum(len(files) for files in consoles.values())
+            lines.append(f"| [{mfr}]({_slug(mfr)}.md) | {len(consoles)} | {file_count} |")
+        lines.append("")
+    if games:
+        lines += [
+            "Game engines and PC games hold the files a game engine reads, such "
+            "as the data of a game, rather than the BIOS of a machine.",
+            "",
+        ]
 
     return "\n".join(lines) + "\n"
 
@@ -2644,7 +2885,7 @@ def generate_provenance_page(
         "",
         "When the two views disagree, this project follows the code, because "
         "that is what decides whether your emulator boots. The reasoning is in "
-        "the [FAQ](wiki/faq.md#are-these-files-verified-against-original-"
+        "the [technical questions](wiki/technical-faq.md#are-these-files-verified-against-original-"
         "hardware-dumps).",
         "",
         "## Coverage",
@@ -3039,6 +3280,11 @@ def generate_system_page(
 
         lines.append("")
 
+    lines.extend(_next_block([
+        "[Get your files](../which-pack.md), for the setup you play on",
+        "[When a game does not start](../wiki/troubleshooting.md)",
+        "[Every emulator](../emulators/index.md), and the files each one reads",
+    ]))
     lines.append(f'<div class="rb-timestamp">Generated on {_timestamp()}.</div>')
     return "\n".join(lines) + "\n"
 
@@ -3633,22 +3879,6 @@ def _render_metadata_rows(profile: dict) -> list[str]:
     return lines
 
 
-INSTALL_BASE = "https://raw.githubusercontent.com/Abdess/retrobios/main"
-
-
-def install_command(shell: str, args: str = "") -> str:
-    """The one-liner for a shell, with installer options when given.
-
-    PowerShell passes options only through a scriptblock: `irm ... | iex`
-    takes none.
-    """
-    if shell == "sh":
-        return f"curl -fsSL {INSTALL_BASE}/install.sh | sh" + (f" -s -- {args}" if args else "")
-    if args:
-        return f"&([scriptblock]::Create((irm {INSTALL_BASE}/install.ps1))) {args}"
-    return f"irm {INSTALL_BASE}/install.ps1 | iex"
-
-
 def install_commands(args: str = "", indent: str = "") -> list[str]:
     """The same install for each place a user runs it: one generator for the
     download page and the platform, system and emulator pages, so none of
@@ -4168,6 +4398,11 @@ def generate_emulator_page(
                 lines.append("")
         lines.append("")
 
+    lines.extend(_next_block([
+        "[Get your files](../which-pack.md), for the setup you play on",
+        "[Every system](../systems/index.md), and the files each one needs",
+        "[When a game does not start](../wiki/troubleshooting.md)",
+    ]))
     lines.extend([f"*Generated on {_timestamp()}*"])
     return "\n".join(lines) + "\n"
 
@@ -5066,7 +5301,20 @@ def generate_cross_reference(
 def generate_contributing() -> str:
     return contributing_text(
         lambda page: f"{page}.md", "# Contributing", "on this site"
-    )
+    ) + "\n" + "\n".join(_next_block([
+        "[Profiling an emulator](wiki/profiling.md), the first task most "
+        "contributions start from",
+    ]))
+
+
+# The end of a reference page: back to the index, or on to contributing.
+REFERENCE_NEXT = "\n" + "\n".join([
+    '!!! tip "Next"',
+    "",
+    "    - [Reference index](wiki/index.md), every reference page in one list",
+    "    - For contributors: [How to contribute](contributing.md)",
+    "",
+])
 
 
 # Wiki pages
@@ -5281,301 +5529,329 @@ def _mkdocs_config(docs: Path, text: str) -> tuple[Path, str]:
 # mkdocs.yml nav generator
 
 
+_OS_NAMES = {"windows": "Windows", "darwin": "macOS", "linux": "Linux"}
+
+
+def _runs_on(entry: dict, guide) -> str:
+    """Where a setup runs, read from the systems the installer detects it on."""
+    if guide.on_card:
+        return "SD card, filled from a computer"
+    if "server" in guide.run:
+        return "A server"
+    if "device" in guide.run:
+        return "Its own system"
+    systems = {rule.get("os") for rule in (entry.get("install") or {}).get("detect") or []}
+    names = [label for key, label in _OS_NAMES.items() if key in systems]
+    if "steamdeck" in guide.run:
+        names.append("Steam Deck")
+    if "android" in guide.run:
+        names.append("Android")
+    return ", ".join(names)
+
+
+def _folder_cell(name: str, guide, prefix: str = "") -> str:
+    """The BIOS folder in a table cell, or a link where it depends on the system."""
+    if len(guide.folders) > 3:
+        return f"Depends on the system: [listed on its page]({prefix}platforms/{name}.md#where-the-files-go)"
+    return "<br>".join(f"{label}: {path}" for label, path in guide.folders)
+
+
+def _pack_cell(name: str, record: dict, prefix: str = "") -> str:
+    """The pack's parts and size, or the command where the release has none."""
+    pack = release_record.pack_for(name, record)
+    if record.get("tag") and not (pack and pack.get("assets")):
+        return (f"Not in {record['tag']}: "
+                f"[use the command]({prefix}platforms/{name}.md#install)")
+    display = load_platform_config(name, "platforms").get("platform", name)
+    links = download_links(name, record, REPO_URL, display)
+    size = pack.get("download_size") if pack else None
+    return f"{links} ({_fmt_size(size)})" if size else links
+
+
+def _retroarch_handhelds(registry: dict) -> list[tuple[str, str]]:
+    """Handheld systems that run RetroArch, with the BIOS folder the installer
+    writes on each, read from the detection rules of the registry."""
+    seen: dict[str, str] = {}
+    for rule in (registry.get("retroarch", {}).get("install") or {}).get("detect") or []:
+        name, folder = rule.get("name"), rule.get("bios_path")
+        if name and folder and rule.get("installs", True) and name not in seen:
+            seen[name] = folder
+    return sorted(seen.items(), key=lambda item: item[0].casefold())
+
+
+def _group_keys(registry: dict, group: str, display: dict[str, str]) -> list[str]:
+    return sorted(
+        (k for k in registry if registry[k].get("device_group") == group),
+        key=lambda k: display[k].casefold(),
+    )
+
+
 def generate_which_pack() -> str:
-    """Generate the 'Which pack?' decision page."""
-    rel = RELEASE_URL
-    quick = "\n".join(install_commands())
-    check_sh, check_ps = install_command("sh", "--check"), install_command("powershell", "--check")
-    sd_card = install_command(
-        "sh", "--platform retroarch --dest /path/to/sdcard/retroarch/cores/system")
-    return _link_pack_cells(f"""\
-# Download
-
-Some retro consoles need firmware files (commonly called BIOS) to run games.
-Without them, the emulator either refuses to start the game or runs it with
-reduced accuracy. RetroBIOS maps those requirements to source-traced emulator
-profiles and verifies local content against the evidence each platform exposes.
-
-BIOS directory paths per platform, verification and the CLI are in
-[Getting started](wiki/getting-started.md).
-
-## Quick install
-
-One line detects the platform and BIOS directory, downloads only missing or
-incorrect files, verifies their hashes, and installs them atomically. The small
-bootstrap checks the Python installer against an embedded SHA-256 before running
-it, and the installer reads its file list from that same revision.
-
-{quick}
-That is the complete default flow. Extra copies into detected standalone
-emulator directories are deliberately opt-in with `--standalone-copies`, so
-automatic setup never writes outside the selected platform tree unexpectedly.
-Adding `--check` reads the BIOS folder, hashes what is there and writes
-nothing:
-
-```sh
-{check_sh}
-```
-
-```powershell
-{check_ps}
-```
-
-An SD card mounted on a PC is installed with `--platform` and `--dest`, the
-BIOS folder on the card (RetroArch on Switch: `retroarch/cores/system`, on
-Android: `RetroArch/system`):
-
-```sh
-{sd_card}
-```
-
-Options, environment overrides, how each platform is detected and what the
-installer is allowed to write: [Installer](wiki/installer.md).
-
----
-
-## Manual download
-
-Pick the pack that matches the setup from the [latest release]({rel}),
-download it, and extract the files into the BIOS folder listed below.
-The metadata and website can be newer than that release: pack publication is
-manual and only happens after the release gates pass.
-
-A pack over 2 GB comes in several parts (`PackName.part1of2.zip`,
-`PackName.part2of2.zip`), and every part is needed. Each part is an ordinary
-ZIP: extract them all into the same folder.
-
-### Steam Deck
-
-| Setup | What it is | Pack | Extract to |
-|-------|-----------|------|-----------|
-| [EmuDeck](https://www.emudeck.com/) | Installs and configures multiple emulators, adds each game to the Steam library | [EmuDeck]({rel}) | `~/Emulation/bios/` |
-| [RetroDECK](https://retrodeck.net/) | Single Flatpak app with its emulators bundled, installed from Flathub or Discover | [RetroDECK]({rel}) | `~/retrodeck/` (the pack carries its own `bios/`) |
-| RetroArch standalone | Installed from Discover, Steam, or Flatpak | [RetroArch]({rel}) | Open RetroArch > Settings > Directory > System, that is the folder |
-
-### Windows
-
-| Setup | What it is | Pack | Extract to |
-|-------|-----------|------|-----------|
-| [RetroArch](https://www.retroarch.com/) | Multi-system emulator, loads different cores for each console | [RetroArch]({rel}) | The `system` folder next to `retroarch.exe` |
-| [RetroBat](https://www.retrobat.org/) | Windows frontend with EmulationStation, includes RetroArch and standalone emulators | [RetroBat]({rel}) | The `bios` folder inside the RetroBat installation |
-| [BizHawk](https://tasvideos.org/BizHawk) | Multi-system emulator with rerecording and debugging tools, hosted by TASVideos | [BizHawk]({rel}) | The `Firmware` folder inside the BizHawk installation |
-| [LaunchBox](https://www.launchbox-app.com/) | Game library manager and launcher, uses RetroArch or standalone emulators behind the scenes | [RetroArch]({rel}) | Open RetroArch (via LaunchBox) > Settings > Directory > System |
-| [EmuDeck](https://www.emudeck.com/) | Installs and configures multiple emulators with ES-DE | [EmuDeck]({rel}) | `bios` in the Emulation folder chosen in EmuDeck, `C:\\Emulation\\bios\\` by default |
-
-### Linux
-
-| Setup | What it is | Pack | Extract to |
-|-------|-----------|------|-----------|
-| RetroArch (native) | Installed via package manager or AppImage | [RetroArch]({rel}) | `~/.config/retroarch/system/` |
-| RetroArch (Flatpak) | Installed from Flathub | [RetroArch]({rel}) | `~/.var/app/org.libretro.RetroArch/config/retroarch/system/` |
-| [Batocera](https://batocera.org/) | Bootable OS dedicated to gaming, runs from USB or full install, supports PC and SBC | [Batocera]({rel}) | `/userdata/bios/` |
-| [Recalbox](https://www.recalbox.com/) | Bootable OS for retro gaming that configures its emulators itself | [Recalbox]({rel}) | `/recalbox/share/bios/` |
-
-### macOS
-
-| Setup | What it is | Pack | Extract to |
-|-------|-----------|------|-----------|
-| [RetroArch](https://www.retroarch.com/) | Multi-system emulator | [RetroArch]({rel}) | `~/Library/Application Support/RetroArch/system/` |
-| [EmuDeck](https://www.emudeck.com/) | Installs and configures multiple emulators with ES-DE | [EmuDeck]({rel}) | `~/Emulation/bios/` |
-
-### Raspberry Pi and single-board computers
-
-| Setup | What it is | Pack | Extract to |
-|-------|-----------|------|-----------|
-| [RetroPie](https://retropie.org.uk/) | Scripts that install RetroArch and standalone emulators on Raspberry Pi OS | [RetroPie]({rel}) | `~/RetroPie/BIOS/` |
-| [Lakka](https://www.lakka.tv/) | Operating system built around RetroArch, boots into its menu | [Lakka]({rel}) | `/storage/system/` |
-| [Batocera](https://batocera.org/) | Bootable OS, with images for Raspberry Pi 3, 4 and 5 and other boards (Odroid XU4 among them) | [Batocera]({rel}) | `/userdata/bios/` |
-| [Recalbox](https://www.recalbox.com/) | Bootable OS for retro gaming that configures its emulators itself | [Recalbox]({rel}) | `/recalbox/share/bios/` |
-
-### Handhelds
-
-| Setup | What it is | Pack | Extract to |
-|-------|-----------|------|-----------|
-| Android (Retroid Pocket, Odin, etc.) | RetroArch for Android | [RetroArch]({rel}) | `RetroArch/system/` on internal storage or SD card |
-| [ROCKNIX](https://rocknix.org/) | Linux OS for ARM and x86 handhelds, among them the RG35XX (H700) and the RG552 (RK3399) | [ROCKNIX]({rel}) | `/storage/roms/bios/`, over SSH or the network share |
-| [Batocera](https://batocera.org/) | Also has images for handheld chips, among them H700 and RK3326 | [Batocera]({rel}) | `/userdata/bios/` |
-| [KNULLI](https://knulli.org/) | Batocera-based OS for handhelds, among them the RG35XX family (H700) and the TrimUI Smart Pro | [KNULLI]({rel}) | `/userdata/bios/` |
-| [AmberELEC](https://amberelec.org/) | Linux OS for Anbernic handhelds: RG351P, RG351V, RG351MP, RG353, RG503 and RG552 | [AmberELEC]({rel}) | `/storage/roms/`, which the pack fills with `bios/` and `neogeo/` |
-| [EmuELEC](https://emuelec.org/) | Linux OS for Amlogic TV boxes, the Odroid Go Advance, GameForce and RK356x devices | [EmuELEC]({rel}) | `/storage/roms/`, which the pack fills with `bios/`, `neogeo/` and `ports/` |
-
-On a handheld that runs PortMaster, the RetroBIOS port checks and fills the
-BIOS folder from the device, with gamepad screens:
-[on a handheld](wiki/installer.md#on-a-handheld-the-retrobios-port).
-
-### FPGA
-
-| Setup | What it is | Pack | Extract to |
-|-------|-----------|------|-----------|
-| [MiSTer FPGA](https://mister-devel.github.io/MkDocs_MiSTer/) | FPGA cores that reimplement console hardware on a DE10-Nano board | [MiSTer FPGA]({rel}) | `/media/fat/games/`, one subfolder per core |
-
-### Self-hosted ROM manager
-
-| Setup | What it is | Pack | Extract to |
-|-------|-----------|------|-----------|
-| [RomM](https://github.com/rommapp/romm) | Web-based ROM manager, plays games in the browser via EmulatorJS | [RomM]({rel}) | `bios/` in the RomM library, one subfolder per platform. With `firmware: "{{platform}}/bios"` in `config.yml`, each subfolder goes to `<platform>/bios/` instead |
-
----
-
-## One pack per platform
-
-The [latest release]({rel}) carries one pack for each platform, and that
-pack holds everything the platform runs: the BIOS list it publishes, plus
-every file its emulator cores load, read from their source code. There is no
-lighter variant to choose, because a pack that leaves out a file a core needs
-means a game that does not boot, with no message saying why. It is not a
-guarantee either: source profiles can document files nobody has dumped or
-that only the user can provide, all of them visible in the
-[gap analysis](gaps.md).
-
-Want less than everything? At a terminal the installer asks whether to install
-everything or to choose systems, cores and regions, and `--system`, `--core`,
-`--region` and `--target` make the same choice without questions (see the
-[installer reference](wiki/installer.md#choosing-what-to-install)). From a
-clone of the repository, `python scripts/generate_pack.py --platform retroarch
---region us` builds the same narrowing as a pack and `--required-only` the bare
-minimum each core needs to start. `--no-game-data`, for the pack and the
-installer alike, keeps the firmware and leaves out the files a game reads
-([details](wiki/advanced-usage.md#firmware-without-game-data)), and `--help`
-lists every way to build your own.
-
----
-
-## After extraction
-
-Launch a game and use the emulator's firmware status screen where available.
-Most supported frontends find files in the documented directory automatically,
-but standalone emulators may still need their BIOS path configured.
-
-If a game still asks for a missing file, check the
-[platforms section](platforms/index.md) for the full file list, or the
-[emulators section](emulators/index.md) for what each core expects.
-""")
-
-
-def _link_pack_cells(page: str) -> str:
-    """Point each table cell naming a platform's pack at that pack's files.
-
-    The cell names the platform by its display name, resolved through the
-    registry, and the links come from the release record.
-    """
+    """The device picker: every registered platform, grouped by the device it
+    runs on, with its BIOS folder, its pack and its page."""
+    registry = load_platform_registry("platforms")
     record = release_record.load_record()
-    keys = {
-        load_platform_config(key, "platforms").get("platform", key): key
-        for key in list_registered_platforms("platforms", include_archived=True)
+    display = {key: load_platform_config(key, "platforms").get("platform", key) for key in registry}
+    check_sh, check_ps = install_command("sh", "--check"), install_command("powershell", "--check")
+    card = install_command("sh", "--platform retroarch --dest /path/to/sdcard/retroarch/cores/system")
+    lines = [
+        "# Get your files",
+        "",
+        "Each setup keeps its BIOS files in a folder of its own. Pick yours below "
+        "to see where that folder is. Then get the files in one of two ways:",
+        "",
+        "- **One command**, the easiest. It finds your setup and its BIOS folder, "
+        "downloads only the files that are missing, and checks each one before "
+        "saving it.",
+        "- **A ZIP pack.** You download the pack of your setup and extract it into "
+        "the BIOS folder yourself.",
+        "",
+        "<!-- image: install-flow -->",
+        "",
+        "## Pick your setup",
+        "",
+        '<div class="grid cards" markdown>',
+        "",
+    ]
+    for group, (label, description) in DEVICE_GROUPS.items():
+        members = _group_keys(registry, group, display)
+        if not members:
+            continue
+        lines += [
+            f"-   **{label}**",
+            "",
+            f"    {description}",
+            "",
+            f"    [{', '.join(display[k] for k in members)}](#{GROUP_ANCHORS[group]})",
+            "",
+        ]
+    lines += [
+        "</div>",
+        "",
+        "## One command { #quick-install }",
+        "",
+        "Run this line in a terminal. It finds your setup by itself. On a system "
+        "that starts into a game menu, such as Batocera, the line runs on the "
+        "device: the page of your setup gives the exact command.",
+        "",
+        *terminal_tabs(("windows", "macos", "linux", "steamdeck", "android"), {}),
+        *trust_box(""),
+        "At a terminal, the installer shows the setup it found and asks what to "
+        "install:",
+        "",
+        "```",
+        "  Enter) install everything",
+        "  i) only what the installed cores read",
+        "  c) choose systems, cores and regions",
+        "  q) quit",
+        "```",
+        "",
+        "Press **Enter** to install everything. Press **c** to pick only some "
+        "consoles. The **i** line appears when the installer finds emulator cores "
+        "installed, and keeps only the files they read.",
+        "",
+        "To see what is already in your BIOS folder, add `--check`. It reads the "
+        "folder, checks every file and writes nothing:",
+        "",
+        "```sh",
+        check_sh,
+        "```",
+        "",
+        "```powershell",
+        check_ps,
+        "```",
+        "",
+        "A memory card from another device can be filled from a computer: name the "
+        "setup with `--platform` and the BIOS folder on the card with `--dest`. "
+        "For RetroArch on a Nintendo Switch:",
+        "",
+        "```sh",
+        card,
+        "```",
+        "",
+    ]
+    for group, (label, description) in DEVICE_GROUPS.items():
+        members = _group_keys(registry, group, display)
+        if not members:
+            continue
+        lines += [
+            f"## {label} {{ #{GROUP_ANCHORS[group]} }}",
+            "",
+            description,
+            "",
+            "| Setup | What it is | Runs on | BIOS folder | Pack |",
+            "|-------|-----------|---------|-------------|------|",
+        ]
+        for key in members:
+            guide = GUIDES[key]
+            lines.append(
+                f"| [{display[key]}](platforms/{key}.md) | {guide.summary} | "
+                f"{_runs_on(registry[key], guide)} | {_folder_cell(key, guide)} | "
+                f"{_pack_cell(key, record)} |"
+            )
+        for setup, summary, uses, runs_on, folder in ALSO_RUNS.get(group, ()):
+            lines.append(
+                f"| {setup} | {summary} It uses the [{display[uses]}](platforms/{uses}.md) "
+                f"files. | {runs_on} | {folder} | {_pack_cell(uses, record)} |"
+            )
+        lines.append("")
+        if group == "handheld":
+            lines += [
+                "Many other handheld systems start RetroArch for their games. On "
+                "them, the RetroArch files go in the folder below, and the command "
+                "finds it by itself.",
+                "",
+                "| System | Runs | BIOS folder |",
+                "|--------|------|-------------|",
+                *(f"| {name} | [RetroArch](platforms/retroarch.md) | `{folder}` |"
+                  for name, folder in _retroarch_handhelds(registry)),
+                "",
+            ]
+    lines += [
+        "## Download a pack { #manual-download }",
+        "",
+        f"Each pack in the tables above comes from the [latest release]({RELEASE_URL}). "
+        "Download the pack of your setup and extract it into its BIOS folder. "
+        "This site can describe files newer than that release: a release is "
+        "published by hand, once its checks pass.",
+        "",
+        "A pack over 2 GB comes in several parts (`PackName.part1of2.zip`, "
+        "`PackName.part2of2.zip`), and every part is needed. Each part is an "
+        "ordinary ZIP: extract them all into the same folder.",
+        "",
+        *[line for note in extract_notes("platforms") for line in (note, "")],
+        "## Fewer files",
+        "",
+        "Each pack holds everything its setup runs: the BIOS list the setup "
+        "publishes, and every file its emulators load. The command can install "
+        "less: press **c** when it asks, or name the consoles with `--system`.",
+        "",
+        "Details: [All installer options](wiki/installer.md#choosing-what-to-install). "
+        "Reference: [Build your own packs](wiki/advanced-usage.md).",
+        "",
+        *_next_block([
+            "[First install, step by step](wiki/first-install.md)",
+            "The page of your setup, from the tables above: where the files go and "
+            "how to check them",
+            "[When a game does not start](wiki/troubleshooting.md)",
+        ]),
+    ]
+    return "\n".join(lines) + "\n"
+
+
+# Letters each alphabetical group of the emulators navigation covers.
+EMULATOR_NAV_GROUPS = ("ABC", "DEF", "GHIJKL", "MNO", "PQR", "STU", "VWXYZ")
+
+
+def nav_emulators(profiles: dict) -> dict[str, dict]:
+    """The emulators listed in the navigation, by key.
+
+    A profile that emulates no system and reads no file (the libretro sample
+    and test cores, games with nothing to load) answers no question about
+    BIOS files. Its page stays, reachable from the overview table and the
+    search, and the navigation is left to the cores people look up.
+    """
+    return {
+        key: profile for key, profile in unique_emulator_profiles(profiles).items()
+        if profile.get("systems") or profile.get("files")
     }
-    cell = re.compile(rf"\| \[([^\]]+)\]\({re.escape(RELEASE_URL)}\) \|")
 
-    def link(match: re.Match[str]) -> str:
-        label = match.group(1)
-        if label not in keys:
-            raise KeyError(f"no registered platform is displayed as {label!r}")
-        return f"| {download_links(keys[label], record, REPO_URL, label)} |"
 
-    def released(line: str) -> bool:
-        # A platform registered after the recorded release has no pack in
-        # it yet: its row would send the reader to a release without one.
-        found = cell.search(line)
-        if not found or not record.get("packs"):
-            return True
-        label = found.group(1)
-        return label not in keys or release_record.pack_for(keys[label], record) is not None
+def _emulator_nav(profiles: dict) -> list:
+    """Emulators in alphabetical groups ("A to C"), by the name a user knows."""
+    groups: dict[str, list[tuple[str, str]]] = {}
+    for key, profile in nav_emulators(profiles).items():
+        display = str(profile.get("emulator", key))
+        initial = display[:1].upper()
+        letters = next((g for g in EMULATOR_NAV_GROUPS if initial in g), "")
+        label = f"{letters[0]} to {letters[-1]}" if letters else "0 to 9"
+        groups.setdefault(label, []).append((display, f"emulators/{key}.md"))
+    order = ["0 to 9"] + [f"{g[0]} to {g[-1]}" for g in EMULATOR_NAV_GROUPS]
+    return ["emulators/index.md"] + [
+        {label: [{d: path} for d, path in sorted(groups[label], key=lambda e: e[0].casefold())]}
+        for label in order if label in groups
+    ]
 
-    page = "\n".join(line for line in page.split("\n") if released(line))
-    return cell.sub(link, page)
+
+def _system_nav(manufacturers: dict) -> list:
+    """Manufacturer pages, the machines apart from the game and engine trees."""
+    machines, games = [], []
+    for mfr in sorted(manufacturers, key=str.casefold):
+        entry = {mfr: f"systems/{_slug(mfr)}.md"}
+        (games if mfr in GAME_DATA_TOPS else machines).append(entry)
+    nav: list = ["systems/index.md", {"Consoles and computers": machines}]
+    if games:
+        nav.append({"Game engines and PC games": games})
+    return nav
+
+
+def _platform_nav(coverages: dict, registry: dict) -> list:
+    """Platforms by the kind of device they run on, as on the device picker."""
+    nav: list = ["platforms/index.md"]
+    for group, (label, _description) in DEVICE_GROUPS.items():
+        members = [
+            {coverages[name]["platform"]: f"platforms/{name}.md"}
+            for name in sorted(coverages, key=lambda n: coverages[n]["platform"].casefold())
+            if registry.get(name, {}).get("device_group") == group
+        ]
+        if members:
+            nav.append({label: members})
+    return nav
 
 
 def generate_mkdocs_nav(
     coverages: dict,
     manufacturers: dict,
     profiles: dict,
+    registry: dict | None = None,
 ) -> list:
-    """Generate the nav section for mkdocs.yml."""
-    platform_nav = [{"Overview": "platforms/index.md"}]
-    for name in sorted(coverages.keys(), key=lambda x: coverages[x]["platform"]):
-        display = coverages[name]["platform"]
-        platform_nav.append({display: f"platforms/{name}.md"})
+    """The navigation, five tabs in reading order.
 
-    system_nav = [{"Overview": "systems/index.md"}]
-    for mfr in sorted(manufacturers.keys()):
-        slug = mfr.lower().replace(" ", "-")
-        system_nav.append({mfr: f"systems/{slug}.md"})
-
-    unique_profiles = {
-        k: v for k, v in profiles.items() if v.get("type") not in ("alias", "test")
-    }
-
-    by_class: dict[str, list[tuple[str, str]]] = {}
-    for name in sorted(unique_profiles.keys()):
-        p = unique_profiles[name]
-        cls = p.get("core_classification", "other")
-        display = p.get("emulator", name)
-        by_class.setdefault(cls, []).append((display, f"emulators/{name}.md"))
-
-    cls_labels = {
-        "pure_libretro": "Pure libretro",
-        "official_port": "Official ports",
-        "community_fork": "Community forks",
-        "frozen_snapshot": "Frozen snapshots",
-        "enhanced_fork": "Enhanced forks",
-        "game_engine": "Game engines",
-        "embedded_hle": "Embedded HLE",
-        "launcher": "Launchers",
-        "other": "Other",
-    }
-
-    emu_nav: list = [{"Overview": "emulators/index.md"}]
-    for cls in [
-        "official_port",
-        "community_fork",
-        "pure_libretro",
-        "game_engine",
-        "enhanced_fork",
-        "frozen_snapshot",
-        "embedded_hle",
-        "launcher",
-        "other",
-    ]:
-        entries = by_class.get(cls, [])
-        if not entries:
-            continue
-        label = cls_labels.get(cls, cls)
-        sub = [{display: path} for display, path in entries]
-        emu_nav.append({f"{label} ({len(entries)})": sub})
-
-    wiki_nav = [
-        {"Overview": "wiki/index.md"},
-        {"First install": "wiki/first-install.md"},
-        {"Getting started": "wiki/getting-started.md"},
-        {"Installer": "wiki/installer.md"},
-        {"FAQ": "wiki/faq.md"},
-        {"Troubleshooting": "wiki/troubleshooting.md"},
-        {"Architecture": "wiki/architecture.md"},
-        {"Tools": "wiki/tools.md"},
-        {"Advanced usage": "wiki/advanced-usage.md"},
-        {"Verification modes": "wiki/verification-modes.md"},
-        {"Data model": "wiki/data-model.md"},
-        {"Profiling guide": "wiki/profiling.md"},
-        {"Adding a platform": "wiki/adding-a-platform.md"},
-        {"Adding a scraper": "wiki/adding-a-scraper.md"},
-        {"Testing guide": "wiki/testing-guide.md"},
-        {"Release process": "wiki/release-process.md"},
-        {"Community tools": "wiki/community-tools.md"},
-    ]
-
+    Start here is for someone who knows nothing yet, Your setup for someone
+    who knows their device, Explore for one system or emulator, Reference for
+    checking the work, Contribute for adding to it. Each tab opens on its
+    index page.
+    """
     return [
-        {"Home": "index.md"},
-        {"Download": "which-pack.md"},
-        {"Platforms": platform_nav},
-        {"Systems": system_nav},
-        {"Emulators": emu_nav},
-        {"Cross-reference": "cross-reference.md"},
-        {"Gap analysis": "gaps.md"},
-        {"Dump provenance": "provenance.md"},
-        {"Updated platform files": "exports.md"},
-        {"Data & API": "data.md"},
-        {"Wiki": wiki_nav},
-        {"Contributing": "contributing.md"},
+        {"Start here": [
+            "index.md",
+            {"What BIOS files are": "wiki/what-are-bios-files.md"},
+            {"Get your files": "which-pack.md"},
+            {"First install, step by step": "wiki/first-install.md"},
+            {"When a game does not start": "wiki/troubleshooting.md"},
+            {"Common questions": "wiki/faq.md"},
+            {"Glossary": "wiki/glossary.md"},
+        ]},
+        {"Your setup": _platform_nav(coverages, registry or {})},
+        {"Explore": [
+            {"Systems": _system_nav(manufacturers)},
+            {"Emulators": _emulator_nav(profiles)},
+            {"All installer options": "wiki/installer.md"},
+        ]},
+        {"Reference": [
+            "wiki/index.md",
+            {"How each platform checks files": "wiki/verification-modes.md"},
+            {"What the packs do not hold": "gaps.md"},
+            {"Cross-reference": "cross-reference.md"},
+            {"Dump provenance": "provenance.md"},
+            {"Updated platform files": "exports.md"},
+            {"Data and API": "data.md"},
+            {"Find a file by its SHA1": "files/index.md"},
+            {"Data model": "wiki/data-model.md"},
+            {"Architecture": "wiki/architecture.md"},
+            {"Build your own packs": "wiki/advanced-usage.md"},
+            {"Command-line tools": "wiki/tools.md"},
+            {"Technical questions": "wiki/technical-faq.md"},
+            {"Projects using this data": "wiki/community-tools.md"},
+        ]},
+        {"Contribute": [
+            "contributing.md",
+            {"Profiling an emulator": "wiki/profiling.md"},
+            {"Adding a platform": "wiki/adding-a-platform.md"},
+            {"Adding a scraper": "wiki/adding-a-scraper.md"},
+            {"Testing": "wiki/testing-guide.md"},
+            {"Release process": "wiki/release-process.md"},
+        ]},
     ]
 
 
@@ -5713,7 +5989,7 @@ def _generate(args: argparse.Namespace) -> None:
     exports = generate_data_exports(
         docs, db, coverages, profiles, stats, gap_report
     )
-    write_if_changed(str(docs / "data.md"), generate_data_page(exports))
+    write_if_changed(str(docs / "data.md"), generate_data_page(exports) + REFERENCE_NEXT)
     PAGE_DATA["data.md"] = dataset_structured_data(exports, db)
 
     # Build system_id -> manufacturer page map (needed by all generators)
@@ -5808,7 +6084,8 @@ def _generate(args: argparse.Namespace) -> None:
 
     print("Generating cross-reference page...")
     write_if_changed(
-        str(docs / "cross-reference.md"), generate_cross_reference(coverages, profiles)
+        str(docs / "cross-reference.md"),
+        generate_cross_reference(coverages, profiles) + REFERENCE_NEXT,
     )
 
     print("Generating gap analysis page...")
@@ -5816,7 +6093,7 @@ def _generate(args: argparse.Namespace) -> None:
         str(docs / "gaps.md"),
         generate_gap_analysis(
             profiles, coverages, db, suppl_names, registry, gap_report
-        ),
+        ) + REFERENCE_NEXT,
     )
 
     print("Generating updated platform files page...")
@@ -5825,14 +6102,14 @@ def _generate(args: argparse.Namespace) -> None:
         generate_exports_page(
             export_reports,
             {name: cov["platform"] for name, cov in coverages.items()},
-        ),
+        ) + REFERENCE_NEXT,
     )
 
     print("Generating dump provenance page...")
     provenance_report = build_report(db, load_provenance_snapshots())
     write_if_changed(
         str(docs / "provenance.md"),
-        generate_provenance_page(db, provenance_report, load_derivable()),
+        generate_provenance_page(db, provenance_report, load_derivable()) + REFERENCE_NEXT,
     )
 
     # Wiki pages: copy manually maintained sources + generate dynamic ones
@@ -5860,7 +6137,7 @@ def _generate(args: argparse.Namespace) -> None:
 
     # Update mkdocs.yml nav section only (avoid yaml.dump round-trip mangling quotes)
     print("Updating mkdocs.yml nav...")
-    nav = generate_mkdocs_nav(coverages, manufacturers, profiles)
+    nav = generate_mkdocs_nav(coverages, manufacturers, profiles, registry)
     nav_yaml = yaml.dump(
         {"nav": nav}, default_flow_style=False, sort_keys=False, allow_unicode=True
     )
@@ -5922,6 +6199,8 @@ theme:
   - navigation.top
   - navigation.tracking
   - navigation.indexes
+  # Breadcrumbs above the title: on a deep page they say which tab it is in.
+  - navigation.path
   # 400+ pages: pruning keeps the navigation out of every page's HTML.
   - navigation.prune
   - navigation.footer

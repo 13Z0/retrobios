@@ -1,75 +1,59 @@
-# Wiki
+---
+level: reference
+---
 
-Technical documentation for the RetroBIOS toolchain.
+# Reference
 
-Pages are grouped by what you came to do. **For users** walks through
-installing and checking files. **Technical reference** describes how the
-toolchain behaves, one subject per page. **For contributors** is task-oriented:
-each page takes one job from start to finish.
+These pages describe how the files are checked, what the data holds and how the
+toolchain works. To set up BIOS files on a device, start with
+[Get your files](../which-pack.md).
 
-## For users
+## How the files are checked
 
-- **[First install](first-install.md)** - one path from an empty folder to working files, with what each step prints
-- **[Getting started](getting-started.md)** - installation, BIOS directory paths per platform, verification
-- **[Installer](installer.md)** - the one-liner in full: bootstrap, options, environment overrides, platform detection, trust boundary
-- **[Troubleshooting](troubleshooting.md)** - diagnosis by symptom: missing BIOS, hash mismatch, pack issues
-- **[FAQ](faq.md)** - common questions, hash explanations
+- **[How each platform checks files](verification-modes.md)** - existence, MD5 and SHA1 modes, severity matrix, resolution chain, reading `verify.py` output
+- **[What the packs do not hold](../gaps.md)** - files emulators load that no pack can carry yet, by platform and by emulator
+- **[Cross-reference](../cross-reference.md)** - files the emulators of a platform load and its own list does not name
+- **[Dump provenance](../provenance.md)** - how the collection lines up against the No-Intro, Redump and TOSEC catalogs
+- **[Updated platform files](../exports.md)** - each platform's own file, with the changes the emulator source supports
+- **[Technical questions](technical-faq.md)** - multiple hashes, MAME versions, UNTESTED, dump verification
 
-If you just want to download BIOS packs, see the [home page](../index.md).
+## Data
 
-## Technical reference
-
-- **[Architecture](architecture.md)** - directory structure, data flow, platform inheritance, pack grouping, security, edge cases, CI workflows
-- **[Tools](tools.md)** - CLI reference for every script, pipeline usage, scrapers
-- **[Advanced usage](advanced-usage.md)** - custom packs, region filtering, one file per slot, target filtering, truth generation, emulator verification, offline workflow
-- **[Verification modes](verification-modes.md)** - how each platform verifies BIOS files, severity matrix, resolution chain
+- **[Data and API](../data.md)** - JSON, CSV and SQLite exports with their checksums
+- **[Find a file by its SHA1](../files/index.md)** - the permanent address of a file by its contents
 - **[Data model](data-model.md)** - database.json structure, indexes, file resolution order, YAML formats
 
-See also [dump provenance](../provenance.md) for how the collection lines up
-against the No-Intro, Redump and TOSEC catalogs.
+## The toolchain
+
+- **[Architecture](architecture.md)** - directory structure, data flow, platform inheritance, pack grouping, security, edge cases, CI workflows
+- **[Build your own packs](advanced-usage.md)** - custom packs, region filtering, one file per slot, target filtering, truth generation, emulator verification, offline workflow
+- **[Command-line tools](tools.md)** - every script, pipeline usage, scrapers
+- **[Projects using this data](community-tools.md)** - projects built on RetroBIOS data
+
+## Methodology
+
+Platform lists are checked against emulator source code, file by file where a
+profile exists. Documentation and metadata can differ from what a program does
+at run time, so the source is the primary reference:
+
+1. **Upstream emulator source**: what the original project loads (Dolphin,
+   PCSX2, Mednafen and others)
+2. **Libretro core source**: the RetroArch port, which may adapt paths or add
+   files
+3. **`.info` declarations**: metadata that platforms rely on, checked against
+   the two above
 
 ## For contributors
 
-- **[Profiling guide](profiling.md)** - create an emulator profile from source code, YAML field reference
+- **[Profiling an emulator](profiling.md)** - create an emulator profile from source code, YAML field reference
 - **[Adding a platform](adding-a-platform.md)** - scraper, registry, YAML config, exporter, target scraper, install detection
 - **[Adding a scraper](adding-a-scraper.md)** - plugin architecture, BaseScraper, parsers, target scrapers
-- **[Testing guide](testing-guide.md)** - run tests, fixture pattern, how to add tests, CI integration
+- **[Testing](testing-guide.md)** - run tests, fixture pattern, how to add tests, CI integration
 - **[Release process](release-process.md)** - CI workflows, large files, manual release
 
 See [contributing](../contributing.md) for submission guidelines.
 
-## Community
-
-- **[Community tools](community-tools.md)** - projects built on RetroBIOS data
-
 ## Glossary
 
-- **BIOS** - firmware burned into console hardware, needed by emulators that rely on original boot code
-- **firmware** - system software loaded by a console at boot, used interchangeably with BIOS in this project
-- **HLE** - High-Level Emulation: software reimplementation of BIOS functions, avoids needing the original file
-- **hash** - fixed-length fingerprint of a file's contents. This project uses MD5, SHA1, SHA256, CRC32, and Adler-32
-- **platform** - a distribution that packages emulators (RetroArch, Batocera, Recalbox, EmuDeck, etc.)
-- **core** - an emulator packaged as a libretro plugin, loaded by RetroArch or compatible frontends
-- **profile** - a YAML file in `emulators/` documenting one core's BIOS requirements, verified against source code
-- **system** - a game console or computer being emulated (e.g. sony-playstation, nintendo-gameboy-advance)
-- **pack** - a ZIP archive containing all BIOS files needed by a specific platform
-- **ground truth** - the emulator's source code, treated as the authoritative reference for BIOS requirements
-- **cross-reference** - comparison of emulator profiles against platform configs to find undeclared files
-- **scraper** - a script that fetches BIOS requirement data from an upstream source (System.dat, es_bios.xml, etc.)
-- **exporter** - a script that converts ground truth data back into a platform's native format
-- **target** - a hardware architecture that a platform runs on (e.g. switch, rpi4, x86_64, steamos)
-- **region** - the territory an emulator's code branches on to select a file. `--region` builds a pack from an ordered priority list, `--one-per-slot` keeps one file per system and region
-- **variant** - an alternative version of a BIOS file (different revision, region, or dump), stored in `.variants/`
-- **required** - a file the core needs to function, determined by source code behavior
-- **optional** - a file the core functions without, possibly with reduced accuracy or missing features
-- **hle_fallback** - flag on a file indicating the core has an HLE path, and absence is downgraded to INFO severity
-- **severity** - the urgency of a verification result: OK (verified), INFO (negligible), WARNING (degraded), CRITICAL (broken)
-- **status** - the outcome of a single file check: `ok`, `untested` (present, hash not the expected one), or `missing`
-- **discrepancy** - a file that passes the platform check but fails the emulator's own size or hash validation
-- **shared group** - a file group in `_shared.yml` that several platforms include, carrying the destination a core expects
-- **data directory** - a whole directory tree a core needs (Dolphin `Sys/`, PPSSPP assets), cached in `data/`, not indexed in the database
-- **storage tier** - where a file comes from: `embedded` (in `bios/`), `external` (downloaded at build), `user_provided`
-- **truth** - platform-shaped data generated from emulator profiles, used to diff against what the platform declares
-- **dump catalog** - a preservation project (Redump, No-Intro, TOSEC) publishing DATs of verified hardware dumps
-- **provenance** - the catalogs that list a file, joined into the database by hash. An annotation, never an authority
-- **manifest** - the JSON file list per platform in `install/`, consumed by `install.py`
+The words these pages use, from BIOS to provenance, are in the
+[glossary](glossary.md).

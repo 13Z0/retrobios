@@ -177,7 +177,7 @@ The [documentation site](https://abdess.github.io/retrobios/) provides:
 
 A platform's BIOS list and an emulator's code are maintained separately. Each list is compared with the emulator source code, file by file where a profile exists, and where the two differ the code decides.
 
-Hashes document what emulator code loads and accepts, not dump provenance. That boundary, and how it relates to preservation catalogs such as No-Intro, is drawn in the [FAQ](https://abdess.github.io/retrobios/wiki/faq/#are-these-files-verified-against-original-hardware-dumps).
+Hashes document what emulator code loads and accepts, not dump provenance. That boundary, and how it relates to preservation catalogs such as No-Intro, is drawn in the [technical questions](https://abdess.github.io/retrobios/wiki/technical-faq/#are-these-files-verified-against-original-hardware-dumps).
 
 1. **Read emulator source code**: trace every file the code loads, its expected hash and size
 2. **Cross-reference with platforms**: match against what each platform declares
@@ -208,4 +208,4 @@ The scripts and tooling are released under the [MIT License](LICENSE).
 The BIOS and firmware files are not covered by that license: they are third-party system software, preserved and provided for personal backup, archival, and interoperability with emulation software. [NOTICE](NOTICE) sets out their status and how to ask for a file to be removed.
 The reasoning, and where it is weakest, is in the [FAQ](https://abdess.github.io/retrobios/wiki/faq/#is-this-legal).
 
-*Auto-generated on 2026-10-22T09:06:29Z*
+*Auto-generated on 2026-10-22T09:44:26Z*

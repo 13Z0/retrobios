@@ -1,4 +1,8 @@
-# Community tools
+---
+level: reference
+---
+
+# Projects using this data
 
 Projects built on RetroBIOS data.
 

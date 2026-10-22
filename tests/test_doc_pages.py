@@ -730,7 +730,8 @@ class RetroArchWindowsSystemFolder(unittest.TestCase):
     """Getting started gave %APPDATA%\\RetroArch\\system for the Windows
     installer. RetroArch's default is `:\\system`, the folder of
     retroarch.exe (platform_win32.c). %APPDATA% is where a retroarch.cfg
-    can live, and install.py reads it there."""
+    can live, and install.py reads it there. The RetroArch page of the site
+    states the folder now, from the guide data."""
 
     def test_page_and_installer_agree(self):
         import install
@@ -738,9 +739,25 @@ class RetroArchWindowsSystemFolder(unittest.TestCase):
         source = inspect.getsource(install)
         self.assertIn('ra_dir or exe_dir / "system"', source)
         self.assertTrue(str(install._os_default_dests("windows")["retroarch"]).replace("\\", "/").endswith("/system"))
-        section = _section(_page("getting-started.md"), "RetroArch")
+        from siteguides import GUIDES
+
+        guide = GUIDES["retroarch"]
+        section = "\n".join([*(path for _label, path in guide.folders), *guide.notes])
         self.assertNotIn("%APPDATA%\\RetroArch\\system", section)
         self.assertIn("`system\\` next to `retroarch.exe`", section)
+
+    def test_the_macos_folder_is_the_installers(self):
+        """The site gave Application Support/RetroArch/system for macOS. A
+        RetroArch left at its defaults reads ~/Documents/RetroArch/system
+        (platform_darwin.m), Application Support only for a portable or
+        Steam build, and install.py looks there in that order."""
+        import install
+        from siteguides import GUIDES
+
+        source = inspect.getsource(install._macos_retroarch_base)
+        self.assertIn('Path.home() / "Documents" / "RetroArch"', source)
+        folders = dict(GUIDES["retroarch"].folders)
+        self.assertEqual(folders["macOS"], "`~/Documents/RetroArch/system/`")
 
 
 if __name__ == "__main__":

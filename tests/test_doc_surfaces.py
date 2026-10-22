@@ -75,22 +75,25 @@ def _which_pack() -> str:
 
 class TheDownloadTablesFollowTheRegistry(unittest.TestCase):
     """EmuDeck has a Windows edition the installer detects, and the Windows
-    table of the download page left it out."""
+    table of the download page left it out. The page is grouped by device
+    now: the row of each platform names every system it is detected on."""
 
     def test_every_detected_system_lists_the_platform(self):
         import yaml  # noqa: PLC0415
 
+        from common import load_platform_config  # noqa: PLC0415
+
         registry = yaml.safe_load(_read("platforms/_registry.yml"))
-        names = {"retroarch": "RetroArch", "retrobat": "RetroBat", "emudeck": "EmuDeck",
-                 "bizhawk": "BizHawk"}
         page = _which_pack()
-        for os_name, heading in (("windows", "### Windows"), ("darwin", "### macOS")):
-            table = _section(page, heading)
+        for os_name, label in (("windows", "Windows"), ("darwin", "macOS")):
             for platform, entry in registry["platforms"].items():
                 systems = {rule["os"] for rule in (entry.get("install") or {}).get("detect", [])}
                 if os_name in systems:
+                    name = load_platform_config(platform, "platforms")["platform"]
+                    row = next(line for line in page.splitlines()
+                               if line.startswith(f"| [{name}]("))
                     with self.subTest(os=os_name, platform=platform):
-                        self.assertIn(f"[{names[platform]}](", table)
+                        self.assertIn(label, row.split(" | ")[2])
 
 
 class DownloadLinksNameTheFile(unittest.TestCase):
@@ -159,9 +162,10 @@ class DownloadLinksNameTheFile(unittest.TestCase):
             for asset in pack["assets"]:
                 self.assertIn(f"/releases/download/{RECORD['tag']}/{asset})", page)
 
-    def test_a_platform_the_release_lacks_has_no_row(self):
+    def test_a_platform_the_release_lacks_links_no_release(self):
         """KNULLI, AmberELEC and EmuELEC were registered after the recorded
-        release: a row for them linked a release page holding no such pack."""
+        release: a row for them linked a release page holding no such pack.
+        Every platform is on the picker now, so the row offers the command."""
         if not RECORD.get("packs"):
             self.skipTest("release.json is not written")
         from common import list_registered_platforms, load_platform_config
@@ -172,8 +176,10 @@ class DownloadLinksNameTheFile(unittest.TestCase):
             if pack_for(key, RECORD) is not None:
                 continue
             label = load_platform_config(key, "platforms").get("platform", key)
+            row = next(line for line in page.splitlines() if line.startswith(f"| [{label}]("))
             with self.subTest(platform=key):
-                self.assertNotIn(f"| [{label}](", page)
+                self.assertNotIn("/releases/", row)
+                self.assertIn(f"Not in {RECORD['tag']}: [use the command](platforms/{key}.md#install)", row)
 
 
 class SlicesLeaveWithTheirRelease(unittest.TestCase):
@@ -205,7 +211,7 @@ class EndUsersCheckTheirOwnFolder(unittest.TestCase):
         ("wiki/troubleshooting.md", "## Game won't start / black screen"),
         ("wiki/faq.md", "## My game shows a black screen"),
         ("wiki/faq.md", "## How do I know which BIOS I need?"),
-        ("wiki/getting-started.md", "## Checking what you installed"),
+        ("wiki/troubleshooting.md", "## Checking what you installed"),
     )
 
     def test_user_sections_never_send_to_verify(self):
@@ -263,7 +269,7 @@ class ShownOutputIsPrintedOutput(unittest.TestCase):
                     self.assertIn(literal, source)
 
     def test_samples_match_a_shape(self):
-        section = _section(_read("wiki/troubleshooting.md"), "### Reading the output")
+        section = _section(_read("wiki/verification-modes.md"), "### Reading the output")
         blocks = re.findall(r"```\n(.*?)```", section, re.DOTALL)
         self.assertTrue(blocks)
         for block in blocks:

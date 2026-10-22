@@ -1,89 +1,19 @@
+---
+level: start
+---
+
 # FAQ
 
-## My game shows a black screen
+The questions people ask before installing anything. Questions about how files
+are identified and checked are in the
+Reference: [technical questions](technical-faq.md).
 
-Most likely a missing or incorrect BIOS file. Check what is in the BIOS folder:
+## Do I need BIOS files?
 
-```bash
-curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh -s -- --check
-```
-
-The count it ends on says what is wrong. A number after `wrong hash` means a
-file is there whose contents the platform will reject, so it is the wrong
-version or a bad dump, and running the install again replaces it. Files that
-are absent are counted as needing downloading.
-
-Some cores also support HLE (see below), so a missing BIOS may not always be the cause. Check the emulator's logs for error messages.
-
-## What's the difference between required and optional?
-
-**Required** means the emulator will not start games for that system without the file. **Optional** means the emulator works without it, but with reduced accuracy or missing features (e.g., boot screen animation, wrong font rendering, or degraded audio).
-
-In verification output, missing required files appear as CRITICAL or WARNING depending on the platform. Missing optional files appear as WARNING or INFO.
-
-## What's HLE?
-
-HLE (High-Level Emulation) is a software reimplementation of what the original BIOS does. Some cores can boot games without a real BIOS file by using their built-in HLE fallback. The trade-off is lower accuracy: some games may have glitches or fail to boot entirely.
-
-When a core has HLE support, the verification tool lowers the severity of a missing BIOS to INFO. The file is still included in packs because the real BIOS gives better results.
-
-## Why are there multiple hashes for the same file?
-
-Two main reasons:
-
-1. **Regional variants.** The same filename (e.g., `IPL.bin` for GameCube) exists in different versions for USA, Europe, and Japan. Each region has a different hash.
-2. **Revision differences.** Console manufacturers released updated BIOS versions over time. A PlayStation SCPH-5501 BIOS differs from a SCPH-7001.
-
-Platforms that verify by MD5 accept specific hashes. If yours doesn't match any known hash, it may be a bad dump or an uncommon revision.
-
-A filename is never allowed to stand in for a declared hash. When a file entry
-carries a hash, resolution matches on content and reports `hash_mismatch` if the
-only same-named copy disagrees. What happens next depends on the platform: an
-MD5 or SHA1 platform would reject the file, so the pack omits it and says why,
-while an existence platform only checks presence, so the file ships and the divergence
-is reported instead.
-
-## Why are there files that aren't BIOS?
-
-A file earns its place when an emulator loads it from disk and does not bundle it. That covers actual BIOS ROMs, console firmware, arcade BIOS sets, and also game data like `prboom.wad` for the PrBoom core or soundfonts for EasyRPG.
-
-This follows the platforms themselves: Batocera lists `prboom.wad` in its BIOS checker, and libretro declares these files in the `firmware` field of its core info. The word "BIOS" is their vocabulary for "external file the emulator needs". Files are tagged by category (`bios`, `game_data`, `bios_zip`) in the emulator profiles, so the distinction stays visible.
-
-## Are these files verified against original hardware dumps?
-
-No, and that is a deliberate boundary. The hashes here document what
-emulator code loads and accepts, read from the source. When several
-revisions or regions pass, all of them are kept (`.variants/` in the
-repository, per-emulator pages list each one), and the pack ships the
-variant satisfying the most checks, logging any conflict it cannot
-resolve.
-
-Whether a file byte-matches the original hardware ROM is a different
-question, answered by dump-preservation catalogs such as No-Intro,
-Redump, and TOSEC, not by emulator code. The collection is
-cross-referenced against their DATs: files matching a catalog entry
-carry a verified dump badge on the system pages, and catalog entries
-absent from the collection are tracked as acquisition targets. When
-the two views differ, this project follows the code, because that is
-what decides whether your emulator boots.
-
-The [dump provenance](../provenance.md) page has the current coverage
-per catalog and the full list of catalogued dumps still missing.
-
-## Which MAME version do the arcade BIOS sets match?
-
-Arcade BIOS sets are coupled to the romset version, so there is one
-profile per MAME core generation: MAME 2000 (0.37b5), MAME 2003 (0.78),
-MAME 2003-Plus, MAME 2009 (0.135u4), MAME 2010 (0.139), MAME 2015
-(0.160), MAME 2016 (0.174), and current MAME (0.289), each read from that
-version's own source tree, because the BIOS root sets differ between
-versions. Derivatives and ports carry their own profiles on top of those
-generations: `mamearcade`, `mamemess`, `mame2003_midway`, the three
-`mame4droid` drops, `advancemame`, `groovymame` and `hbmame`. Recalbox
-compiles two MAME versions of its own, 0.258 and 0.278, profiled as
-`mame0258` and `mame0278`. The pack
-ships the sets matching the core you run, and a generic unversioned arcade
-pack cannot do that.
+For many consoles, yes: PlayStation, PlayStation 2, Saturn, Mega-CD, Neo Geo,
+Dreamcast and many home computers. For cartridge consoles such as the NES or
+the Super Nintendo, usually not. [What BIOS files are](what-are-bios-files.md)
+explains why, console by console.
 
 ## How do I know which BIOS I need?
 
@@ -117,7 +47,23 @@ curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh -o
 less install.sh && sh install.sh
 ```
 
-See [Installer](installer.md) for the full behaviour.
+Details: [All installer options](installer.md), with the full behaviour.
+
+## Will the installer change my other files?
+
+No. It writes only inside the BIOS folder, and games and saves are never
+touched. Inside that folder, a BIOS file whose contents differ from the
+expected one is replaced with a checked copy. Files the installer does not
+know are never read, moved or deleted. Copies into the folders of standalone
+emulators happen only when you ask for them with `--standalone-copies`.
+
+## What if Windows or an antivirus blocks the command?
+
+The PowerShell execution policy governs script files, and the PowerShell line
+writes none, so the policy does not block it. Where a security tool still
+blocks it, download the pack of your setup from
+[Get your files](../which-pack.md) and extract it into the BIOS folder: it holds
+the same files.
 
 ## Can I run the installer again?
 
@@ -126,6 +72,11 @@ the expected hash is left untouched, one whose contents do not match is
 replaced by the verified copy, and files the manifest does not name are never
 read, moved or deleted. `--check` does the same inspection and exits without
 writing.
+
+## Can I undo it?
+
+Yes. Delete the files from your BIOS folder. The installer changed nothing
+outside that folder.
 
 ## Can I install onto an SD card or another machine's drive?
 
@@ -140,7 +91,17 @@ curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh \
 RetroArch on Switch, `RetroArch/system` on Android.
 
 On Windows the arguments need a script block, since `iex` would read them as
-its own. The form is on the [Installer](installer.md#passing-options) page.
+its own. Details: [the Windows form](installer.md#passing-options).
+
+## Can I use BIOS from one platform on another?
+
+Yes. BIOS files are console-specific, not platform-specific. A PlayStation BIOS works in RetroArch, Batocera, Recalbox, and any other platform that emulates PlayStation. The only differences between platforms are:
+
+- **Where the file goes** (each platform has its own BIOS directory)
+- **What filename is expected** (usually the same, occasionally different)
+- **How verification works** (MD5 check vs. existence check)
+
+The packs differ per platform because each platform declares its own set of supported systems and expected files.
 
 ## Why is a file the emulator reads not in the pack?
 
@@ -152,6 +113,47 @@ folder, the PPSSPP libretro core does not, so RetroArch packs carry those files 
 a standalone PPSSPP pack does not. When a platform's own package installs data
 beside a core (Batocera with blueMSX), that platform's pack leaves it out too. The
 emulator's page on the site marks these files as installed with the emulator.
+
+## How often are packs updated?
+
+Upstream sources (libretro System.dat, batocera-systems, etc.) are re-scraped by hand and the diff is reviewed before it lands. Releases happen as needed when new BIOS files are added or profiles are updated.
+
+## What's the difference between required and optional?
+
+**Required** means the emulator will not start games for that system without
+the file. **Optional** means the emulator works without it, but with reduced
+accuracy or missing features (e.g., boot screen animation, wrong font
+rendering, or degraded audio).
+
+## What's HLE?
+
+HLE (High-Level Emulation) is a software reimplementation of what the original
+BIOS does. Some cores can boot games without a real BIOS file by using their
+built-in HLE fallback. The trade-off is lower accuracy: some games may have
+glitches or fail to boot entirely. The file is still included in packs because
+the real BIOS gives better results.
+
+## What's a hash?
+
+A hash is a fingerprint computed from a file's contents. If even one byte
+differs, the hash changes completely. Batocera, Recalbox, EmuDeck and several
+other setups compare the MD5 hash of each BIOS file with their list and refuse
+a file that does not match. RetroArch only checks that the file is there. The
+kinds of hash and where each is used are in the
+Reference: [technical questions](technical-faq.md#whats-a-hashchecksum).
+
+## Are these files verified against original hardware dumps?
+
+The hashes here come from what emulator code loads and accepts. Whether a file
+matches a catalogued dump of the original chip is a separate question, and the
+system pages mark the files that do. The full answer is in the
+Reference: [technical questions](technical-faq.md#are-these-files-verified-against-original-hardware-dumps).
+
+## My game shows a black screen
+
+Most often a BIOS file is missing, or is not the version the emulator expects.
+[When a game does not start](troubleshooting.md) goes through it step by step,
+starting with a check of what is in your BIOS folder.
 
 ## Is this legal?
 
@@ -196,47 +198,8 @@ Age is not what decides inclusion here: availability is. Firmware distribution d
 
 The project tries to archive files while they are still available rather than after they have become rare. "Retro" is a moving window: the PlayStation 2 was current hardware when its BIOS was first preserved, and today's consoles will be tomorrow's retro systems. A file is included for the same reason at any age: an emulator needs it, and nothing guarantees it stays available.
 
-## What's a hash/checksum?
+!!! tip "Next"
 
-A hash is a fixed-length fingerprint computed from a file's contents. If even one byte differs, the hash changes completely. Every file in the database carries these:
-
-| Type | Length | Example | Used for |
-|------|--------|---------|----------|
-| SHA1 | 40 hex chars | `10155d8d6e6e832d8ea1571511e40dfb15fede05` | database primary key, BizHawk, installer downloads |
-| MD5 | 32 hex chars | `924e392ed05558ffdb115408c263dccf` | most platform verification |
-| SHA256 | 64 hex chars | `9a1c...` | emulator profiles whose upstream publishes SHA256 |
-| CRC32 | 8 hex chars | `2F468B96` | ROM-set matching, arcade DATs |
-
-Emulator profiles add Adler-32 where the code checks it, which is how Dolphin
-checks its DSP ROMs (`dsp_rom.bin` and `dsp_coef.bin`, hashed byte-swapped).
-`IPL.bin` is not one of them: Dolphin loads it without a hash check.
-
-Verification uses whichever one the platform itself uses: MD5 for Batocera,
-RetroBat, Recalbox, EmuDeck, RetroDECK, RomM, ROCKNIX, KNULLI, AmberELEC, EmuELEC
-and MiSTer FPGA, SHA1 for
-BizHawk, and nothing at all for RetroArch, Lakka and RetroPie, which only check
-that the file exists.
-
-## Why does my verification report say UNTESTED?
-
-`untested` means the file exists on disk but its hash does not match the expected value. This happens on MD5 and SHA1 platforms (Batocera, Recalbox, BizHawk, ROCKNIX, MiSTer FPGA, and the rest) when the file is present but contains different data than what the platform declares.
-
-On existence-mode platforms (RetroArch, Lakka, RetroPie, MinUI, NextUI, MyMinUI), files are never `untested` because the platform only checks presence, not content. Those files show as `ok` if present, whatever they contain.
-
-Running `verify.py --emulator <core> --verbose` shows the emulator-level ground truth, which can confirm whether the file's hash matches what the source code expects. The platform report applies the same check on its own: `verify.py --platform retroarch` prints a `DISCREPANCY` line for every file the platform accepts and a profiled emulator rejects.
-
-It reaches only as far as the profiles do. Files no profile states a value for are platform-only, and nothing can be said about their content. The footer of the platform report gives that ratio as `Ground truth: N/M files have emulator validation`.
-
-## Can I use BIOS from one platform on another?
-
-Yes. BIOS files are console-specific, not platform-specific. A PlayStation BIOS works in RetroArch, Batocera, Recalbox, and any other platform that emulates PlayStation. The only differences between platforms are:
-
-- **Where the file goes** (each platform has its own BIOS directory)
-- **What filename is expected** (usually the same, occasionally different)
-- **How verification works** (MD5 check vs. existence check)
-
-The packs differ per platform because each platform declares its own set of supported systems and expected files.
-
-## How often are packs updated?
-
-Upstream sources (libretro System.dat, batocera-systems, etc.) are re-scraped by hand and the diff is reviewed before it lands. Releases happen as needed when new BIOS files are added or profiles are updated.
+    - [Get your files](../which-pack.md)
+    - [When a game does not start](troubleshooting.md)
+    - [Glossary](glossary.md)

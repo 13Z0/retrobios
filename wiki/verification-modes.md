@@ -1,4 +1,8 @@
-# Verification modes
+---
+level: reference
+---
+
+# How each platform checks files
 
 Each platform verifies BIOS files differently. `verify.py` replicates the native behavior
 of each platform so that verification results match what the platform itself would report.
@@ -413,3 +417,146 @@ name or any name the emulator's hashes reach. If found, it ships. If not, the
 Batocera-verified file ships and the discrepancy stays visible in verification
 and gap reporting.
 
+## Hash mismatch / UNTESTED
+
+This section and the two after it are about this repository's own tools, run
+from a clone. `scripts/verify.py` checks the collection in `bios/` against each
+platform, never your BIOS folder: for that, use the installer's `--check`
+([When a game does not start](troubleshooting.md)).
+
+`verify.py` reports `UNTESTED` for a file of the collection that was hashed
+and does not match what the platform declares. The line gives the reason:
+
+```
+  UNTESTED (required): nintendo-ds/dsifirmware.bin: declared hash contradicted by the local file
+```
+
+The system page on the site lists every known version of the file with its
+expected MD5 and SHA1.
+
+### Existence-mode platforms never report UNTESTED
+
+On RetroArch, Lakka and RetroPie, the platform check only asks whether the file
+is there, so the only outcomes are OK and MISSING. `verify.py` adds the emulator
+ground truth from the profiles and flags a `DISCREPANCY` when a file passes the
+platform check but fails the emulator's own size or hash validation.
+
+### The .variants/ directory
+
+When multiple versions of the same BIOS exist (different revisions, regions, or
+dumps), the primary version lives in the main directory and alternatives live in
+`.variants/`. `verify.py` checks the primary file first, then falls back to
+variants when resolving by hash.
+
+If your file matches a variant hash but not the primary, it's a valid BIOS --
+just not the preferred version. Some cores accept multiple versions.
+
+## Pack is missing files
+
+A generated pack doesn't contain all the files you expected.
+
+### Severity levels
+
+`verify.py` assigns a severity to each issue, counted under `severity_counts`
+in its `--json` output. Not all missing files are equally important:
+
+| Severity | Meaning | Action needed |
+|----------|---------|---------------|
+| CRITICAL | Required file missing on an MD5 or SHA1 platform | Must fix. Core won't function. |
+| WARNING | Optional file missing on an MD5 or SHA1 platform, hash mismatch (UNTESTED) on any hash platform, or a required file missing on an existence platform | Core works but with reduced functionality, or runs on content nobody verified. |
+| INFO | Optional file missing on an existence-only platform, or a missing file the core covers with an HLE fallback | Core works fine, BIOS improves accuracy. |
+| OK | File present and verified | No action needed. |
+
+The full mapping, including how `hle_fallback` overrides the platform mode, is
+in [severity matrix](#severity-matrix).
+
+Focus on CRITICAL issues first. WARNING files improve the experience but aren't
+strictly necessary. INFO files are nice to have.
+
+### Large files (release assets)
+
+Files like PS3UPDAT.PUP, PSVUPDAT.PUP, and Switch firmware are too large for the
+git repository. They are stored as GitHub release assets under the `large-files`
+release and downloaded at build time.
+
+If a pack build fails to include these, check your network connection. In offline
+mode (`--offline`), large files are only included if already cached locally in
+`.cache/large/`.
+
+### Data directories
+
+Some cores need entire directory trees rather than individual files (e.g. Dolphin's
+`Sys/` directory, PPSSPP's `assets/`). These are fetched by `refresh_data_dirs.py`
+from upstream repositories.
+
+In offline mode, data directories are only included if already cached in `data/`.
+Run `python scripts/refresh_data_dirs.py` to fetch them.
+
+## verify.py reports errors
+
+How to read and interpret `verify.py` output.
+
+### Status codes
+
+| Status | Meaning |
+|--------|---------|
+| `OK` | File present, hash matches (or existence check passed) |
+| `UNTESTED` | File present, hash not confirmed against the expected value |
+| `MISSING` | File not found in the repository |
+| `DISCREPANCY` | The platform check passes, an emulator's own check fails |
+
+### Reading the output
+
+The first line counts the platform's files and names its check. Under it come
+the entries that need attention, one per line as `STATUS (required|optional):
+system/file`, followed by a reason where there is one, then the counts of the
+files the emulator cores add. From `python scripts/verify.py --platform retrodeck`:
+
+```
+RetroDECK: 2007/2008 OK, 1 untested [md5]
+  UNTESTED (required): nintendo-ds/dsifirmware.bin: declared hash contradicted by the local file
+  DISCREPANCY: nintendo-snes/sgb2.boot.rom: RetroDECK says OK but supersnes9x says size mismatch: got 524288, accepted [256]
+    supersnes9x [size]
+  Core files: 1495 in pack, 0 required missing, 1 optional missing
+```
+
+`--verbose` also lists the passing entries that an emulator validates, with
+the check and the source lines behind it:
+
+```
+Recalbox: 351/351 OK [md5]
+  OK (required): macintosh/MacII.ROM
+    minivmac validates size=262144 [minivmac/cfg/CNFGRAPI.h:32, minivmac/src/OSGLUERETRO.c:781]
+```
+
+### Cross-reference section
+
+After per-file results, `verify.py` prints a cross-reference report. This lists
+files that emulator cores need but that the platform YAML doesn't declare. These
+files are still included in packs automatically, but the report helps identify
+gaps in platform coverage data.
+
+The cross-reference uses `resolve_platform_cores()` to determine which emulator
+profiles are relevant for each platform, then checks whether each profile's files
+appear in the platform config.
+
+### Filtering output
+
+```bash
+# By platform
+python scripts/verify.py --platform batocera
+
+# By emulator core
+python scripts/verify.py --emulator beetle_psx
+
+# By system
+python scripts/verify.py --system sony-playstation
+
+# By hardware target
+python scripts/verify.py --platform retroarch --target switch
+
+# JSON for scripted processing: the entries that need attention
+python scripts/verify.py --platform retroarch --json
+# every entry, passing ones included, with its ground truth
+python scripts/verify.py --platform retroarch --json --verbose
+```

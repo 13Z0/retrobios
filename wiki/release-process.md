@@ -1,3 +1,7 @@
+---
+level: contribute
+---
+
 # Release process
 
 Two GitHub workflows check pull requests and publish the site. Releases are

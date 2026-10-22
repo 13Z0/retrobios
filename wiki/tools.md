@@ -1,4 +1,8 @@
-# Tools
+---
+level: reference
+---
+
+# Command-line tools
 
 All tools are Python scripts in `scripts/`. They need Python 3.9 or newer and `pyyaml`,
 and only `validate_schemas.py` also needs `jsonschema[format-nongpl]`. `install.py`
