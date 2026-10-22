@@ -17,6 +17,8 @@ on:
       - "install.py"
       - "install.sh"
       - "install.ps1"
+      # The handheld port bundles install.py and its tests read both.
+      - "ports/**"
       # Every input of the site build, so a page that would fail the deploy
       # fails here first (tests/test_workflow_paths.py).
       - "wiki/**"
@@ -42,6 +44,7 @@ on:
       - "install.py"
       - "install.sh"
       - "install.ps1"
+      - "ports/**"
       - "wiki/**"
       - "docs_assets/**"
       - "provenance/**"
