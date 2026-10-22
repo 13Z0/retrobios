@@ -1192,8 +1192,8 @@ def verify_platform(
     file_status: dict[str, str] = {}
     file_required: dict[str, bool] = {}
     file_severity: dict[str, str] = {}
-    # What a missing entry is: firmware, a game's data, or a name no core
-    # the platform runs opens. Only firmware gaps carry a severity.
+    # What each entry is: firmware, a game's data, or a name no core the
+    # platform runs opens. Only firmware gaps carry a severity.
     file_category: dict[str, str] = {}
     categories = EntryCategories(config, profiles, data_dir_registry)
 
@@ -1356,13 +1356,14 @@ def verify_platform(
             prev = file_status.get(dest)
             hle = hle_index.get(file_entry.get("name", ""), False)
             sev = compute_severity(cur, required, mode, hle)
-            if cur == Status.MISSING:
-                explained = categories.explain(file_entry, destination, sys_id)
-                category = explained.pop("category")
-                result["category_evidence"] = explained
-            else:
-                category = BIOS
+            explained = categories.explain(file_entry, destination, sys_id)
+            category = explained.pop("category")
             result["category"] = category
+            result["category_evidence"] = explained
+            if cur != Status.MISSING:
+                # A held entry is firmware for the counts: its category only
+                # documents it.
+                category = BIOS
             if file_category.get(dest, category) == BIOS:
                 category = BIOS
             file_category[dest] = category

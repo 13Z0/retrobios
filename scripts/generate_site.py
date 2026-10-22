@@ -1993,14 +1993,14 @@ def _render_platform_systems(
                 status_display = f"untested: {reason}" if reason else "untested"
             elif status == "missing":
                 status_display = "**missing**"
-                # Not every missing entry is firmware: the platform may list a
-                # game's data or a file no core it runs opens.
-                kind = {"game_data": "game data",
-                        "unread": "no core the platform runs opens it"}.get(f.get("category", ""))
-                if kind:
-                    status_display += f", {kind}"
             else:
                 status_display = status
+            # Not every entry is firmware: the platform may list a game's data
+            # or a file no core it runs opens.
+            kind = {"game_data": "game data",
+                    "unread": "no core the platform runs opens it"}.get(f.get("category", ""))
+            if kind:
+                status_display += f", {kind}"
 
             size_str = _fmt_size(size) if size else ""
             details = [status_display]
@@ -2033,7 +2033,7 @@ def _render_platform_systems(
                 if sha256:
                     hash_parts.append(f"SHA256: `{sha256}`")
                 lines.append(f"{pad}    {' | '.join(hash_parts)}")
-            if status == "missing" and f.get("category_evidence"):
+            if f.get("category_evidence"):
                 lines.append(f"{pad}    {_category_evidence_md(f['category_evidence'])}")
 
         lines.append("")
