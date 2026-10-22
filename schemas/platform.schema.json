@@ -53,6 +53,56 @@
       "uniqueItems": true,
       "description": "Emulators of standalone_cores the platform also launches as a libretro core: both layouts get their files"
     },
+    "core_system_dirs": {
+      "type": "object",
+      "description": "The libretro system directory the platform hands each core, keyed by that directory relative to the pack root. A platform that declares it gives a core no other directory: the core's files are placed below each directory listed for it, and a core listed nowhere gets none (MinUI hands each launch tag its own Bios/<TAG>/)",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "cores",
+          "source_ref"
+        ],
+        "properties": {
+          "cores": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string"
+            },
+            "description": "Libretro cores the platform starts with this directory, by the name of their .so"
+          },
+          "devices": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "string"
+            },
+            "description": "Devices whose build ships a launcher for this directory"
+          },
+          "source_ref": {
+            "type": "string",
+            "description": "file:line of the launcher that names the core, at the revision `source` pins"
+          }
+        }
+      }
+    },
+    "core_repositories": {
+      "type": "object",
+      "description": "Repositories each core of core_system_dirs is built from, read from the platform's build recipes",
+      "additionalProperties": {
+        "type": "array",
+        "uniqueItems": true,
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "system_directory_ref": {
+      "type": "string",
+      "description": "file:line, at the revision `source` pins, of the code that sets the system directory core_system_dirs lists"
+    },
     "homepage": {
       "type": "string",
       "format": "uri",

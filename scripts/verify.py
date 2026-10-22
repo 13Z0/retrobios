@@ -76,6 +76,7 @@ from common import (
     entry_system_ids,
     sanitize_pack_path,
     select_emulator_profiles,
+    system_dir_path,
 )
 
 yaml = require_yaml()
@@ -576,7 +577,7 @@ def find_undeclared_files(
                 if is_standalone:
                     dest = f.get("standalone_path") or f.get("path") or fname
                 else:
-                    dest = f.get("path") or fname
+                    dest = system_dir_path(f, f.get("path") or fname)
                 raw_regions = f.get("region") or []
                 region_key = tuple(
                     str(value) for value in (
@@ -615,6 +616,7 @@ def find_undeclared_files(
                 if archive:
                     archive_key = (
                         archive,
+                        f.get("system_dir"),
                         f.get("system"),
                         f.get("variant_group"),
                         region_key,
@@ -634,7 +636,7 @@ def find_undeclared_files(
                             "variant_group": f.get("variant_group"),
                             "name": archive,
                             "archive": archive,
-                            "path": archive,
+                            "path": system_dir_path(f, archive),
                             "required": False,
                             "hle_fallback": False,
                             "category": f.get("category", "bios"),
@@ -647,6 +649,8 @@ def find_undeclared_files(
                             "archive_required_count": 0,
                             "members": archive_members(archive, profile.get("files", [])),
                         }
+                        if f.get("system_dir"):
+                            archive_entries[archive_key]["system_dir"] = f["system_dir"]
                     entry = archive_entries[archive_key]
                     entry["archive_file_count"] += 1
                     if f.get("required", False):
@@ -738,6 +742,8 @@ def find_undeclared_files(
                 }
                 if f.get("contents"):
                     entry["contents"] = f["contents"]
+                if f.get("system_dir"):
+                    entry["system_dir"] = f["system_dir"]
                 members = with_archive_members(f, profile.get("files", [])).get("members")
                 if members:
                     entry["members"] = members

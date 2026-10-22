@@ -1221,6 +1221,12 @@ def resolve_local_file(
     """
     sha1 = file_entry.get("sha1")
     name = file_entry.get("name", "")
+    # A platform that hands each core a system directory of its own (MinUI's
+    # Bios/<TAG>/) writes that folder in front of the core's path. The tail
+    # the collection indexes is the core's path alone.
+    system_dir = file_entry.get("system_dir")
+    if system_dir and dest_hint.startswith(f"{system_dir}/"):
+        dest_hint = dest_hint[len(system_dir) + 1:]
     # A name written with its directory is the destination when no path is
     # given: gam4980/E.BIN resolved by its basename took another model's OS
     # in verify --emulator and the emulator pack, while the platform pack,
@@ -2106,6 +2112,11 @@ def group_identical_platforms(
             # One archive cannot serve a filesystem that folds case and one
             # that does not: Lakka keeps bios.col beside BIOS.col.
             bool(config.get("case_insensitive_fs")),
+            # Where each core's files go: the same cores handed other
+            # folders make another pack.
+            sorted(
+                tag for tag in standalone_set(config) if tag.startswith(CORE_DIR_PREFIX)
+            ),
         ]
         fp = hashlib.sha1(f"{fp}|{emulators}".encode()).hexdigest()
         if target_cores_cache:
@@ -2252,6 +2263,55 @@ DUAL_MODE_PREFIX = "dual:"
 # Marks, in the same set, a whole directory the platform's launcher hands a
 # standalone emulator (launchers.handed_directories), as JSON.
 HANDED_PREFIX = "handed:"
+# Marks, in the same set, a libretro core and the system directory the
+# platform hands it (``core_system_dirs``), as JSON.
+CORE_DIR_PREFIX = "coredir:"
+
+
+def core_system_dirs(
+    emu_name: str, profile: dict, standalone_cores: Iterable[str]
+) -> list[str] | None:
+    """The system directories a platform hands this libretro core, or None.
+
+    None when the platform declares no per-core directory: the core reads
+    the one system directory every core shares. A platform that declares
+    them (MinUI hands each launch tag its own Bios/<TAG>/) gives a core it
+    lists no directory at all, so the list is then empty.
+    """
+    pairs = [
+        json.loads(tag[len(CORE_DIR_PREFIX):])
+        for tag in standalone_cores if tag.startswith(CORE_DIR_PREFIX)
+    ]
+    if not pairs:
+        return None
+    names = {emu_name, *(str(c) for c in profile.get("cores") or [])}
+    return sorted({directory for core, directory in pairs if core in names})
+
+
+def system_dir_view(profile: dict, directory: str) -> dict:
+    """The profile as a core reads it from one handed system directory.
+
+    Each file keeps its own path, relative to the system directory, and
+    carries the directory: destinations put it in front, resolution takes
+    it off again (resolve_local_file), so the collection is still searched
+    by the core's own path. A core's archive subfolder moves with it.
+    """
+    view = {
+        **profile,
+        "files": [
+            {**f, "system_dir": directory} if isinstance(f, dict) else f
+            for f in profile.get("files") or []
+        ],
+    }
+    if profile.get("archive_prefix"):
+        view["archive_prefix"] = f"{directory}/{profile['archive_prefix']}"
+    return view
+
+
+def system_dir_path(entry: dict, path: str) -> str:
+    """``path`` below the system directory the entry carries, if any."""
+    directory = entry.get("system_dir")
+    return f"{directory}/{path}" if directory else path
 
 
 def standalone_set(config: dict) -> set[str]:
@@ -2263,7 +2323,14 @@ def standalone_set(config: dict) -> set[str]:
     """
     names = {str(c) for c in config.get("standalone_cores") or []}
     names |= {DUAL_MODE_PREFIX + str(c) for c in config.get("dual_mode_cores") or []}
-    if names:
+    # The system directory each core is handed travels the same way, so
+    # platform_layouts places a core's files below it for every reader.
+    names |= {
+        CORE_DIR_PREFIX + json.dumps([str(core), directory])
+        for directory, entry in (config.get("core_system_dirs") or {}).items()
+        for core in entry.get("cores") or []
+    }
+    if names - {n for n in names if n.startswith(CORE_DIR_PREFIX)}:
         from launchers import handed_directories  # noqa: PLC0415
 
         names |= {
@@ -2328,7 +2395,10 @@ def platform_layouts(
     (what the build reads from the system directory, where it reads it).
     """
     if not runs_standalone(emu_name, profile, standalone_cores):
-        return [(profile, False)]
+        directories = core_system_dirs(emu_name, profile, standalone_cores)
+        if directories is None:
+            return [(profile, False)]
+        return [(system_dir_view(profile, d), False) for d in directories]
     standalone = profile
     root = standalone_root_for(emu_name, profile, standalone_cores)
     if root:
