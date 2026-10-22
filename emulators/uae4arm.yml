@@ -1,7 +1,7 @@
 emulator: uae4arm
 type: libretro
 core_classification: community_fork
-cores: [uae4arm]
+cores: [uae4arm, "uae4arm_32b"]
 source: "https://github.com/libretro/uae4arm-libretro"
 upstream: "https://github.com/PandTomB/uae4arm"
 profiled_date: "2026-03-25"

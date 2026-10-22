@@ -8,6 +8,7 @@ core_version: "Git"
 display_name: "Sony - PlayStation Portable (PPSSPP)"
 cores:
   - ppsspp
+  - "PPSSPPSDL"
 systems: [sony-psp]
 
 pack_structure:

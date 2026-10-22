@@ -7,7 +7,7 @@ profiled_date: "2026-03-23"
 source_commit: "0cccd9a85d7ffa33fb695691a8a5db246606518c"
 core_version: "1.3.99999"
 display_name: "Wolfenstein 3D (ECWolf)"
-cores: [ecwolf]
+cores: [ecwolf, "ECWolf"]
 systems: [wolfenstein3d]
 notes: |
   Wolfenstein 3D source port by Braden Obrzut. Plays Wolf3D (wl6/wl1),

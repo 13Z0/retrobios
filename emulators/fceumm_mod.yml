@@ -1,0 +1,40 @@
+emulator: FCEUmm Mod
+type: libretro
+core_classification: community_fork
+source: "https://github.com/Tippek/libretro-fceumm-mod"
+upstream: "https://github.com/libretro/libretro-fceumm"
+profiled_date: "2026-10-22"
+source_commit: "f0ea52190427b136a51da4490e49087fe2ca2abb"
+core_version: "SVN"
+display_name: "Nintendo - NES / Famicom (FCEUmm Mod)"
+cores:
+  - "fceumm_mod"
+systems: [nintendo-nes, nintendo-fds]
+
+notes: |
+  libretro-fceumm with the hardware extensions of fceux-mod (extra RAM,
+  sprites, palettes and mappers). The libretro driver hands the system
+  directory to FCEUI_SetBaseDirectory (src/drivers/libretro/libretro.c:2983-2984)
+  and FCEU_MakeFName joins each name to it directly (src/general.c:70-97).
+
+  The Game Genie image is named gg.rom here (src/general.c:77-79), but
+  FCEU_OpenGenie runs only when FSettings.GameGenie is set
+  (src/fceu.c:283-285) and nothing in the libretro driver calls
+  FCEUI_SetGameGenie (src/fceu.c:551-554), so the file is never opened.
+
+files:
+  - name: "disksys.rom"
+    system: nintendo-fds
+    description: "FDS BIOS ROM"
+    required: true
+    size: 8192
+    validation: [size]
+    source_ref: "src/fds.c:612-650, src/general.c:80-82"
+    note: "Read as one 8 KB PRG bank. A missing file or a short read fails the FDS load."
+
+  - name: "nes.pal"
+    system: nintendo-nes
+    description: "External NES color palette"
+    required: false
+    source_ref: "src/palette.c:191-212, src/fceu.c:289-290, src/drivers/libretro/libretro.c:1674-1682, 3013-3017"
+    note: "Read at every game load when present, 768 bytes of RGB triplets. Applied when the fceumm_palette option is custom."

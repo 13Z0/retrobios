@@ -8,6 +8,7 @@ core_version: "8.0_pre"
 display_name: "Atari - 2600 (Stella)"
 cores:
   - stella
+  - "STELLASA"
 systems:
   - atari-2600
 

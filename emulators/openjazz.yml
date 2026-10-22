@@ -7,7 +7,7 @@ profiled_date: "2026-10-04"
 source_commit: "a1626f4edd4a7af72c54103021790c56d8ecfced"
 core_version: "20260301"
 display_name: "Jazz Jackrabbit (OpenJazz)"
-cores: []
+cores: ["OpenJazz"]
 systems: [jazz-jackrabbit]
 
 notes: |

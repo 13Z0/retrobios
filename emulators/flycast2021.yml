@@ -11,6 +11,7 @@ core_version: "0.1"
 display_name: "Sega - Dreamcast/Naomi (Flycast 2021)"
 cores:
   - "flycast2021"
+  - "flycast-xtreme"
 systems:
   - sega-dreamcast
   - sega-naomi

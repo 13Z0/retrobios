@@ -9,6 +9,7 @@ core_version: "2.2.0"
 display_name: "Solarus Game Engine"
 cores:
   - solarus
+  - "Solarus"
 systems:
   - solarus
 mode: standalone

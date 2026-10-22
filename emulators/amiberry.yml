@@ -7,7 +7,7 @@ profiled_date: "2026-10-21"
 source_commit: "2de3bf82280be045ea81dd0c55407061dfdbaa3e"
 core_version: "v8.4.2"
 display_name: "Commodore - Amiga (Amiberry)"
-cores: [amiberry]
+cores: [amiberry, "AMIBERRY"]
 systems:
   - commodore-amiga
   - commodore-cd32

@@ -13,6 +13,7 @@ mode: standalone
 cores:
   - advancemame
   - advmame
+  - "AdvanceMame"
 
 systems:
   - snk-neogeo-mvs

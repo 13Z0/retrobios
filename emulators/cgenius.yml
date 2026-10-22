@@ -7,7 +7,7 @@ profiled_date: "2026-10-04"
 source_commit: "bee4fcbd235b9d3d804a50cc6ecaccbbe89490f7"
 core_version: "v3.6.3"
 display_name: "Commander Genius"
-cores: [cgenius]
+cores: [cgenius, "CGeniusExe"]
 systems: [commander-keen]
 verification: existence
 
