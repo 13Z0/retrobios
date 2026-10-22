@@ -6,7 +6,7 @@
   "platform": "lakka",
   "display_name": "Lakka",
   "version": "1.0",
-  "generated": "2026-10-22T05:54:39Z",
+  "generated": "2026-10-22T06:17:50Z",
   "base_destination": "system",
   "detect": [
     {
@@ -21,9 +21,9 @@
   ],
   "standalone_copies": [],
   "total_files": 8079,
-  "total_size": 6791676658,
+  "total_size": 6791581525,
   "pack_files": 8389,
-  "pack_size": 6813569542,
+  "pack_size": 6813474409,
   "total_omitted": 11,
   "omitted_files": [
     {
@@ -104457,9 +104457,9 @@
     },
     {
       "dest": "sys68k_cpu30.zip",
-      "sha1": "3f61686d2f83490d884b1b57971c66f6811326fb",
-      "sha256": "cc7a84fbced852ef3b1e158aa8f3f3ae922193dc61c851962d5715f9b1e79fba",
-      "size": 386989,
+      "sha1": "47eb7d56111e587702724ba753bd60ed4b432566",
+      "sha256": "48a73548ef891dd92dfefa0065279ce13f51dd13fd2fdbc9f1d3abd8e1628fba",
+      "size": 291856,
       "repo_path": "bios/Arcade/MAME/sys68k_cpu30.zip",
       "cores": [
         "mame"
@@ -104478,7 +104478,7 @@
       "sha1": "47eb7d56111e587702724ba753bd60ed4b432566",
       "sha256": "48a73548ef891dd92dfefa0065279ce13f51dd13fd2fdbc9f1d3abd8e1628fba",
       "size": 291856,
-      "repo_path": "bios/Arcade/MAME/sys68k_cpu30x.zip",
+      "repo_path": "bios/Arcade/MAME/sys68k_cpu30.zip",
       "cores": [
         "mame"
       ],
@@ -104496,7 +104496,7 @@
       "sha1": "47eb7d56111e587702724ba753bd60ed4b432566",
       "sha256": "48a73548ef891dd92dfefa0065279ce13f51dd13fd2fdbc9f1d3abd8e1628fba",
       "size": 291856,
-      "repo_path": "bios/Arcade/MAME/sys68k_cpu30x.zip",
+      "repo_path": "bios/Arcade/MAME/sys68k_cpu30.zip",
       "cores": [
         "mame"
       ],
@@ -104514,7 +104514,7 @@
       "sha1": "47eb7d56111e587702724ba753bd60ed4b432566",
       "sha256": "48a73548ef891dd92dfefa0065279ce13f51dd13fd2fdbc9f1d3abd8e1628fba",
       "size": 291856,
-      "repo_path": "bios/Arcade/MAME/sys68k_cpu30x.zip",
+      "repo_path": "bios/Arcade/MAME/sys68k_cpu30.zip",
       "cores": [
         "mame"
       ],
@@ -104532,7 +104532,7 @@
       "sha1": "47eb7d56111e587702724ba753bd60ed4b432566",
       "sha256": "48a73548ef891dd92dfefa0065279ce13f51dd13fd2fdbc9f1d3abd8e1628fba",
       "size": 291856,
-      "repo_path": "bios/Arcade/MAME/sys68k_cpu30x.zip",
+      "repo_path": "bios/Arcade/MAME/sys68k_cpu30.zip",
       "cores": [
         "mame"
       ],

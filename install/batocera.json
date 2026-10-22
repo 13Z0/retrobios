@@ -6,7 +6,7 @@
   "platform": "batocera",
   "display_name": "Batocera",
   "version": "1.0",
-  "generated": "2026-10-22T05:54:39Z",
+  "generated": "2026-10-22T06:17:50Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -275,9 +275,9 @@
     }
   ],
   "total_files": 14506,
-  "total_size": 9712471124,
+  "total_size": 9712375991,
   "pack_files": 14508,
-  "pack_size": 9712471124,
+  "pack_size": 9712375991,
   "total_omitted": 399,
   "omitted_files": [
     {
@@ -233511,9 +233511,9 @@
     },
     {
       "dest": "sys68k_cpu30.zip",
-      "sha1": "3f61686d2f83490d884b1b57971c66f6811326fb",
-      "sha256": "cc7a84fbced852ef3b1e158aa8f3f3ae922193dc61c851962d5715f9b1e79fba",
-      "size": 386989,
+      "sha1": "47eb7d56111e587702724ba753bd60ed4b432566",
+      "sha256": "48a73548ef891dd92dfefa0065279ce13f51dd13fd2fdbc9f1d3abd8e1628fba",
+      "size": 291856,
       "repo_path": "bios/Arcade/MAME/sys68k_cpu30.zip",
       "cores": [
         "mame"
@@ -233569,7 +233569,7 @@
       "sha1": "47eb7d56111e587702724ba753bd60ed4b432566",
       "sha256": "48a73548ef891dd92dfefa0065279ce13f51dd13fd2fdbc9f1d3abd8e1628fba",
       "size": 291856,
-      "repo_path": "bios/Arcade/MAME/sys68k_cpu30x.zip",
+      "repo_path": "bios/Arcade/MAME/sys68k_cpu30.zip",
       "cores": [
         "mame"
       ],
@@ -233624,7 +233624,7 @@
       "sha1": "47eb7d56111e587702724ba753bd60ed4b432566",
       "sha256": "48a73548ef891dd92dfefa0065279ce13f51dd13fd2fdbc9f1d3abd8e1628fba",
       "size": 291856,
-      "repo_path": "bios/Arcade/MAME/sys68k_cpu30x.zip",
+      "repo_path": "bios/Arcade/MAME/sys68k_cpu30.zip",
       "cores": [
         "mame"
       ],
@@ -233679,7 +233679,7 @@
       "sha1": "47eb7d56111e587702724ba753bd60ed4b432566",
       "sha256": "48a73548ef891dd92dfefa0065279ce13f51dd13fd2fdbc9f1d3abd8e1628fba",
       "size": 291856,
-      "repo_path": "bios/Arcade/MAME/sys68k_cpu30x.zip",
+      "repo_path": "bios/Arcade/MAME/sys68k_cpu30.zip",
       "cores": [
         "mame"
       ],
@@ -233734,7 +233734,7 @@
       "sha1": "47eb7d56111e587702724ba753bd60ed4b432566",
       "sha256": "48a73548ef891dd92dfefa0065279ce13f51dd13fd2fdbc9f1d3abd8e1628fba",
       "size": 291856,
-      "repo_path": "bios/Arcade/MAME/sys68k_cpu30x.zip",
+      "repo_path": "bios/Arcade/MAME/sys68k_cpu30.zip",
       "cores": [
         "mame"
       ],

@@ -6,7 +6,7 @@
   "platform": "retropie",
   "display_name": "RetroPie",
   "version": "1.0",
-  "generated": "2026-10-22T05:54:39Z",
+  "generated": "2026-10-22T06:17:50Z",
   "base_destination": "BIOS",
   "detect": [
     {
@@ -16,11 +16,11 @@
     }
   ],
   "standalone_copies": [],
-  "total_files": 8522,
-  "total_size": 8871756429,
-  "pack_files": 11078,
-  "pack_size": 8905123499,
-  "total_omitted": 215,
+  "total_files": 8523,
+  "total_size": 8871871040,
+  "pack_files": 11079,
+  "pack_size": 8905238110,
+  "total_omitted": 214,
   "omitted_files": [
     {
       "dest": "Assets/3dlogo.cmem",
@@ -1993,16 +1993,6 @@
       "reason": "not_found",
       "cores": [
         "ppsspp-1.5.4"
-      ]
-    },
-    {
-      "dest": "pro1000.zip",
-      "name": "pro1000.zip",
-      "system": "real3d-pro1000",
-      "required": true,
-      "reason": "not_found",
-      "cores": [
-        "supermodel3"
       ]
     },
     {
@@ -109836,9 +109826,9 @@
     },
     {
       "dest": "sys68k_cpu30.zip",
-      "sha1": "3f61686d2f83490d884b1b57971c66f6811326fb",
-      "sha256": "cc7a84fbced852ef3b1e158aa8f3f3ae922193dc61c851962d5715f9b1e79fba",
-      "size": 386989,
+      "sha1": "47eb7d56111e587702724ba753bd60ed4b432566",
+      "sha256": "48a73548ef891dd92dfefa0065279ce13f51dd13fd2fdbc9f1d3abd8e1628fba",
+      "size": 291856,
       "repo_path": "bios/Arcade/MAME/sys68k_cpu30.zip",
       "cores": [
         "mame"
@@ -109857,7 +109847,7 @@
       "sha1": "47eb7d56111e587702724ba753bd60ed4b432566",
       "sha256": "48a73548ef891dd92dfefa0065279ce13f51dd13fd2fdbc9f1d3abd8e1628fba",
       "size": 291856,
-      "repo_path": "bios/Arcade/MAME/sys68k_cpu30x.zip",
+      "repo_path": "bios/Arcade/MAME/sys68k_cpu30.zip",
       "cores": [
         "mame"
       ],
@@ -109875,7 +109865,7 @@
       "sha1": "47eb7d56111e587702724ba753bd60ed4b432566",
       "sha256": "48a73548ef891dd92dfefa0065279ce13f51dd13fd2fdbc9f1d3abd8e1628fba",
       "size": 291856,
-      "repo_path": "bios/Arcade/MAME/sys68k_cpu30x.zip",
+      "repo_path": "bios/Arcade/MAME/sys68k_cpu30.zip",
       "cores": [
         "mame"
       ],
@@ -109893,7 +109883,7 @@
       "sha1": "47eb7d56111e587702724ba753bd60ed4b432566",
       "sha256": "48a73548ef891dd92dfefa0065279ce13f51dd13fd2fdbc9f1d3abd8e1628fba",
       "size": 291856,
-      "repo_path": "bios/Arcade/MAME/sys68k_cpu30x.zip",
+      "repo_path": "bios/Arcade/MAME/sys68k_cpu30.zip",
       "cores": [
         "mame"
       ],
@@ -109911,7 +109901,7 @@
       "sha1": "47eb7d56111e587702724ba753bd60ed4b432566",
       "sha256": "48a73548ef891dd92dfefa0065279ce13f51dd13fd2fdbc9f1d3abd8e1628fba",
       "size": 291856,
-      "repo_path": "bios/Arcade/MAME/sys68k_cpu30x.zip",
+      "repo_path": "bios/Arcade/MAME/sys68k_cpu30.zip",
       "cores": [
         "mame"
       ],
@@ -116097,6 +116087,16 @@
       ],
       "systems": [
         "j2me"
+      ]
+    },
+    {
+      "dest": "pro1000.zip",
+      "sha1": "94e1e19004b2d87735b6874d07d9ca2cca2b418c",
+      "sha256": "a4750e72a5512a70a0dfd1217c95fa93853d3be51db0bc73e90e6f775ffdda5c",
+      "size": 209744,
+      "repo_path": "bios/Real3D/Pro-1000/pro1000.zip",
+      "cores": [
+        "supermodel3"
       ]
     },
     {

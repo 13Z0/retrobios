@@ -194,6 +194,7 @@ nav:
   - QEMU: systems/qemu.md
   - RCA: systems/rca.md
   - RPG Maker: systems/rpg-maker.md
+  - Real3D: systems/real3d.md
   - Roland: systems/roland.md
   - SDL: systems/sdl.md
   - SNK: systems/snk.md

@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-22T05:54:39Z",
+  "generated_at": "2026-10-22T06:17:50Z",
   "total_files": 19591,
-  "total_size": 16856625430,
+  "total_size": 16856448185,
   "bios_dir": "bios",
   "files": {
     "738c7f5fd0c8b57ee2e87ae7a97bf8e21a821d07": {
@@ -29521,19 +29521,9 @@
       "crc32": "3cb52505",
       "adler32": "4ed6a911"
     },
-    "3f61686d2f83490d884b1b57971c66f6811326fb": {
+    "47eb7d56111e587702724ba753bd60ed4b432566": {
       "path": "bios/Arcade/MAME/sys68k_cpu30.zip",
       "name": "sys68k_cpu30.zip",
-      "size": 386989,
-      "sha1": "3f61686d2f83490d884b1b57971c66f6811326fb",
-      "md5": "cf3b2ca0baa6d00a00135fffdebf47bc",
-      "sha256": "cc7a84fbced852ef3b1e158aa8f3f3ae922193dc61c851962d5715f9b1e79fba",
-      "crc32": "fedcfead",
-      "adler32": "17ea5896"
-    },
-    "47eb7d56111e587702724ba753bd60ed4b432566": {
-      "path": "bios/Arcade/MAME/sys68k_cpu30x.zip",
-      "name": "sys68k_cpu30x.zip",
       "size": 291856,
       "sha1": "47eb7d56111e587702724ba753bd60ed4b432566",
       "md5": "535f4c9c4b389cccc86da8dc0fcc1d0f",
@@ -190237,6 +190227,16 @@
       "crc32": "2477d709",
       "adler32": "707d4435"
     },
+    "94e1e19004b2d87735b6874d07d9ca2cca2b418c": {
+      "path": "bios/Real3D/Pro-1000/pro1000.zip",
+      "name": "pro1000.zip",
+      "size": 209744,
+      "sha1": "94e1e19004b2d87735b6874d07d9ca2cca2b418c",
+      "md5": "108e8e1373b558cfca6c39d0adef3d70",
+      "sha256": "a4750e72a5512a70a0dfd1217c95fa93853d3be51db0bc73e90e6f775ffdda5c",
+      "crc32": "c7bc57d3",
+      "adler32": "ab36789b"
+    },
     "a439fbb390da38cada95a7cbb1d6ca199cd66ef8": {
       "path": "bios/Roland/CM32L_CONTROL.ROM",
       "name": "CM32L_CONTROL.ROM",
@@ -204046,7 +204046,6 @@
       "7556cb0c3152192ac1dfc17dd48d3af0": "18140dc7387f7524d7c4b64a46b186500302e688",
       "49bdad0a8d7b2b65df000952e59e38bf": "d1d784d3a697d73d54a154eaea23353d29fdb095",
       "bd85d32fffc302bf5fa21e20e8381207": "e3d9b79fd99417535cad2a0751ceb90adb1b0ae5",
-      "cf3b2ca0baa6d00a00135fffdebf47bc": "3f61686d2f83490d884b1b57971c66f6811326fb",
       "535f4c9c4b389cccc86da8dc0fcc1d0f": "47eb7d56111e587702724ba753bd60ed4b432566",
       "da5393b609f8dab7979588f7c2429e51": "b1d8f97eb49ef80ebaf29f3a05c0f0a058a7b271",
       "f7bce8dcf17509a706b7b4adf59b1d04": "11e469927f7bef6f72ec4031f8261d5a4dfcb664",
@@ -219864,6 +219863,7 @@
       "94dd9f75005cdc7236a0b400b71920fd": "2ecc186ac26d73dc3e184febcc64c1735d0b237c",
       "927ed8f4d8394a4eca03cf7791ff3d6b": "b77432504698d3b01ab2034b5fa1d613a77f2fe2",
       "f7ea340e1b9bad68c08067f37ea12d66": "5b851c281f00ee6e1a3895cd19659eb3990bfb05",
+      "108e8e1373b558cfca6c39d0adef3d70": "94e1e19004b2d87735b6874d07d9ca2cca2b418c",
       "bfff32b6144c1d706109accb6e6b1113": "a439fbb390da38cada95a7cbb1d6ca199cd66ef8",
       "08cdcfa0ed93e9cb16afa76e6ac5f0a4": "289cc298ad532b702461bfc738009d9ebe8025ea",
       "5626206284b22c2734f3e9efefcd2675": "b083518fffb7f66b03c23b7eb4f868e62dc5a987",
@@ -229821,9 +229821,6 @@
         "e3d9b79fd99417535cad2a0751ceb90adb1b0ae5"
       ],
       "sys68k_cpu30.zip": [
-        "3f61686d2f83490d884b1b57971c66f6811326fb"
-      ],
-      "sys68k_cpu30x.zip": [
         "47eb7d56111e587702724ba753bd60ed4b432566"
       ],
       "sys68k_cpu33.zip": [
@@ -268457,6 +268454,9 @@
       "wildmidi.cfg": [
         "5b851c281f00ee6e1a3895cd19659eb3990bfb05"
       ],
+      "pro1000.zip": [
+        "94e1e19004b2d87735b6874d07d9ca2cca2b418c"
+      ],
       "CM32L_CONTROL.ROM": [
         "a439fbb390da38cada95a7cbb1d6ca199cd66ef8"
       ],
@@ -270695,6 +270695,9 @@
       ],
       "nb_824gc.zip": [
         "734efa75815502d58898599359cf55f8003a03a5"
+      ],
+      "sys68k_cpu30x.zip": [
+        "47eb7d56111e587702724ba753bd60ed4b432566"
       ],
       "256.MEC": [
         "decbccbf862a0f94735ea7b8b31181f0c8b3f01c"
@@ -280656,7 +280659,6 @@
       "c5320b73": "18140dc7387f7524d7c4b64a46b186500302e688",
       "34c68be3": "d1d784d3a697d73d54a154eaea23353d29fdb095",
       "3cb52505": "e3d9b79fd99417535cad2a0751ceb90adb1b0ae5",
-      "fedcfead": "3f61686d2f83490d884b1b57971c66f6811326fb",
       "c352958d": "47eb7d56111e587702724ba753bd60ed4b432566",
       "2fd54aba": "b1d8f97eb49ef80ebaf29f3a05c0f0a058a7b271",
       "79c0950e": "11e469927f7bef6f72ec4031f8261d5a4dfcb664",
@@ -296474,6 +296476,7 @@
       "888ee3a3": "2ecc186ac26d73dc3e184febcc64c1735d0b237c",
       "1184b3e8": "b77432504698d3b01ab2034b5fa1d613a77f2fe2",
       "2477d709": "5b851c281f00ee6e1a3895cd19659eb3990bfb05",
+      "c7bc57d3": "94e1e19004b2d87735b6874d07d9ca2cca2b418c",
       "b998047e": "a439fbb390da38cada95a7cbb1d6ca199cd66ef8",
       "4b961eba": "289cc298ad532b702461bfc738009d9ebe8025ea",
       "a7c1531b": "b083518fffb7f66b03c23b7eb4f868e62dc5a987",
@@ -300248,7 +300251,6 @@
       "8e16fad0122eeae18f4ec767de4fdf6ae7e1a399abeb1f9f650e8c067803fcc3": "18140dc7387f7524d7c4b64a46b186500302e688",
       "dd4ca52e8ce3b7882a0b61c4a0c8fde3d064c092c1beaaf5a19c8814c550f2ba": "d1d784d3a697d73d54a154eaea23353d29fdb095",
       "1c5a82de1b3ac4c21cb1b0b4a5872c4342ca5e97b6e45ed4784c0f262fc1cd56": "e3d9b79fd99417535cad2a0751ceb90adb1b0ae5",
-      "cc7a84fbced852ef3b1e158aa8f3f3ae922193dc61c851962d5715f9b1e79fba": "3f61686d2f83490d884b1b57971c66f6811326fb",
       "48a73548ef891dd92dfefa0065279ce13f51dd13fd2fdbc9f1d3abd8e1628fba": "47eb7d56111e587702724ba753bd60ed4b432566",
       "bd3550aa87f2ced2433101984fc686ada44eb171d305ee0fe7081d51592b0826": "b1d8f97eb49ef80ebaf29f3a05c0f0a058a7b271",
       "08cc72eeb357da72ff06622a74cd7931e5e4e3d71ca9348a9c28f452c83e65c2": "11e469927f7bef6f72ec4031f8261d5a4dfcb664",
@@ -316066,6 +316068,7 @@
       "b98598b51add02b0fc6a0bf6cd72545d9c6fa4a33a2404b36549da4103fbee6c": "2ecc186ac26d73dc3e184febcc64c1735d0b237c",
       "0cc333aa339e76f6c5673b1da3334de582443caf3388b457baf785c2ae3040d2": "b77432504698d3b01ab2034b5fa1d613a77f2fe2",
       "b5673896e0ff174b3030525668483a1a32657e46ee22213c6773f9ef11c961ae": "5b851c281f00ee6e1a3895cd19659eb3990bfb05",
+      "a4750e72a5512a70a0dfd1217c95fa93853d3be51db0bc73e90e6f775ffdda5c": "94e1e19004b2d87735b6874d07d9ca2cca2b418c",
       "08d68695e5bff6bbcbb751d6e4453db9f5ead0b5f41e86480798a04376dfe090": "a439fbb390da38cada95a7cbb1d6ca199cd66ef8",
       "0dc50190bb7ea3fb212c970346b771a511772b528801e7eda6d27efda8c40698": "289cc298ad532b702461bfc738009d9ebe8025ea",
       "a73a06c23ed38370e58a11fb1b86f7ea4c547061a60d7aa62bae446235fd2dff": "b083518fffb7f66b03c23b7eb4f868e62dc5a987",
@@ -338930,15 +338933,9 @@
         "e3d9b79fd99417535cad2a0751ceb90adb1b0ae5"
       ],
       "Arcade/MAME/sys68k_cpu30.zip": [
-        "3f61686d2f83490d884b1b57971c66f6811326fb"
-      ],
-      "MAME/sys68k_cpu30.zip": [
-        "3f61686d2f83490d884b1b57971c66f6811326fb"
-      ],
-      "Arcade/MAME/sys68k_cpu30x.zip": [
         "47eb7d56111e587702724ba753bd60ed4b432566"
       ],
-      "MAME/sys68k_cpu30x.zip": [
+      "MAME/sys68k_cpu30.zip": [
         "47eb7d56111e587702724ba753bd60ed4b432566"
       ],
       "Arcade/MAME/sys68k_cpu33.zip": [
@@ -553247,6 +553244,12 @@
       "RPG Maker/wildmidi.cfg": [
         "5b851c281f00ee6e1a3895cd19659eb3990bfb05"
       ],
+      "Real3D/Pro-1000/pro1000.zip": [
+        "94e1e19004b2d87735b6874d07d9ca2cca2b418c"
+      ],
+      "Pro-1000/pro1000.zip": [
+        "94e1e19004b2d87735b6874d07d9ca2cca2b418c"
+      ],
       "Roland/CM32L_CONTROL.ROM": [
         "a439fbb390da38cada95a7cbb1d6ca199cd66ef8"
       ],
@@ -559369,6 +559372,12 @@
       ],
       "Arcade/nb_824gc.zip": [
         "734efa75815502d58898599359cf55f8003a03a5"
+      ],
+      "Arcade/MAME/sys68k_cpu30x.zip": [
+        "47eb7d56111e587702724ba753bd60ed4b432566"
+      ],
+      "MAME/sys68k_cpu30x.zip": [
+        "47eb7d56111e587702724ba753bd60ed4b432566"
       ],
       "Arcade/Namco System 246/256.MEC": [
         "decbccbf862a0f94735ea7b8b31181f0c8b3f01c"
