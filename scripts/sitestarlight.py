@@ -494,9 +494,10 @@ def _links(items: list[dict]) -> Iterator[dict]:
 # The picker's data
 
 
-def picker_data(install: Path, out: Path) -> int:
+def picker_data(install: Path, out: Path, titles: dict[str, str]) -> int:
     """Each manifest, compacted to what the file picker reads: per file its
     destination, size and systems, the systems install.py --system accepts.
+    `titles` names a system id the way its system page does.
     """
     out.mkdir(parents=True, exist_ok=True)
     index = []
@@ -512,7 +513,8 @@ def picker_data(install: Path, out: Path) -> int:
             "name": data.get("display_name", data["platform"]),
             "folder": (data.get("detect") or [{}])[0].get("bios_path", ""),
             "generated": data.get("generated", ""),
-            "systems": [{"id": s, "native": names.get(s, [])} for s in systems],
+            "systems": [{"id": s, "title": titles.get(s, ""), "native": names.get(s, [])}
+                        for s in systems],
             "other": any(not f.get("systems") for f in data["files"]),
             "files": [[f["dest"], f.get("size", 0), [position[s] for s in f.get("systems") or []]]
                       for f in sorted(data["files"], key=lambda f: f["dest"])],

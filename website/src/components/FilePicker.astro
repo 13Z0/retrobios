@@ -44,7 +44,7 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 		name: string;
 		folder: string;
 		generated: string;
-		systems: { id: string; native: string[] }[];
+		systems: { id: string; title: string; native: string[] }[];
 		other: boolean;
 		files: [string, number, number[]][];
 	};
@@ -53,9 +53,9 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 	const MAX_ROWS = 500;
 
 	const size = (bytes: number) =>
-		bytes >= 1e9 ? `${(bytes / 1e9).toFixed(1)} GB`
-		: bytes >= 1e6 ? `${(bytes / 1e6).toFixed(1)} MB`
-		: bytes >= 1e3 ? `${(bytes / 1e3).toFixed(1)} KB`
+		bytes >= 1024 ** 3 ? `${(bytes / 1024 ** 3).toFixed(1)} GB`
+		: bytes >= 1024 ** 2 ? `${(bytes / 1024 ** 2).toFixed(1)} MB`
+		: bytes >= 1024 ? `${(bytes / 1024).toFixed(1)} KB`
 		: `${bytes} B`;
 
 	for (const root of document.querySelectorAll<HTMLElement>('.rb-picker')) {
@@ -123,28 +123,36 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 			if (!platform) { result.textContent = ''; return; }
 			result.textContent = 'Loading the file list...';
 			data = await fetch(`${base}data/picker/${platform}.json`).then((r) => r.json());
-			const choices = data!.systems.map((s) => ({ id: s.id, label: s.native.length ? `${s.id} (${s.native.join(', ')})` : s.id }));
-			if (data!.other) choices.push({ id: 'other', label: 'other (files no system owns: engines, computers)' });
+			const choices = data!.systems.map((s) => ({
+				id: s.id,
+				title: s.title || s.id,
+				detail: [s.id, ...s.native].filter((n) => n !== s.title).join(', '),
+			}));
+			if (data!.other) choices.push({ id: 'other', title: 'Other files', detail: 'engines and computers no system owns' });
 			for (const choice of choices) {
 				const label = document.createElement('label');
 				const box = document.createElement('input');
 				box.type = 'checkbox';
 				box.value = choice.id;
 				box.checked = preset ? preset.includes(choice.id) : true;
-				label.append(box, ` ${choice.label}`);
+				const detail = document.createElement('small');
+				detail.textContent = choice.detail;
+				label.append(box, ` ${choice.title} `, detail);
 				list.append(label);
 			}
+			applyFilter();
 			render();
 		};
 
 		select.addEventListener('change', () => load(select.value, null));
 		list.addEventListener('change', render);
-		filter.addEventListener('input', () => {
+		const applyFilter = () => {
 			const query = filter.value.trim().toLowerCase();
 			for (const label of list.querySelectorAll<HTMLElement>('label')) {
 				label.hidden = !!query && !label.textContent!.toLowerCase().includes(query);
 			}
-		});
+		};
+		filter.addEventListener('input', applyFilter);
 		root.querySelector('[data-all]')!.addEventListener('click', () => {
 			list.querySelectorAll<HTMLInputElement>('label:not([hidden]) input').forEach((box) => (box.checked = true));
 			render();
@@ -175,6 +183,8 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 		border: 1px solid var(--rb-border);
 		border-radius: 4px;
 	}
+	.rb-picker .rb-pick-list label[hidden] { display: none; }
+	.rb-picker .rb-pick-list small { color: var(--sl-color-gray-3); }
 	.rb-picker .rb-pick-list label { display: flex; gap: 0.5rem; align-items: center; min-height: 32px; margin: 0; font-size: 0.9rem; }
 	.sl-markdown-content .rb-picker .rb-pick-list input { min-height: auto; width: 1.1rem; height: 1.1rem; margin: 0; flex: none; }
 	.rb-picker .rb-pick-systems-head { display: flex; gap: 0.5rem; align-items: center; }

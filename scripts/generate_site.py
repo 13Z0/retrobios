@@ -6864,7 +6864,12 @@ def _generate(args: argparse.Namespace) -> None:
                      json.dumps(sitestarlight.sidebar(nav, present), indent=1) + "\n")
     write_if_changed(str(generated / "lastmod.json"),
                      json.dumps(dict(sorted(lastmod.items())), indent=1) + "\n")
-    sitestarlight.picker_data(_REPO_ROOT / "install", public / "data" / "picker")
+    mfr_names = {mfr.lower().replace(" ", "-"): mfr for mfr in manufacturers}
+    titles = {}
+    for sys_id, (slug, console) in _system_page_map.items():
+        mfr = mfr_names.get(slug, "")
+        titles[sys_id] = console if console.startswith(mfr) else f"{mfr} {console}"
+    sitestarlight.picker_data(_REPO_ROOT / "install", public / "data" / "picker", titles)
     total_pages = len(present)
     print(f"\nGenerated {total_pages} pages in {args.docs_dir}/")
     if stale:

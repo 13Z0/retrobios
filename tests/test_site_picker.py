@@ -42,7 +42,8 @@ class PickerMatchesInstaller(unittest.TestCase):
 
         self.folder = tempfile.TemporaryDirectory(dir=REPO_ROOT / "tmp" if (REPO_ROOT / "tmp").is_dir() else None)
         self.out = Path(self.folder.name)
-        self.count = sitestarlight.picker_data(REPO_ROOT / "install", self.out)
+        self.count = sitestarlight.picker_data(REPO_ROOT / "install", self.out,
+                                                {"sony-playstation": "Sony PlayStation"})
 
     def tearDown(self):
         self.folder.cleanup()
@@ -85,6 +86,28 @@ class PickerMatchesInstaller(unittest.TestCase):
         self.assertIn("systems.length ? systems.some((s) => wanted.has(s)) : other", source)
         self.assertIn("picked.includes('other')", source)
         self.assertRegex(source, re.escape("--system ${picked.join(',')}"))
+
+    def test_systems_carry_their_page_title(self):
+        """A beginner picks "Sony PlayStation". The id stays for the command."""
+        data = json.loads((self.out / "batocera.json").read_text(encoding="utf-8"))
+        psx = next(s for s in data["systems"] if s["id"] == "sony-playstation")
+        self.assertEqual(psx["title"], "Sony PlayStation")
+        self.assertIn("s.title || s.id", PICKER.read_text(encoding="utf-8"))
+
+    def test_filter_hides_rows_and_survives_a_platform_change(self):
+        """A display rule on the rows overrides the hidden attribute, and a new
+        list must keep the query typed: otherwise None clears rows no one sees."""
+        source = PICKER.read_text(encoding="utf-8")
+        self.assertIn(".rb-pick-list label[hidden] { display: none; }", source)
+        load = source[source.index("const load = async"):source.index("const applyFilter")]
+        self.assertIn("applyFilter();", load)
+
+    def test_sizes_use_the_installer_units(self):
+        """The total the page shows is the one install.py prints for the same files."""
+        source = PICKER.read_text(encoding="utf-8")
+        self.assertNotRegex(source, r"\b1e[369]\b")
+        self.assertEqual(install.format_size(338_165_350), "322.5 MB")
+        self.assertIn("(bytes / 1024 ** 2).toFixed(1)} MB", source)
 
 
 if __name__ == "__main__":
