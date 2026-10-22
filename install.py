@@ -3443,19 +3443,29 @@ BACKUP_DIR = "retrobios-backup"
 BACKUP_MARKER = ".retrobios-backup"
 
 
-def _check_holder(holder: Path) -> None:
+def _check_holder(holder: Path) -> os.stat_result:
     """Refuse a backup holder the user's files must not go into.
 
     A link would send them wherever it points. On a system with user ids, a
     folder another user owns was not made by this user's runs, and its owner
-    could read or swap what is moved in.
+    could read or swap what is moved in. Returns what was checked, so the
+    caller can confirm the same folder is still there once it has written
+    into it.
     """
     info = os.lstat(holder)
-    if stat.S_ISLNK(info.st_mode):
-        raise OSError(errno.ELOOP, f"{holder} is a link")
+    if not stat.S_ISDIR(info.st_mode):
+        raise OSError(errno.ELOOP, f"{holder} is a link or not a folder")
     getuid = getattr(os, "getuid", None)
     if getuid is not None and info.st_uid != getuid():
         raise OSError(errno.EPERM, f"{holder} belongs to another user")
+    return info
+
+
+def _same_folder(path: Path, checked: os.stat_result) -> bool:
+    """Whether path is still the folder checked, not a link swapped in since."""
+    now = os.lstat(path)
+    return (stat.S_ISDIR(now.st_mode)
+            and (now.st_dev, now.st_ino) == (checked.st_dev, checked.st_ino))
 
 
 class _NotKept(Exception):
@@ -3511,7 +3521,7 @@ class KeptFiles:
                 if run is None:
                     try:
                         holder.mkdir(parents=True, exist_ok=True)
-                        _check_holder(holder)
+                        checked = _check_holder(holder)
                         for n in range(1, 1000):
                             run = holder / (stamp if n == 1 else f"{stamp}-{n}")
                             try:
@@ -3523,6 +3533,11 @@ class KeptFiles:
                             # Every name taken: never reuse a folder this run
                             # did not create.
                             raise OSError(errno.EEXIST, f"no free folder name in {holder}")
+                        # The holder checked before is still the one the run
+                        # folder was made in, and the run folder is a folder.
+                        if not (_same_folder(holder, checked)
+                                and stat.S_ISDIR(os.lstat(run).st_mode)):
+                            raise OSError(errno.ELOOP, f"{holder} changed while in use")
                         (run / BACKUP_MARKER).write_text(
                             "Files the RetroBIOS installer replaced.\n", encoding="utf-8")
                     except OSError as exc:

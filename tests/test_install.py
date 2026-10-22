@@ -5233,6 +5233,18 @@ class AFileYouHadIsKept(unittest.TestCase):
         self.assertEqual(len(inside), 1)
         self.assertEqual((inside[0] / "x.bin").read_bytes(), self.OLD)
 
+    def test_a_holder_swapped_after_the_check_is_noticed(self):
+        holder = self.home / install.BACKUP_DIR
+        holder.mkdir()
+        checked = install._check_holder(holder)
+        self.assertTrue(install._same_folder(holder, checked))
+        holder.rename(self.home / "moved")
+        (self.home / "elsewhere").mkdir()
+        holder.symlink_to(self.home / "elsewhere")
+        self.assertFalse(install._same_folder(holder, checked))
+        with self.assertRaises(OSError):
+            install._check_holder(holder)
+
     @unittest.skipUnless(hasattr(os, "getuid"), "user ids are POSIX")
     def test_a_holder_another_user_owns_is_refused(self):
         (self.home / install.BACKUP_DIR).mkdir()
