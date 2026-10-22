@@ -59,7 +59,7 @@ class ConformanceUsesTheRunDirectories(unittest.TestCase):
 
         def record(*args, **kwargs):
             seen.update(kwargs)
-            return True, 0, 0, [], 0, 0, 0, 0, 0
+            return True, 0, 0, [], 0, 0, 0, 0, 0, 0
 
         with mock.patch.object(gp, "list_registered_platforms", return_value=["fix"]), \
                 mock.patch.object(

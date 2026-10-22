@@ -94,7 +94,6 @@ from validation import (
     agnostic_substitute,
     _build_validation_index,
     deliverable,
-    filter_files_by_mode,
     with_archive_members,
     extra_alternatives,
 )
@@ -2551,6 +2550,16 @@ def _pack_output_lock(output_dir: str, exclusive: bool = True) -> Iterator[None]
         sys.exit(1)
 
 
+def _baseline_shortfall(excluded: int, absent: int) -> list[str]:
+    """Why a verified pack holds fewer baseline files than the platform declares."""
+    parts = []
+    if excluded:
+        parts.append(f"{excluded} unsafe excluded")
+    if absent:
+        parts.append(f"{absent} not in the collection")
+    return parts
+
+
 def _run_verify_packs(args: argparse.Namespace) -> None:
     """Verify each pack in the output directory against its platform.
 
@@ -2634,10 +2643,12 @@ def _run_verify_packs(args: argparse.Namespace) -> None:
                 required_only=required_only,
             )
             (ok, _checked, _present, errors, bl_checked, bl_present,
-             core_checked, core_present, bl_excluded) = result
-            # The unsafe exclusions explain a baseline short of its total: a
-            # dump whose hash the frontend refuses is left out on purpose.
-            excluded = f" ({bl_excluded} unsafe excluded)" if bl_excluded else ""
+             core_checked, core_present, bl_excluded, bl_absent) = result
+            # These explain a baseline short of its total: a dump whose hash
+            # the frontend refuses is left out on purpose, and a file the
+            # collection does not hold cannot be packed (verify reports it).
+            shortfall = ", ".join(_baseline_shortfall(bl_excluded, bl_absent))
+            excluded = f" ({shortfall})" if shortfall else ""
             counts = (
                 f"{bl_present}/{bl_checked} baseline{excluded}, "
                 f"{core_present}/{core_checked} cores"
@@ -4816,6 +4827,7 @@ def verify_and_finalize_packs(
                 core_checked,
                 core_present,
                 bl_excluded,
+                bl_absent,
             ) = verify_pack_against_platform(
                 zip_path,
                 pname,
@@ -4827,8 +4839,8 @@ def verify_and_finalize_packs(
                 target_cores=_target_cores_for(pname, target_name, platforms_dir),
             )
             status = "OK" if p_ok else "FAILED"
-            exclusion_note = (
-                f", {bl_excluded} unsafe excluded" if bl_excluded else ""
+            exclusion_note = "".join(
+                f", {part}" for part in _baseline_shortfall(bl_excluded, bl_absent)
             )
             print(
                 f"  platform {pname}: {bl_present}/{bl_checked} baseline present"

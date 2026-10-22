@@ -5268,6 +5268,37 @@ struct BurnDriver BurnDrvneogeo = {
             )
             self.assertEqual(result[3], [], f"unexpected errors: {result[3]}")
 
+    def test_213b_file_the_collection_lacks_is_no_pack_error(self):
+        """A declared file nothing resolves to is a data gap verify reports;
+        a held file absent from the pack stays a pack error."""
+        import tempfile
+
+        from generate_pack import generate_pack, verify_pack_against_platform
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            plat_dir, bios_root, out_dir, db, _h, _hl = self._make_hash_zip_fixture(
+                tmpdir, declare_md5=True
+            )
+            config_path = os.path.join(plat_dir, "test_hashzip.yml")
+            with open(config_path) as fh:
+                config = yaml.safe_load(fh)
+            config["systems"]["arcade-sys"]["files"].append(
+                {"name": "absent.bin", "destination": "dc/absent.bin"}
+            )
+            with open(config_path, "w") as fh:
+                yaml.dump(config, fh)
+            zip_path = generate_pack("test_hashzip", plat_dir, db, bios_root, out_dir)
+            result = verify_pack_against_platform(zip_path, "test_hashzip", plat_dir, db=db)
+            self.assertEqual(result[3], [])
+            self.assertEqual((result[4], result[5], result[9]), (2, 1, 1))
+
+            empty = os.path.join(out_dir, "Empty.zip")
+            with zipfile.ZipFile(empty, "w") as zf:
+                zf.writestr("README.txt", "")
+            result = verify_pack_against_platform(empty, "test_hashzip", plat_dir, db=db)
+            self.assertEqual(result[3], ["baseline missing: dc/testbios.zip"])
+            self.assertEqual(result[9], 1)
+
     def test_214_hash_matches_truncated_and_multi(self):
         """Declared-hash compare handles truncation, case, multi-values."""
         from generate_pack import _hash_matches

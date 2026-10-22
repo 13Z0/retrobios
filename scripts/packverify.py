@@ -448,6 +448,31 @@ def _repo_holds_member(file_entry: dict, db: dict) -> bool:
     return False
 
 
+def _held_nowhere(
+    entries: list[dict],
+    db: dict,
+    zip_contents: dict,
+    data_dir_registry: dict | None,
+) -> bool:
+    """Return whether no declaration for a destination resolves to a file.
+
+    The builder cannot ship what the collection does not hold, so such a
+    destination is a data gap that verify.py reports as missing, not a pack
+    generation fault. A destination that resolves to anything stays checked.
+    """
+    return bool(entries) and all(
+        resolve_file(
+            entry,
+            db,
+            DEFAULT_BIOS_DIR,
+            zip_contents,
+            data_dir_registry=data_dir_registry,
+            offline=True,
+        )[1] == "not_found"
+        for entry in entries
+    )
+
+
 def _intentional_hash_exclusion(
     entries: list[dict],
     db: dict,
@@ -613,7 +638,7 @@ def verify_pack_against_platform(
     target_cores: set[str] | None = None,
     source: str = "full",
     required_only: bool = False,
-) -> tuple[bool, int, int, list[str], int, int, int, int, int]:
+) -> tuple[bool, int, int, list[str], int, int, int, int, int, int]:
     """Verify a pack ZIP against its platform config and core requirements.
 
     A region priority list narrows the expectation to what the builder would
@@ -633,7 +658,9 @@ def verify_pack_against_platform(
     5. No unexpected zero-byte BIOS files
 
     Returns ``(all_ok, checked, present, errors, baseline_checked,
-    baseline_present, core_checked, core_present, baseline_excluded)``.
+    baseline_present, core_checked, core_present, baseline_excluded,
+    baseline_absent)``. ``baseline_absent`` counts destinations the collection
+    holds no file for: verify.py reports them missing.
     """
 
     config = load_platform_config(platform_name, platforms_dir)
@@ -702,6 +729,7 @@ def verify_pack_against_platform(
         baseline_checked = 0
         baseline_present = 0
         baseline_excluded = 0
+        baseline_absent = 0
         decl_by_member: dict[str, list[dict]] = {}
         # Mirror the builder's path-conflict logic: a declaration whose path
         # collides file-vs-directory with a packed member was skipped by the
@@ -744,6 +772,11 @@ def verify_pack_against_platform(
                 hash_rule=config.get("hash_rule", ""),
             ):
                 baseline_excluded += 1
+                continue
+            elif db is not None and _held_nowhere(
+                declarations, db, exclusion_index, data_registry
+            ):
+                baseline_absent += 1
                 continue
             else:
                 errors.append(f"baseline missing: {expected}")
@@ -835,4 +868,5 @@ def verify_pack_against_platform(
         core_checked,
         core_present,
         baseline_excluded,
+        baseline_absent,
     )
