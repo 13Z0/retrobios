@@ -19,12 +19,14 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
 import generate_site  # noqa: E402
+from tests import sitepages  # noqa: E402
 from common import list_registered_platforms, load_platform_config, load_platform_registry  # noqa: E402
 from siteguides import DEVICE_GROUPS, GROUP_ANCHORS, GUIDES  # noqa: E402
 
-DOCS = REPO_ROOT / "docs"
+DOCS = sitepages.CONTENT
 ORDER = list(generate_site.LEVELS)
-LINK = re.compile(r"\[[^\]]*\]\(([^)\s#]+\.md)(?:#[^)]*)?\)")
+# Pages link to site addresses once written for the site.
+LINK = re.compile(r"\[[^\]]*\]\((/retrobios/[^)\s#?]*)(?:[#?][^)]*)?\)")
 FENCED = re.compile(r"^\s*```.*?^\s*```", re.S | re.M)
 
 
@@ -38,13 +40,7 @@ def _which_pack() -> str:
 
 
 def _docs_pages() -> list[Path]:
-    if not DOCS.is_dir() or not (DOCS / "index.md").is_file():
-        if os.environ.get("CI"):
-            raise AssertionError("CI generates docs/ before the suite")
-        raise unittest.SkipTest("docs/ not generated (python scripts/generate_site.py)")
-    skipped = set(generate_site.LOCAL_NOTE_DIRS)
-    return [p for p in sorted(DOCS.rglob("*.md"))
-            if not set(p.relative_to(DOCS).parts[:-1]) & skipped]
+    return [p for p in sitepages.pages() if p.name not in ("404.md",)]
 
 
 def _level(page: Path) -> str:
@@ -55,14 +51,14 @@ class FiveTabs(unittest.TestCase):
     """Twelve tabs put the walkthrough at position eleven, under "Wiki"."""
 
     def test_the_tabs_in_reading_order(self):
-        nav = generate_site.generate_mkdocs_nav({}, {}, {}, {})
+        nav = generate_site.generate_nav({}, {}, {}, {})
         self.assertEqual(
             [next(iter(tab)) for tab in nav],
             ["Start here", "Your setup", "Explore", "Reference", "Contribute"],
         )
 
     def test_each_tab_opens_on_an_index_or_a_first_page(self):
-        nav = generate_site.generate_mkdocs_nav({}, {}, {}, {})
+        nav = generate_site.generate_nav({}, {}, {}, {})
         tabs = {next(iter(tab)): next(iter(tab.values())) for tab in nav}
         self.assertEqual(tabs["Start here"][0], "index.md")
         self.assertEqual(tabs["Your setup"][0], "platforms/index.md")
@@ -70,8 +66,10 @@ class FiveTabs(unittest.TestCase):
         self.assertEqual(tabs["Contribute"][0], "contributing.md")
 
     def test_the_breadcrumbs_are_on(self):
-        source = (REPO_ROOT / "scripts" / "generate_site.py").read_text(encoding="utf-8")
-        self.assertIn("  - navigation.path\n", source)
+        title = (REPO_ROOT / "website" / "src" / "components" / "PageTitle.astro").read_text(encoding="utf-8")
+        route = (REPO_ROOT / "website" / "src" / "routeData.ts").read_text(encoding="utf-8")
+        self.assertIn('aria-label="Breadcrumb"', title)
+        self.assertIn("rbBreadcrumbs", route)
 
 
 class EveryPlatformOnThePicker(unittest.TestCase):
@@ -100,8 +98,17 @@ class EveryPlatformOnThePicker(unittest.TestCase):
         of the nav is reachable only by a link and MkDocs says so at info
         level. getting-started.md is kept out on purpose: it only links the
         pages that took its content, for the old links that point to it."""
-        # mkdocs.yml is what generate_site writes, and CI checks it is current.
-        nav = (Path(__file__).resolve().parents[1] / "mkdocs.yml").read_text(encoding="utf-8")
+        def targets(entries) -> list[str]:
+            found = []
+            for entry in entries:
+                if isinstance(entry, str):
+                    found.append(entry)
+                else:
+                    for value in entry.values():
+                        found += targets(value) if isinstance(value, list) else [value]
+            return found
+
+        nav = " ".join(targets(generate_site.generate_nav({}, {}, {}, {})))
         kept_out = {"getting-started.md"}
         wiki = Path(__file__).resolve().parents[1] / "wiki"
         missing = sorted(
@@ -116,7 +123,7 @@ class EveryPlatformOnThePicker(unittest.TestCase):
             key: {"platform": load_platform_config(key, str(REPO_ROOT / "platforms"))["platform"]}
             for key in _registered()
         }
-        nav = generate_site.generate_mkdocs_nav(coverages, {}, {}, registry)
+        nav = generate_site.generate_nav(coverages, {}, {}, registry)
         setup = next(tab["Your setup"] for tab in nav if "Your setup" in tab)
         groups = {next(iter(item)): next(iter(item.values()))
                   for item in setup if isinstance(item, dict)}
@@ -166,7 +173,12 @@ class EveryPageHasALevel(unittest.TestCase):
             level = _level(page)
             with self.subTest(page=str(page.relative_to(DOCS))):
                 self.assertIn(level, generate_site.LEVELS)
-                self.assertIn(generate_site.level_label(level), text)
+                self.assertIn(f"\nlevel: {level}\n", text)
+        # The label above each title comes from the page's level.
+        component = (REPO_ROOT / "website" / "src" / "components" / "PageTitle.astro").read_text()
+        for level, label in generate_site.LEVELS.items():
+            with self.subTest(level=level):
+                self.assertIn(f"{level}: '{label}'", component)
 
     def test_the_decoration_keeps_an_authored_level(self):
         with tempfile.TemporaryDirectory(dir=REPO_ROOT / "tmp") as tmp:
@@ -177,9 +189,8 @@ class EveryPageHasALevel(unittest.TestCase):
             generate_site.decorate_markdown_pages(Path(tmp))
             text = page.read_text()
         self.assertEqual(text.count("level: start"), 1)
-        self.assertEqual(text.count(generate_site.level_label("start")), 1)
-        self.assertIn("  boost: 5\n", text)
-        self.assertIn("# FAQ\n", text)
+        self.assertIn("searchWeight: 10\n", text)
+        self.assertIn("title: FAQ\n", text)
 
 
 class DeepLinksCarryALabel(unittest.TestCase):
@@ -189,8 +200,11 @@ class DeepLinksCarryALabel(unittest.TestCase):
     its line, or in the heading of its section ("## Reference: ...")."""
 
     def test_start_and_setup_pages(self):
+        import sitestarlight  # noqa: PLC0415
+
         pages = _docs_pages()
         levels = {page: _level(page) for page in pages}
+        by_url = {sitestarlight.page_url(sitepages.name(page)): page for page in pages}
         offenders = []
         for page, level in levels.items():
             if level not in ("start", "setup"):
@@ -201,7 +215,7 @@ class DeepLinksCarryALabel(unittest.TestCase):
                 if re.match(r"#{1,3} ", line):
                     heading = line.lstrip("#").strip()
                 for match in LINK.finditer(line):
-                    target = (page.parent / match.group(1)).resolve()
+                    target = by_url.get(match.group(1))
                     if target not in levels:
                         continue
                     deeper = levels[target]
@@ -218,18 +232,20 @@ class GuidePagesEndOnANextStep(unittest.TestCase):
         for page in ("index.md", "which-pack.md", "platforms/batocera.md",
                      "wiki/first-install.md", "wiki/troubleshooting.md",
                      "wiki/what-are-bios-files.md", "wiki/faq.md"):
-            path = DOCS / page if page.startswith(("index", "which", "platforms")) else REPO_ROOT / page
-            if not path.is_file():
-                _docs_pages()
+            if page.startswith(("index", "which", "platforms")):
+                sitepages.require()
+                path = sitepages.page(page)
+            else:
+                path = REPO_ROOT / page
             with self.subTest(page=page):
                 text = path.read_text(encoding="utf-8")
-                self.assertTrue('!!! tip "Next"' in text or "## What comes next" in text)
+                self.assertTrue(":::tip[Next]" in text or "## What comes next" in text)
 
     def test_the_platform_page_opens_on_its_guide(self):
         """The folder came after four counters and a metadata table, and was
         the pack-relative `bios/` where Batocera reads /userdata/bios/."""
-        text = (DOCS / "platforms" / "batocera.md").read_text(encoding="utf-8") \
-            if (DOCS / "platforms" / "batocera.md").is_file() else _docs_pages()
+        sitepages.require()
+        text = sitepages.page("platforms/batocera.md").read_text(encoding="utf-8")
         order = [text.index(h) for h in (
             "## Where the files go", "## Install", "## Download", "## How to check",
             "## Reference: every file by system",

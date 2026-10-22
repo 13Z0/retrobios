@@ -66,12 +66,21 @@ export default defineConfig({
 			expressiveCode: { defaultProps: { wrap: true } },
 			lastUpdated: false,
 			pagination: true,
-			// Measured on the ten queries of tools/search_gate.py, inside a range
-			// where all ten answer: Starlight's defaults (0.1, 0.1, 2, 9) let a guide
-			// that cites scph5501 once outrank the file's own card. A long page
-			// is penalised a little more, and how often a word appears counts.
+			// Measured on the queries of tools/search_gate.py, at the centre of a
+			// range where all of them answer. How often a word appears counts more
+			// than in Starlight's defaults (0.1, 0.1, 2, 9), a page's title weighs
+			// ten times its text, so "dolphin" finds Dolphin, and the file names of
+			// a system page (its `files` field, written by sitestarlight.py) count
+			// half, so "scph5501" finds the Sony page without a file name winning
+			// every other query.
 			pagefind: {
-				ranking: { pageLength: 0.3, termFrequency: 0.5, termSaturation: 1.4, termSimilarity: 9 },
+				ranking: {
+					pageLength: 0.1,
+					termFrequency: 0.5,
+					termSaturation: 1.4,
+					termSimilarity: 9,
+					metaWeights: { title: 10, files: 0.5 },
+				},
 			},
 			plugins: [
 				starlightSidebarTopics(sidebar.topics, sidebar.options),

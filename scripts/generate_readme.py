@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Generate slim README.md from database.json and platform configs.
 
-Detailed documentation lives on the MkDocs site (abdess.github.io/retrobios/).
+Detailed documentation lives on the site (abdess.github.io/retrobios/).
 This script produces a concise landing page with download links and coverage.
 
 Usage:
@@ -237,7 +237,7 @@ def download_links(
 
     A pack published whole gets one link labelled *label*. A pack in parts
     gets one link per part, since every part is needed. *repo* is the
-    repository URL, absolute or relative, and *attrs* a MkDocs attribute list
+    repository URL, absolute or relative, and *attrs* an attribute list
     put after each link, or *button* the function that draws each link as a
     button on the site. Without a recorded release the link is the latest
     release page. A release recorded without this platform's pack says so and
@@ -837,7 +837,7 @@ def contributing_text(
 
     Two copies drifted apart: four steps to add a platform here, five on the
     site. *link* renders a site page (absolute URL for the README, relative
-    .md for MkDocs); *site_words* names the site from where the text is read.
+    .md for the site); *site_words* names the site from where the text is read.
     """
     return f"""{title}
 
@@ -900,8 +900,7 @@ validation above is its check. For code, profiles or platform files, these are
 the checks CI runs on a pull request (Python 3.12 or newer):
 
 ```bash
-pip install pyyaml "jsonschema[format-nongpl]" markdown \\
-    "mkdocs-material>=9.7.5,<10" "pymdown-extensions>=10.14"
+pip install pyyaml "jsonschema[format-nongpl]" markdown
 python scripts/validate_pr.py --changed          # the BIOS files the branch adds
 python scripts/validate_schemas.py --source-only # profiles and platform files
 python scripts/profile_sync.py --changed --strict  # each profile the branch adds or edits

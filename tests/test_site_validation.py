@@ -101,9 +101,9 @@ class PlatformDetails(unittest.TestCase):
                 "root": "<system_dir>/x",
             }}}
         )
-        self.assertIn("        - extensions_tried: .bin, .zip", lines)
-        self.assertIn("        - hle_available: no", lines)
-        self.assertIn("        - root: &lt;system_dir>/x", lines)
+        self.assertIn("    - extensions_tried: .bin, .zip", lines)
+        self.assertIn("    - hle_available: no", lines)
+        self.assertIn("    - root: &lt;system_dir>/x", lines)
 
 
 class RenderedSiteValidation(unittest.TestCase):
@@ -112,10 +112,8 @@ class RenderedSiteValidation(unittest.TestCase):
         self.root = Path(self.temp.name)
         self.site = self.root / "site"
         self.site.mkdir()
-        self.config = self.root / "mkdocs.yml"
-        self.config.write_text(
-            "site_url: https://example.test/retrobios/\n", encoding="utf-8"
-        )
+        # The path the site is served under.
+        self.config = "/retrobios/"
 
     def tearDown(self) -> None:
         self.temp.cleanup()
@@ -174,8 +172,7 @@ class TheSiteStaysWithinItsBudgets(unittest.TestCase):
         self.temp = tempfile.TemporaryDirectory(dir=TMP_ROOT)
         self.site = Path(self.temp.name) / "site"
         self.site.mkdir()
-        self.config = Path(self.temp.name) / "mkdocs.yml"
-        self.config.write_text("site_url: https://example.test/retrobios/\n", encoding="utf-8")
+        self.config = "/retrobios/"
 
     def tearDown(self) -> None:
         self.temp.cleanup()
@@ -214,17 +211,16 @@ class TheSiteStaysWithinItsBudgets(unittest.TestCase):
         self.assertTrue(any("drawn by a script at runtime" in issue for issue in issues))
 
     def test_a_search_index_over_its_budget(self):
-        import random
-
         import validate_site as module
 
-        (self.site / "search").mkdir()
-        rng = random.Random(1)
-        noise = "".join(rng.choice("0123456789abcdef") for _ in range(module.MAX_SEARCH_INDEX_BYTES + 1))
-        (self.site / "search" / "search_index.json").write_text(noise, encoding="utf-8")
+        index = self.site / "pagefind" / "index"
+        index.mkdir(parents=True)
+        (index / "en_big.pf_index").write_bytes(b"x" * (module.MAX_PAGEFIND_CHUNK_BYTES + 1))
+        (self.site / "pagefind" / "pagefind.en_x.pf_meta").write_bytes(
+            b"x" * (module.MAX_PAGEFIND_META_BYTES + 1))
         issues = self._issues("")
-        self.assertTrue(any("search_index.json" in issue and "gzip" not in issue for issue in issues))
-        self.assertTrue(any("search_index.json" in issue and "gzip" in issue for issue in issues))
+        self.assertTrue(any("en_big.pf_index" in issue for issue in issues), issues)
+        self.assertTrue(any(".pf_meta" in issue for issue in issues), issues)
 
 
 class UnrenderedMarkdown(unittest.TestCase):
@@ -327,9 +323,12 @@ class TheSitemapIsAnnouncedWhereCrawlersLook(unittest.TestCase):
     never found that way."""
 
     def test_the_head_names_it_and_no_robots_is_written(self):
+        # Starlight links the sitemap from every page's head when the site
+        # has an address, and the config keeps sitemap.xml at its old path.
         root = Path(__file__).resolve().parents[1]
-        override = (root / "docs_assets" / "overrides" / "main.html").read_text()
-        self.assertIn('rel="sitemap"', override)
+        config = (root / "website" / "astro.config.mjs").read_text()
+        self.assertIn("site: SITE", config)
+        self.assertIn("sitemap.xml", config)
         source = (root / "scripts" / "generate_site.py").read_text()
         self.assertNotIn('"robots.txt"),\n        "User-agent', source)
         self.assertNotIn("Sitemap: https://", source)
@@ -351,11 +350,10 @@ class PlatformPagesPrintTheDeclaredCrc32(unittest.TestCase):
     only its sha1 and md5, so the crc a clrmamepro user pastes found nothing."""
 
     def test_the_rendered_page(self):
-        page = ROOT / "docs" / "platforms" / "retroarch.md"
-        if not page.is_file():
-            if os.environ.get("CI"):
-                self.fail("CI generates docs/ before the suite")
-            self.skipTest("site not generated")
+        from tests import sitepages  # noqa: PLC0415
+
+        sitepages.require()
+        page = sitepages.page("platforms/retroarch.md")
         self.assertIn("CRC32: `91e93107`", page.read_text(encoding="utf-8"))
 
 
@@ -378,7 +376,7 @@ class PlainHouseStyle(unittest.TestCase):
     }
 
     def test_the_stylesheet_has_none_of_the_patterns(self):
-        css = (ROOT / "docs_assets" / "extra.css").read_text(encoding="utf-8")
+        css = (ROOT / "website" / "src" / "styles" / "retrobios.css").read_text(encoding="utf-8")
         for label, pattern in self.PATTERNS.items():
             with self.subTest(pattern=label):
                 self.assertIsNone(pattern.search(css), label)
@@ -392,21 +390,3 @@ class PlainHouseStyle(unittest.TestCase):
             first = page.read_text(encoding="utf-8").splitlines()[0]
             with self.subTest(page=page.name):
                 self.assertFalse(first.endswith(" - RetroBIOS"), first)
-
-
-class APreviewLeavesTheTrackedConfig(unittest.TestCase):
-    """--docs-dir moved the pages but still rewrote the tracked mkdocs.yml."""
-
-    def test_another_folder_gets_its_own_config(self):
-        from generate_site import _mkdocs_config
-
-        path, text = _mkdocs_config(Path("docs"), "hooks:\n  - scripts/mkdocs_hooks.py\n")
-        self.assertEqual(path, Path("mkdocs.yml"))
-        path, text = _mkdocs_config(Path("tmp/preview"), "hooks:\n  - scripts/mkdocs_hooks.py\n")
-        self.assertEqual(path, Path("tmp/preview.mkdocs.yml"))
-        self.assertTrue(text.startswith("docs_dir: preview\n"))
-        self.assertIn("../scripts/mkdocs_hooks.py", text)
-
-
-if __name__ == "__main__":
-    unittest.main()

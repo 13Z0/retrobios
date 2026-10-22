@@ -12,8 +12,8 @@ export const collections = {
 				// Who the page is written for, from someone who knows nothing
 				// (start) to someone adding to the project (contribute).
 				level: z.enum(['start', 'setup', 'explore', 'reference', 'contribute']).optional(),
-				// Search ranking of the first two levels.
-				boost: z.number().min(1).max(10).optional(),
+				// How much the site search weighs the page's words (1 by default).
+				searchWeight: z.number().min(0.1).max(10).optional(),
 				// The date the page's content carries, for the sitemap.
 				lastmod: z.string().optional(),
 			}),

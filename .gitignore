@@ -13,7 +13,8 @@ site/
 *.log
 node_modules/
 
-# Generated site pages (built by generate_site.py, deployed in CI)
+# Pages of the MkDocs build the site had before Astro Starlight: a clone may
+# still hold them. The Starlight project ignores its own generated folders.
 docs/
 
 # Large files stored as GitHub Release assets (> 50MB)

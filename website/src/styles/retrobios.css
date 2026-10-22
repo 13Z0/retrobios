@@ -367,7 +367,8 @@
 
 /* Collapsible blocks keep the callout colour of their role */
 .sl-markdown-content details.rb-details {
-	border-inline-start: 4px solid var(--sl-color-blue);
+	border: 1px solid var(--sl-color-blue);
+	border-radius: 4px;
 	background: var(--sl-color-blue-low);
 	padding: 0.6rem 1rem;
 }

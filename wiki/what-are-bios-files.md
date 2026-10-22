@@ -9,7 +9,7 @@ nav_title: What BIOS files are
 A console has a small program inside it. It starts first, then starts the game.
 This program is the **BIOS**, also called **firmware**.
 
-[Get your files](../which-pack.md){ .md-button .md-button--primary }
+<a class="rb-button rb-button-primary" href="../which-pack.md">Get your files</a>
 
 An **emulator** is an app that acts like a console. For many consoles, it needs
 a copy of the BIOS. That copy is a file: a **BIOS file**.
@@ -59,7 +59,8 @@ then glitch or do not start. The real file works best, so we include it.
 
 Laws differ by country. [Read the project's position](faq.md#is-this-legal).
 
-!!! tip "Next"
+:::tip[Next]
+- [Get your files](../which-pack.md)
+- [Words used on this site](glossary.md)
+:::
 
-    - [Get your files](../which-pack.md)
-    - [Words used on this site](glossary.md)

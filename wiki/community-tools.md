@@ -21,6 +21,7 @@ See the project's [README](https://github.com/monster-penguin/BIOS-Preservation-
 
 ---
 
-!!! note "Add your project"
+:::note[Add your project]
+Open an issue with a link to your repository.
+:::
 
-    Open an issue with a link to your repository.

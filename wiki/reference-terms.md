@@ -149,7 +149,8 @@ everyday words (BIOS, emulator, core, hash) are in the [glossary](glossary.md).
     takes a file from (the collection, a data folder, a release asset) is its
     source, not its provenance.
 
-!!! tip "Next"
+:::tip[Next]
+- [How each platform checks files](verification-modes.md)
+- [Glossary](glossary.md)
+:::
 
-    - [How each platform checks files](verification-modes.md)
-    - [Glossary](glossary.md)

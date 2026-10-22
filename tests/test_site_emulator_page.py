@@ -86,7 +86,7 @@ class ACardKeepsItsAddress(unittest.TestCase):
         files = [{"name": "DUKE3D.GRP", "md5": "aaaa1111bbbb"}]
         page = _page("raze", {"type": "standalone", "files": files})
         self.assertIn('<span id="file-duke3d-grp"></span>', page)
-        self.assertIn("{ #file-duke3d-grp-aaaa1111 .rb-file-title }", page)
+        self.assertIn('<h3 id="file-duke3d-grp-aaaa1111" class="rb-file-title"', page)
         # A card already holding the plain id gives it to no one else.
         files = [{"name": "x.bin"}, {"name": "x.bin", "sha1": "ab" * 20}]
         anchors = gs.emulator_file_anchors(files)
@@ -121,8 +121,8 @@ class WhatASearchSnippetSays(unittest.TestCase):
                          "only validate_schemas.py and this")
 
     def test_structured_url_is_encoded_like_the_canonical(self):
-        """mkdocs encodes idtech4a++ as idtech4a%2B%2B in the canonical link
-        and the sitemap, and the JSON-LD named the unencoded URL."""
+        """The canonical link and the sitemap encode idtech4a++ as
+        idtech4a%2B%2B, and the JSON-LD named the unencoded URL."""
         import json
         import tempfile
 
@@ -132,8 +132,11 @@ class WhatASearchSnippetSays(unittest.TestCase):
             page.write_text("# idTech4A++\n\nSome text long enough to be a description.\n")
             gs.decorate_markdown_pages(Path(tmp))
             text = page.read_text()
-        data = json.loads(text.split('<script type="application/ld+json">')[1]
-                          .split("</script>")[0].replace("<\\/", "</"))
+        import yaml
+
+        front = yaml.safe_load(text.split("---\n")[1])
+        script = next(entry for entry in front["head"] if entry["tag"] == "script")
+        data = json.loads(script["content"].replace("<\\/", "</"))
         self.assertEqual(data["url"],
                          "https://abdess.github.io/retrobios/emulators/idtech4a%2B%2B/")
 

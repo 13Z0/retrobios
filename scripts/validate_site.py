@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Validate the built RetroBIOS site as a navigable, accessible data product.
 
-This complements the engine's own link check (``mkdocs build --strict`` or
-Starlight's link validator) with checks on the rendered HTML: metadata,
+This complements Starlight's own link check (starlight-links-validator,
+which fails the build) with checks on the rendered HTML: metadata,
 heading structure, image alternatives, duplicate IDs, structured data, local
 resources, links and fragments, and the budgets of what a visitor downloads.
 """
@@ -50,10 +50,6 @@ class Page:
 # The largest page was 10.5 MB (systems/game-engines/) and took 21 s of
 # main-thread work on a throttled phone. Split pages now top out at 0.9 MB.
 MAX_PAGE_BYTES = 1_000_000
-# The search index is downloaded by every visitor who opens the search:
-# 21.0 MB raw and 4.88 MB gzip with hashes in it, 7.3 MB and 1.44 MB without.
-MAX_SEARCH_INDEX_BYTES = 8_500_000
-MAX_SEARCH_INDEX_GZIP_BYTES = 1_700_000
 # Pagefind loads its index in pieces: the metadata, then the chunks the words
 # typed fall in (stored compressed). 59 KB for the largest chunk and 7.5 KB of
 # metadata on 2026-10-22, 5.2 MB for the whole index on disk.
@@ -190,39 +186,6 @@ def _check_pagefind(site: Path) -> list[str]:
     if total > MAX_PAGEFIND_TOTAL_BYTES:
         issues.append(f"pagefind/: {total:,} bytes, over the {MAX_PAGEFIND_TOTAL_BYTES:,} budget")
     return issues
-
-
-def _check_search_index(site: Path) -> list[str]:
-    """The index every visitor who opens the search downloads, against its budget."""
-    import gzip
-
-    if (site / "pagefind").is_dir():
-        return _check_pagefind(site)
-    path = site / "search" / "search_index.json"
-    if not path.is_file():
-        return []
-    raw = path.read_bytes()
-    packed = len(gzip.compress(raw, 6))
-    issues = []
-    if len(raw) > MAX_SEARCH_INDEX_BYTES:
-        issues.append(f"search/search_index.json: {len(raw):,} bytes, "
-                      f"over the {MAX_SEARCH_INDEX_BYTES:,} budget")
-    if packed > MAX_SEARCH_INDEX_GZIP_BYTES:
-        issues.append(f"search/search_index.json: {packed:,} bytes gzip, "
-                      f"over the {MAX_SEARCH_INDEX_GZIP_BYTES:,} budget")
-    return issues
-
-
-def _base_path(config_path: Path) -> str:
-    """Read site_url without constructing executable YAML extension tags."""
-    config = config_path.read_text(encoding="utf-8")
-    match = re.search(
-        r"(?m)^site_url:\s*['\"]?([^\s#'\"]+)",
-        config,
-    )
-    site_url = match.group(1) if match else ""
-    path = urlsplit(site_url).path or "/"
-    return "/" + path.strip("/") + "/" if path.strip("/") else "/"
 
 
 def _local_target(
@@ -370,12 +333,11 @@ def _check_links(pages: dict, site: Path, base_path: str) -> list[str]:
     return issues
 
 
-def validate_site(site: Path, config_path: Path | None = None, base: str = "/retrobios/") -> list[str]:
+def validate_site(site: Path, base_path: str = "/retrobios/") -> list[str]:
     site = site.resolve()
     if not site.is_dir():
         return [f"site directory does not exist: {site}"]
 
-    base_path = _base_path(config_path) if config_path and config_path.is_file() else base
     html_paths = sorted(site.rglob("*.html"))
     if not html_paths:
         return [f"no HTML pages found in {site}"]
@@ -394,7 +356,7 @@ def validate_site(site: Path, config_path: Path | None = None, base: str = "/ret
                 issues.append(f"duplicate {label} {value!r}: {rendered}")
 
     issues.extend(_check_links(pages, site, base_path))
-    issues.extend(_check_search_index(site))
+    issues.extend(_check_pagefind(site))
 
     return issues
 
@@ -406,12 +368,8 @@ def main() -> None:
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     parser.add_argument(
-        "--site-dir", default="site",
+        "--site-dir", default="website/dist",
         help="the built site (default: %(default)s)",
-    )
-    parser.add_argument(
-        "--config", default=None,
-        help="an MkDocs configuration to read the base path from",
     )
     parser.add_argument(
         "--base", default="/retrobios/",
@@ -424,7 +382,7 @@ def main() -> None:
     args = parser.parse_args()
 
     try:
-        issues = validate_site(Path(args.site_dir), Path(args.config) if args.config else None, args.base)
+        issues = validate_site(Path(args.site_dir), args.base)
     except (OSError, RuntimeError, ValueError) as exc:
         print(f"Site validation failed: {exc}", file=sys.stderr)
         raise SystemExit(1) from exc

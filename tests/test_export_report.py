@@ -85,22 +85,22 @@ class CorrectedFilesPage(unittest.TestCase):
 
     def test_single_file_is_downloadable_raw(self):
         self.assertIn(
-            "(https://raw.githubusercontent.com/Abdess/retrobios/main/exports/recalbox/es_bios.xml)",
+            'href="https://raw.githubusercontent.com/Abdess/retrobios/main/exports/recalbox/es_bios.xml"',
             self.page,
         )
 
     def test_several_files_link_to_their_directory(self):
         self.assertIn("tree/main/exports/retropie", self.page)
-        self.assertIn('??? note "The 2 original files it is based on"', self.page)
+        self.assertIn("<summary>The 2 original files it is based on</summary>", self.page)
 
     def test_every_change_is_listed(self):
-        self.assertIn('??? note "Hashes updated to the emulator source (12)"', self.page)
+        self.assertIn("<summary>Hashes updated to the emulator source (12)</summary>", self.page)
         for i in range(12):
-            self.assertIn(f"    - `sys/file{i}.bin md5`", self.page)
+            self.assertIn(f"\n- `sys/file{i}.bin md5`", self.page)
 
     def test_a_failing_file_is_said_to_fail(self):
-        self.assertIn("    - bash -n failed on a.sh", self.page)
-        self.assertIn("    - a size the format has no field for", self.page)
+        self.assertIn("\n- bash -n failed on a.sh", self.page)
+        self.assertIn("\n- a size the format has no field for", self.page)
 
     def test_nothing_published_says_how_to_build(self):
         self.assertIn("export_native.py --all --fetch", generate_exports_page([], {}))
@@ -412,16 +412,16 @@ class ThePageShowsEachValueBeforeAndAfter(unittest.TestCase):
 
     def test_a_corrected_hash_shows_both_values(self):
         self.assertIn(
-            f"    - `psx/scph5501.bin` md5 `5626{'0' * 28}` becomes `c523{'1' * 28}`",
+            f"\n- `psx/scph5501.bin` md5 `5626{'0' * 28}` becomes `c523{'1' * 28}`",
             self.page,
         )
 
     def test_a_requirement_names_the_entry_and_its_value(self):
-        self.assertIn('??? note "Required flags aligned with the code (1)"', self.page)
-        self.assertIn("    - `psx/scph5501.bin` becomes optional", self.page)
+        self.assertIn("<summary>Required flags aligned with the code (1)</summary>", self.page)
+        self.assertIn("\n- `psx/scph5501.bin` becomes optional", self.page)
 
     def test_a_filled_hash_shows_its_value(self):
-        self.assertIn(f"    - `psx/scph5501.bin` sha1 `{'f' * 40}` added", self.page)
+        self.assertIn(f"\n- `psx/scph5501.bin` sha1 `{'f' * 40}` added", self.page)
 
     def test_no_arrow_glyph(self):
         for glyph in (chr(0x2192), "->", "=>"):

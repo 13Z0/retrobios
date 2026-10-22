@@ -5,18 +5,22 @@ tabs, a button, a card grid) is written through one of these functions, so
 the generator holds no engine syntax of its own. Bodies are passed without
 indentation: the function indents them as the engine reads them.
 
-The engine is Astro Starlight. MkDocs Material is kept while the two builds
-are compared page by page, selected with set_engine("mkdocs").
+The site is built with Astro Starlight. The MkDocs Material syntax the site
+was first written in stays as one thing only: the yardstick of the size
+budgets that split long pages (system pages, platform sections). Those
+budgets were set on that Markdown, and measuring it keeps every page cut
+at the same file, so no card changes address.
 """
 
 from __future__ import annotations
 
 import html
 import re
+from collections.abc import Iterator
 from contextlib import contextmanager
 
 ENGINES = ("mkdocs", "starlight")
-_engine = "mkdocs"
+_engine = "starlight"
 
 # Material's callout kinds, by the role Starlight gives them.
 ASIDE_ROLES = {
@@ -41,10 +45,9 @@ def engine() -> str:
 
 
 @contextmanager
-def using(name: str):
-    """Write in another engine's syntax for a while. A page split by size
-    is measured in the MkDocs Markdown its budgets were tuned on, so both
-    engines cut the same pages at the same files."""
+def using(name: str) -> Iterator[None]:
+    """Write in another syntax for a while: a page split by size is
+    measured in the MkDocs Markdown its budgets were set on."""
     previous = _engine
     set_engine(name)
     try:

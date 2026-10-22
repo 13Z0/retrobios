@@ -24,8 +24,8 @@ Steps, numbered as the run prints them:
   5    consistency check            verify == pack: counts, paths, every emulator pack
   6    --verify-packs               pack integrity, extraction and hashes
   7    generate_readme.py           README.md and CONTRIBUTING.md
-  8    generate_site.py             MkDocs pages
-  8b   mkdocs build --strict        rendered as the site deploy renders it, then validate_site.py
+  8    generate_site.py             site pages, into the Starlight project in website/
+  8b   npm run build (website/)     rendered as the site deploy renders it, then validate_site.py
 
 --offline skips 2 to 2b2 and the network side of 2e and 4: release assets
 come from .cache/large/ only.
@@ -1102,13 +1102,15 @@ def main() -> None:
     if args.skip_docs:
         skip_notice("render_site", "--skip-docs")
         results["render_site"] = SKIPPED
-    elif shutil.which("mkdocs") is None:
-        skip_notice("render_site", "mkdocs not installed")
+    elif shutil.which("npm") is None or not Path("website/node_modules").is_dir():
+        skip_notice("render_site", "Node not set up: npm ci --prefix website")
         results["render_site"] = SKIPPED
     else:
-        ok, _ = run(["mkdocs", "build", "--strict"], STEP_LABELS["render_site"])
+        # Starlight's link check runs inside the build and fails it.
+        ok, _ = run(["npm", "run", "build", "--prefix", "website"], STEP_LABELS["render_site"])
         if ok:
-            ok, _ = run([sys.executable, "scripts/validate_site.py"], "8b validate site")
+            ok, _ = run([sys.executable, "scripts/validate_site.py", "--site-dir", "website/dist"],
+                        "8b validate site")
         results["render_site"] = ok
         all_ok = all_ok and ok
 

@@ -29,7 +29,7 @@ on:
       - "database.json"
       - "release.json"
       - "derivable.json"
-      - "mkdocs.yml"
+      - "website/**"
   # Spelled out twice because the workflow parser reads no YAML anchor. A test
   # holds the two lists equal.
   push:
@@ -53,7 +53,7 @@ on:
       - "database.json"
       - "release.json"
       - "derivable.json"
-      - "mkdocs.yml"
+      - "website/**"
 
 permissions:
   contents: read
@@ -213,10 +213,18 @@ jobs:
         run: python3.9 -m pip install pyyaml "jsonschema[format-nongpl]==4.25.1"
 
       # markdown: the site validation test renders a wiki line to prove the
-      # heading guard's premise, and skipped on every run without it. The docs
-      # group builds the site as deploy-site.yml does, with the same bounds.
+      # heading guard's premise, and skipped on every run without it.
       - name: Install dependencies
-        run: pip install pyyaml "jsonschema[format-nongpl]==4.26.0" "markdown==3.10.2" "mkdocs>=1.6,<2" "mkdocs-material>=9.7.5,<10" "pymdown-extensions>=10.14"
+        run: pip install pyyaml "jsonschema[format-nongpl]==4.26.0" "markdown==3.10.2"
+
+      # The site is built as deploy-site.yml builds it, from the lockfile.
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1  # v7.1.0
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: website/package-lock.json
+
+      - run: npm ci --prefix website
 
       # The exporter fidelity cases compare what we hand back against the
       # file each platform publishes, so they need those files. They skip
@@ -234,7 +242,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # docs/ is gitignored, and the tests that read the rendered pages fail
+      # The pages are gitignored, and the tests that read them fail
       # in CI without it. The suite runs whatever this step returned, so a
       # generator that stops still leaves every other test reporting.
       - name: Generate the site
@@ -256,8 +264,8 @@ jobs:
       - name: Build the site
         if: ${{ !cancelled() }}
         run: |
-          mkdocs build --strict
-          python scripts/validate_site.py
+          npm run build --prefix website
+          python scripts/validate_site.py --site-dir website/dist
 
   label-pr:
     runs-on: ubuntu-latest

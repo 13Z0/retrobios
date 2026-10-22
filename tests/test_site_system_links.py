@@ -143,7 +143,7 @@ class AnIdNamesOneCardPerPage(unittest.TestCase):
                  "path": "bios/Nintendo/DS/a.bin"}
         page = gs.generate_system_page(
             "Nintendo", {"DS": [entry], "DSi": [entry]}, FileConsumers({"files": {}}))
-        self.assertEqual(page.count("#sha1-aaaaaaaaaaaa .rb-file-title"), 1)
+        self.assertEqual(page.count('id="sha1-aaaaaaaaaaaa" class="rb-file-title"'), 1)
         self.assertEqual(page.count("rb-sys-file"), 2)
 
 

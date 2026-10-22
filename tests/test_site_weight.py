@@ -18,8 +18,9 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
 import generate_site  # noqa: E402
-import mkdocs_hooks  # noqa: E402
+import sitestarlight  # noqa: E402
 import siterender  # noqa: E402
+import sitemarkup as markup  # noqa: E402
 from cross_reference import FileConsumers  # noqa: E402
 
 
@@ -54,7 +55,7 @@ class ASystemPageOverItsBudgetIsSplit(unittest.TestCase):
         self.assertIn("## Big", summary)
         self.assertIn("## Small", summary)
         # The small section keeps its cards in place.
-        self.assertIn("{ #sha1-" + f"{900:012x}", summary)
+        self.assertIn('id="sha1-' + f"{900:012x}", summary)
         parts = [stem for stem in pages if stem.startswith("maker-big")]
         self.assertGreater(len(parts), 1)
         self.assertEqual(parts[0], "maker-big")
@@ -73,7 +74,9 @@ class ASystemPageOverItsBudgetIsSplit(unittest.TestCase):
 
     def test_a_console_on_one_page_is_linked_directly(self):
         self.consoles["Big"] = self.consoles["Big"][:12]
-        whole = self._pages(10**9)["maker"][0]
+        # The budget is measured in the Markdown it was set on.
+        with markup.using("mkdocs"):
+            whole = self._pages(10**9)["maker"][0]
         pages = self._pages(len(whole) - 1)
         self.assertIn("maker-big", pages)
         self.assertNotIn("maker-big-2", pages)
@@ -99,8 +102,8 @@ class AnEmulatorWithTooManyCardsIsSplit(unittest.TestCase):
         for anchor in anchors:
             self.assertIn(f'<span id="{anchor}"></span>', main)
         self.assertIn('class="rb-card-index"', main)
-        self.assertNotIn(".rb-file-title", main)
-        self.assertIn(f"{{ #{anchors[0]} .rb-file-title }}", pages["big-files-1"])
+        self.assertNotIn("rb-file-title", main)
+        self.assertIn(f'id="{anchors[0]}" class="rb-file-title"', pages["big-files-1"])
 
     def test_cards_are_linked_on_the_page_that_holds_them(self):
         files = [{"name": f"set{i:04d}.zip"} for i in range(generate_site.EMULATOR_CARDS_PER_PAGE + 1)]
@@ -147,21 +150,27 @@ class TheNavigationOpensOneInitial(unittest.TestCase):
 
 class TheTableOfContentsOfACardPageStopsAtLevelTwo(unittest.TestCase):
     @staticmethod
-    def _item(level: int, children: list | None = None) -> SimpleNamespace:
-        return SimpleNamespace(level=level, children=children or [])
+    @staticmethod
+    def _contents(rel: str, sections: int):
+        import yaml  # noqa: PLC0415
+
+        body = "# T\n\n" + "".join(f"## S{i}\n\n### card\n\n" for i in range(sections))
+        _target, text = sitestarlight.finalize_page(
+            rel, body, level="", weight=None, browser_title="T", description="d",
+            structured={}, terms={})
+        return yaml.safe_load(text.split("---\n")[1]).get("tableOfContents", "default")
 
     def test_cards_leave_the_toc_and_wiki_pages_keep_level_three(self):
-        def page(uri: str) -> SimpleNamespace:
-            h2 = self._item(2, [self._item(3)])
-            return SimpleNamespace(file=SimpleNamespace(src_uri=uri),
-                                   toc=SimpleNamespace(items=[self._item(1, [h2])]))
-
-        for uri, kept in (("systems/sony.md", 0), ("platforms/retroarch.md", 0),
-                          ("emulators/mame.md", 0), ("wiki/faq.md", 1)):
-            current = page(uri)
-            mkdocs_hooks.on_page_content("", current, None, None)
-            with self.subTest(uri=uri):
-                self.assertEqual(len(current.toc.items[0].children[0].children), kept)
+        level_two = {"minHeadingLevel": 2, "maxHeadingLevel": 2}
+        for rel, sections, expected in (
+            ("systems/sony.md", 3, level_two), ("platforms/retroarch.md", 5, level_two),
+            ("emulators/mame.md", 3, level_two), ("wiki/faq.md", 3, "default"),
+            # One or two headings over hundreds of cards: no table at all,
+            # whose script watched every block of the page.
+            ("emulators/mame-files-2.md", 1, False), ("systems/arcade-arcade.md", 2, False),
+        ):
+            with self.subTest(rel=rel):
+                self.assertEqual(self._contents(rel, sections), expected)
 
 
 if __name__ == "__main__":

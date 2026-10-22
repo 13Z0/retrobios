@@ -16,6 +16,7 @@ import json
 import re
 import unicodedata
 import urllib.parse
+from collections.abc import Callable, Iterator
 from html import unescape
 from pathlib import Path, PurePosixPath
 
@@ -85,7 +86,7 @@ def resolve(rel_page: str, target: str) -> str:
 # Text outside code
 
 
-def outside_fences(text: str, fn) -> str:
+def outside_fences(text: str, fn: Callable[[str], str]) -> str:
     parts = FENCE.split(text)
     # FENCE has two groups: text, fence, marker, text, ...
     out = []
@@ -96,7 +97,7 @@ def outside_fences(text: str, fn) -> str:
     return "".join(out)
 
 
-def outside_code(text: str, fn) -> str:
+def outside_code(text: str, fn: Callable[[str], str]) -> str:
     def chunk(part: str) -> str:
         out, position = [], 0
         for match in CODE_SPAN.finditer(part):
@@ -345,12 +346,27 @@ def split_title(markdown: str) -> tuple[str, str, str]:
     return unescape(title).strip(), ident, markdown[: match.start()] + markdown[match.end():]
 
 
+_CARD_NAME = re.compile(r'<h3[^>]*class="rb-file-title"(?![^>]*data-pagefind-ignore)[^>]*><code>([^<]+)</code>')
+
+
+def file_names_meta(body: str) -> str:
+    """The names of the files a system page holds cards for, as a search
+    field of the page. A page of 250 cards is long, and the search weighs a
+    long page down: the Sony page, where scph5501.bin is downloaded, came
+    after every short page citing the name. The field is weighted in the
+    site's ranking (astro.config.mjs, metaWeights.files)."""
+    names = sorted({unescape(name) for name in _CARD_NAME.findall(body)})
+    if not names:
+        return ""
+    return f'\n<span data-pagefind-meta="files" hidden>{html.escape(" ".join(names))}</span>\n'
+
+
 def finalize_page(
     rel: str,
     markdown: str,
     *,
     level: str,
-    boost: int | None,
+    weight: float | None,
     browser_title: str,
     description: str,
     structured: dict,
@@ -375,6 +391,8 @@ def finalize_page(
     # is a name, and stays: it is how "neogeo.zip" finds the cores reading it.
     body = re.sub(r'<span class="(rb-badge(?![^"]*rb-badge-archive)[^"]*)"',
                   r'<span data-pagefind-ignore class="\1"', body)
+    if rel.startswith("systems/"):
+        body += file_names_meta(body)
     components = used_components(body)
     stem = rel.rsplit(".", 1)[0]
     if components:
@@ -394,8 +412,8 @@ def finalize_page(
         front["slug"] = stem
     if level:
         front["level"] = level
-    if boost:
-        front["boost"] = boost
+    if weight:
+        front["searchWeight"] = weight
     if rel.startswith(CARD_PAGES):
         sections = len(re.findall(r"^## ", body, re.M))
         # A page of cards under one or two headings has nothing to list, and
@@ -409,77 +427,6 @@ def finalize_page(
     if structured.get("dateModified"):
         front["lastmod"] = str(structured["dateModified"])
     return stem + (".mdx" if components else ".md"), _front_matter(front) + body
-
-
-# Material syntax in the hand-written wiki pages, read until they are
-# written for Starlight.
-
-_WIKI_ADMONITION = re.compile(r'^(?P<indent> *)(?P<kind>!!!|\?\?\?\+?) *(?P<type>[a-z]+)(?: +"(?P<title>[^"]*)")? *$')
-_WIKI_TAB = re.compile(r'^(?P<indent> *)=== +"(?P<label>[^"]+)" *$')
-_WIKI_BUTTON = re.compile(r"\[(?P<text>[^\]]+)\]\((?P<url>[^)\s]+)\)\{ *(?P<attrs>[^}]*)\}")
-
-
-def _indented_block(lines: list[str], start: int, indent: int) -> tuple[list[str], int]:
-    body: list[str] = []
-    index = start
-    pad = " " * (indent + 4)
-    while index < len(lines) and (not lines[index].strip() or lines[index].startswith(pad)):
-        body.append(lines[index][indent + 4:] if lines[index].startswith(pad) else "")
-        index += 1
-    while body and not body[-1].strip():
-        body.pop()
-        index -= 1
-    return body, index
-
-
-def wiki_page(text: str) -> str:
-    """A wiki page in Material syntax, its blocks written for Starlight."""
-    import sitemarkup as markup
-
-    def blocks(lines: list[str]) -> list[str]:
-        out: list[str] = []
-        index = 0
-        while index < len(lines):
-            line = lines[index]
-            admonition = _WIKI_ADMONITION.match(line)
-            tab = _WIKI_TAB.match(line)
-            if admonition:
-                indent = len(admonition["indent"])
-                body, index = _indented_block(lines, index + 1, indent)
-                title = admonition["title"] if admonition["title"] is not None else admonition["type"].capitalize()
-                pad = " " * indent
-                if admonition["kind"] == "!!!":
-                    out += markup.aside(admonition["type"], title, blocks(body), pad)
-                else:
-                    out += markup.details(admonition["type"], title, blocks(body), pad,
-                                          opened=admonition["kind"].endswith("+"))
-                continue
-            if tab:
-                indent = len(tab["indent"])
-                items = []
-                while index < len(lines):
-                    tab = _WIKI_TAB.match(lines[index])
-                    if not tab or len(tab["indent"]) != indent:
-                        break
-                    body, index = _indented_block(lines, index + 1, indent)
-                    items.append((tab["label"], blocks(body)))
-                    while index < len(lines) and not lines[index].strip() and index + 1 < len(lines) \
-                            and _WIKI_TAB.match(lines[index + 1]):
-                        index += 1
-                out += markup.tabs(items, " " * indent)
-                continue
-            out.append(line)
-            index += 1
-        return out
-
-    def button(match: re.Match) -> str:
-        classes = match["attrs"].split()
-        if ".md-button" not in classes:
-            return match.group(0)
-        return markup.button(match["text"], match["url"], primary=".md-button--primary" in classes)
-
-    text = "\n".join(blocks(text.split("\n")))
-    return outside_fences(text, lambda chunk: _WIKI_BUTTON.sub(button, chunk))
 
 
 # Navigation
@@ -497,7 +444,7 @@ def sidebar(nav: list, present: set[str]) -> dict:
     """
     owner: dict[str, str] = {}
 
-    def item(entry, topic: str) -> dict | None:
+    def item(entry: object, topic: str) -> dict | None:
         if isinstance(entry, str):
             owner[entry] = topic
             return {"label": "Overview", "link": _sidebar_link(entry)} if entry in present else None
@@ -536,7 +483,7 @@ def sidebar(nav: list, present: set[str]) -> dict:
     return {"topics": topics, "options": {"topics": extra, "exclude": exclude}}
 
 
-def _links(items: list[dict]):
+def _links(items: list[dict]) -> Iterator[dict]:
     for entry in items:
         if "link" in entry:
             yield entry

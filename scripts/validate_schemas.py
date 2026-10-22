@@ -439,11 +439,11 @@ def main() -> int:
         if release_path.exists():
             errors.extend(_validate_json_files([release_path], "release.schema.json"))
 
-        stats_path = ROOT / "docs" / "stats.json"
+        stats_path = ROOT / "website" / "public" / "stats.json"
         if stats_path.exists():
             errors.extend(_validate_json_files([stats_path], "stats.schema.json"))
 
-        api_dir = ROOT / "docs" / "api" / "v1"
+        api_dir = ROOT / "website" / "public" / "api" / "v1"
         api_database = api_dir / "database.json"
         if api_database.exists():
             errors.extend(

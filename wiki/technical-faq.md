@@ -143,7 +143,8 @@ Running `verify.py --emulator <core> --verbose` shows the emulator-level ground 
 
 It reaches only as far as the profiles do. Files no profile states a value for are platform-only, and nothing can be said about their content. The footer of the platform report gives that ratio as `Ground truth: N/M files have emulator validation`.
 
-!!! tip "Next"
+:::tip[Next]
+- [Reference index](index.md), every reference page in one list
+- For contributors: [How to contribute](../contributing.md)
+:::
 
-    - [Reference index](index.md), every reference page in one list
-    - For contributors: [How to contribute](../contributing.md)

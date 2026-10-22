@@ -56,6 +56,9 @@ def _tracked() -> list[Path]:
 
 
 def _semicolons(text: str) -> list[str]:
+    # An HTML character reference (&amp; &#123;) ends in a semicolon that
+    # joins no clauses.
+    text = re.sub(r"&(?:#\d+|#x[0-9a-fA-F]+|[a-zA-Z]+);", "&", text)
     return [
         line.strip()
         for line in BACKTICKS.sub("``", text).splitlines()
@@ -356,18 +359,17 @@ class GeneratedSiteProse(unittest.TestCase):
         sys.path.insert(0, str(ROOT / "scripts"))
         from generate_site import LOCAL_NOTE_DIRS  # noqa: PLC0415
 
-        docs = ROOT / "docs"
-        pages = [
-            p for p in docs.rglob("*.md")
-            if not set(p.relative_to(docs).parts[:-1]) & set(LOCAL_NOTE_DIRS)
-        ] if docs.is_dir() else []
-        if not pages:
-            if os.environ.get("CI"):
-                self.fail("CI generates docs/ before the suite")
-            self.skipTest("docs/ not generated (python scripts/generate_site.py)")
+        from tests import sitepages  # noqa: PLC0415
+
+        pages = [p for p in sitepages.pages()
+                 if not set(p.relative_to(sitepages.CONTENT).parts[:-1]) & set(LOCAL_NOTE_DIRS)]
         offenders = []
         for page in pages:
-            text = re.sub(r"<script.*?</script>", "", page.read_text(encoding="utf-8"), flags=re.S)
+            text = page.read_text(encoding="utf-8")
+            # The front matter carries the page's structured data, not prose.
+            if text.startswith("---\n"):
+                text = text[text.index("\n---\n", 4) + 5:]
+            text = re.sub(r"<script.*?</script>", "", text, flags=re.S)
             text = FENCED.sub("", text)
             for number, line in enumerate(text.splitlines(), 1):
                 if GLYPHS.search(line) or _semicolons(line) or ONE_PLURAL.search(line):

@@ -200,9 +200,15 @@ class SharingCards(unittest.TestCase):
                 ET.fromstring(sitediagrams.og_card_svg(section, b"png"))
 
     def test_the_template_names_every_section(self):
-        template = (ROOT / "docs_assets" / "overrides" / "main.html").read_text(encoding="utf-8")
-        named = set(re.findall(r"section = '([a-z]+)'", template))
+        import sitestarlight  # noqa: PLC0415
+
+        named = {sitestarlight.og_section("index.md", "")} | {
+            sitestarlight.og_section("wiki/page.md", level)
+            for level in ("start", "setup", "explore", "reference", "contribute")}
         self.assertEqual(named, set(sitediagrams.OG_SECTIONS))
+        for section in named:
+            with self.subTest(section=section):
+                self.assertTrue((ROOT / "docs_assets" / "og" / f"{section}.png").is_file())
 
 
 class ImagesStillNeeded(unittest.TestCase):

@@ -78,7 +78,8 @@ Other messages: Details: [When something goes wrong](installer.md#when-something
 
 <span id="hash-mismatch-untested"></span><span id="pack-is-missing-files"></span><span id="verifypy-reports-errors"></span>
 
-!!! tip "Next"
+:::tip[Next]
+- [Your setup's page](../which-pack.md): its folder and how it checks files
+- [FAQ](faq.md)
+:::
 
-    - [Your setup's page](../which-pack.md): its folder and how it checks files
-    - [FAQ](faq.md)

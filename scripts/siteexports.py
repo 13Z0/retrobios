@@ -75,8 +75,15 @@ def requirement_lines(report: dict) -> list[str]:
     ]
     if not items:
         return []
-    return markup.details("note", f"Required flags aligned with the code ({len(items)})",
-                           [f"- {item}" for item in items])
+    return _lookup_only(markup.details(
+        "note", f"Required flags aligned with the code ({len(items)})",
+        [f"- {item}" for item in items]))
+
+
+def _lookup_only(block: list[str]) -> list[str]:
+    """A list of entries changed, out of the site search: 129 "md5" in them
+    put this page above the one that explains MD5 checks."""
+    return ["", markup.block_open("section", markup.search_exclude()), "", *block, "", "</section>", ""]
 
 
 def _plural(count: int, noun: str, plural: str = "") -> str:
@@ -139,8 +146,8 @@ def candidate_lines(candidates: list[dict]) -> list[str]:
         title = (reason[:1].upper() + reason[1:]).replace('"', "'")
         items = [f"`{c['system']}` `{c['destination']}`" for c in entries]
         if len(entries) > LONG_LIST:
-            lines.extend(markup.details("note", f"{title} ({len(entries)})",
-                                        [f"- {item}" for item in items]))
+            lines.extend(_lookup_only(markup.details(
+                "note", f"{title} ({len(entries)})", [f"- {item}" for item in items])))
         else:
             lines.extend([f"{title}:", "", *[f"- {item}" for item in items], ""])
     return lines
@@ -289,6 +296,6 @@ def generate_exports_page(reports: list[dict], names: dict[str, str]) -> str:
             items = change_items(report, key)
             if not items:
                 continue
-            lines.extend(markup.details("note", f"{title} ({len(items)})",
-                                        [f"- {item}" for item in items]))
+            lines.extend(_lookup_only(markup.details(
+                "note", f"{title} ({len(items)})", [f"- {item}" for item in items])))
     return "\n".join(lines)

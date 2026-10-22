@@ -7,7 +7,7 @@ nav: false
 
 Three pages take you from nothing to games that start.
 
-[Get your files](../which-pack.md){ .md-button .md-button--primary }
+<a class="rb-button rb-button-primary" href="../which-pack.md">Get your files</a>
 
 ## What is a BIOS?
 

@@ -43,8 +43,9 @@ nav_title: Glossary
 **Game data**
 :   Files from your own copy of a PC game, like Doom. Not a BIOS.
 
-!!! tip "Next"
+:::tip[Next]
+- [What is a BIOS?](what-are-bios-files.md)
+- [Get your files](../which-pack.md)
+- Reference: [Terms of the reference pages](reference-terms.md)
+:::
 
-    - [What is a BIOS?](what-are-bios-files.md)
-    - [Get your files](../which-pack.md)
-    - Reference: [Terms of the reference pages](reference-terms.md)

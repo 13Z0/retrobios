@@ -39,7 +39,8 @@ data/                    cached data directories (not BIOS, fetched at build)
 schemas/                 JSON schemas for platform and emulator YAML (checked in CI)
 tests/                   test suite with synthetic fixtures
 wiki/                    hand-written documentation sources
-docs/                    generated MkDocs site (gitignored, rebuilt in CI)
+website/                 Astro Starlight project; pages, data and navigation
+                         are generated into it (gitignored, rebuilt in CI)
 _mame_clones.json        MAME parent/clone set mappings
 database.json            file index built from bios/ (SHA1 primary key)
 dist/                    generated packs (gitignored)
@@ -55,7 +56,8 @@ heading above the match. Every file card is therefore a level 3 heading with
 the card's anchor, under its console or a Files heading, and every platform
 system a heading of its own: a file name typed in the search opens that card,
 not the top of the page. On pages of cards (systems, emulators, platforms) the
-table of contents stops at level 2 (`scripts/mkdocs_hooks.py`).
+table of contents stops at level 2, and a page of cards under one or two
+headings has none (`scripts/sitestarlight.py`).
 
 The browser downloads and indexes the whole search index before it shows a
 first result, so the index holds names and prose only. Hashes, lists of other
@@ -450,7 +452,7 @@ pattern and how to add a test.
 
 | Workflow | File | Trigger | Role |
 |----------|------|---------|------|
-| Deploy Site | `deploy-site.yml` | push to main on any input of the site build, and manual | validate contracts, generate site, build with MkDocs, validate rendered HTML, deploy to Pages |
+| Deploy Site | `deploy-site.yml` | push to main on any input of the site build, and manual | validate contracts, generate site, build with Astro Starlight, validate rendered HTML, deploy to Pages |
 | Validation | `validate.yml` | pull request and push to main on the collection, profiles, schemas, scripts, tests, the installer and every input of the site build | schema check and full test suite on both, BIOS hash validation and auto-label on pull requests |
 
 Each workflow's `paths:` list is the exact set of files that starts it.

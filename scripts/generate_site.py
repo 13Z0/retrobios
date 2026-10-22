@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
-"""Generate MkDocs site pages from database.json, platform configs, and emulator profiles.
+"""Generate the site from database.json, platform configs, and emulator profiles.
+
+The pages, navigation and data files are written into the Astro Starlight
+project in website/, which builds the site.
 
 Reads the same data sources as verify.py and generate_pack.py to produce
 a complete documentation site. Zero manual content.
@@ -91,7 +94,6 @@ from siteguides import (
 )
 import release_record
 
-DOCS_DIR = "docs"
 # The Starlight project, and where its pages go inside it.
 STARLIGHT_DIR = "website"
 STARLIGHT_CONTENT = "src/content/docs"
@@ -453,15 +455,10 @@ def generate_home(
         "",
         "## Three steps",
         "",
-        *(markup.steps([
+        *markup.steps([
             "**Pick your device.** Its page shows your BIOS folder.",
             "**Run one command**, or download a ZIP file.",
             "**Start a game.**",
-        ]) if markup.starlight() else [
-            "1. **Pick your device.** Its page shows your BIOS folder.",
-            "2. **Run one command**, or download a ZIP file.",
-            "3. **Start a game.**",
-            "",
         ]),
         "## Pick your device",
         "",
@@ -1840,7 +1837,34 @@ LEVELS = {
     "reference": "Reference",
     "contribute": "For contributors",
 }
-SEARCH_BOOST = {"start": 5, "setup": 3}
+# How much the site search weighs the words of a page (Pagefind's
+# data-pagefind-weight, 1 by default). Each value was measured on the
+# queries of website/tools/search_gate.py.
+# - Start here pages answer a beginner's words first.
+# - A system page holds the file cards themselves: a file name finds its
+#   card before a guide that cites the name as an example.
+# - A setup guide is found by its name (the page title weighs it).
+# - A guide behind the first two levels (reference, options, contributing)
+#   names everything a reader types, and ranks after the page that answers.
+# - A launcher, an alias or a frozen copy answers a name after the emulator.
+SEARCH_WEIGHT = {"start": 10, "setup": 1.5, "reference": 0.5, "contribute": 0.5}
+SYSTEM_PAGE_WEIGHT = 5
+DEEP_GUIDE_WEIGHT = 0.5
+SEARCH_DEMOTED: set[str] = set()
+DEMOTED_WEIGHT = 0.5
+
+
+def search_weight(relative: Path, level: str) -> float | None:
+    """The search weight of a page, None for the default."""
+    if relative.as_posix() in SEARCH_DEMOTED:
+        return DEMOTED_WEIGHT
+    if relative.parts[0] == "systems":
+        return SYSTEM_PAGE_WEIGHT
+    if relative.parts[0] == "wiki" and level not in ("start", "setup"):
+        return DEEP_GUIDE_WEIGHT
+    return SEARCH_WEIGHT.get(level)
+
+
 _REFERENCE_PAGES = {
     "gaps.md", "cross-reference.md", "provenance.md", "exports.md", "data.md",
     "files/index.md", "wiki/data-model.md",
@@ -1894,6 +1918,10 @@ def decorate_markdown_pages(docs: Path) -> dict[str, str]:
             continue
         original = path.read_text(encoding="utf-8")
         authored = _front_matter(original)
+        if "head" in authored:
+            # Written in its final form by an earlier pass and rewritten by
+            # nothing since: a second pass would find no title to read.
+            continue
         markdown = prepare_page(original, relative)
         for image_id in unresolved_images(markdown):
             print(f"  WARNING: {relative}: no diagram named {image_id!r}", file=sys.stderr)
@@ -1931,42 +1959,22 @@ def decorate_markdown_pages(docs: Path) -> dict[str, str]:
             },
             **PAGE_DATA.get(relative.as_posix(), {}),
         }
-        if markup.starlight():
-            target, text = sitestarlight.finalize_page(
-                relative.as_posix(), markdown, level=level,
-                boost=SEARCH_BOOST.get(level), browser_title=browser_title,
-                description=description, structured=structured, terms=terms,
-                search=authored.get("search") != "exclude",
-            )
-            write_decorated(docs / target, text)
-            # One file per page: a page that gained or lost its components
-            # changed extension, and the other one would claim its address.
-            stem = relative.with_suffix("").as_posix()
-            for suffix in (".md", ".mdx"):
-                if f"{stem}{suffix}" != target:
-                    (docs / f"{stem}{suffix}").unlink(missing_ok=True)
-            if structured.get("dateModified"):
-                lastmod[sitestarlight.page_url(target)] = str(structured["dateModified"])
-            continue
-        structured_json = json.dumps(
-            structured, ensure_ascii=False, separators=(",", ":")
-        ).replace("</", "<\\/")
-        front_matter = (
-            "---\n"
-            "generated_by: retrobios-site\n"
-            f"title: {json.dumps(browser_title, ensure_ascii=False)}\n"
-            f"description: {json.dumps(description, ensure_ascii=False)}\n"
-            + (f"level: {level}\n" if level else "")
-            + (f"search:\n  boost: {SEARCH_BOOST[level]}\n" if level in SEARCH_BOOST else "")
-            + (f"date_modified: {json.dumps(str(structured['dateModified']))}\n"
-               if structured.get("dateModified") else "")
-            + "---\n\n"
-            '<script type="application/ld+json">\n'
-            f"{structured_json}\n"
-            "</script>\n\n"
-            + (f"{level_label(level)}\n\n" if level else "")
+        target, text = sitestarlight.finalize_page(
+            relative.as_posix(), markdown, level=level,
+            weight=search_weight(relative, level),
+            browser_title=browser_title,
+            description=description, structured=structured, terms=terms,
+            search=authored.get("search") != "exclude",
         )
-        write_decorated(path, front_matter + markdown)
+        write_decorated(docs / target, text)
+        # One file per page: a page that gained or lost its components
+        # changed extension, and the other one would claim its address.
+        stem = relative.with_suffix("").as_posix()
+        for suffix in (".md", ".mdx"):
+            if f"{stem}{suffix}" != target:
+                (docs / f"{stem}{suffix}").unlink(missing_ok=True)
+        if structured.get("dateModified"):
+            lastmod[sitestarlight.page_url(target)] = str(structured["dateModified"])
     return lastmod
 
 
@@ -3317,8 +3325,16 @@ def _system_file_card(
         # looking up scph5501.bin found every platform but RetroBat, whose
         # pack installs it for six cores.
         lines.append(f"- Also installed by: {', '.join(installed)}")
-    # The title stays searchable: the file name is what a reader types.
-    lines[4:] = search_excluded(lines[4:])
+    # The title stays searchable: the file name is what a reader types. On
+    # the site the platforms line does too: it names the file as each setup
+    # names it, and with the name only in its title the card ranked below
+    # every guide citing scph5501 as an example. The size yardstick keeps
+    # its one block.
+    at = next((i for i, line in enumerate(lines) if line.startswith("- Platforms:")), None)
+    if markup.starlight() and searchable and at is not None:
+        lines[4:] = [*search_excluded(lines[4:at]), lines[at], *search_excluded(lines[at + 1:])]
+    else:
+        lines[4:] = search_excluded(lines[4:])
     lines.extend(["", "</div>", ""])
     return lines
 
@@ -3405,14 +3421,14 @@ def _search_skipped_apart(lines: list[str]) -> list[str]:
     return out
 
 
-def _card_title(text: str, anchor: str, searchable: bool = True) -> str:
+def _card_title(text: str, anchor: str, searchable: bool = True, weight: int = 10) -> str:
     """A file card's heading, so the site search lands on the card.
 
     The search splits a page at its headings: a card titled in bold sent a
     pasted md5 to the top of a page of a hundred cards. Level 3, under
     the console or the Files heading: a level 4 after a level 2 skipped
     one for screen readers on 551 pages. The table of contents of a page
-    of cards stops above it (mkdocs_hooks.py), and a card without an
+    of cards stops above it (sitestarlight.py), and a card without an
     anchor keeps the id the toc gives it.
     """
     if markup.starlight():
@@ -3420,11 +3436,12 @@ def _card_title(text: str, anchor: str, searchable: bool = True) -> str:
         # would add the engine's anchor link and icon to every card.
         title = re.sub(r"`([^`]+)`", lambda m: f"<code>{html.escape(m[1], quote=False)}</code>", text)
         ident = f' id="{anchor}"' if anchor else ""
-        # The card is the file's own page in all but name: its title weighs
-        # as a page title does, so a file name typed in the search finds
-        # the card before a guide that cites it as an example.
-        weight = ' data-pagefind-weight="7"' if searchable else f" {markup.search_exclude()}"
-        return f'<h3{ident} class="rb-file-title"{weight}>{title}</h3>'
+        # A system page's card is the file's own page in all but name: its
+        # title weighs the most a word can, so a file name typed in the
+        # search finds the card before a guide that cites it as an example.
+        # An emulator's card says who reads the file, and weighs half.
+        search = f' data-pagefind-weight="{weight}"' if searchable else f" {markup.search_exclude()}"
+        return f'<h3{ident} class="rb-file-title"{search}>{title}</h3>'
     attributes = f"#{anchor} .rb-file-title" if anchor else ".rb-file-title"
     if not searchable:
         attributes += " data-search-exclude"
@@ -3574,8 +3591,8 @@ def system_pages(
     def card_weight(card: list[str]) -> int:
         return sum(len(line) + 1 for line in card)
 
-    # Sizes are those of the MkDocs Markdown the budget was tuned on, so
-    # every engine splits the same pages at the same cards.
+    # Sizes are those of the MkDocs Markdown the budget was set on, so the
+    # pages split where they always have and no card changes address.
     with markup.using("mkdocs"):
         measured = all_sections()
         measured_text = whole_page(measured)
@@ -3667,7 +3684,7 @@ def _part_range(part: list[Card]) -> str:
     """The first and last file names of a part, as the cards show them."""
     names = []
     for _variant, card, _sha1 in part:
-        # A Markdown heading under MkDocs, an HTML one under Starlight.
+        # An HTML heading on the site, a Markdown one in the size yardstick.
         match = re.search(r"`([^`]*)`|<code>(.*?)</code>", card[2])
         names.append(match[1] if match[1] is not None else html.unescape(match[2]))
     if len(names) == 1:
@@ -4025,7 +4042,7 @@ def _render_emulator_file(
     lines.append(markup.block_open("div", 'class="rb-file-entry"'))
     lines.append("")
     marker = f'<span id="{alias}"></span>' if alias else ""
-    lines.append(_card_title(f"{marker}{_code(fname)} {badge_str}", anchor))
+    lines.append(_card_title(f"{marker}{_code(fname)} {badge_str}", anchor, weight=5))
     lines.append("")
     if desc:
         lines.extend([_escape_tags(str(desc)), ""])
@@ -4845,7 +4862,7 @@ def emulator_pages(
         # The member tables are a file list with hashes: out of the search,
         # dolphin, primehack and ishiiruka each put 210 KB of it there.
         lines.extend([
-            "## Data directories" + (" { data-search-exclude }" if not markup.starlight() else ""),
+            "## Data directories",
             "",
         ])
         trees_start = len(lines)
@@ -4895,10 +4912,8 @@ def emulator_pages(
                     "info", f"{_count(len(members), 'file')}, as the packs ship them",
                     table, indent="    "))
         lines.append("")
-        if markup.starlight():
-            # The member tables are the lookup's, as the heading's attribute
-            # keeps them under MkDocs.
-            lines[trees_start:] = search_excluded(lines[trees_start:])
+        # The member tables are the lookup's.
+        lines[trees_start:] = search_excluded(lines[trees_start:])
 
     lines.extend(_next_block([
         "[Get your files](../which-pack.md), for the setup you play on",
@@ -6125,23 +6140,7 @@ def _system_emulators(
             if names & data.get("names", set())]
 
 
-def _mkdocs_config(docs: Path, text: str) -> tuple[Path, str]:
-    """Where the site's config goes, and its text for that place.
-
-    The tracked mkdocs.yml belongs to docs/. A preview into another folder
-    rewrote it anyway, with the navigation of work in progress, and mkdocs
-    kept reading docs/. Another folder gets its own config beside it, its
-    paths taken from there.
-    """
-    if os.path.normpath(str(docs)) == DOCS_DIR:
-        return Path("mkdocs.yml"), text
-    where = docs.parent
-    for relative in ("scripts/mkdocs_hooks.py", "docs_assets/overrides"):
-        text = text.replace(relative, os.path.relpath(relative, where).replace(os.sep, "/"))
-    return where / f"{docs.name}.mkdocs.yml", f"docs_dir: {docs.name}\n" + text
-
-
-# mkdocs.yml nav generator
+# Navigation
 
 
 _OS_NAMES = {"windows": "Windows", "darwin": "macOS", "linux": "Linux"}
@@ -6332,13 +6331,10 @@ def generate_which_pack() -> str:
         "",
         "Run the command and press **c** when it asks.",
         "",
-        *([
-            "Or choose your setup and consoles here. You get the list of files "
-            "and a command that installs only those.",
-            "",
-            "<FilePicker />",
-            "",
-        ] if markup.starlight() else []),
+        "Or pick them here, and get the files and the command.",
+        "",
+        "<FilePicker />",
+        "",
         *_next_block([
             "[First install, step by step](wiki/first-install.md)",
             "[When a game does not start](wiki/troubleshooting.md)",
@@ -6486,7 +6482,7 @@ def _nav_target(entry: object) -> str:
     return entry if isinstance(entry, str) else str(next(iter(entry.values())))
 
 
-def generate_mkdocs_nav(
+def generate_nav(
     coverages: dict,
     manufacturers: dict,
     profiles: dict,
@@ -6543,7 +6539,7 @@ def generate_mkdocs_nav(
 def main() -> None:
     parser = argparse.ArgumentParser(
         allow_abbrev=False,
-        description="Generate MkDocs site from project data"
+        description="Generate the documentation site from project data"
     )
     parser.add_argument(
         "--db", default="database.json",
@@ -6558,23 +6554,17 @@ def main() -> None:
         help="emulator profile directory (default: %(default)s)",
     )
     parser.add_argument(
-        "--engine", choices=markup.ENGINES, default="mkdocs",
-        help="site engine the pages are written for (default: %(default)s)",
-    )
-    parser.add_argument(
         "--site-dir", default=STARLIGHT_DIR,
-        help="the Starlight project, with --engine starlight (default: %(default)s)",
+        help="the Astro Starlight project the site is written into (default: %(default)s)",
     )
     parser.add_argument(
         "--docs-dir", default=None,
-        help="directory the pages are written to (default: docs, or the "
-             "Starlight project's content collection)",
+        help="directory the pages are written to (default: the project's "
+             "content collection, src/content/docs)",
     )
     args = parser.parse_args()
-    markup.set_engine(args.engine)
     if args.docs_dir is None:
-        args.docs_dir = (str(Path(args.site_dir) / STARLIGHT_CONTENT)
-                         if markup.starlight() else DOCS_DIR)
+        args.docs_dir = str(Path(args.site_dir) / STARLIGHT_CONTENT)
     try:
         # Two runs over one docs/ delete each other's pages and scratch
         # files in the sweep, so the second is refused instead.
@@ -6596,38 +6586,25 @@ def _generate(args: argparse.Namespace) -> None:
 
     db = load_database(args.db)
     docs = Path(args.docs_dir)
-    # Files the site serves as they are (data, downloads, images): beside the
-    # pages under MkDocs, in the project's public folder under Starlight.
-    public = Path(args.site_dir) / "public" if markup.starlight() else docs
+    # Files the site serves as they are (data, downloads, images), in the
+    # project's public folder.
+    public = Path(args.site_dir) / "public"
 
     for d in GENERATED_DIRS:
         (public / d if d in PUBLIC_DIRS else docs / d).mkdir(parents=True, exist_ok=True)
 
-    if not markup.starlight():
-        css_src = Path("docs_assets") / "extra.css"
-        css_dest = docs / "stylesheets" / "extra.css"
-        if css_src.exists():
-            css_dest.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copy2(css_src, css_dest)
-        js_src = Path("docs_assets") / "site.js"
-        js_dest = docs / "javascripts" / "site.js"
-        if js_src.exists():
-            js_dest.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copy2(js_src, js_dest)
-
     # No robots.txt: a crawler reads it only at the host root (RFC 9309), and
     # this project site lives under /retrobios/. Every page's head points at
-    # the sitemap instead (overrides/main.html).
+    # the sitemap instead (Starlight's head links it).
     (public / "robots.txt").unlink(missing_ok=True)
 
     images_dest = public / "assets" / "images"
     images_dest.mkdir(parents=True, exist_ok=True)
     # Logos, system icons and sharing cards are served from the site itself
     # (docs_assets/*/sources.json records where each came from).
-    folders = [("logos", "logos"), ("system-icons", "system-icons"), ("og", "og")]
-    if markup.starlight():
-        # The theme's own folder under MkDocs: the mark, favicons, touch icon.
-        folders.append(("overrides/assets/brand", "brand"))
+    # brand: the mark, favicons and touch icon (scripts/make_site_icons.py).
+    folders = [("logos", "logos"), ("system-icons", "system-icons"), ("og", "og"),
+               ("brand", "brand")]
     for folder, dest in folders:
         source = Path("docs_assets") / folder
         if source.is_dir():
@@ -6799,6 +6776,9 @@ def _generate(args: argparse.Namespace) -> None:
             data_dirs=page_data_directories(name, profiles),
         )
         PAGE_DATA[f"emulators/{name}.md"] = emulator_structured_data(profile)
+        if (profile.get("type") in ("launcher", "alias")
+                or profile.get("core_classification") in ("launcher", "alias", "frozen_snapshot")):
+            SEARCH_DEMOTED.add(f"emulators/{name}.md")
         files = profile.get("files") or []
         for stem, entries in emulator_parts(name, files):
             PAGE_DATA[f"emulators/{stem}.md"] = emulator_structured_data(
@@ -6846,12 +6826,7 @@ def _generate(args: argparse.Namespace) -> None:
     wiki_src = Path(WIKI_SRC_DIR)
     if wiki_src.is_dir():
         for src_file in wiki_src.glob("*.md"):
-            if markup.starlight():
-                # Written in Material syntax until the wiki is written for Starlight.
-                write_if_changed(str(wiki_dest / src_file.name),
-                                 sitestarlight.wiki_page(src_file.read_text(encoding="utf-8")))
-            else:
-                shutil.copy2(src_file, wiki_dest / src_file.name)
+            shutil.copy2(src_file, wiki_dest / src_file.name)
             _record(wiki_dest / src_file.name)
     # data-model.md is generated (contains live DB stats)
     write_if_changed(
@@ -6870,162 +6845,31 @@ def _generate(args: argparse.Namespace) -> None:
     stale = _sweep_generated(docs, [d for d in GENERATED_DIRS if d not in PUBLIC_DIRS])
     stale += _sweep_generated(public, list(PUBLIC_DIRS))
 
-    if markup.starlight():
-        write_if_changed(str(docs / "404.md"), generate_not_found())
+    write_if_changed(str(docs / "404.md"), generate_not_found())
 
     print("Adding page metadata and structured data...")
     lastmod = decorate_markdown_pages(docs)
 
-    nav = generate_mkdocs_nav(coverages, manufacturers, profiles, registry,
+    nav = generate_nav(coverages, manufacturers, profiles, registry,
                               Path(WIKI_SRC_DIR))
-    if markup.starlight():
-        print("Writing the Starlight navigation and the picker's data...")
-        site = Path(args.site_dir)
-        present = {
-            path.relative_to(docs).with_suffix(".md").as_posix()
-            for path in docs.rglob("*.md*") if path.suffix in (".md", ".mdx")
-        } - {"404.md"}
-        generated = site / "src" / "generated"
-        generated.mkdir(parents=True, exist_ok=True)
-        write_if_changed(str(generated / "sidebar.json"),
-                         json.dumps(sitestarlight.sidebar(nav, present), indent=1) + "\n")
-        write_if_changed(str(generated / "lastmod.json"),
-                         json.dumps(dict(sorted(lastmod.items())), indent=1) + "\n")
-        sitestarlight.picker_data(_REPO_ROOT / "install", public / "data" / "picker")
-        total_pages = len(present)
-        print(f"\nGenerated {total_pages} pages in {args.docs_dir}/")
-        if stale:
-            print(f"Removed {stale} page(s) nothing produced this run")
-        return
-
-    # Update mkdocs.yml nav section only (avoid yaml.dump round-trip mangling quotes)
-    print("Updating mkdocs.yml nav...")
-    nav_yaml = yaml.dump(
-        {"nav": nav}, default_flow_style=False, sort_keys=False, allow_unicode=True
-    )
-
-    # Rewrite mkdocs.yml entirely (static config + generated nav)
-    mkdocs_static = """\
-site_name: RetroBIOS
-site_description: Source-verified BIOS and firmware packs for RetroArch, Batocera,
-  Recalbox, Lakka, RetroPie, EmuDeck, RetroBat, RetroDECK, RomM, BizHawk, ROCKNIX,
-  KNULLI, AmberELEC, EmuELEC and MiSTer FPGA.
-site_url: https://abdess.github.io/retrobios/
-repo_url: https://github.com/Abdess/retrobios
-repo_name: Abdess/retrobios
-# Almost every page is generated from platforms/, emulators/ and database.json,
-# so a per-page edit link would point at a file that does not exist.
-edit_uri: ''
-# lastmod in the sitemap from each page's own date, or none at all.
-hooks:
-  - scripts/mkdocs_hooks.py
-# Working notes kept under docs/ during development are not part of the site.
-exclude_docs: |
-  plans/
-  specs/
-copyright: MIT for the tooling. BIOS and firmware files are third-party system
-  software, preserved for personal backup, archival and interoperability.
-theme:
-  name: material
-  # Open Graph tags live in overrides/main.html: the social plugin that
-  # would otherwise emit them needs Pillow and CairoSVG only to render a
-  # preview image the pages do not need.
-  custom_dir: docs_assets/overrides
-  palette:
-  - media: (prefers-color-scheme)
-    toggle:
-      icon: material/brightness-auto
-      name: Switch to light mode
-  - media: '(prefers-color-scheme: light)'
-    scheme: default
-    toggle:
-      icon: material/brightness-7
-      name: Switch to dark mode
-  - media: '(prefers-color-scheme: dark)'
-    scheme: slate
-    toggle:
-      icon: material/brightness-4
-      name: Switch to auto
-  font: false
-  logo: assets/brand/logo.svg
-  favicon: assets/brand/favicon-32.png
-  icon:
-    logo: material/chip
-  features:
-  - navigation.instant
-  - navigation.instant.prefetch
-  - navigation.instant.progress
-  - navigation.tabs
-  - navigation.tabs.sticky
-  - navigation.sections
-  - navigation.top
-  - navigation.tracking
-  - navigation.indexes
-  # Breadcrumbs above the title: on a deep page they say which tab it is in.
-  - navigation.path
-  # 400+ pages: pruning keeps the navigation out of every page's HTML.
-  - navigation.prune
-  - navigation.footer
-  - search.suggest
-  - search.highlight
-  - search.share
-  - content.code.copy
-  - content.tabs.link
-  - toc.follow
-extra_css:
-- stylesheets/extra.css
-extra_javascript:
-- javascripts/site.js
-extra:
-  social:
-  - icon: fontawesome/brands/github
-    link: https://github.com/Abdess/retrobios
-    name: RetroBIOS on GitHub
-markdown_extensions:
-- abbr
-- admonition
-- attr_list
-- def_list
-- footnotes
-- meta
-- md_in_html
-- tables
-- toc:
-    permalink: true
-    # Level 3 is the wiki's subsections. On pages of file cards, also level
-    # 3, the hook keeps the table of contents to level 2.
-    toc_depth: 3
-- pymdownx.details
-- pymdownx.highlight:
-    anchor_linenums: true
-- pymdownx.inlinehilite
-- pymdownx.keys
-# No mermaid fence: Material drew it in the browser with a script from a
-# CDN. Diagrams are SVG files written by scripts/sitediagrams.py.
-- pymdownx.superfences
-- pymdownx.tabbed:
-    alternate_style: true
-plugins:
-- search
-# Link rot fails the build: deploy-site.yml runs `mkdocs build --strict`.
-# omitted_files stays at its default (info) so a stale local docs/ does not
-# break a local build. CI regenerates docs/ from scratch anyway.
-validation:
-  absolute_links: warn
-  unrecognized_links: warn
-  anchors: warn
-"""
-    config_path, config_text = _mkdocs_config(Path(docs), mkdocs_static + nav_yaml)
-    write_if_changed(str(config_path), config_text)
-
-    # Counted on disk: the split pages made a sum of page kinds wrong.
-    total_pages = sum(
-        1 for path in docs.rglob("*.md")
-        if not any(part in LOCAL_NOTE_DIRS for part in path.relative_to(docs).parts[:-1])
-    )
+    print("Writing the navigation and the picker's data...")
+    site = Path(args.site_dir)
+    present = {
+        path.relative_to(docs).with_suffix(".md").as_posix()
+        for path in docs.rglob("*.md*") if path.suffix in (".md", ".mdx")
+    } - {"404.md"}
+    generated = site / "src" / "generated"
+    generated.mkdir(parents=True, exist_ok=True)
+    write_if_changed(str(generated / "sidebar.json"),
+                     json.dumps(sitestarlight.sidebar(nav, present), indent=1) + "\n")
+    write_if_changed(str(generated / "lastmod.json"),
+                     json.dumps(dict(sorted(lastmod.items())), indent=1) + "\n")
+    sitestarlight.picker_data(_REPO_ROOT / "install", public / "data" / "picker")
+    total_pages = len(present)
     print(f"\nGenerated {total_pages} pages in {args.docs_dir}/")
     if stale:
         print(f"Removed {stale} page(s) nothing produced this run")
+
 
 from sitediagrams import prepare_page, unresolved_images  # noqa: E402,F401
 from sitewrite import (  # noqa: E402,F401
