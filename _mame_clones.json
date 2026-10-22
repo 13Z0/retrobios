@@ -180,12 +180,26 @@
     "sha1": "2d7d999e2acb4da55c26d1517934d39e7d0a0c86",
     "total_copies": 1
   },
+  "atom_vdu80.zip": {
+    "clones": [
+      "cms_4080term.zip"
+    ],
+    "sha1": "e66d22bcc5fa558c447cf6d83977713a3d6b394b",
+    "total_copies": 1
+  },
   "beebsid.zip": {
     "clones": [
       "bbc_opus3.zip"
     ],
     "sha1": "10dcceb968bb19c77b9544c89e471f4a7bf025ec",
     "total_copies": 2
+  },
+  "buddha.zip": {
+    "clones": [
+      "amiga_buddha.zip"
+    ],
+    "sha1": "25fc9e4387eac3c6ec007f91550c8c002284a4d7",
+    "total_copies": 1
   },
   "c64_cs.zip": {
     "clones": [
@@ -241,12 +255,10 @@
   },
   "cga.zip": {
     "clones": [
-      "cga_superimpose.zip",
-      "ec1840_0002.zip",
-      "ec1841_0002.zip"
+      "isa_ibm_mda.zip"
     ],
     "sha1": "da272af2fb1da8883c539b19c1bda97c5301dc80",
-    "total_copies": 3
+    "total_copies": 1
   },
   "cpc_rom.zip": {
     "clones": [
@@ -367,6 +379,13 @@
     "sha1": "5383599e1955f0fee0abc459da4de62ddbd97b52",
     "total_copies": 1
   },
+  "k573_dio.zip": {
+    "clones": [
+      "k573kara.zip"
+    ],
+    "sha1": "9695831910742a7d6e3b17f5e3f811320e8b4125",
+    "total_copies": 1
+  },
   "keytronic_pc3270.zip": {
     "clones": [
       "keytronic_pc3270_at.zip"
@@ -403,6 +422,13 @@
     "sha1": "4d217c4a72a4450b75faaf7da871e8fe7b64ff60",
     "total_copies": 2
   },
+  "mshark.zip": {
+    "clones": [
+      "gpib_mshark.zip"
+    ],
+    "sha1": "91c5aac76cd66fbd5c70616d523eefd269a12364",
+    "total_copies": 1
+  },
   "nb_48gc.zip": {
     "clones": [
       "nb_mdc48.zip"
@@ -415,6 +441,13 @@
       "newbrain_fdc.zip"
     ],
     "sha1": "a00aa2bbaa7ee7485a6b19450e4f07d41190442e",
+    "total_copies": 1
+  },
+  "pc9801_spb.zip": {
+    "clones": [
+      "speakboard.zip"
+    ],
+    "sha1": "68505cbcfe0a386af4daac18673f9a971674a601",
     "total_copies": 1
   },
   "peribox_ev.zip": {
@@ -436,6 +469,13 @@
       "popn9.zip"
     ],
     "sha1": "207e34befb36e945bbbaf9012156b70a1be97819",
+    "total_copies": 1
+  },
+  "pet_softbox.zip": {
+    "clones": [
+      "gpib_softbox.zip"
+    ],
+    "sha1": "acc47845ad54abde9ddf56084fe0326ca12e81c4",
     "total_copies": 1
   },
   "ql_sqmouse.zip": {
@@ -528,6 +568,13 @@
     "sha1": "0cb430aea9354d8c151933a12c33fa2bb69c16d3",
     "total_copies": 3
   },
+  "sun1cpu.zip": {
+    "clones": [
+      "sun1_cpu.zip"
+    ],
+    "sha1": "d96dcaa450dbc4a6a6522ec0cc2d71a8244ca933",
+    "total_copies": 1
+  },
   "sv601.zip": {
     "clones": [
       "sv602.zip"
@@ -551,6 +598,13 @@
     "sha1": "bbf1cb3e776129524d54d1f885c54d0f1b8d489c",
     "total_copies": 10
   },
+  "sys68k_cpu20.zip": {
+    "clones": [
+      "sys68k_cpu21.zip"
+    ],
+    "sha1": "e3d9b79fd99417535cad2a0751ceb90adb1b0ae5",
+    "total_copies": 1
+  },
   "sys68k_cpu21.zip": {
     "clones": [
       "sys68k_cpu21a.zip",
@@ -561,6 +615,13 @@
     ],
     "sha1": "e3d9b79fd99417535cad2a0751ceb90adb1b0ae5",
     "total_copies": 5
+  },
+  "sys68k_cpu30.zip": {
+    "clones": [
+      "sys68k_cpu30x.zip"
+    ],
+    "sha1": "47eb7d56111e587702724ba753bd60ed4b432566",
+    "total_copies": 1
   },
   "sys68k_cpu30x.zip": {
     "clones": [
