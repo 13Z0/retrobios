@@ -220,7 +220,7 @@ that the file exists.
 
 `untested` means the file exists on disk but its hash does not match the expected value. This happens on MD5 and SHA1 platforms (Batocera, Recalbox, BizHawk, ROCKNIX, MiSTer FPGA, and the rest) when the file is present but contains different data than what the platform declares.
 
-On existence-mode platforms (RetroArch, Lakka, RetroPie), files are never `untested` because the platform only checks presence, not content. Those files show as `ok` if present, whatever they contain.
+On existence-mode platforms (RetroArch, Lakka, RetroPie, MinUI, NextUI, MyMinUI), files are never `untested` because the platform only checks presence, not content. Those files show as `ok` if present, whatever they contain.
 
 Running `verify.py --emulator <core> --verbose` shows the emulator-level ground truth, which can confirm whether the file's hash matches what the source code expects. The platform report applies the same check on its own: `verify.py --platform retroarch` prints a `DISCREPANCY` line for every file the platform accepts and a profiled emulator rejects.
 

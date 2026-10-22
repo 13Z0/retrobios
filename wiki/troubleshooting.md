@@ -67,6 +67,9 @@ Each platform expects BIOS files in a specific base directory:
 - EmuDeck: `~/Emulation/bios/`
 - RetroDECK: `~/retrodeck/bios/`
 - RetroBat: `bios/` inside the RetroBat directory
+- MinUI, NextUI, MyMinUI: `Bios/<TAG>/` at the root of the SD card, one folder
+  per tag in parentheses of the Roms folders (`Bios/PS/` for
+  `Roms/Sony PlayStation (PS)/`)
 
 Some cores expect files in subdirectories (e.g. `dc/` for Dreamcast, `pcsx2/bios/`
 for PlayStation 2). Check the `path:` field in the emulator profile for the exact

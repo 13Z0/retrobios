@@ -151,7 +151,8 @@ platforms:
     source_url: https://...          # upstream data URL
     source_format: json              # json, xml, clrmamepro_dat, python_dict,
                                      # bash_script+csv, csharp_firmware_database,
-                                     # github_component_manifests, mister_downloader_db
+                                     # github_component_manifests, mister_downloader_db,
+                                     # pak_launch_scripts
     hash_type: md5                   # primary hash in the upstream data
     cores:                           # which emulator profiles apply
     - core_a
@@ -194,6 +195,17 @@ profile's layout.
 and `hatari`): both layouts are packed. A profile without a standalone build keeps
 its libretro layout whatever the platform calls it.
 
+A platform that hands each libretro core a system directory of its own declares
+them in `core_system_dirs`, keyed by the directory relative to the pack root,
+each with the `cores` started with it and the `source_ref` of the launcher that
+names them. MinUI, NextUI and MyMinUI give every launch tag `Bios/<TAG>/`
+(`system_directory_ref` cites the minarch statement). A core's files are then
+placed below each directory listed for it, an archive's core subfolder
+(`archive_prefix`) moves with it, and a core listed nowhere gets no file: the
+platform hands it no folder. `platform_layouts` builds one view per directory,
+so the builder, the manifest, verify and slots read the same placement, and the
+resolver still looks the collection up by the core's own path.
+
 ### Optional fields
 
 ```yaml
@@ -205,6 +217,8 @@ its libretro layout whatever the platform calls it.
     zip_digest: composite            # the frontend hashes a .zip by its members only
     firmware_folder_flat: true       # the frontend lists each system folder without
                                      # descending into it
+    native_list: none                # the platform's code names no BIOS file, so no
+                                     # exporter hands one back
     source_wiki: https://...         # human-readable upstream reference
     target_scraper: myplatform_targets  # hardware target scraper name, null if static
     target_source: https://...       # target data source URL
@@ -219,6 +233,18 @@ its libretro layout whatever the platform calls it.
         config: $HOME/.config/myplatform/config.ini
         parse_key: bios_directory
 ```
+
+A frontend whose BIOS live on its SD card is installed from the computer the
+card is mounted on. Its rule is `os: any`, `method: card_marker`, with `file`
+(a path below the card root) and `first_line_prefix`: `install.py` reads that
+file under `--dest` and names the platform when its first line starts with the
+prefix. MinUI, NextUI and MyMinUI write their release name to
+`.system/version.txt`.
+
+`native_list: none` marks a platform whose own code publishes no BIOS list
+(the MinUI family hands each core a folder and names no file in it). The test
+that every registered platform has an exporter exempts it, and a second test
+holds that its platform YAML declares no file.
 
 `zip_digest: composite` is set where the frontend's own check takes
 `Zip::Md5Composite` for every `.zip` and never the container's MD5 (Recalbox,
@@ -410,7 +436,7 @@ to use:
 
 | Mode | Behavior | Example platforms |
 |------|----------|-------------------|
-| `existence` | File must exist, no hash check | RetroArch, Lakka, RetroPie |
+| `existence` | File must exist, no hash check | RetroArch, Lakka, RetroPie, MinUI, NextUI, MyMinUI |
 | `md5` | MD5 must match the declared hash | Batocera, Recalbox, RetroBat, EmuDeck, RetroDECK, RomM, ROCKNIX, MiSTer FPGA |
 | `sha1` | SHA1 must match | BizHawk |
 

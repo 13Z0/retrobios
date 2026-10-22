@@ -322,6 +322,11 @@ not already found that way.
 | `%USERPROFILE%\BizHawk\Firmware` | BizHawk | the same |
 | `EmuHawk.exe` or `EmuHawkMono.sh` in a `BizHawk*` folder of the home folder or one level down (`~/Games/BizHawk-2.11.1`), the newest | BizHawk | `Firmware` beside it |
 
+A `--dest` given without `--platform` is first read as an SD card: the MinUI
+family writes the release name as the first line of `.system/version.txt` at
+the card root (`MinUI-`, `NextUI-`, `MyMinUI-`), and that line names the file
+list.
+
 Desktop installs are read from their own configuration, and several can be
 found on one machine.
 
@@ -393,7 +398,11 @@ for EmuDeck (`C:\Emulation\bios` on Windows), `/storage/roms/bios` for ROCKNIX, 
 `C:\RetroBat\bios` for RetroBat, and RetroArch's own default system
 directory for RetroArch. BizHawk has no such folder: it reads `Firmware`
 beside its executable wherever the archive was extracted, so a forced
-`--platform bizhawk` that finds no install stops and asks for `--dest`. On Android a forced `--platform retroarch` falls back to
+`--platform bizhawk` that finds no install stops and asks for `--dest`. MinUI,
+NextUI and MyMinUI keep their files on the SD card, which the installer reads
+from a computer it is mounted on: a forced `--platform minui` stops and asks
+for the card's root as `--dest`, and a `--dest` that is a folder inside such a
+card (its `Bios/`) is refused with the root to name instead. On Android a forced `--platform retroarch` falls back to
 `<shared storage>/RetroArch/system` instead, a home directory there belonging
 to Termux rather than to the frontend. Pass `--dest` to say where instead of
 relying on that.

@@ -145,6 +145,7 @@ Verification modes per platform:
 | ROCKNIX | md5 | MD5 hash match, same shape as Batocera |
 | MiSTer FPGA | md5 | MD5 of the file at its destination, no ZIP inspection |
 | BizHawk | sha1 | SHA1 per firmware from `FirmwareDatabase.cs` |
+| MinUI, NextUI, MyMinUI | existence | none: minarch hands each core `Bios/<TAG>/` and opens no file |
 
 Full details and severity mapping: [verification modes](verification-modes.md).
 `--region` narrows the report to the file set a regional pack would carry, and a
@@ -848,6 +849,7 @@ stand alone.
 | `rocknix_scraper` | rocknix-systems script | Python dict |
 | `retropie_scraper` | RetroPie-Setup scriptmodules (`rp_module_id`, `rp_module_help`) and `retropie_packages.sh` (version) | Bash |
 | `misterfpga_scraper` | BiosDB_MiSTer bios_db.json.zip | JSON in ZIP |
+| `minui_scraper`, `nextui_scraper`, `myminui_scraper` | each pak's `launch.sh` (`EMU_EXE`, the tag from the pak folder), each device's `cores/makefile` (the repository a library is built from) and the minarch statement that sets `core.bios_dir` | Shell, Make, C |
 | `coreinfo_scraper` | .info files from libretro-core-info | INI-like |
 | `bizhawk_scraper` | FirmwareDatabase.cs | C# source |
 | `mame_hash_scraper` | mamedev/mame source tree. `--release mameNNNN` writes the profile of one release a platform builds. `--devices --listxml FILE` adds the device ROM sets of the release's `-listxml` | C source (sparse clone), listxml |
