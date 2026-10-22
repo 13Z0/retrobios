@@ -218,6 +218,51 @@ class TheArchiveHoldingTheCoreMembers(unittest.TestCase):
                 self.assertNotIn('{"name": archive', source)
 
 
+class EveryDeclaredLayoutIsHeld(unittest.TestCase):
+    """mame4droid reads awbios.zip as MAME 0.139 laid it out, bios.ic23_l
+    alone, and every copy held the later bios0/bios1.ic23 split: the core
+    found no BIOS in the archive the pack shipped under its name. A
+    ``contents:`` list names one version of a set, and the collection must
+    hold that version, served to the profile that declares it."""
+
+    def test_a_copy_holds_each_declared_layout_and_is_served(self):
+        import json
+
+        from common import load_emulator_profiles, resolve_local_file, zip_member_crcs
+
+        database = REPO_ROOT / "database.json"
+        if not (REPO_ROOT / "bios").is_dir() or not database.exists():
+            self.skipTest("bios/ or database.json is absent")
+        db = json.loads(database.read_text())
+        by_name = db["indexes"]["by_name"]
+        previous = os.getcwd()
+        os.chdir(REPO_ROOT)
+        self.addCleanup(os.chdir, previous)
+        short, unserved = [], []
+        for emu, profile in load_emulator_profiles("emulators").items():
+            for entry in profile.get("files") or []:
+                if entry.get("category") != "bios_zip" or entry.get("unsourceable"):
+                    continue
+                crcs = {str(m["crc32"]).lower() for m in entry.get("contents") or []
+                        if m.get("crc32")}
+                names = [entry["name"], *(entry.get("aliases") or [])]
+                copies = [
+                    db["files"][sha1]["path"] for name in names
+                    for sha1 in by_name.get(name, []) if sha1 in db["files"]
+                ]
+                copies = [path for path in copies if Path(path).exists()]
+                if not crcs or not copies:
+                    continue
+                if not any(crcs <= zip_member_crcs(path) for path in copies):
+                    short.append(f"{emu}: {entry['name']}")
+                    continue
+                path, _status = resolve_local_file(entry, db)
+                if not path or not crcs <= zip_member_crcs(path):
+                    unserved.append(f"{emu}: {entry['name']} -> {path}")
+        self.assertEqual(short, [])
+        self.assertEqual(unserved, [])
+
+
 class AnArchiveHashedByItsMembers(unittest.TestCase):
     """Recalbox hashes a .zip with Zip::Md5Composite (Bios.cpp:64-68). Its
     neocdz.zip pin is neocd.bin's md5, which is also the composite of a
