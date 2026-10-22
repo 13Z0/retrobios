@@ -501,7 +501,8 @@ def generate_home(
         "## Is this safe?",
         "",
         "The installer writes only inside your BIOS folder, checks every file "
-        "before saving it, and never touches games or saves. "
+        "before saving it, keeps any file of yours it replaces in a "
+        "retrobios-backup folder beside it, and never touches games or saves. "
         "[How the command is checked](wiki/faq.md#is-piping-the-installer-into-a-shell-safe).",
         "",
         "Laws on copying console firmware differ by country. "

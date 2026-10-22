@@ -134,6 +134,9 @@ def follow(stream: Iterable[str], out: TextIO, summary: TextIO) -> None:
                    event.get("pending", 0), "1" if event.get("interrupted") else "0")
             for failure in event.get("failed") or []:
                 record(summary, "failed", failure.get("dest", ""), failure.get("reason", ""))
+            for kept in event.get("kept") or []:
+                record(summary, "kept", kept.get("folder", ""), kept.get("files", 0),
+                       size_text(kept.get("bytes", 0)))
             for group in event.get("skipped") or []:
                 record(summary, "skipped", group.get("label", ""), group.get("files", 0),
                        group.get("required", 0))

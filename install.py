@@ -485,9 +485,11 @@ EVENT_KEYS: dict[str, tuple[str, ...]] = {
     # failed: [{"dest", "reason"}]. skipped: [{"reason", "label", "files",
     # "required"}], the files the collection cannot supply. left_out:
     # [{"category", "label", "files", "dests"}], what --no-game-data left
-    # out, empty without it.
+    # out, empty without it. kept: [{"folder", "files", "bytes"}], the files
+    # in place the run moved aside before replacing them (under --dry-run,
+    # would move), one per backup folder, empty when none.
     "summary": ("mode", "installed", "up_to_date", "pending", "failed", "skipped",
-                "left_out", "interrupted"),
+                "left_out", "kept", "interrupted"),
     "end": ("code",),
 }
 # Seconds between two progress events while bytes arrive.
@@ -3429,6 +3431,279 @@ def check_local(
     return to_download, up_to_date, mismatched
 
 
+# Where a file in place that this run replaces is kept: a folder beside the
+# one written to, never inside it. Several emulators find their BIOS by
+# content, not by name: DuckStation, SwanStation and Rustation read every
+# file of the BIOS folder, BizHawk walks its firmware folder recursively. A
+# kept copy anywhere under that folder could be taken for the BIOS.
+BACKUP_DIR = "retrobios-backup"
+
+
+class _NotKept(Exception):
+    """The file in place differs and could not be set aside: it stays."""
+
+
+class KeptFiles:
+    """The files this run moved aside before replacing them.
+
+    A file is kept at <holder>/<run>/<folder name>/<path below the folder>,
+    the holder being retrobios-backup beside the folder written to. The run
+    folder is named by date and time, so a second run never mixes with the
+    first, and copying its contents into the holder's parent puts every file
+    back where it was. Only when nothing can be written beside the folder
+    (a drive root, a read-only parent) does the holder go inside it, with
+    no folder name, and the same copy puts the files back.
+    """
+
+    def __init__(self) -> None:
+        self._lock = threading.Lock()
+        self.stamp = ""
+        # Holder -> the run folder this run created in it.
+        self._runs: dict[Path, Path] = {}
+        # Run folder -> [files, bytes] kept (or, under --dry-run, to keep).
+        self.counts: dict[Path, list[int]] = {}
+
+    def reset(self) -> None:
+        with self._lock:
+            self.stamp = ""
+            self._runs.clear()
+            self.counts.clear()
+
+    def _stamp(self) -> str:
+        if not self.stamp:
+            self.stamp = time.strftime("%Y%m%d-%H%M%S")
+        return self.stamp
+
+    @staticmethod
+    def _holders(folder: Path) -> list[tuple[Path, str]]:
+        beside = [(folder.parent / BACKUP_DIR, folder.name)] if (
+            folder.name and folder.parent != folder) else []
+        return beside + [(folder / BACKUP_DIR, "")]
+
+    def place(self, folder: Path, create: bool) -> tuple[Path, Path]:
+        """(run folder, folder the relative path goes under) for files of folder."""
+        with self._lock:
+            stamp = self._stamp()
+            failure: OSError | None = None
+            for holder, prefix in self._holders(folder):
+                if not create:
+                    return holder / stamp, holder / stamp / prefix
+                run = self._runs.get(holder)
+                if run is None:
+                    try:
+                        holder.mkdir(parents=True, exist_ok=True)
+                        for n in range(1, 1000):
+                            run = holder / (stamp if n == 1 else f"{stamp}-{n}")
+                            try:
+                                run.mkdir()
+                                break
+                            except FileExistsError:
+                                continue
+                    except OSError as exc:
+                        failure = exc
+                        continue
+                    self._runs[holder] = run
+                return run, run / prefix
+            raise failure or OSError(errno.EEXIST, "no backup folder name left")
+
+    def plan(self, folder: Path, size: int) -> Path:
+        """Count a file a real run would keep, writing nothing. Returns its run folder."""
+        run, _under = self.place(folder, create=False)
+        with self._lock:
+            tally = self.counts.setdefault(run, [0, 0])
+            tally[0] += 1
+            tally[1] += size
+        return run
+
+    def keep(
+        self, folder: Path, rel: PurePosixPath, dest: Path,
+        expected: dict[str, str], fresh: Path | None = None,
+    ) -> None:
+        """Move the file at dest aside when its content is not the one coming.
+
+        Nothing is done for a missing file, a link (its target is not
+        touched by the replace) or a file already holding the content, by
+        the manifest's hashes or, without them, byte for byte against the
+        fresh copy. Raises _NotKept when the file could not be set aside:
+        the replace must not happen then.
+        """
+        try:
+            info = os.lstat(dest)
+        except FileNotFoundError:
+            return
+        except OSError as exc:
+            raise _NotKept(exc.strerror or str(exc)) from exc
+        if not stat.S_ISREG(info.st_mode):
+            return
+        try:
+            if expected:
+                same = _digest_file(dest, tuple(expected)) == expected
+            else:
+                same = fresh is not None and _same_bytes(dest, fresh)
+        except FileNotFoundError:
+            return  # another run replaced it meanwhile
+        except OSError as exc:
+            raise _NotKept(exc.strerror or str(exc)) from exc
+        if same:
+            return
+        try:
+            run, under = self.place(folder, create=True)
+            kept = under / Path(*rel.parts)
+            if os.path.lexists(kept):
+                # This run kept the user's file at that path already: the
+                # one in place now is one this run wrote.
+                return
+            kept.parent.mkdir(parents=True, exist_ok=True)
+            _move_aside(dest, kept)
+        except FileNotFoundError:
+            if not os.path.lexists(dest):
+                return  # another run moved or replaced it meanwhile
+            raise _NotKept("the backup folder could not be written") from None
+        except OSError as exc:
+            raise _NotKept(exc.strerror or str(exc)) from exc
+        with self._lock:
+            tally = self.counts.setdefault(run, [0, 0])
+            tally[0] += 1
+            tally[1] += info.st_size
+
+    def summary(self) -> list[dict]:
+        """[{folder, files, bytes}], one per run folder, for the report and events."""
+        with self._lock:
+            return [{"folder": str(run), "files": files, "bytes": size}
+                    for run, (files, size) in sorted(self.counts.items())]
+
+
+KEPT = KeptFiles()
+
+
+def _same_bytes(a: Path, b: Path) -> bool:
+    if a.stat().st_size != b.stat().st_size:
+        return False
+    return _digest_file(a, ("sha1",)) == _digest_file(b, ("sha1",))
+
+
+def _move_aside(dest: Path, kept: Path) -> None:
+    """Move dest to kept: a rename on one drive, else a copy then a delete.
+
+    The copy goes under a temporary name first, so an interrupted copy
+    never leaves a cut file under the kept name, and dest is only deleted
+    once its copy is whole.
+    """
+    try:
+        os.rename(dest, kept)
+        return
+    except OSError:
+        if not dest.is_file():
+            raise
+    scratch = kept.parent / f".{kept.name}.part"
+    try:
+        shutil.copy2(dest, scratch)
+        os.replace(scratch, kept)
+    except OSError:
+        if os.path.lexists(scratch):
+            os.unlink(scratch)
+        raise
+    dest.unlink()
+
+
+def _kept_slot(root: Path, value: object) -> tuple[Path, PurePosixPath]:
+    """The folder a manifest destination is written in, and its path below
+    it, as _destination_path places it: a RetroDECK folder moved elsewhere
+    is its own folder."""
+    relative = _safe_relative_path(value, "dest")
+    moved = _MOVED_FOLDERS.get(root, {})
+    if len(relative.parts) > 1 and relative.parts[0] in moved:
+        return moved[relative.parts[0]].resolve(), PurePosixPath(*relative.parts[1:])
+    return root.resolve(), relative
+
+
+def plan_kept(entries: list[dict], root: Path) -> dict[Path, list[int]]:
+    """Count, under --dry-run, the files in place a real run would keep.
+
+    entries are files whose content check failed. Returns {run folder:
+    [files, bytes]} for these entries, also counted in KEPT for the summary.
+    """
+    planned: dict[Path, list[int]] = {}
+    for entry in entries:
+        try:
+            dest = _destination_path(root, entry["dest"])
+            info = os.lstat(dest)
+        except (OSError, ValueError):
+            continue
+        if stat.S_ISREG(info.st_mode):
+            run = KEPT.plan(_kept_slot(root, entry["dest"])[0], info.st_size)
+            tally = planned.setdefault(run, [0, 0])
+            tally[0] += 1
+            tally[1] += info.st_size
+    return planned
+
+
+def _kept_lines() -> list[str]:
+    """Where the files this run replaced are, and how to put them back."""
+    lines = []
+    for item in KEPT.summary():
+        folder = Path(item["folder"])
+        lines.append(f"Kept {_plural(item['files'], 'file')} you had "
+                     f"({format_size(item['bytes'])}), which the collection's "
+                     f"copies replaced, in {folder}")
+        lines.append(f"  To put them back: {_INVOCATION.launcher()} --restore "
+                     f"{_INVOCATION.word(str(folder))}")
+    return lines
+
+
+def restore_kept(run: Path, dry_run: bool = False) -> int:
+    """Put every file of a backup run folder back where it was.
+
+    run is a <holder>/<date-time> folder a run wrote, its holder named
+    retrobios-backup. Each file goes to the same path below the holder's
+    parent, replacing what is there. The backup is left in place. Returns
+    the exit code: 0 when every file went back, 1 when one failed, 2 when
+    the folder is no backup.
+    """
+    run = Path(os.path.abspath(os.path.expanduser(str(run))))
+    if not run.is_dir() or run.parent.name != BACKUP_DIR:
+        print(f"Error: {run} is not a folder the installer kept files in.", file=sys.stderr)
+        print(f"  Name one of the dated folders inside a {BACKUP_DIR} folder, as the "
+              "end of the install printed it.", file=sys.stderr)
+        return 2
+    root = run.parent.parent
+    files = sorted(
+        path for path in run.rglob("*")
+        if path.is_file() and not path.is_symlink()
+        and not (path.name.startswith(".") and path.name.endswith(".part"))
+    )
+    if not files:
+        print(f"{run} holds no file. Nothing to put back.")
+        return 0
+    restored = size = failed = 0
+    for src in files:
+        dest = root / src.relative_to(run)
+        if dry_run:
+            print(f"  would put back {dest}")
+            restored += 1
+            size += src.stat().st_size
+            continue
+        try:
+            dest.parent.mkdir(parents=True, exist_ok=True)
+            _clear_read_only(dest)
+            _replace_with_copy(src, dest)
+        except OSError as exc:
+            print(f"  failed: {dest} ({exc.strerror or exc})", file=sys.stderr)
+            failed += 1
+            continue
+        restored += 1
+        size += src.stat().st_size
+    if dry_run:
+        print(f"\nWould put back {_plural(restored, 'file')} ({format_size(size)}) "
+              f"under {root}. Nothing was written.")
+        return 0
+    print(f"\nPut back {_plural(restored, 'file')} ({format_size(size)}) under {root}.")
+    if failed:
+        print(f"{_plural(failed, 'file')} could not be put back.", file=sys.stderr)
+    print(f"The copies are still in {run}. Delete that folder once you no longer need it.")
+    return 1 if failed else 0
+
+
 def _download_one(
     f: dict, bios_path: Path, verbose: bool = False,
     progress: Progress | None = None,
@@ -3558,6 +3833,9 @@ def _download_one(
             # written with sudo has to stay readable by the emulator's user.
             os.chmod(tmp_path, (0o777 if f.get("executable") else 0o666) & ~_UMASK)
             _clear_read_only(dest)
+            # The file in place, a personal dump or another revision, is
+            # moved aside first: replaced, it was gone for good.
+            KEPT.keep(*_kept_slot(bios_path, f["dest"]), dest, expected, tmp_path)
             if partial is not None and _NO_RENAME_WHILE_OPEN:
                 # Windows renames no open file. Elsewhere the lock is held
                 # until the copy has its final name.
@@ -3576,6 +3854,12 @@ def _download_one(
             if tmp_path is not None and partial is None and tmp_path.exists():
                 tmp_path.unlink()
             return f["dest"], False, "stopped"
+
+        except _NotKept as exc:
+            # No attempt changes it, and the file in place stays as it is.
+            if partial is None and tmp_path is not None and tmp_path.exists():
+                tmp_path.unlink()
+            return f["dest"], False, f"{NOT_KEPT} ({exc})"
 
         except _Corrupt:
             if verbose:
@@ -3800,6 +4084,9 @@ def _write_refused(exc: OSError) -> bool:
 # and whose attribute could not be cleared: replacing it is refused while its
 # folder stays writable.
 READ_ONLY = "file in place is read-only"
+# A file in place whose content differs, which could not be moved aside: it
+# is left as it is rather than lost.
+NOT_KEPT = "file in place could not be kept aside"
 
 
 def _clear_read_only(dest: Path) -> None:
@@ -4046,8 +4333,11 @@ def _report_outcome(
               "as answered.")
         print(f"{_plural(up_to_date, 'file')} already up to date at {_locations(paths)}.")
         return
+    kept = _kept_lines()
     if interrupted:
         print(f"\nStopped. {_plural(downloaded, 'file')} installed.")
+        for line in kept:
+            print(line)
         print("Run the same command again to carry on from here. Nothing is lost.")
         sys.exit(130)
 
@@ -4080,7 +4370,7 @@ def _report_outcome(
             print(f"Destination: {_locations(paths)}")
         else:
             print(f"Location that was being written to: {_locations(paths)}")
-        for line in advice:
+        for line in kept + advice:
             print(line)
         print("Run the same command again once that is resolved. "
               "Files already installed are kept.")
@@ -4090,7 +4380,7 @@ def _report_outcome(
         print(f"\nFinished with errors. {_plural(downloaded, 'file')} installed, "
               f"{_plural(errors, 'file')} failed.")
         print(f"Location: {_locations(paths)}")
-        for line in advice:
+        for line in kept + advice:
             print(line)
         print("Run the same command again to retry only those.")
         sys.exit(1)
@@ -4098,6 +4388,8 @@ def _report_outcome(
     print(f"\nDone. {_plural(downloaded, 'file')} installed, "
           f"{_plural(up_to_date, 'file')} already up to date.")
     print(f"Location: {_locations(paths)}")
+    for line in kept:
+        print(line)
     if omitted:
         for line in _omission_lines(omitted, omitted_entries or []):
             print(line)
@@ -4188,6 +4480,7 @@ def _confirm(prompt: str) -> bool:
 def _print_plan(
     to_download: list[dict], bios_path: Path, term: Terminal,
     trees: list[tuple[dict, dict[str, dict]]] = (),
+    kept: dict[Path, list[int]] | None = None,
 ) -> None:
     """What a real run would fetch, by system, and nothing written.
 
@@ -4222,6 +4515,9 @@ def _print_plan(
     for entry, needed in trees:
         print(f"  {term.bold(entry['ref'] + ' data')}  {_sized(list(needed.values()))}, "
               f"from {entry['url']}")
+    for folder, (count, size) in sorted((kept or {}).items()):
+        print(f"\n  Would keep {_plural(count, 'file')} you have ({format_size(size)}), "
+              f"whose contents differ, in {folder}")
     print("\n  Nothing was written. Run without --dry-run to install.")
 
 
@@ -4412,11 +4708,13 @@ def install_data_directory(entry: dict, bios_path: Path) -> dict:
     """Rebuild one data tree from its source archive, file by file verified.
 
     Returns counts: present, installed, changed (the source no longer holds
-    the recorded bytes), absent (not in the archive), and error, the reason
-    the archive could not be read.
+    the recorded bytes), absent (not in the archive), error, the reason
+    the archive could not be read, and not_kept, the (path, reason) of each
+    file in place that differs and could not be moved aside, left as it is.
     """
     root, needed, present = data_directory_state(entry, bios_path)
-    counts = {"present": present, "installed": 0, "changed": 0, "absent": 0, "error": ""}
+    counts = {"present": present, "installed": 0, "changed": 0, "absent": 0, "error": "",
+              "not_kept": []}
     if not needed:
         return counts
     try:
@@ -4450,6 +4748,14 @@ def install_data_directory(entry: dict, bios_path: Path) -> dict:
                         size += len(chunk)
                         out.write(chunk)
                 if digest.hexdigest() == meta["sha1"] and size == meta["size"]:
+                    slot = f"{entry['dest']}/{rel}" if entry.get("dest") else rel
+                    try:
+                        KEPT.keep(*_kept_slot(bios_path, slot), target,
+                                  {"sha1": meta["sha1"]})
+                    except _NotKept as exc:
+                        Path(out.name).unlink(missing_ok=True)
+                        counts["not_kept"].append((rel, str(exc)))
+                        continue
                     os.replace(out.name, target)
                     counts["installed"] += 1
                 else:
@@ -4596,7 +4902,7 @@ def _install_standalone_folders(
             pending += len(to_download)
             continue
         if args.dry_run:
-            _print_plan(to_download, folder, term)
+            _print_plan(to_download, folder, term, kept=plan_kept(mismatched, folder))
             continue
         if not to_download:
             print("  All files up to date.")
@@ -4618,7 +4924,8 @@ def _install_standalone_folders(
     if args.check:
         if pending:
             print("\n  Run the same command without --check to fetch them; "
-                  "a file with a wrong hash is replaced.")
+                  "a file with a wrong hash is replaced, and the one in place "
+                  f"kept in {BACKUP_DIR} beside its folder.")
             sys.exit(1)
         return True
     if args.dry_run:
@@ -4679,9 +4986,12 @@ def do_standalone_copies(
             continue
 
         if "pattern" in entry:
+            # A kept file is never a source, when the backup had to go
+            # inside the BIOS folder.
             sources = [
                 f for f in bios_path.rglob("*")
                 if fnmatch(f.name, entry["pattern"]) and f.is_file()
+                and BACKUP_DIR not in f.relative_to(bios_path).parts
             ]
         else:
             # `source` is where this platform's manifest put the file, and `file`
@@ -4707,6 +5017,14 @@ def do_standalone_copies(
                     failed += 1
                     if failures is not None:
                         failures.append((str(dest), OUTSIDE_TARGET))
+                    continue
+                try:
+                    KEPT.keep(resolved_dir, PurePosixPath(src.name), dest, {}, src)
+                except _NotKept as exc:
+                    print(f"  ERROR: {dest}: {NOT_KEPT} ({exc})")
+                    failed += 1
+                    if failures is not None:
+                        failures.append((str(dest), f"{NOT_KEPT} ({exc})"))
                     continue
                 try:
                     if linked:
@@ -5437,6 +5755,13 @@ def main() -> None:
              "usual text on stderr (implies --no-input)",
     )
     parser.add_argument(
+        "--restore",
+        type=Path,
+        metavar="FOLDER",
+        help=f"put back the files an earlier run replaced and kept in FOLDER "
+             f"(a dated folder inside {BACKUP_DIR})",
+    )
+    parser.add_argument(
         "--version",
         action="version",
         version=f"retrobios installer {installer_id()} (ref {RELEASE_REF})",
@@ -5464,6 +5789,20 @@ def main() -> None:
         or args.list_systems or args.list_cores or args.list_emulators
     ):
         parser.error("--quiet applies to an install, not to --check, --dry-run or a listing")
+    if args.restore is not None:
+        # The folder says where each file goes: nothing else applies.
+        alone = ("platform", "dest", "target", "every_board", "check", "list_platforms",
+                 "list_targets", "standalone_copies", "emulator", "installed_cores",
+                 "cores_dir", "system", "core", "region", "no_game_data", "list_systems",
+                 "list_cores", "romm_firmware", "list_emulators", "events", "quiet",
+                 "yes", "verbose")
+        given = [name for name in alone if getattr(args, name)]
+        if args.jobs != 8:
+            given.append("jobs")
+        if given:
+            parser.error("--restore puts files back from a folder and takes no "
+                         f"--{given[0].replace('_', '-')}")
+        sys.exit(restore_kept(args.restore, args.dry_run))
     if args.every_board and args.target:
         parser.error("--every-board installs every board; --target names one")
     if args.no_game_data and (args.list_platforms or args.list_targets):
@@ -5635,6 +5974,7 @@ def _unknown_target(target: str, plat: str, targets: dict) -> None:
 
 def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
     """One run of the installer, once the options are read."""
+    KEPT.reset()
     term = Terminal(real_stdout, quiet=args.quiet)
     interactive = sys.stdin.isatty() and not args.no_input and not args.quiet
     listing = (args.list_targets or args.list_systems or args.list_cores
@@ -6106,7 +6446,8 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                     print(f"    ... and {len(missing) - len(shown)} more missing "
                           "(--verbose lists them all)")
                 print("  Run the same command without --check to fetch them; "
-                      "a file with a wrong hash is replaced.")
+                      "a file with a wrong hash is replaced, and the one in place "
+                      f"kept in {BACKUP_DIR} beside the BIOS folder.")
                 check_pending += len(to_download)
             else:
                 print("\n  All files up to date.")
@@ -6128,9 +6469,13 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
 
         if args.dry_run:
             files_pending += len(to_download)
-            _print_plan(to_download, bios_path, term, [
-                (entry, data_directory_state(entry, bios_path)[1]) for entry in data_dirs
-            ])
+            trees = [(entry, data_directory_state(entry, bios_path)[1]) for entry in data_dirs]
+            # A data file in place with other contents is kept like a BIOS file.
+            kept = plan_kept(mismatched + [
+                {"dest": f"{entry['dest']}/{rel}" if entry.get("dest") else rel}
+                for entry, needed in trees for rel in needed
+            ], bios_path)
+            _print_plan(to_download, bios_path, term, trees, kept)
             continue
 
         if to_download:
@@ -6212,6 +6557,10 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                           f"{counts['error']}", file=sys.stderr)
                     failures.append((entry["ref"], counts["error"]))
                     total_errors += 1
+                for rel, reason in counts["not_kept"]:
+                    where = f"{entry['dest']}/{rel}" if entry.get("dest") else rel
+                    failures.append((where, f"{NOT_KEPT} ({reason})"))
+                    total_errors += 1
 
         # Standalone copies
         if (
@@ -6253,7 +6602,7 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
             pending=check_pending if args.check else files_pending,
             failed=[{"dest": dest, "reason": str(reason)} for dest, reason in failures],
             skipped=_skipped(omitted_seen), left_out=_left_out_events(left_out_seen),
-            interrupted=total_interrupted,
+            kept=KEPT.summary(), interrupted=total_interrupted,
         )
     # A check scripted as `--check && launch` reads the exit code only.
     if args.check and check_pending:
