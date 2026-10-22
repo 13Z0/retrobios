@@ -1,0 +1,82 @@
+emulator: "Bermuda Syndrome (bs)"
+type: standalone
+core_classification: game_engine
+source: "https://github.com/cyxx/bermuda"
+profiled_date: "2026-10-22"
+source_commit: "cf6bdb68d53a1618967da565a44c931b15daf791"
+core_version: "0.1.7"
+display_name: "Bermuda Syndrome (bs)"
+cores:
+  - "bs"
+systems: [bermuda-syndrome]
+
+notes: |
+  Gregory Montoir's rewrite of the Bermuda Syndrome engine (Century
+  Interactive, 1995), reversed from the Windows executable. It plays the
+  retail and demo data. EmuELEC builds this revision as bs and starts it with
+  --datapath=/storage/roms/ports/bermuda/ from that same directory.
+  ref: README.TXT:9-14, main.cpp:17-19,
+       EmuELEC packages/sx05re/emuelec-ports/bermuda/package.mk:4-5,
+       EmuELEC packages/sx05re/emuelec-ports/sources/ports.yaml:25-36
+
+  The data directory is walked recursively at start and every name is matched
+  case-insensitively against that list. A path from the scripts starting with
+  ..\ is taken from the data root, any other from SCN/. A single file starting
+  with -rom1fs- is read as a romfs image of the same tree.
+  ref: fs.cpp:40-52, fs.cpp:96-121, fs.cpp:237-321
+
+  The release is told from its first scene: -00.SCN marks the demo, -01.SCN
+  the German release and _01.SCN the French and English ones. None found stops
+  the engine. The demo skips bermuda.ovr.
+  ref: game.cpp:67-84, resource.cpp:44-49
+
+  Music: each MIDI cue is replaced by track<NN>.ogg in the music directory
+  (MUSIC by default, EmuELEC passes none) when that file exists, the CD
+  soundtrack ripped to 22 kHz Vorbis, else the .mid from the data. Videos
+  under DATA/ are skipped when absent. Korean text is drawn with BT16.TBM,
+  the Hangul bitmap font of Windows 3.x, read from the working directory and
+  checked for its signature.
+  ref: game.cpp:1108-1156, game.cpp:1078-1095, resource.cpp:461-478,
+       game.cpp:27-31
+
+files:
+  - name: "_01.SCN"
+    aliases: ["-01.SCN", "-00.SCN"]
+    path: "SCN/_01.SCN"
+    category: game_data
+    system: bermuda-syndrome
+    required: true
+    description: "First scene of the retail release (French, English), -01.SCN for the German one, -00.SCN for the demo"
+    source_ref: "game.cpp:67-84, fs.cpp:237-260"
+
+  - name: "bermuda.wgp"
+    category: game_data
+    system: bermuda-syndrome
+    required: true
+    description: "Bag and status bar bitmaps"
+    note: "Opened at the root of the data directory, and a missing file stops the engine."
+    source_ref: "resource.cpp:51, resource.cpp:130-138"
+
+  - name: "bermuda.spr"
+    category: game_data
+    system: bermuda-syndrome
+    required: true
+    description: "Common sprites"
+    source_ref: "resource.cpp:60-65"
+
+  - name: "bermuda.ovr"
+    category: game_data
+    system: bermuda-syndrome
+    required: false
+    description: "Overlay data of the retail release"
+    note: "Read unless the data is the demo, which has no such file."
+    source_ref: "resource.cpp:44-49"
+
+  - name: "BT16.TBM"
+    category: game_data
+    system: bermuda-syndrome
+    required: false
+    size: 330328
+    description: "Windows 3.x Hangul bitmap font"
+    note: "Loaded only when the dialogue text is CP949, the Korean release. Must start with \"TTBITMAP VARIABLE-PITCH HANGEUL\" and carry 16x16 glyphs."
+    source_ref: "game.cpp:27-31, resource.cpp:461-478"

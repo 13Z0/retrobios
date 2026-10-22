@@ -1,0 +1,130 @@
+emulator: "hode"
+type: standalone
+core_classification: game_engine
+source: "https://github.com/usineur/hode"
+profiled_date: "2026-10-22"
+source_commit: "59f3c466923c6b8d49e29176ff697a91165e7efc"
+core_version: "0.2.9f"
+display_name: "Heart of Darkness (hode)"
+cores:
+  - "hode"
+systems: [heart-of-darkness]
+
+notes: |
+  Gregory Montoir's reimplementation of the Heart of Darkness engine (Amazing
+  Studio, 1998), in usineur's fork with the SDL2, PSP and Wii front ends. It
+  plays the Windows demo and CD data and the PlayStation data. EmuELEC builds
+  this revision and starts it with --datapath and --savepath both set to
+  /storage/roms/ports/hode/.
+  ref: README.txt:9-23,
+       EmuELEC packages/sx05re/emuelec-ports/hodesdl/package.mk:2-5,
+       EmuELEC packages/sx05re/emuelec-ports/sources/ports.yaml:272-283
+
+  The data directory is walked at start for files ending in hod.dem,
+  setup.dat, setup.dax, .paf, _hod.lvl, _hod.sss or _hod.mst, and a name is
+  then matched case-insensitively against that list. A missing rock_hod.lvl
+  stops the version probe, and a missing fort_hod.lvl marks the data as the
+  demo, which plays the first level only.
+  ref: fs_posix.cpp:9-29, fs_posix.cpp:43-54, resource.cpp:28-39,
+       resource.cpp:100-136
+
+  Each level opens <name>_HOD.LVL, and a missing one stops the engine with
+  "Unable to open". Its .MST (monster logic) and .SSS (sounds) are optional:
+  a missing one is logged and left empty, and the PlayStation data carries
+  the sounds inside the .LVL. The cutscenes come from the first of hod.paf,
+  hod_demo.paf, hod_demo2.paf and hod_oem.paf found, and are skipped
+  without one. hode.ini, read from the working directory, holds display and
+  engine settings, setup.cfg the menu settings and progress.
+  ref: resource.cpp:308-343, paf.cpp:11-30, main.cpp:31, main.cpp:129-135,
+       resource.cpp:21
+
+files:
+  - name: "setup.dat"
+    aliases: ["SETUP.DAX"]
+    category: game_data
+    system: heart-of-darkness
+    required: true
+    description: "Menus, icons, fonts and level checkpoints (SETUP.DAX on the PlayStation disc)"
+    note: "SETUP.DAX is tried when setup.dat is absent and selects the PlayStation data. A header version other than 10 or 11 is refused."
+    source_ref: "resource.cpp:23-24, resource.cpp:178-187"
+
+  - name: "hod.paf"
+    aliases: ["hod_demo.paf", "hod_demo2.paf", "hod_oem.paf"]
+    category: game_data
+    system: heart-of-darkness
+    required: false
+    description: "Cutscene videos"
+    note: "The first of the four names found is used, and cutscenes are skipped without any."
+    source_ref: "paf.cpp:11-30"
+
+  - name: "rock_hod.lvl"
+    category: game_data
+    system: heart-of-darkness
+    required: true
+    description: "Level 1 data (canyon of death)"
+    note: "Read at the first level, and the version probe reads its header."
+    source_ref: "resource.cpp:28-39, resource.cpp:308-319"
+
+  - name: "fort_hod.lvl"
+    category: game_data
+    system: heart-of-darkness
+    required: false
+    description: "Level 2 data (swamp lands)"
+    note: "Its presence tells the full game from the demo. The engine stops with \"Unable to open\" on reaching this level without it."
+    source_ref: "resource.cpp:28-39, resource.cpp:308-319"
+
+  - name: "pwr1_hod.lvl"
+    category: game_data
+    system: heart-of-darkness
+    required: false
+    description: "Level 3 data (magic lake)"
+    note: "The engine stops with \"Unable to open\" on reaching this level without it."
+    source_ref: "resource.cpp:28-39, resource.cpp:308-319"
+
+  - name: "isld_hod.lvl"
+    category: game_data
+    system: heart-of-darkness
+    required: false
+    description: "Level 4 data (space island)"
+    note: "The engine stops with \"Unable to open\" on reaching this level without it."
+    source_ref: "resource.cpp:28-39, resource.cpp:308-319"
+
+  - name: "lava_hod.lvl"
+    category: game_data
+    system: heart-of-darkness
+    required: false
+    description: "Level 5 data (river of fire)"
+    note: "The engine stops with \"Unable to open\" on reaching this level without it."
+    source_ref: "resource.cpp:28-39, resource.cpp:308-319"
+
+  - name: "pwr2_hod.lvl"
+    category: game_data
+    system: heart-of-darkness
+    required: false
+    description: "Level 6 data (caverns of doom)"
+    note: "The engine stops with \"Unable to open\" on reaching this level without it."
+    source_ref: "resource.cpp:28-39, resource.cpp:308-319"
+
+  - name: "lar1_hod.lvl"
+    category: game_data
+    system: heart-of-darkness
+    required: false
+    description: "Level 7 data (into the lair)"
+    note: "The engine stops with \"Unable to open\" on reaching this level without it."
+    source_ref: "resource.cpp:28-39, resource.cpp:308-319"
+
+  - name: "lar2_hod.lvl"
+    category: game_data
+    system: heart-of-darkness
+    required: false
+    description: "Level 8 data (heart of darkness)"
+    note: "The engine stops with \"Unable to open\" on reaching this level without it."
+    source_ref: "resource.cpp:28-39, resource.cpp:308-319"
+
+  - name: "dark_hod.lvl"
+    category: game_data
+    system: heart-of-darkness
+    required: false
+    description: "Level 9 data"
+    note: "The engine stops with \"Unable to open\" on reaching this level without it."
+    source_ref: "resource.cpp:28-39, resource.cpp:308-319"

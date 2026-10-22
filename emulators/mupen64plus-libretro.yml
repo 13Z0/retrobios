@@ -1,0 +1,48 @@
+emulator: "Mupen64Plus (libretro, 2019)"
+type: libretro
+core_classification: frozen_snapshot
+source: "https://github.com/libretro/mupen64plus-libretro"
+upstream: "https://github.com/libretro/mupen64plus-libretro"
+profiled_date: "2026-10-22"
+source_commit: "ab8134ac90a567581df6de4fc427dd67bfad1b17"
+core_version: "2.5"
+display_name: "Nintendo - Nintendo 64 (Mupen64Plus 2019)"
+cores:
+  - "mupen64plus_32b"
+built_by: [emuelec]
+systems:
+  - nintendo-64
+
+notes: |
+  The libretro Mupen64Plus core before Mupen64Plus-Next replaced it, with
+  GLideN64, the cxd4 and hle RSP plugins and a vendored mupen64plus-core in one
+  library. The repository is archived and its master stops at this commit.
+  EmuELEC builds it for its 32-bit ARM devices and installs the library as
+  mupen64plus_32b_libretro.so.
+  ref: EmuELEC packages/sx05re/libretro/mupen64plus/package.mk:21-27,72-75
+
+  The core opens no BIOS or firmware. Cartridge boot is simulated: the soft
+  reset fills the registers and the RSP memory the CIC x105 check expects and
+  jumps straight to IPL3. .ndd is among the accepted extensions, but the
+  vendored core carries no 64DD device and asks for no IPL.
+  ref: libretro/libretro.c:348, mupen64plus-core/src/r4300/r4300.c:106-159
+
+  Every shared data lookup lands in <system>/Mupen64plus/. On init the core
+  creates that directory and writes the ROM database it carries compiled in
+  over mupen64plus.ini there, then reads it back, so the file is never
+  obtained. GLideN64 applies its compiled-in per ROM overrides, then those of a
+  GLideN64.custom.ini in the same directory if one exists. Hi-res texture
+  packs are read from the hires_texture directory under it when the
+  txHiresEnable option is on. Neither has a canonical artifact.
+  ref: custom/mupen64plus-core/api/config.c:1288-1300, libretro/libretro.c:369-395,
+       mupen64plus-core/src/main/rom.c:399-408,
+       custom/GLideN64/mupenplus/Config_mupenplus.cpp:33-47,
+       custom/GLideN64/mupenplus/Config_mupenplus.cpp:158-159,
+       custom/GLideN64/mupenplus/CommonAPIImpl_mupenplus.cpp:52-66,
+       GLideN64/src/Config.cpp:92-94
+
+  cxd4's rsp_conf.bin is read only by the zilmar variant of update_conf, behind
+  #if !defined(M64P_PLUGIN_API), and the Makefile defines that macro.
+  ref: custom/mupen64plus-rsp-cxd4/module.c:358-380, Makefile:378
+
+files: []

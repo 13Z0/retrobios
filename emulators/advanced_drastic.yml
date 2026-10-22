@@ -1,0 +1,147 @@
+emulator: "advanced_drastic"
+type: standalone
+core_classification: enhanced_fork
+source: "https://github.com/trngaje/advanced_drastic"
+upstream: closed-source
+author: "trngaje (hooks), Exophase (DraStic)"
+profiled_date: "2026-10-22"
+source_commit: "eaf41ab9bc8adcc15c010bf9517bc94c38e7bffd"
+core_version: "r2.5.2.0"
+display_name: "Nintendo - DS (advanced_drastic)"
+cores:
+  - "advanced_drastic"
+systems:
+  - nintendo-ds
+mode: standalone
+
+notes: |
+  trngaje's package around the closed-source 64-bit Linux DraStic, whose
+  screen output, input and settings menu it replaces through a hooked SDL2
+  build (trngaje/SDL_drastic) and the drastic_layout library. The repository
+  carries the DraStic binary itself, md5 59a7711eff41c640b8861b4d869c747d,
+  which announces "Version r2.5.2.0", together with its system, config,
+  resources and microphone directories, game_database.xml and usrcheat.dat.
+  launch.sh changes to its own directory and runs ./drastic on the content.
+  ref: README.md:1-12, launch.sh:1-9, drastic r2.5.2.0 0x135990
+
+  KNULLI builds this revision, installs the whole tree under
+  /usr/share/advanced_drastic, copies it to
+  /userdata/system/configs/advanced_drastic on first launch or after a board
+  change, then starts launch.sh from there. The copy includes the Nintendo
+  BIOS and firmware images the repository ships, so the platform installs
+  them with the emulator.
+  ref: KNULLI package/emulators/advanced_drastic/advanced_drastic.mk:7-14,
+       KNULLI package/system/knulli-configgen/configgen/configgen/generators/advanced_drastic/advanced_drasticGenerator.py:30-50,156-158
+
+  The binary names the same system files as DraStic r2.5.2.2: each BIOS slot
+  takes the Nintendo image, then the free DraStic one ("Can't find Nintendo
+  ARM9 BIOS. Trying free DraStic ARM9 BIOS."), the firmware is
+  nds_firmware.bin alone, a file of the wrong length is refused with "System
+  file %s is the wrong size", and an empty slot ends in "FATAL: Could not load
+  system files." It carries neither the firmware editor's
+  nds_firmware_modified.bin nor game_database_user.xml. The root also serves
+  game_database.xml, usrcheat.dat, microphone/<game>.wav then
+  microphone/microphone.wav, drastic_dldi.img for homebrew and the
+  drastic_logo_<n>.raw splash.
+  ref: drastic r2.5.2.0 0x131018-0x1310f8, drastic r2.5.2.0 0x12fa18,
+       drastic r2.5.2.0 0x12fce0, drastic r2.5.2.0 0x132128-0x132260,
+       drastic r2.5.2.0 0x132a90-0x132aa8, drastic r2.5.2.0 0x1359b8
+
+files:
+  - name: nds_bios_arm9.bin
+    path: system/nds_bios_arm9.bin
+    system: nintendo-ds
+    required: false
+    bundled: true
+    size: 4096
+    sha1: "bfaac75f101c135e32e2aaf541de6b1be4c8c62d"
+    md5: "a392174eb3e572fed6447e956bde4b25"
+    validation: [size]
+    description: "Nintendo DS ARM9 BIOS"
+    note: "First candidate for the ARM9 slot, before the free replacement. The hashes are those of the copy the repository ships."
+    source_ref: "drastic r2.5.2.0 0x131018, drastic r2.5.2.0 0x12fa18, drastic r2.5.2.0 0x135a5a"
+
+  - name: drastic_bios_arm9.bin
+    sha1: 4dc29a1560e1cbd7afef1998f7a6c25c5db1cc3a
+    md5: 5f34f9f6108f8d57fc26789b7a7ecf82
+    path: system/drastic_bios_arm9.bin
+    system: nintendo-ds
+    required: false
+    bundled: true
+    size: 4096
+    validation: [size]
+    description: "DraStic free ARM9 BIOS replacement"
+    source_ref: "drastic r2.5.2.0 0x131070"
+
+  - name: nds_bios_arm7.bin
+    path: system/nds_bios_arm7.bin
+    system: nintendo-ds
+    required: false
+    bundled: true
+    size: 16384
+    sha1: "24f67bdea115a2c847c8813a262502ee1607b7df"
+    md5: "df692a80a5b1bc90728bc3dfc76cd948"
+    validation: [size]
+    description: "Nintendo DS ARM7 BIOS"
+    note: "First candidate for the ARM7 slot. The hashes are those of the copy the repository ships."
+    source_ref: "drastic r2.5.2.0 0x131088, drastic r2.5.2.0 0x135a7b"
+
+  - name: drastic_bios_arm7.bin
+    sha1: 31ae916c85d012582c7cdf47de6943ac6778253b
+    md5: c259d5dd2d1a8e1f58eaa26c08efae45
+    path: system/drastic_bios_arm7.bin
+    system: nintendo-ds
+    required: false
+    bundled: true
+    size: 16384
+    validation: [size]
+    description: "DraStic free ARM7 BIOS replacement"
+    source_ref: "drastic r2.5.2.0 0x1310e0"
+
+  - name: nds_firmware.bin
+    path: system/nds_firmware.bin
+    system: nintendo-ds
+    required: false
+    hle_fallback: true
+    bundled: true
+    size: 262144
+    sha1: "87dae2500e889737af51f4a5b5845770a62482f5"
+    md5: "3c704824663ce26b6a1ed4d85238ae5b"
+    validation: [size]
+    description: "Nintendo DS firmware"
+    note: "The hashes are those of the copy the repository ships."
+    source_ref: "drastic r2.5.2.0 0x1310f8"
+
+  - name: game_database.xml
+    path: game_database.xml
+    system: nintendo-ds
+    required: false
+    bundled: true
+    category: game_data
+    size: 1610336
+    sha1: 7b84fef16d1d461a49c197709d174eb1ccd8f88d
+    description: "save type database, one entry per title"
+    source_ref: "drastic r2.5.2.0 0x132a90, drastic r2.5.2.0 0x133468"
+
+  - name: usrcheat.dat
+    path: usrcheat.dat
+    system: nintendo-ds
+    required: false
+    bundled: true
+    category: game_data
+    size: 13739796
+    sha1: 6dd1a5399403f39620061556d61f5c6f6c704219
+    description: "Action Replay cheat library"
+    source_ref: "drastic r2.5.2.0 0x132aa8"
+
+  - name: microphone.wav
+    path: microphone/microphone.wav
+    system: nintendo-ds
+    required: false
+    bundled: true
+    category: game_data
+    size: 1323090
+    sha1: ea9281c65ea39c9d1061a05b8b15d9a44f92918e
+    description: "default fake microphone input"
+    note: "Played when the game asks for the microphone and no microphone/<game>.wav exists."
+    source_ref: "drastic r2.5.2.0 0x132128-0x132190"

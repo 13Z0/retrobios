@@ -1,0 +1,957 @@
+Patch File for DeHackEd v3.0
+
+#
+# French dehacked patch.
+#
+# This is a set of string replacements to convert the normal English
+# strings to those used in the French version of doom2.exe.
+# These strings are found in the Doom source code as d_englsh.h and
+# d_french.h.
+#
+#
+# The following is a magic comment to allow long string replacements
+# in Chocolate Doom:
+#
+# *allow-long-strings*
+#
+
+Text 20 20
+Gamma correction OFFCORRECTION GAMMA OFF
+
+Text 24 25
+Gamma correction level 1CORRECTION GAMMA NIVEAU 1
+
+Text 24 25
+Gamma correction level 2CORRECTION GAMMA NIVEAU 2
+
+Text 24 25
+Gamma correction level 3CORRECTION GAMMA NIVEAU 3
+
+Text 24 25
+Gamma correction level 4CORRECTION GAMMA NIVEAU 4
+
+# Quit messages.
+# Only one quit message was translated (the first in the list here),
+# and the French version of doom2.exe always shows the same message.
+# This is done through a tweak in the source code.  Here, this is
+# simulated by translating every message to the same message.
+
+Text 46 42
+are you sure you want to
+quit this great game?VOUS VOULEZ VRAIMENT
+QUITTER CE SUPER JEU?
+
+Text 49 42
+please don't leave, there's more
+demons to toast!VOUS VOULEZ VRAIMENT
+QUITTER CE SUPER JEU?
+
+Text 50 42
+let's beat it -- this is turning
+into a bloodbath!VOUS VOULEZ VRAIMENT
+QUITTER CE SUPER JEU?
+
+Text 50 42
+i wouldn't leave if i were you.
+dos is much worse.VOUS VOULEZ VRAIMENT
+QUITTER CE SUPER JEU?
+
+Text 56 42
+you're trying to say you like dos
+better than me, right?VOUS VOULEZ VRAIMENT
+QUITTER CE SUPER JEU?
+
+Text 54 42
+don't leave yet -- there's a
+demon around that corner!VOUS VOULEZ VRAIMENT
+QUITTER CE SUPER JEU?
+
+Text 55 42
+ya know, next time you come in here
+i'm gonna toast ya.VOUS VOULEZ VRAIMENT
+QUITTER CE SUPER JEU?
+
+Text 34 42
+go ahead and leave. see if i care.VOUS VOULEZ VRAIMENT
+QUITTER CE SUPER JEU?
+
+Text 46 42
+are you sure you want to
+quit this great game?VOUS VOULEZ VRAIMENT
+QUITTER CE SUPER JEU?
+
+Text 49 42
+you want to quit?
+then, thou hast lost an eighth!VOUS VOULEZ VRAIMENT
+QUITTER CE SUPER JEU?
+
+Text 72 42
+don't go now, there's a 
+dimensional shambler waiting
+at the dos prompt!VOUS VOULEZ VRAIMENT
+QUITTER CE SUPER JEU?
+
+Text 51 42
+get outta here and go back
+to your boring programs.VOUS VOULEZ VRAIMENT
+QUITTER CE SUPER JEU?
+
+Text 53 42
+if i were your boss, i'd 
+ deathmatch ya in a minute!VOUS VOULEZ VRAIMENT
+QUITTER CE SUPER JEU?
+
+Text 57 42
+look, bud. you leave now
+and you forfeit your body count!VOUS VOULEZ VRAIMENT
+QUITTER CE SUPER JEU?
+
+Text 59 42
+just leave. when you come
+back, i'll be waiting with a bat.VOUS VOULEZ VRAIMENT
+QUITTER CE SUPER JEU?
+
+Text 58 42
+you're lucky i don't smack
+you for thinking about leaving.VOUS VOULEZ VRAIMENT
+QUITTER CE SUPER JEU?
+
+Text 440 452
+Once you beat the big badasses and
+clean out the moon base you're supposed
+to win, aren't you? Aren't you? Where's
+your fat reward and ticket home? What
+the hell is this? It's not supposed to
+end this way!
+
+It stinks like rotten meat, but looks
+like the lost Deimos base.  Looks like
+you're stuck on The Shores of Hell.
+The only way out is through.
+
+To continue the DOOM experience, play
+The Shores of Hell and its amazing
+sequel, Inferno!
+APRES AVOIR VAINCU LES GROS MECHANTS
+ET NETTOYE LA BASE LUNAIRE, VOUS AVEZ
+GAGNE, NON? PAS VRAI? OU EST DONC VOTRE
+ RECOMPENSE ET VOTRE BILLET DE
+RETOUR? QU'EST-QUE CA VEUT DIRE?CEN'EST PAS LA FIN ESPEREE!
+
+CA SENT LA VIANDE PUTREFIEE, MAIS
+ON DIRAIT LA BASE DEIMOS. VOUS ETES
+APPAREMMENT BLOQUE AUX PORTES DE L'ENFER.
+LA SEULE ISSUE EST DE L'AUTRE COTE.
+
+POUR VIVRE LA SUITE DE DOOM, JOUEZ
+A 'AUX PORTES DE L'ENFER' ET A
+L'EPISODE SUIVANT, 'L'ENFER'!
+
+Text 466 453
+You've done it! The hideous cyber-
+demon lord that ruled the lost Deimos
+moon base has been slain and you
+are triumphant! But ... where are
+you? You clamber to the edge of the
+moon and look down to see the awful
+truth.
+
+Deimos floats above Hell itself!
+You've never heard of anyone escaping
+from Hell, but you'll make the bastards
+sorry they ever heard of you! Quickly,
+you rappel down to  the surface of
+Hell.
+
+Now, it's on to the final chapter of
+DOOM! -- Inferno.VOUS AVEZ REUSSI. L'INFAME DEMON
+QUI CONTROLAIT LA BASE LUNAIRE DE
+DEIMOS EST MORT, ET VOUS AVEZ
+TRIOMPHE! MAIS... OU ETES-VOUS?
+VOUS GRIMPEZ JUSQU'AU BORD DE LA
+LUNE ET VOUS DECOUVREZ L'ATROCE
+VERITE.
+
+DEIMOS EST AU-DESSUS DE L'ENFER!
+VOUS SAVEZ QUE PERSONNE NE S'EN
+EST JAMAIS ECHAPPE, MAIS CES FUMIERS
+VONT REGRETTER DE VOUS AVOIR CONNU!
+VOUS REDESCENDEZ RAPIDEMENT VERS
+LA SURFACE DE L'ENFER.
+
+VOICI MAINTENANT LE CHAPITRE FINAL DE
+DOOM! -- L'ENFER.
+
+Text 492 521
+The loathsome spiderdemon that
+masterminded the invasion of the moon
+bases and caused so much death has had
+its ass kicked for all time.
+
+A hidden doorway opens and you enter.
+You've proven too tough for Hell to
+contain, and now Hell at last plays
+fair -- for you emerge from the door
+to see the green fields of Earth!
+Home at last.
+
+You wonder what's been happening on
+Earth while you were battling evil
+unleashed. It's good that no Hell-
+spawn could have come through that
+door with you ...LE DEMON ARACHNEEN ET REPUGNANT
+QUI A DIRIGE L'INVASION DES BASES
+LUNAIRES ET SEME LA MORT VIENT DE SE
+FAIRE PULVERISER UNE FOIS POUR TOUTES.
+
+UNE PORTE SECRETE S'OUVRE. VOUS ENTREZ.
+VOUS AVEZ PROUVE QUE VOUS POUVIEZ
+RESISTER AUX HORREURS DE L'ENFER.
+IL SAIT ETRE BEAU JOUEUR, ET LORSQUE
+VOUS SORTEZ, VOUS REVOYEZ LES VERTES
+PRAIRIES DE LA TERRE, VOTRE PLANETE.
+
+VOUS VOUS DEMANDEZ CE QUI S'EST PASSE
+SUR TERRE PENDANT QUE VOUS AVEZ
+COMBATTU LE DEMON. HEUREUSEMENT,
+AUCUN GERME DU MAL N'A FRANCHI
+CETTE PORTE AVEC VOUS...
+
+Text 405 424
+YOU HAVE ENTERED DEEPLY INTO THE INFESTED
+STARPORT. BUT SOMETHING IS WRONG. THE
+MONSTERS HAVE BROUGHT THEIR OWN REALITY
+WITH THEM, AND THE STARPORT'S TECHNOLOGY
+IS BEING SUBVERTED BY THEIR PRESENCE.
+
+AHEAD, YOU SEE AN OUTPOST OF HELL, A
+FORTIFIED ZONE. IF YOU CAN GET PAST IT,
+YOU CAN PENETRATE INTO THE HAUNTED HEART
+OF THE STARBASE AND FIND THE CONTROLLING
+SWITCH WHICH HOLDS EARTH'S POPULATION
+HOSTAGE.VOUS ETES AU PLUS PROFOND DE L'ASTROPORT
+INFESTE DE MONSTRES, MAIS QUELQUE CHOSE
+NE VA PAS. ILS ONT APPORTE LEUR PROPRE
+REALITE, ET LA TECHNOLOGIE DE L'ASTROPORT
+EST AFFECTEE PAR LEUR PRESENCE.
+
+DEVANT VOUS, VOUS VOYEZ UN POSTE AVANCE
+DE L'ENFER, UNE ZONE FORTIFIEE. SI VOUS
+POUVEZ PASSER, VOUS POURREZ PENETRER AU
+COEUR DE LA BASE HANTEE ET TROUVER 
+L'INTERRUPTEUR DE CONTROLE QUI GARDE LA 
+POPULATION DE LA TERRE EN OTAGE.
+
+Text 617 656
+YOU HAVE WON! YOUR VICTORY HAS ENABLED
+HUMANKIND TO EVACUATE EARTH AND ESCAPE
+THE NIGHTMARE.  NOW YOU ARE THE ONLY
+HUMAN LEFT ON THE FACE OF THE PLANET.
+CANNIBAL MUTATIONS, CARNIVOROUS ALIENS,
+AND EVIL SPIRITS ARE YOUR ONLY NEIGHBORS.
+YOU SIT BACK AND WAIT FOR DEATH, CONTENT
+THAT YOU HAVE SAVED YOUR SPECIES.
+
+BUT THEN, EARTH CONTROL BEAMS DOWN A
+MESSAGE FROM SPACE: "SENSORS HAVE LOCATED
+THE SOURCE OF THE ALIEN INVASION. IF YOU
+GO THERE, YOU MAY BE ABLE TO BLOCK THEIR
+ENTRY.  THE ALIEN BASE IS IN THE HEART OF
+YOUR OWN HOME CITY, NOT FAR FROM THE
+STARPORT." SLOWLY AND PAINFULLY YOU GET
+UP AND RETURN TO THE FRAY.VOUS AVEZ GAGNE! VOTRE VICTOIRE A PERMIS
+A L'HUMANITE D'EVACUER LA TERRE ET 
+D'ECHAPPER AU CAUCHEMAR. VOUS ETES 
+MAINTENANT LE DERNIER HUMAIN A LA SURFACE 
+DE LA PLANETE. VOUS ETES ENTOURE DE 
+MUTANTS CANNIBALES, D'EXTRATERRESTRES 
+CARNIVORES ET D'ESPRITS DU MAL. VOUS 
+ATTENDEZ CALMEMENT LA MORT, HEUREUX 
+D'AVOIR PU SAUVER VOTRE RACE.
+MAIS UN MESSAGE VOUS PARVIENT SOUDAIN
+DE L'ESPACE: "NOS CAPTEURS ONT LOCALISE
+LA SOURCE DE L'INVASION EXTRATERRESTRE.
+SI VOUS Y ALLEZ, VOUS POURREZ PEUT-ETRE
+LES ARRETER. LEUR BASE EST SITUEE AU COEUR
+DE VOTRE VILLE NATALE, PRES DE L'ASTROPORT.
+VOUS VOUS RELEVEZ LENTEMENT ET PENIBLEMENT
+ET VOUS REPARTEZ POUR LE FRONT.
+
+Text 312 308
+YOU ARE AT THE CORRUPT HEART OF THE CITY,
+SURROUNDED BY THE CORPSES OF YOUR ENEMIES.
+YOU SEE NO WAY TO DESTROY THE CREATURES'
+ENTRYWAY ON THIS SIDE, SO YOU CLENCH YOUR
+TEETH AND PLUNGE THROUGH IT.
+
+THERE MUST BE A WAY TO CLOSE IT ON THE
+OTHER SIDE. WHAT DO YOU CARE IF YOU'VE
+GOT TO GO THROUGH HELL TO GET TO IT?VOUS ETES AU COEUR DE LA CITE CORROMPUE,
+ENTOURE PAR LES CADAVRES DE VOS ENNEMIS.
+VOUS NE VOYEZ PAS COMMENT DETRUIRE LA PORTE
+DES CREATURES DE CE COTE. VOUS SERREZ
+LES DENTS ET PLONGEZ DANS L'OUVERTURE.
+
+IL DOIT Y AVOIR UN MOYEN DE LA FERMER
+DE L'AUTRE COTE. VOUS ACCEPTEZ DE
+TRAVERSER L'ENFER POUR LE FAIRE?
+
+Text 494 527
+THE HORRENDOUS VISAGE OF THE BIGGEST
+DEMON YOU'VE EVER SEEN CRUMBLES BEFORE
+YOU, AFTER YOU PUMP YOUR ROCKETS INTO
+HIS EXPOSED BRAIN. THE MONSTER SHRIVELS
+UP AND DIES, ITS THRASHING LIMBS
+DEVASTATING UNTOLD MILES OF HELL'S
+SURFACE.
+
+YOU'VE DONE IT. THE INVASION IS OVER.
+EARTH IS SAVED. HELL IS A WRECK. YOU
+WONDER WHERE BAD FOLKS WILL GO WHEN THEY
+DIE, NOW. WIPING THE SWEAT FROM YOUR
+FOREHEAD YOU BEGIN THE LONG TREK BACK
+HOME. REBUILDING EARTH OUGHT TO BE A
+LOT MORE FUN THAN RUINING IT WAS.
+LE VISAGE HORRIBLE D'UN DEMON D'UNE
+TAILLE INCROYABLE S'EFFONDRE DEVANT
+VOUS LORSQUE VOUS TIREZ UNE SALVE DE
+ROQUETTES DANS SON CERVEAU. LE MONSTRE
+SE RATATINE, SES MEMBRES DECHIQUETES
+SE REPANDANT SUR DES CENTAINES DE
+KILOMETRES A LA SURFACE DE L'ENFER.
+
+VOUS AVEZ REUSSI. L'INVASION N'AURA.
+PAS LIEU. LA TERRE EST SAUVEE. L'ENFER
+EST ANEANTI. EN VOUS DEMANDANT OU IRONT
+MAINTENANT LES DAMNES, VOUS ESSUYEZ
+VOTRE FRONT COUVERT DE SUEUR ET REPARTEZ
+VERS LA TERRE. SA RECONSTRUCTION SERA
+BEAUCOUP PLUS DROLE QUE SA DESTRUCTION.
+
+Text 164 177
+CONGRATULATIONS, YOU'VE FOUND THE SECRET
+LEVEL! LOOKS LIKE IT'S BEEN BUILT BY
+HUMANS, RATHER THAN DEMONS. YOU WONDER
+WHO THE INMATES OF THIS CORNER OF HELL
+WILL BE.FELICITATIONS! VOUS AVEZ TROUVE LE
+NIVEAU SECRET! IL SEMBLE AVOIR ETE
+CONSTRUIT PAR LES HUMAINS. VOUS VOUS
+DEMANDEZ QUELS PEUVENT ETRE LES
+HABITANTS DE CE COIN PERDU DE L'ENFER.
+
+Text 92 102
+CONGRATULATIONS, YOU'VE FOUND THE
+SUPER SECRET LEVEL!  YOU'D BETTER
+BLAZE THROUGH THIS ONE!
+FELICITATIONS! VOUS AVEZ DECOUVERT
+LE NIVEAU SUPER SECRET! VOUS FERIEZ
+MIEUX DE FONCER DANS CELUI-LA!
+
+Text 9 6
+ZOMBIEMANZOMBIE
+
+Text 11 13
+SHOTGUN GUYTYPE AU FUSIL
+
+Text 17 14
+HEAVY WEAPON DUDEMEC SUPER-ARME
+
+Text 3 9
+IMPDIABLOTIN
+
+Text 9 10
+LOST SOULAME PERDUE
+
+Text 11 20
+HELL KNIGHTCHEVALIER DE L'ENFER
+
+Text 13 16
+BARON OF HELLBARON DE L'ENFER
+
+Text 14 25
+PAIN ELEMENTALELEMENTAIRE DE LA DOULEUR
+
+Text 9 12
+ARCH-VILEARCHI-INFAME
+
+Text 21 18
+THE SPIDER MASTERMINDL'ARAIGNEE CERVEAU
+
+Text 14 13
+THE CYBERDEMONLE CYBERDEMON
+
+Text 8 11
+OUR HERONOTRE HEROS
+
+Text 21 23
+Development mode ON.
+MODE DEVELOPPEMENT ON.
+
+Text 45 45
+CD-ROM Version: default.cfg from c:\doomdata
+VERSION CD-ROM: DEFAULT.CFG DANS C:\DOOMDATA
+
+Text 11 15
+game saved.JEU SAUVEGARDE.
+
+Text 10 16
+empty slotEMPLACEMENT VIDE
+
+Text 52 69
+you can't do load while in a net game!
+
+press a key.VOUS NE POUVEZ PAS CHARGER
+UN JEU EN RESEAU!
+
+APPUYEZ SUR UNE TOUCHE.
+
+Text 51 72
+you can't save if you aren't playing!
+
+press a key.VOUS NE POUVEZ PAS SAUVER SI VOUS NE JOUEZ PAS!
+
+APPUYEZ SUR UNE TOUCHE.
+
+Text 52 61
+quicksave over your game named
+
+'%s'?
+
+press y or n.SAUVEGARDE RAPIDE DANS LE FICHIER 
+
+'%s'?
+
+APPUYEZ SUR Y OU N
+
+Text 51 62
+you can't quickload during a netgame!
+
+press a key.CHARGEMENT RAPIDE INTERDIT EN RESEAU!
+
+APPUYEZ SUR UNE TOUCHE.
+
+Text 54 63
+you haven't picked a quicksave slot yet!
+
+press a key.VOUS N'AVEZ PAS CHOISI UN EMPLACEMENT!
+
+APPUYEZ SUR UNE TOUCHE.
+
+Text 61 60
+do you want to quickload the game named
+
+'%s'?
+
+press y or n.VOULEZ-VOUS CHARGER LA SAUVEGARDE
+
+'%s'?
+
+APPUYEZ SUR Y OU N
+
+Text 65 77
+you can't start a new game
+while in a network game.
+
+press a key.VOUS NE POUVEZ PAS LANCER
+UN NOUVEAU JEU SUR RESEAU.
+
+APPUYEZ SUR UNE TOUCHE.
+
+# Note: looks like a typo in this message.  This is how it appears
+# in the actual French doom2.exe (and in d_french.h):
+
+Text 71 70
+are you sure? this skill level
+isn't even remotely fair.
+
+press y or n.VOUS CONFIRMEZ? CE NIVEAU EST
+VRAIMENT IMPITOYABLE!nAPPUYEZ SUR Y OU N
+
+Text 91 110
+this is the shareware version of doom.
+
+you need to order the entire trilogy.
+
+press a key.CECI EST UNE VERSION SHAREWARE DE DOOM.
+
+VOUS DEVRIEZ COMMANDER LA TRILOGIE COMPLETE.
+
+APPUYEZ SUR UNE TOUCHE.
+
+Text 12 12
+Messages OFFMESSAGES OFF
+
+Text 11 11
+Messages ONMESSAGES ON
+
+Text 38 75
+you can't end a netgame!
+
+press a key.VOUS NE POUVEZ PAS METTRE FIN A UN JEU SUR RESEAU!
+
+APPUYEZ SUR UNE TOUCHE.
+
+Text 53 59
+are you sure you want to end the game?
+
+press y or n.VOUS VOULEZ VRAIMENT METTRE FIN AU JEU?
+
+APPUYEZ SUR Y OU N
+
+# The following is different in the released linuxdoom source
+# (DOS changed to OS)
+
+Text 29 40
+%s
+
+(press y to quit to dos.)%s
+
+(APPUYEZ SUR Y POUR REVENIR AU DOS.)
+
+Text 11 19
+High detailGRAPHISMES MAXIMUM 
+
+Text 10 19
+Low detailGRAPHISMES MINIMUM 
+
+Text 2 3
+NoNON
+
+Text 23 35
+I'm ready to kick butt!JE SUIS PRET A LEUR EN FAIRE BAVER!
+
+Text 7 13
+I'm OK.JE VAIS BIEN.
+
+Text 25 27
+I'm not looking too good!JE N'AI PAS L'AIR EN FORME!
+
+Text 5 11
+Help!AU SECOURS!
+
+Text 9 10
+You suck!TU CRAINS!
+
+Text 21 29
+Next time, scumbag...LA PROCHAINE FOIS, MINABLE...
+
+Text 10 10
+Come here!VIENS ICI!
+
+Text 21 21
+I'll take care of it.JE VAIS M'EN OCCUPER.
+
+Text 3 3
+YesOUI
+
+Text 14 17
+Follow Mode ONMODE POURSUITE ON
+
+Text 15 18
+Follow Mode OFFMODE POURSUITE OFF
+
+Text 7 9
+Grid ONGRILLE ON
+
+Text 8 10
+Grid OFFGRILLE OFF
+
+Text 11 14
+Marked SpotREPERE MARQUE 
+
+Text 17 16
+All Marks ClearedREPERES EFFACES 
+
+Text 43 27
+You need a blue key to activate this objectIL VOUS FAUT UNE CLEF BLEUE
+
+Text 42 27
+You need a red key to activate this objectIL VOUS FAUT UNE CLEF ROUGE
+
+Text 45 27
+You need a yellow key to activate this objectIL VOUS FAUT UNE CLEF JAUNE
+
+Text 37 27
+You need a blue key to open this doorIL VOUS FAUT UNE CLEF BLEUE
+
+Text 39 27
+You need a yellow key to open this doorIL VOUS FAUT UNE CLEF JAUNE
+
+Text 36 27
+You need a red key to open this doorIL VOUS FAUT UNE CLEF ROUGE
+
+Text 20 17
+Picked up the armor.ARMURE RECUPEREE.
+
+Text 24 22
+Picked up the MegaArmor!MEGA-ARMURE RECUPEREE!
+
+Text 25 24
+Picked up a health bonus.BONUS DE SANTE RECUPERE.
+
+Text 25 24
+Picked up an armor bonus.BONUS D'ARMURE RECUPERE.
+
+Text 12 12
+Supercharge!SUPERCHARGE!
+
+Text 11 11
+MegaSphere!MEGASPHERE!
+
+Text 25 33
+Picked up a blue keycard.CARTE MAGNETIQUE BLEUE RECUPEREE.
+
+Text 27 33
+Picked up a yellow keycard.CARTE MAGNETIQUE JAUNE RECUPEREE.
+
+Text 24 33
+Picked up a red keycard.CARTE MAGNETIQUE ROUGE RECUPEREE.
+
+Text 27 27
+Picked up a blue skull key.CLEF CRANE BLEUE RECUPEREE.
+
+Text 29 27
+Picked up a yellow skull key.CLEF CRANE JAUNE RECUPEREE.
+
+Text 26 27
+Picked up a red skull key.CLEF CRANE ROUGE RECUPEREE.
+
+Text 21 18
+Picked up a stimpack.STIMPACK RECUPERE.
+
+Text 41 47
+Picked up a medikit that you REALLY need!MEDIKIT RECUPERE. VOUS EN AVEZ VRAIMENT BESOIN!
+
+Text 20 17
+Picked up a medikit.MEDIKIT RECUPERE.
+
+Text 16 16
+Invulnerability!INVULNERABILITE!
+
+Text 8 8
+Berserk!BERSERK!
+
+Text 20 23
+Partial InvisibilityINVISIBILITE PARTIELLE 
+
+Text 24 28
+Radiation Shielding SuitCOMBINAISON ANTI-RADIATIONS 
+
+Text 17 19
+Computer Area MapCARTE INFORMATIQUE 
+
+Text 25 34
+Light Amplification VisorVISEUR A AMPLIFICATION DE LUMIERE 
+
+Text 17 18
+Picked up a clip.CHARGEUR RECUPERE.
+
+Text 27 26
+Picked up a box of bullets.BOITE DE BALLES RECUPEREE.
+
+Text 19 19
+Picked up a rocket.ROQUETTE RECUPEREE.
+
+Text 27 30
+Picked up a box of rockets.CAISSE DE ROQUETTES RECUPEREE.
+
+Text 25 28
+Picked up an energy cell.CELLULE D'ENERGIE RECUPEREE.
+
+Text 30 36
+Picked up an energy cell pack.PACK DE CELLULES D'ENERGIE RECUPERE.
+
+Text 27 24
+Picked up 4 shotgun shells.4 CARTOUCHES RECUPEREES.
+
+Text 34 30
+Picked up a box of shotgun shells.BOITE DE CARTOUCHES RECUPEREE.
+
+Text 34 32
+Picked up a backpack full of ammo!SAC PLEIN DE MUNITIONS RECUPERE!
+
+Text 30 31
+You got the BFG9000!  Oh, yes.VOUS AVEZ UN BFG9000!  OH, OUI!
+
+Text 21 26
+You got the chaingun!VOUS AVEZ LA MITRAILLEUSE!
+
+Text 28 17
+A chainsaw!  Find some meat!UNE TRONCONNEUSE!
+
+Text 28 29
+You got the rocket launcher!VOUS AVEZ UN LANCE-ROQUETTES!
+
+Text 23 28
+You got the plasma gun!VOUS AVEZ UN FUSIL A PLASMA!
+
+Text 20 19
+You got the shotgun!VOUS AVEZ UN FUSIL!
+
+Text 26 25
+You got the super shotgun!VOUS AVEZ UN SUPER FUSIL!
+
+Text 22 19
+Degreelessness Mode OnINVULNERABILITE ON 
+
+Text 23 19
+Degreelessness Mode OffINVULNERABILITE OFF
+
+Text 20 27
+Ammo (no keys) AddedARMES (SAUF CLEFS) AJOUTEES
+
+Text 21 18
+Very Happy Ammo AddedARMEMENT MAXIMUM! 
+
+Text 12 22
+Music ChangeCHANGEMENT DE MUSIQUE 
+
+Text 19 12
+No Clipping Mode ONBARRIERES ON
+
+Text 20 13
+No Clipping Mode OFFBARRIERES OFF
+
+Text 16 20
+Power-up ToggledAMELIORATION ACTIVEE
+
+Text 45 46
+inVuln, Str, Inviso, Rad, Allmap, or Lite-amp inVuln, Str, Inviso, Rad, Allmap, or Lite-amp
+
+Text 21 21
+... doesn't suck - GM... DOESN'T SUCK - GM
+
+Text 17 23
+Changing Level...CHANGEMENT DE NIVEAU...
+
+Text 23 35
+I'm ready to kick butt!JE SUIS PRET A LEUR EN FAIRE BAVER!
+
+Text 7 13
+I'm OK.JE VAIS BIEN.
+
+Text 25 27
+I'm not looking too good!JE N'AI PAS L'AIR EN FORME!
+
+Text 5 11
+Help!AU SECOURS!
+
+Text 9 10
+You suck!TU CRAINS!
+
+Text 21 29
+Next time, scumbag...LA PROCHAINE FOIS, MINABLE...
+
+Text 10 10
+Come here!VIENS ICI!
+
+Text 21 21
+I'll take care of it.JE VAIS M'EN OCCUPER.
+
+Text 7 6
+Green: VERT: 
+
+Text 8 8
+Indigo: INDIGO: 
+
+Text 7 6
+Brown: BRUN: 
+
+Text 5 7
+Red: ROUGE: 
+
+Text 12 12
+E1M1: HangarE1M1: HANGAR
+
+Text 19 22
+E1M2: Nuclear PlantE1M2: USINE NUCLEAIRE 
+
+Text 20 28
+E1M3: Toxin RefineryE1M3: RAFFINERIE DE TOXINES 
+
+Text 21 25
+E1M4: Command ControlE1M4: CENTRE DE CONTROLE 
+
+Text 16 25
+E1M5: Phobos LabE1M5: LABORATOIRE PHOBOS 
+
+Text 24 25
+E1M6: Central ProcessingE1M6: TRAITEMENT CENTRAL 
+
+Text 22 26
+E1M7: Computer StationE1M7: CENTRE INFORMATIQUE 
+
+Text 20 22
+E1M8: Phobos AnomalyE1M8: ANOMALIE PHOBOS 
+
+Text 19 21
+E1M9: Military BaseE1M9: BASE MILITAIRE 
+
+Text 20 22
+E2M1: Deimos AnomalyE2M1: ANOMALIE DEIMOS 
+
+Text 22 26
+E2M2: Containment AreaE2M2: ZONE DE CONFINEMENT 
+
+Text 14 16
+E2M3: RefineryE2M3: RAFFINERIE
+
+Text 16 25
+E2M4: Deimos LabE2M4: LABORATOIRE DEIMOS 
+
+Text 20 25
+E2M5: Command CenterE2M5: CENTRE DE CONTROLE 
+
+Text 25 23
+E2M6: Halls of the DamnedE2M6: HALLS DES DAMNES 
+
+Text 19 28
+E2M7: Spawning VatsE2M7: CUVES DE REPRODUCTION 
+
+Text 20 20
+E2M8: Tower of BabelE2M8: TOUR DE BABEL 
+
+Text 25 28
+E2M9: Fortress of MysteryE2M9: FORTERESSE DU MYSTERE 
+
+Text 15 24
+E3M1: Hell KeepE3M1: DONJON DE L'ENFER 
+
+Text 23 28
+E3M2: Slough of DespairE3M2: BOURBIER DU DESESPOIR 
+
+Text 17 17
+E3M3: PandemoniumE3M3: PANDEMONIUM
+
+Text 19 27
+E3M4: House of PainE3M4: MAISON DE LA DOULEUR 
+
+Text 22 25
+E3M5: Unholy CathedralE3M5: CATHEDRALE PROFANE 
+
+Text 16 17
+E3M6: Mt. ErebusE3M6: MONT EREBUS
+
+Text 11 12
+E3M7: LimboE3M7: LIMBES
+
+Text 9 9
+E3M8: DisE3M8: DIS
+
+Text 13 14
+E3M9: WarrensE3M9: CLAPIERS
+
+Text 17 17
+level 1: entrywayNIVEAU 1: ENTREE 
+
+Text 19 28
+level 2: underhallsNIVEAU 2: HALLS SOUTERRAINS 
+
+Text 20 24
+level 3: the gantletNIVEAU 3: LE FEU NOURRI 
+
+Text 18 19
+level 4: the focusNIVEAU 4: LE FOYER 
+
+Text 26 21
+level 5: the waste tunnelsNIVEAU 5: LES EGOUTS 
+
+Text 20 21
+level 6: the crusherNIVEAU 6: LE BROYEUR 
+
+Text 20 28
+level 7: dead simpleNIVEAU 7: L'HERBE DE LA MORT
+
+Text 25 26
+level 8: tricks and trapsNIVEAU 8: RUSES ET PIEGES 
+
+Text 16 19
+level 9: the pitNIVEAU 9: LE PUITS 
+
+Text 24 34
+level 10: refueling baseNIVEAU 10: BASE DE RAVITAILLEMENT 
+
+Text 29 32
+level 11: 'o' of destruction!NIVEAU 11: LE CERCLE DE LA MORT!
+
+Text 21 19
+level 12: the factoryNIVEAU 12: L'USINE 
+
+Text 18 26
+level 13: downtownNIVEAU 13: LE CENTRE VILLE
+
+Text 25 32
+level 14: the inmost densNIVEAU 14: LES ANTRES PROFONDES 
+
+Text 25 32
+level 15: industrial zoneNIVEAU 15: LA ZONE INDUSTRIELLE 
+
+Text 17 22
+level 16: suburbsNIVEAU 16: LA BANLIEUE
+
+Text 19 24
+level 17: tenementsNIVEAU 17: LES IMMEUBLES
+
+Text 23 19
+level 18: the courtyardNIVEAU 18: LA COUR 
+
+Text 21 24
+level 19: the citadelNIVEAU 19: LA CITADELLE 
+
+Text 17 22
+level 20: gotcha!NIVEAU 20: JE T'AI EU!
+
+Text 17 21
+level 21: nirvanaNIVEAU 21: LE NIRVANA
+
+Text 23 26
+level 22: the catacombsNIVEAU 22: LES CATACOMBES 
+
+Text 24 26
+level 23: barrels o' funNIVEAU 23: LA GRANDE FETE 
+
+Text 19 22
+level 24: the chasmNIVEAU 24: LE GOUFFRE 
+
+Text 20 29
+level 25: bloodfallsNIVEAU 25: LES CHUTES DE SANG
+
+Text 29 33
+level 26: the abandoned minesNIVEAU 26: LES MINES ABANDONNEES 
+
+Text 23 29
+level 27: monster condoNIVEAU 27: CHEZ LES MONSTRES 
+
+Text 26 32
+level 28: the spirit worldNIVEAU 28: LE MONDE DE L'ESPRIT 
+
+Text 24 21
+level 29: the living endNIVEAU 29: LA LIMITE 
+
+Text 21 28
+level 30: icon of sinNIVEAU 30: L'ICONE DU PECHE 
+
+Text 21 22
+level 31: wolfensteinNIVEAU 31: WOLFENSTEIN
+
+Text 16 22
+level 32: grosseNIVEAU 32: LE MASSACRE
+
+Text 16 20
+[Message unsent][MESSAGE NON ENVOYE]
+
+Text 22 22
+You mumble to yourselfVOUS PARLEZ TOUT SEUL 
+
+Text 12 11
+Who's there?QUI EST LA?
+
+Text 18 22
+You scare yourselfVOUS VOUS FAITES PEUR 
+
+Text 17 25
+You start to raveVOUS COMMENCEZ A DELIRER 
+
+Text 17 19
+You've lost it...VOUS ETES LARGUE...
+

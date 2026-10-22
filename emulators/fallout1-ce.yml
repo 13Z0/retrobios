@@ -7,7 +7,7 @@ profiled_date: "2026-10-04"
 source_commit: "0609bcfd0ec40ff0571d0f57fab2821eb461dc8b"
 core_version: "1.1"
 display_name: "Fallout (Community Edition)"
-cores: [fallout1-ce]
+cores: [fallout1-ce, "fallout-ce"]
 systems: [fallout]
 verification: existence
 
@@ -32,6 +32,12 @@ notes: |
   loaded on demand and the engine runs without them, so they are marked
   optional. Font and resolution tweaks live in f1_res.ini and are a user
   preference, not game data.
+
+  The executable is named fallout-ce (CMakeLists.txt:5). EmuELEC builds
+  glebm/fallout1-ce bc5a9273, one commit on top of this repository's
+  ad8a2754 that changes a return type in src/movie_lib.cc, and starts it
+  from ports/falloutce1. Between ad8a2754 and the profiled pin only
+  db_findfirst gains a path resolution, so both read the same files.
 
 exclusion_note: "data/, sound/ and movies/ load from the retail install folder, not from a shared BIOS tree"
 files:

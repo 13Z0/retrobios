@@ -1,0 +1,40 @@
+emulator: "SuperTux"
+type: standalone
+core_classification: game_engine
+source: "https://github.com/SuperTux/supertux"
+profiled_date: "2026-10-22"
+source_commit: "37cddf24a4abfdec7931a84afd9e87fb8ea18767"
+core_version: "0.6.3-1020-g37cddf24a"
+display_name: "SuperTux (supertux2)"
+cores:
+  - "supertux2"
+systems: [supertux]
+
+notes: |
+  SuperTux 2, the free platformer. The program is supertux2 and every asset
+  (images, levels, music, sounds, fonts, scripts) is read through PhysFS from
+  the data directory: the one given on the command line, else
+  $SUPERTUX2_DATA_DIR, else the build tree when it holds credits.stxt, else the
+  installed share directory beside the binary. A data directory that cannot
+  be mounted is logged and the game has nothing to load.
+  ref: src/supertux/main.cpp:197-266
+
+  EmuELEC builds this revision, 1020 commits past the v0.6.3 tag its package
+  comment names, without the data. On first start its run_supertux.sh
+  downloads the v0.6.3 source archive, keeps its data directory as
+  /storage/roms/ports/supertux, renames levels/misc/menu.stl.in and fills its
+  logo name, then runs supertux2 with SUPERTUX2_DATA_DIR pointing there. The
+  data is the v0.6.3 tree, not that of the built revision.
+  ref: EmuELEC packages/sx05re/emuelec-ports/supertux/package.mk:4-9,
+       EmuELEC packages/sx05re/emuelec-ports/supertux/scripts/run_supertux.sh:10-14,45-66
+
+files:
+  - name: "SuperTux data"
+    path: "data/"
+    type: directory
+    category: game_data
+    system: supertux
+    required: true
+    installed_on: [emuelec]
+    description: "Game data tree (data/ of the SuperTux source)"
+    source_ref: "src/supertux/main.cpp:224-265"

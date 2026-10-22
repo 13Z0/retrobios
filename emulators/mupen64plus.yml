@@ -1,0 +1,159 @@
+emulator: "Mupen64Plus"
+type: standalone
+core_classification: official_port
+source: "https://github.com/mupen64plus/mupen64plus-ui-console"
+upstream: "https://github.com/mupen64plus/mupen64plus-core"
+profiled_date: "2026-10-22"
+source_commit: "c8ac4862a019d7885b24927d9b4db5dd3e42a528"
+upstream_commit: "6dca4c15370ac3e2171ce7b31426695f8f39b460"
+core_version: "2.6.0"
+display_name: "Nintendo - Nintendo 64 (Mupen64Plus)"
+cores:
+  - "mupen64plus"
+  - "mupen64plussa"
+systems:
+  - nintendo-64
+  - nintendo-64dd
+mode: standalone
+
+notes: |
+  The mupen64plus program is the console front end, which loads the
+  mupen64plus-core library and four plugins. AmberELEC builds the front end at
+  c8ac4862 and the core at 6dca4c15 with the rice and glide64mk2 video, hle RSP,
+  sdl input and sdl audio plugins, and EmuELEC builds the same set at older
+  revisions (front end 32e27344, core 57828d93), whose media loader, IPL format
+  check and ROM database lookup read the same files. Both build the core with
+  USE_GLES=1, which turns the OpenGL on-screen display off.
+  ref: AmberELEC packages/games/emulators/mupen64plussa/mupen64plussa-core/package.mk:5,13,
+       EmuELEC packages/sx05re/emulators/mupen64plussa/mupen64plussa-core/package.mk:5,
+       upstream projects/unix/Makefile:374-388
+
+  Cartridge boot needs no boot ROM. The PIF boot sequence is simulated and the
+  CIC-NUS-6105 challenge is answered by an algorithm rather than a stored table.
+  ref: upstream src/device/pif/bootrom_hle.c:48,
+       upstream src/device/r4300/interrupt.c:445,496,
+       upstream src/device/pif/n64_cic_nus_6105.c:93
+
+  64DD: the front end holds one IPL path and one disk path, the 64DD section's
+  IPL-ROM and Disk keys, both empty by default and set by --dd-ipl-rom and
+  --dd-disk. It reads them back from mupen64plus.cfg when the core asks and
+  leaves the core's region callback empty, so whichever image the key names is
+  loaded whatever region the disk carries. The core asks for the IPL only after
+  a disk loads, reads it whole and byteswaps it after identifying its first
+  word as 0x80270740 (z64), 0x40072780 (n64) or 0x27804007 (v64). Any other
+  value, or a missing file, disables 64DD and the cartridge runs alone.
+  ref: src/main.c:321-322, src/main.c:729-737, src/main.c:803-892,
+       upstream src/main/main.c:1183-1248, upstream src/main/main.c:1719-1735
+  AmberELEC's mupen64plus.cfg sets IPL-ROM to "" and its m64p.sh passes no
+  64DD option, and its n64 system lists no disk extension, so 64DD is never
+  reached there. EmuELEC's m64p.sh passes --dd-ipl-rom when <game>.ndd sits
+  beside the cartridge, pointing at bios/Mupen64plus/N64DD IPLROM (J).n64, else
+  bios/Mupen64plus/IPL.n64.
+  ref: AmberELEC packages/games/emulators/mupen64plussa/mupen64plussa-core/config/mupen64plus-RG351V.cfg:4-9,
+       AmberELEC packages/games/emulators/mupen64plussa/mupen64plussa-core/m64p.sh:102-112,
+       EmuELEC packages/sx05re/emulators/mupen64plussa/mupen64plussa-core/m64p.sh:16,65-77,94-99
+
+  Transfer Pak carts come from the Transferpak keys GB-rom-1 to GB-rom-4 and
+  their GB-ram counterparts, read the same way. The core fixes no name, size or
+  hash for them, so neither the cart nor its save carries an entry here.
+  ref: src/main.c:856-872, upstream src/main/main.c:1452-1478
+
+  Shared data files are searched in --datadir, then the core's SharedDataPath,
+  then /usr/local/share/mupen64plus, /usr/share/mupen64plus and the working
+  directory. The packages install the core's data directory and each plugin's
+  .ini there.
+  ref: upstream src/api/config.c:1610-1624, upstream src/osal/files_unix.c:43-48,
+       upstream src/osal/files_unix.c:150-170
+
+  Optional content with no canonical artifact: hi-res texture packs read by
+  rice and glide64mk2 from the user data directory. Written rather than
+  obtained: mupen64plus.cfg, the mempak, eeprom, flashram and sram saves given
+  default content when absent, the 64DD disk save, savestates and screenshots.
+  ref: upstream src/main/main.c:1709-1712
+
+files:
+  - name: "64DD_IPL_JP.n64"
+    aliases: ["64DD_IPL_v12_JPN.bin"]
+    system: nintendo-64dd
+    required: true
+    unread_on: [amberelec]
+    description: "64DD IPL ROM (Japanese retail)"
+    note: "The image every commercially released disk needs. No name is fixed by the code: the path comes from the IPL-ROM key or --dd-ipl-rom. Read whole, then byteswapped after identifying the first word as z64, n64 or v64. Size is not checked and no hash is computed."
+    source_ref: "src/main.c:321, src/main.c:729-732, src/main.c:874-877, upstream src/main/main.c:1183-1248"
+
+  - name: "64DD_IPL_US.n64"
+    aliases: ["64DD_IPL_USA.bin", "IPL_USA.n64"]
+    system: nintendo-64dd
+    required: true
+    unread_on: [amberelec]
+    description: "64DD IPL ROM (American retail)"
+    note: "Needed for a disk whose system data carries the US region word. The front end holds one IPL path and leaves the region callback empty, so this image is loaded by putting it in the same key. Same load path and format check as the Japanese image."
+    source_ref: "src/main.c:874-892, upstream src/main/main.c:1183-1248"
+
+  - name: "64DD_IPL_DEV.n64"
+    aliases: ["64DD_IPL_DEV.bin", "IPL_DEV.n64"]
+    system: nintendo-64dd
+    required: true
+    unread_on: [amberelec]
+    description: "64DD IPL ROM (development)"
+    note: "Needed for a disk whose system data carries the development region word. Shares the single IPL key with the other two images. Same load path and format check."
+    source_ref: "src/main.c:874-892, upstream src/main/main.c:1183-1248"
+
+  - name: "mupen64plus.ini"
+    system: nintendo-64
+    required: false
+    bundled: true
+    size: 449082
+    sha1: "37b26dbe0df63c2887f958978e1638e2ddead1bc"
+    description: "ROM database"
+    note: "Per ROM save type, player count, rumble and counter settings, looked up by MD5 or CRC. Absent, the core logs an error and runs every ROM on defaults."
+    source_ref: "upstream src/main/rom.c:590-604"
+
+  - name: "mupencheat.txt"
+    system: nintendo-64
+    required: false
+    bundled: true
+    size: 1272116
+    sha1: "f8b083f6a5a9ef4a28957792ca65d7b50f7af1bd"
+    description: "Cheat code database"
+    note: "Read by the front end for the ROM's section when --cheats is given. Absent, a warning is logged and no cheat is offered."
+    source_ref: "src/cheat.c:33, src/cheat.c:202-216, src/cheat.c:346-367, src/main.c:1040-1041"
+
+  - name: "font.ttf"
+    system: nintendo-64
+    required: false
+    bundled: true
+    size: 65932
+    sha1: "1d7f6fa0c34e3d50be52c16a0816bebac309fe41"
+    description: "On-screen display font"
+    note: "Opened by the core's OpenGL on-screen display, which a USE_GLES=1 build leaves out."
+    source_ref: "upstream src/osd/osd.c:40, upstream src/osd/osd.c:227, upstream projects/unix/Makefile:377-388"
+
+  - name: "InputAutoCfg.ini"
+    system: nintendo-64
+    required: false
+    bundled: true
+    size: 51631
+    sha1: "c71834f8e0749ba28135cefbec370a8ac6b3c26c"
+    description: "Controller auto-configuration database of the sdl input plugin"
+    note: "Matched against the SDL joystick name to fill the controller mapping."
+    source_ref: "mupen64plus-input-sdl src/autoconfig.c:196-218"
+
+  - name: "RiceVideoLinux.ini"
+    system: nintendo-64
+    required: false
+    bundled: true
+    size: 23195
+    sha1: "7299996b11d37dd644d8c01adeb04fae15352983"
+    description: "Per ROM settings of the rice video plugin"
+    source_ref: "mupen64plus-video-rice src/Config.cpp:38, mupen64plus-video-rice src/Config.cpp:933-945"
+
+  - name: "Glide64mk2.ini"
+    system: nintendo-64
+    required: false
+    bundled: true
+    size: 17454
+    sha1: "523de4d0c142bc112a7d94df26c0fe42a049d581"
+    description: "Per ROM settings of the glide64mk2 video plugin"
+    note: "PluginStartup returns M64ERR_FILES without it, so the glide64mk2 renderer does not start."
+    source_ref: "mupen64plus-video-glide64mk2 src/Glide64/Main.cpp:1580-1591, mupen64plus-video-glide64mk2 src/Glide64/Ini.cpp:134-216"

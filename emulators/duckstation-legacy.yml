@@ -1,0 +1,253 @@
+emulator: "DuckStation (legacy)"
+type: standalone
+core_classification: frozen_snapshot
+source: "https://github.com/stenzek/duckstation"
+profiled_date: "2026-10-22"
+source_commit: "56ac3d6c324ec4520dac433b071ecab6227fb459"
+pin_frozen: "Batocera builds this revision of 4 August 2023 as duckstation-legacy, its package marked not to be bumped, and KNULLI ships the same package."
+core_version: "0.1"
+display_name: "Sony - PlayStation (DuckStation legacy)"
+cores:
+  - "duckstation-legacy"
+found_by: content
+systems: [sony-playstation]
+mode: standalone
+
+notes: |
+  DuckStation as of August 2023, from before its licence change, kept as a
+  separate package. Batocera builds it with its own path patches: the BIOS
+  directory becomes /userdata/bios, the shared BIOS root, and the resources
+  directory /usr/share/duckstation/resources.
+  ref: Batocera package/batocera/emulators/duckstation-legacy/duckstation-legacy.mk:6-7,
+       Batocera package/batocera/emulators/duckstation-legacy/004-adjust-paths.patch
+
+  A BIOS file is any file of 512 KB, 4 MB (PS2) or 0x3E66F0 bytes (PS3) in the
+  BIOS directory. Only its first 512 KB are read, and their MD5 is looked up
+  in a table of 29 images. A file carrying "OpenBIOS" at offset 0x78 is
+  recognised by that signature instead. With no file configured for the
+  console region, the directory is scanned and the first image whose region
+  matches, or whose table region is Auto, is used. Otherwise the first known
+  image found, else the first unknown one, stands in with a warning, and an
+  empty directory stops the boot with "No BIOS image found". The table has no
+  priority field: the scan order decides between matching images.
+  ref: src/core/bios.h:15-17, src/core/bios.cpp:45-91, src/core/bios.cpp:95-97,
+       src/core/bios.cpp:108-137, src/core/bios.cpp:145-167,
+       src/core/bios.cpp:276-377
+
+  KNULLI's launcher sets BIOS SearchDirectory to /userdata/bios and fills
+  PathNTSCU, PathPAL and PathNTSCJ with the first name it finds from three
+  lists, refusing to start when none exists. A configured path is loaded by
+  name and only warned about when its image does not match the region.
+  ref: KNULLI package/system/knulli-configgen/configgen/configgen/generators/duckstation_legacy/duckstationLegacyGenerator.py:116-153,
+       src/core/bios.cpp:296-315
+
+  Fast boot and TTY patching are refused for the two PS3 images, the table's
+  only entries marked not patch compatible.
+  ref: src/core/system.cpp:1280, src/core/system.cpp:1306
+
+files:
+  - name: "scph1000.bin"
+    description: "SCPH-1000, DTL-H1000 (v1.0)"
+    region: [japan]
+    required: false
+    md5: "239665b1a3dade1b5a52c06338011044"
+    source_ref: "src/core/bios.cpp:46"
+
+  - name: "scph1001.bin"
+    description: "SCPH-1001, 5003, DTL-H1201, H3001 (v2.2 12-04-95 A)"
+    region: [north-america, latin-america]
+    required: false
+    md5: "924e392ed05558ffdb115408c263dccf"
+    source_ref: "src/core/bios.cpp:47-48"
+
+  - name: "scph1002a.bin"
+    description: "SCPH-1002, DTL-H1002 (v2.0 05-10-95 E)"
+    region: [europe, oceania]
+    required: false
+    md5: "54847e693405ffeb0359c6287434cbef"
+    source_ref: "src/core/bios.cpp:49-50"
+
+  - name: "scph1002b.bin"
+    description: "SCPH-1002, DTL-H1102 (v2.1 07-17-95 E)"
+    region: [europe, oceania]
+    required: false
+    md5: "417b34706319da7cf001e76e40136c23"
+    source_ref: "src/core/bios.cpp:51-52"
+
+  - name: "scph1002c.bin"
+    description: "SCPH-1002, DTL-H1202, H3002 (v2.2 12-04-95 E)"
+    region: [europe, oceania]
+    required: false
+    md5: "e2110b8a2b97a8e0b857a45d32f7e187"
+    source_ref: "src/core/bios.cpp:53-54"
+
+  - name: "dtlh1100.bin"
+    description: "DTL-H1100 (v2.2 03-06-96 D)"
+    region: [japan]
+    required: false
+    md5: "ca5cfc321f916756e3f0effbfaeba13b"
+    source_ref: "src/core/bios.cpp:55"
+
+  - name: "scph3000.bin"
+    description: "SCPH-3000, DTL-H1000H (v1.1 01-22-95)"
+    region: [japan]
+    required: false
+    md5: "849515939161e62f6b866f6853006780"
+    source_ref: "src/core/bios.cpp:56-57"
+
+  - name: "scph1001_v20.bin"
+    description: "SCPH-1001, DTL-H1001 (v2.0 05-07-95 A)"
+    region: [north-america, latin-america]
+    required: false
+    md5: "dc2b9bf8da62ec93e868cfd29f0d067d"
+    source_ref: "src/core/bios.cpp:58-59"
+
+  - name: "scph3500.bin"
+    description: "SCPH-3500 (v2.1 07-17-95 J)"
+    region: [japan]
+    required: false
+    md5: "cba733ceeff5aef5c32254f1d617fa62"
+    source_ref: "src/core/bios.cpp:60"
+
+  - name: "scph1001_v21.bin"
+    description: "SCPH-1001, DTL-H1101 (v2.1 07-17-95 A)"
+    region: [north-america, latin-america]
+    required: false
+    md5: "da27e8b6dab242d8f91a9b25d80c63b8"
+    source_ref: "src/core/bios.cpp:61-62"
+
+  - name: "scph5000.bin"
+    description: "SCPH-5000, DTL-H1200, H3000 (v2.2 12-04-95 J)"
+    region: [japan]
+    required: false
+    md5: "57a06303dfa9cf9351222dfcbb4a29d9"
+    source_ref: "src/core/bios.cpp:63-64"
+
+  - name: "scph5500.bin"
+    description: "SCPH-5500 (v3.0 09-09-96 J)"
+    region: [japan]
+    required: false
+    md5: "8dd7d5296a650fac7319bce665a6a53c"
+    source_ref: "src/core/bios.cpp:65"
+
+  - name: "scph5501.bin"
+    description: "SCPH-5501, 5503, 7003 (v3.0 11-18-96 A)"
+    region: [north-america, latin-america]
+    required: false
+    md5: "490f666e1afb15b7362b406ed1cea246"
+    source_ref: "src/core/bios.cpp:66-67"
+
+  - name: "scph5502.bin"
+    description: "SCPH-5502, 5552 (v3.0 01-06-97 E)"
+    region: [europe, oceania]
+    required: false
+    md5: "32736f17079d0b2b7024407c39bd3050"
+    source_ref: "src/core/bios.cpp:68-69"
+
+  - name: "scph7000.bin"
+    description: "SCPH-7000, 7500, 9000 (v4.0 08-18-97 J)"
+    region: [japan]
+    required: false
+    md5: "8e4c14f567745eff2f0408c8129f72a6"
+    source_ref: "src/core/bios.cpp:70-71"
+
+  - name: "scph7000w.bin"
+    description: "SCPH-7000W (v4.1 11-14-97 A)"
+    region: [japan]
+    required: false
+    md5: "b84be139db3ee6cbd075630aa20a6553"
+    source_ref: "src/core/bios.cpp:72"
+
+  - name: "scph7001.bin"
+    description: "SCPH-7001, 7501, 7503, 9001, 9003, 9903 (v4.1 12-16-97 A)"
+    region: [north-america, latin-america]
+    required: false
+    md5: "1e68c231d0896b7eadcad1d7d8e76129"
+    source_ref: "src/core/bios.cpp:73-74"
+
+  - name: "scph7002.bin"
+    description: "SCPH-7002, 7502, 9002 (v4.1 12-16-97 E)"
+    region: [europe, oceania]
+    required: false
+    md5: "b9d9a0286c33dc6b7237bb13cd46fdee"
+    source_ref: "src/core/bios.cpp:75-76"
+
+  - name: "scph100.bin"
+    description: "SCPH-100 (v4.3 03-11-00 J)"
+    region: [japan]
+    required: false
+    md5: "8abc1b549a4a80954addc48ef02c4521"
+    source_ref: "src/core/bios.cpp:77"
+
+  - name: "scph101_v44.bin"
+    description: "SCPH-101 (v4.4 03-24-00 A)"
+    region: [north-america, latin-america]
+    required: false
+    md5: "9a09ab7e49b422c007e6d54d7c49b965"
+    source_ref: "src/core/bios.cpp:78"
+
+  - name: "scph101_v45.bin"
+    description: "SCPH-101 (v4.5 05-25-00 A)"
+    region: [north-america, latin-america]
+    required: false
+    md5: "6e3735ff4c7dc899ee98981385f6f3d0"
+    source_ref: "src/core/bios.cpp:79"
+
+  - name: "scph102_v44.bin"
+    description: "SCPH-102 (v4.4 03-24-00 E)"
+    region: [europe, oceania]
+    required: false
+    md5: "b10f5e0e3d9eb60e5159690680b1e774"
+    source_ref: "src/core/bios.cpp:80"
+
+  - name: "scph102_v45.bin"
+    description: "SCPH-102 (v4.5 05-25-00 E)"
+    region: [europe, oceania]
+    required: false
+    md5: "de93caec13d1a141a40a79f5c86168d6"
+    source_ref: "src/core/bios.cpp:81"
+
+  - name: "ps2_scph18000.bin"
+    description: "PS2, SCPH-18000 (v5.0 10-27-00 J)"
+    region: [japan]
+    required: false
+    md5: "d8f485717a5237285e4d7c5f881b7f32"
+    note: "The table hashes the first 512 KB that are read, whatever the file size."
+    source_ref: "src/core/bios.cpp:82-83"
+
+  - name: "ps2_scph30003.bin"
+    description: "PS2, SCPH-30003 (v5.0 09-02-00 E)"
+    region: [europe, oceania]
+    required: false
+    md5: "71f50ef4f4e17c163c78908e16244f7d"
+    note: "The table hashes the first 512 KB that are read, whatever the file size."
+    source_ref: "src/core/bios.cpp:84-85"
+
+  - name: "psxonpsp660.bin"
+    description: "PSP, SCPH-1000R (v4.5 05-25-00 J)"
+    required: false
+    md5: "c53ca5908936d412331790f4426c6c33"
+    source_ref: "src/core/bios.cpp:86-87"
+
+  - name: "scph1000r.bin"
+    description: "SCPH-1000R (v4.5 05-25-00 J)"
+    region: [japan]
+    required: false
+    md5: "476d68a94ccec3b9c8303bbd1daf2810"
+    source_ref: "src/core/bios.cpp:88"
+
+  - name: "ps1_rom.bin"
+    description: "PS3 (v5.0 06-23-03 A)"
+    required: false
+    md5: "fbb5f59ec332451debccf1e377017237"
+    size: 4089584
+    validation: [size]
+    note: "The whole 0x3E66F0 PS3 image. Only its first 512 KB are read and hashed, md5 c02a6fbb1b27359f84e92fae8bc21316. Marked not patch compatible: fast boot is refused with this image."
+    source_ref: "src/core/bios.cpp:89"
+
+  - name: "ps1_rom.bin"
+    description: "PS3 (v5.0 06-23-03 A)"
+    required: false
+    md5: "81bbe60ba7a3d1cea1d48c14cbcc647b"
+    note: "Marked not patch compatible: fast boot is refused with this image."
+    source_ref: "src/core/bios.cpp:90"

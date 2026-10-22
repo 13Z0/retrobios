@@ -3014,8 +3014,16 @@ def _git_history(path: Path) -> list[str] | None:
 
     try:
         result = git("log", "--format=%H", "--", path.name)
-        if result.returncode == 0:
-            return result.stdout.split()
+        deleted = git("log", "--format=%H", "--diff-filter=D", "--", path.name)
+        if result.returncode == 0 and deleted.returncode == 0:
+            # A commit that deletes or renames the file away ends the history
+            # of the profile now at that path: what precedes it is another
+            # profile once filed under the same name (mupen64plus.yml became
+            # mupen64plus_next.yml before the standalone took the name).
+            history = result.stdout.split()
+            ends = set(deleted.stdout.split())
+            cut = next((i for i, sha in enumerate(history) if sha in ends), len(history))
+            return history[:cut]
         # A repository with no commit yet holds nothing written earlier.
         inside = git("rev-parse", "--is-inside-work-tree")
         if inside.stdout.strip() == "true" and git("rev-parse", "-q", "--verify", "HEAD").returncode:

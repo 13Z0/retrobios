@@ -5584,6 +5584,8 @@ class AHashScanLabelNamesNoOtherDump(unittest.TestCase):
         ("swanstation", "ps1_rom.bin"):
             "the whole PS3 image is the file the PS3 itself names ps1_rom.bin, "
             "beetle_psx reads its first 512 KB under the same name",
+        ("duckstation-legacy", "ps1_rom.bin"):
+            "the same whole PS3 image, whose first 512 KB src/core/bios.cpp:89 hashes",
     }
 
     @staticmethod
