@@ -271,6 +271,7 @@ nav:
         - Atari800: emulators/atari800.md
         - aX360e: emulators/ax360e.md
         - Azahar: emulators/azahar.md
+        - Azahar (SDL2): emulators/azahar-sdl.md
         - AzaharPlus: emulators/azaharplus.md
       - B:
         - b2: emulators/b2.md

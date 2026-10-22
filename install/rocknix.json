@@ -22,9 +22,9 @@
   ],
   "standalone_copies": [],
   "total_files": 7152,
-  "total_size": 8224212372,
+  "total_size": 8224212452,
   "pack_files": 7154,
-  "pack_size": 8224212372,
+  "pack_size": 8224212452,
   "total_omitted": 42,
   "omitted_files": [
     {
@@ -487,6 +487,9 @@
     ],
     "armsx2": [
       "armsx2_libretro"
+    ],
+    "azahar": [
+      "azahar-sa"
     ],
     "beetle_gba": [
       "mednafen_gba"
@@ -2676,10 +2679,10 @@
     },
     {
       "dest": "sysdata/keys.txt",
-      "sha1": "5fab786695311433602028cd89898689c5df0898",
-      "sha256": "dee8cbca96b74e81d19b0292f8c6255f0e2b23d8551f82cacd086c2eead35ea4",
-      "size": 7344,
-      "repo_path": "bios/Other/azahar/sysdata/keys.txt",
+      "sha1": "5288772be438b86978a801e6dcb14228ad3a20af",
+      "sha256": "ea8b3d7c752d85f2326b9bfa01615414ab34ba052f87481b0ff4003fd887e50a",
+      "size": 7424,
+      "repo_path": "bios/Other/azaharplus/sysdata/keys.txt",
       "cores": [
         "azahar"
       ]

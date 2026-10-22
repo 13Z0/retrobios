@@ -4432,6 +4432,9 @@
     "armsx2": [
       "armsx2_libretro"
     ],
+    "azahar-sdl": [
+      "azahar"
+    ],
     "basiliskii": [
       "basilisk"
     ],
@@ -11415,7 +11418,7 @@
       "size": 7344,
       "repo_path": "bios/Other/azahar/sysdata/keys.txt",
       "cores": [
-        "azahar"
+        "azahar-sdl"
       ]
     },
     {
@@ -108675,7 +108678,7 @@
       "size": 3145728,
       "repo_path": "bios/Nintendo/3DS/Citra/sysdata/shared_font.bin",
       "cores": [
-        "azahar"
+        "azahar-sdl"
       ]
     },
     {
@@ -108685,7 +108688,7 @@
       "size": 53264,
       "repo_path": "bios/Nintendo/3DS/Citra/sysdata/seeddb.bin",
       "cores": [
-        "azahar"
+        "azahar-sdl"
       ]
     },
     {
@@ -108695,7 +108698,7 @@
       "size": 256,
       "repo_path": "bios/Nintendo/3DS/otp.bin",
       "cores": [
-        "azahar"
+        "azahar-sdl"
       ]
     },
     {
@@ -108705,7 +108708,7 @@
       "size": 320,
       "repo_path": "bios/Nintendo/3DS/Citra/nand/private/movable.sed",
       "cores": [
-        "azahar"
+        "azahar-sdl"
       ]
     },
     {
@@ -108715,7 +108718,7 @@
       "size": 273,
       "repo_path": "bios/Nintendo/3DS/Citra/nand/rw/sys/SecureInfo_A",
       "cores": [
-        "azahar"
+        "azahar-sdl"
       ]
     },
     {
@@ -108725,7 +108728,7 @@
       "size": 272,
       "repo_path": "bios/Nintendo/3DS/Citra/nand/rw/sys/LocalFriendCodeSeed_B",
       "cores": [
-        "azahar"
+        "azahar-sdl"
       ]
     },
     {

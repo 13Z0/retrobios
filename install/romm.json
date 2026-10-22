@@ -6,7 +6,7 @@
   "platform": "romm",
   "display_name": "RomM",
   "version": "1.0",
-  "generated": "2026-10-22T09:20:33Z",
+  "generated": "2026-10-22T13:12:21Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -286,6 +286,76 @@
       "reason": "below_platform_folder",
       "cores": [
         "Clock Signal (CLK)"
+      ]
+    },
+    {
+      "dest": "Azahar/nand/private/movable.sed",
+      "name": "movable.sed",
+      "system": "nintendo-3ds",
+      "required": false,
+      "reason": "below_platform_folder",
+      "cores": [
+        "Azahar"
+      ]
+    },
+    {
+      "dest": "Azahar/nand/rw/sys/LocalFriendCodeSeed_B",
+      "name": "LocalFriendCodeSeed_B",
+      "system": "nintendo-3ds",
+      "required": false,
+      "reason": "below_platform_folder",
+      "cores": [
+        "Azahar"
+      ]
+    },
+    {
+      "dest": "Azahar/nand/rw/sys/SecureInfo_A",
+      "name": "SecureInfo_A",
+      "system": "nintendo-3ds",
+      "required": false,
+      "reason": "below_platform_folder",
+      "cores": [
+        "Azahar"
+      ]
+    },
+    {
+      "dest": "Azahar/sysdata/keys.txt",
+      "name": "keys.txt",
+      "system": "nintendo-3ds",
+      "required": false,
+      "reason": "below_platform_folder",
+      "cores": [
+        "Azahar"
+      ]
+    },
+    {
+      "dest": "Azahar/sysdata/otp.bin",
+      "name": "otp.bin",
+      "system": "nintendo-3ds",
+      "required": false,
+      "reason": "below_platform_folder",
+      "cores": [
+        "Azahar"
+      ]
+    },
+    {
+      "dest": "Azahar/sysdata/seeddb.bin",
+      "name": "seeddb.bin",
+      "system": "nintendo-3ds",
+      "required": false,
+      "reason": "below_platform_folder",
+      "cores": [
+        "Azahar"
+      ]
+    },
+    {
+      "dest": "Azahar/sysdata/shared_font.bin",
+      "name": "shared_font.bin",
+      "system": "nintendo-3ds",
+      "required": false,
+      "reason": "below_platform_folder",
+      "cores": [
+        "Azahar"
       ]
     },
     {
@@ -2892,36 +2962,6 @@
       ]
     },
     {
-      "dest": "nand/private/movable.sed",
-      "name": "movable.sed",
-      "system": "nintendo-3ds",
-      "required": false,
-      "reason": "below_platform_folder",
-      "cores": [
-        "Azahar"
-      ]
-    },
-    {
-      "dest": "nand/rw/sys/LocalFriendCodeSeed_B",
-      "name": "LocalFriendCodeSeed_B",
-      "system": "nintendo-3ds",
-      "required": false,
-      "reason": "below_platform_folder",
-      "cores": [
-        "Azahar"
-      ]
-    },
-    {
-      "dest": "nand/rw/sys/SecureInfo_A",
-      "name": "SecureInfo_A",
-      "system": "nintendo-3ds",
-      "required": false,
-      "reason": "below_platform_folder",
-      "cores": [
-        "Azahar"
-      ]
-    },
-    {
       "dest": "nestopia/samples/ftaerobi/00.wav",
       "name": "nestopia/samples/ftaerobi/00.wav",
       "system": "nintendo-nes",
@@ -4649,46 +4689,6 @@
       "reason": "no_platform_slug",
       "cores": [
         "MAME 2003"
-      ]
-    },
-    {
-      "dest": "sysdata/keys.txt",
-      "name": "keys.txt",
-      "system": "nintendo-3ds",
-      "required": false,
-      "reason": "below_platform_folder",
-      "cores": [
-        "Azahar"
-      ]
-    },
-    {
-      "dest": "sysdata/otp.bin",
-      "name": "otp.bin",
-      "system": "nintendo-3ds",
-      "required": false,
-      "reason": "below_platform_folder",
-      "cores": [
-        "Azahar"
-      ]
-    },
-    {
-      "dest": "sysdata/seeddb.bin",
-      "name": "seeddb.bin",
-      "system": "nintendo-3ds",
-      "required": false,
-      "reason": "below_platform_folder",
-      "cores": [
-        "Azahar"
-      ]
-    },
-    {
-      "dest": "sysdata/shared_font.bin",
-      "name": "shared_font.bin",
-      "system": "nintendo-3ds",
-      "required": false,
-      "reason": "below_platform_folder",
-      "cores": [
-        "Azahar"
       ]
     },
     {

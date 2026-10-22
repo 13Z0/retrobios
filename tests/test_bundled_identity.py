@@ -83,7 +83,7 @@ class BundledFilesCarryTheirIdentity(unittest.TestCase):
 
 class TheFixedEntriesGetTheirOwnBytes(unittest.TestCase):
     CASES = (
-        ("azahar", "sysdata/keys.txt"),
+        ("azahar", "Azahar/sysdata/keys.txt"),
         ("azaharplus", "sysdata/keys.txt"),
         ("zesarux", "ace.rom"),
         ("zesarux", "alternate_roms/ace.rom"),

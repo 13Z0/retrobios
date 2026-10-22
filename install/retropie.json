@@ -17,9 +17,9 @@
   ],
   "standalone_copies": [],
   "total_files": 8528,
-  "total_size": 8749842474,
+  "total_size": 8749842554,
   "pack_files": 11084,
-  "pack_size": 8783209544,
+  "pack_size": 8783209624,
   "total_omitted": 215,
   "omitted_files": [
     {
@@ -2387,6 +2387,9 @@
     ],
     "armsx2": [
       "armsx2_libretro"
+    ],
+    "azahar": [
+      "azahar-sa"
     ],
     "basiliskii": [
       "basilisk"
@@ -15470,11 +15473,11 @@
       ]
     },
     {
-      "dest": "sysdata/keys.txt",
-      "sha1": "5fab786695311433602028cd89898689c5df0898",
-      "sha256": "dee8cbca96b74e81d19b0292f8c6255f0e2b23d8551f82cacd086c2eead35ea4",
-      "size": 7344,
-      "repo_path": "bios/Other/azahar/sysdata/keys.txt",
+      "dest": "Azahar/sysdata/keys.txt",
+      "sha1": "5288772be438b86978a801e6dcb14228ad3a20af",
+      "sha256": "ea8b3d7c752d85f2326b9bfa01615414ab34ba052f87481b0ff4003fd887e50a",
+      "size": 7424,
+      "repo_path": "bios/Other/azaharplus/sysdata/keys.txt",
       "cores": [
         "azahar"
       ]
@@ -86448,7 +86451,7 @@
       ]
     },
     {
-      "dest": "sysdata/shared_font.bin",
+      "dest": "Azahar/sysdata/shared_font.bin",
       "sha1": "60022d6d026c8df950722478aab25702a0dfa067",
       "sha256": "a06aaf6b50ebc38ebdccc59b913d4a1c0cc7005289957530acaaf78ffc49dddd",
       "size": 3145728,
@@ -86458,7 +86461,7 @@
       ]
     },
     {
-      "dest": "sysdata/seeddb.bin",
+      "dest": "Azahar/sysdata/seeddb.bin",
       "sha1": "9e2c006997761082be87cf316e57c4da5cddbc62",
       "sha256": "ff485c60090185aff05354ece01f86b61f6020332bed0f9090c58d4678e5a180",
       "size": 53264,
@@ -86468,7 +86471,7 @@
       ]
     },
     {
-      "dest": "sysdata/otp.bin",
+      "dest": "Azahar/sysdata/otp.bin",
       "sha1": "49489245b400f62c62faf1736b7f0a70714d3c49",
       "sha256": "e2f1810ceff3d1fd4f1c08ffc1f4d47aa8efca551edd24cd5686205c71a3b13b",
       "size": 256,
@@ -86478,7 +86481,7 @@
       ]
     },
     {
-      "dest": "nand/private/movable.sed",
+      "dest": "Azahar/nand/private/movable.sed",
       "sha1": "6620b0a0c79dfe80be682fbd5c31c152ab570899",
       "sha256": "5c024772c93d5b491398873b05be69a178d8a5208152d60ea2c006dfdbb2ce00",
       "size": 320,
@@ -86488,7 +86491,7 @@
       ]
     },
     {
-      "dest": "nand/rw/sys/SecureInfo_A",
+      "dest": "Azahar/nand/rw/sys/SecureInfo_A",
       "sha1": "ff52883a0f61afcbbb3f8e59b9327ac52050e9a7",
       "sha256": "5eda7e8951c48fc0913445fc844fa1caafcf226f82c0d06341e7e5fa39ae033e",
       "size": 273,
@@ -86498,7 +86501,7 @@
       ]
     },
     {
-      "dest": "nand/rw/sys/LocalFriendCodeSeed_B",
+      "dest": "Azahar/nand/rw/sys/LocalFriendCodeSeed_B",
       "sha1": "3011ae55c3dc70203fd62aad98bf485e55d018ff",
       "sha256": "086e900d21c6ae3f892db284359315cb5ec44bb3939f2fb3187d212f5be3ac61",
       "size": 272,
