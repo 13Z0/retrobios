@@ -11,6 +11,7 @@ import argparse
 import json
 import os
 import logging
+import re
 import shutil
 import subprocess
 import sys
@@ -41,6 +42,7 @@ from ._hash_merge import (
     merge_mame_devices,
     merge_mame_profile,
     merge_mame_support,
+    settled_required,
 )
 from .mame_devices import (
     attribute_softlists,
@@ -241,12 +243,18 @@ def _find_mame_profiles() -> list[Path]:
             # declare mamedev/mame upstream but build from their own fork at
             # another release: refreshing their refs from current MAME moves
             # them onto paths their tree does not have, such as the 0.289 move
-            # of neogeo.cpp from src/mame/neogeo/ to src/mame/snk/.
+            # of neogeo.cpp from src/mame/neogeo/ to src/mame/snk/. A profile
+            # that builds mamedev/mame itself at a pinned commit, as pSxMAME
+            # does at 0.133, is a snapshot of that tree just the same.
             if (
                 isinstance(upstream, str)
                 and upstream.rstrip("/") == "https://github.com/mamedev/mame"
                 and isinstance(source, str)
                 and source.rstrip("/") in _MAME_TREES
+                and not (
+                    source.rstrip("/") == "https://github.com/mamedev/mame"
+                    and data.get("source_commit")
+                )
             ):
                 profiles.append(path)
         except (yaml.YAMLError, OSError) as exc:
@@ -427,7 +435,8 @@ def release_profile(
     BIOS root sets and their ROMs change between releases, so the current
     MAME profile does not describe them. Each set keeps the system and the
     required flag the current profile gives it, while the contents and the line
-    are the release's own.
+    are the release's own, and so is a set the release runs without: recel is
+    undumped at 0.258 and dumped later.
     """
     version = release.removeprefix("mame")
     version = f"{version[0]}.{version[1:]}" if version.isdigit() else version
@@ -440,7 +449,7 @@ def release_profile(
         name = f"{set_name}.zip"
         entry: dict[str, Any] = {
             "name": name,
-            "required": known.get(name, {}).get("required", True),
+            "required": settled_required(known.get(name, {}), data),
             "category": "bios_zip",
         }
         if known.get(name, {}).get("system"):
@@ -471,6 +480,9 @@ def release_profile(
     }
 
 
+_QUOTE_REF = re.compile(r'^(\s*source_ref: )([^"\'\n].*)$', re.MULTILINE)
+
+
 def _write_release(args: argparse.Namespace) -> None:
     """Write the profile of one MAME release, read from its own tag."""
     try:
@@ -487,6 +499,9 @@ def _write_release(args: argparse.Namespace) -> None:
         args.built_by,
     )
     text = yaml.safe_dump(profile, sort_keys=False, allow_unicode=True, width=100)
+    # Citations are written double-quoted in every profile: left bare, each
+    # regeneration rewrote all of them.
+    text = _QUOTE_REF.sub(r'\g<1>"\g<2>"', text)
     write_text_atomic(str(args.profile), text)
     print(f"{args.profile}: {len(profile['files'])} BIOS root sets at {args.release}")
 
