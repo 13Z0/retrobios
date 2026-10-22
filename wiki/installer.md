@@ -251,6 +251,7 @@ what the options name, everything by default.
 | `--dry-run` | Show what would be downloaded, by system and with sizes, without writing anything |
 | `--yes`, `-y` | Do not ask before a download of 1 GB or more |
 | `--quiet`, `-q` | Print only failures and the final summary. Implies `--no-input` |
+| `--events` | Write the run as JSON events on standard output, one object per line, and the usual text on standard error. Implies `--no-input`. See [Machine-readable events](#machine-readable-events) |
 | `--version` | Print the installer's identity, the first 12 hex digits of the SHA-256 the bootstraps pin |
 | `--list-platforms` | Print the supported platforms and what was detected here |
 | `--list-targets` | Print the hardware targets a platform publishes, with the core count each carries |
@@ -266,6 +267,31 @@ with a wrong hash are listed first and in full, then the first ten missing ones
 it, a file already present with the expected hash is left untouched, and one
 whose contents do not match is re-downloaded and replaced by the verified copy.
 Files the list does not name are never read, moved or deleted.
+
+## Machine-readable events
+
+With `--events`, standard output carries only JSON objects, one per line, and
+the text a person reads goes to standard error. A program driving the installer reads
+the objects and never parses the text. Every object has an `event` key naming its
+kind, and each kind has exactly the keys below, in this order. The schema is
+`EVENT_KEYS` in `install.py`, and a test holds this table to it.
+
+| Kind | Keys | When |
+|------|------|------|
+| `start` | `schema`, `installer`, `mode` | First line. `schema` is 1, `installer` the identity `--version` prints, `mode` one of `install`, `check`, `dry-run`, `list` |
+| `detect` | `os`, `os_name`, `platforms` | Once the platforms are known. `os_name` comes from `/etc/os-release`. `platforms` lists `{platform, name, bios_dir}`, and is empty when nothing supported was found |
+| `error` | `stage`, `reason`, `platform`, `message` | The file list could not be read (`stage` is `manifest`). `reason` is `network`, `not_found` or `invalid` |
+| `file` | `platform`, `dest`, `systems`, `size`, `state` | Each file of the list after the check. `state` is `present` (hash verified), `wrong_hash` or `missing` |
+| `system` | `platform`, `system`, `name`, `files`, `present`, `missing`, `wrong_hash`, `bytes_needed` | Each system, sorted by id. Files with no system count under `other`. `name` is the platform's own name for it |
+| `check` | `platform`, `name`, `bios_dir`, `files`, `present`, `missing`, `wrong_hash`, `bytes_needed`, `data_missing`, `not_installable` | The platform's totals. `data_missing` counts data-tree files to fetch, `not_installable` the files the collection cannot supply |
+| `download` | `platform`, `files`, `bytes` | Before the downloads start |
+| `progress` | `files_done`, `files_total`, `bytes_done`, `bytes_total` | At most every half second while bytes arrive |
+| `downloaded` | `dest`, `ok`, `reason`, `size`, `files_done`, `files_total`, `bytes_done`, `bytes_total` | Each finished file. `reason` says why one failed, and is empty otherwise |
+| `summary` | `mode`, `installed`, `up_to_date`, `pending`, `failed`, `skipped`, `interrupted` | The outcome. `pending` counts what a next run would still fetch, `failed` lists `{dest, reason}`, `skipped` lists `{reason, label, files, required}` for the files the collection cannot supply. Not written for a listing |
+| `end` | `code` | Last line, with the exit status the process returns (see [Exit status](#exit-status)) |
+
+An option refused before the run starts (`install.py: error:`, code 2) writes
+no event at all. A program reads a missing `end` as that case.
 
 ## Environment overrides
 

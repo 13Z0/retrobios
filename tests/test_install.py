@@ -12,6 +12,7 @@ import os
 import shlex
 import re
 import shutil
+import socket
 import subprocess
 import sys
 import tempfile
@@ -4377,6 +4378,179 @@ class RomMFirmwareInstallsUnderItsTemplate(unittest.TestCase, _LoopbackRun):
         self.assertTrue((base / "library" / "lynx" / "bios" / "lynxboot.img").is_file())
         self.assertFalse((base / "library" / "bios").exists())
         self.assertIn("{platform}/bios", proc.stdout)
+
+
+class _SyntheticTree:
+    """A served tree of four BIOS files over loopback, one with no system,
+    and a BIOS folder holding one of them, another with other bytes, and
+    neither of the last two."""
+
+    FILES = {
+        "bios/A/a.bin": b"alpha" * 20,
+        "bios/A/b.bin": b"bravo" * 30,
+        "bios/B/c.bin": b"charlie" * 10,
+        "bios/X/d.bin": b"delta" * 5,
+    }
+
+    def serve_tree(self, test: unittest.TestCase) -> dict:
+        root = Path(_tempdir(test))
+        files = []
+        for path, data in self.FILES.items():
+            (root / path).parent.mkdir(parents=True, exist_ok=True)
+            (root / path).write_bytes(data)
+            name = Path(path).name
+            systems = {"a.bin": ["sys-a"], "b.bin": ["sys-a"], "c.bin": ["sys-b"]}.get(name)
+            entry = {"dest": name, "repo_path": path, "size": len(data),
+                     "sha1": hashlib.sha1(data).hexdigest(), "cores": None}
+            if systems:
+                entry["systems"] = systems
+            files.append(entry)
+        manifest = {
+            "manifest_version": 2, "platform": "retroarch", "display_name": "RetroArch",
+            "files": files, "system_names": {"sys-a": ["alpha"]},
+            "omitted_files": [{"dest": "e.bin", "name": "e.bin", "system": "sys-b",
+                               "required": True, "reason": "not_found",
+                               "systems": ["sys-b"]}],
+        }
+        (root / "install").mkdir()
+        (root / "install" / "retroarch.json").write_text(json.dumps(manifest))
+
+        class Quiet(http.server.SimpleHTTPRequestHandler):
+            def log_message(self, *args) -> None:
+                return
+
+        handler = functools.partial(Quiet, directory=str(root))
+        httpd = http.server.ThreadingHTTPServer(("127.0.0.1", 0), handler)
+        threading.Thread(target=httpd.serve_forever, daemon=True).start()
+        test.addCleanup(httpd.server_close)
+        test.addCleanup(httpd.shutdown)
+        self.home = Path(_tempdir(test))
+        self.bios = self.home / "bios"
+        self.bios.mkdir()
+        (self.bios / "a.bin").write_bytes(self.FILES["bios/A/a.bin"])
+        (self.bios / "b.bin").write_bytes(b"other bytes")
+        return {
+            **os.environ, "HOME": str(self.home), "RETROBIOS_OS": "linux",
+            "RETROBIOS_BASE_URL": f"http://127.0.0.1:{httpd.server_address[1]}",
+        }
+
+
+def _events(proc: subprocess.CompletedProcess) -> list[dict]:
+    """The --events stream, every stdout line a JSON object."""
+    return [json.loads(line) for line in proc.stdout.splitlines()]
+
+
+class EventsDescribeTheRun(unittest.TestCase, _SyntheticTree):
+    """--events: the handheld port reads the run as JSON lines on stdout and
+    never parses the text, which goes to stderr."""
+
+    def setUp(self):
+        self.env = self.serve_tree(self)
+
+    def _run(self, *argv: str) -> tuple[subprocess.CompletedProcess, list[dict]]:
+        proc = _install_run(self.env, "--platform", "retroarch", "--dest", str(self.bios),
+                            "--events", "--jobs", "1", *argv)
+        self.assertNotIn("Traceback", proc.stderr)
+        return proc, _events(proc)
+
+    def _head(self, mode: str, installer: str) -> list[dict]:
+        return [
+            {"event": "start", "schema": install.EVENT_SCHEMA, "installer": installer,
+             "mode": mode},
+            {"event": "detect", "os": "linux", "os_name": install._os_name(),
+             "platforms": [{"platform": "retroarch", "name": "RetroArch",
+                            "bios_dir": str(self.bios)}]},
+            {"event": "file", "platform": "retroarch", "dest": "a.bin",
+             "systems": ["sys-a"], "size": 100, "state": "present"},
+            {"event": "file", "platform": "retroarch", "dest": "b.bin",
+             "systems": ["sys-a"], "size": 150, "state": "wrong_hash"},
+            {"event": "file", "platform": "retroarch", "dest": "c.bin",
+             "systems": ["sys-b"], "size": 70, "state": "missing"},
+            {"event": "file", "platform": "retroarch", "dest": "d.bin",
+             "systems": [], "size": 25, "state": "missing"},
+            {"event": "system", "platform": "retroarch", "system": "other", "name": "other",
+             "files": 1, "present": 0, "missing": 1, "wrong_hash": 0, "bytes_needed": 25},
+            {"event": "system", "platform": "retroarch", "system": "sys-a", "name": "alpha",
+             "files": 2, "present": 1, "missing": 0, "wrong_hash": 1, "bytes_needed": 150},
+            {"event": "system", "platform": "retroarch", "system": "sys-b", "name": "sys-b",
+             "files": 1, "present": 0, "missing": 1, "wrong_hash": 0, "bytes_needed": 70},
+            {"event": "check", "platform": "retroarch", "name": "RetroArch",
+             "bios_dir": str(self.bios), "files": 4, "present": 1, "missing": 2,
+             "wrong_hash": 1, "bytes_needed": 245, "data_missing": 0,
+             "not_installable": 1},
+        ]
+
+    SKIPPED = [{"reason": "not_found", "label": "not found", "files": 1, "required": 1}]
+
+    def test_a_check_run(self):
+        proc, events = self._run("--check")
+        self.assertEqual(proc.returncode, 1)
+        installer = events[0]["installer"]
+        self.assertEqual(events, self._head("check", installer) + [
+            {"event": "summary", "mode": "check", "installed": 0, "up_to_date": 1,
+             "pending": 3, "failed": [], "skipped": self.SKIPPED, "interrupted": False},
+            {"event": "end", "code": 1},
+        ])
+        self.assertIn("2/4 present (1 verified, 1 wrong hash)", proc.stderr)
+        self.assertFalse((self.bios / "c.bin").exists())
+
+    def test_an_install_run(self):
+        proc, events = self._run()
+        self.assertEqual(proc.returncode, 0, proc.stderr)
+        installer = events[0]["installer"]
+        progress = [event for event in events if event["event"] == "progress"]
+        for event in progress:
+            self.assertEqual(list(event), ["event", *install.EVENT_KEYS["progress"]])
+        done = [{"event": "downloaded", "dest": dest, "ok": True, "reason": "",
+                 "size": size, "files_done": n, "files_total": 3, "bytes_done": total,
+                 "bytes_total": 245}
+                for n, (dest, size, total) in enumerate(
+                    (("c.bin", 70, 70), ("d.bin", 25, 95), ("b.bin", 150, 245)), 1)]
+        self.assertEqual([e for e in events if e["event"] != "progress"],
+                         self._head("install", installer) + [
+            {"event": "download", "platform": "retroarch", "files": 3, "bytes": 245},
+            *done,
+            {"event": "summary", "mode": "install", "installed": 3, "up_to_date": 1,
+             "pending": 0, "failed": [], "skipped": self.SKIPPED, "interrupted": False},
+            {"event": "end", "code": 0},
+        ])
+        self.assertEqual((self.bios / "b.bin").read_bytes(), self.FILES["bios/A/b.bin"])
+        self.assertIn("Done. 3 files installed", proc.stderr)
+
+    def test_every_event_has_its_schema_keys(self):
+        _proc, events = self._run()
+        for event in events:
+            self.assertEqual(list(event), ["event", *install.EVENT_KEYS[event["event"]]])
+
+    def test_a_file_list_out_of_reach_is_a_network_error(self):
+        # A port nothing listens on: the connection is refused at once.
+        with socket.socket() as probe:
+            probe.bind(("127.0.0.1", 0))
+            closed = probe.getsockname()[1]
+        env = {**self.env, "RETROBIOS_BASE_URL": f"http://127.0.0.1:{closed}"}
+        proc = _install_run(env, "--platform", "retroarch", "--dest", str(self.bios),
+                            "--events", "--check")
+        events = _events(proc)
+        self.assertEqual([e["event"] for e in events], ["start", "detect", "error", "end"])
+        self.assertEqual(events[2]["reason"], "network")
+        self.assertEqual(events[2]["stage"], "manifest")
+        self.assertEqual(events[3], {"event": "end", "code": 1})
+
+    def test_nothing_detected_is_an_empty_platform_list(self):
+        proc = _install_run(self.env, "--events", "--check")
+        events = _events(proc)
+        self.assertEqual(proc.returncode, 1)
+        self.assertEqual(events[1]["platforms"], [])
+        self.assertEqual(events[-1], {"event": "end", "code": 1})
+
+    def test_the_schema_is_documented(self):
+        page = (REPO_ROOT / "wiki" / "installer.md").read_text(encoding="utf-8")
+        for kind, keys in install.EVENT_KEYS.items():
+            row = next((line for line in page.splitlines()
+                        if line.startswith(f"| `{kind}` |")), None)
+            self.assertIsNotNone(row, kind)
+            for key in keys:
+                self.assertIn(f"`{key}`", row, f"{kind}.{key}")
 
 
 if __name__ == "__main__":
