@@ -54,7 +54,8 @@ is missing.
 6. Run `generate_readme.py` (rebuilds README.md and CONTRIBUTING.md)
 7. `mkdocs build --strict` to produce the static site
 8. Run `validate_site.py` on the rendered HTML (metadata, headings, image
-   alternatives, duplicate ids, local links and fragments)
+   alternatives, duplicate ids, local links and fragments, page and search
+   index budgets)
 9. Require the committed README and CONTRIBUTING to match what the generator
    just produced. `write_if_changed()` compares content with the timestamp line
    stripped, so a run that only moves the clock leaves the files untouched and

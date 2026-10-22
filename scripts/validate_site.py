@@ -34,7 +34,25 @@ class Page:
     jsonld: list[str] = field(default_factory=list)
     unrendered: list[str] = field(default_factory=list)
     remote_images: list[str] = field(default_factory=list)
+    remote_scripts: list[str] = field(default_factory=list)
     placeholders: list[str] = field(default_factory=list)
+    headings: list[int] = field(default_factory=list)
+    empty_headers: int = 0
+    runtime_diagrams: int = 0
+    size: int = 0
+
+
+# Budgets the site was brought under on 2026-10-22, with room to grow. A
+# change that passes one is a regression of what a visitor downloads, not a
+# matter of taste: raise the number in the same change that explains why.
+#
+# The largest page was 10.5 MB (systems/game-engines/) and took 21 s of
+# main-thread work on a throttled phone. Split pages now top out at 0.9 MB.
+MAX_PAGE_BYTES = 1_000_000
+# The search index is downloaded by every visitor who opens the search:
+# 21.0 MB raw and 4.88 MB gzip with hashes in it, 7.3 MB and 1.44 MB without.
+MAX_SEARCH_INDEX_BYTES = 8_500_000
+MAX_SEARCH_INDEX_GZIP_BYTES = 1_700_000
 
 
 # Text inside these is shown as written, so markup there is not a leftover.
@@ -50,11 +68,21 @@ class _PageParser(HTMLParser):
         self._jsonld_depth = 0
         self._jsonld_parts: list[str] = []
         self._literal_depth = 0
+        self._header_parts: list[str] | None = None
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
-        data = dict(attrs)
+        data = {key: value or "" for key, value in attrs}
         if tag in _LITERAL_TAGS:
             self._literal_depth += 1
+        if re.fullmatch(r"h[1-6]", tag):
+            self.page.headings.append(int(tag[1]))
+        if tag == "th":
+            self._header_parts = []
+        if "mermaid" in data.get("class", "").split():
+            # Material renders it in the browser with a script from a CDN.
+            self.page.runtime_diagrams += 1
+        if tag == "script" and re.match(r"\s*(?:https?:)?//", data.get("src", "")):
+            self.page.remote_scripts.append(data["src"])
         if tag == "html":
             self.page.lang = data.get("lang", "")
         elif tag == "title":
@@ -97,6 +125,10 @@ class _PageParser(HTMLParser):
     def handle_endtag(self, tag: str) -> None:
         if tag in _LITERAL_TAGS and self._literal_depth:
             self._literal_depth -= 1
+        if tag == "th" and self._header_parts is not None:
+            if not "".join(self._header_parts).strip():
+                self.page.empty_headers += 1
+            self._header_parts = None
         if tag == "title":
             self._title_depth -= 1
         elif tag == "script" and self._jsonld_depth:
@@ -105,6 +137,8 @@ class _PageParser(HTMLParser):
             self._jsonld_parts = []
 
     def handle_data(self, data: str) -> None:
+        if self._header_parts is not None:
+            self._header_parts.append(data)
         if self._title_depth:
             self._title_parts.append(data)
         if self._jsonld_depth:
@@ -119,9 +153,37 @@ class _PageParser(HTMLParser):
 
 def _parse_page(path: Path) -> Page:
     parser = _PageParser(path)
-    parser.feed(path.read_text(encoding="utf-8", errors="replace"))
+    text = path.read_text(encoding="utf-8", errors="replace")
+    parser.feed(text)
     parser.close()
+    parser.page.size = len(text.encode("utf-8"))
     return parser.page
+
+
+def _heading_jumps(levels: list[int]) -> list[str]:
+    """Each heading more than one level below the one before it: a screen
+    reader user moving by level finds nothing at the level skipped."""
+    return [f"h{before} to h{after}" for before, after in zip(levels, levels[1:])
+            if after > before + 1]
+
+
+def _check_search_index(site: Path) -> list[str]:
+    """The index every visitor who opens the search downloads, against its budget."""
+    import gzip
+
+    path = site / "search" / "search_index.json"
+    if not path.is_file():
+        return []
+    raw = path.read_bytes()
+    packed = len(gzip.compress(raw, 6))
+    issues = []
+    if len(raw) > MAX_SEARCH_INDEX_BYTES:
+        issues.append(f"search/search_index.json: {len(raw):,} bytes, "
+                      f"over the {MAX_SEARCH_INDEX_BYTES:,} budget")
+    if packed > MAX_SEARCH_INDEX_GZIP_BYTES:
+        issues.append(f"search/search_index.json: {packed:,} bytes gzip, "
+                      f"over the {MAX_SEARCH_INDEX_GZIP_BYTES:,} budget")
+    return issues
 
 
 def _base_path(config_path: Path) -> str:
@@ -220,6 +282,17 @@ def _check_pages(
             report(path, f"images missing alt: {page.missing_alt[:5]}")
         if page.remote_images:
             report(path, f"images loaded from another host: {page.remote_images[:3]}")
+        if page.remote_scripts:
+            report(path, f"scripts loaded from another host: {page.remote_scripts[:3]}")
+        if page.runtime_diagrams:
+            report(path, f"{page.runtime_diagrams} diagram(s) drawn by a script at runtime")
+        if page.size > MAX_PAGE_BYTES:
+            report(path, f"{page.size:,} bytes of HTML, over the {MAX_PAGE_BYTES:,} budget")
+        jumps = _heading_jumps(page.headings)
+        if jumps:
+            report(path, f"heading levels skipped: {sorted(set(jumps))}")
+        if page.empty_headers:
+            report(path, f"{page.empty_headers} table header cell(s) without text")
         if page.placeholders:
             # scripts/sitediagrams.py knows no diagram of this name.
             report(path, f"image placeholders left unresolved: {page.placeholders[:3]}")
@@ -294,6 +367,7 @@ def validate_site(site: Path, config_path: Path) -> list[str]:
                 issues.append(f"duplicate {label} {value!r}: {rendered}")
 
     issues.extend(_check_links(pages, site, base_path))
+    issues.extend(_check_search_index(site))
 
     return issues
 

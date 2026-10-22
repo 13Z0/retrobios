@@ -166,6 +166,67 @@ class RenderedSiteValidation(unittest.TestCase):
 
 
 
+class TheSiteStaysWithinItsBudgets(unittest.TestCase):
+    """The 10.5 MB page and the 21 MB search index passed every check:
+    validate_site now holds the gains, each limit with its reason."""
+
+    def setUp(self) -> None:
+        self.temp = tempfile.TemporaryDirectory(dir=TMP_ROOT)
+        self.site = Path(self.temp.name) / "site"
+        self.site.mkdir()
+        self.config = Path(self.temp.name) / "mkdocs.yml"
+        self.config.write_text("site_url: https://example.test/retrobios/\n", encoding="utf-8")
+
+    def tearDown(self) -> None:
+        self.temp.cleanup()
+
+    def _issues(self, body: str) -> list[str]:
+        (self.site / "index.html").write_text(_page("Home", "Home page.", body), encoding="utf-8")
+        return validate_site(self.site, self.config)
+
+    def test_a_clean_page_passes(self):
+        (self.site / "javascripts").mkdir()
+        (self.site / "javascripts" / "site.js").write_text("", encoding="utf-8")
+        self.assertEqual(self._issues(
+            "<h2 id='a'>A</h2><h3 id='b'>B</h3><h2 id='c'>C</h2>"
+            "<table><thead><tr><th>Detail</th><th>Value</th></tr></thead></table>"
+            '<script src="javascripts/site.js"></script>'), [])
+
+    def test_a_page_over_its_size(self):
+        import validate_site as module
+
+        issues = self._issues("<p>" + "x" * module.MAX_PAGE_BYTES + "</p>")
+        self.assertTrue(any("over the" in issue and "HTML" in issue for issue in issues), issues)
+
+    def test_a_skipped_heading_level(self):
+        issues = self._issues("<h2 id='a'>A</h2><h4 id='b'>B</h4>")
+        self.assertTrue(any("h2 to h4" in issue for issue in issues), issues)
+
+    def test_an_empty_table_header(self):
+        issues = self._issues("<table><thead><tr><th> </th><th></th></tr></thead></table>")
+        self.assertTrue(any("2 table header cell(s) without text" in issue for issue in issues))
+
+    def test_a_script_or_a_diagram_from_another_host(self):
+        issues = self._issues(
+            '<script src="https://unpkg.com/mermaid@11/dist/mermaid.min.js"></script>'
+            '<pre class="mermaid">graph LR</pre>')
+        self.assertTrue(any("scripts loaded from another host" in issue for issue in issues))
+        self.assertTrue(any("drawn by a script at runtime" in issue for issue in issues))
+
+    def test_a_search_index_over_its_budget(self):
+        import random
+
+        import validate_site as module
+
+        (self.site / "search").mkdir()
+        rng = random.Random(1)
+        noise = "".join(rng.choice("0123456789abcdef") for _ in range(module.MAX_SEARCH_INDEX_BYTES + 1))
+        (self.site / "search" / "search_index.json").write_text(noise, encoding="utf-8")
+        issues = self._issues("")
+        self.assertTrue(any("search_index.json" in issue and "gzip" not in issue for issue in issues))
+        self.assertTrue(any("search_index.json" in issue and "gzip" in issue for issue in issues))
+
+
 class UnrenderedMarkdown(unittest.TestCase):
     """The clownmdemu analysis block reached readers as "- **bios_hle:**
     True": a list indented one level too deep, read as code."""
