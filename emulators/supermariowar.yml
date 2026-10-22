@@ -1,0 +1,41 @@
+emulator: "Super Mario War"
+type: standalone
+core_classification: game_engine
+source: "https://github.com/mmatyas/supermariowar"
+profiled_date: "2026-10-22"
+source_commit: "ed60ed45e296ff88a8883cbc51f5bf5aed880636"
+core_version: "2.0.0"
+display_name: "Super Mario War (smw)"
+cores:
+  - "smw"
+systems: [super-mario-war]
+
+notes: |
+  The open source continuation of the Super Mario War fan game. The code and
+  the game data live in two repositories: the engine reads graphics, sounds,
+  music, maps, worlds and tours from a data directory, ./data beside the
+  executable unless --datadir names another. A graphics or sound file missing
+  from the selected pack falls back to the Classic pack, and missing menu fonts
+  or start graphics stop the game at its splash screen.
+  ref: src/common/global.cpp:24-29, src/smw/main.cpp:295-296,
+       src/common/path.cpp:148-206, src/smw/GSSplashScreen.cpp:53-80
+
+  EmuELEC builds this revision with a patch moving the configuration to
+  /emuelec/configs/smw. Its run_smw.sh fetches mmatyas/supermariowar-data at
+  da13a367 into /storage/roms/ports/smw/data on first start, when
+  worlds/Big JM_Mixed River.txt is absent, and passes that directory as
+  --datadir.
+  ref: EmuELEC packages/sx05re/emuelec-ports/supermariowar/package.mk:4-5,
+       EmuELEC packages/sx05re/emuelec-ports/supermariowar/scripts/run_smw.sh:10-14,25-43
+
+files:
+  - name: "Super Mario War data"
+    path: "data/"
+    type: directory
+    category: game_data
+    system: super-mario-war
+    required: true
+    installed_on: [emuelec]
+    description: "Game data tree (mmatyas/supermariowar-data)"
+    note: "gfx/packs/menu/menu_font_small.png, menu_font_large.png, menu_background.png, menu_smw.png and menu_version.png are checked at the splash screen and stop the game when missing."
+    source_ref: "src/common/global.cpp:24-29, src/smw/GSSplashScreen.cpp:53-80"
