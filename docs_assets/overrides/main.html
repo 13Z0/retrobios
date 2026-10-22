@@ -29,6 +29,12 @@
   {% else %}{% set section = 'reference' %}{% endif %}
   {% set preview_image = config.site_url ~ 'assets/og/' ~ section ~ '.png' if config.site_url else '' %}
 
+  {# The theme's favicon is the 32 px PNG. Browsers that read an SVG icon
+     take this one, listed after it, and a home-screen shortcut takes the
+     opaque 180 px icon (scripts/make_site_icons.py makes all three). #}
+  <link rel="icon" type="image/svg+xml" href="{{ 'assets/brand/favicon.svg' | url }}">
+  <link rel="apple-touch-icon" sizes="180x180" href="{{ 'assets/brand/apple-touch-icon.png' | url }}">
+
   <meta property="og:type" content="{{ 'website' if not url else 'article' }}">
   <meta property="og:site_name" content="{{ config.site_name }}">
   <meta property="og:title" content="{{ page_title }}">

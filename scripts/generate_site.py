@@ -6194,8 +6194,8 @@ theme:
       icon: material/brightness-4
       name: Switch to auto
   font: false
-  logo: assets/images/logo.png
-  favicon: assets/images/favicon.png
+  logo: assets/brand/logo.svg
+  favicon: assets/brand/favicon-32.png
   icon:
     logo: material/chip
   features:
