@@ -5249,6 +5249,10 @@ ZIP: extract them all into the same folder.
 | [ROCKNIX](https://rocknix.org/) | Linux OS for ARM and x86 handhelds, among them the RG35XX (H700) and the RG552 (RK3399) | [ROCKNIX]({rel}) | `/storage/roms/bios/`, over SSH or the network share |
 | [Batocera](https://batocera.org/) | Also has images for handheld chips, among them H700 and RK3326 | [Batocera]({rel}) | `/userdata/bios/` |
 
+On a handheld that runs PortMaster, the RetroBIOS port checks and fills the
+BIOS folder from the device, with gamepad screens:
+[on a handheld](wiki/installer.md#on-a-handheld-the-retrobios-port).
+
 ### FPGA
 
 | Setup | What it is | Pack | Extract to |

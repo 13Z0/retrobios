@@ -271,8 +271,9 @@ Files the list does not name are never read, moved or deleted.
 ## Machine-readable events
 
 With `--events`, standard output carries only JSON objects, one per line, and
-the text a person reads goes to standard error. A program driving the installer reads
-the objects and never parses the text. Every object has an `event` key naming its
+the text a person reads goes to standard error. A program driving the installer
+(the [handheld port](#on-a-handheld-the-retrobios-port) is one) reads the
+objects and never parses the text. Every object has an `event` key naming its
 kind, and each kind has exactly the keys below, in this order. The schema is
 `EVENT_KEYS` in `install.py`, and a test holds this table to it.
 
@@ -510,6 +511,67 @@ elsewhere. A custom BIOS directory is still named directly:
 ```bash
 python install.py --platform retroarch --dest /storage/emulated/0/RetroArch/system
 ```
+
+## On a handheld: the RetroBIOS port
+
+On a Linux handheld that runs [PortMaster](https://portmaster.games/) (ArkOS,
+ROCKNIX, AmberELEC, muOS, KNULLI and the others it supports), the installer
+also runs from the device itself, as a port with gamepad screens. The screens
+are PortMaster's own, so the port carries no graphics code.
+
+**Getting it.** Two ways:
+
+- From PortMaster's catalog, once the port is accepted there: open PortMaster,
+  find RetroBIOS under the Other genre, install.
+- `RetroBIOS.zip`, attached to each [release](https://github.com/Abdess/retrobios/releases/latest)
+  cut since the port was added, copied into PortMaster's
+  autoinstall folder. Starting PortMaster then installs it, with or without a
+  network connection. PortMaster's FAQ names the folder: `/roms/ports/PortMaster/autoinstall/`
+  on AmberELEC and ROCKNIX, `/roms/tools/PortMaster/autoinstall/` on ArkOS,
+  `/mmc/MUOS/PortMaster/autoinstall/` on muOS,
+  `/userdata/system/.local/share/PortMaster/autoinstall/` on KNULLI.
+
+From a clone of the repository, `python scripts/build_port.py` builds the
+same archive into `dist/RetroBIOS.zip`.
+
+**What it shows.** RetroBIOS appears among the ports. Started, it runs
+`install.py --check --events` and opens on the result: the system's name,
+how many BIOS files are present, missing, or present with a hash that does
+not match. The menu
+offers to update everything missing, to choose systems (each listed with what
+it lacks, selected or cleared with A), to check again, or to quit. An update
+shows a progress bar, one step per file, then what was installed, what failed
+and why, and what the collection cannot supply. Every list has its own Back or
+Quit entry, since older PortMaster releases do not read B there.
+
+**What it needs.**
+
+- A network connection: the list of files to check comes from the internet,
+  as do the files. Without one the port says so and offers to check again.
+- Python 3.8 or newer. The port uses the system's `python3` when it is recent
+  enough, else PortMaster's `python_3.11` runtime on aarch64 devices, which it
+  downloads through PortMaster on first use. An armhf device with an older
+  Python is told so, with the computer route below.
+- A BIOS folder the installer detects (see [Platform detection](#platform-detection)).
+  On a system it does not know yet, the port says it found no BIOS folder.
+
+**The computer route.** With the SD card mounted on a computer, the one-line
+command fills it, naming the platform and the card's BIOS folder:
+`--platform <platform> --dest <BIOS folder on the card>`. The port's screens
+for an unknown system or an old Python name this route.
+
+**Which installer runs.** The archive carries `install.py`, the file the
+one-line command of the same commit downloads: the build refuses any other
+(`scripts/build_port.py` compares it with the SHA-256 `install.sh` pins). A
+port that downloaded the installer at each start against a pinned SHA-256
+would stop working at the next change to `install.py`, since the pin is fixed
+when the port is built. The file lists come from `main`, as for the one-line
+command. A newer port version carries a newer installer. When a list is in a
+format the carried installer does not read, the port says to update it.
+
+The launcher (`ports/RetroBIOS/RetroBIOS.sh`) and its screens
+(`retrobios/screens.txt`) read the installer through
+[Machine-readable events](#machine-readable-events) only.
 
 ## Where the files come from
 
