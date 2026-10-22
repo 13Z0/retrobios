@@ -1,6 +1,25 @@
-# Advanced usage
+---
+level: reference
+---
+
+# Build your own packs
 
 Fine-grained control over pack generation, hardware filtering, truth analysis, and verification.
+
+The [latest release](https://github.com/Abdess/retrobios/releases/latest)
+carries one pack for each platform, and that pack holds everything the
+platform runs: the BIOS list it publishes, plus every file its emulator cores
+load, read from their source code. There is no lighter variant to choose,
+because a pack that leaves out a file a core needs means a game that does not
+boot, with no message saying why. It is not a guarantee either: source
+profiles can document files nobody has dumped or that only the user can
+provide, all of them visible in the [gap analysis](../gaps.md).
+
+From a clone of the repository, `python scripts/generate_pack.py --platform
+retroarch --region us` builds a narrower pack, `--required-only` the bare
+minimum each core needs to start, and `--no-game-data` keeps the firmware and
+leaves out the files a game reads. `--help` lists every way to build your own,
+and the sections below describe each one.
 
 ## Custom packs
 

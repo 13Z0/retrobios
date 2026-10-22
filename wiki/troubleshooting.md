@@ -1,4 +1,11 @@
-# Troubleshooting
+---
+level: start
+---
+
+# When a game does not start
+
+Start here when a game does not start, or says that a BIOS file is missing.
+Each section is one check, in the order that finds the cause soonest.
 
 ## Game won't start / black screen
 
@@ -47,6 +54,45 @@ Some cores require region-specific BIOS files. A Japanese BIOS won't boot
 North American games on cores that enforce region matching. Check the emulator
 profile for your core to see which regions are supported and which files
 correspond to each.
+
+## Checking what you installed
+
+`--check` reads the BIOS folder, hashes what is there and writes nothing:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh -s -- --check
+```
+
+It ends on a count:
+
+```
+Checking existing files...
+  5865/5865 present (5865 verified, 0 wrong hash)
+
+  All files up to date.
+```
+
+`0 wrong hash` is the line that matters. A number there means a file is present
+whose contents the platform will reject, which is how a wrong revision or a bad
+dump shows up.
+
+The installer's `--check` hashes every file against the list on every
+platform, so it catches a wrong revision even where the frontend would not:
+RetroArch, Lakka, RetroPie, MinUI, NextUI and MyMinUI only check that a file
+exists, while Batocera, RetroBat, Recalbox, EmuDeck, RetroDECK, RomM, ROCKNIX,
+KNULLI, AmberELEC, EmuELEC and MiSTer FPGA compare
+MD5 and BizHawk compares SHA1.
+
+For a single system, or the files a single emulator core reads (`--list-systems`
+and `--list-cores` give the names):
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh -s -- --check --system sony-playstation
+curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh -s -- --check --emulator beetle_psx
+```
+
+`--verbose` names every file still to fetch, wrong hashes included.
+Details: [All installer options](installer.md).
 
 ## BIOS not found by emulator
 
@@ -100,11 +146,8 @@ name per file: `BIOS.col`, never `bios.col` beside it, since extracting both on
 Windows or macOS would overwrite one with the other. On Linux, Mesen-CE opens
 `bios.col` and NP2kai opens the lowercase `np2kai/2608_*.wav`, which the pack
 only holds as `BIOS.col` and `2608_*.WAV`. The installer checks whether the
-BIOS directory keeps case and, if it does, also fetches these names. If you
-extract the ZIP on Linux by hand, take the Lakka pack instead: it is the
-RetroArch pack with both spellings. Releases up to v2026.10.10 have no Lakka
-pack of their own (`RetroArch_Lakka_*_BIOS_Pack.zip` serves both and holds one
-spelling), so with those use the installer.
+BIOS directory keeps case and, if it does, also fetches these names. On Linux, use the installer
+rather than extracting the ZIP by hand.
 
 The reverse happens on Batocera and Recalbox, whose lists hold both spellings
 because their systems keep case: NP2kai reads `np2kai/bios.rom` and
@@ -112,149 +155,6 @@ because their systems keep case: NP2kai reads `np2kai/bios.rom` and
 (the share opened from Windows, an exFAT card), one overwrites the other. The
 installer checks the folder first, keeps one file per name there and lists
 the ones it left out.
-
-## Hash mismatch / UNTESTED
-
-This section and the two after it are about this repository's own tools, run
-from a clone. `scripts/verify.py` checks the collection in `bios/` against each
-platform, never your BIOS folder: for that, use `--check` above.
-
-`verify.py` reports `UNTESTED` for a file of the collection that was hashed
-and does not match what the platform declares. The line gives the reason:
-
-```
-  UNTESTED (required): nintendo-ds/dsifirmware.bin: declared hash contradicted by the local file
-```
-
-The system page on the site lists every known version of the file with its
-expected MD5 and SHA1.
-
-### Existence-mode platforms never report UNTESTED
-
-On RetroArch, Lakka and RetroPie, the platform check only asks whether the file
-is there, so the only outcomes are OK and MISSING. `verify.py` adds the emulator
-ground truth from the profiles and flags a `DISCREPANCY` when a file passes the
-platform check but fails the emulator's own size or hash validation.
-
-### The .variants/ directory
-
-When multiple versions of the same BIOS exist (different revisions, regions, or
-dumps), the primary version lives in the main directory and alternatives live in
-`.variants/`. `verify.py` checks the primary file first, then falls back to
-variants when resolving by hash.
-
-If your file matches a variant hash but not the primary, it's a valid BIOS --
-just not the preferred version. Some cores accept multiple versions.
-
-## Pack is missing files
-
-A generated pack doesn't contain all the files you expected.
-
-### Severity levels
-
-`verify.py` assigns a severity to each issue, counted under `severity_counts`
-in its `--json` output. Not all missing files are equally important:
-
-| Severity | Meaning | Action needed |
-|----------|---------|---------------|
-| CRITICAL | Required file missing on an MD5 or SHA1 platform | Must fix. Core won't function. |
-| WARNING | Optional file missing on an MD5 or SHA1 platform, hash mismatch (UNTESTED) on any hash platform, or a required file missing on an existence platform | Core works but with reduced functionality, or runs on content nobody verified. |
-| INFO | Optional file missing on an existence-only platform, or a missing file the core covers with an HLE fallback | Core works fine, BIOS improves accuracy. |
-| OK | File present and verified | No action needed. |
-
-The full mapping, including how `hle_fallback` overrides the platform mode, is
-in [verification modes](verification-modes.md#severity-matrix).
-
-Focus on CRITICAL issues first. WARNING files improve the experience but aren't
-strictly necessary. INFO files are nice to have.
-
-### Large files (release assets)
-
-Files like PS3UPDAT.PUP, PSVUPDAT.PUP, and Switch firmware are too large for the
-git repository. They are stored as GitHub release assets under the `large-files`
-release and downloaded at build time.
-
-If a pack build fails to include these, check your network connection. In offline
-mode (`--offline`), large files are only included if already cached locally in
-`.cache/large/`.
-
-### Data directories
-
-Some cores need entire directory trees rather than individual files (e.g. Dolphin's
-`Sys/` directory, PPSSPP's `assets/`). These are fetched by `refresh_data_dirs.py`
-from upstream repositories.
-
-In offline mode, data directories are only included if already cached in `data/`.
-Run `python scripts/refresh_data_dirs.py` to fetch them.
-
-## verify.py reports errors
-
-How to read and interpret `verify.py` output.
-
-### Status codes
-
-| Status | Meaning |
-|--------|---------|
-| `OK` | File present, hash matches (or existence check passed) |
-| `UNTESTED` | File present, hash not confirmed against the expected value |
-| `MISSING` | File not found in the repository |
-| `DISCREPANCY` | The platform check passes, an emulator's own check fails |
-
-### Reading the output
-
-The first line counts the platform's files and names its check. Under it come
-the entries that need attention, one per line as `STATUS (required|optional):
-system/file`, followed by a reason where there is one, then the counts of the
-files the emulator cores add. From `python scripts/verify.py --platform retrodeck`:
-
-```
-RetroDECK: 2007/2008 OK, 1 untested [md5]
-  UNTESTED (required): nintendo-ds/dsifirmware.bin: declared hash contradicted by the local file
-  DISCREPANCY: nintendo-snes/sgb2.boot.rom: RetroDECK says OK but supersnes9x says size mismatch: got 524288, accepted [256]
-    supersnes9x [size]
-  Core files: 1495 in pack, 0 required missing, 1 optional missing
-```
-
-`--verbose` also lists the passing entries that an emulator validates, with
-the check and the source lines behind it:
-
-```
-Recalbox: 351/351 OK [md5]
-  OK (required): macintosh/MacII.ROM
-    minivmac validates size=262144 [minivmac/cfg/CNFGRAPI.h:32, minivmac/src/OSGLUERETRO.c:781]
-```
-
-### Cross-reference section
-
-After per-file results, `verify.py` prints a cross-reference report. This lists
-files that emulator cores need but that the platform YAML doesn't declare. These
-files are still included in packs automatically, but the report helps identify
-gaps in platform coverage data.
-
-The cross-reference uses `resolve_platform_cores()` to determine which emulator
-profiles are relevant for each platform, then checks whether each profile's files
-appear in the platform config.
-
-### Filtering output
-
-```bash
-# By platform
-python scripts/verify.py --platform batocera
-
-# By emulator core
-python scripts/verify.py --emulator beetle_psx
-
-# By system
-python scripts/verify.py --system sony-playstation
-
-# By hardware target
-python scripts/verify.py --platform retroarch --target switch
-
-# JSON for scripted processing: the entries that need attention
-python scripts/verify.py --platform retroarch --json
-# every entry, passing ones included, with its ground truth
-python scripts/verify.py --platform retroarch --json --verbose
-```
 
 ## Installation script fails
 
@@ -317,7 +217,7 @@ checked before anything is downloaded, so a "No file list" message comes from
 the revision: `RETROBIOS_REF` naming a tag that does not exist, or one older
 than the platform. Unset it, or pick a tag from the releases page. What a tag
 holds and for how long is under
-[environment overrides](installer.md#environment-overrides).
+Details: [environment overrides](installer.md#environment-overrides).
 
 ### Manual pack not found in release
 
@@ -346,3 +246,16 @@ many there are.
 it against the release's checksums before extracting. Both stage inside the
 destination directory, never in `/tmp`, which is a RAM disk on most of these
 systems.
+## Checks of the collection itself
+
+<span id="hash-mismatch-untested"></span><span id="pack-is-missing-files"></span><span id="verifypy-reports-errors"></span>
+
+`scripts/verify.py` checks this project's own collection against each
+platform, from a clone of the repository. It never reads your BIOS folder.
+Reference: [Reading verify.py output](verification-modes.md#hash-mismatch-untested).
+
+!!! tip "Next"
+
+    - The page of your setup, from [Get your files](../which-pack.md): its folder
+      and how to check it
+    - [FAQ](faq.md), for the questions people ask before installing

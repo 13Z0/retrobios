@@ -1,3 +1,7 @@
+---
+level: contribute
+---
+
 # Profiling guide
 
 How to create an emulator profile from source code.

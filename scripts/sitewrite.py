@@ -20,6 +20,10 @@ _produced: set[str] = set()
 def _record(path: str | Path) -> None:
     _produced.add(os.path.realpath(str(path)))
 
+# The reader level label the decoration pass puts above a page's title.
+LEVEL_LABEL_START = '<span class="rb-level '
+
+
 def _undecorated(markdown: str) -> str:
     """Return a page body without the front matter the decoration pass adds."""
     if markdown.startswith("---\n") and "generated_by: retrobios-site" in markdown[:300]:
@@ -29,6 +33,8 @@ def _undecorated(markdown: str) -> str:
             script_end = markdown.find("</script>\n\n")
             if markdown.startswith('<script type="application/ld+json">') and script_end != -1:
                 markdown = markdown[script_end + len("</script>\n\n"):]
+            if markdown.startswith(LEVEL_LABEL_START):
+                markdown = markdown[markdown.find("\n\n") + 2:]
     return markdown
 
 def write_if_changed(path: str, content: str) -> bool:

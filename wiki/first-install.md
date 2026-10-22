@@ -1,3 +1,7 @@
+---
+level: start
+---
+
 # First install
 
 One path, from an empty BIOS folder to files the emulator can read. Every step
@@ -5,6 +9,8 @@ shows what the screen looks like when it worked.
 
 If something on this page does not match what happens, the last section covers
 the cases that come up.
+
+<!-- image: install-flow -->
 
 ## Before starting
 
@@ -24,6 +30,11 @@ Nothing is written outside the BIOS folder, and games and saves are never
 touched.
 
 ## Step 1. Run the command
+
+The command runs in a terminal. On Windows, open the Start menu, type
+PowerShell and open it. On a Mac, open Terminal from Applications, then
+Utilities. On a Steam Deck, switch to Desktop Mode and open Konsole. Paste the
+line and press Enter.
 
 On Linux, macOS, a Steam Deck, or a handheld running Batocera, Recalbox,
 KNULLI, ROCKNIX, AmberELEC, EmuELEC or Lakka:
@@ -74,6 +85,19 @@ SHA-256 the command checked before running it.
 
 That path is the one thing worth reading twice. If it is not where the emulator
 keeps its BIOS files, stop with Ctrl+C and see the last section.
+
+At a terminal, the installer then asks what to install:
+
+```
+  Enter) install everything
+  i) only what the installed cores read
+  c) choose systems, cores and regions
+  q) quit
+```
+
+Enter installs everything, which is what the rest of this page shows. **c**
+lets you pick consoles, emulator cores and regions. The **i** line appears
+only when the installer finds emulator cores installed.
 
 ## Step 3. Let it work
 
@@ -181,8 +205,8 @@ curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh \
   | sh -s -- --platform retroarch --dest /path/to/system
 ```
 
-The accepted names come from `--list-platforms`. For where each platform keeps
-its BIOS folder, see [Getting started](getting-started.md).
+The accepted names come from `--list-platforms`. The page of each setup,
+listed on [Get your files](../which-pack.md), gives its BIOS folder.
 
 ### Error: Python 3.8 or newer is required.
 
@@ -222,11 +246,16 @@ much is free. `--dest` installs to another drive.
 
 A file can be in place and still be the wrong one for that game, or the console
 may need a file that nobody has dumped yet.
-[Troubleshooting](troubleshooting.md) goes through that case.
+[When a game does not start](troubleshooting.md) goes through that case.
 
 ## What comes next
 
-- [Troubleshooting](troubleshooting.md), when a game does not start
+- The page of your setup, from [Get your files](../which-pack.md): where its
+  folder is and how the setup itself checks the files
+- [When a game does not start](troubleshooting.md)
 - [FAQ](faq.md), for what the words mean and why a pack is this large
-- [Installer](installer.md), for every option, what it detects and what it is
-  allowed to write
+- Details: [All installer options](installer.md), for every option, what it
+  detects and what it is allowed to write
+
+To remove what the installer wrote, delete the files from the BIOS folder.
+Nothing outside it was changed.

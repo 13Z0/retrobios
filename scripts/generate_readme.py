@@ -659,7 +659,7 @@ def generate_readme(db: dict, platforms_dir: str) -> str:
             "Hashes document what emulator code loads and accepts, not dump"
             " provenance. That boundary, and how it relates to preservation"
             " catalogs such as No-Intro, is drawn in the"
-            f" [FAQ]({SITE_URL}wiki/faq/"
+            f" [technical questions]({SITE_URL}wiki/technical-faq/"
             "#are-these-files-verified-against-original-hardware-dumps).",
             "",
             "1. **Read emulator source code**: trace every file the code loads, its expected hash and size",
