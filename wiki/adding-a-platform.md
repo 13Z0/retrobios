@@ -1,5 +1,6 @@
 ---
 level: contribute
+order: 20
 ---
 
 # Adding a platform
@@ -175,18 +176,8 @@ platforms:
 
 `device_group` places the platform among the devices a reader picks from: on
 the site's "Get your files" page, in the "Your setup" navigation and on the home
-page. The groups and their labels are `DEVICE_GROUPS` in
-`scripts/siteguides.py`, and the same file holds the platform's guide text
-(what it is, where its BIOS folder is, where the install command runs). A
-test fails when a registered platform has no group or no guide.
-
-The guide text is read by someone who knows their device and little else.
-`summary` is one plain sentence, with no chip or board names. `notes` hold
-one fact each that the reader acts on. A source citation, a list of models or
-how the installer finds the folder goes in `reference_notes`, which open the
-Reference part of the page, and a rare build goes in `more_folders`, shown
-folded. The guide part of every setup page is held to the word budgets of
-[Pages for newcomers](testing-guide.md#pages-for-newcomers).
+page. The groups, their labels and their anchors are under `device_groups` in
+`platforms/_guides.yml`, beside the platform's [guide text](#guide-text).
 
 A platform without a scraper (`scraper: null`, `schedule: null`) keeps its YAML
 as a hand-maintained file. Every registered platform has a scraper today, so
@@ -234,6 +225,56 @@ placed below each directory listed for it, an archive's core subfolder
 platform hands it no folder. `platform_layouts` builds one view per directory,
 so the builder, the manifest, verify and slots read the same placement, and the
 resolver still looks the collection up by the core's own path.
+
+### Guide text
+
+`platforms/_guides.yml` holds each platform's guide: what it is, where its
+BIOS folder is, where the install command runs. It is data, edited like the registry, and
+no Python changes when a platform is added. The registry keeps what tools read
+and `_guides.yml` keeps what people read, so neither grows unreadable.
+
+```yaml
+guides:
+  knulli:
+    summary: A system for handhelds, based on Batocera.
+    folders:
+    - where: On KNULLI                # no path: the registry's extract_to
+    run: [device]                     # terminal tabs, in the order shown
+    reference_notes:
+    - KNULLI runs on handhelds among them the RG35XX family (H700).
+    logo_owner: KNULLI
+    logo_licence: GitHub organisation avatar of knulli-cfw
+```
+
+- `summary`, `folders` and `run` are required. Every value is Markdown.
+- A folder row without `path` shows the registry's `extract_to`. That folder
+  is written once, where the installer and the release notes read it too.
+- `run` names entries of `terminals` in the same file: `windows`, `macos`,
+  `linux`, `steamdeck`, `android`, `device` or `server`.
+- `dest` puts `--dest` in the command, and `on_card: true` makes it the SD
+  card's path.
+- `more_folders` lists rare builds, shown folded under `more_folders_title`.
+  `more_folders_detected: true` adds a row for each named system the
+  registry's `install.detect` rules find the platform on.
+- `download_hint` adds a line under the pack download.
+- `pack_manual` is the manual part of the README inside the pack, in plain
+  text. Without it the README names the `bios_path` of the detection rules.
+- `logo_owner` and `logo_licence` credit the registry's `logo`, read by
+  `scripts/fetch_site_images.py`.
+
+The guide text is read by someone who knows their device and little else.
+`summary` is one plain sentence, with no chip or board names. `notes` hold
+one fact each that the reader acts on. A source citation, a list of models or
+how the installer finds the folder goes in `reference_notes`, which open the
+Reference part of the page. The guide part of every setup page is held to the
+word budgets of [Pages for newcomers](testing-guide.md#pages-for-newcomers).
+
+`scripts/siteguides.py` loads the file and stops the build with the key at
+fault: a registered platform without a guide, a guide for no registered
+platform, a misspelt key, an unknown terminal, a group the file does not
+describe. `tests/test_site_content_data.py` also fails when a script holds a
+table of text keyed by platform or a page branches on one platform's name:
+that text belongs in a guide field.
 
 ### Optional fields
 
@@ -634,6 +675,7 @@ Verification is not optional. A platform that passes `pipeline.py` today may bre
 - [ ] `fetch_requirements()` and `validate_format()` implemented
 - [ ] System ID mapping covers all upstream systems
 - [ ] Entry added to `platforms/_registry.yml`
+- [ ] Guide added to `platforms/_guides.yml`
 - [ ] Platform YAML generated and verified
 - [ ] `python scripts/pipeline.py --offline` passes
 - [ ] Exporter in `scripts/exporter/<name>_exporter.py` (if applicable)

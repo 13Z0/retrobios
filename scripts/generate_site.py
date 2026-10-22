@@ -75,7 +75,6 @@ from generate_readme import (
 from provenance_report import build_report, distinct_missing
 from siteexports import generate_exports_page, load_export_reports
 from siteguides import (
-    Guide,
     ALSO_RUNS,
     DEVICE_GROUPS,
     GROUP_ANCHORS,
@@ -2339,22 +2338,15 @@ def _platform_guide(name: str, display: str, cov: dict, registry: dict, no_list:
         lines += [note, ""]
     lines += [line for note in extract_notes("platforms") if f"The {display} pack " in note
               for line in (note, "")]
-    if name == "retroarch":
+    if guide.more_folders:
+        detected = _detected_systems(registry, name) if guide.more_folders_detected else []
         lines += [
-            '??? note "Other builds: Microsoft Store, Mac Steam, handhelds"',
+            f'??? note "{guide.more_folders_title}"',
             "",
             *_folder_rows(guide.more_folders, "    "),
-            *(f"    | {system} | `{folder}` |" for system, folder in _retroarch_handhelds(registry)),
+            *(f"    | {system} | `{folder}` |" for system, folder in detected),
             "",
-            "    LaunchBox and other launchers use the folder RetroArch reads.",
-            "",
-        ]
-    elif guide.more_folders:
-        lines += [
-            '??? note "Other layouts"',
-            "",
-            *_folder_rows(guide.more_folders, "    "),
-            "",
+            *([f"    {guide.more_folders_note}", ""] if guide.more_folders_note else []),
         ]
     lines += [
         *(["<!-- image: minui-card -->", ""] if guide.on_card else []),
@@ -6172,11 +6164,12 @@ def _pack_cell(name: str, record: dict, prefix: str = "") -> str:
     return f"{links} ({_fmt_size(size)})" if size else links
 
 
-def _retroarch_handhelds(registry: dict) -> list[tuple[str, str]]:
-    """Handheld systems that run RetroArch, with the BIOS folder the installer
-    writes on each, read from the detection rules of the registry."""
+def _detected_systems(registry: dict, platform: str) -> list[tuple[str, str]]:
+    """Named systems a platform runs on, handhelds that run RetroArch for one,
+    with the BIOS folder the installer writes on each, read from the
+    detection rules of the registry."""
     seen: dict[str, str] = {}
-    for rule in (registry.get("retroarch", {}).get("install") or {}).get("detect") or []:
+    for rule in (registry.get(platform, {}).get("install") or {}).get("detect") or []:
         name, folder = rule.get("name"), rule.get("bios_path")
         if name and folder and rule.get("installs", True) and name not in seen:
             seen[name] = folder
@@ -6310,7 +6303,7 @@ def generate_which_pack() -> str:
                 "    | System | Runs | BIOS folder |",
                 "    |--------|------|-------------|",
                 *(f"    | {name} | [RetroArch](platforms/retroarch.md) | `{folder}` |"
-                  for name, folder in _retroarch_handhelds(registry)),
+                  for name, folder in _detected_systems(registry, "retroarch")),
                 "",
             ]
     lines += [
@@ -6415,11 +6408,75 @@ def _platform_nav(coverages: dict, registry: dict) -> list:
     return nav
 
 
+# The tabs in reading order, by the level their pages declare.
+TABS = {
+    "start": "Start here",
+    "setup": "Your setup",
+    "explore": "Explore",
+    "reference": "Reference",
+    "contribute": "Contribute",
+}
+
+
+class NavError(ValueError):
+    """A wiki page does not say where it goes in the navigation."""
+
+
+def _h1(markdown: str) -> str:
+    match = re.search(r"^# (.+?)(?:\s*\{[^}]*\})?\s*$", markdown, re.M)
+    return match.group(1).strip() if match else ""
+
+
+def wiki_nav(wiki_dir: Path | None = None) -> dict[str, list[tuple[int, object]]]:
+    """Wiki pages by tab, each at the place its front matter gives.
+
+    A page states `level:` (its tab), `order:` (its place in the tab, the
+    smallest first) and, when the navigation names it otherwise than its
+    first heading, `nav_title:`. `nav: false` keeps a page out on purpose.
+    A page that says neither raises, naming what to add.
+    """
+    wiki_dir = Path(wiki_dir) if wiki_dir else _REPO_ROOT / WIKI_SRC_DIR
+    tabs: dict[str, list[tuple[int, object]]] = {level: [] for level in TABS}
+    for page in sorted(wiki_dir.glob("*.md")):
+        where = f"{WIKI_SRC_DIR}/{page.name}"
+        text = page.read_text(encoding="utf-8")
+        meta = _front_matter(text)
+        level = meta.get("level")
+        if level not in TABS:
+            raise NavError(
+                f"{where}: front matter needs `level:`, one of {', '.join(TABS)}, "
+                f"to place the page in a tab (found {level!r})"
+            )
+        if meta.get("nav") is False:
+            continue
+        order = meta.get("order")
+        if not isinstance(order, int) or isinstance(order, bool):
+            raise NavError(
+                f"{where}: front matter needs `order:`, a whole number giving its "
+                f"place in the {TABS[level]} tab, smallest first (found {order!r}), "
+                "or `nav: false` to keep it out of the navigation"
+            )
+        path = f"{WIKI_SRC_DIR}/{page.name}"
+        if page.name == "index.md":
+            tabs[level].append((order, path))
+            continue
+        title = meta.get("nav_title") or _h1(text)
+        if not title:
+            raise NavError(f"{where}: no `# ` heading and no `nav_title:` to name it")
+        tabs[level].append((order, {str(title): path}))
+    return tabs
+
+
+def _nav_target(entry: object) -> str:
+    return entry if isinstance(entry, str) else str(next(iter(entry.values())))
+
+
 def generate_mkdocs_nav(
     coverages: dict,
     manufacturers: dict,
     profiles: dict,
     registry: dict | None = None,
+    wiki_dir: Path | None = None,
 ) -> list:
     """The navigation, five tabs in reading order.
 
@@ -6427,51 +6484,42 @@ def generate_mkdocs_nav(
     who knows their device, Explore for one system or emulator, Reference for
     checking the work, Contribute for adding to it. Each tab opens on its
     index page.
+
+    The generated pages hold the places below. A wiki page takes its own
+    place from its front matter (wiki_nav), so a new page needs no edit here.
     """
-    return [
-        {"Start here": [
-            "index.md",
-            {"What BIOS files are": "wiki/what-are-bios-files.md"},
-            {"Get your files": "which-pack.md"},
-            {"First install, step by step": "wiki/first-install.md"},
-            {"When a game does not start": "wiki/troubleshooting.md"},
-            {"Common questions": "wiki/faq.md"},
-            {"Glossary": "wiki/glossary.md"},
-        ]},
-        {"Your setup": _platform_nav(coverages, registry or {})},
-        {"Explore": [
-            "explore.md",
-            {"Systems": _system_nav(manufacturers)},
-            {"Emulators": _emulator_nav(profiles)},
-            {"All installer options": "wiki/installer.md"},
-            {"Is it legal?": "wiki/legal.md"},
-        ]},
-        {"Reference": [
-            "wiki/index.md",
-            {"How each platform checks files": "wiki/verification-modes.md"},
-            {"What the packs do not hold": "gaps.md"},
-            {"Cores by platform": "cross-reference.md"},
-            {"Dump provenance": "provenance.md"},
-            {"Updated platform files": "exports.md"},
-            {"Data and API": "data.md"},
-            {"Find a file": "files/index.md"},
-            {"Data model": "wiki/data-model.md"},
-            {"Architecture": "wiki/architecture.md"},
-            {"Build your own packs": "wiki/advanced-usage.md"},
-            {"Command-line tools": "wiki/tools.md"},
-            {"Technical questions": "wiki/technical-faq.md"},
-            {"Project terms": "wiki/reference-terms.md"},
-            {"Projects using this data": "wiki/community-tools.md"},
-        ]},
-        {"Contribute": [
-            "contributing.md",
-            {"Profiling an emulator": "wiki/profiling.md"},
-            {"Adding a platform": "wiki/adding-a-platform.md"},
-            {"Adding a scraper": "wiki/adding-a-scraper.md"},
-            {"Testing": "wiki/testing-guide.md"},
-            {"Release process": "wiki/release-process.md"},
-        ]},
-    ]
+    generated: dict[str, list[tuple[int, object]]] = {
+        "start": [(0, "index.md"), (20, {"Get your files": "which-pack.md"})],
+        "setup": [(10 * i, item)
+                  for i, item in enumerate(_platform_nav(coverages, registry or {}))],
+        "explore": [
+            (0, "explore.md"),
+            (10, {"Systems": _system_nav(manufacturers)}),
+            (20, {"Emulators": _emulator_nav(profiles)}),
+        ],
+        "reference": [
+            (20, {"What the packs do not hold": "gaps.md"}),
+            (30, {"Cores by platform": "cross-reference.md"}),
+            (40, {"Dump provenance": "provenance.md"}),
+            (50, {"Updated platform files": "exports.md"}),
+            (60, {"Data and API": "data.md"}),
+            (70, {"Find a file": "files/index.md"}),
+            (80, {"Data model": "wiki/data-model.md"}),
+        ],
+        "contribute": [(0, "contributing.md")],
+    }
+    wiki = wiki_nav(wiki_dir)
+    nav = []
+    for level, label in TABS.items():
+        entries = sorted(generated[level] + wiki[level], key=lambda item: item[0])
+        for (first, a), (second, b) in zip(entries, entries[1:]):
+            if first == second:
+                raise NavError(
+                    f"{label} tab: {_nav_target(a)} and {_nav_target(b)} both take "
+                    f"order {first}; give one of them a free number"
+                )
+        nav.append({label: [entry for _order, entry in entries]})
+    return nav
 
 
 # Main
@@ -6785,7 +6833,8 @@ def _generate(args: argparse.Namespace) -> None:
 
     # Update mkdocs.yml nav section only (avoid yaml.dump round-trip mangling quotes)
     print("Updating mkdocs.yml nav...")
-    nav = generate_mkdocs_nav(coverages, manufacturers, profiles, registry)
+    nav = generate_mkdocs_nav(coverages, manufacturers, profiles, registry,
+                              Path(WIKI_SRC_DIR))
     nav_yaml = yaml.dump(
         {"nav": nav}, default_flow_style=False, sort_keys=False, allow_unicode=True
     )

@@ -1,118 +1,28 @@
 """The guide part of the site: where each setup keeps its BIOS files.
 
 A platform page opens on what someone holding the device needs: the folder,
-the command, the pack, how to check. The registry says which group of
-devices a platform belongs to (`device_group`), so the device picker and the
-navigation list every registered platform. The prose below is per platform,
-and a test holds that every registered platform has an entry.
-
-Every path here is one the installer detects, the registry records or the
-platform documents. Menu labels of third-party software are named only where
-this project already relies on them.
+the command, the pack, how to check. The words live in
+``platforms/_guides.yml``, one guide per registered platform, beside the
+device groups, the terminal tabs and the safety notes every guide shares.
+This module loads that file, checks it against the registry and renders the
+parts the pages share. The registry keeps the folder the pack unzips into
+(``extract_to``) and the group a platform belongs to (``device_group``).
 """
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+import textwrap
+from dataclasses import dataclass, fields
+from pathlib import Path
 
-INSTALL_BASE = "https://raw.githubusercontent.com/Abdess/retrobios/main"
+from safeparse import require_yaml
 
-# Order of the groups on the picker, in the navigation and on the home page.
-DEVICE_GROUPS: dict[str, tuple[str, str]] = {
-    "computer": (
-        "Computers and Steam Deck",
-        "An emulator app on a computer or a Steam Deck.",
-    ),
-    "gaming-os": (
-        "Game systems for PCs and small boards",
-        "A system that starts straight into a game menu, on a PC or a Raspberry Pi.",
-    ),
-    "handheld": (
-        "Handhelds and TV boxes",
-        "The system your handheld or TV box starts.",
-    ),
-    "fpga": (
-        "MiSTer FPGA",
-        "A board that recreates old consoles in hardware, not in software.",
-    ),
-    "server": (
-        "Self-hosted game library",
-        "A RomM server. It plays games in your web browser.",
-    ),
-}
+PLATFORMS_DIR = Path(__file__).resolve().parent.parent / "platforms"
+GUIDES_FILE = PLATFORMS_DIR / "_guides.yml"
 
-# Section anchors on the device picker. Two keep the anchors the page had
-# before it was grouped by device, which links outside the site may use.
-GROUP_ANCHORS = {
-    "computer": "computers-and-steam-deck",
-    "gaming-os": "game-systems",
-    "handheld": "handhelds",
-    "fpga": "fpga",
-    "server": "self-hosted",
-}
 
-# Setups that are not platforms of their own: they run one, and use its pack.
-# (setup, what it is, platform it uses, runs on, BIOS folder)
-ALSO_RUNS: dict[str, tuple[tuple[str, str, str, str, str], ...]] = {
-    "computer": (
-        ("LaunchBox", "A game library and launcher. It starts RetroArch or "
-         "standalone emulators.", "retroarch", "Windows",
-         "The folder of the RetroArch it starts"),
-    ),
-    "handheld": (
-        ("Android (Retroid Pocket, AYN Odin and others)", "RetroArch for Android.",
-         "retroarch", "Android", "`RetroArch/system/` on the internal storage"),
-    ),
-}
-
-# Ways to run the installer. Each tab names how to open a terminal there,
-# the shell the command is written for, and the options it needs.
-TERMINALS: dict[str, tuple[str, str, str]] = {
-    "windows": (
-        "Windows",
-        "Open the Start menu. Type **PowerShell** and open it. Paste the line. "
-        "Press Enter.",
-        "powershell",
-    ),
-    "macos": (
-        "macOS",
-        "Open **Terminal**, in Applications, then Utilities. Paste the line. "
-        "Press Return.",
-        "sh",
-    ),
-    "linux": (
-        "Linux",
-        "Open a terminal. Paste the line. Press Enter.",
-        "sh",
-    ),
-    "steamdeck": (
-        "Steam Deck",
-        "Switch to Desktop Mode. Open **Konsole**. Paste with Ctrl+Shift+V. "
-        "Press Enter.",
-        "sh",
-    ),
-    "android": (
-        "Android (Termux)",
-        "Install **Termux**, a terminal app. Run `pkg install python` and "
-        "`termux-setup-storage` once. Then paste the line. Press Enter.",
-        "sh",
-    ),
-    "device": (
-        "On the device",
-        "Open a terminal on the device. Or connect from a computer with SSH, a "
-        "terminal over the network. Paste the line. Press Enter.",
-        "sh",
-    ),
-    "server": (
-        "On the server",
-        "Open a terminal on the machine that holds your RomM library. Put the "
-        "path of its `bios` folder after `--dest`.",
-        "sh",
-    ),
-}
-
-# Windows users of a card frontend run the PowerShell form with a drive letter.
-CARD_TERMINALS = ("macos", "linux", "windows")
+class GuideError(ValueError):
+    """The guides file does not say what a page needs, or contradicts the registry."""
 
 
 @dataclass(frozen=True)
@@ -120,10 +30,14 @@ class Guide:
     """What a platform page says before its file reference.
 
     `folders` are the common cases, `more_folders` the rarer builds shown
-    folded under them. `notes` stay in the guide, one plain fact each.
-    `reference_notes` carry the source citations and the details a reader
-    checking the work wants, and open the Reference part of the page.
-    `download_hint` is one more bullet under the pack download.
+    folded under them, under `more_folders_title`. `more_folders_detected`
+    adds a row for each named system the registry detects the platform on.
+    `notes` stay in the guide, one plain fact each. `reference_notes` carry
+    the source citations and the details a reader checking the work wants,
+    and open the Reference part of the page. `download_hint` is one more
+    bullet under the pack download. `pack_manual` is the manual part of the
+    README inside the pack. `logo_owner` and `logo_licence` credit the
+    logo the registry links.
     """
 
     summary: str
@@ -132,257 +46,198 @@ class Guide:
     notes: tuple[str, ...] = ()
     dest: str = ""
     on_card: bool = False
-    extra_args: dict[str, str] = field(default_factory=dict)
     more_folders: tuple[tuple[str, str], ...] = ()
+    more_folders_title: str = "Other layouts"
+    more_folders_detected: bool = False
+    more_folders_note: str = ""
     reference_notes: tuple[str, ...] = ()
     download_hint: str = ""
+    pack_manual: str = ""
+    logo_owner: str = ""
+    logo_licence: str = ""
 
 
-NETWORK_HINT = "From a computer, use the network folder above."
+_GUIDE_KEYS = {f.name for f in fields(Guide)}
+_REQUIRED = ("summary", "folders", "run")
+_TOP_KEYS = {"install_base", "trust_items", "device_groups", "terminals", "guides"}
+_GROUP_KEYS = {"label", "description", "anchor", "also_runs"}
+_ALSO_KEYS = ("setup", "summary", "uses", "runs_on", "folder")
+_TERMINAL_KEYS = ("label", "how", "shell")
 
-GUIDES: dict[str, Guide] = {
-    "retroarch": Guide(
-        summary="An app that runs many consoles. It uses a different **core**, "
-        "a small emulator, for each one.",
-        folders=(
-            ("Windows", "`system\\` next to `retroarch.exe`"),
-            ("macOS", "`~/Documents/RetroArch/system/`"),
-            ("Linux", "`~/.config/retroarch/system/`"),
-            ("Steam Deck and Linux Flatpak", "`~/.var/app/org.libretro.RetroArch/config/retroarch/system/`"),
-            ("Android", "`RetroArch/system/` on the internal storage"),
-            ("Nintendo Switch", "`retroarch/cores/system/` on the SD card"),
-        ),
-        more_folders=(
-            ("Windows, Microsoft Store build",
-             "`%LOCALAPPDATA%\\Packages\\1e4cf179-f3c2-404f-b9f3-cb2070a5aad8_*\\LocalState\\system\\`"),
-            ("macOS, Steam or portable build", "`~/Library/Application Support/RetroArch/system/`"),
-        ),
-        run=("windows", "macos", "linux", "steamdeck", "android"),
-        notes=(
-            "**Not sure?** In RetroArch, open **Settings > Directory > "
-            "System/BIOS**. It shows the folder.",
-        ),
-        reference_notes=(
-            "RetroArch reads its BIOS folder from the `system_directory` line of "
-            "`retroarch.cfg`, the value **Settings > Directory > System/BIOS** "
-            "shows.",
-            "On Windows, `retroarch.cfg` is read next to `retroarch.exe` first, "
-            "then from `%APPDATA%\\RetroArch\\`. A `system_directory` left at its "
-            "default is the `system` folder next to `retroarch.exe` (`:\\system` "
-            "in RetroArch's `frontend/drivers/platform_win32.c`, where `:` stands "
-            "for the folder of the program).",
-        ),
-    ),
-    "batocera": Guide(
-        summary="A system that starts straight into a game menu.",
-        folders=(
-            ("On Batocera", "`/userdata/bios/`"),
-            ("From Windows, over your home network", "`\\\\BATOCERA\\share\\bios\\`"),
-            ("From a Mac or Linux, over your home network", "`smb://batocera/share/bios/`"),
-        ),
-        run=("device",),
-        download_hint=NETWORK_HINT,
-    ),
-    "recalbox": Guide(
-        summary="A system that starts straight into a game menu and sets up its "
-        "emulators.",
-        folders=(
-            ("On Recalbox", "`/recalbox/share/bios/`"),
-            ("From Windows, over your home network", "`\\\\RECALBOX\\share\\bios\\`"),
-        ),
-        run=("device",),
-        download_hint=NETWORK_HINT,
-    ),
-    "retrobat": Guide(
-        summary="A game menu for Windows. It comes with RetroArch and other "
-        "emulators.",
-        folders=(
-            ("Inside the RetroBat folder", "`bios\\`"),
-            ("Default install", "`C:\\RetroBat\\bios\\`"),
-        ),
-        run=("windows",),
-        notes=("The command finds RetroBat wherever you installed it.",),
-        reference_notes=(
-            "RetroBat records its own folder each time it starts, and the "
-            "installer reads it there.",
-        ),
-    ),
-    "emudeck": Guide(
-        summary="Installs your emulators and adds your games to Steam.",
-        folders=(
-            ("Steam Deck and Linux", "`~/Emulation/bios/`"),
-            ("Windows, by default", "`C:\\Emulation\\bios\\`"),
-            ("macOS", "`~/Emulation/bios/`"),
-        ),
-        run=("steamdeck", "linux", "windows", "macos"),
-        notes=(
-            "The `bios` folder is inside the Emulation folder you chose in "
-            "EmuDeck. If you chose the SD card, it is on the card.",
-        ),
-        reference_notes=(
-            "The installer reads the Emulation folder from EmuDeck's settings "
-            "(`emulationPath` in `~/.config/EmuDeck/settings.sh`).",
-        ),
-    ),
-    "lakka": Guide(
-        summary="A system that starts straight into RetroArch.",
-        folders=(("On Lakka", "`/storage/system/`"),),
-        run=("device",),
-        notes=("You can also reach the folder from a computer, over your home network.",),
-        reference_notes=("The folder is reachable over SSH and over the network share.",),
-    ),
-    "retrodeck": Guide(
-        summary="One app with its emulators inside. Install it from Flathub or "
-        "Discover.",
-        folders=(
-            ("Steam Deck and Linux", "`~/retrodeck/bios/`"),
-            ("Installed on a microSD card", "for example `/run/media/mmcblk0p1/retrodeck/bios/`"),
-        ),
-        run=("steamdeck", "linux"),
-    ),
-    "romm": Guide(
-        summary="A game library on your own server. It plays games in the web "
-        "browser.",
-        folders=(("In the RomM library", "`bios/`, one subfolder per platform"),),
-        more_folders=(
-            ("With `firmware: \"{platform}/bios\"` in `config.yml`",
-             "`<platform>/bios/` for each platform"),
-        ),
-        run=("server",),
-        dest="/path/to/library/bios",
-        notes=("You can also add BIOS files in RomM's web page.",),
-    ),
-    "rocknix": Guide(
-        summary="A system for handhelds.",
-        folders=(("On ROCKNIX", "`/storage/roms/bios/`"),),
-        run=("device",),
-        notes=("You can also reach the folder from a computer, over your home network.",),
-        reference_notes=(
-            "ROCKNIX runs on ARM and x86 handhelds, among them the RG35XX (H700) "
-            "and the RG552 (RK3399). The folder is reachable over SSH and over "
-            "the network share.",
-        ),
-    ),
-    "amberelec": Guide(
-        summary="A system for Anbernic handhelds.",
-        folders=(("On AmberELEC", "`/storage/roms/`"),),
-        run=("device",),
-        reference_notes=(
-            "AmberELEC runs on the RG351P, RG351V, RG351MP, RG353, RG503 and "
-            "RG552. Its list names files under `/storage/roms`: `bios/` for most, "
-            "`neogeo/` for the rest. The pack holds those folders.",
-        ),
-    ),
-    "emuelec": Guide(
-        summary="A system for TV boxes and some handhelds.",
-        folders=(("On EmuELEC", "`/storage/roms/`"),),
-        run=("device",),
-        reference_notes=(
-            "EmuELEC runs on Amlogic TV boxes, the Odroid Go Advance, GameForce "
-            "and RK356x devices. Its list names files under `/storage/roms`: "
-            "`bios/` for most, `neogeo/` and `ports/` for the rest. The pack "
-            "holds those folders.",
-        ),
-    ),
-    "knulli": Guide(
-        summary="A system for handhelds, based on Batocera.",
-        folders=(("On KNULLI", "`/userdata/bios/`"),),
-        run=("device",),
-        reference_notes=(
-            "KNULLI runs on handhelds among them the RG35XX family (H700) and the "
-            "TrimUI Smart Pro.",
-        ),
-    ),
-    "retropie": Guide(
-        summary="Installs RetroArch and other emulators on a Raspberry Pi.",
-        folders=(("On the Raspberry Pi", "`~/RetroPie/BIOS/`"),),
-        run=("device",),
-        notes=(
-            "Use the RetroPie pack, not the RetroArch one. On RetroPie 4.8, "
-            "Python is too old for the command: use the pack there.",
-        ),
-        reference_notes=(
-            "RetroPie also installs standalone emulators (openMSX, PCSX2, XRoar, "
-            "Amiberry and others) whose files only the RetroPie pack carries.",
-            "RetroPie is archived in this project: its configuration is kept and "
-            "its pack is still built, but its upstream list is no longer read "
-            "again on a schedule.",
-        ),
-    ),
-    "bizhawk": Guide(
-        summary="An emulator app for many consoles, from TASVideos.",
-        folders=(
-            ("Inside the BizHawk folder", "`Firmware\\`"),
-            ("Default place the installer looks", "`%USERPROFILE%\\BizHawk\\Firmware\\`"),
-        ),
-        run=("windows", "linux"),
-        reference_notes=("BizHawk carries rerecording and debugging tools.",),
-    ),
-    "misterfpga": Guide(
-        summary="A board that recreates old consoles in hardware, not in software.",
-        folders=(("On the MiSTer SD card", "`/media/fat/games/`, one subfolder per core"),),
-        run=("device",),
-        notes=(
-            "Each file goes in its console's folder, like "
-            "`/media/fat/games/3DO/boot.rom`.",
-        ),
-        reference_notes=(
-            "MiSTer runs FPGA cores on a DE10-Nano board. Only the files the "
-            "MiSTer BIOS database lists with a download address are in the pack. "
-            "The others come with the MiSTer distribution and install themselves.",
-        ),
-    ),
-    "minui": Guide(
-        summary="A simple game menu for handhelds. It runs from the SD card.",
-        folders=(("On the SD card", "`Bios/<TAG>/`, one folder per console"),),
-        run=CARD_TERMINALS,
-        on_card=True,
-        notes=(
-            "Each console has its own folder, named after the tag in its Roms "
-            "folder. `Roms/Sony PlayStation (PS)/` uses `Bios/PS/`.",
-        ),
-        reference_notes=(
-            "MinUI gives each console its own folder, named after the tag in "
-            "parentheses of the Roms folder the game sits in. A game in "
-            "`Roms/Game Boy (GB)/` runs with `Bios/GB/` as its BIOS folder (MinUI "
-            "`workspace/all/minarch/minarch.c:2943`).",
-            "Without `--platform`, the installer reads the release name MinUI "
-            "writes in `.system/version.txt` on the card. A console started by a "
-            "standalone program instead of a libretro core (DraStic for NDS, "
-            "native PICO-8) is not covered.",
-        ),
-    ),
-    "nextui": Guide(
-        summary="A game menu for handhelds, based on MinUI. It runs from the SD card.",
-        folders=(("On the SD card", "`Bios/<TAG>/`, one folder per console"),),
-        run=CARD_TERMINALS,
-        on_card=True,
-        notes=(
-            "Each console has its own folder, named after the tag in its Roms "
-            "folder. `Roms/Sony PlayStation (PS)/` uses `Bios/PS/`.",
-        ),
-        reference_notes=(
-            "NextUI gives each console its own folder, named after the tag in "
-            "parentheses of the Roms folder the game sits in (NextUI "
-            "`workspace/all/minarch/ma_core.c:76`).",
-        ),
-    ),
-    "myminui": Guide(
-        summary="A game menu for handhelds, based on MinUI. It runs from the SD card.",
-        folders=(("On the SD card", "`Bios/<TAG>/`, one folder per console"),),
-        run=CARD_TERMINALS,
-        on_card=True,
-        notes=(
-            "Each console has its own folder, named after the tag in its Roms "
-            "folder. `Roms/Sony PlayStation (PS)/` uses `Bios/PS/`.",
-        ),
-        reference_notes=(
-            "MyMinUI gives each console its own folder, named after the tag in "
-            "parentheses of the Roms folder the game sits in (MyMinUI "
-            "`workspace/all/minarch/minarch.c:3532`).",
-        ),
-    ),
-}
+
+def _text(value: object, where: str) -> str:
+    if not isinstance(value, str) or not value.strip():
+        raise GuideError(f"{where}: expected text, found {value!r}")
+    return value
+
+
+def _texts(value: object, where: str) -> tuple[str, ...]:
+    if not isinstance(value, list):
+        raise GuideError(f"{where}: expected a list, found {value!r}")
+    return tuple(_text(item, f"{where}[{i}]") for i, item in enumerate(value))
+
+
+def _unknown(data: dict, allowed: set[str] | tuple[str, ...], where: str) -> None:
+    extra = sorted(set(data) - set(allowed))
+    if extra:
+        raise GuideError(f"{where}: unknown key {', '.join(extra)} "
+                         f"(known: {', '.join(sorted(allowed))})")
+
+
+def _folder_rows(value: object, extract_to: str, where: str) -> tuple[tuple[str, str], ...]:
+    """Folder rows as (where, path). A row with no path is the registry's
+    extract_to, so that folder is written once."""
+    if not isinstance(value, list) or not value:
+        raise GuideError(f"{where}: expected a list of folder rows")
+    rows = []
+    for i, row in enumerate(value):
+        at = f"{where}[{i}]"
+        if not isinstance(row, dict):
+            raise GuideError(f"{at}: expected a mapping with `where` and `path`")
+        _unknown(row, ("where", "path"), at)
+        label = _text(row.get("where"), f"{at}.where")
+        if "path" in row:
+            rows.append((label, _text(row["path"], f"{at}.path")))
+        elif extract_to:
+            rows.append((label, f"`{extract_to}`"))
+        else:
+            raise GuideError(f"{at}: no `path`, and the registry has no extract_to for it")
+    return tuple(rows)
+
+
+def _guide(name: str, data: object, extract_to: str, terminals: dict) -> Guide:
+    where = f"{GUIDES_FILE.name}: guides.{name}"
+    if not isinstance(data, dict):
+        raise GuideError(f"{where}: expected a mapping")
+    _unknown(data, _GUIDE_KEYS, where)
+    missing = [key for key in _REQUIRED if key not in data]
+    if missing:
+        raise GuideError(f"{where}: missing {', '.join(missing)}")
+    run = _texts(data["run"], f"{where}.run")
+    unknown_tabs = [key for key in run if key not in terminals]
+    if unknown_tabs:
+        raise GuideError(f"{where}.run: no terminal named {', '.join(unknown_tabs)}")
+    values: dict = {
+        "summary": _text(data["summary"], f"{where}.summary"),
+        "folders": _folder_rows(data["folders"], extract_to, f"{where}.folders"),
+        "run": run,
+    }
+    if "more_folders" in data:
+        values["more_folders"] = _folder_rows(
+            data["more_folders"], extract_to, f"{where}.more_folders")
+    for key in ("notes", "reference_notes"):
+        if key in data:
+            values[key] = _texts(data[key], f"{where}.{key}")
+    for key in ("dest", "download_hint", "more_folders_title", "more_folders_note",
+                "logo_owner", "logo_licence"):
+        if key in data:
+            values[key] = _text(data[key], f"{where}.{key}")
+    for key in ("on_card", "more_folders_detected"):
+        if key in data:
+            if not isinstance(data[key], bool):
+                raise GuideError(f"{where}.{key}: expected true or false")
+            values[key] = data[key]
+    if "pack_manual" in data:
+        values["pack_manual"] = _text(data["pack_manual"], f"{where}.pack_manual")
+    return Guide(**values)
+
+
+def load_guides(path: Path = GUIDES_FILE, registry: dict | None = None) -> dict:
+    """The guides file, checked against the registry.
+
+    Every registered platform, archived ones included, has a guide and a
+    device group the file describes. A mistake raises GuideError naming the
+    key, so the site is never built from half a guide.
+    """
+    yaml = require_yaml()
+    if registry is None:
+        with open(PLATFORMS_DIR / "_registry.yml", encoding="utf-8") as handle:
+            registry = (yaml.safe_load(handle) or {}).get("platforms", {})
+    with open(path, encoding="utf-8") as handle:
+        data = yaml.safe_load(handle) or {}
+    if not isinstance(data, dict):
+        raise GuideError(f"{path.name}: expected a mapping")
+    _unknown(data, _TOP_KEYS, path.name)
+
+    terminals: dict[str, tuple[str, str, str]] = {}
+    for key, entry in (data.get("terminals") or {}).items():
+        at = f"{path.name}: terminals.{key}"
+        if not isinstance(entry, dict):
+            raise GuideError(f"{at}: expected a mapping")
+        _unknown(entry, _TERMINAL_KEYS, at)
+        terminals[key] = tuple(_text(entry.get(k), f"{at}.{k}") for k in _TERMINAL_KEYS)
+        if entry["shell"] not in ("sh", "powershell"):
+            raise GuideError(f"{at}.shell: sh or powershell, found {entry['shell']!r}")
+
+    raw_guides = data.get("guides") or {}
+    groups: dict[str, tuple[str, str]] = {}
+    anchors: dict[str, str] = {}
+    also_runs: dict[str, tuple[tuple[str, str, str, str, str], ...]] = {}
+    for key, entry in (data.get("device_groups") or {}).items():
+        at = f"{path.name}: device_groups.{key}"
+        if not isinstance(entry, dict):
+            raise GuideError(f"{at}: expected a mapping")
+        _unknown(entry, _GROUP_KEYS, at)
+        groups[key] = (_text(entry.get("label"), f"{at}.label"),
+                       _text(entry.get("description"), f"{at}.description"))
+        anchors[key] = _text(entry.get("anchor"), f"{at}.anchor")
+        rows = []
+        for i, row in enumerate(entry.get("also_runs") or []):
+            row_at = f"{at}.also_runs[{i}]"
+            if not isinstance(row, dict):
+                raise GuideError(f"{row_at}: expected a mapping")
+            _unknown(row, _ALSO_KEYS, row_at)
+            values = tuple(_text(row.get(k), f"{row_at}.{k}") for k in _ALSO_KEYS)
+            if values[2] not in raw_guides:
+                raise GuideError(f"{row_at}.uses: {values[2]!r} is not a platform with a guide")
+            rows.append(values)
+        if rows:
+            also_runs[key] = tuple(rows)
+
+    unregistered = sorted(set(raw_guides) - set(registry))
+    if unregistered:
+        raise GuideError(f"{path.name}: guides for unregistered platforms: "
+                         f"{', '.join(unregistered)}")
+    guides = {}
+    for name, entry in registry.items():
+        if name not in raw_guides:
+            raise GuideError(f"{path.name}: {name} is registered and has no guide "
+                             f"(add guides.{name})")
+        group = entry.get("device_group")
+        if group not in groups:
+            raise GuideError(f"_registry.yml: {name}.device_group {group!r} is not "
+                             f"one of {', '.join(groups)} in {path.name}")
+        guides[name] = _guide(name, raw_guides[name], str(entry.get("extract_to") or ""),
+                              terminals)
+    # The order the file is written in, which the pages do not depend on.
+    guides = {name: guides[name] for name in raw_guides}
+    return {
+        "install_base": _text(data.get("install_base"), f"{path.name}: install_base"),
+        "trust_items": _texts(data.get("trust_items"), f"{path.name}: trust_items"),
+        "device_groups": groups,
+        "group_anchors": anchors,
+        "also_runs": also_runs,
+        "terminals": terminals,
+        "guides": guides,
+    }
+
+
+_LOADED = load_guides()
+INSTALL_BASE: str = _LOADED["install_base"]
+DEVICE_GROUPS: dict[str, tuple[str, str]] = _LOADED["device_groups"]
+GROUP_ANCHORS: dict[str, str] = _LOADED["group_anchors"]
+ALSO_RUNS: dict[str, tuple[tuple[str, str, str, str, str], ...]] = _LOADED["also_runs"]
+TERMINALS: dict[str, tuple[str, str, str]] = _LOADED["terminals"]
+TRUST_ITEMS: tuple[str, ...] = _LOADED["trust_items"]
+GUIDES: dict[str, Guide] = _LOADED["guides"]
+
+
+def pack_manual(name: str) -> str:
+    """The manual part of a pack README, indented as the README is, or empty."""
+    guide = GUIDES.get(name)
+    if not guide or not guide.pack_manual:
+        return ""
+    return textwrap.indent(guide.pack_manual.rstrip("\n"), "  ") + "\n\n"
 
 
 def install_command(shell: str, args: str = "") -> str:
@@ -431,16 +286,6 @@ def platform_args(name: str, guide: Guide) -> dict[str, str]:
         else:
             args[key] = f"--platform {name}"
     return args
-
-
-TRUST_ITEMS = (
-    "It checks each file before saving it.",
-    "It writes only in your BIOS folder.",
-    "It never touches games or saves.",
-    "It never moves or deletes files it does not know.",
-    "It keeps any file it replaces in a `retrobios-backup` folder, beside your "
-    "BIOS folder. The same command with `--restore` puts it back.",
-)
 
 
 def trust_box(prefix: str, indent: str = "") -> list[str]:

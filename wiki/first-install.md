@@ -1,5 +1,7 @@
 ---
 level: start
+order: 30
+nav_title: First install, step by step
 ---
 
 # First install

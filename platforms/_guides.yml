@@ -1,0 +1,541 @@
+# What each platform page and pack README tell someone holding the device:
+# the folder, where the command runs, what to know. Read by
+# scripts/siteguides.py, which checks it on load: every platform in
+# _registry.yml has a guide here, and every guide a registered platform.
+#
+# Values are Markdown. A folder row with no `path` is the registry's
+# `extract_to` for that platform, the one place that folder is written.
+# `run` names the terminals below, in the order the page shows them.
+# `pack_manual` is the manual part of the README inside the pack, plain text.
+# `logo_owner` and `logo_licence` credit the logo the registry links: it is
+# shown only to name the platform, with the licence of the repository the
+# file was taken from when that repository states one.
+#
+# The registry keeps what tools read (device_group, extract_to, install);
+# this file keeps what people read.
+
+install_base: https://raw.githubusercontent.com/Abdess/retrobios/main
+
+# Is it safe: shown under every command on a guide page.
+trust_items:
+- It checks each file before saving it.
+- It writes only in your BIOS folder.
+- It never touches games or saves.
+- It never moves or deletes files it does not know.
+- >-
+  It keeps any file it replaces in a `retrobios-backup` folder, beside your BIOS folder.
+  The same command with `--restore` puts it back.
+
+# Order of the groups on the picker, in the navigation and on the home page.
+# `anchor` is the section id on the device picker: two keep the ids the page
+# had before it was grouped by device, which links outside the site may use.
+# `also_runs` are setups that are not platforms of their own: they run one,
+# and use its pack.
+device_groups:
+  computer:
+    label: Computers and Steam Deck
+    description: An emulator app on a computer or a Steam Deck.
+    anchor: computers-and-steam-deck
+    also_runs:
+    - setup: LaunchBox
+      summary: >-
+        A game library and launcher. It starts RetroArch or standalone emulators.
+      uses: retroarch
+      runs_on: Windows
+      folder: The folder of the RetroArch it starts
+  gaming-os:
+    label: Game systems for PCs and small boards
+    description: >-
+      A system that starts straight into a game menu, on a PC or a Raspberry Pi.
+    anchor: game-systems
+  handheld:
+    label: Handhelds and TV boxes
+    description: The system your handheld or TV box starts.
+    anchor: handhelds
+    also_runs:
+    - setup: Android (Retroid Pocket, AYN Odin and others)
+      summary: RetroArch for Android.
+      uses: retroarch
+      runs_on: Android
+      folder: '`RetroArch/system/` on the internal storage'
+  fpga:
+    label: MiSTer FPGA
+    description: >-
+      A board that recreates old consoles in hardware, not in software.
+    anchor: fpga
+  server:
+    label: Self-hosted game library
+    description: A RomM server. It plays games in your web browser.
+    anchor: self-hosted
+
+# Ways to run the installer: the tab label, how to open a terminal there, and
+# the shell the command is written for.
+terminals:
+  windows:
+    label: Windows
+    how: >-
+      Open the Start menu. Type **PowerShell** and open it. Paste the line. Press Enter.
+    shell: powershell
+  macos:
+    label: macOS
+    how: >-
+      Open **Terminal**, in Applications, then Utilities. Paste the line. Press Return.
+    shell: sh
+  linux:
+    label: Linux
+    how: Open a terminal. Paste the line. Press Enter.
+    shell: sh
+  steamdeck:
+    label: Steam Deck
+    how: >-
+      Switch to Desktop Mode. Open **Konsole**. Paste with Ctrl+Shift+V. Press Enter.
+    shell: sh
+  android:
+    label: Android (Termux)
+    how: >-
+      Install **Termux**, a terminal app. Run `pkg install python` and `termux-setup-storage`
+      once. Then paste the line. Press Enter.
+    shell: sh
+  device:
+    label: On the device
+    how: >-
+      Open a terminal on the device. Or connect from a computer with SSH, a terminal over
+      the network. Paste the line. Press Enter.
+    shell: sh
+  server:
+    label: On the server
+    how: >-
+      Open a terminal on the machine that holds your RomM library. Put the path of its
+      `bios` folder after `--dest`.
+    shell: sh
+
+guides:
+  retroarch:
+    summary: >-
+      An app that runs many consoles. It uses a different **core**, a small emulator,
+      for each one.
+    folders:
+    - where: Windows
+      path: '`system\` next to `retroarch.exe`'
+    - where: macOS
+      path: '`~/Documents/RetroArch/system/`'
+    - where: Linux
+      path: '`~/.config/retroarch/system/`'
+    - where: Steam Deck and Linux Flatpak
+      path: '`~/.var/app/org.libretro.RetroArch/config/retroarch/system/`'
+    - where: Android
+      path: '`RetroArch/system/` on the internal storage'
+    - where: Nintendo Switch
+      path: '`retroarch/cores/system/` on the SD card'
+    more_folders:
+    - where: Windows, Microsoft Store build
+      path: '`%LOCALAPPDATA%\Packages\1e4cf179-f3c2-404f-b9f3-cb2070a5aad8_*\LocalState\system\`'
+    - where: macOS, Steam or portable build
+      path: '`~/Library/Application Support/RetroArch/system/`'
+    more_folders_title: 'Other builds: Microsoft Store, Mac Steam, handhelds'
+    # Adds a row for each named system the registry detects this platform on.
+    more_folders_detected: true
+    more_folders_note: LaunchBox and other launchers use the folder RetroArch reads.
+    run: [windows, macos, linux, steamdeck, android]
+    notes:
+    - >-
+      **Not sure?** In RetroArch, open **Settings > Directory > System/BIOS**. It shows
+      the folder.
+    reference_notes:
+    - >-
+      RetroArch reads its BIOS folder from the `system_directory` line of `retroarch.cfg`,
+      the value **Settings > Directory > System/BIOS** shows.
+    - >-
+      On Windows, `retroarch.cfg` is read next to `retroarch.exe` first, then from `%APPDATA%\RetroArch\`.
+      A `system_directory` left at its default is the `system` folder next to `retroarch.exe`
+      (`:\system` in RetroArch's `frontend/drivers/platform_win32.c`, where `:` stands
+      for the folder of the program).
+    pack_manual: |
+      Option B: Manual (PC)
+      ---------------------
+      1. Find your RetroArch system directory:
+         - RetroArch > Settings > Directory > System/BIOS
+         - Default: retroarch/system/
+      2. Extract all files from this archive directly into your system directory
+      3. Overwrite if asked
+
+      Option C: Manual (handheld / SD card)
+      -------------------------------------
+      Anbernic, Retroid, Miyoo, Trimui, etc.:
+      1. Connect your SD card to your PC
+      2. Find the BIOS folder (usually BIOS/ or system/)
+      3. Extract all files from this archive directly into that folder
+      4. Eject SD card and reboot your device
+
+      Common paths by device:
+        Anbernic (ArkOS/JELOS): BIOS/
+        Retroid (RetroArch):     RetroArch/system/
+        Miyoo Mini (Onion OS):   BIOS/
+        Steam Deck (RetroArch):  ~/.config/retroarch/system/
+    logo_owner: libretro
+    logo_licence: repository licence GPL-3.0
+  batocera:
+    summary: A system that starts straight into a game menu.
+    folders:
+    - where: On Batocera
+    - where: From Windows, over your home network
+      path: '`\\BATOCERA\share\bios\`'
+    - where: From a Mac or Linux, over your home network
+      path: '`smb://batocera/share/bios/`'
+    run: [device]
+    download_hint: From a computer, use the network folder above.
+    pack_manual: |
+      The terminal is F1 from the Batocera menu, or SSH.
+
+      Option B: Manual (network share)
+      --------------------------------
+      1. On your PC, open the Batocera network share:
+         - Windows: \\BATOCERA\share\bios\
+         - Mac/Linux: smb://batocera/share/bios/
+      2. Extract all files from this archive directly into the share
+      3. Overwrite if asked
+
+      Option C: Manual (SD card)
+      --------------------------
+      1. Put the SD card in your PC
+      2. Navigate to /userdata/bios/ on the SHARE partition
+      3. Extract all files from this archive directly into that folder
+
+      NOTE: Dreamcast flash memory is named dc_nvmem.bin
+      (if your setup asks for dc_flash.bin, same file).
+    logo_owner: Batocera
+    logo_licence: repository licence MIT
+  recalbox:
+    summary: >-
+      A system that starts straight into a game menu and sets up its emulators.
+    folders:
+    - where: On Recalbox
+    - where: From Windows, over your home network
+      path: '`\\RECALBOX\share\bios\`'
+    run: [device]
+    download_hint: From a computer, use the network folder above.
+    pack_manual: |
+      Option B: Manual (network share)
+      --------------------------------
+      1. On your PC, open the Recalbox network share:
+         - Windows: \\RECALBOX\share\bios\
+         - Mac/Linux: smb://recalbox/share/bios/
+      2. Extract all files from this archive directly into the share
+
+      Option C: Manual (SD card)
+      --------------------------
+      1. Put the SD card in your PC
+      2. Navigate to /recalbox/share/bios/
+      3. Extract all files from this archive directly into that folder
+    logo_owner: Recalbox
+    logo_licence: file from homarr-labs/dashboard-icons, Apache-2.0
+  retrobat:
+    summary: >-
+      A game menu for Windows. It comes with RetroArch and other emulators.
+    folders:
+    - where: Inside the RetroBat folder
+      path: '`bios\`'
+    - where: Default install
+      path: '`C:\RetroBat\bios\`'
+    run: [windows]
+    notes:
+    - The command finds RetroBat wherever you installed it.
+    reference_notes:
+    - >-
+      RetroBat records its own folder each time it starts, and the installer reads it
+      there.
+    pack_manual: |
+      Option B: Manual
+      ----------------
+      1. Open your RetroBat installation folder
+      2. Navigate to the bios\ subfolder
+         (default: C:\RetroBat\bios\)
+      3. Extract all files from this archive directly into your bios\ folder
+      4. Overwrite if asked
+    logo_owner: RetroBat
+    logo_licence: repository states no licence
+  emudeck:
+    summary: Installs your emulators and adds your games to Steam.
+    folders:
+    - where: Steam Deck and Linux
+    - where: Windows, by default
+      path: '`C:\Emulation\bios\`'
+    - where: macOS
+    run: [steamdeck, linux, windows, macos]
+    notes:
+    - >-
+      The `bios` folder is inside the Emulation folder you chose in EmuDeck. If you chose
+      the SD card, it is on the card.
+    reference_notes:
+    - >-
+      The installer reads the Emulation folder from EmuDeck's settings (`emulationPath`
+      in `~/.config/EmuDeck/settings.sh`).
+    pack_manual: |
+      Option B: Manual
+      ----------------
+      Extract all files from this archive directly into EmuDeck's bios
+      folder, inside the Emulation folder chosen in EmuDeck:
+        Steam Deck, Linux and macOS: ~/Emulation/bios/ by default
+        Windows: C:\Emulation\bios\ by default
+    logo_owner: EmuDeck
+    logo_licence: repository licence GPL-3.0
+  lakka:
+    summary: A system that starts straight into RetroArch.
+    folders:
+    - where: On Lakka
+    run: [device]
+    notes:
+    - >-
+      You can also reach the folder from a computer, over your home network.
+    reference_notes:
+    - The folder is reachable over SSH and over the network share.
+    pack_manual: |
+      Lakka reads its BIOS files from /storage/system/.
+
+      Option B: Via network share
+      --------------------------
+      1. On Lakka: Settings > Services > Samba Enable
+      2. On your PC, open the System share: \\LAKKA\System\
+         (macOS and Linux: smb://lakka/System)
+      3. Extract all files from this archive directly into that share
+
+      Option C: Via SSH
+      -----------------
+      1. On Lakka: Settings > Services > SSH Enable
+      2. Copy the files to /storage/system/ (scp -r * root@lakka:/storage/system/)
+    logo_owner: Lakka (libretro)
+    logo_licence: file from libretro/retroarch-assets, CC-BY-4.0
+  retrodeck:
+    summary: >-
+      One app with its emulators inside. Install it from Flathub or Discover.
+    folders:
+    - where: Steam Deck and Linux
+      path: '`~/retrodeck/bios/`'
+    - where: Installed on a microSD card
+      path: 'for example `/run/media/mmcblk0p1/retrodeck/bios/`'
+    run: [steamdeck, linux]
+    pack_manual: |
+      Option B: Manual
+      ----------------
+      1. Open Dolphin file manager
+      2. Show hidden files (Ctrl+H)
+      3. Navigate to ~/retrodeck/
+      4. Extract all files from this archive directly into ~/retrodeck/
+         (the archive already holds the bios/ and roms/ folders)
+
+      NOTE: RetroDECK uses its own BIOS checker. After
+      copying, open RetroDECK > Tools > BIOS Checker to
+      verify everything is detected.
+    logo_owner: RetroDECK
+    logo_licence: repository licence GPL-3.0
+  romm:
+    summary: >-
+      A game library on your own server. It plays games in the web browser.
+    folders:
+    - where: In the RomM library
+      path: '`bios/`, one subfolder per platform'
+    more_folders:
+    - where: 'With `firmware: "{platform}/bios"` in `config.yml`'
+      path: '`<platform>/bios/` for each platform'
+    run: [server]
+    notes:
+    - 'You can also add BIOS files in RomM''s web page.'
+    dest: /path/to/library/bios
+    # RomM 5.4 places firmware by filesystem.structure.firmware in config.yml,
+    # bios/{platform} by default, and suggests {platform}/bios for a library
+    # laid out as {platform}/roms (rommapp/romm 68f71259,
+    # backend/config/config_manager.py:58,101-109,1105-1124).
+    pack_manual: |
+      Option B: Manual
+      ----------------
+      The archive holds one folder per RomM platform (psx/, gba/, ...).
+      Where they go depends on filesystem.structure.firmware in RomM's
+      config.yml, read relative to the library folder:
+
+      - Not set, or "bios/{platform}" (the default): extract all files
+        from this archive directly into library/bios/
+      - "{platform}/bios" (the layout RomM suggests for a library kept as
+        {platform}/roms): each folder goes under its platform, psx/ into
+        library/psx/bios/, gba/ into library/gba/bios/, and so on.
+        The installer reads config.yml and does this itself. Run from
+        the host of a container, --romm-firmware "{platform}/bios" says it.
+
+      Then restart the RomM service to detect new files.
+    logo_owner: RomM
+    logo_licence: GitHub organisation avatar of rommapp
+  rocknix:
+    summary: A system for handhelds.
+    folders:
+    - where: On ROCKNIX
+    run: [device]
+    notes:
+    - >-
+      You can also reach the folder from a computer, over your home network.
+    reference_notes:
+    - >-
+      ROCKNIX runs on ARM and x86 handhelds, among them the RG35XX (H700) and the RG552
+      (RK3399). The folder is reachable over SSH and over the network share.
+    logo_owner: ROCKNIX
+    logo_licence: GitHub organisation avatar of ROCKNIX
+  amberelec:
+    summary: A system for Anbernic handhelds.
+    folders:
+    - where: On AmberELEC
+    run: [device]
+    reference_notes:
+    - >-
+      AmberELEC runs on the RG351P, RG351V, RG351MP, RG353, RG503 and RG552. Its list
+      names files under `/storage/roms`: `bios/` for most, `neogeo/` for the rest. The
+      pack holds those folders.
+    logo_owner: AmberELEC
+    logo_licence: GitHub organisation avatar of AmberELEC
+  emuelec:
+    summary: A system for TV boxes and some handhelds.
+    folders:
+    - where: On EmuELEC
+    run: [device]
+    reference_notes:
+    - >-
+      EmuELEC runs on Amlogic TV boxes, the Odroid Go Advance, GameForce and RK356x devices.
+      Its list names files under `/storage/roms`: `bios/` for most, `neogeo/` and `ports/`
+      for the rest. The pack holds those folders.
+    logo_owner: EmuELEC
+    logo_licence: GitHub organisation avatar of EmuELEC
+  knulli:
+    summary: A system for handhelds, based on Batocera.
+    folders:
+    - where: On KNULLI
+    run: [device]
+    reference_notes:
+    - >-
+      KNULLI runs on handhelds among them the RG35XX family (H700) and the TrimUI Smart
+      Pro.
+    logo_owner: KNULLI
+    logo_licence: GitHub organisation avatar of knulli-cfw
+  retropie:
+    summary: Installs RetroArch and other emulators on a Raspberry Pi.
+    folders:
+    - where: On the Raspberry Pi
+    run: [device]
+    notes:
+    - >-
+      Use the RetroPie pack, not the RetroArch one. On RetroPie 4.8, Python is too old
+      for the command: use the pack there.
+    reference_notes:
+    - >-
+      RetroPie also installs standalone emulators (openMSX, PCSX2, XRoar, Amiberry and
+      others) whose files only the RetroPie pack carries.
+    - >-
+      RetroPie is archived in this project: its configuration is kept and its pack is
+      still built, but its upstream list is no longer read again on a schedule.
+    pack_manual: |
+      Option B: Via network share
+      --------------------------
+      1. On your PC, open: \\RETROPIE\bios\
+      2. Extract all files from this archive directly into that folder
+
+      Option C: Via SSH
+      -----------------
+      1. SSH into your Pi: ssh pi@retropie
+      2. Copy files to ~/RetroPie/BIOS/
+
+      NOTE: the BIOS folder is on the card's Linux partition,
+      which Windows and macOS cannot open: copying through the
+      card works from a Linux computer only
+      (<rootfs>/home/pi/RetroPie/BIOS/).
+    logo_owner: RetroPie
+    logo_licence: GitHub organisation avatar of RetroPie
+  bizhawk:
+    summary: An emulator app for many consoles, from TASVideos.
+    folders:
+    - where: Inside the BizHawk folder
+      path: '`Firmware\`'
+    - where: Default place the installer looks
+      path: '`%USERPROFILE%\BizHawk\Firmware\`'
+    run: [windows, linux]
+    reference_notes:
+    - BizHawk carries rerecording and debugging tools.
+    pack_manual: |
+      Option B: Manual
+      ----------------
+      1. Open the folder you extracted BizHawk to, the one holding
+         EmuHawk.exe (Windows) or EmuHawkMono.sh (Linux)
+      2. Navigate to its Firmware subfolder
+      3. Extract all files from this archive directly into your Firmware folder
+      4. In BizHawk: Config > Paths > Firmware should
+         point to this folder
+    logo_owner: TASVideos
+    logo_licence: GitHub organisation avatar of TASEmulators
+  misterfpga:
+    summary: >-
+      A board that recreates old consoles in hardware, not in software.
+    folders:
+    - where: On the MiSTer SD card
+      path: '`/media/fat/games/`, one subfolder per core'
+    run: [device]
+    notes:
+    - >-
+      Each file goes in its console's folder, like `/media/fat/games/3DO/boot.rom`.
+    reference_notes:
+    - >-
+      MiSTer runs FPGA cores on a DE10-Nano board. Only the files the MiSTer BIOS database
+      lists with a download address are in the pack. The others come with the MiSTer distribution
+      and install themselves.
+    logo_owner: MiSTer FPGA
+    logo_licence: GitHub organisation avatar of MiSTer-devel
+  minui:
+    summary: A simple game menu for handhelds. It runs from the SD card.
+    folders:
+    - where: On the SD card
+      path: '`Bios/<TAG>/`, one folder per console'
+    run: [macos, linux, windows]
+    notes:
+    - >-
+      Each console has its own folder, named after the tag in its Roms folder. `Roms/Sony
+      PlayStation (PS)/` uses `Bios/PS/`.
+    on_card: true
+    reference_notes:
+    - >-
+      MinUI gives each console its own folder, named after the tag in parentheses of the
+      Roms folder the game sits in. A game in `Roms/Game Boy (GB)/` runs with `Bios/GB/`
+      as its BIOS folder (MinUI `workspace/all/minarch/minarch.c:2943`).
+    - >-
+      Without `--platform`, the installer reads the release name MinUI writes in `.system/version.txt`
+      on the card. A console started by a standalone program instead of a libretro core
+      (DraStic for NDS, native PICO-8) is not covered.
+    logo_owner: Shaun Inman
+    logo_licence: GitHub avatar of shauninman, the author of MinUI
+  nextui:
+    summary: >-
+      A game menu for handhelds, based on MinUI. It runs from the SD card.
+    folders:
+    - where: On the SD card
+      path: '`Bios/<TAG>/`, one folder per console'
+    run: [macos, linux, windows]
+    notes:
+    - >-
+      Each console has its own folder, named after the tag in its Roms folder. `Roms/Sony
+      PlayStation (PS)/` uses `Bios/PS/`.
+    on_card: true
+    reference_notes:
+    - >-
+      NextUI gives each console its own folder, named after the tag in parentheses of
+      the Roms folder the game sits in (NextUI `workspace/all/minarch/ma_core.c:76`).
+    logo_owner: LoveRetro
+    logo_licence: GitHub organisation avatar of LoveRetro
+  myminui:
+    summary: >-
+      A game menu for handhelds, based on MinUI. It runs from the SD card.
+    folders:
+    - where: On the SD card
+      path: '`Bios/<TAG>/`, one folder per console'
+    run: [macos, linux, windows]
+    notes:
+    - >-
+      Each console has its own folder, named after the tag in its Roms folder. `Roms/Sony
+      PlayStation (PS)/` uses `Bios/PS/`.
+    on_card: true
+    reference_notes:
+    - >-
+      MyMinUI gives each console its own folder, named after the tag in parentheses of
+      the Roms folder the game sits in (MyMinUI `workspace/all/minarch/minarch.c:3532`).

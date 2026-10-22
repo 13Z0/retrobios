@@ -1,5 +1,6 @@
 ---
 level: reference
+order: 10
 ---
 
 # How each platform checks files

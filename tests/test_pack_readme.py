@@ -98,9 +98,15 @@ class TheOneLinerFollowsTheRegistry(unittest.TestCase):
         self.assertIn("--romm-firmware", text)
 
     def test_the_commands_are_written_once(self):
+        """The address comes from install_base in platforms/_guides.yml, the
+        one the site's commands use."""
+        import packreadme
+        from siteguides import INSTALL_BASE
+
         source = (REPO_ROOT / "scripts" / "packreadme.py").read_text(encoding="utf-8")
-        self.assertEqual(source.count("main/install.sh"), 1)
-        self.assertEqual(source.count("main/install.ps1"), 1)
+        self.assertNotIn("raw.githubusercontent.com", source)
+        self.assertEqual(packreadme.INSTALL_SH, f"{INSTALL_BASE}/install.sh")
+        self.assertEqual(packreadme.INSTALL_PS1, f"{INSTALL_BASE}/install.ps1")
 
 
 if __name__ == "__main__":

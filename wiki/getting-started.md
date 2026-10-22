@@ -1,5 +1,6 @@
 ---
 level: start
+nav: false
 ---
 
 # Getting started

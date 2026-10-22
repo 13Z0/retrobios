@@ -5,8 +5,10 @@ goes, and which ones the user has to rename."""
 
 from __future__ import annotations
 
-INSTALL_SH = "https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh"
-INSTALL_PS1 = "https://raw.githubusercontent.com/Abdess/retrobios/main/install.ps1"
+from siteguides import INSTALL_BASE, pack_manual
+
+INSTALL_SH = f"{INSTALL_BASE}/install.sh"
+INSTALL_PS1 = f"{INSTALL_BASE}/install.ps1"
 
 def _detect_systems(detect: list[dict]) -> list[str]:
     """The operating systems the registry's detection rules cover, in order."""
@@ -114,147 +116,6 @@ def _generic_manual(bios_paths: list[str]) -> str:
     )
 
 
-# What a manual install needs on each platform: its shares, cards and folders.
-MANUAL_GUIDES: dict[str, str] = {
-    "retroarch": (
-        "  Option B: Manual (PC)\n"
-        "  ---------------------\n"
-        "  1. Find your RetroArch system directory:\n"
-        "     - RetroArch > Settings > Directory > System/BIOS\n"
-        "     - Default: retroarch/system/\n"
-        "  2. Extract all files from this archive directly into your system directory\n"
-        "  3. Overwrite if asked\n\n"
-        "  Option C: Manual (handheld / SD card)\n"
-        "  -------------------------------------\n"
-        "  Anbernic, Retroid, Miyoo, Trimui, etc.:\n"
-        "  1. Connect your SD card to your PC\n"
-        "  2. Find the BIOS folder (usually BIOS/ or system/)\n"
-        "  3. Extract all files from this archive directly into that folder\n"
-        "  4. Eject SD card and reboot your device\n\n"
-        "  Common paths by device:\n"
-        "    Anbernic (ArkOS/JELOS): BIOS/\n"
-        "    Retroid (RetroArch):     RetroArch/system/\n"
-        "    Miyoo Mini (Onion OS):   BIOS/\n"
-        "    Steam Deck (RetroArch):  ~/.config/retroarch/system/\n\n"
-    ),
-    "batocera": (
-        "  The terminal is F1 from the Batocera menu, or SSH.\n\n"
-        "  Option B: Manual (network share)\n"
-        "  --------------------------------\n"
-        "  1. On your PC, open the Batocera network share:\n"
-        "     - Windows: \\\\BATOCERA\\share\\bios\\\n"
-        "     - Mac/Linux: smb://batocera/share/bios/\n"
-        "  2. Extract all files from this archive directly into the share\n"
-        "  3. Overwrite if asked\n\n"
-        "  Option C: Manual (SD card)\n"
-        "  --------------------------\n"
-        "  1. Put the SD card in your PC\n"
-        "  2. Navigate to /userdata/bios/ on the SHARE partition\n"
-        "  3. Extract all files from this archive directly into that folder\n\n"
-        "  NOTE: Dreamcast flash memory is named dc_nvmem.bin\n"
-        "  (if your setup asks for dc_flash.bin, same file).\n\n"
-    ),
-    "recalbox": (
-        "  Option B: Manual (network share)\n"
-        "  --------------------------------\n"
-        "  1. On your PC, open the Recalbox network share:\n"
-        "     - Windows: \\\\RECALBOX\\share\\bios\\\n"
-        "     - Mac/Linux: smb://recalbox/share/bios/\n"
-        "  2. Extract all files from this archive directly into the share\n\n"
-        "  Option C: Manual (SD card)\n"
-        "  --------------------------\n"
-        "  1. Put the SD card in your PC\n"
-        "  2. Navigate to /recalbox/share/bios/\n"
-        "  3. Extract all files from this archive directly into that folder\n\n"
-    ),
-    "emudeck": (
-        "  Option B: Manual\n"
-        "  ----------------\n"
-        "  Extract all files from this archive directly into EmuDeck's bios\n"
-        "  folder, inside the Emulation folder chosen in EmuDeck:\n"
-        "    Steam Deck, Linux and macOS: ~/Emulation/bios/ by default\n"
-        "    Windows: C:\\Emulation\\bios\\ by default\n\n"
-    ),
-    "retrodeck": (
-        "  Option B: Manual\n"
-        "  ----------------\n"
-        "  1. Open Dolphin file manager\n"
-        "  2. Show hidden files (Ctrl+H)\n"
-        "  3. Navigate to ~/retrodeck/\n"
-        "  4. Extract all files from this archive directly into ~/retrodeck/\n"
-        "     (the archive already holds the bios/ and roms/ folders)\n\n"
-        "  NOTE: RetroDECK uses its own BIOS checker. After\n"
-        "  copying, open RetroDECK > Tools > BIOS Checker to\n"
-        "  verify everything is detected.\n\n"
-    ),
-    "retrobat": (
-        "  Option B: Manual\n"
-        "  ----------------\n"
-        "  1. Open your RetroBat installation folder\n"
-        "  2. Navigate to the bios\\ subfolder\n"
-        "     (default: C:\\RetroBat\\bios\\)\n"
-        "  3. Extract all files from this archive directly into your bios\\ folder\n"
-        "  4. Overwrite if asked\n\n"
-    ),
-    "bizhawk": (
-        "  Option B: Manual\n"
-        "  ----------------\n"
-        "  1. Open the folder you extracted BizHawk to, the one holding\n"
-        "     EmuHawk.exe (Windows) or EmuHawkMono.sh (Linux)\n"
-        "  2. Navigate to its Firmware subfolder\n"
-        "  3. Extract all files from this archive directly into your Firmware folder\n"
-        "  4. In BizHawk: Config > Paths > Firmware should\n"
-        "     point to this folder\n\n"
-    ),
-    # RomM 5.4 places firmware by filesystem.structure.firmware in config.yml,
-    # bios/{platform} by default, and suggests {platform}/bios for a library
-    # laid out as {platform}/roms (rommapp/romm 68f71259,
-    # backend/config/config_manager.py:58,101-109,1105-1124).
-    "romm": (
-        "  Option B: Manual\n"
-        "  ----------------\n"
-        "  The archive holds one folder per RomM platform (psx/, gba/, ...).\n"
-        "  Where they go depends on filesystem.structure.firmware in RomM's\n"
-        "  config.yml, read relative to the library folder:\n\n"
-        "  - Not set, or \"bios/{platform}\" (the default): extract all files\n"
-        "    from this archive directly into library/bios/\n"
-        "  - \"{platform}/bios\" (the layout RomM suggests for a library kept as\n"
-        "    {platform}/roms): each folder goes under its platform, psx/ into\n"
-        "    library/psx/bios/, gba/ into library/gba/bios/, and so on.\n"
-        "    The installer reads config.yml and does this itself. Run from\n"
-        "    the host of a container, --romm-firmware \"{platform}/bios\" says it.\n\n"
-        "  Then restart the RomM service to detect new files.\n\n"
-    ),
-    "retropie": (
-        "  Option B: Via network share\n"
-        "  --------------------------\n"
-        "  1. On your PC, open: \\\\RETROPIE\\bios\\\n"
-        "  2. Extract all files from this archive directly into that folder\n\n"
-        "  Option C: Via SSH\n"
-        "  -----------------\n"
-        "  1. SSH into your Pi: ssh pi@retropie\n"
-        "  2. Copy files to ~/RetroPie/BIOS/\n\n"
-        "  NOTE: the BIOS folder is on the card's Linux partition,\n"
-        "  which Windows and macOS cannot open: copying through the\n"
-        "  card works from a Linux computer only\n"
-        "  (<rootfs>/home/pi/RetroPie/BIOS/).\n\n"
-    ),
-    "lakka": (
-        "  Lakka reads its BIOS files from /storage/system/.\n\n"
-        "  Option B: Via network share\n"
-        "  --------------------------\n"
-        "  1. On Lakka: Settings > Services > Samba Enable\n"
-        "  2. On your PC, open the System share: \\\\LAKKA\\System\\\n"
-        "     (macOS and Linux: smb://lakka/System)\n"
-        "  3. Extract all files from this archive directly into that share\n\n"
-        "  Option C: Via SSH\n"
-        "  -----------------\n"
-        "  1. On Lakka: Settings > Services > SSH Enable\n"
-        "  2. Copy the files to /storage/system/ (scp -r * root@lakka:/storage/system/)\n\n"
-    ),
-}
-
-
 def _build_readme(
     platform_name: str,
     platform_display: str,
@@ -303,7 +164,7 @@ def _build_readme(
         guide = (
             "INSTALLATION GUIDE\n\n"
             + _automatic_section(platform_display, detect, standalone_copies)
-            + MANUAL_GUIDES.get(platform_name, _generic_manual(bios_paths))
+            + (pack_manual(platform_name) or _generic_manual(bios_paths))
         )
 
     if regions:

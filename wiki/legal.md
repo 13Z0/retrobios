@@ -1,5 +1,7 @@
 ---
 level: explore
+order: 40
+nav_title: "Is it legal?"
 ---
 
 # The project's legal position

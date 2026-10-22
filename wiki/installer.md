@@ -1,5 +1,6 @@
 ---
 level: explore
+order: 30
 ---
 
 # All installer options
