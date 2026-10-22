@@ -1223,6 +1223,8 @@
     "apple-macintosh-ii": [
       "basiliskii",
       "mame",
+      "mame0258",
+      "mame0278",
       "minivmac"
     ],
     "arcade": [
@@ -1290,6 +1292,8 @@
     ],
     "coco": [
       "mame",
+      "mame0258",
+      "mame0278",
       "xroar"
     ],
     "coleco-colecovision": [
@@ -1345,15 +1349,21 @@
     ],
     "dragon64": [
       "mame",
+      "mame0258",
+      "mame0278",
       "xroar"
     ],
     "enterprise-64-128": [
       "clk",
-      "mame"
+      "mame",
+      "mame0258",
+      "mame0278"
     ],
     "epoch-scv": [
       "emuscv",
-      "mame"
+      "mame",
+      "mame0258",
+      "mame0278"
     ],
     "fairchild-channel-f": [
       "bizhawk",
@@ -1826,6 +1836,8 @@
     "vectrex": [
       "bizhawk",
       "mame",
+      "mame0258",
+      "mame0278",
       "vecx"
     ],
     "vtech-vsmile": [
@@ -15856,15 +15868,6 @@
       ],
       "alternatives": [
         {
-          "sha1": "f138c8df3637b804a0e5f2007af583b01c338554",
-          "sha256": "d87cc31aebc4694e9d776734572dbe8b45071a4888d913cb4baac4fc51175a1f",
-          "size": 1345355,
-          "repo_path": "bios/Arcade/MAME/galgbios.zip",
-          "cores": [
-            "mame"
-          ]
-        },
-        {
           "sha1": "9ec50f79c5fd6eaddd88542aa18b6c5bb81a9ed4",
           "sha256": "0132a956caa5705177688d2ee454aaf919b9cc3ed1ee6c4ae331f006292b59f0",
           "size": 1345333,
@@ -15874,7 +15877,6 @@
             "mame2010",
             "mame2015",
             "mame2016",
-            "mamearcade",
             "ume2015"
           ]
         }
@@ -108784,7 +108786,8 @@
       "size": 2017848,
       "repo_path": "bios/Arcade/MAME/galgames.zip",
       "cores": [
-        "mame"
+        "mame",
+        "mamearcade"
       ],
       "systems": [
         "3do",

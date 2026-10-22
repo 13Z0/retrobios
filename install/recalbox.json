@@ -943,6 +943,8 @@
     ],
     "coco": [
       "mame",
+      "mame0258",
+      "mame0278",
       "xroar"
     ],
     "coleco-colecovision": [
@@ -987,11 +989,15 @@
     ],
     "dragon64": [
       "mame",
+      "mame0258",
+      "mame0278",
       "xroar"
     ],
     "elektronika-bk": [
       "bk",
-      "mame"
+      "mame",
+      "mame0258",
+      "mame0278"
     ],
     "fairchild-channel-f": [
       "bizhawk",
@@ -1239,7 +1245,9 @@
     ],
     "scv": [
       "emuscv",
-      "mame"
+      "mame",
+      "mame0258",
+      "mame0278"
     ],
     "sega-dreamcast": [
       "demul",
@@ -35798,7 +35806,11 @@
         "3do",
         "apple2gs",
         "cdi",
+        "coco",
+        "dragon64",
+        "elektronika-bk",
         "naomi2",
+        "scv",
         "stv",
         "ti994a"
       ]
@@ -35817,7 +35829,11 @@
         "3do",
         "apple2gs",
         "cdi",
+        "coco",
+        "dragon64",
+        "elektronika-bk",
         "naomi2",
+        "scv",
         "stv",
         "ti994a"
       ]
@@ -35839,7 +35855,11 @@
         "3do",
         "apple2gs",
         "cdi",
+        "coco",
+        "dragon64",
+        "elektronika-bk",
         "naomi2",
+        "scv",
         "stv",
         "ti994a"
       ]
@@ -35860,7 +35880,11 @@
         "3do",
         "apple2gs",
         "cdi",
+        "coco",
+        "dragon64",
+        "elektronika-bk",
         "naomi2",
+        "scv",
         "stv",
         "ti994a"
       ]
@@ -35879,7 +35903,11 @@
         "3do",
         "apple2gs",
         "cdi",
+        "coco",
+        "dragon64",
+        "elektronika-bk",
         "naomi2",
+        "scv",
         "stv",
         "ti994a"
       ],
@@ -35910,7 +35938,11 @@
         "3do",
         "apple2gs",
         "cdi",
+        "coco",
+        "dragon64",
+        "elektronika-bk",
         "naomi2",
+        "scv",
         "stv",
         "ti994a"
       ],
@@ -35980,7 +36012,11 @@
         "3do",
         "apple2gs",
         "cdi",
+        "coco",
+        "dragon64",
+        "elektronika-bk",
         "naomi2",
+        "scv",
         "stv",
         "ti994a"
       ]
@@ -36023,7 +36059,11 @@
         "3do",
         "apple2gs",
         "cdi",
+        "coco",
+        "dragon64",
+        "elektronika-bk",
         "naomi2",
+        "scv",
         "stv",
         "ti994a"
       ]
@@ -36053,7 +36093,11 @@
         "3do",
         "apple2gs",
         "cdi",
+        "coco",
+        "dragon64",
+        "elektronika-bk",
         "naomi2",
+        "scv",
         "stv",
         "ti994a"
       ]
@@ -36072,7 +36116,11 @@
         "3do",
         "apple2gs",
         "cdi",
+        "coco",
+        "dragon64",
+        "elektronika-bk",
         "naomi2",
+        "scv",
         "stv",
         "ti994a"
       ]
@@ -36091,7 +36139,11 @@
         "3do",
         "apple2gs",
         "cdi",
+        "coco",
+        "dragon64",
+        "elektronika-bk",
         "naomi2",
+        "scv",
         "stv",
         "ti994a"
       ]
@@ -36110,7 +36162,11 @@
         "3do",
         "apple2gs",
         "cdi",
+        "coco",
+        "dragon64",
+        "elektronika-bk",
         "naomi2",
+        "scv",
         "stv",
         "ti994a"
       ]
@@ -36129,7 +36185,11 @@
         "3do",
         "apple2gs",
         "cdi",
+        "coco",
+        "dragon64",
+        "elektronika-bk",
         "naomi2",
+        "scv",
         "stv",
         "ti994a"
       ]
@@ -36148,7 +36208,11 @@
         "3do",
         "apple2gs",
         "cdi",
+        "coco",
+        "dragon64",
+        "elektronika-bk",
         "naomi2",
+        "scv",
         "stv",
         "ti994a"
       ]
@@ -36177,7 +36241,11 @@
         "3do",
         "apple2gs",
         "cdi",
+        "coco",
+        "dragon64",
+        "elektronika-bk",
         "naomi2",
+        "scv",
         "stv",
         "ti994a"
       ],
@@ -36216,14 +36284,6 @@
         "mame0258",
         "mame0278"
       ],
-      "systems": [
-        "3do",
-        "apple2gs",
-        "cdi",
-        "naomi2",
-        "stv",
-        "ti994a"
-      ],
       "alternatives": [
         {
           "sha1": "37487f9f73734e8dd621004a5ef98c5a2301bd1d",
@@ -36247,14 +36307,6 @@
       "cores": [
         "mame0258",
         "mame0278"
-      ],
-      "systems": [
-        "3do",
-        "apple2gs",
-        "cdi",
-        "naomi2",
-        "stv",
-        "ti994a"
       ],
       "alternatives": [
         {
@@ -36286,7 +36338,11 @@
         "3do",
         "apple2gs",
         "cdi",
+        "coco",
+        "dragon64",
+        "elektronika-bk",
         "naomi2",
+        "scv",
         "stv",
         "ti994a"
       ]
@@ -36307,7 +36363,11 @@
         "3do",
         "apple2gs",
         "cdi",
+        "coco",
+        "dragon64",
+        "elektronika-bk",
         "naomi2",
+        "scv",
         "stv",
         "ti994a"
       ]
@@ -36339,7 +36399,11 @@
         "3do",
         "apple2gs",
         "cdi",
+        "coco",
+        "dragon64",
+        "elektronika-bk",
         "naomi2",
+        "scv",
         "stv",
         "ti994a"
       ],
@@ -36419,7 +36483,11 @@
         "3do",
         "apple2gs",
         "cdi",
+        "coco",
+        "dragon64",
+        "elektronika-bk",
         "naomi2",
+        "scv",
         "stv",
         "ti994a"
       ]
@@ -36438,7 +36506,11 @@
         "3do",
         "apple2gs",
         "cdi",
+        "coco",
+        "dragon64",
+        "elektronika-bk",
         "naomi2",
+        "scv",
         "stv",
         "ti994a"
       ]
@@ -36457,7 +36529,11 @@
         "3do",
         "apple2gs",
         "cdi",
+        "coco",
+        "dragon64",
+        "elektronika-bk",
         "naomi2",
+        "scv",
         "stv",
         "ti994a"
       ]
@@ -36476,7 +36552,11 @@
         "3do",
         "apple2gs",
         "cdi",
+        "coco",
+        "dragon64",
+        "elektronika-bk",
         "naomi2",
+        "scv",
         "stv",
         "ti994a"
       ]
@@ -36493,14 +36573,6 @@
         "mame2010",
         "mame2015",
         "mame2016"
-      ],
-      "systems": [
-        "3do",
-        "apple2gs",
-        "cdi",
-        "naomi2",
-        "stv",
-        "ti994a"
       ]
     },
     {
@@ -36533,7 +36605,11 @@
         "3do",
         "apple2gs",
         "cdi",
+        "coco",
+        "dragon64",
+        "elektronika-bk",
         "naomi2",
+        "scv",
         "stv",
         "ti994a"
       ]
@@ -36552,7 +36628,11 @@
         "3do",
         "apple2gs",
         "cdi",
+        "coco",
+        "dragon64",
+        "elektronika-bk",
         "naomi2",
+        "scv",
         "stv",
         "ti994a"
       ]
@@ -36570,7 +36650,11 @@
         "3do",
         "apple2gs",
         "cdi",
+        "coco",
+        "dragon64",
+        "elektronika-bk",
         "naomi2",
+        "scv",
         "stv",
         "ti994a"
       ],
@@ -36600,7 +36684,11 @@
         "3do",
         "apple2gs",
         "cdi",
+        "coco",
+        "dragon64",
+        "elektronika-bk",
         "naomi2",
+        "scv",
         "stv",
         "ti994a"
       ]
@@ -36618,7 +36706,11 @@
         "3do",
         "apple2gs",
         "cdi",
+        "coco",
+        "dragon64",
+        "elektronika-bk",
         "naomi2",
+        "scv",
         "stv",
         "ti994a"
       ],
@@ -36659,7 +36751,11 @@
         "3do",
         "apple2gs",
         "cdi",
+        "coco",
+        "dragon64",
+        "elektronika-bk",
         "naomi2",
+        "scv",
         "stv",
         "ti994a"
       ]
@@ -36704,7 +36800,11 @@
         "3do",
         "apple2gs",
         "cdi",
+        "coco",
+        "dragon64",
+        "elektronika-bk",
         "naomi2",
+        "scv",
         "stv",
         "ti994a"
       ]
@@ -36725,7 +36825,11 @@
         "3do",
         "apple2gs",
         "cdi",
+        "coco",
+        "dragon64",
+        "elektronika-bk",
         "naomi2",
+        "scv",
         "stv",
         "ti994a"
       ]
@@ -36789,7 +36893,11 @@
         "3do",
         "apple2gs",
         "cdi",
+        "coco",
+        "dragon64",
+        "elektronika-bk",
         "naomi2",
+        "scv",
         "stv",
         "ti994a"
       ]
@@ -36810,7 +36918,11 @@
         "3do",
         "apple2gs",
         "cdi",
+        "coco",
+        "dragon64",
+        "elektronika-bk",
         "naomi2",
+        "scv",
         "stv",
         "ti994a"
       ]
@@ -36845,7 +36957,11 @@
         "3do",
         "apple2gs",
         "cdi",
+        "coco",
+        "dragon64",
+        "elektronika-bk",
         "naomi2",
+        "scv",
         "stv",
         "ti994a"
       ]
@@ -36863,7 +36979,11 @@
         "3do",
         "apple2gs",
         "cdi",
+        "coco",
+        "dragon64",
+        "elektronika-bk",
         "naomi2",
+        "scv",
         "stv",
         "ti994a"
       ]
@@ -36881,7 +37001,11 @@
         "3do",
         "apple2gs",
         "cdi",
+        "coco",
+        "dragon64",
+        "elektronika-bk",
         "naomi2",
+        "scv",
         "stv",
         "ti994a"
       ]
@@ -36899,7 +37023,11 @@
         "3do",
         "apple2gs",
         "cdi",
+        "coco",
+        "dragon64",
+        "elektronika-bk",
         "naomi2",
+        "scv",
         "stv",
         "ti994a"
       ]
@@ -39921,14 +40049,6 @@
         "mame0258",
         "mame0278"
       ],
-      "systems": [
-        "3do",
-        "apple2gs",
-        "cdi",
-        "naomi2",
-        "stv",
-        "ti994a"
-      ],
       "alternatives": [
         {
           "sha1": "03c9d1c3f59e8c6f320ea74abde1e4e7c5bfa623",
@@ -39985,14 +40105,6 @@
         "mame2010",
         "mame2015",
         "mame2016"
-      ],
-      "systems": [
-        "3do",
-        "apple2gs",
-        "cdi",
-        "naomi2",
-        "stv",
-        "ti994a"
       ]
     },
     {

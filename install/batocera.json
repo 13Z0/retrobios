@@ -274,10 +274,10 @@
       }
     }
   ],
-  "total_files": 14509,
-  "total_size": 9589723676,
-  "pack_files": 14511,
-  "pack_size": 9589723676,
+  "total_files": 14508,
+  "total_size": 9588378321,
+  "pack_files": 14510,
+  "pack_size": 9588378321,
   "total_omitted": 399,
   "omitted_files": [
     {
@@ -5157,7 +5157,9 @@
     ],
     "acorn-bbc-micro": [
       "clk",
-      "mame"
+      "mame",
+      "mame0258",
+      "mame0278"
     ],
     "adam": [
       "colem",
@@ -5195,11 +5197,15 @@
     "apple-macintosh-ii": [
       "basiliskii",
       "mame",
+      "mame0258",
+      "mame0278",
       "minivmac"
     ],
     "archimedes": [
       "clk",
-      "mame"
+      "mame",
+      "mame0258",
+      "mame0278"
     ],
     "atari-400-800": [
       "altirra",
@@ -5277,6 +5283,8 @@
     ],
     "coco": [
       "mame",
+      "mame0258",
+      "mame0278",
       "xroar"
     ],
     "coleco-colecovision": [
@@ -5319,21 +5327,29 @@
     ],
     "dragon64": [
       "mame",
+      "mame0258",
+      "mame0278",
       "xroar"
     ],
     "electron": [
       "clk",
-      "mame"
+      "mame",
+      "mame0258",
+      "mame0278"
     ],
     "elektronika-bk": [
       "bk",
-      "mame"
+      "mame",
+      "mame0258",
+      "mame0278"
     ],
     "enterprise-64-128": [
       "clk",
       "ep128emu",
       "ep128emu_core",
-      "mame"
+      "mame",
+      "mame0258",
+      "mame0278"
     ],
     "entex-advision": [
       "groovymame",
@@ -5435,6 +5451,8 @@
     ],
     "mc10": [
       "mame",
+      "mame0258",
+      "mame0278",
       "xroar"
     ],
     "microsoft-msx": [
@@ -5603,6 +5621,8 @@
     ],
     "pc80": [
       "mame",
+      "mame0258",
+      "mame0278",
       "quasi88",
       "quasi88kai"
     ],
@@ -5637,7 +5657,9 @@
     ],
     "scv": [
       "emuscv",
-      "mame"
+      "mame",
+      "mame0258",
+      "mame0278"
     ],
     "sega-ai": [
       "groovymame",
@@ -5793,6 +5815,8 @@
     "vectrex": [
       "bizhawk",
       "mame",
+      "mame0258",
+      "mame0278",
       "vecx"
     ],
     "vgmplay": [
@@ -5832,7 +5856,9 @@
     "xegs": [
       "altirra",
       "atari800",
-      "mame"
+      "mame",
+      "mame0258",
+      "mame0278"
     ],
     "zc210": [
       "zc210"
@@ -183798,61 +183824,6 @@
       "sha256": "0ba851362a00400291e265c876e383d5f46ca6699307731e61cd84483a7a5ae9",
       "size": 109693,
       "repo_path": "bios/Arcade/MAME/crysbios.zip",
-      "cores": [
-        "mame"
-      ],
-      "systems": [
-        "3do",
-        "acorn-bbc-micro",
-        "adam",
-        "apfm1000",
-        "apple-macintosh-ii",
-        "archimedes",
-        "beena",
-        "camplynx",
-        "cdi",
-        "chihiro",
-        "coco",
-        "crvision",
-        "dragon64",
-        "electron",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "entex-advision",
-        "fm7",
-        "gamate",
-        "gamecom",
-        "gamepark-gp32",
-        "gamepock",
-        "gmaster",
-        "hikaru",
-        "laser310",
-        "loopy",
-        "mc10",
-        "pc80",
-        "pcw",
-        "pv2000",
-        "rx78",
-        "scv",
-        "sega-ai",
-        "tandy-vis",
-        "ti99",
-        "triforce",
-        "trs80",
-        "tutor",
-        "vectrex",
-        "vgmplay",
-        "vtech-socrates",
-        "vtech-vsmile",
-        "xegs"
-      ]
-    },
-    {
-      "dest": "galgbios.zip",
-      "sha1": "f138c8df3637b804a0e5f2007af583b01c338554",
-      "sha256": "d87cc31aebc4694e9d776734572dbe8b45071a4888d913cb4baac4fc51175a1f",
-      "size": 1345355,
-      "repo_path": "bios/Arcade/MAME/galgbios.zip",
       "cores": [
         "mame"
       ],

@@ -6,7 +6,7 @@
   "platform": "romm",
   "display_name": "RomM",
   "version": "1.0",
-  "generated": "2026-10-22T09:16:18Z",
+  "generated": "2026-10-22T09:20:33Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -8323,6 +8323,8 @@
     "apple-macintosh-ii": [
       "basiliskii",
       "mame",
+      "mame0258",
+      "mame0278",
       "minivmac"
     ],
     "arcade": [
@@ -8426,7 +8428,9 @@
     ],
     "enterprise-64-128": [
       "clk",
-      "mame"
+      "mame",
+      "mame0258",
+      "mame0278"
     ],
     "fairchild-channel-f": [
       "bizhawk",

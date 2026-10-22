@@ -285,9 +285,9 @@
     }
   ],
   "total_files": 5146,
-  "total_size": 8006921481,
+  "total_size": 8006921459,
   "pack_files": 5148,
-  "pack_size": 8006921481,
+  "pack_size": 8006921459,
   "total_omitted": 154,
   "omitted_files": [
     {
@@ -2516,7 +2516,9 @@
     ],
     "archimedes": [
       "clk",
-      "mame"
+      "mame",
+      "mame0258",
+      "mame0278"
     ],
     "atari-400-800": [
       "altirra",
@@ -2556,7 +2558,9 @@
     ],
     "bbcmicro": [
       "clk",
-      "mame"
+      "mame",
+      "mame0258",
+      "mame0278"
     ],
     "camplynx": [
       "groovymame",
@@ -2603,6 +2607,8 @@
     ],
     "coco": [
       "mame",
+      "mame0258",
+      "mame0278",
       "xroar"
     ],
     "coleco-colecovision": [
@@ -2648,11 +2654,15 @@
     ],
     "electron": [
       "clk",
-      "mame"
+      "mame",
+      "mame0258",
+      "mame0278"
     ],
     "elektronika-bk": [
       "bk",
-      "mame"
+      "mame",
+      "mame0258",
+      "mame0278"
     ],
     "emerson-arcadia-2001": [
       "amiarcadia",
@@ -3047,7 +3057,9 @@
     ],
     "scv": [
       "emuscv",
-      "mame"
+      "mame",
+      "mame0258",
+      "mame0278"
     ],
     "sega-dreamcast": [
       "demul",
@@ -3223,6 +3235,8 @@
     "vectrex": [
       "bizhawk",
       "mame",
+      "mame0258",
+      "mame0278",
       "vecx"
     ],
     "vg5k": [
@@ -3258,7 +3272,9 @@
     "xegs": [
       "altirra",
       "atari800",
-      "mame"
+      "mame",
+      "mame0258",
+      "mame0278"
     ]
   },
   "system_names": {
@@ -47629,66 +47645,6 @@
       "repo_path": "bios/NEC/PC Engine/gecard.pce",
       "cores": [
         "magicengine"
-      ]
-    },
-    {
-      "dest": "galgbios.zip",
-      "sha1": "f138c8df3637b804a0e5f2007af583b01c338554",
-      "sha256": "d87cc31aebc4694e9d776734572dbe8b45071a4888d913cb4baac4fc51175a1f",
-      "size": 1345355,
-      "repo_path": "bios/Arcade/MAME/galgbios.zip",
-      "cores": [
-        "mame"
-      ],
-      "systems": [
-        "3do",
-        "adam",
-        "apfm1000",
-        "archimedes",
-        "bbcmicro",
-        "camplynx",
-        "cdi",
-        "chihiro",
-        "coco",
-        "crvision",
-        "electron",
-        "elektronika-bk",
-        "entex-advision",
-        "fm7",
-        "gamate",
-        "gamecom",
-        "gamepark-gp32",
-        "gamepock",
-        "gmaster",
-        "hikaru",
-        "loopy",
-        "namco-system246",
-        "neogeo64",
-        "pegasus",
-        "pv1000",
-        "scv",
-        "segastv",
-        "ti99",
-        "triforce",
-        "tutor",
-        "vc4000",
-        "vectrex",
-        "vg5k",
-        "vtech-vsmile",
-        "xegs"
-      ],
-      "alternatives": [
-        {
-          "sha1": "9ec50f79c5fd6eaddd88542aa18b6c5bb81a9ed4",
-          "sha256": "0132a956caa5705177688d2ee454aaf919b9cc3ed1ee6c4ae331f006292b59f0",
-          "size": 1345333,
-          "repo_path": "bios/Arcade/Arcade/galgbios.zip",
-          "cores": [
-            "mame2010",
-            "mame2014",
-            "mame2016"
-          ]
-        }
       ]
     },
     {
@@ -92873,6 +92829,18 @@
         "mame2014",
         "mame2016",
         "psxmame"
+      ]
+    },
+    {
+      "dest": "galgbios.zip",
+      "sha1": "9ec50f79c5fd6eaddd88542aa18b6c5bb81a9ed4",
+      "sha256": "0132a956caa5705177688d2ee454aaf919b9cc3ed1ee6c4ae331f006292b59f0",
+      "size": 1345333,
+      "repo_path": "bios/Arcade/Arcade/galgbios.zip",
+      "cores": [
+        "mame2010",
+        "mame2014",
+        "mame2016"
       ]
     },
     {

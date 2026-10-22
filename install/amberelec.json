@@ -30,9 +30,9 @@
   ],
   "standalone_copies": [],
   "total_files": 4953,
-  "total_size": 5339809186,
+  "total_size": 5339809164,
   "pack_files": 4955,
-  "pack_size": 5339809186,
+  "pack_size": 5339809164,
   "total_omitted": 58,
   "omitted_files": [
     {
@@ -43813,32 +43813,6 @@
       ]
     },
     {
-      "dest": "bios/galgbios.zip",
-      "sha1": "f138c8df3637b804a0e5f2007af583b01c338554",
-      "sha256": "d87cc31aebc4694e9d776734572dbe8b45071a4888d913cb4baac4fc51175a1f",
-      "size": 1345355,
-      "repo_path": "bios/Arcade/MAME/galgbios.zip",
-      "cores": [
-        "mame"
-      ],
-      "systems": [
-        "3do"
-      ],
-      "alternatives": [
-        {
-          "sha1": "9ec50f79c5fd6eaddd88542aa18b6c5bb81a9ed4",
-          "sha256": "0132a956caa5705177688d2ee454aaf919b9cc3ed1ee6c4ae331f006292b59f0",
-          "size": 1345333,
-          "repo_path": "bios/Arcade/Arcade/galgbios.zip",
-          "cores": [
-            "mame2010",
-            "mame2015",
-            "mame2016"
-          ]
-        }
-      ]
-    },
-    {
       "dest": "bios/aristmk5.zip",
       "sha1": "82122ecbc6ece6bf94d3184b3bf6a79f97923f53",
       "sha256": "c0bce56e637cb59b6c45714337bc8643955c9ee6c1327260720bb35dad69df06",
@@ -61560,6 +61534,18 @@
       "sha256": "845cd0033844dd2c5ab59365d74e5c8895d2d86a4059e6651ffc8db9260fee65",
       "size": 126468,
       "repo_path": "bios/Arcade/Arcade/vspsx.zip",
+      "cores": [
+        "mame2010",
+        "mame2015",
+        "mame2016"
+      ]
+    },
+    {
+      "dest": "bios/galgbios.zip",
+      "sha1": "9ec50f79c5fd6eaddd88542aa18b6c5bb81a9ed4",
+      "sha256": "0132a956caa5705177688d2ee454aaf919b9cc3ed1ee6c4ae331f006292b59f0",
+      "size": 1345333,
+      "repo_path": "bios/Arcade/Arcade/galgbios.zip",
       "cores": [
         "mame2010",
         "mame2015",

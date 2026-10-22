@@ -21,9 +21,9 @@
   ],
   "standalone_copies": [],
   "total_files": 8079,
-  "total_size": 6654703364,
+  "total_size": 6654703342,
   "pack_files": 8389,
-  "pack_size": 6676596248,
+  "pack_size": 6676596226,
   "total_omitted": 11,
   "omitted_files": [
     {
@@ -680,6 +680,8 @@
     "apple-macintosh-ii": [
       "basiliskii",
       "mame",
+      "mame0258",
+      "mame0278",
       "minivmac"
     ],
     "arcade": [
@@ -805,17 +807,23 @@
     ],
     "elektronika-bk": [
       "bk",
-      "mame"
+      "mame",
+      "mame0258",
+      "mame0278"
     ],
     "enterprise-64-128": [
       "clk",
       "ep128emu",
       "ep128emu_core",
-      "mame"
+      "mame",
+      "mame0258",
+      "mame0278"
     ],
     "epoch-scv": [
       "emuscv",
-      "mame"
+      "mame",
+      "mame0258",
+      "mame0278"
     ],
     "fairchild-channel-f": [
       "bizhawk",
@@ -85294,40 +85302,6 @@
       ]
     },
     {
-      "dest": "galgbios.zip",
-      "sha1": "f138c8df3637b804a0e5f2007af583b01c338554",
-      "sha256": "d87cc31aebc4694e9d776734572dbe8b45071a4888d913cb4baac4fc51175a1f",
-      "size": 1345355,
-      "repo_path": "bios/Arcade/MAME/galgbios.zip",
-      "cores": [
-        "mame"
-      ],
-      "systems": [
-        "3do",
-        "apple-macintosh-ii",
-        "elektronika-bk",
-        "enterprise-64-128",
-        "epoch-scv",
-        "philips-cdi"
-      ],
-      "alternatives": [
-        {
-          "sha1": "9ec50f79c5fd6eaddd88542aa18b6c5bb81a9ed4",
-          "sha256": "0132a956caa5705177688d2ee454aaf919b9cc3ed1ee6c4ae331f006292b59f0",
-          "size": 1345333,
-          "repo_path": "bios/Arcade/Arcade/galgbios.zip",
-          "cores": [
-            "mame2009",
-            "mame2010",
-            "mame2015",
-            "mame2016",
-            "mamearcade",
-            "ume2015"
-          ]
-        }
-      ]
-    },
-    {
       "dest": "aristmk5.zip",
       "sha1": "82122ecbc6ece6bf94d3184b3bf6a79f97923f53",
       "sha256": "c0bce56e637cb59b6c45714337bc8643955c9ee6c1327260720bb35dad69df06",
@@ -87253,7 +87227,8 @@
       "size": 2017848,
       "repo_path": "bios/Arcade/MAME/galgames.zip",
       "cores": [
-        "mame"
+        "mame",
+        "mamearcade"
       ],
       "systems": [
         "3do",
@@ -106911,6 +106886,20 @@
       "cores": [
         "mame2009",
         "mame2010"
+      ]
+    },
+    {
+      "dest": "galgbios.zip",
+      "sha1": "9ec50f79c5fd6eaddd88542aa18b6c5bb81a9ed4",
+      "sha256": "0132a956caa5705177688d2ee454aaf919b9cc3ed1ee6c4ae331f006292b59f0",
+      "size": 1345333,
+      "repo_path": "bios/Arcade/Arcade/galgbios.zip",
+      "cores": [
+        "mame2009",
+        "mame2010",
+        "mame2015",
+        "mame2016",
+        "ume2015"
       ]
     },
     {

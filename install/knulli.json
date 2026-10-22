@@ -30,9 +30,9 @@
   ],
   "standalone_copies": [],
   "total_files": 9375,
-  "total_size": 9407977362,
+  "total_size": 9407977340,
   "pack_files": 9377,
-  "pack_size": 9407977362,
+  "pack_size": 9407977340,
   "total_omitted": 398,
   "omitted_files": [
     {
@@ -4899,7 +4899,9 @@
     ],
     "acorn-bbc-micro": [
       "clk",
-      "mame"
+      "mame",
+      "mame0258",
+      "mame0278"
     ],
     "adam": [
       "colem",
@@ -4937,11 +4939,15 @@
     "apple-macintosh-ii": [
       "basiliskii",
       "mame",
+      "mame0258",
+      "mame0278",
       "minivmac"
     ],
     "archimedes": [
       "clk",
-      "mame"
+      "mame",
+      "mame0258",
+      "mame0278"
     ],
     "atari-400-800": [
       "altirra",
@@ -5013,6 +5019,8 @@
     ],
     "coco": [
       "mame",
+      "mame0258",
+      "mame0278",
       "xroar"
     ],
     "commodore-amiga": [
@@ -5037,7 +5045,9 @@
     ],
     "electron": [
       "clk",
-      "mame"
+      "mame",
+      "mame0258",
+      "mame0278"
     ],
     "entex-advision": [
       "groovymame",
@@ -5317,7 +5327,9 @@
     ],
     "scv": [
       "emuscv",
-      "mame"
+      "mame",
+      "mame0258",
+      "mame0278"
     ],
     "sega-dreamcast": [
       "demul",
@@ -5442,6 +5454,8 @@
     "vectrex": [
       "bizhawk",
       "mame",
+      "mame0258",
+      "mame0278",
       "vecx"
     ],
     "vgmplay": [
@@ -5468,7 +5482,9 @@
     "xegs": [
       "altirra",
       "atari800",
-      "mame"
+      "mame",
+      "mame0258",
+      "mame0278"
     ],
     "zc210": [
       "zc210"
@@ -116311,59 +116327,6 @@
       ]
     },
     {
-      "dest": "galgbios.zip",
-      "sha1": "f138c8df3637b804a0e5f2007af583b01c338554",
-      "sha256": "d87cc31aebc4694e9d776734572dbe8b45071a4888d913cb4baac4fc51175a1f",
-      "size": 1345355,
-      "repo_path": "bios/Arcade/MAME/galgbios.zip",
-      "cores": [
-        "mame"
-      ],
-      "systems": [
-        "3do",
-        "acorn-bbc-micro",
-        "adam",
-        "apfm1000",
-        "apple-macintosh-ii",
-        "archimedes",
-        "camplynx",
-        "cdi",
-        "chihiro",
-        "coco",
-        "crvision",
-        "electron",
-        "entex-advision",
-        "fm7",
-        "gamate",
-        "gamecom",
-        "gamepark-gp32",
-        "gamepock",
-        "gmaster",
-        "hikaru",
-        "laser310",
-        "scv",
-        "tandy-vis",
-        "ti99",
-        "tutor",
-        "vectrex",
-        "vgmplay",
-        "vtech-socrates",
-        "vtech-vsmile",
-        "xegs"
-      ],
-      "alternatives": [
-        {
-          "sha1": "9ec50f79c5fd6eaddd88542aa18b6c5bb81a9ed4",
-          "sha256": "0132a956caa5705177688d2ee454aaf919b9cc3ed1ee6c4ae331f006292b59f0",
-          "size": 1345333,
-          "repo_path": "bios/Arcade/Arcade/galgbios.zip",
-          "cores": [
-            "mame2010"
-          ]
-        }
-      ]
-    },
-    {
       "dest": "aristmk5.zip",
       "sha1": "82122ecbc6ece6bf94d3184b3bf6a79f97923f53",
       "sha256": "c0bce56e637cb59b6c45714337bc8643955c9ee6c1327260720bb35dad69df06",
@@ -160595,6 +160558,16 @@
       "sha256": "845cd0033844dd2c5ab59365d74e5c8895d2d86a4059e6651ffc8db9260fee65",
       "size": 126468,
       "repo_path": "bios/Arcade/Arcade/vspsx.zip",
+      "cores": [
+        "mame2010"
+      ]
+    },
+    {
+      "dest": "galgbios.zip",
+      "sha1": "9ec50f79c5fd6eaddd88542aa18b6c5bb81a9ed4",
+      "sha256": "0132a956caa5705177688d2ee454aaf919b9cc3ed1ee6c4ae331f006292b59f0",
+      "size": 1345333,
+      "repo_path": "bios/Arcade/Arcade/galgbios.zip",
       "cores": [
         "mame2010"
       ]
