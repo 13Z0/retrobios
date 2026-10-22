@@ -141,7 +141,9 @@ class EventRecords(unittest.TestCase):
             json.dumps({"event": "summary", "mode": "install", "installed": 0,
                         "up_to_date": 4, "pending": 1,
                         "failed": [{"dest": "x.bin", "reason": "HTTP 404"}],
-                        "skipped": [], "left_out": [], "interrupted": False}),
+                        "skipped": [], "left_out": [],
+                        "kept": [{"folder": "/b/retrobios-backup/1", "files": 1,
+                                  "bytes": 2048}], "interrupted": False}),
             json.dumps({"event": "end", "code": 2}),
         ]
         out, summary = io.StringIO(), io.StringIO()
@@ -149,7 +151,8 @@ class EventRecords(unittest.TestCase):
         self.assertEqual(out.getvalue().splitlines(), [
             "download\t1\t2 KB", "file\t1\t1\tfailed\tx.bin\t0 B\t2 KB"])
         self.assertEqual(summary.getvalue().splitlines(), [
-            "summary\t0\t4\t1\t0", "failed\tx.bin\tHTTP 404", "end\t2"])
+            "summary\t0\t4\t1\t0", "failed\tx.bin\tHTTP 404",
+            "kept\t/b/retrobios-backup/1\t1\t2 KB", "end\t2"])
 
     def test_a_system_id_that_is_no_slug_is_dropped(self):
         # The id becomes a bash array subscript in the launcher, where a
@@ -228,7 +231,7 @@ if check:
          present=3 if done else 1, missing=0 if done else 1, wrong_hash=0 if done else 1,
          bytes_needed=0 if done else 300, data_missing=0, not_installable=1)
     emit("summary", mode="check", installed=0, up_to_date=3 if done else 1,
-         pending=0 if done else 2, failed=[], skipped=[], left_out=[],
+         pending=0 if done else 2, failed=[], skipped=[], left_out=[], kept=[],
          interrupted=False)
     end(0 if done else 1)
 emit("download", platform="retroarch", files=2, bytes=300)
@@ -238,7 +241,8 @@ for n, (dest, size) in enumerate((("a.bin", 100), ("b.bin", 200)), 1):
 (state / "installed").write_text("")
 emit("summary", mode="install", installed=2, up_to_date=1, pending=0, failed=[],
      skipped=[{"reason": "not_found", "label": "not found", "files": 1, "required": 1}],
-     left_out=[], interrupted=False)
+     left_out=[], kept=[{"folder": "/roms/retrobios-backup/20261022-153000", "files": 1,
+                         "bytes": 100}], interrupted=False)
 end(0)
 '''
 
@@ -371,7 +375,8 @@ class TheScreens(unittest.TestCase):
         shown = self.run_port("missing", ["update", "back", "quit"])
         self.assertEqual(self.lists(shown), [
             ("menu", ["status", "update", "choose", "check", "quit"]),
-            ("summary", ["info:result", "back", "quit", "info:skipped:not found"]),
+            ("summary", ["info:result", "back", "quit", "info:kept:1",
+                         "info:skipped:not found"]),
             ("menu", ["status", "check", "quit"]),
         ])
         menu = shown[[s[0] for s in shown].index("list")][2]
@@ -385,6 +390,8 @@ class TheScreens(unittest.TestCase):
         ])
         summary = [s for s in shown if s[:2] == ("list", "summary")][0][2]
         self.assertEqual(summary["info:result"][0], "Installed: 2 files")
+        self.assertEqual(summary["info:kept:1"][0], "Kept 1 file you had (100 B)")
+        self.assertIn("/roms/retrobios-backup/20261022-153000", summary["info:kept:1"][1])
         self.assertEqual(self.calls(), [
             "--check --events",
             "--events --platform retroarch",

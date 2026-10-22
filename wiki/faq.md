@@ -51,9 +51,10 @@ Details: [All installer options](installer.md), with the full behaviour.
 
 ## Will the installer change my other files?
 
-No. It writes only inside the BIOS folder, and games and saves are never
+No. It writes only inside the BIOS folder and `retrobios-backup` beside it, and games and saves are never
 touched. Inside that folder, a BIOS file whose contents differ from the
-expected one is replaced with a checked copy. Files the installer does not
+expected one is replaced with a checked copy, and your old file is moved to a
+`retrobios-backup` folder beside the BIOS folder. Files the installer does not
 know are never read, moved or deleted. Copies into the folders of standalone
 emulators happen only when you ask for them with `--standalone-copies`.
 
@@ -69,14 +70,20 @@ the same files.
 
 Yes, and re-running is the normal way to update. A file already present with
 the expected hash is left untouched, one whose contents do not match is
-replaced by the verified copy, and files the manifest does not name are never
+replaced by the verified copy (the old one is kept), and files the manifest does not name are never
 read, moved or deleted. `--check` does the same inspection and exits without
 writing.
 
 ## Can I undo it?
 
-Yes. Delete the files from your BIOS folder. The installer changed nothing
-outside that folder.
+Yes. A file you had that the installer replaced is kept in a dated folder
+inside `retrobios-backup`, beside the BIOS folder. The end of the run prints
+that folder and the command that puts the files back, the same command with
+`--restore` and the folder. Copying the contents of the dated folder into the folder that holds
+`retrobios-backup` does the same. Files that were not there before can be
+deleted from the BIOS folder. The installer changed nothing outside it, apart
+from the backup folder.
+[More on kept files](installer.md#files-you-already-had).
 
 ## Can I install onto an SD card or another machine's drive?
 

@@ -414,8 +414,9 @@ TRUST_NOTE = (
     "checks the installer against a fingerprint it carries, then the installer "
     "downloads the files your setup needs and checks each one before saving it. "
     "It writes only inside your BIOS folder. A BIOS file whose contents differ "
-    "from the expected one is replaced with a checked copy, and files it does "
-    "not know are never moved or deleted. Games and saves are never touched."
+    "from the expected one is replaced with a checked copy, and yours is kept in "
+    "a retrobios-backup folder beside it. Files it does not know are never moved "
+    "or deleted. Games and saves are never touched."
 )
 
 

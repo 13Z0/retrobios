@@ -187,7 +187,7 @@ Checking existing files...
 The files the collection does not hold are listed after it again, as long as
 they are absent from the folder. `0 wrong hash` is the line that matters. A number there means a file is present
 whose contents the platform will reject, and running the install again replaces
-it.
+it. Your old file is kept in `retrobios-backup`, beside the BIOS folder.
 
 ## When the screen says something else
 
@@ -258,4 +258,7 @@ may need a file that nobody has dumped yet.
   detects and what it is allowed to write
 
 To remove what the installer wrote, delete the files from the BIOS folder.
-Nothing outside it was changed.
+A file you had that it replaced is in `retrobios-backup`, beside that folder:
+the end of the run printed the `--restore` command that puts it back
+([details](installer.md#files-you-already-had)). Nothing else outside the
+BIOS folder was changed.

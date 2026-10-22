@@ -370,7 +370,7 @@ rb_update() {
 
 # What the update did. Prints back or quit.
 rb_screen_summary() {
-  local kind a b c d shown=0 failed=0
+  local kind a b c d shown=0 failed=0 kept=0
   local end="none" installed=0 up_to_date=0 pending=0 interrupted=0 error=""
   while IFS=$'\t' read -r kind a b c d; do
     case "$kind" in
@@ -401,6 +401,10 @@ rb_screen_summary() {
         if [ "$shown" -le 50 ]; then
           rb_entry "summary" "info:failed:$shown" "Failed: $a" "$b"
         fi
+        ;;
+      kept)
+        kept=$((kept + 1))
+        rb_entry "summary" "info:kept:$kept" "Kept $(rb_plural "$b" file) you had ($c)" "The collection's copies replaced them. Yours are in $a. Copy what that folder holds into the folder above retrobios-backup to put them back."
         ;;
       skipped)
         rb_entry "summary" "info:skipped:$a" "Not in the collection ($a): $(rb_plural "$b" file)" "Required: $c. The RetroBIOS collection does not hold these files, so they cannot be downloaded."

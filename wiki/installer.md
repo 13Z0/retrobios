@@ -109,7 +109,8 @@ macOS.
    times, after 1, 2 then 4 seconds or the delay a `Retry-After` header asks.
    A file of 16 MB or more keeps its partial copy (`.<name>.part`) when a
    transfer stops, and the next attempt or the next run requests only the
-   rest.
+   rest. A file already there with other contents is moved aside first, see
+   [Files you already had](#files-you-already-had).
 7. Copies into standalone emulator directories, only with `--standalone-copies`.
 
 A RetroArch run into an empty folder printed this on 2026-10-21:
@@ -129,6 +130,48 @@ says how many and why. `--check` and the closing report also name the required
 ones, grouped by system with the emulators that read them, and point at the
 emulator pages. They do not change the exit code of `--check`, since no run of
 the installer can fetch them.
+
+## Files you already had
+
+A file in the BIOS folder whose contents differ from the expected one (another
+revision, a personal dump) is replaced, but never lost. Just before the
+verified copy takes its place, the old file is moved to a dated folder beside
+the BIOS folder, under the same path:
+
+```
+~/.config/retroarch/system/scph5501.bin                    the verified copy
+~/.config/retroarch/retrobios-backup/20261022-153000/system/scph5501.bin   yours
+```
+
+A file with the expected contents is never copied, and nothing is kept when
+nothing is replaced. The end of the run says how many files were kept, their
+size, the folder, and the command that puts them back:
+
+```
+Kept 1 file you had (512.0 KB), which the collection's copies replaced, in /home/me/.config/retroarch/retrobios-backup/20261022-153000
+  To put them back: python3 install.py --restore /home/me/.config/retroarch/retrobios-backup/20261022-153000
+```
+
+`--restore FOLDER` copies every file of that folder back to its place and
+leaves the folder as it is, to delete once the emulators start as before.
+Copying the contents of the dated folder into the folder that holds
+`retrobios-backup` does the same by hand. `--dry-run --restore FOLDER` lists
+what would go back. `--dry-run` alone counts the files an install would keep.
+
+The folder is beside the BIOS folder, not inside it, because some emulators
+find a BIOS by its contents and not by its name. DuckStation, SwanStation and
+Rustation read every file of the BIOS folder, and BizHawk walks its firmware
+folder with every subfolder: an old copy anywhere inside could be picked
+instead of the new one. Only when nothing can be written beside the BIOS folder
+(a drive root, a parent folder that refuses writes) does `retrobios-backup` go
+inside it, and the same `--restore` puts the files back. A file that cannot be
+moved aside is not replaced: it stays, and the run reports it as failed with
+`file in place could not be kept aside`.
+
+On one drive the old file is moved, not copied, so keeping it needs no space
+beyond what it already used. A link sitting at a file's name is not kept: the
+file it points to is never touched. Data trees and `--standalone-copies` keep
+their replaced files the same way, beside the folder they were in.
 
 ## Choosing what to install
 
@@ -277,6 +320,7 @@ what the options name, everything by default.
 | `--yes`, `-y` | Do not ask before a download of 1 GB or more |
 | `--quiet`, `-q` | Print only failures and the final summary. Implies `--no-input` |
 | `--events` | Write the run as JSON events on standard output, one object per line, and the usual text on standard error. Implies `--no-input`. See [Machine-readable events](#machine-readable-events) |
+| `--restore FOLDER` | Put back the files a run replaced and kept in FOLDER, a dated folder inside `retrobios-backup`. Takes no other option but `--dry-run` and `--no-input`. See [Files you already had](#files-you-already-had) |
 | `--version` | Print the installer's identity, the first 12 hex digits of the SHA-256 the bootstraps pin |
 | `--list-platforms` | Print the supported platforms and what was detected here |
 | `--list-targets` | Print the hardware targets a platform publishes, with the core count each carries |
@@ -290,7 +334,8 @@ code 1 when a file is missing or does not match and 0 when every one does. Files
 with a wrong hash are listed first and in full, then the first ten missing ones
 (`--verbose` lists them all). `--dry-run` counts the data trees in its total. Without
 it, a file already present with the expected hash is left untouched, and one
-whose contents do not match is re-downloaded and replaced by the verified copy.
+whose contents do not match is re-downloaded and replaced by the verified copy,
+the old one kept beside the BIOS folder.
 Files the list does not name are never read, moved or deleted.
 
 ## Machine-readable events
@@ -313,7 +358,7 @@ kind, and each kind has exactly the keys below, in this order. The schema is
 | `download` | `platform`, `files`, `bytes` | Before the downloads start |
 | `progress` | `files_done`, `files_total`, `bytes_done`, `bytes_total` | At most every half second while bytes arrive |
 | `downloaded` | `dest`, `ok`, `reason`, `size`, `files_done`, `files_total`, `bytes_done`, `bytes_total` | Each finished file. `reason` says why one failed, and is empty otherwise |
-| `summary` | `mode`, `installed`, `up_to_date`, `pending`, `failed`, `skipped`, `left_out`, `interrupted` | The outcome. `pending` counts what a next run would still fetch, `failed` lists `{dest, reason}`, `skipped` lists `{reason, label, files, required}` for the files the collection cannot supply, `left_out` lists `{category, label, files, dests}` for what `--no-game-data` left out, and is empty without it. Not written for a listing |
+| `summary` | `mode`, `installed`, `up_to_date`, `pending`, `failed`, `skipped`, `left_out`, `kept`, `interrupted` | The outcome. `pending` counts what a next run would still fetch, `failed` lists `{dest, reason}`, `skipped` lists `{reason, label, files, required}` for the files the collection cannot supply, `left_out` lists `{category, label, files, dests}` for what `--no-game-data` left out, and is empty without it. `kept` lists `{folder, files, bytes}`, one per backup folder, for the files in place the run moved aside before replacing them (with `--dry-run`, would move), and is empty when none. Not written for a listing |
 | `end` | `code` | Last line, with the exit status the process returns (see [Exit status](#exit-status)) |
 
 An option refused before the run starts (`install.py: error:`, code 2) writes
@@ -508,7 +553,7 @@ exits 1.
 Some files are read by a standalone emulator from its own data directory
 rather than from the platform's BIOS tree. `--standalone-copies` copies them
 there after the install, and only then: without the flag nothing is written
-outside the selected tree.
+outside the selected tree, apart from the files kept in `retrobios-backup`.
 
 The manifest carries the list, fifteen entries on the six platforms that
 declare them (Batocera, EmuDeck, Recalbox, RetroArch, RetroBat, RetroDECK):
@@ -741,8 +786,8 @@ fields, the installer refuses to narrow rather than install everything.
 | Code | Meaning |
 |------|---------|
 | `0` | everything asked for is installed or already up to date |
-| `1` | a failure: the one-liner could not download or verify `install.py`, or found no Python 3.8 (nothing was run), an unusable base URL, an unknown platform or target, `--installed-cores` with no core found, a manifest that fails validation, a fetch that never succeeded, no platform to install for in a non-interactive run, some files failed while others installed, or `--check` found files to fetch |
-| `2` | nothing was installed: every file the run tried failed (a BIOS folder that cannot be written, for one), the drive has too little free space for the download (checked before any folder is created), or the question about a `--dest` folder that does not exist was answered no. Also an option the installer refused before any download: an unknown option, `--jobs` outside 1 to 32, `--target` with `--every-board`. The message then starts with `install.py: error:` |
+| `1` | a failure: the one-liner could not download or verify `install.py`, or found no Python 3.8 (nothing was run), an unusable base URL, an unknown platform or target, `--installed-cores` with no core found, a manifest that fails validation, a fetch that never succeeded, no platform to install for in a non-interactive run, some files failed while others installed, `--check` found files to fetch, or `--restore` could not put a file back |
+| `2` | nothing was installed: every file the run tried failed (a BIOS folder that cannot be written, for one), the drive has too little free space for the download (checked before any folder is created), or the question about a `--dest` folder that does not exist was answered no. Also an option the installer refused before any download: an unknown option, `--jobs` outside 1 to 32, `--target` with `--every-board`. The message then starts with `install.py: error:`. With `--restore`, a folder that is not a dated folder inside `retrobios-backup` |
 | `130` | stopped with Ctrl+C, or with Ctrl+C or Ctrl+D at a question. Run the same command again to carry on |
 | `141` | the output was piped to a reader that closed early (`--list-platforms \| head`) |
 
