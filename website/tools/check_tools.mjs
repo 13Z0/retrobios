@@ -71,6 +71,9 @@ console.log('glossary term:', await term.textContent(), '=', await term.getAttri
 // On a phone, a table whose rows end in a download is one block per row.
 await page.setViewportSize({ width: 390, height: 844 });
 await page.goto(`${base}which-pack/`, { waitUntil: 'networkidle' });
+// Tables are set up as they near the screen.
+await page.locator('table:has(a[href*="/releases/download/"])').first().scrollIntoViewIfNeeded();
+await page.waitForTimeout(300);
 const stacked = await page.locator('table[data-rb-stack]').count();
 const overflow = await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1);
 console.log('stacked tables:', stacked, 'page wider than the phone:', overflow);

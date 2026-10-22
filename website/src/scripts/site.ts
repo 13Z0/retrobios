@@ -131,7 +131,20 @@ const enhanceTables = () => {
 		},
 		{ rootMargin: '400px 0px' },
 	);
-	tables.forEach((table) => observer.observe(table));
+	// Every table is measured once the page is drawn and idle, before anything
+	// is written, so the read finds the layout done instead of forcing it: a
+	// keyboard reaches a scrolling table anywhere on the page, not only near
+	// the screen.
+	const idle = window.requestIdleCallback ?? ((callback: () => void) => setTimeout(callback, 1));
+	const start = () =>
+		idle(() => {
+			// A table in a closed block is not laid out, and measuring it would
+			// lay it out: it is measured when its block opens.
+			markScrollable(tables.filter((table) => table.checkVisibility?.() ?? true));
+			tables.forEach((table) => observer.observe(table));
+		});
+	if (document.readyState === 'complete') start();
+	else addEventListener('load', start, { once: true });
 	let timer = 0;
 	addEventListener('resize', () => {
 		clearTimeout(timer);

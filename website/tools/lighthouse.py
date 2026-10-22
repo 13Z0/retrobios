@@ -42,7 +42,9 @@ def main() -> int:
                 ["npx", "--prefix", str(Path(__file__).resolve().parent.parent), "lighthouse", base + page,
                  "--quiet", "--output=json", f"--output-path={report.resolve()}",
                  "--chrome-flags=--headless=new --no-sandbox",
-                 f"--only-categories={','.join(categories)}"],
+                 f"--only-categories={','.join(categories)}",
+                 # Extra flags for one experiment, space separated.
+                 *os.environ.get("LIGHTHOUSE_FLAGS", "").split()],
                 env=env, cwd=out, check=False, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             data = json.loads(report.read_text())
             cats, audits = data["categories"], data["audits"]

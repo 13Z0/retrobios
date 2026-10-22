@@ -1,6 +1,6 @@
 """The site as an Astro Starlight project: pages, sidebar and data files.
 
-generate_site.py writes each page body; this module gives it the form
+generate_site.py writes each page body, and this module gives it the form
 Starlight reads. A page's links are written as the docs tree holds them
 (``../systems/sony.md``, MkDocs' convention, the one a Markdown editor
 follows), and the site serves them as addresses under /retrobios/, so
@@ -397,7 +397,12 @@ def finalize_page(
     if boost:
         front["boost"] = boost
     if rel.startswith(CARD_PAGES):
-        front["tableOfContents"] = {"minHeadingLevel": 2, "maxHeadingLevel": 2}
+        sections = len(re.findall(r"^## ", body, re.M))
+        # A page of cards under one or two headings has nothing to list, and
+        # the table of contents watches every block of the page to follow
+        # the reader: 2 x 430 ms of a phone's main thread on 400 cards.
+        front["tableOfContents"] = (
+            {"minHeadingLevel": 2, "maxHeadingLevel": 2} if sections > 2 else False)
     if not search:
         front["pagefind"] = False
     front["head"] = page_head(rel, level, front["title"], browser_title, structured)
