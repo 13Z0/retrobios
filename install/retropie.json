@@ -6,7 +6,7 @@
   "platform": "retropie",
   "display_name": "RetroPie",
   "version": "1.0",
-  "generated": "2026-10-22T06:17:50Z",
+  "generated": "2026-10-22T09:05:39Z",
   "base_destination": "BIOS",
   "detect": [
     {
@@ -16,32 +16,12 @@
     }
   ],
   "standalone_copies": [],
-  "total_files": 8523,
-  "total_size": 8871871040,
-  "pack_files": 11079,
-  "pack_size": 8905238110,
-  "total_omitted": 214,
+  "total_files": 8525,
+  "total_size": 8871883312,
+  "pack_files": 11081,
+  "pack_size": 8905250382,
+  "total_omitted": 212,
   "omitted_files": [
-    {
-      "dest": "Assets/3dlogo.cmem",
-      "name": "3dlogo.cmem",
-      "system": "real3d-pro1000",
-      "required": false,
-      "reason": "not_found",
-      "cores": [
-        "supermodel3"
-      ]
-    },
-    {
-      "dest": "Assets/3dlogo.pmem",
-      "name": "3dlogo.pmem",
-      "system": "real3d-pro1000",
-      "required": false,
-      "reason": "not_found",
-      "cores": [
-        "supermodel3"
-      ]
-    },
     {
       "dest": "BOOT_MMR.ROM",
       "name": "BOOT_MMR.ROM",
@@ -116095,6 +116075,26 @@
       "sha256": "a4750e72a5512a70a0dfd1217c95fa93853d3be51db0bc73e90e6f775ffdda5c",
       "size": 209744,
       "repo_path": "bios/Real3D/Pro-1000/pro1000.zip",
+      "cores": [
+        "supermodel3"
+      ]
+    },
+    {
+      "dest": "Assets/3dlogo.cmem",
+      "sha1": "09ec1535286e1fcc31f1f1a865ab93607f5323f2",
+      "sha256": "cfa4e111ffa6322942dec17e8643d16ba26dad3126a107c3400724b7b658b248",
+      "size": 208,
+      "repo_path": "bios/Real3D/Pro-1000/Assets/3dlogo.cmem",
+      "cores": [
+        "supermodel3"
+      ]
+    },
+    {
+      "dest": "Assets/3dlogo.pmem",
+      "sha1": "08a8be3a75745eb80a987ed85f8d86890d540024",
+      "sha256": "74a38e92a1227b7f942fd0b2738c56330c6870b228e17216e9d6f3df247660f8",
+      "size": 12064,
+      "repo_path": "bios/Real3D/Pro-1000/Assets/3dlogo.pmem",
       "cores": [
         "supermodel3"
       ]

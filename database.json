@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-22T06:17:50Z",
-  "total_files": 19591,
-  "total_size": 16856448185,
+  "generated_at": "2026-10-22T09:05:39Z",
+  "total_files": 19595,
+  "total_size": 16856471669,
   "bios_dir": "bios",
   "files": {
     "738c7f5fd0c8b57ee2e87ae7a97bf8e21a821d07": {
@@ -190227,6 +190227,46 @@
       "crc32": "2477d709",
       "adler32": "707d4435"
     },
+    "a2e368407c30f437ffb41469c919142be545fdc5": {
+      "path": "bios/Real3D/Pro-1000/Assets/.variants/3dlogo.cmem.35f079de",
+      "name": "3dlogo.cmem",
+      "size": 236,
+      "sha1": "a2e368407c30f437ffb41469c919142be545fdc5",
+      "md5": "35f079de6aad0cfe5e7151d15fc4eb51",
+      "sha256": "8c1af9081ed531f67996021406233dea2668025ccb2a4e6995d506e12dd77f58",
+      "crc32": "791b513e",
+      "adler32": "1a260d2b"
+    },
+    "8821b3d39cd71e8be2550289cecb86e6f8104ade": {
+      "path": "bios/Real3D/Pro-1000/Assets/.variants/3dlogo.pmem.928e7fdb",
+      "name": "3dlogo.pmem",
+      "size": 10976,
+      "sha1": "8821b3d39cd71e8be2550289cecb86e6f8104ade",
+      "md5": "928e7fdbbb9248f90f53a684ee503996",
+      "sha256": "495ea3062ad767395f76e466f70dec53fc459328d4b3919e5c68caeeb220b650",
+      "crc32": "cbb16689",
+      "adler32": "45c0aa4f"
+    },
+    "09ec1535286e1fcc31f1f1a865ab93607f5323f2": {
+      "path": "bios/Real3D/Pro-1000/Assets/3dlogo.cmem",
+      "name": "3dlogo.cmem",
+      "size": 208,
+      "sha1": "09ec1535286e1fcc31f1f1a865ab93607f5323f2",
+      "md5": "e379c3bfe4be8268b7270724e1ed6d12",
+      "sha256": "cfa4e111ffa6322942dec17e8643d16ba26dad3126a107c3400724b7b658b248",
+      "crc32": "5c428aa4",
+      "adler32": "1a5508f9"
+    },
+    "08a8be3a75745eb80a987ed85f8d86890d540024": {
+      "path": "bios/Real3D/Pro-1000/Assets/3dlogo.pmem",
+      "name": "3dlogo.pmem",
+      "size": 12064,
+      "sha1": "08a8be3a75745eb80a987ed85f8d86890d540024",
+      "md5": "100f4bfc9082ecf3fbc5d87fd9a65acc",
+      "sha256": "74a38e92a1227b7f942fd0b2738c56330c6870b228e17216e9d6f3df247660f8",
+      "crc32": "122a05cf",
+      "adler32": "520bdcfe"
+    },
     "94e1e19004b2d87735b6874d07d9ca2cca2b418c": {
       "path": "bios/Real3D/Pro-1000/pro1000.zip",
       "name": "pro1000.zip",
@@ -219863,6 +219903,10 @@
       "94dd9f75005cdc7236a0b400b71920fd": "2ecc186ac26d73dc3e184febcc64c1735d0b237c",
       "927ed8f4d8394a4eca03cf7791ff3d6b": "b77432504698d3b01ab2034b5fa1d613a77f2fe2",
       "f7ea340e1b9bad68c08067f37ea12d66": "5b851c281f00ee6e1a3895cd19659eb3990bfb05",
+      "35f079de6aad0cfe5e7151d15fc4eb51": "a2e368407c30f437ffb41469c919142be545fdc5",
+      "928e7fdbbb9248f90f53a684ee503996": "8821b3d39cd71e8be2550289cecb86e6f8104ade",
+      "e379c3bfe4be8268b7270724e1ed6d12": "09ec1535286e1fcc31f1f1a865ab93607f5323f2",
+      "100f4bfc9082ecf3fbc5d87fd9a65acc": "08a8be3a75745eb80a987ed85f8d86890d540024",
       "108e8e1373b558cfca6c39d0adef3d70": "94e1e19004b2d87735b6874d07d9ca2cca2b418c",
       "bfff32b6144c1d706109accb6e6b1113": "a439fbb390da38cada95a7cbb1d6ca199cd66ef8",
       "08cdcfa0ed93e9cb16afa76e6ac5f0a4": "289cc298ad532b702461bfc738009d9ebe8025ea",
@@ -268454,6 +268498,14 @@
       "wildmidi.cfg": [
         "5b851c281f00ee6e1a3895cd19659eb3990bfb05"
       ],
+      "3dlogo.cmem": [
+        "a2e368407c30f437ffb41469c919142be545fdc5",
+        "09ec1535286e1fcc31f1f1a865ab93607f5323f2"
+      ],
+      "3dlogo.pmem": [
+        "8821b3d39cd71e8be2550289cecb86e6f8104ade",
+        "08a8be3a75745eb80a987ed85f8d86890d540024"
+      ],
       "pro1000.zip": [
         "94e1e19004b2d87735b6874d07d9ca2cca2b418c"
       ],
@@ -296476,6 +296528,10 @@
       "888ee3a3": "2ecc186ac26d73dc3e184febcc64c1735d0b237c",
       "1184b3e8": "b77432504698d3b01ab2034b5fa1d613a77f2fe2",
       "2477d709": "5b851c281f00ee6e1a3895cd19659eb3990bfb05",
+      "791b513e": "a2e368407c30f437ffb41469c919142be545fdc5",
+      "cbb16689": "8821b3d39cd71e8be2550289cecb86e6f8104ade",
+      "5c428aa4": "09ec1535286e1fcc31f1f1a865ab93607f5323f2",
+      "122a05cf": "08a8be3a75745eb80a987ed85f8d86890d540024",
       "c7bc57d3": "94e1e19004b2d87735b6874d07d9ca2cca2b418c",
       "b998047e": "a439fbb390da38cada95a7cbb1d6ca199cd66ef8",
       "4b961eba": "289cc298ad532b702461bfc738009d9ebe8025ea",
@@ -316068,6 +316124,10 @@
       "b98598b51add02b0fc6a0bf6cd72545d9c6fa4a33a2404b36549da4103fbee6c": "2ecc186ac26d73dc3e184febcc64c1735d0b237c",
       "0cc333aa339e76f6c5673b1da3334de582443caf3388b457baf785c2ae3040d2": "b77432504698d3b01ab2034b5fa1d613a77f2fe2",
       "b5673896e0ff174b3030525668483a1a32657e46ee22213c6773f9ef11c961ae": "5b851c281f00ee6e1a3895cd19659eb3990bfb05",
+      "8c1af9081ed531f67996021406233dea2668025ccb2a4e6995d506e12dd77f58": "a2e368407c30f437ffb41469c919142be545fdc5",
+      "495ea3062ad767395f76e466f70dec53fc459328d4b3919e5c68caeeb220b650": "8821b3d39cd71e8be2550289cecb86e6f8104ade",
+      "cfa4e111ffa6322942dec17e8643d16ba26dad3126a107c3400724b7b658b248": "09ec1535286e1fcc31f1f1a865ab93607f5323f2",
+      "74a38e92a1227b7f942fd0b2738c56330c6870b228e17216e9d6f3df247660f8": "08a8be3a75745eb80a987ed85f8d86890d540024",
       "a4750e72a5512a70a0dfd1217c95fa93853d3be51db0bc73e90e6f775ffdda5c": "94e1e19004b2d87735b6874d07d9ca2cca2b418c",
       "08d68695e5bff6bbcbb751d6e4453db9f5ead0b5f41e86480798a04376dfe090": "a439fbb390da38cada95a7cbb1d6ca199cd66ef8",
       "0dc50190bb7ea3fb212c970346b771a511772b528801e7eda6d27efda8c40698": "289cc298ad532b702461bfc738009d9ebe8025ea",
@@ -553243,6 +553303,48 @@
       ],
       "RPG Maker/wildmidi.cfg": [
         "5b851c281f00ee6e1a3895cd19659eb3990bfb05"
+      ],
+      "Real3D/Pro-1000/Assets/.variants/3dlogo.cmem.35f079de": [
+        "a2e368407c30f437ffb41469c919142be545fdc5"
+      ],
+      "Pro-1000/Assets/.variants/3dlogo.cmem.35f079de": [
+        "a2e368407c30f437ffb41469c919142be545fdc5"
+      ],
+      "Assets/.variants/3dlogo.cmem.35f079de": [
+        "a2e368407c30f437ffb41469c919142be545fdc5"
+      ],
+      ".variants/3dlogo.cmem.35f079de": [
+        "a2e368407c30f437ffb41469c919142be545fdc5"
+      ],
+      "Real3D/Pro-1000/Assets/.variants/3dlogo.pmem.928e7fdb": [
+        "8821b3d39cd71e8be2550289cecb86e6f8104ade"
+      ],
+      "Pro-1000/Assets/.variants/3dlogo.pmem.928e7fdb": [
+        "8821b3d39cd71e8be2550289cecb86e6f8104ade"
+      ],
+      "Assets/.variants/3dlogo.pmem.928e7fdb": [
+        "8821b3d39cd71e8be2550289cecb86e6f8104ade"
+      ],
+      ".variants/3dlogo.pmem.928e7fdb": [
+        "8821b3d39cd71e8be2550289cecb86e6f8104ade"
+      ],
+      "Real3D/Pro-1000/Assets/3dlogo.cmem": [
+        "09ec1535286e1fcc31f1f1a865ab93607f5323f2"
+      ],
+      "Pro-1000/Assets/3dlogo.cmem": [
+        "09ec1535286e1fcc31f1f1a865ab93607f5323f2"
+      ],
+      "Assets/3dlogo.cmem": [
+        "09ec1535286e1fcc31f1f1a865ab93607f5323f2"
+      ],
+      "Real3D/Pro-1000/Assets/3dlogo.pmem": [
+        "08a8be3a75745eb80a987ed85f8d86890d540024"
+      ],
+      "Pro-1000/Assets/3dlogo.pmem": [
+        "08a8be3a75745eb80a987ed85f8d86890d540024"
+      ],
+      "Assets/3dlogo.pmem": [
+        "08a8be3a75745eb80a987ed85f8d86890d540024"
       ],
       "Real3D/Pro-1000/pro1000.zip": [
         "94e1e19004b2d87735b6874d07d9ca2cca2b418c"
