@@ -130,12 +130,12 @@ files:
     required: false
     system: real3d-pro1000
     description: "Pro-1000 SDK logo model, culling data"
-    note: "Read with 3dlogo.pmem into the synthetic SCSI ROM when the set has no scsi_rom region. Both files or neither, one alone is rejected with an error. The machine boots without them."
-    source_ref: "source Src/Pro1000/SyntheticSCSIROM.cpp:102-125, source Src/Pro1000/SyntheticSCSIROM.cpp:232"
+    note: "Read with 3dlogo.pmem into the synthetic SCSI ROM when the set has no scsi_rom region. Both files or neither, one alone is rejected with an error. The .pmem size must equal the polygon word count in the .cmem header, so both come from one model. The machine boots without them."
+    source_ref: "source Src/Pro1000/SyntheticSCSIROM.cpp:102-125, source Src/Pro1000/SyntheticSCSIROM.cpp:159-163, source Src/Pro1000/SyntheticSCSIROM.cpp:232"
 
   - name: "3dlogo.pmem"
     path: "Assets/3dlogo.pmem"
     required: false
     system: real3d-pro1000
     description: "Pro-1000 SDK logo model, polygon data"
-    source_ref: "source Src/Pro1000/SyntheticSCSIROM.cpp:104-106, source Src/Pro1000/SyntheticSCSIROM.cpp:119-125"
+    source_ref: "source Src/Pro1000/SyntheticSCSIROM.cpp:104-106, source Src/Pro1000/SyntheticSCSIROM.cpp:119-125, source Src/Pro1000/SyntheticSCSIROM.cpp:159-163"
