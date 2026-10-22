@@ -14,13 +14,6 @@ notes: |
   Puzzle game by the libretro team (Themaister, Agnes Heyer). Push blocks on ice.
   Game data (TMX levels, sprites, music) needed for the core to work.
 
-  Two loading modes:
-  1. Load dinothawr.game as content (data in content directory)
-  2. supports_no_game=true: loads from system_dir/dinothawr/
-     ref: libretro.c:476-479
-       game_path_dir = join(system_dir, "/", "dinothawr")
-       game_path = join(game_path_dir, "/", "dinothawr.game")
-
   Buildbot provides Dinothawr.zip via Core System Files Downloader.
   ref: buildbot.libretro.com/assets/system/Dinothawr.zip
 
@@ -29,5 +22,13 @@ data_directories:
     installed_on: [lakka, recalbox, retrobat, retrodeck, retropie]
     source_ref: "libretro.c:479"
 
-files: []
-# no BIOS/firmware, game data loaded via data_directories or content
+files:
+  - name: "dinothawr.game"
+    path: "dinothawr/dinothawr.game"
+    installed_on: [lakka, recalbox, retrobat, retrodeck, retropie]
+    category: game_data
+    system: dinothawr
+    required: true
+    description: "Game manifest naming the levels, sprites and music the engine loads"
+    note: "Loaded as content (valid_extensions game) or, started without content, from system_dir/dinothawr/. Without it the core reports the game files missing and refuses to start."
+    source_ref: "libretro.c:116-117, 465-468, 479-488, 491-520"
