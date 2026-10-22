@@ -42,6 +42,7 @@ from common import (
     load_database,
     load_emulator_profiles,
     load_platform_config,
+    load_platform_registry,
     native_layer,
     require_platform,
     yaml_load,
@@ -814,11 +815,17 @@ def run(
     refresh_only: bool = False,
 ) -> int:
     exporters = discover_exporters()
+    registry = load_platform_registry(platforms_dir)
     failures = 0
     skipped: list[str] = []
 
     for platform in sorted(platforms):
         exporter_class = exporters.get(platform)
+        if not exporter_class and (registry.get(platform) or {}).get("native_list") == "none":
+            # The platform's code names no BIOS file: there is no list of its
+            # own to hand back corrected.
+            print(f"  SKIP {platform}: names no BIOS file of its own (native_list: none)")
+            continue
         if not exporter_class:
             skipped.append(platform)
             print(f"  SKIP {platform}: no exporter")

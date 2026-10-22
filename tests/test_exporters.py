@@ -565,6 +565,26 @@ class ExporterRegistry(unittest.TestCase):
         )
         self.assertEqual(registered - set(exporters) - _without_native_list(), set())
 
+    def test_a_run_over_a_platform_without_a_native_list_passes(self):
+        """export_native --all ran over MinUI, NextUI and MyMinUI and failed
+        the pipeline step for three platforms the registry says have nothing
+        to export. A platform with no exporter and no such mark still fails."""
+        import contextlib
+
+        import export_native
+
+        with tempfile.TemporaryDirectory(dir=REPO_ROOT / "tmp") as directory:
+            platforms = Path(directory)
+            (platforms / "_registry.yml").write_text(
+                "platforms:\n  cardonly:\n    native_list: none\n  unwritten: {}\n",
+                encoding="utf-8")
+            with contextlib.redirect_stdout(io.StringIO()) as out:
+                self.assertEqual(export_native.run(
+                    ["cardonly"], directory, directory, str(platforms), directory, False), 0)
+                self.assertEqual(export_native.run(
+                    ["unwritten"], directory, directory, str(platforms), directory, False), 1)
+            self.assertIn("SKIP cardonly: names no BIOS file of its own", out.getvalue())
+
     def test_a_platform_without_a_native_list_declares_no_file(self):
         """`native_list: none` says the platform's code names no BIOS file
         (MinUI hands each core a folder and opens nothing in it). A platform
