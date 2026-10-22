@@ -588,13 +588,13 @@ files:
     source_ref: "upstream src/burn/drv/pgm/d_pgm.cpp:887"
 
   - name: "svg_bios.u49"
-    archive: pgm.zip
+    archive: svgpcb.zip
     system: igs-pgm
     required: false
     size: 131072
     crc32: "3346401f"
-    note: "68K BIOS V0001 custom (05/13/05) for SVG PCB"
-    source_ref: "upstream src/burn/drv/pgm/d_pgm.cpp:928"
+    note: "68K BIOS V0001 custom (05/13/05) for SVG PCB, in the svgpcb ROM list"
+    source_ref: "upstream src/burn/drv/pgm/d_pgm.cpp:928, 7035"
 
   # -------------------------------------------------------
   # Capcom CPS-3 (per-game BIOS, no shared archive)

@@ -70,6 +70,9 @@ NODEDUP_DIRS = {
     # MAME's support trees (hash, plugins) are read by path as a whole, and
     # two MAME versions share most of their software lists byte for byte.
     "mame",
+    # The Tyrian 2.1 distribution ships netset.pcx and tyrset.pcx with the
+    # same bytes, and EmuELEC places both names under ports/opentyrian/.
+    "opentyrian",
 }
 
 

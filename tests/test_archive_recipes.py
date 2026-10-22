@@ -20,9 +20,12 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
 # Sets whose archive also carries the ROMs of devices the machine references
-# (listxml device_ref): the NAOMI boards pull the JVS I/O board and the Maple
-# interface, and MAME finds those ROMs in the machine's own archive too.
+# (listxml device_ref). A device looks for its ROMs under its own name, then
+# under the system's (device_t::searchpath, src/emu/device.cpp:140-152), so
+# MAME finds them in the machine's own archive too. A device set is not a
+# system: the devices it holds are never looked for in its archive.
 DEVICE_ROMS = {
+    # NAOMI boards: the JVS I/O board and the Maple interface
     "airlbios.zip": ("jvs13551.zip", "mie.zip"),
     "f355bios.zip": ("jvs13551.zip", "mie.zip"),
     "f355dlx.zip": ("jvs13551.zip", "mie.zip"),
@@ -30,18 +33,41 @@ DEVICE_ROMS = {
     "naomi.zip": ("jvs13551.zip", "mie.zip"),
     "naomi2.zip": ("jvs13551.zip", "mie.zip"),
     "naomigd.zip": ("jvs13551.zip", "mie.zip"),
+    # Teletext character ROM: SAA5050 in bbcmet (acorn/bbcm.cpp:701), which
+    # bbcm builds on (line 764)
+    "bbcm.zip": ("saa5050.zip",),
+    # DragonDOS, the default cartridge (trs/dragon.cpp:544, 562)
+    "dragon32.zip": ("dragon_fdc.zip",),
+    "dragon64.zip": ("dragon_fdc.zip",),
+    # PC-80S31 disk unit (nec/pc6001.cpp:1644 through pc6601_fdc_config,
+    # nec/pc8001.cpp:1257)
+    "pc6001mk2sr.zip": ("pc80s31.zip",),
+    "pc8001mk2sr.zip": ("pc80s31.zip",),
 }
 
 # Archives that share a set name without being that set.
 NOT_ROMSETS = {"samples", "artwork"}
 
-# The defect added whole slot-option trees, dozens of members at a time.
-MIN_EXTRA = 3
+MIN_EXTRA = 1
 
 # Kept as they are: rewriting them would drop bytes the collection holds
-# nowhere else, and no recipe names the set those bytes belong to.
+# nowhere else, or they are another emulator's archive under a MAME set name.
 KEPT = {
-    "bios/Acorn/BBC Micro/.variants/bbcb.zip": "zdfs-0.90.rom is held only here",
+    "bios/Acorn/BBC Micro/.variants/bbcb.zip": (
+        "MAME 0.150's bbcb loads its DFS ROMs from the machine archive "
+        "(src/mess/drivers/bbc.c ROM_START(bbcb)), older than every imported "
+        "listxml; zdfs-0.90.rom is held only here"
+    ),
+    "bios/Arcade/Arcade/.variants/cvs.zip.3c69f366": (
+        "the 2001 mame.dk distribution of cvs.zip; its cvs.txt is held only here"
+    ),
+    "bios/Mattel/Aquarius/.variants/aquarius_ar.zip.73026a45": (
+        "a platform pack copy; its TMCTV.png is held only here"
+    ),
+    "bios/Sega/Dreamcast/dc.zip": (
+        "RetroBat's dc/dc.zip holds dc_boot.bin and dc_flash.bin, the names the "
+        "Dreamcast BIOS goes by outside MAME, not MAME's dc set"
+    ),
 }
 
 
