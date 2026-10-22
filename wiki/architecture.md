@@ -71,14 +71,32 @@ dist/                    generated packs (gitignored)
 Documentation changes belong in `wiki/` or in the generator.
 
 The site search splits each page at its headings and sends a result to the
-heading above the match. Every file card is therefore a level 4 heading with
-the card's anchor, and every platform system a heading of its own: a hash
-pasted in the search opens that card or that system, not the top of the page.
-Level 4 stays out of the table of contents (`toc_depth: 3`). The lines that
-list other pages (platforms, packs, source citations, collection paths) sit
-in a `data-search-exclude` block, since the browser downloads and indexes the
-whole search index before it shows a first result. File names, hashes, the
-paths an emulator reads and the notes stay searchable.
+heading above the match. Every file card is therefore a level 3 heading with
+the card's anchor, under its console or a Files heading, and every platform
+system a heading of its own: a file name typed in the search opens that card,
+not the top of the page. On pages of cards (systems, emulators, platforms) the
+table of contents stops at level 2 (`scripts/mkdocs_hooks.py`).
+
+The browser downloads and indexes the whole search index before it shows a
+first result, so the index holds names and prose only. Hashes, lists of other
+pages, install commands, member tables and long reference tables sit in
+`data-search-exclude` blocks. Those blocks are `section` elements: the search
+plugin compares elements by tag, and a `div` stopped excluding at the first
+`div` closed inside it. A hash goes to [Find a file](../files/index.md), which
+reads one shard of `api/v1/lookup/` named by the first two characters of the
+value.
+
+A page has a budget. A manufacturer page over 500 KB of Markdown becomes a
+summary: its largest consoles move to pages of their own, cut into parts when
+one console alone is over the budget, and every console keeps its heading on
+the summary. An emulator with more than 400 entries (MAME) lists them in a
+table on its page, each row holding the old anchor of the card, and the cards
+move to pages of 400. A platform system whose list is over 200 KB moves to a
+page of its own. A card anchor (`#sha1-...`) that a page no longer holds is
+looked up by content, so a link cited before a split still opens the card.
+`validate_site.py` fails a page over 1 MB of HTML, a search index over 8.5 MB
+(1.7 MB compressed), a skipped heading level, a table header without text, a
+script from another host and a diagram drawn at runtime.
 
 ## Data flow
 

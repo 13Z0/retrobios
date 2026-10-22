@@ -12,6 +12,7 @@ the platform names that no profile describes leaves the verdict open.
 from __future__ import annotations
 
 import sys
+from collections.abc import Iterable
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -134,6 +135,81 @@ class ReadEvidence:
         if full[1:] in self.tree_members:
             return "data_directory"
         return None
+
+
+# The order ReadEvidence.proof tries: a reader's proof is the first that holds.
+_PROOF_ORDER = ("path", "launcher", "name", "hash", "directory", "data_directory")
+
+
+class ProofIndex:
+    """ReadEvidence.proof for many readers at once, by lookup.
+
+    Asking every core in turn cost one proof per core and entry: 3.8 million
+    calls to categorize 7,430 entries. Each key a reader can match is indexed
+    once, and an entry's own keys find the readers it concerns. The proof of
+    each reader is the one ReadEvidence.proof returns.
+    """
+
+    def __init__(self, readers: list[ReadEvidence]) -> None:
+        self._index: dict[str, dict[str, set[int]]] = {
+            kind: {} for kind in ("tail", "launched", "name", "hash", "cut", "dir", "tree", "member")
+        }
+        for position, evidence in enumerate(readers):
+            for kind, keys in (
+                ("tail", evidence.tails), ("launched", evidence.launched),
+                ("name", evidence.names), ("hash", evidence.hashes),
+                ("dir", evidence.directories), ("tree", evidence.trees),
+                ("member", evidence.tree_members),
+            ):
+                for key in keys:
+                    self._index[kind].setdefault(key, set()).add(position)
+            # A cut md5 names any hash it is the start of.
+            for value in evidence.hashes:
+                for length in range(_CUT_MD5, _FULL_MD5):
+                    if len(value) >= length:
+                        self._index["cut"].setdefault(value[:length], set()).add(position)
+
+    def _hits(self, kind: str, keys: Iterable[str]) -> set[int]:
+        table = self._index[kind]
+        found: set[int] = set()
+        for key in keys:
+            found |= table.get(key, set())
+        return found
+
+    def proofs(self, entry: dict, destination: str) -> dict[int, str]:
+        """Reader position -> its proof, for the readers that have one."""
+        names = {
+            str(n).casefold()
+            for n in (entry.get("name"), *(entry.get("aliases") or []))
+            if n
+        }
+        tails = _tails(destination)
+        last = {tails[-1]} if tails else set()
+        hashes = {
+            v for f in (*HASH_FIELDS, "alt_md5") for v in _hash_values(entry, f)
+        }
+        cut = {v for v in hashes if _CUT_MD5 <= len(v) < _FULL_MD5}
+        # "/" + d in "/" + path: d is a run of whole segments ending in "/",
+        # so it is a run of the path's segments before the last one.
+        parts = tails[0].split("/") if tails else []
+        runs = {
+            "/".join(parts[i:j]) + "/"
+            for i in range(len(parts)) for j in range(i + 1, len(parts))
+        }
+        found = {
+            "path": self._hits("tail", tails[:-1]),
+            "launcher": self._hits("launched", names | last),
+            "name": self._hits("name", names | last),
+            "hash": self._hits("hash", hashes) | self._hits("cut", cut),
+            "directory": self._hits("dir", runs),
+            "data_directory": self._hits("tree", runs)
+            | self._index["member"].get(tails[0] if tails else "", set()),
+        }
+        result: dict[int, str] = {}
+        for kind in _PROOF_ORDER:
+            for position in found[kind]:
+                result.setdefault(position, kind)
+        return result
 
 
 def _loads_romsets(profile: dict) -> bool:
@@ -275,6 +351,8 @@ class EntryCategories:
                 self._readers.append((kind, key, evidence))
         self._launchers = ReadEvidence()
         self._launchers.add_launchers(config.get("launchers") or [])
+        self._proofs = ProofIndex([evidence for _kind, _key, evidence in self._readers]
+                                  + [self._launchers])
         self._by_system: dict[str, list[str]] = {}
         for key in sorted(examined):
             for sid in profiles[key].get("systems") or []:
@@ -313,14 +391,14 @@ class EntryCategories:
     def explain(self, entry: dict, destination: str, system: str) -> dict:
         """The category of an entry and what establishes it."""
         readers: dict[str, list[dict]] = {BIOS: [], GAME_DATA: []}
-        for kind, key, evidence in self._readers:
-            proof = evidence.proof(entry, destination)
-            if proof is not None:
-                readers[kind].append({
-                    "emulator": key, "proof": proof,
-                    "entries": self._matching(key, kind, entry),
-                })
-        if self._launchers.proof(entry, destination) is not None:
+        proofs = self._proofs.proofs(entry, destination)
+        for position in sorted(p for p in proofs if p < len(self._readers)):
+            kind, key, _evidence = self._readers[position]
+            readers[kind].append({
+                "emulator": key, "proof": proofs[position],
+                "entries": self._matching(key, kind, entry),
+            })
+        if len(self._readers) in proofs:
             readers[BIOS].append({"emulator": "launcher", "proof": "launcher", "entries": []})
         if system in self._system_runs:
             system_cores, unresolved = self._system_runs[system]

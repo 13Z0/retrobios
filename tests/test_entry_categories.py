@@ -13,7 +13,14 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "scripts"))
 
 import verify  # noqa: E402
-from exporter.candidates import BIOS, GAME_DATA, UNREAD, EntryCategories  # noqa: E402
+from exporter.candidates import (  # noqa: E402
+    BIOS,
+    GAME_DATA,
+    UNREAD,
+    EntryCategories,
+    ProofIndex,
+    ReadEvidence,
+)
 
 PROFILES = {
     "bluemsx": {
@@ -142,6 +149,50 @@ class StrictCountsFirmwareOnly(unittest.TestCase):
         evidence = {d["name"]: d.get("category_evidence") for d in result["details"]}
         self.assertEqual(evidence["hardwareconfig.xml"]["cores_examined"], ["bluemsx"])
         self.assertEqual(evidence["diabdat.mpq"]["read_by"][0]["emulator"], "devilutionx")
+
+
+class IndexedProof(unittest.TestCase):
+    """ProofIndex answers what ReadEvidence.proof answers, reader by reader."""
+
+    def test_every_kind_matches_the_direct_proof(self):
+        md5 = "490f666e1afb15b7362b406ed1cea246"
+        readers = []
+        for profile in (
+            {"files": [{"name": "a.bin", "path": "sys/dir/a.bin"}]},
+            {"files": [{"name": "other.rom", "aliases": ["B.ROM"]}]},
+            {"files": [{"name": "c.bin", "md5": md5}]},
+            {"files": [{"name": "tree/", "type": "directory", "path": "data/tree/"}]},
+            {"files": [], "data_directories": [{"ref": "x", "destination": "assets/sys"}]},
+            {"files": [{"name": "d.bin", "sha1": "ab" * 20, "crc32": "12345678"}]},
+        ):
+            evidence = ReadEvidence()
+            evidence.add_profile(profile, {})
+            readers.append(evidence)
+        launcher = ReadEvidence()
+        launcher.add_launchers([{"names": ["scph101.bin"]}])
+        readers.append(launcher)
+        index = ProofIndex(readers)
+        cases = [
+            ({"name": "a.bin"}, "bios/sys/dir/a.bin"),
+            ({"name": "a.bin"}, "elsewhere/a.bin"),
+            ({"name": "x", "aliases": ["b.rom"]}, "x"),
+            ({"name": "y", "md5": md5[:29]}, "y"),
+            ({"name": "y", "md5": md5.upper()}, "y"),
+            ({"name": "z", "md5": md5[:28]}, "z"),
+            ({"name": "z"}, "root/data/tree/deep/z"),
+            ({"name": "z"}, "data/tree"),
+            ({"name": "z"}, "a/assets/sys/z.png"),
+            ({"name": "scph101.bin"}, "bios/scph101.bin"),
+            ({"name": "q", "crc32": "12345678, 9"}, "q"),
+            ({"name": "q"}, ""),
+        ]
+        for entry, destination in cases:
+            expected = {
+                position: proof for position, evidence in enumerate(readers)
+                if (proof := evidence.proof(entry, destination)) is not None
+            }
+            with self.subTest(entry=entry, destination=destination):
+                self.assertEqual(index.proofs(entry, destination), expected)
 
 
 if __name__ == "__main__":

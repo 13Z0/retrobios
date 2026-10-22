@@ -111,6 +111,105 @@ def compute_coverage(
     }
 
 
+_REPO = Path(__file__).resolve().parent.parent
+# The site and the README read the same coverage: the first generator to run
+# stores it here and the second reads it back, instead of verifying every
+# platform twice (about a minute of the site build).
+COVERAGE_CACHE_DIR = _REPO / "tmp" / "coverage-cache"
+_COVERAGE_CACHE_FORMAT = "1"
+
+
+def _coverage_inputs(db_path: Path, platforms_dir: str, emulators_dir: str) -> str:
+    """A digest of everything coverage is computed from.
+
+    The database, the platform and emulator files, the code, the install
+    manifests, the data directory revisions and the state of bios/ on disk:
+    a change to any of them computes the coverage again.
+    """
+    import hashlib
+
+    digest = hashlib.sha256(_COVERAGE_CACHE_FORMAT.encode())
+
+    def add_file(path: Path) -> None:
+        digest.update(str(path).encode() + b"\0")
+        digest.update(path.read_bytes() if path.is_file() else b"<absent>")
+
+    add_file(db_path.resolve())
+    for root, pattern in ((Path(platforms_dir), "*"), (Path(emulators_dir), "*.yml"),
+                          (_REPO / "scripts", "*.py"), (_REPO / "install", "*.json"),
+                          (_REPO / "recipes", "*.json")):
+        for path in sorted(p for p in root.resolve().rglob(pattern) if p.is_file()):
+            add_file(path)
+    for path in (_REPO / ".gitignore", _REPO / "_mame_clones.json",
+                 _REPO / "data" / ".versions.json"):
+        add_file(path)
+    bios = _REPO / "bios"
+    for path in sorted(bios.rglob("*")):
+        if path.is_file():
+            stat = path.stat()
+            digest.update(f"{path.relative_to(bios)}\0{stat.st_size}\0{stat.st_mtime_ns}\n".encode())
+    return digest.hexdigest()
+
+
+def platform_coverages(
+    platform_names: list[str],
+    platforms_dir: str,
+    db: dict,
+    data_registry: dict | None = None,
+    emulators_dir: str = _EMULATORS_DIR,
+    db_path: str = "database.json",
+    report: Callable[[str, dict], None] | None = None,
+) -> dict[str, dict]:
+    """compute_coverage for each platform, read from the cache when its
+    inputs have not changed since a generator last stored it.
+
+    A platform with no YAML is left out, as compute_coverage raises for it.
+    ``report`` is called with each platform and its coverage.
+    """
+    # pickle, not JSON: the coverage holds sets and enums that JSON would
+    # turn into lists and strings. The file is written by this function into
+    # the repository's own tmp/, never downloaded.
+    import pickle
+
+    key = _coverage_inputs(Path(db_path), platforms_dir, emulators_dir)
+    names = sorted(platform_names)
+    cache = COVERAGE_CACHE_DIR / f"{key}.pickle"
+    coverages: dict[str, dict] | None = None
+    if cache.is_file():
+        try:
+            with cache.open("rb") as handle:
+                stored = pickle.load(handle)
+        except (OSError, EOFError, pickle.UnpicklingError) as exc:
+            print(f"  coverage cache unreadable, computing again: {exc}", file=sys.stderr)
+        else:
+            if stored.get("platforms") == names:
+                coverages = stored["coverages"]
+                print(f"  coverage read from {cache.relative_to(_REPO)}")
+    if coverages is None:
+        coverages = {}
+        for name in names:
+            try:
+                coverages[name] = compute_coverage(
+                    name, platforms_dir, db, data_registry, emulators_dir=emulators_dir,
+                )
+            except FileNotFoundError as exc:
+                print(f"  {name}: skipped ({exc})", file=sys.stderr)
+        COVERAGE_CACHE_DIR.mkdir(parents=True, exist_ok=True)
+        for stale in COVERAGE_CACHE_DIR.glob("*.pickle"):
+            stale.unlink()
+        scratch = cache.with_suffix(f".{os.getpid()}.tmp")
+        with scratch.open("wb") as handle:
+            pickle.dump({"platforms": names, "coverages": coverages}, handle,
+                        protocol=pickle.HIGHEST_PROTOCOL)
+        scratch.replace(cache)
+    ordered = {name: coverages[name] for name in platform_names if name in coverages}
+    if report:
+        for name in names:
+            if name in ordered:
+                report(name, ordered[name])
+    return ordered
+
+
 def release_totals(platform_name: str, record: dict) -> tuple[int | None, int | None]:
     """Files and bytes of the pack the latest release serves for a platform.
 
@@ -347,7 +446,7 @@ def _catalog_matched_line(db: dict) -> list[str]:
     ]
 
 
-def generate_readme(db: dict, platforms_dir: str) -> str:
+def generate_readme(db: dict, platforms_dir: str, db_path: str = "database.json") -> str:
     total_files = db.get("total_files", 0)
     total_size = db.get("total_size", 0)
     ts = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
@@ -358,14 +457,8 @@ def generate_readme(db: dict, platforms_dir: str) -> str:
 
     data_registry = load_data_dir_registry(platforms_dir)
 
-    coverages = {}
-    for name in platform_names:
-        try:
-            coverages[name] = compute_coverage(
-                name, platforms_dir, db, data_registry
-            )
-        except FileNotFoundError:
-            pass
+    coverages = platform_coverages(platform_names, platforms_dir, db, data_registry,
+                                   db_path=db_path)
 
     profiles = unique_emulator_profiles(
         load_emulator_profiles("emulators", skip_aliases=False)
@@ -853,7 +946,7 @@ def main() -> None:
     # published counts taken from half of it.
     with contextlib.ExitStack() as held:
         hold_data_dirs(held, load_data_dir_registry(args.platforms_dir))
-        readme = generate_readme(db, args.platforms_dir)
+        readme = generate_readme(db, args.platforms_dir, args.db)
     status = "Generated" if write_if_changed("README.md", readme) else "Unchanged"
     print(f"{status} ./README.md")
 

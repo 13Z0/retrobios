@@ -20,7 +20,7 @@ toolchain works. To set up BIOS files on a device, start with
 ## Data
 
 - **[Data and API](../data.md)** - JSON, CSV and SQLite exports with their checksums
-- **[Find a file by its SHA1](../files/index.md)** - the permanent address of a file by its contents
+- **[Find a file](../files/index.md)** - any SHA1, MD5, CRC32 or SHA256: the file, the platforms that declare it, the emulators that check it
 - **[Data model](data-model.md)** - database.json structure, indexes, file resolution order, YAML formats
 
 ## The toolchain

@@ -323,7 +323,7 @@ class TheSearchLandsOnTheCard(unittest.TestCase):
         entry = {"name": "scph5501.bin", "required": True}
         lines = generate_site._render_emulator_file(
             entry, {"files": [entry]}, None, [entry], lambda f: True, "file-scph5501-bin")
-        self.assertTrue(lines[2].startswith("#### `scph5501.bin` "))
+        self.assertTrue(lines[2].startswith("### `scph5501.bin` "))
         self.assertTrue(lines[2].endswith("{ #file-scph5501-bin .rb-file-title }"))
 
     def test_a_system_card_is_a_heading_with_its_anchor(self):
@@ -332,16 +332,17 @@ class TheSearchLandsOnTheCard(unittest.TestCase):
 
         entry = {"name": "a.bin", "sha1": "a" * 40, "md5": "b" * 32, "size": 3}
         lines = generate_site._system_file_card(entry, FileConsumers({"files": {}}))
-        self.assertTrue(lines[2].startswith("#### `a.bin` "))
+        self.assertTrue(lines[2].startswith("### `a.bin` "))
         self.assertTrue(lines[2].endswith("{ #sha1-aaaaaaaaaaaa .rb-file-title }"))
 
 
 class TheSearchSkipsLinkLists(unittest.TestCase):
     """The search index was 24.7 MB, read and indexed before the first
     result. Lists of platforms, copies and source citations on every card
-    made 6.6 MB of it, names already indexed on their own pages."""
+    made 6.6 MB of it, names already indexed on their own pages, and the
+    hashes 4 MB more: files/?hash= finds those."""
 
-    def test_a_system_card_keeps_its_hashes_and_skips_its_platforms(self):
+    def test_a_system_card_keeps_its_name_and_skips_its_body(self):
         import generate_site
         from cross_reference import FileConsumers
 
@@ -352,25 +353,47 @@ class TheSearchSkipsLinkLists(unittest.TestCase):
         consumers.emulators = {sha1: {"duckstation"}}
         entry = {"name": "a.bin", "sha1": sha1, "md5": "b" * 32, "size": 3}
         text = "\n".join(generate_site._system_file_card(entry, consumers))
-        searched, skipped = text.split('<div class="rb-search-skip" data-search-exclude markdown>')
-        self.assertIn("- MD5:", searched)
-        self.assertIn("- Emulators:", searched)
-        self.assertIn("- Platforms:", skipped)
-        self.assertIn("- Also installed by:", skipped)
-        self.assertEqual(text.count("</div>"), 2)
+        searched, skipped = text.split("<section data-search-exclude markdown>")
+        self.assertIn("`a.bin`", searched)
+        self.assertNotIn("- MD5:", searched)
+        for line in ("- MD5:", "- Emulators:", "- Platforms:", "- Also installed by:"):
+            self.assertIn(line, skipped)
+
+    def test_a_game_data_card_skips_its_name_too(self):
+        import generate_site
+        from cross_reference import FileConsumers
+
+        entry = {"name": "0.ogg", "sha1": "a" * 40, "size": 3}
+        lines = generate_site._system_file_card(
+            entry, FileConsumers({"files": {}}), searchable=False)
+        self.assertTrue(lines[2].endswith("data-search-exclude }"))
 
     def test_runs_alternate_in_card_order(self):
         import generate_site
 
-        lines = ["- SHA1: x", "- Source: `a.c:1`", "- Platforms: p",
-                 "- Destination: `d`", "- Contents (1 members):", "    - `m`"]
+        lines = ["- Path: `p`", "- SHA1: x", "- Source: `a.c:1`", "- Platforms: p",
+                 "- Destination: `d`", "- Contents (1 members):", "    - `m`",
+                 "- Note"]
         out = [line for line in generate_site._search_skipped_apart(lines) if line]
         self.assertEqual(out, [
-            "- SHA1: x",
+            "- Path: `p`",
             '<div class="rb-search-skip" data-search-exclude markdown>',
-            "- Source: `a.c:1`", "- Platforms: p", "</div>",
-            "- Destination: `d`", "- Contents (1 members):", "    - `m`",
+            "- SHA1: x", "- Source: `a.c:1`", "- Platforms: p", "</div>",
+            "- Destination: `d`",
+            '<div class="rb-search-skip" data-search-exclude markdown>',
+            "- Contents (1 members):", "    - `m`", "</div>",
+            "- Note",
         ])
+
+    def test_long_tables_leave_the_search(self):
+        import generate_site
+
+        short = "| a |\n|---|\n| 1 |"
+        long = "    | a |\n    |---|\n" + "\n".join(f"    | {'x' * 50} |" for _ in range(80))
+        text = generate_site.tables_out_of_search(f"# T\n\n{short}\n\n{long}\n")
+        self.assertEqual(text.count("data-search-exclude"), 1)
+        self.assertIn("    <section data-search-exclude markdown>\n\n    | a |", text)
+        self.assertIn(short, text)
 
 
 if __name__ == "__main__":
