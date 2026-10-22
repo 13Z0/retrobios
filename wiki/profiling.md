@@ -562,10 +562,20 @@ The save directory itself is the platform's: `save_directory` in
 `platforms/_registry.yml` names it where the frontend keeps it in one place.
 RetroArch keeps `saves/` beside `system/` and sorts by core, so Azahar's keys
 land in `saves/Azahar/Azahar/sysdata/keys.txt`. Lakka keeps
-`/storage/savefiles`. Batocera, RetroBat and RetroPie hand each game or system
-a folder of its own: those entries are listed as omitted
-(`no_save_directory`), never placed in the BIOS tree where the core does not
-look.
+`/storage/savefiles`, and EmuDeck one unsorted `~/Emulation/saves/retroarch/saves`
+for every core.
+
+Batocera, KNULLI, Recalbox, RetroBat and RetroDECK hand a core the save folder
+of the system it was launched for (`by_system`): Batocera's configgen writes
+`/userdata/saves/<system>` at each launch. The file then goes once below each
+system that runs the core there, so libretro Dolphin's `User/GBA/gba_bios.bin`
+lands in both `saves/gamecube/User/GBA/` and `saves/wii/User/GBA/` on Batocera.
+RetroBat sorts Dolphin's saves by core too, which adds `dolphin-emu/`.
+
+RetroPie, ROCKNIX, AmberELEC and EmuELEC keep saves beside each game, and RomM
+runs cores in the browser: no single place exists, so those entries are listed
+as omitted (`no_save_directory`), never placed in the BIOS tree where the core
+does not look.
 
 ### File entry fields
 
