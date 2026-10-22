@@ -1,0 +1,31 @@
+emulator: "BennuGD monolithic (bgdi)"
+type: standalone
+core_classification: game_engine
+source: "https://github.com/christianhaitian/bennugd-monolithic"
+profiled_date: "2026-10-22"
+source_commit: "60ee3389efcf9b402d66035e87f33d17d70cbd83"
+core_version: "git"
+display_name: "Bennu Game Development (bennugd-monolithic)"
+cores:
+  - "bgdi"
+systems:
+  - bennugd
+
+notes: |
+  The BennuGD interpreter built with every module linked in, from the Google
+  Code bennugd-monolithic project moved to SDL 2. EmuELEC builds this revision
+  for Streets of Rage Remake and runs bgdi on SorR.dat from ports/sorr, after
+  checking the file is there.
+  ref: README.md:1-3, README.md:24-25,
+       EmuELEC packages/sx05re/emuelec-ports/bennugd-monolithic/package.mk:4-5,32-36,
+       EmuELEC packages/sx05re/emuelec-ports/sources/ports.yaml:501-515
+
+  The only file bgdi needs is the game's code block: a bytecode file appended
+  to the executable, else the file named on the command line, tried as given
+  then with .dcb, .dat and .bin appended. Graphics, sounds and fonts are
+  opened by the game's own code by the names it carries. No system file is
+  read.
+  ref: core/bgdi/src/main.c:59, core/bgdi/src/main.c:140-158,
+       core/bgdi/src/main.c:263-289
+
+files: []
