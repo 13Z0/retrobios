@@ -1,0 +1,557 @@
+/* RetroBIOS on top of Starlight.
+
+   Starlight's dark theme is :root and its light theme
+   :root[data-theme='light']. Colour pairs are the ones measured for WCAG AA
+   on the previous site, in both themes.
+
+   Classes the generator and the wiki pages use:
+   .rb-lead            first paragraph under a page title
+   .rb-level-*         level label (start, setup, explore, reference, contribute)
+   .rb-cards, .rb-card card grid
+   .rb-steps           ordered list drawn as numbered steps
+   .rb-button          a link drawn as a button (.rb-button-primary: filled)
+   .rb-terminal        wraps a code block that shows terminal output
+   .rb-cmd             wraps a command that must wrap instead of scrolling
+   code.rb-path        a folder path shown as a chip
+   .rb-figure          a generated diagram (scripts/sitediagrams.py)
+   .rb-bar             inline coverage bar, width from --v
+   .rb-details-*       collapsible block, in the callout colour of its role
+   abbr.rb-term        a glossary term, its definition on hover or tap
+*/
+
+:root {
+	--sl-font: system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+	--sl-font-mono: ui-monospace, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+	--sl-color-accent-low: #1f2147;
+	--sl-color-accent: #8c9cf0;
+	--sl-color-accent-high: #c9d2ff;
+
+	--rb-link: #aebcff;
+	--rb-accent: #ff9a8f;
+	--rb-surface: #252838;
+	--rb-border: #3a3d52;
+	--rb-border-strong: #5a5e7a;
+	--rb-text-secondary: #a6adc8;
+	--rb-ok-fg: #a5d6a7;
+	--rb-ok-bg: #1b3a1f;
+	--rb-warn-fg: #ffcc80;
+	--rb-warn-bg: #7a2e00;
+	--rb-err-fg: #ef9a9a;
+	--rb-err-bg: #7f1414;
+	--rb-info-fg: #90caf9;
+	--rb-info-bg: #0d2a55;
+	--rb-muted-fg: #cfd8dc;
+	--rb-muted-bg: #37474f;
+	--rb-level-start: #a5d6a7;
+	--rb-level-setup: #90caf9;
+	--rb-level-explore: #ce93d8;
+	--rb-level-reference: #cfd8dc;
+	--rb-level-contribute: #ffcc80;
+	--rb-terminal-bg: #12131c;
+	--rb-terminal-fg: #e6e6f0;
+	--rb-terminal-label: #9aa0c3;
+	--rb-diagram-fill: #252838;
+	--rb-diagram-stroke: #7c82a3;
+	--rb-diagram-accent: #aebcff;
+}
+
+:root[data-theme='light'] {
+	--sl-color-accent-low: #e3e5f6;
+	--sl-color-accent: #3b3f7a;
+	--sl-color-accent-high: #2b2e5c;
+
+	--rb-link: #273c8f;
+	--rb-accent: #b42318;
+	--rb-surface: #f5f6fa;
+	--rb-border: #e0e3eb;
+	--rb-border-strong: #b8bdcc;
+	--rb-text-secondary: #546e7a;
+	--rb-ok-fg: #1b5e20;
+	--rb-ok-bg: #e8f5e9;
+	--rb-warn-fg: #a33f00;
+	--rb-warn-bg: #fff3e0;
+	--rb-err-fg: #b71c1c;
+	--rb-err-bg: #ffebee;
+	--rb-info-fg: #0d47a1;
+	--rb-info-bg: #e3f2fd;
+	--rb-muted-fg: #455a64;
+	--rb-muted-bg: #eceff1;
+	--rb-level-start: #1b5e20;
+	--rb-level-setup: #0d47a1;
+	--rb-level-explore: #6a1b9a;
+	--rb-level-reference: #455a64;
+	--rb-level-contribute: #a33f00;
+	--rb-terminal-bg: #1b1d2e;
+	--rb-diagram-fill: #f5f6fa;
+	--rb-diagram-stroke: #8c92ac;
+	--rb-diagram-accent: #3b3f7a;
+}
+
+/* Links and focus */
+.sl-markdown-content a:not(.rb-button):not(.rb-badge):not(.rb-permalink) {
+	color: var(--rb-link);
+	text-decoration-thickness: 0.08em;
+	text-underline-offset: 0.14em;
+}
+.sl-markdown-content a:not(.rb-button):hover { text-decoration-thickness: 0.14em; }
+.sl-markdown-content a code { color: var(--rb-link); }
+:where(a, button, input, select, textarea, summary, abbr, [tabindex]):focus-visible {
+	outline: 3px solid var(--rb-accent);
+	outline-offset: 3px;
+}
+
+/* Type scale */
+.sl-markdown-content h2 { font-weight: 600; letter-spacing: -0.005em; }
+.sl-markdown-content h3 { font-weight: 600; }
+.sl-markdown-content .rb-lead { font-size: 1.05em; line-height: 1.55; max-width: 44em; }
+
+/* Breadcrumbs above the title */
+.rb-breadcrumbs ol {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.15rem 0;
+	margin: 0 0 0.4rem;
+	padding: 0;
+	list-style: none;
+	font-size: var(--sl-text-sm);
+	color: var(--rb-text-secondary);
+}
+.rb-breadcrumbs li + li::before { content: '/'; padding: 0 0.45rem; color: var(--rb-border-strong); }
+.rb-breadcrumbs a {
+	display: inline-block;
+	min-height: 24px;
+	line-height: 24px;
+	color: var(--rb-text-secondary);
+	text-decoration: none;
+}
+.rb-breadcrumbs a:hover { color: var(--rb-link); text-decoration: underline; }
+
+/* Level label above a title */
+.rb-level {
+	display: inline-block;
+	margin: 0 0 0.5rem;
+	padding: 0.05rem 0.45rem;
+	border: 1px solid currentColor;
+	border-radius: 2px;
+	font-size: 0.72rem;
+	font-weight: 600;
+	letter-spacing: 0.01em;
+	line-height: 1.6;
+	color: var(--rb-level-reference);
+}
+.rb-level-start { color: var(--rb-level-start); }
+.rb-level-setup { color: var(--rb-level-setup); }
+.rb-level-explore { color: var(--rb-level-explore); }
+.rb-level-reference { color: var(--rb-level-reference); }
+.rb-level-contribute { color: var(--rb-level-contribute); }
+
+/* Buttons */
+.sl-markdown-content .rb-button {
+	display: inline-flex;
+	align-items: center;
+	min-height: 44px;
+	padding: 0.5rem 1.1rem;
+	margin: 0.25rem 0.4rem 0.25rem 0;
+	border: 2px solid var(--rb-link);
+	border-radius: 4px;
+	color: var(--rb-link);
+	font-weight: 600;
+	text-decoration: none;
+}
+.sl-markdown-content .rb-button-primary { background: var(--rb-link); color: var(--sl-color-black); }
+.sl-markdown-content .rb-button:is(:hover, :focus) {
+	background: var(--rb-accent);
+	border-color: var(--rb-accent);
+	color: var(--sl-color-black);
+}
+.sl-markdown-content table .rb-button { font-size: 0.8rem; padding: 0.4rem 0.8rem; }
+
+/* Badges */
+.rb-badge {
+	display: inline-block;
+	padding: 0 0.4em;
+	border-radius: 2px;
+	font-size: 0.75rem;
+	font-weight: 600;
+	line-height: 1.6;
+	white-space: nowrap;
+}
+.rb-badge-success { background: var(--rb-ok-bg); color: var(--rb-ok-fg); }
+.rb-badge-warning { background: var(--rb-warn-bg); color: var(--rb-warn-fg); }
+.rb-badge-danger { background: var(--rb-err-bg); color: var(--rb-err-fg); }
+.rb-badge-info { background: var(--rb-info-bg); color: var(--rb-info-fg); }
+.rb-badge-muted { background: var(--rb-muted-bg); color: var(--rb-muted-fg); }
+.sl-markdown-content .rb-badge a,
+.sl-markdown-content a.rb-badge { color: inherit; }
+/* A badge link sits in a dense list: it keeps a 24 px target (WCAG 2.5.8). */
+.sl-markdown-content :is(.rb-sys-file, .rb-file-entry) li:has(.rb-badge a) { min-height: 24px; line-height: 24px; }
+.sl-markdown-content .rb-badge a { display: inline-block; min-width: 24px; line-height: 24px; text-align: center; }
+
+/* Headline figures */
+.rb-stats {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr));
+	gap: 0.6rem 1rem;
+	margin: 1rem 0 1.5rem;
+	padding: 0.8rem 1rem;
+	border: 1px solid var(--rb-border);
+	border-radius: 4px;
+	background: var(--rb-surface);
+}
+.sl-markdown-content .rb-stats > *,
+.sl-markdown-content .rb-stat > * { margin: 0; }
+.rb-stat-value { display: block; font-size: 1.25rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+.rb-stat-label { display: block; font-size: 0.75rem; color: var(--rb-text-secondary); }
+
+/* Logos float right beside the opening paragraph */
+.sl-markdown-content img[align='right'] {
+	float: right;
+	width: 56px;
+	height: 56px;
+	object-fit: contain;
+	margin: 0 0 0.6rem 1rem;
+	padding: 4px;
+	border: 1px solid var(--rb-border);
+	border-radius: 4px;
+	background: #fff;
+}
+.sl-markdown-content img[src*='assets/logos/'] { padding: 2px; border-radius: 2px; background: #fff; }
+.sl-markdown-content :is(h2, h3) img { display: inline; vertical-align: middle; margin: 0 0.4rem 0 0; }
+
+/* Card grids */
+.rb-cards {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr));
+	gap: 0.8rem;
+	margin: 1rem 0 1.5rem;
+}
+.sl-markdown-content .rb-cards > .rb-card {
+	display: flex;
+	flex-direction: column;
+	gap: 0.35rem;
+	margin: 0;
+	padding: 0.8rem;
+	border: 1px solid var(--rb-border);
+	border-radius: 4px;
+	background: var(--sl-color-bg);
+}
+.rb-card:is(:hover, :focus-within) { border-color: var(--rb-border-strong); }
+.sl-markdown-content .rb-card > * { margin: 0; }
+.sl-markdown-content .rb-card .rb-button { margin-top: auto; align-self: flex-start; }
+.sl-markdown-content .rb-card-logo {
+	width: 40px;
+	height: 40px;
+	object-fit: contain;
+	padding: 4px;
+	border: 1px solid var(--rb-border);
+	border-radius: 4px;
+	background: #fff;
+	vertical-align: middle;
+}
+
+/* Numbered steps */
+.sl-markdown-content .rb-steps > ol {
+	counter-reset: rb-step;
+	list-style: none;
+	padding-left: 0;
+}
+.sl-markdown-content .rb-steps > ol > li {
+	counter-increment: rb-step;
+	position: relative;
+	margin: 0 0 1.2rem;
+	padding-left: 2.6rem;
+	min-height: 1.8rem;
+}
+.sl-markdown-content .rb-steps > ol > li::before {
+	content: counter(rb-step);
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 1.8rem;
+	height: 1.8rem;
+	border-radius: 4px;
+	background: var(--rb-link);
+	color: var(--sl-color-black);
+	font-weight: 700;
+	line-height: 1.8rem;
+	text-align: center;
+}
+
+/* Path chip */
+.sl-markdown-content code.rb-path {
+	padding: 0.15rem 0.45rem;
+	border: 1px solid var(--rb-border);
+	border-radius: 2px;
+	font-size: 0.8em;
+	overflow-wrap: anywhere;
+}
+
+/* Inline coverage bar beside a number */
+.rb-bar {
+	display: inline-block;
+	width: 5rem;
+	height: 0.4rem;
+	margin-right: 0.4rem;
+	border-radius: 2px;
+	background: var(--rb-border);
+	vertical-align: middle;
+}
+.rb-bar > span { display: block; width: var(--v, 0%); height: 100%; border-radius: 2px; background: var(--rb-ok-fg); }
+
+/* Tables */
+.sl-markdown-content table { font-variant-numeric: tabular-nums; }
+.sl-markdown-content table th { font-weight: 600; }
+.sl-markdown-content table[role='region']:focus-visible { outline: 3px solid var(--rb-accent); outline-offset: 2px; }
+
+/* Key and value cards: the empty header row is not drawn */
+.rb-meta-card thead,
+.sl-markdown-content table thead:not(:has(th:not(:empty))) { display: none; }
+.rb-meta-card td { overflow-wrap: anywhere; }
+.rb-meta-card td:first-child { font-weight: 600; color: var(--rb-text-secondary); white-space: nowrap; width: 140px; }
+
+.rb-timestamp {
+	font-size: 0.8rem;
+	color: var(--rb-text-secondary);
+	margin-top: 2rem;
+	padding-top: 1rem;
+	border-top: 1px solid var(--rb-border);
+}
+
+/* File cards on system and emulator pages */
+.sl-markdown-content :is(.rb-sys-file, .rb-file-entry) {
+	border-top: 1px solid var(--rb-border);
+	padding: 0.75rem 0 0.25rem;
+}
+.sl-markdown-content :is(.rb-sys-file, .rb-file-entry) > :first-child { margin-top: 0; }
+.sl-markdown-content .rb-file-title {
+	margin: 0 0 0.3rem;
+	font-size: 1rem;
+	font-weight: 400;
+	letter-spacing: normal;
+	scroll-margin-top: 5rem;
+}
+.sl-markdown-content .rb-file-title code { font-weight: 700; }
+.sl-markdown-content .rb-search-skip > ul { margin-top: 0.1rem; }
+.sl-markdown-content :is(.rb-sys-file, .rb-file-entry) ul {
+	margin: 0.3rem 0 0;
+	padding-left: 1.2rem;
+	font-size: 0.85rem;
+}
+.sl-markdown-content :is(.rb-sys-file, .rb-file-entry) li { margin: 0.1rem 0; }
+.rb-hash {
+	font-family: var(--sl-font-mono);
+	font-size: 0.78rem;
+	color: var(--rb-text-secondary);
+	overflow-wrap: anywhere;
+}
+.rb-hash code { background: none; padding: 0; overflow-wrap: anywhere; }
+.rb-permalink {
+	margin-left: 0.4rem;
+	font-size: 0.75rem;
+	color: var(--rb-text-secondary);
+	text-decoration: none;
+	opacity: 0;
+}
+:is(.rb-sys-file, .rb-file-entry):hover .rb-permalink,
+.rb-permalink:focus { opacity: 1; }
+:is(.rb-sys-file, .rb-file-entry):has(> .rb-file-title:target) { background: var(--rb-surface); }
+
+/* Collapsible blocks keep the callout colour of their role */
+.sl-markdown-content details.rb-details {
+	border-inline-start: 4px solid var(--sl-color-blue);
+	background: var(--sl-color-blue-low);
+	padding: 0.6rem 1rem;
+}
+.sl-markdown-content details.rb-details-tip { border-color: var(--sl-color-purple); background: var(--sl-color-purple-low); }
+.sl-markdown-content details.rb-details-caution { border-color: var(--sl-color-orange); background: var(--sl-color-orange-low); }
+.sl-markdown-content details.rb-details-danger { border-color: var(--sl-color-red); background: var(--sl-color-red-low); }
+.sl-markdown-content details.rb-details > summary {
+	min-height: 24px;
+	font-weight: 600;
+	cursor: pointer;
+}
+.sl-markdown-content details.rb-details[open] > summary { margin-bottom: 0.6rem; }
+
+/* Terminal output: what the screen shows, not something to type */
+.sl-markdown-content .rb-terminal .expressive-code pre { background: var(--rb-terminal-bg); color: var(--rb-terminal-fg); }
+
+/* Diagrams written by scripts/sitediagrams.py follow the theme */
+.sl-markdown-content .rb-figure { margin: 1.2rem 0 1.6rem; }
+.sl-markdown-content .rb-figure svg { display: block; width: 100%; height: auto; max-width: 52rem; color: var(--sl-color-text); }
+.sl-markdown-content .rb-figure :is(figcaption, .rb-figure-caption) {
+	display: block;
+	max-width: 44em;
+	margin-top: 0.4rem;
+	font-size: 0.8rem;
+	color: var(--rb-text-secondary);
+}
+.rb-diagram text { font-family: var(--sl-font); fill: currentColor; }
+.rb-diagram .rb-d-box { fill: var(--rb-diagram-fill); stroke: var(--rb-diagram-stroke); }
+.rb-diagram .rb-d-accent { stroke: var(--rb-diagram-accent); }
+.rb-diagram .rb-d-line { stroke: var(--rb-diagram-stroke); }
+.rb-diagram .rb-d-head { fill: var(--rb-diagram-stroke); }
+.rb-diagram .rb-d-num { fill: var(--rb-diagram-accent); }
+.rb-diagram .rb-d-numtext { fill: var(--sl-color-bg); }
+.rb-diagram .rb-d-muted { fill: var(--rb-text-secondary); }
+.rb-diagram-narrow { display: none !important; }
+@media (max-width: 37.5em) {
+	.rb-diagram-wide { display: none !important; }
+	.rb-diagram-narrow { display: block !important; }
+}
+
+/* Glossary terms */
+abbr.rb-term {
+	position: relative;
+	text-decoration: underline dotted;
+	text-underline-offset: 0.2em;
+	cursor: help;
+}
+abbr.rb-term[data-open]::after {
+	content: attr(data-definition);
+	position: absolute;
+	z-index: 10;
+	top: calc(100% + 0.3rem);
+	left: 0;
+	width: max-content;
+	max-width: min(20rem, 80vw);
+	padding: 0.4rem 0.6rem;
+	border: 1px solid var(--rb-border-strong);
+	border-radius: 4px;
+	background: var(--sl-color-bg);
+	color: var(--sl-color-text);
+	font-size: 0.85rem;
+	font-weight: 400;
+	line-height: 1.4;
+	white-space: normal;
+}
+
+/* Forms: lookup, picker, table filters */
+.rb-file-lookup,
+.rb-picker fieldset {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+	align-items: center;
+}
+.sl-markdown-content :is(.rb-file-lookup, .rb-picker) :is(input, select, button) {
+	min-height: 44px;
+	padding: 0 0.6rem;
+	border: 1px solid var(--rb-border-strong);
+	border-radius: 4px;
+	background: var(--sl-color-bg);
+	color: var(--sl-color-text);
+	font: inherit;
+}
+.sl-markdown-content .rb-file-lookup input { flex: 1 1 20rem; font-family: var(--sl-font-mono); }
+.sl-markdown-content :is(.rb-file-lookup, .rb-picker) button {
+	background: var(--rb-link);
+	color: var(--sl-color-black);
+	font-weight: 600;
+	border: 0;
+}
+.rb-visually-hidden {
+	position: absolute !important;
+	width: 1px !important;
+	height: 1px !important;
+	padding: 0 !important;
+	margin: -1px !important;
+	overflow: hidden !important;
+	clip: rect(0, 0, 0, 0) !important;
+	white-space: nowrap !important;
+	border: 0 !important;
+}
+.rb-table-filter {
+	display: grid;
+	grid-template-columns: minmax(14rem, 28rem) auto;
+	gap: 0.35rem 0.8rem;
+	align-items: end;
+	margin: 1rem 0 0.45rem;
+}
+.sl-markdown-content .rb-table-filter > * { margin: 0; }
+.rb-table-filter label { grid-column: 1 / -1; color: var(--rb-text-secondary); font-size: 0.78rem; font-weight: 700; }
+.rb-table-filter input {
+	width: 100%;
+	min-height: 44px;
+	border: 1px solid var(--rb-text-secondary);
+	border-radius: 2px;
+	background: var(--sl-color-bg);
+	color: var(--sl-color-text);
+	padding: 0.55rem 0.75rem;
+	font: inherit;
+}
+.rb-table-filter-count { align-self: center; color: var(--rb-text-secondary); font-size: 0.8rem; white-space: nowrap; }
+
+/* 404 */
+.sl-markdown-content .rb-notfound-search {
+	display: inline-flex;
+	align-items: center;
+	min-height: 44px;
+	padding: 0.55em 1.2em;
+	border: 2px solid var(--rb-link);
+	border-radius: 4px;
+	background: none;
+	color: var(--rb-link);
+	font: inherit;
+	font-weight: 700;
+	cursor: pointer;
+}
+
+/* Licence line under every page */
+.rb-copyright { margin: 1.5rem 0 0; font-size: var(--sl-text-xs); color: var(--sl-color-gray-3); }
+
+@media (max-width: 50rem) {
+	/* Tables with an action column become one block per row, so the button
+	   is never behind a horizontal scroll (site.ts marks them). */
+	.sl-markdown-content table[data-rb-stack] { display: block; width: 100%; overflow: visible; }
+	.sl-markdown-content table[data-rb-stack] thead {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip: rect(0, 0, 0, 0);
+	}
+	.sl-markdown-content table[data-rb-stack] :is(tbody, tr) { display: block; }
+	.sl-markdown-content table[data-rb-stack] tr { padding: 0.5rem 0; border-top: 1px solid var(--rb-border); }
+	.sl-markdown-content table[data-rb-stack] td {
+		display: block;
+		position: relative;
+		min-height: 1.6rem;
+		padding: 0.25rem 0.6rem 0.25rem 8.4rem;
+		border: 0;
+		text-align: left !important;
+		overflow-wrap: anywhere;
+	}
+	.sl-markdown-content table[data-rb-stack] td::before {
+		content: attr(data-label);
+		position: absolute;
+		top: 0.25rem;
+		left: 0.6rem;
+		width: 7.4rem;
+		font-weight: 600;
+		color: var(--rb-text-secondary);
+	}
+	.sl-markdown-content table[data-rb-stack] td:empty { display: none; }
+
+	/* On a phone every command wraps: the end of a one-liner is never off-screen. */
+	.sl-markdown-content .expressive-code pre > code { white-space: pre-wrap; overflow-wrap: anywhere; }
+	.sl-markdown-content :is(.rb-sys-file, .rb-file-entry) ul,
+	.rb-hash { font-size: 0.75rem; }
+}
+
+@media (max-width: 600px) {
+	.rb-table-filter { grid-template-columns: 1fr; }
+	.rb-table-filter label { grid-column: auto; }
+	.rb-stats { grid-template-columns: repeat(auto-fit, minmax(5.5rem, 1fr)); }
+	.rb-stat-value { font-size: 1.1rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		scroll-behavior: auto !important;
+		transition-duration: 0.01ms !important;
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+	}
+}

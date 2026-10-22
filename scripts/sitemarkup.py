@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import html
 import re
+from contextlib import contextmanager
 
 ENGINES = ("mkdocs", "starlight")
 _engine = "mkdocs"
@@ -37,6 +38,19 @@ def set_engine(name: str) -> None:
 
 def engine() -> str:
     return _engine
+
+
+@contextmanager
+def using(name: str):
+    """Write in another engine's syntax for a while. A page split by size
+    is measured in the MkDocs Markdown its budgets were tuned on, so both
+    engines cut the same pages at the same files."""
+    previous = _engine
+    set_engine(name)
+    try:
+        yield
+    finally:
+        set_engine(previous)
 
 
 def starlight() -> bool:

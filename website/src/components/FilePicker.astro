@@ -1,0 +1,186 @@
+---
+// "Which files do I need": pick a setup and systems, get the file list and
+// the install command. Client side only: reads public/data/picker/*.json,
+// which convert.py derives from install/<platform>.json. The selection
+// follows install.py narrow(): a file is kept when one of its systems is
+// chosen, a file with no system when "other" is chosen.
+const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
+---
+
+<div class="rb-picker" data-base={base}>
+	<fieldset>
+		<label for="rb-pick-platform">Your setup</label>
+		<select id="rb-pick-platform" name="platform">
+			<option value="">Choose a setup</option>
+		</select>
+	</fieldset>
+	<div class="rb-pick-systems" hidden>
+		<p class="rb-pick-systems-head">
+			<strong>Systems</strong>
+			<button type="button" data-all>All</button>
+			<button type="button" data-none>None</button>
+		</p>
+		<input type="search" class="rb-pick-filter" placeholder="Filter systems" aria-label="Filter systems" />
+		<div class="rb-pick-list" role="group" aria-label="Systems"></div>
+	</div>
+	<div class="rb-pick-result" role="status" aria-live="polite"></div>
+	<div class="rb-pick-output" hidden>
+		<p><strong>Install command</strong> (Linux, macOS, Steam Deck, handhelds)</p>
+		<pre class="rb-pick-cmd"><code></code></pre>
+		<button type="button" data-copy>Copy the command</button>
+		<details>
+			<summary>Files and where they go</summary>
+			<table>
+				<thead><tr><th scope="col">Destination</th><th scope="col">Size</th></tr></thead>
+				<tbody></tbody>
+			</table>
+		</details>
+	</div>
+</div>
+
+<script>
+	type Data = {
+		platform: string;
+		name: string;
+		folder: string;
+		generated: string;
+		systems: { id: string; native: string[] }[];
+		other: boolean;
+		files: [string, number, number[]][];
+	};
+
+	const INSTALL = 'curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh -s --';
+	const MAX_ROWS = 500;
+
+	const size = (bytes: number) =>
+		bytes >= 1e9 ? `${(bytes / 1e9).toFixed(1)} GB`
+		: bytes >= 1e6 ? `${(bytes / 1e6).toFixed(1)} MB`
+		: bytes >= 1e3 ? `${(bytes / 1e3).toFixed(1)} KB`
+		: `${bytes} B`;
+
+	for (const root of document.querySelectorAll<HTMLElement>('.rb-picker')) {
+		const base = root.dataset.base ?? '/';
+		const select = root.querySelector('select')!;
+		const systemsBox = root.querySelector<HTMLElement>('.rb-pick-systems')!;
+		const list = root.querySelector<HTMLElement>('.rb-pick-list')!;
+		const filter = root.querySelector<HTMLInputElement>('.rb-pick-filter')!;
+		const result = root.querySelector<HTMLElement>('.rb-pick-result')!;
+		const output = root.querySelector<HTMLElement>('.rb-pick-output')!;
+		const cmd = root.querySelector<HTMLElement>('.rb-pick-cmd code')!;
+		const tbody = root.querySelector('tbody')!;
+		let data: Data | null = null;
+
+		const params = new URLSearchParams(location.search);
+		const index: { platform: string; name: string }[] = await fetch(`${base}data/picker/index.json`).then((r) => r.json());
+		for (const entry of index) select.add(new Option(entry.name, entry.platform));
+
+		const chosen = () => [...list.querySelectorAll<HTMLInputElement>('input:checked')].map((box) => box.value);
+
+		const render = () => {
+			if (!data) return;
+			const picked = chosen();
+			const wanted = new Set(picked.map((id) => data!.systems.findIndex((s) => s.id === id)));
+			const other = picked.includes('other');
+			const files = data.files.filter(([, , systems]) =>
+				systems.length ? systems.some((s) => wanted.has(s)) : other);
+			const total = files.reduce((sum, [, bytes]) => sum + bytes, 0);
+			const all = picked.length === data.systems.length + (data.other ? 1 : 0);
+			result.textContent = picked.length
+				? `${files.length} files, ${size(total)}, for ${picked.length} of ${data.systems.length + (data.other ? 1 : 0)} choices. Folder: ${data.folder || 'the setup BIOS folder'}.`
+				: 'Choose at least one system.';
+			output.hidden = !picked.length;
+			cmd.textContent = `${INSTALL} --platform ${data.platform}${all ? '' : ` --system ${picked.join(',')}`}`;
+			tbody.replaceChildren(...files.slice(0, MAX_ROWS).map(([dest, bytes]) => {
+				const row = document.createElement('tr');
+				const where = document.createElement('td');
+				const code = document.createElement('code');
+				code.textContent = dest;
+				where.append(code);
+				const weight = document.createElement('td');
+				weight.textContent = size(bytes);
+				row.append(where, weight);
+				return row;
+			}));
+			if (files.length > MAX_ROWS) {
+				const row = document.createElement('tr');
+				const cell = document.createElement('td');
+				cell.colSpan = 2;
+				cell.textContent = `and ${files.length - MAX_ROWS} more.`;
+				row.append(cell);
+				tbody.append(row);
+			}
+			const url = new URL(location.href);
+			url.searchParams.set('platform', data.platform);
+			if (all) url.searchParams.delete('system');
+			else url.searchParams.set('system', picked.join(','));
+			history.replaceState(null, '', url);
+		};
+
+		const load = async (platform: string, preset: string[] | null) => {
+			list.replaceChildren();
+			output.hidden = true;
+			systemsBox.hidden = !platform;
+			if (!platform) { result.textContent = ''; return; }
+			result.textContent = 'Loading the file list...';
+			data = await fetch(`${base}data/picker/${platform}.json`).then((r) => r.json());
+			const choices = data!.systems.map((s) => ({ id: s.id, label: s.native.length ? `${s.id} (${s.native.join(', ')})` : s.id }));
+			if (data!.other) choices.push({ id: 'other', label: 'other (files no system owns: engines, computers)' });
+			for (const choice of choices) {
+				const label = document.createElement('label');
+				const box = document.createElement('input');
+				box.type = 'checkbox';
+				box.value = choice.id;
+				box.checked = preset ? preset.includes(choice.id) : true;
+				label.append(box, ` ${choice.label}`);
+				list.append(label);
+			}
+			render();
+		};
+
+		select.addEventListener('change', () => load(select.value, null));
+		list.addEventListener('change', render);
+		filter.addEventListener('input', () => {
+			const query = filter.value.trim().toLowerCase();
+			for (const label of list.querySelectorAll<HTMLElement>('label')) {
+				label.hidden = !!query && !label.textContent!.toLowerCase().includes(query);
+			}
+		});
+		root.querySelector('[data-all]')!.addEventListener('click', () => {
+			list.querySelectorAll<HTMLInputElement>('label:not([hidden]) input').forEach((box) => (box.checked = true));
+			render();
+		});
+		root.querySelector('[data-none]')!.addEventListener('click', () => {
+			list.querySelectorAll<HTMLInputElement>('label:not([hidden]) input').forEach((box) => (box.checked = false));
+			render();
+		});
+		root.querySelector('[data-copy]')!.addEventListener('click', () => navigator.clipboard?.writeText(cmd.textContent ?? ''));
+
+		const initial = params.get('platform');
+		if (initial && index.some((entry) => entry.platform === initial)) {
+			select.value = initial;
+			await load(initial, params.get('system')?.split(',') ?? null);
+		}
+	}
+</script>
+
+<!-- Global: the checkboxes are created by the script, outside Astro's scoped styles. -->
+<style is:global>
+	.rb-picker .rb-pick-list {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+		gap: 0.25rem 1rem;
+		max-height: 22rem;
+		overflow: auto;
+		padding: 0.5rem;
+		border: 1px solid var(--rb-border);
+		border-radius: 4px;
+	}
+	.rb-picker .rb-pick-list label { display: flex; gap: 0.5rem; align-items: center; min-height: 32px; margin: 0; font-size: 0.9rem; }
+	.sl-markdown-content .rb-picker .rb-pick-list input { min-height: auto; width: 1.1rem; height: 1.1rem; margin: 0; flex: none; }
+	.rb-picker .rb-pick-systems-head { display: flex; gap: 0.5rem; align-items: center; }
+	.rb-picker .rb-pick-systems-head > * { margin: 0; }
+	.rb-picker .rb-pick-filter { width: 100%; margin: 0.5rem 0; }
+	.rb-picker .rb-pick-cmd code { white-space: pre-wrap; overflow-wrap: anywhere; }
+	.rb-picker .rb-pick-result { margin-top: 1rem; font-weight: 600; }
+	.rb-picker fieldset { border: 0; padding: 0; }
+</style>

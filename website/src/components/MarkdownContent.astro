@@ -1,0 +1,21 @@
+---
+// Search ranking: Pagefind multiplies the score of words inside a weighted
+// element, so a Start here page outranks the reference page that names it.
+import Default from '@astrojs/starlight/components/MarkdownContent.astro';
+
+const { boost } = Astro.locals.starlightRoute.entry.data;
+---
+
+{
+	boost ? (
+		<div data-pagefind-weight={String(Math.min(10, boost * 2))}>
+			<Default><slot /></Default>
+		</div>
+	) : (
+		<Default><slot /></Default>
+	)
+}
+
+<script>
+	import '../scripts/site.ts';
+</script>
