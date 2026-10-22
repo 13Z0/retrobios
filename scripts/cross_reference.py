@@ -41,6 +41,7 @@ from common import (
     require_yaml,
     resolve_local_file,
     platform_layouts,
+    system_dir_path,
     standalone_set,
     select_emulator_profiles,
 )
@@ -652,7 +653,7 @@ def slot_key(f: dict, standalone: bool = False) -> tuple:
     return (
         fname,
         f.get("archive"),
-        where or fname,
+        system_dir_path(f, where or fname),
         f.get("system"),
         f.get("variant_group"),
         f.get("mode", "both"),
@@ -727,7 +728,7 @@ def _cross_reference_profile(
         if is_standalone:
             effective_path = f.get("standalone_path") or f.get("path") or fname
         else:
-            effective_path = f.get("path") or fname
+            effective_path = system_dir_path(f, f.get("path") or fname)
         slot = slot_key(f, is_standalone)
         seen_key = slot
         if len(layouts) > 1:

@@ -22,6 +22,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 from common import (
     compute_composition,
     count_catalog_matched,
+    declared_root,
     github_token,
     list_registered_platforms,
     load_database,
@@ -167,6 +168,19 @@ def extract_targets(platforms_dir: str) -> list[tuple[str, str]]:
     return sorted(rows, key=lambda row: row[0].casefold())
 
 
+def own_root(config: dict) -> str:
+    """The folder a pack written from an empty base_destination starts with.
+
+    RetroDECK writes bios/ in front of its files, the MinUI family hands its
+    cores folders below Bios/.
+    """
+    root = declared_root(config)
+    if root:
+        return root
+    tops = {directory.split("/", 1)[0] for directory in config.get("core_system_dirs") or {}}
+    return tops.pop() if len(tops) == 1 else "bios"
+
+
 def extract_notes(platforms_dir: str) -> list[str]:
     """A pack whose entries carry their own root extracts above the BIOS folder."""
     folders = dict(extract_targets(platforms_dir))
@@ -176,8 +190,8 @@ def extract_notes(platforms_dir: str) -> list[str]:
         display = config.get("platform", key)
         if config.get("base_destination") == "" and display in folders:
             notes.append(
-                f"The {display} pack already carries its own `bios/` folder, so it"
-                f" extracts into `{folders[display]}` rather than into the BIOS folder."
+                f"The {display} pack already carries its own `{own_root(config)}/` folder,"
+                f" so it extracts into `{folders[display]}` rather than into the BIOS folder."
             )
     return notes
 
@@ -470,7 +484,9 @@ def generate_readme(db: dict, platforms_dir: str) -> str:
             " a checksum, the fingerprint of a file's contents, which catches a"
             " corrupt or unexpected copy. RetroArch, Lakka and RetroPie check"
             " that the file is present under its name without reading its"
-            " contents (`path_is_valid` in RetroArch's `core_info.c`): the"
+            " contents (`path_is_valid` in RetroArch's `core_info.c`), and"
+            " MinUI, NextUI and MyMinUI hand each core its folder without"
+            " opening a file in it: the"
             " Coverage table says which applies to you. Independently of that,"
             " the collection records five fingerprints per file, and wherever"
             " an emulator's code states an expected size or hash, that value is"

@@ -1,0 +1,399 @@
+platform: NextUI
+version: '2026-10-20'
+homepage: "https://nextui.loveretro.games"
+source: "https://github.com/LoveRetro/NextUI/tree/5291344b3aceae5fa197437a70824afb41e2d338"
+base_destination: ''
+hash_type: sha1
+verification_mode: existence
+system_directory_ref: "workspace/all/minarch/ma_core.c:76"
+cores:
+- a5200
+- bluemsx
+- cap32
+- fake08
+- fbneo
+- fceumm
+- gambatte
+- gearcoleco
+- gpsp
+- handy
+- mednafen_pce_fast
+- mednafen_supafaust
+- mednafen_vb
+- mgba
+- pcsx_rearmed
+- picodrive
+- pokemini
+- prboom
+- prosystem
+- puae2021
+- race
+- snes9x
+- stella2014
+- vice_x128
+- vice_x64
+- vice_xpet
+- vice_xplus4
+- vice_xvic
+core_system_dirs:
+  Bios/32X:
+    cores:
+    - picodrive
+    devices:
+    - h700
+    - tg5040
+    - tg5050
+    source_ref: "skeleton/EXTRAS/Emus/h700/32X.pak/launch.sh:3"
+  Bios/A2600:
+    cores:
+    - stella2014
+    devices:
+    - h700
+    - tg5040
+    - tg5050
+    source_ref: "skeleton/EXTRAS/Emus/h700/A2600.pak/launch.sh:3"
+  Bios/A5200:
+    cores:
+    - a5200
+    devices:
+    - h700
+    - tg5040
+    - tg5050
+    source_ref: "skeleton/EXTRAS/Emus/h700/A5200.pak/launch.sh:3"
+  Bios/A7800:
+    cores:
+    - prosystem
+    devices:
+    - h700
+    - tg5040
+    - tg5050
+    source_ref: "skeleton/EXTRAS/Emus/h700/A7800.pak/launch.sh:3"
+  Bios/C128:
+    cores:
+    - vice_x128
+    devices:
+    - h700
+    - tg5040
+    - tg5050
+    source_ref: "skeleton/EXTRAS/Emus/h700/C128.pak/launch.sh:3"
+  Bios/C64:
+    cores:
+    - vice_x64
+    devices:
+    - h700
+    - tg5040
+    - tg5050
+    source_ref: "skeleton/EXTRAS/Emus/h700/C64.pak/launch.sh:3"
+  Bios/COLECO:
+    cores:
+    - gearcoleco
+    devices:
+    - h700
+    - tg5040
+    - tg5050
+    source_ref: "skeleton/EXTRAS/Emus/h700/COLECO.pak/launch.sh:3"
+  Bios/CPC:
+    cores:
+    - cap32
+    devices:
+    - h700
+    - tg5040
+    - tg5050
+    source_ref: "skeleton/EXTRAS/Emus/h700/CPC.pak/launch.sh:3"
+  Bios/FBN:
+    cores:
+    - fbneo
+    devices:
+    - h700
+    - tg5040
+    - tg5050
+    source_ref: "skeleton/EXTRAS/Emus/h700/FBN.pak/launch.sh:3"
+  Bios/FC:
+    cores:
+    - fceumm
+    devices:
+    - desktop
+    - h700
+    - tg5040
+    - tg5050
+    source_ref: "skeleton/SYSTEM/desktop/paks/Emus/FC.pak/launch.sh:3"
+  Bios/FDS:
+    cores:
+    - fceumm
+    devices:
+    - h700
+    - tg5040
+    - tg5050
+    source_ref: "skeleton/EXTRAS/Emus/h700/FDS.pak/launch.sh:3"
+  Bios/GB:
+    cores:
+    - gambatte
+    devices:
+    - desktop
+    - h700
+    - tg5040
+    - tg5050
+    source_ref: "skeleton/SYSTEM/desktop/paks/Emus/GB.pak/launch.sh:3"
+  Bios/GBA:
+    cores:
+    - gpsp
+    devices:
+    - desktop
+    - h700
+    - tg5040
+    - tg5050
+    source_ref: "skeleton/SYSTEM/desktop/paks/Emus/GBA.pak/launch.sh:3"
+  Bios/GBC:
+    cores:
+    - gambatte
+    devices:
+    - desktop
+    - h700
+    - tg5040
+    - tg5050
+    source_ref: "skeleton/SYSTEM/desktop/paks/Emus/GBC.pak/launch.sh:3"
+  Bios/GG:
+    cores:
+    - picodrive
+    devices:
+    - h700
+    - tg5040
+    - tg5050
+    source_ref: "skeleton/EXTRAS/Emus/h700/GG.pak/launch.sh:3"
+  Bios/LYNX:
+    cores:
+    - handy
+    devices:
+    - h700
+    - tg5040
+    - tg5050
+    source_ref: "skeleton/EXTRAS/Emus/h700/LYNX.pak/launch.sh:3"
+  Bios/MD:
+    cores:
+    - picodrive
+    devices:
+    - desktop
+    - h700
+    - tg5040
+    - tg5050
+    source_ref: "skeleton/SYSTEM/desktop/paks/Emus/MD.pak/launch.sh:3"
+  Bios/MGBA:
+    cores:
+    - mgba
+    devices:
+    - h700
+    - tg5040
+    - tg5050
+    source_ref: "skeleton/EXTRAS/Emus/h700/MGBA.pak/launch.sh:3"
+  Bios/MSX:
+    cores:
+    - bluemsx
+    devices:
+    - h700
+    - tg5040
+    - tg5050
+    source_ref: "skeleton/EXTRAS/Emus/h700/MSX.pak/launch.sh:3"
+  Bios/NGP:
+    cores:
+    - race
+    devices:
+    - h700
+    - tg5040
+    - tg5050
+    source_ref: "skeleton/EXTRAS/Emus/h700/NGP.pak/launch.sh:3"
+  Bios/NGPC:
+    cores:
+    - race
+    devices:
+    - h700
+    - tg5040
+    - tg5050
+    source_ref: "skeleton/EXTRAS/Emus/h700/NGPC.pak/launch.sh:3"
+  Bios/P8:
+    cores:
+    - fake08
+    devices:
+    - h700
+    - tg5040
+    - tg5050
+    source_ref: "skeleton/EXTRAS/Emus/h700/P8.pak/launch.sh:3"
+  Bios/PCE:
+    cores:
+    - mednafen_pce_fast
+    devices:
+    - h700
+    - tg5040
+    - tg5050
+    source_ref: "skeleton/EXTRAS/Emus/h700/PCE.pak/launch.sh:3"
+  Bios/PET:
+    cores:
+    - vice_xpet
+    devices:
+    - h700
+    - tg5040
+    - tg5050
+    source_ref: "skeleton/EXTRAS/Emus/h700/PET.pak/launch.sh:3"
+  Bios/PKM:
+    cores:
+    - pokemini
+    devices:
+    - h700
+    - tg5040
+    - tg5050
+    source_ref: "skeleton/EXTRAS/Emus/h700/PKM.pak/launch.sh:3"
+  Bios/PLUS4:
+    cores:
+    - vice_xplus4
+    devices:
+    - h700
+    - tg5040
+    - tg5050
+    source_ref: "skeleton/EXTRAS/Emus/h700/PLUS4.pak/launch.sh:3"
+  Bios/PRBOOM:
+    cores:
+    - prboom
+    devices:
+    - h700
+    - tg5040
+    - tg5050
+    source_ref: "skeleton/EXTRAS/Emus/h700/PRBOOM.pak/launch.sh:7"
+  Bios/PS:
+    cores:
+    - pcsx_rearmed
+    devices:
+    - desktop
+    - h700
+    - tg5040
+    - tg5050
+    source_ref: "skeleton/SYSTEM/desktop/paks/Emus/PS.pak/launch.sh:3"
+  Bios/PUAE:
+    cores:
+    - puae2021
+    devices:
+    - h700
+    - tg5040
+    - tg5050
+    source_ref: "skeleton/EXTRAS/Emus/h700/PUAE.pak/launch.sh:3"
+  Bios/SEGACD:
+    cores:
+    - picodrive
+    devices:
+    - h700
+    - tg5040
+    - tg5050
+    source_ref: "skeleton/EXTRAS/Emus/h700/SEGACD.pak/launch.sh:3"
+  Bios/SFC:
+    cores:
+    - snes9x
+    devices:
+    - desktop
+    - h700
+    - tg5040
+    - tg5050
+    source_ref: "skeleton/SYSTEM/desktop/paks/Emus/SFC.pak/launch.sh:3"
+  Bios/SG1000:
+    cores:
+    - picodrive
+    devices:
+    - h700
+    - tg5040
+    - tg5050
+    source_ref: "skeleton/EXTRAS/Emus/h700/SG1000.pak/launch.sh:3"
+  Bios/SGB:
+    cores:
+    - mgba
+    devices:
+    - h700
+    - tg5040
+    - tg5050
+    source_ref: "skeleton/EXTRAS/Emus/h700/SGB.pak/launch.sh:3"
+  Bios/SMS:
+    cores:
+    - picodrive
+    devices:
+    - h700
+    - tg5040
+    - tg5050
+    source_ref: "skeleton/EXTRAS/Emus/h700/SMS.pak/launch.sh:3"
+  Bios/SUPA:
+    cores:
+    - mednafen_supafaust
+    devices:
+    - h700
+    - tg5040
+    - tg5050
+    source_ref: "skeleton/EXTRAS/Emus/h700/SUPA.pak/launch.sh:3"
+  Bios/VB:
+    cores:
+    - mednafen_vb
+    devices:
+    - h700
+    - tg5040
+    - tg5050
+    source_ref: "skeleton/EXTRAS/Emus/h700/VB.pak/launch.sh:3"
+  Bios/VIC:
+    cores:
+    - vice_xvic
+    devices:
+    - h700
+    - tg5040
+    - tg5050
+    source_ref: "skeleton/EXTRAS/Emus/h700/VIC.pak/launch.sh:3"
+core_repositories:
+  a5200:
+  - "https://github.com/libretro/a5200"
+  bluemsx:
+  - "https://github.com/libretro/blueMSX-libretro"
+  cap32:
+  - "https://github.com/libretro/libretro-cap32"
+  fake08:
+  - "https://github.com/jtothebell/fake-08"
+  fbneo:
+  - "https://github.com/libretro/FBNeo"
+  fceumm:
+  - "https://github.com/libretro/libretro-fceumm"
+  gambatte:
+  - "https://github.com/libretro/gambatte-libretro"
+  gearcoleco:
+  - "https://github.com/drhelius/Gearcoleco"
+  gpsp:
+  - "https://github.com/libretro/gpsp"
+  handy:
+  - "https://github.com/libretro/libretro-handy"
+  mednafen_pce_fast:
+  - "https://github.com/libretro/beetle-pce-fast-libretro"
+  mednafen_supafaust:
+  - "https://github.com/libretro/supafaust"
+  mednafen_vb:
+  - "https://github.com/libretro/beetle-vb-libretro"
+  mgba:
+  - "https://github.com/libretro/mgba"
+  pcsx_rearmed:
+  - "https://github.com/libretro/pcsx_rearmed"
+  picodrive:
+  - "https://github.com/irixxxx/picodrive"
+  pokemini:
+  - "https://github.com/libretro/PokeMini"
+  prboom:
+  - "https://github.com/libretro/libretro-prboom"
+  prosystem:
+  - "https://github.com/libretro/prosystem-libretro"
+  puae2021:
+  - "https://github.com/libretro/libretro-uae"
+  race:
+  - "https://github.com/libretro/race"
+  snes9x:
+  - "https://github.com/libretro/snes9x"
+  stella2014:
+  - "https://github.com/libretro/stella2014-libretro"
+  vice_x128:
+  - "https://github.com/libretro/vice-libretro"
+  vice_x64:
+  - "https://github.com/libretro/vice-libretro"
+  vice_xpet:
+  - "https://github.com/libretro/vice-libretro"
+  vice_xplus4:
+  - "https://github.com/libretro/vice-libretro"
+  vice_xvic:
+  - "https://github.com/libretro/vice-libretro"
+systems: {}

@@ -2158,7 +2158,9 @@ def generate_platform_page(
                 f"| Contributed by | [@{username}](https://github.com/{username}):"
                 f" {contribution}{pr_link} |"
             )
-    lines.extend(["", *_platform_install_block(name, display)])
+    detect = ((registry or {}).get(name, {}).get("install") or {}).get("detect") or []
+    on_card = any(rule.get("method") == "card_marker" for rule in detect)
+    lines.extend(["", *_platform_install_block(name, display, on_card)])
     lines.extend(
         [
             "",
@@ -3565,9 +3567,35 @@ def _install_block(name: str, profile: dict) -> list[str]:
     ]
 
 
-def _platform_install_block(name: str, display: str) -> list[str]:
+def _platform_install_block(name: str, display: str, on_card: bool = False) -> list[str]:
     """The platform's pack, installed file by file: what the ZIP holds, with
-    resume, verification and only what is missing."""
+    resume, verification and only what is missing.
+
+    ``on_card``: the files go on the frontend's SD card, installed from the
+    computer it is mounted on, whose root is named.
+    """
+    if on_card:
+        return [
+            '???+ tip "Install with one command"',
+            "",
+            f"    With the {display} SD card mounted, the installer downloads the files "
+            "of the pack that are missing or differ from it into `Bios/<TAG>/` on "
+            "the card, checks each one, and resumes where it stopped. `--dest` "
+            "names the card's root.",
+            "",
+            "    Linux, macOS:",
+            "",
+            "    ```sh",
+            f"    {install_command('sh', f'--platform {name} --dest /path/to/card')}",
+            "    ```",
+            "",
+            "    Windows (PowerShell, E: being the card):",
+            "",
+            "    ```powershell",
+            "    " + install_command("powershell", f"--platform {name} --dest E:\\"),
+            "    ```",
+            "",
+        ]
     return [
         '???+ tip "Install with one command"',
         "",

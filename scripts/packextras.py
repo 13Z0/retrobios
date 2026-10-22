@@ -15,7 +15,7 @@ from common import load_emulator_profiles
 from common import resolution_is_hash_exact
 from common import resolve_local_file
 from common import resolve_platform_cores
-from common import platform_layouts
+from common import core_system_dirs, platform_layouts, system_dir_path
 from common import standalone_set as platform_standalone_set
 from common import sanitize_pack_path
 from common import size_fits
@@ -331,7 +331,9 @@ def _extra_dest(u: dict) -> str:
     the file's name after it ("cafeLibs/" + "snd_user.rpl").
     """
     archive = u.get("archive")
-    raw = archive if archive else (u.get("path") or u["name"])
+    # An archive goes at the root of the core's system directory, which a
+    # platform handing each core its own folder writes in the path.
+    raw = (u.get("path") or archive) if archive else (u.get("path") or u["name"])
     return f"{raw}{u['name']}" if raw.endswith("/") else raw
 
 
@@ -479,6 +481,8 @@ def _agnostic_scan_extras(
                     seed = f.get("path") or ""
                     if standalone:
                         seed = f.get("standalone_path") or seed
+                    else:
+                        seed = system_dir_path(f, seed or fname)
                     folder = seed.rsplit("/", 1)[0] if "/" in seed else ""
                     dest = f"{folder}/{scan_name}" if folder else scan_name
                     full_dest = f"{extras_prefix}/{dest}" if extras_prefix else dest
@@ -727,6 +731,7 @@ def _archive_prefix_extras(
     extras_prefix: str,
     by_name: dict,
     taken: dict[str, dict] | None = None,
+    standalone_set: set[str] | None = None,
 ) -> list[dict]:
     """A second copy of an archive under the subdirectory a core reads.
 
@@ -744,45 +749,75 @@ def _archive_prefix_extras(
             continue
         if emu_name not in relevant:
             continue
-        prefix = profile.get("archive_prefix", "")
-        if not prefix:
+        # A platform that hands each core its own system directory moves the
+        # subfolder with it, once per directory.
+        views = [profile]
+        if core_system_dirs(emu_name, profile, standalone_set or set()) is not None:
+            views = [
+                view for view, standalone
+                in platform_layouts(emu_name, profile, standalone_set or set())
+                if not standalone
+            ]
+        for view in views:
+            extras.extend(_archive_prefix_copies(
+                emu_name, view, covered_names, seen_dests, extras_prefix,
+                by_name, taken,
+            ))
+    return extras
+
+
+def _archive_prefix_copies(
+    emu_name: str,
+    profile: dict,
+    covered_names: set,
+    seen_dests: set,
+    extras_prefix: str,
+    by_name: dict,
+    taken: dict[str, dict] | None,
+) -> list[dict]:
+    """The prefixed copies of one layout's archives."""
+    extras: list[dict] = []
+    prefix = profile.get("archive_prefix", "")
+    if not prefix:
+        return extras
+    profile_archives: dict[str, dict] = {}
+    for f in profile.get("files", []):
+        archive = f.get("archive", "")
+        if archive:
+            profile_archives.setdefault(archive, f)
+    for archive_name, archive_entry in sorted(profile_archives.items()):
+        if archive_name not in covered_names:
             continue
-        profile_archives: dict[str, dict] = {}
-        for f in profile.get("files", []):
-            archive = f.get("archive", "")
-            if archive:
-                profile_archives.setdefault(archive, f)
-        for archive_name, archive_entry in sorted(profile_archives.items()):
-            if archive_name not in covered_names:
-                continue
-            dest = f"{prefix}/{archive_name}"
-            full_dest = f"{extras_prefix}/{dest}" if extras_prefix else dest
-            if full_dest in seen_dests and (taken is None or full_dest not in taken):
-                continue
-            if not by_name.get(archive_name):
-                continue
-            extra = {
-                "name": archive_name,
-                "destination": dest,
-                "required": True,
-                "hle_fallback": False,
-                "source_emulator": profile.get("emulator", emu_name),
-                "source_profile": emu_name,
-                # Keyed as the gap report keys an archive: name and path alike.
-                "source_name": archive_name,
-                "source_path": archive_name,
-                "category": archive_entry.get("category", "bios"),
-                "source_system": archive_entry.get("system"),
-                "source_systems": entry_system_ids(archive_entry, profile),
-                "region": archive_entry.get("region"),
-                "variant_group": archive_entry.get("variant_group"),
-            }
-            members = archive_members(archive_name, profile.get("files", []))
-            if members:
-                extra["members"] = members
-            extra["claim_order"] = (3, 0, emu_name)
-            if _take(extra, full_dest, seen_dests, taken):
-                extras.append(extra)
+        dest = f"{prefix}/{archive_name}"
+        full_dest = f"{extras_prefix}/{dest}" if extras_prefix else dest
+        if full_dest in seen_dests and (taken is None or full_dest not in taken):
+            continue
+        if not by_name.get(archive_name):
+            continue
+        extra = {
+            "name": archive_name,
+            "destination": dest,
+            "required": True,
+            "hle_fallback": False,
+            "source_emulator": profile.get("emulator", emu_name),
+            "source_profile": emu_name,
+            # Keyed as the gap report keys an archive: name and path alike.
+            "source_name": archive_name,
+            "source_path": system_dir_path(archive_entry, archive_name),
+            "category": archive_entry.get("category", "bios"),
+            "source_system": archive_entry.get("system"),
+            "source_systems": entry_system_ids(archive_entry, profile),
+            "region": archive_entry.get("region"),
+            "variant_group": archive_entry.get("variant_group"),
+        }
+        members = archive_members(archive_name, profile.get("files", []))
+        if members:
+            extra["members"] = members
+        if archive_entry.get("system_dir"):
+            extra["system_dir"] = archive_entry["system_dir"]
+        extra["claim_order"] = (3, 0, emu_name)
+        if _take(extra, full_dest, seen_dests, taken):
+            extras.append(extra)
 
     return extras
 
@@ -1046,7 +1081,7 @@ def _collect_emulator_extras(
                 if is_standalone:
                     raw = f.get("standalone_path") or f.get("path") or fname
                 else:
-                    raw = f.get("path") or fname
+                    raw = system_dir_path(f, f.get("path") or fname)
                 dest = f"{raw}{fname}" if raw.endswith("/") else raw
                 # A bare name is a destination too: the core reads it at the root
                 # of the directory core files go to, which the platform may not
@@ -1087,6 +1122,8 @@ def _collect_emulator_extras(
                         extra[identity] = f[identity]
                 if f.get("contents"):
                     extra["contents"] = f["contents"]
+                if f.get("system_dir"):
+                    extra["system_dir"] = f["system_dir"]
                 extra["claim_order"] = (2, 0, emu_name)
                 if _take(extra, full_dest, seen_dests, taken):
                     extras.append(extra)
@@ -1094,7 +1131,7 @@ def _collect_emulator_extras(
     extras.extend(
         _archive_prefix_extras(
             profiles, relevant, covered_names, seen_dests, extras_prefix,
-            by_name, taken,
+            by_name, taken, standalone_set,
         )
     )
 
@@ -1211,6 +1248,8 @@ def _report_extra(u: dict, name: str, dest: str) -> dict:
     }
     if u.get("members"):
         extra["members"] = u["members"]
+    if u.get("system_dir"):
+        extra["system_dir"] = u["system_dir"]
     # The archive layout the core opens ranks same-named copies by what
     # they hold. Without it the first copy indexed won.
     if u.get("contents"):

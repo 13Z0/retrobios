@@ -35,6 +35,7 @@ from common import (
     resolve_platform_cores,
     platform_layouts,
     standalone_set as platform_standalone_set,
+    system_dir_path,
     variant_base_name,
 )
 from packresolve import preferred_entries
@@ -227,7 +228,7 @@ def profile_claims(
                 dest = (
                     (entry.get("standalone_path") or entry.get("path"))
                     if is_standalone
-                    else entry.get("path")
+                    else system_dir_path(entry, entry.get("path") or entry.get("name") or "")
                 ) or entry.get("name") or ""
                 if not dest:
                     continue
@@ -299,8 +300,12 @@ def _archive_claims(
         members = entry.get("members")
         if not members:
             continue
-        system = next(f.get("system") for f in files if f.get("archive") == archive)
-        for dest in (archive, f"{prefix}/{archive}") if prefix else (archive,):
+        member = next(f for f in files if f.get("archive") == archive)
+        system = member.get("system")
+        if member.get("system_dir"):
+            entry = {**entry, "system_dir": member["system_dir"]}
+        root = system_dir_path(entry, archive)
+        for dest in (root, f"{prefix}/{archive}") if prefix else (root,):
             if placement is None:
                 full = f"{base_dest}/{dest}" if base_dest else dest
             else:

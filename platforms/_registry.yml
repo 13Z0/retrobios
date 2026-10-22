@@ -918,3 +918,86 @@ platforms:
         method: path_exists
         path: /media/fat/MiSTer
         bios_path: /media/fat/games
+  minui:
+    config: minui.yml
+    status: active
+    # The card root: minarch hands each core SDCARD_PATH/Bios/<TAG>
+    # (workspace/all/minarch/minarch.c:2943).
+    extract_to: <SD card>/
+    logo: https://avatars.githubusercontent.com/u/225589
+    scraper: minui
+    # minarch hands each core a folder and names no file (workspace/all/minarch/minarch.c:2943):
+    # there is no BIOS list of its own to export corrected.
+    native_list: none
+    source_url: https://github.com/shauninman/MinUI
+    source_format: pak_launch_scripts
+    hash_type: sha1
+    # The primary card is formatted FAT32 (skeleton/BASE/README.txt:15).
+    case_insensitive_fs: true
+    schedule: null
+    target_scraper: null
+    target_source: null
+    install:
+      detect:
+      # The release zip holds the build's SYSTEM tree as .system/ at the card
+      # root with version.txt, whose first line is the release name
+      # (makefile:22-24, 152-157). The installer runs on the computer the
+      # card is mounted on and reads it from --dest.
+      - os: any
+        method: card_marker
+        file: .system/version.txt
+        first_line_prefix: MinUI-
+  nextui:
+    config: nextui.yml
+    status: active
+    # minarch hands each core SDCARD_PATH/Bios/<TAG>
+    # (workspace/all/minarch/ma_core.c:76).
+    extract_to: <SD card>/
+    logo: https://avatars.githubusercontent.com/u/202386615
+    scraper: nextui
+    # minarch hands each core a folder and names no file (workspace/all/minarch/ma_core.c:76):
+    # there is no BIOS list of its own to export corrected.
+    native_list: none
+    source_url: https://github.com/LoveRetro/NextUI
+    source_format: pak_launch_scripts
+    hash_type: sha1
+    # The primary card is formatted FAT32 (skeleton/BASE/README.txt:17).
+    case_insensitive_fs: true
+    schedule: null
+    target_scraper: null
+    target_source: null
+    install:
+      detect:
+      # makefile:33-35 and 249: version.txt in .system/, first line the
+      # release name.
+      - os: any
+        method: card_marker
+        file: .system/version.txt
+        first_line_prefix: NextUI-
+  myminui:
+    config: myminui.yml
+    status: active
+    # minarch hands each core SDCARD_PATH/Bios/<TAG>
+    # (workspace/all/minarch/minarch.c:3532).
+    extract_to: <SD card>/
+    logo: https://avatars.githubusercontent.com/u/10894566
+    scraper: myminui
+    # minarch hands each core a folder and names no file (workspace/all/minarch/minarch.c:3532):
+    # there is no BIOS list of its own to export corrected.
+    native_list: none
+    source_url: https://github.com/Turro75/MyMinUI
+    source_format: pak_launch_scripts
+    hash_type: sha1
+    # The card is formatted FAT32 (MANUAL.md:13).
+    case_insensitive_fs: true
+    schedule: null
+    target_scraper: null
+    target_source: null
+    install:
+      detect:
+      # makefile:16-19 and 124: version.txt in .system/, first line the
+      # release name.
+      - os: any
+        method: card_marker
+        file: .system/version.txt
+        first_line_prefix: MyMinUI-

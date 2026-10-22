@@ -1,0 +1,1145 @@
+{
+  "manifest_version": 2,
+  "source": "full",
+  "regions": [],
+  "platform": "minui",
+  "display_name": "MinUI",
+  "version": "1.0",
+  "generated": "2026-10-21T11:20:26Z",
+  "base_destination": "",
+  "detect": [
+    {
+      "os": "any",
+      "method": "card_marker",
+      "file": ".system/version.txt",
+      "first_line_prefix": "MinUI-"
+    }
+  ],
+  "standalone_copies": [],
+  "total_files": 78,
+  "total_size": 9888157,
+  "pack_files": 80,
+  "pack_size": 9888157,
+  "total_omitted": 0,
+  "omitted_files": [],
+  "core_names": {
+    "mednafen_pce_fast": [
+      "beetle_pce_fast",
+      "pce_fast"
+    ],
+    "mgba": [
+      "mgba_fork"
+    ],
+    "pcsx_rearmed": [
+      "pcsx_rearmed_interpreter",
+      "pcsx_rearmed_neon"
+    ]
+  },
+  "system_cores": {},
+  "system_names": {},
+  "files": [
+    {
+      "dest": "Bios/MGBA/gb_bios.bin",
+      "sha1": "4ed31ec6b0b175bb109c0eb5fd3d193da823339f",
+      "sha256": "cf053eccb4ccafff9e67339d4e78e98dce7d1ed59be819d2a1ba2232c6fce1c7",
+      "size": 256,
+      "repo_path": "bios/Nintendo/Game Boy/GB_dmg.bin",
+      "cores": [
+        "mgba"
+      ]
+    },
+    {
+      "dest": "Bios/MGBA/gbc_bios.bin",
+      "sha1": "1293d68bf9643bc4f36954c1e80e38f39864528d",
+      "sha256": "b4f2e416a35eef52cba161b159c7c8523a92594facb924b3ede0d722867c50c7",
+      "size": 2304,
+      "repo_path": "bios/Nintendo/Game Boy Color/GBC_cgb.bin",
+      "cores": [
+        "mgba"
+      ]
+    },
+    {
+      "dest": "Bios/MGBA/sgb_bios.bin",
+      "sha1": "aa2f50a77dfb4823da96ba99309085a3c6278515",
+      "sha256": "0e4ddff32fc9d1eeaae812a157dd246459b00c9e14f2f61751f661f32361e360",
+      "size": 256,
+      "repo_path": "bios/Nintendo/Game Boy/GB_sgb.bin",
+      "cores": [
+        "mgba"
+      ]
+    },
+    {
+      "dest": "Bios/SGB/gb_bios.bin",
+      "sha1": "4ed31ec6b0b175bb109c0eb5fd3d193da823339f",
+      "sha256": "cf053eccb4ccafff9e67339d4e78e98dce7d1ed59be819d2a1ba2232c6fce1c7",
+      "size": 256,
+      "repo_path": "bios/Nintendo/Game Boy/GB_dmg.bin",
+      "cores": [
+        "mgba"
+      ]
+    },
+    {
+      "dest": "Bios/SGB/gbc_bios.bin",
+      "sha1": "1293d68bf9643bc4f36954c1e80e38f39864528d",
+      "sha256": "b4f2e416a35eef52cba161b159c7c8523a92594facb924b3ede0d722867c50c7",
+      "size": 2304,
+      "repo_path": "bios/Nintendo/Game Boy Color/GBC_cgb.bin",
+      "cores": [
+        "mgba"
+      ]
+    },
+    {
+      "dest": "Bios/SGB/sgb_bios.bin",
+      "sha1": "aa2f50a77dfb4823da96ba99309085a3c6278515",
+      "sha256": "0e4ddff32fc9d1eeaae812a157dd246459b00c9e14f2f61751f661f32361e360",
+      "size": 256,
+      "repo_path": "bios/Nintendo/Game Boy/GB_sgb.bin",
+      "cores": [
+        "mgba"
+      ]
+    },
+    {
+      "dest": "Bios/FC/disksys.rom",
+      "sha1": "57fe1bdee955bb48d357e463ccbf129496930b62",
+      "sha256": "99c18490ed9002d9c6d999b9d8d15be5c051bdfa7cc7e73318053c9a994b0178",
+      "size": 8192,
+      "repo_path": "bios/Arcade/FBNeo/fdsbios.nes",
+      "cores": [
+        "fceumm"
+      ]
+    },
+    {
+      "dest": "Bios/FC/gamegenie.nes",
+      "sha1": "f430a0d752a9fa0c7032db8131f9090d18f71779",
+      "sha256": "623ee3c09a175b3e5ccb15a295d17b135b9f3cc30397bbd781a5ba0a41ec6d48",
+      "size": 24592,
+      "repo_path": "bios/Nintendo/NES/gamegenie.nes",
+      "cores": [
+        "fceumm"
+      ]
+    },
+    {
+      "dest": "Bios/FC/nes.pal",
+      "sha1": "37027d92e1015b82a7dc5c43e9f1649a961577ab",
+      "sha256": "26072575abb8a28c1f541b8cbcf6386a9bb136c6ff397fc76d649b8e10f220fb",
+      "size": 192,
+      "repo_path": "bios/Nintendo/NES/nes.pal",
+      "cores": [
+        "fceumm"
+      ]
+    },
+    {
+      "dest": "Bios/GB/gb_bios.bin",
+      "sha1": "4ed31ec6b0b175bb109c0eb5fd3d193da823339f",
+      "sha256": "cf053eccb4ccafff9e67339d4e78e98dce7d1ed59be819d2a1ba2232c6fce1c7",
+      "size": 256,
+      "repo_path": "bios/Nintendo/Game Boy/GB_dmg.bin",
+      "cores": [
+        "gambatte"
+      ]
+    },
+    {
+      "dest": "Bios/GB/gbc_bios.bin",
+      "sha1": "1293d68bf9643bc4f36954c1e80e38f39864528d",
+      "sha256": "b4f2e416a35eef52cba161b159c7c8523a92594facb924b3ede0d722867c50c7",
+      "size": 2304,
+      "repo_path": "bios/Nintendo/Game Boy Color/GBC_cgb.bin",
+      "cores": [
+        "gambatte"
+      ]
+    },
+    {
+      "dest": "Bios/GBC/gb_bios.bin",
+      "sha1": "4ed31ec6b0b175bb109c0eb5fd3d193da823339f",
+      "sha256": "cf053eccb4ccafff9e67339d4e78e98dce7d1ed59be819d2a1ba2232c6fce1c7",
+      "size": 256,
+      "repo_path": "bios/Nintendo/Game Boy/GB_dmg.bin",
+      "cores": [
+        "gambatte"
+      ]
+    },
+    {
+      "dest": "Bios/GBC/gbc_bios.bin",
+      "sha1": "1293d68bf9643bc4f36954c1e80e38f39864528d",
+      "sha256": "b4f2e416a35eef52cba161b159c7c8523a92594facb924b3ede0d722867c50c7",
+      "size": 2304,
+      "repo_path": "bios/Nintendo/Game Boy Color/GBC_cgb.bin",
+      "cores": [
+        "gambatte"
+      ]
+    },
+    {
+      "dest": "Bios/GBA/gba_bios.bin",
+      "sha1": "300c20df6731a33952ded8c436f7f186d25d3492",
+      "sha256": "fd2547724b505f487e6dcb29ec2ecff3af35a841a77ab2e85fd87350abd36570",
+      "size": 16384,
+      "repo_path": "bios/Nintendo/Game Boy Advance/GBA_bios.rom",
+      "cores": [
+        "gpsp"
+      ]
+    },
+    {
+      "dest": "Bios/PCE/syscard3.pce",
+      "sha1": "79f5ff55dd10187c7fd7b8daab0b3ffbd1f56a2c",
+      "sha256": "e11527b3b96ce112a037138988ca72fd117a6b0779c2480d9e03eaebece3d9ce",
+      "size": 262144,
+      "repo_path": "bios/NEC/PC Engine/syscard3.pce",
+      "cores": [
+        "mednafen_pce_fast"
+      ]
+    },
+    {
+      "dest": "Bios/PCE/syscard2.pce",
+      "sha1": "88da02e2503f7c32810f5d93a34849d470742b6d",
+      "sha256": "0deb13845c7e44ea78a25bbbe324afd60a0ec29ea5a4cf5780349f1598d24cd3",
+      "size": 262144,
+      "repo_path": "bios/NEC/PC Engine/syscard2.pce",
+      "cores": [
+        "mednafen_pce_fast"
+      ]
+    },
+    {
+      "dest": "Bios/PCE/syscard1.pce",
+      "sha1": "a39a66da7de6ba94ab84d04eef7afeec7d4ee66a",
+      "sha256": "afe9f27f91ac918348555b86298b4f984643eafa2773196f2c5441ea84f0c3bb",
+      "size": 262144,
+      "repo_path": "bios/NEC/PC Engine/syscard1.pce",
+      "cores": [
+        "mednafen_pce_fast"
+      ]
+    },
+    {
+      "dest": "Bios/PCE/gexpress.pce",
+      "sha1": "014881a959e045e00f4db8f52955200865d40280",
+      "sha256": "4b86bb96a48a4ca8375fc0109631d0b1d64f255a03b01de70594d40788ba6c3d",
+      "size": 32768,
+      "repo_path": "bios/NEC/PC Engine/gecard.pce",
+      "cores": [
+        "mednafen_pce_fast"
+      ]
+    },
+    {
+      "dest": "Bios/PCE/syscard3u.pce",
+      "sha1": "d02611d99921986147c753df14c7349b31d71950",
+      "sha256": "cadac2725711b3c442bcf237b02f5a5210c96f17625c35fa58f009e0ed39e4db",
+      "size": 262144,
+      "repo_path": "bios/NEC/PC Engine/syscard3u.pce",
+      "cores": [
+        "mednafen_pce_fast"
+      ]
+    },
+    {
+      "dest": "Bios/PCE/syscard2u.pce",
+      "sha1": "2bea3dac98f84b2f2f469fa77ea720b8770d598d",
+      "sha256": "edba5be43803b180e1d64ca678c3f8bdbf07180c9e2a65a5db69ad635951e6cc",
+      "size": 262144,
+      "repo_path": "bios/NEC/PC Engine/syscard2u.pce",
+      "cores": [
+        "mednafen_pce_fast"
+      ]
+    },
+    {
+      "dest": "Bios/MGBA/gba_bios.bin",
+      "sha1": "300c20df6731a33952ded8c436f7f186d25d3492",
+      "sha256": "fd2547724b505f487e6dcb29ec2ecff3af35a841a77ab2e85fd87350abd36570",
+      "size": 16384,
+      "repo_path": "bios/Nintendo/Game Boy Advance/GBA_bios.rom",
+      "cores": [
+        "mgba"
+      ]
+    },
+    {
+      "dest": "Bios/SGB/gba_bios.bin",
+      "sha1": "300c20df6731a33952ded8c436f7f186d25d3492",
+      "sha256": "fd2547724b505f487e6dcb29ec2ecff3af35a841a77ab2e85fd87350abd36570",
+      "size": 16384,
+      "repo_path": "bios/Nintendo/Game Boy Advance/GBA_bios.rom",
+      "cores": [
+        "mgba"
+      ]
+    },
+    {
+      "dest": "Bios/PS/scph5500.bin",
+      "sha1": "b05def971d8ec59f346f2d9ac21fb742e3eb6917",
+      "sha256": "9c0421858e217805f4abe18698afea8d5aa36ff0727eb8484944e00eb5e7eadb",
+      "size": 524288,
+      "repo_path": "bios/Sony/PlayStation/scph5500.bin",
+      "cores": [
+        "pcsx_rearmed"
+      ],
+      "regions": [
+        "japan"
+      ],
+      "region_groups": [
+        "sony-playstation"
+      ]
+    },
+    {
+      "dest": "Bios/PS/scph5501.bin",
+      "sha1": "0555c6fae8906f3f09baf5988f00e55f88e9f30b",
+      "sha256": "11052b6499e466bbf0a709b1f9cb6834a9418e66680387912451e971cf8a1fef",
+      "size": 524288,
+      "repo_path": "bios/Sony/PlayStation/scph5501.bin",
+      "cores": [
+        "pcsx_rearmed"
+      ],
+      "regions": [
+        "latin-america",
+        "north-america"
+      ],
+      "region_groups": [
+        "sony-playstation"
+      ]
+    },
+    {
+      "dest": "Bios/PS/scph5502.bin",
+      "sha1": "f6bc2d1f5eb6593de7d089c425ac681d6fffd3f0",
+      "sha256": "1faaa18fa820a0225e488d9f086296b8e6c46df739666093987ff7d8fd352c09",
+      "size": 524288,
+      "repo_path": "bios/Sony/PlayStation/scph5502.bin",
+      "cores": [
+        "pcsx_rearmed"
+      ],
+      "regions": [
+        "europe",
+        "oceania"
+      ],
+      "region_groups": [
+        "sony-playstation"
+      ]
+    },
+    {
+      "dest": "Bios/PS/psxonpsp660.bin",
+      "sha1": "96880d1ca92a016ff054be5159bb06fe03cb4e14",
+      "sha256": "cbe758e1c8ece593c8e14ce1e8b3436428a01c608032a02613b3a4b442b4d712",
+      "size": 524288,
+      "repo_path": "bios/Sony/PlayStation/psxonpsp660.bin",
+      "cores": [
+        "pcsx_rearmed"
+      ],
+      "regions": [
+        "japan"
+      ],
+      "region_groups": [
+        "sony-playstation"
+      ]
+    },
+    {
+      "dest": "Bios/PS/scph101.bin",
+      "sha1": "dcffe16bd90a723499ad46c641424981338d8378",
+      "sha256": "aca9cbfa974b933646baad6556a867eca9b81ce65d8af343a7843f7775b9ffc8",
+      "size": 524288,
+      "repo_path": "bios/Sony/PlayStation/scph101.bin",
+      "cores": [
+        "pcsx_rearmed"
+      ],
+      "regions": [
+        "latin-america",
+        "north-america"
+      ],
+      "region_groups": [
+        "sony-playstation"
+      ]
+    },
+    {
+      "dest": "Bios/PS/scph7001.bin",
+      "sha1": "14df4f6c1e367ce097c11deae21566b4fe5647a9",
+      "sha256": "39dcc1a0717036c9b6ac52fefd1ee7a57d3808e8cfbc755879fa685a0a738278",
+      "size": 524288,
+      "repo_path": "bios/Sony/PlayStation/scph7001.bin",
+      "cores": [
+        "pcsx_rearmed"
+      ],
+      "regions": [
+        "latin-america",
+        "north-america"
+      ],
+      "region_groups": [
+        "sony-playstation"
+      ]
+    },
+    {
+      "dest": "Bios/PS/scph1001.bin",
+      "sha1": "10155d8d6e6e832d6ea66db9bc098321fb5e8ebf",
+      "sha256": "71af94d1e47a68c11e8fdb9f8368040601514a42a5a399cda48c7d3bff1e99d3",
+      "size": 524288,
+      "repo_path": "bios/Sony/PlayStation/scph1001.bin",
+      "cores": [
+        "pcsx_rearmed"
+      ],
+      "regions": [
+        "latin-america",
+        "north-america"
+      ],
+      "region_groups": [
+        "sony-playstation"
+      ]
+    },
+    {
+      "dest": "Bios/GG/carthw.cfg",
+      "sha1": "d3fe0b958705e4cb5eeb7822e60d474204df4bd3",
+      "sha256": "107438c14367af32fe08a731aee9255d5aa5ee444723969a799c546e4ad402f1",
+      "size": 16367,
+      "repo_path": "bios/Sega/Mega Drive/carthw.cfg",
+      "cores": [
+        "picodrive"
+      ]
+    },
+    {
+      "dest": "Bios/GG/us_scd2_9306.bin",
+      "sha1": "5adb6c3af218c60868e6b723ec47e36bbdf5e6f0",
+      "sha256": "b1c2036b79467514eaaa69c76e5ba83801621e821059caa53cb921a0b21e3af4",
+      "size": 131072,
+      "repo_path": "bios/Sega/Mega CD/us_scd2_9306.bin",
+      "cores": [
+        "picodrive"
+      ],
+      "regions": [
+        "latin-america",
+        "north-america"
+      ],
+      "region_groups": [
+        "PicoDrive:variant:mega-cd-bios"
+      ],
+      "priority": 1
+    },
+    {
+      "dest": "Bios/GG/SegaCDBIOS9303.bin",
+      "sha1": "5a8c4b91d3034c1448aac4b5dc9a6484fce51636",
+      "sha256": "fb477cdbf94c84424c2feca4fe40656d85393fe7b7b401911b45ad2eb991258c",
+      "size": 131072,
+      "repo_path": "bios/Sega/Mega CD/SegaCDBIOS9303.bin",
+      "cores": [
+        "picodrive"
+      ],
+      "regions": [
+        "latin-america",
+        "north-america"
+      ],
+      "region_groups": [
+        "PicoDrive:variant:mega-cd-bios"
+      ],
+      "priority": 2
+    },
+    {
+      "dest": "Bios/GG/us_scd1_9210.bin",
+      "sha1": "f4f315adcef9b8feb0364c21ab7f0eaf5457f3ed",
+      "sha256": "807384678ef259494d943eddb6954dfc7069693d0dde0c424e2028488d88e81a",
+      "size": 131072,
+      "repo_path": "bios/Sega/Mega CD/bios_CD_U.bin",
+      "cores": [
+        "picodrive"
+      ],
+      "regions": [
+        "latin-america",
+        "north-america"
+      ],
+      "region_groups": [
+        "PicoDrive:variant:mega-cd-bios"
+      ],
+      "priority": 3
+    },
+    {
+      "dest": "Bios/GG/bios_CD_U.bin",
+      "sha1": "f4f315adcef9b8feb0364c21ab7f0eaf5457f3ed",
+      "sha256": "807384678ef259494d943eddb6954dfc7069693d0dde0c424e2028488d88e81a",
+      "size": 131072,
+      "repo_path": "bios/Sega/Mega CD/bios_CD_U.bin",
+      "cores": [
+        "picodrive"
+      ],
+      "regions": [
+        "latin-america",
+        "north-america"
+      ],
+      "region_groups": [
+        "PicoDrive:variant:mega-cd-bios"
+      ],
+      "priority": 4
+    },
+    {
+      "dest": "Bios/GG/eu_mcd2_9306.bin",
+      "sha1": "f5f60f03501908962446ee02fc27d98694dd157d",
+      "sha256": "71eb86242d8d155ead2ab86721ef5ca236aba004018c500d46e55fc81ddd79b4",
+      "size": 131072,
+      "repo_path": "bios/Sega/Mega CD/eu_mcd2_9306.bin",
+      "cores": [
+        "picodrive"
+      ],
+      "regions": [
+        "europe",
+        "oceania"
+      ],
+      "region_groups": [
+        "PicoDrive:variant:mega-cd-bios"
+      ],
+      "priority": 1
+    },
+    {
+      "dest": "Bios/GG/eu_mcd2_9303.bin",
+      "sha1": "7063192ae9f6b696c5b81bc8f0a9fe6f0c400e58",
+      "sha256": "fe608a2a07676a23ab5fd5eee2f53c9e2526d69a28aa16ccd85c0ec42e6933cb",
+      "size": 131072,
+      "repo_path": "bios/Sega/Mega CD/eu_mcd2_9303.bin",
+      "cores": [
+        "picodrive"
+      ],
+      "regions": [
+        "europe",
+        "oceania"
+      ],
+      "region_groups": [
+        "PicoDrive:variant:mega-cd-bios"
+      ],
+      "priority": 2
+    },
+    {
+      "dest": "Bios/GG/eu_mcd1_9210.bin",
+      "sha1": "f891e0ea651e2232af0c5c4cb46a0cae2ee8f356",
+      "sha256": "16735df92fcc1d0fc6a1eced244867e95281c5006340926082b74e363e073dc4",
+      "size": 131072,
+      "repo_path": "bios/Sega/Mega CD/MCD_eu_100.bin",
+      "cores": [
+        "picodrive"
+      ],
+      "regions": [
+        "europe",
+        "oceania"
+      ],
+      "region_groups": [
+        "PicoDrive:variant:mega-cd-bios"
+      ],
+      "priority": 3
+    },
+    {
+      "dest": "Bios/GG/bios_CD_E.bin",
+      "sha1": "f891e0ea651e2232af0c5c4cb46a0cae2ee8f356",
+      "sha256": "16735df92fcc1d0fc6a1eced244867e95281c5006340926082b74e363e073dc4",
+      "size": 131072,
+      "repo_path": "bios/Sega/Mega CD/MCD_eu_100.bin",
+      "cores": [
+        "picodrive"
+      ],
+      "regions": [
+        "europe",
+        "oceania"
+      ],
+      "region_groups": [
+        "PicoDrive:variant:mega-cd-bios"
+      ],
+      "priority": 4
+    },
+    {
+      "dest": "Bios/GG/jp_mcd2_921222.bin",
+      "sha1": "d203cfe22c03ae479dd8ca33840cf8d9776eb3ff",
+      "sha256": "7133fc2dd2fe5b7d0acd53a5f10f3d00b5d31270239ad20d74ef32393e24af88",
+      "size": 131072,
+      "repo_path": "bios/Sega/Mega CD/jp_mcd2_921222.bin",
+      "cores": [
+        "picodrive"
+      ],
+      "regions": [
+        "japan"
+      ],
+      "region_groups": [
+        "PicoDrive:variant:mega-cd-bios"
+      ],
+      "priority": 1
+    },
+    {
+      "dest": "Bios/GG/jp_mcd1_9112.bin",
+      "sha1": "e4193c6ae44c3cea002707d2a88f1fbcced664de",
+      "sha256": "e8dbee3edcd1b2751c72c1d9ae0dac1aacd9203804bfc1a35ea098d8778bcb1c",
+      "size": 131072,
+      "repo_path": "bios/Sega/Mega CD/jp_mcd1_9112.bin",
+      "cores": [
+        "picodrive"
+      ],
+      "regions": [
+        "japan"
+      ],
+      "region_groups": [
+        "PicoDrive:variant:mega-cd-bios"
+      ],
+      "priority": 2
+    },
+    {
+      "dest": "Bios/GG/jp_mcd1_9111.bin",
+      "sha1": "4846f448160059a7da0215a5df12ca160f26dd69",
+      "sha256": "923eb9da740f98ab1572085e3d351e2c0982df0906b0b99efb68a9997c94cf8f",
+      "size": 131072,
+      "repo_path": "bios/Sega/Mega CD/MCD_jp_100p.bin",
+      "cores": [
+        "picodrive"
+      ],
+      "regions": [
+        "japan"
+      ],
+      "region_groups": [
+        "PicoDrive:variant:mega-cd-bios"
+      ],
+      "priority": 3
+    },
+    {
+      "dest": "Bios/GG/bios_CD_J.bin",
+      "sha1": "4846f448160059a7da0215a5df12ca160f26dd69",
+      "sha256": "923eb9da740f98ab1572085e3d351e2c0982df0906b0b99efb68a9997c94cf8f",
+      "size": 131072,
+      "repo_path": "bios/Sega/Mega CD/MCD_jp_100p.bin",
+      "cores": [
+        "picodrive"
+      ],
+      "regions": [
+        "japan"
+      ],
+      "region_groups": [
+        "PicoDrive:variant:mega-cd-bios"
+      ],
+      "priority": 4
+    },
+    {
+      "dest": "Bios/GG/32X_G_BIOS.BIN",
+      "sha1": "dbebd76a448447cb6e524ac3cb0fd19fc065d944",
+      "sha256": "a2d6b6e1544467e27d404634de6e6b0a54ed4b3babb6b71739a260e1be04ebfc",
+      "size": 256,
+      "repo_path": "bios/Sega/32X/32X_G_BIOS.BIN",
+      "cores": [
+        "picodrive"
+      ]
+    },
+    {
+      "dest": "Bios/GG/32X_M_BIOS.BIN",
+      "sha1": "1e5b0b2441a4979b6966d942b20cc76c413b8c5e",
+      "sha256": "4c6128229bd24dae5f11d3f569ca592665f141bef26cef937e2ce4d9b548cc3b",
+      "size": 2048,
+      "repo_path": "bios/Sega/32X/32X_M_BIOS.BIN",
+      "cores": [
+        "picodrive"
+      ]
+    },
+    {
+      "dest": "Bios/GG/32X_S_BIOS.BIN",
+      "sha1": "4103668c1bbd66c5e24558e73d4f3f92061a109a",
+      "sha256": "7bde4245ce00c51a23a1ce73a881752e7b14dc12416e175352a3807338e04745",
+      "size": 1024,
+      "repo_path": "bios/Sega/32X/32X_S_BIOS.BIN",
+      "cores": [
+        "picodrive"
+      ]
+    },
+    {
+      "dest": "Bios/MD/carthw.cfg",
+      "sha1": "d3fe0b958705e4cb5eeb7822e60d474204df4bd3",
+      "sha256": "107438c14367af32fe08a731aee9255d5aa5ee444723969a799c546e4ad402f1",
+      "size": 16367,
+      "repo_path": "bios/Sega/Mega Drive/carthw.cfg",
+      "cores": [
+        "picodrive"
+      ]
+    },
+    {
+      "dest": "Bios/MD/us_scd2_9306.bin",
+      "sha1": "5adb6c3af218c60868e6b723ec47e36bbdf5e6f0",
+      "sha256": "b1c2036b79467514eaaa69c76e5ba83801621e821059caa53cb921a0b21e3af4",
+      "size": 131072,
+      "repo_path": "bios/Sega/Mega CD/us_scd2_9306.bin",
+      "cores": [
+        "picodrive"
+      ],
+      "regions": [
+        "latin-america",
+        "north-america"
+      ],
+      "region_groups": [
+        "PicoDrive:variant:mega-cd-bios"
+      ],
+      "priority": 1
+    },
+    {
+      "dest": "Bios/MD/SegaCDBIOS9303.bin",
+      "sha1": "5a8c4b91d3034c1448aac4b5dc9a6484fce51636",
+      "sha256": "fb477cdbf94c84424c2feca4fe40656d85393fe7b7b401911b45ad2eb991258c",
+      "size": 131072,
+      "repo_path": "bios/Sega/Mega CD/SegaCDBIOS9303.bin",
+      "cores": [
+        "picodrive"
+      ],
+      "regions": [
+        "latin-america",
+        "north-america"
+      ],
+      "region_groups": [
+        "PicoDrive:variant:mega-cd-bios"
+      ],
+      "priority": 2
+    },
+    {
+      "dest": "Bios/MD/us_scd1_9210.bin",
+      "sha1": "f4f315adcef9b8feb0364c21ab7f0eaf5457f3ed",
+      "sha256": "807384678ef259494d943eddb6954dfc7069693d0dde0c424e2028488d88e81a",
+      "size": 131072,
+      "repo_path": "bios/Sega/Mega CD/bios_CD_U.bin",
+      "cores": [
+        "picodrive"
+      ],
+      "regions": [
+        "latin-america",
+        "north-america"
+      ],
+      "region_groups": [
+        "PicoDrive:variant:mega-cd-bios"
+      ],
+      "priority": 3
+    },
+    {
+      "dest": "Bios/MD/bios_CD_U.bin",
+      "sha1": "f4f315adcef9b8feb0364c21ab7f0eaf5457f3ed",
+      "sha256": "807384678ef259494d943eddb6954dfc7069693d0dde0c424e2028488d88e81a",
+      "size": 131072,
+      "repo_path": "bios/Sega/Mega CD/bios_CD_U.bin",
+      "cores": [
+        "picodrive"
+      ],
+      "regions": [
+        "latin-america",
+        "north-america"
+      ],
+      "region_groups": [
+        "PicoDrive:variant:mega-cd-bios"
+      ],
+      "priority": 4
+    },
+    {
+      "dest": "Bios/MD/eu_mcd2_9306.bin",
+      "sha1": "f5f60f03501908962446ee02fc27d98694dd157d",
+      "sha256": "71eb86242d8d155ead2ab86721ef5ca236aba004018c500d46e55fc81ddd79b4",
+      "size": 131072,
+      "repo_path": "bios/Sega/Mega CD/eu_mcd2_9306.bin",
+      "cores": [
+        "picodrive"
+      ],
+      "regions": [
+        "europe",
+        "oceania"
+      ],
+      "region_groups": [
+        "PicoDrive:variant:mega-cd-bios"
+      ],
+      "priority": 1
+    },
+    {
+      "dest": "Bios/MD/eu_mcd2_9303.bin",
+      "sha1": "7063192ae9f6b696c5b81bc8f0a9fe6f0c400e58",
+      "sha256": "fe608a2a07676a23ab5fd5eee2f53c9e2526d69a28aa16ccd85c0ec42e6933cb",
+      "size": 131072,
+      "repo_path": "bios/Sega/Mega CD/eu_mcd2_9303.bin",
+      "cores": [
+        "picodrive"
+      ],
+      "regions": [
+        "europe",
+        "oceania"
+      ],
+      "region_groups": [
+        "PicoDrive:variant:mega-cd-bios"
+      ],
+      "priority": 2
+    },
+    {
+      "dest": "Bios/MD/eu_mcd1_9210.bin",
+      "sha1": "f891e0ea651e2232af0c5c4cb46a0cae2ee8f356",
+      "sha256": "16735df92fcc1d0fc6a1eced244867e95281c5006340926082b74e363e073dc4",
+      "size": 131072,
+      "repo_path": "bios/Sega/Mega CD/MCD_eu_100.bin",
+      "cores": [
+        "picodrive"
+      ],
+      "regions": [
+        "europe",
+        "oceania"
+      ],
+      "region_groups": [
+        "PicoDrive:variant:mega-cd-bios"
+      ],
+      "priority": 3
+    },
+    {
+      "dest": "Bios/MD/bios_CD_E.bin",
+      "sha1": "f891e0ea651e2232af0c5c4cb46a0cae2ee8f356",
+      "sha256": "16735df92fcc1d0fc6a1eced244867e95281c5006340926082b74e363e073dc4",
+      "size": 131072,
+      "repo_path": "bios/Sega/Mega CD/MCD_eu_100.bin",
+      "cores": [
+        "picodrive"
+      ],
+      "regions": [
+        "europe",
+        "oceania"
+      ],
+      "region_groups": [
+        "PicoDrive:variant:mega-cd-bios"
+      ],
+      "priority": 4
+    },
+    {
+      "dest": "Bios/MD/jp_mcd2_921222.bin",
+      "sha1": "d203cfe22c03ae479dd8ca33840cf8d9776eb3ff",
+      "sha256": "7133fc2dd2fe5b7d0acd53a5f10f3d00b5d31270239ad20d74ef32393e24af88",
+      "size": 131072,
+      "repo_path": "bios/Sega/Mega CD/jp_mcd2_921222.bin",
+      "cores": [
+        "picodrive"
+      ],
+      "regions": [
+        "japan"
+      ],
+      "region_groups": [
+        "PicoDrive:variant:mega-cd-bios"
+      ],
+      "priority": 1
+    },
+    {
+      "dest": "Bios/MD/jp_mcd1_9112.bin",
+      "sha1": "e4193c6ae44c3cea002707d2a88f1fbcced664de",
+      "sha256": "e8dbee3edcd1b2751c72c1d9ae0dac1aacd9203804bfc1a35ea098d8778bcb1c",
+      "size": 131072,
+      "repo_path": "bios/Sega/Mega CD/jp_mcd1_9112.bin",
+      "cores": [
+        "picodrive"
+      ],
+      "regions": [
+        "japan"
+      ],
+      "region_groups": [
+        "PicoDrive:variant:mega-cd-bios"
+      ],
+      "priority": 2
+    },
+    {
+      "dest": "Bios/MD/jp_mcd1_9111.bin",
+      "sha1": "4846f448160059a7da0215a5df12ca160f26dd69",
+      "sha256": "923eb9da740f98ab1572085e3d351e2c0982df0906b0b99efb68a9997c94cf8f",
+      "size": 131072,
+      "repo_path": "bios/Sega/Mega CD/MCD_jp_100p.bin",
+      "cores": [
+        "picodrive"
+      ],
+      "regions": [
+        "japan"
+      ],
+      "region_groups": [
+        "PicoDrive:variant:mega-cd-bios"
+      ],
+      "priority": 3
+    },
+    {
+      "dest": "Bios/MD/bios_CD_J.bin",
+      "sha1": "4846f448160059a7da0215a5df12ca160f26dd69",
+      "sha256": "923eb9da740f98ab1572085e3d351e2c0982df0906b0b99efb68a9997c94cf8f",
+      "size": 131072,
+      "repo_path": "bios/Sega/Mega CD/MCD_jp_100p.bin",
+      "cores": [
+        "picodrive"
+      ],
+      "regions": [
+        "japan"
+      ],
+      "region_groups": [
+        "PicoDrive:variant:mega-cd-bios"
+      ],
+      "priority": 4
+    },
+    {
+      "dest": "Bios/MD/32X_G_BIOS.BIN",
+      "sha1": "dbebd76a448447cb6e524ac3cb0fd19fc065d944",
+      "sha256": "a2d6b6e1544467e27d404634de6e6b0a54ed4b3babb6b71739a260e1be04ebfc",
+      "size": 256,
+      "repo_path": "bios/Sega/32X/32X_G_BIOS.BIN",
+      "cores": [
+        "picodrive"
+      ]
+    },
+    {
+      "dest": "Bios/MD/32X_M_BIOS.BIN",
+      "sha1": "1e5b0b2441a4979b6966d942b20cc76c413b8c5e",
+      "sha256": "4c6128229bd24dae5f11d3f569ca592665f141bef26cef937e2ce4d9b548cc3b",
+      "size": 2048,
+      "repo_path": "bios/Sega/32X/32X_M_BIOS.BIN",
+      "cores": [
+        "picodrive"
+      ]
+    },
+    {
+      "dest": "Bios/MD/32X_S_BIOS.BIN",
+      "sha1": "4103668c1bbd66c5e24558e73d4f3f92061a109a",
+      "sha256": "7bde4245ce00c51a23a1ce73a881752e7b14dc12416e175352a3807338e04745",
+      "size": 1024,
+      "repo_path": "bios/Sega/32X/32X_S_BIOS.BIN",
+      "cores": [
+        "picodrive"
+      ]
+    },
+    {
+      "dest": "Bios/SMS/carthw.cfg",
+      "sha1": "d3fe0b958705e4cb5eeb7822e60d474204df4bd3",
+      "sha256": "107438c14367af32fe08a731aee9255d5aa5ee444723969a799c546e4ad402f1",
+      "size": 16367,
+      "repo_path": "bios/Sega/Mega Drive/carthw.cfg",
+      "cores": [
+        "picodrive"
+      ]
+    },
+    {
+      "dest": "Bios/SMS/us_scd2_9306.bin",
+      "sha1": "5adb6c3af218c60868e6b723ec47e36bbdf5e6f0",
+      "sha256": "b1c2036b79467514eaaa69c76e5ba83801621e821059caa53cb921a0b21e3af4",
+      "size": 131072,
+      "repo_path": "bios/Sega/Mega CD/us_scd2_9306.bin",
+      "cores": [
+        "picodrive"
+      ],
+      "regions": [
+        "latin-america",
+        "north-america"
+      ],
+      "region_groups": [
+        "PicoDrive:variant:mega-cd-bios"
+      ],
+      "priority": 1
+    },
+    {
+      "dest": "Bios/SMS/SegaCDBIOS9303.bin",
+      "sha1": "5a8c4b91d3034c1448aac4b5dc9a6484fce51636",
+      "sha256": "fb477cdbf94c84424c2feca4fe40656d85393fe7b7b401911b45ad2eb991258c",
+      "size": 131072,
+      "repo_path": "bios/Sega/Mega CD/SegaCDBIOS9303.bin",
+      "cores": [
+        "picodrive"
+      ],
+      "regions": [
+        "latin-america",
+        "north-america"
+      ],
+      "region_groups": [
+        "PicoDrive:variant:mega-cd-bios"
+      ],
+      "priority": 2
+    },
+    {
+      "dest": "Bios/SMS/us_scd1_9210.bin",
+      "sha1": "f4f315adcef9b8feb0364c21ab7f0eaf5457f3ed",
+      "sha256": "807384678ef259494d943eddb6954dfc7069693d0dde0c424e2028488d88e81a",
+      "size": 131072,
+      "repo_path": "bios/Sega/Mega CD/bios_CD_U.bin",
+      "cores": [
+        "picodrive"
+      ],
+      "regions": [
+        "latin-america",
+        "north-america"
+      ],
+      "region_groups": [
+        "PicoDrive:variant:mega-cd-bios"
+      ],
+      "priority": 3
+    },
+    {
+      "dest": "Bios/SMS/bios_CD_U.bin",
+      "sha1": "f4f315adcef9b8feb0364c21ab7f0eaf5457f3ed",
+      "sha256": "807384678ef259494d943eddb6954dfc7069693d0dde0c424e2028488d88e81a",
+      "size": 131072,
+      "repo_path": "bios/Sega/Mega CD/bios_CD_U.bin",
+      "cores": [
+        "picodrive"
+      ],
+      "regions": [
+        "latin-america",
+        "north-america"
+      ],
+      "region_groups": [
+        "PicoDrive:variant:mega-cd-bios"
+      ],
+      "priority": 4
+    },
+    {
+      "dest": "Bios/SMS/eu_mcd2_9306.bin",
+      "sha1": "f5f60f03501908962446ee02fc27d98694dd157d",
+      "sha256": "71eb86242d8d155ead2ab86721ef5ca236aba004018c500d46e55fc81ddd79b4",
+      "size": 131072,
+      "repo_path": "bios/Sega/Mega CD/eu_mcd2_9306.bin",
+      "cores": [
+        "picodrive"
+      ],
+      "regions": [
+        "europe",
+        "oceania"
+      ],
+      "region_groups": [
+        "PicoDrive:variant:mega-cd-bios"
+      ],
+      "priority": 1
+    },
+    {
+      "dest": "Bios/SMS/eu_mcd2_9303.bin",
+      "sha1": "7063192ae9f6b696c5b81bc8f0a9fe6f0c400e58",
+      "sha256": "fe608a2a07676a23ab5fd5eee2f53c9e2526d69a28aa16ccd85c0ec42e6933cb",
+      "size": 131072,
+      "repo_path": "bios/Sega/Mega CD/eu_mcd2_9303.bin",
+      "cores": [
+        "picodrive"
+      ],
+      "regions": [
+        "europe",
+        "oceania"
+      ],
+      "region_groups": [
+        "PicoDrive:variant:mega-cd-bios"
+      ],
+      "priority": 2
+    },
+    {
+      "dest": "Bios/SMS/eu_mcd1_9210.bin",
+      "sha1": "f891e0ea651e2232af0c5c4cb46a0cae2ee8f356",
+      "sha256": "16735df92fcc1d0fc6a1eced244867e95281c5006340926082b74e363e073dc4",
+      "size": 131072,
+      "repo_path": "bios/Sega/Mega CD/MCD_eu_100.bin",
+      "cores": [
+        "picodrive"
+      ],
+      "regions": [
+        "europe",
+        "oceania"
+      ],
+      "region_groups": [
+        "PicoDrive:variant:mega-cd-bios"
+      ],
+      "priority": 3
+    },
+    {
+      "dest": "Bios/SMS/bios_CD_E.bin",
+      "sha1": "f891e0ea651e2232af0c5c4cb46a0cae2ee8f356",
+      "sha256": "16735df92fcc1d0fc6a1eced244867e95281c5006340926082b74e363e073dc4",
+      "size": 131072,
+      "repo_path": "bios/Sega/Mega CD/MCD_eu_100.bin",
+      "cores": [
+        "picodrive"
+      ],
+      "regions": [
+        "europe",
+        "oceania"
+      ],
+      "region_groups": [
+        "PicoDrive:variant:mega-cd-bios"
+      ],
+      "priority": 4
+    },
+    {
+      "dest": "Bios/SMS/jp_mcd2_921222.bin",
+      "sha1": "d203cfe22c03ae479dd8ca33840cf8d9776eb3ff",
+      "sha256": "7133fc2dd2fe5b7d0acd53a5f10f3d00b5d31270239ad20d74ef32393e24af88",
+      "size": 131072,
+      "repo_path": "bios/Sega/Mega CD/jp_mcd2_921222.bin",
+      "cores": [
+        "picodrive"
+      ],
+      "regions": [
+        "japan"
+      ],
+      "region_groups": [
+        "PicoDrive:variant:mega-cd-bios"
+      ],
+      "priority": 1
+    },
+    {
+      "dest": "Bios/SMS/jp_mcd1_9112.bin",
+      "sha1": "e4193c6ae44c3cea002707d2a88f1fbcced664de",
+      "sha256": "e8dbee3edcd1b2751c72c1d9ae0dac1aacd9203804bfc1a35ea098d8778bcb1c",
+      "size": 131072,
+      "repo_path": "bios/Sega/Mega CD/jp_mcd1_9112.bin",
+      "cores": [
+        "picodrive"
+      ],
+      "regions": [
+        "japan"
+      ],
+      "region_groups": [
+        "PicoDrive:variant:mega-cd-bios"
+      ],
+      "priority": 2
+    },
+    {
+      "dest": "Bios/SMS/jp_mcd1_9111.bin",
+      "sha1": "4846f448160059a7da0215a5df12ca160f26dd69",
+      "sha256": "923eb9da740f98ab1572085e3d351e2c0982df0906b0b99efb68a9997c94cf8f",
+      "size": 131072,
+      "repo_path": "bios/Sega/Mega CD/MCD_jp_100p.bin",
+      "cores": [
+        "picodrive"
+      ],
+      "regions": [
+        "japan"
+      ],
+      "region_groups": [
+        "PicoDrive:variant:mega-cd-bios"
+      ],
+      "priority": 3
+    },
+    {
+      "dest": "Bios/SMS/bios_CD_J.bin",
+      "sha1": "4846f448160059a7da0215a5df12ca160f26dd69",
+      "sha256": "923eb9da740f98ab1572085e3d351e2c0982df0906b0b99efb68a9997c94cf8f",
+      "size": 131072,
+      "repo_path": "bios/Sega/Mega CD/MCD_jp_100p.bin",
+      "cores": [
+        "picodrive"
+      ],
+      "regions": [
+        "japan"
+      ],
+      "region_groups": [
+        "PicoDrive:variant:mega-cd-bios"
+      ],
+      "priority": 4
+    },
+    {
+      "dest": "Bios/SMS/32X_G_BIOS.BIN",
+      "sha1": "dbebd76a448447cb6e524ac3cb0fd19fc065d944",
+      "sha256": "a2d6b6e1544467e27d404634de6e6b0a54ed4b3babb6b71739a260e1be04ebfc",
+      "size": 256,
+      "repo_path": "bios/Sega/32X/32X_G_BIOS.BIN",
+      "cores": [
+        "picodrive"
+      ]
+    },
+    {
+      "dest": "Bios/SMS/32X_M_BIOS.BIN",
+      "sha1": "1e5b0b2441a4979b6966d942b20cc76c413b8c5e",
+      "sha256": "4c6128229bd24dae5f11d3f569ca592665f141bef26cef937e2ce4d9b548cc3b",
+      "size": 2048,
+      "repo_path": "bios/Sega/32X/32X_M_BIOS.BIN",
+      "cores": [
+        "picodrive"
+      ]
+    },
+    {
+      "dest": "Bios/SMS/32X_S_BIOS.BIN",
+      "sha1": "4103668c1bbd66c5e24558e73d4f3f92061a109a",
+      "sha256": "7bde4245ce00c51a23a1ce73a881752e7b14dc12416e175352a3807338e04745",
+      "size": 1024,
+      "repo_path": "bios/Sega/32X/32X_S_BIOS.BIN",
+      "cores": [
+        "picodrive"
+      ]
+    },
+    {
+      "dest": "Bios/PKM/bios.min",
+      "sha1": "daad4113713ed776fbd47727762bca81ba74915f",
+      "sha256": "45a1c7f28b9ad585e67f047abe9c1c956724bfcab8c9011002af4274e7c50e8f",
+      "size": 4096,
+      "repo_path": "bios/Nintendo/Pokemon Mini/bios.min",
+      "cores": [
+        "pokemini"
+      ]
+    }
+  ]
+}

@@ -56,6 +56,17 @@ from exporter.baseline import (  # noqa: E402
 
 UPSTREAM_CACHE = REPO_ROOT / ".cache" / "upstream-native"
 
+
+def _without_native_list() -> set[str]:
+    """Registered platforms whose code names no BIOS file to hand back."""
+    import yaml  # noqa: PLC0415
+
+    registry = yaml.safe_load((REPO_ROOT / "platforms" / "_registry.yml").read_text())
+    return {
+        name for name, entry in registry["platforms"].items()
+        if entry.get("native_list") == "none"
+    }
+
 TRUTH = {
     "systems": {
         "sony-playstation": {
@@ -552,7 +563,19 @@ class ExporterRegistry(unittest.TestCase):
                 str(REPO_ROOT / "platforms"), include_archived=True
             )
         )
-        self.assertEqual(registered - set(exporters), set())
+        self.assertEqual(registered - set(exporters) - _without_native_list(), set())
+
+    def test_a_platform_without_a_native_list_declares_no_file(self):
+        """`native_list: none` says the platform's code names no BIOS file
+        (MinUI hands each core a folder and opens nothing in it). A platform
+        whose file declares one has a list to hand back."""
+        for name in _without_native_list():
+            config = load_platform_config(name, str(REPO_ROOT / "platforms"))
+            with self.subTest(platform=name):
+                self.assertNotIn(name, discover_exporters())
+                self.assertFalse(any(
+                    system.get("files") for system in (config.get("systems") or {}).values()
+                ))
 
     def test_no_exporter_is_registered_for_an_unregistered_platform(self):
         """A dead exporter is one nobody will notice has stopped working."""

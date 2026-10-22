@@ -225,6 +225,33 @@ Files go under the per-core subdirectory the MiSTer BIOS database declares
 lists with a download URL are in scope: the rest ship with the MiSTer
 distribution and install themselves.
 
+### MinUI, NextUI and MyMinUI
+
+```
+<SD card>/Bios/<TAG>/
+```
+
+These frontends give each core a folder of its own, named after the tag in
+parentheses of the Roms folder the game sits in: a game in
+`Roms/Sony PlayStation (PS)/` runs with `Bios/PS/` as its system directory, one
+in `Roms/Game Boy (GB)/` with `Bios/GB/` (MinUI
+`workspace/all/minarch/minarch.c:2943`, NextUI
+`workspace/all/minarch/ma_core.c:76`, MyMinUI
+`workspace/all/minarch/minarch.c:3532`). The pack holds the `Bios/` folder:
+extract it at the root of the card. A core started from two tags (Gambatte for
+GB and GBC) gets its files in both folders.
+
+The installer runs on the computer the card is mounted on, with the card's root
+as `--dest`:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh -s -- --platform minui --dest /media/$USER/CARD
+```
+
+Without `--platform`, it reads the release name the frontend writes in
+`.system/version.txt` on the card. A pak that starts a standalone program
+instead of a libretro core (DraStic for NDS, native PICO-8) is not covered.
+
 ### BizHawk
 
 ```
@@ -262,9 +289,9 @@ dump shows up.
 
 The installer's `--check` hashes every file against the list on every
 platform, so it catches a wrong revision even where the frontend would not:
-RetroArch, Lakka and RetroPie only check that a file exists, while Batocera,
-RetroBat, Recalbox, EmuDeck, RetroDECK, RomM, ROCKNIX, KNULLI, AmberELEC,
-EmuELEC and MiSTer FPGA compare
+RetroArch, Lakka, RetroPie, MinUI, NextUI and MyMinUI only check that a file
+exists, while Batocera, RetroBat, Recalbox, EmuDeck, RetroDECK, RomM, ROCKNIX,
+KNULLI, AmberELEC, EmuELEC and MiSTer FPGA compare
 MD5 and BizHawk compares SHA1.
 
 For a single system, or the files a single emulator core reads (`--list-systems`

@@ -6,9 +6,9 @@ of each platform so that verification results match what the platform itself wou
 
 ## Existence mode
 
-**Platforms**: RetroArch, Lakka, RetroPie
+**Platforms**: RetroArch, Lakka, RetroPie, MinUI, NextUI, MyMinUI
 
-**Source**: RetroArch `core_info.c`, function `path_is_valid()`
+**Source**: RetroArch `core_info.c`, function `path_is_valid()`; minarch for the MinUI family
 
 The most straightforward mode. A file is OK if it exists at the expected path. No hash is checked.
 Any file with the correct name passes, regardless of content.
@@ -24,6 +24,13 @@ upstream code: `core_info.c` only calls `path_is_valid()` and does not open or h
 
 Lakka and RetroPie inherit this behavior through platform config inheritance
 (`inherits: retroarch` in the platform YAML).
+
+MinUI, NextUI and MyMinUI check nothing at all: minarch returns the folder
+`Bios/<TAG>/` for `RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY` and never opens a
+file in it (MinUI `workspace/all/minarch/minarch.c:1889-1893` and `:2943`). The
+core decides what it loads, so the files are the ones its profile documents,
+placed below each folder a pak hands it (`core_system_dirs` in the platform
+YAML).
 
 
 ## MD5 mode
