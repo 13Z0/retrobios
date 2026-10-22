@@ -39,6 +39,48 @@ await page.click('[data-none]');
 assert.match(await page.textContent('.rb-pick-result'), /Choose at least one system/);
 await page.click('[data-all]');
 assert.match(await page.textContent('.rb-pick-cmd code'), /--platform batocera$/);
+
+// A full hash typed in the search opens the lookup instead of text results.
+await page.goto(base, { waitUntil: 'networkidle' });
+await page.click('site-search button[data-open-modal]');
+const search = page.locator('site-search dialog input').first();
+await search.waitFor();
+await search.fill('490f666e1afb15b7362b406ed1cea246');
+await Promise.all([page.waitForURL(/files\/\?hash=/), search.press('Enter')]);
+console.log('hash in search ->', page.url());
+
+// Breadcrumbs name the tab and the group of a deep page.
+await page.goto(`${base}emulators/duckstation/`, { waitUntil: 'networkidle' });
+const crumbs = await page.locator('.rb-breadcrumbs li').allTextContents();
+console.log('breadcrumbs:', crumbs.join(' / '));
+assert.deepEqual(crumbs.slice(0, 2), ['Explore', 'Emulators']);
+
+// Previous and next run on from one tab into the next.
+await page.goto(`${base}wiki/glossary/`, { waitUntil: 'networkidle' });
+const next = await page.locator('.pagination-links a[rel="next"]').getAttribute('href');
+console.log('after the last Start here page:', next);
+assert.ok(next && next.endsWith('/platforms/'), next);
+
+// A glossary term opens its definition on a tap.
+await page.goto(`${base}which-pack/`, { waitUntil: 'networkidle' });
+const term = page.locator('abbr.rb-term').first();
+await term.click();
+assert.equal(await term.getAttribute('data-open'), '');
+console.log('glossary term:', await term.textContent(), '=', await term.getAttribute('data-definition'));
+
+// On a phone, a table whose rows end in a download is one block per row.
+await page.setViewportSize({ width: 390, height: 844 });
+await page.goto(`${base}which-pack/`, { waitUntil: 'networkidle' });
+const stacked = await page.locator('table[data-rb-stack]').count();
+const overflow = await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1);
+console.log('stacked tables:', stacked, 'page wider than the phone:', overflow);
+assert.ok(stacked > 0);
+assert.equal(overflow, false);
+
+// A stale address offers the list its page may be in.
+await page.goto(`${base}emulators/no-such-core/`, { waitUntil: 'networkidle' });
+assert.match(await page.textContent('#rb-notfound-hint'), /list of emulators/);
+
 assert.deepEqual(errors, []);
 console.log('ok');
 await browser.close();

@@ -44,11 +44,11 @@ const markScrollable = (table: HTMLTableElement) => {
 	}
 };
 
-// A table whose rows end in an action (a download button) is laid out one
-// block per row on a phone, each cell under its column name, so the action
-// never sits behind a horizontal scroll.
+// A table whose rows end in an action (a button, a pack to download) is laid
+// out one block per row on a phone, each cell under its column name, so the
+// action never sits behind a horizontal scroll.
 const stackActionTable = (table: HTMLTableElement) => {
-	if (!table.querySelector('tbody .rb-button')) return;
+	if (!table.querySelector('tbody :is(.rb-button, a[href*="/releases/download/"], a[href$="/releases/latest"])')) return;
 	const labels = [...table.querySelectorAll('thead th')].map((cell) => cell.textContent!.trim());
 	if (!labels.length) return;
 	table.dataset.rbStack = 'true';

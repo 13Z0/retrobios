@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """Validate the built RetroBIOS site as a navigable, accessible data product.
 
-This complements ``mkdocs build --strict`` with checks on the rendered HTML:
-metadata, heading structure, image alternatives, duplicate IDs, structured
-data, local resources, links and fragments.
+This complements the engine's own link check (``mkdocs build --strict`` or
+Starlight's link validator) with checks on the rendered HTML: metadata,
+heading structure, image alternatives, duplicate IDs, structured data, local
+resources, links and fragments, and the budgets of what a visitor downloads.
 """
 
 from __future__ import annotations
@@ -53,6 +54,12 @@ MAX_PAGE_BYTES = 1_000_000
 # 21.0 MB raw and 4.88 MB gzip with hashes in it, 7.3 MB and 1.44 MB without.
 MAX_SEARCH_INDEX_BYTES = 8_500_000
 MAX_SEARCH_INDEX_GZIP_BYTES = 1_700_000
+# Pagefind loads its index in pieces: the metadata, then the chunks the words
+# typed fall in (stored compressed). 59 KB for the largest chunk and 7.5 KB of
+# metadata on 2026-10-22, 5.2 MB for the whole index on disk.
+MAX_PAGEFIND_CHUNK_BYTES = 150_000
+MAX_PAGEFIND_META_BYTES = 50_000
+MAX_PAGEFIND_TOTAL_BYTES = 12_000_000
 
 
 # Text inside these is shown as written, so markup there is not a leftover.
@@ -167,10 +174,30 @@ def _heading_jumps(levels: list[int]) -> list[str]:
             if after > before + 1]
 
 
+def _check_pagefind(site: Path) -> list[str]:
+    """Pagefind's index pieces, each against its budget."""
+    root = site / "pagefind"
+    files = [path for path in root.rglob("*") if path.is_file()]
+    issues = []
+    for path in files:
+        size = path.stat().st_size
+        rel = path.relative_to(site).as_posix()
+        if path.suffix == ".pf_index" and size > MAX_PAGEFIND_CHUNK_BYTES:
+            issues.append(f"{rel}: {size:,} bytes, over the {MAX_PAGEFIND_CHUNK_BYTES:,} budget of a chunk")
+        if path.suffix == ".pf_meta" and size > MAX_PAGEFIND_META_BYTES:
+            issues.append(f"{rel}: {size:,} bytes, over the {MAX_PAGEFIND_META_BYTES:,} budget")
+    total = sum(path.stat().st_size for path in files)
+    if total > MAX_PAGEFIND_TOTAL_BYTES:
+        issues.append(f"pagefind/: {total:,} bytes, over the {MAX_PAGEFIND_TOTAL_BYTES:,} budget")
+    return issues
+
+
 def _check_search_index(site: Path) -> list[str]:
     """The index every visitor who opens the search downloads, against its budget."""
     import gzip
 
+    if (site / "pagefind").is_dir():
+        return _check_pagefind(site)
     path = site / "search" / "search_index.json"
     if not path.is_file():
         return []
@@ -343,12 +370,12 @@ def _check_links(pages: dict, site: Path, base_path: str) -> list[str]:
     return issues
 
 
-def validate_site(site: Path, config_path: Path) -> list[str]:
+def validate_site(site: Path, config_path: Path | None = None, base: str = "/retrobios/") -> list[str]:
     site = site.resolve()
     if not site.is_dir():
         return [f"site directory does not exist: {site}"]
 
-    base_path = _base_path(config_path)
+    base_path = _base_path(config_path) if config_path and config_path.is_file() else base
     html_paths = sorted(site.rglob("*.html"))
     if not html_paths:
         return [f"no HTML pages found in {site}"]
@@ -383,8 +410,12 @@ def main() -> None:
         help="the built site (default: %(default)s)",
     )
     parser.add_argument(
-        "--config", default="mkdocs.yml",
-        help="the MkDocs configuration (default: %(default)s)",
+        "--config", default=None,
+        help="an MkDocs configuration to read the base path from",
+    )
+    parser.add_argument(
+        "--base", default="/retrobios/",
+        help="the path the site is served under (default: %(default)s)",
     )
     parser.add_argument(
         "--max-errors", type=int, default=100,
@@ -393,7 +424,7 @@ def main() -> None:
     args = parser.parse_args()
 
     try:
-        issues = validate_site(Path(args.site_dir), Path(args.config))
+        issues = validate_site(Path(args.site_dir), Path(args.config) if args.config else None, args.base)
     except (OSError, RuntimeError, ValueError) as exc:
         print(f"Site validation failed: {exc}", file=sys.stderr)
         raise SystemExit(1) from exc
