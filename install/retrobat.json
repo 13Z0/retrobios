@@ -4437,6 +4437,11 @@
       "repo_path": "bios/Atari/5200/5200.rom",
       "cores": null,
       "systems": [
+        "atari-400-800",
+        "atari-5200",
+        "xegs"
+      ],
+      "declared_in": [
         "atari-5200"
       ],
       "alternatives": [
@@ -6169,6 +6174,44 @@
       "repo_path": "bios/Sega/Saturn/ar_bios.zip",
       "cores": null,
       "systems": [
+        "3do",
+        "adam",
+        "apfm1000",
+        "archimedes",
+        "bbcmicro",
+        "camplynx",
+        "cdi",
+        "chihiro",
+        "coco",
+        "crvision",
+        "electron",
+        "elektronika-bk",
+        "emerson-arcadia-2001",
+        "entex-advision",
+        "fm7",
+        "gamate",
+        "gamecom",
+        "gamepark-gp32",
+        "gamepock",
+        "gmaster",
+        "hikaru",
+        "loopy",
+        "namco-system246",
+        "neogeo64",
+        "pegasus",
+        "pv1000",
+        "scv",
+        "segastv",
+        "ti99",
+        "triforce",
+        "tutor",
+        "vc4000",
+        "vectrex",
+        "vg5k",
+        "vtech-vsmile",
+        "xegs"
+      ],
+      "declared_in": [
         "emerson-arcadia-2001"
       ],
       "alternatives": [
@@ -8204,6 +8247,11 @@
       "repo_path": "bios/Nintendo/SNES/Satellaview_BS-X.sfc",
       "cores": null,
       "systems": [
+        "nintendo-gb",
+        "nintendo-gbc",
+        "nintendo-satellaview"
+      ],
+      "declared_in": [
         "nintendo-satellaview"
       ],
       "alternatives": [
@@ -8288,6 +8336,12 @@
       "repo_path": "bios/Nintendo/Super Game Boy/SGB1.sfc/program.rom",
       "cores": null,
       "systems": [
+        "nintendo-gb",
+        "nintendo-gbc",
+        "nintendo-satellaview",
+        "nintendo-sgb"
+      ],
+      "declared_in": [
         "nintendo-sgb"
       ],
       "alternatives": [
@@ -8313,6 +8367,12 @@
       "repo_path": "bios/Nintendo/Super Game Boy/SGB2.sfc/program.rom",
       "cores": null,
       "systems": [
+        "nintendo-gb",
+        "nintendo-gbc",
+        "nintendo-satellaview",
+        "nintendo-sgb"
+      ],
+      "declared_in": [
         "nintendo-sgb"
       ],
       "alternatives": [
@@ -9654,7 +9714,9 @@
         "atari800"
       ],
       "systems": [
-        "atari-5200"
+        "atari-400-800",
+        "atari-5200",
+        "xegs"
       ]
     },
     {
@@ -9668,7 +9730,9 @@
         "atari800"
       ],
       "systems": [
-        "atari-400-800"
+        "atari-400-800",
+        "atari-5200",
+        "xegs"
       ]
     },
     {
@@ -9682,7 +9746,9 @@
         "atari800"
       ],
       "systems": [
-        "atari-400-800"
+        "atari-400-800",
+        "atari-5200",
+        "xegs"
       ]
     },
     {
@@ -9709,7 +9775,9 @@
         "atari800"
       ],
       "systems": [
-        "atari-400-800"
+        "atari-400-800",
+        "atari-5200",
+        "xegs"
       ]
     },
     {
@@ -9775,7 +9843,9 @@
         "atari800"
       ],
       "systems": [
-        "atari-400-800"
+        "atari-400-800",
+        "atari-5200",
+        "xegs"
       ]
     },
     {
@@ -9789,7 +9859,9 @@
         "atari800"
       ],
       "systems": [
-        "atari-400-800"
+        "atari-400-800",
+        "atari-5200",
+        "xegs"
       ]
     },
     {
@@ -9803,7 +9875,9 @@
         "atari800"
       ],
       "systems": [
-        "atari-400-800"
+        "atari-400-800",
+        "atari-5200",
+        "xegs"
       ]
     },
     {
@@ -9830,7 +9904,9 @@
         "atari800"
       ],
       "systems": [
-        "atari-400-800"
+        "atari-400-800",
+        "atari-5200",
+        "xegs"
       ]
     },
     {
@@ -11143,6 +11219,9 @@
         "mednafen_pce",
         "mednafen_pce_fast",
         "mednafen_supergrafx"
+      ],
+      "systems": [
+        "nec-pc-engine"
       ]
     },
     {
@@ -11155,6 +11234,9 @@
         "ares",
         "mednafen_pce",
         "mednafen_pce_fast"
+      ],
+      "systems": [
+        "nec-pc-engine"
       ]
     },
     {
@@ -18502,6 +18584,9 @@
       "cores": [
         "dosbox-staging",
         "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
       ]
     },
     {
@@ -18533,6 +18618,9 @@
       "cores": [
         "dosbox-staging",
         "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
       ]
     },
     {
@@ -20115,7 +20203,8 @@
         "pcsx2-legacy"
       ],
       "systems": [
-        "sony-playstation"
+        "sony-playstation",
+        "sony-playstation-2"
       ],
       "regions": [
         "japan"
@@ -20157,7 +20246,8 @@
         "pcsx2-legacy"
       ],
       "systems": [
-        "sony-playstation"
+        "sony-playstation",
+        "sony-playstation-2"
       ],
       "regions": [
         "europe",
@@ -33637,6 +33727,9 @@
         "mednafen_pce",
         "mednafen_pce_fast",
         "mednafen_supergrafx"
+      ],
+      "systems": [
+        "nec-pc-engine"
       ]
     },
     {
@@ -33650,6 +33743,9 @@
         "mednafen_pce",
         "mednafen_pce_fast",
         "mednafen_supergrafx"
+      ],
+      "systems": [
+        "nec-pc-engine"
       ]
     },
     {
@@ -39949,6 +40045,43 @@
       "cores": [
         "arcadeduck",
         "mame"
+      ],
+      "systems": [
+        "3do",
+        "adam",
+        "apfm1000",
+        "archimedes",
+        "bbcmicro",
+        "camplynx",
+        "cdi",
+        "chihiro",
+        "coco",
+        "crvision",
+        "electron",
+        "elektronika-bk",
+        "entex-advision",
+        "fm7",
+        "gamate",
+        "gamecom",
+        "gamepark-gp32",
+        "gamepock",
+        "gmaster",
+        "hikaru",
+        "loopy",
+        "namco-system246",
+        "neogeo64",
+        "pegasus",
+        "pv1000",
+        "scv",
+        "segastv",
+        "ti99",
+        "triforce",
+        "tutor",
+        "vc4000",
+        "vectrex",
+        "vg5k",
+        "vtech-vsmile",
+        "xegs"
       ]
     },
     {
@@ -39983,6 +40116,43 @@
         "arcadeduck",
         "groovymame"
       ],
+      "systems": [
+        "3do",
+        "adam",
+        "apfm1000",
+        "archimedes",
+        "bbcmicro",
+        "camplynx",
+        "cdi",
+        "chihiro",
+        "coco",
+        "crvision",
+        "electron",
+        "elektronika-bk",
+        "entex-advision",
+        "fm7",
+        "gamate",
+        "gamecom",
+        "gamepark-gp32",
+        "gamepock",
+        "gmaster",
+        "hikaru",
+        "loopy",
+        "namco-system246",
+        "neogeo64",
+        "pegasus",
+        "pv1000",
+        "scv",
+        "segastv",
+        "ti99",
+        "triforce",
+        "tutor",
+        "vc4000",
+        "vectrex",
+        "vg5k",
+        "vtech-vsmile",
+        "xegs"
+      ],
       "alternatives": [
         {
           "sha1": "470da2042487c17fce84d8d10fc5af46b4594c9c",
@@ -40004,6 +40174,43 @@
       "cores": [
         "arcadeduck",
         "groovymame"
+      ],
+      "systems": [
+        "3do",
+        "adam",
+        "apfm1000",
+        "archimedes",
+        "bbcmicro",
+        "camplynx",
+        "cdi",
+        "chihiro",
+        "coco",
+        "crvision",
+        "electron",
+        "elektronika-bk",
+        "entex-advision",
+        "fm7",
+        "gamate",
+        "gamecom",
+        "gamepark-gp32",
+        "gamepock",
+        "gmaster",
+        "hikaru",
+        "loopy",
+        "namco-system246",
+        "neogeo64",
+        "pegasus",
+        "pv1000",
+        "scv",
+        "segastv",
+        "ti99",
+        "triforce",
+        "tutor",
+        "vc4000",
+        "vectrex",
+        "vg5k",
+        "vtech-vsmile",
+        "xegs"
       ],
       "alternatives": [
         {
@@ -40027,6 +40234,43 @@
         "arcadeduck",
         "groovymame"
       ],
+      "systems": [
+        "3do",
+        "adam",
+        "apfm1000",
+        "archimedes",
+        "bbcmicro",
+        "camplynx",
+        "cdi",
+        "chihiro",
+        "coco",
+        "crvision",
+        "electron",
+        "elektronika-bk",
+        "entex-advision",
+        "fm7",
+        "gamate",
+        "gamecom",
+        "gamepark-gp32",
+        "gamepock",
+        "gmaster",
+        "hikaru",
+        "loopy",
+        "namco-system246",
+        "neogeo64",
+        "pegasus",
+        "pv1000",
+        "scv",
+        "segastv",
+        "ti99",
+        "triforce",
+        "tutor",
+        "vc4000",
+        "vectrex",
+        "vg5k",
+        "vtech-vsmile",
+        "xegs"
+      ],
       "alternatives": [
         {
           "sha1": "670bd7592f4eef153223e7906ead8b2d97901291",
@@ -40048,6 +40292,43 @@
       "cores": [
         "arcadeduck",
         "groovymame"
+      ],
+      "systems": [
+        "3do",
+        "adam",
+        "apfm1000",
+        "archimedes",
+        "bbcmicro",
+        "camplynx",
+        "cdi",
+        "chihiro",
+        "coco",
+        "crvision",
+        "electron",
+        "elektronika-bk",
+        "entex-advision",
+        "fm7",
+        "gamate",
+        "gamecom",
+        "gamepark-gp32",
+        "gamepock",
+        "gmaster",
+        "hikaru",
+        "loopy",
+        "namco-system246",
+        "neogeo64",
+        "pegasus",
+        "pv1000",
+        "scv",
+        "segastv",
+        "ti99",
+        "triforce",
+        "tutor",
+        "vc4000",
+        "vectrex",
+        "vg5k",
+        "vtech-vsmile",
+        "xegs"
       ],
       "alternatives": [
         {
@@ -40071,6 +40352,43 @@
         "arcadeduck",
         "groovymame"
       ],
+      "systems": [
+        "3do",
+        "adam",
+        "apfm1000",
+        "archimedes",
+        "bbcmicro",
+        "camplynx",
+        "cdi",
+        "chihiro",
+        "coco",
+        "crvision",
+        "electron",
+        "elektronika-bk",
+        "entex-advision",
+        "fm7",
+        "gamate",
+        "gamecom",
+        "gamepark-gp32",
+        "gamepock",
+        "gmaster",
+        "hikaru",
+        "loopy",
+        "namco-system246",
+        "neogeo64",
+        "pegasus",
+        "pv1000",
+        "scv",
+        "segastv",
+        "ti99",
+        "triforce",
+        "tutor",
+        "vc4000",
+        "vectrex",
+        "vg5k",
+        "vtech-vsmile",
+        "xegs"
+      ],
       "alternatives": [
         {
           "sha1": "f8526dcec63402d2533d8180e217fa03a6322c34",
@@ -40093,6 +40411,43 @@
         "arcadeduck",
         "groovymame"
       ],
+      "systems": [
+        "3do",
+        "adam",
+        "apfm1000",
+        "archimedes",
+        "bbcmicro",
+        "camplynx",
+        "cdi",
+        "chihiro",
+        "coco",
+        "crvision",
+        "electron",
+        "elektronika-bk",
+        "entex-advision",
+        "fm7",
+        "gamate",
+        "gamecom",
+        "gamepark-gp32",
+        "gamepock",
+        "gmaster",
+        "hikaru",
+        "loopy",
+        "namco-system246",
+        "neogeo64",
+        "pegasus",
+        "pv1000",
+        "scv",
+        "segastv",
+        "ti99",
+        "triforce",
+        "tutor",
+        "vc4000",
+        "vectrex",
+        "vg5k",
+        "vtech-vsmile",
+        "xegs"
+      ],
       "alternatives": [
         {
           "sha1": "88d002262d7c26983416d5bc90f039f93615f947",
@@ -40114,6 +40469,43 @@
       "cores": [
         "arcadeduck",
         "groovymame"
+      ],
+      "systems": [
+        "3do",
+        "adam",
+        "apfm1000",
+        "archimedes",
+        "bbcmicro",
+        "camplynx",
+        "cdi",
+        "chihiro",
+        "coco",
+        "crvision",
+        "electron",
+        "elektronika-bk",
+        "entex-advision",
+        "fm7",
+        "gamate",
+        "gamecom",
+        "gamepark-gp32",
+        "gamepock",
+        "gmaster",
+        "hikaru",
+        "loopy",
+        "namco-system246",
+        "neogeo64",
+        "pegasus",
+        "pv1000",
+        "scv",
+        "segastv",
+        "ti99",
+        "triforce",
+        "tutor",
+        "vc4000",
+        "vectrex",
+        "vg5k",
+        "vtech-vsmile",
+        "xegs"
       ],
       "alternatives": [
         {
@@ -40582,6 +40974,11 @@
         "bsnes-jg",
         "bsnes_hd_beta",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-gb",
+        "nintendo-gbc",
+        "nintendo-satellaview"
       ]
     },
     {
@@ -40595,6 +40992,11 @@
         "bsnes-jg",
         "bsnes_hd_beta",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-gb",
+        "nintendo-gbc",
+        "nintendo-satellaview"
       ]
     },
     {
@@ -40608,6 +41010,11 @@
         "bsnes-jg",
         "bsnes_hd_beta",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-gb",
+        "nintendo-gbc",
+        "nintendo-satellaview"
       ]
     },
     {
@@ -40621,6 +41028,11 @@
         "bsnes-jg",
         "bsnes_hd_beta",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-gb",
+        "nintendo-gbc",
+        "nintendo-satellaview"
       ]
     },
     {
@@ -40634,6 +41046,11 @@
         "bsnes-jg",
         "bsnes_hd_beta",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-gb",
+        "nintendo-gbc",
+        "nintendo-satellaview"
       ]
     },
     {
@@ -40647,6 +41064,11 @@
         "bsnes-jg",
         "bsnes_hd_beta",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-gb",
+        "nintendo-gbc",
+        "nintendo-satellaview"
       ]
     },
     {
@@ -40660,6 +41082,11 @@
         "bsnes-jg",
         "bsnes_hd_beta",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-gb",
+        "nintendo-gbc",
+        "nintendo-satellaview"
       ]
     },
     {
@@ -40673,6 +41100,11 @@
         "bsnes-jg",
         "bsnes_hd_beta",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-gb",
+        "nintendo-gbc",
+        "nintendo-satellaview"
       ]
     },
     {
@@ -40686,6 +41118,11 @@
         "bsnes-jg",
         "bsnes_hd_beta",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-gb",
+        "nintendo-gbc",
+        "nintendo-satellaview"
       ]
     },
     {
@@ -40699,6 +41136,11 @@
         "bsnes-jg",
         "bsnes_hd_beta",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-gb",
+        "nintendo-gbc",
+        "nintendo-satellaview"
       ]
     },
     {
@@ -40712,6 +41154,11 @@
         "bsnes-jg",
         "bsnes_hd_beta",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-gb",
+        "nintendo-gbc",
+        "nintendo-satellaview"
       ]
     },
     {
@@ -40725,6 +41172,11 @@
         "bsnes-jg",
         "bsnes_hd_beta",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-gb",
+        "nintendo-gbc",
+        "nintendo-satellaview"
       ]
     },
     {
@@ -40738,6 +41190,11 @@
         "bsnes-jg",
         "bsnes_hd_beta",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-gb",
+        "nintendo-gbc",
+        "nintendo-satellaview"
       ]
     },
     {
@@ -40751,6 +41208,11 @@
         "bsnes-jg",
         "bsnes_hd_beta",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-gb",
+        "nintendo-gbc",
+        "nintendo-satellaview"
       ]
     },
     {
@@ -41558,6 +42020,16 @@
         "mame2014",
         "mame2016",
         "teknoparrot"
+      ],
+      "systems": [
+        "3do",
+        "cdi",
+        "chihiro",
+        "hikaru",
+        "namco-system246",
+        "neogeo64",
+        "segastv",
+        "triforce"
       ]
     },
     {
@@ -41568,6 +42040,16 @@
       "repo_path": "bios/Arcade/MAME/f355bios.zip",
       "cores": [
         "demul"
+      ],
+      "systems": [
+        "3do",
+        "cdi",
+        "chihiro",
+        "hikaru",
+        "namco-system246",
+        "neogeo64",
+        "segastv",
+        "triforce"
       ],
       "alternatives": [
         {
@@ -41603,6 +42085,16 @@
       "cores": [
         "demul"
       ],
+      "systems": [
+        "3do",
+        "cdi",
+        "chihiro",
+        "hikaru",
+        "namco-system246",
+        "neogeo64",
+        "segastv",
+        "triforce"
+      ],
       "alternatives": [
         {
           "sha1": "48d1712d1b1cdfeeeb43c6287c17b0b6309cfaab",
@@ -41635,6 +42127,16 @@
       "repo_path": "bios/Arcade/MAME/airlbios.zip",
       "cores": [
         "demul"
+      ],
+      "systems": [
+        "3do",
+        "cdi",
+        "chihiro",
+        "hikaru",
+        "namco-system246",
+        "neogeo64",
+        "segastv",
+        "triforce"
       ],
       "alternatives": [
         {
@@ -41671,6 +42173,43 @@
         "demul",
         "groovymame"
       ],
+      "systems": [
+        "3do",
+        "adam",
+        "apfm1000",
+        "archimedes",
+        "bbcmicro",
+        "camplynx",
+        "cdi",
+        "chihiro",
+        "coco",
+        "crvision",
+        "electron",
+        "elektronika-bk",
+        "entex-advision",
+        "fm7",
+        "gamate",
+        "gamecom",
+        "gamepark-gp32",
+        "gamepock",
+        "gmaster",
+        "hikaru",
+        "loopy",
+        "namco-system246",
+        "neogeo64",
+        "pegasus",
+        "pv1000",
+        "scv",
+        "segastv",
+        "ti99",
+        "triforce",
+        "tutor",
+        "vc4000",
+        "vectrex",
+        "vg5k",
+        "vtech-vsmile",
+        "xegs"
+      ],
       "alternatives": [
         {
           "sha1": "b4c7e46fb510096acf8fb19fb99c8c5a8ab1d9e1",
@@ -41703,6 +42242,7 @@
         "mame"
       ],
       "systems": [
+        "chihiro",
         "hikaru",
         "sega-dreamcast"
       ]
@@ -43826,6 +44366,43 @@
       "cores": [
         "groovymame"
       ],
+      "systems": [
+        "3do",
+        "adam",
+        "apfm1000",
+        "archimedes",
+        "bbcmicro",
+        "camplynx",
+        "cdi",
+        "chihiro",
+        "coco",
+        "crvision",
+        "electron",
+        "elektronika-bk",
+        "entex-advision",
+        "fm7",
+        "gamate",
+        "gamecom",
+        "gamepark-gp32",
+        "gamepock",
+        "gmaster",
+        "hikaru",
+        "loopy",
+        "namco-system246",
+        "neogeo64",
+        "pegasus",
+        "pv1000",
+        "scv",
+        "segastv",
+        "ti99",
+        "triforce",
+        "tutor",
+        "vc4000",
+        "vectrex",
+        "vg5k",
+        "vtech-vsmile",
+        "xegs"
+      ],
       "alternatives": [
         {
           "sha1": "d08a271feaab04ac904e6357c23bca95c1cf57f1",
@@ -43857,6 +44434,43 @@
       "cores": [
         "groovymame",
         "mame"
+      ],
+      "systems": [
+        "3do",
+        "adam",
+        "apfm1000",
+        "archimedes",
+        "bbcmicro",
+        "camplynx",
+        "cdi",
+        "chihiro",
+        "coco",
+        "crvision",
+        "electron",
+        "elektronika-bk",
+        "entex-advision",
+        "fm7",
+        "gamate",
+        "gamecom",
+        "gamepark-gp32",
+        "gamepock",
+        "gmaster",
+        "hikaru",
+        "loopy",
+        "namco-system246",
+        "neogeo64",
+        "pegasus",
+        "pv1000",
+        "scv",
+        "segastv",
+        "ti99",
+        "triforce",
+        "tutor",
+        "vc4000",
+        "vectrex",
+        "vg5k",
+        "vtech-vsmile",
+        "xegs"
       ],
       "alternatives": [
         {
@@ -43941,6 +44555,43 @@
         "fbneo",
         "groovymame"
       ],
+      "systems": [
+        "3do",
+        "adam",
+        "apfm1000",
+        "archimedes",
+        "bbcmicro",
+        "camplynx",
+        "cdi",
+        "chihiro",
+        "coco",
+        "crvision",
+        "electron",
+        "elektronika-bk",
+        "entex-advision",
+        "fm7",
+        "gamate",
+        "gamecom",
+        "gamepark-gp32",
+        "gamepock",
+        "gmaster",
+        "hikaru",
+        "loopy",
+        "namco-system246",
+        "neogeo64",
+        "pegasus",
+        "pv1000",
+        "scv",
+        "segastv",
+        "ti99",
+        "triforce",
+        "tutor",
+        "vc4000",
+        "vectrex",
+        "vg5k",
+        "vtech-vsmile",
+        "xegs"
+      ],
       "alternatives": [
         {
           "sha1": "6a19d46d3915f2bff823ac34327bb0976fb2fed7",
@@ -43972,6 +44623,43 @@
       "cores": [
         "groovymame",
         "mame"
+      ],
+      "systems": [
+        "3do",
+        "adam",
+        "apfm1000",
+        "archimedes",
+        "bbcmicro",
+        "camplynx",
+        "cdi",
+        "chihiro",
+        "coco",
+        "crvision",
+        "electron",
+        "elektronika-bk",
+        "entex-advision",
+        "fm7",
+        "gamate",
+        "gamecom",
+        "gamepark-gp32",
+        "gamepock",
+        "gmaster",
+        "hikaru",
+        "loopy",
+        "namco-system246",
+        "neogeo64",
+        "pegasus",
+        "pv1000",
+        "scv",
+        "segastv",
+        "ti99",
+        "triforce",
+        "tutor",
+        "vc4000",
+        "vectrex",
+        "vg5k",
+        "vtech-vsmile",
+        "xegs"
       ]
     },
     {
@@ -44117,6 +44805,43 @@
       "cores": [
         "groovymame"
       ],
+      "systems": [
+        "3do",
+        "adam",
+        "apfm1000",
+        "archimedes",
+        "bbcmicro",
+        "camplynx",
+        "cdi",
+        "chihiro",
+        "coco",
+        "crvision",
+        "electron",
+        "elektronika-bk",
+        "entex-advision",
+        "fm7",
+        "gamate",
+        "gamecom",
+        "gamepark-gp32",
+        "gamepock",
+        "gmaster",
+        "hikaru",
+        "loopy",
+        "namco-system246",
+        "neogeo64",
+        "pegasus",
+        "pv1000",
+        "scv",
+        "segastv",
+        "ti99",
+        "triforce",
+        "tutor",
+        "vc4000",
+        "vectrex",
+        "vg5k",
+        "vtech-vsmile",
+        "xegs"
+      ],
       "alternatives": [
         {
           "sha1": "6f2f76832d6dc2c18997421ba26d22d623715c77",
@@ -44244,6 +44969,43 @@
       "cores": [
         "groovymame"
       ],
+      "systems": [
+        "3do",
+        "adam",
+        "apfm1000",
+        "archimedes",
+        "bbcmicro",
+        "camplynx",
+        "cdi",
+        "chihiro",
+        "coco",
+        "crvision",
+        "electron",
+        "elektronika-bk",
+        "entex-advision",
+        "fm7",
+        "gamate",
+        "gamecom",
+        "gamepark-gp32",
+        "gamepock",
+        "gmaster",
+        "hikaru",
+        "loopy",
+        "namco-system246",
+        "neogeo64",
+        "pegasus",
+        "pv1000",
+        "scv",
+        "segastv",
+        "ti99",
+        "triforce",
+        "tutor",
+        "vc4000",
+        "vectrex",
+        "vg5k",
+        "vtech-vsmile",
+        "xegs"
+      ],
       "alternatives": [
         {
           "sha1": "a97c0579198d88d4db3f7f1b7707ddc6a86ab084",
@@ -44345,6 +45107,43 @@
         "mame",
         "mame2014",
         "mame2016"
+      ],
+      "systems": [
+        "3do",
+        "adam",
+        "apfm1000",
+        "archimedes",
+        "bbcmicro",
+        "camplynx",
+        "cdi",
+        "chihiro",
+        "coco",
+        "crvision",
+        "electron",
+        "elektronika-bk",
+        "entex-advision",
+        "fm7",
+        "gamate",
+        "gamecom",
+        "gamepark-gp32",
+        "gamepock",
+        "gmaster",
+        "hikaru",
+        "loopy",
+        "namco-system246",
+        "neogeo64",
+        "pegasus",
+        "pv1000",
+        "scv",
+        "segastv",
+        "ti99",
+        "triforce",
+        "tutor",
+        "vc4000",
+        "vectrex",
+        "vg5k",
+        "vtech-vsmile",
+        "xegs"
       ]
     },
     {
@@ -44356,6 +45155,43 @@
       "cores": [
         "groovymame",
         "mame"
+      ],
+      "systems": [
+        "3do",
+        "adam",
+        "apfm1000",
+        "archimedes",
+        "bbcmicro",
+        "camplynx",
+        "cdi",
+        "chihiro",
+        "coco",
+        "crvision",
+        "electron",
+        "elektronika-bk",
+        "entex-advision",
+        "fm7",
+        "gamate",
+        "gamecom",
+        "gamepark-gp32",
+        "gamepock",
+        "gmaster",
+        "hikaru",
+        "loopy",
+        "namco-system246",
+        "neogeo64",
+        "pegasus",
+        "pv1000",
+        "scv",
+        "segastv",
+        "ti99",
+        "triforce",
+        "tutor",
+        "vc4000",
+        "vectrex",
+        "vg5k",
+        "vtech-vsmile",
+        "xegs"
       ]
     },
     {
@@ -44367,6 +45203,43 @@
       "cores": [
         "groovymame",
         "mame"
+      ],
+      "systems": [
+        "3do",
+        "adam",
+        "apfm1000",
+        "archimedes",
+        "bbcmicro",
+        "camplynx",
+        "cdi",
+        "chihiro",
+        "coco",
+        "crvision",
+        "electron",
+        "elektronika-bk",
+        "entex-advision",
+        "fm7",
+        "gamate",
+        "gamecom",
+        "gamepark-gp32",
+        "gamepock",
+        "gmaster",
+        "hikaru",
+        "loopy",
+        "namco-system246",
+        "neogeo64",
+        "pegasus",
+        "pv1000",
+        "scv",
+        "segastv",
+        "ti99",
+        "triforce",
+        "tutor",
+        "vc4000",
+        "vectrex",
+        "vg5k",
+        "vtech-vsmile",
+        "xegs"
       ]
     },
     {
@@ -44378,6 +45251,43 @@
       "cores": [
         "groovymame",
         "mame"
+      ],
+      "systems": [
+        "3do",
+        "adam",
+        "apfm1000",
+        "archimedes",
+        "bbcmicro",
+        "camplynx",
+        "cdi",
+        "chihiro",
+        "coco",
+        "crvision",
+        "electron",
+        "elektronika-bk",
+        "entex-advision",
+        "fm7",
+        "gamate",
+        "gamecom",
+        "gamepark-gp32",
+        "gamepock",
+        "gmaster",
+        "hikaru",
+        "loopy",
+        "namco-system246",
+        "neogeo64",
+        "pegasus",
+        "pv1000",
+        "scv",
+        "segastv",
+        "ti99",
+        "triforce",
+        "tutor",
+        "vc4000",
+        "vectrex",
+        "vg5k",
+        "vtech-vsmile",
+        "xegs"
       ]
     },
     {
@@ -44410,6 +45320,43 @@
       "cores": [
         "groovymame",
         "mame"
+      ],
+      "systems": [
+        "3do",
+        "adam",
+        "apfm1000",
+        "archimedes",
+        "bbcmicro",
+        "camplynx",
+        "cdi",
+        "chihiro",
+        "coco",
+        "crvision",
+        "electron",
+        "elektronika-bk",
+        "entex-advision",
+        "fm7",
+        "gamate",
+        "gamecom",
+        "gamepark-gp32",
+        "gamepock",
+        "gmaster",
+        "hikaru",
+        "loopy",
+        "namco-system246",
+        "neogeo64",
+        "pegasus",
+        "pv1000",
+        "scv",
+        "segastv",
+        "ti99",
+        "triforce",
+        "tutor",
+        "vc4000",
+        "vectrex",
+        "vg5k",
+        "vtech-vsmile",
+        "xegs"
       ]
     },
     {
@@ -44421,6 +45368,43 @@
       "cores": [
         "groovymame",
         "mame"
+      ],
+      "systems": [
+        "3do",
+        "adam",
+        "apfm1000",
+        "archimedes",
+        "bbcmicro",
+        "camplynx",
+        "cdi",
+        "chihiro",
+        "coco",
+        "crvision",
+        "electron",
+        "elektronika-bk",
+        "entex-advision",
+        "fm7",
+        "gamate",
+        "gamecom",
+        "gamepark-gp32",
+        "gamepock",
+        "gmaster",
+        "hikaru",
+        "loopy",
+        "namco-system246",
+        "neogeo64",
+        "pegasus",
+        "pv1000",
+        "scv",
+        "segastv",
+        "ti99",
+        "triforce",
+        "tutor",
+        "vc4000",
+        "vectrex",
+        "vg5k",
+        "vtech-vsmile",
+        "xegs"
       ]
     },
     {
@@ -44431,6 +45415,43 @@
       "repo_path": "bios/Arcade/Arcade/taitotz.zip",
       "cores": [
         "groovymame"
+      ],
+      "systems": [
+        "3do",
+        "adam",
+        "apfm1000",
+        "archimedes",
+        "bbcmicro",
+        "camplynx",
+        "cdi",
+        "chihiro",
+        "coco",
+        "crvision",
+        "electron",
+        "elektronika-bk",
+        "entex-advision",
+        "fm7",
+        "gamate",
+        "gamecom",
+        "gamepark-gp32",
+        "gamepock",
+        "gmaster",
+        "hikaru",
+        "loopy",
+        "namco-system246",
+        "neogeo64",
+        "pegasus",
+        "pv1000",
+        "scv",
+        "segastv",
+        "ti99",
+        "triforce",
+        "tutor",
+        "vc4000",
+        "vectrex",
+        "vg5k",
+        "vtech-vsmile",
+        "xegs"
       ],
       "alternatives": [
         {
@@ -44502,6 +45523,43 @@
         "mame2010",
         "mame2014",
         "mame2016"
+      ],
+      "systems": [
+        "3do",
+        "adam",
+        "apfm1000",
+        "archimedes",
+        "bbcmicro",
+        "camplynx",
+        "cdi",
+        "chihiro",
+        "coco",
+        "crvision",
+        "electron",
+        "elektronika-bk",
+        "entex-advision",
+        "fm7",
+        "gamate",
+        "gamecom",
+        "gamepark-gp32",
+        "gamepock",
+        "gmaster",
+        "hikaru",
+        "loopy",
+        "namco-system246",
+        "neogeo64",
+        "pegasus",
+        "pv1000",
+        "scv",
+        "segastv",
+        "ti99",
+        "triforce",
+        "tutor",
+        "vc4000",
+        "vectrex",
+        "vg5k",
+        "vtech-vsmile",
+        "xegs"
       ]
     },
     {
@@ -44513,6 +45571,43 @@
       "cores": [
         "groovymame",
         "mame"
+      ],
+      "systems": [
+        "3do",
+        "adam",
+        "apfm1000",
+        "archimedes",
+        "bbcmicro",
+        "camplynx",
+        "cdi",
+        "chihiro",
+        "coco",
+        "crvision",
+        "electron",
+        "elektronika-bk",
+        "entex-advision",
+        "fm7",
+        "gamate",
+        "gamecom",
+        "gamepark-gp32",
+        "gamepock",
+        "gmaster",
+        "hikaru",
+        "loopy",
+        "namco-system246",
+        "neogeo64",
+        "pegasus",
+        "pv1000",
+        "scv",
+        "segastv",
+        "ti99",
+        "triforce",
+        "tutor",
+        "vc4000",
+        "vectrex",
+        "vg5k",
+        "vtech-vsmile",
+        "xegs"
       ],
       "alternatives": [
         {
@@ -44555,7 +45650,41 @@
         "mame"
       ],
       "systems": [
-        "3do"
+        "3do",
+        "adam",
+        "apfm1000",
+        "archimedes",
+        "bbcmicro",
+        "camplynx",
+        "cdi",
+        "chihiro",
+        "coco",
+        "crvision",
+        "electron",
+        "elektronika-bk",
+        "entex-advision",
+        "fm7",
+        "gamate",
+        "gamecom",
+        "gamepark-gp32",
+        "gamepock",
+        "gmaster",
+        "hikaru",
+        "loopy",
+        "namco-system246",
+        "neogeo64",
+        "pegasus",
+        "pv1000",
+        "scv",
+        "segastv",
+        "ti99",
+        "triforce",
+        "tutor",
+        "vc4000",
+        "vectrex",
+        "vg5k",
+        "vtech-vsmile",
+        "xegs"
       ]
     },
     {
@@ -44583,6 +45712,43 @@
       "repo_path": "bios/Arcade/Arcade/alg_bios.zip",
       "cores": [
         "groovymame"
+      ],
+      "systems": [
+        "3do",
+        "adam",
+        "apfm1000",
+        "archimedes",
+        "bbcmicro",
+        "camplynx",
+        "cdi",
+        "chihiro",
+        "coco",
+        "crvision",
+        "electron",
+        "elektronika-bk",
+        "entex-advision",
+        "fm7",
+        "gamate",
+        "gamecom",
+        "gamepark-gp32",
+        "gamepock",
+        "gmaster",
+        "hikaru",
+        "loopy",
+        "namco-system246",
+        "neogeo64",
+        "pegasus",
+        "pv1000",
+        "scv",
+        "segastv",
+        "ti99",
+        "triforce",
+        "tutor",
+        "vc4000",
+        "vectrex",
+        "vg5k",
+        "vtech-vsmile",
+        "xegs"
       ],
       "alternatives": [
         {
@@ -44618,6 +45784,43 @@
         "groovymame",
         "mame"
       ],
+      "systems": [
+        "3do",
+        "adam",
+        "apfm1000",
+        "archimedes",
+        "bbcmicro",
+        "camplynx",
+        "cdi",
+        "chihiro",
+        "coco",
+        "crvision",
+        "electron",
+        "elektronika-bk",
+        "entex-advision",
+        "fm7",
+        "gamate",
+        "gamecom",
+        "gamepark-gp32",
+        "gamepock",
+        "gmaster",
+        "hikaru",
+        "loopy",
+        "namco-system246",
+        "neogeo64",
+        "pegasus",
+        "pv1000",
+        "scv",
+        "segastv",
+        "ti99",
+        "triforce",
+        "tutor",
+        "vc4000",
+        "vectrex",
+        "vg5k",
+        "vtech-vsmile",
+        "xegs"
+      ],
       "alternatives": [
         {
           "sha1": "4fb1f00681d2540b476add2def2bbf07ca3e3993",
@@ -44640,6 +45843,43 @@
       "repo_path": "bios/Arcade/Arcade/maxaflex.zip",
       "cores": [
         "groovymame"
+      ],
+      "systems": [
+        "3do",
+        "adam",
+        "apfm1000",
+        "archimedes",
+        "bbcmicro",
+        "camplynx",
+        "cdi",
+        "chihiro",
+        "coco",
+        "crvision",
+        "electron",
+        "elektronika-bk",
+        "entex-advision",
+        "fm7",
+        "gamate",
+        "gamecom",
+        "gamepark-gp32",
+        "gamepock",
+        "gmaster",
+        "hikaru",
+        "loopy",
+        "namco-system246",
+        "neogeo64",
+        "pegasus",
+        "pv1000",
+        "scv",
+        "segastv",
+        "ti99",
+        "triforce",
+        "tutor",
+        "vc4000",
+        "vectrex",
+        "vg5k",
+        "vtech-vsmile",
+        "xegs"
       ],
       "alternatives": [
         {
@@ -44676,6 +45916,43 @@
         "mame2010",
         "mame2014",
         "mame2016"
+      ],
+      "systems": [
+        "3do",
+        "adam",
+        "apfm1000",
+        "archimedes",
+        "bbcmicro",
+        "camplynx",
+        "cdi",
+        "chihiro",
+        "coco",
+        "crvision",
+        "electron",
+        "elektronika-bk",
+        "entex-advision",
+        "fm7",
+        "gamate",
+        "gamecom",
+        "gamepark-gp32",
+        "gamepock",
+        "gmaster",
+        "hikaru",
+        "loopy",
+        "namco-system246",
+        "neogeo64",
+        "pegasus",
+        "pv1000",
+        "scv",
+        "segastv",
+        "ti99",
+        "triforce",
+        "tutor",
+        "vc4000",
+        "vectrex",
+        "vg5k",
+        "vtech-vsmile",
+        "xegs"
       ]
     },
     {
@@ -44687,6 +45964,43 @@
       "cores": [
         "groovymame",
         "mame"
+      ],
+      "systems": [
+        "3do",
+        "adam",
+        "apfm1000",
+        "archimedes",
+        "bbcmicro",
+        "camplynx",
+        "cdi",
+        "chihiro",
+        "coco",
+        "crvision",
+        "electron",
+        "elektronika-bk",
+        "entex-advision",
+        "fm7",
+        "gamate",
+        "gamecom",
+        "gamepark-gp32",
+        "gamepock",
+        "gmaster",
+        "hikaru",
+        "loopy",
+        "namco-system246",
+        "neogeo64",
+        "pegasus",
+        "pv1000",
+        "scv",
+        "segastv",
+        "ti99",
+        "triforce",
+        "tutor",
+        "vc4000",
+        "vectrex",
+        "vg5k",
+        "vtech-vsmile",
+        "xegs"
       ],
       "alternatives": [
         {
@@ -44711,6 +46025,43 @@
         "groovymame",
         "mame"
       ],
+      "systems": [
+        "3do",
+        "adam",
+        "apfm1000",
+        "archimedes",
+        "bbcmicro",
+        "camplynx",
+        "cdi",
+        "chihiro",
+        "coco",
+        "crvision",
+        "electron",
+        "elektronika-bk",
+        "entex-advision",
+        "fm7",
+        "gamate",
+        "gamecom",
+        "gamepark-gp32",
+        "gamepock",
+        "gmaster",
+        "hikaru",
+        "loopy",
+        "namco-system246",
+        "neogeo64",
+        "pegasus",
+        "pv1000",
+        "scv",
+        "segastv",
+        "ti99",
+        "triforce",
+        "tutor",
+        "vc4000",
+        "vectrex",
+        "vg5k",
+        "vtech-vsmile",
+        "xegs"
+      ],
       "alternatives": [
         {
           "sha1": "c5c72aec2f70003d99da9c33858036543ec53dff",
@@ -44733,6 +46084,43 @@
       "cores": [
         "groovymame",
         "mame"
+      ],
+      "systems": [
+        "3do",
+        "adam",
+        "apfm1000",
+        "archimedes",
+        "bbcmicro",
+        "camplynx",
+        "cdi",
+        "chihiro",
+        "coco",
+        "crvision",
+        "electron",
+        "elektronika-bk",
+        "entex-advision",
+        "fm7",
+        "gamate",
+        "gamecom",
+        "gamepark-gp32",
+        "gamepock",
+        "gmaster",
+        "hikaru",
+        "loopy",
+        "namco-system246",
+        "neogeo64",
+        "pegasus",
+        "pv1000",
+        "scv",
+        "segastv",
+        "ti99",
+        "triforce",
+        "tutor",
+        "vc4000",
+        "vectrex",
+        "vg5k",
+        "vtech-vsmile",
+        "xegs"
       ]
     },
     {
@@ -44743,6 +46131,43 @@
       "repo_path": "bios/Arcade/Arcade/allied.zip",
       "cores": [
         "groovymame"
+      ],
+      "systems": [
+        "3do",
+        "adam",
+        "apfm1000",
+        "archimedes",
+        "bbcmicro",
+        "camplynx",
+        "cdi",
+        "chihiro",
+        "coco",
+        "crvision",
+        "electron",
+        "elektronika-bk",
+        "entex-advision",
+        "fm7",
+        "gamate",
+        "gamecom",
+        "gamepark-gp32",
+        "gamepock",
+        "gmaster",
+        "hikaru",
+        "loopy",
+        "namco-system246",
+        "neogeo64",
+        "pegasus",
+        "pv1000",
+        "scv",
+        "segastv",
+        "ti99",
+        "triforce",
+        "tutor",
+        "vc4000",
+        "vectrex",
+        "vg5k",
+        "vtech-vsmile",
+        "xegs"
       ],
       "alternatives": [
         {
@@ -44774,6 +46199,43 @@
       "repo_path": "bios/Arcade/Arcade/gp_110.zip",
       "cores": [
         "groovymame"
+      ],
+      "systems": [
+        "3do",
+        "adam",
+        "apfm1000",
+        "archimedes",
+        "bbcmicro",
+        "camplynx",
+        "cdi",
+        "chihiro",
+        "coco",
+        "crvision",
+        "electron",
+        "elektronika-bk",
+        "entex-advision",
+        "fm7",
+        "gamate",
+        "gamecom",
+        "gamepark-gp32",
+        "gamepock",
+        "gmaster",
+        "hikaru",
+        "loopy",
+        "namco-system246",
+        "neogeo64",
+        "pegasus",
+        "pv1000",
+        "scv",
+        "segastv",
+        "ti99",
+        "triforce",
+        "tutor",
+        "vc4000",
+        "vectrex",
+        "vg5k",
+        "vtech-vsmile",
+        "xegs"
       ],
       "alternatives": [
         {
@@ -44807,6 +46269,43 @@
         "groovymame",
         "mame"
       ],
+      "systems": [
+        "3do",
+        "adam",
+        "apfm1000",
+        "archimedes",
+        "bbcmicro",
+        "camplynx",
+        "cdi",
+        "chihiro",
+        "coco",
+        "crvision",
+        "electron",
+        "elektronika-bk",
+        "entex-advision",
+        "fm7",
+        "gamate",
+        "gamecom",
+        "gamepark-gp32",
+        "gamepock",
+        "gmaster",
+        "hikaru",
+        "loopy",
+        "namco-system246",
+        "neogeo64",
+        "pegasus",
+        "pv1000",
+        "scv",
+        "segastv",
+        "ti99",
+        "triforce",
+        "tutor",
+        "vc4000",
+        "vectrex",
+        "vg5k",
+        "vtech-vsmile",
+        "xegs"
+      ],
       "alternatives": [
         {
           "sha1": "346cbf24af08f5bfd96e6a77abf27595477aace8",
@@ -44829,6 +46328,43 @@
       "cores": [
         "groovymame",
         "mame"
+      ],
+      "systems": [
+        "3do",
+        "adam",
+        "apfm1000",
+        "archimedes",
+        "bbcmicro",
+        "camplynx",
+        "cdi",
+        "chihiro",
+        "coco",
+        "crvision",
+        "electron",
+        "elektronika-bk",
+        "entex-advision",
+        "fm7",
+        "gamate",
+        "gamecom",
+        "gamepark-gp32",
+        "gamepock",
+        "gmaster",
+        "hikaru",
+        "loopy",
+        "namco-system246",
+        "neogeo64",
+        "pegasus",
+        "pv1000",
+        "scv",
+        "segastv",
+        "ti99",
+        "triforce",
+        "tutor",
+        "vc4000",
+        "vectrex",
+        "vg5k",
+        "vtech-vsmile",
+        "xegs"
       ]
     },
     {
@@ -44840,6 +46376,43 @@
       "cores": [
         "groovymame",
         "mame"
+      ],
+      "systems": [
+        "3do",
+        "adam",
+        "apfm1000",
+        "archimedes",
+        "bbcmicro",
+        "camplynx",
+        "cdi",
+        "chihiro",
+        "coco",
+        "crvision",
+        "electron",
+        "elektronika-bk",
+        "entex-advision",
+        "fm7",
+        "gamate",
+        "gamecom",
+        "gamepark-gp32",
+        "gamepock",
+        "gmaster",
+        "hikaru",
+        "loopy",
+        "namco-system246",
+        "neogeo64",
+        "pegasus",
+        "pv1000",
+        "scv",
+        "segastv",
+        "ti99",
+        "triforce",
+        "tutor",
+        "vc4000",
+        "vectrex",
+        "vg5k",
+        "vtech-vsmile",
+        "xegs"
       ]
     },
     {
@@ -44851,6 +46424,43 @@
       "cores": [
         "groovymame",
         "mame"
+      ],
+      "systems": [
+        "3do",
+        "adam",
+        "apfm1000",
+        "archimedes",
+        "bbcmicro",
+        "camplynx",
+        "cdi",
+        "chihiro",
+        "coco",
+        "crvision",
+        "electron",
+        "elektronika-bk",
+        "entex-advision",
+        "fm7",
+        "gamate",
+        "gamecom",
+        "gamepark-gp32",
+        "gamepock",
+        "gmaster",
+        "hikaru",
+        "loopy",
+        "namco-system246",
+        "neogeo64",
+        "pegasus",
+        "pv1000",
+        "scv",
+        "segastv",
+        "ti99",
+        "triforce",
+        "tutor",
+        "vc4000",
+        "vectrex",
+        "vg5k",
+        "vtech-vsmile",
+        "xegs"
       ]
     },
     {
@@ -44862,6 +46472,43 @@
       "cores": [
         "groovymame",
         "mame"
+      ],
+      "systems": [
+        "3do",
+        "adam",
+        "apfm1000",
+        "archimedes",
+        "bbcmicro",
+        "camplynx",
+        "cdi",
+        "chihiro",
+        "coco",
+        "crvision",
+        "electron",
+        "elektronika-bk",
+        "entex-advision",
+        "fm7",
+        "gamate",
+        "gamecom",
+        "gamepark-gp32",
+        "gamepock",
+        "gmaster",
+        "hikaru",
+        "loopy",
+        "namco-system246",
+        "neogeo64",
+        "pegasus",
+        "pv1000",
+        "scv",
+        "segastv",
+        "ti99",
+        "triforce",
+        "tutor",
+        "vc4000",
+        "vectrex",
+        "vg5k",
+        "vtech-vsmile",
+        "xegs"
       ]
     },
     {
@@ -44873,6 +46520,43 @@
       "cores": [
         "groovymame",
         "mame"
+      ],
+      "systems": [
+        "3do",
+        "adam",
+        "apfm1000",
+        "archimedes",
+        "bbcmicro",
+        "camplynx",
+        "cdi",
+        "chihiro",
+        "coco",
+        "crvision",
+        "electron",
+        "elektronika-bk",
+        "entex-advision",
+        "fm7",
+        "gamate",
+        "gamecom",
+        "gamepark-gp32",
+        "gamepock",
+        "gmaster",
+        "hikaru",
+        "loopy",
+        "namco-system246",
+        "neogeo64",
+        "pegasus",
+        "pv1000",
+        "scv",
+        "segastv",
+        "ti99",
+        "triforce",
+        "tutor",
+        "vc4000",
+        "vectrex",
+        "vg5k",
+        "vtech-vsmile",
+        "xegs"
       ],
       "alternatives": [
         {
@@ -44895,6 +46579,43 @@
       "repo_path": "bios/Arcade/Arcade/su2000.zip",
       "cores": [
         "groovymame"
+      ],
+      "systems": [
+        "3do",
+        "adam",
+        "apfm1000",
+        "archimedes",
+        "bbcmicro",
+        "camplynx",
+        "cdi",
+        "chihiro",
+        "coco",
+        "crvision",
+        "electron",
+        "elektronika-bk",
+        "entex-advision",
+        "fm7",
+        "gamate",
+        "gamecom",
+        "gamepark-gp32",
+        "gamepock",
+        "gmaster",
+        "hikaru",
+        "loopy",
+        "namco-system246",
+        "neogeo64",
+        "pegasus",
+        "pv1000",
+        "scv",
+        "segastv",
+        "ti99",
+        "triforce",
+        "tutor",
+        "vc4000",
+        "vectrex",
+        "vg5k",
+        "vtech-vsmile",
+        "xegs"
       ],
       "alternatives": [
         {
@@ -44929,6 +46650,43 @@
         "mame",
         "mame2014",
         "mame2016"
+      ],
+      "systems": [
+        "3do",
+        "adam",
+        "apfm1000",
+        "archimedes",
+        "bbcmicro",
+        "camplynx",
+        "cdi",
+        "chihiro",
+        "coco",
+        "crvision",
+        "electron",
+        "elektronika-bk",
+        "entex-advision",
+        "fm7",
+        "gamate",
+        "gamecom",
+        "gamepark-gp32",
+        "gamepock",
+        "gmaster",
+        "hikaru",
+        "loopy",
+        "namco-system246",
+        "neogeo64",
+        "pegasus",
+        "pv1000",
+        "scv",
+        "segastv",
+        "ti99",
+        "triforce",
+        "tutor",
+        "vc4000",
+        "vectrex",
+        "vg5k",
+        "vtech-vsmile",
+        "xegs"
       ]
     },
     {
@@ -44939,6 +46697,43 @@
       "repo_path": "bios/Arcade/Arcade/v4bios.zip",
       "cores": [
         "groovymame"
+      ],
+      "systems": [
+        "3do",
+        "adam",
+        "apfm1000",
+        "archimedes",
+        "bbcmicro",
+        "camplynx",
+        "cdi",
+        "chihiro",
+        "coco",
+        "crvision",
+        "electron",
+        "elektronika-bk",
+        "entex-advision",
+        "fm7",
+        "gamate",
+        "gamecom",
+        "gamepark-gp32",
+        "gamepock",
+        "gmaster",
+        "hikaru",
+        "loopy",
+        "namco-system246",
+        "neogeo64",
+        "pegasus",
+        "pv1000",
+        "scv",
+        "segastv",
+        "ti99",
+        "triforce",
+        "tutor",
+        "vc4000",
+        "vectrex",
+        "vg5k",
+        "vtech-vsmile",
+        "xegs"
       ],
       "alternatives": [
         {
@@ -44971,6 +46766,43 @@
       "cores": [
         "groovymame",
         "mame"
+      ],
+      "systems": [
+        "3do",
+        "adam",
+        "apfm1000",
+        "archimedes",
+        "bbcmicro",
+        "camplynx",
+        "cdi",
+        "chihiro",
+        "coco",
+        "crvision",
+        "electron",
+        "elektronika-bk",
+        "entex-advision",
+        "fm7",
+        "gamate",
+        "gamecom",
+        "gamepark-gp32",
+        "gamepock",
+        "gmaster",
+        "hikaru",
+        "loopy",
+        "namco-system246",
+        "neogeo64",
+        "pegasus",
+        "pv1000",
+        "scv",
+        "segastv",
+        "ti99",
+        "triforce",
+        "tutor",
+        "vc4000",
+        "vectrex",
+        "vg5k",
+        "vtech-vsmile",
+        "xegs"
       ]
     },
     {
@@ -44982,6 +46814,43 @@
       "cores": [
         "groovymame",
         "mame"
+      ],
+      "systems": [
+        "3do",
+        "adam",
+        "apfm1000",
+        "archimedes",
+        "bbcmicro",
+        "camplynx",
+        "cdi",
+        "chihiro",
+        "coco",
+        "crvision",
+        "electron",
+        "elektronika-bk",
+        "entex-advision",
+        "fm7",
+        "gamate",
+        "gamecom",
+        "gamepark-gp32",
+        "gamepock",
+        "gmaster",
+        "hikaru",
+        "loopy",
+        "namco-system246",
+        "neogeo64",
+        "pegasus",
+        "pv1000",
+        "scv",
+        "segastv",
+        "ti99",
+        "triforce",
+        "tutor",
+        "vc4000",
+        "vectrex",
+        "vg5k",
+        "vtech-vsmile",
+        "xegs"
       ]
     },
     {
@@ -45426,10 +47295,15 @@
         "3do",
         "adam",
         "apfm1000",
+        "archimedes",
+        "bbcmicro",
         "camplynx",
         "cdi",
         "chihiro",
+        "coco",
         "crvision",
+        "electron",
+        "elektronika-bk",
         "entex-advision",
         "fm7",
         "gamate",
@@ -45443,13 +47317,16 @@
         "neogeo64",
         "pegasus",
         "pv1000",
+        "scv",
         "segastv",
         "ti99",
         "triforce",
         "tutor",
         "vc4000",
+        "vectrex",
         "vg5k",
-        "vtech-vsmile"
+        "vtech-vsmile",
+        "xegs"
       ],
       "alternatives": [
         {
@@ -45477,10 +47354,15 @@
         "3do",
         "adam",
         "apfm1000",
+        "archimedes",
+        "bbcmicro",
         "camplynx",
         "cdi",
         "chihiro",
+        "coco",
         "crvision",
+        "electron",
+        "elektronika-bk",
         "entex-advision",
         "fm7",
         "gamate",
@@ -45494,13 +47376,16 @@
         "neogeo64",
         "pegasus",
         "pv1000",
+        "scv",
         "segastv",
         "ti99",
         "triforce",
         "tutor",
         "vc4000",
+        "vectrex",
         "vg5k",
-        "vtech-vsmile"
+        "vtech-vsmile",
+        "xegs"
       ]
     },
     {
@@ -45512,6 +47397,43 @@
       "cores": [
         "fbneo",
         "groovymame"
+      ],
+      "systems": [
+        "3do",
+        "adam",
+        "apfm1000",
+        "archimedes",
+        "bbcmicro",
+        "camplynx",
+        "cdi",
+        "chihiro",
+        "coco",
+        "crvision",
+        "electron",
+        "elektronika-bk",
+        "entex-advision",
+        "fm7",
+        "gamate",
+        "gamecom",
+        "gamepark-gp32",
+        "gamepock",
+        "gmaster",
+        "hikaru",
+        "loopy",
+        "namco-system246",
+        "neogeo64",
+        "pegasus",
+        "pv1000",
+        "scv",
+        "segastv",
+        "ti99",
+        "triforce",
+        "tutor",
+        "vc4000",
+        "vectrex",
+        "vg5k",
+        "vtech-vsmile",
+        "xegs"
       ],
       "alternatives": [
         {
@@ -45539,10 +47461,15 @@
         "3do",
         "adam",
         "apfm1000",
+        "archimedes",
+        "bbcmicro",
         "camplynx",
         "cdi",
         "chihiro",
+        "coco",
         "crvision",
+        "electron",
+        "elektronika-bk",
         "entex-advision",
         "fm7",
         "gamate",
@@ -45556,13 +47483,16 @@
         "neogeo64",
         "pegasus",
         "pv1000",
+        "scv",
         "segastv",
         "ti99",
         "triforce",
         "tutor",
         "vc4000",
+        "vectrex",
         "vg5k",
-        "vtech-vsmile"
+        "vtech-vsmile",
+        "xegs"
       ]
     },
     {
@@ -45579,10 +47509,15 @@
         "3do",
         "adam",
         "apfm1000",
+        "archimedes",
+        "bbcmicro",
         "camplynx",
         "cdi",
         "chihiro",
+        "coco",
         "crvision",
+        "electron",
+        "elektronika-bk",
         "entex-advision",
         "fm7",
         "gamate",
@@ -45596,13 +47531,16 @@
         "neogeo64",
         "pegasus",
         "pv1000",
+        "scv",
         "segastv",
         "ti99",
         "triforce",
         "tutor",
         "vc4000",
+        "vectrex",
         "vg5k",
-        "vtech-vsmile"
+        "vtech-vsmile",
+        "xegs"
       ]
     },
     {
@@ -45619,10 +47557,15 @@
         "3do",
         "adam",
         "apfm1000",
+        "archimedes",
+        "bbcmicro",
         "camplynx",
         "cdi",
         "chihiro",
+        "coco",
         "crvision",
+        "electron",
+        "elektronika-bk",
         "entex-advision",
         "fm7",
         "gamate",
@@ -45636,13 +47579,16 @@
         "neogeo64",
         "pegasus",
         "pv1000",
+        "scv",
         "segastv",
         "ti99",
         "triforce",
         "tutor",
         "vc4000",
+        "vectrex",
         "vg5k",
-        "vtech-vsmile"
+        "vtech-vsmile",
+        "xegs"
       ]
     },
     {
@@ -45659,10 +47605,15 @@
         "3do",
         "adam",
         "apfm1000",
+        "archimedes",
+        "bbcmicro",
         "camplynx",
         "cdi",
         "chihiro",
+        "coco",
         "crvision",
+        "electron",
+        "elektronika-bk",
         "entex-advision",
         "fm7",
         "gamate",
@@ -45676,13 +47627,16 @@
         "neogeo64",
         "pegasus",
         "pv1000",
+        "scv",
         "segastv",
         "ti99",
         "triforce",
         "tutor",
         "vc4000",
+        "vectrex",
         "vg5k",
-        "vtech-vsmile"
+        "vtech-vsmile",
+        "xegs"
       ]
     },
     {
@@ -45699,10 +47653,15 @@
         "3do",
         "adam",
         "apfm1000",
+        "archimedes",
+        "bbcmicro",
         "camplynx",
         "cdi",
         "chihiro",
+        "coco",
         "crvision",
+        "electron",
+        "elektronika-bk",
         "entex-advision",
         "fm7",
         "gamate",
@@ -45716,13 +47675,16 @@
         "neogeo64",
         "pegasus",
         "pv1000",
+        "scv",
         "segastv",
         "ti99",
         "triforce",
         "tutor",
         "vc4000",
+        "vectrex",
         "vg5k",
-        "vtech-vsmile"
+        "vtech-vsmile",
+        "xegs"
       ]
     },
     {
@@ -45739,10 +47701,15 @@
         "3do",
         "adam",
         "apfm1000",
+        "archimedes",
+        "bbcmicro",
         "camplynx",
         "cdi",
         "chihiro",
+        "coco",
         "crvision",
+        "electron",
+        "elektronika-bk",
         "entex-advision",
         "fm7",
         "gamate",
@@ -45756,13 +47723,16 @@
         "neogeo64",
         "pegasus",
         "pv1000",
+        "scv",
         "segastv",
         "ti99",
         "triforce",
         "tutor",
         "vc4000",
+        "vectrex",
         "vg5k",
-        "vtech-vsmile"
+        "vtech-vsmile",
+        "xegs"
       ]
     },
     {
@@ -45779,10 +47749,15 @@
         "3do",
         "adam",
         "apfm1000",
+        "archimedes",
+        "bbcmicro",
         "camplynx",
         "cdi",
         "chihiro",
+        "coco",
         "crvision",
+        "electron",
+        "elektronika-bk",
         "entex-advision",
         "fm7",
         "gamate",
@@ -45796,13 +47771,16 @@
         "neogeo64",
         "pegasus",
         "pv1000",
+        "scv",
         "segastv",
         "ti99",
         "triforce",
         "tutor",
         "vc4000",
+        "vectrex",
         "vg5k",
-        "vtech-vsmile"
+        "vtech-vsmile",
+        "xegs"
       ]
     },
     {
@@ -45819,10 +47797,15 @@
         "3do",
         "adam",
         "apfm1000",
+        "archimedes",
+        "bbcmicro",
         "camplynx",
         "cdi",
         "chihiro",
+        "coco",
         "crvision",
+        "electron",
+        "elektronika-bk",
         "entex-advision",
         "fm7",
         "gamate",
@@ -45836,13 +47819,16 @@
         "neogeo64",
         "pegasus",
         "pv1000",
+        "scv",
         "segastv",
         "ti99",
         "triforce",
         "tutor",
         "vc4000",
+        "vectrex",
         "vg5k",
-        "vtech-vsmile"
+        "vtech-vsmile",
+        "xegs"
       ]
     },
     {
@@ -45859,10 +47845,15 @@
         "3do",
         "adam",
         "apfm1000",
+        "archimedes",
+        "bbcmicro",
         "camplynx",
         "cdi",
         "chihiro",
+        "coco",
         "crvision",
+        "electron",
+        "elektronika-bk",
         "entex-advision",
         "fm7",
         "gamate",
@@ -45876,13 +47867,16 @@
         "neogeo64",
         "pegasus",
         "pv1000",
+        "scv",
         "segastv",
         "ti99",
         "triforce",
         "tutor",
         "vc4000",
+        "vectrex",
         "vg5k",
-        "vtech-vsmile"
+        "vtech-vsmile",
+        "xegs"
       ]
     },
     {
@@ -45899,10 +47893,15 @@
         "3do",
         "adam",
         "apfm1000",
+        "archimedes",
+        "bbcmicro",
         "camplynx",
         "cdi",
         "chihiro",
+        "coco",
         "crvision",
+        "electron",
+        "elektronika-bk",
         "entex-advision",
         "fm7",
         "gamate",
@@ -45916,13 +47915,16 @@
         "neogeo64",
         "pegasus",
         "pv1000",
+        "scv",
         "segastv",
         "ti99",
         "triforce",
         "tutor",
         "vc4000",
+        "vectrex",
         "vg5k",
-        "vtech-vsmile"
+        "vtech-vsmile",
+        "xegs"
       ]
     },
     {
@@ -45939,10 +47941,15 @@
         "3do",
         "adam",
         "apfm1000",
+        "archimedes",
+        "bbcmicro",
         "camplynx",
         "cdi",
         "chihiro",
+        "coco",
         "crvision",
+        "electron",
+        "elektronika-bk",
         "entex-advision",
         "fm7",
         "gamate",
@@ -45956,13 +47963,16 @@
         "neogeo64",
         "pegasus",
         "pv1000",
+        "scv",
         "segastv",
         "ti99",
         "triforce",
         "tutor",
         "vc4000",
+        "vectrex",
         "vg5k",
-        "vtech-vsmile"
+        "vtech-vsmile",
+        "xegs"
       ]
     },
     {
@@ -45979,10 +47989,15 @@
         "3do",
         "adam",
         "apfm1000",
+        "archimedes",
+        "bbcmicro",
         "camplynx",
         "cdi",
         "chihiro",
+        "coco",
         "crvision",
+        "electron",
+        "elektronika-bk",
         "entex-advision",
         "fm7",
         "gamate",
@@ -45996,13 +48011,16 @@
         "neogeo64",
         "pegasus",
         "pv1000",
+        "scv",
         "segastv",
         "ti99",
         "triforce",
         "tutor",
         "vc4000",
+        "vectrex",
         "vg5k",
-        "vtech-vsmile"
+        "vtech-vsmile",
+        "xegs"
       ]
     },
     {
@@ -46019,10 +48037,15 @@
         "3do",
         "adam",
         "apfm1000",
+        "archimedes",
+        "bbcmicro",
         "camplynx",
         "cdi",
         "chihiro",
+        "coco",
         "crvision",
+        "electron",
+        "elektronika-bk",
         "entex-advision",
         "fm7",
         "gamate",
@@ -46036,13 +48059,16 @@
         "neogeo64",
         "pegasus",
         "pv1000",
+        "scv",
         "segastv",
         "ti99",
         "triforce",
         "tutor",
         "vc4000",
+        "vectrex",
         "vg5k",
-        "vtech-vsmile"
+        "vtech-vsmile",
+        "xegs"
       ]
     },
     {
@@ -46059,10 +48085,15 @@
         "3do",
         "adam",
         "apfm1000",
+        "archimedes",
+        "bbcmicro",
         "camplynx",
         "cdi",
         "chihiro",
+        "coco",
         "crvision",
+        "electron",
+        "elektronika-bk",
         "entex-advision",
         "fm7",
         "gamate",
@@ -46076,13 +48107,16 @@
         "neogeo64",
         "pegasus",
         "pv1000",
+        "scv",
         "segastv",
         "ti99",
         "triforce",
         "tutor",
         "vc4000",
+        "vectrex",
         "vg5k",
-        "vtech-vsmile"
+        "vtech-vsmile",
+        "xegs"
       ]
     },
     {
@@ -46099,10 +48133,15 @@
         "3do",
         "adam",
         "apfm1000",
+        "archimedes",
+        "bbcmicro",
         "camplynx",
         "cdi",
         "chihiro",
+        "coco",
         "crvision",
+        "electron",
+        "elektronika-bk",
         "entex-advision",
         "fm7",
         "gamate",
@@ -46116,13 +48155,16 @@
         "neogeo64",
         "pegasus",
         "pv1000",
+        "scv",
         "segastv",
         "ti99",
         "triforce",
         "tutor",
         "vc4000",
+        "vectrex",
         "vg5k",
-        "vtech-vsmile"
+        "vtech-vsmile",
+        "xegs"
       ]
     },
     {
@@ -46139,10 +48181,15 @@
         "3do",
         "adam",
         "apfm1000",
+        "archimedes",
+        "bbcmicro",
         "camplynx",
         "cdi",
         "chihiro",
+        "coco",
         "crvision",
+        "electron",
+        "elektronika-bk",
         "entex-advision",
         "fm7",
         "gamate",
@@ -46156,13 +48203,16 @@
         "neogeo64",
         "pegasus",
         "pv1000",
+        "scv",
         "segastv",
         "ti99",
         "triforce",
         "tutor",
         "vc4000",
+        "vectrex",
         "vg5k",
-        "vtech-vsmile"
+        "vtech-vsmile",
+        "xegs"
       ]
     },
     {
@@ -46179,10 +48229,15 @@
         "3do",
         "adam",
         "apfm1000",
+        "archimedes",
+        "bbcmicro",
         "camplynx",
         "cdi",
         "chihiro",
+        "coco",
         "crvision",
+        "electron",
+        "elektronika-bk",
         "entex-advision",
         "fm7",
         "gamate",
@@ -46196,13 +48251,16 @@
         "neogeo64",
         "pegasus",
         "pv1000",
+        "scv",
         "segastv",
         "ti99",
         "triforce",
         "tutor",
         "vc4000",
+        "vectrex",
         "vg5k",
-        "vtech-vsmile"
+        "vtech-vsmile",
+        "xegs"
       ]
     },
     {
@@ -46219,10 +48277,15 @@
         "3do",
         "adam",
         "apfm1000",
+        "archimedes",
+        "bbcmicro",
         "camplynx",
         "cdi",
         "chihiro",
+        "coco",
         "crvision",
+        "electron",
+        "elektronika-bk",
         "entex-advision",
         "fm7",
         "gamate",
@@ -46236,13 +48299,16 @@
         "neogeo64",
         "pegasus",
         "pv1000",
+        "scv",
         "segastv",
         "ti99",
         "triforce",
         "tutor",
         "vc4000",
+        "vectrex",
         "vg5k",
-        "vtech-vsmile"
+        "vtech-vsmile",
+        "xegs"
       ]
     },
     {
@@ -46259,10 +48325,15 @@
         "3do",
         "adam",
         "apfm1000",
+        "archimedes",
+        "bbcmicro",
         "camplynx",
         "cdi",
         "chihiro",
+        "coco",
         "crvision",
+        "electron",
+        "elektronika-bk",
         "entex-advision",
         "fm7",
         "gamate",
@@ -46276,13 +48347,16 @@
         "neogeo64",
         "pegasus",
         "pv1000",
+        "scv",
         "segastv",
         "ti99",
         "triforce",
         "tutor",
         "vc4000",
+        "vectrex",
         "vg5k",
-        "vtech-vsmile"
+        "vtech-vsmile",
+        "xegs"
       ]
     },
     {
@@ -46294,6 +48368,43 @@
       "cores": [
         "groovymame",
         "mame"
+      ],
+      "systems": [
+        "3do",
+        "adam",
+        "apfm1000",
+        "archimedes",
+        "bbcmicro",
+        "camplynx",
+        "cdi",
+        "chihiro",
+        "coco",
+        "crvision",
+        "electron",
+        "elektronika-bk",
+        "entex-advision",
+        "fm7",
+        "gamate",
+        "gamecom",
+        "gamepark-gp32",
+        "gamepock",
+        "gmaster",
+        "hikaru",
+        "loopy",
+        "namco-system246",
+        "neogeo64",
+        "pegasus",
+        "pv1000",
+        "scv",
+        "segastv",
+        "ti99",
+        "triforce",
+        "tutor",
+        "vc4000",
+        "vectrex",
+        "vg5k",
+        "vtech-vsmile",
+        "xegs"
       ]
     },
     {
@@ -47843,7 +49954,9 @@
         "mesen-s"
       ],
       "systems": [
-        "nintendo-gb"
+        "nintendo-gb",
+        "nintendo-gbc",
+        "nintendo-satellaview"
       ]
     },
     {
@@ -47858,7 +49971,9 @@
         "mesen-s"
       ],
       "systems": [
-        "nintendo-gbc"
+        "nintendo-gb",
+        "nintendo-gbc",
+        "nintendo-satellaview"
       ]
     },
     {
@@ -58685,6 +60800,43 @@
       "cores": [
         "fbneo",
         "mame"
+      ],
+      "systems": [
+        "3do",
+        "adam",
+        "apfm1000",
+        "archimedes",
+        "bbcmicro",
+        "camplynx",
+        "cdi",
+        "chihiro",
+        "coco",
+        "crvision",
+        "electron",
+        "elektronika-bk",
+        "entex-advision",
+        "fm7",
+        "gamate",
+        "gamecom",
+        "gamepark-gp32",
+        "gamepock",
+        "gmaster",
+        "hikaru",
+        "loopy",
+        "namco-system246",
+        "neogeo64",
+        "pegasus",
+        "pv1000",
+        "scv",
+        "segastv",
+        "ti99",
+        "triforce",
+        "tutor",
+        "vc4000",
+        "vectrex",
+        "vg5k",
+        "vtech-vsmile",
+        "xegs"
       ]
     },
     {
@@ -71951,6 +74103,43 @@
       "cores": [
         "fbneo",
         "mame"
+      ],
+      "systems": [
+        "3do",
+        "adam",
+        "apfm1000",
+        "archimedes",
+        "bbcmicro",
+        "camplynx",
+        "cdi",
+        "chihiro",
+        "coco",
+        "crvision",
+        "electron",
+        "elektronika-bk",
+        "entex-advision",
+        "fm7",
+        "gamate",
+        "gamecom",
+        "gamepark-gp32",
+        "gamepock",
+        "gmaster",
+        "hikaru",
+        "loopy",
+        "namco-system246",
+        "neogeo64",
+        "pegasus",
+        "pv1000",
+        "scv",
+        "segastv",
+        "ti99",
+        "triforce",
+        "tutor",
+        "vc4000",
+        "vectrex",
+        "vg5k",
+        "vtech-vsmile",
+        "xegs"
       ]
     },
     {
@@ -75967,6 +78156,43 @@
       "cores": [
         "fbneo",
         "mame"
+      ],
+      "systems": [
+        "3do",
+        "adam",
+        "apfm1000",
+        "archimedes",
+        "bbcmicro",
+        "camplynx",
+        "cdi",
+        "chihiro",
+        "coco",
+        "crvision",
+        "electron",
+        "elektronika-bk",
+        "entex-advision",
+        "fm7",
+        "gamate",
+        "gamecom",
+        "gamepark-gp32",
+        "gamepock",
+        "gmaster",
+        "hikaru",
+        "loopy",
+        "namco-system246",
+        "neogeo64",
+        "pegasus",
+        "pv1000",
+        "scv",
+        "segastv",
+        "ti99",
+        "triforce",
+        "tutor",
+        "vc4000",
+        "vectrex",
+        "vg5k",
+        "vtech-vsmile",
+        "xegs"
       ]
     },
     {
@@ -75978,6 +78204,43 @@
       "cores": [
         "fbneo",
         "mame"
+      ],
+      "systems": [
+        "3do",
+        "adam",
+        "apfm1000",
+        "archimedes",
+        "bbcmicro",
+        "camplynx",
+        "cdi",
+        "chihiro",
+        "coco",
+        "crvision",
+        "electron",
+        "elektronika-bk",
+        "entex-advision",
+        "fm7",
+        "gamate",
+        "gamecom",
+        "gamepark-gp32",
+        "gamepock",
+        "gmaster",
+        "hikaru",
+        "loopy",
+        "namco-system246",
+        "neogeo64",
+        "pegasus",
+        "pv1000",
+        "scv",
+        "segastv",
+        "ti99",
+        "triforce",
+        "tutor",
+        "vc4000",
+        "vectrex",
+        "vg5k",
+        "vtech-vsmile",
+        "xegs"
       ]
     },
     {
@@ -76083,6 +78346,43 @@
       "cores": [
         "fbneo",
         "mame"
+      ],
+      "systems": [
+        "3do",
+        "adam",
+        "apfm1000",
+        "archimedes",
+        "bbcmicro",
+        "camplynx",
+        "cdi",
+        "chihiro",
+        "coco",
+        "crvision",
+        "electron",
+        "elektronika-bk",
+        "entex-advision",
+        "fm7",
+        "gamate",
+        "gamecom",
+        "gamepark-gp32",
+        "gamepock",
+        "gmaster",
+        "hikaru",
+        "loopy",
+        "namco-system246",
+        "neogeo64",
+        "pegasus",
+        "pv1000",
+        "scv",
+        "segastv",
+        "ti99",
+        "triforce",
+        "tutor",
+        "vc4000",
+        "vectrex",
+        "vg5k",
+        "vtech-vsmile",
+        "xegs"
       ]
     },
     {
@@ -76661,6 +78961,43 @@
       "cores": [
         "fbneo",
         "mame"
+      ],
+      "systems": [
+        "3do",
+        "adam",
+        "apfm1000",
+        "archimedes",
+        "bbcmicro",
+        "camplynx",
+        "cdi",
+        "chihiro",
+        "coco",
+        "crvision",
+        "electron",
+        "elektronika-bk",
+        "entex-advision",
+        "fm7",
+        "gamate",
+        "gamecom",
+        "gamepark-gp32",
+        "gamepock",
+        "gmaster",
+        "hikaru",
+        "loopy",
+        "namco-system246",
+        "neogeo64",
+        "pegasus",
+        "pv1000",
+        "scv",
+        "segastv",
+        "ti99",
+        "triforce",
+        "tutor",
+        "vc4000",
+        "vectrex",
+        "vg5k",
+        "vtech-vsmile",
+        "xegs"
       ]
     },
     {
@@ -93136,6 +95473,16 @@
         "mame2016",
         "psxmame",
         "zinc"
+      ],
+      "systems": [
+        "3do",
+        "cdi",
+        "chihiro",
+        "hikaru",
+        "namco-system246",
+        "neogeo64",
+        "segastv",
+        "triforce"
       ]
     },
     {
@@ -93152,6 +95499,16 @@
         "mame2016",
         "psxmame",
         "zinc"
+      ],
+      "systems": [
+        "3do",
+        "cdi",
+        "chihiro",
+        "hikaru",
+        "namco-system246",
+        "neogeo64",
+        "segastv",
+        "triforce"
       ]
     },
     {
@@ -93178,6 +95535,16 @@
         "mame2014",
         "mame2016",
         "psxmame"
+      ],
+      "systems": [
+        "3do",
+        "cdi",
+        "chihiro",
+        "hikaru",
+        "namco-system246",
+        "neogeo64",
+        "segastv",
+        "triforce"
       ]
     },
     {
@@ -93249,6 +95616,16 @@
         "mame2016",
         "psxmame",
         "zinc"
+      ],
+      "systems": [
+        "3do",
+        "cdi",
+        "chihiro",
+        "hikaru",
+        "namco-system246",
+        "neogeo64",
+        "segastv",
+        "triforce"
       ]
     },
     {
@@ -93262,6 +95639,16 @@
         "mame2014",
         "mame2016",
         "psxmame"
+      ],
+      "systems": [
+        "3do",
+        "cdi",
+        "chihiro",
+        "hikaru",
+        "namco-system246",
+        "neogeo64",
+        "segastv",
+        "triforce"
       ]
     },
     {
@@ -93276,6 +95663,16 @@
         "mame2016",
         "psxmame",
         "zinc"
+      ],
+      "systems": [
+        "3do",
+        "cdi",
+        "chihiro",
+        "hikaru",
+        "namco-system246",
+        "neogeo64",
+        "segastv",
+        "triforce"
       ]
     },
     {
@@ -93289,6 +95686,16 @@
         "mame2014",
         "mame2016",
         "psxmame"
+      ],
+      "systems": [
+        "3do",
+        "cdi",
+        "chihiro",
+        "hikaru",
+        "namco-system246",
+        "neogeo64",
+        "segastv",
+        "triforce"
       ]
     },
     {
@@ -93301,6 +95708,16 @@
         "mame2010",
         "mame2014",
         "mame2016"
+      ],
+      "systems": [
+        "3do",
+        "cdi",
+        "chihiro",
+        "hikaru",
+        "namco-system246",
+        "neogeo64",
+        "segastv",
+        "triforce"
       ]
     },
     {
@@ -93332,6 +95749,16 @@
       "cores": [
         "mame2014",
         "mame2016"
+      ],
+      "systems": [
+        "3do",
+        "cdi",
+        "chihiro",
+        "hikaru",
+        "namco-system246",
+        "neogeo64",
+        "segastv",
+        "triforce"
       ]
     },
     {
@@ -93343,6 +95770,16 @@
       "cores": [
         "mame2014",
         "mame2016"
+      ],
+      "systems": [
+        "3do",
+        "cdi",
+        "chihiro",
+        "hikaru",
+        "namco-system246",
+        "neogeo64",
+        "segastv",
+        "triforce"
       ]
     },
     {
@@ -99295,6 +101732,7 @@
         "pcsx2x6"
       ],
       "systems": [
+        "namco-system246",
         "sony-playstation-2"
       ]
     },

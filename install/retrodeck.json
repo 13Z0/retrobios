@@ -43469,7 +43469,8 @@
         "pcsx2"
       ],
       "systems": [
-        "sony-playstation"
+        "sony-playstation",
+        "sony-playstation-2"
       ],
       "regions": [
         "japan"
@@ -43510,7 +43511,8 @@
         "pcsx2"
       ],
       "systems": [
-        "sony-playstation"
+        "sony-playstation",
+        "sony-playstation-2"
       ],
       "regions": [
         "europe",
@@ -56729,6 +56731,7 @@
         "ep128emu_core"
       ],
       "systems": [
+        "amstrad-cpc",
         "sinclair-zx-spectrum"
       ]
     },
@@ -56743,6 +56746,7 @@
         "ep128emu_core"
       ],
       "systems": [
+        "amstrad-cpc",
         "sinclair-zx-spectrum"
       ]
     },
@@ -61689,6 +61693,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -61716,6 +61721,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -61743,6 +61749,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -61770,6 +61777,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -61797,6 +61805,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -61824,6 +61833,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -61851,6 +61861,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -61878,6 +61889,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -61905,6 +61917,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -61932,6 +61945,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -61959,6 +61973,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -61986,6 +62001,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -62013,6 +62029,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -62040,6 +62057,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -62067,6 +62085,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -62094,6 +62113,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -62121,6 +62141,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -62148,6 +62169,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -62175,6 +62197,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -62202,6 +62225,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -62229,6 +62253,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -62256,6 +62281,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -62283,6 +62309,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -62310,6 +62337,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -62337,6 +62365,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -62364,6 +62393,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -62391,6 +62421,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -62418,6 +62449,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -62445,6 +62477,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -62472,6 +62505,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -62499,6 +62533,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -62526,6 +62561,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -62553,6 +62589,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -62580,6 +62617,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -62607,6 +62645,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -62634,6 +62673,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -62661,6 +62701,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -62688,6 +62729,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -62715,6 +62757,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -62742,6 +62785,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -62769,6 +62813,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -62796,6 +62841,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -62823,6 +62869,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -62850,6 +62897,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -62877,6 +62925,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -62904,6 +62953,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -62931,6 +62981,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -62958,6 +63009,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -62985,6 +63037,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -63012,6 +63065,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -63039,6 +63093,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -63066,6 +63121,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -63093,6 +63149,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -63120,6 +63177,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -63147,6 +63205,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -63174,6 +63233,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -63201,6 +63261,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -63228,6 +63289,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -63255,6 +63317,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -63282,6 +63345,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -63309,6 +63373,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -63336,6 +63401,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -63363,6 +63429,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -63390,6 +63457,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -63417,6 +63485,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -63444,6 +63513,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -63471,6 +63541,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -63498,6 +63569,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -63525,6 +63597,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -63552,6 +63625,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -63579,6 +63653,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -63606,6 +63681,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -63633,6 +63709,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -63660,6 +63737,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -63687,6 +63765,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -63714,6 +63793,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -63741,6 +63821,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -63768,6 +63849,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -63795,6 +63877,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -63822,6 +63905,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -63849,6 +63933,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -63876,6 +63961,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -63903,6 +63989,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -63930,6 +64017,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -63957,6 +64045,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -63984,6 +64073,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -64011,6 +64101,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -64038,6 +64129,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -64065,6 +64157,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -64092,6 +64185,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -64119,6 +64213,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -64146,6 +64241,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -64173,6 +64269,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -64200,6 +64297,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -64227,6 +64325,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -64254,6 +64353,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -64281,6 +64381,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -64308,6 +64409,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -64335,6 +64437,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -64362,6 +64465,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -64389,6 +64493,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -64416,6 +64521,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -64443,6 +64549,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -64470,6 +64577,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -64497,6 +64605,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -64524,6 +64633,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -64551,6 +64661,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -64578,6 +64689,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -64605,6 +64717,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -64632,6 +64745,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -64659,6 +64773,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -64686,6 +64801,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -64713,6 +64829,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -64740,6 +64857,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -64767,6 +64885,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -64794,6 +64913,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -64821,6 +64941,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -64848,6 +64969,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -64875,6 +64997,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -64902,6 +65025,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -64929,6 +65053,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -64956,6 +65081,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -64983,6 +65109,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -65010,6 +65137,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -65037,6 +65165,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -65064,6 +65193,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -65091,6 +65221,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -65118,6 +65249,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -65145,6 +65277,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -65172,6 +65305,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -65199,6 +65333,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -65226,6 +65361,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -65253,6 +65389,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -65280,6 +65417,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -65307,6 +65445,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -65334,6 +65473,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -65361,6 +65501,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -65388,6 +65529,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -65415,6 +65557,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -65442,6 +65585,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -65469,6 +65613,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -65496,6 +65641,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -65523,6 +65669,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -65550,6 +65697,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -65577,6 +65725,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -65604,6 +65753,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -65631,6 +65781,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -65658,6 +65809,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -65685,6 +65837,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -65712,6 +65865,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -65739,6 +65893,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -65766,6 +65921,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -65793,6 +65949,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -65820,6 +65977,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -65847,6 +66005,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -65874,6 +66033,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -65901,6 +66061,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -65928,6 +66089,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -65955,6 +66117,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -65982,6 +66145,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -66009,6 +66173,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -66036,6 +66201,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -66063,6 +66229,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -66090,6 +66257,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -66117,6 +66285,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -66144,6 +66313,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -66171,6 +66341,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -66198,6 +66369,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -66225,6 +66397,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -66252,6 +66425,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -66279,6 +66453,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -66306,6 +66481,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -66333,6 +66509,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -66360,6 +66537,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -66387,6 +66565,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -66414,6 +66593,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -66441,6 +66621,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -66468,6 +66649,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -66495,6 +66677,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -66522,6 +66705,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -66549,6 +66733,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -66576,6 +66761,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -66603,6 +66789,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -66630,6 +66817,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -66657,6 +66845,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -66684,6 +66873,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -66711,6 +66901,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -66738,6 +66929,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -66765,6 +66957,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -66792,6 +66985,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -66819,6 +67013,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -66846,6 +67041,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -66873,6 +67069,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -66900,6 +67097,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -66927,6 +67125,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -66954,6 +67153,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -66981,6 +67181,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -67008,6 +67209,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -67035,6 +67237,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -67062,6 +67265,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -67089,6 +67293,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -67116,6 +67321,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -67143,6 +67349,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -67170,6 +67377,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -67197,6 +67405,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -67224,6 +67433,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -67251,6 +67461,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -67278,6 +67489,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -67305,6 +67517,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -67332,6 +67545,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -67359,6 +67573,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -67386,6 +67601,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -67413,6 +67629,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -67440,6 +67657,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -67467,6 +67685,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -67494,6 +67713,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -67521,6 +67741,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -67548,6 +67769,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -67575,6 +67797,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -67602,6 +67825,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -67629,6 +67853,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -67656,6 +67881,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -67683,6 +67909,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -67710,6 +67937,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -67737,6 +67965,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -67764,6 +67993,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -67791,6 +68021,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -67818,6 +68049,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -67845,6 +68077,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -67872,6 +68105,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -67899,6 +68133,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -67926,6 +68161,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -67953,6 +68189,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -67980,6 +68217,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -68007,6 +68245,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -68034,6 +68273,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -68061,6 +68301,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -68088,6 +68329,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -68115,6 +68357,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -68142,6 +68385,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -68169,6 +68413,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -68196,6 +68441,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -68223,6 +68469,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -68250,6 +68497,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -68277,6 +68525,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -68304,6 +68553,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -68331,6 +68581,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -68358,6 +68609,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -68385,6 +68637,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -68412,6 +68665,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -68439,6 +68693,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -68466,6 +68721,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -68493,6 +68749,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -68520,6 +68777,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -68547,6 +68805,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -68574,6 +68833,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -68601,6 +68861,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -68628,6 +68889,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -68655,6 +68917,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -68682,6 +68945,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -68709,6 +68973,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -68736,6 +69001,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -68763,6 +69029,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -68790,6 +69057,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -68817,6 +69085,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -68844,6 +69113,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -68871,6 +69141,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -68898,6 +69169,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -68925,6 +69197,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -68952,6 +69225,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -68979,6 +69253,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -69006,6 +69281,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -69033,6 +69309,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -69060,6 +69337,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -69087,6 +69365,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -69114,6 +69393,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -69141,6 +69421,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -69168,6 +69449,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -69195,6 +69477,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -69222,6 +69505,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -69249,6 +69533,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -69276,6 +69561,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -69303,6 +69589,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -69330,6 +69617,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -69357,6 +69645,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -69384,6 +69673,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -69411,6 +69701,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -69438,6 +69729,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -69465,6 +69757,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -69492,6 +69785,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -69519,6 +69813,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -69546,6 +69841,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -69573,6 +69869,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -69600,6 +69897,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -69627,6 +69925,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -69654,6 +69953,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -69681,6 +69981,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -69708,6 +70009,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -69735,6 +70037,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -69762,6 +70065,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -69789,6 +70093,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -69816,6 +70121,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -69843,6 +70149,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -69870,6 +70177,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -69897,6 +70205,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -69924,6 +70233,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -69951,6 +70261,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -69978,6 +70289,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -70005,6 +70317,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -70032,6 +70345,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -70059,6 +70373,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -70086,6 +70401,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -70113,6 +70429,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -70140,6 +70457,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -70167,6 +70485,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -70194,6 +70513,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -70221,6 +70541,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -70248,6 +70569,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -70275,6 +70597,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -70302,6 +70625,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -70329,6 +70653,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -70356,6 +70681,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -70383,6 +70709,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -70410,6 +70737,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -70437,6 +70765,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -70464,6 +70793,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -70491,6 +70821,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -70518,6 +70849,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -70545,6 +70877,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -70572,6 +70905,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -70599,6 +70933,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -70626,6 +70961,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -70653,6 +70989,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -70680,6 +71017,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -70707,6 +71045,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -70734,6 +71073,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -70761,6 +71101,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -70788,6 +71129,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -70815,6 +71157,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -70842,6 +71185,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -70869,6 +71213,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -70896,6 +71241,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -70923,6 +71269,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -70950,6 +71297,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -70977,6 +71325,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -71004,6 +71353,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -71031,6 +71381,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -71058,6 +71409,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -71085,6 +71437,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -71112,6 +71465,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -71139,6 +71493,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -71166,6 +71521,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -71193,6 +71549,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -71220,6 +71577,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -71247,6 +71605,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -71274,6 +71633,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -71301,6 +71661,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -71328,6 +71689,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -71355,6 +71717,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -71382,6 +71745,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -71409,6 +71773,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -71436,6 +71801,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -71463,6 +71829,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -71490,6 +71857,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -71517,6 +71885,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -71544,6 +71913,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -71571,6 +71941,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -71598,6 +71969,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -71625,6 +71997,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -71652,6 +72025,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -71679,6 +72053,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -71706,6 +72081,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -71733,6 +72109,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -71760,6 +72137,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -71787,6 +72165,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -71814,6 +72193,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -71841,6 +72221,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -71868,6 +72249,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -71895,6 +72277,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -71922,6 +72305,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -71949,6 +72333,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -71976,6 +72361,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -72003,6 +72389,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -72030,6 +72417,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -72057,6 +72445,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -72084,6 +72473,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -72111,6 +72501,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -72138,6 +72529,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -72165,6 +72557,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -72192,6 +72585,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -72219,6 +72613,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -72246,6 +72641,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -72273,6 +72669,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -72300,6 +72697,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -72327,6 +72725,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -72354,6 +72753,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -72381,6 +72781,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -72408,6 +72809,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -72435,6 +72837,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -72462,6 +72865,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -72489,6 +72893,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -72516,6 +72921,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -72543,6 +72949,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -72570,6 +72977,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -72597,6 +73005,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -72624,6 +73033,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -72651,6 +73061,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -72678,6 +73089,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -72705,6 +73117,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -72732,6 +73145,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -72759,6 +73173,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -72786,6 +73201,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -72813,6 +73229,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -72840,6 +73257,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -72867,6 +73285,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -72894,6 +73313,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -72921,6 +73341,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -72948,6 +73369,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -72975,6 +73397,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -73002,6 +73425,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -73029,6 +73453,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -73056,6 +73481,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -73083,6 +73509,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -73110,6 +73537,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -73137,6 +73565,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -73164,6 +73593,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -73191,6 +73621,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -73218,6 +73649,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -73245,6 +73677,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -73272,6 +73705,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -73299,6 +73733,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -73326,6 +73761,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -73353,6 +73789,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -73380,6 +73817,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -73407,6 +73845,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -73434,6 +73873,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -73461,6 +73901,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -73488,6 +73929,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -73515,6 +73957,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -73542,6 +73985,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -73569,6 +74013,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -73596,6 +74041,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -73623,6 +74069,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -73650,6 +74097,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -73677,6 +74125,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -73704,6 +74153,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -73731,6 +74181,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -73758,6 +74209,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -73785,6 +74237,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -73812,6 +74265,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -73839,6 +74293,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -73866,6 +74321,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -73893,6 +74349,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -73920,6 +74377,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -73947,6 +74405,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -73974,6 +74433,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -74001,6 +74461,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -74028,6 +74489,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -74055,6 +74517,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -74082,6 +74545,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -74109,6 +74573,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -74136,6 +74601,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -74163,6 +74629,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -74190,6 +74657,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -74217,6 +74685,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -74244,6 +74713,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -74271,6 +74741,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -74298,6 +74769,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -74325,6 +74797,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -74352,6 +74825,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -74379,6 +74853,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -74406,6 +74881,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -74433,6 +74909,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -74460,6 +74937,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -74487,6 +74965,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -74514,6 +74993,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -74541,6 +75021,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -74568,6 +75049,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -74595,6 +75077,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -74622,6 +75105,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -74649,6 +75133,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -74676,6 +75161,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -74703,6 +75189,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -74730,6 +75217,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -74757,6 +75245,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -74784,6 +75273,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -74811,6 +75301,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -74838,6 +75329,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -74865,6 +75357,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -74892,6 +75385,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -74919,6 +75413,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -74946,6 +75441,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -74973,6 +75469,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -75000,6 +75497,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -75027,6 +75525,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -75054,6 +75553,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -75081,6 +75581,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -75108,6 +75609,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -75135,6 +75637,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -75162,6 +75665,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -75189,6 +75693,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -75216,6 +75721,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -75243,6 +75749,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -75270,6 +75777,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -75297,6 +75805,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -75324,6 +75833,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -75351,6 +75861,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -75378,6 +75889,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -75405,6 +75917,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -75432,6 +75945,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -75459,6 +75973,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -75486,6 +76001,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -75513,6 +76029,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -75540,6 +76057,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -75567,6 +76085,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -75594,6 +76113,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -75621,6 +76141,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -75648,6 +76169,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -75675,6 +76197,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -75702,6 +76225,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -75729,6 +76253,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -75756,6 +76281,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -75783,6 +76309,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -75810,6 +76337,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -75837,6 +76365,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -75864,6 +76393,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -75891,6 +76421,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -75918,6 +76449,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -75945,6 +76477,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -75972,6 +76505,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -75999,6 +76533,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -76026,6 +76561,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -76053,6 +76589,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -76080,6 +76617,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -76107,6 +76645,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -76134,6 +76673,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -76161,6 +76701,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -76188,6 +76729,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -76215,6 +76757,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -76242,6 +76785,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -76269,6 +76813,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -76296,6 +76841,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -76323,6 +76869,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -76350,6 +76897,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -76377,6 +76925,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -76404,6 +76953,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -76431,6 +76981,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -76458,6 +77009,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -76485,6 +77037,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -76512,6 +77065,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -76539,6 +77093,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -76566,6 +77121,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -76593,6 +77149,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -76620,6 +77177,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -76647,6 +77205,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -76674,6 +77233,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -76701,6 +77261,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -76728,6 +77289,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -76755,6 +77317,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -76782,6 +77345,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -76809,6 +77373,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -76836,6 +77401,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -76863,6 +77429,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -76890,6 +77457,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -76917,6 +77485,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -76944,6 +77513,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -76971,6 +77541,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -76998,6 +77569,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -77025,6 +77597,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -77052,6 +77625,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -77079,6 +77653,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -77106,6 +77681,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -77133,6 +77709,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -77160,6 +77737,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -77187,6 +77765,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -77214,6 +77793,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -77241,6 +77821,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -77268,6 +77849,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -77295,6 +77877,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -77322,6 +77905,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -77349,6 +77933,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -77376,6 +77961,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -77403,6 +77989,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -77430,6 +78017,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -77457,6 +78045,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -77484,6 +78073,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -77511,6 +78101,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -77538,6 +78129,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -77565,6 +78157,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -77592,6 +78185,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -77619,6 +78213,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -77646,6 +78241,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -77673,6 +78269,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -77700,6 +78297,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -77727,6 +78325,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -77754,6 +78353,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -77781,6 +78381,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -77808,6 +78409,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -77835,6 +78437,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -77862,6 +78465,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -77889,6 +78493,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -77916,6 +78521,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -77943,6 +78549,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -77970,6 +78577,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -77997,6 +78605,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -78024,6 +78633,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -78051,6 +78661,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -78078,6 +78689,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -78105,6 +78717,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -78132,6 +78745,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -78159,6 +78773,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -78186,6 +78801,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -78213,6 +78829,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -78240,6 +78857,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -78267,6 +78885,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -78294,6 +78913,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -78321,6 +78941,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -78348,6 +78969,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -78375,6 +78997,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -78402,6 +79025,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -78429,6 +79053,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -78456,6 +79081,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -78483,6 +79109,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -78510,6 +79137,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -78537,6 +79165,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -78564,6 +79193,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -78591,6 +79221,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -78618,6 +79249,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -78645,6 +79277,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -78672,6 +79305,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -78699,6 +79333,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -78726,6 +79361,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -78753,6 +79389,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -78780,6 +79417,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -78807,6 +79445,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -78834,6 +79473,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -78861,6 +79501,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -78888,6 +79529,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -78915,6 +79557,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -78942,6 +79585,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -78969,6 +79613,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -78996,6 +79641,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -79023,6 +79669,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -79050,6 +79697,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -79077,6 +79725,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -79104,6 +79753,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -79131,6 +79781,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -79158,6 +79809,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -79185,6 +79837,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -79212,6 +79865,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -79239,6 +79893,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -79266,6 +79921,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -79293,6 +79949,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -79320,6 +79977,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -79347,6 +80005,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -79374,6 +80033,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -79401,6 +80061,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -79428,6 +80089,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -79455,6 +80117,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -79482,6 +80145,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -79509,6 +80173,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -79536,6 +80201,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -79563,6 +80229,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -79590,6 +80257,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -79617,6 +80285,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -79644,6 +80313,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -79671,6 +80341,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -79698,6 +80369,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -79725,6 +80397,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -79752,6 +80425,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -79779,6 +80453,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -79806,6 +80481,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -79833,6 +80509,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -79860,6 +80537,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -79887,6 +80565,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -79914,6 +80593,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -79941,6 +80621,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -79968,6 +80649,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -79995,6 +80677,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -80022,6 +80705,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -80049,6 +80733,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -80076,6 +80761,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -80103,6 +80789,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -80130,6 +80817,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -80157,6 +80845,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -80184,6 +80873,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -80211,6 +80901,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -80238,6 +80929,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -80265,6 +80957,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -80292,6 +80985,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -80319,6 +81013,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -80346,6 +81041,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -80373,6 +81069,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -80400,6 +81097,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -80427,6 +81125,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -80454,6 +81153,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -80481,6 +81181,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -80508,6 +81209,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -80535,6 +81237,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -80562,6 +81265,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -80589,6 +81293,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -80616,6 +81321,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -80643,6 +81349,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -80670,6 +81377,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -80697,6 +81405,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -80724,6 +81433,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -80751,6 +81461,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -80778,6 +81489,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -80805,6 +81517,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -80832,6 +81545,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -80859,6 +81573,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -80886,6 +81601,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -80913,6 +81629,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -80940,6 +81657,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -80967,6 +81685,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -80994,6 +81713,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -81021,6 +81741,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -81048,6 +81769,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -81075,6 +81797,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -81102,6 +81825,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -81129,6 +81853,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -81156,6 +81881,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -81183,6 +81909,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -81210,6 +81937,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -81237,6 +81965,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -81264,6 +81993,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -81291,6 +82021,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -81318,6 +82049,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -81345,6 +82077,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -81372,6 +82105,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -81399,6 +82133,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -81426,6 +82161,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -81453,6 +82189,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -81480,6 +82217,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -81507,6 +82245,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -81534,6 +82273,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -81561,6 +82301,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -81588,6 +82329,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -81615,6 +82357,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -81642,6 +82385,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -81669,6 +82413,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -81696,6 +82441,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -81723,6 +82469,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -81750,6 +82497,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -81771,7 +82519,10 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
-        "enterprise-64-128"
+        "enterprise-64-128",
+        "hartung-game-master",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -81789,7 +82540,10 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
-        "enterprise-64-128"
+        "enterprise-64-128",
+        "hartung-game-master",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -81807,7 +82561,10 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
-        "enterprise-64-128"
+        "enterprise-64-128",
+        "hartung-game-master",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -81825,7 +82582,10 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
-        "enterprise-64-128"
+        "enterprise-64-128",
+        "hartung-game-master",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -81843,7 +82603,10 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
-        "enterprise-64-128"
+        "enterprise-64-128",
+        "hartung-game-master",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -81861,7 +82624,10 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
-        "enterprise-64-128"
+        "enterprise-64-128",
+        "hartung-game-master",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -81879,7 +82645,10 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
-        "enterprise-64-128"
+        "enterprise-64-128",
+        "hartung-game-master",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -81897,7 +82666,10 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
-        "enterprise-64-128"
+        "enterprise-64-128",
+        "hartung-game-master",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -81915,7 +82687,10 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
-        "enterprise-64-128"
+        "enterprise-64-128",
+        "hartung-game-master",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -81933,7 +82708,10 @@
         "apple-macintosh-ii",
         "coco",
         "dragon64",
-        "enterprise-64-128"
+        "enterprise-64-128",
+        "hartung-game-master",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -81950,7 +82728,10 @@
       "systems": [
         "apple-macintosh-ii",
         "coco",
-        "dragon64"
+        "dragon64",
+        "hartung-game-master",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -81967,7 +82748,10 @@
       "systems": [
         "apple-macintosh-ii",
         "coco",
-        "dragon64"
+        "dragon64",
+        "hartung-game-master",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -81984,7 +82768,10 @@
       "systems": [
         "apple-macintosh-ii",
         "coco",
-        "dragon64"
+        "dragon64",
+        "hartung-game-master",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -82001,7 +82788,10 @@
       "systems": [
         "apple-macintosh-ii",
         "coco",
-        "dragon64"
+        "dragon64",
+        "hartung-game-master",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -82018,7 +82808,10 @@
       "systems": [
         "apple-macintosh-ii",
         "coco",
-        "dragon64"
+        "dragon64",
+        "hartung-game-master",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -82035,7 +82828,10 @@
       "systems": [
         "apple-macintosh-ii",
         "coco",
-        "dragon64"
+        "dragon64",
+        "hartung-game-master",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -82052,7 +82848,10 @@
       "systems": [
         "apple-macintosh-ii",
         "coco",
-        "dragon64"
+        "dragon64",
+        "hartung-game-master",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -82069,7 +82868,10 @@
       "systems": [
         "apple-macintosh-ii",
         "coco",
-        "dragon64"
+        "dragon64",
+        "hartung-game-master",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -82086,7 +82888,10 @@
       "systems": [
         "apple-macintosh-ii",
         "coco",
-        "dragon64"
+        "dragon64",
+        "hartung-game-master",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -82214,7 +83019,11 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "3do",
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -82230,7 +83039,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -82246,7 +83058,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -82262,7 +83077,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -82278,7 +83096,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -82294,7 +83115,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -82310,7 +83134,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -82326,7 +83153,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -82342,7 +83172,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -82358,7 +83191,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -82374,7 +83210,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -82390,7 +83229,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -82406,7 +83248,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -82422,7 +83267,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -82438,7 +83286,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -82454,7 +83305,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -82470,7 +83324,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -82486,7 +83343,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -82502,7 +83362,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -82518,7 +83381,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -82534,7 +83400,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -82550,7 +83419,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -82566,7 +83438,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -82582,7 +83457,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -82598,7 +83476,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -82614,7 +83495,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -82630,7 +83514,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -82646,7 +83533,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -82662,7 +83552,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -82678,7 +83571,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -82694,7 +83590,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -82710,7 +83609,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -82726,7 +83628,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -82742,7 +83647,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -82758,7 +83666,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -82774,7 +83685,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -82790,7 +83704,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -82806,7 +83723,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -82822,7 +83742,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -82838,7 +83761,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -82854,7 +83780,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -82870,7 +83799,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -82886,7 +83818,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -82902,7 +83837,12 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "coco",
+        "dragon64",
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -82918,7 +83858,11 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "coco",
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -82934,7 +83878,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -82950,7 +83897,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -82966,7 +83916,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -82982,7 +83935,11 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "dragon64",
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -82998,7 +83955,12 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "coco",
+        "dragon64",
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -83014,7 +83976,11 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "dragon64",
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -83030,7 +83996,11 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "dragon64",
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -83046,7 +84016,11 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "dragon64",
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -83062,7 +84036,11 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "dragon64",
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -83078,7 +84056,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -83094,7 +84075,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -83110,7 +84094,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -83126,7 +84113,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -83142,7 +84132,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -83158,7 +84151,11 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "enterprise-64-128",
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -83174,7 +84171,11 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "enterprise-64-128",
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -83190,7 +84191,11 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "enterprise-64-128",
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -83206,7 +84211,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -83222,7 +84230,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -83238,7 +84249,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -83254,7 +84268,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -83270,7 +84287,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -83286,7 +84306,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -83302,7 +84325,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -83318,7 +84344,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -83334,7 +84363,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -83350,7 +84382,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -83366,7 +84401,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -83382,7 +84420,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -83398,7 +84439,11 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "apple-macintosh-ii",
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -83414,7 +84459,11 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "apple-macintosh-ii",
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -83430,7 +84479,11 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "apple-macintosh-ii",
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -83446,7 +84499,11 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "apple-macintosh-ii",
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -83462,7 +84519,11 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "apple-macintosh-ii",
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -83478,7 +84539,11 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "apple-macintosh-ii",
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -83494,7 +84559,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -83510,7 +84578,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -83526,7 +84597,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -83542,7 +84616,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -83558,7 +84635,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -83574,7 +84654,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -83590,7 +84673,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -83606,7 +84692,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -83622,7 +84711,11 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "3do",
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -83638,7 +84731,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -83654,7 +84750,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -83670,7 +84769,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -83686,7 +84788,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -83702,7 +84807,11 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "epoch-scv",
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -83718,7 +84827,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -83734,7 +84846,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -83750,7 +84865,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -83766,7 +84884,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -83782,7 +84903,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -83798,7 +84922,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -83814,7 +84941,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -83830,7 +84960,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -83846,7 +84979,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -83862,7 +84998,11 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com",
+        "vectrex"
       ],
       "category": "game_data"
     },
@@ -83878,7 +85018,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -83894,7 +85037,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -83910,7 +85056,11 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com",
+        "vtech-vsmile"
       ],
       "category": "game_data"
     },
@@ -83926,7 +85076,11 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com",
+        "vtech-vsmile"
       ],
       "category": "game_data"
     },
@@ -83942,7 +85096,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -83958,7 +85115,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -83974,7 +85134,10 @@
         "mame"
       ],
       "systems": [
-        "philips-cdi"
+        "hartung-game-master",
+        "philips-cdi",
+        "supracan",
+        "tiger-game-com"
       ],
       "category": "game_data"
     },
@@ -114737,6 +115900,8 @@
         "mesence"
       ],
       "systems": [
+        "nintendo-gb",
+        "nintendo-gbc",
         "nintendo-snes"
       ]
     },
@@ -116016,6 +117181,9 @@
       "cores": [
         "primehack",
         "dolphin"
+      ],
+      "systems": [
+        "triforce"
       ]
     },
     {
@@ -116027,6 +117195,9 @@
       "cores": [
         "primehack",
         "dolphin"
+      ],
+      "systems": [
+        "triforce"
       ]
     },
     {
@@ -116568,7 +117739,9 @@
         "mesen-s"
       ],
       "systems": [
-        "nintendo-gb"
+        "nintendo-gb",
+        "nintendo-gbc",
+        "nintendo-snes"
       ],
       "alternatives": [
         {
@@ -117358,7 +118531,8 @@
       ],
       "systems": [
         "nintendo-gb",
-        "nintendo-gbc"
+        "nintendo-gbc",
+        "nintendo-snes"
       ],
       "alternatives": [
         {
@@ -118999,6 +120173,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -119024,6 +120199,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -119049,6 +120225,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -119074,6 +120251,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -119099,6 +120277,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -119124,6 +120303,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -119149,6 +120329,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -119174,6 +120355,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -119199,6 +120381,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -119224,6 +120407,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -119249,6 +120433,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -119274,6 +120459,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -119299,6 +120485,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -119324,6 +120511,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -119349,6 +120537,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -119374,6 +120563,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -119399,6 +120589,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -119424,6 +120615,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -119449,6 +120641,7 @@
         "epoch-scv",
         "hartung-game-master",
         "philips-cdi",
+        "supracan",
         "tiger-game-com",
         "triforce",
         "vectrex",
@@ -121988,6 +123181,9 @@
         "mame2015",
         "mame2016",
         "ume2015"
+      ],
+      "systems": [
+        "triforce"
       ]
     },
     {
@@ -122004,6 +123200,9 @@
         "mame2015",
         "mame2016",
         "ume2015"
+      ],
+      "systems": [
+        "triforce"
       ]
     },
     {
@@ -122020,6 +123219,11 @@
         "mame2015",
         "mame2016",
         "ume2015"
+      ],
+      "systems": [
+        "3do",
+        "philips-cdi",
+        "triforce"
       ]
     },
     {
@@ -122036,6 +123240,11 @@
         "mame2015",
         "mame2016",
         "ume2015"
+      ],
+      "systems": [
+        "3do",
+        "philips-cdi",
+        "triforce"
       ]
     },
     {
@@ -122063,6 +123272,11 @@
         "mame2015",
         "mame2016",
         "ume2015"
+      ],
+      "systems": [
+        "3do",
+        "philips-cdi",
+        "triforce"
       ]
     },
     {
@@ -122093,6 +123307,8 @@
         "ume2015"
       ],
       "systems": [
+        "3do",
+        "philips-cdi",
         "triforce"
       ]
     },
@@ -122110,6 +123326,8 @@
         "ume2015"
       ],
       "systems": [
+        "3do",
+        "philips-cdi",
         "triforce"
       ]
     },
@@ -122127,6 +123345,8 @@
         "ume2015"
       ],
       "systems": [
+        "3do",
+        "philips-cdi",
         "triforce"
       ]
     },
@@ -122144,6 +123364,8 @@
         "ume2015"
       ],
       "systems": [
+        "3do",
+        "philips-cdi",
         "triforce"
       ]
     },
@@ -122240,6 +123462,11 @@
         "mame2015",
         "mame2016",
         "ume2015"
+      ],
+      "systems": [
+        "3do",
+        "philips-cdi",
+        "triforce"
       ]
     },
     {
@@ -122252,6 +123479,11 @@
         "mame2015",
         "mame2016",
         "ume2015"
+      ],
+      "systems": [
+        "3do",
+        "philips-cdi",
+        "triforce"
       ]
     },
     {
@@ -125824,6 +127056,11 @@
       "cores": [
         "sameboy",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-gb",
+        "nintendo-gbc",
+        "nintendo-snes"
       ]
     },
     {
@@ -128428,6 +129665,10 @@
       "cores": [
         "ep128emu",
         "ep128emu_core"
+      ],
+      "systems": [
+        "amstrad-cpc",
+        "sinclair-zx-spectrum"
       ]
     },
     {
@@ -128439,6 +129680,10 @@
       "cores": [
         "ep128emu",
         "ep128emu_core"
+      ],
+      "systems": [
+        "amstrad-cpc",
+        "sinclair-zx-spectrum"
       ]
     },
     {
@@ -128450,6 +129695,10 @@
       "cores": [
         "ep128emu",
         "ep128emu_core"
+      ],
+      "systems": [
+        "amstrad-cpc",
+        "sinclair-zx-spectrum"
       ]
     },
     {
@@ -128461,6 +129710,10 @@
       "cores": [
         "ep128emu",
         "ep128emu_core"
+      ],
+      "systems": [
+        "amstrad-cpc",
+        "sinclair-zx-spectrum"
       ]
     },
     {
@@ -128472,6 +129725,10 @@
       "cores": [
         "ep128emu",
         "ep128emu_core"
+      ],
+      "systems": [
+        "amstrad-cpc",
+        "sinclair-zx-spectrum"
       ]
     },
     {
@@ -128483,6 +129740,10 @@
       "cores": [
         "ep128emu",
         "ep128emu_core"
+      ],
+      "systems": [
+        "amstrad-cpc",
+        "sinclair-zx-spectrum"
       ]
     },
     {
@@ -128494,6 +129755,10 @@
       "cores": [
         "ep128emu",
         "ep128emu_core"
+      ],
+      "systems": [
+        "amstrad-cpc",
+        "sinclair-zx-spectrum"
       ]
     },
     {
@@ -128505,6 +129770,10 @@
       "cores": [
         "ep128emu",
         "ep128emu_core"
+      ],
+      "systems": [
+        "amstrad-cpc",
+        "sinclair-zx-spectrum"
       ]
     },
     {
@@ -128516,6 +129785,10 @@
       "cores": [
         "ep128emu",
         "ep128emu_core"
+      ],
+      "systems": [
+        "amstrad-cpc",
+        "sinclair-zx-spectrum"
       ]
     },
     {
@@ -128527,6 +129800,10 @@
       "cores": [
         "ep128emu",
         "ep128emu_core"
+      ],
+      "systems": [
+        "amstrad-cpc",
+        "sinclair-zx-spectrum"
       ]
     },
     {
@@ -128538,6 +129815,10 @@
       "cores": [
         "ep128emu",
         "ep128emu_core"
+      ],
+      "systems": [
+        "amstrad-cpc",
+        "sinclair-zx-spectrum"
       ]
     },
     {
@@ -128549,6 +129830,10 @@
       "cores": [
         "ep128emu",
         "ep128emu_core"
+      ],
+      "systems": [
+        "amstrad-cpc",
+        "sinclair-zx-spectrum"
       ]
     },
     {
@@ -128560,6 +129845,10 @@
       "cores": [
         "ep128emu",
         "ep128emu_core"
+      ],
+      "systems": [
+        "amstrad-cpc",
+        "sinclair-zx-spectrum"
       ]
     },
     {
@@ -128571,6 +129860,10 @@
       "cores": [
         "ep128emu",
         "ep128emu_core"
+      ],
+      "systems": [
+        "amstrad-cpc",
+        "sinclair-zx-spectrum"
       ]
     },
     {
@@ -128582,6 +129875,10 @@
       "cores": [
         "ep128emu",
         "ep128emu_core"
+      ],
+      "systems": [
+        "amstrad-cpc",
+        "sinclair-zx-spectrum"
       ]
     },
     {
@@ -128593,6 +129890,10 @@
       "cores": [
         "ep128emu",
         "ep128emu_core"
+      ],
+      "systems": [
+        "amstrad-cpc",
+        "sinclair-zx-spectrum"
       ]
     },
     {
@@ -128606,7 +129907,8 @@
         "ep128emu_core"
       ],
       "systems": [
-        "amstrad-cpc"
+        "amstrad-cpc",
+        "sinclair-zx-spectrum"
       ]
     },
     {
@@ -128620,7 +129922,8 @@
         "ep128emu_core"
       ],
       "systems": [
-        "amstrad-cpc"
+        "amstrad-cpc",
+        "sinclair-zx-spectrum"
       ]
     },
     {
@@ -128634,7 +129937,8 @@
         "ep128emu_core"
       ],
       "systems": [
-        "amstrad-cpc"
+        "amstrad-cpc",
+        "sinclair-zx-spectrum"
       ]
     },
     {
@@ -128648,7 +129952,8 @@
         "ep128emu_core"
       ],
       "systems": [
-        "amstrad-cpc"
+        "amstrad-cpc",
+        "sinclair-zx-spectrum"
       ]
     },
     {

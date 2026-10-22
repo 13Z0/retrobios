@@ -27,6 +27,25 @@ class SystemExtras(unittest.TestCase):
         picked = [e["name"] for e in _extras_for_systems(extras, ["sony-playstation"])]
         self.assertEqual(picked, ["a", "c"])
 
+    def test_a_shared_file_follows_every_core_that_reads_it(self):
+        """One extra stands per destination and the other cores' claims ride on
+        it. Their systems are the file's systems too: narrowed to one of them,
+        pack and installer both keep the file the core reads."""
+        from manifestselect import SelectionIndex  # noqa: PLC0415
+
+        extras = [{
+            "name": "floppy.wav", "destination": "mame/samples/floppy.wav",
+            "source_system": "coco",
+            "other_claims": [{"name": "floppy.wav", "source_system": "supracan"}],
+        }]
+        picked = [e["name"] for e in _extras_for_systems(extras, ["supracan"])]
+        self.assertEqual(picked, ["floppy.wav"])
+        index = SelectionIndex.build({}, {}, {"coco": {}, "supracan": {}}, extras)
+        self.assertEqual(
+            index.fields("mame/samples/floppy.wav", "floppy.wav")["systems"],
+            ["coco", "supracan"],
+        )
+
     def test_full_source_does_not_empty_them(self):
         source = (REPO_ROOT / "scripts" / "generate_pack.py").read_text(encoding="utf-8")
         self.assertNotIn('elif system_filter and source != "truth":\n          core_files = []', source)

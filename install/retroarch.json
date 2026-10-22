@@ -2324,6 +2324,11 @@
       "repo_path": "bios/Amstrad/CPC/cpc464.rom",
       "cores": null,
       "systems": [
+        "amstrad-cpc",
+        "sinclair-zx-spectrum",
+        "videoton-tvc"
+      ],
+      "declared_in": [
         "amstrad-cpc"
       ],
       "alternatives": [
@@ -2347,6 +2352,11 @@
       "repo_path": "bios/Amstrad/CPC/cpc6128.rom",
       "cores": null,
       "systems": [
+        "amstrad-cpc",
+        "sinclair-zx-spectrum",
+        "videoton-tvc"
+      ],
+      "declared_in": [
         "amstrad-cpc"
       ],
       "alternatives": [
@@ -2370,6 +2380,11 @@
       "repo_path": "bios/Amstrad/CPC/cpc664.rom",
       "cores": null,
       "systems": [
+        "amstrad-cpc",
+        "sinclair-zx-spectrum",
+        "videoton-tvc"
+      ],
+      "declared_in": [
         "amstrad-cpc"
       ],
       "alternatives": [
@@ -2393,6 +2408,11 @@
       "repo_path": "bios/Amstrad/CPC/amsdos.rom",
       "cores": null,
       "systems": [
+        "amstrad-cpc",
+        "sinclair-zx-spectrum",
+        "videoton-tvc"
+      ],
+      "declared_in": [
         "amstrad-cpc"
       ],
       "alternatives": [
@@ -3395,6 +3415,10 @@
       "repo_path": "bios/Atari/5200/5200.rom",
       "cores": null,
       "systems": [
+        "atari-400-800",
+        "atari-5200"
+      ],
+      "declared_in": [
         "atari-5200"
       ],
       "alternatives": [
@@ -4434,6 +4458,12 @@
       "repo_path": "bios/Enterprise/64-128/basic20.rom",
       "cores": null,
       "systems": [
+        "amstrad-cpc",
+        "enterprise-64-128",
+        "sinclair-zx-spectrum",
+        "videoton-tvc"
+      ],
+      "declared_in": [
         "enterprise-64-128"
       ],
       "alternatives": [
@@ -4457,6 +4487,12 @@
       "repo_path": "bios/Enterprise/64-128/basic21.rom",
       "cores": null,
       "systems": [
+        "amstrad-cpc",
+        "enterprise-64-128",
+        "sinclair-zx-spectrum",
+        "videoton-tvc"
+      ],
+      "declared_in": [
         "enterprise-64-128"
       ],
       "alternatives": [
@@ -4480,6 +4516,12 @@
       "repo_path": "bios/Enterprise/64-128/brd.rom",
       "cores": null,
       "systems": [
+        "amstrad-cpc",
+        "enterprise-64-128",
+        "sinclair-zx-spectrum",
+        "videoton-tvc"
+      ],
+      "declared_in": [
         "enterprise-64-128"
       ],
       "alternatives": [
@@ -4514,6 +4556,12 @@
       "repo_path": "bios/Enterprise/64-128/epfileio.rom",
       "cores": null,
       "systems": [
+        "amstrad-cpc",
+        "enterprise-64-128",
+        "sinclair-zx-spectrum",
+        "videoton-tvc"
+      ],
+      "declared_in": [
         "enterprise-64-128"
       ],
       "alternatives": [
@@ -4537,6 +4585,12 @@
       "repo_path": "bios/Enterprise/64-128/exdos13.rom",
       "cores": null,
       "systems": [
+        "amstrad-cpc",
+        "enterprise-64-128",
+        "sinclair-zx-spectrum",
+        "videoton-tvc"
+      ],
+      "declared_in": [
         "enterprise-64-128"
       ],
       "alternatives": [
@@ -4560,6 +4614,12 @@
       "repo_path": "bios/Enterprise/64-128/exos20.bin",
       "cores": null,
       "systems": [
+        "amstrad-cpc",
+        "enterprise-64-128",
+        "sinclair-zx-spectrum",
+        "videoton-tvc"
+      ],
+      "declared_in": [
         "enterprise-64-128"
       ],
       "alternatives": [
@@ -4583,6 +4643,12 @@
       "repo_path": "bios/Enterprise/64-128/exos21.rom",
       "cores": null,
       "systems": [
+        "amstrad-cpc",
+        "enterprise-64-128",
+        "sinclair-zx-spectrum",
+        "videoton-tvc"
+      ],
+      "declared_in": [
         "enterprise-64-128"
       ],
       "alternatives": [
@@ -4606,6 +4672,12 @@
       "repo_path": "bios/Enterprise/64-128/exos24uk.rom",
       "cores": null,
       "systems": [
+        "amstrad-cpc",
+        "enterprise-64-128",
+        "sinclair-zx-spectrum",
+        "videoton-tvc"
+      ],
+      "declared_in": [
         "enterprise-64-128"
       ],
       "alternatives": [
@@ -4629,6 +4701,12 @@
       "repo_path": "bios/Enterprise/64-128/hun.rom",
       "cores": null,
       "systems": [
+        "amstrad-cpc",
+        "enterprise-64-128",
+        "sinclair-zx-spectrum",
+        "videoton-tvc"
+      ],
+      "declared_in": [
         "enterprise-64-128"
       ],
       "alternatives": [
@@ -4652,6 +4730,12 @@
       "repo_path": "bios/Enterprise/64-128/zt19uk.rom",
       "cores": null,
       "systems": [
+        "amstrad-cpc",
+        "enterprise-64-128",
+        "sinclair-zx-spectrum",
+        "videoton-tvc"
+      ],
+      "declared_in": [
         "enterprise-64-128"
       ],
       "alternatives": [
@@ -6963,6 +7047,12 @@
       "repo_path": "bios/Nintendo/Game Boy/GB_dmg.bin",
       "cores": null,
       "systems": [
+        "nintendo-gb",
+        "nintendo-gbc",
+        "nintendo-satellaview",
+        "nintendo-snes"
+      ],
+      "declared_in": [
         "nintendo-gb"
       ],
       "alternatives": [
@@ -7073,7 +7163,9 @@
       "cores": null,
       "systems": [
         "nintendo-gb",
-        "nintendo-gbc"
+        "nintendo-gbc",
+        "nintendo-satellaview",
+        "nintendo-snes"
       ],
       "declared_in": [
         "nintendo-gbc"
@@ -7198,6 +7290,12 @@
       "repo_path": "bios/Nintendo/SNES/Satellaview_BS-X.sfc",
       "cores": null,
       "systems": [
+        "nintendo-gb",
+        "nintendo-gbc",
+        "nintendo-satellaview",
+        "nintendo-snes"
+      ],
+      "declared_in": [
         "nintendo-satellaview"
       ],
       "alternatives": [
@@ -7249,6 +7347,13 @@
       "repo_path": "bios/Nintendo/Super Game Boy/SGB1.sfc/program.rom",
       "cores": null,
       "systems": [
+        "nintendo-gb",
+        "nintendo-gbc",
+        "nintendo-satellaview",
+        "nintendo-sgb",
+        "nintendo-snes"
+      ],
+      "declared_in": [
         "nintendo-sgb"
       ],
       "alternatives": [
@@ -7273,6 +7378,13 @@
       "repo_path": "bios/Nintendo/Super Game Boy/SGB2.sfc/program.rom",
       "cores": null,
       "systems": [
+        "nintendo-gb",
+        "nintendo-gbc",
+        "nintendo-satellaview",
+        "nintendo-sgb",
+        "nintendo-snes"
+      ],
+      "declared_in": [
         "nintendo-sgb"
       ],
       "alternatives": [
@@ -7481,6 +7593,12 @@
       "repo_path": "bios/Nintendo/SNES/dsp1.data.rom",
       "cores": null,
       "systems": [
+        "nintendo-gb",
+        "nintendo-gbc",
+        "nintendo-satellaview",
+        "nintendo-snes"
+      ],
+      "declared_in": [
         "nintendo-snes"
       ],
       "alternatives": [
@@ -7510,6 +7628,12 @@
       "repo_path": "bios/Nintendo/SNES/dsp1.program.rom",
       "cores": null,
       "systems": [
+        "nintendo-gb",
+        "nintendo-gbc",
+        "nintendo-satellaview",
+        "nintendo-snes"
+      ],
+      "declared_in": [
         "nintendo-snes"
       ],
       "alternatives": [
@@ -7539,6 +7663,12 @@
       "repo_path": "bios/Nintendo/SNES/dsp1b.data.rom",
       "cores": null,
       "systems": [
+        "nintendo-gb",
+        "nintendo-gbc",
+        "nintendo-satellaview",
+        "nintendo-snes"
+      ],
+      "declared_in": [
         "nintendo-snes"
       ],
       "alternatives": [
@@ -7569,6 +7699,12 @@
       "repo_path": "bios/Nintendo/SNES/dsp1b.program.rom",
       "cores": null,
       "systems": [
+        "nintendo-gb",
+        "nintendo-gbc",
+        "nintendo-satellaview",
+        "nintendo-snes"
+      ],
+      "declared_in": [
         "nintendo-snes"
       ],
       "alternatives": [
@@ -7599,6 +7735,12 @@
       "repo_path": "bios/Nintendo/SNES/dsp2.data.rom",
       "cores": null,
       "systems": [
+        "nintendo-gb",
+        "nintendo-gbc",
+        "nintendo-satellaview",
+        "nintendo-snes"
+      ],
+      "declared_in": [
         "nintendo-snes"
       ],
       "alternatives": [
@@ -7629,6 +7771,12 @@
       "repo_path": "bios/Nintendo/SNES/dsp2.program.rom",
       "cores": null,
       "systems": [
+        "nintendo-gb",
+        "nintendo-gbc",
+        "nintendo-satellaview",
+        "nintendo-snes"
+      ],
+      "declared_in": [
         "nintendo-snes"
       ],
       "alternatives": [
@@ -7659,6 +7807,12 @@
       "repo_path": "bios/Nintendo/SNES/dsp3.data.rom",
       "cores": null,
       "systems": [
+        "nintendo-gb",
+        "nintendo-gbc",
+        "nintendo-satellaview",
+        "nintendo-snes"
+      ],
+      "declared_in": [
         "nintendo-snes"
       ],
       "alternatives": [
@@ -7689,6 +7843,12 @@
       "repo_path": "bios/Nintendo/SNES/dsp3.program.rom",
       "cores": null,
       "systems": [
+        "nintendo-gb",
+        "nintendo-gbc",
+        "nintendo-satellaview",
+        "nintendo-snes"
+      ],
+      "declared_in": [
         "nintendo-snes"
       ],
       "alternatives": [
@@ -7719,6 +7879,12 @@
       "repo_path": "bios/Nintendo/SNES/dsp4.data.rom",
       "cores": null,
       "systems": [
+        "nintendo-gb",
+        "nintendo-gbc",
+        "nintendo-satellaview",
+        "nintendo-snes"
+      ],
+      "declared_in": [
         "nintendo-snes"
       ],
       "alternatives": [
@@ -7749,6 +7915,12 @@
       "repo_path": "bios/Nintendo/SNES/dsp4.program.rom",
       "cores": null,
       "systems": [
+        "nintendo-gb",
+        "nintendo-gbc",
+        "nintendo-satellaview",
+        "nintendo-snes"
+      ],
+      "declared_in": [
         "nintendo-snes"
       ],
       "alternatives": [
@@ -7779,6 +7951,12 @@
       "repo_path": "bios/Nintendo/SNES/st010.data.rom",
       "cores": null,
       "systems": [
+        "nintendo-gb",
+        "nintendo-gbc",
+        "nintendo-satellaview",
+        "nintendo-snes"
+      ],
+      "declared_in": [
         "nintendo-snes"
       ],
       "alternatives": [
@@ -7809,6 +7987,12 @@
       "repo_path": "bios/Nintendo/SNES/st010.program.rom",
       "cores": null,
       "systems": [
+        "nintendo-gb",
+        "nintendo-gbc",
+        "nintendo-satellaview",
+        "nintendo-snes"
+      ],
+      "declared_in": [
         "nintendo-snes"
       ],
       "alternatives": [
@@ -7839,6 +8023,12 @@
       "repo_path": "bios/Nintendo/SNES/st011.data.rom",
       "cores": null,
       "systems": [
+        "nintendo-gb",
+        "nintendo-gbc",
+        "nintendo-satellaview",
+        "nintendo-snes"
+      ],
+      "declared_in": [
         "nintendo-snes"
       ],
       "alternatives": [
@@ -7869,6 +8059,12 @@
       "repo_path": "bios/Nintendo/SNES/st011.program.rom",
       "cores": null,
       "systems": [
+        "nintendo-gb",
+        "nintendo-gbc",
+        "nintendo-satellaview",
+        "nintendo-snes"
+      ],
+      "declared_in": [
         "nintendo-snes"
       ],
       "alternatives": [
@@ -10980,6 +11176,11 @@
       "repo_path": "bios/Enterprise/64-128/zx128.rom",
       "cores": null,
       "systems": [
+        "amstrad-cpc",
+        "sinclair-zx-spectrum",
+        "videoton-tvc"
+      ],
+      "declared_in": [
         "sinclair-zx-spectrum"
       ],
       "alternatives": [
@@ -11003,6 +11204,11 @@
       "repo_path": "bios/Arcade/FBNeo/spectrum.rom",
       "cores": null,
       "systems": [
+        "amstrad-cpc",
+        "sinclair-zx-spectrum",
+        "videoton-tvc"
+      ],
+      "declared_in": [
         "sinclair-zx-spectrum"
       ],
       "alternatives": [
@@ -13679,6 +13885,11 @@
       "repo_path": "bios/Enterprise/64-128/tvc22_ext.rom",
       "cores": null,
       "systems": [
+        "amstrad-cpc",
+        "sinclair-zx-spectrum",
+        "videoton-tvc"
+      ],
+      "declared_in": [
         "videoton-tvc"
       ],
       "alternatives": [
@@ -13702,6 +13913,11 @@
       "repo_path": "bios/Enterprise/64-128/tvc22_sys.rom",
       "cores": null,
       "systems": [
+        "amstrad-cpc",
+        "sinclair-zx-spectrum",
+        "videoton-tvc"
+      ],
+      "declared_in": [
         "videoton-tvc"
       ],
       "alternatives": [
@@ -13725,6 +13941,11 @@
       "repo_path": "bios/Enterprise/64-128/tvc_dos12d.rom",
       "cores": null,
       "systems": [
+        "amstrad-cpc",
+        "sinclair-zx-spectrum",
+        "videoton-tvc"
+      ],
+      "declared_in": [
         "videoton-tvc"
       ],
       "alternatives": [
@@ -13748,6 +13969,11 @@
       "repo_path": "bios/Enterprise/64-128/tvcfileio.rom",
       "cores": null,
       "systems": [
+        "amstrad-cpc",
+        "sinclair-zx-spectrum",
+        "videoton-tvc"
+      ],
+      "declared_in": [
         "videoton-tvc"
       ],
       "alternatives": [
@@ -29108,6 +29334,11 @@
       "cores": [
         "ep128emu",
         "ep128emu_core"
+      ],
+      "systems": [
+        "amstrad-cpc",
+        "sinclair-zx-spectrum",
+        "videoton-tvc"
       ]
     },
     {
@@ -29119,6 +29350,11 @@
       "cores": [
         "ep128emu",
         "ep128emu_core"
+      ],
+      "systems": [
+        "amstrad-cpc",
+        "sinclair-zx-spectrum",
+        "videoton-tvc"
       ]
     },
     {
@@ -49816,6 +50052,7 @@
         "mame"
       ],
       "systems": [
+        "3do",
         "philips-cdi"
       ],
       "category": "game_data"
@@ -50424,6 +50661,7 @@
         "mame"
       ],
       "systems": [
+        "elektronika-bk",
         "philips-cdi"
       ],
       "category": "game_data"
@@ -50760,6 +50998,7 @@
         "mame"
       ],
       "systems": [
+        "enterprise-64-128",
         "philips-cdi"
       ],
       "category": "game_data"
@@ -50776,6 +51015,7 @@
         "mame"
       ],
       "systems": [
+        "enterprise-64-128",
         "philips-cdi"
       ],
       "category": "game_data"
@@ -50792,6 +51032,7 @@
         "mame"
       ],
       "systems": [
+        "enterprise-64-128",
         "philips-cdi"
       ],
       "category": "game_data"
@@ -51000,6 +51241,7 @@
         "mame"
       ],
       "systems": [
+        "apple-macintosh-ii",
         "philips-cdi"
       ],
       "category": "game_data"
@@ -51016,6 +51258,7 @@
         "mame"
       ],
       "systems": [
+        "apple-macintosh-ii",
         "philips-cdi"
       ],
       "category": "game_data"
@@ -51032,6 +51275,7 @@
         "mame"
       ],
       "systems": [
+        "apple-macintosh-ii",
         "philips-cdi"
       ],
       "category": "game_data"
@@ -51048,6 +51292,7 @@
         "mame"
       ],
       "systems": [
+        "apple-macintosh-ii",
         "philips-cdi"
       ],
       "category": "game_data"
@@ -51064,6 +51309,7 @@
         "mame"
       ],
       "systems": [
+        "apple-macintosh-ii",
         "philips-cdi"
       ],
       "category": "game_data"
@@ -51080,6 +51326,7 @@
         "mame"
       ],
       "systems": [
+        "apple-macintosh-ii",
         "philips-cdi"
       ],
       "category": "game_data"
@@ -51224,6 +51471,7 @@
         "mame"
       ],
       "systems": [
+        "3do",
         "philips-cdi"
       ],
       "category": "game_data"
@@ -51304,6 +51552,7 @@
         "mame"
       ],
       "systems": [
+        "epoch-scv",
         "philips-cdi"
       ],
       "category": "game_data"
@@ -87056,6 +87305,14 @@
         "fbneo",
         "mame"
       ],
+      "systems": [
+        "3do",
+        "apple-macintosh-ii",
+        "elektronika-bk",
+        "enterprise-64-128",
+        "epoch-scv",
+        "philips-cdi"
+      ],
       "alternatives": [
         {
           "sha1": "4fb1f00681d2540b476add2def2bbf07ca3e3993",
@@ -108583,6 +108840,10 @@
         "mame2015",
         "mame2016",
         "ume2015"
+      ],
+      "systems": [
+        "3do",
+        "philips-cdi"
       ]
     },
     {
@@ -108599,6 +108860,10 @@
         "mame2015",
         "mame2016",
         "ume2015"
+      ],
+      "systems": [
+        "3do",
+        "philips-cdi"
       ]
     },
     {
@@ -108626,6 +108891,10 @@
         "mame2015",
         "mame2016",
         "ume2015"
+      ],
+      "systems": [
+        "3do",
+        "philips-cdi"
       ]
     },
     {
@@ -108682,6 +108951,10 @@
         "mame2015",
         "mame2016",
         "ume2015"
+      ],
+      "systems": [
+        "3do",
+        "philips-cdi"
       ]
     },
     {
@@ -108696,6 +108969,10 @@
         "mame2015",
         "mame2016",
         "ume2015"
+      ],
+      "systems": [
+        "3do",
+        "philips-cdi"
       ]
     },
     {
@@ -108710,6 +108987,10 @@
         "mame2015",
         "mame2016",
         "ume2015"
+      ],
+      "systems": [
+        "3do",
+        "philips-cdi"
       ]
     },
     {
@@ -108724,6 +109005,10 @@
         "mame2015",
         "mame2016",
         "ume2015"
+      ],
+      "systems": [
+        "3do",
+        "philips-cdi"
       ]
     },
     {
@@ -108774,6 +109059,10 @@
         "mame2015",
         "mame2016",
         "ume2015"
+      ],
+      "systems": [
+        "3do",
+        "philips-cdi"
       ]
     },
     {
@@ -108824,6 +109113,10 @@
         "mame2015",
         "mame2016",
         "ume2015"
+      ],
+      "systems": [
+        "3do",
+        "philips-cdi"
       ]
     },
     {
@@ -108836,6 +109129,10 @@
         "mame2015",
         "mame2016",
         "ume2015"
+      ],
+      "systems": [
+        "3do",
+        "philips-cdi"
       ]
     },
     {
@@ -114457,6 +114754,14 @@
       "cores": [
         "fbalpha2019",
         "mame"
+      ],
+      "systems": [
+        "3do",
+        "apple-macintosh-ii",
+        "elektronika-bk",
+        "enterprise-64-128",
+        "epoch-scv",
+        "philips-cdi"
       ]
     },
     {
@@ -114514,6 +114819,14 @@
       "cores": [
         "fbalpha2019"
       ],
+      "systems": [
+        "3do",
+        "apple-macintosh-ii",
+        "elektronika-bk",
+        "enterprise-64-128",
+        "epoch-scv",
+        "philips-cdi"
+      ],
       "alternatives": [
         {
           "sha1": "9f84f563df14ea1a1bcaaf05b720c3f5545e5a83",
@@ -114555,6 +114868,14 @@
       "cores": [
         "fbalpha2019"
       ],
+      "systems": [
+        "3do",
+        "apple-macintosh-ii",
+        "elektronika-bk",
+        "enterprise-64-128",
+        "epoch-scv",
+        "philips-cdi"
+      ],
       "alternatives": [
         {
           "sha1": "6a19d46d3915f2bff823ac34327bb0976fb2fed7",
@@ -114588,6 +114909,14 @@
       "cores": [
         "fbalpha2019",
         "mame"
+      ],
+      "systems": [
+        "3do",
+        "apple-macintosh-ii",
+        "elektronika-bk",
+        "enterprise-64-128",
+        "epoch-scv",
+        "philips-cdi"
       ]
     },
     {
@@ -114598,6 +114927,14 @@
       "repo_path": "bios/Arcade/Arcade/ym2608.zip",
       "cores": [
         "fbalpha2019"
+      ],
+      "systems": [
+        "3do",
+        "apple-macintosh-ii",
+        "elektronika-bk",
+        "enterprise-64-128",
+        "epoch-scv",
+        "philips-cdi"
       ],
       "alternatives": [
         {
@@ -114686,6 +115023,10 @@
         "mame2016",
         "mamearcade",
         "ume2015"
+      ],
+      "systems": [
+        "3do",
+        "philips-cdi"
       ]
     },
     {
@@ -114698,6 +115039,10 @@
         "mame",
         "mame2015",
         "mame2016"
+      ],
+      "systems": [
+        "3do",
+        "philips-cdi"
       ],
       "alternatives": [
         {
@@ -114733,6 +115078,10 @@
         "mame2015",
         "mame2016"
       ],
+      "systems": [
+        "3do",
+        "philips-cdi"
+      ],
       "alternatives": [
         {
           "sha1": "b6ff66dcb5547bd91760d239ddf428a655631c53",
@@ -114766,6 +115115,10 @@
         "mame2010",
         "mame2015",
         "mame2016"
+      ],
+      "systems": [
+        "3do",
+        "philips-cdi"
       ],
       "alternatives": [
         {

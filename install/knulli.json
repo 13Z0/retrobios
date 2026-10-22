@@ -6885,6 +6885,11 @@
       "repo_path": "bios/Atari/5200/5200.rom",
       "cores": null,
       "systems": [
+        "atari-400-800",
+        "atari-5200",
+        "xegs"
+      ],
+      "declared_in": [
         "atari-5200"
       ],
       "alternatives": [
@@ -9382,6 +9387,10 @@
       "repo_path": "bios/Nintendo/Super Game Boy/SGB1.sfc/program.rom",
       "cores": null,
       "systems": [
+        "nintendo-satellaview",
+        "nintendo-sgb"
+      ],
+      "declared_in": [
         "nintendo-sgb"
       ],
       "alternatives": [
@@ -9406,6 +9415,10 @@
       "repo_path": "bios/Nintendo/Super Game Boy/SGB2.sfc/program.rom",
       "cores": null,
       "systems": [
+        "nintendo-satellaview",
+        "nintendo-sgb"
+      ],
+      "declared_in": [
         "nintendo-sgb"
       ],
       "alternatives": [
@@ -17960,6 +17973,9 @@
       "cores": [
         "dosbox-staging",
         "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
       ]
     },
     {
@@ -17991,6 +18007,9 @@
       "cores": [
         "dosbox-staging",
         "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
       ]
     },
     {
@@ -19562,7 +19581,8 @@
         "pcsx2"
       ],
       "systems": [
-        "sony-playstation"
+        "sony-playstation",
+        "sony-playstation-2"
       ],
       "regions": [
         "japan"
@@ -19603,7 +19623,8 @@
         "pcsx2"
       ],
       "systems": [
-        "sony-playstation"
+        "sony-playstation",
+        "sony-playstation-2"
       ],
       "regions": [
         "europe",
@@ -109877,6 +109898,9 @@
         "bsnes",
         "bsnes_hd_beta",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-satellaview"
       ]
     },
     {
@@ -109889,6 +109913,9 @@
         "bsnes",
         "bsnes_hd_beta",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-satellaview"
       ]
     },
     {
@@ -109901,6 +109928,9 @@
         "bsnes",
         "bsnes_hd_beta",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-satellaview"
       ]
     },
     {
@@ -109913,6 +109943,9 @@
         "bsnes",
         "bsnes_hd_beta",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-satellaview"
       ]
     },
     {
@@ -109925,6 +109958,9 @@
         "bsnes",
         "bsnes_hd_beta",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-satellaview"
       ]
     },
     {
@@ -109937,6 +109973,9 @@
         "bsnes",
         "bsnes_hd_beta",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-satellaview"
       ]
     },
     {
@@ -109949,6 +109988,9 @@
         "bsnes",
         "bsnes_hd_beta",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-satellaview"
       ]
     },
     {
@@ -109961,6 +110003,9 @@
         "bsnes",
         "bsnes_hd_beta",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-satellaview"
       ]
     },
     {
@@ -109973,6 +110018,9 @@
         "bsnes",
         "bsnes_hd_beta",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-satellaview"
       ]
     },
     {
@@ -109985,6 +110033,9 @@
         "bsnes",
         "bsnes_hd_beta",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-satellaview"
       ]
     },
     {
@@ -109997,6 +110048,9 @@
         "bsnes",
         "bsnes_hd_beta",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-satellaview"
       ]
     },
     {
@@ -110009,6 +110063,9 @@
         "bsnes",
         "bsnes_hd_beta",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-satellaview"
       ]
     },
     {
@@ -110021,6 +110078,9 @@
         "bsnes",
         "bsnes_hd_beta",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-satellaview"
       ]
     },
     {
@@ -110033,6 +110093,9 @@
         "bsnes",
         "bsnes_hd_beta",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-satellaview"
       ]
     },
     {
@@ -111279,6 +111342,38 @@
         "demul",
         "flycast"
       ],
+      "systems": [
+        "3do",
+        "acorn-bbc-micro",
+        "adam",
+        "apfm1000",
+        "apple-macintosh-ii",
+        "archimedes",
+        "camplynx",
+        "cdi",
+        "chihiro",
+        "coco",
+        "crvision",
+        "electron",
+        "entex-advision",
+        "fm7",
+        "gamate",
+        "gamecom",
+        "gamepark-gp32",
+        "gamepock",
+        "gmaster",
+        "hikaru",
+        "laser310",
+        "scv",
+        "tandy-vis",
+        "ti99",
+        "tutor",
+        "vectrex",
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile",
+        "xegs"
+      ],
       "alternatives": [
         {
           "sha1": "b4c7e46fb510096acf8fb19fb99c8c5a8ab1d9e1",
@@ -111302,6 +111397,7 @@
         "mame"
       ],
       "systems": [
+        "chihiro",
         "hikaru",
         "sega-dreamcast"
       ]
@@ -115218,6 +115314,38 @@
       "cores": [
         "fbneo"
       ],
+      "systems": [
+        "3do",
+        "acorn-bbc-micro",
+        "adam",
+        "apfm1000",
+        "apple-macintosh-ii",
+        "archimedes",
+        "camplynx",
+        "cdi",
+        "chihiro",
+        "coco",
+        "crvision",
+        "electron",
+        "entex-advision",
+        "fm7",
+        "gamate",
+        "gamecom",
+        "gamepark-gp32",
+        "gamepock",
+        "gmaster",
+        "hikaru",
+        "laser310",
+        "scv",
+        "tandy-vis",
+        "ti99",
+        "tutor",
+        "vectrex",
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile",
+        "xegs"
+      ],
       "alternatives": [
         {
           "sha1": "6a19d46d3915f2bff823ac34327bb0976fb2fed7",
@@ -115622,6 +115750,38 @@
       "cores": [
         "fbneo",
         "mame"
+      ],
+      "systems": [
+        "3do",
+        "acorn-bbc-micro",
+        "adam",
+        "apfm1000",
+        "apple-macintosh-ii",
+        "archimedes",
+        "camplynx",
+        "cdi",
+        "chihiro",
+        "coco",
+        "crvision",
+        "electron",
+        "entex-advision",
+        "fm7",
+        "gamate",
+        "gamecom",
+        "gamepark-gp32",
+        "gamepock",
+        "gmaster",
+        "hikaru",
+        "laser310",
+        "scv",
+        "tandy-vis",
+        "ti99",
+        "tutor",
+        "vectrex",
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile",
+        "xegs"
       ]
     },
     {
@@ -116499,6 +116659,38 @@
       "cores": [
         "fbneo",
         "mame"
+      ],
+      "systems": [
+        "3do",
+        "acorn-bbc-micro",
+        "adam",
+        "apfm1000",
+        "apple-macintosh-ii",
+        "archimedes",
+        "camplynx",
+        "cdi",
+        "chihiro",
+        "coco",
+        "crvision",
+        "electron",
+        "entex-advision",
+        "fm7",
+        "gamate",
+        "gamecom",
+        "gamepark-gp32",
+        "gamepock",
+        "gmaster",
+        "hikaru",
+        "laser310",
+        "scv",
+        "tandy-vis",
+        "ti99",
+        "tutor",
+        "vectrex",
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile",
+        "xegs"
       ],
       "alternatives": [
         {
@@ -129481,6 +129673,38 @@
       "cores": [
         "fbneo",
         "mame"
+      ],
+      "systems": [
+        "3do",
+        "acorn-bbc-micro",
+        "adam",
+        "apfm1000",
+        "apple-macintosh-ii",
+        "archimedes",
+        "camplynx",
+        "cdi",
+        "chihiro",
+        "coco",
+        "crvision",
+        "electron",
+        "entex-advision",
+        "fm7",
+        "gamate",
+        "gamecom",
+        "gamepark-gp32",
+        "gamepock",
+        "gmaster",
+        "hikaru",
+        "laser310",
+        "scv",
+        "tandy-vis",
+        "ti99",
+        "tutor",
+        "vectrex",
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile",
+        "xegs"
       ]
     },
     {
@@ -141504,6 +141728,38 @@
       "cores": [
         "fbneo",
         "mame"
+      ],
+      "systems": [
+        "3do",
+        "acorn-bbc-micro",
+        "adam",
+        "apfm1000",
+        "apple-macintosh-ii",
+        "archimedes",
+        "camplynx",
+        "cdi",
+        "chihiro",
+        "coco",
+        "crvision",
+        "electron",
+        "entex-advision",
+        "fm7",
+        "gamate",
+        "gamecom",
+        "gamepark-gp32",
+        "gamepock",
+        "gmaster",
+        "hikaru",
+        "laser310",
+        "scv",
+        "tandy-vis",
+        "ti99",
+        "tutor",
+        "vectrex",
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile",
+        "xegs"
       ]
     },
     {
@@ -145102,6 +145358,38 @@
       "cores": [
         "fbneo",
         "mame"
+      ],
+      "systems": [
+        "3do",
+        "acorn-bbc-micro",
+        "adam",
+        "apfm1000",
+        "apple-macintosh-ii",
+        "archimedes",
+        "camplynx",
+        "cdi",
+        "chihiro",
+        "coco",
+        "crvision",
+        "electron",
+        "entex-advision",
+        "fm7",
+        "gamate",
+        "gamecom",
+        "gamepark-gp32",
+        "gamepock",
+        "gmaster",
+        "hikaru",
+        "laser310",
+        "scv",
+        "tandy-vis",
+        "ti99",
+        "tutor",
+        "vectrex",
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile",
+        "xegs"
       ]
     },
     {
@@ -145113,6 +145401,38 @@
       "cores": [
         "fbneo",
         "mame"
+      ],
+      "systems": [
+        "3do",
+        "acorn-bbc-micro",
+        "adam",
+        "apfm1000",
+        "apple-macintosh-ii",
+        "archimedes",
+        "camplynx",
+        "cdi",
+        "chihiro",
+        "coco",
+        "crvision",
+        "electron",
+        "entex-advision",
+        "fm7",
+        "gamate",
+        "gamecom",
+        "gamepark-gp32",
+        "gamepock",
+        "gmaster",
+        "hikaru",
+        "laser310",
+        "scv",
+        "tandy-vis",
+        "ti99",
+        "tutor",
+        "vectrex",
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile",
+        "xegs"
       ]
     },
     {
@@ -145208,6 +145528,38 @@
       "cores": [
         "fbneo",
         "mame"
+      ],
+      "systems": [
+        "3do",
+        "acorn-bbc-micro",
+        "adam",
+        "apfm1000",
+        "apple-macintosh-ii",
+        "archimedes",
+        "camplynx",
+        "cdi",
+        "chihiro",
+        "coco",
+        "crvision",
+        "electron",
+        "entex-advision",
+        "fm7",
+        "gamate",
+        "gamecom",
+        "gamepark-gp32",
+        "gamepock",
+        "gmaster",
+        "hikaru",
+        "laser310",
+        "scv",
+        "tandy-vis",
+        "ti99",
+        "tutor",
+        "vectrex",
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile",
+        "xegs"
       ]
     },
     {
@@ -145839,6 +146191,38 @@
       "cores": [
         "fbneo",
         "mame"
+      ],
+      "systems": [
+        "3do",
+        "acorn-bbc-micro",
+        "adam",
+        "apfm1000",
+        "apple-macintosh-ii",
+        "archimedes",
+        "camplynx",
+        "cdi",
+        "chihiro",
+        "coco",
+        "crvision",
+        "electron",
+        "entex-advision",
+        "fm7",
+        "gamate",
+        "gamecom",
+        "gamepark-gp32",
+        "gamepock",
+        "gmaster",
+        "hikaru",
+        "laser310",
+        "scv",
+        "tandy-vis",
+        "ti99",
+        "tutor",
+        "vectrex",
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile",
+        "xegs"
       ]
     },
     {
@@ -165855,6 +166239,9 @@
         "puae",
         "puae2021",
         "uae4arm"
+      ],
+      "systems": [
+        "commodore-amiga"
       ]
     },
     {
@@ -165867,6 +166254,9 @@
         "puae",
         "puae2021",
         "uae4arm"
+      ],
+      "systems": [
+        "commodore-amiga"
       ]
     },
     {
@@ -165879,6 +166269,9 @@
         "puae",
         "puae2021",
         "uae4arm"
+      ],
+      "systems": [
+        "commodore-amiga"
       ]
     },
     {

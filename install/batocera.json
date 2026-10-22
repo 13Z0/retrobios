@@ -7341,6 +7341,11 @@
       "repo_path": "bios/Atari/5200/5200.rom",
       "cores": null,
       "systems": [
+        "atari-400-800",
+        "atari-5200",
+        "xegs"
+      ],
+      "declared_in": [
         "atari-5200"
       ],
       "alternatives": [
@@ -9395,6 +9400,7 @@
       "repo_path": "bios/Sega/Hikaru/jvs13551.zip",
       "cores": null,
       "systems": [
+        "chihiro",
         "hikaru",
         "sega-dreamcast"
       ],
@@ -10573,6 +10579,10 @@
       "repo_path": "bios/Nintendo/Super Game Boy/SGB1.sfc/program.rom",
       "cores": null,
       "systems": [
+        "nintendo-satellaview",
+        "nintendo-sgb"
+      ],
+      "declared_in": [
         "nintendo-sgb"
       ],
       "alternatives": [
@@ -10597,6 +10607,10 @@
       "repo_path": "bios/Nintendo/Super Game Boy/SGB2.sfc/program.rom",
       "cores": null,
       "systems": [
+        "nintendo-satellaview",
+        "nintendo-sgb"
+      ],
+      "declared_in": [
         "nintendo-sgb"
       ],
       "alternatives": [
@@ -57682,6 +57696,9 @@
       "cores": [
         "dosbox-staging",
         "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
       ]
     },
     {
@@ -57713,6 +57730,9 @@
       "cores": [
         "dosbox-staging",
         "amiberry"
+      ],
+      "systems": [
+        "commodore-amiga"
       ]
     },
     {
@@ -59200,7 +59220,8 @@
         "pcsx2"
       ],
       "systems": [
-        "sony-playstation"
+        "sony-playstation",
+        "sony-playstation-2"
       ],
       "regions": [
         "japan"
@@ -59241,7 +59262,8 @@
         "pcsx2"
       ],
       "systems": [
-        "sony-playstation"
+        "sony-playstation",
+        "sony-playstation-2"
       ],
       "regions": [
         "europe",
@@ -176707,6 +176729,9 @@
         "bsnes",
         "bsnes_hd_beta",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-satellaview"
       ]
     },
     {
@@ -176719,6 +176744,9 @@
         "bsnes",
         "bsnes_hd_beta",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-satellaview"
       ]
     },
     {
@@ -176731,6 +176759,9 @@
         "bsnes",
         "bsnes_hd_beta",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-satellaview"
       ]
     },
     {
@@ -176743,6 +176774,9 @@
         "bsnes",
         "bsnes_hd_beta",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-satellaview"
       ]
     },
     {
@@ -176755,6 +176789,9 @@
         "bsnes",
         "bsnes_hd_beta",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-satellaview"
       ]
     },
     {
@@ -176767,6 +176804,9 @@
         "bsnes",
         "bsnes_hd_beta",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-satellaview"
       ]
     },
     {
@@ -176779,6 +176819,9 @@
         "bsnes",
         "bsnes_hd_beta",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-satellaview"
       ]
     },
     {
@@ -176791,6 +176834,9 @@
         "bsnes",
         "bsnes_hd_beta",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-satellaview"
       ]
     },
     {
@@ -176803,6 +176849,9 @@
         "bsnes",
         "bsnes_hd_beta",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-satellaview"
       ]
     },
     {
@@ -176815,6 +176864,9 @@
         "bsnes",
         "bsnes_hd_beta",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-satellaview"
       ]
     },
     {
@@ -176827,6 +176879,9 @@
         "bsnes",
         "bsnes_hd_beta",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-satellaview"
       ]
     },
     {
@@ -176839,6 +176894,9 @@
         "bsnes",
         "bsnes_hd_beta",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-satellaview"
       ]
     },
     {
@@ -176851,6 +176909,9 @@
         "bsnes",
         "bsnes_hd_beta",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-satellaview"
       ]
     },
     {
@@ -176863,6 +176924,9 @@
         "bsnes",
         "bsnes_hd_beta",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-satellaview"
       ]
     },
     {
@@ -178139,6 +178203,51 @@
       "repo_path": "bios/Arcade/Arcade/segasp.zip",
       "cores": [
         "demul"
+      ],
+      "systems": [
+        "3do",
+        "acorn-bbc-micro",
+        "adam",
+        "apfm1000",
+        "apple-macintosh-ii",
+        "archimedes",
+        "beena",
+        "camplynx",
+        "cdi",
+        "chihiro",
+        "coco",
+        "crvision",
+        "dragon64",
+        "electron",
+        "elektronika-bk",
+        "enterprise-64-128",
+        "entex-advision",
+        "fm7",
+        "gamate",
+        "gamecom",
+        "gamepark-gp32",
+        "gamepock",
+        "gmaster",
+        "hikaru",
+        "laser310",
+        "loopy",
+        "mc10",
+        "pc80",
+        "pcw",
+        "pv2000",
+        "rx78",
+        "scv",
+        "sega-ai",
+        "tandy-vis",
+        "ti99",
+        "triforce",
+        "trs80",
+        "tutor",
+        "vectrex",
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile",
+        "xegs"
       ],
       "alternatives": [
         {
@@ -182594,6 +182703,51 @@
       "cores": [
         "fbneo"
       ],
+      "systems": [
+        "3do",
+        "acorn-bbc-micro",
+        "adam",
+        "apfm1000",
+        "apple-macintosh-ii",
+        "archimedes",
+        "beena",
+        "camplynx",
+        "cdi",
+        "chihiro",
+        "coco",
+        "crvision",
+        "dragon64",
+        "electron",
+        "elektronika-bk",
+        "enterprise-64-128",
+        "entex-advision",
+        "fm7",
+        "gamate",
+        "gamecom",
+        "gamepark-gp32",
+        "gamepock",
+        "gmaster",
+        "hikaru",
+        "laser310",
+        "loopy",
+        "mc10",
+        "pc80",
+        "pcw",
+        "pv2000",
+        "rx78",
+        "scv",
+        "sega-ai",
+        "tandy-vis",
+        "ti99",
+        "triforce",
+        "trs80",
+        "tutor",
+        "vectrex",
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile",
+        "xegs"
+      ],
       "alternatives": [
         {
           "sha1": "6a19d46d3915f2bff823ac34327bb0976fb2fed7",
@@ -182939,6 +183093,51 @@
       "cores": [
         "fbneo",
         "mame"
+      ],
+      "systems": [
+        "3do",
+        "acorn-bbc-micro",
+        "adam",
+        "apfm1000",
+        "apple-macintosh-ii",
+        "archimedes",
+        "beena",
+        "camplynx",
+        "cdi",
+        "chihiro",
+        "coco",
+        "crvision",
+        "dragon64",
+        "electron",
+        "elektronika-bk",
+        "enterprise-64-128",
+        "entex-advision",
+        "fm7",
+        "gamate",
+        "gamecom",
+        "gamepark-gp32",
+        "gamepock",
+        "gmaster",
+        "hikaru",
+        "laser310",
+        "loopy",
+        "mc10",
+        "pc80",
+        "pcw",
+        "pv2000",
+        "rx78",
+        "scv",
+        "sega-ai",
+        "tandy-vis",
+        "ti99",
+        "triforce",
+        "trs80",
+        "tutor",
+        "vectrex",
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile",
+        "xegs"
       ]
     },
     {
@@ -184013,6 +184212,51 @@
       "cores": [
         "fbneo",
         "mame"
+      ],
+      "systems": [
+        "3do",
+        "acorn-bbc-micro",
+        "adam",
+        "apfm1000",
+        "apple-macintosh-ii",
+        "archimedes",
+        "beena",
+        "camplynx",
+        "cdi",
+        "chihiro",
+        "coco",
+        "crvision",
+        "dragon64",
+        "electron",
+        "elektronika-bk",
+        "enterprise-64-128",
+        "entex-advision",
+        "fm7",
+        "gamate",
+        "gamecom",
+        "gamepark-gp32",
+        "gamepock",
+        "gmaster",
+        "hikaru",
+        "laser310",
+        "loopy",
+        "mc10",
+        "pc80",
+        "pcw",
+        "pv2000",
+        "rx78",
+        "scv",
+        "sega-ai",
+        "tandy-vis",
+        "ti99",
+        "triforce",
+        "trs80",
+        "tutor",
+        "vectrex",
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile",
+        "xegs"
       ]
     },
     {
@@ -199609,6 +199853,51 @@
       "cores": [
         "fbneo",
         "mame"
+      ],
+      "systems": [
+        "3do",
+        "acorn-bbc-micro",
+        "adam",
+        "apfm1000",
+        "apple-macintosh-ii",
+        "archimedes",
+        "beena",
+        "camplynx",
+        "cdi",
+        "chihiro",
+        "coco",
+        "crvision",
+        "dragon64",
+        "electron",
+        "elektronika-bk",
+        "enterprise-64-128",
+        "entex-advision",
+        "fm7",
+        "gamate",
+        "gamecom",
+        "gamepark-gp32",
+        "gamepock",
+        "gmaster",
+        "hikaru",
+        "laser310",
+        "loopy",
+        "mc10",
+        "pc80",
+        "pcw",
+        "pv2000",
+        "rx78",
+        "scv",
+        "sega-ai",
+        "tandy-vis",
+        "ti99",
+        "triforce",
+        "trs80",
+        "tutor",
+        "vectrex",
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile",
+        "xegs"
       ]
     },
     {
@@ -215070,6 +215359,51 @@
       "cores": [
         "fbneo",
         "mame"
+      ],
+      "systems": [
+        "3do",
+        "acorn-bbc-micro",
+        "adam",
+        "apfm1000",
+        "apple-macintosh-ii",
+        "archimedes",
+        "beena",
+        "camplynx",
+        "cdi",
+        "chihiro",
+        "coco",
+        "crvision",
+        "dragon64",
+        "electron",
+        "elektronika-bk",
+        "enterprise-64-128",
+        "entex-advision",
+        "fm7",
+        "gamate",
+        "gamecom",
+        "gamepark-gp32",
+        "gamepock",
+        "gmaster",
+        "hikaru",
+        "laser310",
+        "loopy",
+        "mc10",
+        "pc80",
+        "pcw",
+        "pv2000",
+        "rx78",
+        "scv",
+        "sega-ai",
+        "tandy-vis",
+        "ti99",
+        "triforce",
+        "trs80",
+        "tutor",
+        "vectrex",
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile",
+        "xegs"
       ]
     },
     {
@@ -219775,6 +220109,51 @@
       "cores": [
         "fbneo",
         "mame"
+      ],
+      "systems": [
+        "3do",
+        "acorn-bbc-micro",
+        "adam",
+        "apfm1000",
+        "apple-macintosh-ii",
+        "archimedes",
+        "beena",
+        "camplynx",
+        "cdi",
+        "chihiro",
+        "coco",
+        "crvision",
+        "dragon64",
+        "electron",
+        "elektronika-bk",
+        "enterprise-64-128",
+        "entex-advision",
+        "fm7",
+        "gamate",
+        "gamecom",
+        "gamepark-gp32",
+        "gamepock",
+        "gmaster",
+        "hikaru",
+        "laser310",
+        "loopy",
+        "mc10",
+        "pc80",
+        "pcw",
+        "pv2000",
+        "rx78",
+        "scv",
+        "sega-ai",
+        "tandy-vis",
+        "ti99",
+        "triforce",
+        "trs80",
+        "tutor",
+        "vectrex",
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile",
+        "xegs"
       ]
     },
     {
@@ -219786,6 +220165,51 @@
       "cores": [
         "fbneo",
         "mame"
+      ],
+      "systems": [
+        "3do",
+        "acorn-bbc-micro",
+        "adam",
+        "apfm1000",
+        "apple-macintosh-ii",
+        "archimedes",
+        "beena",
+        "camplynx",
+        "cdi",
+        "chihiro",
+        "coco",
+        "crvision",
+        "dragon64",
+        "electron",
+        "elektronika-bk",
+        "enterprise-64-128",
+        "entex-advision",
+        "fm7",
+        "gamate",
+        "gamecom",
+        "gamepark-gp32",
+        "gamepock",
+        "gmaster",
+        "hikaru",
+        "laser310",
+        "loopy",
+        "mc10",
+        "pc80",
+        "pcw",
+        "pv2000",
+        "rx78",
+        "scv",
+        "sega-ai",
+        "tandy-vis",
+        "ti99",
+        "triforce",
+        "trs80",
+        "tutor",
+        "vectrex",
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile",
+        "xegs"
       ]
     },
     {
@@ -219907,6 +220331,51 @@
       "cores": [
         "fbneo",
         "mame"
+      ],
+      "systems": [
+        "3do",
+        "acorn-bbc-micro",
+        "adam",
+        "apfm1000",
+        "apple-macintosh-ii",
+        "archimedes",
+        "beena",
+        "camplynx",
+        "cdi",
+        "chihiro",
+        "coco",
+        "crvision",
+        "dragon64",
+        "electron",
+        "elektronika-bk",
+        "enterprise-64-128",
+        "entex-advision",
+        "fm7",
+        "gamate",
+        "gamecom",
+        "gamepark-gp32",
+        "gamepock",
+        "gmaster",
+        "hikaru",
+        "laser310",
+        "loopy",
+        "mc10",
+        "pc80",
+        "pcw",
+        "pv2000",
+        "rx78",
+        "scv",
+        "sega-ai",
+        "tandy-vis",
+        "ti99",
+        "triforce",
+        "trs80",
+        "tutor",
+        "vectrex",
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile",
+        "xegs"
       ]
     },
     {
@@ -220660,6 +221129,51 @@
       "cores": [
         "fbneo",
         "mame"
+      ],
+      "systems": [
+        "3do",
+        "acorn-bbc-micro",
+        "adam",
+        "apfm1000",
+        "apple-macintosh-ii",
+        "archimedes",
+        "beena",
+        "camplynx",
+        "cdi",
+        "chihiro",
+        "coco",
+        "crvision",
+        "dragon64",
+        "electron",
+        "elektronika-bk",
+        "enterprise-64-128",
+        "entex-advision",
+        "fm7",
+        "gamate",
+        "gamecom",
+        "gamepark-gp32",
+        "gamepock",
+        "gmaster",
+        "hikaru",
+        "laser310",
+        "loopy",
+        "mc10",
+        "pc80",
+        "pcw",
+        "pv2000",
+        "rx78",
+        "scv",
+        "sega-ai",
+        "tandy-vis",
+        "ti99",
+        "triforce",
+        "trs80",
+        "tutor",
+        "vectrex",
+        "vgmplay",
+        "vtech-socrates",
+        "vtech-vsmile",
+        "xegs"
       ]
     },
     {
@@ -245082,6 +245596,9 @@
         "puae",
         "puae2021",
         "uae4arm"
+      ],
+      "systems": [
+        "commodore-amiga"
       ]
     },
     {
@@ -245094,6 +245611,9 @@
         "puae",
         "puae2021",
         "uae4arm"
+      ],
+      "systems": [
+        "commodore-amiga"
       ]
     },
     {
@@ -245106,6 +245626,9 @@
         "puae",
         "puae2021",
         "uae4arm"
+      ],
+      "systems": [
+        "commodore-amiga"
       ]
     },
     {

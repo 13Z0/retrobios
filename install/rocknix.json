@@ -3306,6 +3306,10 @@
         "ares",
         "bsnes",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-gb",
+        "nintendo-gbc"
       ]
     },
     {
@@ -3320,6 +3324,10 @@
         "ares",
         "bsnes",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-gb",
+        "nintendo-gbc"
       ]
     },
     {
@@ -22489,6 +22497,10 @@
       "repo_path": "bios/Nintendo/Game Boy/GB_sgb2.bin",
       "cores": [
         "mesence"
+      ],
+      "systems": [
+        "nintendo-gb",
+        "nintendo-gbc"
       ],
       "alternatives": [
         {
@@ -52705,6 +52717,10 @@
         "snes9x",
         "snes9x2010",
         "supersnes9x"
+      ],
+      "systems": [
+        "nintendo-gb",
+        "nintendo-gbc"
       ]
     },
     {
@@ -53918,6 +53934,10 @@
         "higan_sfc_balanced",
         "mesen-s",
         "mesence"
+      ],
+      "systems": [
+        "nintendo-gb",
+        "nintendo-gbc"
       ]
     },
     {
@@ -53935,6 +53955,10 @@
         "higan_sfc_balanced",
         "mesen-s",
         "mesence"
+      ],
+      "systems": [
+        "nintendo-gb",
+        "nintendo-gbc"
       ]
     },
     {
@@ -53953,6 +53977,10 @@
         "higan_sfc_balanced",
         "mesen-s",
         "mesence"
+      ],
+      "systems": [
+        "nintendo-gb",
+        "nintendo-gbc"
       ]
     },
     {
@@ -53971,6 +53999,10 @@
         "higan_sfc_balanced",
         "mesen-s",
         "mesence"
+      ],
+      "systems": [
+        "nintendo-gb",
+        "nintendo-gbc"
       ]
     },
     {
@@ -53989,6 +54021,10 @@
         "higan_sfc_balanced",
         "mesen-s",
         "mesence"
+      ],
+      "systems": [
+        "nintendo-gb",
+        "nintendo-gbc"
       ]
     },
     {
@@ -54007,6 +54043,10 @@
         "higan_sfc_balanced",
         "mesen-s",
         "mesence"
+      ],
+      "systems": [
+        "nintendo-gb",
+        "nintendo-gbc"
       ]
     },
     {
@@ -54025,6 +54065,10 @@
         "higan_sfc_balanced",
         "mesen-s",
         "mesence"
+      ],
+      "systems": [
+        "nintendo-gb",
+        "nintendo-gbc"
       ]
     },
     {
@@ -54043,6 +54087,10 @@
         "higan_sfc_balanced",
         "mesen-s",
         "mesence"
+      ],
+      "systems": [
+        "nintendo-gb",
+        "nintendo-gbc"
       ]
     },
     {
@@ -54061,6 +54109,10 @@
         "higan_sfc_balanced",
         "mesen-s",
         "mesence"
+      ],
+      "systems": [
+        "nintendo-gb",
+        "nintendo-gbc"
       ]
     },
     {
@@ -54079,6 +54131,10 @@
         "higan_sfc_balanced",
         "mesen-s",
         "mesence"
+      ],
+      "systems": [
+        "nintendo-gb",
+        "nintendo-gbc"
       ]
     },
     {
@@ -54097,6 +54153,10 @@
         "higan_sfc_balanced",
         "mesen-s",
         "mesence"
+      ],
+      "systems": [
+        "nintendo-gb",
+        "nintendo-gbc"
       ]
     },
     {
@@ -54115,6 +54175,10 @@
         "higan_sfc_balanced",
         "mesen-s",
         "mesence"
+      ],
+      "systems": [
+        "nintendo-gb",
+        "nintendo-gbc"
       ]
     },
     {
@@ -54133,6 +54197,10 @@
         "higan_sfc_balanced",
         "mesen-s",
         "mesence"
+      ],
+      "systems": [
+        "nintendo-gb",
+        "nintendo-gbc"
       ]
     },
     {
@@ -54151,6 +54219,10 @@
         "higan_sfc_balanced",
         "mesen-s",
         "mesence"
+      ],
+      "systems": [
+        "nintendo-gb",
+        "nintendo-gbc"
       ]
     },
     {
@@ -54974,7 +55046,8 @@
         "mesen-s"
       ],
       "systems": [
-        "nintendo-gb"
+        "nintendo-gb",
+        "nintendo-gbc"
       ],
       "alternatives": [
         {

@@ -4511,7 +4511,8 @@
         "pcsx2"
       ],
       "systems": [
-        "sony-playstation"
+        "sony-playstation",
+        "sony-playstation-2"
       ],
       "regions": [
         "japan"
@@ -4552,7 +4553,8 @@
         "pcsx2"
       ],
       "systems": [
-        "sony-playstation"
+        "sony-playstation",
+        "sony-playstation-2"
       ],
       "regions": [
         "europe",
@@ -35042,6 +35044,9 @@
         "mamemess",
         "mame"
       ],
+      "systems": [
+        "panasonic-3do"
+      ],
       "category": "game_data"
     },
     {
@@ -36185,6 +36190,9 @@
         "mamearcade",
         "mamemess",
         "mame"
+      ],
+      "systems": [
+        "panasonic-3do"
       ],
       "category": "game_data"
     },
@@ -69779,6 +69787,9 @@
         "fbneo",
         "fbalpha2019",
         "mame"
+      ],
+      "systems": [
+        "panasonic-3do"
       ]
     },
     {
@@ -69847,6 +69858,9 @@
       "cores": [
         "fbneo"
       ],
+      "systems": [
+        "panasonic-3do"
+      ],
       "alternatives": [
         {
           "sha1": "489256f5e2001070d2ad94c90d255282c71ed274",
@@ -69899,6 +69913,9 @@
         "fbneo",
         "fbalpha2019"
       ],
+      "systems": [
+        "panasonic-3do"
+      ],
       "alternatives": [
         {
           "sha1": "6a19d46d3915f2bff823ac34327bb0976fb2fed7",
@@ -69933,6 +69950,9 @@
         "fbneo",
         "fbalpha2019",
         "mame"
+      ],
+      "systems": [
+        "panasonic-3do"
       ]
     },
     {
@@ -69944,6 +69964,9 @@
       "cores": [
         "fbneo",
         "fbalpha2019"
+      ],
+      "systems": [
+        "panasonic-3do"
       ],
       "alternatives": [
         {
@@ -71226,6 +71249,9 @@
         "mame2016",
         "mamearcade",
         "ume2015"
+      ],
+      "systems": [
+        "panasonic-3do"
       ]
     },
     {
@@ -71238,6 +71264,9 @@
         "mame",
         "mame2015",
         "mame2016"
+      ],
+      "systems": [
+        "panasonic-3do"
       ],
       "alternatives": [
         {
@@ -71273,6 +71302,9 @@
         "mame2015",
         "mame2016"
       ],
+      "systems": [
+        "panasonic-3do"
+      ],
       "alternatives": [
         {
           "sha1": "b6ff66dcb5547bd91760d239ddf428a655631c53",
@@ -71306,6 +71338,9 @@
         "mame2010",
         "mame2015",
         "mame2016"
+      ],
+      "systems": [
+        "panasonic-3do"
       ],
       "alternatives": [
         {
@@ -71965,6 +72000,9 @@
         "mame2016",
         "mamearcade",
         "ume2015"
+      ],
+      "systems": [
+        "panasonic-3do"
       ]
     },
     {
@@ -72436,6 +72474,9 @@
       "cores": [
         "fbneo",
         "mame"
+      ],
+      "systems": [
+        "panasonic-3do"
       ],
       "alternatives": [
         {
@@ -83735,6 +83776,9 @@
       "cores": [
         "fbneo",
         "mame"
+      ],
+      "systems": [
+        "panasonic-3do"
       ]
     },
     {
@@ -83746,6 +83790,9 @@
       "cores": [
         "fbneo",
         "mame"
+      ],
+      "systems": [
+        "panasonic-3do"
       ]
     },
     {
@@ -83783,6 +83830,9 @@
       "cores": [
         "fbneo",
         "mame"
+      ],
+      "systems": [
+        "panasonic-3do"
       ]
     },
     {
@@ -89149,6 +89199,9 @@
         "mame2015",
         "mame2016",
         "ume2015"
+      ],
+      "systems": [
+        "panasonic-3do"
       ]
     },
     {
@@ -89165,6 +89218,9 @@
         "mame2015",
         "mame2016",
         "ume2015"
+      ],
+      "systems": [
+        "panasonic-3do"
       ]
     },
     {
@@ -89192,6 +89248,9 @@
         "mame2015",
         "mame2016",
         "ume2015"
+      ],
+      "systems": [
+        "panasonic-3do"
       ]
     },
     {
@@ -89239,6 +89298,9 @@
         "mame2015",
         "mame2016",
         "ume2015"
+      ],
+      "systems": [
+        "panasonic-3do"
       ]
     },
     {
@@ -89253,6 +89315,9 @@
         "mame2015",
         "mame2016",
         "ume2015"
+      ],
+      "systems": [
+        "panasonic-3do"
       ]
     },
     {
@@ -89267,6 +89332,9 @@
         "mame2015",
         "mame2016",
         "ume2015"
+      ],
+      "systems": [
+        "panasonic-3do"
       ]
     },
     {
@@ -89281,6 +89349,9 @@
         "mame2015",
         "mame2016",
         "ume2015"
+      ],
+      "systems": [
+        "panasonic-3do"
       ]
     },
     {
@@ -89331,6 +89402,9 @@
         "mame2015",
         "mame2016",
         "ume2015"
+      ],
+      "systems": [
+        "panasonic-3do"
       ]
     },
     {
@@ -89375,6 +89449,9 @@
         "mame2015",
         "mame2016",
         "ume2015"
+      ],
+      "systems": [
+        "panasonic-3do"
       ]
     },
     {
@@ -89387,6 +89464,9 @@
         "mame2015",
         "mame2016",
         "ume2015"
+      ],
+      "systems": [
+        "panasonic-3do"
       ]
     },
     {

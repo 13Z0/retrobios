@@ -43438,6 +43438,10 @@
       "cores": [
         "advancemame"
       ],
+      "systems": [
+        "3do",
+        "cdi"
+      ],
       "alternatives": [
         {
           "sha1": "a97c0579198d88d4db3f7f1b7707ddc6a86ab084",
@@ -43626,6 +43630,10 @@
         "advancemame",
         "mame",
         "mame2010"
+      ],
+      "systems": [
+        "3do",
+        "cdi"
       ]
     },
     {
@@ -43636,6 +43644,10 @@
       "repo_path": "bios/Arcade/Arcade/maxaflex.zip",
       "cores": [
         "advancemame"
+      ],
+      "systems": [
+        "3do",
+        "cdi"
       ],
       "alternatives": [
         {
@@ -43667,6 +43679,10 @@
       "cores": [
         "advancemame"
       ],
+      "systems": [
+        "3do",
+        "cdi"
+      ],
       "alternatives": [
         {
           "sha1": "6227dd5f5d7083d0aed95a544b64183787699386",
@@ -43688,6 +43704,10 @@
       "repo_path": "bios/Arcade/Arcade/macsbios.zip",
       "cores": [
         "advancemame"
+      ],
+      "systems": [
+        "3do",
+        "cdi"
       ],
       "alternatives": [
         {
@@ -45837,6 +45857,10 @@
       "cores": [
         "flycast"
       ],
+      "systems": [
+        "3do",
+        "cdi"
+      ],
       "alternatives": [
         {
           "sha1": "b4c7e46fb510096acf8fb19fb99c8c5a8ab1d9e1",
@@ -45884,7 +45908,8 @@
         "vvvvvv"
       ],
       "systems": [
-        "sega-dreamcast"
+        "sega-dreamcast",
+        "vvvvvv"
       ]
     },
     {
@@ -46109,7 +46134,8 @@
       ],
       "systems": [
         "nintendo-gb",
-        "nintendo-gbc"
+        "nintendo-gbc",
+        "nintendo-satellaview"
       ]
     },
     {
@@ -46125,7 +46151,8 @@
       ],
       "systems": [
         "nintendo-gb",
-        "nintendo-gbc"
+        "nintendo-gbc",
+        "nintendo-satellaview"
       ]
     },
     {
@@ -47274,6 +47301,10 @@
       "cores": [
         "fbneo"
       ],
+      "systems": [
+        "3do",
+        "cdi"
+      ],
       "alternatives": [
         {
           "sha1": "6a19d46d3915f2bff823ac34327bb0976fb2fed7",
@@ -47460,6 +47491,10 @@
       "cores": [
         "fbneo",
         "mame"
+      ],
+      "systems": [
+        "3do",
+        "cdi"
       ]
     },
     {
@@ -47751,6 +47786,10 @@
       "cores": [
         "fbneo",
         "mame"
+      ],
+      "systems": [
+        "3do",
+        "cdi"
       ],
       "alternatives": [
         {
@@ -49046,6 +49085,10 @@
       "repo_path": "bios/Arcade/Arcade/ym2608.zip",
       "cores": [
         "fbneo"
+      ],
+      "systems": [
+        "3do",
+        "cdi"
       ],
       "alternatives": [
         {
@@ -54839,6 +54882,10 @@
       "cores": [
         "fbneo",
         "mame"
+      ],
+      "systems": [
+        "3do",
+        "cdi"
       ]
     },
     {
@@ -59370,6 +59417,10 @@
       "cores": [
         "fbneo",
         "mame"
+      ],
+      "systems": [
+        "3do",
+        "cdi"
       ]
     },
     {
@@ -60597,6 +60648,10 @@
       "cores": [
         "fbneo",
         "mame"
+      ],
+      "systems": [
+        "3do",
+        "cdi"
       ]
     },
     {
@@ -60608,6 +60663,10 @@
       "cores": [
         "fbneo",
         "mame"
+      ],
+      "systems": [
+        "3do",
+        "cdi"
       ]
     },
     {
@@ -60647,6 +60706,10 @@
       "cores": [
         "fbneo",
         "mame"
+      ],
+      "systems": [
+        "3do",
+        "cdi"
       ]
     },
     {
@@ -60964,6 +61027,10 @@
       "cores": [
         "fbneo",
         "mame"
+      ],
+      "systems": [
+        "3do",
+        "cdi"
       ]
     },
     {
@@ -67932,6 +67999,11 @@
       "cores": [
         "sameboy",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-gb",
+        "nintendo-gbc",
+        "nintendo-satellaview"
       ]
     },
     {
@@ -67943,6 +68015,11 @@
       "cores": [
         "sameboy",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-gb",
+        "nintendo-gbc",
+        "nintendo-satellaview"
       ]
     },
     {

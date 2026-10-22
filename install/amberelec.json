@@ -39769,6 +39769,9 @@
       "cores": [
         "advancemame"
       ],
+      "systems": [
+        "3do"
+      ],
       "alternatives": [
         {
           "sha1": "a97c0579198d88d4db3f7f1b7707ddc6a86ab084",
@@ -39876,6 +39879,9 @@
         "mame2010",
         "mame2015",
         "mame2016"
+      ],
+      "systems": [
+        "3do"
       ]
     },
     {
@@ -39890,6 +39896,9 @@
         "mame2010",
         "mame2015",
         "mame2016"
+      ],
+      "systems": [
+        "3do"
       ]
     },
     {
@@ -39903,6 +39912,9 @@
         "mame2010",
         "mame2015",
         "mame2016"
+      ],
+      "systems": [
+        "3do"
       ]
     },
     {
@@ -39916,6 +39928,9 @@
         "mame2010",
         "mame2015",
         "mame2016"
+      ],
+      "systems": [
+        "3do"
       ]
     },
     {
@@ -39929,6 +39944,9 @@
         "mame2010",
         "mame2015",
         "mame2016"
+      ],
+      "systems": [
+        "3do"
       ]
     },
     {
@@ -39943,6 +39961,9 @@
         "mame2010",
         "mame2015",
         "mame2016"
+      ],
+      "systems": [
+        "3do"
       ]
     },
     {
@@ -39981,6 +40002,9 @@
         "mame2010",
         "mame2015",
         "mame2016"
+      ],
+      "systems": [
+        "3do"
       ]
     },
     {
@@ -39991,6 +40015,9 @@
       "repo_path": "bios/Arcade/Arcade/maxaflex.zip",
       "cores": [
         "advancemame"
+      ],
+      "systems": [
+        "3do"
       ],
       "alternatives": [
         {
@@ -40024,6 +40051,9 @@
       "cores": [
         "advancemame"
       ],
+      "systems": [
+        "3do"
+      ],
       "alternatives": [
         {
           "sha1": "6227dd5f5d7083d0aed95a544b64183787699386",
@@ -40047,6 +40077,9 @@
       "repo_path": "bios/Arcade/Arcade/macsbios.zip",
       "cores": [
         "advancemame"
+      ],
+      "systems": [
+        "3do"
       ],
       "alternatives": [
         {
@@ -40453,6 +40486,11 @@
         "bsnes",
         "bsnes_mercury",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-gb",
+        "nintendo-gbc",
+        "nintendo-satellaview"
       ]
     },
     {
@@ -40465,6 +40503,11 @@
         "bsnes",
         "bsnes_mercury",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-gb",
+        "nintendo-gbc",
+        "nintendo-satellaview"
       ]
     },
     {
@@ -40478,6 +40521,11 @@
         "bsnes2014",
         "bsnes_mercury",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-gb",
+        "nintendo-gbc",
+        "nintendo-satellaview"
       ]
     },
     {
@@ -40491,6 +40539,11 @@
         "bsnes2014",
         "bsnes_mercury",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-gb",
+        "nintendo-gbc",
+        "nintendo-satellaview"
       ]
     },
     {
@@ -40504,6 +40557,11 @@
         "bsnes2014",
         "bsnes_mercury",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-gb",
+        "nintendo-gbc",
+        "nintendo-satellaview"
       ]
     },
     {
@@ -40517,6 +40575,11 @@
         "bsnes2014",
         "bsnes_mercury",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-gb",
+        "nintendo-gbc",
+        "nintendo-satellaview"
       ]
     },
     {
@@ -40530,6 +40593,11 @@
         "bsnes2014",
         "bsnes_mercury",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-gb",
+        "nintendo-gbc",
+        "nintendo-satellaview"
       ]
     },
     {
@@ -40543,6 +40611,11 @@
         "bsnes2014",
         "bsnes_mercury",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-gb",
+        "nintendo-gbc",
+        "nintendo-satellaview"
       ]
     },
     {
@@ -40556,6 +40629,11 @@
         "bsnes2014",
         "bsnes_mercury",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-gb",
+        "nintendo-gbc",
+        "nintendo-satellaview"
       ]
     },
     {
@@ -40569,6 +40647,11 @@
         "bsnes2014",
         "bsnes_mercury",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-gb",
+        "nintendo-gbc",
+        "nintendo-satellaview"
       ]
     },
     {
@@ -40582,6 +40665,11 @@
         "bsnes2014",
         "bsnes_mercury",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-gb",
+        "nintendo-gbc",
+        "nintendo-satellaview"
       ]
     },
     {
@@ -40595,6 +40683,11 @@
         "bsnes2014",
         "bsnes_mercury",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-gb",
+        "nintendo-gbc",
+        "nintendo-satellaview"
       ]
     },
     {
@@ -40608,6 +40701,11 @@
         "bsnes2014",
         "bsnes_mercury",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-gb",
+        "nintendo-gbc",
+        "nintendo-satellaview"
       ]
     },
     {
@@ -40621,6 +40719,11 @@
         "bsnes2014",
         "bsnes_mercury",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-gb",
+        "nintendo-gbc",
+        "nintendo-satellaview"
       ]
     },
     {
@@ -40656,6 +40759,11 @@
       "cores": [
         "bsnes",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-gb",
+        "nintendo-gbc",
+        "nintendo-satellaview"
       ]
     },
     {
@@ -40667,6 +40775,11 @@
       "cores": [
         "bsnes",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-gb",
+        "nintendo-gbc",
+        "nintendo-satellaview"
       ]
     },
     {
@@ -41329,6 +41442,9 @@
         "fbneo",
         "fbalpha2019",
         "mame"
+      ],
+      "systems": [
+        "3do"
       ]
     },
     {
@@ -41400,6 +41516,9 @@
       "cores": [
         "fbneo"
       ],
+      "systems": [
+        "3do"
+      ],
       "alternatives": [
         {
           "sha1": "489256f5e2001070d2ad94c90d255282c71ed274",
@@ -41430,6 +41549,9 @@
       "cores": [
         "fbneo",
         "fbalpha2019"
+      ],
+      "systems": [
+        "3do"
       ],
       "alternatives": [
         {
@@ -41463,6 +41585,9 @@
         "fbneo",
         "fbalpha2019",
         "mame"
+      ],
+      "systems": [
+        "3do"
       ]
     },
     {
@@ -41474,6 +41599,9 @@
       "cores": [
         "fbneo",
         "fbalpha2019"
+      ],
+      "systems": [
+        "3do"
       ],
       "alternatives": [
         {
@@ -41961,7 +42089,8 @@
       ],
       "systems": [
         "nintendo-gb",
-        "nintendo-gbc"
+        "nintendo-gbc",
+        "nintendo-satellaview"
       ]
     },
     {
@@ -41977,7 +42106,8 @@
       ],
       "systems": [
         "nintendo-gb",
-        "nintendo-gbc"
+        "nintendo-gbc",
+        "nintendo-satellaview"
       ]
     },
     {
@@ -43243,6 +43373,9 @@
         "mame2010",
         "mame2015",
         "mame2016"
+      ],
+      "systems": [
+        "3do"
       ]
     },
     {
@@ -43255,6 +43388,9 @@
         "mame",
         "mame2015",
         "mame2016"
+      ],
+      "systems": [
+        "3do"
       ]
     },
     {
@@ -43268,6 +43404,9 @@
         "mame2010",
         "mame2015",
         "mame2016"
+      ],
+      "systems": [
+        "3do"
       ]
     },
     {
@@ -43281,6 +43420,9 @@
         "mame2010",
         "mame2015",
         "mame2016"
+      ],
+      "systems": [
+        "3do"
       ]
     },
     {
@@ -43630,6 +43772,9 @@
         "mame",
         "mame2015",
         "mame2016"
+      ],
+      "systems": [
+        "3do"
       ]
     },
     {
@@ -43913,6 +44058,9 @@
       "cores": [
         "fbneo",
         "mame"
+      ],
+      "systems": [
+        "3do"
       ],
       "alternatives": [
         {
@@ -56265,6 +56413,9 @@
       "cores": [
         "fbneo",
         "mame"
+      ],
+      "systems": [
+        "3do"
       ]
     },
     {
@@ -56276,6 +56427,9 @@
       "cores": [
         "fbneo",
         "mame"
+      ],
+      "systems": [
+        "3do"
       ]
     },
     {
@@ -56313,6 +56467,9 @@
       "cores": [
         "fbneo",
         "mame"
+      ],
+      "systems": [
+        "3do"
       ]
     },
     {
@@ -61654,6 +61811,9 @@
         "mame2010",
         "mame2015",
         "mame2016"
+      ],
+      "systems": [
+        "3do"
       ]
     },
     {
@@ -61666,6 +61826,9 @@
         "mame2010",
         "mame2015",
         "mame2016"
+      ],
+      "systems": [
+        "3do"
       ]
     },
     {
@@ -61687,6 +61850,9 @@
       "cores": [
         "mame2015",
         "mame2016"
+      ],
+      "systems": [
+        "3do"
       ]
     },
     {
@@ -61698,6 +61864,9 @@
       "cores": [
         "mame2015",
         "mame2016"
+      ],
+      "systems": [
+        "3do"
       ]
     },
     {
@@ -62828,6 +62997,11 @@
       "cores": [
         "sameboy",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-gb",
+        "nintendo-gbc",
+        "nintendo-satellaview"
       ]
     },
     {
@@ -62839,6 +63013,11 @@
       "cores": [
         "sameboy",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-gb",
+        "nintendo-gbc",
+        "nintendo-satellaview"
       ]
     },
     {

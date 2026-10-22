@@ -1459,6 +1459,17 @@ def _extra_system_ids(extra: dict) -> list[str]:
         return [str(explicit)]
     return [str(value) for value in extra.get("source_systems", []) if value]
 
+def _serving_system_ids(extra: dict) -> list[str]:
+    """Every system the extra's file serves: its own core's and those of the
+    other cores whose claim rides on it. One file stands per destination, so
+    narrowed to any of their systems the file is what that core reads.
+    """
+    ids = list(_extra_system_ids(extra))
+    for claim in extra.get("other_claims", []):
+        ids.extend(s for s in _extra_system_ids(claim) if s not in ids)
+    return ids
+
+
 def _kept(entries: list[dict], required_only: bool) -> list[dict]:
     """The entries a pack keeps: optional ones go under --required-only."""
     if not required_only:
@@ -1476,8 +1487,8 @@ def extras_for_systems(extras: list[dict], system_ids: list[str]) -> list[dict]:
     return [
         fe for fe in extras
         if (
-            set(_extra_system_ids(fe))
-            | {_norm_system_id(s) for s in _extra_system_ids(fe)}
+            set(_serving_system_ids(fe))
+            | {_norm_system_id(s) for s in _serving_system_ids(fe)}
         ) & wanted
     ]
 

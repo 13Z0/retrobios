@@ -12808,7 +12808,8 @@
         "pcsx2"
       ],
       "systems": [
-        "sony-playstation"
+        "sony-playstation",
+        "sony-playstation-2"
       ],
       "regions": [
         "japan"
@@ -12849,7 +12850,8 @@
         "pcsx2"
       ],
       "systems": [
-        "sony-playstation"
+        "sony-playstation",
+        "sony-playstation-2"
       ],
       "regions": [
         "europe",
@@ -33127,6 +33129,18 @@
         "mame2010",
         "mame2015",
         "mame2016"
+      ],
+      "systems": [
+        "3do",
+        "apple2gs",
+        "cdi",
+        "coco",
+        "dragon64",
+        "elektronika-bk",
+        "naomi2",
+        "scv",
+        "stv",
+        "ti994a"
       ]
     },
     {
@@ -33199,6 +33213,12 @@
         "mame2010",
         "mame2015",
         "mame2016"
+      ],
+      "systems": [
+        "3do",
+        "cdi",
+        "naomi2",
+        "stv"
       ]
     },
     {
@@ -33214,6 +33234,12 @@
         "mame2010",
         "mame2015",
         "mame2016"
+      ],
+      "systems": [
+        "3do",
+        "cdi",
+        "naomi2",
+        "stv"
       ]
     },
     {
@@ -33227,6 +33253,12 @@
         "mame2010",
         "mame2015",
         "mame2016"
+      ],
+      "systems": [
+        "3do",
+        "cdi",
+        "naomi2",
+        "stv"
       ]
     },
     {
@@ -33240,6 +33272,12 @@
         "mame2010",
         "mame2015",
         "mame2016"
+      ],
+      "systems": [
+        "3do",
+        "cdi",
+        "naomi2",
+        "stv"
       ]
     },
     {
@@ -33253,6 +33291,12 @@
         "mame2010",
         "mame2015",
         "mame2016"
+      ],
+      "systems": [
+        "3do",
+        "cdi",
+        "naomi2",
+        "stv"
       ]
     },
     {
@@ -33268,6 +33312,12 @@
         "mame2010",
         "mame2015",
         "mame2016"
+      ],
+      "systems": [
+        "3do",
+        "cdi",
+        "naomi2",
+        "stv"
       ]
     },
     {
@@ -33308,6 +33358,18 @@
         "mame2010",
         "mame2015",
         "mame2016"
+      ],
+      "systems": [
+        "3do",
+        "apple2gs",
+        "cdi",
+        "coco",
+        "dragon64",
+        "elektronika-bk",
+        "naomi2",
+        "scv",
+        "stv",
+        "ti994a"
       ]
     },
     {
@@ -33323,6 +33385,18 @@
         "mame2010",
         "mame2015",
         "mame2016"
+      ],
+      "systems": [
+        "3do",
+        "apple2gs",
+        "cdi",
+        "coco",
+        "dragon64",
+        "elektronika-bk",
+        "naomi2",
+        "scv",
+        "stv",
+        "ti994a"
       ]
     },
     {
@@ -33333,6 +33407,18 @@
       "repo_path": "bios/Arcade/Arcade/crysbios.zip",
       "cores": [
         "advancemame"
+      ],
+      "systems": [
+        "3do",
+        "apple2gs",
+        "cdi",
+        "coco",
+        "dragon64",
+        "elektronika-bk",
+        "naomi2",
+        "scv",
+        "stv",
+        "ti994a"
       ],
       "alternatives": [
         {
@@ -33359,6 +33445,18 @@
       "cores": [
         "advancemame",
         "mame0258"
+      ],
+      "systems": [
+        "3do",
+        "apple2gs",
+        "cdi",
+        "coco",
+        "dragon64",
+        "elektronika-bk",
+        "naomi2",
+        "scv",
+        "stv",
+        "ti994a"
       ],
       "alternatives": [
         {
@@ -33722,6 +33820,11 @@
         "bsnes",
         "bsnes_hd_beta",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-gb",
+        "nintendo-gbc",
+        "satellaview"
       ]
     },
     {
@@ -33734,6 +33837,11 @@
         "bsnes",
         "bsnes_hd_beta",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-gb",
+        "nintendo-gbc",
+        "satellaview"
       ]
     },
     {
@@ -33746,6 +33854,11 @@
         "bsnes",
         "bsnes_hd_beta",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-gb",
+        "nintendo-gbc",
+        "satellaview"
       ]
     },
     {
@@ -33758,6 +33871,11 @@
         "bsnes",
         "bsnes_hd_beta",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-gb",
+        "nintendo-gbc",
+        "satellaview"
       ]
     },
     {
@@ -33770,6 +33888,11 @@
         "bsnes",
         "bsnes_hd_beta",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-gb",
+        "nintendo-gbc",
+        "satellaview"
       ]
     },
     {
@@ -33782,6 +33905,11 @@
         "bsnes",
         "bsnes_hd_beta",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-gb",
+        "nintendo-gbc",
+        "satellaview"
       ]
     },
     {
@@ -33794,6 +33922,11 @@
         "bsnes",
         "bsnes_hd_beta",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-gb",
+        "nintendo-gbc",
+        "satellaview"
       ]
     },
     {
@@ -33806,6 +33939,11 @@
         "bsnes",
         "bsnes_hd_beta",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-gb",
+        "nintendo-gbc",
+        "satellaview"
       ]
     },
     {
@@ -33818,6 +33956,11 @@
         "bsnes",
         "bsnes_hd_beta",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-gb",
+        "nintendo-gbc",
+        "satellaview"
       ]
     },
     {
@@ -33830,6 +33973,11 @@
         "bsnes",
         "bsnes_hd_beta",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-gb",
+        "nintendo-gbc",
+        "satellaview"
       ]
     },
     {
@@ -33842,6 +33990,11 @@
         "bsnes",
         "bsnes_hd_beta",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-gb",
+        "nintendo-gbc",
+        "satellaview"
       ]
     },
     {
@@ -33854,6 +34007,11 @@
         "bsnes",
         "bsnes_hd_beta",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-gb",
+        "nintendo-gbc",
+        "satellaview"
       ]
     },
     {
@@ -33866,6 +34024,11 @@
         "bsnes",
         "bsnes_hd_beta",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-gb",
+        "nintendo-gbc",
+        "satellaview"
       ]
     },
     {
@@ -33878,6 +34041,11 @@
         "bsnes",
         "bsnes_hd_beta",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-gb",
+        "nintendo-gbc",
+        "satellaview"
       ]
     },
     {
@@ -36183,6 +36351,18 @@
         "mame0258",
         "mame0278"
       ],
+      "systems": [
+        "3do",
+        "apple2gs",
+        "cdi",
+        "coco",
+        "dragon64",
+        "elektronika-bk",
+        "naomi2",
+        "scv",
+        "stv",
+        "ti994a"
+      ],
       "alternatives": [
         {
           "sha1": "4fb1f00681d2540b476add2def2bbf07ca3e3993",
@@ -36209,6 +36389,18 @@
         "mame0278",
         "mame2015",
         "mame2016"
+      ],
+      "systems": [
+        "3do",
+        "apple2gs",
+        "cdi",
+        "coco",
+        "dragon64",
+        "elektronika-bk",
+        "naomi2",
+        "scv",
+        "stv",
+        "ti994a"
       ]
     },
     {
@@ -36497,6 +36689,12 @@
         "mame0258",
         "mame0278"
       ],
+      "systems": [
+        "3do",
+        "cdi",
+        "naomi2",
+        "stv"
+      ],
       "alternatives": [
         {
           "sha1": "37487f9f73734e8dd621004a5ef98c5a2301bd1d",
@@ -36520,6 +36718,12 @@
       "cores": [
         "mame0258",
         "mame0278"
+      ],
+      "systems": [
+        "3do",
+        "cdi",
+        "naomi2",
+        "stv"
       ],
       "alternatives": [
         {
@@ -36678,6 +36882,18 @@
         "mame0278",
         "mame2015",
         "mame2016"
+      ],
+      "systems": [
+        "3do",
+        "apple2gs",
+        "cdi",
+        "coco",
+        "dragon64",
+        "elektronika-bk",
+        "naomi2",
+        "scv",
+        "stv",
+        "ti994a"
       ]
     },
     {
@@ -37345,6 +37561,12 @@
         "mame2010",
         "mame2015",
         "mame2016"
+      ],
+      "systems": [
+        "3do",
+        "cdi",
+        "naomi2",
+        "stv"
       ]
     },
     {
@@ -37366,6 +37588,12 @@
       "cores": [
         "mame2015",
         "mame2016"
+      ],
+      "systems": [
+        "3do",
+        "cdi",
+        "naomi2",
+        "stv"
       ]
     },
     {
@@ -37377,6 +37605,12 @@
       "cores": [
         "mame2015",
         "mame2016"
+      ],
+      "systems": [
+        "3do",
+        "cdi",
+        "naomi2",
+        "stv"
       ]
     },
     {
@@ -39425,6 +39659,7 @@
         "atari800"
       ],
       "systems": [
+        "atari-400-800",
         "atari-5200"
       ]
     },
@@ -39711,6 +39946,11 @@
         "bsnes",
         "bsnes_hd_beta",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-gb",
+        "nintendo-gbc",
+        "satellaview"
       ]
     },
     {
@@ -39723,6 +39963,11 @@
         "bsnes",
         "bsnes_hd_beta",
         "mesen-s"
+      ],
+      "systems": [
+        "nintendo-gb",
+        "nintendo-gbc",
+        "satellaview"
       ]
     },
     {
@@ -39739,6 +39984,8 @@
         "snes9x2010"
       ],
       "systems": [
+        "nintendo-gb",
+        "nintendo-gbc",
         "satellaview"
       ]
     },
@@ -40083,6 +40330,9 @@
         "geargrafx",
         "mednafen_pce_fast",
         "mednafen_supergrafx"
+      ],
+      "systems": [
+        "nec-pc-engine"
       ]
     },
     {
@@ -40095,6 +40345,9 @@
         "geargrafx",
         "mednafen_pce_fast",
         "mednafen_supergrafx"
+      ],
+      "systems": [
+        "nec-pc-engine"
       ]
     },
     {
@@ -40107,6 +40360,9 @@
         "geargrafx",
         "mednafen_pce_fast",
         "mednafen_supergrafx"
+      ],
+      "systems": [
+        "nec-pc-engine"
       ]
     },
     {
@@ -40119,6 +40375,9 @@
         "geargrafx",
         "mednafen_pce_fast",
         "mednafen_supergrafx"
+      ],
+      "systems": [
+        "nec-pc-engine"
       ]
     },
     {
@@ -40346,6 +40605,12 @@
         "mame0258",
         "mame0278"
       ],
+      "systems": [
+        "3do",
+        "cdi",
+        "naomi2",
+        "stv"
+      ],
       "alternatives": [
         {
           "sha1": "03c9d1c3f59e8c6f320ea74abde1e4e7c5bfa623",
@@ -40402,6 +40667,12 @@
         "mame2010",
         "mame2015",
         "mame2016"
+      ],
+      "systems": [
+        "3do",
+        "cdi",
+        "naomi2",
+        "stv"
       ]
     },
     {
@@ -41087,6 +41358,9 @@
         "puae",
         "puae2021",
         "uae4arm"
+      ],
+      "systems": [
+        "commodore-amiga"
       ]
     },
     {
@@ -41099,6 +41373,9 @@
         "puae",
         "puae2021",
         "uae4arm"
+      ],
+      "systems": [
+        "commodore-amiga"
       ]
     },
     {
@@ -41111,6 +41388,9 @@
         "puae",
         "puae2021",
         "uae4arm"
+      ],
+      "systems": [
+        "commodore-amiga"
       ]
     },
     {
@@ -41250,6 +41530,9 @@
         "vice_x128",
         "vice_x64",
         "vice_x64sc"
+      ],
+      "systems": [
+        "commodore-c64"
       ]
     },
     {
@@ -41263,6 +41546,9 @@
         "vice_x64",
         "vice_x64sc",
         "vice_xscpu64"
+      ],
+      "systems": [
+        "commodore-c64"
       ]
     },
     {
@@ -41276,6 +41562,9 @@
         "vice_x64",
         "vice_x64sc",
         "vice_xscpu64"
+      ],
+      "systems": [
+        "commodore-c64"
       ]
     },
     {
@@ -41289,6 +41578,9 @@
         "vice_x64",
         "vice_x64sc",
         "vice_xscpu64"
+      ],
+      "systems": [
+        "commodore-c64"
       ]
     },
     {
