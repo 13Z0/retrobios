@@ -1,0 +1,69 @@
+emulator: "fheroes2"
+type: standalone
+core_classification: game_engine
+source: "https://github.com/ihhub/fheroes2"
+profiled_date: "2026-10-22"
+source_commit: "35ca4c915be00098547d5050412a325dd55cfd7f"
+core_version: "1.0.11"
+display_name: "Heroes of Might and Magic II (fheroes2)"
+cores:
+  - "fheroes2"
+systems: [heroes-of-might-and-magic-2]
+
+notes: |
+  Free reimplementation of the Heroes of Might and Magic II engine (New World
+  Computing, 1996). It plays the original or demo data. EmuELEC builds this
+  revision, installs the engine's resurrection.h2d under
+  /usr/share/fheroes2/files/data and runs fheroes2 from
+  /storage/roms/ports/fheroes2. When data/HEROES2.AGG is absent there, its
+  fheroes2.sh offers to download the demo (h2demo.zip from archive.org) and
+  unpacks its DATA and MAPS directories in place.
+  ref: version.txt:1,
+       EmuELEC packages/sx05re/emuelec-ports/fheroes2/package.mk:4-7,15-23,
+       EmuELEC packages/sx05re/emuelec-ports/fheroes2/scripts/fheroes2.sh:9-40
+
+  Every resource is looked up under each root directory in turn: the
+  FHEROES2_DATA build path and environment variable, the program's directory,
+  then the OS data directories. The data subdirectory is scanned for .agg
+  files, the one whose lowercased name ends in heroes2.agg is the game
+  resource file, and a heroes2x.agg beside it turns on The Price of Loyalty
+  content. No AGG, no resurrection.h2d, or an AGG without the font stops the
+  start with a missing resource window.
+  ref: src/fheroes2/system/settings.cpp:526-551, src/fheroes2/agg/agg.cpp:53-118,
+       src/fheroes2/h2d/h2d.cpp:35-62, src/fheroes2/game/fheroes2.cpp:220-240
+
+  Maps are the .mp2, .mx2 (with the expansion) and .fh2m files of the maps
+  directories, campaign videos come from anim, anim2, heroes2/anim or data,
+  and CD music from music. All are optional.
+  ref: src/fheroes2/maps/maps_fileinfo.cpp:600-615, src/fheroes2/game/game_video.cpp:47,
+       src/fheroes2/audio/audio_manager.cpp:94-101
+
+files:
+  - name: "heroes2.agg"
+    path: "data/heroes2.agg"
+    category: game_data
+    system: heroes-of-might-and-magic-2
+    required: true
+    installed_on: [emuelec]
+    description: "Game resource archive (retail or demo HEROES2.AGG)"
+    note: "Found by a case-insensitive name ending among the .agg files of the data directory. EmuELEC's launcher fetches the demo on first start."
+    source_ref: "src/fheroes2/agg/agg.cpp:62-97"
+
+  - name: "heroes2x.agg"
+    path: "data/heroes2x.agg"
+    category: game_data
+    system: heroes-of-might-and-magic-2
+    required: false
+    description: "The Price of Loyalty resource archive"
+    source_ref: "src/fheroes2/agg/agg.cpp:99-115"
+
+  - name: "resurrection.h2d"
+    path: "files/data/resurrection.h2d"
+    category: game_data
+    system: heroes-of-might-and-magic-2
+    required: true
+    bundled: true
+    size: 30343
+    sha1: "beb7cb43518447a8cd6faae7a697a79de3c31b39"
+    description: "fheroes2's own resource container, installed with the engine"
+    source_ref: "src/fheroes2/h2d/h2d.cpp:35-62"
