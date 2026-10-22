@@ -290,7 +290,9 @@ wins, since a machine is only one of them.
 | Evidence | Platform | BIOS directory |
 |----------|----------|----------------|
 | `/etc/os-release` `OS_NAME=ROCKNIX` (or `ID=rocknix` on images before 2025) | ROCKNIX | `/storage/roms/bios` |
-| `/etc/os-release` `OS_NAME=knulli` or `/usr/share/knulli/knulli.version` | Batocera (Knulli) | `/userdata/bios` |
+| `/etc/os-release` `OS_NAME=knulli` or `/usr/share/knulli/knulli.version` | KNULLI | `/userdata/bios` |
+| `/etc/os-release` `NAME=AmberELEC` | AmberELEC | `/storage/roms` (its list names `bios/` and `neogeo/`) |
+| `/etc/os-release` `ID=emuelec` | EmuELEC | `/storage/roms` (its list names `bios/`, `neogeo/` and `ports/`) |
 | `/etc/os-release` `ID=lakka` | Lakka | `/storage/system` |
 | `/usr/share/batocera/batocera.version` | Batocera | `/userdata/bios` |
 | `/recalbox/recalbox.version` or `/usr/bin/recalbox-settings` | Recalbox | `/recalbox/share/bios` |
@@ -302,9 +304,9 @@ wins, since a machine is only one of them.
 Batocera, Recalbox, ROCKNIX and Lakka also name the board they were built for, and
 that board narrows the install unless `--target` or `--every-board` says
 otherwise (see the options above). A board with no core list of its own is
-named and gets the files of every board. Knulli names its board in
-`/usr/share/knulli/knulli.arch` but builds its own set of cores, so Batocera's
-per-board lists are not applied to it and the run says so.
+named and gets the files of every board. KNULLI names its board in
+`/usr/share/knulli/knulli.arch` but publishes no core list per board, so the
+run says so and installs the files of every board.
 
 Some platforms keep their BIOS in a fixed directory, and that directory is the
 evidence. They are looked for after the configurations below, for a platform
@@ -388,7 +390,8 @@ When a platform named with `--platform` is not found on the machine, the
 destination falls back to the directory its detection looks for:
 `/userdata/bios` for Batocera, `/recalbox/share/bios` for Recalbox,
 `/storage/system` for Lakka, `~/retrodeck` for RetroDECK, `~/Emulation/bios`
-for EmuDeck (`C:\Emulation\bios` on Windows), `/storage/roms/bios` for ROCKNIX, `/media/fat/games` for MiSTer,
+for EmuDeck (`C:\Emulation\bios` on Windows), `/storage/roms/bios` for ROCKNIX,
+`/userdata/bios` for KNULLI, `/storage/roms` for AmberELEC and EmuELEC, `/media/fat/games` for MiSTer,
 `~/RetroPie/BIOS` for RetroPie, `/romm/library/bios` for RomM,
 `C:\RetroBat\bios` for RetroBat, and RetroArch's own default system
 directory for RetroArch. BizHawk has no such folder: it reads `Firmware`

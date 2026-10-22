@@ -62,6 +62,8 @@ Each platform expects BIOS files in a specific base directory:
 - Recalbox: `/recalbox/share/bios/`
 - RetroPie: `~/RetroPie/BIOS/`
 - ROCKNIX: `/storage/roms/bios/`
+- KNULLI: `/userdata/bios/`
+- AmberELEC and EmuELEC: `/storage/roms/` (the pack holds `bios/` and the other folders their lists name)
 - MiSTer FPGA: `/media/fat/games/`
 - BizHawk: `Firmware/` inside the BizHawk directory
 - EmuDeck: `~/Emulation/bios/`

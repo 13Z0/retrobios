@@ -250,7 +250,10 @@ systems:
 
 `base_destination` is what the pack prefixes every entry with. Leave it empty
 when the upstream destinations already carry their own root, as RetroDECK does
-with `bios/` and `roms/`.
+with `bios/` and `roms/`. Core files then go under the root most destinations
+share, or under `core_destination` when the list names other folders too:
+AmberELEC and EmuELEC declare `neogeo/` and `ports/` beside `bios/`, and set
+`core_destination: bios`.
 
 ### Launchers
 
@@ -411,7 +414,7 @@ to use:
 | Mode | Behavior | Example platforms |
 |------|----------|-------------------|
 | `existence` | File must exist, no hash check | RetroArch, Lakka, RetroPie |
-| `md5` | MD5 must match the declared hash | Batocera, Recalbox, RetroBat, EmuDeck, RetroDECK, RomM, ROCKNIX, MiSTer FPGA |
+| `md5` | MD5 must match the declared hash | Batocera, Recalbox, RetroBat, EmuDeck, RetroDECK, RomM, ROCKNIX, KNULLI, AmberELEC, EmuELEC, MiSTer FPGA |
 | `sha1` | SHA1 must match | BizHawk |
 
 Inheriting platforms take the parent's mode: Lakka and RetroPie do not declare

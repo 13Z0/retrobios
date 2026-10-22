@@ -212,7 +212,8 @@ checks its DSP ROMs (`dsp_rom.bin` and `dsp_coef.bin`, hashed byte-swapped).
 `IPL.bin` is not one of them: Dolphin loads it without a hash check.
 
 Verification uses whichever one the platform itself uses: MD5 for Batocera,
-RetroBat, Recalbox, EmuDeck, RetroDECK, RomM, ROCKNIX and MiSTer FPGA, SHA1 for
+RetroBat, Recalbox, EmuDeck, RetroDECK, RomM, ROCKNIX, KNULLI, AmberELEC, EmuELEC
+and MiSTer FPGA, SHA1 for
 BizHawk, and nothing at all for RetroArch, Lakka and RetroPie, which only check
 that the file exists.
 

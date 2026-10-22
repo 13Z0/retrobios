@@ -198,6 +198,22 @@ others) whose files only the RetroPie pack carries, laid out for
 
 Accessible via SSH or Samba, like Lakka.
 
+### KNULLI
+
+```
+/userdata/bios/
+```
+
+### AmberELEC and EmuELEC
+
+```
+/storage/roms/
+```
+
+Their BIOS lists name files under `/storage/roms`: `bios/` for most, and
+`neogeo/` (and `ports/` on EmuELEC) for the rest. The pack holds those
+folders, so it is extracted into `/storage/roms/` itself.
+
 ### MiSTer FPGA
 
 ```
@@ -247,7 +263,8 @@ dump shows up.
 The installer's `--check` hashes every file against the list on every
 platform, so it catches a wrong revision even where the frontend would not:
 RetroArch, Lakka and RetroPie only check that a file exists, while Batocera,
-RetroBat, Recalbox, EmuDeck, RetroDECK, RomM, ROCKNIX and MiSTer FPGA compare
+RetroBat, Recalbox, EmuDeck, RetroDECK, RomM, ROCKNIX, KNULLI, AmberELEC,
+EmuELEC and MiSTer FPGA compare
 MD5 and BizHawk compares SHA1.
 
 For a single system, or the files a single emulator core reads (`--list-systems`

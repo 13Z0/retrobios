@@ -143,6 +143,9 @@ Verification modes per platform:
 | RetroDECK | md5 | MD5 per file via component manifests |
 | RomM | md5 | size + any hash (MD5/SHA1/CRC32), no ZIP inspection |
 | ROCKNIX | md5 | MD5 hash match, same shape as Batocera |
+| KNULLI | md5 | Batocera's `checkBios` in `knulli-systems`, `checkInsideZip` and emulator/core gates included |
+| AmberELEC | md5 | MD5 of each file under `/storage/roms`, `checkInsideZip` for `zippedFile` entries |
+| EmuELEC | md5 | MD5 of each file under `/storage/roms`; `zippedFile` is never read |
 | MiSTer FPGA | md5 | MD5 of the file at its destination, no ZIP inspection |
 | BizHawk | sha1 | SHA1 per firmware from `FirmwareDatabase.cs` |
 
@@ -846,6 +849,9 @@ stand alone.
 | `retrodeck_scraper` | component manifests | JSON per component |
 | `romm_scraper` | known_bios_files.json | JSON |
 | `rocknix_scraper` | rocknix-systems script | Python dict |
+| `knulli_scraper` | knulli-systems script, es_systems.yml and configgen-defaults.yml (cores) | Python dict, YAML |
+| `amberelec_scraper` | batocera-systems script at the newest prerelease's commit, es_systems.cfg (cores) | Python dict, XML |
+| `emuelec_scraper` | batocera-systems script, es_systems.json (cores) | Python dict, JSON |
 | `retropie_scraper` | RetroPie-Setup scriptmodules (`rp_module_id`, `rp_module_help`) and `retropie_packages.sh` (version) | Bash |
 | `misterfpga_scraper` | BiosDB_MiSTer bios_db.json.zip | JSON in ZIP |
 | `coreinfo_scraper` | .info files from libretro-core-info | INI-like |
@@ -991,6 +997,9 @@ Located in `scripts/exporter/`. Each inherits `BaseExporter`, defined in
 | `lakka_exporter` | the same `System.dat`, which Lakka reads unchanged |
 | `batocera_exporter` | the systems block of the `batocera-systems` script, patched entry by entry |
 | `rocknix_exporter` | the systems mapping of the `rocknix-systems` script, patched the same way |
+| `knulli_exporter` | the systems mapping of the `knulli-systems` script, patched the same way |
+| `amberelec_exporter` | AmberELEC's `batocera-systems`, paths from `/storage/roms`, additions without a runner gate |
+| `emuelec_exporter` | EmuELEC's `batocera-systems`, as AmberELEC's |
 | `retrobat_exporter` | `batocera-systems.json` |
 | `recalbox_exporter` | `es_bios.xml`, valid against `es_bios.xsd` |
 | `emudeck_exporter` | the MD5 lists of the `checkBIOS.sh` functions, patched in place |

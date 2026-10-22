@@ -28,7 +28,7 @@ Lakka and RetroPie inherit this behavior through platform config inheritance
 
 ## MD5 mode
 
-**Platforms**: Batocera, RetroBat, Recalbox, EmuDeck, RetroDECK, RomM, ROCKNIX, MiSTer FPGA
+**Platforms**: Batocera, RetroBat, Recalbox, EmuDeck, RetroDECK, RomM, ROCKNIX, KNULLI, AmberELEC, EmuELEC, MiSTer FPGA
 
 All MD5-mode platforms compute a hash of the file and compare it against an expected value.
 The details vary by platform.
@@ -136,6 +136,28 @@ shape: `md5sum()` on the file, `checkInsideZip()` for archive entries, and an
 `altmd5` field that accepts a second hash for the same entry. Every entry the
 platform declares is mandatory in its own data, so the platform YAML marks all
 38 files `required: true` and none of them use `zippedFile`.
+
+### KNULLI, AmberELEC and EmuELEC verification
+
+**Source**: `knulli-systems` (KNULLI) and `batocera-systems` (AmberELEC,
+EmuELEC), function `checkBios`
+
+All three keep Batocera's `systems` dict and its checker, run by their
+EmulationStation's BIOS screen.
+
+- **KNULLI** runs Batocera's `checkBios` on files under `/userdata`: `md5sum()`,
+  `checkInsideZip()` for `zippedFile` entries, and the `emulator`/`core` gates
+  read from `es_systems.cfg`.
+- **AmberELEC** runs the same checker on files under `/storage/roms`. Its list
+  sets no gate, and names `neogeo/neogeo.zip` and `neogeo/aes.zip` beside
+  `bios/`, so the pack extracts into `/storage/roms`.
+- **EmuELEC** hashes the whole file under `/storage/roms` and never reads
+  `zippedFile`: an entry that names a member inside an archive compares the
+  archive's MD5 with the member's and reports `UNTESTED` whatever the archive
+  holds. Its list also names game data under `ports/`.
+
+A key written twice in the dict (`naomi` and `Dinothawr` in EmuELEC, `msx1`
+and `msx2+` in KNULLI) keeps its later value, as when Python runs the script.
 
 ### MiSTer FPGA verification
 
