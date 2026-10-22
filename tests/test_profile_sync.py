@@ -2799,6 +2799,10 @@ class TestDeliberatelyFrozenPin(TestBuildReport):
         # coolbaremu_libretro. Both read the same .cbe archives, yet the two
         # profiles named two systems and two build types, so --system for
         # either missed the other core.
+        # A frozen revision whose tree lacks a build the live one documents
+        # keeps its own type: DuckStation 56ac3d6c has no libretro frontend
+        # under src/, only duckstation-nogui and duckstation-qt.
+        builds_differ = {("duckstation-legacy", "duckstation")}
         from common import load_emulator_profiles  # noqa: PLC0415
 
         root = Path(__file__).resolve().parents[1] / "emulators"
@@ -2820,7 +2824,8 @@ class TestDeliberatelyFrozenPin(TestBuildReport):
                             sorted(profiles[old].get("systems") or []),
                             sorted(profiles[new].get("systems") or []),
                         )
-                        self.assertEqual(profiles[old].get("type"), profiles[new].get("type"))
+                        if (old, new) not in builds_differ:
+                            self.assertEqual(profiles[old].get("type"), profiles[new].get("type"))
         self.assertGreaterEqual(pairs, 3)
 
     def test_an_ordinary_profile_is_unaffected(self):
