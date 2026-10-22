@@ -39,6 +39,8 @@ try:
         BaseScraper,
         BiosRequirement,
         fetch_branch_head,
+        fetch_bytes,
+        fetch_github_latest_version,
         github_headers,
         requirement_entry,
     )
@@ -49,6 +51,8 @@ except ImportError:
         BaseScraper,
         BiosRequirement,
         fetch_branch_head,
+        fetch_bytes,
+        fetch_github_latest_version,
         github_headers,
         requirement_entry,
     )
@@ -60,6 +64,38 @@ COMPONENTS_BRANCH = "main"
 COMPONENTS_API_URL = "https://api.github.com/repos/" + COMPONENTS_REPO + "/git/trees/{rev}"
 RAW_BASE = "https://raw.githubusercontent.com/" + COMPONENTS_REPO + "/{rev}"
 SKIP_DIRS = {"archive_later", "archive_old", "automation-tools", ".github"}
+
+# ES-DE's system list as RetroDECK's fork builds it.
+ES_DE_REPO = "RetroDECK/ES-DE"
+ES_DE_SYSTEMS_URL = (
+    "https://raw.githubusercontent.com/" + ES_DE_REPO
+    + "/{rev}/resources/systems/linux/es_systems.xml"
+)
+_RETROARCH_CORE = re.compile(r"%CORE_RETROARCH%/([\w.+-]+?)_libretro\.so")
+
+
+def es_systems_libretro_systems(text: str) -> dict[str, list[str]]:
+    """libretro core -> the ROM folders of the systems whose commands load it.
+
+    RetroDECK's RetroArch sorts saves by content and not by core
+    (retroarch/rd_assets/rd_config/retroarch.cfg, sort_savefiles_by_content_enable
+    and sort_savefiles_enable): a core is handed saves/<folder holding the
+    ROM>, the system's <path> folder below %ROMPATH%. A commented-out
+    command is no element and counts for nothing.
+    """
+    from common import parse_untrusted_xml
+
+    found: dict[str, set[str]] = {}
+    for system in parse_untrusted_xml(text, "es_systems.xml").iter("system"):
+        path = (system.findtext("path") or "").strip().replace("\\", "/")
+        folder = path.rstrip("/").rsplit("/", 1)[-1]
+        if not folder or folder.startswith("%"):
+            continue
+        for command in system.iter("command"):
+            match = _RETROARCH_CORE.search(command.text or "")
+            if match:
+                found.setdefault(match.group(1), set()).add(folder)
+    return {core: sorted(folders) for core, folders in sorted(found.items())}
 NON_EMULATOR_COMPONENTS = {
     "framework",
     "es-de",
@@ -468,6 +504,16 @@ class Scraper(BaseScraper):
 
         return requirements
 
+    def _fetch_libretro_systems(self) -> dict[str, list[str]]:
+        """libretro core -> ROM folders, from the ES-DE build RetroDECK ships.
+
+        RetroDECK takes ES-DE's latest release of its fork
+        (automation-tools/alchemist/desired_versions.sh, ES_DE_DESIRED_VERSION).
+        """
+        tag = fetch_github_latest_version(ES_DE_REPO)
+        text = fetch_bytes(ES_DE_SYSTEMS_URL.format(rev=tag)).decode("utf-8")
+        return es_systems_libretro_systems(text)
+
     def generate_platform_yaml(self) -> dict:
         reqs = self.fetch_requirements()
         manifests = self._get_manifests()
@@ -486,10 +532,6 @@ class Scraper(BaseScraper):
             sys_entry = systems.setdefault(req.system, {"files": []})
             sys_entry["files"].append(requirement_entry(req))
 
-        try:
-            from .base_scraper import fetch_github_latest_version
-        except ImportError:
-            from scraper.base_scraper import fetch_github_latest_version
         version = fetch_github_latest_version("RetroDECK/RetroDECK")
 
         return {
@@ -509,6 +551,8 @@ class Scraper(BaseScraper):
             # its own, and retroarch is the one that runs cores.
             "standalone_cores": [c for c in cores if c != "retroarch"],
             "systems": systems,
+            # The ROM folders each libretro core runs for: its save folders.
+            "libretro_systems": self._fetch_libretro_systems(),
             "launchers": extract_launchers(cores, self.component_file),
         }
 

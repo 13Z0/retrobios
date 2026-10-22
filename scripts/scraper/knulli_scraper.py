@@ -38,6 +38,7 @@ from .batocera_scraper import (
     _not_cores,
     configgen_cores,
     es_systems_by_system,
+    es_systems_libretro_systems,
     extract_systems_dict,
     platform_systems,
     requirements_from_systems,
@@ -120,6 +121,9 @@ class Scraper(BaseScraper):
             result["standalone_cores"] = standalone
         if dual:
             result["dual_mode_cores"] = dual
+        # configgen hands a libretro core /userdata/saves/<system>, as
+        # Batocera's does: the systems each core runs for are its save folders.
+        result["libretro_systems"] = es_systems_libretro_systems(es_systems, dropped)
         return result
 
 

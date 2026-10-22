@@ -16040,6 +16040,641 @@ systems:
       native_system: coco
       component: xroar
       description: Generic disk ROM
+libretro_systems:
+  "81":
+  - zx81
+  DoubleCherryGB:
+  - gb
+  - gbc
+  a5200:
+  - atari5200
+  amiarcadia:
+  - arcadia
+  amiberry:
+  - amiga
+  - amiga1200
+  - amiga600
+  - amigacd32
+  - cdtv
+  applewin:
+  - apple2
+  ardens:
+  - arduboy
+  arduous:
+  - arduboy
+  atari800:
+  - atari5200
+  - atari800
+  - atarixe
+  azahar:
+  - n3ds
+  b2:
+  - bbcmicro
+  blastem:
+  - colecovision
+  - gamegear
+  - genesis
+  - mark3
+  - mastersystem
+  - megacd
+  - megacdjp
+  - megadrive
+  - megadrivejp
+  - sega32x
+  - sega32xjp
+  - sega32xna
+  - segacd
+  - sg-1000
+  bluemsx:
+  - colecovision
+  - msx
+  - msx1
+  - msx2
+  - msxturbor
+  - sg-1000
+  - spectravideo
+  boom3:
+  - doom
+  boom3_xp:
+  - doom
+  bsnes:
+  - gb
+  - gbc
+  - satellaview
+  - sfc
+  - snes
+  - snesna
+  - sufami
+  bsnes-jg:
+  - satellaview
+  - sfc
+  - snes
+  - snesna
+  - sufami
+  bsnes_hd_beta:
+  - satellaview
+  - sfc
+  - snes
+  - snesna
+  - sufami
+  bsnes_mercury_accuracy:
+  - satellaview
+  - sfc
+  - snes
+  - snesna
+  - sufami
+  cannonball:
+  - ports
+  cap32:
+  - amstradcpc
+  - gx4000
+  cdi2015:
+  - cdimono1
+  cemu:
+  - wiiu
+  chailove:
+  - chailove
+  citra:
+  - n3ds
+  citra2018:
+  - n3ds
+  clownmdemu:
+  - megacd
+  - megacdjp
+  - segacd
+  craft:
+  - ports
+  crocods:
+  - amstradcpc
+  - gx4000
+  desmume:
+  - nds
+  desmume2015:
+  - nds
+  dice:
+  - arcade
+  - mame
+  dirksimple:
+  - daphne
+  - laserdisc
+  dolphin:
+  - gc
+  - wii
+  dosbox_core:
+  - dos
+  - pc
+  dosbox_pure:
+  - dos
+  - pc
+  - windows3x
+  - windows9x
+  dosbox_svn:
+  - dos
+  - pc
+  easyrpg:
+  - easyrpg
+  ecwolf:
+  - ports
+  fbalpha2012:
+  - arcade
+  - cps
+  - cps1
+  - cps2
+  - cps3
+  - fba
+  - mame
+  fbalpha2012_cps1:
+  - cps
+  - cps1
+  - fba
+  fbalpha2012_cps2:
+  - cps
+  - cps2
+  - fba
+  fbalpha2012_cps3:
+  - cps
+  - cps3
+  - fba
+  fbalpha2012_neogeo:
+  - fba
+  fbneo:
+  - arcade
+  - cps
+  - cps1
+  - cps2
+  - cps3
+  - fbneo
+  - mame
+  - neogeo
+  - neogeocd
+  - neogeocdjp
+  fceumm:
+  - famicom
+  - fds
+  - nes
+  flycast:
+  - arcade
+  - atomiswave
+  - consolearcade
+  - dreamcast
+  - mame
+  - naomi
+  - naomi2
+  - naomigd
+  fmsx:
+  - msx
+  - msx1
+  - msx2
+  freechaf:
+  - channelf
+  freeintv:
+  - intellivision
+  frodo:
+  - c64
+  fsuae:
+  - amiga
+  - amiga1200
+  - amiga600
+  fuse:
+  - zxspectrum
+  gambatte:
+  - gb
+  - gbc
+  gearboy:
+  - gb
+  - gbc
+  gearcoleco:
+  - colecovision
+  geargrafx:
+  - pcengine
+  - pcenginecd
+  - supergrafx
+  - tg-cd
+  - tg16
+  gearsystem:
+  - gamegear
+  - mark3
+  - mastersystem
+  - multivision
+  - sg-1000
+  genesis-plus-gx-expanded-rom-size-paprium:
+  - megadrive
+  - megadrivejp
+  genesis_plus_gx:
+  - gamegear
+  - genesis
+  - mark3
+  - mastersystem
+  - megacd
+  - megacdjp
+  - megadrive
+  - megadrivejp
+  - segacd
+  - sg-1000
+  genesis_plus_gx_wide:
+  - gamegear
+  - genesis
+  - mark3
+  - mastersystem
+  - megacd
+  - megacdjp
+  - megadrive
+  - megadrivejp
+  - segacd
+  - sg-1000
+  geolith:
+  - arcade
+  - mame
+  - neogeo
+  - neogeocd
+  - neogeocdjp
+  gpsp:
+  - gba
+  gw:
+  - gameandwatch
+  - lcdgames
+  handy:
+  - atarilynx
+  hatari:
+  - atarist
+  hatari2014:
+  - atarist
+  hbmame:
+  - arcade
+  - mame
+  holani:
+  - atarilynx
+  irogb:
+  - gb
+  - gbc
+  jollycv:
+  - colecovision
+  - crvision
+  kronos:
+  - arcade
+  - consolearcade
+  - mame
+  - saturn
+  - saturnjp
+  - stv
+  lowresnx:
+  - lowresnx
+  lutro:
+  - lutro
+  mame:
+  - apple2
+  - apple2gs
+  - arcade
+  - arcadia
+  - astrocde
+  - atari7800
+  - channelf
+  - consolearcade
+  - cps
+  - cps1
+  - cps2
+  - cps3
+  - crvision
+  - daphne
+  - fmtowns
+  - gamate
+  - gameandwatch
+  - gamecom
+  - gmaster
+  - intellivision
+  - laserdisc
+  - lcdgames
+  - mame
+  - megaduck
+  - model2
+  - neogeo
+  - odyssey2
+  - pv1000
+  - scv
+  - stv
+  - supervision
+  - supracan
+  - vectrex
+  - videopac
+  - vsmile
+  mame2000:
+  - arcade
+  - cps
+  - cps1
+  - cps2
+  - cps3
+  - mame
+  mame2003:
+  - arcade
+  - cps
+  - cps1
+  - cps2
+  - cps3
+  - mame
+  mame2003_plus:
+  - arcade
+  - cps
+  - cps1
+  - cps2
+  - cps3
+  - mame
+  mame2010:
+  - arcade
+  - cps
+  - cps1
+  - cps2
+  - cps3
+  - mame
+  mednafen_lynx:
+  - atarilynx
+  mednafen_ngp:
+  - ngp
+  - ngpc
+  mednafen_pce:
+  - pcengine
+  - pcenginecd
+  - supergrafx
+  - tg-cd
+  - tg16
+  mednafen_pce_fast:
+  - pcengine
+  - pcenginecd
+  - tg-cd
+  - tg16
+  mednafen_pcfx:
+  - pcfx
+  mednafen_psx:
+  - psx
+  mednafen_psx_hw:
+  - psx
+  mednafen_saturn:
+  - saturn
+  - saturnjp
+  mednafen_supafaust:
+  - sfc
+  - snes
+  - snesna
+  mednafen_supergrafx:
+  - pcengine
+  - pcenginecd
+  - supergrafx
+  - tg-cd
+  - tg16
+  mednafen_vb:
+  - virtualboy
+  mednafen_wswan:
+  - wonderswan
+  - wonderswancolor
+  melonds:
+  - nds
+  melondsds:
+  - nds
+  mesen:
+  - famicom
+  - fds
+  - nes
+  mesen-s:
+  - gb
+  - gbc
+  - satellaview
+  - sfc
+  - sgb
+  - snes
+  - snesna
+  mesen2:
+  - famicom
+  - fds
+  - gamegear
+  - gb
+  - gba
+  - gbc
+  - mark3
+  - mastersystem
+  - nes
+  - pcengine
+  - pcenginecd
+  - satellaview
+  - sfc
+  - sgb
+  - snes
+  - snesna
+  - supergrafx
+  - tg-cd
+  - tg16
+  - wonderswan
+  - wonderswancolor
+  mess2015:
+  - mess
+  mgba:
+  - gb
+  - gba
+  - gbc
+  - sgb
+  mojozork:
+  - zmachine
+  mrboom:
+  - ports
+  mu:
+  - palm
+  mupen64plus_next:
+  - n64
+  - n64dd
+  nekop2:
+  - pc98
+  neocd:
+  - neogeocd
+  - neogeocdjp
+  nestopia:
+  - famicom
+  - fds
+  - nes
+  noods:
+  - gba
+  np2kai:
+  - pc98
+  nxengine:
+  - ports
+  o2em:
+  - odyssey2
+  - videopac
+  openlara:
+  - ports
+  opera:
+  - 3do
+  panda3ds:
+  - n3ds
+  parallel_n64:
+  - n64
+  - n64dd
+  pcee2:
+  - ps2
+  pcsx2:
+  - ps2
+  pcsx_rearmed:
+  - psx
+  picodrive:
+  - gamegear
+  - genesis
+  - mark3
+  - mastersystem
+  - megacd
+  - megacdjp
+  - megadrive
+  - megadrivejp
+  - sega32x
+  - sega32xjp
+  - sega32xna
+  - segacd
+  pokemini:
+  - pokemini
+  potator:
+  - supervision
+  ppsspp:
+  - psp
+  prboom:
+  - doom
+  prosystem:
+  - atari7800
+  puae:
+  - amiga
+  - amiga1200
+  - amiga600
+  - amigacd32
+  - cdtv
+  puae2021:
+  - amiga
+  - amiga1200
+  - amiga600
+  - amigacd32
+  - cdtv
+  px68k:
+  - x68000
+  quasi88:
+  - pc88
+  quicknes:
+  - famicom
+  - nes
+  race:
+  - ngp
+  - ngpc
+  retro8:
+  - pico8
+  rustynes:
+  - famicom
+  - fds
+  - nes
+  same_cdi:
+  - cdimono1
+  sameboy:
+  - gb
+  - gbc
+  - sgb
+  sameduck:
+  - megaduck
+  scummvm:
+  - scummvm
+  skyemu:
+  - gb
+  - gba
+  - gbc
+  smsplus:
+  - gamegear
+  - mark3
+  - mastersystem
+  snes9x:
+  - satellaview
+  - sfc
+  - snes
+  - snesna
+  - sufami
+  snes9x2005_plus:
+  - satellaview
+  - sfc
+  - snes
+  - snesna
+  - sufami
+  snes9x2010:
+  - satellaview
+  - sfc
+  - snes
+  - snesna
+  - sufami
+  squirreljme:
+  - j2me
+  stella:
+  - atari2600
+  stella2014:
+  - atari2600
+  stella2023:
+  - atari2600
+  superbroswar:
+  - ports
+  supermodel:
+  - arcade
+  - mame
+  swanstation:
+  - psx
+  tgbdual:
+  - gb
+  - gbc
+  theodore:
+  - moto
+  - to8
+  tia:
+  - atari2600
+  tic80:
+  - tic80
+  tyrquake:
+  - quake
+  uzem:
+  - uzebox
+  vba_next:
+  - gba
+  vbam:
+  - gb
+  - gba
+  - gbc
+  vecx:
+  - vectrex
+  vice_x128:
+  - c64
+  vice_x64:
+  - c64
+  vice_x64sc:
+  - c64
+  vice_xplus4:
+  - plus4
+  vice_xscpu64:
+  - c64
+  vice_xvic:
+  - vic20
+  vircon32:
+  - vircon32
+  virtualjaguar:
+  - atarijaguar
+  virtualxt:
+  - dos
+  - pc
+  vitaquake2:
+  - quake
+  vitaquake2-rogue:
+  - quake
+  vitaquake2-xatrix:
+  - quake
+  vitaquake2-zaero:
+  - quake
+  vitaquake3:
+  - quake
+  wasm4:
+  - wasm4
+  x1:
+  - x1
+  yabasanshiro:
+  - saturn
+  - saturnjp
+  yabause:
+  - saturn
+  - saturnjp
 launchers:
 - emulator: cemu
   build: standalone

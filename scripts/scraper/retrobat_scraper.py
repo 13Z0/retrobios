@@ -99,6 +99,31 @@ def es_systems_cores(text: str) -> tuple[set[str], set[str]]:
     return cores, standalone
 
 
+def es_systems_libretro_systems(text: str) -> dict[str, list[str]]:
+    """libretro core -> the ES systems es_systems.cfg offers it for.
+
+    emulatorLauncher hands a libretro core saves\\<system> at each launch
+    (LibRetro.Generator.cs Configure: savefile_directory), so a file a core
+    reads below its save directory sits once in each of these system
+    folders. A commented-out system is no element and counts for nothing.
+    """
+    from common import parse_untrusted_xml
+
+    found: dict[str, set[str]] = {}
+    for system in parse_untrusted_xml(text, "es_systems.cfg").iter("system"):
+        name = (system.findtext("name") or "").strip()
+        if not name:
+            continue
+        for emulator in system.iter("emulator"):
+            if (emulator.get("name") or "").strip() != "libretro":
+                continue
+            for core in emulator.iter("core"):
+                core_name = (core.text or "").strip()
+                if core_name:
+                    found.setdefault(core_name, set()).add(name)
+    return {core: sorted(systems) for core, systems in sorted(found.items())}
+
+
 def launcher_revision(url: str) -> str:
     """The emulatorLauncher commit a source URL is pinned to."""
     found = re.search(r"/emulatorlauncher/([0-9a-f]{40})/", url)
@@ -259,6 +284,7 @@ class Scraper(BaseScraper):
                 es_text = resp.read().decode("utf-8")
             cores, standalone = es_systems_cores(es_text)
             dual = es_systems_dual(es_text)
+            libretro_systems = es_systems_libretro_systems(es_text)
         except urllib.error.URLError as e:
             raise ConnectionError(f"Failed to fetch {es_url}: {e}") from e
         if not cores:
@@ -277,6 +303,8 @@ class Scraper(BaseScraper):
             # Launched both ways: each layout gets its files.
             **({"dual_mode_cores": sorted(dual)} if dual else {}),
             "systems": systems,
+            # The systems each libretro core runs for: its save folders.
+            "libretro_systems": libretro_systems,
             "launchers": fetch_launchers(launcher_revision(self.url)),
         }
 

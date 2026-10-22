@@ -3047,6 +3047,478 @@ systems:
       native_path: bios/mame/hash/xegs.xml
       native_name: Atari XEGS
     name: Atari XEGS
+libretro_systems:
+  "81":
+  - zx81
+  DoubleCherryGB:
+  - gb
+  - gb2players
+  - gbc
+  - gbc2players
+  a5200:
+  - atari5200
+  amiarcadia:
+  - arcadia
+  - vc4000
+  amiberry:
+  - amiga1200
+  - amiga4000
+  - amiga500
+  - amigacd32
+  - amigacdtv
+  applewin:
+  - apple2
+  ardens:
+  - arduboy
+  arduous:
+  - arduboy
+  atari800:
+  - atari5200
+  - atari800
+  azahar:
+  - 3ds
+  b2:
+  - bbcmicro
+  bennugd:
+  - bennugd
+  bk:
+  - bk
+  bluemsx:
+  - colecovision
+  - msx1
+  - msx2
+  - msx2+
+  - msxturbor
+  - spectravideo
+  boom3:
+  - doom3
+  boom3_xp:
+  - doom3
+  bsnes:
+  - gb
+  - sgb-msu1
+  - snes
+  - snes-msu1
+  - sufami
+  bsnes-jg:
+  - snes
+  bsnes_hd_beta:
+  - sgb-msu1
+  - snes
+  - snes-msu1
+  cannonball:
+  - cannonball
+  cap32:
+  - amstradcpc
+  - gx4000
+  crocods:
+  - amstradcpc
+  desmume:
+  - nds
+  desmume2015:
+  - nds
+  dice:
+  - dice
+  dinothawr:
+  - dinothawr
+  dolphin:
+  - gamecube
+  - triforce
+  - wii
+  dosbox_pure:
+  - dos
+  doukutsu_rs:
+  - cavestory
+  easyrpg:
+  - easyrpg
+  ecwolf:
+  - ecwolf
+  emuscv:
+  - scv
+  ep128emu_core:
+  - enterprise
+  fake08:
+  - pico8
+  fbalpha:
+  - cave
+  - cps1
+  - cps2
+  - cps3
+  - fbneo
+  - neogeo
+  fbalpha2012:
+  - cave
+  - cps1
+  - cps2
+  - cps3
+  - fbneo
+  fbalpha2012_cps1:
+  - cps1
+  fbalpha2012_cps2:
+  - cps2
+  fbalpha2012_cps3:
+  - cps3
+  fbalpha2012_neogeo:
+  - fbneo
+  - neogeo
+  fbneo:
+  - cave
+  - colecovision
+  - cps1
+  - cps2
+  - cps3
+  - fbneo
+  - gamegear
+  - mastersystem
+  - megadrive
+  - msx1
+  - msx2
+  - msx2+
+  - msxturbor
+  - neogeo
+  - neogeocd
+  - pcengine
+  - pcenginecd
+  - supergrafx
+  - zx81
+  - zxspectrum
+  fceumm:
+  - fds
+  - nes
+  flycast:
+  - atomiswave
+  - dreamcast
+  - naomi
+  - naomi2
+  freechaf:
+  - channelf
+  freeintv:
+  - intellivision
+  freej2me:
+  - j2me
+  frodo:
+  - c64
+  fuse:
+  - zx81
+  - zxspectrum
+  gambatte:
+  - gb
+  - gbc
+  gearcoleco:
+  - adam
+  - colecovision
+  geargrafx:
+  - supergrafx
+  gearsystem:
+  - gamegear
+  - mastersystem
+  - multivision
+  - sg1000
+  genesis_plus_gx:
+  - gamegear
+  - mastersystem
+  - megacd
+  - megadrive
+  - megadrive-msu
+  - sg1000
+  genesis_plus_gx_expanded:
+  - megadrive-msu
+  genesis_plus_gx_wide:
+  - megacd
+  - megadrive
+  - megadrive-msu
+  geolith:
+  - neogeo
+  gpsp:
+  - gba
+  gw:
+  - gw
+  - lcdgames
+  handy:
+  - lynx
+  hatari:
+  - atarist
+  hatarib:
+  - atarist
+  holani:
+  - lynx
+  imageviewer:
+  - screenshots
+  jollycv:
+  - colecovision
+  - crvision
+  kronos:
+  - saturn
+  - segastv
+  lowresnx:
+  - lowresnx
+  lutro:
+  - lutro
+  m2000:
+  - p2000t
+  mame:
+  - adam
+  - advision
+  - apfm1000
+  - apple2
+  - apple2gs
+  - aquarius
+  - arcadia
+  - archimedes
+  - astrocade
+  - atom
+  - bbcmicro
+  - camplynx
+  - casloopy
+  - cave
+  - cdi
+  - coco
+  - crvision
+  - electron
+  - fm7
+  - fmtowns
+  - gaelco
+  - gamate
+  - gamecom
+  - gamepock
+  - gmaster
+  - gp32
+  - gw
+  - hbmame
+  - lcdgames
+  - mame
+  - megaduck
+  - model2
+  - neogeo64
+  - odyssey2
+  - oricatmos
+  - pegasus
+  - pv1000
+  - scv
+  - segastv
+  - supracan
+  - ti99
+  - tutor
+  - tvgames
+  - vc4000
+  - vg5k
+  - vsmile
+  - xegs
+  - zinc
+  mame2000:
+  - mame
+  mame2003:
+  - mame
+  - segastv
+  mame2003_midway:
+  - mame
+  mame2003_plus:
+  - cave
+  - mame
+  - segastv
+  mame2010:
+  - mame
+  - segastv
+  mame2014:
+  - gaelco
+  - mame
+  - segastv
+  mame2016:
+  - cave
+  - gaelco
+  - mame
+  - neogeo64
+  - segastv
+  mednafen_gba:
+  - gba
+  mednafen_lynx:
+  - lynx
+  mednafen_ngp:
+  - ngp
+  - ngpc
+  mednafen_pce:
+  - pcengine
+  - pcenginecd
+  mednafen_pce_fast:
+  - pcengine
+  - pcenginecd
+  mednafen_pcfx:
+  - pcfx
+  mednafen_psx_hw:
+  - psx
+  mednafen_saturn:
+  - saturn
+  mednafen_snes:
+  - snes
+  mednafen_supergrafx:
+  - supergrafx
+  mednafen_vb:
+  - virtualboy
+  mednafen_wswan:
+  - wswan
+  - wswanc
+  melonds:
+  - nds
+  melondsds:
+  - nds
+  mesen:
+  - fds
+  - nes
+  mesen-s:
+  - gb
+  - satellaview
+  - sgb
+  - snes
+  - snes-msu1
+  mgba:
+  - gba
+  - sgb
+  mupen64plus_next:
+  - n64
+  - n64dd
+  nekop2:
+  - pc98
+  neocd:
+  - neogeocd
+  nestopia:
+  - fds
+  - nes
+  noods:
+  - nds
+  np2kai:
+  - pc98
+  nxengine:
+  - cavestory
+  o2em:
+  - odyssey2
+  openlara:
+  - openlara
+  opera:
+  - 3do
+  parallel_n64:
+  - n64
+  - n64dd
+  pcsx2:
+  - ps2
+  pcsx_rearmed:
+  - psx
+  pd777:
+  - cassettevision
+  picodrive:
+  - gamegear
+  - mastersystem
+  - megacd
+  - megadrive
+  - sega32x
+  pocketcdg:
+  - karaoke
+  pokemini:
+  - pokemini
+  potator:
+  - supervision
+  ppsspp:
+  - psp
+  prboom:
+  - doom
+  prosystem:
+  - atari7800
+  puae:
+  - amiga1200
+  - amiga4000
+  - amiga500
+  - amigacd32
+  - amigacdtv
+  px68k:
+  - x68000
+  quasi88:
+  - pc88
+  race:
+  - ngp
+  - ngpc
+  reminiscence:
+  - reminiscence
+  retro8:
+  - pico8
+  same_cdi:
+  - cdi
+  sameboy:
+  - gb
+  - gb2players
+  - gbc
+  - gbc2players
+  sameduck:
+  - megaduck
+  scummvm:
+  - scummvm
+  snes9x:
+  - satellaview
+  - snes
+  - snes-msu1
+  - sufami
+  snes9x2005:
+  - snes
+  stella:
+  - atari2600
+  stella2014:
+  - atari2600
+  - atari5200
+  superbroswar:
+  - superbroswar
+  supermodel:
+  - model3
+  swanstation:
+  - psx
+  tgbdual:
+  - gb
+  - gb2players
+  - gbc
+  - gbc2players
+  theodore:
+  - thomson
+  tic80:
+  - tic80
+  tyrquake:
+  - quake
+  uzem:
+  - uzebox
+  vecx:
+  - vectrex
+  vice_x128:
+  - c128
+  vice_x64:
+  - c64
+  vice_x64sc:
+  - c64
+  vice_xpet:
+  - pet
+  vice_xplus4:
+  - c16
+  - cplus4
+  vice_xvic:
+  - c20
+  vircon32:
+  - vircon32
+  virtualjaguar:
+  - jaguar
+  - jaguarcd
+  vitaquake2:
+  - quake2
+  vitaquake2-rogue:
+  - quake2
+  vitaquake2-xatrix:
+  - quake2
+  vitaquake2-zaero:
+  - quake2
+  wasm4:
+  - wasm4
+  x1:
+  - x1
+  yabasanshiro:
+  - saturn
+  ymir:
+  - saturn
+  zc255:
+  - zeldaclassic
 launchers:
 - emulator: amiberry
   build: standalone

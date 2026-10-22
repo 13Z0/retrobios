@@ -53,6 +53,20 @@
       "uniqueItems": true,
       "description": "Emulators of standalone_cores the platform also launches as a libretro core: both layouts get their files"
     },
+    "libretro_systems": {
+      "type": "object",
+      "description": "libretro core name -> the systems the platform's system list offers it for, as the launcher names them. A launcher handing each core <save directory>/<system> (save_directory.by_system in the registry) places a file the core reads below its save directory once in each of these folders",
+      "additionalProperties": {
+        "type": "array",
+        "minItems": 1,
+        "uniqueItems": true,
+        "items": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^[^/\\\\]+$"
+        }
+      }
+    },
     "core_system_dirs": {
       "type": "object",
       "description": "The libretro system directory the platform hands each core, keyed by that directory relative to the pack root. A platform that declares it gives a core no other directory: the core's files are placed below each directory listed for it, and a core listed nowhere gets none (MinUI hands each launch tag its own Bios/<TAG>/)",

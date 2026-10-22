@@ -5015,3 +5015,382 @@ dual_mode_cores:
 - scummvm
 - stella
 - yabasanshiro
+libretro_systems:
+  "81":
+  - zx81
+  a5200:
+  - atari5200
+  applewin:
+  - apple2
+  arduous:
+  - arduboy
+  atari800:
+  - atari5200
+  - atari800
+  beetle-saturn:
+  - saturn
+  bennugd:
+  - bennugd
+  blastem:
+  - megadrive
+  bluemsx:
+  - colecovision
+  - msx1
+  - msx2
+  - msx2+
+  - msxturbor
+  - spectravideo
+  boom3:
+  - doom3
+  bsnes:
+  - sgb-msu1
+  - snes
+  - snes-msu1
+  bsnes_hd:
+  - sgb-msu1
+  - snes
+  - snes-msu1
+  cap32:
+  - amstradcpc
+  - gx4000
+  citra:
+  - 3ds
+  desmume:
+  - nds
+  dice:
+  - dice
+  dolphin:
+  - gamecube
+  - wii
+  dosbox_pure:
+  - dos
+  easyrpg:
+  - easyrpg
+  emuscv:
+  - scv
+  fake08:
+  - pico8
+  fbalpha:
+  - fbneo
+  - neogeo
+  fbneo:
+  - fbneo
+  - neogeo
+  fceumm:
+  - fds
+  - nes
+  flycast:
+  - atomiswave
+  - dreamcast
+  - naomi
+  - naomi2
+  - systemsp
+  flycast-xtreme:
+  - atomiswave
+  - dreamcast
+  - naomi
+  - naomi2
+  - systemsp
+  flycastvl:
+  - atomiswave
+  - dreamcast
+  - naomi
+  fmsx:
+  - msx1
+  - msx2
+  - msx2+
+  freechaf:
+  - channelf
+  freeintv:
+  - intellivision
+  freej2me:
+  - j2me
+  fuse:
+  - zxspectrum
+  gambatte:
+  - gb
+  - gbc
+  gearsystem:
+  - gamegear
+  - mastersystem
+  - multivision
+  - sg1000
+  genesisplusgx:
+  - gamegear
+  - mastersystem
+  - megadrive
+  - msu-md
+  - pico
+  - segacd
+  - sg1000
+  genesisplusgx-expanded:
+  - megadrive
+  genesisplusgx-wide:
+  - megadrive
+  - msu-md
+  - pico
+  geolith:
+  - fbneo
+  - neogeo
+  gong:
+  - gong
+  gpsp:
+  - gba
+  gw:
+  - gameandwatch
+  handy:
+  - lynx
+  hatari:
+  - atarist
+  hatarib:
+  - atarist
+  holani:
+  - lynx
+  imame4all:
+  - mame
+  - neogeo
+  kronos:
+  - saturn
+  lowresnx:
+  - lowresnx
+  lutro:
+  - lutro
+  mame:
+  - adam
+  - advision
+  - apfm1000
+  - apple2
+  - apple2gs
+  - arcadia
+  - archimedes
+  - astrocde
+  - atom
+  - bbc
+  - camplynx
+  - cdi
+  - coco
+  - crvision
+  - electron
+  - fm7
+  - fmtowns
+  - gamate
+  - gameandwatch
+  - gamecom
+  - gamepock
+  - gmaster
+  - gp32
+  - laser310
+  - lcdgames
+  - macintosh
+  - mame
+  - megaduck
+  - namco22
+  - neogeo
+  - pdp1
+  - plugnplay
+  - pv1000
+  - socrates
+  - supracan
+  - ti99
+  - tutor
+  - vc4000
+  - vgmplay
+  - vis
+  - vsmile
+  - xegs
+  mame0139:
+  - mame
+  - neogeo
+  mame078plus:
+  - mame
+  - neogeo
+  mednafen_lynx:
+  - lynx
+  mednafen_ngp:
+  - ngp
+  - ngpc
+  mednafen_psx:
+  - psx
+  mednafen_supergrafx:
+  - supergrafx
+  mednafen_wswan:
+  - wswan
+  - wswanc
+  melonds:
+  - nds
+  melondsds:
+  - nds
+  mesen:
+  - fds
+  - nes
+  mesen-s:
+  - gb
+  - gbc
+  - satellaview
+  - sgb
+  - snes
+  mgba:
+  - gb
+  - gba
+  - gbc
+  - sgb
+  minivmac:
+  - macintosh
+  mrboom:
+  - mrboom
+  mupen64plus-next:
+  - n64
+  - n64dd
+  neocd:
+  - neogeocd
+  nestopia:
+  - fds
+  - nes
+  np2kai:
+  - pc98
+  nxengine:
+  - cavestory
+  o2em:
+  - o2em
+  - videopacplus
+  openlara:
+  - traider1
+  opera:
+  - 3do
+  parallel_n64:
+  - n64
+  - n64dd
+  pce:
+  - pcengine
+  - pcenginecd
+  pce_fast:
+  - pcengine
+  - pcenginecd
+  pcfx:
+  - pcfx
+  pcsx2:
+  - ps2
+  pcsx_rearmed:
+  - psx
+  picodrive:
+  - gamegear
+  - mastersystem
+  - megadrive
+  - pico
+  - sega32x
+  - segacd
+  play:
+  - ps2
+  pocketsnes:
+  - satellaview
+  - snes
+  - snes-msu1
+  pokemini:
+  - pokemini
+  potator:
+  - supervision
+  ppsspp:
+  - psp
+  prboom:
+  - prboom
+  prosystem:
+  - atari7800
+  puae:
+  - amiga1200
+  - amiga500
+  - amigacd32
+  - amigacdtv
+  puae2021:
+  - amiga1200
+  - amiga500
+  - amigacd32
+  - amigacdtv
+  px68k:
+  - x68000
+  quasi88:
+  - pc88
+  reminiscence:
+  - reminiscence
+  same_cdi:
+  - cdi
+  sameduck:
+  - megaduck
+  scummvm:
+  - scummvm
+  smsplus:
+  - gamegear
+  - mastersystem
+  snes9x:
+  - satellaview
+  - snes
+  - snes-msu1
+  - sufami
+  snes9x_next:
+  - snes
+  squirreljme:
+  - j2me
+  stella:
+  - atari2600
+  stella2014:
+  - atari2600
+  superbroswar:
+  - superbroswar
+  swanstation:
+  - psx
+  tgbdual:
+  - gb2players
+  - gbc2players
+  theodore:
+  - thomson
+  tic80:
+  - tic80
+  tyrquake:
+  - quake
+  uae4arm:
+  - amiga1200
+  - amiga500
+  - amigacd32
+  - amigacdtv
+  uzem:
+  - uzebox
+  vb:
+  - virtualboy
+  vba-m:
+  - gb
+  - gba
+  - gbc
+  vecx:
+  - vectrex
+  vemulator:
+  - vemulator
+  vice_x128:
+  - c128
+  vice_x64:
+  - c64
+  vice_x64sc:
+  - c64
+  vice_xpet:
+  - pet
+  vice_xplus4:
+  - cplus4
+  vice_xscpu64:
+  - c64
+  vice_xvic:
+  - c20
+  vircon32:
+  - vircon32
+  virtualjaguar:
+  - jaguar
+  - jaguarcd
+  vitaquake2:
+  - quake2
+  wasm4:
+  - wasm4
+  x1:
+  - x1
+  xrick:
+  - xrick
+  yabasanshiro:
+  - saturn
+  zc210:
+  - zc210
