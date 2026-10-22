@@ -531,7 +531,7 @@ files:
     category: bios_zip
     system: sammy-atomiswave
     description: "Atomiswave Bios"
-    source_ref: "upstream src/mame/drivers/naomi.c:6625"
+    source_ref: "upstream src/mame/drivers/naomi.c:2161-2163, 2216-2221, 6625"
     contents:
       - name: "bios.ic23_l"
         size: 65536
