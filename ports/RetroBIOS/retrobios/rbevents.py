@@ -24,7 +24,7 @@ from typing import Iterable, Iterator, TextIO
 _UNSAFE = re.compile(r"[\x00-\x1f\x7f*?\[\]\\]+")
 _SPACES = re.compile(r" {2,}")
 # A system id becomes a bash array subscript and a menu key in the launcher.
-# Every manifest uses slugs; anything else is dropped, never cleaned into one.
+# Every manifest uses slugs, and anything else is dropped, never cleaned into one.
 _SYSTEM_ID = re.compile(r"[A-Za-z0-9._-]+")
 
 

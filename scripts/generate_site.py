@@ -2067,13 +2067,13 @@ def _category_evidence_md(evidence: dict) -> str:
         readers = []
         for reader in evidence["read_by"]:
             refs = [
-                f"`{e['name']}` (`{e['source_ref']}`)" if e.get("source_ref") else f"`{e['name']}`"
+                f"`{e['name']}` at `{e['source_ref']}`" if e.get("source_ref") else f"`{e['name']}`"
                 for e in reader.get("entries", [])
             ]
             name = (_emulator_link(reader["emulator"], "../")
                     if reader["emulator"] != "launcher" else "the platform's launcher")
-            readers.append(f"{name}: {', '.join(refs)}" if refs else f"{name} (by {reader['proof']})")
-        return "Read by " + "; ".join(readers)
+            readers.append(f"{name} ({', '.join(refs)})" if refs else f"{name} (by {reader['proof']})")
+        return "Read by " + ", ".join(readers)
     examined = evidence.get("cores_examined") or []
     cores = ("cores examined: " + ", ".join(_emulator_link(c, "../") for c in examined)
              if examined else "no core examined")

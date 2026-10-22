@@ -85,7 +85,7 @@ class Evidence(unittest.TestCase):
             "emulator": "devilutionx", "proof": "name",
             "entries": [{"name": "diabdat.mpq", "source_ref": "Source/init.cpp:120"}]}])
         self.assertEqual(verify.category_evidence_text(found),
-                         "read by devilutionx: diabdat.mpq (Source/init.cpp:120)")
+                         "read by devilutionx (diabdat.mpq at Source/init.cpp:120)")
 
     def test_unread_names_the_cores_examined(self):
         found = self.cats.explain({"name": "hardwareconfig.xml"},

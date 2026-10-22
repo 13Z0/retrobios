@@ -22,7 +22,7 @@ sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
 
 def _ok_result() -> tuple:
-    return (True, 0, 0, [], 1, 1, 1, 1, 0)
+    return (True, 0, 0, [], 1, 1, 1, 1, 0, 0)
 
 
 class VerifyPackChoice(unittest.TestCase):
@@ -125,7 +125,7 @@ class VerifyPackChoice(unittest.TestCase):
         pack = f"{self.stem}_BIOS_Pack.zip"
         self._touch(pack)
         out, err = io.StringIO(), io.StringIO()
-        failed = (False, 0, 0, ["x: missing"], 1, 0, 1, 1, 0)
+        failed = (False, 0, 0, ["x: missing"], 1, 0, 1, 1, 0, 0)
         with mock.patch.object(self.gp, "verify_pack_against_platform",
                                return_value=failed), \
                 contextlib.redirect_stdout(out), contextlib.redirect_stderr(err), \

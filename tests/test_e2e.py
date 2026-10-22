@@ -5270,7 +5270,7 @@ struct BurnDriver BurnDrvneogeo = {
 
     def test_213b_absent_game_data_is_counted_apart(self):
         """Game data the collection lacks is counted apart from the pack's
-        errors; firmware the collection lacks stays one."""
+        errors, while firmware the collection lacks stays one."""
         import tempfile
 
         from generate_pack import generate_pack, verify_pack_against_platform

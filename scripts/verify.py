@@ -1637,14 +1637,14 @@ def category_evidence_text(evidence: dict) -> str:
         readers = []
         for reader in evidence["read_by"]:
             refs = [
-                f"{e['name']} ({e['source_ref']})" if e.get("source_ref") else e["name"]
+                f"{e['name']} at {e['source_ref']}" if e.get("source_ref") else e["name"]
                 for e in reader.get("entries", [])
             ]
             readers.append(
-                f"{reader['emulator']}: {', '.join(refs)}" if refs
+                f"{reader['emulator']} ({', '.join(refs)})" if refs
                 else f"{reader['emulator']} (by {reader['proof']})"
             )
-        return "read by " + "; ".join(readers)
+        return "read by " + ", ".join(readers)
     examined = evidence.get("cores_examined") or []
     cores = f"cores examined: {', '.join(examined)}" if examined else "no core examined"
     if evidence.get("unsettled"):
@@ -1682,7 +1682,7 @@ def _print_detail_entries(details: list[dict], seen: set[str], verbose: bool) ->
                 continue
             label = _NOT_FIRMWARE.get(d.get("category", BIOS))
             if label:
-                # Counted on their own line; named on request.
+                # Counted on their own line, named on request.
                 if verbose:
                     seen.add(key)
                     print(f"  MISSING ({label}): {key}")

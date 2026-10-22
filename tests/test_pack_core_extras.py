@@ -73,7 +73,7 @@ class CoreFilesAsTheBuilderPlacesThem(unittest.TestCase):
         )
 
     def test_a_path_the_platform_file_holds_is_not_a_core_file(self):
-        ok, _checked, _present, errors, _bc, _bp, core_checked, core_present, _ex = (
+        ok, _checked, _present, errors, _bc, _bp, core_checked, core_present, _ex, _absent = (
             self._check(b"core file")
         )
         self.assertTrue(ok, errors)
