@@ -142,6 +142,7 @@ files:
 
   - name: drastic_bios_arm9.bin
     sha1: 4dc29a1560e1cbd7afef1998f7a6c25c5db1cc3a
+    md5: 5f34f9f6108f8d57fc26789b7a7ecf82
     path: system/drastic_bios_arm9.bin
     system: nintendo-ds
     required: false
@@ -164,6 +165,7 @@ files:
 
   - name: drastic_bios_arm7.bin
     sha1: 31ae916c85d012582c7cdf47de6943ac6778253b
+    md5: c259d5dd2d1a8e1f58eaa26c08efae45
     path: system/drastic_bios_arm7.bin
     system: nintendo-ds
     required: false
