@@ -1,99 +1,122 @@
 emulator: Azahar
 type: standalone + libretro
-core_classification: community_fork
-source: "https://github.com/johndoe6345789/azahar_libretro"
+core_classification: official_port
+source: "https://github.com/azahar-emu/azahar"
 upstream: "https://github.com/azahar-emu/azahar"
-profiled_date: "2026-03-23"
-source_commit: "9dd12da328c753806cbd4f2b0e048fced97ae97d"
-upstream_commit: "9b045bf8370d035cacd99e5ad19a082df9e3b262"
-core_version: "Git"
+profiled_date: "2026-10-22"
+source_commit: "219d743a1e698101fe1ab8bef43e6563126c3c27"
+core_version: "2126.2"
 display_name: "Nintendo - 3DS (Azahar)"
-cores: [azahar]
+cores:
+  - azahar
+  - azahar-sa
 systems:
   - nintendo-3ds
 
+# path: is where the libretro core reads a file, standalone_path: where the
+# standalone app reads it under its user directory.
 notes: |
-  Successor to Citra (via Lime3DS). Libretro port by johndoe6345789.
-  Data dir: azahar-emu (legacy: citra-emu, lime3ds-emu).
-  ref: src/common/common_paths.h:41-43
+  Successor to Citra (via Lime3DS). The libretro core lives in the same
+  repository (src/citra_libretro) and is built with ENABLE_LIBRETRO, which
+  forces the SDL2, Qt and web service frontends off.
+  ref: CMakeLists.txt:40, CMakeLists.txt:109-111, CMakeLists.txt:165-187
 
-  Key file named keys.txt (not aes_keys.txt like old Citra).
-  Embedded encrypted key fallback if keys.txt absent.
-  ref: src/core/hw/aes/key.cpp:282-297
+  The libretro core moves the user directory to <save_dir>/Azahar/, or to
+  <system_dir>/Azahar/ when the frontend gives no save directory. The core
+  option "Azahar Default" keeps the standalone data directory instead.
+  ref: src/citra_libretro/core_settings.cpp:592-603, src/citra_libretro/core_settings.cpp:1048-1080,
+  src/citra_libretro/environment.cpp:191-208
 
-  Uses RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY.
-  ref: src/citra_libretro/environment.cpp:179
+  Standalone data dir: azahar-emu under XDG_DATA_HOME (Azahar on Windows and
+  macOS), with citra-emu and lime3ds-emu kept as legacy locations. A user/
+  directory beside the executable (Windows) or in the working directory takes
+  precedence. sysdata/, nand/ and sdmc/ sit under the user directory.
+  ref: src/common/common_paths.h:19-49, src/common/file_util.cpp:943-972,
+  src/common/file_util.cpp:1023-1025
 
-  .info has firmware_count=0 but core loads files from system_dir.
+  keys.txt has an AES-encrypted key blob compiled in, used when the file is
+  absent. ENABLE_BUILTIN_KEYBLOB defaults to ON and is not among the options a
+  libretro build forces off.
+  ref: src/core/hw/aes/key.cpp:292-314, CMakeLists.txt:154, src/core/CMakeLists.txt:501-503
 
-  boot9.bin and sector0x96.bin are defined in common_paths.h:84-85
-  but never loaded by any code path. Dead defines from Citra heritage.
+  System archives (shared font, Mii data, country list, bad word list) are read
+  from installed NAND titles. Open-source replacements embedded in the binary
+  answer when the title is absent.
+  ref: src/core/file_sys/archive_ncch.cpp:150-214, src/core/hle/service/apt/apt.cpp:211-276
 
-  System archives (shared font, Mii data, country list, bad word list)
-  have open-source replacements embedded in the binary.
-  ref: src/core/file_sys/archive_ncch.cpp:146-176
+  boot9.bin and sector0x96.bin are defined but read by no code path.
+  ref: src/common/common_paths.h:84-85
+
+  The .info declares no firmware.
 
 files:
   - name: keys.txt
-    path: sysdata/keys.txt
+    path: Azahar/sysdata/keys.txt
+    standalone_path: sysdata/keys.txt
     system: nintendo-3ds
     required: false
     hle_fallback: true
-    sha1: "5fab786695311433602028cd89898689c5df0898"
-    md5: "cb52d323b13129a2f0bc3e3e911e567f"
-    note: "embedded encrypted fallback if missing: default_keys_enc, AES-CBC with a zero key and IV. The hashes are those of the decrypted text without its PKCS#7 block"
-    source_ref: "source src/core/hw/aes/key.cpp:283-300, upstream src/common/common_paths.h:83, source src/core/hw/default_keys.h:4-5"
+    sha1: "5288772be438b86978a801e6dcb14228ad3a20af"
+    md5: "4812e96097b7fc1bdd7b40366208b7a7"
+    note: "AES key slots, common keys and NFC secrets. Embedded encrypted blob used if missing: default_keys_enc, AES-CBC with a zero key and IV, the hashes are those of the decrypted text"
+    source_ref: "src/core/hw/aes/key.cpp:151-288, src/core/hw/aes/key.cpp:292-314, src/common/common_paths.h:83, src/core/hw/default_keys.h:11"
 
   - name: shared_font.bin
-    path: sysdata/shared_font.bin
+    path: Azahar/sysdata/shared_font.bin
+    standalone_path: sysdata/shared_font.bin
     system: nintendo-3ds
     required: false
     hle_fallback: true
-    note: "legacy load path, embedded open-source font used if missing"
-    source_ref: "source src/core/hle/service/apt/apt.cpp:263-278"
+    note: "legacy path, tried when the shared font system archive fails to load"
+    source_ref: "src/core/hle/service/apt/apt.cpp:278-293, src/core/hle/service/apt/apt.cpp:300-305, src/common/common_paths.h:82"
 
   - name: seeddb.bin
-    path: sysdata/seeddb.bin
+    path: Azahar/sysdata/seeddb.bin
+    standalone_path: sysdata/seeddb.bin
     system: nintendo-3ds
     required: false
-    note: "game seed database for 9.6+ titles"
-    source_ref: "upstream src/core/file_sys/seed_db.cpp:15"
+    note: "game seed database for 9.6+ titles, an empty one is written if absent"
+    source_ref: "src/core/file_sys/seed_db.cpp:12-58"
 
   - name: otp.bin
-    path: sysdata/otp.bin
+    path: Azahar/sysdata/otp.bin
+    standalone_path: sysdata/otp.bin
     system: nintendo-3ds
     required: false
     size: 256
     validation: [size, crypto]
-    note: "OTP data for console key derivation"
-    source_ref: "source src/core/hw/unique_data.cpp:126-167, source src/core/hw/unique_data.cpp:213"
+    note: "console-unique OTP, AES-CBC decrypted with the keys.txt OTP key, then checked against the OTP magic and its SHA-256"
+    source_ref: "src/core/file_sys/otp.cpp:14-55, src/core/hw/unique_data.cpp:143-192, src/core/hw/unique_data.cpp:243-245"
 
   - name: movable.sed
-    path: nand/private/movable.sed
+    path: Azahar/nand/private/movable.sed
+    standalone_path: nand/private/movable.sed
     system: nintendo-3ds
     required: false
     size: [288, 320]
     validation: [size, signature]
     on_mismatch: {signature: warn}
     note: "console-unique key seed, 288 bytes without the AES MAC block, 320 with it"
-    source_ref: "source src/core/hw/unique_data.cpp:170-200, source src/core/hw/unique_data.cpp:217, source src/core/hw/unique_data.h:103-133"
+    source_ref: "src/core/hw/unique_data.cpp:194-233, src/core/hw/unique_data.cpp:247-249, src/core/hw/unique_data.h:103-133"
 
   - name: SecureInfo_A
-    path: nand/rw/sys/SecureInfo_A
+    path: Azahar/nand/rw/sys/SecureInfo_A
+    standalone_path: nand/rw/sys/SecureInfo_A
     system: nintendo-3ds
     required: false
     size: 273
     validation: [size, signature]
     on_mismatch: {signature: warn}
-    note: "console serial and region data"
-    source_ref: "source src/core/hw/unique_data.cpp:43-92, source src/core/hw/unique_data.cpp:205"
+    note: "console serial and region. A failed signature is retried against every region"
+    source_ref: "src/core/hw/unique_data.cpp:48-103, src/core/hw/unique_data.cpp:235-237, src/core/hw/unique_data.h:57"
 
   - name: LocalFriendCodeSeed_B
-    path: nand/rw/sys/LocalFriendCodeSeed_B
+    path: Azahar/nand/rw/sys/LocalFriendCodeSeed_B
+    standalone_path: nand/rw/sys/LocalFriendCodeSeed_B
     system: nintendo-3ds
     required: false
     size: 272
     validation: [size, signature]
     on_mismatch: {signature: warn}
     note: "friend code generation seed"
-    source_ref: "source src/core/hw/unique_data.cpp:94-123, source src/core/hw/unique_data.cpp:209, source src/core/hw/unique_data.h:76"
+    source_ref: "src/core/hw/unique_data.cpp:105-141, src/core/hw/unique_data.cpp:239-241, src/core/hw/unique_data.h:76"

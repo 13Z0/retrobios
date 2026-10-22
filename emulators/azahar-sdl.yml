@@ -1,0 +1,108 @@
+emulator: "Azahar (SDL2)"
+type: standalone
+core_classification: community_fork
+source: "https://github.com/johndoe6345789/azahar_libretro"
+profiled_date: "2026-10-22"
+source_commit: "c8d39853c1ebacc5657e51d601713a09404ca8a7"
+core_version: "Git"
+display_name: "Nintendo - 3DS (Azahar SDL2)"
+mode: standalone
+cores: ["azahar"]
+built_by: [knulli]
+systems:
+  - nintendo-3ds
+
+notes: |
+  Fork of Azahar by johndoe6345789 that keeps the SDL2 frontend
+  (src/citra_sdl) beside a libretro port. ENABLE_SDL2_FRONTEND links it into
+  the azahar executable, without Qt.
+  ref: CMakeLists.txt:101, src/CMakeLists.txt:196-206, src/citra_meta/CMakeLists.txt:1-7,
+  src/citra_meta/CMakeLists.txt:47
+
+  Data dir: azahar-emu under XDG_DATA_HOME (Azahar on Windows and macOS), with
+  citra-emu and lime3ds-emu kept as legacy locations. A user/ directory in the
+  working directory takes precedence. sysdata/ and nand/ sit under it, and the
+  SDL2 config can move nand/ with use_custom_storage and nand_directory.
+  ref: src/common/common_paths.h:19-49, src/common/file_util.cpp:844-899,
+  src/common/file_util.cpp:902-904, src/citra_sdl/config.cpp:217-222
+
+  keys.txt has an AES-encrypted key blob compiled in, used when the file is
+  absent.
+  ref: src/core/hw/aes/key.cpp:282-300, src/core/hw/default_keys.h:4-5
+
+  System archives (shared font, Mii data, country list, bad word list) have
+  open-source replacements embedded in the binary.
+  ref: src/core/file_sys/archive_ncch.cpp:126-188
+
+  boot9.bin and sector0x96.bin are defined but read by no code path.
+  ref: src/common/common_paths.h:84-85
+
+  mcu.dat and mac.txt in sysdata hold per-installation state the emulator
+  writes itself.
+  ref: src/core/hle/service/cfg/cfg.cpp:946, src/core/hle/service/cfg/cfg.cpp:961,
+  src/core/hle/service/cfg/cfg.cpp:1027, src/core/hle/service/cfg/cfg.cpp:1050
+
+files:
+  - name: keys.txt
+    path: sysdata/keys.txt
+    system: nintendo-3ds
+    required: false
+    hle_fallback: true
+    sha1: "5fab786695311433602028cd89898689c5df0898"
+    md5: "cb52d323b13129a2f0bc3e3e911e567f"
+    note: "embedded encrypted fallback if missing: default_keys_enc, AES-CBC with a zero key and IV. The hashes are those of the decrypted text without its PKCS#7 block"
+    source_ref: "src/core/hw/aes/key.cpp:146-278, src/core/hw/aes/key.cpp:282-300, src/common/common_paths.h:83, src/core/hw/default_keys.h:4-5"
+
+  - name: shared_font.bin
+    path: sysdata/shared_font.bin
+    system: nintendo-3ds
+    required: false
+    hle_fallback: true
+    note: "legacy path, tried when the shared font system archive fails to load"
+    source_ref: "src/core/hle/service/apt/apt.cpp:263-279, src/core/hle/service/apt/apt.cpp:285-290, src/common/common_paths.h:82"
+
+  - name: seeddb.bin
+    path: sysdata/seeddb.bin
+    system: nintendo-3ds
+    required: false
+    note: "game seed database for 9.6+ titles, an empty one is written if absent"
+    source_ref: "src/core/file_sys/seed_db.cpp:12-58"
+
+  - name: otp.bin
+    path: sysdata/otp.bin
+    system: nintendo-3ds
+    required: false
+    size: 256
+    validation: [size, crypto]
+    note: "console-unique OTP, AES-CBC decrypted with the keys.txt OTP key, then checked against the OTP magic and its SHA-256"
+    source_ref: "src/core/file_sys/otp.cpp:14-55, src/core/hw/unique_data.cpp:126-168, src/core/hw/unique_data.cpp:213-215"
+
+  - name: movable.sed
+    path: nand/private/movable.sed
+    system: nintendo-3ds
+    required: false
+    size: [288, 320]
+    validation: [size, signature]
+    on_mismatch: {signature: warn}
+    note: "console-unique key seed, 288 bytes without the AES MAC block, 320 with it"
+    source_ref: "src/core/hw/unique_data.cpp:170-203, src/core/hw/unique_data.cpp:217-219, src/core/hw/unique_data.h:103-133"
+
+  - name: SecureInfo_A
+    path: nand/rw/sys/SecureInfo_A
+    system: nintendo-3ds
+    required: false
+    size: 273
+    validation: [size, signature]
+    on_mismatch: {signature: warn}
+    note: "console serial and region data"
+    source_ref: "src/core/hw/unique_data.cpp:43-92, src/core/hw/unique_data.cpp:205-207, src/core/hw/unique_data.h:57"
+
+  - name: LocalFriendCodeSeed_B
+    path: nand/rw/sys/LocalFriendCodeSeed_B
+    system: nintendo-3ds
+    required: false
+    size: 272
+    validation: [size, signature]
+    on_mismatch: {signature: warn}
+    note: "friend code generation seed"
+    source_ref: "src/core/hw/unique_data.cpp:94-124, src/core/hw/unique_data.cpp:209-211, src/core/hw/unique_data.h:76"
