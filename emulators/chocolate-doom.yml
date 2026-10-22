@@ -1,0 +1,184 @@
+emulator: "Chocolate Doom"
+type: standalone
+core_classification: game_engine
+source: "https://github.com/chocolate-doom/chocolate-doom"
+profiled_date: "2026-10-22"
+source_commit: "72d9e9318c4ccc61dab29bb9cc30bc8a9a93266d"
+core_version: "3.0.0"
+display_name: "Doom (Chocolate Doom)"
+cores:
+  - "Chocolate-Doom"
+  - "chocolate-doom"
+systems: [doom, heretic, hexen, strife, chex]
+
+notes: |
+  Simon Howard's Doom source port that reproduces the DOS executables. One
+  tree builds four programs, chocolate-doom, chocolate-heretic,
+  chocolate-hexen and chocolate-strife, each accepting only the IWADs of its
+  own game: the Doom program takes Doom, Doom II, Final Doom, Chex Quest and
+  Hacx, and every program refuses an IWAD carrying a sprite unique to another
+  game. EmuELEC builds this revision, launches chocolate-doom -iwad <file> for
+  a .wad, and for a .doom file picks the program from its GAMETYPE key.
+  ref: src/d_iwad.h:24-32, src/w_main.c:233-262,
+       EmuELEC packages/sx05re/emuelec-ports/chocolate-doom/package.mk:5,
+       EmuELEC packages/sx05re/emuelec-ports/chocolate-doom/scripts/chocodoom.sh:29-66
+
+  -iwad is looked for as given, then by name on the search path, and a name
+  outside the table leaves the mission undetermined. Without -iwad, each
+  directory of the search path is scanned for the names of the table in
+  order: the working directory, the executable's directory, $DOOMWADDIR, the
+  entries of $DOOMWADPATH, then the XDG data directories and Steam install
+  paths. Nothing found stops startup with "Game mode indeterminate". No hash
+  of any IWAD is read.
+  ref: src/d_iwad.c:34-52, src/d_iwad.c:567-594, src/d_iwad.c:732-783,
+       src/d_iwad.c:870-913, src/doom/d_main.c:1488-1496
+
+  The Freedoom IWADs and Hacx carry their own DEHACKED lump. Chex Quest and the
+  French Doom II need a separate dehacked patch, looked for beside the IWAD,
+  then on the search path. Without it the Doom program stops. Strife loads
+  voices.wad from beside the IWAD or the search path when present, and
+  disables voices otherwise.
+  ref: src/doom/d_main.c:1178-1184, src/doom/d_main.c:1188-1206,
+       src/doom/d_main.c:1210-1241, src/doom/d_main.c:1244-1278,
+       src/strife/d_main.c:844-885
+
+  Music plays through the OPL emulation by default, which takes its
+  instruments from the GENMIDI lump of the IWAD. EmuELEC's configuration
+  selects the SDL MIDI device instead and points timidity_cfg_path at
+  /storage/.config/timidity/timidity.cfg. gus_patch_path and the music pack
+  directory hold user supplied sets with no canonical artifact.
+  ref: src/i_sound.c:55, src/i_sound.c:504-506, src/i_sdlmusic.c:56-80,
+       EmuELEC packages/sx05re/emuelec-ports/chocolate-doom/config/chocolate-doom.cfg:27-29
+
+files:
+  - name: "doom.wad"
+    category: game_data
+    system: doom
+    required: false
+    description: "The Ultimate Doom / Registered Doom IWAD"
+    source_ref: "src/d_iwad.c:39"
+
+  - name: "doom1.wad"
+    category: game_data
+    system: doom
+    required: false
+    description: "Shareware Doom IWAD"
+    source_ref: "src/d_iwad.c:40"
+
+  - name: "doom2.wad"
+    category: game_data
+    system: doom
+    required: false
+    description: "Doom II IWAD"
+    source_ref: "src/d_iwad.c:36"
+
+  - name: "doom2f.wad"
+    category: game_data
+    system: doom
+    required: false
+    description: "Doom II: L'Enfer sur Terre IWAD"
+    source_ref: "src/d_iwad.c:41"
+
+  - name: "plutonia.wad"
+    category: game_data
+    system: doom
+    required: false
+    description: "Final Doom: The Plutonia Experiment IWAD"
+    source_ref: "src/d_iwad.c:37"
+
+  - name: "tnt.wad"
+    category: game_data
+    system: doom
+    required: false
+    description: "Final Doom: TNT: Evilution IWAD"
+    source_ref: "src/d_iwad.c:38"
+
+  - name: "freedoom1.wad"
+    category: game_data
+    system: doom
+    required: false
+    description: "Freedoom: Phase 1 IWAD"
+    source_ref: "src/d_iwad.c:45, src/doom/d_main.c:1190-1196"
+
+  - name: "freedoom2.wad"
+    category: game_data
+    system: doom
+    required: false
+    description: "Freedoom: Phase 2 IWAD"
+    source_ref: "src/d_iwad.c:44, src/doom/d_main.c:1190-1196"
+
+  - name: "freedm.wad"
+    category: game_data
+    system: doom
+    required: false
+    description: "FreeDM IWAD"
+    source_ref: "src/d_iwad.c:46, src/doom/d_main.c:1190-1196"
+
+  - name: "hacx.wad"
+    category: game_data
+    system: doom
+    required: false
+    description: "Hacx IWAD"
+    note: "Must be v1.2: its DEHACKED lump is required and a missing one stops startup."
+    source_ref: "src/d_iwad.c:43, src/doom/d_main.c:1198-1206"
+
+  - name: "chex.wad"
+    category: game_data
+    system: chex
+    required: false
+    description: "Chex Quest IWAD"
+    source_ref: "src/d_iwad.c:42"
+
+  - name: "chex.deh"
+    category: game_data
+    system: chex
+    required: true
+    size: 20367
+    description: "Dehacked patch emulating chex.exe (Simon Howard, 2008)"
+    note: "Needed for chex.wad, the Doom program stops without it. Read beside the IWAD, then on the WAD search path. Distributed as themes/chex/chexdeh.zip on idgames."
+    source_ref: "src/doom/d_main.c:1210-1241"
+
+  - name: "french.deh"
+    category: game_data
+    system: doom
+    required: true
+    size: 20764
+    description: "Dehacked patch emulating the French doom2.exe (Simon Howard, 2010)"
+    note: "Needed when the IWAD is the French Doom II, recognised by its lumps, and the Doom program stops without it. Read beside the IWAD, then on the WAD search path. Distributed as utils/exe_edit/patches/french.zip on idgames."
+    source_ref: "src/doom/d_main.c:1178-1184, src/doom/d_main.c:1244-1278"
+
+  - name: "heretic.wad"
+    category: game_data
+    system: heretic
+    required: false
+    description: "Heretic IWAD"
+    source_ref: "src/d_iwad.c:47, src/heretic/d_main.c:888-897"
+
+  - name: "heretic1.wad"
+    category: game_data
+    system: heretic
+    required: false
+    description: "Shareware Heretic IWAD"
+    source_ref: "src/d_iwad.c:48, src/heretic/d_main.c:888-897"
+
+  - name: "hexen.wad"
+    category: game_data
+    system: hexen
+    required: false
+    description: "Hexen IWAD"
+    source_ref: "src/d_iwad.c:49, src/hexen/h2_main.c:425-434"
+
+  - name: "strife1.wad"
+    category: game_data
+    system: strife
+    required: false
+    description: "Strife IWAD"
+    source_ref: "src/d_iwad.c:51, src/strife/d_main.c:1728"
+
+  - name: "voices.wad"
+    category: game_data
+    system: strife
+    required: false
+    description: "Strife voice acting WAD"
+    note: "Absent, voices are disabled."
+    source_ref: "src/strife/d_main.c:844-885"
