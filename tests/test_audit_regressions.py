@@ -5928,6 +5928,20 @@ class AForcedRehashIsCheckedAgainstTheLastOne(unittest.TestCase):
         self.assertEqual(settled["sha1"], "a" * 40)
         self.assertIn("WARNING", err.getvalue())
 
+    def test_two_agreeing_readings_against_an_unmoved_file_stop_the_run(self):
+        """The host has returned the same wrong SHA-1 twice in a row
+        (DSi_Nand_USA.bin as 62b100f2, 2026-10-22). Taking two agreeing
+        readings as a rewrite put the wrong value in the cache, where every
+        later run read it back. An unmoved file is never rewritten silently."""
+        from unittest import mock
+
+        from scripts import generate_db
+
+        cached = {"sha1": "a" * 40, "mtime": 1.0, "size": 4}
+        with mock.patch.object(generate_db, "compute_hashes", lambda *a, **k: {"sha1": "b" * 40}), \
+                self.assertRaisesRegex(RuntimeError, "touch"):
+            generate_db._settled_hashes(Path("x.bin"), cached, 1.0, 4)
+
     def test_a_changed_file_takes_its_new_digest(self):
         from unittest import mock
 

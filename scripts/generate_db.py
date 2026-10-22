@@ -80,8 +80,11 @@ def _settled_hashes(
     A forced run rehashes everything, and this host has given a wrong SHA-1
     under load (DSi_Nand_USA.bin read as 834b140f, not ef08ae02). An entry
     whose mtime and size did not move but whose digest did is hashed a
-    second time, and the two computations that agree win. The previous run's
-    value is the independent check the forced run used to throw away.
+    second time. A second reading that gives the cached value back settles it.
+    Two readings that agree against it do not: the host has returned the same
+    wrong digest twice in a row (62b100f2 for the same file), and a value
+    taken then is cached and read back by every later run. A file rewritten
+    in place moves its mtime, so the run stops instead of choosing.
     """
     hashes = compute_hashes(filepath)
     if not cached or cached.get("mtime") != mtime or cached.get("size") != size:
@@ -89,15 +92,18 @@ def _settled_hashes(
     if cached.get("sha1") in (None, hashes["sha1"]):
         return hashes
     again = compute_hashes(filepath, cache=False)
-    if again["sha1"] == hashes["sha1"]:
-        # Two fresh readings agree: the bytes changed under an unchanged mtime.
-        return hashes
     print(
         f"  WARNING: {filepath}: sha1 read as {hashes['sha1'][:8]} then "
         f"{again['sha1'][:8]}, cached {cached['sha1'][:8]}",
         file=sys.stderr,
     )
-    return again if again["sha1"] == cached["sha1"] else hashes
+    if again["sha1"] == cached["sha1"]:
+        return again
+    raise RuntimeError(
+        f"{filepath}: read as {again['sha1'][:8]}, cached as {cached['sha1'][:8]}, "
+        "with the same mtime and size. Rerun when the host is idle, or "
+        f"`touch {filepath}` if its bytes really changed."
+    )
 
 
 def scan_bios_dir(bios_dir: Path, cache: dict, force: bool) -> tuple[dict, dict, dict]:
