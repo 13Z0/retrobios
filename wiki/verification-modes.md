@@ -292,6 +292,12 @@ categories, read from the profiles of the cores the platform runs:
 | game data | only `category: game_data` entries of those profiles name it | none, counted apart |
 | unread | the platform declares its cores, every one has a profile, at least one emulates the entry's system, and none opens the entry | none, counted apart |
 
+Every missing entry carries what establishes its category: the profile entries
+that read it, with their source reference, or the cores of its system that were
+examined and found no reader, or the reason the question stays open. `--verbose`
+prints it under the entry, `--json` carries it as `category_evidence`, and each
+platform page shows it.
+
 The report counts the last two on a line of their own (`Missing, not firmware: ...`)
 and `--verbose` names them. They stay in the platform's file and in the totals, but
 `--strict` fails on firmware gaps only, and the pack check does not count them as

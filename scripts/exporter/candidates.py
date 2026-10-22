@@ -241,50 +241,89 @@ class EntryCategories:
     archive, and the platform declares the cores it runs. Anything else,
     and every entry of a platform with no core to examine (BizHawk, MiSTer),
     stays firmware.
+
+    `explain` returns the category with its evidence: the profile entries
+    that read the file, or the cores of its system that were examined.
     """
 
     def __init__(self, config: dict, profiles: dict[str, dict],
                  data_registry: dict | None = None) -> None:
         examined = resolve_platform_cores(config, profiles)
+        self._unresolved = sorted(unresolved_platform_cores(config, profiles))
         # Without a declared core list, the examined cores are those sharing
         # a system id: a guess about what runs, which cannot prove a negative.
-        self._open = (
-            not examined or not config.get("cores")
-            or bool(unresolved_platform_cores(config, profiles))
-        )
-        self._romsets = any(_loads_romsets(profiles[key]) for key in examined)
-        self._firmware = ReadEvidence()
-        self._game = ReadEvidence()
+        self._guessed = not config.get("cores")
+        self._romsets = sorted(key for key in examined if _loads_romsets(profiles[key]))
+        self._profiles = profiles
+        # One index per core and per kind, so a proof names its reader.
+        self._readers: list[tuple[str, str, ReadEvidence]] = []
         for key in sorted(examined):
             profile = profiles[key]
             files = [f for f in profile.get("files") or [] if isinstance(f, dict)]
-            self._firmware.add_profile(
-                {**profile, "files": [f for f in files if f.get("category") != GAME_DATA]},
-                data_registry or {},
-            )
-            self._game.add_profile(
-                {"files": [f for f in files if f.get("category") == GAME_DATA]},
-                data_registry or {},
-            )
-        self._firmware.add_launchers(config.get("launchers") or [])
-        self._systems = {
-            _norm_system_id(str(sid))
-            for key in examined
-            for sid in profiles[key].get("systems") or []
+            for kind, keep in ((BIOS, lambda f: f.get("category") != GAME_DATA),
+                               (GAME_DATA, lambda f: f.get("category") == GAME_DATA)):
+                evidence = ReadEvidence()
+                evidence.add_profile(
+                    {"files": [f for f in files if keep(f)],
+                     "data_directories": profile.get("data_directories") if kind == BIOS else []},
+                    data_registry or {},
+                )
+                self._readers.append((kind, key, evidence))
+        self._launchers = ReadEvidence()
+        self._launchers.add_launchers(config.get("launchers") or [])
+        self._by_system: dict[str, list[str]] = {}
+        for key in sorted(examined):
+            for sid in profiles[key].get("systems") or []:
+                self._by_system.setdefault(_norm_system_id(str(sid)), []).append(key)
+
+    def _matching(self, key: str, kind: str, entry: dict) -> list[dict]:
+        """The profile entries of `key` that name the platform entry."""
+        names = {
+            str(n).casefold()
+            for n in (entry.get("name"), *(entry.get("aliases") or []))
+            if n
         }
+        found = []
+        for f in self._profiles[key].get("files") or []:
+            if not isinstance(f, dict) or (f.get("category") == GAME_DATA) != (kind == GAME_DATA):
+                continue
+            own = {str(n).casefold() for n in (f.get("name"), *(f.get("aliases") or [])) if n}
+            if own & names:
+                found.append({k: f[k] for k in ("name", "source_ref") if f.get(k)})
+        return found
+
+    def explain(self, entry: dict, destination: str, system: str) -> dict:
+        """The category of an entry and what establishes it."""
+        readers: dict[str, list[dict]] = {BIOS: [], GAME_DATA: []}
+        for kind, key, evidence in self._readers:
+            proof = evidence.proof(entry, destination)
+            if proof is not None:
+                readers[kind].append({
+                    "emulator": key, "proof": proof,
+                    "entries": self._matching(key, kind, entry),
+                })
+        if self._launchers.proof(entry, destination) is not None:
+            readers[BIOS].append({"emulator": "launcher", "proof": "launcher", "entries": []})
+        system_cores = self._by_system.get(_norm_system_id(system), [])
+        if readers[BIOS]:
+            return {"category": BIOS, "read_by": readers[BIOS]}
+        if readers[GAME_DATA]:
+            return {"category": GAME_DATA, "read_by": readers[GAME_DATA]}
+        examined = {"cores_examined": system_cores}
+        if self._guessed:
+            return {"category": BIOS, "unsettled": "the platform declares no core list", **examined}
+        if self._unresolved:
+            return {"category": BIOS,
+                    "unsettled": "cores the platform names have no profile: "
+                                 + ", ".join(self._unresolved), **examined}
+        if not system_cores:
+            return {"category": BIOS,
+                    "unsettled": "no examined core emulates this system", **examined}
+        if self._romsets and str(entry.get("name", "")).casefold().endswith(_ARCHIVES):
+            return {"category": BIOS,
+                    "unsettled": "a ROM set, opened by name by " + ", ".join(self._romsets),
+                    **examined}
+        return {"category": UNREAD, **examined}
 
     def category(self, entry: dict, destination: str, system: str) -> str:
-        """`system` is the platform's system id the entry is declared under.
-
-        Unread also needs a core of that system among those examined: an
-        entry of a system no profiled core emulates is simply unexamined.
-        """
-        if self._firmware.proof(entry, destination) is not None:
-            return BIOS
-        if self._game.proof(entry, destination) is not None:
-            return GAME_DATA
-        if self._open or _norm_system_id(system) not in self._systems:
-            return BIOS
-        if self._romsets and str(entry.get("name", "")).casefold().endswith(_ARCHIVES):
-            return BIOS
-        return UNREAD
+        return self.explain(entry, destination, system)["category"]

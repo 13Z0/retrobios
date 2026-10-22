@@ -1993,6 +1993,12 @@ def _render_platform_systems(
                 status_display = f"untested: {reason}" if reason else "untested"
             elif status == "missing":
                 status_display = "**missing**"
+                # Not every missing entry is firmware: the platform may list a
+                # game's data or a file no core it runs opens.
+                kind = {"game_data": "game data",
+                        "unread": "no core the platform runs opens it"}.get(f.get("category", ""))
+                if kind:
+                    status_display += f", {kind}"
             else:
                 status_display = status
 
@@ -2027,6 +2033,8 @@ def _render_platform_systems(
                 if sha256:
                     hash_parts.append(f"SHA256: `{sha256}`")
                 lines.append(f"{pad}    {' | '.join(hash_parts)}")
+            if status == "missing" and f.get("category_evidence"):
+                lines.append(f"{pad}    {_category_evidence_md(f['category_evidence'])}")
 
         lines.append("")
 
@@ -2051,6 +2059,27 @@ def _platform_data_links(name: str) -> str:
     if (_REPO_ROOT / "install" / f"{name}.json").is_file():
         links.append(f"[install manifest]({REPO_URL}/blob/main/install/{name}.json)")
     return ", ".join(links)
+
+
+def _category_evidence_md(evidence: dict) -> str:
+    """What establishes a missing entry's category, as the page shows it."""
+    if evidence.get("read_by"):
+        readers = []
+        for reader in evidence["read_by"]:
+            refs = [
+                f"`{e['name']}` (`{e['source_ref']}`)" if e.get("source_ref") else f"`{e['name']}`"
+                for e in reader.get("entries", [])
+            ]
+            name = (_emulator_link(reader["emulator"], "../")
+                    if reader["emulator"] != "launcher" else "the platform's launcher")
+            readers.append(f"{name}: {', '.join(refs)}" if refs else f"{name} (by {reader['proof']})")
+        return "Read by " + "; ".join(readers)
+    examined = evidence.get("cores_examined") or []
+    cores = ("cores examined: " + ", ".join(_emulator_link(c, "../") for c in examined)
+             if examined else "no core examined")
+    if evidence.get("unsettled"):
+        return f"No reader found, not settled: {evidence['unsettled']} ({cores})"
+    return f"No reader found ({cores})"
 
 
 def generate_platform_page(

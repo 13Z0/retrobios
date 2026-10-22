@@ -1356,10 +1356,12 @@ def verify_platform(
             prev = file_status.get(dest)
             hle = hle_index.get(file_entry.get("name", ""), False)
             sev = compute_severity(cur, required, mode, hle)
-            category = (
-                categories.category(file_entry, destination, sys_id)
-                if cur == Status.MISSING else BIOS
-            )
+            if cur == Status.MISSING:
+                explained = categories.explain(file_entry, destination, sys_id)
+                category = explained.pop("category")
+                result["category_evidence"] = explained
+            else:
+                category = BIOS
             result["category"] = category
             if file_category.get(dest, category) == BIOS:
                 category = BIOS
@@ -1608,6 +1610,33 @@ _NOT_FIRMWARE = {
 }
 
 
+def category_evidence_text(evidence: dict) -> str:
+    """One line saying what establishes a missing entry's category."""
+    if evidence.get("read_by"):
+        readers = []
+        for reader in evidence["read_by"]:
+            refs = [
+                f"{e['name']} ({e['source_ref']})" if e.get("source_ref") else e["name"]
+                for e in reader.get("entries", [])
+            ]
+            readers.append(
+                f"{reader['emulator']}: {', '.join(refs)}" if refs
+                else f"{reader['emulator']} (by {reader['proof']})"
+            )
+        return "read by " + "; ".join(readers)
+    examined = evidence.get("cores_examined") or []
+    cores = f"cores examined: {', '.join(examined)}" if examined else "no core examined"
+    if evidence.get("unsettled"):
+        return f"no reader found, not settled: {evidence['unsettled']} ({cores})"
+    return f"no reader found ({cores})"
+
+
+def _print_category_evidence(detail: dict) -> None:
+    evidence = detail.get("category_evidence")
+    if evidence:
+        print(f"      {category_evidence_text(evidence)}")
+
+
 def _print_detail_entries(details: list[dict], seen: set[str], verbose: bool) -> None:
     """Print UNTESTED, MISSING, and DISCREPANCY entries from verification details."""
     for d in details:
@@ -1636,11 +1665,14 @@ def _print_detail_entries(details: list[dict], seen: set[str], verbose: bool) ->
                 if verbose:
                     seen.add(key)
                     print(f"  MISSING ({label}): {key}")
+                    _print_category_evidence(d)
                 continue
             seen.add(key)
             req = "required" if d.get("required", True) else "optional"
             hle = ", HLE available" if d.get("hle_fallback") else ""
             print(f"  MISSING ({req}{hle}): {key}")
+            if verbose:
+                _print_category_evidence(d)
             _print_ground_truth(d.get("ground_truth", []), verbose)
     for d in details:
         disc = d.get("discrepancy")
