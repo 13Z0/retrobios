@@ -305,335 +305,12 @@
       }
     }
   ],
-  "total_files": 8207,
-  "total_size": 7660568116,
-  "pack_files": 8209,
-  "pack_size": 7660568116,
-  "total_omitted": 49,
+  "total_files": 8239,
+  "total_size": 7836973672,
+  "pack_files": 8241,
+  "pack_size": 7836973672,
+  "total_omitted": 12,
   "omitted_files": [
-    {
-      "dest": "Citra/Citra/sysdata/aes_keys.txt",
-      "root": "save",
-      "core_folder": "Citra",
-      "name": "aes_keys.txt",
-      "system": "nintendo-3ds",
-      "required": false,
-      "reason": "no_save_directory",
-      "cores": [
-        "citra"
-      ],
-      "systems": [
-        "nintendo-3ds"
-      ],
-      "held": true
-    },
-    {
-      "dest": "Citra/Citra/sysdata/boot9.bin",
-      "root": "save",
-      "core_folder": "Citra",
-      "name": "boot9.bin",
-      "system": "nintendo-3ds",
-      "required": false,
-      "reason": "no_save_directory",
-      "cores": [
-        "citra"
-      ]
-    },
-    {
-      "dest": "Citra/Citra/sysdata/seeddb.bin",
-      "root": "save",
-      "core_folder": "Citra",
-      "name": "seeddb.bin",
-      "system": "nintendo-3ds",
-      "required": false,
-      "reason": "no_save_directory",
-      "cores": [
-        "citra"
-      ]
-    },
-    {
-      "dest": "Citra/Citra/sysdata/shared_font.bin",
-      "root": "save",
-      "core_folder": "Citra",
-      "name": "shared_font.bin",
-      "system": "nintendo-3ds",
-      "required": false,
-      "reason": "no_save_directory",
-      "cores": [
-        "citra"
-      ]
-    },
-    {
-      "dest": "Citra2018/Citra/sysdata/aes_keys.txt",
-      "root": "save",
-      "core_folder": "Citra2018",
-      "name": "aes_keys.txt",
-      "system": "nintendo-3ds",
-      "required": false,
-      "reason": "no_save_directory",
-      "cores": [
-        "citra2018"
-      ],
-      "systems": [
-        "nintendo-3ds"
-      ],
-      "held": true
-    },
-    {
-      "dest": "Citra2018/Citra/sysdata/shared_font.bin",
-      "root": "save",
-      "core_folder": "Citra2018",
-      "name": "shared_font.bin",
-      "system": "nintendo-3ds",
-      "required": false,
-      "reason": "no_save_directory",
-      "cores": [
-        "citra2018"
-      ]
-    },
-    {
-      "dest": "FB Alpha 2012 CPS-3/hiscore.dat",
-      "root": "save",
-      "core_folder": "FB Alpha 2012 CPS-3",
-      "name": "hiscore.dat",
-      "system": "",
-      "required": false,
-      "reason": "no_save_directory",
-      "cores": [
-        "fbalpha2012_cps3"
-      ]
-    },
-    {
-      "dest": "FB Alpha 2012/hiscore.dat",
-      "root": "save",
-      "core_folder": "FB Alpha 2012",
-      "name": "hiscore.dat",
-      "system": "arcade",
-      "required": false,
-      "reason": "no_save_directory",
-      "cores": [
-        "fbalpha2012"
-      ]
-    },
-    {
-      "dest": "Ishiiruka/User/Wii/clientca.pem",
-      "root": "save",
-      "core_folder": "Ishiiruka",
-      "name": "clientca.pem",
-      "system": "",
-      "required": false,
-      "reason": "no_save_directory",
-      "cores": [
-        "ishiiruka"
-      ]
-    },
-    {
-      "dest": "Ishiiruka/User/Wii/clientcakey.pem",
-      "root": "save",
-      "core_folder": "Ishiiruka",
-      "name": "clientcakey.pem",
-      "system": "",
-      "required": false,
-      "reason": "no_save_directory",
-      "cores": [
-        "ishiiruka"
-      ]
-    },
-    {
-      "dest": "Ishiiruka/User/Wii/rootca.pem",
-      "root": "save",
-      "core_folder": "Ishiiruka",
-      "name": "rootca.pem",
-      "system": "",
-      "required": false,
-      "reason": "no_save_directory",
-      "cores": [
-        "ishiiruka"
-      ]
-    },
-    {
-      "dest": "Ishiiruka/User/Wii/sd.raw",
-      "root": "save",
-      "core_folder": "Ishiiruka",
-      "name": "sd.raw",
-      "system": "",
-      "required": false,
-      "reason": "no_save_directory",
-      "cores": [
-        "ishiiruka"
-      ]
-    },
-    {
-      "dest": "Ishiiruka/User/Wii/shared2/sys/SYSCONF",
-      "root": "save",
-      "core_folder": "Ishiiruka",
-      "name": "SYSCONF",
-      "system": "",
-      "required": false,
-      "reason": "no_save_directory",
-      "cores": [
-        "ishiiruka"
-      ]
-    },
-    {
-      "dest": "Ishiiruka/User/Wii/title/00000001/00000002/data/setting.txt",
-      "root": "save",
-      "core_folder": "Ishiiruka",
-      "name": "setting.txt",
-      "system": "",
-      "required": false,
-      "reason": "no_save_directory",
-      "cores": [
-        "ishiiruka"
-      ]
-    },
-    {
-      "dest": "Panda3DS/Emulator Files/sysdata/aes_keys.txt",
-      "root": "save",
-      "core_folder": "Panda3DS",
-      "name": "aes_keys.txt",
-      "system": "",
-      "required": false,
-      "reason": "no_save_directory",
-      "cores": [
-        "panda3ds"
-      ],
-      "systems": [
-        "nintendo-3ds"
-      ],
-      "held": true
-    },
-    {
-      "dest": "Panda3DS/Emulator Files/sysdata/seeddb.bin",
-      "root": "save",
-      "core_folder": "Panda3DS",
-      "name": "seeddb.bin",
-      "system": "",
-      "required": false,
-      "reason": "no_save_directory",
-      "cores": [
-        "panda3ds"
-      ]
-    },
-    {
-      "dest": "Stella/stella/KVB1.WAV",
-      "root": "save",
-      "core_folder": "Stella",
-      "name": "KVB1.WAV",
-      "system": "",
-      "required": false,
-      "reason": "no_save_directory",
-      "cores": [
-        "stella"
-      ],
-      "category": "game_data"
-    },
-    {
-      "dest": "Stella/stella/KVB2.WAV",
-      "root": "save",
-      "core_folder": "Stella",
-      "name": "KVB2.WAV",
-      "system": "",
-      "required": false,
-      "reason": "no_save_directory",
-      "cores": [
-        "stella"
-      ],
-      "category": "game_data"
-    },
-    {
-      "dest": "Stella/stella/KVB3.WAV",
-      "root": "save",
-      "core_folder": "Stella",
-      "name": "KVB3.WAV",
-      "system": "",
-      "required": false,
-      "reason": "no_save_directory",
-      "cores": [
-        "stella"
-      ],
-      "category": "game_data"
-    },
-    {
-      "dest": "Stella/stella/KVS1.WAV",
-      "root": "save",
-      "core_folder": "Stella",
-      "name": "KVS1.WAV",
-      "system": "",
-      "required": false,
-      "reason": "no_save_directory",
-      "cores": [
-        "stella"
-      ],
-      "category": "game_data"
-    },
-    {
-      "dest": "Stella/stella/KVS2.WAV",
-      "root": "save",
-      "core_folder": "Stella",
-      "name": "KVS2.WAV",
-      "system": "",
-      "required": false,
-      "reason": "no_save_directory",
-      "cores": [
-        "stella"
-      ],
-      "category": "game_data"
-    },
-    {
-      "dest": "Stella/stella/KVS3.WAV",
-      "root": "save",
-      "core_folder": "Stella",
-      "name": "KVS3.WAV",
-      "system": "",
-      "required": false,
-      "reason": "no_save_directory",
-      "cores": [
-        "stella"
-      ],
-      "category": "game_data"
-    },
-    {
-      "dest": "Stella/stella/KVSHARED.WAV",
-      "root": "save",
-      "core_folder": "Stella",
-      "name": "KVSHARED.WAV",
-      "system": "",
-      "required": false,
-      "reason": "no_save_directory",
-      "cores": [
-        "stella"
-      ],
-      "category": "game_data"
-    },
-    {
-      "dest": "Trident/Emulator Files/sysdata/aes_keys.txt",
-      "root": "save",
-      "core_folder": "Trident",
-      "name": "aes_keys.txt",
-      "system": "",
-      "required": false,
-      "reason": "no_save_directory",
-      "cores": [
-        "trident"
-      ],
-      "systems": [
-        "nintendo-3ds"
-      ],
-      "held": true
-    },
-    {
-      "dest": "Trident/Emulator Files/sysdata/seeddb.bin",
-      "root": "save",
-      "core_folder": "Trident",
-      "name": "seeddb.bin",
-      "system": "",
-      "required": false,
-      "reason": "no_save_directory",
-      "cores": [
-        "trident"
-      ]
-    },
     {
       "dest": "doomu.wad",
       "name": "doomu.wad",
@@ -655,139 +332,6 @@
         "prboom"
       ],
       "category": "game_data"
-    },
-    {
-      "dest": "fsuae/Kickstarts/amiga-ext-130-cdtv.rom",
-      "root": "save",
-      "name": "amiga-ext-130-cdtv.rom",
-      "system": "amiga",
-      "required": false,
-      "reason": "no_save_directory",
-      "cores": [
-        "fsuae"
-      ]
-    },
-    {
-      "dest": "fsuae/Kickstarts/amiga-ext-310-cd32.rom",
-      "root": "save",
-      "name": "amiga-ext-310-cd32.rom",
-      "system": "amiga",
-      "required": false,
-      "reason": "no_save_directory",
-      "cores": [
-        "fsuae"
-      ]
-    },
-    {
-      "dest": "fsuae/Kickstarts/amiga-os-120.rom",
-      "root": "save",
-      "name": "amiga-os-120.rom",
-      "system": "amiga",
-      "required": false,
-      "reason": "no_save_directory",
-      "cores": [
-        "fsuae"
-      ]
-    },
-    {
-      "dest": "fsuae/Kickstarts/amiga-os-130.rom",
-      "root": "save",
-      "name": "amiga-os-130.rom",
-      "system": "amiga",
-      "required": false,
-      "reason": "no_save_directory",
-      "cores": [
-        "fsuae"
-      ]
-    },
-    {
-      "dest": "fsuae/Kickstarts/amiga-os-204.rom",
-      "root": "save",
-      "name": "amiga-os-204.rom",
-      "system": "amiga",
-      "required": false,
-      "reason": "no_save_directory",
-      "cores": [
-        "fsuae"
-      ]
-    },
-    {
-      "dest": "fsuae/Kickstarts/amiga-os-205.rom",
-      "root": "save",
-      "name": "amiga-os-205.rom",
-      "system": "amiga",
-      "required": false,
-      "reason": "no_save_directory",
-      "cores": [
-        "fsuae"
-      ]
-    },
-    {
-      "dest": "fsuae/Kickstarts/amiga-os-310-a1200.rom",
-      "root": "save",
-      "name": "amiga-os-310-a1200.rom",
-      "system": "amiga",
-      "required": false,
-      "reason": "no_save_directory",
-      "cores": [
-        "fsuae"
-      ]
-    },
-    {
-      "dest": "fsuae/Kickstarts/amiga-os-310-a3000.rom",
-      "root": "save",
-      "name": "amiga-os-310-a3000.rom",
-      "system": "amiga",
-      "required": false,
-      "reason": "no_save_directory",
-      "cores": [
-        "fsuae"
-      ]
-    },
-    {
-      "dest": "fsuae/Kickstarts/amiga-os-310-a4000.rom",
-      "root": "save",
-      "name": "amiga-os-310-a4000.rom",
-      "system": "amiga",
-      "required": false,
-      "reason": "no_save_directory",
-      "cores": [
-        "fsuae"
-      ]
-    },
-    {
-      "dest": "fsuae/Kickstarts/amiga-os-310-cd32.rom",
-      "root": "save",
-      "name": "amiga-os-310-cd32.rom",
-      "system": "amiga",
-      "required": false,
-      "reason": "no_save_directory",
-      "cores": [
-        "fsuae"
-      ]
-    },
-    {
-      "dest": "fsuae/Kickstarts/cd32fmv.rom",
-      "root": "save",
-      "name": "cd32fmv.rom",
-      "system": "amiga",
-      "required": false,
-      "reason": "no_save_directory",
-      "cores": [
-        "fsuae"
-      ]
-    },
-    {
-      "dest": "fsuae/Kickstarts/rom.key",
-      "root": "save",
-      "name": "rom.key",
-      "system": "amiga",
-      "required": false,
-      "reason": "no_save_directory",
-      "cores": [
-        "fsuae"
-      ],
-      "held": true
     },
     {
       "dest": "jazz2/Source/Anims.j2a",
@@ -18672,6 +18216,127 @@
       "cores": [
         "fmsx"
       ]
+    },
+    {
+      "dest": "fsuae/Kickstarts/amiga-os-130.rom",
+      "sha1": "891e9a547772fe0c6c19b610baf8bc4ea7fcb785",
+      "sha256": "ee05862d8102a08436ac4056da7d549db31625c7d47b24dfb7b3c9a5c113ca53",
+      "size": 262144,
+      "repo_path": "bios/Commodore/Amiga/Kickstart-v1.3-rev34.5-1987-Commodore-A500-A1000-A2000-CDTV.rom",
+      "cores": [
+        "fsuae"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "fsuae/Kickstarts/amiga-os-204.rom",
+      "sha1": "c5839f5cb98a7a8947065c3ed2f14f5f42e334a1",
+      "sha256": "d0b70e8a1772614b897f92c33cb299bed3fc8e3de488fc12f67f97fc2486eb79",
+      "size": 524288,
+      "repo_path": "bios/Commodore/Amiga/amiga-os-204.rom",
+      "cores": [
+        "fsuae"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "fsuae/Kickstarts/amiga-os-205.rom",
+      "sha1": "02843c4253bbd29aba535b0aa3bd9a85034ecde4",
+      "sha256": "8d57d6e9d976df42d91ff9d10a5eedaede1a00e3b4b34cad750ca5ff7229f28a",
+      "size": 524288,
+      "repo_path": "bios/Commodore/Amiga/amiga-os-205-a600.rom",
+      "cores": [
+        "fsuae"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "fsuae/Kickstarts/amiga-os-120.rom",
+      "sha1": "11f9e62cf299f72184835b7b2a70a16333fc0d88",
+      "sha256": "87cddb1f499e32758de20145e73031a84bab299e3f6e5c8487e76d02b2ee9d16",
+      "size": 262144,
+      "repo_path": "bios/Commodore/Amiga/amiga-os-120.rom",
+      "cores": [
+        "fsuae"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "fsuae/Kickstarts/amiga-os-310-a1200.rom",
+      "sha1": "e21545723fe8374e91342617604f1b3d703094f1",
+      "sha256": "6d43840d4099a74170ea0f0425b6257c3891ebcaa39c4d1840075a9ab22b5707",
+      "size": 524288,
+      "repo_path": "bios/Commodore/Amiga/amiga-os-310-a1200.rom",
+      "cores": [
+        "fsuae"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "fsuae/Kickstarts/amiga-os-310-a3000.rom",
+      "sha1": "f8e210d72b4c4853e0c9b85d223ba20e3d1b36ee",
+      "sha256": "f2c9307aacb92b203a3135a35185deffad6c66cfa8d79920b235d7cf9a5222c4",
+      "size": 524288,
+      "repo_path": "bios/Commodore/Amiga/amiga-os-310-a3000.rom",
+      "cores": [
+        "fsuae"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "fsuae/Kickstarts/amiga-os-310-a4000.rom",
+      "sha1": "5fe04842d04a489720f0f4bb0e46948199406f49",
+      "sha256": "71236ed62c85394a3ad7d0d8d65405bac7a10083e06ba6b82120dacc7a00fe9a",
+      "size": 524288,
+      "repo_path": "bios/Commodore/Amiga/amiga-os-310-a4000.rom",
+      "cores": [
+        "fsuae"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "fsuae/Kickstarts/amiga-os-310-cd32.rom",
+      "sha1": "3525be8887f79b5929e017b42380a79edfee542d",
+      "sha256": "3586355514947b5ab48c8755dc004fab94f188b19e7bce491c8f9693499e830b",
+      "size": 524288,
+      "repo_path": "bios/Commodore/Amiga/amiga-os-310-cd32.rom",
+      "cores": [
+        "fsuae"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "fsuae/Kickstarts/amiga-ext-310-cd32.rom",
+      "sha1": "5bef3d628ce59cc02a66e6e4ae0da48f60e78f7f",
+      "sha256": "d964826432559994ffe329f643fd4e42dbbff313362d9434945725d7119cae87",
+      "size": 524288,
+      "repo_path": "bios/Commodore/Amiga/amiga-ext-310-cd32.rom",
+      "cores": [
+        "fsuae"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "fsuae/Kickstarts/cd32fmv.rom",
+      "sha1": "03ca81c7a7b259cf64bc9582863eca0f6529f435",
+      "sha256": "680e654880c891a3b03e6107ed30b10903efca16c1dac1b4c8e7835f4e37acb6",
+      "size": 262144,
+      "repo_path": "bios/Commodore/Amiga/cd32fmv.rom",
+      "cores": [
+        "fsuae"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "fsuae/Kickstarts/amiga-ext-130-cdtv.rom",
+      "sha1": "7ba40ffa17e500ed9fed041f3424bd81d9c907be",
+      "sha256": "6e48bb768539e8dae352553e5fdfa860682edaf9e26b105fadd8e26103171765",
+      "size": 262144,
+      "repo_path": "bios/Commodore/Amiga/amiga-ext-130-cdtv.rom",
+      "cores": [
+        "fsuae"
+      ],
+      "root": "save"
     },
     {
       "dest": "fuse/48.rom",
@@ -69122,6 +68787,64 @@
       "executable": true
     },
     {
+      "dest": "Citra/sysdata/aes_keys.txt",
+      "sha1": "29556640b022cbfaf427874695838b43a5e8aff4",
+      "sha256": "0d866e062cf62275fbb291ba44af253e67fdc5bd76c7640b6c4a9dfe742510d9",
+      "size": 7357,
+      "repo_path": "bios/Nintendo/3DS/aes_keys.txt",
+      "cores": [
+        "citra",
+        "citra2018"
+      ],
+      "systems": [
+        "nintendo-3ds"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "Citra/sysdata/boot9.bin",
+      "sha1": "5a3d3d6df4743e6b50afe0fc717fa8a12bc888e6",
+      "sha256": "2f88744feed717856386400a44bba4b9ca62e76a32c715d4f309c399bf28166f",
+      "size": 65536,
+      "repo_path": "bios/Nintendo/3DS/boot9.bin",
+      "cores": [
+        "citra"
+      ],
+      "systems": [
+        "nintendo-3ds"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "Citra/sysdata/shared_font.bin",
+      "sha1": "60022d6d026c8df950722478aab25702a0dfa067",
+      "sha256": "a06aaf6b50ebc38ebdccc59b913d4a1c0cc7005289957530acaaf78ffc49dddd",
+      "size": 3145728,
+      "repo_path": "bios/Nintendo/3DS/Citra/sysdata/shared_font.bin",
+      "cores": [
+        "citra",
+        "citra2018"
+      ],
+      "systems": [
+        "nintendo-3ds"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "Citra/sysdata/seeddb.bin",
+      "sha1": "9e2c006997761082be87cf316e57c4da5cddbc62",
+      "sha256": "ff485c60090185aff05354ece01f86b61f6020332bed0f9090c58d4678e5a180",
+      "size": 53264,
+      "repo_path": "bios/Nintendo/3DS/Citra/sysdata/seeddb.bin",
+      "cores": [
+        "citra"
+      ],
+      "systems": [
+        "nintendo-3ds"
+      ],
+      "root": "save"
+    },
+    {
       "dest": "switch/title.keys",
       "sha1": "bfee8e708dc4c8f27bfe51a12d57caaa0b7f74de",
       "sha256": "3ed66f7e82df79922739c6c2d34de90bc36a48d13acdff24f9d51013bd8c0677",
@@ -69850,6 +69573,18 @@
         "gearsystem",
         "smsplus"
       ]
+    },
+    {
+      "dest": "hiscore.dat",
+      "sha1": "7381472bf046126257e51a0124e4553282f020e5",
+      "sha256": "9d44fc928c0df41debad1b86739bd6ca96a5891b3b499f6fb3d7e9ea95ca8de5",
+      "size": 322458,
+      "repo_path": "bios/Arcade/Arcade/hiscore.dat",
+      "cores": [
+        "fbalpha2012",
+        "fbalpha2012_cps3"
+      ],
+      "root": "save"
     },
     {
       "dest": "fba2012/samples/dkong.zip",
@@ -70623,6 +70358,17 @@
       ]
     },
     {
+      "dest": "fsuae/Kickstarts/rom.key",
+      "sha1": "801bbab32e3d37386dd1636d4f1d6fa7e21d5874",
+      "sha256": "baf2366ae04337d37e7b37ebfb5cd7af7e4ffddeb6b017bf2e5fec43d87764e0",
+      "size": 2069,
+      "repo_path": "bios/Commodore/Amiga/rom.key",
+      "cores": [
+        "fsuae"
+      ],
+      "root": "save"
+    },
+    {
       "dest": "fuse/128p-0.rom",
       "sha1": "d07fcdeca892ee80494d286ea9ea5bf3928a1aca",
       "sha256": "633343620691a592c706d18c927fd539b7069a5d0fb7011bcd3bfc94be418681",
@@ -71057,6 +70803,92 @@
       "systems": [
         "nintendo-gamecube"
       ]
+    },
+    {
+      "dest": "User/Wii/shared2/sys/SYSCONF",
+      "sha1": "3256c026284a24fb99d2ec1558d95db3b5dcc2e9",
+      "sha256": "a8ec1ec377ee3a3c93a27f74dadf9edf95112ce167fc23d1abdbeb4fa15eb179",
+      "size": 16384,
+      "repo_path": "bios/Nintendo/Wii/SYSCONF",
+      "cores": [
+        "ishiiruka"
+      ],
+      "systems": [
+        "nintendo-gamecube"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "User/Wii/title/00000001/00000002/data/setting.txt",
+      "sha1": "077a31ce116de322f089a627c5eb7ff5c2236a5d",
+      "sha256": "5e17f8bc2444048c944e92a4f3b2a89a6f7f06398a17b2552be8d32e52c6f9db",
+      "size": 256,
+      "repo_path": "bios/Nintendo/Wii/setting.txt",
+      "cores": [
+        "ishiiruka"
+      ],
+      "systems": [
+        "nintendo-gamecube"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "User/Wii/sd.raw",
+      "sha1": "8c8134f08b2e3baa603206ede30d3935365009b8",
+      "sha256": "5709657d763f510f58792ca3ba080b0f663ec922149aa3ef5a0a4495ebabf8a6",
+      "size": 134217728,
+      "repo_path": "bios/Nintendo/Wii/sd.raw",
+      "cores": [
+        "ishiiruka"
+      ],
+      "systems": [
+        "nintendo-gamecube"
+      ],
+      "storage": "release",
+      "release_asset": "sd.raw",
+      "root": "save"
+    },
+    {
+      "dest": "User/Wii/clientca.pem",
+      "sha1": "4b937d4e81de11574b926386dd5f768aa23bf177",
+      "sha256": "229ec678525e060588e8ea23e5459ec14af3c2ebb7b9e69ec46b0faf011730d9",
+      "size": 1005,
+      "repo_path": "bios/Nintendo/Wii/clientca.pem",
+      "cores": [
+        "ishiiruka"
+      ],
+      "systems": [
+        "nintendo-gamecube"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "User/Wii/clientcakey.pem",
+      "sha1": "a2c11886e6d12a135e1d5eb50d5fe92e028577d9",
+      "sha256": "723be9b32c3afb83a4a3757adf352529e90c0ad6fad52509963ba8942ae625df",
+      "size": 609,
+      "repo_path": "bios/Nintendo/Wii/clientcakey.pem",
+      "cores": [
+        "ishiiruka"
+      ],
+      "systems": [
+        "nintendo-gamecube"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "User/Wii/rootca.pem",
+      "sha1": "b5229455dd26c1f53c73060e9089b391389e1f75",
+      "sha256": "c5b0f8dfcec6b9ed2ac38b8bc69a4db7c209dc177d243c8df2bddf9e39171e5f",
+      "size": 897,
+      "repo_path": "bios/Nintendo/Wii/rootca.pem",
+      "cores": [
+        "ishiiruka"
+      ],
+      "systems": [
+        "nintendo-gamecube"
+      ],
+      "root": "save"
     },
     {
       "dest": "jazz2/Source/AnimsSw.j2a",
@@ -91321,6 +91153,36 @@
       "category": "game_data"
     },
     {
+      "dest": "Emulator Files/sysdata/aes_keys.txt",
+      "sha1": "29556640b022cbfaf427874695838b43a5e8aff4",
+      "sha256": "0d866e062cf62275fbb291ba44af253e67fdc5bd76c7640b6c4a9dfe742510d9",
+      "size": 7357,
+      "repo_path": "bios/Nintendo/3DS/aes_keys.txt",
+      "cores": [
+        "panda3ds",
+        "trident"
+      ],
+      "systems": [
+        "nintendo-3ds"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "Emulator Files/sysdata/seeddb.bin",
+      "sha1": "9e2c006997761082be87cf316e57c4da5cddbc62",
+      "sha256": "ff485c60090185aff05354ece01f86b61f6020332bed0f9090c58d4678e5a180",
+      "size": 53264,
+      "repo_path": "bios/Nintendo/3DS/Citra/sysdata/seeddb.bin",
+      "cores": [
+        "panda3ds",
+        "trident"
+      ],
+      "systems": [
+        "nintendo-3ds"
+      ],
+      "root": "save"
+    },
+    {
       "dest": "64DD_IPL.bin",
       "sha1": "bf861922dcb78c316360e3e742f4f70ff63c9bc3",
       "sha256": "806400ec0df94b0755de6c5b8249d6b6a9866124c5ddbdac198bde22499bfb8b",
@@ -94408,6 +94270,90 @@
       "cores": [
         "squirreljme"
       ]
+    },
+    {
+      "dest": "stella/KVS1.WAV",
+      "sha1": "b094c2c1fca81a0e531e0541f302346150ec4604",
+      "sha256": "8bf8d878db407cc81b4c8a05069d3aa35e0e7bff803112d4d0eba637d60fe12c",
+      "size": 3436329,
+      "repo_path": "bios/Atari/2600/KVS1.WAV",
+      "cores": [
+        "stella"
+      ],
+      "root": "save",
+      "category": "game_data"
+    },
+    {
+      "dest": "stella/KVS2.WAV",
+      "sha1": "8b83b2eea01b3e08ceb885aeb153d4084bddb63c",
+      "sha256": "d031b9534ba75d870365657f578ed18c0cc513ebe9b253be7d80114c7ae4210d",
+      "size": 2086275,
+      "repo_path": "bios/Atari/2600/KVS2.WAV",
+      "cores": [
+        "stella"
+      ],
+      "root": "save",
+      "category": "game_data"
+    },
+    {
+      "dest": "stella/KVS3.WAV",
+      "sha1": "86896a1e272d8715489de9b407f0b8a42f82d4a0",
+      "sha256": "4e47d32533feebfa9625ea818183edcd519b8cb6516bf3db11dc9a01ada6878b",
+      "size": 3720920,
+      "repo_path": "bios/Atari/2600/KVS3.WAV",
+      "cores": [
+        "stella"
+      ],
+      "root": "save",
+      "category": "game_data"
+    },
+    {
+      "dest": "stella/KVB1.WAV",
+      "sha1": "6a582aebcefd6e2a97bdd8968202aab9851a889c",
+      "sha256": "968937d09e17ca059cdc5f092161ba172c56ff31bc945e381638c79bf7a7e4e2",
+      "size": 4219542,
+      "repo_path": "bios/Atari/2600/KVB1.WAV",
+      "cores": [
+        "stella"
+      ],
+      "root": "save",
+      "category": "game_data"
+    },
+    {
+      "dest": "stella/KVB2.WAV",
+      "sha1": "60a425c6bde3226ab731995562716321be20fc49",
+      "sha256": "6ac885493469e68992b0d272264b4b0947e7d6a5c6fd0170c65299acc386c122",
+      "size": 9593878,
+      "repo_path": "bios/Atari/2600/KVB2.WAV",
+      "cores": [
+        "stella"
+      ],
+      "root": "save",
+      "category": "game_data"
+    },
+    {
+      "dest": "stella/KVB3.WAV",
+      "sha1": "5e34125c4d6c209b21d1c892f3df0ec1644fd0d8",
+      "sha256": "76acf3b4e607cc851c625d455ced2b099dc394460d8716c02420904960842e34",
+      "size": 7676992,
+      "repo_path": "bios/Atari/2600/KVB3.WAV",
+      "cores": [
+        "stella"
+      ],
+      "root": "save",
+      "category": "game_data"
+    },
+    {
+      "dest": "stella/KVSHARED.WAV",
+      "sha1": "9adf10cdf1de833b194c7d8797ad1f041ad98dd3",
+      "sha256": "589b37725aeb9801868deafa2940c6eacb15430d4051ada7942298561f3014b6",
+      "size": 3059116,
+      "repo_path": "bios/Atari/2600/KVSHARED.WAV",
+      "cores": [
+        "stella"
+      ],
+      "root": "save",
+      "category": "game_data"
     },
     {
       "dest": "sgb.sfc",
@@ -100395,6 +100341,10 @@
       ]
     }
   ],
+  "save_directory": {
+    "folder": "saves/retroarch/saves",
+    "by_core": false
+  },
   "case_variants": [
     {
       "dest": "np2kai/2608_BD.WAV",
