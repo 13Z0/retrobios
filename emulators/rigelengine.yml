@@ -1,0 +1,104 @@
+emulator: RigelEngine
+type: standalone
+core_classification: game_engine
+source: "https://github.com/lethal-guitar/RigelEngine"
+upstream: "https://github.com/lethal-guitar/RigelEngine"
+profiled_date: "2026-10-22"
+source_commit: "30afeff8f0b105eac77ee0a2fbd54b06e1a49b60"
+core_version: "0.9.1-28-g30afeff8"
+display_name: "Duke Nukem II (RigelEngine)"
+cores: [rigelengine]
+systems: [duke-nukem-2]
+verification: existence
+
+notes: |
+  Reimplementation of the Duke Nukem II engine (Apogee, 1993). It plays the
+  data files of the DOS release, shareware or registered.
+
+  Game path. The path comes from the positional command line argument
+  (src/main.cpp:222), else the working directory when it holds NUKEM2.CMP,
+  else a folder browser (src/game_main.cpp:101-125). A folder is accepted only
+  when NUKEM2.CMP exists in it (src/game_main.cpp:72-78, 136-142) and the
+  choice is kept in the user profile (src/game_main.cpp:152-153, 235-240).
+  File names are opened as written, in upper case.
+
+  NUKEM2.CMP is an archive with a dictionary of 12-character names, offsets
+  and sizes. Every game asset is read from it (src/assets/resource_loader.cpp:148,
+  515-537). The only check is that each entry lies inside the file
+  (src/assets/cmp_file_package.cpp:43-66). No size, CRC or hash is compared.
+
+  Shareware or registered. The registered set is assumed when the archive
+  holds LCR.MNI and O1.MNI (src/frontend/game.cpp:235-245). With the
+  shareware set, episodes 2 to 4 answer with the ordering message
+  (src/frontend/menu_mode.cpp:243-247) and saves of those episodes are
+  refused (src/frontend/menu_mode.cpp:303-305). The shareware episode plays
+  in full.
+
+  Intro movies. NUKEM2.F1 to NUKEM2.F4 are loaded loose from the game path
+  (src/assets/resource_loader.cpp:415-429) when the intro is built
+  (src/ui/intro_movie.cpp:72, 80, 94, 108), and NUKEM2.F5 is the Apogee logo
+  (src/ui/apogee_logo.cpp:63-67). A missing file throws and the intro or the
+  logo is skipped (src/frontend/intro_demo_loop_mode.cpp:38-55, 64-77).
+
+  On first launch the original game's saves, high scores and settings
+  (NUKEM2.-NM, NUKEM2.-S1 to -S8, NUKEM2.-V1 to -V4, NUKEM2.-GT) are imported
+  when present (src/assets/user_profile_import.cpp:144-203). They are user
+  data, not distributed files.
+
+  The shareware release that the project points to is
+  archive.org msdos_DUKE2_shareware, DUKE2.zip (README.md:82,
+  cmake/rigel_pack.cmake:14-17). It holds NUKEM2.CMP and all five movies.
+  NUKEM2.EXE in that release is never opened.
+
+  EmuELEC 4.8 builds commit f05996f9b3ad3b3ea5bb818e49e7977636746343, where
+  every file cited above is identical, and passes /storage/roms/ports/rigelengine
+  as the game path.
+
+files:
+  - name: "NUKEM2.CMP"
+    category: game_data
+    system: duke-nukem-2
+    required: true
+    description: "Game data archive: levels, graphics, sounds, music and texts"
+    note: "Its presence validates the game path. The shareware archive plays episode 1, the registered one all four."
+    source_ref: "src/game_main.cpp:72-78, 136-142, src/assets/resource_loader.cpp:148"
+
+  - name: "NUKEM2.F1"
+    category: game_data
+    system: duke-nukem-2
+    required: false
+    description: "Intro movie, shot at the shooting range"
+    note: "The intro needs F1 to F4 together, it is skipped when one is missing"
+    source_ref: "src/ui/intro_movie.cpp:80, src/frontend/intro_demo_loop_mode.cpp:38-44"
+
+  - name: "NUKEM2.F2"
+    category: game_data
+    system: duke-nukem-2
+    required: false
+    description: "Intro movie, Neo LA opening scene"
+    note: "The intro needs F1 to F4 together, it is skipped when one is missing"
+    source_ref: "src/ui/intro_movie.cpp:72, src/frontend/intro_demo_loop_mode.cpp:38-44"
+
+  - name: "NUKEM2.F3"
+    category: game_data
+    system: duke-nukem-2
+    required: false
+    description: "Intro movie, target hit"
+    note: "The intro needs F1 to F4 together, it is skipped when one is missing"
+    source_ref: "src/ui/intro_movie.cpp:94, src/frontend/intro_demo_loop_mode.cpp:38-44"
+
+  - name: "NUKEM2.F4"
+    category: game_data
+    system: duke-nukem-2
+    required: false
+    description: "Intro movie, end of the shooting range scene"
+    note: "The intro needs F1 to F4 together, it is skipped when one is missing"
+    source_ref: "src/ui/intro_movie.cpp:108, src/frontend/intro_demo_loop_mode.cpp:38-44"
+
+  - name: "NUKEM2.F5"
+    category: game_data
+    system: duke-nukem-2
+    required: false
+    description: "Apogee logo movie"
+    note: "The logo is skipped when the file is missing"
+    source_ref: "src/ui/apogee_logo.cpp:63-67, src/frontend/intro_demo_loop_mode.cpp:49-55, 64-70"
