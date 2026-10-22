@@ -1,0 +1,47 @@
+emulator: "SuperTuxKart"
+type: standalone
+core_classification: game_engine
+source: "https://github.com/supertuxkart/stk-code"
+profiled_date: "2026-10-22"
+source_commit: "fab79150111944c9e33396db68eb5de84f2efeaa"
+core_version: "git"
+display_name: "SuperTuxKart"
+cores:
+  - "supertuxkart"
+systems: [supertuxkart]
+
+notes: |
+  The free kart racer. A development build announces its version as git, and
+  the data directory is accepted only when it holds the marker file
+  supertuxkart.<version>, here supertuxkart.git. It is
+  $SUPERTUXKART_DATADIR/data, else the first of ./data, ../data, ../../data
+  and the data directories next to the executable that holds the marker, else
+  the build-time install path. No marker stops the game with a fatal error.
+  The code's data directory holds the configuration, interface, shaders and
+  fonts. Karts, tracks, music, sounds, models and textures come from the
+  separate assets set, read from $SUPERTUXKART_ASSETS_DIR, ../../stk-assets
+  or ../../supertuxkart-assets relative to the data directory, or from the
+  same tree.
+  ref: CMakeLists.txt:5-7, src/utils/constants.cpp:33,
+       src/io/file_manager.cpp:170-262, src/io/file_manager.cpp:269-292
+
+  EmuELEC builds this revision without data. On first start its
+  run_supertuxkart.sh downloads the 1.4 tag of stk-code, keeps its data
+  directory under /storage/roms/ports/supertuxkart, unpacks the 1.4
+  stk-assets-mobile set into it, creates the supertuxkart.git marker the 1.4
+  tree lacks (it carries supertuxkart.1.4), and runs supertuxkart with
+  SUPERTUXKART_DATADIR set to that directory.
+  ref: EmuELEC packages/sx05re/emuelec-ports/supertuxkart/package.mk:4-11,
+       EmuELEC packages/sx05re/emuelec-ports/supertuxkart/scripts/run_supertuxkart.sh:10-34
+
+files:
+  - name: "SuperTuxKart data"
+    path: "data/"
+    type: directory
+    category: game_data
+    system: supertuxkart
+    required: true
+    installed_on: [emuelec]
+    description: "Game data tree (data/ of stk-code with the stk-assets set)"
+    note: "Must hold supertuxkart.git for this build."
+    source_ref: "src/io/file_manager.cpp:179-225"
