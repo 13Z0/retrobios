@@ -472,6 +472,78 @@ class RetroDeckCoresAreItsComponents(unittest.TestCase):
         self.assertNotIn("cores", registry["platforms"]["retrodeck"])
 
 
+class RetroDeckComponentModes(unittest.TestCase):
+    """Every RetroDECK component was written standalone only: Azahar, whose
+    ES-DE system also loads azahar_libretro.so, never got its libretro
+    files, which the core reads below its save folder."""
+
+    # Commands as RetroDECK/ES-DE 15e1b236 writes them in
+    # resources/systems/linux/es_systems.xml (n3ds at 1379-1383, psx at
+    # 1843 and 1847). The commented-out DuckStation core is the fixture's own.
+    ES_SYSTEMS = """\
+<?xml version="1.0"?>
+<systemList>
+  <system><name>n3ds</name><path>%ROMPATH%/n3ds</path>
+    <command label="Azahar (Standalone)">%EMULATOR_AZAHAR% %ROM%</command>
+    <command label="Azahar">%EMULATOR_RETROARCH% -L %CORE_RETROARCH%/azahar_libretro.so %ROM%</command>
+    <command label="Citra">%EMULATOR_RETROARCH% -L %CORE_RETROARCH%/citra_libretro.so %ROM%</command>
+  </system>
+  <system><name>psx</name><path>%ROMPATH%/psx</path>
+    <command label="SwanStation">%EMULATOR_RETROARCH% -L %CORE_RETROARCH%/swanstation_libretro.so %ROM%</command>
+    <!-- <command label="DuckStation">%EMULATOR_RETROARCH% -L %CORE_RETROARCH%/duckstation_libretro.so %ROM%</command> -->
+    <command label="DuckStation (Legacy) (Standalone)">%EMULATOR_DUCKSTATION% -batch %ROM%</command>
+  </system>
+</systemList>
+"""
+
+    def _config(self) -> dict:
+        from scraper import retrodeck_scraper as rd
+
+        with tempfile.TemporaryDirectory() as tmp:
+            for component in ("azahar", "duckstation", "es-de", "retroarch"):
+                (Path(tmp) / component).mkdir()
+                (Path(tmp) / component / "component_manifest.json").write_text(
+                    json.dumps({component: {"system": component}})
+                )
+            scraper = rd.Scraper(manifests_dir=tmp)
+            systems = rd.es_systems_libretro_systems(self.ES_SYSTEMS)
+            with mock.patch.object(rd, "fetch_github_latest_version", return_value="0.10.10b"), \
+                    mock.patch.object(rd, "extract_launchers", return_value=[]), \
+                    mock.patch.object(rd.Scraper, "_fetch_libretro_systems", return_value=systems):
+                return scraper.generate_platform_yaml()
+
+    def test_a_component_es_de_also_runs_as_a_core_is_dual_mode(self):
+        config = self._config()
+        self.assertEqual(config["cores"], ["azahar", "duckstation", "retroarch"])
+        self.assertEqual(config["standalone_cores"], ["azahar", "duckstation"])
+        self.assertEqual(config["dual_mode_cores"], ["azahar"])
+
+    def test_a_commented_out_core_command_offers_nothing(self):
+        """duckstation_libretro.so sits in a comment: DuckStation runs standalone only."""
+        config = self._config()
+        self.assertNotIn("duckstation", config["dual_mode_cores"])
+        self.assertNotIn("duckstation", config["libretro_systems"])
+
+    def test_a_core_without_a_component_is_not_a_component(self):
+        """citra_libretro.so runs through RetroArch, and RetroDECK ships no citra build."""
+        from scraper.retrodeck_scraper import component_modes
+
+        standalone, dual = component_modes(
+            ["azahar", "retroarch"], {"azahar": ["n3ds"], "citra": ["n3ds"]}
+        )
+        self.assertEqual((standalone, dual), (["azahar"], ["azahar"]))
+
+    def test_the_platform_file_carries_the_modes(self):
+        import yaml
+
+        root = Path(__file__).resolve().parents[1]
+        platform = yaml.safe_load((root / "platforms" / "retrodeck.yml").read_text())
+        dual = set(platform.get("dual_mode_cores") or [])
+        self.assertIn("azahar", dual)
+        self.assertLessEqual(dual, set(platform["standalone_cores"]))
+        self.assertLessEqual(dual, set(platform["libretro_systems"]))
+
+
 class BizHawkRunsAresForN64Only(unittest.TestCase):
     """BizHawk embeds ares as Ares64, its N64 core. Mapping it to the ares
     profile claimed thirty systems and accused FirmwareDatabase.cs of a

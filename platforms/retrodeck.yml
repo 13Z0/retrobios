@@ -44,6 +44,14 @@ standalone_cores:
 - vita3k
 - xemu
 - xroar
+dual_mode_cores:
+- azahar
+- cemu
+- dolphin
+- mame
+- melonds
+- pcsx2
+- ppsspp
 systems:
   triforce:
     files:

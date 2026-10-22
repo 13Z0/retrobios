@@ -96,6 +96,25 @@ def es_systems_libretro_systems(text: str) -> dict[str, list[str]]:
             if match:
                 found.setdefault(match.group(1), set()).add(folder)
     return {core: sorted(folders) for core, folders in sorted(found.items())}
+
+
+def component_modes(
+    components: list[str], libretro_systems: dict[str, list[str]]
+) -> tuple[list[str], list[str]]:
+    """(standalone_cores, dual_mode_cores) of RetroDECK's emulator components.
+
+    Every component but retroarch is an emulator RetroDECK launches on its
+    own (its component_launcher.sh execs the emulator's binary). One whose name
+    is also a core an ES-DE command loads through RetroArch is offered both
+    ways: es_systems.xml lists "Azahar (Standalone)" and "Azahar"
+    (azahar_libretro.so) for n3ds. The core itself ships, RetroArch's cores
+    coming whole from the buildbot's nightly RetroArch_cores.7z
+    (retroarch/component_recipe.json:250-262 at components fcd0d729).
+    """
+    standalone = [c for c in components if c != "retroarch"]
+    return standalone, [c for c in standalone if c in libretro_systems]
+
+
 NON_EMULATOR_COMPONENTS = {
     "framework",
     "es-de",
@@ -533,6 +552,9 @@ class Scraper(BaseScraper):
             sys_entry["files"].append(requirement_entry(req))
 
         version = fetch_github_latest_version("RetroDECK/RetroDECK")
+        # The ROM folders each libretro core runs for: its save folders.
+        libretro_systems = self._fetch_libretro_systems()
+        standalone, dual = component_modes(cores, libretro_systems)
 
         return {
             "platform": "RetroDECK",
@@ -547,12 +569,10 @@ class Scraper(BaseScraper):
             "hash_type": "md5",
             "verification_mode": "md5",
             "cores": cores,
-            # Each component is one emulator RetroDECK ships and launches on
-            # its own, and retroarch is the one that runs cores.
-            "standalone_cores": [c for c in cores if c != "retroarch"],
+            "standalone_cores": standalone,
+            **({"dual_mode_cores": dual} if dual else {}),
             "systems": systems,
-            # The ROM folders each libretro core runs for: its save folders.
-            "libretro_systems": self._fetch_libretro_systems(),
+            "libretro_systems": libretro_systems,
             "launchers": extract_launchers(cores, self.component_file),
         }
 
