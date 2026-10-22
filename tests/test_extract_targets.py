@@ -67,9 +67,14 @@ class ThePackGuideNamesTheInstallerDefault(unittest.TestCase):
             rule["path"] for rule in registry["retrobat"]["install"]["detect"]
             if rule["os"] == "windows" and rule["method"] == "path_exists"
         )
-        guide = (REPO_ROOT / "scripts" / "packreadme.py").read_text(encoding="utf-8")
+        sys.path.insert(0, str(REPO_ROOT / "scripts"))
+        from siteguides import pack_manual  # noqa: PLC0415
+
+        # The pack guide text is data (platforms/_guides.yml): read what the
+        # pack README prints, not the source of the script that prints it.
+        guide = pack_manual("retrobat")
         self.assertEqual(first, "C:\\RetroBat\\bios")
-        self.assertIn("(default: C:\\\\RetroBat\\\\bios\\\\)", guide)
+        self.assertIn("(default: C:\\RetroBat\\bios\\)", guide)
 
 
 if __name__ == "__main__":
