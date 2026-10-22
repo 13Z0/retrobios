@@ -1634,17 +1634,22 @@ _NOT_FIRMWARE = {
 def category_evidence_text(evidence: dict) -> str:
     """One line saying what establishes a missing entry's category."""
     if evidence.get("read_by"):
-        readers = []
+        groups: dict[bool, list[str]] = {True: [], False: []}
         for reader in evidence["read_by"]:
             refs = [
                 f"{e['name']} at {e['source_ref']}" if e.get("source_ref") else e["name"]
                 for e in reader.get("entries", [])
             ]
-            readers.append(
+            groups[bool(reader.get("runs_system"))].append(
                 f"{reader['emulator']} ({', '.join(refs)})" if refs
                 else f"{reader['emulator']} (by {reader['proof']})"
             )
-        return "read by " + ", ".join(readers)
+        if not groups[True]:
+            return "read by " + ", ".join(groups[False])
+        text = "read by " + ", ".join(groups[True])
+        if groups[False]:
+            text += ", also named by " + ", ".join(groups[False])
+        return text
     examined = evidence.get("cores_examined") or []
     cores = f"cores examined: {', '.join(examined)}" if examined else "no core examined"
     if evidence.get("unsettled"):

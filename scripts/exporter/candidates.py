@@ -242,6 +242,10 @@ class EntryCategories:
     and every entry of a platform with no core to examine (BizHawk, MiSTer),
     stays firmware.
 
+    A system that carries its own `cores:` list is settled by those cores:
+    the cores examined are the ones it runs, and only its own unprofiled
+    cores leave it open. Otherwise the platform's whole list applies.
+
     `explain` returns the category with its evidence: the profile entries
     that read the file, or the cores of its system that were examined.
     """
@@ -275,6 +279,20 @@ class EntryCategories:
         for key in sorted(examined):
             for sid in profiles[key].get("systems") or []:
                 self._by_system.setdefault(_norm_system_id(str(sid)), []).append(key)
+        # Where the platform says which cores run a system, those settle its
+        # entries: an unprofiled core of another system has no say.
+        self._system_runs: dict[str, tuple[list[str], list[str]]] = {}
+        for sys_id, system in (config.get("systems") or {}).items():
+            names = system.get("cores") if isinstance(system, dict) else None
+            if names:
+                own = {**config, "cores": list(names)}
+                for key in ("standalone_cores", "dual_mode_cores"):
+                    if key in config:
+                        own[key] = [n for n in config.get(key) or [] if n in names]
+                self._system_runs[sys_id] = (
+                    sorted(resolve_platform_cores(own, profiles)),
+                    sorted(unresolved_platform_cores(own, profiles)),
+                )
 
     def _matching(self, key: str, kind: str, entry: dict) -> list[dict]:
         """The profile entries of `key` that name the platform entry."""
@@ -304,7 +322,17 @@ class EntryCategories:
                 })
         if self._launchers.proof(entry, destination) is not None:
             readers[BIOS].append({"emulator": "launcher", "proof": "launcher", "entries": []})
-        system_cores = self._by_system.get(_norm_system_id(system), [])
+        if system in self._system_runs:
+            system_cores, unresolved = self._system_runs[system]
+        else:
+            system_cores = self._by_system.get(_norm_system_id(system), [])
+            unresolved = self._unresolved
+        # A reader that runs the entry's system comes first and says so: a
+        # core of another system may only share the file's name.
+        for found in readers.values():
+            for reader in found:
+                reader["runs_system"] = reader["emulator"] in system_cores
+            found.sort(key=lambda r: not r["runs_system"])
         if readers[BIOS]:
             return {"category": BIOS, "read_by": readers[BIOS]}
         if readers[GAME_DATA]:
@@ -312,10 +340,10 @@ class EntryCategories:
         examined = {"cores_examined": system_cores}
         if self._guessed:
             return {"category": BIOS, "unsettled": "the platform declares no core list", **examined}
-        if self._unresolved:
+        if unresolved:
             return {"category": BIOS,
                     "unsettled": "cores the platform names have no profile: "
-                                 + ", ".join(self._unresolved), **examined}
+                                 + ", ".join(unresolved), **examined}
         if not system_cores:
             return {"category": BIOS,
                     "unsettled": "no examined core emulates this system", **examined}

@@ -82,7 +82,7 @@ class Evidence(unittest.TestCase):
         found = self.cats.explain({"name": "diabdat.mpq"}, "ports/diablo/diabdat.mpq", "diablo")
         self.assertEqual(found["category"], GAME_DATA)
         self.assertEqual(found["read_by"], [{
-            "emulator": "devilutionx", "proof": "name",
+            "emulator": "devilutionx", "proof": "name", "runs_system": True,
             "entries": [{"name": "diabdat.mpq", "source_ref": "Source/init.cpp:120"}]}])
         self.assertEqual(verify.category_evidence_text(found),
                          "read by devilutionx (diabdat.mpq at Source/init.cpp:120)")
@@ -90,6 +90,25 @@ class Evidence(unittest.TestCase):
     def test_unread_names_the_cores_examined(self):
         found = self.cats.explain({"name": "hardwareconfig.xml"},
                                   "bios/Machines/MSX/hardwareconfig.xml", "microsoft-msx")
+        self.assertEqual(found, {"category": UNREAD, "cores_examined": ["bluemsx"]})
+
+    def test_the_system_s_own_core_reads_first(self):
+        profiles = {**PROFILES, "other": {
+            "emulator": "Other", "type": "game", "cores": ["other"], "systems": ["elsewhere"],
+            "files": [{"name": "diabdat.mpq", "category": "game_data"}]}}
+        cats = EntryCategories(_config(["bluemsx", "devilutionx", "other"], []), profiles)
+        found = cats.explain({"name": "diabdat.mpq"}, "ports/diablo/diabdat.mpq", "diablo")
+        self.assertEqual([r["emulator"] for r in found["read_by"]], ["devilutionx", "other"])
+        self.assertEqual(verify.category_evidence_text(found),
+                         "read by devilutionx (diabdat.mpq at Source/init.cpp:120), "
+                         "also named by other (diabdat.mpq)")
+
+    def test_a_system_s_own_cores_settle_it(self):
+        config = _config(["bluemsx", "devilutionx", "mystery"], [], system="microsoft-msx")
+        config["systems"]["microsoft-msx"]["cores"] = ["bluemsx"]
+        found = EntryCategories(config, PROFILES).explain(
+            {"name": "hardwareconfig.xml"}, "bios/Machines/MSX/hardwareconfig.xml",
+            "microsoft-msx")
         self.assertEqual(found, {"category": UNREAD, "cores_examined": ["bluemsx"]})
         self.assertEqual(verify.category_evidence_text(found),
                          "no reader found (cores examined: bluemsx)")

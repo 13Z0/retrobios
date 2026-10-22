@@ -2064,7 +2064,7 @@ def _platform_data_links(name: str) -> str:
 def _category_evidence_md(evidence: dict) -> str:
     """What establishes a missing entry's category, as the page shows it."""
     if evidence.get("read_by"):
-        readers = []
+        groups: dict[bool, list[str]] = {True: [], False: []}
         for reader in evidence["read_by"]:
             refs = [
                 f"`{e['name']}` at `{e['source_ref']}`" if e.get("source_ref") else f"`{e['name']}`"
@@ -2072,8 +2072,14 @@ def _category_evidence_md(evidence: dict) -> str:
             ]
             name = (_emulator_link(reader["emulator"], "../")
                     if reader["emulator"] != "launcher" else "the platform's launcher")
-            readers.append(f"{name} ({', '.join(refs)})" if refs else f"{name} (by {reader['proof']})")
-        return "Read by " + ", ".join(readers)
+            groups[bool(reader.get("runs_system"))].append(
+                f"{name} ({', '.join(refs)})" if refs else f"{name} (by {reader['proof']})")
+        if not groups[True]:
+            return "Read by " + ", ".join(groups[False])
+        text = "Read by " + ", ".join(groups[True])
+        if groups[False]:
+            text += ", also named by " + ", ".join(groups[False])
+        return text
     examined = evidence.get("cores_examined") or []
     cores = ("cores examined: " + ", ".join(_emulator_link(c, "../") for c in examined)
              if examined else "no core examined")
