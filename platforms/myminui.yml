@@ -1,0 +1,426 @@
+platform: MyMinUI
+version: '2026-08-09'
+homepage: "https://github.com/Turro75/MyMinUI"
+source: "https://github.com/Turro75/MyMinUI/tree/72ed4f3dd80d96646c11bf9363242565320d9566"
+base_destination: ''
+hash_type: sha1
+verification_mode: existence
+system_directory_ref: "workspace/all/minarch/minarch.c:3532"
+cores:
+- a5200
+- dosbox_pure
+- fake08
+- fbneo
+- fceumm
+- fuse
+- gambatte
+- gpsp
+- mame2003_plus
+- mednafen_ngp
+- mednafen_pce_fast
+- mednafen_supafaust
+- mednafen_vb
+- mednafen_wswan
+- mgba
+- neocd
+- pcsx_rearmed
+- picodrive
+- pokemini
+- prboom
+- prosystem
+- puae2021
+- snes9x2005_plus
+- stella2014
+- tyrquake
+core_system_dirs:
+  Bios/A2600:
+    cores:
+    - stella2014
+    devices:
+    - h700
+    - m21
+    - miyoomini
+    - my282
+    - r36s
+    - rg35xx
+    source_ref: "skeleton/EXTRAS/Emus/h700/A2600.pak/launch.sh:3"
+  Bios/A5200:
+    cores:
+    - a5200
+    devices:
+    - h700
+    - m21
+    - miyoomini
+    - my282
+    - r36s
+    - rg35xx
+    source_ref: "skeleton/EXTRAS/Emus/h700/A5200.pak/launch.sh:3"
+  Bios/A7800:
+    cores:
+    - prosystem
+    devices:
+    - h700
+    - m21
+    - miyoomini
+    - my282
+    - r36s
+    - rg35xx
+    source_ref: "skeleton/EXTRAS/Emus/h700/A7800.pak/launch.sh:3"
+  Bios/DOOM:
+    cores:
+    - prboom
+    devices:
+    - h700
+    - m21
+    - miyoomini
+    - my282
+    - r36s
+    - rg35xx
+    source_ref: "skeleton/EXTRAS/Emus/h700/DOOM.pak/launch.sh:3"
+  Bios/DOS:
+    cores:
+    - dosbox_pure
+    devices:
+    - h700
+    - m21
+    - miyoomini
+    - r36s
+    - rg35xx
+    source_ref: "skeleton/EXTRAS/Emus/h700/DOS.pak/launch.sh:3"
+  Bios/FBN:
+    cores:
+    - fbneo
+    devices:
+    - h700
+    - m21
+    - miyoomini
+    - my282
+    - r36s
+    - rg35xx
+    source_ref: "skeleton/EXTRAS/Emus/h700/FBN.pak/launch.sh:3"
+  Bios/FC:
+    cores:
+    - fceumm
+    devices:
+    - h700
+    - m21
+    - miyoomini
+    - my282
+    - r36s
+    - rg35xx
+    source_ref: "skeleton/EXTRAS/Emus/h700/FC.pak/launch.sh:3"
+  Bios/GB:
+    cores:
+    - gambatte
+    devices:
+    - h700
+    - m21
+    - miyoomini
+    - my282
+    - r36s
+    - rg35xx
+    source_ref: "skeleton/EXTRAS/Emus/h700/GB.pak/launch.sh:3"
+  Bios/GBA:
+    cores:
+    - gpsp
+    devices:
+    - h700
+    - m21
+    - miyoomini
+    - my282
+    - r36s
+    - rg35xx
+    source_ref: "skeleton/EXTRAS/Emus/h700/GBA.pak/launch.sh:3"
+  Bios/GBC:
+    cores:
+    - gambatte
+    devices:
+    - h700
+    - m21
+    - miyoomini
+    - my282
+    - r36s
+    - rg35xx
+    source_ref: "skeleton/EXTRAS/Emus/h700/GBC.pak/launch.sh:3"
+  Bios/GG:
+    cores:
+    - picodrive
+    devices:
+    - h700
+    - m21
+    - miyoomini
+    - my282
+    - r36s
+    - rg35xx
+    source_ref: "skeleton/EXTRAS/Emus/h700/GG.pak/launch.sh:3"
+  Bios/MAME:
+    cores:
+    - mame2003_plus
+    devices:
+    - h700
+    - m21
+    - miyoomini
+    - my282
+    - r36s
+    - rg35xx
+    source_ref: "skeleton/EXTRAS/Emus/h700/MAME.pak/launch.sh:3"
+  Bios/MD:
+    cores:
+    - picodrive
+    devices:
+    - h700
+    - m21
+    - miyoomini
+    - my282
+    - r36s
+    - rg35xx
+    source_ref: "skeleton/EXTRAS/Emus/h700/MD.pak/launch.sh:3"
+  Bios/MGBA:
+    cores:
+    - mgba
+    devices:
+    - h700
+    - m21
+    - miyoomini
+    - my282
+    - r36s
+    - rg35xx
+    source_ref: "skeleton/EXTRAS/Emus/h700/MGBA.pak/launch.sh:3"
+  Bios/NG:
+    cores:
+    - fbneo
+    devices:
+    - h700
+    - m21
+    - miyoomini
+    - my282
+    - r36s
+    - rg35xx
+    source_ref: "skeleton/EXTRAS/Emus/h700/NG.pak/launch.sh:3"
+  Bios/NGCD:
+    cores:
+    - neocd
+    devices:
+    - h700
+    - m21
+    - miyoomini
+    - my282
+    - r36s
+    - rg35xx
+    source_ref: "skeleton/EXTRAS/Emus/h700/NGCD.pak/launch.sh:3"
+  Bios/NGP:
+    cores:
+    - mednafen_ngp
+    devices:
+    - h700
+    - m21
+    - miyoomini
+    - my282
+    - r36s
+    - rg35xx
+    source_ref: "skeleton/EXTRAS/Emus/h700/NGP.pak/launch.sh:3"
+  Bios/NGPC:
+    cores:
+    - mednafen_ngp
+    devices:
+    - h700
+    - m21
+    - miyoomini
+    - my282
+    - r36s
+    - rg35xx
+    source_ref: "skeleton/EXTRAS/Emus/h700/NGPC.pak/launch.sh:3"
+  Bios/P8:
+    cores:
+    - fake08
+    devices:
+    - h700
+    - m21
+    - miyoomini
+    - my282
+    - r36s
+    - rg35xx
+    source_ref: "skeleton/EXTRAS/Emus/h700/P8.pak/launch.sh:3"
+  Bios/PCE:
+    cores:
+    - mednafen_pce_fast
+    devices:
+    - h700
+    - m21
+    - miyoomini
+    - my282
+    - r36s
+    - rg35xx
+    source_ref: "skeleton/EXTRAS/Emus/h700/PCE.pak/launch.sh:3"
+  Bios/PKM:
+    cores:
+    - pokemini
+    devices:
+    - h700
+    - m21
+    - miyoomini
+    - my282
+    - r36s
+    - rg35xx
+    source_ref: "skeleton/EXTRAS/Emus/h700/PKM.pak/launch.sh:3"
+  Bios/PS:
+    cores:
+    - pcsx_rearmed
+    devices:
+    - h700
+    - m21
+    - miyoomini
+    - my282
+    - r36s
+    - rg35xx
+    source_ref: "skeleton/EXTRAS/Emus/h700/PS.pak/launch.sh:3"
+  Bios/PUAE:
+    cores:
+    - puae2021
+    devices:
+    - h700
+    - m21
+    - miyoomini
+    - my282
+    - r36s
+    - rg35xx
+    source_ref: "skeleton/EXTRAS/Emus/h700/PUAE.pak/launch.sh:3"
+  Bios/QUAKE:
+    cores:
+    - tyrquake
+    devices:
+    - h700
+    - m21
+    - miyoomini
+    - r36s
+    - rg35xx
+    source_ref: "skeleton/EXTRAS/Emus/h700/QUAKE.pak/launch.sh:3"
+  Bios/SFC:
+    cores:
+    - snes9x2005_plus
+    devices:
+    - h700
+    - m21
+    - miyoomini
+    - my282
+    - r36s
+    - rg35xx
+    source_ref: "skeleton/EXTRAS/Emus/h700/SFC.pak/launch.sh:3"
+  Bios/SGB:
+    cores:
+    - mgba
+    devices:
+    - h700
+    - m21
+    - miyoomini
+    - my282
+    - r36s
+    - rg35xx
+    source_ref: "skeleton/EXTRAS/Emus/h700/SGB.pak/launch.sh:3"
+  Bios/SMS:
+    cores:
+    - picodrive
+    devices:
+    - h700
+    - m21
+    - miyoomini
+    - my282
+    - r36s
+    - rg35xx
+    source_ref: "skeleton/EXTRAS/Emus/h700/SMS.pak/launch.sh:3"
+  Bios/SUPA:
+    cores:
+    - mednafen_supafaust
+    devices:
+    - h700
+    - m21
+    - miyoomini
+    - my282
+    - r36s
+    - rg35xx
+    source_ref: "skeleton/EXTRAS/Emus/h700/SUPA.pak/launch.sh:3"
+  Bios/VB:
+    cores:
+    - mednafen_vb
+    devices:
+    - h700
+    - m21
+    - miyoomini
+    - my282
+    - r36s
+    - rg35xx
+    source_ref: "skeleton/EXTRAS/Emus/h700/VB.pak/launch.sh:3"
+  Bios/WS:
+    cores:
+    - mednafen_wswan
+    devices:
+    - h700
+    - m21
+    - miyoomini
+    - my282
+    - r36s
+    - rg35xx
+    source_ref: "skeleton/EXTRAS/Emus/h700/WS.pak/launch.sh:3"
+  Bios/ZXS:
+    cores:
+    - fuse
+    devices:
+    - h700
+    - m21
+    - miyoomini
+    - my282
+    - r36s
+    - rg35xx
+    source_ref: "skeleton/EXTRAS/Emus/h700/ZXS.pak/launch.sh:3"
+core_repositories:
+  a5200:
+  - "https://github.com/libretro/a5200"
+  dosbox_pure:
+  - "https://github.com/libretro/dosbox-pure"
+  fake08:
+  - "https://github.com/jtothebell/fake-08"
+  fbneo:
+  - "https://github.com/libretro/fbneo"
+  fceumm:
+  - "https://github.com/libretro/libretro-fceumm"
+  fuse:
+  - "https://github.com/libretro/fuse-libretro"
+  gambatte:
+  - "https://github.com/libretro/gambatte-libretro"
+  gpsp:
+  - "https://github.com/libretro/gpsp"
+  mame2003_plus:
+  - "https://github.com/libretro/mame2003-plus-libretro"
+  mednafen_ngp:
+  - "https://github.com/libretro/beetle-ngp-libretro"
+  mednafen_pce_fast:
+  - "https://github.com/libretro/beetle-pce-fast-libretro"
+  mednafen_supafaust:
+  - "https://github.com/libretro/supafaust"
+  mednafen_vb:
+  - "https://github.com/libretro/beetle-vb-libretro"
+  mednafen_wswan:
+  - "https://github.com/libretro/beetle-wswan-libretro"
+  mgba:
+  - "https://github.com/libretro/mgba"
+  neocd:
+  - "https://github.com/libretro/neocd_libretro"
+  pcsx_rearmed:
+  - "https://github.com/libretro/pcsx_rearmed"
+  picodrive:
+  - "https://github.com/irixxxx/picodrive"
+  pokemini:
+  - "https://github.com/libretro/PokeMini"
+  prboom:
+  - "https://github.com/libretro/libretro-prboom"
+  prosystem:
+  - "https://github.com/libretro/prosystem-libretro"
+  puae2021:
+  - "https://github.com/libretro/libretro-uae"
+  snes9x2005_plus:
+  - "https://github.com/libretro/snes9x2005"
+  stella2014:
+  - "https://github.com/libretro/stella2014-libretro"
+  tyrquake:
+  - "https://github.com/libretro/tyrquake"
+systems: {}

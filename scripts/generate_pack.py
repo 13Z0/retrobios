@@ -1157,6 +1157,7 @@ def generate_pack(
           standalone_copies=(
               _pack_registry.get(platform_name, {}).get("install", {}) or {}
           ).get("standalone_copies", []),
+          launch_folders=len(config.get("core_system_dirs") or {}),
       )
       _write_generated_member(zf, "README.txt", readme_text)
 

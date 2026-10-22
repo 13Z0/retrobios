@@ -12,7 +12,44 @@ def _detect_systems(detect: list[dict]) -> list[str]:
     """The operating systems the registry's detection rules cover, in order."""
     order = ("linux", "darwin", "windows")
     seen = {str(rule.get("os", "")) for rule in detect}
+    if "any" in seen:
+        return list(order)
     return [name for name in order if name in seen]
+
+
+def _card_section(platform_name: str, display: str) -> str:
+    """The one-line install for a frontend whose files live on its SD card.
+
+    The installer runs on the computer the card is mounted on, and the card
+    root is named: no folder on that computer is one the frontend reads.
+    """
+    return (
+        "  Option A: Automatic (recommended)\n"
+        "  ---------------------------------\n"
+        "  With the SD card mounted on a computer, name its root with --dest.\n"
+        "  Linux and macOS: run this in a terminal:\n\n"
+        f"    curl -fsSL {INSTALL_SH} | sh -s -- --platform {platform_name} --dest /path/to/card\n\n"
+        "  Windows: run this in PowerShell (E: being the card):\n\n"
+        f"    &([scriptblock]::Create((irm {INSTALL_PS1}))) --platform {platform_name} --dest E:\\\n\n"
+        f"  The installer writes each file where {display} hands it to the core\n"
+        "  and checks every file.\n\n"
+    )
+
+
+def _card_manual(display: str) -> str:
+    """Where the files of a per-tag Bios/ layout go, copied by hand."""
+    return (
+        "  Option B: Manual\n"
+        "  ----------------\n"
+        "  1. Put the SD card in your PC\n"
+        "  2. Extract all files from this archive directly into the root of the\n"
+        "     card: the archive holds the Bios/ folder, with one subfolder per\n"
+        "     launch tag (Bios/PS/, Bios/GBA/, ...)\n"
+        "  3. Overwrite if asked\n\n"
+        f"  {display} hands each core the folder named after the tag in\n"
+        "  parentheses of its Roms folder (\"Sony PlayStation (PS)\" reads\n"
+        "  Bios/PS/). A Roms folder can be renamed as long as the tag stays.\n\n"
+    )
 
 
 def _automatic_section(
@@ -234,24 +271,40 @@ def _build_readme(
     system_filter: list[str] | None = None,
     detect: list[dict] | None = None,
     standalone_copies: list[dict] | None = None,
+    launch_folders: int = 0,
 ) -> str:
-    """Build a personalized step-by-step README for each platform pack."""
+    """Build a personalized step-by-step README for each platform pack.
+
+    ``launch_folders`` counts the folders a platform that hands each core
+    its own system directory gives them, where it names no system.
+    """
     narrowings = narrowings or []
     sep = "=" * 50
+    scope = (
+        f"{launch_folders} launch folders" if launch_folders and not num_systems
+        else f"{num_systems} systems"
+    )
     header = (
         f"{sep}\n"
         f"  RETROBIOS - {platform_display} BIOS Pack\n"
-        f"  {total_files} files for {num_systems} systems\n"
+        f"  {total_files} files for {scope}\n"
         f"{sep}\n\n"
     )
 
     detect = list(detect or [])
     bios_paths = [str(rule.get("bios_path", "")) for rule in detect]
-    guide = (
-        "INSTALLATION GUIDE\n\n"
-        + _automatic_section(platform_display, detect, standalone_copies)
-        + MANUAL_GUIDES.get(platform_name, _generic_manual(bios_paths))
-    )
+    if any(rule.get("method") == "card_marker" for rule in detect):
+        guide = (
+            "INSTALLATION GUIDE\n\n"
+            + _card_section(platform_name, platform_display)
+            + _card_manual(platform_display)
+        )
+    else:
+        guide = (
+            "INSTALLATION GUIDE\n\n"
+            + _automatic_section(platform_display, detect, standalone_copies)
+            + MANUAL_GUIDES.get(platform_name, _generic_manual(bios_paths))
+        )
 
     if regions:
         region_help = (

@@ -1,0 +1,354 @@
+platform: MinUI
+version: '2025-11-27'
+homepage: "https://github.com/shauninman/MinUI"
+source: "https://github.com/shauninman/MinUI/tree/dbf89435a5179788418ff3573042cf9c7e75d9e0"
+base_destination: ''
+hash_type: sha1
+verification_mode: existence
+system_directory_ref: "workspace/all/minarch/minarch.c:2943"
+cores:
+- fake08
+- fceumm
+- gambatte
+- gpsp
+- mednafen_pce_fast
+- mednafen_supafaust
+- mednafen_vb
+- mgba
+- pcsx_rearmed
+- picodrive
+- pokemini
+- race
+- snes9x2005_plus
+core_system_dirs:
+  Bios/FC:
+    cores:
+    - fceumm
+    devices:
+    - gkdpixel
+    - m17
+    - magicmini
+    - miyoomini
+    - my282
+    - my355
+    - rg35xx
+    - rg35xxplus
+    - rgb30
+    - tg5040
+    - trimuismart
+    - zero28
+    source_ref: "skeleton/SYSTEM/gkdpixel/paks/Emus/FC.pak/launch.sh:3"
+  Bios/GB:
+    cores:
+    - gambatte
+    devices:
+    - gkdpixel
+    - m17
+    - magicmini
+    - miyoomini
+    - my282
+    - my355
+    - rg35xx
+    - rg35xxplus
+    - rgb30
+    - tg5040
+    - trimuismart
+    - zero28
+    source_ref: "skeleton/SYSTEM/gkdpixel/paks/Emus/GB.pak/launch.sh:3"
+  Bios/GBA:
+    cores:
+    - gpsp
+    devices:
+    - gkdpixel
+    - m17
+    - magicmini
+    - miyoomini
+    - my282
+    - my355
+    - rg35xx
+    - rg35xxplus
+    - rgb30
+    - tg5040
+    - trimuismart
+    - zero28
+    source_ref: "skeleton/SYSTEM/gkdpixel/paks/Emus/GBA.pak/launch.sh:3"
+  Bios/GBC:
+    cores:
+    - gambatte
+    devices:
+    - gkdpixel
+    - m17
+    - magicmini
+    - miyoomini
+    - my282
+    - my355
+    - rg35xx
+    - rg35xxplus
+    - rgb30
+    - tg5040
+    - trimuismart
+    - zero28
+    source_ref: "skeleton/SYSTEM/gkdpixel/paks/Emus/GBC.pak/launch.sh:3"
+  Bios/GG:
+    cores:
+    - picodrive
+    devices:
+    - gkdpixel
+    - m17
+    - magicmini
+    - miyoomini
+    - my282
+    - my355
+    - rg35xx
+    - rg35xxplus
+    - rgb30
+    - tg5040
+    - trimuismart
+    - zero28
+    source_ref: "skeleton/EXTRAS/Emus/gkdpixel/GG.pak/launch.sh:3"
+  Bios/MD:
+    cores:
+    - picodrive
+    devices:
+    - gkdpixel
+    - m17
+    - magicmini
+    - miyoomini
+    - my282
+    - my355
+    - rg35xx
+    - rg35xxplus
+    - rgb30
+    - tg5040
+    - trimuismart
+    - zero28
+    source_ref: "skeleton/SYSTEM/gkdpixel/paks/Emus/MD.pak/launch.sh:3"
+  Bios/MGBA:
+    cores:
+    - mgba
+    devices:
+    - gkdpixel
+    - m17
+    - magicmini
+    - miyoomini
+    - my282
+    - my355
+    - rg35xx
+    - rg35xxplus
+    - rgb30
+    - tg5040
+    - trimuismart
+    - zero28
+    source_ref: "skeleton/EXTRAS/Emus/gkdpixel/MGBA.pak/launch.sh:3"
+  Bios/NGP:
+    cores:
+    - race
+    devices:
+    - gkdpixel
+    - m17
+    - magicmini
+    - miyoomini
+    - my282
+    - my355
+    - rg35xx
+    - rg35xxplus
+    - rgb30
+    - tg5040
+    - trimuismart
+    - zero28
+    source_ref: "skeleton/EXTRAS/Emus/gkdpixel/NGP.pak/launch.sh:3"
+  Bios/NGPC:
+    cores:
+    - race
+    devices:
+    - gkdpixel
+    - m17
+    - magicmini
+    - miyoomini
+    - my282
+    - my355
+    - rg35xx
+    - rg35xxplus
+    - rgb30
+    - tg5040
+    - trimuismart
+    - zero28
+    source_ref: "skeleton/EXTRAS/Emus/gkdpixel/NGPC.pak/launch.sh:3"
+  Bios/P8:
+    cores:
+    - fake08
+    devices:
+    - m17
+    - magicmini
+    - miyoomini
+    - my282
+    - my355
+    - rg35xx
+    - rg35xxplus
+    - rgb30
+    - tg5040
+    - trimuismart
+    - zero28
+    source_ref: "skeleton/EXTRAS/Emus/m17/P8.pak/launch.sh:3"
+  Bios/PCE:
+    cores:
+    - mednafen_pce_fast
+    devices:
+    - gkdpixel
+    - m17
+    - magicmini
+    - miyoomini
+    - my282
+    - my355
+    - rg35xx
+    - rg35xxplus
+    - rgb30
+    - tg5040
+    - trimuismart
+    - zero28
+    source_ref: "skeleton/EXTRAS/Emus/gkdpixel/PCE.pak/launch.sh:3"
+  Bios/PKM:
+    cores:
+    - pokemini
+    devices:
+    - gkdpixel
+    - m17
+    - magicmini
+    - miyoomini
+    - my282
+    - my355
+    - rg35xx
+    - rg35xxplus
+    - rgb30
+    - tg5040
+    - trimuismart
+    - zero28
+    source_ref: "skeleton/EXTRAS/Emus/gkdpixel/PKM.pak/launch.sh:3"
+  Bios/PS:
+    cores:
+    - pcsx_rearmed
+    devices:
+    - gkdpixel
+    - m17
+    - magicmini
+    - miyoomini
+    - my282
+    - my355
+    - rg35xx
+    - rg35xxplus
+    - rgb30
+    - tg5040
+    - trimuismart
+    - zero28
+    source_ref: "skeleton/SYSTEM/gkdpixel/paks/Emus/PS.pak/launch.sh:3"
+  Bios/SFC:
+    cores:
+    - snes9x2005_plus
+    devices:
+    - gkdpixel
+    - m17
+    - magicmini
+    - miyoomini
+    - my282
+    - my355
+    - rg35xx
+    - rg35xxplus
+    - rgb30
+    - tg5040
+    - trimuismart
+    - zero28
+    source_ref: "skeleton/SYSTEM/gkdpixel/paks/Emus/SFC.pak/launch.sh:3"
+  Bios/SGB:
+    cores:
+    - mgba
+    devices:
+    - gkdpixel
+    - m17
+    - magicmini
+    - miyoomini
+    - my282
+    - my355
+    - rg35xx
+    - rg35xxplus
+    - rgb30
+    - tg5040
+    - trimuismart
+    - zero28
+    source_ref: "skeleton/EXTRAS/Emus/gkdpixel/SGB.pak/launch.sh:3"
+  Bios/SMS:
+    cores:
+    - picodrive
+    devices:
+    - gkdpixel
+    - m17
+    - magicmini
+    - miyoomini
+    - my282
+    - my355
+    - rg35xx
+    - rg35xxplus
+    - rgb30
+    - tg5040
+    - trimuismart
+    - zero28
+    source_ref: "skeleton/EXTRAS/Emus/gkdpixel/SMS.pak/launch.sh:3"
+  Bios/SUPA:
+    cores:
+    - mednafen_supafaust
+    devices:
+    - m17
+    - magicmini
+    - miyoomini
+    - my282
+    - my355
+    - rg35xx
+    - rg35xxplus
+    - rgb30
+    - tg5040
+    - trimuismart
+    - zero28
+    source_ref: "skeleton/EXTRAS/Emus/m17/SUPA.pak/launch.sh:3"
+  Bios/VB:
+    cores:
+    - mednafen_vb
+    devices:
+    - m17
+    - magicmini
+    - miyoomini
+    - my282
+    - my355
+    - rg35xx
+    - rg35xxplus
+    - rgb30
+    - tg5040
+    - trimuismart
+    - zero28
+    source_ref: "skeleton/EXTRAS/Emus/m17/VB.pak/launch.sh:3"
+core_repositories:
+  fake08:
+  - "https://github.com/jtothebell/fake-08"
+  fceumm:
+  - "https://github.com/libretro/libretro-fceumm"
+  gambatte:
+  - "https://github.com/libretro/gambatte-libretro"
+  gpsp:
+  - "https://github.com/libretro/gpsp"
+  mednafen_pce_fast:
+  - "https://github.com/libretro/beetle-pce-fast-libretro"
+  mednafen_supafaust:
+  - "https://github.com/libretro/supafaust"
+  mednafen_vb:
+  - "https://github.com/libretro/beetle-vb-libretro"
+  mgba:
+  - "https://github.com/libretro/mgba"
+  pcsx_rearmed:
+  - "https://github.com/libretro/pcsx_rearmed"
+  picodrive:
+  - "https://github.com/irixxxx/picodrive"
+  pokemini:
+  - "https://github.com/libretro/PokeMini"
+  race:
+  - "https://github.com/libretro/race"
+  snes9x2005_plus:
+  - "https://github.com/libretro/snes9x2005"
+systems: {}

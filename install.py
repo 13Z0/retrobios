@@ -185,7 +185,7 @@ OTHER_SYSTEMS = "other"
 AVAILABLE_PLATFORMS = (
     "retroarch", "batocera", "recalbox", "retrobat", "emudeck",
     "lakka", "retrodeck", "rocknix", "romm", "bizhawk", "misterfpga",
-    "retropie",
+    "retropie", "minui", "nextui", "myminui",
 )
 
 # The names the frontends give themselves, as each manifest's display_name
@@ -197,7 +197,22 @@ PLATFORM_NAMES = {
     "retrobat": "RetroBat", "emudeck": "EmuDeck", "lakka": "Lakka",
     "retrodeck": "RetroDECK", "rocknix": "ROCKNIX", "romm": "RomM",
     "bizhawk": "BizHawk", "misterfpga": "MiSTer FPGA", "retropie": "RetroPie",
+    "minui": "MinUI", "nextui": "NextUI", "myminui": "MyMinUI",
 }
+
+# Frontends whose BIOS live on their SD card, installed from a computer the
+# card is mounted on. Each release unpacks as .system/ at the card root and
+# writes its release name as the first line of .system/version.txt (MinUI
+# makefile:22-24 and 152-157, NextUI makefile:33-35 and 249, MyMinUI
+# makefile:16-19 and 124). The registry publishes the same rules as each
+# manifest's `detect` (card_marker), and a test holds the two equal.
+CARD_MARKER = ".system/version.txt"
+_CARD_RULES: tuple[tuple[str, str, str], ...] = (
+    ("minui", CARD_MARKER, "MinUI-"),
+    ("nextui", CARD_MARKER, "NextUI-"),
+    ("myminui", CARD_MARKER, "MyMinUI-"),
+)
+CARD_PLATFORMS = frozenset(name for name, _file, _prefix in _CARD_RULES)
 
 SITE_URL = "https://abdess.github.io/retrobios/"
 INSTALLER_PAGE = f"{SITE_URL}wiki/installer/"
@@ -4830,6 +4845,39 @@ def _no_core_found(plat: str, bios_path: Path, searched: list[Path], dest_given:
     sys.exit(1)
 
 
+def card_platform(root: Path) -> str | None:
+    """The frontend whose card ``root`` is, from the release name it wrote."""
+    for name, marker, prefix in _CARD_RULES:
+        try:
+            with open(root / marker, encoding="utf-8", errors="replace") as handle:
+                first = handle.readline().strip()
+        except OSError:
+            continue
+        if first.startswith(prefix):
+            return name
+    return None
+
+
+def _check_card_root(plat: str, dest: Path) -> None:
+    """Refuse a folder inside the card where its root is meant.
+
+    The file list writes Bios/<TAG>/ below --dest: given the card's Bios
+    folder, every file would land in Bios/Bios/<TAG>/, which no core reads.
+    """
+    found = card_platform(dest)
+    if found is None:
+        for parent in list(dest.absolute().parents)[:2]:
+            holder = card_platform(parent)
+            if holder:
+                print(f"Error: {dest} is inside a {display_name(holder)} card. "
+                      f"Name the card's root: --dest {parent}", file=sys.stderr)
+                sys.exit(1)
+        return
+    if found != plat:
+        print(f"  Note: this card holds {display_name(found)} ({CARD_MARKER}), and the "
+              f"{display_name(plat)} file list was asked for.")
+
+
 def _platform_for_dest(os_type: str, dest: Path, interactive: bool) -> str:
     """The file list for a --dest given without --platform.
 
@@ -4839,6 +4887,11 @@ def _platform_for_dest(os_type: str, dest: Path, interactive: bool) -> str:
     terminal the user picks, Enter taking the one found. Otherwise the one
     found is used, RetroArch when none is, and several found are refused.
     """
+    card = card_platform(dest)
+    if card:
+        print(f"  File list: {display_name(card)} (the card's {CARD_MARKER}). "
+              f"Same choice without detection: --platform {card}")
+        return card
     print("Detecting platform...")
     found = list(dict.fromkeys(name for name, _path in detect_platforms(os_type)))
     default = found[0] if len(found) == 1 else "" if found else "retroarch"
@@ -4896,6 +4949,8 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
     if args.platform:
         args.platform = normalize_platform(args.platform)
     if args.platform and args.dest:
+        if args.platform in CARD_PLATFORMS:
+            _check_card_root(args.platform, args.dest)
         platforms = [(args.platform, args.dest)]
     elif args.platform:
         print("Detecting platform...")
@@ -4908,6 +4963,17 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
             # needed, and asking BizHawk's for one refused a question asked
             # before downloading BizHawk.
             platforms = [(args.platform, _default_dest(os_type, args.platform) or Path.cwd())]
+        elif args.platform in CARD_PLATFORMS:
+            # Its files go on its SD card, which is never this machine's
+            # own folder: the card's mount point is the user's to name.
+            print(
+                f"  {display_name(args.platform)} keeps its BIOS files on its SD card. "
+                f"Mount the card and name its root with --dest, for example: "
+                f"--platform {args.platform} --dest /media/$USER/<card> "
+                f"(Windows: --dest E:\\)",
+                file=sys.stderr,
+            )
+            sys.exit(1)
         elif args.platform in PORTABLE_ONLY:
             # A portable emulator reads the folder beside its executable:
             # any default would be a folder it never opens.

@@ -44,6 +44,9 @@ body:
         - ROCKNIX
         - BizHawk
         - MiSTer FPGA
+        - MinUI
+        - NextUI
+        - MyMinUI
         - Other
     validations:
       required: true
