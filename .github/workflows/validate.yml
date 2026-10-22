@@ -216,7 +216,7 @@ jobs:
       # heading guard's premise, and skipped on every run without it. The docs
       # group builds the site as deploy-site.yml does, with the same bounds.
       - name: Install dependencies
-        run: pip install pyyaml "jsonschema[format-nongpl]==4.26.0" "markdown==3.10.2" "mkdocs-material>=9.7.5,<10" "pymdown-extensions>=10.14"
+        run: pip install pyyaml "jsonschema[format-nongpl]==4.26.0" "markdown==3.10.2" "mkdocs>=1.6,<2" "mkdocs-material>=9.7.5,<10" "pymdown-extensions>=10.14"
 
       # The exporter fidelity cases compare what we hand back against the
       # file each platform publishes, so they need those files. They skip
