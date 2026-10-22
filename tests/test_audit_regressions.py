@@ -779,7 +779,11 @@ class FaqRegressions(unittest.TestCase):
 
     @staticmethod
     def _faq() -> str:
-        return (ROOT / "wiki" / "faq.md").read_text(encoding="utf-8")
+        # The questions about hashes and checks moved to the technical FAQ.
+        return "\n\n".join(
+            (ROOT / "wiki" / name).read_text(encoding="utf-8")
+            for name in ("faq.md", "technical-faq.md")
+        )
 
     @staticmethod
     def _profile(key: str) -> dict:

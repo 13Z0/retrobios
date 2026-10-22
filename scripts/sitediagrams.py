@@ -744,7 +744,7 @@ def write_svgs(directory: Path) -> list[Path]:
 def main() -> None:
     import argparse
 
-    parser = argparse.ArgumentParser(description="Write the site diagrams as SVG files.")
+    parser = argparse.ArgumentParser(allow_abbrev=False, description="Write the site diagrams as SVG files.")
     parser.add_argument("--output-dir", default="tmp/diagrams", help="default: %(default)s")
     args = parser.parse_args()
     for path in write_svgs(Path(args.output_dir)):
@@ -752,4 +752,6 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    from common import run_cli
+
+    run_cli(main)
