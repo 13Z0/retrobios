@@ -65,6 +65,7 @@ from nativemode import digest_algorithm, reads_file_contents
 yaml = require_yaml()
 from generate_readme import (
     compute_coverage,
+    platform_coverages,
     contributing_text,
     download_links,
     extract_notes,
@@ -5955,19 +5956,13 @@ def _generate(args: argparse.Namespace) -> None:
     suppl_names = _build_supplemental_index()
 
     print("Computing platform coverage...")
-    coverages = {}
-    for name in sorted(platform_names):
-        try:
-            cov = compute_coverage(
-                name, args.platforms_dir, db, data_registry,
-                emulators_dir=args.emulators_dir,
-            )
-            coverages[name] = cov
-            print(
-                f"  {cov['platform']}: {cov['present']}/{cov['total']} ({_pct(cov['present'], cov['total'])})"
-            )
-        except FileNotFoundError as e:
-            print(f"  {name}: skipped ({e})", file=sys.stderr)
+    coverages = platform_coverages(
+        sorted(platform_names), args.platforms_dir, db, data_registry,
+        emulators_dir=args.emulators_dir, db_path=args.db,
+        report=lambda _name, cov: print(
+            f"  {cov['platform']}: {cov['present']}/{cov['total']} ({_pct(cov['present'], cov['total'])})"
+        ),
+    )
 
     print("Loading emulator profiles...")
     profiles = load_emulator_profiles(args.emulators_dir, skip_aliases=False)
