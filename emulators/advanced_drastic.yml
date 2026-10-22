@@ -54,9 +54,11 @@ files:
     required: false
     bundled: true
     size: 4096
+    sha1: "bfaac75f101c135e32e2aaf541de6b1be4c8c62d"
+    md5: "a392174eb3e572fed6447e956bde4b25"
     validation: [size]
     description: "Nintendo DS ARM9 BIOS"
-    note: "First candidate for the ARM9 slot, before the free replacement. The repository ships md5 a392174eb3e572fed6447e956bde4b25."
+    note: "First candidate for the ARM9 slot, before the free replacement. The hashes are those of the copy the repository ships."
     source_ref: "drastic r2.5.2.0 0x131018, drastic r2.5.2.0 0x12fa18, drastic r2.5.2.0 0x135a5a"
 
   - name: drastic_bios_arm9.bin
@@ -77,9 +79,11 @@ files:
     required: false
     bundled: true
     size: 16384
+    sha1: "24f67bdea115a2c847c8813a262502ee1607b7df"
+    md5: "df692a80a5b1bc90728bc3dfc76cd948"
     validation: [size]
     description: "Nintendo DS ARM7 BIOS"
-    note: "First candidate for the ARM7 slot. The repository ships md5 df692a80a5b1bc90728bc3dfc76cd948."
+    note: "First candidate for the ARM7 slot. The hashes are those of the copy the repository ships."
     source_ref: "drastic r2.5.2.0 0x131088, drastic r2.5.2.0 0x135a7b"
 
   - name: drastic_bios_arm7.bin
@@ -101,9 +105,11 @@ files:
     hle_fallback: true
     bundled: true
     size: 262144
+    sha1: "87dae2500e889737af51f4a5b5845770a62482f5"
+    md5: "3c704824663ce26b6a1ed4d85238ae5b"
     validation: [size]
     description: "Nintendo DS firmware"
-    note: "The repository ships md5 3c704824663ce26b6a1ed4d85238ae5b."
+    note: "The hashes are those of the copy the repository ships."
     source_ref: "drastic r2.5.2.0 0x1310f8"
 
   - name: game_database.xml
