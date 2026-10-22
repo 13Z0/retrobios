@@ -17,52 +17,1194 @@ notes: |
   Game engine re-implementation of Flashback (Delphine Software, 1992) by Gregory Montoir,
   ported to libretro by Stuart Carnie. Version 0.3.6 (upstream is at 0.5.5).
 
-  The core sets need_fullpath = true and valid_extensions = "map" (src/libretro.cpp:66).
-  Content loading (retro_load_game) extracts the parent directory from the provided .MAP
-  file path and uses it as the data root via FileSystem (src/libretro.cpp:186-188).
+  The core sets need_fullpath = true and valid_extensions = "map" (src/libretro.cpp:66-67).
+  retro_load_game takes the directory of the loaded .MAP file as the data root
+  (src/libretro.cpp:186-188). FileSystem walks that directory and its subdirectories and
+  matches names case-insensitively (src/fs.cpp:44-51, 101-119), so every file below is
+  found by its name anywhere under the content directory.
 
-  Version detection (src/libretro.cpp:117-140) probes for these files in order:
-    DEMO_UK.ABA -> DOS Demo
-    INTRO.SEQ   -> DOS CD
-    LEVEL1.MAP  -> DOS
-    LEVEL1.LEV  -> Amiga
-    DEMO.LEV    -> Amiga Demo
-  Only kResourceTypeDOS is accepted (line 199), so Amiga data is rejected.
+  detectVersion (src/libretro.cpp:118-141) probes DEMO_UK.ABA (DOS demo), INTRO.SEQ
+  (DOS CD), LEVEL1.MAP (DOS), LEVEL1.LEV (Amiga) and DEMO.LEV (Amiga demo) in that
+  order. Only the DOS data is accepted (src/libretro.cpp:190-192).
 
-  Language detection (src/libretro.cpp:142-166) probes for:
-    ENGCINE.TXT -> English
-    FR_CINE.TXT -> French
-    GERCINE.TXT -> German
-    SPACINE.TXT -> Spanish
-    ITACINE.TXT -> Italian
-    FRCINE.TXT  -> French (Amiga)
-  Falls back to English if none found.
-
-  All game data files are loaded from the content directory via FileSystem (fs.cpp),
-  which scans the directory and matches filenames case-insensitively (strcasecmp at
-  fs.cpp:53-56). The resource system (resource.cpp) loads files by constructing names
-  like "LEVEL1.MAP", "GLOBAL.ICN", "PERSO.SPR", "FB_TXT.FNT", etc.
-
-  The core never calls RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY. All data files must live
-  alongside the loaded .MAP content file. No BIOS or firmware files: the required files
-  are the original Flashback DOS game data.
-
-  Music loaded from .mod files (mod_player.cpp, staticres.cpp:3198-3225). Optional:
-  the core has a built-in SFX player for in-game action music (sfx_player.cpp with
-  embedded music data in staticres.cpp).
-
-  VOICE.VCE from the SegaCD version can be placed in the data directory for in-game
-  voice playback (resource.cpp:900-941). Optional.
-
-  SEQ cutscene playback is disabled in the libretro build: g_options is zero-initialized
-  (game.cpp:30) and rs.cfg is never parsed, so use_seq_cutscenes defaults to false.
-  The core always uses polygon-based cutscenes (cutscene.cpp).
+  The title screen and menus are skipped (src/game.cpp:84-86), so the menu maps and
+  palettes and the DEMO*.BIN input recordings of the release are never opened.
 
   Upstream (0.5.5) additionally supports Amiga, Macintosh, PC98 data, MIDI music,
   OGG playback, SEQ cutscenes, and widescreen modes. None of these are in the
   libretro port.
 
-files: []
+files:
+  - name: "LEVEL1.MAP"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "Level 1 room map, the content file the frontend loads"
+    note: "Its directory, walked recursively, becomes the data root. The probe that names the release finds it third, after DEMO_UK.ABA and INTRO.SEQ."
+    source_ref: "source src/libretro.cpp:66-67, 186-192, source src/game.cpp:1854-1861, source src/staticres.cpp:424"
+
+  - name: "DEMO_UK.ABA"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: false
+    description: "DOS demo archive holding every file the demo reads"
+    note: "Probed first. Each file is read from the archive when no loose copy exists. The demo has no TELEPORT cutscene and skips it (game.cpp:1868-1870)."
+    source_ref: "source src/libretro.cpp:118-141, source src/resource.cpp:55-61, source src/resource_aba.cpp:5, 19-39"
+
+  - name: "INTRO.SEQ"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: false
+    description: "DOS CD video, opened as a release probe"
+    note: "SEQ playback stays off: g_options is zero-initialized (game.cpp:29) and use_seq_cutscenes gates the SEQ player (game.cpp:57-59)."
+    source_ref: "source src/libretro.cpp:118-141"
+
+  - name: "FB_TXT.FNT"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "Text font"
+    source_ref: "source src/game.cpp:56, source src/resource.cpp:404-406"
+
+  - name: "GLOBAL.ICN"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "Inventory icons"
+    source_ref: "source src/game.cpp:77, source src/resource.cpp:400-402"
+
+  - name: "GLOBAL.SPC"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "Shared sprite set"
+    source_ref: "source src/game.cpp:78, source src/resource.cpp:380-382"
+
+  - name: "GLOBAL.FIB"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "Sound effects, Fibonacci-delta packed"
+    source_ref: "source src/game.cpp:81, source src/resource.cpp:92-141"
+
+  - name: "PERSO.SPR"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "Conrad sprites"
+    source_ref: "source src/game.cpp:79, source src/resource.cpp:392-394"
+
+  - name: "PERSO.OFF"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "Conrad sprite offsets"
+    source_ref: "source src/game.cpp:80, source src/resource.cpp:198-232"
+
+  - name: "ENGCINE.TXT"
+    aliases: ["FR_CINE.TXT", "GERCINE.TXT", "SPACINE.TXT", "ITACINE.TXT"]
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "Cutscene subtitles"
+    note: "Its presence also selects the language: ENG, FR_, GER, SPA, ITA in that order, English when none is found."
+    source_ref: "source src/libretro.cpp:143-167, source src/resource.cpp:234-248, 268-283"
+
+  - name: "ENGCINE.BIN"
+    aliases: ["FR_CINE.BIN", "GERCINE.BIN", "SPACINE.BIN", "ITACINE.BIN"]
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "Cutscene subtitle offsets"
+    source_ref: "source src/resource.cpp:234-248, 250-267"
+
+  - name: "LEVEL1.MBK"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "Level 1 tile banks"
+    source_ref: "source src/game.cpp:1854-1861, source src/staticres.cpp:423-431"
+
+  - name: "LEVEL1.CT"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "Level 1 collision data"
+    source_ref: "source src/game.cpp:1854-1861, source src/staticres.cpp:423-431"
+
+  - name: "LEVEL1.PAL"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "Level 1 palettes"
+    source_ref: "source src/game.cpp:1854-1861, source src/staticres.cpp:423-431"
+
+  - name: "LEVEL1.RP"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "Level 1 palette remap"
+    source_ref: "source src/game.cpp:1854-1861, source src/staticres.cpp:423-431"
+
+  - name: "LEVEL2.MBK"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "Level 2 tile banks"
+    source_ref: "source src/game.cpp:1854-1861, source src/staticres.cpp:423-431"
+
+  - name: "LEVEL2.CT"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "Level 2 collision data"
+    source_ref: "source src/game.cpp:1854-1861, source src/staticres.cpp:423-431"
+
+  - name: "LEVEL2.PAL"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "Level 2 palettes"
+    source_ref: "source src/game.cpp:1854-1861, source src/staticres.cpp:423-431"
+
+  - name: "LEVEL2.RP"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "Level 2 palette remap"
+    source_ref: "source src/game.cpp:1854-1861, source src/staticres.cpp:423-431"
+
+  - name: "LEVEL2.MAP"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "Level 2 room map"
+    source_ref: "source src/game.cpp:1854-1861, source src/staticres.cpp:423-431"
+
+  - name: "LEVEL3.MBK"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "Level 3 tile banks"
+    source_ref: "source src/game.cpp:1854-1861, source src/staticres.cpp:423-431"
+
+  - name: "LEVEL3.CT"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "Level 3 collision data"
+    source_ref: "source src/game.cpp:1854-1861, source src/staticres.cpp:423-431"
+
+  - name: "LEVEL3.PAL"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "Level 3 palettes"
+    source_ref: "source src/game.cpp:1854-1861, source src/staticres.cpp:423-431"
+
+  - name: "LEVEL3.RP"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "Level 3 palette remap"
+    source_ref: "source src/game.cpp:1854-1861, source src/staticres.cpp:423-431"
+
+  - name: "LEVEL3.MAP"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "Level 3 room map"
+    source_ref: "source src/game.cpp:1854-1861, source src/staticres.cpp:423-431"
+
+  - name: "LEVEL4.MBK"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "Level 4 tile banks"
+    source_ref: "source src/game.cpp:1854-1861, source src/staticres.cpp:423-431"
+
+  - name: "LEVEL4.CT"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "Level 4 collision data"
+    source_ref: "source src/game.cpp:1854-1861, source src/staticres.cpp:423-431"
+
+  - name: "LEVEL4.PAL"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "Level 4 palettes"
+    source_ref: "source src/game.cpp:1854-1861, source src/staticres.cpp:423-431"
+
+  - name: "LEVEL4.RP"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "Level 4 palette remap"
+    source_ref: "source src/game.cpp:1854-1861, source src/staticres.cpp:423-431"
+
+  - name: "LEVEL4.MAP"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "Level 4 room map"
+    source_ref: "source src/game.cpp:1854-1861, source src/staticres.cpp:423-431"
+
+  - name: "LEVEL5.MBK"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "Level 5 tile banks"
+    source_ref: "source src/game.cpp:1854-1861, source src/staticres.cpp:423-431"
+
+  - name: "LEVEL5.CT"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "Level 5 collision data"
+    source_ref: "source src/game.cpp:1854-1861, source src/staticres.cpp:423-431"
+
+  - name: "LEVEL5.PAL"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "Level 5 palettes"
+    source_ref: "source src/game.cpp:1854-1861, source src/staticres.cpp:423-431"
+
+  - name: "LEVEL5.RP"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "Level 5 palette remap"
+    source_ref: "source src/game.cpp:1854-1861, source src/staticres.cpp:423-431"
+
+  - name: "LEVEL5.MAP"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "Level 5 room map"
+    source_ref: "source src/game.cpp:1854-1861, source src/staticres.cpp:423-431"
+
+  - name: "LEVEL1.PGE"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "Level 1 objects and scripts"
+    source_ref: "source src/game.cpp:1862-1864, source src/staticres.cpp:423-431"
+
+  - name: "LEVEL1.OBJ"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "Level 1 object nodes"
+    source_ref: "source src/game.cpp:1862-1864, source src/staticres.cpp:423-431"
+
+  - name: "LEVEL1.ANI"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "Level 1 animations"
+    source_ref: "source src/game.cpp:1862-1864, source src/staticres.cpp:423-431"
+
+  - name: "LEVEL1.TBN"
+    aliases: ["LEVEL1.TBF", "LEVEL1.TBG", "LEVEL1.TBS", "LEVEL1.TBI"]
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "Level 1 in-game text"
+    note: "The CD release ships one file per language. The language's extension is tried first, TBN after it."
+    source_ref: "source src/game.cpp:1865, source src/resource.cpp:339-355, 416-421, source src/staticres.cpp:423-431"
+
+  - name: "LEVEL2.PGE"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "Level 2 objects and scripts"
+    source_ref: "source src/game.cpp:1862-1864, source src/staticres.cpp:423-431"
+
+  - name: "LEVEL2.OBJ"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "Level 2 object nodes"
+    source_ref: "source src/game.cpp:1862-1864, source src/staticres.cpp:423-431"
+
+  - name: "LEVEL2.ANI"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "Level 2 animations"
+    source_ref: "source src/game.cpp:1862-1864, source src/staticres.cpp:423-431"
+
+  - name: "LEVEL2.TBN"
+    aliases: ["LEVEL2.TBF", "LEVEL2.TBG", "LEVEL2.TBS", "LEVEL2.TBI"]
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "Level 2 in-game text"
+    note: "The CD release ships one file per language. The language's extension is tried first, TBN after it."
+    source_ref: "source src/game.cpp:1865, source src/resource.cpp:339-355, 416-421, source src/staticres.cpp:423-431"
+
+  - name: "LEVEL3.PGE"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "Level 3 objects and scripts"
+    source_ref: "source src/game.cpp:1862-1864, source src/staticres.cpp:423-431"
+
+  - name: "LEVEL3.OBJ"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "Level 3 object nodes"
+    source_ref: "source src/game.cpp:1862-1864, source src/staticres.cpp:423-431"
+
+  - name: "LEVEL3.ANI"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "Level 3 animations"
+    source_ref: "source src/game.cpp:1862-1864, source src/staticres.cpp:423-431"
+
+  - name: "LEVEL3.TBN"
+    aliases: ["LEVEL3.TBF", "LEVEL3.TBG", "LEVEL3.TBS", "LEVEL3.TBI"]
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "Level 3 in-game text"
+    note: "The CD release ships one file per language. The language's extension is tried first, TBN after it."
+    source_ref: "source src/game.cpp:1865, source src/resource.cpp:339-355, 416-421, source src/staticres.cpp:423-431"
+
+  - name: "LEVEL4_1.PGE"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "Level 4.1 objects and scripts"
+    source_ref: "source src/game.cpp:1862-1864, source src/staticres.cpp:423-431"
+
+  - name: "LEVEL4_1.OBJ"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "Level 4.1 object nodes"
+    source_ref: "source src/game.cpp:1862-1864, source src/staticres.cpp:423-431"
+
+  - name: "LEVEL4_1.ANI"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "Level 4.1 animations"
+    source_ref: "source src/game.cpp:1862-1864, source src/staticres.cpp:423-431"
+
+  - name: "LEVEL4_1.TBN"
+    aliases: ["LEVEL4_1.TBF", "LEVEL4_1.TBG", "LEVEL4_1.TBS", "LEVEL4_1.TBI"]
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "Level 4.1 in-game text"
+    note: "The CD release ships one file per language. The language's extension is tried first, TBN after it."
+    source_ref: "source src/game.cpp:1865, source src/resource.cpp:339-355, 416-421, source src/staticres.cpp:423-431"
+
+  - name: "LEVEL4_2.PGE"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "Level 4.2 objects and scripts"
+    source_ref: "source src/game.cpp:1862-1864, source src/staticres.cpp:423-431"
+
+  - name: "LEVEL4_2.OBJ"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "Level 4.2 object nodes"
+    source_ref: "source src/game.cpp:1862-1864, source src/staticres.cpp:423-431"
+
+  - name: "LEVEL4_2.ANI"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "Level 4.2 animations"
+    source_ref: "source src/game.cpp:1862-1864, source src/staticres.cpp:423-431"
+
+  - name: "LEVEL4_2.TBN"
+    aliases: ["LEVEL4_2.TBF", "LEVEL4_2.TBG", "LEVEL4_2.TBS", "LEVEL4_2.TBI"]
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "Level 4.2 in-game text"
+    note: "The CD release ships one file per language. The language's extension is tried first, TBN after it."
+    source_ref: "source src/game.cpp:1865, source src/resource.cpp:339-355, 416-421, source src/staticres.cpp:423-431"
+
+  - name: "LEVEL5_1.PGE"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "Level 5.1 objects and scripts"
+    source_ref: "source src/game.cpp:1862-1864, source src/staticres.cpp:423-431"
+
+  - name: "LEVEL5_1.OBJ"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "Level 5.1 object nodes"
+    source_ref: "source src/game.cpp:1862-1864, source src/staticres.cpp:423-431"
+
+  - name: "LEVEL5_1.ANI"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "Level 5.1 animations"
+    source_ref: "source src/game.cpp:1862-1864, source src/staticres.cpp:423-431"
+
+  - name: "LEVEL5_1.TBN"
+    aliases: ["LEVEL5_1.TBF", "LEVEL5_1.TBG", "LEVEL5_1.TBS", "LEVEL5_1.TBI"]
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "Level 5.1 in-game text"
+    note: "The CD release ships one file per language. The language's extension is tried first, TBN after it."
+    source_ref: "source src/game.cpp:1865, source src/resource.cpp:339-355, 416-421, source src/staticres.cpp:423-431"
+
+  - name: "LEVEL5_2.PGE"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "Level 5.2 objects and scripts"
+    source_ref: "source src/game.cpp:1862-1864, source src/staticres.cpp:423-431"
+
+  - name: "LEVEL5_2.OBJ"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "Level 5.2 object nodes"
+    source_ref: "source src/game.cpp:1862-1864, source src/staticres.cpp:423-431"
+
+  - name: "LEVEL5_2.ANI"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "Level 5.2 animations"
+    source_ref: "source src/game.cpp:1862-1864, source src/staticres.cpp:423-431"
+
+  - name: "LEVEL5_2.TBN"
+    aliases: ["LEVEL5_2.TBF", "LEVEL5_2.TBG", "LEVEL5_2.TBS", "LEVEL5_2.TBI"]
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "Level 5.2 in-game text"
+    note: "The CD release ships one file per language. The language's extension is tried first, TBN after it."
+    source_ref: "source src/game.cpp:1865, source src/resource.cpp:339-355, 416-421, source src/staticres.cpp:423-431"
+
+  - name: "JUNKY.SPR"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "Junky enemy sprites"
+    source_ref: "source src/game.cpp:1825-1830, source src/staticres.cpp:494-500"
+
+  - name: "JUNKY.OFF"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "Junky enemy sprite offsets"
+    source_ref: "source src/game.cpp:1825-1830, source src/resource.cpp:198-232, source src/staticres.cpp:494-500"
+
+  - name: "MERCENAI.SPR"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "Mercenai enemy sprites"
+    source_ref: "source src/game.cpp:1825-1830, source src/staticres.cpp:494-500"
+
+  - name: "MERCENAI.OFF"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "Mercenai enemy sprite offsets"
+    source_ref: "source src/game.cpp:1825-1830, source src/resource.cpp:198-232, source src/staticres.cpp:494-500"
+
+  - name: "REPLICAN.SPR"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "Replican enemy sprites"
+    source_ref: "source src/game.cpp:1825-1830, source src/staticres.cpp:494-500"
+
+  - name: "REPLICAN.OFF"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "Replican enemy sprite offsets"
+    source_ref: "source src/game.cpp:1825-1830, source src/resource.cpp:198-232, source src/staticres.cpp:494-500"
+
+  - name: "GLUE.SPR"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "Glue enemy sprites"
+    source_ref: "source src/game.cpp:1825-1830, source src/staticres.cpp:494-500"
+
+  - name: "GLUE.OFF"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "Glue enemy sprite offsets"
+    source_ref: "source src/game.cpp:1825-1830, source src/resource.cpp:198-232, source src/staticres.cpp:494-500"
+
+  - name: "DEBUT.CMD"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "DEBUT cutscene commands"
+    source_ref: "source src/cutscene.cpp:1276-1282, source src/staticres.cpp:33-69, 71-88"
+
+  - name: "DEBUT.POL"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "DEBUT cutscene polygons"
+    source_ref: "source src/cutscene.cpp:1276-1282, source src/staticres.cpp:33-69, 71-88"
+
+  - name: "OBJET.CMD"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "OBJET cutscene commands"
+    source_ref: "source src/cutscene.cpp:1276-1282, source src/staticres.cpp:33-69, 71-88"
+
+  - name: "OBJET.POL"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "OBJET cutscene polygons"
+    source_ref: "source src/cutscene.cpp:1276-1282, source src/staticres.cpp:33-69, 71-88"
+
+  - name: "GEN.CMD"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "GEN cutscene commands"
+    source_ref: "source src/cutscene.cpp:1276-1282, source src/staticres.cpp:33-69, 71-88"
+
+  - name: "GEN.POL"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "GEN cutscene polygons"
+    source_ref: "source src/cutscene.cpp:1276-1282, source src/staticres.cpp:33-69, 71-88"
+
+  - name: "CHUTE.CMD"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "CHUTE cutscene commands"
+    source_ref: "source src/cutscene.cpp:1276-1282, source src/staticres.cpp:33-69, 71-88"
+
+  - name: "CHUTE.POL"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "CHUTE cutscene polygons"
+    source_ref: "source src/cutscene.cpp:1276-1282, source src/staticres.cpp:33-69, 71-88"
+
+  - name: "DESINTEG.CMD"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "DESINTEG cutscene commands"
+    source_ref: "source src/cutscene.cpp:1276-1282, source src/staticres.cpp:33-69, 71-88"
+
+  - name: "DESINTEG.POL"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "DESINTEG cutscene polygons"
+    source_ref: "source src/cutscene.cpp:1276-1282, source src/staticres.cpp:33-69, 71-88"
+
+  - name: "INTRO1.CMD"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "INTRO1 cutscene commands"
+    source_ref: "source src/cutscene.cpp:1276-1282, source src/staticres.cpp:33-69, 71-88"
+
+  - name: "INTRO1.POL"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "INTRO1 cutscene polygons"
+    source_ref: "source src/cutscene.cpp:1276-1282, source src/staticres.cpp:33-69, 71-88"
+
+  - name: "HOLOSEQ.CMD"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "HOLOSEQ cutscene commands"
+    source_ref: "source src/cutscene.cpp:1276-1282, source src/staticres.cpp:33-69, 71-88"
+
+  - name: "HOLOSEQ.POL"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "HOLOSEQ cutscene polygons"
+    source_ref: "source src/cutscene.cpp:1276-1282, source src/staticres.cpp:33-69, 71-88"
+
+  - name: "PONT.CMD"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "PONT cutscene commands"
+    source_ref: "source src/cutscene.cpp:1276-1282, source src/staticres.cpp:33-69, 71-88"
+
+  - name: "PONT.POL"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "PONT cutscene polygons"
+    source_ref: "source src/cutscene.cpp:1276-1282, source src/staticres.cpp:33-69, 71-88"
+
+  - name: "MAP.CMD"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "MAP cutscene commands"
+    source_ref: "source src/cutscene.cpp:1276-1282, source src/staticres.cpp:33-69, 71-88"
+
+  - name: "MAP.POL"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "MAP cutscene polygons"
+    source_ref: "source src/cutscene.cpp:1276-1282, source src/staticres.cpp:33-69, 71-88"
+
+  - name: "MISSIONS.CMD"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "MISSIONS cutscene commands"
+    source_ref: "source src/cutscene.cpp:1276-1282, source src/staticres.cpp:33-69, 71-88"
+
+  - name: "MISSIONS.POL"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "MISSIONS cutscene polygons"
+    source_ref: "source src/cutscene.cpp:1276-1282, source src/staticres.cpp:33-69, 71-88"
+
+  - name: "MEMO.CMD"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "MEMO cutscene commands"
+    source_ref: "source src/cutscene.cpp:1276-1282, source src/staticres.cpp:33-69, 71-88"
+
+  - name: "MEMO.POL"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "MEMO cutscene polygons"
+    source_ref: "source src/cutscene.cpp:1276-1282, source src/staticres.cpp:33-69, 71-88"
+
+  - name: "TAXI.CMD"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "TAXI cutscene commands"
+    source_ref: "source src/cutscene.cpp:1276-1282, source src/staticres.cpp:33-69, 71-88"
+
+  - name: "TAXI.POL"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "TAXI cutscene polygons"
+    source_ref: "source src/cutscene.cpp:1276-1282, source src/staticres.cpp:33-69, 71-88"
+
+  - name: "VOYAGE.CMD"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "VOYAGE cutscene commands"
+    source_ref: "source src/cutscene.cpp:1276-1282, source src/staticres.cpp:33-69, 71-88"
+
+  - name: "VOYAGE.POL"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "VOYAGE cutscene polygons"
+    source_ref: "source src/cutscene.cpp:1276-1282, source src/staticres.cpp:33-69, 71-88"
+
+  - name: "TELEPORT.CMD"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "TELEPORT cutscene commands"
+    source_ref: "source src/cutscene.cpp:1276-1282, source src/staticres.cpp:33-69, 71-88"
+
+  - name: "TELEPORT.POL"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "TELEPORT cutscene polygons"
+    source_ref: "source src/cutscene.cpp:1276-1282, source src/staticres.cpp:33-69, 71-88"
+
+  - name: "LIFT.CMD"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "LIFT cutscene commands"
+    source_ref: "source src/cutscene.cpp:1276-1282, source src/staticres.cpp:33-69, 71-88"
+
+  - name: "LIFT.POL"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "LIFT cutscene polygons"
+    source_ref: "source src/cutscene.cpp:1276-1282, source src/staticres.cpp:33-69, 71-88"
+
+  - name: "ESPIONS.CMD"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "ESPIONS cutscene commands"
+    source_ref: "source src/cutscene.cpp:1276-1282, source src/staticres.cpp:33-69, 71-88"
+
+  - name: "ESPIONS.POL"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "ESPIONS cutscene polygons"
+    source_ref: "source src/cutscene.cpp:1276-1282, source src/staticres.cpp:33-69, 71-88"
+
+  - name: "LOG.CMD"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "LOG cutscene commands"
+    source_ref: "source src/cutscene.cpp:1276-1282, source src/staticres.cpp:33-69, 71-88"
+
+  - name: "LOG.POL"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "LOG cutscene polygons"
+    source_ref: "source src/cutscene.cpp:1276-1282, source src/staticres.cpp:33-69, 71-88"
+
+  - name: "FIN.CMD"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "FIN cutscene commands"
+    source_ref: "source src/cutscene.cpp:1276-1282, source src/staticres.cpp:33-69, 71-88"
+
+  - name: "FIN.POL"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "FIN cutscene polygons"
+    source_ref: "source src/cutscene.cpp:1276-1282, source src/staticres.cpp:33-69, 71-88"
+
+  - name: "GENEXP.CMD"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "GENEXP cutscene commands"
+    source_ref: "source src/cutscene.cpp:1276-1282, source src/staticres.cpp:33-69, 71-88"
+
+  - name: "GENEXP.POL"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "GENEXP cutscene polygons"
+    source_ref: "source src/cutscene.cpp:1276-1282, source src/staticres.cpp:33-69, 71-88"
+
+  - name: "LOGOS.CMD"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "LOGOS cutscene commands"
+    source_ref: "source src/cutscene.cpp:1276-1282, source src/staticres.cpp:33-69, 71-88"
+
+  - name: "LOGOS.POL"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "LOGOS cutscene polygons"
+    source_ref: "source src/cutscene.cpp:1276-1282, source src/staticres.cpp:33-69, 71-88"
+
+  - name: "OVER.CMD"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "OVER cutscene commands"
+    source_ref: "source src/cutscene.cpp:1276-1282, source src/staticres.cpp:33-69, 71-88"
+
+  - name: "OVER.POL"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "OVER cutscene polygons"
+    source_ref: "source src/cutscene.cpp:1276-1282, source src/staticres.cpp:33-69, 71-88"
+
+  - name: "SCORE.CMD"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "SCORE cutscene commands"
+    source_ref: "source src/cutscene.cpp:1276-1282, source src/staticres.cpp:33-69, 71-88"
+
+  - name: "SCORE.POL"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "SCORE cutscene polygons"
+    source_ref: "source src/cutscene.cpp:1276-1282, source src/staticres.cpp:33-69, 71-88"
+
+  - name: "INTRO2.CMD"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "INTRO2 cutscene commands"
+    source_ref: "source src/cutscene.cpp:1276-1282, source src/staticres.cpp:33-69, 71-88"
+
+  - name: "INTRO2.POL"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: true
+    description: "INTRO2 cutscene polygons"
+    source_ref: "source src/cutscene.cpp:1276-1282, source src/staticres.cpp:33-69, 71-88"
+
+  - name: "LOGOSSSI.CMD"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: false
+    description: "SSI publisher logo cutscene commands"
+    note: "Played in place of LOGOS when logosssi.cmd exists."
+    source_ref: "source src/game.cpp:60-62, source src/cutscene.cpp:1276-1282, source src/staticres.cpp:68, 90-93"
+
+  - name: "LOGOSSSI.POL"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: false
+    description: "SSI publisher logo cutscene polygons"
+    note: "Played in place of LOGOS when logosssi.cmd exists."
+    source_ref: "source src/game.cpp:60-62, source src/cutscene.cpp:1276-1282, source src/staticres.cpp:68, 90-93"
+
+  - name: "VOICE.VCE"
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: false
+    description: "Sega CD voice data for in-game dialogue"
+    source_ref: "source src/game.cpp:1346, source src/resource.cpp:908-917"
+
+  - name: "intro"
+    aliases: ["mod.flashback-introb"]
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: false
+    description: "Amiga cutscene music module"
+    source_ref: "source src/mixer.cpp:103-115, source src/mod_player.cpp:651-664, source src/staticres.cpp:3199"
+
+  - name: "options"
+    aliases: ["mod.flashback-options2"]
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: false
+    description: "Amiga cutscene music module"
+    source_ref: "source src/mixer.cpp:103-115, source src/mod_player.cpp:651-664, source src/staticres.cpp:3200"
+
+  - name: "journal"
+    aliases: ["mod.flashback-options1"]
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: false
+    description: "Amiga cutscene music module"
+    source_ref: "source src/mixer.cpp:103-115, source src/mod_player.cpp:651-664, source src/staticres.cpp:3201"
+
+  - name: "ceinture"
+    aliases: ["mod.flashback-ceinturea"]
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: false
+    description: "Amiga cutscene music module"
+    source_ref: "source src/mixer.cpp:103-115, source src/mod_player.cpp:651-664, source src/staticres.cpp:3202"
+
+  - name: "desinteg"
+    aliases: ["mod.flashback-desintegr"]
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: false
+    description: "Amiga cutscene music module"
+    source_ref: "source src/mixer.cpp:103-115, source src/mod_player.cpp:651-664, source src/staticres.cpp:3203"
+
+  - name: "reunion"
+    aliases: ["mod.flashback-reunion"]
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: false
+    description: "Amiga cutscene music module"
+    source_ref: "source src/mixer.cpp:103-115, source src/mod_player.cpp:651-664, source src/staticres.cpp:3204"
+
+  - name: "voyage"
+    aliases: ["mod.flashback-voyage"]
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: false
+    description: "Amiga cutscene music module"
+    source_ref: "source src/mixer.cpp:103-115, source src/mod_player.cpp:651-664, source src/staticres.cpp:3205"
+
+  - name: "level4"
+    aliases: ["mod.flashback-teleporta"]
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: false
+    description: "Amiga cutscene music module"
+    source_ref: "source src/mixer.cpp:103-115, source src/mod_player.cpp:651-664, source src/staticres.cpp:3206"
+
+  - name: "planetexplo"
+    aliases: ["mod.flashback-teleport2"]
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: false
+    description: "Amiga cutscene music module"
+    source_ref: "source src/mixer.cpp:103-115, source src/mod_player.cpp:651-664, source src/staticres.cpp:3207"
+
+  - name: "fin"
+    aliases: ["mod.flashback-fin"]
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: false
+    description: "Amiga cutscene music module"
+    source_ref: "source src/mixer.cpp:103-115, source src/mod_player.cpp:651-664, source src/staticres.cpp:3208"
+
+  - name: "ascenseur"
+    aliases: ["mod.flashback-ascenseur"]
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: false
+    description: "Amiga cutscene music module"
+    source_ref: "source src/mixer.cpp:103-115, source src/mod_player.cpp:651-664, source src/staticres.cpp:3209"
+
+  - name: "logo"
+    aliases: ["mod.flashback-logo"]
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: false
+    description: "Amiga cutscene music module"
+    source_ref: "source src/mixer.cpp:103-115, source src/mod_player.cpp:651-664, source src/staticres.cpp:3210"
+
+  - name: "game_over"
+    aliases: ["mod.flashback-game_over"]
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: false
+    description: "Amiga cutscene music module"
+    source_ref: "source src/mixer.cpp:103-115, source src/mod_player.cpp:651-664, source src/staticres.cpp:3211"
+
+  - name: "holocube"
+    aliases: ["mod.flashback-holocube"]
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: false
+    description: "Amiga cutscene music module"
+    source_ref: "source src/mixer.cpp:103-115, source src/mod_player.cpp:651-664, source src/staticres.cpp:3212"
+
+  - name: "memoire"
+    aliases: ["mod.flashback-memoire"]
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: false
+    description: "Amiga cutscene music module"
+    source_ref: "source src/mixer.cpp:103-115, source src/mod_player.cpp:651-664, source src/staticres.cpp:3213"
+
+  - name: "chute"
+    aliases: ["mod.flashback-chute"]
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: false
+    description: "Amiga cutscene music module"
+    source_ref: "source src/mixer.cpp:103-115, source src/mod_player.cpp:651-664, source src/staticres.cpp:3214"
+
+  - name: "debut"
+    aliases: ["mod.flashback-jungle"]
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: false
+    description: "Amiga cutscene music module"
+    source_ref: "source src/mixer.cpp:103-115, source src/mod_player.cpp:651-664, source src/staticres.cpp:3215"
+
+  - name: "missions"
+    aliases: ["mod.flashback-missionca"]
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: false
+    description: "Amiga cutscene music module"
+    source_ref: "source src/mixer.cpp:103-115, source src/mod_player.cpp:651-664, source src/staticres.cpp:3216"
+
+  - name: "taxi"
+    aliases: ["mod.flashback-taxi"]
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: false
+    description: "Amiga cutscene music module"
+    source_ref: "source src/mixer.cpp:103-115, source src/mod_player.cpp:651-664, source src/staticres.cpp:3217"
+
+  - name: "donneobj"
+    aliases: ["mod.flashback-donneobjt"]
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: false
+    description: "Amiga cutscene music module"
+    source_ref: "source src/mixer.cpp:103-115, source src/mod_player.cpp:651-664, source src/staticres.cpp:3218"
+
+  - name: "missions2"
+    aliases: ["mod.flashback-fin2"]
+    category: game_data
+    system: flashback
+    load_from: content_dir
+    required: false
+    description: "Amiga cutscene music module"
+    source_ref: "source src/mixer.cpp:103-115, source src/mod_player.cpp:651-664, source src/staticres.cpp:3219"
 
 exclusion_note: >
   Game engine core. All data files (game data, music, voice) are loaded from the content
@@ -70,33 +1212,3 @@ exclusion_note: >
   directory (RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY is never called). The .info declares
   firmware_count=0, consistent with the code.
 
-analysis:
-  content_type: game_data
-  content_extensions: ["map"]
-  system_directory_used: false
-  filesystem_access: true
-  data_files_location: "same directory as loaded content"
-  game_data_files:
-    dos_floppy:
-      required:
-        - "LEVEL1.MAP through LEVEL7.MAP (level map data)"
-        - "LEVEL1.* (MBK, PGE, PAL, CT, SPC, RP, ANI, OBJ, TBN, SGD, BNQ, LEV)"
-        - "GLOBAL.ICN, GLOBAL.SPC, GLOBAL.FIB"
-        - "PERSO.SPR, PERSO.OFF"
-        - "FB_TXT.FNT"
-        - "ENGCINE.TXT or equivalent language file"
-        - "ENGCINE.BIN or equivalent"
-      optional:
-        - "intro, options, journal, etc. (.mod files for cutscene music)"
-        - "VOICE.VCE (SegaCD voice data)"
-    dos_cd:
-      additional:
-        - "INTRO.SEQ, CREDITS.SEQ, and other .SEQ cutscene videos (SEQ playback disabled in libretro build)"
-    demo:
-      archive: "DEMO_UK.ABA (contains all demo data in a single archive)"
-  detection_order:
-    - { file: "DEMO_UK.ABA", type: "DOS Demo" }
-    - { file: "INTRO.SEQ", type: "DOS CD" }
-    - { file: "LEVEL1.MAP", type: "DOS Floppy" }
-    - { file: "LEVEL1.LEV", type: "Amiga (rejected by libretro port)" }
-    - { file: "DEMO.LEV", type: "Amiga Demo (rejected by libretro port)" }

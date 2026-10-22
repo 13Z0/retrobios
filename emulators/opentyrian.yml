@@ -284,15 +284,15 @@ files:
   - name: "newsh1.shp"
     category: game_data
     system: tyrian
-    description: "Compressed sprites (arrows, mouse cursor)"
-    required: false
-    source_ref: "source src/mainint.c:493, source src/mainint.c:884, source src/mainint.c:1462 (JE_loadCompShapes '1')"
+    description: "Compressed sprites (item sprites, arrows, mouse cursor)"
+    required: true
+    source_ref: "source src/game_menu.c:151, source src/mainint.c:493, source src/mainint.c:884, source src/mainint.c:1462 (JE_loadCompShapes '1'), source src/sprite.c:469-481 (dir_fopen_die)"
 
   - name: "newsh6.shp"
     category: game_data
     system: tyrian
     description: "Compressed sprites (explosions)"
-    required: false
+    required: true
     source_ref: "source src/tyrian2.c:771 (JE_loadCompShapes '6')"
 
   - name: "newsh~.shp"
@@ -301,6 +301,231 @@ files:
     description: "Compressed sprites (destruct mode)"
     required: false
     source_ref: "source src/destruct.c:569 (JE_loadCompShapes '~')"
+
+  # -----------------------------------------------------------
+  # Enemy sprite banks: a type 5 level event names up to four
+  # indices into shapeFile[34], each loaded as newsh<char>.shp
+  # with dir_fopen_die, so a missing bank halts the game when a
+  # level asks for it. Required marks the banks the events of
+  # tyrian1.lvl name. No level of the 2.1 data names Q or @.
+  # -----------------------------------------------------------
+  - name: "newsh2.shp"
+    category: game_data
+    system: tyrian
+    description: "Compressed enemy sprite bank '2'"
+    required: true
+    source_ref: "source src/tyrian2.c:4194-4211, source src/lvlmast.c:23-27, source src/sprite.c:469-481"
+
+  - name: "newsh4.shp"
+    category: game_data
+    system: tyrian
+    description: "Compressed enemy sprite bank '4'"
+    required: true
+    source_ref: "source src/tyrian2.c:4194-4211, source src/lvlmast.c:23-27, source src/sprite.c:469-481"
+
+  - name: "newsh7.shp"
+    category: game_data
+    system: tyrian
+    description: "Compressed enemy sprite bank '7'"
+    required: false
+    source_ref: "source src/tyrian2.c:4194-4211, source src/lvlmast.c:23-27, source src/sprite.c:469-481"
+
+  - name: "newsh8.shp"
+    category: game_data
+    system: tyrian
+    description: "Compressed enemy sprite bank '8'"
+    required: false
+    source_ref: "source src/tyrian2.c:4194-4211, source src/lvlmast.c:23-27, source src/sprite.c:469-481"
+
+  - name: "newsha.shp"
+    category: game_data
+    system: tyrian
+    description: "Compressed enemy sprite bank 'a'"
+    required: true
+    source_ref: "source src/tyrian2.c:4194-4211, source src/lvlmast.c:23-27, source src/sprite.c:469-481"
+
+  - name: "newshb.shp"
+    category: game_data
+    system: tyrian
+    description: "Compressed enemy sprite bank 'b'"
+    required: false
+    source_ref: "source src/tyrian2.c:4194-4211, source src/lvlmast.c:23-27, source src/sprite.c:469-481"
+
+  - name: "newshc.shp"
+    category: game_data
+    system: tyrian
+    description: "Compressed enemy sprite bank 'c'"
+    required: true
+    source_ref: "source src/tyrian2.c:4194-4211, source src/lvlmast.c:23-27, source src/sprite.c:469-481"
+
+  - name: "newshd.shp"
+    category: game_data
+    system: tyrian
+    description: "Compressed enemy sprite bank 'd'"
+    required: true
+    source_ref: "source src/tyrian2.c:4194-4211, source src/lvlmast.c:23-27, source src/sprite.c:469-481"
+
+  - name: "newshe.shp"
+    category: game_data
+    system: tyrian
+    description: "Compressed enemy sprite bank 'e'"
+    required: true
+    source_ref: "source src/tyrian2.c:4194-4211, source src/lvlmast.c:23-27, source src/sprite.c:469-481"
+
+  - name: "newshf.shp"
+    category: game_data
+    system: tyrian
+    description: "Compressed enemy sprite bank 'f'"
+    required: true
+    source_ref: "source src/tyrian2.c:4194-4211, source src/lvlmast.c:23-27, source src/sprite.c:469-481"
+
+  - name: "newshg.shp"
+    category: game_data
+    system: tyrian
+    description: "Compressed enemy sprite bank 'g'"
+    required: false
+    source_ref: "source src/tyrian2.c:4194-4211, source src/lvlmast.c:23-27, source src/sprite.c:469-481"
+
+  - name: "newshh.shp"
+    category: game_data
+    system: tyrian
+    description: "Compressed enemy sprite bank 'h'"
+    required: false
+    source_ref: "source src/tyrian2.c:4194-4211, source src/lvlmast.c:23-27, source src/sprite.c:469-481"
+
+  - name: "newshi.shp"
+    category: game_data
+    system: tyrian
+    description: "Compressed enemy sprite bank 'i'"
+    required: true
+    source_ref: "source src/tyrian2.c:4194-4211, source src/lvlmast.c:23-27, source src/sprite.c:469-481"
+
+  - name: "newshj.shp"
+    category: game_data
+    system: tyrian
+    description: "Compressed enemy sprite bank 'j'"
+    required: true
+    source_ref: "source src/tyrian2.c:4194-4211, source src/lvlmast.c:23-27, source src/sprite.c:469-481"
+
+  - name: "newshk.shp"
+    category: game_data
+    system: tyrian
+    description: "Compressed enemy sprite bank 'k'"
+    required: false
+    source_ref: "source src/tyrian2.c:4194-4211, source src/lvlmast.c:23-27, source src/sprite.c:469-481"
+
+  - name: "newshl.shp"
+    category: game_data
+    system: tyrian
+    description: "Compressed enemy sprite bank 'l'"
+    required: true
+    source_ref: "source src/tyrian2.c:4194-4211, source src/lvlmast.c:23-27, source src/sprite.c:469-481"
+
+  - name: "newshm.shp"
+    category: game_data
+    system: tyrian
+    description: "Compressed enemy sprite bank 'm'"
+    required: true
+    source_ref: "source src/tyrian2.c:4194-4211, source src/lvlmast.c:23-27, source src/sprite.c:469-481"
+
+  - name: "newshn.shp"
+    category: game_data
+    system: tyrian
+    description: "Compressed enemy sprite bank 'n'"
+    required: false
+    source_ref: "source src/tyrian2.c:4194-4211, source src/lvlmast.c:23-27, source src/sprite.c:469-481"
+
+  - name: "newsho.shp"
+    category: game_data
+    system: tyrian
+    description: "Compressed enemy sprite bank 'o'"
+    required: false
+    source_ref: "source src/tyrian2.c:4194-4211, source src/lvlmast.c:23-27, source src/sprite.c:469-481"
+
+  - name: "newshp.shp"
+    category: game_data
+    system: tyrian
+    description: "Compressed enemy sprite bank 'p'"
+    required: true
+    source_ref: "source src/tyrian2.c:4194-4211, source src/lvlmast.c:23-27, source src/sprite.c:469-481"
+
+  - name: "newshr.shp"
+    category: game_data
+    system: tyrian
+    description: "Compressed enemy sprite bank 'r'"
+    required: false
+    source_ref: "source src/tyrian2.c:4194-4211, source src/lvlmast.c:23-27, source src/sprite.c:469-481"
+
+  - name: "newshs.shp"
+    category: game_data
+    system: tyrian
+    description: "Compressed enemy sprite bank 's'"
+    required: true
+    source_ref: "source src/tyrian2.c:4194-4211, source src/lvlmast.c:23-27, source src/sprite.c:469-481"
+
+  - name: "newsht.shp"
+    category: game_data
+    system: tyrian
+    description: "Compressed enemy sprite bank 't'"
+    required: true
+    source_ref: "source src/tyrian2.c:4194-4211, source src/lvlmast.c:23-27, source src/sprite.c:469-481"
+
+  - name: "newshu.shp"
+    category: game_data
+    system: tyrian
+    description: "Compressed enemy sprite bank 'u'"
+    required: true
+    source_ref: "source src/tyrian2.c:4194-4211, source src/lvlmast.c:23-27, source src/sprite.c:469-481"
+
+  - name: "newsh5.shp"
+    category: game_data
+    system: tyrian
+    description: "Compressed enemy sprite bank '5'"
+    required: false
+    source_ref: "source src/tyrian2.c:4194-4211, source src/lvlmast.c:23-27, source src/sprite.c:469-481"
+
+  - name: "newsh#.shp"
+    category: game_data
+    system: tyrian
+    description: "Compressed enemy sprite bank '#'"
+    required: false
+    source_ref: "source src/tyrian2.c:4194-4211, source src/lvlmast.c:23-27, source src/sprite.c:469-481"
+
+  - name: "newshv.shp"
+    category: game_data
+    system: tyrian
+    description: "Compressed enemy sprite bank 'v'"
+    required: false
+    source_ref: "source src/tyrian2.c:4194-4211, source src/lvlmast.c:23-27, source src/sprite.c:469-481"
+
+  - name: "newsh0.shp"
+    category: game_data
+    system: tyrian
+    description: "Compressed enemy sprite bank '0'"
+    required: false
+    source_ref: "source src/tyrian2.c:4194-4211, source src/lvlmast.c:23-27, source src/sprite.c:469-481"
+
+  - name: "newsh3.shp"
+    category: game_data
+    system: tyrian
+    description: "Compressed enemy sprite bank '3'"
+    required: false
+    source_ref: "source src/tyrian2.c:4194-4211, source src/lvlmast.c:23-27, source src/sprite.c:469-481"
+
+  - name: "newsh^.shp"
+    category: game_data
+    system: tyrian
+    description: "Compressed enemy sprite bank '^'"
+    required: false
+    source_ref: "source src/tyrian2.c:4194-4211, source src/lvlmast.c:23-27, source src/sprite.c:469-481"
+
+  - name: "newsh9.shp"
+    category: game_data
+    system: tyrian
+    description: "Compressed enemy sprite bank '9'"
+    required: false
+    source_ref: "source src/tyrian2.c:4194-4211, source src/lvlmast.c:23-27, source src/sprite.c:469-481"
+
 
   # -----------------------------------------------------------
   # Optional / special mode files

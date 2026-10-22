@@ -58,4 +58,12 @@ notes: |
   built into the core binary.
 
 exclusion_note: "game data loaded relative to content path, not from system directory"
-files: []
+files:
+  - name: "Doukutsu.exe"
+    category: game_data
+    system: cavestory
+    load_from: content_dir
+    required: false
+    description: "Freeware Cave Story executable, loaded as content"
+    note: "The engine reads the game from the data/ folder in the same directory. On first run it extracts the Organya music, bitmaps and stage table from it into data/, unless data/stage.sect already exists."
+    source_ref: "source drsretroarch/src/core.rs:51-52, 226-233, source src/game/shared_game_state.rs:366-384, source src/data/vanilla.rs:37-97"
