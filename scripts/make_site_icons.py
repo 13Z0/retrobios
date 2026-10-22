@@ -11,8 +11,8 @@ four pins per side and the pixel glyph on a 4 by 4 grid. Three variants:
   shapes rasterised by a headless Chromium through Playwright, for browsers
   that take no SVG icon and for home-screen shortcuts.
 
-The files land in ``docs_assets/overrides/assets/brand/``, which MkDocs copies
-with the theme. The site build never runs this script.
+The files land in ``docs_assets/brand/``, which generate_site.py copies into
+the site. The site build never runs this script.
 
     python scripts/make_site_icons.py
 """
@@ -22,7 +22,7 @@ from __future__ import annotations
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-OUT = ROOT / "docs_assets" / "overrides" / "assets" / "brand"
+OUT = ROOT / "docs_assets" / "brand"
 
 HEADER = "#3b3f7a"
 GLYPH = "#8be0f7"

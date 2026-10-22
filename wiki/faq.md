@@ -104,7 +104,8 @@ and name the file. A file is removed when the owner of its rights asks.
 Files disappear when stores close, like the 3DS and Wii U shops in 2023. We keep
 them while they can still be found.
 
-!!! tip "Next"
+:::tip[Next]
+- [Get your files](../which-pack.md)
+- [Words used on this site](glossary.md)
+:::
 
-    - [Get your files](../which-pack.md)
-    - [Words used on this site](glossary.md)

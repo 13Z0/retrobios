@@ -36,7 +36,8 @@ class SiteCoreCounts(unittest.TestCase):
         page = generate_site.generate_cross_reference(coverages, profiles)
         shown = {
             m.group(1): int(m.group(2))
-            for m in re.finditer(r'\?\?\? abstract "([^"]+)"\n\n.*\n\n {4}\*\*(\d+) cores', page)
+            for m in re.finditer(
+                r'<summary>([^<]+)</summary>\n\n.*\n\n\*\*(\d+) cores', page)
         }
         for name, cov in coverages.items():
             with self.subTest(platform=name):

@@ -148,7 +148,7 @@ def _wiki_copy(tmp: str) -> Path:
 class NavFromFrontMatter(unittest.TestCase):
 
     def _nav(self, wiki: Path) -> dict:
-        nav = generate_site.generate_mkdocs_nav({}, {}, {}, {}, wiki)
+        nav = generate_site.generate_nav({}, {}, {}, {}, wiki)
         return {next(iter(tab)): next(iter(tab.values())) for tab in nav}
 
     def test_the_repository_nav_matches_the_pages(self):

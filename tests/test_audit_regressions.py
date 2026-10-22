@@ -258,7 +258,7 @@ class WorkflowRegressions(unittest.TestCase):
         and acted on afterwards rather than swallowed. A best-effort side
         action such as adding a label is not a check and keeps its `|| true`.
         """
-        checks = ("python scripts/", "unittest", "mkdocs build")
+        checks = ("python scripts/", "unittest", "npm run build")
         for name in ("validate.yml", "deploy-site.yml"):
             workflow = self._workflow(name)
             for job_name, job in workflow["jobs"].items():
@@ -4311,7 +4311,7 @@ class AFileCardSaysAllItKnows(unittest.TestCase):
         ))
         # The card is a heading with this id, linked by the heading's own
         # permalink.
-        self.assertIn("{ #file-neogeo-zip .rb-file-title }", text)
+        self.assertIn('<h3 id="file-neogeo-zip" class="rb-file-title"', text)
         self.assertIn("Standalone path: `Firmware/neogeo.zip`", text)
         self.assertIn("`m11.bin`", text)
         self.assertIn("CRC32 `0000000b`", text)
@@ -4954,7 +4954,7 @@ class CollectionCardsCarryFullHashes(unittest.TestCase):
                  "crc32": "504086c1", "sha256": "b" * 64}
         text = "\n".join(_system_file_card(entry, FileConsumers({}, {})))
         for value in (entry["sha1"], entry["md5"], entry["crc32"], entry["sha256"]):
-            self.assertIn(f"`{value}`", text)
+            self.assertIn(f">{value}</code>", text)
 
 
 
@@ -4975,17 +4975,11 @@ class NullReadsAsNone(unittest.TestCase):
         self.assertIn("none: the source is the project itself", page)
 
     def test_the_rendered_site_has_no_python_none(self):
-        docs = ROOT / "docs"
-        if not docs.is_dir():
-            if os.environ.get("CI"):
-                self.fail("CI generates docs/ before the suite")
-            self.skipTest("docs/ not generated")
-        pattern = re.compile(r"\| None \||: None$|: None \|", re.M)
-        from scripts.generate_site import LOCAL_NOTE_DIRS
+        from tests import sitepages
 
-        found = [p.relative_to(docs).as_posix() for p in sorted(docs.rglob("*.md"))
-                 if not set(p.relative_to(docs).parts[:-1]) & set(LOCAL_NOTE_DIRS)
-                 and pattern.search(p.read_text(encoding="utf-8"))]
+        pattern = re.compile(r"\| None \||: None$|: None \|", re.M)
+        found = [sitepages.name(p) for p in sitepages.pages()
+                 if pattern.search(p.read_text(encoding="utf-8"))]
         self.assertEqual(found, [])
 
 
@@ -5029,7 +5023,7 @@ class VersionAnchorsFollowContent(unittest.TestCase):
             "raze", {"emulator": "Raze", "type": "standalone", "files": files},
             {"files": {}, "indexes": {}},
         )
-        return re.findall(r"\{ #(file-[^ ]+) \.rb-file-title \}", page)
+        return re.findall(r'<h3 id="(file-[^"]+)" class="rb-file-title"', page)
 
     def test_inserting_a_version_keeps_the_others(self):
         a = {"name": "DUKE3D.GRP", "path": "DUKE3D.GRP", "crc32": "bbc9ce44"}
@@ -5051,18 +5045,26 @@ class SitemapDatesComeFromThePage(unittest.TestCase):
     """All 664 sitemap URLs carried the build date: eduke32, re-read on
     2026-10-04, was announced as changed on the day of every build."""
 
-    def test_the_hook_takes_the_page_date_or_none(self):
-        from types import SimpleNamespace
+    def test_the_page_date_or_none_reaches_the_sitemap(self):
+        import tempfile
 
-        from scripts.mkdocs_hooks import on_page_markdown
+        from scripts import generate_site
 
-        dated = SimpleNamespace(meta={"date_modified": "2026-10-04"}, update_date="today")
-        undated = SimpleNamespace(meta={}, update_date="today")
-        on_page_markdown("", dated, None, None)
-        on_page_markdown("", undated, None, None)
-        self.assertEqual((dated.update_date, undated.update_date), ("2026-10-04", ""))
-        config = (ROOT / "mkdocs.yml").read_text(encoding="utf-8")
-        self.assertIn("hooks:\n  - scripts/mkdocs_hooks.py", config)
+        saved = dict(generate_site.PAGE_DATA)
+        self.addCleanup(lambda: (generate_site.PAGE_DATA.clear(),
+                                 generate_site.PAGE_DATA.update(saved)))
+        with tempfile.TemporaryDirectory(dir=ROOT / "tmp") as tmp:
+            docs = Path(tmp)
+            (docs / "emulators").mkdir()
+            (docs / "emulators" / "dated.md").write_text("# Dated\n\nA page with its own date.\n")
+            (docs / "emulators" / "undated.md").write_text("# Undated\n\nA page with no date.\n")
+            generate_site.PAGE_DATA["emulators/dated.md"] = {"dateModified": "2026-10-04"}
+            lastmod = generate_site.decorate_markdown_pages(docs)
+        self.assertEqual(lastmod, {"/retrobios/emulators/dated/": "2026-10-04"})
+        # The sitemap reads that map, and leaves every other page undated.
+        config = (ROOT / "website" / "astro.config.mjs").read_text(encoding="utf-8")
+        self.assertIn("lastmod.json", config)
+        self.assertIn("serialize(item)", config)
 
 
 class SiteCodeSpansHoldTheirValue(unittest.TestCase):
@@ -6082,8 +6084,8 @@ class ThePipelineRunsTheSchemaCheckCIRuns(unittest.TestCase):
         duplicate ids passed it and failed the deploy."""
         workflow = (ROOT / ".github" / "workflows" / "deploy-site.yml").read_text(encoding="utf-8")
         source = (ROOT / "scripts" / "pipeline.py").read_text(encoding="utf-8")
-        self.assertIn("mkdocs build --strict", workflow)
-        self.assertIn('["mkdocs", "build", "--strict"]', source)
+        self.assertIn("npm run build --prefix website", workflow)
+        self.assertIn('["npm", "run", "build", "--prefix", "website"]', source)
         self.assertIn("scripts/validate_site.py", workflow)
         self.assertIn('"scripts/validate_site.py"', source)
 

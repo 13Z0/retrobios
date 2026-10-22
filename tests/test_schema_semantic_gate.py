@@ -42,7 +42,7 @@ class SemanticManifestValidation(unittest.TestCase):
             (install / "synthetic.json").write_text(
                 json.dumps({"files": None}), encoding="utf-8"
             )
-            api = root / "docs" / "api" / "v1"
+            api = root / "website" / "public" / "api" / "v1"
             api.mkdir(parents=True)
             (api / "catalog.json").write_text(
                 json.dumps({"count": 1, "items": None}), encoding="utf-8"
@@ -58,7 +58,7 @@ class SemanticManifestValidation(unittest.TestCase):
         text = output.getvalue().replace("\\", "/")
         self.assertIn("database.json", text)
         self.assertIn("install/synthetic.json", text)
-        self.assertIn("docs/api/v1/catalog.json", text)
+        self.assertIn("website/public/api/v1/catalog.json", text)
         self.assertIn("files", text)
         self.assertIn("items", text)
         self.assertNotIn("Traceback", text)

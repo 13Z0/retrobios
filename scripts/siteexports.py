@@ -11,6 +11,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+import sitemarkup as markup
+
 EXPORTS_DIR = "exports"
 REPO_BLOB = "https://github.com/Abdess/retrobios/blob/main"
 REPO_TREE = "https://github.com/Abdess/retrobios/tree/main"
@@ -73,12 +75,15 @@ def requirement_lines(report: dict) -> list[str]:
     ]
     if not items:
         return []
-    return [
-        f'??? note "Required flags aligned with the code ({len(items)})"',
-        "",
-        *[f"    - {item}" for item in items],
-        "",
-    ]
+    return _lookup_only(markup.details(
+        "note", f"Required flags aligned with the code ({len(items)})",
+        [f"- {item}" for item in items]))
+
+
+def _lookup_only(block: list[str]) -> list[str]:
+    """A list of entries changed, out of the site search: 129 "md5" in them
+    put this page above the one that explains MD5 checks."""
+    return ["", markup.block_open("section", markup.search_exclude()), "", *block, "", "</section>", ""]
 
 
 def _plural(count: int, noun: str, plural: str = "") -> str:
@@ -141,12 +146,8 @@ def candidate_lines(candidates: list[dict]) -> list[str]:
         title = (reason[:1].upper() + reason[1:]).replace('"', "'")
         items = [f"`{c['system']}` `{c['destination']}`" for c in entries]
         if len(entries) > LONG_LIST:
-            lines.extend([
-                f'??? note "{title} ({len(entries)})"',
-                "",
-                *[f"    - {item}" for item in items],
-                "",
-            ])
+            lines.extend(_lookup_only(markup.details(
+                "note", f"{title} ({len(entries)})", [f"- {item}" for item in items])))
         else:
             lines.extend([f"{title}:", "", *[f"- {item}" for item in items], ""])
     return lines
@@ -263,35 +264,29 @@ def generate_exports_page(reports: list[dict], names: dict[str, str]) -> str:
             ])
         lines.extend(candidate_lines(report.get("removal_candidates") or []))
         if report.get("invalid"):
-            lines.extend([
-                '!!! warning "The updated file does not pass the platform\'s own checks"',
-                "",
-                *[f"    - {issue}" for issue in report["invalid"]],
-                "",
-            ])
+            lines.extend(markup.aside(
+                "warning", "The updated file does not pass the platform's own checks",
+                [f"- {issue}" for issue in report["invalid"]]))
 
         originals = report.get("originals") or {}
         files = report["files"]
         raw = [f"{REPO_RAW}/{EXPORTS_DIR}/{platform}/{name}" for name in files]
         if len(files) == 1:
             lines.extend([
-                f"[Download the updated file]({raw[0]}){{ .md-button .md-button--primary }} "
-                f"[See it on GitHub]({REPO_BLOB}/{EXPORTS_DIR}/{platform}/{files[0]}){{ .md-button }}",
+                markup.button("Download the updated file", raw[0], primary=True) + " "
+                + markup.button("See it on GitHub", f"{REPO_BLOB}/{EXPORTS_DIR}/{platform}/{files[0]}"),
                 "",
             ])
         else:
             lines.extend([
-                f"[Browse the {len(files)} updated files]"
-                f"({REPO_TREE}/{EXPORTS_DIR}/{platform}){{ .md-button .md-button--primary }}",
+                markup.button(f"Browse the {len(files)} updated files",
+                              f"{REPO_TREE}/{EXPORTS_DIR}/{platform}", primary=True),
                 "",
             ])
         if len(originals) > 1:
-            lines.extend([
-                f'??? note "The {len(originals)} original files it is based on"',
-                "",
-                *[f"    - [`{name}`]({url})" for name, url in sorted(originals.items())],
-                "",
-            ])
+            lines.extend(markup.details(
+                "note", f"The {len(originals)} original files it is based on",
+                [f"- [`{name}`]({url})" for name, url in sorted(originals.items())]))
         elif originals:
             (name, url), = originals.items()
             lines.extend([f"Based on [`{name}`]({url}).", ""])
@@ -301,10 +296,6 @@ def generate_exports_page(reports: list[dict], names: dict[str, str]) -> str:
             items = change_items(report, key)
             if not items:
                 continue
-            lines.extend([
-                f'??? note "{title} ({len(items)})"',
-                "",
-                *[f"    - {item}" for item in items],
-                "",
-            ])
+            lines.extend(_lookup_only(markup.details(
+                "note", f"{title} ({len(items)})", [f"- {item}" for item in items])))
     return "\n".join(lines)

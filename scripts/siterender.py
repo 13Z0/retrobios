@@ -7,6 +7,8 @@ import urllib.parse
 from collections.abc import Callable
 from pathlib import Path
 
+import sitemarkup as markup
+
 
 WIKI_SRC_DIR = "wiki"  # manually maintained wiki sources
 SYSTEM_ICON_BASE = "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png"
@@ -89,7 +91,7 @@ def system_icon_markdown(manufacturer: str, console_name: str) -> str:
     name = _icon_name(manufacturer, console_name)
     if not _icon_available.get(name):
         return ""
-    return f"![{console_name}]({_icon_url(name)}){{ width=24 }} "
+    return markup.image(console_name, _icon_url(name), width="24") + " "
 
 # Global index: maps system_id -> (manufacturer_slug, console_name) for cross-linking
 _system_page_map: dict[str, tuple[str, str]] = {}

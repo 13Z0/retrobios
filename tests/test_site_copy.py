@@ -21,7 +21,10 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-DOCS = REPO_ROOT / "docs"
+sys.path.insert(0, str(REPO_ROOT))
+from tests import sitepages  # noqa: E402
+
+DOCS = sitepages.CONTENT
 
 # Level 0: the Start here pages, with their own ceiling on words.
 START_PAGES = {
@@ -142,15 +145,19 @@ def guide_part(markdown: str) -> str:
 
 
 def parse(markdown: str) -> Page:
-    """Blocks of prose a reader sees, code and HTML left out."""
+    """Blocks of prose a reader sees, code and HTML left out.
+
+    A collapsed block (<details>) counts, but not before the first action:
+    the reader opens it on purpose. Of a group of tabs the first is read and
+    the others only stand in for it.
+    """
     text = guide_part(markdown)
     text = re.sub(r"<script.*?</script>", "", text, flags=re.S)
     text = re.sub(r"<!--.*?-->", "", text, flags=re.S)
     page = Page()
     seen_words = 0
-    collapsed_indent: int | None = None
-    tab_indent: int | None = None  # the tabs of a group a reader picks one of
-    hidden_indent: int | None = None
+    details = 0  # depth of collapsed blocks
+    tab = 0  # the tab of a group being read, 0 outside a group
     fence: str | None = None
     current: list[str] = []
     kind = "paragraph"
@@ -162,8 +169,7 @@ def parse(markdown: str) -> Page:
             body = strip_inline(" ".join(current))
             if WORD.search(body):
                 term = page.blocks[-1].text.lower() if kind == "definition" and page.blocks else ""
-                block = Block(kind, body, collapsed_indent is not None, term,
-                              hidden_indent is not None)
+                block = Block(kind, body, details > 0, term, tab > 1)
                 page.blocks.append(block)
                 if (page.before_action is None and not block.collapsed
                         and not block.hidden and kind not in ("table", "heading")):
@@ -185,37 +191,44 @@ def parse(markdown: str) -> Page:
             if stripped.startswith(fence):
                 fence = None
             continue
-        if stripped and tab_indent is not None and indent <= tab_indent and not stripped.startswith("=== "):
-            flush()
-            tab_indent = hidden_indent = None
         if stripped.startswith(("```", "~~~")):
             fence = stripped[:3]
-            if hidden_indent is None:
+            if tab < 2:
                 act()
             continue
-        if collapsed_indent is not None and stripped and indent <= collapsed_indent:
-            flush()
-            collapsed_indent = None
         if not stripped:
             flush()
             continue
-        if re.match(r"(\?\?\?\+?|!!!) ", stripped):
-            flush()
-            if stripped.startswith("??? "):
-                collapsed_indent = indent
+        if stripped.startswith("import ") and stripped.endswith(";"):
             continue
-        if stripped.startswith("=== "):
-            flush()
-            if tab_indent == indent:
-                hidden_indent = indent
-            else:
-                tab_indent, hidden_indent = indent, None
-            continue
-        if stripped.startswith("<") or stripped.startswith("</"):
+        if stripped.startswith(":::"):
             flush()
             continue
-        if ".md-button" in stripped:
+        if stripped.startswith("<details"):
+            flush()
+            details += 1
+            continue
+        if stripped.startswith("</details>"):
+            flush()
+            details = max(0, details - 1)
+            continue
+        if stripped.startswith("<Tabs"):
+            flush()
+            tab = 0
+            continue
+        if stripped.startswith("<TabItem"):
+            flush()
+            tab += 1
+            continue
+        if stripped.startswith("</Tabs>"):
+            flush()
+            tab = 0
+            continue
+        if "rb-button" in stripped or stripped.startswith("<FilePicker"):
             act()
+            continue
+        if re.match(r"</?(?!abbr\b|a\b|code\b|strong\b|em\b)[A-Za-z]", stripped):
+            flush()
             continue
         if stripped.startswith("#"):
             flush()
@@ -223,7 +236,7 @@ def parse(markdown: str) -> Page:
                 page.list_runs.append(run)
                 run = 0
             kind = "heading"
-            current = [stripped.lstrip("#").strip()]
+            current = [re.sub(r"\s*\{[^}]*\}\s*$", "", stripped.lstrip("#").strip())]
             flush()
             kind = "paragraph"
             continue
@@ -311,25 +324,23 @@ def held_pages(docs: Path) -> list[tuple[str, str, int]]:
     """(relative path, level, ceiling) for every page the budgets hold."""
     pages = [(name, "start", ceiling) for name, ceiling in START_PAGES.items()]
     pages += [
-        (str(path.relative_to(docs)), "setup", SETUP_CEILING)
-        for path in sorted((docs / "platforms").glob("*.md"))
-        if path.name != "index.md"
+        (sitepages.name(path), "setup", SETUP_CEILING)
+        for path in sorted((docs / "platforms").glob("*.md*"))
+        if path.stem != "index"
         and "\n## Where the files go" in path.read_text(encoding="utf-8")
     ]
     pages.append(("platforms/index.md", "setup", SETUP_INDEX_CEILING))
-    return [(name, level, ceiling) for name, level, ceiling in pages if (docs / name).is_file()]
+    return [(name, level, ceiling) for name, level, ceiling in pages
+            if sitepages.page(name).is_file()]
 
 
 def _docs() -> Path:
-    if not (DOCS / "index.md").is_file():
-        if os.environ.get("CI"):
-            raise AssertionError("CI generates docs/ before the suite")
-        raise unittest.SkipTest("docs/ not generated (python scripts/generate_site.py)")
-    return DOCS
+    return sitepages.require()
 
 
 def _load(name: str) -> Page:
-    return parse((_docs() / name).read_text(encoding="utf-8"))
+    _docs()
+    return parse(sitepages.page(name).read_text(encoding="utf-8"))
 
 
 class CopyBudgets(unittest.TestCase):
@@ -400,8 +411,10 @@ class TheMeasureItself(unittest.TestCase):
     SAMPLE = (
         "---\nlevel: start\n---\n\n# Title\n\nOne two three. Four five.\n\n"
         "- Item **one**.\n- Item [two](x.md).\n\n```sh\nnot counted at all\n```\n\n"
-        "??? note \"Hidden\"\n\n    Collapsed words here.\n\n"
-        "=== \"A\"\n\n    First tab.\n\n=== \"B\"\n\n    Second tab words.\n\n"
+        '<details class="rb-details rb-details-note">\n<summary>Hidden</summary>\n\n'
+        "Collapsed words here.\n\n</details>\n\n"
+        '<Tabs syncKey="os">\n<TabItem label="A">\n\nFirst tab.\n\n</TabItem>\n'
+        '<TabItem label="B">\n\nSecond tab words.\n\n</TabItem>\n</Tabs>\n\n'
         "| A | B |\n|---|---|\n| cell | cell |\n\n## Reference: deep\n\nNot read.\n"
     )
 
@@ -429,7 +442,7 @@ def report(docs: Path) -> str:
     rows = ["| Page | Words | Before action | Max block | Median / max sentence |",
             "|---|---:|---:|---:|---|"]
     for name, _level, _ceiling in held_pages(docs):
-        m = measure(parse((docs / name).read_text(encoding="utf-8")))
+        m = measure(parse(sitepages.page(name).read_text(encoding="utf-8")))
         before = "none" if m["before_action"] is None else m["before_action"]
         rows.append(f"| {name} | {m['words']} | {before} | {m['max_block']} | "
                     f"{m['median_sentence']:g} / {m['max_sentence']} |")

@@ -79,15 +79,8 @@ class DeploySiteTriggers(unittest.TestCase):
             }
         )
         self.assertIn("generate_site.py", entry_points)
-        # mkdocs build runs the hooks mkdocs.yml names: a script of the build.
-        # The file carries Python tags safe_load refuses, but the list is plain.
-        mkdocs = (REPO_ROOT / "mkdocs.yml").read_text(encoding="utf-8")
-        hooks = re.search(r"^hooks:\n((?:  - .+\n)+)", mkdocs, re.M)
-        entry_points += [
-            line.strip()[2:].removeprefix("scripts/")
-            for line in (hooks.group(1).splitlines() if hooks else [])
-            if line.strip()[2:].startswith("scripts/")
-        ]
+        # The Starlight project is an input of its own build.
+        self.assertIn("website/**", patterns)
         uncovered = sorted(
             path
             for path in closure(entry_points)
@@ -109,9 +102,9 @@ class DeploySiteTriggers(unittest.TestCase):
 
 
 class ThePullRequestBuildsTheSite(unittest.TestCase):
-    """mkdocs was installed by deploy-site.yml alone, which runs after the
-    merge, and validate.yml did not watch wiki/: a dead link or a line read as
-    a second heading passed every check and failed the deploy on main."""
+    """The site build ran in deploy-site.yml alone, after the merge, and
+    validate.yml did not watch wiki/: a dead link or a line read as a second
+    heading passed every check and failed the deploy on main."""
 
     @staticmethod
     def _workflow(name: str) -> dict:
@@ -124,17 +117,23 @@ class ThePullRequestBuildsTheSite(unittest.TestCase):
         runs = "\n".join(str(step.get("run", "")) for step in steps)
         for command in (
             "python scripts/generate_site.py",
-            "mkdocs build --strict",
-            "python scripts/validate_site.py",
+            "npm ci --prefix website",
+            "npm run build --prefix website",
+            "python scripts/validate_site.py --site-dir website/dist",
         ):
             with self.subTest(command=command):
                 self.assertIn(command, runs)
-        for package in ("mkdocs-material", "pymdown-extensions"):
-            with self.subTest(package=package):
-                self.assertIn(package, runs)
+        # The same Node, from the official action pinned by commit, in both.
+        uses = {str(step.get("uses", "")) for step in steps}
+        deploy = {str(step.get("uses", ""))
+                  for step in self._workflow("deploy-site.yml")["jobs"]["build"]["steps"]}
+        node = {use for use in uses if use.startswith("actions/setup-node@")}
+        self.assertEqual(len(node), 1)
+        self.assertTrue(node <= deploy)
+        self.assertRegex(next(iter(node)), r"@[0-9a-f]{40}$")
 
     def test_the_pages_exist_before_the_suite_reads_them(self):
-        """docs/ is gitignored. Built after the suite, the tests that read
+        """The pages are gitignored. Built after the suite, the tests that read
         the rendered pages found none and skipped on every CI run."""
         steps = self._workflow("validate.yml")["jobs"]["run-tests"]["steps"]
         runs = [str(step.get("run", "")) for step in steps]

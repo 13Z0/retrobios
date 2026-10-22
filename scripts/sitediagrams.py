@@ -36,6 +36,8 @@ from xml.sax.saxutils import escape
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "scripts"))
 
+import sitemarkup as markup  # noqa: E402
+
 PLACEHOLDER = re.compile(r"(?m)^([ \t]*)<!--\s*image:\s*([A-Za-z0-9_-]+)\s*-->[ \t]*$")
 PLACEHOLDER_ANYWHERE = re.compile(r"<!--\s*image:\s*([A-Za-z0-9_-]+)\s*-->")
 
@@ -605,12 +607,12 @@ def figure_html(image_id: str, occurrence: int = 1, inline: bool = False) -> str
     anchor = f"rb-fig-{image_id}{suffix}"
     if inline:
         html = (
-            f'<span class="rb-figure rb-figure-inline" id="{anchor}" data-search-exclude>'
+            f'<span class="rb-figure rb-figure-inline" id="{anchor}" {markup.search_exclude()}>'
             f'{drawings}<span class="rb-figure-caption">{caption}</span></span>'
         )
         return html.translate(_INLINE_ESCAPES)
     return (
-        f'<figure class="rb-figure" id="{anchor}" data-search-exclude>\n'
+        f'<figure class="rb-figure" id="{anchor}" {markup.search_exclude()}>\n'
         f"{drawings}\n"
         f"<figcaption>{caption}</figcaption>\n"
         "</figure>"

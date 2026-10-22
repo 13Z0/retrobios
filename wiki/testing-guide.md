@@ -56,7 +56,7 @@ Every module in `tests/`, by the area it guards.
 | Handheld port | stubbed PortMaster dialogs, fake installer | `test_port` |
 | Truth and native export | synthetic + cached originals | `test_export_counts`, `test_export_native_layer`, `test_export_report`, `test_exporters`, `test_truth_data_dir_readers`, `test_truth_diff`, `test_truth_layout` |
 | Scrapers, upstream and provenance | inline sources, synthetic | `test_check_freshness`, `test_dedup`, `test_elec_scrapers`, `test_fbneo_parser`, `test_find_pinned_revision`, `test_hash_merge`, `test_launchers`, `test_launchers_emudeck`, `test_launchers_recalbox`, `test_launchers_retrobat`, `test_launchers_retrodeck`, `test_launchers_retropie`, `test_launchers_rocknix`, `test_mame_devices`, `test_mame_parser`, `test_mame_ref_audit`, `test_profile_sync`, `test_provenance`, `test_refresh_data_dirs`, `test_refresh_failures`, `test_refresh_stale`, `test_retrodeck_scraper_errors`, `test_romset_recipes`, `test_scraper_contract`, `test_upstream`, `test_upstream_index` |
-| Site, docs and repository contracts | rendered pages, sources | `test_contributing_text`, `test_coverage_cache`, `test_data_dir_refs`, `test_dataclass_defaults`, `test_doc_pages`, `test_doc_surfaces`, `test_optional_dependencies`, `test_prose_style`, `test_schema_semantic_gate`, `test_site_availability`, `test_site_content_data`, `test_site_copy`, `test_site_cores`, `test_site_emulator_page`, `test_site_exports`, `test_site_funnel`, `test_site_images`, `test_site_platform_hashes`, `test_site_render`, `test_site_system_links`, `test_site_validation`, `test_site_weight`, `test_site_write`, `test_validate_pr`, `test_validate_pr_flow`, `test_validate_pr_hashes`, `test_workflow_paths` |
+| Site, docs and repository contracts | rendered pages, sources | `test_contributing_text`, `test_coverage_cache`, `test_data_dir_refs`, `test_dataclass_defaults`, `test_doc_pages`, `test_doc_surfaces`, `test_optional_dependencies`, `test_prose_style`, `test_schema_semantic_gate`, `test_site_availability`, `test_site_content_data`, `test_site_copy`, `test_site_cores`, `test_site_emulator_page`, `test_site_exports`, `test_site_funnel`, `test_site_images`, `test_site_picker`, `test_site_platform_hashes`, `test_site_render`, `test_site_system_links`, `test_site_validation`, `test_site_weight`, `test_site_write`, `test_validate_pr`, `test_validate_pr_flow`, `test_validate_pr_hashes`, `test_workflow_paths` |
 
 ## Test architecture
 
@@ -287,7 +287,23 @@ The test suite is one layer of verification. The full quality gate is:
 3. No unexpected CRITICAL entries in the verify output
 4. Pack file counts match verification file counts (consistency check)
 5. Pack integrity passes (every declared file extractable with correct hash)
-6. `mkdocs build --strict` and `python scripts/validate_site.py` pass
+6. `npm run build --prefix website` and `python scripts/validate_site.py` pass
+
+A change to the site engine, its version, its search ranking or the page
+weights is measured on a served build before it lands, with the scripts in
+`website/tools/` (they need `npm install --no-save playwright-core axe-core
+lighthouse` and Chrome):
+
+- `search_gate.py`: the queries a visitor types and the page that must answer
+  each, read from the site's own search box
+- `lighthouse.py`: Lighthouse mobile on a list of pages, the heaviest ones
+  included
+- `axe.mjs`: WCAG 2.2 AA in light and dark
+- `check_tools.mjs`: the hash lookup, the file picker, a hash typed in the
+  search, breadcrumbs, previous and next across tabs, glossary terms, tables
+  on a phone and the 404 page, in a real browser
+- `serve.mjs`: the build served under /retrobios/ with gzip, as GitHub Pages
+  serves it
 
 A change that passes the tests but breaks the pipeline is not merged. A new
 CRITICAL entry in the verify output after a change is explained before the
@@ -380,7 +396,7 @@ nav_title: Save files    # only when the menu names it otherwise than its headin
 - `level` picks the tab and the label shown at the top of the page.
 - `order` sorts the tab. Pages are spaced by ten, so a new page fits between
   two without renumbering. The generated pages (systems, emulators, the gaps
-  and data pages) hold fixed places among them, set in `generate_mkdocs_nav`.
+  and data pages) hold fixed places among them, set in `generate_nav`.
 - `nav_title` is the menu label. Without it the menu shows the page's `# `
   heading. It is not `title`, which both MkDocs and Astro Starlight read as
   the page's own title.
@@ -419,7 +435,7 @@ The `validate.yml` workflow runs `python -m unittest discover -s tests -t . -v` 
 roads into main: every pull request, and every direct push, that touches
 `bios/`, `platforms/`, `emulators/`, `schemas/`, `scripts/`, `tests/`,
 `install.py` or an input of the site build such as `wiki/`. The same job then
-builds the site with `mkdocs build --strict`, so a page that would fail the
+builds the site with `npm run build --prefix website`, so a page that would fail the
 deploy fails the pull request. Work reaches main by push as often as by pull request, so a suite
 wired to pull requests alone would guard the road nobody takes. The test job
 (`run-tests`) runs in parallel with schema validation, and on a pull request

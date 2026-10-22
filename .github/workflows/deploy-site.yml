@@ -29,7 +29,6 @@ on:
       - "scripts/largefiles.py"
       - "scripts/launchers.py"
       - "scripts/manifestselect.py"
-      - "scripts/mkdocs_hooks.py"
       - "scripts/nativemode.py"
       - "scripts/packextras.py"
       - "scripts/packpaths.py"
@@ -45,9 +44,11 @@ on:
       - "scripts/sect233r1.py"
       - "scripts/sitediagrams.py"
       - "scripts/siteguides.py"
+      - "scripts/sitemarkup.py"
       - "scripts/siteexports.py"
       - "scripts/siterender.py"
       - "scripts/sitesources.py"
+      - "scripts/sitestarlight.py"
       - "scripts/sitewrite.py"
       - "scripts/slot.py"
       - "scripts/slots.py"
@@ -67,7 +68,9 @@ on:
       - "database.json"
       - "release.json"
       - "derivable.json"
-      - "mkdocs.yml"
+      # The Starlight project: config, components, styles, lockfile. Its
+      # generated folders are gitignored and never trigger anything.
+      - "website/**"
       - ".github/workflows/deploy-site.yml"
   workflow_dispatch:
 
@@ -93,11 +96,18 @@ jobs:
         with:
           python-version: "3.12"
 
-      # mkdocs-material >= 9.7.5 caps mkdocs < 2, and the upper bound keeps a major
-      # theme release from changing the site without a deliberate bump here.
-      # mkdocs is pinned below 2 on its own too: MkDocs 2 drops plugins, and the
-      # theme, in maintenance mode since 9.7.0, will not follow it.
-      - run: pip install pyyaml "jsonschema[format-nongpl]==4.26.0" "mkdocs>=1.6,<2" "mkdocs-material>=9.7.5,<10" "pymdown-extensions>=10.14"
+      - run: pip install pyyaml "jsonschema[format-nongpl]==4.26.0"
+
+      # Node builds the site only: the scripts stay Python. The engine and
+      # its plugins are pinned exactly in website/package.json and resolved
+      # from the committed lockfile.
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1  # v7.1.0
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: website/package-lock.json
+
+      - run: npm ci --prefix website
 
       - name: Validate data contracts
         run: python scripts/validate_schemas.py
@@ -120,8 +130,9 @@ jobs:
         run: |
           python scripts/generate_site.py
           python scripts/generate_readme.py --db database.json --platforms-dir platforms
-          mkdocs build --strict
-          python scripts/validate_site.py
+          # starlight-links-validator fails the build on a dead link or anchor.
+          npm run build --prefix website
+          python scripts/validate_site.py --site-dir website/dist
 
       # write_if_changed() compares content with its timestamp line stripped,
       # so a run that only moves the clock leaves the file untouched and this
@@ -135,7 +146,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9  # v5
         with:
-          path: site/
+          path: website/dist/
 
   deploy:
     needs: build

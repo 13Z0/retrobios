@@ -219,7 +219,7 @@ def hold_artifact_lock(directory: str) -> Iterator[None]:
 
 
 # What a pipeline run writes at fixed paths, whatever its --output-dir.
-REPOSITORY_OUTPUTS = ("database.json", "install/", "README.md", "CONTRIBUTING.md", "docs/")
+REPOSITORY_OUTPUTS = ("database.json", "install/", "README.md", "CONTRIBUTING.md", "website/")
 
 
 @contextlib.contextmanager

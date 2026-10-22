@@ -1,0 +1,40 @@
+---
+// Breadcrumbs, the level label and the title. The trail says which tab a
+// deep page belongs to; the label says who the page is written for.
+const PAGE_TITLE_ID = '_top';
+
+const LABELS = {
+	start: 'Start here',
+	setup: 'Setup guide',
+	explore: 'Details',
+	reference: 'Reference',
+	contribute: 'For contributors',
+} as const;
+
+const { title, level } = Astro.locals.starlightRoute.entry.data;
+const crumbs = Astro.locals.rbBreadcrumbs ?? [];
+---
+
+{
+	crumbs.length > 0 && (
+		<nav class="rb-breadcrumbs" aria-label="Breadcrumb">
+			<ol>
+				{crumbs.map((crumb) => (
+					<li>{crumb.href ? <a href={crumb.href}>{crumb.label}</a> : crumb.label}</li>
+				))}
+			</ol>
+		</nav>
+	)
+}
+{level && <span class={`rb-level rb-level-${level}`}>{LABELS[level]}</span>}
+<h1 id={PAGE_TITLE_ID}>{title}</h1>
+
+<style>
+	h1 {
+		margin-top: 0.25rem;
+		font-size: var(--sl-text-h1);
+		line-height: var(--sl-line-height-headings);
+		font-weight: 700;
+		color: var(--sl-color-white);
+	}
+</style>

@@ -18,8 +18,8 @@ Budget target: ~175 minutes/month on the GitHub free tier.
 
 | Workflow | File | Trigger |
 |----------|------|---------|
-| Deploy Site | `deploy-site.yml` | Push to main (platforms, emulators, provenance, wiki, scripts, database.json, mkdocs.yml), manual |
-| Validation | `validate.yml` | PR and push to main touching `bios/**`, `platforms/**`, `emulators/**`, `schemas/**`, `scripts/**`, `tests/**`, `install.py`, `install.sh`, `install.ps1`, or any other input of the site build (`wiki/**`, `docs_assets/**`, `provenance/**`, `exports/**`, `install/**`, `database.json`, `release.json`, `derivable.json`, `mkdocs.yml`) |
+| Deploy Site | `deploy-site.yml` | Push to main (platforms, emulators, provenance, wiki, scripts, database.json, website), manual |
+| Validation | `validate.yml` | PR and push to main touching `bios/**`, `platforms/**`, `emulators/**`, `schemas/**`, `scripts/**`, `tests/**`, `install.py`, `install.sh`, `install.ps1`, or any other input of the site build (`wiki/**`, `docs_assets/**`, `provenance/**`, `exports/**`, `install/**`, `database.json`, `release.json`, `derivable.json`, `website/**`) |
 
 Upstream BIOS lists are not scraped on a schedule. A maintainer runs the
 scrapers by hand (see [adding a scraper](adding-a-scraper.md)), reviews the
@@ -32,7 +32,8 @@ hosted runner should rebuild and re-upload.
 
 **Trigger.** Push to `main` when any of these paths change: `platforms/`,
 `emulators/`, `provenance/`, `wiki/`, `schemas/`, `tests/`, `docs_assets/`,
-`install/`, `install.py`, `database.json`, `release.json`, `mkdocs.yml`, the
+`install/`, `install.py`, `database.json`, `release.json`, `website/` (the
+Starlight project: configuration, components, styles, lockfile), the
 workflow itself, and every script the build runs or imports. Also manual
 dispatch.
 
@@ -45,19 +46,21 @@ is missing.
 ### Steps
 
 1. Checkout, Python 3.12
-2. Install `pyyaml`, `jsonschema[format-nongpl]==4.26.0`,
-   `mkdocs>=1.6,<2`, `mkdocs-material>=9.7.5,<10`,
-   `pymdown-extensions>=10.14`
+2. Install `pyyaml` and `jsonschema[format-nongpl]==4.26.0`, then Node 24 with
+   the official `actions/setup-node` (npm cache keyed on the lockfile) and
+   `npm ci --prefix website`
 3. Run `validate_schemas.py`: the data contracts, checked before anything is
    generated (see below)
 4. Restore large files from the `large-files` release, refresh data directories
-5. Run `generate_site.py` (converts YAML data into MkDocs pages and rewrites
-   `mkdocs.yml`)
+5. Run `generate_site.py`: it writes the pages, the navigation and the data
+   files into the Astro Starlight project in `website/`
 6. Run `generate_readme.py` (rebuilds README.md and CONTRIBUTING.md)
-7. `mkdocs build --strict` to produce the static site
-8. Run `validate_site.py` on the rendered HTML (metadata, headings, image
-   alternatives, duplicate ids, local links and fragments, page and search
-   index budgets)
+7. `npm run build --prefix website` to produce the static site in
+   `website/dist/`. The build runs `starlight-links-validator` with its
+   strict defaults, so a dead link or anchor fails it
+8. Run `validate_site.py --site-dir website/dist` on the rendered HTML
+   (metadata, headings, image alternatives, duplicate ids, every local link
+   and fragment again, page and search index budgets)
 9. Require the committed README and CONTRIBUTING to match what the generator
    just produced. `write_if_changed()` compares content with the timestamp line
    stripped, so a run that only moves the clock leaves the files untouched and
@@ -77,14 +80,18 @@ The site is deployed via the `github-pages` environment using the official
 cancelled (`cancel-in-progress: false`): cancelling one mid-flight leaves the
 deployment stuck and the next runs time out waiting on it.
 
-`--strict` turns MkDocs warnings into failures, so a broken internal link or a
-dangling anchor fails the build instead of shipping. The `validation:` block in
-`mkdocs.yml` is what promotes unrecognized links and missing anchors to
-warnings in the first place.
+Two link checks run, and both fail the build: Starlight's validator inside
+`astro build`, and `validate_site.py` over the rendered files. They read
+different things (the content collection, the final HTML with its navigation
+and breadcrumbs), and each has caught what the other passed.
 
-The theme version is pinned on both sides: `>=9.7.5` because that is the
-release which caps `mkdocs < 2` (MkDocs 2.0 ships without a license), `<10`
-so a major theme release cannot change the site without a deliberate bump.
+Astro, Starlight and their plugins are pinned to exact versions in
+`website/package.json`, resolved from the committed `website/package-lock.json`
+by `npm ci`. Starlight is below 1.0 and Astro shipped two majors in 2026, so an
+upgrade is its own change, built and measured with the scripts in
+`website/tools/` (search queries, Lighthouse, axe, screenshots) before it
+merges. Node runs only inside the site build: `install.py` and the build
+scripts stay Python.
 
 ## validate.yml - Validation
 
@@ -119,7 +126,7 @@ declares while schemas and tests pass it. This job confronts it with its
 upstream. An edited profile is not held to it.
 
 **run-tests.** Runs `python -m unittest discover -s tests -t . -v`, then builds the
-site as Deploy Site does (`generate_site.py`, `mkdocs build --strict`,
+site as Deploy Site does (`generate_site.py`, `npm run build --prefix website`,
 `validate_site.py`) whatever the suite returned. Must pass before a merge, and
 again on the commit a direct push puts at the head of main.
 
@@ -257,7 +264,7 @@ python scripts/check_release.py --tag "v${DATE}" --sums dist/SHA256SUMS.txt \
 #    and pack_size describe the packs just built. git status names anything
 #    else the run rewrote.
 git status --short
-git add release.json README.md mkdocs.yml install/*.json install/targets/*.json
+git add release.json README.md install/*.json install/targets/*.json
 git commit -m "chore: record release v${DATE}" && git push
 
 # 6. Keep only the new release plus large-files: an older pack carries hashes

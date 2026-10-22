@@ -1,0 +1,22 @@
+---
+// Search weight: Pagefind multiplies the score of words inside a weighted
+// element, so a Start here page outranks the reference page that names it,
+// and an emulator outranks its launcher or its frozen copy.
+import Default from '@astrojs/starlight/components/MarkdownContent.astro';
+
+const { searchWeight } = Astro.locals.starlightRoute.entry.data;
+---
+
+{
+	searchWeight ? (
+		<div data-pagefind-weight={String(searchWeight)}>
+			<Default><slot /></Default>
+		</div>
+	) : (
+		<Default><slot /></Default>
+	)
+}
+
+<script>
+	import '../scripts/site.ts';
+</script>

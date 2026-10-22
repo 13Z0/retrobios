@@ -236,7 +236,7 @@ class SiteReferenceContracts(unittest.TestCase):
         decorate_markdown_pages(self.docs)
         decorate_markdown_pages(self.docs)
         content = page.read_text()
-        self.assertEqual(content.count('type="application/ld+json"'), 1)
+        self.assertEqual(content.count("type: application/ld+json"), 1)
         self.assertIn("Current RetroBIOS verification gaps", content)
         self.assertIn('"@type":"TechArticle"', content)
 
@@ -357,11 +357,11 @@ class AVariantShowsWhoPinsIt(unittest.TestCase):
             platforms={"c" * 40: {"batocera", "retrobat"}}, emulators={"a" * 40: {"mame"}})
         page = generate_site.generate_system_page(
             "Entex", {"Adventure Vision": [primary, variant]}, consumers)
-        block = page[page.index('??? note "Variants (1)"'):]
-        self.assertIn("    - Collection path: `bios/Entex/Adventure Vision/.variants/advision.zip.1c086064`", block)
+        block = page[page.index("<summary>Variants (1)</summary>"):]
+        self.assertIn("- Collection path: `bios/Entex/Adventure Vision/.variants/advision.zip.1c086064`", block)
         self.assertIn("[batocera](../platforms/batocera.md)", block)
         self.assertIn("[retrobat](../platforms/retrobat.md)", block)
-        self.assertIn('`' + "c" * 40 + '`', block)
+        self.assertIn('<code class="rb-hash">' + "c" * 40 + "</code>", block)
         self.assertIn("Catalogued", block)
 
 
@@ -402,10 +402,10 @@ class EmulatorPagesPrintWholeHashes(unittest.TestCase):
         from generate_site import _hash_spans
 
         sha1 = "0c3de403b524107809fa9308b730d60e8e41ba93"
-        self.assertIn(f"`{sha1}`", _hash_spans(sha1))
+        self.assertIn(f">{sha1}</code>", _hash_spans(sha1))
         both = _hash_spans(f"{'a' * 64}, {'b' * 64}")
-        self.assertIn("`" + "a" * 64 + "`", both)
-        self.assertIn("`" + "b" * 64 + "`", both)
+        self.assertIn(">" + "a" * 64 + "</code>", both)
+        self.assertIn(">" + "b" * 64 + "</code>", both)
         self.assertNotIn("...", both)
 
 
@@ -724,15 +724,16 @@ class AFileHasAnAddressByContent(unittest.TestCase):
             [{"sha1": "ab" * 20, "url": "systems/roland/#sha1-" + "ab" * 6}],
         )
         self.assertIn('id="rb-file-lookup-status"', generate_site.generate_files_page())
-        script = (Path(__file__).resolve().parents[1] / "docs_assets" / "site.js").read_text()
+        script = (Path(__file__).resolve().parents[1] / "website" / "src" / "scripts"
+                  / "site.ts").read_text()
         self.assertIn("api/v1/lookup/", script)
-        self.assertIn('params.has("sha1")', script)
+        self.assertIn("params.has('sha1')", script)
         from cross_reference import FileConsumers  # noqa: PLC0415
 
         card = "\n".join(generate_site._system_file_card(
             {"name": "x.rom", "sha1": "ab" * 20, "size": 1}, FileConsumers({"files": {}}),
         ))
-        self.assertIn("../../files/?sha1=" + "ab" * 20, card)
+        self.assertIn("/retrobios/files/?sha1=" + "ab" * 20, card)
 
 
 class ACardNamesThePacksThatInstallIt(unittest.TestCase):
@@ -825,7 +826,7 @@ class EveryAcceptedHashIsItsOwnWord(unittest.TestCase):
         md5s = ["96cf" + "0" * 28, "d5af" + "0" * 28]
         text = _hash_spans(",".join(md5s))
         for md5 in md5s:
-            self.assertIn(f"`{md5}`</span>", text)
+            self.assertIn(f'<code class="rb-hash">{md5}</code>', text)
 
 
 class AMismatchNamesTheDumpTheCollectionHolds(unittest.TestCase):
@@ -924,12 +925,14 @@ class NestedProfileBlocksRenderAsLists(unittest.TestCase):
         lines = generate_site._render_platform_details(
             {"platform_details": {"megacd": {"root": "x"}, "note": "y"}}
         )
-        lines[0] = lines[0].replace("???+", "!!!")
         try:
             import markdown
         except ImportError:
             self.skipTest("markdown is not installed")
-        html = markdown.markdown("\n".join(lines), extensions=["admonition"])
+        # The block's body, read as the engine reads Markdown inside HTML.
+        body = lines[lines.index("<summary>Platform details</summary>") + 1:
+                     lines.index("</details>")]
+        html = markdown.markdown("\n".join(body))
         self.assertIn("<li>root: x</li>", html)
         self.assertNotIn("**", html)
 
@@ -959,7 +962,7 @@ class TheOneLinerIsWhereUsersLand(unittest.TestCase):
                "verified": 0, "missing": 0, "details": [], "config": {"systems": {}}}
         page = generate_site.generate_platform_page("batocera", cov)
         self.assertIn("install.sh | sh -s -- --platform batocera", page)
-        self.assertLess(page.index("--platform batocera"), page.index("md-button"))
+        self.assertLess(page.index("--platform batocera"), page.index("rb-button"))
         # Batocera runs the command on the device itself. A platform detected
         # on Windows gets the PowerShell form.
         cov = dict(cov, platform="RetroArch", mode="existence")

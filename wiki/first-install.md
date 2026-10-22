@@ -15,39 +15,47 @@ From an empty BIOS folder to games that start.
 A **terminal** is a window where you type commands. Paste the line for your
 system, then press Enter.
 
-=== "Windows"
+<Tabs syncKey="os">
+<TabItem label="Windows">
 
-    Open the Start menu. Type **PowerShell** and open it.
+Open the Start menu. Type **PowerShell** and open it.
 
-    ```powershell
-    irm https://raw.githubusercontent.com/Abdess/retrobios/main/install.ps1 | iex
-    ```
+```powershell
+irm https://raw.githubusercontent.com/Abdess/retrobios/main/install.ps1 | iex
+```
 
-=== "Mac"
+</TabItem>
+<TabItem label="Mac">
 
-    Open **Terminal**. It is in Applications, then Utilities.
+Open **Terminal**. It is in Applications, then Utilities.
 
-    ```sh
-    curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh
-    ```
+```sh
+curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh
+```
 
-=== "Linux and Steam Deck"
+</TabItem>
+<TabItem label="Linux and Steam Deck">
 
-    On a Steam Deck, switch to Desktop Mode and open **Konsole**.
+On a Steam Deck, switch to Desktop Mode and open **Konsole**.
 
-    ```sh
-    curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh
-    ```
+```sh
+curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh
+```
 
-=== "Android"
+</TabItem>
+<TabItem label="Android">
 
-    Install **Termux**, a terminal app. Run these three lines in it.
+Install **Termux**, a terminal app. Run these three lines in it.
 
-    ```sh
-    pkg install python
-    termux-setup-storage
-    curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh
-    ```
+```sh
+pkg install python
+termux-setup-storage
+curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh
+```
+
+</TabItem>
+</Tabs>
+
 
 On Batocera, Recalbox and other game systems, follow
 [your setup's page](../which-pack.md).
@@ -145,8 +153,9 @@ drive.
 
 See [When a game does not start](troubleshooting.md).
 
-!!! tip "Next"
+:::tip[Next]
+- [Your setup's page](../which-pack.md): its folder and how it checks files
+- [When a game does not start](troubleshooting.md)
+- Details: [Reading the installer's output, line by line](installer.md#reading-a-run)
+:::
 
-    - [Your setup's page](../which-pack.md): its folder and how it checks files
-    - [When a game does not start](troubleshooting.md)
-    - Details: [Reading the installer's output, line by line](installer.md#reading-a-run)

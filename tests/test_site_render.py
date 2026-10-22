@@ -126,16 +126,18 @@ class StructuredBlocks(unittest.TestCase):
         page = self.render(self.profile("firmware_titles", [
             {"id": "0005001b-10042400", "name": "Shared fonts",
              "content": ["CafeCn.ttf", "CafeKr.ttf"]}]))
-        self.assertIn("    - id: 0005001b-10042400, name: Shared fonts\n", page)
-        self.assertIn("        - **content:**", page)
-        self.assertIn("            - CafeKr.ttf", page)
+        self.assertIn("\n- id: 0005001b-10042400, name: Shared fonts\n", page)
+        self.assertIn("\n    - **content:**", page)
+        self.assertIn("\n        - CafeKr.ttf", page)
 
     def test_a_folded_note_stays_inside_its_block(self):
         page = self.render(self.profile("analysis", {"tmss": {
             "note": "The core points\nsystem/tmss_path at the system directory."}}))
         self.assertIn("- **note:** The core points system/tmss_path at the", page)
-        body = page.split("\n")[1:]
-        self.assertEqual([line for line in body if line and not line.startswith("    ")], [])
+        # Nothing of the note is left after the block closes.
+        lines = page.split("\n")
+        end = lines.index("</details>")
+        self.assertEqual([line for line in lines[end + 1:] if line.strip()], [])
 
     def test_a_long_note_is_not_cut(self):
         note = "word " * 80 + "end."
@@ -315,7 +317,7 @@ class TheSearchLandsOnTheCard(unittest.TestCase):
         self.assertEqual(len(headings), 11)
         self.assertTrue(headings[0].endswith("{ #system-00 }"))
         self.assertNotIn('<a id="system-00"></a>', lines)
-        self.assertIn('??? note "1 file (OK)"', lines)
+        self.assertIn("<summary>1 file (OK)</summary>", lines)
 
     def test_an_emulator_card_is_a_heading_with_its_anchor(self):
         import generate_site
@@ -323,8 +325,8 @@ class TheSearchLandsOnTheCard(unittest.TestCase):
         entry = {"name": "scph5501.bin", "required": True}
         lines = generate_site._render_emulator_file(
             entry, {"files": [entry]}, None, [entry], lambda f: True, "file-scph5501-bin")
-        self.assertTrue(lines[2].startswith("### `scph5501.bin` "))
-        self.assertTrue(lines[2].endswith("{ #file-scph5501-bin .rb-file-title }"))
+        self.assertTrue(lines[2].startswith('<h3 id="file-scph5501-bin" class="rb-file-title"'))
+        self.assertIn("<code>scph5501.bin</code>", lines[2])
 
     def test_a_system_card_is_a_heading_with_its_anchor(self):
         import generate_site
@@ -332,8 +334,8 @@ class TheSearchLandsOnTheCard(unittest.TestCase):
 
         entry = {"name": "a.bin", "sha1": "a" * 40, "md5": "b" * 32, "size": 3}
         lines = generate_site._system_file_card(entry, FileConsumers({"files": {}}))
-        self.assertTrue(lines[2].startswith("### `a.bin` "))
-        self.assertTrue(lines[2].endswith("{ #sha1-aaaaaaaaaaaa .rb-file-title }"))
+        self.assertTrue(lines[2].startswith('<h3 id="sha1-aaaaaaaaaaaa" class="rb-file-title"'))
+        self.assertIn("<code>a.bin</code>", lines[2])
 
 
 class TheSearchSkipsLinkLists(unittest.TestCase):
@@ -353,11 +355,14 @@ class TheSearchSkipsLinkLists(unittest.TestCase):
         consumers.emulators = {sha1: {"duckstation"}}
         entry = {"name": "a.bin", "sha1": sha1, "md5": "b" * 32, "size": 3}
         text = "\n".join(generate_site._system_file_card(entry, consumers))
-        searched, skipped = text.split("<section data-search-exclude markdown>")
-        self.assertIn("`a.bin`", searched)
+        searched, _sep, skipped = text.partition("<section data-pagefind-ignore>")
+        self.assertIn("<code>a.bin</code>", searched)
         self.assertNotIn("- MD5:", searched)
-        for line in ("- MD5:", "- Emulators:", "- Platforms:", "- Also installed by:"):
+        for line in ("- MD5:", "- Emulators:", "- Also installed by:"):
             self.assertIn(line, skipped)
+        # The platforms line names the file as each setup does: the site
+        # search reads it, so a file name finds its card.
+        self.assertIn("- Platforms:", searched + skipped.split("</section>", 1)[1])
 
     def test_a_game_data_card_skips_its_name_too(self):
         import generate_site
@@ -366,7 +371,8 @@ class TheSearchSkipsLinkLists(unittest.TestCase):
         entry = {"name": "0.ogg", "sha1": "a" * 40, "size": 3}
         lines = generate_site._system_file_card(
             entry, FileConsumers({"files": {}}), searchable=False)
-        self.assertTrue(lines[2].endswith("data-search-exclude }"))
+        self.assertIn("data-pagefind-ignore", lines[2])
+        self.assertNotIn("data-pagefind-weight", lines[2])
 
     def test_runs_alternate_in_card_order(self):
         import generate_site
@@ -377,10 +383,10 @@ class TheSearchSkipsLinkLists(unittest.TestCase):
         out = [line for line in generate_site._search_skipped_apart(lines) if line]
         self.assertEqual(out, [
             "- Path: `p`",
-            '<div class="rb-search-skip" data-search-exclude markdown>',
+            '<div class="rb-search-skip" data-pagefind-ignore>',
             "- SHA1: x", "- Source: `a.c:1`", "- Platforms: p", "</div>",
             "- Destination: `d`",
-            '<div class="rb-search-skip" data-search-exclude markdown>',
+            '<div class="rb-search-skip" data-pagefind-ignore>',
             "- Contents (1 members):", "    - `m`", "</div>",
             "- Note",
         ])
@@ -391,8 +397,8 @@ class TheSearchSkipsLinkLists(unittest.TestCase):
         short = "| a |\n|---|\n| 1 |"
         long = "    | a |\n    |---|\n" + "\n".join(f"    | {'x' * 50} |" for _ in range(80))
         text = generate_site.tables_out_of_search(f"# T\n\n{short}\n\n{long}\n")
-        self.assertEqual(text.count("data-search-exclude"), 1)
-        self.assertIn("    <section data-search-exclude markdown>\n\n    | a |", text)
+        self.assertEqual(text.count("data-pagefind-ignore"), 1)
+        self.assertIn("    <section data-pagefind-ignore>\n\n    | a |", text)
         self.assertIn(short, text)
 
 

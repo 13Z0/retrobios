@@ -51,7 +51,7 @@ Pipeline steps:
 | 6 | Pack integrity (extract + hash) | `--skip-packs` |
 | 7 | Generate README | `--skip-docs` |
 | 8 | Generate site | `--skip-docs` |
-| 8b | Render the site with `mkdocs build --strict`, then `validate_site.py`, as the deploy does | `--skip-docs`, or no `mkdocs` installed |
+| 8b | Render the site with `npm run build --prefix website`, then `validate_site.py`, as the deploy does | `--skip-docs`, or Node not set up (`npm ci --prefix website`) |
 
 Pipeline flags:
 
@@ -692,7 +692,7 @@ python scripts/refresh_stale.py --only platforms,targets --jobs 6
 | `provenance_report.py` | Dump-catalog coverage and acquisition targets (see above) |
 | `find_pinned_revision.py` | Walk the upstream commits that touched a file and return the revision whose bytes match a platform's pinned md5 (`--write` saves them) |
 | `generate_readme.py` | Generate README.md and CONTRIBUTING.md from database |
-| `generate_site.py` | Generate all MkDocs site pages (this documentation) |
+| `generate_site.py` | Generate the site (this documentation) into the Starlight project in `website/` |
 | `validate_site.py` | Validate rendered metadata, heading order, image alternatives, JSON-LD, local resources, links and fragments, and the page size and search index budgets |
 | `romset_recipes.py` | Identify which emulator version an arcade archive matches, and rebuild a pinned archive from ROMs already held |
 | `scraper/romset_dat_importer.py` | Fetch and import per-set recipes from MAME `-listxml` or FBNeo DATs into `recipes/`. `--fetch` alone takes the newest MAME release, and FBNeo DATs are refreshed by git blob sha. `--fetch <revision>` reads FBNeo at that tag, branch or commit |
@@ -732,7 +732,7 @@ Further options, by script:
 | `split_pack.py` | `--max-size 1900M`, the ceiling per part (K, M, G, default 2G) |
 | `torrentzip.py` | `--check ZIP` reports conformance, `--rebuild ZIP -o OUT` normalizes an archive |
 | `validate_pr.py` | `--changed` takes the BIOS files the branch changes, `--markdown`, `--json` |
-| `validate_site.py` | `--site-dir` (rendered site), `--config` (mkdocs.yml), `--max-errors N` |
+| `validate_site.py` | `--site-dir` (rendered site, default `website/dist`), `--base` (path the site is served under), `--max-errors N` |
 | `scraper/coreinfo_scraper.py` | `--compare-db database.json` lists the `.info` firmware the database lacks |
 | `scraper/mame_hash_scraper.py` | `--release mameNNNN --profile FILE --source-commit SHA --core NAME --built-by PLATFORM` writes the profile of a MAME build a platform compiles. `--devices --listxml FILE` documents in `mame.yml` every device set with dumped ROMs that the release's `-listxml` names (`isdevice="yes"`), with `--dry-run` to preview |
 | `scraper/romset_dat_importer.py` | `--cache-dir` (downloaded listxml and DATs) |

@@ -22,7 +22,7 @@ import generate_site  # noqa: E402
 def _normalized(text: str) -> str:
     # The site ends each page with its next step in the reading order. That
     # is navigation, not contributing text, and a repository file has none.
-    text = text.split('\n\n!!! tip "Next"\n', 1)[0].rstrip("\n")
+    text = text.split("\n\n:::tip[Next]\n", 1)[0].rstrip("\n")
     text = re.sub(r"\]\([^)]*\)", "](link)", text)
     return "\n".join(text.splitlines()[1:]).replace("on this site", "on the documentation site")
 
@@ -73,17 +73,14 @@ class BeforeOpeningAPullRequest(unittest.TestCase):
         workflow = (REPO_ROOT / ".github" / "workflows" / "validate.yml").read_text(encoding="utf-8")
         self.assertIn("validate_schemas.py --source-only", workflow)
 
-    def test_it_installs_the_packages_the_site_render_needs(self):
-        """Without mkdocs-material and pymdown-extensions the pipeline's
-        render step (8b) is skipped for every contributor."""
-        deploy = (REPO_ROOT / ".github" / "workflows" / "deploy-site.yml").read_text(
-            encoding="utf-8"
-        )
-        specs = re.findall(r'"((?:mkdocs-material|pymdown-extensions)[^"]*)"', deploy)
-        self.assertEqual(len(specs), 2)
+    def test_it_installs_what_the_checks_need_and_no_site_package(self):
+        """The site is built by Node from website/package-lock.json: a pip
+        line naming the old theme installed packages nothing reads."""
         text = generate_readme.generate_contributing()
-        for spec in specs:
-            self.assertIn(f'"{spec}"', text)
+        section = text.split("## Before opening a PR", 1)[1].split("\n## ", 1)[0]
+        self.assertIn('pip install pyyaml "jsonschema[format-nongpl]" markdown', section)
+        self.assertNotIn("mkdocs", section)
+        self.assertTrue((REPO_ROOT / "website" / "package-lock.json").is_file())
 
 
 class OneFileThroughTheBrowser(unittest.TestCase):
