@@ -674,15 +674,17 @@ class FirstInstallWalkthrough(unittest.TestCase):
     Batocera run printed 399 files not installed. Its disk sizes (Batocera
     4.0 GB) contradicted its own example (8.6 GB), and its no-platform case
     said a piped command cannot ask, where install.sh hands it the terminal
-    and the installer shows a menu."""
+    and the installer shows a menu. The annotated run now lives in the
+    installer page, under Reading a run: First install keeps the steps."""
 
     def setUp(self):
         self.text = _page("first-install.md")
+        self.run = _page("installer.md")
 
     def test_no_hand_kept_size_before_the_run(self):
         import install
 
-        section = _section(self.text, "Before starting")
+        section = _section(self.run, "Before the run")
         # The confirmation threshold is a constant of the installer, not a pack size.
         self.assertEqual(install.CONFIRM_FROM_BYTES, 1024 ** 3)
         self.assertIn("reaches 1 GB", section)
@@ -691,10 +693,12 @@ class FirstInstallWalkthrough(unittest.TestCase):
     def test_the_run_is_dated_and_consistent_with_the_manifest(self):
         import install
 
-        self.assertRegex(self.text, r"published on \d{4}-\d{2}-\d{2}")
-        step3 = _section(self.text, "Step 3. Let it work")
-        step4 = _section(self.text, "Step 4. Read the end of the run")
-        step5 = _section(self.text, "Step 5. Confirm it later")
+        self.assertRegex(_section(self.run, "Reading a run { #reading-a-run }"),
+                         r"published on\s+\d{4}-\d{2}-\d{2}")
+        step3 = _section(self.run, "The file index and the download")
+        step4 = _section(self.run, "The end of the run")
+        step5 = _section(self.run, "A later check")
+        self.assertIn(re.search(r"Done\. \d+ files installed", step4).group(0), self.text)
         count, size = re.search(r"\n  (\d+) files \(([\d.]+ [KMG]B)\)", step3).groups()
         self.assertIn(f"0/{count} present", step3)
         self.assertIn(f"Downloading {count} files ({size})", step3)

@@ -171,6 +171,14 @@ page. The groups and their labels are `DEVICE_GROUPS` in
 (what it is, where its BIOS folder is, where the install command runs). A
 test fails when a registered platform has no group or no guide.
 
+The guide text is read by someone who knows their device and little else.
+`summary` is one plain sentence, with no chip or board names. `notes` hold
+one fact each that the reader acts on. A source citation, a list of models or
+how the installer finds the folder goes in `reference_notes`, which open the
+Reference part of the page, and a rare build goes in `more_folders`, shown
+folded. The guide part of every setup page is held to the word budgets of
+[Pages for newcomers](testing-guide.md#pages-for-newcomers).
+
 A platform without a scraper (`scraper: null`, `schedule: null`) keeps its YAML
 as a hand-maintained file. Every registered platform has a scraper today, so
 none is edited by hand: RetroPie inherits RetroArch's file set and its scraper

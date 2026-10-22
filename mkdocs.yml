@@ -141,6 +141,7 @@ nav:
   - Self-hosted game library:
     - RomM: platforms/romm.md
 - Explore:
+  - explore.md
   - Systems:
     - systems/index.md
     - Consoles and computers:
@@ -855,7 +856,7 @@ nav:
   - wiki/index.md
   - How each platform checks files: wiki/verification-modes.md
   - What the packs do not hold: gaps.md
-  - Cross-reference: cross-reference.md
+  - Cores by platform: cross-reference.md
   - Dump provenance: provenance.md
   - Updated platform files: exports.md
   - Data and API: data.md

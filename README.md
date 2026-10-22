@@ -66,17 +66,17 @@ The Files column counts what a pack holds once extracted, the figure a file mana
 | RetroPie * | 12,533 | 8.1 GB | `~/RetroPie/BIOS/` | Download: [part 1 of 3](../../releases/download/v2026.10.10/RetroPie_4.8.12_BIOS_Pack.part1of3.zip), [part 2 of 3](../../releases/download/v2026.10.10/RetroPie_4.8.12_BIOS_Pack.part2of3.zip), [part 3 of 3](../../releases/download/v2026.10.10/RetroPie_4.8.12_BIOS_Pack.part3of3.zip) |
 | RomM | 1,087 | 1.5 GB | `library/bios/` | [Download](../../releases/download/v2026.10.10/RomM_5.3.1_BIOS_Pack.zip) |
 
-The AmberELEC pack already carries its own `bios/` folder, so it extracts into `/storage/roms/` rather than into the BIOS folder.
+The AmberELEC pack holds its own `bios/` folder. Unzip it into `/storage/roms/`.
 
-The EmuELEC pack already carries its own `bios/` folder, so it extracts into `/storage/roms/` rather than into the BIOS folder.
+The EmuELEC pack holds its own `bios/` folder. Unzip it into `/storage/roms/`.
 
-The MinUI pack already carries its own `Bios/` folder, so it extracts into `<SD card>/` rather than into the BIOS folder.
+The MinUI pack holds its own `Bios/` folder. Unzip it into `<SD card>/`.
 
-The MyMinUI pack already carries its own `Bios/` folder, so it extracts into `<SD card>/` rather than into the BIOS folder.
+The MyMinUI pack holds its own `Bios/` folder. Unzip it into `<SD card>/`.
 
-The NextUI pack already carries its own `Bios/` folder, so it extracts into `<SD card>/` rather than into the BIOS folder.
+The NextUI pack holds its own `Bios/` folder. Unzip it into `<SD card>/`.
 
-The RetroDECK pack already carries its own `bios/` folder, so it extracts into `~/retrodeck/` rather than into the BIOS folder.
+The RetroDECK pack holds its own `bios/` folder. Unzip it into `~/retrodeck/`.
 
 \* Archived: the configuration is kept and packs are still built, but upstream is no longer scraped on a schedule.
 
@@ -206,6 +206,6 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 The scripts and tooling are released under the [MIT License](LICENSE).
 The BIOS and firmware files are not covered by that license: they are third-party system software, preserved and provided for personal backup, archival, and interoperability with emulation software. [NOTICE](NOTICE) sets out their status and how to ask for a file to be removed.
-The reasoning, and where it is weakest, is in the [FAQ](https://abdess.github.io/retrobios/wiki/faq/#is-this-legal).
+The reasoning, and where it is weakest, is in [the project's legal position](https://abdess.github.io/retrobios/wiki/legal/).
 
 *Auto-generated on 2026-10-22T10:00:19Z*

@@ -4,9 +4,19 @@ level: explore
 
 # All installer options
 
-Reference for `install.sh`, `install.ps1` and `install.py`: what the one-liner
-runs, what it detects, where the bytes come from and what it is allowed to
-write. For the BIOS folder of each setup, see
+The one-line command finds your setup and its BIOS folder. It downloads only
+the files that are missing or wrong, and checks each one against its
+fingerprint before writing it. The options below are for anything else: fewer
+files (one console, one region, only the cores you have), another folder, an
+SD card, a check without download, or a run from a script.
+
+Example: `--platform retroarch --system sony-playstation --region north-america`
+installs only the PlayStation files, and the North American version where
+there is one per region.
+
+How the command protects your machine is under
+[What the bootstrap does](#what-the-bootstrap-does) and
+[Trust boundary](#trust-boundary). The BIOS folder of each setup is on
 [Get your files](../which-pack.md).
 
 ## One line
@@ -49,43 +59,6 @@ from the text and calling it passes the arguments through:
 &([scriptblock]::Create((irm https://raw.githubusercontent.com/Abdess/retrobios/main/install.ps1))) `
   --platform retroarch --dest D:\bios
 ```
-
-## What the bootstrap does
-
-Both wrappers do the same four things before any BIOS file is considered.
-
-They fetch `install.py` over HTTPS only, from `RETROBIOS_INSTALL_URL` or the
-pinned raw URL. A URL with any other scheme is refused outright.
-
-They cap the download at 2 MB and require the SHA-256 to equal the 64 hex
-characters embedded in the wrapper, `RETROBIOS_INSTALL_SHA256` when set. A
-mismatch aborts with "the downloaded installer does not match its expected
-fingerprint" and nothing runs. Right after an update of this project the
-wrapper and `install.py` can come from caches a few minutes apart, which reads
-the same way: waiting five minutes settles it. Any change to `install.py`
-therefore means recomputing that pin in both wrappers.
-
-They locate a Python 3.8 or newer interpreter (`python3` then `python` on
-POSIX, `py -3` then `python3` then `python` on Windows). Without one,
-`install.sh` names the command that installs it on the system it runs on
-(`pkg install python` in Termux, which it offers to run since Termux installs
-without root, `xcode-select --install` on macOS, apt, dnf, pacman, zypper or apk
-from `/etc/os-release`), and `install.ps1` at a console offers to run `winget
-install Python.Python.3.12`, then reads the new PATH and carries on.
-`install.sh` needs `curl` or `wget` (GNU or BusyBox) and `sha256sum` or `shasum`.
-Windows PowerShell 5.1 still negotiates SSL 3.0 and TLS 1.0 by default and
-GitHub refuses both, so `install.ps1` raises the floor to TLS 1.2 before
-downloading, and `install.sh` pins the same floor with `curl --tlsv1.2`.
-
-They delete the temporary installer on the way out, including on interrupt.
-Run from a clone, `install.sh` and `install.ps1` reuse the `install.py` sitting
-next to them and skip the download entirely. Piped from stdin, `install.sh`
-never treats the working directory as a trusted location for it.
-
-Piped from `curl`, the shell's standard input is the script itself, so
-`install.sh` hands the installer the terminal (`/dev/tty`) when there is one.
-Without that, every question the installer can ask was skipped on Linux and
-macOS.
 
 ## What the installer does
 
@@ -130,6 +103,119 @@ says how many and why. `--check` and the closing report also name the required
 ones, grouped by system with the emulators that read them, and point at the
 emulator pages. They do not change the exit code of `--check`, since no run of
 the installer can fetch them.
+
+## Reading a run { #reading-a-run }
+
+Each line a first install prints, and what it means. The run below is a
+Batocera install into an empty folder, from the list as published on
+2026-10-21. The figures change with each release.
+
+### Before the run
+
+The size depends on the platform and changes with each release. The run prints
+it before downloading, and asks first when the download reaches 1 GB. The
+installer also measures the free space and refuses before writing anything if
+there is not enough.
+
+`curl` or `wget`, and Python 3.8 or newer, are checked by the command itself:
+it stops with a message naming what is absent. PowerShell's execution policy
+does not block the Windows line. The policy governs script files, and the
+command never writes one.
+
+### The first lines
+
+```
+RetroBIOS 8c0e9c762d2f
+
+Detecting platform...
+  Found Batocera at /userdata/bios
+```
+
+The code after RetroBIOS identifies the installer: it is the start of the
+SHA-256 the command checked before running it. The path is the folder it will
+write to.
+
+### The file index and the download
+
+Two phases follow. The first reads what is already in the folder. It takes a
+few minutes on a memory card, because every file is hashed:
+
+```
+Fetching file index for batocera...
+  14481 files (9.1 GB)
+  Not installable: 399 files (79 required, not found: 399).
+
+Checking existing files...
+  0/14481 present (0 verified, 0 wrong hash)
+```
+
+`Not installable` counts the files of the list that the collection does not
+hold. They are named at the end of the run.
+
+On a first install the present count is zero. On a later run it counts what
+is already there, and only the rest is downloaded. A download of 1 GB or more
+is confirmed first (`Download 9.1 GB to /userdata/bios? [Y/n]`).
+
+The second phase downloads what is missing, one line per file:
+
+```
+Downloading 14481 files (9.1 GB)...
+  Press Ctrl+C to stop. Running the same command again carries on from here.
+  [1/14481] 3do_arcade_saot.bin ok
+  [2/14481] 3dobios.zip ok
+```
+
+Ctrl+C is safe at any point. Files already installed stay, and running the
+command again picks up where it stopped.
+
+### The end of the run
+
+```
+Done. 14481 files installed, 0 files already up to date.
+Location: /userdata/bios
+399 files were not installed: the collection does not hold them, or its copy fails their check.
+  Needed to start an emulator (79 files):
+    dark-forces (theforceengine): DARK.GOB, SOUNDS.GOB, SPRITES.GOB, TEXTURES.GOB
+    dark-forces-ii (openjkdf2): openjkdf2/episode/JK1.gob, openjkdf2/episode/JK1CTF.gob, openjkdf2/episode/JK1MP.gob, openjkdf2/resource/Res1hi.gob, openjkdf2/resource/Res2.gob
+    diablo (devilutionx): devilutionx/diabdat.mpq
+    doom3 (dhewm3): base/pak000.pk4, base/pak002.pk4, base/pak003.pk4, base/pak004.pk4
+    droidworks (openjkdf2): dwCD.GOB, dwHD.GOB, dwMin.GOB, dwStream.GOB
+    fallout (fallout1-ce): fallout1-ce/critter.dat, fallout1-ce/master.dat
+    fallout2 (fallout2-ce): fallout2-ce/critter.dat, fallout2-ce/master.dat
+    fury (fury): fury.grp
+    ... and 9 more systems (--check --verbose lists them all)
+  Each emulator's page says what these files are: https://abdess.github.io/retrobios/emulators/
+To check this later, run the same command with --check.
+```
+
+The word `Done` and a location are the confirmation. Any other ending
+(`Stopped`, `Finished with errors`, `Nothing was installed`) means something
+was left undone, and the run says which case it was.
+
+The lines between `Location:` and the `--check` hint name the files of the
+list that the collection does not hold. `Needed to start an emulator` gives,
+for each system, the emulators that read it and the files they cannot start
+without. On the run above, all 79 belong to games (Dark Forces, Diablo, Doom 3,
+Tomb Raider and the others): the engine reads them from a copy of the game
+itself. The other 320 are optional, and the emulators reading them start
+without them.
+
+### A later check
+
+The same command with `--check` reads the folder and writes nothing:
+
+```
+Checking existing files...
+  14481/14481 present (14481 verified, 0 wrong hash)
+
+  All files up to date.
+```
+
+The files the collection does not hold are listed after it again, as long as
+they are absent from the folder. A number before `wrong hash` means a file is
+present with contents the platform does not accept. Running the install again
+replaces it and keeps the old one, see
+[Files you already had](#files-you-already-had).
 
 ## Files you already had
 
@@ -337,46 +423,6 @@ it, a file already present with the expected hash is left untouched, and one
 whose contents do not match is re-downloaded and replaced by the verified copy,
 the old one kept beside the BIOS folder.
 Files the list does not name are never read, moved or deleted.
-
-## Machine-readable events
-
-With `--events`, standard output carries only JSON objects, one per line, and
-the text a person reads goes to standard error. A program driving the installer
-(the [handheld port](#on-a-handheld-the-retrobios-port) is one) reads the
-objects and never parses the text. Every object has an `event` key naming its
-kind, and each kind has exactly the keys below, in this order. The schema is
-`EVENT_KEYS` in `install.py`, and a test holds this table to it.
-
-| Kind | Keys | When |
-|------|------|------|
-| `start` | `schema`, `installer`, `mode` | First line. `schema` is 1, `installer` the identity `--version` prints, `mode` one of `install`, `check`, `dry-run`, `list` |
-| `detect` | `os`, `os_name`, `platforms` | Once the platforms are known. `os_name` comes from `/etc/os-release`. `platforms` lists `{platform, name, bios_dir}`, and is empty when nothing supported was found |
-| `error` | `stage`, `reason`, `platform`, `message` | The file list could not be read (`stage` is `manifest`). `reason` is `network`, `not_found` or `invalid` |
-| `file` | `platform`, `dest`, `systems`, `size`, `state` | Each file of the list after the check. `state` is `present` (hash verified), `wrong_hash` or `missing` |
-| `system` | `platform`, `system`, `name`, `files`, `present`, `missing`, `wrong_hash`, `bytes_needed` | Each system, sorted by id. Files with no system count under `other`. `name` is the platform's own name for it |
-| `check` | `platform`, `name`, `bios_dir`, `files`, `present`, `missing`, `wrong_hash`, `bytes_needed`, `data_missing`, `not_installable` | The platform's totals. `data_missing` counts data-tree files to fetch, `not_installable` the files the collection cannot supply |
-| `download` | `platform`, `files`, `bytes` | Before the downloads start |
-| `progress` | `files_done`, `files_total`, `bytes_done`, `bytes_total` | At most every half second while bytes arrive |
-| `downloaded` | `dest`, `ok`, `reason`, `size`, `files_done`, `files_total`, `bytes_done`, `bytes_total` | Each finished file. `reason` says why one failed, and is empty otherwise |
-| `summary` | `mode`, `installed`, `up_to_date`, `pending`, `failed`, `skipped`, `left_out`, `kept`, `interrupted` | The outcome. `pending` counts what a next run would still fetch, `failed` lists `{dest, reason}`, `skipped` lists `{reason, label, files, required}` for the files the collection cannot supply, `left_out` lists `{category, label, files, dests}` for what `--no-game-data` left out, and is empty without it. `kept` lists `{folder, files, bytes}`, one per backup folder, for the files in place the run moved aside before replacing them (with `--dry-run`, would move), and is empty when none. Not written for a listing |
-| `end` | `code` | Last line, with the exit status the process returns (see [Exit status](#exit-status)) |
-
-An option refused before the run starts (`install.py: error:`, code 2) writes
-no event at all. A program reads a missing `end` as that case.
-
-## Environment overrides
-
-| Variable | Effect |
-|----------|--------|
-| `RETROBIOS_REF` | Branch or tag the file list and the files committed to the repository are read from. Defaults to `main`. Files the manifest marks `release_asset` always come from the `large-files` release, whatever the ref, and that release replaces an asset in place when it is rebuilt. Each release deletes the previous release tags ([release process](release-process.md#cutting-a-release)), so a tag holds a file list until the next release |
-| `RETROBIOS_BASE_URL` | Base URL for the manifest and the files it declares. HTTPS only, plain HTTP allowed to loopback for end-to-end tests. Whoever controls this base controls the expected hashes, hence the check. A file list that cannot be fetched names the address, and this variable when it is set |
-| `RETROBIOS_OS` | Names the host outright (`linux`, `wsl`, `windows`, `darwin`, `android`) instead of detecting it |
-| `EXTERNAL_STORAGE` | Android only, the shared storage root RetroArch builds its default directories from. Defaults to `/storage/emulated/0` |
-| `RETROBIOS_INSTALL_URL` | Where the bootstrap fetches `install.py`. HTTPS only |
-| `RETROBIOS_INSTALL_SHA256` | The SHA-256 the bootstrap requires of that installer, 64 hex characters. When either of these two is set and the fingerprint does not match, the error names the variable instead of suggesting a retry |
-| `RETROBIOS_BOOTSTRAP` | Set by `install.sh` (`sh`) and `install.ps1` (`ps1`) for the temporary installer they run, so that its hints give back the one-line command rather than `python3 install.py` |
-| `NO_COLOR` | Plain text, no colour, even at a terminal. `TERM=dumb` also turns the live progress line off |
-| `HTTPS_PROXY`, `NO_PROXY` | Honoured for every download through the standard library's default proxy handling: one names the proxy, the other the hosts to reach directly |
 
 ## Platform detection
 
@@ -743,6 +789,43 @@ counts the data files missing, `--dry-run` names each tree it would fetch, and
 narrowing with `--system`, `--core` or `--target` keeps only the trees of the
 systems that stay.
 
+## What the bootstrap does
+
+Both wrappers do the same four things before any BIOS file is considered.
+
+They fetch `install.py` over HTTPS only, from `RETROBIOS_INSTALL_URL` or the
+pinned raw URL. A URL with any other scheme is refused outright.
+
+They cap the download at 2 MB and require the SHA-256 to equal the 64 hex
+characters embedded in the wrapper, `RETROBIOS_INSTALL_SHA256` when set. A
+mismatch aborts with "the downloaded installer does not match its expected
+fingerprint" and nothing runs. Right after an update of this project the
+wrapper and `install.py` can come from caches a few minutes apart, which reads
+the same way: waiting five minutes settles it. Any change to `install.py`
+therefore means recomputing that pin in both wrappers.
+
+They locate a Python 3.8 or newer interpreter (`python3` then `python` on
+POSIX, `py -3` then `python3` then `python` on Windows). Without one,
+`install.sh` names the command that installs it on the system it runs on
+(`pkg install python` in Termux, which it offers to run since Termux installs
+without root, `xcode-select --install` on macOS, apt, dnf, pacman, zypper or apk
+from `/etc/os-release`), and `install.ps1` at a console offers to run `winget
+install Python.Python.3.12`, then reads the new PATH and carries on.
+`install.sh` needs `curl` or `wget` (GNU or BusyBox) and `sha256sum` or `shasum`.
+Windows PowerShell 5.1 still negotiates SSL 3.0 and TLS 1.0 by default and
+GitHub refuses both, so `install.ps1` raises the floor to TLS 1.2 before
+downloading, and `install.sh` pins the same floor with `curl --tlsv1.2`.
+
+They delete the temporary installer on the way out, including on interrupt.
+Run from a clone, `install.sh` and `install.ps1` reuse the `install.py` sitting
+next to them and skip the download entirely. Piped from stdin, `install.sh`
+never treats the working directory as a trusted location for it.
+
+Piped from `curl`, the shell's standard input is the script itself, so
+`install.sh` hands the installer the terminal (`/dev/tty`) when there is one.
+That keeps the installer's questions working when the script is piped from
+`curl`.
+
 ## Trust boundary
 
 The manifest is fetched over the network and treated as untrusted input. Every
@@ -802,7 +885,134 @@ in the session.
 Failures that are per-file, such as a download exhausting its three attempts,
 are counted and reported at the end.
 
+## Machine-readable events
+
+With `--events`, standard output carries only JSON objects, one per line, and
+the text a person reads goes to standard error. A program driving the installer
+(the [handheld port](#on-a-handheld-the-retrobios-port) is one) reads the
+objects and never parses the text. Every object has an `event` key naming its
+kind, and each kind has exactly the keys below, in this order. The schema is
+`EVENT_KEYS` in `install.py`, and a test holds this table to it.
+
+| Kind | Keys | When |
+|------|------|------|
+| `start` | `schema`, `installer`, `mode` | First line. `schema` is 1, `installer` the identity `--version` prints, `mode` one of `install`, `check`, `dry-run`, `list` |
+| `detect` | `os`, `os_name`, `platforms` | Once the platforms are known. `os_name` comes from `/etc/os-release`. `platforms` lists `{platform, name, bios_dir}`, and is empty when nothing supported was found |
+| `error` | `stage`, `reason`, `platform`, `message` | The file list could not be read (`stage` is `manifest`). `reason` is `network`, `not_found` or `invalid` |
+| `file` | `platform`, `dest`, `systems`, `size`, `state` | Each file of the list after the check. `state` is `present` (hash verified), `wrong_hash` or `missing` |
+| `system` | `platform`, `system`, `name`, `files`, `present`, `missing`, `wrong_hash`, `bytes_needed` | Each system, sorted by id. Files with no system count under `other`. `name` is the platform's own name for it |
+| `check` | `platform`, `name`, `bios_dir`, `files`, `present`, `missing`, `wrong_hash`, `bytes_needed`, `data_missing`, `not_installable` | The platform's totals. `data_missing` counts data-tree files to fetch, `not_installable` the files the collection cannot supply |
+| `download` | `platform`, `files`, `bytes` | Before the downloads start |
+| `progress` | `files_done`, `files_total`, `bytes_done`, `bytes_total` | At most every half second while bytes arrive |
+| `downloaded` | `dest`, `ok`, `reason`, `size`, `files_done`, `files_total`, `bytes_done`, `bytes_total` | Each finished file. `reason` says why one failed, and is empty otherwise |
+| `summary` | `mode`, `installed`, `up_to_date`, `pending`, `failed`, `skipped`, `left_out`, `kept`, `interrupted` | The outcome. `pending` counts what a next run would still fetch, `failed` lists `{dest, reason}`, `skipped` lists `{reason, label, files, required}` for the files the collection cannot supply, `left_out` lists `{category, label, files, dests}` for what `--no-game-data` left out, and is empty without it. `kept` lists `{folder, files, bytes}`, one per backup folder, for the files in place the run moved aside before replacing them (with `--dry-run`, would move), and is empty when none. Not written for a listing |
+| `end` | `code` | Last line, with the exit status the process returns (see [Exit status](#exit-status)) |
+
+An option refused before the run starts (`install.py: error:`, code 2) writes
+no event at all. A program reads a missing `end` as that case.
+
+## Environment overrides
+
+| Variable | Effect |
+|----------|--------|
+| `RETROBIOS_REF` | Branch or tag the file list and the files committed to the repository are read from. Defaults to `main`. Files the manifest marks `release_asset` always come from the `large-files` release, whatever the ref, and that release replaces an asset in place when it is rebuilt. Each release deletes the previous release tags ([release process](release-process.md#cutting-a-release)), so a tag holds a file list until the next release |
+| `RETROBIOS_BASE_URL` | Base URL for the manifest and the files it declares. HTTPS only, plain HTTP allowed to loopback for end-to-end tests. Whoever controls this base controls the expected hashes, hence the check. A file list that cannot be fetched names the address, and this variable when it is set |
+| `RETROBIOS_OS` | Names the host outright (`linux`, `wsl`, `windows`, `darwin`, `android`) instead of detecting it |
+| `EXTERNAL_STORAGE` | Android only, the shared storage root RetroArch builds its default directories from. Defaults to `/storage/emulated/0` |
+| `RETROBIOS_INSTALL_URL` | Where the bootstrap fetches `install.py`. HTTPS only |
+| `RETROBIOS_INSTALL_SHA256` | The SHA-256 the bootstrap requires of that installer, 64 hex characters. When either of these two is set and the fingerprint does not match, the error names the variable instead of suggesting a retry |
+| `RETROBIOS_BOOTSTRAP` | Set by `install.sh` (`sh`) and `install.ps1` (`ps1`) for the temporary installer they run, so that its hints give back the one-line command rather than `python3 install.py` |
+| `NO_COLOR` | Plain text, no colour, even at a terminal. `TERM=dumb` also turns the live progress line off |
+| `HTTPS_PROXY`, `NO_PROXY` | Honoured for every download through the standard library's default proxy handling: one names the proxy, the other the hosts to reach directly |
+
 ## When something goes wrong
 
-See [Troubleshooting](troubleshooting.md#installation-script-fails) for network,
-permission and detection failures.
+The common cases, with the short answer, are on
+[When a game does not start](troubleshooting.md). The details follow.
+
+### Network
+
+The installer fetches its manifest, then downloads only the repository or
+`large-files` release objects it needs. When a download fails, check that
+`https://github.com` opens. Behind a proxy, set `HTTPS_PROXY` in the
+environment. A file that fails three attempts is counted and reported at the
+end, and the next run fetches only what is still missing.
+
+### Permission denied
+
+The installer needs to write to the BIOS folder. On Linux and macOS, check who
+owns it (`ls -la`). On Batocera, Recalbox and ROCKNIX the folder belongs to
+root, so the same command with `sudo` in front of it succeeds. On Windows, run
+PowerShell as Administrator only for a protected folder.
+
+A file system mounted read-only refuses root too, so the installer does not
+suggest `sudo` for it. Linux remounts a card or drive read-only after an error,
+an unclean removal for one: check it (`fsck`, or `chkdsk` on Windows) and
+mount it read-write again.
+
+A file already in the BIOS folder with the read-only attribute is replaced
+like any other: on Windows the installer clears the attribute first.
+`file in place is read-only` appears only when Windows refuses that too, which
+a file owned by another account can cause.
+
+### Platform not detected
+
+The installer finds a platform from the config files it knows. When it finds
+none, name the platform and its BIOS folder:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh -s -- --platform retroarch --dest ~/.config/retroarch/system
+curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh -s -- --platform batocera --dest /userdata/bios
+```
+
+```powershell
+&([scriptblock]::Create((irm https://raw.githubusercontent.com/Abdess/retrobios/main/install.ps1))) `
+  --platform retroarch --dest C:\RetroArch-Win64\system
+```
+
+`--list-platforms` lists the platforms the installer knows and the ones it
+finds here. `--help` lists the options with examples.
+
+### No file list
+
+The installer reads its manifests from the revision the bootstrap checked it
+against. A platform name is checked before anything is downloaded, so a
+"No file list" message comes from the revision: `RETROBIOS_REF` naming a tag
+that does not exist, or one older than the platform. Unset it, or pick a tag
+from the releases page ([Environment overrides](#environment-overrides)).
+
+### Upper and lower case
+
+Linux file systems tell `Bios.ROM` and `bios.rom` apart. Windows and macOS do
+not, by default.
+
+The RetroArch pack is built for every system RetroArch runs on, so it holds
+one name per file: `BIOS.col`, never `bios.col` beside it, since unzipping both
+on Windows or macOS would overwrite one with the other. On Linux, Mesen-CE
+opens `bios.col` and NP2kai opens the lowercase `np2kai/2608_*.wav`, which the
+pack only holds as `BIOS.col` and `2608_*.WAV`. The installer checks whether
+the BIOS folder keeps case and, when it does, also fetches these names. On
+Linux, use the installer rather than unzipping the pack by hand.
+
+The reverse happens on Batocera and Recalbox, whose lists hold both spellings
+because their systems keep case: NP2kai reads `np2kai/bios.rom` and
+`np2kai/BIOS.ROM` as two files. Written to a folder that folds case (the share
+opened from Windows, an exFAT card), one overwrites the other. The installer
+checks the folder first, keeps one file per name there and lists the ones it
+left out.
+
+### Packs and their parts
+
+`scripts/download.py --list` and `scripts/download.sh --list` print the packs of
+a release. A pack's name lists every platform it serves. Releases up to
+v2026.10.10 ship RetroArch and Lakka as one `RetroArch_Lakka` pack, and the
+next ones give Lakka its own, since Lakka runs on Linux where two names that
+differ by case are two files. The installer and the download scripts find the
+right pack either way.
+
+Parts named `Pack.part1of2.zip` are ordinary ZIPs: unzip each one into the same
+folder, and check that all of them were downloaded. The name says how many
+there are. `scripts/download.sh` and `scripts/download.py` download every part
+and check it against the release's checksums before unzipping. Both stage
+inside the destination folder, never in `/tmp`, which is a RAM disk on most of
+these systems.

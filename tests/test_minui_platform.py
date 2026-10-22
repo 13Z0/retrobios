@@ -429,7 +429,7 @@ class TheSitePageOfACardPlatform(unittest.TestCase):
         self.assertNotIn("0/0", page)
         self.assertNotIn("## Systems overview", page)
         self.assertIn("| `Bios/PS/` | [pcsx_rearmed](../emulators/pcsx_rearmed.md) |", page)
-        self.assertIn("| Extract the pack into | `<SD card>/` |", page)
+        self.assertIn("| Unzip the pack into | `<SD card>/` |", page)
 
 
 if __name__ == "__main__":

@@ -12,7 +12,7 @@ toolchain works. To set up BIOS files on a device, start with
 
 - **[How each platform checks files](verification-modes.md)** - existence, MD5 and SHA1 modes, severity matrix, resolution chain, reading `verify.py` output
 - **[What the packs do not hold](../gaps.md)** - files emulators load that no pack can carry yet, by platform and by emulator
-- **[Cross-reference](../cross-reference.md)** - files the emulators of a platform load and its own list does not name
+- **[Cores by platform](../cross-reference.md)** - every core each platform runs, the systems it emulates, the upstream project it comes from
 - **[Dump provenance](../provenance.md)** - how the collection lines up against the No-Intro, Redump and TOSEC catalogs
 - **[Updated platform files](../exports.md)** - each platform's own file, with the changes the emulator source supports
 - **[Technical questions](technical-faq.md)** - multiple hashes, MAME versions, UNTESTED, dump verification
@@ -53,7 +53,8 @@ at run time, so the source is the primary reference:
 
 See [contributing](../contributing.md) for submission guidelines.
 
-## Glossary
+## Terms
 
-The words these pages use, from BIOS to provenance, are in the
-[glossary](glossary.md).
+The words these pages use, from profile to provenance, are in
+[Terms of the reference pages](reference-terms.md). The everyday words are in
+the [glossary](glossary.md).

@@ -144,11 +144,13 @@ degraded functionality (missing boot animation, different fonts, reduced
 audio in menus), it is optional. This keeps the classification objective
 and consistent across all profiles.
 
-When a core has HLE (high-level emulation), the real BIOS typically
-gives better accuracy, but the core functions without it. These files
-are marked with `hle_fallback: true` and `required: false`. The file
-still ships in packs (better experience for the user), but its absence
-does not raise alarms during verification.
+When a core has HLE (high-level emulation), code of its own that stands
+in for the file, mark the entry `hle_fallback: true`. The flag records the
+stand-in. It does not decide `required`, which still comes from what the
+code does without the file: most of the 778 entries that carry the flag
+are optional, and 13 are required, among them Beetle PSX's three region
+BIOS (`emulators/beetle_psx.yml`). The file still ships in packs, and
+verification reports its absence at INFO whatever `required` says.
 
 MAME is read the same way. A missing ROM is fatal only when it is neither
 `ROM_OPTIONAL` nor `NO_DUMP` (`src/emu/romload.cpp`), so a set made only of
