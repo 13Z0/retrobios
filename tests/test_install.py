@@ -1007,15 +1007,25 @@ class DetectionFollowsTheRegistry(unittest.TestCase):
         registry = yaml.safe_load(
             (Path(__file__).resolve().parents[1] / "platforms" / "_registry.yml").read_text()
         )
-        rules = set()
+        rules = []
         for name, entry in registry["platforms"].items():
             for rule in (entry.get("install") or {}).get("detect", []):
                 if rule["method"] == "os_release":
-                    rules.add((name, "os_release", tuple(rule["match"]), rule["bios_path"]))
+                    values = tuple(rule["match"])
                 elif rule["method"] == "file_exists":
-                    files = rule["file"] if isinstance(rule["file"], list) else [rule["file"]]
-                    rules.add((name, "file_exists", tuple(files), rule["bios_path"]))
-        self.assertEqual(set(install._EMBEDDED_RULES), rules)
+                    files = rule["file"]
+                    values = tuple(files if isinstance(files, list) else [files])
+                elif rule["method"] == "file_matches":
+                    values = (rule["file"], rule["pattern"])
+                else:
+                    continue
+                rules.append(install._OsRule(
+                    "" if rule.get("installs") is False else name, rule["name"],
+                    rule["method"], values, rule.get("bios_path"),
+                    tuple(rule.get("config", ())), rule.get("home", ""),
+                    rule.get("derives_from", ""),
+                ))
+        self.assertEqual(sorted(install._EMBEDDED_RULES, key=repr), sorted(rules, key=repr))
 
     def test_every_config_file_read_is_published(self):
         """The registry published five RetroArch config files and the fixed
@@ -2758,8 +2768,9 @@ class TheInstallerPageNamesEveryEvidence(unittest.TestCase):
     def test_every_rule_is_on_the_page(self):
         page = (REPO_ROOT / "wiki" / "installer.md").read_text(encoding="utf-8")
         page = page.replace("\\\\", "\\")
-        expected = [path for _p, method, values, _b in install._EMBEDDED_RULES
-                    if method == "file_exists" for path in values]
+        expected = [path for rule in install._EMBEDDED_RULES
+                    if rule.method == "file_exists" for path in rule.values]
+        expected += [rule.name for rule in install._EMBEDDED_RULES]
         expected += [path.replace("$HOME", "~").rstrip("/")
                      for _os, _p, path, _b in install._PATH_RULES]
         missing = [path for path in expected if path not in page]
@@ -4196,54 +4207,264 @@ class EmuDeckWindowsIsFoundAsItsScriptsFindIt(unittest.TestCase):
                          install._host_path("C:/Emulation/bios"))
 
 
+def _device(test: unittest.TestCase, files: dict[str, str],
+            release: str = "", home: str = "/root") -> Path:
+    """A fake root holding these files, read by the embedded rules."""
+    root = Path(_tempdir(test))
+    if release:
+        files = {**files, "/etc/os-release": release}
+    for name, text in files.items():
+        path = root / name.lstrip("/")
+        if name.endswith("/"):
+            path.mkdir(parents=True, exist_ok=True)
+            continue
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(text)
+    for patcher in (
+        unittest.mock.patch.object(install, "_SYSTEM_ROOT", root),
+        unittest.mock.patch.dict(os.environ, {"HOME": home}),
+        unittest.mock.patch.dict(install._RETROARCH_CONFIGS, clear=True),
+        unittest.mock.patch.dict(install._DETECTED_OS, clear=True),
+    ):
+        patcher.start()
+        test.addCleanup(patcher.stop)
+    return root
+
+
 class MuOsIsReadFromItsRetroArchConfig(unittest.TestCase):
     """muOS wrote to /mnt/mmc/MUOS/bios while RetroArch reads
     /run/muos/storage/bios, bound to the second card when it holds MUOS/bios,
     and --installed-cores found no core in /opt/muos/share/core."""
 
-    def _muos(self, *, user_config: bool) -> tuple[Path, Path]:
-        root = Path(_tempdir(self))
-        muos = root / "opt" / "muos"
-        system_dir, cores = root / "run" / "bios", root / "core"
-        cores.mkdir(parents=True)
-        configs = (muos / "share/info/config/retroarch.cfg",
-                   muos / "share/emulator/retroarch/retroarch.default.cfg")
-        default = configs[1]
-        default.parent.mkdir(parents=True)
-        default.write_text(f'libretro_directory = "{cores}"\n'
-                           f'system_directory = "{root / "default-bios"}"\n')
-        if user_config:
-            configs[0].parent.mkdir(parents=True)
-            configs[0].write_text(f'libretro_directory = "{cores}"\n'
-                                  f'system_directory = "{system_dir}"\n')
-        for patcher in (
-            unittest.mock.patch.object(install, "MUOS_ROOT", muos),
-            unittest.mock.patch.object(install, "MUOS_RETROARCH_CONFIGS", configs),
-            unittest.mock.patch.object(
-                install, "_detect_embedded",
-                lambda: [("retroarch", Path("/run/muos/storage/bios"))]),
-            unittest.mock.patch.dict(os.environ, {"HOME": str(root / "home")}),
-            unittest.mock.patch.dict(install._RETROARCH_CONFIGS, clear=True),
-        ):
-            patcher.start()
-            self.addCleanup(patcher.stop)
-        return (system_dir if user_config else root / "default-bios"), cores
+    USER = "/opt/muos/share/info/config/retroarch.cfg"
+    DEFAULT = "/opt/muos/share/emulator/retroarch/retroarch.default.cfg"
+
+    def _muos(self, files: dict[str, str]) -> Path:
+        root = _device(self, {"/opt/muos/": "", **files})
+        found = install._detect_embedded()
+        self.assertEqual(len(found), 1)
+        self.assertEqual(install.detected_os(*found[0]), "muOS")
+        return root
 
     def test_the_users_config_decides(self):
-        system_dir, cores = self._muos(user_config=True)
-        found = install.detect_platforms("linux")
-        self.assertIn(("retroarch", system_dir), found)
-        self.assertNotIn(("retroarch", Path("/run/muos/storage/bios")), found)
-        self.assertIn(cores, install.core_dirs("retroarch", system_dir))
+        root = self._muos({
+            self.USER: 'libretro_directory = "/opt/muos/share/core"\n'
+                       'system_directory = "/mnt/sdcard/MUOS/bios"\n',
+            self.DEFAULT: 'system_directory = "/run/muos/storage/bios"\n',
+        })
+        self.assertEqual(install._detect_embedded(),
+                         [("retroarch", root / "mnt/sdcard/MUOS/bios")])
+        self.assertIn(Path("/opt/muos/share/core"),
+                      install.core_dirs("retroarch", root / "mnt/sdcard/MUOS/bios"))
 
     def test_before_the_first_launch_the_default_does(self):
-        system_dir, cores = self._muos(user_config=False)
-        self.assertIn(("retroarch", system_dir), install.detect_platforms("linux"))
-        self.assertIn(cores, install.core_dirs("retroarch", system_dir))
+        root = self._muos({self.DEFAULT: 'system_directory = "/run/muos/storage/bios"\n'})
+        self.assertEqual(install._detect_embedded(),
+                         [("retroarch", root / "run/muos/storage/bios")])
 
     def test_without_a_config_the_bound_folder_is_used(self):
-        rule = next(r for r in install._EMBEDDED_RULES if r[2] == ("/opt/muos",))
-        self.assertEqual(rule[3], "/run/muos/storage/bios")
+        root = self._muos({})
+        self.assertEqual(install._detect_embedded(),
+                         [("retroarch", root / "run/muos/storage/bios")])
+
+
+class HandheldSystemsByTheirOwnFiles(unittest.TestCase):
+    """AmberELEC, EmuELEC, JELOS, ArkOS on a second card and a dozen other
+    handheld systems were not detected, or got /roms/bios whatever their
+    RetroArch read: each is found by what its own build writes, and its
+    folder is the system_directory of its RetroArch config."""
+
+    ELEC_CFG = "/storage/.config/retroarch/retroarch.cfg"
+    ARK_CFG = "/home/ark/.config/retroarch/retroarch.cfg"
+    TITLE = "/usr/share/plymouth/themes/text.plymouth"
+
+    def _found(self, files: dict, release: str = "", home: str = "/root"):
+        root = _device(self, files, release, home)
+        with contextlib.redirect_stderr(io.StringIO()) as err:
+            found = install._detect_embedded()
+        names = [install.detected_os(plat, path) for plat, path in found]
+        return root, found, names, err.getvalue()
+
+    def _one(self, files: dict, release: str = "", home: str = "/root"):
+        root, found, names, _err = self._found(files, release, home)
+        self.assertEqual(len(found), 1, found)
+        return root, found[0], names[0]
+
+    def _elec(self, release: str, name: str, extra: dict | None = None,
+              plat: str = "retroarch"):
+        cfg = {self.ELEC_CFG: 'system_directory = "~/roms/bios"\n'}
+        root, (found_plat, path), found_name = self._one({**cfg, **(extra or {})}, release)
+        self.assertEqual((found_plat, path, found_name),
+                         (plat, root / "storage/roms/bios", name))
+
+    def test_amberelec(self):
+        self._elec('NAME="AmberELEC"\nID="coreelec"\n', "AmberELEC",
+                   plat=install._STANDIN_MANIFESTS["AmberELEC"])
+
+    def test_chaos_names_itself_amberelec(self):
+        # tech4bot/AmberELEC writes the same os-release as AmberELEC.
+        self._elec('NAME="AmberELEC"\nID="coreelec"\nCOREELEC_DEVICE="RG552"\n', "AmberELEC")
+
+    def test_pan4elec_over_amberelec(self):
+        self._elec('NAME="AmberELEC"\n', "PAN4ELEC",
+                   {"/usr/bin/batocera-info": 'echo "OPERATING SYSTEM: PAN4ELEC"\n'})
+
+    def test_emuelec(self):
+        self._elec('NAME="EmuELEC"\nID="emuelec"\n', "EmuELEC",
+                   plat=install._STANDIN_MANIFESTS["EmuELEC"])
+
+    def test_jelos(self):
+        self._elec('OS_NAME="JELOS"\nHW_DEVICE="RK3566"\n', "JELOS")
+
+    def test_kolos_over_jelos(self):
+        self._elec('OS_NAME="JELOS"\n', "KOLOS",
+                   {"/usr/lib/systemd/system/jelos-ready.service":
+                    "Description=KOLOS system ready script\n"})
+
+    def test_unofficialos(self):
+        self._elec('OS_NAME="UnofficialOS"\n', "UnofficialOS")
+
+    def test_archr(self):
+        self._elec('NAME="ArchR"\nID="archr"\nOS_NAME="ArchR"\n', "ArchR")
+
+    def test_an_elec_config_moved_elsewhere_is_followed(self):
+        root, (_plat, path), _name = self._one(
+            {self.ELEC_CFG: 'system_directory = "/storage/roms2/bios"\n'}, 'OS_NAME="JELOS"\n')
+        self.assertEqual(path, root / "storage/roms2/bios")
+
+    def test_arkos_first_and_second_card(self):
+        base = {"/home/ark/": "", "/opt/system/": "",
+                self.TITLE: "[ubuntu-text]\ntitle=ArkOS 2.0 (02012025)-3\n"}
+        for folder in ("/roms/bios", "/roms2/bios"):
+            with self.subTest(folder=folder):
+                root, found, name = self._one(
+                    {**base, self.ARK_CFG: f'system_directory = "{folder}"\n'})
+                self.assertEqual((found, name),
+                                 (("retroarch", root / folder.lstrip("/")), "ArkOS"))
+
+    def test_arkos_32_bit_config_when_the_64_bit_one_is_missing(self):
+        root, found, _name = self._one({
+            "/home/ark/": "", "/opt/system/": "",
+            "/home/ark/.config/retroarch32/retroarch.cfg": 'system_directory = "/roms2/bios"\n',
+        })
+        self.assertEqual(found, ("retroarch", root / "roms2/bios"))
+
+    def test_darkos_first_and_second_card(self):
+        base = {"/home/ark/": "", "/opt/system/": "",
+                self.TITLE: "title=dArkOS (05102026)\n"}
+        for folder in ("/roms/bios", "/roms2/bios"):
+            with self.subTest(folder=folder):
+                root, found, name = self._one(
+                    {**base, self.ARK_CFG: f'system_directory = "{folder}"\n'})
+                self.assertEqual((found, name),
+                                 (("retroarch", root / folder.lstrip("/")), "dArkOS"))
+
+    def test_darkos_without_a_config(self):
+        root, found, name = self._one({"/home/ark/": "", "/opt/system/": "",
+                                       self.TITLE: "title=dArkOS (05102026)\n"})
+        self.assertEqual((found, name), (("retroarch", root / "roms/bios"), "dArkOS"))
+
+    def test_retrooz(self):
+        cfg = "/home/odroid/.config/retroarch32/retroarch.cfg"
+        root, found, name = self._one({
+            "/opt/.retrooz/version": "0.60\n", self.TITLE: "[ubuntu-text]\ntitle=RetroOZ\n",
+            cfg: 'system_directory = "/roms/bios"\n',
+        })
+        self.assertEqual((found, name), (("retroarch", root / "roms/bios"), "RetroOZ"))
+        root, found, name = self._one({"/etc/retrooz_version": "1\n"})
+        self.assertEqual((found, name), (("retroarch", root / "roms/bios"), "RetroOZ"))
+
+    def test_thera_is_not_detected(self):
+        _root, found, _names, _err = self._found({self.TITLE: "title= *TheRA RC 1*\n"})
+        self.assertEqual(found, [])
+
+    def test_spruceos_on_a_trimui(self):
+        root, found, name = self._one({
+            "/usr/trimui/": "", "/mnt/SDCARD/spruce/": "",
+            "/mnt/SDCARD/Saves/ra-configs/retroarch-Brick.cfg":
+                'system_directory = "/mnt/SDCARD/BIOS"\n',
+        })
+        self.assertEqual((found, name), (("retroarch", root / "mnt/SDCARD/BIOS"), "spruceOS"))
+
+    def test_crossmix_os(self):
+        root, found, name = self._one({
+            "/usr/trimui/": "", "/mnt/SDCARD/System/usr/trimui/crossmix-version.txt": "1.3\n",
+            "/mnt/SDCARD/RetroArch/retroarch.cfg": 'system_directory = "/mnt/SDCARD/BIOS"\n',
+        })
+        self.assertEqual((found, name), (("retroarch", root / "mnt/SDCARD/BIOS"), "CrossMix-OS"))
+
+    def _miyoo_mini(self, marker: str, name: str):
+        root, found, found_name = self._one({
+            marker: "x\n",
+            "/mnt/SDCARD/RetroArch/.retroarch/retroarch.cfg":
+                'system_directory = "/mnt/SDCARD/BIOS"\n',
+        })
+        self.assertEqual((found, found_name), (("retroarch", root / "mnt/SDCARD/BIOS"), name))
+
+    def test_onion(self):
+        self._miyoo_mini("/mnt/SDCARD/.tmp_update/onionVersion/version.txt", "Onion")
+
+    def test_allium(self):
+        self._miyoo_mini("/mnt/SDCARD/.allium/version.txt", "Allium")
+
+    def test_koriki(self):
+        self._miyoo_mini("/mnt/SDCARD/Koriki/version.txt", "Koriki")
+
+    def test_miyoocfw_default_and_config(self):
+        base = {"/etc/main": "export HOME=/mnt\n", "/usr/bin/miyooctl": ""}
+        root, found, name = self._one(base)
+        self.assertEqual((found, name),
+                         (("retroarch", root / "mnt/.retroarch/system"), "MiyooCFW"))
+        root, found, _name = self._one(
+            {**base, "/mnt/.retroarch/retroarch.cfg": 'system_directory = "~/bios"\n'})
+        self.assertEqual(found, ("retroarch", root / "mnt/bios"))
+
+    def test_plumos(self):
+        root, found, name = self._one({"/mnt/plumos-user/": ""}, 'NAME="plumOS"\nID=plumos\n')
+        self.assertEqual((found, name), (("retroarch", root / "mnt/plumos-user/bios"), "plumOS"))
+        _root, found, _names, err = self._found({}, 'NAME="plumOS"\nID=plumos\n')
+        self.assertEqual(found, [])
+        self.assertIn("plumOS found here", err)
+
+    def test_trimui_stock_and_minui_are_named_not_installed_to(self):
+        _root, found, _names, err = self._found({"/usr/trimui/": ""})
+        self.assertEqual(found, [])
+        self.assertIn("TrimUI found here", err)
+        _root, found, _names, err = self._found(
+            {"/usr/trimui/": "", "/mnt/SDCARD/.system/res/": ""})
+        self.assertEqual(found, [])
+        self.assertIn("MinUI found here", err)
+        self.assertNotIn("TrimUI", err)
+
+    def test_two_unrelated_systems_are_refused(self):
+        _root, found, names, _err = self._found(
+            {"/mnt/SDCARD/Koriki/version.txt": "1\n"}, 'OS_NAME="JELOS"\n')
+        self.assertEqual(names, ["JELOS", "Koriki"])
+        self.assertEqual(install.os_conflict(found), ["JELOS", "Koriki"])
+        with unittest.mock.patch.object(sys, "argv", ["install.py", "--no-input"]), \
+                unittest.mock.patch.object(install, "detect_os", return_value="linux"), \
+                unittest.mock.patch.object(install, "detect_platforms", return_value=found), \
+                unittest.mock.patch.object(install, "detect_frontends", return_value=[]), \
+                contextlib.redirect_stdout(io.StringIO()), \
+                contextlib.redirect_stderr(io.StringIO()) as err, \
+                self.assertRaises(SystemExit) as stop:
+            install.main()
+        self.assertEqual(stop.exception.code, 1)
+        self.assertIn("JELOS and Koriki are both detected here", err.getvalue())
+
+    def test_the_system_is_announced_by_its_own_name(self):
+        root, found, _name = self._one({self.ELEC_CFG: ""}, 'NAME="AmberELEC"\n')
+        self.assertEqual(install.found_label(*found),
+                         f"AmberELEC at {root / 'storage/roms/bios'} (RetroArch files)")
+
+    def test_list_platforms_names_every_system(self):
+        with unittest.mock.patch.object(sys, "argv", ["install.py", "--list-platforms"]), \
+                unittest.mock.patch.object(install, "detect_os", return_value="linux"), \
+                unittest.mock.patch.object(install, "detect_platforms", return_value=[]), \
+                contextlib.redirect_stdout(io.StringIO()) as out:
+            install.main()
+        for rule in install._EMBEDDED_RULES:
+            self.assertIn(f"  {rule.name}: ", out.getvalue())
 
 
 class BatoceraAndKnulliByWhatTheirBuildsWrite(unittest.TestCase):

@@ -283,21 +283,56 @@ Files the list does not name are never read, moved or deleted.
 
 ## Platform detection
 
-Detection reads what the platform itself writes, never a guess from a directory
-name. The embedded systems are tested in the order below and the first match
-wins, since a machine is only one of them.
+Detection reads what the system itself writes, never a guess from a directory
+name. A machine runs one embedded system, so every rule below is tested. A
+system built on another one (KOLOS on JELOS, dArkOS on ArkOS, spruceOS on a
+TrimUI) matches both and is the one meant. Two unrelated systems matching
+are both named: at a terminal the run asks which one, otherwise it stops and
+asks for `--dest`. The run names the system as it names itself, with the file
+list it gets: `Found AmberELEC at /storage/roms/bios (RetroArch files)`.
+`--list-platforms` lists every system below.
 
-| Evidence | Platform | BIOS directory |
-|----------|----------|----------------|
-| `/etc/os-release` `OS_NAME=ROCKNIX` (or `ID=rocknix` on images before 2025) | ROCKNIX | `/storage/roms/bios` |
-| `/etc/os-release` `OS_NAME=knulli` or `/usr/share/knulli/knulli.version` | Batocera (Knulli) | `/userdata/bios` |
-| `/etc/os-release` `ID=lakka` | Lakka | `/storage/system` |
-| `/usr/share/batocera/batocera.version` | Batocera | `/userdata/bios` |
-| `/recalbox/recalbox.version` or `/usr/bin/recalbox-settings` | Recalbox | `/recalbox/share/bios` |
-| `/opt/muos` | RetroArch (muOS) | `system_directory` of `/opt/muos/share/info/config/retroarch.cfg`, else of the default it is copied from: `/run/muos/storage/bios`, which muOS binds to `MUOS/bios` on the second card when that card holds one, else the first. Cores are read from that config's `libretro_directory` (`/opt/muos/share/core`) |
-| `/mnt/mmc/MUOS/` | RetroArch | `/mnt/mmc/MUOS/bios` |
-| `/home/ark` and `/opt/system` | RetroArch | `/roms/bios` |
-| `/mnt/vendor/bin/dmenu.bin` | RetroArch | `/mnt/mmc/bios` |
+Where a system's RetroArch config is named, its `system_directory` is the
+folder, `~` being that system's home for RetroArch. The folder in the last
+column is used when no config sets one. ArkOS and dArkOS keep two configs
+(64-bit and 32-bit RetroArch), and their "Switch to SD2 for Roms" script
+rewrites both to `/roms2/bios`: a second card is followed through them.
+
+| Evidence | System | File list | BIOS directory |
+|----------|--------|-----------|----------------|
+| `/etc/os-release` `OS_NAME=ROCKNIX` (or `ID=rocknix` on images before 2025) | ROCKNIX | ROCKNIX | `/storage/roms/bios` |
+| `/etc/os-release` `OS_NAME=knulli` or `/usr/share/knulli/knulli.version` | KNULLI | Batocera | `/userdata/bios` |
+| `/etc/os-release` `ID=lakka` | Lakka | Lakka | `/storage/system` |
+| `/usr/share/batocera/batocera.version` | Batocera | Batocera | `/userdata/bios` |
+| `/recalbox/recalbox.version` or `/usr/bin/recalbox-settings` | Recalbox | Recalbox | `/recalbox/share/bios` |
+| `/opt/muos` | muOS | RetroArch | `system_directory` of `/opt/muos/share/info/config/retroarch.cfg`, else of the default it is copied from: `/run/muos/storage/bios`, which muOS binds to `MUOS/bios` on the second card when that card holds one, else the first. Cores are read from that config's `libretro_directory` (`/opt/muos/share/core`) |
+| `/mnt/mmc/MUOS/` | muOS | RetroArch | `/mnt/mmc/MUOS/bios` |
+| `/etc/os-release` `NAME=AmberELEC` (CHAos writes the same) | AmberELEC | RetroArch | `/storage/.config/retroarch/retroarch.cfg`, else `/storage/roms/bios` |
+| `/usr/bin/batocera-info` naming PAN4ELEC, on AmberELEC | PAN4ELEC | RetroArch | as AmberELEC |
+| `/etc/os-release` `NAME=EmuELEC` | EmuELEC | RetroArch | as AmberELEC |
+| `/etc/os-release` `OS_NAME=JELOS` | JELOS | RetroArch | as AmberELEC |
+| `/usr/lib/systemd/system/jelos-ready.service`, on JELOS | KOLOS | RetroArch | as AmberELEC |
+| `/etc/os-release` `OS_NAME=UnofficialOS` | UnofficialOS | RetroArch | as AmberELEC |
+| `/etc/os-release` `OS_NAME=ArchR` | ArchR | RetroArch | as AmberELEC |
+| `/home/ark` and `/opt/system`, or `title=ArkOS` in `/usr/share/plymouth/themes/text.plymouth` | ArkOS | RetroArch | `/home/ark/.config/retroarch/retroarch.cfg` then `retroarch32/retroarch.cfg`, else `/roms/bios` |
+| `title=dArkOS` in the same file (the dArkOSRE, dArkOSen and ArkOS4Clone images keep it) | dArkOS | RetroArch | as ArkOS |
+| `title=RetroOZ` in the same file, `/opt/.retrooz` or `/etc/retrooz_version` | RetroOZ | RetroArch | `/home/odroid/.config/retroarch/retroarch.cfg` then `retroarch32/retroarch.cfg`, else `/roms/bios` |
+| `/mnt/SDCARD/spruce` | spruceOS | RetroArch | `/mnt/SDCARD/Saves/ra-configs/retroarch-*.cfg`, else `/mnt/SDCARD/BIOS` |
+| `/mnt/SDCARD/System/usr/trimui/crossmix-version.txt` | CrossMix-OS | RetroArch | `/mnt/SDCARD/RetroArch/retroarch.cfg`, else `/mnt/SDCARD/BIOS` |
+| `/mnt/SDCARD/.tmp_update/onionVersion/version.txt` | Onion | RetroArch | `/mnt/SDCARD/RetroArch/.retroarch/retroarch.cfg`, else `/mnt/SDCARD/BIOS` |
+| `/mnt/SDCARD/.allium` | Allium | RetroArch | as Onion |
+| `/mnt/SDCARD/Koriki/version.txt` | Koriki | RetroArch | as Onion |
+| `/etc/main` and `/usr/bin/miyooctl` | MiyooCFW | RetroArch | `/mnt/.retroarch/retroarch.cfg`, else `/mnt/.retroarch/system` |
+| `/mnt/plumos-user` | plumOS | RetroArch | `/mnt/plumos-user/bios`, which its launcher appends to every RetroArch run |
+| `/etc/os-release` `ID=plumos` without the folder above | plumOS | none | its builds choose a folder per launch: named, not installed to |
+| `/usr/trimui` | TrimUI | none | no published source names the stock firmware's folder: named, not installed to |
+| `/mnt/SDCARD/.system/res` or `/mnt/sdcard/.system/res` | MinUI | none | MinUI, MyMinUI and NextUI give each core its own `Bios/<tag>/`, a layout not written yet: named, not installed to |
+| `/mnt/vendor/bin/dmenu.bin` | Anbernic stock firmware | RetroArch | `/mnt/mmc/bios` |
+
+AmberELEC, EmuELEC and KNULLI get the file list of the platform whose cores
+they ship until a list of their own is published. TheRA is not detected: no
+image or source of its Odroid Go builds is published, so neither its marker
+files nor its folder could be read.
 
 Batocera, Recalbox, ROCKNIX and Lakka also name the board they were built for, and
 that board narrows the install unless `--target` or `--every-board` says

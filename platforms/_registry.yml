@@ -267,34 +267,231 @@ platforms:
         method: config_file
         config: '%ProgramFiles%\Steam\steamapps\common\RetroArch\retroarch.cfg'
         parse_key: system_directory
-      # Handheld firmwares that run RetroArch as their frontend: muOS,
-      # ArkOS, and the stock Linux of Anbernic devices (dmenu).
-      # muOS copies its default config on first launch and RetroArch reads
-      # /run/muos/storage/bios, bound to MUOS/bios on the second card when
-      # it holds one, else the first (MustardOS/internal f41f4a89,
-      # script/control/retroarch.sh:8-20, script/device/bind.sh:4,116-150,
-      # share/emulator/retroarch/retroarch.default.cfg:2806,3151).
+      # Handheld systems that run RetroArch as their frontend, each found by
+      # what its own build writes. A system built on another (derives_from)
+      # matches both and is the one meant.
+      # muOS: MustardOS/internal f41f4a89: retroarch.sh:8-20, bind.sh:4,116-150,
+      # retroarch.default.cfg:2806,3151. /mnt/mmc/MUOS is the older layout.
       - os: linux
-        method: config_file
-        config: /opt/muos/share/info/config/retroarch.cfg
-        parse_key: system_directory
-      - os: linux
-        method: config_file
-        config: /opt/muos/share/emulator/retroarch/retroarch.default.cfg
-        parse_key: system_directory
-      - os: linux
+        name: muOS
         method: file_exists
         file: /opt/muos
         bios_path: /run/muos/storage/bios
+        config: [/opt/muos/share/info/config/retroarch.cfg, /opt/muos/share/emulator/retroarch/retroarch.default.cfg]
       - os: linux
+        name: muOS
         method: file_exists
         file: /mnt/mmc/MUOS
         bios_path: /mnt/mmc/MUOS/bios
+      # AmberELEC: AmberELEC 5a3882cb scripts/image:150-152, options:17, runemu.py:22,
+      # retroarch.cfg:611 ("~/roms/bios"), emustation.service:6 (HOME). CHAos
+      # (tech4bot/AmberELEC c0a4b0c6) writes the same name. Served by RetroArch's
+      # file list until its own platform is published.
       - os: linux
+        name: AmberELEC
+        method: os_release
+        match: [NAME=AmberELEC]
+        bios_path: /storage/roms/bios
+        config: [/storage/.config/retroarch/retroarch.cfg]
+        home: /storage
+      # PAN4ELEC: Kegg1701/P4ELEC 9c19bfb2, AmberELEC/usr/bin/batocera-info:101.
+      - os: linux
+        name: PAN4ELEC
+        method: file_matches
+        file: /usr/bin/batocera-info
+        pattern: 'OPERATING SYSTEM: PAN4ELEC'
+        bios_path: /storage/roms/bios
+        config: [/storage/.config/retroarch/retroarch.cfg]
+        home: /storage
+        derives_from: AmberELEC
+      # EmuELEC: EmuELEC d4c7b2f1 scripts/image:172-176, options:4, setsettings.sh:22,
+      # libretro_base/retroarch/package.mk:117. Served by RetroArch's file list
+      # until its own platform is published.
+      - os: linux
+        name: EmuELEC
+        method: os_release
+        match: [NAME=EmuELEC]
+        bios_path: /storage/roms/bios
+        config: [/storage/.config/retroarch/retroarch.cfg]
+        home: /storage
+      # JELOS: JustEnoughLinuxOS/distribution 7b2e116c scripts/image:118-120,
+      # options:17, runemu.sh:37, RK3566/retroarch.cfg:716.
+      - os: linux
+        name: JELOS
+        method: os_release
+        match: [OS_NAME=JELOS]
+        bios_path: /storage/roms/bios
+        config: [/storage/.config/retroarch/retroarch.cfg]
+        home: /storage
+      # KOLOS: AnonLinuxOS/KOLOS 7daf5950: OS_NAME=JELOS kept, jelos-ready.service
+      # ("KOLOS system ready script") installed by scripts/install:100-102.
+      - os: linux
+        name: KOLOS
+        method: file_exists
+        file: /usr/lib/systemd/system/jelos-ready.service
+        bios_path: /storage/roms/bios
+        config: [/storage/.config/retroarch/retroarch.cfg]
+        home: /storage
+        derives_from: JELOS
+      # UnofficialOS: RetroGFX/UnofficialOS 22635796 scripts/image:119-120, options:17,
+      # packages/unofficialos/sources/scripts/runemu.sh:37.
+      - os: linux
+        name: UnofficialOS
+        method: os_release
+        match: [OS_NAME=UnofficialOS]
+        bios_path: /storage/roms/bios
+        config: [/storage/.config/retroarch/retroarch.cfg]
+        home: /storage
+      # ArchR: archr-linux/Arch-R dbd45d45 scripts/image:164-177, options:17,
+      # factoryreset:9-10, RK3326/retroarch.cfg:718.
+      - os: linux
+        name: ArchR
+        method: os_release
+        match: [OS_NAME=ArchR]
+        bios_path: /storage/roms/bios
+        config: [/storage/.config/retroarch/retroarch.cfg]
+        home: /storage
+      # ArkOS: christianhaitian/arkos dedf4278 Update-RGB10.sh:76 (splash title).
+      # Both configs move to /roms2 with "Switch to SD2 for Roms" (darkos
+      # daecf488, scripts/Switch to SD2 for Roms.sh:91-92).
+      - os: linux
+        name: ArkOS
         method: file_exists
         file: [/home/ark, /opt/system]
         bios_path: /roms/bios
+        config: [/home/ark/.config/retroarch/retroarch.cfg, /home/ark/.config/retroarch32/retroarch.cfg]
       - os: linux
+        name: ArkOS
+        method: file_matches
+        file: /usr/share/plymouth/themes/text.plymouth
+        pattern: '^title=\s*ArkOS\b'
+        bios_path: /roms/bios
+        config: [/home/ark/.config/retroarch/retroarch.cfg, /home/ark/.config/retroarch32/retroarch.cfg]
+      # dArkOS: christianhaitian/darkos daecf488 finishing_touches.sh:359-361,
+      # retroarch.cfg.rgb10:3043. The dArkOSRE, dArkOSen and ArkOS4Clone overlays
+      # keep the title.
+      - os: linux
+        name: dArkOS
+        method: file_matches
+        file: /usr/share/plymouth/themes/text.plymouth
+        pattern: '^title=\s*dArkOS'
+        bios_path: /roms/bios
+        config: [/home/ark/.config/retroarch/retroarch.cfg, /home/ark/.config/retroarch32/retroarch.cfg]
+        derives_from: ArkOS
+      # RetroOZ: RetroOZ 0.60 image: splash title, /opt/.retrooz/version,
+      # retroarch32/retroarch.cfg:3046. /etc/retrooz_version is the file PortMaster
+      # reads (PortMaster-GUI ccea6b74, PortMaster/device_info.txt:95).
+      - os: linux
+        name: RetroOZ
+        method: file_matches
+        file: /usr/share/plymouth/themes/text.plymouth
+        pattern: '^title=\s*RetroOZ'
+        bios_path: /roms/bios
+        config: [/home/odroid/.config/retroarch/retroarch.cfg, /home/odroid/.config/retroarch32/retroarch.cfg]
+      - os: linux
+        name: RetroOZ
+        method: file_exists
+        file: /opt/.retrooz
+        bios_path: /roms/bios
+        config: [/home/odroid/.config/retroarch/retroarch.cfg, /home/odroid/.config/retroarch32/retroarch.cfg]
+      - os: linux
+        name: RetroOZ
+        method: file_exists
+        file: /etc/retrooz_version
+        bios_path: /roms/bios
+        config: [/home/odroid/.config/retroarch/retroarch.cfg, /home/odroid/.config/retroarch32/retroarch.cfg]
+      # spruceOS: spruceOS 824b1aae spruce/scripts/helperFunctions.sh:157-165,
+      # RetroArch/platform/retroarch-Brick.cfg.bak:3279.
+      - os: linux
+        name: spruceOS
+        method: file_exists
+        file: /mnt/SDCARD/spruce
+        bios_path: /mnt/SDCARD/BIOS
+        config: ['/mnt/SDCARD/Saves/ra-configs/retroarch-*.cfg']
+        derives_from: TrimUI
+      # CrossMix-OS: cizia64/CrossMix-OS 206d612f System/usr/trimui/scripts/
+      # update_common.sh:20, patch_ra_cfg.sh:5, RetroArch/retroarch.cfg:3202.
+      - os: linux
+        name: CrossMix-OS
+        method: file_exists
+        file: /mnt/SDCARD/System/usr/trimui/crossmix-version.txt
+        bios_path: /mnt/SDCARD/BIOS
+        config: [/mnt/SDCARD/RetroArch/retroarch.cfg]
+        derives_from: TrimUI
+      # Onion: OnionUI/Onion 07505ea5 Makefile:75-76,
+      # .tmp_update/script/patch_ra_cfg.sh:6, retroarch.cfg:3009.
+      - os: linux
+        name: Onion
+        method: file_exists
+        file: /mnt/SDCARD/.tmp_update/onionVersion/version.txt
+        bios_path: /mnt/SDCARD/BIOS
+        config: [/mnt/SDCARD/RetroArch/.retroarch/retroarch.cfg]
+      # Allium: goweiwen/Allium ee0dda97 crates/common/src/constants.rs:19-34,
+      # launch_without_savestate_auto_load.sh:2-7. Its RetroArch patch makes
+      # $ROOT/BIOS the default system folder.
+      - os: linux
+        name: Allium
+        method: file_exists
+        file: /mnt/SDCARD/.allium
+        bios_path: /mnt/SDCARD/BIOS
+        config: [/mnt/SDCARD/RetroArch/.retroarch/retroarch.cfg]
+      # Koriki: Rparadise-Team/Koriki 8513071c src/systemInfo/main.c:106,
+      # .tmp_update/runtime.sh:271, RetroArch/.retroarch/retroarch.cfg:3191.
+      - os: linux
+        name: Koriki
+        method: file_exists
+        file: /mnt/SDCARD/Koriki/version.txt
+        bios_path: /mnt/SDCARD/BIOS
+        config: [/mnt/SDCARD/RetroArch/.retroarch/retroarch.cfg]
+      # MiyooCFW: MiyooCFW buildroot d5912eeb board/miyoo/rootfs/etc/main:4 (HOME),
+      # package/miyoo/miyoo-ctl/miyoo-ctl.mk:12. DINGUX RetroArch defaults to
+      # $HOME/.retroarch/system.
+      - os: linux
+        name: MiyooCFW
+        method: file_exists
+        file: [/etc/main, /usr/bin/miyooctl]
+        bios_path: /mnt/.retroarch/system
+        config: [/mnt/.retroarch/retroarch.cfg]
+        home: /mnt
+      # plumOS: game-de-it/plumOS-pixel2_v2 dec872c0 rootfs/pixel2/etc/os-release:2,
+      # sbin/init:29, plumos-retroarch-launch:342. Other plumOS builds append a
+      # folder of their own at launch (plumOS-MF 0095017c,
+      # plumos-retroarch-launch:15): found, not installed to.
+      - os: linux
+        name: plumOS
+        method: file_exists
+        file: /mnt/plumos-user
+        bios_path: /mnt/plumos-user/bios
+      - os: linux
+        name: plumOS
+        method: os_release
+        match: [ID=plumos]
+      # TrimUI: the stock firmware publishes no source naming its BIOS folder.
+      # /usr/trimui is where PortMaster finds its libraries
+      # (trimui/launch_hooks.txt:37). Found so that what runs on it is told
+      # apart, never installed to.
+      - os: linux
+        name: TrimUI
+        method: file_exists
+        file: /usr/trimui
+        installs: false
+      # MinUI: MinUI dbf89435 workspace/all/common/defines.h:14-16, minarch.c:2942.
+      # One Bios/<tag>/ folder per core, not written by the installer.
+      - os: linux
+        name: MinUI
+        method: file_exists
+        file: /mnt/SDCARD/.system/res
+        installs: false
+        derives_from: TrimUI
+      - os: linux
+        name: MinUI
+        method: file_exists
+        file: /mnt/sdcard/.system/res
+        installs: false
+        derives_from: TrimUI
+      # Anbernic stock firmware: the stock Linux of Anbernic devices.
+      - os: linux
+        name: 'Anbernic stock firmware'
         method: file_exists
         file: /mnt/vendor/bin/dmenu.bin
         bios_path: /mnt/mmc/bios
@@ -316,17 +513,23 @@ platforms:
       # Knulli, a Batocera derivative (knulli-cfw/knulli-linux 57afa662):
       # OS_NAME in os-release (board/scripts/post-build-script.sh:233-236),
       # and knulli.version (package/system/knulli-system/knulli-system.mk:98-102).
+      # Served by Batocera's file list until its own platform is published.
       - os: linux
+        name: KNULLI
         method: os_release
         match: [OS_NAME=knulli]
         bios_path: /userdata/bios
+        derives_from: Batocera
       - os: linux
+        name: KNULLI
         method: file_exists
         file: /usr/share/knulli/knulli.version
         bios_path: /userdata/bios
+        derives_from: Batocera
       # batocera.linux 38845725, package/batocera/core/batocera-system/
       # batocera-system.mk:21-22 writes batocera.arch and batocera.version.
       - os: linux
+        name: Batocera
         method: file_exists
         file: /usr/share/batocera/batocera.version
         bios_path: /userdata/bios
@@ -348,10 +551,12 @@ platforms:
     install:
       detect:
       - os: linux
+        name: Recalbox
         method: file_exists
         file: /recalbox/recalbox.version
         bios_path: /recalbox/share/bios
       - os: linux
+        name: Recalbox
         method: file_exists
         file: /usr/bin/recalbox-settings
         bios_path: /recalbox/share/bios
@@ -456,6 +661,7 @@ platforms:
     install:
       detect:
       - os: linux
+        name: Lakka
         method: os_release
         match: [ID=lakka]
         bios_path: /storage/system
@@ -568,6 +774,7 @@ platforms:
     install:
       detect:
       - os: linux
+        name: ROCKNIX
         method: os_release
         match: [OS_NAME=rocknix, ID=rocknix]
         bios_path: /storage/roms/bios
