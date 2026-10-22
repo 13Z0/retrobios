@@ -125,6 +125,7 @@ python scripts/verify.py --system atari-lynx       # single system
 python scripts/verify.py --platform batocera --system psx  # one system of a platform pack
 python scripts/verify.py --platform retroarch --target switch  # filter by hardware
 python scripts/verify.py --platform recalbox --region us   # regional priority list
+python scripts/verify.py --platform emuelec --no-game-data  # the firmware-only pack, game data named
 python scripts/verify.py --all --destinations tmp/paths.json  # also write the paths each pack holds
 python scripts/verify.py --all --offline             # a release asset the cache lacks counts missing, as in an offline build
 python scripts/verify.py --list-emulators          # list all emulators
@@ -153,7 +154,9 @@ Verification modes per platform:
 Full details and severity mapping: [verification modes](verification-modes.md).
 `--region` narrows the report to the file set a regional pack would carry, and a
 mode that cannot apply it refuses it rather than ignoring it: see
-[region filtering](advanced-usage.md#region-filtering).
+[region filtering](advanced-usage.md#region-filtering). `--no-game-data` narrows
+it to the pack built with the same flag and names what it left out. It needs
+`--platform` or `--all`.
 
 `--db`, `--platforms-dir` and `--emulators-dir` point the run at another
 database or source tree, which is how the tests drive it against fixtures.
@@ -173,6 +176,7 @@ python scripts/generate_pack.py --system atari-lynx
 python scripts/generate_pack.py --platform retroarch --system sony-playstation
 python scripts/generate_pack.py --platform batocera --system psx
 python scripts/generate_pack.py --platform batocera --required-only
+python scripts/generate_pack.py --platform emuelec --no-game-data
 python scripts/generate_pack.py --platform retroarch --split
 python scripts/generate_pack.py --platform retroarch --split --group-by manufacturer
 
@@ -232,6 +236,11 @@ own verification mode ([discrepancy detection](verification-modes.md#discrepancy
   takes our ids only.
 - `--required-only`: exclude optional files and the data directories declared
   `required: false`, keep only required
+- `--no-game-data`: firmware only. Leaves out the platform's entries
+  categorized game data and the cores' `category: game_data` files, and names
+  each one. Tags the pack `_NoGameData`. `verify.py --no-game-data` and
+  `--verify-packs --no-game-data` check the same file set
+  ([details](advanced-usage.md#firmware-without-game-data))
 - `--split`: generate one ZIP per system instead of one big pack
 - `--split --group-by manufacturer`: group split packs by manufacturer (Sony, Nintendo, Sega...)
 - `--from-md5`: look up a hash in the database, or build a custom pack with

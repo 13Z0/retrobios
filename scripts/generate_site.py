@@ -5318,7 +5318,10 @@ everything or to choose systems, cores and regions, and `--system`, `--core`,
 [installer reference](wiki/installer.md#choosing-what-to-install)). From a
 clone of the repository, `python scripts/generate_pack.py --platform retroarch
 --region us` builds the same narrowing as a pack and `--required-only` the bare
-minimum each core needs to start, and `--help` lists every way to build your own.
+minimum each core needs to start. `--no-game-data`, for the pack and the
+installer alike, keeps the firmware and leaves out the files a game reads
+([details](wiki/advanced-usage.md#firmware-without-game-data)), and `--help`
+lists every way to build your own.
 
 ---
 

@@ -299,6 +299,11 @@ pack errors. A core the platform names that has no profile yet makes nothing unr
 The same goes for a system none of the examined cores emulates: in both cases the
 absence of a reader proves nothing.
 
+The same category filters: `--no-game-data` builds, verifies and installs the
+firmware without the game data, and the install manifest marks each game data
+file `"category": "game_data"`
+([details](advanced-usage.md#firmware-without-game-data)).
+
 
 ## File resolution chain
 
