@@ -1171,11 +1171,14 @@ def _android_storage_root() -> Path:
 def _detect_android() -> list[tuple[str, Path]]:
     """Find the RetroArch system directory on Android.
 
-    The config is read from the app external files directory first, then from
-    the internal one (platform_unix.c:1327-1395). A system_directory left at
-    default resolves against <shared storage>/RetroArch, which is also where
-    the directory sits when no config has been written yet
-    (platform_unix.c:2836-2851).
+    RetroArch v1.22.2: the launcher picks retroarch.cfg in the app external
+    files directory, else in the internal one
+    (pkg/android/phoenix-common/src/com/retroarch/browser/preferences/util/
+    UserPreferences.java:36-89), and passes it as CONFIGFILE
+    (MainMenuActivity.java:178, read at frontend/drivers/platform_unix.c:
+    1428-1444). A system_directory left at default resolves against
+    <shared storage>/RetroArch/system (platform_unix.c:1670-1697), which is
+    also where the directory sits when no config has been written yet.
     """
     found: list[tuple[str, Path]] = []
     storage = _android_storage_root()

@@ -499,9 +499,10 @@ with `/system/build.prop` covering a shell started without them.
 Detection then looks for RetroArch, the only Android frontend keeping a shared
 BIOS directory. `retroarch.cfg` is read from the app external files directory
 and then from the internal one, the order the frontend itself follows
-(`platform_unix.c:1327-1395`), and a `system_directory` left at `default`
-resolves against `<shared storage>/RetroArch`, where the directory also sits
-when no config has been written yet (`platform_unix.c:2836-2851`).
+(RetroArch v1.22.2, `UserPreferences.java:36-89`), and a `system_directory`
+left at `default` resolves against `<shared storage>/RetroArch`, where the
+directory also sits when no config has been written yet
+(`platform_unix.c:1670-1697`).
 
 Under scoped storage those two config paths are unreadable from Termux on
 Android 11 and later, so on current devices the shared directory is what

@@ -2711,6 +2711,19 @@ class RetroDeckFoldersMovedOneByOne(unittest.TestCase):
         self.assertNotIn("bios/ at", label)
 
 
+class AndroidCitationsNameTheRelease(unittest.TestCase):
+    """The Android detection cited platform_unix.c lines of a RetroArch
+    revision nobody named, which no longer held the code they described."""
+
+    def test_the_lines_are_those_of_v1_22_2(self):
+        page = (REPO_ROOT / "wiki" / "installer.md").read_text(encoding="utf-8")
+        for text in (install._detect_android.__doc__, page):
+            self.assertIn("v1.22.2", text)
+            self.assertIn("platform_unix.c:1670-1697", text.replace("\n    ", ""))
+            self.assertNotIn("1327-1395", text)
+            self.assertNotIn("2836-2851", text)
+
+
 class TheBoardTheSystemNamesIsTheTarget(unittest.TestCase):
     """Batocera, Recalbox and ROCKNIX each write the board they were built
     for, but the installer read none of them, so a Batocera RPi4 installed
