@@ -95,6 +95,21 @@ class EveryPlatformOnThePicker(unittest.TestCase):
             with self.subTest(platform=key):
                 self.assertIn(f"| [{name}](platforms/{key}.md) |", page)
 
+    def test_every_wiki_page_is_in_the_navigation(self):
+        """A wiki page is published as soon as it exists, but a page left out
+        of the nav is reachable only by a link and MkDocs says so at info
+        level. getting-started.md is kept out on purpose: it only links the
+        pages that took its content, for the old links that point to it."""
+        # mkdocs.yml is what generate_site writes, and CI checks it is current.
+        nav = (Path(__file__).resolve().parents[1] / "mkdocs.yml").read_text(encoding="utf-8")
+        kept_out = {"getting-started.md"}
+        wiki = Path(__file__).resolve().parents[1] / "wiki"
+        missing = sorted(
+            p.name for p in wiki.glob("*.md")
+            if p.name not in kept_out and f"wiki/{p.name}" not in nav
+        )
+        self.assertEqual(missing, [])
+
     def test_every_platform_is_in_the_navigation_of_its_group(self):
         registry = load_platform_registry(str(REPO_ROOT / "platforms"))
         coverages = {
