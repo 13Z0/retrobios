@@ -651,6 +651,62 @@ class APerCoreDocumentValidates(unittest.TestCase):
         jsonschema.validate(document["items"][0]["profile"], schema)
 
 
+class AHashFindsEveryPageThatNamesIt(unittest.TestCase):
+    """Hashes left the site search, 4 MB of the index every visitor
+    downloaded. files/?hash= reads one shard instead, and it must answer at
+    least what the search answered: the card, the platforms, the profiles."""
+
+    def test_records_cover_every_layer_and_shard_by_prefix(self):
+        import json as _json
+        import tempfile
+
+        import generate_site  # noqa: PLC0415
+
+        sha1 = "ab" * 20
+        md5 = "490f666e1afb15b7362b406ed1cea246"
+        db = {"files": {sha1: {"name": "scph5501.bin", "md5": md5, "crc32": "8D8CB7E4",
+                               "path": "bios/Sony/PlayStation/scph5501.bin"}}}
+        coverages = {"batocera": {"config": {"systems": {"sony-playstation": {"files": [
+            {"name": "scph5501.bin", "md5": f"{md5}, 0123456789abcdef0123456789abcdef"},
+            {"name": "typo.bin", "md5": "not-a-hash"},
+        ]}}}}}
+        profiles = {
+            "duckstation": {"files": [{"name": "scph5501.bin", "md5": md5},
+                                      {"name": "set.zip", "contents": [
+                                          {"name": "m.rom", "crc32": "11223344"}]}]},
+            "an-alias": {"type": "alias", "files": [{"name": "x", "md5": md5}]},
+        }
+        locations = generate_site.file_location_items(db) + [
+            {"sha1": "cd" * 20, "url": "emulators/dolphin/#sha1-" + "cd" * 6}]
+        members = {"dolphin-sys": {"Sys/GC/font.bin": {"sha1": "cd" * 20}}}
+        records = generate_site.file_lookup_records(db, coverages, profiles, locations, members)
+        found = {(r["layer"], r.get("owner", ""), r["algorithm"], r["value"]): r for r in records}
+        self.assertEqual(found[("collection", "", "md5", md5)]["url"],
+                         "systems/sony/#sha1-" + "ab" * 6)
+        self.assertIn(("collection", "", "crc32", "8d8cb7e4"), found)
+        self.assertEqual(found[("data-directory", "", "sha1", "cd" * 20)]["name"], "font.bin")
+        self.assertEqual(found[("platform", "batocera", "md5", md5)]["url"],
+                         "platforms/batocera/#sony-playstation")
+        self.assertIn(("platform", "batocera", "md5", "0123456789abcdef0123456789abcdef"), found)
+        self.assertEqual(found[("emulator", "duckstation", "md5", md5)]["url"],
+                         "emulators/duckstation/#file-scph5501-bin-490f666e")
+        self.assertEqual(found[("emulator", "duckstation", "crc32", "11223344")]["name"], "m.rom")
+        self.assertNotIn(("emulator", "an-alias", "md5", md5), found)
+
+        with tempfile.TemporaryDirectory(dir=Path(__file__).resolve().parents[1] / "tmp") as tmp:
+            shards = generate_site.write_lookup_shards(Path(tmp), records, "2026-01-01T00:00:00Z")
+            folder = Path(tmp) / "lookup"
+            names = sorted(path.name for path in folder.glob("*.json"))
+            self.assertEqual(len(names), shards)
+            for path in folder.glob("*.json"):
+                document = _json.loads(path.read_text())
+                self.assertEqual(document["kind"], "file-lookup")
+                self.assertEqual(document["count"], len(document["items"]))
+                for item in document["items"]:
+                    self.assertTrue(item["value"].startswith(path.stem))
+            self.assertNotIn("no.json", names)
+
+
 class AFileHasAnAddressByContent(unittest.TestCase):
     """mt32_control.rom moved from the Commodore page to the Roland page and
     every link to its card broke: the anchor was content-based, the page
@@ -669,7 +725,8 @@ class AFileHasAnAddressByContent(unittest.TestCase):
         )
         self.assertIn('id="rb-file-lookup-status"', generate_site.generate_files_page())
         script = (Path(__file__).resolve().parents[1] / "docs_assets" / "site.js").read_text()
-        self.assertIn("file-locations.json", script)
+        self.assertIn("api/v1/lookup/", script)
+        self.assertIn('params.has("sha1")', script)
         from cross_reference import FileConsumers  # noqa: PLC0415
 
         card = "\n".join(generate_site._system_file_card(

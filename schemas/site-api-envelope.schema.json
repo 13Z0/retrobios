@@ -27,7 +27,8 @@
         "emulators",
         "systems",
         "verification-and-coverage-gaps",
-        "file-locations"
+        "file-locations",
+        "file-lookup"
       ]
     },
     "count": {
@@ -326,6 +327,66 @@
                       }
                     }
                   }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "file-lookup"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "items": {
+            "items": {
+              "type": "object",
+              "required": [
+                "value",
+                "algorithm",
+                "layer",
+                "name",
+                "url"
+              ],
+              "properties": {
+                "value": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]+$"
+                },
+                "algorithm": {
+                  "enum": [
+                    "sha1",
+                    "md5",
+                    "crc32",
+                    "sha256"
+                  ]
+                },
+                "layer": {
+                  "enum": [
+                    "collection",
+                    "data-directory",
+                    "platform",
+                    "emulator"
+                  ]
+                },
+                "name": {
+                  "type": "string"
+                },
+                "url": {
+                  "type": "string"
+                },
+                "sha1": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{40}$"
+                },
+                "owner": {
+                  "type": "string"
                 }
               }
             }

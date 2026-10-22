@@ -12,6 +12,7 @@ the platform names that no profile describes leaves the verdict open.
 from __future__ import annotations
 
 import sys
+from collections.abc import Iterable
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -168,7 +169,7 @@ class ProofIndex:
                     if len(value) >= length:
                         self._index["cut"].setdefault(value[:length], set()).add(position)
 
-    def _hits(self, kind: str, keys) -> set[int]:
+    def _hits(self, kind: str, keys: Iterable[str]) -> set[int]:
         table = self._index[kind]
         found: set[int] = set()
         for key in keys:

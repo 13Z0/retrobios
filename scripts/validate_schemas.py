@@ -446,7 +446,7 @@ def main() -> int:
             if (api_dir / name).exists()
         ] + sorted((api_dir / "platforms").glob("*.json")) + sorted(
             (api_dir / "systems").glob("*.json")
-        )
+        ) + sorted((api_dir / "lookup").glob("*.json"))
         errors.extend(
             _validate_json_files(envelope_paths, "site-api-envelope.schema.json")
         )

@@ -835,7 +835,7 @@ nav:
   - Dump provenance: provenance.md
   - Updated platform files: exports.md
   - Data and API: data.md
-  - Find a file by its SHA1: files/index.md
+  - Find a file: files/index.md
   - Data model: wiki/data-model.md
   - Architecture: wiki/architecture.md
   - Build your own packs: wiki/advanced-usage.md

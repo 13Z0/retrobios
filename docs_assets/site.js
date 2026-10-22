@@ -148,28 +148,88 @@
     });
   };
 
-  // files/?sha1=<sha1> is a file's content address: the card it names may
-  // sit on another manufacturer's page today than when the link was cited.
+  // files/?hash= reads one shard of the lookup, named by the first two hex
+  // characters of the value: 20 KB where the whole index was 675 KB.
+  const HASH_LENGTHS = { 8: "CRC32", 32: "MD5", 40: "SHA1", 64: "SHA256" };
+  const LAYER_LABELS = {
+    collection: "In the collection",
+    "data-directory": "In a data directory the packs ship",
+    platform: "Declared by a platform",
+    emulator: "Read by an emulator",
+  };
+  const siteRoot = () => {
+    const script = document.querySelector('script[src$="javascripts/site.js"]');
+    return script ? new URL("../", script.src) : new URL("../", window.location.href);
+  };
+  const lookupShard = (value) =>
+    fetch(new URL(`api/v1/lookup/${value.slice(0, 2)}.json`, siteRoot()))
+      .then((response) => (response.ok ? response.json() : { items: [] }))
+      .then((shard) => shard.items || []);
+  const normalizeHash = (raw) => raw.trim().toLowerCase().replace(/^0x/, "").replace(/\s+/g, "");
+
+  const renderMatches = (status, value, items) => {
+    status.textContent = "";
+    const kind = HASH_LENGTHS[value.length];
+    const heading = document.createElement("p");
+    heading.textContent = `${items.length} ${items.length === 1 ? "match" : "matches"} for ${kind} ${value}:`;
+    status.append(heading);
+    Object.entries(LAYER_LABELS).forEach(([layer, label]) => {
+      const found = items.filter((item) => item.layer === layer);
+      if (!found.length) return;
+      const title = document.createElement("p");
+      const strong = document.createElement("strong");
+      strong.textContent = label;
+      title.append(strong);
+      const list = document.createElement("ul");
+      found.forEach((item) => {
+        const row = document.createElement("li");
+        const link = document.createElement("a");
+        link.href = new URL(item.url, siteRoot()).href;
+        const code = document.createElement("code");
+        code.textContent = item.name || item.value;
+        link.append(code);
+        row.append(link);
+        if (item.owner) row.append(` (${item.owner})`);
+        list.append(row);
+      });
+      status.append(title, list);
+    });
+  };
+
+  // files/?sha1=<sha1> is a file's content address and opens its card
+  // wherever it is now; files/?hash= also takes an MD5, CRC32 or SHA256 and
+  // lists every page that names the value.
   const resolveFileAddress = () => {
     const status = document.getElementById("rb-file-lookup-status");
     if (!status) return;
-    const sha1 = (new URLSearchParams(window.location.search).get("sha1") || "")
-      .trim().toLowerCase();
-    if (!sha1) return;
-    if (!/^[0-9a-f]{40}$/.test(sha1)) {
-      status.textContent = "A SHA1 is 40 hexadecimal characters.";
+    const params = new URLSearchParams(window.location.search);
+    const permalink = params.has("sha1");
+    const value = normalizeHash(params.get("sha1") || params.get("hash") || "");
+    if (!value) return;
+    const input = document.getElementById("rb-hash");
+    if (input) input.value = value;
+    const prefix = permalink && /^[0-9a-f]{12}$/.test(value);
+    if (!prefix && !(/^[0-9a-f]+$/.test(value) && HASH_LENGTHS[value.length])) {
+      status.textContent =
+        "A hash is 8 (CRC32), 32 (MD5), 40 (SHA1) or 64 (SHA256) hexadecimal characters.";
       return;
     }
     status.textContent = "Looking it up...";
-    const index = new URL("../api/v1/file-locations.json", window.location.href);
-    fetch(index)
-      .then((response) => response.json())
-      .then((document_) => {
-        const item = (document_.items || []).find((entry) => entry.sha1 === sha1);
-        if (item) {
-          window.location.replace(new URL("../" + item.url, window.location.href));
+    lookupShard(value)
+      .then((items) => {
+        const matches = items.filter((item) =>
+          prefix
+            ? item.algorithm === "sha1" && item.value.startsWith(value)
+            : item.value === value
+        );
+        const cards = matches.filter((item) => item.layer === "collection" || item.layer === "data-directory");
+        const targets = new Set(cards.map((item) => item.url));
+        if (permalink && targets.size === 1) {
+          window.location.replace(new URL(cards[0].url, siteRoot()));
+        } else if (matches.length) {
+          renderMatches(status, prefix ? matches[0].value : value, prefix ? cards : matches);
         } else {
-          status.textContent = "The collection holds no file with this SHA1.";
+          status.textContent = "No file the site knows has this hash.";
         }
       })
       .catch(() => {
@@ -177,10 +237,35 @@
       });
   };
 
+  // A file card moved to another page keeps its address: an id of the form
+  // sha1-<12 hex> that this page does not hold is looked up by content.
+  const followMovedCard = () => {
+    const match = /^#sha1-([0-9a-f]{12})$/.exec(window.location.hash);
+    if (!match || document.getElementById(`sha1-${match[1]}`)) return;
+    window.location.replace(new URL(`files/?sha1=${match[1]}`, siteRoot()));
+  };
+
+  // The site search no longer holds hashes: Enter on a hash opens the lookup.
+  const hashSearch = () => {
+    const query = document.querySelector('input[data-md-component="search-query"]');
+    if (!query || query.dataset.rbHash === "true") return;
+    query.dataset.rbHash = "true";
+    query.addEventListener("keydown", (event) => {
+      if (event.key !== "Enter") return;
+      const value = normalizeHash(query.value);
+      if (/^[0-9a-f]+$/.test(value) && HASH_LENGTHS[value.length]) {
+        event.preventDefault();
+        window.location.assign(new URL(`files/?hash=${value}`, siteRoot()));
+      }
+    });
+  };
+
   const enhance = () => {
     enhanceTables();
     nameMaterialWidgets();
     resolveFileAddress();
+    followMovedCard();
+    hashSearch();
   };
 
   let resizeTimer = 0;

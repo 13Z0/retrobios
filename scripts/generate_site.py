@@ -79,6 +79,7 @@ from siteguides import (
     DEVICE_GROUPS,
     GROUP_ANCHORS,
     GUIDES,
+    Guide,
     INSTALL_BASE,
     install_command,
     platform_args,
@@ -1130,13 +1131,17 @@ def generate_data_exports(
     gap_rows = _gap_export_rows(coverages, gap_report)
     cross_rows = _cross_reference_export_rows(coverages, profiles)
 
+    members = data_directory_members()
+    locations = file_location_items(db, profiles, members)
     envelopes = {
         "platforms.json": ("platforms", platform_items),
         "emulators.json": ("emulators", emulator_items),
         "gaps.json": ("verification-and-coverage-gaps", gap_rows),
-        "file-locations.json": ("file-locations", file_location_items(
-            db, profiles, data_directory_members())),
+        "file-locations.json": ("file-locations", locations),
     }
+    write_lookup_shards(
+        api, file_lookup_records(db, coverages, profiles, locations, members), generated_at,
+    )
     for filename, (kind, items) in envelopes.items():
         document = {
             "schema_version": 1,
@@ -1337,6 +1342,13 @@ def generate_data_page(exports: list[dict]) -> str:
         "emulator page links its own. `api/v1/platforms/<id>.json` holds one "
         "platform of `platforms.json`, and `api/v1/systems/<slug>.json` the files "
         "of one system page by console. Each platform and system page links its own.",
+        "",
+        "One hash without the whole list: `api/v1/lookup/<xx>.json`, where `<xx>` "
+        "is the first two characters of the hash in lowercase, holds every SHA1, "
+        "MD5, CRC32 and SHA256 starting with them. Each record names its `layer` "
+        "(the collection, a data directory, a platform's list or an emulator "
+        "profile), the file `name` and the `url` of the page that shows it. "
+        "[Find a file](files/index.md) reads it.",
         "",
         "## Bulk downloads",
         "",
@@ -2059,6 +2071,7 @@ def _render_platform_systems(
         # emulator cards link here, and the site search splits a page at its
         # headings. Folded into blocks under one heading, every hash pasted
         # in the search led to the systems overview of a 100-block page.
+        block_start = len(lines) + 2
         if use_collapsible:
             status_tag = "OK" if ok_count == total else _count(total - ok_count, "issue")
             lines.append(f"### {sys_link} {{ #{anchor} }}")
@@ -2141,7 +2154,9 @@ def _render_platform_systems(
             if f.get("category_evidence"):
                 lines.append(f"{pad}    {_category_evidence_md(f['category_evidence'])}")
 
-        lines.append("")
+        # The section's heading stays searchable, its file list with every
+        # hash is the lookup's: retrodeck's arcade list was 495 KB of index.
+        lines[block_start:] = search_excluded(lines[block_start:])
 
     return lines
 
@@ -2572,28 +2587,44 @@ def generate_platform_page(
 
 
 def generate_files_page() -> str:
-    """The content address of every held file: files/?sha1=<sha1>.
+    """Find a file by any of its hashes: files/?hash=<value>.
 
-    site.js reads api/v1/file-locations.json and goes to the card. Without
-    a sha1, or with one the collection does not hold, the page says so.
+    site.js reads the one shard of api/v1/lookup/ the value names and lists
+    every page that cites it. files/?sha1=<sha1> is the card's permanent
+    address and opens the card directly.
     """
     return "\n".join([
-        "# Find a file by its SHA1",
+        "# Find a file",
         "",
-        "A file's card lives on its manufacturer's page, and a file refiled "
-        "between manufacturers moves with it. `files/?sha1=<sha1>` is the "
-        "address that does not move: it opens the card wherever it is now. "
-        "Each card's **permalink** is that address.",
+        "Paste a hash from clrmamepro, RomVault, an emulator log or a platform's "
+        "BIOS list. The page lists the file in the collection that has it, the "
+        "platforms that declare it and the emulators that check for it.",
         "",
         '<form class="rb-file-lookup" action="./" method="get">',
-        '<label for="rb-sha1">SHA1</label> ',
-        '<input id="rb-sha1" name="sha1" size="44" pattern="[0-9a-fA-F]{40}" required> ',
-        '<button type="submit">Open</button>',
+        '<label for="rb-hash">SHA1, MD5, CRC32 or SHA256</label> ',
+        '<input id="rb-hash" name="hash" size="66" autocomplete="off" spellcheck="false" '
+        'pattern="\\s*(0x)?([0-9a-fA-F]{8}|[0-9a-fA-F]{32}|[0-9a-fA-F]{40}|[0-9a-fA-F]{64})\\s*" '
+        'required> ',
+        '<button type="submit">Find</button>',
         "</form>",
         "",
         '<p id="rb-file-lookup-status" role="status"></p>',
         "",
-        "The index behind it is [`api/v1/file-locations.json`](../api/v1/file-locations.json).",
+        "To look a file up by its name, use the search at the top of the page.",
+        "",
+        "## Permanent links",
+        "",
+        "A file's card lives on its manufacturer's page, and a file refiled "
+        "between manufacturers moves with it. `files/?sha1=<sha1>` is the address "
+        "that does not move: it opens the card wherever it is now. Each card's "
+        "**permalink** is that address.",
+        "",
+        "## The index behind it",
+        "",
+        "The lookup reads one file of [`api/v1/lookup/`](../data.md), named by the "
+        "first two characters of the hash, about 20 KB compressed. "
+        "[`api/v1/file-locations.json`](../api/v1/file-locations.json) lists every "
+        "card by SHA1 in one file.",
         "",
     ])
 
@@ -2686,6 +2717,99 @@ def file_location_items(
                 items.append({"sha1": sha1,
                               "url": f"emulators/{owners[ref]}/#sha1-{sha1[:12]}"})
     return sorted(items, key=lambda item: item["sha1"])
+
+
+LOOKUP_PREFIX = 2  # hex characters naming a lookup shard: 256 files
+
+
+def file_lookup_records(
+    db: dict,
+    coverages: dict,
+    profiles: dict,
+    locations: list[dict],
+    members: dict | None = None,
+) -> list[dict]:
+    """Every hash the site knows, one record per value, for files/?hash=.
+
+    The collection's own files lead to their card, a platform's declared
+    value to the system section of its page, a profile's to the entry's
+    card. The site search indexed these values as text, 4 MB of the 21 MB
+    it made every visitor download: the lookup reads one shard instead.
+    """
+    files = db.get("files", {})
+    member_names = {
+        str(info.get("sha1", "")): member.rsplit("/", 1)[-1]
+        for tree in (members or {}).values() for member, info in sorted(tree.items())
+    }
+    records: list[dict] = []
+    for item in locations:
+        sha1 = item["sha1"]
+        entry = files.get(sha1)
+        if entry is None:
+            # A data directory member: the manifests record its sha1 only.
+            records.append({"value": sha1, "algorithm": "sha1", "layer": "data-directory",
+                            "name": member_names.get(sha1, ""), "sha1": sha1,
+                            "url": item["url"]})
+            continue
+        for algorithm in HASH_ALGORITHMS:
+            for value in _hash_values(entry.get(algorithm)):
+                records.append({
+                    "value": value, "algorithm": algorithm, "layer": "collection",
+                    "name": str(entry.get("name", "")), "sha1": sha1, "url": item["url"],
+                })
+    for key, coverage in sorted(coverages.items()):
+        for system_id, system in sorted((coverage["config"].get("systems") or {}).items()):
+            url = f"platforms/{key}/#{system_id.replace(' ', '-')}"
+            for entry in system.get("files") or []:
+                for algorithm in HASH_ALGORITHMS:
+                    for value in _hash_values(entry.get(algorithm)):
+                        records.append({
+                            "value": value, "algorithm": algorithm, "layer": "platform",
+                            "owner": key, "name": str(entry.get("name", "")), "url": url,
+                        })
+    for key, profile in sorted(profiles.items()):
+        if profile.get("type") in ("alias", "test"):
+            continue
+        entries = profile.get("files") or []
+        for entry, anchor in zip(entries, emulator_file_anchors(entries)):
+            url = f"emulators/{key}/#{anchor}"
+            members = [(str(entry.get("name", "")), entry)] + [
+                (str(member["name"]), member) for member in entry.get("contents") or []
+                if isinstance(member, dict) and member.get("name")
+            ]
+            for name, holder in members:
+                for algorithm in HASH_ALGORITHMS:
+                    for value in _hash_values(holder.get(algorithm)):
+                        records.append({
+                            "value": value, "algorithm": algorithm, "layer": "emulator",
+                            "owner": key, "name": name, "url": url,
+                        })
+    unique = {json.dumps(r, sort_keys=True): r for r in records}
+    return sorted(unique.values(), key=lambda r: (
+        r["value"], r["layer"], r.get("owner", ""), r["name"], r["url"]))
+
+
+def write_lookup_shards(api: Path, records: list[dict], generated_at: str) -> int:
+    """One envelope per leading pair of hex characters, as the lookup asks.
+
+    A value that is not hexadecimal (a typo in a profile) has no shard the
+    lookup would read, and is left out. Returns the number of shards.
+    """
+    shards: dict[str, list[dict]] = {}
+    for record in records:
+        if re.fullmatch(r"[0-9a-f]{8,}", record["value"]):
+            shards.setdefault(record["value"][:LOOKUP_PREFIX], []).append(record)
+    folder = api / "lookup"
+    folder.mkdir(parents=True, exist_ok=True)
+    for prefix, items in sorted(shards.items()):
+        write_if_changed(str(folder / f"{prefix}.json"), json.dumps({
+            "schema_version": 1,
+            "generated_at": generated_at,
+            "kind": "file-lookup",
+            "count": len(items),
+            "items": items,
+        }, ensure_ascii=False, separators=(",", ":"), sort_keys=True) + "\n")
+    return len(shards)
 
 
 def collection_paths(db: dict) -> dict[str, set[str]]:
@@ -3101,9 +3225,14 @@ def _installed_links(sha1: str, consumers: FileConsumers, declared: set[str]) ->
 
 
 def _system_file_card(
-    f: dict, consumers: FileConsumers, anchored: set[str] | None = None
+    f: dict, consumers: FileConsumers, anchored: set[str] | None = None,
+    searchable: bool = True,
 ) -> list[str]:
-    """One file of a system page: hashes, who reads it, its provenance."""
+    """One file of a system page: hashes, who reads it, its provenance.
+
+    ``searchable`` false keeps even the name out of the site search: the
+    asset trees of game engines hold thousands of 0.ogg and tile.png.
+    """
     name = f["name"]
     sha1_full = f.get("sha1", "unknown")
     md5_full = f.get("md5", "unknown")
@@ -3129,7 +3258,7 @@ def _system_file_card(
     ) if anchor else ""
     lines.append(_card_title(
         f'{_code(name)} <span class="rb-badge rb-badge-muted">{size}</span>{permalink}',
-        anchor,
+        anchor, searchable,
     ))
     lines.append("")
     # Every hash in full: the site search indexes text, not a title
@@ -3160,9 +3289,58 @@ def _system_file_card(
         # looking up scph5501.bin found every platform but RetroBat, whose
         # pack installs it for six cores.
         lines.append(f"- Also installed by: {', '.join(installed)}")
-    lines[2:] = _search_skipped_apart(lines[2:])
+    # The title stays searchable: the file name is what a reader types.
+    lines[4:] = search_excluded(lines[4:])
     lines.extend(["", "</div>", ""])
     return lines
+
+
+SEARCH_TABLE_BYTES = 3000
+
+
+def tables_out_of_search(markdown: str, threshold: int = SEARCH_TABLE_BYTES) -> str:
+    """Each table longer than ``threshold`` bytes, wrapped out of the search.
+
+    A search result shows the start of a section: a 600-row table as one
+    snippet helps nobody, and the gaps, provenance and cross-reference
+    tables were 900 KB of the index. The headings above them stay.
+    """
+    lines = markdown.split("\n")
+    out: list[str] = []
+    index = 0
+    while index < len(lines):
+        match = re.match(r"( *)\|", lines[index])
+        if not match:
+            out.append(lines[index])
+            index += 1
+            continue
+        indent = match.group(1)
+        end = index
+        while end < len(lines) and re.match(rf"{indent}\|", lines[end]):
+            end += 1
+        table = lines[index:end]
+        if sum(len(line) for line in table) > threshold:
+            out += ["", f"{indent}<section data-search-exclude markdown>", "", *table,
+                    "", f"{indent}</section>", ""]
+        else:
+            out += table
+        index = end
+    return "\n".join(out)
+
+
+def search_excluded(lines: list[str]) -> list[str]:
+    """Lines the site search leaves out, as a block of their own.
+
+    The browser downloads and indexes the whole search index before the
+    first result: hashes, link lists and install commands repeated on 600
+    pages made it 21 MB. Hashes are found by files/?hash=, names and prose
+    stay searchable.
+
+    A section, not a div: the search plugin compares elements by tag, so
+    the first div closed inside an excluded div (a code block's) ended the
+    exclusion and the rest of the block was indexed.
+    """
+    return ["", "<section data-search-exclude markdown>", "", *lines, "", "</section>", ""]
 
 
 # Card lines the site search leaves out. They list where a file goes and
@@ -3171,6 +3349,8 @@ def _system_file_card(
 # result. The name, the hashes, the entry's path and the notes stay
 # searchable.
 SEARCH_SKIPPED = (
+    "- SHA1:", "- MD5:", "- CRC32:", "- SHA256:", "- Adler32", "- Size:",
+    "- Validation", "- Priority:", "- Contents (",
     "- Platforms:", "- Also installed by:", "- Source:", "- Asked for by:",
     "- Collection path:", "- Collection copy:", "- Collection copies:",
     "- Installed by the platform's own package on:",
@@ -3195,7 +3375,7 @@ def _search_skipped_apart(lines: list[str]) -> list[str]:
     return out
 
 
-def _card_title(text: str, anchor: str) -> str:
+def _card_title(text: str, anchor: str, searchable: bool = True) -> str:
     """A file card's heading, so the site search lands on the card.
 
     The search splits a page at its headings: a card titled in bold sent a
@@ -3204,6 +3384,8 @@ def _card_title(text: str, anchor: str) -> str:
     keeps the id the toc gives it.
     """
     attributes = f"#{anchor} .rb-file-title" if anchor else ".rb-file-title"
+    if not searchable:
+        attributes += " data-search-exclude"
     return f"#### {text} {{ {attributes} }}"
 
 
@@ -3256,6 +3438,7 @@ def generate_system_page(
         "",
     ]
     anchored: set[str] = set()
+    searchable = manufacturer not in GAME_DATA_TOPS
 
     for console_name in sorted(consoles.keys()):
         files = consoles[console_name]
@@ -3267,7 +3450,7 @@ def generate_system_page(
         variant_files = [f for f in files if "/.variants/" in f["path"]]
 
         for f in sorted(main_files, key=lambda x: x["name"]):
-            lines.extend(_system_file_card(f, consumers, anchored))
+            lines.extend(_system_file_card(f, consumers, anchored, searchable))
 
         if variant_files:
             # A variant gets the same card as a primary: the revision a
@@ -3278,7 +3461,7 @@ def generate_system_page(
             for v in sorted(variant_files, key=lambda x: (x["name"], x["path"])):
                 lines.extend(
                     f"    {line}" if line else ""
-                    for line in _system_file_card(v, consumers, anchored)
+                    for line in _system_file_card(v, consumers, anchored, searchable)
                 )
             lines.append("")
 
@@ -3907,14 +4090,14 @@ def _install_block(name: str, profile: dict) -> list[str]:
     """
     if profile.get("type") in ("alias", "launcher", "test"):
         return []
-    return [
+    return search_excluded([
         '??? tip "Install this emulator\'s files"',
         "",
         "    The installer finds your platform and its BIOS folder, then downloads "
         "only the files this emulator reads there and checks each one.",
         "",
         *install_commands(f"--emulator {name}", "    "),
-    ]
+    ])
 
 
 def _platform_install_block(name: str, display: str, on_card: bool = False) -> list[str]:
@@ -3975,7 +4158,7 @@ def _console_install_block(console: str, declared: list[tuple[str, str]]) -> lis
         f"    {install_command('sh', f'--platform {platform} --system {shlex.quote(system)}')}"
         for platform, system in declared
     ]
-    return lines + ["    ```", ""]
+    return search_excluded(lines + ["    ```", ""])
 
 
 def _render_platform_details(profile: dict) -> list[str]:
@@ -4351,7 +4534,9 @@ def generate_emulator_page(
             )
 
     if data_dirs:
-        lines.extend(["## Data directories", ""])
+        # The member tables are a file list with hashes: out of the search,
+        # dolphin, primehack and ishiiruka each put 210 KB of it there.
+        lines.extend(["## Data directories { data-search-exclude }", ""])
         member_anchors: set[str] = set()
         # Each tree with what it holds, where it comes from, which build reads
         # it and the code that does: these trees put thousands of files in
@@ -5536,7 +5721,7 @@ def _mkdocs_config(docs: Path, text: str) -> tuple[Path, str]:
 _OS_NAMES = {"windows": "Windows", "darwin": "macOS", "linux": "Linux"}
 
 
-def _runs_on(entry: dict, guide) -> str:
+def _runs_on(entry: dict, guide: Guide) -> str:
     """Where a setup runs, read from the systems the installer detects it on."""
     if guide.on_card:
         return "SD card, filled from a computer"
@@ -5553,7 +5738,7 @@ def _runs_on(entry: dict, guide) -> str:
     return ", ".join(names)
 
 
-def _folder_cell(name: str, guide, prefix: str = "") -> str:
+def _folder_cell(name: str, guide: Guide, prefix: str = "") -> str:
     """The BIOS folder in a table cell, or a link where it depends on the system."""
     if len(guide.folders) > 3:
         return f"Depends on the system: [listed on its page]({prefix}platforms/{name}.md#where-the-files-go)"
@@ -5840,7 +6025,7 @@ def generate_mkdocs_nav(
             {"Dump provenance": "provenance.md"},
             {"Updated platform files": "exports.md"},
             {"Data and API": "data.md"},
-            {"Find a file by its SHA1": "files/index.md"},
+            {"Find a file": "files/index.md"},
             {"Data model": "wiki/data-model.md"},
             {"Architecture": "wiki/architecture.md"},
             {"Build your own packs": "wiki/advanced-usage.md"},
@@ -6089,15 +6274,15 @@ def _generate(args: argparse.Namespace) -> None:
     print("Generating cross-reference page...")
     write_if_changed(
         str(docs / "cross-reference.md"),
-        generate_cross_reference(coverages, profiles) + REFERENCE_NEXT,
+        tables_out_of_search(generate_cross_reference(coverages, profiles)) + REFERENCE_NEXT,
     )
 
     print("Generating gap analysis page...")
     write_if_changed(
         str(docs / "gaps.md"),
-        generate_gap_analysis(
+        tables_out_of_search(generate_gap_analysis(
             profiles, coverages, db, suppl_names, registry, gap_report
-        ) + REFERENCE_NEXT,
+        )) + REFERENCE_NEXT,
     )
 
     print("Generating updated platform files page...")
@@ -6113,7 +6298,9 @@ def _generate(args: argparse.Namespace) -> None:
     provenance_report = build_report(db, load_provenance_snapshots())
     write_if_changed(
         str(docs / "provenance.md"),
-        generate_provenance_page(db, provenance_report, load_derivable()) + REFERENCE_NEXT,
+        tables_out_of_search(
+            generate_provenance_page(db, provenance_report, load_derivable())
+        ) + REFERENCE_NEXT,
     )
 
     # Wiki pages: copy manually maintained sources + generate dynamic ones
