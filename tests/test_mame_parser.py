@@ -10,6 +10,7 @@ from scripts.scraper.mame_parser import (
     find_bios_root_sets,
     parse_mame_source_tree,
     parse_rom_block,
+    set_is_required,
 )
 
 # Standard GAME macro with MACHINE_IS_BIOS_ROOT, multiple ROM entries, BIOS variants
@@ -49,6 +50,35 @@ ROM_START( testnd )
 ROM_END
 
 GAME( 2000, testnd, 0, testnd, testnd, test_state, init_test, ROT0, "Test", "Test ND", MACHINE_IS_BIOS_ROOT )
+"""
+
+# Every ROM undumped, as macs.cpp declares mac2bios: the machine runs without the set
+ALL_NODUMP_FIXTURE = """\
+#define MACS2_BIOS \\
+	ROM_REGION( 0x400000, "bios", 0 ) \\
+	ROM_LOAD16_BYTE( "macs2os_l.bin", 0x00000, 0x80000, NO_DUMP ) \\
+	ROM_LOAD16_BYTE( "macs2os_h.bin", 0x00001, 0x80000, NO_DUMP )
+
+ROM_START( mac2bios )
+	MACS2_BIOS
+
+	ROM_REGION( 0x1000000, "maincpu", 0 )
+	ROM_COPY( "bios",   0x000000, 0x000000, 0x400000 )
+ROM_END
+
+GAME( 1995, mac2bios, 0, macs, macs_m, macs_state, init_macs2, ROT0, "I'Max", "Multi Amenity Cassette System 2 BIOS", MACHINE_IS_BIOS_ROOT | MACHINE_NOT_WORKING )
+"""
+
+# Every ROM optional, through both spellings romentry.h offers, plus one undumped
+ALL_OPTIONAL_FIXTURE = """\
+ROM_START( testopt )
+    ROM_REGION( 0x10000, "maincpu", 0 )
+    ROM_LOAD_OPTIONAL( "opt1.rom", 0x00000, 0x4000, CRC(aabbccdd) SHA1(1122334455667788990011223344556677889900) )
+    ROMX_LOAD( "opt2.rom", 0x04000, 0x4000, CRC(aabbccde) SHA1(1122334455667788990011223344556677889901), ROM_OPTIONAL )
+    ROM_LOAD( "gone.rom", 0x08000, 0x4000, NO_DUMP )
+ROM_END
+
+GAME( 2000, testopt, 0, testopt, testopt, test_state, init_test, ROT0, "Test", "Test Optional", MACHINE_IS_BIOS_ROOT )
 """
 
 # ROM_LOAD with BAD_DUMP
@@ -282,6 +312,47 @@ ROM_END
         roms = parse_rom_block(fixture, "upper")
         self.assertEqual(roms[0]["crc32"], "aabbccdd")
         self.assertEqual(roms[0]["sha1"], "aabbccddeeff00112233aabbccddeeff00112233")
+
+
+class TestSetIsRequired(unittest.TestCase):
+    """A set is required only if romload.cpp errors when it is missing."""
+
+    def test_all_no_dump_set_is_not_required(self) -> None:
+        entries = parse_rom_block(ALL_NODUMP_FIXTURE, "mac2bios", keep_no_dump=True)
+        self.assertEqual([e["name"] for e in entries], ["macs2os_l.bin", "macs2os_h.bin"])
+        self.assertTrue(all(e["no_dump"] for e in entries))
+        self.assertIs(set_is_required(entries), False)
+
+    def test_optional_and_no_dump_set_is_not_required(self) -> None:
+        entries = parse_rom_block(ALL_OPTIONAL_FIXTURE, "testopt", keep_no_dump=True)
+        self.assertEqual(len(entries), 3)
+        self.assertTrue(entries[0]["optional"] and entries[1]["optional"])
+        self.assertIs(set_is_required(entries), False)
+
+    def test_one_dumped_rom_makes_the_set_required(self) -> None:
+        entries = parse_rom_block(NODUMP_FIXTURE, "testnd", keep_no_dump=True)
+        self.assertIs(set_is_required(entries), True)
+
+    def test_bad_dump_is_still_fatal(self) -> None:
+        entries = parse_rom_block(BADDUMP_FIXTURE, "testbd", keep_no_dump=True)
+        self.assertIs(set_is_required(entries), True)
+
+    def test_no_rom_read_decides_nothing(self) -> None:
+        self.assertIsNone(set_is_required([]))
+
+    def test_no_dump_stays_out_of_the_default_parse(self) -> None:
+        self.assertEqual(parse_rom_block(ALL_NODUMP_FIXTURE, "mac2bios"), [])
+
+    def test_tree_records_required_per_set(self) -> None:
+        with tempfile.TemporaryDirectory() as tmpdir:
+            mame_dir = os.path.join(tmpdir, "src", "mame", "seta")
+            os.makedirs(mame_dir)
+            with open(os.path.join(mame_dir, "macs.cpp"), "w") as f:
+                f.write(ALL_NODUMP_FIXTURE + NEOGEO_FIXTURE)
+            results = parse_mame_source_tree(tmpdir)
+            self.assertIs(results["mac2bios"]["required"], False)
+            self.assertEqual(results["mac2bios"]["roms"], [])
+            self.assertIs(results["neogeo"]["required"], True)
 
 
 class TestParseMameSourceTree(unittest.TestCase):

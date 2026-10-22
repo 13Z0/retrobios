@@ -471,10 +471,11 @@ files:
     source_ref: "source src/mame/drivers/twinkle.c"
 
   - name: mac2bios.zip
-    required: true
+    required: false
     category: bios_zip
     system: imax-macs
     source_ref: "source src/mame/drivers/macs.c:514, 740"
+    note: "macs2os_l.bin and macs2os_h.bin are both NO_DUMP (src/mame/drivers/macs.c:499-502). handle_missing_file (src/emu/romload.c:430-452) counts a missing NO_DUMP ROM as a warning, not an error, so the machine runs without the set."
 
   - name: macsbios.zip
     required: true

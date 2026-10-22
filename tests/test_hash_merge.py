@@ -170,6 +170,85 @@ class TestMameMerge(unittest.TestCase):
             self.assertEqual(entry["system"], "snk-neogeo-mvs")
             self.assertFalse(entry["required"])
 
+    def test_merge_sets_required_false_for_a_set_the_machine_runs_without(self) -> None:
+        profile = _make_mame_profile()
+        profile["files"].append({
+            "name": "mac2bios.zip", "required": True, "category": "bios_zip",
+            "note": "kept",
+        })
+        hashes = _make_mame_hashes()
+        hashes["bios_sets"]["mac2bios"] = {
+            "source_file": "src/mame/seta/macs.cpp", "source_line": 776,
+            "roms": [], "required": False,
+        }
+        with tempfile.TemporaryDirectory() as td:
+            p = Path(td)
+            profile_path = _write_yaml(p / "mame.yml", profile)
+            hashes_path = _write_json(p / "hashes.json", hashes)
+
+            diff = compute_diff(profile_path, hashes_path, mode="mame")
+            self.assertIn("mac2bios", diff["updated"])
+
+            result = merge_mame_profile(profile_path, hashes_path)
+            entry = next(f for f in result["files"] if f["name"] == "mac2bios.zip")
+            self.assertFalse(entry["required"])
+            self.assertEqual(entry["note"], "kept")
+
+    def test_written_profile_carries_the_settled_required(self) -> None:
+        """The text patcher rewrote contents and source_ref but left required."""
+        hashes = _make_mame_hashes()
+        hashes["bios_sets"] = {"mac2bios": {
+            "source_file": "src/mame/seta/macs.cpp", "source_line": 776,
+            "roms": [], "required": False,
+        }}
+        with tempfile.TemporaryDirectory() as td:
+            p = Path(td)
+            profile_path = str(p / "mame.yml")
+            Path(profile_path).write_text(
+                'emulator: MAME\ncore_version: "0.289"\nfiles:\n'
+                "  - name: mac2bios.zip\n    required: true\n    category: bios_zip\n"
+                '    source_ref: "upstream src/mame/seta/macs.cpp:776"\n',
+                encoding="utf-8",
+            )
+            hashes_path = _write_json(p / "hashes.json", hashes)
+            merge_mame_profile(profile_path, hashes_path, write=True)
+            written = yaml.safe_load(Path(profile_path).read_text(encoding="utf-8"))
+        entry = next(f for f in written["files"] if f["name"] == "mac2bios.zip")
+        self.assertIs(entry["required"], False)
+
+    def test_merge_keeps_a_curated_false_over_a_fatal_set(self) -> None:
+        profile = _make_mame_profile()
+        profile["files"][0]["required"] = False
+        hashes = _make_mame_hashes()
+        hashes["bios_sets"]["neogeo"]["required"] = True
+        with tempfile.TemporaryDirectory() as td:
+            p = Path(td)
+            profile_path = _write_yaml(p / "mame.yml", profile)
+            hashes_path = _write_json(p / "hashes.json", hashes)
+            result = merge_mame_profile(profile_path, hashes_path)
+            entry = next(f for f in result["files"] if f["name"] == "neogeo.zip")
+            self.assertFalse(entry["required"])
+
+    def test_merge_restores_required_once_an_undumped_set_is_dumped(self) -> None:
+        profile = _make_mame_profile()
+        profile["files"].append({
+            "name": "recel.zip", "required": False, "category": "bios_zip",
+            "contents": [],
+        })
+        hashes = _make_mame_hashes()
+        hashes["bios_sets"]["recel"] = {
+            "source_file": "src/mame/pinball/recel.cpp", "source_line": 546,
+            "roms": [{"name": "a2361.b1", "size": 1024, "crc32": "eeb8f3f0"}],
+            "required": True,
+        }
+        with tempfile.TemporaryDirectory() as td:
+            p = Path(td)
+            profile_path = _write_yaml(p / "mame.yml", profile)
+            hashes_path = _write_json(p / "hashes.json", hashes)
+            result = merge_mame_profile(profile_path, hashes_path)
+            entry = next(f for f in result["files"] if f["name"] == "recel.zip")
+            self.assertTrue(entry["required"])
+
     def test_merge_adds_new_bios_set(self) -> None:
         hashes = _make_mame_hashes()
         hashes["bios_sets"]["pgm"] = {
@@ -405,12 +484,42 @@ class AReleaseProfileDescribesItsOwnRelease(unittest.TestCase):
         self.assertNotIn("system", files["newset.zip"])
         self.assertEqual(files["neogeo.zip"]["source_ref"], "upstream src/mame/neogeo/neogeo.cpp:10")
 
+    def test_a_set_the_release_runs_without_is_not_required(self):
+        """recel is undumped at 0.258: the current profile's true does not apply."""
+        from scripts.scraper.mame_hash_scraper import release_profile
+
+        bios_sets = {
+            "recel": {"source_file": "src/mame/pinball/recel.cpp", "source_line": 505,
+                      "roms": [], "required": False},
+            "neogeo": {"source_file": "src/mame/neogeo/neogeo.cpp", "source_line": 10,
+                       "roms": [{"name": "sp-s2.sp1", "size": 131072, "crc32": "9036d879"}],
+                       "required": True},
+        }
+        reference = {"files": [
+            {"name": "recel.zip", "category": "bios_zip", "required": True,
+             "contents": [{"name": "a2361.b1", "size": 1024, "crc32": "eeb8f3f0"}]},
+            {"name": "neogeo.zip", "category": "bios_zip", "required": True},
+        ]}
+        profile = release_profile(
+            "mame0258", bios_sets, "a" * 40, "b" * 40, ["mame0258"], reference,
+            ["recalbox"],
+        )
+        files = {f["name"]: f for f in profile["files"]}
+        self.assertFalse(files["recel.zip"]["required"])
+        self.assertTrue(files["neogeo.zip"]["required"])
+
     def test_a_release_profile_is_left_out_of_the_current_refresh(self):
         from scripts.scraper.mame_hash_scraper import _find_mame_profiles
 
         names = {path.name for path in _find_mame_profiles()}
         self.assertIn("mame.yml", names)
         self.assertFalse({"mame0258.yml", "mame0278.yml"} & names)
+
+    def test_a_pinned_build_of_the_mame_tree_is_left_out(self):
+        """pSxMAME builds mamedev/mame at 0.133: refreshed, it would carry 0.289 refs."""
+        from scripts.scraper.mame_hash_scraper import _find_mame_profiles
+
+        self.assertNotIn("psxmame.yml", {path.name for path in _find_mame_profiles()})
 
 
 class TestFbneoMerge(unittest.TestCase):

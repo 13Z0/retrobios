@@ -3,7 +3,7 @@ type: libretro
 core_classification: frozen_snapshot
 source: https://github.com/libretro/mame
 upstream: https://github.com/mamedev/mame/tree/mame0258
-profiled_date: '2026-10-17'
+profiled_date: '2026-10-22'
 source_commit: dc1a96537089d6d4ecd01d9886b21061471c70c0
 upstream_commit: 2e0aa823508663c4a27164be43467d1ef740cdcd
 core_version: '0.258'
@@ -74,6 +74,19 @@ systems:
 - tutor
 - tandy-vis
 - trs80
+- coco
+- scv
+- apple-macintosh-ii
+- electron
+- mc10
+- pc80
+- xegs
+- dragon64
+- acorn-archimedes
+- acorn-bbc-micro
+- elektronika-bk
+- enterprise-64-128
+- vectrex
 - vgmplay
 notes: 'libretro/mame built at the 0.258 release. BIOS root sets read from mamedev/mame at mame0258: the
   sets and their ROMs are that release''s, not the current one''s.'
@@ -107,6 +120,7 @@ files:
 - name: airlbios.zip
   required: false
   category: bios_zip
+  system: sega-naomi
   source_ref: "upstream src/mame/sega/naomi.cpp:10774"
   contents:
   - name: epr-21802.ic27
@@ -1283,6 +1297,7 @@ files:
 - name: f355bios.zip
   required: false
   category: bios_zip
+  system: sega-naomi
   source_ref: "upstream src/mame/sega/naomi.cpp:10773"
   contents:
   - name: epr-22851.ic27
@@ -1308,6 +1323,7 @@ files:
 - name: f355dlx.zip
   required: false
   category: bios_zip
+  system: sega-naomi
   source_ref: "upstream src/mame/sega/naomi.cpp:10772"
   contents:
   - name: epr-21864.ic27
@@ -1470,6 +1486,7 @@ files:
 - name: hod2bios.zip
   required: false
   category: bios_zip
+  system: sega-naomi
   source_ref: "upstream src/mame/sega/naomi.cpp:10771"
   contents:
   - name: epr-21331.ic27
@@ -1638,6 +1655,7 @@ files:
 - name: kviper.zip
   required: true
   category: bios_zip
+  system: konami-viper
   source_ref: "upstream src/mame/konami/viper.cpp:3424"
   contents:
   - name: 941b01.u25
@@ -1682,7 +1700,7 @@ files:
     crc32: f78d14d7
     sha1: f129787e487984edd23bf344f2e9500c85052275
 - name: mac2bios.zip
-  required: true
+  required: false
   category: bios_zip
   source_ref: "upstream src/mame/seta/macs.cpp:796"
   contents: []
@@ -2339,7 +2357,7 @@ files:
     crc32: 9c436cfa
     sha1: 480ea52e74721d1963ced41be5c482b7b913ccd2
 - name: recel.zip
-  required: true
+  required: false
   category: bios_zip
   source_ref: "upstream src/mame/pinball/recel.cpp:505"
   contents: []

@@ -3,7 +3,8 @@
 Extracts BIOS root sets and ROM definitions from MAME driver sources.
 Handles GAME/GAMEL/SYST/COMP/CONS macros with MACHINE_IS_BIOS_ROOT flag,
 ROM_START/ROM_END blocks, ROM_LOAD variants, ROM_REGION, ROM_SYSTEM_BIOS,
-NO_DUMP filtering, and BAD_DUMP flagging.
+NO_DUMP filtering, BAD_DUMP and ROM_OPTIONAL flagging, and whether a missing
+set stops the machine.
 """
 
 from __future__ import annotations
@@ -66,6 +67,8 @@ _CRC_SHA = re.compile(
 _NO_DUMP = re.compile(r"\bNO_DUMP\b")
 _BAD_DUMP = re.compile(r"\bBAD_DUMP\b")
 _ROM_BIOS = re.compile(r"ROM_BIOS\s*\(\s*(\d+)\s*\)")
+# ROM_LOAD_OPTIONAL expands to ROMX_LOAD(..., ROM_OPTIONAL) (src/emu/romentry.h)
+_OPTIONAL = re.compile(r"\bROM_OPTIONAL\b|\bROMX?_LOAD\w*_OPTIONAL\b")
 
 
 def strip_comments(source: str) -> str:
@@ -161,12 +164,15 @@ def find_bios_root_sets(source: str, filename: str) -> dict[str, dict]:
     return results
 
 
-def parse_rom_block(source: str, set_name: str) -> list[dict]:
+def parse_rom_block(
+    source: str, set_name: str, keep_no_dump: bool = False,
+) -> list[dict]:
     """Parse ROM definitions for a given set name.
 
     Finds the ROM_START(set_name)...ROM_END block, expands local
     #define macros that contain ROM_LOAD/ROM_REGION calls, then
-    extracts all ROM entries. Skips NO_DUMP, flags BAD_DUMP.
+    extracts all ROM entries. Skips NO_DUMP unless keep_no_dump, which
+    returns them flagged no_dump. Flags BAD_DUMP and ROM_OPTIONAL.
     """
     pattern = re.compile(
         r"ROM_START\s*\(\s*" + re.escape(set_name) + r"\s*\)",
@@ -187,7 +193,22 @@ def parse_rom_block(source: str, set_name: str) -> list[dict]:
     macros = _collect_rom_macros(source)
     block = _expand_macros(block, macros, depth=5)
 
-    return _parse_rom_entries(block)
+    return _parse_rom_entries(block, keep_no_dump)
+
+
+def set_is_required(entries: list[dict]) -> bool | None:
+    """Whether MAME refuses to run the machine when the set is missing.
+
+    handle_missing_file (src/emu/romload.cpp) counts a missing ROM_OPTIONAL
+    as a warning and a missing NO_DUMP as known bad. Any other ROM raises
+    an error, and display_rom_load_results throws
+    EMU_ERR_MISSING_FILES on errors. A set whose every ROM is optional or
+    undumped warns and the machine runs. None when the block holds no
+    ROM_LOAD at all: nothing was read, so nothing is decided.
+    """
+    if not entries:
+        return None
+    return any(not e.get("no_dump") and not e.get("optional") for e in entries)
 
 
 def parse_mame_source_tree(base_path: str) -> dict[str, dict]:
@@ -213,12 +234,15 @@ def parse_mame_source_tree(base_path: str) -> dict[str, dict]:
 
                 bios_sets = find_bios_root_sets(content, rel_path)
                 for set_name, info in bios_sets.items():
-                    roms = parse_rom_block(content, set_name)
+                    entries = parse_rom_block(content, set_name, keep_no_dump=True)
                     results[set_name] = {
                         "source_file": info["source_file"],
                         "source_line": info["source_line"],
-                        "roms": roms,
+                        "roms": [e for e in entries if not e.get("no_dump")],
                     }
+                    required = set_is_required(entries)
+                    if required is not None:
+                        results[set_name]["required"] = required
 
     return results
 
@@ -353,7 +377,7 @@ def _split_macro_args(inner: str) -> list[str]:
     return args
 
 
-def _parse_rom_entries(block: str) -> list[dict]:
+def _parse_rom_entries(block: str, keep_no_dump: bool = False) -> list[dict]:
     """Parse ROM entries from a ROM block (content between ROM_START and ROM_END).
 
     Uses regex scanning over the entire block (not line-by-line) to handle
@@ -398,7 +422,8 @@ def _parse_rom_entries(block: str) -> list[dict]:
                 context_end = m.end() + 200
             context = block[context_start : min(context_end, len(block))]
 
-            if _NO_DUMP.search(context):
+            no_dump = bool(_NO_DUMP.search(context))
+            if no_dump and not keep_no_dump:
                 continue
 
             rom_name = m.group(1)
@@ -435,6 +460,10 @@ def _parse_rom_entries(block: str) -> list[dict]:
                 entry["bios_index"] = bios_index
                 entry["bios_label"] = bios_label
                 entry["bios_description"] = bios_description
+            if _OPTIONAL.search(context):
+                entry["optional"] = True
+            if no_dump:
+                entry["no_dump"] = True
 
             roms.append(entry)
 

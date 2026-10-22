@@ -40,6 +40,25 @@ def mame_ref_role(profile: dict[str, Any]) -> str:
     return ""
 
 
+def settled_required(entry: dict, set_data: dict) -> bool:
+    """The required flag a bios_zip entry carries after a refresh.
+
+    set_data["required"] is what romload.cpp does with the set missing: False
+    when every ROM is NO_DUMP or ROM_OPTIONAL, so the machine runs without
+    it, and nothing outranks that. True only says the machine itself stops;
+    whether the core needs that machine is the profile's call, so a curated
+    false is kept. The exception is a false over no contents, which is
+    what an undumped set leaves: once a ROM is dumped, the set is required.
+    """
+    current = entry.get("required", True)
+    code = set_data.get("required")
+    if code is False:
+        return False
+    if code is True and current is False and not entry.get("contents"):
+        return True
+    return current
+
+
 def merge_mame_profile(
     profile_path: str,
     hashes_path: str,
@@ -48,11 +67,11 @@ def merge_mame_profile(
 ) -> dict[str, Any]:
     """Merge MAME bios_zip entries from upstream hash data.
 
-    Preserves system, note, required per entry. Updates contents and
-    source_ref from the hashes JSON. New sets are only added when
-    add_new=True (main profile). Entries not in the hash data are
-    left untouched (the scraper only covers MACHINE_IS_BIOS_ROOT sets,
-    not all machine ROM sets).
+    Preserves system and note per entry. Updates contents and source_ref
+    from the hashes JSON, and required where the source settles it (see
+    settled_required). New sets are only added when add_new=True (main
+    profile). Entries not in the hash data are left untouched (the scraper
+    only covers MACHINE_IS_BIOS_ROOT sets, not all machine ROM sets).
 
     If write=True, backs up existing profile to .old.yml before writing.
     """
@@ -93,13 +112,14 @@ def merge_mame_profile(
             entry["contents"] = contents
             if source_ref:
                 entry["source_ref"] = source_ref
+            entry["required"] = settled_required(existing_by_name[set_name], set_data)
             updated_bios.append(entry)
             matched_names.add(set_name)
         elif add_new:
             # New BIOS set, only added to the main profile
             entry = {
                 "name": f"{set_name}.zip",
-                "required": True,
+                "required": settled_required({}, set_data),
                 "category": "bios_zip",
                 "system": None,
                 "source_ref": source_ref,
@@ -245,7 +265,9 @@ def _diff_mame(
         # rots, which is exactly what profile_sync then reports as drift.
         ref_moved = bool(new_ref) and old_entry.get("source_ref") != new_ref
 
-        if _contents_differ(old_contents, new_contents) or ref_moved:
+        required_moved = old_entry.get("required", True) != settled_required(old_entry, set_data)
+
+        if _contents_differ(old_contents, new_contents) or ref_moved or required_moved:
             updated.append(set_name)
         else:
             unchanged += 1
@@ -435,7 +457,7 @@ def _patch_scalar(text: str, key: str, value: str) -> str:
 
 
 def _patch_bios_entries(text: str, files: list[dict]) -> str:
-    """Patch contents and source_ref for existing bios_zip entries in-place.
+    """Patch contents, source_ref and required of bios_zip entries in-place.
 
     Processes entries in reverse order to preserve line offsets.
     Each entry's "owned" lines are: the `- name:` line plus all indented
@@ -498,6 +520,13 @@ def _patch_bios_entries(text: str, files: list[dict]) -> str:
             if not found_sr:
                 lines.insert(last_owned + 1, f'    source_ref: "{source_ref}"')
                 last_owned += 1
+
+        # The source settles required for a set the machine runs without
+        if "required" in fe:
+            for j in range(start_line + 1, last_owned + 1):
+                if re.match(r"^    required:", lines[j]):
+                    lines[j] = f"    required: {str(fe['required']).lower()}"
+                    break
 
         # Remove existing contents block if present
         contents_start = None

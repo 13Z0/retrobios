@@ -2402,9 +2402,10 @@ files:
         sha1: "463962ffe19880135f0d95a7beda79e27448e872"
 
   - name: mac2bios.zip
-    required: true
+    required: false
     category: bios_zip
     source_ref: "upstream src/mame/seta/macs.cpp:776"
+    note: "macs2os_l.bin and macs2os_h.bin are both NO_DUMP (src/mame/seta/macs.cpp:532-535). handle_missing_file (src/emu/romload.cpp:529-571) counts a missing NO_DUMP ROM as known bad, not an error, so the machine runs without the set."
 
   - name: macsbios.zip
     required: true
