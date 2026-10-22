@@ -1,0 +1,56 @@
+emulator: "ccleste"
+type: standalone
+core_classification: game_engine
+source: "https://github.com/lemon32767/ccleste"
+profiled_date: "2026-10-22"
+source_commit: "261d96f15af430b8111abc7a5250229246654f52"
+core_version: "git"
+display_name: "Celeste Classic (ccleste)"
+cores:
+  - "ccleste"
+systems: [celeste-classic]
+
+notes: |
+  A C translation of the PICO-8 Celeste Classic by lemon32767: the game logic
+  is compiled in, and an SDL front end draws and plays it. No game file is
+  loaded. EmuELEC builds this revision, installs the repository's data
+  directory under /emuelec/configs/ccleste and runs ccleste from there.
+  ref: README.md:5-11,
+       EmuELEC packages/sx05re/emuelec-ports/ccleste/package.mk:4-5,24-28,
+       EmuELEC packages/sx05re/emuelec-ports/sources/ports.yaml:113-125
+
+  At start the front end reads, from data/ under the working directory,
+  gfx.bmp and font.bmp, 23 sound effects snd<N>.wav and 5 music tracks
+  mus<N>.ogg. All of them ship with the source and are installed with the
+  binary. A missing bitmap leaves its surface empty and nothing is drawn from
+  it, a missing sound or track is logged and stays silent.
+  ref: sdl12main.c:83-96, sdl12main.c:121-150, sdl12main.c:155-192, sdl12main.c:352
+
+  Optional: ccleste-input-cfg.txt (or $CCLESTE_INPUT_CFG_PATH) for the
+  gamepad mapping, written with defaults when absent, gamecontrollerdb.txt,
+  and ccleste-start-fullscreen.txt, whose presence alone starts in full
+  screen.
+  ref: sdl12main.c:278, sdl12main.c:372, sdl12main.c:1006-1042
+
+files:
+  - name: "gfx.bmp"
+    path: "data/gfx.bmp"
+    system: celeste-classic
+    category: game_data
+    required: true
+    bundled: true
+    size: 4282
+    sha1: "86cfc2bd0c5ac315bdca501118960f264a001791"
+    description: "Sprite sheet"
+    source_ref: "sdl12main.c:121-131, sdl12main.c:155-157"
+
+  - name: "font.bmp"
+    path: "data/font.bmp"
+    system: celeste-classic
+    category: game_data
+    required: true
+    bundled: true
+    size: 1490
+    sha1: "7b45c79394c930c6a7f9d1fa59f14b81ce2f2d19"
+    description: "Text font"
+    source_ref: "sdl12main.c:121-131, sdl12main.c:160-161"
