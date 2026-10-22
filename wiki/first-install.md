@@ -8,8 +8,6 @@ From an empty BIOS folder to games that start.
 
 **You need:** internet and some free space. The installer says how much.
 
-<!-- image: install-flow -->
-
 ## 1. Open a terminal and paste
 
 A **terminal** is a window where you type commands. Paste the line for your
@@ -51,6 +49,8 @@ system, then press Enter.
 
 On Batocera, Recalbox and other game systems, follow
 [your setup's page](../which-pack.md).
+
+<!-- image: install-flow -->
 
 ## 2. Check the folder it found
 
