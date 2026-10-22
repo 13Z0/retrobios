@@ -87,17 +87,17 @@ These are the files an emulator loads from disk instead of carrying inside itsel
 
 Each file is checked the way your platform checks it. Most compare a checksum, the fingerprint of a file's contents, which catches a corrupt or unexpected copy. RetroArch, Lakka and RetroPie check that the file is present under its name without reading its contents (`path_is_valid` in RetroArch's `core_info.c`), and MinUI, NextUI and MyMinUI hand each core its folder without opening a file in it: the Coverage table says which applies to you. Independently of that, the collection records five fingerprints per file, and wherever an emulator's code states an expected size or hash, that value is read from its source and rechecked here.
 
-- **936 files** the platforms' emulators load are still to be found, and 137 more cannot be sourced at all (per-user keys, user-filled slots, dumps nobody has made). Both are named in the [gap analysis](https://abdess.github.io/retrobios/gaps/)
+- **962 files** the platforms' emulators load are still to be found, and 137 more cannot be sourced at all (per-user keys, user-filled slots, dumps nobody has made). Both are named in the [gap analysis](https://abdess.github.io/retrobios/gaps/)
 - **18 platforms** supported with platform-specific verification
-- **609 emulators** profiled from source (RetroArch cores + standalone)
-- **534 systems** handled by those emulators (NES, SNES, PlayStation, Saturn, Dreamcast, ...)
-- **19,595 files in the collection**, each with its SHA1, MD5, SHA256, CRC32 and Adler-32 fingerprints: 5,784 system files, 2,872 arcade ROM sets, 10,939 game and engine data files. That is every platform and emulator together, so no pack holds them all: each carries what its own emulators load, counted in the download table
+- **624 emulators** profiled from source (RetroArch cores + standalone)
+- **541 systems** handled by those emulators (NES, SNES, PlayStation, Saturn, Dreamcast, ...)
+- **19,597 files in the collection**, each with its SHA1, MD5, SHA256, CRC32 and Adler-32 fingerprints: 5,784 system files, 2,872 arcade ROM sets, 10,941 game and engine data files. That is every platform and emulator together, so no pack holds them all: each carries what its own emulators load, counted in the download table
 - **555 of 5,784 system files** matched to dump-preservation catalogs (No-Intro, Redump, TOSEC). Arcade sets and engine data fall outside what those catalogs index
 - **15.7 GB** for the whole collection
 
 ## Supported systems
 
-NES, SNES, Nintendo 64, GameCube, Wii, Game Boy, Game Boy Advance, Nintendo DS, Nintendo 3DS, Switch, PlayStation, PlayStation 2, PlayStation 3, PSP, PS Vita, Mega Drive, Saturn, Dreamcast, Game Gear, Master System, Neo Geo, Atari 2600, Atari 7800, Atari Lynx, Atari ST, MSX, PC Engine, TurboGrafx-16, ColecoVision, Intellivision, Commodore 64, Amiga, ZX Spectrum, Arcade (MAME), and 500+ more.
+NES, SNES, Nintendo 64, GameCube, Wii, Game Boy, Game Boy Advance, Nintendo DS, Nintendo 3DS, Switch, PlayStation, PlayStation 2, PlayStation 3, PSP, PS Vita, Mega Drive, Saturn, Dreamcast, Game Gear, Master System, Neo Geo, Atari 2600, Atari 7800, Atari Lynx, Atari ST, MSX, PC Engine, TurboGrafx-16, ColecoVision, Intellivision, Commodore 64, Amiga, ZX Spectrum, Arcade (MAME), and 507+ more.
 
 Full list with per-file details: **[https://abdess.github.io/retrobios/](https://abdess.github.io/retrobios/)**
 
@@ -105,23 +105,23 @@ Full list with per-file details: **[https://abdess.github.io/retrobios/](https:/
 
 | Platform | On its BIOS list | Files its emulators load | Checked by |
 |----------|-----------------:|-------------------------:|------------|
-| AmberELEC | 414/434 | 4,550/4,647 | MD5 hash |
-| Batocera | 353/353 | 13,941/15,029 | MD5 hash |
+| AmberELEC | 414/434 | 4,551/4,654 | MD5 hash |
+| Batocera | 353/353 | 13,944/15,038 | MD5 hash |
 | BizHawk | 118/118 | - | SHA1 hash |
 | EmuDeck | 168/168 | 8,173/8,249 | MD5 hash |
-| EmuELEC | 544/572 | 4,593/9,911 | MD5 hash |
-| KNULLI | 290/290 | 8,897/15,085 | MD5 hash |
+| EmuELEC | 544/572 | 4,598/9,948 | MD5 hash |
+| KNULLI | 290/290 | 8,897/15,095 | MD5 hash |
 | Lakka | 532/532 | 7,600/7,659 | file presence |
 | MiSTer FPGA | 81/81 | - | MD5 hash |
 | MinUI | 0/0 | 78/79 | file presence |
 | MyMinUI | 0/0 | 347/354 | file presence |
 | NextUI | 0/0 | 343/348 | file presence |
-| ROCKNIX | 38/38 | 7,092/8,360 | MD5 hash |
-| Recalbox | 351/351 | 2,746/2,910 | MD5 hash |
+| ROCKNIX | 38/38 | 7,095/8,369 | MD5 hash |
+| Recalbox | 351/351 | 2,749/2,919 | MD5 hash |
 | RetroArch | 526/526 | 7,609/7,650 | file presence |
 | RetroBat | 348/348 | 4,729/9,194 | MD5 hash |
 | RetroDECK | 2,007/2,008 | 6,273/6,524 | MD5 hash |
-| RetroPie * | 532/532 | 7,879/12,395 | file presence |
+| RetroPie * | 532/532 | 7,882/12,406 | file presence |
 | RomM | 383/383 | 83/846 | MD5 hash |
 
 Each fraction is what the pack has over what is needed, counting required and optional files alike since both ship. The first column is the BIOS list the platform publishes. The second counts files its emulators load that this list never mentions, found by reading their source code, and it is routinely several times larger. A short fraction means files are still missing, and they are named in the [gap analysis](https://abdess.github.io/retrobios/gaps/).
@@ -170,7 +170,7 @@ The [documentation site](https://abdess.github.io/retrobios/) provides:
 - **Per-emulator profiles** with source code references for every file
 - **Per-system pages** showing which emulators and platforms cover each console
 - **Gap analysis** identifying missing files and undeclared core requirements
-- **Cross-reference** mapping files across 18 platforms and 609 emulators
+- **Cross-reference** mapping files across 18 platforms and 624 emulators
 - **Versioned data access** through JSON, CSV and SQLite exports with published SHA-256 checksums
 
 ## How it works
@@ -208,4 +208,4 @@ The scripts and tooling are released under the [MIT License](LICENSE).
 The BIOS and firmware files are not covered by that license: they are third-party system software, preserved and provided for personal backup, archival, and interoperability with emulation software. [NOTICE](NOTICE) sets out their status and how to ask for a file to be removed.
 The reasoning, and where it is weakest, is in the [FAQ](https://abdess.github.io/retrobios/wiki/faq/#is-this-legal).
 
-*Auto-generated on 2026-10-22T09:06:29Z*
+*Auto-generated on 2026-10-22T09:17:08Z*

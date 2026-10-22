@@ -6,7 +6,7 @@
   "platform": "rocknix",
   "display_name": "ROCKNIX",
   "version": "1.0",
-  "generated": "2026-10-22T06:17:50Z",
+  "generated": "2026-10-22T09:16:18Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -21,10 +21,10 @@
     }
   ],
   "standalone_copies": [],
-  "total_files": 7149,
-  "total_size": 8346303834,
-  "pack_files": 7151,
-  "pack_size": 8346303834,
+  "total_files": 7152,
+  "total_size": 8358886746,
+  "pack_files": 7154,
+  "pack_size": 8358886746,
   "total_omitted": 41,
   "omitted_files": [
     {
@@ -681,8 +681,10 @@
     "mkxp_z": [
       "mkxp-z"
     ],
+    "mupen64plus": [
+      "mupen64plussa"
+    ],
     "mupen64plus_next": [
-      "mupen64plus",
       "mupen64plus-next",
       "mupen64plus_next_alt",
       "mupen64plus_next_develop",
@@ -850,6 +852,7 @@
       "xemu"
     ],
     "nintendo-ds": [
+      "advanced_drastic",
       "bizhawk",
       "desmume",
       "desmume2015",
@@ -946,6 +949,7 @@
       "flycast",
       "flycast-dojo",
       "flycast2021",
+      "flycast2021le",
       "redream",
       "reicast",
       "retrodream"
@@ -1022,6 +1026,7 @@
       "beetle_psx",
       "bizhawk",
       "duckstation",
+      "duckstation-legacy",
       "epsxe",
       "fpse",
       "fpse-ng",
@@ -73094,6 +73099,36 @@
       "repo_path": "bios/Palm/Palm/bootloader-dbvz.rom",
       "cores": [
         "mu"
+      ]
+    },
+    {
+      "dest": "64DD_IPL_JP.n64",
+      "sha1": "bf861922dcb78c316360e3e742f4f70ff63c9bc3",
+      "sha256": "806400ec0df94b0755de6c5b8249d6b6a9866124c5ddbdac198bde22499bfb8b",
+      "size": 4194304,
+      "repo_path": "bios/Nintendo/64DD/64DD_IPL_v12_JPN.bin",
+      "cores": [
+        "mupen64plus"
+      ]
+    },
+    {
+      "dest": "64DD_IPL_US.n64",
+      "sha1": "3c5b93ca231550c68693a14f03cea8d5dbd1be9e",
+      "sha256": "e9fec87a45fba02399e88064b9e2f8cf0f2106e351c58279a87f05da5bc984ad",
+      "size": 4194304,
+      "repo_path": "bios/Nintendo/64DD/64DD_IPL_USA.bin",
+      "cores": [
+        "mupen64plus"
+      ]
+    },
+    {
+      "dest": "64DD_IPL_DEV.n64",
+      "sha1": "10c4173c2a7eb09c6579818f72ef18fa0b6d32de",
+      "sha256": "9c2962a8b994a29e4cd04b3a6e4ed730a751414655ab6a9799ebf5fc08b79d44",
+      "size": 4194304,
+      "repo_path": "bios/Nintendo/64DD/64DD_IPL_DEV.bin",
+      "cores": [
+        "mupen64plus"
       ]
     },
     {

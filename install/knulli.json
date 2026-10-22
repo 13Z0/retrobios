@@ -6,7 +6,7 @@
   "platform": "knulli",
   "display_name": "KNULLI",
   "version": "1.0",
-  "generated": "2026-10-22T06:17:50Z",
+  "generated": "2026-10-22T09:16:18Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -30,9 +30,9 @@
   ],
   "standalone_copies": [],
   "total_files": 9375,
-  "total_size": 9530912301,
+  "total_size": 9543212589,
   "pack_files": 9377,
-  "pack_size": 9530912301,
+  "pack_size": 9543212589,
   "total_omitted": 398,
   "omitted_files": [
     {
@@ -4497,6 +4497,9 @@
       "d1x-rebirth",
       "d2x-rebirth"
     ],
+    "fallout1-ce": [
+      "fallout-ce"
+    ],
     "fba2x": [
       "pifba"
     ],
@@ -4653,12 +4656,14 @@
       "MSX-EMU",
       "MSX.emu"
     ],
+    "mupen64plus": [
+      "mupen64plussa"
+    ],
     "mupen64plus-ae": [
       "MUPEN64PLUS-AE",
       "org.mupen64plusae.v3.alpha"
     ],
     "mupen64plus_next": [
-      "mupen64plus",
       "mupen64plus-next",
       "mupen64plus_next_alt",
       "mupen64plus_next_develop",
@@ -5182,6 +5187,7 @@
       "ares",
       "bizhawk",
       "m64plus-fz",
+      "mupen64plus",
       "mupen64plus-ae",
       "mupen64plus_next",
       "parallel-launcher",
@@ -5191,6 +5197,7 @@
       "sixtyforce"
     ],
     "nintendo-ds": [
+      "advanced_drastic",
       "bizhawk",
       "desmume",
       "desmume2015",
@@ -5317,6 +5324,7 @@
       "flycast",
       "flycast-dojo",
       "flycast2021",
+      "flycast2021le",
       "redream",
       "reicast",
       "retrodream"
@@ -5376,6 +5384,7 @@
       "beetle_psx",
       "bizhawk",
       "duckstation",
+      "duckstation-legacy",
       "epsxe",
       "fpse",
       "fpse-ng",
@@ -10236,6 +10245,7 @@
           "repo_path": "bios/Sony/PlayStation/psxonpsp660.bin",
           "cores": [
             "beetle_psx",
+            "duckstation-legacy",
             "pcsx_rearmed",
             "swanstation"
           ]
@@ -10302,6 +10312,7 @@
           "repo_path": "bios/Sony/PlayStation/scph1001.bin",
           "cores": [
             "duckstation",
+            "duckstation-legacy",
             "pcsx_rearmed"
           ]
         }
@@ -10335,6 +10346,7 @@
           "cores": [
             "beetle_psx",
             "duckstation",
+            "duckstation-legacy",
             "pcsx_rearmed",
             "swanstation"
           ]
@@ -10370,6 +10382,7 @@
           "cores": [
             "beetle_psx",
             "duckstation",
+            "duckstation-legacy",
             "pcsx_rearmed",
             "swanstation"
           ]
@@ -10405,6 +10418,7 @@
           "cores": [
             "beetle_psx",
             "duckstation",
+            "duckstation-legacy",
             "pcsx_rearmed",
             "swanstation"
           ]
@@ -10439,6 +10453,7 @@
           "repo_path": "bios/Sony/PlayStation/scph7001.bin",
           "cores": [
             "duckstation",
+            "duckstation-legacy",
             "pcsx_rearmed"
           ]
         }
@@ -11397,11 +11412,30 @@
       "size": 524288,
       "repo_path": "bios/Sony/PlayStation/ps1_rom.bin",
       "cores": [
-        "beetle_psx",
-        "swanstation"
+        "beetle_psx"
       ],
       "systems": [
         "sony-playstation"
+      ],
+      "alternatives": [
+        {
+          "sha1": "48f6a9e001e2cb002217107c46fb0459069d1a42",
+          "sha256": "f6dcfa82cdd48be227b171b01812fa688973159b8be52ba716c67086a6b7e0ea",
+          "size": 4089584,
+          "repo_path": "bios/Sony/PlayStation/.variants/ps1_rom.bin.fbb5f59e",
+          "cores": [
+            "duckstation-legacy"
+          ]
+        },
+        {
+          "sha1": "c40146361eb8cf670b19fdc9759190257803cab7",
+          "sha256": "ab05d7bed4980fe1ddde6828b10b4968ab63d3f75dee3ef1deda16391ec29fb5",
+          "size": 524288,
+          "repo_path": "bios/Sony/PlayStation/ps1_rom.bin",
+          "cores": [
+            "swanstation"
+          ]
+        }
       ]
     },
     {
@@ -18176,7 +18210,8 @@
       "size": 524288,
       "repo_path": "bios/Sony/PlayStation/scph1000.bin",
       "cores": [
-        "duckstation"
+        "duckstation",
+        "duckstation-legacy"
       ],
       "systems": [
         "sony-playstation"
@@ -18186,8 +18221,7 @@
       ],
       "region_groups": [
         "sony-playstation"
-      ],
-      "priority": 50
+      ]
     },
     {
       "dest": "scph1002a.bin",
@@ -18196,7 +18230,8 @@
       "size": 524288,
       "repo_path": "bios/Sony/PlayStation/scph1002.bin",
       "cores": [
-        "duckstation"
+        "duckstation",
+        "duckstation-legacy"
       ],
       "systems": [
         "sony-playstation"
@@ -18207,8 +18242,7 @@
       ],
       "region_groups": [
         "sony-playstation"
-      ],
-      "priority": 10
+      ]
     },
     {
       "dest": "scph1002b.bin",
@@ -18217,7 +18251,8 @@
       "size": 524288,
       "repo_path": "bios/Sony/PlayStation/scph1002b.bin",
       "cores": [
-        "duckstation"
+        "duckstation",
+        "duckstation-legacy"
       ],
       "systems": [
         "sony-playstation"
@@ -18228,8 +18263,7 @@
       ],
       "region_groups": [
         "sony-playstation"
-      ],
-      "priority": 10
+      ]
     },
     {
       "dest": "scph1002c.bin",
@@ -18238,7 +18272,8 @@
       "size": 524288,
       "repo_path": "bios/Sony/PlayStation/scph1002c.bin",
       "cores": [
-        "duckstation"
+        "duckstation",
+        "duckstation-legacy"
       ],
       "systems": [
         "sony-playstation"
@@ -18249,8 +18284,7 @@
       ],
       "region_groups": [
         "sony-playstation"
-      ],
-      "priority": 10
+      ]
     },
     {
       "dest": "dtlh1100.bin",
@@ -18259,7 +18293,8 @@
       "size": 524288,
       "repo_path": "bios/Sony/PlayStation/dtlh1100.bin",
       "cores": [
-        "duckstation"
+        "duckstation",
+        "duckstation-legacy"
       ],
       "systems": [
         "sony-playstation"
@@ -18269,8 +18304,7 @@
       ],
       "region_groups": [
         "sony-playstation"
-      ],
-      "priority": 20
+      ]
     },
     {
       "dest": "scph3000.bin",
@@ -18279,7 +18313,8 @@
       "size": 524288,
       "repo_path": "bios/Sony/PlayStation/scph3000.bin",
       "cores": [
-        "duckstation"
+        "duckstation",
+        "duckstation-legacy"
       ],
       "systems": [
         "sony-playstation"
@@ -18289,8 +18324,7 @@
       ],
       "region_groups": [
         "sony-playstation"
-      ],
-      "priority": 10
+      ]
     },
     {
       "dest": "scph1001_v20.bin",
@@ -18299,7 +18333,8 @@
       "size": 524288,
       "repo_path": "bios/Sony/PlayStation/scph1001_v20.bin",
       "cores": [
-        "duckstation"
+        "duckstation",
+        "duckstation-legacy"
       ],
       "systems": [
         "sony-playstation"
@@ -18310,8 +18345,7 @@
       ],
       "region_groups": [
         "sony-playstation"
-      ],
-      "priority": 10
+      ]
     },
     {
       "dest": "scph3500.bin",
@@ -18320,7 +18354,8 @@
       "size": 524288,
       "repo_path": "bios/Sony/PlayStation/scph3500.bin",
       "cores": [
-        "duckstation"
+        "duckstation",
+        "duckstation-legacy"
       ],
       "systems": [
         "sony-playstation"
@@ -18330,8 +18365,7 @@
       ],
       "region_groups": [
         "sony-playstation"
-      ],
-      "priority": 10
+      ]
     },
     {
       "dest": "scph1001_v21.bin",
@@ -18340,7 +18374,8 @@
       "size": 524288,
       "repo_path": "bios/Sony/PlayStation/scph1001_v21.bin",
       "cores": [
-        "duckstation"
+        "duckstation",
+        "duckstation-legacy"
       ],
       "systems": [
         "sony-playstation"
@@ -18351,8 +18386,7 @@
       ],
       "region_groups": [
         "sony-playstation"
-      ],
-      "priority": 10
+      ]
     },
     {
       "dest": "scph5000.bin",
@@ -18361,7 +18395,8 @@
       "size": 524288,
       "repo_path": "bios/Sony/PlayStation/scph5000.bin",
       "cores": [
-        "duckstation"
+        "duckstation",
+        "duckstation-legacy"
       ],
       "systems": [
         "sony-playstation"
@@ -18371,8 +18406,7 @@
       ],
       "region_groups": [
         "sony-playstation"
-      ],
-      "priority": 5
+      ]
     },
     {
       "dest": "scph7000.bin",
@@ -18381,7 +18415,8 @@
       "size": 524288,
       "repo_path": "bios/Sony/PlayStation/scph7000.bin",
       "cores": [
-        "duckstation"
+        "duckstation",
+        "duckstation-legacy"
       ],
       "systems": [
         "sony-playstation"
@@ -18391,8 +18426,7 @@
       ],
       "region_groups": [
         "sony-playstation"
-      ],
-      "priority": 10
+      ]
     },
     {
       "dest": "scph7000w.bin",
@@ -18401,7 +18435,8 @@
       "size": 524288,
       "repo_path": "bios/Sony/PlayStation/scph7000w.bin",
       "cores": [
-        "duckstation"
+        "duckstation",
+        "duckstation-legacy"
       ],
       "systems": [
         "sony-playstation"
@@ -18411,8 +18446,7 @@
       ],
       "region_groups": [
         "sony-playstation"
-      ],
-      "priority": 10
+      ]
     },
     {
       "dest": "scph7002.bin",
@@ -18421,7 +18455,8 @@
       "size": 524288,
       "repo_path": "bios/Sony/PlayStation/scph7002.bin",
       "cores": [
-        "duckstation"
+        "duckstation",
+        "duckstation-legacy"
       ],
       "systems": [
         "sony-playstation"
@@ -18432,8 +18467,7 @@
       ],
       "region_groups": [
         "sony-playstation"
-      ],
-      "priority": 10
+      ]
     },
     {
       "dest": "scph100.bin",
@@ -18442,7 +18476,8 @@
       "size": 524288,
       "repo_path": "bios/Sony/PlayStation/scph100.bin",
       "cores": [
-        "duckstation"
+        "duckstation",
+        "duckstation-legacy"
       ],
       "systems": [
         "sony-playstation"
@@ -18452,8 +18487,7 @@
       ],
       "region_groups": [
         "sony-playstation"
-      ],
-      "priority": 10
+      ]
     },
     {
       "dest": "scph101_v44.bin",
@@ -18462,7 +18496,8 @@
       "size": 524288,
       "repo_path": "bios/Sony/PlayStation/scph101_v44.bin",
       "cores": [
-        "duckstation"
+        "duckstation",
+        "duckstation-legacy"
       ],
       "systems": [
         "sony-playstation"
@@ -18473,8 +18508,7 @@
       ],
       "region_groups": [
         "sony-playstation"
-      ],
-      "priority": 10
+      ]
     },
     {
       "dest": "scph101_v45.bin",
@@ -18483,7 +18517,8 @@
       "size": 524288,
       "repo_path": "bios/Sony/PlayStation/scph101.bin",
       "cores": [
-        "duckstation"
+        "duckstation",
+        "duckstation-legacy"
       ],
       "systems": [
         "sony-playstation"
@@ -18494,8 +18529,7 @@
       ],
       "region_groups": [
         "sony-playstation"
-      ],
-      "priority": 10
+      ]
     },
     {
       "dest": "scph102_v44.bin",
@@ -18504,7 +18538,8 @@
       "size": 524288,
       "repo_path": "bios/Sony/PlayStation/scph102.bin",
       "cores": [
-        "duckstation"
+        "duckstation",
+        "duckstation-legacy"
       ],
       "systems": [
         "sony-playstation"
@@ -18515,8 +18550,7 @@
       ],
       "region_groups": [
         "sony-playstation"
-      ],
-      "priority": 20
+      ]
     },
     {
       "dest": "scph102_v45.bin",
@@ -18525,7 +18559,8 @@
       "size": 524288,
       "repo_path": "bios/Sony/PlayStation/scph102B.bin",
       "cores": [
-        "duckstation"
+        "duckstation",
+        "duckstation-legacy"
       ],
       "systems": [
         "sony-playstation"
@@ -18536,8 +18571,7 @@
       ],
       "region_groups": [
         "sony-playstation"
-      ],
-      "priority": 20
+      ]
     },
     {
       "dest": "scph1000r.bin",
@@ -18546,7 +18580,8 @@
       "size": 524288,
       "repo_path": "bios/Sony/PlayStation/scph1000r.bin",
       "cores": [
-        "duckstation"
+        "duckstation",
+        "duckstation-legacy"
       ],
       "systems": [
         "sony-playstation"
@@ -18556,8 +18591,7 @@
       ],
       "region_groups": [
         "sony-playstation"
-      ],
-      "priority": 10
+      ]
     },
     {
       "dest": "ps2_scph18000.bin",
@@ -18566,7 +18600,8 @@
       "size": 524288,
       "repo_path": "bios/Sony/PlayStation/ps2-50j.bin",
       "cores": [
-        "duckstation"
+        "duckstation",
+        "duckstation-legacy"
       ],
       "systems": [
         "sony-playstation"
@@ -18576,8 +18611,7 @@
       ],
       "region_groups": [
         "sony-playstation"
-      ],
-      "priority": 100
+      ]
     },
     {
       "dest": "ps2_scph30003.bin",
@@ -18586,7 +18620,8 @@
       "size": 524288,
       "repo_path": "bios/Sony/PlayStation/ps2_scph30003.bin",
       "cores": [
-        "duckstation"
+        "duckstation",
+        "duckstation-legacy"
       ],
       "systems": [
         "sony-playstation"
@@ -18597,8 +18632,7 @@
       ],
       "region_groups": [
         "sony-playstation"
-      ],
-      "priority": 150
+      ]
     },
     {
       "dest": "ps2_dtlh10000_0117.bin",
@@ -112046,45 +112080,6 @@
       ]
     },
     {
-      "dest": "system/nds_bios_arm9.bin",
-      "sha1": "bfaac75f101c135e32e2aaf541de6b1be4c8c62d",
-      "sha256": "1693983a7707ae394786fa526c0552457888a51d4e410d715ef07acd5a540555",
-      "size": 4096,
-      "repo_path": "bios/Nintendo/DS/NDS_Bios9.bin",
-      "cores": [
-        "drastic"
-      ],
-      "systems": [
-        "nintendo-ds"
-      ]
-    },
-    {
-      "dest": "system/nds_bios_arm7.bin",
-      "sha1": "24f67bdea115a2c847c8813a262502ee1607b7df",
-      "sha256": "ba65f690eb04ec92db67c0e299e21ad71de087d6d5de8a9cb17a62eaab563c17",
-      "size": 16384,
-      "repo_path": "bios/Nintendo/DS/NDS_Bios7.bin",
-      "cores": [
-        "drastic"
-      ],
-      "systems": [
-        "nintendo-ds"
-      ]
-    },
-    {
-      "dest": "system/nds_firmware.bin",
-      "sha1": "87dae2500e889737af51f4a5b5845770a62482f5",
-      "sha256": "330c59198faec64b40e96cc875b422d340fc9ab1a9e32e9bd9b7baa1dbe6ba7f",
-      "size": 262144,
-      "repo_path": "bios/Nintendo/DS/NDS_Lite_Firmware.bin",
-      "cores": [
-        "drastic"
-      ],
-      "systems": [
-        "nintendo-ds"
-      ]
-    },
-    {
       "dest": "descent.hog",
       "sha1": "6d45c6c49e085158af990dcb2985ebe079122f0c",
       "sha256": "26d1e31e7709dfe6dddf17ccd37f5c82e866dce49a0faf07e90ba3213b288eab",
@@ -160728,6 +160723,45 @@
       ],
       "systems": [
         "apple-macintosh-ii"
+      ]
+    },
+    {
+      "dest": "64DD_IPL_JP.n64",
+      "sha1": "bf861922dcb78c316360e3e742f4f70ff63c9bc3",
+      "sha256": "806400ec0df94b0755de6c5b8249d6b6a9866124c5ddbdac198bde22499bfb8b",
+      "size": 4194304,
+      "repo_path": "bios/Nintendo/64DD/64DD_IPL_v12_JPN.bin",
+      "cores": [
+        "mupen64plus"
+      ],
+      "systems": [
+        "nintendo-64dd"
+      ]
+    },
+    {
+      "dest": "64DD_IPL_US.n64",
+      "sha1": "3c5b93ca231550c68693a14f03cea8d5dbd1be9e",
+      "sha256": "e9fec87a45fba02399e88064b9e2f8cf0f2106e351c58279a87f05da5bc984ad",
+      "size": 4194304,
+      "repo_path": "bios/Nintendo/64DD/64DD_IPL_USA.bin",
+      "cores": [
+        "mupen64plus"
+      ],
+      "systems": [
+        "nintendo-64dd"
+      ]
+    },
+    {
+      "dest": "64DD_IPL_DEV.n64",
+      "sha1": "10c4173c2a7eb09c6579818f72ef18fa0b6d32de",
+      "sha256": "9c2962a8b994a29e4cd04b3a6e4ed730a751414655ab6a9799ebf5fc08b79d44",
+      "size": 4194304,
+      "repo_path": "bios/Nintendo/64DD/64DD_IPL_DEV.bin",
+      "cores": [
+        "mupen64plus"
+      ],
+      "systems": [
+        "nintendo-64dd"
       ]
     },
     {

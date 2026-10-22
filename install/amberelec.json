@@ -6,7 +6,7 @@
   "platform": "amberelec",
   "display_name": "AmberELEC",
   "version": "1.0",
-  "generated": "2026-10-22T06:17:50Z",
+  "generated": "2026-10-22T09:16:18Z",
   "base_destination": "",
   "detect": [
     {
@@ -29,10 +29,10 @@
     }
   ],
   "standalone_copies": [],
-  "total_files": 4952,
-  "total_size": 5475627871,
-  "pack_files": 4954,
-  "pack_size": 5475627871,
+  "total_files": 4953,
+  "total_size": 5476143967,
+  "pack_files": 4955,
+  "pack_size": 5476143967,
   "total_omitted": 58,
   "omitted_files": [
     {
@@ -881,12 +881,17 @@
       "MSX-EMU",
       "MSX.emu"
     ],
+    "mupen64plus": [
+      "mupen64plussa"
+    ],
     "mupen64plus-ae": [
       "MUPEN64PLUS-AE",
       "org.mupen64plusae.v3.alpha"
     ],
+    "mupen64plus-libretro": [
+      "mupen64plus_32b"
+    ],
     "mupen64plus_next": [
-      "mupen64plus",
       "mupen64plus-next",
       "mupen64plus_next_alt",
       "mupen64plus_next_develop",
@@ -1166,7 +1171,9 @@
       "daedalusx64",
       "gopher64",
       "m64plus-fz",
+      "mupen64plus",
       "mupen64plus-ae",
+      "mupen64plus-libretro",
       "mupen64plus_next",
       "parallel-launcher",
       "parallel_n64",
@@ -1176,6 +1183,7 @@
       "sixtyforce"
     ],
     "nintendo-ds": [
+      "advanced_drastic",
       "bizhawk",
       "desmume",
       "desmume2015",
@@ -1320,6 +1328,7 @@
       "flycast",
       "flycast-dojo",
       "flycast2021",
+      "flycast2021le",
       "redream",
       "reicast",
       "retrodream"
@@ -1432,6 +1441,7 @@
       "beetle_psx",
       "bizhawk",
       "duckstation",
+      "duckstation-legacy",
       "epsxe",
       "fpse",
       "fpse-ng",
@@ -7032,7 +7042,8 @@
           "repo_path": "bios/Sega/Dreamcast/dc_bios.bin",
           "cores": [
             "flycast",
-            "flycast2021"
+            "flycast2021",
+            "flycast2021le"
           ]
         }
       ]
@@ -7077,7 +7088,8 @@
           "repo_path": "bios/Arcade/Arcade/naomi.zip",
           "cores": [
             "flycast",
-            "flycast2021"
+            "flycast2021",
+            "flycast2021le"
           ]
         }
       ]
@@ -7100,7 +7112,8 @@
           "repo_path": "bios/Arcade/Arcade/awbios.zip",
           "cores": [
             "flycast",
-            "flycast2021"
+            "flycast2021",
+            "flycast2021le"
           ]
         }
       ]
@@ -41435,7 +41448,8 @@
       "repo_path": "bios/Sega/Dreamcast/dc_nvmem.bin",
       "cores": [
         "flycast",
-        "flycast2021"
+        "flycast2021",
+        "flycast2021le"
       ],
       "systems": [
         "sega-dreamcast"
@@ -41459,7 +41473,8 @@
       "repo_path": "bios/Arcade/Arcade/f355bios.zip",
       "cores": [
         "flycast",
-        "flycast2021"
+        "flycast2021",
+        "flycast2021le"
       ]
     },
     {
@@ -41470,7 +41485,8 @@
       "repo_path": "bios/Arcade/Arcade/f355dlx.zip",
       "cores": [
         "flycast",
-        "flycast2021"
+        "flycast2021",
+        "flycast2021le"
       ]
     },
     {
@@ -41481,7 +41497,8 @@
       "repo_path": "bios/Arcade/MAME/hod2bios.zip",
       "cores": [
         "flycast",
-        "flycast2021"
+        "flycast2021",
+        "flycast2021le"
       ]
     },
     {
@@ -41511,7 +41528,8 @@
       "size": 519984,
       "repo_path": "bios/Sega/Dreamcast/font.bin",
       "cores": [
-        "flycast2021"
+        "flycast2021",
+        "flycast2021le"
       ],
       "systems": [
         "sega-dreamcast"
@@ -62347,6 +62365,16 @@
       "repo_path": "bios/Sega/32X/32X_S_BIOS.BIN",
       "cores": [
         "picodrive"
+      ]
+    },
+    {
+      "dest": "bios/all.bin",
+      "sha1": "112a9dbd01ebef485a164b0020c3677b9f8bbc83",
+      "sha256": "4437c496ce0b3ec55f02d42d18bfb458886da098dbcaa842b362881fa9eb8d8f",
+      "size": 516096,
+      "repo_path": "bios/Aquaplus/PIECE/update/2mb/all.bin",
+      "cores": [
+        "piemu"
       ]
     },
     {

@@ -6,7 +6,7 @@
   "platform": "retropie",
   "display_name": "RetroPie",
   "version": "1.0",
-  "generated": "2026-10-22T09:05:39Z",
+  "generated": "2026-10-22T09:16:18Z",
   "base_destination": "BIOS",
   "detect": [
     {
@@ -16,11 +16,11 @@
     }
   ],
   "standalone_copies": [],
-  "total_files": 8525,
-  "total_size": 8871883312,
-  "pack_files": 11081,
-  "pack_size": 8905250382,
-  "total_omitted": 212,
+  "total_files": 8528,
+  "total_size": 8884466224,
+  "pack_files": 11084,
+  "pack_size": 8917833294,
+  "total_omitted": 214,
   "omitted_files": [
     {
       "dest": "BOOT_MMR.ROM",
@@ -447,6 +447,28 @@
       "reason": "not_found",
       "cores": [
         "dsda-doom"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "data/Super Mario War data",
+      "name": "Super Mario War data",
+      "system": "super-mario-war",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "supermariowar"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "data/SuperTux data",
+      "name": "SuperTux data",
+      "system": "supertux",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "supertux"
       ],
       "category": "game_data"
     },
@@ -2407,6 +2429,9 @@
     "cgenius": [
       "CGeniusExe"
     ],
+    "chocolate-doom": [
+      "Chocolate-Doom"
+    ],
     "desmume2015": [
       "desmume_2015"
     ],
@@ -2637,12 +2662,14 @@
       "MSX-EMU",
       "MSX.emu"
     ],
+    "mupen64plus": [
+      "mupen64plussa"
+    ],
     "mupen64plus-ae": [
       "MUPEN64PLUS-AE",
       "org.mupen64plusae.v3.alpha"
     ],
     "mupen64plus_next": [
-      "mupen64plus",
       "mupen64plus-next",
       "mupen64plus_next_alt",
       "mupen64plus_next_develop",
@@ -2786,6 +2813,12 @@
       "SPECCY",
       "com.fms.speccy",
       "com.fms.speccy.deluxe"
+    ],
+    "supermariowar": [
+      "smw"
+    ],
+    "supertux": [
+      "supertux2"
     ],
     "superzsnes": [
       "SUPERZSNES"
@@ -2988,6 +3021,7 @@
     ],
     "doom": [
       "bizhawk",
+      "chocolate-doom",
       "dsda-doom",
       "gzdoom",
       "idtech4a++",
@@ -3092,6 +3126,7 @@
       "ares",
       "bizhawk",
       "m64plus-fz",
+      "mupen64plus",
       "mupen64plus-ae",
       "mupen64plus_next",
       "parallel-launcher",
@@ -3101,6 +3136,7 @@
       "sixtyforce"
     ],
     "nintendo-ds": [
+      "advanced_drastic",
       "bizhawk",
       "desmume",
       "desmume2015",
@@ -3348,6 +3384,7 @@
       "flycast",
       "flycast-dojo",
       "flycast2021",
+      "flycast2021le",
       "redream",
       "reicast",
       "retrodream"
@@ -3471,6 +3508,7 @@
       "beetle_psx",
       "bizhawk",
       "duckstation",
+      "duckstation-legacy",
       "epsxe",
       "fpse",
       "fpse-ng",
@@ -112583,6 +112621,45 @@
       "repo_path": "bios/Apple/Macintosh/vMac.ROM",
       "cores": [
         "minivmac37"
+      ]
+    },
+    {
+      "dest": "64DD_IPL_JP.n64",
+      "sha1": "bf861922dcb78c316360e3e742f4f70ff63c9bc3",
+      "sha256": "806400ec0df94b0755de6c5b8249d6b6a9866124c5ddbdac198bde22499bfb8b",
+      "size": 4194304,
+      "repo_path": "bios/Nintendo/64DD/64DD_IPL_v12_JPN.bin",
+      "cores": [
+        "mupen64plus"
+      ],
+      "systems": [
+        "nintendo-64dd"
+      ]
+    },
+    {
+      "dest": "64DD_IPL_US.n64",
+      "sha1": "3c5b93ca231550c68693a14f03cea8d5dbd1be9e",
+      "sha256": "e9fec87a45fba02399e88064b9e2f8cf0f2106e351c58279a87f05da5bc984ad",
+      "size": 4194304,
+      "repo_path": "bios/Nintendo/64DD/64DD_IPL_USA.bin",
+      "cores": [
+        "mupen64plus"
+      ],
+      "systems": [
+        "nintendo-64dd"
+      ]
+    },
+    {
+      "dest": "64DD_IPL_DEV.n64",
+      "sha1": "10c4173c2a7eb09c6579818f72ef18fa0b6d32de",
+      "sha256": "9c2962a8b994a29e4cd04b3a6e4ed730a751414655ab6a9799ebf5fc08b79d44",
+      "size": 4194304,
+      "repo_path": "bios/Nintendo/64DD/64DD_IPL_DEV.bin",
+      "cores": [
+        "mupen64plus"
+      ],
+      "systems": [
+        "nintendo-64dd"
       ]
     },
     {

@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-22T09:05:39Z",
-  "total_files": 19595,
-  "total_size": 16856471669,
+  "generated_at": "2026-10-22T09:16:18Z",
+  "total_files": 19597,
+  "total_size": 16856512800,
   "bios_dir": "bios",
   "files": {
     "738c7f5fd0c8b57ee2e87ae7a97bf8e21a821d07": {
@@ -72963,6 +72963,16 @@
       "crc32": "01b5335b",
       "adler32": "9d449338"
     },
+    "08cb5b52ba35c0ead5ab114aa8270116b7ae69f5": {
+      "path": "bios/Game Engines/DOOM/chex.deh",
+      "name": "chex.deh",
+      "size": 20367,
+      "sha1": "08cb5b52ba35c0ead5ab114aa8270116b7ae69f5",
+      "md5": "928cc1593cda42b78c8326807d5c80b6",
+      "sha256": "8c0345089fb227fa7f71c25a6c6e31ff5bd4bea0580f286cd74e05918d72dd40",
+      "crc32": "b01c102d",
+      "adler32": "24167e39"
+    },
     "f0581563604543060c1dce2f148fd74412adb8b8": {
       "path": "bios/Game Engines/DOOM/chex3.wad",
       "name": "chex3.wad",
@@ -73022,6 +73032,16 @@
       "sha256": "a8772e088847032510d97ba2312406a6998f21cbab44d4ff10696faa9c0ecd4b",
       "crc32": "68a76eb5",
       "adler32": "ed823b4c"
+    },
+    "0699a608e3be575bc8919a3dab9457f2705eb278": {
+      "path": "bios/Game Engines/DOOM/french.deh",
+      "name": "french.deh",
+      "size": 20764,
+      "sha1": "0699a608e3be575bc8919a3dab9457f2705eb278",
+      "md5": "eeb3ae6fc25270efa274d8087667b4b8",
+      "sha256": "03f843bcf2d7e88f16f7389abd932ac18b688572f5b37718ad504e99c00ee24a",
+      "crc32": "26c1978b",
+      "adler32": "7028359b"
     },
     "9fd331b9d53006af1884e89eaeb97b17b8572b71": {
       "path": "bios/Game Engines/DOOM/hacx.wad",
@@ -208306,12 +208326,14 @@
       "ba97733ca5ad36ebce05eeb4f08220a9": "a71e81b9c30e1b029057cec69ab709a59a42a0ac",
       "35f12b439cc475e8ffcba8c42a5bba6c": "0da97921963442f2b22959ab941744d815c4f50d",
       "2d0d2c413132e93ef1a91e07034856bd": "9d071480b3e882cce13fc9be627fb6ea2ec0c2eb",
+      "928cc1593cda42b78c8326807d5c80b6": "08cb5b52ba35c0ead5ab114aa8270116b7ae69f5",
       "bce163d06521f9d15f9686786e64df13": "f0581563604543060c1dce2f148fd74412adb8b8",
       "9691100ff85b0902be3851890ec5aca9": "b1319702b200d95adf8da277fa237c7c0318a1b6",
       "30e3c2d0350b67bfbf47271970b74b2f": "6d559b7ceece4f5ad457415049711992370d520a",
       "908dfd77a14cc490c4cea94b62d13449": "42c36e9d0610bf70c710ca79c7098ef3b1b00059",
       "b93be13d05148dd01614bc205a03648e": "97bb88094a51457a8dcad98c58be22a2d0fa9a37",
       "cd666466759b5e5f63af93c5f0ffd0a1": "975f781e6d801c0a23e3caa33f70493efe68a880",
+      "eeb3ae6fc25270efa274d8087667b4b8": "0699a608e3be575bc8919a3dab9457f2705eb278",
       "65ed74d522bdf6649c2831b13b9e02b4": "9fd331b9d53006af1884e89eaeb97b17b8572b71",
       "c7ae2225610b5d2bb7a44d60ad62923c": "f9ce49ed020f560cb1963634b529bc450e598a65",
       "48ebb49b52f6a3020d174dbcc1b9aeaf": "d7c5f9095fd5f1ebfe14ecd97ca31503e2a02964",
@@ -238488,6 +238510,9 @@
       "blasphem.wad": [
         "9d071480b3e882cce13fc9be627fb6ea2ec0c2eb"
       ],
+      "chex.deh": [
+        "08cb5b52ba35c0ead5ab114aa8270116b7ae69f5"
+      ],
       "chex3.wad": [
         "f0581563604543060c1dce2f148fd74412adb8b8"
       ],
@@ -238505,6 +238530,9 @@
       ],
       "freedoom2.wad": [
         "975f781e6d801c0a23e3caa33f70493efe68a880"
+      ],
+      "french.deh": [
+        "0699a608e3be575bc8919a3dab9457f2705eb278"
       ],
       "hacx.wad": [
         "9fd331b9d53006af1884e89eaeb97b17b8572b71"
@@ -272997,10 +273025,10 @@
       "nintendo-ds:df692a80a5b1bc90728bc3dfc76cd948": [
         "24f67bdea115a2c847c8813a262502ee1607b7df"
       ],
-      "BIOSNDS7.ROM": [
+      "nds_bios_arm7.bin": [
         "24f67bdea115a2c847c8813a262502ee1607b7df"
       ],
-      "nds_bios_arm7.bin": [
+      "BIOSNDS7.ROM": [
         "24f67bdea115a2c847c8813a262502ee1607b7df"
       ],
       "nds9.bin": [
@@ -273012,10 +273040,10 @@
       "nintendo-ds:a392174eb3e572fed6447e956bde4b25": [
         "bfaac75f101c135e32e2aaf541de6b1be4c8c62d"
       ],
-      "BIOSNDS9.ROM": [
+      "nds_bios_arm9.bin": [
         "bfaac75f101c135e32e2aaf541de6b1be4c8c62d"
       ],
-      "nds_bios_arm9.bin": [
+      "BIOSNDS9.ROM": [
         "bfaac75f101c135e32e2aaf541de6b1be4c8c62d"
       ],
       "cx4.data.rom": [
@@ -276669,6 +276697,9 @@
       "CPC664.ROM": [
         "073a7665527b5bd8a148747a3947dbd3328682c8"
       ],
+      "nds_firmware.bin": [
+        "87dae2500e889737af51f4a5b5845770a62482f5"
+      ],
       "whdboot/save-data/Kickstarts/kick33192.A500.RTB": [
         "1d1c557f4a0f5ea88aeb96d68b09f41990340f70"
       ],
@@ -277759,9 +277790,6 @@
       ],
       "cgb_agb_boot.bin": [
         "80e3ee82416c1a74827a5459fde32f04bf51a1f6"
-      ],
-      "nds_firmware.bin": [
-        "87dae2500e889737af51f4a5b5845770a62482f5"
       ],
       "nds_sd_card.bin": [
         "3b71f43ff30f4b15b5cd85dd9e95ebc7e84eb5a3"
@@ -284931,12 +284959,14 @@
       "aa75ca82": "a71e81b9c30e1b029057cec69ab709a59a42a0ac",
       "4310c519": "0da97921963442f2b22959ab941744d815c4f50d",
       "01b5335b": "9d071480b3e882cce13fc9be627fb6ea2ec0c2eb",
+      "b01c102d": "08cb5b52ba35c0ead5ab114aa8270116b7ae69f5",
       "34aa2168": "f0581563604543060c1dce2f148fd74412adb8b8",
       "787548eb": "b1319702b200d95adf8da277fa237c7c0318a1b6",
       "e2a683bd": "6d559b7ceece4f5ad457415049711992370d520a",
       "e5636b13": "42c36e9d0610bf70c710ca79c7098ef3b1b00059",
       "5b55e156": "97bb88094a51457a8dcad98c58be22a2d0fa9a37",
       "68a76eb5": "975f781e6d801c0a23e3caa33f70493efe68a880",
+      "26c1978b": "0699a608e3be575bc8919a3dab9457f2705eb278",
       "72e3b8ac": "9fd331b9d53006af1884e89eaeb97b17b8572b71",
       "46f133c7": "f9ce49ed020f560cb1963634b529bc450e598a65",
       "bf979c23": "d7c5f9095fd5f1ebfe14ecd97ca31503e2a02964",
@@ -304527,12 +304557,14 @@
       "030deb9d78a78c4282d48c4fa3b73acb654dd8548cef1fb23add860a01512a7e": "a71e81b9c30e1b029057cec69ab709a59a42a0ac",
       "519844764bdf262b71f8ebefe48726e1b15077908ad4055cb8e07834c1596f1c": "0da97921963442f2b22959ab941744d815c4f50d",
       "e9ed3f53cb011f1ae897b66fcfe46692c8c2d73e147bbe1e36a9bf1f79a4cc63": "9d071480b3e882cce13fc9be627fb6ea2ec0c2eb",
+      "8c0345089fb227fa7f71c25a6c6e31ff5bd4bea0580f286cd74e05918d72dd40": "08cb5b52ba35c0ead5ab114aa8270116b7ae69f5",
       "81662798c479458a1b2a2071a223e09501386157be5679fa9ec511c437471dd2": "f0581563604543060c1dce2f148fd74412adb8b8",
       "43eebe953c0c0f5b3147cad49d9e43f038018f1a2defa99e529e4e5537783977": "b1319702b200d95adf8da277fa237c7c0318a1b6",
       "5e701c806a8d3a03700f7fef97b7ad62d0aed50fd240dfac26cdf39ac3d0a8d5": "6d559b7ceece4f5ad457415049711992370d520a",
       "d9adc4d792627e7fc47b09067b15486da724010c71dd12831e1cf8e0755b68ad": "42c36e9d0610bf70c710ca79c7098ef3b1b00059",
       "7323bcc168c5a45ff10749b339960e98314740a734c30d4b9f3337001f9e703d": "97bb88094a51457a8dcad98c58be22a2d0fa9a37",
       "a8772e088847032510d97ba2312406a6998f21cbab44d4ff10696faa9c0ecd4b": "975f781e6d801c0a23e3caa33f70493efe68a880",
+      "03f843bcf2d7e88f16f7389abd932ac18b688572f5b37718ad504e99c00ee24a": "0699a608e3be575bc8919a3dab9457f2705eb278",
       "b838dc9a394fe708df7239994b37c14c21e34f81d4cc921e060fc9c16b8ba240": "9fd331b9d53006af1884e89eaeb97b17b8572b71",
       "7f63d58b4e360825a09ee086e8d733b2cd37cea882d785d2658cbc77ba7b1b74": "f9ce49ed020f560cb1963634b529bc450e598a65",
       "b98b74422479f865c12251965f8e69e112c93095fc622d6ca24510b7e3de45fb": "d7c5f9095fd5f1ebfe14ecd97ca31503e2a02964",
@@ -408013,6 +408045,12 @@
       "DOOM/blasphem.wad": [
         "9d071480b3e882cce13fc9be627fb6ea2ec0c2eb"
       ],
+      "Game Engines/DOOM/chex.deh": [
+        "08cb5b52ba35c0ead5ab114aa8270116b7ae69f5"
+      ],
+      "DOOM/chex.deh": [
+        "08cb5b52ba35c0ead5ab114aa8270116b7ae69f5"
+      ],
       "Game Engines/DOOM/chex3.wad": [
         "f0581563604543060c1dce2f148fd74412adb8b8"
       ],
@@ -408048,6 +408086,12 @@
       ],
       "DOOM/freedoom2.wad": [
         "975f781e6d801c0a23e3caa33f70493efe68a880"
+      ],
+      "Game Engines/DOOM/french.deh": [
+        "0699a608e3be575bc8919a3dab9457f2705eb278"
+      ],
+      "DOOM/french.deh": [
+        "0699a608e3be575bc8919a3dab9457f2705eb278"
       ],
       "Game Engines/DOOM/hacx.wad": [
         "9fd331b9d53006af1884e89eaeb97b17b8572b71"

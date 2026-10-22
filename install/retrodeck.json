@@ -6,7 +6,7 @@
   "platform": "retrodeck",
   "display_name": "RetroDECK",
   "version": "1.0",
-  "generated": "2026-10-22T06:17:50Z",
+  "generated": "2026-10-22T09:16:18Z",
   "base_destination": "",
   "detect": [
     {
@@ -725,6 +725,9 @@
     "chihiro-ds": [
       "chihiro-gun"
     ],
+    "chocolate-doom": [
+      "Chocolate-Doom"
+    ],
     "cxbx-reloaded": [
       "cxbx"
     ],
@@ -952,12 +955,14 @@
       "MSX-EMU",
       "MSX.emu"
     ],
+    "mupen64plus": [
+      "mupen64plussa"
+    ],
     "mupen64plus-ae": [
       "MUPEN64PLUS-AE",
       "org.mupen64plusae.v3.alpha"
     ],
     "mupen64plus_next": [
-      "mupen64plus",
       "mupen64plus-next",
       "mupen64plus_next_alt",
       "mupen64plus_next_develop",
@@ -1329,6 +1334,7 @@
     ],
     "doom": [
       "bizhawk",
+      "chocolate-doom",
       "dsda-doom",
       "gzdoom",
       "idtech4a++",
@@ -1458,6 +1464,7 @@
       "ares",
       "bizhawk",
       "m64plus-fz",
+      "mupen64plus",
       "mupen64plus-ae",
       "mupen64plus_next",
       "parallel-launcher",
@@ -1467,6 +1474,7 @@
       "sixtyforce"
     ],
     "nintendo-ds": [
+      "advanced_drastic",
       "bizhawk",
       "desmume",
       "desmume2015",
@@ -1636,6 +1644,7 @@
       "flycast",
       "flycast-dojo",
       "flycast2021",
+      "flycast2021le",
       "redream",
       "reicast",
       "retrodream"
@@ -1758,6 +1767,7 @@
       "beetle_psx",
       "bizhawk",
       "duckstation",
+      "duckstation-legacy",
       "epsxe",
       "fpse",
       "fpse-ng",

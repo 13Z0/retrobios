@@ -6,7 +6,7 @@
   "platform": "emuelec",
   "display_name": "EmuELEC",
   "version": "1.0",
-  "generated": "2026-10-22T06:17:50Z",
+  "generated": "2026-10-22T09:16:18Z",
   "base_destination": "",
   "detect": [
     {
@@ -20,11 +20,11 @@
     }
   ],
   "standalone_copies": [],
-  "total_files": 5270,
-  "total_size": 4258403494,
-  "pack_files": 5291,
-  "pack_size": 4259028552,
-  "total_omitted": 163,
+  "total_files": 5275,
+  "total_size": 4271027537,
+  "pack_files": 5296,
+  "pack_size": 4271652595,
+  "total_omitted": 182,
   "omitted_files": [
     {
       "dest": "bios/AUDIOHED.VSI",
@@ -45,6 +45,17 @@
       "reason": "not_found",
       "cores": [
         "bstone"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "bios/BT16.TBM",
+      "name": "BT16.TBM",
+      "system": "bermuda-syndrome",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "bermuda"
       ],
       "category": "game_data"
     },
@@ -456,6 +467,17 @@
       "category": "game_data"
     },
     {
+      "dest": "bios/SCN/_01.SCN",
+      "name": "_01.SCN",
+      "system": "bermuda-syndrome",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "bermuda"
+      ],
+      "category": "game_data"
+    },
+    {
       "dest": "bios/VACATION.GRP",
       "name": "VACATION.GRP",
       "system": "duke3d",
@@ -573,6 +595,61 @@
       "reason": "not_found",
       "cores": [
         "eduke32"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "bios/bermuda.ovr",
+      "name": "bermuda.ovr",
+      "system": "bermuda-syndrome",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "bermuda"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "bios/bermuda.spr",
+      "name": "bermuda.spr",
+      "system": "bermuda-syndrome",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "bermuda"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "bios/bermuda.wgp",
+      "name": "bermuda.wgp",
+      "system": "bermuda-syndrome",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "bermuda"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "bios/dark_hod.lvl",
+      "name": "dark_hod.lvl",
+      "system": "heart-of-darkness",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "hode"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "bios/data/heroes2x.agg",
+      "name": "heroes2x.agg",
+      "system": "heroes-of-might-and-magic-2",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "fheroes2"
       ],
       "category": "game_data"
     },
@@ -730,6 +807,28 @@
       "category": "game_data"
     },
     {
+      "dest": "bios/fallout1-ce/critter.dat",
+      "name": "critter.dat",
+      "system": "fallout",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "fallout1-ce"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "bios/fallout1-ce/master.dat",
+      "name": "master.dat",
+      "system": "fallout",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "fallout1-ce"
+      ],
+      "category": "game_data"
+    },
+    {
       "dest": "bios/fallout2-ce/critter.dat",
       "name": "critter.dat",
       "system": "fallout2",
@@ -748,6 +847,17 @@
       "reason": "not_found",
       "cores": [
         "fallout2-ce"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "bios/fort_hod.lvl",
+      "name": "fort_hod.lvl",
+      "system": "heart-of-darkness",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "hode"
       ],
       "category": "game_data"
     },
@@ -1357,6 +1467,17 @@
       "category": "game_data"
     },
     {
+      "dest": "bios/hod.paf",
+      "name": "hod.paf",
+      "system": "heart-of-darkness",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "hode"
+      ],
+      "category": "game_data"
+    },
+    {
       "dest": "bios/id24res.wad",
       "name": "id24res.wad",
       "system": "doom",
@@ -1364,6 +1485,17 @@
       "reason": "not_found",
       "cores": [
         "gzdoom"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "bios/isld_hod.lvl",
+      "name": "isld_hod.lvl",
+      "system": "heart-of-darkness",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "hode"
       ],
       "category": "game_data"
     },
@@ -1376,6 +1508,39 @@
       "cores": [
         "px68k"
       ]
+    },
+    {
+      "dest": "bios/lar1_hod.lvl",
+      "name": "lar1_hod.lvl",
+      "system": "heart-of-darkness",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "hode"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "bios/lar2_hod.lvl",
+      "name": "lar2_hod.lvl",
+      "system": "heart-of-darkness",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "hode"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "bios/lava_hod.lvl",
+      "name": "lava_hod.lvl",
+      "system": "heart-of-darkness",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "hode"
+      ],
+      "category": "game_data"
     },
     {
       "dest": "bios/nerve.wad",
@@ -1418,6 +1583,50 @@
       "reason": "not_found",
       "cores": [
         "gzdoom"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "bios/pwr1_hod.lvl",
+      "name": "pwr1_hod.lvl",
+      "system": "heart-of-darkness",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "hode"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "bios/pwr2_hod.lvl",
+      "name": "pwr2_hod.lvl",
+      "system": "heart-of-darkness",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "hode"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "bios/rock_hod.lvl",
+      "name": "rock_hod.lvl",
+      "system": "heart-of-darkness",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "hode"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "bios/setup.dat",
+      "name": "setup.dat",
+      "system": "heart-of-darkness",
+      "required": true,
+      "reason": "not_found",
+      "cores": [
+        "hode"
       ],
       "category": "game_data"
     },
@@ -1857,6 +2066,9 @@
       "beetle-saturn",
       "mednafen_saturn"
     ],
+    "bermuda": [
+      "bs"
+    ],
     "bsnes-jg": [
       "bsnes_jg"
     ],
@@ -1877,6 +2089,9 @@
     "cgenius": [
       "CGeniusExe"
     ],
+    "chocolate-doom": [
+      "Chocolate-Doom"
+    ],
     "daedalusx64": [
       "daedalusx64-sa"
     ],
@@ -1891,6 +2106,9 @@
     ],
     "duckstation": [
       "Duckstation"
+    ],
+    "fallout1-ce": [
+      "fallout-ce"
     ],
     "fbalpha2012": [
       "fbalpha"
@@ -2032,12 +2250,17 @@
       "MSX-EMU",
       "MSX.emu"
     ],
+    "mupen64plus": [
+      "mupen64plussa"
+    ],
     "mupen64plus-ae": [
       "MUPEN64PLUS-AE",
       "org.mupen64plusae.v3.alpha"
     ],
+    "mupen64plus-libretro": [
+      "mupen64plus_32b"
+    ],
     "mupen64plus_next": [
-      "mupen64plus",
       "mupen64plus-next",
       "mupen64plus_next_alt",
       "mupen64plus_next_develop",
@@ -2317,6 +2540,7 @@
     ],
     "doom": [
       "bizhawk",
+      "chocolate-doom",
       "dsda-doom",
       "gzdoom",
       "idtech4a++",
@@ -2378,7 +2602,9 @@
       "daedalusx64",
       "gopher64",
       "m64plus-fz",
+      "mupen64plus",
       "mupen64plus-ae",
+      "mupen64plus-libretro",
       "mupen64plus_next",
       "parallel-launcher",
       "parallel_n64",
@@ -2525,6 +2751,7 @@
       "flycast",
       "flycast-dojo",
       "flycast2021",
+      "flycast2021le",
       "redream",
       "reicast",
       "retrodream"
@@ -2635,6 +2862,7 @@
       "beetle_psx",
       "bizhawk",
       "duckstation",
+      "duckstation-legacy",
       "epsxe",
       "fpse",
       "fpse-ng",
@@ -44309,6 +44537,244 @@
       "category": "game_data"
     },
     {
+      "dest": "bios/doom.wad",
+      "sha1": "7742089b4468a736cadb659a7deca3320fe6dcbd",
+      "sha256": "ff2c301b8719465a6e386a512bfa319931b7f64ea517d337c5a47afe03951902",
+      "size": 11159840,
+      "repo_path": "bios/Id Software/Doom/DOOM.WAD",
+      "cores": [
+        "chocolate-doom",
+        "gzdoom",
+        "lzdoom",
+        "prboom"
+      ],
+      "systems": [
+        "doom"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "bios/doom2f.wad",
+      "sha1": "d510c877031bbd5f3d198581a2c8651e09b9861f",
+      "sha256": "ab6d457050daee95fb763040f753fce44a4852883dafdb520b00cc8426e6bda0",
+      "size": 14607420,
+      "repo_path": "bios/Id Software/Doom/DOOM2F.WAD",
+      "cores": [
+        "chocolate-doom",
+        "gzdoom",
+        "lzdoom",
+        "prboom"
+      ],
+      "systems": [
+        "doom"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "bios/plutonia.wad",
+      "sha1": "90361e2a538d2388506657252ae41aceeb1ba360",
+      "sha256": "a83b00c636fa3308286e76b1b3153fc14507caf994b0450770421260b08efed8",
+      "size": 17420824,
+      "repo_path": "bios/Id Software/Doom/PLUTONIA.WAD",
+      "cores": [
+        "chocolate-doom",
+        "gzdoom",
+        "lzdoom",
+        "prboom"
+      ],
+      "systems": [
+        "doom"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "bios/tnt.wad",
+      "sha1": "9fbc66aedef7fe3bae0986cdb9323d2b8db4c9d3",
+      "sha256": "c0a9c29d023af2737953663d0e03177d9b7b7b64146c158dcc2a07f9ec18f353",
+      "size": 18195736,
+      "repo_path": "bios/Id Software/Doom/TNT.WAD",
+      "cores": [
+        "chocolate-doom",
+        "gzdoom",
+        "lzdoom",
+        "prboom"
+      ],
+      "systems": [
+        "doom"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "bios/freedoom1.wad",
+      "sha1": "97bb88094a51457a8dcad98c58be22a2d0fa9a37",
+      "sha256": "7323bcc168c5a45ff10749b339960e98314740a734c30d4b9f3337001f9e703d",
+      "size": 28795076,
+      "repo_path": "bios/Game Engines/DOOM/freedoom1.wad",
+      "cores": [
+        "chocolate-doom",
+        "gzdoom",
+        "lzdoom",
+        "prboom"
+      ],
+      "systems": [
+        "doom"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "bios/freedoom2.wad",
+      "sha1": "975f781e6d801c0a23e3caa33f70493efe68a880",
+      "sha256": "a8772e088847032510d97ba2312406a6998f21cbab44d4ff10696faa9c0ecd4b",
+      "size": 28787748,
+      "repo_path": "bios/Game Engines/DOOM/freedoom2.wad",
+      "cores": [
+        "chocolate-doom",
+        "gzdoom",
+        "lzdoom",
+        "prboom"
+      ],
+      "systems": [
+        "doom"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "bios/freedm.wad",
+      "sha1": "42c36e9d0610bf70c710ca79c7098ef3b1b00059",
+      "sha256": "d9adc4d792627e7fc47b09067b15486da724010c71dd12831e1cf8e0755b68ad",
+      "size": 22218796,
+      "repo_path": "bios/Game Engines/DOOM/freedm.wad",
+      "cores": [
+        "chocolate-doom",
+        "gzdoom",
+        "lzdoom"
+      ],
+      "systems": [
+        "doom"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "bios/hacx.wad",
+      "sha1": "9fd331b9d53006af1884e89eaeb97b17b8572b71",
+      "sha256": "b838dc9a394fe708df7239994b37c14c21e34f81d4cc921e060fc9c16b8ba240",
+      "size": 19321722,
+      "repo_path": "bios/Game Engines/DOOM/hacx.wad",
+      "cores": [
+        "chocolate-doom",
+        "gzdoom",
+        "lzdoom"
+      ],
+      "systems": [
+        "doom"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "bios/chex.wad",
+      "sha1": "eca9cff1014ce5081804e193588d96c6ddb35432",
+      "sha256": "d8eb5277918883f490fb1a4be3c9a8588df2dbaee6dc4beb8df4929148bbffb1",
+      "size": 12361532,
+      "repo_path": "bios/Id Software/Doom/CHEX.WAD",
+      "cores": [
+        "chocolate-doom",
+        "gzdoom",
+        "lzdoom"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "bios/chex.deh",
+      "sha1": "08cb5b52ba35c0ead5ab114aa8270116b7ae69f5",
+      "sha256": "8c0345089fb227fa7f71c25a6c6e31ff5bd4bea0580f286cd74e05918d72dd40",
+      "size": 20367,
+      "repo_path": "bios/Game Engines/DOOM/chex.deh",
+      "cores": [
+        "chocolate-doom"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "bios/french.deh",
+      "sha1": "0699a608e3be575bc8919a3dab9457f2705eb278",
+      "sha256": "03f843bcf2d7e88f16f7389abd932ac18b688572f5b37718ad504e99c00ee24a",
+      "size": 20764,
+      "repo_path": "bios/Game Engines/DOOM/french.deh",
+      "cores": [
+        "chocolate-doom"
+      ],
+      "systems": [
+        "doom"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "bios/heretic.wad",
+      "sha1": "f489d479371df32f6d280a0cb23b59a35ba2b833",
+      "sha256": "12541f82e1d326b456b89411f8c54b895e775a611580f66b78558e898b2eaafa",
+      "size": 14189976,
+      "repo_path": "bios/Id Software/Doom/HERETIC.WAD",
+      "cores": [
+        "chocolate-doom",
+        "gzdoom",
+        "lzdoom",
+        "prboom"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "bios/heretic1.wad",
+      "sha1": "b4c50ca9bea07f7c35250a1a11906091971c05ae",
+      "sha256": "3ab2f21828877e49e5eb3220785aaf8798050b7c4132003b5db7b8f3678bede4",
+      "size": 5120920,
+      "repo_path": "bios/Id Software/Doom/HERETIC1.WAD",
+      "cores": [
+        "chocolate-doom",
+        "lzdoom",
+        "prboom"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "bios/hexen.wad",
+      "sha1": "4b53832f0733c1e29e5f1de2428e5475e891af29",
+      "sha256": "f74b857076b3ffe2597d0e05bdecc687496e6e8a9582d7a47db681e0e78e4001",
+      "size": 20083672,
+      "repo_path": "bios/Id Software/Doom/HEXEN.WAD",
+      "cores": [
+        "chocolate-doom",
+        "gzdoom",
+        "lzdoom"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "bios/strife1.wad",
+      "sha1": "64c13b951a845ca7f8081f68138a6181557458d1",
+      "sha256": "81e4d4402853392fbf2ebf52f9c19cf97754a84f6dd3e5919036241de1ffe52a",
+      "size": 28377364,
+      "repo_path": "bios/Id Software/Doom/STRIFE1.WAD",
+      "cores": [
+        "chocolate-doom",
+        "gzdoom",
+        "lzdoom"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "bios/voices.wad",
+      "sha1": "ec6883100d807b894a98f426d024d22c77b63e7f",
+      "sha256": "3f7a9c37a23dc30bb3b8415e782ea6c78d59e6b2ed4b50ae255ff0365349110c",
+      "size": 27319149,
+      "repo_path": "bios/Id Software/Doom/VOICES.WAD",
+      "cores": [
+        "chocolate-doom",
+        "gzdoom",
+        "lzdoom"
+      ],
+      "category": "game_data"
+    },
+    {
       "dest": "bios/devilutionx/spawn.mpq",
       "sha1": "80756d85b8d2c951c6f5a15dbdcf97ba9678a6af",
       "sha256": "64427cd7c1ba904eaa2e0031c16a6b136d0ecef9abc888c5ff8344b459356e38",
@@ -45615,130 +46081,6 @@
       ]
     },
     {
-      "dest": "bios/doom.wad",
-      "sha1": "7742089b4468a736cadb659a7deca3320fe6dcbd",
-      "sha256": "ff2c301b8719465a6e386a512bfa319931b7f64ea517d337c5a47afe03951902",
-      "size": 11159840,
-      "repo_path": "bios/Id Software/Doom/DOOM.WAD",
-      "cores": [
-        "gzdoom",
-        "lzdoom",
-        "prboom"
-      ],
-      "systems": [
-        "doom"
-      ],
-      "category": "game_data"
-    },
-    {
-      "dest": "bios/doom2f.wad",
-      "sha1": "d510c877031bbd5f3d198581a2c8651e09b9861f",
-      "sha256": "ab6d457050daee95fb763040f753fce44a4852883dafdb520b00cc8426e6bda0",
-      "size": 14607420,
-      "repo_path": "bios/Id Software/Doom/DOOM2F.WAD",
-      "cores": [
-        "gzdoom",
-        "lzdoom",
-        "prboom"
-      ],
-      "systems": [
-        "doom"
-      ],
-      "category": "game_data"
-    },
-    {
-      "dest": "bios/plutonia.wad",
-      "sha1": "90361e2a538d2388506657252ae41aceeb1ba360",
-      "sha256": "a83b00c636fa3308286e76b1b3153fc14507caf994b0450770421260b08efed8",
-      "size": 17420824,
-      "repo_path": "bios/Id Software/Doom/PLUTONIA.WAD",
-      "cores": [
-        "gzdoom",
-        "lzdoom",
-        "prboom"
-      ],
-      "systems": [
-        "doom"
-      ],
-      "category": "game_data"
-    },
-    {
-      "dest": "bios/tnt.wad",
-      "sha1": "9fbc66aedef7fe3bae0986cdb9323d2b8db4c9d3",
-      "sha256": "c0a9c29d023af2737953663d0e03177d9b7b7b64146c158dcc2a07f9ec18f353",
-      "size": 18195736,
-      "repo_path": "bios/Id Software/Doom/TNT.WAD",
-      "cores": [
-        "gzdoom",
-        "lzdoom",
-        "prboom"
-      ],
-      "systems": [
-        "doom"
-      ],
-      "category": "game_data"
-    },
-    {
-      "dest": "bios/freedoom1.wad",
-      "sha1": "97bb88094a51457a8dcad98c58be22a2d0fa9a37",
-      "sha256": "7323bcc168c5a45ff10749b339960e98314740a734c30d4b9f3337001f9e703d",
-      "size": 28795076,
-      "repo_path": "bios/Game Engines/DOOM/freedoom1.wad",
-      "cores": [
-        "gzdoom",
-        "lzdoom",
-        "prboom"
-      ],
-      "systems": [
-        "doom"
-      ],
-      "category": "game_data"
-    },
-    {
-      "dest": "bios/freedoom2.wad",
-      "sha1": "975f781e6d801c0a23e3caa33f70493efe68a880",
-      "sha256": "a8772e088847032510d97ba2312406a6998f21cbab44d4ff10696faa9c0ecd4b",
-      "size": 28787748,
-      "repo_path": "bios/Game Engines/DOOM/freedoom2.wad",
-      "cores": [
-        "gzdoom",
-        "lzdoom",
-        "prboom"
-      ],
-      "systems": [
-        "doom"
-      ],
-      "category": "game_data"
-    },
-    {
-      "dest": "bios/freedm.wad",
-      "sha1": "42c36e9d0610bf70c710ca79c7098ef3b1b00059",
-      "sha256": "d9adc4d792627e7fc47b09067b15486da724010c71dd12831e1cf8e0755b68ad",
-      "size": 22218796,
-      "repo_path": "bios/Game Engines/DOOM/freedm.wad",
-      "cores": [
-        "gzdoom",
-        "lzdoom"
-      ],
-      "systems": [
-        "doom"
-      ],
-      "category": "game_data"
-    },
-    {
-      "dest": "bios/heretic.wad",
-      "sha1": "f489d479371df32f6d280a0cb23b59a35ba2b833",
-      "sha256": "12541f82e1d326b456b89411f8c54b895e775a611580f66b78558e898b2eaafa",
-      "size": 14189976,
-      "repo_path": "bios/Id Software/Doom/HERETIC.WAD",
-      "cores": [
-        "gzdoom",
-        "lzdoom",
-        "prboom"
-      ],
-      "category": "game_data"
-    },
-    {
       "dest": "bios/blasphem.wad",
       "sha1": "9d071480b3e882cce13fc9be627fb6ea2ec0c2eb",
       "sha256": "e9ed3f53cb011f1ae897b66fcfe46692c8c2d73e147bbe1e36a9bf1f79a4cc63",
@@ -45747,18 +46089,6 @@
       "cores": [
         "gzdoom",
         "prboom"
-      ],
-      "category": "game_data"
-    },
-    {
-      "dest": "bios/hexen.wad",
-      "sha1": "4b53832f0733c1e29e5f1de2428e5475e891af29",
-      "sha256": "f74b857076b3ffe2597d0e05bdecc687496e6e8a9582d7a47db681e0e78e4001",
-      "size": 20083672,
-      "repo_path": "bios/Id Software/Doom/HEXEN.WAD",
-      "cores": [
-        "gzdoom",
-        "lzdoom"
       ],
       "category": "game_data"
     },
@@ -45775,42 +46105,6 @@
       "category": "game_data"
     },
     {
-      "dest": "bios/strife1.wad",
-      "sha1": "64c13b951a845ca7f8081f68138a6181557458d1",
-      "sha256": "81e4d4402853392fbf2ebf52f9c19cf97754a84f6dd3e5919036241de1ffe52a",
-      "size": 28377364,
-      "repo_path": "bios/Id Software/Doom/STRIFE1.WAD",
-      "cores": [
-        "gzdoom",
-        "lzdoom"
-      ],
-      "category": "game_data"
-    },
-    {
-      "dest": "bios/voices.wad",
-      "sha1": "ec6883100d807b894a98f426d024d22c77b63e7f",
-      "sha256": "3f7a9c37a23dc30bb3b8415e782ea6c78d59e6b2ed4b50ae255ff0365349110c",
-      "size": 27319149,
-      "repo_path": "bios/Id Software/Doom/VOICES.WAD",
-      "cores": [
-        "gzdoom",
-        "lzdoom"
-      ],
-      "category": "game_data"
-    },
-    {
-      "dest": "bios/chex.wad",
-      "sha1": "eca9cff1014ce5081804e193588d96c6ddb35432",
-      "sha256": "d8eb5277918883f490fb1a4be3c9a8588df2dbaee6dc4beb8df4929148bbffb1",
-      "size": 12361532,
-      "repo_path": "bios/Id Software/Doom/CHEX.WAD",
-      "cores": [
-        "gzdoom",
-        "lzdoom"
-      ],
-      "category": "game_data"
-    },
-    {
       "dest": "bios/chex3.wad",
       "sha1": "f0581563604543060c1dce2f148fd74412adb8b8",
       "sha256": "81662798c479458a1b2a2071a223e09501386157be5679fa9ec511c437471dd2",
@@ -45819,21 +46113,6 @@
       "cores": [
         "gzdoom",
         "lzdoom"
-      ],
-      "category": "game_data"
-    },
-    {
-      "dest": "bios/hacx.wad",
-      "sha1": "9fd331b9d53006af1884e89eaeb97b17b8572b71",
-      "sha256": "b838dc9a394fe708df7239994b37c14c21e34f81d4cc921e060fc9c16b8ba240",
-      "size": 19321722,
-      "repo_path": "bios/Game Engines/DOOM/hacx.wad",
-      "cores": [
-        "gzdoom",
-        "lzdoom"
-      ],
-      "systems": [
-        "doom"
       ],
       "category": "game_data"
     },
@@ -46756,18 +47035,6 @@
         "lexaloffle"
       ],
       "executable": true
-    },
-    {
-      "dest": "bios/heretic1.wad",
-      "sha1": "b4c50ca9bea07f7c35250a1a11906091971c05ae",
-      "sha256": "3ab2f21828877e49e5eb3220785aaf8798050b7c4132003b5db7b8f3678bede4",
-      "size": 5120920,
-      "repo_path": "bios/Id Software/Doom/HERETIC1.WAD",
-      "cores": [
-        "lzdoom",
-        "prboom"
-      ],
-      "category": "game_data"
     },
     {
       "dest": "bios/blasphemer.wad",
@@ -66262,6 +66529,36 @@
       ]
     },
     {
+      "dest": "bios/64DD_IPL_JP.n64",
+      "sha1": "bf861922dcb78c316360e3e742f4f70ff63c9bc3",
+      "sha256": "806400ec0df94b0755de6c5b8249d6b6a9866124c5ddbdac198bde22499bfb8b",
+      "size": 4194304,
+      "repo_path": "bios/Nintendo/64DD/64DD_IPL_v12_JPN.bin",
+      "cores": [
+        "mupen64plus"
+      ]
+    },
+    {
+      "dest": "bios/64DD_IPL_US.n64",
+      "sha1": "3c5b93ca231550c68693a14f03cea8d5dbd1be9e",
+      "sha256": "e9fec87a45fba02399e88064b9e2f8cf0f2106e351c58279a87f05da5bc984ad",
+      "size": 4194304,
+      "repo_path": "bios/Nintendo/64DD/64DD_IPL_USA.bin",
+      "cores": [
+        "mupen64plus"
+      ]
+    },
+    {
+      "dest": "bios/64DD_IPL_DEV.n64",
+      "sha1": "10c4173c2a7eb09c6579818f72ef18fa0b6d32de",
+      "sha256": "9c2962a8b994a29e4cd04b3a6e4ed730a751414655ab6a9799ebf5fc08b79d44",
+      "size": 4194304,
+      "repo_path": "bios/Nintendo/64DD/64DD_IPL_DEV.bin",
+      "cores": [
+        "mupen64plus"
+      ]
+    },
+    {
       "dest": "bios/Mupen64plus/IPL.n64",
       "sha1": "bf861922dcb78c316360e3e742f4f70ff63c9bc3",
       "sha256": "806400ec0df94b0755de6c5b8249d6b6a9866124c5ddbdac198bde22499bfb8b",
@@ -68917,6 +69214,23 @@
       "category": "game_data"
     },
     {
+      "dest": "bios/doom2.wad",
+      "sha1": "6d559b7ceece4f5ad457415049711992370d520a",
+      "sha256": "5e701c806a8d3a03700f7fef97b7ad62d0aed50fd240dfac26cdf39ac3d0a8d5",
+      "size": 14943400,
+      "repo_path": "bios/Game Engines/DOOM/doom2.wad",
+      "cores": [
+        "chocolate-doom",
+        "gzdoom",
+        "lzdoom",
+        "prboom"
+      ],
+      "systems": [
+        "doom"
+      ],
+      "category": "game_data"
+    },
+    {
       "dest": "bios/dinothawr/dinothawr.game",
       "sha1": "566fd769c8026151e27f3956849b7840532797fd",
       "sha256": "da6ade3c5a9bc1cf78dbf3c13d3cbdc7b650c63ec9a256c6c6927fcc103563ae",
@@ -69078,22 +69392,6 @@
       "systems": [
         "microsoft-msx"
       ]
-    },
-    {
-      "dest": "bios/doom2.wad",
-      "sha1": "6d559b7ceece4f5ad457415049711992370d520a",
-      "sha256": "5e701c806a8d3a03700f7fef97b7ad62d0aed50fd240dfac26cdf39ac3d0a8d5",
-      "size": 14943400,
-      "repo_path": "bios/Game Engines/DOOM/doom2.wad",
-      "cores": [
-        "gzdoom",
-        "lzdoom",
-        "prboom"
-      ],
-      "systems": [
-        "doom"
-      ],
-      "category": "game_data"
     },
     {
       "dest": "bios/cdibios.zip",

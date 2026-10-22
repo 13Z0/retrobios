@@ -224,7 +224,7 @@ nav:
   - sdlpal: systems/sdlpal.md
 - Emulators:
   - Overview: emulators/index.md
-  - Official ports (78):
+  - Official ports (79):
     - amiarcadia: emulators/amiarcadia.md
     - Amiberry: emulators/amiberry.md
     - Ardens: emulators/ardens.md
@@ -272,6 +272,7 @@ nav:
     - mesen-s: emulators/mesen-s.md
     - mGBA: emulators/mgba.md
     - Mr.Boom: emulators/mrboom.md
+    - Mupen64Plus: emulators/mupen64plus.md
     - Nuance: emulators/nuance.md
     - Panda3DS: emulators/panda3ds.md
     - PCSX2: emulators/pcsx2.md
@@ -303,7 +304,7 @@ nav:
     - WQXEmu: emulators/wqxemu.md
     - yabasanshiro: emulators/yabasanshiro.md
     - Yuzu: emulators/yuzu.md
-  - Community forks (190):
+  - Community forks (191):
     - 2600.emu: emulators/2600-emu.md
     - EightyOne: emulators/81.md
     - a5200: emulators/a5200.md
@@ -432,6 +433,7 @@ nav:
     - PCem: emulators/pcem.md
     - PCSX1: emulators/pcsx1.md
     - PD777: emulators/pd777.md
+    - P/EMU/SDL: emulators/piemu.md
     - PokeMini: emulators/pokemini.md
     - Potator: emulators/potator.md
     - ProSystem: emulators/prosystem.md
@@ -547,19 +549,23 @@ nav:
     - uzem: emulators/uzem.md
     - video_processor: emulators/video_processor.md
     - VirtualXT: emulators/virtualxt.md
-  - Game engines (108):
+  - Game engines (117):
     - 2 Ship 2 Harkinian: emulators/2ship.md
     - Abuse: emulators/abuse.md
     - Adventure Game Studio: emulators/ags.md
     - Aleph One: emulators/alephone.md
+    - BennuGD monolithic (bgdi): emulators/bennugd-monolithic.md
+    - Bermuda Syndrome (bs): emulators/bermuda.md
     - boom3: emulators/boom3.md
     - BStone: emulators/bstone.md
     - Bermuda Syndrome: emulators/bsyndrome.md
     - Cannonball: emulators/cannonball.md
     - CatacombGL: emulators/catacombgl.md
+    - ccleste: emulators/ccleste.md
     - C-Dogs SDL: emulators/cdogs.md
     - Commander Genius: emulators/cgenius.md
     - ChaiLove: emulators/chailove.md
+    - Chocolate Doom: emulators/chocolate-doom.md
     - corsixth: emulators/corsixth.md
     - DarkPlaces: emulators/darkplaces.md
     - devilutionx: emulators/devilutionx.md
@@ -575,6 +581,7 @@ nav:
     - FAKE-08: emulators/fake08.md
     - fallout1-ce: emulators/fallout1-ce.md
     - fallout2-ce: emulators/fallout2-ce.md
+    - fheroes2: emulators/fheroes2.md
     - Frotz: emulators/frotz.md
     - Ion Fury: emulators/fury.md
     - future-pinball: emulators/future-pinball.md
@@ -583,6 +590,7 @@ nav:
     - Ghostship: emulators/ghostship.md
     - GZDoom: emulators/gzdoom.md
     - Hydra Castle Labyrinth: emulators/hcl.md
+    - hode: emulators/hode.md
     - Hurrican: emulators/hurrican.md
     - idTech4A++: emulators/idtech4a++.md
     - Ikemen GO: emulators/ikemen.md
@@ -634,6 +642,9 @@ nav:
     - Starship: emulators/starship.md
     - Stratagus: emulators/stratagus.md
     - Super Bros War: emulators/superbroswar.md
+    - Super Mario War: emulators/supermariowar.md
+    - SuperTux: emulators/supertux.md
+    - SuperTuxKart: emulators/supertuxkart.md
     - Taradino: emulators/taradino.md
     - The Force Engine: emulators/theforceengine.md
     - TheXTech: emulators/thextech.md
@@ -656,8 +667,9 @@ nav:
     - Zelda Classic v2.10: emulators/zc210.md
     - Zelda Classic 2.55 Prototype: emulators/zc255.md
     - ZQuest Classic: emulators/zquestclassic.md
-  - Enhanced forks (34):
+  - Enhanced forks (36):
     - A7800: emulators/a7800.md
+    - advanced_drastic: emulators/advanced_drastic.md
     - AdvanceMAME: emulators/advancemame.md
     - bsnes-hd beta: emulators/bsnes_hd_beta.md
     - bsnes-mercury: emulators/bsnes_mercury.md
@@ -666,6 +678,7 @@ nav:
     - DOSBox Pure: emulators/dosbox_pure.md
     - DoubleCherryGB: emulators/doublecherrygb.md
     - Flycast Dojo: emulators/flycast-dojo.md
+    - Flycast 2022 Low-End: emulators/flycast2021le.md
     - FreeJ2ME-Plus: emulators/freej2me_plus.md
     - future-pinball-fploader: emulators/future-pinball-fploader.md
     - Genesis Plus GX Expanded: emulators/genesis_plus_gx_expanded.md
@@ -691,7 +704,7 @@ nav:
     - Triforce: emulators/triforce.md
     - xm6pro68k: emulators/xm6pro68k.md
     - xm6typeg: emulators/xm6typeg.md
-  - Frozen snapshots (50):
+  - Frozen snapshots (52):
     - AdvanceMAME 0.94: emulators/advmame-0.94.md
     - AdvanceMAME 1.4: emulators/advmame-1.4.md
     - bnes: emulators/bnes.md
@@ -701,6 +714,7 @@ nav:
     - Citra 2018: emulators/citra2018.md
     - Cxbx-Reloaded (31ff15b): emulators/cxbx-reloaded-2023.md
     - DeSmuME 2015: emulators/desmume2015.md
+    - DuckStation (legacy): emulators/duckstation-legacy.md
     - piFBA (fba2x): emulators/fba2x.md
     - FB Alpha 2012: emulators/fbalpha2012.md
     - FB Alpha 2012 CPS-1: emulators/fbalpha2012_cps1.md
@@ -726,6 +740,7 @@ nav:
     - mednafen_gba: emulators/mednafen_gba.md
     - mednafen_snes: emulators/mednafen_snes.md
     - MESS 2015: emulators/mess2015.md
+    - Mupen64Plus (libretro, 2019): emulators/mupen64plus-libretro.md
     - NicaiEmu: emulators/nicaiemu.md
     - PCSX2 Legacy: emulators/pcsx2-legacy.md
     - PiSNES: emulators/pisnes.md
