@@ -120,7 +120,7 @@ Full list with per-file details: **[https://abdess.github.io/retrobios/](https:/
 | Recalbox | 351/351 | 2,762/2,933 | MD5 hash |
 | RetroArch | 526/526 | 7,691/7,733 | file presence |
 | RetroBat | 348/348 | 4,752/9,218 | MD5 hash |
-| RetroDECK | 2,007/2,008 | 6,287/6,547 | MD5 hash |
+| RetroDECK | 2,007/2,008 | 6,480/6,741 | MD5 hash |
 | RetroPie * | 532/532 | 7,858/12,489 | file presence |
 | RomM | 383/383 | 83/860 | MD5 hash |
 
@@ -209,4 +209,4 @@ The scripts and tooling are released under the [MIT License](LICENSE).
 The BIOS and firmware files are not covered by that license: they are third-party system software, preserved and provided for personal backup, archival, and interoperability with emulation software. [NOTICE](NOTICE) sets out their status and how to ask for a file to be removed.
 The reasoning, and where it is weakest, is in [the project's legal position](https://abdess.github.io/retrobios/wiki/legal/).
 
-*Auto-generated on 2026-10-22T19:15:47Z*
+*Auto-generated on 2026-10-22T20:58:47Z*
