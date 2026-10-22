@@ -102,8 +102,17 @@ the save directory beside it (`saves`, `/storage/savefiles` on Lakka).
 applies, or when `savefiles_in_content_dir` or
 `sort_savefiles_by_content_enable` keeps saves beside each game, those files
 are left out and the run says why, like the other entries the list cannot
-install. Batocera, RetroBat and RetroPie hand each system or game a save folder
-of its own: their lists record these files as omitted.
+install.
+
+Batocera, KNULLI, Recalbox, RetroBat and RetroDECK write the save directory at
+each launch, one folder per system (`by_system` in the file list). Their lists
+already name each system's folder (`gamecube/User/GBA/gba_bios.bin`), and the
+run writes below the `saves` folder beside the BIOS folder (`/userdata/saves`,
+`/recalbox/share/saves`, `~/retrodeck/saves`), never reading a
+`retroarch.cfg` that only holds the last launch. EmuDeck's RetroArch config
+names `~/Emulation/saves/retroarch/saves`. RetroPie, ROCKNIX, AmberELEC and
+EmuELEC keep saves beside each game, and RomM keeps them in the browser: their
+lists record these files as omitted.
 
 A RetroArch run into an empty folder printed this on 2026-10-21:
 

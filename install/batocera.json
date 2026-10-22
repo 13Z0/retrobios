@@ -274,11 +274,11 @@
       }
     }
   ],
-  "total_files": 14508,
-  "total_size": 9590599187,
-  "pack_files": 14510,
-  "pack_size": 9590599187,
-  "total_omitted": 415,
+  "total_files": 14531,
+  "total_size": 9893543681,
+  "pack_files": 14533,
+  "pack_size": 9893543681,
+  "total_omitted": 400,
   "omitted_files": [
     {
       "dest": "AUDIO.APC",
@@ -499,19 +499,6 @@
         "catacombgl"
       ],
       "category": "game_data"
-    },
-    {
-      "dest": "FB Alpha 2012/hiscore.dat",
-      "root": "save",
-      "core_folder": "FB Alpha 2012",
-      "name": "hiscore.dat",
-      "system": "arcade",
-      "required": false,
-      "reason": "no_save_directory",
-      "cores": [
-        "fbalpha2012"
-      ],
-      "held": true
     },
     {
       "dest": "GAMEMAPS.APC",
@@ -1086,97 +1073,6 @@
       "category": "game_data"
     },
     {
-      "dest": "Stella/stella/KVB1.WAV",
-      "root": "save",
-      "core_folder": "Stella",
-      "name": "KVB1.WAV",
-      "system": "",
-      "required": false,
-      "reason": "no_save_directory",
-      "cores": [
-        "stella"
-      ],
-      "category": "game_data"
-    },
-    {
-      "dest": "Stella/stella/KVB2.WAV",
-      "root": "save",
-      "core_folder": "Stella",
-      "name": "KVB2.WAV",
-      "system": "",
-      "required": false,
-      "reason": "no_save_directory",
-      "cores": [
-        "stella"
-      ],
-      "category": "game_data"
-    },
-    {
-      "dest": "Stella/stella/KVB3.WAV",
-      "root": "save",
-      "core_folder": "Stella",
-      "name": "KVB3.WAV",
-      "system": "",
-      "required": false,
-      "reason": "no_save_directory",
-      "cores": [
-        "stella"
-      ],
-      "category": "game_data"
-    },
-    {
-      "dest": "Stella/stella/KVS1.WAV",
-      "root": "save",
-      "core_folder": "Stella",
-      "name": "KVS1.WAV",
-      "system": "",
-      "required": false,
-      "reason": "no_save_directory",
-      "cores": [
-        "stella"
-      ],
-      "category": "game_data"
-    },
-    {
-      "dest": "Stella/stella/KVS2.WAV",
-      "root": "save",
-      "core_folder": "Stella",
-      "name": "KVS2.WAV",
-      "system": "",
-      "required": false,
-      "reason": "no_save_directory",
-      "cores": [
-        "stella"
-      ],
-      "category": "game_data"
-    },
-    {
-      "dest": "Stella/stella/KVS3.WAV",
-      "root": "save",
-      "core_folder": "Stella",
-      "name": "KVS3.WAV",
-      "system": "",
-      "required": false,
-      "reason": "no_save_directory",
-      "cores": [
-        "stella"
-      ],
-      "category": "game_data"
-    },
-    {
-      "dest": "Stella/stella/KVSHARED.WAV",
-      "root": "save",
-      "core_folder": "Stella",
-      "name": "KVSHARED.WAV",
-      "system": "",
-      "required": false,
-      "reason": "no_save_directory",
-      "cores": [
-        "stella"
-      ],
-      "category": "game_data"
-    },
-    {
       "dest": "System BIOS image",
       "name": "System BIOS image",
       "system": "dos",
@@ -1603,94 +1499,6 @@
         "devilutionx"
       ],
       "category": "game_data"
-    },
-    {
-      "dest": "dolphin-emu/User/GBA/gba_bios.bin",
-      "root": "save",
-      "core_folder": "dolphin-emu",
-      "name": "gba_bios.bin",
-      "system": "",
-      "required": false,
-      "reason": "no_save_directory",
-      "cores": [
-        "dolphin"
-      ],
-      "systems": [
-        "nintendo-gba"
-      ],
-      "held": true
-    },
-    {
-      "dest": "dolphin-emu/User/Load/WiiSD.raw",
-      "root": "save",
-      "core_folder": "dolphin-emu",
-      "name": "WiiSD.raw",
-      "system": "",
-      "required": false,
-      "reason": "no_save_directory",
-      "cores": [
-        "dolphin"
-      ]
-    },
-    {
-      "dest": "dolphin-emu/User/Wii/clientca.pem",
-      "root": "save",
-      "core_folder": "dolphin-emu",
-      "name": "clientca.pem",
-      "system": "",
-      "required": false,
-      "reason": "no_save_directory",
-      "cores": [
-        "dolphin"
-      ]
-    },
-    {
-      "dest": "dolphin-emu/User/Wii/clientcakey.pem",
-      "root": "save",
-      "core_folder": "dolphin-emu",
-      "name": "clientcakey.pem",
-      "system": "",
-      "required": false,
-      "reason": "no_save_directory",
-      "cores": [
-        "dolphin"
-      ]
-    },
-    {
-      "dest": "dolphin-emu/User/Wii/rootca.pem",
-      "root": "save",
-      "core_folder": "dolphin-emu",
-      "name": "rootca.pem",
-      "system": "",
-      "required": false,
-      "reason": "no_save_directory",
-      "cores": [
-        "dolphin"
-      ]
-    },
-    {
-      "dest": "dolphin-emu/User/Wii/shared2/sys/SYSCONF",
-      "root": "save",
-      "core_folder": "dolphin-emu",
-      "name": "SYSCONF",
-      "system": "",
-      "required": false,
-      "reason": "no_save_directory",
-      "cores": [
-        "dolphin"
-      ]
-    },
-    {
-      "dest": "dolphin-emu/User/Wii/title/00000001/00000002/data/setting.txt",
-      "root": "save",
-      "core_folder": "dolphin-emu",
-      "name": "setting.txt",
-      "system": "",
-      "required": false,
-      "reason": "no_save_directory",
-      "cores": [
-        "dolphin"
-      ]
     },
     {
       "dest": "doom2bfg.wad",
@@ -178537,6 +178345,220 @@
       ]
     },
     {
+      "dest": "gamecube/User/GBA/gba_bios.bin",
+      "sha1": "300c20df6731a33952ded8c436f7f186d25d3492",
+      "sha256": "fd2547724b505f487e6dcb29ec2ecff3af35a841a77ab2e85fd87350abd36570",
+      "size": 16384,
+      "repo_path": "bios/Nintendo/Game Boy Advance/GBA_bios.rom",
+      "cores": [
+        "dolphin"
+      ],
+      "systems": [
+        "nintendo-gamecube",
+        "triforce"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "wii/User/GBA/gba_bios.bin",
+      "sha1": "300c20df6731a33952ded8c436f7f186d25d3492",
+      "sha256": "fd2547724b505f487e6dcb29ec2ecff3af35a841a77ab2e85fd87350abd36570",
+      "size": 16384,
+      "repo_path": "bios/Nintendo/Game Boy Advance/GBA_bios.rom",
+      "cores": [
+        "dolphin"
+      ],
+      "systems": [
+        "nintendo-gamecube",
+        "triforce"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "gamecube/User/Wii/shared2/sys/SYSCONF",
+      "sha1": "3256c026284a24fb99d2ec1558d95db3b5dcc2e9",
+      "sha256": "a8ec1ec377ee3a3c93a27f74dadf9edf95112ce167fc23d1abdbeb4fa15eb179",
+      "size": 16384,
+      "repo_path": "bios/Nintendo/Wii/SYSCONF",
+      "cores": [
+        "dolphin"
+      ],
+      "systems": [
+        "nintendo-gamecube",
+        "triforce"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "wii/User/Wii/shared2/sys/SYSCONF",
+      "sha1": "3256c026284a24fb99d2ec1558d95db3b5dcc2e9",
+      "sha256": "a8ec1ec377ee3a3c93a27f74dadf9edf95112ce167fc23d1abdbeb4fa15eb179",
+      "size": 16384,
+      "repo_path": "bios/Nintendo/Wii/SYSCONF",
+      "cores": [
+        "dolphin"
+      ],
+      "systems": [
+        "nintendo-gamecube",
+        "triforce"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "gamecube/User/Wii/title/00000001/00000002/data/setting.txt",
+      "sha1": "077a31ce116de322f089a627c5eb7ff5c2236a5d",
+      "sha256": "5e17f8bc2444048c944e92a4f3b2a89a6f7f06398a17b2552be8d32e52c6f9db",
+      "size": 256,
+      "repo_path": "bios/Nintendo/Wii/setting.txt",
+      "cores": [
+        "dolphin"
+      ],
+      "systems": [
+        "nintendo-gamecube",
+        "triforce"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "wii/User/Wii/title/00000001/00000002/data/setting.txt",
+      "sha1": "077a31ce116de322f089a627c5eb7ff5c2236a5d",
+      "sha256": "5e17f8bc2444048c944e92a4f3b2a89a6f7f06398a17b2552be8d32e52c6f9db",
+      "size": 256,
+      "repo_path": "bios/Nintendo/Wii/setting.txt",
+      "cores": [
+        "dolphin"
+      ],
+      "systems": [
+        "nintendo-gamecube",
+        "triforce"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "gamecube/User/Load/WiiSD.raw",
+      "sha1": "90d83d6c084deceeeb0466ac00723723ccfd0c6d",
+      "sha256": "6ea30c50325dba6adeaf0b5841956a7074534cf2aac5ff4160d5279226f56047",
+      "size": 134217728,
+      "repo_path": "bios/Nintendo/Wii/WiiSD.raw",
+      "cores": [
+        "dolphin"
+      ],
+      "systems": [
+        "nintendo-gamecube",
+        "triforce"
+      ],
+      "storage": "release",
+      "release_asset": "WiiSD.raw",
+      "root": "save"
+    },
+    {
+      "dest": "wii/User/Load/WiiSD.raw",
+      "sha1": "90d83d6c084deceeeb0466ac00723723ccfd0c6d",
+      "sha256": "6ea30c50325dba6adeaf0b5841956a7074534cf2aac5ff4160d5279226f56047",
+      "size": 134217728,
+      "repo_path": "bios/Nintendo/Wii/WiiSD.raw",
+      "cores": [
+        "dolphin"
+      ],
+      "systems": [
+        "nintendo-gamecube",
+        "triforce"
+      ],
+      "storage": "release",
+      "release_asset": "WiiSD.raw",
+      "root": "save"
+    },
+    {
+      "dest": "gamecube/User/Wii/clientca.pem",
+      "sha1": "4b937d4e81de11574b926386dd5f768aa23bf177",
+      "sha256": "229ec678525e060588e8ea23e5459ec14af3c2ebb7b9e69ec46b0faf011730d9",
+      "size": 1005,
+      "repo_path": "bios/Nintendo/Wii/clientca.pem",
+      "cores": [
+        "dolphin"
+      ],
+      "systems": [
+        "nintendo-gamecube",
+        "triforce"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "wii/User/Wii/clientca.pem",
+      "sha1": "4b937d4e81de11574b926386dd5f768aa23bf177",
+      "sha256": "229ec678525e060588e8ea23e5459ec14af3c2ebb7b9e69ec46b0faf011730d9",
+      "size": 1005,
+      "repo_path": "bios/Nintendo/Wii/clientca.pem",
+      "cores": [
+        "dolphin"
+      ],
+      "systems": [
+        "nintendo-gamecube",
+        "triforce"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "gamecube/User/Wii/clientcakey.pem",
+      "sha1": "a2c11886e6d12a135e1d5eb50d5fe92e028577d9",
+      "sha256": "723be9b32c3afb83a4a3757adf352529e90c0ad6fad52509963ba8942ae625df",
+      "size": 609,
+      "repo_path": "bios/Nintendo/Wii/clientcakey.pem",
+      "cores": [
+        "dolphin"
+      ],
+      "systems": [
+        "nintendo-gamecube",
+        "triforce"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "wii/User/Wii/clientcakey.pem",
+      "sha1": "a2c11886e6d12a135e1d5eb50d5fe92e028577d9",
+      "sha256": "723be9b32c3afb83a4a3757adf352529e90c0ad6fad52509963ba8942ae625df",
+      "size": 609,
+      "repo_path": "bios/Nintendo/Wii/clientcakey.pem",
+      "cores": [
+        "dolphin"
+      ],
+      "systems": [
+        "nintendo-gamecube",
+        "triforce"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "gamecube/User/Wii/rootca.pem",
+      "sha1": "b5229455dd26c1f53c73060e9089b391389e1f75",
+      "sha256": "c5b0f8dfcec6b9ed2ac38b8bc69a4db7c209dc177d243c8df2bddf9e39171e5f",
+      "size": 897,
+      "repo_path": "bios/Nintendo/Wii/rootca.pem",
+      "cores": [
+        "dolphin"
+      ],
+      "systems": [
+        "nintendo-gamecube",
+        "triforce"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "wii/User/Wii/rootca.pem",
+      "sha1": "b5229455dd26c1f53c73060e9089b391389e1f75",
+      "sha256": "c5b0f8dfcec6b9ed2ac38b8bc69a4db7c209dc177d243c8df2bddf9e39171e5f",
+      "size": 897,
+      "repo_path": "bios/Nintendo/Wii/rootca.pem",
+      "cores": [
+        "dolphin"
+      ],
+      "systems": [
+        "nintendo-gamecube",
+        "triforce"
+      ],
+      "root": "save"
+    },
+    {
       "dest": "GC/dsp_rom.bin",
       "sha1": "3c6cc6e04fdd0b2a392d7a6ed769455444846be7",
       "sha256": "49d987ee1eab29a157425b82d54516957a81e1bac247c8834e494642605c3e8c",
@@ -179621,6 +179643,28 @@
           ]
         }
       ]
+    },
+    {
+      "dest": "fbneo/hiscore.dat",
+      "sha1": "7381472bf046126257e51a0124e4553282f020e5",
+      "sha256": "9d44fc928c0df41debad1b86739bd6ca96a5891b3b499f6fb3d7e9ea95ca8de5",
+      "size": 322458,
+      "repo_path": "bios/Arcade/Arcade/hiscore.dat",
+      "cores": [
+        "fbalpha2012"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "neogeo/hiscore.dat",
+      "sha1": "7381472bf046126257e51a0124e4553282f020e5",
+      "sha256": "9d44fc928c0df41debad1b86739bd6ca96a5891b3b499f6fb3d7e9ea95ca8de5",
+      "size": 322458,
+      "repo_path": "bios/Arcade/Arcade/hiscore.dat",
+      "cores": [
+        "fbalpha2012"
+      ],
+      "root": "save"
     },
     {
       "dest": "fba2012/samples/dkong.zip",
@@ -242620,6 +242664,90 @@
       ]
     },
     {
+      "dest": "atari2600/stella/KVS1.WAV",
+      "sha1": "b094c2c1fca81a0e531e0541f302346150ec4604",
+      "sha256": "8bf8d878db407cc81b4c8a05069d3aa35e0e7bff803112d4d0eba637d60fe12c",
+      "size": 3436329,
+      "repo_path": "bios/Atari/2600/KVS1.WAV",
+      "cores": [
+        "stella"
+      ],
+      "root": "save",
+      "category": "game_data"
+    },
+    {
+      "dest": "atari2600/stella/KVS2.WAV",
+      "sha1": "8b83b2eea01b3e08ceb885aeb153d4084bddb63c",
+      "sha256": "d031b9534ba75d870365657f578ed18c0cc513ebe9b253be7d80114c7ae4210d",
+      "size": 2086275,
+      "repo_path": "bios/Atari/2600/KVS2.WAV",
+      "cores": [
+        "stella"
+      ],
+      "root": "save",
+      "category": "game_data"
+    },
+    {
+      "dest": "atari2600/stella/KVS3.WAV",
+      "sha1": "86896a1e272d8715489de9b407f0b8a42f82d4a0",
+      "sha256": "4e47d32533feebfa9625ea818183edcd519b8cb6516bf3db11dc9a01ada6878b",
+      "size": 3720920,
+      "repo_path": "bios/Atari/2600/KVS3.WAV",
+      "cores": [
+        "stella"
+      ],
+      "root": "save",
+      "category": "game_data"
+    },
+    {
+      "dest": "atari2600/stella/KVB1.WAV",
+      "sha1": "6a582aebcefd6e2a97bdd8968202aab9851a889c",
+      "sha256": "968937d09e17ca059cdc5f092161ba172c56ff31bc945e381638c79bf7a7e4e2",
+      "size": 4219542,
+      "repo_path": "bios/Atari/2600/KVB1.WAV",
+      "cores": [
+        "stella"
+      ],
+      "root": "save",
+      "category": "game_data"
+    },
+    {
+      "dest": "atari2600/stella/KVB2.WAV",
+      "sha1": "60a425c6bde3226ab731995562716321be20fc49",
+      "sha256": "6ac885493469e68992b0d272264b4b0947e7d6a5c6fd0170c65299acc386c122",
+      "size": 9593878,
+      "repo_path": "bios/Atari/2600/KVB2.WAV",
+      "cores": [
+        "stella"
+      ],
+      "root": "save",
+      "category": "game_data"
+    },
+    {
+      "dest": "atari2600/stella/KVB3.WAV",
+      "sha1": "5e34125c4d6c209b21d1c892f3df0ec1644fd0d8",
+      "sha256": "76acf3b4e607cc851c625d455ced2b099dc394460d8716c02420904960842e34",
+      "size": 7676992,
+      "repo_path": "bios/Atari/2600/KVB3.WAV",
+      "cores": [
+        "stella"
+      ],
+      "root": "save",
+      "category": "game_data"
+    },
+    {
+      "dest": "atari2600/stella/KVSHARED.WAV",
+      "sha1": "9adf10cdf1de833b194c7d8797ad1f041ad98dd3",
+      "sha256": "589b37725aeb9801868deafa2940c6eacb15430d4051ada7942298561f3014b6",
+      "size": 3059116,
+      "repo_path": "bios/Atari/2600/KVSHARED.WAV",
+      "cores": [
+        "stella"
+      ],
+      "root": "save",
+      "category": "game_data"
+    },
+    {
       "dest": "REMOTE1.RTS",
       "sha1": "945f1c126de553cd6e11b9c40e9dd05a103ee25a",
       "sha256": "7901e0102436b3d153a747e1d7b7fe18a4af113701e4dc9ba4764fb997d7d88b",
@@ -247461,5 +247589,10 @@
         "sony-playstation-2"
       ]
     }
-  ]
+  ],
+  "save_directory": {
+    "folder": "saves",
+    "by_core": false,
+    "by_system": true
+  }
 }

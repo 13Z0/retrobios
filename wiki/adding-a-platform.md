@@ -226,6 +226,16 @@ platform hands it no folder. `platform_layouts` builds one view per directory,
 so the builder, the manifest, verify and slots read the same placement, and the
 resolver still looks the collection up by the core's own path.
 
+A launcher that hands each libretro core a save directory per system needs to
+know which systems run each core. The scraper writes `libretro_systems`, each
+libretro core name with the systems the platform's own list offers it for, under
+the name the launcher puts in the path: Batocera and KNULLI from `es_systems.yml`
+(`libretro:` entries), RetroBat from `es_systems.cfg`, Recalbox from each
+`system.ini`, RetroDECK from the ROM folders of the ES-DE commands that load the
+core. With `save_directory.by_system`, a file a core reads below its save
+directory goes once below each of those folders, and a core no system runs is
+listed as omitted (`no_save_system`).
+
 ### Guide text
 
 `platforms/_guides.yml` holds each platform's guide: what it is, where its
@@ -287,9 +297,16 @@ that text belongs in a guide field.
     save_directory:                  # the save directory the frontend hands libretro cores,
       folder: saves                  # where it is one place: the pack folder holding the
       by_core: true                  # files cores read there (load_from: save_dir), its
-                                     # default place beside the BIOS folder, and whether
+                                     # default place beside the BIOS folder (a relative
+                                     # path, saves/retroarch/saves on EmuDeck), and whether
                                      # the frontend appends the core's library_name.
-                                     # null when it is one folder per game or system
+      by_system: true                # the launcher hands <folder>/<system> at each launch
+                                     # (Batocera, RetroBat): one copy per system in the
+                                     # platform file's libretro_systems
+      by_core_for: [dolphin]         # cores the launcher alone sorts by core (RetroBat)
+      pack_folder: userdata-saves    # the pack's folder for them, where the BIOS tree
+                                     # already has one named like folder (Batocera)
+                                     # null when saves sit beside each game
     zip_digest: composite            # the frontend hashes a .zip by its members only
     firmware_folder_flat: true       # the frontend lists each system folder without
                                      # descending into it

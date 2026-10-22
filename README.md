@@ -106,21 +106,21 @@ Full list with per-file details: **[https://abdess.github.io/retrobios/](https:/
 | Platform | On its BIOS list | Files its emulators load | Checked by |
 |----------|-----------------:|-------------------------:|------------|
 | AmberELEC | 414/434 | 4,551/4,663 | MD5 hash |
-| Batocera | 353/353 | 13,943/15,053 | MD5 hash |
+| Batocera | 353/353 | 13,958/15,053 | MD5 hash |
 | BizHawk | 118/118 | - | SHA1 hash |
-| EmuDeck | 168/168 | 8,158/8,272 | MD5 hash |
+| EmuDeck | 168/168 | 8,195/8,272 | MD5 hash |
 | EmuELEC | 544/572 | 4,597/9,956 | MD5 hash |
-| KNULLI | 290/290 | 8,892/15,114 | MD5 hash |
+| KNULLI | 290/290 | 8,915/15,114 | MD5 hash |
 | Lakka | 532/532 | 7,682/7,742 | file presence |
 | MiSTer FPGA | 81/81 | - | MD5 hash |
 | MinUI | 0/0 | 78/79 | file presence |
 | MyMinUI | 0/0 | 347/356 | file presence |
 | NextUI | 0/0 | 343/349 | file presence |
 | ROCKNIX | 38/38 | 7,078/8,397 | MD5 hash |
-| Recalbox | 351/351 | 2,748/2,933 | MD5 hash |
+| Recalbox | 351/351 | 2,762/2,933 | MD5 hash |
 | RetroArch | 526/526 | 7,691/7,733 | file presence |
-| RetroBat | 348/348 | 4,729/9,218 | MD5 hash |
-| RetroDECK | 2,007/2,008 | 6,258/6,547 | MD5 hash |
+| RetroBat | 348/348 | 4,752/9,218 | MD5 hash |
+| RetroDECK | 2,007/2,008 | 6,287/6,547 | MD5 hash |
 | RetroPie * | 532/532 | 7,858/12,489 | file presence |
 | RomM | 383/383 | 83/860 | MD5 hash |
 
@@ -209,4 +209,4 @@ The scripts and tooling are released under the [MIT License](LICENSE).
 The BIOS and firmware files are not covered by that license: they are third-party system software, preserved and provided for personal backup, archival, and interoperability with emulation software. [NOTICE](NOTICE) sets out their status and how to ask for a file to be removed.
 The reasoning, and where it is weakest, is in [the project's legal position](https://abdess.github.io/retrobios/wiki/legal/).
 
-*Auto-generated on 2026-10-22T17:48:21Z*
+*Auto-generated on 2026-10-22T19:15:47Z*

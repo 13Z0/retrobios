@@ -876,6 +876,7 @@ _UNPLACED_REASONS = {
     "below_platform_folder": "below the folder the platform lists",
     "no_save_directory": "read below a save directory the platform keeps in no fixed place",
     "no_core_folder": "read below the save directory and the profile names no library_name",
+    "no_save_system": "read below a save folder per system and no system runs the core there",
 }
 
 

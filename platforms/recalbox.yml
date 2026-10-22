@@ -3409,6 +3409,431 @@ systems:
       mandatory_declared: true
       native_name: ST-V
     native_id: stv
+libretro_systems:
+  "2048":
+  - "2048"
+  "81":
+  - zx81
+  a5200:
+  - atari5200
+  amiberry:
+  - amiga1200
+  - amiga600
+  - amigacd32
+  - amigacdtv
+  applewin:
+  - apple2
+  arduous:
+  - arduboy
+  atari800:
+  - atari5200
+  - atari800
+  b2:
+  - bbcmicro
+  bk:
+  - bk
+  bluemsx:
+  - colecovision
+  - msx1
+  - msx2
+  - msxturbor
+  - multivision
+  - sg1000
+  - spectravideo
+  boom3:
+  - doom3
+  bsnes:
+  - gb
+  - gbc
+  - satellaview
+  - snes
+  bsneshd:
+  - satellaview
+  - snes
+  cannonball:
+  - outrun
+  cap32:
+  - amstradcpc
+  - gx4000
+  cdi2015:
+  - cdi
+  craft:
+  - minecraft
+  crocods:
+  - amstradcpc
+  desmume:
+  - nds
+  dice:
+  - dice
+  dinothawr:
+  - dinothawr
+  dirksimple:
+  - daphne
+  dolphin:
+  - gamecube
+  - wii
+  dosbox_pure:
+  - dos
+  easyrpg:
+  - easyrpg
+  ecwolf:
+  - wolfenstein3d
+  eightyone:
+  - zx81
+  - zxspectrum
+  emuscv:
+  - scv
+  exel-hence:
+  - exl100
+  fake08:
+  - pico8
+  fbneo:
+  - channelf
+  - colecovision
+  - fbneo
+  - fds
+  - gamegear
+  - mastersystem
+  - megadrive
+  - msx1
+  - neogeo
+  - neogeocd
+  - nes
+  - ngp
+  - pcengine
+  - sg1000
+  - supergrafx
+  - zxspectrum
+  fceumm:
+  - fds
+  - nes
+  flycast:
+  - 240ptestsuite
+  - atomiswave
+  - dreamcast
+  - naomi
+  - naomigd
+  flycast-next:
+  - atomiswave
+  - dreamcast
+  - naomi
+  - naomi2
+  - naomigd
+  fmsx:
+  - msx1
+  - msx2
+  freechaf:
+  - channelf
+  freeintv:
+  - intellivision
+  fuse:
+  - zxspectrum
+  gambatte:
+  - 240ptestsuite
+  - gb
+  - gbc
+  gearcoleco:
+  - colecovision
+  geargrafx:
+  - pcengine
+  - pcenginecd
+  - supergrafx
+  gearsystem:
+  - gamegear
+  - mastersystem
+  - multivision
+  - sg1000
+  genesisplusgx:
+  - 240ptestsuite
+  - gamegear
+  - mastersystem
+  - megadrive
+  - segacd
+  - sg1000
+  genesisplusgx_ex:
+  - megadrive
+  genesisplusgxwide:
+  - megadrive
+  geolith:
+  - neogeo
+  - neogeocd
+  gong:
+  - gong
+  gpsp:
+  - gba
+  gw:
+  - gw
+  handy:
+  - lynx
+  hatari:
+  - atarist
+  hatarib:
+  - atarist
+  holani:
+  - lynx
+  hypseus_singe:
+  - daphne
+  imageviewer:
+  - imageviewer
+  kronos:
+  - saturn
+  - stv
+  lowresnx:
+  - lowresnx
+  lutro:
+  - lutro
+  m2000:
+  - p2000t
+  mame0258:
+  - mame
+  mame0278:
+  - mame
+  mame2000:
+  - mame
+  - neogeo
+  mame2003:
+  - mame
+  - neogeo
+  mame2003_plus:
+  - mame
+  - neogeo
+  mame2010:
+  - mame
+  - neogeo
+  mame2015:
+  - mame
+  - neogeo
+  mame2016:
+  - neogeo
+  mednafen_lynx:
+  - lynx
+  mednafen_ngp:
+  - ngp
+  - ngpc
+  mednafen_pce_fast:
+  - pcengine
+  - pcenginecd
+  mednafen_pcfx:
+  - pcfx
+  mednafen_psx:
+  - psx
+  mednafen_psx_hw:
+  - psx
+  mednafen_saturn:
+  - saturn
+  mednafen_stv:
+  - stv
+  mednafen_supafaust:
+  - snes
+  mednafen_supergrafx:
+  - 240ptestsuite
+  - pcengine
+  - pcenginecd
+  - supergrafx
+  mednafen_vb:
+  - virtualboy
+  mednafen_wswan:
+  - pcv2
+  - wswan
+  - wswanc
+  melonds:
+  - nds
+  mesen:
+  - fds
+  - nes
+  mesen_s:
+  - gb
+  - gbc
+  - satellaview
+  - snes
+  meteor:
+  - gba
+  mgba:
+  - 240ptestsuite
+  - gb
+  - gba
+  - gbc
+  minivmac:
+  - macintosh
+  mojozork:
+  - zmachine
+  mrboom:
+  - mrboom
+  mu:
+  - palm
+  mupen64plus:
+  - n64
+  mupen64plus_next:
+  - 64dd
+  - n64
+  neocd:
+  - neogeocd
+  nestopia:
+  - 240ptestsuite
+  - fds
+  - nes
+  np2kai:
+  - pc98
+  nxengine:
+  - cavestory
+  o2em:
+  - o2em
+  - videopacplus
+  opera:
+  - 3do
+  parallel_n64:
+  - 64dd
+  - n64
+  pcsx2:
+  - ps2
+  pcsx_rearmed:
+  - psx
+  pd777:
+  - cassettevision
+  picodrive:
+  - gamegear
+  - mastersystem
+  - megadrive
+  - pico
+  - sega32x
+  - segacd
+  - sg1000
+  pokemini:
+  - pokemini
+  potator:
+  - supervision
+  ppsspp:
+  - psp
+  prboom:
+  - doom
+  prosystem:
+  - atari7800
+  ps2:
+  - ps2
+  puae:
+  - amiga1200
+  - amiga600
+  - amigacd32
+  - amigacdtv
+  puae2021:
+  - amiga1200
+  - amiga600
+  - amigacd32
+  - amigacdtv
+  px68k:
+  - x68000
+  quasi88:
+  - pc88
+  quicknes:
+  - nes
+  race:
+  - ngp
+  - ngpc
+  rb5000:
+  - vg5000
+  reminiscence:
+  - flashback
+  retro8:
+  - pico8
+  retrodream:
+  - dreamcast
+  same_cdi:
+  - cdi
+  sameboy:
+  - gb
+  - gbc
+  sameduck:
+  - megaduck
+  scummvm:
+  - scummvm
+  snes9x:
+  - 240ptestsuite
+  - satellaview
+  - snes
+  - sufami
+  snes9x2002:
+  - snes
+  snes9x2005:
+  - snes
+  snes9x2010:
+  - snes
+  stella:
+  - atari2600
+  stella2014:
+  - atari2600
+  stonesoup:
+  - dungeoncrawlstonesoup
+  sugarbox2:
+  - amstradcpc
+  - gx4000
+  swanstation:
+  - 240ptestsuite
+  - psx
+  tamalibretro:
+  - tamagotchi
+  tgbdual:
+  - gb
+  - gbc
+  theodore:
+  - thomson
+  thepowdertoy:
+  - thepowdertoy
+  tic80:
+  - tic80
+  tyrquake:
+  - quake
+  uae4all:
+  - amiga600
+  uae4arm:
+  - amiga1200
+  - amiga600
+  - amigacd32
+  - amigacdtv
+  uzem:
+  - uzebox
+  vecx:
+  - vectrex
+  vice_x128:
+  - c64
+  vice_x64:
+  - c64
+  vice_x64sc:
+  - c64
+  vice_xcbm2:
+  - c64
+  vice_xcbm5x0:
+  - c64
+  vice_xpet:
+  - c64
+  vice_xplus4:
+  - c64
+  vice_xscpu64:
+  - c64
+  vice_xvic:
+  - c64
+  - vic20
+  vircon32:
+  - vircon32
+  virtualjaguar:
+  - jaguar
+  vitaquake2:
+  - quake2
+  vitaquake3:
+  - quake3
+  vitavoyager:
+  - startrekvoyager
+  wasm4:
+  - wasm4
+  x1:
+  - x1
+  xrick:
+  - rickdangerous
+  yabasanshiro:
+  - saturn
+  yabause:
+  - saturn
+  ymir:
+  - saturn
 launchers:
 - emulator: hatari
   build: standalone

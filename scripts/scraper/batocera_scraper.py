@@ -142,6 +142,29 @@ def es_systems_libretro(text: str) -> set[str]:
     return found
 
 
+def es_systems_libretro_systems(text: str, dropped: set[str]) -> dict[str, list[str]]:
+    """libretro core -> the systems es_systems.yml offers it under `libretro:`.
+
+    configgen hands a libretro core /userdata/saves/<system> at each launch
+    (libretroConfig.py: savefile_directory = SAVES / system.name), so a file
+    a core reads below its save directory sits once in each of these
+    system folders.
+    """
+    data = yaml_load_upstream(text)
+    if not isinstance(data, dict):
+        raise ValueError("es_systems.yml is not a mapping")
+    found: dict[str, set[str]] = {}
+    for system, spec in data.items():
+        emulators = spec.get("emulators") if isinstance(spec, dict) else None
+        libretro = emulators.get("libretro") if isinstance(emulators, dict) else None
+        if not isinstance(libretro, dict):
+            continue
+        for core, entry in libretro.items():
+            if isinstance(entry, dict) and str(core) not in dropped:
+                found.setdefault(str(core), set()).add(str(system))
+    return {core: sorted(systems) for core, systems in sorted(found.items())}
+
+
 def es_systems_by_system(
     es_systems_text: str, defaults_text: str, dropped: set[str]
 ) -> dict[str, list[str]]:
@@ -518,6 +541,9 @@ class Scraper(BaseScraper):
         )
 
         cores, standalone, dual = self._fetch_cores()
+        libretro_systems = es_systems_libretro_systems(
+            self._fetch_text(ES_SYSTEMS_URL.format(tag=self.tag)), _not_cores()
+        )
         result = {
             "platform": "Batocera",
             "version": self.tag.removeprefix("batocera-"),
@@ -534,6 +560,8 @@ class Scraper(BaseScraper):
         if dual:
             # Launched both ways: each layout gets its files.
             result["dual_mode_cores"] = dual
+        # The systems each libretro core runs for: its save folders.
+        result["libretro_systems"] = libretro_systems
         result["launchers"] = extract_launchers(
             lambda path: self._fetch_text(f"{_RAW_BASE}/{self.tag}/{path}")
         )

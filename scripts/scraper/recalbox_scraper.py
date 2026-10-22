@@ -167,6 +167,29 @@ def system_ini_libretro(text: str) -> set[str]:
     }
 
 
+def system_ini_name(text: str, folder: str) -> str:
+    """The system name a system.ini gives, the one ES passes configgen.
+
+    configgen hands a libretro core /recalbox/share/saves/<that name>
+    (projects/configgen/configgen/generators/libretro/libretroRetroarch.py
+    savesFolder). The folder name stands in where the file names none.
+    """
+    return _ini_sections(text).get("system", {}).get("name") or folder
+
+
+def libretro_systems(inis: dict[str, str]) -> dict[str, list[str]]:
+    """libretro core -> the systems whose system.ini offers it.
+
+    ``inis`` maps each system folder to its system.ini.
+    """
+    found: dict[str, set[str]] = {}
+    for folder, text in inis.items():
+        name = system_ini_name(text, folder)
+        for core in system_ini_libretro(text):
+            found.setdefault(core, set()).add(name)
+    return {core: sorted(systems) for core, systems in sorted(found.items())}
+
+
 def system_ini_cores(text: str) -> tuple[set[str], set[str]]:
     """The cores one Recalbox system.ini offers, and those run standalone.
 
@@ -282,7 +305,10 @@ class Scraper(BaseScraper):
         cores: set[str] = set()
         standalone: set[str] = set()
         libretro: set[str] = set()
-        for text in self._system_inis(systems):
+        texts = self._system_inis(systems)
+        # The systems each libretro core runs for: its save folders.
+        self.libretro_systems = libretro_systems(dict(zip(systems, texts)))
+        for text in texts:
             found, alone = system_ini_cores(text)
             cores |= found
             standalone |= alone
@@ -397,6 +423,7 @@ class Scraper(BaseScraper):
             # Launched both ways: each layout gets its files.
             **({"dual_mode_cores": dual} if dual else {}),
             "systems": systems,
+            "libretro_systems": self.libretro_systems,
             "launchers": self._fetch_launchers(),
         }
 

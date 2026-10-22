@@ -12,7 +12,7 @@ and 3-tier storage (embedded/external/user_provided).
 
 from __future__ import annotations
 
-from collections.abc import Callable, Iterable, Iterator
+from collections.abc import Callable, Iterator
 
 from artifacts import _build_timestamp, set_plain_mode
 import argparse
@@ -1191,7 +1191,14 @@ def generate_pack(
               _pack_registry.get(platform_name, {}).get("install", {}) or {}
           ).get("standalone_copies", []),
           launch_folders=len(config.get("core_system_dirs") or {}),
-          save_folder=(save_layout(config).folder if save_count else ""),
+          save_folder=(save_layout(config).in_pack if save_count else ""),
+          save_where=(
+              save_place(
+                  str(_pack_registry.get(platform_name, {}).get("extract_to") or ""),
+                  save_layout(config).folder, base_dest,
+              ) if save_count else ""
+          ),
+          save_by_system=bool(save_count and save_layout(config).by_system),
       )
       _write_generated_member(zf, "README.txt", readme_text)
 
@@ -3975,24 +3982,6 @@ def _manifest_core_entries(
     return total_size
 
 
-def _check_save_destinations(files: list[dict], omitted: Iterable[dict]) -> None:
-    """Refuse a manifest naming one destination below both directories.
-
-    The installer keys every entry by its ``dest``: a file read below the
-    save directory and one of the BIOS tree written alike would be taken
-    for one file.
-    """
-    roots: dict[str, set[bool]] = {}
-    for entry in [*files, *omitted]:
-        roots.setdefault(entry["dest"], set()).add(entry.get("root") == "save")
-    clashes = sorted(dest for dest, kinds in roots.items() if len(kinds) > 1)
-    if clashes:
-        raise ValueError(
-            "destinations below both the system and save directories: "
-            + ", ".join(clashes[:10])
-        )
-
-
 def _manifest_dest_of(full_dest: str, base_dest: str) -> str:
     """A pack destination as the manifest writes it, below base_destination."""
     if base_dest and full_dest.startswith(f"{base_dest}/"):
@@ -4598,9 +4587,12 @@ def generate_manifest(
         result["data_directories"] = data_directories
     saved = [entry for entry in manifest_files if entry.get("root") == "save"]
     if saved:
-        _check_save_destinations(manifest_files, omitted_by_destination.values())
         layout = save_layout(config)
         result["save_directory"] = {"folder": layout.folder, "by_core": layout.by_core}
+        if layout.by_system:
+            # The launcher writes the directory at each launch, one folder
+            # per system: each dest starts with that folder.
+            result["save_directory"]["by_system"] = True
     if case_insensitive and fold_case is None and any(
         d.get("os") not in CASE_FOLDING_OS for d in detect
     ):
@@ -5061,6 +5053,7 @@ from packextras import (  # noqa: E402,F401
 from packreadme import (  # noqa: E402,F401
     _build_readme,
     _build_agnostic_rename_readme,
+    save_place,
 )
 from packverify import (  # noqa: E402,F401
     _check_member_hash,

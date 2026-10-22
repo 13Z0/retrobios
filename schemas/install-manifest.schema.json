@@ -177,7 +177,8 @@
               "no_platform_slug",
               "below_platform_folder",
               "no_save_directory",
-              "no_core_folder"
+              "no_core_folder",
+              "no_save_system"
             ]
           },
           "category": {
@@ -431,10 +432,14 @@
       "properties": {
         "folder": {
           "type": "string",
-          "pattern": "^[^/\\\\.][^/\\\\]*$"
+          "pattern": "^[^/\\\\.][^/\\\\]*(/[^/\\\\.][^/\\\\]*)*$"
         },
         "by_core": {
           "type": "boolean"
+        },
+        "by_system": {
+          "description": "true when the platform's launcher hands each core <save directory>/<system> at each launch (Batocera, RetroBat). Each dest then starts with that system's folder, and no frontend config read at install time changes it.",
+          "const": true
         }
       }
     }

@@ -96,7 +96,8 @@ class ThePlatformNamesItsSaveDirectory(unittest.TestCase):
             save_layout({"save_directory": {"folder": "saves", "by_core": True}}),
             SaveLayout("saves", True),
         )
-        for block in (None, {}, {"folder": ""}, {"folder": "a/b", "by_core": True}):
+        for block in (None, {}, {"folder": ""}, {"folder": "../b", "by_core": True},
+                      {"folder": "a/../b", "by_core": True}):
             with self.subTest(block=block):
                 self.assertIsNone(save_layout({"save_directory": block}))
         self.assertIsNone(save_layout({}))
@@ -125,6 +126,76 @@ class ThePlatformNamesItsSaveDirectory(unittest.TestCase):
                          SaveLayout("savefiles", True))
         # RetroPie inherits RetroArch but keeps saves beside each game.
         self.assertIsNone(save_layout(load_platform_config("retropie", platforms)))
+
+    def test_each_platform_running_these_cores_says_where(self):
+        """The layout read from each platform's launch code, or none where
+        saves sit beside each game or in a browser."""
+        from common import load_platform_config
+
+        platforms = str(REPO_ROOT / "platforms")
+        expected = {
+            "batocera": SaveLayout("saves", False, True, pack_folder="userdata-saves"),
+            "knulli": SaveLayout("saves", False, True),
+            "recalbox": SaveLayout("saves", False, True),
+            "retrodeck": SaveLayout("saves", False, True),
+            "retrobat": SaveLayout("saves", False, True, frozenset({"dolphin"})),
+            "emudeck": SaveLayout("saves/retroarch/saves", False),
+            "rocknix": None, "amberelec": None, "emuelec": None, "romm": None,
+            "retropie": None,
+        }
+        for name, layout in expected.items():
+            with self.subTest(platform=name):
+                config = load_platform_config(name, platforms)
+                self.assertEqual(save_layout(config), layout)
+                if layout is not None and layout.by_system:
+                    self.assertTrue(config.get("libretro_systems"))
+
+    def test_a_save_folder_per_system(self):
+        layout = SaveLayout("saves", False, True)
+        self.assertEqual(save_destination("User/GBA/gba_bios.bin", "dolphin-emu", layout,
+                                          "gamecube"),
+                         "saves/gamecube/User/GBA/gba_bios.bin")
+        # The system folder is required, and one folder name.
+        self.assertIsNone(save_destination("a.bin", "X", layout))
+        self.assertIsNone(save_destination("a.bin", "X", layout, "a/b"))
+        # A launcher sorting one core by core (RetroBat's dolphin).
+        sorted_one = SaveLayout("saves", False, True, frozenset({"dolphin"}))
+        self.assertTrue(sorted_one.sorts({"dolphin", "dolphin-gui"}))
+        self.assertFalse(sorted_one.sorts({"stella"}))
+        self.assertEqual(
+            save_destination("User/GBA/gba_bios.bin", "dolphin-emu", sorted_one, "wii",
+                             sorted_one.sorts({"dolphin"})),
+            "saves/wii/dolphin-emu/User/GBA/gba_bios.bin",
+        )
+
+    def test_a_pack_folder_apart_from_the_bios_tree(self):
+        """Batocera's BIOS tree has a saves/ of its own: the pack keeps the
+        save directory's files in another folder, the installer still
+        writes them to /userdata/saves."""
+        layout = save_layout({"save_directory": {
+            "folder": "saves", "by_core": False, "by_system": True,
+            "pack_folder": "userdata-saves"}})
+        self.assertEqual(layout.in_pack, "userdata-saves")
+        self.assertEqual(save_destination("stella/KVS1.WAV", None, layout, "atari2600"),
+                         "userdata-saves/atari2600/stella/KVS1.WAV")
+        self.assertEqual(SaveLayout("saves", True).in_pack, "saves")
+        try:
+            from validate_schemas import _bios_tree_below
+        except ImportError:
+            self.skipTest("validate_schemas needs jsonschema")
+        self.assertEqual(_bios_tree_below("batocera", "saves"),
+                         "saves/dolphin-emu/Triforce/segaboot.gcm")
+        self.assertEqual(_bios_tree_below("batocera", "userdata-saves"), "")
+
+    def test_the_systems_a_core_runs_for(self):
+        from packpaths import libretro_systems
+
+        config = {"libretro_systems": {"dolphin": ["wii", "gamecube"], "fbalpha": ["fbneo"],
+                                       "fbalpha2012": ["cps3", "fbneo"]}}
+        self.assertEqual(libretro_systems(config, ["dolphin"]), ["gamecube", "wii"])
+        self.assertEqual(libretro_systems(config, ["fbalpha2012", "fbalpha"]),
+                         ["cps3", "fbneo"])
+        self.assertEqual(libretro_systems(config, ["stella"]), [])
 
 
 class _Fixture(unittest.TestCase):
@@ -300,6 +371,108 @@ class ThePackPlacesThemInTheSaveFolder(_Fixture):
         self.assertEqual(set(report["pack_destinations"]), set(record.files))
 
 
+class AFolderPerSystem(_Fixture):
+    """Batocera's launcher hands a core /userdata/saves/<system>, RetroBat's
+    saves\\<system> with dolphin alone sorted by core: one copy of the file
+    below each system the platform runs the core for."""
+
+    OWN = b"COREY OWN FILE"
+
+    def setUp(self) -> None:
+        super().setUp()
+        (self.bios / "X" / "own.bin").write_bytes(self.OWN)
+        sha1 = hashlib.sha1(self.OWN).hexdigest()
+        self.db["files"][sha1] = {
+            "path": str(self.bios / "X" / "own.bin"), "name": "own.bin",
+            "md5": hashlib.md5(self.OWN).hexdigest(), "size": len(self.OWN), "crc32": "",
+        }
+        self.db["indexes"]["by_name"]["own.bin"] = [sha1]
+        (self.emulators / "corey.yml").write_text(yaml.safe_dump({
+            "emulator": "CoreY", "type": "libretro", "library_name": "CoreY",
+            "systems": ["test-console"],
+            "files": [{"name": "own.bin", "path": "own.bin", "load_from": "save_dir",
+                       "required": False, "sha1": sha1}],
+        }))
+        system = {"files": [{"name": "keys.txt", "destination": "keys.txt",
+                             "sha1": hashlib.sha1(self.OTHER_KEYS).hexdigest(),
+                             "required": False}]}
+        for name in ("testbato", "testrb"):
+            (self.platforms / f"{name}.yml").write_text(yaml.safe_dump({
+                "platform": name, "verification_mode": "existence",
+                "base_destination": "bios", "cores": ["corex", "corey"],
+                "systems": {"test-console": system},
+                # Two systems run CoreX, none runs CoreY.
+                "libretro_systems": {"corex": ["sysb", "sysa"], "other": ["sysc"]},
+            }))
+        registry = yaml.safe_load((self.platforms / "_registry.yml").read_text())
+        registry["platforms"]["testbato"] = {"save_directory": {
+            "folder": "saves", "by_core": False, "by_system": True}}
+        registry["platforms"]["testrb"] = {"save_directory": {
+            "folder": "saves", "by_core": False, "by_system": True, "by_core_for": ["corex"]}}
+        (self.platforms / "_registry.yml").write_text(yaml.safe_dump(registry))
+
+    def test_one_copy_below_each_system(self):
+        names = self.pack("testbato")
+        saved = sorted(n for n in names if n.startswith("saves/"))
+        self.assertEqual(saved, ["saves/sysa/CoreX/sysdata/keys.txt",
+                                 "saves/sysb/CoreX/sysdata/keys.txt"])
+        self.assertIn("the folder of each system", self.readme)
+        report = self.verify("testbato")
+        written = {n for n in names if n != "README.txt" and not n.endswith("/")}
+        self.assertEqual(set(report["pack_destinations"]), written)
+
+    def test_the_manifest_lists_each_copy(self):
+        manifest = self.manifest("testbato")
+        saved = sorted((e["dest"], e.get("core_folder")) for e in manifest["files"]
+                       if e.get("root") == "save")
+        # The launcher fixes the path: no core folder for the installer to undo.
+        self.assertEqual(saved, [("sysa/CoreX/sysdata/keys.txt", None),
+                                 ("sysb/CoreX/sysdata/keys.txt", None)])
+        self.assertEqual(manifest["save_directory"],
+                         {"folder": "saves", "by_core": False, "by_system": True})
+        omitted = [(e["dest"], e["reason"]) for e in manifest["omitted_files"]
+                   if e.get("root") == "save"]
+        self.assertEqual(omitted, [("CoreY/own.bin", "no_save_system")])
+        for entry in manifest["files"]:
+            entry["repo_path"] = f"bios/{Path(entry['repo_path']).name}"
+        install._validate_manifest(manifest, "testbato")
+
+    def test_verify_says_why_a_core_without_a_system_is_left_out(self):
+        report = self.verify("testbato")
+        entry = next(u for u in report["undeclared_files"] if u["name"] == "own.bin")
+        self.assertFalse(entry["in_pack"])
+        self.assertIn("no system runs the core", entry["omitted"])
+
+    def test_a_core_the_launcher_sorts(self):
+        names = self.pack("testrb")
+        self.assertEqual(sorted(n for n in names if n.startswith("saves/")),
+                         ["saves/sysa/CoreX/CoreX/sysdata/keys.txt",
+                          "saves/sysb/CoreX/CoreX/sysdata/keys.txt"])
+        manifest = self.manifest("testrb")
+        self.assertEqual(sorted(e["dest"] for e in manifest["files"] if e.get("root") == "save"),
+                         ["sysa/CoreX/CoreX/sysdata/keys.txt",
+                          "sysb/CoreX/CoreX/sysdata/keys.txt"])
+
+    def test_two_cores_reading_one_path_in_one_folder_share_it(self):
+        (self.emulators / "corez.yml").write_text(yaml.safe_dump({
+            "emulator": "CoreZ", "type": "libretro", "library_name": "CoreZ",
+            "systems": ["test-console"],
+            "files": [{"name": "keys.txt", "path": "CoreX/sysdata/keys.txt",
+                       "load_from": "save_dir", "required": False,
+                       "sha1": hashlib.sha1(self.KEYS).hexdigest()}],
+        }))
+        config = yaml.safe_load((self.platforms / "testbato.yml").read_text())
+        config["cores"].append("corez")
+        config["libretro_systems"]["corez"] = ["sysa"]
+        (self.platforms / "testbato.yml").write_text(yaml.safe_dump(config))
+        names = self.pack("testbato")
+        self.assertEqual(names.count("saves/sysa/CoreX/sysdata/keys.txt"), 1)
+        manifest = self.manifest("testbato")
+        shared = next(e for e in manifest["files"]
+                      if e["dest"] == "sysa/CoreX/sysdata/keys.txt")
+        self.assertEqual(sorted(shared["cores"]), ["corex", "corez"])
+
+
 class TheInstallerFindsTheSaveDirectory(unittest.TestCase):
     MANIFEST = {"base_destination": "system",
                 "save_directory": {"folder": "saves", "by_core": True}}
@@ -348,6 +521,36 @@ class TheInstallerFindsTheSaveDirectory(unittest.TestCase):
         self.assertIn("--save-dir", found)
         self.assertEqual(install.save_directory_for(other, self.MANIFEST, self.root / "s"),
                          install.SavePlace(self.root / "s", True))
+
+    def test_a_launcher_writing_it_per_system_is_not_read_from_a_config(self):
+        """Batocera and RetroBat write retroarch.cfg at each launch: the one
+        on disk names the last system played."""
+        manifest = {"base_destination": "system",
+                    "save_directory": {"folder": "saves", "by_core": False, "by_system": True}}
+        other = self.root / "elsewhere"
+        other.mkdir()
+        self.cfg.write_text(f'savefile_directory = "{other}"\nsort_savefiles_enable = "true"\n')
+        install._RETROARCH_CONFIGS[self.bios] = (self.cfg, self.app)
+        self.assertEqual(install.save_directory_for(self.bios, manifest),
+                         install.SavePlace(self.app / "saves", False, False))
+
+    def test_a_list_rooted_above_the_bios_folder(self):
+        """RetroDECK's dests start at ~/retrodeck, which holds bios/ and saves/."""
+        manifest = {"base_destination": "",
+                    "save_directory": {"folder": "saves", "by_core": False, "by_system": True}}
+        root = self.root / "retrodeck"
+        self.assertEqual(install.save_directory_for(root, manifest),
+                         install.SavePlace(root / "saves", False, False))
+
+    def test_a_save_folder_several_levels_down(self):
+        """EmuDeck: ~/Emulation/bios and ~/Emulation/saves/retroarch/saves."""
+        manifest = {"base_destination": "bios",
+                    "save_directory": {"folder": "saves/retroarch/saves", "by_core": False}}
+        bios = self.root / "Emulation" / "bios"
+        self.assertEqual(install.save_directory_for(bios, manifest),
+                         install.SavePlace(self.root / "Emulation" / "saves/retroarch/saves",
+                                           False, False))
+        install._check_save_directory(manifest)
 
     def test_the_entry_path(self):
         saves = (self.app / "saves").resolve()
@@ -403,7 +606,12 @@ class TheManifestBoundary(unittest.TestCase):
             ("core folder on a BIOS file", self.manifest(
                 {k: v for k, v in self.ENTRY.items() if k != "root"}, layout)),
             ("climbing save folder", self.manifest(self.ENTRY, {"folder": "..", "by_core": True})),
-            ("save folder with a path", self.manifest(self.ENTRY, {"folder": "a/b", "by_core": True})),
+            ("save folder climbing inside", self.manifest(
+                self.ENTRY, {"folder": "a/../b", "by_core": True})),
+            ("by_system not true", self.manifest(
+                self.ENTRY, {"folder": "saves", "by_core": True, "by_system": False})),
+            ("unknown save_directory key", self.manifest(
+                self.ENTRY, {"folder": "saves", "by_core": True, "by_game": True})),
             ("by_core not a flag", self.manifest(self.ENTRY, {"folder": "saves", "by_core": 1})),
             ("dest without its core folder", self.manifest(
                 {**self.ENTRY, "dest": "sysdata/keys.txt"}, layout)),
@@ -526,6 +734,86 @@ class TheProfilesFollowTheContract(unittest.TestCase):
         azahar = {e["dest"]: e for e in manifest["files"] if e.get("core_folder") == "Azahar"}
         self.assertIn("Azahar/Azahar/sysdata/keys.txt", azahar)
         self.assertTrue(all(e["root"] == "save" for e in azahar.values()))
+
+
+class TheScrapersReadTheSystemLists(unittest.TestCase):
+    """libretro_systems, read from each platform's own system list."""
+
+    def setUp(self) -> None:
+        sys.path.insert(0, str(REPO_ROOT))
+        self.addCleanup(sys.path.remove, str(REPO_ROOT))
+
+    def test_batocera_and_knulli_es_systems_yml(self):
+        from scripts.scraper.batocera_scraper import es_systems_libretro_systems
+
+        text = (
+            "gamecube:\n  emulators:\n    dolphin:\n      dolphin: { requireAnyOf: [A] }\n"
+            "    libretro:\n      dolphin: { requireAnyOf: [B] }\n"
+            "wii:\n  emulators:\n    libretro:\n      dolphin: { requireAnyOf: [B] }\n"
+            "      plugin: { requireAnyOf: [C] }\n"
+            "atari2600:\n  emulators:\n    libretro:\n      stella: { requireAnyOf: [D] }\n"
+        )
+        self.assertEqual(es_systems_libretro_systems(text, {"plugin"}),
+                         {"dolphin": ["gamecube", "wii"], "stella": ["atari2600"]})
+
+    def test_retrobat_es_systems_cfg(self):
+        from scripts.scraper.retrobat_scraper import es_systems_libretro_systems
+
+        text = (
+            "<systemList><system><name>3ds</name><emulators>"
+            "<emulator name=\"libretro\"><cores><core>azahar</core>"
+            "<!-- <core>citra</core> --></cores></emulator>"
+            "<emulator name=\"citra-qt\"><cores><core>citra-qt</core></cores></emulator>"
+            "</emulators></system></systemList>"
+        )
+        self.assertEqual(es_systems_libretro_systems(text), {"azahar": ["3ds"]})
+
+    def test_recalbox_system_ini(self):
+        from scripts.scraper.recalbox_scraper import libretro_systems
+
+        wii = ("[system]\nname = \"wii\"\n[core.0]\nemulator = \"dolphin-gui\"\n"
+               "core = \"dolphin-gui\"\n[core.2]\nemulator = \"libretro\"\ncore = \"dolphin\"\n")
+        nameless = "[core.0]\nemulator = \"libretro\"\ncore = \"stella\"\n"
+        self.assertEqual(libretro_systems({"wii": wii, "atari2600": nameless}),
+                         {"dolphin": ["wii"], "stella": ["atari2600"]})
+
+    def test_retrodeck_es_de_commands(self):
+        from scripts.scraper.retrodeck_scraper import es_systems_libretro_systems
+
+        text = (
+            "<systemList><system><name>n3ds</name><path>%ROMPATH%/n3ds</path>"
+            "<command label=\"Azahar (Standalone)\">%EMULATOR_AZAHAR% %ROM%</command>"
+            "<command label=\"Citra\">%EMULATOR_RETROARCH% -L "
+            "%CORE_RETROARCH%/citra_libretro.so %ROM%</command>"
+            "<!-- <command>%EMULATOR_RETROARCH% -L %CORE_RETROARCH%/x_libretro.so</command> -->"
+            "</system></systemList>"
+        )
+        self.assertEqual(es_systems_libretro_systems(text), {"citra": ["n3ds"]})
+
+    def test_the_published_platform_files(self):
+        expected = {
+            "batocera": {"dolphin": ["gamecube", "wii"], "stella": ["atari2600"]},
+            "knulli": {"dolphin": ["gamecube", "wii"], "citra": ["3ds"]},
+            "retrobat": {"azahar": ["3ds"], "dolphin": ["gamecube", "triforce", "wii"]},
+            "recalbox": {"dolphin": ["gamecube", "wii"], "stella": ["atari2600"]},
+            "retrodeck": {"citra": ["n3ds"], "stella": ["atari2600"]},
+        }
+        for name, cores in expected.items():
+            table = yaml.safe_load(
+                (REPO_ROOT / "platforms" / f"{name}.yml").read_text(encoding="utf-8")
+            )["libretro_systems"]
+            for core, systems in cores.items():
+                with self.subTest(platform=name, core=core):
+                    self.assertEqual(table[core], systems)
+
+    def test_the_published_batocera_list_places_dolphin_per_system(self):
+        manifest = json.loads((REPO_ROOT / "install" / "batocera.json").read_text())
+        self.assertEqual(manifest.get("save_directory"),
+                         {"folder": "saves", "by_core": False, "by_system": True})
+        dests = {e["dest"] for e in manifest["files"] if e.get("root") == "save"}
+        for system in ("gamecube", "wii"):
+            self.assertIn(f"{system}/User/GBA/gba_bios.bin", dests)
+        self.assertIn("atari2600/stella/KVS1.WAV", dests)
 
 
 class TheSchemasCarryTheFields(unittest.TestCase):
