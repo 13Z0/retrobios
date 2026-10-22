@@ -493,12 +493,17 @@ platforms:
     source_url: https://raw.githubusercontent.com/batocera-linux/batocera.linux/master/package/batocera/core/batocera-scripts/scripts/batocera-systems
     source_format: python_dict
     hash_type: md5
-    # The libretro launcher hands each core /userdata/saves/<system> with
-    # sort_savefiles_enable off (python-src/batocera-launch-libretro/
-    # batocera_launch_libretro/emulator.py:754-757 at 8bbc0d6e, saves_dir in
-    # python-src/batocera-launch/batocera_launch/emulator.py:251-252 at
-    # d30617e5): one folder per launched system, no single place.
-    save_directory: null
+    # configgen hands each libretro core /userdata/saves/<system> at every
+    # launch, with sort_savefiles_enable off (package/batocera/core/
+    # batocera-configgen/configgen/configgen/generators/libretro/
+    # libretroConfig.py:225-228 and batoceraPaths.py:22 at batocera-43.1).
+    # <system> is the ES system name (Emulator.py:119, args.system), so a
+    # file is placed once below each system es_systems.yml offers the core
+    # for (libretro_systems in batocera.yml).
+    save_directory:
+      folder: saves
+      by_core: false
+      by_system: true
     schedule: weekly
     target_scraper: batocera_targets
     target_source: https://github.com/batocera-linux/batocera.linux
@@ -524,6 +529,16 @@ platforms:
     hash_type: md5
     # Bios.cpp:64-68 hashes a .zip with Zip::Md5Composite, never its bytes
     zip_digest: composite
+    # configgen hands each libretro core /recalbox/share/saves/<system> at
+    # every launch, with sort_savefiles_enable off (projects/configgen/
+    # configgen/generators/libretro/libretroRetroarch.py:338, 347-348 and
+    # 419-420, recalboxFiles.py:84 at 10.1.1). <system> is the name the
+    # system.ini gives, so a file is placed once below each system offering
+    # the core (libretro_systems in recalbox.yml).
+    save_directory:
+      folder: saves
+      by_core: false
+      by_system: true
     schedule: monthly
     target_scraper: recalbox_targets
     target_source: https://gitlab.com/recalbox/recalbox/-/tree/master/configs
@@ -552,11 +567,20 @@ platforms:
     hash_type: md5
     # Windows: names differing only by case land on one file.
     case_insensitive_fs: true
-    # emulatorLauncher hands a libretro core saves\<system> (saves\<system>\
-    # LR-amiberry for amiberry, saves\ for mame), sorted by core for dolphin
-    # only (emulatorLauncher/Generators/LibRetro.Generator.cs:1128-1131 and
-    # 1305-1315 at 7f8dc28a): one folder per launched system, no single place.
-    save_directory: null
+    # emulatorLauncher hands each libretro core saves\<system> at every
+    # launch, saves\ beside bios\ (emulatorLauncher.cfg in retrobat 8.3.1),
+    # and sorts saves by core for dolphin alone (CoreSaveSort)
+    # (emulatorLauncher/Generators/LibRetro.Generator.cs:1128-1132, 1304-1315
+    # and 2707 at 48cdc616). <system> is the ES system name, so a file is
+    # placed once below each system es_systems.cfg offers the core for
+    # (libretro_systems in retrobat.yml). mame (saves\) and amiberry
+    # (saves\<system>\LR-amiberry) differ, and neither profile has a file
+    # read below the save directory.
+    save_directory:
+      folder: saves
+      by_core: false
+      by_system: true
+      by_core_for: [dolphin]
     schedule: weekly
     target_scraper: null
     target_source: null
@@ -591,6 +615,16 @@ platforms:
     hash_type: md5
     # Windows: names differing only by case land on one file.
     case_insensitive_fs: true
+    # RetroArch_setupSaves points savefile_directory at
+    # $savesPath/retroarch/saves (functions/EmuScripts/emuDeckRetroArch.sh:236
+    # at dddb3022), savesPath ~/Emulation/saves beside biosPath
+    # ~/Emulation/bios (functions/helperFunctions.sh:347-348). The shipped
+    # retroarch.cfg turns savefiles_in_content_dir and both sort options off
+    # (configs/org.libretro.RetroArch/config/retroarch/retroarch.cfg:3135,
+    # 3176-3177): one folder for every core.
+    save_directory:
+      folder: saves/retroarch/saves
+      by_core: false
     schedule: weekly
     target_scraper: emudeck_targets
     target_source: https://github.com/dragoonDorise/EmuDeck
@@ -669,6 +703,20 @@ platforms:
     source_url: https://github.com/RetroDECK/components
     source_format: github_component_manifests
     hash_type: md5
+    # savefile_directory is $saves_path, ~/retrodeck/saves beside
+    # ~/retrodeck/bios (retroarch/component_prepare.sh:27 and 44 at
+    # components fcd0d729), and RetroArch sorts saves by content, not by
+    # core (retroarch/rd_assets/rd_config/retroarch.cfg:3233-3234 and
+    # 3275-3276). RetroArch 1.22.2 appends the name of the folder holding
+    # the ROM (runloop.c:8205-8209 and 8249-8258 at 69a4f0ea): saves/<ROM
+    # folder> for a ROM at the top of its system folder, the folder of each
+    # system whose ES-DE command loads the core (libretro_systems in
+    # retrodeck.yml, from RetroDECK/ES-DE resources/systems/linux/
+    # es_systems.xml at 15e1b236, the release RetroDECK takes as latest).
+    save_directory:
+      folder: saves
+      by_core: false
+      by_system: true
     schedule: monthly
     contributed_by:
       - username: monster-penguin
@@ -705,6 +753,11 @@ platforms:
     source_url: https://raw.githubusercontent.com/rommapp/romm/master/backend/models/fixtures/known_bios_files.json
     source_format: json
     hash_type: sha1
+    # Cores run in the browser through EmulatorJS: the save file lives in
+    # the Emscripten filesystem and goes through RomM's save API
+    # (frontend/src/views/Player/EmulatorJS/utils.ts:409-426 at 5.4.0).
+    # Nothing a user installs reaches it.
+    save_directory: null
     schedule: monthly
     contributed_by:
       - username: PixNyb
@@ -765,6 +818,11 @@ platforms:
     extract_to: /storage/roms/bios/
     logo: https://avatars.githubusercontent.com/u/163176886
     scraper: rocknix
+    # Every device's retroarch.cfg sets savefiles_in_content_dir (for
+    # instance projects/ROCKNIX/packages/emulators/libretro/retroarch/
+    # sources/RK3566/retroarch.cfg:664-665 at 20261001) and setsettings.sh
+    # leaves it: saves sit beside each game, no single place.
+    save_directory: null
     schedule: weekly
     target_scraper: rocknix_targets
     target_source: https://github.com/ROCKNIX/distribution/blob/next/projects/ROCKNIX/packages/virtual/emulators/package.mk
@@ -793,6 +851,10 @@ platforms:
     source_url: https://github.com/AmberELEC/AmberELEC/blob/dev/packages/amberelec/sources/scripts/batocera-systems
     source_format: python_dict
     hash_type: md5
+    # retroarch.cfg sets savefiles_in_content_dir (packages/games/tools/
+    # retroarch/sources/retroarch.cfg:567-568 at a21975bf) and
+    # setsettings.py leaves it: saves sit beside each game, no single place.
+    save_directory: null
     schedule: monthly
     target_scraper: null
     target_source: null
@@ -830,6 +892,10 @@ platforms:
     source_url: https://github.com/EmuELEC/EmuELEC/blob/master/packages/sx05re/emuelec/bin/batocera/batocera-systems
     source_format: python_dict
     hash_type: md5
+    # savefile_directory stays commented out (packages/sx05re/libretro_base/
+    # retroarch/package.mk:115 at v4.8) and setsettings.sh never sets it, so
+    # RetroArch saves beside each game: no single place.
+    save_directory: null
     schedule: monthly
     target_scraper: null
     target_source: null
@@ -858,6 +924,16 @@ platforms:
     source_url: https://github.com/knulli-cfw/knulli-linux/blob/knulli-main/package/system/knulli-scripts/scripts/knulli-systems
     source_format: python_dict
     hash_type: md5
+    # configgen hands each libretro core /userdata/saves/<system> at every
+    # launch, with sort_savefiles_enable off (package/system/knulli-configgen/
+    # configgen/configgen/generators/libretro/libretroConfig.py:240-243 and
+    # batoceraPaths.py:22 at 20260511), as Batocera's does: a file is placed
+    # once below each system es_systems.yml offers the core for
+    # (libretro_systems in knulli.yml).
+    save_directory:
+      folder: saves
+      by_core: false
+      by_system: true
     schedule: monthly
     target_scraper: null
     target_source: null

@@ -395,7 +395,9 @@ def _save_directory_blocks() -> list[str]:
     """Each registry save_directory is null or a folder and a by_core flag.
 
     The folder names the pack folder and the save directory's default place
-    beside the BIOS directory: one path segment.
+    beside the BIOS directory: a relative path that never climbs. ``by_system`` (a save
+    folder per launched system) needs the platform file's libretro_systems,
+    and ``by_core_for`` names the cores a launcher sorts by core.
     """
     registry_path = ROOT / "platforms" / "_registry.yml"
     if not registry_path.is_file():
@@ -410,20 +412,44 @@ def _save_directory_blocks() -> list[str]:
         if block is None:
             continue
         folder = block.get("folder") if isinstance(block, dict) else None
+        sorted_cores = block.get("by_core_for", []) if isinstance(block, dict) else None
         if (
             not isinstance(block, dict)
-            or set(block) != {"folder", "by_core"}
+            or not {"folder", "by_core"} <= set(block) <= {
+                "folder", "by_core", "by_system", "by_core_for",
+            }
             or not isinstance(folder, str)
             or not folder
-            or re.search(r"[/\\]", folder)
-            or folder in (".", "..")
+            or "\\" in folder
+            or any(part in ("", ".", "..") for part in folder.split("/"))
             or not isinstance(block.get("by_core"), bool)
+            or not isinstance(block.get("by_system", False), bool)
+            or not isinstance(sorted_cores, list)
+            or not all(isinstance(core, str) and core for core in sorted_cores)
         ):
             out.append(
                 f"platforms/_registry.yml: {name}.save_directory must be null or "
-                "{folder: <one path segment>, by_core: <bool>}"
+                "{folder: <relative path>, by_core: <bool>, by_system: <bool>, "
+                "by_core_for: [<core>]}"
+            )
+            continue
+        if block.get("by_system") and not _libretro_systems(name):
+            out.append(
+                f"platforms/_registry.yml: {name}.save_directory.by_system and "
+                f"platforms/{name}.yml lists no libretro_systems"
             )
     return out
+
+
+def _libretro_systems(platform: str) -> dict:
+    """The platform file's core -> systems table, inheritance included."""
+    from common import load_platform_config
+
+    try:
+        config = load_platform_config(platform, str(ROOT / "platforms"))
+    except FileNotFoundError:
+        return {}
+    return config.get("libretro_systems") or {}
 
 
 def _semantic_install_checks(path: Path, manifest: dict) -> list[str]:
@@ -439,10 +465,12 @@ def _semantic_install_checks(path: Path, manifest: dict) -> list[str]:
             f"{path.relative_to(ROOT)}: total_omitted does not equal "
             "len(omitted_files)"
         )
-    destinations = [entry.get("dest") for entry in files]
+    # One dest below the BIOS folder and one below the save directory are
+    # two places.
+    destinations = [(entry.get("root"), entry.get("dest")) for entry in files]
     if len(destinations) != len(set(destinations)):
         out.append(f"{path.relative_to(ROOT)}: duplicate destinations")
-    omitted_destinations = [entry.get("dest") for entry in omitted]
+    omitted_destinations = [(entry.get("root"), entry.get("dest")) for entry in omitted]
     if len(omitted_destinations) != len(set(omitted_destinations)):
         out.append(f"{path.relative_to(ROOT)}: duplicate omitted destinations")
     overlap = set(destinations) & set(omitted_destinations)

@@ -116,22 +116,59 @@ def _generic_manual(bios_paths: list[str]) -> str:
     )
 
 
-def _save_section(display: str, folder: str) -> str:
+def save_place(extract_to: str, folder: str, base_dest: str) -> str:
+    """Where a platform keeps its save directory by default, as the README
+    names it: ``folder`` beside the BIOS folder the archive is extracted
+    into (``base_dest`` names it), or inside the folder the archive is
+    extracted into when the archive holds the BIOS folder itself
+    (RetroDECK's ~/retrodeck/). A relative BIOS folder (RetroArch's
+    system/) gives ``folder`` beside it."""
+    root = extract_to.rstrip("/")
+    if not base_dest:
+        return f"{root}/{folder}/" if root else f"{folder}/"
+    parent = root.rpartition("/")[0]
+    if parent:
+        return f"{parent}/{folder}/"
+    return f"{folder}/ beside {root or base_dest}/"
+
+
+def _save_section(
+    display: str, folder: str, place: str = "", by_system: bool = False,
+    in_frontend_settings: bool = True, in_place: bool = False,
+) -> str:
     """Where the files of the pack's save folder go.
 
     Some cores read their system data below the save directory the frontend
     hands them, not below the system directory the archive is extracted
-    into: Azahar keeps its user folder there.
+    into: Azahar keeps its user folder there. ``place`` is the save
+    directory's default place (save_place), saves/ beside system/ when not
+    given. ``by_system`` says the launcher hands each system a folder of
+    its own, which the archive's folder already holds.
+    ``in_frontend_settings`` points at RetroArch's setting, for a frontend
+    whose own config names the directory. ``in_place`` says the archive is
+    extracted into the folder holding the save directory, which then
+    needs no move.
     """
-    return (
-        "  Files read from the save directory\n"
-        "  ----------------------------------\n"
-        f"  Some cores read files from {display}'s save directory, not its\n"
-        f"  system directory. The {folder}/ folder of this archive holds them.\n"
-        f"  Move its contents into the save directory ({folder}/ beside\n"
-        "  system/ by default, see Settings > Directory > Save Files), keeping\n"
-        "  the folders it holds. The automatic install writes them there.\n\n"
-    )
+    where = place or f"{folder}/ beside system/"
+    kept = "the folder of each system" if by_system else "the folders it holds"
+    lines = [
+        "  Files read from the save directory",
+        "  ----------------------------------",
+        f"  Some cores read files from {display}'s save directory, not its",
+        f"  system directory. The {folder}/ folder of this archive holds them.",
+    ]
+    if in_place:
+        lines.append(f"  Extracted as above, it lands at {where}, where they are read.")
+    else:
+        lines += [
+            "  Move its contents into the save directory, keeping",
+            f"  {kept}. By default it is {where}"
+            + ("," if in_frontend_settings else "."),
+        ]
+        if in_frontend_settings:
+            lines.append("  see Settings > Directory > Save Files.")
+    lines.append("  The automatic install writes them there.")
+    return "\n".join(lines) + "\n\n"
 
 
 def _build_readme(
@@ -152,13 +189,17 @@ def _build_readme(
     standalone_copies: list[dict] | None = None,
     launch_folders: int = 0,
     save_folder: str = "",
+    save_where: str = "",
+    save_by_system: bool = False,
 ) -> str:
     """Build a personalized step-by-step README for each platform pack.
 
     ``launch_folders`` counts the folders a platform that hands each core
     its own system directory gives them, where it names no system.
     ``save_folder`` is the pack folder holding files cores read below the
-    frontend's save directory, empty when the pack holds none.
+    frontend's save directory, empty when the pack holds none, and
+    ``save_where`` that directory's default place (save_place).
+    ``save_by_system`` is set when the launcher hands each system a folder.
     """
     narrowings = narrowings or []
     sep = "=" * 50
@@ -189,7 +230,10 @@ def _build_readme(
         )
 
     if save_folder:
-        guide += _save_section(platform_display, save_folder)
+        guide += _save_section(
+            platform_display, save_folder, save_where, save_by_system,
+            in_frontend_settings=not save_by_system, in_place=not base_dest,
+        )
 
     if regions:
         region_help = (

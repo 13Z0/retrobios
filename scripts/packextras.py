@@ -20,7 +20,7 @@ from common import standalone_set as platform_standalone_set
 from common import sanitize_pack_path
 from common import size_fits
 from validation import deliverable, read_from_save_dir, read_from_system_dir
-from packpaths import save_destination, save_layout
+from packpaths import libretro_systems, save_destination, save_layout
 from region import FILE_GROUP
 
 
@@ -67,15 +67,16 @@ def save_entry_fields(fe: dict) -> dict:
 def save_manifest_dest(fe: dict) -> str:
     """A manifest dest for a file read below the save directory.
 
-    The pack path below the platform's save folder when the file is placed,
-    the core's own folder first where the frontend sorts saves by core.
+    The pack path below the platform's save folder when the file is placed
+    (``save_dest``), the system's folder first where the launcher keeps one
+    per system, the core's own folder first where the frontend sorts saves
+    by core.
     Without a save folder (an omission), the same shape: the core's folder,
     then the path the core reads, so two cores reading one name below their
     own folders stay two entries.
     """
-    pack_path = str(fe.get("pack_path") or "")
-    if pack_path:
-        return pack_path.split("/", 1)[1]
+    if fe.get("save_dest"):
+        return str(fe["save_dest"])
     rel = sanitize_pack_path(fe.get("destination") or fe.get("path") or fe.get("name", ""))
     folder = fe.get("core_folder")
     return f"{folder}/{rel}" if folder else rel
@@ -324,6 +325,7 @@ def hidden_extras(
     lower = set(content) if case_insensitive else set()
     prefix = _detect_extras_prefix(config, base_dest)
     hidden: dict[tuple[str, str, str], str] = {}
+    packed_keys: set[tuple[str, str, str]] = set()
     extras = _collect_emulator_extras(
         config, emulators_dir, db, set() if system_ids else set(shipped),
         base_dest, profiles, target_cores=target_cores, include_all=include_all,
@@ -356,13 +358,14 @@ def hidden_extras(
         held = (sha1_by_path.get(local) or _file_sha1(local)) if local else None
         if reason == "case_twin" and held and content.get(full.lower()) == held:
             continue
+        key = (
+            fe.get("source_emulator", ""), fe.get("source_name", ""),
+            fe.get("source_path", ""),
+        )
         if reason is not None:
-            key = (
-                fe.get("source_emulator", ""), fe.get("source_name", ""),
-                fe.get("source_path", ""),
-            )
             hidden.setdefault(key, reason)
             continue
+        packed_keys.add(key)
         _register_path(full, seen, parents)
         content[full.lower()] = held
         if case_insensitive:
@@ -373,7 +376,9 @@ def hidden_extras(
             placed_kind[full] = fe.get("category", "bios")
         if placed_local is not None and local:
             placed_local[full] = local
-    return hidden
+    # A file read below a save directory kept per system is packed once per
+    # system: one copy left out does not leave the file out.
+    return {key: reason for key, reason in hidden.items() if key not in packed_keys}
 
 
 def _extra_dest(u: dict) -> str:
@@ -407,7 +412,7 @@ def unplaceable_extras(
         if not placement.slug_based and u.get("root") != "save":
             continue
         dest = _extra_dest(u)
-        if placement.place(u, dest) is None:
+        if not placement.places(u, dest):
             key = (u.get("emulator", ""), u.get("name", ""), u.get("path") or "")
             unplaced[key] = placement.unplaced_reason(u, dest)
     return unplaced
@@ -893,6 +898,7 @@ class ExtraPlacement:
         self.native_systems = native_slug_systems(config)
         self.flat = bool(config.get("firmware_folder_flat"))
         self.save = save_layout(config)
+        self.config = config
         self.norm_map = (
             {_norm_system_id(sid): sid for sid in self.platform_systems}
             if self.slug_based
@@ -911,10 +917,8 @@ class ExtraPlacement:
         platform keeping saves beside the content does not have.
         """
         if entry.get("root") == "save":
-            if self.save is None:
-                return None
-            full = save_destination(dest, entry.get("core_folder"), self.save)
-            return (dest, full) if full else None
+            placed = self.save_places(entry, dest)
+            return placed[0] if placed else None
         if self.slug_based:
             slug = _slug_for(
                 entry, self.profiles, self.platform_systems, self.norm_map,
@@ -925,6 +929,43 @@ class ExtraPlacement:
             dest = f"{slug}/{dest}"
         return dest, (f"{self.prefix}/{dest}" if self.prefix else dest)
 
+    def places(self, entry: dict, dest: str) -> list[tuple[str, str]]:
+        """Every (pack-relative, full) destination the pack gives an entry.
+
+        One for most entries. A file read below the save directory of a
+        platform that hands each system a save folder of its own goes once
+        below each system that runs the core.
+        """
+        if entry.get("root") == "save":
+            return self.save_places(entry, dest)
+        placed = self.place(entry, dest)
+        return [placed] if placed is not None else []
+
+    def save_places(self, entry: dict, dest: str) -> list[tuple[str, str]]:
+        """The destinations of a file read below the save directory."""
+        if self.save is None:
+            return []
+        names = self.core_names(entry)
+        sorted_by_core = self.save.sorts(names)
+        systems = libretro_systems(self.config, names) if self.save.by_system else [""]
+        placed = []
+        for system in systems:
+            full = save_destination(
+                dest, entry.get("core_folder"), self.save, system, sorted_by_core
+            )
+            if full:
+                placed.append((dest, full))
+        return placed
+
+    def core_names(self, entry: dict) -> set[str]:
+        """The names a report entry's core goes by: its profile key and the
+        upstream names its profile lists."""
+        key = entry.get("profile") or entry.get("emulator", "")
+        profile = self.profiles.get(key) or next(
+            (pp for pp in self.profiles.values() if pp.get("emulator") == key), {}
+        )
+        return {str(key), *(str(c) for c in profile.get("cores") or [])} - {""}
+
     def nested(self, dest: str) -> bool:
         """True when the file would sit below a folder the frontend lists flat."""
         return self.slug_based and self.flat and "/" in dest
@@ -932,7 +973,13 @@ class ExtraPlacement:
     def unplaced_reason(self, entry: dict, dest: str) -> str:
         """Why ``place`` returned None for this entry."""
         if entry.get("root") == "save":
-            return "no_save_directory" if self.save is None else "no_core_folder"
+            if self.save is None:
+                return "no_save_directory"
+            if self.save.by_system and not libretro_systems(
+                self.config, self.core_names(entry)
+            ):
+                return "no_save_system"
+            return "no_core_folder"
         return "below_platform_folder" if self.nested(dest) else "no_platform_slug"
 
 
@@ -1053,49 +1100,51 @@ def _collect_emulator_extras(
         name = archive if archive else u["name"]
         dest = _extra_dest(u)
 
-        # Slug-based platforms: prefix dest with system slug
-        placed = placement.place(u, dest)
+        # Slug-based platforms: prefix dest with system slug. A file read
+        # below a save directory kept per system goes below each system.
+        placements = placement.places(u, dest)
+        save_root = u.get("root") == "save"
         if not u["in_repo"]:
-            if placed is not None:
+            for placed in placements:
                 missing = _report_extra(u, name, placed[0])
-                if u.get("root") == "save":
-                    missing["pack_path"] = placed[1]
+                if save_root:
+                    _save_fields(missing, placed[1], placement)
                 absent.append(missing)
             continue
-        if placed is None:
+        if not placements:
             if unplaceable is not None:
                 reason = placement.unplaced_reason(u, dest)
                 unplaceable.append(
                     u if reason == "no_platform_slug" else {**u, "unplaceable": reason}
                 )
             continue
-        dest, full_dest = placed
         if claimants is not None:
             claimants[(u.get("emulator", ""), u.get("name", ""), u.get("path") or "")] = (
-                sanitize_pack_path(dest)
+                sanitize_pack_path(placements[0][0])
             )
-        candidates = [
-            _report_extra(c, name, dest) for c in (u, *u.get("other_claims", []))
-        ]
-        if u.get("root") == "save":
+        for dest, full_dest in placements:
+            candidates = [
+                _report_extra(c, name, dest) for c in (u, *u.get("other_claims", []))
+            ]
+            if save_root:
+                for item in candidates:
+                    _save_fields(item, full_dest, placement)
+            # Where the builder meets each claim: the strongest proof first, the
+            # report's profile order between equals, archives after loose files.
             for item in candidates:
-                item["pack_path"] = full_dest
-        # Where the builder meets each claim: the strongest proof first, the
-        # report's profile order between equals, archives after loose files.
-        for item in candidates:
-            item["claim_order"] = (
-                1, 1 if u.get("archive") else 0, -rank.of_extra(item, full_dest),
-                item["source_profile"],
-            )
-        candidates.sort(key=lambda item: item["claim_order"])
-        extra, claims = candidates[0], candidates[1:]
-        if not _take(extra, full_dest, seen_dests, taken):
+                item["claim_order"] = (
+                    1, 1 if u.get("archive") else 0, -rank.of_extra(item, full_dest),
+                    item["source_profile"],
+                )
+            candidates.sort(key=lambda item: item["claim_order"])
+            extra, claims = candidates[0], candidates[1:]
+            if not _take(extra, full_dest, seen_dests, taken):
+                for claim in claims:
+                    _another_claim(taken.get(full_dest), claim)
+                continue
             for claim in claims:
-                _another_claim(taken.get(full_dest), claim)
-            continue
-        for claim in claims:
-            _another_claim(extra, claim)
-        extras.append(extra)
+                _another_claim(extra, claim)
+            extras.append(extra)
 
     # Second pass: find alternative destinations for files already in the pack.
     # A file declared by the platform or emitted above may also be needed at a
@@ -1234,19 +1283,28 @@ class _ClaimRanks:
         self._db = db
         # Two spellings of one path are one file where the filesystem folds case.
         self._key = (lambda dest: dest.lower()) if fold else (lambda dest: dest)
-        self._placed: dict[int, tuple[str, str] | None] = {}
+        # An entry can take several destinations: one per system folder of a
+        # save directory kept per system.
+        self._placed: dict[int, list[tuple[str, str]]] = {}
         counts: dict[str, int] = {}
         for u in undeclared:
             placed = (
-                placement.place(u, _extra_dest(u))
-                if u.get("in_repo") and not u.get("bundled") else None
+                placement.places(u, _extra_dest(u))
+                if u.get("in_repo") and not u.get("bundled") else []
             )
             self._placed[id(u)] = placed
-            if placed is not None:
-                key = self._key(placed[1])
+            for _dest, full in placed:
+                key = self._key(full)
                 counts[key] = counts.get(key, 0) + 1 + len(u.get("other_claims", []))
         self._contested = {dest for dest, n in counts.items() if n > 1}
         self._cache: dict[tuple, int] = {}
+
+    def _contests(self, u: dict) -> list[tuple[str, str]]:
+        """The entry's destinations another claim also asks for."""
+        return [
+            placed for placed in self._placed.get(id(u), [])
+            if self._key(placed[1]) in self._contested
+        ]
 
     def of_extra(self, extra: dict, full_dest: str) -> int:
         if self._key(full_dest) not in self._contested:
@@ -1275,22 +1333,23 @@ class _ClaimRanks:
         first: dict[str, int] = {}
         keys: list[tuple[int, int, int]] = []
         for position, u in enumerate(undeclared):
-            placed = self._placed.get(id(u))
-            if placed is None or self._key(placed[1]) not in self._contested:
+            contests = self._contests(u)
+            if not contests:
                 keys.append((position, 0, position))
                 continue
-            group = first.setdefault(self._key(placed[1]), position)
+            group = first.setdefault(self._key(contests[0][1]), position)
             keys.append((group, -self.of_entry(u), position))
         order = sorted(range(len(undeclared)), key=keys.__getitem__)
         return [undeclared[i] for i in order]
 
     def of_entry(self, u: dict) -> int:
-        placed = self._placed.get(id(u))
-        if placed is None or self._key(placed[1]) not in self._contested:
+        contests = self._contests(u)
+        if not contests:
             return 0
         name = u.get("archive") or u["name"]
         return max(
-            self.of_extra(_report_extra(c, name, placed[0]), placed[1])
+            self.of_extra(_report_extra(c, name, dest), full)
+            for dest, full in contests
             for c in (u, *u.get("other_claims", []))
         )
 
@@ -1298,6 +1357,23 @@ class _ClaimRanks:
 def _names_content(entry: dict) -> bool:
     """Whether a report entry declares the bytes it wants, not only a name."""
     return any(entry.get(field) for field in ("sha1", "md5", "sha256", "crc32"))
+
+
+def _save_fields(extra: dict, pack_path: str, placement: ExtraPlacement) -> None:
+    """Record where a file read below the save directory goes in the pack.
+
+    ``core_folder`` stays only where the frontend sorts saves by core for
+    every core, the one setting a frontend config can turn off and the
+    installer then reads (RetroArch's sort_savefiles_enable). A launcher
+    writing the save directory at each launch fixes the path the pack
+    already spells out.
+    """
+    extra["pack_path"] = pack_path
+    if placement.save is not None:
+        # The path below the save directory, what the manifest writes.
+        extra["save_dest"] = pack_path[len(placement.save.folder) + 1:]
+        if not placement.save.by_core:
+            extra.pop("core_folder", None)
 
 
 def _report_extra(u: dict, name: str, dest: str) -> dict:
