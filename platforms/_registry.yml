@@ -190,6 +190,15 @@ platforms:
     hash_type: sha1
     verification_mode: existence
     base_destination: system
+    # The directory RETRO_ENVIRONMENT_GET_SAVE_DIRECTORY returns
+    # (runloop.c:2699-2700, libretro/RetroArch a81e450c): savefile_directory,
+    # saves/ beside system/ by default (platform_unix.c:3364-3365,
+    # platform_win32.c:1343, platform_darwin.m:456), with the core's
+    # library_name appended since sort_savefiles_enable defaults to true
+    # (config.def.h:1099, runloop.c:11285-11293).
+    save_directory:
+      folder: saves
+      by_core: true
     case_insensitive_fs: true
     schedule: weekly
     cores: all_libretro
@@ -484,6 +493,12 @@ platforms:
     source_url: https://raw.githubusercontent.com/batocera-linux/batocera.linux/master/package/batocera/core/batocera-scripts/scripts/batocera-systems
     source_format: python_dict
     hash_type: md5
+    # The libretro launcher hands each core /userdata/saves/<system> with
+    # sort_savefiles_enable off (python-src/batocera-launch-libretro/
+    # batocera_launch_libretro/emulator.py:754-757 at 8bbc0d6e, saves_dir in
+    # python-src/batocera-launch/batocera_launch/emulator.py:251-252 at
+    # d30617e5): one folder per launched system, no single place.
+    save_directory: null
     schedule: weekly
     target_scraper: batocera_targets
     target_source: https://github.com/batocera-linux/batocera.linux
@@ -537,6 +552,11 @@ platforms:
     hash_type: md5
     # Windows: names differing only by case land on one file.
     case_insensitive_fs: true
+    # emulatorLauncher hands a libretro core saves\<system> (saves\<system>\
+    # LR-amiberry for amiberry, saves\ for mame), sorted by core for dolphin
+    # only (emulatorLauncher/Generators/LibRetro.Generator.cs:1128-1131 and
+    # 1305-1315 at 7f8dc28a): one folder per launched system, no single place.
+    save_directory: null
     schedule: weekly
     target_scraper: null
     target_source: null
@@ -617,6 +637,13 @@ platforms:
     scraper: libretro
     inherits_from: retroarch
     cores: all_libretro
+    # Lakka's retroarch.cfg sets savefile_directory to /storage/savefiles,
+    # beside /storage/system, and sorts saves by core
+    # (packages/lakka/retroarch_base/retroarch/config/retroarch.cfg:3164-3165
+    # and 3206-3207, libretro/Lakka-LibreELEC cc3bf85d).
+    save_directory:
+      folder: savefiles
+      by_core: true
     # Lakka is a Linux distribution: two names that differ by case are two
     # files there, not the one RetroArch's Windows and macOS builds see.
     case_insensitive_fs: false
@@ -863,6 +890,14 @@ platforms:
     # scriptmodules are what say which packages it ships.
     # RetroPie runs on Linux, where case tells two files apart.
     case_insensitive_fs: false
+    # Not RetroArch's: RetroPie sets no savefile_directory and turns
+    # sort_savefiles_enable off (scriptmodules/emulators/retroarch.sh:289-290,
+    # RetroPie-Setup 46128cd2), and its RetroArch (retropie-v1.19.0) has no
+    # default save directory on Linux (frontend/drivers/platform_unix.c sets
+    # DEFAULT_DIR_SRAM only at 1624-1626, for Android). The save directory is
+    # then the folder of the loaded content (runloop.c runloop_path_set_redirect),
+    # one per game: a file read below it has no single place.
+    save_directory: null
     schedule: null
     target_scraper: retropie_targets
     target_source: https://retropie.org.uk/stats/pkgflags/

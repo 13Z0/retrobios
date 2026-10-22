@@ -330,8 +330,13 @@ class CandidateVerdict(unittest.TestCase):
         )
 
     def test_a_file_read_from_elsewhere_is_not_a_bios_gap(self):
+        for where in ("content_dir", "working_directory", "internal_storage"):
+            self.assertEqual(
+                self.verdict({"name": "save.bin", "load_from": where}), "skip"
+            )
+        # Below the save directory: the pack places it there.
         self.assertEqual(
-            self.verdict({"name": "save.bin", "load_from": "save_dir"}), "skip"
+            self.verdict({"name": "save.bin", "load_from": "save_dir"}), "keep"
         )
         self.assertEqual(
             self.verdict({"name": "b.bin", "load_from": "system_dir"}), "keep"

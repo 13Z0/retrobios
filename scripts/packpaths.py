@@ -6,7 +6,88 @@ on Windows is not a pack."""
 
 from __future__ import annotations
 
+from dataclasses import dataclass
+
 from common import sanitize_pack_path
+from validation import read_from_save_dir
+
+
+@dataclass(frozen=True)
+class SaveLayout:
+    """Where a platform's frontend keeps the save directory it hands a core.
+
+    ``folder`` names it twice: the folder of the pack that holds the files
+    read below it, and its default place beside the system directory
+    (RetroArch's own folder holds system/ and saves/). A pack is extracted
+    into the system directory, so that folder is moved by hand, and the
+    installer writes to the save directory the frontend's config names.
+    ``by_core`` is set when the frontend hands each core <save
+    directory>/<library_name>, RetroArch's sort_savefiles_enable.
+    """
+
+    folder: str
+    by_core: bool
+
+
+def save_layout(config: dict) -> SaveLayout | None:
+    """The platform's save directory, or None when it is no fixed place.
+
+    Read from the registry's ``save_directory``. A platform that keeps
+    saves beside the content, or in one folder per launched system, has
+    none: a file read below it has no single destination.
+    """
+    block = config.get("save_directory")
+    if not isinstance(block, dict):
+        return None
+    folder = sanitize_pack_path(str(block.get("folder") or ""))
+    if not folder or "/" in folder:
+        return None
+    return SaveLayout(folder, bool(block.get("by_core")))
+
+
+def save_destination(
+    path: str, core_folder: str | None, layout: SaveLayout
+) -> str | None:
+    """The pack path of a file a core reads below the save directory.
+
+    ``path`` is relative to the directory the core is handed. ``core_folder``
+    is the folder a frontend sorting saves by core inserts: the core's
+    library_name, empty when it inserts none (an empty library_name, or a
+    core that reads the same place sorted or not), None when the profile
+    does not say. None then, where the frontend sorts by core.
+    """
+    rel = sanitize_pack_path(path)
+    if not rel:
+        return None
+    if layout.by_core and core_folder:
+        return f"{layout.folder}/{sanitize_pack_path(core_folder)}/{rel}"
+    if layout.by_core and core_folder is None:
+        return None
+    return f"{layout.folder}/{rel}"
+
+
+def core_save_folder(profile: dict) -> str | None:
+    """The folder a frontend sorting saves by core inserts for this core.
+
+    RetroArch appends a non-empty library_name only (runloop.c
+    runloop_path_set_redirect). A core declaring ``save_folder_once`` adds
+    its own folder to the save directory unless it is already named so
+    (Cemu's in_named_dir): its paths start with that folder and land in the
+    same place sorted or not. None when the profile names no library_name.
+    """
+    if "library_name" not in profile:
+        return None
+    if profile.get("save_folder_once"):
+        return ""
+    return str(profile.get("library_name") or "")
+
+
+# Top folder of an emulator pack holding the files a libretro core reads
+# below the frontend's save directory, apart from those of its system
+# directory at the root.
+EMULATOR_PACK_SAVE_FOLDER = "saves"
+
+
 def _path_parents(dest: str) -> list[str]:
     """Return all parent directory segments of a path."""
     parts = dest.split("/")
@@ -79,7 +160,12 @@ def _resolve_destination(file_entry: dict, standalone: bool) -> str:
     else:
         rel = file_entry.get("name", "")
 
-    return sanitize_pack_path(rel)
+    dest = sanitize_pack_path(rel)
+    # Read below the frontend's save directory: kept apart from the system
+    # directory's files at the root, in the folder the pack names for it.
+    if dest and read_from_save_dir(file_entry, standalone):
+        return f"{EMULATOR_PACK_SAVE_FOLDER}/{dest}"
+    return dest
 
 
 def _archive_destination(

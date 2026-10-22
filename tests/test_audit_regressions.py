@@ -3253,11 +3253,16 @@ class KidVidTapesStayWithTheContent(unittest.TestCase):
     working directory) or from its base directory (stella2023, the content
     folder, and stella, a folder under the save directory): never the system
     directory. Without load_from every Linux pack put about 68 MB of WAVs at
-    the BIOS root, in two cases."""
+    the BIOS root, in two cases. The save directory is a place a pack
+    reaches: stella's tapes go there, never to the BIOS tree."""
 
     def test_no_pack_places_them_in_the_system_directory(self):
         from scripts.common import load_emulator_profiles
-        from scripts.validation import outside_gap_scope
+        from scripts.validation import (
+            outside_gap_scope,
+            read_from_save_dir,
+            read_from_system_dir,
+        )
 
         profiles = load_emulator_profiles(str(ROOT / "emulators"))
         for name in ("stella", "stella2014", "stella2023"):
@@ -3265,7 +3270,11 @@ class KidVidTapesStayWithTheContent(unittest.TestCase):
                      if f["name"].lower().endswith(".wav")]
             with self.subTest(profile=name):
                 self.assertEqual(len(tapes), 7)
-                self.assertTrue(all(outside_gap_scope(f, False) for f in tapes))
+                self.assertFalse(any(read_from_system_dir(f, False) for f in tapes))
+                for f in tapes:
+                    self.assertTrue(
+                        outside_gap_scope(f, False) or read_from_save_dir(f, False)
+                    )
 
 
 class ModuleConstantsDeclaredOnce(unittest.TestCase):

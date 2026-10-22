@@ -60,6 +60,7 @@ def _validate_yaml_directory(
         out.extend(_unreachable_citations(path, data))
         if schema_name == "emulator.schema.json":
             out.extend(_checks_without_values(path, data))
+            out.extend(_save_dir_without_library_name(path, data))
             out.extend(_systems_outside_profile(path, data))
             out.extend(_doubled_paths(path))
     return out
@@ -343,6 +344,88 @@ def _semantic_database_checks(database: dict) -> list[str]:
     return out
 
 
+def _save_dir_without_library_name(path: Path, document: object) -> list[str]:
+    """A file the libretro build reads below the save directory, in a profile
+    naming no library_name.
+
+    RetroArch hands each core <save directory>/<library_name> by default
+    (sort_savefiles_enable): without the name, packs and the installer
+    cannot say where the file goes, and leave it out.
+    """
+    from validation import read_from_save_dir
+
+    if not isinstance(document, dict):
+        return []
+    if "library_name" in document:
+        return _save_folder_once_paths(path, document)
+    return [
+        f"{path.relative_to(ROOT)}: files[{index}] ({entry.get('name')}) is read "
+        "below the save directory and the profile declares no library_name"
+        for index, entry in enumerate(document.get("files") or [])
+        if isinstance(entry, dict)
+        and read_from_save_dir(entry)
+        and not ("path" in entry and entry["path"] is None)
+    ]
+
+
+def _save_folder_once_paths(path: Path, document: dict) -> list[str]:
+    """A core adding its own folder once: each save path starts with it.
+
+    The pack places such a file at <save directory>/<path> whether the
+    frontend sorts saves by core or not, which holds only when the path
+    already names the folder the core reads below.
+    """
+    from validation import read_from_save_dir
+
+    if not document.get("save_folder_once"):
+        return []
+    folder = f"{document.get('library_name') or ''}/"
+    return [
+        f"{path.relative_to(ROOT)}: files[{index}] ({entry.get('name')}) does not "
+        f"start with {folder}, the folder save_folder_once says the core adds"
+        for index, entry in enumerate(document.get("files") or [])
+        if isinstance(entry, dict)
+        and read_from_save_dir(entry)
+        and entry.get("path")
+        and not str(entry["path"]).startswith(folder)
+    ]
+
+
+def _save_directory_blocks() -> list[str]:
+    """Each registry save_directory is null or a folder and a by_core flag.
+
+    The folder names the pack folder and the save directory's default place
+    beside the BIOS directory: one path segment.
+    """
+    registry_path = ROOT / "platforms" / "_registry.yml"
+    if not registry_path.is_file():
+        return []
+    with registry_path.open(encoding="utf-8") as handle:
+        platforms = (yaml_load(handle) or {}).get("platforms") or {}
+    out: list[str] = []
+    for name, entry in sorted(platforms.items()):
+        if not isinstance(entry, dict) or "save_directory" not in entry:
+            continue
+        block = entry["save_directory"]
+        if block is None:
+            continue
+        folder = block.get("folder") if isinstance(block, dict) else None
+        if (
+            not isinstance(block, dict)
+            or set(block) != {"folder", "by_core"}
+            or not isinstance(folder, str)
+            or not folder
+            or re.search(r"[/\\]", folder)
+            or folder in (".", "..")
+            or not isinstance(block.get("by_core"), bool)
+        ):
+            out.append(
+                f"platforms/_registry.yml: {name}.save_directory must be null or "
+                "{folder: <one path segment>, by_core: <bool>}"
+            )
+    return out
+
+
 def _semantic_install_checks(path: Path, manifest: dict) -> list[str]:
     out: list[str] = []
     files = manifest.get("files", [])
@@ -366,6 +449,24 @@ def _semantic_install_checks(path: Path, manifest: dict) -> list[str]:
     if overlap:
         out.append(
             f"{path.relative_to(ROOT)}: destinations are both downloadable and omitted"
+        )
+    saved = [
+        entry for entry in [*files, *manifest.get("case_variants", [])]
+        if entry.get("root") == "save"
+    ]
+    layout = manifest.get("save_directory")
+    if saved and not layout:
+        out.append(
+            f"{path.relative_to(ROOT)}: entries read below the save directory "
+            "and no save_directory"
+        )
+    stray = sorted(
+        entry["dest"] for entry in [*files, *omitted]
+        if entry.get("core_folder") and entry.get("root") != "save"
+    )
+    if stray:
+        out.append(
+            f"{path.relative_to(ROOT)}: core_folder outside root: save ({stray[0]})"
         )
     return out
 
@@ -412,6 +513,7 @@ def main() -> int:
     )
     errors.extend(_unknown_data_dir_refs())
     errors.extend(_repository_layout_in_profiles())
+    errors.extend(_save_directory_blocks())
 
     if not args.source_only:
         database_path = ROOT / "database.json"

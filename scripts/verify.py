@@ -106,10 +106,12 @@ from validation import (
     installed_with_emulator,
     unread_on,
     outside_gap_scope,
+    read_from_save_dir,
     with_archive_members,
     core_size_refusal,
     same_slot_entries,
 )
+from packpaths import core_save_folder
 
 DEFAULT_DB = "database.json"
 DEFAULT_PLATFORMS_DIR = "platforms"
@@ -574,8 +576,14 @@ def find_undeclared_files(
                 # The key used to skip that fallback, so clk's Acorn/basic.rom and
                 # Electron/basic.rom both keyed as "basic.rom" under Batocera's
                 # standalone clk and the second was dropped.
+                # A file the libretro build reads below the save directory is
+                # placed there, apart from the system directory the platform
+                # lays out: no declaration of the BIOS tree answers for it.
+                save_root = read_from_save_dir(f, is_standalone)
                 if is_standalone:
                     dest = f.get("standalone_path") or f.get("path") or fname
+                elif save_root:
+                    dest = f.get("path") or fname
                 else:
                     dest = system_dir_path(f, f.get("path") or fname)
                 raw_regions = f.get("region") or []
@@ -593,6 +601,10 @@ def find_undeclared_files(
                     f.get("system"),
                     f.get("variant_group"),
                     region_key,
+                    # Below the save directory each core is handed a folder
+                    # of its own: two cores reading hiscore.dat there read
+                    # two files.
+                    ("save", core_save_folder(profile)) if save_root else None,
                 )
                 if not fname or unread_on(f, config.get("_key", "")):
                     continue
@@ -601,8 +613,8 @@ def find_undeclared_files(
                 if duplicate and (first is None or first["profile"] == emu_name):
                     continue
                 verdict = _candidate_verdict(
-                    f, fname, is_standalone, include_all, declared_names, dest,
-                    folded_slots,
+                    f, fname, is_standalone, include_all,
+                    {} if save_root else declared_names, dest, folded_slots,
                 )
                 if verdict == "settled":
                     seen_files.add(seen_key)
@@ -742,12 +754,17 @@ def find_undeclared_files(
                 }
                 if f.get("contents"):
                     entry["contents"] = f["contents"]
-                if f.get("system_dir"):
+                if save_root:
+                    entry["root"] = "save"
+                    folder = core_save_folder(profile)
+                    if folder is not None:
+                        entry["core_folder"] = folder
+                elif f.get("system_dir"):
                     entry["system_dir"] = f["system_dir"]
                 members = with_archive_members(f, profile.get("files", [])).get("members")
                 if members:
                     entry["members"] = members
-                if launcher_layer:
+                if launcher_layer and not save_root:
                     launcher_candidates.append((emu_name, is_standalone, f, entry))
                 if duplicate:
                     first.setdefault("other_claims", []).append(entry)
@@ -857,6 +874,8 @@ def find_exclusion_notes(
 _UNPLACED_REASONS = {
     "no_platform_slug": "no platform slug for its system",
     "below_platform_folder": "below the folder the platform lists",
+    "no_save_directory": "read below a save directory the platform keeps in no fixed place",
+    "no_core_folder": "read below the save directory and the profile names no library_name",
 }
 
 

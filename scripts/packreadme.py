@@ -116,6 +116,24 @@ def _generic_manual(bios_paths: list[str]) -> str:
     )
 
 
+def _save_section(display: str, folder: str) -> str:
+    """Where the files of the pack's save folder go.
+
+    Some cores read their system data below the save directory the frontend
+    hands them, not below the system directory the archive is extracted
+    into: Azahar keeps its user folder there.
+    """
+    return (
+        "  Files read from the save directory\n"
+        "  ----------------------------------\n"
+        f"  Some cores read files from {display}'s save directory, not its\n"
+        f"  system directory. The {folder}/ folder of this archive holds them.\n"
+        f"  Move its contents into the save directory ({folder}/ beside\n"
+        "  system/ by default, see Settings > Directory > Save Files), keeping\n"
+        "  the folders it holds. The automatic install writes them there.\n\n"
+    )
+
+
 def _build_readme(
     platform_name: str,
     platform_display: str,
@@ -133,11 +151,14 @@ def _build_readme(
     detect: list[dict] | None = None,
     standalone_copies: list[dict] | None = None,
     launch_folders: int = 0,
+    save_folder: str = "",
 ) -> str:
     """Build a personalized step-by-step README for each platform pack.
 
     ``launch_folders`` counts the folders a platform that hands each core
     its own system directory gives them, where it names no system.
+    ``save_folder`` is the pack folder holding files cores read below the
+    frontend's save directory, empty when the pack holds none.
     """
     narrowings = narrowings or []
     sep = "=" * 50
@@ -166,6 +187,9 @@ def _build_readme(
             + _automatic_section(platform_display, detect, standalone_copies)
             + (pack_manual(platform_name) or _generic_manual(bios_paths))
         )
+
+    if save_folder:
+        guide += _save_section(platform_display, save_folder)
 
     if regions:
         region_help = (

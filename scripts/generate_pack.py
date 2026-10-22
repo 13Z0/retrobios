@@ -12,7 +12,7 @@ and 3-tier storage (embedded/external/user_provided).
 
 from __future__ import annotations
 
-from collections.abc import Callable, Iterator
+from collections.abc import Callable, Iterable, Iterator
 
 from artifacts import _build_timestamp, set_plain_mode
 import argparse
@@ -1074,6 +1074,7 @@ def generate_pack(
           )
 
       core_count = 0
+      save_count = 0
       extra_resolver = ExtraResolver(
           db, bios_dir, zip_contents, data_registry, validation_index,
           validation_owners, offline, profiles=emu_profiles,
@@ -1089,15 +1090,13 @@ def generate_pack(
           # Core extras: _collect_emulator_extras already adjusted
           # destinations for slug-based platforms.  Apply the effective
           # prefix (base_dest, or inferred from YAML when base_dest is
-          # empty, as RetroDECK infers "bios").
-          extras_pfx = _detect_extras_prefix(config, base_dest)
-          if extras_pfx:
-              if not dest.startswith(f"{extras_pfx}/"):
-                  full_dest = f"{extras_pfx}/{dest}"
-              else:
-                  full_dest = dest
-          else:
-              full_dest = dest
+          # empty, as RetroDECK infers "bios"). A file read below the save
+          # directory goes to the pack's save folder instead.
+          full_dest = extra_full_destination(
+              fe, _detect_extras_prefix(config, base_dest)
+          )
+          if not full_dest:
+              continue
           # Taken, a case twin on a case-insensitive filesystem, or a
           # file/directory conflict (SGB1.sfc vs SGB1.sfc/): verify replays
           # the same rule (packextras.hidden_extras).
@@ -1158,6 +1157,8 @@ def generate_pack(
           if case_insensitive:
               seen_lower.add(full_dest.lower())
           core_count += 1
+          if fe.get("root") == "save":
+              save_count += 1
           total_files += 1
 
       total_files += _pack_data_directories(
@@ -1190,6 +1191,7 @@ def generate_pack(
               _pack_registry.get(platform_name, {}).get("install", {}) or {}
           ).get("standalone_copies", []),
           launch_folders=len(config.get("core_system_dirs") or {}),
+          save_folder=(save_layout(config).folder if save_count else ""),
       )
       _write_generated_member(zf, "README.txt", readme_text)
 
@@ -3856,13 +3858,10 @@ def _manifest_core_entries(
             continue
         if region_drops and dest in region_drops:
             continue
-        if extras_pfx:
-            if not dest.startswith(f"{extras_pfx}/"):
-                full_dest = f"{extras_pfx}/{dest}"
-            else:
-                full_dest = dest
-        else:
-            full_dest = dest
+        full_dest = extra_full_destination(fe, extras_pfx)
+        if not full_dest:
+            continue
+        save_root = fe.get("root") == "save"
 
         if (
             case_insensitive
@@ -3874,9 +3873,14 @@ def _manifest_core_entries(
             # entry kept, or a pack built without the first core loses the
             # file the installer would still have to place. Collisions are
             # rare, so the entry is looked up only when one happens.
+            folded = (
+                save_manifest_dest(fe) if save_root
+                else _manifest_dest_of(full_dest, base_dest)
+            ).lower()
             held = next(
                 (e for e in manifest_files
-                 if e["dest"].lower() == _manifest_dest_of(full_dest, base_dest).lower()),
+                 if e["dest"].lower() == folded
+                 and (e.get("root") == "save") == save_root),
                 None,
             )
             if held is not None and held.get("cores") is not None:
@@ -3917,13 +3921,19 @@ def _manifest_core_entries(
 
         # Manifest dests are relative to base_destination. Keep the inferred
         # extras prefix when it is an internal layout dir (RetroDECK bios/).
-        manifest_dest = _manifest_dest_of(full_dest, base_dest)
+        # A file read below the save directory is written relative to the
+        # directory the core is handed, and says so (save_entry_fields).
+        manifest_dest = (
+            save_manifest_dest(fe) if save_root else _manifest_dest_of(full_dest, base_dest)
+        )
 
         entry, file_size = _manifest_entry(
             local_path, manifest_dest, [source_emu] if source_emu else [],
             db, repo_root,
             selection.fields(dest, fe.get("name", "")),
         )
+        if entry is not None and save_root:
+            entry.update(save_entry_fields(fe))
         if entry is None:
             if not _claim_platform_omission(
                 omitted_by_destination.get(full_dest), source_emu
@@ -3963,6 +3973,24 @@ def _manifest_core_entries(
             seen_lower.add(full_dest.lower())
 
     return total_size
+
+
+def _check_save_destinations(files: list[dict], omitted: Iterable[dict]) -> None:
+    """Refuse a manifest naming one destination below both directories.
+
+    The installer keys every entry by its ``dest``: a file read below the
+    save directory and one of the BIOS tree written alike would be taken
+    for one file.
+    """
+    roots: dict[str, set[bool]] = {}
+    for entry in [*files, *omitted]:
+        roots.setdefault(entry["dest"], set()).add(entry.get("root") == "save")
+    clashes = sorted(dest for dest, kinds in roots.items() if len(kinds) > 1)
+    if clashes:
+        raise ValueError(
+            "destinations below both the system and save directories: "
+            + ", ".join(clashes[:10])
+        )
 
 
 def _manifest_dest_of(full_dest: str, base_dest: str) -> str:
@@ -4061,10 +4089,9 @@ def _record_absent(
         dest = sanitize_pack_path(fe.get("destination", fe.get("name", "")))
         if not dest or (region_drops and dest in region_drops):
             continue
-        full_dest = (
-            dest if not extras_pfx or dest.startswith(f"{extras_pfx}/")
-            else f"{extras_pfx}/{dest}"
-        )
+        full_dest = extra_full_destination(fe, extras_pfx)
+        if not full_dest:
+            continue
         if full_dest in seen_destinations or full_dest in omitted_by_destination:
             continue
         source_emu = fe.get("source_profile") or fe.get("source_emulator", "")
@@ -4081,9 +4108,16 @@ def _record_unplaceable(unplaceable: list[dict], record_omission: Callable[..., 
     Said in the manifest, where RomM's DOSBox Pure ROMs were simply absent.
     """
     for u in unplaceable:
+        where = u.get("path") or u.get("name", "")
         record_omission(
-            u.get("path") or u.get("name", ""), u, u.get("system") or "",
-            u.get("unplaceable", "no_platform_slug"), [u.get("emulator", "")],
+            # Keyed apart from the BIOS tree's paths, which a file read below
+            # the save directory can repeat.
+            f"save:{save_manifest_dest(u)}" if u.get("root") == "save" else where,
+            u, u.get("system") or "",
+            # The profile key, the name a target's core list and the
+            # installer's narrowing match: the display name matched none.
+            u.get("unplaceable", "no_platform_slug"),
+            [u.get("profile") or u.get("emulator", "")],
         )
 
 
@@ -4222,8 +4256,13 @@ def generate_manifest(
         bare = sanitize_pack_path(
             file_entry.get("destination", file_entry.get("name", ""))
         )
+        save_root = file_entry.get("root") == "save"
         omitted_by_destination[full_destination] = {
-            "dest": manifest_destination(full_destination),
+            "dest": (
+                save_manifest_dest(file_entry) if save_root
+                else manifest_destination(full_destination)
+            ),
+            **(save_entry_fields(file_entry) if save_root else {}),
             "name": str(file_entry.get("name") or ""),
             "system": system_id,
             "required": bool(file_entry.get("required", True)),
@@ -4534,7 +4573,8 @@ def generate_manifest(
         "base_destination": base_dest,
         "detect": detect,
         "standalone_copies": _placed_copies(
-            standalone_copies, [entry["dest"] for entry in manifest_files]
+            standalone_copies,
+            [entry["dest"] for entry in manifest_files if entry.get("root") != "save"],
         ),
         "total_files": len(manifest_files),
         "total_size": total_size,
@@ -4556,6 +4596,11 @@ def generate_manifest(
     }
     if data_directories:
         result["data_directories"] = data_directories
+    saved = [entry for entry in manifest_files if entry.get("root") == "save"]
+    if saved:
+        _check_save_destinations(manifest_files, omitted_by_destination.values())
+        layout = save_layout(config)
+        result["save_directory"] = {"folder": layout.folder, "by_core": layout.by_core}
     if case_insensitive and fold_case is None and any(
         d.get("os") not in CASE_FOLDING_OS for d in detect
     ):
@@ -4992,9 +5037,13 @@ from packpaths import (  # noqa: E402,F401
     _flat,
     _resolve_destination,
     placement_block,
+    save_layout,
 )
 from packextras import (  # noqa: E402,F401
     ExtraResolver,
+    extra_full_destination,
+    save_entry_fields,
+    save_manifest_dest,
     _detect_extras_prefix,
     _detect_slug_structure,
     _map_emulator_to_slug,
