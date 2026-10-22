@@ -314,7 +314,7 @@ def deduplicate(bios_dir: str, dry_run: bool = False) -> dict:
             if isinstance(previous, dict):
                 merged = dict(previous)
                 merged.update(mame_clones)
-                mame_clones = merged
+                mame_clones = collapse_clone_chains(merged)
         if dry_run:
             print(f"\nWould write MAME clone map: {clone_path}")
             print(
@@ -330,6 +330,43 @@ def deduplicate(bios_dir: str, dry_run: bool = False) -> dict:
             )
 
     return results
+
+
+def collapse_clone_chains(clone_map: dict[str, dict]) -> dict[str, dict]:
+    """Point every clone at a canonical archive that still exists.
+
+    The map is cumulative. When a later run finds that a canonical archive is
+    itself a byte-identical copy of another and removes it, the entry that
+    named it as canonical would send its clones to a file that is gone:
+    sys68k_cpu21a pointed at sys68k_cpu21 after sys68k_cpu21 became a clone
+    of sys68k_cpu20. Each such entry's clones move to the final canonical.
+    """
+    owner = {
+        clone: canonical
+        for canonical, entry in clone_map.items()
+        for clone in entry.get("clones", [])
+    }
+
+    def final(name: str) -> str:
+        seen = {name}
+        while name in owner:
+            name = owner[name]
+            if name in seen:
+                raise ValueError(f"clone map loops through {name}")
+            seen.add(name)
+        return name
+
+    collapsed: dict[str, dict] = {}
+    for canonical, entry in clone_map.items():
+        target = final(canonical)
+        kept = collapsed.setdefault(target, {**clone_map.get(target, entry), "clones": []})
+        names = set(kept["clones"]) | set(entry.get("clones", []))
+        if target != canonical:
+            names.add(canonical)
+        names.discard(target)
+        kept["clones"] = sorted(names)
+        kept["total_copies"] = len(kept["clones"])
+    return collapsed
 
 
 def main() -> None:

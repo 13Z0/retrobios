@@ -66,7 +66,7 @@
       "vrc5074.zip"
     ],
     "sha1": "17409b32b33cd1474b1aa1417dd3467b15589e16",
-    "total_copies": 35
+    "total_copies": 34
   },
   "a3fdc.zip": {
     "clones": [
@@ -192,7 +192,7 @@
       "bbc_opus3.zip"
     ],
     "sha1": "10dcceb968bb19c77b9544c89e471f4a7bf025ec",
-    "total_copies": 2
+    "total_copies": 1
   },
   "buddha.zip": {
     "clones": [
@@ -600,13 +600,7 @@
   },
   "sys68k_cpu20.zip": {
     "clones": [
-      "sys68k_cpu21.zip"
-    ],
-    "sha1": "e3d9b79fd99417535cad2a0751ceb90adb1b0ae5",
-    "total_copies": 1
-  },
-  "sys68k_cpu21.zip": {
-    "clones": [
+      "sys68k_cpu21.zip",
       "sys68k_cpu21a.zip",
       "sys68k_cpu21b.zip",
       "sys68k_cpu21s.zip",
@@ -614,23 +608,17 @@
       "sys68k_cpu21yb.zip"
     ],
     "sha1": "e3d9b79fd99417535cad2a0751ceb90adb1b0ae5",
-    "total_copies": 5
+    "total_copies": 6
   },
   "sys68k_cpu30.zip": {
     "clones": [
-      "sys68k_cpu30x.zip"
-    ],
-    "sha1": "47eb7d56111e587702724ba753bd60ed4b432566",
-    "total_copies": 1
-  },
-  "sys68k_cpu30x.zip": {
-    "clones": [
       "sys68k_cpu30be.zip",
+      "sys68k_cpu30x.zip",
       "sys68k_cpu30xa.zip",
       "sys68k_cpu30za.zip"
     ],
     "sha1": "47eb7d56111e587702724ba753bd60ed4b432566",
-    "total_copies": 3
+    "total_copies": 4
   },
   "tms32030.zip": {
     "clones": [

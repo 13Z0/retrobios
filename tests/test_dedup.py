@@ -341,5 +341,31 @@ class OnlyFilesSharingASizeAreHashed(_Bios):
                          sorted(os.path.join(*p.split("/")) for p in ("A/one.bin", "B/one.bin")))
 
 
+
+class CloneChainsCollapse(unittest.TestCase):
+    """A later run removed sys68k_cpu21.zip as a copy of sys68k_cpu20.zip
+    while the map still named it canonical for five clones: those clones
+    pointed at a file that no longer existed."""
+
+    def test_clones_follow_to_the_canonical_that_exists(self):
+        import dedup  # noqa: PLC0415
+
+        chain = {
+            "cpu20.zip": {"clones": ["cpu21.zip"], "sha1": "a", "total_copies": 1},
+            "cpu21.zip": {"clones": ["cpu21a.zip", "cpu21b.zip"], "sha1": "a", "total_copies": 2},
+        }
+        self.assertEqual(dedup.collapse_clone_chains(chain), {
+            "cpu20.zip": {"clones": ["cpu21.zip", "cpu21a.zip", "cpu21b.zip"],
+                          "sha1": "a", "total_copies": 3},
+        })
+
+    def test_a_loop_is_refused(self):
+        import dedup  # noqa: PLC0415
+
+        loop = {"a.zip": {"clones": ["b.zip"]}, "b.zip": {"clones": ["a.zip"]}}
+        with self.assertRaises(ValueError):
+            dedup.collapse_clone_chains(loop)
+
+
 if __name__ == "__main__":
     unittest.main()
