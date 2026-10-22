@@ -107,6 +107,7 @@ OMISSION_REASONS = {
     "below_platform_folder": "below the platform folder",
     "no_save_directory": "no save directory",
     "no_core_folder": "no core folder",
+    "no_save_system": "no system runs the core",
 }
 # What a file is when it is not firmware, as the manifest's category field
 # says, and as the installer words it. Firmware carries no category.
@@ -2447,6 +2448,15 @@ def _entry_path(root: Path, entry: dict) -> Path:
     return _destination_path(*_entry_place(root, entry))
 
 
+def _entry_key(entry: dict) -> str:
+    """What tells one entry of the list from another: its dest, below the
+    BIOS folder or below the save directory. KNULLI lists its own
+    fbneo/hiscore.dat in the BIOS tree and FB Alpha 2012's below the save
+    directory, two files under one dest. NUL never appears in a dest."""
+    dest = str(entry.get("dest"))
+    return f"save\0{dest}" if entry.get("root") == "save" else dest
+
+
 def _check_root(entry: dict, dest: str) -> None:
     """root is absent or save, and core_folder one folder name of a save entry."""
     root = entry.get("root")
@@ -2480,9 +2490,10 @@ def _check_save_directory(data: dict) -> None:
         return
     if (
         not isinstance(layout, dict)
-        or set(layout) != {"folder", "by_core"}
+        or set(layout) - {"by_system"} != {"folder", "by_core"}
         or not isinstance(layout["by_core"], bool)
-        or len(_safe_relative_path(layout["folder"], "save_directory.folder").parts) != 1
+        or layout.get("by_system", True) is not True
+        or not _safe_relative_path(layout["folder"], "save_directory.folder").parts
     ):
         raise ValueError("invalid save_directory")
     if layout["by_core"]:
@@ -2625,9 +2636,10 @@ def _check_entry(
     if not isinstance(entry, dict):
         raise ValueError(f"{where} must be an object")
     dest = str(_safe_relative_path(entry.get("dest"), f"{where}.dest"))
-    if dest in seen_destinations:
+    key = _entry_key({**entry, "dest": dest})
+    if key in seen_destinations:
         raise ValueError(f"duplicate manifest destination: {dest}")
-    seen_destinations.add(dest)
+    seen_destinations.add(key)
     _check_root(entry, dest)
 
     size = _check_download(entry, where, dest)
@@ -2762,9 +2774,10 @@ def _validate_manifest(data: object, plat: str) -> dict:
                 entry.get("dest"), f"omitted_files[{index}].dest"
             )
         )
-        if dest in seen_destinations or dest in seen_omitted:
+        key = _entry_key({**entry, "dest": dest})
+        if key in seen_destinations or key in seen_omitted:
             raise ValueError(f"duplicate or conflicting omitted destination: {dest}")
-        seen_omitted.add(dest)
+        seen_omitted.add(key)
         _check_omission(entry, dest)
         _check_root(entry, dest)
         claims = entry.get("alternatives", [])
@@ -3197,7 +3210,7 @@ def region_drops(
     systems: list[str] | None = None,
     held: set[str] | None = None,
 ) -> set[str]:
-    """Destinations a region priority list withdraws.
+    """Destinations a region priority list withdraws, as _entry_key spells them.
 
     The pack builder's rule (region.resolve_region_drops), replayed over the
     groups the manifest records. Per group, the best-ranked regional file
@@ -3231,7 +3244,7 @@ def region_drops(
         if not isinstance(priority, int) or isinstance(priority, bool):
             priority = None
         for group in joined:
-            groups.setdefault(group, []).append((set(regions), entry["dest"], priority))
+            groups.setdefault(group, []).append((set(regions), _entry_key(entry), priority))
     keep: set[str] = set()
     drop: set[str] = set()
     for group_id, members in groups.items():
@@ -3304,10 +3317,12 @@ def narrow(
         # answers the request but takes no installable file's place, unless
         # the builder holds it (held: true) and only this download lacks it:
         # the pack drops the fallback it displaces, and so does this.
-        held = {f["dest"] for f in files} | {o["dest"] for o in omitted if o.get("held")}
+        held = {_entry_key(f) for f in files} | {
+            _entry_key(o) for o in omitted if o.get("held")
+        }
         dropped = region_drops(files + omitted, regions, systems, held)
-        files = [f for f in files if f["dest"] not in dropped]
-        omitted = [o for o in omitted if o["dest"] not in dropped]
+        files = [f for f in files if _entry_key(f) not in dropped]
+        omitted = [o for o in omitted if _entry_key(o) not in dropped]
     if systems:
         wanted = set(systems)
         files = [f for f in files if _chosen(f, wanted)]
@@ -3488,8 +3503,12 @@ def save_directory_for(
     default (config.def.h:1099). savefiles_in_content_dir and
     sort_savefiles_by_content_enable put the directory beside each game: no
     single place then. Without a config, the BIOS folder standing at its
-    default name puts the save directory beside it, as the pack lays them out.
-    ``override`` (--save-dir) names the directory itself.
+    default name puts the save directory beside it, as the pack lays them out,
+    and a list whose dests start above the BIOS folder (RetroDECK) puts it
+    in the folder the run installs to. ``override`` (--save-dir) names the directory itself. A launcher that
+    writes the save directory at each launch, one folder per system
+    (by_system: Batocera, RetroBat), is not read from any retroarch.cfg:
+    the one on disk holds the last launch's system.
     """
     layout = manifest.get("save_directory")
     if not layout:
@@ -3497,7 +3516,7 @@ def save_directory_for(
     folder = layout["folder"]
     listed = bool(layout["by_core"])
     by_core = listed
-    found = _RETROARCH_CONFIGS.get(bios_path)
+    found = None if layout.get("by_system") else _RETROARCH_CONFIGS.get(bios_path)
     if found is not None:
         cfg_path, app_dir = found
         for key in ("savefiles_in_content_dir", "sort_savefiles_by_content_enable"):
@@ -3518,6 +3537,10 @@ def save_directory_for(
     base = manifest.get("base_destination") or ""
     if base and bios_path.name == base:
         return SavePlace(bios_path.parent / folder, by_core, listed)
+    if not base:
+        # The dests start below the folder holding the BIOS folder
+        # (RetroDECK's ~/retrodeck holds bios/ and saves/).
+        return SavePlace(bios_path / folder, by_core, listed)
     return (f"{bios_path} is not the frontend's default BIOS folder: "
             "name its save directory with --save-dir")
 
@@ -3537,7 +3560,11 @@ def place_save_entries(
     place = save_directory_for(bios_path, manifest, override)
     if isinstance(place, SavePlace):
         _SAVE_DIRS[bios_path] = place
-        where = f"{place.directory}{os.sep}<core>" if place.by_core else str(place.directory)
+        where = str(place.directory)
+        if (manifest.get("save_directory") or {}).get("by_system"):
+            where += f"{os.sep}<system>"
+        if place.by_core:
+            where += f"{os.sep}<core>"
         print(f"  {_plural(len(saved), 'file')} read from {display}'s save directory "
               f"go to {where}")
         return files, []
