@@ -6,7 +6,7 @@
   "platform": "recalbox",
   "display_name": "Recalbox",
   "version": "1.0",
-  "generated": "2026-10-22T09:20:33Z",
+  "generated": "2026-10-22T13:12:21Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -280,10 +280,10 @@
     }
   ],
   "total_files": 3370,
-  "total_size": 4356898611,
+  "total_size": 4356797363,
   "pack_files": 3372,
-  "pack_size": 4356898611,
-  "total_omitted": 13,
+  "pack_size": 4356797363,
+  "total_omitted": 14,
   "omitted_files": [
     {
       "dest": "caesar3/The_empire.555",
@@ -424,6 +424,16 @@
       "reason": "not_found",
       "cores": [
         "gsplus-legacy"
+      ]
+    },
+    {
+      "dest": "svgpcb.zip",
+      "name": "svgpcb.zip",
+      "system": "igs-pgm",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "fbneo"
       ]
     }
   ],
@@ -32873,9 +32883,9 @@
     },
     {
       "dest": "pgm.zip",
-      "sha1": "2b61f36b22933f3bec237818ecc959efb016d652",
-      "sha256": "5582eae58a8f23b7e203f01b56e26e0450e7bab0ceb01bc65b151df6bf532555",
-      "size": 2240738,
+      "sha1": "6bbbce094422062bd178d6007bed06dcdd0d8b78",
+      "sha256": "b26918d5b844b60490a748e3afe21313db2de285c188e58bdfc72add865b9049",
+      "size": 2190114,
       "repo_path": "bios/Arcade/Arcade/pgm.zip",
       "cores": [
         "fbneo",
@@ -33136,7 +33146,7 @@
       "sha1": "1fedd2d6cce0889bf8e23fdecdbbd01d383b0497",
       "sha256": "96389d4937afde45a53b468610cd8dab10688ae2f7393d4013af54f61ec876f5",
       "size": 1941,
-      "repo_path": "bios/Arcade/Arcade/.variants/cvs.zip.95581230",
+      "repo_path": "bios/Arcade/Arcade/cvs.zip",
       "cores": [
         "advancemame",
         "mame2003",
@@ -41640,9 +41650,9 @@
     },
     {
       "dest": "fbneo/pgm.zip",
-      "sha1": "2b61f36b22933f3bec237818ecc959efb016d652",
-      "sha256": "5582eae58a8f23b7e203f01b56e26e0450e7bab0ceb01bc65b151df6bf532555",
-      "size": 2240738,
+      "sha1": "6bbbce094422062bd178d6007bed06dcdd0d8b78",
+      "sha256": "b26918d5b844b60490a748e3afe21313db2de285c188e58bdfc72add865b9049",
+      "size": 2190114,
       "repo_path": "bios/Arcade/Arcade/pgm.zip",
       "cores": [
         "fbneo"

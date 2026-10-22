@@ -6,7 +6,7 @@
   "platform": "myminui",
   "display_name": "MyMinUI",
   "version": "1.0",
-  "generated": "2026-10-22T05:12:35Z",
+  "generated": "2026-10-22T13:12:21Z",
   "base_destination": "",
   "detect": [
     {
@@ -18,10 +18,10 @@
   ],
   "standalone_copies": [],
   "total_files": 465,
-  "total_size": 1489165818,
+  "total_size": 1488912698,
   "pack_files": 467,
-  "pack_size": 1489165818,
-  "total_omitted": 2,
+  "pack_size": 1488912698,
+  "total_omitted": 4,
   "omitted_files": [
     {
       "dest": "Bios/DOOM/doomu.wad",
@@ -44,6 +44,26 @@
         "prboom"
       ],
       "category": "game_data"
+    },
+    {
+      "dest": "Bios/FBN/svgpcb.zip",
+      "name": "svgpcb.zip",
+      "system": "igs-pgm",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "fbneo"
+      ]
+    },
+    {
+      "dest": "Bios/NG/svgpcb.zip",
+      "name": "svgpcb.zip",
+      "system": "igs-pgm",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "fbneo"
+      ]
     }
   ],
   "core_names": {
@@ -1118,9 +1138,9 @@
     },
     {
       "dest": "Bios/MAME/pgm.zip",
-      "sha1": "2b61f36b22933f3bec237818ecc959efb016d652",
-      "sha256": "5582eae58a8f23b7e203f01b56e26e0450e7bab0ceb01bc65b151df6bf532555",
-      "size": 2240738,
+      "sha1": "6bbbce094422062bd178d6007bed06dcdd0d8b78",
+      "sha256": "b26918d5b844b60490a748e3afe21313db2de285c188e58bdfc72add865b9049",
+      "size": 2190114,
       "repo_path": "bios/Arcade/Arcade/pgm.zip",
       "cores": [
         "mame2003_plus"
@@ -1271,7 +1291,7 @@
       "sha1": "1fedd2d6cce0889bf8e23fdecdbbd01d383b0497",
       "sha256": "96389d4937afde45a53b468610cd8dab10688ae2f7393d4013af54f61ec876f5",
       "size": 1941,
-      "repo_path": "bios/Arcade/Arcade/.variants/cvs.zip.95581230",
+      "repo_path": "bios/Arcade/Arcade/cvs.zip",
       "cores": [
         "mame2003_plus"
       ]
@@ -3356,9 +3376,9 @@
     },
     {
       "dest": "Bios/FBN/pgm.zip",
-      "sha1": "2b61f36b22933f3bec237818ecc959efb016d652",
-      "sha256": "5582eae58a8f23b7e203f01b56e26e0450e7bab0ceb01bc65b151df6bf532555",
-      "size": 2240738,
+      "sha1": "6bbbce094422062bd178d6007bed06dcdd0d8b78",
+      "sha256": "b26918d5b844b60490a748e3afe21313db2de285c188e58bdfc72add865b9049",
+      "size": 2190114,
       "repo_path": "bios/Arcade/Arcade/pgm.zip",
       "cores": [
         "fbneo"
@@ -3366,9 +3386,9 @@
     },
     {
       "dest": "Bios/NG/pgm.zip",
-      "sha1": "2b61f36b22933f3bec237818ecc959efb016d652",
-      "sha256": "5582eae58a8f23b7e203f01b56e26e0450e7bab0ceb01bc65b151df6bf532555",
-      "size": 2240738,
+      "sha1": "6bbbce094422062bd178d6007bed06dcdd0d8b78",
+      "sha256": "b26918d5b844b60490a748e3afe21313db2de285c188e58bdfc72add865b9049",
+      "size": 2190114,
       "repo_path": "bios/Arcade/Arcade/pgm.zip",
       "cores": [
         "fbneo"
@@ -4226,9 +4246,9 @@
     },
     {
       "dest": "Bios/FBN/fbneo/pgm.zip",
-      "sha1": "2b61f36b22933f3bec237818ecc959efb016d652",
-      "sha256": "5582eae58a8f23b7e203f01b56e26e0450e7bab0ceb01bc65b151df6bf532555",
-      "size": 2240738,
+      "sha1": "6bbbce094422062bd178d6007bed06dcdd0d8b78",
+      "sha256": "b26918d5b844b60490a748e3afe21313db2de285c188e58bdfc72add865b9049",
+      "size": 2190114,
       "repo_path": "bios/Arcade/Arcade/pgm.zip",
       "cores": [
         "fbneo"
@@ -4826,9 +4846,9 @@
     },
     {
       "dest": "Bios/NG/fbneo/pgm.zip",
-      "sha1": "2b61f36b22933f3bec237818ecc959efb016d652",
-      "sha256": "5582eae58a8f23b7e203f01b56e26e0450e7bab0ceb01bc65b151df6bf532555",
-      "size": 2240738,
+      "sha1": "6bbbce094422062bd178d6007bed06dcdd0d8b78",
+      "sha256": "b26918d5b844b60490a748e3afe21313db2de285c188e58bdfc72add865b9049",
+      "size": 2190114,
       "repo_path": "bios/Arcade/Arcade/pgm.zip",
       "cores": [
         "fbneo"

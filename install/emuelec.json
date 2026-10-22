@@ -6,7 +6,7 @@
   "platform": "emuelec",
   "display_name": "EmuELEC",
   "version": "1.0",
-  "generated": "2026-10-22T09:20:33Z",
+  "generated": "2026-10-22T13:12:21Z",
   "base_destination": "",
   "detect": [
     {
@@ -20,11 +20,11 @@
     }
   ],
   "standalone_copies": [],
-  "total_files": 5275,
-  "total_size": 4134692734,
+  "total_files": 5294,
+  "total_size": 4137534715,
   "pack_files": 5296,
-  "pack_size": 4135317792,
-  "total_omitted": 182,
+  "pack_size": 4137534715,
+  "total_omitted": 164,
   "omitted_files": [
     {
       "dest": "bios/AUDIOHED.VSI",
@@ -1686,6 +1686,16 @@
       "category": "game_data"
     },
     {
+      "dest": "bios/svgpcb.zip",
+      "name": "svgpcb.zip",
+      "system": "igs-pgm",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "fbneo"
+      ]
+    },
+    {
       "dest": "bios/tntkex.wad",
       "name": "tntkex.wad",
       "system": "doom",
@@ -1766,215 +1776,6 @@
         "diablo"
       ],
       "category": "game_data"
-    },
-    {
-      "dest": "ports/opentyrian/dpmi16bi.ovl",
-      "name": "dpmi16bi.ovl",
-      "system": "tyrian",
-      "required": true,
-      "reason": "not_found",
-      "cores": null,
-      "systems": [
-        "tyrian"
-      ]
-    },
-    {
-      "dest": "ports/opentyrian/exitmsg.bin",
-      "name": "exitmsg.bin",
-      "system": "tyrian",
-      "required": true,
-      "reason": "not_found",
-      "cores": null,
-      "systems": [
-        "tyrian"
-      ]
-    },
-    {
-      "dest": "ports/opentyrian/loudness.awe",
-      "name": "loudness.awe",
-      "system": "tyrian",
-      "required": true,
-      "reason": "not_found",
-      "cores": null,
-      "systems": [
-        "tyrian"
-      ]
-    },
-    {
-      "dest": "ports/opentyrian/modems.txt",
-      "name": "modems.txt",
-      "system": "tyrian",
-      "required": true,
-      "reason": "not_found",
-      "cores": null,
-      "systems": [
-        "tyrian"
-      ]
-    },
-    {
-      "dest": "ports/opentyrian/netarena.pcx",
-      "name": "netarena.pcx",
-      "system": "tyrian",
-      "required": true,
-      "reason": "not_found",
-      "cores": null,
-      "systems": [
-        "tyrian"
-      ]
-    },
-    {
-      "dest": "ports/opentyrian/netfont1.pcx",
-      "name": "netfont1.pcx",
-      "system": "tyrian",
-      "required": true,
-      "reason": "not_found",
-      "cores": null,
-      "systems": [
-        "tyrian"
-      ]
-    },
-    {
-      "dest": "ports/opentyrian/netfont2.pcx",
-      "name": "netfont2.pcx",
-      "system": "tyrian",
-      "required": true,
-      "reason": "not_found",
-      "cores": null,
-      "systems": [
-        "tyrian"
-      ]
-    },
-    {
-      "dest": "ports/opentyrian/netmega.pcx",
-      "name": "netmega.pcx",
-      "system": "tyrian",
-      "required": true,
-      "reason": "not_found",
-      "cores": null,
-      "systems": [
-        "tyrian"
-      ]
-    },
-    {
-      "dest": "ports/opentyrian/netset.pcx",
-      "name": "netset.pcx",
-      "system": "tyrian",
-      "required": true,
-      "reason": "not_found",
-      "cores": null,
-      "systems": [
-        "tyrian"
-      ]
-    },
-    {
-      "dest": "ports/opentyrian/netterm.int",
-      "name": "netterm.int",
-      "system": "tyrian",
-      "required": true,
-      "reason": "not_found",
-      "cores": null,
-      "systems": [
-        "tyrian"
-      ]
-    },
-    {
-      "dest": "ports/opentyrian/order.tfp",
-      "name": "order.tfp",
-      "system": "tyrian",
-      "required": true,
-      "reason": "not_found",
-      "cores": null,
-      "systems": [
-        "tyrian"
-      ]
-    },
-    {
-      "dest": "ports/opentyrian/setup.box",
-      "name": "setup.box",
-      "system": "tyrian",
-      "required": true,
-      "reason": "not_found",
-      "cores": null,
-      "systems": [
-        "tyrian"
-      ]
-    },
-    {
-      "dest": "ports/opentyrian/setup.ini",
-      "name": "setup.ini",
-      "system": "tyrian",
-      "required": true,
-      "reason": "not_found",
-      "cores": null,
-      "systems": [
-        "tyrian"
-      ]
-    },
-    {
-      "dest": "ports/opentyrian/setup.int",
-      "name": "setup.int",
-      "system": "tyrian",
-      "required": true,
-      "reason": "not_found",
-      "cores": null,
-      "systems": [
-        "tyrian"
-      ]
-    },
-    {
-      "dest": "ports/opentyrian/shipedit.pcx",
-      "name": "shipedit.pcx",
-      "system": "tyrian",
-      "required": true,
-      "reason": "not_found",
-      "cores": null,
-      "systems": [
-        "tyrian"
-      ]
-    },
-    {
-      "dest": "ports/opentyrian/tyrian.ico",
-      "name": "tyrian.ico",
-      "system": "tyrian",
-      "required": true,
-      "reason": "not_found",
-      "cores": null,
-      "systems": [
-        "tyrian"
-      ]
-    },
-    {
-      "dest": "ports/opentyrian/tyrset.pcx",
-      "name": "tyrset.pcx",
-      "system": "tyrian",
-      "required": true,
-      "reason": "not_found",
-      "cores": null,
-      "systems": [
-        "tyrian"
-      ]
-    },
-    {
-      "dest": "ports/opentyrian/user1.shp",
-      "name": "user1.shp",
-      "system": "tyrian",
-      "required": true,
-      "reason": "not_found",
-      "cores": null,
-      "systems": [
-        "tyrian"
-      ]
-    },
-    {
-      "dest": "ports/opentyrian/user2.shp",
-      "name": "user2.shp",
-      "system": "tyrian",
-      "required": true,
-      "reason": "not_found",
-      "cores": null,
-      "systems": [
-        "tyrian"
-      ]
     },
     {
       "dest": "ports/reminiscence/level1.map",
@@ -9847,6 +9648,17 @@
       "category": "game_data"
     },
     {
+      "dest": "ports/opentyrian/dpmi16bi.ovl",
+      "sha1": "857591b1527d8488bb15237b9412a63bc4bb1d71",
+      "sha256": "afea669e007ff79c8c02b2ae8b3fc908c51b6a86c49f9cef1a9cd3f5ce9635ba",
+      "size": 50544,
+      "repo_path": "bios/Other/opentyrian/dpmi16bi.ovl",
+      "cores": null,
+      "systems": [
+        "tyrian"
+      ]
+    },
+    {
       "dest": "ports/opentyrian/estsc.shp",
       "sha1": "ddbb3d3eef0c199093dd297fbccda8f3d856288c",
       "sha256": "d4368490c9191442c1255b4feb447bc0265236126bed11c9442cef5338a146df",
@@ -9857,6 +9669,17 @@
         "tyrian"
       ],
       "category": "game_data"
+    },
+    {
+      "dest": "ports/opentyrian/exitmsg.bin",
+      "sha1": "95558197db8e614bf409898dcb964b54bc64663b",
+      "sha256": "5e09eccbdc6eef0a20715db1eb59dc336401642ed4afa8f4d506e5a1934557a3",
+      "size": 4000,
+      "repo_path": "bios/Other/opentyrian/exitmsg.bin",
+      "cores": null,
+      "systems": [
+        "tyrian"
+      ]
     },
     {
       "dest": "ports/opentyrian/levels1.dat",
@@ -9907,6 +9730,28 @@
       "category": "game_data"
     },
     {
+      "dest": "ports/opentyrian/loudness.awe",
+      "sha1": "bf46dff901e1e151f6bda16fefaa77906974c5b5",
+      "sha256": "fae838f0dad4894b41b4f1f094203152f5a1cf9a74b9fe24024b12f494d92c6b",
+      "size": 34382,
+      "repo_path": "bios/Other/opentyrian/loudness.awe",
+      "cores": null,
+      "systems": [
+        "tyrian"
+      ]
+    },
+    {
+      "dest": "ports/opentyrian/modems.txt",
+      "sha1": "58b64a9d7d5b1ef62589ae3a096739241dad0460",
+      "sha256": "9544cb45be8b5d6907431e4496e56ccb0c2b9b7d2e621f89316761de81106e68",
+      "size": 3082,
+      "repo_path": "bios/Other/opentyrian/modems.txt",
+      "cores": null,
+      "systems": [
+        "tyrian"
+      ]
+    },
+    {
       "dest": "ports/opentyrian/music.mus",
       "sha1": "b77313a9f92bc67f5c577699dcb95ca613e6948f",
       "sha256": "b06a509bd8576f63c61859e3a2c59482c4035d79f21725f9ec10479377044a74",
@@ -9917,6 +9762,61 @@
         "tyrian"
       ],
       "category": "game_data"
+    },
+    {
+      "dest": "ports/opentyrian/netarena.pcx",
+      "sha1": "022b7de612f8b5aec5d56ed702832e494515bf22",
+      "sha256": "1b8dffbb1d17af08d9e4dd265c7146b6a5f1dfb49bee1462ebd80ad63cba2fac",
+      "size": 22826,
+      "repo_path": "bios/Other/opentyrian/netarena.pcx",
+      "cores": null,
+      "systems": [
+        "tyrian"
+      ]
+    },
+    {
+      "dest": "ports/opentyrian/netfont1.pcx",
+      "sha1": "20d8cb1d75a0b6db64a8e3a5276a00410c8ab2e1",
+      "sha256": "13cecff9b2bb01c472ca42a6d4081bfb54ef182e086130fc1d82530ea2ed5cda",
+      "size": 8692,
+      "repo_path": "bios/Other/opentyrian/netfont1.pcx",
+      "cores": null,
+      "systems": [
+        "tyrian"
+      ]
+    },
+    {
+      "dest": "ports/opentyrian/netfont2.pcx",
+      "sha1": "c6853d9306b8f8daec72e25ab33340856121d1b3",
+      "sha256": "9d99299c4b224b6489d252c63cca08850f525c7ac4548cfb55241fc36902dc42",
+      "size": 10327,
+      "repo_path": "bios/Other/opentyrian/netfont2.pcx",
+      "cores": null,
+      "systems": [
+        "tyrian"
+      ]
+    },
+    {
+      "dest": "ports/opentyrian/netmega.pcx",
+      "sha1": "be6345e7b990998ee81c27da337f45e765c096b4",
+      "sha256": "275291eaf4666aba50869adefbf21b3314bc72b951a38b962f26713ef159b8eb",
+      "size": 33221,
+      "repo_path": "bios/Other/opentyrian/netmega.pcx",
+      "cores": null,
+      "systems": [
+        "tyrian"
+      ]
+    },
+    {
+      "dest": "ports/opentyrian/netset.pcx",
+      "sha1": "50ef0cd9eaa2ae0c0c628c141400b76101223385",
+      "sha256": "bcb12dff1a6b845fdf26d3eb1f347c5d9d90248365f5113a67a371883f4c2a4a",
+      "size": 53766,
+      "repo_path": "bios/Other/opentyrian/netset.pcx",
+      "cores": null,
+      "systems": [
+        "tyrian"
+      ]
     },
     {
       "dest": "ports/opentyrian/newsh#.shp",
@@ -10315,6 +10215,17 @@
       "category": "game_data"
     },
     {
+      "dest": "ports/opentyrian/order.tfp",
+      "sha1": "cbad5ffb246810bff3c752f168b53ae517fbad03",
+      "sha256": "26f5f3d8e403676f5f2080fe45285c5a5118780e90b37cfee891c0ee385ccc18",
+      "size": 272703,
+      "repo_path": "bios/Other/opentyrian/order.tfp",
+      "cores": null,
+      "systems": [
+        "tyrian"
+      ]
+    },
+    {
       "dest": "ports/opentyrian/palette.dat",
       "sha1": "29af4cd642e0b29dc8120b5d92f130eaf4e860c9",
       "sha256": "6f0be74cb1b0026e46029d98d9ade41b8283bad849208543330b717fe5c365fc",
@@ -10325,6 +10236,39 @@
         "tyrian"
       ],
       "category": "game_data"
+    },
+    {
+      "dest": "ports/opentyrian/setup.box",
+      "sha1": "c5b67283ac176399356470b388da622e53723a8a",
+      "sha256": "f87854991cd8ba82d9b99c86f07932fe079089a4d49fd7aeb85b44b409107bf2",
+      "size": 24,
+      "repo_path": "bios/Other/opentyrian/setup.box",
+      "cores": null,
+      "systems": [
+        "tyrian"
+      ]
+    },
+    {
+      "dest": "ports/opentyrian/setup.ini",
+      "sha1": "9bdf6bbc992c867444029701d19c7f93bc41d74f",
+      "sha256": "06b9345543385b2b7249b45e50236dcb5f718ba688992038bbabafee92b6839d",
+      "size": 77,
+      "repo_path": "bios/Other/opentyrian/setup.ini",
+      "cores": null,
+      "systems": [
+        "tyrian"
+      ]
+    },
+    {
+      "dest": "ports/opentyrian/setup.int",
+      "sha1": "fe030b1652a97e51b9b4219957d9959215acf653",
+      "sha256": "a972a5253a3c3ce56b00f72e04f77f3bd2b38f946793370f144b3b5b6ff66262",
+      "size": 7451,
+      "repo_path": "bios/Other/opentyrian/setup.int",
+      "cores": null,
+      "systems": [
+        "tyrian"
+      ]
     },
     {
       "dest": "ports/opentyrian/shapesw.dat",
@@ -10375,6 +10319,17 @@
       "category": "game_data"
     },
     {
+      "dest": "ports/opentyrian/shipedit.pcx",
+      "sha1": "1781a9677345ca990a80177bc839cae76474a809",
+      "sha256": "29caa6ad955f63819dd06ded886a991208a590ee68b88e2b8beb2f55e2e31bb5",
+      "size": 13450,
+      "repo_path": "bios/Other/opentyrian/shipedit.pcx",
+      "cores": null,
+      "systems": [
+        "tyrian"
+      ]
+    },
+    {
       "dest": "ports/opentyrian/tshp2.pcx",
       "sha1": "04cc3cdc73ec23d092cfd7618d9ae5e34e82b791",
       "sha256": "1a7b841ce799fac196e136c8dd90e6a0e9184bfdd05fa036cbb5e97d651e6327",
@@ -10421,6 +10376,17 @@
         "tyrian"
       ],
       "category": "game_data"
+    },
+    {
+      "dest": "ports/opentyrian/tyrian.ico",
+      "sha1": "04c77d6249cde152bbd6dbef27ddaee81b36b5d5",
+      "sha256": "5aa58773ef65ac7503f102aa65e8e6f34ccf52d59ffbde84fe93e69b6bafdf12",
+      "size": 766,
+      "repo_path": "bios/Other/opentyrian/tyrian.ico",
+      "cores": null,
+      "systems": [
+        "tyrian"
+      ]
     },
     {
       "dest": "ports/opentyrian/tyrian.pic",
@@ -10519,6 +10485,39 @@
       "category": "game_data"
     },
     {
+      "dest": "ports/opentyrian/tyrset.pcx",
+      "sha1": "50ef0cd9eaa2ae0c0c628c141400b76101223385",
+      "sha256": "bcb12dff1a6b845fdf26d3eb1f347c5d9d90248365f5113a67a371883f4c2a4a",
+      "size": 53766,
+      "repo_path": "bios/Other/opentyrian/netset.pcx",
+      "cores": null,
+      "systems": [
+        "tyrian"
+      ]
+    },
+    {
+      "dest": "ports/opentyrian/user1.shp",
+      "sha1": "7f010b007408638d4153832edf1dc9d424b4cfcd",
+      "sha256": "d78f5d084f3a2a087c48810476743434b5eddd144038164deee284a51b9d1913",
+      "size": 27674,
+      "repo_path": "bios/Other/opentyrian/user1.shp",
+      "cores": null,
+      "systems": [
+        "tyrian"
+      ]
+    },
+    {
+      "dest": "ports/opentyrian/user2.shp",
+      "sha1": "9af50c68098a3469fc44c3ad2777e345787f2bf6",
+      "sha256": "7ac900995a588386ffc70d66ed67bd501e15bf3a8847ad33363bb67cbbc00d1d",
+      "size": 27674,
+      "repo_path": "bios/Other/opentyrian/user2.shp",
+      "cores": null,
+      "systems": [
+        "tyrian"
+      ]
+    },
+    {
       "dest": "ports/opentyrian/voices.snd",
       "sha1": "63ff6b55caeda529f69983a342618c84cba5addf",
       "sha256": "c709ca1e74be6bd4b7917d258d81824d33c38a1a9a0287ec693b6459f58fc27a",
@@ -10541,6 +10540,17 @@
         "tyrian"
       ],
       "category": "game_data"
+    },
+    {
+      "dest": "ports/opentyrian/netterm.int",
+      "sha1": "c7ebdd17aba1661f33a033d318ce5ff95e21dd31",
+      "sha256": "58fec99ab9512c588e8f4375e1d17ea9c052f9be8cd74fd1ea411ca00519f300",
+      "size": 633,
+      "repo_path": "bios/Other/opentyrian/netterm.int",
+      "cores": null,
+      "systems": [
+        "tyrian"
+      ]
     },
     {
       "dest": "ports/opentyrian/newshi.shp",
@@ -43089,9 +43099,9 @@
     },
     {
       "dest": "bios/pgm.zip",
-      "sha1": "2b61f36b22933f3bec237818ecc959efb016d652",
-      "sha256": "5582eae58a8f23b7e203f01b56e26e0450e7bab0ceb01bc65b151df6bf532555",
-      "size": 2240738,
+      "sha1": "6bbbce094422062bd178d6007bed06dcdd0d8b78",
+      "sha256": "b26918d5b844b60490a748e3afe21313db2de285c188e58bdfc72add865b9049",
+      "size": 2190114,
       "repo_path": "bios/Arcade/Arcade/pgm.zip",
       "cores": [
         "fbneo",
@@ -43108,9 +43118,9 @@
           ]
         },
         {
-          "sha1": "2b61f36b22933f3bec237818ecc959efb016d652",
-          "sha256": "5582eae58a8f23b7e203f01b56e26e0450e7bab0ceb01bc65b151df6bf532555",
-          "size": 2240738,
+          "sha1": "6bbbce094422062bd178d6007bed06dcdd0d8b78",
+          "sha256": "b26918d5b844b60490a748e3afe21313db2de285c188e58bdfc72add865b9049",
+          "size": 2190114,
           "repo_path": "bios/Arcade/Arcade/pgm.zip",
           "cores": [
             "mame2003_plus",
@@ -43379,7 +43389,7 @@
       "sha1": "1fedd2d6cce0889bf8e23fdecdbbd01d383b0497",
       "sha256": "96389d4937afde45a53b468610cd8dab10688ae2f7393d4013af54f61ec876f5",
       "size": 1941,
-      "repo_path": "bios/Arcade/Arcade/.variants/cvs.zip.95581230",
+      "repo_path": "bios/Arcade/Arcade/cvs.zip",
       "cores": [
         "advancemame",
         "mame2003_plus"
@@ -48125,10 +48135,10 @@
     },
     {
       "dest": "bios/pc8001.zip",
-      "sha1": "1859a1e6a53784c258c1b7493727df2e52817996",
-      "sha256": "925495864415336de5f847a0a97e34350a572d0cce335fe8308cf6fc3ca5cf15",
-      "size": 60399,
-      "repo_path": "bios/Arcade/Arcade/pc8001.zip",
+      "sha1": "007704fa0bc202851affae38f268487694bcae6e",
+      "sha256": "c2eceeb416956391a0e54b4a66850d5156919aa7c38dee9523a19489b9a39952",
+      "size": 60721,
+      "repo_path": "bios/NEC/PC-8001/pc8001.zip",
       "cores": [
         "mame"
       ]
@@ -48555,9 +48565,9 @@
     },
     {
       "dest": "bios/trs80.zip",
-      "sha1": "a9b8931c42303e8dfb475112fc18ff200b7252ce",
-      "sha256": "bc508eeb02be884256a8b12ab4eb28baf91dfea54f1abbc417c771d05a06a712",
-      "size": 14558,
+      "sha1": "3795bf93d977f2625e452f8caf6a5371eff2f701",
+      "sha256": "ca5e2550c9c097e23a1828ae7f4338f7962520335c83b78710a89f316d4d2831",
+      "size": 4157,
       "repo_path": "bios/Tandy/TRS-80/trs80.zip",
       "cores": [
         "mame"
@@ -48625,9 +48635,9 @@
     },
     {
       "dest": "bios/trs80m3.zip",
-      "sha1": "b804a031c8db6def59e077a4b6938dcac25093d7",
-      "sha256": "3c344819aebc5e58c34a025ec2ef079066c88a4d43aef67876e5871139a61672",
-      "size": 32854,
+      "sha1": "8cdf51015a0bac500d9a1d3969fa47ebec4144f6",
+      "sha256": "cb70c9eb80135f399c3a068d2d91fb763af362218298a8e04a52168c0d97f817",
+      "size": 20844,
       "repo_path": "bios/Tandy/TRS-80/trs80m3.zip",
       "cores": [
         "mame"
@@ -48715,10 +48725,10 @@
     },
     {
       "dest": "bios/dragon64.zip",
-      "sha1": "d67e0699141078e5c96a55387b794b42f2344321",
-      "sha256": "80f9d7567863115bbc9d5d63d977f7fdcd275a58b33441a63aaab83fa7589f3c",
-      "size": 62928,
-      "repo_path": "bios/Arcade/Arcade/dragon64.zip",
+      "sha1": "d82a22cc7d31620983a8c62d400be37f9b18bb9e",
+      "sha256": "2047b30aae051d322c47464e4684e27cf05d89a5a6cfdcc92b841da7a241c0e8",
+      "size": 49052,
+      "repo_path": "bios/Dragon/Dragon/dragon64.zip",
       "cores": [
         "mame"
       ]
@@ -51070,10 +51080,10 @@
     },
     {
       "dest": "bios/a2mouse.zip",
-      "sha1": "e94f2a8849af562cb1d0b8918778a2f9356335f1",
-      "sha256": "179f9341894c0e880fcf8a4ab0639136bfac52f68d521404307ab0a9d4906b3e",
-      "size": 3058,
-      "repo_path": "bios/Arcade/MAME/a2mouse.zip",
+      "sha1": "e8fceb68a86cff03df1868e514e7106816545ff6",
+      "sha256": "19a1ee969b0d65af091d3532fff3420e7e0f40faedefd555f129d27e6adc39a9",
+      "size": 2836,
+      "repo_path": "bios/Arcade/Arcade/a2mouse.zip",
       "cores": [
         "mame"
       ]
@@ -52420,10 +52430,10 @@
     },
     {
       "dest": "bios/amiga_buddha.zip",
-      "sha1": "25fc9e4387eac3c6ec007f91550c8c002284a4d7",
-      "sha256": "ac49296e4217592152667d349335c318054c5c4d2af80736e3f1a7bdf05ce3fc",
-      "size": 27583,
-      "repo_path": "bios/Arcade/Arcade/buddha.zip",
+      "sha1": "d02fecaa425fe0ab72cb542eea998f156d81f1e9",
+      "sha256": "529b162907006f87e9352938ef39e539ba32b658018dee30b2474f13ff926fa5",
+      "size": 1179140,
+      "repo_path": "bios/Arcade/MAME/.variants/amiga_buddha.zip.0ed12578",
       "cores": [
         "mame"
       ],
@@ -53143,7 +53153,7 @@
       "sha1": "e66d22bcc5fa558c447cf6d83977713a3d6b394b",
       "sha256": "a1336438c53c4b2258bd41c4c53be6d0e3552d7b5eb269854d8ab1ee0b663907",
       "size": 1074,
-      "repo_path": "bios/Arcade/Arcade/cms_4080term.zip",
+      "repo_path": "bios/Arcade/MAME/atom_vdu80.zip",
       "cores": [
         "mame"
       ],
@@ -53764,9 +53774,9 @@
     },
     {
       "dest": "bios/bbc_tube_a500.zip",
-      "sha1": "f03f16d4e5e5ee7443aef4164e2e5b00c5096631",
-      "sha256": "aca2d00c2bd396b87fc5d7c3824d0710e4be57a8a72d353a26d57166ce37791c",
-      "size": 13396,
+      "sha1": "c91260071abff31f167394cd9afe229727a908cf",
+      "sha256": "8396c0e8797f6639310b5b05c0f8297176b9ce2a61ded21de5206ec29bcd012e",
+      "size": 12117,
       "repo_path": "bios/Arcade/MAME/bbc_tube_a500.zip",
       "cores": [
         "mame"
@@ -53774,9 +53784,9 @@
     },
     {
       "dest": "bios/bbc_tube_a500d.zip",
-      "sha1": "667fccd787cefc96525d2f7441199c868515fb79",
-      "sha256": "e62d7b95797ef661360d392e0eee726025690d55a3f1b51b54696bf43bb380d6",
-      "size": 13591,
+      "sha1": "71ded66da22e620b5ecfea5778fb199dc8003d2b",
+      "sha256": "5857e22bb1699699ed209506e7b78a7276c332e2025779b8f42076a54a977762",
+      "size": 12312,
       "repo_path": "bios/Arcade/MAME/bbc_tube_a500d.zip",
       "cores": [
         "mame"
@@ -55219,10 +55229,10 @@
     },
     {
       "dest": "bios/cms_4080term.zip",
-      "sha1": "e66d22bcc5fa558c447cf6d83977713a3d6b394b",
-      "sha256": "a1336438c53c4b2258bd41c4c53be6d0e3552d7b5eb269854d8ab1ee0b663907",
-      "size": 1074,
-      "repo_path": "bios/Arcade/Arcade/cms_4080term.zip",
+      "sha1": "f2214ad23aad6517e72c856a4aaee0fb0d16bc2d",
+      "sha256": "7938712da94461f31621d8880a8a5ddfd722fc4538d4caac958c2d30ab8d3eb2",
+      "size": 576010,
+      "repo_path": "bios/Arcade/MAME/.variants/cms_4080term.zip.702f67db",
       "cores": [
         "mame"
       ]
@@ -58087,10 +58097,10 @@
     },
     {
       "dest": "bios/isa_ibm_mda.zip",
-      "sha1": "da272af2fb1da8883c539b19c1bda97c5301dc80",
-      "sha256": "fa44ace4974d3ea140711b5db44232a1ecb6151f3f945ae69961e528bf7f1fd5",
-      "size": 3710,
-      "repo_path": "bios/Arcade/Arcade/cga.zip",
+      "sha1": "be96de2cff1c66c03be0a4ff9be84d68fafebb15",
+      "sha256": "baf9b7a75dedae04d9db0004233009ae12172f5f4687396b026ec81cdee92519",
+      "size": 483513,
+      "repo_path": "bios/Arcade/MAME/.variants/isa_ibm_mda.zip.cbc72d7d",
       "cores": [
         "mame"
       ],
@@ -58261,10 +58271,10 @@
     },
     {
       "dest": "bios/k573kara.zip",
-      "sha1": "9695831910742a7d6e3b17f5e3f811320e8b4125",
-      "sha256": "fedf850039d0b8a18f34bddebb995bdb1801120e6d58a49000759ca6af6e5452",
-      "size": 158,
-      "repo_path": "bios/Arcade/Arcade/k573_dio.zip",
+      "sha1": "ebe7e830cf5bf5256e6e928d9738efaf000cdf0b",
+      "sha256": "b9792bb93487272368a6ad6124e6e93f635363bb143032f95b7dbe17a1b74288",
+      "size": 95291,
+      "repo_path": "bios/Arcade/MAME/.variants/k573kara.zip.61811c90",
       "cores": [
         "mame"
       ]
@@ -63510,10 +63520,10 @@
     },
     {
       "dest": "bios/speakboard.zip",
-      "sha1": "68505cbcfe0a386af4daac18673f9a971674a601",
-      "sha256": "0fe93c8e7bf3a24ded9f303a1a0d5e8ebb1eaed47676cec3be5eab3b6cb76283",
-      "size": 13078,
-      "repo_path": "bios/Arcade/Arcade/pc9801_spb.zip",
+      "sha1": "eaabc1ef9448c297ef7cbae90278b265acd48169",
+      "sha256": "4f21bc52f4739713687d3b044a48d665dfa888ba5ad1e07fe71dc8ccecf0f968",
+      "size": 116066,
+      "repo_path": "bios/Arcade/MAME/.variants/speakboard.zip.7018498d",
       "cores": [
         "mame"
       ],
@@ -64171,7 +64181,7 @@
       "sha1": "d96dcaa450dbc4a6a6522ec0cc2d71a8244ca933",
       "sha256": "c76918f911c4c8519cb2d7fd539fa02dd7d0ebce7adee594d3e52f974cc250ee",
       "size": 57393,
-      "repo_path": "bios/Arcade/MAME/sun1_cpu.zip",
+      "repo_path": "bios/Arcade/MAME/sun1cpu.zip",
       "cores": [
         "mame"
       ],
@@ -64224,9 +64234,9 @@
     },
     {
       "dest": "bios/sw1000xg.zip",
-      "sha1": "5726931a47ccebb59d22ac7e1912f6adafd6e750",
-      "sha256": "d43d7d39f8863bdcec3bcb7aad2b2bfdfff408bdb43850580777c514722f118c",
-      "size": 20565663,
+      "sha1": "4c6a4617cd99034acd1a647bb61bb4420e1689c5",
+      "sha256": "17f53ffdb6461cdcaf7565bcbc4f5c0754078b528ae866b76345d8a270b84395",
+      "size": 20518162,
       "repo_path": "bios/Arcade/MAME/sw1000xg.zip",
       "cores": [
         "mame"
@@ -70828,9 +70838,9 @@
     },
     {
       "dest": "bios/fbneo/pgm.zip",
-      "sha1": "2b61f36b22933f3bec237818ecc959efb016d652",
-      "sha256": "5582eae58a8f23b7e203f01b56e26e0450e7bab0ceb01bc65b151df6bf532555",
-      "size": 2240738,
+      "sha1": "6bbbce094422062bd178d6007bed06dcdd0d8b78",
+      "sha256": "b26918d5b844b60490a748e3afe21313db2de285c188e58bdfc72add865b9049",
+      "size": 2190114,
       "repo_path": "bios/Arcade/Arcade/pgm.zip",
       "cores": [
         "fbneo"

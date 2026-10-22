@@ -6,7 +6,7 @@
   "platform": "nextui",
   "display_name": "NextUI",
   "version": "1.0",
-  "generated": "2026-10-22T05:12:35Z",
+  "generated": "2026-10-22T13:12:21Z",
   "base_destination": "",
   "detect": [
     {
@@ -18,11 +18,21 @@
   ],
   "standalone_copies": [],
   "total_files": 402,
-  "total_size": 708139441,
+  "total_size": 708038193,
   "pack_files": 404,
-  "pack_size": 708139441,
-  "total_omitted": 2,
+  "pack_size": 708038193,
+  "total_omitted": 3,
   "omitted_files": [
+    {
+      "dest": "Bios/FBN/svgpcb.zip",
+      "name": "svgpcb.zip",
+      "system": "igs-pgm",
+      "required": false,
+      "reason": "not_found",
+      "cores": [
+        "fbneo"
+      ]
+    },
     {
       "dest": "Bios/PRBOOM/doomu.wad",
       "name": "doomu.wad",
@@ -3865,9 +3875,9 @@
     },
     {
       "dest": "Bios/FBN/pgm.zip",
-      "sha1": "2b61f36b22933f3bec237818ecc959efb016d652",
-      "sha256": "5582eae58a8f23b7e203f01b56e26e0450e7bab0ceb01bc65b151df6bf532555",
-      "size": 2240738,
+      "sha1": "6bbbce094422062bd178d6007bed06dcdd0d8b78",
+      "sha256": "b26918d5b844b60490a748e3afe21313db2de285c188e58bdfc72add865b9049",
+      "size": 2190114,
       "repo_path": "bios/Arcade/Arcade/pgm.zip",
       "cores": [
         "fbneo"
@@ -4465,9 +4475,9 @@
     },
     {
       "dest": "Bios/FBN/fbneo/pgm.zip",
-      "sha1": "2b61f36b22933f3bec237818ecc959efb016d652",
-      "sha256": "5582eae58a8f23b7e203f01b56e26e0450e7bab0ceb01bc65b151df6bf532555",
-      "size": 2240738,
+      "sha1": "6bbbce094422062bd178d6007bed06dcdd0d8b78",
+      "sha256": "b26918d5b844b60490a748e3afe21313db2de285c188e58bdfc72add865b9049",
+      "size": 2190114,
       "repo_path": "bios/Arcade/Arcade/pgm.zip",
       "cores": [
         "fbneo"
