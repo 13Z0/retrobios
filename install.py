@@ -3443,6 +3443,21 @@ BACKUP_DIR = "retrobios-backup"
 BACKUP_MARKER = ".retrobios-backup"
 
 
+def _check_holder(holder: Path) -> None:
+    """Refuse a backup holder the user's files must not go into.
+
+    A link would send them wherever it points. On a system with user ids, a
+    folder another user owns was not made by this user's runs, and its owner
+    could read or swap what is moved in.
+    """
+    info = os.lstat(holder)
+    if stat.S_ISLNK(info.st_mode):
+        raise OSError(errno.ELOOP, f"{holder} is a link")
+    getuid = getattr(os, "getuid", None)
+    if getuid is not None and info.st_uid != getuid():
+        raise OSError(errno.EPERM, f"{holder} belongs to another user")
+
+
 class _NotKept(Exception):
     """The file in place differs and could not be set aside: it stays."""
 
@@ -3496,9 +3511,7 @@ class KeptFiles:
                 if run is None:
                     try:
                         holder.mkdir(parents=True, exist_ok=True)
-                        if holder.is_symlink():
-                            # A link would send the user's files wherever it points.
-                            raise OSError(errno.ELOOP, f"{holder} is a link")
+                        _check_holder(holder)
                         for n in range(1, 1000):
                             run = holder / (stamp if n == 1 else f"{stamp}-{n}")
                             try:
@@ -3506,6 +3519,10 @@ class KeptFiles:
                                 break
                             except FileExistsError:
                                 continue
+                        else:
+                            # Every name taken: never reuse a folder this run
+                            # did not create.
+                            raise OSError(errno.EEXIST, f"no free folder name in {holder}")
                         (run / BACKUP_MARKER).write_text(
                             "Files the RetroBIOS installer replaced.\n", encoding="utf-8")
                     except OSError as exc:

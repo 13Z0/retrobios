@@ -5218,6 +5218,29 @@ class AFileYouHadIsKept(unittest.TestCase):
         self.assertEqual(len(inside), 1)
         self.assertEqual((inside[0] / "x.bin").read_bytes(), self.OLD)
 
+    def test_a_holder_with_every_name_taken_is_not_reused(self):
+        # Folders planted under every dated name of this run: none of them
+        # may receive the user's file.
+        holder = self.home / install.BACKUP_DIR
+        stamp = "20260101-000000"
+        for n in range(1, 1000):
+            (holder / (stamp if n == 1 else f"{stamp}-{n}")).mkdir(parents=True)
+        (self.bios / "x.bin").write_bytes(self.OLD)
+        with unittest.mock.patch.object(install.time, "strftime", return_value=stamp):
+            self.assertTrue(self._download("x.bin")[1])
+        self.assertEqual(sum(1 for p in holder.rglob("x.bin")), 0)
+        inside = list((self.bios / install.BACKUP_DIR).iterdir())
+        self.assertEqual(len(inside), 1)
+        self.assertEqual((inside[0] / "x.bin").read_bytes(), self.OLD)
+
+    @unittest.skipUnless(hasattr(os, "getuid"), "user ids are POSIX")
+    def test_a_holder_another_user_owns_is_refused(self):
+        (self.home / install.BACKUP_DIR).mkdir()
+        with self.assertRaises(OSError):
+            with unittest.mock.patch.object(install.os, "getuid", return_value=os.getuid() + 1):
+                install._check_holder(self.home / install.BACKUP_DIR)
+        install._check_holder(self.home / install.BACKUP_DIR)
+
     def test_restore_refuses_a_folder_the_installer_did_not_write(self):
         planted = self.home / install.BACKUP_DIR / "20260101-000000"
         (planted / "system").mkdir(parents=True)
