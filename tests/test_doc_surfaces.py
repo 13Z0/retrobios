@@ -112,9 +112,16 @@ class DownloadLinksNameTheFile(unittest.TestCase):
         cell = download_links("batocera", SPLIT_RECORD, REPO, "Pack", " { .x }")
         self.assertEqual(cell.count("{ .x }"), 2)
 
-    def test_without_a_pack_the_link_is_the_release_page(self):
+    def test_a_release_without_the_pack_names_the_installer(self):
         self.assertEqual(
             download_links("bizhawk", SPLIT_RECORD, "../..", "Download"),
+            "Not in v2000.01.01: "
+            "[use the installer](https://abdess.github.io/retrobios/wiki/installer/)",
+        )
+
+    def test_without_a_recorded_release_the_link_is_the_release_page(self):
+        self.assertEqual(
+            download_links("bizhawk", {}, "../..", "Download"),
             "[Download](../../releases/latest)",
         )
 

@@ -15,6 +15,7 @@ from siterender import WIKI_SRC_DIR
 import argparse
 import csv
 import hashlib
+import functools
 import html
 import io
 import json
@@ -33,6 +34,7 @@ from pathlib import Path
 
 sys.path.insert(0, os.path.dirname(__file__))
 from common import (
+    upstream_profile_index,
     build_zip_contents_index,
     compute_composition,
     count_catalog_matched,
@@ -2088,6 +2090,33 @@ def _category_evidence_md(evidence: dict) -> str:
     return f"No reader found ({cores})"
 
 
+@functools.lru_cache(maxsize=1)
+def _profiles_by_core_name() -> dict[str, list[str]]:
+    """Core name as a platform writes it -> the profiles with a page for it.
+
+    MinUI writes `mednafen_vb`, the profile and its page are `beetle_vb`.
+    """
+    profiles = load_emulator_profiles(str(_REPO_ROOT / "emulators"))
+    with_page = {k for k, v in profiles.items() if v.get("type") not in ("alias", "test")}
+    return {
+        core: sorted(k for k in keys if k in with_page)
+        for core, keys in upstream_profile_index(profiles).items()
+    }
+
+
+def _core_name_links(cores: list[str]) -> list[str]:
+    """A link per core to its profile page, the bare name where none exists."""
+    index = _profiles_by_core_name()
+    links = []
+    for core in cores:
+        keys = [core] if core in index.get(core, []) else index.get(core, [])
+        if keys:
+            links.extend(_emulator_link(k, "../") for k in keys)
+        else:
+            links.append(f"`{core}`")
+    return links
+
+
 def _core_folders_section(name: str, config: dict) -> list[str]:
     """Each folder the frontend hands a core, and the files the pack puts in it.
 
@@ -2111,7 +2140,7 @@ def _core_folders_section(name: str, config: dict) -> list[str]:
             f["dest"][len(folder) + 1:] for f in files
             if f.get("dest", "").startswith(folder + "/")
         )
-        cores = ", ".join(_emulator_link(c, "../") for c in info.get("cores", []))
+        cores = ", ".join(_core_name_links(info.get("cores", [])))
         shown = ", ".join(f"`{n}`" for n in held) if held else "none needed"
         lines.append(f"| `{folder}/` | {cores} | {shown} |")
     lines.append("")

@@ -134,14 +134,18 @@ def download_links(
     A pack published whole gets one link labelled *label*. A pack in parts
     gets one link per part, since every part is needed. *repo* is the
     repository URL, absolute or relative, and *attrs* a MkDocs attribute list
-    put after each link. Without a pack in the record the link falls back to
-    the latest release page.
+    put after each link. Without a recorded release the link is the latest
+    release page. A release recorded without this platform's pack says so and
+    names the installer, which reads the file lists on main: a button to the
+    release served six platforms a page with no pack for them.
     """
     pack = release_record.pack_for(platform_name, record)
     tag = record.get("tag")
     assets = pack.get("assets") if pack else None
-    if not tag or not assets:
+    if not tag:
         return f"[{label}]({repo}/releases/latest){attrs}"
+    if not assets:
+        return f"Not in {tag}: [use the installer]({SITE_URL}wiki/installer/)"
     urls = [f"{repo}/releases/download/{tag}/{asset}" for asset in assets]
     if len(urls) == 1:
         return f"[{label}]({urls[0]}){attrs}"
