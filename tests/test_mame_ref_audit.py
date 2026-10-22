@@ -117,9 +117,14 @@ class TestCorpusStaysCorrect(unittest.TestCase):
             self.skipTest("no upstream cache")
         for name in ("mame", "mamearcade", "mamemess", "groovymame"):
             with self.subTest(emulator=name):
-                findings, agreed, _ = mame_ref_audit.audit(
-                    name, str(ROOT / "emulators"), str(cache), True
-                )
+                try:
+                    findings, agreed, _ = mame_ref_audit.audit(
+                        name, str(ROOT / "emulators"), str(cache), True
+                    )
+                except mame_ref_audit.upstream.NotCachedError as exc:
+                    # A cache that holds some drivers and not others is as
+                    # cold as an empty one for this profile.
+                    self.skipTest(f"{name}: {exc}")
                 if not agreed and not findings:
                     self.skipTest(f"{name}: driver sources not cached")
                 self.assertEqual(
