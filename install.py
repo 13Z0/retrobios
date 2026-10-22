@@ -1154,9 +1154,12 @@ def found_label(plat: str, path: Path) -> str:
     platform whose files it gets when that is another name."""
     name = detected_os(plat, path)
     shown = display_name(plat)
+    moved = "".join(f", {folder}/ at {place}"
+                    for folder, place in sorted(_MOVED_FOLDERS.get(path, {}).items())
+                    if folder in ("bios", "roms"))
     if not name or name == shown:
-        return f"{shown} at {path}"
-    return f"{name} at {path} ({shown} files)"
+        return f"{shown} at {path}{moved}"
+    return f"{name} at {path} ({shown} files){moved}"
 
 
 def _android_storage_root() -> Path:
@@ -1564,7 +1567,9 @@ def detect_platforms(os_type: str) -> list[tuple[str, Path]]:
                     f"{retrodeck_json}; assuming {home / 'retrodeck'}",
                     file=sys.stderr,
                 )
-            found.append(("retrodeck", Path(rd_home) if rd_home else home / "retrodeck"))
+            rd_root = Path(rd_home) if rd_home else home / "retrodeck"
+            _record_moved_folders(rd_root, retrodeck_json)
+            found.append(("retrodeck", rd_root))
         elif retrodeck_cfg.exists():
             rd_home = _parse_bash_var(retrodeck_cfg, "rdhome")
             found.append(("retrodeck", Path(rd_home) if rd_home else home / "retrodeck"))
@@ -1987,6 +1992,33 @@ def _safe_target_dir(value: object, field: str) -> str:
     return value
 
 
+# A platform whose folders move one by one: root -> {folder under the root:
+# where it is now}. RetroDECK's per-folder move (RetroDECK 7786a849,
+# functions/api_data_processing.sh:913-935) records each new place in
+# retrodeck.json paths.<folder>_path (config/retrodeck/retrodeck.json:3-23),
+# and its manifest places files under bios/ and roms/ of the home folder.
+_MOVED_FOLDERS: dict[Path, dict[str, Path]] = {}
+
+
+def _record_moved_folders(root: Path, retrodeck_json: Path) -> None:
+    """Each RetroDECK folder that is no longer <home>/<name>."""
+    try:
+        paths = json.loads(retrodeck_json.read_text(encoding="utf-8", errors="replace"))["paths"]
+    except (OSError, ValueError, KeyError, TypeError):
+        return
+    if not isinstance(paths, dict):
+        return
+    moved = {}
+    for key, value in paths.items():
+        name = key[:-len("_path")] if key.endswith("_path") else ""
+        if name and name != "rd_home" and isinstance(value, str) and value.strip():
+            place = Path(value.strip())
+            if place != root / name:
+                moved[name] = place
+    if moved:
+        _MOVED_FOLDERS[root] = moved
+
+
 def _destination_path(root: Path, value: object) -> Path:
     """Place a manifest destination below *root*.
 
@@ -1997,6 +2029,9 @@ def _destination_path(root: Path, value: object) -> Path:
     emulator reads it.
     """
     relative = _safe_relative_path(value, "dest")
+    moved = _MOVED_FOLDERS.get(root, {})
+    if len(relative.parts) > 1 and relative.parts[0] in moved:
+        return moved[relative.parts[0]].resolve() / Path(*relative.parts[1:])
     return root.resolve() / Path(*relative.parts)
 
 

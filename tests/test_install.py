@@ -2668,6 +2668,49 @@ class AnUnreadableRetroDeckConfigIsSaid(unittest.TestCase):
 
 
 
+class RetroDeckFoldersMovedOneByOne(unittest.TestCase):
+    """RetroDECK moves its bios folder on its own and records the new place
+    in retrodeck.json paths.bios_path, but only rd_home_path was read: the
+    files went to <home>/bios, a folder RetroDECK no longer reads."""
+
+    def _detect(self, paths: dict) -> tuple[Path, list]:
+        home = Path(_tempdir(self))
+        conf = home / ".var/app/net.retrodeck.retrodeck/config/retrodeck"
+        conf.mkdir(parents=True)
+        (conf / "retrodeck.json").write_text(json.dumps({"paths": paths}))
+        with unittest.mock.patch.object(install.Path, "home", return_value=home), \
+                unittest.mock.patch.object(install, "_detect_embedded", return_value=[]), \
+                unittest.mock.patch.dict(install._MOVED_FOLDERS, clear=True), \
+                contextlib.redirect_stderr(io.StringIO()):
+            found = install.detect_platforms("linux")
+            dests = {name: install._destination_path(home / "retrodeck", f"{name}/a.bin")
+                     for name in ("bios", "roms", "saves")}
+            label = install.found_label("retrodeck", home / "retrodeck")
+        return home, [found, dests, label]
+
+    def test_a_moved_bios_folder_is_followed(self):
+        home = Path(_tempdir(self))
+        sd = home / "sd"
+        root, (found, dests, label) = self._detect({
+            "rd_home_path": "", "bios_path": str(sd / "bios"), "roms_path": str(sd / "roms"),
+        })
+        rd_home = root / "retrodeck"
+        self.assertIn(("retrodeck", rd_home), found)
+        self.assertEqual(dests["bios"], (sd / "bios").resolve() / "a.bin")
+        self.assertEqual(dests["roms"], (sd / "roms").resolve() / "a.bin")
+        self.assertEqual(dests["saves"], rd_home.resolve() / "saves" / "a.bin")
+        self.assertIn(f"bios/ at {sd / 'bios'}", label)
+
+    def test_folders_in_place_change_nothing(self):
+        home = Path(_tempdir(self))
+        rd_home = home / "rd"
+        _root, (found, dests, label) = self._detect({
+            "rd_home_path": str(rd_home), "bios_path": str(rd_home / "bios"),
+        })
+        self.assertIn(("retrodeck", rd_home), found)
+        self.assertNotIn("bios/ at", label)
+
+
 class TheBoardTheSystemNamesIsTheTarget(unittest.TestCase):
     """Batocera, Recalbox and ROCKNIX each write the board they were built
     for, but the installer read none of them, so a Batocera RPi4 installed
