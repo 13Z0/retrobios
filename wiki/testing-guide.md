@@ -4,10 +4,13 @@ level: contribute
 
 # Testing guide
 
-The suite is discovered dynamically across focused modules, so its exact count
-is reported by the test runner instead of being hand-maintained here. Tests do
-not require network access. Most build synthetic fixtures under the repository's
-`tmp/`. Modules that read real artifacts skip cleanly when those inputs are absent.
+The tests hold what users and platforms rely on: a pack holds what its
+platform checks, the site states what the code does, the installer writes only
+where it should.
+
+No test needs network access. Most build synthetic fixtures under the
+repository's `tmp/`, and modules that read real artifacts skip when those are
+absent. The test runner prints the count.
 
 ## Running tests
 

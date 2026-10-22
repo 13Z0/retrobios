@@ -4,8 +4,17 @@ level: contribute
 
 # Adding a platform
 
-How to add support for a new retrogaming platform (e.g. a frontend like Batocera,
-a manager like EmuDeck, or a firmware database like BizHawk).
+Adding a platform gives its users a pack and a one-line install with the files
+their setup checks, in the place it checks them, plus every file its emulators
+need that its own list leaves out. The work is to read how the platform
+declares and checks BIOS files, then teach this project to read that
+declaration. A platform can be a frontend like Batocera, a manager like EmuDeck
+or a firmware database like BizHawk.
+
+Example: RomM declares its BIOS files in
+`backend/models/fixtures/known_bios_files.json` and checks size plus any one
+hash (`firmware.py`, `verify_file_hashes`). Its scraper turns that JSON into
+`platforms/romm.yml`, and the pack, the installer and its site page follow.
 
 ## Prerequisites
 

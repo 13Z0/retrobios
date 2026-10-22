@@ -2659,6 +2659,8 @@ def generate_files_page() -> str:
         "",
         '<p id="rb-file-lookup-status" role="status"></p>',
         "",
+        "To try it, paste `0555c6fae8906f3f09baf5988f00e55f88e9f30b`, the SHA1 of "
+        "`scph5501.bin`, the PlayStation BIOS v3.0. "
         "To look a file up by its name, use the search at the top of the page.",
         "",
         "## Permanent links",
@@ -2911,6 +2913,10 @@ def generate_systems_index(manufacturers: dict) -> str:
     lines = [
         "# Systems",
         "",
+        "Every BIOS file the collection holds, by manufacturer and console. Open "
+        "a console to see each file, the emulators that read it and the setups "
+        "that list it.",
+        "",
         f"{total_mfr} manufacturers, {total_consoles} consoles, "
         f"{total_files:,} files in the repository.",
         "",
@@ -3027,6 +3033,11 @@ def generate_provenance_page(
 
     lines = [
         "# Dump provenance",
+        "",
+        "Provenance says whether a file is, byte for byte, a dump that Redump, "
+        "No-Intro or TOSEC catalogues. It tells you where a dump is known from, "
+        "not whether an emulator accepts it: that is the emulator's code, read "
+        "in its profile. Example: `scph5501.bin` is Redump's `ps-30a.bin`.",
         "",
         f"**{matched_files:,}** of {total_files:,} system files match an entry "
         "in a dump-preservation catalog. Those files carry a "
@@ -3559,8 +3570,16 @@ def system_pages(
         console: _console_cards(manufacturer, consoles[console], consumers, whole_anchors)
         for console in sorted(consoles)
     }
+    intro = (
+        f"Every BIOS file the collection holds for {manufacturer} machines, one "
+        "card per file. A card gives the file's fingerprints, the emulators that "
+        "read it, the setups that list it and where to download it. A file can "
+        "have several versions, one per region or revision: the main one comes "
+        "first, the others under \"Variants\". To install the files of one "
+        "console, open its \"Install\" box."
+    )
     lines = [
-        f"# {manufacturer}", "",
+        f"# {manufacturer}", "", intro, "",
         f"The files below by console, with every hash, are also published as {json_link}.",
         "",
     ]
@@ -3591,7 +3610,7 @@ def system_pages(
 
     pages: dict[str, tuple[str, dict[str, list]]] = {}
     summary = [
-        f"# {manufacturer}", "",
+        f"# {manufacturer}", "", intro, "",
         f"The files below by console, with every hash, are also published as {json_link}. "
         f"The largest sections have a page of their own, linked from their heading.",
         "",
@@ -3696,6 +3715,11 @@ def generate_emulators_index(profiles: dict) -> str:
     lines = [
         "# Emulators",
         "",
+        "Each page is one emulator: the files it reads, whether it starts games "
+        "without them, and the line of its source code that says so. The "
+        "classification below says how a core relates to the emulator it comes "
+        "from, which tells how far its own files can differ.",
+        "",
         f"**{len(unique):,}** emulator profiles, **{total_files:,}** files total, **{len(aliases):,}** aliases.",
         "",
         "| Classification | Count | Description |",
@@ -3703,13 +3727,13 @@ def generate_emulators_index(profiles: dict) -> str:
     ]
 
     cls_desc = {
-        "official_port": "Same author maintains both standalone and libretro",
-        "community_fork": "Third-party port to libretro",
-        "pure_libretro": "Built for libretro, no standalone version",
+        "official_port": "The same authors keep the app and the RetroArch core",
+        "community_fork": "Ported to RetroArch by someone else",
+        "pure_libretro": "Built for RetroArch, no app of its own",
         "game_engine": "Game engine reimplementation",
         "enhanced_fork": "Fork with added features",
         "frozen_snapshot": "Frozen at an old version",
-        "embedded_hle": "All ROMs compiled into binary",
+        "embedded_hle": "Needs no BIOS file: the emulator carries its own",
         "launcher": "Launches an external emulator",
         "other": "Unclassified",
     }
@@ -4619,6 +4643,42 @@ def generate_emulator_page(
         name, profile, db, consumers, data_names, data_registry, data_dirs)[name]
 
 
+def _emulator_intro(emu_name: str, profile: dict) -> str:
+    """What the emulator needs, in plain words, from fields every profile has.
+
+    The page opened on a twelve-row table: "Type", "Version", "Checked by".
+    DuckStation needs one PlayStation BIOS of any name, and the reader had
+    to infer it from the "Files found by" row."""
+    import siterender  # noqa: PLC0415
+
+    names: list[str] = []
+    for sys_id in profile.get("systems") or []:
+        page = siterender._system_page_map.get(sys_id) or siterender._page_by_norm(sys_id)
+        label = page[1] if page else str(sys_id)
+        if label not in names:
+            names.append(label)
+    files = [f for f in profile.get("files") or [] if isinstance(f, dict)]
+    required = sum(1 for f in files if f.get("required") is True)
+    sentences = []
+    if names:
+        shown = names if len(names) <= 4 else names[:3] + [f"{len(names) - 3} more systems"]
+        listed = shown[0] if len(shown) == 1 else ", ".join(shown[:-1]) + f" and {shown[-1]}"
+        sentences.append(f"{emu_name} emulates {listed}.")
+    if files:
+        sentences.append(
+            f"It reads {_count(len(files), 'file')}, {required} of them required: "
+            "without a required file it does not start games."
+            if required else
+            f"It reads {_count(len(files), 'file')}, none of them required: it starts "
+            "games without them."
+        )
+        if profile.get("found_by") == "content":
+            sentences.append("It recognises a file by its contents, so any file name works.")
+        if any(f.get("source_ref") for f in files):
+            sentences.append("Each file below cites the line of source code that reads it.")
+    return " ".join(sentences)
+
+
 def emulator_pages(
     name: str,
     profile: dict,
@@ -4671,9 +4731,11 @@ def emulator_pages(
         data_dirs = profile.get("data_directories", [])
 
     part_pages: dict[str, str] = {}
+    intro = _emulator_intro(emu_name, profile)
     lines = [
         f"# {emu_name}",
         "",
+        *([intro, ""] if intro else []),
         '<div class="rb-meta-card" markdown>',
         "",
         "| Detail | Value |",
@@ -4759,7 +4821,7 @@ def emulator_pages(
 
     if notes:
         indented = _admonition_body(link_prose_citations(profile, notes))
-        lines.extend(['???+ note "Technical notes"', f"    {indented}", ""])
+        lines.extend(['??? note "Technical notes"', f"    {indented}", ""])
 
     if not files:
         lines.append("No BIOS or firmware files required.")
@@ -5154,14 +5216,15 @@ def _platform_lists_sentence(
         labels = {"game_data": "game data",
                   "unread": "opened by none of the platform's emulators"}
         firmware = missing - sum(not_firmware.values())
-        pieces = [f"{firmware:,} firmware"] + [
-            f"{count:,} {labels.get(category, category)}"
+        others = [
+            f"{count:,} {'is' if count == 1 else 'are'} {labels.get(category, category)}"
             for category, count in sorted(not_firmware.items())
         ]
-        split = (
-            f" Of the missing, {', '.join(pieces[:-1])} and {pieces[-1]}: "
-            "only missing firmware stops a console from starting."
-        )
+        others_text = others[0] if len(others) == 1 else ", ".join(others[:-1]) + f" and {others[-1]}"
+        head = (f"None of the missing is firmware: {others_text}" if not firmware
+                else f"Of the missing, {firmware:,} {'is' if firmware == 1 else 'are'} "
+                     f"firmware, {others_text}")
+        split = f" {head}. Only missing firmware stops a console from starting."
     return (
         f"Of the {total:,} files on the platforms' own BIOS lists, {listed}.{split} "
         "The files the emulators load beyond those lists are counted per "
@@ -5883,29 +5946,31 @@ def generate_wiki_data_model(db: dict, profiles: dict) -> str:
     by_path = len(db.get("indexes", {}).get("by_path_suffix", {}))
     by_sha256 = len(db.get("indexes", {}).get("by_sha256", {}))
 
+    # A real entry with real values: the PlayStation BIOS v3.0 (A).
+    sample_key = "0555c6fae8906f3f09baf5988f00e55f88e9f30b"
+    files = db.get("files", {})
+    sample = files.get(sample_key) or next(iter(files.values()), {})
     lines = [
         "# Data model",
+        "",
+        "Three kinds of file hold everything this project knows. `database.json` "
+        "lists every file the collection holds, keyed by its SHA1. A platform YAML "
+        "copies the BIOS list a setup publishes. An emulator profile records what "
+        "one emulator opens, read from its code. The sections below show the "
+        "fields of each, with a real entry, so you can read the data or build on it.",
+        "",
+        "Example: `scph5501.bin` is one entry of `database.json` (key "
+        "`0555c6fa...`), one entry of `platforms/batocera.yml` (its MD5) and one "
+        "entry of `emulators/duckstation.yml` (its MD5, region and priority).",
         "",
         "## database.json",
         "",
         f"Primary key: SHA1. **{files_count}** file entries.",
         "",
-        "Each entry:",
+        f"The entry of `{sample.get('name', '')}`:",
         "",
         "```json",
-        "{",
-        '  "path": "bios/Nintendo/GameCube/GC/USA/IPL.bin",',
-        '  "name": "IPL.bin",',
-        '  "size": 2097152,',
-        '  "sha1": "...",',
-        '  "md5": "...",',
-        '  "sha256": "...",',
-        '  "crc32": "...",',
-        '  "adler32": "...",',
-        '  "provenance": {',
-        '    "redump": {"dat": "...", "name": "...", "description": "..."}',
-        "  }",
-        "}",
+        *json.dumps(sample, indent=2, ensure_ascii=False).splitlines(),
         "```",
         "",
         "`provenance` maps each catalog that lists the file to the DAT and entry "
@@ -5925,24 +5990,11 @@ def generate_wiki_data_model(db: dict, profiles: dict) -> str:
         "",
         "### File resolution order",
         "",
-        "`resolve_local_file` tries these steps in order:",
-        "",
-        "1. SHA1 exact match: every other declared hash must agree with the record",
-        "2. SHA256 exact match, with the same all-declarations-must-agree rule",
-        "3. CRC32 plus declared size, only when no stronger hash is present",
-        "4. MD5 direct lookup (including explicitly supported truncated MD5 values)",
-        "5. Path suffix lookup for regional variants. With hashes it is accepted only if those hashes match",
-        "6. Name and alias lookup only when no content hash was declared",
-        "7. Candidate inspection for composite ZIP MD5 or direct MD5. A named candidate with the wrong content returns `hash_mismatch`",
-        "8. `zipped_file` content match via the inner-ROM MD5 index",
-        "9. MAME clone fallback, only for declarations without a content hash",
-        "10. Data-directory scan: declared hashes are computed over the candidate before it is accepted",
-        "11. Agnostic size/path fallback, only for declarations without a content hash",
-        "",
-        "A filename or destination can never override a declared hash. The first "
-        "evidence-compatible match wins, otherwise the resolver reports a mismatch "
-        "or absence. Steps and their return codes are described in "
-        "[verification modes](verification-modes.md#file-resolution-chain).",
+        "`resolve_local_file` finds the file an entry describes by its hashes "
+        "first, then by its path, then by its name, and a filename or "
+        "destination never overrides a declared hash. The steps and their "
+        "return codes are written once, in "
+        "[the file resolution chain](verification-modes.md#file-resolution-chain).",
         "",
         "## Platform YAML",
         "",

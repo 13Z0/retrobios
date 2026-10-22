@@ -4,7 +4,9 @@ level: reference
 
 # Build your own packs
 
-Fine-grained control over pack generation, hardware filtering, truth analysis, and verification.
+Fine-grained control over pack generation, hardware filtering, truth analysis (the file
+list a platform would have if it were written from the emulators' code) and
+verification.
 
 The [latest release](https://github.com/Abdess/retrobios/releases/latest)
 carries one pack for each platform, and that pack holds everything the

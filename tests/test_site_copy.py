@@ -48,7 +48,8 @@ HOME_BEFORE_ACTION = 40
 LIST_ITEMS = {"start": 5, "setup": 6}
 HEADING_WORDS = 8
 
-# Words that say nothing, or talk about the page instead of the task.
+# Words that say nothing, or talk about the page instead of the task. The
+# marketing words are held on every page by test_prose_style.
 FILLER = (
     "just", "simply", "easy", "easily", "easiest", "basically", "actually",
     "really", "very", "quite", "note that", "please note", "keep in mind",
@@ -58,7 +59,7 @@ FILLER = (
     "the rest of this page", "further down", "the usual causes", "come up",
     "one path", "a few minutes", "is the answer", "the normal way", "not a fault",
     "does not pretend", "plainly", "for when you want", "for your own tools",
-    "welcome", "robust", "seamless", "comprehensive", "leverage", "streamline",
+    "welcome",
     "ensure", "utilize", "facilitate", "via", "e.g.", "i.e.", "etc.", "vs.",
     "respectively", "deliberately",
 )

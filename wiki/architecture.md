@@ -4,37 +4,16 @@ level: reference
 
 # Architecture
 
-## Principles
+How a BIOS list on a platform's site becomes a pack on your drive. Scrapers
+copy each platform's own list. Emulator profiles record what each emulator's
+code opens. `database.json` indexes every file the collection holds by its
+contents. The pack builder joins the three and ships every file a platform's
+emulators need, and the verifier checks the result the way the platform itself
+would.
 
-Every part of the toolchain follows from a few rules.
-
-- **The emulator's source code is the authority.** A profile records what the
-  code opens, under which names, what it checks and whether it runs without
-  the file. Documentation, `.info` files and platform lists are starting
-  points to verify. When they disagree with the code, the code wins.
-- **Every statement rests on a fact anyone can check.** A field, a deletion or
-  a wording names what settles it: a `file:line` at a pinned revision, a hash,
-  a command and its output. Where no fact settles a question, the answer is
-  "not verified" until one is found. A sentence on this site once said
-  Batocera matches md5 prefixes. Its script compares the full string
-  (`batocera-systems:1088`).
-- **The collection serves the user.** A pack carries what the user has to
-  obtain to run their emulators. When something forces the user or a
-  contributor to work around the toolchain, the toolchain is changed rather
-  than the workaround documented.
-- **Profiles document the emulator, not this repository.** A profile can be
-  taken into another project as is. No field refers to this repository's
-  folders, file names or database, nor to one platform's conventions. The
-  toolchain resolves a profile against the collection.
-- **Other projects are peers.** A finding about another project says what
-  changes, never who erred, and comes with its evidence. Our data can be
-  wrong too, and an issue that shows it is as welcome as a finding sent
-  upstream.
-- **An inconsistency found is fixed now.** A fix comes with a test that fails
-  without it, so the same mistake cannot return unnoticed.
-- **Collect everything a working setup needs.** BIOS, firmware, keys, fonts,
-  boot and DSP ROMs, databases, data files. Age and licence are not criteria.
-  A file the collection lacks is an acquisition target, not an end state.
+Example: libretro's `System.dat` names 526 RetroArch files. The cores RetroArch
+runs load 7,650 more, and the RetroArch pack carries both (counts of
+[What the packs do not hold](../gaps.md) on 2026-10-22).
 
 ## Directory structure
 
@@ -130,6 +109,36 @@ for the full pipeline reference.
 
 <!-- image: pipeline -->
 
+## Principles
+
+Every part of the toolchain follows from a few rules.
+
+- **The emulator's source code is the authority.** A profile records what the
+  code opens, under which names, what it checks and whether it runs without
+  the file. Documentation, `.info` files and platform lists are starting
+  points to verify. When they disagree with the code, the code wins.
+- **Every statement rests on a fact anyone can check.** A field, a deletion or
+  a wording names what settles it: a `file:line` at a pinned revision, a hash,
+  a command and its output. Where no fact settles a question, the answer is
+  "not verified" until one is found.
+- **The collection serves the user.** A pack carries what the user has to
+  obtain to run their emulators. When something forces the user or a
+  contributor to work around the toolchain, the toolchain is changed rather
+  than the workaround documented.
+- **Profiles document the emulator, not this repository.** A profile can be
+  taken into another project as is. No field refers to this repository's
+  folders, file names or database, nor to one platform's conventions. The
+  toolchain resolves a profile against the collection.
+- **Other projects are peers.** A finding about another project says what
+  changes, never who erred, and comes with its evidence. Our data can be
+  wrong too, and an issue that shows it is as welcome as a finding sent
+  upstream.
+- **An inconsistency found is fixed now.** A fix comes with a test that fails
+  without it, so the same mistake cannot return unnoticed.
+- **Collect everything a working setup needs.** BIOS, firmware, keys, fonts,
+  boot and DSP ROMs, databases, data files. Age and licence are not criteria.
+  A file the collection lacks is an acquisition target, not an end state.
+
 ## Three layers of data
 
 | Layer | Source | Role |
@@ -168,7 +177,7 @@ Some entries in a platform YAML are not the platform's own: files a
 to a twin system (`mirror_of`) and additions the libretro scraper makes
 (`curated`). `native_layer()` removes them wherever the question is what the
 platform itself declares: the export, the truth diff and the site's
-comparison tables. Counted as the platform's, they were written into
+comparison tables. Counted as the platform's, they would be written into
 System.dat as if libretro had declared them.
 
 <!-- image: data-layers -->
