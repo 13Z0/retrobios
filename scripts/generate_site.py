@@ -73,6 +73,7 @@ from generate_readme import (
     release_totals,
 )
 from provenance_report import build_report, distinct_missing
+import sitemarkup as markup
 from siteexports import generate_exports_page, load_export_reports
 from siteguides import (
     ALSO_RUNS,
@@ -384,7 +385,7 @@ def _timestamp() -> str:
 
 def _stat(value: str, label: str) -> list[str]:
     return [
-        '<div class="rb-stat" markdown>',
+        markup.block_open("div", 'class="rb-stat"'),
         f'<span class="rb-stat-value">{value}</span>',
         f'<span class="rb-stat-label">{label}</span>',
         "</div>",
@@ -402,7 +403,7 @@ def _group_members(coverages: dict, registry: dict, group: str) -> list[str]:
 
 def _next_block(links: list[str]) -> list[str]:
     """Where to go from here, at the end of a page."""
-    return ['!!! tip "Next"', "", *(f"    - {link}" for link in links), ""]
+    return markup.aside("tip", "Next", [f"- {link}" for link in links])
 
 
 def generate_home(
@@ -431,8 +432,8 @@ def generate_home(
         "the **BIOS**. Your emulator needs a copy of it. We put the right copy "
         "in the right folder.",
         "",
-        "[Get your files](which-pack.md){ .md-button .md-button--primary } "
-        "[What is a BIOS?](wiki/what-are-bios-files.md){ .md-button }",
+        markup.button("Get your files", "which-pack.md", primary=True) + " "
+        + markup.button("What is a BIOS?", "wiki/what-are-bios-files.md"),
         "",
         f"Free. No account. Works with {works_with}.",
         "",
@@ -446,30 +447,28 @@ def generate_home(
         "",
         "## Three steps",
         "",
-        "1. **Pick your device.** Its page shows your BIOS folder.",
-        "2. **Run one command**, or download a ZIP file.",
-        "3. **Start a game.**",
-        "",
+        *(markup.steps([
+            "**Pick your device.** Its page shows your BIOS folder.",
+            "**Run one command**, or download a ZIP file.",
+            "**Start a game.**",
+        ]) if markup.starlight() else [
+            "1. **Pick your device.** Its page shows your BIOS folder.",
+            "2. **Run one command**, or download a ZIP file.",
+            "3. **Start a game.**",
+            "",
+        ]),
         "## Pick your device",
         "",
-        '<div class="grid cards" markdown>',
-        "",
     ]
-    for group, (label, _description) in DEVICE_GROUPS.items():
-        members = _group_members(coverages, registry, group)
-        if not members:
-            continue
-        lines += [
-            f"-   **{label}**",
-            "",
-            "    " + ", ".join(
-                f"[{coverages[name]['platform']}](platforms/{name}.md)" for name in members
-            ),
-            "",
-        ]
+    lines += markup.card_grid([
+        (label, [", ".join(
+            f"[{coverages[name]['platform']}](platforms/{name}.md)"
+            for name in _group_members(coverages, registry, group)
+        )])
+        for group, (label, _description) in DEVICE_GROUPS.items()
+        if _group_members(coverages, registry, group)
+    ])
     lines += [
-        "</div>",
-        "",
         "## Is it safe?",
         "",
         "- It writes only in your BIOS folder.",
@@ -501,43 +500,23 @@ def generate_explore_index(db: dict, coverages: dict, profiles: dict) -> str:
         "One console, one emulator, or one installer option: each has its page, "
         "with the files it needs and the code that reads them.",
         "",
-        '<div class="grid cards" markdown>',
-        "",
-        "-   **Systems**",
-        "",
-        "    What each console and computer needs, file by file.",
-        "",
-        "    [Browse the systems](systems/index.md)",
-        "",
-        "-   **Emulators**",
-        "",
-        "    What each emulator reads, with the source code that reads it.",
-        "",
-        "    [Browse the emulators](emulators/index.md)",
-        "",
-        "-   **Installer options**",
-        "",
-        "    Fewer files, one region, another folder, a check without download.",
-        "",
-        "    [All installer options](wiki/installer.md)",
-        "",
-        "-   **How files are checked**",
-        "",
-        "    Each setup checks its files its own way: by name, by MD5 or by SHA1.",
-        "",
-        "    Reference: [How each platform checks files](wiki/verification-modes.md)",
-        "",
-        "-   **Data and API**",
-        "",
-        "    Every file and hash as JSON, CSV and SQLite.",
-        "",
-        "    Reference: [Data and API](data.md)",
-        "",
-        "</div>",
-        "",
+        *markup.card_grid([
+            ("Systems", ["What each console and computer needs, file by file.", "",
+                         "[Browse the systems](systems/index.md)"]),
+            ("Emulators", ["What each emulator reads, with the source code that reads it.", "",
+                           "[Browse the emulators](emulators/index.md)"]),
+            ("Installer options", [
+                "Fewer files, one region, another folder, a check without download.", "",
+                "[All installer options](wiki/installer.md)"]),
+            ("How files are checked", [
+                "Each setup checks its files its own way: by name, by MD5 or by SHA1.", "",
+                "Reference: [How each platform checks files](wiki/verification-modes.md)"]),
+            ("Data and API", ["Every file and hash as JSON, CSV and SQLite.", "",
+                              "Reference: [Data and API](data.md)"]),
+        ]),
         "## The collection",
         "",
-        '<div class="rb-stats" markdown>',
+        markup.block_open("div", 'class="rb-stats"'),
         "",
         *_stat(f"{total_files:,}", COLLECTION_FILES_LABEL),
         *_stat(str(len(coverages)), "Setups supported"),
@@ -582,7 +561,7 @@ def _pack_buttons(platform_name: str, label: str = "Pack") -> str:
         release_record.load_record(),
         REPO_URL,
         label,
-        "{ .md-button .md-button--primary }",
+        button=lambda text, url: markup.button(text, url, primary=True),
     )
 
 
@@ -1295,9 +1274,11 @@ def generate_data_page(exports: list[dict]) -> str:
         "RetroBIOS publishes the same metadata used by its verifier, pack builder "
         "and website as versioned static files. No account or API key is required.",
         "",
-        "[API catalog](api/v1/catalog.json){ .md-button .md-button--primary } "
-        "[SQLite snapshot](downloads/retrobios.sqlite){ .md-button } "
-        "[Collection DAT](downloads/retrobios.dat){ .md-button }",
+        " ".join([
+            markup.button("API catalog", "api/v1/catalog.json", primary=True),
+            markup.button("SQLite snapshot", "downloads/retrobios.sqlite"),
+            markup.button("Collection DAT", "downloads/retrobios.dat"),
+        ]),
         "",
         "The DAT is Logiqx XML, the format clrmamepro and RomVault read: one game "
         "per `bios/<Manufacturer>/<Console>/` folder of the collection, named "
@@ -1497,7 +1478,7 @@ def _page_description(markdown: str, relative: Path, title: str) -> str:
         stripped = paragraph.strip()
         if (
             not stripped
-            or stripped.startswith(("#", "|", "```", "???", "<", "- ", "* "))
+            or stripped.startswith(("#", "|", "```", "???", ":::", "<", "- ", "* "))
         ):
             continue
         plain = _plain_markdown(stripped)
@@ -1977,16 +1958,11 @@ def generate_platform_index(coverages: dict, registry: dict | None = None) -> st
         members = _group_members(coverages, registry, group)
         if not members:
             continue
-        lines += [f"## {label}", "", description, "", '<div class="grid cards" markdown>', ""]
-        for name in members:
-            guide = GUIDES[name]
-            lines += [
-                f"-   **[{coverages[name]['platform']}]({name}.md)**",
-                "",
-                f"    {guide.summary}",
-                "",
-            ]
-        lines += ["</div>", ""]
+        lines += [f"## {label}", "", description, ""]
+        lines += markup.card_grid([
+            (f"[{coverages[name]['platform']}]({name}.md)", [GUIDES[name].summary])
+            for name in members
+        ])
 
     lines += [
         "## Reference: every platform at a glance { #reference }",
@@ -2088,24 +2064,14 @@ def _render_platform_systems(
         # emulator cards link here, and the site search splits a page at its
         # headings. Folded into blocks under one heading, every hash pasted
         # in the search led to the systems overview of a 100-block page.
-        block_start = len(lines) + 2
-        if use_collapsible:
-            status_tag = "OK" if ok_count == total else _count(total - ok_count, "issue")
-            lines.append(f"### {sys_link} {{ #{anchor} }}")
-            lines.append("")
-            lines.append(f'??? note "{_count(total, "file")} ({status_tag})"')
-            lines.append("")
-            pad = "    "
-        else:
-            lines.append(f"### {sys_link} {{ #{anchor} }}")
-            lines.append("")
-            pad = ""
-
-        lines.append(f"{pad}{ok_count}/{total} files verified")
+        lines.append(f"### {sys_link} {{ #{anchor} }}")
+        lines.append("")
+        block_start = len(lines)
+        body = [f"{ok_count}/{total} files verified"]
         if sys_emus:
             emu_links = ", ".join(_emulator_link(e, "../") for e in sorted(sys_emus))
-            lines.append(f"{pad}Emulators: {emu_links}")
-        lines.append("")
+            body.append(f"Emulators: {emu_links}")
+        body.append("")
 
         # File listing. The sort is stable, so same-named entries keep the
         # order verify reported them in, which is the declaration order.
@@ -2146,7 +2112,7 @@ def _render_platform_systems(
             # GameCube IPL.bin differ only by GC/USA, GC/EUR and GC/JAP.
             destination = str(cfg_entry.get("destination") or "")
             where = f" at `{destination}`" if destination and destination != fname else ""
-            lines.append(f"{pad}- `{fname}`{where} - {', '.join(details)}")
+            body.append(f"- `{fname}`{where} - {', '.join(details)}")
             # Every hash the platform declares, whole: the crc32 is what
             # System.dat and clrmamepro print, and pasting it found nothing
             # for a pinned file the collection holds under other bytes.
@@ -2167,23 +2133,32 @@ def _render_platform_systems(
                     hash_parts.append(f"CRC32: `{crc32}`")
                 if sha256:
                     hash_parts.append(f"SHA256: `{sha256}`")
-                lines.append(f"{pad}    {' | '.join(hash_parts)}")
+                body.append(f"    {' | '.join(hash_parts)}")
             if f.get("category_evidence"):
-                lines.append(f"{pad}    {_category_evidence_md(f['category_evidence'])}")
+                body.append(f"    {_category_evidence_md(f['category_evidence'])}")
 
-        block = lines[block_start:]
-        if moved is not None and platform and sum(len(line) + 1 for line in block) > PLATFORM_SECTION_BUDGET:
+        # Measured as the Markdown the split was tuned on, a collapsible
+        # block indented by four, so both engines split the same systems.
+        size = sum(len(line) + 1 for line in body)
+        if use_collapsible:
+            status_tag = "OK" if ok_count == total else _count(total - ok_count, "issue")
+            title = f"{_count(total, 'file')} ({status_tag})"
+            size += len(f'??? note "{title}"') + 2 + 4 * sum(1 for line in body if line)
+            block = markup.details("note", title, body)
+            while block and not block[-1]:
+                block.pop()
+        else:
+            block = body
+        if moved is not None and platform and size > PLATFORM_SECTION_BUDGET:
             key, display = platform
             stem = f"{key}-{anchor}"
-            body = block[2:] if use_collapsible else block
             moved[stem] = "\n".join([
                 f"# {display}: {sys_id}", "",
                 f"Part of the [{display} page]({key}.md#{anchor}), whose other systems "
                 f"are listed there. Each file below is as {display} declares it, with "
                 "its status in the pack.",
                 "", "## Files", "",
-                *search_excluded(
-                    [line[len(pad):] if line.startswith(pad) else line for line in body]),
+                *search_excluded(body),
                 "", f"*Generated on {_timestamp()}*",
             ]) + "\n"
             lines[block_start:] = [
@@ -2193,7 +2168,7 @@ def _render_platform_systems(
             continue
         # The section's heading stays searchable, its file list with every
         # hash is the lookup's: retrodeck's arcade list was 495 KB of index.
-        lines[block_start:] = search_excluded(lines[block_start:])
+        lines[block_start:] = search_excluded(block)
 
     return lines
 
@@ -2340,14 +2315,12 @@ def _platform_guide(name: str, display: str, cov: dict, registry: dict, no_list:
               for line in (note, "")]
     if guide.more_folders:
         detected = _detected_systems(registry, name) if guide.more_folders_detected else []
-        lines += [
-            f'??? note "{guide.more_folders_title}"',
+        lines += markup.details("note", guide.more_folders_title, [
+            *_folder_rows(guide.more_folders),
+            *(f"| {system} | `{folder}` |" for system, folder in detected),
             "",
-            *_folder_rows(guide.more_folders, "    "),
-            *(f"    | {system} | `{folder}` |" for system, folder in detected),
-            "",
-            *([f"    {guide.more_folders_note}", ""] if guide.more_folders_note else []),
-        ]
+            *([guide.more_folders_note, ""] if guide.more_folders_note else []),
+        ])
     lines += [
         *(["<!-- image: minui-card -->", ""] if guide.on_card else []),
         "## Install",
@@ -2454,14 +2427,9 @@ def generate_platform_page(
     ]
 
     if registry.get(name, {}).get("status") == "archived":
-        lines.extend(
-            [
-                '!!! warning "Archived platform"',
-                "",
-                f"    {display}'s list is kept as last read. Its pack is still built.",
-                "",
-            ]
-        )
+        lines.extend(markup.aside("warning", "Archived platform", [
+            f"{display}'s list is kept as last read. Its pack is still built.",
+        ]))
 
     summary = GUIDES[name].summary if name in GUIDES else ""
     if summary:
@@ -2485,45 +2453,23 @@ def generate_platform_page(
     if no_list:
         # MinUI and its forks hand each core a folder and name no file: a
         # 0/0 coverage band read as "this device is not supported".
-        lines.extend(
-            [
-                '!!! info "No BIOS list of its own"',
-                "",
-                f"    {display} names no BIOS file itself: it gives each emulator core "
-                "its own folder and the core looks for its files there. The pack "
-                "places every file the cores it runs need into those folders. The "
-                "core files are listed further down this page.",
-                "",
-            ]
-        )
+        lines.extend(markup.aside("info", "No BIOS list of its own", [
+            f"{display} names no BIOS file itself: it gives each emulator core "
+            "its own folder and the core looks for its files there. The pack "
+            "places every file the cores it runs need into those folders. The "
+            "core files are listed further down this page.",
+        ]))
     band = [] if no_list else [
-            '<div class="rb-stats" markdown>',
+            markup.block_open("div", 'class="rb-stats"'),
             "",
-            '<div class="rb-stat" markdown>',
-            f'<span class="rb-stat-value">{cov["present"]}/{cov["total"]}</span>',
-            f'<span class="rb-stat-label">Coverage ({pct})</span>',
-            "</div>",
-            "",
-            '<div class="rb-stat" markdown>',
-            f'<span class="rb-stat-value">{cov["verified"]}</span>',
-            '<span class="rb-stat-label">Verified</span>',
-            "</div>",
-            "",
-            '<div class="rb-stat" markdown>',
-            f'<span class="rb-stat-value">{cov["missing"]}</span>',
-            '<span class="rb-stat-label">Missing</span>',
-            "</div>",
-            "",
-            '<div class="rb-stat" markdown>',
-            f'<span class="rb-stat-value">'
-            f'<span class="rb-badge {mode_badge}">{mode}</span></span>',
-            '<span class="rb-stat-label">Checked by</span>',
-            "</div>",
-            "",
+            *_stat(f"{cov['present']}/{cov['total']}", f"Coverage ({pct})"),
+            *_stat(str(cov["verified"]), "Verified"),
+            *_stat(str(cov["missing"]), "Missing"),
+            *_stat(f'<span class="rb-badge {mode_badge}">{mode}</span>', "Checked by"),
             "</div>",
             "",
         ]
-    lines.extend([*band, '<div class="rb-meta-card" markdown>', "",
+    lines.extend([*band, markup.block_open("div", 'class="rb-meta-card"'), "",
                   "| Detail | Value |", "|---|---|"])
     if hash_type:
         lines.append(f"| Hash type | {hash_type} |")
@@ -3150,9 +3096,7 @@ def generate_provenance_page(
         lines.extend([f"### {label}", ""])
         for dat in sorted(by_dat):
             entries = by_dat[dat]
-            lines.extend([f'??? note "{dat} ({len(entries)})"', ""])
-            lines.append("    | Name | Description | SHA1 |")
-            lines.append("    |------|-------------|------|")
+            table = ["| Name | Description | SHA1 |", "|------|-------------|------|"]
             for entry in sorted(entries, key=lambda e: e["name"]):
                 sha1 = entry.get("sha1") or "-"
                 # A pipe in catalog text would split the markdown table row
@@ -3164,8 +3108,8 @@ def generate_provenance_page(
                         f" Ships in {_ROMSET_SOURCES.get(hit['source'], hit['source'])} "
                         f"`{hit['archive']}` as `{hit['member']}`."
                     )
-                lines.append(f"    | `{name}` | {desc} | `{sha1}` |")
-            lines.append("")
+                table.append(f"| `{name}` | {desc} | `{sha1}` |")
+            lines.extend(markup.details("note", f"{dat} ({len(entries)})", table))
 
     if derived_entries:
         lines.extend(
@@ -3302,11 +3246,11 @@ def _system_file_card(
             anchor = ""
         else:
             anchored.add(anchor)
-    lines = ['<div class="rb-sys-file" markdown>', ""]
+    lines = [markup.block_open("div", 'class="rb-sys-file"'), ""]
     # The heading's own link is this page's, the second link is the file's
     # own address, resolved by content wherever its card moves.
     permalink = (
-        f' <a class="rb-permalink" href="../../files/?sha1={sha1_full}" '
+        f' <a class="rb-permalink" href="{markup.site_href(f"files/?sha1={sha1_full}")}" '
         f'title="Permanent link, by content">permalink</a>'
     ) if anchor else ""
     lines.append(_card_title(
@@ -3373,8 +3317,8 @@ def tables_out_of_search(markdown: str, threshold: int = SEARCH_TABLE_BYTES) -> 
             end += 1
         table = lines[index:end]
         if sum(len(line) for line in table) > threshold:
-            out += ["", f"{indent}<section data-search-exclude markdown>", "", *table,
-                    "", f"{indent}</section>", ""]
+            out += ["", indent + markup.block_open("section", markup.search_exclude()), "",
+                    *table, "", f"{indent}</section>", ""]
         else:
             out += table
         index = end
@@ -3393,7 +3337,8 @@ def search_excluded(lines: list[str]) -> list[str]:
     the first div closed inside an excluded div (a code block's) ended the
     exclusion and the rest of the block was indexed.
     """
-    return ["", "<section data-search-exclude markdown>", "", *lines, "", "</section>", ""]
+    return ["", markup.block_open("section", markup.search_exclude()), "",
+            *lines, "", "</section>", ""]
 
 
 # Card lines the site search leaves out. They list where a file goes and
@@ -3418,7 +3363,8 @@ def _search_skipped_apart(lines: list[str]) -> list[str]:
     for line in lines:
         skip = line.startswith(SEARCH_SKIPPED) or (skipping and line.startswith("    "))
         if skip and not skipping:
-            out.extend(["", '<div class="rb-search-skip" data-search-exclude markdown>', ""])
+            out.extend(["", markup.block_open(
+                "div", f'class="rb-search-skip" {markup.search_exclude()}'), ""])
         elif skipping and not skip:
             out.extend(["", "</div>", ""])
         skipping = skip
@@ -3438,6 +3384,13 @@ def _card_title(text: str, anchor: str, searchable: bool = True) -> str:
     of cards stops above it (mkdocs_hooks.py), and a card without an
     anchor keeps the id the toc gives it.
     """
+    if markup.starlight():
+        # Raw HTML: the card links to itself already, and a Markdown heading
+        # would add the engine's anchor link and icon to every card.
+        title = re.sub(r"`([^`]+)`", lambda m: f"<code>{html.escape(m[1], quote=False)}</code>", text)
+        ident = f' id="{anchor}"' if anchor else ""
+        ignore = "" if searchable else f" {markup.search_exclude()}"
+        return f'<h3{ident} class="rb-file-title"{ignore}>{title}</h3>'
     attributes = f"#{anchor} .rb-file-title" if anchor else ".rb-file-title"
     if not searchable:
         attributes += " data-search-exclude"
@@ -3509,11 +3462,8 @@ def _cards_markdown(cards: list[Card]) -> list[str]:
         # A variant gets the same card as a primary: the revision a
         # platform pins is the one a reader comes to find, and showed as
         # a name and a truncated MD5, nothing said who pins it.
-        lines.append(f'??? note "Variants ({len(variants)})"')
-        lines.append("")
-        for card in variants:
-            lines.extend(f"    {line}" if line else "" for line in card)
-        lines.append("")
+        lines.extend(markup.details(
+            "note", f"Variants ({len(variants)})", [line for card in variants for line in card]))
     return lines
 
 
@@ -4019,7 +3969,7 @@ def _render_emulator_file(
 
     badges = _file_badges(f, in_repo)
     badge_str = " ".join(badges)
-    lines.append('<div class="rb-file-entry" markdown>')
+    lines.append(markup.block_open("div", 'class="rb-file-entry"'))
     lines.append("")
     marker = f'<span id="{alias}"></span>' if alias else ""
     lines.append(_card_title(f"{marker}{_code(fname)} {badge_str}", anchor))
@@ -4307,14 +4257,12 @@ def _install_block(name: str, profile: dict) -> list[str]:
     """
     if profile.get("type") in ("alias", "launcher", "test"):
         return []
-    return search_excluded([
-        '??? tip "Install this emulator\'s files"',
-        "",
-        "    The installer finds your platform and its BIOS folder, then downloads "
+    return search_excluded(markup.details("tip", "Install this emulator's files", [
+        "The installer finds your platform and its BIOS folder, then downloads "
         "only the files this emulator reads there and checks each one.",
         "",
-        *install_commands(f"--emulator {name}", "    "),
-    ])
+        *install_commands(f"--emulator {name}"),
+    ]))
 
 
 def _platform_install_block(name: str, display: str, on_card: bool = False) -> list[str]:
@@ -4325,37 +4273,32 @@ def _platform_install_block(name: str, display: str, on_card: bool = False) -> l
     computer it is mounted on, whose root is named.
     """
     if on_card:
-        return [
-            '???+ tip "Install with one command"',
-            "",
-            f"    With the {display} SD card mounted, the installer downloads the files "
+        return markup.details("tip", "Install with one command", [
+            f"With the {display} SD card mounted, the installer downloads the files "
             "of the pack that are missing or differ from it into `Bios/<TAG>/` on "
             "the card, checks each one, and resumes where it stopped. `--dest` "
             "names the card's root.",
             "",
-            "    Linux, macOS:",
+            "Linux, macOS:",
             "",
-            "    ```sh",
-            f"    {install_command('sh', f'--platform {name} --dest /path/to/card')}",
-            "    ```",
+            "```sh",
+            install_command("sh", f"--platform {name} --dest /path/to/card"),
+            "```",
             "",
-            "    Windows (PowerShell, E: being the card):",
+            "Windows (PowerShell, E: being the card):",
             "",
-            "    ```powershell",
-            "    " + install_command("powershell", f"--platform {name} --dest E:\\"),
-            "    ```",
-            "",
-        ]
-    return [
-        '???+ tip "Install with one command"',
-        "",
-        f"    The installer downloads the files of the {display} pack that are "
+            "```powershell",
+            install_command("powershell", f"--platform {name} --dest E:\\"),
+            "```",
+        ], opened=True)
+    return markup.details("tip", "Install with one command", [
+        f"The installer downloads the files of the {display} pack that are "
         "missing or differ from it, checks each one, and resumes where it "
         "stopped. Add `--system` with the ids of the systems overview below "
         "to install fewer systems.",
         "",
-        *install_commands(f"--platform {name}", "    "),
-    ]
+        *install_commands(f"--platform {name}"),
+    ], opened=True)
 
 
 def _console_install_block(console: str, declared: list[tuple[str, str]]) -> list[str]:
@@ -4363,19 +4306,17 @@ def _console_install_block(console: str, declared: list[tuple[str, str]]) -> lis
     if not declared:
         return []
     lines = [
-        f'??? tip "Install the {console} files"',
-        "",
-        "    Each platform names the system its own way. On Windows, run the "
+        "Each platform names the system its own way. On Windows, run the "
         "same options through `&([scriptblock]::Create((irm "
         f"{INSTALL_BASE}/install.ps1)))`.",
         "",
-        "    ```sh",
+        "```sh",
     ]
     lines += [
-        f"    {install_command('sh', f'--platform {platform} --system {shlex.quote(system)}')}"
+        install_command("sh", f"--platform {platform} --system {shlex.quote(system)}")
         for platform, system in declared
     ]
-    return search_excluded(lines + ["    ```", ""])
+    return search_excluded(markup.details("tip", f"Install the {console} files", [*lines, "```"]))
 
 
 def _render_platform_details(profile: dict) -> list[str]:
@@ -4383,16 +4324,16 @@ def _render_platform_details(profile: dict) -> list[str]:
     lines: list[str] = []
     platform_details = profile.get("platform_details")
     if platform_details and isinstance(platform_details, dict):
-        lines.extend(['???+ info "Platform details"', ""])
+        body: list[str] = []
         for pk, pv in platform_details.items():
             if isinstance(pv, dict):
-                lines.extend([f"    - **{pk}:**", ""])
+                body.extend([f"- **{pk}:**", ""])
                 for sk, sv in pv.items():
-                    lines.append(f"        - {sk}: {_detail_value(profile, sk, sv)}")
-                lines.append("")
+                    body.append(f"    - {sk}: {_detail_value(profile, sk, sv)}")
+                body.append("")
             else:
-                lines.append(f"    - **{pk}:** {_detail_value(profile, pk, pv)}")
-        lines.append("")
+                body.append(f"- **{pk}:** {_detail_value(profile, pk, pv)}")
+        lines.extend(markup.details("info", "Platform details", body, opened=True))
 
     return lines
 
@@ -4466,13 +4407,11 @@ def _render_structured_blocks(profile: dict) -> list[str]:
         val = profile.get(field)
         if val is None:
             continue
-        lines.append(f'???+ abstract "{label}"')
-        lines.append("")
-        start = len(lines)
-        _render_yaml_value(lines, val, indent=4,
+        body: list[str] = []
+        _render_yaml_value(body, val, indent=0,
                            field_text=_structured_field_text(profile))
-        lines[start:] = [_escape_tags(line) for line in lines[start:]]
-        lines.append("")
+        lines.extend(markup.details(
+            "abstract", label, [_escape_tags(line) for line in body], opened=True))
 
     return lines
 
@@ -4728,7 +4667,7 @@ def emulator_pages(
         f"# {emu_name}",
         "",
         *([intro, ""] if intro else []),
-        '<div class="rb-meta-card" markdown>',
+        markup.block_open("div", 'class="rb-meta-card"'),
         "",
         "| Detail | Value |",
         "|---|---|",
@@ -4812,19 +4751,14 @@ def emulator_pages(
     lines.extend(_render_structured_blocks(profile))
 
     if notes:
-        indented = _admonition_body(link_prose_citations(profile, notes))
-        lines.extend(['??? note "Technical notes"', f"    {indented}", ""])
+        body = _admonition_body(link_prose_citations(profile, notes)).replace("\n    ", "\n")
+        lines.extend(markup.details("note", "Technical notes", body.split("\n")))
 
     if not files:
         lines.append("No BIOS or firmware files required.")
         if exclusion:
-            lines.extend(
-                [
-                    "",
-                    '!!! info "Why no files"',
-                    f"    {_escape_tags(str(exclusion))}",
-                ]
-            )
+            lines.append("")
+            lines.extend(markup.aside("info", "Why no files", [_escape_tags(str(exclusion))])[:-1])
     else:
         _file_available = _availability_check(db, data_names)
 
@@ -4851,7 +4785,11 @@ def emulator_pages(
     if data_dirs:
         # The member tables are a file list with hashes: out of the search,
         # dolphin, primehack and ishiiruka each put 210 KB of it there.
-        lines.extend(["## Data directories { data-search-exclude }", ""])
+        lines.extend([
+            "## Data directories" + (" { data-search-exclude }" if not markup.starlight() else ""),
+            "",
+        ])
+        trees_start = len(lines)
         member_anchors: set[str] = set()
         # Each tree with what it holds, where it comes from, which build reads
         # it and the code that does: these trees put thousands of files in
@@ -4881,13 +4819,7 @@ def emulator_pages(
                 lines.append(f"    - Source: {_source_ref_markdown(profile, dd['source_ref'])}")
             members = _DATA_MEMBERS.get(ref) or {}
             if members:
-                lines.extend([
-                    "",
-                    f'    ??? info "{_count(len(members), "file")}, as the packs ship them"',
-                    "",
-                    "        | File | Size | SHA1 |",
-                    "        |------|-----:|------|",
-                ])
+                table = ["| File | Size | SHA1 |", "|------|-----:|------|"]
                 for member, info in sorted(members.items()):
                     sha1 = str(info.get("sha1", ""))
                     # One id per page: two members can hold the same bytes
@@ -4895,12 +4827,19 @@ def emulator_pages(
                     anchor = f"sha1-{sha1[:12]}"
                     span = "" if anchor in member_anchors else f'<span id="{anchor}"></span>'
                     member_anchors.add(anchor)
-                    lines.append(
-                        f"        | {span}{_code(member)} "
+                    table.append(
+                        f"| {span}{_code(member)} "
                         f"| {_fmt_size(int(info.get('size', 0)))} | {_code(sha1)} |"
                     )
                 lines.append("")
+                lines.extend(markup.details(
+                    "info", f"{_count(len(members), 'file')}, as the packs ship them",
+                    table, indent="    "))
         lines.append("")
+        if markup.starlight():
+            # The member tables are the lookup's, as the heading's attribute
+            # keeps them under MkDocs.
+            lines[trees_start:] = search_excluded(lines[trees_start:])
 
     lines.extend(_next_block([
         "[Get your files](../which-pack.md), for the setup you play on",
@@ -4927,7 +4866,7 @@ def _card_index(
         + ", ".join(f"[{number}]({stem}.md)" for number, (stem, _e) in enumerate(parts, 1))
         + ".",
         "",
-        '<section class="rb-card-index" data-search-exclude markdown>',
+        markup.block_open("section", f'class="rb-card-index" {markup.search_exclude()}'),
         "",
         "| File | Required | Category |",
         "|------|----------|----------|",
@@ -5302,9 +5241,11 @@ def generate_gap_analysis(
         "\"Files to source\", [adding it](contributing.md) fills the gap for "
         "every platform at once.",
         "",
-        "[Download gaps CSV](downloads/gaps.csv){ .md-button } "
-        "[Open gaps API](api/v1/gaps.json){ .md-button } "
-        "[All data exports](data.md){ .md-button }",
+        " ".join([
+            markup.button("Download gaps CSV", "downloads/gaps.csv"),
+            markup.button("Open gaps API", "api/v1/gaps.json"),
+            markup.button("All data exports", "data.md"),
+        ]),
         "",
         _platform_lists_sentence(
             total_files_verify, total_verified, total_untested, total_missing_verify,
@@ -5733,13 +5674,7 @@ def _render_xref_by_platform(
         display = cov["platform"]
         config = cov["config"]
 
-        lines.append(f'??? abstract "{display}"')
-        lines.append("")
-        lines.append(
-            f"    [Open {display} platform profile](platforms/{pname}.md)"
-            "{ .md-button }"
-        )
-        lines.append("")
+        body = [markup.button(f"Open {display} platform profile", f"platforms/{pname}.md"), ""]
 
         # The cores the builder and verify resolve: a hand copy here dropped
         # the libretro set a list naming retroarch pulls in, and the system
@@ -5750,11 +5685,11 @@ def _render_xref_by_platform(
             if key in unique
         }
 
-        lines.append(f"    **{len(matched)} cores**{_core_scope_note(config, unique)}")
-        lines.append("")
+        body.append(f"**{len(matched)} cores**{_core_scope_note(config, unique)}")
+        body.append("")
 
-        lines.append("    | Core | Classification | Systems | Files | Upstream |")
-        lines.append("    |------|---------------|---------|-------|----------|")
+        body.append("| Core | Classification | Systems | Files | Upstream |")
+        body.append("|------|---------------|---------|-------|----------|")
 
         for emu_name in sorted(matched.keys()):
             p = matched[emu_name]
@@ -5798,12 +5733,12 @@ def _render_xref_by_platform(
             elif source:
                 upstream_display = source
 
-            lines.append(
-                f"    | [{emu_display}](emulators/{emu_name}.md) | {cls} | "
+            body.append(
+                f"| [{emu_display}](emulators/{emu_name}.md) | {cls} | "
                 f"{sys_str} | {file_str} | {upstream_display} |"
             )
 
-        lines.append("")
+        lines.extend(markup.details("abstract", display, body))
 
     return lines
 
@@ -5892,9 +5827,11 @@ def generate_cross_reference(
         "The files a platform's emulators load and its own list does not name are "
         "counted on [What the packs do not hold](gaps.md).",
         "",
-        "[Download cross-reference CSV](downloads/cross-reference.csv){ .md-button } "
-        "[Open emulator API](api/v1/emulators.json){ .md-button } "
-        "[All data exports](data.md){ .md-button }",
+        " ".join([
+            markup.button("Download cross-reference CSV", "downloads/cross-reference.csv"),
+            markup.button("Open emulator API", "api/v1/emulators.json"),
+            markup.button("All data exports", "data.md"),
+        ]),
         "",
     ]
 
@@ -5915,13 +5852,11 @@ def generate_contributing() -> str:
 
 
 # The end of a reference page: back to the index, or on to contributing.
-REFERENCE_NEXT = "\n" + "\n".join([
-    '!!! tip "Next"',
-    "",
-    "    - [Reference index](wiki/index.md), every reference page in one list",
-    "    - For contributors: [How to contribute](contributing.md)",
-    "",
-])
+def reference_next() -> str:
+    return "\n" + "\n".join(markup.aside("tip", "Next", [
+        "- [Reference index](wiki/index.md), every reference page in one list",
+        "- For contributors: [How to contribute](contributing.md)",
+    ]))
 
 
 # Wiki pages
@@ -6238,34 +6173,26 @@ def generate_which_pack() -> str:
         "",
         *terminal_tabs(("windows", "macos", "linux", "steamdeck", "android"),
                        dict.fromkeys(TERMINALS, "--check"), steps=False),
-        '??? note "Fill an SD card from a computer"',
-        "",
-        "    Name your setup and the BIOS folder on the card. For RetroArch on a "
-        "Nintendo Switch:",
-        "",
-        "    ```sh",
-        "    " + install_command(
-            "sh", "--platform retroarch --dest /path/to/sdcard/retroarch/cores/system"),
-        "    ```",
-        "",
+        *markup.details("note", "Fill an SD card from a computer", [
+            "Name your setup and the BIOS folder on the card. For RetroArch on a "
+            "Nintendo Switch:",
+            "",
+            "```sh",
+            install_command(
+                "sh", "--platform retroarch --dest /path/to/sdcard/retroarch/cores/system"),
+            "```",
+        ]),
         "Details: [All installer options](wiki/installer.md).",
         "",
         "## Pick your setup",
         "",
-        '<div class="grid cards" markdown>',
-        "",
     ]
-    for group, (label, _description) in DEVICE_GROUPS.items():
-        members = _group_keys(registry, group, display)
-        if not members:
-            continue
-        lines += [
-            f"-   **{label}**",
-            "",
-            f"    [{', '.join(display[k] for k in members)}](#{GROUP_ANCHORS[group]})",
-            "",
-        ]
-    lines += ["</div>", ""]
+    lines += markup.card_grid([
+        (label, [f"[{', '.join(display[k] for k in members)}](#{GROUP_ANCHORS[group]})"])
+        for group, (label, _description) in DEVICE_GROUPS.items()
+        for members in [_group_keys(registry, group, display)]
+        if members
+    ])
     for group, (label, description) in DEVICE_GROUPS.items():
         members = _group_keys(registry, group, display)
         if not members:
@@ -6294,18 +6221,15 @@ def generate_which_pack() -> str:
             )
         lines.append("")
         if group == "handheld":
-            lines += [
-                '??? note "Other handhelds that run RetroArch"',
-                "",
-                "    They use the RetroArch files, in the folder below. The command "
+            lines += markup.details("note", "Other handhelds that run RetroArch", [
+                "They use the RetroArch files, in the folder below. The command "
                 "finds it.",
                 "",
-                "    | System | Runs | BIOS folder |",
-                "    |--------|------|-------------|",
-                *(f"    | {name} | [RetroArch](platforms/retroarch.md) | `{folder}` |"
+                "| System | Runs | BIOS folder |",
+                "|--------|------|-------------|",
+                *(f"| {name} | [RetroArch](platforms/retroarch.md) | `{folder}` |"
                   for name, folder in _detected_systems(registry, "retroarch")),
-                "",
-            ]
+            ])
     lines += [
         "## Download a ZIP { #manual-download }",
         "",
@@ -6699,7 +6623,7 @@ def _generate(args: argparse.Namespace) -> None:
     exports = generate_data_exports(
         docs, db, coverages, profiles, stats, gap_report
     )
-    write_if_changed(str(docs / "data.md"), generate_data_page(exports) + REFERENCE_NEXT)
+    write_if_changed(str(docs / "data.md"), generate_data_page(exports) + reference_next())
     PAGE_DATA["data.md"] = dataset_structured_data(exports, db)
 
     export_reports = load_export_reports()
@@ -6774,7 +6698,7 @@ def _generate(args: argparse.Namespace) -> None:
     print("Generating cross-reference page...")
     write_if_changed(
         str(docs / "cross-reference.md"),
-        tables_out_of_search(generate_cross_reference(coverages, profiles)) + REFERENCE_NEXT,
+        tables_out_of_search(generate_cross_reference(coverages, profiles)) + reference_next(),
     )
 
     print("Generating gap analysis page...")
@@ -6782,7 +6706,7 @@ def _generate(args: argparse.Namespace) -> None:
         str(docs / "gaps.md"),
         tables_out_of_search(generate_gap_analysis(
             profiles, coverages, db, suppl_names, registry, gap_report
-        )) + REFERENCE_NEXT,
+        )) + reference_next(),
     )
 
     print("Generating updated platform files page...")
@@ -6791,7 +6715,7 @@ def _generate(args: argparse.Namespace) -> None:
         generate_exports_page(
             export_reports,
             {name: cov["platform"] for name, cov in coverages.items()},
-        ) + REFERENCE_NEXT,
+        ) + reference_next(),
     )
 
     print("Generating dump provenance page...")
@@ -6800,7 +6724,7 @@ def _generate(args: argparse.Namespace) -> None:
         str(docs / "provenance.md"),
         tables_out_of_search(
             generate_provenance_page(db, provenance_report, load_derivable())
-        ) + REFERENCE_NEXT,
+        ) + reference_next(),
     )
 
     # Wiki pages: copy manually maintained sources + generate dynamic ones

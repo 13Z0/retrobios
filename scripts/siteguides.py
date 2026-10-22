@@ -15,6 +15,7 @@ import textwrap
 from dataclasses import dataclass, fields
 from pathlib import Path
 
+import sitemarkup as markup
 from safeparse import require_yaml
 
 PLATFORMS_DIR = Path(__file__).resolve().parent.parent / "platforms"
@@ -263,15 +264,12 @@ def terminal_tabs(
     """Content tabs, one per place the command runs, each with how to open
     the terminal there. Tab labels are shared across the site, so the reader's
     choice carries from page to page."""
-    lines: list[str] = []
+    items = []
     for key in tabs:
         label, how, shell = TERMINALS[key]
-        lines += [f'{indent}=== "{label}"', ""]
-        if steps:
-            lines += [f"{indent}    {how}", ""]
-        lines += _fence(shell, install_command(shell, args.get(key, "")), indent + "    ")
-        lines.append("")
-    return lines
+        body = [how, ""] if steps else []
+        items.append((label, body + _fence(shell, install_command(shell, args.get(key, "")), "")))
+    return markup.tabs(items, indent)
 
 
 def platform_args(name: str, guide: Guide) -> dict[str, str]:
@@ -290,11 +288,8 @@ def platform_args(name: str, guide: Guide) -> dict[str, str]:
 
 def trust_box(prefix: str, indent: str = "") -> list[str]:
     """Is it safe, under every command on a guide page: five plain facts."""
-    return [
-        f'{indent}??? note "Is it safe?"',
+    return markup.details("note", "Is it safe?", [
+        *(f"- {item}" for item in TRUST_ITEMS),
         "",
-        *(f"{indent}    - {item}" for item in TRUST_ITEMS),
-        "",
-        f"{indent}    [Read the script first]({prefix}wiki/faq.md#is-piping-the-installer-into-a-shell-safe)",
-        "",
-    ]
+        f"[Read the script first]({prefix}wiki/faq.md#is-piping-the-installer-into-a-shell-safe)",
+    ], indent)

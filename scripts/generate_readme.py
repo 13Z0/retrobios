@@ -230,14 +230,16 @@ def release_totals(platform_name: str, record: dict) -> tuple[int | None, int | 
 
 
 def download_links(
-    platform_name: str, record: dict, repo: str, label: str, attrs: str = ""
+    platform_name: str, record: dict, repo: str, label: str, attrs: str = "",
+    button: Callable[[str, str], str] | None = None,
 ) -> str:
     """Markdown links to the files of a platform's pack in the recorded release.
 
     A pack published whole gets one link labelled *label*. A pack in parts
     gets one link per part, since every part is needed. *repo* is the
     repository URL, absolute or relative, and *attrs* a MkDocs attribute list
-    put after each link. Without a recorded release the link is the latest
+    put after each link, or *button* the function that draws each link as a
+    button on the site. Without a recorded release the link is the latest
     release page. A release recorded without this platform's pack says so and
     names the installer, which reads the file lists on main: a button to the
     release served six platforms a page with no pack for them.
@@ -245,18 +247,22 @@ def download_links(
     pack = release_record.pack_for(platform_name, record)
     tag = record.get("tag")
     assets = pack.get("assets") if pack else None
+    def link(text: str, url: str) -> str:
+        return button(text, url) if button else f"[{text}]({url}){attrs}"
+
     if not tag:
-        return f"[{label}]({repo}/releases/latest){attrs}"
+        return link(label, f"{repo}/releases/latest")
     if not assets:
         return f"Not in {tag}: [use the installer]({SITE_URL}wiki/installer/)"
     urls = [f"{repo}/releases/download/{tag}/{asset}" for asset in assets]
     if len(urls) == 1:
-        return f"[{label}]({urls[0]}){attrs}"
+        return link(label, urls[0])
+    styled = bool(attrs or button)
     parts = [
-        f"[{'P' if attrs else 'p'}art {number} of {len(urls)}]({url}){attrs}"
+        link(f"{'P' if styled else 'p'}art {number} of {len(urls)}", url)
         for number, url in enumerate(urls, 1)
     ]
-    if attrs:
+    if styled:
         return " ".join(parts)
     return f"{label}: " + ", ".join(parts)
 
