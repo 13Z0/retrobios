@@ -23,8 +23,10 @@ batocera:
       # fsuae/amiberry, not emulators of their own. batocera-es-system
       # groups them under the emulator's node in es_systems.yml.
       # odcommander is OpenDingux's file manager, and flatpak/steam/wine-tkg/sh
-      # are runtime launchers. N64 video plugins (gliden64, glide64mk2,
-      # rice) are backends to mupen64plus, not emulators.
+      # are runtime launchers. wine is the Windows system's launcher and
+      # mugen the MUGEN system's, both running the user's Windows program
+      # on wine-tkg (configgen-defaults.yml). N64 video plugins (gliden64,
+      # glide64mk2, rice) are backends to mupen64plus, not emulators.
       remove_cores:
         - A500
         - "A500+"
@@ -40,6 +42,8 @@ batocera:
         - sh
         - steam
         - wine-tkg
+        - wine
+        - mugen
         - gliden64
         - glide64mk2
         - rice
@@ -167,6 +171,37 @@ rocknix:
         - wine
     amd64:
       aliases: [x86_64, pc]
+
+# KNULLI reads Batocera's list above, plus its own: vaixterm is a terminal,
+# filed as the VaixTerm system's emulator (configgen-defaults.yml:669-671).
+knulli:
+  targets:
+    _default:
+      remove_cores:
+        - vaixterm
+
+# EmuELEC and AmberELEC have no target file: the scrapers read these lists.
+# mpv and ffplay play the Media Player system's videos (EmuELEC
+# emuelecRunEmu.sh:301-303, AmberELEC runemu.py:122). gmloader runs a
+# GameMaker game's own Android library (emuelecRunEmu.sh:331-334). Ports
+# that start the user's own game binary name its runtime or the game as
+# port_exe: mono for Celeste and TMNTSR, the game for Shovel Knight, which
+# shovelknight.sh starts through box64 (ports.yaml, emuelec-ports).
+emuelec:
+  targets:
+    _default:
+      remove_cores:
+        - ffplay
+        - gmloader
+        - mono
+        - mpv
+        - ShovelKnight
+
+amberelec:
+  targets:
+    _default:
+      remove_cores:
+        - mpv
 
 recalbox:
   targets:

@@ -17,7 +17,13 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
 from scraper import amberelec_scraper, emuelec_scraper, knulli_scraper  # noqa: E402
-from scraper.es_emulators import es_cores, json_emulators, xml_emulators  # noqa: E402
+from scraper.es_emulators import (  # noqa: E402
+    attach_system_cores,
+    es_cores,
+    json_systems,
+    system_cores,
+    xml_systems,
+)
 
 CHECKER = '''
 
@@ -133,29 +139,99 @@ class TheListsReadAsPythonReadsThem(unittest.TestCase):
 class TheCoresComeFromTheOsList(unittest.TestCase):
     def test_amberelec_runners_and_standalone_names(self):
         cores, standalone, dual = es_cores(
-            xml_emulators(AMBERELEC_ES), amberelec_scraper.RUNNERS, amberelec_scraper.RENAMED
+            xml_systems(AMBERELEC_ES), amberelec_scraper.RUNNERS, amberelec_scraper.BUILDS_OF
         )
         # mame lists MAME machines and loads the MAME core: advision is no core.
         self.assertIn("mame", cores)
         self.assertNotIn("advision", cores)
         self.assertNotIn("mame", standalone)
         self.assertIn("flycast", cores)
-        self.assertTrue({"HATARISA", "hatari", "PPSSPPSDL", "ppsspp"} <= set(standalone))
-        self.assertEqual(dual, ["hatari", "ppsspp"])
+        # A standalone emulator keeps the name runemu.py dispatches on.
+        self.assertEqual(standalone, ["HATARISA", "PPSSPPSDL"])
+        self.assertEqual(dual, ["HATARISA", "PPSSPPSDL"])
 
     def test_emuelec_runners_and_standalone_names(self):
         cores, standalone, dual = es_cores(
-            json_emulators(EMUELEC_ES), emuelec_scraper.RUNNERS, emuelec_scraper.RENAMED
+            json_systems(EMUELEC_ES), emuelec_scraper.RUNNERS, emuelec_scraper.BUILDS_OF
         )
-        self.assertIn("stella", standalone)
+        self.assertEqual(standalone, ["STELLASA", "yabasanshiro"])
         self.assertNotIn("yabasanshiroSA", cores)
         self.assertEqual(dual, ["yabasanshiro"])
+
+    def test_a_name_that_emulates_nothing_is_dropped(self):
+        cores, standalone, _ = es_cores(
+            json_systems(EMUELEC_ES), emuelec_scraper.RUNNERS, not_cores={"STELLASA"}
+        )
+        self.assertNotIn("STELLASA", cores + standalone)
+
+    def test_each_system_keeps_its_cores_in_menu_order(self):
+        by_system = system_cores(xml_systems(AMBERELEC_ES), amberelec_scraper.RUNNERS)
+        self.assertEqual(by_system["atarist"], ["hatari", "HATARISA"])
+        self.assertEqual(by_system["advision"], ["mame"])
+        self.assertEqual(by_system["dreamcast"], ["flycast"])
+
+    def test_a_slug_gathers_the_cores_of_its_native_systems(self):
+        systems = {
+            "diablo": {"native_id": "Diablo", "files": [
+                {"native_system": "Diablo"}, {"native_system": "Hellfire"}]},
+            "unlisted": {"native_id": "o2em", "files": []},
+        }
+        attach_system_cores(systems, {"Diablo": ["devilutionx"], "Hellfire": ["devilutionx", "x"]})
+        self.assertEqual(systems["diablo"]["cores"], ["devilutionx", "x"])
+        self.assertNotIn("cores", systems["unlisted"])
 
     def test_the_newest_prerelease_names_its_commit(self):
         body = "This is a prerelease based on the commit: AmberELEC/AmberELEC@" + "a" * 40 + "."
         self.assertEqual(amberelec_scraper.prerelease_commit(body), "a" * 40)
         with self.assertRaises(RuntimeError):
             amberelec_scraper.prerelease_commit("no commit here")
+
+
+PORTS = """
+2048:
+  commands:
+    - /usr/bin/emuelecRunEmu.sh "" -Pports "${2}" -C2048 "-SC${0}"
+
+Diablo:
+  check_bios: Diablo
+  init_port: true
+  port_exe: "devilutionx"
+  commands:
+    - devilutionx.sh >> $EE_LOG 2>&1
+
+Flashback:
+  check_bios: REminiscence
+  commands:
+    - /usr/bin/emuelecRunEmu.sh "/storage/roms/ports/reminiscence" -Pports "${2}" -Creminiscence "-SC${0}"
+"""
+
+
+class EmuelecPortsRunTheirEngine(unittest.TestCase):
+    """The ES system `ports` has one emulator, `ports`, the dispatch to each
+    port's script: what runs is the core or program the script names."""
+
+    def test_each_port_names_its_engine(self):
+        self.assertEqual(emuelec_scraper.port_engines(PORTS), [
+            ("2048", "2048", None, True),
+            ("Diablo", "devilutionx", "Diablo", False),
+            ("Flashback", "reminiscence", "REminiscence", True),
+        ])
+
+    def test_engines_replace_the_dispatch(self):
+        systems = emuelec_scraper.with_ports(
+            {"ports": [("ports", ["ports"])]}, emuelec_scraper.port_engines(PORTS)
+        )
+        cores, standalone, _ = es_cores(systems, emuelec_scraper.RUNNERS)
+        self.assertNotIn("ports", cores)
+        self.assertEqual(standalone, ["devilutionx"])
+        self.assertTrue({"2048", "reminiscence"} <= set(cores))
+        by_system = system_cores(systems, emuelec_scraper.RUNNERS)
+        self.assertEqual(by_system["Diablo"], ["devilutionx"])
+        self.assertEqual(by_system["REminiscence"], ["reminiscence"])
+
+    def test_a_port_without_an_engine_is_refused(self):
+        with self.assertRaises(ValueError):
+            emuelec_scraper.port_engines("Broken:\n  commands:\n    - true\n")
 
 
 class CoreFilesGoUnderTheStatedFolder(unittest.TestCase):
@@ -202,6 +278,22 @@ class TheExportKeepsTheirShape(unittest.TestCase):
         self.assertEqual(Amber.declared_path(fe), "neogeo/neogeo.zip")
         fe = NativeFile("bios_CD_E.bin", "bios_CD_E.bin", "msu-md")
         self.assertEqual(Knulli.declared_path(fe), "bios/bios_CD_E.bin")
+
+
+class TheCommittedListsAgree(unittest.TestCase):
+    """A system's cores are a part of the platform's: a name only the system
+    carries would escape every reader of the platform list."""
+
+    def test_system_cores_are_platform_cores(self):
+        import yaml
+
+        for name in ("amberelec", "emuelec", "knulli"):
+            with self.subTest(platform=name):
+                config = yaml.safe_load((REPO_ROOT / "platforms" / f"{name}.yml").read_text())
+                platform = {str(c) for c in config["cores"]}
+                listed = {str(c) for s in config["systems"].values() for c in s.get("cores", [])}
+                self.assertTrue(listed, "no system carries its cores")
+                self.assertEqual(listed - platform, set())
 
 
 if __name__ == "__main__":

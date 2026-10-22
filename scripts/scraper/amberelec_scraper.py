@@ -37,11 +37,12 @@ from .batocera_scraper import (
     SYSTEM_SLUG_MAP as BATOCERA_SLUGS,
 )
 from .batocera_scraper import (
+    _not_cores,
     extract_systems_dict,
     platform_systems,
     requirements_from_systems,
 )
-from .es_emulators import es_cores, xml_emulators
+from .es_emulators import attach_system_cores, es_cores, system_cores, xml_systems
 
 PLATFORM_NAME = "amberelec"
 
@@ -65,9 +66,14 @@ SYSTEM_SLUG_MAP = {
 # names. `mame` lists MAME machines and runs them on the libretro MAME core
 # (lines 233-261 set self.core = 'mame', line 355 builds the RetroArch command).
 RUNNERS: dict[str, str | None] = {"retroarch": None, "retrorun": None, "mame": "mame"}
-# runemu.py:113, PPSSPPSDL runs /usr/bin/ppsspp.sh, installed by the
-# ppssppsa package (packages/games/emulators/ppssppsa).
-RENAMED = {"PPSSPPSDL": "ppsspp"}
+# runemu.py:110-128 starts every other emulator through the script its
+# standalone_emulators table names, keyed by the emulator name es_systems.cfg
+# writes. Three are the standalone build of an emulator the list also offers
+# as a libretro core, the package's PKG_SITE naming the same project:
+# hatarisa hatari/hatari (packages/games/emulators/hatarisa), ppssppsa
+# hrydgard/ppsspp (PPSSPPSDL runs its ppsspp.sh, line 116) and scummvmsa
+# scummvm/scummvm.
+BUILDS_OF = {"HATARISA": "hatari", "PPSSPPSDL": "ppsspp", "SCUMMVMSA": "scummvm"}
 
 _PRERELEASE_COMMIT = re.compile(r"AmberELEC/AmberELEC@([0-9a-f]{40})")
 
@@ -128,11 +134,12 @@ class Scraper(BaseScraper):
         systems = platform_systems(
             self.fetch_requirements(), extract_systems_dict(self._fetch_raw()), SYSTEM_SLUG_MAP
         )
-        cores, standalone, dual = es_cores(
-            xml_emulators(self._fetch_text(ES_SYSTEMS_TEMPLATE.format(ref=self.commit))),
-            RUNNERS,
-            RENAMED,
-        )
+        # es_systems.cfg gives each <system> its <emulators> in menu order
+        # (atarist, lines 267-288: retroarch's hatari, then HATARISA).
+        es_systems = xml_systems(self._fetch_text(ES_SYSTEMS_TEMPLATE.format(ref=self.commit)))
+        not_cores = _not_cores(PLATFORM_NAME)
+        cores, standalone, dual = es_cores(es_systems, RUNNERS, BUILDS_OF, not_cores)
+        attach_system_cores(systems, system_cores(es_systems, RUNNERS, not_cores))
         return {
             "platform": "AmberELEC",
             "version": self.tag,

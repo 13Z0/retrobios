@@ -121,7 +121,6 @@ cores:
 - moonlight
 - mpv
 - mrboom
-- mugen
 - mupen64plus
 - mupen64plus-next
 - neocd
@@ -203,7 +202,6 @@ cores:
 - uae4arm
 - uqm
 - uzem
-- vaixterm
 - vb
 - vba-m
 - vecx
@@ -226,7 +224,6 @@ cores:
 - vox_official
 - vpinball
 - wasm4
-- wine
 - x1
 - x128
 - x16emu
@@ -277,6 +274,8 @@ systems:
       native_name: Atari 800
     native_id: atari800
     name: Atari 800
+    cores:
+    - atari800
   atari-5200:
     files:
     - name: 5200.rom
@@ -288,6 +287,9 @@ systems:
       native_name: Atari 5200
     native_id: atari5200
     name: Atari 5200
+    cores:
+    - atari800
+    - a5200
   atari-st:
     files:
     - name: tos.img
@@ -544,6 +546,9 @@ systems:
       native_name: Atari ST
     native_id: atarist
     name: Atari ST
+    cores:
+    - hatari
+    - hatarib
   atari-lynx:
     files:
     - name: lynxboot.img
@@ -555,6 +560,10 @@ systems:
       native_name: Lynx
     native_id: lynx
     name: Lynx
+    cores:
+    - mednafen_lynx
+    - handy
+    - holani
   magnavox-odyssey2:
     files:
     - name: o2rom.bin
@@ -573,6 +582,8 @@ systems:
       native_name: Odyssey 2
     native_id: o2em
     name: Odyssey 2
+    cores:
+    - o2em
   philips-videopac:
     files:
     - name: g7400.bin
@@ -591,6 +602,8 @@ systems:
       native_name: Videopac+ G7400
     native_id: videopacplus
     name: Videopac+ G7400
+    cores:
+    - o2em
   mattel-intellivision:
     files:
     - name: exec.bin
@@ -609,6 +622,8 @@ systems:
       native_name: Mattel Intellivision
     native_id: intellivision
     name: Mattel Intellivision
+    cores:
+    - freeintv
   nec-pc-engine:
     files:
     - name: syscard3.pce
@@ -627,6 +642,10 @@ systems:
       native_name: Supergrafx
     native_id: pcengine
     name: Supergrafx
+    cores:
+    - pce
+    - pce_fast
+    - mednafen_supergrafx
   nec-pc-fx:
     files:
     - name: pcfx.rom
@@ -638,6 +657,8 @@ systems:
       native_name: PC-FX
     native_id: pcfx
     name: PC-FX
+    cores:
+    - pcfx
   snk-neogeo:
     files:
     - name: neogeo.zip
@@ -649,6 +670,15 @@ systems:
       native_name: NeoGeo
     native_id: neogeo
     name: NeoGeo
+    cores:
+    - fbalpha
+    - fbneo
+    - geolith
+    - imame4all
+    - mame078plus
+    - mame0139
+    - mame
+    - fba2x
   snk-neogeo-cd:
     files:
     - name: neocd_f.rom
@@ -723,6 +753,8 @@ systems:
       native_name: NeoGeo CD
     native_id: neogeocd
     name: NeoGeo CD
+    cores:
+    - neocd
   sharp-x68000:
     files:
     - name: iplrom.dat
@@ -741,6 +773,8 @@ systems:
       native_name: Sharp x68000
     native_id: x68000
     name: Sharp x68000
+    cores:
+    - px68k
   3do:
     files:
     - name: panafz1.bin
@@ -766,6 +800,8 @@ systems:
       native_name: 3DO
     native_id: 3do
     name: 3DO
+    cores:
+    - opera
   sega-dreamcast:
     files:
     - name: dc_boot.bin
@@ -784,6 +820,11 @@ systems:
       native_name: Dreamcast
     native_id: dreamcast
     name: Dreamcast
+    cores:
+    - flycast
+    - flycastvl
+    - flycast-xtreme
+    - redream
   sega-dreamcast-arcade:
     files:
     - name: naomi.zip
@@ -976,6 +1017,10 @@ systems:
       native_name: Naomi 2
     native_id: naomi
     name: Naomi 2
+    cores:
+    - flycast
+    - flycastvl
+    - flycast-xtreme
   sega-mega-cd:
     files:
     - name: bios_CD_E.bin
@@ -1022,6 +1067,10 @@ systems:
       native_name: MSU-MD
     native_id: segacd
     name: MSU-MD
+    cores:
+    - genesisplusgx
+    - picodrive
+    - genesisplusgx-wide
   sega-saturn:
     files:
     - name: sega_101.bin
@@ -1061,6 +1110,11 @@ systems:
       native_name: Sega Saturn
     native_id: saturn
     name: Sega Saturn
+    cores:
+    - yabasanshiro
+    - beetle-saturn
+    - kronos
+    - ymir
   sony-playstation:
     files:
     - name: psxonpsp660.bin
@@ -1114,6 +1168,12 @@ systems:
       native_name: PSX
     native_id: psx
     name: PSX
+    cores:
+    - pcsx_rearmed
+    - swanstation
+    - mednafen_psx
+    - duckstation
+    - duckstation-legacy
   sony-playstation-2:
     files:
     - name: ps2-0230a-20080220.bin
@@ -1125,6 +1185,10 @@ systems:
       native_name: PS2
     native_id: ps2
     name: PS2
+    cores:
+    - pcsx2
+    - play
+    - aethersx2
   sony-playstation-3:
     files:
     - name: PS3UPDAT.PUP
@@ -1136,6 +1200,8 @@ systems:
       native_name: PS3
     native_id: ps3
     name: PS3
+    cores:
+    - rpcs3
   nintendo-fds:
     files:
     - name: disksys.rom
@@ -1147,6 +1213,10 @@ systems:
       native_name: Nintendo Family Computer Disk System
     native_id: fds
     name: Nintendo Family Computer Disk System
+    cores:
+    - fceumm
+    - nestopia
+    - mesen
   nintendo-ds:
     files:
     - name: firmware.bin
@@ -1197,6 +1267,12 @@ systems:
       native_name: Nintendo DS
     native_id: nds
     name: Nintendo DS
+    cores:
+    - desmume
+    - melonds
+    - melondsds
+    - drastic
+    - advanced_drastic
   nintendo-gba:
     files:
     - name: gba_bios.bin
@@ -1229,6 +1305,10 @@ systems:
       native_name: Nintendo Gameboy Advance
     native_id: gba
     name: Nintendo Gameboy Advance
+    cores:
+    - mgba
+    - vba-m
+    - gpsp
   nintendo-satellaview:
     files:
     - name: BS-X.bin
@@ -1240,6 +1320,10 @@ systems:
       native_name: Satellaview
     native_id: satellaview
     name: Satellaview
+    cores:
+    - pocketsnes
+    - snes9x
+    - mesen-s
   nintendo-sufami-turbo:
     files:
     - name: STBIOS.bin
@@ -1251,6 +1335,8 @@ systems:
       native_name: Sufami
     native_id: sufami
     name: Sufami
+    cores:
+    - snes9x
   nintendo-sgb:
     files:
     - name: sgb_boot.bin
@@ -1283,6 +1369,9 @@ systems:
       native_name: Super Game Boy
     native_id: sgb
     name: Super Game Boy
+    cores:
+    - mgba
+    - mesen-s
   microsoft-msx:
     files:
     - name: MSX.ROM
@@ -1420,6 +1509,10 @@ systems:
       native_name: MSX-Turbo
     native_id: msx
     name: MSX-Turbo
+    cores:
+    - bluemsx
+    - fmsx
+    - openmsx
   microsoft-xbox:
     files:
     - name: mcpx_1.0.bin
@@ -1438,6 +1531,8 @@ systems:
       native_name: Xbox
     native_id: xbox
     name: Xbox
+    cores:
+    - xemu
   commodore-amiga:
     files:
     - name: kick33180.A500
@@ -1624,6 +1719,12 @@ systems:
       native_name: Amiga CD32
     native_id: amiga500
     name: Amiga CD32
+    cores:
+    - fsuae
+    - amiberry
+    - puae
+    - puae2021
+    - uae4arm
   nec-pc-88:
     files:
     - name: N88.ROM
@@ -1684,6 +1785,8 @@ systems:
       native_name: NEC PC-8800
     native_id: pc88
     name: NEC PC-8800
+    cores:
+    - quasi88
   nec-pc-98:
     files:
     - name: BIOS.ROM
@@ -1723,6 +1826,8 @@ systems:
       native_name: NEC PC-9800
     native_id: pc98
     name: NEC PC-9800
+    cores:
+    - np2kai
   fairchild-channel-f:
     files:
     - name: sl31253.bin
@@ -1748,6 +1853,8 @@ systems:
       native_name: Fairchild ChannelF
     native_id: channelf
     name: Fairchild ChannelF
+    cores:
+    - freechaf
   sharp-x1:
     files:
     - name: IPLROM.X1
@@ -1766,6 +1873,8 @@ systems:
       native_name: Sharp X1
     native_id: x1
     name: Sharp X1
+    cores:
+    - x1
   fmtowns:
     files:
     - name: FMT_DIC.ROM
@@ -1911,6 +2020,9 @@ systems:
       native_name: Fujistu FM-Towns
     native_id: fmtowns
     name: Fujistu FM-Towns
+    cores:
+    - mame
+    - tsugaru
   gamepark-gp32:
     files:
     - name: gp32.zip
@@ -1969,6 +2081,8 @@ systems:
       native_name: GamePark GP32
     native_id: gp32
     name: GamePark GP32
+    cores:
+    - mame
   laser310:
     files:
     - name: laser310.zip
@@ -1995,6 +2109,8 @@ systems:
       native_name: VTech Laser 310
     native_id: laser310
     name: VTech Laser 310
+    cores:
+    - mame
   fpinball:
     files:
     - name: scripten.exe
@@ -2006,6 +2122,8 @@ systems:
       native_name: Future Pinball
     native_id: fpinball
     name: Future Pinball
+    cores:
+    - fpinball
   scv:
     files:
     - name: upd7801g.s01
@@ -2017,6 +2135,8 @@ systems:
       native_name: Super Cassette Vision
     native_id: scv
     name: Super Cassette Vision
+    cores:
+    - emuscv
   apple-iigs:
     files:
     - name: ROM1
@@ -2074,6 +2194,9 @@ systems:
       native_name: Apple IIgs
     native_id: gsplus
     name: Apple IIgs
+    cores:
+    - mame
+    - gsplus
   zc210:
     files:
     - name: zcdata.dat
@@ -2169,6 +2292,8 @@ systems:
       native_name: Zelda Classic
     native_id: zc210
     name: Zelda Classic
+    cores:
+    - zc210
   apple-macintosh-ii:
     files:
     - name: MacII.ROM
@@ -2527,6 +2652,9 @@ systems:
       native_name: Apple Macintosh
     native_id: macintosh
     name: Apple Macintosh
+    cores:
+    - minivmac
+    - mame
   coco:
     files:
     - name: coco.zip
@@ -2631,6 +2759,8 @@ systems:
       native_name: Tandy Color Computer
     native_id: coco
     name: Tandy Color Computer
+    cores:
+    - mame
   tutor:
     files:
     - name: tutor.zip
@@ -2657,6 +2787,8 @@ systems:
       native_name: Tomy Tutor
     native_id: tutor
     name: Tomy Tutor
+    cores:
+    - mame
   ti99:
     files:
     - name: ti99_4a.zip
@@ -2729,6 +2861,8 @@ systems:
       native_name: Texas Instruments TI-99
     native_id: ti99
     name: Texas Instruments TI-99
+    cores:
+    - mame
   astrocde:
     files:
     - name: astrocde.zip
@@ -2747,6 +2881,8 @@ systems:
       native_name: Bally Astrocade
     native_id: astrocde
     name: Bally Astrocade
+    cores:
+    - mame
   gmaster:
     files:
     - name: gmaster.zip
@@ -2765,6 +2901,8 @@ systems:
       native_name: Hartung Game Master
     native_id: gmaster
     name: Hartung Game Master
+    cores:
+    - mame
   adam:
     files:
     - name: adam.zip
@@ -2943,6 +3081,8 @@ systems:
       native_name: Coleco Adam
     native_id: adam
     name: Coleco Adam
+    cores:
+    - mame
   acorn-bbc-micro:
     files:
     - name: bbcb.zip
@@ -3239,6 +3379,8 @@ systems:
       native_name: BBC Micro
     native_id: bbc
     name: BBC Micro
+    cores:
+    - mame
   apfm1000:
     files:
     - name: apfm1000.zip
@@ -3273,6 +3415,8 @@ systems:
       native_name: APF M-1000
     native_id: apfm1000
     name: APF M-1000
+    cores:
+    - mame
   fm7:
     files:
     - name: fm7.zip
@@ -3369,6 +3513,8 @@ systems:
       native_name: Fujitsu FM-7
     native_id: fm7
     name: Fujitsu FM-7
+    cores:
+    - mame
   archimedes:
     files:
     - name: aa310.zip
@@ -3705,6 +3851,8 @@ systems:
       native_name: Acorn Archimedes
     native_id: archimedes
     name: Acorn Archimedes
+    cores:
+    - mame
   atom:
     files:
     - name: atom.zip
@@ -3739,6 +3887,8 @@ systems:
       native_name: Acorn Atom
     native_id: atom
     name: Acorn Atom
+    cores:
+    - mame
   electron:
     files:
     - name: electron.zip
@@ -3839,6 +3989,8 @@ systems:
       native_name: Acorn Electron
     native_id: electron
     name: Acorn Electron
+    cores:
+    - mame
   apple-ii:
     files:
     - name: apple2e.zip
@@ -4051,6 +4203,10 @@ systems:
       native_name: Apple II
     native_id: apple2
     name: Apple II
+    cores:
+    - mame
+    - applewin
+    - gsplus
   camplynx:
     files:
     - name: lynx48k.zip
@@ -4185,6 +4341,8 @@ systems:
       native_name: Camputers Lynx
     native_id: camplynx
     name: Camputers Lynx
+    cores:
+    - mame
   vgmplay:
     files:
     - name: qsound.zip
@@ -4231,6 +4389,8 @@ systems:
       native_name: Video Game Music Player
     native_id: vgmplay
     name: Video Game Music Player
+    cores:
+    - mame
   gamepock:
     files:
     - name: gamepock.zip
@@ -4249,6 +4409,8 @@ systems:
       native_name: Epoch Game Pocket Computer
     native_id: gamepock
     name: Epoch Game Pocket Computer
+    cores:
+    - mame
   gamecom:
     files:
     - name: gamecom.zip
@@ -4275,6 +4437,8 @@ systems:
       native_name: Tiger Game.com
     native_id: gamecom
     name: Tiger Game.com
+    cores:
+    - mame
   xegs:
     files:
     - name: xegs.zip
@@ -4293,6 +4457,8 @@ systems:
       native_name: Atari XE Game System
     native_id: xegs
     name: Atari XE Game System
+    cores:
+    - mame
   crvision:
     files:
     - name: crvision.zip
@@ -4311,6 +4477,8 @@ systems:
       native_name: VTech CreatiVision
     native_id: crvision
     name: VTech CreatiVision
+    cores:
+    - mame
   vtech-vsmile:
     files:
     - name: vsmile.zip
@@ -4345,6 +4513,8 @@ systems:
       native_name: VTech V.Smile
     native_id: vsmile
     name: VTech V.Smile
+    cores:
+    - mame
   vtech-socrates:
     files:
     - name: socrates.zip
@@ -4395,6 +4565,8 @@ systems:
       native_name: VTech Socrates
     native_id: socrates
     name: VTech Socrates
+    cores:
+    - mame
   entex-advision:
     files:
     - name: advision.zip
@@ -4421,6 +4593,8 @@ systems:
       native_name: Entex Adventure Vision
     native_id: advision
     name: Entex Adventure Vision
+    cores:
+    - mame
   gamate:
     files:
     - name: gamate.zip
@@ -4447,6 +4621,8 @@ systems:
       native_name: Bitcorp Gamate
     native_id: gamate
     name: Bitcorp Gamate
+    cores:
+    - mame
   cdi:
     files:
     - name: cdimono1.zip
@@ -4497,6 +4673,9 @@ systems:
       native_name: Phillips CD-i
     native_id: cdi
     name: Phillips CD-i
+    cores:
+    - same_cdi
+    - mame
   hikaru:
     files:
     - name: hikaru.zip
@@ -4515,6 +4694,8 @@ systems:
       native_name: Hikaru
     native_id: hikaru
     name: Hikaru
+    cores:
+    - demul
   sony-playstation-vita:
     files:
     - name: PSP2UPDAT.PUP
@@ -4533,6 +4714,8 @@ systems:
       native_name: PS Vita
     native_id: psvita
     name: PS Vita
+    cores:
+    - vita3k
   vectrex:
     files:
     - name: vectrex.zip
@@ -4559,6 +4742,9 @@ systems:
       native_name: GCE Vectrex
     native_id: vectrex
     name: GCE Vectrex
+    cores:
+    - vecx
+    - mame
   scummvm:
     files:
     - name: MT32_PCM.ROM
@@ -4577,6 +4763,8 @@ systems:
       native_name: ScummVM
     native_id: scummvm
     name: ScummVM
+    cores:
+    - scummvm
   supracan:
     files:
     - name: supracan.zip
@@ -4595,6 +4783,8 @@ systems:
       native_name: Supr'A'can
     native_id: supracan
     name: Supr'A'can
+    cores:
+    - mame
   tandy-vis:
     files:
     - name: vis.zip
@@ -4621,6 +4811,8 @@ systems:
       native_name: Tandy Video Information System
     native_id: vis
     name: Tandy Video Information System
+    cores:
+    - mame
   nintendo-64dd:
     files:
     - name: 64DD_IPL.bin
@@ -4632,6 +4824,10 @@ systems:
       native_name: Nintendo 64DD
     native_id: n64dd
     name: Nintendo 64DD
+    cores:
+    - mupen64plus
+    - mupen64plus-next
+    - parallel_n64
   nintendo-gamecube:
     files:
     - name: IPL.bin
@@ -4657,6 +4853,8 @@ systems:
       native_name: Nintendo GameCube
     native_id: gamecube
     name: Nintendo GameCube
+    cores:
+    - dolphin
   chihiro:
     files:
     - name: mcpx_1.0.bin
@@ -4675,6 +4873,8 @@ systems:
       native_name: Sega Chihiro
     native_id: chihiro
     name: Sega Chihiro
+    cores:
+    - xemu
 standalone_cores:
 - abuse
 - advanced_drastic
@@ -4737,7 +4937,6 @@ standalone_cores:
 - model2emu
 - moonlight
 - mpv
-- mugen
 - mupen64plus
 - openbor
 - openbor4432
@@ -4780,7 +4979,6 @@ standalone_cores:
 - tsugaru
 - tyrian
 - uqm
-- vaixterm
 - vice
 - vita3k
 - vkquake
@@ -4788,7 +4986,6 @@ standalone_cores:
 - vkquake3
 - vox_official
 - vpinball
-- wine
 - x128
 - x16emu
 - x64

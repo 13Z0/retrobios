@@ -27,19 +27,29 @@ Verification (batocera-systems at the release tag):
 from __future__ import annotations
 
 import re
+import shlex
 import urllib.error
 import urllib.request
+
+from safeparse import yaml_load_upstream
 
 from .base_scraper import BaseScraper, BiosRequirement, fetch_github_latest_version
 from .batocera_scraper import (
     SYSTEM_SLUG_MAP as BATOCERA_SLUGS,
 )
 from .batocera_scraper import (
+    _not_cores,
     extract_systems_dict,
     platform_systems,
     requirements_from_systems,
 )
-from .es_emulators import es_cores, json_emulators
+from .es_emulators import (
+    SystemEmulators,
+    attach_system_cores,
+    es_cores,
+    json_systems,
+    system_cores,
+)
 
 PLATFORM_NAME = "emuelec"
 
@@ -47,12 +57,14 @@ REPO = "EmuELEC/EmuELEC"
 _RAW = "https://raw.githubusercontent.com/EmuELEC/EmuELEC/{ref}/"
 SOURCE_TEMPLATE = _RAW + "packages/sx05re/emuelec/bin/batocera/batocera-systems"
 ES_SYSTEMS_TEMPLATE = _RAW + "packages/sx05re/emuelec-emulationstation/config/es_systems.json"
+PORTS_TEMPLATE = _RAW + "packages/sx05re/emuelec-ports/sources/ports.yaml"
 
 # Batocera's names, plus the keys EmuELEC writes that Batocera does not:
 # console keys under the slug the other scrapers give them, and each port
 # under the system of the profile of the engine its name gives
 # (devilutionx, prboom, opentyrian, cannonball, nxengine, tyrquake,
-# reminiscence, xrick, vvvvvv, eduke32, sonic2013, sonic-mania, dinothawr).
+# reminiscence, xrick, vvvvvv, eduke32, sonic2013, sonic-mania, dinothawr,
+# rigelengine).
 SYSTEM_SLUG_MAP = {
     **BATOCERA_SLUGS,
     "atari7800": "atari-7800",
@@ -75,14 +87,77 @@ SYSTEM_SLUG_MAP = {
     "sonic1": "sonic-1-2013",
     "sonic2": "sonic-2-2013",
     "sonicmania": "sonic-mania",
+    "RigelEngine": "duke-nukem-2",
 }
 
 # es_systems.json names libretro cores under `libretro`, and `retrorun`
-# loads the libretro core it lists.
+# loads the libretro core it lists. emuelecRunEmu.sh:101-116 turns either
+# into ${CORE}_libretro. Any other emulator runs the core it names
+# (EMU="${CORE}", line 107) through the case at lines 164-353.
 RUNNERS: dict[str, str | None] = {"libretro": None, "retrorun": None}
-# packages/sx05re/emulators/PPSSPPSDL builds PPSSPP's SDL front end.
-RENAMED = {"PPSSPPSDL": "ppsspp"}
 
+# A standalone emulator and the libretro core of the same emulator, from the
+# packages each one builds (packages/sx05re/emulators/<pkg>/package.mk
+# PKG_SITE): hatarisa hatari/hatari, stellasa stella-emu/stella, fbneoSA
+# finalburnneo/FBNeo, flycastsa flyinghead/flycast, scummvmsa
+# scummvm/scummvm, PPSSPPSDL hrydgard/ppsspp.
+BUILDS_OF = {
+    "HATARISA": "hatari",
+    "STELLASA": "stella",
+    "FBNEOSA": "fbneo",
+    "flycastsa": "flycast",
+    "SCUMMVMSA": "scummvm",
+    "PPSSPPSDL": "ppsspp",
+}
+
+# The ES system `ports` (es_systems.json:2570-2590) runs one generated
+# script per entry of ports.yaml through emuelecRunApp.sh:22, and its single
+# emulator `ports` is that dispatch, not a program. The scripts are rendered
+# from port.sh.j2 by port_builder.py (emuelec-ports/package.mk:62-64): each
+# runs its `commands`, so the engine is the libretro core a command hands
+# emuelecRunEmu.sh with -C (lines 367-369 load <core>_libretro.so), or the
+# program `port_exe` names.
+PORTS_SYSTEM = "ports"
+
+
+def port_engines(text: str) -> list[tuple[str, str, str | None, bool]]:
+    """(port, engine, check_bios key, libretro?) for each entry of ports.yaml.
+
+    The engine is written as the OS writes it: the libretro core a command
+    hands emuelecRunEmu.sh with -C, else `port_exe`. `check_bios` is the
+    batocera-systems key the script hands ee_check_bios on a failed start
+    (port.sh.j2:23-25), the key the port's files are listed under.
+    """
+    data = yaml_load_upstream(text)
+    if not isinstance(data, dict) or not data:
+        raise ValueError("ports.yaml names no port")
+    engines = []
+    for port, spec in data.items():
+        core = None
+        for command in map(str, spec.get("commands") or []):
+            if "emuelecRunEmu.sh" in command:
+                core = next(
+                    (w[2:] for w in shlex.split(command) if w.startswith("-C")), core
+                )
+        engine = core or spec.get("port_exe")
+        if not engine:
+            raise ValueError(f"ports.yaml: {port} names neither a core nor port_exe")
+        engines.append((str(port), str(engine), spec.get("check_bios"), core is not None))
+    return engines
+
+
+def with_ports(
+    systems: SystemEmulators, engines: list[tuple[str, str, str | None, bool]]
+) -> SystemEmulators:
+    """The ES systems, each port engine filed under `ports` and its own key."""
+    def entry(engine: str, libretro: bool) -> tuple[str, list[str]]:
+        return ("libretro", [engine]) if libretro else (engine, [engine])
+
+    result = {**systems, PORTS_SYSTEM: [entry(e, lr) for _, e, _, lr in engines]}
+    for _, engine, key, libretro in engines:
+        if key:
+            result[key] = [*result.get(key, []), entry(engine, libretro)]
+    return result
 
 class Scraper(BaseScraper):
     """Scraper for EmuELEC's batocera-systems."""
@@ -115,11 +190,16 @@ class Scraper(BaseScraper):
         systems = platform_systems(
             self.fetch_requirements(), extract_systems_dict(self._fetch_raw()), SYSTEM_SLUG_MAP
         )
-        cores, standalone, dual = es_cores(
-            json_emulators(self._fetch_text(ES_SYSTEMS_TEMPLATE.format(ref=self.tag))),
-            RUNNERS,
-            RENAMED,
+        # es_systems.json gives each system its emulators in menu order (psx,
+        # lines 3610-3660: libretro pcsx_rearmed_32b, pcsx_rearmed,
+        # swanstation, then Duckstation).
+        es_systems = with_ports(
+            json_systems(self._fetch_text(ES_SYSTEMS_TEMPLATE.format(ref=self.tag))),
+            port_engines(self._fetch_text(PORTS_TEMPLATE.format(ref=self.tag))),
         )
+        not_cores = _not_cores(PLATFORM_NAME)
+        cores, standalone, dual = es_cores(es_systems, RUNNERS, BUILDS_OF, not_cores)
+        attach_system_cores(systems, system_cores(es_systems, RUNNERS, not_cores))
         return {
             "platform": "EmuELEC",
             "version": self.tag.removeprefix("v"),
