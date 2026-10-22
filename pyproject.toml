@@ -23,6 +23,9 @@ dev = [
 # declared nowhere, so a contributor following either had to read the
 # workflow to learn what to install.
 docs = [
+    # MkDocs 2 drops plugins, and the theme, in maintenance since 9.7.0,
+    # will not follow it.
+    "mkdocs>=1.6,<2",
     "mkdocs-material>=9.7.5,<10",
     "pymdown-extensions>=10.14",
 ]

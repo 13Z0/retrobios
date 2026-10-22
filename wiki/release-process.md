@@ -45,7 +45,8 @@ is missing.
 
 1. Checkout, Python 3.12
 2. Install `pyyaml`, `jsonschema[format-nongpl]==4.26.0`,
-   `mkdocs-material>=9.7.5,<10`, `pymdown-extensions>=10.14`
+   `mkdocs>=1.6,<2`, `mkdocs-material>=9.7.5,<10`,
+   `pymdown-extensions>=10.14`
 3. Run `validate_schemas.py`: the data contracts, checked before anything is
    generated (see below)
 4. Restore large files from the `large-files` release, refresh data directories
