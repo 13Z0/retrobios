@@ -504,7 +504,16 @@ left at `default` resolves against `<shared storage>/RetroArch`, where the
 directory also sits when no config has been written yet
 (`platform_unix.c:1670-1697`).
 
-Under scoped storage those two config paths are unreadable from Termux on
+Two Android emulators keep their BIOS elsewhere. DraStic reads
+`/data/data/com.dsemu.drastic/files/DraStic/system`, private to the app, and
+Flycast reads `Android/data/com.flycast.emulator/files/data` in shared
+storage, which Android 11 and later keep from other apps. No app can write
+the first without root, and Termux cannot write the second on Android 11 and
+later. When either emulator is installed and its folder is out of reach, the
+run names it and the files that are not copied. Where the Flycast folder is
+writable (Android 10 and earlier), it is a standalone copy target.
+
+Under scoped storage the two RetroArch config paths are unreadable from Termux on
 Android 11 and later, so on current devices the shared directory is what
 answers. Running `termux-setup-storage` once is what makes it reachable:
 

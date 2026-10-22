@@ -2724,6 +2724,57 @@ class AndroidCitationsNameTheRelease(unittest.TestCase):
             self.assertNotIn("2836-2851", text)
 
 
+class AndroidEmulatorsOutOfReachAreSaid(unittest.TestCase):
+    """DraStic keeps its BIOS in its private data and Flycast in
+    Android/data, which Termux cannot write on Android 11 and later: both
+    were skipped without a word."""
+
+    def _lines(self, make) -> list[str]:
+        root = Path(_tempdir(self))
+        app_data, storage = root / "data", root / "storage"
+        app_data.mkdir()
+        make(app_data, storage)
+        with unittest.mock.patch.object(install, "ANDROID_APP_DATA", app_data), \
+                unittest.mock.patch.dict(os.environ, {"EXTERNAL_STORAGE": str(storage)}):
+            return install.android_unreachable_folders()
+
+    def test_nothing_installed_says_nothing(self):
+        self.assertEqual(self._lines(lambda data, storage: None), [])
+
+    def test_an_installed_drastic_is_named(self):
+        lines = self._lines(lambda data, storage: (data / "com.dsemu.drastic").mkdir())
+        self.assertEqual(len(lines), 1)
+        self.assertIn("DraStic is installed", lines[0])
+        self.assertIn("nds_bios_arm7.bin", lines[0])
+
+    def test_flycast_out_of_reach_is_named(self):
+        lines = self._lines(lambda data, storage: (data / "com.flycast.emulator").mkdir())
+        self.assertEqual(len(lines), 1)
+        self.assertIn("Flycast is installed", lines[0])
+        self.assertIn("dc_boot.bin", lines[0])
+
+    def test_a_writable_flycast_folder_is_a_copy_target(self):
+        def make(data, storage):
+            (data / "com.flycast.emulator").mkdir()
+            (storage / "Android/data/com.flycast.emulator/files/data").mkdir(parents=True)
+        self.assertEqual(self._lines(make), [])
+        import yaml  # noqa: PLC0415
+
+        registry = yaml.safe_load((REPO_ROOT / "platforms" / "_registry.yml").read_text())
+        copies = {entry.get("file"): entry for entry in registry["_standalone_copies"]}
+        self.assertEqual(copies["dc/dc_boot.bin"]["targets"]["android"],
+                         ["$EXTERNAL_STORAGE/Android/data/com.flycast.emulator/files/data"])
+
+    def test_detection_prints_them(self):
+        err = io.StringIO()
+        with unittest.mock.patch.object(install, "_detect_android", return_value=[]), \
+                unittest.mock.patch.object(install, "android_unreachable_folders",
+                                           return_value=["DraStic is installed, but"]), \
+                contextlib.redirect_stderr(err):
+            install.detect_platforms("android")
+        self.assertIn("DraStic is installed", err.getvalue())
+
+
 class TheBoardTheSystemNamesIsTheTarget(unittest.TestCase):
     """Batocera, Recalbox and ROCKNIX each write the board they were built
     for, but the installer read none of them, so a Batocera RPi4 installed

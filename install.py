@@ -1199,6 +1199,46 @@ def _detect_android() -> list[tuple[str, Path]]:
     return found
 
 
+# Android emulators that keep their BIOS outside RetroArch's folder:
+# (name, package, folder, files read there). DraStic keeps it in its private
+# data (GammaOS Next 14 bb28e71d, gammaos/setup.sh:345-363 extracts it to
+# /data/data/com.dsemu.drastic/files/DraStic/system), which no other app
+# writes without root. Flycast reads <home>/data/ (flycast a9bd1c74,
+# shell/android-studio/flycast/src/main/jni/src/Android.cpp:143-159), its
+# home being Android/data/com.flycast.emulator/files, which Android 11 and
+# later keep from other apps.
+ANDROID_APP_DATA = Path("/data/data")
+_ANDROID_APP_FOLDERS = (
+    ("DraStic", "com.dsemu.drastic", "/data/data/com.dsemu.drastic/files/DraStic/system",
+     ("nds_bios_arm7.bin", "nds_bios_arm9.bin", "nds_firmware.bin")),
+    ("Flycast", "com.flycast.emulator",
+     "$STORAGE/Android/data/com.flycast.emulator/files/data",
+     ("dc_boot.bin", "dc_nvmem.bin")),
+)
+
+
+def android_unreachable_folders() -> list[str]:
+    """A line for each Android emulator installed here whose BIOS folder
+    this shell cannot write, said instead of skipping it in silence.
+
+    An app's private folder can be tested for existence by any app, so the
+    emulator is known to be installed even where its folder is out of reach.
+    """
+    lines = []
+    storage = str(_android_storage_root())
+    for name, package, folder, files in _ANDROID_APP_FOLDERS:
+        target = Path(folder.replace("$STORAGE", storage, 1))
+        if folder.startswith("/data/data/"):
+            target = ANDROID_APP_DATA / Path(folder).relative_to("/data/data")
+        if not (ANDROID_APP_DATA / package).exists() and not target.exists():
+            continue
+        if target.is_dir() and os.access(target, os.W_OK):
+            continue
+        lines.append(f"{name} is installed, but this shell cannot write its BIOS folder "
+                     f"{target} without root: {', '.join(files)} are not copied there.")
+    return lines
+
+
 def _lnk_target(lnk_path: Path, exe_name: str) -> Path | None:
     """Read the target path of a Windows shortcut.
 
@@ -1539,6 +1579,8 @@ def detect_platforms(os_type: str) -> list[tuple[str, Path]]:
 
     if os_type == "android":
         found.extend(_detect_android())
+        for line in android_unreachable_folders():
+            print(line, file=sys.stderr)
 
     if os_type in ("linux", "wsl"):
         found.extend(_detect_embedded())

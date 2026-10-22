@@ -158,6 +158,10 @@ _standalone_copies: &standalone_copies
       # shell/apple/emulator-osx/emulator-osx/osx-main.mm:83-101 (flycast 6bb0fc3e).
       darwin:
       - $HOME/Library/Application Support/Flycast/data
+      # <home>/data/ (shell/android-studio/flycast/src/main/jni/src/Android.cpp:
+      # 143-159, flycast a9bd1c74), writable from Termux up to Android 10.
+      android:
+      - $EXTERNAL_STORAGE/Android/data/com.flycast.emulator/files/data
   - file: dc/dc_nvmem.bin
     targets:
       linux:
@@ -168,6 +172,10 @@ _standalone_copies: &standalone_copies
       # shell/apple/emulator-osx/emulator-osx/osx-main.mm:83-101 (flycast 6bb0fc3e).
       darwin:
       - $HOME/Library/Application Support/Flycast/data
+      # <home>/data/ (shell/android-studio/flycast/src/main/jni/src/Android.cpp:
+      # 143-159, flycast a9bd1c74), writable from Termux up to Android 10.
+      android:
+      - $EXTERNAL_STORAGE/Android/data/com.flycast.emulator/files/data
 
 platforms:
   retroarch:
