@@ -238,10 +238,20 @@
   };
 
   // A file card moved to another page keeps its address: an id of the form
-  // sha1-<12 hex> that this page does not hold is looked up by content.
+  // sha1-<12 hex> that this page does not hold is looked up by content, and
+  // an emulator card listed in the table of a split page opens its page.
   const followMovedCard = () => {
-    const match = /^#sha1-([0-9a-f]{12})$/.exec(window.location.hash);
-    if (!match || document.getElementById(`sha1-${match[1]}`)) return;
+    const id = decodeURIComponent(window.location.hash.slice(1));
+    if (!id) return;
+    const target = document.getElementById(id);
+    const row = target?.closest(".rb-card-index tr");
+    const link = row?.querySelector("a[href]");
+    if (link) {
+      window.location.replace(link.href);
+      return;
+    }
+    const match = /^sha1-([0-9a-f]{12})$/.exec(id);
+    if (!match || target) return;
     window.location.replace(new URL(`files/?sha1=${match[1]}`, siteRoot()));
   };
 

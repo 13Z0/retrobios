@@ -323,7 +323,7 @@ class TheSearchLandsOnTheCard(unittest.TestCase):
         entry = {"name": "scph5501.bin", "required": True}
         lines = generate_site._render_emulator_file(
             entry, {"files": [entry]}, None, [entry], lambda f: True, "file-scph5501-bin")
-        self.assertTrue(lines[2].startswith("#### `scph5501.bin` "))
+        self.assertTrue(lines[2].startswith("### `scph5501.bin` "))
         self.assertTrue(lines[2].endswith("{ #file-scph5501-bin .rb-file-title }"))
 
     def test_a_system_card_is_a_heading_with_its_anchor(self):
@@ -332,7 +332,7 @@ class TheSearchLandsOnTheCard(unittest.TestCase):
 
         entry = {"name": "a.bin", "sha1": "a" * 40, "md5": "b" * 32, "size": 3}
         lines = generate_site._system_file_card(entry, FileConsumers({"files": {}}))
-        self.assertTrue(lines[2].startswith("#### `a.bin` "))
+        self.assertTrue(lines[2].startswith("### `a.bin` "))
         self.assertTrue(lines[2].endswith("{ #sha1-aaaaaaaaaaaa .rb-file-title }"))
 
 

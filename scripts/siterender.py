@@ -139,13 +139,75 @@ def _page_by_norm(sys_id: str) -> tuple[str, str] | None:
     return _norm_page_map.get(_norm_system_id(sys_id))
 
 
+# A manufacturer page too large for one page is a summary, each console on
+# pages of its own: (slug, console) -> its page stems under systems/, and
+# (slug, console, sha1) -> the stem holding that card. A console of a page
+# kept whole has no entry, its section is on the manufacturer's page.
+_console_pages: dict[tuple[str, str], list[str]] = {}
+_card_pages: dict[tuple[str, str, str], str] = {}
+
+
+def reset_console_pages() -> None:
+    _console_pages.clear()
+    _card_pages.clear()
+
+
+def record_console_pages(
+    slug: str, console: str, stems: list[str], sha1s: list[list[str]]
+) -> None:
+    """Where a split manufacturer page put one console: its page stems, in
+    order, and the sha1 of each card on each of them."""
+    _console_pages[(slug, console)] = list(stems)
+    for stem, part in zip(stems, sha1s):
+        for sha1 in part:
+            _card_pages.setdefault((slug, console, sha1), stem)
+
+
+def split_system_stems() -> set[str]:
+    """Every page stem of a console moved to a page of its own."""
+    return {stem for stems in _console_pages.values() for stem in stems}
+
+
+def console_href(slug: str, console: str, prefix: str = "") -> str:
+    """Where a console's files are: its own page, or its section of the
+    manufacturer's page (also where a console cut into parts lists them)."""
+    stems = _console_pages.get((slug, console))
+    if stems and len(stems) == 1:
+        return f"{prefix}systems/{urllib.parse.quote(stems[0])}.md"
+    return f"{prefix}systems/{urllib.parse.quote(slug)}.md#{_slugify_anchor(console)}"
+
+
+def card_page(path: str, sha1: str) -> str:
+    """The systems/ page stem holding the card of the copy at ``path``
+    (bios/<Manufacturer>/<Console>/...)."""
+    parts = path.split("/")
+    slug = parts[1].lower().replace(" ", "-")
+    console = parts[2] if len(parts) > 2 else ""
+    return _card_pages.get((slug, console, sha1), slug)
+
+
+# Emulator cards moved off a page too long for one: (emulator, anchor) ->
+# the page stem under emulators/ that holds the card.
+_emulator_card_pages: dict[tuple[str, str], str] = {}
+
+
+def record_emulator_cards(emulator: str, stem: str, anchors: list[str]) -> None:
+    for anchor in anchors:
+        _emulator_card_pages[(emulator, anchor)] = stem
+
+
+def emulator_card_page(emulator: str, anchor: str) -> str:
+    """The emulators/ page stem holding a card: the emulator's own page, or
+    the page its cards went to."""
+    return _emulator_card_pages.get((emulator, anchor), emulator)
+
+
 def _system_link(sys_id: str, prefix: str = "") -> str:
     """Generate a markdown link to a system page with anchor."""
     page = _system_page_map.get(sys_id) or _page_by_norm(sys_id)
     if page:
         slug, console = page
-        anchor = _slugify_anchor(console)
-        return f"[{sys_id}]({prefix}systems/{slug}.md#{anchor})"
+        return f"[{sys_id}]({console_href(slug, console, prefix)})"
     return sys_id
 
 def _field_text(key: object, value: object) -> str:
