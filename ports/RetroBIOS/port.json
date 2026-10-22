@@ -1,0 +1,31 @@
+{
+  "version": 4,
+  "name": "retrobios.zip",
+  "items": [
+    "RetroBIOS.sh",
+    "retrobios"
+  ],
+  "items_opt": [],
+  "attr": {
+    "title": "RetroBIOS",
+    "porter": [
+      "Abdess"
+    ],
+    "desc": "Checks the BIOS folder of this system against the files its emulators read, and downloads the missing ones from the RetroBIOS collection, each verified by its hash.",
+    "desc_md": null,
+    "inst": "Needs a network connection: the list of files and the files come from the internet. Uses the system's Python 3.8 or newer, or PortMaster's python_3.11 runtime on aarch64.",
+    "inst_md": null,
+    "genres": [
+      "other"
+    ],
+    "image": null,
+    "rtr": true,
+    "exp": false,
+    "runtime": [],
+    "store": [],
+    "availability": "full",
+    "reqs": [],
+    "arch": [],
+    "min_glibc": ""
+  }
+}

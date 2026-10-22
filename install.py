@@ -363,6 +363,7 @@ class Progress:
 
     def __init__(self, total_files: int, total_bytes: int, term: Terminal) -> None:
         self.total_files = total_files
+        self.expected_bytes = total_bytes
         self.total_bytes = max(total_bytes, 1)
         self.term = term
         self.files = 0
@@ -370,6 +371,7 @@ class Progress:
         self.resumed = 0
         self.start = time.monotonic()
         self._drawn = 0.0
+        self._evented = self.start
         self._lock = threading.Lock()
 
     def add(self, count: int, resumed: bool = False) -> None:
@@ -381,6 +383,10 @@ class Progress:
             if self.term.live and not self.term.quiet and now - self._drawn >= 0.1:
                 self._drawn = now
                 self._draw()
+            if EVENTS.on and now - self._evented >= EVENT_PROGRESS_INTERVAL:
+                self._evented = now
+                EVENTS.emit("progress", files_done=self.files, files_total=self.total_files,
+                            bytes_done=self.bytes, bytes_total=self.expected_bytes)
 
     def forget_resumed(self, count: int) -> None:
         with self._lock:
@@ -448,6 +454,142 @@ class Progress:
         else:
             text = f"  {tail}"
         print(f"\r\033[K{text[:width]}", end="", file=self.term.stream, flush=True)
+
+
+# --events: one JSON object per line on stdout, for a program driving the
+# installer (the handheld port shows its screens from them). Each kind has
+# exactly these keys besides "event", in this order, and nothing else.
+EVENT_SCHEMA = 1
+EVENT_KEYS: dict[str, tuple[str, ...]] = {
+    # mode: install, check, dry-run or list.
+    "start": ("schema", "installer", "mode"),
+    # platforms: [{"platform", "name", "bios_dir"}], empty when none is found.
+    "detect": ("os", "os_name", "platforms"),
+    # stage: manifest (reason: network, not_found or invalid) or detect
+    # (reason: conflict, two systems found on one machine).
+    "error": ("stage", "reason", "platform", "message"),
+    # state: present (hash verified), wrong_hash or missing.
+    "file": ("platform", "dest", "systems", "size", "state"),
+    "system": ("platform", "system", "name", "files", "present", "missing",
+               "wrong_hash", "bytes_needed"),
+    "check": ("platform", "name", "bios_dir", "files", "present", "missing",
+              "wrong_hash", "bytes_needed", "data_missing", "not_installable"),
+    "download": ("platform", "files", "bytes"),
+    "progress": ("files_done", "files_total", "bytes_done", "bytes_total"),
+    "downloaded": ("dest", "ok", "reason", "size", "files_done", "files_total",
+                   "bytes_done", "bytes_total"),
+    # failed: [{"dest", "reason"}]. skipped: [{"reason", "label", "files",
+    # "required"}], the files the collection cannot supply.
+    "summary": ("mode", "installed", "up_to_date", "pending", "failed", "skipped",
+                "interrupted"),
+    "end": ("code",),
+}
+# Seconds between two progress events while bytes arrive.
+EVENT_PROGRESS_INTERVAL = 0.5
+
+
+class EventStream:
+    """The --events output: closed (nothing written) until opened."""
+
+    def __init__(self) -> None:
+        self.stream: TextIO | None = None
+        self._lock = threading.Lock()
+
+    def open(self, stream: TextIO) -> None:
+        self.stream = stream
+
+    @property
+    def on(self) -> bool:
+        return self.stream is not None
+
+    def emit(self, kind: str, **fields: object) -> None:
+        if self.stream is None:
+            return
+        keys = EVENT_KEYS[kind]
+        if set(fields) != set(keys):
+            raise ValueError(f"event {kind}: keys {sorted(fields)} != {sorted(keys)}")
+        line = json.dumps({"event": kind, **{key: fields[key] for key in keys}})
+        with self._lock:
+            self.stream.write(line + "\n")
+            self.stream.flush()
+
+
+EVENTS = EventStream()
+
+
+def _event_mode(args: argparse.Namespace) -> str:
+    if args.check:
+        return "check"
+    if args.dry_run:
+        return "dry-run"
+    if (args.list_platforms or args.list_targets or args.list_systems
+            or args.list_cores or args.list_emulators):
+        return "list"
+    return "install"
+
+
+def _event_exit_code(code: object) -> int:
+    """The process status sys.exit(code) gives."""
+    if code is None:
+        return 0
+    return code if isinstance(code, int) else 1
+
+
+def _os_name() -> str:
+    """The OS's own name, from os-release, else the kernel's."""
+    release = _parse_os_release()
+    return release.get("PRETTY_NAME") or release.get("NAME") or platform.system()
+
+
+def _emit_check(
+    plat: str, manifest: dict, bios_path: Path, files: list[dict], up_to_date: list[dict],
+    mismatched: list[dict], data_missing: int, not_installable: int,
+) -> None:
+    """One event per file, per system and per platform after a check."""
+    present = {id(entry) for entry in up_to_date}
+    wrong = {id(entry) for entry in mismatched}
+    systems: dict[str, dict[str, int]] = {}
+    for entry in files:
+        state = ("present" if id(entry) in present
+                 else "wrong_hash" if id(entry) in wrong else "missing")
+        size = entry.get("size", 0)
+        EVENTS.emit("file", platform=plat, dest=entry["dest"],
+                    systems=entry_systems(entry), size=size, state=state)
+        for system in entry_systems(entry) or [OTHER_SYSTEMS]:
+            counts = systems.setdefault(system, {
+                "files": 0, "present": 0, "missing": 0, "wrong_hash": 0,
+                "bytes_needed": 0,
+            })
+            counts["files"] += 1
+            counts[state] += 1
+            if state != "present":
+                counts["bytes_needed"] += size
+    names = manifest.get("system_names") or {}
+    for system in sorted(systems):
+        EVENTS.emit("system", platform=plat, system=system,
+                    name=", ".join(names.get(system) or [system]), **systems[system])
+    needed = [entry for entry in files if id(entry) not in present]
+    EVENTS.emit(
+        "check", platform=plat, name=display_name(plat, manifest), bios_dir=str(bios_path),
+        files=len(files), present=len(up_to_date), missing=len(needed) - len(mismatched),
+        wrong_hash=len(mismatched),
+        bytes_needed=sum(entry.get("size", 0) for entry in needed),
+        data_missing=data_missing, not_installable=not_installable,
+    )
+
+
+def _skipped(omitted: list[dict]) -> list[dict]:
+    """The files the collection cannot supply, grouped by reason."""
+    groups: dict[str, dict] = {}
+    for entry in omitted:
+        reason = entry.get("reason", "unknown")
+        group = groups.setdefault(reason, {
+            "reason": reason, "label": OMISSION_REASONS.get(reason, reason),
+            "files": 0, "required": 0,
+        })
+        group["files"] += 1
+        group["required"] += bool(entry.get("required", True))
+    return [groups[reason] for reason in sorted(groups)]
 
 
 # The three RetroArch packages published for Android, newest ABI first.
@@ -2645,9 +2787,15 @@ def fetch_manifest(plat: str) -> dict:
     try:
         return _validate_manifest(_fetch_json(url, MAX_MANIFEST_BYTES, "manifest"), plat)
     except ValueError as exc:
+        EVENTS.emit("error", stage="manifest", reason="invalid", platform=plat,
+                    message=f"the file list is not valid: {exc}")
         print(f"  The file list for {plat} is not valid: {exc}", file=sys.stderr)
         sys.exit(1)
     except urllib.error.HTTPError as exc:
+        EVENTS.emit(
+            "error", stage="manifest", reason="not_found" if exc.code == 404 else "network",
+            platform=plat, message=f"the file list could not be fetched: HTTP {exc.code}",
+        )
         if exc.code == 404 and os.environ.get("RETROBIOS_BASE_URL"):
             print(f"  No file list for {plat} there.", file=sys.stderr)
             for line in _address_lines(url):
@@ -2671,6 +2819,9 @@ def fetch_manifest(plat: str) -> dict:
         print(NETWORK_ADVICE, file=sys.stderr)
         sys.exit(1)
     except (urllib.error.URLError, OSError) as exc:
+        EVENTS.emit("error", stage="manifest", reason="network", platform=plat,
+                    message=f"the file list could not be fetched: "
+                            f"{getattr(exc, 'reason', None) or exc}")
         print(f"  Could not fetch the file list for {plat} after {MAX_RETRIES} "
               f"attempts: {getattr(exc, 'reason', None) or exc}", file=sys.stderr)
         for line in _address_lines(url):
@@ -4093,6 +4244,12 @@ def download_files(
                 if _stop.is_set():
                     continue
                 progress.done(dest, success, reason)
+                EVENTS.emit(
+                    "downloaded", dest=dest, ok=success, reason=reason,
+                    size=future_map[future].get("size", 0), files_done=progress.files,
+                    files_total=progress.total_files, bytes_done=progress.bytes,
+                    bytes_total=progress.expected_bytes,
+                )
                 if not success:
                     failed.append((dest, reason))
                     if reason == NOT_WRITABLE and not _folder_writable(bios_path):
@@ -5218,6 +5375,12 @@ def main() -> None:
         help="print only errors and the final summary (implies --no-input)",
     )
     parser.add_argument(
+        "--events",
+        action="store_true",
+        help="write the run as JSON events on stdout, one per line, and the "
+             "usual text on stderr (implies --no-input)",
+    )
+    parser.add_argument(
         "--version",
         action="version",
         version=f"retrobios installer {installer_id()} (ref {RELEASE_REF})",
@@ -5247,6 +5410,29 @@ def main() -> None:
         parser.error("--quiet applies to an install, not to --check, --dry-run or a listing")
     if args.every_board and args.target:
         parser.error("--every-board installs every board; --target names one")
+    if args.events:
+        # The events own stdout. The text a person reads goes to stderr, so a
+        # program never has to tell one from the other.
+        args.no_input = True
+        EVENTS.open(sys.stdout)
+        sys.stdout = sys.stderr
+        EVENTS.emit("start", schema=EVENT_SCHEMA, installer=installer_id(),
+                    mode=_event_mode(args))
+        try:
+            _run(args)
+        except SystemExit as exc:
+            EVENTS.emit("end", code=_event_exit_code(exc.code))
+            raise
+        except KeyboardInterrupt:
+            EVENTS.emit("end", code=130)
+            raise
+        EVENTS.emit("end", code=0)
+        return
+    _run(args)
+
+
+def _run(args: argparse.Namespace) -> None:
+    """The run, its text quiet or not."""
     if not args.quiet:
         _install(args, sys.stdout)
         return
@@ -5487,6 +5673,7 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
         platforms = detect_platforms(os_type)
         if not platforms:
             print("  No supported platform detected.")
+            EVENTS.emit("detect", os=os_type, os_name=_os_name(), platforms=[])
             # Standalone emulators read their BIOS from folders of their own,
             # which the file lists name: an ES-DE user with DuckStation and
             # PCSX2 was sent to RetroArch's folder, which nothing here reads.
@@ -5513,11 +5700,20 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
     if conflict and not interactive and not listing:
         # A machine runs one system: installing to each folder would write
         # where nothing reads, and picking one would be a guess.
-        print(f"Error: {' and '.join(conflict)} are both detected here, and a "
-              "machine runs one. Name the folder with --dest (and --platform for "
+        message = (f"{' and '.join(conflict)} are both detected here, and a "
+                   "machine runs one")
+        EVENTS.emit("error", stage="detect", reason="conflict", platform="",
+                    message=message)
+        print(f"Error: {message}. Name the folder with --dest (and --platform for "
               "its file list).",
               file=sys.stderr)
         sys.exit(1)
+    if platforms:
+        EVENTS.emit("detect", os=os_type, os_name=_os_name(), platforms=[
+            {"platform": name, "name": display_name(name), "bios_dir": str(path)}
+            for name, path in platforms
+        ])
+
     if len(platforms) > 1 and not listing and interactive:
         platforms = _prompt_platform_choice(platforms)
 
@@ -5534,6 +5730,8 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
     total_seconds = 0.0
     total_declined = 0
     check_pending = 0
+    total_verified = 0
+    files_pending = 0
     failures: list[tuple[str, str]] = []
     installed_paths: list[Path] = []
 
@@ -5801,6 +5999,15 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
             )
         )
         data_dirs = select_data_directories(manifest, files, narrowed)
+        data_states = [
+            (entry, data_directory_state(entry, bios_path)) for entry in data_dirs
+        ] if args.check or EVENTS.on else []
+        if EVENTS.on:
+            _emit_check(
+                plat_name, manifest, bios_path, files, up_to_date, mismatched,
+                sum(len(state[1]) for _entry, state in data_states), len(omitted_files),
+            )
+        total_verified += len(up_to_date)
 
         if args.check:
             if to_download:
@@ -5833,8 +6040,7 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                 every=args.verbose,
             ):
                 print(line)
-            for entry in data_dirs:
-                _root, needed, present = data_directory_state(entry, bios_path)
+            for entry, (_root, needed, present) in data_states:
                 if needed:
                     print(f"  {entry['ref']}: {present}/{len(entry['files'])} data files "
                           f"present, {len(needed)} to fetch")
@@ -5842,6 +6048,7 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
             continue
 
         if args.dry_run:
+            files_pending += len(to_download)
             _print_plan(to_download, bios_path, term, [
                 (entry, data_directory_state(entry, bios_path)[1]) for entry in data_dirs
             ])
@@ -5861,7 +6068,9 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                       "install less (see --help).")
                 total_up_to_date += len(up_to_date)
                 total_declined += len(to_download)
+                files_pending += len(to_download)
                 continue
+            EVENTS.emit("download", platform=plat_name, files=len(to_download), bytes=dl_size)
             print(f"\nDownloading {len(to_download)} files ({format_size(dl_size)})...")
             print("  Press Ctrl+C to stop. Running the same command again "
                   "carries on from here.")
@@ -5889,6 +6098,9 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                 term=term, progress=progress,
             )
             total_downloaded += len(to_download) - len(failed)
+            files_pending += len(failed)
+            if interrupted:
+                files_pending += max(len(to_download) - progress.files, 0)
             total_errors += len(failed)
             failures.extend(failed)
             total_bytes += progress.transferred()
@@ -5955,6 +6167,14 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                       "they read into them.")
 
     sys.stdout = real_stdout
+    if not listing:
+        EVENTS.emit(
+            "summary", mode=_event_mode(args), installed=total_downloaded,
+            up_to_date=total_verified if args.check or args.dry_run else total_up_to_date,
+            pending=check_pending if args.check else files_pending,
+            failed=[{"dest": dest, "reason": str(reason)} for dest, reason in failures],
+            skipped=_skipped(omitted_seen), interrupted=total_interrupted,
+        )
     # A check scripted as `--check && launch` reads the exit code only.
     if args.check and check_pending:
         sys.exit(1)

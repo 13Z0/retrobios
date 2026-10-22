@@ -44,6 +44,7 @@ Every module in `tests/`, by the area it guards.
 | Slots and regions | synthetic + profiles | `test_region`, `test_region_agnostic_scan`, `test_region_groups`, `test_region_held`, `test_region_platform_index`, `test_region_required_only`, `test_slot`, `test_slots`, `test_slots_shipped_file` |
 | Hardware targets and systems | synthetic + target files | `test_extract_targets`, `test_lakka_targets`, `test_libretro_slugs`, `test_system_ids`, `test_system_selection`, `test_target_names`, `test_target_scrapers`, `test_target_systems`, `test_target_verify` |
 | Installer and downloads | loopback server | `test_check_release`, `test_download`, `test_install`, `test_install_cores`, `test_install_experience`, `test_install_selection` |
+| Handheld port | stubbed PortMaster dialogs, fake installer | `test_port` |
 | Truth and native export | synthetic + cached originals | `test_export_counts`, `test_export_native_layer`, `test_export_report`, `test_exporters`, `test_truth_data_dir_readers`, `test_truth_diff`, `test_truth_layout` |
 | Scrapers, upstream and provenance | inline sources, synthetic | `test_check_freshness`, `test_dedup`, `test_elec_scrapers`, `test_fbneo_parser`, `test_find_pinned_revision`, `test_hash_merge`, `test_launchers`, `test_launchers_emudeck`, `test_launchers_recalbox`, `test_launchers_retrobat`, `test_launchers_retrodeck`, `test_launchers_retropie`, `test_launchers_rocknix`, `test_mame_devices`, `test_mame_parser`, `test_mame_ref_audit`, `test_profile_sync`, `test_provenance`, `test_refresh_data_dirs`, `test_refresh_failures`, `test_refresh_stale`, `test_retrodeck_scraper_errors`, `test_romset_recipes`, `test_scraper_contract`, `test_upstream`, `test_upstream_index` |
 | Site, docs and repository contracts | rendered pages, sources | `test_contributing_text`, `test_data_dir_refs`, `test_dataclass_defaults`, `test_doc_pages`, `test_doc_surfaces`, `test_optional_dependencies`, `test_prose_style`, `test_site_availability`, `test_site_cores`, `test_site_emulator_page`, `test_site_exports`, `test_site_platform_hashes`, `test_site_render`, `test_site_system_links`, `test_site_validation`, `test_site_write`, `test_validate_pr`, `test_validate_pr_flow`, `test_validate_pr_hashes`, `test_workflow_paths` |
@@ -250,6 +251,23 @@ python scripts/generate_pack.py --all --verify-packs --output-dir dist/
 
 Integrated as pipeline step 6/8 (runs after consistency check, before
 README generation). Requires packs in `dist/`, skip with `--skip-packs`.
+
+### test_port.py
+
+The PortMaster port in `ports/RetroBIOS/`. `bash -n` on its scripts, the
+archive `scripts/build_port.py` writes (layout, reproducibility, the bundled
+`install.py` equal to the one `install.sh` pins), and the event reader. The
+screens run in bash with PortMasterDialog's functions replaced by stubs that
+record each command and answer from a script, against a fake `install.py`
+whose event streams follow `EVENT_KEYS`: all files present, some missing
+(update everything, choose systems), no network, no BIOS folder detected,
+Python too old, and an answer that arrives after the 30-second wait of the
+older PortMaster releases. Drawing, the pad, `mount` and the network belong
+to a device and are not exercised.
+
+```bash
+python -m unittest tests.test_port -v
+```
 
 ## Verification discipline
 

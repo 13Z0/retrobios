@@ -95,6 +95,21 @@ class ReleaseMatchesWhatWasBuilt(unittest.TestCase):
         self.assertIn(("unrecorded", "Other_BIOS_Pack.zip"), kinds)
         self.assertIn(("missing", "Other_BIOS_Pack.zip"), kinds)
 
+    def test_the_handheld_port_is_vouched_for_by_the_checksum_list(self):
+        sums = {**SUMS_LIST, "RetroBIOS.zip": A}
+        assets = _assets()
+        self.assertEqual(
+            _kinds(compare_release(RECORD, sums, assets, "v2026.10.10")),
+            {("missing", "RetroBIOS.zip")},
+        )
+        assets["RetroBIOS.zip"] = Asset(70, A)
+        self.assertEqual(compare_release(RECORD, sums, assets, "v2026.10.10"), [])
+        assets["RetroBIOS.zip"] = Asset(70, B)
+        self.assertEqual(
+            _kinds(compare_release(RECORD, sums, assets, "v2026.10.10")),
+            {("content", "RetroBIOS.zip")},
+        )
+
     def test_parts_must_add_up_to_the_printed_download_size(self):
         assets = _assets()
         assets["Big_BIOS_Pack.part2of2.zip"] = Asset(99, B)

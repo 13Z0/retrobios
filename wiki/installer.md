@@ -251,6 +251,7 @@ what the options name, everything by default.
 | `--dry-run` | Show what would be downloaded, by system and with sizes, without writing anything |
 | `--yes`, `-y` | Do not ask before a download of 1 GB or more |
 | `--quiet`, `-q` | Print only failures and the final summary. Implies `--no-input` |
+| `--events` | Write the run as JSON events on standard output, one object per line, and the usual text on standard error. Implies `--no-input`. See [Machine-readable events](#machine-readable-events) |
 | `--version` | Print the installer's identity, the first 12 hex digits of the SHA-256 the bootstraps pin |
 | `--list-platforms` | Print the supported platforms and what was detected here |
 | `--list-targets` | Print the hardware targets a platform publishes, with the core count each carries |
@@ -266,6 +267,32 @@ with a wrong hash are listed first and in full, then the first ten missing ones
 it, a file already present with the expected hash is left untouched, and one
 whose contents do not match is re-downloaded and replaced by the verified copy.
 Files the list does not name are never read, moved or deleted.
+
+## Machine-readable events
+
+With `--events`, standard output carries only JSON objects, one per line, and
+the text a person reads goes to standard error. A program driving the installer
+(the [handheld port](#on-a-handheld-the-retrobios-port) is one) reads the
+objects and never parses the text. Every object has an `event` key naming its
+kind, and each kind has exactly the keys below, in this order. The schema is
+`EVENT_KEYS` in `install.py`, and a test holds this table to it.
+
+| Kind | Keys | When |
+|------|------|------|
+| `start` | `schema`, `installer`, `mode` | First line. `schema` is 1, `installer` the identity `--version` prints, `mode` one of `install`, `check`, `dry-run`, `list` |
+| `detect` | `os`, `os_name`, `platforms` | Once the platforms are known. `os_name` comes from `/etc/os-release`. `platforms` lists `{platform, name, bios_dir}`, and is empty when nothing supported was found |
+| `error` | `stage`, `reason`, `platform`, `message` | The file list could not be read (`stage` is `manifest`). `reason` is `network`, `not_found` or `invalid` |
+| `file` | `platform`, `dest`, `systems`, `size`, `state` | Each file of the list after the check. `state` is `present` (hash verified), `wrong_hash` or `missing` |
+| `system` | `platform`, `system`, `name`, `files`, `present`, `missing`, `wrong_hash`, `bytes_needed` | Each system, sorted by id. Files with no system count under `other`. `name` is the platform's own name for it |
+| `check` | `platform`, `name`, `bios_dir`, `files`, `present`, `missing`, `wrong_hash`, `bytes_needed`, `data_missing`, `not_installable` | The platform's totals. `data_missing` counts data-tree files to fetch, `not_installable` the files the collection cannot supply |
+| `download` | `platform`, `files`, `bytes` | Before the downloads start |
+| `progress` | `files_done`, `files_total`, `bytes_done`, `bytes_total` | At most every half second while bytes arrive |
+| `downloaded` | `dest`, `ok`, `reason`, `size`, `files_done`, `files_total`, `bytes_done`, `bytes_total` | Each finished file. `reason` says why one failed, and is empty otherwise |
+| `summary` | `mode`, `installed`, `up_to_date`, `pending`, `failed`, `skipped`, `interrupted` | The outcome. `pending` counts what a next run would still fetch, `failed` lists `{dest, reason}`, `skipped` lists `{reason, label, files, required}` for the files the collection cannot supply. Not written for a listing |
+| `end` | `code` | Last line, with the exit status the process returns (see [Exit status](#exit-status)) |
+
+An option refused before the run starts (`install.py: error:`, code 2) writes
+no event at all. A program reads a missing `end` as that case.
 
 ## Environment overrides
 
@@ -559,6 +586,67 @@ elsewhere. A custom BIOS directory is still named directly:
 ```bash
 python install.py --platform retroarch --dest /storage/emulated/0/RetroArch/system
 ```
+
+## On a handheld: the RetroBIOS port
+
+On a Linux handheld that runs [PortMaster](https://portmaster.games/) (ArkOS,
+ROCKNIX, AmberELEC, muOS, KNULLI and the others it supports), the installer
+also runs from the device itself, as a port with gamepad screens. The screens
+are PortMaster's own, so the port carries no graphics code.
+
+**Getting it.** Two ways:
+
+- From PortMaster's catalog, once the port is accepted there: open PortMaster,
+  find RetroBIOS under the Other genre, install.
+- `RetroBIOS.zip`, attached to each [release](https://github.com/Abdess/retrobios/releases/latest)
+  cut since the port was added, copied into PortMaster's
+  autoinstall folder. Starting PortMaster then installs it, with or without a
+  network connection. PortMaster's FAQ names the folder: `/roms/ports/PortMaster/autoinstall/`
+  on AmberELEC and ROCKNIX, `/roms/tools/PortMaster/autoinstall/` on ArkOS,
+  `/mmc/MUOS/PortMaster/autoinstall/` on muOS,
+  `/userdata/system/.local/share/PortMaster/autoinstall/` on KNULLI.
+
+From a clone of the repository, `python scripts/build_port.py` builds the
+same archive into `dist/RetroBIOS.zip`.
+
+**What it shows.** RetroBIOS appears among the ports. Started, it runs
+`install.py --check --events` and opens on the result: the system's name,
+how many BIOS files are present, missing, or present with a hash that does
+not match. The menu
+offers to update everything missing, to choose systems (each listed with what
+it lacks, selected or cleared with A), to check again, or to quit. An update
+shows a progress bar, one step per file, then what was installed, what failed
+and why, and what the collection cannot supply. Every list has its own Back or
+Quit entry, since older PortMaster releases do not read B there.
+
+**What it needs.**
+
+- A network connection: the list of files to check comes from the internet,
+  as do the files. Without one the port says so and offers to check again.
+- Python 3.8 or newer. The port uses the system's `python3` when it is recent
+  enough, else PortMaster's `python_3.11` runtime on aarch64 devices, which it
+  downloads through PortMaster on first use. An armhf device with an older
+  Python is told so, with the computer route below.
+- A BIOS folder the installer detects (see [Platform detection](#platform-detection)).
+  On a system it does not know yet, the port says it found no BIOS folder.
+
+**The computer route.** With the SD card mounted on a computer, the one-line
+command fills it, naming the platform and the card's BIOS folder:
+`--platform <platform> --dest <BIOS folder on the card>`. The port's screens
+for an unknown system or an old Python name this route.
+
+**Which installer runs.** The archive carries `install.py`, the file the
+one-line command of the same commit downloads: the build refuses any other
+(`scripts/build_port.py` compares it with the SHA-256 `install.sh` pins). A
+port that downloaded the installer at each start against a pinned SHA-256
+would stop working at the next change to `install.py`, since the pin is fixed
+when the port is built. The file lists come from `main`, as for the one-line
+command. A newer port version carries a newer installer. When a list is in a
+format the carried installer does not read, the port says to update it.
+
+The launcher (`ports/RetroBIOS/RetroBIOS.sh`) and its screens
+(`retrobios/screens.txt`) read the installer through
+[Machine-readable events](#machine-readable-events) only.
 
 ## Where the files come from
 

@@ -202,6 +202,11 @@ python scripts/pipeline.py --include-archived
 #    and the set compared with the pack before the pack is removed.
 python scripts/split_pack.py dist/
 
+# 2b. The handheld port, RetroBIOS.zip, built from ports/RetroBIOS with the
+#     installer the bootstraps pin. It is a release file, listed in the
+#     checksums below, and check_release.py holds it to them.
+python scripts/build_port.py
+
 # 3. Checksums of the files as published, then sign the list. The checksums
 #    answer corruption, and the signature answers a rewritten release, which is
 #    the one thing a checksum published beside its own artifacts cannot

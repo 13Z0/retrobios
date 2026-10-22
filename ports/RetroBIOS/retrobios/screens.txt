@@ -1,0 +1,467 @@
+#!/bin/bash
+# RetroBIOS screens, drawn by PortMaster's own GUI (pugwash fifo_control)
+# through the functions of PortMasterDialog.txt. Sourced by RetroBIOS.sh
+# after PortMasterDialog.txt.
+#
+# Only what PortMaster 2024.02.26 and the 8.5.23 copy JELOS and KOLOS ship
+# is used: PortMasterDialogInit, PortMasterDialog, PortMasterDialogResult,
+# PortMasterDialogExit, PortMasterIPCheck, and the commands
+# register_set_info, register_clear, selection_list, messages_begin,
+# message, messages_end, progress, progress_clear and check_runtime.
+# Those releases ignore --want-cancel, so every list ends on its own Back
+# or Quit entry. They also read "\n" literally, so no text has a newline,
+# and their wait for an answer gives up after 30 seconds: rb_answer keeps
+# waiting while pugwash is alive.
+#
+# Inputs: GAMEDIR, controlfolder, ESUDO, and RB_INSTALL (install.py).
+
+RB_STATE="${RB_STATE:-$GAMEDIR/run}"
+RB_LOG="${RB_LOG:-$GAMEDIR/log.txt}"
+RB_INSTALL="${RB_INSTALL:-$GAMEDIR/install.py}"
+RB_EVENTS="${RB_EVENTS:-$GAMEDIR/rbevents.py}"
+RB_RUNTIME="python_3.11"
+RB_PC_ROUTE="On a computer, with this SD card mounted, the same installer fills the card: install.py --platform NAME --dest BIOS-FOLDER-ON-THE-CARD. Instructions: abdess.github.io/retrobios/wiki/installer"
+RB_PYTHON=""
+RB_PYTHONHOME=""
+RB_MOUNTED=""
+RB_PYTHON_PROBLEM=""
+
+rb_arch() {
+  uname -m
+}
+
+rb_py() {
+  if [ -n "$RB_PYTHONHOME" ]; then
+    PYTHONHOME="$RB_PYTHONHOME" "$RB_PYTHON" "$@"
+  else
+    "$RB_PYTHON" "$@"
+  fi
+}
+
+# --- Python ---------------------------------------------------------------
+
+rb_python_ok() {
+  "$@" -c 'import sys; sys.exit(0 if sys.version_info >= (3, 8) else 1)' >/dev/null 2>&1
+}
+
+# The OS python3 when it is 3.8 or newer, else PortMaster's python_3.11
+# runtime on aarch64, mounted as PortMaster's own Python ports do. Sets
+# RB_PYTHON_PROBLEM when neither can run install.py.
+rb_select_python() {
+  if command -v python3 >/dev/null 2>&1 && rb_python_ok python3; then
+    RB_PYTHON="python3"
+    return 0
+  fi
+  if [ "$(rb_arch)" != "aarch64" ]; then
+    RB_PYTHON_PROBLEM="old"
+    return 1
+  fi
+  rb_runtime
+}
+
+rb_runtime() {
+  local python_dir="$HOME/$RB_RUNTIME"
+  local squashfs="$controlfolder/libs/$RB_RUNTIME.squashfs"
+  if [ ! -f "$squashfs" ]; then
+    if [ -z "$(PortMasterIPCheck)" ]; then
+      RB_PYTHON_PROBLEM="runtime_offline"
+      return 1
+    fi
+    PortMasterDialogInit "no-check"
+    PortMasterDialog "messages_begin"
+    PortMasterDialog "message" "This system's Python is older than 3.8. Downloading PortMaster's $RB_RUNTIME runtime."
+    local answer
+    answer=$(rb_answer "check_runtime" "$RB_RUNTIME.squashfs")
+    PortMasterDialog "messages_end"
+    PortMasterDialogExit
+    if [ "$answer" != "OKAY" ] || [ ! -f "$squashfs" ]; then
+      RB_PYTHON_PROBLEM="runtime_failed"
+      return 1
+    fi
+  fi
+  mkdir -p "$python_dir"
+  if [ "${PM_CAN_MOUNT:-Y}" != "N" ]; then
+    $ESUDO umount "$python_dir" >/dev/null 2>&1
+  fi
+  if ! $ESUDO mount "$squashfs" "$python_dir"; then
+    RB_PYTHON_PROBLEM="runtime_failed"
+    return 1
+  fi
+  RB_MOUNTED="$python_dir"
+  RB_PYTHON="$python_dir/bin/python3"
+  RB_PYTHONHOME="$python_dir"
+  if ! PYTHONHOME="$python_dir" rb_python_ok "$RB_PYTHON"; then
+    RB_PYTHON_PROBLEM="runtime_failed"
+    return 1
+  fi
+  return 0
+}
+
+rb_release_python() {
+  if [ -n "$RB_MOUNTED" ] && [ "${PM_CAN_MOUNT:-Y}" != "N" ]; then
+    $ESUDO umount "$RB_MOUNTED" >/dev/null 2>&1
+  fi
+  RB_MOUNTED=""
+}
+
+# --- Dialog primitives ----------------------------------------------------
+
+# A command that waits for the user, and its answer. PortMasterDialogResult
+# stops waiting after 30 seconds on the older releases and then returns
+# WAIT: the answer is read again until pugwash writes one or exits.
+rb_answer() {
+  local answer tries=0
+  answer=$(PortMasterDialogResult "$@")
+  while [ "$answer" = "WAIT" ] || [ -z "$answer" ]; do
+    if [ -n "$PM_PID" ] && [ ! -d "/proc/$PM_PID" ]; then
+      break
+    fi
+    if [ "$tries" -ge 6000 ]; then
+      break
+    fi
+    tries=$((tries + 1))
+    sleep 0.3
+    answer=$(cat "$PM_DONE" 2>/dev/null)
+  done
+  printf '%s\n' "$answer"
+}
+
+rb_plural() {
+  if [ "$1" = "1" ]; then
+    printf '%s %s\n' "$1" "$2"
+  else
+    printf '%s %ss\n' "$1" "$2"
+  fi
+}
+
+rb_entry() {
+  PortMasterDialog "register_set_info" "$1" "$2" "title:$3" "description:$4"
+}
+
+# Show a list and print the chosen key. B, where the release reads it,
+# answers like the Back or Quit entry ($2).
+rb_choose() {
+  local answer
+  answer=$(rb_answer "selection_list" "--register=$1" "--want-description" "--want-cancel")
+  case "$answer" in
+    CANCEL|FAIL|WAIT|"") printf '%s\n' "$2" ;;
+    *) printf '%s\n' "$answer" ;;
+  esac
+}
+
+# A screen of text with one or two ways out: rb_notice TITLE TEXT KEY LABEL [KEY LABEL].
+# B answers like the last one, which leaves.
+rb_notice() {
+  local title="$1" text="$2"
+  shift 2
+  local last="$1" answer
+  PortMasterDialog "register_clear" "notice"
+  # The list has no heading of its own: the first entry is the heading.
+  rb_entry "notice" "info" "$title" "$text"
+  rb_entry "notice" "$1" "$2" "$text"
+  if [ $# -ge 4 ]; then
+    rb_entry "notice" "$3" "$4" "$text"
+    last="$3"
+  fi
+  while true; do
+    answer=$(rb_choose "notice" "$last")
+    if [ "$answer" != "info" ]; then
+      printf '%s\n' "$answer"
+      return
+    fi
+  done
+}
+
+# --- Reading install.py ---------------------------------------------------
+
+# Run a --check and read its records into RB_* variables.
+rb_check() {
+  mkdir -p "$RB_STATE"
+  PortMasterDialog "messages_begin"
+  PortMasterDialog "message" "Reading the BIOS folder and the file list."
+  rb_py "$RB_INSTALL" --check --events "${RB_PLATFORM_ARGS[@]}" > "$RB_STATE/check.jsonl" 2>> "$RB_LOG"
+  PortMasterDialog "messages_end"
+  rb_py "$RB_EVENTS" status "$RB_STATE/check.jsonl" > "$RB_STATE/status.tsv" 2>> "$RB_LOG"
+  rb_read_status "$RB_STATE/status.tsv"
+}
+
+rb_read_status() {
+  RB_OS_NAME="this system"
+  RB_DETECTED=""
+  RB_PLATFORM=""
+  RB_PLATFORM_NAME=""
+  RB_BIOS_DIR=""
+  RB_ERROR=""
+  RB_ERROR_TEXT=""
+  RB_CHECKED=""
+  RB_END="none"
+  RB_SYSTEMS=()
+  RB_COMPLETE=0
+  local kind a b c d e f g h
+  while IFS=$'\t' read -r kind a b c d e f g h; do
+    case "$kind" in
+      detect) RB_OS_NAME="$a"; RB_DETECTED="$b" ;;
+      platform) RB_PLATFORM="$a"; RB_PLATFORM_NAME="$b"; RB_BIOS_DIR="$c" ;;
+      error) RB_ERROR="$a"; RB_ERROR_TEXT="$b" ;;
+      check)
+        RB_CHECKED=1
+        RB_FILES="$a"; RB_PRESENT="$b"; RB_MISSING="$c"; RB_WRONG="$d"
+        RB_NEEDED_SIZE="$e"; RB_DATA_MISSING="$f"; RB_NOT_INSTALLABLE="$g"
+        ;;
+      system)
+        if [ "$h" = "1" ]; then
+          RB_SYSTEMS+=("$a"$'\t'"$b"$'\t'"$c"$'\t'"$d"$'\t'"$e"$'\t'"$f"$'\t'"$g")
+        else
+          RB_COMPLETE=$((RB_COMPLETE + 1))
+        fi
+        ;;
+      end) RB_END="$a" ;;
+    esac
+  done < "$1"
+}
+
+rb_status_text() {
+  local text="$RB_OS_NAME, $RB_PLATFORM_NAME file list: $RB_PRESENT/$RB_FILES BIOS files, $RB_MISSING missing, $RB_WRONG wrong hash."
+  if [ "${RB_NOT_INSTALLABLE:-0}" != "0" ]; then
+    text="$text $RB_NOT_INSTALLABLE not in the collection."
+  fi
+  printf '%s\n' "$text"
+}
+
+rb_pending() {
+  printf '%s\n' $((RB_MISSING + RB_WRONG + RB_DATA_MISSING))
+}
+
+# --- Screens --------------------------------------------------------------
+
+rb_screen_no_python() {
+  local found
+  found=$(python3 --version 2>&1 | awk '{print $2}')
+  local text
+  case "$RB_PYTHON_PROBLEM" in
+    old) text="Python 3.8 or newer is needed. This system has ${found:-none}, and PortMaster's Python runtime exists for aarch64 only, and this device is $(rb_arch)." ;;
+    runtime_offline) text="Python 3.8 or newer is needed. This system has ${found:-none}, and PortMaster's $RB_RUNTIME runtime needs a connection to download." ;;
+    *) text="Python 3.8 or newer is needed. This system has ${found:-none}, and PortMaster's $RB_RUNTIME runtime could not be installed or run." ;;
+  esac
+  rb_notice "Python 3.8 or newer is needed" "$text $RB_PC_ROUTE" "quit" "Quit" > /dev/null
+}
+
+# What the check found when it found nothing to show: no platform, no
+# connection, an unreadable list. Prints check or quit.
+rb_screen_problem() {
+  if [ "$RB_END" = "none" ]; then
+    rb_notice "The installer stopped before checking" "install.py ended without a result. Its messages are in $RB_LOG." "check" "Check again" "quit" "Quit"
+  elif [ "$RB_ERROR" = "conflict" ]; then
+    rb_notice "Two systems found" "$RB_ERROR_TEXT, so the BIOS folder is not known. $RB_PC_ROUTE" "check" "Check again" "quit" "Quit"
+  elif [ "$RB_DETECTED" = "0" ]; then
+    rb_notice "No BIOS folder found" "install.py knows no BIOS folder on $RB_OS_NAME. $RB_PC_ROUTE" "check" "Check again" "quit" "Quit"
+  elif [ "$RB_ERROR" = "network" ]; then
+    rb_notice "No connection" "$RB_OS_NAME, BIOS folder $RB_BIOS_DIR. The list of files to check comes from the internet, and so do the files: without a connection nothing can be checked or downloaded. Connect to Wi-Fi, then check again." "check" "Check again" "quit" "Quit"
+  elif [ "$RB_ERROR" = "invalid" ]; then
+    rb_notice "The file list is newer than this port" "$RB_ERROR_TEXT. Update RetroBIOS from PortMaster, or use the installer on a computer. $RB_PC_ROUTE" "check" "Check again" "quit" "Quit"
+  else
+    rb_notice "The file list could not be read" "${RB_ERROR_TEXT:-install.py ended with code $RB_END}. Its messages are in $RB_LOG." "check" "Check again" "quit" "Quit"
+  fi
+}
+
+# The menu after a check. Prints update, choose, check or quit.
+rb_screen_menu() {
+  local status pending
+  status=$(rb_status_text)
+  pending=$(rb_pending)
+  PortMasterDialog "register_clear" "menu"
+  # The list has no heading of its own: the first entry is the status.
+  if [ "$pending" -gt 0 ]; then
+    local data=""
+    if [ "${RB_DATA_MISSING:-0}" != "0" ]; then
+      data=" and $RB_DATA_MISSING data files"
+    fi
+    rb_entry "menu" "status" "$RB_OS_NAME: $RB_PRESENT/$RB_FILES BIOS files, $RB_MISSING missing, $RB_WRONG wrong hash" "$status BIOS folder: $RB_BIOS_DIR."
+    rb_entry "menu" "update" "Update everything missing" "$status Downloads $(rb_plural $((RB_MISSING + RB_WRONG)) file)$data, $RB_NEEDED_SIZE, to $RB_BIOS_DIR."
+    rb_entry "menu" "choose" "Choose systems" "$status Pick the systems to update."
+  else
+    rb_entry "menu" "status" "$RB_OS_NAME: all $RB_FILES BIOS files present" "$status Nothing to download. BIOS folder: $RB_BIOS_DIR."
+  fi
+  rb_entry "menu" "check" "Check again" "$status Reads the BIOS folder and the file list again."
+  rb_entry "menu" "quit" "Quit" "$status"
+  local answer
+  while true; do
+    answer=$(rb_choose "menu" "quit")
+    if [ "$answer" != "status" ]; then
+      printf '%s\n' "$answer"
+      return
+    fi
+  done
+}
+
+# Systems with files to fetch, toggled with A. Prints the chosen system
+# ids, one per line, or nothing for Back.
+rb_screen_systems() {
+  local -A chosen=()
+  local line id name files present missing wrong size answer count
+  while true; do
+    count=0
+    for id in "${!chosen[@]}"; do
+      count=$((count + 1))
+    done
+    PortMasterDialog "register_clear" "systems"
+    if [ "$count" -gt 0 ]; then
+      rb_entry "systems" "update" "Update the $count selected" "Downloads what the selected systems lack to $RB_BIOS_DIR."
+    else
+      rb_entry "systems" "update" "Update the selected" "Nothing selected yet: pick systems below with A."
+    fi
+    rb_entry "systems" "back" "Back" "Back to the menu. $(rb_plural "$RB_COMPLETE" system) complete, not listed."
+    for line in "${RB_SYSTEMS[@]}"; do
+      IFS=$'\t' read -r id name files present missing wrong size <<< "$line"
+      local mark=""
+      if [ -n "${chosen[$id]}" ]; then
+        mark=" (selected)"
+      fi
+      rb_entry "systems" "sys:$id" "$name$mark" "$present/$files present, $missing missing, $wrong wrong hash, $size to download. A selects or clears it."
+    done
+    answer=$(rb_choose "systems" "back")
+    case "$answer" in
+      back) return ;;
+      update)
+        if [ "$count" -gt 0 ]; then
+          printf '%s\n' "${!chosen[@]}" | sort
+          return
+        fi
+        ;;
+      sys:*)
+        id="${answer#sys:}"
+        # Quoted literally so unset expands the subscript once: a double-quoted
+        # "chosen[$id]" is expanded again inside unset.
+        [[ "$id" =~ ^[A-Za-z0-9._-]+$ ]] || continue
+        if [ -n "${chosen[$id]}" ]; then
+          unset 'chosen[$id]'
+        else
+          chosen[$id]=1
+        fi
+        ;;
+    esac
+  done
+}
+
+# Download with a progress bar fed by the event stream: rb_update [SYSTEM...]
+rb_update() {
+  local args=() system
+  for system in "$@"; do
+    args+=(--system "$system")
+  done
+  mkdir -p "$RB_STATE"
+  PortMasterDialog "messages_begin"
+  PortMasterDialog "message" "Downloading to $RB_BIOS_DIR."
+  PortMasterDialog "progress" "Starting" 0 1
+  local kind a b c d e f
+  rb_py "$RB_INSTALL" --events "${RB_PLATFORM_ARGS[@]}" "${args[@]}" 2>> "$RB_LOG" \
+    | rb_py "$RB_EVENTS" follow "$RB_STATE/summary.tsv" 2>> "$RB_LOG" \
+    | while IFS=$'\t' read -r kind a b c d e f; do
+        case "$kind" in
+          download) PortMasterDialog "message" "$(rb_plural "$a" file), $b." ;;
+          file) PortMasterDialog "progress" "$d, $e of $f" "$a" "$b" ;;
+          progress) PortMasterDialog "progress" "$c of $d" "$a" "$b" ;;
+          error) PortMasterDialog "message" "$b" ;;
+        esac
+      done
+  PortMasterDialog "progress_clear"
+  PortMasterDialog "messages_end"
+}
+
+# What the update did. Prints back or quit.
+rb_screen_summary() {
+  local kind a b c d shown=0 failed=0
+  local end="none" installed=0 up_to_date=0 pending=0 interrupted=0 error=""
+  while IFS=$'\t' read -r kind a b c d; do
+    case "$kind" in
+      summary) installed="$a"; up_to_date="$b"; pending="$c"; interrupted="$d" ;;
+      failed) failed=$((failed + 1)) ;;
+      error) error="$b" ;;
+      end) end="$a" ;;
+    esac
+  done < "$RB_STATE/summary.tsv"
+  PortMasterDialog "register_clear" "summary"
+  # The first entry is the outcome, the heading the list does not have.
+  if [ "$end" = "none" ]; then
+    rb_entry "summary" "info:result" "The installer stopped" "install.py ended without a result. Its messages are in $RB_LOG."
+  elif [ -n "$error" ]; then
+    rb_entry "summary" "info:result" "Nothing downloaded" "$error."
+  else
+    rb_entry "summary" "info:result" "Installed: $(rb_plural "$installed" file)" "$up_to_date already up to date, $failed failed, $pending still to fetch."
+  fi
+  rb_entry "summary" "back" "Back to the menu" "Checks the BIOS folder again."
+  rb_entry "summary" "quit" "Quit" "Leaves RetroBIOS."
+  if [ "$interrupted" = "1" ]; then
+    rb_entry "summary" "info:stopped" "Stopped before the end" "Update again to carry on. Files already installed are kept."
+  fi
+  while IFS=$'\t' read -r kind a b c d; do
+    case "$kind" in
+      failed)
+        shown=$((shown + 1))
+        if [ "$shown" -le 50 ]; then
+          rb_entry "summary" "info:failed:$shown" "Failed: $a" "$b"
+        fi
+        ;;
+      skipped)
+        rb_entry "summary" "info:skipped:$a" "Not in the collection ($a): $(rb_plural "$b" file)" "Required: $c. The RetroBIOS collection does not hold these files, so they cannot be downloaded."
+        ;;
+    esac
+  done < "$RB_STATE/summary.tsv"
+  if [ "$shown" -gt 50 ]; then
+    rb_entry "summary" "info:more" "And $((shown - 50)) more failed" "The full list is in $RB_LOG."
+  fi
+  local answer
+  while true; do
+    answer=$(rb_choose "summary" "back")
+    case "$answer" in
+      back|quit) printf '%s\n' "$answer"; return ;;
+    esac
+  done
+}
+
+# --- Flow -----------------------------------------------------------------
+
+rb_main() {
+  if ! rb_select_python; then
+    PortMasterDialogInit "no-harbour"
+    rb_screen_no_python
+    PortMasterDialogExit
+    rb_release_python
+    return 1
+  fi
+  PortMasterDialogInit "no-harbour"
+  RB_PLATFORM_ARGS=()
+  local action systems chosen
+  rb_check
+  while true; do
+    if [ -z "$RB_CHECKED" ]; then
+      action=$(rb_screen_problem)
+    else
+      # Later runs name the platform the first one found, so a second
+      # detected platform never changes what the screens describe.
+      RB_PLATFORM_ARGS=(--platform "$RB_PLATFORM")
+      action=$(rb_screen_menu)
+    fi
+    case "$action" in
+      update)
+        rb_update
+        [ "$(rb_screen_summary)" = "quit" ] && break
+        rb_check
+        ;;
+      choose)
+        systems=$(rb_screen_systems)
+        if [ -n "$systems" ]; then
+          mapfile -t chosen <<< "$systems"
+          rb_update "${chosen[@]}"
+          [ "$(rb_screen_summary)" = "quit" ] && break
+          rb_check
+        fi
+        ;;
+      check) rb_check ;;
+      *) break ;;
+    esac
+  done
+  PortMasterDialogExit
+  rb_release_python
+  return 0
+}

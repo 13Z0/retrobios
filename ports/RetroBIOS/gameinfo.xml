@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<gameList>
+  <game>
+    <path>./RetroBIOS.sh</path>
+    <name>RetroBIOS</name>
+    <desc>Checks the BIOS folder of this system against the files its emulators read, and downloads the missing ones from the RetroBIOS collection, each verified by its hash.</desc>
+    <developer>Abdess</developer>
+    <publisher>Open Source</publisher>
+    <genre>Utility</genre>
+  </game>
+</gameList>

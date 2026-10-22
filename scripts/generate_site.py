@@ -5283,6 +5283,10 @@ ZIP: extract them all into the same folder.
 | [AmberELEC](https://amberelec.org/) | Linux OS for Anbernic handhelds: RG351P, RG351V, RG351MP, RG353, RG503 and RG552 | [AmberELEC]({rel}) | `/storage/roms/`, which the pack fills with `bios/` and `neogeo/` |
 | [EmuELEC](https://emuelec.org/) | Linux OS for Amlogic TV boxes, the Odroid Go Advance, GameForce and RK356x devices | [EmuELEC]({rel}) | `/storage/roms/`, which the pack fills with `bios/`, `neogeo/` and `ports/` |
 
+On a handheld that runs PortMaster, the RetroBIOS port checks and fills the
+BIOS folder from the device, with gamepad screens:
+[on a handheld](wiki/installer.md#on-a-handheld-the-retrobios-port).
+
 ### FPGA
 
 | Setup | What it is | Pack | Extract to |

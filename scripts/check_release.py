@@ -3,7 +3,8 @@
 
 Run on the draft before publishing it, and on the published release at any
 time. Every pack asset release.json names must be on the release at the sha256
-SHA256SUMS.txt lists for it, the parts of a pack must add up to the download
+SHA256SUMS.txt lists for it, as must the handheld port (RetroBIOS.zip) when
+the list names it, the parts of a pack must add up to the download
 size the README prints, and nothing else may be attached. An upload that
 failed in the loop, or a part re-uploaded from an older build, otherwise
 publishes a release that `sha256sum --check` rejects for every user.
@@ -26,6 +27,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 sys.path.insert(0, os.path.dirname(__file__))
+from build_port import PORT_ZIP
 from check_release_assets import digests_of
 from largefiles import LARGE_FILES_REPO
 from release_record import RECORD, load_record
@@ -91,7 +93,9 @@ def compare_release(
         findings.append(Finding("extra", name, "attached but neither recorded nor listed"))
     for name in sorted(set(recorded) - set(sums)):
         findings.append(Finding("unlisted", name, f"absent from {SUMS}"))
-    for name in sorted(set(sums) - set(recorded)):
+    # The handheld port is a release file but no pack: release.json records
+    # packs, and the checksum list alone vouches for the port.
+    for name in sorted(set(sums) - set(recorded) - {PORT_ZIP}):
         findings.append(Finding("unrecorded", name, f"listed in {SUMS}, absent from release.json"))
 
     wanted = {**sums, **(local_files or {})}
