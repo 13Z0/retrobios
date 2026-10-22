@@ -1,52 +1,230 @@
-/* RetroBIOS theme on top of mkdocs-material */
+/* RetroBIOS theme on top of mkdocs-material.
+
+   Classes the generator and the wiki pages can use:
+   .rb-lead            first paragraph under a page title
+   .rb-level-*         level label (start, setup, explore, reference, contribute)
+   .rb-page-header     logo or image beside the title block of an entity page
+   .rb-cards, .rb-card card grid without Material's list markup
+   .grid.cards         Material card grid, restyled here
+   .rb-card-logo       40 px logo tile inside a card
+   .rb-steps           ordered list drawn as numbered steps
+   .rb-terminal        wraps a code block that shows terminal output
+   .rb-cmd             wraps a command that must wrap instead of scrolling
+   code.rb-path        a folder path shown as a chip
+   .rb-figure          a generated diagram (scripts/sitediagrams.py)
+   .rb-bar             inline coverage bar, width from --v
+*/
 
 :root {
-  --rb-primary: #4a4e8a;
-  --rb-primary-light: #6366a0;
-  --rb-primary-dark: #363870;
+  --rb-primary: #3b3f7a;
+  --rb-primary-dark: #2b2e5c;
   --rb-accent: #b42318;
   --rb-link: #273c8f;
+  --rb-fg: rgba(0, 0, 0, 0.87);
   --rb-surface: #f5f6fa;
   --rb-border: #e0e3eb;
+  --rb-border-strong: #b8bdcc;
   --rb-text-secondary: #546e7a;
+  --rb-ok-fg: #1b5e20;
+  --rb-ok-bg: #e8f5e9;
+  --rb-warn-fg: #a33f00;
+  --rb-warn-bg: #fff3e0;
+  --rb-err-fg: #b71c1c;
+  --rb-err-bg: #ffebee;
+  --rb-info-fg: #0d47a1;
+  --rb-info-bg: #e3f2fd;
+  --rb-muted-fg: #455a64;
+  --rb-muted-bg: #eceff1;
+  --rb-level-start: #1b5e20;
+  --rb-level-setup: #0d47a1;
+  --rb-level-explore: #6a1b9a;
+  --rb-level-reference: #455a64;
+  --rb-level-contribute: #a33f00;
+  --rb-terminal-bg: #1b1d2e;
+  --rb-terminal-fg: #e6e6f0;
+  --rb-terminal-label: #9aa0c3;
+  --rb-diagram-fill: #f5f6fa;
+  --rb-diagram-stroke: #8c92ac;
+  --rb-diagram-accent: #3b3f7a;
+  --md-code-font: ui-monospace, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
 }
 
 [data-md-color-scheme="slate"] {
-  --rb-surface: #1e1e2e;
-  --rb-border: #313244;
-  --rb-text-secondary: #a6adc8;
   --rb-accent: #ff9a8f;
   --rb-link: #aebcff;
+  --rb-fg: #e3e4ee;
+  --rb-surface: #252838;
+  --rb-border: #3a3d52;
+  --rb-border-strong: #5a5e7a;
+  --rb-text-secondary: #a6adc8;
+  --rb-ok-fg: #a5d6a7;
+  --rb-ok-bg: #1b3a1f;
+  --rb-warn-fg: #ffcc80;
+  --rb-warn-bg: #7a2e00;
+  --rb-err-fg: #ef9a9a;
+  --rb-err-bg: #7f1414;
+  --rb-info-fg: #90caf9;
+  --rb-info-bg: #0d2a55;
+  --rb-muted-fg: #cfd8dc;
+  --rb-muted-bg: #37474f;
+  --rb-level-start: #a5d6a7;
+  --rb-level-setup: #90caf9;
+  --rb-level-explore: #ce93d8;
+  --rb-level-reference: #cfd8dc;
+  --rb-level-contribute: #ffcc80;
+  --rb-terminal-bg: #12131c;
+  --rb-diagram-fill: #252838;
+  --rb-diagram-stroke: #7c82a3;
+  --rb-diagram-accent: #aebcff;
 }
 
+/* Colour roles. The header keeps the brand indigo in both schemes: the
+   lighter indigo it used in dark mode left the tab labels at 3.5:1. */
 [data-md-color-scheme="default"] {
   --md-primary-fg-color: var(--rb-primary);
-  --md-primary-fg-color--light: var(--rb-primary-light);
+  --md-primary-fg-color--light: #4a4e8a;
   --md-primary-fg-color--dark: var(--rb-primary-dark);
   --md-accent-fg-color: var(--rb-accent);
+  --md-typeset-a-color: var(--rb-link);
+  /* Comments and punctuation sat at 4.47:1 on the code background. */
+  --md-code-hl-comment-color: #5c5c5c;
+  --md-code-hl-generic-color: #5c5c5c;
+  --md-code-hl-variable-color: #5c5c5c;
+  --md-code-hl-operator-color: #5c5c5c;
+  --md-code-hl-punctuation-color: #5c5c5c;
 }
 
 [data-md-color-scheme="slate"] {
-  --md-primary-fg-color: var(--rb-primary-light);
+  --md-primary-fg-color: var(--rb-primary-dark);
+  --md-primary-fg-color--light: var(--rb-primary);
+  --md-primary-fg-color--dark: #1f2147;
   --md-accent-fg-color: var(--rb-accent);
+  --md-accent-bg-color: #1e2129;
+  --md-typeset-a-color: var(--rb-link);
+  --md-code-hl-constant-color: #b39ddb;
+}
+
+/* Type scale: the page title is the strongest heading on the page. */
+.md-typeset h1 {
+  color: var(--md-default-fg-color);
+  font-size: 2em;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+  margin: 0 0 0.9em;
+}
+
+.md-typeset h2 {
+  font-size: 1.45em;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  margin-top: 2em;
+}
+
+.md-typeset h3 {
+  font-size: 1.15em;
+  font-weight: 600;
+}
+
+.md-typeset h4 {
+  font-weight: 600;
+}
+
+.md-typeset .rb-lead {
+  font-size: 1.05em;
+  line-height: 1.55;
+  max-width: 44em;
+}
+
+/* Level label under a page title */
+.rb-level {
+  display: inline-block;
+  margin: 0 0 0.8rem;
+  padding: 0.05rem 0.45rem;
+  border: 1px solid currentColor;
+  border-radius: 2px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  line-height: 1.6;
+  color: var(--rb-level-reference);
+}
+
+.rb-level-start { color: var(--rb-level-start); }
+.rb-level-setup { color: var(--rb-level-setup); }
+.rb-level-explore { color: var(--rb-level-explore); }
+.rb-level-reference { color: var(--rb-level-reference); }
+.rb-level-contribute { color: var(--rb-level-contribute); }
+
+/* Header block of platform, system and emulator pages */
+.rb-page-header {
+  display: grid;
+  grid-template-columns: 56px 1fr;
+  gap: 0.4rem 1rem;
+  align-items: center;
+  margin: 0 0 1.2rem;
+}
+
+.rb-page-header > :first-child img,
+.rb-page-header > img {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+}
+
+.md-typeset .rb-page-header h1 {
+  margin: 0;
+}
+
+.rb-page-header p {
+  margin: 0.2rem 0 0;
+}
+
+/* A page that names its logo next to the title floats it right; the logo
+   keeps its own box instead of shifting the counters below. */
+.md-typeset img[align="right"] {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+  margin: 0 0 0.6rem 1rem;
+  padding: 4px;
+  border: 1px solid var(--rb-border);
+  border-radius: 4px;
+  background: #fff;
+}
+
+/* Logos are drawn for a light background: they keep one in dark mode. */
+.md-typeset img[src*="assets/logos/"] {
+  padding: 2px;
+  border-radius: 2px;
+  background: #fff;
 }
 
 /* Headline figures, read as one line of numbers */
 .rb-stats {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem 2rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr));
+  gap: 0.6rem 1.5rem;
   margin: 1rem 0 1.5rem;
+  padding: 0.8rem 1rem;
+  border: 1px solid var(--rb-border);
+  border-radius: 4px;
+  background: var(--rb-surface);
+}
+
+.md-typeset .rb-stat p {
+  margin: 0;
 }
 
 .rb-stat .rb-stat-value {
   font-size: 1.25rem;
   font-weight: 700;
   display: block;
+  font-variant-numeric: tabular-nums;
 }
 
 .rb-stat .rb-stat-label {
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   color: var(--rb-text-secondary);
   display: block;
 }
@@ -61,22 +239,38 @@
   white-space: nowrap;
 }
 
-.rb-badge-success { background: #e8f5e9; color: #1b5e20; }
-.rb-badge-warning { background: #fff3e0; color: #a33f00; }
-.rb-badge-danger { background: #ffebee; color: #b71c1c; }
-.rb-badge-info { background: #e3f2fd; color: #0d47a1; }
-.rb-badge-muted { background: #eceff1; color: #455a64; }
+.rb-badge-success { background: var(--rb-ok-bg); color: var(--rb-ok-fg); }
+.rb-badge-warning { background: var(--rb-warn-bg); color: var(--rb-warn-fg); }
+.rb-badge-danger { background: var(--rb-err-bg); color: var(--rb-err-fg); }
+.rb-badge-info { background: var(--rb-info-bg); color: var(--rb-info-fg); }
+.rb-badge-muted { background: var(--rb-muted-bg); color: var(--rb-muted-fg); }
 
-[data-md-color-scheme="slate"] .rb-badge-success { background: #1b5e20; color: #a5d6a7; }
-[data-md-color-scheme="slate"] .rb-badge-warning { background: #e65100; color: #ffcc80; }
-[data-md-color-scheme="slate"] .rb-badge-danger { background: #b71c1c; color: #ef9a9a; }
-[data-md-color-scheme="slate"] .rb-badge-info { background: #0d47a1; color: #90caf9; }
-[data-md-color-scheme="slate"] .rb-badge-muted { background: #37474f; color: #b0bec5; }
+/* A link inside a badge keeps the badge's tested colour pair. */
+.md-typeset .rb-badge a:not(.md-button),
+.md-typeset a.rb-badge {
+  color: inherit;
+}
+
+/* Inline code inside a link reads as a link in both schemes. */
+.md-typeset a code {
+  color: var(--rb-link);
+}
+
+/* Tables */
+.md-typeset table:not([class]) {
+  font-variant-numeric: tabular-nums;
+}
 
 .md-typeset table:not([class]) th {
   position: sticky;
   top: 0;
   z-index: 1;
+  font-weight: 600;
+}
+
+.md-typeset table:not([class]) th,
+.md-typeset table:not([class]) td {
+  padding: 0.55em 0.9em;
 }
 
 .md-typeset__scrollwrap {
@@ -141,18 +335,25 @@
 
 /* Hashes are printed whole so the search finds them, and wrap on phones */
 .rb-hash {
-  font-family: monospace;
+  font-family: var(--md-code-font);
   font-size: 0.78rem;
   color: var(--rb-text-secondary);
   overflow-wrap: anywhere;
 }
 
+/* Key and value cards: the header row is empty, so it is not drawn and
+   not announced. */
 .rb-meta-card table {
   margin: 1rem 0 !important;
 }
 
-.rb-meta-card th {
+.rb-meta-card thead,
+.md-typeset table thead:not(:has(th:not(:empty))) {
   display: none;
+}
+
+.rb-meta-card td {
+  overflow-wrap: anywhere;
 }
 
 .rb-meta-card td:first-child {
@@ -168,6 +369,24 @@
   padding: 0.55em 0.8em;
 }
 
+/* Buttons. The dark scheme draws them in the link colour: the header indigo
+   would sit at 3:1 on the page. */
+[data-md-color-scheme="slate"] .md-typeset .md-button {
+  color: var(--rb-link);
+  border-color: var(--rb-link);
+}
+
+[data-md-color-scheme="slate"] .md-typeset .md-button--primary {
+  background-color: var(--rb-link);
+  color: #1e2129;
+}
+
+[data-md-color-scheme="slate"] .md-typeset .md-button:is(:hover, :focus) {
+  background-color: var(--rb-accent);
+  border-color: var(--rb-accent);
+  color: #1e2129;
+}
+
 .md-typeset a:not(.md-button):not(.headerlink):not(.rb-badge) {
   color: var(--rb-link);
   text-decoration: underline;
@@ -179,7 +398,7 @@
   text-decoration-thickness: 0.14em;
 }
 
-:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+:where(a, button, input, select, textarea, label, [tabindex]):focus-visible {
   outline: 3px solid var(--rb-accent);
   outline-offset: 3px;
 }
@@ -240,6 +459,316 @@
   outline-offset: 2px;
 }
 
+/* Admonitions: one meaning per colour.
+   blue   note, info, abstract, example, question, quote: background
+   teal   tip: a shortcut
+   green  success: what it looks like when it worked
+   orange warning: a risk of losing data or using the wrong file
+   red    danger, failure, bug: something is broken or refused */
+.md-typeset :is(.admonition, details):is(.info, .abstract, .example, .question, .quote, .note) {
+  border-color: #448aff;
+}
+
+.md-typeset :is(.info, .abstract, .example, .question, .quote, .note) > :is(.admonition-title, summary) {
+  background-color: rgba(68, 138, 255, 0.1);
+}
+
+.md-typeset :is(.info, .abstract, .example, .question, .quote, .note) > :is(.admonition-title, summary)::before {
+  background-color: #448aff;
+  -webkit-mask-image: var(--md-admonition-icon--info);
+  mask-image: var(--md-admonition-icon--info);
+}
+
+.md-typeset :is(.admonition, details).tip {
+  border-color: #00897b;
+}
+
+.md-typeset .tip > :is(.admonition-title, summary) {
+  background-color: rgba(0, 137, 123, 0.1);
+}
+
+.md-typeset .tip > :is(.admonition-title, summary)::before {
+  background-color: #00897b;
+  -webkit-mask-image: var(--rb-icon-shortcut);
+  mask-image: var(--rb-icon-shortcut);
+}
+
+.md-typeset :is(.admonition, details):is(.danger, .failure, .bug, .error) {
+  border-color: #d32f2f;
+}
+
+.md-typeset :is(.danger, .failure, .bug, .error) > :is(.admonition-title, summary) {
+  background-color: rgba(211, 47, 47, 0.1);
+}
+
+.md-typeset :is(.danger, .failure, .bug, .error) > :is(.admonition-title, summary)::before {
+  background-color: #d32f2f;
+  -webkit-mask-image: var(--md-admonition-icon--danger);
+  mask-image: var(--md-admonition-icon--danger);
+}
+
+:root {
+  --rb-icon-shortcut: url('data:image/svg+xml;charset=utf-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7M9 21a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-1H9z"/></svg>');
+}
+
+/* Code: shell commands wrap so the whole command shows on a phone, and the
+   copy button keeps its own column instead of covering the end. */
+.md-typeset :is(.language-sh, .language-bash, .language-shell, .language-console,
+  .language-powershell, .language-ps1, .language-pwsh, .language-cmd, .language-bat) pre > code,
+.md-typeset .rb-cmd pre > code {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  padding-right: 2.6rem;
+}
+
+/* Terminal output: what the screen shows, not something to type */
+.md-typeset .rb-terminal pre,
+.md-typeset .rb-terminal pre > code {
+  background: var(--rb-terminal-bg);
+  color: var(--rb-terminal-fg);
+}
+
+.md-typeset .rb-terminal pre {
+  border: 1px solid var(--rb-border);
+  border-radius: 4px;
+}
+
+.md-typeset .rb-terminal pre::before {
+  content: "Terminal output";
+  display: block;
+  padding: 0.5rem 1.2em 0;
+  font: 600 0.65rem var(--md-text-font-family);
+  color: var(--rb-terminal-label);
+}
+
+.md-typeset .rb-terminal .md-code__button {
+  color: var(--rb-terminal-label);
+}
+
+/* Numbered steps */
+.md-typeset ol.rb-steps,
+.md-typeset .rb-steps > ol {
+  counter-reset: rb-step;
+  list-style: none;
+  margin-left: 0;
+  padding-left: 0;
+}
+
+.md-typeset ol.rb-steps > li,
+.md-typeset .rb-steps > ol > li {
+  counter-increment: rb-step;
+  position: relative;
+  margin: 0 0 1.2rem;
+  padding-left: 2.6rem;
+  min-height: 1.8rem;
+}
+
+.md-typeset ol.rb-steps > li::before,
+.md-typeset .rb-steps > ol > li::before {
+  content: counter(rb-step);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1.8rem;
+  height: 1.8rem;
+  border-radius: 4px;
+  background: var(--md-primary-fg-color);
+  color: #fff;
+  font-weight: 700;
+  line-height: 1.8rem;
+  text-align: center;
+}
+
+[data-md-color-scheme="slate"] .md-typeset ol.rb-steps > li::before,
+[data-md-color-scheme="slate"] .md-typeset .rb-steps > ol > li::before {
+  background: var(--rb-link);
+  color: #1e2129;
+}
+
+/* Card grids. Material's grid cards keep their markup; the hover shadow
+   gives way to a stronger border. */
+.md-typeset .grid.cards {
+  --md-shadow-z2: 0 0 #0000;
+}
+
+.md-typeset .grid.cards > :is(ul, ol) > li,
+.md-typeset .grid > .card {
+  border: 1px solid var(--rb-border);
+  border-radius: 4px;
+}
+
+.md-typeset .grid.cards > :is(ul, ol) > li:is(:hover, :focus-within),
+.md-typeset .grid > .card:is(:hover, :focus-within) {
+  border-color: var(--rb-border-strong);
+}
+
+.rb-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr));
+  gap: 0.8rem;
+  margin: 1rem 0 1.5rem;
+}
+
+.rb-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 0.8rem;
+  border: 1px solid var(--rb-border);
+  border-radius: 4px;
+  background: var(--md-default-bg-color);
+}
+
+.rb-card:is(:hover, :focus-within) {
+  border-color: var(--rb-border-strong);
+}
+
+.md-typeset .rb-card p {
+  margin: 0;
+}
+
+.md-typeset .rb-card .md-button {
+  margin-top: auto;
+  align-self: flex-start;
+}
+
+.md-typeset .rb-card-logo,
+.md-typeset .grid.cards img.rb-card-logo {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  padding: 4px;
+  border: 1px solid var(--rb-border);
+  border-radius: 4px;
+  background: #fff;
+  vertical-align: middle;
+}
+
+/* Path chip */
+.md-typeset code.rb-path {
+  padding: 0.15rem 0.45rem;
+  border: 1px solid var(--rb-border);
+  border-radius: 2px;
+  font-size: 0.8em;
+  overflow-wrap: anywhere;
+}
+
+/* Content tabs (operating systems): the selected tab reads clearly. */
+.md-typeset .tabbed-labels > label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--rb-text-secondary);
+}
+
+.md-typeset .tabbed-set > input:checked + label,
+.md-typeset .tabbed-labels > label:hover {
+  color: var(--rb-link);
+}
+
+.md-typeset .tabbed-labels::before {
+  background: var(--rb-link);
+}
+
+/* Inline coverage bar beside a number */
+.rb-bar {
+  display: inline-block;
+  width: 5rem;
+  height: 0.4rem;
+  margin-right: 0.4rem;
+  border-radius: 2px;
+  background: var(--rb-border);
+  vertical-align: middle;
+}
+
+.rb-bar > span {
+  display: block;
+  width: var(--v, 0%);
+  height: 100%;
+  border-radius: 2px;
+  background: var(--rb-ok-fg);
+}
+
+/* Diagrams written by scripts/sitediagrams.py. Text takes the page font and
+   colour, boxes take the theme surface, so the drawing follows the palette
+   toggle. Each diagram carries a wide and a narrow layout. */
+.md-typeset .rb-figure {
+  margin: 1.2rem 0 1.6rem;
+}
+
+.md-typeset .rb-figure svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 52rem;
+  color: var(--md-default-fg-color);
+}
+
+.md-typeset .rb-figure figcaption {
+  max-width: 44em;
+  margin: 0.4rem 0 0;
+  font-size: 0.75rem;
+  font-style: normal;
+  color: var(--rb-text-secondary);
+  text-align: left;
+}
+
+.rb-diagram text {
+  font-family: var(--md-text-font-family);
+  fill: currentColor;
+}
+
+.rb-diagram .rb-d-box {
+  fill: var(--rb-diagram-fill);
+  stroke: var(--rb-diagram-stroke);
+}
+
+.rb-diagram .rb-d-accent {
+  stroke: var(--rb-diagram-accent);
+}
+
+.rb-diagram .rb-d-line {
+  stroke: var(--rb-diagram-stroke);
+}
+
+.rb-diagram .rb-d-head {
+  fill: var(--rb-diagram-stroke);
+}
+
+.rb-diagram .rb-d-num {
+  fill: var(--rb-diagram-accent);
+}
+
+.rb-diagram .rb-d-numtext {
+  fill: var(--md-default-bg-color);
+}
+
+.rb-diagram .rb-d-muted {
+  fill: var(--rb-text-secondary);
+}
+
+.rb-diagram-narrow {
+  display: none !important;
+}
+
+@media (max-width: 37.5em) {
+  .rb-diagram-wide {
+    display: none !important;
+  }
+
+  .rb-diagram-narrow {
+    display: block !important;
+  }
+}
+
+/* The sidebar title stays legible over the list scrolling under it. */
+@media (min-width: 76.25em) {
+  .md-nav--primary > .md-nav__title,
+  .md-nav--secondary > .md-nav__title {
+    background: var(--md-default-bg-color);
+    border-bottom: 1px solid var(--rb-border);
+  }
+}
+
 /* Material's compact footer defaults sit just below WCAG AA on the dark bar. */
 .md-footer-meta .md-copyright {
   color: #b5b5b5;
@@ -249,6 +778,116 @@
   color: #b8c6ff !important;
 }
 
+/* 404 page */
+.rb-notfound-search {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0.55em 1.2em;
+  border: 1px solid currentColor;
+  border-radius: 2px;
+  color: var(--rb-link);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+@media (max-width: 44.984375em) {
+  /* Tables with an action column become one block per row, so the button
+     is never behind a horizontal scroll (site.js marks them). */
+  .md-typeset__table:has(table[data-rb-stack]) {
+    display: block;
+  }
+
+  .md-typeset table[data-rb-stack] {
+    display: block;
+    width: 100%;
+  }
+
+  .md-typeset table[data-rb-stack] thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+  }
+
+  .md-typeset table[data-rb-stack] tbody,
+  .md-typeset table[data-rb-stack] tr {
+    display: block;
+  }
+
+  .md-typeset table[data-rb-stack] tr {
+    padding: 0.5rem 0;
+    border-top: 1px solid var(--rb-border);
+  }
+
+  .md-typeset table[data-rb-stack] td {
+    display: block;
+    position: relative;
+    min-height: 1.6rem;
+    padding: 0.25rem 0.6rem 0.25rem 8.4rem;
+    border: 0;
+    text-align: left !important;
+    overflow-wrap: anywhere;
+  }
+
+  .md-typeset table[data-rb-stack] td::before {
+    content: attr(data-label);
+    position: absolute;
+    top: 0.25rem;
+    left: 0.6rem;
+    width: 7.4rem;
+    font-weight: 600;
+    color: var(--rb-text-secondary);
+  }
+
+  .md-typeset table[data-rb-stack] td .md-button {
+    margin: 0 0.3rem 0.3rem 0;
+  }
+
+  .md-typeset table[data-rb-stack] td:empty {
+    display: none;
+  }
+
+  /* Other wide tables scroll with their first column held in place. */
+  .md-typeset table:not([class]):not([data-rb-stack]) :is(td, th):first-child {
+    position: sticky;
+    left: 0;
+    max-width: 40vw;
+    background: var(--md-default-bg-color);
+    overflow-wrap: anywhere;
+  }
+
+  .md-typeset table:not([class]):not([data-rb-stack]) th:first-child {
+    z-index: 2;
+  }
+
+  /* On a phone every command wraps: the end of a one-liner (the "| sh"
+     that makes it work) is never off-screen. Terminal output keeps its
+     columns and scrolls. */
+  .md-typeset pre > code {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    padding-right: 2.6rem;
+  }
+
+  .md-typeset :is(.rb-terminal, .language-text) pre > code {
+    white-space: pre;
+    overflow-wrap: normal;
+  }
+
+  /* Text on reference pages stays at 12 px or more on a phone. */
+  .rb-file-entry ul,
+  .rb-sys-file ul,
+  .rb-hash {
+    font-size: 0.75rem;
+  }
+
+  .rb-page-header {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 600px) {
   .rb-table-filter {
     grid-template-columns: 1fr;
@@ -256,6 +895,14 @@
 
   .rb-table-filter label {
     grid-column: auto;
+  }
+
+  .rb-stats {
+    grid-template-columns: repeat(auto-fit, minmax(5.5rem, 1fr));
+  }
+
+  .rb-stat .rb-stat-value {
+    font-size: 1.1rem;
   }
 }
 

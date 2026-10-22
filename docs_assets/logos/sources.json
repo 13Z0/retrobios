@@ -1,0 +1,124 @@
+{
+  "note": "Each platform's own logo, owned by its project and shown only to name that platform. Copied once by scripts/fetch_site_images.py.",
+  "images": [
+    {
+      "file": "amberelec.png",
+      "platform": "amberelec",
+      "source": "https://avatars.githubusercontent.com/u/102820909",
+      "owner": "AmberELEC",
+      "licence": "GitHub organisation avatar of AmberELEC"
+    },
+    {
+      "file": "batocera.svg",
+      "platform": "batocera",
+      "source": "https://raw.githubusercontent.com/batocera-linux/batocera-emulationstation/master/resources/splash_batocera.svg",
+      "owner": "Batocera",
+      "licence": "repository licence MIT"
+    },
+    {
+      "file": "bizhawk.png",
+      "platform": "bizhawk",
+      "source": "https://avatars.githubusercontent.com/u/11743303",
+      "owner": "TASVideos",
+      "licence": "GitHub organisation avatar of TASEmulators"
+    },
+    {
+      "file": "emudeck.png",
+      "platform": "emudeck",
+      "source": "https://raw.githubusercontent.com/dragoonDorise/EmuDeck/main/icons/EmuDeck.png",
+      "owner": "EmuDeck",
+      "licence": "repository licence GPL-3.0"
+    },
+    {
+      "file": "emuelec.png",
+      "platform": "emuelec",
+      "source": "https://avatars.githubusercontent.com/u/57574835",
+      "owner": "EmuELEC",
+      "licence": "GitHub organisation avatar of EmuELEC"
+    },
+    {
+      "file": "knulli.png",
+      "platform": "knulli",
+      "source": "https://avatars.githubusercontent.com/u/166268572",
+      "owner": "KNULLI",
+      "licence": "GitHub organisation avatar of knulli-cfw"
+    },
+    {
+      "file": "lakka.svg",
+      "platform": "lakka",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/src/xmb/flatui/lakka.svg",
+      "owner": "Lakka (libretro)",
+      "licence": "file from libretro/retroarch-assets, CC-BY-4.0"
+    },
+    {
+      "file": "minui.png",
+      "platform": "minui",
+      "source": "https://avatars.githubusercontent.com/u/225589",
+      "owner": "Shaun Inman",
+      "licence": "GitHub avatar of shauninman, the author of MinUI"
+    },
+    {
+      "file": "misterfpga.png",
+      "platform": "misterfpga",
+      "source": "https://avatars.githubusercontent.com/u/29345272",
+      "owner": "MiSTer FPGA",
+      "licence": "GitHub organisation avatar of MiSTer-devel"
+    },
+    {
+      "file": "nextui.png",
+      "platform": "nextui",
+      "source": "https://avatars.githubusercontent.com/u/202386615",
+      "owner": "LoveRetro",
+      "licence": "GitHub organisation avatar of LoveRetro"
+    },
+    {
+      "file": "recalbox.svg",
+      "platform": "recalbox",
+      "source": "https://raw.githubusercontent.com/homarr-labs/dashboard-icons/main/svg/recalbox.svg",
+      "owner": "Recalbox",
+      "licence": "file from homarr-labs/dashboard-icons, Apache-2.0"
+    },
+    {
+      "file": "retroarch.svg",
+      "platform": "retroarch",
+      "source": "https://raw.githubusercontent.com/libretro/RetroArch/master/media/retroarch-vector_invader-only.svg",
+      "owner": "libretro",
+      "licence": "repository licence GPL-3.0"
+    },
+    {
+      "file": "retrobat.png",
+      "platform": "retrobat",
+      "source": "https://raw.githubusercontent.com/RetroBat-Official/retrobat/main/system/resources/retrobat_logo_notext.png",
+      "owner": "RetroBat",
+      "licence": "repository states no licence"
+    },
+    {
+      "file": "retrodeck.svg",
+      "platform": "retrodeck",
+      "source": "https://raw.githubusercontent.com/RetroDECK/RetroDECK/main/res/icon.svg",
+      "owner": "RetroDECK",
+      "licence": "repository licence GPL-3.0"
+    },
+    {
+      "file": "retropie.png",
+      "platform": "retropie",
+      "source": "https://avatars.githubusercontent.com/u/11378204",
+      "owner": "RetroPie",
+      "licence": "GitHub organisation avatar of RetroPie"
+    },
+    {
+      "file": "rocknix.png",
+      "platform": "rocknix",
+      "source": "https://avatars.githubusercontent.com/u/163176886",
+      "owner": "ROCKNIX",
+      "licence": "GitHub organisation avatar of ROCKNIX"
+    },
+    {
+      "file": "romm.png",
+      "platform": "romm",
+      "source": "https://avatars.githubusercontent.com/u/164058018",
+      "owner": "RomM",
+      "licence": "GitHub organisation avatar of rommapp"
+    }
+  ]
+}

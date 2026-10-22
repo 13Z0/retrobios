@@ -2,16 +2,65 @@
 (() => {
   "use strict";
 
+  // A heading's words without its permalink sign.
+  const headingText = (heading) => {
+    const copy = heading.cloneNode(true);
+    copy.querySelectorAll(".headerlink").forEach((link) => link.remove());
+    return copy.textContent.trim();
+  };
+
   const textFromHeading = (element) => {
     let cursor = element;
     while (cursor) {
       cursor = cursor.previousElementSibling;
       if (!cursor) break;
       if (/^H[1-6]$/.test(cursor.tagName)) {
-        return cursor.textContent.trim();
+        return headingText(cursor);
       }
     }
-    return document.querySelector("h1")?.textContent.trim() || "Data table";
+    const title = document.querySelector("h1");
+    return title ? headingText(title) : "Data table";
+  };
+
+  // A scroller is a stop in the tab order only while it overflows: a table
+  // in a closed block or a hidden tab gains its overflow later.
+  const markScrollable = (container, heading) => {
+    if (!container) return;
+    container.dataset.rbHeading = heading;
+    if (container.scrollWidth > container.clientWidth + 1) {
+      container.tabIndex = 0;
+      container.setAttribute("role", "region");
+      container.setAttribute("aria-label", `${heading}, scrollable table`);
+    } else if (container.getAttribute("role") === "region") {
+      container.removeAttribute("tabindex");
+      container.removeAttribute("role");
+      container.removeAttribute("aria-label");
+    }
+  };
+
+  const recheckScrollable = () => {
+    document.querySelectorAll(".md-typeset__scrollwrap[data-rb-heading]").forEach((container) => {
+      markScrollable(container, container.dataset.rbHeading);
+    });
+  };
+
+  // A table whose rows end in an action (a download button) is laid out one
+  // block per row on a phone, each cell under its column name, so the action
+  // never sits behind a horizontal scroll.
+  const stackActionTable = (table) => {
+    if (!table.querySelector("tbody .md-button")) return;
+    const labels = Array.from(table.querySelectorAll("thead th")).map((cell) =>
+      cell.textContent.trim()
+    );
+    if (!labels.length) return;
+    table.dataset.rbStack = "true";
+    table.querySelectorAll("tbody tr").forEach((row) => {
+      Array.from(row.children).forEach((cell, column) => {
+        if (labels[column] && !cell.hasAttribute("data-label")) {
+          cell.setAttribute("data-label", labels[column]);
+        }
+      });
+    });
   };
 
   const enhanceTables = () => {
@@ -27,7 +76,9 @@
         if (first && !first.hasAttribute("scope")) first.setAttribute("scope", "row");
       });
 
-      const container = table.parentElement;
+      // The scrolling element is Material's scrollwrap, one level above
+      // the table's own wrapper.
+      const container = table.closest(".md-typeset__scrollwrap") || table.parentElement;
       const heading = textFromHeading(container);
       if (!table.querySelector("caption")) {
         const caption = document.createElement("caption");
@@ -35,11 +86,8 @@
         caption.textContent = heading;
         table.prepend(caption);
       }
-      if (container && container.scrollWidth > container.clientWidth) {
-        container.tabIndex = 0;
-        container.setAttribute("role", "region");
-        container.setAttribute("aria-label", `${heading}, scrollable table`);
-      }
+      stackActionTable(table);
+      markScrollable(container, heading);
 
       const rows = Array.from(table.querySelectorAll("tbody tr"));
       if (rows.length < 20 || !container || container.dataset.rbFilter === "true") {
@@ -88,10 +136,15 @@
       const heading = dialog.querySelector("h1, h2, h3");
       dialog.setAttribute("aria-label", heading?.textContent.trim() || "Site search");
     });
-    document.querySelectorAll('[role="progressbar"]').forEach((progress) => {
-      if (!progress.hasAttribute("aria-label") && !progress.hasAttribute("aria-labelledby")) {
-        progress.setAttribute("aria-label", "Loading page");
-      }
+    // The page-load bar is drawn for the eye only: the new page announces
+    // itself when it arrives.
+    document.querySelectorAll(".md-progress").forEach((progress) => {
+      progress.setAttribute("aria-hidden", "true");
+    });
+    // Material wraps each copy button in a nav element: one unnamed
+    // navigation landmark per code block. The button stays, the landmark goes.
+    document.querySelectorAll("nav.md-code__nav").forEach((nav) => {
+      nav.setAttribute("role", "none");
     });
   };
 
@@ -129,6 +182,16 @@
     nameMaterialWidgets();
     resolveFileAddress();
   };
+
+  let resizeTimer = 0;
+  window.addEventListener("resize", () => {
+    window.clearTimeout(resizeTimer);
+    resizeTimer = window.setTimeout(recheckScrollable, 150);
+  });
+  document.addEventListener("toggle", recheckScrollable, true);
+  document.addEventListener("change", (event) => {
+    if (event.target.matches?.(".tabbed-set > input")) recheckScrollable();
+  });
 
   if (window.document$?.subscribe) {
     window.document$.subscribe(enhance);

@@ -33,6 +33,8 @@ class Page:
     missing_alt: list[str] = field(default_factory=list)
     jsonld: list[str] = field(default_factory=list)
     unrendered: list[str] = field(default_factory=list)
+    remote_images: list[str] = field(default_factory=list)
+    placeholders: list[str] = field(default_factory=list)
 
 
 # Text inside these is shown as written, so markup there is not a leftover.
@@ -77,8 +79,20 @@ class _PageParser(HTMLParser):
             self.page.links.append(data["href"])
         if tag in ("img", "script", "source") and data.get("src"):
             self.page.links.append(data["src"])
+        # An image from another host breaks when that host renames it, and
+        # tells it about every visit: the site serves its own copies.
+        sources = [data.get("src") or ""] + (data.get("srcset") or "").split(",")
+        if tag in ("img", "source", "image") and any(
+            re.match(r"\s*(?:https?:)?//", value) for value in sources if value
+        ):
+            self.page.remote_images.append(data.get("src") or data.get("srcset") or "?")
         if tag == "link" and "canonical" in data.get("rel", "").split():
             self.page.canonical.append(data.get("href", ""))
+
+    def handle_comment(self, data: str) -> None:
+        match = re.match(r"\s*image:\s*(\S+)", data)
+        if match:
+            self.page.placeholders.append(match.group(1))
 
     def handle_endtag(self, tag: str) -> None:
         if tag in _LITERAL_TAGS and self._literal_depth:
@@ -204,6 +218,11 @@ def _check_pages(
             report(path, f"duplicate IDs: {duplicate_ids[:5]}")
         if page.missing_alt:
             report(path, f"images missing alt: {page.missing_alt[:5]}")
+        if page.remote_images:
+            report(path, f"images loaded from another host: {page.remote_images[:3]}")
+        if page.placeholders:
+            # scripts/sitediagrams.py knows no diagram of this name.
+            report(path, f"image placeholders left unresolved: {page.placeholders[:3]}")
         if page.unrendered:
             # Bold that reached the reader as asterisks: a block indented
             # one level too deep is read as code (the clownmdemu analysis).

@@ -1876,8 +1876,11 @@ def decorate_markdown_pages(docs: Path) -> None:
         relative = path.relative_to(docs)
         if any(part in LOCAL_NOTE_DIRS for part in relative.parts[:-1]):
             continue
-        markdown = path.read_text(encoding="utf-8")
-        authored = _front_matter(markdown)
+        original = path.read_text(encoding="utf-8")
+        authored = _front_matter(original)
+        markdown = prepare_page(original, relative)
+        for image_id in unresolved_images(markdown):
+            print(f"  WARNING: {relative}: no diagram named {image_id!r}", file=sys.stderr)
         stripped = _undecorated(markdown)
         if stripped is not markdown:
             markdown = stripped
@@ -5923,6 +5926,12 @@ def _generate(args: argparse.Namespace) -> None:
 
     images_dest = docs / "assets" / "images"
     images_dest.mkdir(parents=True, exist_ok=True)
+    # Logos, system icons and sharing cards are served from the site itself
+    # (docs_assets/*/sources.json records where each came from).
+    for folder in ("logos", "system-icons", "og"):
+        source = Path("docs_assets") / folder
+        if source.is_dir():
+            shutil.copytree(source, docs / "assets" / folder, dirs_exist_ok=True)
     assets_src = Path(".github") / "assets"
     for name, dest_name in [("logo.png", "logo.png"), ("favicon.png", "favicon.png")]:
         src = assets_src / name
@@ -6282,6 +6291,7 @@ validation:
     if stale:
         print(f"Removed {stale} page(s) nothing produced this run")
 
+from sitediagrams import prepare_page, unresolved_images  # noqa: E402,F401
 from sitewrite import (  # noqa: E402,F401
     _produced,
     _record,
@@ -6321,7 +6331,7 @@ from siterender import (  # noqa: E402,F401
     prime_system_icons,
     _icon_available,
     SYSTEM_ICON_BASE,
-    ICON_CACHE_PATH,
+    ICON_DIR,
 )
 
 if __name__ == "__main__":

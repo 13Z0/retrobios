@@ -1,0 +1,321 @@
+{
+  "note": "System icons from libretro/retroarch-assets (xmb/systematic), licensed CC-BY-4.0 by the libretro team. Resized to 48 px.",
+  "images": [
+    {
+      "file": "APF - Imagination Machine.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/APF%20-%20Imagination%20Machine.png"
+    },
+    {
+      "file": "Acorn - Archimedes.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/Acorn%20-%20Archimedes.png"
+    },
+    {
+      "file": "Acorn - BBC Micro.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/Acorn%20-%20BBC%20Micro.png"
+    },
+    {
+      "file": "Amstrad - CPC.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/Amstrad%20-%20CPC.png"
+    },
+    {
+      "file": "Apple - Macintosh.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/Apple%20-%20Macintosh.png"
+    },
+    {
+      "file": "Aquaplus - PIECE.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/Aquaplus%20-%20PIECE.png"
+    },
+    {
+      "file": "Atari - 2600.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/Atari%20-%202600.png"
+    },
+    {
+      "file": "Atari - 5200.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/Atari%20-%205200.png"
+    },
+    {
+      "file": "Atari - 7800.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/Atari%20-%207800.png"
+    },
+    {
+      "file": "Atari - Jaguar.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/Atari%20-%20Jaguar.png"
+    },
+    {
+      "file": "Atari - Lynx.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/Atari%20-%20Lynx.png"
+    },
+    {
+      "file": "Atari - ST.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/Atari%20-%20ST.png"
+    },
+    {
+      "file": "Atari - XEGS.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/Atari%20-%20XEGS.png"
+    },
+    {
+      "file": "Bally - Astrocade.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/Bally%20-%20Astrocade.png"
+    },
+    {
+      "file": "Bandai - WonderSwan.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/Bandai%20-%20WonderSwan.png"
+    },
+    {
+      "file": "Bit Corporation - Gamate.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/Bit%20Corporation%20-%20Gamate.png"
+    },
+    {
+      "file": "Casio - Loopy.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/Casio%20-%20Loopy.png"
+    },
+    {
+      "file": "Casio - PV-2000.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/Casio%20-%20PV-2000.png"
+    },
+    {
+      "file": "Coleco - ColecoVision.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/Coleco%20-%20ColecoVision.png"
+    },
+    {
+      "file": "Commodore - Amiga.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/Commodore%20-%20Amiga.png"
+    },
+    {
+      "file": "Commodore - VIC-20.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/Commodore%20-%20VIC-20.png"
+    },
+    {
+      "file": "Entex - Adventure Vision.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/Entex%20-%20Adventure%20Vision.png"
+    },
+    {
+      "file": "Epoch - Super Cassette Vision.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/Epoch%20-%20Super%20Cassette%20Vision.png"
+    },
+    {
+      "file": "Fairchild - Channel F.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/Fairchild%20-%20Channel%20F.png"
+    },
+    {
+      "file": "Fujitsu - FM Towns.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/Fujitsu%20-%20FM%20Towns.png"
+    },
+    {
+      "file": "Fujitsu - FM-7.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/Fujitsu%20-%20FM-7.png"
+    },
+    {
+      "file": "GCE - Vectrex.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/GCE%20-%20Vectrex.png"
+    },
+    {
+      "file": "GamePark - GP32.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/GamePark%20-%20GP32.png"
+    },
+    {
+      "file": "Hartung - Game Master.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/Hartung%20-%20Game%20Master.png"
+    },
+    {
+      "file": "Infocom - Z-Machine.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/Infocom%20-%20Z-Machine.png"
+    },
+    {
+      "file": "Magnavox - Odyssey2.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/Magnavox%20-%20Odyssey2.png"
+    },
+    {
+      "file": "Mattel - Intellivision.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/Mattel%20-%20Intellivision.png"
+    },
+    {
+      "file": "Microsoft - MSX.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/Microsoft%20-%20MSX.png"
+    },
+    {
+      "file": "Microsoft - Xbox.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/Microsoft%20-%20Xbox.png"
+    },
+    {
+      "file": "NEC - PC-88.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/NEC%20-%20PC-88.png"
+    },
+    {
+      "file": "NEC - PC-98.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/NEC%20-%20PC-98.png"
+    },
+    {
+      "file": "NEC - PC-FX.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/NEC%20-%20PC-FX.png"
+    },
+    {
+      "file": "Nintendo - Game Boy Advance.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/Nintendo%20-%20Game%20Boy%20Advance.png"
+    },
+    {
+      "file": "Nintendo - Game Boy Color.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/Nintendo%20-%20Game%20Boy%20Color.png"
+    },
+    {
+      "file": "Nintendo - Game Boy.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/Nintendo%20-%20Game%20Boy.png"
+    },
+    {
+      "file": "Nintendo - GameCube.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/Nintendo%20-%20GameCube.png"
+    },
+    {
+      "file": "Nintendo - Nintendo 64.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/Nintendo%20-%20Nintendo%2064.png"
+    },
+    {
+      "file": "Nintendo - Nintendo 64DD.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/Nintendo%20-%20Nintendo%2064DD.png"
+    },
+    {
+      "file": "Nintendo - Nintendo DS.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/Nintendo%20-%20Nintendo%20DS.png"
+    },
+    {
+      "file": "Nintendo - Pokemon Mini.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/Nintendo%20-%20Pokemon%20Mini.png"
+    },
+    {
+      "file": "Nintendo - Satellaview.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/Nintendo%20-%20Satellaview.png"
+    },
+    {
+      "file": "Nintendo - Switch.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/Nintendo%20-%20Switch.png"
+    },
+    {
+      "file": "Nintendo - Wii U.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/Nintendo%20-%20Wii%20U.png"
+    },
+    {
+      "file": "Nintendo - Wii.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/Nintendo%20-%20Wii.png"
+    },
+    {
+      "file": "Nokia - N-Gage.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/Nokia%20-%20N-Gage.png"
+    },
+    {
+      "file": "Philips - CD-i.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/Philips%20-%20CD-i.png"
+    },
+    {
+      "file": "Philips - Videopac+.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/Philips%20-%20Videopac%2B.png"
+    },
+    {
+      "file": "Pioneer - LaserActive.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/Pioneer%20-%20LaserActive.png"
+    },
+    {
+      "file": "RCA - Studio II.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/RCA%20-%20Studio%20II.png"
+    },
+    {
+      "file": "SNK - Neo Geo CD.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/SNK%20-%20Neo%20Geo%20CD.png"
+    },
+    {
+      "file": "SNK - Neo Geo Pocket.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/SNK%20-%20Neo%20Geo%20Pocket.png"
+    },
+    {
+      "file": "SNK - Neo Geo.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/SNK%20-%20Neo%20Geo.png"
+    },
+    {
+      "file": "Sega - 32X.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/Sega%20-%2032X.png"
+    },
+    {
+      "file": "Sega - Beena.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/Sega%20-%20Beena.png"
+    },
+    {
+      "file": "Sega - Chihiro.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/Sega%20-%20Chihiro.png"
+    },
+    {
+      "file": "Sega - Dreamcast.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/Sega%20-%20Dreamcast.png"
+    },
+    {
+      "file": "Sega - Game Gear.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/Sega%20-%20Game%20Gear.png"
+    },
+    {
+      "file": "Sega - Saturn.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/Sega%20-%20Saturn.png"
+    },
+    {
+      "file": "Sharp - X1.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/Sharp%20-%20X1.png"
+    },
+    {
+      "file": "Sharp - X68000.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/Sharp%20-%20X68000.png"
+    },
+    {
+      "file": "Sinclair - ZX 81.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/Sinclair%20-%20ZX%2081.png"
+    },
+    {
+      "file": "Sinclair - ZX Spectrum.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/Sinclair%20-%20ZX%20Spectrum.png"
+    },
+    {
+      "file": "Sony - PlayStation 2.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/Sony%20-%20PlayStation%202.png"
+    },
+    {
+      "file": "Sony - PlayStation 4.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/Sony%20-%20PlayStation%204.png"
+    },
+    {
+      "file": "Sony - PlayStation Portable.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/Sony%20-%20PlayStation%20Portable.png"
+    },
+    {
+      "file": "Sony - PlayStation Vita.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/Sony%20-%20PlayStation%20Vita.png"
+    },
+    {
+      "file": "Sony - PlayStation.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/Sony%20-%20PlayStation.png"
+    },
+    {
+      "file": "Texas Instruments - TI-83.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/Texas%20Instruments%20-%20TI-83.png"
+    },
+    {
+      "file": "Tiger - Game.com.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/Tiger%20-%20Game.com.png"
+    },
+    {
+      "file": "Tomy - Tutor.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/Tomy%20-%20Tutor.png"
+    },
+    {
+      "file": "VTech - CreatiVision.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/VTech%20-%20CreatiVision.png"
+    },
+    {
+      "file": "VTech - Socrates.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/VTech%20-%20Socrates.png"
+    },
+    {
+      "file": "VTech - V.Smile.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/VTech%20-%20V.Smile.png"
+    },
+    {
+      "file": "Videoton - TVC.png",
+      "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/xmb/systematic/png/Videoton%20-%20TVC.png"
+    }
+  ]
+}

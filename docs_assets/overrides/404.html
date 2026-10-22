@@ -1,0 +1,37 @@
+{% extends "main.html" %}
+
+{#
+  The page a stale link lands on. Pages have moved before (file cards
+  refiled between manufacturers), so it offers the search, the two pages a
+  visitor most often wants, and the list a moved emulator, system or
+  platform page belongs to.
+#}
+{% block content %}
+  <h1>Page not found</h1>
+  <p class="rb-lead">This address has no page. It may have moved since the link was written.</p>
+  <p><label class="rb-notfound-search" for="__search" tabindex="0">Search the site</label></p>
+  <ul>
+    <li><a href="{{ config.site_url }}">Start here</a>: what BIOS files are and how to install them</li>
+    <li><a href="{{ config.site_url }}which-pack/">Get your files</a>: the pack or the command for your device</li>
+    <li>Browse <a href="{{ config.site_url }}platforms/">platforms</a>, <a href="{{ config.site_url }}systems/">systems</a> or <a href="{{ config.site_url }}emulators/">emulators</a></li>
+  </ul>
+  <p id="rb-notfound-hint" hidden></p>
+  <script>
+    (() => {
+      const match = window.location.pathname.match(/\/(emulators|systems|platforms)\/([^/]+)\/?$/);
+      const hint = document.getElementById("rb-notfound-hint");
+      if (!match || !hint) return;
+      const link = document.createElement("a");
+      link.href = "{{ config.site_url }}" + match[1] + "/";
+      link.textContent = "the list of " + match[1];
+      hint.append("No page is named " + decodeURIComponent(match[2]) + " here. It may be listed under another name in ", link, ".");
+      hint.hidden = false;
+    })();
+    document.querySelector(".rb-notfound-search")?.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        event.currentTarget.click();
+      }
+    });
+  </script>
+{% endblock %}
