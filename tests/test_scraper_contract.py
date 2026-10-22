@@ -558,6 +558,9 @@ class UnreadableReleaseStopsTheScrape(unittest.TestCase):
             "scraper.emudeck_scraper",
             "scraper.misterfpga_scraper",
             "scraper.retropie_scraper",
+            "scraper.amberelec_scraper",
+            "scraper.emuelec_scraper",
+            "scraper.knulli_scraper",
         ):
             module = importlib.import_module(name)
             with self.subTest(scraper=name), mock.patch(
@@ -839,8 +842,11 @@ class OneNativeIdOneSystem(unittest.TestCase):
     # A platform system no profile names gets no core extra and answers no
     # --system. Named here: Batocera's family folds Naomi and Atomiswave into
     # one system the profiles keep apart, and MiSTer cores nothing profiles.
+    # EmuELEC lists Duke Nukem 2's data for RigelEngine, which no profile
+    # describes yet.
     UNMATCHED = {
         "*": {"sega-dreamcast-arcade"},
+        "emuelec": {"RigelEngine"},
         "misterfpga": {"gameking", "interact", "marty", "studio-ii", "superacan",
                        "videobrain"},
     }

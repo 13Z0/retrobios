@@ -2842,10 +2842,14 @@ def declared_root(config: dict) -> str:
     Only a platform whose base_destination is explicitly empty does that
     (RetroDECK writes bios/ in front of each file), and core files go under
     the same directory. A config that does not state a base says nothing,
-    and its common folder is a system's, not the BIOS root.
+    and its common folder is a system's, not the BIOS root. A platform whose
+    list also names folders beside the BIOS one states it as
+    core_destination: EmuELEC's ports/ entries are a quarter of its list.
     """
     if config.get("base_destination", None) != "":
         return ""
+    if config.get("core_destination"):
+        return str(config["core_destination"])
     roots = [
         d.split("/", 1)[0]
         for system in config.get("systems", {}).values()

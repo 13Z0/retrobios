@@ -32,6 +32,7 @@ EMULATORS = REPO_ROOT / "emulators"
 PLATFORM_WORDS = (
     "retroarch", "batocera", "recalbox", "retrobat", "emudeck", "lakka",
     "retrodeck", "romm", "rocknix", "retropie", "bizhawk", "mister",
+    "knulli", "amberelec", "emuelec",
 )
 
 # Launcher sources: configgen and emulatorLauncher generators, EmuDeck and

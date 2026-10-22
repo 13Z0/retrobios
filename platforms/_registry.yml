@@ -313,17 +313,6 @@ platforms:
     target_source: https://github.com/batocera-linux/batocera.linux
     install:
       detect:
-      # Knulli, a Batocera derivative (knulli-cfw/knulli-linux 57afa662):
-      # OS_NAME in os-release (board/scripts/post-build-script.sh:233-236),
-      # and knulli.version (package/system/knulli-system/knulli-system.mk:98-102).
-      - os: linux
-        method: os_release
-        match: [OS_NAME=knulli]
-        bios_path: /userdata/bios
-      - os: linux
-        method: file_exists
-        file: /usr/share/knulli/knulli.version
-        bios_path: /userdata/bios
       # batocera.linux 38845725, package/batocera/core/batocera-system/
       # batocera-system.mk:21-22 writes batocera.arch and batocera.version.
       - os: linux
@@ -571,6 +560,88 @@ platforms:
         method: os_release
         match: [OS_NAME=rocknix, ID=rocknix]
         bios_path: /storage/roms/bios
+  # AmberELEC's checker (batocera-systems) md5s each file under /storage/roms,
+  # where its list also names neogeo/neogeo.zip and neogeo/aes.zip: the pack
+  # is extracted there, not into bios/. EmulationStation's BIOS screen runs
+  # it (ApiSystem.cpp:603-613 at e3846751). The launch-failure check in
+  # 99-distribution.conf:320 passes --strictfilter, an argument the script
+  # does not handle, so that path reports nothing. No release since
+  # 20230203: the scraper reads the commit of the newest prerelease.
+  # Several device images, no per-device core list: no target file.
+  amberelec:
+    config: amberelec.yml
+    status: active
+    extract_to: /storage/roms/
+    logo: https://avatars.githubusercontent.com/u/102820909
+    scraper: amberelec
+    source_url: https://github.com/AmberELEC/AmberELEC/blob/dev/packages/amberelec/sources/scripts/batocera-systems
+    source_format: python_dict
+    hash_type: md5
+    schedule: monthly
+    target_scraper: null
+    target_source: null
+    install:
+      detect:
+      - os: linux
+        method: os_release
+        match: [NAME=AmberELEC]
+        bios_path: /storage/roms
+  # EmuELEC's checker md5s each file under /storage/roms and never reads
+  # zippedFile: its FM Towns entries hash the whole archive against a
+  # member's md5 and report UNTESTED whatever the archive holds. Run by
+  # EmulationStation's BIOS screen and by ee_check_bios after a failed
+  # launch (99-emuelec.conf:261). naomi and Dinothawr are written twice in
+  # the dict and the later entry is the one Python keeps.
+  emuelec:
+    config: emuelec.yml
+    status: active
+    extract_to: /storage/roms/
+    logo: https://avatars.githubusercontent.com/u/57574835
+    scraper: emuelec
+    source_url: https://github.com/EmuELEC/EmuELEC/blob/master/packages/sx05re/emuelec/bin/batocera/batocera-systems
+    source_format: python_dict
+    hash_type: md5
+    schedule: monthly
+    target_scraper: null
+    target_source: null
+    install:
+      detect:
+      - os: linux
+        method: os_release
+        match: [ID=emuelec]
+        bios_path: /storage/roms
+  # KNULLI's knulli-systems is its own fork of Batocera's list, checked the
+  # same way (md5, checkInsideZip, emulator/core gates) by its
+  # EmulationStation (knulli-cfw/batocera-emulationstation 10834d00,
+  # ApiSystem.cpp:764-774). Arch R (archr-linux/Arch-R dbd45d45) ships the
+  # same dict as archr-systems: lines 1-870 are identical, only the prefix
+  # (/storage/roms instead of /userdata) and the es_systems.cfg path differ.
+  # Many boards, no per-board core list: no target file.
+  knulli:
+    config: knulli.yml
+    status: active
+    extract_to: /userdata/bios/
+    logo: https://avatars.githubusercontent.com/u/166268572
+    scraper: knulli
+    source_url: https://github.com/knulli-cfw/knulli-linux/blob/knulli-main/package/system/knulli-scripts/scripts/knulli-systems
+    source_format: python_dict
+    hash_type: md5
+    schedule: monthly
+    target_scraper: null
+    target_source: null
+    install:
+      detect:
+      # knulli-linux 57afa662: OS_NAME in os-release
+      # (board/scripts/post-build-script.sh:233-236) and knulli.version
+      # (package/system/knulli-system/knulli-system.mk:98-102).
+      - os: linux
+        method: os_release
+        match: [OS_NAME=knulli]
+        bios_path: /userdata/bios
+      - os: linux
+        method: file_exists
+        file: /usr/share/knulli/knulli.version
+        bios_path: /userdata/bios
   retropie:
     config: retropie.yml
     status: archived

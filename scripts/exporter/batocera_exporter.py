@@ -35,6 +35,27 @@ def _commented(text: str, position: int) -> bool:
     return "#" in _STRING.sub("", text[line_start:position])
 
 
+def _closing_line(text: str, start: int) -> int | None:
+    """Index of the line holding the brace that closes `systems = {`.
+
+    Read from the parsed module, never executed. None when the script does
+    not parse or names no such assignment at line `start`.
+    """
+    try:
+        tree = ast.parse(text)
+    except SyntaxError:
+        return None
+    for node in tree.body:
+        if (
+            isinstance(node, ast.Assign)
+            and node.lineno - 1 == start
+            and isinstance(node.value, ast.Dict)
+            and node.end_lineno is not None
+        ):
+            return node.end_lineno - 1
+    return None
+
+
 def _note_key(text: str) -> tuple[str, str]:
     """(file, zippedFile) of the item a line holds, ("", "") for none."""
     path = re.search(r'"file"\s*:\s*"([^"]+)"', text)
@@ -54,6 +75,11 @@ class Exporter(BaseExporter):
     # standalone_cores are those names. ROCKNIX's list holds package names
     # (duckstation-sa), which its checker does not know.
     STANDALONE_RUNNERS = True
+
+    # What the script's paths add in front of a destination. Batocera's
+    # paths are relative to /userdata and our destinations to its bios/;
+    # AmberELEC's and EmuELEC's destinations already start at /storage/roms.
+    PATH_PREFIX = "bios/"
 
     def __init__(self) -> None:
         super().__init__()
@@ -200,14 +226,19 @@ class Exporter(BaseExporter):
         alt = fe.native("alt_md5", "")
         if alt:
             item.append(f'"altmd5": "{alt}"')
-        declared = fe.native("native_path", "")
-        path = str(declared) if declared else f"bios/{fe.destination}"
+        path = self.declared_path(fe)
         item.append(f'"file": "{path}"')
         zipped = fe.native("zipped_file", "")
         if zipped:
             item.append(f'"zippedFile": "{zipped}"')
         item.extend(self._runner_keys(originals.get(path)) if runner is None else runner)
         return "{ " + ", ".join(item) + " }"
+
+    @classmethod
+    def declared_path(cls, fe: NativeFile) -> str:
+        """The `file` the script names for an entry."""
+        declared = fe.native("native_path", "")
+        return str(declared) if declared else f"{cls.PATH_PREFIX}{fe.destination}"
 
     @staticmethod
     def _own_entry(system: NativeSystem, before: dict | None) -> dict:
@@ -397,6 +428,9 @@ class Exporter(BaseExporter):
             None,
         )
         if end is None:
+            # EmuELEC closes the dict with an indented brace.
+            end = _closing_line(original, start)
+        if end is None:
             raise ValueError("batocera-systems: the systems dict is not closed")
         return lines[: start + 1], lines[start + 1 : end], lines[end:]
 
@@ -520,14 +554,12 @@ class Exporter(BaseExporter):
         content = produced[self.native_filename()]
         issues: list[str] = []
 
-        block = content.split("\nsystems = {", 1)
-        if len(block) != 2:
-            return ["no systems dict in the output"]
-        end = block[1].find("\n}")
-        if end < 0:
-            return ["the systems dict is not closed"]
         try:
-            exported = ast.literal_eval("{" + block[1][:end] + "\n}")
+            _head, body, _tail = self._split_original(content)
+        except ValueError as exc:
+            return [str(exc)]
+        try:
+            exported = ast.literal_eval("{" + "\n".join(body) + "\n}")
         except (SyntaxError, ValueError) as exc:
             return [f"the systems dict does not parse: {exc}"]
 
@@ -541,8 +573,7 @@ class Exporter(BaseExporter):
                 continue
             declared = {bios.get("file", "") for bios in entry.get("biosFiles", [])}
             for fe in files:
-                path = str(fe.native("native_path", "")) or f"bios/{fe.destination}"
-                if path not in declared:
+                if self.declared_path(fe) not in declared:
                     issues.append(f"absent: {system.native_id}/{fe.name}")
 
         for native_id, entry in exported.items():
