@@ -6,7 +6,7 @@
   "platform": "recalbox",
   "display_name": "Recalbox",
   "version": "1.0",
-  "generated": "2026-10-22T09:16:18Z",
+  "generated": "2026-10-22T09:20:33Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -36576,9 +36576,9 @@
       ],
       "alternatives": [
         {
-          "sha1": "a32161e3b5904f3eb87a156d35fbd941c8f913d0",
-          "sha256": "4a9187a43ff9ccae171ecfed8284af57328d7ac645516bdb763b227b54b6ddc1",
-          "size": 7985810,
+          "sha1": "e8c7243652c2457543c82ddc95cb4ecf3bfcb149",
+          "sha256": "630c0db05bb56455e4a25c0abc1b0047d5a0ff332ef27dcc3b999a3511af1aeb",
+          "size": 2075031,
           "repo_path": "bios/Arcade/MAME/pumpitup.zip",
           "cores": [
             "mame0278"

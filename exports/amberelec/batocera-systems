@@ -447,7 +447,7 @@ systems = {
                                                                                   {"md5": "dbfce9db9deaa2567f6a84fde55f9680", "file": "bios/gbc_bios.bin"},
                                                                                   {"md5": "d574d4f9c12f305074798f54c091a8b4", "file": "bios/sgb_bios.bin"}]},
 
-    "n64":         {"name": "Nintendo 64", "biosFiles":                          [{"md5": "8d3d9f294b6e174bc7b1d2fd1c727530", "file": "bios/64DD_IPL.bin"}]},
+    "n64":         {"name": "Nintendo 64", "biosFiles":                          [{"md5": "8d3d9f294b6e174bc7b1d2fd1c727530", "file": "bios/64DD_IPL.bin"}, { "md5": "785d2fd45984c6548763ae6702d83e20", "file": "Mupen64plus/font.ttf"}]},
 
     "nds":         {"name": "Nintendo DS", "biosFiles":                          [{"md5": "145eaef5bd3037cbc247c213bb3da1b3", "file": "bios/firmware.bin"},
                                                                                   {"md5": "df692a80a5b1bc90728bc3dfc76cd948", "file": "bios/bios7.bin"},

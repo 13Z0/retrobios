@@ -185,6 +185,7 @@ systems = {
                                             { "md5": "1e68c231d0896b7eadcad1d7d8e76129", "file": "bios/scph7001.bin"    },
                                             { "md5": "81328b966e6dcf7ea1e32e55e1c104bb", "file": "bios/scph5903.bin", "emulator": "libretro", "core": "mednafen_psx" },
                                             { "md5": "81bbe60ba7a3d1cea1d48c14cbcc647b", "file": "bios/ps1_rom.bin", "emulator": "libretro", "core": "mednafen_psx" },
+                                            { "md5": "81bbe60ba7a3d1cea1d48c14cbcc647b", "file": "bios/ps1_rom.bin", "emulator": "duckstation-legacy" },
                                             { "md5": "81bbe60ba7a3d1cea1d48c14cbcc647b", "file": "bios/ps1_rom.bin", "emulator": "libretro", "core": "swanstation" } ] },
 
     # https://pcsx2.net/config-guide/official-english-pcsx2-configuration-guide.html#Bios
@@ -205,7 +206,10 @@ systems = {
                                             { "md5": "322ceeafb77b0cc96a1fcc6271e0e0ae", "file": "bios/dsi_bios7.bin" },
                                             { "md5": "23031f25602a52c2df32c39554b0c55e", "file": "bios/dsi_bios9.bin" },
                                             { "md5": "", "file": "bios/dsi_firmware.bin" }, # ideally - 74f23348012d7b3e1cc216c47192ffeb
-                                            { "md5": "", "file": "bios/dsi_nand.bin" } # ideally - d71edf897ddd06bf335feeb68edeb272
+                                            { "md5": "", "file": "bios/dsi_nand.bin" },
+                                            { "md5": "a392174eb3e572fed6447e956bde4b25", "file": "bios/system/nds_bios_arm9.bin", "emulator": "drastic" },
+                                            { "md5": "df692a80a5b1bc90728bc3dfc76cd948", "file": "bios/system/nds_bios_arm7.bin", "emulator": "drastic" },
+                                            { "md5": "3c704824663ce26b6a1ed4d85238ae5b", "file": "bios/system/nds_firmware.bin", "emulator": "drastic" } # ideally - d71edf897ddd06bf335feeb68edeb272
                                             ] },
 
     # https://docs.libretro.com/library/mgba/#bios

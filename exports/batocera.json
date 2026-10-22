@@ -1577,1284 +1577,1080 @@
       "system": "pc60",
       "name": "pc6001.zip",
       "destination": "pc6001.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "pc60",
       "name": "pc6001.zip",
       "destination": "pc6001.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "pc60",
       "name": "pc6001.zip",
       "destination": "pc6001.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "pc60",
       "name": "pc6001a.zip",
       "destination": "pc6001a.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "pc60",
       "name": "pc6001a.zip",
       "destination": "pc6001a.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "pc60",
       "name": "pc6001mk2.zip",
       "destination": "pc6001mk2.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "pc60",
       "name": "pc6001mk2.zip",
       "destination": "pc6001mk2.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "pc60",
       "name": "pc6001mk2.zip",
       "destination": "pc6001mk2.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "pc60",
       "name": "pc6001mk2.zip",
       "destination": "pc6001mk2.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "pc60",
       "name": "pc6001mk2.zip",
       "destination": "pc6001mk2.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "pc60",
       "name": "pc6001mk2sr.zip",
       "destination": "pc6001mk2sr.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "pc60",
       "name": "pc6001mk2sr.zip",
       "destination": "pc6001mk2sr.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "pc60",
       "name": "pc6001mk2sr.zip",
       "destination": "pc6001mk2sr.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "fmtowns",
       "name": "fmtmarty.zip",
       "destination": "fmtmarty.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [
         "tsugaru"
       ],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "fmtowns",
       "name": "fmtmarty.zip",
       "destination": "fmtmarty.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [
         "tsugaru"
       ],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "fmtowns",
       "name": "fmtmarty.zip",
       "destination": "fmtmarty.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [
         "tsugaru"
       ],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "fmtowns",
       "name": "fmtowns.zip",
       "destination": "fmtowns.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [
         "tsugaru"
       ],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "fmtowns",
       "name": "fmtowns.zip",
       "destination": "fmtowns.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [
         "tsugaru"
       ],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "fmtowns",
       "name": "fmtowns.zip",
       "destination": "fmtowns.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [
         "tsugaru"
       ],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "fmtowns",
       "name": "fmtowns.zip",
       "destination": "fmtowns.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [
         "tsugaru"
       ],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "fmtowns",
       "name": "fmtowns.zip",
       "destination": "fmtowns.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [
         "tsugaru"
       ],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "fmtowns",
       "name": "fmtownsux.zip",
       "destination": "fmtownsux.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [
         "tsugaru"
       ],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "fmtowns",
       "name": "fmtownsux.zip",
       "destination": "fmtownsux.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [
         "tsugaru"
       ],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "fmtowns",
       "name": "fmtownsux.zip",
       "destination": "fmtownsux.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [
         "tsugaru"
       ],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "fmtowns",
       "name": "fmtownsux.zip",
       "destination": "fmtownsux.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [
         "tsugaru"
       ],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "fmtowns",
       "name": "fmtownsux.zip",
       "destination": "fmtownsux.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [
         "tsugaru"
       ],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "fmtowns",
       "name": "fmtownsux.zip",
       "destination": "fmtownsux.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [
         "tsugaru"
       ],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "zc210",
       "name": "zcsf.sf2",
       "destination": "zcsf.sf2",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [
         "zc210"
       ],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "macintosh",
       "name": "macos3.img",
       "destination": "macos3.img",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [
         "mame",
         "minivmac"
       ],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "macintosh",
       "name": "macos608.img",
       "destination": "macos608.img",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [
         "mame",
         "minivmac"
       ],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "macintosh",
       "name": "macos701.img",
       "destination": "macos701.img",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [
         "mame",
         "minivmac"
       ],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "macintosh",
       "name": "macos75.img",
       "destination": "macos75.img",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [
         "mame",
         "minivmac"
       ],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "macintosh",
       "name": "mac608.chd",
       "destination": "mac608.chd",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [
         "mame",
         "minivmac"
       ],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "macintosh",
       "name": "mac701.chd",
       "destination": "mac701.chd",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [
         "mame",
         "minivmac"
       ],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "macintosh",
       "name": "mac755.chd",
       "destination": "mac755.chd",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [
         "mame",
         "minivmac"
       ],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "coco",
       "name": "coco2.zip",
       "destination": "coco2.zip",
       "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "reason": "a ROM set, and these cores open sets their profiles do not list: mame",
       "cores_examined": [
         "mame",
         "xroar"
       ],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "coco",
       "name": "coco2.zip",
       "destination": "coco2.zip",
       "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "reason": "a ROM set, and these cores open sets their profiles do not list: mame",
       "cores_examined": [
         "mame",
         "xroar"
       ],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "coco",
       "name": "coco_fdc_v11.zip",
       "destination": "coco_fdc_v11.zip",
       "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "reason": "a ROM set, and these cores open sets their profiles do not list: mame",
       "cores_examined": [
         "mame",
         "xroar"
       ],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "cgenie",
       "name": "cgenie.zip",
       "destination": "cgenie.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "dragon64",
       "name": "dragon32.zip",
       "destination": "dragon32.zip",
       "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "reason": "a ROM set, and these cores open sets their profiles do not list: mame",
       "cores_examined": [
         "mame",
         "xroar"
       ],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "dragon64",
       "name": "dragon32.zip",
       "destination": "dragon32.zip",
       "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "reason": "a ROM set, and these cores open sets their profiles do not list: mame",
       "cores_examined": [
         "mame",
         "xroar"
       ],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "bbc",
       "name": "bbcb.zip",
       "destination": "bbcb.zip",
       "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "reason": "a ROM set, and these cores open sets their profiles do not list: mame",
       "cores_examined": [
         "clk",
         "mame"
       ],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "bbc",
       "name": "bbcb.zip",
       "destination": "bbcb.zip",
       "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "reason": "a ROM set, and these cores open sets their profiles do not list: mame",
       "cores_examined": [
         "clk",
         "mame"
       ],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "bbc",
       "name": "bbcb.zip",
       "destination": "bbcb.zip",
       "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "reason": "a ROM set, and these cores open sets their profiles do not list: mame",
       "cores_examined": [
         "clk",
         "mame"
       ],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "bbc",
       "name": "bbcb.zip",
       "destination": "bbcb.zip",
       "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "reason": "a ROM set, and these cores open sets their profiles do not list: mame",
       "cores_examined": [
         "clk",
         "mame"
       ],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "bbc",
       "name": "bbcb.zip",
       "destination": "bbcb.zip",
       "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "reason": "a ROM set, and these cores open sets their profiles do not list: mame",
       "cores_examined": [
         "clk",
         "mame"
       ],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "bbc",
       "name": "bbcb.zip",
       "destination": "bbcb.zip",
       "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "reason": "a ROM set, and these cores open sets their profiles do not list: mame",
       "cores_examined": [
         "clk",
         "mame"
       ],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "bbc",
       "name": "bbcb.zip",
       "destination": "bbcb.zip",
       "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "reason": "a ROM set, and these cores open sets their profiles do not list: mame",
       "cores_examined": [
         "clk",
         "mame"
       ],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "bbc",
       "name": "bbcb.zip",
       "destination": "bbcb.zip",
       "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "reason": "a ROM set, and these cores open sets their profiles do not list: mame",
       "cores_examined": [
         "clk",
         "mame"
       ],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "atom",
       "name": "atom.zip",
       "destination": "atom.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "atom",
       "name": "atom.zip",
       "destination": "atom.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "atom",
       "name": "atom.zip",
       "destination": "atom.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "atom",
       "name": "atom.zip",
       "destination": "atom.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "apple2",
       "name": "apple2e.zip",
       "destination": "apple2e.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [
         "applewin",
         "clk"
       ],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "apple2",
       "name": "apple2e.zip",
       "destination": "apple2e.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [
         "applewin",
         "clk"
       ],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "apple2",
       "name": "apple2e.zip",
       "destination": "apple2e.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [
         "applewin",
         "clk"
       ],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "apple2",
       "name": "apple2e.zip",
       "destination": "apple2e.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [
         "applewin",
         "clk"
       ],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "apple2",
       "name": "apple2e.zip",
       "destination": "apple2e.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [
         "applewin",
         "clk"
       ],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "apple2",
       "name": "apple2ee.zip",
       "destination": "apple2ee.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [
         "applewin",
         "clk"
       ],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "apple2",
       "name": "apple2ee.zip",
       "destination": "apple2ee.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [
         "applewin",
         "clk"
       ],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "apple2",
       "name": "apple2ee.zip",
       "destination": "apple2ee.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [
         "applewin",
         "clk"
       ],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "apple2",
       "name": "apple2ee.zip",
       "destination": "apple2ee.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [
         "applewin",
         "clk"
       ],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "apple2",
       "name": "apple2ee.zip",
       "destination": "apple2ee.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [
         "applewin",
         "clk"
       ],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "apple2",
       "name": "apple2p.zip",
       "destination": "apple2p.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [
         "applewin",
         "clk"
       ],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "apple2",
       "name": "apple2p.zip",
       "destination": "apple2p.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [
         "applewin",
         "clk"
       ],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "apple2",
       "name": "apple2p.zip",
       "destination": "apple2p.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [
         "applewin",
         "clk"
       ],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "apple2",
       "name": "apple2p.zip",
       "destination": "apple2p.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [
         "applewin",
         "clk"
       ],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "apple2",
       "name": "apple2p.zip",
       "destination": "apple2p.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [
         "applewin",
         "clk"
       ],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "apple2",
       "name": "apple2p.zip",
       "destination": "apple2p.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [
         "applewin",
         "clk"
       ],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "apple2",
       "name": "apple2p.zip",
       "destination": "apple2p.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [
         "applewin",
         "clk"
       ],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "mz80k",
       "name": "mz80k.zip",
       "destination": "mz80k.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "mz80k",
       "name": "mz80k.zip",
       "destination": "mz80k.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "mz80k",
       "name": "mz80k.zip",
       "destination": "mz80k.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "mz80k",
       "name": "mz80kj.zip",
       "destination": "mz80kj.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "mz80k",
       "name": "mz80kj.zip",
       "destination": "mz80kj.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "mz80k",
       "name": "mz80kj.zip",
       "destination": "mz80kj.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "mz700",
       "name": "mz700.zip",
       "destination": "mz700.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "mz700",
       "name": "mz700.zip",
       "destination": "mz700.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "mz700",
       "name": "mz700.zip",
       "destination": "mz700.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "mz800",
       "name": "mz800.zip",
       "destination": "mz800.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "mz800",
       "name": "mz800.zip",
       "destination": "mz800.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "mz2000",
       "name": "mz2000.zip",
       "destination": "mz2000.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "mz2000",
       "name": "mz2000.zip",
       "destination": "mz2000.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "mz2000",
       "name": "mz2000.zip",
       "destination": "mz2000.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "mz2500",
       "name": "mz2500.zip",
       "destination": "mz2500.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "mz2500",
       "name": "mz2500.zip",
       "destination": "mz2500.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "mz2500",
       "name": "mz2500.zip",
       "destination": "mz2500.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "mz2500",
       "name": "mz2500.zip",
       "destination": "mz2500.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "mz2500",
       "name": "mz2500.zip",
       "destination": "mz2500.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "mz2500",
       "name": "mz2500.zip",
       "destination": "mz2500.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "mz2500",
       "name": "mz2500.zip",
       "destination": "mz2500.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "supracan",
       "name": "supracan.zip",
       "destination": "supracan.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "supracan",
       "name": "supracan.zip",
       "destination": "supracan.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "enterprise",
       "name": "epd19hft.rom",
       "destination": "ep128emu/roms/epd19hft.rom",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [
         "clk",
         "mame"
       ],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "enterprise",
       "name": "zt19hfnt.rom",
       "destination": "ep128emu/roms/zt19hfnt.rom",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [
         "clk",
         "mame"
       ],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "tvc",
       "name": "tvc64.zip",
       "destination": "tvc64.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [
         "ep128emu_core"
       ],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "tvc",
       "name": "tvc64.zip",
       "destination": "tvc64.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [
         "ep128emu_core"
       ],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "tvc",
       "name": "tvc64.zip",
       "destination": "tvc64.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [
         "ep128emu_core"
       ],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "tvc",
       "name": "tvc64.zip",
       "destination": "tvc64.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [
         "ep128emu_core"
       ],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "tvc",
       "name": "tvc64.zip",
       "destination": "tvc64.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [
         "ep128emu_core"
       ],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "tvc",
       "name": "tvc64.zip",
       "destination": "tvc64.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [
         "ep128emu_core"
       ],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     },
     {
       "system": "tvc",
       "name": "tvc64.zip",
       "destination": "tvc64.zip",
-      "verdict": "undetermined",
-      "reason": "a core the platform names has no profile yet",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
       "cores_examined": [
         "ep128emu_core"
       ],
-      "unresolved_cores": [
-        "duckstation-legacy"
-      ]
+      "unresolved_cores": []
     }
   ],
   "invalid": []

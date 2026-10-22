@@ -120,12 +120,6 @@
     ],
     "transform": "odd words, byte-swapped"
   },
-  "33777c133c76436a55ada7041eedb0ce76991984": {
-    "from": [
-      "bios/Arcade/MAME/spectrum_opus.zip/24.ic8"
-    ],
-    "transform": "mirrored twice"
-  },
   "3622111f486d0e137022523657394befa92bde44": {
     "from": [
       "bios/Commodore/C128/vice/PET/basic-2.901465-01-02.bin"
@@ -241,12 +235,6 @@
     ],
     "transform": "odd words, byte-swapped"
   },
-  "603ba1e5967ca6298ff598ced18b28439fbc027f": {
-    "from": [
-      "bios/Arcade/MAME/spectrum_opus.zip/gamma.bin"
-    ],
-    "transform": "second half"
-  },
   "6763a2258ec493f7408cf663110dae9a17803ad1": {
     "from": [
       "bios/Commodore/Amiga/amiga-os-310-a3000.rom"
@@ -333,6 +321,12 @@
     ],
     "transform": "even words, byte-swapped"
   },
+  "ba28754a3cc31a4ca579829ed4310c313409cf5d": {
+    "from": [
+      "bios/Other/speccy/MF1.ROM"
+    ],
+    "transform": "second half"
+  },
   "cd7a706c431b04d87814d3a2d8b397100cf44c0c": {
     "from": [
       "bios/Commodore/Amiga/amiga-os-310-a4000t.rom"
@@ -387,12 +381,6 @@
       "bios/Microsoft/MSX/MSX2R2.ROM"
     ],
     "transform": "second half"
-  },
-  "f27bb2ba0f4c7b9e8c6b997eefe5a21ebec80c71": {
-    "from": [
-      "bios/Arcade/MAME/spectrum_opus.zip/gamma.bin"
-    ],
-    "transform": "first half"
   },
   "f5d604d89daedb47a1abe4b0aa41ea762829e71e": {
     "from": [

@@ -180,6 +180,7 @@ systems = {
                                             { "md5": "1e68c231d0896b7eadcad1d7d8e76129", "file": "bios/scph7001.bin"    },
                                             { "md5": "81328b966e6dcf7ea1e32e55e1c104bb", "file": "bios/scph5903.bin", "emulator": "libretro", "core": "mednafen_psx" },
                                             { "md5": "81bbe60ba7a3d1cea1d48c14cbcc647b", "file": "bios/ps1_rom.bin", "emulator": "libretro", "core": "mednafen_psx" },
+                                            { "md5": "81bbe60ba7a3d1cea1d48c14cbcc647b", "file": "bios/ps1_rom.bin", "emulator": "duckstation-legacy" },
                                             { "md5": "81bbe60ba7a3d1cea1d48c14cbcc647b", "file": "bios/ps1_rom.bin", "emulator": "libretro", "core": "swanstation" } ] },
 
     # https://pcsx2.net/config-guide/official-english-pcsx2-configuration-guide.html#Bios
