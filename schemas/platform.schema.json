@@ -302,6 +302,12 @@
           "type": "string",
           "description": "Emulator core name"
         },
+        "cores": {
+          "type": "array",
+          "items": {"type": "string"},
+          "uniqueItems": true,
+          "description": "The emulators and cores the platform's system list offers this system, as the platform writes them, in its order"
+        },
         "manufacturer": {
           "type": "string",
           "description": "Hardware manufacturer"

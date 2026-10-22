@@ -142,6 +142,44 @@ def es_systems_libretro(text: str) -> set[str]:
     return found
 
 
+def es_systems_by_system(
+    es_systems_text: str, defaults_text: str, dropped: set[str]
+) -> dict[str, list[str]]:
+    """system -> the cores es_systems.yml offers it, in the file's order.
+
+    Read as configgen_cores reads the whole list: a core under `libretro:`
+    is a libretro core, any other emulator is its own core and so is each
+    build it lists. The core configgen-defaults.yml starts by default comes
+    last when es_systems.yml does not offer it.
+    """
+    data = yaml_load_upstream(es_systems_text)
+    defaults = yaml_load_upstream(defaults_text)
+    if not isinstance(data, dict) or not isinstance(defaults, dict):
+        raise ValueError("es_systems.yml or configgen-defaults.yml is not a mapping")
+    result: dict[str, list[str]] = {}
+    for system, spec in data.items():
+        emulators = spec.get("emulators") if isinstance(spec, dict) else None
+        names: list[str] = []
+        if isinstance(emulators, dict):
+            for emulator, entries in emulators.items():
+                if not isinstance(entries, dict):
+                    continue
+                if emulator != "libretro":
+                    names.append(str(emulator))
+                names.extend(str(c) for c, s in entries.items() if isinstance(s, dict))
+        default = defaults.get(system)
+        if isinstance(default, dict):
+            emulator, core = default.get("emulator"), default.get("core")
+            if emulator and emulator != "libretro":
+                names.append(str(emulator))
+            if core:
+                names.append(str(core))
+        names = [n for n in dict.fromkeys(names) if n not in dropped]
+        if names:
+            result[str(system)] = names
+    return result
+
+
 SYSTEM_SLUG_MAP = {
     "advision": "entex-advision",
     "amiga500": "commodore-amiga",

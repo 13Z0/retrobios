@@ -6,7 +6,7 @@ profiled_date: "2026-10-20"
 source_commit: "4ce19a12164ebd6802b7fb2f94d700a6e736d0fb"
 core_version: "3.88b"
 display_name: "LZDoom"
-cores: [lzdoom]
+cores: [lzdoom, "LZDoom"]
 systems: [doom, heretic, hexen, strife, chex]
 
 notes: |

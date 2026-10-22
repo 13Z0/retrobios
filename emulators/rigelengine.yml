@@ -7,7 +7,7 @@ profiled_date: "2026-10-22"
 source_commit: "30afeff8f0b105eac77ee0a2fbd54b06e1a49b60"
 core_version: "0.9.1-28-g30afeff8"
 display_name: "Duke Nukem II (RigelEngine)"
-cores: [rigelengine]
+cores: [rigelengine, "RigelEngine"]
 systems: [duke-nukem-2]
 verification: existence
 

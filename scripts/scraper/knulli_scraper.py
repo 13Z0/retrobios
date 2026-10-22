@@ -37,10 +37,12 @@ from .batocera_scraper import (
 from .batocera_scraper import (
     _not_cores,
     configgen_cores,
+    es_systems_by_system,
     extract_systems_dict,
     platform_systems,
     requirements_from_systems,
 )
+from .es_emulators import attach_system_cores
 
 PLATFORM_NAME = "knulli"
 
@@ -93,12 +95,16 @@ class Scraper(BaseScraper):
             self.fetch_requirements(), extract_systems_dict(self._fetch_raw()), SYSTEM_SLUG_MAP
         )
         # es_systems.yml files machine selectors and plugins under an
-        # emulator as Batocera's does: Batocera's list of them applies.
-        cores, standalone, dual = configgen_cores(
-            self._fetch_text(CONFIGGEN_DEFAULTS_TEMPLATE.format(ref=self.tag)),
-            self._fetch_text(ES_SYSTEMS_TEMPLATE.format(ref=self.tag)),
-            _not_cores("batocera"),
-        )
+        # emulator as Batocera's does: Batocera's list of them applies, with
+        # KNULLI's own.
+        defaults = self._fetch_text(CONFIGGEN_DEFAULTS_TEMPLATE.format(ref=self.tag))
+        es_systems = self._fetch_text(ES_SYSTEMS_TEMPLATE.format(ref=self.tag))
+        dropped = _not_cores("batocera") | _not_cores(PLATFORM_NAME)
+        cores, standalone, dual = configgen_cores(defaults, es_systems, dropped)
+        # Each system's own list (psx, es_systems.yml:640-653: libretro
+        # pcsx_rearmed, swanstation, mednafen_psx, then duckstation and
+        # duckstation-legacy).
+        attach_system_cores(systems, es_systems_by_system(es_systems, defaults, dropped))
         result = {
             "platform": "KNULLI",
             "version": self.tag,

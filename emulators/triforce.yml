@@ -11,6 +11,7 @@ display_name: "Namco / Sega / Nintendo - Triforce (Dolphin Triforce)"
 cores:
   - triforce
   - dolphin-triforce
+  - "dolphin_triforce"
 systems:
   - sega-triforce
   - nintendo-wii-arcade

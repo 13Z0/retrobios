@@ -11,6 +11,7 @@ core_version: "v1.0.0.2"
 display_name: "Arcade (FinalBurn Neo)"
 cores:
   - fbneo
+  - "FBNEOSA"
 systems:
   - snk-neogeo-mvs
   - snk-neogeo-aes

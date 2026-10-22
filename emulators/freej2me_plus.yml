@@ -10,6 +10,7 @@ core_version: "1.53"
 display_name: "Mobile - J2ME (FreeJ2ME-Plus)"
 cores:
   - freej2me_plus
+  - "freej2me-plus"
 systems:
   - j2me
 

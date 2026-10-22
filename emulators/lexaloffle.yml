@@ -8,6 +8,7 @@ cores:
   - "pico-8"
   - vox_official
   - "pico8"
+  - "Pico-8"
 systems:
   - pico8
   - voxatron

@@ -11,6 +11,7 @@ core_version: "2.6.1-devel"
 display_name: "Atari - ST/STE/TT/Falcon (Hatari)"
 cores:
   - hatari
+  - "HATARISA"
 systems:
   - atari-st
   - atari-ste

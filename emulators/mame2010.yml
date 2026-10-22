@@ -13,6 +13,7 @@ mame_version: "0.139"
 
 cores:
   - mame2010
+  - "mame0139"
 systems:
   - snk-neogeo-mvs
   - igs-pgm

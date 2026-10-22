@@ -7,7 +7,7 @@ profiled_date: "2026-03-25"
 source_commit: "c8816799b50388e61cfe237fe2cdbb7d8175f20a"
 core_version: "r25"
 display_name: "Sony - PlayStation (PCSX ReARMed)"
-cores: [pcsx_rearmed, pcsx_rearmed_neon, pcsx_rearmed_interpreter]
+cores: [pcsx_rearmed, pcsx_rearmed_neon, pcsx_rearmed_interpreter, "pcsx_rearmed_32b"]
 systems: [sony-playstation]
 notes: >
   HLE BIOS built-in: core option pcsx_rearmed_bios = "HLE" bypasses real BIOS entirely.

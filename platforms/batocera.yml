@@ -114,7 +114,6 @@ cores:
 - model2emu
 - moonlight
 - mrboom
-- mugen
 - mupen64plus
 - mupen64plus-next
 - neocd
@@ -217,7 +216,6 @@ cores:
 - vox_official
 - vpinball
 - wasm4
-- wine
 - x1
 - x128
 - x16emu
@@ -5737,7 +5735,6 @@ standalone_cores:
 - melonds
 - model2emu
 - moonlight
-- mugen
 - mupen64plus
 - openbor
 - openbor4432
@@ -5787,7 +5784,6 @@ standalone_cores:
 - vkquake3
 - vox_official
 - vpinball
-- wine
 - x128
 - x16emu
 - x64

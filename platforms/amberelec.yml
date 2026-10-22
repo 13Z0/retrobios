@@ -16,8 +16,6 @@ cores:
 - PPSSPPSDL
 - SCUMMVMSA
 - a5200
-- advancemame
-- amiberry
 - arduous
 - atari800
 - beetle_gba
@@ -73,7 +71,6 @@ cores:
 - gzdoom
 - handy
 - hatari
-- hatarisa
 - hypseus_singe
 - jaxe
 - lowresnx
@@ -90,8 +87,6 @@ cores:
 - mesen-s
 - mgba
 - mojozork
-- mpv
-- mupen64plus
 - mupen64plus_next
 - mupen64plussa
 - nekop2
@@ -99,7 +94,6 @@ cores:
 - nestopia
 - np2kai
 - o2em
-- openbor
 - opera
 - parallel_n64
 - pcsx_rearmed
@@ -109,7 +103,6 @@ cores:
 - pokemini
 - potator
 - ppsspp
-- ppssppsdl
 - prboom
 - prosystem
 - puae
@@ -123,7 +116,6 @@ cores:
 - sameboy
 - sameduck
 - scummvm
-- scummvmsa
 - smsplus
 - snes9x
 - snes9x2002
@@ -150,9 +142,7 @@ cores:
 - virtualjaguar
 - wasm4
 - x1
-- yabasanshiro
 - yabasanshiroSA
-- yabasanshirosa
 standalone_cores:
 - AMIBERRY
 - AdvanceMame
@@ -160,34 +150,21 @@ standalone_cores:
 - OPENBOR
 - PPSSPPSDL
 - SCUMMVMSA
-- advancemame
-- amiberry
 - drastic
 - ecwolf
 - gzdoom
-- hatari
-- hatarisa
 - hypseus_singe
 - lzdoom
-- mpv
-- mupen64plus
 - mupen64plussa
-- openbor
 - pico8
 - piemu
-- ppsspp
-- ppssppsdl
 - raze
-- scummvm
-- scummvmsa
 - solarus
-- yabasanshiro
 - yabasanshiroSA
-- yabasanshirosa
 dual_mode_cores:
-- hatari
-- ppsspp
-- scummvm
+- HATARISA
+- PPSSPPSDL
+- SCUMMVMSA
 systems:
   atari-5200:
     files:
@@ -200,6 +177,9 @@ systems:
       native_name: Atari 5200
     native_id: atari5200
     name: Atari 5200
+    cores:
+    - atari800
+    - a5200
   atari-400-800:
     files:
     - name: ATARIXL.ROM
@@ -232,6 +212,8 @@ systems:
       native_name: Atari 800
     native_id: atari800
     name: Atari 800
+    cores:
+    - atari800
   atari-7800:
     files:
     - name: "7800 BIOS (U).rom"
@@ -243,6 +225,9 @@ systems:
       native_name: Atari 7800
     native_id: atari7800
     name: Atari 7800
+    cores:
+    - prosystem
+    - mame
   atari-st:
     files:
     - name: tos.img
@@ -254,6 +239,9 @@ systems:
       native_name: Atari ST
     native_id: atarist
     name: Atari ST
+    cores:
+    - hatari
+    - HATARISA
   atari-lynx:
     files:
     - name: lynxboot.img
@@ -265,6 +253,9 @@ systems:
       native_name: Lynx
     native_id: atarilynx
     name: Lynx
+    cores:
+    - handy
+    - beetle_lynx
   coleco-colecovision:
     files:
     - name: config.ini
@@ -348,6 +339,10 @@ systems:
       native_name: Colecovision
     native_id: colecovision
     name: Colecovision
+    cores:
+    - bluemsx
+    - gearcoleco
+    - smsplus
   commodore-amiga:
     files:
     - name: "CDTV Extended-ROM v1.0 (1991)(Commodore)(CDTV)[!].rom"
@@ -492,6 +487,11 @@ systems:
       native_name: Amiga/CD32
     native_id: amiga
     name: Amiga/CD32
+    cores:
+    - puae2021
+    - puae
+    - uae4arm
+    - AMIBERRY
   magnavox-odyssey2:
     files:
     - name: o2rom.bin
@@ -556,6 +556,8 @@ systems:
       native_name: Mattel Intellivision
     native_id: intellivision
     name: Mattel Intellivision
+    cores:
+    - freeintv
   microsoft-msx:
     files:
     - name: config.ini
@@ -2438,6 +2440,9 @@ systems:
       native_name: MSX
     native_id: msx
     name: MSX
+    cores:
+    - bluemsx
+    - fmsx
   nec-pc-engine:
     files:
     - name: syscard3.pce
@@ -2474,6 +2479,10 @@ systems:
       native_name: Supergrafx
     native_id: pcengine
     name: Supergrafx
+    cores:
+    - beetle_pce_fast
+    - beetle_pce
+    - beetle_supergrafx
   nec-pc-fx:
     files:
     - name: pcfx.rom
@@ -2485,6 +2494,8 @@ systems:
       native_name: PC-FX
     native_id: pcfx
     name: PC-FX
+    cores:
+    - beetle_pcfx
   nec-pc-88:
     files:
     - name: DISK.ROM
@@ -2560,6 +2571,11 @@ systems:
       native_name: Nintendo Family Computer Disk System
     native_id: fds
     name: Nintendo Family Computer Disk System
+    cores:
+    - fceumm
+    - nestopia
+    - quicknes
+    - mesen
   nintendo-gb:
     files:
     - name: gb_bios.bin
@@ -2578,6 +2594,16 @@ systems:
       native_name: Game Boy
     native_id: gb
     name: Game Boy
+    cores:
+    - gambatte
+    - sameboy
+    - gearboy
+    - tgbdual
+    - DoubleCherryGB
+    - mgba
+    - vbam
+    - bsnes
+    - mesen-s
   nintendo-gbc:
     files:
     - name: gb_bios.bin
@@ -2596,6 +2622,16 @@ systems:
       native_name: Game Boy Color
     native_id: gbc
     name: Game Boy Color
+    cores:
+    - gambatte
+    - sameboy
+    - gearboy
+    - tgbdual
+    - DoubleCherryGB
+    - mgba
+    - vbam
+    - bsnes
+    - mesen-s
   nintendo-gba:
     files:
     - name: gba_bios.bin
@@ -2628,6 +2664,12 @@ systems:
       native_name: Game Boy Advance
     native_id: gba
     name: Game Boy Advance
+    cores:
+    - mgba
+    - gpsp
+    - vbam
+    - vba_next
+    - beetle_gba
   nintendo-64:
     files:
     - name: 64DD_IPL.bin
@@ -2639,6 +2681,10 @@ systems:
       native_name: Nintendo 64
     native_id: n64
     name: Nintendo 64
+    cores:
+    - parallel_n64
+    - mupen64plus_next
+    - mupen64plussa
   nintendo-ds:
     files:
     - name: firmware.bin
@@ -2664,6 +2710,10 @@ systems:
       native_name: Nintendo DS
     native_id: nds
     name: Nintendo DS
+    cores:
+    - melonds
+    - melondsds
+    - drastic
   nintendo-satellaview:
     files:
     - name: BS-X.bin
@@ -2675,6 +2725,18 @@ systems:
       native_name: Satellaview
     native_id: satellaview
     name: Satellaview
+    cores:
+    - snes9x
+    - snes9x2010
+    - snes9x2002
+    - snes9x2005_plus
+    - beetle_snes
+    - bsnes
+    - bsnes2014_performance
+    - bsnes2014_balanced
+    - bsnes_mercury_performance
+    - bsnes_mercury_balanced
+    - mesen-s
   nintendo-sufami-turbo:
     files:
     - name: STBIOS.bin
@@ -2686,6 +2748,8 @@ systems:
       native_name: Sufami
     native_id: sufami
     name: Sufami
+    cores:
+    - snes9x
   3do:
     files:
     - name: panafz1.bin
@@ -2725,6 +2789,8 @@ systems:
       native_name: 3DO
     native_id: 3do
     name: 3DO
+    cores:
+    - opera
   sega-dreamcast-arcade:
     files:
     - name: naomi_boot.bin
@@ -2750,6 +2816,10 @@ systems:
       native_name: Atomiswave
     native_id: naomi
     name: Atomiswave
+    cores:
+    - flycast
+    - flycast2021
+    - flycast2021le
   sega-dreamcast:
     files:
     - name: dc_boot.bin
@@ -2768,6 +2838,10 @@ systems:
       native_name: Dreamcast
     native_id: dreamcast
     name: Dreamcast
+    cores:
+    - flycast
+    - flycast2021
+    - flycast2021le
   sega-game-gear:
     files:
     - name: bios.gg
@@ -2779,6 +2853,11 @@ systems:
       native_name: Game Gear
     native_id: gamegear
     name: Game Gear
+    cores:
+    - gearsystem
+    - genesis_plus_gx
+    - picodrive
+    - smsplus
   sega-master-system:
     files:
     - name: bios_E.sms
@@ -2804,6 +2883,11 @@ systems:
       native_name: MasterSystem
     native_id: mastersystem
     name: MasterSystem
+    cores:
+    - gearsystem
+    - genesis_plus_gx
+    - picodrive
+    - smsplus
   sega-saturn:
     files:
     - name: saturn_bios.bin
@@ -2850,6 +2934,8 @@ systems:
       native_name: Sega Saturn
     native_id: saturn
     name: Sega Saturn
+    cores:
+    - yabasanshiroSA
   sega-mega-cd:
     files:
     - name: bios_CD_E.bin
@@ -2875,6 +2961,9 @@ systems:
       native_name: Sega CD
     native_id: segacd
     name: Sega CD
+    cores:
+    - genesis_plus_gx
+    - picodrive
   sc-3000:
     files:
     - name: config.ini
@@ -2885,6 +2974,8 @@ systems:
       native_name: SC-3000
     native_id: sc-3000
     name: SC-3000
+    cores:
+    - bluemsx
   sharp-x68000:
     files:
     - name: iplrom.dat
@@ -2919,6 +3010,8 @@ systems:
       native_name: Sharp x68000
     native_id: x68000
     name: Sharp x68000
+    cores:
+    - px68k
   sharp-x1:
     files:
     - name: IPLROM.X1
@@ -2937,6 +3030,8 @@ systems:
       native_name: Sharp X1
     native_id: x1
     name: Sharp X1
+    cores:
+    - x1
   snk-neogeo:
     files:
     - name: neogeo.zip
@@ -2953,6 +3048,16 @@ systems:
       native_name: NeoGeo
     native_id: neogeo
     name: NeoGeo
+    cores:
+    - fbneo
+    - geolith
+    - mame2003_plus
+    - fbalpha2012
+    - fbalpha2019
+    - mame2010
+    - mame2015
+    - mame2016
+    - mame
   snk-neogeo-cd:
     files:
     - name: neogeo.zip
@@ -3008,6 +3113,10 @@ systems:
       native_name: PSX
     native_id: psx
     name: PSX
+    cores:
+    - pcsx_rearmed
+    - duckstation
+    - swanstation
   sinclair-zx-spectrum:
     files:
     - name: 128p-0.rom
@@ -3060,3 +3169,6 @@ systems:
       native_name: ZX Spectrum
     native_id: zxspectrum
     name: ZX Spectrum
+    cores:
+    - fuse
+    - ep128emu_core

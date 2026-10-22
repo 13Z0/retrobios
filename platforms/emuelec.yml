@@ -7,9 +7,11 @@ core_destination: bios
 hash_type: md5
 verification_mode: md5
 cores:
+- "2048"
 - "81"
 - AMIBERRY
 - AdvanceMame
+- CGeniusExe
 - Chocolate-Doom
 - DOSBOXSDL2
 - Duckstation
@@ -20,34 +22,42 @@ cores:
 - HYPSEUS
 - LZDoom
 - OPENBOR
+- OpenJazz
 - PPSSPPSDL
 - Pico-8
+- RigelEngine
 - SCUMMVMSA
 - STELLASA
 - Solarus
+- VVVVVV
 - a5200
-- advancemame
-- amiberry
+- abuse
 - atari800
+- bgdi
 - bk
 - bluemsx
+- bs
+- bstone
+- cannonball
 - cap32
-- chocolate-doom
+- ccleste
+- cdogs-sdl
 - daphne
+- devilutionx
+- dinothawr
 - dolphin
 - dosbox_pure
 - dosbox_svn
-- dosboxsdl2
-- duckstation
 - easyrpg
-- ecwolf
+- eduke32
 - fake08
+- fallout-ce
+- fallout2-ce
 - fbalpha2012
 - fbneo
-- fbneosa
 - fceumm
 - fceumm_mod
-- ffplay
+- fheroes2
 - flycast
 - flycast_32b
 - flycast_dojo
@@ -66,17 +76,15 @@ cores:
 - genesis_plus_gx_cart_special
 - genesis_plus_gx_wide
 - geolith
-- gmloader
 - gpsp
 - gw
-- gzdoom
 - handy
 - hatari
-- hatarisa
-- hypseus
+- hcl
+- hode
+- hurrican
 - ikemen
 - jzintv
-- lzdoom
 - mame
 - mame2003_plus
 - mame2010
@@ -92,8 +100,7 @@ cores:
 - mesen
 - mesen-s
 - mgba
-- mpv
-- mupen64plus
+- mrboom
 - mupen64plus_32b
 - mupen64plus_next
 - mupen64plus_next_alt
@@ -102,40 +109,43 @@ cores:
 - neocd
 - nestopia
 - np2kai
+- nxengine
 - o2em
-- openbor
+- opentyrian
 - opera
 - parallel_n64_32b
 - pcsx_rearmed
 - pcsx_rearmed_32b
-- pico-8
 - picodrive
 - pocketcdg
 - pokemini
-- ports
 - potator
-- ppsspp
-- ppssppsdl
 - prboom
+- prince
 - prosystem
 - puae
 - puae2021
 - px68k
+- reminiscence
 - same_cdi
 - sameboy
 - sameduck
 - scummvm
-- scummvmsa
+- smw
 - snes9x
 - snes9x2002
 - snes9x2005_plus
 - snes9x2010
-- solarus
+- sonic2013
+- soniccd
+- sonicmania
 - stella
-- stellasa
+- supertux2
+- supertuxkart
 - swanstation
 - tgbdual
 - tic80
+- tyrquake
 - uae4arm_32b
 - uzem
 - vba_next
@@ -148,10 +158,13 @@ cores:
 - vice_xvic
 - virtualjaguar
 - x1
+- xash3d
+- xrick
 - yabasanshiro
 standalone_cores:
 - AMIBERRY
 - AdvanceMame
+- CGeniusExe
 - Chocolate-Doom
 - DOSBOXSDL2
 - Duckstation
@@ -162,52 +175,50 @@ standalone_cores:
 - HYPSEUS
 - LZDoom
 - OPENBOR
+- OpenJazz
 - PPSSPPSDL
 - Pico-8
+- RigelEngine
 - SCUMMVMSA
 - STELLASA
 - Solarus
-- advancemame
-- amiberry
-- chocolate-doom
+- VVVVVV
+- abuse
+- bgdi
+- bs
+- bstone
+- ccleste
+- cdogs-sdl
+- devilutionx
 - dolphin
-- dosboxsdl2
-- duckstation
-- ecwolf
-- fbneo
-- fbneosa
-- ffplay
-- flycast
+- eduke32
+- fallout-ce
+- fallout2-ce
+- fheroes2
 - flycast_dojo
 - flycastsa
-- gmloader
-- gzdoom
-- hatari
-- hatarisa
-- hypseus
+- hcl
+- hode
+- hurrican
 - ikemen
 - jzintv
-- lzdoom
-- mpv
-- mupen64plus
 - mupen64plussa
-- openbor
-- pico-8
-- ports
-- ppsspp
-- ppssppsdl
-- scummvm
-- scummvmsa
-- solarus
-- stella
-- stellasa
+- opentyrian
+- prince
+- smw
+- sonic2013
+- soniccd
+- sonicmania
+- supertux2
+- supertuxkart
+- xash3d
 - yabasanshiro
 dual_mode_cores:
-- fbneo
-- flycast
-- hatari
-- scummvm
-- stella
+- FBNEOSA
+- HATARISA
+- SCUMMVMSA
+- STELLASA
+- flycastsa
 - yabasanshiro
 systems:
   atari-5200:
@@ -221,6 +232,9 @@ systems:
       native_name: Atari 5200
     native_id: atari5200
     name: Atari 5200
+    cores:
+    - a5200
+    - atari800
   atari-400-800:
     files:
     - name: ATARIXL.ROM
@@ -253,6 +267,8 @@ systems:
       native_name: Atari 800
     native_id: atari800
     name: Atari 800
+    cores:
+    - atari800
   atari-7800:
     files:
     - name: "7800 BIOS (U).rom"
@@ -264,6 +280,8 @@ systems:
       native_name: Atari 7800
     native_id: atari7800
     name: Atari 7800
+    cores:
+    - prosystem
   atari-st:
     files:
     - name: tos.img
@@ -275,6 +293,9 @@ systems:
       native_name: Atari ST
     native_id: atarist
     name: Atari ST
+    cores:
+    - HATARISA
+    - hatari
   atari-lynx:
     files:
     - name: lynxboot.img
@@ -286,6 +307,10 @@ systems:
       native_name: Lynx
     native_id: atarilynx
     name: Lynx
+    cores:
+    - handy
+    - mednafen_lynx
+    - gearlynx
   coleco-colecovision:
     files:
     - name: config.ini
@@ -355,6 +380,9 @@ systems:
       native_name: Colecovision
     native_id: colecovision
     name: Colecovision
+    cores:
+    - bluemsx
+    - gearcoleco
   commodore-amiga:
     files:
     - name: "CDTV Extended-ROM v1.0 (1991)(Commodore)(CDTV)[!].rom"
@@ -499,6 +527,11 @@ systems:
       native_name: Amiga/CD32
     native_id: amiga
     name: Amiga/CD32
+    cores:
+    - AMIBERRY
+    - puae
+    - puae2021
+    - uae4arm_32b
   fmtowns:
     files:
     - name: FMT_DIC.ROM
@@ -644,6 +677,8 @@ systems:
       native_name: Fujistu FM-Towns
     native_id: fmtowns
     name: Fujistu FM-Towns
+    cores:
+    - mame
   magnavox-odyssey2:
     files:
     - name: o2rom.bin
@@ -708,6 +743,9 @@ systems:
       native_name: Mattel Intellivision
     native_id: intellivision
     name: Mattel Intellivision
+    cores:
+    - freeintv
+    - jzintv
   microsoft-msx:
     files:
     - name: config.ini
@@ -2590,6 +2628,9 @@ systems:
       native_name: MSX
     native_id: msx
     name: MSX
+    cores:
+    - bluemsx
+    - fmsx
   nec-pc-engine:
     files:
     - name: syscard3.pce
@@ -2626,6 +2667,10 @@ systems:
       native_name: Supergrafx
     native_id: pcengine
     name: Supergrafx
+    cores:
+    - mednafen_pce_fast
+    - mednafen_supergrafx
+    - geargrafx
   nec-pc-fx:
     files:
     - name: pcfx.rom
@@ -2637,6 +2682,8 @@ systems:
       native_name: PC-FX
     native_id: pcfx
     name: PC-FX
+    cores:
+    - mednafen_pcfx
   nintendo-fds:
     files:
     - name: NstDatabase.xml
@@ -2655,6 +2702,11 @@ systems:
       native_name: Nintendo Family Computer Disk System
     native_id: fds
     name: Nintendo Family Computer Disk System
+    cores:
+    - nestopia
+    - fceumm
+    - fceumm_mod
+    - mesen
   nintendo-gb:
     files:
     - name: gb_bios.bin
@@ -2673,6 +2725,15 @@ systems:
       native_name: Game Boy
     native_id: gb
     name: Game Boy
+    cores:
+    - gambatte
+    - gearboy
+    - sameboy
+    - tgbdual
+    - mgba
+    - vbam
+    - vba_next
+    - mesen-s
   nintendo-gbc:
     files:
     - name: gb_bios.bin
@@ -2691,6 +2752,15 @@ systems:
       native_name: Game Boy Color
     native_id: gbc
     name: Game Boy Color
+    cores:
+    - gambatte
+    - gearboy
+    - sameboy
+    - tgbdual
+    - mgba
+    - vbam
+    - vba_next
+    - mesen-s
   nintendo-gba:
     files:
     - name: gba_bios.bin
@@ -2723,6 +2793,11 @@ systems:
       native_name: Game Boy Advance
     native_id: gba
     name: Game Boy Advance
+    cores:
+    - mgba
+    - gpsp
+    - vbam
+    - vba_next
   nintendo-64:
     files:
     - name: 64DD_IPL.bin
@@ -2734,6 +2809,12 @@ systems:
       native_name: Nintendo 64
     native_id: n64
     name: Nintendo 64
+    cores:
+    - mupen64plus_next
+    - mupen64plus_next_alt
+    - mupen64plus_32b
+    - parallel_n64_32b
+    - mupen64plussa
   nintendo-ds:
     files:
     - name: firmware.bin
@@ -2770,6 +2851,9 @@ systems:
       native_name: Satellaview
     native_id: satellaview
     name: Satellaview
+    cores:
+    - snes9x
+    - mesen-s
   nintendo-sufami-turbo:
     files:
     - name: STBIOS.bin
@@ -2781,6 +2865,9 @@ systems:
       native_name: Sufami
     native_id: sufami
     name: Sufami
+    cores:
+    - snes9x
+    - mesen-s
   3do:
     files:
     - name: panafz1.bin
@@ -2820,6 +2907,8 @@ systems:
       native_name: 3DO
     native_id: 3do
     name: 3DO
+    cores:
+    - opera
   sega-dreamcast-arcade:
     files:
     - name: naomi_boot.bin
@@ -2845,6 +2934,11 @@ systems:
       native_name: Atomiswave
     native_id: naomi
     name: Atomiswave
+    cores:
+    - flycast
+    - flycast_32b
+    - flycastsa
+    - flycast_dojo
   sega-dreamcast:
     files:
     - name: dc_boot.bin
@@ -2863,6 +2957,11 @@ systems:
       native_name: Dreamcast
     native_id: dreamcast
     name: Dreamcast
+    cores:
+    - flycast
+    - flycast_32b
+    - flycastsa
+    - flycast_dojo
   sega-game-gear:
     files:
     - name: bios.gg
@@ -2874,6 +2973,10 @@ systems:
       native_name: Game Gear
     native_id: gamegear
     name: Game Gear
+    cores:
+    - gearsystem
+    - genesis_plus_gx
+    - picodrive
   sega-master-system:
     files:
     - name: bios_E.sms
@@ -2899,6 +3002,10 @@ systems:
       native_name: MasterSystem
     native_id: mastersystem
     name: MasterSystem
+    cores:
+    - gearsystem
+    - genesis_plus_gx
+    - picodrive
   sega-saturn:
     files:
     - name: saturn_bios.bin
@@ -2945,6 +3052,9 @@ systems:
       native_name: Sega Saturn
     native_id: saturn
     name: Sega Saturn
+    cores:
+    - yabasanshiro
+    - mednafen_saturn
   sega-mega-cd:
     files:
     - name: bios_CD_E.bin
@@ -2970,6 +3080,9 @@ systems:
       native_name: Sega CD
     native_id: segacd
     name: Sega CD
+    cores:
+    - genesis_plus_gx
+    - picodrive
   sc-3000:
     files:
     - name: config.ini
@@ -2980,6 +3093,8 @@ systems:
       native_name: SC-3000
     native_id: sc-3000
     name: SC-3000
+    cores:
+    - bluemsx
   sharp-x68000:
     files:
     - name: iplrom.dat
@@ -3014,6 +3129,8 @@ systems:
       native_name: Sharp x68000
     native_id: x68000
     name: Sharp x68000
+    cores:
+    - px68k
   snk-neogeo:
     files:
     - name: neogeo.zip
@@ -3024,6 +3141,12 @@ systems:
       native_name: NeoGeo
     native_id: neogeo
     name: NeoGeo
+    cores:
+    - fbneo
+    - mame2003_plus
+    - fbalpha2012
+    - geolith
+    - FBNEOSA
   snk-neogeo-cd:
     files:
     - name: neogeo.zip
@@ -3066,6 +3189,11 @@ systems:
       native_name: PSX
     native_id: psx
     name: PSX
+    cores:
+    - pcsx_rearmed_32b
+    - pcsx_rearmed
+    - swanstation
+    - Duckstation
   diablo:
     files:
     - name: diabdat.mpq
@@ -3108,6 +3236,8 @@ systems:
       native_name: "Diablo 1: Hellfire (devilutionx) "
     native_id: Diablo
     name: "Diablo 1: Hellfire (devilutionx) "
+    cores:
+    - devilutionx
   dinothawr:
     files:
     - name: dinothawr.game
@@ -3118,6 +3248,8 @@ systems:
       native_name: Dinothawr
     native_id: Dinothawr
     name: Dinothawr
+    cores:
+    - dinothawr
   doom:
     files:
     - name: doom1.wad
@@ -3134,6 +3266,8 @@ systems:
       native_name: "DOOM2 (PrBoom)"
     native_id: DOOM1
     name: "DOOM2 (PrBoom)"
+    cores:
+    - prboom
   tyrian:
     files:
     - name: cubetxt1.dat
@@ -3666,6 +3800,8 @@ systems:
       native_name: OpenTyrian
     native_id: OpenTyrian
     name: OpenTyrian
+    cores:
+    - opentyrian
   sega-outrun:
     files:
     - name: epr-10187.88
@@ -3904,6 +4040,8 @@ systems:
       native_name: Cannonball
     native_id: Cannonball
     name: Cannonball
+    cores:
+    - cannonball
   cave-story:
     files:
     - name: Doukutsu.exe
@@ -3914,6 +4052,8 @@ systems:
       native_name: "Cave Story (nxengine)"
     native_id: CaveStory
     name: "Cave Story (nxengine)"
+    cores:
+    - nxengine
   quake:
     files:
     - name: pak0.pak
@@ -3924,6 +4064,8 @@ systems:
       native_name: "Quake (tryquake)"
     native_id: Quake
     name: "Quake (tryquake)"
+    cores:
+    - tyrquake
   flashback:
     files:
     - name: level1.map
@@ -3934,6 +4076,8 @@ systems:
       native_name: "Flashback (REminiscence)"
     native_id: REminiscence
     name: "Flashback (REminiscence)"
+    cores:
+    - reminiscence
   xrick:
     files:
     - name: data.zip
@@ -3944,6 +4088,8 @@ systems:
       native_name: "Rick Dangerous (xrick)"
     native_id: RickDangerous
     name: "Rick Dangerous (xrick)"
+    cores:
+    - xrick
   vvvvvv:
     files:
     - name: data.zip
@@ -3954,6 +4100,8 @@ systems:
       native_name: VVVVVV
     native_id: VVVVVV
     name: VVVVVV
+    cores:
+    - VVVVVV
   duke3d:
     files:
     - name: duke3d.grp
@@ -3964,6 +4112,8 @@ systems:
       native_name: Duke Nukem 3D
     native_id: eduke32
     name: Duke Nukem 3D
+    cores:
+    - eduke32
   sonic-1-2013:
     files:
     - name: Data.rsdk
@@ -3974,6 +4124,8 @@ systems:
       native_name: Sonic 1
     native_id: sonic1
     name: Sonic 1
+    cores:
+    - sonic2013
   sonic-2-2013:
     files:
     - name: Data.rsdk
@@ -3984,6 +4136,8 @@ systems:
       native_name: Sonic 2
     native_id: sonic2
     name: Sonic 2
+    cores:
+    - sonic2013
   soniccd:
     files:
     - name: Data.rsdk
@@ -3994,6 +4148,8 @@ systems:
       native_name: Sonic CD
     native_id: soniccd
     name: Sonic CD
+    cores:
+    - soniccd
   sonic-mania:
     files:
     - name: Data.rsdk
@@ -4004,7 +4160,9 @@ systems:
       native_name: Sonic Mania
     native_id: sonicmania
     name: Sonic Mania
-  RigelEngine:
+    cores:
+    - sonicmania
+  duke-nukem-2:
     files:
     - name: NUKEM2.CMP
       destination: ports/rigelengine/NUKEM2.CMP
@@ -4044,6 +4202,8 @@ systems:
       native_name: Duke Nukem 2
     native_id: RigelEngine
     name: Duke Nukem 2
+    cores:
+    - RigelEngine
   cdi:
     files:
     - name: cdimono1.zip

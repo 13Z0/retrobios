@@ -12,6 +12,7 @@ cores:
   - hypseus-singe
   - hypseus
   - "hypseus_singe"
+  - "HYPSEUS"
 systems:
   - arcade-laserdisc
 mode: standalone

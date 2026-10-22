@@ -11,6 +11,7 @@ core_version: "dojo-7-preview4"
 display_name: "Sega - Dreamcast/Naomi (Flycast Dojo)"
 cores:
   - flycast-dojo
+  - "flycast_dojo"
 systems:
   - sega-dreamcast
   - sega-naomi
