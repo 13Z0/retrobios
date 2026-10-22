@@ -8,6 +8,7 @@ source_commit: "089bb69207fe8fa5eec0006d1d759fb6426f4027"
 upstream_commit: "f362278ccd4c60991caac3b4d240d4a3f751bea2"
 core_version: "v5.0.7"
 display_name: "Commodore - Amiga (FS-UAE)"
+library_name: ""
 cores:
   - fsuae
 found_by: content
@@ -19,7 +20,15 @@ notes: |
 
   Standalone: scans --kickstarts_dir for .rom/.bin files (default: Documents/FS-UAE/Kickstarts/).
   Batocera overrides to bios/amiga/ via --kickstarts_dir (batocera fsuaePaths.py:8, batocera fsuaeGenerator.py:68).
-  Libretro port: scans save_dir/fsuae/Kickstarts/ (frozen at v2.7.15).
+  Libretro port: scans save_dir/fsuae/Kickstarts/ (frozen at v2.7.15), and
+  reads rom.key there. The base directory is <save_dir>/fsuae, the build
+  leaving USE_FSUAEDIRS off. The core reports an empty library_name, for
+  which RetroArch adds no folder of its own.
+  ref: source Makefile.libretro:125-126, source sources/src/fs-uae/paths.c:133-138,
+  source sources/src/fs-uae/paths.c:196-198, source sources/src/fs-uae/paths.c:258-265,
+  source sources/src/fs-uae/config.c:128, source libretro/libretro.c:194-206,
+  source libretro/libretro.c:575
+
   Identification by SHA-1 checksum, not filename (rommgr.cpp:92-151, od-fs/python/fsuae/roms/romservice.py:78-91).
   AROS kickstart (1 MB) compiled into binary as fallback for all models (rommgr.cpp:112).
   rom.key searched in kickstart dir and multiple fallback paths (rommgr.cpp:1397-1498).
@@ -34,6 +43,9 @@ notes: |
 
 files:
   - name: "amiga-os-130.rom"
+    path: "fsuae/Kickstarts/amiga-os-130.rom"
+    standalone_path: "amiga-os-130.rom"
+    load_from: {libretro: save_dir}
     system: amiga
     required: false
     hle_fallback: true
@@ -45,6 +57,9 @@ files:
     source_ref: "upstream rommgr.cpp:150-151 (id=6, ROMTYPE_KICK)"
 
   - name: "amiga-os-204.rom"
+    path: "fsuae/Kickstarts/amiga-os-204.rom"
+    standalone_path: "amiga-os-204.rom"
+    load_from: {libretro: save_dir}
     system: amiga
     required: false
     hle_fallback: true
@@ -56,6 +71,9 @@ files:
     source_ref: "upstream rommgr.cpp:158-159 (id=7, ROMTYPE_KICK)"
 
   - name: "amiga-os-205.rom"
+    path: "fsuae/Kickstarts/amiga-os-205.rom"
+    standalone_path: "amiga-os-205.rom"
+    load_from: {libretro: save_dir}
     system: amiga
     required: false
     hle_fallback: true
@@ -67,6 +85,9 @@ files:
     source_ref: "upstream rommgr.cpp:164-165 (id=10, ROMTYPE_KICK)"
 
   - name: "amiga-os-120.rom"
+    path: "fsuae/Kickstarts/amiga-os-120.rom"
+    standalone_path: "amiga-os-120.rom"
+    load_from: {libretro: save_dir}
     system: amiga
     required: false
     hle_fallback: true
@@ -78,6 +99,9 @@ files:
     source_ref: "upstream rommgr.cpp:148-149 (id=5, ROMTYPE_KICK)"
 
   - name: "amiga-os-310-a1200.rom"
+    path: "fsuae/Kickstarts/amiga-os-310-a1200.rom"
+    standalone_path: "amiga-os-310-a1200.rom"
+    load_from: {libretro: save_dir}
     system: amiga
     required: false
     hle_fallback: true
@@ -89,6 +113,9 @@ files:
     source_ref: "upstream rommgr.cpp:185-186 (id=15, ROMTYPE_KICK)"
 
   - name: "amiga-os-310-a3000.rom"
+    path: "fsuae/Kickstarts/amiga-os-310-a3000.rom"
+    standalone_path: "amiga-os-310-a3000.rom"
+    load_from: {libretro: save_dir}
     system: amiga
     required: false
     hle_fallback: true
@@ -100,6 +127,9 @@ files:
     source_ref: "upstream rommgr.cpp:189-190 (id=61, ROMTYPE_KICK)"
 
   - name: "amiga-os-310-a4000.rom"
+    path: "fsuae/Kickstarts/amiga-os-310-a4000.rom"
+    standalone_path: "amiga-os-310-a4000.rom"
+    load_from: {libretro: save_dir}
     system: amiga
     required: false
     hle_fallback: true
@@ -111,6 +141,9 @@ files:
     source_ref: "upstream rommgr.cpp:195-196 (id=16, ROMTYPE_KICK)"
 
   - name: "amiga-os-310-cd32.rom"
+    path: "fsuae/Kickstarts/amiga-os-310-cd32.rom"
+    standalone_path: "amiga-os-310-cd32.rom"
+    load_from: {libretro: save_dir}
     system: amiga
     required: false
     hle_fallback: true
@@ -122,6 +155,9 @@ files:
     source_ref: "upstream rommgr.cpp:312-313 (id=18, ROMTYPE_KICKCD32)"
 
   - name: "amiga-ext-310-cd32.rom"
+    path: "fsuae/Kickstarts/amiga-ext-310-cd32.rom"
+    standalone_path: "amiga-ext-310-cd32.rom"
+    load_from: {libretro: save_dir}
     system: amiga
     required: false
     size: 524288
@@ -132,6 +168,9 @@ files:
     source_ref: "upstream rommgr.cpp:314-315 (id=19, ROMTYPE_EXTCD32)"
 
   - name: "cd32fmv.rom"
+    path: "fsuae/Kickstarts/cd32fmv.rom"
+    standalone_path: "cd32fmv.rom"
+    load_from: {libretro: save_dir}
     system: amiga
     required: false
     size: 262144
@@ -142,6 +181,9 @@ files:
     source_ref: "upstream rommgr.cpp:323-326 (id=23/74, ROMTYPE_CD32CART)"
 
   - name: "amiga-ext-130-cdtv.rom"
+    path: "fsuae/Kickstarts/amiga-ext-130-cdtv.rom"
+    standalone_path: "amiga-ext-130-cdtv.rom"
+    load_from: {libretro: save_dir}
     system: amiga
     required: false
     size: 262144
@@ -152,6 +194,9 @@ files:
     source_ref: "upstream rommgr.cpp:328-329 (id=20, ROMTYPE_EXTCDTV)"
 
   - name: "rom.key"
+    path: "fsuae/Kickstarts/rom.key"
+    standalone_path: "rom.key"
+    load_from: {libretro: save_dir}
     system: amiga
     found_by: name
     required: false

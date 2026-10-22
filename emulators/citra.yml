@@ -7,14 +7,21 @@ profiled_date: "2026-03-23"
 source_commit: "a0483e9abe8134ae6b290cdca7d49cb77689f05b"
 core_version: "Git"
 display_name: "Nintendo - 3DS (Citra)"
+library_name: "Citra"
 cores: [citra]
 systems: [nintendo-3ds]
 
 notes: |
   Citra 3DS emulator. Upstream taken down March 2024 (Nintendo lawsuit).
   Mirror: https://github.com/citra-mirror/citra
-  Data dir: {save_dir}/Citra/ or {system_dir}/Citra/
-  ref: src/citra_libretro/citra_libretro.cpp:460-466
+  Data dir: {save_dir}/Citra/ under the default "LibRetro Default" option
+  citra_use_libretro_save_path, {system_dir}/Citra/ only when the frontend
+  gives no save directory. sysdata/ sits under it.
+  ref: src/citra_libretro/citra_libretro.cpp:157, src/citra_libretro/citra_libretro.cpp:445-466,
+  src/citra_libretro/environment.cpp:139, src/common/file_util.cpp:855
+
+  The core reports library_name "Citra".
+  ref: src/citra_libretro/environment.cpp:180
 
   HLE for most services. Embedded open-source replacements for shared font,
   Mii data, country list, and bad word list compiled into the binary.
@@ -25,6 +32,7 @@ notes: |
 files:
   - name: aes_keys.txt
     path: "Citra/sysdata/aes_keys.txt"
+    load_from: {libretro: save_dir}
     system: nintendo-3ds
     description: "AES encryption keys"
     required: false
@@ -33,6 +41,7 @@ files:
 
   - name: boot9.bin
     path: "Citra/sysdata/boot9.bin"
+    load_from: {libretro: save_dir}
     system: nintendo-3ds
     description: "ARM9 bootrom"
     required: false
@@ -43,6 +52,7 @@ files:
 
   - name: shared_font.bin
     path: "Citra/sysdata/shared_font.bin"
+    load_from: {libretro: save_dir}
     system: nintendo-3ds
     description: "system shared font (legacy format)"
     required: false
@@ -52,6 +62,7 @@ files:
 
   - name: seeddb.bin
     path: "Citra/sysdata/seeddb.bin"
+    load_from: {libretro: save_dir}
     system: nintendo-3ds
     description: "game seed database"
     required: false

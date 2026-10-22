@@ -4,9 +4,11 @@ core_classification: community_fork
 source: "https://github.com/libretro/citra"
 upstream: "https://github.com/citra-emu/citra"
 profiled_date: "2026-03-23"
-source_commit: "a0483e9abe8134ae6b290cdca7d49cb77689f05b"
+source_commit: "5401990a9be46e4497abc92db3d5f2042674303d"
+source_branch: canary
 core_version: "Git"
 display_name: "Nintendo - 3DS (Citra Canary/Experimental)"
+library_name: "Citra Canary"
 cores: [citra_canary]
 systems:
   - nintendo-3ds
@@ -18,8 +20,23 @@ notes: |
   Upstream citra-emu/citra taken down March 2024 (Nintendo lawsuit).
   Mirror: https://github.com/citra-mirror/citra
 
-  Data dir: {system_dir}/Citra/sysdata/
-  ref: src/citra_libretro/citra_libretro.cpp:305-314
+  The buildbot builds citra_canary from the canary branch of libretro/citra
+  (libretro-super recipes/windows/cores-windows-x64_seh-noccache).
+
+  Under the default option citra_use_libretro_save_path the core points the
+  root and user directories at {save_dir}/Citra ({system_dir}/Citra without a
+  save directory), but GetUserPath fills sysdata/ on its first call, before
+  that, and the UserDir case never moves it. aes_keys.txt and
+  shared_font.bin are read from the host's Citra data directory: user/sysdata/
+  beside the working directory when ./user exists, else
+  $XDG_DATA_HOME/citra-emu/sysdata/ (Linux) or user/sysdata/ beside the
+  executable, else %APPDATA%/Citra/sysdata/ (Windows). Neither the system nor
+  the save directory of the frontend.
+  ref: src/citra_libretro/citra_libretro.cpp:295-316, src/common/file_util.cpp:674-736,
+  src/common/common_paths.h:16-38
+
+  The core reports library_name "Citra Canary".
+  ref: src/citra_libretro/environment.cpp:131
 
   Embedded open-source replacements for shared font, country list, bad word list.
   ref: src/core/file_sys/archive_ncch.cpp:142-147
@@ -28,14 +45,16 @@ notes: |
 
 files:
   - name: aes_keys.txt
-    path: "Citra/sysdata/aes_keys.txt"
+    path: "sysdata/aes_keys.txt"
+    load_from: data_dir
     system: nintendo-3ds
     required: false
     note: "AES encryption keys for decrypting 3DS content"
     source_ref: "src/core/hw/aes/key.cpp:71-131"
 
   - name: shared_font.bin
-    path: "Citra/sysdata/shared_font.bin"
+    path: "sysdata/shared_font.bin"
+    load_from: data_dir
     system: nintendo-3ds
     required: false
     hle_fallback: true

@@ -8,6 +8,7 @@ profiled_date: "2026-03-24"
 source_commit: "3787358bdae41d5532ccd00c8998a527ae949949"
 core_version: "Git"
 display_name: "Nintendo - 3DS (Panda3DS)"
+library_name: "Panda3DS"
 cores: [panda3ds]
 systems: [nintendo-3ds]
 
@@ -19,13 +20,19 @@ notes: |
   option panda3ds_dsp_emulation). System archives (shared font, bad word
   list, country list, mii data) are compiled into the binary via cmrc.
   The libretro core uses the save directory, not RetroArch's system
-  directory. Files go under <save_dir>/Emulator Files/sysdata/.
+  directory. Files go under <save_dir>/Emulator Files/sysdata/, under the
+  working directory when the frontend gives no save directory. The core
+  reports library_name "Panda3DS". Standalone reads them from Emulator
+  Files/sysdata/ below its SDL pref path.
+  ref: src/libretro_core.cpp:29-31, src/libretro_core.cpp:233, src/libretro_core.cpp:277-281,
+  src/emulator.cpp:196-208
   The .info declares firmware_count=0. is_experimental = true.
 
 files:
   - name: "aes_keys.txt"
     path: "Emulator Files/sysdata/aes_keys.txt"
-    load_from: save_dir
+    standalone_path: "Emulator Files/sysdata/aes_keys.txt"
+    load_from: {libretro: save_dir, standalone: data_dir}
     description: "AES encryption keys for decrypting encrypted ROMs"
     required: false
     source_ref: "src/emulator.cpp:229,237-238, src/core/crypto/aes_engine.cpp:13-92"
@@ -38,7 +45,8 @@ files:
 
   - name: "seeddb.bin"
     path: "Emulator Files/sysdata/seeddb.bin"
-    load_from: save_dir
+    standalone_path: "Emulator Files/sysdata/seeddb.bin"
+    load_from: {libretro: save_dir, standalone: data_dir}
     description: "Seed database for seed-encrypted games"
     required: false
     source_ref: "src/emulator.cpp:230,241-242, src/core/loader/ncch.cpp:78-93"
