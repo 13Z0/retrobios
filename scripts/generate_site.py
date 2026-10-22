@@ -2088,6 +2088,36 @@ def _category_evidence_md(evidence: dict) -> str:
     return f"No reader found ({cores})"
 
 
+def _core_folders_section(name: str, config: dict) -> list[str]:
+    """Each folder the frontend hands a core, and the files the pack puts in it.
+
+    For a platform that names no file of its own (MinUI and its forks): the
+    folders come from its launch scripts, the files from its install manifest.
+    """
+    folders = config.get("core_system_dirs") or {}
+    manifest = _REPO_ROOT / "install" / f"{name}.json"
+    files = json.loads(manifest.read_text())["files"] if manifest.is_file() else []
+    lines = [
+        "## Core folders",
+        "",
+        "Each folder below is the one the frontend gives that core. The pack "
+        "puts the files the core reads there.",
+        "",
+        "| Folder | Cores | Files |",
+        "|--------|-------|-------|",
+    ]
+    for folder, info in sorted(folders.items()):
+        held = sorted(
+            f["dest"][len(folder) + 1:] for f in files
+            if f.get("dest", "").startswith(folder + "/")
+        )
+        cores = ", ".join(_emulator_link(c, "../") for c in info.get("cores", []))
+        shown = ", ".join(f"`{n}`" for n in held) if held else "none needed"
+        lines.append(f"| `{folder}/` | {cores} | {shown} |")
+    lines.append("")
+    return lines
+
+
 def generate_platform_page(
     name: str,
     cov: dict,
@@ -2131,8 +2161,22 @@ def generate_platform_page(
             ]
         )
 
-    lines.extend(
-        [
+    no_list = not cov["total"] and (registry or {}).get(name, {}).get("native_list") == "none"
+    if no_list:
+        # MinUI and its forks hand each core a folder and name no file: a
+        # 0/0 coverage band read as "this device is not supported".
+        lines.extend(
+            [
+                '!!! info "No BIOS list of its own"',
+                "",
+                f"    {display} names no BIOS file itself: it gives each emulator core "
+                "its own folder and the core looks for its files there. The pack "
+                "places every file the cores it runs need into those folders. The "
+                "core files are listed further down this page.",
+                "",
+            ]
+        )
+    band = [] if no_list else [
             '<div class="rb-stats" markdown>',
             "",
             '<div class="rb-stat" markdown>',
@@ -2158,16 +2202,21 @@ def generate_platform_page(
             "",
             "</div>",
             "",
-            "| | |",
-            "|---|---|",
         ]
-    )
+    lines.extend([*band, "| | |", "|---|---|"])
     if hash_type:
         lines.append(f"| Hash type | {hash_type} |")
     if version:
         lines.append(f"| Version | {version} |")
+    # Where a user puts the pack, from the registry the README and the pack
+    # guide read too. base_destination is only the root the platform's own
+    # list writes its paths from: the pack strips it, so it is no folder to
+    # extract into, and showing it as "BIOS path" sent EmuDeck users to bios/.
+    extract_to = (registry or {}).get(name, {}).get("extract_to")
+    if extract_to:
+        lines.append(f"| Extract the pack into | `{extract_to}` |")
     if base_dest:
-        lines.append(f"| BIOS path | `{base_dest}/` |")
+        lines.append(f"| Paths in the platform's list start at | `{base_dest}/` |")
     if homepage:
         lines.append(f"| Homepage | [{homepage}]({homepage}) |")
     transcribed = str(config.get("source") or "")
@@ -2219,9 +2268,12 @@ def generate_platform_page(
         sys_id = d.get("system", "unknown")
         by_system.setdefault(sys_id, []).append(d)
 
+    if no_list:
+        lines.extend(_core_folders_section(name, config))
+
     # System summary table (quick navigation)
     lines.extend(
-        [
+        [] if no_list and not by_system else [
             "## Systems overview",
             "",
             "| System | Files | Status | Emulators |",

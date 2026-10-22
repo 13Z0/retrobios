@@ -410,6 +410,27 @@ class InstallerReadsTheCard(unittest.TestCase):
             install._check_card_root("minui", self.root / "Bios")
         install._check_card_root("minui", self.root)
 
+class TheSitePageOfACardPlatform(unittest.TestCase):
+    """A platform that names no file showed "0/0 Coverage (0%)" and an empty
+    systems table, which read as "not supported". Its page lists the folders
+    the frontend hands its cores and the files the pack puts in each."""
+
+    def test_folders_replace_the_empty_coverage(self):
+        import generate_site
+        from common import load_database, load_platform_registry
+        from generate_readme import compute_coverage
+
+        if not (REPO_ROOT / "database.json").is_file():
+            self.skipTest("database.json absent")
+        registry = load_platform_registry(str(REPO_ROOT / "platforms"))
+        db = load_database(str(REPO_ROOT / "database.json"))
+        cov = compute_coverage("minui", str(REPO_ROOT / "platforms"), db)
+        page = generate_site.generate_platform_page("minui", cov, registry, {})
+        self.assertNotIn("0/0", page)
+        self.assertNotIn("## Systems overview", page)
+        self.assertIn("| `Bios/PS/` | [pcsx_rearmed](../emulators/pcsx_rearmed.md) |", page)
+        self.assertIn("| Extract the pack into | `<SD card>/` |", page)
+
 
 if __name__ == "__main__":
     unittest.main()
