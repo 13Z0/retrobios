@@ -4068,6 +4068,26 @@ class TestRealignProse(unittest.TestCase):
         messages = profile_sync.realign_prose(self.path, self.tmp.name, dry_run=True)
         self.assertTrue(any("unreadable" in m for m in messages), messages)
 
+    def test_a_deleted_namesake_is_not_the_profiles_history(self):
+        """mupen64plus.yml was renamed away in March, and a new standalone
+        profile took the name in October. The deletion commit holds no file,
+        so the older revisions were read as a gap and every note reported
+        unreadable."""
+        self._git("init", "-q")
+        self._git("config", "user.email", "t@t")
+        self._git("config", "user.name", "t")
+        self._commit(
+            PROSE_SAMPLE.replace('"pin"', '"older"').replace("a.c:10", "a.c:3"),
+            "old profile",
+        )
+        self._git("rm", "-q", "p.yml")
+        self._git("commit", "-m", "rename away")
+        self._commit(PROSE_SAMPLE, "new profile")
+        self.files[("pin", "a.c")] = ["x"] * 9 + ["subject"]
+        self.assertEqual(
+            profile_sync.realign_prose(self.path, self.tmp.name, dry_run=True), []
+        )
+
     def test_scalar_written_at_the_current_pin_is_left_alone(self):
         self._git("init", "-q")
         self._git("config", "user.email", "t@t")
