@@ -523,6 +523,8 @@ reports the profile as uncheckable, and the CI job that runs
 | `systems` | no | list of system IDs this core handles |
 | `cores` | no | every upstream name the core is known by, for buildbot/target matching |
 | `alias_of` | for `type: alias` | profile key this one aliases. The alias carries no `files` |
+| `library_name` | when a libretro file has `load_from: save_dir` | the `library_name` the core reports in `retro_get_system_info`, read from the code. RetroArch sorts saves by core by default and hands the core `<save directory>/<library_name>`, so packs and the installer need it to place a file read there. Empty when the core reports an empty name, for which RetroArch adds no folder (FS-UAE, `libretro/libretro.c:575`) |
+| `save_folder_once` | no | `true` when the core adds its own folder to the save directory only where the directory it is handed is not already named so (Cemu's `in_named_dir`, `src/libretro/CemuLibretro.cpp:1670-1681`). Every `load_from: save_dir` path then starts with that folder, the `library_name`, and the file lands in the same place whether the frontend sorts saves by core or not |
 | `mode` | no | default mode: `standalone`, `libretro`, or `both` |
 | `verification` | no | how the core verifies BIOS: `existence`, `md5`, `sha1`, `crc32` |
 | `files` | yes, unless `type: alias` | list of file entries |
@@ -545,6 +547,25 @@ profile whose BIOS set is the same), `resources_directory`, `rom_path`,
 `firmware_titles` and `mlc_structure` (system titles a Wii U or Switch
 firmware installs), `dev_flash`, `dev_flash2`, `dev_flash3` (PS3 flash
 partitions), and `game_count`.
+
+### Files read from the save directory
+
+Some libretro cores read system data below the save directory the frontend
+hands them, not below the system directory. Azahar moves its whole user folder
+to `<save_dir>/Azahar/` under the default option "LibRetro Default"
+(`src/citra_libretro/core_settings.cpp:1048-1080`), falling back to the system
+directory only when the frontend gives none. Such an entry carries
+`load_from: save_dir` (or `{libretro: save_dir}`), a `path` relative to the
+save directory, and the profile names its `library_name`.
+
+The save directory itself is the platform's: `save_directory` in
+`platforms/_registry.yml` names it where the frontend keeps it in one place.
+RetroArch keeps `saves/` beside `system/` and sorts by core, so Azahar's keys
+land in `saves/Azahar/Azahar/sysdata/keys.txt`. Lakka keeps
+`/storage/savefiles`. Batocera, RetroBat and RetroPie hand each game or system
+a folder of its own: those entries are listed as omitted
+(`no_save_directory`), never placed in the BIOS tree where the core does not
+look.
 
 ### File entry fields
 
@@ -581,10 +602,10 @@ partitions), and `game_count`.
 | `installed_on` | platforms whose own package installs the file beside the emulator although the release does not: their packs leave it out (Batocera and RetroPie copy blueMSX's machines beside the core) |
 | `has_builtin` | true if the core falls back to a built-in copy when the file is absent |
 | `config_key` | configuration key the emulator exposes to point at the file |
-| `load_from` | directory the core reads the file from when it is not the system directory |
+| `load_from` | directory the core reads the file from when it is not the system directory, keyed by build (`{libretro: save_dir}`) when the standalone build reads `standalone_path` from its own folder. `save_dir` is the directory the frontend returns for `RETRO_ENVIRONMENT_GET_SAVE_DIRECTORY`: `path` is then relative to it, as the code joins it (Azahar's `Azahar/sysdata/keys.txt`, Dolphin's `User/GBA/gba_bios.bin`), and packs and the installer place the libretro build's file below the save directory (see [Files read from the save directory](#files-read-from-the-save-directory)). `content_dir`, `working_directory`, `config_dir`, `data_dir` and the others describe places no pack reaches |
 | `found_by` | `name` when the code opens the file by its name (the default), `content` when it scans a folder and identifies the file by hash, so the name is only a label (DuckStation by MD5, `bios.cpp:208`). Set on the profile or on one file, a dict splits `standalone` from `libretro`. A label is never written into a platform file as a name to hold, and pairs with a platform entry only by hash |
 | `source_ref` | source file and line number (e.g. `boot.cpp:42`), read at the profile's `source_commit` when set. A dict splits `standalone` from `libretro` when they diverge. In a profile that declares both `source` and `upstream`, each cited path opens with the one its lines are in: `source libretro.c:120` for the port's own code, `upstream emu/memory.c:46` for the emulator's, including the copy a port carries. `profile_sync --attribute-refs` writes these words from where the lines are found, and the site labels each citation with them |
-| `path` | destination path relative to system directory |
+| `path` | destination path relative to the system directory, or to the save directory under `load_from: save_dir` |
 | `standalone_path` | where the standalone build reads the file, under its own data folder, when it differs from `path` (the libretro destination). Packs for a platform running the emulator standalone use it |
 | `on_mismatch` | what the code does when a declared check fails: `reject` (default) or `warn` and run with it, for every check or check by check (`{size: warn, md5: reject}`) |
 | `variant_group` | one slot of one core that several entries fill, whatever system each is filed under (PicoDrive's twelve Mega CD BIOS). Region selection keeps one per group |
