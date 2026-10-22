@@ -20,6 +20,8 @@ on:
       - "scripts/deterministic_zip.py"
       - "scripts/dumpcatalog.py"
       - "scripts/exporter/baseline.py"
+      - "scripts/exporter/candidates.py"
+      - "scripts/gamedata.py"
       - "scripts/generate_pack.py"
       - "scripts/generate_readme.py"
       - "scripts/generate_site.py"

@@ -44,6 +44,10 @@ class VerifyRefusesWhatAModeDoesNotRead(unittest.TestCase):
         (("--platform", "retroarch"), "--include-archived"),
         (("--emulator", "handy"), "--include-archived"),
         (("--platform", "retroarch"), "--standalone"),
+        # Game data is categorized against a platform's list and its cores.
+        (("--emulator", "handy"), "--no-game-data"),
+        (("--system", "atari-lynx"), "--no-game-data"),
+        (("--list-systems",), "--no-game-data"),
     )
 
     def test_each_combination_is_refused(self):
