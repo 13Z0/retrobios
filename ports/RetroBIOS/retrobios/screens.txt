@@ -254,7 +254,7 @@ rb_screen_problem() {
   elif [ "$RB_DETECTED" = "0" ]; then
     rb_notice "No BIOS folder found" "install.py knows no BIOS folder on $RB_OS_NAME. $RB_PC_ROUTE" "check" "Check again" "quit" "Quit"
   elif [ "$RB_ERROR" = "network" ]; then
-    rb_notice "No connection: checking only" "$RB_OS_NAME, BIOS folder $RB_BIOS_DIR. The list of files to check comes from the internet, and so do the files. Connect to Wi-Fi, then check again." "check" "Check again" "quit" "Quit"
+    rb_notice "No connection" "$RB_OS_NAME, BIOS folder $RB_BIOS_DIR. The list of files to check comes from the internet, and so do the files: without a connection nothing can be checked or downloaded. Connect to Wi-Fi, then check again." "check" "Check again" "quit" "Quit"
   elif [ "$RB_ERROR" = "invalid" ]; then
     rb_notice "The file list is newer than this port" "$RB_ERROR_TEXT. Update RetroBIOS from PortMaster, or use the installer on a computer. $RB_PC_ROUTE" "check" "Check again" "quit" "Quit"
   else

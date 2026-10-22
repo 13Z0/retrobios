@@ -382,7 +382,7 @@ class TheScreens(unittest.TestCase):
         shown = self.run_port("offline", ["quit"])
         self.assertEqual(self.lists(shown), [("notice", ["info", "check", "quit"])])
         notice = shown[[s[0] for s in shown].index("list")][2]
-        self.assertEqual(notice["info"][0], "No connection: checking only")
+        self.assertEqual(notice["info"][0], "No connection")
         self.assertIn("Connect to Wi-Fi", notice["info"][1])
         self.assertIn("/roms/bios", notice["info"][1])
 
