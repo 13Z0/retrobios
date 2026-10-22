@@ -9,7 +9,7 @@ committed, and records where each came from in a ``sources.json`` beside
 them. The site build only reads those copies (``sitediagrams.localize_images``).
 
 Raster images are normalised to a square PNG (96 px for logos, 48 px for
-system icons) so every tile has the same weight; SVG is kept as published.
+system icons) so every tile has the same weight, and SVG is kept as published.
 Normalising needs Pillow. This is a maintenance tool run by hand when a
 logo changes, not a build step: the build stays on the standard library
 and PyYAML.

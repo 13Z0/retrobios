@@ -47,7 +47,7 @@ PAD = 10
 WIDE = 720
 NARROW = 340
 
-# Default colours for an SVG read outside the page; the stylesheet replaces
+# Default colours for an SVG read outside the page. The stylesheet replaces
 # them on the site through the rb-d-* classes.
 INK = "#1f2233"
 FILL = "#f5f6fa"
@@ -315,8 +315,8 @@ def _folder(name: str) -> str:
     return str(registry()[name].get("extract_to", "")).strip()
 
 
-# Frontends and emulators shown in the explainer. Each pair is one a user
-# meets together; tests check that the platform runs that emulator.
+# Frontends and emulators shown in the explainer, each pair one a user meets
+# together. Tests check that the platform runs that emulator.
 CHAIN_EXAMPLES = (("batocera", "duckstation"), ("emudeck", "pcsx2"), ("retroarch", "beetle_psx"))
 
 

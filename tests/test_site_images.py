@@ -50,7 +50,7 @@ class EveryDiagramIsAccessibleSvg(unittest.TestCase):
         for image_id in sitediagrams.IMAGE_IDS:
             html = sitediagrams.figure_html(image_id)
             with self.subTest(image=image_id):
-                self.assertIsNone(re.search("[–—←-⇿─-╿…]", html))
+                self.assertIsNone(re.search("[\u2013\u2014\u2190-\u21ff\u2500-\u257f\u2026]", html))
                 self.assertNotIn("; ", re.sub(r"<[^>]+>", " ", html))
 
     def test_a_second_copy_on_one_page_gets_its_own_ids(self):

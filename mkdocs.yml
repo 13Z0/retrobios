@@ -249,6 +249,7 @@ nav:
       - A7800: emulators/a7800.md
       - Abuse: emulators/abuse.md
       - ACE-DL: emulators/ace-dl.md
+      - advanced_drastic: emulators/advanced_drastic.md
       - AdvanceMAME: emulators/advancemame.md
       - AdvanceMAME 0.94: emulators/advmame-0.94.md
       - AdvanceMAME 1.4: emulators/advmame-1.4.md
@@ -285,7 +286,9 @@ nav:
       - Beetle WonderSwan (Mednafen WonderSwan): emulators/beetle_wswan.md
       - beetle_saturn: emulators/beetle_saturn.md
       - BennuGD: emulators/bennugd.md
+      - BennuGD monolithic (bgdi): emulators/bennugd-monolithic.md
       - Bermuda Syndrome: emulators/bsyndrome.md
+      - Bermuda Syndrome (bs): emulators/bermuda.md
       - BigPEmu: emulators/bigpemu.md
       - BizHawk: emulators/bizhawk.md
       - bk-emulator: emulators/bk.md
@@ -308,10 +311,12 @@ nav:
       - Caprice32: emulators/cap32.md
       - CapriceRPI: emulators/capricerpi.md
       - CatacombGL: emulators/catacombgl.md
+      - ccleste: emulators/ccleste.md
       - CDi 2015: emulators/cdi2015.md
       - Cemu: emulators/cemu.md
       - Chihiro-DS: emulators/chihiro-ds.md
       - ChimeraSNES: emulators/chimerasnes.md
+      - Chocolate Doom: emulators/chocolate-doom.md
       - Citra: emulators/citra.md
       - Citra 2018: emulators/citra2018.md
       - Citra Canary: emulators/citra_canary.md
@@ -367,6 +372,7 @@ nav:
       - dsda-doom: emulators/dsda-doom.md
       - DSperate: emulators/dsperate.md
       - DuckStation: emulators/duckstation.md
+      - DuckStation (legacy): emulators/duckstation-legacy.md
       - Dusklight: emulators/dusklight.md
       - dxx-rebirth: emulators/dxx-rebirth.md
       - EasyRPG Player: emulators/easyrpg.md
@@ -402,6 +408,7 @@ nav:
       - FBZX: emulators/fbzx.md
       - FCEUmm: emulators/fceumm.md
       - FCEUmm Mod: emulators/fceumm_mod.md
+      - fheroes2: emulators/fheroes2.md
       - FinalBurn Neo: emulators/fbneo.md
       - FinalBurn Neo (CPS-1/CPS-2): emulators/fbneo_cps12.md
       - FinalBurn Neo (Neo Geo): emulators/fbneo_neogeo.md
@@ -409,6 +416,7 @@ nav:
       - fixNES: emulators/fixnes.md
       - Flycast: emulators/flycast.md
       - Flycast 2021: emulators/flycast2021.md
+      - Flycast 2022 Low-End: emulators/flycast2021le.md
       - Flycast Dojo: emulators/flycast-dojo.md
       - fMSX: emulators/fmsx.md
       - FPse: emulators/fpse.md
@@ -460,6 +468,7 @@ nav:
       - hatariB: emulators/hatarib.md
       - HBMAME (Homebrew MAME): emulators/hbmame.md
       - higan (SFC Accuracy): emulators/higan_sfc.md
+      - hode: emulators/hode.md
       - Holani: emulators/holani.md
       - Hurrican: emulators/hurrican.md
       - Hydra Castle Labyrinth: emulators/hcl.md
@@ -551,6 +560,8 @@ nav:
       - MojoZork: emulators/mojozork.md
       - MSX.emu: emulators/msx-emu.md
       - Mu: emulators/mu.md
+      - Mupen64Plus: emulators/mupen64plus.md
+      - Mupen64Plus (libretro, 2019): emulators/mupen64plus-libretro.md
       - Mupen64Plus AE: emulators/mupen64plus-ae.md
       - Mupen64Plus-Next: emulators/mupen64plus_next.md
       - My Boy!: emulators/my-boy.md
@@ -596,6 +607,7 @@ nav:
       - Oricutron: emulators/oricutron.md
       - Osmose (RetroPie): emulators/osmose.md
     - P to R:
+      - P/EMU/SDL: emulators/piemu.md
       - Panda3DS: emulators/panda3ds.md
       - Parallel Launcher: emulators/parallel-launcher.md
       - ParaLLEl N64: emulators/parallel_n64.md
@@ -712,6 +724,7 @@ nav:
       - Stella 2023: emulators/stella2023.md
       - Sudachi: emulators/sudachi.md
       - Sugarbox2: emulators/sugarbox2.md
+      - Super Mario War: emulators/supermariowar.md
       - SUPER ZSNES: emulators/superzsnes.md
       - SUPER3: emulators/super3.md
       - Supermodel: emulators/supermodel.md
@@ -719,6 +732,8 @@ nav:
       - Supermodel Dojo: emulators/supermodel-dojo.md
       - Supermodel Legacy: emulators/supermodel-legacy.md
       - SuperSnes9x: emulators/supersnes9x.md
+      - SuperTux: emulators/supertux.md
+      - SuperTuxKart: emulators/supertuxkart.md
       - Suyu: emulators/suyu.md
       - Swan.emu: emulators/swan-emu.md
       - swanstation: emulators/swanstation.md
