@@ -133,10 +133,15 @@ class ShippedFilesSatisfyTheirDeclaration(unittest.TestCase):
                 if not satisfied:
                     first = candidates[0][1]
                     algo = sorted(first)[0]
+                    # A core's copy at the path means the builder found no
+                    # file with the pinned bytes and filled the slot for the
+                    # core (generate_pack's core phase): the pin is to acquire.
+                    filled = (" (a core's copy: the pinned file is not held, acquire it)"
+                              if shipped.get("cores") and not shipped.get("systems") else "")
                     violations.append(
                         f"{platform}: {shipped['dest']} ships {repo_path} "
                         f"with {algo} {digests[algo][0]}, declared "
-                        f"{sorted(first[algo])[0]}"
+                        f"{sorted(first[algo])[0]}{filled}"
                     )
         self.assertEqual(
             violations, [],
