@@ -41,30 +41,6 @@ ICON_SIZE = 48
 AVATAR_HOST = "avatars.githubusercontent.com"
 USER_AGENT = "retrobios-site-images"
 
-# Who owns each mark. Logos are shown to name the platform they belong to;
-# the note says so, and gives the licence of the repository the file was
-# taken from when that repository states one.
-OWNERS = {
-    "retroarch": ("libretro", "repository licence GPL-3.0"),
-    "lakka": ("Lakka (libretro)", "file from libretro/retroarch-assets, CC-BY-4.0"),
-    "batocera": ("Batocera", "repository licence MIT"),
-    "recalbox": ("Recalbox", "file from homarr-labs/dashboard-icons, Apache-2.0"),
-    "retrobat": ("RetroBat", "repository states no licence"),
-    "emudeck": ("EmuDeck", "repository licence GPL-3.0"),
-    "retrodeck": ("RetroDECK", "repository licence GPL-3.0"),
-    "romm": ("RomM", "GitHub organisation avatar of rommapp"),
-    "rocknix": ("ROCKNIX", "GitHub organisation avatar of ROCKNIX"),
-    "amberelec": ("AmberELEC", "GitHub organisation avatar of AmberELEC"),
-    "emuelec": ("EmuELEC", "GitHub organisation avatar of EmuELEC"),
-    "knulli": ("KNULLI", "GitHub organisation avatar of knulli-cfw"),
-    "retropie": ("RetroPie", "GitHub organisation avatar of RetroPie"),
-    "bizhawk": ("TASVideos", "GitHub organisation avatar of TASEmulators"),
-    "misterfpga": ("MiSTer FPGA", "GitHub organisation avatar of MiSTer-devel"),
-    "minui": ("Shaun Inman", "GitHub avatar of shauninman, the author of MinUI"),
-    "nextui": ("LoveRetro", "GitHub organisation avatar of LoveRetro"),
-}
-
-
 def fetch(url: str) -> bytes:
     request = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
     with urllib.request.urlopen(request, timeout=60) as response:
@@ -107,6 +83,8 @@ def write_manifest(directory: Path, note: str, entries: list[dict]) -> None:
 
 
 def fetch_logos() -> None:
+    from siteguides import GUIDES
+
     with open(ROOT / "platforms" / "_registry.yml", encoding="utf-8") as handle:
         platforms = yaml.safe_load(handle)["platforms"]
     LOGO_DIR.mkdir(parents=True, exist_ok=True)
@@ -125,7 +103,10 @@ def fetch_logos() -> None:
             if stale.name != file_name:
                 stale.unlink()
         (LOGO_DIR / file_name).write_bytes(payload)
-        owner, licence = OWNERS.get(name, (name, "ownership not recorded"))
+        # Who owns each mark: logo_owner and logo_licence in the guides.
+        guide = GUIDES.get(name)
+        owner = (guide and guide.logo_owner) or name
+        licence = (guide and guide.logo_licence) or "ownership not recorded"
         entries.append({
             "file": file_name, "platform": name, "source": url,
             "owner": owner, "licence": licence,

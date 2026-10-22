@@ -1,5 +1,7 @@
 ---
 level: reference
+order: 130
+nav_title: Project terms
 ---
 
 # Terms of the reference pages

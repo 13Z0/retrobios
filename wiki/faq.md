@@ -1,5 +1,7 @@
 ---
 level: start
+order: 50
+nav_title: Common questions
 ---
 
 # FAQ

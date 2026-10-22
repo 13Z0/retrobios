@@ -1,5 +1,6 @@
 ---
 level: start
+order: 40
 ---
 
 # When a game does not start

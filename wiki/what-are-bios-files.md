@@ -1,5 +1,7 @@
 ---
 level: start
+order: 10
+nav_title: What BIOS files are
 ---
 
 # What is a BIOS?

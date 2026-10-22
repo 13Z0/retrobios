@@ -1,5 +1,7 @@
 ---
 level: start
+order: 60
+nav_title: Glossary
 ---
 
 # Words used on this site
