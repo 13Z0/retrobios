@@ -2,10 +2,11 @@
   "manifest_version": 2,
   "source": "full",
   "regions": [],
+  "categorized": true,
   "platform": "bizhawk",
   "display_name": "BizHawk",
   "version": "1.0",
-  "generated": "2026-10-21T08:36:42Z",
+  "generated": "2026-10-22T05:12:35Z",
   "base_destination": "Firmware",
   "detect": [
     {

@@ -2,10 +2,11 @@
   "manifest_version": 2,
   "source": "full",
   "regions": [],
+  "categorized": true,
   "platform": "minui",
   "display_name": "MinUI",
   "version": "1.0",
-  "generated": "2026-10-21T11:20:26Z",
+  "generated": "2026-10-22T05:12:35Z",
   "base_destination": "",
   "detect": [
     {
@@ -31,6 +32,7 @@
       "mgba_fork"
     ],
     "pcsx_rearmed": [
+      "pcsx_rearmed_32b",
       "pcsx_rearmed_interpreter",
       "pcsx_rearmed_neon"
     ]

@@ -2,10 +2,11 @@
   "manifest_version": 2,
   "source": "full",
   "regions": [],
+  "categorized": true,
   "platform": "nextui",
   "display_name": "NextUI",
   "version": "1.0",
-  "generated": "2026-10-21T11:20:26Z",
+  "generated": "2026-10-22T05:12:35Z",
   "base_destination": "",
   "detect": [
     {
@@ -30,7 +31,8 @@
       "reason": "not_found",
       "cores": [
         "prboom"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "Bios/PRBOOM/freedoom.wad",
@@ -40,10 +42,14 @@
       "reason": "not_found",
       "cores": [
         "prboom"
-      ]
+      ],
+      "category": "game_data"
     }
   ],
   "core_names": {
+    "fbneo": [
+      "FBNEOSA"
+    ],
     "mednafen_pce_fast": [
       "beetle_pce_fast",
       "pce_fast"
@@ -52,6 +58,7 @@
       "mgba_fork"
     ],
     "pcsx_rearmed": [
+      "pcsx_rearmed_32b",
       "pcsx_rearmed_interpreter",
       "pcsx_rearmed_neon"
     ],
@@ -1142,7 +1149,8 @@
         "fbneo"
       ],
       "storage": "release",
-      "release_asset": "donpachi.zip"
+      "release_asset": "donpachi.zip",
+      "category": "game_data"
     },
     {
       "dest": "Bios/FBN/fbneo/samples/sfz3mix.zip",
@@ -1154,7 +1162,8 @@
         "fbneo"
       ],
       "storage": "release",
-      "release_asset": "sfz3mix.zip"
+      "release_asset": "sfz3mix.zip",
+      "category": "game_data"
     },
     {
       "dest": "Bios/FBN/fbneo/samples/twotiger.zip",
@@ -1166,7 +1175,8 @@
         "fbneo"
       ],
       "storage": "release",
-      "release_asset": "twotiger.zip"
+      "release_asset": "twotiger.zip",
+      "category": "game_data"
     },
     {
       "dest": "Bios/FC/disksys.rom",
@@ -3015,7 +3025,8 @@
       "repo_path": "bios/Id Software/Doom/DOOM.WAD",
       "cores": [
         "prboom"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "Bios/PRBOOM/freedoom1.wad",
@@ -3025,7 +3036,8 @@
       "repo_path": "bios/Game Engines/DOOM/freedoom1.wad",
       "cores": [
         "prboom"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "Bios/PRBOOM/doom1.wad",
@@ -3035,7 +3047,8 @@
       "repo_path": "bios/Id Software/Doom/DOOM1.WAD",
       "cores": [
         "prboom"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "Bios/PRBOOM/doom2.wad",
@@ -3045,7 +3058,8 @@
       "repo_path": "bios/Game Engines/DOOM/doom2.wad",
       "cores": [
         "prboom"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "Bios/PRBOOM/doom2f.wad",
@@ -3055,7 +3069,8 @@
       "repo_path": "bios/Id Software/Doom/DOOM2F.WAD",
       "cores": [
         "prboom"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "Bios/PRBOOM/plutonia.wad",
@@ -3065,7 +3080,8 @@
       "repo_path": "bios/Id Software/Doom/PLUTONIA.WAD",
       "cores": [
         "prboom"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "Bios/PRBOOM/tnt.wad",
@@ -3075,7 +3091,8 @@
       "repo_path": "bios/Id Software/Doom/TNT.WAD",
       "cores": [
         "prboom"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "Bios/PRBOOM/freedoom2.wad",
@@ -3085,7 +3102,8 @@
       "repo_path": "bios/Game Engines/DOOM/freedoom2.wad",
       "cores": [
         "prboom"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "Bios/PRBOOM/heretic.wad",
@@ -3095,7 +3113,8 @@
       "repo_path": "bios/Id Software/Doom/HERETIC.WAD",
       "cores": [
         "prboom"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "Bios/PRBOOM/heretic1.wad",
@@ -3105,7 +3124,8 @@
       "repo_path": "bios/Id Software/Doom/HERETIC1.WAD",
       "cores": [
         "prboom"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "Bios/PRBOOM/blasphem.wad",
@@ -3115,7 +3135,8 @@
       "repo_path": "bios/Game Engines/DOOM/blasphem.wad",
       "cores": [
         "prboom"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "Bios/PRBOOM/gzdoom.pk3",
@@ -3125,7 +3146,8 @@
       "repo_path": "bios/Game Engines/GZDoom/gzdoom.pk3",
       "cores": [
         "prboom"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "Bios/PRBOOM/zdoom.pk3",
@@ -3135,7 +3157,8 @@
       "repo_path": "bios/Game Engines/ZDoom/zdoom.pk3",
       "cores": [
         "prboom"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "Bios/A7800/7800 BIOS (U).rom",

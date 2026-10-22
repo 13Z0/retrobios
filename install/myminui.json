@@ -2,10 +2,11 @@
   "manifest_version": 2,
   "source": "full",
   "regions": [],
+  "categorized": true,
   "platform": "myminui",
   "display_name": "MyMinUI",
   "version": "1.0",
-  "generated": "2026-10-21T11:20:26Z",
+  "generated": "2026-10-22T05:12:35Z",
   "base_destination": "",
   "detect": [
     {
@@ -17,9 +18,9 @@
   ],
   "standalone_copies": [],
   "total_files": 465,
-  "total_size": 1490462202,
+  "total_size": 1489165818,
   "pack_files": 467,
-  "pack_size": 1490462202,
+  "pack_size": 1489165818,
   "total_omitted": 2,
   "omitted_files": [
     {
@@ -30,7 +31,8 @@
       "reason": "not_found",
       "cores": [
         "prboom"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "Bios/DOOM/freedoom.wad",
@@ -40,10 +42,14 @@
       "reason": "not_found",
       "cores": [
         "prboom"
-      ]
+      ],
+      "category": "game_data"
     }
   ],
   "core_names": {
+    "fbneo": [
+      "FBNEOSA"
+    ],
     "fuse": [
       "fuse_libretro"
     ],
@@ -58,6 +64,7 @@
       "mgba_fork"
     ],
     "pcsx_rearmed": [
+      "pcsx_rearmed_32b",
       "pcsx_rearmed_interpreter",
       "pcsx_rearmed_neon"
     ]
@@ -353,7 +360,8 @@
       "repo_path": "bios/Arcade/Arcade/.variants/hiscore.dat.c0863060",
       "cores": [
         "mame2003_plus"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "Bios/MAME/mame2003-plus/artwork/blueshrk.zip",
@@ -363,7 +371,8 @@
       "repo_path": "bios/Arcade/MAME/mame2003-plus/artwork/blueshrk.zip",
       "cores": [
         "mame2003_plus"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "Bios/MAME/mame2003-plus/artwork/frogs.zip",
@@ -373,7 +382,8 @@
       "repo_path": "bios/Arcade/MAME/mame2003-plus/artwork/frogs.zip",
       "cores": [
         "mame2003_plus"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "Bios/MAME/mame2003-plus/artwork/invaders.zip",
@@ -383,7 +393,8 @@
       "repo_path": "bios/Arcade/MAME/mame2003-plus/artwork/invaders.zip",
       "cores": [
         "mame2003_plus"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "Bios/MAME/mame2003-plus/artwork/omegrace.zip",
@@ -393,7 +404,8 @@
       "repo_path": "bios/Arcade/MAME/mame2003-plus/artwork/omegrace.zip",
       "cores": [
         "mame2003_plus"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "Bios/MAME/mame2003-plus/artwork/skydiver.zip",
@@ -403,7 +415,8 @@
       "repo_path": "bios/Arcade/MAME/mame2003-plus/artwork/skydiver.zip",
       "cores": [
         "mame2003_plus"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "Bios/MAME/mame2003-plus/artwork/solarq.zip",
@@ -413,7 +426,8 @@
       "repo_path": "bios/Arcade/MAME/mame2003-plus/artwork/solarq.zip",
       "cores": [
         "mame2003_plus"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "Bios/MAME/mame2003-plus/artwork/warrior.zip",
@@ -423,7 +437,8 @@
       "repo_path": "bios/Arcade/MAME/mame2003-plus/artwork/warrior.zip",
       "cores": [
         "mame2003_plus"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "Bios/MGBA/gb_bios.bin",
@@ -593,7 +608,8 @@
       "repo_path": "bios/Id Software/Quake/quoth/pak0.pak",
       "cores": [
         "tyrquake"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "Bios/QUAKE/quoth/pak1.pak",
@@ -605,7 +621,8 @@
         "tyrquake"
       ],
       "storage": "release",
-      "release_asset": "pak1.pak"
+      "release_asset": "pak1.pak",
+      "category": "game_data"
     },
     {
       "dest": "Bios/QUAKE/quoth/pak2.pak",
@@ -615,7 +632,8 @@
       "repo_path": "bios/Id Software/Quake/quoth/pak2.pak",
       "cores": [
         "tyrquake"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "Bios/A5200/5200.rom",
@@ -747,7 +765,8 @@
         "fbneo"
       ],
       "storage": "release",
-      "release_asset": "donpachi.zip"
+      "release_asset": "donpachi.zip",
+      "category": "game_data"
     },
     {
       "dest": "Bios/FBN/fbneo/samples/sfz3mix.zip",
@@ -759,7 +778,8 @@
         "fbneo"
       ],
       "storage": "release",
-      "release_asset": "sfz3mix.zip"
+      "release_asset": "sfz3mix.zip",
+      "category": "game_data"
     },
     {
       "dest": "Bios/FBN/fbneo/samples/twotiger.zip",
@@ -771,7 +791,8 @@
         "fbneo"
       ],
       "storage": "release",
-      "release_asset": "twotiger.zip"
+      "release_asset": "twotiger.zip",
+      "category": "game_data"
     },
     {
       "dest": "Bios/NG/fbneo/samples/donpachi.zip",
@@ -783,7 +804,8 @@
         "fbneo"
       ],
       "storage": "release",
-      "release_asset": "donpachi.zip"
+      "release_asset": "donpachi.zip",
+      "category": "game_data"
     },
     {
       "dest": "Bios/NG/fbneo/samples/sfz3mix.zip",
@@ -795,7 +817,8 @@
         "fbneo"
       ],
       "storage": "release",
-      "release_asset": "sfz3mix.zip"
+      "release_asset": "sfz3mix.zip",
+      "category": "game_data"
     },
     {
       "dest": "Bios/NG/fbneo/samples/twotiger.zip",
@@ -807,7 +830,8 @@
         "fbneo"
       ],
       "storage": "release",
-      "release_asset": "twotiger.zip"
+      "release_asset": "twotiger.zip",
+      "category": "game_data"
     },
     {
       "dest": "Bios/FC/disksys.rom",
@@ -1057,7 +1081,8 @@
       "repo_path": "bios/Arcade/MAME/cheat.dat",
       "cores": [
         "mame2003_plus"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "Bios/MAME/mame2003-plus/history.dat",
@@ -1067,7 +1092,8 @@
       "repo_path": "bios/Arcade/MAME/history.dat",
       "cores": [
         "mame2003_plus"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "Bios/MAME/mame2003-plus/mameinfo.dat",
@@ -1077,14 +1103,15 @@
       "repo_path": "bios/Arcade/MAME/mameinfo.dat",
       "cores": [
         "mame2003_plus"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "Bios/MAME/neogeo.zip",
-      "sha1": "447e23757e5be7ae688885a5ce8ea3da8c8bedc0",
-      "sha256": "9a8cf2b88488969d7000028b30474175067f753a649a1fe0c008efd8450d60a0",
-      "size": 1952551,
-      "repo_path": "bios/Arcade/MAME/neogeo.zip",
+      "sha1": "b43ed646fb64625ec2e06531c274340b98bd9baa",
+      "sha256": "6c1ea40e4acf89c7a077ce0adfed7b81f86eff7ffc9ea06ff9b2904d6c22ef3a",
+      "size": 674691,
+      "repo_path": "bios/Arcade/Arcade/.variants/neogeo.zip.74df3258",
       "cores": [
         "mame2003_plus"
       ]
@@ -1151,10 +1178,10 @@
     },
     {
       "dest": "Bios/MAME/nss.zip",
-      "sha1": "68b780f40623e51a421faf374ae5a84a53a81279",
-      "sha256": "24d341ee618c8499178ee9b57bebb68f5418645cc2b4683af605a7db628b196e",
-      "size": 50536,
-      "repo_path": "bios/Arcade/Arcade/nss.zip",
+      "sha1": "9196cf10477b2b4a1a18ace699d226817203073a",
+      "sha256": "5d763d0fead849cd834fc782be7be65746f9c19d294e9a74c13ad7abdebcc4cc",
+      "size": 33184,
+      "repo_path": "bios/Arcade/Arcade/.variants/nss.zip.cba0bd8c",
       "cores": [
         "mame2003_plus"
       ]
@@ -1241,10 +1268,10 @@
     },
     {
       "dest": "Bios/MAME/cvs.zip",
-      "sha1": "649d8af20ba0048fa993585960bf0305d50fc560",
-      "sha256": "5c3a236073b6aec57ddd2be963d77a49d5d60d920813ae750b55d3874fd6afe1",
-      "size": 3113,
-      "repo_path": "bios/Arcade/Arcade/cvs.zip",
+      "sha1": "1fedd2d6cce0889bf8e23fdecdbbd01d383b0497",
+      "sha256": "96389d4937afde45a53b468610cd8dab10688ae2f7393d4013af54f61ec876f5",
+      "size": 1941,
+      "repo_path": "bios/Arcade/Arcade/.variants/cvs.zip.95581230",
       "cores": [
         "mame2003_plus"
       ]
@@ -2320,7 +2347,8 @@
       "repo_path": "bios/Id Software/Doom/DOOM.WAD",
       "cores": [
         "prboom"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "Bios/DOOM/freedoom1.wad",
@@ -2330,7 +2358,8 @@
       "repo_path": "bios/Game Engines/DOOM/freedoom1.wad",
       "cores": [
         "prboom"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "Bios/DOOM/doom1.wad",
@@ -2340,7 +2369,8 @@
       "repo_path": "bios/Id Software/Doom/DOOM1.WAD",
       "cores": [
         "prboom"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "Bios/DOOM/doom2.wad",
@@ -2350,7 +2380,8 @@
       "repo_path": "bios/Game Engines/DOOM/doom2.wad",
       "cores": [
         "prboom"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "Bios/DOOM/doom2f.wad",
@@ -2360,7 +2391,8 @@
       "repo_path": "bios/Id Software/Doom/DOOM2F.WAD",
       "cores": [
         "prboom"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "Bios/DOOM/plutonia.wad",
@@ -2370,7 +2402,8 @@
       "repo_path": "bios/Id Software/Doom/PLUTONIA.WAD",
       "cores": [
         "prboom"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "Bios/DOOM/tnt.wad",
@@ -2380,7 +2413,8 @@
       "repo_path": "bios/Id Software/Doom/TNT.WAD",
       "cores": [
         "prboom"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "Bios/DOOM/freedoom2.wad",
@@ -2390,7 +2424,8 @@
       "repo_path": "bios/Game Engines/DOOM/freedoom2.wad",
       "cores": [
         "prboom"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "Bios/DOOM/heretic.wad",
@@ -2400,7 +2435,8 @@
       "repo_path": "bios/Id Software/Doom/HERETIC.WAD",
       "cores": [
         "prboom"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "Bios/DOOM/heretic1.wad",
@@ -2410,7 +2446,8 @@
       "repo_path": "bios/Id Software/Doom/HERETIC1.WAD",
       "cores": [
         "prboom"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "Bios/DOOM/blasphem.wad",
@@ -2420,7 +2457,8 @@
       "repo_path": "bios/Game Engines/DOOM/blasphem.wad",
       "cores": [
         "prboom"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "Bios/DOOM/gzdoom.pk3",
@@ -2430,7 +2468,8 @@
       "repo_path": "bios/Game Engines/GZDoom/gzdoom.pk3",
       "cores": [
         "prboom"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "Bios/DOOM/zdoom.pk3",
@@ -2440,7 +2479,8 @@
       "repo_path": "bios/Game Engines/ZDoom/zdoom.pk3",
       "cores": [
         "prboom"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "Bios/A7800/7800 BIOS (U).rom",
@@ -2651,7 +2691,8 @@
       "repo_path": "bios/Id Software/Quake/id1/pak0.pak",
       "cores": [
         "tyrquake"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "Bios/FBN/astrocde.zip",

@@ -2,10 +2,11 @@
   "manifest_version": 2,
   "source": "full",
   "regions": [],
+  "categorized": true,
   "platform": "romm",
   "display_name": "RomM",
   "version": "1.0",
-  "generated": "2026-10-21T08:36:42Z",
+  "generated": "2026-10-22T05:12:35Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -1785,7 +1786,8 @@
       "reason": "no_platform_slug",
       "cores": [
         "PrBoom"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "chargen-901460-02.bin",
@@ -1915,7 +1917,8 @@
       "reason": "not_found",
       "cores": [
         "prboom"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "doom/freedoom.wad",
@@ -1925,7 +1928,8 @@
       "reason": "not_found",
       "cores": [
         "prboom"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "dsi_bios7.bin",
@@ -2045,7 +2049,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "FinalBurn Neo"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "fbneo/samples/sfz3mix.zip",
@@ -2055,7 +2060,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "FinalBurn Neo"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "fbneo/samples/twotiger.zip",
@@ -2065,7 +2071,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "FinalBurn Neo"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "fuse/128-0.rom",
@@ -2455,7 +2462,8 @@
       "reason": "no_platform_slug",
       "cores": [
         "PrBoom"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "heretic1.wad",
@@ -2465,7 +2473,8 @@
       "reason": "no_platform_slug",
       "cores": [
         "PrBoom"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "jagboot.rom",
@@ -2665,7 +2674,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "MAME 2003-Plus"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "mame2003-plus/artwork/frogs.zip",
@@ -2675,7 +2685,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "MAME 2003-Plus"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "mame2003-plus/artwork/invaders.zip",
@@ -2685,7 +2696,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "MAME 2003-Plus"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "mame2003-plus/artwork/omegrace.zip",
@@ -2695,7 +2707,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "MAME 2003-Plus"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "mame2003-plus/artwork/skydiver.zip",
@@ -2705,7 +2718,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "MAME 2003-Plus"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "mame2003-plus/artwork/solarq.zip",
@@ -2715,7 +2729,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "MAME 2003-Plus"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "mame2003-plus/artwork/warrior.zip",
@@ -2725,7 +2740,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "MAME 2003-Plus"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "mame2003-plus/cheat.dat",
@@ -2735,7 +2751,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "MAME 2003-Plus"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "mame2003-plus/hiscore.dat",
@@ -2745,7 +2762,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "MAME 2003-Plus"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "mame2003-plus/history.dat",
@@ -2755,7 +2773,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "MAME 2003-Plus"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "mame2003-plus/mameinfo.dat",
@@ -2765,7 +2784,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "MAME 2003-Plus"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "mame2003/cheat.dat",
@@ -2775,7 +2795,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "MAME 2003"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "mame2003/hiscore.dat",
@@ -2785,7 +2806,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "MAME 2003"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "mame2003/history.dat",
@@ -2795,7 +2817,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "MAME 2003"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "mame2003/mameinfo.dat",
@@ -2805,7 +2828,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "MAME 2003"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "megaplay.zip",
@@ -2905,7 +2929,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "Nestopia UE"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "nestopia/samples/ftaerobi/01.wav",
@@ -2915,7 +2940,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "Nestopia UE"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "nestopia/samples/ftaerobi/02.wav",
@@ -2925,7 +2951,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "Nestopia UE"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "nestopia/samples/ftaerobi/03.wav",
@@ -2935,7 +2962,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "Nestopia UE"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "nestopia/samples/ftaerobi/04.wav",
@@ -2945,7 +2973,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "Nestopia UE"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "nestopia/samples/ftaerobi/05.wav",
@@ -2955,7 +2984,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "Nestopia UE"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "nestopia/samples/ftaerobi/06.wav",
@@ -2965,7 +2995,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "Nestopia UE"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "nestopia/samples/ftaerobi/07.wav",
@@ -2975,7 +3006,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "Nestopia UE"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "nestopia/samples/moepro/00.wav",
@@ -2985,7 +3017,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "Nestopia UE"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "nestopia/samples/moepro/01.wav",
@@ -2995,7 +3028,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "Nestopia UE"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "nestopia/samples/moepro/02.wav",
@@ -3005,7 +3039,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "Nestopia UE"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "nestopia/samples/moepro/03.wav",
@@ -3015,7 +3050,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "Nestopia UE"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "nestopia/samples/moepro/04.wav",
@@ -3025,7 +3061,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "Nestopia UE"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "nestopia/samples/moepro/05.wav",
@@ -3035,7 +3072,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "Nestopia UE"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "nestopia/samples/moepro/06.wav",
@@ -3045,7 +3083,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "Nestopia UE"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "nestopia/samples/moepro/07.wav",
@@ -3055,7 +3094,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "Nestopia UE"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "nestopia/samples/moepro/08.wav",
@@ -3065,7 +3105,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "Nestopia UE"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "nestopia/samples/moepro/09.wav",
@@ -3075,7 +3116,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "Nestopia UE"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "nestopia/samples/moepro/10.wav",
@@ -3085,7 +3127,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "Nestopia UE"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "nestopia/samples/moepro/11.wav",
@@ -3095,7 +3138,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "Nestopia UE"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "nestopia/samples/moepro/12.wav",
@@ -3105,7 +3149,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "Nestopia UE"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "nestopia/samples/moepro/13.wav",
@@ -3115,7 +3160,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "Nestopia UE"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "nestopia/samples/moepro/14.wav",
@@ -3125,7 +3171,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "Nestopia UE"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "nestopia/samples/moepro/15.wav",
@@ -3135,7 +3182,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "Nestopia UE"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "nestopia/samples/moepro88/00.wav",
@@ -3145,7 +3193,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "Nestopia UE"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "nestopia/samples/moepro88/01.wav",
@@ -3155,7 +3204,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "Nestopia UE"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "nestopia/samples/moepro88/02.wav",
@@ -3165,7 +3215,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "Nestopia UE"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "nestopia/samples/moepro88/03.wav",
@@ -3175,7 +3226,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "Nestopia UE"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "nestopia/samples/moepro88/04.wav",
@@ -3185,7 +3237,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "Nestopia UE"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "nestopia/samples/moepro88/05.wav",
@@ -3195,7 +3248,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "Nestopia UE"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "nestopia/samples/moepro88/06.wav",
@@ -3205,7 +3259,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "Nestopia UE"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "nestopia/samples/moepro88/07.wav",
@@ -3215,7 +3270,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "Nestopia UE"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "nestopia/samples/moepro88/08.wav",
@@ -3225,7 +3281,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "Nestopia UE"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "nestopia/samples/moepro88/09.wav",
@@ -3235,7 +3292,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "Nestopia UE"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "nestopia/samples/moepro88/10.wav",
@@ -3245,7 +3303,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "Nestopia UE"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "nestopia/samples/moepro88/11.wav",
@@ -3255,7 +3314,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "Nestopia UE"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "nestopia/samples/moepro88/12.wav",
@@ -3265,7 +3325,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "Nestopia UE"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "nestopia/samples/moepro88/13.wav",
@@ -3275,7 +3336,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "Nestopia UE"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "nestopia/samples/moepro88/14.wav",
@@ -3285,7 +3347,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "Nestopia UE"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "nestopia/samples/moepro88/15.wav",
@@ -3295,7 +3358,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "Nestopia UE"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "nestopia/samples/moepro88/16.wav",
@@ -3305,7 +3369,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "Nestopia UE"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "nestopia/samples/moepro88/17.wav",
@@ -3315,7 +3380,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "Nestopia UE"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "nestopia/samples/moepro88/18.wav",
@@ -3325,7 +3391,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "Nestopia UE"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "nestopia/samples/moepro88/19.wav",
@@ -3335,7 +3402,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "Nestopia UE"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "nestopia/samples/mptennis/00.wav",
@@ -3345,7 +3413,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "Nestopia UE"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "nestopia/samples/mptennis/01.wav",
@@ -3355,7 +3424,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "Nestopia UE"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "nestopia/samples/mptennis/02.wav",
@@ -3365,7 +3435,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "Nestopia UE"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "nestopia/samples/mptennis/03.wav",
@@ -3375,7 +3446,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "Nestopia UE"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "nestopia/samples/mptennis/04.wav",
@@ -3385,7 +3457,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "Nestopia UE"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "nestopia/samples/mptennis/05.wav",
@@ -3395,7 +3468,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "Nestopia UE"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "nestopia/samples/mptennis/06.wav",
@@ -3405,7 +3479,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "Nestopia UE"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "nestopia/samples/mptennis/07.wav",
@@ -3415,7 +3490,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "Nestopia UE"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "nestopia/samples/mptennis/08.wav",
@@ -3425,7 +3501,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "Nestopia UE"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "nestopia/samples/mptennis/09.wav",
@@ -3435,7 +3512,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "Nestopia UE"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "nestopia/samples/mptennis/10.wav",
@@ -3445,7 +3523,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "Nestopia UE"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "nestopia/samples/mptennis/11.wav",
@@ -3455,7 +3534,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "Nestopia UE"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "nestopia/samples/mptennis/12.wav",
@@ -3465,7 +3545,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "Nestopia UE"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "nestopia/samples/mptennis/13.wav",
@@ -3475,7 +3556,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "Nestopia UE"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "nestopia/samples/mptennis/14.wav",
@@ -3485,7 +3567,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "Nestopia UE"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "nestopia/samples/mptennis/15.wav",
@@ -3495,7 +3578,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "Nestopia UE"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "nestopia/samples/mptennis/16.wav",
@@ -3505,7 +3589,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "Nestopia UE"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "nestopia/samples/mptennis/17.wav",
@@ -3515,7 +3600,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "Nestopia UE"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "nestopia/samples/mptennis/18.wav",
@@ -3525,7 +3611,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "Nestopia UE"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "nestopia/samples/mptennis/19.wav",
@@ -3535,7 +3622,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "Nestopia UE"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "nestopia/samples/terao/00.wav",
@@ -3545,7 +3633,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "Nestopia UE"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "nestopia/samples/terao/01.wav",
@@ -3555,7 +3644,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "Nestopia UE"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "nestopia/samples/terao/02.wav",
@@ -3565,7 +3655,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "Nestopia UE"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "nestopia/samples/terao/03.wav",
@@ -3575,7 +3666,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "Nestopia UE"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "nestopia/samples/terao/04.wav",
@@ -3585,7 +3677,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "Nestopia UE"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "nestopia/samples/terao/05.wav",
@@ -3595,7 +3688,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "Nestopia UE"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "ngp.zip",
@@ -4725,7 +4819,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E481.WAV",
@@ -4735,7 +4830,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E482.WAV",
@@ -4745,7 +4841,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E483.WAV",
@@ -4755,7 +4852,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E484.WAV",
@@ -4765,7 +4863,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E485.WAV",
@@ -4775,7 +4874,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E486.WAV",
@@ -4785,7 +4885,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E487.WAV",
@@ -4795,7 +4896,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E488.WAV",
@@ -4805,7 +4907,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E489.WAV",
@@ -4815,7 +4918,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E48A.WAV",
@@ -4825,7 +4929,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E48B.WAV",
@@ -4835,7 +4940,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E48C.WAV",
@@ -4845,7 +4951,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E48D.WAV",
@@ -4855,7 +4962,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E48E.WAV",
@@ -4865,7 +4973,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E48F.WAV",
@@ -4875,7 +4984,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E490.WAV",
@@ -4885,7 +4995,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E491.WAV",
@@ -4895,7 +5006,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E492.WAV",
@@ -4905,7 +5017,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E493.WAV",
@@ -4915,7 +5028,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E494.WAV",
@@ -4925,7 +5039,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E495.WAV",
@@ -4935,7 +5050,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E496.WAV",
@@ -4945,7 +5061,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E497.WAV",
@@ -4955,7 +5072,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E498.WAV",
@@ -4965,7 +5083,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E499.WAV",
@@ -4975,7 +5094,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E49A.WAV",
@@ -4985,7 +5105,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E49B.WAV",
@@ -4995,7 +5116,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E49C.WAV",
@@ -5005,7 +5127,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E49D.WAV",
@@ -5015,7 +5138,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E49E.WAV",
@@ -5025,7 +5149,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E49F.WAV",
@@ -5035,7 +5160,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E4A0.WAV",
@@ -5045,7 +5171,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E4A1.WAV",
@@ -5055,7 +5182,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E4A2.WAV",
@@ -5065,7 +5193,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E4A3.WAV",
@@ -5075,7 +5204,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E4A4.WAV",
@@ -5085,7 +5215,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E4A5.WAV",
@@ -5095,7 +5226,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E4A6.WAV",
@@ -5105,7 +5237,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E4A7.WAV",
@@ -5115,7 +5248,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E4A8.WAV",
@@ -5125,7 +5259,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E4A9.WAV",
@@ -5135,7 +5270,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E4AA.WAV",
@@ -5145,7 +5281,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E4AB.WAV",
@@ -5155,7 +5292,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E4AC.WAV",
@@ -5165,7 +5303,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E4AD.WAV",
@@ -5175,7 +5314,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E4AE.WAV",
@@ -5185,7 +5325,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E4AF.WAV",
@@ -5195,7 +5336,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E4B0.WAV",
@@ -5205,7 +5347,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E4B1.WAV",
@@ -5215,7 +5358,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E4B2.WAV",
@@ -5225,7 +5369,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E4B3.WAV",
@@ -5235,7 +5380,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E4B4.WAV",
@@ -5245,7 +5391,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E4B5.WAV",
@@ -5255,7 +5402,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E4B6.WAV",
@@ -5265,7 +5413,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E4B7.WAV",
@@ -5275,7 +5424,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E4B8.WAV",
@@ -5285,7 +5435,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E4B9.WAV",
@@ -5295,7 +5446,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E4BA.WAV",
@@ -5305,7 +5457,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E4BB.WAV",
@@ -5315,7 +5468,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E4BC.WAV",
@@ -5325,7 +5479,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E4BD.WAV",
@@ -5335,7 +5490,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E4BE.WAV",
@@ -5345,7 +5501,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E4BF.WAV",
@@ -5355,7 +5512,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E4C0.WAV",
@@ -5365,7 +5523,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E4C1.WAV",
@@ -5375,7 +5534,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E4C2.WAV",
@@ -5385,7 +5545,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E4C3.WAV",
@@ -5395,7 +5556,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E4C4.WAV",
@@ -5405,7 +5567,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E4C5.WAV",
@@ -5415,7 +5578,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E4C6.WAV",
@@ -5425,7 +5589,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E4C7.WAV",
@@ -5435,7 +5600,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E4C8.WAV",
@@ -5445,7 +5611,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E4C9.WAV",
@@ -5455,7 +5622,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E4CA.WAV",
@@ -5465,7 +5633,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E4FA.WAV",
@@ -5475,7 +5644,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E4FB.WAV",
@@ -5485,7 +5655,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E880.WAV",
@@ -5495,7 +5666,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E881.WAV",
@@ -5505,7 +5677,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E882.WAV",
@@ -5515,7 +5688,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E883.WAV",
@@ -5525,7 +5699,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E884.WAV",
@@ -5535,7 +5710,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E885.WAV",
@@ -5545,7 +5721,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E886.WAV",
@@ -5555,7 +5732,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E887.WAV",
@@ -5565,7 +5743,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E888.WAV",
@@ -5575,7 +5754,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E889.WAV",
@@ -5585,7 +5765,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E88A.WAV",
@@ -5595,7 +5776,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E88B.WAV",
@@ -5605,7 +5787,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E88C.WAV",
@@ -5615,7 +5798,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E88D.WAV",
@@ -5625,7 +5809,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E88E.WAV",
@@ -5635,7 +5820,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E88F.WAV",
@@ -5645,7 +5831,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E890.WAV",
@@ -5655,7 +5842,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E891.WAV",
@@ -5665,7 +5853,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E892.WAV",
@@ -5675,7 +5864,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E893.WAV",
@@ -5685,7 +5875,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E894.WAV",
@@ -5695,7 +5886,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E895.WAV",
@@ -5705,7 +5897,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E980.WAV",
@@ -5715,7 +5908,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E981.WAV",
@@ -5725,7 +5919,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E982.WAV",
@@ -5735,7 +5930,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E983.WAV",
@@ -5745,7 +5941,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E984.WAV",
@@ -5755,7 +5952,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E985.WAV",
@@ -5765,7 +5963,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E986.WAV",
@@ -5775,7 +5974,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E987.WAV",
@@ -5785,7 +5985,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E988.WAV",
@@ -5795,7 +5996,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E989.WAV",
@@ -5805,7 +6007,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E98A.WAV",
@@ -5815,7 +6018,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E98B.WAV",
@@ -5825,7 +6029,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E98C.WAV",
@@ -5835,7 +6040,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E98D.WAV",
@@ -5845,7 +6051,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E98E.WAV",
@@ -5855,7 +6062,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E98F.WAV",
@@ -5865,7 +6073,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E990.WAV",
@@ -5875,7 +6084,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E991.WAV",
@@ -5885,7 +6095,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E992.WAV",
@@ -5895,7 +6106,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E993.WAV",
@@ -5905,7 +6117,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E994.WAV",
@@ -5915,7 +6128,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E995.WAV",
@@ -5925,7 +6139,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/E996.WAV",
@@ -5935,7 +6150,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EA80.WAV",
@@ -5945,7 +6161,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EA81.WAV",
@@ -5955,7 +6172,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EA82.WAV",
@@ -5965,7 +6183,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EA83.WAV",
@@ -5975,7 +6194,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EA84.WAV",
@@ -5985,7 +6205,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EA85.WAV",
@@ -5995,7 +6216,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EA86.WAV",
@@ -6005,7 +6227,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EA87.WAV",
@@ -6015,7 +6238,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EA88.WAV",
@@ -6025,7 +6249,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EA89.WAV",
@@ -6035,7 +6260,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EA8A.WAV",
@@ -6045,7 +6271,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EA8B.WAV",
@@ -6055,7 +6282,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EA8C.WAV",
@@ -6065,7 +6293,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EA8D.WAV",
@@ -6075,7 +6304,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EA8E.WAV",
@@ -6085,7 +6315,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EA8F.WAV",
@@ -6095,7 +6326,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EA90.WAV",
@@ -6105,7 +6337,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EA91.WAV",
@@ -6115,7 +6348,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EA92.WAV",
@@ -6125,7 +6359,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EA93.WAV",
@@ -6135,7 +6370,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EA94.WAV",
@@ -6145,7 +6381,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EA95.WAV",
@@ -6155,7 +6392,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EA96.WAV",
@@ -6165,7 +6403,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EA97.WAV",
@@ -6175,7 +6414,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EA98.WAV",
@@ -6185,7 +6425,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EA99.WAV",
@@ -6195,7 +6436,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EA9A.WAV",
@@ -6205,7 +6447,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EA9B.WAV",
@@ -6215,7 +6458,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EA9C.WAV",
@@ -6225,7 +6469,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EA9D.WAV",
@@ -6235,7 +6480,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EA9E.WAV",
@@ -6245,7 +6491,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EA9F.WAV",
@@ -6255,7 +6502,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EAA0.WAV",
@@ -6265,7 +6513,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EAA1.WAV",
@@ -6275,7 +6524,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EAA2.WAV",
@@ -6285,7 +6535,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EAA3.WAV",
@@ -6295,7 +6546,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EAA4.WAV",
@@ -6305,7 +6557,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EAA5.WAV",
@@ -6315,7 +6568,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EAA6.WAV",
@@ -6325,7 +6579,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EAA7.WAV",
@@ -6335,7 +6590,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EB80.WAV",
@@ -6345,7 +6601,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EB81.WAV",
@@ -6355,7 +6612,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EB82.WAV",
@@ -6365,7 +6623,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EB83.WAV",
@@ -6375,7 +6634,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EB84.WAV",
@@ -6385,7 +6645,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EB85.WAV",
@@ -6395,7 +6656,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EB86.WAV",
@@ -6405,7 +6667,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EB87.WAV",
@@ -6415,7 +6678,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EB88.WAV",
@@ -6425,7 +6689,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EB89.WAV",
@@ -6435,7 +6700,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EB8A.WAV",
@@ -6445,7 +6711,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EB8B.WAV",
@@ -6455,7 +6722,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EB8C.WAV",
@@ -6465,7 +6733,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EB8D.WAV",
@@ -6475,7 +6744,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EB8E.WAV",
@@ -6485,7 +6755,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EB8F.WAV",
@@ -6495,7 +6766,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EB90.WAV",
@@ -6505,7 +6777,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EB91.WAV",
@@ -6515,7 +6788,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EB92.WAV",
@@ -6525,7 +6799,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EB93.WAV",
@@ -6535,7 +6810,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EB94.WAV",
@@ -6545,7 +6821,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EB95.WAV",
@@ -6555,7 +6832,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EB96.WAV",
@@ -6565,7 +6843,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EB97.WAV",
@@ -6575,7 +6854,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EB98.WAV",
@@ -6585,7 +6865,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EB99.WAV",
@@ -6595,7 +6876,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EB9A.WAV",
@@ -6605,7 +6887,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EB9B.WAV",
@@ -6615,7 +6898,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EB9C.WAV",
@@ -6625,7 +6909,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EB9D.WAV",
@@ -6635,7 +6920,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EC80.WAV",
@@ -6645,7 +6931,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EC81.WAV",
@@ -6655,7 +6942,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EC82.WAV",
@@ -6665,7 +6953,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EC83.WAV",
@@ -6675,7 +6964,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EC84.WAV",
@@ -6685,7 +6975,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EC85.WAV",
@@ -6695,7 +6986,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EC86.WAV",
@@ -6705,7 +6997,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EC87.WAV",
@@ -6715,7 +7008,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EC88.WAV",
@@ -6725,7 +7019,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EC89.WAV",
@@ -6735,7 +7030,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EC8A.WAV",
@@ -6745,7 +7041,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EC8B.WAV",
@@ -6755,7 +7052,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EC8C.WAV",
@@ -6765,7 +7063,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EC8D.WAV",
@@ -6775,7 +7074,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EC8E.WAV",
@@ -6785,7 +7085,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EC8F.WAV",
@@ -6795,7 +7096,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EC90.WAV",
@@ -6805,7 +7107,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EC91.WAV",
@@ -6815,7 +7118,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EC92.WAV",
@@ -6825,7 +7129,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EC93.WAV",
@@ -6835,7 +7140,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EC94.WAV",
@@ -6845,7 +7151,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EC95.WAV",
@@ -6855,7 +7162,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EC96.WAV",
@@ -6865,7 +7173,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EC97.WAV",
@@ -6875,7 +7184,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EC98.WAV",
@@ -6885,7 +7195,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EC99.WAV",
@@ -6895,7 +7206,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EC9A.WAV",
@@ -6905,7 +7217,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EC9B.WAV",
@@ -6915,7 +7228,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/ED80.WAV",
@@ -6925,7 +7239,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/ED81.WAV",
@@ -6935,7 +7250,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/ED82.WAV",
@@ -6945,7 +7261,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/ED83.WAV",
@@ -6955,7 +7272,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/ED84.WAV",
@@ -6965,7 +7283,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/ED85.WAV",
@@ -6975,7 +7294,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/ED86.WAV",
@@ -6985,7 +7305,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/ED87.WAV",
@@ -6995,7 +7316,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/ED88.WAV",
@@ -7005,7 +7327,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/ED89.WAV",
@@ -7015,7 +7338,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/ED8A.WAV",
@@ -7025,7 +7349,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/ED8B.WAV",
@@ -7035,7 +7360,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/ED8C.WAV",
@@ -7045,7 +7371,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/ED8D.WAV",
@@ -7055,7 +7382,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/ED8E.WAV",
@@ -7065,7 +7393,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/ED8F.WAV",
@@ -7075,7 +7404,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/ED90.WAV",
@@ -7085,7 +7415,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/ED91.WAV",
@@ -7095,7 +7426,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/ED92.WAV",
@@ -7105,7 +7437,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/ED93.WAV",
@@ -7115,7 +7448,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/ED94.WAV",
@@ -7125,7 +7459,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/ED95.WAV",
@@ -7135,7 +7470,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/ED96.WAV",
@@ -7145,7 +7481,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/ED97.WAV",
@@ -7155,7 +7492,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/ED98.WAV",
@@ -7165,7 +7503,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/ED99.WAV",
@@ -7175,7 +7514,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/ED9A.WAV",
@@ -7185,7 +7525,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EE80.WAV",
@@ -7195,7 +7536,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EE81.WAV",
@@ -7205,7 +7547,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EE82.WAV",
@@ -7215,7 +7558,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EE83.WAV",
@@ -7225,7 +7569,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EE84.WAV",
@@ -7235,7 +7580,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EE85.WAV",
@@ -7245,7 +7591,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EE86.WAV",
@@ -7255,7 +7602,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EE87.WAV",
@@ -7265,7 +7613,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EE88.WAV",
@@ -7275,7 +7624,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EE89.WAV",
@@ -7285,7 +7635,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EE8A.WAV",
@@ -7295,7 +7646,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EE8B.WAV",
@@ -7305,7 +7657,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EE8C.WAV",
@@ -7315,7 +7668,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EE8D.WAV",
@@ -7325,7 +7679,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EE8E.WAV",
@@ -7335,7 +7690,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EE8F.WAV",
@@ -7345,7 +7701,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EE90.WAV",
@@ -7355,7 +7712,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EE91.WAV",
@@ -7365,7 +7723,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EE92.WAV",
@@ -7375,7 +7734,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EE93.WAV",
@@ -7385,7 +7745,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EE94.WAV",
@@ -7395,7 +7756,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EE95.WAV",
@@ -7405,7 +7767,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "voice/EE96.WAV",
@@ -7415,7 +7778,8 @@
       "reason": "below_platform_folder",
       "cores": [
         "O2EM"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "warzard.zip",
@@ -7496,10 +7860,14 @@
       "acedl"
     ],
     "advancemame": [
+      "AdvanceMame",
       "advmame"
     ],
     "aethersx2": [
       "aethersx2-sa"
+    ],
+    "amiberry": [
+      "AMIBERRY"
     ],
     "armsx2": [
       "armsx2_libretro"
@@ -7575,6 +7943,12 @@
     "dsperate": [
       "dsperate-sa"
     ],
+    "duckstation": [
+      "Duckstation"
+    ],
+    "ecwolf": [
+      "ECWolf"
+    ],
     "ep128emu": [
       "ep128emu_core"
     ],
@@ -7587,9 +7961,15 @@
     "fbalpha2012": [
       "fbalpha"
     ],
+    "fbneo": [
+      "FBNEOSA"
+    ],
     "fpse-ng": [
       "fpse64",
       "fpseng"
+    ],
+    "freej2me_plus": [
+      "freej2me-plus"
     ],
     "fuse": [
       "fuse_libretro"
@@ -7603,6 +7983,7 @@
       "GBC.emu"
     ],
     "genesis_plus_gx": [
+      "genesis_plus_gx_cart_special",
       "genesisplusgx",
       "genesisplusgx_ex",
       "genplus"
@@ -7613,6 +7994,12 @@
     "genesis_plus_gx_wide": [
       "genesisplusgx-wide",
       "genesisplusgxwide"
+    ],
+    "gzdoom": [
+      "GZDoom"
+    ],
+    "hatari": [
+      "HATARISA"
     ],
     "higan_sfc_balanced": [
       "nside_sfc_balanced"
@@ -7642,6 +8029,9 @@
       "LYNX-EMU",
       "Lynx.emu"
     ],
+    "lzdoom": [
+      "LZDoom"
+    ],
     "m64plus-fz": [
       "M64PLUS-FZ",
       "org.mupen64plusae.v3.fzurita",
@@ -7656,6 +8046,9 @@
     ],
     "mame2003_plus": [
       "mame078plus"
+    ],
+    "mame2010": [
+      "mame0139"
     ],
     "mame2016": [
       "mess2016"
@@ -7686,7 +8079,8 @@
     ],
     "mednafen_snes": [
       "beetle-bsnes",
-      "beetle_bsnes"
+      "beetle_bsnes",
+      "beetle_snes"
     ],
     "mednafen_supafaust": [
       "beetle_supafaust",
@@ -7721,6 +8115,7 @@
     "mupen64plus_next": [
       "mupen64plus",
       "mupen64plus-next",
+      "mupen64plus_next_alt",
       "mupen64plus_next_develop",
       "mupen64plus_next_gles2",
       "mupen64plus_next_gles3",
@@ -7771,6 +8166,7 @@
       "ca.parallel_launcher.ParallelLauncher"
     ],
     "parallel_n64": [
+      "parallel_n64_32b",
       "parallel_n64_debug"
     ],
     "pce-emu": [
@@ -7784,6 +8180,7 @@
       "pcsx2-16"
     ],
     "pcsx_rearmed": [
+      "pcsx_rearmed_32b",
       "pcsx_rearmed_interpreter",
       "pcsx_rearmed_neon"
     ],
@@ -7807,6 +8204,9 @@
     "play": [
       "play!"
     ],
+    "ppsspp": [
+      "PPSSPPSDL"
+    ],
     "puae": [
       "uae"
     ],
@@ -7826,6 +8226,9 @@
       "SATURN-EMU",
       "Saturn.emu",
       "saturnemu"
+    ],
+    "scummvm": [
+      "SCUMMVMSA"
     ],
     "smsplus": [
       "smsplus_gx"
@@ -7851,10 +8254,14 @@
       "TGB Dual"
     ],
     "triforce": [
-      "dolphin-triforce"
+      "dolphin-triforce",
+      "dolphin_triforce"
     ],
     "uae4all-rpi": [
       "uae4all"
+    ],
+    "uae4arm": [
+      "uae4arm_32b"
     ],
     "vbam": [
       "vba-m"
@@ -7875,7 +8282,8 @@
       "XM6TYPEG-WINDOWS"
     ],
     "yabasanshiro": [
-      "yabasanshiro-2"
+      "yabasanshiro-2",
+      "yabasanshiroSA"
     ]
   },
   "system_cores": {
@@ -8108,6 +8516,7 @@
     "nintendo-fds": [
       "fbneo",
       "fceumm",
+      "fceumm_mod",
       "fixnes",
       "ines",
       "mednafen",
@@ -8207,6 +8616,7 @@
       "bnes",
       "emux_nes",
       "fceumm",
+      "fceumm_mod",
       "fixnes",
       "ines",
       "jgenesis",
@@ -9196,7 +9606,8 @@
       "cores": null,
       "systems": [
         "doom"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "doom/DOOM.WAD",
@@ -9207,7 +9618,8 @@
       "cores": null,
       "systems": [
         "doom"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "doom/DOOM2.WAD",
@@ -9218,7 +9630,8 @@
       "cores": null,
       "systems": [
         "doom"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "doom/DOOM2F.WAD",
@@ -9229,7 +9642,8 @@
       "cores": null,
       "systems": [
         "doom"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "doom/DOOM64.WAD",
@@ -9251,7 +9665,8 @@
       "cores": null,
       "systems": [
         "doom"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "doom/PLUTONIA.WAD",
@@ -9262,7 +9677,8 @@
       "cores": null,
       "systems": [
         "doom"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "doom/HERETIC1.WAD",
@@ -9273,7 +9689,8 @@
       "cores": null,
       "systems": [
         "doom"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "doom/HERETIC.WAD",
@@ -9284,7 +9701,8 @@
       "cores": null,
       "systems": [
         "doom"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "doom/HEXEN.WAD",
@@ -13504,7 +13922,8 @@
       ],
       "systems": [
         "doom"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "doom/freedoom1.wad",
@@ -13517,7 +13936,8 @@
       ],
       "systems": [
         "doom"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "doom/doom1.wad",
@@ -13530,7 +13950,8 @@
       ],
       "systems": [
         "doom"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "doom/doom2.wad",
@@ -13543,7 +13964,8 @@
       ],
       "systems": [
         "doom"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "doom/doom2f.wad",
@@ -13556,7 +13978,8 @@
       ],
       "systems": [
         "doom"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "doom/plutonia.wad",
@@ -13569,7 +13992,8 @@
       ],
       "systems": [
         "doom"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "doom/tnt.wad",
@@ -13582,7 +14006,8 @@
       ],
       "systems": [
         "doom"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "doom/freedoom2.wad",
@@ -13595,7 +14020,8 @@
       ],
       "systems": [
         "doom"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "doom/gzdoom.pk3",
@@ -13608,7 +14034,8 @@
       ],
       "systems": [
         "doom"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "doom/zdoom.pk3",
@@ -13621,7 +14048,8 @@
       ],
       "systems": [
         "doom"
-      ]
+      ],
+      "category": "game_data"
     },
     {
       "dest": "amiga/kick31034.A1000",

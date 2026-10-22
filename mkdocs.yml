@@ -1,7 +1,7 @@
 site_name: RetroBIOS
 site_description: Source-verified BIOS and firmware packs for RetroArch, Batocera,
-  Recalbox, Lakka, RetroPie, EmuDeck, RetroBat, RetroDECK, RomM, BizHawk, ROCKNIX
-  and MiSTer FPGA.
+  Recalbox, Lakka, RetroPie, EmuDeck, RetroBat, RetroDECK, RomM, BizHawk, ROCKNIX,
+  KNULLI, AmberELEC, EmuELEC and MiSTer FPGA.
 site_url: https://abdess.github.io/retrobios/
 repo_url: https://github.com/Abdess/retrobios
 repo_name: Abdess/retrobios
@@ -111,11 +111,17 @@ nav:
 - Download: which-pack.md
 - Platforms:
   - Overview: platforms/index.md
+  - AmberELEC: platforms/amberelec.md
   - Batocera: platforms/batocera.md
   - BizHawk: platforms/bizhawk.md
   - EmuDeck: platforms/emudeck.md
+  - EmuELEC: platforms/emuelec.md
+  - KNULLI: platforms/knulli.md
   - Lakka: platforms/lakka.md
   - MiSTer FPGA: platforms/misterfpga.md
+  - MinUI: platforms/minui.md
+  - MyMinUI: platforms/myminui.md
+  - NextUI: platforms/nextui.md
   - ROCKNIX: platforms/rocknix.md
   - Recalbox: platforms/recalbox.md
   - RetroArch: platforms/retroarch.md
@@ -296,7 +302,7 @@ nav:
     - WQXEmu: emulators/wqxemu.md
     - yabasanshiro: emulators/yabasanshiro.md
     - Yuzu: emulators/yuzu.md
-  - Community forks (189):
+  - Community forks (190):
     - 2600.emu: emulators/2600-emu.md
     - EightyOne: emulators/81.md
     - a5200: emulators/a5200.md
@@ -353,6 +359,7 @@ nav:
     - ep128emu_core: emulators/ep128emu_core.md
     - Eternal Computer: emulators/eternal.md
     - FCEUmm: emulators/fceumm.md
+    - FCEUmm Mod: emulators/fceumm_mod.md
     - fMSX: emulators/fmsx.md
     - Frodo: emulators/frodo.md
     - FS-UAE: emulators/fsuae.md
@@ -539,7 +546,7 @@ nav:
     - uzem: emulators/uzem.md
     - video_processor: emulators/video_processor.md
     - VirtualXT: emulators/virtualxt.md
-  - Game engines (107):
+  - Game engines (108):
     - 2 Ship 2 Harkinian: emulators/2ship.md
     - Abuse: emulators/abuse.md
     - Adventure Game Studio: emulators/ags.md
@@ -608,6 +615,7 @@ nav:
     - Quake 3 (Raspberry Pi): emulators/quake3.md
     - Raze: emulators/raze.md
     - Retro8: emulators/retro8.md
+    - RigelEngine: emulators/rigelengine.md
     - ruffle: emulators/ruffle.md
     - ScummVM: emulators/scummvm.md
     - ScummVM (SDL1): emulators/scummvm-sdl1.md

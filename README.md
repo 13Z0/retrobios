@@ -6,7 +6,7 @@
   <a href="https://github.com/Abdess/retrobios/actions/workflows/deploy-site.yml"><img src="https://github.com/Abdess/retrobios/actions/workflows/deploy-site.yml/badge.svg" alt="Site"></a>
 </p>
 
-BIOS and firmware files for Batocera, BizHawk, EmuDeck, Lakka, MiSTer FPGA, ROCKNIX, Recalbox, RetroArch, RetroBat, RetroDECK, RetroPie, and RomM, one pack per platform.
+BIOS and firmware files for AmberELEC, Batocera, BizHawk, EmuDeck, EmuELEC, KNULLI, Lakka, MiSTer FPGA, MinUI, MyMinUI, NextUI, ROCKNIX, Recalbox, RetroArch, RetroBat, RetroDECK, RetroPie, and RomM, one pack per platform.
 
 A pack holds the files its emulators read, as their source code names them, and leaves out what the emulators install themselves.
 
@@ -47,11 +47,17 @@ The Files column counts what a pack holds once extracted, the figure a file mana
 
 | Platform | Files | Extracted size | Extract to | Download |
 |----------|------:|---------------:|-----------|----------|
+| AmberELEC | - | - | `/storage/roms/` | [Download](../../releases/latest) |
 | Batocera | 12,810 | 7.5 GB | `/userdata/bios/` | Download: [part 1 of 3](../../releases/download/v2026.10.10/Batocera_43.1_BIOS_Pack.part1of3.zip), [part 2 of 3](../../releases/download/v2026.10.10/Batocera_43.1_BIOS_Pack.part2of3.zip), [part 3 of 3](../../releases/download/v2026.10.10/Batocera_43.1_BIOS_Pack.part3of3.zip) |
 | BizHawk | 950 | 2.4 GB | `Firmware/` | [Download](../../releases/download/v2026.10.10/BizHawk_2.11.1_BIOS_Pack.zip) |
 | EmuDeck | 620 | 3.2 GB | `~/Emulation/bios/` | [Download](../../releases/download/v2026.10.10/EmuDeck_2.7EA_BIOS_Pack.zip) |
+| EmuELEC | - | - | `/storage/roms/` | [Download](../../releases/latest) |
+| KNULLI | - | - | `/userdata/bios/` | [Download](../../releases/latest) |
 | Lakka | 8,504 | 6.0 GB | `/storage/system/` | Download: [part 1 of 2](../../releases/download/v2026.10.10/RetroArch_Lakka_v1.22.2_BIOS_Pack.part1of2.zip), [part 2 of 2](../../releases/download/v2026.10.10/RetroArch_Lakka_v1.22.2_BIOS_Pack.part2of2.zip) |
 | MiSTer FPGA | 83 | 29 MB | `/media/fat/games/` | [Download](../../releases/download/v2026.10.10/MiSTer_FPGA_2026-09-29_BIOS_Pack.zip) |
+| MinUI | - | - | `<SD card>/` | [Download](../../releases/latest) |
+| MyMinUI | - | - | `<SD card>/` | [Download](../../releases/latest) |
+| NextUI | - | - | `<SD card>/` | [Download](../../releases/latest) |
 | ROCKNIX | 5,804 | 6.1 GB | `/storage/roms/bios/` | Download: [part 1 of 2](../../releases/download/v2026.10.10/ROCKNIX_20261001_BIOS_Pack.part1of2.zip), [part 2 of 2](../../releases/download/v2026.10.10/ROCKNIX_20261001_BIOS_Pack.part2of2.zip) |
 | Recalbox | 3,222 | 3.9 GB | `/recalbox/share/bios/` | Download: [part 1 of 2](../../releases/download/v2026.10.10/Recalbox_10.1.1_BIOS_Pack.part1of2.zip), [part 2 of 2](../../releases/download/v2026.10.10/Recalbox_10.1.1_BIOS_Pack.part2of2.zip) |
 | RetroArch | 8,504 | 6.0 GB | `system/` | Download: [part 1 of 2](../../releases/download/v2026.10.10/RetroArch_Lakka_v1.22.2_BIOS_Pack.part1of2.zip), [part 2 of 2](../../releases/download/v2026.10.10/RetroArch_Lakka_v1.22.2_BIOS_Pack.part2of2.zip) |
@@ -59,6 +65,16 @@ The Files column counts what a pack holds once extracted, the figure a file mana
 | RetroDECK | 7,793 | 8.0 GB | `~/retrodeck/` | Download: [part 1 of 3](../../releases/download/v2026.10.10/RetroDECK_0.10.10b_BIOS_Pack.part1of3.zip), [part 2 of 3](../../releases/download/v2026.10.10/RetroDECK_0.10.10b_BIOS_Pack.part2of3.zip), [part 3 of 3](../../releases/download/v2026.10.10/RetroDECK_0.10.10b_BIOS_Pack.part3of3.zip) |
 | RetroPie * | 12,533 | 8.1 GB | `~/RetroPie/BIOS/` | Download: [part 1 of 3](../../releases/download/v2026.10.10/RetroPie_4.8.12_BIOS_Pack.part1of3.zip), [part 2 of 3](../../releases/download/v2026.10.10/RetroPie_4.8.12_BIOS_Pack.part2of3.zip), [part 3 of 3](../../releases/download/v2026.10.10/RetroPie_4.8.12_BIOS_Pack.part3of3.zip) |
 | RomM | 1,087 | 1.5 GB | `library/bios/` | [Download](../../releases/download/v2026.10.10/RomM_5.3.1_BIOS_Pack.zip) |
+
+The AmberELEC pack already carries its own `bios/` folder, so it extracts into `/storage/roms/` rather than into the BIOS folder.
+
+The EmuELEC pack already carries its own `bios/` folder, so it extracts into `/storage/roms/` rather than into the BIOS folder.
+
+The MinUI pack already carries its own `Bios/` folder, so it extracts into `<SD card>/` rather than into the BIOS folder.
+
+The MyMinUI pack already carries its own `Bios/` folder, so it extracts into `<SD card>/` rather than into the BIOS folder.
+
+The NextUI pack already carries its own `Bios/` folder, so it extracts into `<SD card>/` rather than into the BIOS folder.
 
 The RetroDECK pack already carries its own `bios/` folder, so it extracts into `~/retrodeck/` rather than into the BIOS folder.
 
@@ -69,19 +85,19 @@ The RetroDECK pack already carries its own `bios/` folder, so it extracts into `
 BIOS, firmware, and system files for consoles from Atari to PlayStation 3.
 These are the files an emulator loads from disk instead of carrying inside itself. Some are required to boot a system, others improve accuracy or unlock a feature, and the packs carry both.
 
-Each file is checked the way your platform checks it. Most compare a checksum, the fingerprint of a file's contents, which catches a corrupt or unexpected copy. RetroArch, Lakka and RetroPie check that the file is present under its name without reading its contents (`path_is_valid` in RetroArch's `core_info.c`): the Coverage table says which applies to you. Independently of that, the collection records five fingerprints per file, and wherever an emulator's code states an expected size or hash, that value is read from its source and rechecked here.
+Each file is checked the way your platform checks it. Most compare a checksum, the fingerprint of a file's contents, which catches a corrupt or unexpected copy. RetroArch, Lakka and RetroPie check that the file is present under its name without reading its contents (`path_is_valid` in RetroArch's `core_info.c`), and MinUI, NextUI and MyMinUI hand each core its folder without opening a file in it: the Coverage table says which applies to you. Independently of that, the collection records five fingerprints per file, and wherever an emulator's code states an expected size or hash, that value is read from its source and rechecked here.
 
-- **938 files** the platforms' emulators load are still to be found, and 137 more cannot be sourced at all (per-user keys, user-filled slots, dumps nobody has made). Both are named in the [gap analysis](https://abdess.github.io/retrobios/gaps/)
-- **12 platforms** supported with platform-specific verification
-- **607 emulators** profiled from source (RetroArch cores + standalone)
-- **533 systems** handled by those emulators (NES, SNES, PlayStation, Saturn, Dreamcast, ...)
-- **19,526 files in the collection**, each with its SHA1, MD5, SHA256, CRC32 and Adler-32 fingerprints: 5,743 system files, 2,851 arcade ROM sets, 10,932 game and engine data files. That is every platform and emulator together, so no pack holds them all: each carries what its own emulators load, counted in the download table
-- **555 of 5,743 system files** matched to dump-preservation catalogs (No-Intro, Redump, TOSEC). Arcade sets and engine data fall outside what those catalogs index
-- **15.6 GB** for the whole collection
+- **939 files** the platforms' emulators load are still to be found, and 137 more cannot be sourced at all (per-user keys, user-filled slots, dumps nobody has made). Both are named in the [gap analysis](https://abdess.github.io/retrobios/gaps/)
+- **18 platforms** supported with platform-specific verification
+- **609 emulators** profiled from source (RetroArch cores + standalone)
+- **534 systems** handled by those emulators (NES, SNES, PlayStation, Saturn, Dreamcast, ...)
+- **19,558 files in the collection**, each with its SHA1, MD5, SHA256, CRC32 and Adler-32 fingerprints: 5,747 system files, 2,873 arcade ROM sets, 10,938 game and engine data files. That is every platform and emulator together, so no pack holds them all: each carries what its own emulators load, counted in the download table
+- **555 of 5,747 system files** matched to dump-preservation catalogs (No-Intro, Redump, TOSEC). Arcade sets and engine data fall outside what those catalogs index
+- **15.7 GB** for the whole collection
 
 ## Supported systems
 
-NES, SNES, Nintendo 64, GameCube, Wii, Game Boy, Game Boy Advance, Nintendo DS, Nintendo 3DS, Switch, PlayStation, PlayStation 2, PlayStation 3, PSP, PS Vita, Mega Drive, Saturn, Dreamcast, Game Gear, Master System, Neo Geo, Atari 2600, Atari 7800, Atari Lynx, Atari ST, MSX, PC Engine, TurboGrafx-16, ColecoVision, Intellivision, Commodore 64, Amiga, ZX Spectrum, Arcade (MAME), and 499+ more.
+NES, SNES, Nintendo 64, GameCube, Wii, Game Boy, Game Boy Advance, Nintendo DS, Nintendo 3DS, Switch, PlayStation, PlayStation 2, PlayStation 3, PSP, PS Vita, Mega Drive, Saturn, Dreamcast, Game Gear, Master System, Neo Geo, Atari 2600, Atari 7800, Atari Lynx, Atari ST, MSX, PC Engine, TurboGrafx-16, ColecoVision, Intellivision, Commodore 64, Amiga, ZX Spectrum, Arcade (MAME), and 500+ more.
 
 Full list with per-file details: **[https://abdess.github.io/retrobios/](https://abdess.github.io/retrobios/)**
 
@@ -89,16 +105,22 @@ Full list with per-file details: **[https://abdess.github.io/retrobios/](https:/
 
 | Platform | On its BIOS list | Files its emulators load | Checked by |
 |----------|-----------------:|-------------------------:|------------|
-| Batocera | 353/353 | 13,909/14,998 | MD5 hash |
+| AmberELEC | 413/434 | 4,550/4,647 | MD5 hash |
+| Batocera | 353/353 | 13,910/14,998 | MD5 hash |
 | BizHawk | 118/118 | - | SHA1 hash |
-| EmuDeck | 168/168 | 8,140/8,217 | MD5 hash |
+| EmuDeck | 168/168 | 8,141/8,217 | MD5 hash |
+| EmuELEC | 543/572 | 4,593/9,911 | MD5 hash |
+| KNULLI | 290/290 | 8,866/15,054 | MD5 hash |
 | Lakka | 532/532 | 7,569/7,627 | file presence |
 | MiSTer FPGA | 81/81 | - | MD5 hash |
-| ROCKNIX | 38/38 | 7,059/8,328 | MD5 hash |
+| MinUI | 0/0 | 78/79 | file presence |
+| MyMinUI | 0/0 | 347/354 | file presence |
+| NextUI | 0/0 | 343/348 | file presence |
+| ROCKNIX | 38/38 | 7,060/8,328 | MD5 hash |
 | Recalbox | 351/351 | 2,746/2,909 | MD5 hash |
 | RetroArch | 526/526 | 7,577/7,618 | file presence |
-| RetroBat | 348/348 | 4,727/9,193 | MD5 hash |
-| RetroDECK | 2,007/2,008 | 6,241/6,492 | MD5 hash |
+| RetroBat | 348/348 | 4,729/9,193 | MD5 hash |
+| RetroDECK | 2,007/2,008 | 6,242/6,492 | MD5 hash |
 | RetroPie * | 532/532 | 7,845/12,363 | file presence |
 | RomM | 383/383 | 83/846 | MD5 hash |
 
@@ -123,6 +145,9 @@ python scripts/generate_pack.py --system sony-playstation-2
 python scripts/generate_pack.py --platform retroarch --region us,eu,jp
 python scripts/generate_pack.py --platform retroarch --region us --one-per-slot
 
+# Firmware only: the game data a list or a core names is left out, each file named
+python scripts/generate_pack.py --platform emuelec --no-game-data
+
 # List available emulators and systems
 python scripts/generate_pack.py --list-emulators
 python scripts/generate_pack.py --list-systems
@@ -145,7 +170,7 @@ The [documentation site](https://abdess.github.io/retrobios/) provides:
 - **Per-emulator profiles** with source code references for every file
 - **Per-system pages** showing which emulators and platforms cover each console
 - **Gap analysis** identifying missing files and undeclared core requirements
-- **Cross-reference** mapping files across 12 platforms and 607 emulators
+- **Cross-reference** mapping files across 18 platforms and 609 emulators
 - **Versioned data access** through JSON, CSV and SQLite exports with published SHA-256 checksums
 
 ## How it works
@@ -183,4 +208,4 @@ The scripts and tooling are released under the [MIT License](LICENSE).
 The BIOS and firmware files are not covered by that license: they are third-party system software, preserved and provided for personal backup, archival, and interoperability with emulation software. [NOTICE](NOTICE) sets out their status and how to ask for a file to be removed.
 The reasoning, and where it is weakest, is in the [FAQ](https://abdess.github.io/retrobios/wiki/faq/#is-this-legal).
 
-*Auto-generated on 2026-10-21T11:49:25Z*
+*Auto-generated on 2026-10-22T05:48:13Z*
