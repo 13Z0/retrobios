@@ -852,6 +852,7 @@ nav:
         - ZiNc: emulators/zinc.md
         - ZQuest Classic: emulators/zquestclassic.md
   - All installer options: wiki/installer.md
+  - Is it legal?: wiki/legal.md
 - Reference:
   - wiki/index.md
   - How each platform checks files: wiki/verification-modes.md
@@ -866,6 +867,7 @@ nav:
   - Build your own packs: wiki/advanced-usage.md
   - Command-line tools: wiki/tools.md
   - Technical questions: wiki/technical-faq.md
+  - Project terms: wiki/reference-terms.md
   - Projects using this data: wiki/community-tools.md
 - Contribute:
   - contributing.md

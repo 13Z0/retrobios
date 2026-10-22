@@ -6444,6 +6444,7 @@ def generate_mkdocs_nav(
             {"Systems": _system_nav(manufacturers)},
             {"Emulators": _emulator_nav(profiles)},
             {"All installer options": "wiki/installer.md"},
+            {"Is it legal?": "wiki/legal.md"},
         ]},
         {"Reference": [
             "wiki/index.md",
@@ -6459,6 +6460,7 @@ def generate_mkdocs_nav(
             {"Build your own packs": "wiki/advanced-usage.md"},
             {"Command-line tools": "wiki/tools.md"},
             {"Technical questions": "wiki/technical-faq.md"},
+            {"Project terms": "wiki/reference-terms.md"},
             {"Projects using this data": "wiki/community-tools.md"},
         ]},
         {"Contribute": [
