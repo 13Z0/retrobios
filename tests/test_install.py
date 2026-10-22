@@ -1078,7 +1078,7 @@ class DetectionFollowsTheRegistry(unittest.TestCase):
                     lambda p: str(p) in ("/usr/share/knulli/knulli.version",
                                        "/usr/share/batocera/batocera.version"),
                 ):
-            self.assertEqual(install._detect_embedded(), [("batocera", Path("/userdata/bios"))])
+            self.assertEqual(install._detect_embedded(), [("knulli", Path("/userdata/bios"))])
         # What ROCKNIX writes since 2025: OS_NAME and HW_DEVICE, no ID.
         with unittest.mock.patch.object(install, "_parse_os_release",
                                         return_value={"OS_NAME": "ROCKNIX", "HW_DEVICE": "RK3566"}):
@@ -4264,16 +4264,25 @@ class BatoceraAndKnulliByWhatTheirBuildsWrite(unittest.TestCase):
 
     def test_knulli_by_its_os_release_or_version_file(self):
         self.assertEqual(self._detect({"OS_NAME": "knulli"}, ()),
-                         [("batocera", Path("/userdata/bios"))])
+                         [("knulli", Path("/userdata/bios"))])
         self.assertEqual(self._detect({}, ("/usr/share/knulli/knulli.version",)),
-                         [("batocera", Path("/userdata/bios"))])
+                         [("knulli", Path("/userdata/bios"))])
+
+    def test_amberelec_and_emuelec_by_their_os_release(self):
+        """Both write os-release from DISTRONAME in scripts/image. AmberELEC
+        keeps CoreELEC's ID, so its NAME tells it apart."""
+        self.assertEqual(self._detect({"NAME": "AmberELEC", "ID": "coreelec"}, ()),
+                         [("amberelec", Path("/storage/roms"))])
+        self.assertEqual(self._detect({"NAME": "EmuELEC", "ID": "emuelec"}, ()),
+                         [("emuelec", Path("/storage/roms"))])
+        self.assertEqual(self._detect({"NAME": "CoreELEC", "ID": "coreelec"}, ()), [])
 
     def test_a_knulli_board_is_named_and_not_narrowed(self):
         board = Path(_tempdir(self)) / "knulli.arch"
         board.write_text("a133")
         with unittest.mock.patch.dict(install._DERIVATIVE_BOARDS,
-                                      {"batocera": ("Knulli", str(board))}):
-            self.assertEqual(install.derivative_board("batocera"), ("Knulli", "a133"))
+                                      {"knulli": ("Knulli", str(board))}):
+            self.assertEqual(install.derivative_board("knulli"), ("Knulli", "a133"))
             self.assertIsNone(install.derivative_board("recalbox"))
 
     def test_the_run_says_why_every_board_is_installed(self):

@@ -185,7 +185,7 @@ OTHER_SYSTEMS = "other"
 AVAILABLE_PLATFORMS = (
     "retroarch", "batocera", "recalbox", "retrobat", "emudeck",
     "lakka", "retrodeck", "rocknix", "romm", "bizhawk", "misterfpga",
-    "retropie",
+    "retropie", "amberelec", "emuelec", "knulli",
 )
 
 # The names the frontends give themselves, as each manifest's display_name
@@ -197,6 +197,7 @@ PLATFORM_NAMES = {
     "retrobat": "RetroBat", "emudeck": "EmuDeck", "lakka": "Lakka",
     "retrodeck": "RetroDECK", "rocknix": "ROCKNIX", "romm": "RomM",
     "bizhawk": "BizHawk", "misterfpga": "MiSTer FPGA", "retropie": "RetroPie",
+    "amberelec": "AmberELEC", "emuelec": "EmuELEC", "knulli": "KNULLI",
 }
 
 SITE_URL = "https://abdess.github.io/retrobios/"
@@ -213,6 +214,10 @@ DEFAULT_DESTS = {
     "retrodeck": Path.home() / "retrodeck",
     "emudeck": Path.home() / "Emulation" / "bios",
     "rocknix": Path("/storage/roms/bios"),
+    # Their BIOS lists name files under /storage/roms beside bios/.
+    "amberelec": Path("/storage/roms"),
+    "emuelec": Path("/storage/roms"),
+    "knulli": Path("/userdata/bios"),
     "misterfpga": Path("/media/fat/games"),
     "retropie": Path.home() / "RetroPie" / "BIOS",
     "romm": Path("/romm/library/bios"),
@@ -745,13 +750,12 @@ _BOARD_SOURCES: dict[str, tuple[str, str]] = {
 }
 
 
-# A derivative installed under a platform's name, with its own board file.
+# A platform that names its board without publishing a core list per board.
 # Knulli moves /usr/share/batocera to /usr/share/knulli (knulli-linux
 # 57afa662, board/scripts/post-build-script.sh:264-278) and writes its board
-# to knulli.arch (package/system/knulli-system/knulli-system.mk:98-99). Its
-# packages are its own, so Batocera's per-board core lists do not apply.
+# to knulli.arch (package/system/knulli-system/knulli-system.mk:98-99).
 _DERIVATIVE_BOARDS: dict[str, tuple[str, str]] = {
-    "batocera": ("Knulli", "/usr/share/knulli/knulli.arch"),
+    "knulli": ("Knulli", "/usr/share/knulli/knulli.arch"),
 }
 
 
@@ -827,8 +831,14 @@ _EMBEDDED_RULES: tuple[tuple[str, str, tuple[str, ...], str], ...] = (
     # Knulli (knulli-linux 57afa662): OS_NAME in os-release
     # (board/scripts/post-build-script.sh:233-236) and knulli.version
     # (package/system/knulli-system/knulli-system.mk:98-102).
-    ("batocera", "os_release", ("OS_NAME=knulli",), "/userdata/bios"),
-    ("batocera", "file_exists", ("/usr/share/knulli/knulli.version",), "/userdata/bios"),
+    ("knulli", "os_release", ("OS_NAME=knulli",), "/userdata/bios"),
+    ("knulli", "file_exists", ("/usr/share/knulli/knulli.version",), "/userdata/bios"),
+    # scripts/image writes NAME from DISTRONAME. AmberELEC a21975bf:
+    # scripts/image:152 (ID is "coreelec", line 154) and
+    # distributions/AmberELEC/options:17. EmuELEC v4.8: scripts/image:174-176
+    # (ID is DISTRONAME lowercased) and distributions/EmuELEC/options:4.
+    ("amberelec", "os_release", ("NAME=AmberELEC",), "/storage/roms"),
+    ("emuelec", "os_release", ("ID=emuelec",), "/storage/roms"),
     ("lakka", "os_release", ("ID=lakka",), "/storage/system"),
     # batocera.linux 38845725, batocera-system.mk:21-22 (the same lines in
     # batocera-30): batocera.arch and batocera.version.
