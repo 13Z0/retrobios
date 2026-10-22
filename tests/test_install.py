@@ -5205,6 +5205,41 @@ class AFileYouHadIsKept(unittest.TestCase):
             self.assertEqual(install.restore_kept(self.bios), 2)
         self.assertIn(install.BACKUP_DIR, err.getvalue())
 
+    def test_a_linked_backup_holder_is_not_written_through(self):
+        # Someone with write access to a shared parent folder placed a link
+        # where the holder goes: the user's file must not land at its target.
+        elsewhere = self.home / "elsewhere"
+        elsewhere.mkdir()
+        (self.home / install.BACKUP_DIR).symlink_to(elsewhere)
+        (self.bios / "x.bin").write_bytes(self.OLD)
+        self.assertTrue(self._download("x.bin")[1])
+        self.assertEqual(list(elsewhere.iterdir()), [])
+        inside = list((self.bios / install.BACKUP_DIR).iterdir())
+        self.assertEqual(len(inside), 1)
+        self.assertEqual((inside[0] / "x.bin").read_bytes(), self.OLD)
+
+    def test_restore_refuses_a_folder_the_installer_did_not_write(self):
+        planted = self.home / install.BACKUP_DIR / "20260101-000000"
+        (planted / "system").mkdir(parents=True)
+        (planted / "system" / "x.bin").write_bytes(b"not the user's")
+        (self.bios / "x.bin").write_bytes(self.OLD)
+        with contextlib.redirect_stderr(io.StringIO()):
+            self.assertEqual(install.restore_kept(planted), 2)
+        self.assertEqual((self.bios / "x.bin").read_bytes(), self.OLD)
+
+    def test_restore_does_not_follow_links_inside_the_backup(self):
+        (self.bios / "x.bin").write_bytes(self.OLD)
+        self.assertTrue(self._download("x.bin")[1])
+        run = self._run_folder()
+        outside = self.home / "outside"
+        (outside / "deep").mkdir(parents=True)
+        (outside / "deep" / "y.bin").write_bytes(b"foreign")
+        (run / "system" / "linked").symlink_to(outside)
+        with contextlib.redirect_stdout(io.StringIO()):
+            self.assertEqual(install.restore_kept(run), 0)
+        self.assertEqual((self.bios / "x.bin").read_bytes(), self.OLD)
+        self.assertFalse((self.bios / "linked").exists())
+
 
 class KeptFilesEndToEnd(unittest.TestCase, _SyntheticTree):
     """The run says what it kept and where, --dry-run what it would keep

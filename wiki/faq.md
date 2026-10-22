@@ -83,7 +83,7 @@ that folder and the command that puts the files back, the same command with
 `retrobios-backup` does the same. Files that were not there before can be
 deleted from the BIOS folder. The installer changed nothing outside it, apart
 from the backup folder.
-[More on kept files](installer.md#files-you-already-had).
+Details: [kept files](installer.md#files-you-already-had).
 
 ## Can I install onto an SD card or another machine's drive?
 

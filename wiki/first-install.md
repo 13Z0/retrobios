@@ -260,5 +260,5 @@ may need a file that nobody has dumped yet.
 To remove what the installer wrote, delete the files from the BIOS folder.
 A file you had that it replaced is in `retrobios-backup`, beside that folder:
 the end of the run printed the `--restore` command that puts it back
-([details](installer.md#files-you-already-had)). Nothing else outside the
+(Details: [kept files](installer.md#files-you-already-had)). Nothing else outside the
 BIOS folder was changed.

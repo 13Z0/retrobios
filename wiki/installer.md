@@ -168,6 +168,12 @@ inside it, and the same `--restore` puts the files back. A file that cannot be
 moved aside is not replaced: it stays, and the run reports it as failed with
 `file in place could not be kept aside`.
 
+A BIOS folder can sit on a network share other people write to. So a
+`retrobios-backup` that is a link is never written through (the backup goes
+inside the BIOS folder instead), and `--restore` only takes a folder the
+installer created, marked by a `.retrobios-backup` file, without following
+links found inside it.
+
 On one drive the old file is moved, not copied, so keeping it needs no space
 beyond what it already used. A link sitting at a file's name is not kept: the
 file it points to is never touched. Data trees and `--standalone-copies` keep

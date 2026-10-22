@@ -46,7 +46,7 @@ looks for the name. Common causes:
 
 Running the same command without `--check` replaces each file with a wrong
 hash by a verified copy, and keeps yours in `retrobios-backup` beside the BIOS
-folder ([putting it back](installer.md#files-you-already-had)). Each system page on the site also lists the expected
+folder (Details: [putting it back](installer.md#files-you-already-had)). Each system page on the site also lists the expected
 hashes, to compare against your file's MD5 or SHA1 by hand.
 
 ### Wrong region BIOS

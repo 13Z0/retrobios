@@ -3437,6 +3437,10 @@ def check_local(
 # file of the BIOS folder, BizHawk walks its firmware folder recursively. A
 # kept copy anywhere under that folder could be taken for the BIOS.
 BACKUP_DIR = "retrobios-backup"
+# Written into every run folder the installer creates. --restore only accepts
+# a folder holding it, so a folder someone else placed (a shared BIOS folder
+# on a network share) is never copied over the user's files.
+BACKUP_MARKER = ".retrobios-backup"
 
 
 class _NotKept(Exception):
@@ -3492,13 +3496,18 @@ class KeptFiles:
                 if run is None:
                     try:
                         holder.mkdir(parents=True, exist_ok=True)
+                        if holder.is_symlink():
+                            # A link would send the user's files wherever it points.
+                            raise OSError(errno.ELOOP, f"{holder} is a link")
                         for n in range(1, 1000):
                             run = holder / (stamp if n == 1 else f"{stamp}-{n}")
                             try:
-                                run.mkdir()
+                                run.mkdir(mode=0o700)
                                 break
                             except FileExistsError:
                                 continue
+                        (run / BACKUP_MARKER).write_text(
+                            "Files the RetroBIOS installer replaced.\n", encoding="utf-8")
                     except OSError as exc:
                         failure = exc
                         continue
@@ -3661,16 +3670,22 @@ def restore_kept(run: Path, dry_run: bool = False) -> int:
     the folder is no backup.
     """
     run = Path(os.path.abspath(os.path.expanduser(str(run))))
-    if not run.is_dir() or run.parent.name != BACKUP_DIR:
+    if (not run.is_dir() or run.is_symlink() or run.parent.name != BACKUP_DIR
+            or run.parent.is_symlink() or not (run / BACKUP_MARKER).is_file()):
         print(f"Error: {run} is not a folder the installer kept files in.", file=sys.stderr)
         print(f"  Name one of the dated folders inside a {BACKUP_DIR} folder, as the "
               "end of the install printed it.", file=sys.stderr)
         return 2
     root = run.parent.parent
+    # Links inside the backup are never followed: os.walk does not descend
+    # into a linked folder and a linked file is skipped.
     files = sorted(
-        path for path in run.rglob("*")
-        if path.is_file() and not path.is_symlink()
-        and not (path.name.startswith(".") and path.name.endswith(".part"))
+        Path(base) / name
+        for base, _dirs, names in os.walk(run, followlinks=False)
+        for name in names
+        if not (Path(base) / name).is_symlink()
+        and not (name.startswith(".") and name.endswith(".part"))
+        and not (Path(base) == run and name == BACKUP_MARKER)
     )
     if not files:
         print(f"{run} holds no file. Nothing to put back.")
