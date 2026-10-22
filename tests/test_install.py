@@ -541,7 +541,9 @@ class TestAndroidDetection(unittest.TestCase):
         storage = Path(_tempdir(self))
         files = storage / "Android" / "data" / "com.retroarch.aarch64" / "files"
         files.mkdir(parents=True)
-        (files / "retroarch.cfg").write_text('system_directory = "default"\n')
+        (files / "retroarch.cfg").write_text(
+            'system_directory = "default"\n'
+            'bundle_assets_extract_version_current = "1745000000"\n')
         os.environ["EXTERNAL_STORAGE"] = str(storage)
         self.assertEqual(
             install._detect_android(),
@@ -2722,6 +2724,130 @@ class AndroidCitationsNameTheRelease(unittest.TestCase):
             self.assertIn("platform_unix.c:1670-1697", text.replace("\n    ", ""))
             self.assertNotIn("1327-1395", text)
             self.assertNotIn("2836-2851", text)
+
+
+class AndroidRetroArchFolderFollowsItsBuild(unittest.TestCase):
+    """The Google Play build of RetroArch builds its defaults under
+    Android/data/<package>/files/RetroArch, the retroarch.com build under
+    the shared storage root (RetroArch v1.22.2, MainMenuActivity.java:
+    182-183), and both publish com.retroarch and com.retroarch.aarch64.
+    Detection sent every build to <shared storage>/RetroArch/system."""
+
+    PLAY_CODE = 1597175870
+    SITE_CODE = 1745000000
+
+    def _run(self, make):
+        root = Path(_tempdir(self))
+        app_data, storage = root / "data", root / "storage"
+        app_data.mkdir()
+        storage.mkdir()
+        make(app_data, storage)
+        try:
+            with unittest.mock.patch.object(install, "ANDROID_APP_DATA", app_data), \
+                    unittest.mock.patch.dict(os.environ, {"EXTERNAL_STORAGE": str(storage)}):
+                return storage, install._detect_android(), install.android_unreachable_folders()
+        finally:
+            for folder in root.rglob("*"):
+                if folder.is_dir():
+                    folder.chmod(0o755)
+
+    @staticmethod
+    def _install(app_data, storage, package, cfg=None, visible=True):
+        (app_data / package).mkdir()
+        if visible:
+            files = storage / "Android" / "data" / package / "files"
+            files.mkdir(parents=True)
+            if cfg is not None:
+                (files / "retroarch.cfg").write_text(cfg)
+
+    @staticmethod
+    def _cfg(code, system="default"):
+        return (f'system_directory = "{system}"\n'
+                f'bundle_assets_extract_version_current = "{code}"\n')
+
+    def test_google_play_build_reads_its_own_files(self):
+        storage, found, lines = self._run(lambda data, storage: self._install(
+            data, storage, "com.retroarch", self._cfg(self.PLAY_CODE)))
+        folder = storage / "Android/data/com.retroarch/files/RetroArch/system"
+        self.assertEqual(found, [("retroarch", folder)])
+        self.assertEqual(lines, [])
+
+    def test_retroarch_com_build_reads_shared_storage(self):
+        storage, found, lines = self._run(lambda data, storage: self._install(
+            data, storage, "com.retroarch.aarch64", self._cfg(self.SITE_CODE)))
+        self.assertEqual(found, [("retroarch", storage / "RetroArch/system")])
+        self.assertEqual(lines, [])
+
+    def test_ra32_has_no_google_play_build(self):
+        storage, found, _lines = self._run(lambda data, storage: self._install(
+            data, storage, "com.retroarch.ra32", 'system_directory = "default"\n'))
+        self.assertEqual(found, [("retroarch", storage / "RetroArch/system")])
+
+    def test_play_plus_folder_seen_without_a_config(self):
+        def make(data, storage):
+            self._install(data, storage, "com.retroarch.aarch64")
+            (storage / "Android/data/com.retroarch.aarch64/files/RetroArch").mkdir()
+        storage, found, _lines = self._run(make)
+        self.assertEqual(found, [(
+            "retroarch",
+            storage / "Android/data/com.retroarch.aarch64/files/RetroArch/system")])
+
+    def test_play_folder_out_of_reach_is_named(self):
+        if os.geteuid() == 0:
+            self.skipTest("root writes any folder")
+
+        def make(data, storage):
+            self._install(data, storage, "com.retroarch", self._cfg(self.PLAY_CODE))
+            (storage / "Android/data/com.retroarch/files").chmod(0o555)
+        storage, found, lines = self._run(make)
+        self.assertEqual(found, [])
+        self.assertEqual(len(lines), 1)
+        self.assertIn("RetroArch (Google Play build, com.retroarch) is installed", lines[0])
+        self.assertIn(str(storage / "Android/data/com.retroarch/files/RetroArch/system"),
+                      lines[0])
+
+    def test_hidden_private_data_and_shared_folder_mean_retroarch_com(self):
+        def make(data, storage):
+            self._install(data, storage, "com.retroarch", visible=False)
+            (storage / "RetroArch").mkdir()
+        storage, found, lines = self._run(make)
+        self.assertEqual(found, [("retroarch", storage / "RetroArch/system")])
+        self.assertEqual(lines, [])
+
+    def test_undecided_build_names_both_folders(self):
+        storage, found, lines = self._run(lambda data, storage: self._install(
+            data, storage, "com.retroarch.aarch64", visible=False))
+        self.assertEqual(found, [])
+        self.assertEqual(len(lines), 1)
+        self.assertIn(
+            str(storage / "Android/data/com.retroarch.aarch64/files/RetroArch/system"),
+            lines[0])
+        self.assertIn(str(storage / "RetroArch/system"), lines[0])
+
+    def test_named_folder_needs_no_build(self):
+        storage, found, _lines = self._run(lambda data, storage: self._install(
+            data, storage, "com.retroarch", f'system_directory = "{storage}/bios"\n'))
+        self.assertEqual(found, [("retroarch", storage / "bios")])
+
+    def test_each_installed_build_is_found(self):
+        def make(data, storage):
+            self._install(data, storage, "com.retroarch", self._cfg(self.PLAY_CODE))
+            self._install(data, storage, "com.retroarch.ra32", self._cfg(self.SITE_CODE))
+        storage, found, _lines = self._run(make)
+        self.assertEqual(found, [
+            ("retroarch", storage / "Android/data/com.retroarch/files/RetroArch/system"),
+            ("retroarch", storage / "RetroArch/system"),
+        ])
+
+    def test_detection_prints_the_retroarch_line(self):
+        err = io.StringIO()
+        root = Path(_tempdir(self))
+        (root / "data" / "com.retroarch").mkdir(parents=True)
+        with unittest.mock.patch.object(install, "ANDROID_APP_DATA", root / "data"), \
+                unittest.mock.patch.dict(os.environ, {"EXTERNAL_STORAGE": str(root / "s")}), \
+                contextlib.redirect_stderr(err):
+            install.detect_platforms("android")
+        self.assertIn("RetroArch (com.retroarch) is installed", err.getvalue())
 
 
 class AndroidEmulatorsOutOfReachAreSaid(unittest.TestCase):

@@ -397,12 +397,15 @@ under scoped storage.
 |----------|----------|----------------|
 | `<shared storage>/Android/data/<package>/files/retroarch.cfg` | RetroArch (Android) | `system_directory` |
 | `/data/data/<package>/files/retroarch.cfg` | RetroArch (Android) | `system_directory` |
-| `<shared storage>/RetroArch/` | RetroArch (Android) | `<shared storage>/RetroArch/system` |
+| `<shared storage>/Android/data/<package>/files/RetroArch/` | RetroArch (Android, Google Play build) | `<shared storage>/Android/data/<package>/files/RetroArch/system` |
+| `<shared storage>/RetroArch/` | RetroArch (Android, retroarch.com build) | `<shared storage>/RetroArch/system` |
 
 The packages are `com.retroarch.aarch64`, `com.retroarch` and
-`com.retroarch.ra32`, the flavours the frontend publishes. Both config paths
-are unreadable from Termux on Android 11 and later, so the directory itself is
-what answers on current devices.
+`com.retroarch.ra32`, the flavours the frontend publishes. The first two are
+published both on Google Play and on retroarch.com, and the two builds keep
+their folders in different places (see [Android](#android)). Both config
+paths are unreadable from Termux on Android 11 and later, so the directories
+themselves are what answers on current devices.
 
 ES-DE and LaunchBox are reported when present and nothing is written to them:
 they reference emulators rather than owning a BIOS directory. ES-DE is looked
@@ -496,13 +499,31 @@ Android reports itself as Linux, so the runtime is named from its own
 variables instead: `ANDROID_ROOT` and `ANDROID_DATA`, which Termux inherits,
 with `/system/build.prop` covering a shell started without them.
 
-Detection then looks for RetroArch, the only Android frontend keeping a shared
-BIOS directory. `retroarch.cfg` is read from the app external files directory
-and then from the internal one, the order the frontend itself follows
-(RetroArch v1.22.2, `UserPreferences.java:36-89`), and a `system_directory`
-left at `default` resolves against `<shared storage>/RetroArch`, where the
-directory also sits when no config has been written yet
-(`platform_unix.c:1670-1697`).
+Detection then looks for each installed RetroArch package. Its
+`retroarch.cfg` is read from the app external files directory and then from
+the internal one, the order the frontend itself follows (RetroArch v1.22.2,
+`UserPreferences.java:36-89`), and a `system_directory` it names is used as
+written. Left at `default`, it resolves against `<storage>/RetroArch`
+(`platform_unix.c:1670-1697`), where `<storage>` depends on the build
+(`MainMenuActivity.java:182-183`):
+
+| Build | Packages | `<storage>` |
+|-------|----------|-------------|
+| Google Play | `com.retroarch`, `com.retroarch.aarch64` | `<shared storage>/Android/data/<package>/files` |
+| retroarch.com | `com.retroarch`, `com.retroarch.aarch64`, `com.retroarch.ra32` | `<shared storage>` |
+
+The two builds share their package ids (`pkg/android/phoenix/build.gradle:46-95`),
+so the build is told by what it wrote. The version code the launcher records
+in `retroarch.cfg` (`bundle_assets_extract_version_current`) is below
+1609632000 for a Google Play build and the build time in seconds for the
+others (`build.gradle:42, 168-175`). Without a readable config, a
+`RetroArch` folder under `Android/data/<package>/files` is the Google Play
+build, and `<shared storage>/RetroArch` is the retroarch.com build, the
+Google Play build never asking for shared storage
+(`MainMenuActivity.java:199-202`). When nothing tells them apart, the run
+names both folders and asks for `--dest`. The Google Play folder sits in
+`Android/data`, which Termux cannot write on Android 11 and later: the run
+then names it, as it does for Flycast below.
 
 Two Android emulators keep their BIOS elsewhere. DraStic reads
 `/data/data/com.dsemu.drastic/files/DraStic/system`, private to the app, and
@@ -514,8 +535,8 @@ run names it and the files that are not copied. Where the Flycast folder is
 writable (Android 10 and earlier), it is a standalone copy target.
 
 Under scoped storage the two RetroArch config paths are unreadable from Termux on
-Android 11 and later, so on current devices the shared directory is what
-answers. Running `termux-setup-storage` once is what makes it reachable:
+Android 11 and later, so on current devices the folders are what answers.
+Running `termux-setup-storage` once is what makes the shared one reachable:
 
 ```bash
 pkg install python

@@ -440,6 +440,8 @@ ANDROID_RETROARCH_PACKAGES = (
     "com.retroarch",
     "com.retroarch.ra32",
 )
+# Where Android keeps each app's private data.
+ANDROID_APP_DATA = Path("/data/data")
 
 
 def _is_android() -> bool:
@@ -1171,8 +1173,78 @@ def _android_storage_root() -> Path:
     return Path(value) if value else Path("/storage/emulated/0")
 
 
-def _detect_android() -> list[tuple[str, Path]]:
-    """Find the RetroArch system directory on Android.
+# Where each RetroArch package keeps its folders, RetroArch v1.22.2
+# (pkg/android/phoenix/build.gradle:46-95). com.retroarch and
+# com.retroarch.aarch64 are each published twice under one id: by
+# retroarch.com (normal, aarch64) and on Google Play (playStoreNormal,
+# playStorePlus). com.retroarch.ra32 has no Google Play flavor. The Google
+# Play build hands RetroArch Android/data/<package>/files as the storage its
+# defaults are built from, the other builds the shared storage root
+# (MainMenuActivity.java:182-183).
+_ANDROID_RETROARCH_PLAY_IDS = ("com.retroarch", "com.retroarch.aarch64")
+# A Google Play versionCode is the manifest's 1597175267 (AndroidManifest.xml:5)
+# plus one per half week since 1609632000 (build.gradle:76, 87, 168-175), so
+# it stays below that start time. The other flavors use the build time in
+# seconds (build.gradle:42), above it for every build since 2021. The launcher
+# writes the code to retroarch.cfg (UserPreferences.java:150), which
+# RetroArch keeps (configuration.c:2623).
+_ANDROID_PLAY_VERSION_CEILING = 1609632000
+
+
+def _android_cfg_value(cfg: Path, key: str) -> str | None:
+    """A value of an Android retroarch.cfg, None when unreadable or unset."""
+    try:
+        lines = cfg.read_text(encoding="utf-8", errors="replace").splitlines()
+    except OSError:
+        return None
+    for line in lines:
+        name, sep, value = line.partition("=")
+        if sep and name.strip() == key:
+            return value.strip().strip('"').strip("'")
+    return None
+
+
+def _android_play_build(package: str, storage: Path, cfgs: tuple[Path, ...]) -> bool | None:
+    """True for the Google Play build of this package, False for the
+    retroarch.com one, None when nothing it wrote tells them apart.
+
+    The version code in its config decides. Without a readable config, the
+    folder each build writes does: the Google Play build never asks for
+    shared storage (MainMenuActivity.java:199-202), and only it builds its
+    defaults under Android/data/<package>/files/RetroArch.
+    """
+    if package not in _ANDROID_RETROARCH_PLAY_IDS:
+        return False
+    for cfg in cfgs:
+        code = _android_cfg_value(cfg, "bundle_assets_extract_version_current")
+        if code and code.isdigit() and int(code) > 0:
+            return int(code) < _ANDROID_PLAY_VERSION_CEILING
+    if (storage / "Android" / "data" / package / "files" / "RetroArch").is_dir():
+        return True
+    if (storage / "RetroArch").is_dir():
+        return False
+    return None
+
+
+def _android_writable(folder: Path) -> bool:
+    """Whether this shell can create folder: its nearest existing parent is
+    writable. Android 11 and later keep Android/data/<package> of other apps
+    from Termux."""
+    for parent in (folder, *folder.parents):
+        if parent.exists():
+            return parent.is_dir() and os.access(parent, os.W_OK)
+    return False
+
+
+def _android_out_of_reach(name: str, folder: Path, what: str) -> str:
+    """The line said for an emulator whose BIOS folder this shell cannot write."""
+    return (f"{name} is installed, but this shell cannot write its BIOS folder "
+            f"{folder} without root: {what} are not copied there.")
+
+
+def _android_retroarch_builds() -> list[tuple[Path | None, str]]:
+    """Each installed RetroArch build: its system folder when this shell can
+    write it, else None and the line that says why.
 
     RetroArch v1.22.2: the launcher picks retroarch.cfg in the app external
     files directory, else in the internal one
@@ -1180,24 +1252,58 @@ def _detect_android() -> list[tuple[str, Path]]:
     UserPreferences.java:36-89), and passes it as CONFIGFILE
     (MainMenuActivity.java:178, read at frontend/drivers/platform_unix.c:
     1428-1444). A system_directory left at default resolves against
-    <shared storage>/RetroArch/system (platform_unix.c:1670-1697), which is
-    also where the directory sits when no config has been written yet.
+    <storage>/RetroArch/system (platform_unix.c:1670-1697), storage being
+    what the launcher passes as SDCARD: Android/data/<package>/files for the
+    Google Play build, the shared storage root for the others.
+    """
+    storage = _android_storage_root()
+    builds: list[tuple[Path | None, str]] = []
+    for package in ANDROID_RETROARCH_PACKAGES:
+        external = storage / "Android" / "data" / package / "files"
+        if not (ANDROID_APP_DATA / package).exists() and not external.exists():
+            continue
+        cfgs = (external / "retroarch.cfg",
+                ANDROID_APP_DATA / package / "files" / "retroarch.cfg")
+        play = _android_play_build(package, storage, cfgs)
+        play_root, shared_root = external / "RetroArch", storage / "RetroArch"
+        named = next(filter(None, (_android_cfg_value(cfg, "system_directory")
+                                   for cfg in cfgs)), "default")
+        if play is None and named == "default":
+            builds.append((None,
+                f"RetroArch ({package}) is installed, but nothing it has written tells "
+                f"which build it is: the Google Play build reads {play_root / 'system'}, "
+                f"the retroarch.com build reads {shared_root / 'system'}. "
+                "Name the folder with --dest."))
+            continue
+        root = play_root if play else shared_root
+        folder = next(filter(None, (_parse_retroarch_system_dir(cfg, root) for cfg in cfgs)),
+                      root / "system")
+        private = (storage / "Android" / "data", ANDROID_APP_DATA)
+        if any(folder == base or base in folder.parents for base in private) \
+                and not _android_writable(folder):
+            build = "Google Play build" if play else "retroarch.com build"
+            builds.append((None, _android_out_of_reach(
+                f"RetroArch ({build}, {package})", folder, "BIOS files")))
+            continue
+        builds.append((folder, ""))
+    return builds
+
+
+def _detect_android() -> list[tuple[str, Path]]:
+    """Find the RetroArch system directory of each installed build on
+    Android, as _android_retroarch_builds() resolves it (RetroArch v1.22.2,
+    platform_unix.c:1670-1697).
+
+    With no package seen, <shared storage>/RetroArch is the folder of a
+    retroarch.com build whose private data this shell cannot see.
     """
     found: list[tuple[str, Path]] = []
-    storage = _android_storage_root()
-    default_root = storage / "RetroArch"
-
-    for package in ANDROID_RETROARCH_PACKAGES:
-        for cfg in (
-            storage / "Android" / "data" / package / "files" / "retroarch.cfg",
-            Path("/data/data") / package / "files" / "retroarch.cfg",
-        ):
-            system_dir = _parse_retroarch_system_dir(cfg, default_root)
-            if system_dir:
-                found.append(("retroarch", system_dir))
-                return found
-
-    if default_root.exists():
+    builds = _android_retroarch_builds()
+    for folder, _line in builds:
+        if folder is not None and ("retroarch", folder) not in found:
+            found.append(("retroarch", folder))
+    default_root = _android_storage_root() / "RetroArch"
+    if not builds and default_root.exists():
         found.append(("retroarch", default_root / "system"))
     return found
 
@@ -1210,7 +1316,6 @@ def _detect_android() -> list[tuple[str, Path]]:
 # shell/android-studio/flycast/src/main/jni/src/Android.cpp:143-159), its
 # home being Android/data/com.flycast.emulator/files, which Android 11 and
 # later keep from other apps.
-ANDROID_APP_DATA = Path("/data/data")
 _ANDROID_APP_FOLDERS = (
     ("DraStic", "com.dsemu.drastic", "/data/data/com.dsemu.drastic/files/DraStic/system",
      ("nds_bios_arm7.bin", "nds_bios_arm9.bin", "nds_firmware.bin")),
@@ -1222,12 +1327,14 @@ _ANDROID_APP_FOLDERS = (
 
 def android_unreachable_folders() -> list[str]:
     """A line for each Android emulator installed here whose BIOS folder
-    this shell cannot write, said instead of skipping it in silence.
+    this shell cannot write, said instead of skipping it in silence. A
+    RetroArch build whose folder is out of reach, or whose build cannot be
+    told, is among them.
 
     An app's private folder can be tested for existence by any app, so the
     emulator is known to be installed even where its folder is out of reach.
     """
-    lines = []
+    lines = [line for folder, line in _android_retroarch_builds() if folder is None]
     storage = str(_android_storage_root())
     for name, package, folder, files in _ANDROID_APP_FOLDERS:
         target = Path(folder.replace("$STORAGE", storage, 1))
@@ -1237,8 +1344,7 @@ def android_unreachable_folders() -> list[str]:
             continue
         if target.is_dir() and os.access(target, os.W_OK):
             continue
-        lines.append(f"{name} is installed, but this shell cannot write its BIOS folder "
-                     f"{target} without root: {', '.join(files)} are not copied there.")
+        lines.append(_android_out_of_reach(name, target, ", ".join(files)))
     return lines
 
 
