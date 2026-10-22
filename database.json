@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-22T05:12:35Z",
-  "total_files": 19558,
-  "total_size": 16849476798,
+  "generated_at": "2026-10-22T05:54:39Z",
+  "total_files": 19591,
+  "total_size": 16856625430,
   "bios_dir": "bios",
   "files": {
     "738c7f5fd0c8b57ee2e87ae7a97bf8e21a821d07": {
@@ -37785,6 +37785,16 @@
       "sha256": "3672baf7aaaab8eb266887792ef7d84d3bcb9d9abe836653e3c232012d3ec43a",
       "crc32": "ae2635ef",
       "adler32": "b7dd503d"
+    },
+    "566fd769c8026151e27f3956849b7840532797fd": {
+      "path": "bios/Dinothawr/Dinothawr/dinothawr/dinothawr.game",
+      "name": "dinothawr.game",
+      "size": 3399,
+      "sha1": "566fd769c8026151e27f3956849b7840532797fd",
+      "md5": "34d78b76a6793190cefbe84b202d5397",
+      "sha256": "da6ade3c5a9bc1cf78dbf3c13d3cbdc7b650c63ec9a256c6c6927fcc103563ae",
+      "crc32": "315a9ffb",
+      "adler32": "f28d0492"
     },
     "e004e25a8bb7bcd76a1aee7c2ec87b8fceda4332": {
       "path": "bios/Dragon/Dragon/.variants/d32.rom.e004e25a",
@@ -148681,6 +148691,26 @@
       "crc32": "53e70005",
       "adler32": "af8d5f0f"
     },
+    "031bdfc2f280e4ae3e9574c2151559fb752eb441": {
+      "path": "bios/Other/opentyrian/newsh#.shp",
+      "name": "newsh#.shp",
+      "size": 17750,
+      "sha1": "031bdfc2f280e4ae3e9574c2151559fb752eb441",
+      "md5": "a15a912c59b845e3b21e9d70bbeb213f",
+      "sha256": "45c9e26a7742ce3e9340638349ab6b1b4c834c1ed6dd5d69cc32dd4e481a706d",
+      "crc32": "1d31c213",
+      "adler32": "baf62a0b"
+    },
+    "1da408b9177ffba057189eff64b6096615a8d767": {
+      "path": "bios/Other/opentyrian/newsh0.shp",
+      "name": "newsh0.shp",
+      "size": 14096,
+      "sha1": "1da408b9177ffba057189eff64b6096615a8d767",
+      "md5": "71e299a984b261bb86b724cd8f84d43f",
+      "sha256": "c443ec4e268205e6a843c1ba783e84cce9d710e3226ddd03b8bfc869bcafbf10",
+      "crc32": "7c0ca842",
+      "adler32": "f7e4aca0"
+    },
     "2c858ec1c02d65df0a00bea02474bb9ad365b202": {
       "path": "bios/Other/opentyrian/newsh1.shp",
       "name": "newsh1.shp",
@@ -148691,6 +148721,46 @@
       "crc32": "e6f8f518",
       "adler32": "8f825fdc"
     },
+    "445d2e49862304431525bcedbe7838fa5fd16f1e": {
+      "path": "bios/Other/opentyrian/newsh2.shp",
+      "name": "newsh2.shp",
+      "size": 35236,
+      "sha1": "445d2e49862304431525bcedbe7838fa5fd16f1e",
+      "md5": "97371bdf38332c2621bf7954d967ebfe",
+      "sha256": "8773ebcae4be992ecfbb476c0797b0bef4d43faa4c99449890bfaa28c8d9cbcc",
+      "crc32": "8c021a5a",
+      "adler32": "7c7d91a7"
+    },
+    "f8f9c6f3c1fe9972c75d0c9958c4eee555a57e96": {
+      "path": "bios/Other/opentyrian/newsh3.shp",
+      "name": "newsh3.shp",
+      "size": 37130,
+      "sha1": "f8f9c6f3c1fe9972c75d0c9958c4eee555a57e96",
+      "md5": "e6587898b8b3dabda6bccd6acea739ff",
+      "sha256": "f5ac183f489079505908f3cb431b516a54b24fdf312f2702725abf83732e9c6d",
+      "crc32": "f6f156c6",
+      "adler32": "0f2cacd7"
+    },
+    "81747e837d40194431a018764013efc060391590": {
+      "path": "bios/Other/opentyrian/newsh4.shp",
+      "name": "newsh4.shp",
+      "size": 29449,
+      "sha1": "81747e837d40194431a018764013efc060391590",
+      "md5": "bf3a281c254910afaedc649e1351a332",
+      "sha256": "05fd4174fa1041dbccccf16fffc18b574b9c3c3ca3e2678ba0ba977c9b288fca",
+      "crc32": "fa75bfe9",
+      "adler32": "3dbb07dd"
+    },
+    "c961da96994deb81cf71d0d8e6495cc05bb9888f": {
+      "path": "bios/Other/opentyrian/newsh5.shp",
+      "name": "newsh5.shp",
+      "size": 35813,
+      "sha1": "c961da96994deb81cf71d0d8e6495cc05bb9888f",
+      "md5": "2b8becea765397e8af43cad42a38d85d",
+      "sha256": "1e6854ccde0e6b0e0789afadd52f6d8b7d264a61f59185635c5ed119f29d4bad",
+      "crc32": "80c22900",
+      "adler32": "93a8c027"
+    },
     "be7ff3250f8712848c550b913731b60b8c945f6a": {
       "path": "bios/Other/opentyrian/newsh6.shp",
       "name": "newsh6.shp",
@@ -148700,6 +148770,256 @@
       "sha256": "79098b156a9a1cc1af16a3a03156d58cf45b9a830217d362c3c9935798afe62d",
       "crc32": "0e5b1e86",
       "adler32": "5586edbf"
+    },
+    "9c59e7f83e01afbef951f56d7a1a88cd0ac615d8": {
+      "path": "bios/Other/opentyrian/newsh7.shp",
+      "name": "newsh7.shp",
+      "size": 44079,
+      "sha1": "9c59e7f83e01afbef951f56d7a1a88cd0ac615d8",
+      "md5": "667ac2ef6b7ad320369560c5c503b009",
+      "sha256": "52c40a2438373f9fc9a7cd2d338ec149f4e81dda56d9c05061ee2264408f0b1a",
+      "crc32": "bba98d90",
+      "adler32": "c67d5037"
+    },
+    "a3efbcc672fe772b8761c47230c1cdac2c70cd1c": {
+      "path": "bios/Other/opentyrian/newsh8.shp",
+      "name": "newsh8.shp",
+      "size": 35152,
+      "sha1": "a3efbcc672fe772b8761c47230c1cdac2c70cd1c",
+      "md5": "10fdce60379c172d38622e4dcba93e43",
+      "sha256": "1fb3f52d36bf3d05c4e5867f8fa34035fc8eace8fd27b55b41df1abba7ef41ee",
+      "crc32": "3a6db269",
+      "adler32": "4270f744"
+    },
+    "51d07d3b1003931249a0938cca84d36b9e0e1c1e": {
+      "path": "bios/Other/opentyrian/newsh9.shp",
+      "name": "newsh9.shp",
+      "size": 38831,
+      "sha1": "51d07d3b1003931249a0938cca84d36b9e0e1c1e",
+      "md5": "44a71b2e40e9d00a0f52dd7e7fe1b633",
+      "sha256": "371650303f8b93ae17b76d7c27df202bf6a3f6bb482ffabb7b6b1e16e2774d30",
+      "crc32": "327a6f56",
+      "adler32": "0a2e3bae"
+    },
+    "3a380dc88b030d8359ce76100b516ccc4400b186": {
+      "path": "bios/Other/opentyrian/newsh^.shp",
+      "name": "newsh^.shp",
+      "size": 34888,
+      "sha1": "3a380dc88b030d8359ce76100b516ccc4400b186",
+      "md5": "241f78397712ea5e8cf90e06343bb43a",
+      "sha256": "e9884ec4debe73f00c51cca5112dd2e2b0d2c57d1d5953d2902947df36471f23",
+      "crc32": "12c45240",
+      "adler32": "a8b68f8c"
+    },
+    "651f90cc86784b6ba4d60a70dfe54d6b2a18d8d3": {
+      "path": "bios/Other/opentyrian/newsha.shp",
+      "name": "newsha.shp",
+      "size": 25622,
+      "sha1": "651f90cc86784b6ba4d60a70dfe54d6b2a18d8d3",
+      "md5": "f71b7f996e1a8aea600452742dee017e",
+      "sha256": "6fee07e22d028831ee0c54a21982a1e6c8ec8efba94e7576670ea0dfc617c6b9",
+      "crc32": "5473e8ca",
+      "adler32": "3ef338f5"
+    },
+    "66144493e3cfe3185956ba911c8c4249a9494f0e": {
+      "path": "bios/Other/opentyrian/newshb.shp",
+      "name": "newshb.shp",
+      "size": 39025,
+      "sha1": "66144493e3cfe3185956ba911c8c4249a9494f0e",
+      "md5": "02baeda4bc658eb1bfb172326ca508bc",
+      "sha256": "9bae3eccd4e8793d42553c9798581f0ef77d829fe30d16afa29cf45261ed3c08",
+      "crc32": "43b9b55e",
+      "adler32": "ca417a57"
+    },
+    "9acf9a67965ec94b2d2efbb772a83320c54791ec": {
+      "path": "bios/Other/opentyrian/newshc.shp",
+      "name": "newshc.shp",
+      "size": 40714,
+      "sha1": "9acf9a67965ec94b2d2efbb772a83320c54791ec",
+      "md5": "fc2c4501b5f7c977a2c24854b216e87e",
+      "sha256": "16db0d5faa13c935da700f3bd25ce539bdd37336fa164d23f5fa3405a315f31a",
+      "crc32": "4109a41d",
+      "adler32": "01f61ed8"
+    },
+    "3e222af4b6d36a4394d16c6b7a3064662cfdad5e": {
+      "path": "bios/Other/opentyrian/newshd.shp",
+      "name": "newshd.shp",
+      "size": 42012,
+      "sha1": "3e222af4b6d36a4394d16c6b7a3064662cfdad5e",
+      "md5": "fc86314734e7f00a34e7cc01f993286f",
+      "sha256": "08c7c81b4ed590609f97347b1a4ec60aba56925ecc7193a6718c34cb8d698adf",
+      "crc32": "7c9706c8",
+      "adler32": "0d1cb662"
+    },
+    "77af84b88b9b6adfc69a2e60ade0f00e4f577e64": {
+      "path": "bios/Other/opentyrian/newshe.shp",
+      "name": "newshe.shp",
+      "size": 28945,
+      "sha1": "77af84b88b9b6adfc69a2e60ade0f00e4f577e64",
+      "md5": "c277aa8d8c40d8b029746b803e5baa58",
+      "sha256": "4be2df495007fc211eeeedf3fe07a0d3eb4fdca4174e1adccb2918967c3f7c7b",
+      "crc32": "9c90f7f0",
+      "adler32": "35ec41ef"
+    },
+    "f454dcec5ef1fa701e48c6dc5c5e0dfd3c52b3f6": {
+      "path": "bios/Other/opentyrian/newshf.shp",
+      "name": "newshf.shp",
+      "size": 33543,
+      "sha1": "f454dcec5ef1fa701e48c6dc5c5e0dfd3c52b3f6",
+      "md5": "1885561dae22d611a2cd848ae11debb8",
+      "sha256": "852c2fb552c9077a198be7902d8f58699ed070dabcd36c6e3acfe80dd3804cce",
+      "crc32": "11129e83",
+      "adler32": "305eb590"
+    },
+    "00c730755761a3f1e70883361a03d6a72c5606c2": {
+      "path": "bios/Other/opentyrian/newshg.shp",
+      "name": "newshg.shp",
+      "size": 36643,
+      "sha1": "00c730755761a3f1e70883361a03d6a72c5606c2",
+      "md5": "07a0d666da939d5af73816f69ac1f3cd",
+      "sha256": "3d4cb3d7e3b6547b637ecf02e8d284abc1e240809cc648d836dfa99afd45f416",
+      "crc32": "5631c734",
+      "adler32": "72a10f56"
+    },
+    "b940e28e61e38390073bc85b56a43639aaa459b0": {
+      "path": "bios/Other/opentyrian/newshh.shp",
+      "name": "newshh.shp",
+      "size": 46639,
+      "sha1": "b940e28e61e38390073bc85b56a43639aaa459b0",
+      "md5": "904a7e0c26209e3ad7cab6ca5e274d9f",
+      "sha256": "d5bc9e5a6f8a2098f95284a9e675cf6d5b15a29baf8ff8a0fa72943801f351db",
+      "crc32": "08a23845",
+      "adler32": "f90a0344"
+    },
+    "bec6f69b0d09bc26e2376b09acecc42e5f73affa": {
+      "path": "bios/Other/opentyrian/newshi.shp",
+      "name": "newshi.shp",
+      "size": 30860,
+      "sha1": "bec6f69b0d09bc26e2376b09acecc42e5f73affa",
+      "md5": "20cad98ec81470a2dadc77a57bd2d927",
+      "sha256": "226da9b33b9b16f7a4212b9cc785fbd82c9517172b3a15a7f58798a38b0a12e4",
+      "crc32": "e6da4af7",
+      "adler32": "5092bb04"
+    },
+    "ef90569f294d58d92bfdcb46b766cadcc6356cd7": {
+      "path": "bios/Other/opentyrian/newshj.shp",
+      "name": "newshj.shp",
+      "size": 43999,
+      "sha1": "ef90569f294d58d92bfdcb46b766cadcc6356cd7",
+      "md5": "c6feda4ed05794234aeeef29541b738f",
+      "sha256": "013fbc96bfba79bec9b07d37ec477e7d3ea9d22aab3f9efd392c6253ae5721dd",
+      "crc32": "c4ce185d",
+      "adler32": "05009733"
+    },
+    "6988b3c87c3d34d3e32dc3691c39357302a5b62b": {
+      "path": "bios/Other/opentyrian/newshk.shp",
+      "name": "newshk.shp",
+      "size": 22913,
+      "sha1": "6988b3c87c3d34d3e32dc3691c39357302a5b62b",
+      "md5": "2dbd9fd8eb3ab864a8dee9fe884c0231",
+      "sha256": "cc61abb548a4015d71bac98bc0091217660c1146adcac8b15e3d2bc7e5598d73",
+      "crc32": "857fe5ee",
+      "adler32": "708198b4"
+    },
+    "633192dde1be2d6d9d5767cb40cb121db28bb84c": {
+      "path": "bios/Other/opentyrian/newshl.shp",
+      "name": "newshl.shp",
+      "size": 14846,
+      "sha1": "633192dde1be2d6d9d5767cb40cb121db28bb84c",
+      "md5": "533596271e83f092a4bfcd3c51cd20c9",
+      "sha256": "9c8ee60bc111a9eb4fb33c7b2528a2f6217c57dc77ec8ee1f2104e8c1f20a34d",
+      "crc32": "5466903f",
+      "adler32": "b2c3eeae"
+    },
+    "ade7cbc0ad0bbc861e16d85f0c84dfb85244ae5b": {
+      "path": "bios/Other/opentyrian/newshm.shp",
+      "name": "newshm.shp",
+      "size": 22378,
+      "sha1": "ade7cbc0ad0bbc861e16d85f0c84dfb85244ae5b",
+      "md5": "0ea42895128c45430d7563be3bb578a8",
+      "sha256": "ba6998cb74ba122812bacb714c81b8c309af073b5464645eee2856233f37e7c2",
+      "crc32": "1dbc562b",
+      "adler32": "da6889e4"
+    },
+    "f1b5f21ad0f591e9e58e0204f1cfb46ac5d3c463": {
+      "path": "bios/Other/opentyrian/newshn.shp",
+      "name": "newshn.shp",
+      "size": 41201,
+      "sha1": "f1b5f21ad0f591e9e58e0204f1cfb46ac5d3c463",
+      "md5": "dac352f9a396743e62356274c070927b",
+      "sha256": "612c38b9d93220d9fb0228594d9597a0637f52fcdf789e9ffc15b0a362a70341",
+      "crc32": "a33b6f49",
+      "adler32": "d7540c89"
+    },
+    "ad2c76ce5bf704a91f79fd197a814653c4c397ff": {
+      "path": "bios/Other/opentyrian/newsho.shp",
+      "name": "newsho.shp",
+      "size": 24478,
+      "sha1": "ad2c76ce5bf704a91f79fd197a814653c4c397ff",
+      "md5": "1c657e5934c3d2b3617ecf91c5a254a2",
+      "sha256": "47dbee09f4c94660c42503d721e82ec50627faa241f458f7bfe3835d88cd250a",
+      "crc32": "6ac98e6b",
+      "adler32": "da380f26"
+    },
+    "895952a22061a7461526f9eef08f96ce444a0ceb": {
+      "path": "bios/Other/opentyrian/newshp.shp",
+      "name": "newshp.shp",
+      "size": 46204,
+      "sha1": "895952a22061a7461526f9eef08f96ce444a0ceb",
+      "md5": "1f32ef233620c2b13b60eb654f42ca38",
+      "sha256": "4bd9a72339e30440c172e385f258c8895b516ff84026a9a6b5a65ada4cf0ab90",
+      "crc32": "cc06c21d",
+      "adler32": "3b0b0a98"
+    },
+    "787f128c51ef1ff316162db2506c4d30695adb76": {
+      "path": "bios/Other/opentyrian/newshr.shp",
+      "name": "newshr.shp",
+      "size": 28249,
+      "sha1": "787f128c51ef1ff316162db2506c4d30695adb76",
+      "md5": "63715985f6c11bb8a95e43789f101bc8",
+      "sha256": "7869a88236e46deaf6e051d4d7d38830865bc0047f09879fc8afd68ab7f30d94",
+      "crc32": "7e4f7109",
+      "adler32": "a4e5971b"
+    },
+    "dc332a6ea28b6b2feead48982dde5afc8a984e95": {
+      "path": "bios/Other/opentyrian/newshs.shp",
+      "name": "newshs.shp",
+      "size": 46566,
+      "sha1": "dc332a6ea28b6b2feead48982dde5afc8a984e95",
+      "md5": "b569d981cbecb4dd2e2f0ae2ec478dcd",
+      "sha256": "f0bccf154a436ba46834a00b934e7cb8a77d8585b175a39c1270ad7888411c88",
+      "crc32": "8ced8d56",
+      "adler32": "02c765c0"
+    },
+    "869a8d46fcf62c6eefcefb171a7b396b63d44707": {
+      "path": "bios/Other/opentyrian/newsht.shp",
+      "name": "newsht.shp",
+      "size": 14187,
+      "sha1": "869a8d46fcf62c6eefcefb171a7b396b63d44707",
+      "md5": "bebf775c982a16ec0fcdff4810588972",
+      "sha256": "133fe424165eacbe3f05a8be838c5b962791855e3afff184123209e8f1cc118f",
+      "crc32": "0f16f0f1",
+      "adler32": "2c91f76e"
+    },
+    "6827b9c067fe25f065bb88f42957f13899dc4ee9": {
+      "path": "bios/Other/opentyrian/newshu.shp",
+      "name": "newshu.shp",
+      "size": 35657,
+      "sha1": "6827b9c067fe25f065bb88f42957f13899dc4ee9",
+      "md5": "ad0ffce00676cc087cda3e4b840a4421",
+      "sha256": "762c328b99a824942005e66a4567d3c1d45a680527584367a962eeb4bf4e8c45",
+      "crc32": "b62f7432",
+      "adler32": "4e7b91af"
+    },
+    "e26f95d57cf6d40f214a5b985ba760b82c666205": {
+      "path": "bios/Other/opentyrian/newshv.shp",
+      "name": "newshv.shp",
+      "size": 23343,
+      "sha1": "e26f95d57cf6d40f214a5b985ba760b82c666205",
+      "md5": "885bd4e4f1e769410a3308d1be8f9b53",
+      "sha256": "b23f634db62c1db5efe6766368b76ec1700f7b96ecfe054cac308f9742c60075",
+      "crc32": "67de7fb3",
+      "adler32": "360e85fd"
     },
     "34557bb003bacb454d98533a1b91fb7119774e09": {
       "path": "bios/Other/opentyrian/newsh~.shp",
@@ -191875,6 +192195,16 @@
       "crc32": "cc8b8e1e",
       "adler32": "0d3ff848"
     },
+    "e352ae6943f7bead98cf73c0340dc07c1ff90135": {
+      "path": "bios/Sega/Dreamcast/.variants/naomi.zip.e352ae69",
+      "name": "naomi.zip",
+      "size": 6134785,
+      "sha1": "e352ae6943f7bead98cf73c0340dc07c1ff90135",
+      "md5": "e63d892cdb8b532351dc7020bb60b6f4",
+      "sha256": "757083837e7a0cb84bfd68c4c9bfe027cff9e96c3abfe9466b6d1d9056c5b135",
+      "crc32": "e7048a9c",
+      "adler32": "c077012b"
+    },
     "2962e338ccc9f66f29b409f73ca27aeee79633ac": {
       "path": "bios/Sega/Dreamcast/.variants/naomi2.zip.2962e338",
       "name": "naomi2.zip",
@@ -204437,6 +204767,7 @@
       "ea143b23779d01152633442abb1e0c67": "efa4fdedfac60c98c53f3aec10fb44b324a35835",
       "3a48c08c224c32f2f4829b960e95f73b": "77d07d7518104896e0acfee24073356f1a6bd51b",
       "b8e3f8e88dc8164f8b4b60aa2add9107": "eadb966430454b40a17387acc7302ff1683cc9f2",
+      "34d78b76a6793190cefbe84b202d5397": "566fd769c8026151e27f3956849b7840532797fd",
       "d35177f73cf303c5565aa13ef8ca5251": "e004e25a8bb7bcd76a1aee7c2ec87b8fceda4332",
       "e6930a3a38f839bb510e8471e964c84e": "eb686ce6afe63e4d4011b333a882ca812c69307f",
       "be9bc86ee5eb401d0a40d0377f65fefa": "1983b4fb398e3dd9668d424c666c5a0b3f1e2b69",
@@ -215396,8 +215727,39 @@
       "bbf7aaa5cf9114f4fa2de51a693c7e28": "5a7112e1c579bdcc935fe747e159a62a1a516943",
       "0e63ad8bc8b9aab5295b6dd3dc5fbd05": "050c0c5a9b1a1b1174142c9408e7c6b2eb9c1325",
       "bdb982d1ee185f1f713eadcd80931a66": "b77313a9f92bc67f5c577699dcb95ca613e6948f",
+      "a15a912c59b845e3b21e9d70bbeb213f": "031bdfc2f280e4ae3e9574c2151559fb752eb441",
+      "71e299a984b261bb86b724cd8f84d43f": "1da408b9177ffba057189eff64b6096615a8d767",
       "14a694d3b9cb2254a6ade23a7984ccdf": "2c858ec1c02d65df0a00bea02474bb9ad365b202",
+      "97371bdf38332c2621bf7954d967ebfe": "445d2e49862304431525bcedbe7838fa5fd16f1e",
+      "e6587898b8b3dabda6bccd6acea739ff": "f8f9c6f3c1fe9972c75d0c9958c4eee555a57e96",
+      "bf3a281c254910afaedc649e1351a332": "81747e837d40194431a018764013efc060391590",
+      "2b8becea765397e8af43cad42a38d85d": "c961da96994deb81cf71d0d8e6495cc05bb9888f",
       "ada115e193ffeb7cb2ef27b1a85452dc": "be7ff3250f8712848c550b913731b60b8c945f6a",
+      "667ac2ef6b7ad320369560c5c503b009": "9c59e7f83e01afbef951f56d7a1a88cd0ac615d8",
+      "10fdce60379c172d38622e4dcba93e43": "a3efbcc672fe772b8761c47230c1cdac2c70cd1c",
+      "44a71b2e40e9d00a0f52dd7e7fe1b633": "51d07d3b1003931249a0938cca84d36b9e0e1c1e",
+      "241f78397712ea5e8cf90e06343bb43a": "3a380dc88b030d8359ce76100b516ccc4400b186",
+      "f71b7f996e1a8aea600452742dee017e": "651f90cc86784b6ba4d60a70dfe54d6b2a18d8d3",
+      "02baeda4bc658eb1bfb172326ca508bc": "66144493e3cfe3185956ba911c8c4249a9494f0e",
+      "fc2c4501b5f7c977a2c24854b216e87e": "9acf9a67965ec94b2d2efbb772a83320c54791ec",
+      "fc86314734e7f00a34e7cc01f993286f": "3e222af4b6d36a4394d16c6b7a3064662cfdad5e",
+      "c277aa8d8c40d8b029746b803e5baa58": "77af84b88b9b6adfc69a2e60ade0f00e4f577e64",
+      "1885561dae22d611a2cd848ae11debb8": "f454dcec5ef1fa701e48c6dc5c5e0dfd3c52b3f6",
+      "07a0d666da939d5af73816f69ac1f3cd": "00c730755761a3f1e70883361a03d6a72c5606c2",
+      "904a7e0c26209e3ad7cab6ca5e274d9f": "b940e28e61e38390073bc85b56a43639aaa459b0",
+      "20cad98ec81470a2dadc77a57bd2d927": "bec6f69b0d09bc26e2376b09acecc42e5f73affa",
+      "c6feda4ed05794234aeeef29541b738f": "ef90569f294d58d92bfdcb46b766cadcc6356cd7",
+      "2dbd9fd8eb3ab864a8dee9fe884c0231": "6988b3c87c3d34d3e32dc3691c39357302a5b62b",
+      "533596271e83f092a4bfcd3c51cd20c9": "633192dde1be2d6d9d5767cb40cb121db28bb84c",
+      "0ea42895128c45430d7563be3bb578a8": "ade7cbc0ad0bbc861e16d85f0c84dfb85244ae5b",
+      "dac352f9a396743e62356274c070927b": "f1b5f21ad0f591e9e58e0204f1cfb46ac5d3c463",
+      "1c657e5934c3d2b3617ecf91c5a254a2": "ad2c76ce5bf704a91f79fd197a814653c4c397ff",
+      "1f32ef233620c2b13b60eb654f42ca38": "895952a22061a7461526f9eef08f96ce444a0ceb",
+      "63715985f6c11bb8a95e43789f101bc8": "787f128c51ef1ff316162db2506c4d30695adb76",
+      "b569d981cbecb4dd2e2f0ae2ec478dcd": "dc332a6ea28b6b2feead48982dde5afc8a984e95",
+      "bebf775c982a16ec0fcdff4810588972": "869a8d46fcf62c6eefcefb171a7b396b63d44707",
+      "ad0ffce00676cc087cda3e4b840a4421": "6827b9c067fe25f065bb88f42957f13899dc4ee9",
+      "885bd4e4f1e769410a3308d1be8f9b53": "e26f95d57cf6d40f214a5b985ba760b82c666205",
       "7c5154d4d2977f0975c4e9adba99c5ef": "34557bb003bacb454d98533a1b91fb7119774e09",
       "847d6c6bf3d856422b7b27067049ed85": "29af4cd642e0b29dc8120b5d92f130eaf4e860c9",
       "9c9db30866f194285cd528cb6082fcb3": "861552d4f7fcad129bc919136c413263154499aa",
@@ -219689,6 +220051,7 @@
       "9c755171b222fb1f4e1439d5b709dbf1": "b3a86809857fe9ce575da73f6ed6c5441d558e3d",
       "ee362dd63d7ff01f6d579ad53f3bfe69": "889d239ac41f25622164609367b713dd33bd5bde",
       "8bab1ba136d0cb6ebcc05a27c4dfc185": "43f0018c32dd6d166c3b6d8ed2ffa672f398fa3a",
+      "e63d892cdb8b532351dc7020bb60b6f4": "e352ae6943f7bead98cf73c0340dc07c1ff90135",
       "c50072cbab75673e1b1a6b94355e6fa8": "2962e338ccc9f66f29b409f73ca27aeee79633ac",
       "2593bcd4ba33a4974344af27ca371a1a": "09f1ed9e0f8ece181a1850ec89361cef78f37c9e",
       "1c3337f3f267e9aaab2652ab8aa6c335": "a43960ea7ba25dd823f5e0567d8d0296b960e47e",
@@ -220945,6 +221308,7 @@
         "055e72e6866662ae3ae97575f7bb7882c77869db",
         "a39d7d17e52c26435ed1745503c7d6a68b36be1d",
         "43f0018c32dd6d166c3b6d8ed2ffa672f398fa3a",
+        "e352ae6943f7bead98cf73c0340dc07c1ff90135",
         "d7ef86bd03de7c1d0e2b0762e04b6f8f8d26dbdb"
       ],
       "naomi2.zip": [
@@ -231401,6 +231765,9 @@
       ],
       "Dinothawr.zip": [
         "eadb966430454b40a17387acc7302ff1683cc9f2"
+      ],
+      "dinothawr.game": [
+        "566fd769c8026151e27f3956849b7840532797fd"
       ],
       "d32.rom": [
         "e004e25a8bb7bcd76a1aee7c2ec87b8fceda4332",
@@ -256532,11 +256899,104 @@
       "music.mus": [
         "b77313a9f92bc67f5c577699dcb95ca613e6948f"
       ],
+      "newsh#.shp": [
+        "031bdfc2f280e4ae3e9574c2151559fb752eb441"
+      ],
+      "newsh0.shp": [
+        "1da408b9177ffba057189eff64b6096615a8d767"
+      ],
       "newsh1.shp": [
         "2c858ec1c02d65df0a00bea02474bb9ad365b202"
       ],
+      "newsh2.shp": [
+        "445d2e49862304431525bcedbe7838fa5fd16f1e"
+      ],
+      "newsh3.shp": [
+        "f8f9c6f3c1fe9972c75d0c9958c4eee555a57e96"
+      ],
+      "newsh4.shp": [
+        "81747e837d40194431a018764013efc060391590"
+      ],
+      "newsh5.shp": [
+        "c961da96994deb81cf71d0d8e6495cc05bb9888f"
+      ],
       "newsh6.shp": [
         "be7ff3250f8712848c550b913731b60b8c945f6a"
+      ],
+      "newsh7.shp": [
+        "9c59e7f83e01afbef951f56d7a1a88cd0ac615d8"
+      ],
+      "newsh8.shp": [
+        "a3efbcc672fe772b8761c47230c1cdac2c70cd1c"
+      ],
+      "newsh9.shp": [
+        "51d07d3b1003931249a0938cca84d36b9e0e1c1e"
+      ],
+      "newsh^.shp": [
+        "3a380dc88b030d8359ce76100b516ccc4400b186"
+      ],
+      "newsha.shp": [
+        "651f90cc86784b6ba4d60a70dfe54d6b2a18d8d3"
+      ],
+      "newshb.shp": [
+        "66144493e3cfe3185956ba911c8c4249a9494f0e"
+      ],
+      "newshc.shp": [
+        "9acf9a67965ec94b2d2efbb772a83320c54791ec"
+      ],
+      "newshd.shp": [
+        "3e222af4b6d36a4394d16c6b7a3064662cfdad5e"
+      ],
+      "newshe.shp": [
+        "77af84b88b9b6adfc69a2e60ade0f00e4f577e64"
+      ],
+      "newshf.shp": [
+        "f454dcec5ef1fa701e48c6dc5c5e0dfd3c52b3f6"
+      ],
+      "newshg.shp": [
+        "00c730755761a3f1e70883361a03d6a72c5606c2"
+      ],
+      "newshh.shp": [
+        "b940e28e61e38390073bc85b56a43639aaa459b0"
+      ],
+      "newshi.shp": [
+        "bec6f69b0d09bc26e2376b09acecc42e5f73affa"
+      ],
+      "newshj.shp": [
+        "ef90569f294d58d92bfdcb46b766cadcc6356cd7"
+      ],
+      "newshk.shp": [
+        "6988b3c87c3d34d3e32dc3691c39357302a5b62b"
+      ],
+      "newshl.shp": [
+        "633192dde1be2d6d9d5767cb40cb121db28bb84c"
+      ],
+      "newshm.shp": [
+        "ade7cbc0ad0bbc861e16d85f0c84dfb85244ae5b"
+      ],
+      "newshn.shp": [
+        "f1b5f21ad0f591e9e58e0204f1cfb46ac5d3c463"
+      ],
+      "newsho.shp": [
+        "ad2c76ce5bf704a91f79fd197a814653c4c397ff"
+      ],
+      "newshp.shp": [
+        "895952a22061a7461526f9eef08f96ce444a0ceb"
+      ],
+      "newshr.shp": [
+        "787f128c51ef1ff316162db2506c4d30695adb76"
+      ],
+      "newshs.shp": [
+        "dc332a6ea28b6b2feead48982dde5afc8a984e95"
+      ],
+      "newsht.shp": [
+        "869a8d46fcf62c6eefcefb171a7b396b63d44707"
+      ],
+      "newshu.shp": [
+        "6827b9c067fe25f065bb88f42957f13899dc4ee9"
+      ],
+      "newshv.shp": [
+        "e26f95d57cf6d40f214a5b985ba760b82c666205"
       ],
       "newsh~.shp": [
         "34557bb003bacb454d98533a1b91fb7119774e09"
@@ -280917,6 +281377,7 @@
       "e5d1e180": "efa4fdedfac60c98c53f3aec10fb44b324a35835",
       "0a8e277a": "77d07d7518104896e0acfee24073356f1a6bd51b",
       "ae2635ef": "eadb966430454b40a17387acc7302ff1683cc9f2",
+      "315a9ffb": "566fd769c8026151e27f3956849b7840532797fd",
       "ff7bf41e": "e004e25a8bb7bcd76a1aee7c2ec87b8fceda4332",
       "149eb4dd": "eb686ce6afe63e4d4011b333a882ca812c69307f",
       "84f68bf9": "1983b4fb398e3dd9668d424c666c5a0b3f1e2b69",
@@ -291876,8 +292337,39 @@
       "e9d39f10": "5a7112e1c579bdcc935fe747e159a62a1a516943",
       "7b00d004": "050c0c5a9b1a1b1174142c9408e7c6b2eb9c1325",
       "53e70005": "b77313a9f92bc67f5c577699dcb95ca613e6948f",
+      "1d31c213": "031bdfc2f280e4ae3e9574c2151559fb752eb441",
+      "7c0ca842": "1da408b9177ffba057189eff64b6096615a8d767",
       "e6f8f518": "2c858ec1c02d65df0a00bea02474bb9ad365b202",
+      "8c021a5a": "445d2e49862304431525bcedbe7838fa5fd16f1e",
+      "f6f156c6": "f8f9c6f3c1fe9972c75d0c9958c4eee555a57e96",
+      "fa75bfe9": "81747e837d40194431a018764013efc060391590",
+      "80c22900": "c961da96994deb81cf71d0d8e6495cc05bb9888f",
       "0e5b1e86": "be7ff3250f8712848c550b913731b60b8c945f6a",
+      "bba98d90": "9c59e7f83e01afbef951f56d7a1a88cd0ac615d8",
+      "3a6db269": "a3efbcc672fe772b8761c47230c1cdac2c70cd1c",
+      "327a6f56": "51d07d3b1003931249a0938cca84d36b9e0e1c1e",
+      "12c45240": "3a380dc88b030d8359ce76100b516ccc4400b186",
+      "5473e8ca": "651f90cc86784b6ba4d60a70dfe54d6b2a18d8d3",
+      "43b9b55e": "66144493e3cfe3185956ba911c8c4249a9494f0e",
+      "4109a41d": "9acf9a67965ec94b2d2efbb772a83320c54791ec",
+      "7c9706c8": "3e222af4b6d36a4394d16c6b7a3064662cfdad5e",
+      "9c90f7f0": "77af84b88b9b6adfc69a2e60ade0f00e4f577e64",
+      "11129e83": "f454dcec5ef1fa701e48c6dc5c5e0dfd3c52b3f6",
+      "5631c734": "00c730755761a3f1e70883361a03d6a72c5606c2",
+      "08a23845": "b940e28e61e38390073bc85b56a43639aaa459b0",
+      "e6da4af7": "bec6f69b0d09bc26e2376b09acecc42e5f73affa",
+      "c4ce185d": "ef90569f294d58d92bfdcb46b766cadcc6356cd7",
+      "857fe5ee": "6988b3c87c3d34d3e32dc3691c39357302a5b62b",
+      "5466903f": "633192dde1be2d6d9d5767cb40cb121db28bb84c",
+      "1dbc562b": "ade7cbc0ad0bbc861e16d85f0c84dfb85244ae5b",
+      "a33b6f49": "f1b5f21ad0f591e9e58e0204f1cfb46ac5d3c463",
+      "6ac98e6b": "ad2c76ce5bf704a91f79fd197a814653c4c397ff",
+      "cc06c21d": "895952a22061a7461526f9eef08f96ce444a0ceb",
+      "7e4f7109": "787f128c51ef1ff316162db2506c4d30695adb76",
+      "8ced8d56": "dc332a6ea28b6b2feead48982dde5afc8a984e95",
+      "0f16f0f1": "869a8d46fcf62c6eefcefb171a7b396b63d44707",
+      "b62f7432": "6827b9c067fe25f065bb88f42957f13899dc4ee9",
+      "67de7fb3": "e26f95d57cf6d40f214a5b985ba760b82c666205",
       "d8dfc9b7": "34557bb003bacb454d98533a1b91fb7119774e09",
       "6c014b30": "29af4cd642e0b29dc8120b5d92f130eaf4e860c9",
       "7b615a12": "861552d4f7fcad129bc919136c413263154499aa",
@@ -296168,6 +296660,7 @@
       "277c7fee": "b3a86809857fe9ce575da73f6ed6c5441d558e3d",
       "9521330f": "889d239ac41f25622164609367b713dd33bd5bde",
       "cc8b8e1e": "43f0018c32dd6d166c3b6d8ed2ffa672f398fa3a",
+      "e7048a9c": "e352ae6943f7bead98cf73c0340dc07c1ff90135",
       "2143196c": "2962e338ccc9f66f29b409f73ca27aeee79633ac",
       "18ecc714": "09f1ed9e0f8ece181a1850ec89361cef78f37c9e",
       "312459a8": "a43960ea7ba25dd823f5e0567d8d0296b960e47e",
@@ -300476,6 +300969,7 @@
       "a588a5e4ad58738156b0f9a90f4f47838eeef78da475eb0fd2b061e047b008f6": "efa4fdedfac60c98c53f3aec10fb44b324a35835",
       "746202fca1891dc7db1ae844154f9b2ad1c010b1e050ed5acc4b3777afabaa8e": "77d07d7518104896e0acfee24073356f1a6bd51b",
       "3672baf7aaaab8eb266887792ef7d84d3bcb9d9abe836653e3c232012d3ec43a": "eadb966430454b40a17387acc7302ff1683cc9f2",
+      "da6ade3c5a9bc1cf78dbf3c13d3cbdc7b650c63ec9a256c6c6927fcc103563ae": "566fd769c8026151e27f3956849b7840532797fd",
       "26f693acc25468e84b549e72336a711c38c57d032b5ec333c7a36e7ea58e1907": "e004e25a8bb7bcd76a1aee7c2ec87b8fceda4332",
       "d6d36e367f76a58ce3454049ad0de5da2a4627cff92a430adf69ddbc501516bf": "eb686ce6afe63e4d4011b333a882ca812c69307f",
       "0486c51d3b6f7b6b4bcdde661d54f076278fd6a4ee92cbf9d1bc791554e16bd7": "1983b4fb398e3dd9668d424c666c5a0b3f1e2b69",
@@ -311435,8 +311929,39 @@
       "891b9ecbdd223df291077fd95626f37ac03b527ca6fd50f76198067a5edebdb4": "5a7112e1c579bdcc935fe747e159a62a1a516943",
       "788710b2321fc58b8fbe43da960be8bb8370ef5595f63c62e5ed3a17e008797f": "050c0c5a9b1a1b1174142c9408e7c6b2eb9c1325",
       "b06a509bd8576f63c61859e3a2c59482c4035d79f21725f9ec10479377044a74": "b77313a9f92bc67f5c577699dcb95ca613e6948f",
+      "45c9e26a7742ce3e9340638349ab6b1b4c834c1ed6dd5d69cc32dd4e481a706d": "031bdfc2f280e4ae3e9574c2151559fb752eb441",
+      "c443ec4e268205e6a843c1ba783e84cce9d710e3226ddd03b8bfc869bcafbf10": "1da408b9177ffba057189eff64b6096615a8d767",
       "77827c137462ebaa53ad9c6d190224a6e0e1d00bf36cff2c7c66f82b00b7026a": "2c858ec1c02d65df0a00bea02474bb9ad365b202",
+      "8773ebcae4be992ecfbb476c0797b0bef4d43faa4c99449890bfaa28c8d9cbcc": "445d2e49862304431525bcedbe7838fa5fd16f1e",
+      "f5ac183f489079505908f3cb431b516a54b24fdf312f2702725abf83732e9c6d": "f8f9c6f3c1fe9972c75d0c9958c4eee555a57e96",
+      "05fd4174fa1041dbccccf16fffc18b574b9c3c3ca3e2678ba0ba977c9b288fca": "81747e837d40194431a018764013efc060391590",
+      "1e6854ccde0e6b0e0789afadd52f6d8b7d264a61f59185635c5ed119f29d4bad": "c961da96994deb81cf71d0d8e6495cc05bb9888f",
       "79098b156a9a1cc1af16a3a03156d58cf45b9a830217d362c3c9935798afe62d": "be7ff3250f8712848c550b913731b60b8c945f6a",
+      "52c40a2438373f9fc9a7cd2d338ec149f4e81dda56d9c05061ee2264408f0b1a": "9c59e7f83e01afbef951f56d7a1a88cd0ac615d8",
+      "1fb3f52d36bf3d05c4e5867f8fa34035fc8eace8fd27b55b41df1abba7ef41ee": "a3efbcc672fe772b8761c47230c1cdac2c70cd1c",
+      "371650303f8b93ae17b76d7c27df202bf6a3f6bb482ffabb7b6b1e16e2774d30": "51d07d3b1003931249a0938cca84d36b9e0e1c1e",
+      "e9884ec4debe73f00c51cca5112dd2e2b0d2c57d1d5953d2902947df36471f23": "3a380dc88b030d8359ce76100b516ccc4400b186",
+      "6fee07e22d028831ee0c54a21982a1e6c8ec8efba94e7576670ea0dfc617c6b9": "651f90cc86784b6ba4d60a70dfe54d6b2a18d8d3",
+      "9bae3eccd4e8793d42553c9798581f0ef77d829fe30d16afa29cf45261ed3c08": "66144493e3cfe3185956ba911c8c4249a9494f0e",
+      "16db0d5faa13c935da700f3bd25ce539bdd37336fa164d23f5fa3405a315f31a": "9acf9a67965ec94b2d2efbb772a83320c54791ec",
+      "08c7c81b4ed590609f97347b1a4ec60aba56925ecc7193a6718c34cb8d698adf": "3e222af4b6d36a4394d16c6b7a3064662cfdad5e",
+      "4be2df495007fc211eeeedf3fe07a0d3eb4fdca4174e1adccb2918967c3f7c7b": "77af84b88b9b6adfc69a2e60ade0f00e4f577e64",
+      "852c2fb552c9077a198be7902d8f58699ed070dabcd36c6e3acfe80dd3804cce": "f454dcec5ef1fa701e48c6dc5c5e0dfd3c52b3f6",
+      "3d4cb3d7e3b6547b637ecf02e8d284abc1e240809cc648d836dfa99afd45f416": "00c730755761a3f1e70883361a03d6a72c5606c2",
+      "d5bc9e5a6f8a2098f95284a9e675cf6d5b15a29baf8ff8a0fa72943801f351db": "b940e28e61e38390073bc85b56a43639aaa459b0",
+      "226da9b33b9b16f7a4212b9cc785fbd82c9517172b3a15a7f58798a38b0a12e4": "bec6f69b0d09bc26e2376b09acecc42e5f73affa",
+      "013fbc96bfba79bec9b07d37ec477e7d3ea9d22aab3f9efd392c6253ae5721dd": "ef90569f294d58d92bfdcb46b766cadcc6356cd7",
+      "cc61abb548a4015d71bac98bc0091217660c1146adcac8b15e3d2bc7e5598d73": "6988b3c87c3d34d3e32dc3691c39357302a5b62b",
+      "9c8ee60bc111a9eb4fb33c7b2528a2f6217c57dc77ec8ee1f2104e8c1f20a34d": "633192dde1be2d6d9d5767cb40cb121db28bb84c",
+      "ba6998cb74ba122812bacb714c81b8c309af073b5464645eee2856233f37e7c2": "ade7cbc0ad0bbc861e16d85f0c84dfb85244ae5b",
+      "612c38b9d93220d9fb0228594d9597a0637f52fcdf789e9ffc15b0a362a70341": "f1b5f21ad0f591e9e58e0204f1cfb46ac5d3c463",
+      "47dbee09f4c94660c42503d721e82ec50627faa241f458f7bfe3835d88cd250a": "ad2c76ce5bf704a91f79fd197a814653c4c397ff",
+      "4bd9a72339e30440c172e385f258c8895b516ff84026a9a6b5a65ada4cf0ab90": "895952a22061a7461526f9eef08f96ce444a0ceb",
+      "7869a88236e46deaf6e051d4d7d38830865bc0047f09879fc8afd68ab7f30d94": "787f128c51ef1ff316162db2506c4d30695adb76",
+      "f0bccf154a436ba46834a00b934e7cb8a77d8585b175a39c1270ad7888411c88": "dc332a6ea28b6b2feead48982dde5afc8a984e95",
+      "133fe424165eacbe3f05a8be838c5b962791855e3afff184123209e8f1cc118f": "869a8d46fcf62c6eefcefb171a7b396b63d44707",
+      "762c328b99a824942005e66a4567d3c1d45a680527584367a962eeb4bf4e8c45": "6827b9c067fe25f065bb88f42957f13899dc4ee9",
+      "b23f634db62c1db5efe6766368b76ec1700f7b96ecfe054cac308f9742c60075": "e26f95d57cf6d40f214a5b985ba760b82c666205",
       "17519efb2aec555a83f0c1406e7d513641440e0b1c12e0832ad4c70ee54023f0": "34557bb003bacb454d98533a1b91fb7119774e09",
       "6f0be74cb1b0026e46029d98d9ade41b8283bad849208543330b717fe5c365fc": "29af4cd642e0b29dc8120b5d92f130eaf4e860c9",
       "36173a95248ed1f60c499122b4b17450af2bc9ddcb958215ed9c400429ae37eb": "861552d4f7fcad129bc919136c413263154499aa",
@@ -315728,6 +316253,7 @@
       "766c3823b2c3512817628dbb5d6b05aa39322c3c97b8ee244ce4e47d84593084": "b3a86809857fe9ce575da73f6ed6c5441d558e3d",
       "6b5dac03ab1a08340b8f5e2c041b407730cc5517c315396b78369c76295a2734": "889d239ac41f25622164609367b713dd33bd5bde",
       "19e80855afc0f3cf60d4f232891cbf94dce29cdfcbdd602b056b3cbc4e8082f9": "43f0018c32dd6d166c3b6d8ed2ffa672f398fa3a",
+      "757083837e7a0cb84bfd68c4c9bfe027cff9e96c3abfe9466b6d1d9056c5b135": "e352ae6943f7bead98cf73c0340dc07c1ff90135",
       "a852233a97a2282e331dababb83d2dbf14bdef5253bf590adeaf02fbbfe3d64c": "2962e338ccc9f66f29b409f73ca27aeee79633ac",
       "aa0fa7ebc9f3fabf6d20477c9b71cac9ef4f146598900147db74d8ea8c7f1556": "09f1ed9e0f8ece181a1850ec89361cef78f37c9e",
       "8f4f3f521dfb5c89560f777ad2909394e13df2ed2bbd85600f2ab179abcdad62": "a43960ea7ba25dd823f5e0567d8d0296b960e47e",
@@ -345425,6 +345951,15 @@
       ],
       "Dinothawr/Dinothawr.zip": [
         "eadb966430454b40a17387acc7302ff1683cc9f2"
+      ],
+      "Dinothawr/Dinothawr/dinothawr/dinothawr.game": [
+        "566fd769c8026151e27f3956849b7840532797fd"
+      ],
+      "Dinothawr/dinothawr/dinothawr.game": [
+        "566fd769c8026151e27f3956849b7840532797fd"
+      ],
+      "dinothawr/dinothawr.game": [
+        "566fd769c8026151e27f3956849b7840532797fd"
       ],
       "Dragon/Dragon/.variants/d32.rom.e004e25a": [
         "e004e25a8bb7bcd76a1aee7c2ec87b8fceda4332"
@@ -491549,17 +492084,203 @@
       "opentyrian/music.mus": [
         "b77313a9f92bc67f5c577699dcb95ca613e6948f"
       ],
+      "Other/opentyrian/newsh#.shp": [
+        "031bdfc2f280e4ae3e9574c2151559fb752eb441"
+      ],
+      "opentyrian/newsh#.shp": [
+        "031bdfc2f280e4ae3e9574c2151559fb752eb441"
+      ],
+      "Other/opentyrian/newsh0.shp": [
+        "1da408b9177ffba057189eff64b6096615a8d767"
+      ],
+      "opentyrian/newsh0.shp": [
+        "1da408b9177ffba057189eff64b6096615a8d767"
+      ],
       "Other/opentyrian/newsh1.shp": [
         "2c858ec1c02d65df0a00bea02474bb9ad365b202"
       ],
       "opentyrian/newsh1.shp": [
         "2c858ec1c02d65df0a00bea02474bb9ad365b202"
       ],
+      "Other/opentyrian/newsh2.shp": [
+        "445d2e49862304431525bcedbe7838fa5fd16f1e"
+      ],
+      "opentyrian/newsh2.shp": [
+        "445d2e49862304431525bcedbe7838fa5fd16f1e"
+      ],
+      "Other/opentyrian/newsh3.shp": [
+        "f8f9c6f3c1fe9972c75d0c9958c4eee555a57e96"
+      ],
+      "opentyrian/newsh3.shp": [
+        "f8f9c6f3c1fe9972c75d0c9958c4eee555a57e96"
+      ],
+      "Other/opentyrian/newsh4.shp": [
+        "81747e837d40194431a018764013efc060391590"
+      ],
+      "opentyrian/newsh4.shp": [
+        "81747e837d40194431a018764013efc060391590"
+      ],
+      "Other/opentyrian/newsh5.shp": [
+        "c961da96994deb81cf71d0d8e6495cc05bb9888f"
+      ],
+      "opentyrian/newsh5.shp": [
+        "c961da96994deb81cf71d0d8e6495cc05bb9888f"
+      ],
       "Other/opentyrian/newsh6.shp": [
         "be7ff3250f8712848c550b913731b60b8c945f6a"
       ],
       "opentyrian/newsh6.shp": [
         "be7ff3250f8712848c550b913731b60b8c945f6a"
+      ],
+      "Other/opentyrian/newsh7.shp": [
+        "9c59e7f83e01afbef951f56d7a1a88cd0ac615d8"
+      ],
+      "opentyrian/newsh7.shp": [
+        "9c59e7f83e01afbef951f56d7a1a88cd0ac615d8"
+      ],
+      "Other/opentyrian/newsh8.shp": [
+        "a3efbcc672fe772b8761c47230c1cdac2c70cd1c"
+      ],
+      "opentyrian/newsh8.shp": [
+        "a3efbcc672fe772b8761c47230c1cdac2c70cd1c"
+      ],
+      "Other/opentyrian/newsh9.shp": [
+        "51d07d3b1003931249a0938cca84d36b9e0e1c1e"
+      ],
+      "opentyrian/newsh9.shp": [
+        "51d07d3b1003931249a0938cca84d36b9e0e1c1e"
+      ],
+      "Other/opentyrian/newsh^.shp": [
+        "3a380dc88b030d8359ce76100b516ccc4400b186"
+      ],
+      "opentyrian/newsh^.shp": [
+        "3a380dc88b030d8359ce76100b516ccc4400b186"
+      ],
+      "Other/opentyrian/newsha.shp": [
+        "651f90cc86784b6ba4d60a70dfe54d6b2a18d8d3"
+      ],
+      "opentyrian/newsha.shp": [
+        "651f90cc86784b6ba4d60a70dfe54d6b2a18d8d3"
+      ],
+      "Other/opentyrian/newshb.shp": [
+        "66144493e3cfe3185956ba911c8c4249a9494f0e"
+      ],
+      "opentyrian/newshb.shp": [
+        "66144493e3cfe3185956ba911c8c4249a9494f0e"
+      ],
+      "Other/opentyrian/newshc.shp": [
+        "9acf9a67965ec94b2d2efbb772a83320c54791ec"
+      ],
+      "opentyrian/newshc.shp": [
+        "9acf9a67965ec94b2d2efbb772a83320c54791ec"
+      ],
+      "Other/opentyrian/newshd.shp": [
+        "3e222af4b6d36a4394d16c6b7a3064662cfdad5e"
+      ],
+      "opentyrian/newshd.shp": [
+        "3e222af4b6d36a4394d16c6b7a3064662cfdad5e"
+      ],
+      "Other/opentyrian/newshe.shp": [
+        "77af84b88b9b6adfc69a2e60ade0f00e4f577e64"
+      ],
+      "opentyrian/newshe.shp": [
+        "77af84b88b9b6adfc69a2e60ade0f00e4f577e64"
+      ],
+      "Other/opentyrian/newshf.shp": [
+        "f454dcec5ef1fa701e48c6dc5c5e0dfd3c52b3f6"
+      ],
+      "opentyrian/newshf.shp": [
+        "f454dcec5ef1fa701e48c6dc5c5e0dfd3c52b3f6"
+      ],
+      "Other/opentyrian/newshg.shp": [
+        "00c730755761a3f1e70883361a03d6a72c5606c2"
+      ],
+      "opentyrian/newshg.shp": [
+        "00c730755761a3f1e70883361a03d6a72c5606c2"
+      ],
+      "Other/opentyrian/newshh.shp": [
+        "b940e28e61e38390073bc85b56a43639aaa459b0"
+      ],
+      "opentyrian/newshh.shp": [
+        "b940e28e61e38390073bc85b56a43639aaa459b0"
+      ],
+      "Other/opentyrian/newshi.shp": [
+        "bec6f69b0d09bc26e2376b09acecc42e5f73affa"
+      ],
+      "opentyrian/newshi.shp": [
+        "bec6f69b0d09bc26e2376b09acecc42e5f73affa"
+      ],
+      "Other/opentyrian/newshj.shp": [
+        "ef90569f294d58d92bfdcb46b766cadcc6356cd7"
+      ],
+      "opentyrian/newshj.shp": [
+        "ef90569f294d58d92bfdcb46b766cadcc6356cd7"
+      ],
+      "Other/opentyrian/newshk.shp": [
+        "6988b3c87c3d34d3e32dc3691c39357302a5b62b"
+      ],
+      "opentyrian/newshk.shp": [
+        "6988b3c87c3d34d3e32dc3691c39357302a5b62b"
+      ],
+      "Other/opentyrian/newshl.shp": [
+        "633192dde1be2d6d9d5767cb40cb121db28bb84c"
+      ],
+      "opentyrian/newshl.shp": [
+        "633192dde1be2d6d9d5767cb40cb121db28bb84c"
+      ],
+      "Other/opentyrian/newshm.shp": [
+        "ade7cbc0ad0bbc861e16d85f0c84dfb85244ae5b"
+      ],
+      "opentyrian/newshm.shp": [
+        "ade7cbc0ad0bbc861e16d85f0c84dfb85244ae5b"
+      ],
+      "Other/opentyrian/newshn.shp": [
+        "f1b5f21ad0f591e9e58e0204f1cfb46ac5d3c463"
+      ],
+      "opentyrian/newshn.shp": [
+        "f1b5f21ad0f591e9e58e0204f1cfb46ac5d3c463"
+      ],
+      "Other/opentyrian/newsho.shp": [
+        "ad2c76ce5bf704a91f79fd197a814653c4c397ff"
+      ],
+      "opentyrian/newsho.shp": [
+        "ad2c76ce5bf704a91f79fd197a814653c4c397ff"
+      ],
+      "Other/opentyrian/newshp.shp": [
+        "895952a22061a7461526f9eef08f96ce444a0ceb"
+      ],
+      "opentyrian/newshp.shp": [
+        "895952a22061a7461526f9eef08f96ce444a0ceb"
+      ],
+      "Other/opentyrian/newshr.shp": [
+        "787f128c51ef1ff316162db2506c4d30695adb76"
+      ],
+      "opentyrian/newshr.shp": [
+        "787f128c51ef1ff316162db2506c4d30695adb76"
+      ],
+      "Other/opentyrian/newshs.shp": [
+        "dc332a6ea28b6b2feead48982dde5afc8a984e95"
+      ],
+      "opentyrian/newshs.shp": [
+        "dc332a6ea28b6b2feead48982dde5afc8a984e95"
+      ],
+      "Other/opentyrian/newsht.shp": [
+        "869a8d46fcf62c6eefcefb171a7b396b63d44707"
+      ],
+      "opentyrian/newsht.shp": [
+        "869a8d46fcf62c6eefcefb171a7b396b63d44707"
+      ],
+      "Other/opentyrian/newshu.shp": [
+        "6827b9c067fe25f065bb88f42957f13899dc4ee9"
+      ],
+      "opentyrian/newshu.shp": [
+        "6827b9c067fe25f065bb88f42957f13899dc4ee9"
+      ],
+      "Other/opentyrian/newshv.shp": [
+        "e26f95d57cf6d40f214a5b985ba760b82c666205"
+      ],
+      "opentyrian/newshv.shp": [
+        "e26f95d57cf6d40f214a5b985ba760b82c666205"
       ],
       "Other/opentyrian/newsh~.shp": [
         "34557bb003bacb454d98533a1b91fb7119774e09"
@@ -553923,6 +554644,15 @@
       ],
       ".variants/naomi.zip.43f0018c": [
         "43f0018c32dd6d166c3b6d8ed2ffa672f398fa3a"
+      ],
+      "Sega/Dreamcast/.variants/naomi.zip.e352ae69": [
+        "e352ae6943f7bead98cf73c0340dc07c1ff90135"
+      ],
+      "Dreamcast/.variants/naomi.zip.e352ae69": [
+        "e352ae6943f7bead98cf73c0340dc07c1ff90135"
+      ],
+      ".variants/naomi.zip.e352ae69": [
+        "e352ae6943f7bead98cf73c0340dc07c1ff90135"
       ],
       "Sega/Dreamcast/.variants/naomi2.zip.2962e338": [
         "2962e338ccc9f66f29b409f73ca27aeee79633ac"

@@ -91,8 +91,8 @@ Each file is checked the way your platform checks it. Most compare a checksum, t
 - **18 platforms** supported with platform-specific verification
 - **609 emulators** profiled from source (RetroArch cores + standalone)
 - **534 systems** handled by those emulators (NES, SNES, PlayStation, Saturn, Dreamcast, ...)
-- **19,558 files in the collection**, each with its SHA1, MD5, SHA256, CRC32 and Adler-32 fingerprints: 5,747 system files, 2,873 arcade ROM sets, 10,938 game and engine data files. That is every platform and emulator together, so no pack holds them all: each carries what its own emulators load, counted in the download table
-- **555 of 5,747 system files** matched to dump-preservation catalogs (No-Intro, Redump, TOSEC). Arcade sets and engine data fall outside what those catalogs index
+- **19,591 files in the collection**, each with its SHA1, MD5, SHA256, CRC32 and Adler-32 fingerprints: 5,779 system files, 2,873 arcade ROM sets, 10,939 game and engine data files. That is every platform and emulator together, so no pack holds them all: each carries what its own emulators load, counted in the download table
+- **555 of 5,779 system files** matched to dump-preservation catalogs (No-Intro, Redump, TOSEC). Arcade sets and engine data fall outside what those catalogs index
 - **15.7 GB** for the whole collection
 
 ## Supported systems
@@ -105,23 +105,23 @@ Full list with per-file details: **[https://abdess.github.io/retrobios/](https:/
 
 | Platform | On its BIOS list | Files its emulators load | Checked by |
 |----------|-----------------:|-------------------------:|------------|
-| AmberELEC | 413/434 | 4,550/4,647 | MD5 hash |
-| Batocera | 353/353 | 13,910/14,998 | MD5 hash |
+| AmberELEC | 414/434 | 4,550/4,647 | MD5 hash |
+| Batocera | 353/353 | 13,941/15,029 | MD5 hash |
 | BizHawk | 118/118 | - | SHA1 hash |
-| EmuDeck | 168/168 | 8,141/8,217 | MD5 hash |
-| EmuELEC | 543/572 | 4,593/9,911 | MD5 hash |
-| KNULLI | 290/290 | 8,866/15,054 | MD5 hash |
-| Lakka | 532/532 | 7,569/7,627 | file presence |
+| EmuDeck | 168/168 | 8,173/8,249 | MD5 hash |
+| EmuELEC | 544/572 | 4,593/9,911 | MD5 hash |
+| KNULLI | 290/290 | 8,897/15,085 | MD5 hash |
+| Lakka | 532/532 | 7,600/7,659 | file presence |
 | MiSTer FPGA | 81/81 | - | MD5 hash |
 | MinUI | 0/0 | 78/79 | file presence |
 | MyMinUI | 0/0 | 347/354 | file presence |
 | NextUI | 0/0 | 343/348 | file presence |
-| ROCKNIX | 38/38 | 7,060/8,328 | MD5 hash |
-| Recalbox | 351/351 | 2,746/2,909 | MD5 hash |
-| RetroArch | 526/526 | 7,577/7,618 | file presence |
-| RetroBat | 348/348 | 4,729/9,193 | MD5 hash |
-| RetroDECK | 2,007/2,008 | 6,242/6,492 | MD5 hash |
-| RetroPie * | 532/532 | 7,845/12,363 | file presence |
+| ROCKNIX | 38/38 | 7,092/8,360 | MD5 hash |
+| Recalbox | 351/351 | 2,746/2,910 | MD5 hash |
+| RetroArch | 526/526 | 7,609/7,650 | file presence |
+| RetroBat | 348/348 | 4,729/9,194 | MD5 hash |
+| RetroDECK | 2,007/2,008 | 6,273/6,524 | MD5 hash |
+| RetroPie * | 532/532 | 7,876/12,395 | file presence |
 | RomM | 383/383 | 83/846 | MD5 hash |
 
 Each fraction is what the pack has over what is needed, counting required and optional files alike since both ship. The first column is the BIOS list the platform publishes. The second counts files its emulators load that this list never mentions, found by reading their source code, and it is routinely several times larger. A short fraction means files are still missing, and they are named in the [gap analysis](https://abdess.github.io/retrobios/gaps/).
@@ -208,4 +208,4 @@ The scripts and tooling are released under the [MIT License](LICENSE).
 The BIOS and firmware files are not covered by that license: they are third-party system software, preserved and provided for personal backup, archival, and interoperability with emulation software. [NOTICE](NOTICE) sets out their status and how to ask for a file to be removed.
 The reasoning, and where it is weakest, is in the [FAQ](https://abdess.github.io/retrobios/wiki/faq/#is-this-legal).
 
-*Auto-generated on 2026-10-22T05:48:13Z*
+*Auto-generated on 2026-10-22T05:55:27Z*

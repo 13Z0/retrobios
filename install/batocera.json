@@ -6,7 +6,7 @@
   "platform": "batocera",
   "display_name": "Batocera",
   "version": "1.0",
-  "generated": "2026-10-22T05:12:35Z",
+  "generated": "2026-10-22T05:54:39Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -274,10 +274,10 @@
       }
     }
   ],
-  "total_files": 14475,
-  "total_size": 9711460676,
-  "pack_files": 14477,
-  "pack_size": 9711460676,
+  "total_files": 14506,
+  "total_size": 9712471124,
+  "pack_files": 14508,
+  "pack_size": 9712471124,
   "total_omitted": 399,
   "omitted_files": [
     {
@@ -240854,6 +240854,347 @@
       "sha256": "17519efb2aec555a83f0c1406e7d513641440e0b1c12e0832ad4c70ee54023f0",
       "size": 16219,
       "repo_path": "bios/Other/opentyrian/newsh~.shp",
+      "cores": [
+        "opentyrian"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "newsh2.shp",
+      "sha1": "445d2e49862304431525bcedbe7838fa5fd16f1e",
+      "sha256": "8773ebcae4be992ecfbb476c0797b0bef4d43faa4c99449890bfaa28c8d9cbcc",
+      "size": 35236,
+      "repo_path": "bios/Other/opentyrian/newsh2.shp",
+      "cores": [
+        "opentyrian"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "newsh4.shp",
+      "sha1": "81747e837d40194431a018764013efc060391590",
+      "sha256": "05fd4174fa1041dbccccf16fffc18b574b9c3c3ca3e2678ba0ba977c9b288fca",
+      "size": 29449,
+      "repo_path": "bios/Other/opentyrian/newsh4.shp",
+      "cores": [
+        "opentyrian"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "newsh7.shp",
+      "sha1": "9c59e7f83e01afbef951f56d7a1a88cd0ac615d8",
+      "sha256": "52c40a2438373f9fc9a7cd2d338ec149f4e81dda56d9c05061ee2264408f0b1a",
+      "size": 44079,
+      "repo_path": "bios/Other/opentyrian/newsh7.shp",
+      "cores": [
+        "opentyrian"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "newsh8.shp",
+      "sha1": "a3efbcc672fe772b8761c47230c1cdac2c70cd1c",
+      "sha256": "1fb3f52d36bf3d05c4e5867f8fa34035fc8eace8fd27b55b41df1abba7ef41ee",
+      "size": 35152,
+      "repo_path": "bios/Other/opentyrian/newsh8.shp",
+      "cores": [
+        "opentyrian"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "newsha.shp",
+      "sha1": "651f90cc86784b6ba4d60a70dfe54d6b2a18d8d3",
+      "sha256": "6fee07e22d028831ee0c54a21982a1e6c8ec8efba94e7576670ea0dfc617c6b9",
+      "size": 25622,
+      "repo_path": "bios/Other/opentyrian/newsha.shp",
+      "cores": [
+        "opentyrian"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "newshb.shp",
+      "sha1": "66144493e3cfe3185956ba911c8c4249a9494f0e",
+      "sha256": "9bae3eccd4e8793d42553c9798581f0ef77d829fe30d16afa29cf45261ed3c08",
+      "size": 39025,
+      "repo_path": "bios/Other/opentyrian/newshb.shp",
+      "cores": [
+        "opentyrian"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "newshc.shp",
+      "sha1": "9acf9a67965ec94b2d2efbb772a83320c54791ec",
+      "sha256": "16db0d5faa13c935da700f3bd25ce539bdd37336fa164d23f5fa3405a315f31a",
+      "size": 40714,
+      "repo_path": "bios/Other/opentyrian/newshc.shp",
+      "cores": [
+        "opentyrian"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "newshd.shp",
+      "sha1": "3e222af4b6d36a4394d16c6b7a3064662cfdad5e",
+      "sha256": "08c7c81b4ed590609f97347b1a4ec60aba56925ecc7193a6718c34cb8d698adf",
+      "size": 42012,
+      "repo_path": "bios/Other/opentyrian/newshd.shp",
+      "cores": [
+        "opentyrian"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "newshe.shp",
+      "sha1": "77af84b88b9b6adfc69a2e60ade0f00e4f577e64",
+      "sha256": "4be2df495007fc211eeeedf3fe07a0d3eb4fdca4174e1adccb2918967c3f7c7b",
+      "size": 28945,
+      "repo_path": "bios/Other/opentyrian/newshe.shp",
+      "cores": [
+        "opentyrian"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "newshf.shp",
+      "sha1": "f454dcec5ef1fa701e48c6dc5c5e0dfd3c52b3f6",
+      "sha256": "852c2fb552c9077a198be7902d8f58699ed070dabcd36c6e3acfe80dd3804cce",
+      "size": 33543,
+      "repo_path": "bios/Other/opentyrian/newshf.shp",
+      "cores": [
+        "opentyrian"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "newshg.shp",
+      "sha1": "00c730755761a3f1e70883361a03d6a72c5606c2",
+      "sha256": "3d4cb3d7e3b6547b637ecf02e8d284abc1e240809cc648d836dfa99afd45f416",
+      "size": 36643,
+      "repo_path": "bios/Other/opentyrian/newshg.shp",
+      "cores": [
+        "opentyrian"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "newshh.shp",
+      "sha1": "b940e28e61e38390073bc85b56a43639aaa459b0",
+      "sha256": "d5bc9e5a6f8a2098f95284a9e675cf6d5b15a29baf8ff8a0fa72943801f351db",
+      "size": 46639,
+      "repo_path": "bios/Other/opentyrian/newshh.shp",
+      "cores": [
+        "opentyrian"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "newshi.shp",
+      "sha1": "bec6f69b0d09bc26e2376b09acecc42e5f73affa",
+      "sha256": "226da9b33b9b16f7a4212b9cc785fbd82c9517172b3a15a7f58798a38b0a12e4",
+      "size": 30860,
+      "repo_path": "bios/Other/opentyrian/newshi.shp",
+      "cores": [
+        "opentyrian"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "newshj.shp",
+      "sha1": "ef90569f294d58d92bfdcb46b766cadcc6356cd7",
+      "sha256": "013fbc96bfba79bec9b07d37ec477e7d3ea9d22aab3f9efd392c6253ae5721dd",
+      "size": 43999,
+      "repo_path": "bios/Other/opentyrian/newshj.shp",
+      "cores": [
+        "opentyrian"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "newshk.shp",
+      "sha1": "6988b3c87c3d34d3e32dc3691c39357302a5b62b",
+      "sha256": "cc61abb548a4015d71bac98bc0091217660c1146adcac8b15e3d2bc7e5598d73",
+      "size": 22913,
+      "repo_path": "bios/Other/opentyrian/newshk.shp",
+      "cores": [
+        "opentyrian"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "newshl.shp",
+      "sha1": "633192dde1be2d6d9d5767cb40cb121db28bb84c",
+      "sha256": "9c8ee60bc111a9eb4fb33c7b2528a2f6217c57dc77ec8ee1f2104e8c1f20a34d",
+      "size": 14846,
+      "repo_path": "bios/Other/opentyrian/newshl.shp",
+      "cores": [
+        "opentyrian"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "newshm.shp",
+      "sha1": "ade7cbc0ad0bbc861e16d85f0c84dfb85244ae5b",
+      "sha256": "ba6998cb74ba122812bacb714c81b8c309af073b5464645eee2856233f37e7c2",
+      "size": 22378,
+      "repo_path": "bios/Other/opentyrian/newshm.shp",
+      "cores": [
+        "opentyrian"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "newshn.shp",
+      "sha1": "f1b5f21ad0f591e9e58e0204f1cfb46ac5d3c463",
+      "sha256": "612c38b9d93220d9fb0228594d9597a0637f52fcdf789e9ffc15b0a362a70341",
+      "size": 41201,
+      "repo_path": "bios/Other/opentyrian/newshn.shp",
+      "cores": [
+        "opentyrian"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "newsho.shp",
+      "sha1": "ad2c76ce5bf704a91f79fd197a814653c4c397ff",
+      "sha256": "47dbee09f4c94660c42503d721e82ec50627faa241f458f7bfe3835d88cd250a",
+      "size": 24478,
+      "repo_path": "bios/Other/opentyrian/newsho.shp",
+      "cores": [
+        "opentyrian"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "newshp.shp",
+      "sha1": "895952a22061a7461526f9eef08f96ce444a0ceb",
+      "sha256": "4bd9a72339e30440c172e385f258c8895b516ff84026a9a6b5a65ada4cf0ab90",
+      "size": 46204,
+      "repo_path": "bios/Other/opentyrian/newshp.shp",
+      "cores": [
+        "opentyrian"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "newshr.shp",
+      "sha1": "787f128c51ef1ff316162db2506c4d30695adb76",
+      "sha256": "7869a88236e46deaf6e051d4d7d38830865bc0047f09879fc8afd68ab7f30d94",
+      "size": 28249,
+      "repo_path": "bios/Other/opentyrian/newshr.shp",
+      "cores": [
+        "opentyrian"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "newshs.shp",
+      "sha1": "dc332a6ea28b6b2feead48982dde5afc8a984e95",
+      "sha256": "f0bccf154a436ba46834a00b934e7cb8a77d8585b175a39c1270ad7888411c88",
+      "size": 46566,
+      "repo_path": "bios/Other/opentyrian/newshs.shp",
+      "cores": [
+        "opentyrian"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "newsht.shp",
+      "sha1": "869a8d46fcf62c6eefcefb171a7b396b63d44707",
+      "sha256": "133fe424165eacbe3f05a8be838c5b962791855e3afff184123209e8f1cc118f",
+      "size": 14187,
+      "repo_path": "bios/Other/opentyrian/newsht.shp",
+      "cores": [
+        "opentyrian"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "newshu.shp",
+      "sha1": "6827b9c067fe25f065bb88f42957f13899dc4ee9",
+      "sha256": "762c328b99a824942005e66a4567d3c1d45a680527584367a962eeb4bf4e8c45",
+      "size": 35657,
+      "repo_path": "bios/Other/opentyrian/newshu.shp",
+      "cores": [
+        "opentyrian"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "newsh5.shp",
+      "sha1": "c961da96994deb81cf71d0d8e6495cc05bb9888f",
+      "sha256": "1e6854ccde0e6b0e0789afadd52f6d8b7d264a61f59185635c5ed119f29d4bad",
+      "size": 35813,
+      "repo_path": "bios/Other/opentyrian/newsh5.shp",
+      "cores": [
+        "opentyrian"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "newsh#.shp",
+      "sha1": "031bdfc2f280e4ae3e9574c2151559fb752eb441",
+      "sha256": "45c9e26a7742ce3e9340638349ab6b1b4c834c1ed6dd5d69cc32dd4e481a706d",
+      "size": 17750,
+      "repo_path": "bios/Other/opentyrian/newsh#.shp",
+      "cores": [
+        "opentyrian"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "newshv.shp",
+      "sha1": "e26f95d57cf6d40f214a5b985ba760b82c666205",
+      "sha256": "b23f634db62c1db5efe6766368b76ec1700f7b96ecfe054cac308f9742c60075",
+      "size": 23343,
+      "repo_path": "bios/Other/opentyrian/newshv.shp",
+      "cores": [
+        "opentyrian"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "newsh0.shp",
+      "sha1": "1da408b9177ffba057189eff64b6096615a8d767",
+      "sha256": "c443ec4e268205e6a843c1ba783e84cce9d710e3226ddd03b8bfc869bcafbf10",
+      "size": 14096,
+      "repo_path": "bios/Other/opentyrian/newsh0.shp",
+      "cores": [
+        "opentyrian"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "newsh3.shp",
+      "sha1": "f8f9c6f3c1fe9972c75d0c9958c4eee555a57e96",
+      "sha256": "f5ac183f489079505908f3cb431b516a54b24fdf312f2702725abf83732e9c6d",
+      "size": 37130,
+      "repo_path": "bios/Other/opentyrian/newsh3.shp",
+      "cores": [
+        "opentyrian"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "newsh^.shp",
+      "sha1": "3a380dc88b030d8359ce76100b516ccc4400b186",
+      "sha256": "e9884ec4debe73f00c51cca5112dd2e2b0d2c57d1d5953d2902947df36471f23",
+      "size": 34888,
+      "repo_path": "bios/Other/opentyrian/newsh^.shp",
+      "cores": [
+        "opentyrian"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "newsh9.shp",
+      "sha1": "51d07d3b1003931249a0938cca84d36b9e0e1c1e",
+      "sha256": "371650303f8b93ae17b76d7c27df202bf6a3f6bb482ffabb7b6b1e16e2774d30",
+      "size": 38831,
+      "repo_path": "bios/Other/opentyrian/newsh9.shp",
       "cores": [
         "opentyrian"
       ],

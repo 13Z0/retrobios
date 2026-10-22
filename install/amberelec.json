@@ -6,7 +6,7 @@
   "platform": "amberelec",
   "display_name": "AmberELEC",
   "version": "1.0",
-  "generated": "2026-10-22T05:12:35Z",
+  "generated": "2026-10-22T05:54:39Z",
   "base_destination": "",
   "detect": [
     {
@@ -30,9 +30,9 @@
   ],
   "standalone_copies": [],
   "total_files": 4952,
-  "total_size": 5479240046,
+  "total_size": 5475723004,
   "pack_files": 4954,
-  "pack_size": 5479240046,
+  "pack_size": 5475723004,
   "total_omitted": 58,
   "omitted_files": [
     {
@@ -7057,6 +7057,29 @@
       "cores": null,
       "systems": [
         "sega-dreamcast-arcade"
+      ]
+    },
+    {
+      "dest": "bios/dc/naomi.zip",
+      "sha1": "e352ae6943f7bead98cf73c0340dc07c1ff90135",
+      "sha256": "757083837e7a0cb84bfd68c4c9bfe027cff9e96c3abfe9466b6d1d9056c5b135",
+      "size": 6134785,
+      "repo_path": "bios/Sega/Dreamcast/.variants/naomi.zip.e352ae69",
+      "cores": null,
+      "systems": [
+        "sega-dreamcast-arcade"
+      ],
+      "alternatives": [
+        {
+          "sha1": "788aee0f30ee80ea54dcd705afe93944accafc31",
+          "sha256": "62a011c3a4dc5686ebced343987199bd7ccad1578ca8e2f2350b41204d87de65",
+          "size": 9651827,
+          "repo_path": "bios/Arcade/Arcade/naomi.zip",
+          "cores": [
+            "flycast",
+            "flycast2021"
+          ]
+        }
       ]
     },
     {
@@ -63426,17 +63449,6 @@
             "mame2016"
           ]
         }
-      ]
-    },
-    {
-      "dest": "bios/dc/naomi.zip",
-      "sha1": "788aee0f30ee80ea54dcd705afe93944accafc31",
-      "sha256": "62a011c3a4dc5686ebced343987199bd7ccad1578ca8e2f2350b41204d87de65",
-      "size": 9651827,
-      "repo_path": "bios/Arcade/Arcade/naomi.zip",
-      "cores": [
-        "flycast",
-        "flycast2021"
       ]
     },
     {
