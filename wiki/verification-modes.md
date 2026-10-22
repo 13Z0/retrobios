@@ -290,11 +290,17 @@ categories, read from the profiles of the cores the platform runs:
 |----------|------|----------|
 | firmware | a core reads it as firmware, or nothing settles the question | from the matrix above |
 | game data | only `category: game_data` entries of those profiles name it | none, counted apart |
-| unread | the platform declares its cores, every one has a profile, at least one emulates the entry's system, and none opens the entry | none, counted apart |
+| unread | the platform declares its cores, the cores of the entry's system all have a profile, at least one of them emulates it, and no examined core opens the entry | none, counted apart |
+
+The cores of a system are the ones the platform's file lists for it (`cores:` on the
+system, read from the platform's own emulator menu: KNULLI, AmberELEC and EmuELEC
+carry it). Where a system has no such list, every core the platform names counts.
 
 Every entry, held or missing, carries what establishes its category: the profile
 entries that read it, with their source reference, or the cores of its system that
-were examined and found no reader, or the reason the question stays open.
+were examined and found no reader, or the reason the question stays open. A reader
+whose core runs the entry's system is named first. A core of another system that
+declares a file of the same name is listed after it as "also named by".
 `--verbose` prints it under a missing entry, `--json` carries it as
 `category_evidence` on each entry, and each platform page shows it under every
 file. Only a missing entry's category changes its severity.
@@ -302,7 +308,7 @@ file. Only a missing entry's category changes its severity.
 The report counts the last two on a line of their own (`Missing, not firmware: ...`)
 and `--verbose` names them. They stay in the platform's file and in the totals, but
 `--strict` fails on firmware gaps only, and the pack check does not count them as
-pack errors. A core the platform names that has no profile yet makes nothing unread.
+pack errors. A core of the system that has no profile yet makes nothing unread.
 The same goes for a system none of the examined cores emulates: in both cases the
 absence of a reader proves nothing.
 
