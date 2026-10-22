@@ -73,7 +73,7 @@ notes: |
 
 files:
   - name: "64DD_IPL_JP.n64"
-    aliases: ["64DD_IPL_v12_JPN.bin", "64DD_IPL.bin"]
+    aliases: ["64DD_IPL_v12_JPN.bin"]
     system: nintendo-64dd
     required: true
     unread_on: [amberelec]
@@ -103,6 +103,8 @@ files:
     system: nintendo-64
     required: false
     bundled: true
+    size: 449082
+    sha1: "37b26dbe0df63c2887f958978e1638e2ddead1bc"
     description: "ROM database"
     note: "Per ROM save type, player count, rumble and counter settings, looked up by MD5 or CRC. Absent, the core logs an error and runs every ROM on defaults."
     source_ref: "upstream src/main/rom.c:590-604"
@@ -111,6 +113,8 @@ files:
     system: nintendo-64
     required: false
     bundled: true
+    size: 1272116
+    sha1: "f8b083f6a5a9ef4a28957792ca65d7b50f7af1bd"
     description: "Cheat code database"
     note: "Read by the front end for the ROM's section when --cheats is given. Absent, a warning is logged and no cheat is offered."
     source_ref: "src/cheat.c:33, src/cheat.c:202-216, src/cheat.c:346-367, src/main.c:1040-1041"
@@ -119,6 +123,8 @@ files:
     system: nintendo-64
     required: false
     bundled: true
+    size: 65932
+    sha1: "1d7f6fa0c34e3d50be52c16a0816bebac309fe41"
     description: "On-screen display font"
     note: "Opened by the core's OpenGL on-screen display, which a USE_GLES=1 build leaves out."
     source_ref: "upstream src/osd/osd.c:40, upstream src/osd/osd.c:227, upstream projects/unix/Makefile:377-388"
@@ -127,6 +133,8 @@ files:
     system: nintendo-64
     required: false
     bundled: true
+    size: 51631
+    sha1: "c71834f8e0749ba28135cefbec370a8ac6b3c26c"
     description: "Controller auto-configuration database of the sdl input plugin"
     note: "Matched against the SDL joystick name to fill the controller mapping."
     source_ref: "mupen64plus-input-sdl src/autoconfig.c:196-218"
@@ -135,6 +143,8 @@ files:
     system: nintendo-64
     required: false
     bundled: true
+    size: 23195
+    sha1: "7299996b11d37dd644d8c01adeb04fae15352983"
     description: "Per ROM settings of the rice video plugin"
     source_ref: "mupen64plus-video-rice src/Config.cpp:38, mupen64plus-video-rice src/Config.cpp:933-945"
 
@@ -142,6 +152,8 @@ files:
     system: nintendo-64
     required: false
     bundled: true
+    size: 17454
+    sha1: "523de4d0c142bc112a7d94df26c0fe42a049d581"
     description: "Per ROM settings of the glide64mk2 video plugin"
     note: "PluginStartup returns M64ERR_FILES without it, so the glide64mk2 renderer does not start."
     source_ref: "mupen64plus-video-glide64mk2 src/Glide64/Main.cpp:1580-1591, mupen64plus-video-glide64mk2 src/Glide64/Ini.cpp:134-216"
