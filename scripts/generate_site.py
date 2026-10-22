@@ -74,6 +74,7 @@ from generate_readme import (
 from provenance_report import build_report, distinct_missing
 from siteexports import generate_exports_page, load_export_reports
 from siteguides import (
+    Guide,
     ALSO_RUNS,
     DEVICE_GROUPS,
     GROUP_ANCHORS,
@@ -5535,7 +5536,7 @@ def _mkdocs_config(docs: Path, text: str) -> tuple[Path, str]:
 _OS_NAMES = {"windows": "Windows", "darwin": "macOS", "linux": "Linux"}
 
 
-def _runs_on(entry: dict, guide) -> str:
+def _runs_on(entry: dict, guide: Guide) -> str:
     """Where a setup runs, read from the systems the installer detects it on."""
     if guide.on_card:
         return "SD card, filled from a computer"
@@ -5552,7 +5553,7 @@ def _runs_on(entry: dict, guide) -> str:
     return ", ".join(names)
 
 
-def _folder_cell(name: str, guide, prefix: str = "") -> str:
+def _folder_cell(name: str, guide: Guide, prefix: str = "") -> str:
     """The BIOS folder in a table cell, or a link where it depends on the system."""
     if len(guide.folders) > 3:
         return f"Depends on the system: [listed on its page]({prefix}platforms/{name}.md#where-the-files-go)"

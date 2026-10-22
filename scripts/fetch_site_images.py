@@ -172,7 +172,7 @@ def fetch_icons() -> None:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
+    parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0], allow_abbrev=False)
     parser.add_argument("--only", choices=("logos", "icons"), help="fetch one kind only")
     args = parser.parse_args()
     if args.only in (None, "logos"):
@@ -184,4 +184,6 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    from common import run_cli
+
+    run_cli(main)

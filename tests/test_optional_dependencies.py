@@ -52,6 +52,16 @@ class SuiteWithoutJsonschema(unittest.TestCase):
         self.assertEqual(completed.returncode, 0, completed.stdout + completed.stderr[-2000:])
 
 
+# Tools a maintainer runs by hand when a logo or a card changes. Their output
+# is committed under docs_assets/ and the build only reads it, so the build
+# keeps to the standard library and pyyaml.
+MAINTENANCE_TOOLS = {
+    "fetch_site_images.py": "PIL",
+    "make_og_cards.py": "playwright",
+    "make_site_icons.py": "playwright",
+}
+
+
 class ScriptsNeedOnlyPyyaml(unittest.TestCase):
     """The build scripts need the standard library and pyyaml. jsonschema is
     validate_schemas.py's alone. CI installs jsonschema with its whole tree
@@ -79,6 +89,8 @@ class ScriptsNeedOnlyPyyaml(unittest.TestCase):
                     if name in sys.stdlib_module_names or name in local or name in allowed:
                         continue
                     if name == "jsonschema" and path.name == "validate_schemas.py":
+                        continue
+                    if MAINTENANCE_TOOLS.get(path.name) == name:
                         continue
                     found.append(f"{path.relative_to(scripts)}: {name}")
         self.assertEqual(found, [])

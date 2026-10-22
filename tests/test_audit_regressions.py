@@ -779,7 +779,9 @@ class FaqRegressions(unittest.TestCase):
 
     @staticmethod
     def _faq() -> str:
-        return (ROOT / "wiki" / "faq.md").read_text(encoding="utf-8")
+        # The questions about how files are identified and checked moved to
+        # the technical FAQ when the site was laid out by level.
+        return (ROOT / "wiki" / "technical-faq.md").read_text(encoding="utf-8")
 
     @staticmethod
     def _profile(key: str) -> dict:

@@ -202,10 +202,11 @@ class ReleaseProcessPublishesArchives(unittest.TestCase):
 
 
 class PartsAreExplainedWhereTheyAreDownloaded(unittest.TestCase):
+    # getting-started.md now only links the pages that took its content: the
+    # downloads are explained on Get your files, which generate_site.py writes.
     PAGES = (
         "scripts/generate_readme.py",
         "scripts/generate_site.py",
-        "wiki/getting-started.md",
         "wiki/troubleshooting.md",
     )
 

@@ -1,4 +1,4 @@
-"""The "which pack" table sends each platform to the pack built for it.
+"""The Get your files page sends each platform to the pack built for it.
 
 RetroPie's row linked the RetroArch pack, although a RetroPie pack is
 published and carries 3916 files the RetroArch one does not.
@@ -15,58 +15,31 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
 
-def _packs_of() -> dict[str, set[str]]:
-    """Each platform's display name, mapped to the platforms its pack serves."""
-    from common import (
-        group_identical_platforms,
-        list_registered_platforms,
-        load_platform_config,
-    )
-
-    platforms_dir = str(REPO_ROOT / "platforms")
-    registered = list_registered_platforms(platforms_dir, include_archived=True)
-    display = {
-        p: load_platform_config(p, platforms_dir).get("platform", p)
-        for p in registered
-    }
-    packs_of: dict[str, set[str]] = {}
-    for group, _rep in group_identical_platforms(registered, platforms_dir):
-        names = {display[p] for p in group}
-        for p in group:
-            packs_of[display[p]] = names
-    return packs_of
-
-
 class WhichPackRows(unittest.TestCase):
+    """Every row of the Get your files page links only its own pack.
+
+    The rows were written by hand and the RetroPie one sent readers to the
+    RetroArch pack. They are now built from each platform's registry key, and
+    this reads the rendered page to keep it so. The per-platform folder notes
+    that getting-started.md carried moved to each platform page, built by the
+    same key.
+    """
+
     def test_platform_rows_name_their_own_pack(self):
-        packs_of = _packs_of()
-        source = (REPO_ROOT / "scripts" / "generate_site.py").read_text(encoding="utf-8")
-        row = re.compile(r"^\| \[([^\]]+)\]\([^)]*\) \|[^|]*\| \[([^\]]+)\]\(\{rel\}\)", re.M)
+        import generate_site  # noqa: PLC0415
+        import release_record  # noqa: PLC0415
+
+        record = release_record.load_record()
+        page = generate_site.generate_which_pack()
+        row = re.compile(r"^\| \[[^\]]+\]\(platforms/([a-z0-9]+)\.md\) \|(.*)$", re.M)
+        asset = re.compile(r"/releases/download/[^/]+/([^)\s]+)\)")
         checked = 0
-        for setup, pack in row.findall(source):
-            if setup not in packs_of:
-                continue
-            checked += 1
-            with self.subTest(setup=setup):
-                self.assertIn(pack, packs_of[setup])
+        for key, rest in row.findall(page):
+            linked = set(asset.findall(rest))
+            pack = release_record.pack_for(key, record) or {}
+            with self.subTest(platform=key):
+                self.assertLessEqual(linked, set(pack.get("assets") or []))
+                if pack:
+                    checked += 1
+                    self.assertTrue(linked)
         self.assertGreater(checked, 5)
-
-    def test_getting_started_sends_each_platform_to_its_pack(self):
-        """Its RetroPie section said the RetroArch pack applies as well."""
-        packs_of = _packs_of()
-        text = (REPO_ROOT / "wiki" / "getting-started.md").read_text(encoding="utf-8")
-        section = text.split("## BIOS directory by platform", 1)[1].split("\n## ", 1)[0]
-        checked = 0
-        for block in section.split("\n### ")[1:]:
-            heading, _, body = block.partition("\n")
-            if heading not in packs_of:
-                continue
-            checked += 1
-            for named in [name for name in packs_of if f"{name} pack" in body]:
-                with self.subTest(section=heading, named=named):
-                    self.assertIn(named, packs_of[heading])
-        self.assertGreater(checked, 5)
-
-
-if __name__ == "__main__":
-    unittest.main()

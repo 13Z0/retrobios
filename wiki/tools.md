@@ -821,7 +821,7 @@ set that ships it: MAME's `fm7740sx` carries the FM77AV40SX `DICROM.rom`,
 members are merged into the child, and members with no CRC32 are dropped: those
 are undumped and a real romset does not carry them.
 
-The store is compacted: 22 MAME versions produce 24,101 entries but only 2,148
+The store is compacted: 22 MAME versions produce 31,141 entries but only 2,399
 distinct recipes, since most sets do not change between releases. Each is kept
 once, `dats` listing every version that agrees and `dat` naming the earliest, so
 an identification reads as "unchanged since that version".

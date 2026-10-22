@@ -20,6 +20,9 @@ import generate_site  # noqa: E402
 
 
 def _normalized(text: str) -> str:
+    # The site ends each page with its next step in the reading order. That
+    # is navigation, not contributing text, and a repository file has none.
+    text = text.split('\n\n!!! tip "Next"\n', 1)[0].rstrip("\n")
     text = re.sub(r"\]\([^)]*\)", "](link)", text)
     return "\n".join(text.splitlines()[1:]).replace("on this site", "on the documentation site")
 
