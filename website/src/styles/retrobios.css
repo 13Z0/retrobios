@@ -216,7 +216,16 @@
 	background: #fff;
 }
 .sl-markdown-content img[src*='assets/logos/'] { padding: 2px; border-radius: 2px; background: #fff; }
-.sl-markdown-content :is(h2, h3) img { display: inline; vertical-align: middle; margin: 0 0.4rem 0 0; }
+/* A system icon beside a console heading holds its box before it loads:
+   it pushed every card below it down once it arrived. */
+.sl-markdown-content :is(h2, h3) img {
+	display: inline;
+	width: 24px;
+	height: 24px;
+	object-fit: contain;
+	vertical-align: middle;
+	margin: 0 0.4rem 0 0;
+}
 
 /* Card grids */
 .rb-cards {

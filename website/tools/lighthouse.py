@@ -1,7 +1,11 @@
 #!/usr/bin/env python3
 """Lighthouse mobile (default form factor) on a list of pages, one summary line each.
 
-    python lighthouse.py <out dir> <name>=<base url> ... -- <page> ...
+    python lighthouse.py [--performance-only] <out dir> <name>=<base url> ... -- <page> ...
+
+With all four categories, Lighthouse runs its accessibility checks inside the
+page during the same load, and those tasks count toward Total Blocking Time
+on a page of 15,000 elements. --performance-only measures the page alone.
 
 Needs `npx lighthouse` and Chrome at /usr/bin/google-chrome.
 """
@@ -18,6 +22,10 @@ CATEGORIES = ("performance", "accessibility", "best-practices", "seo")
 
 def main() -> int:
     args = sys.argv[1:]
+    categories = CATEGORIES
+    if args[0] == "--performance-only":
+        args.pop(0)
+        categories = ("performance",)
     out = Path(args.pop(0))
     split = args.index("--")
     engines = dict(item.split("=", 1) for item in args[:split])
@@ -34,7 +42,7 @@ def main() -> int:
                 ["npx", "--prefix", str(Path(__file__).resolve().parent.parent), "lighthouse", base + page,
                  "--quiet", "--output=json", f"--output-path={report.resolve()}",
                  "--chrome-flags=--headless=new --no-sandbox",
-                 f"--only-categories={','.join(CATEGORIES)}"],
+                 f"--only-categories={','.join(categories)}"],
                 env=env, cwd=out, check=False, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             data = json.loads(report.read_text())
             cats, audits = data["categories"], data["audits"]
@@ -42,12 +50,13 @@ def main() -> int:
                       if a.get("score") is not None and a["score"] < 1 and a.get("scoreDisplayMode") == "binary"]
             print(json.dumps({
                 "engine": name, "page": page or "/",
-                **{c: round(cats[c]["score"] * 100) for c in CATEGORIES},
+                **{c: round(cats[c]["score"] * 100) for c in categories},
                 "lcp": audits["largest-contentful-paint"]["displayValue"],
                 "tbt": audits["total-blocking-time"]["displayValue"],
                 "cls": audits["cumulative-layout-shift"]["displayValue"],
                 "bytes": audits["total-byte-weight"]["displayValue"],
-                "dom": audits["dom-size"]["displayValue"],
+                # Lighthouse 13 moved the DOM size audit into an insight.
+                "dom": (audits.get("dom-size") or audits.get("dom-size-insight") or {}).get("displayValue", ""),
                 "failed": failed,
             }))
     return 0

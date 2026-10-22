@@ -66,6 +66,13 @@ export default defineConfig({
 			expressiveCode: { defaultProps: { wrap: true } },
 			lastUpdated: false,
 			pagination: true,
+			// Measured on the ten queries of tools/search_gate.py, inside a range
+			// where all ten answer: Starlight's defaults (0.1, 0.1, 2, 9) let a guide
+			// that cites scph5501 once outrank the file's own card. A long page
+			// is penalised a little more, and how often a word appears counts.
+			pagefind: {
+				ranking: { pageLength: 0.3, termFrequency: 0.5, termSaturation: 1.4, termSimilarity: 9 },
+			},
 			plugins: [
 				starlightSidebarTopics(sidebar.topics, sidebar.options),
 				starlightLinksValidator(),

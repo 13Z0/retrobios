@@ -3295,7 +3295,7 @@ def _system_file_card(
     for label, value in (("SHA1", sha1_full), ("MD5", md5_full),
                          ("CRC32", f.get("crc32")), ("SHA256", f.get("sha256"))):
         if value and value != "unknown":
-            lines.append(f'- {label}: <span class="rb-hash">{_code(value)}</span>')
+            lines.append(f'- {label}: {markup.hash_value(value)}')
     if emus:
         lines.append(f"- Emulators: {', '.join(_emulator_links(sha1_full, consumers))}")
     provenance = f.get("provenance", {})
@@ -3420,8 +3420,11 @@ def _card_title(text: str, anchor: str, searchable: bool = True) -> str:
         # would add the engine's anchor link and icon to every card.
         title = re.sub(r"`([^`]+)`", lambda m: f"<code>{html.escape(m[1], quote=False)}</code>", text)
         ident = f' id="{anchor}"' if anchor else ""
-        ignore = "" if searchable else f" {markup.search_exclude()}"
-        return f'<h3{ident} class="rb-file-title"{ignore}>{title}</h3>'
+        # The card is the file's own page in all but name: its title weighs
+        # as a page title does, so a file name typed in the search finds
+        # the card before a guide that cites it as an example.
+        weight = ' data-pagefind-weight="7"' if searchable else f" {markup.search_exclude()}"
+        return f'<h3{ident} class="rb-file-title"{weight}>{title}</h3>'
     attributes = f"#{anchor} .rb-file-title" if anchor else ".rb-file-title"
     if not searchable:
         attributes += " data-search-exclude"
@@ -3873,7 +3876,7 @@ def _file_badges(f: dict, in_repo: bool) -> list[str]:
         )
     if archive:
         badges.append(
-            f'<span class="rb-badge rb-badge-muted">in {archive}</span>'
+            f'<span class="rb-badge rb-badge-muted rb-badge-archive">in {archive}</span>'
         )
     if ftype and ftype != "bios":
         badges.append(
@@ -4460,8 +4463,14 @@ def _render_structured_blocks(profile: dict) -> list[str]:
         body: list[str] = []
         _render_yaml_value(body, val, indent=0,
                            field_text=_structured_field_text(profile))
-        lines.extend(markup.details(
-            "abstract", label, [_escape_tags(line) for line in body], opened=True))
+        block = markup.details(
+            "abstract", label, [_escape_tags(line) for line in body], opened=True)
+        # A block listing hashes is the lookup's, as a card's hash lines are:
+        # izapple2's ROM table put "md5" 59 times in the search, above the
+        # page that explains MD5 checks.
+        if any(re.search(r"\b[0-9a-f]{32,64}\b", line) for line in body):
+            block = search_excluded(block)
+        lines.extend(block)
 
     return lines
 
@@ -4476,7 +4485,7 @@ def _hash_spans(value: str | list) -> str:
     from hashing import parse_hash_list  # noqa: PLC0415
 
     return ", ".join(
-        f'<span class="rb-hash">{_code(v)}</span>' for v in parse_hash_list(value)
+        markup.hash_value(v) for v in parse_hash_list(value)
     )
 
 

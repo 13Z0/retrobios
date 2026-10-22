@@ -30,10 +30,17 @@ const headingText = (element: Element): string => {
 };
 
 // A table that overflows is a named stop in the tab order, so a keyboard
-// can scroll it (WCAG 2.1.1). Checked again when a closed block opens.
-const markScrollable = (table: HTMLTableElement) => {
+// can scroll it (WCAG 2.1.1). Checked again when a closed block opens. All
+// widths are read first and the attributes written after, so a page of
+// twenty tables is laid out once, not twenty times.
+const markScrollable = (tables: HTMLTableElement[]) => {
+	const overflowing = tables.map((table) => table.scrollWidth > table.clientWidth + 1);
+	tables.forEach((table, index) => setScrollable(table, overflowing[index]));
+};
+
+const setScrollable = (table: HTMLTableElement, overflows: boolean) => {
 	const heading = table.dataset.rbHeading ?? 'Data table';
-	if (table.scrollWidth > table.clientWidth + 1) {
+	if (overflows) {
 		table.tabIndex = 0;
 		table.setAttribute('role', 'region');
 		table.setAttribute('aria-label', `${heading}, scrollable table`);
@@ -79,8 +86,10 @@ const filterTable = (table: HTMLTableElement, index: number, heading: string) =>
 	count.textContent = `${rows.length} rows`;
 	controls.append(label, input, count);
 	table.before(controls);
-	const searchable = rows.map((row) => ({ row, text: row.textContent!.normalize('NFKD').toLocaleLowerCase() }));
+	// Each row's text is read on the first keystroke, not on every page load.
+	let searchable: { row: HTMLTableRowElement; text: string }[] | null = null;
 	input.addEventListener('input', () => {
+		searchable ??= rows.map((row) => ({ row, text: row.textContent!.normalize('NFKD').toLocaleLowerCase() }));
 		const query = input.value.trim().normalize('NFKD').toLocaleLowerCase();
 		let visible = 0;
 		for (const entry of searchable) {
@@ -92,7 +101,8 @@ const filterTable = (table: HTMLTableElement, index: number, heading: string) =>
 };
 
 const enhanceTables = () => {
-	document.querySelectorAll<HTMLTableElement>('.sl-markdown-content table').forEach((table, index) => {
+	const tables = [...document.querySelectorAll<HTMLTableElement>('.sl-markdown-content table')];
+	const enhance = (table: HTMLTableElement) => {
 		for (const cell of table.querySelectorAll('thead th')) if (!cell.hasAttribute('scope')) cell.setAttribute('scope', 'col');
 		const heading = headingText(table);
 		table.dataset.rbHeading = heading;
@@ -103,18 +113,29 @@ const enhanceTables = () => {
 			table.prepend(caption);
 		}
 		stackActionTable(table);
-		markScrollable(table);
-		filterTable(table, index, heading);
-	});
-	const recheck = () => document.querySelectorAll<HTMLTableElement>('.sl-markdown-content table').forEach(markScrollable);
+		filterTable(table, tables.indexOf(table), heading);
+	};
+	// A table is set up and measured when it nears the screen. Doing all of
+	// them at load relaid out every row of a 3,800-row page after its first
+	// paint. One that appears later (a block opened, a tab chosen) is handled
+	// then.
+	const near = new Set<HTMLTableElement>();
+	const observer = new IntersectionObserver(
+		(entries) => {
+			const shown = entries.filter((entry) => entry.isIntersecting).map((entry) => entry.target as HTMLTableElement);
+			for (const table of shown) {
+				if (!near.has(table)) enhance(table);
+				near.add(table);
+			}
+			if (shown.length) requestAnimationFrame(() => markScrollable(shown));
+		},
+		{ rootMargin: '400px 0px' },
+	);
+	tables.forEach((table) => observer.observe(table));
 	let timer = 0;
 	addEventListener('resize', () => {
 		clearTimeout(timer);
-		timer = window.setTimeout(recheck, 150);
-	});
-	document.addEventListener('toggle', recheck, true);
-	document.addEventListener('click', (event) => {
-		if ((event.target as Element).closest?.('[role="tab"]')) setTimeout(recheck, 0);
+		timer = window.setTimeout(() => markScrollable([...near]), 150);
 	});
 };
 

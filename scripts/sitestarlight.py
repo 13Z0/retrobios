@@ -369,6 +369,12 @@ def finalize_page(
         body = f'<div id="{html.escape(title_id)}" class="rb-anchor"></div>\n\n' + body
     if rel not in ("wiki/glossary.md", "wiki/reference-terms.md"):
         body = add_tooltips(body, terms)
+    # A badge is a status (required, missing, MD5), not a word a reader
+    # searches for: 141 "missing" badges put an emulator page above the
+    # troubleshooting page for "missing bios". The archive a file sits in
+    # is a name, and stays: it is how "neogeo.zip" finds the cores reading it.
+    body = re.sub(r'<span class="(rb-badge(?![^"]*rb-badge-archive)[^"]*)"',
+                  r'<span data-pagefind-ignore class="\1"', body)
     components = used_components(body)
     stem = rel.rsplit(".", 1)[0]
     if components:
