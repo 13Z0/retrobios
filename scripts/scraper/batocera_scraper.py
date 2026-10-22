@@ -86,9 +86,9 @@ ES_SYSTEMS_URL = (
 OVERRIDES_PATH = Path(__file__).resolve().parents[2] / "platforms" / "targets" / "_overrides.yml"
 
 
-def _not_cores() -> set[str]:
+def _not_cores(platform: str = "batocera") -> set[str]:
     data = yaml_load(OVERRIDES_PATH.read_text(encoding="utf-8")) or {}
-    default = (data.get("batocera", {}).get("targets", {}) or {}).get("_default", {}) or {}
+    default = (data.get(platform, {}).get("targets", {}) or {}).get("_default", {}) or {}
     return {str(name) for name in default.get("remove_cores", [])}
 
 
@@ -262,6 +262,177 @@ def _resolve_truncated_md5(md5: str, md5_index: dict[str, str]) -> str:
     return md5
 
 
+def extract_systems_dict(raw: str) -> dict:
+    """The `systems` dict of a batocera-systems style script.
+
+    Read with ast.literal_eval, never executed: the text is the platform's
+    code. A key written twice keeps its later value, as it does when Python
+    runs the script.
+    """
+    match = re.search(r"^systems\s*=\s*\{", raw, re.MULTILINE)
+    if not match:
+        raise ValueError("no 'systems = {' in the script")
+
+    start = match.start() + raw[match.start() :].index("{")
+    depth = 0
+    i = start
+    in_str = False
+    str_ch = None
+    while i < len(raw):
+        ch = raw[i]
+        if in_str:
+            if ch == "\\":
+                i += 2
+                continue
+            if ch == str_ch:
+                in_str = False
+        elif ch in ('"', "'"):
+            in_str = True
+            str_ch = ch
+        elif ch == "{":
+            depth += 1
+        elif ch == "}":
+            depth -= 1
+            if depth == 0:
+                break
+        elif ch == "#":
+            while i < len(raw) and raw[i] != "\n":
+                i += 1
+        i += 1
+
+    dict_str = raw[start : i + 1]
+
+    lines = []
+    for line in dict_str.split("\n"):
+        in_string = False
+        string_char = None
+        clean = []
+        j = 0
+        while j < len(line):
+            ch = line[j]
+            if ch == "\\" and j + 1 < len(line):
+                clean.append(ch)
+                clean.append(line[j + 1])
+                j += 2
+                continue
+            if ch in ('"', "'") and not in_string:
+                in_string = True
+                string_char = ch
+                clean.append(ch)
+            elif ch == string_char and in_string:
+                in_string = False
+                clean.append(ch)
+            elif ch == "#" and not in_string:
+                break
+            else:
+                clean.append(ch)
+            j += 1
+        lines.append("".join(clean))
+
+    clean_dict_str = "\n".join(lines)
+
+    # OrderedDict({...}) -> just the inner dict literal
+    clean_dict_str = re.sub(r"OrderedDict\(\s*\{", "{", clean_dict_str)
+    clean_dict_str = re.sub(r"\}\s*\)", "}", clean_dict_str)
+
+    try:
+        return ast.literal_eval(clean_dict_str)
+    except (SyntaxError, ValueError) as e:
+        raise ValueError(f"Failed to parse systems dict: {e}") from e
+
+
+def requirements_from_systems(
+    systems: dict, slug_map: dict[str, str], strip: str = "bios/"
+) -> list[BiosRequirement]:
+    """One requirement per biosFiles item, filed under our system slug.
+
+    `strip` is the part of each declared path that the platform's
+    base_destination already stands for: `bios/` where the pack is extracted
+    into the BIOS folder, nothing where it is extracted into the folder the
+    script's prefix names (AmberELEC and EmuELEC declare `neogeo/neogeo.zip`
+    and `ports/...` beside `bios/`).
+    """
+    requirements = []
+    md5_index = _load_md5_index()
+    for sys_key, sys_data in systems.items():
+        system_slug = slug_map.get(sys_key, sys_key)
+        for bios in sys_data.get("biosFiles", []):
+            declared_path = bios.get("file", "")
+            file_path = declared_path
+            md5 = _resolve_truncated_md5(bios.get("md5", ""), md5_index)
+            zipped_file = bios.get("zippedFile", "")
+            if strip and file_path.startswith(strip):
+                file_path = file_path[len(strip):]
+            requirements.append(
+                BiosRequirement(
+                    name=file_path.split("/")[-1],
+                    system=system_slug,
+                    md5=md5 or None,
+                    destination=file_path,
+                    native_path=declared_path,
+                    required=True,
+                    zipped_file=zipped_file or None,
+                    native_id=sys_key,
+                    native={"native_name": sys_data.get("name", "")},
+                )
+            )
+    return requirements
+
+
+def platform_systems(
+    requirements: list[BiosRequirement], source_dict: dict, slug_map: dict[str, str]
+) -> dict:
+    """The `systems:` section of a platform YAML, in the script's order."""
+    display_names: dict[str, str] = {}
+    for sys_key, sys_data in source_dict.items():
+        dname = sys_data.get("name", "")
+        if dname:
+            display_names[slug_map.get(sys_key, sys_key)] = dname
+    systems: dict[str, dict] = {}
+    for req in requirements:
+        if req.system not in systems:
+            sys_entry: dict = {"files": []}
+            if req.native_id:
+                sys_entry["native_id"] = req.native_id
+            dname = display_names.get(req.system)
+            if dname:
+                sys_entry["name"] = dname
+            systems[req.system] = sys_entry
+        systems[req.system]["files"].append(requirement_entry(req))
+    return systems
+
+
+def configgen_cores(
+    defaults_text: str, es_systems_text: str, dropped: set[str]
+) -> tuple[list[str], list[str], list[str]]:
+    """Core names, standalone cores and dual-mode cores of a configgen build.
+
+    Standalone cores are those with emulator != "libretro" in
+    configgen-defaults.yml or listed outside `libretro:` in es_systems.yml,
+    dual-mode ones those es_systems.yml also offers under libretro (dolphin
+    for GameCube). `dropped` names what es_systems.yml files under an
+    emulator without being one.
+    """
+    data = yaml_load_upstream(defaults_text)
+    cores, standalone = es_systems_emulators(es_systems_text)
+    libretro = es_systems_libretro(es_systems_text)
+    if not cores:
+        raise RuntimeError("es_systems.yml names no emulator")
+    for system, cfg in data.items():
+        if system == "default" or not isinstance(cfg, dict):
+            continue
+        emulator = cfg.get("emulator", "")
+        core = cfg.get("core", "")
+        if core:
+            cores.add(core)
+        if emulator and emulator != "libretro":
+            standalone.add(emulator)
+            if core and core != emulator:
+                standalone.add(core)
+    dual = (standalone & libretro) - dropped
+    return sorted(cores - dropped), sorted(standalone - dropped), sorted(dual)
+
+
 class Scraper(BaseScraper):
     """Scraper for batocera-systems Python dict."""
 
@@ -270,44 +441,12 @@ class Scraper(BaseScraper):
         super().__init__(url=SOURCE_URL.format(tag=self.tag))
 
     def _fetch_cores(self) -> tuple[list[str], list[str], list[str]]:
-        """Extract core names and standalone cores from configgen-defaults.yml.
-
-        Returns (all_cores, standalone_cores, dual_mode_cores): standalone
-        cores are those with emulator != "libretro", dual-mode ones those
-        es_systems.yml also offers under libretro (dolphin for GameCube).
-        """
-        url = CONFIGGEN_DEFAULTS_URL.format(tag=self.tag)
-        try:
-            req = urllib.request.Request(
-                url,
-                headers={"User-Agent": "retrobios-scraper/1.0"},
-            )
-            with urllib.request.urlopen(req, timeout=30) as resp:
-                raw = resp.read().decode("utf-8")
-        except urllib.error.URLError as e:
-            raise ConnectionError(
-                f"Failed to fetch {url}: {e}"
-            ) from e
-        data = yaml_load_upstream(raw)
-        es_systems = self._fetch_text(ES_SYSTEMS_URL.format(tag=self.tag))
-        cores, standalone = es_systems_emulators(es_systems)
-        libretro = es_systems_libretro(es_systems)
-        if not cores:
-            raise RuntimeError("es_systems.yml names no emulator")
-        for system, cfg in data.items():
-            if system == "default" or not isinstance(cfg, dict):
-                continue
-            emulator = cfg.get("emulator", "")
-            core = cfg.get("core", "")
-            if core:
-                cores.add(core)
-            if emulator and emulator != "libretro":
-                standalone.add(emulator)
-                if core and core != emulator:
-                    standalone.add(core)
-        dropped = _not_cores()
-        dual = (standalone & libretro) - dropped
-        return sorted(cores - dropped), sorted(standalone - dropped), sorted(dual)
+        """Core names, standalone cores and dual-mode cores at the pinned tag."""
+        return configgen_cores(
+            self._fetch_text(CONFIGGEN_DEFAULTS_URL.format(tag=self.tag)),
+            self._fetch_text(ES_SYSTEMS_URL.format(tag=self.tag)),
+            _not_cores(),
+        )
 
     def _fetch_text(self, url: str) -> str:
         req = urllib.request.Request(url, headers={"User-Agent": "retrobios-scraper/1.0"})
@@ -317,120 +456,12 @@ class Scraper(BaseScraper):
         except urllib.error.URLError as e:
             raise ConnectionError(f"Failed to fetch {url}: {e}") from e
 
-    def _extract_systems_dict(self, raw: str) -> dict:
-        """Extract and parse the 'systems' dict from the Python source via ast.literal_eval."""
-        match = re.search(r"^systems\s*=\s*\{", raw, re.MULTILINE)
-        if not match:
-            raise ValueError("Could not find 'systems = {' in batocera-systems")
-
-        start = match.start() + raw[match.start() :].index("{")
-        depth = 0
-        i = start
-        in_str = False
-        str_ch = None
-        while i < len(raw):
-            ch = raw[i]
-            if in_str:
-                if ch == "\\":
-                    i += 2
-                    continue
-                if ch == str_ch:
-                    in_str = False
-            elif ch in ('"', "'"):
-                in_str = True
-                str_ch = ch
-            elif ch == "{":
-                depth += 1
-            elif ch == "}":
-                depth -= 1
-                if depth == 0:
-                    break
-            elif ch == "#":
-                while i < len(raw) and raw[i] != "\n":
-                    i += 1
-            i += 1
-
-        dict_str = raw[start : i + 1]
-
-        lines = []
-        for line in dict_str.split("\n"):
-            in_string = False
-            string_char = None
-            clean = []
-            j = 0
-            while j < len(line):
-                ch = line[j]
-                if ch == "\\" and j + 1 < len(line):
-                    clean.append(ch)
-                    clean.append(line[j + 1])
-                    j += 2
-                    continue
-                if ch in ('"', "'") and not in_string:
-                    in_string = True
-                    string_char = ch
-                    clean.append(ch)
-                elif ch == string_char and in_string:
-                    in_string = False
-                    clean.append(ch)
-                elif ch == "#" and not in_string:
-                    break
-                else:
-                    clean.append(ch)
-                j += 1
-            lines.append("".join(clean))
-
-        clean_dict_str = "\n".join(lines)
-
-        # OrderedDict({...}) -> just the inner dict literal
-        clean_dict_str = re.sub(r"OrderedDict\(\s*\{", "{", clean_dict_str)
-        clean_dict_str = re.sub(r"\}\s*\)", "}", clean_dict_str)
-
-        try:
-            return ast.literal_eval(clean_dict_str)
-        except (SyntaxError, ValueError) as e:
-            raise ValueError(f"Failed to parse systems dict: {e}") from e
-
     def fetch_requirements(self) -> list[BiosRequirement]:
         """Parse batocera-systems and return BIOS requirements."""
         raw = self._fetch_raw()
-
         if not self.validate_format(raw):
             raise ValueError("batocera-systems format validation failed")
-
-        systems = self._extract_systems_dict(raw)
-        requirements = []
-        md5_index = _load_md5_index()
-
-        for sys_key, sys_data in systems.items():
-            system_slug = SYSTEM_SLUG_MAP.get(sys_key, sys_key)
-            bios_files = sys_data.get("biosFiles", [])
-
-            for bios in bios_files:
-                declared_path = bios.get("file", "")
-                file_path = declared_path
-                md5 = _resolve_truncated_md5(bios.get("md5", ""), md5_index)
-                zipped_file = bios.get("zippedFile", "")
-
-                if file_path.startswith("bios/"):
-                    file_path = file_path[5:]
-
-                name = file_path.split("/")[-1] if "/" in file_path else file_path
-
-                requirements.append(
-                    BiosRequirement(
-                        name=name,
-                        system=system_slug,
-                        md5=md5 or None,
-                        destination=file_path,
-                        native_path=declared_path,
-                        required=True,
-                        zipped_file=zipped_file or None,
-                        native_id=sys_key,
-                        native={"native_name": sys_data.get("name", "")},
-                    )
-                )
-
-        return requirements
+        return requirements_from_systems(extract_systems_dict(raw), SYSTEM_SLUG_MAP)
 
     def validate_format(self, raw_data: str) -> bool:
         """Validate batocera-systems format."""
@@ -442,29 +473,11 @@ class Scraper(BaseScraper):
 
     def generate_platform_yaml(self) -> dict:
         """Generate a platform YAML config dict from scraped data."""
-        requirements = self.fetch_requirements()
-
-        raw = self._fetch_raw()
-        source_dict = self._extract_systems_dict(raw)
-        display_names: dict[str, str] = {}
-        for sys_key, sys_data in source_dict.items():
-            dname = sys_data.get("name", "")
-            if dname:
-                slug = SYSTEM_SLUG_MAP.get(sys_key, sys_key)
-                display_names[slug] = dname
-
-        systems = {}
-        for req in requirements:
-            if req.system not in systems:
-                sys_entry: dict = {"files": []}
-                if req.native_id:
-                    sys_entry["native_id"] = req.native_id
-                dname = display_names.get(req.system)
-                if dname:
-                    sys_entry["name"] = dname
-                systems[req.system] = sys_entry
-
-            systems[req.system]["files"].append(requirement_entry(req))
+        systems = platform_systems(
+            self.fetch_requirements(),
+            extract_systems_dict(self._fetch_raw()),
+            SYSTEM_SLUG_MAP,
+        )
 
         cores, standalone, dual = self._fetch_cores()
         result = {

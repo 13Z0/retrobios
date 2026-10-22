@@ -152,6 +152,22 @@ class DownloadLinksNameTheFile(unittest.TestCase):
             for asset in pack["assets"]:
                 self.assertIn(f"/releases/download/{RECORD['tag']}/{asset})", page)
 
+    def test_a_platform_the_release_lacks_has_no_row(self):
+        """KNULLI, AmberELEC and EmuELEC were registered after the recorded
+        release: a row for them linked a release page holding no such pack."""
+        if not RECORD.get("packs"):
+            self.skipTest("release.json is not written")
+        from common import list_registered_platforms, load_platform_config
+        from release_record import pack_for
+
+        page = _which_pack()
+        for key in list_registered_platforms("platforms", include_archived=True):
+            if pack_for(key, RECORD) is not None:
+                continue
+            label = load_platform_config(key, "platforms").get("platform", key)
+            with self.subTest(platform=key):
+                self.assertNotIn(f"| [{label}](", page)
+
 
 class SlicesLeaveWithTheirRelease(unittest.TestCase):
     """Parts named `.zip.001` were cut by v2026.09.04, deleted since. A page

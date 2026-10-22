@@ -586,7 +586,7 @@ class ExporterRegistry(unittest.TestCase):
     def test_an_exporter_that_patches_code_says_it_needs_the_original(self):
         """Regenerating a script from data alone drops the code around it."""
         for name in ("batocera", "rocknix", "emudeck", "retrodeck", "bizhawk",
-                     "misterfpga"):
+                     "misterfpga", "knulli", "amberelec", "emuelec"):
             with self.subTest(platform=name):
                 self.assertTrue(discover_exporters()[name].needs_original())
 

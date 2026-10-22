@@ -66,6 +66,11 @@
       "type": "string",
       "description": "Base directory for BIOS files on this platform"
     },
+    "core_destination": {
+      "type": "string",
+      "minLength": 1,
+      "description": "With an empty base_destination, the directory core files go under (AmberELEC and EmuELEC declare bios/, neogeo/ and ports/ from /storage/roms, and their cores read bios/)"
+    },
     "hash_type": {
       "type": "string",
       "enum": [

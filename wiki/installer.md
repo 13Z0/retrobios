@@ -301,19 +301,19 @@ rewrites both to `/roms2/bios`: a second card is followed through them.
 | Evidence | System | File list | BIOS directory |
 |----------|--------|-----------|----------------|
 | `/etc/os-release` `OS_NAME=ROCKNIX` (or `ID=rocknix` on images before 2025) | ROCKNIX | ROCKNIX | `/storage/roms/bios` |
-| `/etc/os-release` `OS_NAME=knulli` or `/usr/share/knulli/knulli.version` | KNULLI | Batocera | `/userdata/bios` |
+| `/etc/os-release` `OS_NAME=knulli` or `/usr/share/knulli/knulli.version` | KNULLI | KNULLI | `/userdata/bios` |
 | `/etc/os-release` `ID=lakka` | Lakka | Lakka | `/storage/system` |
 | `/usr/share/batocera/batocera.version` | Batocera | Batocera | `/userdata/bios` |
 | `/recalbox/recalbox.version` or `/usr/bin/recalbox-settings` | Recalbox | Recalbox | `/recalbox/share/bios` |
 | `/opt/muos` | muOS | RetroArch | `system_directory` of `/opt/muos/share/info/config/retroarch.cfg`, else of the default it is copied from: `/run/muos/storage/bios`, which muOS binds to `MUOS/bios` on the second card when that card holds one, else the first. Cores are read from that config's `libretro_directory` (`/opt/muos/share/core`) |
 | `/mnt/mmc/MUOS/` | muOS | RetroArch | `/mnt/mmc/MUOS/bios` |
-| `/etc/os-release` `NAME=AmberELEC` (CHAos writes the same) | AmberELEC | RetroArch | `/storage/.config/retroarch/retroarch.cfg`, else `/storage/roms/bios` |
-| `/usr/bin/batocera-info` naming PAN4ELEC, on AmberELEC | PAN4ELEC | RetroArch | as AmberELEC |
-| `/etc/os-release` `NAME=EmuELEC` | EmuELEC | RetroArch | as AmberELEC |
-| `/etc/os-release` `OS_NAME=JELOS` | JELOS | RetroArch | as AmberELEC |
-| `/usr/lib/systemd/system/jelos-ready.service`, on JELOS | KOLOS | RetroArch | as AmberELEC |
-| `/etc/os-release` `OS_NAME=UnofficialOS` | UnofficialOS | RetroArch | as AmberELEC |
-| `/etc/os-release` `OS_NAME=ArchR` | ArchR | RetroArch | as AmberELEC |
+| `/etc/os-release` `NAME=AmberELEC` (CHAos writes the same) | AmberELEC | AmberELEC | `/storage/roms` (its list names `bios/`, `ports/` and `neogeo/` there) |
+| `/usr/bin/batocera-info` naming PAN4ELEC, on AmberELEC | PAN4ELEC | AmberELEC | as AmberELEC |
+| `/etc/os-release` `NAME=EmuELEC` | EmuELEC | EmuELEC | as AmberELEC |
+| `/etc/os-release` `OS_NAME=JELOS` | JELOS | RetroArch | `/storage/.config/retroarch/retroarch.cfg`, else `/storage/roms/bios` |
+| `/usr/lib/systemd/system/jelos-ready.service`, on JELOS | KOLOS | RetroArch | as JELOS |
+| `/etc/os-release` `OS_NAME=UnofficialOS` | UnofficialOS | RetroArch | as JELOS |
+| `/etc/os-release` `OS_NAME=ArchR` | ArchR | RetroArch | as JELOS |
 | `/home/ark` and `/opt/system`, or `title=ArkOS` in `/usr/share/plymouth/themes/text.plymouth` | ArkOS | RetroArch | `/home/ark/.config/retroarch/retroarch.cfg` then `retroarch32/retroarch.cfg`, else `/roms/bios` |
 | `title=dArkOS` in the same file (the dArkOSRE, dArkOSen and ArkOS4Clone images keep it) | dArkOS | RetroArch | as ArkOS |
 | `title=RetroOZ` in the same file, `/opt/.retrooz` or `/etc/retrooz_version` | RetroOZ | RetroArch | `/home/odroid/.config/retroarch/retroarch.cfg` then `retroarch32/retroarch.cfg`, else `/roms/bios` |
@@ -329,17 +329,16 @@ rewrites both to `/roms2/bios`: a second card is followed through them.
 | `/mnt/SDCARD/.system/res` or `/mnt/sdcard/.system/res` | MinUI | none | MinUI, MyMinUI and NextUI give each core its own `Bios/<tag>/`, a layout not written yet: named, not installed to |
 | `/mnt/vendor/bin/dmenu.bin` | Anbernic stock firmware | RetroArch | `/mnt/mmc/bios` |
 
-AmberELEC, EmuELEC and KNULLI get the file list of the platform whose cores
-they ship until a list of their own is published. TheRA is not detected: no
+AmberELEC, EmuELEC and KNULLI install the BIOS list they publish themselves. TheRA is not detected: no
 image or source of its Odroid Go builds is published, so neither its marker
 files nor its folder could be read.
 
 Batocera, Recalbox, ROCKNIX and Lakka also name the board they were built for, and
 that board narrows the install unless `--target` or `--every-board` says
 otherwise (see the options above). A board with no core list of its own is
-named and gets the files of every board. Knulli names its board in
-`/usr/share/knulli/knulli.arch` but builds its own set of cores, so Batocera's
-per-board lists are not applied to it and the run says so.
+named and gets the files of every board. KNULLI names its board in
+`/usr/share/knulli/knulli.arch` but publishes no core list per board, so the
+run says so and installs the files of every board.
 
 Some platforms keep their BIOS in a fixed directory, and that directory is the
 evidence. They are looked for after the configurations below, for a platform
@@ -423,7 +422,8 @@ When a platform named with `--platform` is not found on the machine, the
 destination falls back to the directory its detection looks for:
 `/userdata/bios` for Batocera, `/recalbox/share/bios` for Recalbox,
 `/storage/system` for Lakka, `~/retrodeck` for RetroDECK, `~/Emulation/bios`
-for EmuDeck (`C:\Emulation\bios` on Windows), `/storage/roms/bios` for ROCKNIX, `/media/fat/games` for MiSTer,
+for EmuDeck (`C:\Emulation\bios` on Windows), `/storage/roms/bios` for ROCKNIX,
+`/userdata/bios` for KNULLI, `/storage/roms` for AmberELEC and EmuELEC, `/media/fat/games` for MiSTer,
 `~/RetroPie/BIOS` for RetroPie, `/romm/library/bios` for RomM,
 `C:\RetroBat\bios` for RetroBat, and RetroArch's own default system
 directory for RetroArch. BizHawk has no such folder: it reads `Firmware`

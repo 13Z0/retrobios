@@ -185,7 +185,7 @@ OTHER_SYSTEMS = "other"
 AVAILABLE_PLATFORMS = (
     "retroarch", "batocera", "recalbox", "retrobat", "emudeck",
     "lakka", "retrodeck", "rocknix", "romm", "bizhawk", "misterfpga",
-    "retropie",
+    "retropie", "amberelec", "emuelec", "knulli",
 )
 
 # The names the frontends give themselves, as each manifest's display_name
@@ -197,6 +197,7 @@ PLATFORM_NAMES = {
     "retrobat": "RetroBat", "emudeck": "EmuDeck", "lakka": "Lakka",
     "retrodeck": "RetroDECK", "rocknix": "ROCKNIX", "romm": "RomM",
     "bizhawk": "BizHawk", "misterfpga": "MiSTer FPGA", "retropie": "RetroPie",
+    "amberelec": "AmberELEC", "emuelec": "EmuELEC", "knulli": "KNULLI",
 }
 
 SITE_URL = "https://abdess.github.io/retrobios/"
@@ -213,6 +214,10 @@ DEFAULT_DESTS = {
     "retrodeck": Path.home() / "retrodeck",
     "emudeck": Path.home() / "Emulation" / "bios",
     "rocknix": Path("/storage/roms/bios"),
+    # Their BIOS lists name files under /storage/roms beside bios/.
+    "amberelec": Path("/storage/roms"),
+    "emuelec": Path("/storage/roms"),
+    "knulli": Path("/userdata/bios"),
     "misterfpga": Path("/media/fat/games"),
     "retropie": Path.home() / "RetroPie" / "BIOS",
     "romm": Path("/romm/library/bios"),
@@ -746,13 +751,12 @@ _BOARD_SOURCES: dict[str, tuple[str, str]] = {
 }
 
 
-# A derivative installed under a platform's name, with its own board file.
+# A platform that names its board without publishing a core list per board.
 # Knulli moves /usr/share/batocera to /usr/share/knulli (knulli-linux
 # 57afa662, board/scripts/post-build-script.sh:264-278) and writes its board
-# to knulli.arch (package/system/knulli-system/knulli-system.mk:98-99). Its
-# packages are its own, so Batocera's per-board core lists do not apply.
+# to knulli.arch (package/system/knulli-system/knulli-system.mk:98-99).
 _DERIVATIVE_BOARDS: dict[str, tuple[str, str]] = {
-    "batocera": ("Knulli", "/usr/share/knulli/knulli.arch"),
+    "knulli": ("Knulli", "/usr/share/knulli/knulli.arch"),
 }
 
 
@@ -852,13 +856,12 @@ class _OsRule(NamedTuple):
     base: str = ""
 
 
-# Systems whose own platform is not published yet. Their files come from the
-# platform whose core set they ship, and this is the one place that changes
-# when the manifest of their own is published.
+# The platform whose files each of these systems gets. They publish their own
+# BIOS list, and these platforms transcribe it.
 _STANDIN_MANIFESTS = {
-    "AmberELEC": "retroarch",
-    "EmuELEC": "retroarch",
-    "KNULLI": "batocera",
+    "AmberELEC": "amberelec",
+    "EmuELEC": "emuelec",
+    "KNULLI": "knulli",
 }
 
 # Where the ELEC family keeps RetroArch: the config runemu writes and copies
@@ -916,18 +919,18 @@ _EMBEDDED_RULES: tuple[_OsRule, ...] = (
     # (packages/games/tools/retroarch/sources/retroarch.cfg:611), and
     # emustation.service:6 sets HOME=/storage.
     _OsRule(_STANDIN_MANIFESTS["AmberELEC"], "AmberELEC", "os_release", ("NAME=AmberELEC",),
-            "/storage/roms/bios", _ELEC_CONFIGS, "/storage"),
+            "/storage/roms"),
     # PAN4ELEC (Kegg1701/P4ELEC 9c19bfb2), an overlay on an AmberELEC image:
     # AmberELEC/usr/bin/batocera-info:101 prints its name.
     _OsRule(_STANDIN_MANIFESTS["AmberELEC"], "PAN4ELEC", "file_matches",
             ("/usr/bin/batocera-info", r"OPERATING SYSTEM: PAN4ELEC"),
-            "/storage/roms/bios", _ELEC_CONFIGS, "/storage", base="AmberELEC"),
+            "/storage/roms", base="AmberELEC"),
     # EmuELEC d4c7b2f1: scripts/image:172-176 NAME and ID from DISTRONAME,
     # EmuELEC in distributions/EmuELEC/options:4. setsettings.sh:22 names the
     # config, and libretro_base/retroarch/package.mk:117 sets its
     # system_directory to /storage/roms/bios.
     _OsRule(_STANDIN_MANIFESTS["EmuELEC"], "EmuELEC", "os_release", ("NAME=EmuELEC",),
-            "/storage/roms/bios", _ELEC_CONFIGS, "/storage"),
+            "/storage/roms"),
     # JELOS 7b2e116c: scripts/image:118-120 OS_NAME="${DISTRONAME}", JELOS in
     # distributions/JELOS/options:17. runemu.sh:37 names the config, whose
     # default is "~/roms/bios" (retroarch/sources/RK3566/retroarch.cfg:716),

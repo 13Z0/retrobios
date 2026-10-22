@@ -26,7 +26,7 @@ touched.
 ## Step 1. Run the command
 
 On Linux, macOS, a Steam Deck, or a handheld running Batocera, Recalbox,
-KNULLI, ROCKNIX or Lakka:
+KNULLI, ROCKNIX, AmberELEC, EmuELEC or Lakka:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh

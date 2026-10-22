@@ -1088,7 +1088,7 @@ class DetectionFollowsTheRegistry(unittest.TestCase):
                     lambda p: str(p) in ("/usr/share/knulli/knulli.version",
                                        "/usr/share/batocera/batocera.version"),
                 ):
-            self.assertEqual(install._detect_embedded(), [("batocera", Path("/userdata/bios"))])
+            self.assertEqual(install._detect_embedded(), [("knulli", Path("/userdata/bios"))])
         # What ROCKNIX writes since 2025: OS_NAME and HW_DEVICE, no ID.
         with unittest.mock.patch.object(install, "_parse_os_release",
                                         return_value={"OS_NAME": "ROCKNIX", "HW_DEVICE": "RK3566"}):
@@ -4398,27 +4398,31 @@ class HandheldSystemsByTheirOwnFiles(unittest.TestCase):
         return root, found[0], names[0]
 
     def _elec(self, release: str, name: str, extra: dict | None = None,
-              plat: str = "retroarch"):
+              plat: str = "retroarch", folder: str = "storage/roms/bios"):
         cfg = {self.ELEC_CFG: 'system_directory = "~/roms/bios"\n'}
         root, (found_plat, path), found_name = self._one({**cfg, **(extra or {})}, release)
         self.assertEqual((found_plat, path, found_name),
-                         (plat, root / "storage/roms/bios", name))
+                         (plat, root / folder, name))
 
+    # AmberELEC and EmuELEC publish their own lists, written against
+    # /storage/roms (bios/, ports/ and neogeo/ side by side).
     def test_amberelec(self):
         self._elec('NAME="AmberELEC"\nID="coreelec"\n', "AmberELEC",
-                   plat=install._STANDIN_MANIFESTS["AmberELEC"])
+                   plat="amberelec", folder="storage/roms")
 
     def test_chaos_names_itself_amberelec(self):
         # tech4bot/AmberELEC writes the same os-release as AmberELEC.
-        self._elec('NAME="AmberELEC"\nID="coreelec"\nCOREELEC_DEVICE="RG552"\n', "AmberELEC")
+        self._elec('NAME="AmberELEC"\nID="coreelec"\nCOREELEC_DEVICE="RG552"\n', "AmberELEC",
+                   plat="amberelec", folder="storage/roms")
 
     def test_pan4elec_over_amberelec(self):
         self._elec('NAME="AmberELEC"\n', "PAN4ELEC",
-                   {"/usr/bin/batocera-info": 'echo "OPERATING SYSTEM: PAN4ELEC"\n'})
+                   {"/usr/bin/batocera-info": 'echo "OPERATING SYSTEM: PAN4ELEC"\n'},
+                   plat="amberelec", folder="storage/roms")
 
     def test_emuelec(self):
         self._elec('NAME="EmuELEC"\nID="emuelec"\n', "EmuELEC",
-                   plat=install._STANDIN_MANIFESTS["EmuELEC"])
+                   plat="emuelec", folder="storage/roms")
 
     def test_jelos(self):
         self._elec('OS_NAME="JELOS"\nHW_DEVICE="RK3566"\n', "JELOS")
@@ -4560,9 +4564,9 @@ class HandheldSystemsByTheirOwnFiles(unittest.TestCase):
         self.assertIn("JELOS and Koriki are both detected here", err.getvalue())
 
     def test_the_system_is_announced_by_its_own_name(self):
-        root, found, _name = self._one({self.ELEC_CFG: ""}, 'NAME="AmberELEC"\n')
+        root, found, _name = self._one({self.ELEC_CFG: ""}, 'OS_NAME="JELOS"\n')
         self.assertEqual(install.found_label(*found),
-                         f"AmberELEC at {root / 'storage/roms/bios'} (RetroArch files)")
+                         f"JELOS at {root / 'storage/roms/bios'} (RetroArch files)")
 
     def test_list_platforms_names_every_system(self):
         with unittest.mock.patch.object(sys, "argv", ["install.py", "--list-platforms"]), \
@@ -4592,16 +4596,25 @@ class BatoceraAndKnulliByWhatTheirBuildsWrite(unittest.TestCase):
 
     def test_knulli_by_its_os_release_or_version_file(self):
         self.assertEqual(self._detect({"OS_NAME": "knulli"}, ()),
-                         [("batocera", Path("/userdata/bios"))])
+                         [("knulli", Path("/userdata/bios"))])
         self.assertEqual(self._detect({}, ("/usr/share/knulli/knulli.version",)),
-                         [("batocera", Path("/userdata/bios"))])
+                         [("knulli", Path("/userdata/bios"))])
+
+    def test_amberelec_and_emuelec_by_their_os_release(self):
+        """Both write os-release from DISTRONAME in scripts/image. AmberELEC
+        keeps CoreELEC's ID, so its NAME tells it apart."""
+        self.assertEqual(self._detect({"NAME": "AmberELEC", "ID": "coreelec"}, ()),
+                         [("amberelec", Path("/storage/roms"))])
+        self.assertEqual(self._detect({"NAME": "EmuELEC", "ID": "emuelec"}, ()),
+                         [("emuelec", Path("/storage/roms"))])
+        self.assertEqual(self._detect({"NAME": "CoreELEC", "ID": "coreelec"}, ()), [])
 
     def test_a_knulli_board_is_named_and_not_narrowed(self):
         board = Path(_tempdir(self)) / "knulli.arch"
         board.write_text("a133")
         with unittest.mock.patch.dict(install._DERIVATIVE_BOARDS,
-                                      {"batocera": ("Knulli", str(board))}):
-            self.assertEqual(install.derivative_board("batocera"), ("Knulli", "a133"))
+                                      {"knulli": ("Knulli", str(board))}):
+            self.assertEqual(install.derivative_board("knulli"), ("Knulli", "a133"))
             self.assertIsNone(install.derivative_board("recalbox"))
 
     def test_the_run_says_why_every_board_is_installed(self):

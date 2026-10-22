@@ -5025,6 +5025,9 @@ def generate_wiki_data_model(db: dict, profiles: dict) -> str:
         "`base_destination` is the prefix the pack applies to every entry. It is",
         "empty when the upstream destinations already carry their own root, which",
         "is why the RetroDECK pack ships `bios/` and `roms/` at its top level.",
+        "Core files then go under `core_destination` when the platform states one",
+        "(`bios` for AmberELEC and EmuELEC, whose lists also name `neogeo/` and",
+        "`ports/`), else under the root nearly every destination shares.",
         "",
         "## Emulator YAML",
         "",
@@ -5248,6 +5251,9 @@ ZIP: extract them all into the same folder.
 | Android (Retroid Pocket, Odin, etc.) | RetroArch for Android | [RetroArch]({rel}) | `RetroArch/system/` on internal storage or SD card |
 | [ROCKNIX](https://rocknix.org/) | Linux OS for ARM and x86 handhelds, among them the RG35XX (H700) and the RG552 (RK3399) | [ROCKNIX]({rel}) | `/storage/roms/bios/`, over SSH or the network share |
 | [Batocera](https://batocera.org/) | Also has images for handheld chips, among them H700 and RK3326 | [Batocera]({rel}) | `/userdata/bios/` |
+| [KNULLI](https://knulli.org/) | Batocera-based OS for handhelds, among them the RG35XX family (H700) and the TrimUI Smart Pro | [KNULLI]({rel}) | `/userdata/bios/` |
+| [AmberELEC](https://amberelec.org/) | Linux OS for Anbernic handhelds: RG351P, RG351V, RG351MP, RG353, RG503 and RG552 | [AmberELEC]({rel}) | `/storage/roms/`, which the pack fills with `bios/` and `neogeo/` |
+| [EmuELEC](https://emuelec.org/) | Linux OS for Amlogic TV boxes, the Odroid Go Advance, GameForce and RK356x devices | [EmuELEC]({rel}) | `/storage/roms/`, which the pack fills with `bios/`, `neogeo/` and `ports/` |
 
 ### FPGA
 
@@ -5315,6 +5321,16 @@ def _link_pack_cells(page: str) -> str:
             raise KeyError(f"no registered platform is displayed as {label!r}")
         return f"| {download_links(keys[label], record, REPO_URL, label)} |"
 
+    def released(line: str) -> bool:
+        # A platform registered after the recorded release has no pack in
+        # it yet: its row would send the reader to a release without one.
+        found = cell.search(line)
+        if not found or not record.get("packs"):
+            return True
+        label = found.group(1)
+        return label not in keys or release_record.pack_for(keys[label], record) is not None
+
+    page = "\n".join(line for line in page.split("\n") if released(line))
     return cell.sub(link, page)
 
 
@@ -5702,8 +5718,8 @@ def _generate(args: argparse.Namespace) -> None:
     mkdocs_static = """\
 site_name: RetroBIOS
 site_description: Source-verified BIOS and firmware packs for RetroArch, Batocera,
-  Recalbox, Lakka, RetroPie, EmuDeck, RetroBat, RetroDECK, RomM, BizHawk, ROCKNIX
-  and MiSTer FPGA.
+  Recalbox, Lakka, RetroPie, EmuDeck, RetroBat, RetroDECK, RomM, BizHawk, ROCKNIX,
+  KNULLI, AmberELEC, EmuELEC and MiSTer FPGA.
 site_url: https://abdess.github.io/retrobios/
 repo_url: https://github.com/Abdess/retrobios
 repo_name: Abdess/retrobios

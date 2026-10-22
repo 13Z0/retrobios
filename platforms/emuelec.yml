@@ -1,0 +1,4068 @@
+platform: EmuELEC
+version: '4.8'
+homepage: "https://emuelec.org"
+source: "https://raw.githubusercontent.com/EmuELEC/EmuELEC/v4.8/packages/sx05re/emuelec/bin/batocera/batocera-systems"
+base_destination: ''
+core_destination: bios
+hash_type: md5
+verification_mode: md5
+cores:
+- "81"
+- AMIBERRY
+- AdvanceMame
+- Chocolate-Doom
+- DOSBOXSDL2
+- Duckstation
+- ECWolf
+- FBNEOSA
+- GZDoom
+- HATARISA
+- HYPSEUS
+- LZDoom
+- OPENBOR
+- PPSSPPSDL
+- Pico-8
+- SCUMMVMSA
+- STELLASA
+- Solarus
+- a5200
+- advancemame
+- amiberry
+- atari800
+- bk
+- bluemsx
+- cap32
+- chocolate-doom
+- daphne
+- dolphin
+- dosbox_pure
+- dosbox_svn
+- dosboxsdl2
+- duckstation
+- easyrpg
+- ecwolf
+- fake08
+- fbalpha2012
+- fbneo
+- fbneosa
+- fceumm
+- fceumm_mod
+- ffplay
+- flycast
+- flycast_32b
+- flycast_dojo
+- flycastsa
+- fmsx
+- freeintv
+- freej2me
+- fuse
+- gambatte
+- gearboy
+- gearcoleco
+- geargrafx
+- gearlynx
+- gearsystem
+- genesis_plus_gx
+- genesis_plus_gx_cart_special
+- genesis_plus_gx_wide
+- geolith
+- gmloader
+- gpsp
+- gw
+- gzdoom
+- handy
+- hatari
+- hatarisa
+- hypseus
+- ikemen
+- jzintv
+- lzdoom
+- mame
+- mame2003_plus
+- mame2010
+- mednafen_lynx
+- mednafen_ngp
+- mednafen_pce_fast
+- mednafen_pcfx
+- mednafen_saturn
+- mednafen_supafaust
+- mednafen_supergrafx
+- mednafen_vb
+- mednafen_wswan
+- mesen
+- mesen-s
+- mgba
+- mpv
+- mupen64plus
+- mupen64plus_32b
+- mupen64plus_next
+- mupen64plus_next_alt
+- mupen64plussa
+- nekop2
+- neocd
+- nestopia
+- np2kai
+- o2em
+- openbor
+- opera
+- parallel_n64_32b
+- pcsx_rearmed
+- pcsx_rearmed_32b
+- pico-8
+- picodrive
+- pocketcdg
+- pokemini
+- ports
+- potator
+- ppsspp
+- ppssppsdl
+- prboom
+- prosystem
+- puae
+- puae2021
+- px68k
+- same_cdi
+- sameboy
+- sameduck
+- scummvm
+- scummvmsa
+- snes9x
+- snes9x2002
+- snes9x2005_plus
+- snes9x2010
+- solarus
+- stella
+- stellasa
+- swanstation
+- tgbdual
+- tic80
+- uae4arm_32b
+- uzem
+- vba_next
+- vbam
+- vecx
+- vice_x128
+- vice_x64
+- vice_x64sc
+- vice_xplus4
+- vice_xvic
+- virtualjaguar
+- x1
+- yabasanshiro
+standalone_cores:
+- AMIBERRY
+- AdvanceMame
+- Chocolate-Doom
+- DOSBOXSDL2
+- Duckstation
+- ECWolf
+- FBNEOSA
+- GZDoom
+- HATARISA
+- HYPSEUS
+- LZDoom
+- OPENBOR
+- PPSSPPSDL
+- Pico-8
+- SCUMMVMSA
+- STELLASA
+- Solarus
+- advancemame
+- amiberry
+- chocolate-doom
+- dolphin
+- dosboxsdl2
+- duckstation
+- ecwolf
+- fbneo
+- fbneosa
+- ffplay
+- flycast
+- flycast_dojo
+- flycastsa
+- gmloader
+- gzdoom
+- hatari
+- hatarisa
+- hypseus
+- ikemen
+- jzintv
+- lzdoom
+- mpv
+- mupen64plus
+- mupen64plussa
+- openbor
+- pico-8
+- ports
+- ppsspp
+- ppssppsdl
+- scummvm
+- scummvmsa
+- solarus
+- stella
+- stellasa
+- yabasanshiro
+dual_mode_cores:
+- fbneo
+- flycast
+- hatari
+- scummvm
+- stella
+- yabasanshiro
+systems:
+  atari-5200:
+    files:
+    - name: 5200.rom
+      destination: bios/5200.rom
+      required: true
+      md5: 281f20ea4320404ec820fb7ec0693b38
+      native_system: atari5200
+      native_path: bios/5200.rom
+      native_name: Atari 5200
+    native_id: atari5200
+    name: Atari 5200
+  atari-400-800:
+    files:
+    - name: ATARIXL.ROM
+      destination: bios/ATARIXL.ROM
+      required: true
+      md5: 06daac977823773a3eea3422fd26a703
+      native_system: atari800
+      native_path: bios/ATARIXL.ROM
+      native_name: Atari 800
+    - name: ATARIBAS.ROM
+      destination: bios/ATARIBAS.ROM
+      required: true
+      md5: 0bac0c6a50104045d902df4503a4c30b
+      native_system: atari800
+      native_path: bios/ATARIBAS.ROM
+      native_name: Atari 800
+    - name: ATARIOSA.ROM
+      destination: bios/ATARIOSA.ROM
+      required: true
+      md5: eb1f32f5d9f382db1bbfb8d7f9cb343a
+      native_system: atari800
+      native_path: bios/ATARIOSA.ROM
+      native_name: Atari 800
+    - name: ATARIOSB.ROM
+      destination: bios/ATARIOSB.ROM
+      required: true
+      md5: a3e8d617c95d08031fe1b20d541434b2
+      native_system: atari800
+      native_path: bios/ATARIOSB.ROM
+      native_name: Atari 800
+    native_id: atari800
+    name: Atari 800
+  atari-7800:
+    files:
+    - name: "7800 BIOS (U).rom"
+      destination: "bios/7800 BIOS (U).rom"
+      required: true
+      md5: 0763f1ffb006ddbe32e52d497ee848ae
+      native_system: atari7800
+      native_path: "bios/7800 BIOS (U).rom"
+      native_name: Atari 7800
+    native_id: atari7800
+    name: Atari 7800
+  atari-st:
+    files:
+    - name: tos.img
+      destination: bios/tos.img
+      required: true
+      md5: b2a8570de2e850c5acf81cb80512d9f6
+      native_system: atarist
+      native_path: bios/tos.img
+      native_name: Atari ST
+    native_id: atarist
+    name: Atari ST
+  atari-lynx:
+    files:
+    - name: lynxboot.img
+      destination: bios/lynxboot.img
+      required: true
+      md5: fcd403db69f54290b51035d82f835e7b
+      native_system: atarilynx
+      native_path: bios/lynxboot.img
+      native_name: Lynx
+    native_id: atarilynx
+    name: Lynx
+  coleco-colecovision:
+    files:
+    - name: config.ini
+      destination: bios/Machines/COL - Bit Corporation Dina/config.ini
+      required: true
+      native_system: colecovision
+      native_path: bios/Machines/COL - Bit Corporation Dina/config.ini
+      native_name: Colecovision
+    - name: czz50-1.rom
+      destination: bios/Machines/COL - Bit Corporation Dina/czz50-1.rom
+      required: true
+      md5: 1de922acdd742d31349c2801e9768c35
+      native_system: colecovision
+      native_path: bios/Machines/COL - Bit Corporation Dina/czz50-1.rom
+      native_name: Colecovision
+    - name: czz50-2.rom
+      destination: bios/Machines/COL - Bit Corporation Dina/czz50-2.rom
+      required: true
+      md5: 72b089dc55b7fe7ffb5028f365e8c045
+      native_system: colecovision
+      native_path: bios/Machines/COL - Bit Corporation Dina/czz50-2.rom
+      native_name: Colecovision
+    - name: coleco.rom
+      destination: bios/Machines/COL - ColecoVision/coleco.rom
+      required: true
+      md5: 2c66f5911e5b42b8ebe113403548eee7
+      native_system: colecovision
+      native_path: bios/Machines/COL - ColecoVision/coleco.rom
+      native_name: Colecovision
+    - name: config.ini
+      destination: bios/Machines/COL - ColecoVision/config.ini
+      required: true
+      native_system: colecovision
+      native_path: bios/Machines/COL - ColecoVision/config.ini
+      native_name: Colecovision
+    - name: coleco.rom
+      destination: bios/Machines/COL - ColecoVision with Opcode Memory Extension/coleco.rom
+      required: true
+      md5: 2c66f5911e5b42b8ebe113403548eee7
+      native_system: colecovision
+      native_path: bios/Machines/COL - ColecoVision with Opcode Memory Extension/coleco.rom
+      native_name: Colecovision
+    - name: config.ini
+      destination: bios/Machines/COL - ColecoVision with Opcode Memory Extension/config.ini
+      required: true
+      native_system: colecovision
+      native_path: bios/Machines/COL - ColecoVision with Opcode Memory Extension/config.ini
+      native_name: Colecovision
+    - name: config.ini
+      destination: bios/Machines/COL - Spectravideo SVI-603 Coleco/config.ini
+      required: true
+      native_system: colecovision
+      native_path: bios/Machines/COL - Spectravideo SVI-603 Coleco/config.ini
+      native_name: Colecovision
+    - name: SVI603.ROM
+      destination: bios/Machines/COL - Spectravideo SVI-603 Coleco/SVI603.ROM
+      required: true
+      md5: c60a2e85572c0ccb69505a7646d5c1b6
+      native_system: colecovision
+      native_path: bios/Machines/COL - Spectravideo SVI-603 Coleco/SVI603.ROM
+      native_name: Colecovision
+    - name: colecodb.xml
+      destination: bios/Databases/colecodb.xml
+      required: true
+      native_system: colecovision
+      native_path: bios/Databases/colecodb.xml
+      native_name: Colecovision
+    native_id: colecovision
+    name: Colecovision
+  commodore-amiga:
+    files:
+    - name: "CDTV Extended-ROM v1.0 (1991)(Commodore)(CDTV)[!].rom"
+      destination: "bios/CDTV Extended-ROM v1.0 (1991)(Commodore)(CDTV)[!].rom"
+      required: true
+      md5: 89da1838a24460e4b93f4f0c5d92d48d
+      native_system: amiga
+      native_path: "bios/CDTV Extended-ROM v1.0 (1991)(Commodore)(CDTV)[!].rom"
+      native_name: Amiga/CD32
+    - name: "Kickstart v1.2 r33.180 (1986)(Commodore)(A500-A1000-A2000)[!].rom"
+      destination: "bios/Kickstart v1.2 r33.180 (1986)(Commodore)(A500-A1000-A2000)[!].rom"
+      required: true
+      md5: 85ad74194e87c08904327de1a9443b7a
+      native_system: amiga
+      native_path: "bios/Kickstart v1.2 r33.180 (1986)(Commodore)(A500-A1000-A2000)[!].rom"
+      native_name: Amiga/CD32
+    - name: "Kickstart v1.2 rev 33.166 (1986)(Commodore)(A1000).rom"
+      destination: "bios/Kickstart v1.2 rev 33.166 (1986)(Commodore)(A1000).rom"
+      required: true
+      md5: 68c9c0826f6c0ca20546d588ee77391c
+      native_system: amiga
+      native_path: "bios/Kickstart v1.2 rev 33.166 (1986)(Commodore)(A1000).rom"
+      native_name: Amiga/CD32
+    - name: "Kickstart v1.3 r34.5 (1987)(Commodore)(A500-A1000-A2000-CDTV)[o].rom"
+      destination: "bios/Kickstart v1.3 r34.5 (1987)(Commodore)(A500-A1000-A2000-CDTV)[o].rom"
+      required: true
+      md5: 192d6d950d0ed3df8040b788502831c2
+      native_system: amiga
+      native_path: "bios/Kickstart v1.3 r34.5 (1987)(Commodore)(A500-A1000-A2000-CDTV)[o].rom"
+      native_name: Amiga/CD32
+    - name: "Kickstart v1.3 r34.5 (1987)(Commodore)(A500-A1000-A2000-CDTV)[!].rom"
+      destination: "bios/Kickstart v1.3 r34.5 (1987)(Commodore)(A500-A1000-A2000-CDTV)[!].rom"
+      required: true
+      md5: 82a21c1890cae844b3df741f2762d48d
+      native_system: amiga
+      native_path: "bios/Kickstart v1.3 r34.5 (1987)(Commodore)(A500-A1000-A2000-CDTV)[!].rom"
+      native_name: Amiga/CD32
+    - name: "Kickstart v2.04 r37.175 (1991)(Commodore)(A500+)[!].rom"
+      destination: "bios/Kickstart v2.04 r37.175 (1991)(Commodore)(A500+)[!].rom"
+      required: true
+      md5: dc10d7bdd1b6f450773dfb558477c230
+      native_system: amiga
+      native_path: "bios/Kickstart v2.04 r37.175 (1991)(Commodore)(A500+)[!].rom"
+      native_name: Amiga/CD32
+    - name: "Kickstart v2.05 r37.350 (1992)(Commodore)(A600HD)[!].rom"
+      destination: "bios/Kickstart v2.05 r37.350 (1992)(Commodore)(A600HD)[!].rom"
+      required: true
+      md5: 465646c9b6729f77eea5314d1f057951
+      native_system: amiga
+      native_path: "bios/Kickstart v2.05 r37.350 (1992)(Commodore)(A600HD)[!].rom"
+      native_name: Amiga/CD32
+    - name: "Kickstart v3.1 r40.60 (1993)(Commodore)(CD32).rom"
+      destination: "bios/Kickstart v3.1 r40.60 (1993)(Commodore)(CD32).rom"
+      required: true
+      md5: 5f8924d013dd57a89cf349f4cdedc6b1
+      native_system: amiga
+      native_path: "bios/Kickstart v3.1 r40.60 (1993)(Commodore)(CD32).rom"
+      native_name: Amiga/CD32
+    - name: "Kickstart v3.1 r40.68 (1993)(Commodore)(A1200)[!].rom"
+      destination: "bios/Kickstart v3.1 r40.68 (1993)(Commodore)(A1200)[!].rom"
+      required: true
+      md5: 646773759326fbac3b2311fd8c8793ee
+      native_system: amiga
+      native_path: "bios/Kickstart v3.1 r40.68 (1993)(Commodore)(A1200)[!].rom"
+      native_name: Amiga/CD32
+    - name: "Kickstart v3.1 r40.68 (1993)(Commodore)(A3000).rom"
+      destination: "bios/Kickstart v3.1 r40.68 (1993)(Commodore)(A3000).rom"
+      required: true
+      md5: 413590e50098a056cfec418d3df0212d
+      native_system: amiga
+      native_path: "bios/Kickstart v3.1 r40.68 (1993)(Commodore)(A3000).rom"
+      native_name: Amiga/CD32
+    - name: "Kickstart v3.1 r40.68 (1993)(Commodore)(A4000).rom"
+      destination: "bios/Kickstart v3.1 r40.68 (1993)(Commodore)(A4000).rom"
+      required: true
+      md5: 9bdedde6a4f33555b4a270c8ca53297d
+      native_system: amiga
+      native_path: "bios/Kickstart v3.1 r40.68 (1993)(Commodore)(A4000).rom"
+      native_name: Amiga/CD32
+    - name: kick33180.A500
+      destination: bios/kick33180.A500
+      required: true
+      md5: 85ad74194e87c08904327de1a9443b7a
+      native_system: amiga
+      native_path: bios/kick33180.A500
+      native_name: Amiga/CD32
+    - name: kick34005.A500
+      destination: bios/kick34005.A500
+      required: true
+      md5: 82a21c1890cae844b3df741f2762d48d
+      native_system: amiga
+      native_path: bios/kick34005.A500
+      native_name: Amiga/CD32
+    - name: kick37175.A500
+      destination: bios/kick37175.A500
+      required: true
+      md5: dc10d7bdd1b6f450773dfb558477c230
+      native_system: amiga
+      native_path: bios/kick37175.A500
+      native_name: Amiga/CD32
+    - name: kick40060.CD32
+      destination: bios/kick40060.CD32
+      required: true
+      md5: 5f8924d013dd57a89cf349f4cdedc6b1
+      native_system: amiga
+      native_path: bios/kick40060.CD32
+      native_name: Amiga/CD32
+    - name: kick40060.CD32.ext
+      destination: bios/kick40060.CD32.ext
+      required: true
+      md5: bb72565701b1b6faece07d68ea5da639
+      native_system: amiga
+      native_path: bios/kick40060.CD32.ext
+      native_name: Amiga/CD32
+    - name: kick40063.A600
+      destination: bios/kick40063.A600
+      required: true
+      md5: e40a5dfb3d017ba8779faba30cbd1c8e
+      native_system: amiga
+      native_path: bios/kick40063.A600
+      native_name: Amiga/CD32
+    - name: kick40068.A1200
+      destination: bios/kick40068.A1200
+      required: true
+      md5: 646773759326fbac3b2311fd8c8793ee
+      native_system: amiga
+      native_path: bios/kick40068.A1200
+      native_name: Amiga/CD32
+    - name: kick40068.A4000
+      destination: bios/kick40068.A4000
+      required: true
+      md5: 9bdedde6a4f33555b4a270c8ca53297d
+      native_system: amiga
+      native_path: bios/kick40068.A4000
+      native_name: Amiga/CD32
+    - name: "CD32 Extended-ROM r40.60 (1993)(Commodore)(CD32).rom"
+      destination: "bios/CD32 Extended-ROM r40.60 (1993)(Commodore)(CD32).rom"
+      required: true
+      md5: bb72565701b1b6faece07d68ea5da639
+      native_system: amiga
+      native_path: "bios/CD32 Extended-ROM r40.60 (1993)(Commodore)(CD32).rom"
+      native_name: Amiga/CD32
+    native_id: amiga
+    name: Amiga/CD32
+  fmtowns:
+    files:
+    - name: FMT_DIC.ROM
+      destination: bios/fmtowns/FMT_DIC.ROM
+      required: true
+      md5: 8fa4e553f28cfc0c30a0a1e589799942
+      native_system: fmtowns
+      native_path: bios/fmtowns/FMT_DIC.ROM
+      native_name: Fujistu FM-Towns
+    - name: FMT_DOS.ROM
+      destination: bios/fmtowns/FMT_DOS.ROM
+      required: true
+      md5: 0585b19930d4a7f4c71bcc8a33746588
+      native_system: fmtowns
+      native_path: bios/fmtowns/FMT_DOS.ROM
+      native_name: Fujistu FM-Towns
+    - name: FMT_F20.ROM
+      destination: bios/fmtowns/FMT_F20.ROM
+      required: true
+      md5: ac0c7021e9bf48ca84b51ab651169a88
+      native_system: fmtowns
+      native_path: bios/fmtowns/FMT_F20.ROM
+      native_name: Fujistu FM-Towns
+    - name: FMT_FNT.ROM
+      destination: bios/fmtowns/FMT_FNT.ROM
+      required: true
+      md5: b91300e55b70227ce98b59c5f02fa8dd
+      native_system: fmtowns
+      native_path: bios/fmtowns/FMT_FNT.ROM
+      native_name: Fujistu FM-Towns
+    - name: FMT_SYS.ROM
+      destination: bios/fmtowns/FMT_SYS.ROM
+      required: true
+      md5: 86fb6f7280689259f0ca839dd3dd6cde
+      native_system: fmtowns
+      native_path: bios/fmtowns/FMT_SYS.ROM
+      native_name: Fujistu FM-Towns
+    - name: fmtmarty.zip
+      destination: bios/fmtmarty.zip
+      required: true
+      native_system: fmtowns
+      native_path: bios/fmtmarty.zip
+      native_name: Fujistu FM-Towns
+    - name: fmtmarty.zip
+      destination: bios/fmtmarty.zip
+      required: true
+      md5: 6618519b2c104cf9b7e71a48381b44a9
+      zipped_file: mrom.m36
+      native_system: fmtowns
+      native_path: bios/fmtmarty.zip
+      native_name: Fujistu FM-Towns
+    - name: fmtmarty.zip
+      destination: bios/fmtmarty.zip
+      required: true
+      md5: 75a5c7afb4bc8221bab8cf24db417950
+      zipped_file: mrom.m37
+      native_system: fmtowns
+      native_path: bios/fmtmarty.zip
+      native_name: Fujistu FM-Towns
+    - name: fmtowns.zip
+      destination: bios/fmtowns.zip
+      required: true
+      native_system: fmtowns
+      native_path: bios/fmtowns.zip
+      native_name: Fujistu FM-Towns
+    - name: fmtowns.zip
+      destination: bios/fmtowns.zip
+      required: true
+      md5: 34847786d7de94b5d1133c956ab1d75d
+      zipped_file: fmt_dic.rom
+      native_system: fmtowns
+      native_path: bios/fmtowns.zip
+      native_name: Fujistu FM-Towns
+    - name: fmtowns.zip
+      destination: bios/fmtowns.zip
+      required: true
+      md5: 0585b19930d4a7f4c71bcc8a33746588
+      zipped_file: fmt_dos.rom
+      native_system: fmtowns
+      native_path: bios/fmtowns.zip
+      native_name: Fujistu FM-Towns
+    - name: fmtowns.zip
+      destination: bios/fmtowns.zip
+      required: true
+      md5: eb44f2093f51eb7159f03e170b13af76
+      zipped_file: fmt_fnt.rom
+      native_system: fmtowns
+      native_path: bios/fmtowns.zip
+      native_name: Fujistu FM-Towns
+    - name: fmtowns.zip
+      destination: bios/fmtowns.zip
+      required: true
+      md5: feaf8c5675151e00cfe3ad27673bff29
+      zipped_file: fmt_sys.rom
+      native_system: fmtowns
+      native_path: bios/fmtowns.zip
+      native_name: Fujistu FM-Towns
+    - name: fmtownsux.zip
+      destination: bios/fmtownsux.zip
+      required: true
+      native_system: fmtowns
+      native_path: bios/fmtownsux.zip
+      native_name: Fujistu FM-Towns
+    - name: fmtownsux.zip
+      destination: bios/fmtownsux.zip
+      required: true
+      md5: 8fa4e553f28cfc0c30a0a1e589799942
+      zipped_file: fmt_dic.rom
+      native_system: fmtowns
+      native_path: bios/fmtownsux.zip
+      native_name: Fujistu FM-Towns
+    - name: fmtownsux.zip
+      destination: bios/fmtownsux.zip
+      required: true
+      md5: 03c8fac9a5f5f5f35fb5de5a5d0d018f
+      zipped_file: fmt_dos_a.rom
+      native_system: fmtowns
+      native_path: bios/fmtownsux.zip
+      native_name: Fujistu FM-Towns
+    - name: fmtownsux.zip
+      destination: bios/fmtownsux.zip
+      required: true
+      md5: b91300e55b70227ce98b59c5f02fa8dd
+      zipped_file: fmt_fnt.rom
+      native_system: fmtowns
+      native_path: bios/fmtownsux.zip
+      native_name: Fujistu FM-Towns
+    - name: fmtownsux.zip
+      destination: bios/fmtownsux.zip
+      required: true
+      md5: 90b5e01d42aaa93e8f4503a5e94e120b
+      zipped_file: fmt_sys_a.rom
+      native_system: fmtowns
+      native_path: bios/fmtownsux.zip
+      native_name: Fujistu FM-Towns
+    - name: fmtownsux.zip
+      destination: bios/fmtownsux.zip
+      required: true
+      md5: 1a15f6c1b58ec7e5f850118610a787a7
+      zipped_file: mytownsux.rom
+      native_system: fmtowns
+      native_path: bios/fmtownsux.zip
+      native_name: Fujistu FM-Towns
+    native_id: fmtowns
+    name: Fujistu FM-Towns
+  magnavox-odyssey2:
+    files:
+    - name: o2rom.bin
+      destination: bios/o2rom.bin
+      required: true
+      md5: 562d5ebf9e030a40d6fabfc2f33139fd
+      native_system: o2em
+      native_path: bios/o2rom.bin
+      native_name: Odyssey 2
+    - name: c52.bin
+      destination: bios/c52.bin
+      required: true
+      md5: f1071cdb0b6b10dde94d3bc8a6146387
+      native_system: o2em
+      native_path: bios/c52.bin
+      native_name: Odyssey 2
+    - name: g7400.bin
+      destination: bios/g7400.bin
+      required: true
+      md5: c500ff71236068e0dc0d0603d265ae76
+      native_system: o2em
+      native_path: bios/g7400.bin
+      native_name: Odyssey 2
+    - name: jopac.bin
+      destination: bios/jopac.bin
+      required: true
+      md5: 279008e4a0db2dc5f1c048853b033828
+      native_system: o2em
+      native_path: bios/jopac.bin
+      native_name: Odyssey 2
+    native_id: o2em
+    name: Odyssey 2
+  mattel-intellivision:
+    files:
+    - name: exec.bin
+      destination: bios/exec.bin
+      required: true
+      md5: 62e761035cb657903761800f4437b8af
+      native_system: intellivision
+      native_path: bios/exec.bin
+      native_name: Mattel Intellivision
+    - name: grom.bin
+      destination: bios/grom.bin
+      required: true
+      md5: 0cd5946c6473e42e8e4c2137785e427f
+      native_system: intellivision
+      native_path: bios/grom.bin
+      native_name: Mattel Intellivision
+    - name: ECS.bin
+      destination: bios/ECS.bin
+      required: true
+      md5: 2e72a9a2b897d330a35c8b07a6146c52
+      native_system: intellivision
+      native_path: bios/ECS.bin
+      native_name: Mattel Intellivision
+    - name: IVOICE.bin
+      destination: bios/IVOICE.bin
+      required: true
+      md5: d5530f74681ec6e0f282dab42e6b1c5f
+      native_system: intellivision
+      native_path: bios/IVOICE.bin
+      native_name: Mattel Intellivision
+    native_id: intellivision
+    name: Mattel Intellivision
+  microsoft-msx:
+    files:
+    - name: config.ini
+      destination: bios/Machines/Forte II Games - Pesadelo/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/Forte II Games - Pesadelo/config.ini
+      native_name: MSX
+    - name: pesadelo.rom
+      destination: bios/Machines/Forte II Games - Pesadelo/pesadelo.rom
+      required: true
+      native_system: msx
+      native_path: bios/Machines/Forte II Games - Pesadelo/pesadelo.rom
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX/config.ini
+      native_name: MSX
+    - name: hardwareconfig.xml
+      destination: bios/Machines/MSX/hardwareconfig.xml
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX/hardwareconfig.xml
+      native_name: MSX
+    - name: MSX.ROM
+      destination: bios/Machines/MSX/MSX.ROM
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX/MSX.ROM
+      native_name: MSX
+    - name: MSX2.ROM
+      destination: bios/Machines/MSX/MSX2.ROM
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX/MSX2.ROM
+      native_name: MSX
+    - name: MSX2EXT.ROM
+      destination: bios/Machines/MSX/MSX2EXT.ROM
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX/MSX2EXT.ROM
+      native_name: MSX
+    - name: MSX2P.ROM
+      destination: bios/Machines/MSX/MSX2P.ROM
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX/MSX2P.ROM
+      native_name: MSX
+    - name: MSX2PEXT.ROM
+      destination: bios/Machines/MSX/MSX2PEXT.ROM
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX/MSX2PEXT.ROM
+      native_name: MSX
+    - name: MSXDOS2.ROM
+      destination: bios/Machines/MSX/MSXDOS2.ROM
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX/MSXDOS2.ROM
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Al Alamiah AX-170/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Al Alamiah AX-170/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Arabic/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Arabic/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Brazilian/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Brazilian/config.ini
+      native_name: MSX
+    - name: hardwareconfig.xml
+      destination: bios/Machines/MSX - Brazilian/hardwareconfig.xml
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Brazilian/hardwareconfig.xml
+      native_name: MSX
+    - name: cbios.txt
+      destination: bios/Machines/MSX - C-BIOS/cbios.txt
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - C-BIOS/cbios.txt
+      native_name: MSX
+    - name: cbios_logo_msx1.rom
+      destination: bios/Machines/MSX - C-BIOS/cbios_logo_msx1.rom
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - C-BIOS/cbios_logo_msx1.rom
+      native_name: MSX
+    - name: cbios_main_msx1.rom
+      destination: bios/Machines/MSX - C-BIOS/cbios_main_msx1.rom
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - C-BIOS/cbios_main_msx1.rom
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - C-BIOS/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - C-BIOS/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Canon V-10/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Canon V-10/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Canon V-20/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Canon V-20/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Daewoo DPC-100/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Daewoo DPC-100/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Daewoo DPC-180/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Daewoo DPC-180/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Daewoo DPC-200/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Daewoo DPC-200/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Estonian/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Estonian/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Frael Bruc 100-1/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Frael Bruc 100-1/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - French/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - French/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - German/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - German/config.ini
+      native_name: MSX
+    - name: hardwareconfig.xml
+      destination: bios/Machines/MSX - German/hardwareconfig.xml
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - German/hardwareconfig.xml
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Goldstar FC-200/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Goldstar FC-200/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Gradiente Expert 1.0/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Gradiente Expert 1.0/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Gradiente Expert 1.1/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Gradiente Expert 1.1/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Gradiente Expert 1.3/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Gradiente Expert 1.3/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Gradiente Expert DDPlus/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Gradiente Expert DDPlus/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Gradiente Expert Plus/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Gradiente Expert Plus/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Japanese/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Japanese/config.ini
+      native_name: MSX
+    - name: hardwareconfig.xml
+      destination: bios/Machines/MSX - Japanese/hardwareconfig.xml
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Japanese/hardwareconfig.xml
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - JVC HC-7GB/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - JVC HC-7GB/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Korean/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Korean/config.ini
+      native_name: MSX
+    - name: hardwareconfig.xml
+      destination: bios/Machines/MSX - Korean/hardwareconfig.xml
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Korean/hardwareconfig.xml
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Mitsubishi ML-F80/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Mitsubishi ML-F80/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Mitsubishi ML-FX1/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Mitsubishi ML-FX1/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - National CF-1200/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - National CF-1200/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2 - Panasonic FS-A1/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - Panasonic FS-A1/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: "bios/Machines/MSX2 - Panasonic FS-A1 (a)/config.ini"
+      required: true
+      native_system: msx
+      native_path: "bios/Machines/MSX2 - Panasonic FS-A1 (a)/config.ini"
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2 - Panasonic FS-A1F/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - Panasonic FS-A1F/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2 - Panasonic FS-A1FM/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - Panasonic FS-A1FM/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2 - Panasonic FS-A1MK2/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - Panasonic FS-A1MK2/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2 - Philips NMS-8220/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - Philips NMS-8220/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: "bios/Machines/MSX2 - Philips NMS-8220 (a)/config.ini"
+      required: true
+      native_system: msx
+      native_path: "bios/Machines/MSX2 - Philips NMS-8220 (a)/config.ini"
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2 - Philips NMS-8245/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - Philips NMS-8245/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2 - Philips NMS-8245F/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - Philips NMS-8245F/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2 - Philips NMS-8250/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - Philips NMS-8250/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2 - Philips NMS-8255/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - Philips NMS-8255/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2 - Philips NMS-8280/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - Philips NMS-8280/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2 - Philips NMS-8280G/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - Philips NMS-8280G/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2 - Philips VG-8230/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - Philips VG-8230/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2 - Philips VG-8235/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - Philips VG-8235/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Sharp Epcom HotBit 1.2/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Sharp Epcom HotBit 1.2/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Sharp Epcom HotBit 1.3b/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Sharp Epcom HotBit 1.3b/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Sharp Epcom HotBit 1.3p/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Sharp Epcom HotBit 1.3p/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Sony HB-10P/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Sony HB-10P/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Sony HB-201/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Sony HB-201/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Sony HB-201P/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Sony HB-201P/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Sony HB-20P/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Sony HB-20P/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Sony HB-501P/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Sony HB-501P/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Sony HB-55D/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Sony HB-55D/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Sony HB-55P/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Sony HB-55P/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Sony HB-75D/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Sony HB-75D/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Sony HB-75P/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Sony HB-75P/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Spanish/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Spanish/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Spectravideo SVI-728/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Spectravideo SVI-728/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Spectravideo SVI-738/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Spectravideo SVI-738/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2 - Spectravideo SVI-738-2 CUC/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - Spectravideo SVI-738-2 CUC/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2 - Spectravideo SVI-738-2 JP Grobler/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - Spectravideo SVI-738-2 JP Grobler/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2 - Spectravideo SVI-738-2 LC Grosso/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - Spectravideo SVI-738-2 LC Grosso/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2 - Swedish/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - Swedish/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2 - Talent TPC-310/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - Talent TPC-310/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2 - Toshiba HX-23/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - Toshiba HX-23/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2 - Toshiba HX-23F/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - Toshiba HX-23F/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2 - Virtual Haesung Console/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - Virtual Haesung Console/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2 - Yamaha CX7M/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - Yamaha CX7M/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2 - Yamaha CX7M-128/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - Yamaha CX7M-128/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2+/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2+/config.ini
+      native_name: MSX
+    - name: hardwareconfig.xml
+      destination: bios/Machines/MSX2+/hardwareconfig.xml
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2+/hardwareconfig.xml
+      native_name: MSX
+    - name: MSX.ROM
+      destination: bios/Machines/MSX2+/MSX.ROM
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2+/MSX.ROM
+      native_name: MSX
+    - name: MSX2.ROM
+      destination: bios/Machines/MSX2+/MSX2.ROM
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2+/MSX2.ROM
+      native_name: MSX
+    - name: MSX2EXT.ROM
+      destination: bios/Machines/MSX2+/MSX2EXT.ROM
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2+/MSX2EXT.ROM
+      native_name: MSX
+    - name: MSX2P.ROM
+      destination: bios/Machines/MSX2+/MSX2P.ROM
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2+/MSX2P.ROM
+      native_name: MSX
+    - name: MSX2PEXT.ROM
+      destination: bios/Machines/MSX2+/MSX2PEXT.ROM
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2+/MSX2PEXT.ROM
+      native_name: MSX
+    - name: MSXDOS2.ROM
+      destination: bios/Machines/MSX2+/MSXDOS2.ROM
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2+/MSXDOS2.ROM
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2+ - Brazilian/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2+ - Brazilian/config.ini
+      native_name: MSX
+    - name: cbios.txt
+      destination: bios/Machines/MSX2+ - C-BIOS/cbios.txt
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2+ - C-BIOS/cbios.txt
+      native_name: MSX
+    - name: cbios_logo_msx2+.rom
+      destination: bios/Machines/MSX2+ - C-BIOS/cbios_logo_msx2+.rom
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2+ - C-BIOS/cbios_logo_msx2+.rom
+      native_name: MSX
+    - name: cbios_main_msx2+.rom
+      destination: bios/Machines/MSX2+ - C-BIOS/cbios_main_msx2+.rom
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2+ - C-BIOS/cbios_main_msx2+.rom
+      native_name: MSX
+    - name: cbios_music.rom
+      destination: bios/Machines/MSX2+ - C-BIOS/cbios_music.rom
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2+ - C-BIOS/cbios_music.rom
+      native_name: MSX
+    - name: cbios_sub.rom
+      destination: bios/Machines/MSX2+ - C-BIOS/cbios_sub.rom
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2+ - C-BIOS/cbios_sub.rom
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2+ - C-BIOS/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2+ - C-BIOS/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2+ - Ciel Expert 3 IDE/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2+ - Ciel Expert 3 IDE/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2+ - Ciel Expert 3 Turbo/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2+ - Ciel Expert 3 Turbo/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Spectravideo SVI-738 Swedish/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Spectravideo SVI-738 Swedish/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Swedish/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Swedish/config.ini
+      native_name: MSX
+    - name: hardwareconfig.xml
+      destination: bios/Machines/MSX - Swedish/hardwareconfig.xml
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Swedish/hardwareconfig.xml
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Talent DPC-200/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Talent DPC-200/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Talent DPC-200A/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Talent DPC-200A/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Toshiba HX-10/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Toshiba HX-10/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Toshiba HX-10S/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Toshiba HX-10S/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Toshiba HX-20/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Toshiba HX-20/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Yamaha CX5M-1/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Yamaha CX5M-1/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Yamaha CX5M-128/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Yamaha CX5M-128/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Yamaha CX5M-2/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Yamaha CX5M-2/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Yamaha CX5MII/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Yamaha CX5MII/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Yamaha YIS303/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Yamaha YIS303/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Yamaha YIS503/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Yamaha YIS503/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Yamaha YIS503F/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Yamaha YIS503F/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Yamaha YIS503II/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Yamaha YIS503II/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Yamaha YIS503IIR/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Yamaha YIS503IIR/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Yamaha YIS503M/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Yamaha YIS503M/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Yashica YC-64/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Yashica YC-64/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Yeno DPC-64/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Yeno DPC-64/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Yeno MX64/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Yeno MX64/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2/config.ini
+      native_name: MSX
+    - name: hardwareconfig.xml
+      destination: bios/Machines/MSX2/hardwareconfig.xml
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2/hardwareconfig.xml
+      native_name: MSX
+    - name: MSX.ROM
+      destination: bios/Machines/MSX2/MSX.ROM
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2/MSX.ROM
+      native_name: MSX
+    - name: MSX2.ROM
+      destination: bios/Machines/MSX2/MSX2.ROM
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2/MSX2.ROM
+      native_name: MSX
+    - name: MSX2EXT.ROM
+      destination: bios/Machines/MSX2/MSX2EXT.ROM
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2/MSX2EXT.ROM
+      native_name: MSX
+    - name: MSX2P.ROM
+      destination: bios/Machines/MSX2/MSX2P.ROM
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2/MSX2P.ROM
+      native_name: MSX
+    - name: MSX2PEXT.ROM
+      destination: bios/Machines/MSX2/MSX2PEXT.ROM
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2/MSX2PEXT.ROM
+      native_name: MSX
+    - name: MSXDOS2.ROM
+      destination: bios/Machines/MSX2/MSXDOS2.ROM
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2/MSXDOS2.ROM
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2 - Al Alamiah AX-350/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - Al Alamiah AX-350/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2 - Al Alamiah AX-370/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - Al Alamiah AX-370/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2 - Arabic/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - Arabic/config.ini
+      native_name: MSX
+    - name: hardwareconfig.xml
+      destination: bios/Machines/MSX2 - Arabic/hardwareconfig.xml
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - Arabic/hardwareconfig.xml
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2 - Brazilian/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - Brazilian/config.ini
+      native_name: MSX
+    - name: hardwareconfig.xml
+      destination: bios/Machines/MSX2 - Brazilian/hardwareconfig.xml
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - Brazilian/hardwareconfig.xml
+      native_name: MSX
+    - name: cbios.txt
+      destination: bios/Machines/MSX2 - C-BIOS/cbios.txt
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - C-BIOS/cbios.txt
+      native_name: MSX
+    - name: cbios_logo_msx2.rom
+      destination: bios/Machines/MSX2 - C-BIOS/cbios_logo_msx2.rom
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - C-BIOS/cbios_logo_msx2.rom
+      native_name: MSX
+    - name: cbios_main_msx2.rom
+      destination: bios/Machines/MSX2 - C-BIOS/cbios_main_msx2.rom
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - C-BIOS/cbios_main_msx2.rom
+      native_name: MSX
+    - name: cbios_sub.rom
+      destination: bios/Machines/MSX2 - C-BIOS/cbios_sub.rom
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - C-BIOS/cbios_sub.rom
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2 - C-BIOS/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - C-BIOS/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2 - Daewoo CPC-300/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - Daewoo CPC-300/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2 - Daewoo CPC-300E/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - Daewoo CPC-300E/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2 - Daewoo CPC-400/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - Daewoo CPC-400/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2 - Daewoo CPC-400S/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - Daewoo CPC-400S/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2 - Estonian/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - Estonian/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2 - French/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - French/config.ini
+      native_name: MSX
+    - name: hardwareconfig.xml
+      destination: bios/Machines/MSX2 - French/hardwareconfig.xml
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - French/hardwareconfig.xml
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2 - German/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - German/config.ini
+      native_name: MSX
+    - name: hardwareconfig.xml
+      destination: bios/Machines/MSX2 - German/hardwareconfig.xml
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - German/hardwareconfig.xml
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2 - Gradiente Expert 2.0/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - Gradiente Expert 2.0/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2 - Japanese/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - Japanese/config.ini
+      native_name: MSX
+    - name: hardwareconfig.xml
+      destination: bios/Machines/MSX2 - Japanese/hardwareconfig.xml
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - Japanese/hardwareconfig.xml
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2 - Korean/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - Korean/config.ini
+      native_name: MSX
+    - name: hardwareconfig.xml
+      destination: bios/Machines/MSX2 - Korean/hardwareconfig.xml
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - Korean/hardwareconfig.xml
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2 - National FS-4500/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - National FS-4500/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2 - National FS-4600/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - National FS-4600/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2 - National FS-4700/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - National FS-4700/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2 - National FS-5000/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - National FS-5000/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2 - National FS-5500F1/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - National FS-5500F1/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2 - National FS-5500F2/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - National FS-5500F2/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Daewoo DPC-200E/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Daewoo DPC-200E/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - National CF-2000/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - National CF-2000/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Sharp Epcom HotBit 1.1/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Sharp Epcom HotBit 1.1/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Spectravideo SVI-738 Henrik Gilvad/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Spectravideo SVI-738 Henrik Gilvad/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Yamaha YIS503IIR Estonian/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Yamaha YIS503IIR Estonian/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2 - Only PSG/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - Only PSG/config.ini
+      native_name: MSX
+    - name: hardwareconfig.xml
+      destination: bios/Machines/MSX2 - Only PSG/hardwareconfig.xml
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - Only PSG/hardwareconfig.xml
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2 - Philips VG-8235F/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - Philips VG-8235F/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2 - Spanish/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - Spanish/config.ini
+      native_name: MSX
+    - name: hardwareconfig.xml
+      destination: bios/Machines/MSX2 - Spanish/hardwareconfig.xml
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - Spanish/hardwareconfig.xml
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2+ - European/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2+ - European/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - National CF-2700/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - National CF-2700/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - National CF-3000/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - National CF-3000/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - National CF-3300/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - National CF-3300/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - National FS-1300/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - National FS-1300/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - National FS-4000/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - National FS-4000/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Olympia PHC-2/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Olympia PHC-2/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Olympia PHC-28/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Olympia PHC-28/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Panasonic CF-2700G/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Panasonic CF-2700G/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Philips NMS-801/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Philips NMS-801/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Philips VG-8000/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Philips VG-8000/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Philips VG-8010/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Philips VG-8010/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Philips VG-8010F/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Philips VG-8010F/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Philips VG-8020-00/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Philips VG-8020-00/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Philips VG-8020-20/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Philips VG-8020-20/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Philips VG-8020F/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Philips VG-8020F/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Pioneer PX-7/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Pioneer PX-7/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Pioneer PX-V60/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Pioneer PX-V60/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Russian/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Russian/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Sanyo MPC-100/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Sanyo MPC-100/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Sanyo MPC-64/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Sanyo MPC-64/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Sanyo PHC-28L/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Sanyo PHC-28L/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Sanyo PHC-28S/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Sanyo PHC-28S/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX - Sanyo Wavy MPC-10/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX - Sanyo Wavy MPC-10/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2+ - Gradiente Expert AC88+/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2+ - Gradiente Expert AC88+/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2+ - Gradiente Expert DDX+/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2+ - Gradiente Expert DDX+/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2+ - MSXPLAYer 2003/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2+ - MSXPLAYer 2003/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2+ - Panasonic FS-A1FX/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2+ - Panasonic FS-A1FX/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2+ - Panasonic FS-A1WSX/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2+ - Panasonic FS-A1WSX/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2+ - Panasonic FS-A1WX/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2+ - Panasonic FS-A1WX/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: "bios/Machines/MSX2+ - Panasonic FS-A1WX (a)/config.ini"
+      required: true
+      native_system: msx
+      native_path: "bios/Machines/MSX2+ - Panasonic FS-A1WX (a)/config.ini"
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2+ - Sanyo Wavy PHC-35J/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2+ - Sanyo Wavy PHC-35J/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2+ - Sanyo Wavy PHC-70FD1/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2+ - Sanyo Wavy PHC-70FD1/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2+ - Sanyo Wavy PHC-70FD2/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2+ - Sanyo Wavy PHC-70FD2/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2+ - Sony HB-F1XDJ/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2+ - Sony HB-F1XDJ/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2+ - Sony HB-F1XV/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2+ - Sony HB-F1XV/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2+ - Sony HB-F9S+/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2+ - Sony HB-F9S+/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSXturboR/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSXturboR/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSXturboR - European/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSXturboR - European/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSXturboR - Panasonic FS-A1GT/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSXturboR - Panasonic FS-A1GT/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSXturboR - Panasonic FS-A1ST/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSXturboR - Panasonic FS-A1ST/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: "bios/Machines/MSXturboR - Panasonic FS-A1ST (a)/config.ini"
+      required: true
+      native_system: msx
+      native_path: "bios/Machines/MSXturboR - Panasonic FS-A1ST (a)/config.ini"
+      native_name: MSX
+    - name: config.ini
+      destination: "bios/Machines/MSXturboR - Panasonic FS-A1ST (b)/config.ini"
+      required: true
+      native_system: msx
+      native_path: "bios/Machines/MSXturboR - Panasonic FS-A1ST (b)/config.ini"
+      native_name: MSX
+    - name: MSX2G.rom
+      destination: bios/Machines/Shared Roms/MSX2G.rom
+      required: true
+      native_system: msx
+      native_path: bios/Machines/Shared Roms/MSX2G.rom
+      native_name: MSX
+    - name: MSXDOS23.ROM
+      destination: bios/Machines/Shared Roms/MSXDOS23.ROM
+      required: true
+      native_system: msx
+      native_path: bios/Machines/Shared Roms/MSXDOS23.ROM
+      native_name: MSX
+    - name: ARAB1.ROM
+      destination: bios/Machines/Shared Roms/ARAB1.ROM
+      required: true
+      native_system: msx
+      native_path: bios/Machines/Shared Roms/ARAB1.ROM
+      native_name: MSX
+    - name: ARABIC.rom
+      destination: bios/Machines/Shared Roms/ARABIC.rom
+      required: true
+      native_system: msx
+      native_path: bios/Machines/Shared Roms/ARABIC.rom
+      native_name: MSX
+    - name: BEERIDE.ROM
+      destination: bios/Machines/Shared Roms/BEERIDE.ROM
+      required: true
+      native_system: msx
+      native_path: bios/Machines/Shared Roms/BEERIDE.ROM
+      native_name: MSX
+    - name: FMPAC.rom
+      destination: bios/Machines/Shared Roms/FMPAC.rom
+      required: true
+      native_system: msx
+      native_path: bios/Machines/Shared Roms/FMPAC.rom
+      native_name: MSX
+    - name: GCVMX80.ROM
+      destination: bios/Machines/Shared Roms/GCVMX80.ROM
+      required: true
+      native_system: msx
+      native_path: bios/Machines/Shared Roms/GCVMX80.ROM
+      native_name: MSX
+    - name: HANGUL.rom
+      destination: bios/Machines/Shared Roms/HANGUL.rom
+      required: true
+      native_system: msx
+      native_path: bios/Machines/Shared Roms/HANGUL.rom
+      native_name: MSX
+    - name: KANJI.rom
+      destination: bios/Machines/Shared Roms/KANJI.rom
+      required: true
+      native_system: msx
+      native_path: bios/Machines/Shared Roms/KANJI.rom
+      native_name: MSX
+    - name: MICROSOLDISK.ROM
+      destination: bios/Machines/Shared Roms/MICROSOLDISK.ROM
+      required: true
+      native_system: msx
+      native_path: bios/Machines/Shared Roms/MICROSOLDISK.ROM
+      native_name: MSX
+    - name: MOONSOUND.rom
+      destination: bios/Machines/Shared Roms/MOONSOUND.rom
+      required: true
+      native_system: msx
+      native_path: bios/Machines/Shared Roms/MOONSOUND.rom
+      native_name: MSX
+    - name: MSX.rom
+      destination: bios/Machines/Shared Roms/MSX.rom
+      required: true
+      native_system: msx
+      native_path: bios/Machines/Shared Roms/MSX.rom
+      native_name: MSX
+    - name: MSX2.rom
+      destination: bios/Machines/Shared Roms/MSX2.rom
+      required: true
+      native_system: msx
+      native_path: bios/Machines/Shared Roms/MSX2.rom
+      native_name: MSX
+    - name: MSX2AR.ROM
+      destination: bios/Machines/Shared Roms/MSX2AR.ROM
+      required: true
+      native_system: msx
+      native_path: bios/Machines/Shared Roms/MSX2AR.ROM
+      native_name: MSX
+    - name: MSX2AREXT.ROM
+      destination: bios/Machines/Shared Roms/MSX2AREXT.ROM
+      required: true
+      native_system: msx
+      native_path: bios/Machines/Shared Roms/MSX2AREXT.ROM
+      native_name: MSX
+    - name: MSX2BR.rom
+      destination: bios/Machines/Shared Roms/MSX2BR.rom
+      required: true
+      native_system: msx
+      native_path: bios/Machines/Shared Roms/MSX2BR.rom
+      native_name: MSX
+    - name: MSX2BREXT.rom
+      destination: bios/Machines/Shared Roms/MSX2BREXT.rom
+      required: true
+      native_system: msx
+      native_path: bios/Machines/Shared Roms/MSX2BREXT.rom
+      native_name: MSX
+    - name: MSX2EXT.rom
+      destination: bios/Machines/Shared Roms/MSX2EXT.rom
+      required: true
+      native_system: msx
+      native_path: bios/Machines/Shared Roms/MSX2EXT.rom
+      native_name: MSX
+    - name: MSX2FR.rom
+      destination: bios/Machines/Shared Roms/MSX2FR.rom
+      required: true
+      native_system: msx
+      native_path: bios/Machines/Shared Roms/MSX2FR.rom
+      native_name: MSX
+    - name: MSX2FREXT.rom
+      destination: bios/Machines/Shared Roms/MSX2FREXT.rom
+      required: true
+      native_system: msx
+      native_path: bios/Machines/Shared Roms/MSX2FREXT.rom
+      native_name: MSX
+    - name: MSX2GEXT.rom
+      destination: bios/Machines/Shared Roms/MSX2GEXT.rom
+      required: true
+      native_system: msx
+      native_path: bios/Machines/Shared Roms/MSX2GEXT.rom
+      native_name: MSX
+    - name: MSX2HAN.rom
+      destination: bios/Machines/Shared Roms/MSX2HAN.rom
+      required: true
+      native_system: msx
+      native_path: bios/Machines/Shared Roms/MSX2HAN.rom
+      native_name: MSX
+    - name: MSX2J.rom
+      destination: bios/Machines/Shared Roms/MSX2J.rom
+      required: true
+      native_system: msx
+      native_path: bios/Machines/Shared Roms/MSX2J.rom
+      native_name: MSX
+    - name: MSX2JEXT.rom
+      destination: bios/Machines/Shared Roms/MSX2JEXT.rom
+      required: true
+      native_system: msx
+      native_path: bios/Machines/Shared Roms/MSX2JEXT.rom
+      native_name: MSX
+    - name: MSX2KR.rom
+      destination: bios/Machines/Shared Roms/MSX2KR.rom
+      required: true
+      native_system: msx
+      native_path: bios/Machines/Shared Roms/MSX2KR.rom
+      native_name: MSX
+    - name: MSX2KREXT.rom
+      destination: bios/Machines/Shared Roms/MSX2KREXT.rom
+      required: true
+      native_system: msx
+      native_path: bios/Machines/Shared Roms/MSX2KREXT.rom
+      native_name: MSX
+    - name: MSX2P.rom
+      destination: bios/Machines/Shared Roms/MSX2P.rom
+      required: true
+      native_system: msx
+      native_path: bios/Machines/Shared Roms/MSX2P.rom
+      native_name: MSX
+    - name: MSX2PEXT.rom
+      destination: bios/Machines/Shared Roms/MSX2PEXT.rom
+      required: true
+      native_system: msx
+      native_path: bios/Machines/Shared Roms/MSX2PEXT.rom
+      native_name: MSX
+    - name: MSX2PMUS.rom
+      destination: bios/Machines/Shared Roms/MSX2PMUS.rom
+      required: true
+      native_system: msx
+      native_path: bios/Machines/Shared Roms/MSX2PMUS.rom
+      native_name: MSX
+    - name: MSX2R.rom
+      destination: bios/Machines/Shared Roms/MSX2R.rom
+      required: true
+      native_system: msx
+      native_path: bios/Machines/Shared Roms/MSX2R.rom
+      native_name: MSX
+    - name: MSX2R2.ROM
+      destination: bios/Machines/Shared Roms/MSX2R2.ROM
+      required: true
+      native_system: msx
+      native_path: bios/Machines/Shared Roms/MSX2R2.ROM
+      native_name: MSX
+    - name: MSX2REXT.rom
+      destination: bios/Machines/Shared Roms/MSX2REXT.rom
+      required: true
+      native_system: msx
+      native_path: bios/Machines/Shared Roms/MSX2REXT.rom
+      native_name: MSX
+    - name: MSX2SE.rom
+      destination: bios/Machines/Shared Roms/MSX2SE.rom
+      required: true
+      native_system: msx
+      native_path: bios/Machines/Shared Roms/MSX2SE.rom
+      native_name: MSX
+    - name: MSX2SP.rom
+      destination: bios/Machines/Shared Roms/MSX2SP.rom
+      required: true
+      native_system: msx
+      native_path: bios/Machines/Shared Roms/MSX2SP.rom
+      native_name: MSX
+    - name: MSX2SPEXT.rom
+      destination: bios/Machines/Shared Roms/MSX2SPEXT.rom
+      required: true
+      native_system: msx
+      native_path: bios/Machines/Shared Roms/MSX2SPEXT.rom
+      native_name: MSX
+    - name: MSXAR.ROM
+      destination: bios/Machines/Shared Roms/MSXAR.ROM
+      required: true
+      native_system: msx
+      native_path: bios/Machines/Shared Roms/MSXAR.ROM
+      native_name: MSX
+    - name: MSXBR.rom
+      destination: bios/Machines/Shared Roms/MSXBR.rom
+      required: true
+      native_system: msx
+      native_path: bios/Machines/Shared Roms/MSXBR.rom
+      native_name: MSX
+    - name: MSXDOS2.ROM
+      destination: bios/Machines/Shared Roms/MSXDOS2.ROM
+      required: true
+      native_system: msx
+      native_path: bios/Machines/Shared Roms/MSXDOS2.ROM
+      native_name: MSX
+    - name: MSXFR.rom
+      destination: bios/Machines/Shared Roms/MSXFR.rom
+      required: true
+      native_system: msx
+      native_path: bios/Machines/Shared Roms/MSXFR.rom
+      native_name: MSX
+    - name: MSXG.rom
+      destination: bios/Machines/Shared Roms/MSXG.rom
+      required: true
+      native_system: msx
+      native_path: bios/Machines/Shared Roms/MSXG.rom
+      native_name: MSX
+    - name: MSXHAN.rom
+      destination: bios/Machines/Shared Roms/MSXHAN.rom
+      required: true
+      native_system: msx
+      native_path: bios/Machines/Shared Roms/MSXHAN.rom
+      native_name: MSX
+    - name: MSXJ.rom
+      destination: bios/Machines/Shared Roms/MSXJ.rom
+      required: true
+      native_system: msx
+      native_path: bios/Machines/Shared Roms/MSXJ.rom
+      native_name: MSX
+    - name: MSXKANJI.rom
+      destination: bios/Machines/Shared Roms/MSXKANJI.rom
+      required: true
+      native_system: msx
+      native_path: bios/Machines/Shared Roms/MSXKANJI.rom
+      native_name: MSX
+    - name: MSXKR.rom
+      destination: bios/Machines/Shared Roms/MSXKR.rom
+      required: true
+      native_system: msx
+      native_path: bios/Machines/Shared Roms/MSXKR.rom
+      native_name: MSX
+    - name: MSXR.rom
+      destination: bios/Machines/Shared Roms/MSXR.rom
+      required: true
+      native_system: msx
+      native_path: bios/Machines/Shared Roms/MSXR.rom
+      native_name: MSX
+    - name: MSXR2.rom
+      destination: bios/Machines/Shared Roms/MSXR2.rom
+      required: true
+      native_system: msx
+      native_path: bios/Machines/Shared Roms/MSXR2.rom
+      native_name: MSX
+    - name: MSXSE.ROM
+      destination: bios/Machines/Shared Roms/MSXSE.ROM
+      required: true
+      native_system: msx
+      native_path: bios/Machines/Shared Roms/MSXSE.ROM
+      native_name: MSX
+    - name: MSXSP.rom
+      destination: bios/Machines/Shared Roms/MSXSP.rom
+      required: true
+      native_system: msx
+      native_path: bios/Machines/Shared Roms/MSXSP.rom
+      native_name: MSX
+    - name: MSXTR.ROM
+      destination: bios/Machines/Shared Roms/MSXTR.ROM
+      required: true
+      native_system: msx
+      native_path: bios/Machines/Shared Roms/MSXTR.ROM
+      native_name: MSX
+    - name: MSXTREXT.ROM
+      destination: bios/Machines/Shared Roms/MSXTREXT.ROM
+      required: true
+      native_system: msx
+      native_path: bios/Machines/Shared Roms/MSXTREXT.ROM
+      native_name: MSX
+    - name: MSXTRMUS.ROM
+      destination: bios/Machines/Shared Roms/MSXTRMUS.ROM
+      required: true
+      native_system: msx
+      native_path: bios/Machines/Shared Roms/MSXTRMUS.ROM
+      native_name: MSX
+    - name: MSXTROPT.ROM
+      destination: bios/Machines/Shared Roms/MSXTROPT.ROM
+      required: true
+      native_system: msx
+      native_path: bios/Machines/Shared Roms/MSXTROPT.ROM
+      native_name: MSX
+    - name: NATIONALDISK.rom
+      destination: bios/Machines/Shared Roms/NATIONALDISK.rom
+      required: true
+      native_system: msx
+      native_path: bios/Machines/Shared Roms/NATIONALDISK.rom
+      native_name: MSX
+    - name: NOVAXIS.rom
+      destination: bios/Machines/Shared Roms/NOVAXIS.rom
+      required: true
+      native_system: msx
+      native_path: bios/Machines/Shared Roms/NOVAXIS.rom
+      native_name: MSX
+    - name: nowindDos1.rom
+      destination: bios/Machines/Shared Roms/nowindDos1.rom
+      required: true
+      native_system: msx
+      native_path: bios/Machines/Shared Roms/nowindDos1.rom
+      native_name: MSX
+    - name: nowindDos2.rom
+      destination: bios/Machines/Shared Roms/nowindDos2.rom
+      required: true
+      native_system: msx
+      native_path: bios/Machines/Shared Roms/nowindDos2.rom
+      native_name: MSX
+    - name: PAINT.rom
+      destination: bios/Machines/Shared Roms/PAINT.rom
+      required: true
+      native_system: msx
+      native_path: bios/Machines/Shared Roms/PAINT.rom
+      native_name: MSX
+    - name: PANASONICDISK.rom
+      destination: bios/Machines/Shared Roms/PANASONICDISK.rom
+      required: true
+      native_system: msx
+      native_path: bios/Machines/Shared Roms/PANASONICDISK.rom
+      native_name: MSX
+    - name: PHILIPSDISK.rom
+      destination: bios/Machines/Shared Roms/PHILIPSDISK.rom
+      required: true
+      native_system: msx
+      native_path: bios/Machines/Shared Roms/PHILIPSDISK.rom
+      native_name: MSX
+    - name: RS232.ROM
+      destination: bios/Machines/Shared Roms/RS232.ROM
+      required: true
+      native_system: msx
+      native_path: bios/Machines/Shared Roms/RS232.ROM
+      native_name: MSX
+    - name: Shared.txt
+      destination: bios/Machines/Shared Roms/Shared.txt
+      required: true
+      native_system: msx
+      native_path: bios/Machines/Shared Roms/Shared.txt
+      native_name: MSX
+    - name: SUNRISEIDE.rom
+      destination: bios/Machines/Shared Roms/SUNRISEIDE.rom
+      required: true
+      native_system: msx
+      native_path: bios/Machines/Shared Roms/SUNRISEIDE.rom
+      native_name: MSX
+    - name: SWP.rom
+      destination: bios/Machines/Shared Roms/SWP.rom
+      required: true
+      native_system: msx
+      native_path: bios/Machines/Shared Roms/SWP.rom
+      native_name: MSX
+    - name: XBASIC2.rom
+      destination: bios/Machines/Shared Roms/XBASIC2.rom
+      required: true
+      native_system: msx
+      native_path: bios/Machines/Shared Roms/XBASIC2.rom
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/SVI - Spectravideo SVI-318/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/SVI - Spectravideo SVI-318/config.ini
+      native_name: MSX
+    - name: svi318.rom
+      destination: bios/Machines/SVI - Spectravideo SVI-318/svi318.rom
+      required: true
+      native_system: msx
+      native_path: bios/Machines/SVI - Spectravideo SVI-318/svi318.rom
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/SVI - Spectravideo SVI-328/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/SVI - Spectravideo SVI-328/config.ini
+      native_name: MSX
+    - name: svi328.rom
+      destination: bios/Machines/SVI - Spectravideo SVI-328/svi328.rom
+      required: true
+      native_system: msx
+      native_path: bios/Machines/SVI - Spectravideo SVI-328/svi328.rom
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/SVI - Spectravideo SVI-328 80 Column/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/SVI - Spectravideo SVI-328 80 Column/config.ini
+      native_name: MSX
+    - name: svi328a.rom
+      destination: bios/Machines/SVI - Spectravideo SVI-328 80 Column/svi328a.rom
+      required: true
+      native_system: msx
+      native_path: bios/Machines/SVI - Spectravideo SVI-328 80 Column/svi328a.rom
+      native_name: MSX
+    - name: svi806.rom
+      destination: bios/Machines/SVI - Spectravideo SVI-328 80 Column/svi806.rom
+      required: true
+      native_system: msx
+      native_path: bios/Machines/SVI - Spectravideo SVI-328 80 Column/svi806.rom
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/SVI - Spectravideo SVI-328 80 Swedish/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/SVI - Spectravideo SVI-328 80 Swedish/config.ini
+      native_name: MSX
+    - name: svi328a.rom
+      destination: bios/Machines/SVI - Spectravideo SVI-328 80 Swedish/svi328a.rom
+      required: true
+      native_system: msx
+      native_path: bios/Machines/SVI - Spectravideo SVI-328 80 Swedish/svi328a.rom
+      native_name: MSX
+    - name: svi806se.rom
+      destination: bios/Machines/SVI - Spectravideo SVI-328 80 Swedish/svi806se.rom
+      required: true
+      native_system: msx
+      native_path: bios/Machines/SVI - Spectravideo SVI-328 80 Swedish/svi806se.rom
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/SVI - Spectravideo SVI-328 MK2/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/SVI - Spectravideo SVI-328 MK2/config.ini
+      native_name: MSX
+    - name: svi328a.rom
+      destination: bios/Machines/SVI - Spectravideo SVI-328 MK2/svi328a.rom
+      required: true
+      native_system: msx
+      native_path: bios/Machines/SVI - Spectravideo SVI-328 MK2/svi328a.rom
+      native_name: MSX
+    - name: svi806.rom
+      destination: bios/Machines/SVI - Spectravideo SVI-328 MK2/svi806.rom
+      required: true
+      native_system: msx
+      native_path: bios/Machines/SVI - Spectravideo SVI-328 MK2/svi806.rom
+      native_name: MSX
+    - name: hardwareconfig.xml
+      destination: bios/Machines/Turbo-R/hardwareconfig.xml
+      required: true
+      native_system: msx
+      native_path: bios/Machines/Turbo-R/hardwareconfig.xml
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2 - Philips VG-8240/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - Philips VG-8240/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2 - Russian/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - Russian/config.ini
+      native_name: MSX
+    - name: hardwareconfig.xml
+      destination: bios/Machines/MSX2 - Russian/hardwareconfig.xml
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - Russian/hardwareconfig.xml
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2 - Sanyo Wavy MPC-25FD/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - Sanyo Wavy MPC-25FD/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2 - Sanyo Wavy PHC-23/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - Sanyo Wavy PHC-23/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2 - Sharp Epcom HotBit 2.0/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - Sharp Epcom HotBit 2.0/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2 - Sony HB-F1/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - Sony HB-F1/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2 - Sony HB-F1II/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - Sony HB-F1II/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2 - Sony HB-F1XD/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - Sony HB-F1XD/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2 - Sony HB-F1XDMK2/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - Sony HB-F1XDMK2/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2 - Sony HB-F500/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - Sony HB-F500/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2 - Sony HB-F500P/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - Sony HB-F500P/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2 - Sony HB-F700D/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - Sony HB-F700D/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2 - Sony HB-F700F/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - Sony HB-F700F/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2 - Sony HB-F700P/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - Sony HB-F700P/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2 - Sony HB-F700S/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - Sony HB-F700S/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2 - Sony HB-F900/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - Sony HB-F900/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: "bios/Machines/MSX2 - Sony HB-F900 (a)/config.ini"
+      required: true
+      native_system: msx
+      native_path: "bios/Machines/MSX2 - Sony HB-F900 (a)/config.ini"
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2 - Sony HB-F9P/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - Sony HB-F9P/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2 - Sony HB-F9P Russian/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - Sony HB-F9P Russian/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2 - Sony HB-F9S/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - Sony HB-F9S/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2 - Sony HB-G900AP/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - Sony HB-G900AP/config.ini
+      native_name: MSX
+    - name: config.ini
+      destination: bios/Machines/MSX2 - Sony HB-G900P/config.ini
+      required: true
+      native_system: msx
+      native_path: bios/Machines/MSX2 - Sony HB-G900P/config.ini
+      native_name: MSX
+    native_id: msx
+    name: MSX
+  nec-pc-engine:
+    files:
+    - name: syscard3.pce
+      destination: bios/syscard3.pce
+      required: true
+      md5: ff1a674273fe3540ccef576376407d1d
+      native_system: pcengine
+      native_path: bios/syscard3.pce
+      native_name: PC Engine
+    - name: syscard3.pce
+      destination: bios/syscard3.pce
+      required: true
+      md5: ff1a674273fe3540ccef576376407d1d
+      native_system: supergrafx
+      native_path: bios/syscard3.pce
+      native_name: Supergrafx
+    - name: syscard2.pce
+      destination: bios/syscard2.pce
+      required: true
+      native_system: supergrafx
+      native_path: bios/syscard2.pce
+      native_name: Supergrafx
+    - name: syscard1.pce
+      destination: bios/syscard1.pce
+      required: true
+      native_system: supergrafx
+      native_path: bios/syscard1.pce
+      native_name: Supergrafx
+    - name: gexpress.pce
+      destination: bios/gexpress.pce
+      required: true
+      native_system: supergrafx
+      native_path: bios/gexpress.pce
+      native_name: Supergrafx
+    native_id: pcengine
+    name: Supergrafx
+  nec-pc-fx:
+    files:
+    - name: pcfx.rom
+      destination: bios/pcfx.rom
+      required: true
+      md5: 08e36edbea28a017f79f8d4f7ff9b6d7
+      native_system: pcfx
+      native_path: bios/pcfx.rom
+      native_name: PC-FX
+    native_id: pcfx
+    name: PC-FX
+  nintendo-fds:
+    files:
+    - name: NstDatabase.xml
+      destination: bios/NstDatabase.xml
+      required: true
+      md5: 7bfe8c0540ed4bd6a0f1e2a0f0118ced
+      native_system: fds
+      native_path: bios/NstDatabase.xml
+      native_name: Nintendo Family Computer Disk System
+    - name: disksys.rom
+      destination: bios/disksys.rom
+      required: true
+      md5: ca30b50f880eb660a320674ed365ef7a
+      native_system: fds
+      native_path: bios/disksys.rom
+      native_name: Nintendo Family Computer Disk System
+    native_id: fds
+    name: Nintendo Family Computer Disk System
+  nintendo-gb:
+    files:
+    - name: gb_bios.bin
+      destination: bios/gb_bios.bin
+      required: true
+      md5: 32fbbd84168d3482956eb3c5051637f5
+      native_system: gb
+      native_path: bios/gb_bios.bin
+      native_name: Game Boy
+    - name: gbc_bios.bin
+      destination: bios/gbc_bios.bin
+      required: true
+      md5: dbfce9db9deaa2567f6a84fde55f9680
+      native_system: gb
+      native_path: bios/gbc_bios.bin
+      native_name: Game Boy
+    native_id: gb
+    name: Game Boy
+  nintendo-gbc:
+    files:
+    - name: gb_bios.bin
+      destination: bios/gb_bios.bin
+      required: true
+      md5: 32fbbd84168d3482956eb3c5051637f5
+      native_system: gbc
+      native_path: bios/gb_bios.bin
+      native_name: Game Boy Color
+    - name: gbc_bios.bin
+      destination: bios/gbc_bios.bin
+      required: true
+      md5: dbfce9db9deaa2567f6a84fde55f9680
+      native_system: gbc
+      native_path: bios/gbc_bios.bin
+      native_name: Game Boy Color
+    native_id: gbc
+    name: Game Boy Color
+  nintendo-gba:
+    files:
+    - name: gba_bios.bin
+      destination: bios/gba_bios.bin
+      required: true
+      md5: a860e8c0b6d573d191e4ec7db1b1e4f6
+      native_system: gba
+      native_path: bios/gba_bios.bin
+      native_name: Game Boy Advance
+    - name: gb_bios.bin
+      destination: bios/gb_bios.bin
+      required: true
+      md5: 32fbbd84168d3482956eb3c5051637f5
+      native_system: gba
+      native_path: bios/gb_bios.bin
+      native_name: Game Boy Advance
+    - name: gbc_bios.bin
+      destination: bios/gbc_bios.bin
+      required: true
+      md5: dbfce9db9deaa2567f6a84fde55f9680
+      native_system: gba
+      native_path: bios/gbc_bios.bin
+      native_name: Game Boy Advance
+    - name: sgb_bios.bin
+      destination: bios/sgb_bios.bin
+      required: true
+      md5: d574d4f9c12f305074798f54c091a8b4
+      native_system: gba
+      native_path: bios/sgb_bios.bin
+      native_name: Game Boy Advance
+    native_id: gba
+    name: Game Boy Advance
+  nintendo-64:
+    files:
+    - name: 64DD_IPL.bin
+      destination: bios/64DD_IPL.bin
+      required: true
+      md5: 8d3d9f294b6e174bc7b1d2fd1c727530
+      native_system: n64
+      native_path: bios/64DD_IPL.bin
+      native_name: Nintendo 64
+    native_id: n64
+    name: Nintendo 64
+  nintendo-ds:
+    files:
+    - name: firmware.bin
+      destination: bios/firmware.bin
+      required: true
+      md5: 145eaef5bd3037cbc247c213bb3da1b3
+      native_system: nds
+      native_path: bios/firmware.bin
+      native_name: Nintendo DS
+    - name: bios7.bin
+      destination: bios/bios7.bin
+      required: true
+      md5: df692a80a5b1bc90728bc3dfc76cd948
+      native_system: nds
+      native_path: bios/bios7.bin
+      native_name: Nintendo DS
+    - name: bios9.bin
+      destination: bios/bios9.bin
+      required: true
+      md5: a392174eb3e572fed6447e956bde4b25
+      native_system: nds
+      native_path: bios/bios9.bin
+      native_name: Nintendo DS
+    native_id: nds
+    name: Nintendo DS
+  nintendo-satellaview:
+    files:
+    - name: BS-X.bin
+      destination: bios/BS-X.bin
+      required: true
+      md5: fed4d8242cfbed61343d53d48432aced
+      native_system: satellaview
+      native_path: bios/BS-X.bin
+      native_name: Satellaview
+    native_id: satellaview
+    name: Satellaview
+  nintendo-sufami-turbo:
+    files:
+    - name: STBIOS.bin
+      destination: bios/STBIOS.bin
+      required: true
+      md5: d3a44ba7d42a74d3ac58cb9c14c6a5ca
+      native_system: sufami
+      native_path: bios/STBIOS.bin
+      native_name: Sufami
+    native_id: sufami
+    name: Sufami
+  3do:
+    files:
+    - name: panafz1.bin
+      destination: bios/panafz1.bin
+      required: true
+      md5: f47264dd47fe30f73ab3c010015c155b
+      native_system: 3do
+      native_path: bios/panafz1.bin
+      native_name: 3DO
+    - name: panafz10.bin
+      destination: bios/panafz10.bin
+      required: true
+      md5: 51f2f43ae2f3508a14d9f56597e2d3ce
+      native_system: 3do
+      native_path: bios/panafz10.bin
+      native_name: 3DO
+    - name: goldstar.bin
+      destination: bios/goldstar.bin
+      required: true
+      md5: 8639fd5e549bd6238cfee79e3e749114
+      native_system: 3do
+      native_path: bios/goldstar.bin
+      native_name: 3DO
+    - name: sanyotry.bin
+      destination: bios/sanyotry.bin
+      required: true
+      md5: 35fa1a1ebaaeea286dc5cd15487c13ea
+      native_system: 3do
+      native_path: bios/sanyotry.bin
+      native_name: 3DO
+    - name: 3do_arcade_saot.bin
+      destination: bios/3do_arcade_saot.bin
+      required: true
+      md5: 8970fc987ab89a7f64da9f8a8c4333ff
+      native_system: 3do
+      native_path: bios/3do_arcade_saot.bin
+      native_name: 3DO
+    native_id: 3do
+    name: 3DO
+  sega-dreamcast-arcade:
+    files:
+    - name: naomi_boot.bin
+      destination: bios/dc/naomi_boot.bin
+      required: true
+      md5: 3bffafac42a7767d8dcecf771f5552ba
+      native_system: naomi
+      native_path: bios/dc/naomi_boot.bin
+      native_name: Naomi
+    - name: naomi.zip
+      destination: bios/dc/naomi.zip
+      required: true
+      md5: e63d892cdb8b532351dc7020bb60b6f4
+      native_system: naomi
+      native_path: bios/dc/naomi.zip
+      native_name: Naomi
+    - name: awbios.zip
+      destination: bios/dc/awbios.zip
+      required: true
+      md5: 0ec5ae5b5a5c4959fa8b43fcf8687f7c
+      native_system: atomiswave
+      native_path: bios/dc/awbios.zip
+      native_name: Atomiswave
+    native_id: naomi
+    name: Atomiswave
+  sega-dreamcast:
+    files:
+    - name: dc_boot.bin
+      destination: bios/dc/dc_boot.bin
+      required: true
+      md5: e10c53c2f8b90bab96ead2d368858623
+      native_system: dreamcast
+      native_path: bios/dc/dc_boot.bin
+      native_name: Dreamcast
+    - name: dc_flash.bin
+      destination: bios/dc/dc_flash.bin
+      required: true
+      md5: 0a93f7940c455905bea6e392dfde92a4
+      native_system: dreamcast
+      native_path: bios/dc/dc_flash.bin
+      native_name: Dreamcast
+    native_id: dreamcast
+    name: Dreamcast
+  sega-game-gear:
+    files:
+    - name: bios.gg
+      destination: bios/bios.gg
+      required: true
+      md5: 672e104c3be3a238301aceffc3b23fd6
+      native_system: gamegear
+      native_path: bios/bios.gg
+      native_name: Game Gear
+    native_id: gamegear
+    name: Game Gear
+  sega-master-system:
+    files:
+    - name: bios_E.sms
+      destination: bios/bios_E.sms
+      required: true
+      md5: 840481177270d5642a14ca71ee72844c
+      native_system: mastersystem
+      native_path: bios/bios_E.sms
+      native_name: MasterSystem
+    - name: bios_U.sms
+      destination: bios/bios_U.sms
+      required: true
+      md5: 840481177270d5642a14ca71ee72844c
+      native_system: mastersystem
+      native_path: bios/bios_U.sms
+      native_name: MasterSystem
+    - name: bios_J.sms
+      destination: bios/bios_J.sms
+      required: true
+      md5: 24a519c53f67b00640d0048ef7089105
+      native_system: mastersystem
+      native_path: bios/bios_J.sms
+      native_name: MasterSystem
+    native_id: mastersystem
+    name: MasterSystem
+  sega-saturn:
+    files:
+    - name: saturn_bios.bin
+      destination: bios/saturn_bios.bin
+      required: true
+      md5: af5828fdff51384f99b3c4926be27762
+      native_system: saturn
+      native_path: bios/saturn_bios.bin
+      native_name: Sega Saturn
+    - name: sega_101.bin
+      destination: bios/sega_101.bin
+      required: true
+      md5: 85ec9ca47d8f6807718151cbcca8b964
+      native_system: saturn
+      native_path: bios/sega_101.bin
+      native_name: Sega Saturn
+    - name: mpr-17933.bin
+      destination: bios/mpr-17933.bin
+      required: true
+      md5: 3240872c70984b6cbfda1586cab68dbe
+      native_system: saturn
+      native_path: bios/mpr-17933.bin
+      native_name: Sega Saturn
+    - name: mpr-18811-mx.ic1
+      destination: bios/mpr-18811-mx.ic1
+      required: true
+      md5: 255113ba943c92a54facd25a10fd780c
+      native_system: saturn
+      native_path: bios/mpr-18811-mx.ic1
+      native_name: Sega Saturn
+    - name: mpr-19367-mx.ic1
+      destination: bios/mpr-19367-mx.ic1
+      required: true
+      md5: 1cd19988d1d72a3e7caa0b73234c96b4
+      native_system: saturn
+      native_path: bios/mpr-19367-mx.ic1
+      native_name: Sega Saturn
+    - name: stvbios.zip
+      destination: bios/stvbios.zip
+      required: true
+      md5: 53a094ad3a188f86de4e64624fe9b3ca
+      native_system: saturn
+      native_path: bios/stvbios.zip
+      native_name: Sega Saturn
+    native_id: saturn
+    name: Sega Saturn
+  sega-mega-cd:
+    files:
+    - name: bios_CD_E.bin
+      destination: bios/bios_CD_E.bin
+      required: true
+      md5: e66fa1dc5820d254611fdcdba0662372
+      native_system: segacd
+      native_path: bios/bios_CD_E.bin
+      native_name: Sega CD
+    - name: bios_CD_U.bin
+      destination: bios/bios_CD_U.bin
+      required: true
+      md5: 854b9150240a198070150e4566ae1290
+      native_system: segacd
+      native_path: bios/bios_CD_U.bin
+      native_name: Sega CD
+    - name: bios_CD_J.bin
+      destination: bios/bios_CD_J.bin
+      required: true
+      md5: 278a9397d192149e84e820ac621a8edd
+      native_system: segacd
+      native_path: bios/bios_CD_J.bin
+      native_name: Sega CD
+    native_id: segacd
+    name: Sega CD
+  sc-3000:
+    files:
+    - name: config.ini
+      destination: bios/Machines/SEGA - SC-3000/config.ini
+      required: true
+      native_system: sc-3000
+      native_path: bios/Machines/SEGA - SC-3000/config.ini
+      native_name: SC-3000
+    native_id: sc-3000
+    name: SC-3000
+  sharp-x68000:
+    files:
+    - name: iplrom.dat
+      destination: bios/keropi/iplrom.dat
+      required: true
+      native_system: x68000
+      native_path: bios/keropi/iplrom.dat
+      native_name: Sharp x68000
+    - name: iplrom30.dat
+      destination: bios/keropi/iplrom30.dat
+      required: true
+      native_system: x68000
+      native_path: bios/keropi/iplrom30.dat
+      native_name: Sharp x68000
+    - name: iplromco.dat
+      destination: bios/keropi/iplromco.dat
+      required: true
+      native_system: x68000
+      native_path: bios/keropi/iplromco.dat
+      native_name: Sharp x68000
+    - name: iplromxv.dat
+      destination: bios/keropi/iplromxv.dat
+      required: true
+      native_system: x68000
+      native_path: bios/keropi/iplromxv.dat
+      native_name: Sharp x68000
+    - name: cgrom.dat
+      destination: bios/keropi/cgrom.dat
+      required: true
+      native_system: x68000
+      native_path: bios/keropi/cgrom.dat
+      native_name: Sharp x68000
+    native_id: x68000
+    name: Sharp x68000
+  snk-neogeo:
+    files:
+    - name: neogeo.zip
+      destination: neogeo/neogeo.zip
+      required: true
+      native_system: neogeo
+      native_path: neogeo/neogeo.zip
+      native_name: NeoGeo
+    native_id: neogeo
+    name: NeoGeo
+  snk-neogeo-cd:
+    files:
+    - name: neogeo.zip
+      destination: neogeo/neogeo.zip
+      required: true
+      native_system: neogeocd
+      native_path: neogeo/neogeo.zip
+      native_name: NeoGeo CD
+    - name: neocd_z.rom
+      destination: bios/neocd/neocd_z.rom
+      required: true
+      md5: f39572af7584cb5b3f70ae8cc848aba2
+      native_system: neogeocd
+      native_path: bios/neocd/neocd_z.rom
+      native_name: NeoGeo CD
+    native_id: neogeocd
+    name: NeoGeo CD
+  sony-playstation:
+    files:
+    - name: scph5500.bin
+      destination: bios/scph5500.bin
+      required: true
+      md5: 8dd7d5296a650fac7319bce665a6a53c
+      native_system: psx
+      native_path: bios/scph5500.bin
+      native_name: PSX
+    - name: scph5501.bin
+      destination: bios/scph5501.bin
+      required: true
+      md5: 490f666e1afb15b7362b406ed1cea246
+      native_system: psx
+      native_path: bios/scph5501.bin
+      native_name: PSX
+    - name: scph5502.bin
+      destination: bios/scph5502.bin
+      required: true
+      md5: 32736f17079d0b2b7024407c39bd3050
+      native_system: psx
+      native_path: bios/scph5502.bin
+      native_name: PSX
+    native_id: psx
+    name: PSX
+  diablo:
+    files:
+    - name: diabdat.mpq
+      destination: ports/diablo/diabdat.mpq
+      required: true
+      md5: 68f049866b44688a7af65ba766bef75a
+      native_system: Diablo
+      native_path: ports/diablo/diabdat.mpq
+      native_name: "Diablo 1 (devilutionx) "
+    - name: hellfire.mpq
+      destination: ports/diablo/hellfire.mpq
+      required: true
+      native_system: Hellfire
+      native_path: ports/diablo/hellfire.mpq
+      native_name: "Diablo 1: Hellfire (devilutionx) "
+    - name: hfmonk.mpq
+      destination: ports/diablo/hfmonk.mpq
+      required: true
+      native_system: Hellfire
+      native_path: ports/diablo/hfmonk.mpq
+      native_name: "Diablo 1: Hellfire (devilutionx) "
+    - name: hfmusic.mpq
+      destination: ports/diablo/hfmusic.mpq
+      required: true
+      native_system: Hellfire
+      native_path: ports/diablo/hfmusic.mpq
+      native_name: "Diablo 1: Hellfire (devilutionx) "
+    - name: hfvoice.mpq
+      destination: ports/diablo/hfvoice.mpq
+      required: true
+      native_system: Hellfire
+      native_path: ports/diablo/hfvoice.mpq
+      native_name: "Diablo 1: Hellfire (devilutionx) "
+    - name: diabdat.mpq
+      destination: ports/diablo/diabdat.mpq
+      required: true
+      md5: 68f049866b44688a7af65ba766bef75a
+      native_system: Hellfire
+      native_path: ports/diablo/diabdat.mpq
+      native_name: "Diablo 1: Hellfire (devilutionx) "
+    native_id: Diablo
+    name: "Diablo 1: Hellfire (devilutionx) "
+  dinothawr:
+    files:
+    - name: dinothawr.game
+      destination: ports/dinothawr/dinothawr.game
+      required: true
+      native_system: Dinothawr
+      native_path: ports/dinothawr/dinothawr.game
+      native_name: Dinothawr
+    native_id: Dinothawr
+    name: Dinothawr
+  doom:
+    files:
+    - name: doom1.wad
+      destination: ports/doom/doom1.wad
+      required: true
+      native_system: DOOM1
+      native_path: ports/doom/doom1.wad
+      native_name: "DOOM1 (PrBoom)"
+    - name: doom2.wad
+      destination: ports/doom2/doom2.wad
+      required: true
+      native_system: DOOM2
+      native_path: ports/doom2/doom2.wad
+      native_name: "DOOM2 (PrBoom)"
+    native_id: DOOM1
+    name: "DOOM2 (PrBoom)"
+  tyrian:
+    files:
+    - name: cubetxt1.dat
+      destination: ports/opentyrian/cubetxt1.dat
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/cubetxt1.dat
+      native_name: OpenTyrian
+    - name: cubetxt2.dat
+      destination: ports/opentyrian/cubetxt2.dat
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/cubetxt2.dat
+      native_name: OpenTyrian
+    - name: cubetxt3.dat
+      destination: ports/opentyrian/cubetxt3.dat
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/cubetxt3.dat
+      native_name: OpenTyrian
+    - name: cubetxt4.dat
+      destination: ports/opentyrian/cubetxt4.dat
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/cubetxt4.dat
+      native_name: OpenTyrian
+    - name: demo.1
+      destination: ports/opentyrian/demo.1
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/demo.1
+      native_name: OpenTyrian
+    - name: demo.2
+      destination: ports/opentyrian/demo.2
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/demo.2
+      native_name: OpenTyrian
+    - name: demo.3
+      destination: ports/opentyrian/demo.3
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/demo.3
+      native_name: OpenTyrian
+    - name: demo.4
+      destination: ports/opentyrian/demo.4
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/demo.4
+      native_name: OpenTyrian
+    - name: demo.5
+      destination: ports/opentyrian/demo.5
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/demo.5
+      native_name: OpenTyrian
+    - name: dpmi16bi.ovl
+      destination: ports/opentyrian/dpmi16bi.ovl
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/dpmi16bi.ovl
+      native_name: OpenTyrian
+    - name: estsc.shp
+      destination: ports/opentyrian/estsc.shp
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/estsc.shp
+      native_name: OpenTyrian
+    - name: exitmsg.bin
+      destination: ports/opentyrian/exitmsg.bin
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/exitmsg.bin
+      native_name: OpenTyrian
+    - name: levels1.dat
+      destination: ports/opentyrian/levels1.dat
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/levels1.dat
+      native_name: OpenTyrian
+    - name: levels2.dat
+      destination: ports/opentyrian/levels2.dat
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/levels2.dat
+      native_name: OpenTyrian
+    - name: levels3.dat
+      destination: ports/opentyrian/levels3.dat
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/levels3.dat
+      native_name: OpenTyrian
+    - name: levels4.dat
+      destination: ports/opentyrian/levels4.dat
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/levels4.dat
+      native_name: OpenTyrian
+    - name: loudness.awe
+      destination: ports/opentyrian/loudness.awe
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/loudness.awe
+      native_name: OpenTyrian
+    - name: modems.txt
+      destination: ports/opentyrian/modems.txt
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/modems.txt
+      native_name: OpenTyrian
+    - name: music.mus
+      destination: ports/opentyrian/music.mus
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/music.mus
+      native_name: OpenTyrian
+    - name: netarena.pcx
+      destination: ports/opentyrian/netarena.pcx
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/netarena.pcx
+      native_name: OpenTyrian
+    - name: netfont1.pcx
+      destination: ports/opentyrian/netfont1.pcx
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/netfont1.pcx
+      native_name: OpenTyrian
+    - name: netfont2.pcx
+      destination: ports/opentyrian/netfont2.pcx
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/netfont2.pcx
+      native_name: OpenTyrian
+    - name: netmega.pcx
+      destination: ports/opentyrian/netmega.pcx
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/netmega.pcx
+      native_name: OpenTyrian
+    - name: netset.pcx
+      destination: ports/opentyrian/netset.pcx
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/netset.pcx
+      native_name: OpenTyrian
+    - name: "newsh#.shp"
+      destination: "ports/opentyrian/newsh#.shp"
+      required: true
+      native_system: OpenTyrian
+      native_path: "ports/opentyrian/newsh#.shp"
+      native_name: OpenTyrian
+    - name: newsh0.shp
+      destination: ports/opentyrian/newsh0.shp
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/newsh0.shp
+      native_name: OpenTyrian
+    - name: newsh1.shp
+      destination: ports/opentyrian/newsh1.shp
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/newsh1.shp
+      native_name: OpenTyrian
+    - name: newsh2.shp
+      destination: ports/opentyrian/newsh2.shp
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/newsh2.shp
+      native_name: OpenTyrian
+    - name: newsh3.shp
+      destination: ports/opentyrian/newsh3.shp
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/newsh3.shp
+      native_name: OpenTyrian
+    - name: newsh4.shp
+      destination: ports/opentyrian/newsh4.shp
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/newsh4.shp
+      native_name: OpenTyrian
+    - name: newsh5.shp
+      destination: ports/opentyrian/newsh5.shp
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/newsh5.shp
+      native_name: OpenTyrian
+    - name: newsh6.shp
+      destination: ports/opentyrian/newsh6.shp
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/newsh6.shp
+      native_name: OpenTyrian
+    - name: newsh7.shp
+      destination: ports/opentyrian/newsh7.shp
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/newsh7.shp
+      native_name: OpenTyrian
+    - name: newsh8.shp
+      destination: ports/opentyrian/newsh8.shp
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/newsh8.shp
+      native_name: OpenTyrian
+    - name: newsh9.shp
+      destination: ports/opentyrian/newsh9.shp
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/newsh9.shp
+      native_name: OpenTyrian
+    - name: newsha.shp
+      destination: ports/opentyrian/newsha.shp
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/newsha.shp
+      native_name: OpenTyrian
+    - name: newshb.shp
+      destination: ports/opentyrian/newshb.shp
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/newshb.shp
+      native_name: OpenTyrian
+    - name: newshc.shp
+      destination: ports/opentyrian/newshc.shp
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/newshc.shp
+      native_name: OpenTyrian
+    - name: newshd.shp
+      destination: ports/opentyrian/newshd.shp
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/newshd.shp
+      native_name: OpenTyrian
+    - name: newshe.shp
+      destination: ports/opentyrian/newshe.shp
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/newshe.shp
+      native_name: OpenTyrian
+    - name: newshf.shp
+      destination: ports/opentyrian/newshf.shp
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/newshf.shp
+      native_name: OpenTyrian
+    - name: newshg.shp
+      destination: ports/opentyrian/newshg.shp
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/newshg.shp
+      native_name: OpenTyrian
+    - name: newshh.shp
+      destination: ports/opentyrian/newshh.shp
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/newshh.shp
+      native_name: OpenTyrian
+    - name: newshj.shp
+      destination: ports/opentyrian/newshj.shp
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/newshj.shp
+      native_name: OpenTyrian
+    - name: newshk.shp
+      destination: ports/opentyrian/newshk.shp
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/newshk.shp
+      native_name: OpenTyrian
+    - name: newshl.shp
+      destination: ports/opentyrian/newshl.shp
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/newshl.shp
+      native_name: OpenTyrian
+    - name: newshm.shp
+      destination: ports/opentyrian/newshm.shp
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/newshm.shp
+      native_name: OpenTyrian
+    - name: newshn.shp
+      destination: ports/opentyrian/newshn.shp
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/newshn.shp
+      native_name: OpenTyrian
+    - name: newsho.shp
+      destination: ports/opentyrian/newsho.shp
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/newsho.shp
+      native_name: OpenTyrian
+    - name: newshp.shp
+      destination: ports/opentyrian/newshp.shp
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/newshp.shp
+      native_name: OpenTyrian
+    - name: newshr.shp
+      destination: ports/opentyrian/newshr.shp
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/newshr.shp
+      native_name: OpenTyrian
+    - name: newshs.shp
+      destination: ports/opentyrian/newshs.shp
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/newshs.shp
+      native_name: OpenTyrian
+    - name: newsht.shp
+      destination: ports/opentyrian/newsht.shp
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/newsht.shp
+      native_name: OpenTyrian
+    - name: newshu.shp
+      destination: ports/opentyrian/newshu.shp
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/newshu.shp
+      native_name: OpenTyrian
+    - name: newshv.shp
+      destination: ports/opentyrian/newshv.shp
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/newshv.shp
+      native_name: OpenTyrian
+    - name: newsh^.shp
+      destination: ports/opentyrian/newsh^.shp
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/newsh^.shp
+      native_name: OpenTyrian
+    - name: newsh~.shp
+      destination: ports/opentyrian/newsh~.shp
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/newsh~.shp
+      native_name: OpenTyrian
+    - name: order.tfp
+      destination: ports/opentyrian/order.tfp
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/order.tfp
+      native_name: OpenTyrian
+    - name: palette.dat
+      destination: ports/opentyrian/palette.dat
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/palette.dat
+      native_name: OpenTyrian
+    - name: setup.box
+      destination: ports/opentyrian/setup.box
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/setup.box
+      native_name: OpenTyrian
+    - name: setup.ini
+      destination: ports/opentyrian/setup.ini
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/setup.ini
+      native_name: OpenTyrian
+    - name: setup.int
+      destination: ports/opentyrian/setup.int
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/setup.int
+      native_name: OpenTyrian
+    - name: shapesw.dat
+      destination: ports/opentyrian/shapesw.dat
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/shapesw.dat
+      native_name: OpenTyrian
+    - name: shapesx.dat
+      destination: ports/opentyrian/shapesx.dat
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/shapesx.dat
+      native_name: OpenTyrian
+    - name: shapesy.dat
+      destination: ports/opentyrian/shapesy.dat
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/shapesy.dat
+      native_name: OpenTyrian
+    - name: shapesz.dat
+      destination: ports/opentyrian/shapesz.dat
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/shapesz.dat
+      native_name: OpenTyrian
+    - name: shipedit.pcx
+      destination: ports/opentyrian/shipedit.pcx
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/shipedit.pcx
+      native_name: OpenTyrian
+    - name: tshp2.pcx
+      destination: ports/opentyrian/tshp2.pcx
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/tshp2.pcx
+      native_name: OpenTyrian
+    - name: tyrend.anm
+      destination: ports/opentyrian/tyrend.anm
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/tyrend.anm
+      native_name: OpenTyrian
+    - name: tyrian.cdt
+      destination: ports/opentyrian/tyrian.cdt
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/tyrian.cdt
+      native_name: OpenTyrian
+    - name: tyrian.hdt
+      destination: ports/opentyrian/tyrian.hdt
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/tyrian.hdt
+      native_name: OpenTyrian
+    - name: tyrian.ico
+      destination: ports/opentyrian/tyrian.ico
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/tyrian.ico
+      native_name: OpenTyrian
+    - name: tyrian.pic
+      destination: ports/opentyrian/tyrian.pic
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/tyrian.pic
+      native_name: OpenTyrian
+    - name: tyrian.shp
+      destination: ports/opentyrian/tyrian.shp
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/tyrian.shp
+      native_name: OpenTyrian
+    - name: tyrian.snd
+      destination: ports/opentyrian/tyrian.snd
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/tyrian.snd
+      native_name: OpenTyrian
+    - name: tyrian1.lvl
+      destination: ports/opentyrian/tyrian1.lvl
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/tyrian1.lvl
+      native_name: OpenTyrian
+    - name: tyrian2.lvl
+      destination: ports/opentyrian/tyrian2.lvl
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/tyrian2.lvl
+      native_name: OpenTyrian
+    - name: tyrian3.lvl
+      destination: ports/opentyrian/tyrian3.lvl
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/tyrian3.lvl
+      native_name: OpenTyrian
+    - name: tyrian4.lvl
+      destination: ports/opentyrian/tyrian4.lvl
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/tyrian4.lvl
+      native_name: OpenTyrian
+    - name: tyrianc.shp
+      destination: ports/opentyrian/tyrianc.shp
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/tyrianc.shp
+      native_name: OpenTyrian
+    - name: tyrset.pcx
+      destination: ports/opentyrian/tyrset.pcx
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/tyrset.pcx
+      native_name: OpenTyrian
+    - name: user1.shp
+      destination: ports/opentyrian/user1.shp
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/user1.shp
+      native_name: OpenTyrian
+    - name: user2.shp
+      destination: ports/opentyrian/user2.shp
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/user2.shp
+      native_name: OpenTyrian
+    - name: voices.snd
+      destination: ports/opentyrian/voices.snd
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/voices.snd
+      native_name: OpenTyrian
+    - name: voicesc.snd
+      destination: ports/opentyrian/voicesc.snd
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/voicesc.snd
+      native_name: OpenTyrian
+    - name: netterm.int
+      destination: ports/opentyrian/netterm.int
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/netterm.int
+      native_name: OpenTyrian
+    - name: newshi.shp
+      destination: ports/opentyrian/newshi.shp
+      required: true
+      native_system: OpenTyrian
+      native_path: ports/opentyrian/newshi.shp
+      native_name: OpenTyrian
+    - name: "shapes).dat"
+      destination: "ports/opentyrian/shapes).dat"
+      required: true
+      native_system: OpenTyrian
+      native_path: "ports/opentyrian/shapes).dat"
+      native_name: OpenTyrian
+    native_id: OpenTyrian
+    name: OpenTyrian
+  sega-outrun:
+    files:
+    - name: epr-10187.88
+      destination: ports/cannonball/epr-10187.88
+      required: true
+      native_system: Cannonball
+      native_path: ports/cannonball/epr-10187.88
+      native_name: Cannonball
+    - name: epr-10327.76
+      destination: ports/cannonball/epr-10327.76
+      required: true
+      native_system: Cannonball
+      native_path: ports/cannonball/epr-10327.76
+      native_name: Cannonball
+    - name: epr-10327a.76
+      destination: ports/cannonball/epr-10327a.76
+      required: true
+      native_system: Cannonball
+      native_path: ports/cannonball/epr-10327a.76
+      native_name: Cannonball
+    - name: epr-10328.75
+      destination: ports/cannonball/epr-10328.75
+      required: true
+      native_system: Cannonball
+      native_path: ports/cannonball/epr-10328.75
+      native_name: Cannonball
+    - name: epr-10328a.75
+      destination: ports/cannonball/epr-10328a.75
+      required: true
+      native_system: Cannonball
+      native_path: ports/cannonball/epr-10328a.75
+      native_name: Cannonball
+    - name: epr-10329.58
+      destination: ports/cannonball/epr-10329.58
+      required: true
+      native_system: Cannonball
+      native_path: ports/cannonball/epr-10329.58
+      native_name: Cannonball
+    - name: epr-10329a.58
+      destination: ports/cannonball/epr-10329a.58
+      required: true
+      native_system: Cannonball
+      native_path: ports/cannonball/epr-10329a.58
+      native_name: Cannonball
+    - name: epr-10330.57
+      destination: ports/cannonball/epr-10330.57
+      required: true
+      native_system: Cannonball
+      native_path: ports/cannonball/epr-10330.57
+      native_name: Cannonball
+    - name: epr-10330a.57
+      destination: ports/cannonball/epr-10330a.57
+      required: true
+      native_system: Cannonball
+      native_path: ports/cannonball/epr-10330a.57
+      native_name: Cannonball
+    - name: epr-10380.133
+      destination: ports/cannonball/epr-10380.133
+      required: true
+      native_system: Cannonball
+      native_path: ports/cannonball/epr-10380.133
+      native_name: Cannonball
+    - name: epr-10380b.133
+      destination: ports/cannonball/epr-10380b.133
+      required: true
+      native_system: Cannonball
+      native_path: ports/cannonball/epr-10380b.133
+      native_name: Cannonball
+    - name: epr-10381.132
+      destination: ports/cannonball/epr-10381.132
+      required: true
+      native_system: Cannonball
+      native_path: ports/cannonball/epr-10381.132
+      native_name: Cannonball
+    - name: epr-10381b.132
+      destination: ports/cannonball/epr-10381b.132
+      required: true
+      native_system: Cannonball
+      native_path: ports/cannonball/epr-10381b.132
+      native_name: Cannonball
+    - name: epr-10382.118
+      destination: ports/cannonball/epr-10382.118
+      required: true
+      native_system: Cannonball
+      native_path: ports/cannonball/epr-10382.118
+      native_name: Cannonball
+    - name: epr-10382b.118
+      destination: ports/cannonball/epr-10382b.118
+      required: true
+      native_system: Cannonball
+      native_path: ports/cannonball/epr-10382b.118
+      native_name: Cannonball
+    - name: epr-10383.117
+      destination: ports/cannonball/epr-10383.117
+      required: true
+      native_system: Cannonball
+      native_path: ports/cannonball/epr-10383.117
+      native_name: Cannonball
+    - name: epr-10383b.117
+      destination: ports/cannonball/epr-10383b.117
+      required: true
+      native_system: Cannonball
+      native_path: ports/cannonball/epr-10383b.117
+      native_name: Cannonball
+    - name: mpr-10371.9
+      destination: ports/cannonball/mpr-10371.9
+      required: true
+      native_system: Cannonball
+      native_path: ports/cannonball/mpr-10371.9
+      native_name: Cannonball
+    - name: mpr-10372.13
+      destination: ports/cannonball/mpr-10372.13
+      required: true
+      native_system: Cannonball
+      native_path: ports/cannonball/mpr-10372.13
+      native_name: Cannonball
+    - name: mpr-10373.10
+      destination: ports/cannonball/mpr-10373.10
+      required: true
+      native_system: Cannonball
+      native_path: ports/cannonball/mpr-10373.10
+      native_name: Cannonball
+    - name: mpr-10374.14
+      destination: ports/cannonball/mpr-10374.14
+      required: true
+      native_system: Cannonball
+      native_path: ports/cannonball/mpr-10374.14
+      native_name: Cannonball
+    - name: mpr-10375.11
+      destination: ports/cannonball/mpr-10375.11
+      required: true
+      native_system: Cannonball
+      native_path: ports/cannonball/mpr-10375.11
+      native_name: Cannonball
+    - name: mpr-10376.15
+      destination: ports/cannonball/mpr-10376.15
+      required: true
+      native_system: Cannonball
+      native_path: ports/cannonball/mpr-10376.15
+      native_name: Cannonball
+    - name: mpr-10377.12
+      destination: ports/cannonball/mpr-10377.12
+      required: true
+      native_system: Cannonball
+      native_path: ports/cannonball/mpr-10377.12
+      native_name: Cannonball
+    - name: mpr-10378.16
+      destination: ports/cannonball/mpr-10378.16
+      required: true
+      native_system: Cannonball
+      native_path: ports/cannonball/mpr-10378.16
+      native_name: Cannonball
+    - name: opr-10185.11
+      destination: ports/cannonball/opr-10185.11
+      required: true
+      native_system: Cannonball
+      native_path: ports/cannonball/opr-10185.11
+      native_name: Cannonball
+    - name: opr-10186.47
+      destination: ports/cannonball/opr-10186.47
+      required: true
+      native_system: Cannonball
+      native_path: ports/cannonball/opr-10186.47
+      native_name: Cannonball
+    - name: opr-10188.71
+      destination: ports/cannonball/opr-10188.71
+      required: true
+      native_system: Cannonball
+      native_path: ports/cannonball/opr-10188.71
+      native_name: Cannonball
+    - name: opr-10189.70
+      destination: ports/cannonball/opr-10189.70
+      required: true
+      native_system: Cannonball
+      native_path: ports/cannonball/opr-10189.70
+      native_name: Cannonball
+    - name: opr-10190.69
+      destination: ports/cannonball/opr-10190.69
+      required: true
+      native_system: Cannonball
+      native_path: ports/cannonball/opr-10190.69
+      native_name: Cannonball
+    - name: opr-10191.68
+      destination: ports/cannonball/opr-10191.68
+      required: true
+      native_system: Cannonball
+      native_path: ports/cannonball/opr-10191.68
+      native_name: Cannonball
+    - name: opr-10192.67
+      destination: ports/cannonball/opr-10192.67
+      required: true
+      native_system: Cannonball
+      native_path: ports/cannonball/opr-10192.67
+      native_name: Cannonball
+    - name: opr-10193.66
+      destination: ports/cannonball/opr-10193.66
+      required: true
+      native_system: Cannonball
+      native_path: ports/cannonball/opr-10193.66
+      native_name: Cannonball
+    - name: opr-10230.104
+      destination: ports/cannonball/opr-10230.104
+      required: true
+      native_system: Cannonball
+      native_path: ports/cannonball/opr-10230.104
+      native_name: Cannonball
+    - name: opr-10231.103
+      destination: ports/cannonball/opr-10231.103
+      required: true
+      native_system: Cannonball
+      native_path: ports/cannonball/opr-10231.103
+      native_name: Cannonball
+    - name: opr-10232.102
+      destination: ports/cannonball/opr-10232.102
+      required: true
+      native_system: Cannonball
+      native_path: ports/cannonball/opr-10232.102
+      native_name: Cannonball
+    - name: opr-10266.101
+      destination: ports/cannonball/opr-10266.101
+      required: true
+      native_system: Cannonball
+      native_path: ports/cannonball/opr-10266.101
+      native_name: Cannonball
+    - name: opr-10267.100
+      destination: ports/cannonball/opr-10267.100
+      required: true
+      native_system: Cannonball
+      native_path: ports/cannonball/opr-10267.100
+      native_name: Cannonball
+    - name: opr-10268.99
+      destination: ports/cannonball/opr-10268.99
+      required: true
+      native_system: Cannonball
+      native_path: ports/cannonball/opr-10268.99
+      native_name: Cannonball
+    native_id: Cannonball
+    name: Cannonball
+  cave-story:
+    files:
+    - name: Doukutsu.exe
+      destination: ports/CaveStory/Doukutsu.exe
+      required: true
+      native_system: CaveStory
+      native_path: ports/CaveStory/Doukutsu.exe
+      native_name: "Cave Story (nxengine)"
+    native_id: CaveStory
+    name: "Cave Story (nxengine)"
+  quake:
+    files:
+    - name: pak0.pak
+      destination: ports/quake/id1/pak0.pak
+      required: true
+      native_system: Quake
+      native_path: ports/quake/id1/pak0.pak
+      native_name: "Quake (tryquake)"
+    native_id: Quake
+    name: "Quake (tryquake)"
+  flashback:
+    files:
+    - name: level1.map
+      destination: ports/reminiscence/level1.map
+      required: true
+      native_system: REminiscence
+      native_path: ports/reminiscence/level1.map
+      native_name: "Flashback (REminiscence)"
+    native_id: REminiscence
+    name: "Flashback (REminiscence)"
+  xrick:
+    files:
+    - name: data.zip
+      destination: ports/xrick/data.zip
+      required: true
+      native_system: RickDangerous
+      native_path: ports/xrick/data.zip
+      native_name: "Rick Dangerous (xrick)"
+    native_id: RickDangerous
+    name: "Rick Dangerous (xrick)"
+  vvvvvv:
+    files:
+    - name: data.zip
+      destination: ports/VVVVVV/data.zip
+      required: true
+      native_system: VVVVVV
+      native_path: ports/VVVVVV/data.zip
+      native_name: VVVVVV
+    native_id: VVVVVV
+    name: VVVVVV
+  duke3d:
+    files:
+    - name: duke3d.grp
+      destination: ports/eduke/duke3d.grp
+      required: true
+      native_system: eduke32
+      native_path: ports/eduke/duke3d.grp
+      native_name: Duke Nukem 3D
+    native_id: eduke32
+    name: Duke Nukem 3D
+  sonic-1-2013:
+    files:
+    - name: Data.rsdk
+      destination: ports/sonic1/Data.rsdk
+      required: true
+      native_system: sonic1
+      native_path: ports/sonic1/Data.rsdk
+      native_name: Sonic 1
+    native_id: sonic1
+    name: Sonic 1
+  sonic-2-2013:
+    files:
+    - name: Data.rsdk
+      destination: ports/sonic2/Data.rsdk
+      required: true
+      native_system: sonic2
+      native_path: ports/sonic2/Data.rsdk
+      native_name: Sonic 2
+    native_id: sonic2
+    name: Sonic 2
+  soniccd:
+    files:
+    - name: Data.rsdk
+      destination: ports/soniccd/Data.rsdk
+      required: true
+      native_system: soniccd
+      native_path: ports/soniccd/Data.rsdk
+      native_name: Sonic CD
+    native_id: soniccd
+    name: Sonic CD
+  sonic-mania:
+    files:
+    - name: Data.rsdk
+      destination: ports/sonicmania/Data.rsdk
+      required: true
+      native_system: sonicmania
+      native_path: ports/sonicmania/Data.rsdk
+      native_name: Sonic Mania
+    native_id: sonicmania
+    name: Sonic Mania
+  RigelEngine:
+    files:
+    - name: NUKEM2.CMP
+      destination: ports/rigelengine/NUKEM2.CMP
+      required: true
+      native_system: RigelEngine
+      native_path: ports/rigelengine/NUKEM2.CMP
+      native_name: Duke Nukem 2
+    - name: NUKEM2.F1
+      destination: ports/rigelengine/NUKEM2.F1
+      required: true
+      native_system: RigelEngine
+      native_path: ports/rigelengine/NUKEM2.F1
+      native_name: Duke Nukem 2
+    - name: NUKEM2.F2
+      destination: ports/rigelengine/NUKEM2.F2
+      required: true
+      native_system: RigelEngine
+      native_path: ports/rigelengine/NUKEM2.F2
+      native_name: Duke Nukem 2
+    - name: NUKEM2.F3
+      destination: ports/rigelengine/NUKEM2.F3
+      required: true
+      native_system: RigelEngine
+      native_path: ports/rigelengine/NUKEM2.F3
+      native_name: Duke Nukem 2
+    - name: NUKEM2.F4
+      destination: ports/rigelengine/NUKEM2.F4
+      required: true
+      native_system: RigelEngine
+      native_path: ports/rigelengine/NUKEM2.F4
+      native_name: Duke Nukem 2
+    - name: NUKEM2.F5
+      destination: ports/rigelengine/NUKEM2.F5
+      required: true
+      native_system: RigelEngine
+      native_path: ports/rigelengine/NUKEM2.F5
+      native_name: Duke Nukem 2
+    native_id: RigelEngine
+    name: Duke Nukem 2
+  cdi:
+    files:
+    - name: cdimono1.zip
+      destination: bios/same_cdi/bios/cdimono1.zip
+      required: true
+      native_system: cdi
+      native_path: bios/same_cdi/bios/cdimono1.zip
+      native_name: Phillips CDI
+    - name: cdimono2.zip
+      destination: bios/same_cdi/bios/cdimono2.zip
+      required: true
+      native_system: cdi
+      native_path: bios/same_cdi/bios/cdimono2.zip
+      native_name: Phillips CDI
+    - name: cdibios.zip
+      destination: bios/same_cdi/bios/cdibios.zip
+      required: true
+      native_system: cdi
+      native_path: bios/same_cdi/bios/cdibios.zip
+      native_name: Phillips CDI
+    native_id: cdi
+    name: Phillips CDI
