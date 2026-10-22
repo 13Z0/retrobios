@@ -4,8 +4,32 @@ level: reference
 
 # Technical questions
 
-Questions about how the files are identified and checked. The questions asked
-before installing are in the [FAQ](faq.md).
+Answers to "how do you know?" questions: how a file is identified, why one BIOS
+has several fingerprints, why some files are not BIOS, and which MAME version an
+arcade set belongs to. Each answer gives a real file as its example, so you can
+check it on the system pages. Questions asked before installing are in the
+[FAQ](faq.md).
+
+## What's a hash/checksum?
+
+A hash is a fixed-length fingerprint computed from a file's contents. If even one byte differs, the hash changes completely. Every file in the database carries these:
+
+| Type | Length | Example | Used for |
+|------|--------|---------|----------|
+| SHA1 | 40 hex chars | `10155d8d6e6e832d8ea1571511e40dfb15fede05` | database primary key, BizHawk, installer downloads |
+| MD5 | 32 hex chars | `924e392ed05558ffdb115408c263dccf` | most platform verification |
+| SHA256 | 64 hex chars | `9a1c...` | emulator profiles whose upstream publishes SHA256 |
+| CRC32 | 8 hex chars | `2F468B96` | ROM-set matching, arcade DATs |
+
+Emulator profiles add Adler-32 where the code checks it, which is how Dolphin
+checks its DSP ROMs (`dsp_rom.bin` and `dsp_coef.bin`, hashed byte-swapped).
+`IPL.bin` is not one of them: Dolphin loads it without a hash check.
+
+Verification uses whichever one the platform itself uses: MD5 for Batocera,
+RetroBat, Recalbox, EmuDeck, RetroDECK, RomM, ROCKNIX, KNULLI, AmberELEC, EmuELEC
+and MiSTer FPGA, SHA1 for
+BizHawk, and nothing at all for RetroArch, Lakka and RetroPie, which only check
+that the file exists.
 
 ## How is a missing file ranked?
 
@@ -29,19 +53,52 @@ Platforms that verify by MD5 accept specific hashes. If yours doesn't match any 
 A filename is never allowed to stand in for a declared hash. When a file entry
 carries a hash, resolution matches on content and reports `hash_mismatch` if the
 only same-named copy disagrees. What happens next depends on the platform: an
-MD5 or SHA1 platform would reject the file, so the pack omits it and says why,
+MD5 or SHA1 platform would report the file as not the expected one, so the pack
+omits it and says why,
 while an existence platform only checks presence, so the file ships and the divergence
 is reported instead.
 
 ## Why are there files that aren't BIOS?
 
-A file earns its place when an emulator loads it from disk and does not bundle it. That covers actual BIOS ROMs, console firmware, arcade BIOS sets, and also game data like `prboom.wad` for the PrBoom core or soundfonts for EasyRPG.
+A file earns its place when an emulator loads it from disk and does not bundle it. That covers actual BIOS ROMs, console firmware, arcade BIOS sets, and also game data, such as `doom.wad` for the PrBoom core (`category: game_data` in `emulators/prboom.yml`) or soundfonts for EasyRPG.
 
-This follows the platforms themselves: Batocera lists `prboom.wad` in its BIOS checker, and libretro declares these files in the `firmware` field of its core info. The word "BIOS" is their vocabulary for "external file the emulator needs". Files are tagged by category (`bios`, `game_data`, `bios_zip`) in the emulator profiles, so the distinction stays visible.
+This follows the platforms themselves: EmuELEC lists Diablo's `diabdat.mpq` in its BIOS list (`platforms/emuelec.yml`, destination `ports/diablo/diabdat.mpq`), and libretro declares such files in the `firmware` field of its core info. The word "BIOS" is their vocabulary for "external file the emulator needs". Files are tagged by category (`bios`, `game_data`, `bios_zip`) in the emulator profiles, so the distinction stays visible.
+
+A file the emulator carries inside itself is not one of them. PrBoom compiles its engine data `prboom.wad` into the core from `src/prboom_wad_data.h` and never opens it on disk (`emulators/prboom.yml`, `src/d_main.c:1449-1465`), so no PrBoom pack needs it.
+
+## Why is a file the emulator reads not in the pack?
+
+A pack brings what the user has to obtain. A file the emulator installs itself
+(a font, a shader, a game database, a free replacement BIOS) is already on the
+machine once the emulator is installed, so the pack leaves it out. This is
+decided per build and per platform: the PPSSPP standalone release ships its
+`assets/` folder, the PPSSPP libretro core does not, so RetroArch packs carry
+those files and a standalone PPSSPP pack does not. When a platform's own
+package installs data beside a core (Batocera with blueMSX), that platform's
+pack leaves it out too. The emulator's page marks these files as installed with
+the emulator.
+
+## What's HLE?
+
+HLE (high-level emulation) is code inside an emulator that does the BIOS's job,
+so some games start without the file. Beetle PSX, for one, carries OpenBIOS for
+that (`emulators/beetle_psx.yml`, notes). The real file still ships, because
+the stand-in is not perfect: some games glitch or do not start.
+
+A profile entry records it as `hle_fallback: true`. That flag does not decide
+`required`: 13 of the 778 entries that carry it are required, among them Beetle
+PSX's three region BIOS. Verification reports a missing `hle_fallback` file at
+INFO either way.
+
+## How often are packs updated?
+
+The platforms' own lists (libretro's System.dat, batocera-systems and the
+others) are read again by hand, and the difference is reviewed before it lands.
+A release follows when files are added or profiles change.
 
 ## Are these files verified against original hardware dumps?
 
-No, and that is a deliberate boundary. The hashes here document what
+No. The hashes here document what
 emulator code loads and accepts, read from the source. When several
 revisions or regions pass, all of them are kept (`.variants/` in the
 repository, per-emulator pages list each one), and the pack ships the
@@ -74,27 +131,6 @@ compiles two MAME versions of its own, 0.258 and 0.278, profiled as
 `mame0258` and `mame0278`. The pack
 ships the sets matching the core you run, and a generic unversioned arcade
 pack cannot do that.
-
-## What's a hash/checksum?
-
-A hash is a fixed-length fingerprint computed from a file's contents. If even one byte differs, the hash changes completely. Every file in the database carries these:
-
-| Type | Length | Example | Used for |
-|------|--------|---------|----------|
-| SHA1 | 40 hex chars | `10155d8d6e6e832d8ea1571511e40dfb15fede05` | database primary key, BizHawk, installer downloads |
-| MD5 | 32 hex chars | `924e392ed05558ffdb115408c263dccf` | most platform verification |
-| SHA256 | 64 hex chars | `9a1c...` | emulator profiles whose upstream publishes SHA256 |
-| CRC32 | 8 hex chars | `2F468B96` | ROM-set matching, arcade DATs |
-
-Emulator profiles add Adler-32 where the code checks it, which is how Dolphin
-checks its DSP ROMs (`dsp_rom.bin` and `dsp_coef.bin`, hashed byte-swapped).
-`IPL.bin` is not one of them: Dolphin loads it without a hash check.
-
-Verification uses whichever one the platform itself uses: MD5 for Batocera,
-RetroBat, Recalbox, EmuDeck, RetroDECK, RomM, ROCKNIX, KNULLI, AmberELEC, EmuELEC
-and MiSTer FPGA, SHA1 for
-BizHawk, and nothing at all for RetroArch, Lakka and RetroPie, which only check
-that the file exists.
 
 ## Why does my verification report say UNTESTED?
 

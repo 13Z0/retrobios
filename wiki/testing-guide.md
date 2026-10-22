@@ -4,10 +4,13 @@ level: contribute
 
 # Testing guide
 
-The suite is discovered dynamically across focused modules, so its exact count
-is reported by the test runner instead of being hand-maintained here. Tests do
-not require network access. Most build synthetic fixtures under the repository's
-`tmp/`. Modules that read real artifacts skip cleanly when those inputs are absent.
+The tests hold what users and platforms rely on: a pack holds what its
+platform checks, the site states what the code does, the installer writes only
+where it should.
+
+No test needs network access. Most build synthetic fixtures under the
+repository's `tmp/`, and modules that read real artifacts skip when those are
+absent. The test runner prints the count.
 
 ## Running tests
 
@@ -51,7 +54,7 @@ Every module in `tests/`, by the area it guards.
 | Handheld port | stubbed PortMaster dialogs, fake installer | `test_port` |
 | Truth and native export | synthetic + cached originals | `test_export_counts`, `test_export_native_layer`, `test_export_report`, `test_exporters`, `test_truth_data_dir_readers`, `test_truth_diff`, `test_truth_layout` |
 | Scrapers, upstream and provenance | inline sources, synthetic | `test_check_freshness`, `test_dedup`, `test_elec_scrapers`, `test_fbneo_parser`, `test_find_pinned_revision`, `test_hash_merge`, `test_launchers`, `test_launchers_emudeck`, `test_launchers_recalbox`, `test_launchers_retrobat`, `test_launchers_retrodeck`, `test_launchers_retropie`, `test_launchers_rocknix`, `test_mame_devices`, `test_mame_parser`, `test_mame_ref_audit`, `test_profile_sync`, `test_provenance`, `test_refresh_data_dirs`, `test_refresh_failures`, `test_refresh_stale`, `test_retrodeck_scraper_errors`, `test_romset_recipes`, `test_scraper_contract`, `test_upstream`, `test_upstream_index` |
-| Site, docs and repository contracts | rendered pages, sources | `test_contributing_text`, `test_coverage_cache`, `test_data_dir_refs`, `test_dataclass_defaults`, `test_doc_pages`, `test_doc_surfaces`, `test_optional_dependencies`, `test_prose_style`, `test_site_availability`, `test_site_cores`, `test_site_emulator_page`, `test_site_exports`, `test_site_funnel`, `test_site_images`, `test_site_platform_hashes`, `test_site_render`, `test_site_system_links`, `test_site_validation`, `test_site_weight`, `test_site_write`, `test_validate_pr`, `test_validate_pr_flow`, `test_validate_pr_hashes`, `test_workflow_paths` |
+| Site, docs and repository contracts | rendered pages, sources | `test_contributing_text`, `test_coverage_cache`, `test_data_dir_refs`, `test_dataclass_defaults`, `test_doc_pages`, `test_doc_surfaces`, `test_optional_dependencies`, `test_prose_style`, `test_site_availability`, `test_site_copy`, `test_site_cores`, `test_site_emulator_page`, `test_site_exports`, `test_site_funnel`, `test_site_images`, `test_site_platform_hashes`, `test_site_render`, `test_site_system_links`, `test_site_validation`, `test_site_weight`, `test_site_write`, `test_validate_pr`, `test_validate_pr_flow`, `test_validate_pr_hashes`, `test_workflow_paths` |
 
 ## Test architecture
 
@@ -324,6 +327,40 @@ someone else's work. Notes in a profile say what the core does, nothing about
 what it is not. A reply on an issue or a pull request thanks once, gives the
 facts, describes the script or the file rather than the person, and leaves
 the door open.
+
+### Pages for newcomers
+
+The Start here pages and the guide part of each setup page are read by someone
+who knows nothing about BIOS files, often on a phone. Each word costs that
+reader attention, so `tests/test_site_copy.py` holds them to numbers measured
+on the generated pages in `docs/`, code blocks left out:
+
+| Budget | Start here | Setup guide |
+|--------|-----------:|------------:|
+| Longest sentence | 20 words | 25 words |
+| Median sentence | 12 words | 14 words |
+| Longest paragraph, list item or definition | 35 words | 40 words |
+| Words before the first button or command | 50 (home page 40) | 90 |
+| Items in one list | 5 | 6 |
+| Heading | 8 words | 8 words |
+
+Each Start here page has its own ceiling (home 220 words, FAQ 450), a setup
+guide 220 and the setup index 300. Of a group of tabs only the first counts
+toward a page's words, since a reader opens one. A folded block counts toward
+the words, not toward what comes before the first command.
+
+The same test refuses filler ("simply", "just", "in order to", "this page",
+"what follows") and words a newcomer does not know yet, unless the sentence
+explains them: "Termux, a terminal app", "SSH, a terminal over the network",
+"its hash, a fingerprint of its contents". A word that needs more than that
+(manifest, libretro, revision, standalone) belongs one level down, behind a
+link labelled with that level ("Details:", "Reference:"). On Start here pages
+a pack is a ZIP and a platform is a setup.
+
+The reasons: a reader holds about four things at once, scans more than reads,
+and reads less on a phone. Facts a newcomer does not act on (legal analysis,
+source lines, annotated runs) are kept, on the page one level down. To see
+the numbers of every page, run `python -m tests.test_site_copy --report docs`.
 
 ## Landing a change
 

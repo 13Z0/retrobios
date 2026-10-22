@@ -5333,7 +5333,8 @@ class DocumentedExamplesHoldTogether(unittest.TestCase):
     def test_the_first_install_example_counts_one_number(self):
         import re
 
-        page = (ROOT / "wiki" / "first-install.md").read_text(encoding="utf-8")
+        # The annotated run moved from First install to the installer page.
+        page = (ROOT / "wiki" / "installer.md").read_text(encoding="utf-8")
         downloading = re.search(r"Downloading (\d+) files", page).group(1)
         done = re.search(r"Done\. (\d+) files installed", page).group(1)
         self.assertEqual(done, downloading)

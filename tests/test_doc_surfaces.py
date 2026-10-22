@@ -93,7 +93,7 @@ class TheDownloadTablesFollowTheRegistry(unittest.TestCase):
                     row = next(line for line in page.splitlines()
                                if line.startswith(f"| [{name}]("))
                     with self.subTest(os=os_name, platform=platform):
-                        self.assertIn(label, row.split(" | ")[2])
+                        self.assertIn(label, row.split(" | ")[1])
 
 
 class DownloadLinksNameTheFile(unittest.TestCase):
@@ -208,10 +208,10 @@ class EndUsersCheckTheirOwnFolder(unittest.TestCase):
     files points at the installer's --check, which hashes their folder."""
 
     USER_SECTIONS = (
-        ("wiki/troubleshooting.md", "## Game won't start / black screen"),
+        ("wiki/troubleshooting.md", "## 1. Check your BIOS folder { #checking-what-you-installed }"),
+        ("wiki/troubleshooting.md", "## 2. Fix the files"),
         ("wiki/faq.md", "## My game shows a black screen"),
         ("wiki/faq.md", "## How do I know which BIOS I need?"),
-        ("wiki/troubleshooting.md", "## Checking what you installed"),
     )
 
     def test_user_sections_never_send_to_verify(self):

@@ -4,7 +4,24 @@ level: contribute
 
 # Profiling guide
 
-How to create an emulator profile from source code.
+A profile is a YAML file that says which files one emulator opens, under which
+names, what it checks in them and whether it runs without them. Each line
+points at the code that proves it, at a fixed revision of that code (the pin,
+`source_commit`), so anyone can check it. Packs, checks and every emulator page
+on this site are built from profiles.
+
+Example, one entry of `emulators/duckstation.yml`:
+
+```yaml
+- name: "scph5501.bin"
+  region: [north-america, latin-america]
+  required: true
+  md5: "490f666e1afb15b7362b406ed1cea246"
+  priority: 5
+  source_ref: "src/core/bios.cpp:47"
+```
+
+This guide shows how to read an emulator's code to write one.
 
 ## Approach
 
@@ -15,15 +32,13 @@ but are verified against the code.
 
 ### Source hierarchy
 
-Documentation and metadata are valuable starting points, but they can
-fall out of sync with the actual code over time. The desmume2015 .info
-file is a good illustration: it declares `firmware_count=3`, but the
-source code at the pinned version opens zero firmware files. Cross-checking
-against the source helps catch that kind of gap early.
+The desmume2015 `.info` file declares `firmware_count=3`. The source at the
+pinned revision opens no firmware file. Documentation and metadata are where a
+profile starts, and the code is where it is checked.
 
 When sources conflict, priority follows the chain of actual execution:
 
-1. **Original emulator source** (ground truth, what the code actually does)
+1. **Original emulator source** (ground truth, what the code does)
 2. **Libretro port** (may adapt paths, add compatibility shims, or drop features)
 3. **.info metadata** (declarative, may be outdated or copied from another core)
 
@@ -144,11 +159,13 @@ degraded functionality (missing boot animation, different fonts, reduced
 audio in menus), it is optional. This keeps the classification objective
 and consistent across all profiles.
 
-When a core has HLE (high-level emulation), the real BIOS typically
-gives better accuracy, but the core functions without it. These files
-are marked with `hle_fallback: true` and `required: false`. The file
-still ships in packs (better experience for the user), but its absence
-does not raise alarms during verification.
+When a core has HLE (high-level emulation), code of its own that stands
+in for the file, mark the entry `hle_fallback: true`. The flag records the
+stand-in. It does not decide `required`, which still comes from what the
+code does without the file: most of the 778 entries that carry the flag
+are optional, and 13 are required, among them Beetle PSX's three region
+BIOS (`emulators/beetle_psx.yml`). The file still ships in packs, and
+verification reports its absence at INFO whatever `required` says.
 
 MAME is read the same way. A missing ROM is fatal only when it is neither
 `ROM_OPTIONAL` nor `NO_DUMP` (`src/emu/romload.cpp`), so a set made only of
@@ -216,7 +233,8 @@ selection, and a Hong Kong PS2 is an NTSC-J console.
 
 ### 3c. Record the search order
 
-When several files can fill one slot, `priority:` records the order the code
+When several files can fill one slot (one role for one system and region, such
+as the North American PlayStation BIOS), `priority:` records the order the code
 looks for them, lowest first, read from the source alone. Two cores can rank
 the same file differently: pcsx1 walks `scph1001`, `scph5501`, `scph7001` in
 that order while DuckStation prefers `scph5501` (5) to `scph1001` (10). The

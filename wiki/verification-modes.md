@@ -4,8 +4,22 @@ level: reference
 
 # How each platform checks files
 
-Each platform verifies BIOS files differently. `verify.py` replicates the native behavior
-of each platform so that verification results match what the platform itself would report.
+Before a game starts, your setup may check its BIOS files, and each setup checks
+differently. RetroArch only asks whether a file with the right name is in the
+folder. Batocera computes the file's MD5 fingerprint and compares it with its
+list, so a renamed or wrong-region file shows as `UNTESTED`: present, but not
+the expected file. BizHawk does the same with SHA1. The way a setup checks
+decides what "OK" means there: a file RetroArch accepts can still be one
+Batocera reports.
+
+Example: `scph5501.bin`, MD5 `490f666e1afb15b7362b406ed1cea246`. Any file named
+`scph5501.bin` passes on RetroArch. On Batocera only those exact bytes pass.
+
+This project's `verify.py` reproduces each setup's own check, so its report
+says what the setup itself would say. A missing file is then ranked by
+**severity**: CRITICAL when the setup cannot start that console, WARNING when
+it runs degraded or the file's version is in doubt, INFO when nothing visible
+changes ([severity matrix](#severity-matrix)).
 
 <!-- image: verification-modes -->
 
@@ -15,8 +29,8 @@ of each platform so that verification results match what the platform itself wou
 
 **Source**: RetroArch `core_info.c`, function `path_is_valid()`; minarch for the MinUI family
 
-The most straightforward mode. A file is OK if it exists at the expected path. No hash is checked.
-Any file with the correct name passes, regardless of content.
+A file is OK if it exists at the expected path. No hash is checked. Any file
+with the correct name passes, regardless of content.
 
 | Condition | Status | Severity (required) | Severity (optional) |
 |-----------|--------|---------------------|---------------------|
@@ -24,15 +38,15 @@ Any file with the correct name passes, regardless of content.
 | File missing | MISSING | WARNING | INFO |
 
 RetroArch does not distinguish between a correct and an incorrect BIOS at the verification
-level. A corrupt or wrong-region file still shows as present. This is by design in the
-upstream code: `core_info.c` only calls `path_is_valid()` and does not open or hash the file.
+level. A corrupt or wrong-region file still shows as present: RetroArch's
+`core_info.c` only calls `path_is_valid()` and does not open or hash the file.
 
 Lakka and RetroPie inherit this behavior through platform config inheritance
 (`inherits: retroarch` in the platform YAML).
 
-MinUI, NextUI and MyMinUI check nothing at all: minarch returns the folder
-`Bios/<TAG>/` for `RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY` and never opens a
-file in it (MinUI `workspace/all/minarch/minarch.c:1889-1893` and `:2943`). The
+MinUI, NextUI and MyMinUI check nothing at all. They hand each core its own
+folder, `Bios/<TAG>/`, and open nothing in it: minarch answers
+`RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY` with that folder (MinUI `workspace/all/minarch/minarch.c:1889-1893` and `:2943`). The
 core decides what it loads, so the files are the ones its profile documents,
 placed below each folder a pak hands it (`core_system_dirs` in the platform
 YAML).
@@ -56,8 +70,9 @@ hashed with MD5, and compared case-insensitively against the expected value.
 | File present, hash differs | UNTESTED | WARNING | WARNING |
 | File missing | MISSING | CRITICAL | WARNING |
 
-If the `resolve_local_file` step already confirmed the MD5 match (status `md5_exact`),
-`verify.py` skips re-hashing and returns OK directly.
+If finding the file already confirmed the MD5 match (status `md5_exact` of the
+[file resolution chain](#file-resolution-chain)), `verify.py` skips re-hashing
+and returns OK directly.
 
 ### MD5 shorter than 32 characters (Batocera)
 
@@ -381,8 +396,10 @@ A local file that contradicts a declared hash is handled by the platform's
 own mode, never by one global rule. An existence frontend never reads the
 bytes, so the file is packed and the difference reported: a hash in System.dat
 that differs from the local dump must not remove a file RetroArch would have
-loaded. An md5 or sha1 frontend would reject it, so it is left out of the pack
-and counted as `unsafe excluded`, which is distinct from `missing`. The pack
+loaded. An md5 or sha1 frontend would report it as not the expected file
+(Batocera's `checkBios` marks it `UNTESTED`), so it is left out of the pack
+and counted as `unsafe excluded`, left out because the platform would not
+accept it, which is distinct from `missing`. The pack
 report and the installer manifest both record it. The pack builder and the
 pack verification apply the same rule.
 
@@ -401,22 +418,29 @@ pack, verify and the install manifest all read it, so they name the same file.
    the emulator declares, which finds a dump stored under another name, then
    from the files sharing the name, `.variants/` included, in a stable order.
    On a md5 or sha1 platform a candidate must also carry a value the platform
-   entry declares, or the frontend would refuse it.
+   entry declares, or the frontend's own check would not accept it.
 4. When only a warning-level check fails (`on_mismatch: warn`), the file
    itself stands: the core runs it.
 5. Then a held file the core at least runs.
 6. Failing all of these, the platform-verified file is kept and the
    disagreement is reported ("<core> says ..."), never as compatible.
 
-### Practical example
+### Worked example
 
-A `scph5501.bin` file passes Batocera MD5 verification (hash matches upstream
-declaration) but fails an emulator profile's size check because the profile
-was verified against a different revision. The search looks for a held file
-carrying a Batocera-accepted md5 that also passes the size check, under that
-name or any name the emulator's hashes reach. If found, it ships. If not, the
-Batocera-verified file ships and the discrepancy stays visible in verification
-and gap reporting.
+RetroBat lists `dragon/d64_1.rom` with MD5 `5f0bee59710e55f5880e74890912ed78`
+(`platforms/retrobat.yml`). The collection holds that dump, CRC32 `60a4634c`,
+and RetroBat's check passes. XRoar, which RetroBat runs for the Dragon, checks
+the CRC32 of the same file and accepts `84f68bf9` only. The collection holds a
+dump with that CRC32 too (`bios/Dragon/Dragon/d64_1.rom`), but its MD5 is
+`be9bc86ee5eb401d0a40d0377f65fefa`, not the one RetroBat lists, so RetroBat
+would not accept it at that path (step 3). The RetroBat file ships, and the
+[gaps page](../gaps.md) lists the discrepancy with the dump XRoar accepts.
+
+## Reading this project's own reports
+
+The sections below are about `verify.py` run on a clone of the repository.
+Your own BIOS folder is checked with the installer's `--check`
+([When a game does not start](troubleshooting.md)).
 
 ## Hash mismatch / UNTESTED
 
@@ -449,8 +473,8 @@ dumps), the primary version lives in the main directory and alternatives live in
 `.variants/`. `verify.py` checks the primary file first, then falls back to
 variants when resolving by hash.
 
-If your file matches a variant hash but not the primary, it's a valid BIOS --
-just not the preferred version. Some cores accept multiple versions.
+A file that matches a variant hash but not the primary works. It is not the
+version the emulator tries first, and some cores accept several versions.
 
 ## Pack is missing files
 

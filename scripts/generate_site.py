@@ -82,6 +82,7 @@ from siteguides import (
     GUIDES,
     Guide,
     INSTALL_BASE,
+    TERMINALS,
     install_command,
     platform_args,
     terminal_tabs,
@@ -414,105 +415,92 @@ def generate_home(
 ) -> str:
     """The page someone lands on knowing nothing: what a BIOS file is,
     whether they need one, and the three steps to get the right ones.
-    Figures about the collection come last."""
+
+    The figures about the collection, the cards to the deeper pages and the
+    call for help sat below the steps and doubled the page: they are on the
+    Explore index, one tab further."""
     registry = registry or {}
-    total_files = db.get("total_files", 0)
-    total_size = db.get("total_size", 0)
-    emulator_count = len(unique_emulator_profiles(profiles))
     names = sorted((cov["platform"] for cov in coverages.values()), key=str.casefold)
+    named = [n for n in ("RetroArch", "Batocera", "EmuDeck") if n in names]
+    others = len(names) - len(named)
+    works_with = ", ".join(named) + (f" and {others} more" if others else "")
 
     lines = [
-        "# BIOS files for your emulators, in the right folder",
+        "# BIOS files for your emulators",
         "",
-        "Many consoles start their games with the help of a small program built "
-        "into the machine, called a BIOS or firmware. An emulator needs a copy of "
-        "that file to start the games of those consoles. RetroBIOS gives you the "
-        "right files for the setup you already have, in the folder where your "
-        "emulators look for them.",
+        "Some consoles need a small program to start their games. It is called "
+        "the **BIOS**. Your emulator needs a copy of it. We put the right copy "
+        "in the right folder.",
         "",
         "[Get your files](which-pack.md){ .md-button .md-button--primary } "
-        "[What is a BIOS file?](wiki/what-are-bios-files.md){ .md-button }",
+        "[What is a BIOS?](wiki/what-are-bios-files.md){ .md-button }",
         "",
-        f"Free, with no account. It works with {', '.join(names[:-1])} and {names[-1]}.",
+        f"Free. No account. Works with {works_with}.",
         "",
-        "<!-- image: bios-chain -->",
+        "## Do I need it?",
         "",
-        "## Do I need this?",
+        "- **Yes**, if your emulator says a BIOS is missing.",
+        "- **Yes** for PlayStation 1 and 2, Saturn, Dreamcast and Neo Geo.",
+        "- **Usually not** for NES, Super Nintendo, Mega Drive and Game Boy.",
         "",
-        "- **Yes**, if a game or an emulator says a BIOS file is missing.",
-        "- **Usually yes** for PlayStation, PlayStation 2, Saturn, Dreamcast, Neo "
-        "Geo and many home computers. Details: [the files each system "
-        "needs](systems/index.md).",
-        "- **Usually not** for NES, Super Nintendo and Mega Drive cartridges: those "
-        "consoles start games without a BIOS. Their add-ons do need one, such as "
-        "the Famicom Disk System and the Mega-CD.",
+        "Details: [Every console, one by one](systems/index.md)",
         "",
         "## Three steps",
         "",
-        '<div class="grid cards" markdown>',
-        "",
-        "-   **1. Find your setup**",
-        "",
-        "    Pick your device, or the system you play on. Its page shows the folder "
-        "where the files go.",
-        "",
-        "    [Pick your setup](which-pack.md#pick-your-setup)",
-        "",
-        "-   **2. Get the files**",
-        "",
-        "    One command downloads only what is missing and checks each file. You "
-        "can also download a ZIP pack and extract it yourself.",
-        "",
-        "    [First install, step by step](wiki/first-install.md)",
-        "",
-        "-   **3. Start a game**",
-        "",
-        "    Your emulator finds the files by itself. If a game still does not "
-        "start, the help page goes through the usual causes.",
-        "",
-        "    [When a game does not start](wiki/troubleshooting.md)",
-        "",
-        "</div>",
+        "1. **Pick your device.** Its page shows your BIOS folder.",
+        "2. **Run one command**, or download a ZIP file.",
+        "3. **Start a game.**",
         "",
         "## Pick your device",
         "",
         '<div class="grid cards" markdown>',
         "",
     ]
-    for group, (label, description) in DEVICE_GROUPS.items():
+    for group, (label, _description) in DEVICE_GROUPS.items():
         members = _group_members(coverages, registry, group)
         if not members:
             continue
         lines += [
             f"-   **{label}**",
             "",
-            f"    {description}",
-            "",
             "    " + ", ".join(
                 f"[{coverages[name]['platform']}](platforms/{name}.md)" for name in members
             ),
-            "",
-            f"    [See where the files go](which-pack.md#{GROUP_ANCHORS[group]})",
             "",
         ]
     lines += [
         "</div>",
         "",
-        "## Is this safe?",
+        "## Is it safe?",
         "",
-        "The installer writes only inside your BIOS folder, checks every file "
-        "before saving it, keeps any file of yours it replaces in a "
-        "retrobios-backup folder beside it, and never touches games or saves. "
-        "[How the command is checked](wiki/faq.md#is-piping-the-installer-into-a-shell-safe).",
+        "- It writes only in your BIOS folder.",
+        "- It checks every file before saving it.",
+        "- It keeps any file it replaces, in a `retrobios-backup` folder.",
+        "- It never touches your games or saves.",
         "",
-        "Laws on copying console firmware differ by country. "
-        "[The project's position](wiki/faq.md#is-this-legal) says where it stands "
-        "and how to ask for a file to be removed.",
+        "[How the command is checked](wiki/faq.md#is-piping-the-installer-into-a-shell-safe). "
+        "[Is it legal?](wiki/faq.md#is-this-legal)",
         "",
-        "## Go further",
+        *_next_block([
+            "[Get your files](which-pack.md)",
+            "[What is a BIOS?](wiki/what-are-bios-files.md)",
+        ]),
+        f'<div class="rb-timestamp">Generated on {_timestamp()}.</div>',
+    ]
+    return "\n".join(lines) + "\n"
+
+
+def generate_explore_index(db: dict, coverages: dict, profiles: dict) -> str:
+    """The Explore tab opens here: where to look for one console, one
+    emulator or one installer option, and the figures of the collection."""
+    total_files = db.get("total_files", 0)
+    total_size = db.get("total_size", 0)
+    emulator_count = len(unique_emulator_profiles(profiles))
+    lines = [
+        "# Explore",
         "",
-        "These pages go into detail, for when you want to know more than where the "
-        "files go.",
+        "One console, one emulator, or one installer option: each has its page, "
+        "with the files it needs and the code that reads them.",
         "",
         '<div class="grid cards" markdown>',
         "",
@@ -520,13 +508,19 @@ def generate_home(
         "",
         "    What each console and computer needs, file by file.",
         "",
-        "    Details: [Browse the systems](systems/index.md)",
+        "    [Browse the systems](systems/index.md)",
         "",
         "-   **Emulators**",
         "",
         "    What each emulator reads, with the source code that reads it.",
         "",
-        "    Details: [Browse the emulators](emulators/index.md)",
+        "    [Browse the emulators](emulators/index.md)",
+        "",
+        "-   **Installer options**",
+        "",
+        "    Fewer files, one region, another folder, a check without download.",
+        "",
+        "    [All installer options](wiki/installer.md)",
         "",
         "-   **How files are checked**",
         "",
@@ -536,11 +530,13 @@ def generate_home(
         "",
         "-   **Data and API**",
         "",
-        "    Every file and hash as JSON, CSV and SQLite, for your own tools.",
+        "    Every file and hash as JSON, CSV and SQLite.",
         "",
         "    Reference: [Data and API](data.md)",
         "",
         "</div>",
+        "",
+        "## The collection",
         "",
         '<div class="rb-stats" markdown>',
         "",
@@ -554,14 +550,9 @@ def generate_home(
         "",
         "## Help the project",
         "",
-        "Files, emulator profiles and corrections are welcome. "
-        "For contributors: [How to contribute](contributing.md).",
+        "A file you hold, an emulator profile or a correction fills a gap for "
+        "every setup at once. For contributors: [How to contribute](contributing.md).",
         "",
-        *_next_block([
-            "[Get your files](which-pack.md)",
-            "[What BIOS files are](wiki/what-are-bios-files.md)",
-        ]),
-        f'<div class="rb-timestamp">Generated on {_timestamp()}.</div>',
     ]
     return "\n".join(lines) + "\n"
 
@@ -1429,6 +1420,7 @@ def _browser_title(relative: Path, title: str) -> str:
         "systems/index.md": "Systems",
         "emulators/index.md": "Emulators",
         "wiki/index.md": "Reference",
+        "explore.md": "Explore",
     }
     if key in index_titles:
         return index_titles[key]
@@ -1470,10 +1462,11 @@ def _page_description(markdown: str, relative: Path, title: str) -> str:
     specific = {
         "index.md": "The BIOS files your emulators need, for RetroArch, Batocera, EmuDeck and more: the folder they go in, one command that installs and checks them, and packs to download.",
         "data.md": "Versioned RetroBIOS JSON API, CSV exports, SQLite snapshot, schemas, checksums and data interpretation guidance.",
-        "cross-reference.md": "Cross-reference from retrogaming platforms to emulator cores, systems, upstream projects and profiled firmware files.",
+        "cross-reference.md": "Every emulator core each retrogaming platform runs, the systems it emulates and the upstream project it comes from.",
         "gaps.md": "Current RetroBIOS verification gaps, platform-to-emulator divergences, missing files and documented source limitations.",
         "exports.md": "Each platform's own BIOS list (System.dat, batocera-systems, es_bios.xml and the rest) with the hashes and files the emulator source code shows, offered to its maintainers.",
         "provenance.md": "Hash-based comparison of RetroBIOS metadata with No-Intro, Redump and TOSEC catalog snapshots.",
+        "explore.md": "Systems, emulators and installer options to explore, with the figures of the BIOS collection.",
         "which-pack.md": "Pick your device or setup and get its BIOS files: the folder they go in, one command that installs and checks them, or a ZIP pack to extract.",
     }
     if key in specific:
@@ -1875,7 +1868,7 @@ def page_level(relative: Path) -> str:
         return "start"
     if relative.parts[0] == "platforms":
         return "setup"
-    if relative.parts[0] in ("systems", "emulators"):
+    if relative.parts[0] in ("systems", "emulators") or path == "explore.md":
         return "explore"
     if path in _REFERENCE_PAGES:
         return "reference"
@@ -1978,8 +1971,7 @@ def generate_platform_index(coverages: dict, registry: dict | None = None) -> st
     lines = [
         "# Your setup",
         "",
-        "Pick the system you play on. Its page says where the BIOS files go, "
-        "gives the command that installs them and links its pack.",
+        "Pick what you play on. Its page gives the folder, the command and the ZIP.",
         "",
     ]
     for group, (label, description) in DEVICE_GROUPS.items():
@@ -2314,19 +2306,24 @@ def _core_folders_section(name: str, config: dict) -> list[str]:
 def _check_sentence(display: str, mode: str, config: dict, no_list: bool) -> str:
     """What the frontend itself checks, from the mode its code uses."""
     if no_list:
-        return (f"{display} publishes no BIOS list, so it does not check files "
-                "itself. Each emulator core looks for its own files when a game starts.")
+        return (f"{display} has no BIOS list, so it checks nothing itself. Each "
+                "emulator looks for its own files when a game starts.")
     if config.get("hash_rule") == "size_and_any_hash":
-        return (f"{display} itself compares the size and a hash (MD5, SHA1 or "
-                "CRC32) of each file with its list, so a file with other contents "
-                "does not count there.")
-    algorithm = digest_algorithm(mode)
-    if algorithm:
-        return (f"{display} itself compares the {algorithm.upper()} of each file "
-                "with its list, so a file with other contents does not count there.")
-    return (f"{display} itself only checks that each file is there, by its name. "
-            "The check above also reads the contents, so it finds a file that has "
-            "the right name and other contents.")
+        return (f"{display} checks each file's size and fingerprint too. It "
+                "reports a file with the wrong size or contents.")
+    if digest_algorithm(mode):
+        return (f"{display} checks each file's fingerprint too. It reports a file "
+                "with the wrong contents.")
+    return (f"{display} only checks that a file with the right name is there. "
+            "`--check` also checks what is inside.")
+
+
+def _folder_rows(rows: tuple[tuple[str, str], ...], indent: str = "") -> list[str]:
+    return [
+        f"{indent}| Where | BIOS folder |",
+        f"{indent}|-------|-------------|",
+        *(f"{indent}| {label} | {path} |" for label, path in rows),
+    ]
 
 
 def _platform_guide(name: str, display: str, cov: dict, registry: dict, no_list: bool) -> list[str]:
@@ -2334,15 +2331,9 @@ def _platform_guide(name: str, display: str, cov: dict, registry: dict, no_list:
     guide = GUIDES[name]
     entry = registry.get(name, {})
     extract_to = entry.get("extract_to")
-    lines = [
-        "## Where the files go",
-        "",
-        "| Where | BIOS folder |",
-        "|-------|-------------|",
-        *(f"| {label} | {path} |" for label, path in guide.folders),
-    ]
+    lines = ["## Where the files go", "", *_folder_rows(guide.folders)]
     if extract_to:
-        lines.append(f"| Extract the pack into | `{extract_to}` |")
+        lines.append(f"| Unzip the pack into | `{extract_to}` |")
     lines.append("")
     for note in guide.notes:
         lines += [note, ""]
@@ -2350,35 +2341,38 @@ def _platform_guide(name: str, display: str, cov: dict, registry: dict, no_list:
               for line in (note, "")]
     if name == "retroarch":
         lines += [
-            "Handheld systems that start RetroArch for their games keep its files "
-            "in the folder below. The command finds it by itself.",
+            '??? note "Other builds: Microsoft Store, Mac Steam, handhelds"',
             "",
-            "| System | BIOS folder |",
-            "|--------|-------------|",
-            *(f"| {system} | `{folder}` |" for system, folder in _retroarch_handhelds(registry)),
+            *_folder_rows(guide.more_folders, "    "),
+            *(f"    | {system} | `{folder}` |" for system, folder in _retroarch_handhelds(registry)),
+            "",
+            "    LaunchBox and other launchers use the folder RetroArch reads.",
+            "",
+        ]
+    elif guide.more_folders:
+        lines += [
+            '??? note "Other layouts"',
+            "",
+            *_folder_rows(guide.more_folders, "    "),
             "",
         ]
     lines += [
         *(["<!-- image: minui-card -->", ""] if guide.on_card else []),
         "## Install",
         "",
-        f"The command finds the {display} BIOS folder, downloads the files that "
-        "are missing or differ, checks each one, and resumes where it stopped.",
+        "The command finds the folder, downloads what is missing, and checks "
+        "each file.",
         "",
     ]
     if guide.on_card:
         lines += [
-            f"Put the {display} SD card in a computer. On Windows, note its drive "
-            "letter (for example **E:**). Then run the line with the root of the "
-            "card after `--dest`.",
+            "Put the SD card in a computer. On Windows, note its letter, like "
+            "**E:**. Put the card's path after `--dest`.",
             "",
         ]
     lines += [
         *terminal_tabs(guide.run, platform_args(name, guide)),
         *trust_box("../"),
-        "To install fewer systems, add `--system` with the system ids listed in "
-        "the reference below.",
-        "",
         "## Download",
         "",
     ]
@@ -2386,21 +2380,26 @@ def _platform_guide(name: str, display: str, cov: dict, registry: dict, no_list:
     pack = release_record.pack_for(name, record)
     if pack and pack.get("assets"):
         parts = len(pack["assets"])
+        bullets = [
+            f"{_fmt_size(pack['download_size'])} to download, "
+            f"{_fmt_size(pack['extracted_size'])} once unzipped."
+        ]
+        if parts > 1:
+            bullets.append("You need both parts." if parts == 2 else f"You need all {parts} parts.")
+        target = f"`{extract_to}`" if extract_to else "your BIOS folder"
+        bullets.append(f"Unzip {'them all' if parts > 1 else 'it'} into {target}.")
+        if guide.download_hint:
+            bullets.append(guide.download_hint)
         lines += [
             _pack_buttons(name, f"Download {display} Pack"),
             "",
-            f"{_fmt_size(pack['download_size'])} to download"
-            + (f" in {parts} parts" if parts > 1 else "")
-            + f", {_fmt_size(pack['extracted_size'])} once extracted. "
-            + (f"Extract it into `{extract_to}`. " if extract_to else "")
-            + ("Every part is needed: extract them all into the same folder."
-               if parts > 1 else ""),
+            *(f"- {b}" for b in bullets),
             "",
         ]
     elif record.get("tag"):
         lines += [
-            f"The {record['tag']} release has no {display} pack yet. The command "
-            "above installs the same files.",
+            f"No {display} pack in release {record['tag']} yet. The command above "
+            "installs the same files.",
             "",
         ]
     else:
@@ -2409,19 +2408,16 @@ def _platform_guide(name: str, display: str, cov: dict, registry: dict, no_list:
     lines += [
         "## How to check",
         "",
-        "The same command with `--check` reads the BIOS folder, checks every file "
-        "and writes nothing. It ends on a line such as "
-        "`5865/5865 present (5865 verified, 0 wrong hash)`.",
+        "Add `--check` to the command. It changes nothing.",
         "",
         *terminal_tabs(guide.run, check_args, steps=False),
+        "All good when you see `0 wrong hash`.",
+        "",
         _check_sentence(display, cov["mode"], cov["config"], no_list),
         "",
         *_next_block([
-            "[First install, step by step](../wiki/first-install.md), with what "
-            "each step prints",
+            "[First install, step by step](../wiki/first-install.md)",
             "[When a game does not start](../wiki/troubleshooting.md)",
-            "[Every file by system](#reference-every-file-by-system), further down "
-            "this page",
         ]),
     ]
     return lines
@@ -2470,9 +2466,7 @@ def generate_platform_page(
             [
                 '!!! warning "Archived platform"',
                 "",
-                "    The configuration is kept and packs are still built, but "
-                "upstream is no longer scraped on a schedule, so the file list "
-                "reflects the last sync rather than today's upstream.",
+                f"    {display}'s list is kept as last read. Its pack is still built.",
                 "",
             ]
         )
@@ -2490,9 +2484,11 @@ def generate_platform_page(
         "",
         level_label("reference"),
         "",
-        "What follows is for checking the work: the counts, where the list was "
-        "read from, and each file with its hashes.",
+        "For checking the work: the counts, where the list comes from, and "
+        "every file with its hashes.",
         "",
+        *(line for note in (GUIDES[name].reference_notes if name in GUIDES else ())
+          for line in (note, "")),
     ]
     if no_list:
         # MinUI and its forks hand each core a folder and name no file: a
@@ -2663,6 +2659,8 @@ def generate_files_page() -> str:
         "",
         '<p id="rb-file-lookup-status" role="status"></p>',
         "",
+        "To try it, paste `0555c6fae8906f3f09baf5988f00e55f88e9f30b`, the SHA1 of "
+        "`scph5501.bin`, the PlayStation BIOS v3.0. "
         "To look a file up by its name, use the search at the top of the page.",
         "",
         "## Permanent links",
@@ -2915,6 +2913,10 @@ def generate_systems_index(manufacturers: dict) -> str:
     lines = [
         "# Systems",
         "",
+        "Every BIOS file the collection holds, by manufacturer and console. Open "
+        "a console to see each file, the emulators that read it and the setups "
+        "that list it.",
+        "",
         f"{total_mfr} manufacturers, {total_consoles} consoles, "
         f"{total_files:,} files in the repository.",
         "",
@@ -3032,6 +3034,11 @@ def generate_provenance_page(
     lines = [
         "# Dump provenance",
         "",
+        "Provenance says whether a file is, byte for byte, a dump that Redump, "
+        "No-Intro or TOSEC catalogues. It tells you where a dump is known from, "
+        "not whether an emulator accepts it: that is the emulator's code, read "
+        "in its profile. Example: `scph5501.bin` is Redump's `ps-30a.bin`.",
+        "",
         f"**{matched_files:,}** of {total_files:,} system files match an entry "
         "in a dump-preservation catalog. Those files carry a "
         '<span class="rb-badge rb-badge-success">catalog</span> badge and the '
@@ -3061,7 +3068,7 @@ def generate_provenance_page(
         "not by catalog membership. Plenty of files this project ships are "
         "outside any catalog by nature: composites a core assembles for itself "
         "(the MiSTer X68000 `boot.rom` is `cgrom.dat` joined to `iplrom.dat`), "
-        "modern console firmware updates, game data such as `prboom.wad`, and "
+        "modern console firmware updates, game data such as Diablo's `diabdat.mpq`, and "
         "arcade sets tracked by MAME driver source instead.",
         "",
         "When the two views disagree, this project follows the code, because "
@@ -3563,8 +3570,16 @@ def system_pages(
         console: _console_cards(manufacturer, consoles[console], consumers, whole_anchors)
         for console in sorted(consoles)
     }
+    intro = (
+        f"Every BIOS file the collection holds for {manufacturer} machines, one "
+        "card per file. A card gives the file's fingerprints, the emulators that "
+        "read it, the setups that list it and where to download it. A file can "
+        "have several versions, one per region or revision: the main one comes "
+        "first, the others under \"Variants\". To install the files of one "
+        "console, open its \"Install\" box."
+    )
     lines = [
-        f"# {manufacturer}", "",
+        f"# {manufacturer}", "", intro, "",
         f"The files below by console, with every hash, are also published as {json_link}.",
         "",
     ]
@@ -3595,7 +3610,7 @@ def system_pages(
 
     pages: dict[str, tuple[str, dict[str, list]]] = {}
     summary = [
-        f"# {manufacturer}", "",
+        f"# {manufacturer}", "", intro, "",
         f"The files below by console, with every hash, are also published as {json_link}. "
         f"The largest sections have a page of their own, linked from their heading.",
         "",
@@ -3700,6 +3715,11 @@ def generate_emulators_index(profiles: dict) -> str:
     lines = [
         "# Emulators",
         "",
+        "Each page is one emulator: the files it reads, whether it starts games "
+        "without them, and the line of its source code that says so. The "
+        "classification below says how a core relates to the emulator it comes "
+        "from, which tells how far its own files can differ.",
+        "",
         f"**{len(unique):,}** emulator profiles, **{total_files:,}** files total, **{len(aliases):,}** aliases.",
         "",
         "| Classification | Count | Description |",
@@ -3707,13 +3727,13 @@ def generate_emulators_index(profiles: dict) -> str:
     ]
 
     cls_desc = {
-        "official_port": "Same author maintains both standalone and libretro",
-        "community_fork": "Third-party port to libretro",
-        "pure_libretro": "Built for libretro, no standalone version",
+        "official_port": "The same authors keep the app and the RetroArch core",
+        "community_fork": "Ported to RetroArch by someone else",
+        "pure_libretro": "Built for RetroArch, no app of its own",
         "game_engine": "Game engine reimplementation",
         "enhanced_fork": "Fork with added features",
         "frozen_snapshot": "Frozen at an old version",
-        "embedded_hle": "All ROMs compiled into binary",
+        "embedded_hle": "Needs no BIOS file: the emulator carries its own",
         "launcher": "Launches an external emulator",
         "other": "Unclassified",
     }
@@ -4251,14 +4271,16 @@ def _render_metadata_rows(profile: dict) -> list[str]:
         ("resources_directory", "Resources directory"),
         ("rom_path", "ROM path"),
         ("game_count", "Game count"),
-        ("verification", "Checked by"),
+        ("verification", "Checks the file by"),
         ("analysis_date", "Analysis date"),
         ("analysis_commit", "Analysis commit"),
     ]:
         val = profile.get(field)
         if val is None or val == "" or isinstance(val, (dict, list)):
             continue
-        if isinstance(val, str) and val.startswith("http"):
+        if field == "bios_size" and isinstance(val, int):
+            lines.append(f"| {label} | {_fmt_size(val)} ({val:,} bytes) |")
+        elif isinstance(val, str) and val.startswith("http"):
             lines.append(f"| {label} | [{val}]({val}) |")
         else:
             lines.append(f"| {label} | {val} |")
@@ -4621,6 +4643,42 @@ def generate_emulator_page(
         name, profile, db, consumers, data_names, data_registry, data_dirs)[name]
 
 
+def _emulator_intro(emu_name: str, profile: dict) -> str:
+    """What the emulator needs, in plain words, from fields every profile has.
+
+    The page opened on a twelve-row table: "Type", "Version", "Checked by".
+    DuckStation needs one PlayStation BIOS of any name, and the reader had
+    to infer it from the "Files found by" row."""
+    import siterender  # noqa: PLC0415
+
+    names: list[str] = []
+    for sys_id in profile.get("systems") or []:
+        page = siterender._system_page_map.get(sys_id) or siterender._page_by_norm(sys_id)
+        label = page[1] if page else str(sys_id)
+        if label not in names:
+            names.append(label)
+    files = [f for f in profile.get("files") or [] if isinstance(f, dict)]
+    required = sum(1 for f in files if f.get("required") is True)
+    sentences = []
+    if names:
+        shown = names if len(names) <= 4 else names[:3] + [f"{len(names) - 3} more systems"]
+        listed = shown[0] if len(shown) == 1 else ", ".join(shown[:-1]) + f" and {shown[-1]}"
+        sentences.append(f"{emu_name} emulates {listed}.")
+    if files:
+        sentences.append(
+            f"It reads {_count(len(files), 'file')}, {required} of them required: "
+            "without a required file it does not start games."
+            if required else
+            f"It reads {_count(len(files), 'file')}, none of them required: it starts "
+            "games without them."
+        )
+        if profile.get("found_by") == "content":
+            sentences.append("It recognises a file by its contents, so any file name works.")
+        if any(f.get("source_ref") for f in files):
+            sentences.append("Each file below cites the line of source code that reads it.")
+    return " ".join(sentences)
+
+
 def emulator_pages(
     name: str,
     profile: dict,
@@ -4673,9 +4731,11 @@ def emulator_pages(
         data_dirs = profile.get("data_directories", [])
 
     part_pages: dict[str, str] = {}
+    intro = _emulator_intro(emu_name, profile)
     lines = [
         f"# {emu_name}",
         "",
+        *([intro, ""] if intro else []),
         '<div class="rb-meta-card" markdown>',
         "",
         "| Detail | Value |",
@@ -4761,7 +4821,7 @@ def emulator_pages(
 
     if notes:
         indented = _admonition_body(link_prose_citations(profile, notes))
-        lines.extend(['???+ note "Technical notes"', f"    {indented}", ""])
+        lines.extend(['??? note "Technical notes"', f"    {indented}", ""])
 
     if not files:
         lines.append("No BIOS or firmware files required.")
@@ -5008,9 +5068,10 @@ def _render_problem_files(
         if p["status"] == "missing":
             entry = missing_files.setdefault(fname, {
                 "name": fname, "required": p["required"],
-                "platforms": [], "reason": p["reason"],
+                "platforms": [], "reason": p["reason"], "categories": set(),
             })
             entry["platforms"].append(p["platform"])
+            entry["categories"].add(p.get("category", "bios"))
             if p["required"]:
                 entry["required"] = True
         elif p["status"] == "untested":
@@ -5038,7 +5099,7 @@ def _render_problem_files(
             "## Problem files",
             "",
             f"{len(missing_files)} missing, {len(untested_files)} untested, "
-            f"{len(mismatch_files)} hash mismatch.",
+            f"{len(mismatch_files)} discrepancy.",
             "",
         ])
 
@@ -5047,14 +5108,22 @@ def _render_problem_files(
                 f'### Missing <span class="rb-badge rb-badge-danger">'
                 f"{_count(len(missing_files), 'file')}</span>",
                 "",
-                "| File | Required | Platforms |",
-                "|------|----------|-----------|",
+                "Required is the platform's own flag. Category says what the "
+                "platform's emulators do with the file: `bios` is firmware they "
+                "load, `game_data` comes from a copy of the game, `unread` is "
+                "opened by none of them. Only a missing `bios` entry stops a "
+                "console from starting.",
+                "",
+                "| File | Category | Required | Platforms |",
+                "|------|----------|----------|-----------|",
             ])
             for fname in sorted(missing_files):
                 f = missing_files[fname]
                 req = "yes" if f["required"] else "no"
                 plats = ", ".join(sorted(set(f["platforms"])))
-                lines.append(f"| `{fname}` | {req} | {plats} |")
+                cats = f["categories"]
+                category = "bios" if "bios" in cats else ", ".join(sorted(cats))
+                lines.append(f"| `{fname}` | {category} | {req} | {plats} |")
             lines.append("")
 
         if untested_files:
@@ -5062,7 +5131,7 @@ def _render_problem_files(
                 f'### Untested <span class="rb-badge rb-badge-warning">'
                 f"{_count(len(untested_files), 'file')}</span>",
                 "",
-                "Present but hash not verified. Declared is what the platform "
+                "Present, but not the expected hash. Declared is what the platform "
                 "asks for, the collection copy is what the path holds.",
                 "",
                 "| File | Platforms | Reason | Declared | Collection copy |",
@@ -5081,10 +5150,11 @@ def _render_problem_files(
 
         if mismatch_files:
             lines.extend([
-                f'### Hash mismatch <span class="rb-badge rb-badge-warning">'
+                f'### Discrepancy <span class="rb-badge rb-badge-warning">'
                 f"{_count(len(mismatch_files), 'file')}</span>",
                 "",
-                "Platform says OK but emulator validation disagrees.",
+                "The platform's own check passes, but the emulator's size or "
+                "hash check fails. Each row names the check that fails.",
                 "",
                 "| File | Platforms | Discrepancy | Accepted dump in the collection |",
                 "|------|----------|-------------|-------------------|",
@@ -5118,25 +5188,45 @@ def _render_problem_files(
     return lines
 
 
-def _platform_lists_sentence(total: int, verified: int, untested: int, missing: int) -> str:
+def _platform_lists_sentence(
+    total: int, verified: int, untested: int, missing: int,
+    not_firmware: dict[str, int] | None = None,
+) -> str:
     """The platforms' own lists in one sentence, every count said.
 
     Four tiles opened the page: "Verified (100%)" for 5,437 of 5,438 and
     "Missing 0", above a table of red cells, on the page about what is
     missing. The gaps are in the files the emulators load, and the sentence
-    says so.
+    says so. The missing count then read as missing firmware, while every
+    entry behind it was game data or a file no emulator opens: the split by
+    category is said with it.
     """
     def _is(count: int) -> str:
         return "is" if count == 1 else "are"
 
+    not_firmware = {k: v for k, v in (not_firmware or {}).items() if v}
     parts = [f"{verified:,} {_is(verified)} held and pass the platform's own check"]
     if untested:
         parts.append(f"{untested:,} {_is(untested)} held but not verified "
                      "(listed under Untested below)")
     parts.append(f"{missing:,} {_is(missing)} missing")
     listed = ", ".join(parts[:-1]) + f" and {parts[-1]}"
+    split = ""
+    if missing and not_firmware:
+        labels = {"game_data": "game data",
+                  "unread": "opened by none of the platform's emulators"}
+        firmware = missing - sum(not_firmware.values())
+        others = [
+            f"{count:,} {'is' if count == 1 else 'are'} {labels.get(category, category)}"
+            for category, count in sorted(not_firmware.items())
+        ]
+        others_text = others[0] if len(others) == 1 else ", ".join(others[:-1]) + f" and {others[-1]}"
+        head = (f"None of the missing is firmware: {others_text}" if not firmware
+                else f"Of the missing, {firmware:,} {'is' if firmware == 1 else 'are'} "
+                     f"firmware, {others_text}")
+        split = f" {head}. Only missing firmware stops a console from starting."
     return (
-        f"Of the {total:,} files on the platforms' own BIOS lists, {listed}. "
+        f"Of the {total:,} files on the platforms' own BIOS lists, {listed}.{split} "
         "The files the emulators load beyond those lists are counted per "
         "platform in the table below."
     )
@@ -5169,6 +5259,7 @@ def generate_gap_analysis(
     total_untested = 0
     total_missing_verify = 0
     total_files_verify = 0
+    not_firmware_totals: dict[str, int] = {}
 
     platform_problems: list[dict] = []
     settled_problems: list[dict] = []
@@ -5177,6 +5268,8 @@ def generate_gap_analysis(
         total_untested += cov["untested"]
         total_missing_verify += cov["missing"]
         total_files_verify += cov["total"]
+        for category, count in (cov.get("missing_not_firmware") or {}).items():
+            not_firmware_totals[category] = not_firmware_totals.get(category, 0) + count
 
         for d in cov["details"]:
             if d.get("settled_by") and d["status"] != "ok":
@@ -5195,6 +5288,7 @@ def generate_gap_analysis(
                     "name": d["name"],
                     "status": d["status"],
                     "required": d.get("required", True),
+                    "category": d.get("category", "bios"),
                     "reason": d.get("reason", ""),
                     "discrepancy": d.get("discrepancy", ""),
                     "system": d.get("system", ""),
@@ -5205,15 +5299,24 @@ def generate_gap_analysis(
     lines = [
         "# Gap analysis",
         "",
-        "What each platform and its emulators still lack, and where the "
-        "collection's copies come from.",
+        "What each pack still cannot give you, and why. Most gaps are not "
+        "firmware: a platform's list can also name game files, such as "
+        "Diablo's `diabdat.mpq`, which you copy from your own game, or files "
+        "no emulator of that platform opens. Those are counted apart. A missing "
+        "firmware file means a console that does not start, and each one is "
+        "named below with the platforms that list it.",
+        "",
+        "Each file here is a request: if you hold one of the files under "
+        "\"Files to source\", [adding it](contributing.md) fills the gap for "
+        "every platform at once.",
         "",
         "[Download gaps CSV](downloads/gaps.csv){ .md-button } "
         "[Open gaps API](api/v1/gaps.json){ .md-button } "
         "[All data exports](data.md){ .md-button }",
         "",
         _platform_lists_sentence(
-            total_files_verify, total_verified, total_untested, total_missing_verify
+            total_files_verify, total_verified, total_untested, total_missing_verify,
+            not_firmware_totals,
         ),
         "",
     ]
@@ -5259,7 +5362,7 @@ def generate_gap_analysis(
         "required and optional files alike since both ship. The first column "
         "is the BIOS list the platform publishes. The second counts files its "
         "emulators load that this list never mentions, found by reading their "
-        "source code, and it is routinely several times larger. A short "
+        "source code, and it is often several times larger. A short "
         "fraction is flagged and named in the sections below. That second "
         "number is a floor, not a ceiling: an emulator that accepts any file "
         "handed to it names none in its code, so nothing there can be counted. "
@@ -5267,7 +5370,7 @@ def generate_gap_analysis(
         "from its source code "
         "([how each one works](wiki/verification-modes.md)).",
         "",
-        "## Corroboration against emulator source",
+        "## How much of each list the emulator code confirms { #corroboration-against-emulator-source }",
         "",
         "| Platform | On its BIOS list | Documented in a profile | Content the code checks |",
         "|----------|-----------------:|------------------------:|------------------------:|",
@@ -5402,7 +5505,7 @@ def generate_gap_analysis(
         )
 
         lines.extend([
-            "## Core complement",
+            "## Files emulators load that no platform lists { #core-complement }",
             "",
             f"Files loaded by emulators but not declared by any platform. "
             f"{total_undeclared:,} files across {_count(len(emulator_gaps), 'emulator')}, "
@@ -5416,7 +5519,7 @@ def generate_gap_analysis(
             "Whatever is not in the collection is an acquisition target, named "
             "per emulator below.",
             "",
-            "### Provenance",
+            "### Where the files come from",
             "",
             "| Source | Count | Description |",
             "|--------|------:|-------------|",
@@ -5785,14 +5888,17 @@ def generate_cross_reference(
     })
 
     lines = [
-        "# Cross-reference",
+        "# Cores by platform",
         "",
-        f"Platform > Core > Systems > Upstream emulator. "
-        f"{total_cores} cores across {len(coverages)} platforms, "
-        f"tracing back to {total_upstreams} upstream projects.",
+        "Every core each platform runs, the systems it emulates, and the project "
+        "it comes from. A core built for RetroArch is often a port of another "
+        "emulator, and the two can differ in the files they read and the checks "
+        "they make, so each core names its upstream project. "
+        f"{total_cores} cores across {len(coverages)} platforms come from "
+        f"{total_upstreams} upstream projects.",
         "",
-        "The libretro core is a port of the upstream emulator. "
-        "Files, features, and validation may differ between the two.",
+        "The files a platform's emulators load and its own list does not name are "
+        "counted on [What the packs do not hold](gaps.md).",
         "",
         "[Download cross-reference CSV](downloads/cross-reference.csv){ .md-button } "
         "[Open emulator API](api/v1/emulators.json){ .md-button } "
@@ -5840,29 +5946,31 @@ def generate_wiki_data_model(db: dict, profiles: dict) -> str:
     by_path = len(db.get("indexes", {}).get("by_path_suffix", {}))
     by_sha256 = len(db.get("indexes", {}).get("by_sha256", {}))
 
+    # A real entry with real values: the PlayStation BIOS v3.0 (A).
+    sample_key = "0555c6fae8906f3f09baf5988f00e55f88e9f30b"
+    files = db.get("files", {})
+    sample = files.get(sample_key) or next(iter(files.values()), {})
     lines = [
         "# Data model",
+        "",
+        "Three kinds of file hold everything this project knows. `database.json` "
+        "lists every file the collection holds, keyed by its SHA1. A platform YAML "
+        "copies the BIOS list a setup publishes. An emulator profile records what "
+        "one emulator opens, read from its code. The sections below show the "
+        "fields of each, with a real entry, so you can read the data or build on it.",
+        "",
+        "Example: `scph5501.bin` is one entry of `database.json` (key "
+        "`0555c6fa...`), one entry of `platforms/batocera.yml` (its MD5) and one "
+        "entry of `emulators/duckstation.yml` (its MD5, region and priority).",
         "",
         "## database.json",
         "",
         f"Primary key: SHA1. **{files_count}** file entries.",
         "",
-        "Each entry:",
+        f"The entry of `{sample.get('name', '')}`:",
         "",
         "```json",
-        "{",
-        '  "path": "bios/Nintendo/GameCube/GC/USA/IPL.bin",',
-        '  "name": "IPL.bin",',
-        '  "size": 2097152,',
-        '  "sha1": "...",',
-        '  "md5": "...",',
-        '  "sha256": "...",',
-        '  "crc32": "...",',
-        '  "adler32": "...",',
-        '  "provenance": {',
-        '    "redump": {"dat": "...", "name": "...", "description": "..."}',
-        "  }",
-        "}",
+        *json.dumps(sample, indent=2, ensure_ascii=False).splitlines(),
         "```",
         "",
         "`provenance` maps each catalog that lists the file to the DAT and entry "
@@ -5882,24 +5990,11 @@ def generate_wiki_data_model(db: dict, profiles: dict) -> str:
         "",
         "### File resolution order",
         "",
-        "`resolve_local_file` tries these steps in order:",
-        "",
-        "1. SHA1 exact match: every other declared hash must agree with the record",
-        "2. SHA256 exact match, with the same all-declarations-must-agree rule",
-        "3. CRC32 plus declared size, only when no stronger hash is present",
-        "4. MD5 direct lookup (including explicitly supported truncated MD5 values)",
-        "5. Path suffix lookup for regional variants. With hashes it is accepted only if those hashes match",
-        "6. Name and alias lookup only when no content hash was declared",
-        "7. Candidate inspection for composite ZIP MD5 or direct MD5. A named candidate with the wrong content returns `hash_mismatch`",
-        "8. `zipped_file` content match via the inner-ROM MD5 index",
-        "9. MAME clone fallback, only for declarations without a content hash",
-        "10. Data-directory scan: declared hashes are computed over the candidate before it is accepted",
-        "11. Agnostic size/path fallback, only for declarations without a content hash",
-        "",
-        "A filename or destination can never override a declared hash. The first "
-        "evidence-compatible match wins, otherwise the resolver reports a mismatch "
-        "or absence. Steps and their return codes are described in "
-        "[verification modes](verification-modes.md#file-resolution-chain).",
+        "`resolve_local_file` finds the file an entry describes by its hashes "
+        "first, then by its path, then by its name, and a filename or "
+        "destination never overrides a declared hash. The steps and their "
+        "return codes are written once, in "
+        "[the file resolution chain](verification-modes.md#file-resolution-chain).",
         "",
         "## Platform YAML",
         "",
@@ -6095,58 +6190,49 @@ def _group_keys(registry: dict, group: str, display: dict[str, str]) -> list[str
     )
 
 
+def _own_root_folders(registry: dict) -> dict[str, str]:
+    """Platforms whose pack holds its own top folder, with where it unzips.
+
+    The same rule as extract_notes: a list written from an empty base
+    destination carries its root in every path."""
+    folders = {}
+    for key, entry in registry.items():
+        config = load_platform_config(key, "platforms")
+        if config.get("base_destination") == "" and entry.get("extract_to"):
+            folders[key] = entry["extract_to"]
+    return folders
+
+
 def generate_which_pack() -> str:
     """The device picker: every registered platform, grouped by the device it
-    runs on, with its BIOS folder, its pack and its page."""
+    runs on, with its BIOS folder, its pack and its page.
+
+    The command comes first: it finds the setup by itself, and the tables
+    below it serve the reader who downloads a ZIP."""
     registry = load_platform_registry("platforms")
     record = release_record.load_record()
     display = {key: load_platform_config(key, "platforms").get("platform", key) for key in registry}
-    check_sh, check_ps = install_command("sh", "--check"), install_command("powershell", "--check")
-    card = install_command("sh", "--platform retroarch --dest /path/to/sdcard/retroarch/cores/system")
+    own_root = _own_root_folders(registry)
     lines = [
         "# Get your files",
         "",
-        "Each setup keeps its BIOS files in a folder of its own. Pick yours below "
-        "to see where that folder is. Then get the files in one of two ways:",
+        "Two ways to fill your BIOS folder.",
         "",
-        "- **One command**, the easiest. It finds your setup and its BIOS folder, "
-        "downloads only the files that are missing, and checks each one before "
-        "saving it.",
-        "- **A ZIP pack.** You download the pack of your setup and extract it into "
-        "the BIOS folder yourself.",
-        "",
-        "<!-- image: install-flow -->",
-        "",
-        "## Pick your setup",
-        "",
-        '<div class="grid cards" markdown>',
-        "",
-    ]
-    for group, (label, description) in DEVICE_GROUPS.items():
-        members = _group_keys(registry, group, display)
-        if not members:
-            continue
-        lines += [
-            f"-   **{label}**",
-            "",
-            f"    {description}",
-            "",
-            f"    [{', '.join(display[k] for k in members)}](#{GROUP_ANCHORS[group]})",
-            "",
-        ]
-    lines += [
-        "</div>",
+        "- **[One command](#quick-install)**: finds your folder and checks each "
+        "file.",
+        "- **[A ZIP file](#manual-download)**: download it, unzip it into your "
+        "BIOS folder.",
         "",
         "## One command { #quick-install }",
         "",
-        "Run this line in a terminal. It finds your setup by itself. On a system "
-        "that starts into a game menu, such as Batocera, the line runs on the "
-        "device: the page of your setup gives the exact command.",
+        "A **terminal** is a window where you type commands.",
         "",
         *terminal_tabs(("windows", "macos", "linux", "steamdeck", "android"), {}),
+        "On Batocera, Recalbox and other game systems, run it on the device. "
+        "Your setup's page shows how.",
+        "",
         *trust_box(""),
-        "At a terminal, the installer shows the setup it found and asks what to "
-        "install:",
+        "It then asks what to install. Press **Enter** for everything.",
         "",
         "```",
         "  Enter) install everything",
@@ -6155,30 +6241,38 @@ def generate_which_pack() -> str:
         "  q) quit",
         "```",
         "",
-        "Press **Enter** to install everything. Press **c** to pick only some "
-        "consoles. The **i** line appears when the installer finds emulator cores "
-        "installed, and keeps only the files they read.",
+        "**Check your folder later.** Add `--check`. It changes nothing.",
         "",
-        "To see what is already in your BIOS folder, add `--check`. It reads the "
-        "folder, checks every file and writes nothing:",
+        *terminal_tabs(("windows", "macos", "linux", "steamdeck", "android"),
+                       dict.fromkeys(TERMINALS, "--check"), steps=False),
+        '??? note "Fill an SD card from a computer"',
         "",
-        "```sh",
-        check_sh,
-        "```",
+        "    Name your setup and the BIOS folder on the card. For RetroArch on a "
+        "Nintendo Switch:",
         "",
-        "```powershell",
-        check_ps,
-        "```",
+        "    ```sh",
+        "    " + install_command(
+            "sh", "--platform retroarch --dest /path/to/sdcard/retroarch/cores/system"),
+        "    ```",
         "",
-        "A memory card from another device can be filled from a computer: name the "
-        "setup with `--platform` and the BIOS folder on the card with `--dest`. "
-        "For RetroArch on a Nintendo Switch:",
+        "Details: [All installer options](wiki/installer.md).",
         "",
-        "```sh",
-        card,
-        "```",
+        "## Pick your setup",
+        "",
+        '<div class="grid cards" markdown>',
         "",
     ]
+    for group, (label, _description) in DEVICE_GROUPS.items():
+        members = _group_keys(registry, group, display)
+        if not members:
+            continue
+        lines += [
+            f"-   **{label}**",
+            "",
+            f"    [{', '.join(display[k] for k in members)}](#{GROUP_ANCHORS[group]})",
+            "",
+        ]
+    lines += ["</div>", ""]
     for group, (label, description) in DEVICE_GROUPS.items():
         members = _group_keys(registry, group, display)
         if not members:
@@ -6188,60 +6282,57 @@ def generate_which_pack() -> str:
             "",
             description,
             "",
-            "| Setup | What it is | Runs on | BIOS folder | Pack |",
-            "|-------|-----------|---------|-------------|------|",
+            "| Setup | Runs on | BIOS folder | ZIP |",
+            "|-------|---------|-------------|-----|",
         ]
         for key in members:
             guide = GUIDES[key]
+            folder = (f"Unzip into `{own_root[key]}`" if key in own_root
+                      else _folder_cell(key, guide))
             lines.append(
-                f"| [{display[key]}](platforms/{key}.md) | {guide.summary} | "
-                f"{_runs_on(registry[key], guide)} | {_folder_cell(key, guide)} | "
+                f"| [{display[key]}](platforms/{key}.md) | "
+                f"{_runs_on(registry[key], guide)} | {folder} | "
                 f"{_pack_cell(key, record)} |"
             )
-        for setup, summary, uses, runs_on, folder in ALSO_RUNS.get(group, ()):
+        for setup, _summary, uses, runs_on, folder in ALSO_RUNS.get(group, ()):
             lines.append(
-                f"| {setup} | {summary} It uses the [{display[uses]}](platforms/{uses}.md) "
-                f"files. | {runs_on} | {folder} | {_pack_cell(uses, record)} |"
+                f"| {setup} | {runs_on} | {folder}, same as "
+                f"[{display[uses]}](platforms/{uses}.md) | {_pack_cell(uses, record)} |"
             )
         lines.append("")
         if group == "handheld":
             lines += [
-                "Many other handheld systems start RetroArch for their games. On "
-                "them, the RetroArch files go in the folder below, and the command "
-                "finds it by itself.",
+                '??? note "Other handhelds that run RetroArch"',
                 "",
-                "| System | Runs | BIOS folder |",
-                "|--------|------|-------------|",
-                *(f"| {name} | [RetroArch](platforms/retroarch.md) | `{folder}` |"
+                "    They use the RetroArch files, in the folder below. The command "
+                "finds it.",
+                "",
+                "    | System | Runs | BIOS folder |",
+                "    |--------|------|-------------|",
+                *(f"    | {name} | [RetroArch](platforms/retroarch.md) | `{folder}` |"
                   for name, folder in _retroarch_handhelds(registry)),
                 "",
             ]
     lines += [
-        "## Download a pack { #manual-download }",
+        "## Download a ZIP { #manual-download }",
         "",
-        f"Each pack in the tables above comes from the [latest release]({RELEASE_URL}). "
-        "Download the pack of your setup and extract it into its BIOS folder. "
-        "This site can describe files newer than that release: a release is "
-        "published by hand, once its checks pass.",
+        "1. Find your setup in the tables above.",
+        "2. Download its ZIP. A big one comes in parts, like "
+        "`Pack.part1of2.zip` and `Pack.part2of2.zip`. Download every part.",
+        "3. Unzip every part into the folder named in the table.",
         "",
-        "A pack over 2 GB comes in several parts (`PackName.part1of2.zip`, "
-        "`PackName.part2of2.zip`), and every part is needed. Each part is an "
-        "ordinary ZIP: extract them all into the same folder.",
+        "A row that says **Unzip into** has a ZIP that holds its own top folder. "
+        "Unzip it there, not into the BIOS folder.",
         "",
-        *[line for note in extract_notes("platforms") for line in (note, "")],
-        "## Fewer files",
+        f"The ZIPs come from the [latest release]({RELEASE_URL}). The command may "
+        "install newer files.",
         "",
-        "Each pack holds everything its setup runs: the BIOS list the setup "
-        "publishes, and every file its emulators load. The command can install "
-        "less: press **c** when it asks, or name the consoles with `--system`.",
+        "## Only some consoles?",
         "",
-        "Details: [All installer options](wiki/installer.md#choosing-what-to-install). "
-        "Reference: [Build your own packs](wiki/advanced-usage.md).",
+        "Run the command and press **c** when it asks.",
         "",
         *_next_block([
             "[First install, step by step](wiki/first-install.md)",
-            "The page of your setup, from the tables above: where the files go and "
-            "how to check them",
             "[When a game does not start](wiki/troubleshooting.md)",
         ]),
     ]
@@ -6349,6 +6440,7 @@ def generate_mkdocs_nav(
         ]},
         {"Your setup": _platform_nav(coverages, registry or {})},
         {"Explore": [
+            "explore.md",
             {"Systems": _system_nav(manufacturers)},
             {"Emulators": _emulator_nav(profiles)},
             {"All installer options": "wiki/installer.md"},
@@ -6357,7 +6449,7 @@ def generate_mkdocs_nav(
             "wiki/index.md",
             {"How each platform checks files": "wiki/verification-modes.md"},
             {"What the packs do not hold": "gaps.md"},
-            {"Cross-reference": "cross-reference.md"},
+            {"Cores by platform": "cross-reference.md"},
             {"Dump provenance": "provenance.md"},
             {"Updated platform files": "exports.md"},
             {"Data and API": "data.md"},
@@ -6501,6 +6593,8 @@ def _generate(args: argparse.Namespace) -> None:
             db, coverages, profiles, registry, args.platforms_dir
         )
     )
+
+    write_if_changed(str(docs / "explore.md"), generate_explore_index(db, coverages, profiles))
 
     stats = compute_stats(db, coverages, profiles)
     stats["composition"] = compute_composition(db)

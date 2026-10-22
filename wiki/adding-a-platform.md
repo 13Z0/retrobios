@@ -4,8 +4,17 @@ level: contribute
 
 # Adding a platform
 
-How to add support for a new retrogaming platform (e.g. a frontend like Batocera,
-a manager like EmuDeck, or a firmware database like BizHawk).
+Adding a platform gives its users a pack and a one-line install with the files
+their setup checks, in the place it checks them, plus every file its emulators
+need that its own list leaves out. The work is to read how the platform
+declares and checks BIOS files, then teach this project to read that
+declaration. A platform can be a frontend like Batocera, a manager like EmuDeck
+or a firmware database like BizHawk.
+
+Example: RomM declares its BIOS files in
+`backend/models/fixtures/known_bios_files.json` and checks size plus any one
+hash (`firmware.py`, `verify_file_hashes`). Its scraper turns that JSON into
+`platforms/romm.yml`, and the pack, the installer and its site page follow.
 
 ## Prerequisites
 
@@ -170,6 +179,14 @@ page. The groups and their labels are `DEVICE_GROUPS` in
 `scripts/siteguides.py`, and the same file holds the platform's guide text
 (what it is, where its BIOS folder is, where the install command runs). A
 test fails when a registered platform has no group or no guide.
+
+The guide text is read by someone who knows their device and little else.
+`summary` is one plain sentence, with no chip or board names. `notes` hold
+one fact each that the reader acts on. A source citation, a list of models or
+how the installer finds the folder goes in `reference_notes`, which open the
+Reference part of the page, and a rare build goes in `more_folders`, shown
+folded. The guide part of every setup page is held to the word budgets of
+[Pages for newcomers](testing-guide.md#pages-for-newcomers).
 
 A platform without a scraper (`scraper: null`, `schedule: null`) keeps its YAML
 as a hand-maintained file. Every registered platform has a scraper today, so

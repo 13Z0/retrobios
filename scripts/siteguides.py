@@ -21,25 +21,23 @@ INSTALL_BASE = "https://raw.githubusercontent.com/Abdess/retrobios/main"
 DEVICE_GROUPS: dict[str, tuple[str, str]] = {
     "computer": (
         "Computers and Steam Deck",
-        "An emulator app on a Windows, Mac or Linux computer, or on a Steam Deck.",
+        "An emulator app on a computer or a Steam Deck.",
     ),
     "gaming-os": (
         "Game systems for PCs and small boards",
-        "A system that starts straight into a game menu, installed on a PC, a "
-        "Raspberry Pi or another single-board computer.",
+        "A system that starts straight into a game menu, on a PC or a Raspberry Pi.",
     ),
     "handheld": (
         "Handhelds and TV boxes",
-        "A handheld console or a TV box, and the system it starts when you turn it on.",
+        "The system your handheld or TV box starts.",
     ),
     "fpga": (
         "MiSTer FPGA",
-        "A MiSTer board, which recreates console hardware in a chip instead of "
-        "emulating it in software.",
+        "A board that recreates old consoles in hardware, not in software.",
     ),
     "server": (
         "Self-hosted game library",
-        "A RomM server, which plays your games in a web browser.",
+        "A RomM server. It plays games in your web browser.",
     ),
 }
 
@@ -72,43 +70,43 @@ ALSO_RUNS: dict[str, tuple[tuple[str, str, str, str, str], ...]] = {
 TERMINALS: dict[str, tuple[str, str, str]] = {
     "windows": (
         "Windows",
-        "Open the Start menu, type **PowerShell** and open it. Paste the line "
-        "and press Enter.",
+        "Open the Start menu. Type **PowerShell** and open it. Paste the line. "
+        "Press Enter.",
         "powershell",
     ),
     "macos": (
         "macOS",
-        "Open **Terminal**, in Applications then Utilities. Paste the line and "
-        "press Return.",
+        "Open **Terminal**, in Applications, then Utilities. Paste the line. "
+        "Press Return.",
         "sh",
     ),
     "linux": (
         "Linux",
-        "Open a terminal. Paste the line and press Enter.",
+        "Open a terminal. Paste the line. Press Enter.",
         "sh",
     ),
     "steamdeck": (
         "Steam Deck",
-        "Switch to Desktop Mode and open **Konsole**, the terminal. Paste the "
-        "line with Ctrl+Shift+V and press Enter.",
+        "Switch to Desktop Mode. Open **Konsole**. Paste with Ctrl+Shift+V. "
+        "Press Enter.",
         "sh",
     ),
     "android": (
         "Android (Termux)",
-        "Install **Termux**, then run `pkg install python` and "
-        "`termux-setup-storage` once. Paste the line and press Enter.",
+        "Install **Termux**, a terminal app. Run `pkg install python` and "
+        "`termux-setup-storage` once. Then paste the line. Press Enter.",
         "sh",
     ),
     "device": (
         "On the device",
-        "Open a terminal on the device, or connect to it from a computer on the "
-        "same network with SSH. Paste the line and press Enter.",
+        "Open a terminal on the device. Or connect from a computer with SSH, a "
+        "terminal over the network. Paste the line. Press Enter.",
         "sh",
     ),
     "server": (
         "On the server",
-        "Open a terminal on the machine that holds the RomM library. Give "
-        "`--dest` the `bios` folder of that library.",
+        "Open a terminal on the machine that holds your RomM library. Put the "
+        "path of its `bios` folder after `--dest`.",
         "sh",
     ),
 }
@@ -119,7 +117,14 @@ CARD_TERMINALS = ("macos", "linux", "windows")
 
 @dataclass(frozen=True)
 class Guide:
-    """What a platform page says before its file reference."""
+    """What a platform page says before its file reference.
+
+    `folders` are the common cases, `more_folders` the rarer builds shown
+    folded under them. `notes` stay in the guide, one plain fact each.
+    `reference_notes` carry the source citations and the details a reader
+    checking the work wants, and open the Reference part of the page.
+    `download_hint` is one more bullet under the pack download.
+    """
 
     summary: str
     folders: tuple[tuple[str, str], ...]
@@ -128,79 +133,82 @@ class Guide:
     dest: str = ""
     on_card: bool = False
     extra_args: dict[str, str] = field(default_factory=dict)
+    more_folders: tuple[tuple[str, str], ...] = ()
+    reference_notes: tuple[str, ...] = ()
+    download_hint: str = ""
 
+
+NETWORK_HINT = "From a computer, use the network folder above."
 
 GUIDES: dict[str, Guide] = {
     "retroarch": Guide(
-        summary="A multi-system emulator. It loads a different core for each console.",
+        summary="An app that runs many consoles. It uses a different **core**, "
+        "a small emulator, for each one.",
         folders=(
-            ("Windows, installer or portable build", "`system\\` next to `retroarch.exe`"),
-            ("Windows, Microsoft Store build",
-             "`%LOCALAPPDATA%\\Packages\\1e4cf179-f3c2-404f-b9f3-cb2070a5aad8_*\\LocalState\\system\\`"),
+            ("Windows", "`system\\` next to `retroarch.exe`"),
             ("macOS", "`~/Documents/RetroArch/system/`"),
-            ("macOS, Steam or portable build", "`~/Library/Application Support/RetroArch/system/`"),
             ("Linux", "`~/.config/retroarch/system/`"),
-            ("Linux Flatpak and Steam Deck", "`~/.var/app/org.libretro.RetroArch/config/retroarch/system/`"),
+            ("Steam Deck and Linux Flatpak", "`~/.var/app/org.libretro.RetroArch/config/retroarch/system/`"),
             ("Android", "`RetroArch/system/` on the internal storage"),
             ("Nintendo Switch", "`retroarch/cores/system/` on the SD card"),
         ),
+        more_folders=(
+            ("Windows, Microsoft Store build",
+             "`%LOCALAPPDATA%\\Packages\\1e4cf179-f3c2-404f-b9f3-cb2070a5aad8_*\\LocalState\\system\\`"),
+            ("macOS, Steam or portable build", "`~/Library/Application Support/RetroArch/system/`"),
+        ),
         run=("windows", "macos", "linux", "steamdeck", "android"),
         notes=(
-            "RetroArch shows the folder it reads in **Settings > Directory > "
-            "System/BIOS**. The same value is the `system_directory` line of "
-            "`retroarch.cfg`.",
+            "**Not sure?** In RetroArch, open **Settings > Directory > "
+            "System/BIOS**. It shows the folder.",
+        ),
+        reference_notes=(
+            "RetroArch reads its BIOS folder from the `system_directory` line of "
+            "`retroarch.cfg`, the value **Settings > Directory > System/BIOS** "
+            "shows.",
             "On Windows, `retroarch.cfg` is read next to `retroarch.exe` first, "
             "then from `%APPDATA%\\RetroArch\\`. A `system_directory` left at its "
             "default is the `system` folder next to `retroarch.exe` (`:\\system` "
             "in RetroArch's `frontend/drivers/platform_win32.c`, where `:` stands "
             "for the folder of the program).",
-            "LaunchBox and other launchers that start RetroArch use the folder "
-            "RetroArch itself reads.",
         ),
     ),
     "batocera": Guide(
-        summary="A system that starts straight into a game menu. It runs on PCs, "
-        "Raspberry Pi boards and handhelds.",
+        summary="A system that starts straight into a game menu.",
         folders=(
             ("On Batocera", "`/userdata/bios/`"),
-            ("From Windows, over the network", "`\\\\BATOCERA\\share\\bios\\`"),
-            ("From macOS or Linux, over the network", "`smb://batocera/share/bios/`"),
+            ("From Windows, over your home network", "`\\\\BATOCERA\\share\\bios\\`"),
+            ("From a Mac or Linux, over your home network", "`smb://batocera/share/bios/`"),
         ),
         run=("device",),
-        notes=(
-            "From a computer on the same network, the network folder is the "
-            "easiest way in: download the pack and extract it there.",
-        ),
+        download_hint=NETWORK_HINT,
     ),
     "recalbox": Guide(
         summary="A system that starts straight into a game menu and sets up its "
-        "emulators itself.",
+        "emulators.",
         folders=(
             ("On Recalbox", "`/recalbox/share/bios/`"),
-            ("From Windows, over the network", "`\\\\RECALBOX\\share\\bios\\`"),
+            ("From Windows, over your home network", "`\\\\RECALBOX\\share\\bios\\`"),
         ),
         run=("device",),
-        notes=(
-            "From a computer on the same network, download the pack and extract "
-            "it into the network folder.",
-        ),
+        download_hint=NETWORK_HINT,
     ),
     "retrobat": Guide(
-        summary="A Windows frontend built on EmulationStation. It comes with "
-        "RetroArch and standalone emulators.",
+        summary="A game menu for Windows. It comes with RetroArch and other "
+        "emulators.",
         folders=(
             ("Inside the RetroBat folder", "`bios\\`"),
             ("Default install", "`C:\\RetroBat\\bios\\`"),
         ),
         run=("windows",),
-        notes=(
+        notes=("The command finds RetroBat wherever you installed it.",),
+        reference_notes=(
             "RetroBat records its own folder each time it starts, and the "
-            "installer reads it there, wherever RetroBat was installed.",
+            "installer reads it there.",
         ),
     ),
     "emudeck": Guide(
-        summary="Installs and sets up many emulators, and adds each game to the "
-        "Steam library.",
+        summary="Installs your emulators and adds your games to Steam.",
         folders=(
             ("Steam Deck and Linux", "`~/Emulation/bios/`"),
             ("Windows, by default", "`C:\\Emulation\\bios\\`"),
@@ -208,22 +216,24 @@ GUIDES: dict[str, Guide] = {
         ),
         run=("steamdeck", "linux", "windows", "macos"),
         notes=(
-            "The `bios` folder sits inside the Emulation folder chosen in "
-            "EmuDeck. When EmuDeck was set up on an SD card, that folder is on "
-            "the card. The installer reads the location from EmuDeck's settings "
+            "The `bios` folder is inside the Emulation folder you chose in "
+            "EmuDeck. If you chose the SD card, it is on the card.",
+        ),
+        reference_notes=(
+            "The installer reads the Emulation folder from EmuDeck's settings "
             "(`emulationPath` in `~/.config/EmuDeck/settings.sh`).",
         ),
     ),
     "lakka": Guide(
-        summary="A system built around RetroArch. It starts straight into the "
-        "RetroArch menu.",
+        summary="A system that starts straight into RetroArch.",
         folders=(("On Lakka", "`/storage/system/`"),),
         run=("device",),
-        notes=("The folder is reachable over SSH and over the network share.",),
+        notes=("You can also reach the folder from a computer, over your home network.",),
+        reference_notes=("The folder is reachable over SSH and over the network share.",),
     ),
     "retrodeck": Guide(
-        summary="One app with its emulators included, installed from Flathub "
-        "or Discover.",
+        summary="One app with its emulators inside. Install it from Flathub or "
+        "Discover.",
         folders=(
             ("Steam Deck and Linux", "`~/retrodeck/bios/`"),
             ("Installed on a microSD card", "for example `/run/media/mmcblk0p1/retrodeck/bios/`"),
@@ -231,101 +241,111 @@ GUIDES: dict[str, Guide] = {
         run=("steamdeck", "linux"),
     ),
     "romm": Guide(
-        summary="A web-based game library. It plays games in the browser "
-        "through EmulatorJS.",
-        folders=(
-            ("In the RomM library", "`bios/`, one subfolder per platform"),
+        summary="A game library on your own server. It plays games in the web "
+        "browser.",
+        folders=(("In the RomM library", "`bios/`, one subfolder per platform"),),
+        more_folders=(
             ("With `firmware: \"{platform}/bios\"` in `config.yml`",
              "`<platform>/bios/` for each platform"),
         ),
         run=("server",),
         dest="/path/to/library/bios",
-        notes=("BIOS files can also be managed in RomM's web interface.",),
+        notes=("You can also add BIOS files in RomM's web page.",),
     ),
     "rocknix": Guide(
-        summary="A Linux system for ARM and x86 handhelds, among them the "
-        "RG35XX (H700) and the RG552 (RK3399).",
+        summary="A system for handhelds.",
         folders=(("On ROCKNIX", "`/storage/roms/bios/`"),),
         run=("device",),
-        notes=("The folder is reachable over SSH and over the network share.",),
+        notes=("You can also reach the folder from a computer, over your home network.",),
+        reference_notes=(
+            "ROCKNIX runs on ARM and x86 handhelds, among them the RG35XX (H700) "
+            "and the RG552 (RK3399). The folder is reachable over SSH and over "
+            "the network share.",
+        ),
     ),
     "amberelec": Guide(
-        summary="A Linux system for Anbernic handhelds: RG351P, RG351V, "
-        "RG351MP, RG353, RG503 and RG552.",
+        summary="A system for Anbernic handhelds.",
         folders=(("On AmberELEC", "`/storage/roms/`"),),
         run=("device",),
-        notes=(
-            "The AmberELEC list names files under `/storage/roms`: `bios/` for "
-            "most, `neogeo/` for the rest. The pack holds those folders, so it "
-            "is extracted into `/storage/roms/` itself.",
+        reference_notes=(
+            "AmberELEC runs on the RG351P, RG351V, RG351MP, RG353, RG503 and "
+            "RG552. Its list names files under `/storage/roms`: `bios/` for most, "
+            "`neogeo/` for the rest. The pack holds those folders.",
         ),
     ),
     "emuelec": Guide(
-        summary="A Linux system for Amlogic TV boxes, the Odroid Go Advance, "
-        "GameForce and RK356x devices.",
+        summary="A system for TV boxes and some handhelds.",
         folders=(("On EmuELEC", "`/storage/roms/`"),),
         run=("device",),
-        notes=(
-            "The EmuELEC list names files under `/storage/roms`: `bios/` for "
-            "most, `neogeo/` and `ports/` for the rest. The pack holds those "
-            "folders, so it is extracted into `/storage/roms/` itself.",
+        reference_notes=(
+            "EmuELEC runs on Amlogic TV boxes, the Odroid Go Advance, GameForce "
+            "and RK356x devices. Its list names files under `/storage/roms`: "
+            "`bios/` for most, `neogeo/` and `ports/` for the rest. The pack "
+            "holds those folders.",
         ),
     ),
     "knulli": Guide(
-        summary="A system for handhelds based on Batocera, among them the "
-        "RG35XX family (H700) and the TrimUI Smart Pro.",
+        summary="A system for handhelds, based on Batocera.",
         folders=(("On KNULLI", "`/userdata/bios/`"),),
         run=("device",),
+        reference_notes=(
+            "KNULLI runs on handhelds among them the RG35XX family (H700) and the "
+            "TrimUI Smart Pro.",
+        ),
     ),
     "retropie": Guide(
-        summary="Scripts that install RetroArch and standalone emulators on "
-        "Raspberry Pi OS.",
+        summary="Installs RetroArch and other emulators on a Raspberry Pi.",
         folders=(("On the Raspberry Pi", "`~/RetroPie/BIOS/`"),),
         run=("device",),
         notes=(
-            "Use the RetroPie pack, not the RetroArch one. RetroPie also "
-            "installs standalone emulators (openMSX, PCSX2, XRoar, Amiberry and "
-            "others) whose files only the RetroPie pack carries.",
-            "A stock RetroPie 4.8 image ships Python 3.7, older than the "
-            "installer needs. On it, download the RetroPie pack and extract it "
-            "into `~/RetroPie/BIOS/`.",
+            "Use the RetroPie pack, not the RetroArch one. On RetroPie 4.8, "
+            "Python is too old for the command: use the pack there.",
+        ),
+        reference_notes=(
+            "RetroPie also installs standalone emulators (openMSX, PCSX2, XRoar, "
+            "Amiberry and others) whose files only the RetroPie pack carries.",
             "RetroPie is archived in this project: its configuration is kept and "
             "its pack is still built, but its upstream list is no longer read "
             "again on a schedule.",
         ),
     ),
     "bizhawk": Guide(
-        summary="A multi-system emulator with rerecording and debugging tools, "
-        "hosted by TASVideos.",
+        summary="An emulator app for many consoles, from TASVideos.",
         folders=(
             ("Inside the BizHawk folder", "`Firmware\\`"),
             ("Default place the installer looks", "`%USERPROFILE%\\BizHawk\\Firmware\\`"),
         ),
         run=("windows", "linux"),
+        reference_notes=("BizHawk carries rerecording and debugging tools.",),
     ),
     "misterfpga": Guide(
-        summary="FPGA cores that recreate console hardware on a DE10-Nano board.",
+        summary="A board that recreates old consoles in hardware, not in software.",
         folders=(("On the MiSTer SD card", "`/media/fat/games/`, one subfolder per core"),),
         run=("device",),
         notes=(
-            "Each file goes in the subfolder of its core, for example "
-            "`/media/fat/games/3DO/boot.rom`. Only the files the MiSTer BIOS "
-            "database lists with a download address are in the pack. The others "
-            "come with the MiSTer distribution and install themselves.",
+            "Each file goes in its console's folder, like "
+            "`/media/fat/games/3DO/boot.rom`.",
+        ),
+        reference_notes=(
+            "MiSTer runs FPGA cores on a DE10-Nano board. Only the files the "
+            "MiSTer BIOS database lists with a download address are in the pack. "
+            "The others come with the MiSTer distribution and install themselves.",
         ),
     ),
     "minui": Guide(
-        summary="A frontend for handhelds that runs from the SD card.",
+        summary="A simple game menu for handhelds. It runs from the SD card.",
         folders=(("On the SD card", "`Bios/<TAG>/`, one folder per console"),),
         run=CARD_TERMINALS,
         on_card=True,
         notes=(
+            "Each console has its own folder, named after the tag in its Roms "
+            "folder. `Roms/Sony PlayStation (PS)/` uses `Bios/PS/`.",
+        ),
+        reference_notes=(
             "MinUI gives each console its own folder, named after the tag in "
             "parentheses of the Roms folder the game sits in. A game in "
-            "`Roms/Sony PlayStation (PS)/` runs with `Bios/PS/` as its BIOS "
-            "folder, one in `Roms/Game Boy (GB)/` with `Bios/GB/` (MinUI "
-            "`workspace/all/minarch/minarch.c:2943`). The pack holds the `Bios/` "
-            "folder: extract it at the root of the card.",
+            "`Roms/Game Boy (GB)/` runs with `Bios/GB/` as its BIOS folder (MinUI "
+            "`workspace/all/minarch/minarch.c:2943`).",
             "Without `--platform`, the installer reads the release name MinUI "
             "writes in `.system/version.txt` on the card. A console started by a "
             "standalone program instead of a libretro core (DraStic for NDS, "
@@ -333,29 +353,33 @@ GUIDES: dict[str, Guide] = {
         ),
     ),
     "nextui": Guide(
-        summary="A frontend for handhelds derived from MinUI. It runs from the SD card.",
+        summary="A game menu for handhelds, based on MinUI. It runs from the SD card.",
         folders=(("On the SD card", "`Bios/<TAG>/`, one folder per console"),),
         run=CARD_TERMINALS,
         on_card=True,
         notes=(
+            "Each console has its own folder, named after the tag in its Roms "
+            "folder. `Roms/Sony PlayStation (PS)/` uses `Bios/PS/`.",
+        ),
+        reference_notes=(
             "NextUI gives each console its own folder, named after the tag in "
-            "parentheses of the Roms folder the game sits in: `Bios/PS/` for "
-            "`Roms/Sony PlayStation (PS)/` (NextUI "
-            "`workspace/all/minarch/ma_core.c:76`). The pack holds the `Bios/` "
-            "folder: extract it at the root of the card.",
+            "parentheses of the Roms folder the game sits in (NextUI "
+            "`workspace/all/minarch/ma_core.c:76`).",
         ),
     ),
     "myminui": Guide(
-        summary="A frontend for handhelds derived from MinUI. It runs from the SD card.",
+        summary="A game menu for handhelds, based on MinUI. It runs from the SD card.",
         folders=(("On the SD card", "`Bios/<TAG>/`, one folder per console"),),
         run=CARD_TERMINALS,
         on_card=True,
         notes=(
+            "Each console has its own folder, named after the tag in its Roms "
+            "folder. `Roms/Sony PlayStation (PS)/` uses `Bios/PS/`.",
+        ),
+        reference_notes=(
             "MyMinUI gives each console its own folder, named after the tag in "
-            "parentheses of the Roms folder the game sits in: `Bios/PS/` for "
-            "`Roms/Sony PlayStation (PS)/` (MyMinUI "
-            "`workspace/all/minarch/minarch.c:3532`). The pack holds the `Bios/` "
-            "folder: extract it at the root of the card.",
+            "parentheses of the Roms folder the game sits in (MyMinUI "
+            "`workspace/all/minarch/minarch.c:3532`).",
         ),
     ),
 }
@@ -409,23 +433,23 @@ def platform_args(name: str, guide: Guide) -> dict[str, str]:
     return args
 
 
-TRUST_NOTE = (
-    "The line downloads a small script from this project on GitHub. The script "
-    "checks the installer against a fingerprint it carries, then the installer "
-    "downloads the files your setup needs and checks each one before saving it. "
-    "It writes only inside your BIOS folder. A BIOS file whose contents differ "
-    "from the expected one is replaced with a checked copy, and yours is kept in "
-    "a retrobios-backup folder beside it. Files it does not know are never moved "
-    "or deleted. Games and saves are never touched."
+TRUST_ITEMS = (
+    "It checks each file before saving it.",
+    "It writes only in your BIOS folder.",
+    "It never touches games or saves.",
+    "It never moves or deletes files it does not know.",
+    "It keeps any file it replaces in a `retrobios-backup` folder, beside your "
+    "BIOS folder. The same command with `--restore` puts it back.",
 )
 
 
 def trust_box(prefix: str, indent: str = "") -> list[str]:
-    """What the command does, under every command on a guide page."""
+    """Is it safe, under every command on a guide page: five plain facts."""
     return [
-        f'{indent}??? note "What this command does"',
+        f'{indent}??? note "Is it safe?"',
         "",
-        f"{indent}    {TRUST_NOTE} "
-        f"[Read the script first]({prefix}wiki/faq.md#is-piping-the-installer-into-a-shell-safe).",
+        *(f"{indent}    - {item}" for item in TRUST_ITEMS),
+        "",
+        f"{indent}    [Read the script first]({prefix}wiki/faq.md#is-piping-the-installer-into-a-shell-safe)",
         "",
     ]

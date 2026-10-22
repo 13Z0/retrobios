@@ -4,25 +4,20 @@ level: start
 
 # Getting started
 
-What this page held now lives on the pages written for each step.
+Three pages take you from nothing to games that start.
 
-## What are BIOS files?
+[Get your files](../which-pack.md){ .md-button .md-button--primary }
 
-[What BIOS files are](what-are-bios-files.md) explains what they do, and which
-consoles need them.
+## What is a BIOS?
 
-## Installation
+[What is a BIOS?](what-are-bios-files.md) tells you which consoles need one.
 
-[Get your files](../which-pack.md) gives the command and the packs for every
-setup. [First install, step by step](first-install.md) shows what each step of
-the command prints.
+## Install
 
-## BIOS directory by platform
+[Get your files](../which-pack.md) gives the command and the ZIP for your
+setup. [First install, step by step](first-install.md) shows each step.
 
-The page of each setup opens on where its files go. All setups are on
-[Get your files](../which-pack.md), grouped by the device they run on.
-
-## Checking what you installed
+## Check your folder
 
 [When a game does not start](troubleshooting.md#checking-what-you-installed)
-shows how to check the files in your BIOS folder.
+shows how to check your BIOS folder.

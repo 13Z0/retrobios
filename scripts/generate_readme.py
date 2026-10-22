@@ -92,6 +92,10 @@ def compute_coverage(
         "verified": ok,
         "untested": untested,
         "missing": missing,
+        "missing_not_firmware": {
+            category: len(dests)
+            for category, dests in (result.get("missing_not_firmware") or {}).items()
+        },
         "present": present,
         "percentage": pct,
         "core_present": core_present,
@@ -116,7 +120,7 @@ _REPO = Path(__file__).resolve().parent.parent
 # stores it here and the second reads it back, instead of verifying every
 # platform twice (about a minute of the site build).
 COVERAGE_CACHE_DIR = _REPO / "tmp" / "coverage-cache"
-_COVERAGE_CACHE_FORMAT = "1"
+_COVERAGE_CACHE_FORMAT = "2"
 
 
 def _coverage_inputs(db_path: Path, platforms_dir: str, emulators_dir: str) -> str:
@@ -293,8 +297,8 @@ def extract_notes(platforms_dir: str) -> list[str]:
         display = config.get("platform", key)
         if config.get("base_destination") == "" and display in folders:
             notes.append(
-                f"The {display} pack already carries its own `{own_root(config)}/` folder,"
-                f" so it extracts into `{folders[display]}` rather than into the BIOS folder."
+                f"The {display} pack holds its own `{own_root(config)}/` folder."
+                f" Unzip it into `{folders[display]}`."
             )
     return notes
 
@@ -810,8 +814,8 @@ def generate_readme(db: dict, platforms_dir: str, db_path: str = "database.json"
             " backup, archival, and interoperability with emulation software."
             " [NOTICE](NOTICE) sets out their status and how to ask for a file"
             " to be removed.",
-            f"The reasoning, and where it is weakest, is in the"
-            f" [FAQ]({SITE_URL}wiki/faq/#is-this-legal).",
+            f"The reasoning, and where it is weakest, is in"
+            f" [the project's legal position]({SITE_URL}wiki/legal/).",
             "",
             f"*Auto-generated on {ts}*",
         ]

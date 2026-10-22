@@ -4,8 +4,15 @@ level: contribute
 
 # Adding a scraper
 
-How to create or modify a scraper for fetching BIOS requirements from upstream
-platform sources.
+A scraper reads a platform's own BIOS list and writes it as
+`platforms/<name>.yml`, the file every pack, check and page of that platform
+starts from. It copies what the platform declares, as the platform wrote it,
+and leaves the corrections to the emulator profiles.
+
+Example: `scripts/scraper/romm_scraper.py` reads RomM's
+`known_bios_files.json` and writes `platforms/romm.yml`. Adding a scraper means
+one `*_scraper.py` file with a class that extends `BaseScraper`, the base class
+every scraper extends.
 
 ## Scraper architecture
 
