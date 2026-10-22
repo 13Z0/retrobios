@@ -1,0 +1,45 @@
+emulator: "P/EMU/SDL"
+type: standalone
+core_classification: community_fork
+source: "https://github.com/yonkuma/piemu"
+upstream: "https://github.com/autch/piemu"
+profiled_date: "2026-10-22"
+source_commit: "0785214f13746bdfd709b1909f007e213b470ba1"
+upstream_commit: "23208626e16e53b73fd21a2fbd0c429338625dc4"
+core_version: "git"
+display_name: "Aquaplus - P/ECE (P/EMU/SDL)"
+cores:
+  - "piemu"
+systems:
+  - aquaplus-piece
+
+notes: |
+  Autch's SDL port of Naoyuki Sawa's P/EMU, with two commits by YonKuma
+  that add game controller input and a quit hotkey. AmberELEC builds this
+  revision and installs piemu with the mkpfi and pfar tools built from the
+  same tree.
+  ref: AmberELEC packages/games/emulators/piemu/package.mk:5-6,19-29
+
+  The emulator reads one file, piece.pfi, from its working directory: a PFI
+  header with the SYSTEMINFO block, then the flash contents at the stored
+  offset. A missing file, a signature other than PFI1 or a SYSTEMINFO of the
+  wrong size stops it.
+  ref: piemu.c:5-20, piemu.c:25-45
+
+  That image holds the P/ECE kernel, its file system and the installed
+  programs. AmberELEC's piemu.sh builds it for every launch in /tmp/piemu:
+  mkpfi writes a fresh image from the kernel update image all.bin in the BIOS
+  directory, then pfar adds the .pex program, its .sav file or the files a
+  .pfs list names. A .pfi game never starts: the extension test lacks its `$`,
+  so the image is not copied into the working directory.
+  ref: AmberELEC packages/games/emulators/piemu/bin/piemu.sh:10,22-54
+
+files:
+  - name: "all.bin"
+    path: "all.bin"
+    system: aquaplus-piece
+    required: true
+    size: 516096
+    description: "P/ECE kernel update image (PieceSystem 1.20, update/all.bin)"
+    note: "mkpfi checks the \"Piece Kernel Program\" signature at offset 8, writes the boot vector 0x00C02004 into sector 0, leaves sector 1 blank and copies the file from sector 2. Called without -2mb, it builds the 512 KB flash layout of factory units."
+    source_ref: "source tools/mkpfi.c:13, source tools/mkpfi.c:30-62, source tools/mkpfi.c:64-128"
