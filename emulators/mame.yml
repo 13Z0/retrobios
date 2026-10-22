@@ -2716,11 +2716,6 @@ files:
         sha1: "f60c016be2ff11e47b2192acddb92676043af501"
 
   # Galaxy Games
-  - name: galgbios.zip
-    required: true
-    category: bios_zip
-    source_ref: "source src/mame/ces/galgames.cpp:1288"
-
   # Aristocrat
   - name: aristmk5.zip
     required: true

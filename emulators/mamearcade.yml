@@ -1830,11 +1830,36 @@ files:
         sha1: "f60c016be2ff11e47b2192acddb92676043af501"
 
   # Galaxy Games
-  - name: galgbios.zip
+  - name: galgames.zip
     required: true
     category: bios_zip
     system: ces-galaxy-games
-    source_ref: "source src/mame/ces/galgames.cpp:1288"
+    source_ref: "upstream src/mame/ces/galgames.cpp:1301"
+    contents:
+      - name: "galaxy_u2__v1.90_12-01-98.u2"
+        size: 1048576
+        crc32: "e51ff184"
+        sha1: "aaa795f2c15ec29b3ceeb5c917b643db0dbb7083"
+      - name: "galaxy_u1__v1.90_12-01-98.u1"
+        size: 1048576
+        crc32: "c6d7bc6d"
+        sha1: "93c032f9aa38cbbdda59a8a25ff9f38f7ad9c760"
+      - name: "galaxy_u2__v1.80_10-15-98.u2"
+        size: 1048576
+        crc32: "73cff284"
+        sha1: "e6f7d92999cdb478c21c3b65a04eade84299ac12"
+      - name: "galaxy_u1__v1.80_10-15-98.u1"
+        size: 1048576
+        crc32: "e3ae423c"
+        sha1: "66d1964845a99a5ed4b19b4135b55cde6b5fe295"
+      - name: "galaxy_u2__v1.71_7-8-98.u2"
+        size: 1048576
+        crc32: "d1c3dbb3"
+        sha1: "ebe74ed7f2d8c4abcd6743b9d9c77cc347efc444"
+      - name: "galaxy_u1__v1.71_7-8-98.u1"
+        size: 1048576
+        crc32: "604415c8"
+        sha1: "6c67c3be1aca03d009b6244e3bd911caaa2ca666"
 
   # EFO Cedar Magnet
   - name: cedmag.zip
