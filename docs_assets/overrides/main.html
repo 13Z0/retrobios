@@ -9,25 +9,43 @@
   taking on two image dependencies. The links get shared on Discord, Reddit and
   forums, where a bare URL with no preview is the difference between a card and
   a grey rectangle.
+
+  One sharing card per section (docs_assets/og, made by
+  scripts/make_og_cards.py). The section is the page's level when the
+  generator gives one, otherwise it follows from the URL.
 #}
 {% block extrahead %}
   {% set page_title = page.meta.title if page and page.meta and page.meta.title else (page.title if page and page.title else config.site_name) %}
   {% set page_description = page.meta.description if page and page.meta and page.meta.description else config.site_description %}
   {% set page_url = page.canonical_url if page and page.canonical_url else config.site_url %}
-  {% set preview_image = config.site_url ~ 'assets/images/logo.png' if config.site_url else '' %}
+  {% set url = page.url if page and page.url else '' %}
+  {% set level = page.meta.level if page and page.meta and page.meta.level else '' %}
+  {% if not url %}{% set section = 'home' %}
+  {% elif level in ['start', 'setup', 'explore', 'reference', 'contribute'] %}{% set section = level %}
+  {% elif url.startswith('which-pack') or url.startswith('wiki/first-install') or url.startswith('wiki/faq') or url.startswith('wiki/getting-started') %}{% set section = 'start' %}
+  {% elif url.startswith('platforms') %}{% set section = 'setup' %}
+  {% elif url.startswith('systems') or url.startswith('emulators') or url.startswith('files') %}{% set section = 'explore' %}
+  {% elif url.startswith('contributing') or url.startswith('wiki/adding') or url.startswith('wiki/profiling') or url.startswith('wiki/testing') or url.startswith('wiki/release') %}{% set section = 'contribute' %}
+  {% else %}{% set section = 'reference' %}{% endif %}
+  {% set preview_image = config.site_url ~ 'assets/og/' ~ section ~ '.png' if config.site_url else '' %}
 
-  <meta property="og:type" content="website">
+  <meta property="og:type" content="{{ 'website' if not url else 'article' }}">
   <meta property="og:site_name" content="{{ config.site_name }}">
   <meta property="og:title" content="{{ page_title }}">
   <meta property="og:description" content="{{ page_description }}">
   {% if page_url %}<meta property="og:url" content="{{ page_url }}">{% endif %}
-  {% if preview_image %}<meta property="og:image" content="{{ preview_image }}">{% endif %}
+  {% if preview_image %}
+  <meta property="og:image" content="{{ preview_image }}">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="{{ config.site_name }}: {{ page_title }}">
+  {% endif %}
 
   {# The sitemap, named from every page: a project site under /retrobios/
      cannot serve the host-root robots.txt that would announce it. #}
   {% if config.site_url %}<link rel="sitemap" type="application/xml" title="Sitemap" href="{{ config.site_url }}sitemap.xml">{% endif %}
 
-  <meta name="twitter:card" content="summary">
+  <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="{{ page_title }}">
   <meta name="twitter:description" content="{{ page_description }}">
   {% if preview_image %}<meta name="twitter:image" content="{{ preview_image }}">{% endif %}

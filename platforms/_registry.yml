@@ -665,7 +665,7 @@ platforms:
     config: romm.yml
     status: active
     extract_to: library/bios/
-    logo: https://avatars.githubusercontent.com/u/168586850
+    logo: https://avatars.githubusercontent.com/u/164058018
     scraper: romm
     source_url: https://raw.githubusercontent.com/rommapp/romm/master/backend/models/fixtures/known_bios_files.json
     source_format: json
@@ -727,7 +727,7 @@ platforms:
     config: rocknix.yml
     status: active
     extract_to: /storage/roms/bios/
-    logo: https://avatars.githubusercontent.com/u/152618023
+    logo: https://avatars.githubusercontent.com/u/163176886
     scraper: rocknix
     schedule: weekly
     target_scraper: rocknix_targets
@@ -897,7 +897,7 @@ platforms:
     config: misterfpga.yml
     status: active
     extract_to: /media/fat/games/
-    logo: https://avatars.githubusercontent.com/u/47264183
+    logo: https://avatars.githubusercontent.com/u/29345272
     scraper: misterfpga
     source_url: https://raw.githubusercontent.com/ajgowans/BiosDB_MiSTer/db/bios_db.json.zip
     source_format: mister_downloader_db
@@ -980,7 +980,6 @@ platforms:
     # minarch hands each core SDCARD_PATH/Bios/<TAG>
     # (workspace/all/minarch/minarch.c:3532).
     extract_to: <SD card>/
-    logo: https://avatars.githubusercontent.com/u/10894566
     scraper: myminui
     # minarch hands each core a folder and names no file (workspace/all/minarch/minarch.c:3532):
     # there is no BIOS list of its own to export corrected.

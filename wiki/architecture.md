@@ -106,26 +106,7 @@ MAME/FBNeo hashes, verify, packs, install manifests, target manifests,
 consistency check, pack integrity, README, site. See [tools](tools.md)
 for the full pipeline reference.
 
-```mermaid
-graph LR
-    A[generate_db] --> A2[provenance report]
-    A2 --> B[refresh_data_dirs]
-    B --> C[MAME/FBNeo hashes]
-    C --> D[verify --all]
-    D --> E[generate_pack --all]
-    E --> F[install manifests]
-    F --> G[target manifests]
-    G --> H[consistency check]
-    H --> H2[pack integrity]
-    H2 --> I[generate_readme]
-    I --> J[generate_site]
-
-    style A fill:#2d333b,stroke:#adbac7,color:#adbac7
-    style D fill:#2d333b,stroke:#adbac7,color:#adbac7
-    style E fill:#2d333b,stroke:#adbac7,color:#adbac7
-    style H2 fill:#2d333b,stroke:#adbac7,color:#adbac7
-    style J fill:#2d333b,stroke:#adbac7,color:#adbac7
-```
+<!-- image: pipeline -->
 
 ## Three layers of data
 
@@ -168,20 +149,7 @@ platform itself declares: the export, the truth diff and the site's
 comparison tables. Counted as the platform's, they were written into
 System.dat as if libretro had declared them.
 
-```mermaid
-graph TD
-    PY[Platform YAML<br/>scraped from upstream] --> PG[Pack generation]
-    EP[Emulator profiles<br/>source-verified] --> PG
-    SH[_shared.yml<br/>curated shared files] --> PY
-    SH --> EP
-    PG --> ZIP[ZIP pack per platform]
-
-    style PY fill:#2d333b,stroke:#adbac7,color:#adbac7
-    style EP fill:#2d333b,stroke:#adbac7,color:#adbac7
-    style SH fill:#2d333b,stroke:#adbac7,color:#adbac7
-    style PG fill:#2d333b,stroke:#adbac7,color:#adbac7
-    style ZIP fill:#2d333b,stroke:#adbac7,color:#adbac7
-```
+<!-- image: data-layers -->
 
 ## The inverted model
 

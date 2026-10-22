@@ -3,6 +3,7 @@
 Each platform verifies BIOS files differently. `verify.py` replicates the native behavior
 of each platform so that verification results match what the platform itself would report.
 
+<!-- image: verification-modes -->
 
 ## Existence mode
 
