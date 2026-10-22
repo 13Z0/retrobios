@@ -278,7 +278,7 @@
   "total_size": 9590599187,
   "pack_files": 14510,
   "pack_size": 9590599187,
-  "total_omitted": 400,
+  "total_omitted": 415,
   "omitted_files": [
     {
       "dest": "AUDIO.APC",
@@ -499,6 +499,19 @@
         "catacombgl"
       ],
       "category": "game_data"
+    },
+    {
+      "dest": "FB Alpha 2012/hiscore.dat",
+      "root": "save",
+      "core_folder": "FB Alpha 2012",
+      "name": "hiscore.dat",
+      "system": "arcade",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "fbalpha2012"
+      ],
+      "held": true
     },
     {
       "dest": "GAMEMAPS.APC",
@@ -1073,6 +1086,97 @@
       "category": "game_data"
     },
     {
+      "dest": "Stella/stella/KVB1.WAV",
+      "root": "save",
+      "core_folder": "Stella",
+      "name": "KVB1.WAV",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "stella"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "Stella/stella/KVB2.WAV",
+      "root": "save",
+      "core_folder": "Stella",
+      "name": "KVB2.WAV",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "stella"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "Stella/stella/KVB3.WAV",
+      "root": "save",
+      "core_folder": "Stella",
+      "name": "KVB3.WAV",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "stella"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "Stella/stella/KVS1.WAV",
+      "root": "save",
+      "core_folder": "Stella",
+      "name": "KVS1.WAV",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "stella"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "Stella/stella/KVS2.WAV",
+      "root": "save",
+      "core_folder": "Stella",
+      "name": "KVS2.WAV",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "stella"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "Stella/stella/KVS3.WAV",
+      "root": "save",
+      "core_folder": "Stella",
+      "name": "KVS3.WAV",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "stella"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "Stella/stella/KVSHARED.WAV",
+      "root": "save",
+      "core_folder": "Stella",
+      "name": "KVSHARED.WAV",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "stella"
+      ],
+      "category": "game_data"
+    },
+    {
       "dest": "System BIOS image",
       "name": "System BIOS image",
       "system": "dos",
@@ -1499,6 +1603,94 @@
         "devilutionx"
       ],
       "category": "game_data"
+    },
+    {
+      "dest": "dolphin-emu/User/GBA/gba_bios.bin",
+      "root": "save",
+      "core_folder": "dolphin-emu",
+      "name": "gba_bios.bin",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "dolphin"
+      ],
+      "systems": [
+        "nintendo-gba"
+      ],
+      "held": true
+    },
+    {
+      "dest": "dolphin-emu/User/Load/WiiSD.raw",
+      "root": "save",
+      "core_folder": "dolphin-emu",
+      "name": "WiiSD.raw",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "dolphin"
+      ]
+    },
+    {
+      "dest": "dolphin-emu/User/Wii/clientca.pem",
+      "root": "save",
+      "core_folder": "dolphin-emu",
+      "name": "clientca.pem",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "dolphin"
+      ]
+    },
+    {
+      "dest": "dolphin-emu/User/Wii/clientcakey.pem",
+      "root": "save",
+      "core_folder": "dolphin-emu",
+      "name": "clientcakey.pem",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "dolphin"
+      ]
+    },
+    {
+      "dest": "dolphin-emu/User/Wii/rootca.pem",
+      "root": "save",
+      "core_folder": "dolphin-emu",
+      "name": "rootca.pem",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "dolphin"
+      ]
+    },
+    {
+      "dest": "dolphin-emu/User/Wii/shared2/sys/SYSCONF",
+      "root": "save",
+      "core_folder": "dolphin-emu",
+      "name": "SYSCONF",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "dolphin"
+      ]
+    },
+    {
+      "dest": "dolphin-emu/User/Wii/title/00000001/00000002/data/setting.txt",
+      "root": "save",
+      "core_folder": "dolphin-emu",
+      "name": "setting.txt",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "dolphin"
+      ]
     },
     {
       "dest": "doom2bfg.wad",
@@ -5079,6 +5271,9 @@
     ],
     "sonic3-air": [
       "sonic3air"
+    ],
+    "stella": [
+      "STELLASA"
     ],
     "theforceengine": [
       "tfe"

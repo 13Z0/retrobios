@@ -283,8 +283,99 @@
   "total_size": 4356797363,
   "pack_files": 3372,
   "pack_size": 4356797363,
-  "total_omitted": 14,
+  "total_omitted": 28,
   "omitted_files": [
+    {
+      "dest": "Stella/stella/KVB1.WAV",
+      "root": "save",
+      "core_folder": "Stella",
+      "name": "KVB1.WAV",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "stella"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "Stella/stella/KVB2.WAV",
+      "root": "save",
+      "core_folder": "Stella",
+      "name": "KVB2.WAV",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "stella"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "Stella/stella/KVB3.WAV",
+      "root": "save",
+      "core_folder": "Stella",
+      "name": "KVB3.WAV",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "stella"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "Stella/stella/KVS1.WAV",
+      "root": "save",
+      "core_folder": "Stella",
+      "name": "KVS1.WAV",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "stella"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "Stella/stella/KVS2.WAV",
+      "root": "save",
+      "core_folder": "Stella",
+      "name": "KVS2.WAV",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "stella"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "Stella/stella/KVS3.WAV",
+      "root": "save",
+      "core_folder": "Stella",
+      "name": "KVS3.WAV",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "stella"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "Stella/stella/KVSHARED.WAV",
+      "root": "save",
+      "core_folder": "Stella",
+      "name": "KVSHARED.WAV",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "stella"
+      ],
+      "category": "game_data"
+    },
     {
       "dest": "caesar3/The_empire.555",
       "name": "The_empire.555",
@@ -383,6 +474,94 @@
         "julius"
       ],
       "category": "game_data"
+    },
+    {
+      "dest": "dolphin-emu/User/GBA/gba_bios.bin",
+      "root": "save",
+      "core_folder": "dolphin-emu",
+      "name": "gba_bios.bin",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "dolphin"
+      ],
+      "systems": [
+        "nintendo-gba"
+      ],
+      "held": true
+    },
+    {
+      "dest": "dolphin-emu/User/Load/WiiSD.raw",
+      "root": "save",
+      "core_folder": "dolphin-emu",
+      "name": "WiiSD.raw",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "dolphin"
+      ]
+    },
+    {
+      "dest": "dolphin-emu/User/Wii/clientca.pem",
+      "root": "save",
+      "core_folder": "dolphin-emu",
+      "name": "clientca.pem",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "dolphin"
+      ]
+    },
+    {
+      "dest": "dolphin-emu/User/Wii/clientcakey.pem",
+      "root": "save",
+      "core_folder": "dolphin-emu",
+      "name": "clientcakey.pem",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "dolphin"
+      ]
+    },
+    {
+      "dest": "dolphin-emu/User/Wii/rootca.pem",
+      "root": "save",
+      "core_folder": "dolphin-emu",
+      "name": "rootca.pem",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "dolphin"
+      ]
+    },
+    {
+      "dest": "dolphin-emu/User/Wii/shared2/sys/SYSCONF",
+      "root": "save",
+      "core_folder": "dolphin-emu",
+      "name": "SYSCONF",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "dolphin"
+      ]
+    },
+    {
+      "dest": "dolphin-emu/User/Wii/title/00000001/00000002/data/setting.txt",
+      "root": "save",
+      "core_folder": "dolphin-emu",
+      "name": "setting.txt",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "dolphin"
+      ]
     },
     {
       "dest": "doomu.wad",
@@ -808,6 +987,9 @@
       "SPECCY",
       "com.fms.speccy",
       "com.fms.speccy.deluxe"
+    ],
+    "stella": [
+      "STELLASA"
     ],
     "tgbdual": [
       "TGB Dual"

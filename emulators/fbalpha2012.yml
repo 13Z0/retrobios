@@ -7,6 +7,7 @@ profiled_date: "2026-03-23"
 source_commit: "0ce31536bef3162fe7e69ff5f555334ec4913cef"
 core_version: "v0.2.97.29"
 display_name: "Arcade (FB Alpha 2012)"
+library_name: "FB Alpha 2012"
 cores:
   - fbalpha2012
   - fbalpha
@@ -55,6 +56,7 @@ notes: |
 
 files:
   - name: "hiscore.dat"
+    path: "hiscore.dat"
     description: "High score persistence database"
     load_from: save_dir
     required: false

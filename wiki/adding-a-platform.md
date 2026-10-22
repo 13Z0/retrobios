@@ -284,6 +284,12 @@ that text belongs in a guide field.
     case_insensitive_fs: true        # if the platform runs on case-insensitive filesystems
     extract_to: /userdata/bios/      # folder the pack extracts into, shown in the README,
                                      # the site and the release notes
+    save_directory:                  # the save directory the frontend hands libretro cores,
+      folder: saves                  # where it is one place: the pack folder holding the
+      by_core: true                  # files cores read there (load_from: save_dir), its
+                                     # default place beside the BIOS folder, and whether
+                                     # the frontend appends the core's library_name.
+                                     # null when it is one folder per game or system
     zip_digest: composite            # the frontend hashes a .zip by its members only
     firmware_folder_flat: true       # the frontend lists each system folder without
                                      # descending into it

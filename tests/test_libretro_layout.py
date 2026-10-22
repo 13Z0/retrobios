@@ -18,7 +18,11 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
 from packpaths import _resolve_destination  # noqa: E402
-from validation import outside_gap_scope, read_from_system_dir  # noqa: E402
+from validation import (  # noqa: E402
+    outside_gap_scope,
+    read_from_save_dir,
+    read_from_system_dir,
+)
 
 
 class PathIsTheDestination(unittest.TestCase):
@@ -38,7 +42,11 @@ class LoadFromPerBuild(unittest.TestCase):
     def test_each_build_reads_its_own_place(self):
         self.assertFalse(read_from_system_dir(self.ENTRY, False))
         self.assertTrue(read_from_system_dir(self.ENTRY, True))
-        self.assertTrue(outside_gap_scope(self.ENTRY, False))
+        # The libretro build's copy goes below the save directory, the
+        # standalone one below the folder the platform hands it.
+        self.assertTrue(read_from_save_dir(self.ENTRY, False))
+        self.assertFalse(read_from_save_dir(self.ENTRY, True))
+        self.assertFalse(outside_gap_scope(self.ENTRY, False))
         self.assertFalse(outside_gap_scope(self.ENTRY, True))
 
     def test_a_plain_value_holds_for_both(self):
@@ -67,11 +75,23 @@ class RetroArchCarriesDolphinWhereItReads(unittest.TestCase):
         dolphin = [
             e["destination"] for e in extras
             if e.get("source_emulator") in ("Dolphin", "Ishiiruka")
+            and e.get("root") != "save"
         ]
         self.assertTrue(dolphin)
         self.assertEqual(
             [d for d in dolphin if not d.startswith("dolphin-emu/Sys/")], []
         )
+        # The User tree goes below the save directory, each core's folder
+        # first (RetroArch sorts saves by core).
+        user = {
+            e["pack_path"] for e in extras
+            if e.get("source_emulator") in ("Dolphin", "Ishiiruka")
+            and e.get("root") == "save"
+        }
+        self.assertIn("saves/dolphin-emu/User/GBA/gba_bios.bin", user)
+        self.assertTrue(all(
+            p.startswith(("saves/dolphin-emu/User/", "saves/Ishiiruka/User/")) for p in user
+        ))
         self.assertIn("dolphin-emu/Sys/Triforce/segaboot.gcm", dolphin)
 
 

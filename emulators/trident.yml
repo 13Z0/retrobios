@@ -7,6 +7,7 @@ upstream: https://github.com/wheremyfoodat/Panda3DS
 profiled_date: "2026-03-25"
 source_commit: "b97b0befa326105e181838bc6fa11c546de8294d"
 core_version: git
+library_name: "Trident"
 
 cores:
   - trident
@@ -21,10 +22,15 @@ notes: >-
   the game ROM at runtime, not from an external file.
   DSP modes: HLE (default), LLE (Teakra), Null.
   Files are resolved from the RetroArch save directory
-  (<save_dir>/Emulator Files/sysdata/), not the system directory.
+  (<save_dir>/Emulator Files/sysdata/), not the system directory, or from
+  the working directory when the frontend gives none. The core reports
+  library_name "Trident". The wrapper is vendor/Panda3DS at 69095ee6
+  (DanAlexMorton/Panda3DS src/libretro_core.cpp:30, 243, 280-285).
 
 files:
   - name: aes_keys.txt
+    path: "Emulator Files/sysdata/aes_keys.txt"
+    load_from: save_dir
     description: AES encryption keys for decrypting encrypted 3DS ROMs
     required: false
     source_ref: >-
@@ -33,6 +39,8 @@ files:
       src/core/loader/ncch.cpp:151-164 (panic if encrypted ROM loaded without keys)
 
   - name: seeddb.bin
+    path: "Emulator Files/sysdata/seeddb.bin"
+    load_from: save_dir
     description: seed database for seed-encrypted 3DS games
     required: false
     source_ref: >-

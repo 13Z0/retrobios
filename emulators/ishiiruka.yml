@@ -8,6 +8,7 @@ source_commit: "f228bde5fbf4861ba749a229803addcd6238663f"
 upstream_commit: "cba6d7279b44894297d8c1dde1effdbba3605c32"
 core_version: "Git"
 display_name: "Nintendo - GameCube / Wii (Ishiiruka)"
+library_name: "Ishiiruka"
 cores:
   - ishiiruka
 systems: [nintendo-gamecube, nintendo-wii]
@@ -131,7 +132,8 @@ files:
   # -- Wii System Files --
   # Auto-generated/managed by Dolphin's Wii emulation.
   - name: "SYSCONF"
-    path: "Wii/shared2/sys/SYSCONF"
+    path: "User/Wii/shared2/sys/SYSCONF"
+    standalone_path: "Wii/shared2/sys/SYSCONF"
     load_from:
       libretro: save_dir
     required: false
@@ -140,7 +142,8 @@ files:
     source_ref: "source Source/Core/Common/CommonPaths.h:59, 95, source Source/Core/Common/SysConf.cpp:40"
 
   - name: "setting.txt"
-    path: "Wii/title/00000001/00000002/data/setting.txt"
+    path: "User/Wii/title/00000001/00000002/data/setting.txt"
+    standalone_path: "Wii/title/00000001/00000002/data/setting.txt"
     load_from:
       libretro: save_dir
     size: 256
@@ -151,7 +154,8 @@ files:
 
   # -- Wii SD Card Image --
   - name: "sd.raw"
-    path: "Wii/sd.raw"
+    path: "User/Wii/sd.raw"
+    standalone_path: "Wii/sd.raw"
     load_from:
       libretro: save_dir
     required: false
@@ -179,28 +183,34 @@ files:
 
   # -- NAND Certificates (auto-extracted) --
   - name: "clientca.pem"
-    path: "Wii/clientca.pem"
+    path: "User/Wii/clientca.pem"
+    standalone_path: "Wii/clientca.pem"
+    load_from:
+      libretro: save_dir
     required: false
     hle_fallback: true
-    mode: standalone
     note: "SSL client certificate. Auto-extracted from IOS13 content during NAND import"
-    source_ref: "source Source/Core/DiscIO/NANDImporter.cpp:199-264"
+    source_ref: "source Source/Core/DiscIO/NANDImporter.cpp:199-264, source Source/Core/Core/IOS/Network/SSL.cpp:339-341, source Source/Core/Core/WiiRoot.cpp:73-76"
 
   - name: "clientcakey.pem"
-    path: "Wii/clientcakey.pem"
+    path: "User/Wii/clientcakey.pem"
+    standalone_path: "Wii/clientcakey.pem"
+    load_from:
+      libretro: save_dir
     required: false
     hle_fallback: true
-    mode: standalone
     note: "SSL client private key. Auto-extracted from IOS13 content during NAND import"
-    source_ref: "upstream Source/Core/DiscIO/NANDImporter.cpp:235"
+    source_ref: "upstream Source/Core/DiscIO/NANDImporter.cpp:235, source Source/Core/Core/IOS/Network/SSL.cpp:339-343, source Source/Core/Core/WiiRoot.cpp:73-76"
 
   - name: "rootca.pem"
-    path: "Wii/rootca.pem"
+    path: "User/Wii/rootca.pem"
+    standalone_path: "Wii/rootca.pem"
+    load_from:
+      libretro: save_dir
     required: false
     hle_fallback: true
-    mode: standalone
     note: "SSL root CA certificate. Auto-extracted from IOS13 content during NAND import"
-    source_ref: "upstream Source/Core/DiscIO/NANDImporter.cpp:236"
+    source_ref: "upstream Source/Core/DiscIO/NANDImporter.cpp:236, source Source/Core/Core/IOS/Network/SSL.cpp:404-406, source Source/Core/Core/WiiRoot.cpp:73-76"
 
 notes:
   hle_available: true

@@ -87,6 +87,24 @@ from the text and calling it passes the arguments through:
    [Files you already had](#files-you-already-had).
 7. Copies into standalone emulator directories, only with `--standalone-copies`.
 
+Some cores read their system data below the frontend's save directory, not
+below the BIOS folder: Azahar's keys, shared font and NAND files, Citra's
+`sysdata`, Dolphin's `User` tree. The file list marks them `root: save`, and
+the run writes them below the save directory, which it names before checking
+files (`5 files read from RetroArch's save directory go to ...`). For a
+RetroArch found by its `retroarch.cfg`, that is `savefile_directory` as
+RetroArch expands it (`:` for its own folder, `~` for the home), `saves/`
+beside the config when the value is `default`, empty, or names no folder, and
+the core's own folder below it when `sort_savefiles_enable` is on, as it is by
+default. Without a config, a BIOS folder at its default name (`system`) puts
+the save directory beside it (`saves`, `/storage/savefiles` on Lakka).
+`--save-dir PATH` names the save directory itself. When none of these
+applies, or when `savefiles_in_content_dir` or
+`sort_savefiles_by_content_enable` keeps saves beside each game, those files
+are left out and the run says why, like the other entries the list cannot
+install. Batocera, RetroBat and RetroPie hand each system or game a save folder
+of its own: their lists record these files as omitted.
+
 A RetroArch run into an empty folder printed this on 2026-10-21:
 
 ```
@@ -398,6 +416,7 @@ what the options name, everything by default.
 | `--every-board` | Install the files of every board instead of the one the system names, for a card that moves between devices |
 | `--installed-cores` | Keep only what the cores already installed read (RetroArch, Lakka, RetroPie). See [Installed cores](#installed-cores) |
 | `--cores-dir PATH` | The folder RetroArch loads its cores from, for `--installed-cores` when it is not found. Implies `--installed-cores` |
+| `--save-dir PATH` | The frontend's save directory (RetroArch's `savefile_directory`), for the files some cores read there, when the run cannot find it. The core's own folder is still added below it when the frontend sorts saves by core |
 | `--system NAMES` | Install only these systems. Comma-separated or repeated. `--list-systems` prints the names, `other` included |
 | `--core NAMES` | Keep the platform's own list and only the extra files these cores load. `--list-cores` prints the names |
 | `--emulator NAMES` | Install what these emulators read on the detected platform, and nothing else: their own files and the platform's files of the systems they run. Each emulator page on the site gives this command. `--list-emulators` prints the names, buildbot names such as `mednafen_psx` included |

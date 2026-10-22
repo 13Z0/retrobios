@@ -19,7 +19,8 @@ from common import core_system_dirs, platform_layouts, system_dir_path
 from common import standalone_set as platform_standalone_set
 from common import sanitize_pack_path
 from common import size_fits
-from validation import deliverable, read_from_system_dir
+from validation import deliverable, read_from_save_dir, read_from_system_dir
+from packpaths import save_destination, save_layout
 from region import FILE_GROUP
 
 
@@ -30,6 +31,55 @@ def _detect_extras_prefix(config: dict, base_dest: str) -> str:
     the YAML-declared destinations.
     """
     return base_dest or declared_root(config)
+
+
+def extra_full_destination(fe: dict, prefix: str) -> str:
+    """Where a pack writes a core extra, from the pack root.
+
+    A file the core reads below the frontend's save directory goes to the
+    pack path its placement recorded (ExtraPlacement.place). Any other one
+    goes below the platform's prefix, unless its destination carries it.
+    The builder, the manifest and verify's replay all read this.
+    """
+    if fe.get("root") == "save":
+        return str(fe.get("pack_path") or "")
+    dest = sanitize_pack_path(fe.get("destination", fe.get("name", "")))
+    if not dest or not prefix or dest.startswith(f"{prefix}/"):
+        return dest
+    return f"{prefix}/{dest}"
+
+
+def save_entry_fields(fe: dict) -> dict:
+    """What a manifest entry adds for a file read below the save directory.
+
+    ``root: save`` puts its ``dest`` below the frontend's save directory,
+    laid out as the pack lays it out. ``core_folder`` is the core's
+    library_name when the platform's frontend inserts it as the first folder
+    of ``dest`` (RetroArch's sort_savefiles_enable): the installer drops it
+    where the frontend's own config turns sorting off.
+    """
+    fields = {"root": "save"}
+    if fe.get("core_folder"):
+        fields["core_folder"] = str(fe["core_folder"])
+    return fields
+
+
+def save_manifest_dest(fe: dict) -> str:
+    """A manifest dest for a file read below the save directory.
+
+    The pack path below the platform's save folder when the file is placed,
+    the core's own folder first where the frontend sorts saves by core.
+    Without a save folder (an omission), the same shape: the core's folder,
+    then the path the core reads, so two cores reading one name below their
+    own folders stay two entries.
+    """
+    pack_path = str(fe.get("pack_path") or "")
+    if pack_path:
+        return pack_path.split("/", 1)[1]
+    rel = sanitize_pack_path(fe.get("destination") or fe.get("path") or fe.get("name", ""))
+    folder = fe.get("core_folder")
+    return f"{folder}/{rel}" if folder else rel
+
 
 def _detect_slug_structure(config: dict) -> tuple[bool, dict[str, str]]:
     """Detect whether a platform uses per-system slug destinations.
@@ -287,7 +337,9 @@ def hidden_extras(
         dest = sanitize_pack_path(fe.get("destination", fe.get("name", "")))
         if not dest or (region_drops and dest in region_drops):
             continue
-        full = dest if not prefix or dest.startswith(f"{prefix}/") else f"{prefix}/{dest}"
+        full = extra_full_destination(fe, prefix)
+        if not full:
+            continue
         reason = placement_block(full, seen, lower, parents, case_insensitive)
         if reason == "taken":
             # Another core's claim on the same path, settled by the claims
@@ -348,18 +400,16 @@ def unplaceable_extras(
     the pack. The answer comes from the builder's own placement.
     """
     placement = ExtraPlacement(config, "", profiles)
-    if not placement.slug_based:
-        return {}
     unplaced: dict[tuple[str, str, str], str] = {}
     for u in undeclared:
         if not u.get("in_repo"):
             continue
+        if not placement.slug_based and u.get("root") != "save":
+            continue
         dest = _extra_dest(u)
         if placement.place(u, dest) is None:
             key = (u.get("emulator", ""), u.get("name", ""), u.get("path") or "")
-            unplaced[key] = (
-                "below_platform_folder" if placement.nested(dest) else "no_platform_slug"
-            )
+            unplaced[key] = placement.unplaced_reason(u, dest)
     return unplaced
 
 
@@ -437,6 +487,10 @@ def _agnostic_scan_extras(
                 if (mode == "standalone" and not standalone) or (
                     mode == "libretro" and standalone
                 ):
+                    continue
+                # The scan walks the BIOS tree: a file read below the save
+                # directory is placed by the gap report's pass.
+                if read_from_save_dir(f, standalone):
                     continue
                 # An agnostic BIOS mode says the BIOS filename is free, not that
                 # every file the emulator loads is.  A free filename still has a
@@ -838,6 +892,7 @@ class ExtraPlacement:
         self.platform_systems = set(config.get("systems", {}).keys())
         self.native_systems = native_slug_systems(config)
         self.flat = bool(config.get("firmware_folder_flat"))
+        self.save = save_layout(config)
         self.norm_map = (
             {_norm_system_id(sid): sid for sid in self.platform_systems}
             if self.slug_based
@@ -850,8 +905,16 @@ class ExtraPlacement:
 
         ``entry`` names its profile and may name its own system. A
         slug-based platform cannot place a file of a system it has no
-        folder for.
+        folder for. A file the core reads below the frontend's save
+        directory (``root: save``) keeps its path relative to that
+        directory and goes below the platform's save folder, which a
+        platform keeping saves beside the content does not have.
         """
+        if entry.get("root") == "save":
+            if self.save is None:
+                return None
+            full = save_destination(dest, entry.get("core_folder"), self.save)
+            return (dest, full) if full else None
         if self.slug_based:
             slug = _slug_for(
                 entry, self.profiles, self.platform_systems, self.norm_map,
@@ -865,6 +928,12 @@ class ExtraPlacement:
     def nested(self, dest: str) -> bool:
         """True when the file would sit below a folder the frontend lists flat."""
         return self.slug_based and self.flat and "/" in dest
+
+    def unplaced_reason(self, entry: dict, dest: str) -> str:
+        """Why ``place`` returned None for this entry."""
+        if entry.get("root") == "save":
+            return "no_save_directory" if self.save is None else "no_core_folder"
+        return "below_platform_folder" if self.nested(dest) else "no_platform_slug"
 
 
 def undeclared_report(
@@ -988,13 +1057,16 @@ def _collect_emulator_extras(
         placed = placement.place(u, dest)
         if not u["in_repo"]:
             if placed is not None:
-                absent.append(_report_extra(u, name, placed[0]))
+                missing = _report_extra(u, name, placed[0])
+                if u.get("root") == "save":
+                    missing["pack_path"] = placed[1]
+                absent.append(missing)
             continue
         if placed is None:
             if unplaceable is not None:
+                reason = placement.unplaced_reason(u, dest)
                 unplaceable.append(
-                    {**u, "unplaceable": "below_platform_folder"}
-                    if placement.nested(dest) else u
+                    u if reason == "no_platform_slug" else {**u, "unplaceable": reason}
                 )
             continue
         dest, full_dest = placed
@@ -1005,6 +1077,9 @@ def _collect_emulator_extras(
         candidates = [
             _report_extra(c, name, dest) for c in (u, *u.get("other_claims", []))
         ]
+        if u.get("root") == "save":
+            for item in candidates:
+                item["pack_path"] = full_dest
         # Where the builder meets each claim: the strongest proof first, the
         # report's profile order between equals, archives after loose files.
         for item in candidates:
@@ -1248,6 +1323,10 @@ def _report_extra(u: dict, name: str, dest: str) -> dict:
     }
     if u.get("members"):
         extra["members"] = u["members"]
+    if u.get("root") == "save":
+        extra["root"] = "save"
+        if u.get("core_folder") is not None:
+            extra["core_folder"] = u["core_folder"]
     if u.get("system_dir"):
         extra["system_dir"] = u["system_dir"]
     # The archive layout the core opens ranks same-named copies by what

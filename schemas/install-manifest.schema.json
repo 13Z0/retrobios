@@ -175,7 +175,9 @@
               "external",
               "user_provided",
               "no_platform_slug",
-              "below_platform_folder"
+              "below_platform_folder",
+              "no_save_directory",
+              "no_core_folder"
             ]
           },
           "category": {
@@ -316,6 +318,16 @@
                 }
               }
             }
+          },
+          "root": {
+            "description": "save: dest is relative to the save directory the frontend hands the core (RETRO_ENVIRONMENT_GET_SAVE_DIRECTORY), not to the BIOS directory. Absent for a file of the BIOS tree.",
+            "const": "save"
+          },
+          "core_folder": {
+            "description": "The core's library_name, the folder a frontend sorting saves by core (RetroArch's sort_savefiles_enable) inserts between its save directory and dest. Only with root: save. Absent on a save entry when the core reads the same place sorted or not.",
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^[^/\\\\]+$"
           }
         }
       }
@@ -405,6 +417,24 @@
               }
             }
           }
+        }
+      }
+    },
+    "save_directory": {
+      "description": "Where the platform keeps the save directory its frontend hands a core, present when an entry carries root: save. folder is the pack folder holding those files and the save directory's default place beside the BIOS directory, and by_core says the frontend appends each core's library_name (core_folder).",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "folder",
+        "by_core"
+      ],
+      "properties": {
+        "folder": {
+          "type": "string",
+          "pattern": "^[^/\\\\.][^/\\\\]*$"
+        },
+        "by_core": {
+          "type": "boolean"
         }
       }
     }
@@ -861,6 +891,16 @@
               }
             }
           }
+        },
+        "root": {
+          "description": "save: dest is relative to the save directory the frontend hands the core (RETRO_ENVIRONMENT_GET_SAVE_DIRECTORY), not to the BIOS directory. Absent for a file of the BIOS tree.",
+          "const": "save"
+        },
+        "core_folder": {
+          "description": "The core's library_name, the folder a frontend sorting saves by core (RetroArch's sort_savefiles_enable) inserts between its save directory and dest. Only with root: save. Absent on a save entry when the core reads the same place sorted or not.",
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^[^/\\\\]+$"
         }
       },
       "oneOf": [

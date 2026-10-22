@@ -10,6 +10,8 @@ source_commit: "4802094a2c15559541b3da3a6b11c2e12ba5d7e8"
 upstream_commit: "32e6628a6a9e5255fd0f7e734386a364ff9c106e"
 core_version: "2.6"
 display_name: "Nintendo - Wii U (Cemu)"
+library_name: "Cemu"
+save_folder_once: true
 cores:
   - cemu
 systems: [nintendo-wiiu]
@@ -51,8 +53,11 @@ notes: |
   portable directory next to the executable when it exists, otherwise
   %APPDATA%/Cemu on Windows, XDG_DATA_HOME/Cemu and XDG_CONFIG_HOME/Cemu on
   Linux, and the MLC defaults to <user data>/mlc01. path: entries below are
-  the libretro destination under the system directory, and standalone_path: is
-  relative to the Cemu user data directory.
+  the libretro destination under the system directory, or under the save
+  directory for the MLC (load_from), and standalone_path: is relative to the
+  Cemu user data directory, which holds the MLC by default (load_from
+  data_dir). The core reports library_name "Cemu"
+  (src/libretro/CemuLibretro.cpp:3354).
   ref: src/libretro/CemuLibretro.cpp:1647-1707,
        src/libretro/CemuLibretro.cpp:3264-3272,
        src/gui/wxgui/CemuApp.cpp:90-123, src/gui/wxgui/CemuApp.cpp:127-171,
@@ -204,7 +209,7 @@ files:
   - name: CafeCn.ttf
     path: Cemu/mlc01/sys/title/0005001b/10042400/content/CafeCn.ttf
     standalone_path: mlc01/sys/title/0005001b/10042400/content/CafeCn.ttf
-    load_from: save_dir
+    load_from: {libretro: save_dir, standalone: data_dir}
     required: false
     hle_fallback: true
     description: "Shared font, Simplified Chinese, console dump"
@@ -217,7 +222,7 @@ files:
   - name: CafeKr.ttf
     path: Cemu/mlc01/sys/title/0005001b/10042400/content/CafeKr.ttf
     standalone_path: mlc01/sys/title/0005001b/10042400/content/CafeKr.ttf
-    load_from: save_dir
+    load_from: {libretro: save_dir, standalone: data_dir}
     required: false
     hle_fallback: true
     description: "Shared font, Korean, console dump"
@@ -226,7 +231,7 @@ files:
   - name: CafeStd.ttf
     path: Cemu/mlc01/sys/title/0005001b/10042400/content/CafeStd.ttf
     standalone_path: mlc01/sys/title/0005001b/10042400/content/CafeStd.ttf
-    load_from: save_dir
+    load_from: {libretro: save_dir, standalone: data_dir}
     required: false
     hle_fallback: true
     description: "Shared font, standard Latin and Japanese, console dump"
@@ -235,7 +240,7 @@ files:
   - name: CafeTw.ttf
     path: Cemu/mlc01/sys/title/0005001b/10042400/content/CafeTw.ttf
     standalone_path: mlc01/sys/title/0005001b/10042400/content/CafeTw.ttf
-    load_from: save_dir
+    load_from: {libretro: save_dir, standalone: data_dir}
     required: false
     hle_fallback: true
     description: "Shared font, Traditional Chinese, console dump"
@@ -426,7 +431,7 @@ files:
   - name: swkbd.pack
     path: Cemu/mlc01/sys/title/0005001b/1004f000/content/00/swkbd/swkbd.pack
     standalone_path: mlc01/sys/title/0005001b/1004f000/content/00/swkbd/swkbd.pack
-    load_from: save_dir
+    load_from: {libretro: save_dir, standalone: data_dir}
     required: false
     description: "Software keyboard applet data, title 0005001b-1004f000"
     note: >-
@@ -437,7 +442,7 @@ files:
   - name: erreula.pack
     path: Cemu/mlc01/sys/title/0005001b/10051000/content/00/erreula/erreula.pack
     standalone_path: mlc01/sys/title/0005001b/10051000/content/00/erreula/erreula.pack
-    load_from: save_dir
+    load_from: {libretro: save_dir, standalone: data_dir}
     required: false
     description: "Error viewer applet data, title 0005001b-10051000"
     note: >-
@@ -464,7 +469,7 @@ files:
   - name: WIIU_COMMON_1_CERT.der
     path: Cemu/mlc01/sys/title/0005001b/10054000/content/ccerts/WIIU_COMMON_1_CERT.der
     standalone_path: mlc01/sys/title/0005001b/10054000/content/ccerts/WIIU_COMMON_1_CERT.der
-    load_from: save_dir
+    load_from: {libretro: save_dir, standalone: data_dir}
     required: false
     description: "Client certificate, common"
     source_ref: "upstream src/Cafe/IOSU/legacy/iosu_crypto.cpp:471, source src/Cafe/IOSU/legacy/iosu_crypto.cpp:303-330"
@@ -472,7 +477,7 @@ files:
   - name: WIIU_COMMON_1_RSA_KEY.aes
     path: Cemu/mlc01/sys/title/0005001b/10054000/content/ccerts/WIIU_COMMON_1_RSA_KEY.aes
     standalone_path: mlc01/sys/title/0005001b/10054000/content/ccerts/WIIU_COMMON_1_RSA_KEY.aes
-    load_from: save_dir
+    load_from: {libretro: save_dir, standalone: data_dir}
     required: false
     description: "Client key, common, AES-CBC encrypted"
     note: "Must be a non-empty multiple of 16 bytes."
@@ -481,7 +486,7 @@ files:
   - name: WIIU_ACCOUNT_1_CERT.der
     path: Cemu/mlc01/sys/title/0005001b/10054000/content/ccerts/WIIU_ACCOUNT_1_CERT.der
     standalone_path: mlc01/sys/title/0005001b/10054000/content/ccerts/WIIU_ACCOUNT_1_CERT.der
-    load_from: save_dir
+    load_from: {libretro: save_dir, standalone: data_dir}
     required: false
     description: "Client certificate, account"
     source_ref: "upstream src/Cafe/IOSU/legacy/iosu_crypto.cpp:472, source src/Cafe/IOSU/legacy/iosu_crypto.cpp:303-330"
@@ -489,7 +494,7 @@ files:
   - name: WIIU_ACCOUNT_1_RSA_KEY.aes
     path: Cemu/mlc01/sys/title/0005001b/10054000/content/ccerts/WIIU_ACCOUNT_1_RSA_KEY.aes
     standalone_path: mlc01/sys/title/0005001b/10054000/content/ccerts/WIIU_ACCOUNT_1_RSA_KEY.aes
-    load_from: save_dir
+    load_from: {libretro: save_dir, standalone: data_dir}
     required: false
     description: "Client key, account, AES-CBC encrypted"
     note: "Must be a non-empty multiple of 16 bytes."
@@ -498,7 +503,7 @@ files:
   - name: WIIU_OLIVE_1_CERT.der
     path: Cemu/mlc01/sys/title/0005001b/10054000/content/ccerts/WIIU_OLIVE_1_CERT.der
     standalone_path: mlc01/sys/title/0005001b/10054000/content/ccerts/WIIU_OLIVE_1_CERT.der
-    load_from: save_dir
+    load_from: {libretro: save_dir, standalone: data_dir}
     required: false
     description: "Client certificate, olive (Miiverse)"
     note: "Registered twice, under ids 4 and 7."
@@ -507,7 +512,7 @@ files:
   - name: WIIU_OLIVE_1_RSA_KEY.aes
     path: Cemu/mlc01/sys/title/0005001b/10054000/content/ccerts/WIIU_OLIVE_1_RSA_KEY.aes
     standalone_path: mlc01/sys/title/0005001b/10054000/content/ccerts/WIIU_OLIVE_1_RSA_KEY.aes
-    load_from: save_dir
+    load_from: {libretro: save_dir, standalone: data_dir}
     required: false
     description: "Client key, olive, AES-CBC encrypted"
     note: "Must be a non-empty multiple of 16 bytes."
@@ -516,7 +521,7 @@ files:
   - name: WIIU_VINO_1_CERT.der
     path: Cemu/mlc01/sys/title/0005001b/10054000/content/ccerts/WIIU_VINO_1_CERT.der
     standalone_path: mlc01/sys/title/0005001b/10054000/content/ccerts/WIIU_VINO_1_CERT.der
-    load_from: save_dir
+    load_from: {libretro: save_dir, standalone: data_dir}
     required: false
     description: "Client certificate, vino (Nintendo TVii)"
     source_ref: "upstream src/Cafe/IOSU/legacy/iosu_crypto.cpp:474, source src/Cafe/IOSU/legacy/iosu_crypto.cpp:303-330"
@@ -524,7 +529,7 @@ files:
   - name: WIIU_VINO_1_RSA_KEY.aes
     path: Cemu/mlc01/sys/title/0005001b/10054000/content/ccerts/WIIU_VINO_1_RSA_KEY.aes
     standalone_path: mlc01/sys/title/0005001b/10054000/content/ccerts/WIIU_VINO_1_RSA_KEY.aes
-    load_from: save_dir
+    load_from: {libretro: save_dir, standalone: data_dir}
     required: false
     description: "Client key, vino, AES-CBC encrypted"
     note: "Must be a non-empty multiple of 16 bytes."
@@ -533,7 +538,7 @@ files:
   - name: WIIU_WOOD_1_CERT.der
     path: Cemu/mlc01/sys/title/0005001b/10054000/content/ccerts/WIIU_WOOD_1_CERT.der
     standalone_path: mlc01/sys/title/0005001b/10054000/content/ccerts/WIIU_WOOD_1_CERT.der
-    load_from: save_dir
+    load_from: {libretro: save_dir, standalone: data_dir}
     required: false
     description: "Client certificate, wood (eShop)"
     note: "Registered twice, under ids 6 and 8."
@@ -542,7 +547,7 @@ files:
   - name: WIIU_WOOD_1_RSA_KEY.aes
     path: Cemu/mlc01/sys/title/0005001b/10054000/content/ccerts/WIIU_WOOD_1_RSA_KEY.aes
     standalone_path: mlc01/sys/title/0005001b/10054000/content/ccerts/WIIU_WOOD_1_RSA_KEY.aes
-    load_from: save_dir
+    load_from: {libretro: save_dir, standalone: data_dir}
     required: false
     description: "Client key, wood, AES-CBC encrypted"
     note: "Must be a non-empty multiple of 16 bytes."
@@ -553,273 +558,273 @@ files:
   - name: CACERT_NINTENDO_CA.der
     path: Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/CACERT_NINTENDO_CA.der
     standalone_path: mlc01/sys/title/0005001b/10054000/content/scerts/CACERT_NINTENDO_CA.der
-    load_from: save_dir
+    load_from: {libretro: save_dir, standalone: data_dir}
     required: false
     source_ref: "upstream src/Cafe/IOSU/legacy/iosu_crypto.cpp:480"
 
   - name: CACERT_NINTENDO_CA_G2.der
     path: Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/CACERT_NINTENDO_CA_G2.der
     standalone_path: mlc01/sys/title/0005001b/10054000/content/scerts/CACERT_NINTENDO_CA_G2.der
-    load_from: save_dir
+    load_from: {libretro: save_dir, standalone: data_dir}
     required: false
     source_ref: "upstream src/Cafe/IOSU/legacy/iosu_crypto.cpp:481"
 
   - name: CACERT_NINTENDO_CA_G3.der
     path: Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/CACERT_NINTENDO_CA_G3.der
     standalone_path: mlc01/sys/title/0005001b/10054000/content/scerts/CACERT_NINTENDO_CA_G3.der
-    load_from: save_dir
+    load_from: {libretro: save_dir, standalone: data_dir}
     required: false
     source_ref: "upstream src/Cafe/IOSU/legacy/iosu_crypto.cpp:482"
 
   - name: CACERT_NINTENDO_CLASS2_CA.der
     path: Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/CACERT_NINTENDO_CLASS2_CA.der
     standalone_path: mlc01/sys/title/0005001b/10054000/content/scerts/CACERT_NINTENDO_CLASS2_CA.der
-    load_from: save_dir
+    load_from: {libretro: save_dir, standalone: data_dir}
     required: false
     source_ref: "upstream src/Cafe/IOSU/legacy/iosu_crypto.cpp:483"
 
   - name: CACERT_NINTENDO_CLASS2_CA_G2.der
     path: Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/CACERT_NINTENDO_CLASS2_CA_G2.der
     standalone_path: mlc01/sys/title/0005001b/10054000/content/scerts/CACERT_NINTENDO_CLASS2_CA_G2.der
-    load_from: save_dir
+    load_from: {libretro: save_dir, standalone: data_dir}
     required: false
     source_ref: "upstream src/Cafe/IOSU/legacy/iosu_crypto.cpp:484"
 
   - name: CACERT_NINTENDO_CLASS2_CA_G3.der
     path: Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/CACERT_NINTENDO_CLASS2_CA_G3.der
     standalone_path: mlc01/sys/title/0005001b/10054000/content/scerts/CACERT_NINTENDO_CLASS2_CA_G3.der
-    load_from: save_dir
+    load_from: {libretro: save_dir, standalone: data_dir}
     required: false
     source_ref: "upstream src/Cafe/IOSU/legacy/iosu_crypto.cpp:485"
 
   - name: BALTIMORE_CYBERTRUST_ROOT_CA.der
     path: Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/BALTIMORE_CYBERTRUST_ROOT_CA.der
     standalone_path: mlc01/sys/title/0005001b/10054000/content/scerts/BALTIMORE_CYBERTRUST_ROOT_CA.der
-    load_from: save_dir
+    load_from: {libretro: save_dir, standalone: data_dir}
     required: false
     source_ref: "upstream src/Cafe/IOSU/legacy/iosu_crypto.cpp:488"
 
   - name: CYBERTRUST_GLOBAL_ROOT_CA.der
     path: Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/CYBERTRUST_GLOBAL_ROOT_CA.der
     standalone_path: mlc01/sys/title/0005001b/10054000/content/scerts/CYBERTRUST_GLOBAL_ROOT_CA.der
-    load_from: save_dir
+    load_from: {libretro: save_dir, standalone: data_dir}
     required: false
     source_ref: "upstream src/Cafe/IOSU/legacy/iosu_crypto.cpp:489"
 
   - name: VERIZON_GLOBAL_ROOT_CA.der
     path: Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/VERIZON_GLOBAL_ROOT_CA.der
     standalone_path: mlc01/sys/title/0005001b/10054000/content/scerts/VERIZON_GLOBAL_ROOT_CA.der
-    load_from: save_dir
+    load_from: {libretro: save_dir, standalone: data_dir}
     required: false
     source_ref: "upstream src/Cafe/IOSU/legacy/iosu_crypto.cpp:490"
 
   - name: GLOBALSIGN_ROOT_CA.der
     path: Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/GLOBALSIGN_ROOT_CA.der
     standalone_path: mlc01/sys/title/0005001b/10054000/content/scerts/GLOBALSIGN_ROOT_CA.der
-    load_from: save_dir
+    load_from: {libretro: save_dir, standalone: data_dir}
     required: false
     source_ref: "upstream src/Cafe/IOSU/legacy/iosu_crypto.cpp:491"
 
   - name: GLOBALSIGN_ROOT_CA_R2.der
     path: Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/GLOBALSIGN_ROOT_CA_R2.der
     standalone_path: mlc01/sys/title/0005001b/10054000/content/scerts/GLOBALSIGN_ROOT_CA_R2.der
-    load_from: save_dir
+    load_from: {libretro: save_dir, standalone: data_dir}
     required: false
     source_ref: "upstream src/Cafe/IOSU/legacy/iosu_crypto.cpp:492"
 
   - name: GLOBALSIGN_ROOT_CA_R3.der
     path: Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/GLOBALSIGN_ROOT_CA_R3.der
     standalone_path: mlc01/sys/title/0005001b/10054000/content/scerts/GLOBALSIGN_ROOT_CA_R3.der
-    load_from: save_dir
+    load_from: {libretro: save_dir, standalone: data_dir}
     required: false
     source_ref: "upstream src/Cafe/IOSU/legacy/iosu_crypto.cpp:493"
 
   - name: VERISIGN_CLASS3_PUBLIC_PRIMARY_CA_G3.der
     path: Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/VERISIGN_CLASS3_PUBLIC_PRIMARY_CA_G3.der
     standalone_path: mlc01/sys/title/0005001b/10054000/content/scerts/VERISIGN_CLASS3_PUBLIC_PRIMARY_CA_G3.der
-    load_from: save_dir
+    load_from: {libretro: save_dir, standalone: data_dir}
     required: false
     source_ref: "upstream src/Cafe/IOSU/legacy/iosu_crypto.cpp:494"
 
   - name: VERISIGN_UNIVERSAL_ROOT_CA.der
     path: Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/VERISIGN_UNIVERSAL_ROOT_CA.der
     standalone_path: mlc01/sys/title/0005001b/10054000/content/scerts/VERISIGN_UNIVERSAL_ROOT_CA.der
-    load_from: save_dir
+    load_from: {libretro: save_dir, standalone: data_dir}
     required: false
     source_ref: "upstream src/Cafe/IOSU/legacy/iosu_crypto.cpp:495"
 
   - name: VERISIGN_CLASS3_PUBLIC_PRIMARY_CA_G5.der
     path: Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/VERISIGN_CLASS3_PUBLIC_PRIMARY_CA_G5.der
     standalone_path: mlc01/sys/title/0005001b/10054000/content/scerts/VERISIGN_CLASS3_PUBLIC_PRIMARY_CA_G5.der
-    load_from: save_dir
+    load_from: {libretro: save_dir, standalone: data_dir}
     required: false
     source_ref: "upstream src/Cafe/IOSU/legacy/iosu_crypto.cpp:496"
 
   - name: THAWTE_PRIMARY_ROOT_CA_G3.der
     path: Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/THAWTE_PRIMARY_ROOT_CA_G3.der
     standalone_path: mlc01/sys/title/0005001b/10054000/content/scerts/THAWTE_PRIMARY_ROOT_CA_G3.der
-    load_from: save_dir
+    load_from: {libretro: save_dir, standalone: data_dir}
     required: false
     source_ref: "upstream src/Cafe/IOSU/legacy/iosu_crypto.cpp:497"
 
   - name: THAWTE_PRIMARY_ROOT_CA.der
     path: Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/THAWTE_PRIMARY_ROOT_CA.der
     standalone_path: mlc01/sys/title/0005001b/10054000/content/scerts/THAWTE_PRIMARY_ROOT_CA.der
-    load_from: save_dir
+    load_from: {libretro: save_dir, standalone: data_dir}
     required: false
     source_ref: "upstream src/Cafe/IOSU/legacy/iosu_crypto.cpp:498"
 
   - name: GEOTRUST_GLOBAL_CA.der
     path: Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/GEOTRUST_GLOBAL_CA.der
     standalone_path: mlc01/sys/title/0005001b/10054000/content/scerts/GEOTRUST_GLOBAL_CA.der
-    load_from: save_dir
+    load_from: {libretro: save_dir, standalone: data_dir}
     required: false
     source_ref: "upstream src/Cafe/IOSU/legacy/iosu_crypto.cpp:499"
 
   - name: GEOTRUST_GLOBAL_CA2.der
     path: Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/GEOTRUST_GLOBAL_CA2.der
     standalone_path: mlc01/sys/title/0005001b/10054000/content/scerts/GEOTRUST_GLOBAL_CA2.der
-    load_from: save_dir
+    load_from: {libretro: save_dir, standalone: data_dir}
     required: false
     source_ref: "upstream src/Cafe/IOSU/legacy/iosu_crypto.cpp:500"
 
   - name: GEOTRUST_PRIMARY_CA.der
     path: Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/GEOTRUST_PRIMARY_CA.der
     standalone_path: mlc01/sys/title/0005001b/10054000/content/scerts/GEOTRUST_PRIMARY_CA.der
-    load_from: save_dir
+    load_from: {libretro: save_dir, standalone: data_dir}
     required: false
     source_ref: "upstream src/Cafe/IOSU/legacy/iosu_crypto.cpp:501"
 
   - name: GEOTRUST_PRIMARY_CA_G3.der
     path: Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/GEOTRUST_PRIMARY_CA_G3.der
     standalone_path: mlc01/sys/title/0005001b/10054000/content/scerts/GEOTRUST_PRIMARY_CA_G3.der
-    load_from: save_dir
+    load_from: {libretro: save_dir, standalone: data_dir}
     required: false
     source_ref: "upstream src/Cafe/IOSU/legacy/iosu_crypto.cpp:502"
 
   - name: ADDTRUST_EXT_CA_ROOT.der
     path: Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/ADDTRUST_EXT_CA_ROOT.der
     standalone_path: mlc01/sys/title/0005001b/10054000/content/scerts/ADDTRUST_EXT_CA_ROOT.der
-    load_from: save_dir
+    load_from: {libretro: save_dir, standalone: data_dir}
     required: false
     source_ref: "upstream src/Cafe/IOSU/legacy/iosu_crypto.cpp:503"
 
   - name: COMODO_CA.der
     path: Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/COMODO_CA.der
     standalone_path: mlc01/sys/title/0005001b/10054000/content/scerts/COMODO_CA.der
-    load_from: save_dir
+    load_from: {libretro: save_dir, standalone: data_dir}
     required: false
     source_ref: "upstream src/Cafe/IOSU/legacy/iosu_crypto.cpp:504"
 
   - name: UTN_DATACORP_SGC_CA.der
     path: Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/UTN_DATACORP_SGC_CA.der
     standalone_path: mlc01/sys/title/0005001b/10054000/content/scerts/UTN_DATACORP_SGC_CA.der
-    load_from: save_dir
+    load_from: {libretro: save_dir, standalone: data_dir}
     required: false
     source_ref: "upstream src/Cafe/IOSU/legacy/iosu_crypto.cpp:505"
 
   - name: UTN_USERFIRST_HARDWARE_CA.der
     path: Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/UTN_USERFIRST_HARDWARE_CA.der
     standalone_path: mlc01/sys/title/0005001b/10054000/content/scerts/UTN_USERFIRST_HARDWARE_CA.der
-    load_from: save_dir
+    load_from: {libretro: save_dir, standalone: data_dir}
     required: false
     source_ref: "upstream src/Cafe/IOSU/legacy/iosu_crypto.cpp:506"
 
   - name: DIGICERT_HIGH_ASSURANCE_EV_ROOT_CA.der
     path: Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/DIGICERT_HIGH_ASSURANCE_EV_ROOT_CA.der
     standalone_path: mlc01/sys/title/0005001b/10054000/content/scerts/DIGICERT_HIGH_ASSURANCE_EV_ROOT_CA.der
-    load_from: save_dir
+    load_from: {libretro: save_dir, standalone: data_dir}
     required: false
     source_ref: "upstream src/Cafe/IOSU/legacy/iosu_crypto.cpp:507"
 
   - name: DIGICERT_ASSURED_ID_ROOT_CA.der
     path: Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/DIGICERT_ASSURED_ID_ROOT_CA.der
     standalone_path: mlc01/sys/title/0005001b/10054000/content/scerts/DIGICERT_ASSURED_ID_ROOT_CA.der
-    load_from: save_dir
+    load_from: {libretro: save_dir, standalone: data_dir}
     required: false
     source_ref: "upstream src/Cafe/IOSU/legacy/iosu_crypto.cpp:508"
 
   - name: DIGICERT_GLOBAL_ROOT_CA.der
     path: Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/DIGICERT_GLOBAL_ROOT_CA.der
     standalone_path: mlc01/sys/title/0005001b/10054000/content/scerts/DIGICERT_GLOBAL_ROOT_CA.der
-    load_from: save_dir
+    load_from: {libretro: save_dir, standalone: data_dir}
     required: false
     source_ref: "upstream src/Cafe/IOSU/legacy/iosu_crypto.cpp:509"
 
   - name: GTE_CYBERTRUST_GLOBAL_ROOT.der
     path: Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/GTE_CYBERTRUST_GLOBAL_ROOT.der
     standalone_path: mlc01/sys/title/0005001b/10054000/content/scerts/GTE_CYBERTRUST_GLOBAL_ROOT.der
-    load_from: save_dir
+    load_from: {libretro: save_dir, standalone: data_dir}
     required: false
     source_ref: "upstream src/Cafe/IOSU/legacy/iosu_crypto.cpp:510"
 
   - name: VERISIGN_CLASS3_PUBLIC_PRIMARY_CA.der
     path: Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/VERISIGN_CLASS3_PUBLIC_PRIMARY_CA.der
     standalone_path: mlc01/sys/title/0005001b/10054000/content/scerts/VERISIGN_CLASS3_PUBLIC_PRIMARY_CA.der
-    load_from: save_dir
+    load_from: {libretro: save_dir, standalone: data_dir}
     required: false
     source_ref: "upstream src/Cafe/IOSU/legacy/iosu_crypto.cpp:511"
 
   - name: THAWTE_PREMIUM_SERVER_CA.der
     path: Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/THAWTE_PREMIUM_SERVER_CA.der
     standalone_path: mlc01/sys/title/0005001b/10054000/content/scerts/THAWTE_PREMIUM_SERVER_CA.der
-    load_from: save_dir
+    load_from: {libretro: save_dir, standalone: data_dir}
     required: false
     source_ref: "upstream src/Cafe/IOSU/legacy/iosu_crypto.cpp:512"
 
   - name: EQUIFAX_SECURE_CA.der
     path: Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/EQUIFAX_SECURE_CA.der
     standalone_path: mlc01/sys/title/0005001b/10054000/content/scerts/EQUIFAX_SECURE_CA.der
-    load_from: save_dir
+    load_from: {libretro: save_dir, standalone: data_dir}
     required: false
     source_ref: "upstream src/Cafe/IOSU/legacy/iosu_crypto.cpp:513"
 
   - name: ENTRUST_SECURE_SERVER_CA.der
     path: Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/ENTRUST_SECURE_SERVER_CA.der
     standalone_path: mlc01/sys/title/0005001b/10054000/content/scerts/ENTRUST_SECURE_SERVER_CA.der
-    load_from: save_dir
+    load_from: {libretro: save_dir, standalone: data_dir}
     required: false
     source_ref: "upstream src/Cafe/IOSU/legacy/iosu_crypto.cpp:514"
 
   - name: VERISIGN_CLASS3_PUBLIC_PRIMARY_CA_G2.der
     path: Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/VERISIGN_CLASS3_PUBLIC_PRIMARY_CA_G2.der
     standalone_path: mlc01/sys/title/0005001b/10054000/content/scerts/VERISIGN_CLASS3_PUBLIC_PRIMARY_CA_G2.der
-    load_from: save_dir
+    load_from: {libretro: save_dir, standalone: data_dir}
     required: false
     source_ref: "upstream src/Cafe/IOSU/legacy/iosu_crypto.cpp:515"
 
   - name: ENTRUST_CA_2048.der
     path: Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/ENTRUST_CA_2048.der
     standalone_path: mlc01/sys/title/0005001b/10054000/content/scerts/ENTRUST_CA_2048.der
-    load_from: save_dir
+    load_from: {libretro: save_dir, standalone: data_dir}
     required: false
     source_ref: "upstream src/Cafe/IOSU/legacy/iosu_crypto.cpp:516"
 
   - name: ENTRUST_ROOT_CA.der
     path: Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/ENTRUST_ROOT_CA.der
     standalone_path: mlc01/sys/title/0005001b/10054000/content/scerts/ENTRUST_ROOT_CA.der
-    load_from: save_dir
+    load_from: {libretro: save_dir, standalone: data_dir}
     required: false
     source_ref: "upstream src/Cafe/IOSU/legacy/iosu_crypto.cpp:517"
 
   - name: ENTRUST_ROOT_CA_G2.der
     path: Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/ENTRUST_ROOT_CA_G2.der
     standalone_path: mlc01/sys/title/0005001b/10054000/content/scerts/ENTRUST_ROOT_CA_G2.der
-    load_from: save_dir
+    load_from: {libretro: save_dir, standalone: data_dir}
     required: false
     source_ref: "upstream src/Cafe/IOSU/legacy/iosu_crypto.cpp:518"
 
   - name: DIGICERT_ASSURED_ID_ROOT_CA_G2.der
     path: Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/DIGICERT_ASSURED_ID_ROOT_CA_G2.der
     standalone_path: mlc01/sys/title/0005001b/10054000/content/scerts/DIGICERT_ASSURED_ID_ROOT_CA_G2.der
-    load_from: save_dir
+    load_from: {libretro: save_dir, standalone: data_dir}
     required: false
     source_ref: "upstream src/Cafe/IOSU/legacy/iosu_crypto.cpp:519"
 
   - name: DIGICERT_GLOBAL_ROOT_CA_G2.der
     path: Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/DIGICERT_GLOBAL_ROOT_CA_G2.der
     standalone_path: mlc01/sys/title/0005001b/10054000/content/scerts/DIGICERT_GLOBAL_ROOT_CA_G2.der
-    load_from: save_dir
+    load_from: {libretro: save_dir, standalone: data_dir}
     required: false
     source_ref: "upstream src/Cafe/IOSU/legacy/iosu_crypto.cpp:520"
 

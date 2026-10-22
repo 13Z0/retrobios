@@ -335,6 +335,15 @@
       "type": "integer",
       "minimum": 0
     },
+    "library_name": {
+      "description": "The library_name the libretro core reports in retro_get_system_info. A frontend sorting saves by core (RetroArch's sort_savefiles_enable) hands the core <save directory>/<library_name>, so a profile with a file the libretro build reads below the save directory (load_from: save_dir) declares it. Empty when the core reports an empty name, which RetroArch appends nothing for.",
+      "type": "string",
+      "pattern": "^[^/\\\\]*$"
+    },
+    "save_folder_once": {
+      "description": "true when the core adds its own folder to the save directory only where the directory it is handed is not already named so (Cemu's in_named_dir), so it reads the same place whether the frontend sorts saves by core or not. Every load_from: save_dir path then starts with that folder, the library_name.",
+      "const": true
+    },
     "logo": {
       "type": "string"
     },
@@ -536,7 +545,7 @@
             ]
           },
           "load_from": {
-            "description": "Where the emulator reads the file when not from the system directory, keyed by build when the libretro and standalone builds read it from different places.",
+            "description": "Where the emulator reads the file when not from the system directory, keyed by build when the libretro and standalone builds read it from different places. save_dir: path is relative to the directory the frontend returns for RETRO_ENVIRONMENT_GET_SAVE_DIRECTORY, and packs and the installer place the libretro build's file there.",
             "oneOf": [
               {
                 "type": "string"

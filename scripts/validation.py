@@ -429,16 +429,40 @@ def check_file_validation(
 def read_from_system_dir(file_entry: dict, standalone: bool = False) -> bool:
     """Whether the emulator reads this entry from the system directory.
 
-    A file loaded from the save, content or working directory is not a BIOS:
-    no platform lists it, no pack carries it, and the truth model must not
-    ask a platform to declare it. Two builds can read one file from two
+    A file loaded from the save, content or working directory is not in the
+    BIOS tree: no platform lists it, and the truth model must not ask a
+    platform to declare it. Packs place one read below the save directory
+    there (read_from_save_dir), never in the BIOS tree. Two builds can read one file from two
     places: libretro Dolphin keeps its User tree in the save directory, the
     standalone app in its own folder, so ``load_from`` can be keyed by build.
     """
+    load_from = _load_from(file_entry, standalone)
+    return not load_from or load_from == "system_dir"
+
+
+def _load_from(file_entry: dict, standalone: bool) -> str:
+    """The ``load_from`` value that applies to one build."""
     load_from = file_entry.get("load_from", "")
     if isinstance(load_from, dict):
         load_from = load_from.get("standalone" if standalone else "libretro", "")
-    return not load_from or load_from == "system_dir"
+    return load_from or ""
+
+
+def read_from_save_dir(file_entry: dict, standalone: bool = False) -> bool:
+    """Whether the libretro build reads this entry below the frontend's save
+    directory, the one RETRO_ENVIRONMENT_GET_SAVE_DIRECTORY returns.
+
+    ``path`` is then relative to that directory. A standalone app has no
+    frontend to hand it one: its files are placed by ``standalone_path``.
+    """
+    return not standalone and _load_from(file_entry, False) == "save_dir"
+
+
+def entry_root(file_entry: dict, standalone: bool = False) -> str:
+    """The frontend directory an entry's ``path`` is relative to: ``save``
+    for a file the libretro build reads below the save directory, else
+    ``system``."""
+    return "save" if read_from_save_dir(file_entry, standalone) else "system"
 
 
 def outside_gap_scope(file_entry: dict, is_standalone: bool) -> bool:
@@ -447,8 +471,10 @@ def outside_gap_scope(file_entry: dict, is_standalone: bool) -> bool:
     Read by the gap report and by verify's undeclared-file pass, so both set
     aside the same entries: a placeholder standing for a family of files, a
     file the user imports through the UI (``path: null``), an entry of the
-    build the platform does not run, a file read outside the system
-    directory, and a filename-agnostic entry the builder scans for itself.
+    build the platform does not run, a file read outside the system and
+    save directories, and a filename-agnostic entry the builder scans for
+    itself. A file the libretro build reads below the save directory is in
+    scope: the pack places it there (``entry_root``).
     """
     name = file_entry.get("name", "")
     if "<" in name or ">" in name or "*" in name:
@@ -460,9 +486,10 @@ def outside_gap_scope(file_entry: dict, is_standalone: bool) -> bool:
         mode == "libretro" and is_standalone
     ):
         return True
-    return not read_from_system_dir(file_entry, is_standalone) or bool(
-        file_entry.get("agnostic")
-    )
+    return not (
+        read_from_system_dir(file_entry, is_standalone)
+        or read_from_save_dir(file_entry, is_standalone)
+    ) or bool(file_entry.get("agnostic"))
 
 
 def case_folded_slots(

@@ -51,6 +51,7 @@ from validation import (
     declaration_settles,
     installed_with_emulator,
     outside_gap_scope,
+    read_from_save_dir,
     unread_on,
 )
 
@@ -657,6 +658,7 @@ def slot_key(f: dict, standalone: bool = False) -> tuple:
         f.get("system"),
         f.get("variant_group"),
         f.get("mode", "both"),
+        read_from_save_dir(f, standalone),
     )
 
 
@@ -725,8 +727,11 @@ def _cross_reference_profile(
         # takes it: Batocera's standalone Cemu reads keys.txt at
         # standalone_path, and the libretro Cemu/keys.txt reported here
         # settled the declaration on a slot the platform never fills.
+        save_root = read_from_save_dir(f, is_standalone)
         if is_standalone:
             effective_path = f.get("standalone_path") or f.get("path") or fname
+        elif save_root:
+            effective_path = f.get("path") or fname
         else:
             effective_path = system_dir_path(f, f.get("path") or fname)
         slot = slot_key(f, is_standalone)
@@ -757,7 +762,9 @@ def _cross_reference_profile(
         # Check platform declaration: by name, by an alias the core answers
         # to (RetroArch lists amiberry's cd32.rom as kick40060.CD32), or by
         # archive.
-        in_platform = declaration_settles(
+        # A platform declares files of its BIOS tree: none answers for one
+        # the core reads below the save directory.
+        in_platform = not save_root and declaration_settles(
             f, fname, platform_names, effective_path, index.get("folded_slots", frozenset())
         )
 
@@ -836,6 +843,8 @@ def _cross_reference_profile(
             # What tells this file from a homonym another emulator wants.
             "identity": _first_hash(f),
         }
+        if save_root:
+            entry["root"] = "save"
         gaps.append(entry)
 
     for ag in sorted(archive_gaps.values(), key=lambda e: e["name"]):

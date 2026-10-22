@@ -284,11 +284,11 @@
       }
     }
   ],
-  "total_files": 5153,
-  "total_size": 8012332667,
-  "pack_files": 5155,
-  "pack_size": 8012332667,
-  "total_omitted": 155,
+  "total_files": 5146,
+  "total_size": 8009125130,
+  "pack_files": 5148,
+  "pack_size": 8009125130,
+  "total_omitted": 178,
   "omitted_files": [
     {
       "dest": "AR6002G.ROM",
@@ -331,6 +331,93 @@
         "bstone"
       ],
       "category": "game_data"
+    },
+    {
+      "dest": "Azahar/Azahar/nand/private/movable.sed",
+      "root": "save",
+      "core_folder": "Azahar",
+      "name": "movable.sed",
+      "system": "nintendo-3ds",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "azahar"
+      ]
+    },
+    {
+      "dest": "Azahar/Azahar/nand/rw/sys/LocalFriendCodeSeed_B",
+      "root": "save",
+      "core_folder": "Azahar",
+      "name": "LocalFriendCodeSeed_B",
+      "system": "nintendo-3ds",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "azahar"
+      ]
+    },
+    {
+      "dest": "Azahar/Azahar/nand/rw/sys/SecureInfo_A",
+      "root": "save",
+      "core_folder": "Azahar",
+      "name": "SecureInfo_A",
+      "system": "nintendo-3ds",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "azahar"
+      ]
+    },
+    {
+      "dest": "Azahar/Azahar/sysdata/keys.txt",
+      "root": "save",
+      "core_folder": "Azahar",
+      "name": "keys.txt",
+      "system": "nintendo-3ds",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "azahar"
+      ],
+      "held": true
+    },
+    {
+      "dest": "Azahar/Azahar/sysdata/otp.bin",
+      "root": "save",
+      "core_folder": "Azahar",
+      "name": "otp.bin",
+      "system": "nintendo-3ds",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "azahar"
+      ],
+      "held": true
+    },
+    {
+      "dest": "Azahar/Azahar/sysdata/seeddb.bin",
+      "root": "save",
+      "core_folder": "Azahar",
+      "name": "seeddb.bin",
+      "system": "nintendo-3ds",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "azahar"
+      ],
+      "held": true
+    },
+    {
+      "dest": "Azahar/Azahar/sysdata/shared_font.bin",
+      "root": "save",
+      "core_folder": "Azahar",
+      "name": "shared_font.bin",
+      "system": "nintendo-3ds",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "azahar"
+      ]
     },
     {
       "dest": "BIOSDSI7.ROM",
@@ -490,6 +577,32 @@
       "cores": [
         "cxbx-reloaded"
       ]
+    },
+    {
+      "dest": "FB Alpha 2012 CPS-3/hiscore.dat",
+      "root": "save",
+      "core_folder": "FB Alpha 2012 CPS-3",
+      "name": "hiscore.dat",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "fbalpha2012_cps3"
+      ],
+      "held": true
+    },
+    {
+      "dest": "FB Alpha 2012/hiscore.dat",
+      "root": "save",
+      "core_folder": "FB Alpha 2012",
+      "name": "hiscore.dat",
+      "system": "arcade",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "fbalpha2012"
+      ],
+      "held": true
     },
     {
       "dest": "GANIM.BS6",
@@ -719,6 +832,97 @@
       "reason": "not_found",
       "cores": [
         "sonic3-air"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "Stella/stella/KVB1.WAV",
+      "root": "save",
+      "core_folder": "Stella",
+      "name": "KVB1.WAV",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "stella"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "Stella/stella/KVB2.WAV",
+      "root": "save",
+      "core_folder": "Stella",
+      "name": "KVB2.WAV",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "stella"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "Stella/stella/KVB3.WAV",
+      "root": "save",
+      "core_folder": "Stella",
+      "name": "KVB3.WAV",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "stella"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "Stella/stella/KVS1.WAV",
+      "root": "save",
+      "core_folder": "Stella",
+      "name": "KVS1.WAV",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "stella"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "Stella/stella/KVS2.WAV",
+      "root": "save",
+      "core_folder": "Stella",
+      "name": "KVS2.WAV",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "stella"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "Stella/stella/KVS3.WAV",
+      "root": "save",
+      "core_folder": "Stella",
+      "name": "KVS3.WAV",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "stella"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "Stella/stella/KVSHARED.WAV",
+      "root": "save",
+      "core_folder": "Stella",
+      "name": "KVSHARED.WAV",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "stella"
       ],
       "category": "game_data"
     },
@@ -1072,6 +1276,94 @@
         "devilutionx"
       ],
       "category": "game_data"
+    },
+    {
+      "dest": "dolphin-emu/User/GBA/gba_bios.bin",
+      "root": "save",
+      "core_folder": "dolphin-emu",
+      "name": "gba_bios.bin",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "dolphin"
+      ],
+      "systems": [
+        "nintendo-gba"
+      ],
+      "held": true
+    },
+    {
+      "dest": "dolphin-emu/User/Load/WiiSD.raw",
+      "root": "save",
+      "core_folder": "dolphin-emu",
+      "name": "WiiSD.raw",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "dolphin"
+      ]
+    },
+    {
+      "dest": "dolphin-emu/User/Wii/clientca.pem",
+      "root": "save",
+      "core_folder": "dolphin-emu",
+      "name": "clientca.pem",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "dolphin"
+      ]
+    },
+    {
+      "dest": "dolphin-emu/User/Wii/clientcakey.pem",
+      "root": "save",
+      "core_folder": "dolphin-emu",
+      "name": "clientcakey.pem",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "dolphin"
+      ]
+    },
+    {
+      "dest": "dolphin-emu/User/Wii/rootca.pem",
+      "root": "save",
+      "core_folder": "dolphin-emu",
+      "name": "rootca.pem",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "dolphin"
+      ]
+    },
+    {
+      "dest": "dolphin-emu/User/Wii/shared2/sys/SYSCONF",
+      "root": "save",
+      "core_folder": "dolphin-emu",
+      "name": "SYSCONF",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "dolphin"
+      ]
+    },
+    {
+      "dest": "dolphin-emu/User/Wii/title/00000001/00000002/data/setting.txt",
+      "root": "save",
+      "core_folder": "dolphin-emu",
+      "name": "setting.txt",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "dolphin"
+      ]
     },
     {
       "dest": "doom2bfg.wad",
@@ -2415,6 +2707,9 @@
     ],
     "sonic3-air": [
       "sonic3air"
+    ],
+    "stella": [
+      "STELLASA"
     ],
     "tgbdual": [
       "TGB Dual"
@@ -11356,16 +11651,6 @@
         "atari-400-800",
         "atari-5200",
         "xegs"
-      ]
-    },
-    {
-      "dest": "Azahar/sysdata/keys.txt",
-      "sha1": "5288772be438b86978a801e6dcb14228ad3a20af",
-      "sha256": "ea8b3d7c752d85f2326b9bfa01615414ab34ba052f87481b0ff4003fd887e50a",
-      "size": 7424,
-      "repo_path": "bios/Other/azaharplus/sysdata/keys.txt",
-      "cores": [
-        "azahar"
       ]
     },
     {
@@ -40186,66 +40471,6 @@
       ],
       "systems": [
         "sega-saturn"
-      ]
-    },
-    {
-      "dest": "Azahar/sysdata/shared_font.bin",
-      "sha1": "60022d6d026c8df950722478aab25702a0dfa067",
-      "sha256": "a06aaf6b50ebc38ebdccc59b913d4a1c0cc7005289957530acaaf78ffc49dddd",
-      "size": 3145728,
-      "repo_path": "bios/Nintendo/3DS/Citra/sysdata/shared_font.bin",
-      "cores": [
-        "azahar"
-      ]
-    },
-    {
-      "dest": "Azahar/sysdata/seeddb.bin",
-      "sha1": "9e2c006997761082be87cf316e57c4da5cddbc62",
-      "sha256": "ff485c60090185aff05354ece01f86b61f6020332bed0f9090c58d4678e5a180",
-      "size": 53264,
-      "repo_path": "bios/Nintendo/3DS/Citra/sysdata/seeddb.bin",
-      "cores": [
-        "azahar"
-      ]
-    },
-    {
-      "dest": "Azahar/sysdata/otp.bin",
-      "sha1": "49489245b400f62c62faf1736b7f0a70714d3c49",
-      "sha256": "e2f1810ceff3d1fd4f1c08ffc1f4d47aa8efca551edd24cd5686205c71a3b13b",
-      "size": 256,
-      "repo_path": "bios/Nintendo/3DS/otp.bin",
-      "cores": [
-        "azahar"
-      ]
-    },
-    {
-      "dest": "Azahar/nand/private/movable.sed",
-      "sha1": "6620b0a0c79dfe80be682fbd5c31c152ab570899",
-      "sha256": "5c024772c93d5b491398873b05be69a178d8a5208152d60ea2c006dfdbb2ce00",
-      "size": 320,
-      "repo_path": "bios/Nintendo/3DS/Citra/nand/private/movable.sed",
-      "cores": [
-        "azahar"
-      ]
-    },
-    {
-      "dest": "Azahar/nand/rw/sys/SecureInfo_A",
-      "sha1": "ff52883a0f61afcbbb3f8e59b9327ac52050e9a7",
-      "sha256": "5eda7e8951c48fc0913445fc844fa1caafcf226f82c0d06341e7e5fa39ae033e",
-      "size": 273,
-      "repo_path": "bios/Nintendo/3DS/Citra/nand/rw/sys/SecureInfo_A",
-      "cores": [
-        "azahar"
-      ]
-    },
-    {
-      "dest": "Azahar/nand/rw/sys/LocalFriendCodeSeed_B",
-      "sha1": "3011ae55c3dc70203fd62aad98bf485e55d018ff",
-      "sha256": "086e900d21c6ae3f892db284359315cb5ec44bb3939f2fb3187d212f5be3ac61",
-      "size": 272,
-      "repo_path": "bios/Nintendo/3DS/Citra/nand/rw/sys/LocalFriendCodeSeed_B",
-      "cores": [
-        "azahar"
       ]
     },
     {

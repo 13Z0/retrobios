@@ -105,6 +105,8 @@ OMISSION_REASONS = {
     "user_provided": "user provided",
     "no_platform_slug": "no platform folder",
     "below_platform_folder": "below the platform folder",
+    "no_save_directory": "no save directory",
+    "no_core_folder": "no core folder",
 }
 # What a file is when it is not firmware, as the manifest's category field
 # says, and as the installer words it. Firmware carries no category.
@@ -2398,6 +2400,101 @@ def _destination_path(root: Path, value: object) -> Path:
     return root.resolve() / Path(*relative.parts)
 
 
+class SavePlace(NamedTuple):
+    """The save directory a frontend's config names, whether it hands each
+    core a folder of its own below it (RetroArch's sort_savefiles_enable,
+    runloop.c runloop_path_set_redirect), and whether the file list's dests
+    hold that folder (its save_directory.by_core)."""
+
+    directory: Path
+    by_core: bool
+    listed_by_core: bool = True
+
+
+# BIOS folder -> where the files read below its frontend's save directory go,
+# set once the save directory is known (save_directory_for).
+_SAVE_DIRS: dict[Path, SavePlace] = {}
+
+
+def _entry_place(root: Path, entry: dict) -> tuple[Path, object]:
+    """The folder an entry's dest is relative to, and the dest.
+
+    An entry with root: save is relative to the save directory the frontend
+    hands the core, below the BIOS folder's frontend save directory and the
+    core's own folder where the frontend sorts saves by core. Any other is
+    relative to the BIOS folder.
+    """
+    if entry.get("root") != "save":
+        return root, entry.get("dest")
+    place = _SAVE_DIRS.get(root)
+    if place is None:
+        raise ValueError(f"no save directory known for {entry.get('dest')}")
+    dest = entry.get("dest")
+    folder = entry.get("core_folder")
+    # No core_folder: the core reads the same place whether the frontend
+    # sorts saves by core or not (an empty library_name, or Cemu adding its
+    # own folder only where the directory is not named after it).
+    if folder and isinstance(dest, str) and place.by_core != place.listed_by_core:
+        if place.listed_by_core:
+            dest = dest.split("/", 1)[1] if "/" in dest else dest
+        else:
+            dest = f"{folder}/{dest}"
+    return place.directory, dest
+
+
+def _entry_path(root: Path, entry: dict) -> Path:
+    """Where an entry is written, as _entry_place places it."""
+    return _destination_path(*_entry_place(root, entry))
+
+
+def _check_root(entry: dict, dest: str) -> None:
+    """root is absent or save, and core_folder one folder name of a save entry."""
+    root = entry.get("root")
+    if root is not None and root != "save":
+        raise ValueError(f"invalid root for {dest}")
+    folder = entry.get("core_folder")
+    if folder is None:
+        return
+    if root != "save":
+        raise ValueError(f"core_folder outside root: save for {dest}")
+    if len(_safe_relative_path(folder, f"core_folder of {dest}").parts) != 1:
+        raise ValueError(f"core_folder must be one folder name for {dest}")
+
+
+def _check_save_directory(data: dict) -> None:
+    """The manifest's save_directory, which every root: save entry needs."""
+    layout = data.get("save_directory")
+    entries = [
+        entry for field in ("files", "case_variants", "omitted_files")
+        for entry in data.get(field) or [] if isinstance(entry, dict)
+    ]
+    if layout is None:
+        # An omission may name one: the list says the file exists and why
+        # this platform cannot place it.
+        installable = [
+            entry for field in ("files", "case_variants")
+            for entry in data.get(field) or [] if isinstance(entry, dict)
+        ]
+        if any(entry.get("root") == "save" for entry in installable):
+            raise ValueError("entries below the save directory and no save_directory")
+        return
+    if (
+        not isinstance(layout, dict)
+        or set(layout) != {"folder", "by_core"}
+        or not isinstance(layout["by_core"], bool)
+        or len(_safe_relative_path(layout["folder"], "save_directory.folder").parts) != 1
+    ):
+        raise ValueError("invalid save_directory")
+    if layout["by_core"]:
+        # The core's folder heads each dest it names: dropped, never guessed,
+        # where the frontend does not sort saves by core.
+        for entry in entries:
+            folder = entry.get("core_folder")
+            dest = entry.get("dest")
+            if folder and isinstance(dest, str) and dest.split("/", 1)[0] != folder:
+                raise ValueError(f"{dest} does not start with its core_folder {folder}")
+
+
 def _check_tags(entry: dict, field: str, where: str) -> None:
     """A selection field is absent or a short list of short strings."""
     value = entry.get(field)
@@ -2531,6 +2628,7 @@ def _check_entry(
     if dest in seen_destinations:
         raise ValueError(f"duplicate manifest destination: {dest}")
     seen_destinations.add(dest)
+    _check_root(entry, dest)
 
     size = _check_download(entry, where, dest)
     largest = size
@@ -2643,6 +2741,7 @@ def _validate_manifest(data: object, plat: str) -> dict:
         raise ValueError("invalid data_directories list")
     for index, entry in enumerate(data_dirs):
         _check_data_directory(entry, f"data_directories[{index}]")
+    _check_save_directory(data)
 
     declared_total_files = data.get("total_files")
     if declared_total_files is not None and declared_total_files != len(files):
@@ -2667,6 +2766,7 @@ def _validate_manifest(data: object, plat: str) -> dict:
             raise ValueError(f"duplicate or conflicting omitted destination: {dest}")
         seen_omitted.add(dest)
         _check_omission(entry, dest)
+        _check_root(entry, dest)
         claims = entry.get("alternatives", [])
         if not isinstance(claims, list) or len(claims) > MAX_SELECTION_TAGS:
             raise ValueError(f"invalid omitted alternatives for {dest}")
@@ -3371,6 +3471,89 @@ def _sha256_file(path: Path) -> str:
     return _digest_file(path, ("sha256",))["sha256"]
 
 
+def _cfg_true(value: str | None) -> bool:
+    return (value or "").strip().lower() == "true"
+
+
+def save_directory_for(
+    bios_path: Path, manifest: dict, override: Path | None = None,
+) -> SavePlace | str:
+    """The save directory the platform's frontend hands its cores, or why
+    this run cannot tell.
+
+    A RetroArch found by its retroarch.cfg answers from it: savefile_directory
+    as RetroArch expands it, a value left at default or naming no folder
+    being saves/ beside the config (configuration.c config_load_file keeps
+    the default unless path_is_directory), and sort_savefiles_enable, true by
+    default (config.def.h:1099). savefiles_in_content_dir and
+    sort_savefiles_by_content_enable put the directory beside each game: no
+    single place then. Without a config, the BIOS folder standing at its
+    default name puts the save directory beside it, as the pack lays them out.
+    ``override`` (--save-dir) names the directory itself.
+    """
+    layout = manifest.get("save_directory")
+    if not layout:
+        return "the file list names no save directory for this platform"
+    folder = layout["folder"]
+    listed = bool(layout["by_core"])
+    by_core = listed
+    found = _RETROARCH_CONFIGS.get(bios_path)
+    if found is not None:
+        cfg_path, app_dir = found
+        for key in ("savefiles_in_content_dir", "sort_savefiles_by_content_enable"):
+            if _cfg_true(_android_cfg_value(cfg_path, key)):
+                return (f"RetroArch keeps saves beside each game ({key} in {cfg_path}): "
+                        "name the folder with --save-dir")
+        sort = _android_cfg_value(cfg_path, "sort_savefiles_enable")
+        if sort is not None:
+            by_core = _cfg_true(sort)
+        if override is not None:
+            return SavePlace(override, by_core, listed)
+        directory = _retroarch_cfg_dir(cfg_path, "savefile_directory", app_dir, folder)
+        if directory is None or not directory.is_dir():
+            directory = app_dir / folder
+        return SavePlace(directory, by_core, listed)
+    if override is not None:
+        return SavePlace(override, by_core, listed)
+    base = manifest.get("base_destination") or ""
+    if base and bios_path.name == base:
+        return SavePlace(bios_path.parent / folder, by_core, listed)
+    return (f"{bios_path} is not the frontend's default BIOS folder: "
+            "name its save directory with --save-dir")
+
+
+def place_save_entries(
+    files: list[dict], bios_path: Path, manifest: dict, override: Path | None,
+    display: str,
+) -> tuple[list[dict], list[dict]]:
+    """Find the save directory for the entries read below it.
+
+    Returns the files to install and, when the save directory is unknown,
+    the entries left out as omissions, said once with the reason.
+    """
+    saved = [entry for entry in files if entry.get("root") == "save"]
+    if not saved:
+        return files, []
+    place = save_directory_for(bios_path, manifest, override)
+    if isinstance(place, SavePlace):
+        _SAVE_DIRS[bios_path] = place
+        where = f"{place.directory}{os.sep}<core>" if place.by_core else str(place.directory)
+        print(f"  {_plural(len(saved), 'file')} read from {display}'s save directory "
+              f"go to {where}")
+        return files, []
+    print(f"  {_plural(len(saved), 'file')} read from {display}'s save directory "
+          f"left out: {place}")
+    kept = [entry for entry in files if entry.get("root") != "save"]
+    unplaced = [
+        {"dest": entry["dest"], "name": PurePosixPath(entry["dest"]).name,
+         "system": "", "required": False, "reason": "no_save_directory",
+         "cores": entry.get("cores"), "root": "save",
+         **({"core_folder": entry["core_folder"]} if entry.get("core_folder") else {})}
+        for entry in saved
+    ]
+    return kept, unplaced
+
+
 def _classify_local(entry: dict, dest: Path) -> str:
     """Return 'up_to_date' or 'mismatched' for a file already on disk."""
     expected = {
@@ -3400,7 +3583,7 @@ def check_local(
     present: list[tuple[dict, Path]] = []
 
     for f in files:
-        dest = _destination_path(bios_path, f["dest"])
+        dest = _entry_path(bios_path, f)
         if dest.exists():
             present.append((f, dest))
         else:
@@ -3667,12 +3850,12 @@ def plan_kept(entries: list[dict], root: Path) -> dict[Path, list[int]]:
     planned: dict[Path, list[int]] = {}
     for entry in entries:
         try:
-            dest = _destination_path(root, entry["dest"])
+            dest = _entry_path(root, entry)
             info = os.lstat(dest)
         except (OSError, ValueError):
             continue
         if stat.S_ISREG(info.st_mode):
-            run = KEPT.plan(_kept_slot(root, entry["dest"])[0], info.st_size)
+            run = KEPT.plan(_kept_slot(*_entry_place(root, entry))[0], info.st_size)
             tally = planned.setdefault(run, [0, 0])
             tally[0] += 1
             tally[1] += info.st_size
@@ -3759,7 +3942,7 @@ def _download_one(
     if _stop.is_set():
         return str(f.get("dest", "?")), False, "stopped"
     try:
-        dest = _destination_path(bios_path, f["dest"])
+        dest = _entry_path(bios_path, f)
     except ValueError:
         return str(f.get("dest", "?")), False, "unsafe destination"
     try:
@@ -3882,7 +4065,7 @@ def _download_one(
             _clear_read_only(dest)
             # The file in place, a personal dump or another revision, is
             # moved aside first: replaced, it was gone for good.
-            KEPT.keep(*_kept_slot(bios_path, f["dest"]), dest, expected, tmp_path)
+            KEPT.keep(*_kept_slot(*_entry_place(bios_path, f)), dest, expected, tmp_path)
             if partial is not None and _NO_RENAME_WHILE_OPEN:
                 # Windows renames no open file. Elsewhere the lock is held
                 # until the copy has its final name.
@@ -4168,7 +4351,9 @@ def _folder_writable(path: Path) -> bool:
 
 
 # Options that take a value, as a hint gives them back.
-_VALUED_OPTIONS = ("--system", "--core", "--emulator", "--region", "--target", "--cores-dir")
+_VALUED_OPTIONS = (
+    "--system", "--core", "--emulator", "--region", "--target", "--cores-dir", "--save-dir",
+)
 
 
 class Invocation:
@@ -4466,9 +4651,11 @@ def _absent_required(omitted: list[dict], bios_path: Path) -> list[dict]:
         if not entry.get("required", True) or not dest:
             continue
         try:
-            placed = _destination_path(bios_path, dest).is_file()
+            placed = _entry_path(bios_path, {**entry, "dest": dest}).is_file()
         except ValueError:
-            placed = False  # a path climbing out of the folder is never one we read
+            # A path climbing out of the folder is never one we read, and one
+            # below a save directory this run does not know is not looked at.
+            placed = False
         if not placed:
             absent.append(entry)
     return absent
@@ -5721,6 +5908,14 @@ def main() -> None:
              "(RetroArch, Lakka, RetroPie)",
     )
     parser.add_argument(
+        "--save-dir",
+        type=Path,
+        metavar="PATH",
+        help="the frontend's save directory (RetroArch: savefile_directory), "
+             "for the files some cores read there (Azahar's keys and system "
+             "data), when it is not found",
+    )
+    parser.add_argument(
         "--cores-dir",
         type=Path,
         metavar="PATH",
@@ -5840,7 +6035,8 @@ def main() -> None:
         # The folder says where each file goes: nothing else applies.
         alone = ("platform", "dest", "target", "every_board", "check", "list_platforms",
                  "list_targets", "standalone_copies", "emulator", "installed_cores",
-                 "cores_dir", "system", "core", "region", "no_game_data", "list_systems",
+                 "cores_dir", "save_dir", "system", "core", "region", "no_game_data",
+                 "list_systems",
                  "list_cores", "romm_firmware", "list_emulators", "events", "quiet",
                  "yes", "verbose")
         given = [name for name in alone if getattr(args, name)]
@@ -6434,6 +6630,13 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                           f"under {library}")
                     bios_path = library
 
+        files, unplaced = place_save_entries(
+            files, bios_path, manifest, args.save_dir, display_name(plat_name, manifest)
+        )
+        if unplaced:
+            total_omitted += len(unplaced)
+            omitted_seen.extend(unplaced)
+
         print("\nChecking existing files...")
         to_download, up_to_date, mismatched = check_local(
             files, bios_path, jobs=args.jobs, term=term
@@ -6448,7 +6651,7 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
         # is in place: it goes.
         for entry in up_to_date:
             try:
-                stale = _destination_path(bios_path, entry["dest"])
+                stale = _entry_path(bios_path, entry)
             except ValueError:
                 continue
             stale = stale.parent / f".{stale.name}.part"
@@ -6460,9 +6663,8 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
 
         narrowed = bool(
             target or args.system or args.core or args.region or args.installed_cores
-            or len(files) + game_data_cut != len(manifest.get("files", [])) + len(
-                variants if case_kept else []
-            )
+            or len(files) + game_data_cut + len(unplaced)
+            != len(manifest.get("files", [])) + len(variants if case_kept else [])
         )
         data_dirs = select_data_directories(manifest, files, narrowed)
         data_states = [

@@ -39,7 +39,7 @@ from common import (
     variant_base_name,
 )
 from packresolve import preferred_entries
-from validation import outside_gap_scope, with_archive_members
+from validation import outside_gap_scope, read_from_save_dir, with_archive_members
 
 if TYPE_CHECKING:
     from packextras import ExtraPlacement
@@ -216,9 +216,12 @@ def profile_claims(
                 if not isinstance(entry, dict):
                     continue
                 # The same rule as the gap report and the builder: an entry the
-                # pack never carries (read from the save directory, a
-                # placeholder, a filename-agnostic scan) arbitrates nothing.
-                if outside_gap_scope(entry, is_standalone):
+                # pack never carries (a placeholder, a filename-agnostic scan)
+                # arbitrates nothing. One read below the save directory sits
+                # outside the BIOS tree, where no platform declares a file.
+                if outside_gap_scope(entry, is_standalone) or read_from_save_dir(
+                    entry, is_standalone
+                ):
                     continue
                 # A member of a romset is not a file at the BIOS root: the archive
                 # holding it occupies the destination (_archive_claims). Claiming
@@ -291,7 +294,9 @@ def _archive_claims(
     """
     files = [
         entry for entry in profile.get("files") or []
-        if isinstance(entry, dict) and not outside_gap_scope(entry, is_standalone)
+        if isinstance(entry, dict)
+        and not outside_gap_scope(entry, is_standalone)
+        and not read_from_save_dir(entry, is_standalone)
     ]
     prefix = profile.get("archive_prefix", "")
     claims: list[Claim] = []
