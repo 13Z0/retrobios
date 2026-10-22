@@ -235,6 +235,39 @@ visible.
 Variants compose with `--split`, `--target` and `--manifest`.
 
 
+## Firmware without game data
+
+The firmware an emulator needs comes first. A platform list can also name the
+files a game reads (EmuELEC lists the Doom WADs), and a core profile marks the
+data of the games it runs `category: game_data`: MAME's software lists, the
+RPG Maker run-time packages, a game engine's own files. `--no-game-data`
+leaves both out and keeps the firmware:
+
+```bash
+python scripts/generate_pack.py --platform emuelec --no-game-data
+python scripts/generate_pack.py --platform emuelec --no-game-data --verify-packs
+python scripts/verify.py --platform emuelec --no-game-data
+```
+
+A platform entry is game data when the only cores of the platform that read it
+read it as game data (see [Verification modes](verification-modes.md) for how
+entries are categorized). An entry that some core reads as firmware stays.
+The build names every file it left out and why: the platform's entries with
+the cores that read them as game data, then each core with the game data
+files its profile declares.
+
+The pack is named `EmuELEC_4.8_NoGameData_BIOS_Pack.zip` and its README says
+it was narrowed. `verify.py --no-game-data` reports on the same file set, and
+`--verify-packs --no-game-data` checks the pack against it. The flag composes
+with `--region`, `--target`, `--required-only`, `--source`, `--one-per-slot`,
+`--split`, `--system` and `--manifest`
+(`install/emuelec_nogamedata.json`). It needs `--platform` or `--all` and is
+refused with `--emulator`, `--system` alone, `--from-md5` and
+`--all-variants`: game data is categorized against a platform's list and the
+cores it runs. The installer's `--no-game-data` makes the same cut from the
+full manifest, where each game data file carries `"category": "game_data"`.
+
+
 ## Hardware target filtering
 
 ### What targets are

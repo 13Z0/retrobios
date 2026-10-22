@@ -1121,14 +1121,33 @@ def verify_platform(
     data_dir_registry: dict | None = None,
     regions: list[str] | None = None,
     system_filter: list[str] | None = None,
+    no_game_data: bool = False,
 ) -> dict:
     """Verify all BIOS files for a platform, including cross-reference gaps.
+
+    ``no_game_data`` reports on the pack built with --no-game-data: the
+    game data cut as the builder cuts it, and named in ``left_out``.
 
     A region priority list narrows the report to the files a pack built with the
     same list would carry, using the same selection function as the builder.
     ``system_filter`` does the same for a pack built with --system: the
     systems it keeps and the core extras those systems own.
     """
+    left_out: list[str] = []
+    if no_game_data:
+        from gamedata import without_game_data
+
+        if emu_profiles is None:
+            emu_profiles = load_emulator_profiles(emulators_dir)
+        cut = without_game_data(config, emu_profiles, data_dir_registry, target_cores)
+        config, emu_profiles = cut.config, cut.profiles
+        systems = config.get("systems", {})
+        in_scope = set(select_systems(systems, system_filter) if system_filter else systems)
+        cut.left_out = [
+            item for item in cut.left_out
+            if item.layer == "core" or item.system in in_scope
+        ]
+        left_out = cut.report_lines()
     # Normalized once: a typo in a platform YAML must not verify with one
     # mode and be scored with another.
     mode = normalize_mode(config.get("verification_mode"))
@@ -1527,6 +1546,7 @@ def verify_platform(
         "undeclared_files": undeclared,
         "exclusion_notes": exclusions,
         "region_fallbacks": sorted(region_fallbacks),
+        **({"left_out": left_out} if no_game_data else {}),
         "details": details,
         "ground_truth_coverage": {
             "with_validation": with_validation,
@@ -1866,6 +1886,8 @@ def print_platform_result(
         # them missing, as an offline build leaves them out.
         shown = ", ".join(fetched[:10]) + (f" (+{len(fetched) - 10})" if len(fetched) > 10 else "")
         print(f"  Release assets fetched when the pack is built ({len(fetched)}): {shown}")
+    for line in result.get("left_out") or []:
+        print(f"  {line}")
     fallbacks = result.get("region_fallbacks") or []
     if fallbacks:
         from packreadme import _group_label
@@ -2572,6 +2594,7 @@ def _refuse_listing_narrowings(
         ("--verbose", args.verbose),
         ("--destinations", args.destinations),
         ("--offline", args.offline),
+        ("--no-game-data", getattr(args, "no_game_data", False)),
     ):
         if on:
             parser.error(f"{flag} is incompatible with {listing}")
@@ -2595,6 +2618,9 @@ def _refuse_mode_flags(args: argparse.Namespace, parser: argparse.ArgumentParser
          "--destinations requires --platform or --all"),
         (args.offline and not (args.platform or args.all),
          "--offline requires --platform or --all"),
+        # Game data is categorized against a platform's list and its cores.
+        (getattr(args, "no_game_data", False) and not (args.platform or args.all),
+         "--no-game-data requires --platform or --all"),
         (args.destinations and getattr(args, "region", None),
          "--destinations describes the full pack and is incompatible with --region"),
     ):
@@ -2654,6 +2680,11 @@ def _main(held: contextlib.ExitStack) -> None:
         "--list-targets",
         action="store_true",
         help="List available targets for the platform",
+    )
+    parser.add_argument(
+        "--no-game-data", action="store_true",
+        help="Report on the pack built with --no-game-data: game data left "
+        "out and named, firmware only",
     )
     parser.add_argument(
         "--db", default=DEFAULT_DB,
@@ -2816,6 +2847,7 @@ def _main(held: contextlib.ExitStack) -> None:
             data_dir_registry=data_registry,
             regions=requested_regions,
             system_filter=platform_systems,
+            no_game_data=getattr(args, "no_game_data", False),
         )
         names = [
             load_platform_config(p, args.platforms_dir).get("platform", p)

@@ -79,6 +79,7 @@ from manifestselect import SelectionIndex
 import slot as slot_mod
 import slots
 import split_pack
+from gamedata import GAME_DATA, GameDataCut, is_game_data, platform_game_data, without_game_data
 from deterministic_zip import _FIXED_DATE_TIME, rebuild_zip_deterministic
 from largefiles import asset_name, load_registered_paths, published_asset_name
 from nativemode import (
@@ -193,6 +194,7 @@ def _narrowings(
     one_per_slot: bool,
     required_only: bool,
     standalone: bool = False,
+    no_game_data: bool = False,
 ) -> list[tuple[str, str]]:
     """Every dimension that narrows a pack, as (filename tag, plain label).
 
@@ -223,6 +225,8 @@ def _narrowings(
         applied.append(("_Standalone", "standalone mode files only"))
     if required_only:
         applied.append(("_Required", "required files only"))
+    if no_game_data:
+        applied.append(("_NoGameData", "firmware only, game data left out"))
     return applied
 
 
@@ -608,6 +612,22 @@ def _matches_an_alternative(fe: dict, local_path: str, profiles: dict) -> bool:
     return False
 
 
+def _report_left_out(cut: GameDataCut, systems: set[str], cores: bool) -> None:
+    """Name the game data a --no-game-data build left out, and why.
+
+    ``systems`` limits the platform layer to the systems this pack covers,
+    and ``cores`` says whether this pack collected the core files itself:
+    a split part does not, its run names them once.
+    """
+    kept = [
+        item for item in cut.left_out
+        if (item.layer == "platform" and item.system in systems)
+        or (item.layer == "core" and cores)
+    ]
+    for line in GameDataCut(cut.config, cut.profiles, kept).report_lines():
+        print(f"  {line}")
+
+
 def generate_pack(
     platform_name: str,
     platforms_dir: str,
@@ -630,8 +650,12 @@ def generate_pack(
     one_per_slot: bool = False,
     offline: bool | None = None,
     pack_name: str | None = None,
+    no_game_data: bool = False,
 ) -> str | None:
     """Generate a ZIP pack for a platform.
+
+    ``no_game_data`` leaves out the platform's entries categorized as game
+    data and the cores' ``category: game_data`` files, and names each one.
 
     ``pack_name`` replaces the derived file name: a split part is named after
     its group, and a name built from every system of a hundred-system group
@@ -646,13 +670,22 @@ def generate_pack(
         # The pipeline always passes them, but a caller that does not must get the
         # same pack, not one built without validation, slots or agnostic cores.
         emu_profiles = load_emulator_profiles(emulators_dir)
+    # Cut from the full config and profiles: the category of a platform
+    # entry is read from the profiles' game data entries.
+    cut = (
+        without_game_data(config, emu_profiles, data_registry, target_cores)
+        if no_game_data else None
+    )
+    if cut is not None:
+        config, emu_profiles = cut.config, cut.profiles
 
     verification_mode = config.get("verification_mode", "existence")
     platform_display = config.get("platform", platform_name)
     base_dest = config.get("base_destination", "")
 
     narrowings = _narrowings(
-        source, regions, target_name, one_per_slot, required_only
+        source, regions, target_name, one_per_slot, required_only,
+        no_game_data=no_game_data,
     )
     zip_path = os.path.join(
         output_dir,
@@ -1164,6 +1197,12 @@ def generate_pack(
         zip_path, file_status, total_files, core_count, source,
         verification_mode,
     )
+    if cut is not None:
+        _report_left_out(
+            cut,
+            systems=set(pack_systems) if source != "truth" else set(),
+            cores=source != "platform" and precomputed_extras is None,
+        )
 
 
     for key, reason in sorted(file_reasons.items()):
@@ -1884,6 +1923,7 @@ def generate_split_packs(
     target_name: str | None = None,
     one_per_slot: bool = False,
     offline: bool | None = None,
+    no_game_data: bool = False,
 ) -> list[str]:
     """Generate split packs (one ZIP per system or manufacturer)."""
     config = load_platform_config(platform_name, platforms_dir)
@@ -1893,7 +1933,8 @@ def generate_split_packs(
     split_tags = "".join(
         tag
         for tag, _label in _narrowings(
-            source, regions, target_name, one_per_slot, required_only
+            source, regions, target_name, one_per_slot, required_only,
+            no_game_data=no_game_data,
         )
     )
     # Two groupings write different files. Without the tag they accumulate in
@@ -1920,15 +1961,24 @@ def generate_split_packs(
     if emu_profiles is None:
         emu_profiles = load_emulator_profiles(emulators_dir)
     base_dest = config.get("base_destination", "")
+    # Each part cuts the platform's own entries from the full profiles. The
+    # extras are collected once here, already without the cores' game data.
+    cut = (
+        without_game_data(config, emu_profiles, data_registry, target_cores)
+        if no_game_data else None
+    )
     if source == "platform":
         all_extras = []
     elif emu_profiles:
         all_extras = _collect_emulator_extras(
-            config, emulators_dir, db, set(), base_dest, emu_profiles,
+            cut.config if cut else config, emulators_dir, db, set(), base_dest,
+            cut.profiles if cut else emu_profiles,
             target_cores=target_cores, include_all=(source == "truth"),
         )
     else:
         all_extras = []
+    if cut is not None and source != "platform":
+        _report_left_out(cut, systems=set(), cores=True)
     results = []
     for group_name, group_system_ids in sorted(groups.items()):
         group_extras = _extras_for_systems(all_extras, group_system_ids)
@@ -1952,6 +2002,7 @@ def generate_split_packs(
             one_per_slot=one_per_slot,
             offline=offline,
             pack_name=f"{part_prefix}_{_name_part(group_name, '_')}_BIOS_Pack.zip",
+            no_game_data=no_game_data,
         )
         if zip_path:
             results.append(zip_path)
@@ -1975,6 +2026,7 @@ def generate_split_packs(
             precomputed_extras=undistributed, extras_only=True, source=source,
             regions=regions, target_name=target_name, one_per_slot=one_per_slot,
             offline=offline, pack_name=f"{part_prefix}_Other_Cores_BIOS_Pack.zip",
+            no_game_data=no_game_data,
         )
         if zip_path:
             results.append(zip_path)
@@ -2411,6 +2463,12 @@ def _validate_args(args: argparse.Namespace, parser: argparse.ArgumentParser) ->
         if args.split:
             parser.error("--system is incompatible with --split")
 
+    # Game data is categorized against a platform's list and the cores it
+    # runs: a pack of one emulator or of a system's emulators has neither.
+    if getattr(args, "no_game_data", False) and not (has_platform or has_all):
+        parser.error("--no-game-data requires --platform or --all")
+    if getattr(args, "no_game_data", False) and has_from_md5:
+        parser.error("--no-game-data is incompatible with --from-md5")
     if getattr(args, "one_per_slot", False):
         if has_from_md5:
             parser.error("--one-per-slot and --from-md5 are mutually exclusive")
@@ -2483,6 +2541,7 @@ def _run_manifest_mode(
                     ),
                     offline=args.offline,
                     required_only=required_only,
+                    no_game_data=getattr(args, "no_game_data", False),
                 )
                 narrow_suffix = "".join(
                     tag.lower()
@@ -2492,6 +2551,7 @@ def _run_manifest_mode(
                         _platform_target(representative, args.target, args.platforms_dir),
                         False,
                         required_only,
+                        no_game_data=getattr(args, "no_game_data", False),
                     )
                 )
                 out_path = os.path.join(
@@ -2591,6 +2651,7 @@ def _run_verify_packs(args: argparse.Namespace) -> None:
         verify_regions,
         args.target,
         ALL_VARIANTS if args.all_variants else (("full", False),),
+        no_game_data=getattr(args, "no_game_data", False),
     )
     on_disk = (
         set(os.listdir(args.output_dir)) if os.path.isdir(args.output_dir) else set()
@@ -2641,6 +2702,7 @@ def _run_verify_packs(args: argparse.Namespace) -> None:
                 target_cores=tc,
                 source=source,
                 required_only=required_only,
+                no_game_data=getattr(args, "no_game_data", False),
             )
             (ok, _checked, _present, errors, bl_checked, bl_present,
              core_checked, core_present, bl_excluded, bl_absent) = result
@@ -2788,6 +2850,7 @@ def _run_platform_packs(
                         target_name=named_target,
                         one_per_slot=args.one_per_slot,
                         offline=args.offline,
+                        no_game_data=getattr(args, "no_game_data", False),
                     )
                     print(f"  Split into {len(zip_paths)} packs")
                 else:
@@ -2806,6 +2869,7 @@ def _run_platform_packs(
                                 named_target,
                                 args.one_per_slot,
                                 required_only,
+                                no_game_data=getattr(args, "no_game_data", False),
                             )
                         )
                         stem = _platform_pack_stem(
@@ -2834,6 +2898,7 @@ def _run_platform_packs(
                         one_per_slot=args.one_per_slot,
                         offline=args.offline,
                         pack_name=group_name,
+                        no_game_data=getattr(args, "no_game_data", False),
                     )
             except (FileNotFoundError, OSError, yaml.YAMLError) as e:
                 print(f"  ERROR: {e}", file=sys.stderr)
@@ -2856,6 +2921,7 @@ def _run_platform_packs(
         data_registry=data_registry,
         regions=getattr(args, "regions", None),
         target_name=args.target,
+        no_game_data=getattr(args, "no_game_data", False),
     )
     if args.split:
         for entry in os.listdir(args.output_dir):
@@ -2890,6 +2956,7 @@ def _refuse_for_all_variants(args: argparse.Namespace, parser: argparse.Argument
     for flag, given in (
         ("--source", args.source is not None),
         ("--required-only", args.required_only),
+        ("--no-game-data", getattr(args, "no_game_data", False)),
         ("--emulator", args.emulator),
         ("--from-md5", args.from_md5 or args.from_md5_file),
     ):
@@ -2978,7 +3045,10 @@ def _refuse_unapplied_flags(args: argparse.Namespace, parser: argparse.ArgumentP
 QUICK_MODE_FLAGS: dict[str, set[str]] = {
     # Checks packs already on disk against the platform's own list, narrowed
     # by region and target and by nothing else.
-    "--verify-packs": {"--platform", "--all", "--target", "--region", "--include-archived"},
+    "--verify-packs": {
+        "--platform", "--all", "--target", "--region", "--include-archived",
+        "--no-game-data",
+    },
     # One manifest per hardware target, from the target files themselves.
     "--manifest-targets": set(),
     "--list": set(),
@@ -3005,6 +3075,7 @@ def _given_flags(args: argparse.Namespace) -> set[str]:
         "--from-md5": args.from_md5,
         "--from-md5-file": args.from_md5_file,
         "--required-only": args.required_only,
+        "--no-game-data": getattr(args, "no_game_data", False),
         "--source": args.source is not None,
         "--target": args.target,
         "--region": args.region,
@@ -3106,6 +3177,12 @@ def _main(held: contextlib.ExitStack) -> None:
         "--required-only",
         action="store_true",
         help="Only include required files, skip optional",
+    )
+    parser.add_argument(
+        "--no-game-data",
+        action="store_true",
+        help="Leave out game data (the platform's entries a core reads as a "
+        "game's files, and the cores' game data files): firmware only",
     )
     parser.add_argument(
         "--source",
@@ -3860,6 +3937,10 @@ def _manifest_core_entries(
                 pack_only_sizes.append(file_size)
             continue
 
+        if is_game_data(fe) and all(
+            is_game_data(claim) for claim in fe.get("other_claims", [])
+        ):
+            entry["category"] = GAME_DATA
         _attach_claims(
             entry, fe.get("other_claims", []), db, bios_dir, zip_contents,
             offline, required_only, validation_index, owners, dest,
@@ -4027,12 +4108,17 @@ def generate_manifest(
     required_only: bool = False,
     data_registry: dict | None = None,
     fold_case: bool | None = None,
+    no_game_data: bool = False,
 ) -> dict:
     """Generate a JSON manifest for a platform (same resolution as generate_pack).
 
     Returns a dict ready for JSON serialization with file inventory,
     install hints, and download metadata. ``fold_case`` overrides the
     platform's ``case_insensitive_fs``, for the case variants below.
+
+    A file that is a game's data, not firmware, carries ``"category":
+    "game_data"``, so the installer can leave it out as the builder does
+    under ``no_game_data``. Firmware carries no category.
     """
     config = load_platform_config(platform_name, platforms_dir)
     if fold_case is not None:
@@ -4041,6 +4127,15 @@ def generate_manifest(
         zip_contents = {}
     if emu_profiles is None:
         emu_profiles = load_emulator_profiles(emulators_dir)
+    if data_registry is None:
+        data_registry = load_data_dir_registry(platforms_dir)
+    full_profiles = emu_profiles
+    game_entries: set[int] = set()
+    if no_game_data:
+        cut = without_game_data(config, emu_profiles, data_registry, target_cores)
+        config, emu_profiles = cut.config, cut.profiles
+    else:
+        game_entries = platform_game_data(config, emu_profiles, data_registry)
 
     platform_display = config.get("platform", platform_name)
     base_dest = config.get("base_destination", "")
@@ -4073,6 +4168,16 @@ def generate_manifest(
         platform_cores=plat_cores,
     )
 
+    # A destination is game data when every declaration of it is: a firmware
+    # declaration of the same path keeps it in a pack built without game data.
+    declared_kinds: dict[str, set[bool]] = {}
+    for system in pack_systems.values():
+        for fe in system.get("files", []):
+            bare = sanitize_pack_path(fe.get("destination", fe.get("name", "")))
+            if bare:
+                declared_kinds.setdefault(bare, set()).add(id(fe) in game_entries)
+    game_destinations = {d for d, kinds in declared_kinds.items() if kinds == {True}}
+
     seen_destinations: set[str] = set()
     # Destination -> (entry, full destination, manifest destination) of each
     # platform file, for the core claims a target build would fall back on.
@@ -4090,8 +4195,6 @@ def generate_manifest(
     # collection does not index them, a data directory cache answered.
     pack_only_sizes: list[int] = []
     rename_notes: set[str] = set()
-    if data_registry is None:
-        data_registry = load_data_dir_registry(platforms_dir)
     slot_overrides = slots.pack_overrides(
         config, emu_profiles, db, zip_contents, data_registry,
         target_cores=target_cores, source=source,
@@ -4134,6 +4237,11 @@ def generate_manifest(
             # drops the same fallback.
             **selection.fields(bare, str(file_entry.get("name") or "")),
             **({"held": True} if bare in builder_held else {}),
+            **(
+                {"category": GAME_DATA}
+                if (bare in game_destinations if cores is None else is_game_data(file_entry))
+                else {}
+            ),
         }
 
     # Read by the region grouping and by phase 2 with the same arguments.
@@ -4299,6 +4407,8 @@ def generate_manifest(
                     local_path, dest, None, db, repo_root,
                     selection.fields(dest, file_entry["name"]),
                 )
+                if entry is not None and dest in game_destinations:
+                    entry["category"] = GAME_DATA
                 if entry is not None and target_cores is None:
                     order = declaration_order(full_dest)
                     if full_dest in slot_choices or len(order) > 1:
@@ -4364,6 +4474,10 @@ def generate_manifest(
         if declared and declared != set(entry.get("systems") or []):
             entry["declared_in"] = sorted(declared)
         claims = baseline_claims.get(key, {}).get("other_claims")
+        if claims and any(not is_game_data(claim) for claim in claims):
+            # A core reads this path as firmware: a pack without game data
+            # still fills it.
+            entry.pop("category", None)
         if claims:
             _attach_claims(
                 entry, claims, db, bios_dir, zip_contents, offline, required_only,
@@ -4409,6 +4523,10 @@ def generate_manifest(
         # Absent on an unfiltered manifest rather than empty, to leave the
         # twelve default files byte-identical.
         **({"target": target_name} if target_name else {}),
+        # Every game data file below says so: the installer's --no-game-data
+        # relies on it, and refuses a list that does not record categories.
+        "categorized": True,
+        **({"no_game_data": True} if no_game_data else {}),
         "platform": platform_name,
         "display_name": platform_display,
         "version": "1.0",
@@ -4448,9 +4566,9 @@ def generate_manifest(
         # or macOS too, stays folded.
         kept = generate_manifest(
             platform_name, platforms_dir, db, bios_dir, registry_path,
-            emulators_dir, zip_contents, emu_profiles, target_cores, source,
+            emulators_dir, zip_contents, full_profiles, target_cores, source,
             regions, target_name, offline, required_only, data_registry,
-            fold_case=False,
+            fold_case=False, no_game_data=no_game_data,
         )
         folded = {entry["dest"] for entry in manifest_files}
         folded_lower = {dest.lower() for dest in folded}
@@ -4624,6 +4742,7 @@ def _expected_pack_names(
     regions: list[str] | None,
     target_name: str | None,
     variants: tuple[tuple[str, bool], ...] = (("full", False),),
+    no_game_data: bool = False,
 ) -> dict[str, set[str]]:
     """Exact pack file names --verify-packs may check, per platform.
 
@@ -4638,7 +4757,9 @@ def _expected_pack_names(
         return [
             "".join(
                 tag
-                for tag, _label in _narrowings(source, regions, named, False, required)
+                for tag, _label in _narrowings(
+                    source, regions, named, False, required, no_game_data=no_game_data
+                )
             )
             for source, required in variants
         ]
@@ -4767,6 +4888,7 @@ def verify_and_finalize_packs(
     regions: list[str] | None = None,
     target_name: str | None = None,
     emulators_dir: str = "emulators",
+    no_game_data: bool = False,
 ) -> bool:
     """Verify all packs, inject manifests, generate SHA256SUMS.
 
@@ -4783,7 +4905,9 @@ def verify_and_finalize_packs(
     # substring: a _Custom or regional pack left by another run was judged
     # against this run's expectation and failed it.
     registered = list_registered_platforms(platforms_dir, include_archived=True)
-    expected = _expected_pack_names(registered, platforms_dir, regions, target_name)
+    expected = _expected_pack_names(
+        registered, platforms_dir, regions, target_name, no_game_data=no_game_data
+    )
     pack_to_platform: dict[str, list[str]] = {}
     for name in _pack_archives(output_dir):
         for pname in registered:
@@ -4837,6 +4961,7 @@ def verify_and_finalize_packs(
                 regions=regions,
                 data_registry=data_registry,
                 target_cores=_target_cores_for(pname, target_name, platforms_dir),
+                no_game_data=no_game_data,
             )
             status = "OK" if p_ok else "FAILED"
             exclusion_note = "".join(

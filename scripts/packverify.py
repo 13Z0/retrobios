@@ -32,6 +32,7 @@ from nativemode import reads_file_contents
 import region as region_mod
 from packresolve import resolve_file
 from exporter.candidates import BIOS, EntryCategories
+from gamedata import without_game_data
 from common import resolve_platform_cores
 from common import sanitize_pack_path
 import zipfile
@@ -634,6 +635,7 @@ def verify_pack_against_platform(
     target_cores: set[str] | None = None,
     source: str = "full",
     required_only: bool = False,
+    no_game_data: bool = False,
 ) -> tuple[bool, int, int, list[str], int, int, int, int, int, int]:
     """Verify a pack ZIP against its platform config and core requirements.
 
@@ -644,6 +646,8 @@ def verify_pack_against_platform(
     ``required_only`` are the variant the pack was built as: a platform-only
     pack is held to the platform's list alone, a truth pack to the cores'
     files alone, and a required-only pack to the required entries of both.
+    ``no_game_data`` holds the pack to the firmware alone, cut as the
+    builder cuts it.
 
     Checks:
     1. Every baseline file declared by the platform exists in the ZIP
@@ -657,7 +661,7 @@ def verify_pack_against_platform(
     baseline_present, core_checked, core_present, baseline_excluded,
     baseline_absent)``. ``baseline_absent`` counts destinations the collection
     holds no file for that are a game's data or that no core the platform
-    runs opens; verify.py counts them apart from firmware.
+    runs opens. verify.py counts them apart from firmware.
     """
 
     config = load_platform_config(platform_name, platforms_dir)
@@ -668,6 +672,9 @@ def verify_pack_against_platform(
 
     if emu_profiles is None:
         emu_profiles = load_emulator_profiles(emulators_dir)
+    if no_game_data:
+        cut = without_game_data(config, emu_profiles, data_registry, target_cores)
+        config, emu_profiles = cut.config, cut.profiles
 
     expected_systems = config.get("systems", {})
     if target_cores is not None:

@@ -3797,7 +3797,7 @@ class HintsGiveTheUsersOwnCommandBack(unittest.TestCase):
         args = SimpleNamespace(
             system=None, core=None, emulator=None, region=None, target=None,
             cores_dir=None, every_board=False, installed_cores=False,
-            standalone_copies=False, check=False, dry_run=False,
+            standalone_copies=False, check=False, dry_run=False, no_game_data=False,
         )
         flags = list(argv)
         while flags:
@@ -4966,7 +4966,7 @@ class EventsDescribeTheRun(unittest.TestCase, _SyntheticTree):
         installer = events[0]["installer"]
         self.assertEqual(events, self._head("check", installer) + [
             {"event": "summary", "mode": "check", "installed": 0, "up_to_date": 1,
-             "pending": 3, "failed": [], "skipped": self.SKIPPED, "interrupted": False},
+             "pending": 3, "failed": [], "skipped": self.SKIPPED, "left_out": [], "interrupted": False},
             {"event": "end", "code": 1},
         ])
         self.assertIn("2/4 present (1 verified, 1 wrong hash)", proc.stderr)
@@ -4989,7 +4989,7 @@ class EventsDescribeTheRun(unittest.TestCase, _SyntheticTree):
             {"event": "download", "platform": "retroarch", "files": 3, "bytes": 245},
             *done,
             {"event": "summary", "mode": "install", "installed": 3, "up_to_date": 1,
-             "pending": 0, "failed": [], "skipped": self.SKIPPED, "interrupted": False},
+             "pending": 0, "failed": [], "skipped": self.SKIPPED, "left_out": [], "interrupted": False},
             {"event": "end", "code": 0},
         ])
         self.assertEqual((self.bios / "b.bin").read_bytes(), self.FILES["bios/A/b.bin"])

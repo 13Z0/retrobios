@@ -44,6 +44,14 @@
       "minLength": 1,
       "description": "Hardware target this manifest was filtered for, absent when unfiltered"
     },
+    "categorized": {
+      "description": "Every game data file carries category: game_data. Without it the list records no category, and the installer refuses --no-game-data.",
+      "const": true
+    },
+    "no_game_data": {
+      "description": "Built without game data, absent when the game data is listed",
+      "const": true
+    },
     "platform": {
       "type": "string",
       "minLength": 1
@@ -169,6 +177,10 @@
               "no_platform_slug",
               "below_platform_folder"
             ]
+          },
+          "category": {
+            "description": "game_data: a game's own data, not firmware. Absent on firmware.",
+            "const": "game_data"
           },
           "held": {
             "description": "The pack builder holds this file and the installer cannot download it. Region narrowing counts it held, as the builder does, so it displaces the same fallback.",
@@ -684,6 +696,10 @@
               }
             }
           }
+        },
+        "category": {
+          "description": "game_data: a game's own data, not firmware. Absent on firmware. The installer's --no-game-data leaves these out, as a pack built with --no-game-data does.",
+          "const": "game_data"
         },
         "executable": {
           "description": "The repository keeps the file executable, and the installer gives it the execute bits the umask allows.",

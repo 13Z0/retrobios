@@ -6003,6 +6003,7 @@ struct BurnDriver BurnDrvneogeo = {
             {"target_name": "switch"},
             {"one_per_slot": True},
             {"required_only": True},
+            {"no_game_data": True},
         ]
         for kwargs in dimensions:
             applied = _narrowings(
@@ -6011,6 +6012,7 @@ struct BurnDriver BurnDrvneogeo = {
                 kwargs.get("target_name"),
                 kwargs.get("one_per_slot", False),
                 kwargs.get("required_only", False),
+                no_game_data=kwargs.get("no_game_data", False),
             )
             self.assertEqual(len(applied), 1, kwargs)
             tag, label = applied[0]
@@ -6136,6 +6138,19 @@ struct BurnDriver BurnDrvneogeo = {
             # Documented as adding core files, read by nothing.
             (["--emulator", "handy"], ["--include-extras"], "refuse"),
             (["--system", "atari-lynx"], ["--include-extras"], "refuse"),
+            # Game data is categorized against a platform's list and the
+            # cores it runs: the modes without a platform refuse it, and
+            # --all-variants builds its own fixed set.
+            (["--emulator", "handy"], ["--no-game-data"], "refuse"),
+            (["--system", "atari-lynx"], ["--no-game-data"], "refuse"),
+            (["--platform", "retroarch", "--from-md5", "d8f1"], ["--no-game-data"],
+             "refuse"),
+            (["--from-md5", "d8f1"], ["--no-game-data"], "refuse"),
+            (["--manifest-targets"], ["--no-game-data"], "refuse"),
+            (["--platform", "retroarch", "--all-variants"], ["--no-game-data"],
+             "refuse"),
+            (["--list-systems"], ["--no-game-data"], "refuse"),
+            (["--list"], ["--no-game-data"], "refuse"),
         ]
         for mode, flag, expected in matrix:
             with self.subTest(mode=mode, flag=flag):

@@ -106,6 +106,10 @@ OMISSION_REASONS = {
     "no_platform_slug": "no platform folder",
     "below_platform_folder": "below the platform folder",
 }
+# What a file is when it is not firmware, as the manifest's category field
+# says, and as the installer words it. Firmware carries no category.
+GAME_DATA = "game_data"
+CATEGORY_LABELS = {GAME_DATA: "game data"}
 _SHA1_RE = re.compile(r"^[0-9a-fA-F]{40}$")
 _SHA256_RE = re.compile(r"^[0-9a-fA-F]{64}$")
 
@@ -479,9 +483,11 @@ EVENT_KEYS: dict[str, tuple[str, ...]] = {
     "downloaded": ("dest", "ok", "reason", "size", "files_done", "files_total",
                    "bytes_done", "bytes_total"),
     # failed: [{"dest", "reason"}]. skipped: [{"reason", "label", "files",
-    # "required"}], the files the collection cannot supply.
+    # "required"}], the files the collection cannot supply. left_out:
+    # [{"category", "label", "files", "dests"}], what --no-game-data left
+    # out, empty without it.
     "summary": ("mode", "installed", "up_to_date", "pending", "failed", "skipped",
-                "interrupted"),
+                "left_out", "interrupted"),
     "end": ("code",),
 }
 # Seconds between two progress events while bytes arrive.
@@ -576,6 +582,49 @@ def _emit_check(
         bytes_needed=sum(entry.get("size", 0) for entry in needed),
         data_missing=data_missing, not_installable=not_installable,
     )
+
+
+def leave_out_game_data(
+    files: list[dict], omitted: list[dict]
+) -> tuple[list[dict], list[dict], list[dict]]:
+    """The files and omissions without game data, and what was left out.
+
+    The same cut as a pack built with --no-game-data: the manifest marks
+    each file that is a game's data, not firmware.
+    """
+    left_out = [e for e in files + omitted if e.get("category") == GAME_DATA]
+    return (
+        [e for e in files if e.get("category") != GAME_DATA],
+        [e for e in omitted if e.get("category") != GAME_DATA],
+        left_out,
+    )
+
+
+def _left_out_lines(left_out: list[dict], every: bool) -> list[str]:
+    """What --no-game-data left out, named per category, ten each unless every."""
+    lines = []
+    for group in _left_out_events(left_out):
+        dests = group["dests"]
+        shown = dests if every else dests[:10]
+        more = (f" ... and {len(dests) - len(shown)} more (--verbose lists them all)"
+                if len(shown) < len(dests) else "")
+        lines.append(f"  Left out as {group['label']} (--no-game-data): "
+                     f"{_plural(len(dests), 'file')}: {', '.join(shown)}{more}")
+    return lines
+
+
+def _left_out_events(left_out: list[dict]) -> list[dict]:
+    """What --no-game-data left out, per category, every file named."""
+    groups: dict[str, dict] = {}
+    for entry in left_out:
+        category = entry.get("category", "")
+        group = groups.setdefault(category, {
+            "category": category, "label": CATEGORY_LABELS.get(category, category),
+            "files": 0, "dests": [],
+        })
+        group["files"] += 1
+        group["dests"].append(entry["dest"])
+    return [groups[category] for category in sorted(groups)]
 
 
 def _skipped(omitted: list[dict]) -> list[dict]:
@@ -3812,6 +3861,7 @@ class Invocation:
         for flag, on in (
             ("--every-board", args.every_board),
             ("--installed-cores", args.installed_cores and not args.cores_dir),
+            ("--no-game-data", args.no_game_data),
             ("--standalone-copies", args.standalone_copies),
             ("--check", args.check),
             ("--dry-run", args.dry_run),
@@ -5333,6 +5383,12 @@ def main() -> None:
              "region where a system has several",
     )
     parser.add_argument(
+        "--no-game-data",
+        action="store_true",
+        help="leave out game data (files a game reads, not firmware) and "
+             "install the firmware only",
+    )
+    parser.add_argument(
         "--list-systems",
         action="store_true",
         help="list a platform's systems with their file counts and exit",
@@ -5410,6 +5466,9 @@ def main() -> None:
         parser.error("--quiet applies to an install, not to --check, --dry-run or a listing")
     if args.every_board and args.target:
         parser.error("--every-board installs every board; --target names one")
+    if args.no_game_data and (args.list_platforms or args.list_targets):
+        parser.error("--no-game-data narrows a file list, not --list-platforms "
+                     "or --list-targets")
     if args.events:
         # The events own stdout. The text a person reads goes to stderr, so a
         # program never has to tell one from the other.
@@ -5725,6 +5784,7 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
     total_errors = 0
     total_omitted = 0
     omitted_seen: list[dict] = []
+    left_out_seen: list[dict] = []
     total_interrupted = False
     total_bytes = 0
     total_seconds = 0.0
@@ -5805,6 +5865,23 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                     f"  {_plural(len(folded), 'file')} left out: {bios_path} does not keep "
                     f"case and holds another file under the same name ({shown})"
                 )
+
+        game_data_cut = 0
+        if args.no_game_data:
+            if not manifest.get("categorized"):
+                # Without the field nothing is marked, and the run would
+                # install the game data it was asked to leave out.
+                print(f"Error: the {plat_name} file list records no file category, "
+                      "which --no-game-data needs.", file=sys.stderr)
+                print(_older_list_advice(), file=sys.stderr)
+                sys.exit(1)
+            before = len(files)
+            files, omitted_files, left_out = leave_out_game_data(files, omitted_files)
+            game_data_cut = before - len(files)
+            left_out_seen.extend(left_out)
+            if left_out:
+                for line in _left_out_lines(left_out, args.verbose):
+                    print(line)
 
         if args.list_targets:
             targets = fetch_targets(plat_name)
@@ -5912,12 +5989,14 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
             if selection == INSTALLED_ONLY:
                 files, omitted_files = installed
                 print("\n  Same choice without questions: "
-                      f"--platform {plat_name} --installed-cores")
+                      f"--platform {plat_name} --installed-cores"
+                      + (" --no-game-data" if args.no_game_data else ""))
                 _INVOCATION.chosen[plat_name] = [("--installed-cores", None)]
                 selection = None
             elif selection is not None:
                 print("\n  Same choice without questions: "
-                      + _same_choice_hint(plat_name, *selection))
+                      + _same_choice_hint(plat_name, *selection)
+                      + (" --no-game-data" if args.no_game_data else ""))
                 systems, cores, regions = selection
                 _INVOCATION.chosen[plat_name] = [
                     *(("--system", name) for name in systems),
@@ -5994,7 +6073,7 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
 
         narrowed = bool(
             target or args.system or args.core or args.region or args.installed_cores
-            or len(files) != len(manifest.get("files", [])) + len(
+            or len(files) + game_data_cut != len(manifest.get("files", [])) + len(
                 variants if case_kept else []
             )
         )
@@ -6173,7 +6252,8 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
             up_to_date=total_verified if args.check or args.dry_run else total_up_to_date,
             pending=check_pending if args.check else files_pending,
             failed=[{"dest": dest, "reason": str(reason)} for dest, reason in failures],
-            skipped=_skipped(omitted_seen), interrupted=total_interrupted,
+            skipped=_skipped(omitted_seen), left_out=_left_out_events(left_out_seen),
+            interrupted=total_interrupted,
         )
     # A check scripted as `--check && launch` reads the exit code only.
     if args.check and check_pending:

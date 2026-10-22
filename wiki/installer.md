@@ -170,7 +170,27 @@ python install.py --platform retroarch --list-systems
 python install.py --platform retroarch --system sony-playstation,nintendo-gba
 python install.py --platform retroarch --system sony-playstation --core pcsx_rearmed
 python install.py --platform recalbox --region us,eu,jp
+python install.py --platform emuelec --no-game-data
 ```
+
+### Firmware without game data
+
+Some platform lists name the files a game reads beside the firmware its
+emulator needs (the Doom WADs in EmuELEC's list), and the cores' profiles mark
+the data files of the games they run `category: game_data`: MAME's software
+lists, a game engine's own data. The manifest marks each of these files
+`"category": "game_data"`, and firmware carries no category.
+
+`--no-game-data` leaves them out of the install, `--check` and `--dry-run`,
+and names what it left out with its category (ten names, `--verbose` for all):
+
+```text
+  Left out as game data (--no-game-data): 2436 files: ports/doom/doom1.wad, ports/doom2/doom2.wad, ...
+```
+
+It is the cut `generate_pack.py --no-game-data` makes, and a test holds the
+two to the same file list. A file list that records no category is refused
+rather than read as having no game data.
 
 ### Installed cores
 
@@ -242,6 +262,7 @@ what the options name, everything by default.
 | `--core NAMES` | Keep the platform's own list and only the extra files these cores load. `--list-cores` prints the names |
 | `--emulator NAMES` | Install what these emulators read on the detected platform, and nothing else: their own files and the platform's files of the systems they run. Each emulator page on the site gives this command. `--list-emulators` prints the names, buildbot names such as `mednafen_psx` included |
 | `--region LIST` | Preferred regions, best first (`us,eu,jp`): keep one BIOS per region where a system has several. Accepts the names and aliases of `generate_pack.py --region` |
+| `--no-game-data` | Leave out game data (a game's own files, not firmware) and install the firmware only. What it leaves out is named. See [Firmware without game data](#firmware-without-game-data) |
 | `--list-systems` | Print a platform's systems with the files and size each holds |
 | `--list-cores` | Print the cores whose extra files a platform installs |
 | `--list-emulators` | Print every name `--emulator` accepts, each buildbot name beside the emulator it stands for |
@@ -288,7 +309,7 @@ kind, and each kind has exactly the keys below, in this order. The schema is
 | `download` | `platform`, `files`, `bytes` | Before the downloads start |
 | `progress` | `files_done`, `files_total`, `bytes_done`, `bytes_total` | At most every half second while bytes arrive |
 | `downloaded` | `dest`, `ok`, `reason`, `size`, `files_done`, `files_total`, `bytes_done`, `bytes_total` | Each finished file. `reason` says why one failed, and is empty otherwise |
-| `summary` | `mode`, `installed`, `up_to_date`, `pending`, `failed`, `skipped`, `interrupted` | The outcome. `pending` counts what a next run would still fetch, `failed` lists `{dest, reason}`, `skipped` lists `{reason, label, files, required}` for the files the collection cannot supply. Not written for a listing |
+| `summary` | `mode`, `installed`, `up_to_date`, `pending`, `failed`, `skipped`, `left_out`, `interrupted` | The outcome. `pending` counts what a next run would still fetch, `failed` lists `{dest, reason}`, `skipped` lists `{reason, label, files, required}` for the files the collection cannot supply, `left_out` lists `{category, label, files, dests}` for what `--no-game-data` left out, and is empty without it. Not written for a listing |
 | `end` | `code` | Last line, with the exit status the process returns (see [Exit status](#exit-status)) |
 
 An option refused before the run starts (`install.py: error:`, code 2) writes

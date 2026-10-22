@@ -141,7 +141,7 @@ class EventRecords(unittest.TestCase):
             json.dumps({"event": "summary", "mode": "install", "installed": 0,
                         "up_to_date": 4, "pending": 1,
                         "failed": [{"dest": "x.bin", "reason": "HTTP 404"}],
-                        "skipped": [], "interrupted": False}),
+                        "skipped": [], "left_out": [], "interrupted": False}),
             json.dumps({"event": "end", "code": 2}),
         ]
         out, summary = io.StringIO(), io.StringIO()
@@ -228,7 +228,8 @@ if check:
          present=3 if done else 1, missing=0 if done else 1, wrong_hash=0 if done else 1,
          bytes_needed=0 if done else 300, data_missing=0, not_installable=1)
     emit("summary", mode="check", installed=0, up_to_date=3 if done else 1,
-         pending=0 if done else 2, failed=[], skipped=[], interrupted=False)
+         pending=0 if done else 2, failed=[], skipped=[], left_out=[],
+         interrupted=False)
     end(0 if done else 1)
 emit("download", platform="retroarch", files=2, bytes=300)
 for n, (dest, size) in enumerate((("a.bin", 100), ("b.bin", 200)), 1):
@@ -237,7 +238,7 @@ for n, (dest, size) in enumerate((("a.bin", 100), ("b.bin", 200)), 1):
 (state / "installed").write_text("")
 emit("summary", mode="install", installed=2, up_to_date=1, pending=0, failed=[],
      skipped=[{"reason": "not_found", "label": "not found", "files": 1, "required": 1}],
-     interrupted=False)
+     left_out=[], interrupted=False)
 end(0)
 '''
 
