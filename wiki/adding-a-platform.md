@@ -1,3 +1,7 @@
+---
+level: contribute
+---
+
 # Adding a platform
 
 How to add support for a new retrogaming platform (e.g. a frontend like Batocera,
@@ -146,6 +150,7 @@ platforms:
   myplatform:
     config: myplatform.yml           # platform YAML filename in platforms/
     status: active                   # active or archived
+    device_group: handheld           # computer, gaming-os, handheld, fpga or server
     scraper: myplatform              # matches PLATFORM_NAME, null if hand-maintained
     schedule: weekly                 # re-scrape cadence, run by hand: weekly, monthly, or null
     source_url: https://...          # upstream data URL
@@ -158,6 +163,13 @@ platforms:
     - core_a
     - core_b
 ```
+
+`device_group` places the platform among the devices a reader picks from: on
+the site's "Get your files" page, in the "Your setup" navigation and on the home
+page. The groups and their labels are `DEVICE_GROUPS` in
+`scripts/siteguides.py`, and the same file holds the platform's guide text
+(what it is, where its BIOS folder is, where the install command runs). A
+test fails when a registered platform has no group or no guide.
 
 A platform without a scraper (`scraper: null`, `schedule: null`) keeps its YAML
 as a hand-maintained file. Every registered platform has a scraper today, so
