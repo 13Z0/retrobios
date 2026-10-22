@@ -31,6 +31,7 @@ from packpaths import _flat
 from nativemode import reads_file_contents
 import region as region_mod
 from packresolve import resolve_file
+from exporter.candidates import BIOS, EntryCategories
 from common import resolve_platform_cores
 from common import sanitize_pack_path
 import zipfile
@@ -454,12 +455,7 @@ def _held_nowhere(
     zip_contents: dict,
     data_dir_registry: dict | None,
 ) -> bool:
-    """Return whether no declaration for a destination resolves to a file.
-
-    The builder cannot ship what the collection does not hold, so such a
-    destination is a data gap that verify.py reports as missing, not a pack
-    generation fault. A destination that resolves to anything stays checked.
-    """
+    """Return whether no declaration for a destination resolves to a file."""
     return bool(entries) and all(
         resolve_file(
             entry,
@@ -660,7 +656,8 @@ def verify_pack_against_platform(
     Returns ``(all_ok, checked, present, errors, baseline_checked,
     baseline_present, core_checked, core_present, baseline_excluded,
     baseline_absent)``. ``baseline_absent`` counts destinations the collection
-    holds no file for: verify.py reports them missing.
+    holds no file for that are a game's data or that no core the platform
+    runs opens; verify.py counts them apart from firmware.
     """
 
     config = load_platform_config(platform_name, platforms_dir)
@@ -740,8 +737,10 @@ def verify_pack_against_platform(
             for i in range(1, len(parts)):
                 zip_parents.add("/".join(parts[:i]))
         baseline_groups: dict[str, list[dict]] = {}
-        for _sys_id, system in (expected_systems if source != "truth" else {}).items():
+        system_of: dict[int, str] = {}
+        for sys_id, system in (expected_systems if source != "truth" else {}).items():
             for fe in system.get("files", []):
+                system_of[id(fe)] = sys_id
                 if required_only and fe.get("required") is False:
                     continue
                 dest = sanitize_pack_path(fe.get("destination", fe.get("name", "")))
@@ -754,6 +753,7 @@ def verify_pack_against_platform(
 
         baseline_checked = len(baseline_groups)
         exclusion_index = build_zip_contents_index(db) if db is not None else {}
+        categories = EntryCategories(config, emu_profiles, data_registry)
         for expected, declarations in baseline_groups.items():
             if expected in zip_set:
                 member = expected
@@ -773,9 +773,13 @@ def verify_pack_against_platform(
             ):
                 baseline_excluded += 1
                 continue
-            elif db is not None and _held_nowhere(
-                declarations, db, exclusion_index, data_registry
-            ):
+            elif db is not None and all(
+                categories.category(fe, fe.get("destination", fe.get("name", "")),
+                                    system_of[id(fe)]) != BIOS
+                for fe in declarations
+            ) and _held_nowhere(declarations, db, exclusion_index, data_registry):
+                # A game's data or an entry no core opens that the collection
+                # lacks: verify counts it apart. Missing firmware stays an error.
                 baseline_absent += 1
                 continue
             else:

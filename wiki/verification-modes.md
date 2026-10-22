@@ -280,6 +280,25 @@ files are downgraded to INFO regardless of platform mode or required status. The
 is still included in packs (better accuracy with the real BIOS), but its absence is not
 actionable.
 
+**Firmware, game data, unread**: a platform's list can name more than firmware.
+EmuELEC lists the data files of the games its ports run (Diablo's `diabdat.mpq`, the
+Sonic `Data.rsdk` files), and AmberELEC lists a `hardwareconfig.xml` in each blueMSX
+machine folder, a file blueMSX never opens. Each missing entry gets one of three
+categories, read from the profiles of the cores the platform runs:
+
+| Category | When | Severity |
+|----------|------|----------|
+| firmware | a core reads it as firmware, or nothing settles the question | from the matrix above |
+| game data | only `category: game_data` entries of those profiles name it | none, counted apart |
+| unread | the platform declares its cores, every one has a profile, at least one emulates the entry's system, and none opens the entry | none, counted apart |
+
+The report counts the last two on a line of their own (`Missing, not firmware: ...`)
+and `--verbose` names them. They stay in the platform's file and in the totals, but
+`--strict` fails on firmware gaps only, and the pack check does not count them as
+pack errors. A core the platform names that has no profile yet makes nothing unread.
+The same goes for a system none of the examined cores emulates: in both cases the
+absence of a reader proves nothing.
+
 
 ## File resolution chain
 

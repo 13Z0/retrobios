@@ -5268,13 +5268,17 @@ struct BurnDriver BurnDrvneogeo = {
             )
             self.assertEqual(result[3], [], f"unexpected errors: {result[3]}")
 
-    def test_213b_file_the_collection_lacks_is_no_pack_error(self):
-        """A declared file nothing resolves to is a data gap verify reports;
-        a held file absent from the pack stays a pack error."""
+    def test_213b_absent_game_data_is_counted_apart(self):
+        """Game data the collection lacks is counted apart from the pack's
+        errors; firmware the collection lacks stays one."""
         import tempfile
 
         from generate_pack import generate_pack, verify_pack_against_platform
 
+        profiles = {"eng": {"emulator": "Eng", "type": "game", "cores": ["eng"],
+                            "systems": ["arcade-sys"],
+                            "files": [{"name": "data.pak", "category": "game_data"},
+                                      {"name": "firmware.bin"}]}}
         with tempfile.TemporaryDirectory() as tmpdir:
             plat_dir, bios_root, out_dir, db, _h, _hl = self._make_hash_zip_fixture(
                 tmpdir, declare_md5=True
@@ -5282,22 +5286,28 @@ struct BurnDriver BurnDrvneogeo = {
             config_path = os.path.join(plat_dir, "test_hashzip.yml")
             with open(config_path) as fh:
                 config = yaml.safe_load(fh)
+            config["cores"] = ["eng"]
             config["systems"]["arcade-sys"]["files"].append(
-                {"name": "absent.bin", "destination": "dc/absent.bin"}
+                {"name": "data.pak", "destination": "dc/data.pak"}
             )
             with open(config_path, "w") as fh:
                 yaml.dump(config, fh)
-            zip_path = generate_pack("test_hashzip", plat_dir, db, bios_root, out_dir)
-            result = verify_pack_against_platform(zip_path, "test_hashzip", plat_dir, db=db)
+            zip_path = generate_pack("test_hashzip", plat_dir, db, bios_root, out_dir,
+                                     emu_profiles=profiles)
+            result = verify_pack_against_platform(
+                zip_path, "test_hashzip", plat_dir, db=db, emu_profiles=profiles)
             self.assertEqual(result[3], [])
             self.assertEqual((result[4], result[5], result[9]), (2, 1, 1))
 
-            empty = os.path.join(out_dir, "Empty.zip")
-            with zipfile.ZipFile(empty, "w") as zf:
-                zf.writestr("README.txt", "")
-            result = verify_pack_against_platform(empty, "test_hashzip", plat_dir, db=db)
-            self.assertEqual(result[3], ["baseline missing: dc/testbios.zip"])
-            self.assertEqual(result[9], 1)
+            config["systems"]["arcade-sys"]["files"][-1]["name"] = "firmware.bin"
+            config["systems"]["arcade-sys"]["files"][-1]["destination"] = "dc/firmware.bin"
+            with open(os.path.join(plat_dir, "test_hashzip_fw.yml"), "w") as fh:
+                yaml.dump(config, fh)
+            result = verify_pack_against_platform(
+                zip_path, "test_hashzip_fw", plat_dir, db=db, emu_profiles=profiles)
+            self.assertEqual([e.rsplit("/", 1)[-1] for e in result[3]], ["firmware.bin"])
+            self.assertTrue(result[3][0].startswith("baseline missing: "))
+            self.assertEqual(result[9], 0)
 
     def test_214_hash_matches_truncated_and_multi(self):
         """Declared-hash compare handles truncation, case, multi-values."""

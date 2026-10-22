@@ -80,6 +80,7 @@ from common import (
 )
 
 yaml = require_yaml()
+from exporter.candidates import BIOS, EntryCategories
 from launchers import LauncherLayer, declared_destinations
 from nativemode import (
     SIZE_AND_ANY_HASH,
@@ -102,7 +103,6 @@ from validation import (
     build_ground_truth,
     check_file_validation,
     deliverable,
-    filter_files_by_mode,
     installed_with_emulator,
     unread_on,
     outside_gap_scope,
@@ -1192,6 +1192,10 @@ def verify_platform(
     file_status: dict[str, str] = {}
     file_required: dict[str, bool] = {}
     file_severity: dict[str, str] = {}
+    # What a missing entry is: firmware, a game's data, or a name no core
+    # the platform runs opens. Only firmware gaps carry a severity.
+    file_category: dict[str, str] = {}
+    categories = EntryCategories(config, profiles, data_dir_registry)
 
     region_drops: set[str] = set()
     region_fallbacks: list[str] = []
@@ -1352,6 +1356,14 @@ def verify_platform(
             prev = file_status.get(dest)
             hle = hle_index.get(file_entry.get("name", ""), False)
             sev = compute_severity(cur, required, mode, hle)
+            category = (
+                categories.category(file_entry, destination, sys_id)
+                if cur == Status.MISSING else BIOS
+            )
+            result["category"] = category
+            if file_category.get(dest, category) == BIOS:
+                category = BIOS
+            file_category[dest] = category
             if prev is not None and (cur == Status.MISSING) != (prev == Status.MISSING):
                 if cur == Status.MISSING:
                     continue
@@ -1439,7 +1451,12 @@ def verify_platform(
         Severity.WARNING: 0,
         Severity.CRITICAL: 0,
     }
-    for s in file_severity.values():
+    not_firmware: dict[str, list[str]] = {}
+    for dest, s in file_severity.items():
+        category = file_category.get(dest, BIOS)
+        if category != BIOS and file_status.get(dest) == Status.MISSING:
+            not_firmware.setdefault(category, []).append(dest)
+            continue
         counts[s] = counts.get(s, 0) + 1
 
     # Held but refused: on a hash platform the builder leaves out a file whose
@@ -1501,6 +1518,7 @@ def verify_platform(
         "pack_destinations": pack_destinations,
         "severity_counts": counts,
         "status_counts": status_counts,
+        "missing_not_firmware": {k: sorted(v) for k, v in sorted(not_firmware.items())},
         "excluded_files": excluded,
         "packed_extras": packed_extras,
         "undeclared_files": undeclared,
@@ -1583,6 +1601,13 @@ def _discrepancy_keys(details: list[dict]) -> set[str]:
     }
 
 
+# A platform entry that is not firmware, as the report names it.
+_NOT_FIRMWARE = {
+    "game_data": "game data",
+    "unread": "no core the platform runs opens it",
+}
+
+
 def _print_detail_entries(details: list[dict], seen: set[str], verbose: bool) -> None:
     """Print UNTESTED, MISSING, and DISCREPANCY entries from verification details."""
     for d in details:
@@ -1604,6 +1629,13 @@ def _print_detail_entries(details: list[dict], seen: set[str], verbose: bool) ->
         if d["status"] == Status.MISSING:
             key = f"{d['system']}/{d['name']}"
             if key in seen:
+                continue
+            label = _NOT_FIRMWARE.get(d.get("category", BIOS))
+            if label:
+                # Counted on their own line; named on request.
+                if verbose:
+                    seen.add(key)
+                    print(f"  MISSING ({label}): {key}")
                 continue
             seen.add(key)
             req = "required" if d.get("required", True) else "optional"
@@ -1807,6 +1839,15 @@ def print_platform_result(
 
         print(f"  No BIOS for the requested regions, all kept ({len(fallbacks)}): "
               + ", ".join(_group_label(g) for g in fallbacks))
+
+    not_firmware = result.get("missing_not_firmware") or {}
+    if not_firmware:
+        counts = ", ".join(
+            f"{len(dests)} {_NOT_FIRMWARE[category]}"
+            for category, dests in not_firmware.items()
+        )
+        listed = "" if verbose else " (--verbose lists them)"
+        print(f"  Missing, not firmware: {counts}{listed}")
 
     seen_details: set[str] = set()
     _print_detail_entries(result["details"], seen_details, verbose)
@@ -2863,6 +2904,14 @@ def _overall_summary(group_results: list[tuple[dict, list[str]]]) -> str:
         detail = "; ".join(f"{group}: {', '.join(names)}"
                            for group, names in missing.items() if names)
         lines.append(f"{total} core file(s) a core cannot run without are missing ({detail})")
+    for category, label in _NOT_FIRMWARE.items():
+        counts = {
+            " / ".join(group): len((r.get("missing_not_firmware") or {}).get(category, []))
+            for r, group in group_results
+        }
+        total = sum(counts.values())
+        if total:
+            lines.append(f"{total} platform entries missing, not firmware, {label}{where(counts)}")
     return "\n".join(lines)
 
 

@@ -224,3 +224,67 @@ def removal_candidates(
                 "unresolved_cores": unresolved,
             })
     return listed
+
+
+# What a platform entry is, for the gates and the filters: firmware a core
+# needs, a game's own data, or a name no examined core opens.
+BIOS, GAME_DATA, UNREAD = "bios", "game_data", "unread"
+
+
+class EntryCategories:
+    """Categorize a platform's entries by what the cores it runs read.
+
+    An entry only game_data profile entries answer is the game's data, and
+    one nothing examined answers is unread. Unread needs the same certainty
+    as a removal candidate: every core the platform names is profiled, and
+    no core of the platform opens ROM sets by name when the entry is an
+    archive, and the platform declares the cores it runs. Anything else,
+    and every entry of a platform with no core to examine (BizHawk, MiSTer),
+    stays firmware.
+    """
+
+    def __init__(self, config: dict, profiles: dict[str, dict],
+                 data_registry: dict | None = None) -> None:
+        examined = resolve_platform_cores(config, profiles)
+        # Without a declared core list, the examined cores are those sharing
+        # a system id: a guess about what runs, which cannot prove a negative.
+        self._open = (
+            not examined or not config.get("cores")
+            or bool(unresolved_platform_cores(config, profiles))
+        )
+        self._romsets = any(_loads_romsets(profiles[key]) for key in examined)
+        self._firmware = ReadEvidence()
+        self._game = ReadEvidence()
+        for key in sorted(examined):
+            profile = profiles[key]
+            files = [f for f in profile.get("files") or [] if isinstance(f, dict)]
+            self._firmware.add_profile(
+                {**profile, "files": [f for f in files if f.get("category") != GAME_DATA]},
+                data_registry or {},
+            )
+            self._game.add_profile(
+                {"files": [f for f in files if f.get("category") == GAME_DATA]},
+                data_registry or {},
+            )
+        self._firmware.add_launchers(config.get("launchers") or [])
+        self._systems = {
+            _norm_system_id(str(sid))
+            for key in examined
+            for sid in profiles[key].get("systems") or []
+        }
+
+    def category(self, entry: dict, destination: str, system: str) -> str:
+        """`system` is the platform's system id the entry is declared under.
+
+        Unread also needs a core of that system among those examined: an
+        entry of a system no profiled core emulates is simply unexamined.
+        """
+        if self._firmware.proof(entry, destination) is not None:
+            return BIOS
+        if self._game.proof(entry, destination) is not None:
+            return GAME_DATA
+        if self._open or _norm_system_id(system) not in self._systems:
+            return BIOS
+        if self._romsets and str(entry.get("name", "")).casefold().endswith(_ARCHIVES):
+            return BIOS
+        return UNREAD

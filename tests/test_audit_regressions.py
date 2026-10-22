@@ -4226,8 +4226,10 @@ class VerifyPacksSaysWhatItExcluded(unittest.TestCase):
         source = (ROOT / "scripts" / "generate_pack.py").read_text()
         body = source[source.index("def _run_verify_packs"):]
         body = body[:body.index("\ndef ")]
-        self.assertIn("bl_excluded) = result", body)
-        self.assertIn("unsafe excluded", body)
+        self.assertIn("bl_excluded, bl_absent) = result", body)
+        self.assertIn("_baseline_shortfall(bl_excluded, bl_absent)", body)
+        shortfall = source[source.index("def _baseline_shortfall"):]
+        self.assertIn("unsafe excluded", shortfall[:shortfall.index("\ndef ")])
         self.assertNotIn("errors[:5]", body)
         self.assertNotRegex(body, r"result\[\d\]")
 
