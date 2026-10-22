@@ -225,40 +225,69 @@ class EveryDeclaredLayoutIsHeld(unittest.TestCase):
     ``contents:`` list names one version of a set, and the collection must
     hold that version, served to the profile that declares it."""
 
-    def test_a_copy_holds_each_declared_layout_and_is_served(self):
+    def setUp(self):
         import json
 
-        from common import load_emulator_profiles, resolve_local_file, zip_member_crcs
+        from common import get_mame_clone_map
 
         database = REPO_ROOT / "database.json"
         if not (REPO_ROOT / "bios").is_dir() or not database.exists():
             self.skipTest("bios/ or database.json is absent")
-        db = json.loads(database.read_text())
-        by_name = db["indexes"]["by_name"]
+        self.db = json.loads(database.read_text())
+        self.clones = get_mame_clone_map(str(REPO_ROOT / "bios"))
         previous = os.getcwd()
         os.chdir(REPO_ROOT)
         self.addCleanup(os.chdir, previous)
-        short, unserved = [], []
+
+    def _declared_archives(self):
+        from common import load_emulator_profiles
+
         for emu, profile in load_emulator_profiles("emulators").items():
             for entry in profile.get("files") or []:
-                if entry.get("category") != "bios_zip" or entry.get("unsourceable"):
-                    continue
-                crcs = {str(m["crc32"]).lower() for m in entry.get("contents") or []
-                        if m.get("crc32")}
-                names = [entry["name"], *(entry.get("aliases") or [])]
-                copies = [
-                    db["files"][sha1]["path"] for name in names
-                    for sha1 in by_name.get(name, []) if sha1 in db["files"]
-                ]
-                copies = [path for path in copies if Path(path).exists()]
-                if not crcs or not copies:
-                    continue
-                if not any(crcs <= zip_member_crcs(path) for path in copies):
-                    short.append(f"{emu}: {entry['name']}")
-                    continue
-                path, _status = resolve_local_file(entry, db)
-                if not path or not crcs <= zip_member_crcs(path):
-                    unserved.append(f"{emu}: {entry['name']} -> {path}")
+                if entry.get("category") == "bios_zip" and not entry.get("unsourceable"):
+                    yield emu, entry
+
+    def _copies(self, entry) -> list[str]:
+        """Paths the database holds under the archive's names. dedup.py keeps
+        one of several byte-identical MAME archives and maps the others to it,
+        so a clone name is held by its canonical copy."""
+        by_name = self.db["indexes"]["by_name"]
+        names = [entry["name"], *(entry.get("aliases") or [])]
+        names += [self.clones[name] for name in names if name in self.clones]
+        return [
+            self.db["files"][sha1]["path"] for name in names
+            for sha1 in by_name.get(name, []) if sha1 in self.db["files"]
+        ]
+
+    def test_every_declared_archive_has_a_copy(self):
+        """The layout check below skips an archive with no copy at all.
+        Looking up names alone, it skipped 23 MAME device sets held only
+        through the clone map, and Supermodel's pro1000.zip, which the
+        collection did not hold. A set with no copy is an acquisition
+        target, marked ``unsourceable:`` only when a homonym would otherwise
+        stand in."""
+        absent = sorted({
+            f"{emu}: {entry['name']}"
+            for emu, entry in self._declared_archives() if not self._copies(entry)
+        })
+        self.assertEqual(absent, [])
+
+    def test_a_copy_holds_each_declared_layout_and_is_served(self):
+        from common import resolve_local_file, zip_member_crcs
+
+        short, unserved = [], []
+        for emu, entry in self._declared_archives():
+            crcs = {str(m["crc32"]).lower() for m in entry.get("contents") or []
+                    if m.get("crc32")}
+            copies = [path for path in self._copies(entry) if Path(path).exists()]
+            if not crcs or not copies:
+                continue
+            if not any(crcs <= zip_member_crcs(path) for path in copies):
+                short.append(f"{emu}: {entry['name']}")
+                continue
+            path, _status = resolve_local_file(entry, self.db)
+            if not path or not crcs <= zip_member_crcs(path):
+                unserved.append(f"{emu}: {entry['name']} -> {path}")
         self.assertEqual(short, [])
         self.assertEqual(unserved, [])
 
