@@ -26,7 +26,7 @@
   "total_size": 872654387,
   "pack_files": 467,
   "pack_size": 872654387,
-  "total_omitted": 746,
+  "total_omitted": 759,
   "omitted_files": [
     {
       "dest": "32X_G_BIOS.BIN",
@@ -35,7 +35,7 @@
       "required": false,
       "reason": "no_platform_slug",
       "cores": [
-        "PicoDrive"
+        "picodrive"
       ]
     },
     {
@@ -45,7 +45,7 @@
       "required": false,
       "reason": "no_platform_slug",
       "cores": [
-        "PicoDrive"
+        "picodrive"
       ]
     },
     {
@@ -55,7 +55,7 @@
       "required": false,
       "reason": "no_platform_slug",
       "cores": [
-        "PicoDrive"
+        "picodrive"
       ]
     },
     {
@@ -65,7 +65,7 @@
       "required": true,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -75,7 +75,7 @@
       "required": true,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -85,7 +85,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -95,7 +95,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -105,7 +105,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -115,7 +115,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -125,7 +125,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -135,7 +135,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -145,7 +145,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -155,7 +155,7 @@
       "required": true,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -165,7 +165,7 @@
       "required": true,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -175,7 +175,7 @@
       "required": true,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -185,7 +185,7 @@
       "required": true,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -195,7 +195,7 @@
       "required": true,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -205,7 +205,7 @@
       "required": true,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -215,7 +215,7 @@
       "required": true,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -225,7 +225,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -235,7 +235,7 @@
       "required": true,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -245,7 +245,7 @@
       "required": true,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -255,7 +255,7 @@
       "required": true,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -265,7 +265,7 @@
       "required": true,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -275,7 +275,7 @@
       "required": true,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -285,77 +285,91 @@
       "required": true,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
-      "dest": "Azahar/nand/private/movable.sed",
+      "dest": "Azahar/Azahar/nand/private/movable.sed",
+      "root": "save",
+      "core_folder": "Azahar",
       "name": "movable.sed",
       "system": "nintendo-3ds",
       "required": false,
-      "reason": "below_platform_folder",
+      "reason": "no_save_directory",
       "cores": [
-        "Azahar"
+        "azahar"
       ]
     },
     {
-      "dest": "Azahar/nand/rw/sys/LocalFriendCodeSeed_B",
+      "dest": "Azahar/Azahar/nand/rw/sys/LocalFriendCodeSeed_B",
+      "root": "save",
+      "core_folder": "Azahar",
       "name": "LocalFriendCodeSeed_B",
       "system": "nintendo-3ds",
       "required": false,
-      "reason": "below_platform_folder",
+      "reason": "no_save_directory",
       "cores": [
-        "Azahar"
+        "azahar"
       ]
     },
     {
-      "dest": "Azahar/nand/rw/sys/SecureInfo_A",
+      "dest": "Azahar/Azahar/nand/rw/sys/SecureInfo_A",
+      "root": "save",
+      "core_folder": "Azahar",
       "name": "SecureInfo_A",
       "system": "nintendo-3ds",
       "required": false,
-      "reason": "below_platform_folder",
+      "reason": "no_save_directory",
       "cores": [
-        "Azahar"
+        "azahar"
       ]
     },
     {
-      "dest": "Azahar/sysdata/keys.txt",
+      "dest": "Azahar/Azahar/sysdata/keys.txt",
+      "root": "save",
+      "core_folder": "Azahar",
       "name": "keys.txt",
       "system": "nintendo-3ds",
       "required": false,
-      "reason": "below_platform_folder",
+      "reason": "no_save_directory",
       "cores": [
-        "Azahar"
+        "azahar"
       ]
     },
     {
-      "dest": "Azahar/sysdata/otp.bin",
+      "dest": "Azahar/Azahar/sysdata/otp.bin",
+      "root": "save",
+      "core_folder": "Azahar",
       "name": "otp.bin",
       "system": "nintendo-3ds",
       "required": false,
-      "reason": "below_platform_folder",
+      "reason": "no_save_directory",
       "cores": [
-        "Azahar"
+        "azahar"
       ]
     },
     {
-      "dest": "Azahar/sysdata/seeddb.bin",
+      "dest": "Azahar/Azahar/sysdata/seeddb.bin",
+      "root": "save",
+      "core_folder": "Azahar",
       "name": "seeddb.bin",
       "system": "nintendo-3ds",
       "required": false,
-      "reason": "below_platform_folder",
+      "reason": "no_save_directory",
       "cores": [
-        "Azahar"
+        "azahar"
       ]
     },
     {
-      "dest": "Azahar/sysdata/shared_font.bin",
+      "dest": "Azahar/Azahar/sysdata/shared_font.bin",
+      "root": "save",
+      "core_folder": "Azahar",
       "name": "shared_font.bin",
       "system": "nintendo-3ds",
       "required": false,
-      "reason": "below_platform_folder",
+      "reason": "no_save_directory",
       "cores": [
-        "Azahar"
+        "azahar"
       ]
     },
     {
@@ -365,7 +379,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -375,7 +389,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -385,7 +399,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -395,7 +409,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -405,7 +419,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -415,7 +429,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -425,7 +439,7 @@
       "required": true,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -435,7 +449,7 @@
       "required": false,
       "reason": "no_platform_slug",
       "cores": [
-        "DOSBox Pure"
+        "dosbox_pure"
       ]
     },
     {
@@ -445,7 +459,7 @@
       "required": false,
       "reason": "no_platform_slug",
       "cores": [
-        "DOSBox Pure"
+        "dosbox_pure"
       ]
     },
     {
@@ -455,7 +469,7 @@
       "required": false,
       "reason": "no_platform_slug",
       "cores": [
-        "DOSBox Pure"
+        "dosbox_pure"
       ]
     },
     {
@@ -465,7 +479,7 @@
       "required": true,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -475,7 +489,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -485,7 +499,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -495,7 +509,7 @@
       "required": false,
       "reason": "no_platform_slug",
       "cores": [
-        "DOSBox Pure"
+        "dosbox_pure"
       ]
     },
     {
@@ -505,7 +519,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -515,7 +529,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -525,7 +539,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -535,7 +549,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -545,7 +559,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -555,7 +569,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -565,7 +579,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -575,7 +589,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -585,7 +599,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -595,7 +609,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -605,7 +619,7 @@
       "required": true,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -615,7 +629,7 @@
       "required": true,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -625,7 +639,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -635,7 +649,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -645,7 +659,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -655,7 +669,7 @@
       "required": true,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -665,7 +679,7 @@
       "required": true,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -675,7 +689,7 @@
       "required": true,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -685,7 +699,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -695,7 +709,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -705,7 +719,7 @@
       "required": true,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -715,7 +729,7 @@
       "required": true,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -725,7 +739,7 @@
       "required": true,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -735,7 +749,7 @@
       "required": true,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -745,7 +759,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "PrimeHack"
+        "primehack"
       ]
     },
     {
@@ -755,7 +769,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "PrimeHack"
+        "primehack"
       ]
     },
     {
@@ -765,7 +779,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "PrimeHack"
+        "primehack"
       ]
     },
     {
@@ -775,7 +789,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "PrimeHack"
+        "primehack"
       ]
     },
     {
@@ -785,7 +799,79 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "PrimeHack"
+        "primehack"
+      ]
+    },
+    {
+      "dest": "Ishiiruka/User/Wii/clientca.pem",
+      "root": "save",
+      "core_folder": "Ishiiruka",
+      "name": "clientca.pem",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "ishiiruka"
+      ]
+    },
+    {
+      "dest": "Ishiiruka/User/Wii/clientcakey.pem",
+      "root": "save",
+      "core_folder": "Ishiiruka",
+      "name": "clientcakey.pem",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "ishiiruka"
+      ]
+    },
+    {
+      "dest": "Ishiiruka/User/Wii/rootca.pem",
+      "root": "save",
+      "core_folder": "Ishiiruka",
+      "name": "rootca.pem",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "ishiiruka"
+      ]
+    },
+    {
+      "dest": "Ishiiruka/User/Wii/sd.raw",
+      "root": "save",
+      "core_folder": "Ishiiruka",
+      "name": "sd.raw",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "ishiiruka"
+      ]
+    },
+    {
+      "dest": "Ishiiruka/User/Wii/shared2/sys/SYSCONF",
+      "root": "save",
+      "core_folder": "Ishiiruka",
+      "name": "SYSCONF",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "ishiiruka"
+      ]
+    },
+    {
+      "dest": "Ishiiruka/User/Wii/title/00000001/00000002/data/setting.txt",
+      "root": "save",
+      "core_folder": "Ishiiruka",
+      "name": "setting.txt",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "ishiiruka"
       ]
     },
     {
@@ -795,7 +881,7 @@
       "required": false,
       "reason": "no_platform_slug",
       "cores": [
-        "VICE x128"
+        "vice_x128"
       ]
     },
     {
@@ -805,7 +891,7 @@
       "required": false,
       "reason": "no_platform_slug",
       "cores": [
-        "VICE x128"
+        "vice_x128"
       ]
     },
     {
@@ -815,7 +901,7 @@
       "required": false,
       "reason": "no_platform_slug",
       "cores": [
-        "VICE x128"
+        "vice_x128"
       ]
     },
     {
@@ -825,7 +911,7 @@
       "required": false,
       "reason": "no_platform_slug",
       "cores": [
-        "VICE x128"
+        "vice_x128"
       ]
     },
     {
@@ -835,7 +921,7 @@
       "required": false,
       "reason": "no_platform_slug",
       "cores": [
-        "VICE x128"
+        "vice_x128"
       ]
     },
     {
@@ -845,7 +931,7 @@
       "required": false,
       "reason": "no_platform_slug",
       "cores": [
-        "VICE x64"
+        "vice_x64"
       ]
     },
     {
@@ -855,7 +941,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "PrimeHack"
+        "primehack"
       ]
     },
     {
@@ -865,7 +951,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "PrimeHack"
+        "primehack"
       ]
     },
     {
@@ -875,7 +961,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "PrimeHack"
+        "primehack"
       ]
     },
     {
@@ -885,7 +971,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "PrimeHack"
+        "primehack"
       ]
     },
     {
@@ -895,7 +981,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "PrimeHack"
+        "primehack"
       ]
     },
     {
@@ -905,7 +991,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "PrimeHack"
+        "primehack"
       ]
     },
     {
@@ -915,7 +1001,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "PrimeHack"
+        "primehack"
       ]
     },
     {
@@ -925,7 +1011,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "PrimeHack"
+        "primehack"
       ]
     },
     {
@@ -935,7 +1021,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "PrimeHack"
+        "primehack"
       ]
     },
     {
@@ -945,7 +1031,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "PrimeHack"
+        "primehack"
       ]
     },
     {
@@ -955,7 +1041,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "PrimeHack"
+        "primehack"
       ]
     },
     {
@@ -965,7 +1051,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "PrimeHack"
+        "primehack"
       ]
     },
     {
@@ -975,7 +1061,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "PrimeHack"
+        "primehack"
       ]
     },
     {
@@ -985,7 +1071,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "PrimeHack"
+        "primehack"
       ]
     },
     {
@@ -995,7 +1081,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "PrimeHack"
+        "primehack"
       ]
     },
     {
@@ -1005,7 +1091,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "PrimeHack"
+        "primehack"
       ]
     },
     {
@@ -1015,7 +1101,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -1025,7 +1111,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -1035,7 +1121,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -1045,7 +1131,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -1055,7 +1141,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -1065,7 +1151,7 @@
       "required": true,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -1075,7 +1161,7 @@
       "required": true,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -1085,7 +1171,7 @@
       "required": true,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -1095,7 +1181,7 @@
       "required": false,
       "reason": "no_platform_slug",
       "cores": [
-        "DOSBox Pure"
+        "dosbox_pure"
       ]
     },
     {
@@ -1105,7 +1191,7 @@
       "required": false,
       "reason": "no_platform_slug",
       "cores": [
-        "DOSBox Pure"
+        "dosbox_pure"
       ]
     },
     {
@@ -1115,7 +1201,7 @@
       "required": true,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -1125,7 +1211,7 @@
       "required": true,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -1135,7 +1221,7 @@
       "required": true,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -1145,7 +1231,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -1155,7 +1241,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Mupen64Plus-Next"
+        "mupen64plus_next"
       ]
     },
     {
@@ -1165,7 +1251,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Mupen64Plus-Next"
+        "mupen64plus_next"
       ]
     },
     {
@@ -1175,7 +1261,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -1185,7 +1271,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -1195,7 +1281,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -1205,7 +1291,7 @@
       "required": true,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -1215,7 +1301,7 @@
       "required": true,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -1225,7 +1311,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -1235,7 +1321,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -1245,7 +1331,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -1255,7 +1341,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -1265,7 +1351,7 @@
       "required": true,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -1275,7 +1361,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -1285,7 +1371,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -1295,7 +1381,7 @@
       "required": true,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -1305,7 +1391,7 @@
       "required": true,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -1315,7 +1401,7 @@
       "required": true,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -1325,7 +1411,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -1335,7 +1421,7 @@
       "required": true,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -1345,7 +1431,7 @@
       "required": true,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -1355,7 +1441,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -1365,7 +1451,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -1375,7 +1461,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -1385,7 +1471,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "PPSSPP"
+        "ppsspp"
       ]
     },
     {
@@ -1395,7 +1481,7 @@
       "required": true,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -1405,7 +1491,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -1415,7 +1501,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -1425,7 +1511,7 @@
       "required": true,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -1435,7 +1521,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "DOSBox Pure"
+        "dosbox_pure"
       ]
     },
     {
@@ -1445,7 +1531,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "DOSBox Pure"
+        "dosbox_pure"
       ]
     },
     {
@@ -1455,7 +1541,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "DOSBox Pure"
+        "dosbox_pure"
       ]
     },
     {
@@ -1465,7 +1551,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "DOSBox Pure"
+        "dosbox_pure"
       ]
     },
     {
@@ -1475,7 +1561,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "DOSBox Pure"
+        "dosbox_pure"
       ]
     },
     {
@@ -1485,7 +1571,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "DOSBox Pure"
+        "dosbox_pure"
       ]
     },
     {
@@ -1495,7 +1581,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "DOSBox Pure"
+        "dosbox_pure"
       ]
     },
     {
@@ -1505,7 +1591,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "DOSBox Pure"
+        "dosbox_pure"
       ]
     },
     {
@@ -1515,7 +1601,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "DOSBox Pure"
+        "dosbox_pure"
       ]
     },
     {
@@ -1525,7 +1611,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "DOSBox Pure"
+        "dosbox_pure"
       ]
     },
     {
@@ -1535,7 +1621,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -1545,7 +1631,7 @@
       "required": true,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -1555,7 +1641,7 @@
       "required": true,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -1565,7 +1651,7 @@
       "required": true,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -1575,7 +1661,7 @@
       "required": true,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -1585,7 +1671,7 @@
       "required": true,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -1595,7 +1681,7 @@
       "required": true,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -1605,7 +1691,7 @@
       "required": true,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -1615,7 +1701,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -1625,7 +1711,7 @@
       "required": true,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -1635,7 +1721,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -1645,7 +1731,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -1655,7 +1741,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -1665,7 +1751,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -1675,7 +1761,7 @@
       "required": true,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -1685,7 +1771,7 @@
       "required": true,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -1695,7 +1781,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -1705,7 +1791,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "PrimeHack"
+        "primehack"
       ]
     },
     {
@@ -1715,7 +1801,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "PrimeHack"
+        "primehack"
       ]
     },
     {
@@ -1725,7 +1811,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "PrimeHack"
+        "primehack"
       ]
     },
     {
@@ -1735,7 +1821,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "PrimeHack"
+        "primehack"
       ]
     },
     {
@@ -1745,7 +1831,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "PrimeHack"
+        "primehack"
       ]
     },
     {
@@ -1755,7 +1841,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -1765,7 +1851,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -1775,7 +1861,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -1785,7 +1871,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -1795,7 +1881,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Clock Signal (CLK)"
+        "clk"
       ]
     },
     {
@@ -1805,7 +1891,7 @@
       "required": false,
       "reason": "no_platform_slug",
       "cores": [
-        "Virtual Jaguar"
+        "virtualjaguar"
       ]
     },
     {
@@ -1815,7 +1901,7 @@
       "required": false,
       "reason": "no_platform_slug",
       "cores": [
-        "Virtual Jaguar"
+        "virtualjaguar"
       ]
     },
     {
@@ -1825,7 +1911,7 @@
       "required": true,
       "reason": "no_platform_slug",
       "cores": [
-        "MAME 2003"
+        "mame2003"
       ]
     },
     {
@@ -1835,7 +1921,7 @@
       "required": true,
       "reason": "no_platform_slug",
       "cores": [
-        "FinalBurn Neo"
+        "fbneo"
       ]
     },
     {
@@ -1845,7 +1931,7 @@
       "required": true,
       "reason": "no_platform_slug",
       "cores": [
-        "FinalBurn Neo"
+        "fbneo"
       ]
     },
     {
@@ -1855,7 +1941,7 @@
       "required": false,
       "reason": "no_platform_slug",
       "cores": [
-        "PrBoom"
+        "prboom"
       ],
       "category": "game_data"
     },
@@ -1866,7 +1952,7 @@
       "required": false,
       "reason": "no_platform_slug",
       "cores": [
-        "VICE xvic"
+        "vice_xvic"
       ]
     },
     {
@@ -1876,7 +1962,7 @@
       "required": true,
       "reason": "no_platform_slug",
       "cores": [
-        "MAME 2003"
+        "mame2003"
       ]
     },
     {
@@ -1886,7 +1972,7 @@
       "required": true,
       "reason": "no_platform_slug",
       "cores": [
-        "MAME 2003"
+        "mame2003"
       ]
     },
     {
@@ -1896,7 +1982,7 @@
       "required": true,
       "reason": "no_platform_slug",
       "cores": [
-        "MAME 2003"
+        "mame2003"
       ]
     },
     {
@@ -1906,7 +1992,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Dolphin"
+        "dolphin"
       ]
     },
     {
@@ -1916,7 +2002,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Dolphin"
+        "dolphin"
       ]
     },
     {
@@ -1926,7 +2012,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Dolphin"
+        "dolphin"
       ]
     },
     {
@@ -1936,7 +2022,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Dolphin"
+        "dolphin"
       ]
     },
     {
@@ -1946,7 +2032,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Dolphin"
+        "dolphin"
       ]
     },
     {
@@ -1956,7 +2042,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Dolphin"
+        "dolphin"
       ]
     },
     {
@@ -1966,7 +2052,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Dolphin"
+        "dolphin"
       ]
     },
     {
@@ -1976,7 +2062,91 @@
       "required": true,
       "reason": "below_platform_folder",
       "cores": [
-        "Dolphin"
+        "dolphin"
+      ]
+    },
+    {
+      "dest": "dolphin-emu/User/GBA/gba_bios.bin",
+      "root": "save",
+      "core_folder": "dolphin-emu",
+      "name": "gba_bios.bin",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "dolphin"
+      ]
+    },
+    {
+      "dest": "dolphin-emu/User/Load/WiiSD.raw",
+      "root": "save",
+      "core_folder": "dolphin-emu",
+      "name": "WiiSD.raw",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "dolphin"
+      ]
+    },
+    {
+      "dest": "dolphin-emu/User/Wii/clientca.pem",
+      "root": "save",
+      "core_folder": "dolphin-emu",
+      "name": "clientca.pem",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "dolphin"
+      ]
+    },
+    {
+      "dest": "dolphin-emu/User/Wii/clientcakey.pem",
+      "root": "save",
+      "core_folder": "dolphin-emu",
+      "name": "clientcakey.pem",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "dolphin"
+      ]
+    },
+    {
+      "dest": "dolphin-emu/User/Wii/rootca.pem",
+      "root": "save",
+      "core_folder": "dolphin-emu",
+      "name": "rootca.pem",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "dolphin"
+      ]
+    },
+    {
+      "dest": "dolphin-emu/User/Wii/shared2/sys/SYSCONF",
+      "root": "save",
+      "core_folder": "dolphin-emu",
+      "name": "SYSCONF",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "dolphin"
+      ]
+    },
+    {
+      "dest": "dolphin-emu/User/Wii/title/00000001/00000002/data/setting.txt",
+      "root": "save",
+      "core_folder": "dolphin-emu",
+      "name": "setting.txt",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "dolphin"
       ]
     },
     {
@@ -2008,7 +2178,7 @@
       "required": true,
       "reason": "no_platform_slug",
       "cores": [
-        "melonDS"
+        "melonds"
       ]
     },
     {
@@ -2018,7 +2188,7 @@
       "required": true,
       "reason": "no_platform_slug",
       "cores": [
-        "melonDS"
+        "melonds"
       ]
     },
     {
@@ -2028,7 +2198,7 @@
       "required": true,
       "reason": "no_platform_slug",
       "cores": [
-        "melonDS"
+        "melonds"
       ]
     },
     {
@@ -2038,7 +2208,7 @@
       "required": false,
       "reason": "no_platform_slug",
       "cores": [
-        "melonDS"
+        "melonds"
       ]
     },
     {
@@ -2048,7 +2218,7 @@
       "required": true,
       "reason": "no_platform_slug",
       "cores": [
-        "Gearcoleco"
+        "gearcoleco"
       ]
     },
     {
@@ -2098,7 +2268,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "FB Alpha 2012 CPS-1"
+        "fbalpha2012_cps1"
       ]
     },
     {
@@ -2108,7 +2278,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "FinalBurn Neo"
+        "fbneo"
       ]
     },
     {
@@ -2118,7 +2288,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "FinalBurn Neo"
+        "fbneo"
       ],
       "category": "game_data"
     },
@@ -2129,7 +2299,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "FinalBurn Neo"
+        "fbneo"
       ],
       "category": "game_data"
     },
@@ -2140,7 +2310,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "FinalBurn Neo"
+        "fbneo"
       ],
       "category": "game_data"
     },
@@ -2151,7 +2321,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Fuse"
+        "fuse"
       ]
     },
     {
@@ -2161,7 +2331,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Fuse"
+        "fuse"
       ]
     },
     {
@@ -2171,7 +2341,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Fuse"
+        "fuse"
       ]
     },
     {
@@ -2181,7 +2351,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Fuse"
+        "fuse"
       ]
     },
     {
@@ -2191,7 +2361,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Fuse"
+        "fuse"
       ]
     },
     {
@@ -2201,7 +2371,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Fuse"
+        "fuse"
       ]
     },
     {
@@ -2211,7 +2381,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Fuse"
+        "fuse"
       ]
     },
     {
@@ -2221,7 +2391,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Fuse"
+        "fuse"
       ]
     },
     {
@@ -2231,7 +2401,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Fuse"
+        "fuse"
       ]
     },
     {
@@ -2241,7 +2411,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Fuse"
+        "fuse"
       ]
     },
     {
@@ -2251,7 +2421,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Fuse"
+        "fuse"
       ]
     },
     {
@@ -2261,7 +2431,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Fuse"
+        "fuse"
       ]
     },
     {
@@ -2271,7 +2441,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Fuse"
+        "fuse"
       ]
     },
     {
@@ -2281,7 +2451,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Fuse"
+        "fuse"
       ]
     },
     {
@@ -2291,7 +2461,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Fuse"
+        "fuse"
       ]
     },
     {
@@ -2301,7 +2471,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Fuse"
+        "fuse"
       ]
     },
     {
@@ -2311,7 +2481,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Fuse"
+        "fuse"
       ]
     },
     {
@@ -2321,7 +2491,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Fuse"
+        "fuse"
       ]
     },
     {
@@ -2331,7 +2501,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Fuse"
+        "fuse"
       ]
     },
     {
@@ -2341,7 +2511,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Fuse"
+        "fuse"
       ]
     },
     {
@@ -2351,7 +2521,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Fuse"
+        "fuse"
       ]
     },
     {
@@ -2361,7 +2531,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Fuse"
+        "fuse"
       ]
     },
     {
@@ -2371,7 +2541,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Fuse"
+        "fuse"
       ]
     },
     {
@@ -2381,7 +2551,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Fuse"
+        "fuse"
       ]
     },
     {
@@ -2391,7 +2561,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Fuse"
+        "fuse"
       ]
     },
     {
@@ -2401,7 +2571,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Fuse"
+        "fuse"
       ]
     },
     {
@@ -2411,7 +2581,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Fuse"
+        "fuse"
       ]
     },
     {
@@ -2421,7 +2591,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Fuse"
+        "fuse"
       ]
     },
     {
@@ -2431,7 +2601,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Fuse"
+        "fuse"
       ]
     },
     {
@@ -2441,7 +2611,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Fuse"
+        "fuse"
       ]
     },
     {
@@ -2451,7 +2621,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Fuse"
+        "fuse"
       ]
     },
     {
@@ -2461,7 +2631,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Fuse"
+        "fuse"
       ]
     },
     {
@@ -2471,7 +2641,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Fuse"
+        "fuse"
       ]
     },
     {
@@ -2481,7 +2651,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Fuse"
+        "fuse"
       ]
     },
     {
@@ -2491,7 +2661,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Fuse"
+        "fuse"
       ]
     },
     {
@@ -2501,7 +2671,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Fuse"
+        "fuse"
       ]
     },
     {
@@ -2511,7 +2681,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Fuse"
+        "fuse"
       ]
     },
     {
@@ -2521,7 +2691,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Hatari"
+        "hatari"
       ]
     },
     {
@@ -2531,7 +2701,7 @@
       "required": false,
       "reason": "no_platform_slug",
       "cores": [
-        "PrBoom"
+        "prboom"
       ],
       "category": "game_data"
     },
@@ -2542,7 +2712,7 @@
       "required": false,
       "reason": "no_platform_slug",
       "cores": [
-        "PrBoom"
+        "prboom"
       ],
       "category": "game_data"
     },
@@ -2553,7 +2723,7 @@
       "required": false,
       "reason": "no_platform_slug",
       "cores": [
-        "Virtual Jaguar"
+        "virtualjaguar"
       ]
     },
     {
@@ -2563,7 +2733,7 @@
       "required": false,
       "reason": "no_platform_slug",
       "cores": [
-        "Virtual Jaguar"
+        "virtualjaguar"
       ]
     },
     {
@@ -2573,7 +2743,7 @@
       "required": true,
       "reason": "no_platform_slug",
       "cores": [
-        "FinalBurn Neo"
+        "fbneo"
       ]
     },
     {
@@ -2583,7 +2753,7 @@
       "required": true,
       "reason": "no_platform_slug",
       "cores": [
-        "FinalBurn Neo"
+        "fbneo"
       ]
     },
     {
@@ -2593,7 +2763,7 @@
       "required": true,
       "reason": "no_platform_slug",
       "cores": [
-        "FinalBurn Neo"
+        "fbneo"
       ]
     },
     {
@@ -2603,7 +2773,7 @@
       "required": true,
       "reason": "no_platform_slug",
       "cores": [
-        "FinalBurn Neo"
+        "fbneo"
       ]
     },
     {
@@ -2613,7 +2783,7 @@
       "required": true,
       "reason": "no_platform_slug",
       "cores": [
-        "FinalBurn Neo"
+        "fbneo"
       ]
     },
     {
@@ -2623,7 +2793,7 @@
       "required": true,
       "reason": "no_platform_slug",
       "cores": [
-        "FinalBurn Neo"
+        "fbneo"
       ]
     },
     {
@@ -2633,7 +2803,7 @@
       "required": true,
       "reason": "no_platform_slug",
       "cores": [
-        "FinalBurn Neo"
+        "fbneo"
       ]
     },
     {
@@ -2643,7 +2813,7 @@
       "required": true,
       "reason": "no_platform_slug",
       "cores": [
-        "FinalBurn Neo"
+        "fbneo"
       ]
     },
     {
@@ -2653,7 +2823,7 @@
       "required": true,
       "reason": "no_platform_slug",
       "cores": [
-        "FinalBurn Neo"
+        "fbneo"
       ]
     },
     {
@@ -2663,7 +2833,7 @@
       "required": false,
       "reason": "no_platform_slug",
       "cores": [
-        "VICE x64"
+        "vice_x64"
       ]
     },
     {
@@ -2673,7 +2843,7 @@
       "required": false,
       "reason": "no_platform_slug",
       "cores": [
-        "VICE x64"
+        "vice_x64"
       ]
     },
     {
@@ -2683,7 +2853,7 @@
       "required": false,
       "reason": "no_platform_slug",
       "cores": [
-        "VICE xvic"
+        "vice_xvic"
       ]
     },
     {
@@ -2693,7 +2863,7 @@
       "required": true,
       "reason": "no_platform_slug",
       "cores": [
-        "PUAE (P-UAE)"
+        "puae"
       ]
     },
     {
@@ -2703,7 +2873,7 @@
       "required": true,
       "reason": "no_platform_slug",
       "cores": [
-        "PUAE (P-UAE)"
+        "puae"
       ]
     },
     {
@@ -2713,7 +2883,7 @@
       "required": true,
       "reason": "no_platform_slug",
       "cores": [
-        "PUAE (P-UAE)"
+        "puae"
       ]
     },
     {
@@ -2723,7 +2893,7 @@
       "required": true,
       "reason": "no_platform_slug",
       "cores": [
-        "MAME 2003"
+        "mame2003"
       ]
     },
     {
@@ -2733,7 +2903,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Mini vMac"
+        "minivmac"
       ]
     },
     {
@@ -2743,7 +2913,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "MAME 2003-Plus"
+        "mame2003_plus"
       ],
       "category": "game_data"
     },
@@ -2754,7 +2924,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "MAME 2003-Plus"
+        "mame2003_plus"
       ],
       "category": "game_data"
     },
@@ -2765,7 +2935,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "MAME 2003-Plus"
+        "mame2003_plus"
       ],
       "category": "game_data"
     },
@@ -2776,7 +2946,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "MAME 2003-Plus"
+        "mame2003_plus"
       ],
       "category": "game_data"
     },
@@ -2787,7 +2957,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "MAME 2003-Plus"
+        "mame2003_plus"
       ],
       "category": "game_data"
     },
@@ -2798,7 +2968,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "MAME 2003-Plus"
+        "mame2003_plus"
       ],
       "category": "game_data"
     },
@@ -2809,7 +2979,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "MAME 2003-Plus"
+        "mame2003_plus"
       ],
       "category": "game_data"
     },
@@ -2820,7 +2990,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "MAME 2003-Plus"
+        "mame2003_plus"
       ],
       "category": "game_data"
     },
@@ -2831,7 +3001,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "MAME 2003-Plus"
+        "mame2003_plus"
       ],
       "category": "game_data"
     },
@@ -2842,7 +3012,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "MAME 2003-Plus"
+        "mame2003_plus"
       ],
       "category": "game_data"
     },
@@ -2853,7 +3023,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "MAME 2003-Plus"
+        "mame2003_plus"
       ],
       "category": "game_data"
     },
@@ -2864,7 +3034,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "MAME 2003"
+        "mame2003"
       ],
       "category": "game_data"
     },
@@ -2875,7 +3045,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "MAME 2003"
+        "mame2003"
       ],
       "category": "game_data"
     },
@@ -2886,7 +3056,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "MAME 2003"
+        "mame2003"
       ],
       "category": "game_data"
     },
@@ -2897,7 +3067,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "MAME 2003"
+        "mame2003"
       ],
       "category": "game_data"
     },
@@ -2908,7 +3078,7 @@
       "required": true,
       "reason": "no_platform_slug",
       "cores": [
-        "MAME 2003"
+        "mame2003"
       ]
     },
     {
@@ -2918,7 +3088,7 @@
       "required": true,
       "reason": "no_platform_slug",
       "cores": [
-        "MAME 2003"
+        "mame2003"
       ]
     },
     {
@@ -2928,7 +3098,7 @@
       "required": true,
       "reason": "no_platform_slug",
       "cores": [
-        "FinalBurn Neo"
+        "fbneo"
       ]
     },
     {
@@ -2938,7 +3108,7 @@
       "required": true,
       "reason": "no_platform_slug",
       "cores": [
-        "FinalBurn Neo"
+        "fbneo"
       ]
     },
     {
@@ -2948,7 +3118,7 @@
       "required": true,
       "reason": "no_platform_slug",
       "cores": [
-        "FinalBurn Neo"
+        "fbneo"
       ]
     },
     {
@@ -2958,7 +3128,7 @@
       "required": true,
       "reason": "no_platform_slug",
       "cores": [
-        "FinalBurn Neo"
+        "fbneo"
       ]
     },
     {
@@ -2968,7 +3138,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Nestopia UE"
+        "nestopia"
       ],
       "category": "game_data"
     },
@@ -2979,7 +3149,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Nestopia UE"
+        "nestopia"
       ],
       "category": "game_data"
     },
@@ -2990,7 +3160,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Nestopia UE"
+        "nestopia"
       ],
       "category": "game_data"
     },
@@ -3001,7 +3171,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Nestopia UE"
+        "nestopia"
       ],
       "category": "game_data"
     },
@@ -3012,7 +3182,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Nestopia UE"
+        "nestopia"
       ],
       "category": "game_data"
     },
@@ -3023,7 +3193,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Nestopia UE"
+        "nestopia"
       ],
       "category": "game_data"
     },
@@ -3034,7 +3204,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Nestopia UE"
+        "nestopia"
       ],
       "category": "game_data"
     },
@@ -3045,7 +3215,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Nestopia UE"
+        "nestopia"
       ],
       "category": "game_data"
     },
@@ -3056,7 +3226,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Nestopia UE"
+        "nestopia"
       ],
       "category": "game_data"
     },
@@ -3067,7 +3237,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Nestopia UE"
+        "nestopia"
       ],
       "category": "game_data"
     },
@@ -3078,7 +3248,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Nestopia UE"
+        "nestopia"
       ],
       "category": "game_data"
     },
@@ -3089,7 +3259,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Nestopia UE"
+        "nestopia"
       ],
       "category": "game_data"
     },
@@ -3100,7 +3270,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Nestopia UE"
+        "nestopia"
       ],
       "category": "game_data"
     },
@@ -3111,7 +3281,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Nestopia UE"
+        "nestopia"
       ],
       "category": "game_data"
     },
@@ -3122,7 +3292,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Nestopia UE"
+        "nestopia"
       ],
       "category": "game_data"
     },
@@ -3133,7 +3303,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Nestopia UE"
+        "nestopia"
       ],
       "category": "game_data"
     },
@@ -3144,7 +3314,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Nestopia UE"
+        "nestopia"
       ],
       "category": "game_data"
     },
@@ -3155,7 +3325,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Nestopia UE"
+        "nestopia"
       ],
       "category": "game_data"
     },
@@ -3166,7 +3336,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Nestopia UE"
+        "nestopia"
       ],
       "category": "game_data"
     },
@@ -3177,7 +3347,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Nestopia UE"
+        "nestopia"
       ],
       "category": "game_data"
     },
@@ -3188,7 +3358,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Nestopia UE"
+        "nestopia"
       ],
       "category": "game_data"
     },
@@ -3199,7 +3369,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Nestopia UE"
+        "nestopia"
       ],
       "category": "game_data"
     },
@@ -3210,7 +3380,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Nestopia UE"
+        "nestopia"
       ],
       "category": "game_data"
     },
@@ -3221,7 +3391,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Nestopia UE"
+        "nestopia"
       ],
       "category": "game_data"
     },
@@ -3232,7 +3402,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Nestopia UE"
+        "nestopia"
       ],
       "category": "game_data"
     },
@@ -3243,7 +3413,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Nestopia UE"
+        "nestopia"
       ],
       "category": "game_data"
     },
@@ -3254,7 +3424,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Nestopia UE"
+        "nestopia"
       ],
       "category": "game_data"
     },
@@ -3265,7 +3435,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Nestopia UE"
+        "nestopia"
       ],
       "category": "game_data"
     },
@@ -3276,7 +3446,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Nestopia UE"
+        "nestopia"
       ],
       "category": "game_data"
     },
@@ -3287,7 +3457,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Nestopia UE"
+        "nestopia"
       ],
       "category": "game_data"
     },
@@ -3298,7 +3468,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Nestopia UE"
+        "nestopia"
       ],
       "category": "game_data"
     },
@@ -3309,7 +3479,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Nestopia UE"
+        "nestopia"
       ],
       "category": "game_data"
     },
@@ -3320,7 +3490,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Nestopia UE"
+        "nestopia"
       ],
       "category": "game_data"
     },
@@ -3331,7 +3501,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Nestopia UE"
+        "nestopia"
       ],
       "category": "game_data"
     },
@@ -3342,7 +3512,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Nestopia UE"
+        "nestopia"
       ],
       "category": "game_data"
     },
@@ -3353,7 +3523,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Nestopia UE"
+        "nestopia"
       ],
       "category": "game_data"
     },
@@ -3364,7 +3534,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Nestopia UE"
+        "nestopia"
       ],
       "category": "game_data"
     },
@@ -3375,7 +3545,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Nestopia UE"
+        "nestopia"
       ],
       "category": "game_data"
     },
@@ -3386,7 +3556,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Nestopia UE"
+        "nestopia"
       ],
       "category": "game_data"
     },
@@ -3397,7 +3567,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Nestopia UE"
+        "nestopia"
       ],
       "category": "game_data"
     },
@@ -3408,7 +3578,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Nestopia UE"
+        "nestopia"
       ],
       "category": "game_data"
     },
@@ -3419,7 +3589,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Nestopia UE"
+        "nestopia"
       ],
       "category": "game_data"
     },
@@ -3430,7 +3600,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Nestopia UE"
+        "nestopia"
       ],
       "category": "game_data"
     },
@@ -3441,7 +3611,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Nestopia UE"
+        "nestopia"
       ],
       "category": "game_data"
     },
@@ -3452,7 +3622,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Nestopia UE"
+        "nestopia"
       ],
       "category": "game_data"
     },
@@ -3463,7 +3633,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Nestopia UE"
+        "nestopia"
       ],
       "category": "game_data"
     },
@@ -3474,7 +3644,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Nestopia UE"
+        "nestopia"
       ],
       "category": "game_data"
     },
@@ -3485,7 +3655,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Nestopia UE"
+        "nestopia"
       ],
       "category": "game_data"
     },
@@ -3496,7 +3666,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Nestopia UE"
+        "nestopia"
       ],
       "category": "game_data"
     },
@@ -3507,7 +3677,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Nestopia UE"
+        "nestopia"
       ],
       "category": "game_data"
     },
@@ -3518,7 +3688,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Nestopia UE"
+        "nestopia"
       ],
       "category": "game_data"
     },
@@ -3529,7 +3699,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Nestopia UE"
+        "nestopia"
       ],
       "category": "game_data"
     },
@@ -3540,7 +3710,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Nestopia UE"
+        "nestopia"
       ],
       "category": "game_data"
     },
@@ -3551,7 +3721,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Nestopia UE"
+        "nestopia"
       ],
       "category": "game_data"
     },
@@ -3562,7 +3732,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Nestopia UE"
+        "nestopia"
       ],
       "category": "game_data"
     },
@@ -3573,7 +3743,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Nestopia UE"
+        "nestopia"
       ],
       "category": "game_data"
     },
@@ -3584,7 +3754,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Nestopia UE"
+        "nestopia"
       ],
       "category": "game_data"
     },
@@ -3595,7 +3765,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Nestopia UE"
+        "nestopia"
       ],
       "category": "game_data"
     },
@@ -3606,7 +3776,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Nestopia UE"
+        "nestopia"
       ],
       "category": "game_data"
     },
@@ -3617,7 +3787,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Nestopia UE"
+        "nestopia"
       ],
       "category": "game_data"
     },
@@ -3628,7 +3798,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Nestopia UE"
+        "nestopia"
       ],
       "category": "game_data"
     },
@@ -3639,7 +3809,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Nestopia UE"
+        "nestopia"
       ],
       "category": "game_data"
     },
@@ -3650,7 +3820,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Nestopia UE"
+        "nestopia"
       ],
       "category": "game_data"
     },
@@ -3661,7 +3831,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Nestopia UE"
+        "nestopia"
       ],
       "category": "game_data"
     },
@@ -3672,7 +3842,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Nestopia UE"
+        "nestopia"
       ],
       "category": "game_data"
     },
@@ -3683,7 +3853,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Nestopia UE"
+        "nestopia"
       ],
       "category": "game_data"
     },
@@ -3694,7 +3864,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Nestopia UE"
+        "nestopia"
       ],
       "category": "game_data"
     },
@@ -3705,7 +3875,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Nestopia UE"
+        "nestopia"
       ],
       "category": "game_data"
     },
@@ -3716,7 +3886,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Nestopia UE"
+        "nestopia"
       ],
       "category": "game_data"
     },
@@ -3727,7 +3897,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "Nestopia UE"
+        "nestopia"
       ],
       "category": "game_data"
     },
@@ -3738,7 +3908,7 @@
       "required": true,
       "reason": "no_platform_slug",
       "cores": [
-        "FinalBurn Neo"
+        "fbneo"
       ]
     },
     {
@@ -3778,7 +3948,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "NP2kai"
+        "np2kai"
       ]
     },
     {
@@ -3788,7 +3958,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "NP2kai"
+        "np2kai"
       ]
     },
     {
@@ -3798,7 +3968,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "NP2kai"
+        "np2kai"
       ]
     },
     {
@@ -3808,7 +3978,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "NP2kai"
+        "np2kai"
       ]
     },
     {
@@ -3818,7 +3988,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "NP2kai"
+        "np2kai"
       ]
     },
     {
@@ -3828,7 +3998,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "NP2kai"
+        "np2kai"
       ]
     },
     {
@@ -3838,7 +4008,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "NP2kai"
+        "np2kai"
       ]
     },
     {
@@ -3848,7 +4018,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "NP2kai"
+        "np2kai"
       ]
     },
     {
@@ -3858,7 +4028,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "NP2kai"
+        "np2kai"
       ]
     },
     {
@@ -3868,7 +4038,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "NP2kai"
+        "np2kai"
       ]
     },
     {
@@ -3878,7 +4048,7 @@
       "required": true,
       "reason": "no_platform_slug",
       "cores": [
-        "MAME 2003"
+        "mame2003"
       ]
     },
     {
@@ -3888,7 +4058,7 @@
       "required": true,
       "reason": "no_platform_slug",
       "cores": [
-        "MAME 2003"
+        "mame2003"
       ]
     },
     {
@@ -3898,7 +4068,7 @@
       "required": true,
       "reason": "no_platform_slug",
       "cores": [
-        "FinalBurn Neo"
+        "fbneo"
       ]
     },
     {
@@ -3908,7 +4078,7 @@
       "required": true,
       "reason": "no_platform_slug",
       "cores": [
-        "FinalBurn Neo"
+        "fbneo"
       ]
     },
     {
@@ -3918,7 +4088,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "SAME CDi"
+        "same_cdi"
       ]
     },
     {
@@ -3928,7 +4098,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "SAME CDi"
+        "same_cdi"
       ]
     },
     {
@@ -3938,7 +4108,7 @@
       "required": true,
       "reason": "below_platform_folder",
       "cores": [
-        "SAME CDi"
+        "same_cdi"
       ]
     },
     {
@@ -3948,7 +4118,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "SAME CDi"
+        "same_cdi"
       ]
     },
     {
@@ -3958,7 +4128,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "ScummVM"
+        "scummvm"
       ]
     },
     {
@@ -3968,7 +4138,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "ScummVM"
+        "scummvm"
       ]
     },
     {
@@ -3978,7 +4148,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "ScummVM"
+        "scummvm"
       ]
     },
     {
@@ -3988,7 +4158,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "ScummVM"
+        "scummvm"
       ]
     },
     {
@@ -3998,7 +4168,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "ScummVM"
+        "scummvm"
       ]
     },
     {
@@ -4008,7 +4178,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "ScummVM"
+        "scummvm"
       ]
     },
     {
@@ -4018,7 +4188,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "ScummVM"
+        "scummvm"
       ]
     },
     {
@@ -4028,7 +4198,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "ScummVM"
+        "scummvm"
       ]
     },
     {
@@ -4038,7 +4208,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "ScummVM"
+        "scummvm"
       ]
     },
     {
@@ -4048,7 +4218,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "ScummVM"
+        "scummvm"
       ]
     },
     {
@@ -4058,7 +4228,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "ScummVM"
+        "scummvm"
       ]
     },
     {
@@ -4068,7 +4238,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "ScummVM"
+        "scummvm"
       ]
     },
     {
@@ -4078,7 +4248,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "ScummVM"
+        "scummvm"
       ]
     },
     {
@@ -4088,7 +4258,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "ScummVM"
+        "scummvm"
       ]
     },
     {
@@ -4098,7 +4268,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "ScummVM"
+        "scummvm"
       ]
     },
     {
@@ -4108,7 +4278,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "ScummVM"
+        "scummvm"
       ]
     },
     {
@@ -4118,7 +4288,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "ScummVM"
+        "scummvm"
       ]
     },
     {
@@ -4128,7 +4298,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "ScummVM"
+        "scummvm"
       ]
     },
     {
@@ -4138,7 +4308,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "ScummVM"
+        "scummvm"
       ]
     },
     {
@@ -4148,7 +4318,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "ScummVM"
+        "scummvm"
       ]
     },
     {
@@ -4158,7 +4328,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "ScummVM"
+        "scummvm"
       ]
     },
     {
@@ -4168,7 +4338,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "ScummVM"
+        "scummvm"
       ]
     },
     {
@@ -4178,7 +4348,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "ScummVM"
+        "scummvm"
       ]
     },
     {
@@ -4188,7 +4358,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "ScummVM"
+        "scummvm"
       ]
     },
     {
@@ -4198,7 +4368,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "ScummVM"
+        "scummvm"
       ]
     },
     {
@@ -4208,7 +4378,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "ScummVM"
+        "scummvm"
       ]
     },
     {
@@ -4218,7 +4388,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "ScummVM"
+        "scummvm"
       ]
     },
     {
@@ -4228,7 +4398,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "ScummVM"
+        "scummvm"
       ]
     },
     {
@@ -4238,7 +4408,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "ScummVM"
+        "scummvm"
       ]
     },
     {
@@ -4248,7 +4418,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "ScummVM"
+        "scummvm"
       ]
     },
     {
@@ -4258,7 +4428,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "ScummVM"
+        "scummvm"
       ]
     },
     {
@@ -4268,7 +4438,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "ScummVM"
+        "scummvm"
       ]
     },
     {
@@ -4278,7 +4448,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "ScummVM"
+        "scummvm"
       ]
     },
     {
@@ -4288,7 +4458,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "ScummVM"
+        "scummvm"
       ]
     },
     {
@@ -4298,7 +4468,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "ScummVM"
+        "scummvm"
       ]
     },
     {
@@ -4308,7 +4478,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "ScummVM"
+        "scummvm"
       ]
     },
     {
@@ -4318,7 +4488,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "ScummVM"
+        "scummvm"
       ]
     },
     {
@@ -4328,7 +4498,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "ScummVM"
+        "scummvm"
       ]
     },
     {
@@ -4338,7 +4508,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "ScummVM"
+        "scummvm"
       ]
     },
     {
@@ -4348,7 +4518,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "ScummVM"
+        "scummvm"
       ]
     },
     {
@@ -4358,7 +4528,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "ScummVM"
+        "scummvm"
       ]
     },
     {
@@ -4368,7 +4538,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "ScummVM"
+        "scummvm"
       ]
     },
     {
@@ -4378,7 +4548,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "ScummVM"
+        "scummvm"
       ]
     },
     {
@@ -4388,7 +4558,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "ScummVM"
+        "scummvm"
       ]
     },
     {
@@ -4398,7 +4568,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "ScummVM"
+        "scummvm"
       ]
     },
     {
@@ -4408,7 +4578,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "ScummVM"
+        "scummvm"
       ]
     },
     {
@@ -4418,7 +4588,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "ScummVM"
+        "scummvm"
       ]
     },
     {
@@ -4428,7 +4598,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "ScummVM"
+        "scummvm"
       ]
     },
     {
@@ -4438,7 +4608,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "ScummVM"
+        "scummvm"
       ]
     },
     {
@@ -4448,7 +4618,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "ScummVM"
+        "scummvm"
       ]
     },
     {
@@ -4458,7 +4628,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "ScummVM"
+        "scummvm"
       ]
     },
     {
@@ -4468,7 +4638,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "ScummVM"
+        "scummvm"
       ]
     },
     {
@@ -4478,7 +4648,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "ScummVM"
+        "scummvm"
       ]
     },
     {
@@ -4488,7 +4658,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "ScummVM"
+        "scummvm"
       ]
     },
     {
@@ -4498,7 +4668,7 @@
       "required": true,
       "reason": "no_platform_slug",
       "cores": [
-        "FinalBurn Neo"
+        "fbneo"
       ]
     },
     {
@@ -4508,7 +4678,7 @@
       "required": true,
       "reason": "no_platform_slug",
       "cores": [
-        "FinalBurn Neo"
+        "fbneo"
       ]
     },
     {
@@ -4518,7 +4688,7 @@
       "required": true,
       "reason": "no_platform_slug",
       "cores": [
-        "FinalBurn Neo"
+        "fbneo"
       ]
     },
     {
@@ -4528,7 +4698,7 @@
       "required": true,
       "reason": "no_platform_slug",
       "cores": [
-        "FinalBurn Neo"
+        "fbneo"
       ]
     },
     {
@@ -4538,7 +4708,7 @@
       "required": true,
       "reason": "no_platform_slug",
       "cores": [
-        "FinalBurn Neo"
+        "fbneo"
       ]
     },
     {
@@ -4548,7 +4718,7 @@
       "required": true,
       "reason": "no_platform_slug",
       "cores": [
-        "FinalBurn Neo"
+        "fbneo"
       ]
     },
     {
@@ -4558,7 +4728,7 @@
       "required": true,
       "reason": "no_platform_slug",
       "cores": [
-        "FinalBurn Neo"
+        "fbneo"
       ]
     },
     {
@@ -4568,7 +4738,7 @@
       "required": true,
       "reason": "no_platform_slug",
       "cores": [
-        "FinalBurn Neo"
+        "fbneo"
       ]
     },
     {
@@ -4578,7 +4748,7 @@
       "required": true,
       "reason": "no_platform_slug",
       "cores": [
-        "FinalBurn Neo"
+        "fbneo"
       ]
     },
     {
@@ -4588,7 +4758,7 @@
       "required": true,
       "reason": "no_platform_slug",
       "cores": [
-        "FinalBurn Neo"
+        "fbneo"
       ]
     },
     {
@@ -4598,7 +4768,7 @@
       "required": true,
       "reason": "no_platform_slug",
       "cores": [
-        "FinalBurn Neo"
+        "fbneo"
       ]
     },
     {
@@ -4608,7 +4778,7 @@
       "required": true,
       "reason": "no_platform_slug",
       "cores": [
-        "FinalBurn Neo"
+        "fbneo"
       ]
     },
     {
@@ -4618,7 +4788,7 @@
       "required": true,
       "reason": "no_platform_slug",
       "cores": [
-        "FinalBurn Neo"
+        "fbneo"
       ]
     },
     {
@@ -4628,7 +4798,7 @@
       "required": true,
       "reason": "no_platform_slug",
       "cores": [
-        "FinalBurn Neo"
+        "fbneo"
       ]
     },
     {
@@ -4638,7 +4808,7 @@
       "required": true,
       "reason": "no_platform_slug",
       "cores": [
-        "FinalBurn Neo"
+        "fbneo"
       ]
     },
     {
@@ -4648,7 +4818,7 @@
       "required": false,
       "reason": "no_platform_slug",
       "cores": [
-        "MAME 2003"
+        "mame2003"
       ]
     },
     {
@@ -4658,7 +4828,7 @@
       "required": true,
       "reason": "no_platform_slug",
       "cores": [
-        "FinalBurn Neo"
+        "fbneo"
       ]
     },
     {
@@ -4668,7 +4838,7 @@
       "required": false,
       "reason": "no_platform_slug",
       "cores": [
-        "FinalBurn Neo"
+        "fbneo"
       ]
     },
     {
@@ -4678,7 +4848,7 @@
       "required": true,
       "reason": "no_platform_slug",
       "cores": [
-        "FinalBurn Neo"
+        "fbneo"
       ]
     },
     {
@@ -4688,7 +4858,7 @@
       "required": true,
       "reason": "no_platform_slug",
       "cores": [
-        "MAME 2003"
+        "mame2003"
       ]
     },
     {
@@ -4698,7 +4868,7 @@
       "required": true,
       "reason": "no_platform_slug",
       "cores": [
-        "MAME 2003"
+        "mame2003"
       ]
     },
     {
@@ -4708,7 +4878,7 @@
       "required": true,
       "reason": "no_platform_slug",
       "cores": [
-        "MAME 2003"
+        "mame2003"
       ]
     },
     {
@@ -4718,7 +4888,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "PUAE (P-UAE)"
+        "puae"
       ]
     },
     {
@@ -4728,7 +4898,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "PUAE (P-UAE)"
+        "puae"
       ]
     },
     {
@@ -4738,7 +4908,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "PUAE (P-UAE)"
+        "puae"
       ]
     },
     {
@@ -4748,7 +4918,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "PUAE (P-UAE)"
+        "puae"
       ]
     },
     {
@@ -4758,7 +4928,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "PUAE (P-UAE)"
+        "puae"
       ]
     },
     {
@@ -4768,7 +4938,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "PUAE (P-UAE)"
+        "puae"
       ]
     },
     {
@@ -4778,7 +4948,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "PUAE (P-UAE)"
+        "puae"
       ]
     },
     {
@@ -4788,7 +4958,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "PUAE (P-UAE)"
+        "puae"
       ]
     },
     {
@@ -4798,7 +4968,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "PUAE (P-UAE)"
+        "puae"
       ]
     },
     {
@@ -4808,7 +4978,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "PUAE (P-UAE)"
+        "puae"
       ]
     },
     {
@@ -4818,7 +4988,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -4829,7 +4999,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -4840,7 +5010,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -4851,7 +5021,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -4862,7 +5032,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -4873,7 +5043,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -4884,7 +5054,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -4895,7 +5065,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -4906,7 +5076,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -4917,7 +5087,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -4928,7 +5098,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -4939,7 +5109,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -4950,7 +5120,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -4961,7 +5131,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -4972,7 +5142,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -4983,7 +5153,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -4994,7 +5164,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5005,7 +5175,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5016,7 +5186,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5027,7 +5197,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5038,7 +5208,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5049,7 +5219,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5060,7 +5230,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5071,7 +5241,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5082,7 +5252,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5093,7 +5263,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5104,7 +5274,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5115,7 +5285,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5126,7 +5296,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5137,7 +5307,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5148,7 +5318,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5159,7 +5329,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5170,7 +5340,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5181,7 +5351,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5192,7 +5362,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5203,7 +5373,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5214,7 +5384,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5225,7 +5395,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5236,7 +5406,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5247,7 +5417,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5258,7 +5428,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5269,7 +5439,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5280,7 +5450,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5291,7 +5461,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5302,7 +5472,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5313,7 +5483,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5324,7 +5494,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5335,7 +5505,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5346,7 +5516,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5357,7 +5527,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5368,7 +5538,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5379,7 +5549,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5390,7 +5560,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5401,7 +5571,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5412,7 +5582,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5423,7 +5593,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5434,7 +5604,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5445,7 +5615,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5456,7 +5626,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5467,7 +5637,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5478,7 +5648,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5489,7 +5659,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5500,7 +5670,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5511,7 +5681,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5522,7 +5692,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5533,7 +5703,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5544,7 +5714,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5555,7 +5725,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5566,7 +5736,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5577,7 +5747,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5588,7 +5758,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5599,7 +5769,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5610,7 +5780,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5621,7 +5791,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5632,7 +5802,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5643,7 +5813,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5654,7 +5824,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5665,7 +5835,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5676,7 +5846,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5687,7 +5857,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5698,7 +5868,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5709,7 +5879,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5720,7 +5890,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5731,7 +5901,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5742,7 +5912,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5753,7 +5923,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5764,7 +5934,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5775,7 +5945,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5786,7 +5956,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5797,7 +5967,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5808,7 +5978,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5819,7 +5989,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5830,7 +6000,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5841,7 +6011,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5852,7 +6022,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5863,7 +6033,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5874,7 +6044,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5885,7 +6055,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5896,7 +6066,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5907,7 +6077,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5918,7 +6088,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5929,7 +6099,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5940,7 +6110,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5951,7 +6121,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5962,7 +6132,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5973,7 +6143,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5984,7 +6154,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -5995,7 +6165,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6006,7 +6176,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6017,7 +6187,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6028,7 +6198,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6039,7 +6209,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6050,7 +6220,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6061,7 +6231,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6072,7 +6242,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6083,7 +6253,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6094,7 +6264,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6105,7 +6275,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6116,7 +6286,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6127,7 +6297,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6138,7 +6308,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6149,7 +6319,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6160,7 +6330,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6171,7 +6341,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6182,7 +6352,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6193,7 +6363,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6204,7 +6374,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6215,7 +6385,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6226,7 +6396,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6237,7 +6407,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6248,7 +6418,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6259,7 +6429,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6270,7 +6440,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6281,7 +6451,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6292,7 +6462,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6303,7 +6473,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6314,7 +6484,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6325,7 +6495,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6336,7 +6506,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6347,7 +6517,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6358,7 +6528,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6369,7 +6539,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6380,7 +6550,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6391,7 +6561,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6402,7 +6572,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6413,7 +6583,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6424,7 +6594,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6435,7 +6605,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6446,7 +6616,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6457,7 +6627,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6468,7 +6638,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6479,7 +6649,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6490,7 +6660,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6501,7 +6671,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6512,7 +6682,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6523,7 +6693,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6534,7 +6704,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6545,7 +6715,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6556,7 +6726,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6567,7 +6737,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6578,7 +6748,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6589,7 +6759,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6600,7 +6770,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6611,7 +6781,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6622,7 +6792,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6633,7 +6803,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6644,7 +6814,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6655,7 +6825,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6666,7 +6836,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6677,7 +6847,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6688,7 +6858,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6699,7 +6869,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6710,7 +6880,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6721,7 +6891,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6732,7 +6902,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6743,7 +6913,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6754,7 +6924,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6765,7 +6935,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6776,7 +6946,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6787,7 +6957,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6798,7 +6968,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6809,7 +6979,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6820,7 +6990,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6831,7 +7001,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6842,7 +7012,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6853,7 +7023,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6864,7 +7034,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6875,7 +7045,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6886,7 +7056,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6897,7 +7067,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6908,7 +7078,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6919,7 +7089,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6930,7 +7100,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6941,7 +7111,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6952,7 +7122,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6963,7 +7133,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6974,7 +7144,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6985,7 +7155,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -6996,7 +7166,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -7007,7 +7177,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -7018,7 +7188,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -7029,7 +7199,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -7040,7 +7210,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -7051,7 +7221,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -7062,7 +7232,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -7073,7 +7243,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -7084,7 +7254,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -7095,7 +7265,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -7106,7 +7276,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -7117,7 +7287,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -7128,7 +7298,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -7139,7 +7309,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -7150,7 +7320,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -7161,7 +7331,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -7172,7 +7342,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -7183,7 +7353,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -7194,7 +7364,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -7205,7 +7375,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -7216,7 +7386,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -7227,7 +7397,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -7238,7 +7408,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -7249,7 +7419,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -7260,7 +7430,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -7271,7 +7441,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -7282,7 +7452,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -7293,7 +7463,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -7304,7 +7474,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -7315,7 +7485,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -7326,7 +7496,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -7337,7 +7507,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -7348,7 +7518,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -7359,7 +7529,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -7370,7 +7540,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -7381,7 +7551,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -7392,7 +7562,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -7403,7 +7573,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -7414,7 +7584,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -7425,7 +7595,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -7436,7 +7606,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -7447,7 +7617,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -7458,7 +7628,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -7469,7 +7639,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -7480,7 +7650,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -7491,7 +7661,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -7502,7 +7672,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -7513,7 +7683,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -7524,7 +7694,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -7535,7 +7705,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -7546,7 +7716,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -7557,7 +7727,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -7568,7 +7738,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -7579,7 +7749,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -7590,7 +7760,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -7601,7 +7771,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -7612,7 +7782,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -7623,7 +7793,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -7634,7 +7804,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -7645,7 +7815,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -7656,7 +7826,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -7667,7 +7837,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -7678,7 +7848,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -7689,7 +7859,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -7700,7 +7870,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -7711,7 +7881,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -7722,7 +7892,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -7733,7 +7903,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -7744,7 +7914,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -7755,7 +7925,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -7766,7 +7936,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -7777,7 +7947,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "O2EM"
+        "o2em"
       ],
       "category": "game_data"
     },
@@ -7788,7 +7958,7 @@
       "required": true,
       "reason": "no_platform_slug",
       "cores": [
-        "FinalBurn Neo"
+        "fbneo"
       ]
     },
     {
@@ -7798,7 +7968,7 @@
       "required": true,
       "reason": "no_platform_slug",
       "cores": [
-        "Gearcoleco"
+        "gearcoleco"
       ]
     },
     {
@@ -7808,7 +7978,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "X Millennium"
+        "x1"
       ]
     },
     {
@@ -7818,7 +7988,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "X Millennium"
+        "x1"
       ]
     },
     {
@@ -7828,7 +7998,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "X Millennium"
+        "x1"
       ]
     },
     {
@@ -7838,7 +8008,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "X Millennium"
+        "x1"
       ]
     },
     {
@@ -7848,7 +8018,7 @@
       "required": false,
       "reason": "below_platform_folder",
       "cores": [
-        "X Millennium"
+        "x1"
       ]
     }
   ],
@@ -7871,6 +8041,9 @@
     ],
     "armsx2": [
       "armsx2_libretro"
+    ],
+    "azahar": [
+      "azahar-sa"
     ],
     "basiliskii": [
       "basilisk"
@@ -8270,6 +8443,15 @@
     ],
     "vbam": [
       "vba-m"
+    ],
+    "vice_x128": [
+      "x128"
+    ],
+    "vice_x64": [
+      "x64"
+    ],
+    "vice_xvic": [
+      "xvic"
     ],
     "x1": [
       "xmil"

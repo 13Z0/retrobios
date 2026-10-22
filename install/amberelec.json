@@ -33,8 +33,111 @@
   "total_size": 5342026087,
   "pack_files": 4955,
   "pack_size": 5342026087,
-  "total_omitted": 59,
+  "total_omitted": 67,
   "omitted_files": [
+    {
+      "dest": "FB Alpha 2012/hiscore.dat",
+      "root": "save",
+      "core_folder": "FB Alpha 2012",
+      "name": "hiscore.dat",
+      "system": "arcade",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "fbalpha2012"
+      ]
+    },
+    {
+      "dest": "Stella/stella/KVB1.WAV",
+      "root": "save",
+      "core_folder": "Stella",
+      "name": "KVB1.WAV",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "stella"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "Stella/stella/KVB2.WAV",
+      "root": "save",
+      "core_folder": "Stella",
+      "name": "KVB2.WAV",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "stella"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "Stella/stella/KVB3.WAV",
+      "root": "save",
+      "core_folder": "Stella",
+      "name": "KVB3.WAV",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "stella"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "Stella/stella/KVS1.WAV",
+      "root": "save",
+      "core_folder": "Stella",
+      "name": "KVS1.WAV",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "stella"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "Stella/stella/KVS2.WAV",
+      "root": "save",
+      "core_folder": "Stella",
+      "name": "KVS2.WAV",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "stella"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "Stella/stella/KVS3.WAV",
+      "root": "save",
+      "core_folder": "Stella",
+      "name": "KVS3.WAV",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "stella"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "Stella/stella/KVSHARED.WAV",
+      "root": "save",
+      "core_folder": "Stella",
+      "name": "KVSHARED.WAV",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "stella"
+      ],
+      "category": "game_data"
+    },
     {
       "dest": "bios/BLOOD.GRP",
       "name": "BLOOD.GRP",
@@ -1018,6 +1121,9 @@
       "SPECCY",
       "com.fms.speccy",
       "com.fms.speccy.deluxe"
+    ],
+    "stella": [
+      "STELLASA"
     ],
     "tgbdual": [
       "TGB Dual"

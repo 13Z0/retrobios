@@ -16,12 +16,96 @@
     }
   ],
   "standalone_copies": [],
-  "total_files": 8528,
-  "total_size": 8749842554,
-  "pack_files": 11084,
-  "pack_size": 8783209624,
-  "total_omitted": 215,
+  "total_files": 8504,
+  "total_size": 8738583919,
+  "pack_files": 11060,
+  "pack_size": 8771950989,
+  "total_omitted": 321,
   "omitted_files": [
+    {
+      "dest": "Azahar/Azahar/nand/private/movable.sed",
+      "root": "save",
+      "core_folder": "Azahar",
+      "name": "movable.sed",
+      "system": "nintendo-3ds",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "azahar"
+      ]
+    },
+    {
+      "dest": "Azahar/Azahar/nand/rw/sys/LocalFriendCodeSeed_B",
+      "root": "save",
+      "core_folder": "Azahar",
+      "name": "LocalFriendCodeSeed_B",
+      "system": "nintendo-3ds",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "azahar"
+      ]
+    },
+    {
+      "dest": "Azahar/Azahar/nand/rw/sys/SecureInfo_A",
+      "root": "save",
+      "core_folder": "Azahar",
+      "name": "SecureInfo_A",
+      "system": "nintendo-3ds",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "azahar"
+      ]
+    },
+    {
+      "dest": "Azahar/Azahar/sysdata/keys.txt",
+      "root": "save",
+      "core_folder": "Azahar",
+      "name": "keys.txt",
+      "system": "nintendo-3ds",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "azahar"
+      ]
+    },
+    {
+      "dest": "Azahar/Azahar/sysdata/otp.bin",
+      "root": "save",
+      "core_folder": "Azahar",
+      "name": "otp.bin",
+      "system": "nintendo-3ds",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "azahar"
+      ]
+    },
+    {
+      "dest": "Azahar/Azahar/sysdata/seeddb.bin",
+      "root": "save",
+      "core_folder": "Azahar",
+      "name": "seeddb.bin",
+      "system": "nintendo-3ds",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "azahar"
+      ]
+    },
+    {
+      "dest": "Azahar/Azahar/sysdata/shared_font.bin",
+      "root": "save",
+      "core_folder": "Azahar",
+      "name": "shared_font.bin",
+      "system": "nintendo-3ds",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "azahar"
+      ]
+    },
     {
       "dest": "BOOT_MMR.ROM",
       "name": "BOOT_MMR.ROM",
@@ -30,6 +114,683 @@
       "reason": "not_found",
       "cores": [
         "xm7"
+      ]
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10042400/content/CafeCn.ttf",
+      "root": "save",
+      "name": "CafeCn.ttf",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "cemu"
+      ]
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10042400/content/CafeKr.ttf",
+      "root": "save",
+      "name": "CafeKr.ttf",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "cemu"
+      ]
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10042400/content/CafeStd.ttf",
+      "root": "save",
+      "name": "CafeStd.ttf",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "cemu"
+      ]
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10042400/content/CafeTw.ttf",
+      "root": "save",
+      "name": "CafeTw.ttf",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "cemu"
+      ]
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/1004f000/content/00/swkbd/swkbd.pack",
+      "root": "save",
+      "name": "swkbd.pack",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "cemu"
+      ]
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10051000/content/00/erreula/erreula.pack",
+      "root": "save",
+      "name": "erreula.pack",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "cemu"
+      ]
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/ccerts/WIIU_ACCOUNT_1_CERT.der",
+      "root": "save",
+      "name": "WIIU_ACCOUNT_1_CERT.der",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "cemu"
+      ]
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/ccerts/WIIU_ACCOUNT_1_RSA_KEY.aes",
+      "root": "save",
+      "name": "WIIU_ACCOUNT_1_RSA_KEY.aes",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "cemu"
+      ]
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/ccerts/WIIU_COMMON_1_CERT.der",
+      "root": "save",
+      "name": "WIIU_COMMON_1_CERT.der",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "cemu"
+      ]
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/ccerts/WIIU_COMMON_1_RSA_KEY.aes",
+      "root": "save",
+      "name": "WIIU_COMMON_1_RSA_KEY.aes",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "cemu"
+      ]
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/ccerts/WIIU_OLIVE_1_CERT.der",
+      "root": "save",
+      "name": "WIIU_OLIVE_1_CERT.der",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "cemu"
+      ]
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/ccerts/WIIU_OLIVE_1_RSA_KEY.aes",
+      "root": "save",
+      "name": "WIIU_OLIVE_1_RSA_KEY.aes",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "cemu"
+      ]
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/ccerts/WIIU_VINO_1_CERT.der",
+      "root": "save",
+      "name": "WIIU_VINO_1_CERT.der",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "cemu"
+      ]
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/ccerts/WIIU_VINO_1_RSA_KEY.aes",
+      "root": "save",
+      "name": "WIIU_VINO_1_RSA_KEY.aes",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "cemu"
+      ]
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/ccerts/WIIU_WOOD_1_CERT.der",
+      "root": "save",
+      "name": "WIIU_WOOD_1_CERT.der",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "cemu"
+      ]
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/ccerts/WIIU_WOOD_1_RSA_KEY.aes",
+      "root": "save",
+      "name": "WIIU_WOOD_1_RSA_KEY.aes",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "cemu"
+      ]
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/ADDTRUST_EXT_CA_ROOT.der",
+      "root": "save",
+      "name": "ADDTRUST_EXT_CA_ROOT.der",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "cemu"
+      ]
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/BALTIMORE_CYBERTRUST_ROOT_CA.der",
+      "root": "save",
+      "name": "BALTIMORE_CYBERTRUST_ROOT_CA.der",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "cemu"
+      ]
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/CACERT_NINTENDO_CA.der",
+      "root": "save",
+      "name": "CACERT_NINTENDO_CA.der",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "cemu"
+      ]
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/CACERT_NINTENDO_CA_G2.der",
+      "root": "save",
+      "name": "CACERT_NINTENDO_CA_G2.der",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "cemu"
+      ]
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/CACERT_NINTENDO_CA_G3.der",
+      "root": "save",
+      "name": "CACERT_NINTENDO_CA_G3.der",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "cemu"
+      ]
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/CACERT_NINTENDO_CLASS2_CA.der",
+      "root": "save",
+      "name": "CACERT_NINTENDO_CLASS2_CA.der",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "cemu"
+      ]
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/CACERT_NINTENDO_CLASS2_CA_G2.der",
+      "root": "save",
+      "name": "CACERT_NINTENDO_CLASS2_CA_G2.der",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "cemu"
+      ]
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/CACERT_NINTENDO_CLASS2_CA_G3.der",
+      "root": "save",
+      "name": "CACERT_NINTENDO_CLASS2_CA_G3.der",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "cemu"
+      ]
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/COMODO_CA.der",
+      "root": "save",
+      "name": "COMODO_CA.der",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "cemu"
+      ]
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/CYBERTRUST_GLOBAL_ROOT_CA.der",
+      "root": "save",
+      "name": "CYBERTRUST_GLOBAL_ROOT_CA.der",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "cemu"
+      ]
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/DIGICERT_ASSURED_ID_ROOT_CA.der",
+      "root": "save",
+      "name": "DIGICERT_ASSURED_ID_ROOT_CA.der",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "cemu"
+      ]
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/DIGICERT_ASSURED_ID_ROOT_CA_G2.der",
+      "root": "save",
+      "name": "DIGICERT_ASSURED_ID_ROOT_CA_G2.der",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "cemu"
+      ]
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/DIGICERT_GLOBAL_ROOT_CA.der",
+      "root": "save",
+      "name": "DIGICERT_GLOBAL_ROOT_CA.der",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "cemu"
+      ]
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/DIGICERT_GLOBAL_ROOT_CA_G2.der",
+      "root": "save",
+      "name": "DIGICERT_GLOBAL_ROOT_CA_G2.der",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "cemu"
+      ]
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/DIGICERT_HIGH_ASSURANCE_EV_ROOT_CA.der",
+      "root": "save",
+      "name": "DIGICERT_HIGH_ASSURANCE_EV_ROOT_CA.der",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "cemu"
+      ]
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/ENTRUST_CA_2048.der",
+      "root": "save",
+      "name": "ENTRUST_CA_2048.der",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "cemu"
+      ]
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/ENTRUST_ROOT_CA.der",
+      "root": "save",
+      "name": "ENTRUST_ROOT_CA.der",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "cemu"
+      ]
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/ENTRUST_ROOT_CA_G2.der",
+      "root": "save",
+      "name": "ENTRUST_ROOT_CA_G2.der",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "cemu"
+      ]
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/ENTRUST_SECURE_SERVER_CA.der",
+      "root": "save",
+      "name": "ENTRUST_SECURE_SERVER_CA.der",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "cemu"
+      ]
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/EQUIFAX_SECURE_CA.der",
+      "root": "save",
+      "name": "EQUIFAX_SECURE_CA.der",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "cemu"
+      ]
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/GEOTRUST_GLOBAL_CA.der",
+      "root": "save",
+      "name": "GEOTRUST_GLOBAL_CA.der",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "cemu"
+      ]
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/GEOTRUST_GLOBAL_CA2.der",
+      "root": "save",
+      "name": "GEOTRUST_GLOBAL_CA2.der",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "cemu"
+      ]
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/GEOTRUST_PRIMARY_CA.der",
+      "root": "save",
+      "name": "GEOTRUST_PRIMARY_CA.der",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "cemu"
+      ]
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/GEOTRUST_PRIMARY_CA_G3.der",
+      "root": "save",
+      "name": "GEOTRUST_PRIMARY_CA_G3.der",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "cemu"
+      ]
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/GLOBALSIGN_ROOT_CA.der",
+      "root": "save",
+      "name": "GLOBALSIGN_ROOT_CA.der",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "cemu"
+      ]
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/GLOBALSIGN_ROOT_CA_R2.der",
+      "root": "save",
+      "name": "GLOBALSIGN_ROOT_CA_R2.der",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "cemu"
+      ]
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/GLOBALSIGN_ROOT_CA_R3.der",
+      "root": "save",
+      "name": "GLOBALSIGN_ROOT_CA_R3.der",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "cemu"
+      ]
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/GTE_CYBERTRUST_GLOBAL_ROOT.der",
+      "root": "save",
+      "name": "GTE_CYBERTRUST_GLOBAL_ROOT.der",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "cemu"
+      ]
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/THAWTE_PREMIUM_SERVER_CA.der",
+      "root": "save",
+      "name": "THAWTE_PREMIUM_SERVER_CA.der",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "cemu"
+      ]
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/THAWTE_PRIMARY_ROOT_CA.der",
+      "root": "save",
+      "name": "THAWTE_PRIMARY_ROOT_CA.der",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "cemu"
+      ]
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/THAWTE_PRIMARY_ROOT_CA_G3.der",
+      "root": "save",
+      "name": "THAWTE_PRIMARY_ROOT_CA_G3.der",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "cemu"
+      ]
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/UTN_DATACORP_SGC_CA.der",
+      "root": "save",
+      "name": "UTN_DATACORP_SGC_CA.der",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "cemu"
+      ]
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/UTN_USERFIRST_HARDWARE_CA.der",
+      "root": "save",
+      "name": "UTN_USERFIRST_HARDWARE_CA.der",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "cemu"
+      ]
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/VERISIGN_CLASS3_PUBLIC_PRIMARY_CA.der",
+      "root": "save",
+      "name": "VERISIGN_CLASS3_PUBLIC_PRIMARY_CA.der",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "cemu"
+      ]
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/VERISIGN_CLASS3_PUBLIC_PRIMARY_CA_G2.der",
+      "root": "save",
+      "name": "VERISIGN_CLASS3_PUBLIC_PRIMARY_CA_G2.der",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "cemu"
+      ]
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/VERISIGN_CLASS3_PUBLIC_PRIMARY_CA_G3.der",
+      "root": "save",
+      "name": "VERISIGN_CLASS3_PUBLIC_PRIMARY_CA_G3.der",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "cemu"
+      ]
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/VERISIGN_CLASS3_PUBLIC_PRIMARY_CA_G5.der",
+      "root": "save",
+      "name": "VERISIGN_CLASS3_PUBLIC_PRIMARY_CA_G5.der",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "cemu"
+      ]
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/VERISIGN_UNIVERSAL_ROOT_CA.der",
+      "root": "save",
+      "name": "VERISIGN_UNIVERSAL_ROOT_CA.der",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "cemu"
+      ]
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/VERIZON_GLOBAL_ROOT_CA.der",
+      "root": "save",
+      "name": "VERIZON_GLOBAL_ROOT_CA.der",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "cemu"
+      ]
+    },
+    {
+      "dest": "Citra/Citra/sysdata/aes_keys.txt",
+      "root": "save",
+      "core_folder": "Citra",
+      "name": "aes_keys.txt",
+      "system": "nintendo-3ds",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "citra"
+      ]
+    },
+    {
+      "dest": "Citra/Citra/sysdata/boot9.bin",
+      "root": "save",
+      "core_folder": "Citra",
+      "name": "boot9.bin",
+      "system": "nintendo-3ds",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "citra"
+      ]
+    },
+    {
+      "dest": "Citra/Citra/sysdata/seeddb.bin",
+      "root": "save",
+      "core_folder": "Citra",
+      "name": "seeddb.bin",
+      "system": "nintendo-3ds",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "citra"
+      ]
+    },
+    {
+      "dest": "Citra/Citra/sysdata/shared_font.bin",
+      "root": "save",
+      "core_folder": "Citra",
+      "name": "shared_font.bin",
+      "system": "nintendo-3ds",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "citra"
+      ]
+    },
+    {
+      "dest": "Citra2018/Citra/sysdata/aes_keys.txt",
+      "root": "save",
+      "core_folder": "Citra2018",
+      "name": "aes_keys.txt",
+      "system": "nintendo-3ds",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "citra2018"
+      ]
+    },
+    {
+      "dest": "Citra2018/Citra/sysdata/shared_font.bin",
+      "root": "save",
+      "core_folder": "Citra2018",
+      "name": "shared_font.bin",
+      "system": "nintendo-3ds",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "citra2018"
       ]
     },
     {
@@ -86,6 +847,38 @@
       ]
     },
     {
+      "dest": "FB Alpha 2012 CPS-3/hiscore.dat",
+      "root": "save",
+      "core_folder": "FB Alpha 2012 CPS-3",
+      "name": "hiscore.dat",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "fbalpha2012_cps3"
+      ],
+      "systems": [
+        "arcade"
+      ],
+      "held": true
+    },
+    {
+      "dest": "FB Alpha 2012/hiscore.dat",
+      "root": "save",
+      "core_folder": "FB Alpha 2012",
+      "name": "hiscore.dat",
+      "system": "arcade",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "fbalpha2012"
+      ],
+      "systems": [
+        "arcade"
+      ],
+      "held": true
+    },
+    {
       "dest": "FBASIC30.ROM",
       "name": "FBASIC30.ROM",
       "system": "fm7",
@@ -103,6 +896,78 @@
       "reason": "not_found",
       "cores": [
         "xm7"
+      ]
+    },
+    {
+      "dest": "Ishiiruka/User/Wii/clientca.pem",
+      "root": "save",
+      "core_folder": "Ishiiruka",
+      "name": "clientca.pem",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "ishiiruka"
+      ]
+    },
+    {
+      "dest": "Ishiiruka/User/Wii/clientcakey.pem",
+      "root": "save",
+      "core_folder": "Ishiiruka",
+      "name": "clientcakey.pem",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "ishiiruka"
+      ]
+    },
+    {
+      "dest": "Ishiiruka/User/Wii/rootca.pem",
+      "root": "save",
+      "core_folder": "Ishiiruka",
+      "name": "rootca.pem",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "ishiiruka"
+      ]
+    },
+    {
+      "dest": "Ishiiruka/User/Wii/sd.raw",
+      "root": "save",
+      "core_folder": "Ishiiruka",
+      "name": "sd.raw",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "ishiiruka"
+      ]
+    },
+    {
+      "dest": "Ishiiruka/User/Wii/shared2/sys/SYSCONF",
+      "root": "save",
+      "core_folder": "Ishiiruka",
+      "name": "SYSCONF",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "ishiiruka"
+      ]
+    },
+    {
+      "dest": "Ishiiruka/User/Wii/title/00000001/00000002/data/setting.txt",
+      "root": "save",
+      "core_folder": "Ishiiruka",
+      "name": "setting.txt",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "ishiiruka"
       ]
     },
     {
@@ -172,6 +1037,30 @@
       "category": "game_data"
     },
     {
+      "dest": "Panda3DS/Emulator Files/sysdata/aes_keys.txt",
+      "root": "save",
+      "core_folder": "Panda3DS",
+      "name": "aes_keys.txt",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "panda3ds"
+      ]
+    },
+    {
+      "dest": "Panda3DS/Emulator Files/sysdata/seeddb.bin",
+      "root": "save",
+      "core_folder": "Panda3DS",
+      "name": "seeddb.bin",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "panda3ds"
+      ]
+    },
+    {
       "dest": "ROM",
       "name": "ROM",
       "system": "apple-macintosh",
@@ -219,6 +1108,121 @@
       "reason": "not_found",
       "cores": [
         "xm7"
+      ]
+    },
+    {
+      "dest": "Stella/stella/KVB1.WAV",
+      "root": "save",
+      "core_folder": "Stella",
+      "name": "KVB1.WAV",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "stella"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "Stella/stella/KVB2.WAV",
+      "root": "save",
+      "core_folder": "Stella",
+      "name": "KVB2.WAV",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "stella"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "Stella/stella/KVB3.WAV",
+      "root": "save",
+      "core_folder": "Stella",
+      "name": "KVB3.WAV",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "stella"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "Stella/stella/KVS1.WAV",
+      "root": "save",
+      "core_folder": "Stella",
+      "name": "KVS1.WAV",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "stella"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "Stella/stella/KVS2.WAV",
+      "root": "save",
+      "core_folder": "Stella",
+      "name": "KVS2.WAV",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "stella"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "Stella/stella/KVS3.WAV",
+      "root": "save",
+      "core_folder": "Stella",
+      "name": "KVS3.WAV",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "stella"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "Stella/stella/KVSHARED.WAV",
+      "root": "save",
+      "core_folder": "Stella",
+      "name": "KVSHARED.WAV",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "stella"
+      ],
+      "category": "game_data"
+    },
+    {
+      "dest": "Trident/Emulator Files/sysdata/aes_keys.txt",
+      "root": "save",
+      "core_folder": "Trident",
+      "name": "aes_keys.txt",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "trident"
+      ]
+    },
+    {
+      "dest": "Trident/Emulator Files/sysdata/seeddb.bin",
+      "root": "save",
+      "core_folder": "Trident",
+      "name": "seeddb.bin",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "trident"
       ]
     },
     {
@@ -517,6 +1521,94 @@
       "category": "game_data"
     },
     {
+      "dest": "dolphin-emu/User/GBA/gba_bios.bin",
+      "root": "save",
+      "core_folder": "dolphin-emu",
+      "name": "gba_bios.bin",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "dolphin"
+      ],
+      "systems": [
+        "nintendo-gba"
+      ],
+      "held": true
+    },
+    {
+      "dest": "dolphin-emu/User/Load/WiiSD.raw",
+      "root": "save",
+      "core_folder": "dolphin-emu",
+      "name": "WiiSD.raw",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "dolphin"
+      ]
+    },
+    {
+      "dest": "dolphin-emu/User/Wii/clientca.pem",
+      "root": "save",
+      "core_folder": "dolphin-emu",
+      "name": "clientca.pem",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "dolphin"
+      ]
+    },
+    {
+      "dest": "dolphin-emu/User/Wii/clientcakey.pem",
+      "root": "save",
+      "core_folder": "dolphin-emu",
+      "name": "clientcakey.pem",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "dolphin"
+      ]
+    },
+    {
+      "dest": "dolphin-emu/User/Wii/rootca.pem",
+      "root": "save",
+      "core_folder": "dolphin-emu",
+      "name": "rootca.pem",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "dolphin"
+      ]
+    },
+    {
+      "dest": "dolphin-emu/User/Wii/shared2/sys/SYSCONF",
+      "root": "save",
+      "core_folder": "dolphin-emu",
+      "name": "SYSCONF",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "dolphin"
+      ]
+    },
+    {
+      "dest": "dolphin-emu/User/Wii/title/00000001/00000002/data/setting.txt",
+      "root": "save",
+      "core_folder": "dolphin-emu",
+      "name": "setting.txt",
+      "system": "",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "dolphin"
+      ]
+    },
+    {
       "dest": "doom2bfg.wad",
       "name": "doom2bfg.wad",
       "system": "doom",
@@ -668,6 +1760,142 @@
         "prboom"
       ],
       "category": "game_data"
+    },
+    {
+      "dest": "fsuae/Kickstarts/amiga-ext-130-cdtv.rom",
+      "root": "save",
+      "name": "amiga-ext-130-cdtv.rom",
+      "system": "amiga",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "fsuae"
+      ]
+    },
+    {
+      "dest": "fsuae/Kickstarts/amiga-ext-310-cd32.rom",
+      "root": "save",
+      "name": "amiga-ext-310-cd32.rom",
+      "system": "amiga",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "fsuae"
+      ]
+    },
+    {
+      "dest": "fsuae/Kickstarts/amiga-os-120.rom",
+      "root": "save",
+      "name": "amiga-os-120.rom",
+      "system": "amiga",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "fsuae"
+      ]
+    },
+    {
+      "dest": "fsuae/Kickstarts/amiga-os-130.rom",
+      "root": "save",
+      "name": "amiga-os-130.rom",
+      "system": "amiga",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "fsuae"
+      ]
+    },
+    {
+      "dest": "fsuae/Kickstarts/amiga-os-204.rom",
+      "root": "save",
+      "name": "amiga-os-204.rom",
+      "system": "amiga",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "fsuae"
+      ]
+    },
+    {
+      "dest": "fsuae/Kickstarts/amiga-os-205.rom",
+      "root": "save",
+      "name": "amiga-os-205.rom",
+      "system": "amiga",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "fsuae"
+      ]
+    },
+    {
+      "dest": "fsuae/Kickstarts/amiga-os-310-a1200.rom",
+      "root": "save",
+      "name": "amiga-os-310-a1200.rom",
+      "system": "amiga",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "fsuae"
+      ]
+    },
+    {
+      "dest": "fsuae/Kickstarts/amiga-os-310-a3000.rom",
+      "root": "save",
+      "name": "amiga-os-310-a3000.rom",
+      "system": "amiga",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "fsuae"
+      ]
+    },
+    {
+      "dest": "fsuae/Kickstarts/amiga-os-310-a4000.rom",
+      "root": "save",
+      "name": "amiga-os-310-a4000.rom",
+      "system": "amiga",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "fsuae"
+      ]
+    },
+    {
+      "dest": "fsuae/Kickstarts/amiga-os-310-cd32.rom",
+      "root": "save",
+      "name": "amiga-os-310-cd32.rom",
+      "system": "amiga",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "fsuae"
+      ]
+    },
+    {
+      "dest": "fsuae/Kickstarts/cd32fmv.rom",
+      "root": "save",
+      "name": "cd32fmv.rom",
+      "system": "amiga",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "fsuae"
+      ]
+    },
+    {
+      "dest": "fsuae/Kickstarts/rom.key",
+      "root": "save",
+      "name": "rom.key",
+      "system": "amiga",
+      "required": false,
+      "reason": "no_save_directory",
+      "cores": [
+        "fsuae"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ],
+      "held": true
     },
     {
       "dest": "fury.grp",
@@ -2826,6 +4054,9 @@
       "SPECCY",
       "com.fms.speccy",
       "com.fms.speccy.deluxe"
+    ],
+    "stella": [
+      "STELLASA"
     ],
     "supermariowar": [
       "smw"
@@ -15470,16 +16701,6 @@
       "systems": [
         "atari-400-800",
         "atari-5200"
-      ]
-    },
-    {
-      "dest": "Azahar/sysdata/keys.txt",
-      "sha1": "5288772be438b86978a801e6dcb14228ad3a20af",
-      "sha256": "ea8b3d7c752d85f2326b9bfa01615414ab34ba052f87481b0ff4003fd887e50a",
-      "size": 7424,
-      "repo_path": "bios/Other/azaharplus/sysdata/keys.txt",
-      "cores": [
-        "azahar"
       ]
     },
     {
@@ -31216,149 +32437,6 @@
       ],
       "systems": [
         "microsoft-msx"
-      ]
-    },
-    {
-      "dest": "amiga-os-130.rom",
-      "sha1": "891e9a547772fe0c6c19b610baf8bc4ea7fcb785",
-      "sha256": "ee05862d8102a08436ac4056da7d549db31625c7d47b24dfb7b3c9a5c113ca53",
-      "size": 262144,
-      "repo_path": "bios/Commodore/Amiga/Kickstart-v1.3-rev34.5-1987-Commodore-A500-A1000-A2000-CDTV.rom",
-      "cores": [
-        "fsuae"
-      ],
-      "systems": [
-        "commodore-amiga"
-      ]
-    },
-    {
-      "dest": "amiga-os-204.rom",
-      "sha1": "c5839f5cb98a7a8947065c3ed2f14f5f42e334a1",
-      "sha256": "d0b70e8a1772614b897f92c33cb299bed3fc8e3de488fc12f67f97fc2486eb79",
-      "size": 524288,
-      "repo_path": "bios/Commodore/Amiga/amiga-os-204.rom",
-      "cores": [
-        "fsuae"
-      ],
-      "systems": [
-        "commodore-amiga"
-      ]
-    },
-    {
-      "dest": "amiga-os-205.rom",
-      "sha1": "02843c4253bbd29aba535b0aa3bd9a85034ecde4",
-      "sha256": "8d57d6e9d976df42d91ff9d10a5eedaede1a00e3b4b34cad750ca5ff7229f28a",
-      "size": 524288,
-      "repo_path": "bios/Commodore/Amiga/amiga-os-205-a600.rom",
-      "cores": [
-        "fsuae"
-      ],
-      "systems": [
-        "commodore-amiga"
-      ]
-    },
-    {
-      "dest": "amiga-os-120.rom",
-      "sha1": "11f9e62cf299f72184835b7b2a70a16333fc0d88",
-      "sha256": "87cddb1f499e32758de20145e73031a84bab299e3f6e5c8487e76d02b2ee9d16",
-      "size": 262144,
-      "repo_path": "bios/Commodore/Amiga/amiga-os-120.rom",
-      "cores": [
-        "fsuae"
-      ],
-      "systems": [
-        "commodore-amiga"
-      ]
-    },
-    {
-      "dest": "amiga-os-310-a1200.rom",
-      "sha1": "e21545723fe8374e91342617604f1b3d703094f1",
-      "sha256": "6d43840d4099a74170ea0f0425b6257c3891ebcaa39c4d1840075a9ab22b5707",
-      "size": 524288,
-      "repo_path": "bios/Commodore/Amiga/amiga-os-310-a1200.rom",
-      "cores": [
-        "fsuae"
-      ],
-      "systems": [
-        "commodore-amiga"
-      ]
-    },
-    {
-      "dest": "amiga-os-310-a3000.rom",
-      "sha1": "f8e210d72b4c4853e0c9b85d223ba20e3d1b36ee",
-      "sha256": "f2c9307aacb92b203a3135a35185deffad6c66cfa8d79920b235d7cf9a5222c4",
-      "size": 524288,
-      "repo_path": "bios/Commodore/Amiga/amiga-os-310-a3000.rom",
-      "cores": [
-        "fsuae"
-      ],
-      "systems": [
-        "commodore-amiga"
-      ]
-    },
-    {
-      "dest": "amiga-os-310-a4000.rom",
-      "sha1": "5fe04842d04a489720f0f4bb0e46948199406f49",
-      "sha256": "71236ed62c85394a3ad7d0d8d65405bac7a10083e06ba6b82120dacc7a00fe9a",
-      "size": 524288,
-      "repo_path": "bios/Commodore/Amiga/amiga-os-310-a4000.rom",
-      "cores": [
-        "fsuae"
-      ],
-      "systems": [
-        "commodore-amiga"
-      ]
-    },
-    {
-      "dest": "amiga-os-310-cd32.rom",
-      "sha1": "3525be8887f79b5929e017b42380a79edfee542d",
-      "sha256": "3586355514947b5ab48c8755dc004fab94f188b19e7bce491c8f9693499e830b",
-      "size": 524288,
-      "repo_path": "bios/Commodore/Amiga/amiga-os-310-cd32.rom",
-      "cores": [
-        "fsuae"
-      ],
-      "systems": [
-        "commodore-amiga"
-      ]
-    },
-    {
-      "dest": "amiga-ext-310-cd32.rom",
-      "sha1": "5bef3d628ce59cc02a66e6e4ae0da48f60e78f7f",
-      "sha256": "d964826432559994ffe329f643fd4e42dbbff313362d9434945725d7119cae87",
-      "size": 524288,
-      "repo_path": "bios/Commodore/Amiga/amiga-ext-310-cd32.rom",
-      "cores": [
-        "fsuae"
-      ],
-      "systems": [
-        "commodore-amiga"
-      ]
-    },
-    {
-      "dest": "cd32fmv.rom",
-      "sha1": "03ca81c7a7b259cf64bc9582863eca0f6529f435",
-      "sha256": "680e654880c891a3b03e6107ed30b10903efca16c1dac1b4c8e7835f4e37acb6",
-      "size": 262144,
-      "repo_path": "bios/Commodore/Amiga/cd32fmv.rom",
-      "cores": [
-        "fsuae"
-      ],
-      "systems": [
-        "commodore-amiga"
-      ]
-    },
-    {
-      "dest": "amiga-ext-130-cdtv.rom",
-      "sha1": "7ba40ffa17e500ed9fed041f3424bd81d9c907be",
-      "sha256": "6e48bb768539e8dae352553e5fdfa860682edaf9e26b105fadd8e26103171765",
-      "size": 262144,
-      "repo_path": "bios/Commodore/Amiga/amiga-ext-130-cdtv.rom",
-      "cores": [
-        "fsuae"
-      ],
-      "systems": [
-        "commodore-amiga"
       ]
     },
     {
@@ -86376,7 +87454,6 @@
       "cores": [
         "amiberry",
         "fs-uae",
-        "fsuae",
         "puae",
         "puae2021",
         "uae4arm"
@@ -86448,66 +87525,6 @@
       ],
       "systems": [
         "commodore-amiga"
-      ]
-    },
-    {
-      "dest": "Azahar/sysdata/shared_font.bin",
-      "sha1": "60022d6d026c8df950722478aab25702a0dfa067",
-      "sha256": "a06aaf6b50ebc38ebdccc59b913d4a1c0cc7005289957530acaaf78ffc49dddd",
-      "size": 3145728,
-      "repo_path": "bios/Nintendo/3DS/Citra/sysdata/shared_font.bin",
-      "cores": [
-        "azahar"
-      ]
-    },
-    {
-      "dest": "Azahar/sysdata/seeddb.bin",
-      "sha1": "9e2c006997761082be87cf316e57c4da5cddbc62",
-      "sha256": "ff485c60090185aff05354ece01f86b61f6020332bed0f9090c58d4678e5a180",
-      "size": 53264,
-      "repo_path": "bios/Nintendo/3DS/Citra/sysdata/seeddb.bin",
-      "cores": [
-        "azahar"
-      ]
-    },
-    {
-      "dest": "Azahar/sysdata/otp.bin",
-      "sha1": "49489245b400f62c62faf1736b7f0a70714d3c49",
-      "sha256": "e2f1810ceff3d1fd4f1c08ffc1f4d47aa8efca551edd24cd5686205c71a3b13b",
-      "size": 256,
-      "repo_path": "bios/Nintendo/3DS/otp.bin",
-      "cores": [
-        "azahar"
-      ]
-    },
-    {
-      "dest": "Azahar/nand/private/movable.sed",
-      "sha1": "6620b0a0c79dfe80be682fbd5c31c152ab570899",
-      "sha256": "5c024772c93d5b491398873b05be69a178d8a5208152d60ea2c006dfdbb2ce00",
-      "size": 320,
-      "repo_path": "bios/Nintendo/3DS/Citra/nand/private/movable.sed",
-      "cores": [
-        "azahar"
-      ]
-    },
-    {
-      "dest": "Azahar/nand/rw/sys/SecureInfo_A",
-      "sha1": "ff52883a0f61afcbbb3f8e59b9327ac52050e9a7",
-      "sha256": "5eda7e8951c48fc0913445fc844fa1caafcf226f82c0d06341e7e5fa39ae033e",
-      "size": 273,
-      "repo_path": "bios/Nintendo/3DS/Citra/nand/rw/sys/SecureInfo_A",
-      "cores": [
-        "azahar"
-      ]
-    },
-    {
-      "dest": "Azahar/nand/rw/sys/LocalFriendCodeSeed_B",
-      "sha1": "3011ae55c3dc70203fd62aad98bf485e55d018ff",
-      "sha256": "086e900d21c6ae3f892db284359315cb5ec44bb3939f2fb3187d212f5be3ac61",
-      "size": 272,
-      "repo_path": "bios/Nintendo/3DS/Citra/nand/rw/sys/LocalFriendCodeSeed_B",
-      "cores": [
-        "azahar"
       ]
     },
     {
@@ -87184,50 +88201,6 @@
         "cgenius"
       ],
       "category": "game_data"
-    },
-    {
-      "dest": "Citra/sysdata/aes_keys.txt",
-      "sha1": "29556640b022cbfaf427874695838b43a5e8aff4",
-      "sha256": "0d866e062cf62275fbb291ba44af253e67fdc5bd76c7640b6c4a9dfe742510d9",
-      "size": 7357,
-      "repo_path": "bios/Nintendo/3DS/aes_keys.txt",
-      "cores": [
-        "citra",
-        "citra2018",
-        "citra_canary"
-      ]
-    },
-    {
-      "dest": "Citra/sysdata/boot9.bin",
-      "sha1": "5a3d3d6df4743e6b50afe0fc717fa8a12bc888e6",
-      "sha256": "2f88744feed717856386400a44bba4b9ca62e76a32c715d4f309c399bf28166f",
-      "size": 65536,
-      "repo_path": "bios/Nintendo/3DS/boot9.bin",
-      "cores": [
-        "citra"
-      ]
-    },
-    {
-      "dest": "Citra/sysdata/shared_font.bin",
-      "sha1": "60022d6d026c8df950722478aab25702a0dfa067",
-      "sha256": "a06aaf6b50ebc38ebdccc59b913d4a1c0cc7005289957530acaaf78ffc49dddd",
-      "size": 3145728,
-      "repo_path": "bios/Nintendo/3DS/Citra/sysdata/shared_font.bin",
-      "cores": [
-        "citra",
-        "citra2018",
-        "citra_canary"
-      ]
-    },
-    {
-      "dest": "Citra/sysdata/seeddb.bin",
-      "sha1": "9e2c006997761082be87cf316e57c4da5cddbc62",
-      "sha256": "ff485c60090185aff05354ece01f86b61f6020332bed0f9090c58d4678e5a180",
-      "size": 53264,
-      "repo_path": "bios/Nintendo/3DS/Citra/sysdata/seeddb.bin",
-      "cores": [
-        "citra"
-      ]
     },
     {
       "dest": "mcpx_1.0.bin",
@@ -116549,26 +117522,6 @@
       "cores": [
         "ti99sim",
         "ti99sim-sdl1"
-      ]
-    },
-    {
-      "dest": "aes_keys.txt",
-      "sha1": "29556640b022cbfaf427874695838b43a5e8aff4",
-      "sha256": "0d866e062cf62275fbb291ba44af253e67fdc5bd76c7640b6c4a9dfe742510d9",
-      "size": 7357,
-      "repo_path": "bios/Nintendo/3DS/aes_keys.txt",
-      "cores": [
-        "trident"
-      ]
-    },
-    {
-      "dest": "seeddb.bin",
-      "sha1": "9e2c006997761082be87cf316e57c4da5cddbc62",
-      "sha256": "ff485c60090185aff05354ece01f86b61f6020332bed0f9090c58d4678e5a180",
-      "size": 53264,
-      "repo_path": "bios/Nintendo/3DS/Citra/sysdata/seeddb.bin",
-      "cores": [
-        "trident"
       ]
     },
     {

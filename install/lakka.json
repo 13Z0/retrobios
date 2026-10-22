@@ -20,10 +20,10 @@
     }
   ],
   "standalone_copies": [],
-  "total_files": 8079,
-  "total_size": 6656957855,
-  "pack_files": 8389,
-  "pack_size": 6678850739,
+  "total_files": 8161,
+  "total_size": 6992356323,
+  "pack_files": 8471,
+  "pack_size": 7014249207,
   "total_omitted": 12,
   "omitted_files": [
     {
@@ -594,6 +594,9 @@
       "SPECCY",
       "com.fms.speccy",
       "com.fms.speccy.deluxe"
+    ],
+    "stella": [
+      "STELLASA"
     ],
     "superzsnes": [
       "SUPERZSNES"
@@ -13331,14 +13334,16 @@
       ]
     },
     {
-      "dest": "Azahar/sysdata/keys.txt",
+      "dest": "Azahar/Azahar/sysdata/keys.txt",
       "sha1": "5288772be438b86978a801e6dcb14228ad3a20af",
       "sha256": "ea8b3d7c752d85f2326b9bfa01615414ab34ba052f87481b0ff4003fd887e50a",
       "size": 7424,
       "repo_path": "bios/Other/azaharplus/sysdata/keys.txt",
       "cores": [
         "azahar"
-      ]
+      ],
+      "root": "save",
+      "core_folder": "Azahar"
     },
     {
       "dest": "scph5903.bin",
@@ -28384,7 +28389,7 @@
       ]
     },
     {
-      "dest": "amiga-os-130.rom",
+      "dest": "fsuae/Kickstarts/amiga-os-130.rom",
       "sha1": "891e9a547772fe0c6c19b610baf8bc4ea7fcb785",
       "sha256": "ee05862d8102a08436ac4056da7d549db31625c7d47b24dfb7b3c9a5c113ca53",
       "size": 262144,
@@ -28394,10 +28399,11 @@
       ],
       "systems": [
         "commodore-amiga"
-      ]
+      ],
+      "root": "save"
     },
     {
-      "dest": "amiga-os-204.rom",
+      "dest": "fsuae/Kickstarts/amiga-os-204.rom",
       "sha1": "c5839f5cb98a7a8947065c3ed2f14f5f42e334a1",
       "sha256": "d0b70e8a1772614b897f92c33cb299bed3fc8e3de488fc12f67f97fc2486eb79",
       "size": 524288,
@@ -28407,10 +28413,11 @@
       ],
       "systems": [
         "commodore-amiga"
-      ]
+      ],
+      "root": "save"
     },
     {
-      "dest": "amiga-os-205.rom",
+      "dest": "fsuae/Kickstarts/amiga-os-205.rom",
       "sha1": "02843c4253bbd29aba535b0aa3bd9a85034ecde4",
       "sha256": "8d57d6e9d976df42d91ff9d10a5eedaede1a00e3b4b34cad750ca5ff7229f28a",
       "size": 524288,
@@ -28420,10 +28427,11 @@
       ],
       "systems": [
         "commodore-amiga"
-      ]
+      ],
+      "root": "save"
     },
     {
-      "dest": "amiga-os-120.rom",
+      "dest": "fsuae/Kickstarts/amiga-os-120.rom",
       "sha1": "11f9e62cf299f72184835b7b2a70a16333fc0d88",
       "sha256": "87cddb1f499e32758de20145e73031a84bab299e3f6e5c8487e76d02b2ee9d16",
       "size": 262144,
@@ -28433,10 +28441,11 @@
       ],
       "systems": [
         "commodore-amiga"
-      ]
+      ],
+      "root": "save"
     },
     {
-      "dest": "amiga-os-310-a1200.rom",
+      "dest": "fsuae/Kickstarts/amiga-os-310-a1200.rom",
       "sha1": "e21545723fe8374e91342617604f1b3d703094f1",
       "sha256": "6d43840d4099a74170ea0f0425b6257c3891ebcaa39c4d1840075a9ab22b5707",
       "size": 524288,
@@ -28446,10 +28455,11 @@
       ],
       "systems": [
         "commodore-amiga"
-      ]
+      ],
+      "root": "save"
     },
     {
-      "dest": "amiga-os-310-a3000.rom",
+      "dest": "fsuae/Kickstarts/amiga-os-310-a3000.rom",
       "sha1": "f8e210d72b4c4853e0c9b85d223ba20e3d1b36ee",
       "sha256": "f2c9307aacb92b203a3135a35185deffad6c66cfa8d79920b235d7cf9a5222c4",
       "size": 524288,
@@ -28459,10 +28469,11 @@
       ],
       "systems": [
         "commodore-amiga"
-      ]
+      ],
+      "root": "save"
     },
     {
-      "dest": "amiga-os-310-a4000.rom",
+      "dest": "fsuae/Kickstarts/amiga-os-310-a4000.rom",
       "sha1": "5fe04842d04a489720f0f4bb0e46948199406f49",
       "sha256": "71236ed62c85394a3ad7d0d8d65405bac7a10083e06ba6b82120dacc7a00fe9a",
       "size": 524288,
@@ -28472,10 +28483,11 @@
       ],
       "systems": [
         "commodore-amiga"
-      ]
+      ],
+      "root": "save"
     },
     {
-      "dest": "amiga-os-310-cd32.rom",
+      "dest": "fsuae/Kickstarts/amiga-os-310-cd32.rom",
       "sha1": "3525be8887f79b5929e017b42380a79edfee542d",
       "sha256": "3586355514947b5ab48c8755dc004fab94f188b19e7bce491c8f9693499e830b",
       "size": 524288,
@@ -28485,10 +28497,11 @@
       ],
       "systems": [
         "commodore-amiga"
-      ]
+      ],
+      "root": "save"
     },
     {
-      "dest": "amiga-ext-310-cd32.rom",
+      "dest": "fsuae/Kickstarts/amiga-ext-310-cd32.rom",
       "sha1": "5bef3d628ce59cc02a66e6e4ae0da48f60e78f7f",
       "sha256": "d964826432559994ffe329f643fd4e42dbbff313362d9434945725d7119cae87",
       "size": 524288,
@@ -28498,10 +28511,11 @@
       ],
       "systems": [
         "commodore-amiga"
-      ]
+      ],
+      "root": "save"
     },
     {
-      "dest": "cd32fmv.rom",
+      "dest": "fsuae/Kickstarts/cd32fmv.rom",
       "sha1": "03ca81c7a7b259cf64bc9582863eca0f6529f435",
       "sha256": "680e654880c891a3b03e6107ed30b10903efca16c1dac1b4c8e7835f4e37acb6",
       "size": 262144,
@@ -28511,10 +28525,11 @@
       ],
       "systems": [
         "commodore-amiga"
-      ]
+      ],
+      "root": "save"
     },
     {
-      "dest": "amiga-ext-130-cdtv.rom",
+      "dest": "fsuae/Kickstarts/amiga-ext-130-cdtv.rom",
       "sha1": "7ba40ffa17e500ed9fed041f3424bd81d9c907be",
       "sha256": "6e48bb768539e8dae352553e5fdfa860682edaf9e26b105fadd8e26103171765",
       "size": 262144,
@@ -28524,7 +28539,8 @@
       ],
       "systems": [
         "commodore-amiga"
-      ]
+      ],
+      "root": "save"
     },
     {
       "dest": "fuse/48.rom",
@@ -81635,7 +81651,6 @@
       "repo_path": "bios/Commodore/Amiga/rom.key",
       "cores": [
         "amiberry",
-        "fsuae",
         "puae",
         "puae2021",
         "uae4arm"
@@ -81736,64 +81751,76 @@
       ]
     },
     {
-      "dest": "Azahar/sysdata/shared_font.bin",
+      "dest": "Azahar/Azahar/sysdata/shared_font.bin",
       "sha1": "60022d6d026c8df950722478aab25702a0dfa067",
       "sha256": "a06aaf6b50ebc38ebdccc59b913d4a1c0cc7005289957530acaaf78ffc49dddd",
       "size": 3145728,
       "repo_path": "bios/Nintendo/3DS/Citra/sysdata/shared_font.bin",
       "cores": [
         "azahar"
-      ]
+      ],
+      "root": "save",
+      "core_folder": "Azahar"
     },
     {
-      "dest": "Azahar/sysdata/seeddb.bin",
+      "dest": "Azahar/Azahar/sysdata/seeddb.bin",
       "sha1": "9e2c006997761082be87cf316e57c4da5cddbc62",
       "sha256": "ff485c60090185aff05354ece01f86b61f6020332bed0f9090c58d4678e5a180",
       "size": 53264,
       "repo_path": "bios/Nintendo/3DS/Citra/sysdata/seeddb.bin",
       "cores": [
         "azahar"
-      ]
+      ],
+      "root": "save",
+      "core_folder": "Azahar"
     },
     {
-      "dest": "Azahar/sysdata/otp.bin",
+      "dest": "Azahar/Azahar/sysdata/otp.bin",
       "sha1": "49489245b400f62c62faf1736b7f0a70714d3c49",
       "sha256": "e2f1810ceff3d1fd4f1c08ffc1f4d47aa8efca551edd24cd5686205c71a3b13b",
       "size": 256,
       "repo_path": "bios/Nintendo/3DS/otp.bin",
       "cores": [
         "azahar"
-      ]
+      ],
+      "root": "save",
+      "core_folder": "Azahar"
     },
     {
-      "dest": "Azahar/nand/private/movable.sed",
+      "dest": "Azahar/Azahar/nand/private/movable.sed",
       "sha1": "6620b0a0c79dfe80be682fbd5c31c152ab570899",
       "sha256": "5c024772c93d5b491398873b05be69a178d8a5208152d60ea2c006dfdbb2ce00",
       "size": 320,
       "repo_path": "bios/Nintendo/3DS/Citra/nand/private/movable.sed",
       "cores": [
         "azahar"
-      ]
+      ],
+      "root": "save",
+      "core_folder": "Azahar"
     },
     {
-      "dest": "Azahar/nand/rw/sys/SecureInfo_A",
+      "dest": "Azahar/Azahar/nand/rw/sys/SecureInfo_A",
       "sha1": "ff52883a0f61afcbbb3f8e59b9327ac52050e9a7",
       "sha256": "5eda7e8951c48fc0913445fc844fa1caafcf226f82c0d06341e7e5fa39ae033e",
       "size": 273,
       "repo_path": "bios/Nintendo/3DS/Citra/nand/rw/sys/SecureInfo_A",
       "cores": [
         "azahar"
-      ]
+      ],
+      "root": "save",
+      "core_folder": "Azahar"
     },
     {
-      "dest": "Azahar/nand/rw/sys/LocalFriendCodeSeed_B",
+      "dest": "Azahar/Azahar/nand/rw/sys/LocalFriendCodeSeed_B",
       "sha1": "3011ae55c3dc70203fd62aad98bf485e55d018ff",
       "sha256": "086e900d21c6ae3f892db284359315cb5ec44bb3939f2fb3187d212f5be3ac61",
       "size": 272,
       "repo_path": "bios/Nintendo/3DS/Citra/nand/rw/sys/LocalFriendCodeSeed_B",
       "cores": [
         "azahar"
-      ]
+      ],
+      "root": "save",
+      "core_folder": "Azahar"
     },
     {
       "dest": "BBKEmu/A4980/8.BIN",
@@ -82930,6 +82957,50 @@
       ]
     },
     {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10042400/content/CafeCn.ttf",
+      "sha1": "23abcb52bc8bd580e9f58556d220f541dccafd15",
+      "sha256": "cd04bff116e410be438da7621bff1de9e8644aa46c254bd2656b42258bac67df",
+      "size": 13110604,
+      "repo_path": "bios/Nintendo/Wii U/mlc01/sys/title/0005001b/10042400/content/CafeCn.ttf",
+      "cores": [
+        "cemu"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10042400/content/CafeKr.ttf",
+      "sha1": "3fcb923bec89c240c7d1bc206cc8bca0f8661222",
+      "sha256": "cb7c685444154b8c90ae832f1bce144d01b2c0462d29eb51b8bff291ffdd6c81",
+      "size": 2260660,
+      "repo_path": "bios/Nintendo/Wii U/mlc01/sys/title/0005001b/10042400/content/CafeKr.ttf",
+      "cores": [
+        "cemu"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10042400/content/CafeStd.ttf",
+      "sha1": "607a826ebb99f279243a09219b1b8fc3495bf7e4",
+      "sha256": "39590968f7386d0b4541f3cee978c7c359cbbdc6a28f4dc60a2d2e0a8bfc1c42",
+      "size": 2442464,
+      "repo_path": "bios/Nintendo/Wii U/mlc01/sys/title/0005001b/10042400/content/CafeStd.ttf",
+      "cores": [
+        "cemu"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10042400/content/CafeTw.ttf",
+      "sha1": "365dde080f9db06326ab3ec982131deeedd6d44f",
+      "sha256": "8c1b825c12b535434226e4939f4b9a37f02f8a4c2ccf78f564dee2697ed7fd55",
+      "size": 8229724,
+      "repo_path": "bios/Nintendo/Wii U/mlc01/sys/title/0005001b/10042400/content/CafeTw.ttf",
+      "cores": [
+        "cemu"
+      ],
+      "root": "save"
+    },
+    {
       "dest": "Cemu/shareddata.bin",
       "sha1": "cd34a0ee9b7a8cbb9c9eae34739704a9dd4dd413",
       "sha256": "662bc6c693c88040531fbe51186ce203e188d1c67ad788b2013b3c91ce595420",
@@ -82984,48 +83055,637 @@
       "executable": true
     },
     {
-      "dest": "Citra/sysdata/aes_keys.txt",
+      "dest": "Cemu/mlc01/sys/title/0005001b/1004f000/content/00/swkbd/swkbd.pack",
+      "sha1": "2cbbd11f0472e861a57465b6fff8cf354aa53594",
+      "sha256": "8cae762c18b9d9b78aee2d53bd21a9203fdf0f931275209c7772ba25a64bc73b",
+      "size": 1907900,
+      "repo_path": "bios/Nintendo/Wii U/mlc01/sys/title/0005001b/1004f000/content/00/swkbd/swkbd.pack",
+      "cores": [
+        "cemu"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10051000/content/00/erreula/erreula.pack",
+      "sha1": "ad8dd4132adee5d29ea8ea54867bcaf2cecb805f",
+      "sha256": "a6ef51b567abe7b680fd6c14b69e8f41612a7071f16692e7a70f66e49987c2fe",
+      "size": 1252759,
+      "repo_path": "bios/Nintendo/Wii U/mlc01/sys/title/0005001b/10051000/content/00/erreula/erreula.pack",
+      "cores": [
+        "cemu"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/ccerts/WIIU_COMMON_1_CERT.der",
+      "sha1": "b5cb90503a555c55d59374829b4202bd44d8839b",
+      "sha256": "d0aa8c90d74c0aaa611c214f7d5b222d5655bac9683e74a3d363b57359636234",
+      "size": 1224,
+      "repo_path": "bios/Nintendo/Wii U/mlc01/sys/title/0005001b/10054000/content/ccerts/WIIU_COMMON_1_CERT.der",
+      "cores": [
+        "cemu"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/ccerts/WIIU_COMMON_1_RSA_KEY.aes",
+      "sha1": "016ccf923cfa5f4c57b06be749e3cc67d9435372",
+      "sha256": "ff43574255c91a3e5963f181a328575747e9a8c30265d05fefbfe6301acdfe00",
+      "size": 1200,
+      "repo_path": "bios/Nintendo/Wii U/mlc01/sys/title/0005001b/10054000/content/ccerts/WIIU_COMMON_1_RSA_KEY.aes",
+      "cores": [
+        "cemu"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/ccerts/WIIU_ACCOUNT_1_CERT.der",
+      "sha1": "7e6b6092d4142418a80c1066f54f56e891a8dce8",
+      "sha256": "ec86e29a9323d153b65bbb3e381e36d544368f767e908ead8ab806c1aea2b8a2",
+      "size": 1226,
+      "repo_path": "bios/Nintendo/Wii U/mlc01/sys/title/0005001b/10054000/content/ccerts/WIIU_ACCOUNT_1_CERT.der",
+      "cores": [
+        "cemu"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/ccerts/WIIU_ACCOUNT_1_RSA_KEY.aes",
+      "sha1": "47f5231553e47ce1bf2714c19e2e46ea80466770",
+      "sha256": "80453f5bd7d5ddcb06fe4c9541e9bd72712d555dee7d1b5aaf6c73583e101099",
+      "size": 1200,
+      "repo_path": "bios/Nintendo/Wii U/mlc01/sys/title/0005001b/10054000/content/ccerts/WIIU_ACCOUNT_1_RSA_KEY.aes",
+      "cores": [
+        "cemu"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/ccerts/WIIU_OLIVE_1_CERT.der",
+      "sha1": "00b319fd37195e15f481c1880f0648e2ea5d3e21",
+      "sha256": "0691f15f8e272f0a42660710c55f1156497f7db4347ef1b3e2335053ba444c9e",
+      "size": 1224,
+      "repo_path": "bios/Nintendo/Wii U/mlc01/sys/title/0005001b/10054000/content/ccerts/WIIU_OLIVE_1_CERT.der",
+      "cores": [
+        "cemu"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/ccerts/WIIU_OLIVE_1_RSA_KEY.aes",
+      "sha1": "f7d2f8daef1f5d1428cbb1e88dc8a006585fa1ce",
+      "sha256": "186183469ff5ee055c27dab6173f213b2b85617835de0f64849c26691ebd112b",
+      "size": 1200,
+      "repo_path": "bios/Nintendo/Wii U/mlc01/sys/title/0005001b/10054000/content/ccerts/WIIU_OLIVE_1_RSA_KEY.aes",
+      "cores": [
+        "cemu"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/ccerts/WIIU_VINO_1_CERT.der",
+      "sha1": "dbfb19775297b8051bab2b8e18440a41345840bf",
+      "sha256": "85355cceccacfdd68d50b82e6be179678c3c1600875b82c9590bdcddf9307a81",
+      "size": 1223,
+      "repo_path": "bios/Nintendo/Wii U/mlc01/sys/title/0005001b/10054000/content/ccerts/WIIU_VINO_1_CERT.der",
+      "cores": [
+        "cemu"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/ccerts/WIIU_VINO_1_RSA_KEY.aes",
+      "sha1": "b7de80b42ba2bed6272e9e73279c9972868cdaa8",
+      "sha256": "1a18db63be5008a1ab6457a255618f4e4052961fec233e3b56a883eb999692ed",
+      "size": 1200,
+      "repo_path": "bios/Nintendo/Wii U/mlc01/sys/title/0005001b/10054000/content/ccerts/WIIU_VINO_1_RSA_KEY.aes",
+      "cores": [
+        "cemu"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/ccerts/WIIU_WOOD_1_CERT.der",
+      "sha1": "fedcda522b1b5aae79fe6942997fe313648f6a8b",
+      "sha256": "f61ab592635b195e2b77f4d99a17b6c5ee3590dbb4b5721ede9b8c5a1851c2bd",
+      "size": 1223,
+      "repo_path": "bios/Nintendo/Wii U/mlc01/sys/title/0005001b/10054000/content/ccerts/WIIU_WOOD_1_CERT.der",
+      "cores": [
+        "cemu"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/ccerts/WIIU_WOOD_1_RSA_KEY.aes",
+      "sha1": "2f2371527a6ec3d517f17320a77f0fbe349b70d0",
+      "sha256": "5982eb573663b7e631d347860767b0e45af845dd75eb5f05f5d5b0240aaa1276",
+      "size": 1200,
+      "repo_path": "bios/Nintendo/Wii U/mlc01/sys/title/0005001b/10054000/content/ccerts/WIIU_WOOD_1_RSA_KEY.aes",
+      "cores": [
+        "cemu"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/CACERT_NINTENDO_CA.der",
+      "sha1": "b5229455dd26c1f53c73060e9089b391389e1f75",
+      "sha256": "c5b0f8dfcec6b9ed2ac38b8bc69a4db7c209dc177d243c8df2bddf9e39171e5f",
+      "size": 897,
+      "repo_path": "bios/Nintendo/Wii/rootca.pem",
+      "cores": [
+        "cemu"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/CACERT_NINTENDO_CA_G2.der",
+      "sha1": "c60b2a5cc90f0630cca33040df6b3378239f3bfa",
+      "sha256": "f9dcd0e7f77d21ce249b2e5170ab9da22797a7030cc5601eefaac8819f9e824a",
+      "size": 1173,
+      "repo_path": "bios/Nintendo/Wii U/mlc01/sys/title/0005001b/10054000/content/scerts/CACERT_NINTENDO_CA_G2.der",
+      "cores": [
+        "cemu"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/CACERT_NINTENDO_CA_G3.der",
+      "sha1": "68a07705ccc7a408416e0ed7ad65f2ec3fea9862",
+      "sha256": "220a4fba273a033c0edd7ae0993b3737215fc05ff972fcb5472aab6dbece6409",
+      "size": 1060,
+      "repo_path": "bios/Nintendo/Wii U/mlc01/sys/title/0005001b/10054000/content/scerts/CACERT_NINTENDO_CA_G3.der",
+      "cores": [
+        "cemu"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/CACERT_NINTENDO_CLASS2_CA.der",
+      "sha1": "aa8ef66ae0f807edb841c889ee3666a259a28ccc",
+      "sha256": "2e36d30b961c0c520b5e2aface40a18083225207323cd6759a8bb70cac5eb5d3",
+      "size": 924,
+      "repo_path": "bios/Nintendo/Wii U/mlc01/sys/title/0005001b/10054000/content/scerts/CACERT_NINTENDO_CLASS2_CA.der",
+      "cores": [
+        "cemu"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/CACERT_NINTENDO_CLASS2_CA_G2.der",
+      "sha1": "039de5373ac65e1aee898d54e7563576ebbe549b",
+      "sha256": "c3c94083c1bb9d4f008812902f2029a13185b13f2345a75fe339cd34f5f6d72c",
+      "size": 1200,
+      "repo_path": "bios/Nintendo/Wii U/mlc01/sys/title/0005001b/10054000/content/scerts/CACERT_NINTENDO_CLASS2_CA_G2.der",
+      "cores": [
+        "cemu"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/CACERT_NINTENDO_CLASS2_CA_G3.der",
+      "sha1": "fab56c4cc7cff5071d40b6b0073861d290ca2a1a",
+      "sha256": "58054caa85da74b2b9f3407b17bb8428040e46a9159a1afb9f58cadac27642c0",
+      "size": 1200,
+      "repo_path": "bios/Nintendo/Wii U/mlc01/sys/title/0005001b/10054000/content/scerts/CACERT_NINTENDO_CLASS2_CA_G3.der",
+      "cores": [
+        "cemu"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/BALTIMORE_CYBERTRUST_ROOT_CA.der",
+      "sha1": "d4de20d05e66fc53fe1a50882c78db2852cae474",
+      "sha256": "16af57a9f676b0ab126095aa5ebadef22ab31119d644ac95cd4b93dbf3f26aeb",
+      "size": 891,
+      "repo_path": "bios/Nintendo/Wii U/mlc01/sys/title/0005001b/10054000/content/scerts/BALTIMORE_CYBERTRUST_ROOT_CA.der",
+      "cores": [
+        "cemu"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/CYBERTRUST_GLOBAL_ROOT_CA.der",
+      "sha1": "5f43e5b1bff8788cac1cc7ca4a9ac6222bcc34c6",
+      "sha256": "960adf0063e96356750c2965dd0a0867da0b9cbd6e77714aeafb2349ab393da3",
+      "size": 933,
+      "repo_path": "bios/Nintendo/Wii U/mlc01/sys/title/0005001b/10054000/content/scerts/CYBERTRUST_GLOBAL_ROOT_CA.der",
+      "cores": [
+        "cemu"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/VERIZON_GLOBAL_ROOT_CA.der",
+      "sha1": "912198eef23dcac40939312fee97dd560bae49b1",
+      "sha256": "68ad50909b04363c605ef13581a939ff2c96372e3f12325b0a6861e1d59f6603",
+      "size": 889,
+      "repo_path": "bios/Nintendo/Wii U/mlc01/sys/title/0005001b/10054000/content/scerts/VERIZON_GLOBAL_ROOT_CA.der",
+      "cores": [
+        "cemu"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/GLOBALSIGN_ROOT_CA.der",
+      "sha1": "b1bc968bd4f49d622aa89a81f2150152a41d829c",
+      "sha256": "ebd41040e4bb3ec742c9e381d31ef2a41a48b6685c96e7cef3c1df6cd4331c99",
+      "size": 889,
+      "repo_path": "bios/Nintendo/Wii U/mlc01/sys/title/0005001b/10054000/content/scerts/GLOBALSIGN_ROOT_CA.der",
+      "cores": [
+        "cemu"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/GLOBALSIGN_ROOT_CA_R2.der",
+      "sha1": "75e0abb6138512271c04f85fddde38e4b7242efe",
+      "sha256": "ca42dd41745fd0b81eb902362cf9d8bf719da1bd1b1efc946f5b4c99f42c1b9e",
+      "size": 958,
+      "repo_path": "bios/Nintendo/Wii U/mlc01/sys/title/0005001b/10054000/content/scerts/GLOBALSIGN_ROOT_CA_R2.der",
+      "cores": [
+        "cemu"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/GLOBALSIGN_ROOT_CA_R3.der",
+      "sha1": "d69b561148f01c77c54578c10926df5b856976ad",
+      "sha256": "cbb522d7b7f127ad6a0113865bdf1cd4102e7d0759af635a7cf4720dc963c53b",
+      "size": 867,
+      "repo_path": "bios/Nintendo/Wii U/mlc01/sys/title/0005001b/10054000/content/scerts/GLOBALSIGN_ROOT_CA_R3.der",
+      "cores": [
+        "cemu"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/VERISIGN_CLASS3_PUBLIC_PRIMARY_CA_G3.der",
+      "sha1": "132d0d45534b6997cdb2d5c339e25576609b5cc6",
+      "sha256": "eb04cf5eb1f39afa762f2bb120f296cba520c1b97db1589565b81cb9a17b7244",
+      "size": 1054,
+      "repo_path": "bios/Nintendo/Wii U/mlc01/sys/title/0005001b/10054000/content/scerts/VERISIGN_CLASS3_PUBLIC_PRIMARY_CA_G3.der",
+      "cores": [
+        "cemu"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/VERISIGN_UNIVERSAL_ROOT_CA.der",
+      "sha1": "3679ca35668772304d30a5fb873b0fa77bb70d54",
+      "sha256": "2399561127a57125de8cefea610ddf2fa078b5c8067f4e828290bfb860e84b3c",
+      "size": 1213,
+      "repo_path": "bios/Nintendo/Wii U/mlc01/sys/title/0005001b/10054000/content/scerts/VERISIGN_UNIVERSAL_ROOT_CA.der",
+      "cores": [
+        "cemu"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/VERISIGN_CLASS3_PUBLIC_PRIMARY_CA_G5.der",
+      "sha1": "4eb6d578499b1ccf5f581ead56be3d9b6744a5e5",
+      "sha256": "9acfab7e43c8d880d06b262a94deeee4b4659989c3d0caf19baf6405e41ab7df",
+      "size": 1239,
+      "repo_path": "bios/Nintendo/Wii U/mlc01/sys/title/0005001b/10054000/content/scerts/VERISIGN_CLASS3_PUBLIC_PRIMARY_CA_G5.der",
+      "cores": [
+        "cemu"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/THAWTE_PRIMARY_ROOT_CA_G3.der",
+      "sha1": "f18b538d1be903b6a6f056435b171589caf36bf2",
+      "sha256": "4b03f45807ad70f21bfc2cae71c9fde4604c064cf5ffb686bae5dbaad7fdd34c",
+      "size": 1070,
+      "repo_path": "bios/Nintendo/Wii U/mlc01/sys/title/0005001b/10054000/content/scerts/THAWTE_PRIMARY_ROOT_CA_G3.der",
+      "cores": [
+        "cemu"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/THAWTE_PRIMARY_ROOT_CA.der",
+      "sha1": "91c6d6ee3e8ac86384e548c299295c756c817b81",
+      "sha256": "8d722f81a9c113c0791df136a2966db26c950a971db46b4199f4ea54b78bfb9f",
+      "size": 1060,
+      "repo_path": "bios/Nintendo/Wii U/mlc01/sys/title/0005001b/10054000/content/scerts/THAWTE_PRIMARY_ROOT_CA.der",
+      "cores": [
+        "cemu"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/GEOTRUST_GLOBAL_CA.der",
+      "sha1": "de28f4a4ffe5b92fa3c503d1a349a7f9962a8212",
+      "sha256": "ff856a2d251dcd88d36656f450126798cfabaade40799c722de4d2b5db36a73a",
+      "size": 856,
+      "repo_path": "bios/Nintendo/Wii U/mlc01/sys/title/0005001b/10054000/content/scerts/GEOTRUST_GLOBAL_CA.der",
+      "cores": [
+        "cemu"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/GEOTRUST_GLOBAL_CA2.der",
+      "sha1": "a9e9780814375888f20519b06d2b0d2b6016907d",
+      "sha256": "ca2d82a08677072f8ab6764ff035676cfe3e5e325e012172df3f92096db79b85",
+      "size": 874,
+      "repo_path": "bios/Nintendo/Wii U/mlc01/sys/title/0005001b/10054000/content/scerts/GEOTRUST_GLOBAL_CA2.der",
+      "cores": [
+        "cemu"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/GEOTRUST_PRIMARY_CA.der",
+      "sha1": "323c118e1bf7b8b65254e2e2100dd6029037f096",
+      "sha256": "37d51006c512eaab626421f1ec8c92013fc5f82ae98ee533eb4619b8deb4d06c",
+      "size": 896,
+      "repo_path": "bios/Nintendo/Wii U/mlc01/sys/title/0005001b/10054000/content/scerts/GEOTRUST_PRIMARY_CA.der",
+      "cores": [
+        "cemu"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/GEOTRUST_PRIMARY_CA_G3.der",
+      "sha1": "039eedb80be7a03c6953893b20d2d9323a4c2afd",
+      "sha256": "b478b812250df878635c2aa7ec7d155eaa625ee82916e2cd294361886cd1fbd4",
+      "size": 1026,
+      "repo_path": "bios/Nintendo/Wii U/mlc01/sys/title/0005001b/10054000/content/scerts/GEOTRUST_PRIMARY_CA_G3.der",
+      "cores": [
+        "cemu"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/ADDTRUST_EXT_CA_ROOT.der",
+      "sha1": "02faf3e291435468607857694df5e45b68851868",
+      "sha256": "687fa451382278fff0c8b11f8d43d576671c6eb2bceab413fb83d965d06d2ff2",
+      "size": 1082,
+      "repo_path": "bios/Nintendo/Wii U/mlc01/sys/title/0005001b/10054000/content/scerts/ADDTRUST_EXT_CA_ROOT.der",
+      "cores": [
+        "cemu"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/COMODO_CA.der",
+      "sha1": "ee869387fffd8349ab5ad14322588789a457b012",
+      "sha256": "1a0d20445de5ba1862d19ef880858cbce50102b36e8f0a040c3c69e74522fe6e",
+      "size": 980,
+      "repo_path": "bios/Nintendo/Wii U/mlc01/sys/title/0005001b/10054000/content/scerts/COMODO_CA.der",
+      "cores": [
+        "cemu"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/UTN_DATACORP_SGC_CA.der",
+      "sha1": "58119f0e128287ea50fdd987456f4f78dcfad6d4",
+      "sha256": "85fb2f91dd12275a0145b636534f84024ad68b69b8ee88684ff711375805b348",
+      "size": 1122,
+      "repo_path": "bios/Nintendo/Wii U/mlc01/sys/title/0005001b/10054000/content/scerts/UTN_DATACORP_SGC_CA.der",
+      "cores": [
+        "cemu"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/UTN_USERFIRST_HARDWARE_CA.der",
+      "sha1": "0483ed3399ac3608058722edbc5e4600e3bef9d7",
+      "sha256": "6ea54741d004667eed1b4816634aa3a79e6e4b96950f8279dafc8d9bd8812137",
+      "size": 1144,
+      "repo_path": "bios/Nintendo/Wii U/mlc01/sys/title/0005001b/10054000/content/scerts/UTN_USERFIRST_HARDWARE_CA.der",
+      "cores": [
+        "cemu"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/DIGICERT_HIGH_ASSURANCE_EV_ROOT_CA.der",
+      "sha1": "5fb7ee0633e259dbad0c4c9ae6d38f1a61c7dc25",
+      "sha256": "7431e5f4c3c1ce4690774f0b61e05440883ba9a01ed00ba6abd7806ed3b118cf",
+      "size": 969,
+      "repo_path": "bios/Nintendo/Wii U/mlc01/sys/title/0005001b/10054000/content/scerts/DIGICERT_HIGH_ASSURANCE_EV_ROOT_CA.der",
+      "cores": [
+        "cemu"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/DIGICERT_ASSURED_ID_ROOT_CA.der",
+      "sha1": "0563b8630d62d75abbc8ab1e4bdfb5a899b24d43",
+      "sha256": "3e9099b5015e8f486c00bcea9d111ee721faba355a89bcf1df69561e3dc6325c",
+      "size": 955,
+      "repo_path": "bios/Nintendo/Wii U/mlc01/sys/title/0005001b/10054000/content/scerts/DIGICERT_ASSURED_ID_ROOT_CA.der",
+      "cores": [
+        "cemu"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/DIGICERT_GLOBAL_ROOT_CA.der",
+      "sha1": "a8985d3a65e5e5c4b2d7d66d40c6dd2fb19c5436",
+      "sha256": "4348a0e9444c78cb265e058d5e8944b4d84f9662bd26db257f8934a443c70161",
+      "size": 947,
+      "repo_path": "bios/Nintendo/Wii U/mlc01/sys/title/0005001b/10054000/content/scerts/DIGICERT_GLOBAL_ROOT_CA.der",
+      "cores": [
+        "cemu"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/GTE_CYBERTRUST_GLOBAL_ROOT.der",
+      "sha1": "97817950d81c9670cc34d809cf794431367ef474",
+      "sha256": "a53125188d2110aa964b02c7b7c6da3203170894e5fb71fffb6667d5e6810a36",
+      "size": 606,
+      "repo_path": "bios/Nintendo/Wii U/mlc01/sys/title/0005001b/10054000/content/scerts/GTE_CYBERTRUST_GLOBAL_ROOT.der",
+      "cores": [
+        "cemu"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/VERISIGN_CLASS3_PUBLIC_PRIMARY_CA.der",
+      "sha1": "a1db6393916f17e4185509400415c70240b0ae6b",
+      "sha256": "a4b6b3996fc2f306b3fd8681bd63413d8c5009cc4fa329c2ccf0e2fa1b140305",
+      "size": 576,
+      "repo_path": "bios/Nintendo/Wii U/mlc01/sys/title/0005001b/10054000/content/scerts/VERISIGN_CLASS3_PUBLIC_PRIMARY_CA.der",
+      "cores": [
+        "cemu"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/THAWTE_PREMIUM_SERVER_CA.der",
+      "sha1": "627f8d7827656399d27d7f9044c9feb3f33efa9a",
+      "sha256": "ab7036365c7154aa29c2c29f5d4191163b162a2225011357d56d07ffa7bc1f72",
+      "size": 811,
+      "repo_path": "bios/Nintendo/Wii U/mlc01/sys/title/0005001b/10054000/content/scerts/THAWTE_PREMIUM_SERVER_CA.der",
+      "cores": [
+        "cemu"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/EQUIFAX_SECURE_CA.der",
+      "sha1": "d23209ad23d314232174e40d7f9d62139786633a",
+      "sha256": "08297a4047dba23680c731db6e317653ca7848e1bebd3a0b0179a707f92cf178",
+      "size": 804,
+      "repo_path": "bios/Nintendo/Wii U/mlc01/sys/title/0005001b/10054000/content/scerts/EQUIFAX_SECURE_CA.der",
+      "cores": [
+        "cemu"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/ENTRUST_SECURE_SERVER_CA.der",
+      "sha1": "99a69be61afe886b4d2b82007cb854fc317e1539",
+      "sha256": "62f240278c564c4dd8bf7d9d4f6f366ea894d22f5f34d989a983acec2fffed50",
+      "size": 1244,
+      "repo_path": "bios/Nintendo/Wii U/mlc01/sys/title/0005001b/10054000/content/scerts/ENTRUST_SECURE_SERVER_CA.der",
+      "cores": [
+        "cemu"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/VERISIGN_CLASS3_PUBLIC_PRIMARY_CA_G2.der",
+      "sha1": "85371ca6e550143dce2803471bde3a09e8f8770f",
+      "sha256": "83ce3c1229688a593d485f81973c0f9195431eda37cc5e36430e79c7a888638b",
+      "size": 774,
+      "repo_path": "bios/Nintendo/Wii U/mlc01/sys/title/0005001b/10054000/content/scerts/VERISIGN_CLASS3_PUBLIC_PRIMARY_CA_G2.der",
+      "cores": [
+        "cemu"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/ENTRUST_CA_2048.der",
+      "sha1": "503006091d97d4f5ae39f7cbe7927d7d652d3431",
+      "sha256": "6dc47172e01cbcb0bf62580d895fe2b8ac9ad4f873801e0c10b9c837d21eb177",
+      "size": 1070,
+      "repo_path": "bios/Nintendo/Wii U/mlc01/sys/title/0005001b/10054000/content/scerts/ENTRUST_CA_2048.der",
+      "cores": [
+        "cemu"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/ENTRUST_ROOT_CA.der",
+      "sha1": "b31eb1b740e36c8402dadc37d44df5d4674952f9",
+      "sha256": "73c176434f1bc6d5adf45b0e76e727287c8de57616c1e6e6141a2b2cbc7d8e4c",
+      "size": 1173,
+      "repo_path": "bios/Nintendo/Wii U/mlc01/sys/title/0005001b/10054000/content/scerts/ENTRUST_ROOT_CA.der",
+      "cores": [
+        "cemu"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/ENTRUST_ROOT_CA_G2.der",
+      "sha1": "8cf427fd790c3ad166068de81e57efbb932272d4",
+      "sha256": "43df5774b03e7fef5fe40d931a7bedf1bb2e6b42738c4e6d3841103d3aa7f339",
+      "size": 1090,
+      "repo_path": "bios/Nintendo/Wii U/mlc01/sys/title/0005001b/10054000/content/scerts/ENTRUST_ROOT_CA_G2.der",
+      "cores": [
+        "cemu"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/DIGICERT_ASSURED_ID_ROOT_CA_G2.der",
+      "sha1": "a14b48d943ee0a0e40904f3ce0a4c09193515d3f",
+      "sha256": "7d05ebb682339f8c9451ee094eebfefa7953a114edb2f44949452fab7d2fc185",
+      "size": 922,
+      "repo_path": "bios/Nintendo/Wii U/mlc01/sys/title/0005001b/10054000/content/scerts/DIGICERT_ASSURED_ID_ROOT_CA_G2.der",
+      "cores": [
+        "cemu"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "Cemu/mlc01/sys/title/0005001b/10054000/content/scerts/DIGICERT_GLOBAL_ROOT_CA_G2.der",
+      "sha1": "df3c24f9bfd666761b268073fe06d1cc8d4f82a4",
+      "sha256": "cb3ccbb76031e5e0138f8dd39a23f9de47ffc35e43c1144cea27d46a5ab1cb5f",
+      "size": 914,
+      "repo_path": "bios/Nintendo/Wii U/mlc01/sys/title/0005001b/10054000/content/scerts/DIGICERT_GLOBAL_ROOT_CA_G2.der",
+      "cores": [
+        "cemu"
+      ],
+      "root": "save"
+    },
+    {
+      "dest": "Citra/Citra/sysdata/aes_keys.txt",
       "sha1": "29556640b022cbfaf427874695838b43a5e8aff4",
       "sha256": "0d866e062cf62275fbb291ba44af253e67fdc5bd76c7640b6c4a9dfe742510d9",
       "size": 7357,
       "repo_path": "bios/Nintendo/3DS/aes_keys.txt",
       "cores": [
-        "citra",
-        "citra2018",
-        "citra_canary"
-      ]
+        "citra"
+      ],
+      "root": "save",
+      "core_folder": "Citra"
     },
     {
-      "dest": "Citra/sysdata/boot9.bin",
+      "dest": "Citra/Citra/sysdata/boot9.bin",
       "sha1": "5a3d3d6df4743e6b50afe0fc717fa8a12bc888e6",
       "sha256": "2f88744feed717856386400a44bba4b9ca62e76a32c715d4f309c399bf28166f",
       "size": 65536,
       "repo_path": "bios/Nintendo/3DS/boot9.bin",
       "cores": [
         "citra"
-      ]
+      ],
+      "root": "save",
+      "core_folder": "Citra"
     },
     {
-      "dest": "Citra/sysdata/shared_font.bin",
+      "dest": "Citra/Citra/sysdata/shared_font.bin",
       "sha1": "60022d6d026c8df950722478aab25702a0dfa067",
       "sha256": "a06aaf6b50ebc38ebdccc59b913d4a1c0cc7005289957530acaaf78ffc49dddd",
       "size": 3145728,
       "repo_path": "bios/Nintendo/3DS/Citra/sysdata/shared_font.bin",
       "cores": [
-        "citra",
-        "citra2018",
-        "citra_canary"
-      ]
+        "citra"
+      ],
+      "root": "save",
+      "core_folder": "Citra"
     },
     {
-      "dest": "Citra/sysdata/seeddb.bin",
+      "dest": "Citra/Citra/sysdata/seeddb.bin",
       "sha1": "9e2c006997761082be87cf316e57c4da5cddbc62",
       "sha256": "ff485c60090185aff05354ece01f86b61f6020332bed0f9090c58d4678e5a180",
       "size": 53264,
       "repo_path": "bios/Nintendo/3DS/Citra/sysdata/seeddb.bin",
       "cores": [
         "citra"
-      ]
+      ],
+      "root": "save",
+      "core_folder": "Citra"
+    },
+    {
+      "dest": "Citra2018/Citra/sysdata/aes_keys.txt",
+      "sha1": "29556640b022cbfaf427874695838b43a5e8aff4",
+      "sha256": "0d866e062cf62275fbb291ba44af253e67fdc5bd76c7640b6c4a9dfe742510d9",
+      "size": 7357,
+      "repo_path": "bios/Nintendo/3DS/aes_keys.txt",
+      "cores": [
+        "citra2018"
+      ],
+      "root": "save",
+      "core_folder": "Citra2018"
+    },
+    {
+      "dest": "Citra2018/Citra/sysdata/shared_font.bin",
+      "sha1": "60022d6d026c8df950722478aab25702a0dfa067",
+      "sha256": "a06aaf6b50ebc38ebdccc59b913d4a1c0cc7005289957530acaaf78ffc49dddd",
+      "size": 3145728,
+      "repo_path": "bios/Nintendo/3DS/Citra/sysdata/shared_font.bin",
+      "cores": [
+        "citra2018"
+      ],
+      "root": "save",
+      "core_folder": "Citra2018"
     },
     {
       "dest": "mcpx_1.0.bin",
@@ -83057,6 +83717,113 @@
       "cores": [
         "dolphin"
       ]
+    },
+    {
+      "dest": "dolphin-emu/User/GBA/gba_bios.bin",
+      "sha1": "300c20df6731a33952ded8c436f7f186d25d3492",
+      "sha256": "fd2547724b505f487e6dcb29ec2ecff3af35a841a77ab2e85fd87350abd36570",
+      "size": 16384,
+      "repo_path": "bios/Nintendo/Game Boy Advance/GBA_bios.rom",
+      "cores": [
+        "dolphin"
+      ],
+      "systems": [
+        "nintendo-gamecube"
+      ],
+      "root": "save",
+      "core_folder": "dolphin-emu"
+    },
+    {
+      "dest": "dolphin-emu/User/Wii/shared2/sys/SYSCONF",
+      "sha1": "3256c026284a24fb99d2ec1558d95db3b5dcc2e9",
+      "sha256": "a8ec1ec377ee3a3c93a27f74dadf9edf95112ce167fc23d1abdbeb4fa15eb179",
+      "size": 16384,
+      "repo_path": "bios/Nintendo/Wii/SYSCONF",
+      "cores": [
+        "dolphin"
+      ],
+      "systems": [
+        "nintendo-gamecube"
+      ],
+      "root": "save",
+      "core_folder": "dolphin-emu"
+    },
+    {
+      "dest": "dolphin-emu/User/Wii/title/00000001/00000002/data/setting.txt",
+      "sha1": "077a31ce116de322f089a627c5eb7ff5c2236a5d",
+      "sha256": "5e17f8bc2444048c944e92a4f3b2a89a6f7f06398a17b2552be8d32e52c6f9db",
+      "size": 256,
+      "repo_path": "bios/Nintendo/Wii/setting.txt",
+      "cores": [
+        "dolphin"
+      ],
+      "systems": [
+        "nintendo-gamecube"
+      ],
+      "root": "save",
+      "core_folder": "dolphin-emu"
+    },
+    {
+      "dest": "dolphin-emu/User/Load/WiiSD.raw",
+      "sha1": "90d83d6c084deceeeb0466ac00723723ccfd0c6d",
+      "sha256": "6ea30c50325dba6adeaf0b5841956a7074534cf2aac5ff4160d5279226f56047",
+      "size": 134217728,
+      "repo_path": "bios/Nintendo/Wii/WiiSD.raw",
+      "cores": [
+        "dolphin"
+      ],
+      "systems": [
+        "nintendo-gamecube"
+      ],
+      "storage": "release",
+      "release_asset": "WiiSD.raw",
+      "root": "save",
+      "core_folder": "dolphin-emu"
+    },
+    {
+      "dest": "dolphin-emu/User/Wii/clientca.pem",
+      "sha1": "4b937d4e81de11574b926386dd5f768aa23bf177",
+      "sha256": "229ec678525e060588e8ea23e5459ec14af3c2ebb7b9e69ec46b0faf011730d9",
+      "size": 1005,
+      "repo_path": "bios/Nintendo/Wii/clientca.pem",
+      "cores": [
+        "dolphin"
+      ],
+      "systems": [
+        "nintendo-gamecube"
+      ],
+      "root": "save",
+      "core_folder": "dolphin-emu"
+    },
+    {
+      "dest": "dolphin-emu/User/Wii/clientcakey.pem",
+      "sha1": "a2c11886e6d12a135e1d5eb50d5fe92e028577d9",
+      "sha256": "723be9b32c3afb83a4a3757adf352529e90c0ad6fad52509963ba8942ae625df",
+      "size": 609,
+      "repo_path": "bios/Nintendo/Wii/clientcakey.pem",
+      "cores": [
+        "dolphin"
+      ],
+      "systems": [
+        "nintendo-gamecube"
+      ],
+      "root": "save",
+      "core_folder": "dolphin-emu"
+    },
+    {
+      "dest": "dolphin-emu/User/Wii/rootca.pem",
+      "sha1": "b5229455dd26c1f53c73060e9089b391389e1f75",
+      "sha256": "c5b0f8dfcec6b9ed2ac38b8bc69a4db7c209dc177d243c8df2bddf9e39171e5f",
+      "size": 897,
+      "repo_path": "bios/Nintendo/Wii/rootca.pem",
+      "cores": [
+        "dolphin"
+      ],
+      "systems": [
+        "nintendo-gamecube"
+      ],
+      "root": "save",
+      "core_folder": "dolphin-emu"
     },
     {
       "dest": "SC-55/ROM1.BIN",
@@ -83254,6 +84021,21 @@
       ]
     },
     {
+      "dest": "FB Alpha 2012/hiscore.dat",
+      "sha1": "7381472bf046126257e51a0124e4553282f020e5",
+      "sha256": "9d44fc928c0df41debad1b86739bd6ca96a5891b3b499f6fb3d7e9ea95ca8de5",
+      "size": 322458,
+      "repo_path": "bios/Arcade/Arcade/hiscore.dat",
+      "cores": [
+        "fbalpha2012"
+      ],
+      "systems": [
+        "arcade"
+      ],
+      "root": "save",
+      "core_folder": "FB Alpha 2012"
+    },
+    {
       "dest": "fba2012/samples/dkong.zip",
       "sha1": "764ec667084bc237c1de6bd1db7541ad8cb59975",
       "sha256": "a66bc2ea040ec792308259ee96ba57b4c88de48fbce244714800b6b6340c730d",
@@ -83372,6 +84154,21 @@
       "storage": "release",
       "release_asset": "vimana.zip",
       "category": "game_data"
+    },
+    {
+      "dest": "FB Alpha 2012 CPS-3/hiscore.dat",
+      "sha1": "7381472bf046126257e51a0124e4553282f020e5",
+      "sha256": "9d44fc928c0df41debad1b86739bd6ca96a5891b3b499f6fb3d7e9ea95ca8de5",
+      "size": 322458,
+      "repo_path": "bios/Arcade/Arcade/hiscore.dat",
+      "cores": [
+        "fbalpha2012_cps3"
+      ],
+      "systems": [
+        "arcade"
+      ],
+      "root": "save",
+      "core_folder": "FB Alpha 2012 CPS-3"
     },
     {
       "dest": "ssio.zip",
@@ -83560,6 +84357,20 @@
       "cores": [
         "frodo"
       ]
+    },
+    {
+      "dest": "fsuae/Kickstarts/rom.key",
+      "sha1": "801bbab32e3d37386dd1636d4f1d6fa7e21d5874",
+      "sha256": "baf2366ae04337d37e7b37ebfb5cd7af7e4ffddeb6b017bf2e5fec43d87764e0",
+      "size": 2069,
+      "repo_path": "bios/Commodore/Amiga/rom.key",
+      "cores": [
+        "fsuae"
+      ],
+      "systems": [
+        "commodore-amiga"
+      ],
+      "root": "save"
     },
     {
       "dest": "fuse/if1-2.rom",
@@ -83761,6 +84572,98 @@
       "systems": [
         "atari-st"
       ]
+    },
+    {
+      "dest": "Ishiiruka/User/Wii/shared2/sys/SYSCONF",
+      "sha1": "3256c026284a24fb99d2ec1558d95db3b5dcc2e9",
+      "sha256": "a8ec1ec377ee3a3c93a27f74dadf9edf95112ce167fc23d1abdbeb4fa15eb179",
+      "size": 16384,
+      "repo_path": "bios/Nintendo/Wii/SYSCONF",
+      "cores": [
+        "ishiiruka"
+      ],
+      "systems": [
+        "nintendo-gamecube"
+      ],
+      "root": "save",
+      "core_folder": "Ishiiruka"
+    },
+    {
+      "dest": "Ishiiruka/User/Wii/title/00000001/00000002/data/setting.txt",
+      "sha1": "077a31ce116de322f089a627c5eb7ff5c2236a5d",
+      "sha256": "5e17f8bc2444048c944e92a4f3b2a89a6f7f06398a17b2552be8d32e52c6f9db",
+      "size": 256,
+      "repo_path": "bios/Nintendo/Wii/setting.txt",
+      "cores": [
+        "ishiiruka"
+      ],
+      "systems": [
+        "nintendo-gamecube"
+      ],
+      "root": "save",
+      "core_folder": "Ishiiruka"
+    },
+    {
+      "dest": "Ishiiruka/User/Wii/sd.raw",
+      "sha1": "8c8134f08b2e3baa603206ede30d3935365009b8",
+      "sha256": "5709657d763f510f58792ca3ba080b0f663ec922149aa3ef5a0a4495ebabf8a6",
+      "size": 134217728,
+      "repo_path": "bios/Nintendo/Wii/sd.raw",
+      "cores": [
+        "ishiiruka"
+      ],
+      "systems": [
+        "nintendo-gamecube"
+      ],
+      "storage": "release",
+      "release_asset": "sd.raw",
+      "root": "save",
+      "core_folder": "Ishiiruka"
+    },
+    {
+      "dest": "Ishiiruka/User/Wii/clientca.pem",
+      "sha1": "4b937d4e81de11574b926386dd5f768aa23bf177",
+      "sha256": "229ec678525e060588e8ea23e5459ec14af3c2ebb7b9e69ec46b0faf011730d9",
+      "size": 1005,
+      "repo_path": "bios/Nintendo/Wii/clientca.pem",
+      "cores": [
+        "ishiiruka"
+      ],
+      "systems": [
+        "nintendo-gamecube"
+      ],
+      "root": "save",
+      "core_folder": "Ishiiruka"
+    },
+    {
+      "dest": "Ishiiruka/User/Wii/clientcakey.pem",
+      "sha1": "a2c11886e6d12a135e1d5eb50d5fe92e028577d9",
+      "sha256": "723be9b32c3afb83a4a3757adf352529e90c0ad6fad52509963ba8942ae625df",
+      "size": 609,
+      "repo_path": "bios/Nintendo/Wii/clientcakey.pem",
+      "cores": [
+        "ishiiruka"
+      ],
+      "systems": [
+        "nintendo-gamecube"
+      ],
+      "root": "save",
+      "core_folder": "Ishiiruka"
+    },
+    {
+      "dest": "Ishiiruka/User/Wii/rootca.pem",
+      "sha1": "b5229455dd26c1f53c73060e9089b391389e1f75",
+      "sha256": "c5b0f8dfcec6b9ed2ac38b8bc69a4db7c209dc177d243c8df2bddf9e39171e5f",
+      "size": 897,
+      "repo_path": "bios/Nintendo/Wii/rootca.pem",
+      "cores": [
+        "ishiiruka"
+      ],
+      "systems": [
+        "nintendo-gamecube"
+      ],
+      "root": "save",
+      "core_folder": "Ishiiruka"
     },
     {
       "dest": "jazz2/Source/AnimsSw.j2a",
@@ -108299,6 +109202,30 @@
       "category": "game_data"
     },
     {
+      "dest": "Panda3DS/Emulator Files/sysdata/aes_keys.txt",
+      "sha1": "29556640b022cbfaf427874695838b43a5e8aff4",
+      "sha256": "0d866e062cf62275fbb291ba44af253e67fdc5bd76c7640b6c4a9dfe742510d9",
+      "size": 7357,
+      "repo_path": "bios/Nintendo/3DS/aes_keys.txt",
+      "cores": [
+        "panda3ds"
+      ],
+      "root": "save",
+      "core_folder": "Panda3DS"
+    },
+    {
+      "dest": "Panda3DS/Emulator Files/sysdata/seeddb.bin",
+      "sha1": "9e2c006997761082be87cf316e57c4da5cddbc62",
+      "sha256": "ff485c60090185aff05354ece01f86b61f6020332bed0f9090c58d4678e5a180",
+      "size": 53264,
+      "repo_path": "bios/Nintendo/3DS/Citra/sysdata/seeddb.bin",
+      "cores": [
+        "panda3ds"
+      ],
+      "root": "save",
+      "core_folder": "Panda3DS"
+    },
+    {
       "dest": "mda.rom",
       "sha1": "c2a8b10808bf51a3c123ba3eb1e9dd608231916f",
       "sha256": "37527f661580e5a09710051cec67422abfadf31c61b841537a91e7f27be19304",
@@ -110677,6 +111604,97 @@
       ]
     },
     {
+      "dest": "Stella/stella/KVS1.WAV",
+      "sha1": "b094c2c1fca81a0e531e0541f302346150ec4604",
+      "sha256": "8bf8d878db407cc81b4c8a05069d3aa35e0e7bff803112d4d0eba637d60fe12c",
+      "size": 3436329,
+      "repo_path": "bios/Atari/2600/KVS1.WAV",
+      "cores": [
+        "stella"
+      ],
+      "root": "save",
+      "core_folder": "Stella",
+      "category": "game_data"
+    },
+    {
+      "dest": "Stella/stella/KVS2.WAV",
+      "sha1": "8b83b2eea01b3e08ceb885aeb153d4084bddb63c",
+      "sha256": "d031b9534ba75d870365657f578ed18c0cc513ebe9b253be7d80114c7ae4210d",
+      "size": 2086275,
+      "repo_path": "bios/Atari/2600/KVS2.WAV",
+      "cores": [
+        "stella"
+      ],
+      "root": "save",
+      "core_folder": "Stella",
+      "category": "game_data"
+    },
+    {
+      "dest": "Stella/stella/KVS3.WAV",
+      "sha1": "86896a1e272d8715489de9b407f0b8a42f82d4a0",
+      "sha256": "4e47d32533feebfa9625ea818183edcd519b8cb6516bf3db11dc9a01ada6878b",
+      "size": 3720920,
+      "repo_path": "bios/Atari/2600/KVS3.WAV",
+      "cores": [
+        "stella"
+      ],
+      "root": "save",
+      "core_folder": "Stella",
+      "category": "game_data"
+    },
+    {
+      "dest": "Stella/stella/KVB1.WAV",
+      "sha1": "6a582aebcefd6e2a97bdd8968202aab9851a889c",
+      "sha256": "968937d09e17ca059cdc5f092161ba172c56ff31bc945e381638c79bf7a7e4e2",
+      "size": 4219542,
+      "repo_path": "bios/Atari/2600/KVB1.WAV",
+      "cores": [
+        "stella"
+      ],
+      "root": "save",
+      "core_folder": "Stella",
+      "category": "game_data"
+    },
+    {
+      "dest": "Stella/stella/KVB2.WAV",
+      "sha1": "60a425c6bde3226ab731995562716321be20fc49",
+      "sha256": "6ac885493469e68992b0d272264b4b0947e7d6a5c6fd0170c65299acc386c122",
+      "size": 9593878,
+      "repo_path": "bios/Atari/2600/KVB2.WAV",
+      "cores": [
+        "stella"
+      ],
+      "root": "save",
+      "core_folder": "Stella",
+      "category": "game_data"
+    },
+    {
+      "dest": "Stella/stella/KVB3.WAV",
+      "sha1": "5e34125c4d6c209b21d1c892f3df0ec1644fd0d8",
+      "sha256": "76acf3b4e607cc851c625d455ced2b099dc394460d8716c02420904960842e34",
+      "size": 7676992,
+      "repo_path": "bios/Atari/2600/KVB3.WAV",
+      "cores": [
+        "stella"
+      ],
+      "root": "save",
+      "core_folder": "Stella",
+      "category": "game_data"
+    },
+    {
+      "dest": "Stella/stella/KVSHARED.WAV",
+      "sha1": "9adf10cdf1de833b194c7d8797ad1f041ad98dd3",
+      "sha256": "589b37725aeb9801868deafa2940c6eacb15430d4051ada7942298561f3014b6",
+      "size": 3059116,
+      "repo_path": "bios/Atari/2600/KVSHARED.WAV",
+      "cores": [
+        "stella"
+      ],
+      "root": "save",
+      "core_folder": "Stella",
+      "category": "game_data"
+    },
+    {
       "dest": "KROM1.BIN",
       "sha1": "f4c74086a83b728b1c1af3a021a60efa80eff5a4",
       "sha256": "505deabd49cdcb2913eacb1064a7e532c664d95d252b7955c3c2042ea484beaf",
@@ -111049,24 +112067,28 @@
       "category": "game_data"
     },
     {
-      "dest": "aes_keys.txt",
+      "dest": "Trident/Emulator Files/sysdata/aes_keys.txt",
       "sha1": "29556640b022cbfaf427874695838b43a5e8aff4",
       "sha256": "0d866e062cf62275fbb291ba44af253e67fdc5bd76c7640b6c4a9dfe742510d9",
       "size": 7357,
       "repo_path": "bios/Nintendo/3DS/aes_keys.txt",
       "cores": [
         "trident"
-      ]
+      ],
+      "root": "save",
+      "core_folder": "Trident"
     },
     {
-      "dest": "seeddb.bin",
+      "dest": "Trident/Emulator Files/sysdata/seeddb.bin",
       "sha1": "9e2c006997761082be87cf316e57c4da5cddbc62",
       "sha256": "ff485c60090185aff05354ece01f86b61f6020332bed0f9090c58d4678e5a180",
       "size": 53264,
       "repo_path": "bios/Nintendo/3DS/Citra/sysdata/seeddb.bin",
       "cores": [
         "trident"
-      ]
+      ],
+      "root": "save",
+      "core_folder": "Trident"
     },
     {
       "dest": "id1/pak0.pak",
@@ -115722,5 +116744,9 @@
       },
       "strip_components": 1
     }
-  ]
+  ],
+  "save_directory": {
+    "folder": "savefiles",
+    "by_core": true
+  }
 }
