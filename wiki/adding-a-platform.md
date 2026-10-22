@@ -304,6 +304,8 @@ that text belongs in a guide field.
                                      # (Batocera, RetroBat): one copy per system in the
                                      # platform file's libretro_systems
       by_core_for: [dolphin]         # cores the launcher alone sorts by core (RetroBat)
+      pack_folder: userdata-saves    # the pack's folder for them, where the BIOS tree
+                                     # already has one named like folder (Batocera)
                                      # null when saves sit beside each game
     zip_digest: composite            # the frontend hashes a .zip by its members only
     firmware_folder_flat: true       # the frontend lists each system folder without

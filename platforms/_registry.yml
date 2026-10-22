@@ -499,11 +499,14 @@ platforms:
     # libretroConfig.py:225-228 and batoceraPaths.py:22 at batocera-43.1).
     # <system> is the ES system name (Emulator.py:119, args.system), so a
     # file is placed once below each system es_systems.yml offers the core
-    # for (libretro_systems in batocera.yml).
+    # for (libretro_systems in batocera.yml). The pack keeps them in
+    # userdata-saves/: batocera-systems lists bios/saves/dolphin-emu/
+    # Triforce/segaboot.gcm, so saves/ already belongs to the BIOS tree.
     save_directory:
       folder: saves
       by_core: false
       by_system: true
+      pack_folder: userdata-saves
     schedule: weekly
     target_scraper: batocera_targets
     target_source: https://github.com/batocera-linux/batocera.linux

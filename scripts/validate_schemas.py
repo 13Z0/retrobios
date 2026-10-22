@@ -416,8 +416,10 @@ def _save_directory_blocks() -> list[str]:
         if (
             not isinstance(block, dict)
             or not {"folder", "by_core"} <= set(block) <= {
-                "folder", "by_core", "by_system", "by_core_for",
+                "folder", "by_core", "by_system", "by_core_for", "pack_folder",
             }
+            or not isinstance(block.get("pack_folder", "x"), str)
+            or "/" in str(block.get("pack_folder", ""))
             or not isinstance(folder, str)
             or not folder
             or "\\" in folder
@@ -438,7 +440,35 @@ def _save_directory_blocks() -> list[str]:
                 f"platforms/_registry.yml: {name}.save_directory.by_system and "
                 f"platforms/{name}.yml lists no libretro_systems"
             )
+        in_pack = block.get("pack_folder") or folder
+        taken = _bios_tree_below(name, in_pack)
+        if taken:
+            out.append(
+                f"platforms/_registry.yml: {name}.save_directory puts the save "
+                f"files in {in_pack}/, which the BIOS tree uses ({taken}): "
+                "name another pack_folder"
+            )
     return out
+
+
+def _bios_tree_below(platform: str, folder: str) -> str:
+    """A destination the platform declares below ``folder``, or empty."""
+    from common import load_platform_config
+
+    try:
+        config = load_platform_config(platform, str(ROOT / "platforms"))
+    except FileNotFoundError:
+        return ""
+    prefix = f"{folder}/".lower()
+    return next(
+        (
+            str(entry["destination"])
+            for system in (config.get("systems") or {}).values()
+            for entry in system.get("files") or []
+            if str(entry.get("destination") or "").lower().startswith(prefix)
+        ),
+        "",
+    )
 
 
 def _libretro_systems(platform: str) -> dict:

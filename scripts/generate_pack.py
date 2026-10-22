@@ -1191,7 +1191,7 @@ def generate_pack(
               _pack_registry.get(platform_name, {}).get("install", {}) or {}
           ).get("standalone_copies", []),
           launch_folders=len(config.get("core_system_dirs") or {}),
-          save_folder=(save_layout(config).folder if save_count else ""),
+          save_folder=(save_layout(config).in_pack if save_count else ""),
           save_where=(
               save_place(
                   str(_pack_registry.get(platform_name, {}).get("extract_to") or ""),

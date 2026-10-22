@@ -1371,7 +1371,7 @@ def _save_fields(extra: dict, pack_path: str, placement: ExtraPlacement) -> None
     extra["pack_path"] = pack_path
     if placement.save is not None:
         # The path below the save directory, what the manifest writes.
-        extra["save_dest"] = pack_path[len(placement.save.folder) + 1:]
+        extra["save_dest"] = pack_path[len(placement.save.in_pack) + 1:]
         if not placement.save.by_core:
             extra.pop("core_folder", None)
 

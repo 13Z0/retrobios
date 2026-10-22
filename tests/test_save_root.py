@@ -134,7 +134,7 @@ class ThePlatformNamesItsSaveDirectory(unittest.TestCase):
 
         platforms = str(REPO_ROOT / "platforms")
         expected = {
-            "batocera": SaveLayout("saves", False, True),
+            "batocera": SaveLayout("saves", False, True, pack_folder="userdata-saves"),
             "knulli": SaveLayout("saves", False, True),
             "recalbox": SaveLayout("saves", False, True),
             "retrodeck": SaveLayout("saves", False, True),
@@ -167,6 +167,25 @@ class ThePlatformNamesItsSaveDirectory(unittest.TestCase):
                              sorted_one.sorts({"dolphin"})),
             "saves/wii/dolphin-emu/User/GBA/gba_bios.bin",
         )
+
+    def test_a_pack_folder_apart_from_the_bios_tree(self):
+        """Batocera's BIOS tree has a saves/ of its own: the pack keeps the
+        save directory's files in another folder, the installer still
+        writes them to /userdata/saves."""
+        layout = save_layout({"save_directory": {
+            "folder": "saves", "by_core": False, "by_system": True,
+            "pack_folder": "userdata-saves"}})
+        self.assertEqual(layout.in_pack, "userdata-saves")
+        self.assertEqual(save_destination("stella/KVS1.WAV", None, layout, "atari2600"),
+                         "userdata-saves/atari2600/stella/KVS1.WAV")
+        self.assertEqual(SaveLayout("saves", True).in_pack, "saves")
+        try:
+            from validate_schemas import _bios_tree_below
+        except ImportError:
+            self.skipTest("validate_schemas needs jsonschema")
+        self.assertEqual(_bios_tree_below("batocera", "saves"),
+                         "saves/dolphin-emu/Triforce/segaboot.gcm")
+        self.assertEqual(_bios_tree_below("batocera", "userdata-saves"), "")
 
     def test_the_systems_a_core_runs_for(self):
         from packpaths import libretro_systems

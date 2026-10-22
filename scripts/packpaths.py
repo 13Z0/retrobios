@@ -31,13 +31,23 @@ class SaveLayout:
     /userdata/saves/<system>): a file read there is placed once for each
     system that runs the core, the systems the platform file names in
     ``libretro_systems``. ``by_core_for`` names the cores a launcher
-    sorts by core where it sorts no other.
+    sorts by core where it sorts no other. ``pack_folder`` renames the
+    pack's folder when the BIOS tree holds one of the same name.
     """
 
     folder: str
     by_core: bool
     by_system: bool = False
     by_core_for: frozenset[str] = frozenset()
+    pack_folder: str = ""
+
+    @property
+    def in_pack(self) -> str:
+        """The pack folder holding these files: ``pack_folder`` where the
+        platform's own BIOS tree already has a folder named ``folder``
+        (Batocera lists bios/saves/dolphin-emu/Triforce/segaboot.gcm),
+        ``folder`` otherwise."""
+        return self.pack_folder or self.folder
 
     def sorts(self, names: Iterable[str]) -> bool:
         """Whether the frontend inserts the core's folder for a core known
@@ -64,6 +74,7 @@ def save_layout(config: dict) -> SaveLayout | None:
     return SaveLayout(
         folder, bool(block.get("by_core")), bool(block.get("by_system")),
         frozenset(str(core) for core in block.get("by_core_for") or []),
+        sanitize_pack_path(str(block.get("pack_folder") or "")),
     )
 
 
@@ -85,7 +96,7 @@ def save_destination(
     rel = sanitize_pack_path(path)
     if not rel:
         return None
-    root = layout.folder
+    root = layout.in_pack
     if layout.by_system:
         folder = sanitize_pack_path(system)
         if not folder or "/" in folder:
