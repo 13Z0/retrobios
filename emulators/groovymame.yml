@@ -1886,7 +1886,7 @@ files:
     category: bios_zip
     system: imax-macs
     source_ref: "upstream src/mame/seta/macs.cpp:776"
-    note: "no ROM entries in the set"
+    note: "macs2os_l.bin and macs2os_h.bin are both NO_DUMP (src/mame/seta/macs.cpp:532-535). handle_missing_file (src/emu/romload.cpp:529-571) counts a missing NO_DUMP ROM as known bad, not an error, so the machine runs without the set."
 
   - name: macsbios.zip
     required: true

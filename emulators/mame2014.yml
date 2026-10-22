@@ -388,10 +388,11 @@ files:
     source_ref: "upstream src/mame/drivers/suprnova.c:1734"
 
   - name: mac2bios.zip
-    required: true
+    required: false
     category: bios_zip
     system: imax-macs
     source_ref: "upstream src/mame/drivers/macs.c:747"
+    note: "macs2os_l.bin and macs2os_h.bin are both NO_DUMP (src/mame/drivers/macs.c:511-514). handle_missing_file (src/emu/romload.c:431-469) counts a missing NO_DUMP ROM as known bad, not an error, so the machine runs without the set."
 
   - name: macsbios.zip
     required: true
