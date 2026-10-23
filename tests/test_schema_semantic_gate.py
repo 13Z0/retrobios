@@ -96,3 +96,29 @@ class SemanticManifestValidation(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+try:
+    import jsonschema
+except ImportError:
+    jsonschema = None
+
+
+@unittest.skipIf(jsonschema is None, "jsonschema unavailable")
+class DataRootIsKeyedBySystem(unittest.TestCase):
+    """AetherSX2 gave Android/data/xyz.aethersx2.android only in its notes:
+    the site could not print the folder, nor which OS tabs apply."""
+
+    def _errors(self, value):
+        schema = json.loads((REPO_ROOT / "schemas/emulator.schema.json").read_text(encoding="utf-8"))
+        validator = jsonschema.Draft202012Validator(schema["properties"]["data_root"])
+        return list(validator.iter_errors(value))
+
+    def test_a_system_with_its_path_and_reference(self):
+        self.assertEqual(self._errors({"android": {
+            "path": "Android/data/xyz.aethersx2.android/files", "source_ref": "a.kt:1"}}), [])
+
+    def test_an_unknown_system_or_a_path_without_reference(self):
+        self.assertTrue(self._errors({"amiga": {"path": "x", "source_ref": "y"}}))
+        self.assertTrue(self._errors({"windows": {"path": "%APPDATA%/X"}}))
+        self.assertTrue(self._errors({}))
