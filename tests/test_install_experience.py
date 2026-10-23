@@ -455,20 +455,28 @@ class AStoppedRunCountsWhatLanded(unittest.TestCase):
             dest = Path(tmp) / "bios"
             env = dict(os.environ,
                        RETROBIOS_BASE_URL=f"http://127.0.0.1:{httpd.server_address[1]}")
-            proc = subprocess.Popen(
-                [sys.executable, str(REPO_ROOT / "install.py"), "--platform", "retroarch",
-                 "--dest", str(dest), "--no-input"],
-                env=env, stdin=subprocess.DEVNULL, stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE, text=True,
-            )
-            deadline = time.monotonic() + 30
-            while not (dest / "first.bin").exists() and time.monotonic() < deadline:
-                time.sleep(0.05)
-            time.sleep(0.2)
-            proc.send_signal(signal.SIGINT)
-            time.sleep(0.3)
-            _HeldHandler.release.set()
-            out, err = proc.communicate(timeout=60)
+            log = Path(tmp) / "out.txt"
+            # The held files are released once the run says it is stopping,
+            # not after a fixed pause: under load the stop landed after the
+            # release, all three files arrived, and nothing was stopped.
+            with open(log, "w", encoding="utf-8") as out_file:
+                proc = subprocess.Popen(
+                    [sys.executable, str(REPO_ROOT / "install.py"), "--platform", "retroarch",
+                     "--dest", str(dest), "--no-input"],
+                    env=env, stdin=subprocess.DEVNULL, stdout=out_file,
+                    stderr=subprocess.STDOUT, text=True,
+                )
+                deadline = time.monotonic() + 30
+                while not (dest / "first.bin").exists() and time.monotonic() < deadline:
+                    time.sleep(0.05)
+                time.sleep(0.2)
+                proc.send_signal(signal.SIGINT)
+                while ("Stopping." not in log.read_text(encoding="utf-8")
+                       and time.monotonic() < deadline):
+                    time.sleep(0.05)
+                _HeldHandler.release.set()
+                proc.wait(timeout=60)
+            out = err = log.read_text(encoding="utf-8")
             written = sorted(p.name for p in dest.iterdir() if not p.name.startswith("."))
         self.assertEqual(proc.returncode, 130, out + err)
         self.assertEqual(written, ["first.bin"])
