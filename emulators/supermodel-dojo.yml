@@ -18,6 +18,20 @@ systems:
   - real3d-pro1000
 mode: standalone
 
+data_root:
+  windows:
+    path: "<working directory>"
+    source_ref: "Src/OSD/Windows/FileSystemPath.cpp:34-59"
+    note: "Config/, Assets/, NVRAM/, Saves/, Replays/ and ROMs/ are relative names, so the folder the release archive is extracted to when started from it"
+  macos:
+    path: "<working directory>"
+    source_ref: "Src/OSD/OSX/FileSystemPath.cpp:35-58"
+    note: "relative names, as on Windows"
+  linux:
+    path: "~/.local/share/supermodel-dojo, else $XDG_DATA_HOME/supermodel-dojo"
+    source_ref: "Src/OSD/Unix/FileSystemPath.cpp:80-204"
+    note: "~/.supermodel-dojo when it exists, and the working directory when Config/ is there and no home directory resolves. Config sits apart, in ~/.config/supermodel-dojo/Config or $XDG_CONFIG_HOME/supermodel-dojo/Config"
+
 notes: |
   Fork of Supermodel adding delay based netplay, session replay with mid replay
   takeover, a training mode, and an in-emulator GUI that lists the sets, the
@@ -34,7 +48,8 @@ notes: |
   release archive puts them and where ES-DE starts the process. Linux uses the
   working directory when no home directory resolves, $HOME/.supermodel-dojo/<dir>
   when that directory exists, otherwise $HOME/.config/supermodel-dojo/Config and
-  $HOME/.local/share/supermodel-dojo/<dir> under the XDG variables, and falls back
+  $HOME/.local/share/supermodel-dojo/<dir>, each replaced by its XDG variable
+  when the home folder is absent and the variable is set, and falls back
   to the Config/Games.xml and Assets/ sitting next to the binary when the home copy
   is absent. ROMs/ is the default ROMDirectory, where the GUI looks for
   <set>.zip.
