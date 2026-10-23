@@ -50,7 +50,7 @@ import zipfile
 import zlib
 from collections.abc import Callable, Collection, Iterator, Mapping
 from pathlib import Path, PurePosixPath
-from typing import BinaryIO, NamedTuple, TextIO
+from typing import BinaryIO, ContextManager, NamedTuple, TextIO
 
 # Manifests are read from the same ref the bootstrap verified this installer
 # against, so a file list and the code reading it always come from one commit.
@@ -494,7 +494,8 @@ EVENT_KEYS: dict[str, tuple[str, ...]] = {
     # stage: manifest (reason: network, not_found, invalid, clock for a
     # refused certificate under a clock set in the past, or no_ca for no
     # trusted certificates on the machine) or detect (reason: conflict, two
-    # systems found on one machine).
+    # systems found on one machine) or from (reason: not_found or
+    # not_a_folder, a folder named with --from).
     "error": ("stage", "reason", "platform", "message"),
     # state: present (hash verified), wrong_hash or missing.
     "file": ("platform", "dest", "systems", "size", "state"),
@@ -504,6 +505,11 @@ EVENT_KEYS: dict[str, tuple[str, ...]] = {
     "checking": ("files_done", "files_total"),
     "check": ("platform", "name", "bios_dir", "files", "present", "missing",
               "wrong_hash", "bytes_needed", "data_missing", "not_installable"),
+    # A file to install that this machine already holds: misplaced in the
+    # BIOS folder (folder is its bios_dir, reason says why in words) or in
+    # a folder named with --from (reason empty). member names the ZIP member
+    # when path is an archive, else "". Its copy is a downloaded event.
+    "found": ("platform", "dest", "folder", "path", "member", "reason"),
     "download": ("platform", "files", "bytes"),
     "progress": ("files_done", "files_total", "bytes_done", "bytes_total"),
     "downloaded": ("dest", "ok", "reason", "size", "files_done", "files_total",
@@ -4190,9 +4196,10 @@ def restore_kept(run: Path, dry_run: bool = False) -> int:
 
 def _download_one(
     f: dict, bios_path: Path, verbose: bool = False,
-    progress: Progress | None = None,
+    progress: Progress | None = None, copy: LocalCopy | None = None,
 ) -> tuple[str, bool, str]:
-    """Download a single file. Returns (dest, success, reason it failed)."""
+    """Download a single file, or copy it from where copy found it on this
+    machine. Returns (dest, success, reason it failed)."""
     if _stop.is_set():
         return str(f.get("dest", "?")), False, "stopped"
     try:
@@ -4205,6 +4212,18 @@ def _download_one(
         if _write_refused(exc):
             return f["dest"], False, NOT_WRITABLE
         return f["dest"], False, exc.strerror or str(exc)
+
+    if copy is not None:
+        result = _copy_local(f, bios_path, dest, copy, progress)
+        if result[1]:
+            copy.index.count_copy(copy.misplaced)
+            return result
+        if result[2] in ("stopped", NOT_WRITABLE, READ_ONLY) or result[2].startswith(NOT_KEPT):
+            return result
+        # The copy went or changed since it was read (a card pulled out, a
+        # file another run replaced): the file is fetched as if never found.
+        if verbose:
+            print(f"    {f['dest']}: {result[2]}, fetching it instead", file=sys.stderr)
 
     if LOCAL.pack is not None:
         return _extract_from_pack(f, bios_path, dest, progress)
@@ -4610,7 +4629,7 @@ def _folder_writable(path: Path) -> bool:
 # Options that take a value, as a hint gives them back.
 _VALUED_OPTIONS = (
     "--system", "--core", "--emulator", "--region", "--target", "--cores-dir", "--save-dir",
-    "--from-pack", "--manifest",
+    "--from-pack", "--from", "--manifest",
 )
 
 
@@ -4799,6 +4818,7 @@ def _report_outcome(
     omitted_entries: list[dict] | None = None,
     platform_of: dict[Path, str] | None = None,
     hints: list[str] | None = None,
+    sources: str = "",
 ) -> None:
     """Close the run on what happened, and leave with a status that says so.
 
@@ -4871,6 +4891,8 @@ def _report_outcome(
     if errors:
         print(f"\nFinished with errors. {_plural(downloaded, 'file')} installed, "
               f"{_plural(errors, 'file')} failed.")
+        if sources:
+            print(f"  {sources}")
         print(f"Location: {_locations(paths)}")
         for line in kept + advice:
             print(line)
@@ -4879,6 +4901,8 @@ def _report_outcome(
 
     print(f"\nDone. {_plural(downloaded, 'file')} installed, "
           f"{_plural(up_to_date, 'file')} already up to date.")
+    if sources:
+        print(f"  {sources}")
     print(f"Location: {_locations(paths)}")
     for line in kept:
         print(line)
@@ -4977,6 +5001,7 @@ def _print_plan(
     to_download: list[dict], bios_path: Path, term: Terminal,
     trees: list[tuple[dict, dict[str, dict]]] = (),
     kept: dict[Path, list[int]] | None = None,
+    copied: list[str] = (),
 ) -> None:
     """What a real run would fetch, by system, and nothing written.
 
@@ -4988,16 +5013,21 @@ def _print_plan(
     trees = [(entry, needed) for entry, needed in trees if needed]
     tree_files = sum(len(needed) for _entry, needed in trees)
     tree_size = sum(meta.get("size", 0) for _entry, needed in trees for meta in needed.values())
+    for line in copied:
+        print(line)
     if not to_download and not trees:
-        print("\n  All files up to date. A real run would download nothing.")
-        return
+        if not copied:
+            print("\n  All files up to date. A real run would download nothing.")
+            return
+        print("\n  Nothing to download.")
     parts = []
     if to_download:
         parts.append(f"{_plural(len(to_download), 'file')} ({format_size(total)})")
     if trees:
         parts.append(f"{_plural(tree_files, 'data file')} ({format_size(tree_size)}, "
                      f"extracted from {_plural(len(trees), 'archive')})")
-    print(f"\nWould download {' and '.join(parts)} to {bios_path}:")
+    if parts:
+        print(f"\nWould download {' and '.join(parts)} to {bios_path}:")
     by_system: dict[str, list[dict]] = {}
     for entry in to_download:
         system = ", ".join(entry_systems(entry)) or "other"
@@ -5053,6 +5083,7 @@ def _check_free_space(bios_path: Path, needed: int, plat: str = "", code: int = 
 def download_files(
     files: list[dict], bios_path: Path, jobs: int = 8, verbose: bool = False,
     term: Terminal | None = None, progress: Progress | None = None,
+    copies: dict[int, LocalCopy] | None = None,
 ) -> tuple[list[tuple[str, str]], bool]:
     """Download files in parallel.
 
@@ -5072,7 +5103,8 @@ def download_files(
 
     with concurrent.futures.ThreadPoolExecutor(max_workers=jobs) as pool:
         future_map = {
-            pool.submit(_download_one, f, bios_path, verbose, progress): f
+            pool.submit(_download_one, f, bios_path, verbose, progress,
+                        (copies or {}).get(id(f))): f
             for f in files
         }
         refused = False
@@ -6419,11 +6451,14 @@ class PackSource:
 
 
 class LocalSources:
-    """Where this run reads instead of the network: a file list, a pack."""
+    """Where this run reads instead of the network: a file list, a pack, the
+    folders it copies BIOS files from."""
 
     def __init__(self) -> None:
         self.manifest: Path | None = None
         self.pack: PackSource | None = None
+        # The folders named with --from, read once for every platform.
+        self.folders: list[FolderIndex] = []
 
     @property
     def offline(self) -> bool:
@@ -6434,6 +6469,7 @@ class LocalSources:
             self.pack.close()
         self.manifest = None
         self.pack = None
+        self.folders = []
 
 
 LOCAL = LocalSources()
@@ -6492,11 +6528,42 @@ def _extract_from_pack(
     if held is None:
         return f["dest"], False, NOT_IN_PACK
     archive, info = held
+    return _write_verified(f, bios_path, dest, lambda: archive.open(info), progress,
+                           "the pack")
+
+
+@contextlib.contextmanager
+def _open_copy(copy: LocalCopy) -> Iterator[BinaryIO]:
+    """The bytes of a copy found on this machine, opened for reading only."""
+    if not copy.member:
+        with open(copy.path, "rb") as handle:
+            yield handle
+        return
+    with zipfile.ZipFile(copy.path) as archive, archive.open(copy.member) as handle:
+        yield handle
+
+
+def _copy_local(
+    f: dict, bios_path: Path, dest: Path, copy: LocalCopy, progress: Progress | None,
+) -> tuple[str, bool, str]:
+    """Copy one file found on this machine to its place, checked like a
+    download. Its bytes count as already here, not in the download speed."""
+    return _write_verified(f, bios_path, dest, lambda: _open_copy(copy), progress,
+                           f"the copy in {copy.index.label}", local=True)
+
+
+def _write_verified(
+    f: dict, bios_path: Path, dest: Path,
+    source: Callable[[], ContextManager[BinaryIO]], progress: Progress | None,
+    held_in: str, local: bool = False,
+) -> tuple[str, bool, str]:
+    """Write the bytes source opens at dest once they match the list's size
+    and hashes, the file in place kept aside first when it differs."""
     expected = {name: f[name].lower() for name in ("sha256", "sha1") if f.get(name)}
     tmp_path: Path | None = None
     counted = 0
     try:
-        with archive.open(info) as src, tempfile.NamedTemporaryFile(
+        with source() as src, tempfile.NamedTemporaryFile(
             mode="wb", dir=dest.parent, prefix=f".{dest.name}.", suffix=".part",
             delete=False,
         ) as out:
@@ -6510,17 +6577,17 @@ def _extract_from_pack(
                     break
                 size += len(chunk)
                 if size > f["size"]:
-                    raise ValueError("the pack holds more bytes than the list records")
+                    raise ValueError(f"{held_in} holds more bytes than the list records")
                 out.write(chunk)
                 if progress is not None:
-                    progress.add(len(chunk))
+                    progress.add(len(chunk), resumed=local)
                     counted += len(chunk)
         if size != f["size"]:
-            raise ValueError(f"the pack holds {size} bytes, the list records {f['size']}")
+            raise ValueError(f"{held_in} holds {size} bytes, the list records {f['size']}")
         actual = _digest_file(tmp_path, tuple(expected))
         for name, label in (("sha256", "SHA-256"), ("sha1", "SHA-1")):
             if name in expected and actual[name] != expected[name]:
-                raise ValueError(f"{label} mismatch in the pack")
+                raise ValueError(f"{label} mismatch in {held_in}")
         os.chmod(tmp_path, (0o777 if f.get("executable") else 0o666) & ~_UMASK)
         _clear_read_only(dest)
         KEPT.keep(*_kept_slot(*_entry_place(bios_path, f)), dest, expected, tmp_path)
@@ -6531,9 +6598,9 @@ def _extract_from_pack(
         return f["dest"], False, "stopped"
     except _NotKept as exc:
         return f["dest"], False, f"{NOT_KEPT} ({exc})"
-    except (OSError, ValueError, zipfile.BadZipFile, zlib.error) as exc:
+    except (ValueError, *_MEMBER_ERRORS) as exc:
         if progress is not None and counted:
-            progress.add(-counted)
+            progress.add(-counted, resumed=local)
         if isinstance(exc, OSError) and _write_refused(exc):
             return f["dest"], False, READ_ONLY if _read_only_file(dest) else NOT_WRITABLE
         return f["dest"], False, str(exc)
@@ -6550,23 +6617,85 @@ _ARCHIVE_SUFFIXES = (".zip", ".7z", ".rar")
 SHOWN_CORES = 4
 
 
-class FolderIndex:
-    """The files under a BIOS folder, by name and by size, hashed on demand."""
+# Folders a system writes on a drive for itself. No BIOS file a person
+# copied is in them, and a Mac's Spotlight index alone holds thousands.
+SYSTEM_FOLDERS = frozenset(name.casefold() for name in (
+    ".Spotlight-V100", ".Trashes", ".fseventsd", ".TemporaryItems",
+    ".DocumentRevisions-V100", "System Volume Information", "$RECYCLE.BIN",
+))
+# A Mac copying to a FAT or exFAT card writes ._name beside every file: its
+# Finder data, 4 KB, never the file.
+APPLE_DOUBLE = "._"
+# Errors a member of someone's ZIP can raise on reading: damaged, encrypted
+# (RuntimeError), or packed with a method zipfile lacks.
+_MEMBER_ERRORS = (OSError, EOFError, RuntimeError, NotImplementedError,
+                  zipfile.BadZipFile, zlib.error)
 
-    def __init__(self, root: Path) -> None:
+
+class LocalCopy(NamedTuple):
+    """A file found on this machine with the contents an entry wants."""
+    index: FolderIndex
+    path: Path
+    # The member holding the bytes when path is a ZIP, else "".
+    member: str = ""
+    # In the BIOS folder at a place no entry of the list names: a mistake
+    # the copy fixes. A copy from another entry's place is no mistake.
+    misplaced: bool = False
+
+    def where(self) -> str:
+        """The copy as the folder it was found in names it."""
+        rel = self.index.relative(self.path)
+        return f"{rel}, inside as {self.member}" if self.member else rel
+
+
+class FolderIndex:
+    """The files under a folder, by name and by size, hashed on demand.
+
+    The folder is only read. A link is followed only where it leads to a
+    file inside the folder, so an old card holding a link to the home
+    folder is not walked through it. A ZIP named as the root is read as a
+    folder holding that one archive.
+    """
+
+    def __init__(self, root: Path, label: str = "") -> None:
+        self.label = label or str(root)
         self.root = root = root.resolve()
         self.by_name: dict[str, list[Path]] = {}
         self.by_size: dict[int, list[Path]] = {}
         self.size: dict[Path, int] = {}
         self.archives: list[Path] = []
+        # Name a ._ file stands beside (casefolded) -> the ._ files.
+        self.apple_double: dict[str, list[Path]] = {}
+        # The list's destinations, casefolded (an archive among them is not
+        # unpacked for its members) and as the list writes them.
+        self.sealed: set[str] = set()
+        self.listed: set[str] = set()
+        self.truncated = False
+        self.copied = 0
+        self.fixed = 0
+        self._lock = threading.Lock()
         self._sha1: dict[Path, str] = {}
+        self._digests: dict[tuple[Path, str, str], str] = {}
         self._members: dict[Path, list[str]] = {}
+        self._member_sizes: dict[int, list[tuple[Path, str]]] | None = None
+        if root.is_file():
+            if root.name.casefold().endswith(".zip"):
+                self.archives.append(root)
+            return
         seen = 0
         for folder, dirs, names in os.walk(root):
-            dirs[:] = sorted(d for d in dirs if d != BACKUP_DIR)
+            dirs[:] = sorted(d for d in dirs
+                             if d != BACKUP_DIR and d.casefold() not in SYSTEM_FOLDERS)
             for name in sorted(names):
                 path = Path(folder) / name
+                if name.startswith(APPLE_DOUBLE):
+                    self.apple_double.setdefault(name[2:].casefold(), []).append(path)
+                    continue
+                if name.startswith(".") and name.endswith(".part"):
+                    continue  # a download of this installer, not finished
                 try:
+                    if path.is_symlink() and not _inside(path, root):
+                        continue
                     if not path.is_file():
                         continue
                     size = path.stat().st_size
@@ -6579,6 +6708,7 @@ class FolderIndex:
                     self.archives.append(path)
                 seen += 1
                 if seen >= MAX_SCANNED_FILES:
+                    self.truncated = True
                     return
 
     def seed(self, path: Path, sha1: str) -> None:
@@ -6592,6 +6722,23 @@ class FolderIndex:
             except OSError:
                 self._sha1[path] = ""
         return self._sha1[path]
+
+    def digest(self, path: Path, algorithm: str, member: str = "") -> str:
+        """The file's (or the member's) digest, read once, "" when unreadable."""
+        if algorithm == "sha1" and not member:
+            return self.sha1(path)
+        key = (path, member, algorithm)
+        if key not in self._digests:
+            try:
+                if member:
+                    with zipfile.ZipFile(path) as archive, archive.open(member) as handle:
+                        value = _digest_handle(handle, (algorithm,))[algorithm]
+                else:
+                    value = _digest_file(path, (algorithm,))[algorithm]
+            except _MEMBER_ERRORS:
+                value = ""
+            self._digests[key] = value
+        return self._digests[key]
 
     def holding(self, sizes: set[int], sha1s: set[str]) -> list[Path]:
         """Files whose contents are one of sha1s, read only when the size fits."""
@@ -6608,11 +6755,70 @@ class FolderIndex:
                 self._members[path] = []
         return self._members[path]
 
+    def _members_of_size(self, size: int) -> list[tuple[Path, str]]:
+        """(archive, member) of every ZIP member of that size, the
+        archives' directories read once, the first time one is asked."""
+        if self._member_sizes is None:
+            self._member_sizes = {}
+            for path in self.archives:
+                if (not path.name.casefold().endswith(".zip")
+                        or self.relative(path).casefold() in self.sealed):
+                    continue
+                try:
+                    with zipfile.ZipFile(path) as archive:
+                        infos = archive.infolist()
+                except (OSError, zipfile.BadZipFile):
+                    continue
+                for info in infos:
+                    if not info.is_dir():
+                        self._member_sizes.setdefault(info.file_size, []).append(
+                            (path, info.filename))
+        return self._member_sizes.get(size, [])
+
+    def find(self, entry: dict, skip: Collection[Path] = ()) -> LocalCopy | None:
+        """A copy of the entry's own contents: its size first, then its hash,
+        loose files before ZIP members, a file of the same name first."""
+        size = entry.get("size")
+        if not isinstance(size, int) or isinstance(size, bool):
+            return None
+        algorithm = "sha1" if entry.get("sha1") else "sha256"
+        wanted = str(entry.get(algorithm) or "").lower()
+        if not wanted:
+            return None
+        name = str(entry.get("dest", "")).rsplit("/", 1)[-1].casefold()
+        loose = sorted(self.by_size.get(size, []), key=lambda p: p.name.casefold() != name)
+        for path in loose:
+            if path not in skip and self.digest(path, algorithm) == wanted:
+                return LocalCopy(self, path)
+        members = sorted(self._members_of_size(size),
+                         key=lambda item: item[1].rsplit("/", 1)[-1].casefold() != name)
+        for path, member in members:
+            if self.digest(path, algorithm, member) == wanted:
+                return LocalCopy(self, path, member)
+        return None
+
+    def count_copy(self, misplaced: bool = False) -> None:
+        with self._lock:
+            if misplaced:
+                self.fixed += 1
+            else:
+                self.copied += 1
+
     def relative(self, path: Path) -> str:
         try:
-            return path.relative_to(self.root).as_posix()
+            rel = path.relative_to(self.root).as_posix()
         except ValueError:
             return str(path)
+        return rel if rel != "." else path.name
+
+
+def _inside(path: Path, root: Path) -> bool:
+    """Whether a link at path leads to a place under root."""
+    try:
+        Path(os.path.realpath(path)).relative_to(root)
+    except ValueError:
+        return False
+    return True
 
 
 def _copies(entry: dict) -> list[dict]:
@@ -6674,6 +6880,59 @@ def _content_owner(sha1: str, entry: dict, files: list[dict]) -> str:
     return ""
 
 
+def _place_reason(
+    entry: dict, path: Path, index: FolderIndex, expected: Path, known: set[str],
+    contents: str = "",
+) -> tuple[str, str]:
+    """(reason, folder too deep) for an entry's file found at path in the
+    BIOS folder, or ("", "") when that place says nothing. contents is
+    ", with other contents" for a file of the right name and wrong bytes."""
+    dest = str(entry.get("dest", ""))
+    name = dest.rsplit("/", 1)[-1]
+    rel = index.relative(path)
+    # A dest below the save directory is not below this folder: a copy
+    # here under the same tail is in the wrong place, not too deep.
+    below = entry.get("root") != "save"
+    if below and rel.endswith("/" + dest) and path.name == name:
+        extra = rel[: -len(dest) - 1]
+        top = index.root.name
+        if extra.casefold() == top.casefold():
+            return (f"nested folder: it is at {top}/{rel}{contents}, a "
+                    f"{top} folder inside {top}"), extra
+        depth = extra.count("/") + 1
+        levels = "one folder" if depth == 1 else f"{depth} folders"
+        return f"{levels} too deep: it is at {rel}{contents}", extra
+    if path.name.casefold() == name.casefold():
+        if path.parent == expected.parent and path.name != name:
+            return (f"case of the name: the folder holds {path.name}{contents}, "
+                    f"the cores open {name}"), ""
+        return f"wrong folder: it is at {rel}{contents}", ""
+    if contents:
+        return "", ""
+    if rel.casefold() in known:
+        return f"its contents are at {rel}: copy that file to {dest}", ""
+    return f"a name no core opens: its contents are at {rel}, rename it {name}", ""
+
+
+def _copy_reason(entry: dict, copy: LocalCopy, bios_path: Path, known: set[str]) -> str:
+    """Why a copy found in the BIOS folder is not at the entry's place."""
+    if not copy.misplaced:
+        # np2kai/2608_bd.wav and np2/2608_bd.wav hold the same bytes. Told
+        # "wrong folder", a user moved np2's copy and broke that core.
+        return f"the same file is at {copy.where()}, where the list installs it too"
+    if copy.member:
+        return f"still zipped: it is inside {copy.index.relative(copy.path)}"
+    try:
+        copy.path.relative_to(copy.index.root)
+    except ValueError:
+        return f"one folder too high: it is at {copy.path}"
+    try:
+        expected = _entry_path(bios_path, entry)
+    except ValueError:
+        return ""
+    return _place_reason(entry, copy.path, copy.index, expected, known)[0]
+
+
 def _found_elsewhere(
     entry: dict, index: FolderIndex, bios_path: Path, files: list[dict],
     known: set[str],
@@ -6696,32 +6955,15 @@ def _found_elsewhere(
     same_name = [p for p in index.by_name.get(name.casefold(), []) if p != expected]
     matching = [p for p in same_name if index.size[p] in sizes and index.sha1(p) in sha1s]
     for path in matching or same_name:
-        rel = index.relative(path)
         contents = "" if path in matching else ", with other contents"
-        # A dest below the save directory is not below this folder: a copy
-        # here under the same tail is in the wrong place, not too deep.
-        below = entry.get("root") != "save"
-        if below and rel.endswith("/" + dest) and path.name == name:
-            extra = rel[: -len(dest) - 1]
-            top = index.root.name
-            if extra.casefold() == top.casefold():
-                return (f"nested folder: it is at {top}/{rel}{contents}, a "
-                        f"{top} folder inside {top}"), extra
-            depth = extra.count("/") + 1
-            levels = "one folder" if depth == 1 else f"{depth} folders"
-            return f"{levels} too deep: it is at {rel}{contents}", extra
-        if path.parent == expected.parent and path.name != name:
-            return f"case of the name: the folder holds {path.name}{contents}", ""
-        if path.name.casefold() == name.casefold():
-            return f"wrong folder: it is at {rel}{contents}", ""
+        found = _place_reason(entry, path, index, expected, known, contents)
+        if found[0]:
+            return found
     above = index.root.parent / dest
     if index.root.parent != index.root and above.is_file():
         return f"one folder too high: it is at {above}", ""
     for path in index.holding(sizes, sha1s):
-        rel = index.relative(path)
-        if rel.casefold() in known:
-            return f"its contents are at {rel}: copy that file to {dest}", ""
-        return f"a name no core opens: its contents are at {rel}, rename it {name}", ""
+        return _place_reason(entry, path, index, expected, known)
     if name.casefold().endswith(_ARCHIVE_SUFFIXES):
         return "", ""
     stem = name.rsplit(".", 1)[0].casefold()
@@ -6734,6 +6976,10 @@ def _found_elsewhere(
             return f"still zipped: it is inside {index.relative(path)}", ""
         if lowered.rsplit(".", 1)[0] == stem:
             return f"still zipped: {index.relative(path)} needs extracting", ""
+    for path in index.apple_double.get(name.casefold(), []):
+        if path.parent == expected.parent:
+            return (f"only a Mac's ._ file: {path.name} holds Finder data, not the "
+                    f"file itself. Copy {name} again"), ""
     return "", ""
 
 
@@ -6765,7 +7011,7 @@ class Diagnosis(NamedTuple):
 
 def diagnose(
     missing: list[dict], mismatched: list[dict], files: list[dict], bios_path: Path,
-    verified: list[dict] | None = None,
+    verified: list[dict] | None = None, index: FolderIndex | None = None,
 ) -> Diagnosis:
     """The reason --check gives for each file it flags, from what the folder
     holds and what the list records: id(entry) -> reason, and the folders
@@ -6775,13 +7021,8 @@ def diagnose(
     deep: dict[str, int] = {}
     if not bios_path.is_dir() or not (missing or mismatched):
         return Diagnosis(reasons, deep)
-    index = FolderIndex(bios_path)
-    for entry in verified or []:
-        if entry.get("sha1"):
-            try:
-                index.seed(_entry_path(bios_path, entry), entry["sha1"].lower())
-            except ValueError:
-                continue
+    if index is None:
+        index = bios_folder_index(bios_path, files, verified or [])
     known = _known_destinations(files)
     for entry in missing:
         reason, extra = _found_elsewhere(entry, index, bios_path, files, known)
@@ -6803,21 +7044,26 @@ def diagnose(
 def check_lines(
     missing: list[dict], mismatched: list[dict], files: list[dict], manifest: dict,
     bios_path: Path, every: bool, verified: list[dict] | None = None,
+    index: FolderIndex | None = None, copies: dict[int, LocalCopy] | None = None,
 ) -> list[str]:
     """The files --check flags, each with why and where its cores read it.
 
     "missing: scph5501.bin" left a user with the file one folder too deep,
     or still in its ZIP, to guess. A flagged file with a reason is always
-    listed. Plain missing ones stop at ten unless every is set.
+    listed, and so is one a folder named with --from holds. Plain missing
+    ones stop at ten unless every is set.
     """
-    found = diagnose(missing, mismatched, files, bios_path, verified)
+    found = diagnose(missing, mismatched, files, bios_path, verified, index)
+    copies = copies or {}
+    known = _known_destinations(files)
     lines = []
     for extra, count in sorted(found.deep.items(), key=lambda item: -item[1]):
         if count >= 3:
             lines.append(f"  {_plural(count, 'file')} sit too deep, in "
                          f"{bios_path / extra}: move what it holds up into {bios_path}.")
-    explained = [e for e in missing if id(e) in found.reasons]
-    plain = [e for e in missing if id(e) not in found.reasons]
+    lines += _check_copy_lines(missing + mismatched, copies, index)
+    explained = [e for e in missing if id(e) in found.reasons or id(e) in copies]
+    plain = [e for e in missing if id(e) not in found.reasons and id(e) not in copies]
     shown = plain if every else plain[:10]
 
     def block(label: str, entry: dict) -> list[str]:
@@ -6825,6 +7071,16 @@ def check_lines(
         rows = [f"    {label}: {entry['dest']}{game}"]
         if id(entry) in found.reasons:
             rows.append(f"      {found.reasons[id(entry)]}")
+        copy = copies.get(id(entry))
+        if copy is not None and copy.index is index and not copy.misplaced:
+            rows.append(f"      a run without --check copies it from {copy.where()}")
+        elif copy is not None and copy.index is index:
+            where = _copy_reason(entry, copy, bios_path, known)
+            if where and where != found.reasons.get(id(entry)):
+                rows.append(f"      the right file: {where}")
+            rows.append("      a run without --check copies it into place")
+        elif copy is not None:
+            rows.append(f"      in {copy.index.label}: {copy.where()}")
         rows.append(f"      {opened_line(entry, manifest, bios_path)}")
         return rows
 
@@ -6838,6 +7094,199 @@ def check_lines(
         lines.append(f"    ... and {len(plain) - len(shown)} more missing "
                      "(--verbose lists them all)")
     return lines
+
+
+def bios_folder_index(
+    bios_path: Path, files: list[dict], verified: list[dict],
+) -> FolderIndex | None:
+    """The BIOS folder read for files misplaced in it. The files the check
+    verified are not read again: their SHA-1 is the one the list records.
+    An archive the list installs is not unpacked for its members: a MAME
+    set holding a ROM a core also reads loose is that core's to open."""
+    if not bios_path.is_dir():
+        return None
+    index = FolderIndex(bios_path)
+    for entry in verified:
+        if entry.get("sha1"):
+            try:
+                index.seed(_entry_path(bios_path, entry), entry["sha1"].lower())
+            except ValueError:
+                continue
+    index.sealed = _known_destinations(files)
+    index.listed = {str(f.get("dest", "")) for f in files}
+    return index
+
+
+def _above(entry: dict, index: FolderIndex) -> LocalCopy | None:
+    """The entry's file at its place one folder above the BIOS folder."""
+    if entry.get("root") == "save" or index.root.parent == index.root:
+        return None
+    try:
+        above = index.root.parent / _safe_relative_path(entry.get("dest"), "dest")
+        if above.stat().st_size != entry.get("size") or not above.is_file():
+            return None
+    except (OSError, ValueError):
+        return None
+    algorithm = "sha1" if entry.get("sha1") else "sha256"
+    if index.digest(above, algorithm) != str(entry.get(algorithm, "")).lower():
+        return None
+    return LocalCopy(index, above)
+
+
+def plan_local_copies(
+    entries: list[dict], bios_path: Path, bios_index: FolderIndex | None,
+    folders: list[FolderIndex],
+) -> dict[int, LocalCopy]:
+    """id(entry) -> where this machine already holds the entry's bytes: the
+    BIOS folder itself first, a file misplaced in it, then each folder named
+    with --from in turn. Every copy is found by size, then by hash."""
+    if not entries or (bios_index is None and not folders):
+        return {}
+    # A file this run replaces is no source: its place is being written.
+    written = set()
+    for entry in entries:
+        try:
+            written.add(Path(os.path.realpath(_entry_path(bios_path, entry))))
+        except ValueError:
+            continue
+    copies: dict[int, LocalCopy] = {}
+    for entry in entries:
+        copy = None
+        if bios_index is not None:
+            copy = bios_index.find(entry, written) or _above(entry, bios_index)
+        if copy is not None:
+            copy = copy._replace(misplaced=_misplaced(entry, copy, bios_index))
+        for index in folders:
+            if copy is not None:
+                break
+            copy = index.find(entry, written)
+        if copy is not None:
+            copies[id(entry)] = copy
+    return copies
+
+
+def _misplaced(entry: dict, copy: LocalCopy, index: FolderIndex) -> bool:
+    """Whether a copy in the BIOS folder sits where no other entry of the
+    list goes: GBA_BIOS.BIN for gba_bios.bin is a mistake, np2/2608_bd.wav
+    for np2kai/2608_bd.wav is the other core's file."""
+    if copy.member:
+        return True
+    rel = index.relative(copy.path)
+    if rel in index.listed:
+        return False
+    own = str(entry.get("dest", "")).casefold()
+    return rel.casefold() not in index.sealed or rel.casefold() == own
+
+
+def _check_copy_lines(
+    entries: list[dict], copies: dict[int, LocalCopy], bios_index: FolderIndex | None,
+) -> list[str]:
+    """What --check says a run would copy instead of downloading."""
+    fixed = sum(1 for e in entries if id(e) in copies and copies[id(e)].misplaced)
+    lines = []
+    if fixed:
+        verb = "is" if fixed == 1 else "are"
+        them = "it" if fixed == 1 else "them"
+        lines.append(f"  {fixed} of these files {verb} in the BIOS folder at the wrong place: "
+                     f"a run without --check copies {them} where the cores open {them}, and "
+                     f"leaves your {'copy' if fixed == 1 else 'copies'} as "
+                     f"{'it is' if fixed == 1 else 'they are'}.")
+    for label, count in _counts_by_folder(entries, copies, bios_index):
+        them = "it" if count == 1 else "them"
+        lines.append(f"  {label} holds {count} of these files: a run without --check "
+                     f"copies {them}.")
+    return lines
+
+
+def _counts_by_folder(
+    entries: list[dict], copies: dict[int, LocalCopy], bios_index: FolderIndex | None,
+) -> list[tuple[str, int]]:
+    """(folder, files) for each --from folder that gives some of entries."""
+    counts: dict[str, int] = {}
+    for entry in entries:
+        copy = copies.get(id(entry))
+        if copy is not None and copy.index is not bios_index:
+            counts[copy.index.label] = counts.get(copy.index.label, 0) + 1
+    return list(counts.items())
+
+
+def copy_plan_lines(
+    entries: list[dict], copies: dict[int, LocalCopy], bios_index: FolderIndex | None,
+    bios_path: Path, files: list[dict], every: bool, planned: bool,
+) -> list[str]:
+    """The files a run copies from this machine, by folder: the misplaced
+    ones with the reason each was not where its cores open it."""
+    known = _known_destinations(files)
+    # By --from folder, "" for the misplaced files and "=" for the ones the
+    # BIOS folder holds at another entry's place.
+    groups: dict[str, list[dict]] = {}
+    for entry in entries:
+        copy = copies.get(id(entry))
+        if copy is not None:
+            key = (copy.index.label if copy.index is not bios_index
+                   else "" if copy.misplaced else "=")
+            groups.setdefault(key, []).append(entry)
+    lines = []
+    for key in sorted(groups, key=lambda k: (k != "", k != "=")):
+        chosen = groups[key]
+        sized = f"{_plural(len(chosen), 'file')} ({format_size(_bytes(chosen))})"
+        if key == "":
+            head = (f"Would fix {sized} misplaced in the BIOS folder, copied where the "
+                    "cores open them:" if planned else
+                    f"Fixing {sized} misplaced in the BIOS folder: copied where the cores "
+                    "open them, your copies left as they are.")
+        elif key == "=":
+            head = (f"Would copy {sized} the BIOS folder already holds at another "
+                    "place of the list:" if planned else
+                    f"Copying {sized} the BIOS folder already holds at another place "
+                    "of the list.")
+        else:
+            head = (f"Would copy {sized} from {key}:" if planned else
+                    f"Copying {sized} from {key}, each one checked by hash.")
+        lines.append(f"\n  {head}" if planned else f"  {head}")
+        for entry in chosen if every else chosen[:10]:
+            copy = copies[id(entry)]
+            why = (_copy_reason(entry, copy, bios_path, known) if key == ""
+                   else f"from {copy.where()}" if key == "=" else copy.where())
+            lines.append(f"    {entry['dest']}: {why}" if why else f"    {entry['dest']}")
+        if len(chosen) > 10 and not every:
+            lines.append(f"    ... and {len(chosen) - 10} more (--verbose lists them all)")
+    return lines
+
+
+def emit_copies(
+    plat: str, entries: list[dict], copies: dict[int, LocalCopy],
+    bios_index: FolderIndex | None, bios_path: Path, files: list[dict],
+) -> None:
+    """One found event per file this machine holds, before it is copied."""
+    known = _known_destinations(files)
+    for entry in entries:
+        copy = copies.get(id(entry))
+        if copy is None:
+            continue
+        reason = (_copy_reason(entry, copy, bios_path, known)
+                  if copy.index is bios_index else "")
+        EVENTS.emit("found", platform=plat, dest=entry["dest"], folder=copy.index.label,
+                    path=str(copy.path), member=copy.member, reason=reason)
+
+
+def sources_line(
+    folders: list[tuple[str, int]], fixed: int, downloaded: int, missing: int,
+    fetched: str = "downloaded", shared: int = 0,
+) -> str:
+    """Where the files of a run that copied some came from, in words:
+    "38 files copied from E:\\, 4 downloaded, 2 still missing." """
+    parts = [(count, f"copied from {label}") for label, count in folders]
+    parts.append((fixed, "fixed from copies already in the BIOS folder"))
+    parts.append((shared, "copied from another place of the BIOS folder"))
+    if not any(count for count, _what in parts):
+        return ""
+    parts += [(downloaded, fetched), (missing, "still missing")]
+    words = []
+    for count, what in parts:
+        if count:
+            words.append(f"{_plural(count, 'file') if not words else count} {what}")
+    return ", ".join(words) + "."
 
 
 # Below this a download is small enough that narrowing it is not worth a line.
@@ -7103,6 +7552,15 @@ def main() -> None:
              "Makes no network request, and checks every file's hash",
     )
     parser.add_argument(
+        "--from",
+        action="append",
+        type=Path,
+        metavar="FOLDER",
+        help="copy the BIOS files found in FOLDER (an old SD card, a backup, a "
+             "ZIP) instead of downloading them: every file recognised by its "
+             "hash, never moved. Repeat for several folders",
+    )
+    parser.add_argument(
         "--manifest",
         type=Path,
         metavar="FILE",
@@ -7169,7 +7627,7 @@ def main() -> None:
                  "cores_dir", "save_dir", "system", "core", "region", "no_game_data",
                  "list_systems",
                  "list_cores", "romm_firmware", "list_emulators", "events", "quiet",
-                 "yes", "verbose", "from_pack", "manifest")
+                 "yes", "verbose", "from_pack", "manifest", "from")
         given = [name for name in alone if getattr(args, name)]
         if args.jobs != 8:
             given.append("jobs")
@@ -7182,6 +7640,12 @@ def main() -> None:
     if args.from_pack and args.target:
         parser.error("--target reads a core list from the network, which --from-pack "
                      "does not use")
+    if getattr(args, "from") and (
+        args.list_platforms or args.list_targets or args.list_systems
+        or args.list_cores or args.list_emulators
+    ):
+        parser.error("--from copies files into the BIOS folder, which a listing "
+                     "does not write")
     if (args.from_pack or args.manifest) and (args.list_platforms or args.list_targets):
         parser.error("--from-pack and --manifest give a file list, which --list-platforms "
                      "and --list-targets do not read")
@@ -7238,6 +7702,7 @@ def _open_local_sources(args: argparse.Namespace) -> None:
     """Take the file list and the pack this run was given, and the platform
     they are for when none is named."""
     LOCAL.reset()
+    _open_from_folders(getattr(args, "from", None) or [])
     if args.manifest is not None:
         LOCAL.manifest = args.manifest
         named = local_manifest_platform(args.manifest)
@@ -7270,6 +7735,28 @@ def _open_local_sources(args: argparse.Namespace) -> None:
         print(f"Error: name the platform {pack.name} is installed for with "
               f"--platform{among}.", file=sys.stderr)
         sys.exit(1)
+
+
+def _open_from_folders(folders: list[Path]) -> None:
+    """Read each folder named with --from, or stop on one that is not there."""
+    for folder in folders:
+        label = str(folder)
+        folder = Path(os.path.expanduser(label))
+        zipped = folder.is_file() and folder.name.casefold().endswith(".zip")
+        if not (folder.is_dir() or zipped):
+            reason = "not_a_folder" if folder.exists() else "not_found"
+            what = ("does not exist" if reason == "not_found"
+                    else "is neither a folder nor a ZIP")
+            message = f"{label} {what}: --from names the folder to copy BIOS files from"
+            EVENTS.emit("error", stage="from", reason=reason, platform="", message=message)
+            print(f"Error: {message}.", file=sys.stderr)
+            sys.exit(1)
+        index = FolderIndex(folder, label)
+        LOCAL.folders.append(index)
+        print(f"  Copying BIOS files from: {label}")
+        if index.truncated:
+            print(f"  Read the first {MAX_SCANNED_FILES:,} files of {label} only. Name "
+                  "the folder that holds the BIOS files to search it all.")
 
 
 def _missing_dest(dest: Path, ask: bool, named: str = "named with --dest") -> None:
@@ -7566,6 +8053,8 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
     failures: list[tuple[str, str]] = []
     installed_paths: list[Path] = []
     bulk_lines: list[str] = []
+    # The BIOS folders read for misplaced files, one per platform.
+    bios_indexes: list[FolderIndex] = []
 
     # --target is checked for every platform before anything is written, as
     # --installed-cores is below: EmuDeck installed 3.2 GB and only then was
@@ -7865,6 +8354,14 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
 
         # Mismatched files need re-download
         to_download.extend(mismatched)
+        # The files this machine already holds: misplaced in the BIOS folder
+        # (bios/bios/, a pack extracted into a folder of its own, a name in
+        # capitals, still zipped), or in a folder named with --from.
+        bios_index = (bios_folder_index(bios_path, files, up_to_date)
+                      if to_download else None)
+        if bios_index is not None:
+            bios_indexes.append(bios_index)
+        copies = plan_local_copies(to_download, bios_path, bios_index, LOCAL.folders)
         hint = [] if LOCAL.pack is not None else bulk_hint(
             to_download, manifest,
             systems_chosen=bool(selection and selection[0]),
@@ -7888,6 +8385,7 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                 sum(len(state[1]) for _entry, state in data_states), len(omitted_files),
                 chosen=selection[0] if selection else None,
             )
+            emit_copies(plat_name, to_download, copies, bios_index, bios_path, files)
         total_verified += len(up_to_date)
 
         if args.check:
@@ -7904,7 +8402,7 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                     print(line)
                 print(f"\n  {_plural(len(to_download), 'file')} to download:")
                 for line in check_lines(missing, mismatched, files, manifest, bios_path,
-                                        args.verbose, up_to_date):
+                                        args.verbose, up_to_date, bios_index, copies):
                     print(line)
                 print("  Run the same command without --check to fetch them; "
                       "a file with a wrong hash is replaced, and the one in place "
@@ -7936,19 +8434,23 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                 {"dest": f"{entry['dest']}/{rel}" if entry.get("dest") else rel}
                 for entry, needed in trees for rel in needed
             ], bios_path)
-            _print_plan(to_download, bios_path, term, trees, kept)
+            _print_plan([f for f in to_download if id(f) not in copies], bios_path, term,
+                        trees, kept, copy_plan_lines(to_download, copies, bios_index,
+                                                     bios_path, files, args.verbose, True))
             for line in hint:
                 print(line)
             continue
 
         if to_download:
             dl_size = sum(f.get("size", 0) for f in to_download)
+            fetched = [f for f in to_download if id(f) not in copies]
+            fetch_size = _bytes(fetched)
             if (
                 interactive
                 and not args.yes
-                and dl_size >= CONFIRM_FROM_BYTES
+                and fetch_size >= CONFIRM_FROM_BYTES
                 and not _confirm(
-                    f"\nDownload {format_size(dl_size)} to {bios_path}? [Y/n] "
+                    f"\nDownload {format_size(fetch_size)} to {bios_path}? [Y/n] "
                 )
             ):
                 # A beginner who just passed the c entry was sent to a
@@ -7960,7 +8462,17 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                 files_pending += len(to_download)
                 continue
             EVENTS.emit("download", platform=plat_name, files=len(to_download), bytes=dl_size)
-            if LOCAL.pack is not None:
+            if copies:
+                print()
+                for line in copy_plan_lines(to_download, copies, bios_index, bios_path,
+                                            files, args.verbose, False):
+                    print(line)
+                rest = (f" and {'copying' if LOCAL.pack is not None else 'downloading'} "
+                        f"{len(fetched)}" if fetched else "")
+                where = f" from {LOCAL.pack.name}" if fetched and LOCAL.pack is not None else ""
+                print(f"\nCopying {_plural(len(copies), 'file')} found on this machine"
+                      f"{rest}{where} ({format_size(dl_size)})...")
+            elif LOCAL.pack is not None:
                 print(f"\nCopying {len(to_download)} files ({format_size(dl_size)}) "
                       f"from {LOCAL.pack.name}...")
             else:
@@ -7988,7 +8500,7 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
             progress = Progress(len(to_download), dl_size, term)
             failed, interrupted = download_files(
                 to_download, bios_path, jobs=args.jobs, verbose=args.verbose,
-                term=term, progress=progress,
+                term=term, progress=progress, copies=copies,
             )
             bulk_lines += hint
             total_downloaded += progress.installed
@@ -8093,7 +8605,19 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
             omitted_entries=omitted_seen,
             platform_of={path: plat for plat, path in platforms},
             hints=bulk_lines,
+            sources=_run_sources(bios_indexes, total_downloaded, total_errors),
         )
+
+
+def _run_sources(bios_indexes: list[FolderIndex], installed: int, failed: int) -> str:
+    """The end line saying which folder gave how many of the files."""
+    folders = [(index.label, index.copied) for index in LOCAL.folders]
+    fixed = sum(index.fixed for index in bios_indexes)
+    shared = sum(index.copied for index in bios_indexes)
+    fetched = installed - fixed - shared - sum(count for _label, count in folders)
+    return sources_line(folders, fixed, max(fetched, 0), failed,
+                        "copied from the pack" if LOCAL.pack is not None else "downloaded",
+                        shared)
 
 
 # Full-screen interface
