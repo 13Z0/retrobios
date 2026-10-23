@@ -2205,6 +2205,7 @@ def decorate_markdown_pages(docs: Path) -> dict[str, str]:
             description=description, structured=structured, terms=terms,
             search=authored.get("search") != "exclude",
             logo=str(authored.get("logo") or ""),
+            parent=authored.get("parent"),
         )
         write_decorated(docs / target, text)
         # One file per page: a page that gained or lost its components
@@ -7509,12 +7510,19 @@ def _emulator_nav(profiles: dict) -> list:
 
 
 def _system_nav(manufacturers: dict) -> list:
-    """Manufacturer pages, the machines apart from the game and engine trees."""
-    machines, games = [], []
+    """Manufacturer pages, the machines apart from the arcade boards and the
+    game and engine trees: an arcade page's crumb read "Consoles and
+    computers"."""
+    machines, arcade, games = [], [], []
     for mfr in sorted(manufacturers, key=str.casefold):
         entry = {mfr: f"systems/{_slug(mfr)}.md"}
-        (games if mfr in GAME_DATA_TOPS else machines).append(entry)
+        if mfr in GAME_DATA_TOPS:
+            games.append(entry)
+        else:
+            (arcade if mfr == "Arcade" else machines).append(entry)
     nav: list = ["systems/index.md", {"Consoles and computers": machines}]
+    if arcade:
+        nav.append({"Arcade": arcade})
     if games:
         nav.append({"Game engines and PC games": games})
     return nav
@@ -7904,6 +7912,20 @@ def _generate(args: argparse.Namespace) -> None:
             if stem in coverages:
                 raise RuntimeError(f"a system page takes the platform {stem}'s address")
             PART_PAGES.add(f"platforms/{stem}.md")
+            # One console of one setup's list, a reference: "playstation
+            # bios" found five setups' lists before the console's page.
+            # Weighed down, they still won on their title, which the page
+            # weight does not reach, and their file list is already kept out
+            # of the index: the title alone, found again on the setup's page
+            # and the console's, is all the search held of them.
+            SEARCH_DEMOTED.add(f"platforms/{stem}.md")
+            front = _front_matter(page)
+            if front:
+                page = page[page.find("\n---\n", 4) + 5:].lstrip("\n")
+            front.update(level="reference", search="exclude",
+                         parent={"label": cov["platform"], "link": f"{name}.md"})
+            page = "---\n" + yaml.safe_dump(front, sort_keys=False, allow_unicode=True) \
+                + "---\n\n" + page
             write_if_changed(str(docs / "platforms" / f"{stem}.md"), page)
         PAGE_DATA[f"platforms/{name}.md"] = platform_structured_data(name, cov)
 

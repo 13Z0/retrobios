@@ -368,6 +368,17 @@ def split_title(markdown: str) -> tuple[str, str, str]:
 _CARD_NAME = re.compile(r'<h3[^>]*class="rb-file-title"(?![^>]*data-pagefind-ignore)[^>]*><code>([^<]+)</code>')
 
 
+def search_field(key: str, words: list[str]) -> str:
+    """A search field of the page, held in an attribute of an empty
+    element: the text of an element is indexed and shown as the result's
+    excerpt (a run of 250 file names). Pagefind splits several fields at a
+    comma, so a value carries none."""
+    value = " ".join(word.replace(",", " ") for word in words).strip()
+    if not value:
+        return ""
+    return f'\n<span data-pagefind-meta="{html.escape(f"{key}:{value}", quote=True)}" hidden></span>\n'
+
+
 def file_names_meta(body: str) -> str:
     """The names of the files a system page holds cards for, as a search
     field of the page. A page of 250 cards is long, and the search weighs a
@@ -375,9 +386,35 @@ def file_names_meta(body: str) -> str:
     after every short page citing the name. The field is weighted in the
     site's ranking (astro.config.mjs, metaWeights.files)."""
     names = sorted({unescape(name) for name in _CARD_NAME.findall(body)})
-    if not names:
-        return ""
-    return f'\n<span data-pagefind-meta="files" hidden>{html.escape(" ".join(names))}</span>\n'
+    return search_field("files", names)
+
+
+# systems/ page -> the platforms' own ids for the consoles it holds, built
+# on the first system page, once the generator has installed the sections.
+_page_aliases: dict[str, list[str]] = {}
+_page_aliases_built = [False]
+
+
+def page_aliases(rel: str) -> list[str]:
+    """The names the platforms file the consoles of a system page under
+    (psx, dreamcast, gba), from siterender.system_search_aliases(): "psx
+    bios" finds the PlayStation page though the page never says psx."""
+    if not _page_aliases_built[0]:
+        import siterender
+
+        by_page: dict[str, set[str]] = {}
+        for sys_id in list(siterender._system_page_map):
+            section = siterender.system_section(sys_id)
+            names = siterender.system_search_aliases(sys_id)
+            if not section or not names:
+                continue
+            target = siterender.console_href(*section).partition("#")[0]
+            by_page.setdefault(urllib.parse.unquote(target), set()).update(names)
+        _page_aliases.clear()
+        _page_aliases.update({page: sorted(names, key=str.casefold)
+                              for page, names in by_page.items()})
+        _page_aliases_built[0] = bool(siterender._system_page_map)
+    return list(_page_aliases.get(rel, []))
 
 
 _NEXT_STEPS = re.compile(r"^## Next steps\b[^\n]*\n+(?P<list>(?:[ \t]*[-*] .*\n?)+)", re.M)
@@ -407,9 +444,12 @@ def finalize_page(
     terms: dict[str, str],
     search: bool = True,
     logo: str = "",
+    parent: dict | None = None,
 ) -> tuple[str, str]:
     """The Starlight file for a page body: its path under the content
-    collection and its text."""
+    collection and its text. *parent* ({label, link}, the link written
+    relative to the page) is the page a part page belongs to: the route
+    middleware makes it the last crumb and marks it in the sidebar."""
     title, title_id, body = split_title(markdown)
     body = body.lstrip("\n")
     body = rewrite_links(body, rel)
@@ -427,7 +467,7 @@ def finalize_page(
     body = re.sub(r'<span class="(rb-badge(?![^"]*rb-badge-archive)[^"]*)"',
                   r'<span data-pagefind-ignore class="\1"', body)
     if rel.startswith("systems/"):
-        body += file_names_meta(body)
+        body += file_names_meta(body) + search_field("aliases", page_aliases(rel))
     components = used_components(body)
     stem = rel.rsplit(".", 1)[0]
     if components:
@@ -449,6 +489,9 @@ def finalize_page(
         front["level"] = level
     if logo:
         front["logo"] = logo
+    if parent:
+        front["parent"] = {"label": str(parent["label"]),
+                           "link": resolve(rel, str(parent["link"]))}
     if weight:
         front["searchWeight"] = weight
     if rel == NOT_FOUND:
