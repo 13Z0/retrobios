@@ -455,7 +455,7 @@ def _next_block(links: list[str]) -> list[str]:
 
 
 def _tiles(registry: dict, members: list[str], display: dict[str, str], prefix: str = "",
-           group: str = "") -> list[str]:
+           group: str = "", eager: int = 0) -> list[str]:
     """The setup tiles of one device group: logo, name and the hardware it
     runs on, then the group's other tiles: a kind of device that runs one of
     the setups (Android handhelds, Linux handhelds)."""
@@ -465,13 +465,14 @@ def _tiles(registry: dict, members: list[str], display: dict[str, str], prefix: 
            GUIDES[name].runs_on or _runs_on(registry.get(name, {}), GUIDES[name]))
           for name in members),
         *((tile.name, f"{prefix}{tile.link}", "", tile.text) for tile in GROUP_TILES.get(group, ())),
-    ])
+    ], eager=eager)
 
 
 def setup_picker(registry: dict, display: dict[str, str], prefix: str = "") -> list[str]:
     """Every setup as a tile, under the device group it belongs to. The
     setups alone in their group share one row: "MiSTer FPGA" above
-    "MiSTer FPGA" said nothing."""
+    "MiSTer FPGA" said nothing. Only the first row of logos loads with the
+    page: the 19 logos were most of the bytes of the home page."""
     lines: list[str] = []
     alone: list[str] = []
     for group, (label, _description) in DEVICE_GROUPS.items():
@@ -479,9 +480,12 @@ def setup_picker(registry: dict, display: dict[str, str], prefix: str = "") -> l
         if len(members) == 1 and not GROUP_TILES.get(group):
             alone += members
         elif members:
-            lines += [f"**{label}**", "", *_tiles(registry, members, display, prefix, group)]
+            eager = 0 if lines else markup.FIRST_ROW_TILES
+            lines += [f"**{label}**", "",
+                      *_tiles(registry, members, display, prefix, group, eager)]
     if alone:
-        lines += ["**Other setups**", "", *_tiles(registry, alone, display, prefix)]
+        eager = 0 if lines else markup.FIRST_ROW_TILES
+        lines += ["**Other setups**", "", *_tiles(registry, alone, display, prefix, eager=eager)]
     return lines
 
 

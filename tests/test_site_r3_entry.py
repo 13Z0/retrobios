@@ -22,6 +22,7 @@ sys.path.insert(0, str(REPO_ROOT))
 import generate_site  # noqa: E402
 import release_record  # noqa: E402
 import siteguides  # noqa: E402
+import sitemarkup  # noqa: E402
 from common import load_platform_config, load_platform_registry  # noqa: E402
 from tests import sitepages  # noqa: E402
 
@@ -268,6 +269,23 @@ class HomeCopy(unittest.TestCase):
         boot = next(f for f in profile["files"] if f.get("name") == "dc_boot.bin")
         self.assertFalse(boot.get("required"))
         self.assertTrue(boot.get("hle_fallback"))
+
+
+class TileLogosLoadWhenSeen(unittest.TestCase):
+    def test_the_helper(self):
+        tiles = [(f"S{i}", "x.md", f"{i}.png", "here") for i in range(4)]
+        html = "".join(sitemarkup.platform_tiles(tiles, eager=2))
+        logos = re.findall(r"<img [^>]*>", html)
+        self.assertEqual(['loading="lazy"' in logo for logo in logos], [False, False, True, True])
+        self.assertNotIn("loading=", "".join(sitemarkup.platform_tiles(tiles[:1], eager=1)))
+
+    def test_only_the_first_row_is_eager_on_entry_pages(self):
+        for name in ("index.md", "which-pack.md"):
+            logos = re.findall(r'<img class="rb-card-logo"[^>]*>', _page(name))
+            with self.subTest(page=name):
+                self.assertGreater(len(logos), sitemarkup.FIRST_ROW_TILES)
+                eager = [logo for logo in logos if 'loading="lazy"' not in logo]
+                self.assertEqual(eager, logos[: sitemarkup.FIRST_ROW_TILES])
 
 
 class DownloadLine(unittest.TestCase):
