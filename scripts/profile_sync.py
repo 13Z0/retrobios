@@ -524,7 +524,14 @@ def _map_changed(pin: list[str], head: list[str], lo: int, hi: int) -> AnchorRes
             "CHANGED", None, None, [], f"file over {MAX_MATCH_LINES} lines"
         )
     opcodes = _opcodes(pin, head)
-    if not any(tag == "equal" for tag, *_ in opcodes):
+    # A file whose every line was edited in place keeps no equal block, yet
+    # its lines still map one to one: fheroes2 version.txt holds one line,
+    # 1.0.11 at the pin and 1.1.17 at HEAD, and read GONE.
+    rewritten_in_place = len(opcodes) == 1 and (
+        opcodes[0][0] == "replace"
+        and opcodes[0][2] - opcodes[0][1] == opcodes[0][4] - opcodes[0][3]
+    )
+    if not rewritten_in_place and not any(tag == "equal" for tag, *_ in opcodes):
         return AnchorResult("GONE", None, None, [])
     new_lo = _map_index(opcodes, lo)
     new_hi = _map_index(opcodes, max(lo, hi - 1))

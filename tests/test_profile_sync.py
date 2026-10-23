@@ -387,6 +387,14 @@ class TestAnchorBlock(unittest.TestCase):
             self.assertEqual(result.status, "CHANGED")
             self.assertEqual(result.start, line)
 
+    def test_a_file_rewritten_line_for_line_is_changed_not_gone(self):
+        # fheroes2 version.txt:1 went from 1.0.11 to 1.1.17. With no
+        # unchanged line left the file read GONE and held the whole recale.
+        result = anchor_block(["1.0.11"], ["1.1.17"], 1, 1)
+        self.assertEqual((result.status, result.start, result.end), ("CHANGED", 1, 1))
+        result = anchor_block(["a = 1", "b = 2"], ["a = 3", "b = 4"], 2, 2)
+        self.assertEqual((result.status, result.start), ("CHANGED", 2))
+
     def test_gone_when_content_vanished(self):
         result = anchor_block(["a", "unique marker", "b"], ["x"] * 200, 2, 2)
         self.assertEqual(result.status, "GONE")
