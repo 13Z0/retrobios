@@ -2212,6 +2212,17 @@ class AuditRoundThree(unittest.TestCase):
         self.assertEqual(press(state, "enter"), [])
         self.assertEqual(state.screen, "folder")
 
+    def test_offline_with_nothing_to_copy_offers_no_install_anyway(self):
+        """Offline with nothing here to copy, Install is removed: a folder
+        short of space then put "Install anyway" back, a run that could
+        only fail every file."""
+        state = checked_state({"free": 1024, "writable": False, "cores": []})
+        with mock.patch.dict(os.environ, {install.OFFLINE_VARIABLE: "1"}):
+            labels = [row.label for row in install.tui_rows(state)]
+        self.assertEqual(labels[0], "Choose another folder")
+        self.assertNotIn("Install anyway", labels)
+        self.assertFalse(any(label.startswith("Install") for label in labels), labels)
+
     FULL_TAIL = [
         "  Checking existing files...",
         "    0/50 present (0 verified, 0 wrong hash)",

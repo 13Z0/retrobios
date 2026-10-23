@@ -10428,13 +10428,13 @@ def _plan_rows(state: TuiState) -> list[TuiRow]:
     rows = [TuiRow("install", label)]
     if _offline_only() and not _plan_copies(state, check):
         # Nothing here to copy, and the network refused: Install would
-        # only fail every file.
+        # only fail every file, in this folder or another.
         rows = []
     if state.facts.get("writable") is False or _short_of_space(state, check):
         # Every file would fail alike, or the run would stop before the
         # first one: the way out is another folder.
-        rows = [TuiRow("folder", "Choose another folder"), TuiRow("install", "Install anyway"),
-                *rows[1:]]
+        rows = [TuiRow("folder", "Choose another folder"),
+                *([TuiRow("install", "Install anyway")] if rows else [])]
     if records_selection((state.manifest or {}).get("files", [])) and len(state.systems) > 1:
         rows.append(TuiRow("systems", "Choose systems"))
     rows.append(TuiRow("fromcard", "Copy the BIOS files from your old card or a folder"))
