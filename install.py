@@ -13099,7 +13099,11 @@ def _closed_terminal(exc: BaseException, terminal: _TuiTerminal | None = None) -
 
 def _terminal_gone(terminal: _TuiTerminal) -> bool:
     """Whether the terminal hung up: a closed window answers EIO to
-    tcgetattr and to a write, a live one its settings."""
+    tcgetattr and to a write, a live one its settings. A Windows console
+    has no settings to ask, and an empty write to it reaches nothing: the
+    error is taken as it reads."""
+    if os.name == "nt":
+        return True
     import termios  # noqa: PLC0415
 
     try:

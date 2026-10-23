@@ -29,6 +29,7 @@ import tempfile
 import termios
 import threading
 import time
+import types
 import unittest
 import warnings
 from pathlib import Path, PureWindowsPath
@@ -2775,6 +2776,159 @@ class Crash(unittest.TestCase):
         self.addCleanup(shutil.rmtree, log.parent, True)
         self.assertIn("RuntimeError: a defect", log.read_text())
         self.assertNotIn("Traceback", err.getvalue() + out.getvalue())
+
+
+# POSIX modules a Windows Python does not have: importing one raises there.
+POSIX_ONLY = ("termios", "tty", "pty", "fcntl", "select", "resource", "pwd", "grp")
+# The signal names a Windows Python defines.
+WINDOWS_SIGNALS = ("SIGABRT", "SIGBREAK", "SIGFPE", "SIGILL", "SIGINT", "SIGSEGV",
+                   "SIGTERM")
+
+
+class WindowsOs(types.ModuleType):
+    """The os module with os.name "nt", everything else delegated."""
+
+    def __init__(self) -> None:
+        super().__init__("os")
+        self.name = "nt"
+
+    def __getattr__(self, attribute: str) -> object:
+        return getattr(os, attribute)
+
+
+class SimulatedWindows:
+    """os.name "nt", the POSIX modules unimportable, the signal module cut
+    down to the names Windows has, and msvcrt reading the given keys."""
+
+    def __init__(self, keys: str = "") -> None:
+        self.keys = list(keys)
+        self.handlers: dict[int, object] = {}
+        self.locked: list[int] = []
+        self.msvcrt = types.SimpleNamespace(
+            kbhit=lambda: bool(self.keys), getwch=lambda: self.keys.pop(0),
+            locking=lambda fd, mode, size: self.locked.append(fd), LK_NBLCK=2)
+        self.signal = types.ModuleType("signal")
+        for number, name in enumerate(WINDOWS_SIGNALS, start=100):
+            setattr(self.signal, name, number)
+        self.signal.SIG_DFL, self.signal.SIG_IGN = 0, 1
+        self.signal.CTRL_C_EVENT, self.signal.CTRL_BREAK_EVENT = 0, 1
+        self.signal.signal = self._install
+        self.signal.getsignal = lambda number: self.handlers.get(number, 0)
+        self.stack = contextlib.ExitStack()
+
+    def _install(self, number: int, handler: object) -> object:
+        if number not in {getattr(self.signal, name) for name in WINDOWS_SIGNALS}:
+            raise ValueError(f"invalid signal value {number}")
+        previous = self.handlers.get(number, 0)
+        self.handlers[number] = handler
+        return previous
+
+    def __enter__(self) -> SimulatedWindows:
+        self.stack.enter_context(mock.patch.dict(
+            sys.modules, {**{name: None for name in POSIX_ONLY}, "msvcrt": self.msvcrt}))
+        # install.py alone sees "nt": pathlib here keeps making PosixPaths.
+        self.stack.enter_context(mock.patch.object(install, "os", WindowsOs()))
+        self.stack.enter_context(mock.patch.object(install, "signal", self.signal))
+        return self
+
+    def __exit__(self, *exc: object) -> None:
+        self.stack.close()
+
+
+class WindowsHasNoPosixModules(unittest.TestCase):
+    """_terminal_gone imported termios unguarded: on Windows a closed console
+    raised ModuleNotFoundError inside run_tui's except block, a traceback
+    instead of an exit code. Every path the interface takes on Windows runs
+    here with the POSIX modules gone."""
+
+    class Console(io.StringIO):
+        broken = False
+
+        def fileno(self) -> int:
+            return 0
+
+        def isatty(self) -> bool:
+            return True
+
+        def write(self, text: str) -> int:
+            if self.broken:
+                raise OSError(errno.EPIPE, "The pipe is being closed")
+            return super().write(text)
+
+    def test_the_simulation_refuses_posix_imports(self):
+        with SimulatedWindows():
+            for name in POSIX_ONLY:
+                with self.subTest(module=name), self.assertRaises(ImportError):
+                    __import__(name)
+            self.assertFalse(hasattr(install.signal, "SIGTSTP"))
+
+    def test_a_closed_console_is_a_closed_terminal(self):
+        console = self.Console()
+        with SimulatedWindows():
+            terminal = install._TuiTerminal(console, console)
+            self.assertTrue(install._closed_terminal(
+                OSError(errno.EPIPE, "The pipe is being closed"), terminal))
+            self.assertFalse(install._closed_terminal(
+                OSError(errno.ENOENT, "No such file"), terminal))
+
+    def test_keys_enter_leave_and_cleanup(self):
+        console = self.Console()
+        with SimulatedWindows("a\xe0H") as windows:
+            terminal = install._TuiTerminal(console, console)
+            terminal.enter()
+            self.assertEqual([(key.name, key.text) for key in terminal.keys(0.05)],
+                             [("char", "a"), ("up", "")])
+            handlers = {windows.signal.SIGINT: windows.signal.SIG_DFL}
+            self.assertEqual(install._tui_cleanup(terminal, [], handlers, fresh_state()), [])
+            self.assertIn(install._SCREEN_OFF, console.getvalue())
+
+    def test_a_child_is_interrupted_through_the_console(self):
+        run = install._EngineRun.__new__(install._EngineRun)
+        run.proc = mock.Mock(**{"poll.return_value": None})
+        with SimulatedWindows(), mock.patch.object(install.os, "kill") as kill:
+            run.interrupt(from_key=False)
+            kill.assert_not_called()
+            run.proc.send_signal.assert_not_called()
+            run.interrupt(from_key=True)
+            kill.assert_called_once_with(0, install.signal.CTRL_C_EVENT)
+
+    def test_work_folder_owner_and_partial_lock(self):
+        work = Path(tempfile.mkdtemp(dir=REPO_ROOT / "tmp"))
+        self.addCleanup(shutil.rmtree, work, True)
+        (work / install.TUI_OWNER).write_text(str(os.getpid()), encoding="utf-8")
+        with SimulatedWindows() as windows:
+            self.assertIsNone(install._owner_alive(work))
+            handle = install._claim_partial(work / "x.bin.part")
+            self.assertIsNotNone(handle)
+            handle.close()
+            self.assertEqual(len(windows.locked), 1)
+
+    def test_run_tui_ends_on_the_closed_console_code(self):
+        console = self.Console()
+        real_draw = install._TuiTerminal.draw
+
+        def breaking_draw(terminal, lines, cols):
+            console.broken = True
+            real_draw(terminal, lines, cols)
+
+        work = Path(tempfile.mkdtemp(dir=REPO_ROOT / "tmp"))
+        self.addCleanup(shutil.rmtree, work, True)
+        with SimulatedWindows() as windows, \
+                mock.patch.object(install._TuiTerminal, "draw", breaking_draw), \
+                mock.patch.object(install, "_drop_closed_terminal"), \
+                mock.patch.object(install.tempfile, "mkdtemp", return_value=str(work)), \
+                mock.patch.object(install, "tui_start", return_value=(fresh_state(), [])), \
+                mock.patch.object(install, "_open_local_sources"), \
+                mock.patch.object(install, "detect_os", return_value="windows"), \
+                mock.patch.object(sys, "stdin", console), \
+                mock.patch.object(sys, "stdout", console), \
+                mock.patch.object(sys, "stderr", console):
+            code = install.run_tui(_args())
+            # SIGHUP does not exist there: the closed window's code is 129.
+            self.assertEqual(code, 129)
+            self.assertFalse((work / "error.log").exists())
+            self.assertTrue(all(handler == 0 for handler in windows.handlers.values()),
+                            windows.handlers)
 
 
 # --- End to end, on a pseudo-terminal -------------------------------------
