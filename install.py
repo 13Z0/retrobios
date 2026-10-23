@@ -12966,7 +12966,7 @@ def run_tui(args: argparse.Namespace) -> int:
                 # The result is printed in the terminal on the way out.
                 state.exit_code = state.code if state.code is not None else 1
     except Exception as exc:  # noqa: BLE001
-        if flags["term"] or _closed_terminal(exc):
+        if flags["term"] or _closed_terminal(exc, terminal.fd):
             # The window closed under a screen that was changing, or the
             # SIGCONT that comes with its SIGHUP put the screen back: the
             # write failed before the signal was read. That is its exit.
@@ -13030,13 +13030,29 @@ def _tui_startup(args: argparse.Namespace) -> tuple[TuiState, list[tuple]] | Non
 _CLOSED_TERMINAL = frozenset({errno.EIO, errno.EPIPE, errno.ENXIO})
 
 
-def _closed_terminal(exc: BaseException) -> bool:
+def _closed_terminal(exc: BaseException, fd: int | None = None) -> bool:
     """Whether exc is the terminal gone: an OSError, or a termios.error,
-    whose first argument is the errno, answering EIO, EPIPE or ENXIO."""
+    whose first argument is the errno, answering EIO, EPIPE or ENXIO, and,
+    given the terminal's fd, that terminal no longer answering. A failing
+    SD card answers EIO too, and that read error is kept in a crash log."""
     if isinstance(exc, OSError):
-        return exc.errno in _CLOSED_TERMINAL
-    if type(exc).__name__ == "error" and type(exc).__module__ == "termios":
-        return bool(exc.args) and exc.args[0] in _CLOSED_TERMINAL
+        closed = exc.errno in _CLOSED_TERMINAL
+    elif type(exc).__name__ == "error" and type(exc).__module__ == "termios":
+        closed = bool(exc.args) and exc.args[0] in _CLOSED_TERMINAL
+    else:
+        closed = False
+    return closed and (fd is None or _terminal_gone(fd))
+
+
+def _terminal_gone(fd: int) -> bool:
+    """Whether the terminal at fd hung up: a closed window answers EIO to
+    tcgetattr, a live one its settings."""
+    import termios  # noqa: PLC0415
+
+    try:
+        termios.tcgetattr(fd)
+    except (termios.error, OSError):
+        return True
     return False
 
 

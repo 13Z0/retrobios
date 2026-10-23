@@ -2557,6 +2557,29 @@ class IdleExit(unittest.TestCase):
                          ["RetroBIOS: No button pressed, closing."])
 
 
+class AReadErrorIsNotAClosedWindow(unittest.TestCase):
+    """Any EIO read as the window closing: a failing SD card answers EIO
+    too, and that run ended 129, no error.log, no launcher message."""
+
+    def test_eio_counts_only_once_the_terminal_hung_up(self):
+        import pty
+
+        master, slave = pty.openpty()
+        try:
+            card = OSError(errno.EIO, "Input/output error", "/media/card/bios/x.bin")
+            self.assertFalse(install._closed_terminal(card, slave))
+            self.assertFalse(install._closed_terminal(
+                OSError(errno.ENOENT, "No such file"), slave))
+            os.close(master)
+            master = -1
+            self.assertTrue(install._closed_terminal(card, slave))
+            self.assertTrue(install._closed_terminal(termios.error(errno.EIO, "gone"), slave))
+        finally:
+            os.close(slave)
+            if master >= 0:
+                os.close(master)
+
+
 class AuditRoundFour(unittest.TestCase):
     """tui_audit_3.md, each finding held where it was found."""
 
