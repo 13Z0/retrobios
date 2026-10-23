@@ -4,8 +4,8 @@ core_classification: other
 source: "https://github.com/jsgroth/jgenesis"
 upstream: "https://github.com/jsgroth/jgenesis"
 profiled_date: "2026-08-08"
-source_commit: "db1bec7392704aa0ecc2bbbb5ac751fec3c485a0"
-core_version: "0.14.0"
+source_commit: "d41e2d975771c78ee2efe80f8ec5768b87e3f7eb"
+core_version: "0.14.1"
 display_name: "Multi-System (jgenesis)"
 cores:
   - jgenesis
@@ -22,18 +22,20 @@ systems:
   - nintendo-gbc
   - nintendo-gba
   - nec-pc-engine
+  - nec-pc-engine-cd
 mode: standalone
 
 notes: |
   Multi-system emulator written in Rust by James Groth. One binary covers
   thirteen hardware modes: Master System, Game Gear, SG-1000, Genesis, Sega CD,
   32X, Sega CD 32X, NES, SNES, Game Boy, Game Boy Color, Game Boy Advance and
-  PC Engine (frontend/jgenesis-native-driver/src/extensions.rs:172-187).
+  PC Engine (frontend/jgenesis-native-driver/src/extensions.rs:178-193).
 
   No path is hardcoded. Every BIOS, boot ROM and coprocessor ROM is an
   Option<PathBuf> in the config, defaulting to None and set through a file
-  dialog or the TOML config file (frontend/jgenesis-native-driver/src/config.rs
-  :76-78,95-99,146-159,191-193,205). The emulator identifies these files by
+  dialog or the TOML config file
+  (frontend/jgenesis-native-driver/src/config.rs:78-81,97-102,149-162,193-196,207-208,222-223).
+  The emulator identifies these files by
   size and layout, never by name or hash, so the names below are the ones the
   dumps circulate under rather than strings read from the source. RetroBat
   writes bios_CD_U/E/J.bin and gba_bios.bin into the TOML directly
@@ -41,8 +43,8 @@ notes: |
 
   Sega CD selects the BIOS by disc region and per_region_bios defaults to true,
   so the US, European and Japanese images are each reachable
-  (frontend/jgenesis-native-driver/src/mainloop/genesis.rs:215-244,
-  frontend/jgenesis-native-config/src/genesis.rs:117). Setting "Use US BIOS for
+  (frontend/jgenesis-native-driver/src/mainloop/genesis.rs:211-240,
+  frontend/jgenesis-native-config/src/genesis.rs:119). Setting "Use US BIOS for
   all regions" collapses all three onto the US slot.
 
   SNES coprocessor ROMs use the merged layout, program ROM followed by data ROM
@@ -59,8 +61,13 @@ notes: |
   compiled into the binary (backend/s32x-core/src/bootrom.rs:3-6). A Sega CD
   BIOS is only consulted when the hardware mode is Sega CD or Sega CD 32X.
 
-  NES, SG-1000 and PC Engine need no BIOS. PC Engine has no CD-ROM² support, so
-  no System Card is involved. CX4, SA-1, S-DD1, SPC7110, Super FX, OBC1 and the
+  NES, SG-1000 and PC Engine HuCards need no BIOS. A disc image switches the PC
+  Engine to CD-ROM² mode, which runs the configured System Card ROM in place of
+  a HuCard and refuses to start without one
+  (frontend/jgenesis-native-driver/src/mainloop/pce.rs:29-50). The card model
+  defaults to the Arcade Card, which wants a v3.0 System Card ROM
+  (config/pce-config/src/lib.rs:60-65, frontend/jgenesis-gui/src/app/pce/helptext.rs:11-25).
+  CX4, SA-1, S-DD1, SPC7110, Super FX, OBC1 and the
   S-RTC are emulated from cartridge data alone and take no firmware file.
 
   Written by the emulator, not obtained: save files, save states, the per-game
@@ -81,7 +88,7 @@ files:
     required: true
     size: 131072
     validation: [size]
-    source_ref: "frontend/jgenesis-native-driver/src/mainloop/genesis.rs:39-49 (read), frontend/jgenesis-native-driver/src/mainloop/genesis.rs:238-244 (bios_path_for_region), backend/segacd-core/src/api.rs:77-79 (BIOS_LEN check)"
+    source_ref: "frontend/jgenesis-native-driver/src/mainloop/genesis.rs:43-53 (read), frontend/jgenesis-native-driver/src/mainloop/genesis.rs:234-240 (bios_path_for_region), backend/segacd-core/src/api.rs:77-79 (BIOS_LEN check)"
     note: "Selected when the disc region is Americas, and for every region when per_region_bios is off."
 
   - name: "bios_CD_E.bin"
@@ -91,8 +98,8 @@ files:
     required: true
     size: 131072
     validation: [size]
-    source_ref: "frontend/jgenesis-native-driver/src/mainloop/genesis.rs:238-244 (eu_bios_path), backend/segacd-core/src/api.rs:77-79"
-    note: "Selected when the header area at 0x1F0 holds E and not U or J, as Australian discs do (backend/genesis-components/src/cartridge.rs:361-376, backend/segacd-core/src/api.rs:339-369)."
+    source_ref: "frontend/jgenesis-native-driver/src/mainloop/genesis.rs:234-240 (eu_bios_path), backend/segacd-core/src/api.rs:77-79"
+    note: "Selected when the header area at 0x1F0 holds E and not U or J, as Australian discs do (backend/genesis-components/src/cartridge.rs:362-377, backend/segacd-core/src/api.rs:339-369)."
 
   - name: "bios_CD_J.bin"
     system: sega-megacd
@@ -101,7 +108,7 @@ files:
     required: true
     size: 131072
     validation: [size]
-    source_ref: "frontend/jgenesis-native-driver/src/mainloop/genesis.rs:238-244 (jp_bios_path), backend/segacd-core/src/api.rs:77-79"
+    source_ref: "frontend/jgenesis-native-driver/src/mainloop/genesis.rs:234-240 (jp_bios_path), backend/segacd-core/src/api.rs:77-79"
 
   # -------------------------------------------------------
   # Game Boy Advance
@@ -112,7 +119,7 @@ files:
     required: true
     size: 16384
     validation: [size]
-    source_ref: "frontend/jgenesis-native-driver/src/mainloop/gba.rs:29-33 (GbaNoBios), backend/gba-core/src/memory.rs:10,102-107 (BIOS_ROM_LEN check)"
+    source_ref: "frontend/jgenesis-native-driver/src/mainloop/gba.rs:32-36 (GbaNoBios), backend/gba-core/src/memory.rs:10, 102-107 (BIOS_ROM_LEN check)"
     note: "Every GBA load fails without it. skip_bios_animation only skips the intro, the BIOS is still mapped and read for SWI calls."
 
   # -------------------------------------------------------
@@ -179,20 +186,30 @@ files:
     note: "0x20000 program plus 0x8000 data. Used by Hayazashi Nidan Morita Shougi 2. Files larger than the expected length are accepted, shorter ones are rejected."
 
   # -------------------------------------------------------
+  # PC Engine CD-ROM²
+  # -------------------------------------------------------
+  - name: "syscard3.pce"
+    system: nec-pc-engine-cd
+    description: "Super CD-ROM² System Card 3.0"
+    required: true
+    source_ref: "frontend/jgenesis-native-driver/src/mainloop/pce.rs:29-50 (PceCdNoBios), frontend/jgenesis-native-config/src/pce.rs:15, 44, backend/pce-core/src/cartridge.rs:84-101, config/pce-config/src/lib.rs:60-65"
+    note: "Every disc fails to load without it. One slot accepts any System Card dump, no size or content check, but the default Arcade Card and the Super System Card need a v3.0 ROM. A file over 512 KiB is mapped as a plain HuCard."
+
+  # -------------------------------------------------------
   # Master System / Game Gear
   # -------------------------------------------------------
   - name: "bios.sms"
     system: sega-mastersystem
     description: "Master System BIOS"
     required: false
-    source_ref: "frontend/jgenesis-native-driver/src/mainloop/smsgg.rs:27-33,50-56,74-80,112-122, backend/smsgg-core/src/memory.rs:101-106,148-168"
+    source_ref: "frontend/jgenesis-native-driver/src/mainloop/smsgg.rs:26-32, 49-55, 73-79, 116-126, backend/smsgg-core/src/memory.rs:101-106, 148-168"
     note: "Read only when sms_boot_from_bios is enabled or the emulator runs without a cartridge, both off by default. One slot accepts any regional dump, no size or content check."
 
   - name: "bios.gg"
     system: sega-gamegear
     description: "Game Gear BIOS"
     required: false
-    source_ref: "frontend/jgenesis-native-driver/src/mainloop/smsgg.rs:27-33,50-56,74-80,112-122"
+    source_ref: "frontend/jgenesis-native-driver/src/mainloop/smsgg.rs:26-32, 49-55, 73-79, 116-126"
     note: "Read only when gg_boot_from_bios is enabled or the emulator runs without a cartridge, both off by default."
 
   # -------------------------------------------------------
@@ -204,7 +221,7 @@ files:
     required: false
     size: 256
     validation: [size]
-    source_ref: "frontend/jgenesis-native-driver/src/mainloop/gb.rs:29-33,77-89, backend/gb-core/src/memory.rs:9,45-63 (DMG_BOOT_ROM_LEN check)"
+    source_ref: "frontend/jgenesis-native-driver/src/mainloop/gb.rs:32-36, 78-90, backend/gb-core/src/memory.rs:9, 45-63 (DMG_BOOT_ROM_LEN check)"
     note: "Loaded only when dmg_boot_rom is enabled, off by default. Without it the CPU starts post-boot."
 
   - name: "cgb_boot.bin"
@@ -214,7 +231,7 @@ files:
     min_size: 2048
     max_size: 2304
     validation: [size]
-    source_ref: "frontend/jgenesis-native-driver/src/mainloop/gb.rs:34-38, 77-89, backend/gb-core/src/memory.rs:10, 45-63, backend/gb-core/src/memory.rs:164 (CGB_BOOT_ROM_LEN check and pad_cgb_boot_rom)"
+    source_ref: "frontend/jgenesis-native-driver/src/mainloop/gb.rs:37-41, frontend/jgenesis-native-driver/src/mainloop/gb.rs:78-90, backend/gb-core/src/memory.rs:10, 45-63, backend/gb-core/src/memory.rs:164 (CGB_BOOT_ROM_LEN check and pad_cgb_boot_rom)"
     note: "Loaded only when cgb_boot_rom is enabled, off by default. 2304 bytes is taken as is, 2048 bytes gets the filler page inserted."
 
   # -------------------------------------------------------
