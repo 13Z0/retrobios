@@ -7,6 +7,10 @@
 // a dark mark stays visible in the dark theme. A setup page with no logo file
 // gets its initials in the same square, as its tile does (sitemarkup.py
 // platform_tiles).
+//
+// The crumbs and the title stay out of the search index: every excerpt
+// began with the title and the crumbs matched "bios" on every page. The
+// title still names the result, as the page's title field.
 import setups from '../../public/data/picker/index.json';
 
 const PAGE_TITLE_ID = '_top';
@@ -46,7 +50,7 @@ const setup = !logoSrc && setups.find((entry) => id === `platforms/${entry.platf
 
 {
 	crumbs.length > 0 && (
-		<nav class="rb-breadcrumbs" aria-label="Breadcrumb">
+		<nav class="rb-breadcrumbs" aria-label="Breadcrumb" data-pagefind-ignore>
 			<ol>
 				{crumbs.map((crumb) => (
 					<li>{crumb.href ? <a href={crumb.href}>{crumb.label}</a> : crumb.label}</li>
@@ -68,10 +72,10 @@ const setup = !logoSrc && setups.find((entry) => id === `platforms/${entry.platf
 					</text>
 				</svg>
 			)}
-			<h1 id={PAGE_TITLE_ID}>{title}</h1>
+			<h1 id={PAGE_TITLE_ID} data-pagefind-ignore data-pagefind-meta="title">{title}</h1>
 		</div>
 	) : (
-		<h1 id={PAGE_TITLE_ID}>{title}</h1>
+		<h1 id={PAGE_TITLE_ID} data-pagefind-ignore data-pagefind-meta="title">{title}</h1>
 	)
 }
 

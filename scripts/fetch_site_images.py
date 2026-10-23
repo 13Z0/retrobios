@@ -10,7 +10,8 @@ them. The site build only reads those copies (``sitediagrams.localize_images``).
 
 Raster logos are normalised to an 80 px square WebP, twice the 40 px they
 are shown at, and system icons to a 48 px PNG, so every tile has the same
-weight. SVG is kept as published.
+weight. SVG is minified by svgo, and a raster an SVG embeds is cut to the
+tile size.
 Normalising needs Pillow. This is a maintenance tool run by hand when a
 logo changes, not a build step: the build stays on the standard library
 and PyYAML.
@@ -22,8 +23,11 @@ and PyYAML.
 from __future__ import annotations
 
 import argparse
+import base64
 import io
 import json
+import re
+import subprocess
 import sys
 import urllib.error
 import urllib.parse
@@ -79,6 +83,44 @@ def safe_svg(data: bytes, url: str) -> bytes:
     return data
 
 
+# A raster inside an SVG logo: RetroDECK's icon carried a 441 x 334 PNG,
+# 9 KiB of a mark drawn 40 px wide. It never needs more pixels than the
+# whole tile.
+EMBEDDED_RASTER = re.compile(rb'data:image/(?:png|jpeg|webp);base64,([A-Za-z0-9+/=\s]+)')
+
+
+def shrink_embedded(data: bytes) -> bytes:
+    """Each raster an SVG embeds, at most LOGO_SIZE pixels on its longest side."""
+
+    def shrink(match: re.Match[bytes]) -> bytes:
+        try:
+            from PIL import Image
+        except ImportError as exc:
+            raise SystemExit("Pillow is needed to normalise raster images: pip install Pillow") from exc
+        image = Image.open(io.BytesIO(base64.b64decode(re.sub(rb"\s", b"", match.group(1))))).convert("RGBA")
+        if max(image.size) <= LOGO_SIZE:
+            return match.group(0)
+        image.thumbnail((LOGO_SIZE, LOGO_SIZE), Image.LANCZOS)
+        out = io.BytesIO()
+        image.save(out, "PNG", optimize=True)
+        return b"data:image/png;base64," + base64.b64encode(out.getvalue())
+
+    return EMBEDDED_RASTER.sub(shrink, data)
+
+
+# Editor markup (Inkscape's namedview, sodipodi attributes, metadata) was
+# most of the bytes of two logos. svgo comes with the site's packages.
+SVGO = ROOT / "website" / "node_modules" / ".bin" / "svgo"
+
+
+def minify_svg(data: bytes) -> bytes:
+    if not SVGO.is_file():
+        raise SystemExit("svgo is needed to minify SVG logos: npm ci --prefix website")
+    result = subprocess.run([str(SVGO), "--multipass", "-i", "-", "-o", "-"],
+                            input=data, capture_output=True, check=True)
+    return result.stdout
+
+
 def write_manifest(directory: Path, note: str, entries: list[dict]) -> None:
     entries.sort(key=lambda entry: entry["file"])
     document = {"note": note, "images": entries}
@@ -101,7 +143,7 @@ def fetch_logos() -> None:
         download = f"{url}?s={LOGO_SIZE * 2}" if AVATAR_HOST in url else url
         data = fetch(download)
         if is_svg(data):
-            file_name, payload = f"{name}.svg", safe_svg(data, url)
+            file_name, payload = f"{name}.svg", minify_svg(shrink_embedded(safe_svg(data, url)))
         else:
             file_name, payload = f"{name}.webp", square_image(data, LOGO_SIZE, "WEBP")
         for stale in LOGO_DIR.glob(f"{name}.*"):

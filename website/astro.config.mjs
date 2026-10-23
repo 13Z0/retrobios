@@ -13,6 +13,7 @@ import starlightLinksValidator from 'starlight-links-validator';
 import sidebar from './src/generated/sidebar.json' with { type: 'json' };
 import lastmod from './src/generated/lastmod.json' with { type: 'json' };
 import stackTables from './src/plugins/rehype-stack-tables.mjs';
+import shortCode from './src/plugins/rehype-short-code.mjs';
 import unbrokenTokens from './src/plugins/ec-unbroken-tokens.mjs';
 
 const SITE = 'https://abdess.github.io';
@@ -52,7 +53,7 @@ export default defineConfig({
 	redirects: readRedirects(),
 	markdown: {
 		processor: satteri({
-			hastPlugins: [stackTables()],
+			hastPlugins: [stackTables(), shortCode()],
 			features: {
 				headingAttributes: true,
 				definitionList: true,
@@ -81,6 +82,7 @@ export default defineConfig({
 				MarkdownContent: './src/components/MarkdownContent.astro',
 				Footer: './src/components/Footer.astro',
 				Header: './src/components/Header.astro',
+				Search: './src/components/Search.astro',
 			},
 			routeMiddleware: ['./src/routeData.ts'],
 			tableOfContents: { minHeadingLevel: 2, maxHeadingLevel: 3 },
@@ -109,15 +111,20 @@ export default defineConfig({
 			// every other query. Two fields name the page's subject in other words
 			// and weigh half a title: `aliases`, the ids setups file a system under
 			// (psx, dreamcast, gba), and `devices`, the handhelds and boxes a
-			// setup's own site names (R36S, Miyoo Mini). All three are attributes
-			// on an empty element, so no text of theirs reaches an excerpt.
+			// setup's own site names (R36S, Miyoo Mini). Two more weigh as much as
+			// a title, since each names what a reader types to reach the page:
+			// `consoles`, the consoles a manufacturer page holds (Neo Geo,
+			// WonderSwan Color), and `terms`, the words of a task or a message on
+			// screen (bios not found, mame version, check dump). All of them are
+			// attributes on an empty element, so no text of theirs reaches an
+			// excerpt.
 			pagefind: {
 				ranking: {
 					pageLength: 0.1,
 					termFrequency: 0.5,
 					termSaturation: 1.4,
 					termSimilarity: 9,
-					metaWeights: { title: 10, files: 0.5, aliases: 5, devices: 5 },
+					metaWeights: { title: 10, files: 0.5, aliases: 5, devices: 5, consoles: 10, terms: 10 },
 				},
 			},
 			plugins: [
