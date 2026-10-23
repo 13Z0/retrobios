@@ -64,6 +64,7 @@ notes: |
 
 files:
   - name: "disksys.rom"
+    path: "bios/disksys.rom"
     system: nintendo-fds
     description: "Family Computer Disk System BIOS"
     required: true
@@ -72,6 +73,7 @@ files:
     note: "8192 bytes are read into PRG ROM and mapped at 0xE000. When none of the four locations holds the file, fds_load_bios logs FDS;bios not found and returns EXIT_ERROR, which the caller propagates, so the disk image does not load. A short read only logs FDS;error on reading bios."
 
   - name: "gamegenie.rom"
+    path: "bios/gamegenie.rom"
     system: nintendo-nes
     description: "Game Genie ROM, booted in place of the cartridge to reach the code entry screen"
     required: false
