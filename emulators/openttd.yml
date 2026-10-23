@@ -58,12 +58,14 @@ notes: |
   ref: src/openttd.cpp:717-745, src/openttd.cpp:781-812,
        src/bootstrap_gui.cpp:362-371
 
-  Paths below are written under openttd/, which stands for any OpenTTD
-  search path, the personal data folder being the usual one.
+  Paths below are relative to an OpenTTD search path, the personal data
+  folder named in data_root being the usual one. Base set files sit in its
+  baseset folder.
+  ref: src/fileio.cpp:48
 
 files:
   - name: "TRG1.GRF"
-    path: "openttd/baseset/TRG1.GRF"
+    path: "baseset/TRG1.GRF"
     system: transport-tycoon-deluxe
     category: game_data
     description: "Transport Tycoon Deluxe DOS graphics, base"
@@ -72,7 +74,7 @@ files:
     source_ref: "media/baseset/orig_dos.obg:20, media/baseset/orig_dos_de.obg:20"
 
   - name: "TRGI.GRF"
-    path: "openttd/baseset/TRGI.GRF"
+    path: "baseset/TRGI.GRF"
     system: transport-tycoon-deluxe
     category: game_data
     description: "Transport Tycoon Deluxe DOS graphics, logos"
@@ -81,7 +83,7 @@ files:
     source_ref: "media/baseset/orig_dos.obg:21, media/baseset/orig_dos_de.obg:21"
 
   - name: "TRGC.GRF"
-    path: "openttd/baseset/TRGC.GRF"
+    path: "baseset/TRGC.GRF"
     system: transport-tycoon-deluxe
     category: game_data
     description: "Transport Tycoon Deluxe DOS graphics, sub-arctic climate"
@@ -90,7 +92,7 @@ files:
     source_ref: "media/baseset/orig_dos.obg:22, media/baseset/orig_dos_de.obg:22"
 
   - name: "TRGH.GRF"
-    path: "openttd/baseset/TRGH.GRF"
+    path: "baseset/TRGH.GRF"
     system: transport-tycoon-deluxe
     category: game_data
     description: "Transport Tycoon Deluxe DOS graphics, sub-tropical climate"
@@ -99,7 +101,7 @@ files:
     source_ref: "media/baseset/orig_dos.obg:23, media/baseset/orig_dos_de.obg:23"
 
   - name: "TRGT.GRF"
-    path: "openttd/baseset/TRGT.GRF"
+    path: "baseset/TRGT.GRF"
     system: transport-tycoon-deluxe
     category: game_data
     description: "Transport Tycoon Deluxe DOS graphics, toyland"
@@ -108,7 +110,7 @@ files:
     source_ref: "media/baseset/orig_dos.obg:24"
 
   - name: "TRGT.GRF"
-    path: "openttd/baseset/TRGT.GRF"
+    path: "baseset/TRGT.GRF"
     system: transport-tycoon-deluxe
     category: game_data
     description: "Transport Tycoon Deluxe DOS graphics, toyland, German CD"
@@ -118,7 +120,7 @@ files:
     source_ref: "media/baseset/orig_dos_de.obg:24"
 
   - name: "TRG1R.GRF"
-    path: "openttd/baseset/TRG1R.GRF"
+    path: "baseset/TRG1R.GRF"
     system: transport-tycoon-deluxe
     category: game_data
     description: "Transport Tycoon Deluxe Windows graphics, base"
@@ -127,7 +129,7 @@ files:
     source_ref: "media/baseset/orig_win.obg:20"
 
   - name: "TRGIR.GRF"
-    path: "openttd/baseset/TRGIR.GRF"
+    path: "baseset/TRGIR.GRF"
     system: transport-tycoon-deluxe
     category: game_data
     description: "Transport Tycoon Deluxe Windows graphics, logos"
@@ -136,7 +138,7 @@ files:
     source_ref: "media/baseset/orig_win.obg:21"
 
   - name: "TRGCR.GRF"
-    path: "openttd/baseset/TRGCR.GRF"
+    path: "baseset/TRGCR.GRF"
     system: transport-tycoon-deluxe
     category: game_data
     description: "Transport Tycoon Deluxe Windows graphics, sub-arctic climate"
@@ -145,7 +147,7 @@ files:
     source_ref: "media/baseset/orig_win.obg:22"
 
   - name: "TRGHR.GRF"
-    path: "openttd/baseset/TRGHR.GRF"
+    path: "baseset/TRGHR.GRF"
     system: transport-tycoon-deluxe
     category: game_data
     description: "Transport Tycoon Deluxe Windows graphics, sub-tropical climate"
@@ -154,7 +156,7 @@ files:
     source_ref: "media/baseset/orig_win.obg:23"
 
   - name: "TRGTR.GRF"
-    path: "openttd/baseset/TRGTR.GRF"
+    path: "baseset/TRGTR.GRF"
     system: transport-tycoon-deluxe
     category: game_data
     description: "Transport Tycoon Deluxe Windows graphics, toyland"
@@ -163,7 +165,7 @@ files:
     source_ref: "media/baseset/orig_win.obg:24"
 
   - name: "SAMPLE.CAT"
-    path: "openttd/baseset/SAMPLE.CAT"
+    path: "baseset/SAMPLE.CAT"
     system: transport-tycoon-deluxe
     category: game_data
     description: "Transport Tycoon Deluxe DOS sound samples"
@@ -172,7 +174,7 @@ files:
     source_ref: "media/baseset/orig_dos.obs:14"
 
   - name: "SAMPLE.CAT"
-    path: "openttd/baseset/SAMPLE.CAT"
+    path: "baseset/SAMPLE.CAT"
     system: transport-tycoon-deluxe
     category: game_data
     description: "Transport Tycoon Deluxe Windows sound samples"
@@ -181,7 +183,7 @@ files:
     source_ref: "media/baseset/orig_win.obs:14"
 
   - name: "GM.CAT"
-    path: "openttd/baseset/GM.CAT"
+    path: "baseset/GM.CAT"
     system: transport-tycoon-deluxe
     category: game_data
     description: "Transport Tycoon Deluxe DOS music catalogue"
@@ -190,7 +192,7 @@ files:
     source_ref: "media/baseset/orig_dos.obm:44"
 
   - name: "GM-TTO.CAT"
-    path: "openttd/baseset/GM-TTO.CAT"
+    path: "baseset/GM-TTO.CAT"
     system: transport-tycoon-deluxe
     category: game_data
     description: "Transport Tycoon Original music catalogue"
@@ -199,7 +201,7 @@ files:
     source_ref: "media/baseset/orig_tto.obm:63"
 
   - name: "GM_TT00.GM"
-    path: "openttd/baseset/GM_TT00.GM"
+    path: "baseset/GM_TT00.GM"
     system: transport-tycoon-deluxe
     category: game_data
     description: "Transport Tycoon Deluxe Windows music, Tycoon DELUXE Theme"
@@ -208,7 +210,7 @@ files:
     source_ref: "media/baseset/orig_win.obm:44, media/baseset/orig_win.obm:68"
 
   - name: "GM_TT01.GM"
-    path: "openttd/baseset/GM_TT01.GM"
+    path: "baseset/GM_TT01.GM"
     system: transport-tycoon-deluxe
     category: game_data
     description: "Transport Tycoon Deluxe Windows music, Snarl Up"
@@ -217,7 +219,7 @@ files:
     source_ref: "media/baseset/orig_win.obm:45, media/baseset/orig_win.obm:69"
 
   - name: "GM_TT02.GM"
-    path: "openttd/baseset/GM_TT02.GM"
+    path: "baseset/GM_TT02.GM"
     system: transport-tycoon-deluxe
     category: game_data
     description: "Transport Tycoon Deluxe Windows music, Easy Driver"
@@ -226,7 +228,7 @@ files:
     source_ref: "media/baseset/orig_win.obm:46, media/baseset/orig_win.obm:70"
 
   - name: "GM_TT03.GM"
-    path: "openttd/baseset/GM_TT03.GM"
+    path: "baseset/GM_TT03.GM"
     system: transport-tycoon-deluxe
     category: game_data
     description: "Transport Tycoon Deluxe Windows music, Little Red Diesel"
@@ -235,7 +237,7 @@ files:
     source_ref: "media/baseset/orig_win.obm:47, media/baseset/orig_win.obm:71"
 
   - name: "GM_TT04.GM"
-    path: "openttd/baseset/GM_TT04.GM"
+    path: "baseset/GM_TT04.GM"
     system: transport-tycoon-deluxe
     category: game_data
     description: "Transport Tycoon Deluxe Windows music, City Groove"
@@ -244,7 +246,7 @@ files:
     source_ref: "media/baseset/orig_win.obm:48, media/baseset/orig_win.obm:72"
 
   - name: "GM_TT05.GM"
-    path: "openttd/baseset/GM_TT05.GM"
+    path: "baseset/GM_TT05.GM"
     system: transport-tycoon-deluxe
     category: game_data
     description: "Transport Tycoon Deluxe Windows music, Aliens Ate My Railway"
@@ -253,7 +255,7 @@ files:
     source_ref: "media/baseset/orig_win.obm:49, media/baseset/orig_win.obm:73"
 
   - name: "GM_TT06.GM"
-    path: "openttd/baseset/GM_TT06.GM"
+    path: "baseset/GM_TT06.GM"
     system: transport-tycoon-deluxe
     category: game_data
     description: "Transport Tycoon Deluxe Windows music, Stoke It"
@@ -262,7 +264,7 @@ files:
     source_ref: "media/baseset/orig_win.obm:50, media/baseset/orig_win.obm:74"
 
   - name: "GM_TT07.GM"
-    path: "openttd/baseset/GM_TT07.GM"
+    path: "baseset/GM_TT07.GM"
     system: transport-tycoon-deluxe
     category: game_data
     description: "Transport Tycoon Deluxe Windows music, Don't Walk!"
@@ -271,7 +273,7 @@ files:
     source_ref: "media/baseset/orig_win.obm:51, media/baseset/orig_win.obm:75"
 
   - name: "GM_TT08.GM"
-    path: "openttd/baseset/GM_TT08.GM"
+    path: "baseset/GM_TT08.GM"
     system: transport-tycoon-deluxe
     category: game_data
     description: "Transport Tycoon Deluxe Windows music, Sawyer's Tune"
@@ -280,7 +282,7 @@ files:
     source_ref: "media/baseset/orig_win.obm:52, media/baseset/orig_win.obm:76"
 
   - name: "GM_TT09.GM"
-    path: "openttd/baseset/GM_TT09.GM"
+    path: "baseset/GM_TT09.GM"
     system: transport-tycoon-deluxe
     category: game_data
     description: "Transport Tycoon Deluxe Windows music, Fell Apart On Me"
@@ -289,7 +291,7 @@ files:
     source_ref: "media/baseset/orig_win.obm:53, media/baseset/orig_win.obm:77"
 
   - name: "GM_TT10.GM"
-    path: "openttd/baseset/GM_TT10.GM"
+    path: "baseset/GM_TT10.GM"
     system: transport-tycoon-deluxe
     category: game_data
     description: "Transport Tycoon Deluxe Windows music, Can't Get There From Here"
@@ -298,7 +300,7 @@ files:
     source_ref: "media/baseset/orig_win.obm:54, media/baseset/orig_win.obm:78"
 
   - name: "GM_TT11.GM"
-    path: "openttd/baseset/GM_TT11.GM"
+    path: "baseset/GM_TT11.GM"
     system: transport-tycoon-deluxe
     category: game_data
     description: "Transport Tycoon Deluxe Windows music, Hard Drivin'"
@@ -307,7 +309,7 @@ files:
     source_ref: "media/baseset/orig_win.obm:55, media/baseset/orig_win.obm:79"
 
   - name: "GM_TT12.GM"
-    path: "openttd/baseset/GM_TT12.GM"
+    path: "baseset/GM_TT12.GM"
     system: transport-tycoon-deluxe
     category: game_data
     description: "Transport Tycoon Deluxe Windows music, Road Hog"
@@ -316,7 +318,7 @@ files:
     source_ref: "media/baseset/orig_win.obm:56, media/baseset/orig_win.obm:80"
 
   - name: "GM_TT13.GM"
-    path: "openttd/baseset/GM_TT13.GM"
+    path: "baseset/GM_TT13.GM"
     system: transport-tycoon-deluxe
     category: game_data
     description: "Transport Tycoon Deluxe Windows music, Hold That Train!"
@@ -325,7 +327,7 @@ files:
     source_ref: "media/baseset/orig_win.obm:57, media/baseset/orig_win.obm:81"
 
   - name: "GM_TT14.GM"
-    path: "openttd/baseset/GM_TT14.GM"
+    path: "baseset/GM_TT14.GM"
     system: transport-tycoon-deluxe
     category: game_data
     description: "Transport Tycoon Deluxe Windows music, Broomer's Oil Rag"
@@ -334,7 +336,7 @@ files:
     source_ref: "media/baseset/orig_win.obm:58, media/baseset/orig_win.obm:82"
 
   - name: "GM_TT15.GM"
-    path: "openttd/baseset/GM_TT15.GM"
+    path: "baseset/GM_TT15.GM"
     system: transport-tycoon-deluxe
     category: game_data
     description: "Transport Tycoon Deluxe Windows music, Goss Groove"
@@ -343,7 +345,7 @@ files:
     source_ref: "media/baseset/orig_win.obm:59, media/baseset/orig_win.obm:83"
 
   - name: "GM_TT16.GM"
-    path: "openttd/baseset/GM_TT16.GM"
+    path: "baseset/GM_TT16.GM"
     system: transport-tycoon-deluxe
     category: game_data
     description: "Transport Tycoon Deluxe Windows music, Small Town"
@@ -352,7 +354,7 @@ files:
     source_ref: "media/baseset/orig_win.obm:60, media/baseset/orig_win.obm:84"
 
   - name: "GM_TT17.GM"
-    path: "openttd/baseset/GM_TT17.GM"
+    path: "baseset/GM_TT17.GM"
     system: transport-tycoon-deluxe
     category: game_data
     description: "Transport Tycoon Deluxe Windows music, Cruise Control"
@@ -361,7 +363,7 @@ files:
     source_ref: "media/baseset/orig_win.obm:61, media/baseset/orig_win.obm:85"
 
   - name: "GM_TT18.GM"
-    path: "openttd/baseset/GM_TT18.GM"
+    path: "baseset/GM_TT18.GM"
     system: transport-tycoon-deluxe
     category: game_data
     description: "Transport Tycoon Deluxe Windows music, Stroll On"
@@ -370,7 +372,7 @@ files:
     source_ref: "media/baseset/orig_win.obm:62, media/baseset/orig_win.obm:86"
 
   - name: "GM_TT19.GM"
-    path: "openttd/baseset/GM_TT19.GM"
+    path: "baseset/GM_TT19.GM"
     system: transport-tycoon-deluxe
     category: game_data
     description: "Transport Tycoon Deluxe Windows music, Funk Central"
@@ -379,7 +381,7 @@ files:
     source_ref: "media/baseset/orig_win.obm:63, media/baseset/orig_win.obm:87"
 
   - name: "GM_TT20.GM"
-    path: "openttd/baseset/GM_TT20.GM"
+    path: "baseset/GM_TT20.GM"
     system: transport-tycoon-deluxe
     category: game_data
     description: "Transport Tycoon Deluxe Windows music, Jammit"
@@ -388,7 +390,7 @@ files:
     source_ref: "media/baseset/orig_win.obm:64, media/baseset/orig_win.obm:88"
 
   - name: "GM_TT21.GM"
-    path: "openttd/baseset/GM_TT21.GM"
+    path: "baseset/GM_TT21.GM"
     system: transport-tycoon-deluxe
     category: game_data
     description: "Transport Tycoon Deluxe Windows music, Movin' On"
