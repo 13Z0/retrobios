@@ -999,7 +999,8 @@ platforms:
     status: active
     device_group: computer
     extract_to: Firmware/
-    logo: https://avatars.githubusercontent.com/u/11743303
+    # EmuHawk's application icon (<ApplicationIcon> in BizHawk.Client.EmuHawk.csproj).
+    logo: https://raw.githubusercontent.com/TASEmulators/BizHawk/master/src/BizHawk.Client.EmuHawk/images/logo.ico
     scraper: bizhawk
     source_url: https://raw.githubusercontent.com/TASEmulators/BizHawk/master/src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs
     source_format: csharp_firmware_database
@@ -1064,7 +1065,6 @@ platforms:
     # The card root: minarch hands each core SDCARD_PATH/Bios/<TAG>
     # (workspace/all/minarch/minarch.c:2943).
     extract_to: <SD card>/
-    logo: https://avatars.githubusercontent.com/u/225589
     scraper: minui
     # minarch hands each core a folder and names no file (workspace/all/minarch/minarch.c:2943):
     # there is no BIOS list of its own to export corrected.

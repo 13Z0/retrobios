@@ -139,6 +139,10 @@ def fetch_logos() -> None:
     for name, entry in sorted(platforms.items()):
         url = entry.get("logo")
         if not url:
+            # No logo of its own: the tile shows initials, and an old copy
+            # would still be served.
+            for stale in LOGO_DIR.glob(f"{name}.*"):
+                stale.unlink()
             continue
         download = f"{url}?s={LOGO_SIZE * 2}" if AVATAR_HOST in url else url
         data = fetch(download)

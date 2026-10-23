@@ -18,7 +18,7 @@
     {
       "file": "bizhawk.webp",
       "platform": "bizhawk",
-      "source": "https://avatars.githubusercontent.com/u/11743303",
+      "source": "https://raw.githubusercontent.com/TASEmulators/BizHawk/master/src/BizHawk.Client.EmuHawk/images/logo.ico",
       "owner": "TASVideos",
       "licence": "GitHub organisation avatar of TASEmulators"
     },
@@ -49,13 +49,6 @@
       "source": "https://raw.githubusercontent.com/libretro/retroarch-assets/master/src/xmb/flatui/lakka.svg",
       "owner": "Lakka (libretro)",
       "licence": "file from libretro/retroarch-assets, CC-BY-4.0"
-    },
-    {
-      "file": "minui.webp",
-      "platform": "minui",
-      "source": "https://avatars.githubusercontent.com/u/225589",
-      "owner": "Shaun Inman",
-      "licence": "GitHub avatar of shauninman, the author of MinUI"
     },
     {
       "file": "misterfpga.webp",
