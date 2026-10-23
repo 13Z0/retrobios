@@ -18,6 +18,19 @@ systems:
   - fmtowns
 mode: standalone
 
+data_root:
+  windows:
+    path: "%APPDATA%/Aaron Giles/DREAMM"
+    source_ref: "DREAMM 4.0 win32-x64 dreamm.exe: SDL_GetPrefPath import from SDL2.dll, strings \"Aaron Giles\" 0x1d10c08 and \"DREAMM\" 0x1cfff50"
+  macos:
+    path: "~/Library/Application Support/Aaron Giles/DREAMM"
+    source_ref: "DREAMM 4.0 linux-x64: SDL_GetPrefPath(\"Aaron Giles\", \"DREAMM\") at 0x1aadaa6-0x1aadab4"
+    note: "the SDL preference path of that call. The macOS image itself was not read"
+  linux:
+    path: "$XDG_DATA_HOME/Aaron Giles/DREAMM"
+    source_ref: "DREAMM 4.0 linux-x64: SDL_GetPrefPath(\"Aaron Giles\", \"DREAMM\") at 0x1aadaa6-0x1aadab4"
+    note: "~/.local/share/Aaron Giles/DREAMM when XDG_DATA_HOME is unset"
+
 notes: |
   Closed-source emulator by Aaron Giles for LucasArts, Lucasfilm Games and
   Lucas Learning titles, shipped as a single executable for Windows, macOS and
