@@ -5,7 +5,7 @@ source: "https://github.com/libretro/mame"
 upstream: "https://github.com/mamedev/mame"
 logo: "https://raw.githubusercontent.com/mamedev/mame/master/docs/source/images/MAMElogo.svg"
 profiled_date: "2026-03-29"
-source_commit: "9069f39340f2d2b1795df8e71bb1d3d0fbc76598"
+source_commit: "5f5a07748ce5c239c4118463ce8e6473743d4859"
 upstream_commit: "f34f02505e32c1993c6a782b6814232cbfc74e36"
 core_version: "0.289"
 display_name: "Arcade (MAME)"
@@ -3935,7 +3935,7 @@ files:
     source_ref: "source src/mame/apple/mac128.cpp:1611-1615, source src/mame/apple/mac128.cpp:1306-1345"
     note: >-
       Macintosh SE. Removes the keyboard port and adds the adbmodem ADB
-      controller (mac128.cpp:1314, 1339).
+      controller (src/mame/apple/mac128.cpp:1314, 1339).
     contents:
       - name: "macse.rom"
         size: 262144
@@ -3948,7 +3948,7 @@ files:
     source_ref: "source src/mame/apple/mac128.cpp:1623-1627, source src/mame/apple/mac128.cpp:1384-1386"
     note: >-
       Macintosh Classic, built on macsefd and so on macse, adbmodem included
-      (mac128.cpp:1370-1372, 1384-1386).
+      (src/mame/apple/mac128.cpp:1370-1372, 1384-1386).
     contents:
       - name: "341-0813__=c=1983-90_apple__japan__910d_d.27c4096_be.ue1"
         size: 524288
@@ -3974,7 +3974,7 @@ files:
     source_ref: "source src/mame/apple/macii.cpp:1158-1161, source src/mame/apple/macii.cpp:1067-1069"
     note: >-
       Macintosh IIx, clone of mac2fdhd built on the same config
-      (macii.cpp:1067-1069). Its only ROM is the 97221136.rom of the parent,
+      (src/mame/apple/macii.cpp:1067-1069). Its only ROM is the 97221136.rom of the parent,
       so a split set loads it from mac2fdhd.zip.
     contents:
       - name: "97221136.rom"
@@ -3988,7 +3988,7 @@ files:
     source_ref: "source src/mame/apple/maclc3.cpp:416-419, source src/mame/apple/maclc3.cpp:340-341"
     note: >-
       Macintosh LC III. ADB through the Egret controller with its 341s0851
-      BIOS selected (maclc3.cpp:340-341).
+      BIOS selected (src/mame/apple/maclc3.cpp:340-341).
     contents:
       - name: "ecbbc41c.rom"
         size: 1048576
@@ -4001,7 +4001,7 @@ files:
     source_ref: "source src/mame/apple/adbmodem.cpp:30-33, source src/mame/apple/adbmodem.cpp:28"
     note: >-
       ADB modem microcontroller of macse, macclasc, mac2fdhd and maciix
-      (mac128.cpp:1339, macii.cpp:1016).
+      (src/mame/apple/mac128.cpp:1339, src/mame/apple/macii.cpp:1016).
     contents:
       - name: "342s0440-b.bin"
         size: 1024
@@ -4015,7 +4015,7 @@ files:
     source_ref: "source src/mame/apple/egret.cpp:67-79, source src/mame/apple/egret.cpp:65"
     note: >-
       Egret ADB/I2C microcontroller, three ROM_SYSTEM_BIOS options. maclc3
-      selects 341s0851 (maclc3.cpp:341), the only member that machine loads.
+      selects 341s0851 (src/mame/apple/maclc3.cpp:341), the only member that machine loads.
     contents:
       - name: "344s0100.bin"
         description: "BIOS option Egret 1.00 (344S0100)"
@@ -4053,7 +4053,7 @@ files:
     system: apple-macintosh-ii
     source_ref: "source src/devices/bus/mackbd/pluskbd.cpp:101-104, source src/devices/bus/mackbd/pluskbd.cpp:124-126, source src/devices/bus/mackbd/pluskbd.cpp:506"
     note: >-
-      M0110A keyboard, the macplus default (mac128.cpp:1264).
+      M0110A keyboard, the macplus default (src/mame/apple/mac128.cpp:1264).
     contents:
       - name: "341-0332-a.bin"
         size: 1024
@@ -4110,7 +4110,7 @@ files:
     source_ref: "source src/mame/acorn/electron.cpp:730-733, source src/mame/acorn/electron.cpp:661-662"
     note: >-
       Acorn Electron. The expansion port defaults to the Plus 3, whose own
-      port defaults to the Plus 1 (electron.cpp:620-623, 661-662). Parent of
+      port defaults to the Plus 1 (src/mame/acorn/electron.cpp:620-623, 661-662). Parent of
       electron64.
     contents:
       - name: "os_basic.ic2"
@@ -4125,7 +4125,7 @@ files:
     note: >-
       Electron with the Slogger 64K Master RAM Board, clone of electron with
       its own OS ROM. Same expansion devices as electron
-      (electron.cpp:693-695).
+      (src/mame/acorn/electron.cpp:693-695).
     contents:
       - name: "basic.rom"
         size: 16384
@@ -4156,7 +4156,7 @@ files:
     source_ref: "source src/devices/bus/electron/plus3.cpp:53-69, source src/devices/bus/electron/plus3.cpp:27"
     note: >-
       Acorn Plus 3 disc expansion, the default device on the Electron
-      expansion port (electron.cpp:661). Five ROM_SYSTEM_BIOS options, ADFS
+      expansion port (src/mame/acorn/electron.cpp:661). Five ROM_SYSTEM_BIOS options, ADFS
       1.00 first.
     contents:
       - name: "adfs.rom"
