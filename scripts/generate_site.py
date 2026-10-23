@@ -5708,10 +5708,29 @@ class _StartGroup:
         self.hle: set[str] = set()
         # Files an emulator reads when present and runs the same without.
         self.extra: list[str] = []
+        # By line (a region, "" for every region): visible name -> the
+        # emulators requiring that file for the line. Three Mega CD BIOS,
+        # one per region, share the name cd_bios.rom.
+        self.line_readers: dict[str, dict[str, set[str]]] = {}
+        # (line, visible name, emulator) -> the name the emulator reads.
+        self.read_as: dict[tuple[str, str, str], str] = {}
+        # (line, visible name) -> the file name its card shows.
+        self.card_names: dict[tuple[str, str], str] = {}
+        # (line, visible name) of the files most of whose readers read
+        # them beside another one they require.
+        self.extras: set[tuple[str, str]] = set()
 
     def require(self, name: str, emulator: str) -> None:
         self.written.setdefault(_visible(name), name)
         self.requires.setdefault(_visible(name), set()).add(emulator)
+
+    def read_for(self, line: str, name: str, emulator: str, read: str, card: str) -> None:
+        """Record that ``emulator`` requires ``name`` for ``line``, under
+        the name ``read``, its card titled ``card``."""
+        visible = _visible(name)
+        self.line_readers.setdefault(line, {}).setdefault(visible, set()).add(emulator)
+        self.read_as.setdefault((line, visible, emulator), read)
+        self.card_names.setdefault((line, visible), card)
 
     def absorb(self, other: _StartGroup) -> None:
         for region, names in other.by_region.items():
@@ -5727,9 +5746,37 @@ class _StartGroup:
         for visible, sha1 in other.sha1s.items():
             self.sha1s.setdefault(visible, sha1)
         self.hle.update(other.hle)
+        for line, readers in other.line_readers.items():
+            for visible, emulators in readers.items():
+                self.line_readers.setdefault(line, {}).setdefault(visible, set()).update(emulators)
+        for key, value in other.read_as.items():
+            self.read_as.setdefault(key, value)
+        for key, value in other.card_names.items():
+            self.card_names.setdefault(key, value)
+        self.extras |= other.extras
 
     def requirers(self) -> set[str]:
         return set().union(*self.requires.values()) if self.requires else set()
+
+    def as_read(self, visible: str, emulators: set[str], line: str | None = None) -> str:
+        """A file as an emulator reading it instead is told to fetch it:
+        by its card's name, with the name it reads when that differs.
+        The line read "ares reads neo-epo.sp1" above a card titled
+        neo-epo.bin."""
+        lines = [line] if line is not None else sorted(self.line_readers)
+        for key in lines:
+            card = self.card_names.get((key, visible))
+            if card is None:
+                continue
+            reads = {self.read_as[(key, visible, e)] for e in emulators
+                     if (key, visible, e) in self.read_as}
+            written = self.written.get(visible, _code(card))
+            # A linked name (a file under Arcade) keeps its link.
+            shown = written if _visible(written) == card else _code(card)
+            if len(reads) == 1 and next(iter(reads)) != card:
+                return f"{shown} (as {_code(next(iter(reads)))})"
+            return shown
+        return self.written.get(visible, _code(visible))
 
 
 def _start_groups(
@@ -5806,12 +5853,36 @@ def _start_groups(
             return _code(archive), ""
         return f"[{_code(archive)}]({markup.site_href(f'files/?sha1={found[0]}')})", ""
 
-    for f in ranked:
+    def reading(f: dict) -> Iterator[tuple[str, dict, str | None, str, str]]:
+        """Each read of a file: the emulator, its entry, the system, the
+        name the line writes and the sha1 of the card it names."""
         sha1 = str(f.get("sha1", ""))
         for emulator, entry, system in kept.get(sha1, []):
             name, named = rendered[sha1], sha1
             if entry.get("archive"):
                 name, named = archive_named(str(entry["archive"]))
+            yield emulator, entry, system, name, named
+
+    # A file as many of whose readers require another file and read this
+    # one only when present is an extra, not a start file: NAOMI opened on
+    # hod2bios.zip, which 13 of the 19 emulators listing it read beside
+    # naomi.zip for the House of the Dead 2 alone.
+    requiring: dict[str, set[str]] = {}
+    optional: dict[str, set[str]] = {}
+    for f in ranked:
+        for emulator, entry, _system, name, named in reading(f):
+            if entry.get("hle_fallback"):
+                continue
+            side = requiring if entry.get("required", True) else optional
+            side.setdefault(named or _visible(name), set()).add(emulator)
+    needs_other = {emulator: {key for key, emulators in requiring.items() if emulator in emulators}
+                   for emulators in requiring.values() for emulator in emulators}
+    weak = {key for key, emulators in requiring.items()
+            if len(emulators) <= len({e for e in optional.get(key, ())
+                                      if needs_other.get(e, set()) - {key}})}
+
+    for f in ranked:
+        for emulator, entry, system, name, named in reading(f):
             try:
                 key = system_name(system) if system else None
             except KeyError:
@@ -5829,9 +5900,14 @@ def _start_groups(
                 _add_name(group.extra, name)
                 continue
             group.require(name, emulator)
-            regions = {str(r) for r in entry.get("region") or []}
-            for names in [group.by_region.setdefault(r, []) for r in regions] or [group.plain]:
-                _add_name(names, name)
+            read = str(entry.get("archive") or entry.get("name") or _visible(name))
+            card = str(entry["archive"]) if entry.get("archive") else str(f["name"])
+            regions = sorted({str(r) for r in entry.get("region") or []})
+            for region in regions or [""]:
+                _add_name(group.by_region.setdefault(region, []) if region else group.plain, name)
+                group.read_for(region, name, emulator, read, card)
+                if (named or _visible(name)) in weak:
+                    group.extras.add((region, _visible(name)))
     named = [key for key in groups if key is not None]
     if None in groups and named:
         # An entry that names no system reads the section's own console.
@@ -5925,6 +6001,11 @@ def _group_lines(
             if lead == "*":
                 lines.append(f"- **{key}**: no file needed{text}")
                 continue
+            if lead == "+":
+                # What the others read instead ends the machine's line.
+                end = "" if lines[-1].endswith(".") else "."
+                lines[-1] = f"{lines[-1]}{end} {text}"
+                continue
             lines.append(f"- **{key}, {lead}**: {text}" if lead else f"- **{key}**: {text}")
     return [*lines, ""]
 
@@ -5952,11 +6033,13 @@ def _lead_file(groups: dict[str | None, _StartGroup]) -> list[str]:
     emulators: set[str] = set()
     requires: dict[str, set[str]] = {}
     written: dict[str, str] = {}
+    holder: dict[str, _StartGroup] = {}
     for group in groups.values():
         emulators.update(group.emulators)
         for visible, readers in group.requires.items():
             requires.setdefault(visible, set()).update(readers)
             written.setdefault(visible, group.written[visible])
+            holder.setdefault(visible, group)
     if not requires:
         return []
     top = max(requires, key=lambda v: len(requires[v]))
@@ -5970,10 +6053,11 @@ def _lead_file(groups: dict[str | None, _StartGroup]) -> list[str]:
     lines = [f"**Start with** {written[top]}.{zipped} {said} read{'s' if len(names) == 1 else ''} it.",
              ""]
     # The emulators that require other files and not this one, by the
-    # files they require.
+    # files they require, each by its card's name.
     others: dict[tuple[str, ...], set[str]] = {}
     for emulator in emulators - readers:
-        theirs = tuple(written[v] for v in requires if emulator in requires[v])
+        theirs = tuple(holder[v].as_read(v, {emulator}) for v in requires
+                       if emulator in requires[v])
         if theirs:
             others.setdefault(theirs, set()).add(emulator)
     sentences = []
@@ -6014,9 +6098,48 @@ def _group_start(group: _StartGroup, first_below: bool) -> list[tuple[str, str]]
     if requirers and 2 * len(requirers) <= 2 * len(running - hle) + len(hle):
         free = _display_names(running)
         needing = _display_names(requirers)
+        names = list(group.written.values())
         verb = "requires" if len(needing) == 1 else "require"
+        if all(len(readers) == len(requirers) for readers in group.requires.values()):
+            return [("*", f" with {_names_counted(free)}. Only {_names_counted(needing)} {verb} "
+                          f"{listed(names, False)}.")]
+        # Each requires some of the files: "bsnes, FinalBurn Neo and 3
+        # more require 22 files" read as 22 files for a bsnes user.
+        these = f"these {len(names)} files" if len(names) > START_WITH_NAMES else "these files"
         return [("*", f" with {_names_counted(free)}. Only {_names_counted(needing)} {verb} "
-                      f"{listed(list(group.written.values()), False)}.")]
+                      f"some of {these}: {listed(names, False)}.")]
+
+    def instead_of(line: str, names: list[str], answered: set[str]) -> str:
+        """What the emulators no other name answers read instead, one
+        sentence per set of files: "FinalBurn Neo reads fdsbios.zip instead"."""
+        readers = group.line_readers.get(line, {})
+        others: dict[tuple[str, ...], set[str]] = {}
+        for emulator in sorted(set().union(*(readers.get(_visible(n), set()) for n in names))
+                               - answered):
+            theirs = tuple(group.as_read(_visible(n), {emulator}, line) for n in names
+                           if emulator in readers.get(_visible(n), set()))
+            others.setdefault(theirs, set()).add(emulator)
+        sentences = []
+        for files, who in sorted(others.items(), key=lambda item: (-len(item[1]), item[0])):
+            shown = _display_names(who)
+            verb = "reads" if len(shown) == 1 else "read"
+            sentences.append(f"{_names_counted(shown)} {verb} {_said_as_list(list(files))} instead.")
+        return " ".join(sentences)
+
+    def split(line: str, names: list[str]) -> tuple[list[str], str, set[str]]:
+        """A line's names as the files to start with, the sentence naming
+        what other emulators read instead, and every emulator the line
+        answers. Names no emulator requires beside another are other names
+        for one slot: "fdsbios.zip, disksys.rom" read as two files to get."""
+        readers = group.line_readers.get(line, {})
+        sets = {n: readers.get(_visible(n), set()) for n in names}
+        lead = max(names, key=lambda n: len(sets[n]))
+        main = [n for n in names if n == lead or sets[n] <= sets[lead]]
+        rest = [n for n in names if n not in main]
+        # A file the lead's readers require beside it is a start file too,
+        # unless most of its readers take it as an extra.
+        main = [n for n in main if n == lead or (line, _visible(n)) not in group.extras]
+        return main, instead_of(line, rest, set(sets[lead])), set().union(*sets.values())
 
     order = _region_order()
     # A territory its region answers the same way adds nothing: Brazil
@@ -6024,22 +6147,39 @@ def _group_start(group: _StartGroup, first_below: bool) -> list[tuple[str, str]]
     by_region = {r: names for r, names in group.by_region.items()
                  if group.by_region.get(_PARENT.get(r, "")) != names}
     # Regions that need the same files share a line.
-    regional: dict[tuple[str, ...], list[str]] = {}
+    regional: dict[tuple[str, ...], str] = {}
+    answered: set[str] = set()
+    shown: set[str] = set()
     for region in sorted(by_region, key=lambda r: (order.get(r, len(order)), r)):
-        names = by_region[region]
-        same = next((rs for rs, held in regional.items() if held == names), None)
+        main, sentence, readers = split(region, by_region[region])
+        answered |= readers
+        shown |= {_visible(n) for n in by_region[region]}
+        text = f"{listed(main)}. {sentence}" if sentence else listed(main)
+        same = next((rs for rs, held in regional.items() if held == text), None)
         if same is None:
-            regional[(region,)] = names
+            regional[(region,)] = text
         else:
             regional[(*same, region)] = regional.pop(same)
 
-    out = [(", ".join(_region_word(r) for r in regions), listed(regional[regions]))
+    out = [(", ".join(_region_word(r) for r in regions), regional[regions])
            for regions in sorted(regional, key=lambda rs: (order.get(rs[0], len(order)), rs))]
-    # A name a region line gives already is no "also".
-    shown = {_visible(n) for names in regional.values() for n in names}
+    # A name a region line gives already is no "also", and one only
+    # emulators no region line answers reads is an "instead": armsx1 reads
+    # scph1001.bin where the others pick a BIOS by region.
     plain = [n for n in group.plain if _visible(n) not in shown]
-    if plain:
-        out.append(("", listed(plain)))
+    if plain and out:
+        readers = group.line_readers.get("", {})
+        also = [n for n in plain if readers.get(_visible(n), set()) & answered]
+        if also:
+            out.append(("", listed(also)))
+        sentence = instead_of("", [n for n in plain if n not in also], answered)
+        if sentence:
+            out.append(("+", sentence))
+    elif plain:
+        main, sentence, _readers = split("", plain)
+        out.append(("", listed(main)))
+        if sentence:
+            out.append(("+", sentence))
     if not out and group.optional:
         out.append(("*", f"{_without_files(group.emulators)}. "
                          f"For full accuracy: {listed(group.optional)}."))
@@ -6059,14 +6199,19 @@ def _start_lines(block: list[tuple[str, str]], console: str = "") -> list[str]:
     lead, text = block[0]
     if lead == "*":
         return [f"**No file needed**{text}", ""]
-    if len(block) == 1 and lead == "":
-        named, _sep, where = text.partition(", first below")
+    # What the emulators no line answers read instead, after the lines.
+    instead = " ".join(text for lead, text in block if lead == "+")
+    block = [(lead, text) for lead, text in block if lead != "+"]
+    if len(block) == 1 and block[0][0] == "":
+        named, _sep, _where = block[0][1].partition(", first below")
         below = " They come first below." if _sep else ""
-        return [f"**Start with**: {named}.{below}", ""]
+        return [" ".join(filter(None, [f"**Start with**: {named}.{below}", instead])), ""]
     bios = f"the {console} BIOS" if console else "the BIOS"
     lines = [f"**Start with** {bios} for the region of your games:", ""]
     for lead, text in block:
         lines.append(f"- **{lead or 'Some emulators also require'}**: {text}")
+    if instead:
+        lines += ["", instead]
     return [*lines, ""]
 
 
