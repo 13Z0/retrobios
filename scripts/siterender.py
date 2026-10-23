@@ -629,6 +629,12 @@ _PROGRAM_TOPS = frozenset({"Other", "Arcade"})
 # An Arcade heading can (Namco System 246), an Other one cannot.
 _NAMELESS_TOPS = frozenset({"Other"})
 
+# A section whose folder is a short name the code reads, headed with the
+# program's name instead (bios/Arcade/fba2012 holds FB Alpha 2012's samples).
+SECTION_LABELS: dict[tuple[str, str], str] = {
+    ("Arcade", "fba2012"): "FB Alpha 2012",
+}
+
 # Every (manufacturer, console) section the system pages carry.
 _section_pairs: set[tuple[str, str]] = set()
 # Normalized id -> the console sections spelled that way.

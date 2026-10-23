@@ -289,11 +289,10 @@ class TheBuiltSonyPage(unittest.TestCase):
     def test_playstation_opens_on_a_bios_it_needs(self):
         section = self.text.split('id="playstation"', 1)[1].split("<h2", 1)[0]
         self.assertIn("Start with", section.split('class="rb-sys-file"', 1)[0])
-        # A console with a page of its own opens there.
-        own = DIST / "systems" / "sony-playstation" / "index.html"
-        if 'class="rb-file-title"' not in section and own.is_file():
-            section = own.read_text(encoding="utf-8")
-        first = re.search(r'class="rb-file-title"[^>]*><code>(.*?)</code>', section)[1]
+        # PlayStation has a page of its own, and its files open there.
+        own = (DIST / "systems" / "sony-playstation" / "index.html").read_text(encoding="utf-8")
+        self.assertIn('href="/retrobios/systems/sony-playstation/"', section)
+        first = re.search(r'class="rb-file-title"[^>]*><code[^>]*>(.*?)</code>', own)[1]
         self.assertNotIn(first, {"LibPS.exe", "PSX_DTLH2000.bin"})
         self.assertRegex(first, r"^scph\d+")
 

@@ -119,6 +119,9 @@ export const onRequest = defineRouteMiddleware(async (context, next) => {
 		}
 		const parentHref = parent ? withBase(parent.link) : undefined;
 		if (parent && parentHref !== path && parentHref !== crumbs.at(-1)?.href) {
+			// A board page sits under the Arcade group of the index and has
+			// the Arcade page as parent: one crumb, the page, not two "Arcade".
+			if (crumbs.length > 1 && crumbs.at(-1)?.label === parent.label) crumbs.pop();
 			crumbs.push({ label: parent.label, href: parentHref });
 		}
 	}

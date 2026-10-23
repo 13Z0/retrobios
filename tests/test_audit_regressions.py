@@ -6724,9 +6724,6 @@ class NoArchiveRepeatsAMemberName(unittest.TestCase):
         self.assertEqual(repeated, [])
 
 
-if __name__ == "__main__":
-    unittest.main()
-
 
 class PipelineChildrenSkipNodeCompileCache(unittest.TestCase):
     """The site build's compile cache filled the 4 GB /tmp tmpfs to 3.4 GB:
@@ -6735,3 +6732,7 @@ class PipelineChildrenSkipNodeCompileCache(unittest.TestCase):
     def test_the_run_helper_sets_it(self):
         source = (ROOT / "scripts" / "pipeline.py").read_text(encoding="utf-8")
         self.assertIn('"NODE_DISABLE_COMPILE_CACHE": "1"', source)
+
+
+if __name__ == "__main__":
+    unittest.main()

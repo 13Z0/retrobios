@@ -6,7 +6,7 @@ terms: bios not found, bios missing, firmware missing, bios error
 
 # When a game does not start
 
-Most often a BIOS file is missing or wrong.
+Usually a BIOS file is missing or wrong.
 
 ## 1. Check my BIOS folder { #checking-what-you-installed }
 
@@ -38,7 +38,7 @@ Read the count line:
 
 ## 2. Fix the files
 
-Run it without `--check`. It adds missing files and replaces wrong ones.
+Without `--check`, it adds missing files and replaces wrong ones.
 
 ## 3. Check the folder and the names
 

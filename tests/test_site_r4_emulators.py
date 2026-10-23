@@ -142,7 +142,8 @@ class TheTemplateIsNoEmulator(unittest.TestCase):
         index = gs.generate_emulators_index(profiles)
         self.assertNotIn("00_example", index)
         self.assertIn("melonds.md", index)
-        self.assertEqual(_front(_pages("00_example")["00_example"])["search"], "exclude")
+        # A test profile gets no page at all (generate_site's public_profiles).
+        self.assertEqual(_profile("00_example")["type"], "test")
 
 
 @unittest.skipUnless((DIST / "emulators" / "aethersx2" / "index.html").is_file(), "site not built")
@@ -156,9 +157,10 @@ class TheBuiltPages(unittest.TestCase):
         self.assertNotIn("--emulator aethersx2", page)
 
     def test_the_index_leaves_the_template_out(self):
+        # 00_example is `type: test`: no page, no index row.
         self.assertNotIn("00_example", self._html("emulators"))
         self.assertIn('data-pagefind-body', self._html("emulators/melonds"))
-        self.assertNotIn('data-pagefind-body', self._html("emulators/00_example"))
+        self.assertFalse((DIST / "emulators" / "00_example").exists())
 
     def test_mame_parts_have_a_parent_crumb(self):
         page = self._html("emulators/mame-files-3")

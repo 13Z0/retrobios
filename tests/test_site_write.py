@@ -155,6 +155,18 @@ class Sweep(unittest.TestCase):
         (self.docs / "emulators" / "kept.md").write_text("y")
         self.assertEqual(sitewrite._sweep_generated(self.docs, ["emulators"]), 0)
 
+    def test_a_root_page_nothing_produced_is_removed(self):
+        """cross-reference-misterfpga.md outlived the table it held and kept
+        the address its redirect needed."""
+        for name in ("cross-reference.md", "cross-reference-misterfpga.md", "which-pack.mdx"):
+            (self.docs / name).write_text("x")
+        self._produce("cross-reference.md", "which-pack.mdx")
+        self.assertEqual(sitewrite._sweep_top_pages(self.docs), 1)
+        self.assertFalse((self.docs / "cross-reference-misterfpga.md").exists())
+        self.assertTrue((self.docs / "cross-reference.md").exists())
+        self.assertTrue((self.docs / "which-pack.mdx").exists())
+        self.assertTrue((self.docs / "untouched/manual.md").exists())
+
 
 if __name__ == "__main__":
     unittest.main()

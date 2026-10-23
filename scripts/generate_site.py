@@ -14,7 +14,7 @@ Usage:
 
 from __future__ import annotations
 
-from siterender import WIKI_SRC_DIR
+from siterender import SECTION_LABELS, WIKI_SRC_DIR
 import argparse
 import csv
 import hashlib
@@ -117,7 +117,7 @@ RELEASE_URL = f"{REPO_URL}/releases/latest"
 # metadata. The BIOS files themselves are under NOTICE, never this.
 DATA_LICENSE = "MIT (LICENSE: scripts, tooling, schemas, documentation and metadata)"
 SITE_URL = "https://abdess.github.io/retrobios/"
-GENERATED_DIRS = ["platforms", "systems", "emulators", "wiki", "api", "downloads",
+GENERATED_DIRS = ["platforms", "systems", "emulators", "wiki", "api", "downloads", "files",
                   release_record.GET_DIR]
 # Generated directories of files served as they are, not pages.
 PUBLIC_DIRS = ("api", "downloads")
@@ -1809,7 +1809,8 @@ def system_index_items(db: dict, coverages: dict, profiles: dict) -> list[dict]:
 
 
 def _first_file_place(
-    sys_id: str, sha1s: list[str], files: dict, profiles: dict, card_page,
+    sys_id: str, sha1s: list[str], files: dict, profiles: dict,
+    card_page: Callable[[str, str], str],
 ) -> tuple[str, str | None]:
     """(manufacturer, url) of the card of an id's first collection file,
     else of the page of the first emulator naming the id."""
@@ -4017,7 +4018,7 @@ def generate_files_page() -> str:
     """
     return "\n".join([
         "---",
-        "terms: check dump, md5 check, verify bios file, check hash",
+        "terms: check my dump, md5 check, verify bios file, check hash",
         "---",
         "",
         "# Find or check a file",
@@ -5721,7 +5722,8 @@ def _start(
     held = {str(f.get("sha1", "")) for f in files}
     lines = _lead_file(groups)
     if not lines:
-        lines = _group_lines(groups, first_below, held, sha1s)
+        lines = _group_lines(groups, first_below, held, sha1s,
+                             _section_label(*section) if section and section != OTHER_ARCADE else "")
     order: list[str] = []
     for line in lines:
         for visible in re.findall(r"`([^`]*)`", line):
@@ -5733,9 +5735,10 @@ def _start(
 
 def _group_lines(
     groups: dict[str | None, _StartGroup], first_below: bool, held: set[str],
-    sha1s: dict[str, str],
+    sha1s: dict[str, str], console: str = "",
 ) -> list[str]:
-    """One block per system, as the section opens on them."""
+    """One block per system, as the section opens on them. ``console`` names
+    the section in a line that picks a BIOS by region."""
     keys = sorted(groups, key=lambda k: str(k).casefold())
     blocks: dict[str | None, list[tuple[str, str]]] = {}
     for key in keys:
@@ -5751,7 +5754,7 @@ def _group_lines(
     if not blocks:
         return []
     if len(blocks) == 1:
-        return _start_lines(next(iter(blocks.values())))
+        return _start_lines(next(iter(blocks.values())), console)
     if all(lead == "*" for block in blocks.values() for lead, _text in block):
         # No machine of the section needs a file: the SNES said "Start with"
         # over two lines that each said no file is needed.
@@ -5891,8 +5894,11 @@ def _group_start(group: _StartGroup, first_below: bool) -> list[tuple[str, str]]
     return out
 
 
-def _start_lines(block: list[tuple[str, str]]) -> list[str]:
-    """One system's start, as the lines its section opens on."""
+def _start_lines(block: list[tuple[str, str]], console: str = "") -> list[str]:
+    """One system's start, as the lines its section opens on. A BIOS picked
+    by region is named with its console: "playstation bios" found the
+    PlayStation 2 page first, its file names holding "BIOS" and the
+    PlayStation page's text never saying "PlayStation BIOS"."""
     lead, text = block[0]
     if lead == "*":
         return [f"**No file needed**{text}", ""]
@@ -5900,7 +5906,8 @@ def _start_lines(block: list[tuple[str, str]]) -> list[str]:
         named, _sep, where = text.partition(", first below")
         below = " They come first below." if _sep else ""
         return [f"**Start with**: {named}.{below}", ""]
-    lines = ["**Start with** the BIOS for the region of your games:", ""]
+    bios = f"the {console} BIOS" if console else "the BIOS"
+    lines = [f"**Start with** {bios} for the region of your games:", ""]
     for lead, text in block:
         lines.append(f"- **{lead or 'Some emulators also require'}**: {text}")
     return [*lines, ""]
@@ -6031,12 +6038,16 @@ def arcade_board_sections(
 
 def _section_label(manufacturer: str, console: str) -> str:
     """The heading a section shows."""
-    return OTHER_ARCADE_LABEL if (manufacturer, console) == OTHER_ARCADE else console
+    if (manufacturer, console) == OTHER_ARCADE:
+        return OTHER_ARCADE_LABEL
+    return SECTION_LABELS.get((manufacturer, console), console)
 
 
 def _part_name(manufacturer: str, console: str) -> str:
     """What a part's title calls the files: "Arcade files a to b"."""
-    return "Arcade" if (manufacturer, console) == OTHER_ARCADE else console
+    if (manufacturer, console) == OTHER_ARCADE:
+        return "Arcade"
+    return SECTION_LABELS.get((manufacturer, console), console)
 
 
 def _system_front_matter(
@@ -6450,18 +6461,10 @@ def emulator_initial(display: str) -> str:
     return initial if "A" <= initial <= "Z" else INITIAL_DIGITS
 
 
-# Profiles that document a format, not an emulator: `00_example` is the
-# template libretro-core-info ships for core authors ("No loadable binary,
-# no emulated system", its notes). Out of the index and the search, like a
-# test core, and its page stays for the links that cite it.
-TEMPLATE_PROFILES = frozenset({"00_example"})
-_TEMPLATE_FRONT = ["---", "search: exclude", "---", ""]
-
-
 def generate_emulators_index(profiles: dict) -> str:
     unique = {
         k: v for k, v in profiles.items()
-        if v.get("type") not in ("alias", "test") and k not in TEMPLATE_PROFILES
+        if v.get("type") not in ("alias", "test")
     }
     aliases = {k: v for k, v in profiles.items() if v.get("type") == "alias"}
 
@@ -7482,7 +7485,7 @@ def _data_tree_page(ref: str, entry: dict, pages: list[tuple[str, list[str]]],
     stem, names = pages[index]
     members = _DATA_MEMBERS.get(ref) or {}
     part = f" (part {index + 1} of {len(pages)})" if len(pages) > 1 else ""
-    readers = _said_as_list([f"[{_escape_tags(display)}]({key}.md#data-directories)"
+    read_by = _said_as_list([f"[{_escape_tags(display)}]({key}.md#data-directories)"
                              for key, display in _DATA_READERS.get(ref, [])])
     # A file list out of the search: "dolphin" found three parts of the
     # dolphin-sys tree, on their title, before the Dolphin page.
@@ -7505,7 +7508,7 @@ def _data_tree_page(ref: str, entry: dict, pages: list[tuple[str, list[str]]],
         f"# The {ref} data directory{part}", "",
         f"{entry.get('description') or 'A data directory'}: "
         f"{_count(len(members), 'file')}, as the packs ship them."
-        + (f" Read by {readers}." if readers else ""), "",
+        + (f" Read by {read_by}." if read_by else ""), "",
     ]
     if len(pages) > 1:
         lines.extend([", ".join(f"[part {i}]({other}.md)" if other != stem else f"part {i}"
@@ -7848,7 +7851,6 @@ def emulator_pages(
         one_bios, consumers, name) if one_bios else "")
     romset = emulator_romset(profile)
     lines = [
-        *(_TEMPLATE_FRONT if name in TEMPLATE_PROFILES else []),
         f"# {emu_name}",
         "",
         *([intro, ""] if intro else []),
@@ -10293,10 +10295,10 @@ def _generate(args: argparse.Namespace) -> None:
     # Swept before the decoration, which rewrites every page it finds: a
     # page no generator produced any more (a console moved back onto its
     # manufacturer's page) was decorated, recorded, and kept for ever.
+    write_if_changed(str(docs / "404.md"), generate_not_found())
     stale = _sweep_generated(docs, [d for d in GENERATED_DIRS if d not in PUBLIC_DIRS])
     stale += _sweep_generated(public, list(PUBLIC_DIRS))
-
-    write_if_changed(str(docs / "404.md"), generate_not_found())
+    stale += _sweep_top_pages(docs)
 
     print("Adding page metadata and structured data...")
     lastmod = decorate_markdown_pages(docs)
@@ -10338,6 +10340,7 @@ from sitewrite import (  # noqa: E402,F401
     write_if_changed,
     write_decorated,
     _sweep_generated,
+    _sweep_top_pages,
 )
 from sitesources import (  # noqa: E402,F401
     link_prose_citations,

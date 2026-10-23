@@ -69,3 +69,20 @@ def _sweep_generated(docs: Path, directories: list[str]) -> int:
             if path.is_dir() and not any(path.iterdir()):
                 path.rmdir()
     return removed
+
+
+def _sweep_top_pages(docs: Path) -> int:
+    """Delete the pages at the root of the docs tree this run did not produce.
+
+    The root holds only generated pages, one per stem (`cross-reference-*`,
+    `gaps-*`), and a stem that stops being produced, such as a platform
+    whose core table moved to its own page, otherwise kept its old page
+    and claimed the address its redirect needs.
+    """
+    removed = 0
+    for path in sorted(docs.glob("*.md*")):
+        if (path.is_file() and path.suffix in (".md", ".mdx")
+                and os.path.realpath(str(path)) not in _produced):
+            path.unlink()
+            removed += 1
+    return removed
