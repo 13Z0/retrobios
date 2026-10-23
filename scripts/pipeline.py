@@ -182,7 +182,10 @@ def run(cmd: list[str], label: str) -> tuple[bool, str]:
     lines: list[str] = []
     with subprocess.Popen(
         cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True,
-        cwd=repo_root, env={**os.environ, "PYTHONUNBUFFERED": "1"},
+        # Node's compile cache lands in /tmp, a 4 GB tmpfs here: the site
+        # build filled it to 3.4 GB across a day of pipeline runs.
+        cwd=repo_root,
+        env={**os.environ, "PYTHONUNBUFFERED": "1", "NODE_DISABLE_COMPILE_CACHE": "1"},
     ) as proc:
         for line in proc.stdout:
             lines.append(line)
