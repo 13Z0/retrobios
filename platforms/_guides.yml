@@ -74,6 +74,11 @@ device_groups:
     - name: Linux handhelds
       text: ArkOS, muOS, Onion, spruceOS
       link: platforms/linux-handhelds.md
+    # No terminal runs there: the files are copied in, each app its own way
+    # (which-pack.md, section iPhone and iPad, each step cited).
+    - name: iPhone and iPad
+      text: RetroArch, Delta, Provenance
+      link: which-pack.md#iphone-and-ipad
   fpga:
     label: MiSTer FPGA
     description: >-
@@ -130,7 +135,8 @@ terminals:
 # A folder is the one seen on the card from a computer, and a device list the
 # one the system's own site, wiki or README gives. Each is written only with
 # the first-party page that states it (`*_source`), and left out when no such
-# page states it: the row then says the command finds the folder.
+# page states it: the row then says where RetroArch shows the folder.
+# `linux_only` marks a folder on a part of the card only Linux reads.
 handheld_guide:
   page: linux-handhelds
   title: Linux handhelds
@@ -162,12 +168,15 @@ handheld_guide:
               TrimUI Smart Pro, TrimUI Brick, Anbernic RG35XX Plus, RG40XX H, Powkiddy RGB30]
     devices_source: https://github.com/spruceUI/spruceOS/wiki/Supported-Devices
   - name: Allium
+    folder: '`BIOS` at the root of the card'
+    folder_source: https://github.com/goweiwen/Allium/tree/ee0dda979bc02649fdda48b277eaa60938273465/static/BIOS
     devices: [Miyoo Mini, Miyoo Mini Plus, Miyoo Mini Flip]
     devices_source: https://github.com/goweiwen/Allium
   - name: Anbernic stock firmware
   - name: ArchR
-    folder: '`/storage/roms/bios`, on a part Windows and macOS cannot open'
+    folder: '`/storage/roms/bios`, on a part only Linux can open'
     folder_source: https://arch-r.io/docs/roms/
+    linux_only: true
     devices: [R36S, R33S, R36S Soysauce, Odroid Go Advance, Odroid Go Super, RG351V,
               RG351M, GameForce Chi, MagicX XU10, Powkiddy RGB10, Powkiddy RGB10X, K36]
     devices_source: https://github.com/archr-linux/Arch-R
@@ -182,7 +191,11 @@ handheld_guide:
     devices: [Odroid Go Advance, RGB10, RG351MP, G350]
     devices_source: https://github.com/christianhaitian/dArkOS/wiki
   - name: JELOS
+    folder: '`roms/bios` on the games card'
+    folder_source: https://github.com/JustEnoughLinuxOS/distribution/blob/7b2e116ce6996d56e642a0e2a07288c926db926b/packages/emulators/standalone/retroarch/sources/RK3566/retroarch.cfg#L716
   - name: KOLOS
+    folder: '`roms/bios` on the games card'
+    folder_source: https://github.com/AnonLinuxOS/KOLOS/blob/7daf5950ae79bb8775f129468164f730dbc32298/packages/emulators/standalone/retroarch/sources/RK3566/retroarch.cfg#L716
     devices: [RG353P, RG353M, RG353V, RG353VS, RG503, Powkiddy RK2023, RGB30, RGB10 Max 3]
     devices_source: https://github.com/AnonLinuxOS/KOLOS
   - name: Koriki
@@ -191,6 +204,9 @@ handheld_guide:
     devices: [Miyoo Mini]
     devices_source: https://github.com/Rparadise-Team/Koriki
   - name: MiyooCFW
+    folder: '`.retroarch/system`, hidden, on the **MAIN** part, which only Linux can open'
+    folder_source: https://github.com/MiyooCFW/buildroot/blob/d5912eeb7b636810bafaa34eb0517fd599a0fc71/board/miyoo/rootfs/etc/main#L164-L170
+    linux_only: true
     devices: [BittBoy, Pocket Go, PowKiddy Q90, PowKiddy V90, PowKiddy Q20 Mini, Sup M3, XYC Q8]
     devices_source: https://github.com/MiyooCFW/docs/blob/main/docs/index.md
   - name: plumOS
@@ -521,6 +537,11 @@ guides:
     runs_on: Anbernic RG351 and RG552
     folders:
     - where: On AmberELEC
+    # AmberELEC 5a3882cb packages/network/samba/config/smb.conf:59-60 shares
+    # /storage/roms as "roms". smbd runs unless samba.disabled exists
+    # (system.d.opt/smbd.service:5).
+    - where: From Windows, over your home network
+      path: '`\\AmberELEC\roms\`'
     run: [device]
     # amberelec.org/guides/getting-to-know-amberelec.html: host AmberELEC, root, amberelec.
     terminal: >-
@@ -569,7 +590,8 @@ guides:
     run: [device]
     notes:
     - >-
-      For the network folder, turn on **SAMBA** in **System Settings > Services**.
+      For the network folder, turn on **SAMBA** in **System Settings > Services**
+      ([KNULLI docs](https://github.com/knulli-cfw/knulli.org/blob/314b26f1822c8531bed8a9cea72028b229b4436e/docs/play/add-games/network-transfer.md?plain=1#L20-L24)).
     # knulli.org/configure/ssh: SSH in System Settings > Services, root, password linux.
     terminal: >-
       Turn on **SSH**, a terminal over the network, in **System Settings > Services**. From
@@ -687,6 +709,7 @@ guides:
     - >-
       Each console has its own folder, named after the tag in its Roms folder. `Roms/Sony
       PlayStation (PS)/` uses `Bios/PS/`.
+    - The command makes each console's folder for you.
     on_card: true
     reference_notes:
     - >-
@@ -711,6 +734,7 @@ guides:
     - >-
       Each console has its own folder, named after the tag in its Roms folder. `Roms/Sony
       PlayStation (PS)/` uses `Bios/PS/`.
+    - The command makes each console's folder for you.
     on_card: true
     reference_notes:
     - >-
@@ -730,6 +754,7 @@ guides:
     - >-
       Each console has its own folder, named after the tag in its Roms folder. `Roms/Sony
       PlayStation (PS)/` uses `Bios/PS/`.
+    - The command makes each console's folder for you.
     on_card: true
     reference_notes:
     - >-

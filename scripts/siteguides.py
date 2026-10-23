@@ -91,6 +91,7 @@ class HandheldSystem:
     folder_source: str = ""
     devices: tuple[str, ...] = ()
     devices_source: str = ""
+    linux_only: bool = False
 
 
 @dataclass(frozen=True)
@@ -125,7 +126,7 @@ _GROUP_KEYS = {"label", "description", "anchor", "also_runs", "tiles"}
 _ALSO_KEYS = ("setup", "summary", "uses", "runs_on", "folder")
 _TILE_KEYS = ("name", "text", "link")
 _HANDHELD_KEYS = {"page", "title", "summary", "uses", "systems"}
-_SYSTEM_KEYS = {"name", "folder", "folder_source", "devices", "devices_source"}
+_SYSTEM_KEYS = {"name", "folder", "folder_source", "devices", "devices_source", "linux_only"}
 _SOURCE = re.compile(r"https://\S+")
 _TERMINAL_KEYS = ("label", "how", "shell")
 
@@ -239,6 +240,10 @@ def _handheld_system(data: object, where: str) -> HandheldSystem:
             values[value] = (_texts(data[value], f"{where}.{value}") if value == "devices"
                              else _text(data[value], f"{where}.{value}"))
             values[source] = _source(data[source], f"{where}.{source}")
+    if "linux_only" in data:
+        if not isinstance(data["linux_only"], bool) or "folder" not in data:
+            raise GuideError(f"{where}.linux_only: expected true or false, with a folder")
+        values["linux_only"] = data["linux_only"]
     return HandheldSystem(**values)
 
 
