@@ -6406,7 +6406,10 @@ def _found_elsewhere(
     for path in matching or same_name:
         rel = index.relative(path)
         contents = "" if path in matching else ", with other contents"
-        if rel.endswith("/" + dest) and path.name == name:
+        # A dest below the save directory is not below this folder: a copy
+        # here under the same tail is in the wrong place, not too deep.
+        below = entry.get("root") != "save"
+        if below and rel.endswith("/" + dest) and path.name == name:
             extra = rel[: -len(dest) - 1]
             top = index.root.name
             if extra.casefold() == top.casefold():

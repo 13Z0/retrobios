@@ -197,6 +197,20 @@ class CheckNamesWhyAFileIsRefused(Scratch):
         self.assertIn("a name no core opens: its contents are at PSX BIOS (USA).bin, "
                       "rename it scph5501.bin", self.check())
 
+    def test_a_save_directory_file_left_in_the_bios_folder_is_in_the_wrong_folder(self):
+        """A pack carries the save directory's files under saves/: extracted
+        into the BIOS folder they sit beside it, not too deep in it."""
+        self.place("saves/azahar/keys.txt", b"keys")
+        saves = self.root / "saves"
+        saves.mkdir()
+        install._SAVE_DIRS[self.dest] = install.SavePlace(saves, False)
+        self.addCleanup(install._SAVE_DIRS.pop, self.dest, None)
+        entry = _entry("azahar/keys.txt", b"keys", ["nintendo-3ds"], root="save")
+        found = install.diagnose([entry], [], [entry], self.dest)
+        self.assertEqual(found.reasons[id(entry)],
+                         "wrong folder: it is at saves/azahar/keys.txt")
+        self.assertEqual(found.deep, {})
+
     def test_each_flagged_file_says_where_its_cores_open_it(self):
         self.complete("scph5501.bin", "pcsx/extra.bin")
         out = self.check()
