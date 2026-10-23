@@ -1131,9 +1131,10 @@ names each route it tried, and `log.prev.txt` keeps the run before.
 
 **From a computer.** Onion, MinUI, NextUI, Allium, GarlicOS and the Switch
 have no Python 3 to run the installer. Put the card in a computer and run
-the [one-line command](#one-line) there with
-`--platform <platform> --dest <BIOS folder on the card>`. This works for
-every system above too.
+the [one-line command](#one-line) there: it finds a mounted Onion,
+spruceOS, MinUI, muOS, Knulli or ROCKNIX card by itself. For a card it does
+not recognise, add `--platform <platform> --dest <BIOS folder on the card>`.
+This works for every system above too.
 
 ## Where the files come from
 
