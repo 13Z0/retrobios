@@ -46,6 +46,17 @@ needed, and Python 3.8 is the floor both bootstraps enforce before handing over:
 python install.py
 ```
 
+A package that must not change under its users pins the installer to a
+release tag, and the file lists to the same tag with `RETROBIOS_REF`:
+
+```bash
+curl -fsSLO https://raw.githubusercontent.com/Abdess/retrobios/<tag>/install.py
+RETROBIOS_REF=<tag> python3 install.py
+```
+
+A tag lasts until the next release deletes it. What `RETROBIOS_REF` does not
+pin is listed under [Environment overrides](#environment-overrides).
+
 ## Passing options
 
 The shell bootstrap forwards everything after `-s --`:
@@ -504,8 +515,8 @@ what the options name, everything by default.
 | `--yes`, `-y` | Do not ask before a download of 1 GB or more |
 | `--quiet`, `-q` | Print only failures and the final summary. Implies `--no-input` |
 | `--events` | Write the run as JSON events on standard output, one object per line, and the usual text on standard error. Implies `--no-input`. See [Machine-readable events](#machine-readable-events) |
-| `--from-pack PATH` | Install from a pack already downloaded: its ZIP, one of its parts (the others are found in the same folder), or the folder holding them. Makes no network request and checks every file's hash. See [Without a network](#without-a-network) |
-| `--manifest FILE` | Read the file list from FILE, a copy of `install/<platform>.json`, instead of downloading it. See [Without a network](#without-a-network) |
+| `--from-pack PATH` | Install from a pack already downloaded: its ZIP, one of its parts (the others are found in the same folder), or the folder holding them. Makes no network request and checks every file's hash. See [Without a network](#without-a-network-offline-install) |
+| `--manifest FILE` | Read the file list from FILE, a copy of `install/<platform>.json`, instead of downloading it. See [Without a network](#without-a-network-offline-install) |
 | `--restore FOLDER` | Put back the files a run replaced and kept in FOLDER, a dated folder inside `retrobios-backup`. Takes no other option but `--dry-run` and `--no-input`. See [Files you already had](#files-you-already-had) |
 | `--version` | Print the installer's identity, the first 12 hex digits of the SHA-256 the bootstraps pin |
 | `--list-platforms` | Print the supported platforms and what was detected here |
@@ -865,7 +876,9 @@ The launcher (`ports/RetroBIOS/RetroBIOS.sh`) and its screens
 (`retrobios/screens.txt`) read the installer through
 [Machine-readable events](#machine-readable-events) only.
 
-## Without a network { #without-a-network }
+## Without a network (offline install) { #without-a-network-offline-install }
+
+<span id="without-a-network"></span>
 
 A pack downloaded once installs again with no network, on this machine or on
 one that has none:
@@ -1013,6 +1026,10 @@ in the session.
 
 Failures that are per-file, such as a download exhausting its three attempts,
 are counted and reported at the end.
+
+To tell missing files from a failure, read the `check` event of
+[Machine-readable events](#machine-readable-events): `missing` and `wrong_hash`
+count what is left.
 
 ## Machine-readable events
 
