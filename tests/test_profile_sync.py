@@ -2984,6 +2984,34 @@ class TestRebaseWaitsForThePin(unittest.TestCase):
         self.assertFalse(profile_sync.pending_recale(report))
         self.assertEqual(rebase_refs(self.path, report), ["a.c:10-12 -> a.c:30-32"])
 
+    def test_chained_shifts_are_judged_at_their_own_entry(self):
+        # tr1x: cut2 508->531, cut3 531->552, cut4 552->575. Once written,
+        # cut3 and cut4 read as pending on the values cut2 and cut3 took.
+        text = (
+            'emulator: Test\nsource: "https://github.com/o/n"\n'
+            'source_commit: "pin"\nfiles:\n'
+            + "".join(
+                f'  - name: "cut{n}.mp3"\n    source_ref: "g.json5:{line}"\n'
+                for n, line in ((2, 508), (3, 531), (4, 552))
+            )
+        )
+        self.path.write_text(text, encoding="utf-8")
+        entries = [
+            EntryReport(
+                f"cut{n}.mp3", f"g.json5:{old}", "SHIFTED",
+                [PartResult(RefPart("g.json5", old, old), "SHIFTED", None, new, new, [])],
+                "ref", f"files[cut{n}.mp3].source_ref",
+            )
+            for n, old, new in ((2, 508, 531), (3, 531, 552), (4, 552, 575))
+        ]
+        report = self._report(entries, {"SHIFTED": 3})
+        self.assertEqual(len(rebase_refs(self.path, report)), 3)
+        written = self.path.read_text()
+        self.assertIn('source_ref: "g.json5:575"', written)
+        self.assertEqual(
+            profile_sync.pending_recale(report, text=written), 0
+        )
+
 
 class TestBumpCommit(unittest.TestCase):
     def setUp(self):
@@ -3722,6 +3750,13 @@ files:
     source_ref: "a.c:10-12"
 '''
 
+# One run written twice in a folded scalar: no physical line carries the
+# folded sentence, and the run alone is not unique.
+FOLDED_TWICE = PROSE_SAMPLE.replace(
+    "files:",
+    "twice: >\n  Read at (q.c:7) first\n  and again at (q.c:7) later.\nfiles:",
+)
+
 
 class TestRebaseProse(unittest.TestCase):
     def setUp(self):
@@ -3789,6 +3824,18 @@ class TestRebaseProse(unittest.TestCase):
         self.assertIn("(a.c:10)", self.path.read_text())
 
     def test_ambiguous_sentence_location_is_left_alone(self):
+        self.path.write_text(FOLDED_TWICE, encoding="utf-8")
+        part = PartResult(RefPart("q.c", 7, 7, "7"), "SHIFTED", None, 9, 9, [])
+        applied = rebase_refs(
+            self.path, self._report([self._prose_entry("q.c:7", [part], "twice")])
+        )
+        self.assertEqual(applied, [])
+        self.assertEqual(self.path.read_text(), FOLDED_TWICE)
+
+    def test_one_sentence_in_two_fields_moves_in_both(self):
+        # emucorex cites CMakeLists.txt:706 in notes and in exclusion_note on
+        # identical lines: neither was unique in the file, one was left, and
+        # the pin refused to follow.
         text = PROSE_SAMPLE.replace(
             "files:",
             'quirks: |\n  The loader appends dc/ to the system directory '
@@ -3796,35 +3843,37 @@ class TestRebaseProse(unittest.TestCase):
         )
         self.path.write_text(text, encoding="utf-8")
         part = PartResult(RefPart("a.c", 10, 10, "10"), "SHIFTED", None, 14, 14, [])
-        applied = rebase_refs(
-            self.path, self._report([self._prose_entry("a.c:10", [part])])
+        report = self._report([
+            self._prose_entry("a.c:10", [part]),
+            self._prose_entry("a.c:10", [part], "quirks"),
+        ])
+        self.assertEqual(
+            rebase_refs(self.path, report),
+            ["notes: a.c:10 -> a.c:14", "quirks: a.c:10 -> a.c:14"],
         )
-        self.assertEqual(applied, [])
-        self.assertEqual(self.path.read_text(), text)
+        written = self.path.read_text()
+        self.assertEqual(written, text.replace("(a.c:10)", "(a.c:14)"))
+        self.assertEqual(profile_sync.pending_recale(report, text=written), 0)
+        self.assertTrue(bump_commit(self.path, report))
 
     def test_a_refused_recale_names_the_citation_and_writes_nothing(self):
         # The structured ref could move, the prose could not: the run
         # printed nothing, wrote nothing, and the pin stayed.
-        text = PROSE_SAMPLE.replace(
-            "files:",
-            'quirks: |\n  The loader appends dc/ to the system directory '
-            '(a.c:10) and reads\n  nothing else.\nfiles:',
-        )
-        self.path.write_text(text, encoding="utf-8")
-        prose = PartResult(RefPart("a.c", 10, 10, "10"), "SHIFTED", None, 14, 14, [])
+        self.path.write_text(FOLDED_TWICE, encoding="utf-8")
+        prose = PartResult(RefPart("q.c", 7, 7, "7"), "SHIFTED", None, 9, 9, [])
         structured = PartResult(RefPart("a.c", 10, 12), "SHIFTED", None, 14, 16, [])
         report = self._report([
-            self._prose_entry("a.c:10", [prose]),
+            self._prose_entry("q.c:7", [prose], "twice"),
             EntryReport("a.bin", "a.c:10-12", "SHIFTED", [structured]),
         ])
         err = io.StringIO()
         with contextlib.redirect_stderr(err):
             self.assertEqual(rebase_refs(self.path, report), [])
         self.assertIn(
-            "p: not recaled, cannot move notes: a.c:10 (2 lines carry its sentence)",
+            "p: not recaled, cannot move twice: q.c:7 (0 lines carry its sentence)",
             err.getvalue(),
         )
-        self.assertEqual(self.path.read_text(), text)
+        self.assertEqual(self.path.read_text(), FOLDED_TWICE)
 
     def test_folded_scalar_moves_through_its_run_token(self):
         text = PROSE_SAMPLE.replace(
@@ -3911,14 +3960,12 @@ class TestPendingProse(unittest.TestCase):
         self.assertTrue(bump_commit(self.path, report))
 
     def test_unwritable_prose_blocks_the_pin(self):
-        text = PROSE_SAMPLE.replace(
-            "files:",
-            'quirks: |\n  The loader appends dc/ to the system directory '
-            '(a.c:10) and reads\n  nothing else.\nfiles:',
-        )
-        self.path.write_text(text, encoding="utf-8")
-        part = PartResult(RefPart("a.c", 10, 10, "10"), "SHIFTED", None, 14, 14, [])
+        self.path.write_text(FOLDED_TWICE, encoding="utf-8")
+        part = PartResult(RefPart("q.c", 7, 7, "7"), "SHIFTED", None, 9, 9, [])
         report = self._report([part])
+        report.entries[0] = EntryReport(
+            "twice", "q.c:7", "SHIFTED", [part], "prose", "twice"
+        )
         self.assertEqual(rebase_refs(self.path, report), [])
         self.assertFalse(bump_commit(self.path, report))
 

@@ -2627,14 +2627,57 @@ def _run_after_moves(
     return f"{new_path or parts[0].path}:{','.join(ranges)}"
 
 
-def _unique_line(lines: list[str], target: str) -> int | None:
-    """The one physical line carrying target, None when not exactly one."""
-    hits = [i for i, line in enumerate(lines) if target and target in line]
+def _unique_line(
+    lines: list[str], target: str, window: tuple[int, int]
+) -> int | None:
+    """The one line of the window carrying target, None when not exactly one."""
+    hits = [
+        i for i in range(window[0], min(window[1], len(lines) - 1) + 1)
+        if target and target in lines[i]
+    ]
     return hits[0] if len(hits) == 1 else None
 
 
+def scalar_windows(
+    text: str, document: object
+) -> dict[tuple[int, object], tuple[int, int]]:
+    """Physical lines each scalar spans, keyed by its holder and key.
+
+    The same sentence can sit in two fields: emucorex cites
+    CMakeLists.txt:706 in notes and in exclusion_note, on identical lines.
+    Searched over the whole file neither occurrence was unique, and only
+    the node's own lines tell them apart.
+    """
+    try:
+        root = yaml.compose(text, Loader=yaml.SafeLoader)
+    except yaml.YAMLError:
+        return {}
+    windows: dict[tuple[int, object], tuple[int, int]] = {}
+
+    def walk(value: object, node: yaml.Node | None) -> None:
+        if isinstance(value, dict) and isinstance(node, yaml.MappingNode):
+            by_key = {str(k.value): v for k, v in node.value}
+            for key, item in value.items():
+                child = by_key.get(str(key))
+                if child is None:
+                    continue
+                windows[(id(value), key)] = (
+                    child.start_mark.line, child.end_mark.line
+                )
+                walk(item, child)
+        elif isinstance(value, list) and isinstance(node, yaml.SequenceNode):
+            for index, (item, child) in enumerate(zip(value, node.value)):
+                windows[(id(value), index)] = (
+                    child.start_mark.line, child.end_mark.line
+                )
+                walk(item, child)
+
+    walk(document, root)
+    return windows
+
+
 def _apply_prose_edits(
-    text: str, jobs: list[tuple[Citation, dict]]
+    text: str, jobs: list[tuple[Citation, dict]], document: object = None
 ) -> tuple[str, list[str], list[str]]:
     """Rewrite prose citation tokens in place, nothing else.
 
@@ -2652,6 +2695,8 @@ def _apply_prose_edits(
     holders: dict[tuple[int, object], tuple] = {}
     applied: list[str] = []
     left: list[str] = []
+    windows = scalar_windows(text, document) if document is not None else {}
+    whole = (0, len(lines) - 1)
 
     for citation, moves in jobs:
         replacements = []
@@ -2701,8 +2746,10 @@ def _apply_prose_edits(
         if straddles:
             left.append(f"{citation.field}: {citation.ref} (a token spans the line break)")
             continue
+        window = windows.get((id(citation.holder), citation.key), whole)
         located = {
-            number: _unique_line(lines, value_lines[number]) for number in by_line
+            number: _unique_line(lines, value_lines[number], window)
+            for number in by_line
         }
         if citation.wrapped and (
             None in located.values()
@@ -2731,14 +2778,15 @@ def _apply_prose_edits(
                 rf"(?<![\w/.-]){re.escape(citation.ref)}(?![\w-])"
             )
             run_hits = [
-                i for i, line in enumerate(lines) if pattern.search(line)
+                i for i in range(window[0], min(window[1], len(lines) - 1) + 1)
+                if pattern.search(lines[i])
             ]
             if (
                 len(run_hits) != 1
                 or len(pattern.findall(lines[run_hits[0]])) != 1
             ):
                 carriers = sum(
-                    1 for line in lines
+                    1 for line in lines[window[0]:window[1] + 1]
                     if value_lines[citation.line] and value_lines[citation.line] in line
                 )
                 left.append(
@@ -2981,7 +3029,7 @@ def rebase_refs(
         citation.holder[citation.key] = new_ref
         applied.append(f"{entry.source_ref} -> {new_ref}")
 
-    text, prose_applied, left = _apply_prose_edits(text, prose_jobs)
+    text, prose_applied, left = _apply_prose_edits(text, prose_jobs, document)
     refused.extend(left)
     if refused:
         # A citation left on the pinned lines holds the pin, so writing the
@@ -3029,21 +3077,24 @@ def pending_recale(
     document = yaml.safe_load(text) if text is not None else None
     # A ref the writer regenerates is pending only while the file still
     # carries it as written: a bump run without the recale left lrps2's
-    # SHIFTED refs on the old lines under the new pin.
-    refs_left = (
-        {c.ref for c in collect_citations(document) if c.kind == "ref"}
-        if document is not None else set()
-    )
+    # SHIFTED refs on the old lines under the new pin. It is looked up at
+    # its own field, never by its text alone: tr1x moved cut2 508->531 and
+    # cut3 531->552, and cut3 read as pending on cut2's new value.
+    refs_left: dict[tuple[str, str], int] = {}
+    if document is not None:
+        for citation in collect_citations(document):
+            if citation.kind == "ref":
+                for slot in ((citation.field, citation.ref), ("", citation.ref)):
+                    refs_left[slot] = refs_left.get(slot, 0) + 1
     pending = 0
     for entry in report.entries or []:
         if entry.kind == "prose":
             continue
-        if (
-            _is_rewritable(entry.source_ref)
-            and not entry.name.endswith("]")
-            and entry.source_ref not in refs_left
-        ):
-            continue
+        if _is_rewritable(entry.source_ref) and not entry.name.endswith("]"):
+            slot = (entry.field, entry.source_ref)
+            if not refs_left.get(slot):
+                continue
+            refs_left[slot] -= 1
         pending += sum(
             1
             for part in entry.parts
@@ -3637,7 +3688,7 @@ def realign_prose(
             for citation, moves in jobs
         )
         return messages
-    new_text, applied, left = _apply_prose_edits(text, jobs)
+    new_text, applied, left = _apply_prose_edits(text, jobs, document)
     messages.extend(applied)
     messages.extend(f"left in place: {item}" for item in left)
     if applied:
