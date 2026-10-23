@@ -12,6 +12,20 @@ systems: [nintendo-switch]
 analysis_date: "2026-03-26"
 mode: standalone
 
+data_root:
+  windows:
+    path: "%APPDATA%/Ryujinx"
+    source_ref: "src/Ryujinx.Common/Configuration/AppDataManager.cs:11-12, 52-82"
+    note: "A portable folder beside the executable, or the folder given with --root-data-dir, is used instead."
+  linux:
+    path: "$XDG_CONFIG_HOME/Ryujinx, else ~/.config/Ryujinx"
+    source_ref: "src/Ryujinx.Common/Configuration/AppDataManager.cs:11-12, 52-82"
+    note: "A portable folder beside the executable, or the folder given with --root-data-dir, is used instead."
+  macos:
+    path: "~/Library/Application Support/Ryujinx"
+    source_ref: "src/Ryujinx.Common/Configuration/AppDataManager.cs:11-12, 52-82"
+    note: "A portable folder beside the executable or beside the app bundle, or the folder given with --root-data-dir, is used instead."
+
 # Key files are read from {BaseDirPath}/system/ (src/Ryujinx.Common/Configuration/AppDataManager.cs:229)
 # Also searched in ~/.switch/ (src/Ryujinx.Common/Configuration/AppDataManager.cs:47)
 # Batocera copied bios/switch/prod.keys to Ryujinx/system/prod.keys (batocera ryujinxGenerator.py:108 at 1f69a46e) until it dropped the package in ee8a418f
