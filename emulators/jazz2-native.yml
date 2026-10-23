@@ -10,6 +10,25 @@ display_name: "Jazz Jackrabbit 2 (Jazz² Resurrection)"
 cores: [jazz2]
 systems: [jazz-jackrabbit-2]
 
+data_root:
+  android:
+    path: "Android/data/jazz2.resurrection/files"
+    source_ref: "Sources/Jazz2/ContentResolver.cpp:386-437, Sources/Shared/IO/AndroidAssetStream.cpp:213-216, CMakeLists.txt:35, Sources/nCine/Backends/Android/Bridge/app/build.gradle.in:11"
+    note: "with all-files access, the first of Games/Jazz² Resurrection, Games/Jazz2 Resurrection, Download/Jazz² Resurrection and Download/Jazz2 Resurrection on shared storage that holds Source, else the first one"
+  ios:
+    path: "Documents"
+    source_ref: "Sources/Jazz2/ContentResolver.cpp:445-449, 717-718"
+  windows:
+    path: "<folder of Jazz2.exe>"
+    source_ref: "Sources/nCine/MainApplication.cpp:696-715, Sources/Jazz2/ContentResolver.cpp:242-243, 349-350"
+  macos:
+    path: "~/Library/Application Support/Jazz² Resurrection"
+    source_ref: "Sources/Jazz2/ContentResolver.cpp:450-454, Sources/Shared/IO/FileSystem.cpp:1756-1781, 1713-1720"
+  linux:
+    path: "$XDG_DATA_HOME/jazz2, else ~/.local/share/jazz2"
+    source_ref: "Sources/Jazz2/ContentResolver.cpp:455-531, Sources/Shared/IO/FileSystem.cpp:1922-1935, CMakeLists.txt:30, cmake/ncine_options.cmake:408-409"
+    note: "the folder of the executable for a portable copy with Content beside it. $XDG_DATA_HOME/Jazz² Resurrection when it already holds Cache. The AppImage uses the folder of the .AppImage when its Source holds Anims.j2a"
+
 notes: |
   Open-source reimplementation of Jazz Jackrabbit 2 by Dan R. The engine
   ships its own Content/ tree (animations, metadata, translations) that
