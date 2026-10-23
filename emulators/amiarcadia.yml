@@ -3,9 +3,9 @@ type: libretro
 core_classification: official_port
 source: "https://github.com/warmenhoven/amiarcadia"
 upstream: "https://amigan.1emu.net/releases/"
-profiled_date: "2026-03-22"
-source_commit: "4b84422985457b53dcc22ab46f525d7c34d3e51f"
-core_version: "4.42"
+profiled_date: "2026-10-23"
+source_commit: "8ca27c925833fe0021475155512c7f467924f647"
+core_version: "4.60"
 display_name: "Arcadia 2001 / Interton VC 4000 (AmiArcadia)"
 cores:
   - amiarcadia
@@ -25,8 +25,8 @@ systems:
 # ROMs by CRC32 via games.h lookup table.
 #
 # source_ref: src/libretro.c:497-624 (retro_load_game, no file I/O)
-# source_ref: DroidArcadia/app/src/main/cpp/android.c:893-1052 (parse_bytes, ROM-only)
-# source_ref: DroidArcadia/app/src/main/cpp/da.h:3-5 (version 4.42)
+# source_ref: DroidArcadia/app/src/main/cpp/android.c:906-1065 (parse_bytes, ROM-only)
+# source_ref: DroidArcadia/app/src/main/cpp/da.h:3-5 (version 4.60)
 # source_ref: amiarcadia_libretro.info (firmware_count=0)
 
 notes: |
