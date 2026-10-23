@@ -31,6 +31,7 @@ import sys
 import urllib.error
 import urllib.parse
 import urllib.request
+import zipfile
 from collections.abc import Callable, Iterator
 from datetime import datetime, timezone
 from pathlib import Path
@@ -3455,14 +3456,19 @@ def generate_systems_index(manufacturers: dict) -> str:
     ]
 
     # Other holds one folder per emulator: a7800 or altirra in the console
-    # table named no console.
+    # table named no console. Arcade boards are neither consoles nor
+    # computers, and the crumb of their page says Arcade too.
     def kind(mfr: str) -> str:
         if mfr in GAME_DATA_TOPS:
             return "games"
+        if mfr == "Arcade":
+            return "arcade"
         return "programs" if mfr == "Other" else "consoles"
 
     for heading, group, first, note in (
         ("Consoles and computers", "consoles", "Console", ""),
+        ("Arcade", "arcade", "Name",
+         "Arcade boards, and the sets each arcade emulator family reads."),
         ("Emulator folders", "programs", "Folder",
          "Files kept under the emulator that reads them, not under a console."),
         ("Game engines and PC games", "games", "Name",
@@ -3931,6 +3937,116 @@ def _icon_symbol() -> list[str]:
     return [PERMALINK_SYMBOL, ""] if markup.starlight() else []
 
 
+RomsetMembers = tuple[tuple[str, str], ...]
+# A release a recipe agrees with: its place among the imported releases of
+# its source, and its name ("0.220", "1.0.0.03").
+Release = tuple[int, str]
+
+
+def _release_name(source: str, label: str, versions: dict) -> str:
+    """"MAME mame0220" as "0.220", an FBNeo DAT title as its version."""
+    match = re.fullmatch(r"MAME mame(\d)(\d+)", label) if source == "mame" else None
+    return f"{match[1]}.{match[2]}" if match else str(versions.get(label) or label)
+
+
+@functools.lru_cache(maxsize=1)
+def _romset_snapshots() -> list[tuple[str, dict]]:
+    return [(str(snapshot.get("source", path.stem)), snapshot)
+            for path in sorted((_REPO_ROOT / "recipes").glob("*.json"))
+            for snapshot in [json.loads(path.read_text(encoding="utf-8"))]]
+
+
+@functools.lru_cache(maxsize=1)
+def _romset_releases() -> dict[str, list[tuple[RomsetMembers, str, list[Release]]]]:
+    """Archive name -> (members, source, the releases agreeing on them), from
+    the MAME and FBNeo recipe snapshots under recipes/.
+
+    A snapshot stores a recipe once for every version that agrees on it,
+    so a match reads "this set's contents in those versions".
+    """
+    releases: dict[str, list[tuple[RomsetMembers, str, list[Release]]]] = {}
+    for source, snapshot in _romset_snapshots():
+        versions = snapshot.get("dats") or {}
+        order = {label: index for index, label in enumerate(versions)}
+        for entry in snapshot.get("entries") or []:
+            members = tuple(sorted(
+                (str(m["name"]), str(m.get("crc32") or "").lower())
+                for m in entry.get("members") or [] if m.get("name") is not None
+            ))
+            if not entry.get("name") or not members or not all(crc for _n, crc in members):
+                continue
+            agreed = [(order.get(label, -1), _release_name(source, str(label), versions))
+                      for label in entry.get("dats") or [entry.get("dat")]]
+            releases.setdefault(str(entry["name"]), []).append((members, source, agreed))
+    return releases
+
+
+def _release_runs(releases: list[Release]) -> str:
+    """Releases as runs of consecutive imports: "0.190 to 0.195, 0.220 to
+    0.289". One FBNeo version shared by 15 DATs reads once."""
+    runs: list[list[Release]] = []
+    for release in sorted(set(releases)):
+        if runs and release[1] == runs[-1][-1][1]:
+            continue
+        if runs and release[0] == runs[-1][-1][0] + 1:
+            runs[-1].append(release)
+        else:
+            runs.append([release])
+    return ", ".join(run[0][1] if len(run) == 1 else f"{run[0][1]} to {run[-1][1]}"
+                     for run in runs)
+
+
+def _source_order(source: str) -> tuple[bool, str]:
+    return source != "mame", source
+
+
+def _romset_line(f: dict) -> str:
+    """Which MAME and FBNeo releases a collected archive's contents match.
+
+    MAME and FBNeo check the members of an archive, by CRC32, never its
+    own bytes: the set works with a release whose recipe lists the same
+    members. Empty when no recipe names the archive or the file is not
+    on disk.
+    """
+    recipes = _romset_releases().get(str(f.get("name", "")))
+    path = _REPO_ROOT / str(f.get("path", ""))
+    if not recipes or not path.is_file():
+        return ""
+    try:
+        with zipfile.ZipFile(path) as archive:
+            held = tuple(sorted((info.filename, f"{info.CRC:08x}")
+                                for info in archive.infolist() if not info.is_dir()))
+    except (OSError, zipfile.BadZipFile) as exc:
+        print(f"  WARNING: {path}: {exc}", file=sys.stderr)
+        return ""
+    matched: dict[str, list[Release]] = {}
+    for members, source, agreed in recipes:
+        if members == held:
+            matched.setdefault(source, []).extend(agreed)
+    if not matched:
+        return f"No match in {_romset_coverage()}"
+    return ", ".join(f"{_ROMSET_SOURCES.get(source, source)} {_release_runs(matched[source])}"
+                     for source in sorted(matched, key=_source_order))
+
+
+@functools.lru_cache(maxsize=1)
+def _romset_coverage() -> str:
+    """The releases the recipes cover: "MAME 0.190 to 0.289 or FBNeo 1.0.0.03"."""
+    covered = {}
+    for source, snapshot in _romset_snapshots():
+        versions = snapshot.get("dats") or {}
+        if versions:
+            ends = [(index, _release_name(source, label, versions))
+                    for index, label in enumerate(versions)]
+            # The ends of the span, read as one run.
+            span = [ends[0], (1, ends[-1][1])] if len(ends) > 1 else ends
+            covered[source] = f"{_ROMSET_SOURCES.get(source, source)} {_release_runs(span)}"
+    return " or ".join(covered[source] for source in sorted(covered, key=_source_order))
+
+
+ROMSET_FAQ = "../wiki/technical-faq.md#which-mame-version-do-the-arcade-bios-sets-match"
+
+
 def _system_file_card(
     f: dict, consumers: FileConsumers, anchored: set[str] | None = None,
     searchable: bool = True,
@@ -3996,6 +4112,11 @@ def _system_file_card(
         facts.append(("Packed for its emulators by", [_places_text(installed)], False))
     if emus:
         facts.append(("Emulators", [", ".join(_emulator_links(sha1_full, consumers))], False))
+    romset = _romset_line(f)
+    if romset:
+        # The version question every arcade player asks, answered from the
+        # recipes: the cards named emulators and no release.
+        facts.append(("Romset", [romset], False))
     if f.get("path"):
         # The card named a file, its hashes and provenance, but not where to
         # get it: a user missing scph5501.bin found the reference and no way
@@ -4187,6 +4308,14 @@ def system_install_choices(coverages: dict) -> dict[str, dict[str, list[tuple[st
 # stays under 600 KB from 300 KB. game-engines was one 10.5 MB page that
 # took 21 s of main-thread work on a phone.
 SYSTEM_PAGE_BUDGET = 300_000
+# What the sections kept on a manufacturer's summary may weigh once
+# rendered, estimated from their Markdown. Fitted on the Nintendo, Sega and
+# Commodore summaries: highlighted install commands grow about nine times,
+# cards 1.7 times. The page budget is 600 KB of HTML, and the frame around
+# the content (head, navigation, footer) is about 45 KB.
+CARD_HTML_RATIO = 1.7
+INSTALL_HTML_RATIO = 9
+SYSTEM_SUMMARY_HTML = 500_000
 
 # A system card: whether it is a variant, its lines, its sha1.
 Card = tuple[bool, list[str], str]
@@ -4209,17 +4338,22 @@ _NO_PRIORITY = 1 << 30
 def _card_rank(f: dict, consumers: FileConsumers) -> tuple:
     """Where a file's card sits in its console: the files an emulator
     requires first, then by the emulators' search order (smallest first),
-    then by how many setups list the file, then by name.
+    then a required file by how many emulators read it, then by how many
+    setups list the file, then by name.
 
     By byte order the PlayStation section opened on LibPS.exe and
-    PSX_DTLH2000.bin, capitals first, and scph5501.bin was 28th.
+    PSX_DTLH2000.bin, capitals first, and scph5501.bin was 28th. Without
+    the reader count the Neo Geo section opened on aes.zip, which geolith
+    alone reads.
     """
     sha1 = str(f.get("sha1", ""))
     entries = _reading_entries(sha1, consumers)
     priorities = [e["priority"] for e in entries if isinstance(e.get("priority"), int)]
+    required = any(e.get("required", True) for e in entries)
     return (
-        not any(e.get("required", True) for e in entries),
+        not required,
         min(priorities, default=_NO_PRIORITY),
+        -len(entries) if required else 0,
         -len(consumers.platforms.get(sha1, ())),
         f["name"].casefold(), f["name"], f.get("path", ""),
     )
@@ -4271,32 +4405,241 @@ def _region_word(region: str) -> str:
     return _REGION_WORDS.get(region) or region.replace("-", " ").title()
 
 
-def _start_with(files: list[dict], consumers: FileConsumers, first_below: bool = True) -> list[str]:
-    """The line a console section opens on: the files an emulator requires,
-    by the region the emulator picks each for.
+def _reading_pairs(sha1: str, consumers: FileConsumers) -> list[tuple[str, dict]]:
+    """The profile entries that read a file, each with its emulator."""
+    files_of = getattr(consumers, "emulator_files", {})
+    pairs = []
+    for emulator, index in sorted(getattr(consumers, "emulator_entries", {}).get(sha1, {}).items()):
+        files = files_of.get(emulator) or []
+        if 0 <= index < len(files) and isinstance(files[index], dict):
+            pairs.append((emulator, files[index]))
+    return pairs
 
-    Read from the profiles' required and region fields, never typed per
-    system. A section where no emulator requires a file gets no line.
+
+@functools.lru_cache(maxsize=1)
+def _profiles_on_disk() -> dict[str, dict]:
+    from common import load_emulator_profiles  # noqa: PLC0415
+
+    return load_emulator_profiles(str(_REPO_ROOT / "emulators"), skip_aliases=False)
+
+
+def _entry_systems(emulator: str, entry: dict) -> list[str]:
+    """The system an entry is read for: its own, or its profile's only one."""
+    if entry.get("system"):
+        return [str(entry["system"])]
+    systems = (_profiles_on_disk().get(emulator) or {}).get("systems") or []
+    return [str(systems[0])] if len(systems) == 1 else []
+
+
+def _emulator_display(emulator: str) -> str:
+    return str((_profiles_on_disk().get(emulator) or {}).get("emulator") or emulator)
+
+
+# id(consumers) -> (consumers, section -> the entries whose system leads there).
+_SECTION_ENTRIES: dict[int, tuple[object, dict[tuple[str, str], list]]] = {}
+
+
+def _entries_by_section(consumers: FileConsumers) -> dict[tuple[str, str], list]:
+    """Each console section with the (sha1, emulator, entry, system) whose
+    system leads to it, read once per build."""
+    from siterender import system_section  # noqa: PLC0415
+
+    cached = _SECTION_ENTRIES.get(id(consumers))
+    if cached is not None and cached[0] is consumers:
+        return cached[1]
+    sections: dict[str, tuple[str, str] | None] = {}
+    index: dict[tuple[str, str], list] = {}
+    for sha1 in sorted(getattr(consumers, "emulator_entries", {})):
+        for emulator, entry in _reading_pairs(sha1, consumers):
+            for sys_id in _entry_systems(emulator, entry):
+                if sys_id not in sections:
+                    sections[sys_id] = system_section(sys_id)
+                place = sections[sys_id]
+                if place is not None:
+                    index.setdefault(place, []).append((sha1, emulator, entry, sys_id))
+    _SECTION_ENTRIES.clear()
+    _SECTION_ENTRIES[id(consumers)] = (consumers, index)
+    return index
+
+
+def _setup_name(f: dict, consumers: FileConsumers, pairs: list[tuple[str, dict]]) -> str:
+    """The name most setups give a file, else most emulators: the collection
+    keeps BizHawk's GBA_bios.rom where eight setups write gba_bios.bin."""
+    counts: dict[str, int] = {}
+    destinations = getattr(consumers, "platform_destinations", {}).get(str(f.get("sha1", "")), {})
+    for dests in destinations.values():
+        for base in {d.replace("\\", "/").rsplit("/", 1)[-1] for d in dests if d}:
+            counts[base] = counts.get(base, 0) + 1
+    if not counts:
+        for _emulator, entry in pairs:
+            if entry.get("name"):
+                name = str(entry["name"])
+                counts[name] = counts.get(name, 0) + 1
+    if not counts:
+        return f["name"]
+    most = max(counts.values())
+    top = sorted((n for n, c in counts.items() if c == most), key=lambda n: (n.casefold(), n))
+    return f["name"] if f["name"] in top else top[0]
+
+
+def _without_files(emulators: list[str]) -> str:
+    """Who runs without the files: every emulator reading one, up to three
+    by name, more counted, as their order would rank nothing."""
+    names = sorted({_emulator_display(e) for e in emulators}, key=str.casefold)
+    if len(names) > 3:
+        return f": none of its {len(names)} emulators requires one"
+    return " with " + (", ".join(names[:-1]) + f" or {names[-1]}" if len(names) > 1 else names[0])
+
+
+def _visible(name: str) -> str:
+    """The file name a start line shows, out of its code span and link."""
+    match = re.match(r"\[?`([^`]*)`", name)
+    return match[1] if match else name
+
+
+def _add_name(names: list[str], name: str) -> None:
+    """A name once per line: two copies of sfcbox.zip read as one file."""
+    if all(_visible(n) != _visible(name) for n in names):
+        names.append(name)
+
+
+class _StartGroup:
+    """What one system of a section asks for."""
+
+    def __init__(self) -> None:
+        self.by_region: dict[str, list[str]] = {}
+        self.plain: list[str] = []
+        # Files an emulator reads when present and replaces when absent.
+        self.optional: list[str] = []
+        self.emulators: list[str] = []
+
+    def absorb(self, other: _StartGroup) -> None:
+        for region, names in other.by_region.items():
+            for name in names:
+                _add_name(self.by_region.setdefault(region, []), name)
+        for mine, theirs in ((self.plain, other.plain), (self.optional, other.optional),
+                             (self.emulators, other.emulators)):
+            for name in theirs:
+                _add_name(mine, name)
+
+
+def _start_groups(
+    files: list[dict], consumers: FileConsumers, section: tuple[str, str] | None
+) -> dict[str | None, _StartGroup]:
+    """The files of a section an emulator reads, by the system they are
+    read for. An entry whose system leads to another section is that
+    section's: the DS section named five DSi files. A file the system
+    requires but filed under Arcade, where sets serve every machine, is
+    named too, linked to its card: the Neo Geo BIOS. One filed under
+    another console is that console's, whatever system an emulator files
+    it under (BizHawk reads the Mega CD BIOS for its Genesis), and one
+    under Other is a single emulator's, its shaders and fonts. A file the
+    emulator ships with is no file to fetch."""
+    from siterender import _heading_name, _manufacturer_slug, system_name, system_section  # noqa: PLC0415
+
+    here = (_manufacturer_slug(section[0]), section[1]) if section else None
+    held = {str(f.get("sha1", "")) for f in files}
+    primaries = [f for f in files if "/.variants/" not in f["path"]]
+    kept: dict[str, list[tuple[str, dict, str | None]]] = {}
+    for f in primaries:
+        sha1 = str(f.get("sha1", ""))
+        for emulator, entry in _reading_pairs(sha1, consumers):
+            if entry.get("bundled"):
+                continue
+            system = None
+            if here is not None:
+                places = {s: system_section(s) for s in _entry_systems(emulator, entry)}
+                system = next((s for s, place in places.items() if place == here), None)
+                if system is None and any(places.values()):
+                    continue
+            kept.setdefault(sha1, []).append((emulator, entry, system))
+    candidates = list(primaries)
+    if here is not None:
+        known = (getattr(consumers, "_db", None) or {}).get("files", {})
+        for sha1, emulator, entry, system in _entries_by_section(consumers).get(here, []):
+            record = known.get(sha1)
+            parts = str((record or {}).get("path", "")).split("/")
+            if (sha1 in held or not record or entry.get("bundled") or ".variants" in parts
+                    or len(parts) < 3 or parts[1] != "Arcade"):
+                continue
+            if sha1 not in kept:
+                candidates.append({**record, "elsewhere": True})
+            kept.setdefault(sha1, []).append((emulator, entry, system))
+
+    groups: dict[str | None, _StartGroup] = {}
+    for f in sorted(candidates, key=lambda f: _card_rank(f, consumers)):
+        sha1 = str(f.get("sha1", ""))
+        pairs = kept.get(sha1, [])
+        name = _code(_setup_name(f, consumers, [(e, entry) for e, entry, _s in pairs]))
+        if f.get("elsewhere"):
+            name = f"[{name}]({markup.site_href(f'files/?sha1={sha1}')})"
+        for emulator, entry, system in pairs:
+            try:
+                key = system_name(system) if system else None
+            except KeyError:
+                key = None
+            group = groups.setdefault(key, _StartGroup())
+            if emulator not in group.emulators:
+                group.emulators.append(emulator)
+            if entry.get("hle_fallback"):
+                _add_name(group.optional, name)
+                continue
+            if not entry.get("required", True):
+                continue
+            regions = {str(r) for r in entry.get("region") or []}
+            for names in [group.by_region.setdefault(r, []) for r in regions] or [group.plain]:
+                _add_name(names, name)
+    named = [key for key in groups if key is not None]
+    if None in groups and named:
+        # An entry that names no system reads the section's own console.
+        heading = _heading_name(*section) if section else None
+        groups[heading if heading in groups else named[0]].absorb(groups.pop(None))
+    return groups
+
+
+def _start_with(
+    files: list[dict], consumers: FileConsumers, first_below: bool = True,
+    section: tuple[str, str] | None = None,
+) -> list[str]:
+    """The line a console section opens on: the files an emulator requires,
+    by the region the emulator picks each for, and by system when the
+    section holds several.
+
+    ``section`` is the (manufacturer, console) the files are under: an
+    entry read for another console's system is left to that console.
+    Read from the profiles' system, required, hle_fallback and region
+    fields, never typed per system. A system whose emulators all run
+    without its files says so. A section where no emulator reads a file
+    gets no line.
     """
+    groups = _start_groups(files, consumers, section)
+    blocks = {key: _group_start(group, first_below) for key, group in groups.items()}
+    blocks = {key: block for key, block in blocks.items() if block}
+    if not blocks:
+        return []
+    if len(blocks) == 1:
+        return _start_lines(next(iter(blocks.values())))
+    lines = ["**Start with** the files of your machine:", ""]
+    for key in sorted(blocks, key=lambda k: str(k).casefold()):
+        for lead, text in blocks[key]:
+            if lead == "*":
+                lines.append(f"- **{key}**: no file needed{text}")
+                continue
+            lines.append(f"- **{key}, {lead}**: {text}" if lead else f"- **{key}**: {text}")
+    return [*lines, ""]
+
+
+def _group_start(group: _StartGroup, first_below: bool) -> list[tuple[str, str]]:
+    """One system's start as (lead, text) pairs. The lead is the regions a
+    line is for, "" the files every region needs, "*" the line of a system
+    that runs without any file."""
     from region import _PARENT  # noqa: PLC0415
 
     order = _region_order()
-    by_region: dict[str, list[str]] = {}
-    plain: list[str] = []
-    primaries = [f for f in files if "/.variants/" not in f["path"]]
-    for f in sorted(primaries, key=lambda f: _card_rank(f, consumers)):
-        required = [e for e in _reading_entries(str(f.get("sha1", "")), consumers)
-                    if e.get("required", True)]
-        if not required:
-            continue
-        regions = {str(r) for e in required for r in e.get("region") or []}
-        for names in [by_region.setdefault(r, []) for r in regions] or [plain]:
-            if f["name"] not in names:
-                names.append(f["name"])
     # A territory its region answers the same way adds nothing: Brazil
     # under Latin America.
-    by_region = {r: names for r, names in by_region.items()
-                 if by_region.get(_PARENT.get(r, "")) != names}
+    by_region = {r: names for r, names in group.by_region.items()
+                 if group.by_region.get(_PARENT.get(r, "")) != names}
     # Regions that need the same files share a line.
     regional: dict[tuple[str, ...], list[str]] = {}
     for region in sorted(by_region, key=lambda r: (order.get(r, len(order)), r)):
@@ -4306,27 +4649,40 @@ def _start_with(files: list[dict], consumers: FileConsumers, first_below: bool =
             regional[(region,)] = names
         else:
             regional[(*same, region)] = regional.pop(same)
-    if not regional and not plain:
-        return []
 
-    def named(names: list[str], lead: str) -> str:
+    def listed(names: list[str]) -> str:
         if len(names) <= START_WITH_NAMES:
-            return f"{lead}: {', '.join(_code(n) for n in names)}"
-        where = ", first below" if first_below else ""
-        return f"{lead}: {_count(len(names), 'more file' if regional else 'file')}{where}"
+            return ", ".join(names)
+        # The first three by rank, the rest counted: "the 9 files" named
+        # none, and the Neo Geo BIOS everyone reads is filed under Arcade.
+        return f"{', '.join(names[:3])} and {_count(len(names) - 3, 'more file')}" + (
+            ", first below" if first_below else "")
 
-    if not regional:
-        if len(plain) > START_WITH_NAMES:
-            where = " They come first below." if first_below else ""
-            return [f"**Start with** the {_count(len(plain), 'file')} an emulator requires.{where}",
-                    ""]
-        return [named(plain, "**Start with**") + ".", ""]
-    lines = ["**Start with** the BIOS for the region of your games:", ""]
-    for regions in sorted(regional, key=lambda rs: (order.get(rs[0], len(order)), rs)):
-        lead = ", ".join(_region_word(r) for r in regions)
-        lines.append(f"- **{lead}**: {', '.join(_code(n) for n in regional[regions])}")
+    out = [(", ".join(_region_word(r) for r in regions), listed(regional[regions]))
+           for regions in sorted(regional, key=lambda rs: (order.get(rs[0], len(order)), rs))]
+    # A name a region line gives already is no "also".
+    shown = {_visible(n) for names in regional.values() for n in names}
+    plain = [n for n in group.plain if _visible(n) not in shown]
     if plain:
-        lines.append(named(plain, "- **Some emulators also require**"))
+        out.append(("", listed(plain)))
+    if not out and group.optional:
+        out.append(("*", f"{_without_files(group.emulators)}. "
+                         f"For full accuracy: {listed(group.optional)}."))
+    return out
+
+
+def _start_lines(block: list[tuple[str, str]]) -> list[str]:
+    """One system's start, as the lines its section opens on."""
+    lead, text = block[0]
+    if lead == "*":
+        return [f"**No file needed**{text}", ""]
+    if len(block) == 1 and lead == "":
+        named, _sep, where = text.partition(", first below")
+        below = " They come first below." if _sep else ""
+        return [f"**Start with**: {named}.{below}", ""]
+    lines = ["**Start with** the BIOS for the region of your games:", ""]
+    for lead, text in block:
+        lines.append(f"- **{lead or 'Some emulators also require'}**: {text}")
     return [*lines, ""]
 
 
@@ -4359,15 +4715,20 @@ def _parts(cards: list[Card], budget: int, sizes: list[int] | None = None) -> li
 
 
 def _console_heading(manufacturer: str, console: str) -> str:
-    """A console's heading: its icon hidden from screen readers, then the
-    name with no space before it. The space read as "Section titled
-    “ PlayStation”" on five of seven Sony headings."""
-    anchor = f" {{ #{console_anchor(manufacturer, console)} }}"
-    icon = _icon_name(manufacturer, console)
-    if not _icon_available.get(icon):
-        return f"## {console}{anchor}"
-    image = markup.image("", _icon_url(icon), width="24", **{"aria-hidden": "true"})
-    return f"## {image}{console}{anchor}"
+    """A console's heading, its name alone. An icon on 79 of 544 headings
+    read as missing art on the rest, set the text at two positions on one
+    page and faded out on one theme or the other."""
+    return f"## {console} {{ #{console_anchor(manufacturer, console)} }}"
+
+
+def _romset_note(consoles: dict[str, list]) -> list[str]:
+    """The line a page of MAME or FBNeo sets carries: an arcade player
+    looking for the version found the answer only under Reference."""
+    releases = _romset_releases()
+    if not any(str(f.get("name", "")) in releases for files in consoles.values() for f in files):
+        return []
+    return ["MAME and FBNeo sets must match the emulator's version. "
+            f"[Which version each core reads]({ROMSET_FAQ}).", ""]
 
 
 _NEXT_FROM_SYSTEMS = [
@@ -4417,14 +4778,14 @@ def system_pages(
     )
     def whole_page(sections: dict[str, list[Card]]) -> str:
         lines = [
-            f"# {manufacturer}", "", intro, "", key, "",
+            f"# {manufacturer}", "", intro, "", key, "", *_romset_note(consoles),
             f"The files below by console, with every hash, are also published as {json_link}.",
             "", *_icon_symbol(),
         ]
         for console, cards in sections.items():
             lines.append(_console_heading(manufacturer, console))
             lines.append("")
-            lines.extend(_start_with(consoles[console], consumers))
+            lines.extend(_start_with(consoles[console], consumers, section=(manufacturer, console)))
             lines.extend(_console_install_block(console, (installs or {}).get(console, [])))
             lines.extend(_cards_markdown(cards))
             lines.append("")
@@ -4440,26 +4801,40 @@ def system_pages(
     with markup.using("mkdocs"):
         measured = all_sections()
         measured_text = whole_page(measured)
-    if len(measured_text) <= budget:
+    weights = {
+        console: sum(card_weight(card) for _variant, card, _sha1 in cards)
+        for console, cards in measured.items()
+    }
+    # An install box is a few lines of Markdown and about nine times that
+    # once highlighted: ten of them were 295 KB of the 583 KB Nintendo
+    # page, which the card weights never counted. A page is also cut when
+    # its estimate as it renders passes the summary's.
+    with markup.using("mkdocs"):
+        boxes = {console: sum(len(line) + 1 for line in _console_install_block(
+            console, (installs or {}).get(console, []))) for console in consoles}
+    rendered = {console: CARD_HTML_RATIO * weights[console] + INSTALL_HTML_RATIO * boxes[console]
+                for console in weights}
+    if len(measured_text) <= budget and sum(rendered.values()) <= SYSTEM_SUMMARY_HTML:
         text = whole_page(all_sections()) if markup.starlight() else measured_text
         return {slug: (text, consoles)}
 
     # The heaviest sections move to pages of their own until what stays on
     # the manufacturer's page is half the budget: a section of one file
     # keeps its place, and a reader does not open 91 pages to browse Other.
-    weights = {
-        console: sum(card_weight(card) for _variant, card, _sha1 in cards)
-        for console, cards in measured.items()
-    }
     moved: set[str] = set()
     for console in sorted(weights, key=lambda c: (-weights[c], c)):
         if sum(w for c, w in weights.items() if c not in moved) <= budget // 2:
             break
         moved.add(console)
+    # Then until what stays holds its estimate as it renders.
+    for console in sorted(rendered, key=lambda c: (-rendered[c], c)):
+        if sum(w for c, w in rendered.items() if c not in moved) <= SYSTEM_SUMMARY_HTML:
+            break
+        moved.add(console)
 
     pages: dict[str, tuple[str, dict[str, list]]] = {}
     summary = [
-        f"# {manufacturer}", "", intro, "", key, "",
+        f"# {manufacturer}", "", intro, "", key, "", *_romset_note(consoles),
         f"The files below by console, with every hash, are also published as {json_link}. "
         f"The largest sections have a page of their own, linked from their heading.",
         "", *_icon_symbol(),
@@ -4469,7 +4844,7 @@ def system_pages(
         summary.append(_console_heading(manufacturer, console))
         summary.append("")
         if console not in moved:
-            summary.extend(_start_with(consoles[console], consumers))
+            summary.extend(_start_with(consoles[console], consumers, section=(manufacturer, console)))
             summary.extend(_console_install_block(console, (installs or {}).get(console, [])))
             summary.extend(_cards_markdown(
                 _console_cards(manufacturer, consoles[console], consumers, summary_anchors)))
@@ -4496,7 +4871,8 @@ def system_pages(
         ])
         title = f"{manufacturer}: {console}"
         count = _count(len(consoles[console]), "file")
-        summary.extend(_start_with(consoles[console], consumers, first_below=False))
+        summary.extend(_start_with(consoles[console], consumers, first_below=False,
+                                   section=(manufacturer, console)))
         if len(stems) == 1:
             summary.append(f"{count}, on [their own page]({stems[0]}.md).")
         else:
@@ -4518,8 +4894,10 @@ def system_pages(
                     f"[part {i + 1}]({other}.md)" for i, other in enumerate(stems) if i != index)
                 lines.extend([f"This part holds {_part_range(part)}. The others: {others}.", ""])
             if index == 0:
-                lines.extend(_start_with(consoles[console], consumers, first_below=len(stems) == 1))
+                lines.extend(_start_with(consoles[console], consumers, first_below=len(stems) == 1,
+                                         section=(manufacturer, console)))
             lines.extend([key, ""])
+            lines.extend(_romset_note({console: consoles[console]}))
             lines.extend(_console_install_block(console, (installs or {}).get(console, [])))
             lines.extend(["## Files", ""])
             lines.extend(_cards_markdown(part))
