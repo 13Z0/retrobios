@@ -30,4 +30,25 @@ const { searchWeight } = Astro.locals.starlightRoute.entry.data;
 		max-width: 40rem;
 		box-sizing: border-box;
 	}
+	/* The file chooser site.ts adds under the form, and the four hashes it
+	   shows once the file is read. */
+	.sl-markdown-content .rb-file-pick { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0.35rem; margin-top: 1rem; }
+	.sl-markdown-content .rb-file-pick > * { margin: 0; }
+	.sl-markdown-content .rb-file-pick label { font-weight: 600; }
+	.sl-markdown-content .rb-file-pick input { width: 100%; min-width: 0; font: inherit; }
+	.sl-markdown-content .rb-file-pick input::file-selector-button {
+		min-height: 44px;
+		margin-inline-end: 0.75rem;
+		padding: 0 1rem;
+		border: 1px solid var(--rb-border-strong);
+		border-radius: 4px;
+		background: var(--sl-color-bg);
+		color: var(--sl-color-text);
+		font: inherit;
+		font-weight: 600;
+		cursor: pointer;
+	}
+	.sl-markdown-content .rb-file-pick-note { color: var(--sl-color-gray-3); font-size: var(--sl-text-sm); }
+	.sl-markdown-content .rb-file-pick-hashes code { overflow-wrap: anywhere; }
+	.sl-markdown-content .rb-file-pick-hashes[hidden] { display: none; }
 </style>

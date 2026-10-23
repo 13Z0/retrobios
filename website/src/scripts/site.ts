@@ -1,17 +1,22 @@
 // Progressive enhancement of the generated pages: table captions, filters
-// and keyboard scrolling, the hash lookup on files/, moved cards, a hash
-// typed in the search, glossary terms on a tap, and the 404 page's hints.
+// and keyboard scrolling, the hash lookup on files/ (a pasted hash or a file
+// hashed on this device), moved cards, a hash typed in the search, glossary
+// terms on a tap, the OS tabs kept in view, and the 404 page's hints.
 // Which tables stack on a phone is decided when the page is built
 // (src/plugins/rehype-stack-tables.mjs), so the layout is right on first paint.
 
 const HASH_LENGTHS: Record<number, string> = { 8: 'CRC32', 32: 'MD5', 40: 'SHA1', 64: 'SHA256' };
-const LAYER_LABELS: Record<string, string> = {
-	collection: 'In the collection',
-	'data-directory': 'In a data directory the packs ship',
-	platform: 'Declared by a platform',
-	emulator: 'Read by an emulator',
+// One line of api/v1/lookup/. `system_name` is read when a record carries it.
+type Item = {
+	algorithm: string;
+	layer: string;
+	name?: string;
+	value: string;
+	url: string;
+	owner?: string;
+	sha1?: string;
+	system_name?: string;
 };
-type Item = { algorithm: string; layer: string; name?: string; value: string; url: string; owner?: string };
 
 const siteRoot = () => new URL(import.meta.env.BASE_URL.replace(/\/?$/, '/'), location.origin);
 const normalizeHash = (raw: string) => raw.trim().toLowerCase().replace(/^0x/, '').replace(/\s+/g, '');
@@ -75,26 +80,17 @@ const setScrollable = (table: HTMLTableElement, overflows: boolean) => {
 	}
 };
 
-const filterTable = (table: HTMLTableElement, index: number, heading: string) => {
+// The filter box above a long table is written when the page is built
+// (src/plugins/rehype-stack-tables.mjs), so the table never moves down once
+// drawn. Here it only filters.
+const filterTable = (table: HTMLTableElement) => {
+	const controls = table.previousElementSibling;
+	if (!controls?.matches('.rb-table-filter')) return;
+	const input = controls.querySelector('input');
+	const count = controls.querySelector('.rb-table-filter-count');
+	if (!input || !count || input.dataset.rbWired) return;
+	input.dataset.rbWired = 'true';
 	const rows = [...table.querySelectorAll<HTMLTableRowElement>('tbody tr')];
-	if (rows.length < 20) return;
-	const controls = document.createElement('div');
-	controls.className = 'rb-table-filter';
-	const id = `rb-table-filter-${index}`;
-	const label = document.createElement('label');
-	label.htmlFor = id;
-	label.textContent = `Filter ${heading}`;
-	const input = document.createElement('input');
-	input.id = id;
-	input.type = 'search';
-	input.autocomplete = 'off';
-	input.placeholder = 'Name, platform, system, hash...';
-	const count = document.createElement('span');
-	count.className = 'rb-table-filter-count';
-	count.setAttribute('aria-live', 'polite');
-	count.textContent = `${rows.length} rows`;
-	controls.append(label, input, count);
-	table.before(controls);
 	// Each row's text is read on the first keystroke, not on every page load.
 	let searchable: { row: HTMLTableRowElement; text: string }[] | null = null;
 	input.addEventListener('input', () => {
@@ -105,14 +101,31 @@ const filterTable = (table: HTMLTableElement, index: number, heading: string) =>
 			entry.row.hidden = !!query && !entry.text.includes(query);
 			if (!entry.row.hidden) visible += 1;
 		}
-		count.textContent = `${visible} of ${rows.length} rows`;
+		count.textContent = query
+			? `${visible.toLocaleString('en')} of ${rows.length.toLocaleString('en')} rows`
+			: `${rows.length.toLocaleString('en')} rows`;
 	});
+};
+
+// A stacked table of many rows leaves its column names out of the HTML
+// (rehype-stack-tables.mjs): each cell gets its own here, as the table nears
+// the screen. The name sits in the left room every stacked cell keeps, so
+// writing it moves nothing.
+const labelCells = (table: HTMLTableElement) => {
+	if (table.dataset.rbStack !== 'true') return;
+	const labels = [...table.querySelectorAll('thead th')].map((cell) => cell.textContent?.trim() ?? '');
+	for (const row of table.tBodies[0]?.rows ?? []) {
+		[...row.cells].forEach((cell, column) => {
+			if (labels[column] && !cell.dataset.label) cell.dataset.label = labels[column];
+		});
+	}
 };
 
 const enhanceTables = () => {
 	const tables = [...document.querySelectorAll<HTMLTableElement>('.sl-markdown-content table')];
 	const enhance = (table: HTMLTableElement) => {
 		for (const cell of table.querySelectorAll('thead th')) if (!cell.hasAttribute('scope')) cell.setAttribute('scope', 'col');
+		labelCells(table);
 		const heading = tableName(table);
 		if (!table.querySelector('caption') && !table.closest('.rb-meta-card')) {
 			const caption = document.createElement('caption');
@@ -120,7 +133,7 @@ const enhanceTables = () => {
 			caption.textContent = heading;
 			table.prepend(caption);
 		}
-		filterTable(table, tables.indexOf(table), heading);
+		filterTable(table);
 	};
 	// A table is set up and measured when it nears the screen. Doing all of
 	// them at load relaid out every row of a 3,800-row page after its first
@@ -159,16 +172,100 @@ const enhanceTables = () => {
 	});
 };
 
+// Hashing a file on this device: SHA1 and SHA256 by Web Crypto, MD5 and
+// CRC32 here, since Web Crypto has neither. The bytes never leave the page.
+
+const CRC_TABLE = (() => {
+	const table = new Uint32Array(256);
+	for (let n = 0; n < 256; n += 1) {
+		let c = n;
+		for (let k = 0; k < 8; k += 1) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1;
+		table[n] = c >>> 0;
+	}
+	return table;
+})();
+
+const crc32 = (bytes: Uint8Array): string => {
+	let crc = 0xffffffff;
+	for (let i = 0; i < bytes.length; i += 1) crc = CRC_TABLE[(crc ^ bytes[i]) & 0xff] ^ (crc >>> 8);
+	return ((crc ^ 0xffffffff) >>> 0).toString(16).padStart(8, '0');
+};
+
+const MD5_SHIFTS = [7, 12, 17, 22, 5, 9, 14, 20, 4, 11, 16, 23, 6, 10, 15, 21];
+const MD5_TABLE = Array.from({ length: 64 }, (_, i) => Math.floor(Math.abs(Math.sin(i + 1)) * 2 ** 32) >>> 0);
+
+const hexBytes = (bytes: Uint8Array) => [...bytes].map((byte) => byte.toString(16).padStart(2, '0')).join('');
+
+// RFC 1321, block by block over the file's own buffer: no padded copy of a
+// 500 MB file.
+const md5 = (bytes: Uint8Array): string => {
+	const state = new Int32Array([0x67452301, 0xefcdab89, 0x98badcfe, 0x10325476]);
+	const words = new Int32Array(16);
+	const block = (view: DataView, offset: number) => {
+		for (let i = 0; i < 16; i += 1) words[i] = view.getInt32(offset + i * 4, true);
+		let [a, b, c, d] = state;
+		for (let i = 0; i < 64; i += 1) {
+			const round = i >> 4;
+			const f = round === 0 ? (b & c) | (~b & d) : round === 1 ? (d & b) | (~d & c) : round === 2 ? b ^ c ^ d : c ^ (b | ~d);
+			const g = round === 0 ? i : round === 1 ? (5 * i + 1) % 16 : round === 2 ? (3 * i + 5) % 16 : (7 * i) % 16;
+			const shift = MD5_SHIFTS[round * 4 + (i % 4)];
+			const sum = (a + f + MD5_TABLE[i] + words[g]) | 0;
+			a = d;
+			d = c;
+			c = b;
+			b = (b + ((sum << shift) | (sum >>> (32 - shift)))) | 0;
+		}
+		state[0] += a;
+		state[1] += b;
+		state[2] += c;
+		state[3] += d;
+	};
+	const whole = bytes.length - (bytes.length % 64);
+	const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+	for (let offset = 0; offset < whole; offset += 64) block(view, offset);
+	const tail = new Uint8Array(bytes.length - whole < 56 ? 64 : 128);
+	tail.set(bytes.subarray(whole));
+	tail[bytes.length - whole] = 0x80;
+	const tailView = new DataView(tail.buffer);
+	const bits = bytes.length * 8;
+	tailView.setUint32(tail.length - 8, bits >>> 0, true);
+	tailView.setUint32(tail.length - 4, Math.floor(bits / 2 ** 32), true);
+	for (let offset = 0; offset < tail.length; offset += 64) block(tailView, offset);
+	return hexBytes(new Uint8Array(state.buffer));
+};
+
+type FileHashes = { sha1: string; md5: string; crc32: string; sha256: string };
+
+const hashFile = async (file: Blob): Promise<FileHashes> => {
+	const buffer = await file.arrayBuffer();
+	const bytes = new Uint8Array(buffer);
+	const [sha1, sha256] = await Promise.all(
+		['SHA-1', 'SHA-256'].map(async (name) => hexBytes(new Uint8Array(await crypto.subtle.digest(name, buffer)))),
+	);
+	return { sha1, md5: md5(bytes), crc32: crc32(bytes), sha256 };
+};
+
 // files/?hash= reads one shard of the lookup, named by the first two hex
-// characters of the value.
+// characters of the value. ?md5=, ?crc32= and ?sha256= are read the same way.
+
+const HASH_PARAMS = ['hash', 'md5', 'crc32', 'sha256'];
 
 const lookupShard = (value: string): Promise<Item[]> =>
 	fetch(new URL(`api/v1/lookup/${value.slice(0, 2)}.json`, siteRoot()))
 		.then((response) => (response.ok ? response.json() : { items: [] }))
 		.then((shard) => shard.items || []);
 
+const lookupValues = async (values: string[]): Promise<Item[]> => {
+	const prefixes = [...new Set(values.map((value) => value.slice(0, 2)))];
+	const shards = await Promise.all(prefixes.map(lookupShard));
+	const wanted = new Set(values);
+	return shards.flat().filter((item) => wanted.has(item.value));
+};
+
 type Held = { name: string; path: string; sha1: string; size: number };
 type Declared = { name?: string; destination?: string; required?: boolean; [hash: string]: unknown };
+type ProfileFile = { name?: string; region?: string | string[]; category?: string; [field: string]: unknown };
+type Reader = { name: string; files: ProfileFile[] };
 
 const json = (path: string) =>
 	fetch(new URL(path, siteRoot())).then((response) => (response.ok ? response.json() : Promise.reject(response.status)));
@@ -204,15 +301,33 @@ const strong = (text: string) => {
 	return element;
 };
 
+const count = (n: number, one: string, many: string) => `${n.toLocaleString('en')} ${n === 1 ? one : many}`;
+
+const listed = (words: string[]) =>
+	words.length < 3 ? words.join(' and ') : `${words.slice(0, -1).join(', ')} and ${words.at(-1)}`;
+
+// A region: value in words, as the system pages write it.
+const REGION_WORDS: Record<string, string> = { uk: 'UK', 'asia-ntsc': 'Asia (NTSC)', 'asia-pal': 'Asia (PAL)' };
+const regionWord = (region: string) =>
+	REGION_WORDS[region] ?? region.replace(/-/g, ' ').replace(/\b\w/g, (letter) => letter.toUpperCase());
+const CATEGORY_WORDS: Record<string, string> = { bios: 'BIOS', game_data: 'game data', bios_zip: 'BIOS ZIP' };
+
 // The card a collection match points at, read from its manufacturer's file
-// of api/v1/systems/: the path in the collection and the size.
-const heldFile = async (item: Item & { sha1?: string }): Promise<Held | undefined> => {
+// of api/v1/systems/: the path in the collection and the size. A console's
+// own page (systems/sony-playstation/) is part of its manufacturer's file
+// (systems/sony.json), found by dropping words from the end of the slug.
+const heldFile = async (item: Item): Promise<Held | undefined> => {
 	const slug = /^systems\/([^/]+)\//.exec(item.url)?.[1];
 	if (!slug || !item.sha1) return undefined;
-	const data = await json(`api/v1/systems/${slug}.json`);
-	for (const files of Object.values<Held[]>(data.items?.[0]?.consoles ?? {})) {
-		const found = files.find((file) => file.sha1 === item.sha1);
-		if (found) return found;
+	const words = slug.split('-');
+	for (let size = words.length; size > 0; size -= 1) {
+		const data = await json(`api/v1/systems/${words.slice(0, size).join('-')}.json`).catch(() => undefined);
+		if (!data) continue;
+		for (const files of Object.values<Held[]>(data.items?.[0]?.consoles ?? {})) {
+			const found = files.find((file) => file.sha1 === item.sha1);
+			if (found) return found;
+		}
+		return undefined;
 	}
 	return undefined;
 };
@@ -220,14 +335,39 @@ const heldFile = async (item: Item & { sha1?: string }): Promise<Held | undefine
 // A setup's own entry for the value, from its contract in api/v1/platforms/:
 // where the file goes and whether the setup requires it. Recalbox writes
 // several MD5 in one field, separated by commas.
-const declaredEntry = async (item: Item, value: string): Promise<Declared | undefined> => {
+const declaredEntry = async (item: Item): Promise<Declared | undefined> => {
 	const system = decodeURIComponent(new URL(item.url, siteRoot()).hash.slice(1));
 	const data = await json(`api/v1/platforms/${item.owner}.json`);
 	const files: Declared[] = data.items?.[0]?.contract?.systems?.[system]?.files ?? [];
 	const holds = (entry: Declared) =>
-		String(entry[item.algorithm] ?? '').toLowerCase().split(',').map((hash) => hash.trim()).includes(value);
+		String(entry[item.algorithm] ?? '').toLowerCase().split(',').map((hash) => hash.trim()).includes(item.value);
 	return files.find((entry) => holds(entry) && entry.name === item.name) ?? files.find(holds);
 };
+
+// An emulator by the name its page carries, with the entries of its profile.
+const readerProfile = async (owner: string): Promise<Reader | undefined> => {
+	const data = await json(`api/v1/emulators/${owner}.json`).catch(() => undefined);
+	const profile = data?.items?.[0]?.profile;
+	if (!profile) return undefined;
+	return { name: String(profile.emulator || profile.display_name || owner), files: profile.files ?? [] };
+};
+
+// The entry of a profile that reads the value: by name and hash, else by hash.
+const readerEntry = (reader: Reader | undefined, item: Item): ProfileFile | undefined => {
+	const holds = (entry: ProfileFile) =>
+		String(entry[item.algorithm] ?? '').toLowerCase().split(',').map((hash) => hash.trim()).includes(item.value);
+	return reader?.files.find((entry) => holds(entry) && entry.name === item.name) ?? reader?.files.find(holds);
+};
+
+// One value every reader that says something agrees on, else nothing.
+const agreed = (values: (string | undefined)[]): string | undefined => {
+	const said = new Set(values.filter((value): value is string => !!value));
+	return said.size === 1 ? [...said][0] : undefined;
+};
+
+// A name a setup writes in place of a file name: EmuDeck lists a hash under
+// "system:md5", and any file that has it passes.
+const anyName = (name: string) => !name || name.includes(':');
 
 const setupTable = (rows: { item: Item; entry?: Declared; setup: string }[]) => {
 	const table = document.createElement('table');
@@ -242,12 +382,10 @@ const setupTable = (rows: { item: Item; entry?: Declared; setup: string }[]) => 
 	for (const { item, entry, setup } of rows) {
 		const row = body.insertRow();
 		const name = entry?.name ?? item.name ?? '';
-		// EmuDeck lists a hash with no file name: any file that has it passes.
-		const named = name && !name.includes(':');
 		const destination = entry?.destination;
 		const cells: (Node | string)[] = [
 			link(item.url, setup),
-			named ? code(name) : 'Any name',
+			anyName(name) ? 'Any name' : code(name),
 			destination ? code(destination) : '-',
 			item.algorithm.toUpperCase(),
 			entry?.required === undefined ? '-' : entry.required ? 'Yes' : 'No',
@@ -262,30 +400,83 @@ const setupTable = (rows: { item: Item; entry?: Declared; setup: string }[]) => 
 	return table;
 };
 
-// The answer first: which file this is and where the collection holds it,
-// then the setups that list it (where it goes, whether it is required),
-// then the emulators that read it.
-const renderMatches = async (status: HTMLElement, result: HTMLElement, value: string, items: Item[]) => {
+// One declaration per setup, name and section: a value found by two of its
+// hashes (a file hashed here) is still one line of the setup's list.
+const distinct = (items: Item[], key: (item: Item) => string) => {
+	const seen = new Map<string, Item>();
+	for (const item of items) if (!seen.has(key(item))) seen.set(key(item), item);
+	return [...seen.values()];
+};
+
+// The answer first: which file this is, for which system and region, and
+// how many setups list it under which names. Then where the collection
+// holds it, the setups that list it (where it goes, whether it is
+// required), and the emulators that read it, by name.
+const renderMatches = async (status: HTMLElement, result: HTMLElement, items: Item[]) => {
 	const byLayer = (layer: string) => items.filter((item) => item.layer === layer);
-	const held = byLayer('collection');
-	const platforms = byLayer('platform');
-	const [files, entries, names] = await Promise.all([
+	const held = distinct(byLayer('collection'), (item) => item.sha1 ?? item.url);
+	const platforms = distinct(byLayer('platform'), (item) => `${item.owner}|${item.name}|${item.url}`);
+	const emulators = distinct(byLayer('emulator'), (item) => `${item.owner}|${item.name}|${item.url}`);
+	const owners = [...new Set(emulators.map((item) => item.owner ?? ''))];
+	const [files, entries, names, readers] = await Promise.all([
 		Promise.all(held.map((item) => heldFile(item).catch(() => undefined))),
-		Promise.all(platforms.map((item) => declaredEntry(item, value).catch(() => undefined))),
+		Promise.all(platforms.map((item) => declaredEntry(item).catch(() => undefined))),
 		json('data/picker/index.json').catch(() => []) as Promise<{ platform: string; name: string }[]>,
+		Promise.all(owners.map((owner) => readerProfile(owner))),
 	]);
 	const setupName = new Map(names.map((entry) => [entry.platform, entry.name]));
-	status.textContent = `${items.length.toLocaleString('en')} ${items.length === 1 ? 'match' : 'matches'} for ${HASH_LENGTHS[value.length]} ${value}.`;
+	const reader = new Map(owners.map((owner, index) => [owner, readers[index]]));
+	const readEntries = emulators.map((item) => readerEntry(reader.get(item.owner ?? ''), item));
+	const setups = new Set(platforms.map((item) => item.owner));
+
+	const counted = [
+		held.length ? count(held.length, 'file in the collection', 'files in the collection') : 'not in the collection',
+		...(platforms.length ? [`${count(platforms.length, 'declaration', 'declarations')} by ${count(setups.size, 'setup', 'setups')}`] : []),
+		...(owners.length ? [count(owners.length, 'emulator that reads it', 'emulators that read it')] : []),
+	];
+	status.textContent = `Found: ${counted.join(', ')}.`;
+
 	const blocks: Node[] = [];
+	const category = agreed(readEntries.map((entry) => entry && CATEGORY_WORDS[String(entry.category ?? 'bios')]));
+	const regions = agreed(readEntries.map((entry) => {
+		const raw = entry?.region;
+		const list = Array.isArray(raw) ? raw : raw ? [String(raw)] : [];
+		return list.length ? listed(list.map(regionWord)) : undefined;
+	}));
 	held.forEach((item, index) => {
 		const file = files[index];
-		const name = file?.name ?? item.name ?? value;
+		const name = file?.name ?? item.name ?? item.value;
+		const system = item.system_name;
+		const what: (Node | string)[] = system
+			? [', ', link(item.url, system), category ? ` ${category}` : ' file']
+			: category ? [`, a ${category} file`] : [];
+		const others = new Map<string, Set<string>>();
+		for (const declared of platforms) {
+			const other = declared.name ?? '';
+			if (anyName(other) || other === name) continue;
+			if (!others.has(other)) others.set(other, new Set());
+			others.get(other)!.add(declared.owner ?? '');
+		}
+		const renamed = new Set([...others.values()].flatMap((set) => [...set]));
+		const otherNames = [...others.keys()].sort();
+		const named: (Node | string)[] = [];
+		otherNames.forEach((other, position) => {
+			if (position) named.push(position === otherNames.length - 1 ? ' and ' : ', ');
+			named.push(code(other));
+		});
+		const listing: (Node | string)[] = setups.size
+			? [
+				` ${count(setups.size, 'setup lists', 'setups list')} it`,
+				...(renamed.size
+					? [`, ${renamed.size.toLocaleString('en')} of them under the ${otherNames.length === 1 ? 'name' : 'names'} `, ...named]
+					: []),
+				'.',
+			]
+			: [];
 		blocks.push(
-			file
-				? paragraph('This is ', code(name), ', held in the collection at ', code(file.path), '.')
-				: paragraph('This is ', code(name), ', held in the collection.'),
+			paragraph('This is ', code(name), ...what, ...(regions ? [` for ${regions}`] : []), '.', ...listing),
 			paragraph(
-				...(file ? ['SHA1 ', code(file.sha1), `, ${formatSize(file.size)}. `] : []),
+				...(file ? ['Held in the collection at ', code(file.path), '. SHA1 ', code(file.sha1), `, ${formatSize(file.size)}. `] : []),
 				link(item.url, 'Open its card'),
 				'.',
 			),
@@ -300,12 +491,11 @@ const renderMatches = async (status: HTMLElement, result: HTMLElement, value: st
 			row.append(link(item.url, code(item.name || item.value)));
 			list.append(row);
 		}
-		blocks.push(paragraph(strong(LAYER_LABELS['data-directory'])), list);
+		blocks.push(paragraph(strong('In a data directory the packs ship')), list);
 	}
 	if (platforms.length) {
-		const owners = new Set(platforms.map((item) => item.owner));
 		blocks.push(
-			paragraph(strong(`Setups that list it (${owners.size})`)),
+			paragraph(strong('Setups that list it: '), `${count(platforms.length, 'declaration', 'declarations')} by ${count(setups.size, 'setup', 'setups')}`),
 			setupTable(platforms.map((item, index) => ({
 				item,
 				entry: entries[index],
@@ -313,18 +503,94 @@ const renderMatches = async (status: HTMLElement, result: HTMLElement, value: st
 			}))),
 		);
 	}
-	const readers = byLayer('emulator');
-	if (readers.length) {
+	if (owners.length) {
 		const list = document.createElement('ul');
-		for (const item of readers) {
+		emulators.forEach((item) => {
 			const row = document.createElement('li');
-			row.append(link(item.url, item.owner ?? item.name ?? ''));
-			if (item.name && item.name !== held[0]?.name) row.append(' as ', code(item.name));
+			row.append(link(item.url, reader.get(item.owner ?? '')?.name ?? item.owner ?? item.name ?? ''));
+			if (item.name && item.name !== (files[0]?.name ?? held[0]?.name)) row.append(' as ', code(item.name));
 			list.append(row);
-		}
-		blocks.push(paragraph(strong(`${LAYER_LABELS.emulator} (${readers.length})`)), list);
+		});
+		blocks.push(paragraph(strong(`Emulators that read it (${owners.length.toLocaleString('en')})`)), list);
 	}
 	result.replaceChildren(...blocks);
+};
+
+const WANTED = 'provenance/#wanted-catalogued-dumps-this-project-does-not-have';
+
+// Nothing the site knows has the value: where a dump of one's own can go.
+const renderNoMatch = (status: HTMLElement, result: HTMLElement) => {
+	status.textContent = 'No file, setup or emulator the site knows has this hash.';
+	result.replaceChildren(
+		paragraph('If you dumped it yourself, ', link('contributing/', 'add it'), '.'),
+		paragraph('The ', link(WANTED, 'wanted list'), ' names the catalogued dumps the collection still lacks.'),
+	);
+};
+
+const lookUp = (status: HTMLElement, result: HTMLElement, values: string[]) => {
+	status.textContent = 'Looking it up...';
+	result.replaceChildren();
+	return lookupValues(values)
+		.then((matches) => (matches.length ? renderMatches(status, result, matches) : renderNoMatch(status, result)))
+		.catch(() => {
+			status.textContent = 'The file index could not be read.';
+		});
+};
+
+// A file chosen on files/ is hashed here, its four hashes shown, and all
+// four looked up: a setup may list only the MD5.
+const MAX_HASHED = 512 * 1024 ** 2;
+
+const fileHasher = (status: HTMLElement, result: HTMLElement) => {
+	const form = document.querySelector('form.rb-file-lookup');
+	if (!form) return;
+	const box = document.createElement('div');
+	box.className = 'rb-file-pick';
+	const label = document.createElement('label');
+	label.htmlFor = 'rb-file';
+	label.textContent = 'Or choose the file';
+	const input = document.createElement('input');
+	input.type = 'file';
+	input.id = 'rb-file';
+	const note = paragraph('It is hashed on this device. Nothing is uploaded.');
+	note.className = 'rb-file-pick-note';
+	const hashes = document.createElement('p');
+	hashes.className = 'rb-file-pick-hashes';
+	hashes.hidden = true;
+	box.append(label, input, note, hashes);
+	form.after(box);
+	input.addEventListener('change', async () => {
+		const file = input.files?.[0];
+		if (!file) return;
+		hashes.hidden = true;
+		if (file.size > MAX_HASHED) {
+			status.textContent = `This page hashes files up to ${formatSize(MAX_HASHED)}. ${file.name} is ${formatSize(file.size)}.`;
+			result.replaceChildren();
+			return;
+		}
+		status.textContent = `Hashing ${file.name}...`;
+		result.replaceChildren();
+		let found: FileHashes;
+		try {
+			found = await hashFile(file);
+		} catch {
+			status.textContent = `${file.name} could not be read.`;
+			return;
+		}
+		hashes.replaceChildren(
+			strong(file.name), ` ${formatSize(file.size)}`,
+			...(['sha1', 'md5', 'crc32', 'sha256'] as const).flatMap((algorithm) => [
+				document.createElement('br'), `${algorithm.toUpperCase()} `, code(found[algorithm]),
+			]),
+		);
+		hashes.hidden = false;
+		const field = document.getElementById('rb-hash') as HTMLInputElement | null;
+		if (field) field.value = found.sha1;
+		const url = new URL(location.href);
+		url.search = `?hash=${found.sha1}`;
+		history.replaceState(null, '', url);
+		await lookUp(status, result, [found.sha1, found.md5, found.crc32, found.sha256]);
+	});
 };
 
 // files/?sha1=<sha1> is a file's content address and opens its card
@@ -336,9 +602,11 @@ const resolveFileAddress = () => {
 	const result = document.createElement('div');
 	result.id = 'rb-file-lookup-result';
 	status.after(result);
+	fileHasher(status, result);
 	const params = new URLSearchParams(location.search);
 	const permalink = params.has('sha1');
-	const value = normalizeHash(params.get('sha1') || params.get('hash') || '');
+	const raw = params.get('sha1') || HASH_PARAMS.map((key) => params.get(key)).find(Boolean) || '';
+	const value = normalizeHash(raw);
 	if (!value) return;
 	const input = document.getElementById('rb-hash') as HTMLInputElement | null;
 	if (input) input.value = value;
@@ -347,18 +615,22 @@ const resolveFileAddress = () => {
 		status.textContent = 'A hash is 8 (CRC32), 32 (MD5), 40 (SHA1) or 64 (SHA256) hexadecimal characters.';
 		return;
 	}
+	if (!prefix && !permalink) {
+		lookUp(status, result, [value]);
+		return;
+	}
 	status.textContent = 'Looking it up...';
 	lookupShard(value)
 		.then((items) => {
 			const matches = items.filter((item) =>
 				prefix ? item.algorithm === 'sha1' && item.value.startsWith(value) : item.value === value);
 			const cards = matches.filter((item) => item.layer === 'collection' || item.layer === 'data-directory');
-			if (permalink && new Set(cards.map((item) => item.url)).size === 1) {
+			if (new Set(cards.map((item) => item.url)).size === 1) {
 				location.replace(new URL(cards[0].url, siteRoot()));
 			} else if (matches.length) {
-				return renderMatches(status, result, prefix ? matches[0].value : value, prefix ? cards : matches);
+				return renderMatches(status, result, prefix ? cards : matches);
 			} else {
-				status.textContent = 'No file the site knows has this hash.';
+				renderNoMatch(status, result);
 			}
 		})
 		.catch(() => {
@@ -383,32 +655,52 @@ const followMovedCard = () => {
 };
 
 // The site search holds no hashes. A hash typed in it gets "Look up this
-// hash" as its first result, and Enter opens the lookup.
-const hashLookupRow = (drawer: Element, value: string) => {
+// hash" as its first result, and Enter opens the lookup. The pages Pagefind
+// finds for the same characters (a file name that holds them, a word that
+// starts like them) are no answer: they stay folded under a button that
+// says what they are.
+const hashLookupRow = (drawer: HTMLElement, value: string) => {
 	let row = drawer.querySelector<HTMLElement>(':scope > .rb-search-hash');
 	if (!isHash(value)) {
 		row?.remove();
+		delete drawer.dataset.rbHash;
+		delete drawer.dataset.rbPagesShown;
 		return;
 	}
+	drawer.dataset.rbHash = '';
+	const target = new URL(`files/?hash=${value}`, siteRoot()).href;
+	if (row?.querySelector('a')?.href === target) return;
 	if (!row) {
-		row = document.createElement('p');
+		row = document.createElement('div');
 		row.className = 'rb-search-hash';
 		drawer.prepend(row);
 	}
-	const target = new URL(`files/?hash=${value}`, siteRoot()).href;
-	if (row.querySelector('a')?.href === target) return;
+	delete drawer.dataset.rbPagesShown;
 	const anchor = document.createElement('a');
 	anchor.href = target;
 	anchor.append('Look up this hash');
-	row.replaceChildren(anchor, ` ${HASH_LENGTHS[value.length]} `, code(value));
+	const toggle = document.createElement('button');
+	toggle.type = 'button';
+	toggle.className = 'rb-search-pages';
+	toggle.setAttribute('aria-expanded', 'false');
+	toggle.textContent = 'Pages that mention these characters';
+	toggle.addEventListener('click', () => {
+		const open = toggle.getAttribute('aria-expanded') !== 'true';
+		toggle.setAttribute('aria-expanded', String(open));
+		if (open) drawer.dataset.rbPagesShown = '';
+		else delete drawer.dataset.rbPagesShown;
+	});
+	row.replaceChildren(paragraph(anchor, ` ${HASH_LENGTHS[value.length]} `, code(value)), toggle);
 };
 
 // Pagefind lists a page's title twice: once for the page and once for the
 // anchor of its h1 (#_top). The second title is hidden, its excerpt kept.
-// The `files` field of a system page weighs its file names in the ranking
-// and is never shown: a result is not a list of 120 names. Pagefind reuses
+// The `files`, `aliases` and `devices` fields weigh in the ranking and are
+// never shown: a result is not a list of 120 names. Pagefind reuses
 // its nodes from one query to the next, so both are worked out again on
 // every change.
+const UNSHOWN_FIELDS = new Set(['files', 'aliases', 'devices']);
+
 const tidyResults = (root: Element) => {
 	for (const title of root.querySelectorAll<HTMLElement>('.pagefind-ui__result-nested > .pagefind-ui__result-title')) {
 		title.hidden = !!title.querySelector('a')?.getAttribute('href')?.endsWith('#_top');
@@ -416,7 +708,7 @@ const tidyResults = (root: Element) => {
 	for (const tags of root.querySelectorAll<HTMLElement>('.pagefind-ui__result-tags')) {
 		let shown = 0;
 		for (const tag of tags.querySelectorAll<HTMLElement>('.pagefind-ui__result-tag')) {
-			tag.hidden = tag.dataset.pagefindUiMeta === 'files';
+			tag.hidden = UNSHOWN_FIELDS.has(tag.dataset.pagefindUiMeta ?? '');
 			if (!tag.hidden) shown += 1;
 		}
 		tags.hidden = shown === 0;
@@ -429,7 +721,7 @@ const hashSearch = () => {
 		const refresh = () => {
 			tidyResults(root);
 			const input = root.querySelector<HTMLInputElement>('input');
-			const drawer = root.querySelector('.pagefind-ui__drawer');
+			const drawer = root.querySelector<HTMLElement>('.pagefind-ui__drawer');
 			if (input && drawer) hashLookupRow(drawer, normalizeHash(input.value));
 		};
 		new MutationObserver(refresh).observe(root, {
@@ -455,6 +747,31 @@ const hashSearch = () => {
 		},
 		true,
 	);
+};
+
+// The OS tabs scroll sideways on a phone instead of wrapping to a second
+// row (retrobios.css): the chosen one is kept in view, on load and on a
+// change, by scrolling the row and never the page.
+const keepTabInView = (tab: Element) => {
+	const list = tab.closest('[role="tablist"]');
+	if (!list) return;
+	const row = list.getBoundingClientRect();
+	const box = tab.getBoundingClientRect();
+	if (box.left < row.left) list.scrollLeft -= row.left - box.left;
+	else if (box.right > row.right) list.scrollLeft += box.right - row.right;
+};
+
+const osTabs = () => {
+	const selected = () => document.querySelectorAll('starlight-tabs [role="tab"][aria-selected="true"]').forEach(keepTabInView);
+	if (!document.querySelector('starlight-tabs')) return;
+	const later = () => requestAnimationFrame(selected);
+	for (const type of ['click', 'keyup']) {
+		document.addEventListener(type, (event) => {
+			if ((event.target as Element | null)?.closest?.('starlight-tabs [role="tab"]')) later();
+		});
+	}
+	if (document.readyState === 'complete') later();
+	else addEventListener('load', later, { once: true });
 };
 
 // A glossary term shows its definition on hover; a tap or Enter shows it
@@ -505,4 +822,5 @@ followMovedCard();
 enhanceTables();
 hashSearch();
 glossaryTerms();
+osTabs();
 notFound();

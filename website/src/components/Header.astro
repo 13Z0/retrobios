@@ -38,7 +38,24 @@ const topics = Astro.locals.starlightSidebarTopics?.topics ?? [];
 		border-radius: 0.5rem;
 		overflow-wrap: anywhere;
 	}
+	.rb-search-hash p { margin: 0; }
 	.rb-search-hash a { font-weight: 600; }
+	/* Under a hash, the pages that only mention its characters stay folded. */
+	.pagefind-ui__drawer[data-rb-hash]:not([data-rb-pages-shown]) .pagefind-ui__results-area { display: none; }
+	.rb-search-hash .rb-search-pages {
+		min-height: 24px;
+		margin-top: 0.5rem;
+		padding: 0;
+		border: 0;
+		background: none;
+		color: var(--sl-color-gray-2);
+		font: inherit;
+		font-size: var(--sl-text-sm);
+		text-decoration: underline;
+		cursor: pointer;
+	}
+	.rb-search-hash .rb-search-pages::before { content: '+ '; }
+	.rb-search-hash .rb-search-pages[aria-expanded='true']::before { content: '- '; }
 	/* Pagefind's own display rules would show what site.ts hides. */
 	#starlight__search [hidden] { display: none !important; }
 
