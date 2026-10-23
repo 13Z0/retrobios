@@ -280,11 +280,15 @@ class TheBuiltSonyPage(unittest.TestCase):
             self.assertNotIn("permalink", re.sub(r"<[^>]+>", "", title))
 
     def test_playstation_opens_on_a_bios_it_needs(self):
-        section = self.text.split('id="playstation"', 1)[1]
+        section = self.text.split('id="playstation"', 1)[1].split("<h2", 1)[0]
+        self.assertIn("Start with", section.split('class="rb-sys-file"', 1)[0])
+        # A console with a page of its own opens there.
+        own = DIST / "systems" / "sony-playstation" / "index.html"
+        if 'class="rb-file-title"' not in section and own.is_file():
+            section = own.read_text(encoding="utf-8")
         first = re.search(r'class="rb-file-title"[^>]*><code>(.*?)</code>', section)[1]
         self.assertNotIn(first, {"LibPS.exe", "PSX_DTLH2000.bin"})
         self.assertRegex(first, r"^scph\d+")
-        self.assertIn("Start with", section.split('class="rb-sys-file"', 1)[0])
 
     def test_headings_have_no_leading_space(self):
         self.assertNotRegex(self.text, r'<h2 id="playstation[^"]*"><img[^>]*>\s')

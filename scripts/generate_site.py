@@ -2345,6 +2345,50 @@ def _file_runs(body: list[str], budget: int) -> list[list[str]]:
     return [head + run for run in runs]
 
 
+# A list moved off a reference page (gaps, provenance) is cut in parts of
+# at most this much Markdown: about 450 KB of HTML each.
+LIST_PART_BUDGET = 300_000
+
+
+def _blocks_in_runs(blocks: list[list[str]], budget: int) -> list[list[str]]:
+    """Blocks (table rows, folded lists) in runs of at most ``budget``
+    characters, a block never cut."""
+    runs: list[list[str]] = [[]]
+    size = 0
+    for block in blocks:
+        weight = sum(len(line) + 1 for line in block)
+        if runs[-1] and size + weight > budget:
+            runs.append([])
+            size = 0
+        runs[-1].extend(block)
+        size += weight
+    return runs
+
+
+def _list_pages(
+    stem: str, title: str, intro: str, head: list[str], blocks: list[list[str]],
+    moved: dict[str, str], budget: int = LIST_PART_BUDGET,
+) -> str:
+    """Pages of their own for a long list: ``head`` (a table header, say)
+    opens each part, ``blocks`` are cut between parts. Returns where the list
+    went, as the page it left says it."""
+    runs = _blocks_in_runs(blocks, budget)
+    stems = [stem + (f"-{n}" if n > 1 else "") for n in range(1, len(runs) + 1)]
+    for n, (here, run) in enumerate(zip(stems, runs), 1):
+        part = f" (part {n} of {len(runs)})" if len(runs) > 1 else ""
+        moved[here] = "\n".join([
+            "---", "level: reference", "---", "",
+            f"# {title}{part}", "", intro, "",
+            *([", ".join(f"[part {i}]({other}.md)" if other != here else f"part {i}"
+                         for i, other in enumerate(stems, 1)), ""] if len(runs) > 1 else []),
+            *head, *run, "", _date_line(),
+        ]) + "\n"
+    if len(stems) == 1:
+        return f"[a page of their own]({stems[0]}.md)"
+    return "pages of their own: " + ", ".join(
+        f"[part {i}]({other}.md)" for i, other in enumerate(stems, 1))
+
+
 @functools.lru_cache(maxsize=1)
 def _collection_sha1_by_path() -> dict[str, str]:
     """The sha1 of each file the collection holds, by its path."""
@@ -3533,9 +3577,13 @@ def _date_in_words(stamp: str) -> str:
 
 
 def generate_provenance_page(
-    db: dict, report: dict, derivable: dict[str, dict] | None = None
+    db: dict, report: dict, derivable: dict[str, dict] | None = None,
+    moved: dict[str, str] | None = None,
 ) -> str:
-    """Page explaining the verified dump badges and listing catalog gaps."""
+    """Page explaining the verified dump badges and listing catalog gaps.
+
+    With ``moved``, each catalog's wanted list goes to a page of its own,
+    keyed by stem: the three lists made a 694 KB page."""
     matched_files = count_catalog_matched(db)
     total_files = compute_composition(db)["systems"]["files"]
     # When each catalog was read: a 76-day-old snapshot showed no age.
@@ -3670,6 +3718,7 @@ def generate_provenance_page(
             for dat in entry.get("dats") or [entry.get("dat", "")]:
                 by_dat.setdefault(dat, []).append(entry)
         lines.extend([f"### {label}", ""])
+        blocks: list[list[str]] = []
         for dat in sorted(by_dat):
             entries = by_dat[dat]
             table = ["| Name | Description | SHA1 |", "|------|-------------|------|"]
@@ -3685,7 +3734,20 @@ def generate_provenance_page(
                         f"`{hit['archive']}` as `{hit['member']}`."
                     )
                 table.append(f"| `{name}` | {desc} | `{sha1}` |")
-            lines.extend(markup.details("note", f"{dat} ({len(entries)})", table))
+            blocks.append(markup.details("note", f"{dat} ({len(entries)})", table))
+        if moved is None:
+            lines.extend(line for block in blocks for line in block)
+            continue
+        where = _list_pages(
+            f"provenance-{_slugify_anchor(source)}", f"Wanted from {label}",
+            f"Dumps {label} catalogues and the collection lacks, by DAT. Part of "
+            f"[Dump provenance](provenance.md#{_slugify_anchor(label)}).",
+            [], blocks, moved,
+        )
+        lines.extend([
+            f"{_count(len(data['missing']), 'dump')} in {_count(len(by_dat), 'DAT')}: "
+            f"listed on {where}.", "",
+        ])
 
     if derived_entries:
         lines.extend(
@@ -4116,10 +4178,12 @@ def system_install_choices(coverages: dict) -> dict[str, dict[str, list[tuple[st
 
 
 # A manufacturer page above this much Markdown becomes a summary with one
-# page per console, and a console above it is cut into parts. 500 KB of
-# Markdown renders to about 750 KB of HTML: game-engines was one 10.5 MB
-# page that took 21 s of main-thread work on a phone.
-SYSTEM_PAGE_BUDGET = 500_000
+# page per console, and a console above it is cut into parts. Measured as
+# MkDocs Markdown, a page renders to up to 1.8 times its size in HTML with
+# its structured data: at 500 KB the Sony page was 849 KB, and every page
+# stays under 600 KB from 300 KB. game-engines was one 10.5 MB page that
+# took 21 s of main-thread work on a phone.
+SYSTEM_PAGE_BUDGET = 300_000
 
 # A system card: whether it is a variant, its lines, its sha1.
 Card = tuple[bool, list[str], str]
@@ -5460,8 +5524,8 @@ _DATA_REVISIONS: dict[str, dict] = {}
 # 3 MB page. Past it, the cards go to pages of their own and the emulator's
 # page keeps a table of every entry, each row holding the card's old
 # anchor. A count, not a size: system cards link to these cards and are
-# written before them.
-EMULATOR_CARDS_PER_PAGE = 400
+# written before them. At 400 a part of MAME's cards was 805 KB of HTML.
+EMULATOR_CARDS_PER_PAGE = 220
 
 
 # The headings an emulator's cards go under, in page order: what it needs
@@ -6208,8 +6272,12 @@ def generate_gap_analysis(
     data_names: set[str] | None = None,
     registry: dict | None = None,
     gap_report: dict | None = None,
+    moved: dict[str, str] | None = None,
 ) -> str:
     """Generate a unified gap analysis page.
+
+    With ``moved``, the list of files to source goes to pages of its own,
+    keyed by stem: on the page it made 662 KB of HTML.
 
     Combines verification results (from coverages/verify.py) with source
     provenance (from cross_reference) into a single truth dashboard.
@@ -6574,19 +6642,19 @@ def generate_gap_analysis(
 
         if src_missing_details:
             req_src = [m for m in src_missing_details if m["required"]]
-            lines.extend([
-                "### Files to source",
-                "",
+            counted = (
                 f"{_count(len(src_missing_details), 'file')}, {len(req_src)} required."
                 + (
                     f" They come from {_count(entries, 'entry', 'entries')}: a file "
                     "declared with the same hash at several places is listed once."
                     if entries != len(src_missing_details) else ""
-                ),
-                "",
+                )
+            )
+            head = [
                 "| File | Destination | Expected | Emulator | Required | Affects platforms | Source ref |",
                 "|------|-------------|----------|----------|----------|------------------|-----------|",
-            ])
+            ]
+            rows: list[str] = []
             for m in sorted(
                 src_missing_details,
                 key=lambda x: (not x["required"], x["name"]),
@@ -6610,12 +6678,23 @@ def generate_gap_analysis(
                     f"[{_escape_tags(display)}](emulators/{key}.md)"
                     for display, key in zip(m["emulators"], m["emu_keys"])
                 )
-                lines.append(
+                rows.append(
                     f"| `{m['name']}` | {destination} | {expected} | {emulators} | {req} | "
                     f"{plat_badges} | "
                     f"{_source_ref_markdown(profiles[m['emu_keys'][0]], m['source_ref'])} |"
                 )
-            lines.append("")
+            lines.extend(["### Files to source", "", counted, ""])
+            if moved is None:
+                lines.extend([*head, *rows, ""])
+            else:
+                where = _list_pages(
+                    "gaps-files-to-source", "Files to source",
+                    f"{counted} Each is a file an emulator loads that no platform lists and "
+                    "the collection does not hold. Part of "
+                    "[What the packs do not hold](gaps.md#files-to-source).",
+                    head, [[row] for row in rows], moved,
+                )
+                lines.extend([f"Listed on {where}.", ""])
         if bundled_rows:
             emulators = sorted({emulator for emulator, _name in bundled_rows})
             lines.extend([
@@ -7822,12 +7901,15 @@ def _generate(args: argparse.Namespace) -> None:
         write_if_changed(str(docs / f"{stem}.md"), tables_out_of_search(page))
 
     print("Generating gap analysis page...")
+    gap_pages: dict[str, str] = {}
     write_if_changed(
         str(docs / "gaps.md"),
         tables_out_of_search(generate_gap_analysis(
-            profiles, coverages, db, suppl_names, registry, gap_report
+            profiles, coverages, db, suppl_names, registry, gap_report, gap_pages,
         )) + reference_next(),
     )
+    for stem, page in gap_pages.items():
+        write_if_changed(str(docs / f"{stem}.md"), tables_out_of_search(page))
 
     print("Generating updated platform files page...")
     write_if_changed(
@@ -7840,12 +7922,15 @@ def _generate(args: argparse.Namespace) -> None:
 
     print("Generating dump provenance page...")
     provenance_report = build_report(db, load_provenance_snapshots())
+    provenance_pages: dict[str, str] = {}
     write_if_changed(
         str(docs / "provenance.md"),
         tables_out_of_search(
-            generate_provenance_page(db, provenance_report, load_derivable())
+            generate_provenance_page(db, provenance_report, load_derivable(), provenance_pages)
         ) + reference_next(),
     )
+    for stem, page in provenance_pages.items():
+        write_if_changed(str(docs / f"{stem}.md"), tables_out_of_search(page))
 
     # Wiki pages: copy manually maintained sources + generate dynamic ones
     print("Generating wiki pages...")
