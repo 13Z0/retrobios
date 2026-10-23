@@ -3949,6 +3949,27 @@ def _cfg_true(value: str | None) -> bool:
     return (value or "").strip().lower() == "true"
 
 
+_CONFIGS_READ: list[bool] = []
+
+
+def _retroarch_config_for(bios_path: Path) -> tuple[Path, Path] | None:
+    """The retroarch.cfg whose system_directory is bios_path, and the
+    folder ':' expands to there.
+
+    A run given --dest detects nothing, so the configs are read here, once
+    and silently, the first time a save directory is asked for: the
+    interface names every folder with --dest, and its runs sent Azahar's
+    keys.txt to a guessed folder where line mode read savefile_directory.
+    """
+    found = _RETROARCH_CONFIGS.get(bios_path)
+    if found is not None or _CONFIGS_READ:
+        return found
+    _CONFIGS_READ.append(True)
+    with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+        detect_platforms(_INVOCATION.os_type or detect_os())
+    return _RETROARCH_CONFIGS.get(bios_path)
+
+
 def save_directory_for(
     bios_path: Path, manifest: dict, override: Path | None = None,
 ) -> SavePlace | str:
@@ -3975,7 +3996,7 @@ def save_directory_for(
     folder = layout["folder"]
     listed = bool(layout["by_core"])
     by_core = listed
-    found = None if layout.get("by_system") else _RETROARCH_CONFIGS.get(bios_path)
+    found = None if layout.get("by_system") else _retroarch_config_for(bios_path)
     if found is not None:
         cfg_path, app_dir = found
         for key in ("savefiles_in_content_dir", "sort_savefiles_by_content_enable"):
@@ -9920,6 +9941,8 @@ class TuiState:
         self.dry: dict | None = None
         self.dry_files: list = []
         self.dry_summary: dict | None = None
+        # The check run's summary: what it left out and why.
+        self.check_summary: dict | None = None
         # The confirm screen waits for A even when the plan is unchanged:
         # it was opened by Space, which never installs by itself.
         self.must_confirm: bool = False
@@ -10427,6 +10450,7 @@ def _start_run(state: TuiState, run: str) -> list[tuple]:
         # dropped the --system the command line gave.
         state.check, state.files, state.systems, state.reading = None, [], [], None
         state.found, state.scanned, state.unreadable = [], [], []
+        state.check_summary = None
         state.checked_flags = tui_flags(state)
     elif run in ("confirm", "preview"):
         state.dry, state.dry_files, state.dry_summary = None, [], None
@@ -11060,6 +11084,8 @@ def _take_event(state: TuiState, event: dict) -> None:
             state.files.append(event)
         elif kind == "system":
             state.systems.append(event)
+        elif kind == "summary":
+            state.check_summary = event
     elif state.run in ("confirm", "preview"):
         if kind == "check":
             state.dry = event
@@ -11413,7 +11439,21 @@ def _plan_lines(check: dict, dest: Path | None, state: TuiState) -> list:
         lines += _scan_lines(state)
     if check.get("not_installable"):
         lines += _unavailable_lines(state)
+    if check is state.check:
+        lines += _unplaced_lines(state.check_summary, state)
     return lines
+
+
+def _unplaced_lines(summary: dict | None, state: TuiState) -> list[str]:
+    """The files read from the frontend's save directory that the run left
+    out, that directory being unknown: said, never silent."""
+    count = sum(group.get("files", 0) for group in (summary or {}).get("skipped") or []
+                if group.get("reason") == "no_save_directory")
+    if not count:
+        return []
+    name = display_name(state.platform) if state.platform else "the frontend"
+    return [f"{_plural(count, 'file')} read from {name}'s save directory left out: "
+            "its place is not known. Name it with --save-dir."]
 
 
 def _view_setup(state: TuiState, width: int, height: int) -> tuple:
@@ -11895,6 +11935,7 @@ def tui_outcome(state: TuiState) -> tuple[str, list[str]]:
         lines += _unavailable_lines(state)
     for group in summary.get("left_out") or []:
         lines.append(f"Left out as {group['label']}: {_plural(group['files'], 'file')}.")
+    lines += _unplaced_lines(summary, state)
     lines += ["Same choice without questions:", f"  {tui_command(state)}"]
     if tui_keeps_log(state):
         lines.append(f"Details: {state.log}")

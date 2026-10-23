@@ -2525,6 +2525,36 @@ class AuditRoundThree(unittest.TestCase):
                          sorted(path.name for path in (running, failed, unknown, other)))
 
 
+class AuditRoundFour(unittest.TestCase):
+    """tui_audit_3.md, each finding held where it was found."""
+
+    UNPLACED = {"reason": "no_save_directory", "label": "no save directory", "files": 2,
+                "required": 0}
+
+    def test_p1_1_files_left_out_of_the_save_directory_are_said(self):
+        state = fresh_state()
+        state.stack = ["setup"]
+        with mock.patch.object(install.Path, "exists", return_value=True):
+            install.tui_update(state, Key("enter"))
+        install.tui_receive(state, ("manifest", "retroarch", MANIFEST))
+        summary = {"event": "summary", "mode": "check", "installed": 0, "up_to_date": 0,
+                   "pending": 5, "failed": [], "skipped": [self.UNPLACED], "left_out": [],
+                   "kept": [], "interrupted": False}
+        for event in [*FILES, *SYSTEMS, CHECK, summary]:
+            install.tui_receive(state, ("event", state.run_id, event))
+        with mock.patch.object(install, "_tui_folder_facts", return_value={
+                "free": 50 * 1024 ** 3, "writable": True, "cores": []}):
+            install.tui_receive(state, ("ended", state.run_id, 1, []))
+        line = ("2 files read from RetroArch's save directory left out: its place is "
+                "not known. Name it with --save-dir.")
+        plan = " ".join(" ".join(install.tui_view(state, 120, 40)).split())
+        self.assertIn(line, plan)
+        state.stack.append("result")
+        state.code = 0
+        state.summary = {**summary, "mode": "install", "installed": 5}
+        self.assertIn(line, install.tui_outcome(state)[1])
+
+
 class Crash(unittest.TestCase):
     """An unexpected error ends on one sentence and a log, never a traceback."""
 
@@ -2684,6 +2714,29 @@ class GameDataRepository(FakeRepository):
         return self
 
 
+class SaveDirectoryRepository(FakeRepository):
+    """The fake repository with one file read from RetroArch's save
+    directory, as Azahar's keys.txt and 105 others of the real list."""
+
+    KEYS = b"azahar keys"
+
+    def __enter__(self) -> SaveDirectoryRepository:
+        super().__enter__()
+        path = self.root / "install" / "retroarch.json"
+        manifest = json.loads(path.read_text())
+        (self.root / "bios" / "keys.txt").write_bytes(self.KEYS)
+        manifest["files"].append({
+            "dest": "Azahar/Azahar/sysdata/keys.txt", "root": "save",
+            "core_folder": "Azahar", "sha1": hashlib.sha1(self.KEYS).hexdigest(),
+            "sha256": hashlib.sha256(self.KEYS).hexdigest(), "size": len(self.KEYS),
+            "repo_path": "bios/keys.txt", "cores": ["azahar"],
+            "systems": ["nintendo-3ds"]})
+        manifest["save_directory"] = {"folder": "saves", "by_core": True}
+        manifest["base_destination"] = "system"
+        path.write_text(json.dumps(manifest))
+        return self
+
+
 @unittest.skipUnless(pyte and pty and hasattr(pty, "fork"),
                      "screen tests need pyte (pip install pyte==0.8.2) and a pty")
 class EndToEnd(unittest.TestCase):
@@ -2734,6 +2787,49 @@ class EndToEnd(unittest.TestCase):
         self.assertIn("--platform retroarch --dest", after)
         # The cursor and the main screen come back before the result is printed.
         self.assertIn(b"\x1b[?25h\x1b[?1049l", term.raw)
+
+    def test_the_save_directory_is_the_one_line_mode_finds(self):
+        """The interface named the BIOS folder with --dest, so its runs never
+        read retroarch.cfg: keys.txt went to a guessed RetroArch/saves, or
+        was dropped without a word, where line mode writes it to the
+        savefile_directory RetroArch reads."""
+        import subprocess
+
+        def written(repo, saves: Path) -> list[str]:
+            return sorted([*repo.installed(), *(
+                "saves/" + p.relative_to(saves).as_posix()
+                for p in saves.rglob("*") if p.is_file())])
+
+        results = []
+        for mode in ("line", "interface"):
+            with self.subTest(mode=mode):
+                repo = self.repo(SaveDirectoryRepository)
+                home = Path(self.env["HOME"])
+                saves = home / "MySaves"
+                saves.mkdir()
+                cfg = home / ".config" / "retroarch" / "retroarch.cfg"
+                cfg.write_text(f'system_directory = "{repo.dest}"\n'
+                               f'savefile_directory = "{saves}"\n')
+                if mode == "line":
+                    proc = subprocess.run(
+                        [sys.executable, str(REPO_ROOT / "install.py"), "--platform",
+                         "retroarch", "--yes"], env=self.env, capture_output=True,
+                        text=True, timeout=60, check=False, stdin=subprocess.DEVNULL)
+                    self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+                    self.assertIn("6 files installed", proc.stdout)
+                else:
+                    term = self.start()
+                    term.wait("Where do you play?")
+                    term.send("\r")
+                    screen = term.wait("files to download")
+                    self.assertIn("6 files to download", screen)
+                    term.send("\r")
+                    term.wait("6 files installed.")
+                    term.send("\r")
+                    self.assertEqual(term.close(), 0)
+                results.append(written(repo, saves))
+                self.assertIn("saves/Azahar/Azahar/sysdata/keys.txt", results[-1])
+        self.assertEqual(results[0], results[1])
 
     def test_one_system_from_the_checklist(self):
         repo = self.repo()
