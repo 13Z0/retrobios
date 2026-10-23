@@ -739,11 +739,12 @@ def localize_images(markdown: str, page: Path) -> str:
 # system, the Windows form written by the same function as the setup pages'.
 
 OS_TABS = re.compile(
-    r"(?m)^(?P<indent>[ \t]*)<!--\s*os-tabs(?:\s+windows:\s*(?P<windows>.*?))?\s*-->[ \t]*\n"
+    r"(?m)^(?P<indent>[ \t]*)<!--\s*os-tabs(?P<own>(?:\s+[^\n]*?)?)\s*-->[ \t]*\n"
     r"(?P=indent)```(?:sh|bash)[^\n]*\n(?P<body>.*?)\n(?P=indent)```[ \t]*$",
     re.S,
 )
 OS_TAB_KEYS = ("windows", "macos", "linux", "steamdeck")
+_OWN_ARGS = re.compile(r"(?:^|\s)(" + "|".join(OS_TAB_KEYS) + r"):\s*")
 FENCE_TITLES = {"sh": "Terminal", "powershell": "PowerShell"}
 
 
@@ -758,10 +759,18 @@ def _installer_args(body: str) -> str:
     return match.group(1) or ""
 
 
+def _own_args(text: str) -> dict[str, str]:
+    """`windows: ARGS macos: ARGS` -> the options each named tab uses."""
+    parts = _OWN_ARGS.split(text.strip())
+    if parts[0].strip():
+        raise ValueError(f"an os-tabs marker names no system: {text.strip()!r}")
+    return {key: value.strip() for key, value in zip(parts[1::2], parts[2::2])}
+
+
 def expand_commands(markdown: str) -> str:
     """Each install command marked `<!-- os-tabs -->` as Windows, macOS,
-    Linux and Steam Deck tabs. `<!-- os-tabs windows: ARGS -->` gives the
-    Windows tab its own options, for a path written another way there."""
+    Linux and Steam Deck tabs. `<!-- os-tabs windows: ARGS macos: ARGS -->`
+    gives a tab its own options, for a folder that differs there."""
     if "os-tabs" not in markdown:
         return markdown
     from siteguides import TERMINALS, install_command
@@ -769,10 +778,11 @@ def expand_commands(markdown: str) -> str:
     def replace(match: re.Match[str]) -> str:
         indent = match.group("indent")
         args = _installer_args(match.group("body"))
+        own_args = _own_args(match.group("own"))
         items = []
         for key in OS_TAB_KEYS:
             label, _how, shell = TERMINALS[key]
-            own = match.group("windows") if key == "windows" and match.group("windows") else args
+            own = own_args.get(key) or args
             items.append((label, [f'```{shell} title="{FENCE_TITLES[shell]}"',
                                   install_command(shell, own), "```"]))
         return "\n".join(markup.tabs(items, indent)).rstrip("\n")

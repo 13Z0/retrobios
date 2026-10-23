@@ -1,7 +1,7 @@
 ---
 level: start
 order: 40
-terms: bios not found, bios missing, firmware missing, bios error
+terms: bios not found, bios missing, firmware missing, bios error, check my bios folder, check bios folder
 ---
 
 # When a game does not start
@@ -76,9 +76,15 @@ version.
 - **Network error:** try again later.
 - **`The clock reads ...`:** set the right date.
 - **Permission denied:** do what the message says.
-- **No setup found:** name it and its folder:
+- **`No supported platform detected`:** name your setup and its folder.
+  Not sure of the folder? In RetroArch, open **Settings > Directory >
+  System/BIOS**.
 
-<!-- os-tabs windows: --platform retroarch --dest C:\path\to\RetroArch\system -->
+<!-- The folders RetroArch reads by default, as install.py writes them
+(_os_default_dests, _macos_retroarch_base) and the RetroArch setup page
+cites them. Steam Deck: the Flatpak build. -->
+
+<!-- os-tabs windows: --platform retroarch --dest C:\RetroArch-Win64\system macos: --platform retroarch --dest ~/Documents/RetroArch/system steamdeck: --platform retroarch --dest ~/.var/app/org.libretro.RetroArch/config/retroarch/system -->
 ```sh
 curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh -s -- --platform retroarch --dest ~/.config/retroarch/system
 ```
