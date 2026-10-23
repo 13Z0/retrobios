@@ -742,6 +742,41 @@ def compare(
     return CompareResult(files, truncated, payload.get("status") == "diverged")
 
 
+def _commits_ahead(payload: object, family: str) -> int | None:
+    """Commits the compare head carries that its base does not."""
+    if not isinstance(payload, dict):
+        return None
+    if family == "github":
+        value = payload.get("ahead_by")
+    elif family == "gitlab":
+        value = len(payload.get("commits") or [])
+    else:
+        value = payload.get("total_commits")
+    return value if isinstance(value, int) else None
+
+
+def ancestry(
+    repo: Repo, base: str, head: str, cache_dir: str, offline: bool = False
+) -> tuple[int, int] | None:
+    """(ahead, behind): commits head has that base lacks, and the reverse.
+
+    Two shas never change their history, so both answers are cached for
+    good. GitHub gives both counts in one answer, GitLab and Forgejo list
+    one direction only and are asked twice.
+    """
+    forward = _api(_compare_url(repo, base, head), cache_dir, offline)
+    ahead = _commits_ahead(forward, repo.family)
+    if ahead is None:
+        return None
+    if repo.family == "github":
+        behind = forward.get("behind_by")
+    else:
+        behind = _commits_ahead(
+            _api(_compare_url(repo, head, base), cache_dir, offline), repo.family
+        )
+    return (ahead, behind) if isinstance(behind, int) else None
+
+
 def find_renamed(result: CompareResult, path: str) -> str | None:
     """New path of a file the comparison reports as renamed."""
     for change in result.files:
