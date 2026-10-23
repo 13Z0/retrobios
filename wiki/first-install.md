@@ -87,7 +87,7 @@ Arrows move, Enter chooses, Esc goes back. A handheld's A and B do the same.
 
 ## 3. Install
 
-The next screen counts the missing files and the free space.
+The next screen counts missing files and free space.
 Press Enter on **Install**. **Choose systems** keeps the consoles you
 play.
 
@@ -96,7 +96,7 @@ card or a folder**, then the card. It stays unchanged.
 
 ## 4. Wait
 
-B or Ctrl+C stops it. Run it again to carry on.
+Esc or Ctrl+C stops, B on a handheld. Run again to resume.
 
 ## 5. Read the result
 

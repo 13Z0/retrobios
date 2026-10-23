@@ -546,6 +546,11 @@ EVENT_KEYS: dict[str, tuple[str, ...]] = {
     # size of a file no copy was found for, or of no known size (a folder,
     # a ZIP that would not open). member as in found, reason in words.
     "unreadable": ("platform", "folder", "path", "member", "reason"),
+    # The files of the list read from the frontend's save directory, and
+    # where they go (<system> and <core> stand for a folder per system or
+    # per core), once that directory is known. Not written when it is not:
+    # the summary's skipped then counts them (no_save_directory).
+    "saves": ("platform", "files", "folder"),
     "download": ("platform", "files", "bytes"),
     "progress": ("files_done", "files_total", "bytes_done", "bytes_total"),
     # Right after each progress event, and once when the files of a
@@ -696,9 +701,9 @@ def _declared_state(copy: dict, entry: dict, bios_path: Path) -> str:
         path = _entry_path(bios_path, entry)
     except ValueError:
         return "missing"
-    if not path.is_file():
-        return "missing" if not path.exists() else "wrong_hash"
     try:
+        if not path.is_file():
+            return "missing" if not path.exists() else "wrong_hash"
         verdict = _classify_local(copy, path)
     except OSError:
         return "wrong_hash"
@@ -1443,7 +1448,7 @@ def _rule_matches(rule: _OsRule, release: dict[str, str]) -> bool:
         except OSError:
             return False
         return re.search(pattern, text, re.IGNORECASE | re.MULTILINE) is not None
-    return all(_on_device(value).exists() for value in rule.values)
+    return all(_exists(_on_device(value)) for value in rule.values)
 
 
 def _config_files(pattern: str) -> list[tuple[Path, Path]]:
@@ -2302,11 +2307,12 @@ def core_dirs(plat: str, bios_path: Path) -> list[Path]:
     """The directories the RetroArch writing to bios_path loads cores from.
 
     The config detection read for this system directory names them in
-    libretro_directory. Without one, a retroarch.cfg beside the system
+    libretro_directory, read here when the run was given --dest, as the
+    interface's runs all are. Without one, a retroarch.cfg beside the system
     directory is the portable layout. Unset, the setting is cores/ under
     RetroArch's own directory.
     """
-    found = _RETROARCH_CONFIGS.get(bios_path)
+    found = _retroarch_config_for(bios_path)
     if found is None and (bios_path.parent / "retroarch.cfg").is_file():
         found = (bios_path.parent / "retroarch.cfg", bios_path.parent)
     dirs: list[Path] = []
@@ -3327,13 +3333,16 @@ def install_bounded_opener() -> None:
 # stuck proxy) held the run 93 s on three waits of 30 s. A list is a few
 # MB, never a slow stream.
 LIST_TIMEOUT = 15.0
-# Attempts after a server that took the connection went silent: once more,
-# a stall is rarely a blip.
+# Attempts after a wait ran out, for the connection (a TLS handshake a
+# captive portal never finishes) or for the answer once connected (a stuck
+# proxy): once more, a stall is rarely a blip.
 STALLED_ATTEMPTS = 2
 
 
 def _stalled(exc: BaseException) -> bool:
-    """Whether exc is a wait that ran out, the connection made."""
+    """Whether exc is a wait that ran out: urllib raises a connect timeout
+    as a URLError whose reason is the timeout, a silent answer as the
+    timeout itself."""
     reason = getattr(exc, "reason", None)
     return isinstance(exc, socket.timeout) or isinstance(reason, socket.timeout)
 
@@ -3979,9 +3988,10 @@ def _retroarch_config_for(bios_path: Path) -> tuple[Path, Path] | None:
     folder ':' expands to there.
 
     A run given --dest detects nothing, so the configs are read here, once
-    and silently, the first time a save directory is asked for: the
-    interface names every folder with --dest, and its runs sent Azahar's
-    keys.txt to a guessed folder where line mode read savefile_directory.
+    and silently, the first time a save directory or the cores folder is
+    asked for: the interface names every folder with --dest, and its runs
+    sent Azahar's keys.txt to a guessed folder where line mode read
+    savefile_directory, and found no core where line mode found them.
     """
     found = _RETROARCH_CONFIGS.get(bios_path)
     if found is not None or _CONFIGS_READ:
@@ -4069,6 +4079,8 @@ def place_save_entries(
             where += f"{os.sep}<core>"
         print(f"  {_plural(len(saved), 'file')} read from {display}'s save directory "
               f"go to {where}")
+        EVENTS.emit("saves", platform=str(manifest.get("platform", "")),
+                    files=len(saved), folder=where)
         return files, []
     print(f"  {_plural(len(saved), 'file')} read from {display}'s save directory "
           f"left out: {place}")
@@ -4090,7 +4102,13 @@ def _classify_local(entry: dict, dest: Path) -> str:
         for name in ("sha256", "sha1")
         if entry.get(name)
     }
-    if not dest.is_file():
+    try:
+        is_file = dest.is_file()
+    except OSError:
+        # A folder above it this user cannot enter: what sits there is not
+        # known to be the right file.
+        return "mismatched"
+    if not is_file:
         # A folder at the file's place: --check says so, an install fails
         # on that file alone.
         return "mismatched"
@@ -4105,6 +4123,39 @@ def _classify_local(entry: dict, dest: Path) -> str:
     if all(actual[name] == value for name, value in expected.items()):
         return "up_to_date"
     return "mismatched"
+
+
+def _held(path: Path) -> bool:
+    """Whether something may sit at path. A place that cannot be looked at
+    (a folder above it this user cannot enter, a card that answers a read
+    error) counts as held, so the file is reported unreadable and the run
+    goes on with the others: Path.exists() lets PermissionError through."""
+    try:
+        return path.exists()
+    except OSError:
+        return True
+
+
+def _exists(path: Path) -> bool:
+    """Path.exists(), False where the place cannot be looked at."""
+    try:
+        return path.exists()
+    except OSError:
+        return False
+
+
+def _is_file(path: Path) -> bool:
+    """Path.is_file(), False where the place cannot be looked at."""
+    try:
+        return path.is_file()
+    except OSError:
+        return False
+
+
+def unreachable_words(exc: OSError) -> str:
+    """Why the place of a file could not be looked at, in words."""
+    return (f"could not be read ({exc.strerror or exc}): this user may not "
+            f"have access to its folder")
 
 
 def check_local(
@@ -4122,7 +4173,7 @@ def check_local(
 
     for f in files:
         dest = _entry_path(bios_path, f)
-        if dest.exists():
+        if _held(dest):
             present.append((f, dest))
         else:
             to_download.append(f)
@@ -4362,7 +4413,7 @@ def _move_aside(dest: Path, kept: Path) -> None:
         os.rename(dest, kept)
         return
     except OSError:
-        if not dest.is_file():
+        if not _is_file(dest):
             raise
     scratch = kept.parent / f".{kept.name}.part"
     try:
@@ -4497,7 +4548,11 @@ def _download_one(
         if _write_refused(exc):
             return f["dest"], False, NOT_WRITABLE
         return f["dest"], False, exc.strerror or str(exc)
-    if dest.is_dir():
+    try:
+        in_place_folder = dest.is_dir()
+    except OSError as exc:
+        return f["dest"], False, unreachable_words(exc)
+    if in_place_folder:
         # Fetched, it failed only at the rename, on an errno and two paths.
         return f["dest"], False, FOLDER_IN_PLACE
 
@@ -4752,7 +4807,7 @@ def _replace_released(source: Path, dest: Path, expected: dict[str, str]) -> Non
             os.replace(source, dest)
             return
         except FileNotFoundError:
-            if expected and dest.is_file() and _digest_file(dest, tuple(expected)) == expected:
+            if expected and _is_file(dest) and _digest_file(dest, tuple(expected)) == expected:
                 return
             raise
         except PermissionError as exc:
@@ -4771,7 +4826,7 @@ def _drop_full_partial(dest: Path, expected_size: int) -> None:
     left to it.
     """
     path = dest.parent / f".{dest.name}.part"
-    if not path.is_file():
+    if not _is_file(path):
         return
     try:
         handle = _claim_partial(path)
@@ -4913,7 +4968,7 @@ def _clear_read_only(dest: Path) -> None:
 
 
 def _read_only_file(dest: Path) -> bool:
-    return dest.is_file() and not os.access(dest, os.W_OK) and _folder_writable(dest.parent)
+    return _is_file(dest) and not os.access(dest, os.W_OK) and _folder_writable(dest.parent)
 
 
 def _folder_writable(path: Path) -> bool:
@@ -5017,7 +5072,7 @@ def _on_read_only_mount(path: Path) -> bool:
     if not hasattr(os, "statvfs"):
         return False
     probe = path
-    while not probe.exists() and probe.parent != probe:
+    while not _held(probe) and probe.parent != probe:
         probe = probe.parent
     try:
         return bool(os.statvfs(probe).f_flag & os.ST_RDONLY)
@@ -5247,7 +5302,7 @@ def _absent_required(omitted: list[dict], bios_path: Path) -> list[dict]:
         if not entry.get("required", True) or not dest:
             continue
         try:
-            placed = _entry_path(bios_path, {**entry, "dest": dest}).is_file()
+            placed = _is_file(_entry_path(bios_path, {**entry, "dest": dest}))
         except ValueError:
             # A path climbing out of the folder is never one we read, and one
             # below a save directory this run does not know is not looked at.
@@ -5576,11 +5631,12 @@ def data_directory_state(entry: dict, bios_path: Path) -> tuple[Path, dict[str, 
     present = 0
     for rel, meta in entry["files"].items():
         target = _destination_path(root, rel)
-        if (
-            target.is_file()
-            and target.stat().st_size == meta["size"]
-            and _sha1_file(target) == meta["sha1"]
-        ):
+        try:
+            held = (target.is_file() and target.stat().st_size == meta["size"]
+                    and _sha1_file(target) == meta["sha1"])
+        except OSError:
+            held = False
+        if held:
             present += 1
         else:
             needed[rel] = meta
@@ -7154,6 +7210,10 @@ class FolderIndex:
         # was opened again, its directory parsed again, for each member.
         self._zips: dict[Path, zipfile.ZipFile] = {}
         self._zip_lock = threading.Lock()
+        # The places this run writes, resolved. An archive among them is
+        # never kept open: Windows refuses to move aside or replace a file
+        # a process holds, and a --from folder can hold the BIOS folder.
+        self._written: set[Path] = set()
         # (path, member or "") -> (its size or None when unknown, why) of each
         # file, member or folder below root that could not be read.
         self.unreadable: dict[tuple[Path, str], tuple[int | None, str]] = {}
@@ -7231,7 +7291,7 @@ class FolderIndex:
         A few stay open, the least recently read closed first: a card of
         MAME sets would otherwise hold a descriptor per archive. Closing
         one leaves a member being read open until it is closed itself.
-        Only archives the list does not install are read this way.
+        An archive this run writes is never read this way (see writes).
         """
         archive = self._zips.pop(path, None)
         if archive is None:
@@ -7241,15 +7301,38 @@ class FolderIndex:
         self._zips[path] = archive
         return archive
 
+    def writes(self, paths: Collection[Path]) -> None:
+        """Note the places this run writes, resolved, and close the archives
+        among them: the next read of one opens it and closes it at once."""
+        with self._zip_lock:
+            self._written.update(paths)
+            for held in [held for held in self._zips if self._is_written(held)]:
+                self._zips.pop(held).close()
+
+    def _is_written(self, path: Path) -> bool:
+        return bool(self._written) and (
+            path in self._written or Path(os.path.realpath(path)) in self._written)
+
     def infolist(self, path: Path) -> list[zipfile.ZipInfo]:
         with self._zip_lock:
+            if self._is_written(path):
+                with zipfile.ZipFile(path) as archive:
+                    return archive.infolist()
             return self._archive(path).infolist()
 
     @contextlib.contextmanager
     def open_member(self, path: Path, member: str) -> Iterator[BinaryIO]:
         """A member of an archive under the folder, read from any thread."""
         with self._zip_lock:
-            handle = self._archive(path).open(member)
+            if self._is_written(path):
+                archive = zipfile.ZipFile(path)
+                try:
+                    handle = archive.open(member)
+                finally:
+                    # The member holds the file until it is closed itself.
+                    archive.close()
+            else:
+                handle = self._archive(path).open(member)
         try:
             yield handle
         finally:
@@ -7701,9 +7784,9 @@ def _wrong_contents(
     owners: dict[str, list[dict]] | None = None,
 ) -> str:
     """Why the file at an entry's place is not the one the list installs."""
-    if path.is_dir():
-        return FOLDER_IN_PLACE
     try:
+        if path.is_dir():
+            return FOLDER_IN_PLACE
         size = path.stat().st_size
         with open(path, "rb") as handle:
             head = handle.read(4)
@@ -7869,6 +7952,8 @@ def plan_local_copies(
             written.add(Path(os.path.realpath(_entry_path(bios_path, entry))))
         except ValueError:
             continue
+    for index in ([bios_index] if bios_index is not None else []) + folders:
+        index.writes(written)
     copies: dict[int, LocalCopy] = {}
     for entry in entries:
         copy = None
@@ -8640,12 +8725,12 @@ def _missing_dest(dest: Path, ask: bool, named: str = "named with --dest") -> No
             sys.exit(2)
 
 
-def _no_core_found(plat: str, bios_path: Path, searched: list[Path], dest_given: bool) -> None:
+def _no_core_found(plat: str, bios_path: Path, searched: list[Path]) -> None:
     """Refuse --installed-cores with no core, and say how to point at them.
 
-    With --dest, detection does not run, and without a retroarch.cfg beside
-    the folder nothing names the cores folder: the run stopped on "no known
-    directory" with no way forward.
+    With no retroarch.cfg naming the folder as its system_directory, and
+    none beside it, nothing names the cores folder: the run stopped on "no
+    known directory" with no way forward.
     """
     where = (f"none in {', '.join(map(str, searched))}" if searched
              else f"no retroarch.cfg was found for {bios_path} to name their folder")
@@ -8655,9 +8740,6 @@ def _no_core_found(plat: str, bios_path: Path, searched: list[Path], dest_given:
           "retroarch.cfg, cores/ beside RetroArch by default):", file=sys.stderr)
     command = _INVOCATION.command(plat, bios_path, without=("--installed-cores", "--cores-dir"))
     print(f"    {command} --cores-dir <cores folder>", file=sys.stderr)
-    if dest_given:
-        print("  Or run it without --dest: detection reads retroarch.cfg, which names "
-              "that folder.", file=sys.stderr)
     print("  Or run it without --installed-cores to install every file.", file=sys.stderr)
     sys.exit(1)
 
@@ -8721,7 +8803,7 @@ def _card_rule_matches(rule: _OsRule, root: Path) -> bool:
         except OSError:
             return False
         return re.search(pattern, text, re.MULTILINE) is not None
-    return all((root / value).exists() for value in rule.values)
+    return all(_exists(root / value) for value in rule.values)
 
 
 def card_system(root: Path) -> tuple[str, Path, str] | None:
@@ -8858,6 +8940,14 @@ def _unknown_target(target: str, plat: str, targets: dict) -> None:
         print(f"  {plat} publishes no target list", file=sys.stderr)
 
 
+def _is_terminal(stream: TextIO) -> bool:
+    isatty = getattr(stream, "isatty", None)
+    try:
+        return bool(isatty and isatty())
+    except (OSError, ValueError):
+        return False
+
+
 def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
     """One run of the installer, once the options are read."""
     KEPT.reset()
@@ -8865,6 +8955,13 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
     interactive = sys.stdin.isatty() and not args.no_input and not args.quiet
     listing = (args.list_targets or args.list_systems or args.list_cores
                or args.list_emulators)
+    if interactive and not _is_terminal(real_stdout):
+        # A question goes to stdout: sent to a file, it waited on an answer
+        # to a prompt nobody could see.
+        interactive = False
+        if not listing and not args.check:
+            print("Output goes to a file, so nothing is asked: the run goes on as "
+                  "with --no-input.", file=sys.stderr)
     print(f"{term.bold('RetroBIOS')} {term.dim(installer_id())}\n")
 
     os_type = detect_os()
@@ -9083,7 +9180,7 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
             )
             sys.exit(1)
         if args.installed_cores and not cores_found[(plat_name, bios_path)]:
-            _no_core_found(plat_name, bios_path, searched, bool(args.dest))
+            _no_core_found(plat_name, bios_path, searched)
 
     for plat_name, bios_path in platforms:
         if bios_path not in installed_paths:
@@ -9991,6 +10088,8 @@ class TuiState:
         self.idle_closed = False
         # The check run's summary: what it left out and why.
         self.check_summary: dict | None = None
+        # The saves event of the check: the files that go to the save folder.
+        self.saves: dict | None = None
         # The confirm screen waits for A even when the plan is unchanged:
         # it was opened by Space, which never installs by itself.
         self.must_confirm: bool = False
@@ -10045,9 +10144,9 @@ TUI_PAD_ROUTES = ("gptokeyb", "gptokeyb_muxterm", "muxterm", "evmapy", "miyoo")
 _STEAM_MARKERS = ("SteamGamepadUI", "SteamDeck", "SteamGameId", "GAMESCOPE_WAYLAND_DISPLAY")
 
 
-# Seconds the first screen waits for a first key before it closes, set by a
-# launcher whose mapper may never open the pad: the screen would otherwise
-# hold a handheld that has no other way out.
+# Seconds the interface waits for a first key, no run going, before it
+# closes, set by a launcher whose mapper may never open the pad: the screen
+# would otherwise hold a handheld that has no other way out.
 TUI_IDLE_ENV = "RETROBIOS_IDLE_EXIT"
 TUI_IDLE_WORDS = "No button pressed, closing."
 
@@ -10356,13 +10455,13 @@ def _plan_rows(state: TuiState) -> list[TuiRow]:
     rows = [TuiRow("install", label)]
     if _offline_only() and not _plan_copies(state, check):
         # Nothing here to copy, and the network refused: Install would
-        # only fail every file.
+        # only fail every file, in this folder or another.
         rows = []
     if state.facts.get("writable") is False or _short_of_space(state, check):
         # Every file would fail alike, or the run would stop before the
         # first one: the way out is another folder.
-        rows = [TuiRow("folder", "Choose another folder"), TuiRow("install", "Install anyway"),
-                *rows[1:]]
+        rows = [TuiRow("folder", "Choose another folder"),
+                *([TuiRow("install", "Install anyway")] if rows else [])]
     if records_selection((state.manifest or {}).get("files", [])) and len(state.systems) > 1:
         rows.append(TuiRow("systems", "Choose systems"))
     rows.append(TuiRow("fromcard", "Copy the BIOS files from your old card or a folder"))
@@ -10544,7 +10643,7 @@ def _start_run(state: TuiState, run: str) -> list[tuple]:
         # dropped the --system the command line gave.
         state.check, state.files, state.systems, state.reading = None, [], [], None
         state.found, state.scanned, state.unreadable = [], [], []
-        state.check_summary = None
+        state.check_summary = state.saves = None
         state.checked_flags = tui_flags(state)
     elif run in ("confirm", "preview"):
         state.dry, state.dry_files, state.dry_summary = None, [], None
@@ -11169,6 +11268,8 @@ def _take_event(state: TuiState, event: dict) -> None:
         state.scanned.append(event)
     elif kind == "unreadable" and state.run == "check":
         state.unreadable.append(event)
+    elif kind == "saves" and state.run == "check":
+        state.saves = event
     elif kind == "found" and state.run == "install":
         state.local_dests[event["dest"]] = (event["folder"], event["reason"])
     elif state.run == "check":
@@ -11500,6 +11601,11 @@ def _plan_lines(check: dict, dest: Path | None, state: TuiState) -> list:
     elif need and fetch and offline:
         headline = (f"{_plural(fetch, 'file')} {'needs' if fetch == 1 else 'need'} the "
                     "internet, which --offline does not use")
+    elif need and fetch and LOCAL.pack is not None:
+        # Nothing comes from the network: "to download" on a handheld with
+        # no Wi-Fi read as a failure on its way.
+        headline = (f"{_plural(fetch, 'file')} to install from the pack, "
+                    f"{format_size(fetch_bytes)}")
     elif need and fetch:
         headline = f"{_plural(fetch, 'file')} to download, {format_size(fetch_bytes)}"
     elif need:
@@ -11524,6 +11630,8 @@ def _plan_lines(check: dict, dest: Path | None, state: TuiState) -> list:
         lines.append("You cannot write to this folder: choose another one.")
     lines.append(f"{check['present']} in place, {check['missing']} missing, "
                  f"{wrong} wrong {'copy' if wrong == 1 else 'copies'}")
+    if check is state.check:
+        lines += [_styled(line, "path") for line in _saves_lines(state)]
     found_in = _RETROARCH_CONFIGS.get(dest) if dest is not None else None
     if found_in:
         lines.append(_styled(f"Named by {_short_path(Path(found_in[0]), state.home)}", "path"))
@@ -11559,6 +11667,18 @@ def _plan_lines(check: dict, dest: Path | None, state: TuiState) -> list:
     if check is state.check:
         lines += _unplaced_lines(state.check_summary, state)
     return lines[:2] + offline_lines + lines[2:]
+
+
+def _saves_lines(state: TuiState) -> list[str]:
+    """Where the files read from the frontend's save directory go: a second
+    folder this run writes to, named before anything is written."""
+    if not state.saves or not state.saves.get("files"):
+        return []
+    name = display_name(state.platform) if state.platform else "the frontend"
+    count = state.saves["files"]
+    return [f"{_plural(count, 'file')} read from {name}'s save directory "
+            f"{'goes' if count == 1 else 'go'} to "
+            f"{_short_path(Path(state.saves['folder']), state.home)}"]
 
 
 def _unplaced_lines(summary: dict | None, state: TuiState) -> list[str]:
@@ -12012,7 +12132,8 @@ def tui_outcome(state: TuiState) -> tuple[str, list[str]]:
         head = f"The installer stopped with code {state.code}."
     elif installed:
         title = "Done"
-        head = f"{_plural(installed, 'file')} installed."
+        source = " from the pack" if LOCAL.pack is not None else ""
+        head = f"{_plural(installed, 'file')} installed{source}."
         if up_to_date:
             head += f" {_plural(up_to_date, 'file')} already in place."
     else:
@@ -12023,6 +12144,8 @@ def tui_outcome(state: TuiState) -> tuple[str, list[str]]:
     if sources:
         lines.append(sources)
     lines.append(f"BIOS folder: {state.dest}")
+    if installed + up_to_date:
+        lines += _saves_lines(state)
     if space:
         lines.append("Free some space, or run again and choose another folder.")
     causes: dict[str, list[str]] = {}
@@ -12041,7 +12164,9 @@ def tui_outcome(state: TuiState) -> tuple[str, list[str]]:
             shown += 1
     if shown > 20:
         lines.append(f"  ... and {shown - 20} more")
-    if not summary and not space:
+    if not summary and not space and state.code != 130:
+        # A stop asked for (Ctrl-C, Start+Select, the window closed) is said
+        # by the line above: the log's last lines are for a run that died.
         lines += [f"  {line}" for line in state.tail[-8:]]
     run = Invocation()
     run.os_type = state.os_type
@@ -12822,7 +12947,10 @@ def run_tui(args: argparse.Namespace) -> int:
             if number is not None:
                 handlers[number] = signal.signal(number, handler)
         idle = tui_idle_exit()
-        first_screen, opened, pressed = state.screen, time.monotonic(), False
+        # Counted from the moment the screen last waited for a key with no
+        # run going: given --platform, the first screen moves on by itself
+        # to the plan once the check is read, and no key comes either.
+        quiet_since, pressed = time.monotonic(), False
         sys.stdout = sys.stderr = buffer
         try:
             _prune_work_folders(work.parent, time.time())
@@ -12858,9 +12986,10 @@ def run_tui(args: argparse.Namespace) -> int:
                 perform(tui_update(state, key))
                 if state.exit_code is not None:
                     break
-            if (idle is not None and not pressed and state.exit_code is None
-                    and state.screen == first_screen
-                    and time.monotonic() - opened >= idle):
+            if state.running:
+                quiet_since = time.monotonic()
+            elif (idle is not None and not pressed and state.exit_code is None
+                    and time.monotonic() - quiet_since >= idle):
                 state.idle_closed, state.exit_code = True, 0
             if flags["interrupt"]:
                 flags["interrupt"] = False
@@ -12890,7 +13019,7 @@ def run_tui(args: argparse.Namespace) -> int:
                 # The result is printed in the terminal on the way out.
                 state.exit_code = state.code if state.code is not None else 1
     except Exception as exc:  # noqa: BLE001
-        if flags["term"] or _closed_terminal(exc):
+        if flags["term"] or _closed_terminal(exc, terminal):
             # The window closed under a screen that was changing, or the
             # SIGCONT that comes with its SIGHUP put the screen back: the
             # write failed before the signal was read. That is its exit.
@@ -12954,13 +13083,31 @@ def _tui_startup(args: argparse.Namespace) -> tuple[TuiState, list[tuple]] | Non
 _CLOSED_TERMINAL = frozenset({errno.EIO, errno.EPIPE, errno.ENXIO})
 
 
-def _closed_terminal(exc: BaseException) -> bool:
+def _closed_terminal(exc: BaseException, terminal: _TuiTerminal | None = None) -> bool:
     """Whether exc is the terminal gone: an OSError, or a termios.error,
-    whose first argument is the errno, answering EIO, EPIPE or ENXIO."""
+    whose first argument is the errno, answering EIO, EPIPE or ENXIO, and,
+    given the terminal, that terminal no longer answering. A failing SD
+    card answers EIO too, and that read error is kept in a crash log."""
     if isinstance(exc, OSError):
-        return exc.errno in _CLOSED_TERMINAL
-    if type(exc).__name__ == "error" and type(exc).__module__ == "termios":
-        return bool(exc.args) and exc.args[0] in _CLOSED_TERMINAL
+        closed = exc.errno in _CLOSED_TERMINAL
+    elif type(exc).__name__ == "error" and type(exc).__module__ == "termios":
+        closed = bool(exc.args) and exc.args[0] in _CLOSED_TERMINAL
+    else:
+        closed = False
+    return closed and (terminal is None or _terminal_gone(terminal))
+
+
+def _terminal_gone(terminal: _TuiTerminal) -> bool:
+    """Whether the terminal hung up: a closed window answers EIO to
+    tcgetattr and to a write, a live one its settings."""
+    import termios  # noqa: PLC0415
+
+    try:
+        termios.tcgetattr(terminal.fd)
+        terminal.stdout.write("")
+        terminal.stdout.flush()
+    except (termios.error, OSError, ValueError):
+        return True
     return False
 
 

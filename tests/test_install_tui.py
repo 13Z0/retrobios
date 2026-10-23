@@ -2205,12 +2205,50 @@ class AuditRoundThree(unittest.TestCase):
 
     # P2-1: a card too small for the download.
 
+    def test_a_stop_asked_for_says_only_the_outcome(self):
+        """Start+Select (SIGTERM) or SIGHUP stops the child before it writes
+        a summary: the farewell then listed the log's last lines."""
+        state = checked_state()
+        state.download = {"files": 50}
+        state.finished = [("scph5501.bin", True, "")]
+        state.tail = ["    [2/50] scph5501.bin ok",
+                      "    Stopping. Files already installed are kept."]
+        for code, shown in ((130, False), (1, True)):
+            with self.subTest(code=code):
+                state.code = code
+                _title, lines = install.tui_outcome(state)
+                self.assertEqual(any("[2/50]" in line for line in lines), shown, lines)
+
+    def test_a_pack_installs_from_the_pack_not_the_network(self):
+        """With --from-pack and no Wi-Fi, the plan said "to download", which
+        on a handheld with no network read as a failure on its way."""
+        state = checked_state()
+        with mock.patch.object(install.LOCAL, "pack", object()):
+            headline = str(install.tui_view(state, 80, 24)[0])
+            plan = "\n".join(str(line) for line in install.tui_view(state, 80, 24))
+            state.summary = {"installed": 3, "failed": [], "up_to_date": 0}
+            title, lines = install.tui_outcome(state)
+        self.assertIn("to install from the pack", plan, headline)
+        self.assertNotIn("to download", plan)
+        self.assertEqual(lines[0], "3 files installed from the pack.")
+
     def test_p2_1_another_folder_comes_first_when_space_is_short(self):
         state = checked_state({"free": 1024, "writable": True, "cores": []})
         self.assertEqual([row.label for row in install.tui_rows(state)[:2]],
                          ["Choose another folder", "Install anyway"])
         self.assertEqual(press(state, "enter"), [])
         self.assertEqual(state.screen, "folder")
+
+    def test_offline_with_nothing_to_copy_offers_no_install_anyway(self):
+        """Offline with nothing here to copy, Install is removed: a folder
+        short of space then put "Install anyway" back, a run that could
+        only fail every file."""
+        state = checked_state({"free": 1024, "writable": False, "cores": []})
+        with mock.patch.dict(os.environ, {install.OFFLINE_VARIABLE: "1"}):
+            labels = [row.label for row in install.tui_rows(state)]
+        self.assertEqual(labels[0], "Choose another folder")
+        self.assertNotIn("Install anyway", labels)
+        self.assertFalse(any(label.startswith("Install") for label in labels), labels)
 
     FULL_TAIL = [
         "  Checking existing files...",
@@ -2555,6 +2593,34 @@ class IdleExit(unittest.TestCase):
         state.idle_closed, state.exit_code = True, 0
         self.assertEqual(install.tui_farewell(state),
                          ["RetroBIOS: No button pressed, closing."])
+
+
+class AReadErrorIsNotAClosedWindow(unittest.TestCase):
+    """Any EIO read as the window closing: a failing SD card answers EIO
+    too, and that run ended 129, no error.log, no launcher message."""
+
+    def test_eio_counts_only_once_the_terminal_hung_up(self):
+        import pty
+
+        master, slave = pty.openpty()
+        screen = open(os.dup(slave), "w", encoding="utf-8")  # noqa: SIM115
+        terminal = mock.Mock(fd=slave, stdout=screen)
+        try:
+            card = OSError(errno.EIO, "Input/output error", "/media/card/bios/x.bin")
+            self.assertFalse(install._closed_terminal(card, terminal))
+            self.assertFalse(install._closed_terminal(
+                OSError(errno.ENOENT, "No such file"), terminal))
+            os.close(master)
+            master = -1
+            self.assertTrue(install._closed_terminal(card, terminal))
+            self.assertTrue(install._closed_terminal(termios.error(errno.EIO, "gone"),
+                                                     terminal))
+        finally:
+            with contextlib.suppress(OSError):
+                screen.close()
+            os.close(slave)
+            if master >= 0:
+                os.close(master)
 
 
 class AuditRoundFour(unittest.TestCase):
@@ -2935,8 +3001,13 @@ class EndToEnd(unittest.TestCase):
                     term.send("\r")
                     screen = term.wait("files to download")
                     self.assertIn("6 files to download", screen)
+                    # The second folder the run writes to, named before
+                    # anything is written, and again on the result.
+                    self.assertIn("1 file read from RetroArch's save directory goes to "
+                                  "~/MySaves", screen)
                     term.send("\r")
-                    term.wait("6 files installed.")
+                    screen = term.wait("6 files installed.")
+                    self.assertIn("save directory goes to ~/MySaves", screen)
                     term.send("\r")
                     self.assertEqual(term.close(), 0)
                 results.append(written(repo, saves))
@@ -3035,6 +3106,9 @@ class EndToEnd(unittest.TestCase):
         after = term.after()
         self.assertIn(f"Stopped: {on_disk} of 6 installed, run again to finish.", after)
         self.assertNotIn("Nothing was installed", after)
+        # The plain outcome only: the log's last lines are for a run that died.
+        self.assertIsNone(re.search(r"\[\d+/6\]", after), after)
+        self.assertNotIn("Stopping.", after)
         time.sleep(1)
         self.assertEqual(len(repo.installed()), on_disk)
 
@@ -3175,6 +3249,18 @@ class EndToEnd(unittest.TestCase):
         self.assertEqual(os.waitpid(term.pid, os.WNOHANG), (0, 0))
         term.send("q")
         self.assertEqual(term.close(), 130)
+
+    def test_no_key_on_a_screen_reached_by_itself_closes_it(self):
+        """Given --platform, as the offline launcher route is, the check
+        runs at once and the plan follows without a key: the close counted
+        only on the first screen, and never came."""
+        repo = self.repo()
+        self.env[install.TUI_IDLE_ENV] = "1"
+        term = self.start("--platform", "retroarch", "--dest", str(repo.dest))
+        term.wait("> Install")
+        self.assertEqual(term.close(), 0)
+        self.assertIn("No button pressed, closing.", term.after())
+        self.assertEqual(repo.installed(), [])
 
     def test_a_desktop_names_its_keys_and_a_pad_its_buttons(self):
         self.repo()

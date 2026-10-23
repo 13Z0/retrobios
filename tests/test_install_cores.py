@@ -488,5 +488,39 @@ class TheOneLinerReadsInstalledCores(unittest.TestCase):
             self.assertEqual(repo.installed(), ["gba_bios.bin", "mgba/extra.bin"])
 
 
+class TheInterfaceFindsTheCoresLineModeFinds(unittest.TestCase):
+    """The interface names the BIOS folder with --dest, so its runs never
+    read retroarch.cfg: "only installed cores" found none where line mode,
+    detecting the same config, found them (macOS, Flatpak, any custom
+    system_directory)."""
+
+    def test_a_config_away_from_the_bios_folder(self):
+        with _CoreRepository() as repo:
+            (repo.root / "retroarch.cfg").unlink()
+            home = repo.root / "home"
+            config = home / ".config" / "retroarch"
+            config.mkdir(parents=True)
+            cores = repo.root / "elsewhere" / "my cores"
+            cores.mkdir(parents=True)
+            (cores / "mgba_libretro.so").write_bytes(b"")
+            (config / "retroarch.cfg").write_text(
+                f'system_directory = "{repo.dest}"\n'
+                f'libretro_directory = "{cores}"\n')
+            env = {**repo.env(), "HOME": str(home), "RETROBIOS_OS": "linux",
+                   "XDG_CONFIG_HOME": str(home / ".config")}
+            repo.dest.mkdir()
+            found = []
+            for given in ((), ("--dest", str(repo.dest))):
+                command = [sys.executable, str(REPO_ROOT / "install.py"), "--platform",
+                           "retroarch", *given, "--installed-cores", "--check"]
+                proc = subprocess.run(command, env=env, capture_output=True, text=True,
+                                      timeout=60, check=False, stdin=subprocess.DEVNULL)
+                self.assertNotIn("no installed core found", proc.stderr)
+                found.append([line for line in proc.stdout.splitlines()
+                              if "core installed" in line or "Narrowed" in line])
+            self.assertEqual(found[0], found[1])
+            self.assertIn("  1 core installed", found[1])
+
+
 if __name__ == "__main__":
     unittest.main()

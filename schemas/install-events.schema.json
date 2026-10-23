@@ -21,6 +21,7 @@
         "declared",
         "found",
         "unreadable",
+        "saves",
         "download",
         "progress",
         "transfer",
@@ -63,6 +64,9 @@
     },
     {
       "$ref": "#/$defs/unreadable"
+    },
+    {
+      "$ref": "#/$defs/saves"
     },
     {
       "$ref": "#/$defs/download"
@@ -482,6 +486,31 @@
           "type": "string"
         },
         "reason": {
+          "type": "string"
+        }
+      }
+    },
+    "saves": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "event",
+        "platform",
+        "files",
+        "folder"
+      ],
+      "properties": {
+        "event": {
+          "const": "saves"
+        },
+        "platform": {
+          "type": "string"
+        },
+        "files": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "folder": {
           "type": "string"
         }
       }

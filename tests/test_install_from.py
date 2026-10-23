@@ -854,6 +854,67 @@ class AFolderAroundTheBiosFolder(FromFolder):
                          ["old card/copy.zip, inside as inner.bin"])
 
 
+    @unittest.skipUnless(Path("/proc/self/fd").is_dir(), "reads the open files from /proc")
+    def test_an_archive_the_list_replaces_is_not_held_open(self):
+        """Windows refuses to rename, replace or delete a file a process
+        holds open. The --from index kept the list's own wrong archive open
+        once its members had been listed, and the run failed to move it
+        aside, every run."""
+        good = io.BytesIO()
+        with zipfile.ZipFile(good, "w") as archive:
+            archive.writestr("a.bin", b"A" * 300)
+        good = good.getvalue()
+        card = self.root / "card"
+        bios = card / "bios"
+        _zip(bios / "neogeo.zip", {"x.bin": b"X" * 77})
+        (card / "backup").mkdir()
+        (card / "backup" / "neogeo.zip").write_bytes(good)
+        _zip(card / "backup" / "pack.zip", {"renamed.bin": GBA})
+        self.list.write_text(json.dumps({
+            "manifest_version": 2, "platform": "retroarch",
+            "files": [_entry("neogeo.zip", good, ["snk-neogeo"]),
+                      _entry("gba_bios.bin", GBA, ["nintendo-gba"])]}))
+
+        def held() -> set[str]:
+            out = set()
+            for fd in os.listdir("/proc/self/fd"):
+                with contextlib.suppress(OSError):
+                    out.add(os.path.realpath(os.readlink(f"/proc/self/fd/{fd}")))
+            return out
+
+        real_replace, real_rename, real_unlink = os.replace, os.rename, os.unlink
+
+        def refusing(real):
+            def call(*paths, **kwargs):
+                files = paths[:2] if real is not real_unlink else paths[:1]
+                if any(os.path.realpath(path) in held() for path in files):
+                    raise PermissionError(13, "The process cannot access the file",
+                                          str(files[0]))
+                return real(*paths, **kwargs)
+            return call
+
+        argv = ["install.py", "--platform", "retroarch", "--dest", str(bios),
+                "--manifest", str(self.list), "--from", str(card), "--no-input", "--yes"]
+        out = io.StringIO()
+        with mock.patch.object(sys, "argv", argv), \
+                mock.patch.dict(os.environ, {"RETROBIOS_INSTALL_OFFLINE": "1"}), \
+                mock.patch.object(os, "replace", refusing(real_replace)), \
+                mock.patch.object(os, "rename", refusing(real_rename)), \
+                mock.patch.object(os, "unlink", refusing(real_unlink)), \
+                mock.patch.object(os, "remove", refusing(real_unlink)), \
+                contextlib.redirect_stdout(out), contextlib.redirect_stderr(out):
+            try:
+                install.main()
+                code = 0
+            except SystemExit as exc:
+                code = exc.code
+            finally:
+                install.LOCAL.reset()
+        self.assertEqual(code, 0, out.getvalue())
+        self.assertEqual((bios / "neogeo.zip").read_bytes(), good)
+        self.assertEqual((bios / "gba_bios.bin").read_bytes(), GBA)
+
+
 class ManySameSizedFiles(FromFolder):
     """A card of 16 KB ROMs and a list of 16 KB entries: each entry sorted
     and walked every file of its size."""

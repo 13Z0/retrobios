@@ -622,9 +622,10 @@ rather than read as having no game data.
 `--installed-cores` reads the cores a RetroArch already has and installs what
 they need. The cores are the `<name>_libretro.so` (`.dll`, `.dylib`,
 `_libretro_android.so`) files in the `libretro_directory` of the
-`retroarch.cfg` detection found, `cores/` beside RetroArch when the setting is
-unset, a `retroarch.cfg` next to the system directory for a portable install
-given with `--dest`, and the folders RetroPie (`/opt/retropie/libretrocores`)
+`retroarch.cfg` whose `system_directory` is the BIOS folder, found the same
+way with `--dest` or without, `cores/` beside RetroArch when the setting is
+unset, a `retroarch.cfg` next to the system directory for a portable install,
+and the folders RetroPie (`/opt/retropie/libretrocores`)
 and Lakka (`/usr/lib/libretro`, `/storage/cores`) install into. A core file
 is named the buildbot's way (`mednafen_psx`), and the manifest maps each name to
 the profile its files are filed under (`beetle_psx`).
@@ -694,7 +695,7 @@ what the options name, everything by default.
 | <span id="option-list-cores"></span>`--list-cores` | Print the cores whose extra files a platform installs |
 | <span id="option-list-emulators"></span>`--list-emulators` | Print every name `--emulator` accepts, each buildbot name beside the emulator it stands for |
 | <span id="option-romm-firmware"></span>`--romm-firmware TEMPLATE` | RomM: where each platform's firmware goes in the library, as `filesystem.structure.firmware` in RomM's `config.yml` says (`{platform}/bios` for a library laid out as `{platform}/roms`). Read from `config.yml` beside the library when it is there. See [RomM firmware layout](#romm-firmware-layout) |
-| <span id="option-no-input"></span>`--no-input` | Never ask a question, even at a terminal |
+| <span id="option-no-input"></span>`--no-input` | Never ask a question, even at a terminal. A run whose output goes to a file or a pipe asks nothing either, and says so on stderr |
 | <span id="option-check"></span>`--check` | Report and exit without writing |
 | <span id="option-dry-run"></span>`--dry-run` | Show what would be downloaded, the totals first, then by system and with sizes, without writing anything. A plan taller than the screen names the ten largest systems, and `--verbose` lists every system and file |
 | <span id="option-yes"></span>`--yes`, `-y` | Do not ask before a download of 1 GB or more |
@@ -1066,7 +1067,8 @@ page there: muxterm keeps PgUp and PgDn for its own scrollback, so a list
 moves with the D-pad.
 
 Each launcher also sets `RETROBIOS_IDLE_EXIT` to 300: with no button pressed
-on its first screen for 5 minutes, the interface closes by itself. A pad the
+for 5 minutes since it opened, and no check or install running, the interface
+closes by itself. A pad the
 system has no mapping for sends nothing, and would otherwise leave the
 console stuck on the interface with no way out.
 
@@ -1083,9 +1085,11 @@ Each launcher tells the interface which buttons reach it, in
 
 A launcher with no mapper at all (a keyboard) leaves it unset.
 A launcher can also set `RETROBIOS_IDLE_EXIT` to a number of seconds: when
-no button reaches the first screen for that long, before any choice, the
-interface closes with `No button pressed, closing.` and exit status 0. A
-mapper that never opened the pad would otherwise hold the device on that
+no button has reached the interface since it opened, and nothing has run for
+that long, it closes with `No button pressed, closing.` and exit status 0.
+The time counts from the end of the last check, so a launcher that names the
+platform, whose interface moves on to the plan by itself, closes the same way.
+A mapper that never opened the pad would otherwise hold the device on that
 screen. On a Miyoo, B,
 X, Y and Select are Left Ctrl, Shift, Alt and Right Ctrl: pressed alone, a
 modifier sends nothing to a terminal, so the interface goes back with R2
@@ -1294,6 +1298,7 @@ other schemas under `api/v1/schemas/`.
 | `declared` | `platform`, `files`, `present`, `missing`, `wrong_hash`, `bytes_needed`, `dests` | Right after `check`, the same counts over the files the platform's own list names (`cores: null`), and their `dests` in the order of the `file` events. A setup that checks its own list reads its answer here, with or without `--declared-only` |
 | `found` | `platform`, `dest`, `folder`, `path`, `member`, `reason` | Each file to install that this machine already holds, after `check` and before anything is written, in `--check` and `--dry-run` too. `folder` is the `--from` folder as given, or the `bios_dir` of the check when the BIOS folder holds the file at another place, and then `reason` says where in words (`nested folder: ...` for a misplaced file, `the same file is at ...` for one the list installs there too). `path` is the file, and `member` the ZIP member holding the bytes when `path` is an archive, an empty string otherwise. Its copy is reported by a `downloaded` event |
 | `unreadable` | `platform`, `folder`, `path`, `member`, `reason` | Each file in a `--from` folder that could not be read and may be one the run still needs, right after the `found` events: its size is that of a file no copy was found for, or unknown (a folder that could not be listed, a ZIP that would not open). `member` names the ZIP member, or is empty. `reason` says why in words (`Permission denied`, `it is encrypted, a password is needed`) |
+| `saves` | `platform`, `files`, `folder` | After `detect` and before `checking`, when the list holds files read from the frontend's save directory and that directory is known: how many, and the `folder` they go to, where `<system>` and `<core>` stand for one folder per system or per core. When it is not known, the files are counted in the summary's `skipped` instead (`no_save_directory`) |
 | `download` | `platform`, `files`, `bytes` | Before the downloads start. Counts the files copied from this machine too |
 | `progress` | `files_done`, `files_total`, `bytes_done`, `bytes_total` | At most every half second while bytes arrive |
 | `transfer` | `bytes_local`, `bytes_network` | Right after each `progress` event, and once when the files of a `download` event are done. It splits `bytes_done`: `bytes_local` came from this machine (a copy found by `--from` or in the BIOS folder, the pack, a partial copy resumed), `bytes_network` from the network. A download speed is `bytes_network` over the time elapsed |
@@ -1336,7 +1341,7 @@ RetroArch folder that holds only `scph5501.bin`, in the order written:
 | `SSL_CERT_FILE`, `SSL_CERT_DIR` | The trusted certificates to check servers with, for a Python that finds none of its own |
 | `RETROBIOS_PLAIN`, `ACCESSIBLE` | Set to anything but `0`: the questions come line by line, as with `--plain`, instead of the full-screen interface |
 | `RETROBIOS_PAD` | The buttons a handheld launcher's mapper sends to the full screen (`gptokeyb`, `gptokeyb_muxterm`, `muxterm`, `evmapy`, `miyoo`), so its hints name them. See [On a handheld](#on-a-handheld-the-retrobios-port) |
-| `RETROBIOS_IDLE_EXIT` | Seconds the full screen's first screen waits for a first button. With none pressed, it closes with exit status 0 |
+| `RETROBIOS_IDLE_EXIT` | Seconds the full screen waits for a first button, counted while nothing runs. With none pressed, it closes with exit status 0 |
 | `HTTPS_PROXY`, `NO_PROXY` | Honoured for every download through the standard library's default proxy handling: one names the proxy, the other the hosts to reach directly |
 
 ## When something goes wrong

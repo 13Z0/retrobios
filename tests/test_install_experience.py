@@ -507,6 +507,89 @@ class ARefusedFolderReportsEachFile(unittest.TestCase):
                          list(range(1, len(downloaded) + 1)))
 
 
+class AFolderThisUserCannotEnter(unittest.TestCase):
+    """A subfolder of the BIOS folder without search permission (made 0700
+    by an emulator that ran as root, or denied by a Windows ACL) raised
+    PermissionError from Path.exists() before any file was handled, in
+    --check and in an install alike."""
+
+    def _locked(self, repo: FakeRepository) -> Path:
+        (repo.dest / "pcsx").mkdir(parents=True)
+        (repo.dest / "pcsx" / "extra.bin").write_bytes(b"old")
+        os.chmod(repo.dest / "pcsx", 0o000)
+        return repo.dest / "pcsx"
+
+    @unittest.skipIf(os.name == "nt" or os.geteuid() == 0,
+                     "a folder without search permission is POSIX")
+    def test_check_names_the_file_and_reads_the_others(self):
+        with FakeRepository() as repo:
+            locked = self._locked(repo)
+            try:
+                proc = repo.run("--check")
+            finally:
+                os.chmod(locked, 0o755)
+        self.assertNotIn("Traceback", proc.stderr)
+        self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
+        self.assertIn("wrong hash: pcsx/extra.bin", proc.stdout)
+        self.assertIn("could not be read (Permission denied)", proc.stdout)
+        self.assertIn("missing: scph5501.bin", proc.stdout)
+
+    @unittest.skipIf(os.name == "nt" or os.geteuid() == 0,
+                     "a folder without search permission is POSIX")
+    def test_install_fails_that_file_alone(self):
+        with FakeRepository() as repo:
+            locked = self._locked(repo)
+            try:
+                proc = repo.run("--events")
+            finally:
+                os.chmod(locked, 0o755)
+            installed = repo.installed()
+        self.assertNotIn("Traceback", proc.stderr)
+        events = [json.loads(line) for line in proc.stdout.splitlines()]
+        failed = {e["dest"]: e["reason"] for e in events
+                  if e["event"] == "downloaded" and not e["ok"]}
+        self.assertEqual(list(failed), ["pcsx/extra.bin"], proc.stderr)
+        self.assertIn("this user may not have access", failed["pcsx/extra.bin"])
+        self.assertIn("scph5501.bin", installed)
+        self.assertIn("mgba/extra.bin", installed)
+
+    @unittest.skipIf(os.name == "nt" or os.geteuid() == 0,
+                     "a folder without search permission is POSIX")
+    def test_declared_state_reads_it_as_wrong(self):
+        with FakeRepository() as repo:
+            locked = self._locked(repo)
+            entry = {"dest": "pcsx/extra.bin", "sha1": "0" * 40, "size": 3}
+            try:
+                state = install._declared_state(entry, entry, repo.dest)
+            finally:
+                os.chmod(locked, 0o755)
+        self.assertEqual(state, "wrong_hash")
+
+
+class OutputToAFileAsksNothing(unittest.TestCase):
+    """`install.py > log.txt` at a terminal: the menu went into the file
+    and the run waited on an answer to a prompt nobody could see."""
+
+    @unittest.skipIf(os.name == "nt", "a pseudo-terminal for stdin")
+    def test_the_run_goes_on_as_with_no_input(self):
+        import pty
+
+        master, slave = pty.openpty()
+        try:
+            with FakeRepository() as repo:
+                proc = subprocess.run(
+                    repo.command(), env=repo.env(), stdin=slave, capture_output=True,
+                    text=True, timeout=60, check=False)
+                installed = repo.installed()
+        finally:
+            os.close(master)
+            os.close(slave)
+        self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+        self.assertIn("nothing is asked", proc.stderr)
+        self.assertNotIn("Enter) install everything", proc.stdout)
+        self.assertEqual(len(installed), len(FakeRepository.PAYLOADS))
+
+
 class _Tty(io.StringIO):
     def isatty(self) -> bool:
         return True
