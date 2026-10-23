@@ -225,8 +225,9 @@ class Picker(unittest.TestCase):
         self.assertNotRegex(source, r"`\$\{files\.length\} files")
         self.assertIn("<figcaption>Terminal</figcaption>", source)
         self.assertIn("flex-direction: column;", source)
-        # The size gap is the release against the current list, from release.json.
-        self.assertIn("import release from '../../../release.json';", source)
+        # The size gap is the release against the current list, from the
+        # release record reduced to the registry's release_pack setups.
+        self.assertIn("import release from '../generated/release-advertised.json';", source)
         self.assertIn("It was built from the list of that day.", source)
 
 

@@ -4,19 +4,23 @@
 // which convert.py derives from install/<platform>.json. The selection
 // follows install.py narrow(): a file is kept when one of its systems is
 // chosen, a file with no system when "other" is chosen.
-// The list follows the current data; release.json says what the published
-// ZIP of each setup holds, so the page can say when the two differ.
-import release from '../../../release.json';
+// The list follows the current data. release-advertised.json says what the
+// published ZIP of each setup holds, so the page can say when the two
+// differ. generate_site.py writes it from release_record.load_advertised():
+// the release record reduced to the setups the registry marks release_pack,
+// the rule the setup pages and get/ pages follow. A setup the release still
+// holds a pack for but the registry no longer marks gets no ZIP line here.
+import release from '../generated/release-advertised.json';
 
 const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 const packs = Object.fromEntries(
-	Object.values(release.packs).flatMap((pack) =>
+	Object.values(release.packs ?? {}).flatMap((pack) =>
 		pack.platforms.map((platform) => [platform, { files: pack.files, size: pack.extracted_size }]),
 	),
 );
 ---
 
-<div class="rb-picker" data-base={base} data-release={JSON.stringify({ tag: release.tag, packs })}>
+<div class="rb-picker" data-base={base} data-release={JSON.stringify({ tag: release.tag ?? '', packs })}>
 	<fieldset>
 		<label for="rb-pick-platform">Your setup</label>
 		<select id="rb-pick-platform" name="platform">
