@@ -346,7 +346,8 @@ class ListPlatformsTakesTheSharedFlag(unittest.TestCase):
         )
         self.assertEqual(proc.returncode, 0, proc.stderr)
         lines = proc.stdout.splitlines()
-        self.assertIn("retropie (archived)", lines)
+        self.assertIn("retropie (archived, installer only)", lines)
+        self.assertIn("knulli (installer only)", lines)
         self.assertIn("retroarch", lines)
 
 

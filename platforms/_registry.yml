@@ -177,10 +177,15 @@ _standalone_copies: &standalone_copies
       android:
       - $EXTERNAL_STORAGE/Android/data/com.flycast.emulator/files/data
 
+# release_pack: true marks the platforms a release publishes a ZIP for, the
+# ones most people download (download_count of v2026.10.10, part 1 of each
+# pack). Every other platform is served by the installer, whose manifest is
+# written for all of them. wiki/release-process.md says how to revisit it.
 platforms:
   retroarch:
     config: retroarch.yml
     status: active
+    release_pack: true
     device_group: computer
     extract_to: system/
     logo: https://raw.githubusercontent.com/libretro/RetroArch/master/media/retroarch-vector_invader-only.svg
@@ -486,6 +491,7 @@ platforms:
   batocera:
     config: batocera.yml
     status: active
+    release_pack: true
     device_group: gaming-os
     extract_to: /userdata/bios/
     logo: https://raw.githubusercontent.com/batocera-linux/batocera-emulationstation/master/resources/splash_batocera.svg
@@ -561,6 +567,7 @@ platforms:
   retrobat:
     config: retrobat.yml
     status: active
+    release_pack: true
     device_group: computer
     extract_to: bios/
     logo: https://raw.githubusercontent.com/RetroBat-Official/retrobat/main/system/resources/retrobat_logo_notext.png
@@ -608,6 +615,7 @@ platforms:
   emudeck:
     config: emudeck.yml
     status: active
+    release_pack: true
     device_group: computer
     extract_to: ~/Emulation/bios/
     logo: https://raw.githubusercontent.com/dragoonDorise/EmuDeck/main/icons/EmuDeck.png
@@ -749,6 +757,7 @@ platforms:
   romm:
     config: romm.yml
     status: active
+    release_pack: true
     device_group: server
     extract_to: library/bios/
     logo: https://avatars.githubusercontent.com/u/164058018
@@ -1024,6 +1033,7 @@ platforms:
   misterfpga:
     config: misterfpga.yml
     status: active
+    release_pack: true
     device_group: fpga
     extract_to: /media/fat/games/
     logo: https://avatars.githubusercontent.com/u/29345272

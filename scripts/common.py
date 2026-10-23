@@ -437,6 +437,25 @@ def list_registered_platforms(
     return platforms
 
 
+def list_release_pack_platforms(
+    platforms_dir: str = "platforms",
+    include_archived: bool = False,
+) -> list[str]:
+    """Registered platforms a release publishes a ZIP pack for.
+
+    `release_pack: true` in _registry.yml is the whole list: the build of
+    `--all`, the pack checks, the release record and every download table
+    read it. The other platforms keep their install manifest and are served
+    by the installer.
+    """
+    registry = load_platform_registry(platforms_dir)
+    return [
+        name
+        for name in list_registered_platforms(platforms_dir, include_archived)
+        if registry.get(name, {}).get("release_pack") is True
+    ]
+
+
 # A list this short is printed whole rather than pointed at.
 SHORT_LIST = 12
 

@@ -26,11 +26,15 @@ import split_pack
 from common import (
     ArtifactLockBusy,
     artifact_lock,
-    list_registered_platforms,
+    list_release_pack_platforms,
     write_text_atomic,
 )
 
 RECORD = "release.json"
+# Each registered platform has a page at get/<platform>/ on the site: the
+# current pack's files, or the command when no release publishes one. The
+# address outlives every release, so a link written elsewhere keeps working.
+GET_DIR = "get"
 
 
 class UnfinishedSplitError(Exception):
@@ -46,11 +50,12 @@ def release_owners(platforms_dir: str = "platforms") -> dict[str, list[str]]:
 
     Rebuilt from the name builder, never matched by substring: matched by
     substring, RetroArch_v1.22.2_AndroidArm64V8A_BIOS_Pack.zip sorts before
-    the full pack and was taken for the RetroArch pack.
+    the full pack and was taken for the RetroArch pack. Only the platforms
+    marked release_pack own a release pack.
     """
     import generate_pack
 
-    platforms = list_registered_platforms(platforms_dir, include_archived=True)
+    platforms = list_release_pack_platforms(platforms_dir, include_archived=True)
     owners: dict[str, list[str]] = {}
     for platform, names in generate_pack._expected_pack_names(
         platforms, platforms_dir, None, None
@@ -125,6 +130,35 @@ def load_record(path: str | Path = RECORD) -> dict:
             return json.load(handle)
     except (OSError, json.JSONDecodeError):
         return {}
+
+
+def get_page(platform: str, site: str = "") -> str:
+    """The permanent download address of a platform, under *site*."""
+    return f"{site}{GET_DIR}/{platform}/"
+
+
+def advertised(record: dict, platforms_dir: str = "platforms") -> dict:
+    """The record as the download tables show it: release_pack platforms only.
+
+    A release cut before a platform lost its release_pack still holds that
+    platform's pack. The tables follow the registry, so a platform left out
+    is offered the command, and a pack two platforms shared names the one
+    still released.
+    """
+    if not record:
+        return {}
+    released = set(list_release_pack_platforms(platforms_dir, include_archived=True))
+    packs = {}
+    for name, pack in record.get("packs", {}).items():
+        serves = [p for p in pack.get("platforms", ()) if p in released]
+        if serves:
+            packs[name] = {**pack, "platforms": serves}
+    return {**record, "packs": packs}
+
+
+def load_advertised(path: str | Path = RECORD, platforms_dir: str = "platforms") -> dict:
+    """The committed record, reduced to the platforms a release publishes."""
+    return advertised(load_record(path), platforms_dir)
 
 
 def pack_name_for(platform: str, record: dict) -> str | None:

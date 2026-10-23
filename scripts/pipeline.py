@@ -317,8 +317,27 @@ def _match_key(label: str) -> set[str]:
     } - {""}
 
 
-def check_consistency(verify_output: str, pack_output: str) -> bool:
-    """Verify that check counts match between verify and pack for each platform."""
+def release_pack_keys(platforms_dir: str = "platforms", include_archived: bool = False) -> set[str]:
+    """Comparable identities of the platforms --all builds a pack for: their
+    registry ids and display names, normalized as _match_key does."""
+    from common import list_release_pack_platforms, load_platform_config  # noqa: PLC0415
+
+    keys: set[str] = set()
+    for name in list_release_pack_platforms(platforms_dir, include_archived):
+        keys |= _match_key(name)
+        keys |= _match_key(str(load_platform_config(name, platforms_dir).get("platform", name)))
+    return keys
+
+
+def check_consistency(
+    verify_output: str, pack_output: str, released: set[str] | None = None,
+) -> bool:
+    """Verify that check counts match between verify and pack for each platform.
+
+    *released* holds the identities of the platforms with a release pack
+    (release_pack_keys). verify judges every platform, the build only those:
+    a platform outside it has no pack to compare, which is no failure.
+    """
     v = parse_verify_counts(verify_output)
     p = parse_pack_counts(pack_output)
     excluded = parse_pack_exclusions(pack_output)
@@ -377,6 +396,8 @@ def check_consistency(verify_output: str, pack_output: str) -> bool:
                     f"({p_excluded} unsafe excluded) != verify {v_ok}/{v_total}"
                 )
                 all_ok = False
+        elif released is not None and not (v_names & released):
+            print(f"  {v_label}: {v_ok}/{v_total} (no release pack, served by the installer)")
         else:
             print(f"  {v_label}: {v_ok}/{v_total} (no separate pack)")
             all_ok = False
@@ -1023,7 +1044,10 @@ def main() -> None:
         skip_notice("consistency", "no full pack built")
         results["consistency"] = SKIPPED
     elif pack_output and verify_output:
-        ok = check_consistency(verify_output, pack_output)
+        ok = check_consistency(
+            verify_output, pack_output,
+            release_pack_keys(include_archived=args.include_archived),
+        )
         # Counts can agree while the paths differ, both ways at once.
         ok = check_pack_destinations(destinations_file, pack_output) and ok
         ok = check_emulator_packs() and ok

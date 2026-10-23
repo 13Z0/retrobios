@@ -140,12 +140,19 @@ class VerifyPackChoice(unittest.TestCase):
             self._run(self._args())
         self.assertEqual(out.getvalue().strip().splitlines()[-1], "Verified 1 pack: all OK")
 
-    def test_include_archived_reaches_the_archived_pack(self):
+    def test_the_sweep_checks_release_packs_and_a_named_platform_its_own(self):
+        """--all checks the packs a release publishes (release_pack): the
+        RetroPie pack, archived and served by the installer, is left to a
+        check that names it."""
         stem = self.gp._platform_pack_stem(["retropie"], "retropie", "platforms")
         self._touch(f"{stem}_BIOS_Pack.zip")
+        self._touch(f"{self.stem}_BIOS_Pack.zip")
         checked = self._run(
             self._args(platform=None, all=True, include_archived=True)
         )
+        self.assertIn(("retroarch", f"{self.stem}_BIOS_Pack.zip"), checked)
+        self.assertNotIn(("retropie", f"{stem}_BIOS_Pack.zip"), checked)
+        checked = self._run(self._args(platform="retropie"))
         self.assertIn(("retropie", f"{stem}_BIOS_Pack.zip"), checked)
 
 
