@@ -66,6 +66,12 @@ systems:
   - taito-typezero
   - barcrest-mpu4
 
+data_root:
+  android:
+    path: "Android/data/com.seleuco.mame4droid/files"
+    source_ref: "MAME4droid app/src/main/java/com/seleuco/mame4droid/helpers/MainHelper.java:166-202, MAME4droid app/src/main/java/com/seleuco/mame4droid/helpers/DialogHelper.java:135-185, MAME4droid app/src/main/java/com/seleuco/mame4droid/MAME4droid.java:187-198"
+    note: "Java app seleuco/MAME4droid-0.139u1- at 5b5795d (1.16.9). Android 10 and later take this folder by default, Android/media/com.seleuco.mame4droid on Android TV. Earlier versions use /sdcard/MAME4droid"
+
 notes: |
   Android port of MAME 0.139u1 by David Valdeita (Seleuco), package
   com.seleuco.mame4droid. The Java app (seleuco/MAME4droid-0.139u1-,
@@ -77,9 +83,8 @@ notes: |
   0.139 set names (cpzn1, cpzn2, acpsx, atpsx, atluspsx, vspsx, psarc95,
   tps, taitofx1). Later MAME renamed them to coh####.
 
-  setGlobalPath chdirs into the installation directory, /sdcard/MAME4droid
-  or /sdcard/Android/data/com.seleuco.mame4droid/files, so every relative
-  path resolves there. Defaults from emuopts.c: roms, samples, artwork,
+  setGlobalPath chdirs into the installation directory the Java app passes,
+  given in data_root, so every relative path resolves there. Defaults from emuopts.c: roms, samples, artwork,
   ctrlr, cheat, crosshair, hi, and fontpath at the root.
 
   open_rom_file walks the parent chain building <drivername>/<romname> and
