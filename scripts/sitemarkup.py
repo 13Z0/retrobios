@@ -190,27 +190,37 @@ def initials(name: str) -> str:
     return "".join(capitals[:2]) or name[:2].upper()
 
 
-def _tile_mark(name: str, logo: str) -> str:
+def _tile_mark(name: str, logo: str, lazy: bool = False) -> str:
+    """A tile's logo, or its initials. *lazy* for a tile below the first
+    screen: the browser fetches its logo when the reader scrolls near it."""
     if logo:
-        return f'<img class="rb-card-logo" src="{html.escape(logo)}" alt="" width="40" height="40">'
+        loading = ' loading="lazy"' if lazy else ""
+        return (f'<img class="rb-card-logo" src="{html.escape(logo)}" alt="" '
+                f'width="40" height="40"{loading}>')
     # The same square as a logo, drawn on white like the logos are.
     return ('<svg class="rb-card-logo" viewBox="0 0 40 40" width="40" height="40" aria-hidden="true">'
             '<text x="20" y="25" text-anchor="middle" font-size="14" font-weight="700" '
             f'fill="#2b2e5c">{html.escape(initials(name))}</text></svg>')
 
 
-def platform_tiles(tiles: list[tuple[str, str, str, str]]) -> list[str]:
+# Tiles in the first row of a grid at its widest, two columns of 15rem in
+# the content column: the logos the reader may see without scrolling.
+FIRST_ROW_TILES = 2
+
+
+def platform_tiles(tiles: list[tuple[str, str, str, str]], eager: int = 0) -> list[str]:
     """One link per setup: its logo (or its initials), its name and where it
-    runs. *tiles* are (name, target, logo, runs_on).
+    runs. *tiles* are (name, target, logo, runs_on). The first *eager*
+    logos load with the page, the others when the reader scrolls to them.
 
     One HTML line: a grid of links is a menu, not prose, and the Markdown
     around it reads none of it."""
     links = "".join(
         f'<a class="rb-card rb-tile" href="{html.escape(target)}">'
-        f"{_tile_mark(name, logo)}"
+        f"{_tile_mark(name, logo, lazy=index >= eager)}"
         f'<strong class="rb-tile-name">{html.escape(name)}</strong>'
         f'<span class="rb-tile-runs">{inline_html(runs_on)}</span></a>'
-        for name, target, logo, runs_on in tiles
+        for index, (name, target, logo, runs_on) in enumerate(tiles)
     )
     return [f'<div class="rb-cards rb-tiles">{links}</div>', ""]
 

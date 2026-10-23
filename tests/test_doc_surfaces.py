@@ -169,7 +169,8 @@ class DownloadLinksNameTheFile(unittest.TestCase):
             self.assertNotIn("releases/latest", row)
         for pack in RECORD["packs"].values():
             for asset in pack["assets"]:
-                self.assertIn(f"/releases/download/{RECORD['tag']}/{asset})", page)
+                self.assertRegex(page, re.escape(f"/releases/download/{RECORD['tag']}/{asset}")
+                                 + r"[)\"]")
 
     def test_a_platform_the_release_lacks_links_no_release(self):
         """KNULLI, AmberELEC and EmuELEC were registered after the recorded

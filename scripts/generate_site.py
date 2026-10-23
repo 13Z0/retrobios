@@ -83,8 +83,12 @@ from siteguides import (
     ALSO_RUNS,
     DEVICE_GROUPS,
     GROUP_ANCHORS,
+    GROUP_TILES,
     GUIDES,
+    HANDHELD_GUIDE,
     Guide,
+    HandheldGuide,
+    HandheldSystem,
     FENCE_TITLES,
     INSTALL_BASE,
     TERMINALS,
@@ -450,30 +454,38 @@ def _next_block(links: list[str]) -> list[str]:
     return ["## Next steps", "", *(f"- {link}" for link in links), ""]
 
 
-def _tiles(registry: dict, members: list[str], display: dict[str, str], prefix: str = "") -> list[str]:
-    """The setup tiles of one device group: logo, name and the hardware it runs on."""
+def _tiles(registry: dict, members: list[str], display: dict[str, str], prefix: str = "",
+           group: str = "", eager: int = 0) -> list[str]:
+    """The setup tiles of one device group: logo, name and the hardware it
+    runs on, then the group's other tiles: a kind of device that runs one of
+    the setups (Android handhelds, Linux handhelds)."""
     return markup.platform_tiles([
-        (display[name], f"{prefix}platforms/{name}.md",
-         str(registry.get(name, {}).get("logo") or ""),
-         GUIDES[name].runs_on or _runs_on(registry.get(name, {}), GUIDES[name]))
-        for name in members
-    ])
+        *((display[name], f"{prefix}platforms/{name}.md",
+           str(registry.get(name, {}).get("logo") or ""),
+           GUIDES[name].runs_on or _runs_on(registry.get(name, {}), GUIDES[name]))
+          for name in members),
+        *((tile.name, f"{prefix}{tile.link}", "", tile.text) for tile in GROUP_TILES.get(group, ())),
+    ], eager=eager)
 
 
 def setup_picker(registry: dict, display: dict[str, str], prefix: str = "") -> list[str]:
     """Every setup as a tile, under the device group it belongs to. The
     setups alone in their group share one row: "MiSTer FPGA" above
-    "MiSTer FPGA" said nothing."""
+    "MiSTer FPGA" said nothing. Only the first row of logos loads with the
+    page: the 19 logos were most of the bytes of the home page."""
     lines: list[str] = []
     alone: list[str] = []
     for group, (label, _description) in DEVICE_GROUPS.items():
         members = _group_keys(registry, group, display)
-        if len(members) == 1:
+        if len(members) == 1 and not GROUP_TILES.get(group):
             alone += members
         elif members:
-            lines += [f"**{label}**", "", *_tiles(registry, members, display, prefix)]
+            eager = 0 if lines else markup.FIRST_ROW_TILES
+            lines += [f"**{label}**", "",
+                      *_tiles(registry, members, display, prefix, group, eager)]
     if alone:
-        lines += ["**Other setups**", "", *_tiles(registry, alone, display, prefix)]
+        eager = 0 if lines else markup.FIRST_ROW_TILES
+        lines += ["**Other setups**", "", *_tiles(registry, alone, display, prefix, eager=eager)]
     return lines
 
 
@@ -510,13 +522,15 @@ def generate_home(
         "",
         f"Free. No account. Works with {works_with}.",
         "",
-        "- A game says BIOS missing? [When a game does not start](wiki/troubleshooting.md)",
-        "- Have a file already? Reference: [Check it](files/index.md)",
+        "- BIOS missing, even with the file there? "
+        "[When a game does not start](wiki/troubleshooting.md)",
+        "- Reference: [Check your file](files/index.md)",
         "",
         "## Do I need it?",
         "",
         "- **Yes**, if your emulator says a BIOS is missing.",
-        "- **Yes** for PlayStation 1 and 2, Saturn, Dreamcast and Neo Geo.",
+        "- **Yes** for PlayStation 1 and 2, Saturn and Neo Geo.",
+        "- **Better with it** for Dreamcast: some games need it.",
         "- **Usually not** for NES, Super Nintendo, Mega Drive and Game Boy.",
         "",
         "Details: [Every console, one by one](systems/index.md)",
@@ -635,8 +649,8 @@ def release_line(platform_name: str, record: dict) -> list[str]:
     built = _release_date(tag)
     lines = [
         f"Pack {tag}{f', built {built}' if built else ''}. "
-        f"[SHA256SUMS.txt]({base}/SHA256SUMS.txt) "
-        f"[signature]({base}/SHA256SUMS.txt.sig)",
+        f"[SHA256SUMS.txt]({base}/SHA256SUMS.txt) and its "
+        f"[signature]({base}/SHA256SUMS.txt.sig).",
     ]
     config = load_platform_config(platform_name, "platforms")
     page_version = str(config.get("version") or "")
@@ -648,9 +662,41 @@ def release_line(platform_name: str, record: dict) -> list[str]:
     return lines
 
 
+# What a reader on another version of the setup does with the pack. Our data
+# says which list the pack was made from, not what an older list lacks.
+OTHER_VERSION = "Other version? Run `--check` after copying."
+
+
+def setup_version(platform_name: str, record: dict | None = None) -> str:
+    """The setup and version whose BIOS list the pack was made from
+    ("Batocera 43.1"): the version in the pack's name, else the version the
+    platform YAML was read at. Empty when neither says, or when the
+    platform has no YAML to read a version from."""
+    try:
+        config = load_platform_config(platform_name, "platforms")
+    except FileNotFoundError:
+        return ""
+    pack_name = release_record.pack_name_for(platform_name, record or {})
+    version = (_pack_version(pack_name) if pack_name else "") or str(config.get("version") or "")
+    if not version:
+        return ""
+    return f"{config.get('platform', platform_name)} {version.removeprefix('v')}"
+
+
+def version_line(platform_name: str, record: dict, named: bool = False) -> str:
+    """The version the pack fits, and what to do on another. *named* when
+    the release line already named the pack's version."""
+    made_from = setup_version(platform_name, record)
+    if named or not made_from:
+        return OTHER_VERSION
+    return f"Made for {made_from}. {OTHER_VERSION}"
+
+
 def _pack_buttons(platform_name: str, label: str = "Pack") -> str:
     """Buttons to the files of the platform's pack in the recorded release,
-    and the release they come from under them."""
+    the release they come from, and the setup version its list was read at.
+    "Does this pack fit my version?" is the first question a frontend user
+    asks."""
     record = release_record.load_record()
     buttons = download_links(
         platform_name,
@@ -659,13 +705,9 @@ def _pack_buttons(platform_name: str, label: str = "Pack") -> str:
         label,
         button=lambda text, url: markup.button(text, url, primary=True),
     )
-    return "\n\n".join([buttons, *release_line(platform_name, record)])
-
-
-def _released_files(platform_name: str) -> str:
-    """File count of the pack the latest release serves, as a table cell."""
-    files, _size = release_totals(platform_name, release_record.load_record())
-    return f"{files:,}" if files else "-"
+    released = release_line(platform_name, record)
+    return "\n\n".join([buttons, *released,
+                        version_line(platform_name, record, named=len(released) > 1)])
 
 
 # The home tile counts the whole collection. Labelled "Files" above a table
@@ -2223,15 +2265,14 @@ def decorate_markdown_pages(docs: Path) -> dict[str, str]:
 
 
 def generate_platform_index(coverages: dict, registry: dict | None = None) -> str:
-    """The Your setup tab: every platform by the device it runs on, then the
-    figures of each one under a reference heading."""
+    """The Your setup tab: every platform by the device it runs on, and one
+    line to the table that sets them side by side (setup_table), which is
+    reference matter and sits with how each setup checks its files."""
     registry = registry or {}
-    total_present = sum(c["present"] for c in coverages.values())
-
     lines = [
         "# Your setup",
         "",
-        "Pick what you play on. Its page gives the folder, the command and the ZIP.",
+        "Each setup's page gives the folder, the command and the ZIP.",
         "",
     ]
     for group, (label, description) in DEVICE_GROUPS.items():
@@ -2244,69 +2285,65 @@ def generate_platform_index(coverages: dict, registry: dict | None = None) -> st
             (f"[{coverages[name]['platform']}]({name}.md)", [GUIDES[name].summary])
             for name in members
         ])
-
     lines += [
-        "## Reference: every platform at a glance { #reference }",
+        f"Reference: [Every setup side by side](../{SETUP_TABLE_LINK})",
         "",
-        level_label("reference"),
-        "",
-        f"{setup_count()} supported platforms with {total_present:,} verified files.",
-        "",
-        "| Platform | On its BIOS list | Files in the pack | Checked by | Status | Download |",
-        "|----------|------:|------:|-----------|--------|----------|",
     ]
-
-    mode_labels = {
-        "md5": '<span class="rb-badge rb-badge-success">MD5</span>',
-        "sha1": '<span class="rb-badge rb-badge-success">SHA1</span>',
-        "existence": '<span class="rb-badge rb-badge-info">existence</span>',
-    }
-
-    archived_any = False
-    for name, cov in sorted(coverages.items(), key=lambda x: x[1]["platform"]):
-        display = cov["platform"]
-
-        mode_html = mode_labels.get(
-            cov["mode"],
-            f'<span class="rb-badge rb-badge-muted">{cov["mode"]}</span>',
-        )
-        status = registry.get(name, {}).get("status", "active")
-        if status == "archived":
-            archived_any = True
-            status_html = '<span class="rb-badge rb-badge-muted">archived</span>'
-        else:
-            status_html = '<span class="rb-badge rb-badge-success">active</span>'
-
-        lines.append(
-            f"| [{display}]({name}.md) | "
-            f"{cov['present']:,} | {_released_files(name)} | "
-            f"{mode_html} | {status_html} | "
-            f"{_pack_cell(name, release_record.load_record(), '../')} |"
-        )
-
-    lines.extend(
-        [
-            "",
-            "The BIOS list is what the platform publishes. The pack adds the "
-            "files its emulators load and the data directories they read, "
-            "which is the count an extraction shows. "
-            "Checked by is the test each platform runs on its own, replicated "
-            "from its source code.",
-            "",
-            "Reference: [How each platform checks files](../wiki/verification-modes.md).",
-        ]
-    )
-
-    if archived_any:
-        lines.extend(
-            [
-                "",
-                "An archived platform keeps its configuration and still gets a "
-                "pack, but upstream is no longer scraped on a schedule.",
-            ]
-        )
-
     return "\n".join(lines) + "\n"
+
+
+# Where the side-by-side table of setups is published: with how each setup
+# checks its files, the column a reader compares.
+SETUP_TABLE_PAGE = "wiki/verification-modes.md"
+SETUP_TABLE_ANCHOR = "every-setup-at-a-glance"
+SETUP_TABLE_LINK = f"{SETUP_TABLE_PAGE}#{SETUP_TABLE_ANCHOR}"
+# How a setup checks a file, in the words of a reader.
+_HOW_IT_CHECKS = {"existence": "name only", "md5": "MD5", "sha1": "SHA-1"}
+
+
+def setup_table(coverages: dict, registry: dict | None = None) -> list[str]:
+    """Every setup side by side: the files on its own list, the files in its
+    ZIP, and how it checks them. Written under the Reference level, on the
+    page that explains each way of checking."""
+    registry = registry or {}
+    lines = [
+        f"## Every setup at a glance {{ #{SETUP_TABLE_ANCHOR} }}",
+        "",
+        "| Setup | Files on its own list | Files in the ZIP | How it checks |",
+        "|-------|------:|------:|---------------|",
+    ]
+    archived = False
+    for name, cov in sorted(coverages.items(), key=lambda item: item[1]["platform"].casefold()):
+        status = registry.get(name, {}).get("status")
+        archived |= status == "archived"
+        listed = f"{cov['total']:,}" if cov["total"] else "No list of its own"
+        files, _size = release_totals(name, release_record.load_record())
+        zipped = f"{files:,}" if files else "No ZIP yet"
+        lines.append(
+            f"| [{cov['platform']}](../platforms/{name}.md)"
+            f"{' (archived)' if status == 'archived' else ''} | {listed} | {zipped} | "
+            f"{_HOW_IT_CHECKS.get(cov['mode'], cov['mode'])} |"
+        )
+    lines += [
+        "",
+        "The ZIP adds the files its emulators load to the files on the setup's own list.",
+        "",
+    ]
+    if archived:
+        lines += ["An archived setup keeps its page and its ZIP. Its list is no longer "
+                  "read again on a schedule.", ""]
+    return lines
+
+
+def with_setup_table(page: str, coverages: dict, registry: dict | None = None) -> str:
+    """The comparison table placed before the Next steps of its page, or at
+    its end."""
+    table = "\n".join(setup_table(coverages, registry))
+    marker = "\n## Next steps"
+    if marker in page:
+        head, tail = page.split(marker, 1)
+        return f"{head.rstrip()}\n\n{table}{marker}{tail}"
+    return f"{page.rstrip()}\n\n{table}"
 
 
 # A platform system whose file list passes this much Markdown gets a page
@@ -2783,13 +2820,10 @@ def _check_sentence(display: str, mode: str, config: dict, no_list: bool) -> str
         return (f"{display} has no BIOS list, so it checks nothing itself. Each "
                 "emulator looks for its own files when a game starts.")
     if config.get("hash_rule") == "size_and_any_hash":
-        return (f"{display} checks each file's size and fingerprint too. It "
-                "reports a file with the wrong size or contents.")
+        return f"{display} also checks each file's size and contents."
     if digest_algorithm(mode):
-        return (f"{display} checks each file's fingerprint too. It reports a file "
-                "with the wrong contents.")
-    return (f"{display} only checks that a file with the right name is there. "
-            "`--check` also checks what is inside.")
+        return f"{display} also checks each file's contents."
+    return f"{display} checks names only. `--check` also checks contents."
 
 
 def _folder_rows(rows: tuple[tuple[str, str], ...], indent: str = "") -> list[str]:
@@ -2799,6 +2833,21 @@ def _folder_rows(rows: tuple[tuple[str, str], ...], indent: str = "") -> list[st
         *(f"{indent}| {label} | {path} |" for label, path in rows),
     ]
 
+
+# The second most asked question about BIOS files (14 % of the community
+# sample): the file is there and the setup still reports it missing.
+# `--check` lists every file whose hash is wrong by name (install.py, the
+# "wrong hash" lines of check_lines).
+MISSING_IN_PLACE = "Reported missing anyway? `--check` names a wrong file."
+
+# Under every command of a setup page: the safety list is the one the home
+# page shows in full, so the setup page links it.
+SAFE_LINK = "[Is it safe?](../index.md#is-it-safe)"
+
+# Under "From your computer": a device with no network installs from the ZIP
+# (`--from-pack`). The id is the one wiki/installer.md gives its section.
+OFFLINE_LINE = ("No internet on the device? "
+                "[Install from the ZIP](../wiki/installer.md#without-a-network).")
 
 # Shown in the "On the device" tab of a guide that has no `terminal:` of its own.
 DEVICE_TERMINAL_FALLBACK = "Or fill the folder from your computer, with the ZIP."
@@ -2852,13 +2901,24 @@ def _guide_download(name: str, display: str, guide: Guide, extract_to: str | Non
             "",
         ]
     elif record.get("tag"):
+        made_from = setup_version(name)
         lines += [
-            f"No {display} ZIP yet. The command installs the same files.",
+            f"No {display} ZIP yet. The command installs the same files"
+            + (f", made for {made_from}." if made_from else "."),
             "",
         ]
     else:
         lines += [_pack_buttons(name, f"Download {display} Pack"), ""]
-    return lines
+    return [*lines, *only_some_consoles(name, "../")]
+
+
+def only_some_consoles(name: str, prefix: str = "") -> list[str]:
+    """The way to a smaller download, in the words Get your files uses."""
+    return [
+        f"Only some consoles? [Pick them]({prefix}which-pack.md?platform={name}"
+        "#only-some-consoles), or press **c** in the command.",
+        "",
+    ]
 
 
 def _guide_install(name: str, guide: Guide, heading: str) -> list[str]:
@@ -2866,8 +2926,7 @@ def _guide_install(name: str, guide: Guide, heading: str) -> list[str]:
     lines = [
         heading,
         "",
-        "The command finds the folder, downloads what is missing, and checks "
-        "each file.",
+        "It finds the folder and checks each file.",
         "",
     ]
     if guide.on_card:
@@ -2880,8 +2939,76 @@ def _guide_install(name: str, guide: Guide, heading: str) -> list[str]:
     return [
         *lines,
         *terminal_tabs(guide.run, platform_args(name, guide), how={"device": device}),
-        *trust_box("../"),
+        SAFE_LINK,
+        "",
     ]
+
+
+def devices_meta(devices: tuple[str, ...]) -> str:
+    """The device names a reader types, as the `devices` search field of the
+    page: an attribute on an empty element, commas out (the search engine
+    splits its keys on commas), so no excerpt shows them."""
+    names = " ".join(name.replace(",", " ") for name in devices)
+    return f'<span data-pagefind-meta="devices:{html.escape(names, quote=True)}"></span>'
+
+
+# Devices named in a row of the handheld guide. The rest stay in the
+# page's search field and on the list the row links.
+HANDHELD_ROW_DEVICES = 6
+
+
+def _handheld_row(system: HandheldSystem) -> str:
+    shown = ", ".join(system.devices[:HANDHELD_ROW_DEVICES])
+    more = len(system.devices) - HANDHELD_ROW_DEVICES
+    devices = (f"{shown}{f' and {more} more' if more > 0 else ''} "
+               f"([list]({system.devices_source}))" if system.devices else "")
+    folder = (f"{system.folder} ([source]({system.folder_source}))" if system.folder
+              else "Not written by the system. The command finds it on the device.")
+    return f"| {system.name} | {devices} | {folder} |"
+
+
+def generate_handheld_guide(guide: HandheldGuide) -> str:
+    """The guide for the handheld systems that run a setup (ArkOS, muOS,
+    Onion... run RetroArch): one row per system the installer detects, the
+    folder seen on the card from a computer and the devices, each cited from
+    the system's own pages, then that setup's ZIP and the command for a card.
+
+    A handheld owner starts from the device name. The systems were named
+    only in a closed note, with a path seen from inside the device."""
+    uses = GUIDES[guide.uses]
+    display = load_platform_config(guide.uses, "platforms").get("platform", guide.uses)
+    args = {"windows": f"--platform {guide.uses} --dest E:\\BIOS",
+            "macos": f"--platform {guide.uses} --dest /path/to/card/BIOS",
+            "linux": f"--platform {guide.uses} --dest /path/to/card/BIOS"}
+    return "\n".join([
+        f"# {guide.title}",
+        "",
+        guide.summary,
+        "",
+        devices_meta(guide.devices),
+        "",
+        "## Where the files go { #where-the-files-go }",
+        "",
+        "Put the SD card in a computer. Find your system below.",
+        "",
+        "| System | Devices | BIOS folder on the card |",
+        "|--------|---------|-------------------------|",
+        *(_handheld_row(system) for system in guide.systems),
+        "",
+        *_guide_download(guide.uses, display, uses, None, "## Download { #download }"),
+        "## Fill the card from a computer { #install }",
+        "",
+        "On Windows, note the card's letter, like **E:**. Put its BIOS folder after "
+        "`--dest`, written as in the table.",
+        "",
+        *terminal_tabs(("windows", "macos", "linux"), args),
+        SAFE_LINK,
+        "",
+        *_next_block([
+            f"[{display}]({guide.uses}.md): every folder and every file",
+            "[When a game does not start](../wiki/troubleshooting.md)",
+        ]),
+    ]) + "\n"
 
 
 def _platform_guide(name: str, display: str, cov: dict, registry: dict, no_list: bool) -> list[str]:
@@ -2917,6 +3044,8 @@ def _platform_guide(name: str, display: str, cov: dict, registry: dict, no_list:
         lines += [
             *_guide_download(name, display, guide, extract_to,
                              "## From your computer { #download }"),
+            OFFLINE_LINE,
+            "",
             *_guide_install(name, guide, "## On the device { #install }"),
         ]
     else:
@@ -2934,6 +3063,8 @@ def _platform_guide(name: str, display: str, cov: dict, registry: dict, no_list:
         "All good when you see `0 wrong hash`.",
         "",
         _check_sentence(display, cov["mode"], cov["config"], no_list),
+        "",
+        MISSING_IN_PLACE,
         "",
         *([guide.finish, ""] if guide.finish else []),
         *_next_block([
@@ -7328,8 +7459,10 @@ def _pack_cell(name: str, record: dict, prefix: str = "") -> str:
     pack = release_record.pack_for(name, record)
     if record.get("tag") and not (pack and pack.get("assets")):
         return f"No ZIP yet. [Use the command]({prefix}platforms/{name}.md#install)."
-    display = load_platform_config(name, "platforms").get("platform", name)
-    links = download_links(name, record, REPO_URL, display)
+    # Small buttons, one per part, the size after the last: links wrapped
+    # mid-label ("part 1 of / 3") in a narrow cell.
+    links = download_links(name, record, REPO_URL, "ZIP",
+                           button=lambda text, url: markup.button(text, url))
     size = pack.get("download_size") if pack else None
     return f"{links} ({_fmt_size(size)})" if size else links
 
@@ -7354,17 +7487,62 @@ def _own_root_folders(registry: dict) -> dict[str, str]:
     return folders
 
 
+def _folder_row(key: str, display: dict[str, str], registry: dict, record: dict,
+                own_root: dict[str, str]) -> str:
+    """One setup's row: where it runs, its BIOS folder and its ZIP. A setup
+    whose ZIP holds its own top folder says where to unzip it, and the
+    BIOS folder itself when it has no ZIP to unzip."""
+    guide = GUIDES[key]
+    pack = release_record.pack_for(key, record)
+    zipped = bool(pack and pack.get("assets"))
+    folder = (f"Unzip into `{own_root[key]}`" if key in own_root and zipped
+              else _folder_cell(key, guide))
+    return (f"| [{display[key]}](platforms/{key}.md) | "
+            f"{guide.runs_on or _runs_on(registry[key], guide)} | {folder} | "
+            f"{_pack_cell(key, record)} |")
+
+
+def _folder_tables(registry: dict, record: dict, display: dict[str, str]) -> list[str]:
+    """Every setup's folder and ZIP, one table per device group, the groups
+    of one setup together under "Other setups" as on the tiles. A row for
+    each setup that runs another (LaunchBox, Android) under its group."""
+    own_root = _own_root_folders(registry)
+    header = ["| Setup | Runs on | BIOS folder | ZIP |", "|-------|---------|-------------|-----|"]
+    lines: list[str] = []
+    alone: list[str] = []
+    for group, (label, _description) in DEVICE_GROUPS.items():
+        members = _group_keys(registry, group, display)
+        if len(members) == 1 and not ALSO_RUNS.get(group):
+            alone += members
+            continue
+        if not members:
+            continue
+        lines += [f'<span id="{GROUP_ANCHORS[group]}"></span>**{label}**', "", *header]
+        lines += [_folder_row(key, display, registry, record, own_root) for key in members]
+        lines += [
+            f"| {setup} | {runs_on} | {folder}, same as "
+            f"[{display[uses]}](platforms/{uses}.md) | {_pack_cell(uses, record)} |"
+            for setup, _summary, uses, runs_on, folder in ALSO_RUNS.get(group, ())
+        ]
+        lines.append("")
+    if alone:
+        anchors = "".join(f'<span id="{GROUP_ANCHORS[registry[key]["device_group"]]}"></span>'
+                          for key in alone)
+        lines += [f"{anchors}**Other setups**", "", *header,
+                  *(_folder_row(key, display, registry, record, own_root) for key in alone), ""]
+    return lines
+
+
 def generate_which_pack() -> str:
     """The device picker: every registered platform as a tile under the
-    device it runs on, then one table per device with its BIOS folder and
-    its ZIP, the console picker, and the command for a setup not listed.
+    device it runs on, the ZIP advice with every folder and ZIP in one closed
+    table, the console picker, and the command for a setup not listed.
 
-    The tiles are the choice. A second set of cards, five tables and the
-    picker offered the same choice three times."""
+    The tiles are the choice. Open tables under them listed every setup a
+    second time and made the page 11,800 px tall on a phone."""
     registry = load_platform_registry("platforms")
     record = release_record.load_record()
     display = {key: load_platform_config(key, "platforms").get("platform", key) for key in registry}
-    own_root = _own_root_folders(registry)
     all_tabs = ("windows", "macos", "linux", "steamdeck", "android")
     lines = [
         "# Get your files",
@@ -7376,52 +7554,19 @@ def generate_which_pack() -> str:
         *setup_picker(registry, display),
         "## Folders and ZIP files { #manual-download }",
         "",
-        "- A big ZIP comes in parts, like `Pack.part1of2.zip`. Download every part.",
-        "- Unzip them all into the BIOS folder of your setup. Put the files "
-        "straight in it, not in a new folder.",
-        "- Some files inside stay zipped, like `neogeo.zip`. Leave them as they are.",
-        "- **Unzip into** means the ZIP holds its own top folder. Unzip it there.",
+        "- A big ZIP comes in parts. Download every part.",
+        "- Unzip them into your BIOS folder. Put the files straight in it, "
+        "not in a new folder.",
+        "- Leave the ZIPs inside, like `neogeo.zip`, as they are.",
+        "- A few ZIPs hold their own top folder. Their setup's page says where "
+        "to unzip them.",
         "",
+        *markup.details("note", "Every folder and ZIP in one table",
+                        _folder_tables(registry, record, display)),
     ]
-    no_zip = False
-    for group, (label, _description) in DEVICE_GROUPS.items():
-        members = _group_keys(registry, group, display)
-        if not members:
-            continue
-        lines += [
-            f"### {label} {{ #{GROUP_ANCHORS[group]} }}",
-            "",
-            "| Setup | Runs on | BIOS folder | ZIP |",
-            "|-------|---------|-------------|-----|",
-        ]
-        for key in members:
-            guide = GUIDES[key]
-            folder = (f"Unzip into `{own_root[key]}`" if key in own_root
-                      else _folder_cell(key, guide))
-            pack = release_record.pack_for(key, record)
-            no_zip |= bool(record.get("tag") and not (pack and pack.get("assets")))
-            lines.append(
-                f"| [{display[key]}](platforms/{key}.md) | "
-                f"{guide.runs_on or _runs_on(registry[key], guide)} | {folder} | "
-                f"{_pack_cell(key, record)} |"
-            )
-        for setup, _summary, uses, runs_on, folder in ALSO_RUNS.get(group, ()):
-            lines.append(
-                f"| {setup} | {runs_on} | {folder}, same as "
-                f"[{display[uses]}](platforms/{uses}.md) | {_pack_cell(uses, record)} |"
-            )
-        lines.append("")
-        if group == "handheld":
-            lines += markup.details("note", "Other handhelds that run RetroArch", [
-                "They use the RetroArch files, in the folder below. The command "
-                "finds it.",
-                "",
-                "| System | Runs | BIOS folder |",
-                "|--------|------|-------------|",
-                *(f"| {name} | [RetroArch](platforms/retroarch.md) | `{folder}` |"
-                  for name, folder in _detected_systems(registry, "retroarch")),
-            ])
-    if no_zip:
+    no_zip = any(not (pack and pack.get("assets"))
+                 for pack in (release_record.pack_for(key, record) for key in registry))
+    if record.get("tag") and no_zip:
         lines += ["Setups added after the last release have no ZIP until the next one.", ""]
     lines += [
         f"The ZIPs come from the [latest release]({RELEASE_URL}). The command may "
@@ -7537,6 +7682,10 @@ def _platform_nav(coverages: dict, registry: dict) -> list:
             for name in sorted(coverages, key=lambda n: coverages[n]["platform"].casefold())
             if registry.get(name, {}).get("device_group") == group
         ]
+        # The handheld guide sits with the group whose tile leads to it.
+        members += [{HANDHELD_GUIDE.title: HANDHELD_GUIDE.path}
+                    for tile in GROUP_TILES.get(group, ())
+                    if HANDHELD_GUIDE and tile.link == HANDHELD_GUIDE.path]
         if members:
             nav.append({label: members})
     return nav
@@ -7898,6 +8047,8 @@ def _generate(args: argparse.Namespace) -> None:
         str(docs / "platforms" / "index.md"),
         generate_platform_index(coverages, registry),
     )
+    if HANDHELD_GUIDE:
+        write_if_changed(str(docs / HANDHELD_GUIDE.path), generate_handheld_guide(HANDHELD_GUIDE))
     for name, cov in coverages.items():
         # The emulators this platform runs, not every one of the system.
         runs = resolve_platform_cores(cov["config"], profiles)
@@ -8038,6 +8189,10 @@ def _generate(args: argparse.Namespace) -> None:
         for src_file in wiki_src.glob("*.md"):
             shutil.copy2(src_file, wiki_dest / src_file.name)
             _record(wiki_dest / src_file.name)
+    table_page = docs / SETUP_TABLE_PAGE
+    if table_page.is_file():
+        write_if_changed(str(table_page), with_setup_table(
+            table_page.read_text(encoding="utf-8"), coverages, registry))
     # data-model.md is generated (contains live DB stats)
     write_if_changed(
         str(wiki_dest / "data-model.md"), generate_wiki_data_model(db, profiles)
