@@ -1,7 +1,6 @@
 ---
-level: reference
-order: 130
-nav_title: Project terms
+level: contribute
+order: 90
 ---
 
 # Terms of the reference pages
@@ -149,8 +148,8 @@ everyday words (BIOS, emulator, core, hash) are in the [glossary](glossary.md).
     takes a file from (the collection, a data folder, a release asset) is its
     source, not its provenance.
 
-:::tip[Next]
+## Next steps
+
 - [How each platform checks files](verification-modes.md)
-- [Glossary](glossary.md)
-:::
+- [Words used on this site](glossary.md)
 

@@ -153,23 +153,24 @@ class NavFromFrontMatter(unittest.TestCase):
 
     def test_the_repository_nav_matches_the_pages(self):
         tabs = self._nav(WIKI)
-        self.assertEqual(tabs["Explore"][-2:], [
-            {"All installer options": "wiki/installer.md"},
-            {"Is it legal?": "wiki/legal.md"},
-        ])
+        self.assertEqual(tabs["Explore"][0], "explore.md")
+        self.assertEqual([next(iter(e)) for e in tabs["Explore"][1:]], ["Systems", "Emulators"])
+        self.assertEqual(tabs["Your setup"][-1], {"All installer options": "wiki/installer.md"})
+        start = [e if isinstance(e, str) else next(iter(e)) for e in tabs["Start here"]]
+        self.assertEqual(start.index("Is it legal?"), start.index("Common questions") + 1)
         self.assertEqual(tabs["Reference"][0], "wiki/index.md")
 
     def test_a_new_page_lands_in_its_tab_at_its_order(self):
         with tempfile.TemporaryDirectory(dir=REPO_ROOT / "tmp") as tmp:
             wiki = _wiki_copy(tmp)
             (wiki / "save-files.md").write_text(
-                "---\nlevel: explore\norder: 35\n---\n\n# Save files\n\nText.\n",
+                "---\nlevel: start\norder: 45\n---\n\n# Save files\n\nText.\n",
                 encoding="utf-8")
-            explore = self._nav(wiki)["Explore"]
-        targets = [e if isinstance(e, str) else next(iter(e.values())) for e in explore]
+            start = self._nav(wiki)["Start here"]
+        targets = [e if isinstance(e, str) else next(iter(e.values())) for e in start]
         self.assertEqual(targets.index("wiki/save-files.md"),
-                         targets.index("wiki/installer.md") + 1)
-        self.assertIn({"Save files": "wiki/save-files.md"}, explore)
+                         targets.index("wiki/troubleshooting.md") + 1)
+        self.assertIn({"Save files": "wiki/save-files.md"}, start)
 
     def test_a_page_without_a_level_fails_by_name(self):
         with tempfile.TemporaryDirectory(dir=REPO_ROOT / "tmp") as tmp:
@@ -200,9 +201,12 @@ class NavFromFrontMatter(unittest.TestCase):
                 self._nav(wiki)
 
     def test_nav_false_keeps_a_page_out(self):
-        tabs = self._nav(WIKI)
-        flat = repr(tabs)
-        self.assertNotIn("getting-started.md", flat)
+        with tempfile.TemporaryDirectory(dir=REPO_ROOT / "tmp") as tmp:
+            wiki = _wiki_copy(tmp)
+            (wiki / "hidden.md").write_text(
+                "---\nlevel: start\nnav: false\n---\n\n# Hidden\n", encoding="utf-8")
+            flat = repr(self._nav(wiki))
+        self.assertNotIn("hidden.md", flat)
 
     def test_every_wiki_page_states_its_place(self):
         for page in sorted(WIKI.glob("*.md")):

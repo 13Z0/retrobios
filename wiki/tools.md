@@ -1,6 +1,6 @@
 ---
-level: reference
-order: 110
+level: contribute
+order: 70
 ---
 
 # Command-line tools

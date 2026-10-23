@@ -1,17 +1,18 @@
 ---
 level: reference
 order: 10
+group: Checking files
 ---
 
 # How each platform checks files
 
-Before a game starts, your setup may check its BIOS files, and each setup checks
-differently. RetroArch only asks whether a file with the right name is in the
-folder. Batocera computes the file's MD5 fingerprint and compares it with its
-list, so a renamed or wrong-region file shows as `UNTESTED`: present, but not
-the expected file. BizHawk does the same with SHA1. The way a setup checks
-decides what "OK" means there: a file RetroArch accepts can still be one
-Batocera reports.
+Most setups can show which BIOS files are missing. Each one checks differently.
+RetroArch only asks whether a file with the right name is in the folder.
+Batocera computes the file's MD5 and compares it with its list, so a
+wrong-region file, or another file given the right name, shows as `UNTESTED`:
+present, but not the expected file. BizHawk does the same with SHA1. A file
+RetroArch accepts can still be one Batocera reports. The emulator, not the
+check, is what fails when a game starts.
 
 Example: `scph5501.bin`, MD5 `490f666e1afb15b7362b406ed1cea246`. Any file named
 `scph5501.bin` passes on RetroArch. On Batocera only those exact bytes pass.
@@ -24,11 +25,14 @@ changes ([severity matrix](#severity-matrix)).
 
 <!-- image: verification-modes -->
 
+Each reference to a checker's code below links the revision of that code the
+platform's own list was read from.
+
 ## Existence mode
 
 **Platforms**: RetroArch, Lakka, RetroPie, MinUI, NextUI, MyMinUI
 
-**Source**: RetroArch `core_info.c`, function `path_is_valid()`; minarch for the MinUI family
+**Source**: RetroArch v1.22.2 [`core_info.c:2285`](https://github.com/libretro/RetroArch/blob/v1.22.2/core_info.c#L2285), `path_is_valid()`. For the MinUI family, minarch.
 
 A file is OK if it exists at the expected path. No hash is checked. Any file
 with the correct name passes, regardless of content.
@@ -47,7 +51,7 @@ Lakka and RetroPie inherit this behavior through platform config inheritance
 
 MinUI, NextUI and MyMinUI check nothing at all. They hand each core its own
 folder, `Bios/<TAG>/`, and open nothing in it: minarch answers
-`RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY` with that folder (MinUI `workspace/all/minarch/minarch.c:1889-1893` and `:2943`). The
+`RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY` with that folder (MinUI [`workspace/all/minarch/minarch.c:1889-1893`](https://github.com/shauninman/MinUI/blob/dbf89435a5179788418ff3573042cf9c7e75d9e0/workspace/all/minarch/minarch.c#L1889-L1893) and [`:2943`](https://github.com/shauninman/MinUI/blob/dbf89435a5179788418ff3573042cf9c7e75d9e0/workspace/all/minarch/minarch.c#L2943)). The
 core decides what it loads, so the files are the ones its profile documents,
 placed below each folder a pak hands it (`core_system_dirs` in the platform
 YAML).
@@ -61,6 +65,9 @@ All MD5-mode platforms compute a hash of the file and compare it against an expe
 The details vary by platform.
 
 ### Standard MD5 (Batocera, RetroBat)
+
+**Source**: Batocera 43.1 `batocera-systems`, [`md5sum()`](https://github.com/batocera-linux/batocera.linux/blob/batocera-43.1/package/batocera/core/batocera-scripts/scripts/batocera-systems#L987-L992) and
+function [`checkBios`](https://github.com/batocera-linux/batocera.linux/blob/batocera-43.1/package/batocera/core/batocera-scripts/scripts/batocera-systems#L1047).
 
 `verify.py` replicates Batocera's `md5sum()` function. The file is read in binary mode,
 hashed with MD5, and compared case-insensitively against the expected value.
@@ -77,7 +84,7 @@ and returns OK directly.
 
 ### MD5 shorter than 32 characters (Batocera)
 
-Batocera's script compares the full string (`batocera-systems:1088`), so an MD5
+Batocera's script compares the full string ([`batocera-systems:1088`](https://github.com/batocera-linux/batocera.linux/blob/batocera-43.1/package/batocera/core/batocera-scripts/scripts/batocera-systems#L1088)), so an MD5
 shorter than 32 characters matches no file there. The Batocera scraper completes such
 a value when exactly one MD5 in `database.json` starts with it
 (`_resolve_truncated_md5` in `scripts/scraper/batocera_scraper.py`) and keeps it as
@@ -86,11 +93,12 @@ characters by prefix, and only for a file whose name the entry also names.
 
 ### md5_composite (Recalbox ZIP verification)
 
-Recalbox hashes a ZIP with `Zip::Md5Composite` (`es-core/src/utils/Zip.cpp:71-96` in
-recalbox-emulationstation at `f4cd0ae4`): one MD5 over the contents of every member,
-read in filename order. The members' own MD5s are not involved, and neither is the
-MD5 of the ZIP file itself: `Bios::Scan` takes the composite for every `.zip`
-(`es-app/src/bios/Bios.cpp:64-68`). `verify.py` computes the same value with
+Recalbox hashes a ZIP with `Zip::Md5Composite`
+([`es-core/src/utils/Zip.cpp:71-96`](https://gitlab.com/recalbox/recalbox/-/blob/10.1.1/projects/frontend/es-core/src/utils/Zip.cpp#L71-96) in
+Recalbox 10.1.1): one MD5 over the contents of every member, read in filename
+order. The members' own MD5s are not involved, and neither is the MD5 of the ZIP
+file itself: `Bios::Scan` takes the composite for every `.zip`
+([`es-app/src/bios/Bios.cpp:86-91`](https://gitlab.com/recalbox/recalbox/-/blob/10.1.1/projects/frontend/es-app/src/bios/Bios.cpp#L86-91)). `verify.py` computes the same value with
 `md5_composite()` (`scripts/hashing.py`).
 
 The registry gives Recalbox `zip_digest: composite`. For a platform so marked, a
@@ -109,8 +117,9 @@ listed hash is OK.
 
 Recalbox colours each entry of `es_bios.xml` from two attributes, `mandatory` and
 `hashMatchMandatory`, both true unless written `"false"`
-(`es-app/src/bios/Bios.cpp:162-163` in recalbox-emulationstation at `f4cd0ae4`,
-colours set by `Bios::Scan` at lines 84-108). The platform YAML carries them as
+([`es-app/src/bios/Bios.cpp:187-188`](https://gitlab.com/recalbox/recalbox/-/blob/10.1.1/projects/frontend/es-app/src/bios/Bios.cpp#L187-188) in
+Recalbox 10.1.1, colours set by `Bios::Scan` at
+[lines 106-130](https://gitlab.com/recalbox/recalbox/-/blob/10.1.1/projects/frontend/es-app/src/bios/Bios.cpp#L106-130)). The platform YAML carries them as
 `required` and, when the attribute is written, `hash_match_mandatory`.
 
 | File | mandatory | hashMatchMandatory | Recalbox | verify.py |
@@ -130,7 +139,7 @@ Recalbox shows RED for a mandatory entry with `hashMatchMandatory`.
 
 When a platform entry has a `zipped_file` field, the expected MD5 is not the hash of the
 ZIP container but of a specific ROM file inside the ZIP. `verify.py` replicates Batocera's
-`checkInsideZip()`:
+[`checkInsideZip()`](https://github.com/batocera-linux/batocera.linux/blob/batocera-43.1/package/batocera/core/batocera-scripts/scripts/batocera-systems#L994):
 
 1. Open the ZIP.
 2. Find the inner file by name (case-insensitive via `casefold()`).
@@ -141,7 +150,7 @@ If the inner file is not found inside the ZIP, the status is UNTESTED with a rea
 
 ### RomM verification
 
-**Source**: `backend/models/firmware.py`, `Firmware.verify_file_hashes`
+**Source**: RomM 5.4.0 [`backend/models/firmware.py:58-76`](https://github.com/rommapp/romm/blob/5.4.0/backend/models/firmware.py#L58-L76), `Firmware.verify_file_hashes`
 
 RomM reads the file's bytes (`verification_mode: md5`) but does not compare one
 digest. Its platform YAML carries `hash_rule: size_and_any_hash`: the file's
@@ -157,7 +166,7 @@ not a single digest gets a new `hash_rule` value, never a new mode.
 
 ### ROCKNIX verification
 
-**Source**: `rocknix-systems`, function `checkBios`
+**Source**: ROCKNIX 20261001 [`rocknix-systems:137-197`](https://github.com/ROCKNIX/distribution/blob/20261001/projects/ROCKNIX/packages/rocknix/sources/scripts/rocknix-systems#L137-L197), function `checkBios`
 
 ROCKNIX derives its BIOS checker from Batocera's, so the logic has the same
 shape: `md5sum()` on the file, `checkInsideZip()` for archive entries, and an
@@ -167,8 +176,9 @@ platform declares is mandatory in its own data, so the platform YAML marks all
 
 ### KNULLI, AmberELEC and EmuELEC verification
 
-**Source**: `knulli-systems` (KNULLI) and `batocera-systems` (AmberELEC,
-EmuELEC), function `checkBios`
+**Source**: function `checkBios` in [`knulli-systems:867-928`](https://github.com/knulli-cfw/knulli-linux/blob/20260511/package/system/knulli-scripts/scripts/knulli-systems#L867-L928)
+(KNULLI 20260511), and in `batocera-systems` for
+[AmberELEC](https://github.com/AmberELEC/AmberELEC/blob/a21975bfb1a3af68f66e07a931b994b523e1e6e2/packages/amberelec/sources/scripts/batocera-systems#L583-L644) and [EmuELEC 4.8](https://github.com/EmuELEC/EmuELEC/blob/v4.8/packages/sx05re/emuelec/bin/batocera/batocera-systems#L817-L834)
 
 All three keep Batocera's `systems` dict and its checker, run by their
 EmulationStation's BIOS screen.
@@ -204,6 +214,8 @@ URL and install themselves, so they are not part of the pack.
 ## SHA1 mode
 
 **Platforms**: BizHawk
+
+**Source**: BizHawk 2.11.1 [`FirmwareDatabase.cs`](https://github.com/TASEmulators/BizHawk/blob/2.11.1/src/BizHawk.Emulation.Common/Database/FirmwareDatabase.cs)
 
 BizHawk firmware entries use SHA1 as the primary hash. `verify.py` computes SHA1
 via `compute_hashes()` and compares case-insensitively.
@@ -437,152 +449,8 @@ dump with that CRC32 too (`bios/Dragon/Dragon/d64_1.rom`), but its MD5 is
 would not accept it at that path (step 3). The RetroBat file ships, and the
 [gaps page](../gaps.md) lists the discrepancy with the dump XRoar accepts.
 
-## Reading this project's own reports
+## Next steps
 
-The sections below are about `verify.py` run on a clone of the repository.
-Your own BIOS folder is checked with the installer's `--check`
-([When a game does not start](troubleshooting.md)).
-
-## Hash mismatch / UNTESTED
-
-This section and the two after it are about this repository's own tools, run
-from a clone. `scripts/verify.py` checks the collection in `bios/` against each
-platform, never your BIOS folder: for that, use the installer's `--check`
-([When a game does not start](troubleshooting.md)).
-
-`verify.py` reports `UNTESTED` for a file of the collection that was hashed
-and does not match what the platform declares. The line gives the reason:
-
-```
-  UNTESTED (required): nintendo-ds/dsifirmware.bin: declared hash contradicted by the local file
-```
-
-The system page on the site lists every known version of the file with its
-expected MD5 and SHA1.
-
-### Existence-mode platforms never report UNTESTED
-
-On RetroArch, Lakka and RetroPie, the platform check only asks whether the file
-is there, so the only outcomes are OK and MISSING. `verify.py` adds the emulator
-ground truth from the profiles and flags a `DISCREPANCY` when a file passes the
-platform check but fails the emulator's own size or hash validation.
-
-### The .variants/ directory
-
-When multiple versions of the same BIOS exist (different revisions, regions, or
-dumps), the primary version lives in the main directory and alternatives live in
-`.variants/`. `verify.py` checks the primary file first, then falls back to
-variants when resolving by hash.
-
-A file that matches a variant hash but not the primary works. It is not the
-version the emulator tries first, and some cores accept several versions.
-
-## Pack is missing files
-
-A generated pack doesn't contain all the files you expected.
-
-### Severity levels
-
-`verify.py` assigns a severity to each issue, counted under `severity_counts`
-in its `--json` output. Not all missing files are equally important:
-
-| Severity | Meaning | Action needed |
-|----------|---------|---------------|
-| CRITICAL | Required file missing on an MD5 or SHA1 platform | Must fix. Core won't function. |
-| WARNING | Optional file missing on an MD5 or SHA1 platform, hash mismatch (UNTESTED) on any hash platform, or a required file missing on an existence platform | Core works but with reduced functionality, or runs on content nobody verified. |
-| INFO | Optional file missing on an existence-only platform, or a missing file the core covers with an HLE fallback | Core works fine, BIOS improves accuracy. |
-| OK | File present and verified | No action needed. |
-
-The full mapping, including how `hle_fallback` overrides the platform mode, is
-in [severity matrix](#severity-matrix).
-
-Focus on CRITICAL issues first. WARNING files improve the experience but aren't
-strictly necessary. INFO files are nice to have.
-
-### Large files (release assets)
-
-Files like PS3UPDAT.PUP, PSVUPDAT.PUP, and Switch firmware are too large for the
-git repository. They are stored as GitHub release assets under the `large-files`
-release and downloaded at build time.
-
-If a pack build fails to include these, check your network connection. In offline
-mode (`--offline`), large files are only included if already cached locally in
-`.cache/large/`.
-
-### Data directories
-
-Some cores need entire directory trees rather than individual files (e.g. Dolphin's
-`Sys/` directory, PPSSPP's `assets/`). These are fetched by `refresh_data_dirs.py`
-from upstream repositories.
-
-In offline mode, data directories are only included if already cached in `data/`.
-Run `python scripts/refresh_data_dirs.py` to fetch them.
-
-## verify.py reports errors
-
-How to read and interpret `verify.py` output.
-
-### Status codes
-
-| Status | Meaning |
-|--------|---------|
-| `OK` | File present, hash matches (or existence check passed) |
-| `UNTESTED` | File present, hash not confirmed against the expected value |
-| `MISSING` | File not found in the repository |
-| `DISCREPANCY` | The platform check passes, an emulator's own check fails |
-
-### Reading the output
-
-The first line counts the platform's files and names its check. Under it come
-the entries that need attention, one per line as `STATUS (required|optional):
-system/file`, followed by a reason where there is one, then the counts of the
-files the emulator cores add. From `python scripts/verify.py --platform retrodeck`:
-
-```
-RetroDECK: 2007/2008 OK, 1 untested [md5]
-  UNTESTED (required): nintendo-ds/dsifirmware.bin: declared hash contradicted by the local file
-  DISCREPANCY: nintendo-snes/sgb2.boot.rom: RetroDECK says OK but supersnes9x says size mismatch: got 524288, accepted [256]
-    supersnes9x [size]
-  Core files: 1495 in pack, 0 required missing, 1 optional missing
-```
-
-`--verbose` also lists the passing entries that an emulator validates, with
-the check and the source lines behind it:
-
-```
-Recalbox: 351/351 OK [md5]
-  OK (required): macintosh/MacII.ROM
-    minivmac validates size=262144 [minivmac/cfg/CNFGRAPI.h:32, minivmac/src/OSGLUERETRO.c:781]
-```
-
-### Cross-reference section
-
-After per-file results, `verify.py` prints a cross-reference report. This lists
-files that emulator cores need but that the platform YAML doesn't declare. These
-files are still included in packs automatically, but the report helps identify
-gaps in platform coverage data.
-
-The cross-reference uses `resolve_platform_cores()` to determine which emulator
-profiles are relevant for each platform, then checks whether each profile's files
-appear in the platform config.
-
-### Filtering output
-
-```bash
-# By platform
-python scripts/verify.py --platform batocera
-
-# By emulator core
-python scripts/verify.py --emulator beetle_psx
-
-# By system
-python scripts/verify.py --system sony-playstation
-
-# By hardware target
-python scripts/verify.py --platform retroarch --target switch
-
-# JSON for scripted processing: the entries that need attention
-python scripts/verify.py --platform retroarch --json
-# every entry, passing ones included, with its ground truth
-python scripts/verify.py --platform retroarch --json --verbose
-```
+- [Reading this project's own reports](reading-reports.md): `verify.py` output,
+  status codes and severity levels
+- [What the packs do not hold](../gaps.md)

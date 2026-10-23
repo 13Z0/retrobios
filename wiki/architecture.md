@@ -1,6 +1,6 @@
 ---
-level: reference
-order: 90
+level: contribute
+order: 60
 ---
 
 # Architecture
