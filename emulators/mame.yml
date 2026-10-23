@@ -90,6 +90,20 @@ systems:
   - vectrex
   - vgmplay
 
+data_root:
+  windows:
+    path: "<working directory>"
+    source_ref: "src/emu/emuopts.cpp:43-55"
+    note: "The folder mame.exe is started from. A mame.ini in it or in ini/ can point rompath and the other search paths elsewhere"
+  macos:
+    path: "<working directory>"
+    source_ref: "src/emu/emuopts.cpp:43-55, src/osd/sdl3/sdlopts.cpp:27-35, 107-116"
+    note: "A mame.ini in ~/Library/Application Support/mame or ~/.mame can point rompath and the other search paths elsewhere"
+  linux:
+    path: "<working directory>"
+    source_ref: "src/emu/emuopts.cpp:43-55, src/osd/sdl/sdlopts.cpp:27-35, 107-116"
+    note: "A mame.ini in ~/.mame can point rompath and the other search paths elsewhere"
+
 notes: |
   Rolling release tracking mamedev/mame upstream (0.289 at the pinned commits).
   The archives below are the BIOS root sets, the ROM sets of the machines of the
