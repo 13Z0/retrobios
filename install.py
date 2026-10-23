@@ -546,6 +546,11 @@ EVENT_KEYS: dict[str, tuple[str, ...]] = {
     # size of a file no copy was found for, or of no known size (a folder,
     # a ZIP that would not open). member as in found, reason in words.
     "unreadable": ("platform", "folder", "path", "member", "reason"),
+    # The files of the list read from the frontend's save directory, and
+    # where they go (<system> and <core> stand for a folder per system or
+    # per core), once that directory is known. Not written when it is not:
+    # the summary's skipped then counts them (no_save_directory).
+    "saves": ("platform", "files", "folder"),
     "download": ("platform", "files", "bytes"),
     "progress": ("files_done", "files_total", "bytes_done", "bytes_total"),
     # Right after each progress event, and once when the files of a
@@ -4074,6 +4079,8 @@ def place_save_entries(
             where += f"{os.sep}<core>"
         print(f"  {_plural(len(saved), 'file')} read from {display}'s save directory "
               f"go to {where}")
+        EVENTS.emit("saves", platform=str(manifest.get("platform", "")),
+                    files=len(saved), folder=where)
         return files, []
     print(f"  {_plural(len(saved), 'file')} read from {display}'s save directory "
           f"left out: {place}")
@@ -10081,6 +10088,8 @@ class TuiState:
         self.idle_closed = False
         # The check run's summary: what it left out and why.
         self.check_summary: dict | None = None
+        # The saves event of the check: the files that go to the save folder.
+        self.saves: dict | None = None
         # The confirm screen waits for A even when the plan is unchanged:
         # it was opened by Space, which never installs by itself.
         self.must_confirm: bool = False
@@ -10634,7 +10643,7 @@ def _start_run(state: TuiState, run: str) -> list[tuple]:
         # dropped the --system the command line gave.
         state.check, state.files, state.systems, state.reading = None, [], [], None
         state.found, state.scanned, state.unreadable = [], [], []
-        state.check_summary = None
+        state.check_summary = state.saves = None
         state.checked_flags = tui_flags(state)
     elif run in ("confirm", "preview"):
         state.dry, state.dry_files, state.dry_summary = None, [], None
@@ -11259,6 +11268,8 @@ def _take_event(state: TuiState, event: dict) -> None:
         state.scanned.append(event)
     elif kind == "unreadable" and state.run == "check":
         state.unreadable.append(event)
+    elif kind == "saves" and state.run == "check":
+        state.saves = event
     elif kind == "found" and state.run == "install":
         state.local_dests[event["dest"]] = (event["folder"], event["reason"])
     elif state.run == "check":
@@ -11590,6 +11601,11 @@ def _plan_lines(check: dict, dest: Path | None, state: TuiState) -> list:
     elif need and fetch and offline:
         headline = (f"{_plural(fetch, 'file')} {'needs' if fetch == 1 else 'need'} the "
                     "internet, which --offline does not use")
+    elif need and fetch and LOCAL.pack is not None:
+        # Nothing comes from the network: "to download" on a handheld with
+        # no Wi-Fi read as a failure on its way.
+        headline = (f"{_plural(fetch, 'file')} to install from the pack, "
+                    f"{format_size(fetch_bytes)}")
     elif need and fetch:
         headline = f"{_plural(fetch, 'file')} to download, {format_size(fetch_bytes)}"
     elif need:
@@ -11614,6 +11630,8 @@ def _plan_lines(check: dict, dest: Path | None, state: TuiState) -> list:
         lines.append("You cannot write to this folder: choose another one.")
     lines.append(f"{check['present']} in place, {check['missing']} missing, "
                  f"{wrong} wrong {'copy' if wrong == 1 else 'copies'}")
+    if check is state.check:
+        lines += [_styled(line, "path") for line in _saves_lines(state)]
     found_in = _RETROARCH_CONFIGS.get(dest) if dest is not None else None
     if found_in:
         lines.append(_styled(f"Named by {_short_path(Path(found_in[0]), state.home)}", "path"))
@@ -11649,6 +11667,18 @@ def _plan_lines(check: dict, dest: Path | None, state: TuiState) -> list:
     if check is state.check:
         lines += _unplaced_lines(state.check_summary, state)
     return lines[:2] + offline_lines + lines[2:]
+
+
+def _saves_lines(state: TuiState) -> list[str]:
+    """Where the files read from the frontend's save directory go: a second
+    folder this run writes to, named before anything is written."""
+    if not state.saves or not state.saves.get("files"):
+        return []
+    name = display_name(state.platform) if state.platform else "the frontend"
+    count = state.saves["files"]
+    return [f"{_plural(count, 'file')} read from {name}'s save directory "
+            f"{'goes' if count == 1 else 'go'} to "
+            f"{_short_path(Path(state.saves['folder']), state.home)}"]
 
 
 def _unplaced_lines(summary: dict | None, state: TuiState) -> list[str]:
@@ -12102,7 +12132,8 @@ def tui_outcome(state: TuiState) -> tuple[str, list[str]]:
         head = f"The installer stopped with code {state.code}."
     elif installed:
         title = "Done"
-        head = f"{_plural(installed, 'file')} installed."
+        source = " from the pack" if LOCAL.pack is not None else ""
+        head = f"{_plural(installed, 'file')} installed{source}."
         if up_to_date:
             head += f" {_plural(up_to_date, 'file')} already in place."
     else:
@@ -12113,6 +12144,8 @@ def tui_outcome(state: TuiState) -> tuple[str, list[str]]:
     if sources:
         lines.append(sources)
     lines.append(f"BIOS folder: {state.dest}")
+    if installed + up_to_date:
+        lines += _saves_lines(state)
     if space:
         lines.append("Free some space, or run again and choose another folder.")
     causes: dict[str, list[str]] = {}
@@ -12131,7 +12164,9 @@ def tui_outcome(state: TuiState) -> tuple[str, list[str]]:
             shown += 1
     if shown > 20:
         lines.append(f"  ... and {shown - 20} more")
-    if not summary and not space:
+    if not summary and not space and state.code != 130:
+        # A stop asked for (Ctrl-C, Start+Select, the window closed) is said
+        # by the line above: the log's last lines are for a run that died.
         lines += [f"  {line}" for line in state.tail[-8:]]
     run = Invocation()
     run.os_type = state.os_type

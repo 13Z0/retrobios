@@ -2205,6 +2205,33 @@ class AuditRoundThree(unittest.TestCase):
 
     # P2-1: a card too small for the download.
 
+    def test_a_stop_asked_for_says_only_the_outcome(self):
+        """Start+Select (SIGTERM) or SIGHUP stops the child before it writes
+        a summary: the farewell then listed the log's last lines."""
+        state = checked_state()
+        state.download = {"files": 50}
+        state.finished = [("scph5501.bin", True, "")]
+        state.tail = ["    [2/50] scph5501.bin ok",
+                      "    Stopping. Files already installed are kept."]
+        for code, shown in ((130, False), (1, True)):
+            with self.subTest(code=code):
+                state.code = code
+                _title, lines = install.tui_outcome(state)
+                self.assertEqual(any("[2/50]" in line for line in lines), shown, lines)
+
+    def test_a_pack_installs_from_the_pack_not_the_network(self):
+        """With --from-pack and no Wi-Fi, the plan said "to download", which
+        on a handheld with no network read as a failure on its way."""
+        state = checked_state()
+        with mock.patch.object(install.LOCAL, "pack", object()):
+            headline = str(install.tui_view(state, 80, 24)[0])
+            plan = "\n".join(str(line) for line in install.tui_view(state, 80, 24))
+            state.summary = {"installed": 3, "failed": [], "up_to_date": 0}
+            title, lines = install.tui_outcome(state)
+        self.assertIn("to install from the pack", plan, headline)
+        self.assertNotIn("to download", plan)
+        self.assertEqual(lines[0], "3 files installed from the pack.")
+
     def test_p2_1_another_folder_comes_first_when_space_is_short(self):
         state = checked_state({"free": 1024, "writable": True, "cores": []})
         self.assertEqual([row.label for row in install.tui_rows(state)[:2]],
@@ -2974,8 +3001,13 @@ class EndToEnd(unittest.TestCase):
                     term.send("\r")
                     screen = term.wait("files to download")
                     self.assertIn("6 files to download", screen)
+                    # The second folder the run writes to, named before
+                    # anything is written, and again on the result.
+                    self.assertIn("1 file read from RetroArch's save directory goes to "
+                                  "~/MySaves", screen)
                     term.send("\r")
-                    term.wait("6 files installed.")
+                    screen = term.wait("6 files installed.")
+                    self.assertIn("save directory goes to ~/MySaves", screen)
                     term.send("\r")
                     self.assertEqual(term.close(), 0)
                 results.append(written(repo, saves))
@@ -3074,6 +3106,9 @@ class EndToEnd(unittest.TestCase):
         after = term.after()
         self.assertIn(f"Stopped: {on_disk} of 6 installed, run again to finish.", after)
         self.assertNotIn("Nothing was installed", after)
+        # The plain outcome only: the log's last lines are for a run that died.
+        self.assertIsNone(re.search(r"\[\d+/6\]", after), after)
+        self.assertNotIn("Stopping.", after)
         time.sleep(1)
         self.assertEqual(len(repo.installed()), on_disk)
 
