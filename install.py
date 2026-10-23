@@ -40,7 +40,7 @@ import urllib.request
 import xml.etree.ElementTree as ET
 import zipfile
 import zlib
-from collections.abc import Callable, Iterator
+from collections.abc import Callable, Collection, Iterator
 from pathlib import Path, PurePosixPath
 from typing import BinaryIO, NamedTuple, TextIO
 
@@ -6607,11 +6607,15 @@ def _bytes(files: list[dict]) -> int:
 
 def bulk_hint(
     to_download: list[dict], manifest: dict, systems_chosen: bool, cores_chosen: bool,
+    accepted: Collection[str] = (),
 ) -> list[str]:
     """Name what pulls most of a download, when narrowing saves over half of it.
 
     `--system 3do` fetched 349 MB for RetroArch, and `--core opera` 12.5 MB:
     the arcade cores that also read 3DO pulled the rest, and nothing said so.
+    accepted holds the names --core takes. Drawn from every core of the
+    system, the advice named ares, which loads no file of its own, and
+    `--core ares` was then refused.
     """
     total = _bytes(to_download)
     if total < BULK_HINT_FROM:
@@ -6619,7 +6623,8 @@ def bulk_hint(
     systems = {s for entry in to_download for s in entry_systems(entry)}
     if not cores_chosen and len(systems) == 1:
         system = next(iter(systems))
-        candidates = (manifest.get("system_cores") or {}).get(system) or []
+        candidates = [core for core in (manifest.get("system_cores") or {}).get(system) or []
+                      if core in accepted]
         by_core: dict[str, int] = {}
         for entry in to_download:
             for core in entry.get("cores") or []:
@@ -7465,6 +7470,8 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                 args.emulator, manifest, plat_name, files, omitted_files
             )
 
+        # What --core resolves against, for advice that names one.
+        core_choices = set(available_choices(files, omitted_files)["cores"])
         selection = _requested_narrowing(args, plat_name, files, omitted_files, manifest)
         if (
             selection is None
@@ -7577,6 +7584,7 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
             systems_chosen=bool(selection and selection[0]),
             cores_chosen=bool((selection and selection[1]) or args.emulator
                               or args.installed_cores or target),
+            accepted=core_choices,
         )
 
         narrowed = bool(
