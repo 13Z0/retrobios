@@ -24,8 +24,11 @@ STEM_NAMED = {
     "testvulkan": "type test",
     "vidtest": "type test",
     # Aliases, no emulator page.
+    "ep128emu": "alias",
+    "mednafen_gba": "alias",
     "mednafen_lynx": "alias",
     "mednafen_ngp": "alias",
+    "mednafen_pce": "alias",
     "mednafen_pcfx": "alias",
     "mednafen_psx": "alias",
     "mednafen_psx_hw": "alias",
