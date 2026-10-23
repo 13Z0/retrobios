@@ -470,6 +470,7 @@ files:
     note: "Preloaded into the Basic table when the emulator starts."
 
   - name: A2_DOS33.SYM2
+    path: "A2_DOS33.SYM2"
     description: "Debugger symbol script for DOS 3.3"
     required: false
     size: 2380
