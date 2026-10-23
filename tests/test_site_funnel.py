@@ -199,7 +199,11 @@ class DeepLinksCarryALabel(unittest.TestCase):
     """A beginner page sent its reader to Tools and Architecture as the next
     step. A link from a start or setup page to a page two levels deeper or
     more says what it leads to, with that page's level label before it on
-    its line, or in the heading of its section ("## Reference: ...")."""
+    its line, or in the heading of its section ("## Reference: ...").
+
+    A link right after the question it answers ("Have a file? [Check it]")
+    says it too: there a label read as a broken crumb beside the Reference
+    tab (round 4)."""
 
     def test_start_and_setup_pages(self):
         import sitestarlight  # noqa: PLC0415
@@ -229,6 +233,8 @@ class DeepLinksCarryALabel(unittest.TestCase):
                     if ORDER.index(deeper) - ORDER.index(level) < 2:
                         continue
                     label = f"{generate_site.LEVELS[deeper]}:"
+                    if line[: match.start()].rstrip().endswith("?"):
+                        continue
                     if label not in line[: match.start()] and not any(
                             heading.startswith(label) for heading in headings.values()):
                         offenders.append(f"{page.relative_to(DOCS)}: {match.group(0)}")
