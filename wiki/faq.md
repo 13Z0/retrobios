@@ -15,7 +15,7 @@ order: 50
 
 ## How do I know which BIOS I need?
 
-Run the command with `--dry-run`. It lists the files and changes nothing.
+Run the command with `--dry-run`. It lists the files, changing nothing.
 
 <!-- os-tabs -->
 ```sh
@@ -34,8 +34,8 @@ Flycast's **Language** option.
 
 ## Zip or unzip? { #zip-or-unzip }
 
-Unzip the ZIP you downloaded into the folder your setup's page names. Leave
-the ZIPs inside as they are, like `neogeo.zip`.
+Unzip the ZIP you downloaded into the folder your setup's page names. Keep
+the ZIPs inside zipped, like `neogeo.zip`.
 
 ## Does a BIOS work on every setup?
 
@@ -60,9 +60,10 @@ Sometimes. Some emulators carry a stand-in, and some games then fail.
 
 ## Is the command safe? { #is-piping-the-installer-into-a-shell-safe }
 
-- It checks the installer's fingerprint, then each file before saving it.
+- It stops if the installer does not match its expected fingerprint, then
+  checks each file before saving it.
 - It writes in your BIOS folder, and for some emulators in your save folder.
-- It never changes or deletes a game or a save.
+- It never touches a game or a save.
 - It keeps any file it replaces in `retrobios-backup`, next to your BIOS
   folder. `--restore` puts it back.
 

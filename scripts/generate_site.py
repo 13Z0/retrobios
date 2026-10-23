@@ -6100,7 +6100,6 @@ def _directory_copies(entry: dict, consumers: FileConsumers) -> list[str]:
             f"([browse]({tree}))"]
 
 
-ROMSET_FAQ = "../wiki/technical-faq.md#which-mame-version-do-the-arcade-bios-sets-match"
 _MAME_RELEASE = re.compile(r"^0\.\d")
 
 
@@ -8473,7 +8472,7 @@ def generate_which_pack() -> str:
         *setup_picker(registry, display),
         "## Folders and ZIP files { #manual-download }",
         "",
-        "- A big ZIP comes in parts. Download every part.",
+        "- A big ZIP comes in parts, like `Pack.part1of2.zip`. Download every part.",
         "- Unzip them into your BIOS folder. Put the files straight in it, "
         "not in a new folder.",
         "- Leave the ZIPs inside, like `neogeo.zip`, as they are.",

@@ -14,23 +14,29 @@ from pathlib import Path
 API = "https://abdess.github.io/retrobios/api/v1/platforms/"
 
 
+# The digest each check mode compares. A mode missing here (existence) only
+# asks that the file be present.
+DIGESTS = {"md5": "md5", "sha1": "sha1"}
+
+
 def accepts(entry: dict, path: Path, mode: str) -> bool:
     """Whether the platform's own check passes the file at path."""
+    digest = DIGESTS.get(mode)
     raw = entry.get(mode) or ""
     values = raw if isinstance(raw, list) else str(raw).split(",")
     declared = [value.strip().lower() for value in values if value.strip()]
-    if mode == "existence" or not declared:
+    if digest is None or not declared:
         return path.is_file()  # nothing to compare: the platform checks presence
     try:
         if entry.get("zipped_file"):  # the hash of one member, its name casefolded
             with zipfile.ZipFile(path) as archive:
                 names = {name.casefold(): name for name in archive.namelist()}
                 member = names.get(entry["zipped_file"].casefold())
-                return bool(member) and hashlib.new(mode, archive.read(member)).hexdigest() in declared
-        actual = hashlib.new(mode, path.read_bytes()).hexdigest()
+                return bool(member) and hashlib.new(digest, archive.read(member)).hexdigest() in declared
+        actual = hashlib.new(digest, path.read_bytes()).hexdigest()
         if entry.get("zip_digest") != "composite" and any(actual.startswith(d) for d in declared):
             return True  # a truncated md5 (Batocera) compares by its prefix
-        if mode == "md5" and path.suffix.lower() == ".zip":  # Recalbox: members in name order
+        if digest == DIGESTS["md5"] and path.suffix.lower() == ".zip":  # Recalbox: members in name order
             with zipfile.ZipFile(path) as archive:
                 names = sorted(name for name in archive.namelist() if not name.endswith("/"))
                 return hashlib.md5(b"".join(map(archive.read, names))).hexdigest() in declared
