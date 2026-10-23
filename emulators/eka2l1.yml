@@ -19,6 +19,26 @@ systems:
   - ngage
   - symbian
 
+data_root:
+  android:
+    path: "Android/data/com.github.eka2l1/files"
+    source_ref: "src/emu/android/app/src/main/java/com/github/eka2l1/emu/Emulator.java:134-149, 196, src/emu/android/app/src/main/cpp/src/native-lib.cpp:61-72"
+    note: "EKA2L1 at the root of shared storage when the app runs with legacy external storage. A working folder chosen in the settings replaces it"
+  ios:
+    path: "Documents/data"
+    source_ref: "src/emu/ios/App/EKA2L1Bridge.swift:7-9, src/emu/ios/Bridge/IosEmulator.mm:936-938, 968, 983"
+    note: "the data-storage folder is this folder itself, so roms and drives sit directly in it. The shipped patch and resources folders are read from the app bundle"
+  windows:
+    path: "<folder of eka2l1_qt.exe>"
+    source_ref: "src/emu/qt/src/main.cpp:105-126"
+    note: "the working directory the program is started from, which nothing changes on Windows"
+  macos:
+    path: "~/Library/Application Support/EKA2L1"
+    source_ref: "src/emu/qt/src/main.cpp:105-126"
+  linux:
+    path: "$XDG_DATA_HOME/EKA2L1, else ~/.local/share/EKA2L1"
+    source_ref: "src/emu/qt/src/main.cpp:105-126"
+
 notes: |
   Symbian OS and N-Gage emulator: the EKA1 and EKA2 kernels are emulated and
   the critical application servers and libraries reimplemented in C++, while
