@@ -3,8 +3,8 @@ type: libretro
 core_classification: game_engine
 source: "https://github.com/libretro/libretro-prboom"
 upstream: "http://prboom.sourceforge.net/"
-profiled_date: "2026-03-24"
-source_commit: "b3e47ff5dec483d788e068e7b7fe21be700b5048"
+profiled_date: "2026-10-23"
+source_commit: "4849268e7342494193f2bbf2d0128a751cf58da7"
 core_version: "v2.5.0"
 display_name: "Doom (PrBoom)"
 cores: [prboom]
@@ -24,26 +24,27 @@ notes: |
 
   Content is a .wad, .iwad, .pwad, .lmp, .m3u, .pk3, .ipk3 or .zip file
   (libretro/libretro.c:1029). An IWAD is passed as -iwad and needs nothing
-  else (libretro/libretro.c:2488-2492). A PWAD with map markers, or a PK3,
+  else (libretro/libretro.c:2621-2625). A PWAD with map markers, or a PK3,
   is paired with an IWAD of the matching generation searched next to the
   content, then in system/prboom/, then in system/ (find_iwad_for_kind,
-  libretro/libretro.c:2069-2133, 2514-2560, 2600-2621). A PK3 also loads
+  libretro/libretro.c:2202-2266, 2647-2693, 2733-2754). A PK3 also loads
   gzdoom.pk3, or else zdoom.pk3, from the same places before the mod
-  (find_base_resource, libretro/libretro.c:2141-2172, 2623-2657). When no
+  (find_base_resource, libretro/libretro.c:2274-2305, 2756-2790). When no
   IWAD is paired, FindIWADFile tries the standard_iwads list through
   I_FindFile and the core stops with "IWAD not found" if none is found
   (src/d_main.c:146-158, src/d_main.c:1020-1038, src/d_main.c:1123-1124).
   File names are matched case-insensitively (libretro/libretro.c:787-836).
 
-  I_FindFile search order (libretro/libretro.c:4176-4252):
+  I_FindFile search order (libretro/libretro.c:4332-4413). A name that is
+  absolute or contains a folder separator is first tried as given:
   1. WAD directory (same folder as the loaded content)
   2. system/prboom/ subdirectory
   3. system/ directory directly
   4. Parent folders of the WAD directory (recursive, if enabled)
 
   A baseconfig is read from <content>.prboom.cfg beside the content, else
-  prboom.cfg through I_FindFile (libretro/libretro.c:2461-2466,
-  libretro/libretro.c:2678-2683).
+  prboom.cfg through I_FindFile (libretro/libretro.c:2594-2599,
+  libretro/libretro.c:2811-2816).
 
 files:
   # ---- Doom 1 generation, in search order ----
@@ -51,32 +52,32 @@ files:
     category: game_data
     system: doom
     required: false
-    source_ref: "libretro/libretro.c:2071-2073, libretro/libretro.c:2117-2128, src/d_main.c:153"
+    source_ref: "libretro/libretro.c:2204-2206, libretro/libretro.c:2250-2261, src/d_main.c:153"
     note: "Registered or Ultimate Doom. Paired with a Doom 1 PWAD."
 
   - name: "doomu.wad"
     category: game_data
     system: doom
     required: false
-    source_ref: "libretro/libretro.c:2071-2073, src/d_main.c:154"
+    source_ref: "libretro/libretro.c:2204-2206, src/d_main.c:154"
 
   - name: "freedoom1.wad"
     category: game_data
     system: doom
     required: false
-    source_ref: "libretro/libretro.c:2071-2073, src/d_main.c:155"
+    source_ref: "libretro/libretro.c:2204-2206, src/d_main.c:155"
 
   - name: "freedoom.wad"
     category: game_data
     system: doom
     required: false
-    source_ref: "libretro/libretro.c:2071-2073, src/d_main.c:156"
+    source_ref: "libretro/libretro.c:2204-2206, src/d_main.c:156"
 
   - name: "doom1.wad"
     category: game_data
     system: doom
     required: false
-    source_ref: "libretro/libretro.c:2071-2073, src/d_main.c:157"
+    source_ref: "libretro/libretro.c:2204-2206, src/d_main.c:157"
     note: "Shareware Doom."
 
   # ---- Doom 2 generation, in search order ----
@@ -84,73 +85,73 @@ files:
     category: game_data
     system: doom
     required: false
-    source_ref: "libretro/libretro.c:2074-2076, libretro/libretro.c:2117-2128, src/d_main.c:149"
+    source_ref: "libretro/libretro.c:2207-2209, libretro/libretro.c:2250-2261, src/d_main.c:149"
     note: "Paired with a Doom II PWAD or a PK3, and tried first when the PWAD's maps are not recognised."
 
   - name: "doom2f.wad"
     category: game_data
     system: doom
     required: false
-    source_ref: "libretro/libretro.c:2074-2076, src/d_main.c:148, src/d_main.c:1106-1107"
+    source_ref: "libretro/libretro.c:2207-2209, src/d_main.c:148, src/d_main.c:1106-1107"
     note: "French Doom II. The name selects the French language."
 
   - name: "plutonia.wad"
     category: game_data
     system: doom
     required: false
-    source_ref: "libretro/libretro.c:2074-2076, src/d_main.c:150, src/d_main.c:1110-1111"
+    source_ref: "libretro/libretro.c:2207-2209, src/d_main.c:150, src/d_main.c:1110-1111"
 
   - name: "tnt.wad"
     category: game_data
     system: doom
     required: false
-    source_ref: "libretro/libretro.c:2074-2076, src/d_main.c:151, src/d_main.c:1108-1109"
+    source_ref: "libretro/libretro.c:2207-2209, src/d_main.c:151, src/d_main.c:1108-1109"
 
   - name: "freedoom2.wad"
     category: game_data
     system: doom
     required: false
-    source_ref: "libretro/libretro.c:2074-2076, src/d_main.c:152"
+    source_ref: "libretro/libretro.c:2207-2209, src/d_main.c:152"
 
   # ---- Heretic ----
   - name: "heretic.wad"
     category: game_data
     system: heretic
     required: false
-    source_ref: "libretro/libretro.c:2081-2083, libretro/libretro.c:2117-2128, libretro/libretro.c:2534-2546"
+    source_ref: "libretro/libretro.c:2214-2216, libretro/libretro.c:2250-2261, libretro/libretro.c:2667-2679"
     note: "Paired only with a PWAD recognised as a Heretic add-on, never with a Doom one."
 
   - name: "heretic1.wad"
     category: game_data
     system: heretic
     required: false
-    source_ref: "libretro/libretro.c:2081-2083"
+    source_ref: "libretro/libretro.c:2214-2216"
     note: "Shareware Heretic."
 
   - name: "blasphem.wad"
     category: game_data
     system: heretic
     required: false
-    source_ref: "libretro/libretro.c:2081-2083"
+    source_ref: "libretro/libretro.c:2214-2216"
 
   # ---- ZDoom base resources for PK3 content ----
   - name: "gzdoom.pk3"
     category: game_data
     system: doom
     required: false
-    source_ref: "libretro/libretro.c:2141-2172, libretro/libretro.c:2623-2657"
+    source_ref: "libretro/libretro.c:2274-2305, libretro/libretro.c:2756-2790"
     note: "Loaded before a PK3 mod so the stock ZDoom assets it names resolve."
 
   - name: "zdoom.pk3"
     category: game_data
     system: doom
     required: false
-    source_ref: "libretro/libretro.c:2141-2172, libretro/libretro.c:2623-2657"
+    source_ref: "libretro/libretro.c:2274-2305, libretro/libretro.c:2756-2790"
     note: "Loaded before a PK3 mod when gzdoom.pk3 is not found."
 
   - name: "prboom.cfg"
     system: doom
     required: false
     unsourceable: "user settings in PrBoom's config format, with no canonical contents"
-    source_ref: "libretro/libretro.c:2461-2466, libretro/libretro.c:2678-2683, libretro/libretro.c:4176-4252"
+    source_ref: "libretro/libretro.c:2594-2599, libretro/libretro.c:2811-2816, libretro/libretro.c:4332-4413"
     note: "Passed as -baseconfig when no <content>.prboom.cfg sits beside the content."
