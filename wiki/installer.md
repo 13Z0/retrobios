@@ -67,7 +67,10 @@ curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh \
 ```
 
 `--dest` is the BIOS folder itself: on a card, `retroarch/cores/system` for
-RetroArch on Switch, `RetroArch/system` on Android.
+RetroArch on Switch, `RetroArch/system` on Android. The root of a handheld's
+card works too when the installer knows that card (muOS, Onion, spruceOS,
+KNULLI, ROCKNIX and the MinUI family, see
+[Platform detection](#platform-detection)): the files go where its system reads.
 
 PowerShell needs another form. `iex` takes the script text as its own argument,
 so anything appended to `irm ... | iex` is read as an argument to `iex` and
@@ -454,6 +457,9 @@ python install.py --from ~/Downloads --from /media/me/backup
 python install.py --check --from /media/me/STOCK
 ```
 
+The first line names the root of the muOS card, the one holding `MUOS`: the
+files go to `MUOS/bios` on it, where muOS reads them, and the run says so.
+
 Every file is recognised by its contents, never by its name:
 `PSX BIOS (USA).bin` in a subfolder lands as `scph5501.bin` when it holds those
 bytes, and a file of the right name with other bytes (an empty file left by a
@@ -741,6 +747,26 @@ A `--dest` given without `--platform` is first read as an SD card: the MinUI
 family writes the release name as the first line of `.system/version.txt` at
 the card root (`MinUI-`, `NextUI-`, `MyMinUI-`), and that line names the file
 list.
+
+A card that holds a system's own files is read the same way, without
+`--platform` or with the one that names its list, by the rules the table above
+gives for the device, below the card's root instead of its mount point:
+
+| On the card | System | Files go to |
+|-------------|--------|-------------|
+| `MUOS/` | muOS | `MUOS/bios`, RetroArch's list |
+| `.tmp_update/onionVersion/version.txt` | Onion | `BIOS`, RetroArch's list |
+| `spruce/` | spruceOS | `BIOS`, RetroArch's list |
+| `System/usr/trimui/crossmix-version.txt` | CrossMix-OS | `BIOS`, RetroArch's list |
+| `.allium/` | Allium | `BIOS`, RetroArch's list |
+| `Koriki/version.txt` | Koriki | `BIOS`, RetroArch's list |
+| `system/batocera.conf` with `system.hostname=KNULLI`, as KNULLI's first boot writes its share | KNULLI | `bios`, KNULLI's list |
+| `.config/system/configs/system.cfg` with `root.password=rocknix`, as ROCKNIX's first boot writes its storage | ROCKNIX | `roms/bios`, ROCKNIX's list |
+
+The full screen lists such a card on its first screen ("muOS SD card (E:\)").
+Named by its system (`--platform muos`, `--platform onion`), a `--dest` that
+is neither such a card nor its BIOS folder is refused, with the folder that
+system reads.
 
 Desktop installs are read from their own configuration, and several can be
 found on one machine.
@@ -1156,6 +1182,10 @@ fields, the installer refuses to narrow rather than install everything.
 | `2` | nothing was installed: every file the run tried failed (a BIOS folder that cannot be written, for one), the drive has too little free space for the download (checked before any folder is created), or the question about a folder that does not exist, named with `--dest` or typed at the folder question, was answered no. Also an option the installer refused before any download: an unknown option, `--jobs` outside 1 to 32, `--target` with `--every-board` or `--from-pack`. The message then starts with `install.py: error:`. With `--restore`, a folder that is not a dated folder inside `retrobios-backup` |
 | `130` | stopped with Ctrl+C, or with `q`, Ctrl+C or Ctrl+D at a question. Run the same command again to carry on |
 | `141` | the output was piped to a reader that closed early (`--list-platforms \| head`) |
+
+The full screen ended by SIGTERM (Start+Select on a handheld) before any
+install exits `143`. During an install it stops the install first, and exits
+`130`.
 
 `install.ps1` passes the installer's code on unchanged: run as a file it exits
 with it, run through `irm \| iex` it sets `$LASTEXITCODE` (an `exit` there
