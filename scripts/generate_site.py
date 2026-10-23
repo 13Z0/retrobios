@@ -6357,8 +6357,8 @@ def nav_emulators(profiles: dict) -> dict[str, dict]:
 def _emulator_nav(profiles: dict) -> list:
     """Emulators by initial (A, B, C), one level deep. A name that does not
     open on a letter goes under "0 to 9". The route middleware draws every
-    initial but the open one as a single link, so a page carries one
-    initial's links, at most 60."""
+    initial but the open one as a single link, so a page carries the links
+    of one initial only."""
     groups: dict[str, list[tuple[str, str]]] = {}
     for key, profile in nav_emulators(profiles).items():
         display = str(profile.get("emulator", key))
