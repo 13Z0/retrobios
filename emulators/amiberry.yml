@@ -3,8 +3,8 @@ type: standalone + libretro
 core_classification: official_port
 source: "https://github.com/BlitterStudio/amiberry"
 upstream: "https://github.com/tonioni/WinUAE"
-profiled_date: "2026-10-21"
-source_commit: "2de3bf82280be045ea81dd0c55407061dfdbaa3e"
+profiled_date: "2026-10-23"
+source_commit: "376b22c99e99bf03d861ed054c7e184b60e2f206"
 core_version: "v8.4.2"
 display_name: "Commodore - Amiga (Amiberry)"
 cores: [amiberry, "AMIBERRY"]
@@ -36,12 +36,12 @@ notes: |
   no hash check. When the main ROM is not found there, the fallback order
   is {home_dir}/roms/kick.rom, {home_dir}/kick.rom, ../shared/rom/kick.rom,
   ../System/rom/kick.rom, then ROM database guess.
-  ref: src/cfgfile.cpp:6442-6443, src/memory.cpp:1833-1856,
+  ref: src/cfgfile.cpp:6645-6646, src/memory.cpp:1833-1856,
        src/memory.cpp:2106-2148
 
   ROM identification uses SHA1 against the WinUAE ROM database but does
   not reject unknown ROMs. Cloanto encrypted ROMs supported with rom.key.
-  ref: src/rommgr.cpp:121-1109,1742-1815
+  ref: src/rommgr.cpp:122-1110,1743-1816
 
   Munt MT-32/CM-32L emulation compiled in (WITH_MIDIEMU). ROMs loaded from
   mt32-roms/ subdirectory of the ROM path. Split ROM pairs supported
@@ -161,8 +161,8 @@ files:
   # a1000, a500, a600, a1200, a3000, a4000, cdtv, cd32 or roz and names it by
   # the ROM database. A model then takes the first ROM id on its list that
   # the scan found.
-  # ref: src/osdep/amiberry_gui.cpp:219-242, src/osdep/amiberry_gui.cpp:276-298,
-  #      src/osdep/amiberry_gui.cpp:422-457, src/rommgr.cpp:3175-3244
+  # ref: src/osdep/amiberry_gui.cpp:229-252, src/osdep/amiberry_gui.cpp:286-308,
+  #      src/osdep/amiberry_gui.cpp:432-467, src/rommgr.cpp:3186-3255
 
   - name: amiga-os-310.rom
     mode: standalone
@@ -175,7 +175,7 @@ files:
     note: >
       Identified as KS ROM v3.1 (A4000)(Cloanto), ROM id 31, whatever the file
       is called. The A4000 model takes id 16 first and id 31 after it.
-    source_ref: "source src/rommgr.cpp:203-204, source src/cfgfile.cpp:9749-9754, source src/cfgfile.cpp:9807"
+    source_ref: "source src/rommgr.cpp:204-205, source src/cfgfile.cpp:9960-9968, source src/cfgfile.cpp:10021-10022"
 
   # --- AROS replacement ROMs ---
   # ref: src/memory.cpp:1925-1946 find_kickstart_replacement_directory,
@@ -245,7 +245,7 @@ files:
     system: commodore-amiga
     required: false
     note: "Decryption key for Cloanto Amiga Forever encrypted ROMs"
-    source_ref: "source src/rommgr.cpp:1444-1525"
+    source_ref: "source src/rommgr.cpp:1445-1526"
 
   # --- Keyboard MCU ROMs ---
   # Loaded when keyboard_mode is set to MCU emulation.
@@ -257,21 +257,21 @@ files:
     required: false
     size: 2048
     note: "6500-1/6570-036 keyboard MCU ROM for A500/A600/A1000 models"
-    source_ref: "source src/kbmcu/keyboard_mcu_6500_1.cpp:385-408, source src/rommgr.cpp:136-137"
+    source_ref: "source src/kbmcu/keyboard_mcu_6500_1.cpp:385-408, source src/rommgr.cpp:137-138"
 
   - name: "68HC05.rom"
     system: commodore-amiga
     required: false
     size: 8192
     note: "68HC05 keyboard MCU ROM for A1200"
-    source_ref: "source src/kbmcu/keyboard_mcu_6805.cpp:544-567, source src/rommgr.cpp:138-139"
+    source_ref: "source src/kbmcu/keyboard_mcu_6805.cpp:544-567, source src/rommgr.cpp:139-140"
 
   - name: "D8039HLC.rom"
     system: commodore-amiga
     required: false
     size: 2048
     note: "D8039HLC keyboard MCU ROM for A2000"
-    source_ref: "source src/kbmcu/keyboard_mcu_d8039hlc.cpp:235-258, source src/rommgr.cpp:140-141"
+    source_ref: "source src/kbmcu/keyboard_mcu_d8039hlc.cpp:235-258, source src/rommgr.cpp:141-142"
 
   # --- Munt MT-32/CM-32L MIDI ROMs ---
   # Located in mt32-roms/ subdirectory of the ROM path.
@@ -333,8 +333,8 @@ files:
   # Both builds then replace game-data/whdload_db.json with the one at the
   # first candidate when its "generated" field is later, keeping the old file
   # as a backup.
-  # ref: src/osdep/amiberry.cpp:11801-11826, 12145-12179, 12205-12219,
-  #      src/osdep/amiberry.cpp:12221-12287, 12289-12385,
+  # ref: src/osdep/amiberry.cpp:11903-11928, 12247-12281, 12307-12321,
+  #      src/osdep/amiberry.cpp:12323-12389, 12391-12487,
   #      libretro/libretro.cpp:1459-1475, cmake/linux/install.cmake:196-198
 
   - name: "WHDLoad"
@@ -349,7 +349,7 @@ files:
       WHDLoad executable linked into C: of the boot drive the booter builds,
       unless JST is selected. Part of the set the whdboot seed check requires.
       The core zip carries the library alone.
-    source_ref: "source src/osdep/amiberry_whdbooter.cpp:1866-1875, source src/osdep/amiberry.cpp:12145-12179"
+    source_ref: "source src/osdep/amiberry_whdbooter.cpp:1866-1875, source src/osdep/amiberry.cpp:12247-12281"
 
   - name: "JST"
     path: "whdboot/JST"
@@ -363,7 +363,7 @@ files:
       JST loader linked into C: in place of WHDLoad when the
       use_jst_instead_of_whd option is set. Part of the set the whdboot seed
       check requires. The core zip carries the library alone.
-    source_ref: "source src/osdep/amiberry_whdbooter.cpp:1866-1869, source src/osdep/amiberry.cpp:12145-12179"
+    source_ref: "source src/osdep/amiberry_whdbooter.cpp:1866-1869, source src/osdep/amiberry.cpp:12247-12281"
 
   - name: "AmiQuit"
     path: "whdboot/AmiQuit"
@@ -377,7 +377,7 @@ files:
       Quit helper linked into C: and called at the end of the generated startup-
       sequence. Part of the set the whdboot seed check requires. The core zip
       carries the library alone.
-    source_ref: "source src/osdep/amiberry_whdbooter.cpp:1615, source src/osdep/amiberry_whdbooter.cpp:1875, source src/osdep/amiberry.cpp:12145-12179"
+    source_ref: "source src/osdep/amiberry_whdbooter.cpp:1615, source src/osdep/amiberry_whdbooter.cpp:1875, source src/osdep/amiberry.cpp:12247-12281"
 
   - name: "boot-data.zip"
     path: "whdboot/boot-data.zip"
@@ -391,7 +391,7 @@ files:
       Boot volume mounted as DH3. A boot-data directory at the same place is
       used when the zip is absent. Part of the set the whdboot seed check
       requires. The core zip carries the library alone.
-    source_ref: "source src/osdep/amiberry_whdbooter.cpp:1652-1665, source src/osdep/amiberry.cpp:12145-12179"
+    source_ref: "source src/osdep/amiberry_whdbooter.cpp:1652-1665, source src/osdep/amiberry.cpp:12247-12281"
 
   - name: "whdload_db.json"
     path: "whdboot/game-data/whdload_db.json"
@@ -407,7 +407,7 @@ files:
       whdload_db.xml in the same folder is read when the JSON is absent. With
       neither, the booter scans the archive for a .slave file. Part of the set
       the whdboot seed check requires. The core zip carries the library alone.
-    source_ref: "source src/osdep/amiberry_whdbooter.cpp:1804-1823, source src/osdep/amiberry_whdbooter.cpp:1061-1079, source src/osdep/amiberry_whdbooter.cpp:1826-1840, source src/osdep/amiberry.cpp:12145-12179, source src/osdep/amiberry.cpp:12289-12385"
+    source_ref: "source src/osdep/amiberry_whdbooter.cpp:1804-1823, source src/osdep/amiberry_whdbooter.cpp:1061-1079, source src/osdep/amiberry_whdbooter.cpp:1826-1840, source src/osdep/amiberry.cpp:12247-12281, source src/osdep/amiberry.cpp:12391-12487"
 
   - name: "kick33180.A500.RTB"
     path: "whdboot/save-data/Kickstarts/kick33180.A500.RTB"
@@ -423,7 +423,7 @@ files:
       beside the image the booter links there. Part of the set the whdboot seed
       check requires. The core zip carries the library alone. The repository
       ships the same bytes as kick33192.A500.RTB.
-    source_ref: "source src/osdep/amiberry_whdbooter.cpp:331-352, source src/osdep/amiberry_whdbooter.cpp:1876, source src/osdep/amiberry.cpp:12145-12179"
+    source_ref: "source src/osdep/amiberry_whdbooter.cpp:331-352, source src/osdep/amiberry_whdbooter.cpp:1876, source src/osdep/amiberry.cpp:12247-12281"
 
   - name: "kick34005.A500.RTB"
     path: "whdboot/save-data/Kickstarts/kick34005.A500.RTB"
@@ -437,7 +437,7 @@ files:
       WHDLoad relocation table for Kickstart 1.3, read from DEVS:Kickstarts
       beside the image the booter links there. Part of the set the whdboot seed
       check requires. The core zip carries the library alone.
-    source_ref: "source src/osdep/amiberry_whdbooter.cpp:331-352, source src/osdep/amiberry_whdbooter.cpp:1876, source src/osdep/amiberry.cpp:12145-12179"
+    source_ref: "source src/osdep/amiberry_whdbooter.cpp:331-352, source src/osdep/amiberry_whdbooter.cpp:1876, source src/osdep/amiberry.cpp:12247-12281"
 
   - name: "kick40063.A600.RTB"
     path: "whdboot/save-data/Kickstarts/kick40063.A600.RTB"
@@ -451,7 +451,7 @@ files:
       WHDLoad relocation table for Kickstart 3.1 A600, read from DEVS:Kickstarts
       beside the image the booter links there. Part of the set the whdboot seed
       check requires. The core zip carries the library alone.
-    source_ref: "source src/osdep/amiberry_whdbooter.cpp:331-352, source src/osdep/amiberry_whdbooter.cpp:1876, source src/osdep/amiberry.cpp:12145-12179"
+    source_ref: "source src/osdep/amiberry_whdbooter.cpp:331-352, source src/osdep/amiberry_whdbooter.cpp:1876, source src/osdep/amiberry.cpp:12247-12281"
 
   - name: "kick40068.A1200.RTB"
     path: "whdboot/save-data/Kickstarts/kick40068.A1200.RTB"
@@ -465,7 +465,7 @@ files:
       WHDLoad relocation table for Kickstart 3.1 A1200, read from
       DEVS:Kickstarts beside the image the booter links there. Part of the set
       the whdboot seed check requires. The core zip carries the library alone.
-    source_ref: "source src/osdep/amiberry_whdbooter.cpp:331-352, source src/osdep/amiberry_whdbooter.cpp:1876, source src/osdep/amiberry.cpp:12145-12179"
+    source_ref: "source src/osdep/amiberry_whdbooter.cpp:331-352, source src/osdep/amiberry_whdbooter.cpp:1876, source src/osdep/amiberry.cpp:12247-12281"
 
   - name: "kick40068.A4000.RTB"
     path: "whdboot/save-data/Kickstarts/kick40068.A4000.RTB"
@@ -479,7 +479,7 @@ files:
       WHDLoad relocation table for Kickstart 3.1 A4000, read from
       DEVS:Kickstarts beside the image the booter links there. Part of the set
       the whdboot seed check requires. The core zip carries the library alone.
-    source_ref: "source src/osdep/amiberry_whdbooter.cpp:331-352, source src/osdep/amiberry_whdbooter.cpp:1876, source src/osdep/amiberry.cpp:12145-12179"
+    source_ref: "source src/osdep/amiberry_whdbooter.cpp:331-352, source src/osdep/amiberry_whdbooter.cpp:1876, source src/osdep/amiberry.cpp:12247-12281"
 
   - name: "kick31034.A1000.RTB"
     path: "whdboot/save-data/Kickstarts/kick31034.A1000.RTB"
@@ -567,7 +567,7 @@ files:
       whdload_db.xml in the same folder is read when the JSON is absent. With
       neither, the booter scans the archive for a .slave file. Ships in whdboot/
       of the installed build.
-    source_ref: "source src/osdep/amiberry_whdbooter.cpp:1804-1823, source src/osdep/amiberry_whdbooter.cpp:1061-1079, source src/osdep/amiberry_whdbooter.cpp:1826-1840, source src/osdep/amiberry.cpp:12289-12385"
+    source_ref: "source src/osdep/amiberry_whdbooter.cpp:1804-1823, source src/osdep/amiberry_whdbooter.cpp:1061-1079, source src/osdep/amiberry_whdbooter.cpp:1826-1840, source src/osdep/amiberry.cpp:12391-12487"
 
   - name: "kick33180.A500.RTB"
     path: "whdboot/save-data/Kickstarts/kick33180.A500.RTB"
