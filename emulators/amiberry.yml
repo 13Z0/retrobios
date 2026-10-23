@@ -13,6 +13,26 @@ systems:
   - commodore-cd32
   - commodore-cdtv
 
+data_root:
+  windows:
+    path: "%USERPROFILE%/Amiberry"
+    source_ref: "src/osdep/amiberry.cpp:9067-9076, 9124-9147, 12553-12590, 4792-4795, 12635"
+    note: "AMIBERRY_HOME_DIR overrides it. An amiberry.portable file beside the executable makes its folder the root. rom_path and base_content_path in amiberry.conf move ROMs"
+  macos:
+    path: "~/Documents/Amiberry"
+    source_ref: "src/osdep/amiberry.cpp:9056-9065, 9148-9165, 12553-12590, 4792-4795, 12635"
+    note: "AMIBERRY_HOME_DIR overrides it. rom_path and base_content_path in amiberry.conf move ROMs"
+  linux:
+    path: "~/Amiberry"
+    source_ref: "src/osdep/amiberry.cpp:9078-9085, 9166-9194, 12553-12626, 4792-4795, 12635"
+    note: "AMIBERRY_HOME_DIR overrides it, and an amiberry.portable file beside the executable makes its folder the root. Outside portable mode WHDBoot sits in $XDG_DATA_HOME/amiberry, else ~/.local/share/amiberry. rom_path and base_content_path in amiberry.conf move ROMs"
+  android:
+    path: "Android/data/com.blitterstudio.amiberry/files"
+    source_ref: "src/osdep/amiberry.cpp:9116-9123, 12553-12590, 4792-4795, 12635, android/app/build.gradle:118"
+  ios:
+    path: "Documents/Amiberry"
+    source_ref: "src/osdep/amiberry.cpp:9107-9115, 12553-12590, 4792-4795, 12635"
+
 notes: |
   Amiberry is an Amiga emulator based on WinUAE, available as both standalone
   and libretro core. No built-in kickstart: requires a real Kickstart ROM or
