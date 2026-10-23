@@ -17,6 +17,11 @@ dependencies = [
 dev = [
     "jsonschema[format-nongpl]>=4.23",
     "markdown>=3.7",
+    # The installer's full-screen tests: pyte reads the screen back,
+    # hypothesis fuzzes the key decoder, vermin holds install.py to 3.8.
+    "pyte>=0.8.2",
+    "hypothesis>=6.100",
+    "vermin>=1.9",
 ]
 # The site is built by Astro Starlight from website/package.json and its
 # lockfile (npm ci --prefix website): no Python package builds it.
