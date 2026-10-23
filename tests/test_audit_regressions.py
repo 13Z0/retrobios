@@ -3953,7 +3953,7 @@ class TheSiteCountsSlotsNotVersions(unittest.TestCase):
         ]
         line = _emulator_file_summary(files, lambda f: f.get("crc32") == "2")[0]
         self.assertIn("**2 files** (3 accepted versions)", line)
-        self.assertIn("1 in repo, 1 missing", line)
+        self.assertIn("1 in repo and 1 missing", line)
 
 
 
