@@ -45,6 +45,7 @@ import unicodedata
 import urllib.error
 import urllib.parse
 import urllib.request
+import weakref
 import xml.etree.ElementTree as ET
 import zipfile
 import zlib
@@ -6766,6 +6767,8 @@ class LocalSources:
         self.pack: PackSource | None = None
         # The folders named with --from, read once for every platform.
         self.folders: list[FolderIndex] = []
+        # Every folder index of the run still in use, closed at its end.
+        self.indexes: weakref.WeakSet[FolderIndex] = weakref.WeakSet()
 
     @property
     def offline(self) -> bool:
@@ -6775,9 +6778,15 @@ class LocalSources:
     def reset(self) -> None:
         if self.pack is not None:
             self.pack.close()
+        self.close_indexes()
         self.manifest = None
         self.pack = None
         self.folders = []
+
+    def close_indexes(self) -> None:
+        for index in list(self.indexes):
+            index.close()
+        self.indexes = weakref.WeakSet()
 
 
 LOCAL = LocalSources()
@@ -6860,7 +6869,7 @@ def _open_copy(copy: LocalCopy) -> Iterator[BinaryIO]:
         with open(copy.path, "rb") as handle:
             yield handle
         return
-    with zipfile.ZipFile(copy.path) as archive, archive.open(copy.member) as handle:
+    with copy.index.open_member(copy.path, copy.member) as handle:
         yield handle
 
 
@@ -7014,6 +7023,10 @@ class LocalCopy(NamedTuple):
         return f"{self.member} inside {self.path}" if self.member else str(self.path)
 
 
+# The archives a FolderIndex keeps open at once.
+OPEN_ARCHIVES = 16
+
+
 class FolderIndex:
     """The files under a folder, by name and by size, hashed on demand.
 
@@ -7032,6 +7045,7 @@ class FolderIndex:
         self.archives: list[Path] = []
         # Name a ._ file stands beside (casefolded) -> the ._ files.
         self.apple_double: dict[str, list[Path]] = {}
+        LOCAL.indexes.add(self)
         # The list's destinations, casefolded (an archive among them is not
         # unpacked for its members) and as the list writes them.
         self.sealed: set[str] = set()
@@ -7050,6 +7064,10 @@ class FolderIndex:
         self._member_named: dict[int, dict[str, list[tuple[Path, str]]]] = {}
         self._scans: dict[tuple[str, int, str], _HashScan] = {}
         self._member_size: dict[tuple[Path, str], int] = {}
+        # The archives read so far, open, the last read at the end: a ZIP
+        # was opened again, its directory parsed again, for each member.
+        self._zips: dict[Path, zipfile.ZipFile] = {}
+        self._zip_lock = threading.Lock()
         # (path, member or "") -> (its size or None when unknown, why) of each
         # file, member or folder below root that could not be read.
         self.unreadable: dict[tuple[Path, str], tuple[int | None, str]] = {}
@@ -7121,6 +7139,50 @@ class FolderIndex:
             return False
         return True
 
+    def _archive(self, path: Path) -> zipfile.ZipFile:
+        """The archive at path, opened once. Called with _zip_lock held.
+
+        A few stay open, the least recently read closed first: a card of
+        MAME sets would otherwise hold a descriptor per archive. Closing
+        one leaves a member being read open until it is closed itself.
+        Only archives the list does not install are read this way.
+        """
+        archive = self._zips.pop(path, None)
+        if archive is None:
+            archive = zipfile.ZipFile(path)
+            while len(self._zips) >= OPEN_ARCHIVES:
+                self._zips.pop(next(iter(self._zips))).close()
+        self._zips[path] = archive
+        return archive
+
+    def infolist(self, path: Path) -> list[zipfile.ZipInfo]:
+        with self._zip_lock:
+            return self._archive(path).infolist()
+
+    @contextlib.contextmanager
+    def open_member(self, path: Path, member: str) -> Iterator[BinaryIO]:
+        """A member of an archive under the folder, read from any thread."""
+        with self._zip_lock:
+            handle = self._archive(path).open(member)
+        try:
+            yield handle
+        finally:
+            # The archive counts its open members: the count moves under
+            # the lock, as when the member was opened.
+            with self._zip_lock:
+                handle.close()
+
+    def open_archives(self) -> int:
+        with self._zip_lock:
+            return len(self._zips)
+
+    def close(self) -> None:
+        """Close the archives the index holds open."""
+        with self._zip_lock:
+            for archive in self._zips.values():
+                archive.close()
+            self._zips.clear()
+
     def seed(self, path: Path, sha1: str) -> None:
         """A SHA-1 already known, so the file is not read again."""
         self._sha1[path] = sha1
@@ -7147,7 +7209,7 @@ class FolderIndex:
         if key not in self._digests:
             try:
                 if member:
-                    with zipfile.ZipFile(path) as archive, archive.open(member) as handle:
+                    with self.open_member(path, member) as handle:
                         value = _digest_handle(handle, (algorithm,))[algorithm]
                 else:
                     value = _digest_file(path, (algorithm,))[algorithm]
@@ -7192,6 +7254,8 @@ class FolderIndex:
     def zip_members(self, path: Path) -> list[str]:
         if path not in self._members:
             try:
+                # Read once and closed: the archive may be a file of the
+                # list, which Windows will not replace while it is open.
                 with zipfile.ZipFile(path) as archive:
                     self._members[path] = [n.rsplit("/", 1)[-1].casefold()
                                            for n in archive.namelist()]
@@ -7209,8 +7273,7 @@ class FolderIndex:
                         or self.relative(path).casefold() in self.sealed):
                     continue
                 try:
-                    with zipfile.ZipFile(path) as archive:
-                        infos = archive.infolist()
+                    infos = self.infolist(path)
                 except OSError as exc:
                     # A ZIP that will not open may hold anything: named. A
                     # damaged one is a download cut short, not a copy.
@@ -8332,7 +8395,14 @@ def main() -> None:
 
 
 def _run(args: argparse.Namespace) -> None:
-    """The run, its text quiet or not."""
+    """The run, its text quiet or not, the archives it read closed after."""
+    try:
+        _run_text(args)
+    finally:
+        LOCAL.close_indexes()
+
+
+def _run_text(args: argparse.Namespace) -> None:
     if not args.quiet:
         _install(args, sys.stdout)
         return

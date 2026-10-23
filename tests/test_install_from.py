@@ -18,6 +18,7 @@ import io
 import json
 import os
 import subprocess
+import threading
 import sys
 import time
 import unittest
@@ -842,6 +843,54 @@ class ManySameSizedFiles(FromFolder):
         })
         self.assertEqual(len(copies), 3)
         self.assertLess(elapsed, 30, f"{elapsed:.1f} s")
+
+    def test_one_archive_of_thousands_of_members_is_opened_once(self):
+        """Each member read reopened its ZIP and parsed its directory again:
+        4000 members of one size made 4000 parses of 4000 entries."""
+        count = 4000
+        _zip(self.old / "romset.zip", {f"m{n:04}.bin": b"m%015d" % n for n in range(count)})
+        wanted = [_entry(f"z{n}.bin", b"m%015d" % n, ["x"]) for n in (count - 1, 3, 1234)]
+        index = install.FolderIndex(self.old)
+        opened = []
+        real = zipfile.ZipFile
+
+        def counting(*args, **kwargs):
+            opened.append(args[0])
+            return real(*args, **kwargs)
+
+        start = time.monotonic()
+        with mock.patch.object(install.zipfile, "ZipFile", side_effect=counting):
+            copies = install.plan_local_copies(wanted, self.dest, None, [index])
+            self.assertEqual(len(copies), 3)
+            # The copy step reads members of the archive the plan opened,
+            # from threads.
+            results = []
+            threads = [threading.Thread(target=lambda e=e: results.append(
+                install._copy_local(e, self.dest, self.dest / e["dest"], copies[id(e)], None)))
+                for e in wanted]
+            self.dest.mkdir(parents=True, exist_ok=True)
+            for thread in threads:
+                thread.start()
+            for thread in threads:
+                thread.join()
+        elapsed = time.monotonic() - start
+        self.assertEqual(sorted(ok for _d, ok, _r in results), [True] * 3, results)
+        self.assertEqual(len(opened), 1)
+        self.assertLess(elapsed, 20, f"{elapsed:.1f} s")
+        index.close()
+        self.assertEqual(index.open_archives(), 0)
+
+    def test_a_card_of_many_archives_holds_few_open(self):
+        count = install.OPEN_ARCHIVES * 3
+        for n in range(count):
+            _zip(self.old / f"sets/s{n:03}.zip", {f"m{n}.bin": b"n%015d" % n})
+        wanted = [_entry(f"z{n}.bin", b"n%015d" % n, ["x"]) for n in range(count)]
+        index = install.FolderIndex(self.old)
+        copies = install.plan_local_copies(wanted, self.dest, None, [index])
+        self.assertEqual(len(copies), count)
+        self.assertLessEqual(index.open_archives(), install.OPEN_ARCHIVES)
+        install.LOCAL.close_indexes()
+        self.assertEqual(index.open_archives(), 0)
 
     def test_a_file_of_the_same_name_comes_first(self):
         self.keep("a/other.bin", US)
