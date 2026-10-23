@@ -150,8 +150,10 @@ _card_pages: dict[tuple[str, str, str], str] = {}
 
 
 def reset_console_pages() -> None:
+    """Forget where the system pages put consoles, cards and boards."""
     _console_pages.clear()
     _card_pages.clear()
+    _board_sections.clear()
 
 
 def record_console_pages(
@@ -190,7 +192,13 @@ def console_anchor(manufacturer: str, console: str) -> str:
 
 def console_href(slug: str, console: str, prefix: str = "") -> str:
     """Where a console's files are: its own page, or its section of the
-    manufacturer's page (also where a console cut into parts lists them)."""
+    manufacturer's page (also where a console cut into parts lists them).
+    An arcade board's section heads the page of its own name."""
+    if slug == "arcade" and _board_sections:
+        board = _board_ids_by_name().get(console.casefold())
+        if board in _board_sections:
+            anchor = board_slug(board)
+            return f"{prefix}systems/arcade-{urllib.parse.quote(anchor)}.md#{anchor}"
     stems = _console_pages.get((slug, console))
     if stems and len(stems) == 1:
         return f"{prefix}systems/{urllib.parse.quote(stems[0])}.md"
@@ -203,6 +211,10 @@ def card_page(path: str, sha1: str) -> str:
     parts = path.split("/")
     slug = parts[1].lower().replace(" ", "-")
     console = parts[2] if len(parts) > 2 else ""
+    if slug == "arcade" and _board_sections:
+        board = arcade_board(sha1)
+        if board in _board_sections:
+            return f"arcade-{board_slug(board)}"
     return _card_pages.get((slug, console, sha1), slug)
 
 
@@ -225,12 +237,28 @@ def emulator_card_page(emulator: str, anchor: str) -> str:
 def system_section(sys_id: str) -> tuple[str, str] | None:
     """The console section a system id leads to, as (manufacturer slug,
     console): its own section, else the parent SYSTEM_PARENTS names, else
-    the one section whose heading reads system_name(). The folder a
-    system's files sit in is no answer by itself: Emerson's Arcadia 2001
-    led to the Saturn and Sega's NAOMI to the Dreamcast.
+    the arcade board it names once record_board_section() wrote it
+    (``("arcade", <board name>)``, which console_href turns into
+    ``systems/arcade-<board slug>.md#<board slug>``), else the one section
+    whose heading reads system_name(). The folder a system's files sit in
+    is no answer by itself: Emerson's Arcadia 2001 led to the Saturn and
+    Sega's NAOMI to the Dreamcast.
 
     A heading under Arcade counts when it reads the name exactly (Namco
     System 246). One under Other never does, its headings name programs."""
+    section = _section_without_boards(sys_id)
+    if (not _board_sections or sys_id in SYSTEM_PARENTS
+            or (section is not None and section[0] != "arcade")):
+        return section
+    board = _board_of_id(sys_id)
+    if board in _board_sections:
+        return "arcade", system_name(board)
+    return section
+
+
+def _section_without_boards(sys_id: str) -> tuple[str, str] | None:
+    """system_section before arcade boards: what the folders and the
+    reviewed parents give."""
     own = _own_section(sys_id)
     if own is not None:
         return _manufacturer_slug(own[0]), own[1]
@@ -259,6 +287,236 @@ def _system_link(sys_id: str, prefix: str = "") -> str:
         slug, console = section
         return f"[{sys_id}]({console_href(slug, console, prefix)})"
     return sys_id
+
+
+# Arcade boards. A board is a system id that a profile entry with
+# ``category: bios_zip`` names, through its ``system:``/``systems:`` or the
+# profile's single system, whose archive the collection holds, and that has
+# no section under a machine's maker. The archive is found by its name and,
+# where the entry lists ``contents:``, kept only when it holds one of those
+# CRC32s: maclc3.zip names a MAME set and an unrelated 189 MB file. The
+# folder a copy sits in decides nothing.
+_arcade_source: list[tuple[dict, dict] | None] = [None]
+# sha1 -> the board id the archive is the BIOS of.
+_archive_boards: dict[str, str] = {}
+# Casefolded board name -> the board id that stands for it.
+_board_names: dict[str, str] = {}
+_boards_built = [False]
+
+
+def set_arcade_boards(profiles: dict[str, dict], db: dict) -> None:
+    """Install the profiles and database the arcade boards are read from.
+    Without it they are read from the repository on first use."""
+    _arcade_source[0] = (profiles, db)
+    _boards_built[0] = False
+
+
+def _owner_ids(entry: dict, systems: list[str]) -> set[str]:
+    """The system ids a profile entry is declared for."""
+    owners = {str(entry["system"])} if entry.get("system") else set()
+    owners.update(str(sys_id) for sys_id in entry.get("systems") or [])
+    if not owners and len(systems) == 1:
+        owners = set(systems)
+    return owners
+
+
+# _board_role for an id whose archive is its machine's: a section under the
+# machine's maker, or a reviewed parent outside Arcade.
+_MACHINE = "\0machine"
+
+
+def _board_role(sys_id: str) -> str | None:
+    """A board's name, _MACHINE for an id that names a machine with a
+    section of its own, None for an id that names neither (the generic
+    arcade id, an id with no name)."""
+    parent = SYSTEM_PARENTS.get(sys_id)
+    if parent is not None:
+        return None if parent[0] == "Arcade" else _MACHINE
+    section = _section_without_boards(sys_id)
+    if section is not None and section[0] != "arcade":
+        return _MACHINE
+    try:
+        return system_name(sys_id)
+    except KeyError:
+        return None
+
+
+def _in_arcade(sha1: str, db: dict) -> bool:
+    """Whether a copy of the content sits under bios/Arcade/."""
+    entry = db.get("files", {}).get(sha1) or {}
+    if str(entry.get("path", "")).startswith("bios/Arcade/"):
+        return True
+    return sha1 in _arcade_suffix_sha1s(db)
+
+
+_suffix_cache: list[tuple[int, frozenset[str]] | None] = [None]
+
+
+def _arcade_suffix_sha1s(db: dict) -> frozenset[str]:
+    cached = _suffix_cache[0]
+    if cached is not None and cached[0] == id(db):
+        return cached[1]
+    found = frozenset(
+        sha1s[0]
+        for tail, sha1s in db.get("indexes", {}).get("by_path_suffix", {}).items()
+        if tail.startswith("Arcade/") and len(sha1s) == 1
+    )
+    _suffix_cache[0] = (id(db), found)
+    return found
+
+
+def _build_boards() -> None:
+    if _boards_built[0]:
+        return
+    from ziptools import zip_member_crcs
+
+    _ensure_console_sections()
+    if _arcade_source[0] is None:
+        import json
+
+        from common import load_emulator_profiles
+
+        database = _REPO_ROOT / "database.json"
+        if not database.exists():
+            _archive_boards.clear()
+            _board_names.clear()
+            _boards_built[0] = True
+            return
+        with open(database, encoding="utf-8") as handle:
+            db = json.load(handle)
+        profiles = load_emulator_profiles(str(_REPO_ROOT / "emulators"), skip_aliases=False)
+        _arcade_source[0] = (profiles, db)
+    profiles, db = _arcade_source[0]
+    files = db.get("files", {})
+    by_name = db.get("indexes", {}).get("by_name", {})
+
+    # sha1 -> board name -> the profiles naming it. None: a machine's own.
+    votes: dict[str, dict[str, set[str]] | None] = {}
+    ids_by_name: dict[str, set[str]] = {}
+    for key in sorted(profiles):
+        profile = profiles[key]
+        if profile.get("type") == "test":
+            continue
+        systems = [str(sys_id) for sys_id in profile.get("systems") or []]
+        for entry in profile.get("files") or []:
+            if not isinstance(entry, dict) or entry.get("category") != "bios_zip":
+                continue
+            owners = _owner_ids(entry, systems)
+            if not owners:
+                continue
+            crcs = {
+                str(member["crc32"]).lower()
+                for member in entry.get("contents") or []
+                if isinstance(member, dict) and member.get("crc32")
+            }
+            names = {str(entry.get("name", ""))}
+            names.update(str(alias) for alias in entry.get("aliases") or [])
+            archives: set[str] = set()
+            for name in names:
+                found = by_name.get(name.rsplit("/", 1)[-1]) or []
+                for sha1 in [found] if isinstance(found, str) else found:
+                    if sha1 not in files:
+                        continue
+                    if crcs:
+                        held = zip_member_crcs(str(_REPO_ROOT / files[sha1]["path"]))
+                        # An archive the build cannot read keeps its name.
+                        if held and not held & crcs:
+                            continue
+                    archives.add(sha1)
+            for owner in owners:
+                role = _board_role(owner)
+                if role == _MACHINE:
+                    for sha1 in archives:
+                        votes[sha1] = None
+                    continue
+                if role is None:
+                    continue
+                ids_by_name.setdefault(role.casefold(), set()).add(owner)
+                for sha1 in archives:
+                    ballot = votes.setdefault(sha1, {})
+                    if ballot is not None:
+                        ballot.setdefault(role.casefold(), set()).add(key)
+
+    _archive_boards.clear()
+    _board_names.clear()
+    for sha1, ballot in votes.items():
+        if not ballot:
+            continue
+        ranked = sorted(ballot.items(), key=lambda item: (-len(item[1]), item[0]))
+        # Two boards named as often: a device ROM several boards share.
+        if len(ranked) > 1 and len(ranked[0][1]) == len(ranked[1][1]):
+            continue
+        name = ranked[0][0]
+        board = sorted(ids_by_name[name])[0]
+        _archive_boards[sha1] = board
+        if _in_arcade(sha1, db):
+            _board_names[name] = board
+    # A board none of whose archives sits under Arcade has no section there.
+    for sha1, board in list(_archive_boards.items()):
+        if system_name(board).casefold() not in _board_names:
+            del _archive_boards[sha1]
+    _boards_built[0] = True
+
+
+def _board_ids_by_name() -> dict[str, str]:
+    _build_boards()
+    return _board_names
+
+
+def _board_of_id(sys_id: str) -> str | None:
+    """The board an id names, by its display name: naomi2 and sega-naomi2
+    are one board."""
+    try:
+        name = system_name(sys_id)
+    except KeyError:
+        return None
+    return _board_ids_by_name().get(name.casefold())
+
+
+def arcade_board(sha1: str) -> str | None:
+    """The system id an arcade archive is the BIOS of, or None.
+
+    Read from the profiles' ``system``/``systems`` and ``contents:``,
+    never from the folder. An archive several boards share as often (a
+    device ROM), or one a machine with its own section names (neogeo.zip
+    for the Neo Geo, cd32.zip for the CD32), has no board. Every id of a
+    board's name returns the same id, the first in sort order."""
+    _build_boards()
+    return _archive_boards.get(str(sha1))
+
+
+def board_slug(sys_id: str) -> str:
+    """The slug of a board's section: its page is systems/arcade-<slug>/
+    and its heading's id is <slug>. Read from the board's display name,
+    so every id of one board gives one slug."""
+    from sitestarlight import toc_slug
+
+    return toc_slug(system_name(str(sys_id)))
+
+
+# Boards whose section the system pages wrote. A link waits for its
+# section: before the Arcade pages were grouped by board, 8,606 links on
+# 141 pages led to pages nobody wrote and the build stopped.
+_board_sections: set[str] = set()
+
+
+def record_board_section(board: str) -> None:
+    """Mark a board's section as written, at systems/arcade-<board_slug>/
+    under the heading <board_slug>. From then on system_section() leads
+    every id of the board there, and card_page() sends its Arcade cards
+    there. The system pages call it for each board they give a section,
+    before any other page links one."""
+    canonical = _board_of_id(str(board))
+    if canonical is None:
+        raise KeyError(f"{board!r} is not an arcade board")
+    _board_sections.add(canonical)
+
+
+def arcade_boards() -> dict[str, str]:
+    """Every board, by board id -> display name."""
+    _build_boards()
+    return {board: system_name(board) for board in sorted(set(_board_names.values()))}
+
 
 def _field_text(key: object, value: object) -> str:
     """A scalar of a structured block. A source reference reads as code."""
@@ -435,6 +693,8 @@ def set_console_sections(
     _program_names.clear()
     _program_names.update(name.casefold() for name in programs)
     _sections_installed[0] = True
+    # Which ids are boards depends on which have a section elsewhere.
+    _boards_built[0] = False
 
 
 _sections_installed = [False]
@@ -923,8 +1183,10 @@ SYSTEM_NAMES: dict[str, str] = {
     "zn1-acclaim": "Acclaim ZN-1",
     "zn1-atlus": "Atlus ZN-1",
     "zn1-capcom": "Capcom ZN-1",
-    "zn1-taito": "Taito ZN-1",
-    "zn1-tecmo": "Tecmo ZN-1",
+    # mame2003 files taitofx1.zip and tps.zip under these ids, its notes
+    # name the boards: the Taito FX-1 and the Tecmo TPS, both ZN-1 based.
+    "zn1-taito": "Taito FX-1",
+    "zn1-tecmo": "Tecmo TPS",
     "zn1-video-system": "Video System ZN-1",
     "zn2-capcom": "Capcom ZN-2",
     "zx-spectrum-128": "Sinclair ZX Spectrum 128",
@@ -1010,6 +1272,7 @@ SYSTEM_PARENTS: dict[str, tuple[str, str]] = {
     "marty": ("Fujitsu", "FM Towns"),
     "mz700": ("Sharp", "MZ"),
     "mz80k": ("Sharp", "MZ"),
+    "mz800": ("Sharp", "MZ"),
     "oricatmos": ("Oric", "Oric"),
     "palm-os": ("Palm", "Palm"),
     "philips-vg5k": ("Philips", "VG5000"),
@@ -1034,6 +1297,22 @@ SYSTEM_PARENTS: dict[str, tuple[str, str]] = {
     "mohaa-spearhead": ("Electronic Arts", "Medal of Honor Allied Assault"),
     "ur-quan-masters": ("Toys for Bob", "The Ur-Quan Masters"),
     "star-control-2": ("Toys for Bob", "The Ur-Quan Masters"),
+    # Systems whose files sit in the folder of the program that reads them,
+    # the only section listing them. DOS and ScummVM also read the Roland
+    # MT-32 ROMs, which their own sections do not hold.
+    "bbc-master-128": ("Other", "beebem"),
+    "bbc-master-et": ("Other", "beebem"),
+    "cave-story": ("Other", "NXEngine"),
+    "dos": ("DOS", "DOSBox"),
+    "scummvm": ("Other", "ScummVM"),
+    "sinclair-zx-spectrum-next": ("Other", "cspect"),
+    "solarus": ("Game Engines", "Solarus"),
+    "sunplus-spmp8000": ("Other", "spmp8000emu"),
+    "tomb-raider-1": ("Game Engines", "TRX"),
+    "tyrian": ("Other", "opentyrian"),
+    "vm-labs-nuon": ("Other", "nuance"),
+    "xrick": ("Other", "xrick"),
+    "zc210": ("ZC", "ZC210"),
     # The collection's general arcade section, where naomi.zip, neogeo.zip
     # and the other board sets sit.
     "arcade": ("Arcade", "Arcade"),

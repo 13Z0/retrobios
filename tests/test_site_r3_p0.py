@@ -1,11 +1,14 @@
-"""Every system id with a section leads to it (round 3, package P0).
+"""Every system id with a section leads to it (rounds 3 and 4, package P0).
 
 260 of 636 system ids linked: a variant (WonderSwan Color, Neo Geo MVS)
 never matched a heading, twin folders (DS and Nintendo DS) made the exact
 name ambiguous, and every Arcade heading was refused. siterender now reads
-a reviewed SYSTEM_PARENTS table after the id's own section, and accepts an
-Arcade heading that reads the name exactly. An id whose files the
-collection holds and that stays plain is named below, with the reason.
+a reviewed SYSTEM_PARENTS table after the id's own section, accepts an
+Arcade heading that reads the name exactly, and leads an arcade board
+(NAOMI, ZN-1, PGM) to its own section. An id counts as holding files
+through a set archive (``category: bios_zip``) its profile declares for it,
+not only through a file's own hash. An id whose files the collection holds
+and that stays plain is named below, with the reason.
 Reads the repository: skips when the database is absent.
 """
 
@@ -25,60 +28,33 @@ import siterender  # noqa: E402
 # Ids whose files the collection holds and that lead to no section.
 UNLINKED: dict[str, str] = {
     # Files only under a program's folder (Other/<emulator>, Arcade/<core>,
-    # Game Engines/<engine>, a top named after the program). The heading
-    # names the program, not the system.
-    "atari-system1": "Other > fbneo",
-    "bbc-master-128": "Other > beebem",
-    "bbc-master-et": "Other > beebem",
+    # Game Engines/<engine>, a top named after the program), a folder of
+    # several systems' files or not reviewed as the system's own. The
+    # heading names the program, not the system.
     "capcom-cps3": "Arcade > FBNeo",
-    "cave-story": "Other > NXEngine",
     "cps3": "Arcade > Arcade holds one CPS-3 set among every board's",
     "commanderx16": "Arcade > Arcade",
     "dark-forces-ii": "Game Engines > OpenJKDF2",
-    "deco-cassette": "Arcade > FBNeo",
-    "dos": "DOSBox, Roland and Other folders",
     "fpinball": "Other > future-pinball-fploader",
     "fruitmachine": "Other > mfme",
-    "igs-pgm": "Arcade > FBNeo",
-    "konami-bubsys": "Arcade > FBNeo",
     "microsoft-xbox-360": "Other > xenia-edge",
-    "midway-mcr": "Arcade > FBNeo",
     "mysteries-of-the-sith": "Game Engines > OpenJKDF2",
-    "mz2000": "Arcade > Arcade, not the Sharp MZ section",
-    "mz2500": "Arcade > Arcade, not the Sharp MZ section",
-    "mz800": "Arcade > Arcade, not the Sharp MZ section",
     "namco-na1": "Arcade > FBNeo",
     "namco-nb1": "Arcade > FBNeo",
-    "nmk16": "Arcade > FBNeo",
     "omicron": "Other > omicron",
-    "pegasus": "Arcade > MAME",
     "rpgmaker": "RPG Maker > easyrpg",
-    "scummvm": "Other > ScummVM",
     "sdlpal": "Other > sdlpal",
-    "sega-system16b": "Arcade > FBNeo",
-    "sinclair-zx-spectrum-next": "Other > cspect",
+    "sega-system16b": "Arcade > FBNeo, and isgsm.zip is also the ISG Selection Master's",
     "smbx": "Game Engines > TheXTech",
-    "solarus": "Game Engines > Solarus",
-    "sunplus-spmp8000": "Other > spmp8000emu",
-    "super-kaneko-nova": "Arcade > FBNeo",
-    "taito-cchip": "Arcade > FBNeo",
     "thomson-mo6": "Other > Clock Signal",
-    "tomb-raider-1": "Game Engines > TRX",
-    "vgmplay": "Arcade > Arcade and MAME",
-    "vm-labs-nuon": "Other > nuance",
-    "vpinball": "Arcade > PinMAME",
-    "xrick": "Other > xrick",
-    "zc210": "ZC > ZC210, the emulator's folder",
+    "vgmplay": "qsound.zip, ym2413.zip, ym2608.zip: sound chips, no board",
     # Files filed with another machine: a link would name the wrong one.
-    "atom": "atom.zip is filed with the BBC Micro",
     "commodore-c64-supercpu": "VICE's tree under the C128",
     "emerson-arcadia-2001": "ar_bios.zip is filed with the Saturn",
-    "naomi2": "naomi2.zip is filed with the Dreamcast",
-    "neogeo64": "the platform declares the Neo Geo's neogeo.zip",
-    "sega-dreamcast-arcade": "naomi.zip and awbios.zip, Arcade and Dreamcast",
+    "sega-dreamcast-arcade": "NAOMI, NAOMI 2 and Atomiswave sets, three boards",
     "spectravideo": "the SVI ROMs are filed with the MSX",
+    "taito-type-x": "mame2010 files taitogn.zip, the G-NET BIOS, under this id",
     "vvvvvv": "SDL's controller database",
-    "ym2608": "an FBNeo sound ROM, also filed with the NES",
     # Files of distinct machines or games, one section each.
     "catacomb-adventure": "three games, three sections",
     "sinclair-zx80-81": "ZX 80 and ZX 81 sections",
@@ -95,6 +71,25 @@ def _accepts(fe: dict, local: str | None, status: str) -> bool:
         return True
     path = fe.get("path")
     return bool(path) and local.endswith("/" + str(path))
+
+
+def _archives_held(fe: dict, db: dict) -> set[str]:
+    """The copies of a set archive (``category: bios_zip``) the collection
+    holds: by its name, kept when it holds one CRC32 its ``contents:``
+    lists. MAME hashes the members, never the archive, so the entry has no
+    hash of its own and a name match is the only way to it."""
+    from ziptools import zip_member_crcs
+
+    crcs = {str(m["crc32"]).lower() for m in fe.get("contents") or []
+            if isinstance(m, dict) and m.get("crc32")}
+    names = {str(fe.get("name", ""))} | {str(a) for a in fe.get("aliases") or []}
+    held: set[str] = set()
+    for name in names:
+        for sha1 in db["indexes"]["by_name"].get(name.rsplit("/", 1)[-1], []):
+            members = zip_member_crcs(str(REPO_ROOT / db["files"][sha1]["path"]))
+            if not crcs or not members or members & crcs:
+                held.add(sha1)
+    return held
 
 
 @unittest.skipUnless((REPO_ROOT / "database.json").exists(), "database.json is not built")
@@ -119,6 +114,12 @@ class SystemLinks(unittest.TestCase):
             profiles = load_emulator_profiles("emulators", skip_aliases=False)
             siterender.set_console_sections(
                 cls.manufacturers, siterender.program_names(profiles))
+            # The system pages give every arcade board a section of its own
+            # (round 4, 6.4) and record it. The built pages are checked by
+            # the round 4 gate.
+            siterender.reset_console_pages()
+            for board in siterender.arcade_boards():
+                siterender.record_board_section(board)
             platforms = [
                 load_platform_config(name, "platforms")
                 for name in list_registered_platforms("platforms", include_archived=True)
@@ -148,6 +149,10 @@ class SystemLinks(unittest.TestCase):
             for sys_id in cls.ids:
                 sections: set[tuple[str, str]] = set()
                 for fe in entries.get(sys_id, []):
+                    if fe.get("category") == "bios_zip":
+                        for sha1 in _archives_held(fe, db):
+                            sections.update((m, c) for m, c, _ in places.get(sha1, set()))
+                        continue
                     local, status = resolve_local_file(fe, db)
                     if not _accepts(fe, local, status):
                         continue
@@ -159,11 +164,16 @@ class SystemLinks(unittest.TestCase):
         finally:
             os.chdir(previous)
 
+    @classmethod
+    def tearDownClass(cls) -> None:
+        siterender.reset_console_pages()
+
     def test_every_id_with_files_links(self) -> None:
         linked, total = siterender.link_coverage(self.ids)
         with_files = set(self.held)
         print(f"\n  {linked} of {total} system ids linked, "
-              f"{len(with_files - set(UNLINKED))} of {len(with_files)} with files")
+              f"{len(with_files - set(UNLINKED))} of {len(with_files)} with files, "
+              f"{len(self.ids - with_files)} with no file")
         plain = sorted(
             sys_id for sys_id in with_files - set(UNLINKED)
             if siterender.system_section(sys_id) is None
@@ -240,15 +250,19 @@ class SystemLinks(unittest.TestCase):
     def test_arcade_heading_by_exact_name(self) -> None:
         self.assertEqual(
             siterender.system_section("namco-system246"), ("arcade", "Namco System 246"))
-        # No heading reads NAOMI: its sets are cards of the general section.
-        self.assertIsNone(siterender.system_section("sega-naomi"))
-        # Never a folder of copies a core loads.
-        self.assertIsNone(siterender.system_section("igs-pgm"))
+        # A board leads to its own section, never a folder of copies a core
+        # loads (Arcade > FBNeo).
+        self.assertEqual(siterender.system_section("sega-naomi"), ("arcade", "Sega NAOMI"))
+        self.assertEqual(
+            siterender.system_section("igs-pgm"), ("arcade", "IGS PolyGame Master"))
 
     def test_folder_votes_stay_out(self) -> None:
+        """A copy filed with another machine names no section: the Arcadia
+        stays plain, NAOMI 2 goes to its board, never to the Dreamcast."""
+        self.assertIsNone(siterender.system_section("emerson-arcadia-2001"))
+        self.assertEqual(siterender.system_section("naomi2"), ("arcade", "Sega NAOMI 2"))
         for sys_id in ("emerson-arcadia-2001", "naomi2"):
             with self.subTest(sys_id=sys_id):
-                self.assertIsNone(siterender.system_section(sys_id))
                 self.assertNotIn(sys_id, siterender.SYSTEM_PARENTS)
 
     def test_emulator_rows_link_the_variant(self) -> None:
