@@ -56,6 +56,24 @@ files:
     note: "Amiibo decryption keys (two InternalKey structs, 0x50 bytes each)"
     source_ref: "src/core/hle/service/nfc/common/amiibo_crypto.cpp:281-302"
 
+data_root:
+  windows:
+    path: "%APPDATA%/eden"
+    source_ref: "src/common/fs/path_util.cpp:115-118"
+    note: "A user folder beside eden.exe is used instead when it exists."
+  linux:
+    path: "$XDG_DATA_HOME/eden, else ~/.local/share/eden"
+    source_ref: "src/common/fs/path_util.cpp:135-139, 368-377"
+    note: "A user folder in the working directory is used instead when it exists."
+  macos:
+    path: "$XDG_DATA_HOME/eden, else ~/.local/share/eden"
+    source_ref: "src/common/fs/path_util.cpp:135-139, 368-377"
+    note: "A user folder in the working directory is used instead when it exists."
+  android:
+    path: "Android/data/dev.eden.eden_emulator/files"
+    source_ref: "src/android/app/src/main/java/org/yuzu/yuzu_emu/utils/DirectoryInitialization.kt:42-43, src/common/fs/path_util.cpp:130-131"
+    note: "Nightly, relWithDebInfo and debug builds append .nightly, .relWithDebInfo or .debug to the package name."
+
 notes: |
   Eden is a standalone Nintendo Switch emulator, community fork of yuzu by Camille LaVey.
   Firmware (system NCAs) must be installed through Eden's UI from a firmware ZIP or NCA folder.
