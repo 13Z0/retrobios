@@ -5,6 +5,7 @@ source: "https://github.com/libretro/boom3"
 upstream: "https://github.com/dhewm/dhewm3"
 profiled_date: "2026-03-23"
 source_commit: "efe140ce8fdf8793f5a6fbba062fb34df7f55a81"
+upstream_commit: "455b88e8dff2be822f08eb498f51b383e851fa38"
 core_version: "git"
 display_name: "Doom 3 (boom3)"
 cores: [boom3, boom3_xp]

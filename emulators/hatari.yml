@@ -6,7 +6,7 @@ upstream: "https://github.com/hatari/hatari"
 logo: "https://raw.githubusercontent.com/hatari/hatari/main/share/icons/hicolor/scalable/apps/hatari.svg"
 profiled_date: "2026-10-21"
 source_commit: "50929946d196f431906932420c55e1b3593dacc5"
-upstream_commit: "90949cfa04acbd48ba28c48430fdb58cd82b9053"
+upstream_commit: "7dd6a196cde1b1f9a55cd09cfbecb6edcb1bb000"
 core_version: "2.6.1-devel"
 display_name: "Atari - ST/STE/TT/Falcon (Hatari)"
 cores:
