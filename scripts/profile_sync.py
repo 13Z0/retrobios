@@ -306,11 +306,13 @@ class Citation:
     path_span: tuple[int, int] = (0, 0)
     spans: tuple = ()
     parts: tuple = ()
-    # Broken across two lines of a literal block: compared like any run,
-    # never rewritten, since no single line carries it.
+    # Broken across two lines of a literal block. joined_at is where the
+    # second line starts in the joined run line, so each span goes back to
+    # the line that holds it.
     wrapped: bool = False
-    # Written in a YAML comment, which the loaded document drops: compared,
-    # never rewritten, since no scalar holds it.
+    joined_at: int = 0
+    # Written in a YAML comment, which the loaded document drops. line is
+    # then the physical line of the file and the spans index it.
     in_comment: bool = False
 
 
@@ -388,11 +390,14 @@ def comment_citations(
             if inside_scalar(offset + column):
                 continue
             comment = line[column + 1:].rstrip("\r\n")
+            shift = column + 1
             for _, path_span, run_spans, parts, run, _ in _prose_runs(comment, known):
                 citations.append(Citation(
                     field=f"comment line {number + 1}", kind="prose", ref=run,
-                    path_span=path_span, spans=run_spans, parts=parts,
-                    in_comment=True,
+                    line=number,
+                    path_span=(path_span[0] + shift, path_span[1] + shift),
+                    spans=tuple((lo + shift, hi + shift) for lo, hi in run_spans),
+                    parts=parts, in_comment=True,
                 ))
             break
         offset += len(line)
@@ -422,22 +427,22 @@ def collect_citations(document: dict, text: str | None = None) -> list[Citation]
                     holder=holder, key=key, label=label,
                 ))
             if isinstance(value, str):
-                for line, path_span, spans, parts, run, wrapped in _prose_runs(
+                for line, path_span, spans, parts, run, joined_at in _prose_runs(
                     ref_prose_text(value), known
                 ):
                     citations.append(Citation(
                         field=field, kind="prose", ref=run, holder=holder,
                         key=key, line=line, path_span=path_span, spans=spans,
-                        parts=parts, wrapped=wrapped,
+                        parts=parts, wrapped=bool(joined_at), joined_at=joined_at,
                     ))
             continue
-        for line, path_span, spans, parts, run, wrapped in _prose_runs(
+        for line, path_span, spans, parts, run, joined_at in _prose_runs(
             value, known
         ):
             citations.append(Citation(
                 field=field, kind="prose", ref=run, holder=holder, key=key,
                 line=line, path_span=path_span, spans=spans, parts=parts,
-                wrapped=wrapped,
+                wrapped=bool(joined_at), joined_at=joined_at,
             ))
     if text is not None:
         citations.extend(comment_citations(text, known))
@@ -2543,16 +2548,23 @@ def _run_after_moves(
     return f"{new_path or parts[0].path}:{','.join(ranges)}"
 
 
+def _unique_line(lines: list[str], target: str) -> int | None:
+    """The one physical line carrying target, None when not exactly one."""
+    hits = [i for i, line in enumerate(lines) if target and target in line]
+    return hits[0] if len(hits) == 1 else None
+
+
 def _apply_prose_edits(
     text: str, jobs: list[tuple[Citation, dict]]
 ) -> tuple[str, list[str], list[str]]:
     """Rewrite prose citation tokens in place, nothing else.
 
-    Each run is located as the unique physical line carrying the scalar line
-    it sits on. Two candidate lines, or none, means the write cannot be
-    proved right, so the run is left alone and reported. All replacements of
-    one line are applied together, right to left, so the spans measured on
-    the original text stay valid.
+    Each scalar line a run touches is located as the unique physical line
+    carrying it. Two candidate lines, or none, means the write cannot be
+    proved right, so the run is left alone and reported with the reason. A
+    comment run is rewritten on its own physical line, once the tokens there
+    read as collected. All replacements of one line are applied together,
+    right to left, so the spans measured on the original text stay valid.
     """
     lines = text.splitlines()
     trailing = "\n" if text.endswith("\n") else ""
@@ -2563,15 +2575,6 @@ def _apply_prose_edits(
     left: list[str] = []
 
     for citation, moves in jobs:
-        if citation.wrapped or citation.in_comment:
-            where = "in a comment" if citation.in_comment else "wrapped across lines"
-            left.append(f"{citation.field}: {citation.ref} ({where})")
-            continue
-        value = str(citation.holder[citation.key])
-        value_lines = value.splitlines()
-        if citation.line >= len(value_lines):
-            left.append(f"{citation.field}: {citation.ref} (scalar changed)")
-            continue
         replacements = []
         for index, (start, end, _) in moves.items():
             lo, hi = citation.spans[index]
@@ -2581,13 +2584,63 @@ def _apply_prose_edits(
         new_path = next((m[2] for m in moves.values() if m[2]), None)
         if new_path:
             replacements.append((*citation.path_span, new_path))
-        target = value_lines[citation.line]
-        hits = [i for i, line in enumerate(lines) if target and target in line]
-        if len(hits) == 1:
-            offset = lines[hits[0]].index(target)
-            file_edits.setdefault(hits[0], []).extend(
-                (offset + lo, offset + hi, new) for lo, hi, new in replacements
+        recaled = _run_after_moves(citation.parts, moves, citation.ref)
+
+        if citation.in_comment:
+            # The comment is read again from the text being written: a run
+            # whose tokens no longer sit at the collected offsets is left.
+            line = lines[citation.line] if citation.line < len(lines) else ""
+            expected = [p.raw for p in citation.parts] + [citation.ref.split(":", 1)[0]]
+            spans = list(citation.spans) + [citation.path_span]
+            if any(line[lo:hi] != token for (lo, hi), token in zip(spans, expected)):
+                left.append(f"{citation.field}: {citation.ref} (comment changed)")
+                continue
+            file_edits.setdefault(citation.line, []).extend(replacements)
+            applied.append(f"{citation.field}: {citation.ref} -> {recaled}")
+            continue
+
+        value = str(citation.holder[citation.key])
+        value_lines = value.splitlines()
+        last = citation.line + (1 if citation.wrapped else 0)
+        if last >= len(value_lines):
+            left.append(f"{citation.field}: {citation.ref} (scalar changed)")
+            continue
+        # A wrapped run puts its spans back on the two scalar lines it
+        # joined: playdiaemu wrote `content.rs` and `:111-199` one line apart.
+        by_line: dict[int, list[tuple[int, int, str]]] = {}
+        straddles = False
+        for lo, hi, new in replacements:
+            if citation.wrapped and lo >= citation.joined_at:
+                following = value_lines[last]
+                indent = len(following) - len(following.lstrip())
+                shift = indent - citation.joined_at
+                by_line.setdefault(last, []).append((lo + shift, hi + shift, new))
+            elif citation.wrapped and hi > citation.joined_at:
+                straddles = True
+            else:
+                by_line.setdefault(citation.line, []).append((lo, hi, new))
+        if straddles:
+            left.append(f"{citation.field}: {citation.ref} (a token spans the line break)")
+            continue
+        located = {
+            number: _unique_line(lines, value_lines[number]) for number in by_line
+        }
+        if citation.wrapped and (
+            None in located.values()
+            or (len(located) == 2 and located[last] != located[citation.line] + 1)
+        ):
+            left.append(
+                f"{citation.field}: {citation.ref} "
+                "(wrapped, and its two lines are not found together in the file)"
             )
+            continue
+        if None not in located.values():
+            for number, edits in by_line.items():
+                hit = located[number]
+                offset = lines[hit].index(value_lines[number])
+                file_edits.setdefault(hit, []).extend(
+                    (offset + lo, offset + hi, new) for lo, hi, new in edits
+                )
         else:
             # A folded scalar has no physical line carrying its logical one.
             # The run itself is a single word, which folding never breaks:
@@ -2605,25 +2658,24 @@ def _apply_prose_edits(
                 len(run_hits) != 1
                 or len(pattern.findall(lines[run_hits[0]])) != 1
             ):
+                carriers = sum(
+                    1 for line in lines
+                    if value_lines[citation.line] and value_lines[citation.line] in line
+                )
                 left.append(
                     f"{citation.field}: {citation.ref} "
-                    f"({len(hits)} lines carry its sentence)"
+                    f"({carriers} lines carry its sentence)"
                 )
                 continue
             low = pattern.search(lines[run_hits[0]]).start()
             file_edits.setdefault(run_hits[0], []).append(
-                (low, low + len(citation.ref),
-                 _run_after_moves(citation.parts, moves, citation.ref))
+                (low, low + len(citation.ref), recaled)
             )
         slot = (id(citation.holder), citation.key)
         holders[slot] = (citation.holder, citation.key)
-        value_edits.setdefault(slot, {}).setdefault(citation.line, []).extend(
-            replacements
-        )
-        applied.append(
-            f"{citation.field}: {citation.ref} -> "
-            f"{_run_after_moves(citation.parts, moves, citation.ref)}"
-        )
+        for number, edits in by_line.items():
+            value_edits.setdefault(slot, {}).setdefault(number, []).extend(edits)
+        applied.append(f"{citation.field}: {citation.ref} -> {recaled}")
 
     for number, replacements in file_edits.items():
         lines[number] = _replace_spans(lines[number], replacements)
@@ -2648,31 +2700,54 @@ def _replace_spans(line: str, replacements: list[tuple[int, int, str]]) -> str:
     return line
 
 
-def blocks_the_pin(report: ProfileReport, accept_changed: bool = False) -> int:
-    """What would keep source_commit where it is after a recale.
+def _part_moves(part: PartResult, movable: tuple[str, ...]) -> bool:
+    """Whether a part has a new location the recale would write."""
+    return (
+        part.status in movable
+        and part.start is not None
+        and ((part.start, part.end) != (part.part.start, part.part.end)
+             or bool(part.new_path))
+    )
+
+
+def pin_blockers(report: ProfileReport, accept_changed: bool = False) -> list[str]:
+    """What would keep source_commit where it is after a recale, named.
 
     Two kinds. A ref the writer never regenerates, annotated or under a mode
-    key, whose parts have moved. And a prose run whose tokens cannot be
-    located well enough to rewrite, which stays describing the pinned
-    revision whatever else moves. Either one makes bump_commit refuse, so
-    either one has to stop the recale as well.
+    key, whose parts have moved. And a prose run whose parts disagree on
+    where its file went, which cannot be written without guessing. Either
+    one makes bump_commit refuse, so either one has to stop the recale as
+    well, and the caller says which.
     """
     movable = REBASE_STATUSES + (("CHANGED",) if accept_changed else ())
-    blocked = pending_recale(report, accept_changed)
+    blockers: list[str] = []
     for entry in report.entries or []:
-        if entry.kind != "prose" or _prose_moves(entry, movable):
+        if entry.kind == "prose":
+            if not _prose_moves(entry, movable) and any(
+                _part_moves(part, movable) for part in entry.parts
+            ):
+                blockers.append(
+                    f"{entry.field}: {entry.source_ref} "
+                    "(its parts do not agree on one new file)"
+                )
             continue
-        if any(
+        if not any(
             part.status in movable
             and part.start is not None
-            and (
-                (part.start, part.end) != (part.part.start, part.part.end)
-                or part.new_path
-            )
+            and _rendered_part(part) != _original_part(part)
             for part in entry.parts
         ):
-            blocked += 1
-    return blocked
+            continue
+        if entry.name.endswith("]"):
+            blockers.append(
+                f"{entry.name}: {entry.source_ref} (under a mode key, moved by hand)"
+            )
+        elif not _is_rewritable(entry.source_ref):
+            blockers.append(
+                f"{entry.name}: {entry.source_ref} "
+                "(annotated, a rewrite would drop the annotation)"
+            )
+    return blockers
 
 
 def _view_role(view: RepoView) -> str:
@@ -2755,17 +2830,20 @@ def rebase_refs(
     blocking = [s for s in REVIEW_STATUSES if s not in statuses]
     if any((report.counts or {}).get(s) for s in blocking):
         return []
-    if blocks_the_pin(report, accept_changed):
+    blockers = pin_blockers(report, accept_changed)
+    if blockers:
         # Something here will not move: an annotated ref, one under a mode
         # key, or a prose run this pass cannot rewrite without guessing.
         # bump_commit will refuse while it stands, and recaling the rest
         # would leave the profile describing two revisions at once. All or
         # nothing means the pin too, not only the refs.
+        _refuse_recale(path, blockers)
         return []
     text = path.read_text(encoding="utf-8")
     document = yaml.safe_load(text)
     citations = collect_citations(document, text)
     applied: list[str] = []
+    refused: list[str] = []
     cursor = 0
     pos = 0
     prose_jobs: list[tuple[Citation, dict]] = []
@@ -2773,6 +2851,11 @@ def rebase_refs(
     for entry in report.entries:
         citation, pos = _match_citation(citations, pos, entry)
         if citation is None:
+            if any(_part_moves(part, statuses) for part in entry.parts):
+                refused.append(
+                    f"{entry.field or entry.name}: {entry.source_ref} "
+                    "(the profile no longer carries it as reported)"
+                )
             continue
         if entry.kind == "prose":
             moves = _prose_moves(entry, statuses)
@@ -2783,6 +2866,15 @@ def rebase_refs(
             # The ref lives under a mode key, not on a source_ref line. The
             # entry name check also holds when the report and the document
             # disagree: a stale report must not touch a line it never read.
+            if any(
+                part.status in statuses
+                and part.start is not None
+                and _rendered_part(part) != _original_part(part)
+                for part in entry.parts
+            ):
+                refused.append(
+                    f"{entry.name}: {entry.source_ref} (under a mode key, moved by hand)"
+                )
             continue
         if not _is_rewritable(entry.source_ref):
             # Rewriting would drop the author's annotations. Still consume
@@ -2810,11 +2902,23 @@ def rebase_refs(
         citation.holder[citation.key] = new_ref
         applied.append(f"{entry.source_ref} -> {new_ref}")
 
-    text, prose_applied, _ = _apply_prose_edits(text, prose_jobs)
+    text, prose_applied, left = _apply_prose_edits(text, prose_jobs)
+    refused.extend(left)
+    if refused:
+        # A citation left on the pinned lines holds the pin, so writing the
+        # others would leave the profile describing two revisions.
+        _refuse_recale(path, refused)
+        return []
     applied.extend(prose_applied)
     if applied:
         apply_edit(path, text, document)
     return applied
+
+
+def _refuse_recale(path: Path, reasons: list[str]) -> None:
+    """Name each citation that keeps a recale from being written."""
+    for reason in reasons:
+        print(f"{path.stem}: not recaled, cannot move {reason}", file=sys.stderr)
 
 
 def _citation_key(ref: str) -> str:

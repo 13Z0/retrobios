@@ -329,7 +329,7 @@ def resolve_project_word(path: str, trees: Iterable[list[str] | None]) -> str | 
 def _prose_runs(
     text: str, known: frozenset[str] | set[str] = frozenset()
 ) -> Iterator[tuple[
-    int, tuple[int, int], tuple[tuple[int, int], ...], tuple[RefPart, ...], str, bool
+    int, tuple[int, int], tuple[tuple[int, int], ...], tuple[RefPart, ...], str, int
 ]]:
     """Citation runs inside one prose scalar.
 
@@ -338,6 +338,10 @@ def _prose_runs(
     `main.c:112,1624-1633` cites two ranges of one file, while `x.c:100, 200`
     is a citation followed by prose. A token carrying :// is a URL, whose
     host:port shape would otherwise pass for a citation.
+
+    The last item is 0 for a run held by one line. A run wrapped onto the
+    next line gives the offset where that line's text starts in the
+    joined line, so a writer can put each span back on its own line.
     """
     lines = text.splitlines()
     for number, own in enumerate(lines):
@@ -347,10 +351,12 @@ def _prose_runs(
         # read as the run's continuation, and a run reaching into it is wrapped.
         line = own.rstrip()
         boundary = len(line)
+        joined_at = 0
         following = lines[number + 1].lstrip() if number + 1 < len(lines) else ""
         if PROSE_WRAPPED_RANGE_RE.match(following) and line[-1:].isalnum():
             # The break can fall before the colon too: jgenesis wraps
             # `.../src/config.rs` then `:76-78,95-99` on the next line.
+            joined_at = len(line)
             line += following
             following = ""
         # A numbered list after a colon (abuse: `setup.cpp:` then `1. -datadir`)
@@ -358,8 +364,10 @@ def _prose_runs(
         if not following[:1].isdigit() or PROSE_LIST_ITEM_RE.match(following):
             following = ""
         if following and line.endswith(":"):
+            joined_at = len(line)
             line += following
         elif following and line.endswith(","):
+            joined_at = len(line) + 1
             line += " " + following
         consumed = 0
         for match in PROSE_CITE_RE.finditer(line):
@@ -422,5 +430,5 @@ def _prose_runs(
                 parts.append(RefPart(path, int(a), int(b or a), rng, role))
             yield (
                 number, path_span, tuple(spans), tuple(parts),
-                line[path_start:end], end > boundary,
+                line[path_start:end], joined_at if end > boundary else 0,
             )

@@ -3756,6 +3756,30 @@ class TestRebaseProse(unittest.TestCase):
         self.assertEqual(applied, [])
         self.assertEqual(self.path.read_text(), text)
 
+    def test_a_refused_recale_names_the_citation_and_writes_nothing(self):
+        # The structured ref could move, the prose could not: the run
+        # printed nothing, wrote nothing, and the pin stayed.
+        text = PROSE_SAMPLE.replace(
+            "files:",
+            'quirks: |\n  The loader appends dc/ to the system directory '
+            '(a.c:10) and reads\n  nothing else.\nfiles:',
+        )
+        self.path.write_text(text, encoding="utf-8")
+        prose = PartResult(RefPart("a.c", 10, 10, "10"), "SHIFTED", None, 14, 14, [])
+        structured = PartResult(RefPart("a.c", 10, 12), "SHIFTED", None, 14, 16, [])
+        report = self._report([
+            self._prose_entry("a.c:10", [prose]),
+            EntryReport("a.bin", "a.c:10-12", "SHIFTED", [structured]),
+        ])
+        err = io.StringIO()
+        with contextlib.redirect_stderr(err):
+            self.assertEqual(rebase_refs(self.path, report), [])
+        self.assertIn(
+            "p: not recaled, cannot move notes: a.c:10 (2 lines carry its sentence)",
+            err.getvalue(),
+        )
+        self.assertEqual(self.path.read_text(), text)
+
     def test_folded_scalar_moves_through_its_run_token(self):
         text = PROSE_SAMPLE.replace(
             "files:",
@@ -3897,24 +3921,46 @@ class TestWrappedProse(unittest.TestCase):
         }
         self.assertEqual(runs, {"src/config.rs:76-78,95-99": True})
 
-    def test_a_wrapped_run_that_moves_holds_the_pin(self):
+    def _report(self, ref, parts):
+        return ProfileReport(
+            name="p", repo="o/n", pin="pin", head="newhead",
+            entries=[EntryReport("adam", ref, "SHIFTED", parts, "prose", "adam")],
+            counts={"SHIFTED": 1},
+        )
+
+    def test_a_wrapped_run_moves_on_both_lines_and_the_pin_follows(self):
+        # gearcoleco put its four ranges on the line after `libretro.cpp:`,
+        # and the run held the pin with nothing written and nothing said.
         parts = [
             PartResult(RefPart("libretro.cpp", 2372, 2373, "2372-2373"),
                        "SHIFTED", None, 2381, 2382, []),
             PartResult(RefPart("libretro.cpp", 2429, 2433, "2429-2433"),
                        "SHIFTED", None, 2438, 2442, []),
         ]
-        entry = EntryReport(
-            "adam", "libretro.cpp:2372-2373, 2429-2433", "SHIFTED", parts,
-            "prose", "adam",
+        report = self._report("libretro.cpp:2372-2373, 2429-2433", parts)
+        self.assertEqual(len(rebase_refs(self.path, report)), 1)
+        text = self.path.read_text()
+        self.assertIn("(libretro.cpp:\n  2381-2382, 2438-2442) and by", text)
+        self.assertTrue(bump_commit(self.path, report))
+
+    def test_a_break_before_the_colon_moves_the_next_line(self):
+        # playdiaemu wrote `.../src/content.rs` and `:111-199` one line apart.
+        text = PROSE_SAMPLE.replace(
+            "files:",
+            "adam: |\n  ZIP archives from the game path (src/content.rs\n"
+            "  :111-199). No other file is opened.\nfiles:",
         )
-        report = ProfileReport(
-            name="p", repo="o/n", pin="pin", head="newhead",
-            entries=[entry], counts={"SHIFTED": 1},
+        self.path.write_text(text, encoding="utf-8")
+        part = PartResult(RefPart("src/content.rs", 111, 199, "111-199"),
+                          "CHANGED", None, 111, 204, [])
+        report = self._report("src/content.rs:111-199", [part])
+        report.counts = {"CHANGED": 1}
+        self.assertEqual(
+            rebase_refs(self.path, report, accept_changed=True),
+            ["adam: src/content.rs:111-199 -> src/content.rs:111-204"],
         )
-        self.assertEqual(rebase_refs(self.path, report), [])
-        self.assertFalse(bump_commit(self.path, report))
-        self.assertEqual(self.path.read_text(), self.TEXT)
+        self.assertIn("(src/content.rs\n  :111-204). No", self.path.read_text())
+        self.assertTrue(bump_commit(self.path, report, accept_changed=True))
 
 
 class TestOpcodeCache(unittest.TestCase):
@@ -3967,19 +4013,41 @@ class TestCommentCitations(unittest.TestCase):
             [c.ref for c in profile_sync.collect_citations(document, self.TEXT)],
         )
 
-    def test_a_comment_run_that_moves_holds_the_pin(self):
-        field = profile_sync.comment_citations(self.TEXT)[0].field
+    def _report(self, index, part):
+        field = profile_sync.comment_citations(self.TEXT)[index].field
+        return ProfileReport(
+            name="p", repo="o/n", pin="pin", head="newhead",
+            entries=[EntryReport("comment", f"{part.part.path}:{part.part.raw}",
+                                 part.status, [part], "prose", field)],
+            counts={part.status: 1},
+        )
+
+    def test_a_comment_run_moves_and_the_pin_follows(self):
+        # amiarcadia `# da.h:3-5` and mame2003_plus `core_options.c:223-236`
+        # held the pin, and --rebase-refs wrote nothing and said nothing.
         part = PartResult(RefPart("src/cpu.c", 3212, 3451, "3212-3451"),
                           "SHIFTED", None, 3268, 3507, [])
-        report = ProfileReport(
-            name="p", repo="o/n", pin="pin", head="newhead",
-            entries=[EntryReport("comment", "src/cpu.c:3212-3451", "SHIFTED",
-                                 [part], "prose", field)],
-            counts={"SHIFTED": 1},
+        report = self._report(0, part)
+        self.assertEqual(
+            rebase_refs(self.path, report),
+            ["comment line 10: src/cpu.c:3212-3451 -> src/cpu.c:3268-3507"],
         )
-        self.assertEqual(rebase_refs(self.path, report), [])
-        self.assertFalse(bump_commit(self.path, report))
-        self.assertEqual(self.path.read_text(), self.TEXT)
+        self.assertEqual(
+            self.path.read_text(),
+            self.TEXT.replace("src/cpu.c:3212-3451", "src/cpu.c:3268-3507"),
+        )
+        self.assertTrue(bump_commit(self.path, report))
+
+    def test_a_renamed_comment_path_is_rewritten(self):
+        # bennugd `libretro.c:887-910` in a comment: RENAMED to
+        # libretro/libretro.c, same lines, and nothing moved.
+        part = PartResult(RefPart("z.c", 9, 9, "9"), "RENAMED", "src/z.c", 9, 9, [])
+        report = self._report(1, part)
+        self.assertEqual(
+            rebase_refs(self.path, report), ["comment line 16: z.c:9 -> src/z.c:9"]
+        )
+        self.assertIn('"a.c:10-12"  # see src/z.c:9', self.path.read_text())
+        self.assertTrue(bump_commit(self.path, report))
 
 
 class TestRealignProse(unittest.TestCase):
