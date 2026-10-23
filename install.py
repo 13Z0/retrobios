@@ -12737,7 +12737,8 @@ def run_tui(args: argparse.Namespace) -> int:
     except OSError as exc:
         _restore_handlers(handlers)
         print(f"Error: no work folder could be made in {tempfile.gettempdir()}: {exc}. "
-              "Free some space there, or point TMPDIR (TEMP on Windows) at another folder.", file=sys.stderr)
+              "Free some space there, or point TMPDIR (TEMP on Windows) at another "
+              "folder.", file=sys.stderr)
         return 1
     try:
         (work / TUI_OWNER).write_text(str(os.getpid()), encoding="utf-8")
