@@ -1217,7 +1217,10 @@ class CleanupSurvivesABrokenTerminal(unittest.TestCase):
             CleanupSurvivesABrokenTerminal.Tty.broken = True
 
         self.addCleanup(setattr, CleanupSurvivesABrokenTerminal.Tty, "broken", False)
+        work = Path(tempfile.mkdtemp(dir=REPO_ROOT / "tmp"))
+        self.addCleanup(shutil.rmtree, work, True)
         with mock.patch.object(install._TuiTerminal, "draw", breaking_draw), \
+                mock.patch.object(install.tempfile, "mkdtemp", return_value=str(work)), \
                 mock.patch.object(install, "tui_start", return_value=(fresh_state(), [])), \
                 mock.patch.object(install, "_open_local_sources"), \
                 mock.patch.object(install, "detect_os", return_value="linux"), \
@@ -1226,6 +1229,8 @@ class CleanupSurvivesABrokenTerminal(unittest.TestCase):
             code = install.run_tui(_args())
             self.assertIs(sys.stdout, tty)
         self.assertEqual(code, 1)
+        # The crash keeps its log, and nothing else of the run.
+        self.assertEqual(sorted(path.name for path in work.iterdir()), ["error.log"])
         self.assertEqual(termios.tcgetattr(slave), before)
         for number, handler in handlers.items():
             self.assertEqual(signal.getsignal(number), handler)
