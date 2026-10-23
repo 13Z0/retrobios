@@ -21,6 +21,16 @@ data_directories:
     destination: "pcsx2/resources"
     source_ref: "pcsx2-libretro/Main.cpp:157-158, pcsx2/Pcsx2Config.cpp:2399-2413"
 
+data_root:
+  macos:
+    path: "~/Library/Application Support/YAPS2"
+    source_ref: "pcsx2/Pcsx2Config.cpp:2205-2225,2227-2302"
+    note: "portable.ini or portable.txt beside the app bundle puts it there instead, and a custom data path in the settings takes its YAPS2 subfolder"
+  linux:
+    path: "$XDG_CONFIG_HOME/YAPS2, else ~/.config/YAPS2"
+    source_ref: "pcsx2/Pcsx2Config.cpp:2205-2225,2227-2302"
+    note: "portable.ini or portable.txt beside the binary puts it there instead, and a custom data path in the settings takes its YAPS2 subfolder"
+
 notes: |
   PlayStation 2 emulator, a GPL-3.0 fork of PCSX2 for arm64 Linux handhelds:
   native AArch64 EE, IOP and VU recompilers, a persisted VU program cache,
@@ -49,9 +59,8 @@ notes: |
 
   The standalone builds resolve resources beside the binary, or under the
   share/PCSX2 data directory of a PACKAGE_MODE install, and the data directory
-  as YAPS2 under the platform configuration root: Documents on Windows,
-  $XDG_CONFIG_HOME or ~/.config on Linux, Library/Application Support on
-  macOS, or beside the binary in portable mode. bios, memcards, cheats,
+  as YAPS2 under the platform configuration root given in data_root, or
+  beside the binary in portable mode. bios, memcards, cheats,
   patches and the rest sit under that data directory. The SDL frontend keeps
   its ini at inis/PCSX2.ini, forces the Vulkan renderer, SDL audio and SDL
   input, and exits at startup when the resources directory or
