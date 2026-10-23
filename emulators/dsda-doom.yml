@@ -9,6 +9,16 @@ display_name: "Doom (dsda-doom)"
 cores: [dsda-doom]
 systems: [doom, heretic, hexen, chex]
 
+data_root:
+  macos:
+    path: "~/Library/Application Support/dsda-doom"
+    source_ref: "prboom2/src/SDL/i_system.c:367-393"
+    note: "~/.dsda-doom instead when that folder exists"
+  linux:
+    path: "$XDG_DATA_HOME/dsda-doom"
+    source_ref: "prboom2/src/SDL/i_system.c:333-358, 367-393"
+    note: "~/.local/share/dsda-doom when XDG_DATA_HOME is unset, ~/.dsda-doom instead when that folder exists"
+
 notes: |
   Doom source port derived from PrBoom+, by Ryan Krafnick (kraflab). Plays
   Doom, Doom II, Final Doom, Heretic, Hexen, Chex Quest, Hacx, REKKR and the
@@ -29,7 +39,8 @@ notes: |
   palette, lumps, PPM graphics and WAV sounds under data/.
 
   Every file is located by I_FindFileInternal, which tries in order the
-  executable directory, the config directory, the working directory,
+  executable directory, the config directory (the executable directory again
+  on Windows, prboom2/src/SDL/i_system.c:244-247), the working directory,
   $DOOMWADDIR, the build-time DOOMWADDIR, the build-time path of
   dsda-doom.wad, the SDL base path and ../share/games/doom under it,
   $HOME/doom, $HOME, $XDG_DATA_HOME/games/doom, every $XDG_DATA_DIRS entry
