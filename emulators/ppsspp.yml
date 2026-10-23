@@ -21,6 +21,27 @@ data_directories:
     destination: ""
     source_ref: "libretro/libretro.cpp:1216-1225, libretro/libretro.cpp:1271"
 
+data_root:
+  android:
+    path: "Android/data/org.ppsspp.ppsspp/files"
+    source_ref: "UI/NativeApp.cpp:648-679, UI/MemStickScreen.cpp:234-240, 371-376, android/src/org/ppsspp/ppsspp/PpssppActivity.java:461-463"
+    note: "With scoped storage the memory stick is the folder picked at first launch, this one when setup is skipped, and memstick_dir.txt keeps the choice. Under legacy storage it is the root of shared storage"
+  ios:
+    path: "Documents"
+    source_ref: "UI/NativeApp.cpp:706-708, Core/Util/DarwinFileSystemServices.mm:310-316, 328-331"
+    note: "A folder chosen in the settings and kept in the user defaults replaces it"
+  windows:
+    path: "<folder of PPSSPPWindows64.exe>/memstick"
+    source_ref: "Windows/main.cpp:985-1038, 1217-1218"
+    note: "installed.txt beside the executable switches to the folder it names, else Documents/PPSSPP, which also serves when memstick cannot be created or written"
+  macos:
+    path: "~/.config/ppsspp"
+    source_ref: "UI/NativeApp.cpp:630-631, 709-710, SDL/SDLMain.cpp:1187-1191, Core/Util/DarwinFileSystemServices.mm:310-316, 332-333"
+    note: "A folder chosen in the settings and kept in the user defaults replaces it"
+  linux:
+    path: "$XDG_CONFIG_HOME/ppsspp, else ~/.config/ppsspp"
+    source_ref: "UI/NativeApp.cpp:715-716, Core/Util/PathUtil.cpp:284-300"
+
 notes: |
   Full HLE emulator. No Sony firmware or BIOS required.
   The libretro core is built from hrydgard/ppsspp, the tree of the
