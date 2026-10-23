@@ -223,6 +223,16 @@ Location: /userdata/bios
 To check this later, run the same command with --check.
 ```
 
+When most of a download of 100 MB or more comes from one system, or from
+one core of a single system, the end of the run says so and what narrowing
+would save, once that saving is over half:
+
+```
+  mame pulls 336.5 MB of this 349.0 MB download for 3do. --core opera keeps 12.5 MB of it and saves 336.5 MB (96%).
+```
+
+`--dry-run` prints the same line under its plan.
+
 The word `Done` and a location are the confirmation. Any other ending
 (`Stopped`, `Finished with errors`, `Nothing was installed`) means something
 was left undone, and the run says which case it was.
@@ -251,6 +261,52 @@ they are absent from the folder. A number before `wrong hash` means a file is
 present with contents the platform does not accept. Running the install again
 replaces it and keeps the old one, see
 [Files you already had](#files-you-already-had).
+
+### Why a file is refused { #why-a-file-is-refused }
+
+Each file `--check` flags comes with the reason it found and the place each
+core opens it:
+
+```
+  3 files to download:
+    wrong hash: scph5501.bin
+      another region: the contents of scph5500.bin (japan)
+      opened at /home/me/.config/retroarch/system/scph5501.bin by beetle_psx, pcsx_rearmed
+    missing: gba_bios.bin
+      nested folder: it is at system/system/gba_bios.bin, a system folder inside system
+      opened at /home/me/.config/retroarch/system/gba_bios.bin by mgba
+    missing: pcsx/extra.bin
+      still zipped: it is inside PSX BIOS.zip
+      opened at /home/me/.config/retroarch/system/pcsx/extra.bin by pcsx_rearmed
+```
+
+| Reason | What the folder holds |
+|--------|-----------------------|
+| `nested folder` | The file inside a folder named like the BIOS folder itself (`bios/bios/`, `system/system/`) |
+| `one folder too deep`, `2 folders too deep` | The file below its place, as a ZIP extracted into a folder of its own leaves it |
+| `one folder too high` | The file in the folder above the BIOS folder |
+| `wrong folder` | The file under its name in another folder |
+| `case of the name` | A name that differs only by capital letters, on a system where that makes two names |
+| `still zipped` | The file inside a ZIP in the folder, a `.7z` or `.rar` of the same name, or a ZIP saved under the file's own name |
+| `wrong size` | A file of another size than any copy the list accepts |
+| `another region`, `another revision`, `another file` | The contents of another file of the list: another region's BIOS, the copy another core reads, or the one the platform's own list declares |
+| `a name no core opens` | The right contents under a name no core of the platform reads |
+| `same size, other contents` | Another dump, or a damaged copy |
+
+The reasons are read from the folder and the file list, nothing else. When
+three files or more sit too deep in the same folder, a line before the list
+names that folder once. Files with a reason are always listed. The plain
+missing ones stop at ten unless `--verbose` is given.
+
+A pack published in parts leaves a marker beside the files of each part
+(`RetroArch_v1.22.2_BIOS_Pack.part1of3.txt`). `--check` reads them and names
+a part that was not extracted, or one extracted into a folder of its own:
+
+```
+  RetroArch_v1.22.2_BIOS_Pack.zip comes in 3 parts, all needed.
+    missing: part 2, RetroArch_v1.22.2_BIOS_Pack.part2of3.zip (1.9 GB)
+    Download it and extract into /home/me/.config/retroarch/system, beside the other parts.
+```
 
 ## Files you already had
 
@@ -448,6 +504,8 @@ what the options name, everything by default.
 | `--yes`, `-y` | Do not ask before a download of 1 GB or more |
 | `--quiet`, `-q` | Print only failures and the final summary. Implies `--no-input` |
 | `--events` | Write the run as JSON events on standard output, one object per line, and the usual text on standard error. Implies `--no-input`. See [Machine-readable events](#machine-readable-events) |
+| `--from-pack PATH` | Install from a pack already downloaded: its ZIP, one of its parts (the others are found in the same folder), or the folder holding them. Makes no network request and checks every file's hash. See [Without a network](#without-a-network) |
+| `--manifest FILE` | Read the file list from FILE, a copy of `install/<platform>.json`, instead of downloading it. See [Without a network](#without-a-network) |
 | `--restore FOLDER` | Put back the files a run replaced and kept in FOLDER, a dated folder inside `retrobios-backup`. Takes no other option but `--dry-run` and `--no-input`. See [Files you already had](#files-you-already-had) |
 | `--version` | Print the installer's identity, the first 12 hex digits of the SHA-256 the bootstraps pin |
 | `--list-platforms` | Print the supported platforms and what was detected here |
@@ -459,8 +517,9 @@ what the options name, everything by default.
 
 `--check` reads the same file list, hashes the destination and exits, with
 code 1 when a file is missing or does not match and 0 when every one does. Files
-with a wrong hash are listed first and in full, then the first ten missing ones
-(`--verbose` lists them all). `--dry-run` counts the data trees in its total. Without
+with a wrong hash are listed first and in full, then the missing ones whose
+reason it found, then the first ten other missing ones (`--verbose` lists them
+all). See [Why a file is refused](#why-a-file-is-refused). `--dry-run` counts the data trees in its total. Without
 it, a file already present with the expected hash is left untouched, and one
 whose contents do not match is re-downloaded and replaced by the verified copy,
 the old one kept beside the BIOS folder.
@@ -806,6 +865,34 @@ The launcher (`ports/RetroBIOS/RetroBIOS.sh`) and its screens
 (`retrobios/screens.txt`) read the installer through
 [Machine-readable events](#machine-readable-events) only.
 
+## Without a network { #without-a-network }
+
+A pack downloaded once installs again with no network, on this machine or on
+one that has none:
+
+```bash
+python install.py --from-pack ~/Downloads/RetroArch_v1.22.2_BIOS_Pack.zip
+python install.py --from-pack ~/Downloads/RetroArch_v1.22.2_BIOS_Pack.part1of3.zip
+python install.py --from-pack ~/Downloads --dest /media/card/retroarch/system
+```
+
+One part is enough to name a split pack: the others are taken from the same
+folder, and a part that is not there is named before anything is written.
+The platform is read from the pack's name when `--platform` is not given. The
+file list is the one the pack carries (`manifest.json`), with each file's
+SHA-1 and size, and every file is checked against it before it takes its
+place. A data tree (Dolphin's `Sys/`, PPSSPP's assets) comes from the pack
+too, not from its source archive. `--target` reads a core list from the
+network and is refused with `--from-pack`. A board found on the device is not
+applied either: every board's files are installed.
+
+`--manifest FILE` reads the file list from a copy of `install/<platform>.json`
+instead of downloading it. Alone, the files still come from the repository.
+With `--from-pack`, the run reads that list and takes every file from the
+pack: `--system`, `--core`, `--region` and `--no-game-data` then apply as
+they do online, and a file of the list the pack does not hold fails as
+`not in the pack`. The list's platform has to be the one installed for.
+
 ## Where the files come from
 
 Each manifest entry names either `repo_path`, served from the repository at the
@@ -911,8 +998,8 @@ fields, the installer refuses to narrow rather than install everything.
 | Code | Meaning |
 |------|---------|
 | `0` | everything asked for is installed or already up to date |
-| `1` | a failure: the one-liner could not download or verify `install.py`, or found no Python 3.8 (nothing was run), an unusable base URL, an unknown platform or target, `--installed-cores` with no core found, a manifest that fails validation, a fetch that never succeeded, no platform to install for in a non-interactive run, some files failed while others installed, `--check` found files to fetch, or `--restore` could not put a file back |
-| `2` | nothing was installed: every file the run tried failed (a BIOS folder that cannot be written, for one), the drive has too little free space for the download (checked before any folder is created), or the question about a `--dest` folder that does not exist was answered no. Also an option the installer refused before any download: an unknown option, `--jobs` outside 1 to 32, `--target` with `--every-board`. The message then starts with `install.py: error:`. With `--restore`, a folder that is not a dated folder inside `retrobios-backup` |
+| `1` | a failure: the one-liner could not download or verify `install.py`, or found no Python 3.8 (nothing was run), an unusable base URL, an unknown platform or target, `--installed-cores` with no core found, a manifest that fails validation, a fetch that never succeeded, no platform to install for in a non-interactive run, some files failed while others installed, `--check` found files to fetch, a `--from-pack` pack that cannot be read, lacks a part or is for another platform, or `--restore` could not put a file back |
+| `2` | nothing was installed: every file the run tried failed (a BIOS folder that cannot be written, for one), the drive has too little free space for the download (checked before any folder is created), or the question about a `--dest` folder that does not exist was answered no. Also an option the installer refused before any download: an unknown option, `--jobs` outside 1 to 32, `--target` with `--every-board` or `--from-pack`. The message then starts with `install.py: error:`. With `--restore`, a folder that is not a dated folder inside `retrobios-backup` |
 | `130` | stopped with Ctrl+C, or with Ctrl+C or Ctrl+D at a question. Run the same command again to carry on |
 | `141` | the output was piped to a reader that closed early (`--list-platforms \| head`) |
 
@@ -1054,7 +1141,8 @@ right pack either way.
 
 Parts named `Pack.part1of2.zip` are ordinary ZIPs: unzip each one into the same
 folder, and check that all of them were downloaded. The name says how many
-there are. `scripts/download.sh` and `scripts/download.py` download every part
+there are, and each part leaves a marker file naming every part, which
+`--check` reads to name a part that is missing. `scripts/download.sh` and `scripts/download.py` download every part
 and check it against the release's checksums before unzipping. Both stage
 inside the destination folder, never in `/tmp`, which is a RAM disk on most of
 these systems.
