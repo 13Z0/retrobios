@@ -1045,6 +1045,9 @@ class DetectionFollowsTheRegistry(unittest.TestCase):
             env = {
                 "HOME": str(root / "home"), "APPDATA": str(root / "appdata"),
                 "ProgramFiles": str(root / "pf"), "ProgramFiles(x86)": str(root / "pf86"),
+                # Not the host's: a WSL session can hold them.
+                "USERPROFILE": "", "LOCALAPPDATA": "", "ProgramData": "",
+                "SCOOP": "", "SCOOP_GLOBAL": "",
             }
 
             def expand(text: str) -> str:

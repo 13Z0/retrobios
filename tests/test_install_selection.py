@@ -362,7 +362,10 @@ class DecliningTheSizePointsAtTheChoice(unittest.TestCase):
     def _run(self, answers: list[str], *options: str) -> str:
         replies = iter(answers)
         out = io.StringIO()
-        with FakeRepository() as repo, \
+        # main() on a WSL host reads the Windows variables through cmd.exe
+        # and sets them in os.environ: restored here, they leaked into every
+        # later test (USERPROFILE added a Scoop folder to detection).
+        with FakeRepository() as repo, mock.patch.dict(os.environ), \
                 mock.patch.object(sys, "argv", ["install.py", "--platform", "retroarch",
                                                 "--dest", str(repo.dest), *options]), \
                 mock.patch.object(install, "MANIFEST_URL",
