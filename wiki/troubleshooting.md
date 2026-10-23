@@ -66,9 +66,8 @@ version.
 
 ## If the command fails { #installation-script-fails }
 
-- **Network error:** try again once github.com opens.
-- **`The clock reads ...`:** the date is wrong. Let it sync over Wi-Fi, or set
-  it, then run again.
+- **Network error:** try again later.
+- **`The clock reads ...`:** set the right date.
 - **Permission denied:** do what the message says. It names what to run.
 - **No setup found:** name it and its folder:
 
