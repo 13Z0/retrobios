@@ -21,6 +21,7 @@ _TIMESTAMP_PATTERNS = [
     # The decorated pages carry the same stamp again as a rendered element,
     # and missing it rewrote every page on every run for the clock alone.
     re.compile(r'<div class="rb-timestamp">[^<]*</div>'),
+    re.compile(r'<time datetime="[^"]*">Data as of [^<]*</time>'),
 ]
 
 def write_if_changed(

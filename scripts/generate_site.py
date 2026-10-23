@@ -416,6 +416,11 @@ def data_as_of(moment: datetime | None = None) -> str:
             f"Data as of {moment.day} {moment.strftime('%B %Y')}</time>")
 
 
+def _date_line() -> str:
+    """The date a page closes on, in the words of data_as_of()."""
+    return f'<div class="rb-timestamp">{data_as_of()}.</div>'
+
+
 
 
 # Home page
@@ -2581,7 +2586,7 @@ def _render_platform_systems(
                         for i, other in enumerate(stems, 1))] if len(runs) > 1 else []),
                     "", "## Files", "",
                     *search_excluded(run),
-                    "", f"*Generated on {_timestamp()}*",
+                    "", _date_line(),
                 ]) + "\n"
             where = (f"[a page of their own]({stems[0]}.md)" if len(stems) == 1 else
                      "pages of their own: " + ", ".join(
@@ -3088,7 +3093,7 @@ def generate_platform_page(
                                  (name, display), moved, config)
     )
 
-    lines.append(f"*Generated on {_timestamp()}*")
+    lines.extend(["", _date_line()])
     return "\n".join(lines) + "\n"
 
 
@@ -3702,7 +3707,7 @@ def generate_provenance_page(
             lines.append(f"| `{name}` | {sources} | {how.get('transform', '')} | `{sha1}` |")
         lines.append("")
 
-    lines.append(f'<div class="rb-timestamp">Generated on {_timestamp()}.</div>')
+    lines.extend(["", _date_line()])
     return "\n".join(lines) + "\n"
 
 
@@ -4357,7 +4362,7 @@ def system_pages(
             lines.extend(_cards_markdown(cards))
             lines.append("")
         lines.extend(_next_block(_NEXT_FROM_SYSTEMS))
-        lines.append(f'<div class="rb-timestamp">Generated on {_timestamp()}.</div>')
+        lines.extend(["", _date_line()])
         return "\n".join(lines) + "\n"
 
     def card_weight(card: list[str]) -> int:
@@ -4454,12 +4459,12 @@ def system_pages(
             lines.append("")
             lines.extend(_next_block([f"[{manufacturer}]({slug}.md), every section"]
                                      + _NEXT_FROM_SYSTEMS))
-            lines.append(f'<div class="rb-timestamp">Generated on {_timestamp()}.</div>')
+            lines.extend(["", _date_line()])
             held = {sha1 for _variant, _card, sha1 in part}
             pages[stem] = ("\n".join(lines) + "\n", {console: [
                 f for f in consoles[console] if str(f.get("sha1", "")) in held]})
     summary.extend(_next_block(_NEXT_FROM_SYSTEMS))
-    summary.append(f'<div class="rb-timestamp">Generated on {_timestamp()}.</div>')
+    summary.extend(["", _date_line()])
     kept = {console: files for console, files in consoles.items() if console not in moved}
     return {slug: ("\n".join(summary) + "\n", kept), **pages}
 
@@ -5853,7 +5858,7 @@ def emulator_pages(
         "[Every system](../systems/index.md), and the files each one needs",
         "[When a game does not start](../wiki/troubleshooting.md)",
     ]))
-    lines.extend([f"*Generated on {_timestamp()}*"])
+    lines.extend(["", _date_line()])
     return {name: "\n".join(lines) + "\n", **part_pages}
 
 
@@ -5910,7 +5915,7 @@ def _emulator_part_page(
                     lambda group: [line for i in group for line in cards[i]]),
     ]
     lines.extend(_next_block([f"[{emu_name}]({name}.md), the profile and every entry"]))
-    lines.extend([f"*Generated on {_timestamp()}*"])
+    lines.extend(["", _date_line()])
     return "\n".join(lines) + "\n"
 
 
@@ -6650,7 +6655,7 @@ def generate_gap_analysis(
             )
         lines.append("")
 
-    lines.extend(["", f'<div class="rb-timestamp">Generated on {_timestamp()}.</div>'])
+    lines.extend(["", _date_line()])
     return "\n".join(lines) + "\n"
 
 
@@ -6921,7 +6926,7 @@ def generate_cross_reference(
     lines.extend(_render_xref_by_platform(coverages, unique, moved))
     lines.extend(_render_xref_by_upstream(coverages, unique))
 
-    lines.extend(["", f"*Generated on {_timestamp()}*"])
+    lines.extend(["", _date_line()])
     return "\n".join(lines) + "\n"
 
 
@@ -7071,7 +7076,7 @@ def generate_wiki_data_model(db: dict, profiles: dict) -> str:
         "## Static API and bulk exports",
         "",
         "The website publishes versioned JSON, CSV and SQLite metadata generated "
-        "from these same structures. Start with the [Data & API](../data.md) "
+        "from these same structures. Start with the [Data and API](../data.md) "
         "catalog. Each downloadable artifact carries a SHA256 in "
         "`api/v1/catalog.json`.",
         "",
