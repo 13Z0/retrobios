@@ -261,7 +261,7 @@ class TheRules(unittest.TestCase):
             {"files": {}}, {"dolphin": {"data_directories": [{"ref": "dolphin-sys"}]}},
             {"dolphin-sys": members})
         last = f"{generate_site.DATA_TREE_ROWS_PER_PAGE:040x}"
-        self.assertIn({"sha1": last, "url": f"emulators/data-dolphin-sys-2/#sha1-{last[:12]}"}, items)
+        self.assertIn({"sha1": last, "url": f"/retrobios/emulators/data-dolphin-sys-2/#sha1-{last[:12]}"}, items)
 
     def test_no_float_rule_for_right_aligned_images(self):
         css = (REPO_ROOT / "website" / "src" / "styles" / "retrobios.css").read_text(encoding="utf-8")

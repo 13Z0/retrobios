@@ -69,8 +69,9 @@ class AnUntestedRowNamesBothHashes(unittest.TestCase):
         db = {"files": {"f" * 40: {"path": path, "sha256": held}}}
         table = "\n".join(gs._render_problem_files([problem], db=db))
         row = next(line for line in table.splitlines() if "dsifirmware" in line)
-        self.assertIn(f"sha256 `{declared}`", row)
-        self.assertIn(f"sha256 `{held}`", row)
+        # Cut to 12 characters in the cell, the whole value in its title.
+        self.assertIn(f'sha256 <code title="{declared}">{declared[:12]}</code>', row)
+        self.assertIn(f'sha256 <code title="{held}">{held[:12]}</code>', row)
         self.assertIn(f"`{path}`", row)
 
 

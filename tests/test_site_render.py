@@ -224,7 +224,7 @@ class AnAliasTreeIsListedOnItsParentsPage(unittest.TestCase):
         members = {"freeintv-overlays": {"a.png": {"sha1": "02" * 20}}}
         items = generate_site.file_location_items({"files": {}}, self.PROFILES, members)
         self.assertEqual(items, [{"sha1": "02" * 20,
-                                  "url": "emulators/freeintv/#sha1-020202020202"}])
+                                  "url": "/retrobios/emulators/freeintv/#sha1-020202020202"}])
 
     def test_the_parent_page_lists_the_tree(self):
         import generate_site

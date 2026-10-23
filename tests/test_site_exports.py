@@ -685,14 +685,14 @@ class AHashFindsEveryPageThatNamesIt(unittest.TestCase):
         records = generate_site.file_lookup_records(db, coverages, profiles, locations, members)
         found = {(r["layer"], r.get("owner", ""), r["algorithm"], r["value"]): r for r in records}
         self.assertEqual(found[("collection", "", "md5", md5)]["url"],
-                         "systems/sony/#sha1-" + "ab" * 6)
+                         "/retrobios/systems/sony/#sha1-" + "ab" * 6)
         self.assertIn(("collection", "", "crc32", "8d8cb7e4"), found)
         self.assertEqual(found[("data-directory", "", "sha1", "cd" * 20)]["name"], "font.bin")
         self.assertEqual(found[("platform", "batocera", "md5", md5)]["url"],
-                         "platforms/batocera/#sony-playstation")
+                         "/retrobios/platforms/batocera/#sony-playstation")
         self.assertIn(("platform", "batocera", "md5", "0123456789abcdef0123456789abcdef"), found)
         self.assertEqual(found[("emulator", "duckstation", "md5", md5)]["url"],
-                         "emulators/duckstation/#file-scph5501-bin-490f666e")
+                         "/retrobios/emulators/duckstation/#file-scph5501-bin-490f666e")
         self.assertEqual(found[("emulator", "duckstation", "crc32", "11223344")]["name"], "m.rom")
         self.assertNotIn(("emulator", "an-alias", "md5", md5), found)
 
@@ -724,7 +724,7 @@ class AFileHasAnAddressByContent(unittest.TestCase):
         }}
         self.assertEqual(
             generate_site.file_location_items(db),
-            [{"sha1": "ab" * 20, "url": "systems/roland/#sha1-" + "ab" * 6}],
+            [{"sha1": "ab" * 20, "url": "/retrobios/systems/roland/#sha1-" + "ab" * 6}],
         )
         self.assertIn('id="rb-file-lookup-status"', generate_site.generate_files_page())
         script = (Path(__file__).resolve().parents[1] / "website" / "src" / "scripts"
@@ -865,7 +865,8 @@ class ADataDirectoryFileCanBeLookedUp(unittest.TestCase):
             members = data_directory_members(Path(tmp))
         items = file_location_items(
             {"files": {}}, {"dolphin": {"data_directories": [{"ref": "dolphin-sys"}]}}, members)
-        self.assertEqual(items, [{"sha1": "c" * 40, "url": "emulators/dolphin/#sha1-cccccccccccc"}])
+        self.assertEqual(items, [{"sha1": "c" * 40,
+                                  "url": "/retrobios/emulators/dolphin/#sha1-cccccccccccc"}])
 
 
 class ACardSaysWhyAFileIsLeftOut(unittest.TestCase):
