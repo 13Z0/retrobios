@@ -554,6 +554,23 @@ def _semantic_install_checks(path: Path, manifest: dict) -> list[str]:
     return out
 
 
+def _event_schema_errors() -> list[str]:
+    """install-events.schema.json is EVENT_KEYS written out, and a valid schema."""
+    import generate_event_schema  # noqa: PLC0415
+
+    path = ROOT / "schemas" / generate_event_schema.OUTPUT.name
+    label = path.relative_to(ROOT).as_posix()
+    if not path.is_file():
+        return [f"{label}: missing, run python scripts/generate_event_schema.py"]
+    if path.read_text(encoding="utf-8") != generate_event_schema.render(
+        generate_event_schema.build_schema()
+    ):
+        return [f"{label}: differs from EVENT_KEYS in install.py, run "
+                "python scripts/generate_event_schema.py"]
+    Draft202012Validator.check_schema(_load_json(path))
+    return []
+
+
 def unchecked_formats() -> list[str]:
     """Formats the schemas declare that this jsonschema install cannot check.
 
@@ -598,6 +615,7 @@ def main() -> int:
     errors.extend(_repository_layout_in_profiles())
     errors.extend(_save_directory_blocks())
     errors.extend(_registry_contract())
+    errors.extend(_event_schema_errors())
 
     if not args.source_only:
         database_path = ROOT / "database.json"

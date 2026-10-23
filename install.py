@@ -98,6 +98,11 @@ RELEASE_URL = (
     "https://github.com/Abdess/retrobios/releases/download/large-files/{asset}"
 )
 MAX_RETRIES = 3
+# Seconds a connection has to open. A dropped network cost three tries of a
+# 30-second timeout, 93 s, before the error: a connection that does not open
+# now fails in this time, and once open a read waits as long as before, so
+# a slow line is not cut.
+CONNECT_TIMEOUT = 4.0
 MAX_MANIFEST_BYTES = 16 * 1024 * 1024
 MAX_TARGETS_BYTES = 4 * 1024 * 1024
 MAX_MANIFEST_FILES = 100_000
@@ -526,6 +531,11 @@ EVENT_KEYS: dict[str, tuple[str, ...]] = {
     "checking": ("files_done", "files_total"),
     "check": ("platform", "name", "bios_dir", "files", "present", "missing",
               "wrong_hash", "bytes_needed", "data_missing", "not_installable"),
+    # Right after check: the same counts over the files the platform's own
+    # list declares (cores: null), and their dests in file-event order. A
+    # kind of its own, since schema 1 never adds a key to the file event.
+    "declared": ("platform", "files", "present", "missing", "wrong_hash",
+                 "bytes_needed", "dests"),
     # A file to install that this machine already holds: misplaced in the
     # BIOS folder (folder is its bios_dir, reason says why in words) or in
     # a folder named with --from (reason empty). member names the ZIP member
@@ -616,7 +626,8 @@ def _emit_check(
     mismatched: list[dict], data_missing: int, not_installable: int,
     chosen: list[str] | None = None,
 ) -> None:
-    """One event per file, per system and per platform after a check.
+    """One event per file, per system and per platform after a check, then
+    one for the files of the platform's own list.
 
     With systems chosen, only those are described: a file of SkyEmu's
     carries four systems, and --system nintendo-gba described gb, gbc and
@@ -654,6 +665,15 @@ def _emit_check(
         bytes_needed=sum(entry.get("size", 0) for entry in needed),
         data_missing=data_missing, not_installable=not_installable,
     )
+    own = [entry for entry in files if entry.get("cores") is None]
+    own_needed = [entry for entry in own if id(entry) not in present]
+    own_wrong = sum(1 for entry in own if id(entry) in wrong)
+    EVENTS.emit(
+        "declared", platform=plat, files=len(own), present=len(own) - len(own_needed),
+        missing=len(own_needed) - own_wrong, wrong_hash=own_wrong,
+        bytes_needed=sum(entry.get("size", 0) for entry in own_needed),
+        dests=[entry["dest"] for entry in own],
+    )
 
 
 def leave_out_game_data(
@@ -670,6 +690,22 @@ def leave_out_game_data(
         [e for e in omitted if e.get("category") != GAME_DATA],
         left_out,
     )
+
+
+def keep_declared(files: list[dict], omitted: list[dict]) -> tuple[list[dict], list[dict]]:
+    """The files and omissions the platform's own list declares (cores: null).
+
+    A slot a core contradicts gets the platform's copy, and no core copy
+    stays behind as an alternative: narrowing by cores afterwards would
+    otherwise put a core's file back where a dropped system's was.
+    """
+    def own(entries: list[dict]) -> list[dict]:
+        return [
+            {k: v for k, v in _settle_slot(entry, set()).items() if k != "alternatives"}
+            for entry in entries if entry.get("cores") is None
+        ]
+
+    return own(files), own(omitted)
 
 
 def _left_out_lines(left_out: list[dict], every: bool) -> list[str]:
@@ -2340,7 +2376,7 @@ SYSTEM_SHORT_NAMES = {
                      "supergrafx"), "nec-pc-engine"),
     **dict.fromkeys(("pcecd", "tgcd", "turbografxcd"), "nec-pc-engine-cd"),
     "pcfx": "nec-pc-fx",
-    **dict.fromkeys(("mvs", "aes"), "snk-neogeo"),
+    **dict.fromkeys(("neogeo", "mvs", "aes"), "snk-neogeo"),
     **dict.fromkeys(("neocd", "neogeocd"), "snk-neogeo-cd"),
     **dict.fromkeys(("msx", "msx2"), "microsoft-msx"),
     "c64": "commodore-c64", "c128": "commodore-c128",
@@ -2354,17 +2390,44 @@ SYSTEM_SHORT_NAMES = {
     "cpc": "amstrad-cpc", "bbc": "acorn-bbc-micro", "apple2": "apple-ii",
 }
 
+# A system some lists file under another id, by the file that stands for it.
+# The Neo Geo card offers --system snk-neogeo, and RetroArch's list keeps
+# neogeo.zip under arcade: the run suggests arcade, never takes it.
+SYSTEM_KEY_FILES = {"snk-neogeo": "neogeo.zip"}
+
+
+def key_file_holders(files: list[dict], omitted: list[dict]) -> dict[str, list[str]]:
+    """The systems a list files each SYSTEM_KEY_FILES file under, for the
+    systems the list does not name itself."""
+    entries = files + omitted
+    known = {system for entry in entries for system in entry_systems(entry)}
+    holders: dict[str, list[str]] = {}
+    for system, name in SYSTEM_KEY_FILES.items():
+        if system in known:
+            continue
+        held = sorted({
+            holder for entry in entries
+            if PurePosixPath(str(entry.get("dest", ""))).name.lower() == name
+            for holder in entry_systems(entry)
+        })
+        if held:
+            holders[system] = held
+    return holders
+
 
 def did_you_mean(
     typed: list[str], known: list[str], listing: str,
     aliases: dict[str, str] | None = None, inside_from: int = 4,
+    meant: dict[str, list[str]] | None = None,
 ) -> str:
     """The closest known names to what was typed, and the option listing them all.
 
     A typo was answered with every name the platform has, up to 400 on one
     line, with no hint that playstation is sony-playstation. An alias close
     to what was typed suggests the name it stands for. A name holding what
-    was typed, inside_from letters or more, is suggested too.
+    was typed, inside_from letters or more, is suggested too. meant gives,
+    by the letters and digits of a typed name, the names it stands for
+    here, suggested instead of the close ones.
     """
     import difflib  # noqa: PLC0415
 
@@ -2377,6 +2440,9 @@ def did_you_mean(
     for word in typed:
         key = _name_key(word)
         if not key:
+            continue
+        if meant and key in meant:
+            close += [name for name in meant[key] if name not in close]
             continue
         matches = difflib.get_close_matches(key, list(by_key), n=3, cutoff=0.6)
         if len(key) >= inside_from:
@@ -3089,10 +3155,13 @@ def network_words(
 ) -> tuple[str, str]:
     """The reason a request failed, and the same in words a beginner reads.
 
-    The reason is clock, no_ca or network. Offline, the run printed
+    The reason is clock, no_ca, network, or offline for a request the run
+    was told not to make. Offline, the run printed
     "[Errno -2] Name or service not known": the raw text now follows the
     words only under --verbose.
     """
+    if isinstance(exc, _Offline):
+        return "offline", str(exc)
     reason = getattr(exc, "reason", None)
     inner = reason if isinstance(reason, BaseException) else exc
     raw = str(reason or exc)
@@ -3145,6 +3214,49 @@ def _address_lines(url: str) -> list[str]:
         lines.append("  RETROBIOS_BASE_URL is set in this environment and chose that "
                      "address: unset it to read from the project itself.")
     return lines
+
+
+def _open_socket(
+    address: tuple[str, int], timeout: object, source_address: object = None,
+) -> socket.socket:
+    """A connection given CONNECT_TIMEOUT to open, then the caller's timeout."""
+    bounded = isinstance(timeout, (int, float))
+    limit = min(CONNECT_TIMEOUT, timeout) if bounded else CONNECT_TIMEOUT
+    sock = socket.create_connection(address, limit, source_address)
+    sock.settimeout(timeout if bounded else socket.getdefaulttimeout())
+    return sock
+
+
+class _BoundedHTTPConnection(http.client.HTTPConnection):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self._create_connection = _open_socket
+
+
+class _BoundedHTTPHandler(urllib.request.HTTPHandler):
+    def do_open(self, http_class: Any, req: Any, **kwargs: Any) -> Any:
+        return super().do_open(_BoundedHTTPConnection, req, **kwargs)
+
+
+def install_bounded_opener() -> None:
+    """Every request of the run opens its connection in CONNECT_TIMEOUT.
+
+    The proxy variables are read as before: build_opener keeps its
+    ProxyHandler, and only the HTTP and HTTPS handlers are replaced.
+    """
+    handlers: list[type] = [_BoundedHTTPHandler]
+    if hasattr(http.client, "HTTPSConnection"):
+        class _BoundedHTTPSConnection(http.client.HTTPSConnection):
+            def __init__(self, *args: Any, **kwargs: Any) -> None:
+                super().__init__(*args, **kwargs)
+                self._create_connection = _open_socket
+
+        class _BoundedHTTPSHandler(urllib.request.HTTPSHandler):
+            def do_open(self, http_class: Any, req: Any, **kwargs: Any) -> Any:
+                return super().do_open(_BoundedHTTPSConnection, req, **kwargs)
+
+        handlers.append(_BoundedHTTPSHandler)
+    urllib.request.install_opener(urllib.request.build_opener(*handlers))
 
 
 def _fetch_json(
@@ -3232,6 +3344,11 @@ def fetch_manifest(plat: str) -> dict:
         EVENTS.emit("error", stage="manifest", reason=code, platform=plat,
                     message=words if code != "network"
                     else f"the file list could not be fetched: {words}")
+        if code == "offline":
+            print(f"  No file list for {plat}: {OFFLINE_WORDS}. Give it with "
+                  "--manifest FILE (a copy of install/<platform>.json) or "
+                  "--from-pack PACK, or run without --offline.", file=sys.stderr)
+            sys.exit(1)
         if code != "network":
             print(f"  Could not fetch the file list for {plat}.", file=sys.stderr)
             print(f"  {words}.", file=sys.stderr)
@@ -3617,6 +3734,7 @@ def available_choices(files: list[dict], omitted: list[dict]) -> dict[str, list[
 def resolve_choices(
     values: list[str], known: list[str], label: str,
     aliases: dict[str, str] | None = None,
+    holders: dict[str, list[str]] | None = None,
 ) -> list[str]:
     """Names given on the command line, matched without regard to case.
 
@@ -3626,6 +3744,8 @@ def resolve_choices(
     carrying on would install something other than what was asked.
     aliases maps another name of a known one to it, as Batocera's `psx`
     stands for sony-playstation. A known name always wins over an alias.
+    holders maps a system the list files under other ids to those ids
+    (key_file_holders): an unknown name for it is answered with them.
     """
     aliases = {alias: name for alias, name in (aliases or {}).items() if name in known}
     by_lower = {name.lower(): name for name in known}
@@ -3658,14 +3778,28 @@ def resolve_choices(
         listing = {"system": "--list-systems", "emulator": "--list-emulators"}.get(
             label, "--list-cores")
         hints, inside_from = aliases, 4
+        held = holders or {}
+        stands_for: dict[str, str] = {}
+        notes = ""
         if label == "system":
             # gba is the end of nintendo-gba: three letters are enough here.
             hints = {**{short: name for short, name in SYSTEM_SHORT_NAMES.items()
                         if name in known}, **aliases}
             inside_from = 3
+            stands_for = {_name_key(system): system for system in held}
+            for short, name in SYSTEM_SHORT_NAMES.items():
+                if name in held:
+                    stands_for.setdefault(_name_key(short), name)
+            named = dict.fromkeys(
+                stands_for[_name_key(token)] for token in unknown
+                if _name_key(token) in stands_for)
+            notes = "".join(
+                f"This list files {SYSTEM_KEY_FILES[system]} under "
+                f"{', '.join(held[system])}. " for system in named)
+        meant = {key: held[system] for key, system in stands_for.items()}
         raise ValueError(
-            f"unknown {label}: {', '.join(unknown)}. "
-            f"{did_you_mean(unknown, known, listing, hints, inside_from)}"
+            f"unknown {label}: {', '.join(unknown)}. {notes}"
+            f"{did_you_mean(unknown, known, listing, hints, inside_from, meant)}"
         )
     if values and not chosen:
         raise ValueError(f"--{label} needs at least one name")
@@ -4265,7 +4399,8 @@ def _download_one(
 
     if LOCAL.pack is not None:
         return _extract_from_pack(f, bios_path, dest, progress)
-    _network_allowed(f["dest"])
+    if offline_requested():
+        return f["dest"], False, OfflineReason(f"not fetched: {OFFLINE_WORDS}")
     if f.get("release_asset"):
         url = RELEASE_URL.format(asset=urllib.parse.quote(f["release_asset"], safe=""))
     else:
@@ -4696,7 +4831,9 @@ class Invocation:
             ("--every-board", args.every_board),
             ("--installed-cores", args.installed_cores and not args.cores_dir),
             ("--no-game-data", args.no_game_data),
+            ("--declared-only", args.declared_only),
             ("--standalone-copies", args.standalone_copies),
+            ("--offline", getattr(args, "offline", False)),
             ("--check", args.check),
             ("--dry-run", args.dry_run),
         ):
@@ -4813,6 +4950,10 @@ def _plural(count: int, word: str) -> str:
     return f"{count} {word}" if count == 1 else f"{count} {word}s"
 
 
+class OfflineReason(str):
+    """A file not fetched because the run was told to make no request."""
+
+
 class NetworkReason(str):
     """A failure the connection caused: cut, timed out, refused by a server
     or a proxy. The summary names the network instead of the folder."""
@@ -4910,11 +5051,15 @@ def _report_outcome(
                       "(or delete them), then run again.")
     if any(isinstance(reason, NetworkReason) for _dest, reason in failures or []):
         advice.append(NETWORK_FAILURE_ADVICE)
+    if any(isinstance(reason, OfflineReason) for _dest, reason in failures or []):
+        advice.append("  These files come from the network, which --offline does not "
+                      "use: run without --offline, or name a pack with --from-pack.")
     paths = paths + [folder for folder in elsewhere if folder not in paths]
 
     if errors and not downloaded:
         print(f"\nNothing was installed. {_plural(errors, 'file')} failed.")
-        if failures and all(isinstance(r, NetworkReason) for _d, r in failures):
+        if failures and all(isinstance(r, (NetworkReason, OfflineReason))
+                            for _d, r in failures):
             # The folder was never the problem: naming it as the place being
             # written to sent people looking at their disk.
             print(f"Destination: {_locations(paths)}")
@@ -5025,6 +5170,12 @@ def installer_id() -> str:
         return "unknown"
 
 
+# A --dry-run plan: file names per system, the systems shown when the
+# listing is taller than the screen, and the lines around the listing.
+PLAN_FILES_PER_SYSTEM = 8
+PLAN_LARGEST_SYSTEMS = 10
+PLAN_FRAME_LINES = 6
+
 # Answers that stop: every menu before this one taught q as quit.
 _REFUSALS = ("n", "q", "quit", "exit", "stop", "abort")
 
@@ -5040,42 +5191,61 @@ def _print_plan(
     trees: list[tuple[dict, dict[str, dict]]] = (),
     kept: dict[Path, list[int]] | None = None,
     copied: list[str] = (),
+    verbose: bool = False,
 ) -> None:
-    """What a real run would fetch, by system, and nothing written.
+    """What a real run would fetch: the totals first, then by system, and
+    nothing written.
 
     The data trees count in the total and come before the closing line:
     printed after it, they left 2636 RetroArch files out of the figure a
-    user plans an SD card from.
+    user plans an SD card from. A listing taller than the screen pushed the
+    total out of sight (599 lines for RetroArch): it gives way to the
+    largest systems, and --verbose lists every file.
     """
     total = sum(f.get("size", 0) for f in to_download)
     trees = [(entry, needed) for entry, needed in trees if needed]
     tree_files = sum(len(needed) for _entry, needed in trees)
     tree_size = sum(meta.get("size", 0) for _entry, needed in trees for meta in needed.values())
-    for line in copied:
-        print(line)
-    if not to_download and not trees:
-        if not copied:
-            print("\n  All files up to date. A real run would download nothing.")
-            return
-        print("\n  Nothing to download.")
     parts = []
     if to_download:
         parts.append(f"{_plural(len(to_download), 'file')} ({format_size(total)})")
     if trees:
         parts.append(f"{_plural(tree_files, 'data file')} ({format_size(tree_size)}, "
                      f"extracted from {_plural(len(trees), 'archive')})")
+    if not parts and not copied:
+        print("\n  All files up to date. A real run would download nothing.")
+        return
     if parts:
         print(f"\nWould download {' and '.join(parts)} to {bios_path}:")
+    for line in copied:
+        print(line)
+    if not parts:
+        print("\n  Nothing to download.")
     by_system: dict[str, list[dict]] = {}
     for entry in to_download:
         system = ", ".join(entry_systems(entry)) or "other"
         by_system.setdefault(system, []).append(entry)
+    shown = None if verbose else PLAN_FILES_PER_SYSTEM
+    listing: list[str] = []
     for system in sorted(by_system):
-        print(f"  {term.bold(system)}  {_sized(by_system[system])}")
-        for entry in sorted(by_system[system], key=lambda e: e["dest"])[:8]:
-            print(f"    {entry['dest']}  {term.dim(format_size(entry.get('size', 0)))}")
-        if len(by_system[system]) > 8:
-            print(f"    ... and {len(by_system[system]) - 8} more")
+        entries = sorted(by_system[system], key=lambda e: e["dest"])
+        listing.append(f"  {term.bold(system)}  {_sized(entries)}")
+        listing += [f"    {entry['dest']}  {term.dim(format_size(entry.get('size', 0)))}"
+                    for entry in entries[:shown]]
+        if shown is not None and len(entries) > shown:
+            listing.append(f"    ... and {len(entries) - shown} more")
+    screen = shutil.get_terminal_size((80, 24)).lines
+    if verbose or len(listing) + len(trees) + PLAN_FRAME_LINES <= screen:
+        for line in listing:
+            print(line)
+    else:
+        largest = sorted(by_system, key=lambda s: (-_bytes(by_system[s]), s))
+        print(f"  {_plural(len(largest), 'system')}, the largest first:")
+        for system in largest[:PLAN_LARGEST_SYSTEMS]:
+            print(f"  {term.bold(system)}  {_sized(by_system[system])}")
+        if len(largest) > PLAN_LARGEST_SYSTEMS:
+            print(f"  ... and {len(largest) - PLAN_LARGEST_SYSTEMS} more systems: "
+                  "--verbose lists every system and its files.")
     for entry, needed in trees:
         source = LOCAL.pack.name if LOCAL.pack is not None else entry["url"]
         print(f"  {term.bold(entry['ref'] + ' data')}  {_sized(list(needed.values()))}, "
@@ -5494,7 +5664,8 @@ def _install_standalone_folders(
             pending += len(to_download)
             continue
         if args.dry_run:
-            _print_plan(to_download, folder, term, kept=plan_kept(mismatched, folder))
+            _print_plan(to_download, folder, term, kept=plan_kept(mismatched, folder),
+                        verbose=args.verbose)
             continue
         if not to_download:
             print("  All files up to date.")
@@ -5972,12 +6143,27 @@ def _same_choice_hint(plat: str, systems: list[str], cores: list[str], regions: 
 
 
 def system_aliases(manifest: dict | None) -> dict[str, str]:
-    """The platform's own names for its systems, each with the system id."""
-    return {
+    """The platform's own names for its systems, then the titles the site
+    and the installer print (SNK Neo Geo CD), each with the system id.
+
+    A title two systems share names neither, and the platform's own name
+    wins over a title spelled the same.
+    """
+    aliases = {
         alias: system
         for system, names in ((manifest or {}).get("system_names") or {}).items()
         for alias in names
     }
+    taken = {_name_key(alias) for alias in aliases}
+    titles = (manifest or {}).get("system_titles") or {}
+    counts: dict[str, int] = {}
+    for title in titles.values():
+        counts[_name_key(title)] = counts.get(_name_key(title), 0) + 1
+    for system, title in titles.items():
+        key = _name_key(title)
+        if key and counts[key] == 1 and key not in taken:
+            aliases[title] = system
+    return aliases
 
 
 def _system_label(name: str, manifest: dict | None) -> str:
@@ -6214,7 +6400,8 @@ def _requested_narrowing(
     choices = available_choices(files, omitted)
     try:
         systems = resolve_choices(
-            args.system or [], choices["systems"], "system", system_aliases(manifest)
+            args.system or [], choices["systems"], "system", system_aliases(manifest),
+            key_file_holders(files, omitted),
         )
         cores = resolve_choices(args.core or [], choices["cores"], "core")
         regions = resolve_regions(args.region or [])
@@ -6501,7 +6688,8 @@ class LocalSources:
 
     @property
     def offline(self) -> bool:
-        return self.pack is not None
+        """No network request in this run: a pack is read, or --offline."""
+        return self.pack is not None or offline_requested()
 
     def reset(self) -> None:
         if self.pack is not None:
@@ -6519,9 +6707,22 @@ class _Offline(OSError):
     """A network request in a run told to make none."""
 
 
+# --offline, or this variable set to anything but 0, which every run the
+# full-screen interface starts inherits. RETROBIOS_OFFLINE stays the build
+# scripts' own: CI and the test suite set it for every process they start.
+OFFLINE_VARIABLE = "RETROBIOS_INSTALL_OFFLINE"
+OFFLINE_WORDS = "this run makes no network request (--offline)"
+
+
+def offline_requested() -> bool:
+    return os.environ.get(OFFLINE_VARIABLE, "") not in ("", "0")
+
+
 def _network_allowed(what: str) -> None:
-    if LOCAL.offline:
+    if LOCAL.pack is not None:
         raise _Offline(f"{what}: this run reads a pack and makes no network request")
+    if offline_requested():
+        raise _Offline(f"{what}: {OFFLINE_WORDS}")
 
 
 def read_local_manifest(path: Path, plat: str) -> dict:
@@ -7816,6 +8017,12 @@ def main() -> None:
              "install the firmware only",
     )
     parser.add_argument(
+        "--declared-only",
+        action="store_true",
+        help="keep only the files the platform's own list names, not the extra "
+             "files cores load: --check then answers for the list the platform checks",
+    )
+    parser.add_argument(
         "--list-systems",
         action="store_true",
         help="list a platform's systems with their file counts and exit",
@@ -7878,6 +8085,13 @@ def main() -> None:
         help="install from a pack already downloaded: its ZIP, one of its parts "
              "(the others are found beside it) or the folder holding them. "
              "Makes no network request, and checks every file's hash",
+    )
+    parser.add_argument(
+        "--offline",
+        action="store_true",
+        help="make no network request: --check, --from, --from-pack and --manifest "
+             "work without one, and a file the run would download fails at once "
+             f"({OFFLINE_VARIABLE}=1 does the same)",
     )
     parser.add_argument(
         "--from",
@@ -7946,6 +8160,23 @@ def main() -> None:
         parser.error("--quiet applies to an install, not to --check, --dry-run or a listing")
     if args.tui and args.plain:
         parser.error("--tui and --plain ask for two different interfaces")
+    if args.declared_only:
+        # Applied or refused, never ignored.
+        for given, reason in (
+            (args.tui, "the full-screen interface has no choice for --declared-only"),
+            (args.list_platforms or args.list_targets,
+             "--declared-only narrows a file list, not --list-platforms or --list-targets"),
+            (args.core or args.list_cores,
+             "--declared-only leaves out the files cores load, which --core and "
+             "--list-cores choose among"),
+            (args.list_emulators,
+             "--list-emulators names emulators, and --declared-only narrows files"),
+            (args.standalone_copies,
+             "--standalone-copies copies into standalone emulators' folders, outside "
+             "the platform's own list that --declared-only keeps"),
+        ):
+            if given:
+                parser.error(reason)
     if args.tui:
         reason = tui_blocker(args)
         if reason:
@@ -7958,7 +8189,7 @@ def main() -> None:
         alone = ("platform", "dest", "target", "every_board", "check", "list_platforms",
                  "list_targets", "standalone_copies", "emulator", "installed_cores",
                  "cores_dir", "save_dir", "system", "core", "region", "no_game_data",
-                 "list_systems",
+                 "declared_only", "list_systems",
                  "list_cores", "romm_firmware", "list_emulators", "events", "quiet",
                  "yes", "verbose", "from_pack", "manifest", "from")
         given = [name for name in alone if getattr(args, name)]
@@ -7970,6 +8201,13 @@ def main() -> None:
         sys.exit(restore_kept(args.restore, args.dry_run))
     if args.every_board and args.target:
         parser.error("--every-board installs every board; --target names one")
+    if args.offline:
+        # The runs the full-screen interface starts read it from here.
+        os.environ[OFFLINE_VARIABLE] = "1"
+    if offline_requested() and (args.target or args.list_targets):
+        parser.error("--target and --list-targets read a core list from the network, "
+                     "which --offline does not use")
+    install_bounded_opener()
     if args.from_pack and args.target:
         parser.error("--target reads a core list from the network, which --from-pack "
                      "does not use")
@@ -7985,7 +8223,9 @@ def main() -> None:
     if args.no_game_data and (args.list_platforms or args.list_targets):
         parser.error("--no-game-data narrows a file list, not --list-platforms "
                      "or --list-targets")
-    if args.tui or not (plain_requested(args) or tui_blocker(args)):
+    # The screens have no choice for --declared-only: the questions ask the
+    # rest, and the run keeps the platform's own list.
+    if args.tui or not (plain_requested(args) or args.declared_only or tui_blocker(args)):
         sys.exit(run_tui(args))
     if args.events:
         # The events own stdout. The text a person reads goes to stderr, so a
@@ -8470,7 +8710,7 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
             # which the file lists name: an ES-DE user with DuckStation and
             # PCSX2 was sent to RetroArch's folder, which nothing here reads.
             narrowing = (args.system or args.core or args.emulator or args.region
-                         or args.target or args.installed_cores)
+                         or args.target or args.installed_cores or args.declared_only)
             if not listing and not narrowing and _install_standalone_folders(
                 args, os_type, term, interactive
             ):
@@ -8631,6 +8871,12 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                 for line in _left_out_lines(left_out, args.verbose):
                     print(line)
 
+        if args.declared_only:
+            before = len(files)
+            files, omitted_files = keep_declared(files, omitted_files)
+            print(f"  The platform's own list: {before} -> {len(files)} files "
+                  "(--declared-only)")
+
         if args.list_targets:
             targets = fetch_targets(plat_name)
             if targets is None:
@@ -8749,13 +8995,15 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                 files, omitted_files = installed
                 print("\n  Same choice without questions: "
                       f"--platform {plat_name} --installed-cores"
-                      + (" --no-game-data" if args.no_game_data else ""))
+                      + (" --no-game-data" if args.no_game_data else "")
+                      + (" --declared-only" if args.declared_only else ""))
                 _INVOCATION.chosen[plat_name] = [("--installed-cores", None)]
                 selection = None
             elif selection is not None:
                 print("\n  Same choice without questions: "
                       + _same_choice_hint(plat_name, *selection)
-                      + (" --no-game-data" if args.no_game_data else ""))
+                      + (" --no-game-data" if args.no_game_data else "")
+                      + (" --declared-only" if args.declared_only else ""))
                 systems, cores, regions = selection
                 _INVOCATION.chosen[plat_name] = [
                     *(("--system", name) for name in systems),
@@ -8855,7 +9103,7 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
 
         narrowed = bool(
             target or args.system or args.core or args.region or args.installed_cores
-            or len(files) + game_data_cut + len(unplaced)
+            or args.declared_only or len(files) + game_data_cut + len(unplaced)
             != len(manifest.get("files", [])) + len(variants if case_kept else [])
         )
         data_dirs = select_data_directories(manifest, files, narrowed)
@@ -8922,7 +9170,8 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
             ], bios_path)
             _print_plan([f for f in to_download if id(f) not in copies], bios_path, term,
                         trees, kept, copy_plan_lines(to_download, copies, bios_index,
-                                                     bios_path, files, args.verbose, True))
+                                                     bios_path, files, args.verbose, True),
+                        verbose=args.verbose)
             for line in unreadable_lines(unread, args.verbose):
                 print(line)
             for line in hint:

@@ -684,6 +684,7 @@ python scripts/refresh_stale.py --only platforms,targets --jobs 6
 | `region_audit.py` | Confront every profile `region:` with the regions No-Intro names for the same dump (`--json`, `--db`, `--emulators-dir`). An opinion, never an authority: the code decides, and a disagreement is a line to read in the emulator's source |
 | `validate_pr.py` | Validate BIOS files in pull requests, post markdown report |
 | `validate_schemas.py` | Validate the data contracts: schemas and semantic invariants. `--source-only` checks `emulators/` and `platforms/` alone, which is what PR validation runs |
+| `generate_event_schema.py` | Write `schemas/install-events.schema.json` from `EVENT_KEYS` in `install.py` (`--check` exits 1 when the file is stale, which `validate_schemas.py` also reports) |
 | `auto_fetch.py` | Fetch missing BIOS files from known sources (4-step pipeline). A download is accepted only when every cryptographic hash the entry declares (sha256, sha1, md5) matches. crc32 and size find a file the database already holds, never accept a download. An entry with no cryptographic hash is reported and not searched |
 | `list_platforms.py` | List active platforms (`--include-archived` adds the archived ones, used by CI) |
 | `download.py` | Download a pack from GitHub releases, every part checked (Python, stdlib only) |
