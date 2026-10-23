@@ -4712,7 +4712,7 @@ def generate_emulators_index(profiles: dict) -> str:
                 sys_str += f" and {len(systems) - 3} more"
             file_count = len(files)
             file_str = f"{file_count:,}" if file_count else "-"
-            lines.append(f"| [{emu_name}]({name}.md) | {CLS_LABELS.get(cls, cls)} | {sys_str} | {file_str} |")
+            lines.append(f"| [{emu_name}]({name}.md) | {CLS_LABEL_ONE.get(cls, cls)} | {sys_str} | {file_str} |")
         lines.append("")
 
     if aliases:
@@ -6921,7 +6921,7 @@ def _xref_platform_rows(config: dict, unique: dict) -> tuple[int, list[str]]:
                             if upstream.startswith("http") else (_escape_tags(upstream) or "-"))
         rows.append(
             f"| [{_escape_tags(p.get('emulator', emu_name))}](emulators/{emu_name}.md) "
-            f"| {CLS_LABELS.get(cls_raw, cls_raw)} | {sys_str or '-'} | {file_str} "
+            f"| {CLS_LABEL_ONE.get(cls_raw, cls_raw)} | {sys_str or '-'} | {file_str} "
             f"| {upstream_display} |"
         )
     return len(matched), rows
@@ -7003,7 +7003,7 @@ def _render_xref_by_upstream(
         members = by_upstream[key]
         cores = sorted(c for c, _url, _rest in members)
         classifications = sorted({
-            CLS_LABELS.get(unique[c].get("core_classification", "-"),
+            CLS_LABEL_ONE.get(unique[c].get("core_classification", "-"),
                            unique[c].get("core_classification", "-"))
             for c in cores
         })

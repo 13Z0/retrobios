@@ -359,14 +359,14 @@
 		table-layout: fixed;
 		width: 100%;
 	}
-	.sl-markdown-content .sl-heading-wrapper:has(> #by-upstream-emulator) ~ section :is(th, td) {
+	.sl-markdown-content .sl-heading-wrapper:has(> #by-upstream-emulator) ~ section td {
 		overflow-wrap: anywhere;
 	}
-	.sl-markdown-content .sl-heading-wrapper:has(> #by-upstream-emulator) ~ section th:nth-child(1) { width: 26%; }
+	.sl-markdown-content .sl-heading-wrapper:has(> #by-upstream-emulator) ~ section th:nth-child(1) { width: 25%; }
 	.sl-markdown-content .sl-heading-wrapper:has(> #by-upstream-emulator) ~ section th:nth-child(2) { width: 26%; }
-	.sl-markdown-content .sl-heading-wrapper:has(> #by-upstream-emulator) ~ section th:nth-child(3) { width: 17%; }
-	.sl-markdown-content .sl-heading-wrapper:has(> #by-upstream-emulator) ~ section th:nth-child(4) { width: 18%; }
-	.sl-markdown-content .sl-heading-wrapper:has(> #by-upstream-emulator) ~ section th:nth-child(5) { width: 13%; }
+	.sl-markdown-content .sl-heading-wrapper:has(> #by-upstream-emulator) ~ section th:nth-child(3) { width: 15%; }
+	.sl-markdown-content .sl-heading-wrapper:has(> #by-upstream-emulator) ~ section th:nth-child(4) { width: 20%; }
+	.sl-markdown-content .sl-heading-wrapper:has(> #by-upstream-emulator) ~ section th:nth-child(5) { width: 14%; }
 }
 
 /* The id a platform writes for a system, beside the name in its heading:
