@@ -28,6 +28,8 @@ import unittest
 import zipfile
 from pathlib import Path
 
+import yaml
+
 REPO_ROOT = Path(__file__).resolve().parent.parent
 PORTS = REPO_ROOT / "ports"
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
@@ -235,6 +237,21 @@ class TheArchives(unittest.TestCase):
                 second = build_port.build_archive(name, self.out / f"b-{name}").read_bytes()
                 self.assertEqual(first, second)
 
+    def test_each_names_the_release_packs(self):
+        """packs.txt names the platforms a release publishes a pack for, as
+        the registry marks them, and the pack's name for each."""
+        registry = yaml.safe_load((REPO_ROOT / "platforms" / "_registry.yml").read_text())
+        released = {name for name, entry in registry["platforms"].items()
+                    if entry.get("release_pack") is True}
+        labels = build_port.release_pack_labels()
+        self.assertEqual(set(labels), released)
+        self.assertEqual(labels["retroarch"], "RetroArch")
+        expected = "".join(f"{p}\t{label}\n" for p, label in sorted(labels.items()))
+        for name, (_script, folder) in self.LAYOUT.items():
+            with self.subTest(archive=name):
+                with zipfile.ZipFile(build_port.build_archive(name, self.out / name)) as zf:
+                    self.assertEqual(zf.read(f"{folder}/packs.txt").decode(), expected)
+
     def test_an_unpinned_installer_is_refused(self):
         root = _tempdir(self)
         for name in ("install.py", "install.sh", "LICENSE", "NOTICE"):
@@ -296,10 +313,12 @@ if "--check" in sys.argv:
     if os.environ.get("FAKE_DETECT_HANG"):
         time.sleep(60)
     print(json.dumps({"event": "detect", "os": "linux", "os_name": "Fake OS",
-                      "platforms": [{"platform": "retroarch", "name": "RetroArch",
+                      "platforms": [{"platform": os.environ.get("FAKE_PLATFORM", "retroarch"),
+                                     "name": os.environ.get("FAKE_PLATFORM_NAME", "RetroArch"),
                                      "bios_dir": "/roms/bios"}]}))
     print(json.dumps({"event": "error", "stage": "manifest", "reason": "network",
-                      "platform": "retroarch", "message": "unreachable"}))
+                      "platform": os.environ.get("FAKE_PLATFORM", "retroarch"),
+                      "message": "unreachable"}))
     print(json.dumps({"event": "end", "code": 1}))
     sys.exit(1)
 if os.environ.get("FAKE_REFUSE"):
@@ -1249,6 +1268,24 @@ class TheMuosApp(unittest.TestCase):
         [call] = device.tui_calls()
         self.assertEqual(call["args"][:3], ["--tui", "--from-pack", str(pack)])
 
+    def test_offline_names_the_pack_that_serves_muos(self):
+        """muOS runs RetroArch, and install.py reads it as retroarch: the
+        RetroArch pack serves it."""
+        device, app = self.device(muxterm=True)
+        proc = device.run([str(app / "mux_launch.sh"), str(app)], FAKE_CURL="7")
+        self.assertEqual(proc.returncode, 1)
+        # muxterm draws what its child writes: here the launcher's stdout.
+        screen = " ".join(proc.stdout.decode().split())
+        self.assertIn("download the RetroArch BIOS pack (a file whose name starts with "
+                      "RetroArch_ and ends in _BIOS_Pack.zip)", screen)
+
+    def test_offline_takes_no_pack_named_for_another_system(self):
+        device, app = self.device(muxterm=True)
+        (device.root / "mmc" / "Batocera_43.1_BIOS_Pack.zip").write_bytes(b"")
+        proc = device.run([str(app / "mux_launch.sh"), str(app)], FAKE_CURL="7")
+        self.assertEqual(proc.returncode, 1)
+        self.assertEqual(device.tui_calls(), [])
+
     def test_offline_reads_a_pack_on_the_second_card(self):
         device, app = self.device(muxterm=True)
         (device.root / "sdcard").mkdir()
@@ -1445,6 +1482,22 @@ INI
         # Stopped without the sudo control.ini names.
         device.assert_mapper_stopped()
 
+    def test_rocknix_offline_names_no_pack_the_releases_lack(self):
+        """No release pack spells ROCKNIX, and install.py refuses one named
+        for another system: the RetroArch pack on the card is not offered,
+        and the message gives the computer route."""
+        device, tools = self.device(FAKE_CURL="7")
+        self.rocknix(device)
+        (tools / "retrobios" / "RetroArch_v1.22.2_BIOS_Pack.zip").write_bytes(b"")
+        proc = device.run(["bash", str(tools / "RetroBIOS.sh")], stdio_tty=True, TERM="xterm",
+                          FAKE_PLATFORM="rocknix", FAKE_PLATFORM_NAME="ROCKNIX")
+        self.assertEqual(proc.returncode, 1)
+        self.assertEqual(device.tui_calls(), [])
+        screen = " ".join(device.screen.split())
+        self.assertIn("the releases carry no BIOS pack for ROCKNIX", screen)
+        self.assertIn("--dest", screen)
+        self.assertNotIn("download", screen)
+
     def test_rocknix_start_select_in_foot(self):
         device, tools = self.device()
         self.rocknix(device)
@@ -1458,6 +1511,21 @@ INI
 
 
 class TheDocs(unittest.TestCase):
+    def test_the_offline_packs_named_are_the_ones_that_serve(self):
+        """The wiki names the pack each firmware takes offline: the release
+        pack of the platform install.py detects it as, or none."""
+        labels = build_port.release_pack_labels()
+        served = {}
+        for rule in install._EMBEDDED_RULES:
+            served.setdefault(rule.name, labels.get(rule.manifest))
+        for name in ("muOS", "ArkOS", "dArkOS", "JELOS"):
+            self.assertEqual(served[name], "RetroArch", name)
+        self.assertEqual(served["Batocera"], "Batocera")
+        for name in ("ROCKNIX", "KNULLI", "AmberELEC"):
+            self.assertIsNone(served[name], name)
+        text = (REPO_ROOT / "wiki" / "installer.md").read_text(encoding="utf-8")
+        self.assertIn("The releases carry no pack for ROCKNIX,\nKnulli or AmberELEC", text)
+
     def test_muos_paths_are_the_card_muos_mounts(self):
         """muOS mounts the first card at /mnt/mmc (MustardOS internal
         mux_launch.sh, GET_VAR storage/rom/mount)."""

@@ -304,9 +304,10 @@ rb_detect() {
   done < <(rb_py "$RB_EVENTS" status "$RB_STATE/detect.jsonl" 2>> "$RB_LOG")
 }
 
-# The first pack in RB_PACK_PATH, one whose name spells this system first:
-# install.py reads the platform from the same spelling (Name_With_Underscores
-# between two underscores).
+# The first pack in RB_PACK_PATH whose name spells this system: install.py
+# reads the platform from the same spelling (Name_With_Underscores between
+# two underscores) and refuses a pack named for another. Any pack only when
+# the system is not known, since install.py then reads it from the name.
 rb_find_pack() {
   local dir file base stem first="" want=""
   if [ -n "${RB_PLATFORM_NAME:-}" ]; then
@@ -323,11 +324,25 @@ rb_find_pack() {
         printf '%s\n' "$file"
         return 0
       fi
-      [ -z "$first" ] && first="$file"
+      [ -z "$want" ] && [ -z "$first" ] && first="$file"
     done
   done
   [ -n "$first" ] && printf '%s\n' "$first"
   return 0
+}
+
+# How the release pack that serves this system is named: the platforms of its
+# group, as packs.txt lists them. build_port.py writes packs.txt from the
+# registry's release_pack platforms, so a system with no line has no pack.
+rb_pack_label() {
+  [ -n "${RB_PLATFORM:-}" ] && [ -f "$RB_DIR/packs.txt" ] || return 1
+  awk -F'\t' -v p="$RB_PLATFORM" '$1 == p { print $2; found = 1; exit } END { exit !found }' \
+    "$RB_DIR/packs.txt"
+}
+
+# Whether the system is known to have no release pack.
+rb_no_pack_serves() {
+  [ -n "${RB_PLATFORM:-}" ] && [ -f "$RB_DIR/packs.txt" ] && ! rb_pack_label > /dev/null
 }
 
 rb_same_dir() {
@@ -355,8 +370,14 @@ rb_other_card() {
 }
 
 rb_pack_text() {
-  local dir="${RB_PACK_PATH%%:*}" pack
-  if [ -n "${RB_PLATFORM_NAME:-}" ]; then
+  local dir="${RB_PACK_PATH%%:*}" pack label
+  if rb_no_pack_serves; then
+    printf '%s\n' "No network connection, and the releases carry no BIOS pack for ${RB_PLATFORM_NAME:-$RB_PLATFORM}: connect to Wi-Fi and start RetroBIOS again. $RB_PC_ROUTE"
+    return 0
+  fi
+  if label=$(rb_pack_label); then
+    pack="the $label BIOS pack (a file whose name starts with ${label}_ and ends in _BIOS_Pack.zip)"
+  elif [ -n "${RB_PLATFORM_NAME:-}" ]; then
     pack="the BIOS pack whose name contains ${RB_PLATFORM_NAME// /_}"
   else
     pack="the BIOS pack for this system (a file whose name ends in _BIOS_Pack.zip)"
@@ -752,6 +773,12 @@ rb_here() {
     printf 'No connection. Looking for the BIOS folder and a pack on the card...\n'
     # Detection also names the BIOS folder the other card must not be.
     rb_detect
+    if rb_no_pack_serves; then
+      # Copying from the other card needs a file list too: nothing to ask.
+      rb_message "$(rb_pack_text)"
+      printf '1\n' > "$RB_STATE/status"
+      return 1
+    fi
     other=$(rb_other_card)
     if [ -n "$other" ] && rb_ask "Copy the BIOS files from your other card? $other holds files. RetroBIOS copies the ones this system needs, each checked by its hash, and leaves that card as it is."; then
       args=(--from "$other")

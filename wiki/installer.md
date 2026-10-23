@@ -987,13 +987,15 @@ running install is then stopped the way B stops it, and the last screen says
 what it wrote. On muOS without PortMaster, muxterm reads the pad itself: Y
 ticks a system, Select shows its keyboard, and Menu quits.
 
-**Without Wi-Fi.** On a computer, download the BIOS pack whose name contains
-your system (every part, for a pack in parts) and copy it next to RetroBIOS:
-into `ports/retrobios` for the PortMaster port and on Batocera, to the root
-of either card on muOS, into the `retrobios` folder of the Tools entry. With
-no connection, RetroBIOS installs from it, as
+**Without Wi-Fi.** On a computer, download the BIOS pack that serves your
+system (every part, for a pack in parts): RetroArch's on muOS, ArkOS,
+dArkOS and JELOS, Batocera's on Batocera. Copy it next to RetroBIOS: into
+`ports/retrobios` for the PortMaster port and on Batocera, to the root of
+either card on muOS, into the `retrobios` folder of the Tools entry. With no
+connection, RetroBIOS installs from it, as
 [`--from-pack`](#without-a-network-offline-install) does. With no pack there,
-it names the pack and the folder.
+it names the pack and the folder. The releases carry no pack for ROCKNIX,
+Knulli or AmberELEC: there RetroBIOS needs Wi-Fi, or the computer route.
 
 On a two-card device, RetroBIOS without Wi-Fi first asks to **copy the BIOS
 files from your other card**: muOS's `MUOS/bios` on the card the system does
