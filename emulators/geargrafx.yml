@@ -5,7 +5,7 @@ source: "https://github.com/drhelius/Geargrafx"
 upstream: "https://github.com/drhelius/Geargrafx"
 profiled_date: "2026-10-04"
 source_commit: "57c257dda25f441fff3c63a63bbc4ba7cbb713e3"
-core_version: "1.8.1"
+core_version: "1.8.4"
 display_name: "NEC - PC Engine / SuperGrafx / CD (Geargrafx)"
 cores:
   - geargrafx

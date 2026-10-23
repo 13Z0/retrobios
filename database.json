@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-23T14:55:50Z",
-  "total_files": 19894,
-  "total_size": 16847486057,
+  "generated_at": "2026-10-23T15:57:31Z",
+  "total_files": 19910,
+  "total_size": 16891869309,
   "bios_dir": "bios",
   "files": {
     "738c7f5fd0c8b57ee2e87ae7a97bf8e21a821d07": {
@@ -131176,6 +131176,166 @@
       "crc32": "150b160b",
       "adler32": "21702f6f"
     },
+    "543ff840043256e648ca5b9990f41b48e0136599": {
+      "path": "bios/Microsoft/Xbox 360/Content/0000000000000000/FFFE07D2/000B0000/tu20075c00_00000000",
+      "name": "tu20075c00_00000000",
+      "size": 5529600,
+      "sha1": "543ff840043256e648ca5b9990f41b48e0136599",
+      "md5": "21e0cf5cd195cd19ca8d41663297d251",
+      "sha256": "6aabcdb33fb401f7ac0c252281fdb8cdca2b8e44689c2df3f40e1f9d2941d773",
+      "crc32": "1e896af6",
+      "adler32": "038fd3f6"
+    },
+    "4cc817432b81b7bd3b9f782b678bd69e3d4d5715": {
+      "path": "bios/Microsoft/Xbox 360/Xenia-Edge/xefu/dash/fonts/Xbox Book.xtf",
+      "name": "Xbox Book.xtf",
+      "size": 14440996,
+      "sha1": "4cc817432b81b7bd3b9f782b678bd69e3d4d5715",
+      "md5": "8f5b7cee650f389f1c5c7bb5f70386bb",
+      "sha256": "dea8f97d13668de5bca3ccf8a318d727ce29422c2da898cbc4e9acfd13f05cbe",
+      "crc32": "c895c21a",
+      "adler32": "8096a019"
+    },
+    "df0cadf1a4a080992ef0459c413a841bc3906cc7": {
+      "path": "bios/Microsoft/Xbox 360/Xenia-Edge/xefu/dash/fonts/xbox.xtf",
+      "name": "xbox.xtf",
+      "size": 19124720,
+      "sha1": "df0cadf1a4a080992ef0459c413a841bc3906cc7",
+      "md5": "de4a26c39de8001b95c749f8d3d22128",
+      "sha256": "531f7ad06cac7177ffd679ec797046d68b2af46204e9b9562d381380690ee108",
+      "crc32": "513df3cd",
+      "adler32": "71518986"
+    },
+    "1c577b7495d3d119f5a584b328e837901c537a28": {
+      "path": "bios/Microsoft/Xbox 360/Xenia-Edge/xefu/xbox.xex",
+      "name": "xbox.xex",
+      "size": 135168,
+      "sha1": "1c577b7495d3d119f5a584b328e837901c537a28",
+      "md5": "1a4d640b5780ffd021a40355c0496117",
+      "sha256": "c73c48c7eec019d77ede18fa0b7ca8e012086662c2886f4dcbc98aa0dd57da0c",
+      "crc32": "4037d08b",
+      "adler32": "f8c5b168"
+    },
+    "a97d65c4860dede8a2f58c9c9bbb68270cdd3a64": {
+      "path": "bios/Microsoft/Xbox 360/Xenia-Edge/xefu/xefu.xex",
+      "name": "xefu.xex",
+      "size": 552960,
+      "sha1": "a97d65c4860dede8a2f58c9c9bbb68270cdd3a64",
+      "md5": "f04a57a9f51ed79be301e0e808d5280b",
+      "sha256": "9203180a53f79abfc44df2f5f9132d0b9d1c4df3d6c1ebbaf0382191d4eed535",
+      "crc32": "19e8d76e",
+      "adler32": "faf8d370"
+    },
+    "c39e1de54c7a2a4d3105a6bdd8a2b281e5b637fc": {
+      "path": "bios/Microsoft/Xbox 360/Xenia-Edge/xefu/xefu1_1.xex",
+      "name": "xefu1_1.xex",
+      "size": 643072,
+      "sha1": "c39e1de54c7a2a4d3105a6bdd8a2b281e5b637fc",
+      "md5": "6ab77df6f5df3193a8850007483b1ad9",
+      "sha256": "149a8e4bf19e089f14bf020b0bad8e6cea70f198e8a21ac6535e5b46d481fa1c",
+      "crc32": "ebcf5726",
+      "adler32": "22f95ce9"
+    },
+    "e6b4df2610a0c230addf0ea5e5319ce015ef2c09": {
+      "path": "bios/Microsoft/Xbox 360/Xenia-Edge/xefu/xefu2.xex",
+      "name": "xefu2.xex",
+      "size": 647168,
+      "sha1": "e6b4df2610a0c230addf0ea5e5319ce015ef2c09",
+      "md5": "c6c6925d4f59c5d273351c681f04e109",
+      "sha256": "51f13581929f2bd75f5e5a89daf40e1a883d027b8a5ce9f2deab93b560d81db9",
+      "crc32": "b6e72128",
+      "adler32": "aa43fd60"
+    },
+    "932822d302bb96d3459e4ff9a5ee482f80a17e17": {
+      "path": "bios/Microsoft/Xbox 360/Xenia-Edge/xefu/xefu3.xex",
+      "name": "xefu3.xex",
+      "size": 651264,
+      "sha1": "932822d302bb96d3459e4ff9a5ee482f80a17e17",
+      "md5": "c7e15e4ff93059d01fbb9b38915d73f1",
+      "sha256": "0d2c1fe35d98e37f94d24eec4d84296d098e80d762279b8b704669f549897bb0",
+      "crc32": "e5345b1b",
+      "adler32": "535d3551"
+    },
+    "cad2569c3cd08edf82991237c628abe54fc7bb95": {
+      "path": "bios/Microsoft/Xbox 360/Xenia-Edge/xefu/xefu5.xex",
+      "name": "xefu5.xex",
+      "size": 638976,
+      "sha1": "cad2569c3cd08edf82991237c628abe54fc7bb95",
+      "md5": "e67931ca0ee624e2e75db28f4050a5d4",
+      "sha256": "020c211f47fc41015e566d19050e6a28f9dd91f55f1e1086345fc3dd0cd7d4ad",
+      "crc32": "4ecc054e",
+      "adler32": "938bfd98"
+    },
+    "7154a87eca9ce2e353048e27aa7adebbbe19ece2": {
+      "path": "bios/Microsoft/Xbox 360/Xenia-Edge/xefu/xefu6.xex",
+      "name": "xefu6.xex",
+      "size": 651264,
+      "sha1": "7154a87eca9ce2e353048e27aa7adebbbe19ece2",
+      "md5": "9b3f026d334db47fce8c9f18debc9c9c",
+      "sha256": "c87b42dfbd0af7d3c8ed76af6a5de870ea7cf211121a2b96b6004442d3b8407e",
+      "crc32": "51581552",
+      "adler32": "41443ee8"
+    },
+    "d46cb956a02912f7d21cf305f9183fa4fde13d34": {
+      "path": "bios/Microsoft/Xbox 360/Xenia-Edge/xefu/xefu7.xex",
+      "name": "xefu7.xex",
+      "size": 663552,
+      "sha1": "d46cb956a02912f7d21cf305f9183fa4fde13d34",
+      "md5": "c6c982725de3cfea7e0e14fdebce04be",
+      "sha256": "a9307b3b4d82c7b1be1c2f56eba1fea265d6e7fdb1864b15bf731f0f334d0867",
+      "crc32": "8e157a2a",
+      "adler32": "ae6a461b"
+    },
+    "36b47c464df424ad01eb6bf43a7d2bc172ad04f9": {
+      "path": "bios/Microsoft/Xbox 360/Xenia-Edge/xefu/xefu7b.xex",
+      "name": "xefu7b.xex",
+      "size": 659456,
+      "sha1": "36b47c464df424ad01eb6bf43a7d2bc172ad04f9",
+      "md5": "677d6d265f47df3e66bcd87f1d1ac54f",
+      "sha256": "38dd42b52b2e55aae1838878754344fd4c92c22f2860fedbae34e7a469aa4e65",
+      "crc32": "4b175c12",
+      "adler32": "d5cfcd9b"
+    },
+    "e5a22d00560ba57e5d04fe5e6e47fcadf8820b40": {
+      "path": "bios/Microsoft/Xbox 360/Xenia-Edge/xefu/xefutitle5.xex",
+      "name": "xefutitle5.xex",
+      "size": 8192,
+      "sha1": "e5a22d00560ba57e5d04fe5e6e47fcadf8820b40",
+      "md5": "c72ab90ffa3a422b5a22277fd3524ff2",
+      "sha256": "b8c522c0bd831e3b26d71a3bee449d2e4d01802900f13f798f6ddf72351071f2",
+      "crc32": "97e3b542",
+      "adler32": "2c1d7522"
+    },
+    "827e41c0e98ae9d4a9da2680968e2dd19786ccbe": {
+      "path": "bios/Microsoft/Xbox 360/Xenia-Edge/xefu/xefutitle6.xex",
+      "name": "xefutitle6.xex",
+      "size": 12288,
+      "sha1": "827e41c0e98ae9d4a9da2680968e2dd19786ccbe",
+      "md5": "210305ca547d51e541a28a10ab5c4a67",
+      "sha256": "3cdfed905c0e0b56623b070265b9a03d2f7ef9da1b4bf1a66dad47fa8a8b3aef",
+      "crc32": "034b642d",
+      "adler32": "3f187da6"
+    },
+    "0249630d6986838ff61e5a47ef25a75eedf7953c": {
+      "path": "bios/Microsoft/Xbox 360/Xenia-Edge/xefu/xefutitle7.xex",
+      "name": "xefutitle7.xex",
+      "size": 12288,
+      "sha1": "0249630d6986838ff61e5a47ef25a75eedf7953c",
+      "md5": "22147a97335aa6938246e2e1faab7e1c",
+      "sha256": "59cbdfcce8369cf8574c9986d9306738653c025806517ec56620693e0ff85848",
+      "crc32": "dca82de5",
+      "adler32": "3564449e"
+    },
+    "c1d5e5ef33adc0595bddf6bb67d7fee44af942f7": {
+      "path": "bios/Microsoft/Xbox 360/Xenia-Edge/xefu/xefutitle7b.xex",
+      "name": "xefutitle7b.xex",
+      "size": 12288,
+      "sha1": "c1d5e5ef33adc0595bddf6bb67d7fee44af942f7",
+      "md5": "5e72f083951577216508ae145577d8f8",
+      "sha256": "744522723509b4dd1ee14441863f449c5e049cec124b86e8a25a702ccebfa6b0",
+      "crc32": "0b54a8e0",
+      "adler32": "a7ef8037"
+    },
     "5cd9d0f008a380bb5cddd0a32bcbedf09500ab57": {
       "path": "bios/Monolith/Blood/BLOOD.RFF",
       "name": "BLOOD.RFF",
@@ -217129,6 +217289,22 @@
       "c5907d241de37c22b083b6e30fa934b0": "b9489e883c650b5e5fe2f83a32237dbf74f0e9f1",
       "3e647719d47e4a3992fc8bc5a7e56fce": "ff3e7eaf715fe5612e46fc984d686ed3b115baef",
       "cf15087fd5fd7593e293faaa7281cff8": "9da5f9ecfb1c9c32efa616f0300d02e8f702244d",
+      "21e0cf5cd195cd19ca8d41663297d251": "543ff840043256e648ca5b9990f41b48e0136599",
+      "8f5b7cee650f389f1c5c7bb5f70386bb": "4cc817432b81b7bd3b9f782b678bd69e3d4d5715",
+      "de4a26c39de8001b95c749f8d3d22128": "df0cadf1a4a080992ef0459c413a841bc3906cc7",
+      "1a4d640b5780ffd021a40355c0496117": "1c577b7495d3d119f5a584b328e837901c537a28",
+      "f04a57a9f51ed79be301e0e808d5280b": "a97d65c4860dede8a2f58c9c9bbb68270cdd3a64",
+      "6ab77df6f5df3193a8850007483b1ad9": "c39e1de54c7a2a4d3105a6bdd8a2b281e5b637fc",
+      "c6c6925d4f59c5d273351c681f04e109": "e6b4df2610a0c230addf0ea5e5319ce015ef2c09",
+      "c7e15e4ff93059d01fbb9b38915d73f1": "932822d302bb96d3459e4ff9a5ee482f80a17e17",
+      "e67931ca0ee624e2e75db28f4050a5d4": "cad2569c3cd08edf82991237c628abe54fc7bb95",
+      "9b3f026d334db47fce8c9f18debc9c9c": "7154a87eca9ce2e353048e27aa7adebbbe19ece2",
+      "c6c982725de3cfea7e0e14fdebce04be": "d46cb956a02912f7d21cf305f9183fa4fde13d34",
+      "677d6d265f47df3e66bcd87f1d1ac54f": "36b47c464df424ad01eb6bf43a7d2bc172ad04f9",
+      "c72ab90ffa3a422b5a22277fd3524ff2": "e5a22d00560ba57e5d04fe5e6e47fcadf8820b40",
+      "210305ca547d51e541a28a10ab5c4a67": "827e41c0e98ae9d4a9da2680968e2dd19786ccbe",
+      "22147a97335aa6938246e2e1faab7e1c": "0249630d6986838ff61e5a47ef25a75eedf7953c",
+      "5e72f083951577216508ae145577d8f8": "c1d5e5ef33adc0595bddf6bb67d7fee44af942f7",
       "52b1f25a1bd4606967f21c60f1444a97": "5cd9d0f008a380bb5cddd0a32bcbedf09500ab57",
       "7f95f0a4ca6b7edd9ea3c0608e957a2f": "3a9f77e2fa80a7871ad6639e795f547e065b13c4",
       "24e1f88cc15f8bbeb10501786d2b0965": "3cdc5973be764387cd0b4826d73530fc5ed462e7",
@@ -257812,6 +257988,55 @@
       "xbox_eeprom.bin": [
         "ff3e7eaf715fe5612e46fc984d686ed3b115baef"
       ],
+      "tu20075c00_00000000": [
+        "543ff840043256e648ca5b9990f41b48e0136599"
+      ],
+      "Xbox Book.xtf": [
+        "4cc817432b81b7bd3b9f782b678bd69e3d4d5715"
+      ],
+      "xbox.xtf": [
+        "df0cadf1a4a080992ef0459c413a841bc3906cc7",
+        "f957c9aedd8ea478dafd98babe41faec7f339d8a"
+      ],
+      "xbox.xex": [
+        "1c577b7495d3d119f5a584b328e837901c537a28"
+      ],
+      "xefu.xex": [
+        "a97d65c4860dede8a2f58c9c9bbb68270cdd3a64"
+      ],
+      "xefu1_1.xex": [
+        "c39e1de54c7a2a4d3105a6bdd8a2b281e5b637fc"
+      ],
+      "xefu2.xex": [
+        "e6b4df2610a0c230addf0ea5e5319ce015ef2c09"
+      ],
+      "xefu3.xex": [
+        "932822d302bb96d3459e4ff9a5ee482f80a17e17"
+      ],
+      "xefu5.xex": [
+        "cad2569c3cd08edf82991237c628abe54fc7bb95"
+      ],
+      "xefu6.xex": [
+        "7154a87eca9ce2e353048e27aa7adebbbe19ece2"
+      ],
+      "xefu7.xex": [
+        "d46cb956a02912f7d21cf305f9183fa4fde13d34"
+      ],
+      "xefu7b.xex": [
+        "36b47c464df424ad01eb6bf43a7d2bc172ad04f9"
+      ],
+      "xefutitle5.xex": [
+        "e5a22d00560ba57e5d04fe5e6e47fcadf8820b40"
+      ],
+      "xefutitle6.xex": [
+        "827e41c0e98ae9d4a9da2680968e2dd19786ccbe"
+      ],
+      "xefutitle7.xex": [
+        "0249630d6986838ff61e5a47ef25a75eedf7953c"
+      ],
+      "xefutitle7b.xex": [
+        "c1d5e5ef33adc0595bddf6bb67d7fee44af942f7"
+      ],
       "BLOOD.RFF": [
         "5cd9d0f008a380bb5cddd0a32bcbedf09500ab57"
       ],
@@ -260256,9 +260481,6 @@
       ],
       "letgothl.ttf": [
         "328b2ec7402df86add5c9cd68692c126b7e79707"
-      ],
-      "xbox.xtf": [
-        "f957c9aedd8ea478dafd98babe41faec7f339d8a"
       ],
       "controller_map.txt": [
         "231b29ef9d6314930eb18e57240e27ae81a6e88f"
@@ -294835,6 +295057,22 @@
       "5be2413d": "b9489e883c650b5e5fe2f83a32237dbf74f0e9f1",
       "151aca4c": "ff3e7eaf715fe5612e46fc984d686ed3b115baef",
       "150b160b": "9da5f9ecfb1c9c32efa616f0300d02e8f702244d",
+      "1e896af6": "543ff840043256e648ca5b9990f41b48e0136599",
+      "c895c21a": "4cc817432b81b7bd3b9f782b678bd69e3d4d5715",
+      "513df3cd": "df0cadf1a4a080992ef0459c413a841bc3906cc7",
+      "4037d08b": "1c577b7495d3d119f5a584b328e837901c537a28",
+      "19e8d76e": "a97d65c4860dede8a2f58c9c9bbb68270cdd3a64",
+      "ebcf5726": "c39e1de54c7a2a4d3105a6bdd8a2b281e5b637fc",
+      "b6e72128": "e6b4df2610a0c230addf0ea5e5319ce015ef2c09",
+      "e5345b1b": "932822d302bb96d3459e4ff9a5ee482f80a17e17",
+      "4ecc054e": "cad2569c3cd08edf82991237c628abe54fc7bb95",
+      "51581552": "7154a87eca9ce2e353048e27aa7adebbbe19ece2",
+      "8e157a2a": "d46cb956a02912f7d21cf305f9183fa4fde13d34",
+      "4b175c12": "36b47c464df424ad01eb6bf43a7d2bc172ad04f9",
+      "97e3b542": "e5a22d00560ba57e5d04fe5e6e47fcadf8820b40",
+      "034b642d": "827e41c0e98ae9d4a9da2680968e2dd19786ccbe",
+      "dca82de5": "0249630d6986838ff61e5a47ef25a75eedf7953c",
+      "0b54a8e0": "c1d5e5ef33adc0595bddf6bb67d7fee44af942f7",
       "2a937785": "5cd9d0f008a380bb5cddd0a32bcbedf09500ab57",
       "112343d3": "3a9f77e2fa80a7871ad6639e795f547e065b13c4",
       "0bfbb75d": "3cdc5973be764387cd0b4826d73530fc5ed462e7",
@@ -314730,6 +314968,22 @@
       "148d279bdaa85f54f823722d55ea50eece78fc8a537e7d1efeea653b5201481f": "b9489e883c650b5e5fe2f83a32237dbf74f0e9f1",
       "e652203e6d91140729c29588b18ff8838896cdeb9a3100fbf8d20763af27c9d2": "ff3e7eaf715fe5612e46fc984d686ed3b115baef",
       "c5ec3e0fbc4f31d36c13211ded7f070f3b5f04e99a367fbe5d8c2d8c6e4f925d": "9da5f9ecfb1c9c32efa616f0300d02e8f702244d",
+      "6aabcdb33fb401f7ac0c252281fdb8cdca2b8e44689c2df3f40e1f9d2941d773": "543ff840043256e648ca5b9990f41b48e0136599",
+      "dea8f97d13668de5bca3ccf8a318d727ce29422c2da898cbc4e9acfd13f05cbe": "4cc817432b81b7bd3b9f782b678bd69e3d4d5715",
+      "531f7ad06cac7177ffd679ec797046d68b2af46204e9b9562d381380690ee108": "df0cadf1a4a080992ef0459c413a841bc3906cc7",
+      "c73c48c7eec019d77ede18fa0b7ca8e012086662c2886f4dcbc98aa0dd57da0c": "1c577b7495d3d119f5a584b328e837901c537a28",
+      "9203180a53f79abfc44df2f5f9132d0b9d1c4df3d6c1ebbaf0382191d4eed535": "a97d65c4860dede8a2f58c9c9bbb68270cdd3a64",
+      "149a8e4bf19e089f14bf020b0bad8e6cea70f198e8a21ac6535e5b46d481fa1c": "c39e1de54c7a2a4d3105a6bdd8a2b281e5b637fc",
+      "51f13581929f2bd75f5e5a89daf40e1a883d027b8a5ce9f2deab93b560d81db9": "e6b4df2610a0c230addf0ea5e5319ce015ef2c09",
+      "0d2c1fe35d98e37f94d24eec4d84296d098e80d762279b8b704669f549897bb0": "932822d302bb96d3459e4ff9a5ee482f80a17e17",
+      "020c211f47fc41015e566d19050e6a28f9dd91f55f1e1086345fc3dd0cd7d4ad": "cad2569c3cd08edf82991237c628abe54fc7bb95",
+      "c87b42dfbd0af7d3c8ed76af6a5de870ea7cf211121a2b96b6004442d3b8407e": "7154a87eca9ce2e353048e27aa7adebbbe19ece2",
+      "a9307b3b4d82c7b1be1c2f56eba1fea265d6e7fdb1864b15bf731f0f334d0867": "d46cb956a02912f7d21cf305f9183fa4fde13d34",
+      "38dd42b52b2e55aae1838878754344fd4c92c22f2860fedbae34e7a469aa4e65": "36b47c464df424ad01eb6bf43a7d2bc172ad04f9",
+      "b8c522c0bd831e3b26d71a3bee449d2e4d01802900f13f798f6ddf72351071f2": "e5a22d00560ba57e5d04fe5e6e47fcadf8820b40",
+      "3cdfed905c0e0b56623b070265b9a03d2f7ef9da1b4bf1a66dad47fa8a8b3aef": "827e41c0e98ae9d4a9da2680968e2dd19786ccbe",
+      "59cbdfcce8369cf8574c9986d9306738653c025806517ec56620693e0ff85848": "0249630d6986838ff61e5a47ef25a75eedf7953c",
+      "744522723509b4dd1ee14441863f449c5e049cec124b86e8a25a702ccebfa6b0": "c1d5e5ef33adc0595bddf6bb67d7fee44af942f7",
       "a5f46ec0a2dc8472195de3364f22681cada2a65d8eaebf645021cf6cab8c1e32": "5cd9d0f008a380bb5cddd0a32bcbedf09500ab57",
       "57f24594f528bbfc34350075fb1f6a5373d5b31835e5f04deb6b2110f14df46d": "3a9f77e2fa80a7871ad6639e795f547e065b13c4",
       "2745f8043d4bb4a06ea104ffa89eee21b878114f318d7fe8552bfc9c1df2b721": "3cdc5973be764387cd0b4826d73530fc5ed462e7",
@@ -482978,6 +483232,216 @@
       ],
       "Xbox/xbox_hdd.qcow2": [
         "9da5f9ecfb1c9c32efa616f0300d02e8f702244d"
+      ],
+      "Microsoft/Xbox 360/Content/0000000000000000/FFFE07D2/000B0000/tu20075c00_00000000": [
+        "543ff840043256e648ca5b9990f41b48e0136599"
+      ],
+      "Xbox 360/Content/0000000000000000/FFFE07D2/000B0000/tu20075c00_00000000": [
+        "543ff840043256e648ca5b9990f41b48e0136599"
+      ],
+      "Content/0000000000000000/FFFE07D2/000B0000/tu20075c00_00000000": [
+        "543ff840043256e648ca5b9990f41b48e0136599"
+      ],
+      "0000000000000000/FFFE07D2/000B0000/tu20075c00_00000000": [
+        "543ff840043256e648ca5b9990f41b48e0136599"
+      ],
+      "FFFE07D2/000B0000/tu20075c00_00000000": [
+        "543ff840043256e648ca5b9990f41b48e0136599"
+      ],
+      "000B0000/tu20075c00_00000000": [
+        "543ff840043256e648ca5b9990f41b48e0136599"
+      ],
+      "Microsoft/Xbox 360/Xenia-Edge/xefu/dash/fonts/Xbox Book.xtf": [
+        "4cc817432b81b7bd3b9f782b678bd69e3d4d5715"
+      ],
+      "Xbox 360/Xenia-Edge/xefu/dash/fonts/Xbox Book.xtf": [
+        "4cc817432b81b7bd3b9f782b678bd69e3d4d5715"
+      ],
+      "Xenia-Edge/xefu/dash/fonts/Xbox Book.xtf": [
+        "4cc817432b81b7bd3b9f782b678bd69e3d4d5715"
+      ],
+      "xefu/dash/fonts/Xbox Book.xtf": [
+        "4cc817432b81b7bd3b9f782b678bd69e3d4d5715"
+      ],
+      "dash/fonts/Xbox Book.xtf": [
+        "4cc817432b81b7bd3b9f782b678bd69e3d4d5715"
+      ],
+      "fonts/Xbox Book.xtf": [
+        "4cc817432b81b7bd3b9f782b678bd69e3d4d5715"
+      ],
+      "Microsoft/Xbox 360/Xenia-Edge/xefu/dash/fonts/xbox.xtf": [
+        "df0cadf1a4a080992ef0459c413a841bc3906cc7"
+      ],
+      "Xbox 360/Xenia-Edge/xefu/dash/fonts/xbox.xtf": [
+        "df0cadf1a4a080992ef0459c413a841bc3906cc7"
+      ],
+      "Xenia-Edge/xefu/dash/fonts/xbox.xtf": [
+        "df0cadf1a4a080992ef0459c413a841bc3906cc7"
+      ],
+      "xefu/dash/fonts/xbox.xtf": [
+        "df0cadf1a4a080992ef0459c413a841bc3906cc7"
+      ],
+      "dash/fonts/xbox.xtf": [
+        "df0cadf1a4a080992ef0459c413a841bc3906cc7"
+      ],
+      "fonts/xbox.xtf": [
+        "df0cadf1a4a080992ef0459c413a841bc3906cc7"
+      ],
+      "Microsoft/Xbox 360/Xenia-Edge/xefu/xbox.xex": [
+        "1c577b7495d3d119f5a584b328e837901c537a28"
+      ],
+      "Xbox 360/Xenia-Edge/xefu/xbox.xex": [
+        "1c577b7495d3d119f5a584b328e837901c537a28"
+      ],
+      "Xenia-Edge/xefu/xbox.xex": [
+        "1c577b7495d3d119f5a584b328e837901c537a28"
+      ],
+      "xefu/xbox.xex": [
+        "1c577b7495d3d119f5a584b328e837901c537a28"
+      ],
+      "Microsoft/Xbox 360/Xenia-Edge/xefu/xefu.xex": [
+        "a97d65c4860dede8a2f58c9c9bbb68270cdd3a64"
+      ],
+      "Xbox 360/Xenia-Edge/xefu/xefu.xex": [
+        "a97d65c4860dede8a2f58c9c9bbb68270cdd3a64"
+      ],
+      "Xenia-Edge/xefu/xefu.xex": [
+        "a97d65c4860dede8a2f58c9c9bbb68270cdd3a64"
+      ],
+      "xefu/xefu.xex": [
+        "a97d65c4860dede8a2f58c9c9bbb68270cdd3a64"
+      ],
+      "Microsoft/Xbox 360/Xenia-Edge/xefu/xefu1_1.xex": [
+        "c39e1de54c7a2a4d3105a6bdd8a2b281e5b637fc"
+      ],
+      "Xbox 360/Xenia-Edge/xefu/xefu1_1.xex": [
+        "c39e1de54c7a2a4d3105a6bdd8a2b281e5b637fc"
+      ],
+      "Xenia-Edge/xefu/xefu1_1.xex": [
+        "c39e1de54c7a2a4d3105a6bdd8a2b281e5b637fc"
+      ],
+      "xefu/xefu1_1.xex": [
+        "c39e1de54c7a2a4d3105a6bdd8a2b281e5b637fc"
+      ],
+      "Microsoft/Xbox 360/Xenia-Edge/xefu/xefu2.xex": [
+        "e6b4df2610a0c230addf0ea5e5319ce015ef2c09"
+      ],
+      "Xbox 360/Xenia-Edge/xefu/xefu2.xex": [
+        "e6b4df2610a0c230addf0ea5e5319ce015ef2c09"
+      ],
+      "Xenia-Edge/xefu/xefu2.xex": [
+        "e6b4df2610a0c230addf0ea5e5319ce015ef2c09"
+      ],
+      "xefu/xefu2.xex": [
+        "e6b4df2610a0c230addf0ea5e5319ce015ef2c09"
+      ],
+      "Microsoft/Xbox 360/Xenia-Edge/xefu/xefu3.xex": [
+        "932822d302bb96d3459e4ff9a5ee482f80a17e17"
+      ],
+      "Xbox 360/Xenia-Edge/xefu/xefu3.xex": [
+        "932822d302bb96d3459e4ff9a5ee482f80a17e17"
+      ],
+      "Xenia-Edge/xefu/xefu3.xex": [
+        "932822d302bb96d3459e4ff9a5ee482f80a17e17"
+      ],
+      "xefu/xefu3.xex": [
+        "932822d302bb96d3459e4ff9a5ee482f80a17e17"
+      ],
+      "Microsoft/Xbox 360/Xenia-Edge/xefu/xefu5.xex": [
+        "cad2569c3cd08edf82991237c628abe54fc7bb95"
+      ],
+      "Xbox 360/Xenia-Edge/xefu/xefu5.xex": [
+        "cad2569c3cd08edf82991237c628abe54fc7bb95"
+      ],
+      "Xenia-Edge/xefu/xefu5.xex": [
+        "cad2569c3cd08edf82991237c628abe54fc7bb95"
+      ],
+      "xefu/xefu5.xex": [
+        "cad2569c3cd08edf82991237c628abe54fc7bb95"
+      ],
+      "Microsoft/Xbox 360/Xenia-Edge/xefu/xefu6.xex": [
+        "7154a87eca9ce2e353048e27aa7adebbbe19ece2"
+      ],
+      "Xbox 360/Xenia-Edge/xefu/xefu6.xex": [
+        "7154a87eca9ce2e353048e27aa7adebbbe19ece2"
+      ],
+      "Xenia-Edge/xefu/xefu6.xex": [
+        "7154a87eca9ce2e353048e27aa7adebbbe19ece2"
+      ],
+      "xefu/xefu6.xex": [
+        "7154a87eca9ce2e353048e27aa7adebbbe19ece2"
+      ],
+      "Microsoft/Xbox 360/Xenia-Edge/xefu/xefu7.xex": [
+        "d46cb956a02912f7d21cf305f9183fa4fde13d34"
+      ],
+      "Xbox 360/Xenia-Edge/xefu/xefu7.xex": [
+        "d46cb956a02912f7d21cf305f9183fa4fde13d34"
+      ],
+      "Xenia-Edge/xefu/xefu7.xex": [
+        "d46cb956a02912f7d21cf305f9183fa4fde13d34"
+      ],
+      "xefu/xefu7.xex": [
+        "d46cb956a02912f7d21cf305f9183fa4fde13d34"
+      ],
+      "Microsoft/Xbox 360/Xenia-Edge/xefu/xefu7b.xex": [
+        "36b47c464df424ad01eb6bf43a7d2bc172ad04f9"
+      ],
+      "Xbox 360/Xenia-Edge/xefu/xefu7b.xex": [
+        "36b47c464df424ad01eb6bf43a7d2bc172ad04f9"
+      ],
+      "Xenia-Edge/xefu/xefu7b.xex": [
+        "36b47c464df424ad01eb6bf43a7d2bc172ad04f9"
+      ],
+      "xefu/xefu7b.xex": [
+        "36b47c464df424ad01eb6bf43a7d2bc172ad04f9"
+      ],
+      "Microsoft/Xbox 360/Xenia-Edge/xefu/xefutitle5.xex": [
+        "e5a22d00560ba57e5d04fe5e6e47fcadf8820b40"
+      ],
+      "Xbox 360/Xenia-Edge/xefu/xefutitle5.xex": [
+        "e5a22d00560ba57e5d04fe5e6e47fcadf8820b40"
+      ],
+      "Xenia-Edge/xefu/xefutitle5.xex": [
+        "e5a22d00560ba57e5d04fe5e6e47fcadf8820b40"
+      ],
+      "xefu/xefutitle5.xex": [
+        "e5a22d00560ba57e5d04fe5e6e47fcadf8820b40"
+      ],
+      "Microsoft/Xbox 360/Xenia-Edge/xefu/xefutitle6.xex": [
+        "827e41c0e98ae9d4a9da2680968e2dd19786ccbe"
+      ],
+      "Xbox 360/Xenia-Edge/xefu/xefutitle6.xex": [
+        "827e41c0e98ae9d4a9da2680968e2dd19786ccbe"
+      ],
+      "Xenia-Edge/xefu/xefutitle6.xex": [
+        "827e41c0e98ae9d4a9da2680968e2dd19786ccbe"
+      ],
+      "xefu/xefutitle6.xex": [
+        "827e41c0e98ae9d4a9da2680968e2dd19786ccbe"
+      ],
+      "Microsoft/Xbox 360/Xenia-Edge/xefu/xefutitle7.xex": [
+        "0249630d6986838ff61e5a47ef25a75eedf7953c"
+      ],
+      "Xbox 360/Xenia-Edge/xefu/xefutitle7.xex": [
+        "0249630d6986838ff61e5a47ef25a75eedf7953c"
+      ],
+      "Xenia-Edge/xefu/xefutitle7.xex": [
+        "0249630d6986838ff61e5a47ef25a75eedf7953c"
+      ],
+      "xefu/xefutitle7.xex": [
+        "0249630d6986838ff61e5a47ef25a75eedf7953c"
+      ],
+      "Microsoft/Xbox 360/Xenia-Edge/xefu/xefutitle7b.xex": [
+        "c1d5e5ef33adc0595bddf6bb67d7fee44af942f7"
+      ],
+      "Xbox 360/Xenia-Edge/xefu/xefutitle7b.xex": [
+        "c1d5e5ef33adc0595bddf6bb67d7fee44af942f7"
+      ],
+      "Xenia-Edge/xefu/xefutitle7b.xex": [
+        "c1d5e5ef33adc0595bddf6bb67d7fee44af942f7"
+      ],
+      "xefu/xefutitle7b.xex": [
+        "c1d5e5ef33adc0595bddf6bb67d7fee44af942f7"
       ],
       "Monolith/Blood/BLOOD.RFF": [
         "5cd9d0f008a380bb5cddd0a32bcbedf09500ab57"

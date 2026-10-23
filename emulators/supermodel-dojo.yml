@@ -7,6 +7,7 @@ author: "blueminder"
 profiled_date: "2026-08-12"
 source_commit: "d409fe784b8328d798098708adc760900bcc6937"
 upstream_commit: "98fcbff223e23b1530c8f899aca2fc4fd5663ab4"
+upstream_frozen: "The dojo branch merged trzy/Supermodel at this commit through merge ab1ecae. Later upstream commits are not in the port."
 core_version: "v0.3a-20261022-git-d409fe7"
 display_name: "Sega - Model 3 (Supermodel Dojo)"
 verification: existence

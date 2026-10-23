@@ -5,7 +5,7 @@ source: "https://github.com/WizzardSK/nuance-libretro"
 upstream: "https://github.com/andkrau/NuanceResurrection"
 profiled_date: "2026-09-03"
 source_commit: "daf3ca642756a559ecce91e10da0e73cbad180ff"
-upstream_commit: "700d28553f3a06b16385ed9e48f194377e131b03"
+upstream_commit: "daf3ca642756a559ecce91e10da0e73cbad180ff"
 core_version: "0.6.7"
 display_name: "VM Labs - NUON (Nuance)"
 cores: [nuance]

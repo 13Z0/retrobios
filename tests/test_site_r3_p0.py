@@ -37,7 +37,6 @@ UNLINKED: dict[str, str] = {
     "dark-forces-ii": "Game Engines > OpenJKDF2",
     "fpinball": "Other > future-pinball-fploader",
     "fruitmachine": "Other > mfme",
-    "microsoft-xbox-360": "Other > xenia-edge",
     "mysteries-of-the-sith": "Game Engines > OpenJKDF2",
     "namco-na1": "Arcade > FBNeo",
     "namco-nb1": "Arcade > FBNeo",

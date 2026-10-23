@@ -5102,7 +5102,10 @@ class EventsDescribeTheRun(unittest.TestCase, _SyntheticTree):
                  "bytes_total": 245}
                 for n, (dest, size, total) in enumerate(
                     (("c.bin", 70, 70), ("d.bin", 25, 95), ("b.bin", 150, 245)), 1)]
-        self.assertEqual([e for e in events if e["event"] != "progress"],
+        # The last transfer: every byte came over the network.
+        self.assertEqual([e for e in events if e["event"] == "transfer"][-1],
+                         {"event": "transfer", "bytes_local": 0, "bytes_network": 245})
+        self.assertEqual([e for e in events if e["event"] not in ("progress", "transfer")],
                          self._head("install", installer) + [
             {"event": "download", "platform": "retroarch", "files": 3, "bytes": 245},
             *done,

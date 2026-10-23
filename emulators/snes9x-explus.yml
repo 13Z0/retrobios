@@ -6,6 +6,7 @@ upstream: "https://github.com/snes9xgit/snes9x"
 profiled_date: "2026-08-12"
 source_commit: "1c12fac5ce49badaadff2e2f210dcc30b89f4943"
 upstream_commit: "b33f2afb33c61d675aaf0319bd3b8cc8d6924d49"
+upstream_frozen: "Snes9x is vendored under Snes9x/src/snes9x at this upstream revision, the one the last sync took."
 core_version: "1.5.85"
 display_name: "Nintendo - SNES / SFC (Snes9x EX+)"
 mode: standalone

@@ -50,7 +50,7 @@ import zipfile
 import zlib
 from collections.abc import Callable, Collection, Iterator, Mapping
 from pathlib import Path, PurePosixPath
-from typing import BinaryIO, ContextManager, NamedTuple, TextIO
+from typing import Any, BinaryIO, ContextManager, NamedTuple, TextIO
 
 # Manifests are read from the same ref the bootstrap verified this installer
 # against, so a file list and the code reading it always come from one commit.
@@ -392,6 +392,9 @@ class Progress:
         self.files = 0
         self.bytes = 0
         self.resumed = 0
+        # Bytes that came from this machine and not the network: a copy
+        # found here, the pack, a resumed partial copy.
+        self.local = 0
         # Files written to their place, which a stopped run counts: the
         # queue's length said "118 files installed" over 8 on disk.
         self.installed = 0
@@ -400,11 +403,16 @@ class Progress:
         self._evented = self.start
         self._lock = threading.Lock()
 
-    def add(self, count: int, resumed: bool = False) -> None:
+    def add(self, count: int, resumed: bool = False, network: bool | None = None) -> None:
+        """count bytes written, resumed ones left out of the speed. network
+        is whether they came over the network, by default unless resumed."""
         with self._lock:
             self.bytes += count
             if resumed:
                 self.resumed += count
+            fetched = not resumed if network is None else network
+            if not fetched:
+                self.local += count
             now = time.monotonic()
             if self.term.live and not self.term.quiet and now - self._drawn >= 0.1:
                 self._drawn = now
@@ -413,10 +421,18 @@ class Progress:
                 self._evented = now
                 EVENTS.emit("progress", files_done=self.files, files_total=self.total_files,
                             bytes_done=self.bytes, bytes_total=self.expected_bytes)
+                self.emit_transfer()
+
+    def emit_transfer(self) -> None:
+        """The transfer event: of the bytes done, those this machine held
+        and those the network brought."""
+        EVENTS.emit("transfer", bytes_local=self.local,
+                    bytes_network=self.bytes - self.local)
 
     def forget_resumed(self, count: int) -> None:
         with self._lock:
             self.resumed -= count
+            self.local -= count
 
     def transferred(self) -> int:
         """Bytes fetched by this run, a resumed partial copy excluded."""
@@ -494,9 +510,14 @@ EVENT_KEYS: dict[str, tuple[str, ...]] = {
     # stage: manifest (reason: network, not_found, invalid, clock for a
     # refused certificate under a clock set in the past, or no_ca for no
     # trusted certificates on the machine) or detect (reason: conflict, two
-    # systems found on one machine) or from (reason: not_found or
-    # not_a_folder, a folder named with --from).
+    # systems found on one machine) or from (a folder named with --from,
+    # reason: not_found, not_a_folder, unreadable, or system for the root
+    # of the system and /proc, /sys, /dev).
     "error": ("stage", "reason", "platform", "message"),
+    # A folder named with --from, once read: the files it holds (counted
+    # up to MAX_SCANNED_FILES, truncated past them), and the folders below
+    # it on another drive, not entered.
+    "scanned": ("folder", "files", "truncated", "other_drives"),
     # state: present (hash verified), wrong_hash or missing.
     "file": ("platform", "dest", "systems", "size", "state"),
     "system": ("platform", "system", "name", "files", "present", "missing",
@@ -510,8 +531,17 @@ EVENT_KEYS: dict[str, tuple[str, ...]] = {
     # a folder named with --from (reason empty). member names the ZIP member
     # when path is an archive, else "". Its copy is a downloaded event.
     "found": ("platform", "dest", "folder", "path", "member", "reason"),
+    # What a folder named with --from holds that could not be read, of the
+    # size of a file no copy was found for, or of no known size (a folder,
+    # a ZIP that would not open). member as in found, reason in words.
+    "unreadable": ("platform", "folder", "path", "member", "reason"),
     "download": ("platform", "files", "bytes"),
     "progress": ("files_done", "files_total", "bytes_done", "bytes_total"),
+    # Right after each progress event, and once when the files of a
+    # download event are done: bytes_done split into the bytes this machine
+    # held (a copy found here, the pack, a resumed partial copy) and the
+    # bytes the network brought. A speed is bytes_network over time.
+    "transfer": ("bytes_local", "bytes_network"),
     "downloaded": ("dest", "ok", "reason", "size", "files_done", "files_total",
                    "bytes_done", "bytes_total"),
     # failed: [{"dest", "reason"}]. skipped: [{"reason", "label", "files",
@@ -4221,9 +4251,17 @@ def _download_one(
         if result[2] in ("stopped", NOT_WRITABLE, READ_ONLY) or result[2].startswith(NOT_KEPT):
             return result
         # The copy went or changed since it was read (a card pulled out, a
-        # file another run replaced): the file is fetched as if never found.
+        # file another run replaced): the file is fetched as if never found,
+        # and a fetch that fails too names both reasons.
         if verbose:
             print(f"    {f['dest']}: {result[2]}, fetching it instead", file=sys.stderr)
+        fetched = _download_one(f, bios_path, verbose, progress)
+        why = fetched[2]
+        if (fetched[1] or why in ("stopped", NOT_WRITABLE, READ_ONLY)
+                or why.startswith(NOT_KEPT)):
+            return fetched
+        both = f"{result[2]}, and {why}"
+        return fetched[0], False, NetworkReason(both) if isinstance(why, NetworkReason) else both
 
     if LOCAL.pack is not None:
         return _extract_from_pack(f, bios_path, dest, progress)
@@ -5155,6 +5193,7 @@ def download_files(
         if not future.cancelled() and future.exception() is None and future.result()[1]
     )
     progress.finish()
+    progress.emit_transfer()
     return failed, interrupted
 
 
@@ -6529,7 +6568,7 @@ def _extract_from_pack(
         return f["dest"], False, NOT_IN_PACK
     archive, info = held
     return _write_verified(f, bios_path, dest, lambda: archive.open(info), progress,
-                           "the pack")
+                           "the pack", named=f"{info.filename} inside {archive.filename}")
 
 
 @contextlib.contextmanager
@@ -6549,30 +6588,67 @@ def _copy_local(
     """Copy one file found on this machine to its place, checked like a
     download. Its bytes count as already here, not in the download speed."""
     return _write_verified(f, bios_path, dest, lambda: _open_copy(copy), progress,
-                           f"the copy in {copy.index.label}", local=True)
+                           f"the copy in {copy.index.label}", local=True,
+                           named=copy.named())
+
+
+class _SourceUnreadable(Exception):
+    """The bytes to write could not be read: the source's fault, never the
+    folder's, so it falls back like any copy that failed."""
+
+
+def unreadable_words(exc: BaseException) -> str:
+    """Why a file or a ZIP member could not be read, in words."""
+    if isinstance(exc, RuntimeError) and "encrypted" in str(exc):
+        return "it is encrypted, a password is needed"
+    if isinstance(exc, NotImplementedError):
+        return "it is packed with a compression method this installer cannot read"
+    if isinstance(exc, (zipfile.BadZipFile, zlib.error, EOFError)):
+        return "it is damaged"
+    if isinstance(exc, OSError) and exc.strerror:
+        return exc.strerror
+    return str(exc) or type(exc).__name__
 
 
 def _write_verified(
     f: dict, bios_path: Path, dest: Path,
     source: Callable[[], ContextManager[BinaryIO]], progress: Progress | None,
-    held_in: str, local: bool = False,
+    held_in: str, local: bool = False, named: str = "",
 ) -> tuple[str, bool, str]:
     """Write the bytes source opens at dest once they match the list's size
-    and hashes, the file in place kept aside first when it differs."""
+    and hashes, the file in place kept aside first when it differs.
+
+    The source is opened before the temporary file, and its read errors
+    are told apart from the write errors: a copy that could not be read
+    was reported as a folder not writable. named is the source in the
+    reason then, held_in when empty."""
     expected = {name: f[name].lower() for name in ("sha256", "sha1") if f.get(name)}
     tmp_path: Path | None = None
     counted = 0
+
+    def unreadable(exc: BaseException) -> _SourceUnreadable:
+        return _SourceUnreadable(f"{named or held_in} could not be read: "
+                                 f"{unreadable_words(exc)}")
+
     try:
-        with source() as src, tempfile.NamedTemporaryFile(
-            mode="wb", dir=dest.parent, prefix=f".{dest.name}.", suffix=".part",
-            delete=False,
-        ) as out:
+        with contextlib.ExitStack() as stack:
+            try:
+                src = stack.enter_context(source())
+            except _MEMBER_ERRORS as exc:
+                raise unreadable(exc) from exc
+            out = stack.enter_context(tempfile.NamedTemporaryFile(
+                mode="wb", dir=dest.parent, prefix=f".{dest.name}.", suffix=".part",
+                delete=False,
+            ))
             tmp_path = Path(out.name)
             size = 0
             while True:
                 if _stop.is_set():
                     raise _Interrupted()
-                chunk = src.read(min(1024 * 1024, f["size"] + 1 - size))
+                try:
+                    chunk = src.read(min(1024 * 1024, f["size"] + 1 - size))
+                except _MEMBER_ERRORS as exc:
+                    raise unreadable(exc) from exc
                 if not chunk:
                     break
                 size += len(chunk)
@@ -6580,7 +6656,7 @@ def _write_verified(
                     raise ValueError(f"{held_in} holds more bytes than the list records")
                 out.write(chunk)
                 if progress is not None:
-                    progress.add(len(chunk), resumed=local)
+                    progress.add(len(chunk), resumed=local, network=False)
                     counted += len(chunk)
         if size != f["size"]:
             raise ValueError(f"{held_in} holds {size} bytes, the list records {f['size']}")
@@ -6598,9 +6674,9 @@ def _write_verified(
         return f["dest"], False, "stopped"
     except _NotKept as exc:
         return f["dest"], False, f"{NOT_KEPT} ({exc})"
-    except (ValueError, *_MEMBER_ERRORS) as exc:
+    except (_SourceUnreadable, ValueError, *_MEMBER_ERRORS) as exc:
         if progress is not None and counted:
-            progress.add(-counted, resumed=local)
+            progress.add(-counted, resumed=local, network=False)
         if isinstance(exc, OSError) and _write_refused(exc):
             return f["dest"], False, READ_ONLY if _read_only_file(dest) else NOT_WRITABLE
         return f["dest"], False, str(exc)
@@ -6626,6 +6702,10 @@ SYSTEM_FOLDERS = frozenset(name.casefold() for name in (
 # A Mac copying to a FAT or exFAT card writes ._name beside every file: its
 # Finder data, 4 KB, never the file.
 APPLE_DOUBLE = "._"
+# Folders the kernel makes up on the fly: endless, and never a copy.
+PSEUDO_FOLDERS = frozenset() if os.name == "nt" else frozenset(("/proc", "/sys", "/dev"))
+# FILE_ATTRIBUTE_REPARSE_POINT: a junction, a mount point or a link on Windows.
+_REPARSE_POINT = getattr(stat, "FILE_ATTRIBUTE_REPARSE_POINT", 0x400)
 # Errors a member of someone's ZIP can raise on reading: damaged, encrypted
 # (RuntimeError), or packed with a method zipfile lacks.
 _MEMBER_ERRORS = (OSError, EOFError, RuntimeError, NotImplementedError,
@@ -6646,6 +6726,10 @@ class LocalCopy(NamedTuple):
         """The copy as the folder it was found in names it."""
         rel = self.index.relative(self.path)
         return f"{rel}, inside as {self.member}" if self.member else rel
+
+    def named(self) -> str:
+        """The copy by its full path, the member first when it is one."""
+        return f"{self.member} inside {self.path}" if self.member else str(self.path)
 
 
 class FolderIndex:
@@ -6678,14 +6762,37 @@ class FolderIndex:
         self._digests: dict[tuple[Path, str, str], str] = {}
         self._members: dict[Path, list[str]] = {}
         self._member_sizes: dict[int, list[tuple[Path, str]]] | None = None
+        # (size, casefolded name) -> the files and the ZIP members, built
+        # the first time a copy is looked for.
+        self._loose_named: dict[tuple[int, str], list[Path]] | None = None
+        self._member_named: dict[int, dict[str, list[tuple[Path, str]]]] = {}
+        self._scans: dict[tuple[str, int, str], _HashScan] = {}
+        self._member_size: dict[tuple[Path, str], int] = {}
+        # (path, member or "") -> (its size or None when unknown, why) of each
+        # file, member or folder below root that could not be read.
+        self.unreadable: dict[tuple[Path, str], tuple[int | None, str]] = {}
+        # Folders below root on another drive, not entered.
+        self.other_drives: list[Path] = []
+        self.files = 0
         if root.is_file():
             if root.name.casefold().endswith(".zip"):
                 self.archives.append(root)
+                self.files = 1
             return
         seen = 0
-        for folder, dirs, names in os.walk(root):
+        try:
+            device = os.stat(root).st_dev
+        except OSError as exc:
+            self._unread(root, "", None, exc)
+            return
+
+        def unlisted(exc: OSError) -> None:
+            self._unread(Path(exc.filename or root), "", None, exc)
+
+        for folder, dirs, names in os.walk(root, onerror=unlisted):
             dirs[:] = sorted(d for d in dirs
-                             if d != BACKUP_DIR and d.casefold() not in SYSTEM_FOLDERS)
+                             if d != BACKUP_DIR and d.casefold() not in SYSTEM_FOLDERS
+                             and self._enters(Path(folder) / d, device))
             for name in sorted(names):
                 path = Path(folder) / name
                 if name.startswith(APPLE_DOUBLE):
@@ -6699,7 +6806,8 @@ class FolderIndex:
                     if not path.is_file():
                         continue
                     size = path.stat().st_size
-                except OSError:
+                except OSError as exc:
+                    self._unread(path, "", None, exc)
                     continue
                 self.by_name.setdefault(name.casefold(), []).append(path)
                 self.by_size.setdefault(size, []).append(path)
@@ -6707,19 +6815,45 @@ class FolderIndex:
                 if name.casefold().endswith(_ARCHIVE_SUFFIXES):
                     self.archives.append(path)
                 seen += 1
+                self.files = seen
                 if seen >= MAX_SCANNED_FILES:
                     self.truncated = True
                     return
+
+    def _enters(self, path: Path, device: int) -> bool:
+        """Whether the walk goes into a folder: not a pseudo file system, a
+        Windows junction or reparse point (a link the walk cannot tell from
+        a folder, which led out of the folder named), nor another drive
+        mounted below the root, which is named instead."""
+        if str(path) in PSEUDO_FOLDERS:
+            return False
+        try:
+            held = os.lstat(path)
+        except OSError as exc:
+            self._unread(path, "", None, exc)
+            return False
+        if getattr(held, "st_file_attributes", 0) & _REPARSE_POINT:
+            return False
+        if held.st_dev != device:
+            self.other_drives.append(path)
+            return False
+        return True
 
     def seed(self, path: Path, sha1: str) -> None:
         """A SHA-1 already known, so the file is not read again."""
         self._sha1[path] = sha1
 
+    def _unread(self, path: Path, member: str, size: int | None, exc: BaseException) -> None:
+        """Note a file, a member or a folder that could not be read: a copy
+        the run needs may be the one, and it is named instead of dropped."""
+        self.unreadable.setdefault((path, member), (size, unreadable_words(exc)))
+
     def sha1(self, path: Path) -> str:
         if path not in self._sha1:
             try:
                 self._sha1[path] = _sha1_file(path)
-            except OSError:
+            except OSError as exc:
+                self._unread(path, "", self.size.get(path), exc)
                 self._sha1[path] = ""
         return self._sha1[path]
 
@@ -6735,15 +6869,43 @@ class FolderIndex:
                         value = _digest_handle(handle, (algorithm,))[algorithm]
                 else:
                     value = _digest_file(path, (algorithm,))[algorithm]
-            except _MEMBER_ERRORS:
+            except _MEMBER_ERRORS as exc:
+                size = self._member_size.get((path, member)) if member else self.size.get(path)
+                self._unread(path, member, size, exc)
                 value = ""
             self._digests[key] = value
         return self._digests[key]
 
-    def holding(self, sizes: set[int], sha1s: set[str]) -> list[Path]:
-        """Files whose contents are one of sha1s, read only when the size fits."""
-        return [path for size in sorted(sizes) for path in self.by_size.get(size, [])
-                if self.sha1(path) in sha1s]
+    def unreadable_for(self, sizes: Collection[int]) -> list[tuple[Path, str, str]]:
+        """(path, member, why) of what could not be read and may hold a file
+        of one of sizes: its size is one of them, or unknown (a folder, an
+        archive whose list of members could not be read)."""
+        return sorted((path, member, why)
+                      for (path, member), (size, why) in self.unreadable.items()
+                      if size is None or size in sizes)
+
+    def _scan(self, kind: str, size: int, algorithm: str) -> _HashScan:
+        """The files (kind "loose") or ZIP members ("member") of one size,
+        hashed in the order the folder was read, each read once."""
+        key = (kind, size, algorithm)
+        if key not in self._scans:
+            if kind == "loose":
+                self._scans[key] = _HashScan(
+                    self.by_size.get(size, []), lambda path: self.digest(path, algorithm))
+            else:
+                self._scans[key] = _HashScan(
+                    self._members_of_size(size),
+                    lambda item: self.digest(item[0], algorithm, item[1]))
+        return self._scans[key]
+
+    def first_holding(self, sizes: set[int], sha1s: set[str]) -> Path | None:
+        """The first file whose contents are one of sha1s, the smallest size
+        first, read only when the size fits."""
+        for size in sorted(sizes):
+            path = self._scan("loose", size, "sha1").first(sha1s)
+            if path is not None:
+                return path
+        return None
 
     def zip_members(self, path: Path) -> list[str]:
         if path not in self._members:
@@ -6767,12 +6929,18 @@ class FolderIndex:
                 try:
                     with zipfile.ZipFile(path) as archive:
                         infos = archive.infolist()
-                except (OSError, zipfile.BadZipFile):
+                except OSError as exc:
+                    # A ZIP that will not open may hold anything: named. A
+                    # damaged one is a download cut short, not a copy.
+                    self._unread(path, "", None, exc)
+                    continue
+                except zipfile.BadZipFile:
                     continue
                 for info in infos:
                     if not info.is_dir():
                         self._member_sizes.setdefault(info.file_size, []).append(
                             (path, info.filename))
+                        self._member_size[(path, info.filename)] = info.file_size
         return self._member_sizes.get(size, [])
 
     def find(self, entry: dict, skip: Collection[Path] = ()) -> LocalCopy | None:
@@ -6786,15 +6954,27 @@ class FolderIndex:
         if not wanted:
             return None
         name = str(entry.get("dest", "")).rsplit("/", 1)[-1].casefold()
-        loose = sorted(self.by_size.get(size, []), key=lambda p: p.name.casefold() != name)
-        for path in loose:
-            if path not in skip and self.digest(path, algorithm) == wanted:
+        if self._loose_named is None:
+            self._loose_named = {}
+            for path, held in self.size.items():
+                self._loose_named.setdefault((held, path.name.casefold()), []).append(path)
+        for path in self._loose_named.get((size, name), []):
+            if not _being_written(path, skip) and self.digest(path, algorithm) == wanted:
                 return LocalCopy(self, path)
-        members = sorted(self._members_of_size(size),
-                         key=lambda item: item[1].rsplit("/", 1)[-1].casefold() != name)
-        for path, member in members:
-            if self.digest(path, algorithm, member) == wanted:
-                return LocalCopy(self, path, member)
+        path = self._scan("loose", size, algorithm).first({wanted}, skip)
+        if path is not None:
+            return LocalCopy(self, path)
+        if size not in self._member_named:
+            named = self._member_named[size] = {}
+            for item in self._members_of_size(size):
+                named.setdefault(item[1].rsplit("/", 1)[-1].casefold(), []).append(item)
+        for archive, member in self._member_named[size].get(name, []):
+            if (not _being_written(archive, skip)
+                    and self.digest(archive, algorithm, member) == wanted):
+                return LocalCopy(self, archive, member)
+        held = self._scan("member", size, algorithm).first({wanted}, skip)
+        if held is not None:
+            return LocalCopy(self, held[0], held[1])
         return None
 
     def count_copy(self, misplaced: bool = False) -> None:
@@ -6810,6 +6990,98 @@ class FolderIndex:
         except ValueError:
             return str(path)
         return rel if rel != "." else path.name
+
+
+def _being_written(path: Path, skip: Collection[Path]) -> bool:
+    """Whether a file, or the archive holding a member, is one this run
+    writes: its bytes are being replaced, so they are no source."""
+    return bool(skip) and (path in skip or Path(os.path.realpath(path)) in skip)
+
+
+class _HashScan:
+    """Candidates of one size, hashed in order and each once, so finding
+    the first that holds a digest never reads the earlier ones again: 3,000
+    same-sized files and 3,000 entries of that size cost 3,000 reads, not
+    nine million comparisons."""
+
+    def __init__(self, items: list, digest: Callable[[Any], str]) -> None:
+        self.items = items
+        self.digest = digest
+        self.read = 0
+        self.at: dict[str, list[int]] = {}
+
+    def first(self, wanted: Collection[str], skip: Collection[Path] = ()) -> Any:
+        """The first candidate, in the folder's order, whose digest is one of
+        wanted and that skip does not name, or None."""
+        best = None
+        for value in wanted:
+            for position in self.at.get(value, ()):
+                if not _being_written(self._holder(position), skip):
+                    best = position if best is None else min(best, position)
+                    break
+        if best is not None:
+            return self.items[best]
+        while self.read < len(self.items):
+            position = self.read
+            self.read += 1
+            value = self.digest(self.items[position])
+            self.at.setdefault(value, []).append(position)
+            if value in wanted and not _being_written(self._holder(position), skip):
+                return self.items[position]
+        return None
+
+    def _holder(self, position: int) -> Path:
+        item = self.items[position]
+        return item[0] if isinstance(item, tuple) else item
+
+
+class _ZippedLookup:
+    """The archives of a folder not listed as files to install, by the
+    folder holding them: each one's names read once, so telling that a
+    missing file is still zipped costs two lookups and never a walk."""
+
+    def __init__(self, index: FolderIndex, known: set[str]) -> None:
+        self.index = index
+        self._by_parent: dict[Path, list[tuple[int, Path]]] = {}
+        for position, path in enumerate(index.archives):
+            if index.relative(path).casefold() not in known:
+                self._by_parent.setdefault(path.parent, []).append((position, path))
+        # folder -> (member name -> first archive, stem -> first archive).
+        self._maps: dict[Path, tuple[dict[str, tuple[int, Path]],
+                                     dict[str, tuple[int, Path]]]] = {}
+
+    def _folder(self, folder: Path) -> tuple[dict[str, tuple[int, Path]],
+                                             dict[str, tuple[int, Path]]]:
+        if folder not in self._maps:
+            members: dict[str, tuple[int, Path]] = {}
+            stems: dict[str, tuple[int, Path]] = {}
+            for position, path in self._by_parent.get(folder, []):
+                lowered = path.name.casefold()
+                if lowered.endswith(".zip"):
+                    for member in self.index.zip_members(path):
+                        members.setdefault(member, (position, path))
+                stems.setdefault(lowered.rsplit(".", 1)[0], (position, path))
+            self._maps[folder] = (members, stems)
+        return self._maps[folder]
+
+    def reason(self, name: str, folders: Collection[Path]) -> str:
+        """Why name is missing when an archive in folders holds it or carries
+        its name: the first such archive in the order the folder was read,
+        and one holding it before one carrying its name."""
+        lowered = name.casefold()
+        stem = lowered.rsplit(".", 1)[0]
+        best: tuple[int, int, Path] | None = None
+        for folder in folders:
+            members, stems = self._folder(folder)
+            for kind, held in ((0, members.get(lowered)), (1, stems.get(stem))):
+                if held is not None and (best is None or (held[0], kind) < best[:2]):
+                    best = (held[0], kind, held[1])
+        if best is None:
+            return ""
+        where = self.index.relative(best[2])
+        if best[1] == 0:
+            return f"still zipped: it is inside {where}"
+        return f"still zipped: {where} needs extracting"
 
 
 def _inside(path: Path, root: Path) -> bool:
@@ -6858,7 +7130,19 @@ def _known_destinations(files: list[dict]) -> set[str]:
     return {str(f.get("dest", "")).casefold() for f in files}
 
 
-def _content_owner(sha1: str, entry: dict, files: list[dict]) -> str:
+def _content_owners(files: list[dict]) -> dict[str, list[dict]]:
+    """SHA-1 -> the entries one of whose copies holds it, in the list's order."""
+    owners: dict[str, list[dict]] = {}
+    for other in files:
+        for sha1 in dict.fromkeys(c.get("sha1") for c in _copies(other) if c.get("sha1")):
+            owners.setdefault(sha1, []).append(other)
+    return owners
+
+
+def _content_owner(
+    sha1: str, entry: dict, files: list[dict],
+    owners: dict[str, list[dict]] | None = None,
+) -> str:
     """Why a file holding sha1 is not the one entry wants, if the list knows."""
     for copy in entry.get("alternatives", []) + entry.get("slot_choices", []):
         if copy.get("sha1") == sha1 and copy.get("cores"):
@@ -6868,15 +7152,16 @@ def _content_owner(sha1: str, entry: dict, files: list[dict]) -> str:
         if copy.get("sha1") == sha1:
             return ("another revision: the one the platform's own list declares, "
                     "not the one the cores read")
-    for other in files:
+    if owners is None:
+        owners = _content_owners(files)
+    for other in owners.get(sha1, []):
         if other is entry or other.get("dest") == entry.get("dest"):
             continue
-        if any(copy.get("sha1") == sha1 for copy in _copies(other)):
-            regions = [r for r in other.get("regions") or [] if r != WORLD_REGION]
-            if regions:
-                return (f"another region: the contents of {other['dest']} "
-                        f"({', '.join(regions)})")
-            return f"another file: the contents of {other['dest']}"
+        regions = [r for r in other.get("regions") or [] if r != WORLD_REGION]
+        if regions:
+            return (f"another region: the contents of {other['dest']} "
+                    f"({', '.join(regions)})")
+        return f"another file: the contents of {other['dest']}"
     return ""
 
 
@@ -6935,7 +7220,7 @@ def _copy_reason(entry: dict, copy: LocalCopy, bios_path: Path, known: set[str])
 
 def _found_elsewhere(
     entry: dict, index: FolderIndex, bios_path: Path, files: list[dict],
-    known: set[str],
+    known: set[str], zipped: _ZippedLookup | None = None,
 ) -> tuple[str, str]:
     """(reason, folder too deep) for an entry missing at its place."""
     dest = str(entry.get("dest", ""))
@@ -6954,28 +7239,25 @@ def _found_elsewhere(
         return "", ""
     same_name = [p for p in index.by_name.get(name.casefold(), []) if p != expected]
     matching = [p for p in same_name if index.size[p] in sizes and index.sha1(p) in sha1s]
+    held = set(matching)
     for path in matching or same_name:
-        contents = "" if path in matching else ", with other contents"
+        contents = "" if path in held else ", with other contents"
         found = _place_reason(entry, path, index, expected, known, contents)
         if found[0]:
             return found
     above = index.root.parent / dest
     if index.root.parent != index.root and above.is_file():
         return f"one folder too high: it is at {above}", ""
-    for path in index.holding(sizes, sha1s):
-        return _place_reason(entry, path, index, expected, known)
+    holder = index.first_holding(sizes, sha1s)
+    if holder is not None:
+        return _place_reason(entry, holder, index, expected, known)
     if name.casefold().endswith(_ARCHIVE_SUFFIXES):
         return "", ""
-    stem = name.rsplit(".", 1)[0].casefold()
-    folders = {expected.parent, index.root}
-    for path in index.archives:
-        if path.parent not in folders or index.relative(path).casefold() in known:
-            continue
-        lowered = path.name.casefold()
-        if lowered.endswith(".zip") and name.casefold() in index.zip_members(path):
-            return f"still zipped: it is inside {index.relative(path)}", ""
-        if lowered.rsplit(".", 1)[0] == stem:
-            return f"still zipped: {index.relative(path)} needs extracting", ""
+    if zipped is None:
+        zipped = _ZippedLookup(index, known)
+    reason = zipped.reason(name, {expected.parent, index.root})
+    if reason:
+        return reason, ""
     for path in index.apple_double.get(name.casefold(), []):
         if path.parent == expected.parent:
             return (f"only a Mac's ._ file: {path.name} holds Finder data, not the "
@@ -6983,7 +7265,10 @@ def _found_elsewhere(
     return "", ""
 
 
-def _wrong_contents(entry: dict, path: Path, index: FolderIndex, files: list[dict]) -> str:
+def _wrong_contents(
+    entry: dict, path: Path, index: FolderIndex, files: list[dict],
+    owners: dict[str, list[dict]] | None = None,
+) -> str:
     """Why the file at an entry's place is not the one the list installs."""
     try:
         size = path.stat().st_size
@@ -6992,7 +7277,7 @@ def _wrong_contents(entry: dict, path: Path, index: FolderIndex, files: list[dic
     except OSError:
         return ""
     sha1 = index.sha1(path)
-    owner = _content_owner(sha1, entry, files)
+    owner = _content_owner(sha1, entry, files, owners)
     if owner:
         return owner
     if head == b"PK\x03\x04" and not str(entry.get("dest", "")).casefold().endswith(".zip"):
@@ -7024,18 +7309,20 @@ def diagnose(
     if index is None:
         index = bios_folder_index(bios_path, files, verified or [])
     known = _known_destinations(files)
+    zipped = _ZippedLookup(index, known)
     for entry in missing:
-        reason, extra = _found_elsewhere(entry, index, bios_path, files, known)
+        reason, extra = _found_elsewhere(entry, index, bios_path, files, known, zipped)
         if reason:
             reasons[id(entry)] = reason
         if extra:
             deep[extra] = deep.get(extra, 0) + 1
+    owners = _content_owners(files) if mismatched else {}
     for entry in mismatched:
         try:
             path = _entry_path(bios_path, entry)
         except ValueError:
             continue
-        reason = _wrong_contents(entry, path, index, files)
+        reason = _wrong_contents(entry, path, index, files, owners)
         if reason:
             reasons[id(entry)] = reason
     return Diagnosis(reasons, deep)
@@ -7268,6 +7555,47 @@ def emit_copies(
                   if copy.index is bios_index else "")
         EVENTS.emit("found", platform=plat, dest=entry["dest"], folder=copy.index.label,
                     path=str(copy.path), member=copy.member, reason=reason)
+
+
+class Unreadable(NamedTuple):
+    """A file, ZIP member or folder below a --from folder that could not be
+    read, and may be a file the run still needs."""
+    index: FolderIndex
+    path: Path
+    member: str
+    why: str
+
+    def line(self) -> str:
+        where = f"{self.member} inside {self.path}" if self.member else str(self.path)
+        return f"{where} could not be read: {self.why}"
+
+
+def unreadable_copies(
+    entries: list[dict], copies: dict[int, LocalCopy], folders: list[FolderIndex],
+) -> list[Unreadable]:
+    """What the --from folders hold that could not be read, of the size of
+    a file no copy was found for, or of no known size: dropped silently,
+    a file a user had read as one to download."""
+    sizes = {e["size"] for e in entries
+             if id(e) not in copies and isinstance(e.get("size"), int)}
+    if not sizes:
+        return []
+    return [Unreadable(index, *held) for index in folders
+            for held in index.unreadable_for(sizes)]
+
+
+def unreadable_lines(found: list[Unreadable], every: bool) -> list[str]:
+    lines = [f"  {item.line()}" for item in (found if every else found[:10])]
+    if len(found) > len(lines):
+        lines.append(f"  ... and {len(found) - len(lines)} more could not be read "
+                     "(--verbose lists them all)")
+    return lines
+
+
+def emit_unreadable(plat: str, found: list[Unreadable]) -> None:
+    for item in found:
+        EVENTS.emit("unreadable", platform=plat, folder=item.index.label,
+                    path=str(item.path), member=item.member, reason=item.why)
 
 
 def sources_line(
@@ -7742,26 +8070,71 @@ def _open_local_sources(args: argparse.Namespace) -> None:
         sys.exit(1)
 
 
+def _system_folder(folder: Path) -> str:
+    """Why a --from folder is one of the system's own, in words, or ""."""
+    try:
+        resolved = folder.resolve()
+    except OSError:
+        return ""
+    text = str(resolved)
+    if any(text == pseudo or text.startswith(pseudo + "/") for pseudo in PSEUDO_FOLDERS):
+        return "is a folder the system makes up, it holds no copy"
+    system_drive = os.environ.get("SystemDrive", "C:") if os.name == "nt" else ""
+    if resolved == Path(resolved.anchor) and (
+            os.name != "nt" or resolved.drive.casefold() == system_drive.casefold()):
+        return "is the root of the whole system"
+    return ""
+
+
+def from_folder_problem(label: str) -> tuple[str, str] | None:
+    """Why a folder named with --from cannot be read, without reading what
+    it holds: (reason, words), or None when it can.
+
+    reason is the one the error event carries: not_found, not_a_folder (a
+    file that is no ZIP), unreadable, or system (the root of the system,
+    /proc, /sys or /dev). words follow the folder as given: "E:\\old does
+    not exist". Cheap enough for a screen to call before indexing."""
+    folder = Path(os.path.expanduser(label))
+    zipped = folder.is_file() and folder.name.casefold().endswith(".zip")
+    if not (folder.is_dir() or zipped):
+        if folder.exists():
+            return "not_a_folder", "is neither a folder nor a ZIP"
+        return "not_found", "does not exist"
+    try:
+        if zipped:
+            with open(folder, "rb"):
+                pass
+        else:
+            with os.scandir(folder) as listing:
+                next(listing, None)
+    except OSError as exc:
+        return "unreadable", f"could not be read: {unreadable_words(exc)}"
+    system = "" if zipped else _system_folder(folder)
+    return ("system", system) if system else None
+
+
 def _open_from_folders(folders: list[Path]) -> None:
-    """Read each folder named with --from, or stop on one that is not there."""
+    """Read each folder named with --from, or stop on one that cannot be."""
     for folder in folders:
         label = str(folder)
-        folder = Path(os.path.expanduser(label))
-        zipped = folder.is_file() and folder.name.casefold().endswith(".zip")
-        if not (folder.is_dir() or zipped):
-            reason = "not_a_folder" if folder.exists() else "not_found"
-            what = ("does not exist" if reason == "not_found"
-                    else "is neither a folder nor a ZIP")
+        problem = from_folder_problem(label)
+        if problem is not None:
+            reason, what = problem
             message = f"{label} {what}: --from names the folder to copy BIOS files from"
             EVENTS.emit("error", stage="from", reason=reason, platform="", message=message)
             print(f"Error: {message}.", file=sys.stderr)
             sys.exit(1)
-        index = FolderIndex(folder, label)
+        index = FolderIndex(Path(os.path.expanduser(label)), label)
         LOCAL.folders.append(index)
         print(f"  Copying BIOS files from: {label}")
         if index.truncated:
             print(f"  Read the first {MAX_SCANNED_FILES:,} files of {label} only. Name "
                   "the folder that holds the BIOS files to search it all.")
+        for drive in index.other_drives:
+            print(f"  Did not go into {drive}: it is another drive. Name it with --from "
+                  "to read it too.")
+        EVENTS.emit("scanned", folder=label, files=index.files, truncated=index.truncated,
+                    other_drives=[str(drive) for drive in index.other_drives])
 
 
 def _missing_dest(dest: Path, ask: bool, named: str = "named with --dest") -> None:
@@ -8471,6 +8844,7 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
         if bios_index is not None:
             bios_indexes.append(bios_index)
         copies = plan_local_copies(to_download, bios_path, bios_index, LOCAL.folders)
+        unread = unreadable_copies(to_download, copies, LOCAL.folders)
         hint = [] if LOCAL.pack is not None else bulk_hint(
             to_download, manifest,
             systems_chosen=bool(selection and selection[0]),
@@ -8495,6 +8869,7 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                 chosen=selection[0] if selection else None,
             )
             emit_copies(plat_name, to_download, copies, bios_index, bios_path, files)
+            emit_unreadable(plat_name, unread)
         total_verified += len(up_to_date)
 
         if args.check:
@@ -8512,6 +8887,8 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                 print(f"\n  {_plural(len(to_download), 'file')} to download:")
                 for line in check_lines(missing, mismatched, files, manifest, bios_path,
                                         args.verbose, up_to_date, bios_index, copies):
+                    print(line)
+                for line in unreadable_lines(unread, args.verbose):
                     print(line)
                 print("  Run the same command without --check to fetch them; "
                       "a file with a wrong hash is replaced, and the one in place "
@@ -8546,6 +8923,8 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
             _print_plan([f for f in to_download if id(f) not in copies], bios_path, term,
                         trees, kept, copy_plan_lines(to_download, copies, bios_index,
                                                      bios_path, files, args.verbose, True))
+            for line in unreadable_lines(unread, args.verbose):
+                print(line)
             for line in hint:
                 print(line)
             continue
@@ -8571,6 +8950,10 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                 files_pending += len(to_download)
                 continue
             EVENTS.emit("download", platform=plat_name, files=len(to_download), bytes=dl_size)
+            if unread:
+                print()
+                for line in unreadable_lines(unread, args.verbose):
+                    print(line)
             if copies:
                 print()
                 for line in copy_plan_lines(to_download, copies, bios_index, bios_path,

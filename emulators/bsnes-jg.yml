@@ -5,6 +5,7 @@ source: "https://github.com/libretro/bsnes-jg"
 upstream: "https://gitlab.com/jgemu/bsnes"
 profiled_date: "2026-03-23"
 source_commit: "4aef191fef72be539ccc07ada21c6e0a65360eb7"
+upstream_commit: "53e6a7c2ec4b4220adc2f8dcb3786489bd04fe0e"
 core_version: "2.1.2"
 display_name: "Nintendo - SNES / SFC (bsnes-jg)"
 cores: [bsnes-jg, bsnes_jg]
