@@ -336,6 +336,30 @@ class LookupUrlsResolve(unittest.TestCase):
         shard = SITE + "api/v1/lookup/ab.json"
         self.assertTrue(urllib.parse.urljoin(shard, item["url"]).startswith(SITE + "systems/"))
 
+    def test_each_record_names_its_system_as_the_pages_do(self):
+        """Find a file opens on "a BIOS file for Sony PlayStation": the name
+        comes from system_name, never built in the browser."""
+        from siterender import system_name  # noqa: PLC0415
+
+        db = {"files": {"ab" * 20: {"path": "bios/Sony/PlayStation/scph5501.bin",
+                                    "name": "scph5501.bin", "md5": "490f666e1afb15b7362b406ed1cea246"}}}
+        coverages = {"batocera": {"platform": "Batocera", "config": {"systems": {
+            "sony-playstation": {"files": [{"name": "scph5501.bin", "md5": "490f666e1afb15b7362b406ed1cea246"}]}}}}}
+        profiles = {"duckstation": {"systems": ["sony-playstation"], "files": [
+            {"name": "scph5501.bin", "md5": "490f666e1afb15b7362b406ed1cea246"}]}}
+        records = generate_site.file_lookup_records(
+            db, coverages, profiles, generate_site.file_location_items(db))
+        expected = system_name("sony-playstation")
+        by_layer = {r["layer"]: r for r in records if r["algorithm"] == "md5"}
+        for layer in ("collection", "platform", "emulator"):
+            with self.subTest(layer=layer):
+                self.assertEqual(by_layer[layer]["system_name"], expected)
+
+    def test_built_shards_carry_the_name(self):
+        shard = json.loads(_built(API / "lookup" / "05.json").read_text())
+        record = next(r for r in shard["items"] if r["value"].startswith("0555c6fae890"))
+        self.assertEqual(record["system_name"], "Sony PlayStation")
+
     def test_built_records_land_on_built_pages(self):
         shard = json.loads(_built(API / "lookup" / "05.json").read_text())
         dist = REPO_ROOT / "website" / "dist"
@@ -401,6 +425,9 @@ class TablesFitTheirColumn(unittest.TestCase):
         row = next(line for line in table.splitlines() if "x.bin" in line)
         self.assertIn(f'<code title="{"b" * 32}">{"b" * 12}</code>', row)
         self.assertIn('<span class="rb-reason">expected md5 differs</span>', row)
+        source = Path(generate_site.__file__).read_text(encoding="utf-8")
+        self.assertIn('expected = f"{algorithm} {short_hash(value)}"', source)
+        self.assertIn("{_reason_cell(u['reason'])}", source)
 
 
 class SourceLinksGoWhereTheFileIs(unittest.TestCase):

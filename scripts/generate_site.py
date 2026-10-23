@@ -1792,7 +1792,8 @@ def generate_data_page(exports: list[dict]) -> str:
         "is the first two characters of the hash in lowercase, holds every SHA1, "
         "MD5, CRC32 and SHA256 starting with them. Each record names its `layer` "
         "(the collection, a data directory, a platform's list or an emulator "
-        "profile), the file `name` and the `url` of the page that shows it. "
+        "profile), the file `name`, the `url` of the page that shows it and, "
+        "when one is known, the `system_name` the site gives its system. "
         "[Find a file](files/index.md) reads it.",
         "",
         "Two kinds of `url`:",
@@ -3651,6 +3652,30 @@ def file_location_items(
 LOOKUP_PREFIX = 2  # hex characters naming a lookup shard: 256 files
 
 
+def _lookup_system_name(sys_id: str) -> str | None:
+    """The system's name as every page prints it, None for an id the site
+    cannot name. The Find a file page reads it, and never builds one."""
+    try:
+        return system_name(sys_id)
+    except KeyError:
+        return None
+
+
+def _console_system_names(profiles: dict, coverages: dict) -> dict[tuple[str, str], str]:
+    """(manufacturer slug, console folder) -> the name of the system whose
+    own section that folder is: a collection file is named after the console
+    it is filed under. A folder no id owns, or that two names own, is left out.
+    """
+    from siterender import _own_section, system_ids
+
+    found: dict[tuple[str, str], set[str]] = {}
+    for sys_id in system_ids(profiles, [c["config"] for c in coverages.values()]):
+        own = _own_section(sys_id)
+        if own is not None:
+            found.setdefault((_slug(own[0]), own[1]), set()).add(system_name(sys_id))
+    return {key: next(iter(names)) for key, names in found.items() if len(names) == 1}
+
+
 def file_lookup_records(
     db: dict,
     coverages: dict,
@@ -3666,6 +3691,7 @@ def file_lookup_records(
     it made every visitor download: the lookup reads one shard instead.
     """
     files = db.get("files", {})
+    named = _console_system_names(profiles, coverages)
     member_names = {
         str(info.get("sha1", "")): member.rsplit("/", 1)[-1]
         for tree in (members or {}).values() for member, info in sorted(tree.items())
@@ -3680,28 +3706,37 @@ def file_lookup_records(
                             "name": member_names.get(sha1, ""), "sha1": sha1,
                             "url": item["url"]})
             continue
+        parts = str(entry.get("path", "")).split("/")
+        held_by = named.get((_slug(parts[1]), parts[2])) if len(parts) > 3 else None
         for algorithm in HASH_ALGORITHMS:
             for value in _hash_values(entry.get(algorithm)):
                 records.append({
                     "value": value, "algorithm": algorithm, "layer": "collection",
                     "name": str(entry.get("name", "")), "sha1": sha1, "url": item["url"],
+                    **({"system_name": held_by} if held_by else {}),
                 })
     for key, coverage in sorted(coverages.items()):
         for system_id, system in sorted((coverage["config"].get("systems") or {}).items()):
             url = _site_path(f"platforms/{key}.md#{system_id.replace(' ', '-')}")
+            system_label = _lookup_system_name(system_id)
             for entry in system.get("files") or []:
                 for algorithm in HASH_ALGORITHMS:
                     for value in _hash_values(entry.get(algorithm)):
                         records.append({
                             "value": value, "algorithm": algorithm, "layer": "platform",
                             "owner": key, "name": str(entry.get("name", "")), "url": url,
+                            **({"system_name": system_label} if system_label else {}),
                         })
     for key, profile in sorted(profiles.items()):
         if profile.get("type") in ("alias", "test"):
             continue
         entries = profile.get("files") or []
+        own_systems = [str(s) for s in profile.get("systems") or []]
         for entry, anchor in zip(entries, emulator_file_anchors(entries)):
             url = _site_path(f"emulators/{emulator_card_page(key, anchor)}.md#{anchor}")
+            sys_id = str(entry.get("system") or "") or (
+                own_systems[0] if len(own_systems) == 1 else "")
+            entry_label = _lookup_system_name(sys_id) if sys_id else None
             members = [(str(entry.get("name", "")), entry)] + [
                 (str(member["name"]), member) for member in entry.get("contents") or []
                 if isinstance(member, dict) and member.get("name")
@@ -3712,6 +3747,7 @@ def file_lookup_records(
                         records.append({
                             "value": value, "algorithm": algorithm, "layer": "emulator",
                             "owner": key, "name": name, "url": url,
+                            **({"system_name": entry_label} if entry_label else {}),
                         })
     unique = {json.dumps(r, sort_keys=True): r for r in records}
     return sorted(unique.values(), key=lambda r: (
@@ -7109,7 +7145,7 @@ def generate_gap_analysis(
                 )
                 req = "yes" if m["required"] else "no"
                 algorithm, _, value = m["identity"].partition(":")
-                expected = f"{algorithm} {_code(value)}" if value else "-"
+                expected = f"{algorithm} {short_hash(value)}" if value else "-"
                 destination = _code(m["path"]) if m["path"] != m["name"] else "-"
                 emulators = ", ".join(
                     f"[{_escape_tags(display)}](emulators/{key}.md)"
@@ -7167,7 +7203,7 @@ def generate_gap_analysis(
         ])
         for u in sorted(all_unsourceable, key=lambda x: x["name"]):
             lines.append(
-                f"| `{u['name']}` | {u['emulator']} | {u['reason']} "
+                f"| `{u['name']}` | {u['emulator']} | {_reason_cell(u['reason'])} "
                 f"| {_source_ref_markdown(profiles[u['emu_key']], u['source_ref'])} |"
             )
         lines.append("")

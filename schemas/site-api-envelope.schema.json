@@ -407,6 +407,10 @@
                 },
                 "owner": {
                   "type": "string"
+                },
+                "system_name": {
+                  "type": "string",
+                  "description": "The name the site gives the system the record belongs to (Sony PlayStation): the console a collection file is filed under, the system a platform lists it in, the system of an emulator's entry. Absent when none is known."
                 }
               }
             }
