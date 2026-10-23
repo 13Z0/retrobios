@@ -3862,15 +3862,16 @@ def _apply_writes(
                 file=sys.stderr,
             )
             return
-        for line in applied:
-            print(f"{name}: {recale}{line}")
+        messages = [f"{name}: {recale}{line}" for line in applied]
         if moved:
             # Each pin the write changes, as written: a bump that only moved
             # upstream_commit announced the source_commit it already held.
             after = yaml.safe_load(target.read_text(encoding="utf-8")) or {}
             before = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
-            for pin in pins_changed(before, after):
-                print(f"{name}: {bumped}{pin} -> {str(after[pin])[:7]}")
+            messages += [
+                f"{name}: {bumped}{pin} -> {str(after[pin])[:7]}"
+                for pin in pins_changed(before, after)
+            ]
         if not args.dry_run and (applied or moved):
             original = path.read_bytes()
             path.write_bytes(target.read_bytes())
@@ -3883,9 +3884,12 @@ def _apply_writes(
                 path.write_bytes(original)
                 print(
                     f"{name}: the bump would leave {len(left)} prose citation(s) "
-                    "under an older pin, nothing was written; read them first",
+                    "under an older pin, nothing was written. Read them first.",
                     file=sys.stderr,
                 )
+                return
+        for message in messages:
+            print(message)
 
 
 def _cited_paths(report: ProfileReport) -> list[str]:
