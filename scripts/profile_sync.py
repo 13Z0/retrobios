@@ -4382,6 +4382,12 @@ def _passed_release(
     commit = upstream.tag_commit(repo, version.latest_release, args.cache_dir, args.offline)
     if not commit:
         return None
+    if version.tag_commit and version.tag_commit != commit:
+        # A project can publish a release older than its newest tag:
+        # pcsx2x6's latest release is v0.2.20, its declared tag v0.2.22.
+        older = upstream.ancestry(repo, commit, version.tag_commit, args.cache_dir, args.offline)
+        if older and older[1] == 0:
+            return None
     if commit == pin:
         return version.latest_release
     relation = upstream.ancestry(repo, commit, pin, args.cache_dir, args.offline)

@@ -3287,6 +3287,22 @@ class TestCheckVersion(unittest.TestCase):
         self.assertIn("already contains release v3.1.0", warning)
 
 
+class APassedReleaseIsNewerThanTheTag(unittest.TestCase):
+    """pcsx2x6 declares tag v0.2.22 while its latest published release is
+    v0.2.20: the pin holds v0.2.20 without core_version being older."""
+
+    def test_a_release_older_than_the_declared_tag_is_not_passed(self):
+        from unittest import mock  # noqa: PLC0415
+
+        version = profile_sync.VersionReport(
+            "v0.2.22", "v0.2.22", "v0.2.20", "2026-07-25", True, "tag22"
+        )
+        args = argparse.Namespace(cache_dir="c", offline=True)
+        with mock.patch.object(profile_sync.upstream, "tag_commit", return_value="rel20"), \
+                mock.patch.object(profile_sync.upstream, "ancestry", return_value=(5, 0)):
+            self.assertIsNone(profile_sync._passed_release(args, "repo", version, "pin"))
+
+
 class TestAncestry(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
