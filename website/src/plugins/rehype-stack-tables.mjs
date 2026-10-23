@@ -16,6 +16,10 @@
 //   so the row is wider than a phone at any length (NetherSX2's File,
 //   Required, Hash summary measured 604 px in a 358 px column).
 //
+// A stacked cell is labelled with its column name, or with the header's
+// `title` when the table's writer gives one: "Name as declared" wrapped to two
+// lines in the label column, its title "Declared as" does not.
+//
 // A table of RECORD_ROWS rows or more gets its filter box here, above it.
 // Written by site.ts once the page had painted, the box pushed the table
 // down (CLS 0.066 on gaps-files-to-source). site.ts only wires it.
@@ -101,6 +105,9 @@ const headingBefore = (ctx, table, title) => {
 	return title || 'this table';
 };
 
+// The label a stacked cell shows: the header's title, else its text.
+export const stackedLabel = (title, text) => String(title ?? '').trim() || text;
+
 const filterBox = ({ id, heading, labels, rows }) => ({
 	type: 'element',
 	tagName: 'div',
@@ -136,7 +143,9 @@ export default function stackTables() {
 				const head = elements(table, 'thead')[0];
 				const body = elements(table, 'tbody')[0];
 				if (!head || !body) return;
-				const labels = elements(head, 'th').map((cell) => ctx.textContent(cell).trim());
+				const headers = elements(head, 'th');
+				const labels = headers.map((cell) => ctx.textContent(cell).trim());
+				const stacked = headers.map((cell, column) => stackedLabel(cell.properties?.title, labels[column]));
 				const rows = elements(body, 'tr');
 				const frontmatter = ctx.data.astro?.frontmatter ?? {};
 				if (rows.length >= RECORD_ROWS) {
@@ -153,7 +162,7 @@ export default function stackTables() {
 				if (kind === 'kv' || rows.length >= RECORD_ROWS) return;
 				for (const row of rows) {
 					elements(row, 'td').forEach((cell, column) => {
-						if (labels[column] && cell.properties?.dataLabel === undefined) ctx.setProperty(cell, 'dataLabel', labels[column]);
+						if (stacked[column] && cell.properties?.dataLabel === undefined) ctx.setProperty(cell, 'dataLabel', stacked[column]);
 					});
 				}
 			},

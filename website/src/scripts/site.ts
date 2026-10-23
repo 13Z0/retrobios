@@ -8,8 +8,11 @@
 
 const HASH_LENGTHS: Record<number, string> = { 8: 'CRC32', 32: 'MD5', 40: 'SHA1', 64: 'SHA256' };
 // One line of api/v1/lookup/. `system_name` is read when a record carries it.
+// `algorithm` is the hash the value was found under, `declared` the hash
+// type the setup or profile wrote for that entry.
 type Item = {
 	algorithm: string;
+	declared?: string;
 	layer: string;
 	name?: string;
 	value: string;
@@ -111,10 +114,12 @@ const filterTable = (table: HTMLTableElement) => {
 // A stacked table of many rows leaves its column names out of the HTML
 // (rehype-stack-tables.mjs): each cell gets its own here, as the table nears
 // the screen. The name sits in the left room every stacked cell keeps, so
-// writing it moves nothing.
+// writing it moves nothing. A header's `title` is its short stacked name.
+const stackedLabel = (cell: Element) => cell.getAttribute('title')?.trim() || (cell.textContent?.trim() ?? '');
+
 const labelCells = (table: HTMLTableElement) => {
 	if (table.dataset.rbStack !== 'true') return;
-	const labels = [...table.querySelectorAll('thead th')].map((cell) => cell.textContent?.trim() ?? '');
+	const labels = [...table.querySelectorAll('thead th')].map(stackedLabel);
 	for (const row of table.tBodies[0]?.rows ?? []) {
 		[...row.cells].forEach((cell, column) => {
 			if (labels[column] && !cell.dataset.label) cell.dataset.label = labels[column];
@@ -170,6 +175,49 @@ const enhanceTables = () => {
 	addEventListener('resize', () => {
 		clearTimeout(timer);
 		timer = window.setTimeout(() => markScrollable([...near]), 150);
+	});
+};
+
+// Paths
+
+// A long path breaks at its separators, never inside a word. The build
+// writes the `wbr` of a page's first BREAK_BUDGET separators
+// (rehype-short-code.mjs), since each is an element of the page. The others
+// are written here, as their code nears the screen. Same rule: inline code
+// over 30 characters, a break after each `/` and `\` but the last character.
+const LONG_CODE = 30;
+const SEPARATORS = /([/\\])(?!$)/g;
+const SEPARATOR = /[/\\](?!$)/;
+const unbrokenPath = (code: Element) =>
+	!code.closest('pre') &&
+	!code.querySelector('wbr') &&
+	[...code.childNodes].every((child) => child.nodeType === Node.TEXT_NODE) &&
+	(code.textContent ?? '').length > LONG_CODE &&
+	SEPARATOR.test(code.textContent ?? '');
+const breakPath = (code: Element) => {
+	if (!unbrokenPath(code)) return;
+	const parts = (code.textContent ?? '').split(SEPARATORS).flatMap((piece, index) => [
+		...(piece ? [document.createTextNode(piece)] : []),
+		...(index % 2 ? [document.createElement('wbr')] : []),
+	]);
+	code.replaceChildren(...parts);
+};
+const breakPaths = () => {
+	const observer = new IntersectionObserver(
+		(entries) => {
+			for (const entry of entries) {
+				if (!entry.isIntersecting) continue;
+				breakPath(entry.target);
+				observer.unobserve(entry.target);
+			}
+		},
+		{ rootMargin: '400px 0px' },
+	);
+	const idle = window.requestIdleCallback ?? ((callback: () => void) => setTimeout(callback, 1));
+	idle(() => {
+		for (const code of document.querySelectorAll('.sl-markdown-content code')) {
+			if (unbrokenPath(code)) observer.observe(code);
+		}
 	});
 };
 
@@ -381,6 +429,14 @@ const agreed = (values: (string | undefined)[]): string | undefined => {
 // "system:md5", and any file that has it passes.
 const anyName = (name: string) => !name || name.includes(':');
 
+// The column name a stacked row shows where the full one wraps on a phone,
+// as rehype-stack-tables.mjs reads a header's `title`.
+const STACKED_LABELS: Record<string, string> = { 'Name as declared': 'Declared as' };
+
+// "Hash matched" is the hash the setup's list writes, whatever was pasted:
+// Batocera declares an MD5, so its row says MD5 when a CRC32 found it.
+const declaredHash = (item: Item) => (item.declared || item.algorithm).toUpperCase();
+
 const setupTable = (rows: { item: Item; entry?: Declared; setup: string }[]) => {
 	const table = document.createElement('table');
 	const head = table.createTHead().insertRow();
@@ -388,6 +444,7 @@ const setupTable = (rows: { item: Item; entry?: Declared; setup: string }[]) => 
 		const cell = document.createElement('th');
 		cell.scope = 'col';
 		cell.textContent = label;
+		if (STACKED_LABELS[label]) cell.title = STACKED_LABELS[label];
 		head.append(cell);
 	}
 	const body = table.createTBody();
@@ -399,12 +456,12 @@ const setupTable = (rows: { item: Item; entry?: Declared; setup: string }[]) => 
 			link(item.url, setup),
 			anyName(name) ? 'Any name' : code(name),
 			destination ? code(destination) : '-',
-			item.algorithm.toUpperCase(),
+			declaredHash(item),
 			entry?.required === undefined ? '-' : entry.required ? 'Yes' : 'No',
 		];
 		cells.forEach((content, column) => {
 			const cell = row.insertCell();
-			cell.dataset.label = head.cells[column].textContent!;
+			cell.dataset.label = stackedLabel(head.cells[column]);
 			cell.append(content);
 		});
 	}
@@ -892,6 +949,7 @@ const notFound = () => {
 resolveFileAddress();
 followMovedCard();
 enhanceTables();
+breakPaths();
 hashSearch();
 glossaryTerms();
 osTabs();
