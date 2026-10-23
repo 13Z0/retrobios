@@ -6724,7 +6724,6 @@ class NoArchiveRepeatsAMemberName(unittest.TestCase):
         self.assertEqual(repeated, [])
 
 
-
 class PipelineChildrenSkipNodeCompileCache(unittest.TestCase):
     """The site build's compile cache filled the 4 GB /tmp tmpfs to 3.4 GB:
     every child the pipeline starts carries NODE_DISABLE_COMPILE_CACHE."""

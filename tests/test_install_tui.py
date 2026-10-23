@@ -56,6 +56,8 @@ except ImportError:
 
 GOLDEN = REPO_ROOT / "tests" / "fixtures" / "tui"
 SIZES = ((40, 12), (40, 15), (80, 24), (120, 40))
+# RETROBIOS_PAD's values, and "keys" for a desktop that sets none.
+ROUTES = ("keys", "gptokeyb", "evmapy", "muxterm", "miyoo")
 UP, DOWN, RIGHT, LEFT = "\x1b[A", "\x1b[B", "\x1b[C", "\x1b[D"
 Key = install.TuiKey
 
@@ -940,6 +942,31 @@ class Views(unittest.TestCase):
                         path.write_text(text, encoding="utf-8")
                     self.assertEqual(text, path.read_text(encoding="utf-8"))
 
+    def test_goldens_per_route(self):
+        """Each input route at the handheld sizes and 80x24, kept only where a
+        screen reads differently from the both-names form."""
+        update = os.environ.get("RETROBIOS_UPDATE_GOLDENS") == "1"
+        for route in ROUTES:
+            sections = []
+            for name, state in golden_states().items():
+                state.pad = route
+                for cols, rows in SIZES[:3]:
+                    with self.subTest(route=route, screen=name, size=f"{cols}x{rows}"):
+                        state.cols, state.rows = cols, rows
+                        lines = install.tui_view(state, cols, rows)
+                        for line in lines:
+                            self.assertLessEqual(install.cell_width(line), cols, line)
+                        self.assertLess(install.cell_width(lines[-1]), cols)
+                    text = "\n".join(line.rstrip() for line in lines) + "\n"
+                    both = (GOLDEN / f"{name}-{cols}x{rows}.txt").read_text(encoding="utf-8")
+                    if text != both:
+                        sections.append(f"=== {name} {cols}x{rows}\n{text}")
+            path = GOLDEN / f"route-{route}.txt"
+            if update:
+                path.write_text("".join(sections), encoding="utf-8")
+            with self.subTest(route=route):
+                self.assertEqual("".join(sections), path.read_text(encoding="utf-8"))
+
     def test_the_hint_bar_names_the_primary_action_first(self):
         for name, state in golden_states().items():
             with self.subTest(screen=name):
@@ -952,6 +979,163 @@ class Views(unittest.TestCase):
         focused = [line for line in lines if getattr(line, "style", "") == "focus"]
         self.assertEqual(len(focused), 1)
         self.assertTrue(focused[0].lstrip().startswith("> RetroArch"))
+
+
+def _bar_keys(line: str) -> set:
+    """The key each entry of a hint bar names: its first word."""
+    return {part.split(" ", 1)[0] for part in line.strip().split("  ") if part}
+
+
+# The keys each route has, as the bar may name them. "Any" opens "Any key
+# closes this help", <> and ^v are the narrow forms of Left/Right, Up/Down.
+ROUTE_KEYS = {
+    "keys": {"Enter", "Esc", "Space", "o", "?", "/", "Ctrl-C", "Ctrl-U"},
+    "gptokeyb": {"A", "B", "X", "Y", "Start+Select"},
+    "evmapy": {"A", "B", "X", "Y"},
+    "muxterm": {"Start", "B", "Y", "Menu", "Select"},
+    "miyoo": {"A", "Start", "R2", "L2"},
+}
+EVERY_ROUTE_HAS = {"Left/Right", "Up/Down", "<>", "^v", "Any"}
+
+
+class PadRoutes(unittest.TestCase):
+    """The bar names the buttons the launcher maps, and a desktop's keys."""
+
+    def test_the_route_from_the_environment(self):
+        route = install.tui_pad_route
+        for value in install.TUI_PAD_ROUTES:
+            self.assertEqual(route("linux", {"RETROBIOS_PAD": value, "DISPLAY": ":0"}), value)
+        self.assertEqual(route("linux", {"RETROBIOS_PAD": " MiYoo "}), "miyoo")
+        self.assertEqual(route("linux", {"RETROBIOS_PAD": "dualshock"}), "both")
+        for os_type in ("windows", "darwin", "wsl"):
+            self.assertEqual(route(os_type, {}), "keys", os_type)
+        for env in ({"DISPLAY": ":0", "TERM": "xterm-256color"}, {"WAYLAND_DISPLAY": "w-0"},
+                    {"SSH_CONNECTION": "10.0.0.2 5 10.0.0.3 22"}, {"SSH_TTY": "/dev/pts/1"}):
+            self.assertEqual(route("linux", env), "keys", env)
+        # SteamOS game mode and anything Steam starts: Steam Input may be
+        # all there is. A console with nothing named, or Android: unknown.
+        for os_type, env in (("linux", {"SteamGamepadUI": "1", "DISPLAY": ":0"}),
+                             ("linux", {"GAMESCOPE_WAYLAND_DISPLAY": "gamescope-0",
+                                        "WAYLAND_DISPLAY": "w-0"}),
+                             ("windows", {"SteamGameId": "123"}),
+                             ("linux", {"SteamDeck": "1", "DISPLAY": ":0"}),
+                             ("linux", {"TERM": "linux", "SSH_TTY": "/dev/pts/0"}),
+                             ("linux", {"TERM": "linux"}), ("linux", {}),
+                             ("android", {"DISPLAY": ":0"})):
+            self.assertEqual(route(os_type, env), "both", env)
+
+    def test_the_launchers_values_are_the_routes(self):
+        tui = (REPO_ROOT / "ports" / "shared" / "tui.txt").read_text(encoding="utf-8")
+        named = set(re.findall(r'RB_PAD="(\w+)"', tui))
+        for launcher in REPO_ROOT.glob("ports/*/*.sh"):
+            named |= set(re.findall(r'RB_PAD="(\w+)"', launcher.read_text(encoding="utf-8")))
+        self.assertLessEqual(named, set(install.TUI_PAD_ROUTES))
+        self.assertEqual(set(ROUTES) - {"keys"}, set(install.TUI_PAD_ROUTES))
+
+    def test_the_plan_bar_of_each_route(self):
+        expected = {
+            "both": "A/Enter Install  B/Esc Back  Y/o Options  ? Help",
+            "keys": "Enter Install  Esc Back  o Options  ? Help",
+            "gptokeyb": "A Install  B Back  Y Options",
+            "evmapy": "A Install  B Back  Y Options",
+            "muxterm": "Start Install  B Back",
+            "miyoo": "A Install  R2 Back  L2 Options",
+        }
+        for route, bar in expected.items():
+            with self.subTest(route=route):
+                state = checked_state()
+                state.pad = route
+                self.assertEqual(install.tui_view(state, 80, 24)[-1].strip(), bar)
+
+    def test_no_bar_names_a_key_its_route_lacks(self):
+        for route, have in ROUTE_KEYS.items():
+            for name, state in golden_states().items():
+                state.pad = route
+                for cols, rows in SIZES:
+                    with self.subTest(route=route, screen=name, size=f"{cols}x{rows}"):
+                        state.cols, state.rows = cols, rows
+                        bar = install.tui_view(state, cols, rows)[-1]
+                        self.assertLessEqual(_bar_keys(bar) - EVERY_ROUTE_HAS, have, bar)
+
+    def test_the_install_says_what_stops_it_there(self):
+        expected = {
+            "both": "B, Ctrl-C or Start+Select stops.", "keys": "Esc or Ctrl-C stops.",
+            "gptokeyb": "B or Start+Select stops.", "evmapy": "B stops.",
+            "muxterm": "B stops.", "miyoo": "R2 stops.",
+        }
+        for route, words in expected.items():
+            with self.subTest(route=route):
+                state = golden_states()["installing"]
+                state.pad = route
+                text = "\n".join(install.tui_view(state, 80, 24))
+                self.assertIn(f"{words} What is done stays done.", text)
+                state.stopping = True
+                again = {"both": "B or Ctrl-C", "keys": "Esc or Ctrl-C", "miyoo": "R2"}
+                self.assertIn(f"Press {again.get(route, 'B')} again to stop now.",
+                              " ".join(" ".join(install.tui_view(state, 80, 24)).split()))
+
+    def test_the_help_lists_the_buttons_and_the_keys(self):
+        def help_text(route: str, screen: str = "plan") -> str:
+            state = golden_states()[screen]
+            state.pad, state.help = route, True
+            return "\n".join(line.rstrip() for line in install.tui_view(state, 80, 24))
+
+        gptk = help_text("gptokeyb")
+        for words in ("D-pad, Up/Down", "A, Start, Enter", "B, Select, Esc", "Y, Tab, o",
+                      "Select, then Start", "Quit at once", "q, Ctrl-C"):
+            self.assertIn(words, gptk)
+        self.assertNotIn("Start+Select", help_text("evmapy"))
+        keys = help_text("keys")
+        for words in ("Enter", "Esc, Backspace", "o, Tab"):
+            self.assertIn(words, keys)
+        for button in ("A/Enter", "B/Esc", "L1", "Start", "Y,"):
+            self.assertNotIn(button, keys)
+        muxterm = help_text("muxterm")
+        for words in ("Start, Enter", "B, Esc, Backspace", "Keyboard on or off",
+                      "Close the terminal"):
+            self.assertIn(words, muxterm)
+        self.assertNotIn("Start+Select", muxterm)
+        miyoo = help_text("miyoo", "systems")
+        for words in ("Start, Enter", "A, Space, Right/Left", "R2, Esc, Backspace",
+                      "L2, Tab, o", "Sends no key here"):
+            self.assertIn(words, miyoo)
+        # The both-names form is the one it was.
+        self.assertEqual(help_text("both"), (GOLDEN / "help-80x24.txt").read_text().rstrip("\n"))
+
+    def test_a_miyoo_a_chooses_and_ticks(self):
+        """A is Space on a Miyoo: it chooses where Enter does, ticks where X
+        would, and L1 and R1 (E and T) page."""
+        state = checked_state()
+        state.pad = "miyoo"
+        self.assertEqual(press(state, " "), [("run", "install")])
+        state = checked_state()
+        state.pad = "miyoo"
+        state.stack.append("systems")
+        rows = install.tui_rows(state)
+        first = next(i for i, row in enumerate(rows) if row.action == "system")
+        state.focus["systems"] = first
+        before = set(state.ticked)
+        press(state, " ")
+        self.assertNotEqual(state.ticked, before)
+        state.focus["systems"] = next(i for i, row in enumerate(rows) if row.action == "all")
+        press(state, " ")
+        self.assertEqual(state.ticked, {row["system"] for row in state.systems})
+        state.focus["systems"] = first
+        press(state, "t")
+        self.assertGreater(state.focus["systems"], first)
+        press(state, "e")
+        self.assertEqual(state.focus["systems"], 0)
+        # In a text field the letters are letters.
+        state.editing = "systems"
+        press(state, "t")
+        self.assertEqual(state.filters["systems"], "t")
+
+    def test_space_stays_x_on_the_other_routes(self):
+        for route in ("both", "keys", "gptokeyb", "evmapy", "muxterm"):
+            with self.subTest(route=route):
+                state = checked_state()
+                state.pad = route
+                self.assertEqual(press(state, " "), [("run", "confirm")])
 
 
 class Rendering(unittest.TestCase):
@@ -1234,8 +1418,13 @@ class CleanupSurvivesABrokenTerminal(unittest.TestCase):
         self.addCleanup(os.close, slave)
         fcntl.ioctl(slave, termios.TIOCSWINSZ, struct.pack("HHHH", 24, 80, 0, 0))
         before = termios.tcgetattr(slave)
-        handlers = {n: signal.getsignal(n) for n in (signal.SIGINT, signal.SIGTERM)}
-        tty = self.Tty(slave)
+        handlers = {n: signal.getsignal(n) for n in (signal.SIGINT, signal.SIGTERM,
+                                                     signal.SIGHUP)}
+        # Keys come in on the terminal itself, the screen goes out on a
+        # descriptor of its own, as fd 0 and fd 1 are.
+        tty, screen_fd = self.Tty(slave), os.dup(slave)
+        self.addCleanup(os.close, screen_fd)
+        out = self.Tty(screen_fd)
         real_draw = install._TuiTerminal.draw
 
         def breaking_draw(terminal, lines, cols):
@@ -1251,11 +1440,14 @@ class CleanupSurvivesABrokenTerminal(unittest.TestCase):
                 mock.patch.object(install, "tui_start", return_value=(fresh_state(), [])), \
                 mock.patch.object(install, "_open_local_sources"), \
                 mock.patch.object(install, "detect_os", return_value="linux"), \
-                mock.patch.object(sys, "stdin", tty), mock.patch.object(sys, "stdout", tty), \
-                mock.patch.object(sys, "stderr", tty):
+                mock.patch.object(sys, "stdin", tty), mock.patch.object(sys, "stdout", out), \
+                mock.patch.object(sys, "stderr", out):
             code = install.run_tui(_args())
-            self.assertIs(sys.stdout, tty)
+            self.assertIs(sys.stdout, out)
         self.assertEqual(code, 1)
+        # The farewell found no terminal: what still flushes at exit goes to
+        # the null device, and the exit code stays the one returned.
+        self.assertEqual(os.fstat(screen_fd).st_rdev, os.stat(os.devnull).st_rdev)
         # The crash keeps its log, marked kept, and nothing else of the run.
         self.assertEqual(sorted(path.name for path in work.iterdir()),
                          ["error.log", "kept", "owner"])
@@ -1607,6 +1799,50 @@ class WorkFolders(unittest.TestCase):
     def test_a_stop_leaves_nothing(self):
         work, out = self.run_to(130)
         self.assertFalse(work.exists())
+
+    def test_a_stop_while_it_starts_ends_on_the_farewell(self):
+        """Start+Select during the detection: the signal is the interface's,
+        never the default action that ended Python without a word."""
+        import signal
+
+        for number in (signal.SIGTERM, signal.SIGHUP):
+            with self.subTest(signal=number):
+                heard = []
+
+                def recorder(signum, _frame, heard=heard):
+                    heard.append(signum)
+
+                previous = signal.signal(number, recorder)
+                self.addCleanup(signal.signal, number, previous)
+                interrupt = signal.getsignal(signal.SIGINT)
+
+                def starting(*_args, **_kwargs):
+                    os.kill(os.getpid(), number)
+                    return fresh_state(), [("fetch", "retroarch")]
+
+                entered = []
+                WorkFolders.Terminal.state_to = lambda _t: None
+                out = io.StringIO()
+                work = Path(tempfile.mkdtemp(dir=REPO_ROOT / "tmp"))
+                self.addCleanup(shutil.rmtree, work, True)
+                with mock.patch.object(install, "_TuiTerminal", self.Terminal), \
+                        mock.patch.object(install.tempfile, "mkdtemp", return_value=str(work)), \
+                        mock.patch.object(self.Terminal, "enter",
+                                          lambda _t: entered.append(True)), \
+                        mock.patch.object(install, "tui_start", side_effect=starting), \
+                        mock.patch.object(install, "_open_local_sources"), \
+                        mock.patch.object(install, "_tui_fetch") as fetch, \
+                        mock.patch.object(install, "detect_os", return_value="linux"), \
+                        mock.patch.object(sys, "stdout", out), \
+                        mock.patch.object(sys, "stderr", out):
+                    code = install.run_tui(_args())
+                self.assertEqual(code, 128 + number)
+                self.assertEqual(heard, [])
+                self.assertEqual(entered, [])
+                fetch.assert_not_called()
+                self.assertEqual(out.getvalue(), "RetroBIOS: stopped. Nothing was installed.\n")
+                self.assertIs(signal.getsignal(number), recorder)
+                self.assertIs(signal.getsignal(signal.SIGINT), interrupt)
 
 
 def found(dest: str, folder: str, reason: str = "") -> dict:
@@ -2402,6 +2638,11 @@ class EndToEnd(unittest.TestCase):
         self.env = {**repo.env(), "HOME": str(home), "TERM": "xterm",
                     "RETROBIOS_OS": "linux", "XDG_CONFIG_HOME": str(home / ".config")}
         self.env.pop("NO_COLOR", None)
+        # Whatever the shell running the tests has, the input is not known:
+        # the bar names both the button and the key. Each test names its own.
+        for name in ("DISPLAY", "WAYLAND_DISPLAY", "SSH_CONNECTION", "SSH_TTY",
+                     install.TUI_PAD_ENV, *install._STEAM_MARKERS):
+            self.env.pop(name, None)
         return repo
 
     def start(self, *args: str, cols: int = 80, rows: int = 24) -> Pty:
@@ -2591,6 +2832,49 @@ class EndToEnd(unittest.TestCase):
         self.assertIn(b"\x1b[?1049h", term.raw[mark:])
         term.send("q")
         self.assertEqual(term.close(), 130)
+
+    def test_closing_the_window_ends_with_its_signal(self):
+        """The terminal gone, the farewell has nowhere to go: the code is
+        129 (SIGHUP), not 120 from the flush failing at exit."""
+        self.repo()
+        for screen_name, keys_first in (("Where do you play?", ()),
+                                        ("files to download", ("\r",))):
+            with self.subTest(screen=screen_name):
+                term = self.start()
+                term.wait("Where do you play?")
+                term.send(*keys_first)
+                term.wait(screen_name)
+                os.close(term.fd)
+                end = time.monotonic() + 20
+                status = None
+                while time.monotonic() < end:
+                    pid, status = os.waitpid(term.pid, os.WNOHANG)
+                    if pid:
+                        break
+                    time.sleep(0.05)
+                else:
+                    os.kill(term.pid, 9)
+                    self.fail("still running once its window closed")
+                term.status = os.WEXITSTATUS(status)
+                self.assertTrue(os.WIFEXITED(status))
+                self.assertEqual(term.status, 129)
+
+    def test_a_desktop_names_its_keys_and_a_pad_its_buttons(self):
+        self.repo()
+        for env, bar in (({"DISPLAY": ":0"}, "Enter Continue  Esc Quit  ? Help"),
+                         ({"RETROBIOS_PAD": "gptokeyb", "DISPLAY": ":0"},
+                          "A Continue  B Quit"),
+                         ({"RETROBIOS_PAD": "muxterm"}, "Start Continue  B Quit")):
+            with self.subTest(env=env):
+                self.env.update(env)
+                term = self.start(cols=40, rows=12)
+                term.wait("Where do you play?")
+                screen = term.wait(bar)
+                self.assertEqual(screen.splitlines()[-1].strip(), bar)
+                term.send("q")
+                self.assertEqual(term.close(), 130)
+                for name in env:
+                    self.env.pop(name)
 
     def test_resize_redraws(self):
         self.repo()

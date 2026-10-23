@@ -1,0 +1,1188 @@
+=== setup 40x12
+ RetroBIOS: Where do you play?
+
+ Found on this machine:
+
+ > RetroArch
+   KNULLI (Batocera files)
+   Another setup or folder
+
+ BIOS folder:
+   /home/user/.config/retroarch/system
+ ES-DE found: its BIOS files go to each
+ A Continue  R2 Quit
+=== setup 40x15
+ RetroBIOS: Where do you play?
+
+ Found on this machine:
+
+ > RetroArch
+   KNULLI (Batocera files)
+   Another setup or folder
+
+ BIOS folder:
+   /home/user/.config/retroarch/system
+ ES-DE found: its BIOS files go to each
+   emulator, not to ES-DE itself.
+
+
+ A Continue  R2 Quit
+=== setup 80x24
+ RetroBIOS: Where do you play?
+
+ Found on this machine:
+
+ > RetroArch
+   KNULLI (Batocera files)
+   Another setup or folder
+
+ BIOS folder: /home/user/.config/retroarch/system
+ ES-DE found: its BIOS files go to each emulator, not to ES-DE itself.
+
+
+
+
+
+
+
+
+
+
+
+
+
+ A Continue  R2 Quit
+=== platforms 40x12
+ RetroBIOS: Which setup?
+
+   Filter (with a keyboard)
+ > RetroArch        muOS, JE...firmware
+   Batocera
+   Recalbox
+   RetroBat
+   EmuDeck
+   Lakka
+   RetroDECK
+ 1-7 of 18
+ A Choose  R2 Back
+=== platforms 40x15
+ RetroBIOS: Which setup?
+
+   Filter (with a keyboard)
+ > RetroArch        muOS, JE...firmware
+   Batocera
+   Recalbox
+   RetroBat
+   EmuDeck
+   Lakka
+   RetroDECK
+   ROCKNIX
+   RomM
+   BizHawk
+ 1-10 of 18
+ A Choose  R2 Back
+=== platforms 80x24
+ RetroBIOS: Which setup?
+
+ Choose the setup that will use the BIOS files.
+
+   Filter (with a keyboard)
+ > RetroArch                            muOS, JELOS, KOLOS...nic stock firmware
+   Batocera
+   Recalbox
+   RetroBat
+   EmuDeck
+   Lakka
+   RetroDECK
+   ROCKNIX
+   RomM
+   BizHawk
+   MiSTer FPGA
+   RetroPie
+   AmberELEC                                                           PAN4ELEC
+   EmuELEC
+   KNULLI
+   MinUI
+   NextUI
+   MyMinUI
+ A Choose  R2 Back
+=== folder 40x12
+ RetroBIOS: Which folder?
+
+ RetroArch reads its BIOS files from:
+ /home/user/.config/retroarch/system
+
+ > Use this folder
+   Browse for a folder
+   Type a path
+
+
+
+ A Use this folder  R2 Back
+=== folder 40x15
+ RetroBIOS: Which folder?
+
+ RetroArch reads its BIOS files from:
+ /home/user/.config/retroarch/system
+
+ > Use this folder
+   Browse for a folder
+   Type a path
+
+
+
+
+
+
+ A Use this folder  R2 Back
+=== folder 80x24
+ RetroBIOS: Which folder?
+
+ RetroArch reads its BIOS files from:
+ /home/user/.config/retroarch/system
+
+ > Use this folder
+   Browse for a folder
+   Type a path
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ A Use this folder  R2 Back
+=== folder-card 40x12
+ RetroBIOS: Where is the SD card?
+
+ NextUI keeps its BIOS files on its SD
+   card. Choose the card's root folder,
+   the one holding .system.
+
+ > Browse for a folder
+   Type a path
+
+
+
+ A Browse  R2 Back
+=== folder-card 40x15
+ RetroBIOS: Where is the SD card?
+
+ NextUI keeps its BIOS files on its SD
+   card. Choose the card's root folder,
+   the one holding .system.
+
+ > Browse for a folder
+   Type a path
+
+
+
+
+
+
+ A Browse  R2 Back
+=== folder-card 80x24
+ RetroBIOS: Where is the SD card?
+
+ NextUI keeps its BIOS files on its SD card. Choose the card's root folder, the
+   one holding .system.
+
+ > Browse for a folder
+   Type a path
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ A Browse  R2 Back
+=== browse 40x12
+ RetroBIOS: Browse for a folder
+
+ /home/user/.config/retroarch
+
+ > Use this folder
+   ..
+   /media/user/SDCARD (NextUI card)
+   cores/
+   system/
+
+
+ A Use this folder  R2 Back
+=== browse 40x15
+ RetroBIOS: Browse for a folder
+
+ /home/user/.config/retroarch
+
+ > Use this folder
+   ..
+   /media/user/SDCARD (NextUI card)
+   cores/
+   system/
+
+
+
+
+
+ A Use this folder  R2 Back
+=== browse 80x24
+ RetroBIOS: Browse for a folder
+
+ /home/user/.config/retroarch
+
+ > Use this folder
+   ..
+   /media/user/SDCARD (NextUI card)
+   cores/
+   system/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ A Use this folder  R2 Back
+=== path 40x12
+ RetroBIOS: Type a path
+
+ The folder for RetroArch:
+ > ~/bios_
+
+ Ctrl-U clears. Quotes are removed, ~
+   and variables are expanded.
+
+
+
+
+ Start Use this folder
+=== path 40x15
+ RetroBIOS: Type a path
+
+ The folder for RetroArch:
+ > ~/bios_
+
+ Ctrl-U clears. Quotes are removed, ~
+   and variables are expanded.
+
+
+
+
+
+
+
+ Start Use this folder
+=== path 80x24
+ RetroBIOS: Type a path
+
+ The folder for RetroArch:
+ > ~/bios_
+
+ Ctrl-U clears. Quotes are removed, ~ and variables are expanded.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ Start Use this folder
+=== create 40x12
+ RetroBIOS: Create the folder?
+
+ /home/user/bios/new does not exist.
+ The nearest folder that does:
+   /home/user
+
+ > Create it and continue
+   Choose another folder
+
+
+
+ A Create  R2 Back
+=== create 40x15
+ RetroBIOS: Create the folder?
+
+ /home/user/bios/new does not exist.
+ The nearest folder that does:
+   /home/user
+
+ > Create it and continue
+   Choose another folder
+
+
+
+
+
+
+ A Create  R2 Back
+=== create 80x24
+ RetroBIOS: Create the folder?
+
+ /home/user/bios/new does not exist.
+ The nearest folder that does: /home/user
+
+ > Create it and continue
+   Choose another folder
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ A Create  R2 Back
+=== checking 40x12
+ RetroBIOS: Checking
+
+ RetroArch: ~/.config/retroarch/system
+
+ File list: 5 files.
+ Reading the files already in the
+   folder... 0:04
+
+
+
+
+ R2 Back
+=== checking 40x15
+ RetroBIOS: Checking
+
+ RetroArch: ~/.config/retroarch/system
+
+ File list: 5 files.
+ Reading the files already in the
+   folder... 0:04
+
+
+
+
+
+
+
+ R2 Back
+=== checking 80x24
+ RetroBIOS: Checking
+
+ RetroArch: ~/.config/retroarch/system
+
+ File list: 5 files.
+ Reading the files already in the folder... 0:04
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ R2 Back
+=== plan 40x12
+ RetroBIOS: RetroArch
+
+ 4 files to download, 1.0 MB
+ BIOS folder: ~/.co.../retroarch/system
+ 1 in place, 3 missing, 1 wrong copy
+ Free space: 50.0 GB
+ > Install
+   Choose systems
+   Copy from your old card or a folder
+   Options
+   Quit
+ A Install  R2 Back  L2 Options
+=== plan 40x15
+ RetroBIOS: RetroArch
+
+ 4 files to download, 1.0 MB
+ BIOS folder: ~/.co.../retroarch/system
+ 1 in place, 3 missing, 1 wrong copy
+ Free space: 50.0 GB
+ They are replaced, and the old copies
+   are kept in a backup folder.
+
+ > Install
+   Choose systems
+   Copy from your old card or a folder
+   Options
+   Quit
+ A Install  R2 Back  L2 Options
+=== plan 80x24
+ RetroBIOS: RetroArch
+
+ 4 files to download, 1.0 MB
+ BIOS folder: ~/.config/retroarch/system
+ 1 in place, 3 missing, 1 wrong copy
+ Free space: 50.0 GB
+ They are replaced, and the old copies are kept in a backup folder.
+
+ > Install
+   Choose systems
+   Copy the BIOS files from your old card or a folder
+   Options
+   Quit
+
+
+
+
+
+
+
+
+
+
+ A Install  R2 Back  L2 Options
+=== plan-in-place 40x12
+ RetroBIOS: RetroArch
+
+ Everything is in place
+ BIOS folder: ~/.co.../retroarch/system
+ 5 in place, 0 missing, 0 wrong copies
+ Free space: 50.0 GB
+
+ > Close
+   Options
+
+
+ A Close  R2 Back  L2 Options
+=== plan-in-place 40x15
+ RetroBIOS: RetroArch
+
+ Everything is in place
+ BIOS folder: ~/.co.../retroarch/system
+ 5 in place, 0 missing, 0 wrong copies
+ Free space: 50.0 GB
+
+ > Close
+   Options
+
+
+
+
+
+ A Close  R2 Back  L2 Options
+=== plan-in-place 80x24
+ RetroBIOS: RetroArch
+
+ Everything is in place
+ BIOS folder: ~/.config/retroarch/system
+ 5 in place, 0 missing, 0 wrong copies
+ Free space: 50.0 GB
+
+ > Close
+   Options
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ A Close  R2 Back  L2 Options
+=== systems 40x12
+ RetroBIOS: Choose systems
+
+   All
+   None
+   Filter (with a keyboard)
+ > [x] nintendo-gba (gba)       16.0 KB
+   [x] sony-playstation          1.0 MB
+   [ ] nintendo-famicom-disk   in place
+
+
+ 2 of 3 systems: 4 files, 1.0 MB
+ Start Continue  R2 Back  A Tick
+=== systems 40x15
+ RetroBIOS: Choose systems
+
+   All
+   None
+   Filter (with a keyboard)
+ > [x] nintendo-gba (gba)       16.0 KB
+   [x] sony-playstation          1.0 MB
+   [ ] nintendo-famicom-disk   in place
+
+
+
+
+
+ 2 of 3 systems: 4 files, 1.0 MB
+ Start Continue  R2 Back  A Tick
+=== systems 80x24
+ RetroBIOS: Choose systems
+
+   All
+   None
+   Filter (with a keyboard)
+ > [x] nintendo-gba (gba)                                       1 file, 16.0 KB
+   [x] sony-playstation                                         3 files, 1.0 MB
+   [ ] nintendo-famicom-disk (ファミコン)                              in place
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 2 of 3 systems: 4 files, 1.0 MB
+ Start Continue  R2 Back  A Tick
+=== options 40x12
+ RetroBIOS: Options
+
+ > Preferred regions: North America, Ja
+   Game data: kept
+   Installed cores only: no (1 found)
+   Cores: all
+   Parallel downloads: 8
+   BIOS folder: ~/.config...ch/system
+   Copy from: none
+   Preview the file list
+   Show the command line
+ A Open  R2 Back  Left/Right Set
+=== options 40x15
+ RetroBIOS: Options
+
+ > Preferred regions: North America, Ja
+   Game data: kept
+   Installed cores only: no (1 found)
+   Cores: all
+   Parallel downloads: 8
+   BIOS folder: ~/.config...ch/system
+   Copy from: none
+   Preview the file list
+   Show the command line
+
+ Sets --region
+
+ A Open  R2 Back  Left/Right Set
+=== options 80x24
+ RetroBIOS: Options
+
+ Each row is an option of the command line, named on the right.
+
+ > Preferred regions: North America, Japan                             --region
+   Game data: kept                                               --no-game-data
+   Installed cores only: no (1 found)                         --installed-cores
+   Cores: all                                                            --core
+   Parallel downloads: 8                                                 --jobs
+   BIOS folder: ~/.config/retroarch/system                               --dest
+   Copy from: none                                                       --from
+   Preview the file list                                              --dry-run
+   Show the command line
+
+
+
+
+
+
+
+
+
+
+ A Open  R2 Back  Left/Right Set
+=== regions 40x12
+ RetroBIOS: Preferred regions
+
+ Tick the regions to keep, best first.
+   Where a system has one BIOS per
+   region, the best one found is
+   installed.
+
+ > [1] North America
+   [ ] Japan
+
+
+ A Tick  R2 Done  Left/Right Order
+=== regions 40x15
+ RetroBIOS: Preferred regions
+
+ Tick the regions to keep, best first.
+   Where a system has one BIOS per
+   region, the best one found is
+   installed.
+
+ > [1] North America
+   [ ] Japan
+
+
+
+
+
+ A Tick  R2 Done  Left/Right Order
+=== regions 80x24
+ RetroBIOS: Preferred regions
+
+ Tick the regions to keep, best first. Where a system has one BIOS per region,
+   the best one found is installed.
+
+ > [1] North America
+   [ ] Japan
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ A Tick  R2 Done  Left/Right Order
+=== cores 40x12
+ RetroBIOS: Cores
+
+ Tick the cores you use. With none
+   ticked, every core's files are kept.
+
+ > Filter (with a keyboard)
+   [ ] mesen
+   [x] pcsx_rearmed
+
+
+
+ Start Filter  R2 Back  A Tick
+=== cores 40x15
+ RetroBIOS: Cores
+
+ Tick the cores you use. With none
+   ticked, every core's files are kept.
+
+ > Filter (with a keyboard)
+   [ ] mesen
+   [x] pcsx_rearmed
+
+
+
+
+
+
+ Start Filter  R2 Back  A Tick
+=== cores 80x24
+ RetroBIOS: Cores
+
+ Tick the cores you use. With none ticked, every core's files are kept.
+
+ > Filter (with a keyboard)
+   [ ] mesen
+   [x] pcsx_rearmed
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ Start Filter  R2 Back  A Tick
+=== preview 40x12
+ RetroBIOS: Preview
+
+ 4 files to download, 1.0 MB. Nothing
+   is written.
+
+ missing     512.0 KB  scph5500.bin
+ wrong copy  512.0 KB  scph5501.bin
+ missing          4 B  pcsx/extra.bin
+ missing      16.0 KB  gba_bios.bin
+
+
+ A Back  Up/Down Scroll
+=== preview 40x15
+ RetroBIOS: Preview
+
+ 4 files to download, 1.0 MB. Nothing
+   is written.
+
+ missing     512.0 KB  scph5500.bin
+ wrong copy  512.0 KB  scph5501.bin
+ missing          4 B  pcsx/extra.bin
+ missing      16.0 KB  gba_bios.bin
+
+
+
+
+
+ A Back  Up/Down Scroll
+=== preview 80x24
+ RetroBIOS: Preview
+
+ 4 files to download, 1.0 MB. Nothing is written.
+
+ missing     512.0 KB  scph5500.bin
+ wrong copy  512.0 KB  scph5501.bin
+ missing          4 B  pcsx/extra.bin
+ missing      16.0 KB  gba_bios.bin
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ A Back  Up/Down Scroll
+=== command 40x12
+ RetroBIOS: Command line
+
+ The same choice without questions:
+
+ python3 install.py --platform
+   retroarch --dest
+   /home/user/.config/retroarch/system
+   --system nintendo-gba
+
+
+
+ A Back
+=== command 40x15
+ RetroBIOS: Command line
+
+ The same choice without questions:
+
+ python3 install.py --platform
+   retroarch --dest
+   /home/user/.config/retroarch/system
+   --system nintendo-gba
+
+
+
+
+
+
+ A Back
+=== command 80x24
+ RetroBIOS: Command line
+
+ The same choice without questions:
+
+ python3 install.py --platform retroarch --dest
+   /home/user/.config/retroarch/system --system nintendo-gba
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ A Back
+=== confirm 40x12
+ RetroBIOS: Confirm
+
+ 1 file to download, 16.0 KB
+ BIOS folder: ~/.co.../retroarch/system
+ 0 in place, 1 missing, 0 wrong copies
+ Free space: 50.0 GB
+
+ > Install
+   Back
+
+
+ A Install  R2 Back
+=== confirm 40x15
+ RetroBIOS: Confirm
+
+ 1 file to download, 16.0 KB
+ BIOS folder: ~/.co.../retroarch/system
+ 0 in place, 1 missing, 0 wrong copies
+ Free space: 50.0 GB
+
+ > Install
+   Back
+
+
+
+
+
+ A Install  R2 Back
+=== confirm 80x24
+ RetroBIOS: Confirm
+
+ 1 file to download, 16.0 KB
+ BIOS folder: ~/.config/retroarch/system
+ 0 in place, 1 missing, 0 wrong copies
+ Free space: 50.0 GB
+
+ > Install
+   Back
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ A Install  R2 Back
+=== installing 40x12
+ RetroBIOS: Installing
+
+ [###############----------------]  50%
+ 528.0 KB of 1.0 MB
+ 128.9 KB/s, 0:04 left
+ 2 of 4 files
+ R2 stops. What is done stays done.
+
+ FAILED scph5500.bin (HTTP 404)
+ ok     gba_bios.bin
+
+ R2 Stop
+=== installing 40x15
+ RetroBIOS: Installing
+
+ [###############----------------]  50%
+ 528.0 KB of 1.0 MB
+ 128.9 KB/s, 0:04 left
+ 2 of 4 files
+ R2 stops. What is done stays done.
+
+ FAILED scph5500.bin (HTTP 404)
+ ok     gba_bios.bin
+
+
+
+
+ R2 Stop
+=== installing 80x24
+ RetroBIOS: Installing
+
+ [####################################-----------------------------------]  50%
+ 528.0 KB of 1.0 MB
+ 128.9 KB/s, 0:04 left
+ 2 of 4 files
+ R2 stops. What is done stays done.
+
+ FAILED scph5500.bin (HTTP 404)
+ ok     gba_bios.bin
+
+
+
+
+
+
+
+
+
+
+
+
+
+ R2 Stop
+=== result 40x12
+ RetroBIOS: Finished with errors
+
+ 3 installed, 1 failed.
+ BIOS folder:
+   /home/user/.config/retroarch/system
+   failed: scph5500.bin (HTTP 404)
+ The files it replaced are kept in
+   /home/user/.config/retroarch/
+   retrobios-backup/2026-10-23_1200
+ To put them back: python3 install.py
+ 1-4 of 8
+ A Exit  Up/Down Scroll
+=== result 40x15
+ RetroBIOS: Finished with errors
+
+ 3 installed, 1 failed.
+ BIOS folder:
+   /home/user/.config/retroarch/system
+   failed: scph5500.bin (HTTP 404)
+ The files it replaced are kept in
+   /home/user/.config/retroarch/
+   retrobios-backup/2026-10-23_1200
+ To put them back: python3 install.py
+   --restore
+   /home/user/.config/retroarch/
+   retrobios-backup/2026-10-23_1200
+ 1-5 of 8
+ A Exit  Up/Down Scroll
+=== result 80x24
+ RetroBIOS: Finished with errors
+
+ 3 installed, 1 failed.
+ BIOS folder: /home/user/.config/retroarch/system
+   failed: scph5500.bin (HTTP 404)
+ The files it replaced are kept in
+   /home/user/.config/retroarch/retrobios-backup/2026-10-23_1200
+ To put them back: python3 install.py --restore
+   /home/user/.config/retroarch/retrobios-backup/2026-10-23_1200
+ Same choice without questions:
+   python3 install.py --platform retroarch --dest
+     /home/user/.config/retroarch/system
+ Details: /tmp/retrobios-x/install.log
+
+
+
+
+
+
+
+
+
+
+ A Exit  Up/Down Scroll
+=== error 40x12
+ RetroBIOS: Something went wrong
+
+   Could not fetch the file list for
+     retroarch after 3 attempts: [Errno
+     -2] Name or service not known
+   Address:
+     https://raw.githubusercontent.com/
+     Abdess/retrobios/main/install/
+     retroarch.json
+ > Choose another setup or folder
+   Quit
+ A Back  R2 Back
+=== error 40x15
+ RetroBIOS: Something went wrong
+
+   Could not fetch the file list for
+     retroarch after 3 attempts: [Errno
+     -2] Name or service not known
+   Address:
+     https://raw.githubusercontent.com/
+     Abdess/retrobios/main/install/
+     retroarch.json
+
+ > Choose another setup or folder
+   Quit
+
+
+ A Back  R2 Back
+=== error 80x24
+ RetroBIOS: Something went wrong
+
+   Could not fetch the file list for retroarch after 3 attempts: [Errno -2]
+     Name or service not known
+   Address: https://raw.githubusercontent.com/Abdess/retrobios/main/install/
+     retroarch.json
+
+ > Choose another setup or folder
+   Quit
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ A Back  R2 Back
+=== quit 40x12
+ RetroBIOS: Quit?
+
+ Quit without installing? Nothing was
+   written.
+
+ > Quit
+   Stay
+
+
+
+
+ A Quit  R2 Stay
+=== quit 40x15
+ RetroBIOS: Quit?
+
+ Quit without installing? Nothing was
+   written.
+
+ > Quit
+   Stay
+
+
+
+
+
+
+
+ A Quit  R2 Stay
+=== quit 80x24
+ RetroBIOS: Quit?
+
+ Quit without installing? Nothing was written.
+
+ > Quit
+   Stay
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ A Quit  R2 Stay
+=== help 40x12
+ RetroBIOS: Keys
+
+ D-pad, Up/Down      Move
+ A, Start, Enter     Install
+ L2, Tab, o          Options
+ R2, Esc, Backspace  Back
+ q, Ctrl-C           Quit
+ B                   Sends no key here
+ ?, F1               This help
+
+
+ Any key closes this help
+=== help 40x15
+ RetroBIOS: Keys
+
+ D-pad, Up/Down      Move
+ A, Start, Enter     Install
+ L2, Tab, o          Options
+ R2, Esc, Backspace  Back
+ q, Ctrl-C           Quit
+ B                   Sends no key here
+ ?, F1               This help
+
+ BIOS folder:
+   /home/user/.config/retroarch/system
+
+
+ Any key closes this help
+=== help 80x24
+ RetroBIOS: Keys
+
+ D-pad, Up/Down      Move
+ A, Start, Enter     Install
+ L2, Tab, o          Options
+ R2, Esc, Backspace  Back
+ q, Ctrl-C           Quit
+ B                   Sends no key here
+ ?, F1               This help
+
+ BIOS folder: /home/user/.config/retroarch/system
+
+
+
+
+
+
+
+
+
+
+
+
+ Any key closes this help
