@@ -1087,6 +1087,9 @@ A launcher with no mapper at all (a keyboard) leaves it unset.
 A launcher can also set `RETROBIOS_IDLE_EXIT` to a number of seconds: when
 no button has reached the interface since it opened, and nothing has run for
 that long, it closes with `No button pressed, closing.` and exit status 0.
+Closed on an error or a result screen, it prints that screen's words after
+the line and exits with its code (1 for `No internet: offline mode`), so
+the launcher can tell an error from a close with nothing to report.
 The time counts from the end of the last check, so a launcher that names the
 platform, whose interface moves on to the plan by itself, closes the same way.
 A mapper that never opened the pad would otherwise hold the device on that
@@ -1289,7 +1292,7 @@ other schemas under `api/v1/schemas/`.
 |------|------|------|
 | `start` | `schema`, `installer`, `mode` | First line. `schema` is 1, `installer` the identity `--version` prints, `mode` one of `install`, `check`, `dry-run`, `list` |
 | `detect` | `os`, `os_name`, `platforms` | Once the platforms are known. `os_name` comes from `/etc/os-release`. `platforms` lists `{platform, name, bios_dir}`, and is empty when nothing supported was found |
-| `error` | `stage`, `reason`, `platform`, `message` | The file list could not be read (`stage` is `manifest`): `reason` is `network`, `not_found` or `invalid`, `clock` when the server's certificate was refused and the system clock reads a date before the installer was written, `no_ca` when the machine holds no list of trusted certificates (`SSL_CERT_FILE` names one), or `offline` when `--offline` forbids the request. A folder named with `--from` cannot be read (`stage` is `from`, `reason` `not_found`, `not_a_folder` for a file that is no ZIP, `unreadable`, or `system` for the root of the system, `/proc`, `/sys` or `/dev`). `message` says it in words |
+| `error` | `stage`, `reason`, `platform`, `message` | The file list could not be read (`stage` is `manifest`): `reason` is `network`, `not_found` or `invalid`, `clock` when the server's certificate was refused and the system clock reads a date before the installer was written, `no_ca` when the machine holds no list of trusted certificates (`SSL_CERT_FILE` names one), or `offline` when `--offline` forbids the request. A folder named with `--from` cannot be read (`stage` is `from`, `reason` `not_found`, `not_a_folder` for a file that is no ZIP, `unreadable`, or `system` for the root of the system, `/proc`, `/sys` or `/dev`). The BIOS folder sits under a folder this user cannot open (`stage` is `dest`, `reason` `unreadable`), and the run ends with code 1 before anything is written. Two systems are detected on one machine and no `--dest` names the folder (`stage` is `detect`, `reason` `conflict`). `message` says it in words |
 | `scanned` | `folder`, `files`, `truncated`, `other_drives` | Each folder named with `--from`, once read and before `detect`. `files` counts the files found, `truncated` is true when the search stopped at 200,000 of them, and `other_drives` lists the folders below it on another drive, which were not entered |
 | `checking` | `files_done`, `files_total` | While the files already in the folder are read and hashed, at most every half second and once at the end. `files_total` counts the files found in place |
 | `file` | `platform`, `dest`, `systems`, `size`, `state` | Each file of the list after the check. `state` is `present` (hash verified), `wrong_hash` or `missing` |
@@ -1341,7 +1344,7 @@ RetroArch folder that holds only `scph5501.bin`, in the order written:
 | `SSL_CERT_FILE`, `SSL_CERT_DIR` | The trusted certificates to check servers with, for a Python that finds none of its own |
 | `RETROBIOS_PLAIN`, `ACCESSIBLE` | Set to anything but `0`: the questions come line by line, as with `--plain`, instead of the full-screen interface |
 | `RETROBIOS_PAD` | The buttons a handheld launcher's mapper sends to the full screen (`gptokeyb`, `gptokeyb_muxterm`, `muxterm`, `evmapy`, `miyoo`), so its hints name them. See [On a handheld](#on-a-handheld-the-retrobios-port) |
-| `RETROBIOS_IDLE_EXIT` | Seconds the full screen waits for a first button, counted while nothing runs. With none pressed, it closes with exit status 0 |
+| `RETROBIOS_IDLE_EXIT` | Seconds the full screen waits for a first button, counted while nothing runs. With none pressed, it closes with exit status 0, or with the code of the error or result screen it closed on |
 | `HTTPS_PROXY`, `NO_PROXY` | Honoured for every download through the standard library's default proxy handling: one names the proxy, the other the hosts to reach directly |
 
 ## When something goes wrong
@@ -1381,6 +1384,12 @@ The installer needs to write to the BIOS folder. On Linux and macOS, check who
 owns it (`ls -la`). On Batocera, Recalbox and ROCKNIX the folder belongs to
 root, so the same command with `sudo` in front of it succeeds. On Windows, run
 PowerShell as Administrator only for a protected folder.
+
+When a folder above the BIOS folder cannot be opened at all (`/root/...` run
+without `sudo`, a card mounted for another user), the run stops before it
+starts: `this user cannot open /root/.config (Permission denied), which holds
+/root/.config/retroarch/system`. The full-screen interface says the same on
+the folder screen and asks for another folder.
 
 A file system mounted read-only refuses root too, so the installer does not
 suggest `sudo` for it. Linux remounts a card or drive read-only after an error,

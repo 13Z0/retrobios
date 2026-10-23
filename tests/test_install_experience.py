@@ -565,6 +565,35 @@ class AFolderThisUserCannotEnter(unittest.TestCase):
                 os.chmod(locked, 0o755)
         self.assertEqual(state, "wrong_hash")
 
+    @unittest.skipIf(os.name == "nt" or os.geteuid() == 0,
+                     "a folder without search permission is POSIX")
+    def test_a_bios_folder_under_it_is_refused_in_words(self):
+        """--dest /root/.config/retroarch/system without sudo: _missing_dest
+        ended --check and the install on a PermissionError traceback."""
+        with FakeRepository() as repo:
+            lock = repo.root / "lock"
+            lock.mkdir()
+            repo.dest = lock / "system"
+            os.chmod(lock, 0o000)
+            try:
+                runs = {"check": repo.run("--check"), "install": repo.run(),
+                        "events": repo.run("--events")}
+            finally:
+                os.chmod(lock, 0o755)
+            self.assertFalse(repo.dest.exists())
+        for name, proc in runs.items():
+            with self.subTest(run=name):
+                self.assertNotIn("Traceback", proc.stderr)
+                self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
+                self.assertIn(f"this user cannot open {lock} (Permission denied)",
+                              proc.stderr)
+                self.assertIn("choose another folder", proc.stderr)
+        events = [json.loads(line) for line in runs["events"].stdout.splitlines()]
+        errors = [e for e in events if e["event"] == "error"]
+        self.assertEqual([(e["stage"], e["reason"]) for e in errors],
+                         [("dest", "unreadable")])
+        self.assertIn(str(lock), errors[0]["message"])
+
 
 class OutputToAFileAsksNothing(unittest.TestCase):
     """`install.py > log.txt` at a terminal: the menu went into the file
@@ -588,6 +617,40 @@ class OutputToAFileAsksNothing(unittest.TestCase):
         self.assertIn("nothing is asked", proc.stderr)
         self.assertNotIn("Enter) install everything", proc.stdout)
         self.assertEqual(len(installed), len(FakeRepository.PAYLOADS))
+
+    @unittest.skipIf(os.name == "nt", "a pseudo-terminal for stdin")
+    def test_a_pipe_is_named_a_pipe(self):
+        """`install.py | tee log.txt` was told its output went to a file."""
+        import pty
+
+        master, slave = pty.openpty()
+        self.addCleanup(os.close, master)
+        self.addCleanup(os.close, slave)
+        with FakeRepository() as repo:
+            piped = subprocess.run(
+                [*repo.command(), "--dry-run"], env=repo.env(), stdin=slave,
+                capture_output=True, text=True, timeout=60, check=False)
+            log = repo.root / "log.txt"
+            with open(log, "w", encoding="utf-8") as handle:
+                filed = subprocess.run(
+                    [*repo.command(), "--dry-run"], env=repo.env(), stdin=slave,
+                    stdout=handle, stderr=subprocess.PIPE, text=True, timeout=60,
+                    check=False)
+        self.assertIn("Output goes to a pipe, so nothing is asked", piped.stderr)
+        self.assertIn("run it without the pipe to answer", piped.stderr)
+        self.assertIn("Output goes to a file, so nothing is asked", filed.stderr)
+        self.assertIn("run it without the redirection to answer", filed.stderr)
+        for proc in (piped, filed):
+            self.assertIn("Add --no-input to say so", proc.stderr)
+
+    def test_the_kind_of_output(self):
+        self.assertEqual(install._output_kind(io.StringIO()), "")
+        read, write = os.pipe()
+        with open(read, "rb") as reader, open(write, "w") as writer:
+            self.assertEqual(install._output_kind(writer), "pipe")
+            del reader
+        with tempfile.TemporaryFile("w", dir=REPO_ROOT / "tmp") as handle:
+            self.assertEqual(install._output_kind(handle), "file")
 
 
 class _Tty(io.StringIO):

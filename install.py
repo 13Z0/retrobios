@@ -3993,13 +3993,42 @@ def _retroarch_config_for(bios_path: Path) -> tuple[Path, Path] | None:
     sent Azahar's keys.txt to a guessed folder where line mode read
     savefile_directory, and found no core where line mode found them.
     """
-    found = _RETROARCH_CONFIGS.get(bios_path)
+    found = _retroarch_config_at(bios_path)
     if found is not None or _CONFIGS_READ:
         return found
     _CONFIGS_READ.append(True)
     with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
         detect_platforms(_INVOCATION.os_type or detect_os())
-    return _RETROARCH_CONFIGS.get(bios_path)
+    return _retroarch_config_at(bios_path)
+
+
+def _folder_key(path: Path) -> str:
+    """The folder as the system names it: absolute, links followed, and
+    case folded where the system's default filesystem folds it."""
+    real = os.path.realpath(path)
+    return real.casefold() if sys.platform in ("win32", "darwin") else real
+
+
+def _retroarch_config_at(bios_path: Path) -> tuple[Path, Path] | None:
+    """The config detection read for bios_path, however the folder is
+    written: --dest relative, through a link, or in another case. The
+    configs are keyed by the folder as each retroarch.cfg writes it."""
+    found = _RETROARCH_CONFIGS.get(bios_path)
+    if found is not None or not _RETROARCH_CONFIGS:
+        return found
+    wanted = _folder_key(bios_path)
+    for system_dir, config in _RETROARCH_CONFIGS.items():
+        if _folder_key(system_dir) == wanted:
+            return config
+    # A drive whose filesystem folds case where the system's default does
+    # not (or the reverse): the filesystem answers for folders that exist.
+    for system_dir, config in _RETROARCH_CONFIGS.items():
+        try:
+            if os.path.samefile(system_dir, bios_path):
+                return config
+        except (OSError, ValueError):
+            continue
+    return None
 
 
 def save_directory_for(
@@ -4144,12 +4173,49 @@ def _exists(path: Path) -> bool:
         return False
 
 
+def _is_dir(path: Path) -> bool:
+    """Path.is_dir(), False where the place cannot be looked at."""
+    try:
+        return path.is_dir()
+    except OSError:
+        return False
+
+
 def _is_file(path: Path) -> bool:
     """Path.is_file(), False where the place cannot be looked at."""
     try:
         return path.is_file()
     except OSError:
         return False
+
+
+def closed_folder(path: Path) -> tuple[Path, str] | None:
+    """The folder above path this user cannot open, and why in words, or
+    None when path can be looked at, there or not.
+
+    A BIOS folder under /root run without sudo, or a card mounted at 0700
+    for another user: Path.exists() raised PermissionError before the
+    first line said where.
+    """
+    try:
+        path.exists()
+        return None
+    except OSError as exc:
+        failure = exc
+    probe = path.absolute()
+    for folder in (*reversed(probe.parents), probe):
+        try:
+            os.stat(folder)
+        except OSError as exc:
+            if exc.errno in (errno.ENOENT, errno.ENOTDIR):
+                return None
+            return folder.parent, exc.strerror or str(exc)
+    return probe, failure.strerror or str(failure)
+
+
+def closed_folder_words(dest: Path, closed: tuple[Path, str]) -> str:
+    folder, why = closed
+    return f"this user cannot open {folder} ({why}), which holds {dest}"
 
 
 def unreachable_words(exc: OSError) -> str:
@@ -8708,8 +8774,17 @@ def _missing_dest(dest: Path, ask: bool, named: str = "named with --dest") -> No
     parent, filled, and reported done in a folder no platform reads, and
     --check said only "0/7 present". One missing level is a BIOS folder not
     made yet and is created. Several make a path that may be mistyped:
-    at a terminal the run asks first, and the answer defaults to no.
+    at a terminal the run asks first, and the answer defaults to no. A
+    folder above it this user cannot open ends the run with its name.
     """
+    closed = closed_folder(dest)
+    if closed is not None:
+        message = closed_folder_words(dest, closed)
+        EVENTS.emit("error", stage="dest", reason="unreadable", platform="", message=message)
+        print(f"Error: {screen_text(message)}. Give this user access to it, run as "
+              f"its owner, or choose another folder than the one {named}.",
+              file=sys.stderr)
+        sys.exit(1)
     if dest.exists():
         return
     nearest = dest.absolute()
@@ -8948,6 +9023,18 @@ def _is_terminal(stream: TextIO) -> bool:
         return False
 
 
+def _output_kind(stream: TextIO) -> str:
+    """"pipe" or "file" for what stream writes to, "" when neither is known.
+    `| tee log.txt` shows every line, `> log.txt` none of them."""
+    try:
+        mode = os.fstat(stream.fileno()).st_mode
+    except (OSError, ValueError, AttributeError, io.UnsupportedOperation):
+        return ""
+    if stat.S_ISFIFO(mode) or stat.S_ISSOCK(mode):
+        return "pipe"
+    return "file" if stat.S_ISREG(mode) else ""
+
+
 def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
     """One run of the installer, once the options are read."""
     KEPT.reset()
@@ -8960,8 +9047,12 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
         # to a prompt nobody could see.
         interactive = False
         if not listing and not args.check:
-            print("Output goes to a file, so nothing is asked: the run goes on as "
-                  "with --no-input.", file=sys.stderr)
+            kind = _output_kind(real_stdout)
+            where = f"Output goes to a {kind}" if kind else "Output is not a terminal"
+            undo = "the pipe" if kind == "pipe" else "the redirection"
+            print(f"{where}, so nothing is asked: the run goes on as with --no-input. "
+                  f"Add --no-input to say so, or run it without {undo} to answer.",
+                  file=sys.stderr)
     print(f"{term.bold('RetroBIOS')} {term.dim(installer_id())}\n")
 
     os_type = detect_os()
@@ -10090,6 +10181,10 @@ class TuiState:
         self.check_summary: dict | None = None
         # The saves event of the check: the files that go to the save folder.
         self.saves: dict | None = None
+        # The same of the confirm or preview run, and of the install: a
+        # choice of systems can leave the save file out, or keep it.
+        self.dry_saves: dict | None = None
+        self.done_saves: dict | None = None
         # The confirm screen waits for A even when the plan is unchanged:
         # it was opened by Space, which never installs by itself.
         self.must_confirm: bool = False
@@ -10647,7 +10742,9 @@ def _start_run(state: TuiState, run: str) -> list[tuple]:
         state.checked_flags = tui_flags(state)
     elif run in ("confirm", "preview"):
         state.dry, state.dry_files, state.dry_summary = None, [], None
+        state.dry_saves = None
     else:
+        state.done_saves = None
         state.download = state.progress = state.reading = None
         state.samples, state.local_dests, state.network = [], {}, 0
         state.finished, state.summary, state.code, state.stopping = [], None, None, False
@@ -10670,7 +10767,22 @@ def _start_check(state: TuiState) -> list[tuple]:
     return [("fetch", state.platform)]
 
 
+def _closed_status(state: TuiState, closed: tuple[Path, str]) -> str:
+    return (f"This user cannot open {_short_path(closed[0], state.home)} ({closed[1]}): "
+            "choose another folder, or give this user access to it.")
+
+
 def _choose(state: TuiState, plat: str, dest: Path) -> list[tuple]:
+    closed = closed_folder(dest)
+    if closed is not None:
+        # Nothing can be checked or written there: the folder is asked
+        # again, on the screen that chose it when it can say why.
+        state.platform, state.status = plat, _closed_status(state, closed)
+        if state.stack and state.screen in ("folder", "browse", "path"):
+            return []
+        state.folder_default = (None if plat in CARD_PLATFORMS
+                                else _default_dest(state.os_type, plat))
+        return _push(state, "folder")
     card = card_system(dest)
     if card and card[0] == plat and card[1] != dest:
         # A muOS or KNULLI card's root: that system reads a folder below it.
@@ -10772,8 +10884,9 @@ def _browse_to(state: TuiState, folder: Path | None, came_from: Path | None = No
 
 
 def _nearest_folder(path: Path) -> Path:
+    """The deepest folder on path that exists and can be looked at."""
     probe = path.absolute()
-    while not probe.is_dir() and probe.parent != probe:
+    while not _is_dir(probe) and probe.parent != probe:
         probe = probe.parent
     return probe
 
@@ -11072,6 +11185,10 @@ def _path_key(state: TuiState, key: TuiKey) -> list[tuple]:
         if path is None:
             state.status = "Type a folder first."
             return []
+        closed = closed_folder(path)
+        if closed is not None:
+            state.status = _closed_status(state, closed)
+            return []
         state.stack.pop()
         return _choose(state, state.platform, path)
     return []
@@ -11270,6 +11387,10 @@ def _take_event(state: TuiState, event: dict) -> None:
         state.unreadable.append(event)
     elif kind == "saves" and state.run == "check":
         state.saves = event
+    elif kind == "saves" and state.run in ("confirm", "preview"):
+        state.dry_saves = event
+    elif kind == "saves" and state.run == "install":
+        state.done_saves = event
     elif kind == "found" and state.run == "install":
         state.local_dests[event["dest"]] = (event["folder"], event["reason"])
     elif state.run == "check":
@@ -11630,9 +11751,10 @@ def _plan_lines(check: dict, dest: Path | None, state: TuiState) -> list:
         lines.append("You cannot write to this folder: choose another one.")
     lines.append(f"{check['present']} in place, {check['missing']} missing, "
                  f"{wrong} wrong {'copy' if wrong == 1 else 'copies'}")
-    if check is state.check:
-        lines += [_styled(line, "path") for line in _saves_lines(state)]
-    found_in = _RETROARCH_CONFIGS.get(dest) if dest is not None else None
+    saves = (state.saves if check is state.check
+             else state.dry_saves if check is state.dry else None)
+    lines += [_styled(line, "path") for line in _saves_lines(state, saves)]
+    found_in = _retroarch_config_at(dest) if dest is not None else None
     if found_in:
         lines.append(_styled(f"Named by {_short_path(Path(found_in[0]), state.home)}", "path"))
     free = state.facts.get("free")
@@ -11669,16 +11791,17 @@ def _plan_lines(check: dict, dest: Path | None, state: TuiState) -> list:
     return lines[:2] + offline_lines + lines[2:]
 
 
-def _saves_lines(state: TuiState) -> list[str]:
+def _saves_lines(state: TuiState, saves: dict | None) -> list[str]:
     """Where the files read from the frontend's save directory go: a second
-    folder this run writes to, named before anything is written."""
-    if not state.saves or not state.saves.get("files"):
+    folder this run writes to, named before anything is written. saves is
+    the event of the run the screen shows."""
+    if not saves or not saves.get("files"):
         return []
     name = display_name(state.platform) if state.platform else "the frontend"
-    count = state.saves["files"]
+    count = saves["files"]
     return [f"{_plural(count, 'file')} read from {name}'s save directory "
             f"{'goes' if count == 1 else 'go'} to "
-            f"{_short_path(Path(state.saves['folder']), state.home)}"]
+            f"{_short_path(Path(saves['folder']), state.home)}"]
 
 
 def _unplaced_lines(summary: dict | None, state: TuiState) -> list[str]:
@@ -11730,7 +11853,8 @@ def _view_folder(state: TuiState, width: int, height: int) -> tuple:
     else:
         title = "Which folder?"
         before = [f"No usual {name} folder here: browse for it or type it."]
-    return (title, _compose(state, width, height, before, tui_rows(state)),
+    after = [state.status] if state.status else []
+    return (title, _compose(state, width, height, before, tui_rows(state), after),
             ("A/Enter Choose", "B/Esc Back", "? Help"))
 
 
@@ -12145,7 +12269,7 @@ def tui_outcome(state: TuiState) -> tuple[str, list[str]]:
         lines.append(sources)
     lines.append(f"BIOS folder: {state.dest}")
     if installed + up_to_date:
-        lines += _saves_lines(state)
+        lines += _saves_lines(state, state.done_saves)
     if space:
         lines.append("Free some space, or run again and choose another folder.")
     causes: dict[str, list[str]] = {}
@@ -12365,7 +12489,7 @@ def _install_kind(path: Path) -> str:
     """What sets one install of a frontend apart from another of the same."""
     # The config detection read it from says how it was installed: the
     # Flatpak's system directory can be anywhere its config names.
-    found = _RETROARCH_CONFIGS.get(path)
+    found = _retroarch_config_at(path)
     text = path.as_posix() + (" " + Path(found[0]).as_posix() if found else "")
     for marker, word in (("/.var/app/", "Flatpak"), ("/steamapps/", "Steam"),
                          ("/snap/", "Snap")):
@@ -12817,9 +12941,27 @@ def tui_farewell(state: TuiState) -> list[str]:
     return [screen_text(line) for line in _farewell_lines(state)]
 
 
+def tui_idle_code(state: TuiState) -> int:
+    """The exit code of an idle close: an error's or a result's on those
+    screens, so a launcher tells them from a close with nothing to say."""
+    if state.screen == "error":
+        return state.error_code
+    if state.screen == "result" and state.code is not None:
+        return state.code
+    return 0
+
+
 def _farewell_lines(state: TuiState) -> list[str]:
-    if state.idle_closed:
-        return [f"RetroBIOS: {TUI_IDLE_WORDS}"]
+    if not state.idle_closed:
+        return _closing_lines(state)
+    idle = f"RetroBIOS: {TUI_IDLE_WORDS}"
+    # What an error or a result screen said stays said.
+    if state.screen in ("error", "result"):
+        return [idle, *_closing_lines(state)]
+    return [idle]
+
+
+def _closing_lines(state: TuiState) -> list[str]:
     if state.screen != "result" and state.download is not None:
         # An install ran: what it wrote is said, whatever ended it.
         title, lines = tui_outcome(state)
@@ -12990,7 +13132,7 @@ def run_tui(args: argparse.Namespace) -> int:
                 quiet_since = time.monotonic()
             elif (idle is not None and not pressed and state.exit_code is None
                     and time.monotonic() - quiet_since >= idle):
-                state.idle_closed, state.exit_code = True, 0
+                state.idle_closed, state.exit_code = True, tui_idle_code(state)
             if flags["interrupt"]:
                 flags["interrupt"] = False
                 if time.monotonic() >= ignore_interrupt_until[0]:
@@ -13099,7 +13241,11 @@ def _closed_terminal(exc: BaseException, terminal: _TuiTerminal | None = None) -
 
 def _terminal_gone(terminal: _TuiTerminal) -> bool:
     """Whether the terminal hung up: a closed window answers EIO to
-    tcgetattr and to a write, a live one its settings."""
+    tcgetattr and to a write, a live one its settings. A Windows console
+    has no settings to ask, and an empty write to it reaches nothing: the
+    error is taken as it reads."""
+    if os.name == "nt":
+        return True
     import termios  # noqa: PLC0415
 
     try:
