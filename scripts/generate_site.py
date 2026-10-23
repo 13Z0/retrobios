@@ -2755,9 +2755,12 @@ def _list_pages(
     stems = [stem + (f"-{n}" if n > 1 else "") for n in range(1, len(runs) + 1)]
     for n, (here, run) in enumerate(zip(stems, runs), 1):
         part = f" (part {n} of {len(runs)})" if len(runs) > 1 else ""
+        # The page description is the opening of the intro: parts sharing
+        # one read as duplicates to search and to validate_site.
+        opening = f"Part {n} of {len(runs)}. {intro}" if len(runs) > 1 else intro
         moved[here] = "\n".join([
             "---", "level: reference", *_parent_front_matter(parent), "---", "",
-            f"# {title}{part}", "", intro, "",
+            f"# {title}{part}", "", opening, "",
             *([", ".join(f"[part {i}]({other}.md)" if other != here else f"part {i}"
                          for i, other in enumerate(stems, 1)), ""] if len(runs) > 1 else []),
             *head, *run, "", _date_line(),

@@ -58,10 +58,7 @@ MAX_PAGE_BYTES = 1_000_000
 # index now carries each card's id on the link itself.
 MAX_PAGE_ELEMENTS = 10_000
 # Pages allowed past it, each with the reason, removed when it comes under.
-OVER_ELEMENT_BUDGET = {
-    # One table of every file to source, 10,193 elements on 2026-10-23.
-    "gaps-files-to-source/index.html": "the file table is not split",
-}
+OVER_ELEMENT_BUDGET: dict[str, str] = {}
 # Pagefind loads its index in pieces: the metadata, then the chunks the words
 # typed fall in (stored compressed). 59 KB for the largest chunk and 7.5 KB of
 # metadata on 2026-10-22, 5.2 MB for the whole index on disk.
