@@ -650,6 +650,104 @@ class UnreadableCopies(FromFolder):
             "Input/output error"])
 
 
+class WhereTheSearchGoes(FromFolder):
+    """--from / walked the whole system, /proc and every drive mounted in
+    it. The search stays on the drive it starts on, and the folder is
+    checked before it is read, cheaply enough for a screen to do it."""
+
+    def test_a_folder_is_checked_without_being_read(self):
+        archive = _zip(self.root / "backup.zip", {"a": b"a"})
+        (self.root / "notes.txt").write_text("x")
+        self.assertIsNone(install.from_folder_problem(str(self.old)))
+        self.assertIsNone(install.from_folder_problem(str(archive)))
+        self.assertEqual(install.from_folder_problem(str(self.root / "nowhere")),
+                         ("not_found", "does not exist"))
+        self.assertEqual(install.from_folder_problem(str(self.root / "notes.txt")),
+                         ("not_a_folder", "is neither a folder nor a ZIP"))
+        if os.name == "posix":
+            self.assertEqual(install.from_folder_problem("/"),
+                             ("system", "is the root of the whole system"))
+            self.assertEqual(install.from_folder_problem("/proc")[0], "system")
+
+    def test_a_folder_that_cannot_be_listed_is_refused(self):
+        _unprivileged(self)
+        self.old.chmod(0)
+        self.addCleanup(self.old.chmod, 0o755)
+        self.assertEqual(install.from_folder_problem(str(self.old)),
+                         ("unreadable", "could not be read: Permission denied"))
+        proc = self.install("--events")
+        error = next(e for e in _events(proc) if e["event"] == "error")
+        self.assertEqual((error["stage"], error["reason"]), ("from", "unreadable"))
+        self.assertEqual(proc.returncode, 1)
+
+    @unittest.skipUnless(os.name == "posix", "a POSIX root")
+    def test_the_root_of_the_system_is_refused(self):
+        proc = self.run_installer("--manifest", str(self.list), "--from", "/", "--events")
+        error = next(e for e in _events(proc) if e["event"] == "error")
+        self.assertEqual((error["stage"], error["reason"]), ("from", "system"))
+        self.assertIn("/ is the root of the whole system", proc.stderr)
+        self.assertEqual(proc.returncode, 1)
+
+    def lstat_saying(self, folder: str, **fields):
+        real = os.lstat
+
+        def lstat(path, *args, **kwargs):
+            held = real(path, *args, **kwargs)
+            if Path(path).name != folder:
+                return held
+            values = {"st_dev": held.st_dev, "st_file_attributes": 0, **fields}
+            return mock.Mock(**values)
+
+        return mock.patch.object(install.os, "lstat", side_effect=lstat)
+
+    def test_another_drive_inside_is_named_and_not_entered(self):
+        self.keep("mnt/scph5501.bin", US)
+        self.keep("scph5500.bin", JP)
+        with self.lstat_saying("mnt", st_dev=os.lstat(self.old).st_dev + 1):
+            index = install.FolderIndex(self.old)
+        self.assertEqual(index.other_drives, [self.old.resolve() / "mnt"])
+        self.assertEqual(sorted(p.name for p in index.size), ["scph5500.bin"])
+
+    def test_a_junction_is_not_entered(self):
+        self.keep("junction/scph5501.bin", US)
+        with self.lstat_saying("junction", st_file_attributes=0x400):
+            index = install.FolderIndex(self.old)
+        self.assertEqual(index.size, {})
+        self.assertEqual(index.other_drives, [])
+
+    def test_pseudo_file_systems_are_never_entered(self):
+        if not install.PSEUDO_FOLDERS:
+            self.skipTest("no pseudo file system here")
+        index = install.FolderIndex(self.old)
+        for pseudo in sorted(install.PSEUDO_FOLDERS):
+            self.assertFalse(index._enters(Path(pseudo), os.lstat("/").st_dev), pseudo)
+
+    def test_a_search_cut_short_is_an_event(self):
+        for n in range(3):
+            self.keep(f"f{n}.bin", b"%d" % n)
+        out = io.StringIO()
+        install.EVENTS.open(out)
+        self.addCleanup(setattr, install.EVENTS, "stream", None)
+        self.addCleanup(install.LOCAL.reset)
+        with mock.patch.object(install, "MAX_SCANNED_FILES", 2), \
+                contextlib.redirect_stdout(io.StringIO()) as text:
+            install._open_from_folders([self.old])
+        self.assertIn(f"Read the first 2 files of {self.old} only", text.getvalue())
+        self.assertEqual([json.loads(line) for line in out.getvalue().splitlines()], [{
+            "event": "scanned", "folder": str(self.old), "files": 2, "truncated": True,
+            "other_drives": []}])
+
+    def test_each_folder_read_is_an_event_before_detect(self):
+        self.keep("scph5501.bin", US)
+        events = _events(self.install("--check", "--events"))
+        kinds = [e["event"] for e in events]
+        scanned = next(e for e in events if e["event"] == "scanned")
+        self.assertEqual(scanned, {"event": "scanned", "folder": str(self.old), "files": 1,
+                                   "truncated": False, "other_drives": []})
+        self.assertLess(kinds.index("start"), kinds.index("scanned"))
+        self.assertLess(kinds.index("scanned"), kinds.index("detect"))
+
+
 class ManySameSizedFiles(FromFolder):
     """A card of 16 KB ROMs and a list of 16 KB entries: each entry sorted
     and walked every file of its size."""

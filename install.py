@@ -494,9 +494,14 @@ EVENT_KEYS: dict[str, tuple[str, ...]] = {
     # stage: manifest (reason: network, not_found, invalid, clock for a
     # refused certificate under a clock set in the past, or no_ca for no
     # trusted certificates on the machine) or detect (reason: conflict, two
-    # systems found on one machine) or from (reason: not_found or
-    # not_a_folder, a folder named with --from).
+    # systems found on one machine) or from (a folder named with --from,
+    # reason: not_found, not_a_folder, unreadable, or system for the root
+    # of the system and /proc, /sys, /dev).
     "error": ("stage", "reason", "platform", "message"),
+    # A folder named with --from, once read: the files it holds (counted
+    # up to MAX_SCANNED_FILES, truncated past them), and the folders below
+    # it on another drive, not entered.
+    "scanned": ("folder", "files", "truncated", "other_drives"),
     # state: present (hash verified), wrong_hash or missing.
     "file": ("platform", "dest", "systems", "size", "state"),
     "system": ("platform", "system", "name", "files", "present", "missing",
@@ -6675,6 +6680,10 @@ SYSTEM_FOLDERS = frozenset(name.casefold() for name in (
 # A Mac copying to a FAT or exFAT card writes ._name beside every file: its
 # Finder data, 4 KB, never the file.
 APPLE_DOUBLE = "._"
+# Folders the kernel makes up on the fly: endless, and never a copy.
+PSEUDO_FOLDERS = frozenset() if os.name == "nt" else frozenset(("/proc", "/sys", "/dev"))
+# FILE_ATTRIBUTE_REPARSE_POINT: a junction, a mount point or a link on Windows.
+_REPARSE_POINT = getattr(stat, "FILE_ATTRIBUTE_REPARSE_POINT", 0x400)
 # Errors a member of someone's ZIP can raise on reading: damaged, encrypted
 # (RuntimeError), or packed with a method zipfile lacks.
 _MEMBER_ERRORS = (OSError, EOFError, RuntimeError, NotImplementedError,
@@ -6740,18 +6749,28 @@ class FolderIndex:
         # (path, member or "") -> (its size or None when unknown, why) of each
         # file, member or folder below root that could not be read.
         self.unreadable: dict[tuple[Path, str], tuple[int | None, str]] = {}
+        # Folders below root on another drive, not entered.
+        self.other_drives: list[Path] = []
+        self.files = 0
         if root.is_file():
             if root.name.casefold().endswith(".zip"):
                 self.archives.append(root)
+                self.files = 1
             return
         seen = 0
+        try:
+            device = os.stat(root).st_dev
+        except OSError as exc:
+            self._unread(root, "", None, exc)
+            return
 
         def unlisted(exc: OSError) -> None:
             self._unread(Path(exc.filename or root), "", None, exc)
 
         for folder, dirs, names in os.walk(root, onerror=unlisted):
             dirs[:] = sorted(d for d in dirs
-                             if d != BACKUP_DIR and d.casefold() not in SYSTEM_FOLDERS)
+                             if d != BACKUP_DIR and d.casefold() not in SYSTEM_FOLDERS
+                             and self._enters(Path(folder) / d, device))
             for name in sorted(names):
                 path = Path(folder) / name
                 if name.startswith(APPLE_DOUBLE):
@@ -6774,9 +6793,29 @@ class FolderIndex:
                 if name.casefold().endswith(_ARCHIVE_SUFFIXES):
                     self.archives.append(path)
                 seen += 1
+                self.files = seen
                 if seen >= MAX_SCANNED_FILES:
                     self.truncated = True
                     return
+
+    def _enters(self, path: Path, device: int) -> bool:
+        """Whether the walk goes into a folder: not a pseudo file system, a
+        Windows junction or reparse point (a link the walk cannot tell from
+        a folder, which led out of the folder named), nor another drive
+        mounted below the root, which is named instead."""
+        if str(path) in PSEUDO_FOLDERS:
+            return False
+        try:
+            held = os.lstat(path)
+        except OSError as exc:
+            self._unread(path, "", None, exc)
+            return False
+        if getattr(held, "st_file_attributes", 0) & _REPARSE_POINT:
+            return False
+        if held.st_dev != device:
+            self.other_drives.append(path)
+            return False
+        return True
 
     def seed(self, path: Path, sha1: str) -> None:
         """A SHA-1 already known, so the file is not read again."""
@@ -8004,26 +8043,71 @@ def _open_local_sources(args: argparse.Namespace) -> None:
         sys.exit(1)
 
 
+def _system_folder(folder: Path) -> str:
+    """Why a --from folder is one of the system's own, in words, or ""."""
+    try:
+        resolved = folder.resolve()
+    except OSError:
+        return ""
+    text = str(resolved)
+    if any(text == pseudo or text.startswith(pseudo + "/") for pseudo in PSEUDO_FOLDERS):
+        return "is a folder the system makes up, it holds no copy"
+    system_drive = os.environ.get("SystemDrive", "C:") if os.name == "nt" else ""
+    if resolved == Path(resolved.anchor) and (
+            os.name != "nt" or resolved.drive.casefold() == system_drive.casefold()):
+        return "is the root of the whole system"
+    return ""
+
+
+def from_folder_problem(label: str) -> tuple[str, str] | None:
+    """Why a folder named with --from cannot be read, without reading what
+    it holds: (reason, words), or None when it can.
+
+    reason is the one the error event carries: not_found, not_a_folder (a
+    file that is no ZIP), unreadable, or system (the root of the system,
+    /proc, /sys or /dev). words follow the folder as given: "E:\\old does
+    not exist". Cheap enough for a screen to call before indexing."""
+    folder = Path(os.path.expanduser(label))
+    zipped = folder.is_file() and folder.name.casefold().endswith(".zip")
+    if not (folder.is_dir() or zipped):
+        if folder.exists():
+            return "not_a_folder", "is neither a folder nor a ZIP"
+        return "not_found", "does not exist"
+    try:
+        if zipped:
+            with open(folder, "rb"):
+                pass
+        else:
+            with os.scandir(folder) as listing:
+                next(listing, None)
+    except OSError as exc:
+        return "unreadable", f"could not be read: {unreadable_words(exc)}"
+    system = "" if zipped else _system_folder(folder)
+    return ("system", system) if system else None
+
+
 def _open_from_folders(folders: list[Path]) -> None:
-    """Read each folder named with --from, or stop on one that is not there."""
+    """Read each folder named with --from, or stop on one that cannot be."""
     for folder in folders:
         label = str(folder)
-        folder = Path(os.path.expanduser(label))
-        zipped = folder.is_file() and folder.name.casefold().endswith(".zip")
-        if not (folder.is_dir() or zipped):
-            reason = "not_a_folder" if folder.exists() else "not_found"
-            what = ("does not exist" if reason == "not_found"
-                    else "is neither a folder nor a ZIP")
+        problem = from_folder_problem(label)
+        if problem is not None:
+            reason, what = problem
             message = f"{label} {what}: --from names the folder to copy BIOS files from"
             EVENTS.emit("error", stage="from", reason=reason, platform="", message=message)
             print(f"Error: {message}.", file=sys.stderr)
             sys.exit(1)
-        index = FolderIndex(folder, label)
+        index = FolderIndex(Path(os.path.expanduser(label)), label)
         LOCAL.folders.append(index)
         print(f"  Copying BIOS files from: {label}")
         if index.truncated:
             print(f"  Read the first {MAX_SCANNED_FILES:,} files of {label} only. Name "
                   "the folder that holds the BIOS files to search it all.")
+        for drive in index.other_drives:
+            print(f"  Did not go into {drive}: it is another drive. Name it with --from "
+                  "to read it too.")
+        EVENTS.emit("scanned", folder=label, files=index.files, truncated=index.truncated,
+                    other_drives=[str(drive) for drive in index.other_drives])
 
 
 def _missing_dest(dest: Path, ask: bool, named: str = "named with --dest") -> None:

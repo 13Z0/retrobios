@@ -465,6 +465,13 @@ writes, the system folders (`System Volume Information`, `.Spotlight-V100`,
 `.Trashes`, `$RECYCLE.BIN`) and a link leading out of the folder are skipped.
 `--from` also takes a ZIP of an old BIOS folder.
 
+The search stays on one drive: a drive mounted inside the folder is named and
+not entered (give it its own `--from`), and so are `/proc`, `/sys`, `/dev` and
+Windows junctions. The root of the system (`/`, `C:\`) is refused. A file that
+cannot be read, and has the size of a file still missing, is named with the
+reason (`E:\bios\a.bin could not be read: Permission denied`), as is a ZIP
+member locked by a password.
+
 The folder is only read: each file is copied, checked against the list's
 hashes once written, and the original stays where it is. A file in place with
 other contents is kept aside first, as a download would replace it (see
@@ -1152,7 +1159,7 @@ fields, the installer refuses to narrow rather than install everything.
 | Code | Meaning |
 |------|---------|
 | `0` | everything asked for is installed or already up to date |
-| `1` | a failure: the one-liner could not download or verify `install.py`, or found no Python 3.8 (nothing was run), an unusable base URL, an unknown platform or target, `--installed-cores` with no core found, a manifest that fails validation, a fetch that never succeeded, no platform to install for in a non-interactive run, some files failed while others installed, `--check` found files to fetch, a `--from-pack` pack that cannot be read, lacks a part or is for another platform, a `--from` folder that does not exist, or `--restore` could not put a file back |
+| `1` | a failure: the one-liner could not download or verify `install.py`, or found no Python 3.8 (nothing was run), an unusable base URL, an unknown platform or target, `--installed-cores` with no core found, a manifest that fails validation, a fetch that never succeeded, no platform to install for in a non-interactive run, some files failed while others installed, `--check` found files to fetch, a `--from-pack` pack that cannot be read, lacks a part or is for another platform, a `--from` folder that does not exist or cannot be read, or `--restore` could not put a file back |
 | `2` | nothing was installed: every file the run tried failed (a BIOS folder that cannot be written, for one), the drive has too little free space for the download (checked before any folder is created), or the question about a folder that does not exist, named with `--dest` or typed at the folder question, was answered no. Also an option the installer refused before any download: an unknown option, `--jobs` outside 1 to 32, `--target` with `--every-board` or `--from-pack`. The message then starts with `install.py: error:`. With `--restore`, a folder that is not a dated folder inside `retrobios-backup` |
 | `130` | stopped with Ctrl+C, or with `q`, Ctrl+C or Ctrl+D at a question. Run the same command again to carry on |
 | `141` | the output was piped to a reader that closed early (`--list-platforms \| head`) |
@@ -1185,7 +1192,8 @@ kind, and each kind has exactly the keys below, in this order. The schema is
 |------|------|------|
 | `start` | `schema`, `installer`, `mode` | First line. `schema` is 1, `installer` the identity `--version` prints, `mode` one of `install`, `check`, `dry-run`, `list` |
 | `detect` | `os`, `os_name`, `platforms` | Once the platforms are known. `os_name` comes from `/etc/os-release`. `platforms` lists `{platform, name, bios_dir}`, and is empty when nothing supported was found |
-| `error` | `stage`, `reason`, `platform`, `message` | The file list could not be read (`stage` is `manifest`): `reason` is `network`, `not_found` or `invalid`, `clock` when the server's certificate was refused and the system clock reads a date before the installer was written, or `no_ca` when the machine holds no list of trusted certificates (`SSL_CERT_FILE` names one). A folder named with `--from` is not there (`stage` is `from`, `reason` `not_found`, or `not_a_folder` for a file that is no ZIP). `message` says it in words |
+| `error` | `stage`, `reason`, `platform`, `message` | The file list could not be read (`stage` is `manifest`): `reason` is `network`, `not_found` or `invalid`, `clock` when the server's certificate was refused and the system clock reads a date before the installer was written, or `no_ca` when the machine holds no list of trusted certificates (`SSL_CERT_FILE` names one). A folder named with `--from` cannot be read (`stage` is `from`, `reason` `not_found`, `not_a_folder` for a file that is no ZIP, `unreadable`, or `system` for the root of the system, `/proc`, `/sys` or `/dev`). `message` says it in words |
+| `scanned` | `folder`, `files`, `truncated`, `other_drives` | Each folder named with `--from`, once read and before `detect`. `files` counts the files found, `truncated` is true when the search stopped at 200,000 of them, and `other_drives` lists the folders below it on another drive, which were not entered |
 | `checking` | `files_done`, `files_total` | While the files already in the folder are read and hashed, at most every half second and once at the end. `files_total` counts the files found in place |
 | `file` | `platform`, `dest`, `systems`, `size`, `state` | Each file of the list after the check. `state` is `present` (hash verified), `wrong_hash` or `missing` |
 | `system` | `platform`, `system`, `name`, `files`, `present`, `missing`, `wrong_hash`, `bytes_needed` | Each system, sorted by id, and with `--system` only the systems named. Files with no system count under `other`. `name` is the platform's own name for it |
