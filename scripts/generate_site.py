@@ -6304,9 +6304,18 @@ def emulator_initial(display: str) -> str:
     return initial if "A" <= initial <= "Z" else INITIAL_DIGITS
 
 
+# Profiles that document a format, not an emulator: `00_example` is the
+# template libretro-core-info ships for core authors ("No loadable binary,
+# no emulated system", its notes). Out of the index and the search, like a
+# test core, and its page stays for the links that cite it.
+TEMPLATE_PROFILES = frozenset({"00_example"})
+_TEMPLATE_FRONT = ["---", "search: exclude", "---", ""]
+
+
 def generate_emulators_index(profiles: dict) -> str:
     unique = {
-        k: v for k, v in profiles.items() if v.get("type") not in ("alias", "test")
+        k: v for k, v in profiles.items()
+        if v.get("type") not in ("alias", "test") and k not in TEMPLATE_PROFILES
     }
     aliases = {k: v for k, v in profiles.items() if v.get("type") == "alias"}
 
@@ -6415,12 +6424,13 @@ def comes_with_app(f: dict) -> bool:
     return f.get("bundled") is True and not f.get("mode")
 
 
-def _file_badges(f: dict, in_repo: bool) -> list[str]:
+def _file_badges(f: dict, in_repo: bool, for_system: str = "") -> list[str]:
     """The status chips shown beside a file name.
 
     Fourteen independent optional fields, each contributing at most one
     chip. Kept apart from the rest of the row so the field-by-field
-    rendering stays readable.
+    rendering stays readable. ``for_system`` names the system a required
+    file serves, on a profile that runs more than one.
     """
     required = f.get("required", False)
     hle = f.get("hle_fallback", False)
@@ -6442,8 +6452,9 @@ def _file_badges(f: dict, in_repo: bool) -> list[str]:
             '<span class="rb-badge rb-badge-info">comes with the app</span>'
         )
     elif required:
+        needed = f"required for {html.escape(for_system)}" if for_system else "required"
         badges.append(
-            '<span class="rb-badge rb-badge-danger">required</span>'
+            f'<span class="rb-badge rb-badge-danger">{needed}</span>'
         )
     else:
         badges.append(
@@ -6643,12 +6654,22 @@ def _render_emulator_file(
     size_note = f.get("size_note", "")
     size_range = f.get("size_range", "")
 
-    badges = _file_badges(f, in_repo)
+    # melonDS reads DS and DSi files: "required" alone sat on the DSi NAND
+    # above the DS files, for an emulator most people run for DS games.
+    for_system = (system_name(str(fsystem))
+                  if fsystem and len(profile.get("systems") or []) > 1 else "")
+    badges = _file_badges(f, in_repo, for_system)
     badge_str = " ".join(badges)
     lines.append(markup.block_open("div", 'class="rb-file-entry"'))
     lines.append("")
     marker = f'<span id="{alias}"></span>' if alias else ""
-    lines.append(_card_title(f"{marker}{_code(fname)} {badge_str}", anchor, weight=5))
+    label = _code(fname)
+    if f is any_name_bios(profile):
+        # Found by content: the name is an example, any image of the system works.
+        system = system_name((profile.get("systems") or [""])[0])
+        label = (f"a {system} BIOS (example: {_code(fname)})" if _named_example(str(fname))
+                 else f"a {system} BIOS, any file name")
+    lines.append(_card_title(f"{marker}{label} {badge_str}", anchor, weight=5))
     lines.append("")
     if desc:
         lines.extend([_escape_tags(str(desc)), ""])
@@ -6964,6 +6985,12 @@ def _install_block(name: str, profile: dict) -> list[str]:
     the systems it runs. Each file is also linked one by one below.
     """
     if profile.get("type") in ("alias", "launcher", "test"):
+        return []
+    if profile.get("type") == "standalone" and any_name_bios(profile) is not None:
+        # `--emulator` installs into a platform's BIOS folder and turns off
+        # the pass that fills standalone emulator folders (install.py,
+        # `narrowing` in main): an app on its own reported "No supported
+        # platform detected". The download step of the intro replaces it.
         return []
     return search_excluded(markup.details("tip", "Install this emulator's files", [
         "The installer finds your platform and its BIOS folder, then downloads "
@@ -7320,9 +7347,15 @@ def _data_tree_page(ref: str, entry: dict, pages: list[tuple[str, list[str]]],
     owner = max(readers, default=None,
                 key=lambda reader: len(reader[0]) if ref.startswith(f"{reader[0]}-") else 0)
     if owner:
-        front["parent"] = {"label": owner[1], "link": f"{owner[0]}.md"}
+        head = _part_front_matter(
+            (owner[1], f"{owner[0]}.md"),
+            [(f"The {ref} data directory, part {n}", f"{other}.md")
+             for n, (other, _names) in enumerate(pages, 1)], index, front)
+    else:
+        head = ["---", yaml.safe_dump(front, sort_keys=False, allow_unicode=True).rstrip("\n"),
+                "---", ""]
     lines = [
-        "---", yaml.safe_dump(front, sort_keys=False, allow_unicode=True).rstrip("\n"), "---", "",
+        *head,
         f"# The {ref} data directory{part}", "",
         f"{entry.get('description') or 'A data directory'}: "
         f"{_count(len(members), 'file')}, as the packs ship them."
@@ -7414,7 +7447,8 @@ def _hash_short(f: dict) -> str:
     return ""
 
 
-def _summary_table(files: list[dict], indexes: list[int], cell: Callable[[int, str], str]) -> list[str]:
+def _summary_table(files: list[dict], indexes: list[int], cell: Callable[[int, str], str],
+                   multi_system: bool = False) -> list[str]:
     """The table of an emulator's entries, one row each, ``cell`` writing
     the linked name of entry i from its shown path.
 
@@ -7428,6 +7462,8 @@ def _summary_table(files: list[dict], indexes: list[int], cell: Callable[[int, s
     for i in indexes:
         f = files[i]
         needed = "with the app" if comes_with_app(f) else "yes" if f.get("required") else "no"
+        if needed == "yes" and multi_system and f.get("system"):
+            needed = f"for {system_name(str(f['system']))}"
         rows.append((cell(i, str(f.get("path") or f.get("name", ""))),
                      _region_words(f.get("region"), 3), needed, _hash_short(f)))
     keep = [0] + [column for column in (1, 3) if any(row[column] for row in rows)]
@@ -7472,12 +7508,90 @@ def generate_emulator_page(
         name, profile, db, consumers, data_names, data_registry, data_dirs)[name]
 
 
-def _emulator_intro(emu_name: str, profile: dict) -> str:
+def any_name_bios(profile: dict) -> dict | None:
+    """The one BIOS an emulator needs under any name, or None.
+
+    A profile found by content (`found_by: content`, `bios_mode: agnostic`)
+    for one system, with one required file of no declared region: the
+    code identifies the image by what it holds, so the entry's name is an
+    example. AetherSX2's page showed `bios/ps2-0230a-20080220.bin` as the
+    file to get, while its notes say no name and no hash is matched.
+    """
+    if profile.get("found_by") != "content" and profile.get("bios_mode") != "agnostic":
+        return None
+    if len(profile.get("systems") or []) != 1:
+        return None
+    required = [f for f in profile.get("files") or []
+                if isinstance(f, dict) and f.get("required") is True and not comes_with_app(f)]
+    if len(required) != 1 or required[0].get("region") or required[0].get("category") not in (None, "bios"):
+        return None
+    return required[0]
+
+
+def _collection_card_href(entry: dict, consumers: FileConsumers | None, owner: str) -> str:
+    """The collection card of the copy that answers an emulator entry, or ""."""
+    if consumers is None:
+        return ""
+    sha1 = consumers.sha1_of(entry, entry.get("path") or "", owner=owner)
+    held = consumers.path_of(sha1) if sha1 else ""
+    if not held.startswith("bios/"):
+        return ""
+    return f"../systems/{urllib.parse.quote(card_page(held, sha1))}.md#sha1-{sha1[:12]}"
+
+
+def _named_example(name: str) -> bool:
+    """A real file name, not a placeholder such as `<bios>.bin`."""
+    return bool(name) and "<" not in name
+
+
+def _any_name_folder(profile: dict, entry: dict) -> str:
+    """Where the one BIOS goes, as the profile states it, or ""."""
+    folder = str(profile.get("bios_directory") or "")
+    if not folder:
+        path = str(entry.get("path") or "")
+        folder = path.rsplit("/", 1)[0] + "/" if "/" in path else ""
+    if not folder:
+        return ""
+    if profile.get("type") == "standalone":
+        # A bare `bios/` is a folder inside the app's own data folder.
+        return f"the {_code(folder.strip('/'))} folder inside the app's own data folder"
+    return f"{_code(folder)}, inside your BIOS folder"
+
+
+def _any_name_steps(emu_name: str, profile: dict, entry: dict, href: str) -> str:
+    """The intro of an emulator that takes one BIOS of any name: get one,
+    put it in its folder, any name works."""
+    system = system_name((profile.get("systems") or [""])[0])
+    name = str(entry.get("name") or "")
+    if _named_example(name) and href:
+        get = f"Download [{_code(name)}]({href})."
+    else:
+        get = f"Get one from the {_named_system_link(profile['systems'][0], '../')} files."
+    steps = [get]
+    folder = _any_name_folder(profile, entry)
+    if folder:
+        steps.append(f"Put it in {folder}.")
+    reader = "The app" if profile.get("type") == "standalone" else "The emulator"
+    return "\n".join([
+        f"{emu_name} needs one {system} BIOS file, any region.",
+        "",
+        *(f"{number}. {step}" for number, step in enumerate(steps, 1)),
+        "",
+        f"Any file name works. {reader} reads what the file holds.",
+    ])
+
+
+def _emulator_intro(emu_name: str, profile: dict, href: str = "") -> str:
     """What the emulator needs, in plain words, from fields every profile has.
 
     The page opened on a twelve-row table: "Type", "Version", "Checked by".
     DuckStation needs one PlayStation BIOS of any name, and the reader had
-    to infer it from the "Files found by" row."""
+    to infer it from the "Files found by" row. ``href`` links the
+    collection's copy of the one BIOS an emulator takes under any name.
+    """
+    entry = any_name_bios(profile)
+    if entry is not None:
+        return _any_name_steps(emu_name, profile, entry, href)
     names: list[str] = []
     for sys_id in profile.get("systems") or []:
         label = system_name(sys_id)
@@ -7583,17 +7697,23 @@ def emulator_pages(
         data_dirs = profile.get("data_directories", [])
 
     part_pages: dict[str, str] = {}
-    intro = _emulator_intro(emu_name, profile)
+    one_bios = any_name_bios(profile)
+    intro = _emulator_intro(emu_name, profile, _collection_card_href(
+        one_bios, consumers, name) if one_bios else "")
     romset = emulator_romset(profile)
     lines = [
+        *(_TEMPLATE_FRONT if name in TEMPLATE_PROFILES else []),
         f"# {emu_name}",
         "",
         *([intro, ""] if intro else []),
     ]
-    if romset and any(isinstance(f, dict) and f.get("category") == "bios_zip" for f in files):
+    if romset:
         # The commonest arcade failure is a set from another MAME version,
         # and its answer sat on a Reference page no arcade page linked.
-        lines.extend([f"Its BIOS ZIPs must come from the {romset} romset. "
+        # FinalBurn profiles list the members of their archives, not the
+        # archives, and MAME 2003-Plus none at all: the line went missing
+        # on both.
+        lines.extend([f"Its BIOS and game sets must come from the {romset} romset. "
                       f"[Which version each core reads]({ROMSET_FAQ}).", ""])
     card_start = len(lines)
     lines += [
@@ -7708,7 +7828,8 @@ def emulator_pages(
             indexed = len(files) >= EMULATOR_SUMMARY_MIN
             if indexed:
                 lines.extend(search_excluded(_summary_table(
-                    files, order, lambda i, shown: f"[{_code(shown)}](#{anchors[i]})")))
+                    files, order, lambda i, shown: f"[{_code(shown)}](#{anchors[i]})",
+                    len(systems or []) > 1)))
                 lines.append("")
             lines.extend(held)
             # Below the table, which indexes them, the cards past the
@@ -7718,7 +7839,8 @@ def emulator_pages(
                 files, order, lambda group: [line for i in group for line in cards[i]],
                 fold=indexed))
         else:
-            lines.extend(_card_index(emu_name, files, anchors, aliases, parts))
+            lines.extend(_card_index(emu_name, files, anchors, aliases, parts,
+                                     len(systems or []) > 1))
             lines.extend(held)
             for number, (stem, entries) in enumerate(parts, 1):
                 part_pages[stem] = _emulator_part_page(
@@ -7790,7 +7912,7 @@ def emulator_pages(
 
 def _card_index(
     emu_name: str, files: list[dict], anchors: list[str], aliases: list[str],
-    parts: list[tuple[str, range]],
+    parts: list[tuple[str, range]], multi_system: bool = False,
 ) -> list[str]:
     """Every entry of a split emulator page, one row each, linked to its card.
 
@@ -7810,7 +7932,7 @@ def _card_index(
     def table(group: list[int]) -> list[str]:
         return [
             markup.block_open("section", f'class="rb-card-index" {markup.search_exclude()}'),
-            "", *_summary_table(files, group, cell), "", "</section>", "",
+            "", *_summary_table(files, group, cell, multi_system), "", "</section>", "",
         ]
 
     return [
@@ -7823,6 +7945,26 @@ def _card_index(
     ]
 
 
+def _part_front_matter(parent: tuple[str, str], siblings: list[tuple[str, str]],
+                       index: int, front: dict | None = None) -> list[str]:
+    """The front matter of part ``index`` of ``siblings`` ((label, link)
+    each): the page it belongs to, its neighbours and the part weight.
+
+    MAME's eight card pages had no parent, so the crumbs skipped MAME, and
+    `prev: false`, so part 5 reached part 6 only through a sentence.
+    The first part's previous page is the parent, the last part has no next.
+    """
+    data = dict(front or {})
+    data["parent"] = {"label": parent[0], "link": parent[1]}
+    before = siblings[index - 1] if index > 0 else parent
+    data["prev"] = {"label": before[0], "link": before[1]}
+    data["next"] = ({"label": siblings[index + 1][0], "link": siblings[index + 1][1]}
+                    if index + 1 < len(siblings) else False)
+    data["searchWeight"] = SEARCH_WEIGHT.get("part", DEMOTED_WEIGHT)
+    return ["---", yaml.safe_dump(data, sort_keys=False, allow_unicode=True).rstrip("\n"),
+            "---", ""]
+
+
 def _emulator_part_page(
     name: str, emu_name: str, number: int, parts: list[tuple[str, range]],
     cards: list[list[str]], files: list[dict],
@@ -7833,6 +7975,9 @@ def _emulator_part_page(
     others = ", ".join(
         f"[{n}]({stem}.md)" for n, (stem, _e) in enumerate(parts, 1) if n != number)
     lines = [
+        *_part_front_matter((emu_name, f"{name}.md"),
+                            [(f"{emu_name} files, part {n}", f"{stem}.md")
+                             for n, (stem, _e) in enumerate(parts, 1)], number - 1),
         f"# {emu_name} files, part {number} of {len(parts)}",
         "",
         f"Part of [{emu_name}]({name}.md), whose page has the profile, the install "

@@ -56,7 +56,7 @@ class EachArcadePageNamesItsRomset(unittest.TestCase):
         page = _page("mame2003")
         self.assertIn(f"| Romset | [MAME 0.78]({gs.ROMSET_FAQ}) |", page)
         self.assertNotIn("| MAME version |", _page("mame2016"))
-        line = page.index("Its BIOS ZIPs must come from the MAME 0.78 romset.")
+        line = page.index("Its BIOS and game sets must come from the MAME 0.78 romset.")
         self.assertLess(line, page.index("About this profile"))
         self.assertIn(f"[Which version each core reads]({gs.ROMSET_FAQ})", page)
 
@@ -65,7 +65,7 @@ class EachArcadePageNamesItsRomset(unittest.TestCase):
         self.assertIn("## Which MAME version do the arcade BIOS sets match?", faq)
 
     def test_no_line_without_bios_zips(self):
-        self.assertNotIn("Its BIOS ZIPs", _page("duckstation"))
+        self.assertNotIn("must come from the", _page("duckstation"))
 
 
 class WhatTheAppShipsIsNoFileToGet(unittest.TestCase):
@@ -91,7 +91,8 @@ class WhatTheAppShipsIsNoFileToGet(unittest.TestCase):
         summary = self.page[self.page.index("## Files"):]
         self.assertIn(f"{shipped} more files come with the app.", summary)
         self.assertIn(": 1 required,", summary)
-        self.assertIn("It reads 8 files, 1 of them required", self.page)
+        # Found by content: one BIOS of any name, said as steps (round 4).
+        self.assertIn("NetherSX2 needs one Sony PlayStation 2 BIOS file, any region.", self.page)
 
     def test_their_own_section_after_the_others(self):
         heads = re.findall(r"^## (.+)$", self.page, re.M)
