@@ -1087,6 +1087,9 @@ A launcher with no mapper at all (a keyboard) leaves it unset.
 A launcher can also set `RETROBIOS_IDLE_EXIT` to a number of seconds: when
 no button has reached the interface since it opened, and nothing has run for
 that long, it closes with `No button pressed, closing.` and exit status 0.
+Closed on an error or a result screen, it prints that screen's words after
+the line and exits with its code (1 for `No internet: offline mode`), so
+the launcher can tell an error from a close with nothing to report.
 The time counts from the end of the last check, so a launcher that names the
 platform, whose interface moves on to the plan by itself, closes the same way.
 A mapper that never opened the pad would otherwise hold the device on that
@@ -1341,7 +1344,7 @@ RetroArch folder that holds only `scph5501.bin`, in the order written:
 | `SSL_CERT_FILE`, `SSL_CERT_DIR` | The trusted certificates to check servers with, for a Python that finds none of its own |
 | `RETROBIOS_PLAIN`, `ACCESSIBLE` | Set to anything but `0`: the questions come line by line, as with `--plain`, instead of the full-screen interface |
 | `RETROBIOS_PAD` | The buttons a handheld launcher's mapper sends to the full screen (`gptokeyb`, `gptokeyb_muxterm`, `muxterm`, `evmapy`, `miyoo`), so its hints name them. See [On a handheld](#on-a-handheld-the-retrobios-port) |
-| `RETROBIOS_IDLE_EXIT` | Seconds the full screen waits for a first button, counted while nothing runs. With none pressed, it closes with exit status 0 |
+| `RETROBIOS_IDLE_EXIT` | Seconds the full screen waits for a first button, counted while nothing runs. With none pressed, it closes with exit status 0, or with the code of the error or result screen it closed on |
 | `HTTPS_PROXY`, `NO_PROXY` | Honoured for every download through the standard library's default proxy handling: one names the proxy, the other the hosts to reach directly |
 
 ## When something goes wrong

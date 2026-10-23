@@ -2595,6 +2595,60 @@ class IdleExit(unittest.TestCase):
         self.assertEqual(install.tui_farewell(state),
                          ["RetroBIOS: No button pressed, closing."])
 
+    def test_an_error_screen_closes_with_its_code(self):
+        """Closed idle on "No internet: offline mode", the launcher read 0
+        and showed nothing."""
+        state = fresh_state()
+        state.stack = ["setup", "checking"]
+        install._fail(state, ["Give the file list with --manifest FILE."], 1)
+        state.error_title = "No internet: offline mode"
+        self.assertEqual(self.idle_close(state), 1)
+        self.assertEqual(install.tui_farewell(state), [
+            "RetroBIOS: No button pressed, closing.",
+            "RetroBIOS: No internet: offline mode",
+            "Give the file list with --manifest FILE."])
+
+    def test_a_result_closes_with_the_install_code(self):
+        state = fresh_state()
+        state.stack = ["setup", "result"]
+        state.code = 2
+        state.summary = {"event": "summary", "mode": "install", "installed": 1,
+                         "up_to_date": 0, "pending": 0,
+                         "failed": [{"dest": "a.bin", "reason": "disk full"}],
+                         "skipped": [], "left_out": [], "kept": [], "interrupted": False}
+        state.dest = SYSTEM_DIR
+        self.assertEqual(self.idle_close(state), 2)
+        farewell = install.tui_farewell(state)
+        self.assertEqual(farewell[:2], ["RetroBIOS: No button pressed, closing.",
+                                        "RetroBIOS: Finished with errors"])
+
+    def test_any_other_screen_closes_with_0(self):
+        state = fresh_state()
+        state.stack = ["setup"]
+        self.assertEqual(self.idle_close(state), 0)
+
+    def idle_close(self, state: install.TuiState) -> int:
+        """run_tui on state, no key ever pressed, closed by the idle timer."""
+        class Quiet(Crash.FakeTerminal):
+            def keys(self, timeout):
+                time.sleep(0.01)
+                return []
+
+        out = io.StringIO()
+        work = Path(tempfile.mkdtemp(dir=REPO_ROOT / "tmp"))
+        self.addCleanup(shutil.rmtree, work, True)
+        with mock.patch.object(install, "_TuiTerminal", Quiet), \
+                mock.patch.object(install.tempfile, "mkdtemp", return_value=str(work)), \
+                mock.patch.object(install, "tui_start", return_value=(state, [])), \
+                mock.patch.object(install, "_open_local_sources"), \
+                mock.patch.object(install, "detect_os", return_value="linux"), \
+                mock.patch.dict(os.environ, {install.TUI_IDLE_ENV: "0.05"}), \
+                mock.patch.object(sys, "stdout", out), mock.patch.object(sys, "stderr", out):
+            code = install.run_tui(_args())
+        self.assertTrue(state.idle_closed)
+        self.assertIn("No button pressed, closing.", out.getvalue())
+        return code
+
 
 class AReadErrorIsNotAClosedWindow(unittest.TestCase):
     """Any EIO read as the window closing: a failing SD card answers EIO

@@ -12941,9 +12941,27 @@ def tui_farewell(state: TuiState) -> list[str]:
     return [screen_text(line) for line in _farewell_lines(state)]
 
 
+def tui_idle_code(state: TuiState) -> int:
+    """The exit code of an idle close: an error's or a result's on those
+    screens, so a launcher tells them from a close with nothing to say."""
+    if state.screen == "error":
+        return state.error_code
+    if state.screen == "result" and state.code is not None:
+        return state.code
+    return 0
+
+
 def _farewell_lines(state: TuiState) -> list[str]:
-    if state.idle_closed:
-        return [f"RetroBIOS: {TUI_IDLE_WORDS}"]
+    if not state.idle_closed:
+        return _closing_lines(state)
+    idle = f"RetroBIOS: {TUI_IDLE_WORDS}"
+    # What an error or a result screen said stays said.
+    if state.screen in ("error", "result"):
+        return [idle, *_closing_lines(state)]
+    return [idle]
+
+
+def _closing_lines(state: TuiState) -> list[str]:
     if state.screen != "result" and state.download is not None:
         # An install ran: what it wrote is said, whatever ended it.
         title, lines = tui_outcome(state)
@@ -13114,7 +13132,7 @@ def run_tui(args: argparse.Namespace) -> int:
                 quiet_since = time.monotonic()
             elif (idle is not None and not pressed and state.exit_code is None
                     and time.monotonic() - quiet_since >= idle):
-                state.idle_closed, state.exit_code = True, 0
+                state.idle_closed, state.exit_code = True, tui_idle_code(state)
             if flags["interrupt"]:
                 flags["interrupt"] = False
                 if time.monotonic() >= ignore_interrupt_until[0]:
