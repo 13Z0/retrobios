@@ -31,6 +31,9 @@ from common import (
 )
 
 RECORD = "release.json"
+# The record's format, which release.schema.json pins: a reader holding the
+# file alone can tell which shape it reads.
+SCHEMA_VERSION = 1
 # Each registered platform has a page at get/<platform>/ on the site: the
 # current pack's files, or the command when no release publishes one. The
 # address outlives every release, so a link written elsewhere keeps working.
@@ -120,7 +123,7 @@ def _read_record(dist: Path, tag: str, owners: dict[str, list[str]]) -> dict:
             "assets": [path.name for path in paths],
             "platforms": owners[name],
         }
-    return {"tag": tag, "packs": packs}
+    return {"schema_version": SCHEMA_VERSION, "tag": tag, "packs": packs}
 
 
 def load_record(path: str | Path = RECORD) -> dict:
