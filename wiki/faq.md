@@ -72,8 +72,8 @@ and download their files.
 
 ## Why is there no ZIP for my setup?
 
-ZIPs exist for the most downloaded setups. The command installs and checks
-every setup's files.
+ZIPs are made for the setups most people download. The command installs every
+setup's files and checks each one. `--dry-run` shows the list first.
 
 ## Fill an SD card from a computer?
 
