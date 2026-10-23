@@ -171,8 +171,12 @@ class GetPagesSayWhatTheyHold(unittest.TestCase):
             display = _display(name)
             text = sitepages.page(f"get/{name}.md").read_text(encoding="utf-8")
             kind = "pack" if REGISTRY[name].get("release_pack") is True else "files"
+            title = (f"BIOS {kind} for {display}"
+                     if (REPO_ROOT / "emulators" / f"{name}.yml").is_file()
+                     else f"{display} BIOS {kind}")
             with self.subTest(setup=name):
-                self.assertIn(f"title: {display} BIOS {kind}\n", text)
+                self.assertEqual(generate_site.get_page_title(name, display), title)
+                self.assertIn(f"title: {title}\n", text)
                 self.assertNotIn("Download ", text.split("\n---\n", 1)[0].split("title:", 1)[1]
                                  .split("\n", 1)[0])
                 self.assertIn(f"link: /platforms/{name}/", text)
@@ -185,7 +189,8 @@ class GetPagesSayWhatTheyHold(unittest.TestCase):
             if REGISTRY[name].get("release_pack") is True:
                 continue
             with self.subTest(setup=name):
-                self.assertIn(f"Link to share: [{_display(name)} BIOS files](/retrobios/get/{name}/)",
+                title = generate_site.get_page_title(name, _display(name))
+                self.assertIn(f"Link to share: [{title}](/retrobios/get/{name}/)",
                               _page(f"platforms/{name}.md"))
 
     def test_a_relative_folder_is_named_as_the_setups(self):

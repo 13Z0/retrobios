@@ -722,8 +722,12 @@ def get_page_link(platform_name: str, prefix: str = "") -> str:
 def get_page_title(platform_name: str, display: str) -> str:
     """What a get/ page holds, by its name: the ZIP of a setup a release
     publishes one for, the files of any other. "Download KNULLI" read as
-    the system's own download."""
-    return f"{display} BIOS pack" if has_release_pack(platform_name) else f"{display} BIOS files"
+    the system's own download. A setup that is also an emulator (BizHawk)
+    names it last: "BizHawk BIOS files" is the title of its emulator page."""
+    kind = "BIOS pack" if has_release_pack(platform_name) else "BIOS files"
+    if (_REPO_ROOT / "emulators" / f"{platform_name}.yml").is_file():
+        return f"{kind} for {display}"
+    return f"{display} {kind}"
 
 
 def _unzip_into(platform_name: str, display: str, extract_to: str | None, parts: int) -> list[str]:

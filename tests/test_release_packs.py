@@ -314,7 +314,7 @@ class EveryPlatformHasAPermanentPage(unittest.TestCase):
                 page = generate_site.generate_get_page(name)
                 pack = release_record.pack_for(name, record)
                 with self.subTest(platform=name):
-                    self.assertRegex(page, r"\n# .+ BIOS (pack|files)\n")
+                    self.assertRegex(page, r"\n# (.+ )?BIOS (pack|files)( for .+)?\n")
                     if name in RELEASED and pack:
                         for asset in pack["assets"]:
                             self.assertIn(
