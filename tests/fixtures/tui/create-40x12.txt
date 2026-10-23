@@ -1,0 +1,12 @@
+ RetroBIOS: Create the folder?
+
+ /home/user/bios/new does not exist.
+ The nearest folder that does:
+   /home/user
+
+ > Create it and continue
+   Choose another folder
+
+
+
+ A/Enter Choose  B/Esc Back

@@ -79,6 +79,57 @@ from the text and calling it passes the arguments through:
   --platform retroarch --dest D:\bios
 ```
 
+## The full-screen interface { #the-full-screen-interface }
+
+Run at a terminal, the installer opens a full screen that a keyboard or a
+controller drives. Three presses of A or Enter install everything your setup
+reads: the setup found here, the plan, then the result. The plan screen says
+how many files are missing, how much they weigh, how many are in place and how
+much space is free, before anything is written.
+
+The other choices sit one press away. **Choose systems** ticks the consoles you
+play, with the total to download under the list. **Options** sets the
+preferred regions, game data, the installed cores only, the cores, the parallel
+downloads and the folder. Each row names the option it sets, and **Show the
+command line** gives the same choice as one command for a script. **Preview the
+file list** shows what would be downloaded and writes nothing. When a choice
+changes the plan, the exact count appears before the install starts.
+
+| Action | Keyboard | Controller |
+|--------|----------|------------|
+| Move | Up and Down, `k` and `j` | D-pad Up and Down |
+| Page | PgUp and PgDn | L1 and R1 |
+| First, last | Home and End, `g` and `G` | |
+| Continue, open, choose | Enter, Space | A, Start |
+| Tick, untick | Space, Right, Left | X, D-pad Right and Left |
+| Back | Esc, Backspace | B, Select |
+| Options | `o`, Tab | Y |
+| Filter a long list | `/` then type | the Filter row |
+| Keys of the screen | `?`, F1 | |
+| Quit | `q`, Ctrl+C | B on the first screen |
+
+The bottom line of each screen names its keys, with both spellings (`A/Enter`,
+`B/Esc`), since A and B swap places between controller layouts. On the regions
+screen, Left and Right move the region under the cursor up and down the order of
+preference. During the download, Ctrl+C stops after the files in progress, and
+the result says how many were installed. The result stays printed in the
+terminal once the screen closes, with the command that repeats the run.
+
+It opens only for an install, at a terminal of at least 40 columns and 12 rows
+that is not `TERM=dumb`. A listing, `--check`, `--dry-run`, `--events`,
+`--quiet`, `--no-input`, `--yes` and `--restore` keep the plain output. Options
+given on the command line fill the screens in advance and are kept as they are.
+
+- `--tui` asks for the full screen, and names the reason when it cannot open
+  (code 2).
+- `--plain`, `RETROBIOS_PLAIN=1` or `ACCESSIBLE=1` keep the questions line by
+  line. This is the mode for a screen reader, which reads a full screen badly.
+
+Behind the screens, the installer runs itself with `--check --events`, then
+`--events --yes` and the options chosen: the same
+[events](#machine-readable-events) a program driving the installer reads. The
+file list is downloaded once and handed to each run.
+
 ## What the installer does
 
 1. Detects the host OS and the platforms installed on it.
@@ -518,6 +569,8 @@ what the options name, everything by default.
 | `--from-pack PATH` | Install from a pack already downloaded: its ZIP, one of its parts (the others are found in the same folder), or the folder holding them. Makes no network request and checks every file's hash. See [Without a network](#without-a-network-offline-install) |
 | `--manifest FILE` | Read the file list from FILE, a copy of `install/<platform>.json`, instead of downloading it. See [Without a network](#without-a-network-offline-install) |
 | `--restore FOLDER` | Put back the files a run replaced and kept in FOLDER, a dated folder inside `retrobios-backup`. Takes no other option but `--dry-run` and `--no-input`. See [Files you already had](#files-you-already-had) |
+| `--tui` | Open the full-screen interface, or stop with the reason it cannot open here (code 2) instead of falling back to the questions. Wins over `RETROBIOS_PLAIN` and `ACCESSIBLE`. See [The full-screen interface](#the-full-screen-interface) |
+| `--plain` | Ask the questions line by line instead of the full-screen interface, the mode for a screen reader. See [The full-screen interface](#the-full-screen-interface) |
 | `--version` | Print the installer's identity, the first 12 hex digits of the SHA-256 the bootstraps pin |
 | `--list-platforms` | Print the supported platforms and what was detected here |
 | `--list-targets` | Print the hardware targets a platform publishes, with the core count each carries |
@@ -1069,6 +1122,7 @@ no event at all. A program reads a missing `end` as that case.
 | `RETROBIOS_INSTALL_SHA256` | The SHA-256 the bootstrap requires of that installer, 64 hex characters. When either of these two is set and the fingerprint does not match, the error names the variable instead of suggesting a retry |
 | `RETROBIOS_BOOTSTRAP` | Set by `install.sh` (`sh`) and `install.ps1` (`ps1`) for the temporary installer they run, so that its hints give back the one-line command rather than `python3 install.py` |
 | `NO_COLOR` | Plain text, no colour, even at a terminal. `TERM=dumb` also turns the live progress line off |
+| `RETROBIOS_PLAIN`, `ACCESSIBLE` | Set to anything but `0`: the questions come line by line, as with `--plain`, instead of the full-screen interface |
 | `HTTPS_PROXY`, `NO_PROXY` | Honoured for every download through the standard library's default proxy handling: one names the proxy, the other the hosts to reach directly |
 
 ## When something goes wrong

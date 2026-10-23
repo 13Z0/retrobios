@@ -1,0 +1,12 @@
+ RetroBIOS: Choose systems
+
+   All
+   None
+   Filter (/ to type)
+ > [x] nintendo-gba (gba)       16.0 KB
+   [x] sony-playstation          1.0 MB
+   [ ] nintendo-famicom-disk   in place
+
+
+ 2 of 3 systems: 4 files, 1.0 MB
+ A/Enter Continue  B/Esc Back

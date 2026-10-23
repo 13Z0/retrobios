@@ -1,0 +1,24 @@
+ RetroBIOS: Checking
+
+ RetroArch: ~/.config/retroarch/system
+
+ File list: 5 files.
+ Reading the files already in the folder... 0:04
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ Ctrl-C Quit  B/Esc Back

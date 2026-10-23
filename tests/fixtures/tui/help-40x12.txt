@@ -1,0 +1,12 @@
+ RetroBIOS: Keys
+
+ Up/Down, k/j      Move
+ PgUp/PgDn, L1/R1  Page
+ Home/End, g/G     First, last
+ A/Enter, Start    Install
+ Y, o, Tab         Options
+ B/Esc, Backspace  Back
+ q, Ctrl-C         Quit
+ ?, F1             This help
+
+ Any key closes this help
