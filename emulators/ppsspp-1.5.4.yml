@@ -31,8 +31,11 @@ notes: |
   On Linux, assets are read through the VFS from <binary dir>/assets/,
   then the binary directory, /usr/share/ppsspp/assets/ and ./assets/.
   flash0: is <binary dir>/assets/flash0/. Paths below are written under
-  ppsspp-1.5.4/, which stands for the binary's directory.
-  ref: UI/NativeApp.cpp:329-335, UI/NativeApp.cpp:356-363
+  ppsspp-1.5.4/, which stands for the binary's directory, except zh_gb.pgf,
+  which ships with nothing and is written at the memory stick override
+  path, relative to the memory stick root named in data_root.
+  ref: UI/NativeApp.cpp:329-335, UI/NativeApp.cpp:356-363,
+       Core/HLE/sceFont.cpp:643-644
 
   The 19 font slots of the sceFont registry are filled from the game's
   USRDIR, then ms0:/PSP/flash0/font/ on the memory stick, then flash0:.
@@ -400,7 +403,7 @@ files:
     source_ref: "SDL/SDLJoystick.cpp:23-36"
 
   - name: "zh_gb.pgf"
-    path: "ppsspp-1.5.4/assets/flash0/font/zh_gb.pgf"
+    path: "PSP/flash0/font/zh_gb.pgf"
     system: sony-psp
     description: "Chinese PGF font, FTT-NewRodin Pro DB"
     required: false
