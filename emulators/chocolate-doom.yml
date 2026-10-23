@@ -12,6 +12,15 @@ cores:
   - "chocolate-doom"
 systems: [doom, heretic, hexen, strife, chex]
 
+data_root:
+  macos:
+    path: "~/Library/Application Support/chocolate-doom"
+    source_ref: "src/m_config.c:2528-2549"
+  linux:
+    path: "$XDG_DATA_HOME/chocolate-doom"
+    source_ref: "src/m_config.c:2528-2549"
+    note: "~/.local/share/chocolate-doom when XDG_DATA_HOME is unset (SDL_GetPrefPath)"
+
 notes: |
   Simon Howard's Doom source port that reproduces the DOS executables. One
   tree builds four programs, chocolate-doom, chocolate-heretic,
@@ -50,6 +59,11 @@ notes: |
   directory hold user supplied sets with no canonical artifact.
   ref: src/i_sound.c:55, src/i_sound.c:504-506, src/i_sdlmusic.c:56-80,
        EmuELEC packages/sx05re/emuelec-ports/chocolate-doom/config/chocolate-doom.cfg:27-29
+
+  Configuration files and saves go to the data root, the executable's directory
+  on Windows. music_pack_path defaults to music-packs in the SDL preference
+  folder, the data root outside Windows and %APPDATA%/chocolate-doom on Windows.
+  ref: src/m_config.c:2528-2578, src/m_config.c:2588-2611
 
 files:
   - name: "doom.wad"
