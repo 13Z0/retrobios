@@ -19,6 +19,7 @@ import http.server
 import io
 import json
 import os
+import queue
 import re
 import select
 import shutil
@@ -2576,6 +2577,53 @@ class AuditRoundFour(unittest.TestCase):
         state.code = 0
         state.summary = {**summary, "mode": "install", "installed": 5}
         self.assertIn(line, install.tui_outcome(state)[1])
+
+
+class OfflineInTheInterface(unittest.TestCase):
+    """--offline in the full screen: a "No connection" error offering a Try
+    again that can never work, and a plan counting downloads the run
+    forbids."""
+
+    def setUp(self):
+        patcher = mock.patch.dict(os.environ, {install.OFFLINE_VARIABLE: "1"})
+        patcher.start()
+        self.addCleanup(patcher.stop)
+
+    def test_no_list_names_the_ways_that_work(self):
+        inbox = queue.Queue()
+        install._tui_fetch("retroarch", inbox, io.StringIO())
+        kind, plat, title, lines, code = inbox.get_nowait()
+        self.assertEqual((kind, title, code), ("manifest_failed",
+                                               "No internet: offline mode", 1))
+        text = " ".join(lines)
+        for words in ("--manifest", "--from-pack", "without --offline"):
+            self.assertIn(words, text)
+        state = fresh_state()
+        state.stack = ["setup"]
+        with mock.patch.object(install.Path, "exists", return_value=True):
+            install.tui_update(state, Key("enter"))
+        install.tui_receive(state, (kind, plat, title, lines, code))
+        self.assertEqual(state.screen, "error")
+        self.assertNotIn("retry", [row.action for row in install.tui_rows(state)])
+        view = "\n".join(install.tui_view(state, 80, 24))
+        self.assertIn("No internet: offline mode", view)
+        self.assertNotIn("Try again", view)
+
+    def test_the_plan_offers_no_download(self):
+        state = checked_state()
+        text = " ".join(" ".join(install.tui_view(state, 120, 40)).split())
+        self.assertNotIn("to download", text)
+        self.assertIn("need the internet, which --offline does not use", text)
+        self.assertNotIn("install", [row.action for row in install.tui_rows(state)])
+        # A file found on this machine can still be copied.
+        state.found = [{"event": "found", "platform": "retroarch", "dest": FILES[0]["dest"],
+                        "folder": "/media/old", "path": "/media/old/scph5500.bin",
+                        "member": "", "reason": ""}]
+        text = " ".join(" ".join(install.tui_view(state, 120, 40)).split())
+        self.assertIn("1 found in old,", text)
+        self.assertIn("need the internet (--offline)", text)
+        self.assertEqual(install.tui_rows(state)[0].action, "install")
+        self.assertIn("--offline", install.tui_command(state))
 
 
 class NarrowSystemNames(unittest.TestCase):

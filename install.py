@@ -10140,6 +10140,8 @@ def tui_flags(state: TuiState) -> list[tuple[str, str | None]]:
     if state.jobs != 8:
         flags.append(("--jobs", str(state.jobs)))
     flags += [("--from", str(folder)) for folder in state.from_folders]
+    if offline_requested() and not any(flag == "--offline" for flag, _v in flags):
+        flags.append(("--offline", None))
     return flags
 
 
@@ -10312,7 +10314,8 @@ def tui_rows(state: TuiState) -> list[TuiRow]:
         return [TuiRow("install", "Install"), TuiRow("back", "Back")]
     if screen == "error":
         rows = ([TuiRow("retry", "Try again")]
-                if state.run == "check" and state.error_title else [])
+                if state.run == "check" and state.error_title
+                and state.error_title != TUI_OFFLINE_TITLE else [])
         return rows + [TuiRow("back", "Choose another setup or folder" if state.run == "check"
                               else "Back"),
                        TuiRow("quit", "Quit")]
@@ -10328,6 +10331,10 @@ def _plan_rows(state: TuiState) -> list[TuiRow]:
     size = check.get("bytes_needed", 0)
     label = f"Install {format_size(size)}" if size >= CONFIRM_FROM_BYTES else "Install"
     rows = [TuiRow("install", label)]
+    if _offline_only() and not _plan_copies(state, check):
+        # Nothing here to copy, and the network refused: Install would
+        # only fail every file.
+        rows = []
     if state.facts.get("writable") is False or _short_of_space(state, check):
         # Every file would fail alike, or the run would stop before the
         # first one: the way out is another folder.
@@ -10341,6 +10348,18 @@ def _plan_rows(state: TuiState) -> list[TuiRow]:
     if state.unreadable:
         rows.append(TuiRow("unreadable", "Show the files that could not be read"))
     return rows + [TuiRow("options", "Options"), TuiRow("quit", "Quit")]
+
+
+def _offline_only() -> bool:
+    """--offline without a pack: what is not on this machine cannot come."""
+    return offline_requested() and LOCAL.pack is None
+
+
+def _plan_copies(state: TuiState, check: dict) -> list[str]:
+    """The files to install that this machine holds, by destination."""
+    local = {event["dest"] for event in state.found} if check is state.check else set()
+    sizes = {event["dest"] for event in state.files}
+    return [dest for dest in local if dest in sizes]
 
 
 def _short_of_space(state: TuiState, check: dict) -> bool:
@@ -11443,13 +11462,18 @@ def _plan_lines(check: dict, dest: Path | None, state: TuiState) -> list:
     fetch = max(0, need - len(copied))
     fetch_bytes = max(0, check["bytes_needed"] - sum(sizes[dest_] for dest_ in copied))
     elsewhere = _tui_found_elsewhere(state) if check is state.check else {}
+    offline = _offline_only()
     if elsewhere:
         # The folder by its last name: the whole path pushed the BIOS
         # folder off a 40x15 screen. The Options row spells it out.
         where = ", ".join(f"{len(events)} found in {_last_name(folder)}"
                           for folder, events in elsewhere.items())
-        headline = (f"{where}, {fetch} to download ({format_size(fetch_bytes)})"
+        headline = (f"{where}, {fetch} need the internet (--offline)" if fetch and offline
+                    else f"{where}, {fetch} to download ({format_size(fetch_bytes)})"
                     if fetch else f"{where}, nothing to download")
+    elif need and fetch and offline:
+        headline = (f"{_plural(fetch, 'file')} {'needs' if fetch == 1 else 'need'} the "
+                    "internet, which --offline does not use")
     elif need and fetch:
         headline = f"{_plural(fetch, 'file')} to download, {format_size(fetch_bytes)}"
     elif need:
@@ -11461,6 +11485,9 @@ def _plan_lines(check: dict, dest: Path | None, state: TuiState) -> list:
         headline = (f"{_plural(data, 'data file')} to fetch" if data
                     else "Everything is in place")
     wrong = check["wrong_hash"]
+    offline_lines = (["Copy them from your old card or a folder, or run the installer "
+                      "again with a pack (--from-pack) or without --offline."]
+                     if offline and fetch else [])
     # The folder comes second: on a 40x12 screen it is what is left once
     # the rows are drawn, and nothing is written before it is seen.
     lines: list = [
@@ -11505,7 +11532,7 @@ def _plan_lines(check: dict, dest: Path | None, state: TuiState) -> list:
         lines += _unavailable_lines(state)
     if check is state.check:
         lines += _unplaced_lines(state.check_summary, state)
-    return lines
+    return lines[:2] + offline_lines + lines[2:]
 
 
 def _unplaced_lines(summary: dict | None, state: TuiState) -> list[str]:
@@ -12379,6 +12406,9 @@ class _EngineRun:
 TUI_FETCH_TIMEOUT = 15
 
 
+TUI_OFFLINE_TITLE = "No internet: offline mode"
+
+
 def _tui_fetch(plat: str, inbox: queue.Queue, log: io.StringIO) -> None:
     """The file list, fetched once in this process, or what went wrong."""
     if LOCAL.manifest is not None or LOCAL.pack is not None:
@@ -12407,6 +12437,16 @@ def _tui_fetch(plat: str, inbox: queue.Queue, log: io.StringIO) -> None:
                  if exc.code == 404 else f"The server answered HTTP {exc.code}."]
     except (urllib.error.URLError, OSError) as exc:
         code, words = network_words(exc)
+        if code == "offline":
+            # Asked for, not a failure: no Try again, and the two ways a
+            # run without the network gets its list.
+            inbox.put(("manifest_failed", plat, TUI_OFFLINE_TITLE, [
+                "This run makes no network request (--offline), and the list of "
+                "BIOS files comes from the network.",
+                "Run the installer again with the list saved as a file "
+                "(--manifest FILE, a copy of install/<platform>.json) or with a pack "
+                "(--from-pack PACK), or without --offline."], 1))
+            return
         title = {"clock": "The clock is wrong",
                  "no_ca": "No trusted certificates"}.get(code, "No connection")
         # The screen's first row is Try again: "then run again" was a second way.
