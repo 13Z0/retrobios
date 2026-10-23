@@ -10,11 +10,13 @@ from __future__ import annotations
 
 import sys
 import unittest
+from unittest import mock
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
+import siterender  # noqa: E402
 from generate_site import _render_platform_systems  # noqa: E402
 
 A, B, C = "a" * 32, "b" * 32, "c" * 32
@@ -36,7 +38,9 @@ class EachRowItsDeclaration(unittest.TestCase):
                 {"name": "boot.rom", "status": "ok", "system": "saturn"},
             ],
         }
-        text = "\n".join(_render_platform_systems(by_system, config_files, {}))
+        names = {"psx": "Sony PlayStation", "saturn": "Sega Saturn"}
+        with mock.patch.dict(siterender.SYSTEM_NAMES, names):
+            text = "\n".join(_render_platform_systems(by_system, config_files, {}))
         psx, saturn = text.split("saturn", 1)[0], text.split("saturn", 1)[1]
         self.assertIn(A, psx)
         self.assertNotIn(B, psx)

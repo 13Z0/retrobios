@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import re
 import urllib.parse
+from dataclasses import dataclass
 import urllib.request
 
 import upstream
@@ -345,3 +346,98 @@ _PATH_RE = re.compile(r"^[A-Za-z0-9_.@/+~-]+$")
 def _guarded_spans(line: str) -> list[tuple[int, int]]:
     """Code spans and links of a markdown line."""
     return [m.span() for m in re.finditer(r"`[^`]*`|\[[^\]]*\]\([^)]*\)", line)]
+
+
+# Where a platform's list was read: the forge, the repository, the revision
+# and the path inside it, out of the URL its scraper pinned.
+_LIST_URL_RES = (
+    re.compile(r"^https://raw\.githubusercontent\.com/(?P<owner>[^/]+)/(?P<repo>[^/]+)/"
+               r"(?P<rev>[^/]+)/(?P<path>.+)$"),
+    re.compile(r"^https://github\.com/(?P<owner>[^/]+)/(?P<repo>[^/]+)/(?:blob|tree)/"
+               r"(?P<rev>[^/]+)(?:/(?P<path>.+))?$"),
+    re.compile(r"^https://codeload\.github\.com/(?P<owner>[^/]+)/(?P<repo>[^/]+)/"
+               r"tar\.gz/(?P<rev>[^/]+)$"),
+    re.compile(r"^https://(?P<host>gitlab\.com)/(?P<owner>[^/]+)/(?P<repo>[^/]+)/-/"
+               r"(?:raw|blob)/(?P<rev>[^/]+)/(?P<path>.+)$"),
+)
+_BRANCHES = frozenset({"master", "main", "db"})
+
+
+@dataclass(frozen=True)
+class ListSource:
+    """A platform's list as its scraper read it."""
+
+    host: str
+    owner: str
+    repo: str
+    rev: str
+    path: str
+
+    @property
+    def moving(self) -> bool:
+        """The revision is a branch: what was read is not recorded."""
+        return not self.rev or self.rev in _BRANCHES
+
+    @property
+    def label(self) -> str:
+        """`batocera-systems at tag batocera-43.1`, said in words."""
+        name = self.path.rsplit("/", 1)[-1] if self.path else f"{self.repo} repository"
+        if not self.rev:
+            return f"{name}, default branch"
+        if re.fullmatch(r"[0-9a-f]{40}", self.rev):
+            return f"{name} at commit {self.rev[:12]}"
+        if self.moving:
+            return f"{name} on branch {self.rev}"
+        return f"{name} at tag {self.rev}"
+
+    def browse(self, path: str = "", start: int | None = None,
+               end: int | None = None) -> str:
+        """The page a reader opens: the file, or the tree, at the revision."""
+        path = path or self.path
+        if self.host == "gitlab.com":
+            url = f"https://gitlab.com/{self.owner}/{self.repo}/-/blob/{self.rev}/{path}"
+            anchor = f"#L{start}" + (f"-{end}" if end and end != start else "")
+        else:
+            base = f"https://github.com/{self.owner}/{self.repo}"
+            if not self.rev:
+                return base
+            kind = "blob" if path else "tree"
+            url = f"{base}/{kind}/{self.rev}" + (f"/{path}" if path else "")
+            anchor = f"#L{start}" + (f"-L{end}" if end and end != start else "")
+        return url + (anchor if start else "")
+
+
+def list_source(url: str) -> ListSource | None:
+    """The forge, repository, revision and path of a platform's `source:`."""
+    url = str(url or "").strip()
+    for pattern in _LIST_URL_RES:
+        found = pattern.match(url)
+        if found:
+            parts = found.groupdict()
+            return ListSource(parts.get("host") or "github.com", parts["owner"],
+                              parts["repo"], parts["rev"], parts.get("path") or "")
+    bare = re.match(r"^https://github\.com/([^/]+)/([^/]+?)/?$", url)
+    if bare:
+        return ListSource("github.com", bare[1], bare[2], "", "")
+    return None
+
+
+def launcher_ref_markdown(source: ListSource | None, ref: str) -> str:
+    """A launcher record's source_ref, each part a pinned link.
+
+    Linked only where the caller knows the launcher code sits in the
+    repository and revision of the platform's list. Otherwise each part is
+    plain code: a link to another repository is a false citation.
+    """
+    rendered: list[str] = []
+    for part in split_source_ref(ref):
+        display = part.path.rsplit("/", 1)[-1]
+        if part.start is not None:
+            display += f":{part.start}"
+            if part.end is not None and part.end != part.start:
+                display += f"-{part.end}"
+        if source is None or not source.rev or not _PATH_RE.fullmatch(part.path):
+            rendered.append(f"`{display}`")
+        else:
+            rendered.append(f"[`{display}`]({source.browse(part.path, part.start, part.end)})")
+    return ", ".join(rendered)

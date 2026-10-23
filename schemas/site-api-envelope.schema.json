@@ -19,6 +19,11 @@
       "type": "string",
       "format": "date-time"
     },
+    "commit": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$",
+      "description": "The repository commit the data was read at."
+    },
     "kind": {
       "type": "string",
       "enum": [
