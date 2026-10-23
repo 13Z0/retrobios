@@ -10,6 +10,7 @@ installs it).
 from __future__ import annotations
 
 import argparse
+import contextlib
 import errno
 import fcntl
 import functools
@@ -2121,6 +2122,33 @@ class AuditRoundThree(unittest.TestCase):
         # A list named by its own name says which list, not which card.
         self.assertEqual(install.card_dest("retroarch", "retroarch", root),
                          ("retroarch", root))
+
+    def test_p1_1_the_folder_named_is_compared_by_folders(self):
+        """NOTMUOS/bios ended with MUOS/bios as text and was taken for a
+        muOS card's folder."""
+        root = self.card({"roms/": ""})
+        stray = root / "NOTMUOS" / "bios"
+        with self.assertRaises(SystemExit), \
+                contextlib.redirect_stderr(io.StringIO()) as err:
+            install.card_dest("muos", "retroarch", stray)
+        self.assertIn("is not a muOS card", err.getvalue())
+        self.assertEqual(install.card_dest("muos", "retroarch", root / "muos" / "BIOS"),
+                         ("retroarch", root / "muos" / "BIOS"))
+
+    def test_p1_1_a_card_two_systems_claim_says_so(self):
+        root = self.card({"MUOS/": "", "spruce/": ""})
+        self.assertIsNone(install.card_system(root))
+        with contextlib.redirect_stdout(io.StringIO()) as out:
+            self.assertEqual(install.card_dest("retroarch", "retroarch", root),
+                             ("retroarch", root))
+        lines = out.getvalue().splitlines()
+        self.assertEqual(len(lines), 1, lines)
+        self.assertIn("holds the files of muOS and spruceOS", lines[0])
+        # The system named among them decides.
+        with contextlib.redirect_stdout(io.StringIO()) as out:
+            self.assertEqual(install.card_dest("muos", "retroarch", root),
+                             ("retroarch", root / "MUOS/bios"))
+        self.assertIn("muOS card", out.getvalue())
 
     # P1-2: Space is X on PortMaster and Y on muxterm.
 

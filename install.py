@@ -8667,14 +8667,27 @@ def card_system(root: Path) -> tuple[str, Path, str] | None:
     plat = card_platform(root)
     if plat:
         return plat, root, display_name(plat)
-    matched = [rule for rule in _card_rules() if _card_rule_matches(rule, root)]
-    bases = {rule.base for rule in matched if rule.base}
-    matched = [rule for rule in matched if rule.name not in bases]
-    targets = {(rule.manifest, rule.bios) for rule in matched}
-    if len(targets) != 1:
+    matched = _card_matches(root)
+    if len({(rule.manifest, rule.bios) for rule in matched}) != 1:
         return None
     rule = matched[0]
     return rule.manifest, root / rule.bios, rule.name
+
+
+def _card_matches(root: Path) -> list[_OsRule]:
+    """The card rules root matches, a system another one is built on left
+    out for it."""
+    matched = [rule for rule in _card_rules() if _card_rule_matches(rule, root)]
+    bases = {rule.base for rule in matched if rule.base}
+    return [rule for rule in matched if rule.name not in bases]
+
+
+def _ends_with(path: Path, relative: str) -> bool:
+    """Whether path's last folders are relative's, compared folder by folder
+    and without case: NOTMUOS/bios does not end with MUOS/bios."""
+    tail = [part.casefold() for part in PurePosixPath(relative).parts]
+    parts = [part.casefold() for part in path.parts]
+    return len(parts) >= len(tail) and parts[len(parts) - len(tail):] == tail
 
 
 def card_dest(named: str, plat: str, dest: Path) -> tuple[str, Path]:
@@ -8694,12 +8707,21 @@ def card_dest(named: str, plat: str, dest: Path) -> tuple[str, Path]:
     key = _name_key(named)
     rule = next((rule for rule in _card_rules() if key and key == _name_key(rule.name)
                  and key != _name_key(display_name(rule.manifest))), None)
+    matched = [] if found else _card_matches(dest)
     if rule is None or found:
+        if len({(match.manifest, match.bios) for match in matched}) > 1:
+            names = " and ".join(sorted({match.name for match in matched}))
+            print(f"  {screen_text(str(dest))} holds the files of {names}: installing into "
+                  "it as named. Name the card's BIOS folder with --dest to write there.")
         return plat, dest
     # Its folder on the card, or one its device reads (/run/muos/storage/bios).
     own = {device.bios for device in _EMBEDDED_RULES if device.name == rule.name}
-    if dest.as_posix() in own or dest.as_posix().casefold().endswith(rule.bios.casefold()):
+    if dest.as_posix() in own or _ends_with(dest, rule.bios):
         return plat, dest
+    if any(match.name == rule.name for match in matched):
+        # A card two systems claim, the one named among them.
+        print(f"  {rule.name} card: {display_name(plat)} files, in {dest / rule.bios}")
+        return plat, dest / rule.bios
     marker = rule.values[0].split("/")[0]
     print(f"Error: {dest} is not a {rule.name} card: it holds no {marker}. "
           f"{rule.name} reads its BIOS files from {rule.bios} on its card: name the card's "
