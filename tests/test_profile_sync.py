@@ -2284,6 +2284,17 @@ class TestLineEdits(unittest.TestCase):
         with self.assertRaises(YamlWriteError):
             find_field_line(SAMPLE, "source_ref", "a.c:10-12", index + 1)
 
+    def test_escaped_quotes_are_matched_as_parsed(self):
+        # etlegacy writes (FS_FOpenFileRead \\"pak0.pk3\\") inside a
+        # double-quoted source_ref: the line kept its backslashes and never
+        # equalled the parsed value, so the recale was refused.
+        value = 'files.c:5076 (FS_FOpenFileRead "pak0.pk3")'
+        text = SAMPLE.replace('"b.c:5"', '"files.c:5076 (FS_FOpenFileRead \\"pak0.pk3\\")"')
+        self.assertEqual(yaml.safe_load(text)["files"][1]["source_ref"], value)
+        moved = value.replace("5076", "5080")
+        out, _ = replace_field_line(text, "source_ref", value, moved)
+        self.assertEqual(yaml.safe_load(out)["files"][1]["source_ref"], moved)
+
     def test_source_ref_outside_files_does_not_shift_the_match(self):
         text = SAMPLE.replace(
             "files:",
@@ -3645,6 +3656,22 @@ class TestCollectCitations(unittest.TestCase):
         self.assertEqual(citations[1].parts[0].path, "munt ROMInfo.cpp")
         self.assertTrue(profile_sync.is_external_citation("munt ROMInfo.cpp"))
 
+    def test_project_word_ending_the_line_before_marks_the_path_external(self):
+        # genesis_plus_gx_expanded wrapped `(Batocera` and
+        # `package/batocera/...mk:7` one line apart in its notes, and the
+        # path was read against the declared repository: 1 to review.
+        document = {
+            "notes": "Batocera builds it at a0b5a033\n(Batocera\n"
+            "package/batocera/emulators/gpgx.mk:7), the same tree.\n"
+        }
+        citation = collect_citations(document)[0]
+        self.assertEqual(
+            citation.parts[0].path, "Batocera package/batocera/emulators/gpgx.mk"
+        )
+        self.assertTrue(profile_sync.is_external_citation(citation.parts[0].path))
+        sentence = {"notes": "It is read by the file\nsrc/gpgx.c:7 at boot.\n"}
+        self.assertEqual(collect_citations(sentence)[0].parts[0].path, "src/gpgx.c")
+
     def test_project_word_resolves_inside_a_declared_tree(self):
         tree = [
             "mupen64plus-video-rice/upstream/src/Config.cpp",
@@ -3912,6 +3939,32 @@ class TestRebaseProse(unittest.TestCase):
         self.assertIn("(q.c:9). Checked", content)
         self.assertIn(
             "(q.c:9).", yaml.safe_load(content)["quirk_note"]
+        )
+
+    def test_folded_rename_keeps_the_separator_as_written(self):
+        # boom3 cites libretro.cpp:1635-1643, 2384-2405 in a folded note.
+        # The rename rewrote the run as one token without the space, and
+        # the written document no longer matched the intended one.
+        text = PROSE_SAMPLE.replace(
+            "files:",
+            "quirk_note: >\n  Passes fs_game\n  (q.c:10-12, 30-40). Checked"
+            " later.\nfiles:",
+        )
+        self.path.write_text(text, encoding="utf-8")
+        parts = [
+            PartResult(RefPart("q.c", 10, 12, "10-12"), "RENAMED", "src/q.c", 20, 22, []),
+            PartResult(RefPart("q.c", 30, 40, "30-40"), "RENAMED", "src/q.c", 50, 60, []),
+        ]
+        applied = rebase_refs(
+            self.path,
+            self._report([self._prose_entry("q.c:10-12, 30-40", parts, "quirk_note")]),
+        )
+        self.assertEqual(
+            applied, ["quirk_note: q.c:10-12, 30-40 -> src/q.c:20-22, 50-60"]
+        )
+        self.assertIn(
+            "(src/q.c:20-22, 50-60).",
+            yaml.safe_load(self.path.read_text())["quirk_note"],
         )
 
     def test_parts_disagreeing_on_the_new_file_do_not_move(self):
@@ -4229,6 +4282,40 @@ class TestRealignProse(unittest.TestCase):
         self.assertIn("(b.c:2,8-9)", text)
         self.assertEqual(
             yaml.safe_load(text)["source_commit"], "pin",
+        )
+
+    def test_two_entries_sharing_a_name_keep_their_own_history(self):
+        # supermodel declares Games.xml once per build mode. Both notes
+        # answered to files[Games.xml].note, and the history of the libretro
+        # note decided where the standalone note was written.
+        sample = (
+            'emulator: Test\n'
+            'source: "https://github.com/o/n"\n'
+            'source_commit: "oldpin"\n'
+            'files:\n'
+            '  - name: "Games.xml"\n'
+            '    mode: standalone\n'
+            '    note: "Parsed at startup (a.c:10)."\n'
+            '  - name: "Games.xml"\n'
+            '    mode: libretro\n'
+            '    note: "Read through the VFS (b.c:2)."\n'
+        )
+        self._git("init", "-q")
+        self._git("config", "user.email", "t@t")
+        self._git("config", "user.name", "t")
+        self._commit(sample, "profile")
+        # The pin advances and the libretro note is rewritten, uncommitted.
+        self.path.write_text(
+            sample.replace('"oldpin"', '"pin"').replace("(b.c:2)", "(b.c:5)"),
+            encoding="utf-8",
+        )
+        self.files[("oldpin", "a.c")] = ["x"] * 9 + ["subject"]
+        self.files[("pin", "a.c")] = ["x"] * 13 + ["subject"]
+        self.files[("pin", "b.c")] = ["p"] * 4 + ["read"]
+        messages = profile_sync.realign_prose(self.path, self.tmp.name, dry_run=True)
+        self.assertEqual(
+            messages,
+            ["would recale files[Games.xml@standalone].note: a.c:10 -> a.c:14"],
         )
 
     def test_pin_moved_under_committed_text_is_not_guessed(self):
