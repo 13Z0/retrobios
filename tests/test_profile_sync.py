@@ -2999,6 +2999,24 @@ class TestBumpCommit(unittest.TestCase):
         self.assertEqual(profile_sync.pending_recale(report), 0)
         self.assertTrue(bump_commit(self.path, report))
 
+    def test_refused_on_a_build_a_platform_compiles(self):
+        # mame0258 documents the MAME Recalbox builds: libretro/mame HEAD
+        # is a later release, and every ref still anchors there.
+        self.path.write_text(SAMPLE + "built_by: [recalbox]\n", encoding="utf-8")
+        part = PartResult(
+            RefPart("a.c", 10, 12, "a.c:10-12"), "ANCHORED", None, 10, 12, []
+        )
+        report = ProfileReport(
+            name="p", repo="o/n", pin="pin", head="newhead",
+            entries=[
+                EntryReport("a.bin", "a.c:10-12, (just a note)", "ANCHORED", [part])
+            ],
+            counts={"ANCHORED": 1},
+        )
+        with contextlib.redirect_stderr(io.StringIO()):
+            self.assertFalse(bump_commit(self.path, report))
+        self.assertNotIn("newhead", self.path.read_text())
+
     def test_refused_when_no_ref_reads_the_pinned_repository(self):
         """gam4980: every bare libretro.c ref anchored in upstream, and the
         bump wrote the fork's HEAD over refs that never described it."""

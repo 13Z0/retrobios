@@ -2927,6 +2927,16 @@ def bump_commit(
     if pending_recale(report, accept_changed, text):
         return False
     document = yaml.safe_load(text)
+    if document.get("built_by"):
+        # The pin is the commit a platform builds (recalbox gsplus.mk, the
+        # mame0258 its package fetches), not a point on a moving branch:
+        # HEAD is a build nobody ships under this name.
+        print(
+            f"{path.stem}: pinned to the build {', '.join(document['built_by'])} "
+            "ships, advanced by hand",
+            file=sys.stderr,
+        )
+        return False
     if any(isinstance(document.get(f), dict) for f in ("source_commit", "upstream_commit")):
         # A pin per build mode names one revision per repository, and the
         # report heads only the primary one: rewriting str(dict) was a
