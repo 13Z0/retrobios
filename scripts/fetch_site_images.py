@@ -8,8 +8,9 @@ into ``docs_assets/logos/`` and ``docs_assets/system-icons/``, which are
 committed, and records where each came from in a ``sources.json`` beside
 them. The site build only reads those copies (``sitediagrams.localize_images``).
 
-Raster images are normalised to a square PNG (96 px for logos, 48 px for
-system icons) so every tile has the same weight, and SVG is kept as published.
+Raster logos are normalised to an 80 px square WebP, twice the 40 px they
+are shown at, and system icons to a 48 px PNG, so every tile has the same
+weight. SVG is kept as published.
 Normalising needs Pillow. This is a maintenance tool run by hand when a
 logo changes, not a build step: the build stays on the standard library
 and PyYAML.
@@ -36,7 +37,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 
 LOGO_DIR = ROOT / "docs_assets" / "logos"
 ICON_DIR = ROOT / "docs_assets" / "system-icons"
-LOGO_SIZE = 96
+LOGO_SIZE = 80
 ICON_SIZE = 48
 AVATAR_HOST = "avatars.githubusercontent.com"
 USER_AGENT = "retrobios-site-images"
@@ -47,7 +48,7 @@ def fetch(url: str) -> bytes:
         return response.read()
 
 
-def square_png(data: bytes, size: int) -> bytes:
+def square_image(data: bytes, size: int, kind: str = "PNG") -> bytes:
     try:
         from PIL import Image
     except ImportError as exc:
@@ -57,7 +58,11 @@ def square_png(data: bytes, size: int) -> bytes:
     tile = Image.new("RGBA", (size, size), (0, 0, 0, 0))
     tile.paste(image, ((size - image.width) // 2, (size - image.height) // 2), image)
     out = io.BytesIO()
-    tile.save(out, "PNG", optimize=True)
+    if kind == "WEBP":
+        # Quality 90: half the bytes of lossless, edges still clean at 40 px.
+        tile.save(out, "WEBP", quality=90, method=6)
+    else:
+        tile.save(out, "PNG", optimize=True)
     return out.getvalue()
 
 
@@ -98,7 +103,7 @@ def fetch_logos() -> None:
         if is_svg(data):
             file_name, payload = f"{name}.svg", safe_svg(data, url)
         else:
-            file_name, payload = f"{name}.png", square_png(data, LOGO_SIZE)
+            file_name, payload = f"{name}.webp", square_image(data, LOGO_SIZE, "WEBP")
         for stale in LOGO_DIR.glob(f"{name}.*"):
             if stale.name != file_name:
                 stale.unlink()
@@ -141,7 +146,7 @@ def fetch_icons() -> None:
                 continue
             raise
         file_name = f"{name}.png"
-        (ICON_DIR / file_name).write_bytes(square_png(data, ICON_SIZE))
+        (ICON_DIR / file_name).write_bytes(square_image(data, ICON_SIZE))
         entries.append({"file": file_name, "source": url})
         print(f"  {file_name}")
     write_manifest(
