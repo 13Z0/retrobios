@@ -14,6 +14,16 @@ systems:
   - nintendo-fds
 mode: standalone
 
+data_root:
+  windows:
+    path: "%LOCALAPPDATA%/puNES"
+    source_ref: "src/gui/qt.cpp:561-568"
+    note: "Qt's GenericConfigLocation. --portable moves it to the application directory."
+  linux:
+    path: "$XDG_DATA_HOME/puNES"
+    source_ref: "src/gui/qt.cpp:561-570"
+    note: "~/.local/share/puNES when XDG_DATA_HOME is unset. --portable moves it to the application directory."
+
 notes: |
   Qt emulator of the NES, the Famicom and the Family Computer Disk System,
   also playing NSF and NSFE music files. A cartridge boots with nothing
@@ -30,7 +40,7 @@ notes: |
   (CMakeLists.txt:227-228).
 
   The data directory is the application directory under --portable,
-  %APPDATA%/puNES on Windows and ~/.local/share/puNES elsewhere
+  %LOCALAPPDATA%/puNES on Windows and ~/.local/share/puNES elsewhere
   (src/gui/qt.cpp:561-575), so the bios folder is ~/.local/share/puNES/bios.
 
   No length and no hash is ever compared. fds_load_bios computes a CRC32 of
