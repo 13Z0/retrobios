@@ -4,10 +4,19 @@
 // which convert.py derives from install/<platform>.json. The selection
 // follows install.py narrow(): a file is kept when one of its systems is
 // chosen, a file with no system when "other" is chosen.
+// The list follows the current data; release.json says what the published
+// ZIP of each setup holds, so the page can say when the two differ.
+import release from '../../../release.json';
+
 const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
+const packs = Object.fromEntries(
+	Object.values(release.packs).flatMap((pack) =>
+		pack.platforms.map((platform) => [platform, { files: pack.files, size: pack.extracted_size }]),
+	),
+);
 ---
 
-<div class="rb-picker" data-base={base}>
+<div class="rb-picker" data-base={base} data-release={JSON.stringify({ tag: release.tag, packs })}>
 	<fieldset>
 		<label for="rb-pick-platform">Your setup</label>
 		<select id="rb-pick-platform" name="platform">
@@ -17,16 +26,20 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 	<div class="rb-pick-systems" hidden>
 		<p class="rb-pick-systems-head">
 			<strong>Systems</strong>
-			<button type="button" data-all>All</button>
-			<button type="button" data-none>None</button>
+			<button type="button" class="rb-text-button" data-all>All</button>
+			<button type="button" class="rb-text-button" data-none>None</button>
 		</p>
-		<input type="search" class="rb-pick-filter" placeholder="Filter systems" aria-label="Filter systems" />
+		<input type="search" class="rb-pick-filter" placeholder="Type a console" aria-label="Type a console" />
 		<div class="rb-pick-list" role="group" aria-label="Systems"></div>
 	</div>
 	<div class="rb-pick-result" role="status" aria-live="polite"></div>
+	<p class="rb-pick-release" hidden></p>
 	<div class="rb-pick-output" hidden>
-		<p><strong>Install command</strong> (Linux, macOS, Steam Deck, handhelds)</p>
-		<pre class="rb-pick-cmd"><code></code></pre>
+		<p><strong>Install command</strong> for Linux, macOS, Steam Deck and handhelds</p>
+		<figure class="rb-pick-frame">
+			<figcaption>Terminal</figcaption>
+			<pre class="rb-pick-cmd"><code></code></pre>
+		</figure>
 		<button type="button" data-copy>Copy the command</button>
 		<details>
 			<summary>Files and where they go</summary>
@@ -49,6 +62,8 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 		files: [string, number, number[]][];
 	};
 
+	type Release = { tag: string; packs: Record<string, { files: number; size: number }> };
+
 	const INSTALL = 'curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh -s --';
 	const MAX_ROWS = 500;
 
@@ -68,6 +83,9 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 		const output = root.querySelector<HTMLElement>('.rb-pick-output')!;
 		const cmd = root.querySelector<HTMLElement>('.rb-pick-cmd code')!;
 		const tbody = root.querySelector('tbody')!;
+		const releaseLine = root.querySelector<HTMLElement>('.rb-pick-release')!;
+		const release: Release = JSON.parse(root.dataset.release ?? '{"tag":"","packs":{}}');
+		const count = (n: number) => n.toLocaleString('en');
 		let data: Data | null = null;
 
 		const params = new URLSearchParams(location.search);
@@ -86,7 +104,7 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 			const total = files.reduce((sum, [, bytes]) => sum + bytes, 0);
 			const all = picked.length === data.systems.length + (data.other ? 1 : 0);
 			result.textContent = picked.length
-				? `${files.length} files, ${size(total)}, for ${picked.length} of ${data.systems.length + (data.other ? 1 : 0)} choices. Folder: ${data.folder || 'the setup BIOS folder'}.`
+				? `${count(files.length)} files, ${size(total)}, for ${count(picked.length)} of ${count(data.systems.length + (data.other ? 1 : 0))} choices. Folder: ${data.folder || 'the setup BIOS folder'}.`
 				: 'Choose at least one system.';
 			output.hidden = !picked.length;
 			cmd.textContent = `${INSTALL} --platform ${data.platform}${all ? '' : ` --system ${picked.join(',')}`}`;
@@ -105,7 +123,7 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 				const row = document.createElement('tr');
 				const cell = document.createElement('td');
 				cell.colSpan = 2;
-				cell.textContent = `and ${files.length - MAX_ROWS} more.`;
+				cell.textContent = `and ${count(files.length - MAX_ROWS)} more.`;
 				row.append(cell);
 				tbody.append(row);
 			}
@@ -119,32 +137,45 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 		const load = async (platform: string, preset: string[] | null) => {
 			list.replaceChildren();
 			output.hidden = true;
+			releaseLine.hidden = true;
 			systemsBox.hidden = !platform;
 			if (!platform) { result.textContent = ''; return; }
 			result.textContent = 'Loading the file list...';
 			data = await fetch(`${base}data/picker/${platform}.json`).then((r) => r.json());
-			const choices = data!.systems.map((s) => ({
-				id: s.id,
-				title: s.title || s.id,
-				detail: [s.id, ...s.native].filter((n) => n !== s.title).join(', '),
-			}));
+			// Sorted by the name a reader looks for, not by id.
+			const choices = data!.systems
+				.map((s) => ({
+					id: s.id,
+					title: s.title || s.id,
+					detail: [s.id, ...s.native].filter((n) => n !== s.title).join(', '),
+				}))
+				.sort((a, b) => a.title.localeCompare(b.title, 'en'));
 			if (data!.other) choices.push({ id: 'other', title: 'Other files', detail: 'engines and computers no system owns' });
 			for (const choice of choices) {
 				const label = document.createElement('label');
 				const box = document.createElement('input');
 				box.type = 'checkbox';
 				box.value = choice.id;
-				box.checked = preset ? preset.includes(choice.id) : true;
+				box.checked = preset ? preset.includes(choice.id) : false;
 				const detail = document.createElement('small');
 				detail.textContent = choice.detail;
 				label.append(box, ` ${choice.title} `, detail);
 				list.append(label);
 			}
+			const pack = release.packs[data!.platform];
+			const listed = data!.files.reduce((sum, [, bytes]) => sum + bytes, 0);
+			if (pack && (pack.files !== data!.files.length || pack.size !== listed)) {
+				releaseLine.textContent = `The ZIP of release ${release.tag} holds ${count(pack.files)} files, ${size(pack.size)}. It was built from the list of that day. The command installs the current list.`;
+				releaseLine.hidden = false;
+			}
 			applyFilter();
 			render();
 		};
 
-		select.addEventListener('change', () => load(select.value, null));
+		select.addEventListener('change', async () => {
+			await load(select.value, null);
+			if (select.value) filter.focus();
+		});
 		list.addEventListener('change', render);
 		const applyFilter = () => {
 			const query = filter.value.trim().toLowerCase();
@@ -192,5 +223,42 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 	.rb-picker .rb-pick-filter { width: 100%; margin: 0.5rem 0; }
 	.rb-picker .rb-pick-cmd code { white-space: pre-wrap; overflow-wrap: anywhere; }
 	.rb-picker .rb-pick-result { margin-top: 1rem; font-weight: 600; }
-	.rb-picker fieldset { border: 0; padding: 0; }
+	.rb-picker fieldset {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 0.35rem;
+		border: 0;
+		padding: 0;
+	}
+	.rb-picker fieldset label { font-weight: 600; }
+	.rb-picker .rb-pick-release { margin-top: 0.5rem; color: var(--sl-color-gray-2); }
+	/* All and None act on the list: plain text, not two primary buttons. */
+	.sl-markdown-content .rb-picker .rb-pick-systems-head .rb-text-button {
+		min-height: 32px;
+		padding: 0 0.25rem;
+		background: none;
+		color: var(--rb-link);
+		font-weight: 400;
+		text-decoration: underline;
+	}
+	/* The command in the same titled frame as the page's other commands. */
+	.rb-picker .rb-pick-frame {
+		margin: 0.5rem 0;
+		border: 1px solid var(--sl-color-gray-5);
+		border-radius: 4px;
+		overflow: hidden;
+	}
+	.rb-picker .rb-pick-frame figcaption {
+		padding: 0.35rem 1rem;
+		border-bottom: 1px solid var(--sl-color-gray-5);
+		background: var(--sl-color-gray-6);
+		color: var(--sl-color-gray-2);
+		font-size: var(--sl-text-xs);
+	}
+	.rb-picker .rb-pick-frame pre {
+		margin: 0;
+		padding: 0.75rem 1rem;
+		border: 0;
+		border-radius: 0;
+	}
 </style>

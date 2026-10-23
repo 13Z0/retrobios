@@ -16,6 +16,9 @@ export const collections = {
 				searchWeight: z.number().min(0.1).max(10).optional(),
 				// The date the page's content carries, for the sitemap.
 				lastmod: z.string().optional(),
+				// A mark drawn beside the title (a platform's logo), a path under
+				// the site root such as assets/logos/batocera.svg.
+				logo: z.string().optional(),
 			}),
 		}),
 	}),

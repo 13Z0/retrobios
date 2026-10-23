@@ -1,10 +1,49 @@
 ---
-// Starlight's footer (edit link, previous and next) and the licence line.
+// Starlight's footer (edit link, previous and next), who keeps the project
+// and where to report a problem, the release the packs come from, and the
+// licence line. The release is read from release.json, written when the
+// packs were published: the site may be newer than the packs.
 import Default from '@astrojs/starlight/components/Footer.astro';
+import release from '../../../release.json';
+
+const REPO = 'https://github.com/Abdess/retrobios';
+const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+// A release tag is its date, vYYYY.MM.DD.
+const releaseDate = (tag: string): string | undefined => {
+	const match = /^v(\d{4})\.(\d{2})\.(\d{2})$/.exec(tag);
+	return match ? `${Number(match[3])} ${MONTHS[Number(match[2]) - 1]} ${match[1]}` : undefined;
+};
+
+const tag: string = release.tag;
+const date = releaseDate(tag);
 ---
 
 <Default />
-<p class="rb-copyright">
-	MIT for the tooling. BIOS and firmware files are third-party system software, preserved for personal backup,
-	archival and interoperability.
-</p>
+<div class="rb-footer">
+	<p>
+		Maintained by <a href="https://github.com/Abdess">Abdess on GitHub</a>.{' '}
+		<a href={`${REPO}/issues/new`}>Report a problem</a>.
+	</p>
+	<p>
+		Packs from release <a href={`${REPO}/releases/tag/${tag}`}>{tag}</a>{date && <>, <time datetime={tag.slice(1).replaceAll('.', '-')}>{date}</time></>}.
+	</p>
+	<p class="rb-copyright">
+		MIT for the tooling. BIOS and firmware files are third-party system software, preserved for personal backup,
+		archival and interoperability.
+	</p>
+</div>
+
+<style>
+	.rb-footer {
+		margin-top: 1.5rem;
+		padding-top: 1rem;
+		border-top: 1px solid var(--sl-color-hairline-light);
+		font-size: var(--sl-text-xs);
+		color: var(--sl-color-gray-3);
+	}
+	.rb-footer p { margin: 0.25rem 0 0; }
+	.rb-footer a { color: inherit; }
+	.rb-footer a:hover { color: var(--sl-color-white); }
+	.rb-footer .rb-copyright { margin-top: 0.75rem; }
+</style>
