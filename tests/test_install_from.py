@@ -13,11 +13,15 @@ from __future__ import annotations
 
 import contextlib
 import copy
+import errno
 import io
 import json
+import os
 import subprocess
 import sys
+import time
 import unittest
+import urllib.error
 import zipfile
 from pathlib import Path
 from unittest import mock
@@ -478,6 +482,377 @@ class MisplacedInTheBiosFolder(Scratch):
             self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
             self.assertNotIn("fixed", proc.stdout)
             self.assertNotIn("copied from", proc.stdout)
+
+
+def _unprivileged(test: unittest.TestCase) -> None:
+    if os.name != "posix" or os.geteuid() == 0:
+        test.skipTest("a file of mode 000 is read here anyway")
+
+
+class ACopyThatFails(FromFolder):
+    """A copy found by the plan that cannot be read when it is copied:
+    it read as "folder not writable", and a download failing after it lost
+    the first reason."""
+
+    def setUp(self):
+        super().setUp()
+        self.entry = json.loads(self.list.read_text())["files"][0]
+        self.source = self.keep("old/scph5501.bin", US)
+        self.copy = install.FolderIndex(self.old).find(self.entry)
+        self.assertIsNotNone(self.copy)
+        self.addCleanup(install.LOCAL.reset)
+        self.dest.mkdir()
+
+    def test_an_unreadable_source_falls_back_and_names_both_reasons(self):
+        _unprivileged(self)
+        self.source.chmod(0)
+        self.addCleanup(self.source.chmod, 0o644)
+        refused = urllib.error.URLError(ConnectionRefusedError(111, "Connection refused"))
+        with mock.patch.object(install, "_retry_delay", return_value=0), \
+                mock.patch.object(install.urllib.request, "urlopen", side_effect=refused):
+            dest, ok, reason = install._download_one(self.entry, self.dest, copy=self.copy)
+        self.assertFalse(ok)
+        self.assertTrue(reason.startswith(
+            f"{self.source.resolve()} could not be read: Permission denied, and "), reason)
+        self.assertNotIn(install.NOT_WRITABLE, reason)
+        self.assertIsInstance(reason, install.NetworkReason)
+
+    def test_a_read_error_is_the_source_and_not_the_folder(self):
+        class Failing(io.BytesIO):
+            def read(self, *_args):
+                raise OSError(errno.EIO, "Input/output error")
+
+        for source, words in (
+                (lambda: Failing(b""), "Input/output error"),
+                (mock.Mock(side_effect=PermissionError(errno.EACCES, "Permission denied")),
+                 "Permission denied")):
+            with self.subTest(words=words):
+                result = install._write_verified(
+                    self.entry, self.dest, self.dest / "scph5501.bin", source, None,
+                    "the copy in E:\\", named="E:\\bios\\a.bin")
+                self.assertEqual(result, ("scph5501.bin", False,
+                                          f"E:\\bios\\a.bin could not be read: {words}"))
+        self.assertEqual(list(self.dest.iterdir()), [], "no temporary file is left")
+
+    def test_a_run_reading_a_pack_falls_back_to_the_pack_only(self):
+        _unprivileged(self)
+        self.source.chmod(0)
+        self.addCleanup(self.source.chmod, 0o644)
+        install.LOCAL.pack = mock.Mock(find=mock.Mock(return_value=None))
+        with mock.patch.object(install.urllib.request, "urlopen",
+                               side_effect=AssertionError("network")):
+            _dest, ok, reason = install._download_one(self.entry, self.dest, copy=self.copy)
+        install.LOCAL.pack = None
+        self.assertFalse(ok)
+        self.assertEqual(reason, f"{self.source.resolve()} could not be read: "
+                                 f"Permission denied, and {install.NOT_IN_PACK}")
+
+
+def _patched_zip(path: Path, name: str, data: bytes, flags: int = 0,
+                 method: int | None = None) -> Path:
+    """A stored ZIP of one member, its headers then given other flags or
+    another compression method: zipfile writes neither encryption nor
+    methods it cannot read."""
+    _zip(path, {})
+    with zipfile.ZipFile(path, "w", zipfile.ZIP_STORED) as archive:
+        archive.writestr(name, data)
+    raw = bytearray(path.read_bytes())
+    for signature, at in ((b"PK\x03\x04", 6), (b"PK\x01\x02", 8)):
+        start = raw.find(signature)
+        raw[start + at] |= flags
+        if method is not None:
+            raw[start + at + 2:start + at + 4] = method.to_bytes(2, "little")
+    path.write_bytes(bytes(raw))
+    return path
+
+
+class UnreadableCopies(FromFolder):
+    """A copy that could not be read was cached as no match and dropped:
+    the user saw a file to download that the old card held."""
+
+    def setUp(self):
+        super().setUp()
+        self.keep("scph5500.bin", JP)
+        self.keep("pcsx/extra.bin", EXTRA)
+        self.keep("gba_bios.bin", GBA)
+
+    def locked(self, relative: str, data: bytes) -> Path:
+        _unprivileged(self)
+        path = self.keep(relative, data)
+        path.chmod(0)
+        self.addCleanup(path.chmod, 0o644)
+        return path
+
+    def test_a_file_of_mode_000_is_named_in_every_mode(self):
+        path = self.locked("psx/scph5501.bin", US).resolve()
+        self.locked("notes.txt", b"not the size of any file")
+        line = f"{path} could not be read: Permission denied"
+        for options in (("--check",), ("--dry-run",), ()):
+            with self.subTest(options=options):
+                proc = self.install(*options)
+                self.assertEqual(proc.returncode, 1 if options != ("--dry-run",) else 0,
+                                 proc.stdout + proc.stderr)
+                self.assertIn(line, proc.stdout)
+                self.assertNotIn("notes.txt", proc.stdout)
+
+    def test_an_unreadable_copy_is_an_event(self):
+        path = self.locked("psx/scph5501.bin", US).resolve()
+        proc = self.install("--check", "--events")
+        events = _events(proc)
+        for event in events:
+            self.assertEqual(list(event), ["event", *install.EVENT_KEYS[event["event"]]])
+        self.assertEqual([e for e in events if e["event"] == "unreadable"], [{
+            "event": "unreadable", "platform": "retroarch", "folder": str(self.old),
+            "path": str(path), "member": "", "reason": "Permission denied"}])
+        kinds = [e["event"] for e in events]
+        self.assertLess(kinds.index("found"), kinds.index("unreadable"))
+
+    def test_a_copy_found_elsewhere_leaves_the_unreadable_one_unnamed(self):
+        self.locked("psx/scph5501.bin", US)
+        self.keep("psx/copy.bin", US)
+        proc = self.install("--check")
+        self.assertNotIn("could not be read", proc.stdout)
+
+    def test_a_folder_of_mode_000_is_named(self):
+        _unprivileged(self)
+        folder = self.old / "psx"
+        folder.mkdir()
+        folder.chmod(0)
+        self.addCleanup(folder.chmod, 0o755)
+        proc = self.install("--check")
+        self.assertIn(f"{folder.resolve()} could not be read: Permission denied", proc.stdout)
+
+    def test_members_that_cannot_be_read_say_why(self):
+        for flags, method, words in (
+                (0x1, None, "it is encrypted, a password is needed"),
+                (0, 6, "it is packed with a compression method this installer "
+                       "cannot read")):
+            with self.subTest(words=words):
+                archive = _patched_zip(self.old / "psx.zip", "scph5501.bin", US,
+                                       flags, method).resolve()
+                proc = self.install("--check")
+                self.assertIn(f"scph5501.bin inside {archive} could not be read: {words}",
+                              proc.stdout)
+
+    def test_an_input_output_error_is_named(self):
+        self.keep("psx/scph5501.bin", US)
+        index = install.FolderIndex(self.old)
+        entry = json.loads(self.list.read_text())["files"][0]
+        failing = OSError(errno.EIO, "Input/output error")
+        with mock.patch.object(install, "_sha1_file", side_effect=failing):
+            self.assertIsNone(index.find(entry))
+        found = install.unreadable_copies([entry], {}, [index])
+        # scph5500.bin holds another region of the same size: read too.
+        self.assertEqual([item.line() for item in found], [
+            f"{(self.old / 'psx' / 'scph5501.bin').resolve()} could not be read: "
+            "Input/output error",
+            f"{(self.old / 'scph5500.bin').resolve()} could not be read: "
+            "Input/output error"])
+
+
+class WhereTheSearchGoes(FromFolder):
+    """--from / walked the whole system, /proc and every drive mounted in
+    it. The search stays on the drive it starts on, and the folder is
+    checked before it is read, cheaply enough for a screen to do it."""
+
+    def test_a_folder_is_checked_without_being_read(self):
+        archive = _zip(self.root / "backup.zip", {"a": b"a"})
+        (self.root / "notes.txt").write_text("x")
+        self.assertIsNone(install.from_folder_problem(str(self.old)))
+        self.assertIsNone(install.from_folder_problem(str(archive)))
+        self.assertEqual(install.from_folder_problem(str(self.root / "nowhere")),
+                         ("not_found", "does not exist"))
+        self.assertEqual(install.from_folder_problem(str(self.root / "notes.txt")),
+                         ("not_a_folder", "is neither a folder nor a ZIP"))
+        if os.name == "posix":
+            self.assertEqual(install.from_folder_problem("/"),
+                             ("system", "is the root of the whole system"))
+            self.assertEqual(install.from_folder_problem("/proc")[0], "system")
+
+    def test_a_folder_that_cannot_be_listed_is_refused(self):
+        _unprivileged(self)
+        self.old.chmod(0)
+        self.addCleanup(self.old.chmod, 0o755)
+        self.assertEqual(install.from_folder_problem(str(self.old)),
+                         ("unreadable", "could not be read: Permission denied"))
+        proc = self.install("--events")
+        error = next(e for e in _events(proc) if e["event"] == "error")
+        self.assertEqual((error["stage"], error["reason"]), ("from", "unreadable"))
+        self.assertEqual(proc.returncode, 1)
+
+    @unittest.skipUnless(os.name == "posix", "a POSIX root")
+    def test_the_root_of_the_system_is_refused(self):
+        proc = self.run_installer("--manifest", str(self.list), "--from", "/", "--events")
+        error = next(e for e in _events(proc) if e["event"] == "error")
+        self.assertEqual((error["stage"], error["reason"]), ("from", "system"))
+        self.assertIn("/ is the root of the whole system", proc.stderr)
+        self.assertEqual(proc.returncode, 1)
+
+    def lstat_saying(self, folder: str, **fields):
+        real = os.lstat
+
+        def lstat(path, *args, **kwargs):
+            held = real(path, *args, **kwargs)
+            if Path(path).name != folder:
+                return held
+            values = {"st_dev": held.st_dev, "st_file_attributes": 0, **fields}
+            return mock.Mock(**values)
+
+        return mock.patch.object(install.os, "lstat", side_effect=lstat)
+
+    def test_another_drive_inside_is_named_and_not_entered(self):
+        self.keep("mnt/scph5501.bin", US)
+        self.keep("scph5500.bin", JP)
+        with self.lstat_saying("mnt", st_dev=os.lstat(self.old).st_dev + 1):
+            index = install.FolderIndex(self.old)
+        self.assertEqual(index.other_drives, [self.old.resolve() / "mnt"])
+        self.assertEqual(sorted(p.name for p in index.size), ["scph5500.bin"])
+
+    def test_a_junction_is_not_entered(self):
+        self.keep("junction/scph5501.bin", US)
+        with self.lstat_saying("junction", st_file_attributes=0x400):
+            index = install.FolderIndex(self.old)
+        self.assertEqual(index.size, {})
+        self.assertEqual(index.other_drives, [])
+
+    def test_pseudo_file_systems_are_never_entered(self):
+        if not install.PSEUDO_FOLDERS:
+            self.skipTest("no pseudo file system here")
+        index = install.FolderIndex(self.old)
+        for pseudo in sorted(install.PSEUDO_FOLDERS):
+            self.assertFalse(index._enters(Path(pseudo), os.lstat("/").st_dev), pseudo)
+
+    def test_a_search_cut_short_is_an_event(self):
+        for n in range(3):
+            self.keep(f"f{n}.bin", b"%d" % n)
+        out = io.StringIO()
+        install.EVENTS.open(out)
+        self.addCleanup(setattr, install.EVENTS, "stream", None)
+        self.addCleanup(install.LOCAL.reset)
+        with mock.patch.object(install, "MAX_SCANNED_FILES", 2), \
+                contextlib.redirect_stdout(io.StringIO()) as text:
+            install._open_from_folders([self.old])
+        self.assertIn(f"Read the first 2 files of {self.old} only", text.getvalue())
+        self.assertEqual([json.loads(line) for line in out.getvalue().splitlines()], [{
+            "event": "scanned", "folder": str(self.old), "files": 2, "truncated": True,
+            "other_drives": []}])
+
+    def test_each_folder_read_is_an_event_before_detect(self):
+        self.keep("scph5501.bin", US)
+        events = _events(self.install("--check", "--events"))
+        kinds = [e["event"] for e in events]
+        scanned = next(e for e in events if e["event"] == "scanned")
+        self.assertEqual(scanned, {"event": "scanned", "folder": str(self.old), "files": 1,
+                                   "truncated": False, "other_drives": []})
+        self.assertLess(kinds.index("start"), kinds.index("scanned"))
+        self.assertLess(kinds.index("scanned"), kinds.index("detect"))
+
+
+class LocalAndNetworkBytes(unittest.TestCase):
+    """The engine knows which bytes came from this machine. The interface
+    guessed it to show a download speed: the transfer event tells it."""
+
+    def test_the_counts_follow_each_source_and_each_rollback(self):
+        out = io.StringIO()
+        install.EVENTS.open(out)
+        self.addCleanup(setattr, install.EVENTS, "stream", None)
+        term = install.Terminal()
+        term.live, term.quiet = False, True
+        with mock.patch.object(install, "EVENT_PROGRESS_INTERVAL", 0):
+            progress = install.Progress(3, 100, term)
+            progress.add(10, resumed=True)            # a partial copy resumed
+            progress.add(20)                          # from the network
+            progress.add(30, resumed=True, network=False)  # a copy found here
+            progress.add(15, network=False)           # the pack
+            progress.add(-30, resumed=True, network=False)
+            progress.add(-30)                         # a download dropped,
+            progress.forget_resumed(10)               # its resumed part too
+        self.assertEqual((progress.bytes, progress.local), (15, 15))
+        events = [json.loads(line) for line in out.getvalue().splitlines()]
+        transfers = [e for e in events if e["event"] == "transfer"]
+        progresses = [e for e in events if e["event"] == "progress"]
+        self.assertEqual(len(transfers), len(progresses))
+        self.assertEqual([(t["bytes_local"], t["bytes_network"]) for t in transfers][:4],
+                         [(10, 0), (10, 20), (40, 20), (55, 20)])
+        for transfer, update in zip(transfers, progresses):
+            self.assertEqual(transfer["bytes_local"] + transfer["bytes_network"],
+                             update["bytes_done"])
+
+    def test_an_install_from_a_folder_and_the_network_splits_them(self):
+        with FakeRepository() as repo:
+            old = repo.root / "old"
+            payloads = FakeRepository.PAYLOADS
+            old.mkdir()
+            (old / "a.bin").write_bytes(payloads["scph5500.bin"][0])
+            (old / "b.bin").write_bytes(payloads["gba_bios.bin"][0])
+            proc = repo.run("--from", str(old), "--no-input", "--events")
+            self.assertEqual(proc.returncode, 0, proc.stderr)
+            events = _events(proc)
+        local = len(payloads["scph5500.bin"][0]) + len(payloads["gba_bios.bin"][0])
+        total = sum(len(p[0]) for p in payloads.values())
+        kinds = [e["event"] for e in events]
+        last = len(kinds) - 1 - kinds[::-1].index("transfer")
+        self.assertEqual(events[last], {"event": "transfer", "bytes_local": local,
+                                        "bytes_network": total - local})
+        self.assertLess(kinds.index("download"), last)
+        self.assertLess(last, kinds.index("summary"))
+
+
+class AFolderAroundTheBiosFolder(FromFolder):
+    """--from names a folder holding the BIOS folder: an archive this run
+    replaces was a source of members while it was being written."""
+
+    def test_an_archive_being_replaced_gives_no_member(self):
+        new_set = b"the archive the list installs" * 4
+        inner = b"a rom inside the old archive" * 3
+        _zip(self.dest / "set.zip", {"inner.bin": inner})
+        files = [_entry("set.zip", new_set, ["x"]), _entry("inner.bin", inner, ["x"])]
+        around = install.FolderIndex(self.root)
+        copies = install.plan_local_copies(files, self.dest, None, [around])
+        self.assertEqual(copies, {})
+        _zip(self.old / "copy.zip", {"inner.bin": inner})
+        copies = install.plan_local_copies(files, self.dest, None,
+                                           [install.FolderIndex(self.root)])
+        self.assertEqual([copies[id(e)].where() for e in files if id(e) in copies],
+                         ["old card/copy.zip, inside as inner.bin"])
+
+
+class ManySameSizedFiles(FromFolder):
+    """A card of 16 KB ROMs and a list of 16 KB entries: each entry sorted
+    and walked every file of its size."""
+
+    def test_each_file_is_read_once_and_the_order_holds(self):
+        for n in range(3000):
+            self.keep(f"roms/r{n:04}.bin", b"%016d" % n)
+            _zip(self.old / f"sets/s{n:04}.zip", {f"m{n}.bin": b"m%015d" % n})
+        entries = [{"dest": f"e{n}.bin", "size": 16, "sha1": f"{n:040}"}
+                   for n in range(3000)]
+        wanted = [_entry("late.bin", b"%016d" % 2999, ["x"]),
+                  _entry("m5.bin", b"m%015d" % 5, ["x"]),
+                  _entry("r0007.bin", b"%016d" % 7, ["x"])]
+        index = install.FolderIndex(self.old)
+        start = time.monotonic()
+        copies = install.plan_local_copies(entries + wanted, self.dest, None, [index])
+        elapsed = time.monotonic() - start
+        self.assertEqual({e["dest"]: copies[id(e)].where() for e in wanted if id(e) in copies}, {
+            "late.bin": "roms/r2999.bin",
+            "m5.bin": "sets/s0005.zip, inside as m5.bin",
+            "r0007.bin": "roms/r0007.bin",
+        })
+        self.assertEqual(len(copies), 3)
+        self.assertLess(elapsed, 30, f"{elapsed:.1f} s")
+
+    def test_a_file_of_the_same_name_comes_first(self):
+        self.keep("a/other.bin", US)
+        self.keep("b/scph5501.bin", US)
+        _zip(self.old / "c.zip", {"x/gba.bin": GBA})
+        _zip(self.old / "d.zip", {"gba_bios.bin": GBA})
+        index = install.FolderIndex(self.old)
+        files = json.loads(self.list.read_text())["files"]
+        copies = install.plan_local_copies(files, self.dest, None, [index])
+        found = {e["dest"]: copies[id(e)].where() for e in files if id(e) in copies}
+        self.assertEqual(found["scph5501.bin"], "b/scph5501.bin")
+        self.assertEqual(found["gba_bios.bin"], "d.zip, inside as gba_bios.bin")
 
 
 class TheSummaryLine(unittest.TestCase):

@@ -19,6 +19,7 @@ import socket
 import subprocess
 import sys
 import tempfile
+import time
 import unittest
 import zipfile
 from pathlib import Path
@@ -241,6 +242,58 @@ class CheckNamesWhyAFileIsRefused(Scratch):
         proc = self.run_installer("--check", "--manifest", str(self.list))
         self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
         self.assertNotIn("opened at", proc.stdout)
+
+
+class ArchivesInTheBiosFolder(Scratch):
+    """The reason an archive gives is the first archive, in the order the
+    folder is read, that holds the file or carries its name."""
+
+    def zipped(self, relative: str, members: dict[str, bytes]) -> None:
+        path = self.dest / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with zipfile.ZipFile(path, "w") as archive:
+            for name, data in members.items():
+                archive.writestr(name, data)
+
+    def test_each_reason_names_the_first_archive_that_answers(self):
+        self.zipped("a.zip", {"x.bin": b"x"})
+        self.zipped("x.zip", {"other": b"o"})
+        self.zipped("b.zip", {"other": b"o"})
+        self.zipped("c.zip", {"bios/b.bin": b"b"})
+        self.place("y.7z", b"7z")
+        self.zipped("sub/z.zip", {"Z.BIN": b"z"})
+        self.zipped("elsewhere/w.zip", {"w.bin": b"w"})
+        self.zipped("listed.zip", {"v.bin": b"v"})
+        entries = {dest: _entry(dest, dest.encode() * 3, ["x"]) for dest in (
+            "x.bin", "b.bin", "y.bin", "sub/z.bin", "w.bin", "v.bin")}
+        files = [*entries.values(), _entry("listed.zip", b"zip", ["x"])]
+        found = install.diagnose(list(entries.values()), [], files, self.dest)
+        self.assertEqual({dest: found.reasons.get(id(e), "") for dest, e in entries.items()}, {
+            "x.bin": "still zipped: it is inside a.zip",
+            "b.bin": "still zipped: b.zip needs extracting",
+            "y.bin": "still zipped: y.7z needs extracting",
+            "sub/z.bin": "still zipped: it is inside sub/z.zip",
+            "w.bin": "",
+            "v.bin": "",
+        })
+
+    def test_many_archives_and_many_missing_files_take_one_pass(self):
+        """1,519 ZIPs and 2,000 missing files took 57 seconds: each missing
+        file walked every archive of the folder."""
+        self.dest.mkdir()
+        for n in range(3000):
+            with zipfile.ZipFile(self.dest / f"set{n:04}.zip", "w") as archive:
+                archive.writestr(f"rom{n}.bin", b"x")
+            (self.dest / f"same{n:04}.bin").write_bytes(b"%016d" % n)
+        missing = [{"dest": f"file{n}.bin", "size": 16 if n % 2 else 1000 + n,
+                    "sha1": f"{n:040}"} for n in range(3000)]
+        missing.append(_entry("rom7.bin", b"r", ["x"]))
+        start = time.monotonic()
+        found = install.diagnose(missing, [], missing, self.dest)
+        elapsed = time.monotonic() - start
+        self.assertEqual(found.reasons, {
+            id(missing[-1]): "still zipped: it is inside set0007.zip"})
+        self.assertLess(elapsed, 30, f"{elapsed:.1f} s")
 
 
 def _pack(directory: Path, name: str, members: dict[str, bytes]) -> Path:
