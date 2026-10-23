@@ -3328,13 +3328,16 @@ def install_bounded_opener() -> None:
 # stuck proxy) held the run 93 s on three waits of 30 s. A list is a few
 # MB, never a slow stream.
 LIST_TIMEOUT = 15.0
-# Attempts after a server that took the connection went silent: once more,
-# a stall is rarely a blip.
+# Attempts after a wait ran out, for the connection (a TLS handshake a
+# captive portal never finishes) or for the answer once connected (a stuck
+# proxy): once more, a stall is rarely a blip.
 STALLED_ATTEMPTS = 2
 
 
 def _stalled(exc: BaseException) -> bool:
-    """Whether exc is a wait that ran out, the connection made."""
+    """Whether exc is a wait that ran out: urllib raises a connect timeout
+    as a URLError whose reason is the timeout, a silent answer as the
+    timeout itself."""
     reason = getattr(exc, "reason", None)
     return isinstance(exc, socket.timeout) or isinstance(reason, socket.timeout)
 
