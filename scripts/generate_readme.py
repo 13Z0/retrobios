@@ -843,25 +843,29 @@ def contributing_text(
 
 ## Add a BIOS file
 
-One file needs no clone and no local setup:
+Have a file the collection lacks? Add it from the browser. It is checked on arrival.
 
-1. [Upload it into `bios/`]({UPLOAD_URL})
-   from the browser, 25 MB at most per file. GitHub writes it to a fork and
-   opens the pull request.
-2. CI hashes it and looks it up in every platform list and emulator profile.
-   For a file it recognises, it names the folder holding the other files of its
-   system. The report is in the summary of the pull request's Validation run.
-3. The file can be moved to that folder in the same pull request. A file whose
+[Upload it into `bios/`]({UPLOAD_URL}), 25 MB at most per file. GitHub
+writes it to a fork and opens the pull request.
+
+The files most wanted are on [what the packs do not hold]({link("gaps")}). The
+[dump provenance]({link("provenance")}) page lists catalogued dumps still
+missing from the collection, with their hashes. A file matching one of those is
+the most useful contribution.
+
+## What happens next
+
+1. CI hashes the file and looks it up in every platform list and emulator
+   profile. For a file it recognises, it names the folder holding the other
+   files of its system. The report is in the summary of the pull request's
+   Validation run.
+2. The file can be moved to that folder in the same pull request. A file whose
    hash differs from the one already held under its name goes to that folder's
    `.variants/`.
 
 From a clone, the file goes to `bios/Manufacturer/Console/filename`, and
 `python scripts/validate_pr.py path/to/file` names that folder for a file still
 outside `bios/`. A file over the browser's 25 MB limit goes in that way.
-
-The [dump provenance]({link("provenance")}) page lists catalogued dumps still
-missing from the collection, with their hashes. A file matching one of those is
-the most useful contribution.
 
 ## Add a platform
 
