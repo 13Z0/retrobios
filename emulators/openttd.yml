@@ -12,6 +12,18 @@ cores:
 systems:
   - transport-tycoon-deluxe
 
+data_root:
+  windows:
+    path: "%USERPROFILE%/Documents/OpenTTD"
+    source_ref: "src/os/windows/win32.cpp:359-377, cmake/Options.cmake:12-13"
+  macos:
+    path: "~/Documents/OpenTTD"
+    source_ref: "src/fileio.cpp:879-896, cmake/Options.cmake:8-9"
+  linux:
+    path: "$XDG_DATA_HOME/openttd"
+    source_ref: "src/fileio.cpp:851-877, src/fileio.cpp:1005-1058, src/stdafx.h:275-278"
+    note: "~/.local/share/openttd when XDG_DATA_HOME is unset. the folder of an openttd.cfg already found on a search path, ~/.openttd among them, takes precedence"
+
 notes: |
   Open source reimplementation of Transport Tycoon Deluxe. RetroPie
   installs the distribution's openttd package (14.1 on Debian trixie,
