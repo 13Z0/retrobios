@@ -2380,7 +2380,7 @@ def _served_line(f: dict) -> str:
     if f.get("status") == "missing":
         return "Not held"
     if not path:
-        # verify reports no path in existence mode: nothing to name.
+        # A slot the pack fills from a release asset or leaves to the user.
         return ""
     sha1 = _collection_sha1_by_path().get(path, "")
     label = "Served by" if f.get("status") == "ok" else "Held, not the declared hash"
