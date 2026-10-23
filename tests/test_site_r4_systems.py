@@ -161,10 +161,12 @@ class EachArcadeBoardHasASection(unittest.TestCase):
     """6.4: the Arcade page was cut by storage folder."""
 
     def test_each_board_heads_its_page(self) -> None:
+        # The page's title names the board, no h2 says it again (round 5, 6.8).
         for name in BOARDS:
             slug = toc_slug(name)
             html = _page(DIST / "systems" / f"arcade-{slug}" / "index.html")
-            self.assertRegex(html, rf'<h2[^>]*id="{re.escape(slug)}"', name)
+            self.assertRegex(html, rf"<h1[^>]*>Arcade: {re.escape(name)}</h1>", name)
+            self.assertNotRegex(html, rf"<h2[^>]*>{re.escape(name)}<", name)
 
     def test_every_board_on_an_emulator_systems_row_is_a_link(self) -> None:
         if not (DIST / "emulators").is_dir():
@@ -223,7 +225,10 @@ class PartPagesKnowWhereTheyAre(unittest.TestCase):
         orphans, numbered = [], []
         for page in sorted((CONTENT / "systems").glob("*.md*")):
             text = page.read_text(encoding="utf-8")
-            if "Part of " in text and "\nparent:" not in text.split("\n---\n", 1)[0]:
+            # A part is titled "<maker>: <console>" or "<name> files a to b".
+            title = re.search(r"^title: (.*)$", text, re.M)
+            part = title and (": " in title[1] or re.search(r" files .+ to ", title[1]))
+            if part and "\nparent:" not in text.split("\n---\n", 1)[0]:
                 orphans.append(page.name)
             if re.search(r"^title: .*part \d+ of \d+", text, re.M | re.I):
                 numbered.append(page.name)

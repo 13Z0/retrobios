@@ -4642,14 +4642,92 @@ def _group_by_manufacturer(db: dict) -> dict[str, dict[str, list]]:
     The database keeps one path per content, and a copy filed elsewhere was
     on no page of its own: the Channel F BIOS sat under Arcade > FBNeo only,
     and Fairchild had no system page. Every folder holding a copy lists it,
-    read from the full paths by_path_suffix records.
+    read from the full paths by_path_suffix records. The game engines'
+    files are grouped by engine (_engine_sections).
     """
     files = db.get("files", {})
     manufacturers: dict[str, dict[str, list]] = {}
     for sha1, where in _copy_places(db).items():
         for manufacturer, console in sorted({(m, c) for m, c, _ in where}):
             manufacturers.setdefault(manufacturer, {}).setdefault(console, []).append(files[sha1])
-    return manufacturers
+    return _engine_sections(manufacturers)
+
+
+def _engine_sections(manufacturers: dict[str, dict[str, list]]) -> dict[str, dict[str, list]]:
+    """A game engine's files in one section headed with the engine's name.
+
+    The Systems index listed ".variants", "scummvm.zip" and "wildmidi.cfg"
+    as games, and ScummVM's files sat on three pages. A folder of variants
+    joins the section of its primary, a file kept at a top's root joins
+    the section of the one engine that reads it (else of the engine the
+    top is named after), the folder under Other named after a game-engine
+    top joins that top, and a folder named by a profile key is headed with
+    the engine's name (SECTION_LABELS), its address unchanged.
+    """
+    from siterender import _PROGRAM_TOPS, SECTION_LABELS, record_card_move  # noqa: PLC0415
+
+    profiles = {key: profile for key, profile in _profiles_on_disk().items()
+                if profile.get("type") not in ("alias", "test")}
+    readers: dict[str, set[str]] = {}
+    for key, profile in profiles.items():
+        for entry in profile.get("files") or []:
+            if isinstance(entry, dict):
+                for name in [entry.get("name"), *(entry.get("aliases") or [])]:
+                    if name:
+                        readers.setdefault(str(name).rsplit("/", 1)[-1], set()).add(key)
+
+    def engine(key: str) -> str:
+        return str(profiles[key].get("emulator") or key)
+
+    def profile_of(name: str) -> str | None:
+        return next((k for k in sorted(profiles)
+                     if name.casefold() in (k.casefold(), engine(k).casefold())), None)
+
+    out: dict[str, dict[str, list]] = {}
+    for mfr, consoles in manufacturers.items():
+        if mfr not in GAME_DATA_TOPS:
+            out[mfr] = dict(consoles)
+            continue
+        own = profile_of(mfr)
+        regrouped: dict[str, list] = {}
+        for console, files in sorted(consoles.items(), key=lambda item: item[0].startswith(".")):
+            for f in files:
+                parts = str(f.get("path", "")).split("/")
+                target = console
+                if console.startswith(".") or (len(parts) == 3 and console == parts[-1]):
+                    # A variant answers its primary's name: scummvm.zip.a93f1c4b.
+                    base = parts[-1].rsplit(".", 1)[0] if console.startswith(".") else parts[-1]
+                    keys = sorted(readers.get(base, ()))
+                    key = keys[0] if len(keys) == 1 else own
+                    found = next((c for c, held in regrouped.items()
+                                  if any(h.get("name") == base for h in held)), None)
+                    target = found or (next((c for c in consoles if c == key), None)
+                                       or (engine(key) if key else base))
+                if target != console:
+                    record_card_move(mfr, console, str(f.get("sha1", "")), mfr, target)
+                regrouped.setdefault(target, []).append(f)
+        out[mfr] = regrouped
+    # The folder under Other an engine top is named after: ScummVM's
+    # engine data under Other/ScummVM, its themes under ScummVM/.
+    others = out.get("Other", {})
+    for folder in sorted(others):
+        top = next((t for t in out if t in GAME_DATA_TOPS and t.casefold() == folder.casefold()),
+                   None)
+        if top is None or top in _PROGRAM_TOPS:
+            continue
+        sections = out[top]
+        target = next((c for c in sections if c.casefold() == folder.casefold()), folder)
+        held = {str(f.get("sha1", "")) for f in sections.get(target, [])}
+        for f in others[folder]:
+            record_card_move("Other", folder, str(f.get("sha1", "")), top, target)
+        sections[target] = [*sections.get(target, []),
+                            *(f for f in others.pop(folder) if str(f.get("sha1", "")) not in held)]
+    for mfr in GAME_DATA_TOPS:
+        for console in out.get(mfr, {}):
+            key = profiles.get(console) and console
+            if key and engine(key) != console:
+                SECTION_LABELS[(mfr, console)] = engine(key)
+    return {mfr: consoles for mfr, consoles in out.items() if consoles}
 
 
 def _console_display(manufacturer: str, console: str) -> str:
@@ -4668,6 +4746,8 @@ def generate_systems_index(manufacturers: dict) -> str:
     PlayStation had to know it is filed under Sony, and Other hid 91
     sections. Manufacturer pages stay the containers.
     """
+    for old, new in SYSTEM_PAGES_MOVED.items():
+        sitestarlight.MOVED_PAGES.setdefault(old, new)
     total_mfr = len(manufacturers)
     total_consoles = sum(len(c) for c in manufacturers.values())
     # A copy filed under two folders appears on both pages, counted once here.
@@ -4710,6 +4790,7 @@ def generate_systems_index(manufacturers: dict) -> str:
         rows = sorted(
             ((_folder_emulator(console)[0] if group == "programs"
               else _section_label(mfr, console) if mfr == "Arcade"
+              or (mfr, console) in SECTION_LABELS
               else _console_display(mfr, console), mfr, console, len(files))
              for mfr, consoles in manufacturers.items() if kind(mfr) == group
              for console, files in consoles.items()),
@@ -5693,10 +5774,29 @@ def _console_cards(
         if by_name:
             return (place.get(str(f.get("sha1", "")), _NO_PRIORITY), *_by_name(f))
         return _card_rank(f, consumers, place)
+    # Another revision of a MAME or FBNeo set is another release's set, its
+    # Romset line saying which: it sits open beside the set of its name.
+    # Twelve neogeo.zip were on five pages, the SNK ones closed under
+    # Variants.
+    romsets = _romset_releases()
+    beside = [f for f in files if "/.variants/" in f["path"] and f["name"] in romsets]
     main_files = [f for f in files if "/.variants/" not in f["path"]]
-    variant_files = [f for f in files if "/.variants/" in f["path"]]
+    variant_files = [f for f in files if "/.variants/" in f["path"] and f not in beside]
+    # Sets of one name side by side, the first ranked leading.
+    ranked = sorted(main_files, key=order)
+    by_set: dict[str, list[dict]] = {}
+    for f in [*ranked, *sorted(beside, key=order)]:
+        if f["name"] in romsets:
+            by_set.setdefault(f["name"], []).append(f)
+    ordered: list[dict] = []
+    for f in ranked:
+        if f["name"] not in romsets:
+            ordered.append(f)
+        elif by_set.get(f["name"]):
+            ordered.extend(by_set.pop(f["name"]))
+    ordered.extend(f for files in by_set.values() for f in files)
     cards = [(False, _system_file_card(f, consumers, anchored, searchable), str(f.get("sha1", "")))
-             for f in sorted(main_files, key=order)]
+             for f in ordered]
     cards += [(True, _system_file_card(v, consumers, anchored, searchable), str(v.get("sha1", "")))
               for v in sorted(variant_files, key=order)]
     return cards
@@ -5840,10 +5940,29 @@ class _StartGroup:
         self.hle: set[str] = set()
         # Files an emulator reads when present and runs the same without.
         self.extra: list[str] = []
+        # By line (a region, "" for every region): visible name -> the
+        # emulators requiring that file for the line. Three Mega CD BIOS,
+        # one per region, share the name cd_bios.rom.
+        self.line_readers: dict[str, dict[str, set[str]]] = {}
+        # (line, visible name, emulator) -> the name the emulator reads.
+        self.read_as: dict[tuple[str, str, str], str] = {}
+        # (line, visible name) -> the file name its card shows.
+        self.card_names: dict[tuple[str, str], str] = {}
+        # (line, visible name) of the files most of whose readers read
+        # them beside another one they require.
+        self.extras: set[tuple[str, str]] = set()
 
     def require(self, name: str, emulator: str) -> None:
         self.written.setdefault(_visible(name), name)
         self.requires.setdefault(_visible(name), set()).add(emulator)
+
+    def read_for(self, line: str, name: str, emulator: str, read: str, card: str) -> None:
+        """Record that ``emulator`` requires ``name`` for ``line``, under
+        the name ``read``, its card titled ``card``."""
+        visible = _visible(name)
+        self.line_readers.setdefault(line, {}).setdefault(visible, set()).add(emulator)
+        self.read_as.setdefault((line, visible, emulator), read)
+        self.card_names.setdefault((line, visible), card)
 
     def absorb(self, other: _StartGroup) -> None:
         for region, names in other.by_region.items():
@@ -5859,9 +5978,37 @@ class _StartGroup:
         for visible, sha1 in other.sha1s.items():
             self.sha1s.setdefault(visible, sha1)
         self.hle.update(other.hle)
+        for line, readers in other.line_readers.items():
+            for visible, emulators in readers.items():
+                self.line_readers.setdefault(line, {}).setdefault(visible, set()).update(emulators)
+        for key, value in other.read_as.items():
+            self.read_as.setdefault(key, value)
+        for key, value in other.card_names.items():
+            self.card_names.setdefault(key, value)
+        self.extras |= other.extras
 
     def requirers(self) -> set[str]:
         return set().union(*self.requires.values()) if self.requires else set()
+
+    def as_read(self, visible: str, emulators: set[str], line: str | None = None) -> str:
+        """A file as an emulator reading it instead is told to fetch it:
+        by its card's name, with the name it reads when that differs.
+        The line read "ares reads neo-epo.sp1" above a card titled
+        neo-epo.bin."""
+        lines = [line] if line is not None else sorted(self.line_readers)
+        for key in lines:
+            card = self.card_names.get((key, visible))
+            if card is None:
+                continue
+            reads = {self.read_as[(key, visible, e)] for e in emulators
+                     if (key, visible, e) in self.read_as}
+            written = self.written.get(visible, _code(card))
+            # A linked name (a file under Arcade) keeps its link.
+            shown = written if _visible(written) == card else _code(card)
+            if len(reads) == 1 and next(iter(reads)) != card:
+                return f"{shown} (as {_code(next(iter(reads)))})"
+            return shown
+        return self.written.get(visible, _code(visible))
 
 
 def _start_groups(
@@ -5938,12 +6085,36 @@ def _start_groups(
             return _code(archive), ""
         return f"[{_code(archive)}]({markup.site_href(f'files/?sha1={found[0]}')})", ""
 
-    for f in ranked:
+    def reading(f: dict) -> Iterator[tuple[str, dict, str | None, str, str]]:
+        """Each read of a file: the emulator, its entry, the system, the
+        name the line writes and the sha1 of the card it names."""
         sha1 = str(f.get("sha1", ""))
         for emulator, entry, system in kept.get(sha1, []):
             name, named = rendered[sha1], sha1
             if entry.get("archive"):
                 name, named = archive_named(str(entry["archive"]))
+            yield emulator, entry, system, name, named
+
+    # A file as many of whose readers require another file and read this
+    # one only when present is an extra, not a start file: NAOMI opened on
+    # hod2bios.zip, which 13 of the 19 emulators listing it read beside
+    # naomi.zip for the House of the Dead 2 alone.
+    requiring: dict[str, set[str]] = {}
+    optional: dict[str, set[str]] = {}
+    for f in ranked:
+        for emulator, entry, _system, name, named in reading(f):
+            if entry.get("hle_fallback"):
+                continue
+            side = requiring if entry.get("required", True) else optional
+            side.setdefault(named or _visible(name), set()).add(emulator)
+    needs_other = {emulator: {key for key, emulators in requiring.items() if emulator in emulators}
+                   for emulators in requiring.values() for emulator in emulators}
+    weak = {key for key, emulators in requiring.items()
+            if len(emulators) <= len({e for e in optional.get(key, ())
+                                      if needs_other.get(e, set()) - {key}})}
+
+    for f in ranked:
+        for emulator, entry, system, name, named in reading(f):
             try:
                 key = system_name(system) if system else None
             except KeyError:
@@ -5961,9 +6132,14 @@ def _start_groups(
                 _add_name(group.extra, name)
                 continue
             group.require(name, emulator)
-            regions = {str(r) for r in entry.get("region") or []}
-            for names in [group.by_region.setdefault(r, []) for r in regions] or [group.plain]:
-                _add_name(names, name)
+            read = str(entry.get("archive") or entry.get("name") or _visible(name))
+            card = str(entry["archive"]) if entry.get("archive") else str(f["name"])
+            regions = sorted({str(r) for r in entry.get("region") or []})
+            for region in regions or [""]:
+                _add_name(group.by_region.setdefault(region, []) if region else group.plain, name)
+                group.read_for(region, name, emulator, read, card)
+                if (named or _visible(name)) in weak:
+                    group.extras.add((region, _visible(name)))
     named = [key for key in groups if key is not None]
     if None in groups and named:
         # An entry that names no system reads the section's own console.
@@ -6057,6 +6233,11 @@ def _group_lines(
             if lead == "*":
                 lines.append(f"- **{key}**: no file needed{text}")
                 continue
+            if lead == "+":
+                # What the others read instead ends the machine's line.
+                end = "" if lines[-1].endswith(".") else "."
+                lines[-1] = f"{lines[-1]}{end} {text}"
+                continue
             lines.append(f"- **{key}, {lead}**: {text}" if lead else f"- **{key}**: {text}")
     return [*lines, ""]
 
@@ -6084,11 +6265,13 @@ def _lead_file(groups: dict[str | None, _StartGroup]) -> list[str]:
     emulators: set[str] = set()
     requires: dict[str, set[str]] = {}
     written: dict[str, str] = {}
+    holder: dict[str, _StartGroup] = {}
     for group in groups.values():
         emulators.update(group.emulators)
         for visible, readers in group.requires.items():
             requires.setdefault(visible, set()).update(readers)
             written.setdefault(visible, group.written[visible])
+            holder.setdefault(visible, group)
     if not requires:
         return []
     top = max(requires, key=lambda v: len(requires[v]))
@@ -6102,10 +6285,11 @@ def _lead_file(groups: dict[str | None, _StartGroup]) -> list[str]:
     lines = [f"**Start with** {written[top]}.{zipped} {said} read{'s' if len(names) == 1 else ''} it.",
              ""]
     # The emulators that require other files and not this one, by the
-    # files they require.
+    # files they require, each by its card's name.
     others: dict[tuple[str, ...], set[str]] = {}
     for emulator in emulators - readers:
-        theirs = tuple(written[v] for v in requires if emulator in requires[v])
+        theirs = tuple(holder[v].as_read(v, {emulator}) for v in requires
+                       if emulator in requires[v])
         if theirs:
             others.setdefault(theirs, set()).add(emulator)
     sentences = []
@@ -6146,9 +6330,48 @@ def _group_start(group: _StartGroup, first_below: bool) -> list[tuple[str, str]]
     if requirers and 2 * len(requirers) <= 2 * len(running - hle) + len(hle):
         free = _display_names(running)
         needing = _display_names(requirers)
+        names = list(group.written.values())
         verb = "requires" if len(needing) == 1 else "require"
+        if all(len(readers) == len(requirers) for readers in group.requires.values()):
+            return [("*", f" with {_names_counted(free)}. Only {_names_counted(needing)} {verb} "
+                          f"{listed(names, False)}.")]
+        # Each requires some of the files: "bsnes, FinalBurn Neo and 3
+        # more require 22 files" read as 22 files for a bsnes user.
+        these = f"these {len(names)} files" if len(names) > START_WITH_NAMES else "these files"
         return [("*", f" with {_names_counted(free)}. Only {_names_counted(needing)} {verb} "
-                      f"{listed(list(group.written.values()), False)}.")]
+                      f"some of {these}: {listed(names, False)}.")]
+
+    def instead_of(line: str, names: list[str], answered: set[str]) -> str:
+        """What the emulators no other name answers read instead, one
+        sentence per set of files: "FinalBurn Neo reads fdsbios.zip instead"."""
+        readers = group.line_readers.get(line, {})
+        others: dict[tuple[str, ...], set[str]] = {}
+        for emulator in sorted(set().union(*(readers.get(_visible(n), set()) for n in names))
+                               - answered):
+            theirs = tuple(group.as_read(_visible(n), {emulator}, line) for n in names
+                           if emulator in readers.get(_visible(n), set()))
+            others.setdefault(theirs, set()).add(emulator)
+        sentences = []
+        for files, who in sorted(others.items(), key=lambda item: (-len(item[1]), item[0])):
+            shown = _display_names(who)
+            verb = "reads" if len(shown) == 1 else "read"
+            sentences.append(f"{_names_counted(shown)} {verb} {_said_as_list(list(files))} instead.")
+        return " ".join(sentences)
+
+    def split(line: str, names: list[str]) -> tuple[list[str], str, set[str]]:
+        """A line's names as the files to start with, the sentence naming
+        what other emulators read instead, and every emulator the line
+        answers. Names no emulator requires beside another are other names
+        for one slot: "fdsbios.zip, disksys.rom" read as two files to get."""
+        readers = group.line_readers.get(line, {})
+        sets = {n: readers.get(_visible(n), set()) for n in names}
+        lead = max(names, key=lambda n: len(sets[n]))
+        main = [n for n in names if n == lead or sets[n] <= sets[lead]]
+        rest = [n for n in names if n not in main]
+        # A file the lead's readers require beside it is a start file too,
+        # unless most of its readers take it as an extra.
+        main = [n for n in main if n == lead or (line, _visible(n)) not in group.extras]
+        return main, instead_of(line, rest, set(sets[lead])), set().union(*sets.values())
 
     order = _region_order()
     # A territory its region answers the same way adds nothing: Brazil
@@ -6156,22 +6379,39 @@ def _group_start(group: _StartGroup, first_below: bool) -> list[tuple[str, str]]
     by_region = {r: names for r, names in group.by_region.items()
                  if group.by_region.get(_PARENT.get(r, "")) != names}
     # Regions that need the same files share a line.
-    regional: dict[tuple[str, ...], list[str]] = {}
+    regional: dict[tuple[str, ...], str] = {}
+    answered: set[str] = set()
+    shown: set[str] = set()
     for region in sorted(by_region, key=lambda r: (order.get(r, len(order)), r)):
-        names = by_region[region]
-        same = next((rs for rs, held in regional.items() if held == names), None)
+        main, sentence, readers = split(region, by_region[region])
+        answered |= readers
+        shown |= {_visible(n) for n in by_region[region]}
+        text = f"{listed(main)}. {sentence}" if sentence else listed(main)
+        same = next((rs for rs, held in regional.items() if held == text), None)
         if same is None:
-            regional[(region,)] = names
+            regional[(region,)] = text
         else:
             regional[(*same, region)] = regional.pop(same)
 
-    out = [(", ".join(_region_word(r) for r in regions), listed(regional[regions]))
+    out = [(", ".join(_region_word(r) for r in regions), regional[regions])
            for regions in sorted(regional, key=lambda rs: (order.get(rs[0], len(order)), rs))]
-    # A name a region line gives already is no "also".
-    shown = {_visible(n) for names in regional.values() for n in names}
+    # A name a region line gives already is no "also", and one only
+    # emulators no region line answers reads is an "instead": armsx1 reads
+    # scph1001.bin where the others pick a BIOS by region.
     plain = [n for n in group.plain if _visible(n) not in shown]
-    if plain:
-        out.append(("", listed(plain)))
+    if plain and out:
+        readers = group.line_readers.get("", {})
+        also = [n for n in plain if readers.get(_visible(n), set()) & answered]
+        if also:
+            out.append(("", listed(also)))
+        sentence = instead_of("", [n for n in plain if n not in also], answered)
+        if sentence:
+            out.append(("+", sentence))
+    elif plain:
+        main, sentence, _readers = split("", plain)
+        out.append(("", listed(main)))
+        if sentence:
+            out.append(("+", sentence))
     if not out and group.optional:
         out.append(("*", f"{_without_files(group.emulators)}. "
                          f"For full accuracy: {listed(group.optional)}."))
@@ -6191,14 +6431,19 @@ def _start_lines(block: list[tuple[str, str]], console: str = "") -> list[str]:
     lead, text = block[0]
     if lead == "*":
         return [f"**No file needed**{text}", ""]
-    if len(block) == 1 and lead == "":
-        named, _sep, where = text.partition(", first below")
+    # What the emulators no line answers read instead, after the lines.
+    instead = " ".join(text for lead, text in block if lead == "+")
+    block = [(lead, text) for lead, text in block if lead != "+"]
+    if len(block) == 1 and block[0][0] == "":
+        named, _sep, _where = block[0][1].partition(", first below")
         below = " They come first below." if _sep else ""
-        return [f"**Start with**: {named}.{below}", ""]
+        return [" ".join(filter(None, [f"**Start with**: {named}.{below}", instead])), ""]
     bios = f"the {console} BIOS" if console else "the BIOS"
     lines = [f"**Start with** {bios} for the region of your games:", ""]
     for lead, text in block:
         lines.append(f"- **{lead or 'Some emulators also require'}**: {text}")
+    if instead:
+        lines += ["", instead]
     return [*lines, ""]
 
 
@@ -6262,6 +6507,23 @@ _BOARD_CONSOLES: dict[str, str] = {}
 # its maker, which said nothing about what it holds.
 OTHER_ARCADE = ("Arcade", "Arcade")
 OTHER_ARCADE_LABEL = "Other arcade files"
+# (manufacturer, console) -> the boards whose sets left that folder's
+# section for the boards' own pages. The section names them.
+_BOARDS_FROM: dict[tuple[str, str], set[str]] = {}
+# System pages published under an address no page holds since, and where
+# their files went: the Atom and the MZ were boards, ScummVM's and SDLPAL's
+# files were on two pages, the Dreamcast lost its NAOMI sets. An address
+# redirects only while no page takes it back (sitestarlight.redirects).
+SYSTEM_PAGES_MOVED = {
+    "systems/arcade-acorn-atom.md": "systems/acorn.md",
+    "systems/arcade-sharp-mz-2000.md": "systems/sharp.md",
+    "systems/arcade-sharp-mz-2500.md": "systems/sharp.md",
+    "systems/arcade-miuchiz.md": "systems/arcade.md",
+    "systems/arcade-yamaha-ym2608.md": "systems/arcade.md",
+    "systems/other-scummvm.md": "systems/scummvm.md",
+    "systems/other-sdlpal.md": "systems/sdlpal.md",
+    "systems/sega-dreamcast.md": "systems/sega.md",
+}
 
 
 def arcade_board_sections(
@@ -6274,18 +6536,23 @@ def arcade_board_sections(
     ZN-1 had no section, and their names stayed plain on 568 emulator
     pages. Each archive goes to the board siterender.arcade_board() reads
     from the profiles, never from its folder, and a folder named after a
-    board (Namco System 246) joins it. Files no board claims stay in their
+    board (Namco System 246) joins it, whatever maker's folder holds the
+    copy. A set a reviewed machine owns (siterender.archive_machine) goes
+    to that machine's section. Files neither claims stay in their
     folders. Each board is recorded (siterender.record_board_section) before
     any page links one, and a system's install commands follow its link to
     the board's section. Call after reset_console_pages()."""
     from siterender import (  # noqa: PLC0415
         arcade_board,
         arcade_boards,
+        archive_machine,
         record_board_section,
+        record_card_move,
         system_section,
     )
 
     _BOARD_CONSOLES.clear()
+    _BOARDS_FROM.clear()
     arcade = manufacturers.get("Arcade")
     if not arcade:
         return manufacturers, installs
@@ -6294,23 +6561,66 @@ def arcade_board_sections(
     boards: dict[str, list] = {}
     folders: dict[str, list] = {}
     seen: dict[str, set[str]] = {}
+    # The sets a reviewed machine owns go to its section: neogeo.zip sat on
+    # five Arcade pages, the Atom's and the MZ-2000's sets on board pages.
+    machines: dict[tuple[str, str], list] = {}
+
+    def file_on_board(board: str, f: dict) -> None:
+        # One card per content: a copy under Arcade and one under MAME
+        # are the same file.
+        if str(f.get("sha1", "")) in seen.setdefault(board, set()):
+            return
+        seen[board].add(str(f.get("sha1", "")))
+        boards.setdefault(board, []).append(f)
+
     for console in sorted(arcade):
         joined = by_name.get(console.casefold())
         for f in arcade[console]:
-            board = joined or arcade_board(str(f.get("sha1", "")))
-            if board is None:
+            sha1 = str(f.get("sha1", ""))
+            board = joined or arcade_board(sha1)
+            machine = None if board else archive_machine(sha1)
+            if board is not None:
+                file_on_board(board, f)
+            elif machine is not None:
+                machines.setdefault(machine, []).append(f)
+                record_card_move("Arcade", console, sha1, *machine)
+            else:
                 folders.setdefault(console, []).append(f)
-                continue
-            # One card per content: a copy under Arcade and one under MAME
-            # are the same file.
-            if str(f.get("sha1", "")) in seen.setdefault(board, set()):
-                continue
-            seen[board].add(str(f.get("sha1", "")))
-            boards.setdefault(board, []).append(f)
+    # A board's set filed under a machine's folder is on the board's page
+    # too, whatever the folder: naomi.zip under the Dreamcast was the copy
+    # five setups list, and the NAOMI page did not name it.
+    makers: dict[str, dict[str, list]] = {}
+    for mfr, consoles in manufacturers.items():
+        if mfr == "Arcade":
+            continue
+        for console, files in consoles.items():
+            kept = []
+            for f in files:
+                sha1 = str(f.get("sha1", ""))
+                board = arcade_board(sha1)
+                machine = None if board else archive_machine(sha1)
+                if board is not None:
+                    file_on_board(board, f)
+                    _BOARDS_FROM.setdefault((mfr, console), set()).add(board)
+                elif machine is not None and machine != (mfr, console):
+                    # The Atom's own set sat with the BBC Micro.
+                    machines.setdefault(machine, []).append(f)
+                    record_card_move(mfr, console, sha1, *machine)
+                else:
+                    kept.append(f)
+            if len(kept) != len(files):
+                makers.setdefault(mfr, dict(consoles))[console] = kept
+    for (mfr, console), files in sorted(machines.items()):
+        consoles = makers.setdefault(mfr, dict(manufacturers.get(mfr, {})))
+        held = {str(f.get("sha1", "")) for f in consoles.get(console, [])}
+        consoles[console] = [*consoles.get(console, []),
+                             *(f for f in files if str(f.get("sha1", "")) not in held)]
     for board in sorted(boards):
         record_board_section(board)
         _BOARD_CONSOLES[names[board]] = board
     regrouped = {**folders, **{names[board]: files for board, files in boards.items()}}
+    makers = {mfr: {console: files for console, files in consoles.items() if files}
+              for mfr, consoles in makers.items()}
 
     moved: dict[str, dict[str, list[tuple[str, str]]]] = {}
     for slug, consoles in installs.items():
@@ -6322,7 +6632,21 @@ def arcade_board_sections(
                 else:
                     slug_to, console_to = slug, console
                 moved.setdefault(slug_to, {}).setdefault(console_to, []).append((platform, sys_id))
-    return {**manufacturers, "Arcade": regrouped}, moved
+    return {**manufacturers, **makers, "Arcade": regrouped}, moved
+
+
+def _boards_line(manufacturer: str, console: str) -> list[str]:
+    """The line of a section whose board sets went to the boards' pages:
+    the Dreamcast folder holds NAOMI's and Atomiswave's."""
+    from siterender import arcade_boards  # noqa: PLC0415
+
+    boards = _BOARDS_FROM.get((manufacturer, console))
+    if not boards:
+        return []
+    names = arcade_boards()
+    links = [f"[{names[board]}]({console_href('arcade', names[board]).removeprefix('systems/')})"
+             for board in sorted(boards, key=lambda b: names[b].casefold())]
+    return [f"**Arcade board BIOS** on the boards' own pages: {', '.join(links)}.", ""]
 
 
 def _section_label(manufacturer: str, console: str) -> str:
@@ -6433,7 +6757,8 @@ def system_pages(
     def start_of(console: str, first_below: bool = True) -> list[str]:
         if boards and console not in boards:
             return []
-        return _start_with(consoles[console], consumers, first_below, (manufacturer, console))
+        return [*_start_with(consoles[console], consumers, first_below, (manufacturer, console)),
+                *_boards_line(manufacturer, console)]
 
     starts = {console: [] if boards and console not in boards
               else _start_order(consoles[console], consumers, (manufacturer, console))
@@ -6592,9 +6917,12 @@ def system_pages(
         ])
         lead = set(starts[console])
         # A part by the files it holds: "Arcade: Arcade, part 3 of 5" said
-        # nothing a search result could use.
-        titles = ([f"{manufacturer}: {label}"] if len(stems) == 1 else [
-            "{} files {} to {}".format(_part_name(manufacturer, console), *_part_ends(part, lead))
+        # nothing a search result could use. A folder under Other goes by
+        # its emulator's name: "mame files" named the folder.
+        named = _folder_emulator(console)[0] if manufacturer == "Other" else None
+        titles = ([f"{manufacturer}: {named or label}"] if len(stems) == 1 else [
+            "{} files {} to {}".format(named or _part_name(manufacturer, console),
+                                       *_part_ends(part, lead))
             for part in parts])
         count = _count(len(consoles[console]), "file")
         summary.extend(start_of(console, False))
@@ -6617,25 +6945,23 @@ def system_pages(
                     following=neighbours[-1] if index + 1 < len(stems) else None,
                     weight=_part_weight() if len(stems) > 1 else None,
                     consoles=[label] if index == 0 and console in machines else None),
-                f"# {titles[index]}", "",
-                f"Part of [{manufacturer}]({slug}.md), in [Systems](index.md).",
-                "", *_icon_symbol(),
+                # The crumbs end on the maker's page: no line says it again.
+                f"# {titles[index]}", "", *_icon_symbol(),
             ]
             if len(stems) > 1:
                 others = ", ".join(
                     f"[part {i + 1}]({other}.md)" for i, other in enumerate(stems) if i != index)
                 lines.extend([f"This part holds {_part_range(part, lead)}. The others: {others}.",
                               ""])
-            if board:
-                # The heading a board's links land on, above its start line.
-                lines.extend([f"## {label} {{ #{board_slug(board)} }}", ""])
+            # A board's page is its one section: its title names it, and a
+            # heading of the same name said it a third time. Its cards come
+            # under "Files", as every page of one console's.
             if index == 0:
                 lines.extend(start_of(console, len(stems) == 1))
             lines.extend(legend)
             lines.extend(_romset_note({console: consoles[console]}))
             lines.extend(install_block(console))
-            if not board:
-                lines.extend(["## Files", ""])
+            lines.extend(["## Files", ""])
             lines.extend(_cards_markdown(part))
             lines.append("")
             lines.extend(_next_block([f"[{manufacturer}]({slug}.md), every section"]
@@ -7487,8 +7813,12 @@ def _console_install_block(console: str, declared: list[tuple[str, str]]) -> lis
     ps = [line for platform, system in declared for line in (
         f"# {_platform_display(platform)}",
         install_command("powershell", f"--platform {platform} --system {_ps_quote(system)}"))]
-    # The name last: "Install the Atari System 1 files" read as a count.
-    return search_excluded(markup.details("tip", f"Install the files of {console}", [
+    # The name last: "Install the Atari System 1 files" read as a count. A
+    # label naming files already reads "Install these files": "Install
+    # the files of Other arcade files".
+    summary = ("Install these files" if console.casefold().endswith(" files")
+               else f"Install the files of {console}")
+    return search_excluded(markup.details("tip", summary, [
         "Each platform names the system its own way.",
         "",
         "Linux, macOS, Steam Deck:",

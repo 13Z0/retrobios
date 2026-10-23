@@ -114,7 +114,11 @@ class TheConsoleBiosComesFirst(unittest.TestCase):
 
     def test_a_long_list_names_the_first_and_counts_the_rest(self):
         files = [_file(f"rom{i}.bin", "abcdefgh"[i]) for i in range(8)]
+        # One emulator requires all eight: files each required by another
+        # emulator are other names for one slot (round 5, 6.2).
         consumers = _consumers({f["sha1"]: [{"required": True}] for f in files})
+        consumers.emulator_files = {"emu": [{"required": True}] * len(files)}
+        consumers.emulator_entries = {f["sha1"]: {"emu": i} for i, f in enumerate(files)}
         self.assertEqual(gs._start_with(files, consumers)[0],
                          "**Start with**: `rom0.bin`, `rom1.bin`, `rom2.bin` and 5 more files. "
                          "They come first below.")
