@@ -68,7 +68,7 @@ class NoSetupFoundGivesEachSystemItsFolder(unittest.TestCase):
         self.assertIn('print("  No supported platform detected.")', INSTALL_PY)
 
     def test_the_lead_names_the_menu(self):
-        self.assertIn("In RetroArch, open **Settings > Directory > System/BIOS**",
+        self.assertIn("Not sure? Open RetroArch's **Settings > Directory > System/BIOS**",
                       _flat(self.section))
 
     def test_each_tab_carries_the_folder_retroarch_reads_there(self):
@@ -151,14 +151,14 @@ class FaqAnswersLeadSomewhere(unittest.TestCase):
 
     def test_ios_goes_to_the_iphone_section(self):
         section = _flat(_section(self.text, "My setup is not in the list"))
-        self.assertIn("iPhone, iPad (iOS): no terminal. [Pick your consoles and copy the files "
+        self.assertIn("iPhone, iPad (iOS): no terminal. [Pick your consoles and copy them "
                       "to the app](../which-pack.md#iphone-and-ipad).", section)
         self.assertNotIn("Use the ZIP", section)
         self.assertIn('"## iPhone and iPad { #iphone-and-ipad }"', self.generator)
 
     def test_antivirus_answer_covers_setups_without_a_zip(self):
         section = _flat(_section(self.text, "Windows or my antivirus blocks the command"))
-        self.assertIn("No ZIP for your setup? [Pick your consoles]"
+        self.assertIn("Use your setup's ZIP. None? [Pick your consoles]"
                       "(../which-pack.md#only-some-consoles) and download their files.",
                       section)
         self.assertNotIn("if any", section)
@@ -211,7 +211,7 @@ class SmallCopyFixes(unittest.TestCase):
 
     def test_retropie_share_is_named_with_its_source(self):
         section = _section(_wiki("first-install.md"), "Error: Python 3.8 or newer is required.")
-        self.assertIn("From\nWindows, it is `\\\\RETROPIE\\bios`:", section)
+        self.assertIn("share open, `\\\\RETROPIE\\bios` from Windows:", section)
         self.assertIn("samba.sh:49-52", section)
         self.assertIn("Transferring-Roms.md:29", section)
 

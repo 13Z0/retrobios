@@ -67,13 +67,13 @@ Read them first: [install.sh](https://github.com/Abdess/retrobios/blob/main/inst
 
 ## Windows or my antivirus blocks the command
 
-Use your setup's ZIP. No ZIP for your setup?
-[Pick your consoles](../which-pack.md#only-some-consoles) and download their files.
+Use your setup's ZIP. None? [Pick your consoles](../which-pack.md#only-some-consoles)
+and download their files.
 
 ## Why is there no ZIP for my setup?
 
-ZIPs are made for the setups most people download. The command installs every
-setup's files and checks each one. `--dry-run` shows the list first.
+ZIPs exist for the most downloaded setups. The command installs and checks
+every setup's files.
 
 ## Fill an SD card from a computer?
 
@@ -101,7 +101,7 @@ Fill it from a computer, as above, or point `--from-pack` at your ZIP: [Without 
 - Name your emulator's BIOS folder with `--dest`.
 - ES-DE, LaunchBox: the command fills their emulators' folders.
 - iPhone, iPad (iOS): no terminal.
-  [Pick your consoles and copy the files to the app](../which-pack.md#iphone-and-ipad).
+  [Pick your consoles and copy them to the app](../which-pack.md#iphone-and-ipad).
 
 ## Why is a file missing from the ZIP?
 
