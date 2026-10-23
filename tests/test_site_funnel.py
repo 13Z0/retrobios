@@ -201,6 +201,11 @@ class DeepLinksCarryALabel(unittest.TestCase):
     more says what it leads to, with that page's level label before it on
     its line, or in the heading of its section ("## Reference: ...")."""
 
+    # Answers a start page sends its reader to on purpose: the arcade
+    # version table opens on one plain sentence, and "Reference:" before
+    # its link read as a broken crumb (round 4, C4 and C9).
+    ANSWERS = ("/retrobios/wiki/technical-faq/#which-mame-version-do-the-arcade-bios-sets-match",)
+
     def test_start_and_setup_pages(self):
         import sitestarlight  # noqa: PLC0415
 
@@ -227,6 +232,8 @@ class DeepLinksCarryALabel(unittest.TestCase):
                         continue
                     deeper = levels[target]
                     if ORDER.index(deeper) - ORDER.index(level) < 2:
+                        continue
+                    if any(f"]({answer})" in match.group(0) for answer in self.ANSWERS):
                         continue
                     label = f"{generate_site.LEVELS[deeper]}:"
                     if label not in line[: match.start()] and not any(

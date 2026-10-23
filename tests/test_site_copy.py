@@ -32,8 +32,8 @@ START_PAGES = {
     "which-pack.md": 400,
     "wiki/what-are-bios-files.md": 300,
     "wiki/first-install.md": 400,
-    "wiki/troubleshooting.md": 300,
-    "wiki/faq.md": 450,
+    "wiki/troubleshooting.md": 345,
+    "wiki/faq.md": 480,
     "wiki/glossary.md": 200,
 }
 # Level 1: the guide part of each setup page, above its Reference heading.

@@ -360,11 +360,15 @@ class InstallerOptionsAtAGlance(unittest.TestCase):
         listed = {usage.split()[0].rstrip(",") for usage, _ in sitediagrams.installer_options()}
         self.assertEqual(declared | {"--help"}, listed)
 
-    def test_the_built_page_opens_on_the_table(self):
+    def test_the_built_page_opens_on_a_link_per_option(self):
         text = _built("wiki/installer.md")
-        table = text.index("| Option | What it does | More |")
-        self.assertLess(table, text.index("## One line"))
-        self.assertIn("| `--check` |", text)
+        glance = text.index("## Options at a glance")
+        self.assertLess(glance, text.index("## One line"))
+        listed = text[glance:text.index("## One line")]
+        for usage, _ in sitediagrams.installer_options():
+            flag = usage.split()[0].rstrip(",")
+            with self.subTest(option=flag):
+                self.assertIn(f"[`{flag}`](#option-{flag.lstrip('-')})", listed)
         self.assertNotIn("<!-- installer-options", text)
 
 

@@ -105,12 +105,13 @@ class ArcadeAnswerWherePlayersLook(unittest.TestCase):
                            headings.index("3. Check the folder and the names"))
         section = _flat(_section(text, "An arcade game does not start"))
         for words in ("neogeo.zip", "same emulator version", "MAME version", "Details:",
-                      "../emulators/index.md", "Run the command once."):
+                      "technical-faq.md#which-mame-version-do-the-arcade-bios-sets-match",
+                      "Run the command once."):
             with self.subTest(words=words):
                 self.assertIn(words, section)
 
     def test_the_faq_links_the_technical_answer(self):
-        section = _section(_wiki("faq.md"), "My arcade game does not start")
+        section = _section(_wiki("faq.md"), "My arcade game fails (which MAME version?)")
         anchor = "technical-faq.md#which-mame-version-do-the-arcade-bios-sets-match"
         self.assertIn(anchor, section)
         self.assertIn("## Which MAME version do the arcade BIOS sets match?", _wiki("technical-faq.md"))
@@ -235,7 +236,8 @@ class ExitStatusAndPinnedInstaller(unittest.TestCase):
 
     def test_a_packager_pins_installer_and_lists_to_one_tag(self):
         section = _section(self.text, "One line")
-        self.assertIn("/retrobios/<tag>/install.py", section)
+        self.assertIn("releases/download/<tag>", section)
+        self.assertIn("$base/install.py", section)
         self.assertIn("RETROBIOS_REF=<tag>", section)
         self.assertIn('os.environ.get("RETROBIOS_REF"', self.source)
 
@@ -245,7 +247,7 @@ class SmallCopyFixes(unittest.TestCase):
 
     def test_the_sd_card_example_names_its_setup(self):
         section = _flat(_section(_wiki("faq.md"), "Fill an SD card from a computer?"))
-        self.assertIn("For RetroArch on a Switch card in drive `E:`", section)
+        self.assertIn("For RetroArch on a Switch, with the card in drive `E:`, run:", section)
         guides = (REPO_ROOT / "platforms" / "_guides.yml").read_text(encoding="utf-8")
         self.assertIn("where: Nintendo Switch", guides)
         self.assertIn("`retroarch/cores/system/` on the SD card", guides)
