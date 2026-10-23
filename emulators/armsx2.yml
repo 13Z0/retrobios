@@ -18,6 +18,27 @@ systems:
 bios_directory: "bios/"
 resources_directory: "resources/"
 
+data_root:
+  android:
+    path: "Android/data/com.armsx2/files"
+    source_ref: "source platforms/android/app/src/main/java/kr/co/iefriends/pcsx2/NativeApp.java:66-92, source platforms/android/app/src/main/cpp/native-lib.cpp:291-296"
+    note: "the data folder picked in the setup wizard replaces it, but the BIOS folder stays bios under Android/data/com.armsx2/files"
+  ios:
+    path: "Documents"
+    source_ref: "source platforms/ios/app/src/main/cpp/IOS/AppDelegate.mm:61-73, 96-101"
+  windows:
+    path: "%USERPROFILE%/Documents/ARMSX2"
+    source_ref: "source pcsx2/Pcsx2Config.cpp:2450-2466, 2494-2516"
+    note: "portable.ini or portable.txt beside the executable makes its folder the root, or the folder portable.txt names. A custom data path from the settings gets ARMSX2 under it"
+  macos:
+    path: "~/Library/Application Support/ARMSX2"
+    source_ref: "source pcsx2/Pcsx2Config.cpp:2450-2457, 2488-2516"
+    note: "portable.ini or portable.txt beside the app bundle makes that folder the root"
+  linux:
+    path: "$XDG_CONFIG_HOME/ARMSX2, else ~/.config/ARMSX2"
+    source_ref: "source pcsx2/Pcsx2Config.cpp:2450-2457, 2467-2487, 2494-2516"
+    note: "portable.ini or portable.txt beside the binary makes its folder the root"
+
 notes: |
   PlayStation 2 emulator, a GPL-3.0 fork of PCSX2 that replaces the x86-64 only
   EE, IOP, VU and vtlb fast memory recompilers with native AArch64 ones. One tree
