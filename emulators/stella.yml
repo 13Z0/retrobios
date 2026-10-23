@@ -13,6 +13,20 @@ cores:
 systems:
   - atari-2600
 
+data_root:
+  windows:
+    path: "%APPDATA%/Stella"
+    source_ref: "src/os/windows/OSystemWINDOWS.cxx:28-36, 42-57, src/os/windows/HomeFinder.hxx:46-51"
+    note: "The -baseinappdir option makes the folder of the executable the root, -basedir a chosen folder"
+  macos:
+    path: "~/Library/Application Support/Stella"
+    source_ref: "src/os/macos/OSystemMACOS.cxx:30-33, 38-59, src/os/macos/MacOSUtils.mm:26-38"
+    note: "The -baseinappdir option makes the folder of the executable the root, -basedir a chosen folder"
+  linux:
+    path: "$XDG_CONFIG_HOME/stella, else ~/.config/stella"
+    source_ref: "src/os/unix/OSystemUNIX.cxx:78-79, 83-96, src/os/unix/XDGPaths.hxx:36-38, 49-58"
+    note: "The -baseinappdir option makes the folder of the executable the root, -basedir a chosen folder"
+
 notes: |
   The libretro core is built from stella-emu/stella, the tree of the
   standalone emulator, with its wrapper in src/os/libretro. The binary
