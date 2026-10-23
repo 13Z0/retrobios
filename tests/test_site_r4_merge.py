@@ -15,6 +15,7 @@ import re
 import sys
 import unittest
 from pathlib import Path
+from unittest import mock
 
 import yaml
 
@@ -23,6 +24,7 @@ sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
 import check_freshness  # noqa: E402
 import generate_site as gs  # noqa: E402
+import sitediagrams  # noqa: E402
 import siterender  # noqa: E402
 
 DIST = REPO_ROOT / "website" / "dist"
@@ -120,6 +122,32 @@ class SourcePathsFreshness(unittest.TestCase):
         finding = check_freshness.check_source_paths({"geolith": moved})
         self.assertEqual(finding.status, check_freshness.STALE)
         self.assertIn("sitesources.py --fetch", finding.detail)
+
+
+class OptionsGlanceFromTheParser(unittest.TestCase):
+    """--declared-only and --offline reached install.py and its Options
+    table, and not the hand-written glance above it."""
+
+    def test_every_parser_option_has_a_group(self):
+        named = {flag for _label, flags in sitediagrams.GLANCE_GROUPS for flag in flags}
+        self.assertEqual(set(sitediagrams.installer_flags()) - named, set())
+        self.assertEqual(named - set(sitediagrams.installer_flags()), set())
+
+    def test_an_option_no_group_names_still_lands(self):
+        with mock.patch.object(sitediagrams, "installer_flags",
+                               return_value=["--platform", "--brand-new"]):
+            lines = sitediagrams.options_glance()
+        self.assertEqual(lines, [
+            "- **Where and for what**: [`--platform`](#option-platform)",
+            "- **Other**: [`--brand-new`](#option-brand-new)",
+        ])
+
+    def test_the_source_holds_no_list(self):
+        text = (REPO_ROOT / "wiki" / "installer.md").read_text(encoding="utf-8")
+        section = text[text.index(sitediagrams.GLANCE_HEADING):text.index("\n## One line")]
+        self.assertNotIn("\n- ", section)
+        with self.assertRaises(ValueError):
+            sitediagrams.expand_glance(f"# x\n\n{sitediagrams.GLANCE_HEADING}\n\n- a\n\n## y\n")
 
 
 @unittest.skipUnless((DIST / "systems" / "arcade-acclaim-zn-1" / "index.html").is_file(),

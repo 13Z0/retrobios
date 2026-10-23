@@ -323,7 +323,8 @@ class OneOptionsTable(unittest.TestCase):
         self.text = _wiki("installer.md")
 
     def test_each_option_links_to_its_row(self):
-        glance = _section(self.text, "Options at a glance")
+        # The glance is written from the parser when the page is built.
+        glance = _section(sitediagrams.expand_glance(self.text), "Options at a glance")
         table = _section(self.text, "Options")
         self.assertNotIn("installer-options", glance)
         self.assertNotIn("|", glance)

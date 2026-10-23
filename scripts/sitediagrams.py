@@ -861,6 +861,57 @@ def options_table(markdown: str) -> list[str]:
     return rows
 
 
+# The installer page's glance groups its options by task. The list is
+# written from the parser when the page is built: an option the parser
+# gains and no group names lands under "Other", never off the page.
+GLANCE_HEADING = "## Options at a glance"
+GLANCE_GROUPS: tuple[tuple[str, tuple[str, ...]], ...] = (
+    ("Where and for what", ("--platform", "--dest", "--target", "--every-board", "--save-dir",
+                            "--romm-firmware", "--standalone-copies")),
+    ("Fewer files", ("--system", "--core", "--emulator", "--region", "--no-game-data",
+                     "--declared-only", "--installed-cores", "--cores-dir")),
+    ("Look first", ("--check", "--dry-run", "--list-platforms", "--list-targets",
+                    "--list-systems", "--list-cores", "--list-emulators")),
+    ("From files you have", ("--from", "--from-pack", "--manifest", "--offline", "--restore")),
+    ("How the run talks", ("--tui", "--plain", "--no-input", "--yes", "--quiet", "--verbose",
+                           "--events", "--jobs", "--version", "--help")),
+)
+GLANCE_OTHER = "Other"
+
+
+def installer_flags() -> list[str]:
+    """Each option's first flag, in the order --help lists them."""
+    return [usage.split()[0].rstrip(",") for usage, _help in installer_options()]
+
+
+def options_glance() -> list[str]:
+    """One line per group of the glance, each option a link to its row."""
+    flags = installer_flags()
+    groups = [(label, [flag for flag in members if flag in flags]) for label, members in GLANCE_GROUPS]
+    named = {flag for _label, members in GLANCE_GROUPS for flag in members}
+    groups.append((GLANCE_OTHER, [flag for flag in flags if flag not in named]))
+    return [
+        f"- **{label}**: " + ", ".join(f"[`{flag}`](#option-{flag.lstrip('-')})" for flag in members)
+        for label, members in groups if members
+    ]
+
+
+def expand_glance(markdown: str) -> str:
+    """The glance's list, after the sentence that opens the section."""
+    start = markdown.find(f"\n{GLANCE_HEADING}\n")
+    if start == -1:
+        return markdown
+    body_start = start + len(GLANCE_HEADING) + 2
+    end = markdown.find("\n## ", body_start)
+    end = len(markdown) if end == -1 else end
+    body = markdown[body_start:end].strip("\n")
+    if any(line.startswith("- ") for line in body.splitlines()):
+        raise ValueError(f"{GLANCE_HEADING}: the list is written from install.py's parser, "
+                         "not by hand")
+    return (markdown[:body_start] + "\n" + body + "\n\n" + "\n".join(options_glance())
+            + "\n" + markdown[end:])
+
+
 def expand_options(markdown: str) -> str:
     if "installer-options" not in markdown:
         return markdown
@@ -898,7 +949,7 @@ def hide_hashes(markdown: str) -> str:
 
 def prepare_page(markdown: str, page: Path) -> str:
     """Everything this module does to a page before it is decorated."""
-    markdown = expand_options(expand_commands(resolve_images(localize_images(markdown, page))))
+    markdown = expand_glance(expand_options(expand_commands(resolve_images(localize_images(markdown, page)))))
     if page.parts[:1] == ("wiki",):
         markdown = hide_hashes(markdown)
     return markdown

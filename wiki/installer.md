@@ -25,12 +25,6 @@ How the command protects your machine is under
 
 Each links to its row in the [Options](#options) table.
 
-- **Where and for what**: [`--platform`](#option-platform), [`--dest`](#option-dest), [`--target`](#option-target), [`--every-board`](#option-every-board), [`--save-dir`](#option-save-dir), [`--romm-firmware`](#option-romm-firmware), [`--standalone-copies`](#option-standalone-copies)
-- **Fewer files**: [`--system`](#option-system), [`--core`](#option-core), [`--emulator`](#option-emulator), [`--region`](#option-region), [`--no-game-data`](#option-no-game-data), [`--declared-only`](#option-declared-only), [`--installed-cores`](#option-installed-cores), [`--cores-dir`](#option-cores-dir)
-- **Look first**: [`--check`](#option-check), [`--dry-run`](#option-dry-run), [`--list-platforms`](#option-list-platforms), [`--list-targets`](#option-list-targets), [`--list-systems`](#option-list-systems), [`--list-cores`](#option-list-cores), [`--list-emulators`](#option-list-emulators)
-- **From files you have**: [`--from`](#option-from), [`--from-pack`](#option-from-pack), [`--manifest`](#option-manifest), [`--offline`](#option-offline), [`--restore`](#option-restore)
-- **How the run talks**: [`--tui`](#option-tui), [`--plain`](#option-plain), [`--no-input`](#option-no-input), [`--yes`](#option-yes), [`--quiet`](#option-quiet), [`--verbose`](#option-verbose), [`--events`](#option-events), [`--jobs`](#option-jobs), [`--version`](#option-version), [`--help`](#option-help)
-
 ## One line
 
 ```bash
