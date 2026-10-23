@@ -2778,6 +2778,50 @@ class Crash(unittest.TestCase):
         self.assertNotIn("Traceback", err.getvalue() + out.getvalue())
 
 
+class TheSaveFolderLineFollowsTheChoice(unittest.TestCase):
+    """The save-folder line was the check's: with the system owning the
+    save file unticked, the result named a folder nothing was written to,
+    and kept, the Confirm screen did not name it."""
+
+    SAVES = {"event": "saves", "platform": "retroarch", "files": 1,
+             "folder": "/home/user/MySaves/<core>"}
+    LINE = "1 file read from RetroArch's save directory goes to ~/MySaves/<core>"
+
+    def said(self, lines) -> str:
+        return " ".join(" ".join(lines).split())
+
+    def run_to_result(self, confirm_saves: bool, install_saves: bool) -> install.TuiState:
+        state = checked_state()
+        state.saves = dict(self.SAVES)
+        state.must_confirm = True
+        state.stack.append("confirm")
+        install._start_run(state, "confirm")
+        dry = {**CHECK, "files": 3, "missing": 3, "wrong_hash": 0}
+        for event in [*([self.SAVES] if confirm_saves else []), dry]:
+            install.tui_receive(state, ("event", state.run_id, event))
+        install.tui_receive(state, ("ended", state.run_id, 1, []))
+        self.confirm = self.said(install.tui_view(state, 200, 40))
+        install._start_run(state, "install")
+        summary = {"event": "summary", "mode": "install", "installed": 3, "up_to_date": 0,
+                   "pending": 0, "failed": [], "skipped": [], "left_out": [], "kept": [],
+                   "interrupted": False}
+        for event in [*([self.SAVES] if install_saves else []), summary]:
+            install.tui_receive(state, ("event", state.run_id, event))
+        install.tui_receive(state, ("ended", state.run_id, 0, []))
+        return state
+
+    def test_unticked_it_is_named_nowhere(self):
+        state = self.run_to_result(confirm_saves=False, install_saves=False)
+        self.assertNotIn("save directory", self.confirm)
+        self.assertEqual(state.screen, "result")
+        self.assertNotIn("save directory", self.said(install.tui_outcome(state)[1]))
+
+    def test_kept_the_confirm_screen_and_the_result_name_it(self):
+        state = self.run_to_result(confirm_saves=True, install_saves=True)
+        self.assertIn(self.LINE, self.confirm)
+        self.assertIn(self.LINE, self.said(install.tui_outcome(state)[1]))
+
+
 @unittest.skipIf(os.name == "nt" or os.geteuid() == 0,
                  "a folder without search permission is POSIX")
 class AFolderThisUserCannotOpen(unittest.TestCase):

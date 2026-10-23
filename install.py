@@ -10165,6 +10165,10 @@ class TuiState:
         self.check_summary: dict | None = None
         # The saves event of the check: the files that go to the save folder.
         self.saves: dict | None = None
+        # The same of the confirm or preview run, and of the install: a
+        # choice of systems can leave the save file out, or keep it.
+        self.dry_saves: dict | None = None
+        self.done_saves: dict | None = None
         # The confirm screen waits for A even when the plan is unchanged:
         # it was opened by Space, which never installs by itself.
         self.must_confirm: bool = False
@@ -10722,7 +10726,9 @@ def _start_run(state: TuiState, run: str) -> list[tuple]:
         state.checked_flags = tui_flags(state)
     elif run in ("confirm", "preview"):
         state.dry, state.dry_files, state.dry_summary = None, [], None
+        state.dry_saves = None
     else:
+        state.done_saves = None
         state.download = state.progress = state.reading = None
         state.samples, state.local_dests, state.network = [], {}, 0
         state.finished, state.summary, state.code, state.stopping = [], None, None, False
@@ -11365,6 +11371,10 @@ def _take_event(state: TuiState, event: dict) -> None:
         state.unreadable.append(event)
     elif kind == "saves" and state.run == "check":
         state.saves = event
+    elif kind == "saves" and state.run in ("confirm", "preview"):
+        state.dry_saves = event
+    elif kind == "saves" and state.run == "install":
+        state.done_saves = event
     elif kind == "found" and state.run == "install":
         state.local_dests[event["dest"]] = (event["folder"], event["reason"])
     elif state.run == "check":
@@ -11725,8 +11735,9 @@ def _plan_lines(check: dict, dest: Path | None, state: TuiState) -> list:
         lines.append("You cannot write to this folder: choose another one.")
     lines.append(f"{check['present']} in place, {check['missing']} missing, "
                  f"{wrong} wrong {'copy' if wrong == 1 else 'copies'}")
-    if check is state.check:
-        lines += [_styled(line, "path") for line in _saves_lines(state)]
+    saves = (state.saves if check is state.check
+             else state.dry_saves if check is state.dry else None)
+    lines += [_styled(line, "path") for line in _saves_lines(state, saves)]
     found_in = _retroarch_config_at(dest) if dest is not None else None
     if found_in:
         lines.append(_styled(f"Named by {_short_path(Path(found_in[0]), state.home)}", "path"))
@@ -11764,16 +11775,17 @@ def _plan_lines(check: dict, dest: Path | None, state: TuiState) -> list:
     return lines[:2] + offline_lines + lines[2:]
 
 
-def _saves_lines(state: TuiState) -> list[str]:
+def _saves_lines(state: TuiState, saves: dict | None) -> list[str]:
     """Where the files read from the frontend's save directory go: a second
-    folder this run writes to, named before anything is written."""
-    if not state.saves or not state.saves.get("files"):
+    folder this run writes to, named before anything is written. saves is
+    the event of the run the screen shows."""
+    if not saves or not saves.get("files"):
         return []
     name = display_name(state.platform) if state.platform else "the frontend"
-    count = state.saves["files"]
+    count = saves["files"]
     return [f"{_plural(count, 'file')} read from {name}'s save directory "
             f"{'goes' if count == 1 else 'go'} to "
-            f"{_short_path(Path(state.saves['folder']), state.home)}"]
+            f"{_short_path(Path(saves['folder']), state.home)}"]
 
 
 def _unplaced_lines(summary: dict | None, state: TuiState) -> list[str]:
@@ -12241,7 +12253,7 @@ def tui_outcome(state: TuiState) -> tuple[str, list[str]]:
         lines.append(sources)
     lines.append(f"BIOS folder: {state.dest}")
     if installed + up_to_date:
-        lines += _saves_lines(state)
+        lines += _saves_lines(state, state.done_saves)
     if space:
         lines.append("Free some space, or run again and choose another folder.")
     causes: dict[str, list[str]] = {}
