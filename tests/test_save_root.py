@@ -25,6 +25,7 @@ import threading
 import unittest
 import zipfile
 from pathlib import Path
+from unittest import mock
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
@@ -551,6 +552,60 @@ class TheInstallerFindsTheSaveDirectory(unittest.TestCase):
                          install.SavePlace(self.root / "Emulation" / "saves/retroarch/saves",
                                            False, False))
         install._check_save_directory(manifest)
+
+    def other_spelling(self, spelled: Path) -> install.SavePlace | str:
+        """save_directory_for the BIOS folder written another way, the config
+        keyed as detection writes it, with savefile_directory set."""
+        saves = self.root / "MySaves"
+        saves.mkdir(exist_ok=True)
+        self.cfg.write_text(f'savefile_directory = "{saves}"\n')
+        install._RETROARCH_CONFIGS[self.bios] = (self.cfg, self.app)
+        self.addCleanup(install._SAVE_DIRS.pop, spelled, None)
+        with mock.patch.object(install, "_CONFIGS_READ", [True]):
+            return install.save_directory_for(spelled, self.MANIFEST)
+
+    def test_a_relative_bios_folder_finds_its_config(self):
+        """cd ~/.config/retroarch && install.py --dest system: the save files
+        went to a guessed saves/ beside it."""
+        self.addCleanup(os.chdir, os.getcwd())
+        os.chdir(self.app)
+        self.assertEqual(self.other_spelling(Path("system")),
+                         install.SavePlace(self.root / "MySaves", True))
+
+    def test_a_bios_folder_through_a_link_finds_its_config(self):
+        """EmuDeck links RetroArch's system folder to ~/Emulation/bios."""
+        link = self.root / "bios-link"
+        link.symlink_to(self.bios, target_is_directory=True)
+        self.assertEqual(self.other_spelling(link),
+                         install.SavePlace(self.root / "MySaves", True))
+        linked_app = self.root / "RA-link"
+        linked_app.symlink_to(self.app, target_is_directory=True)
+        self.assertEqual(self.other_spelling(linked_app / "system"),
+                         install.SavePlace(self.root / "MySaves", True))
+
+    def test_case_only_differs_where_the_system_folds_it(self):
+        spelled = Path(str(self.bios).upper())
+        with mock.patch.object(install.sys, "platform", "linux"):
+            self.assertNotEqual(self.other_spelling(spelled),
+                                install.SavePlace(self.root / "MySaves", True))
+        install._SAVE_DIRS.pop(spelled, None)
+        with mock.patch.object(install.sys, "platform", "darwin"):
+            self.assertEqual(self.other_spelling(spelled),
+                             install.SavePlace(self.root / "MySaves", True))
+
+    def test_the_cores_folder_through_another_spelling(self):
+        cores = self.root / "MyCores"
+        cores.mkdir()
+        self.cfg.write_text(f'libretro_directory = "{cores}"\n')
+        install._RETROARCH_CONFIGS[self.bios] = (self.cfg, self.app)
+        link = self.root / "bios-link"
+        link.symlink_to(self.bios, target_is_directory=True)
+        self.addCleanup(os.chdir, os.getcwd())
+        os.chdir(self.app)
+        with mock.patch.object(install, "_CONFIGS_READ", [True]):
+            for spelled in (Path("system"), link, Path("./system/")):
+                with self.subTest(spelled=str(spelled)):
+                    self.assertEqual(install.core_dirs("retroarch", spelled), [cores])
 
     def test_the_entry_path(self):
         saves = (self.app / "saves").resolve()

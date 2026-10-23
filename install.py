@@ -3993,13 +3993,42 @@ def _retroarch_config_for(bios_path: Path) -> tuple[Path, Path] | None:
     sent Azahar's keys.txt to a guessed folder where line mode read
     savefile_directory, and found no core where line mode found them.
     """
-    found = _RETROARCH_CONFIGS.get(bios_path)
+    found = _retroarch_config_at(bios_path)
     if found is not None or _CONFIGS_READ:
         return found
     _CONFIGS_READ.append(True)
     with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
         detect_platforms(_INVOCATION.os_type or detect_os())
-    return _RETROARCH_CONFIGS.get(bios_path)
+    return _retroarch_config_at(bios_path)
+
+
+def _folder_key(path: Path) -> str:
+    """The folder as the system names it: absolute, links followed, and
+    case folded where the system's default filesystem folds it."""
+    real = os.path.realpath(path)
+    return real.casefold() if sys.platform in ("win32", "darwin") else real
+
+
+def _retroarch_config_at(bios_path: Path) -> tuple[Path, Path] | None:
+    """The config detection read for bios_path, however the folder is
+    written: --dest relative, through a link, or in another case. The
+    configs are keyed by the folder as each retroarch.cfg writes it."""
+    found = _RETROARCH_CONFIGS.get(bios_path)
+    if found is not None or not _RETROARCH_CONFIGS:
+        return found
+    wanted = _folder_key(bios_path)
+    for system_dir, config in _RETROARCH_CONFIGS.items():
+        if _folder_key(system_dir) == wanted:
+            return config
+    # A drive whose filesystem folds case where the system's default does
+    # not (or the reverse): the filesystem answers for folders that exist.
+    for system_dir, config in _RETROARCH_CONFIGS.items():
+        try:
+            if os.path.samefile(system_dir, bios_path):
+                return config
+        except (OSError, ValueError):
+            continue
+    return None
 
 
 def save_directory_for(
@@ -11632,7 +11661,7 @@ def _plan_lines(check: dict, dest: Path | None, state: TuiState) -> list:
                  f"{wrong} wrong {'copy' if wrong == 1 else 'copies'}")
     if check is state.check:
         lines += [_styled(line, "path") for line in _saves_lines(state)]
-    found_in = _RETROARCH_CONFIGS.get(dest) if dest is not None else None
+    found_in = _retroarch_config_at(dest) if dest is not None else None
     if found_in:
         lines.append(_styled(f"Named by {_short_path(Path(found_in[0]), state.home)}", "path"))
     free = state.facts.get("free")
@@ -12365,7 +12394,7 @@ def _install_kind(path: Path) -> str:
     """What sets one install of a frontend apart from another of the same."""
     # The config detection read it from says how it was installed: the
     # Flatpak's system directory can be anywhere its config names.
-    found = _RETROARCH_CONFIGS.get(path)
+    found = _retroarch_config_at(path)
     text = path.as_posix() + (" " + Path(found[0]).as_posix() if found else "")
     for marker, word in (("/.var/app/", "Flatpak"), ("/steamapps/", "Steam"),
                          ("/snap/", "Snap")):
