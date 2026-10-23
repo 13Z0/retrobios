@@ -64,8 +64,8 @@ curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | 
 </TabItem>
 </Tabs>
 
-On Batocera, Recalbox and similar setups, follow
-[your setup's page](../which-pack.md).
+On Batocera, Recalbox and similar setups, see
+[Get your files](../which-pack.md).
 
 ## 2. Check the folder it found
 
@@ -96,7 +96,7 @@ You can stop with Ctrl+C at any time. Run the command again to carry on.
 
 ## 5. Read the last line
 
-- **`Done.`** All files are in place.
+- **`Done.`** `N files installed, M already up to date.` All files are in place.
 - **`Finished with errors.`** Some files failed. Run the same command again.
   It retries only those.
 - **`Nothing was installed.`** The lines above it say why. See
@@ -161,6 +161,6 @@ See [When a game does not start](troubleshooting.md).
 
 ## Next steps
 
-- [Your setup's page](../which-pack.md): its folder and how it checks files
+- [Get your files](../which-pack.md)
 - [When a game does not start](troubleshooting.md)
 - Details: [Reading the installer's output, line by line](installer.md#reading-a-run)

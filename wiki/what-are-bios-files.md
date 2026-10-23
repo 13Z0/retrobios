@@ -26,8 +26,9 @@ If step 3 fails, you see "BIOS missing" or a black screen.
 
 ## Do I need one?
 
-- **Yes:** PlayStation 1 and 2, Saturn, Dreamcast, Neo Geo, PC Engine CD and
-  many home computers.
+- **Yes:** PlayStation 1 and 2, Saturn, Neo Geo, PC Engine CD and many home
+  computers.
+- **Better with it:** Dreamcast. Some games need it.
 - **Usually not:** NES, Super Nintendo, Mega Drive, Game Boy and Game Boy
   Advance.
 - **Add-ons need their own:** the Famicom Disk System and the Mega-CD.
