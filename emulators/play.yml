@@ -4,7 +4,7 @@ core_classification: official_port
 source: "https://github.com/jpd002/Play-"
 upstream: "https://github.com/jpd002/Play-"
 profiled_date: "2026-03-24"
-source_commit: "2193ca112b576896a3022478a225661a7f84feb5"
+source_commit: "505dac73149fece41b04dd961078ce3011a8bed5"
 core_version: "Git"
 display_name: "Sony - PlayStation 2 (Play!)"
 cores:
@@ -18,9 +18,9 @@ systems:
 # IOP BIOS modules (IopBios.cpp), GS, SPU2, VU units.
 # The libretro core never calls RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY.
 #
-# LoadBIOS() exists in Ee_SubSystem.cpp:832 but is commented out at line 232.
+# LoadBIOS() exists in Source/ee/Ee_SubSystem.cpp:832 but is commented out at line 232.
 # IOP modules (SIO2MAN, PADMAN, MCMAN, MCSERV, CDVDMAN, CDVDFSV, etc.)
-# are all HLE-replaced via m_hleModules in IopBios.cpp:279-290.
+# are all HLE-replaced via m_hleModules in Source/iop/IopBios.cpp:279-290.
 # _IOP_EMULATE_MODULES=1 is unconditionally defined in Source/CMakeLists.txt:24.
 #
 # source_ref: Source/ee/Ee_SubSystem.cpp:232 (LoadBIOS commented out)
