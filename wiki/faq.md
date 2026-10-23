@@ -29,7 +29,7 @@ No. To keep only your region's BIOS, add it, like `--region us`.
 
 ## Does the BIOS set the game's language?
 
-Rarely. It comes from the game. Some games follow the console's setting, like Flycast's **Language**
+Rarely. It comes from the game. Some follow the console's setting, like Flycast's **Language**
 option.
 
 ## Zip or unzip? { #zip-or-unzip }
@@ -53,18 +53,13 @@ Game sets must match the emulator's version:
   emulator's menu.
 - **Keys** unlock encrypted games, like `prod.keys` for Switch.
 
-## Can I play without the BIOS?
-
-Sometimes, with an emulator's stand-in, but some games fail.
-
 ## Is the command safe? { #is-piping-the-installer-into-a-shell-safe }
 
 - It stops if the installer does not match its expected fingerprint, and
   checks each file.
-- It writes in your BIOS folder, and for some emulators your save folder.
-- It never touches a game or a save.
-- It keeps each file it replaces in `retrobios-backup`. `--restore` puts it
-  back.
+- It writes in your BIOS folder, and some emulators' save folder.
+- It never touches a game or save.
+- It keeps each file it replaces in `retrobios-backup`, for `--restore`.
 
 Read them first: [install.sh](https://github.com/Abdess/retrobios/blob/main/install.sh),
 [install.ps1](https://github.com/Abdess/retrobios/blob/main/install.ps1),
@@ -92,8 +87,13 @@ curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh \
 
 ## No internet on the device?
 
-Fill its folder from a computer, as above, or unzip your ZIP and check it with
-`--from-pack`: [Without a network](installer.md#without-a-network-offline-install).
+Fill its folder from a computer, as above, or point `--from-pack` at
+your ZIP, still zipped: [Without a network](installer.md#without-a-network-offline-install).
+
+## Lost or wiped card?
+
+`--from` copies BIOS files from an old card or a backup:
+[Copy from an old card](installer.md#copy-from-an-old-card).
 
 ## My setup is not in the list
 

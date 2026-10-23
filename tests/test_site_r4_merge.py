@@ -150,6 +150,33 @@ class OptionsGlanceFromTheParser(unittest.TestCase):
             sitediagrams.expand_glance(f"# x\n\n{sitediagrams.GLANCE_HEADING}\n\n- a\n\n## y\n")
 
 
+class FaqInstallsFromWhatYouHold(unittest.TestCase):
+    """--from-pack reads the ZIP itself, and a wiped card had no answer."""
+
+    def setUp(self):
+        self.faq = (REPO_ROOT / "wiki" / "faq.md").read_text(encoding="utf-8")
+
+    def _section(self, heading: str) -> str:
+        return self.faq.split(f"## {heading}\n", 1)[1].split("\n## ", 1)[0]
+
+    def test_no_unzip_before_from_pack(self):
+        section = " ".join(self._section("No internet on the device?").split())
+        self.assertIn("point `--from-pack` at your ZIP, still zipped", section)
+        self.assertNotIn("unzip", section)
+        install = (REPO_ROOT / "install.py").read_text(encoding="utf-8")
+        self.assertIn("Install from a pack already downloaded: its ZIP, one of its parts",
+                      (REPO_ROOT / "wiki" / "installer.md").read_text(encoding="utf-8"))
+        self.assertIn('"--from-pack"', install)
+
+    def test_a_wiped_card_links_the_copy(self):
+        section = self._section("Lost or wiped card?")
+        self.assertIn("`--from`", section)
+        self.assertIn("(installer.md#copy-from-an-old-card)", section)
+        installer = (REPO_ROOT / "wiki" / "installer.md").read_text(encoding="utf-8")
+        self.assertIn("## Copy from an old card { #copy-from-an-old-card }", installer)
+        self.assertIn('"--from"', (REPO_ROOT / "install.py").read_text(encoding="utf-8"))
+
+
 @unittest.skipUnless((DIST / "systems" / "arcade-acclaim-zn-1" / "index.html").is_file(),
                      "site not built")
 class BuiltCrumbs(unittest.TestCase):
