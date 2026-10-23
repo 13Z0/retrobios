@@ -4912,6 +4912,20 @@ class UpstreamVendoredAsASubmodule(unittest.TestCase):
         self.assertEqual(views[1].head, "nesbox-tip")
 
 
+class AHeldUpstreamStaysOnItsPin(unittest.TestCase):
+    """aps3e vendors RPCS3 1f080485 and yaps2 PCSX2 342db515: a bump moved
+    upstream_commit to the upstream HEAD neither port carries."""
+
+    def test_the_upstream_view_is_read_at_its_pin(self):
+        views = [
+            profile_sync.RepoView("fork", "p", "h", "source_commit", "source"),
+            profile_sync.RepoView("up", "vendored", "tip", "upstream_commit", "upstream"),
+        ]
+        held = profile_sync._hold_upstream({"upstream_frozen": "vendored tree"}, views)
+        self.assertEqual((held[0].head, held[1].head), ("h", "vendored"))
+        self.assertEqual(profile_sync._hold_upstream({}, views), views)
+
+
 class RealignReadsThePathAsWritten(unittest.TestCase):
     """hatarib cites hatari/src/tos.c, a path of hatariB. When only
     upstream_commit moved, realign stripped the hatari/ prefix, read

@@ -1136,7 +1136,20 @@ def select_views(
             continue
         seen.add((repo.host, repo.slug))
         views.append(RepoView(repo, pin, head, origin, field))
-    return _follow_fork_base(_follow_submodule(views, cache_dir, offline), cache_dir, offline)
+    views = _follow_fork_base(_follow_submodule(views, cache_dir, offline), cache_dir, offline)
+    return _hold_upstream(profile, views)
+
+
+def _hold_upstream(profile: dict, views: list[RepoView]) -> list[RepoView]:
+    """An upstream tree the port vendors or synced to is judged at that
+    revision: aps3e carries RPCS3 1f080485, yaps2 PCSX2 342db515."""
+    if not str(profile.get("upstream_frozen") or "").strip():
+        return views
+    return [
+        replace(view, head=view.pin, origin=f"{view.origin}, held")
+        if view.field == "upstream" else view
+        for view in views
+    ]
 
 
 def _follow_submodule(

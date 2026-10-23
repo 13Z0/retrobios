@@ -912,6 +912,10 @@
       "type": "string",
       "description": "Why source_commit is held on purpose rather than followed. The profile is then judged against its own revision, like one pinned to a superseded tag: comparing it to HEAD says nothing and recaling would repoint its refs at code the build it documents never had."
     },
+    "upstream_frozen": {
+      "type": "string",
+      "description": "Why upstream_commit is held on purpose rather than followed: the port vendors that upstream tree, synced to that release, or merged that commit. The upstream view is judged against its own revision and a bump leaves it, the way pin_frozen holds source_commit."
+    },
     "version_source": {
       "type": "object",
       "additionalProperties": false,
