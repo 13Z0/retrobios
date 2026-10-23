@@ -59,7 +59,6 @@ STAYS_PLAIN = {
     "fpinball": "scripten.exe, filed with Windows",
     "pv1000": "only MAME's software list pv1000.xml",
     "vc4000": "only MAME's software list vc4000.xml",
-    "sega-dreamcast-arcade": "NAOMI, NAOMI 2 and Atomiswave sets, three boards",
     "spectravideo": "the SVI ROMs are filed with the MSX",
     "vgmplay": "sound chip sets, no board",
     "vvvvvv": "SDL's controller database",
@@ -139,9 +138,11 @@ class Boards(unittest.TestCase):
                 slug = siterender.board_slug(board)
                 self.assertTrue(slug)
                 self.assertEqual(slug, toc_slug(name))
+                # The board's page is its section: no heading repeats its
+                # title (round 5, 6.8).
                 self.assertEqual(
                     siterender.console_href(*siterender.system_section(board)),
-                    f"systems/arcade-{slug}.md#{slug}")
+                    f"systems/arcade-{slug}.md")
 
     def test_aliases_share_a_board(self) -> None:
         """Every id of one board's name leads to one section."""
@@ -171,7 +172,7 @@ class Boards(unittest.TestCase):
     def test_parents_named_by_the_plan(self) -> None:
         expect = {
             "dos": ("dos", "DOSBox"),
-            "scummvm": ("other", "ScummVM"),
+            "scummvm": ("scummvm", "ScummVM"),
             "tyrian": ("other", "opentyrian"),
             "bbc-master-128": ("other", "beebem"),
         }

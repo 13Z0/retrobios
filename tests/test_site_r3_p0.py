@@ -42,7 +42,7 @@ UNLINKED: dict[str, str] = {
     "namco-nb1": "Arcade > FBNeo",
     "omicron": "Other > omicron",
     "rpgmaker": "RPG Maker > easyrpg",
-    "sdlpal": "Other > sdlpal",
+    "sdlpal": "the SDLPAL section under its own top, named after the program",
     "sega-system16b": "Arcade > FBNeo, and isgsm.zip is also the ISG Selection Master's",
     "smbx": "Game Engines > TheXTech",
     "thomson-mo6": "Other > Clock Signal",
@@ -50,7 +50,6 @@ UNLINKED: dict[str, str] = {
     # Files filed with another machine: a link would name the wrong one.
     "commodore-c64-supercpu": "VICE's tree under the C128",
     "emerson-arcadia-2001": "ar_bios.zip is filed with the Saturn",
-    "sega-dreamcast-arcade": "NAOMI, NAOMI 2 and Atomiswave sets, three boards",
     "spectravideo": "the SVI ROMs are filed with the MSX",
     "taito-type-x": "mame2010 files taitogn.zip, the G-NET BIOS, under this id",
     "vvvvvv": "SDL's controller database",
@@ -105,7 +104,7 @@ class SystemLinks(unittest.TestCase):
                 load_platform_config,
                 resolve_local_file,
             )
-            from generate_site import _copy_places, _group_by_manufacturer
+            from generate_site import _group_by_manufacturer, arcade_board_sections
 
             with open("database.json", encoding="utf-8") as handle:
                 db = json.load(handle)
@@ -117,8 +116,9 @@ class SystemLinks(unittest.TestCase):
             # (round 4, 6.4) and record it. The built pages are checked by
             # the round 4 gate.
             siterender.reset_console_pages()
-            for board in siterender.arcade_boards():
-                siterender.record_board_section(board)
+            # The sections as the system pages hold them: each board, the
+            # sets a reviewed machine owns under that machine.
+            cls.sections, _installs = arcade_board_sections(cls.manufacturers, {})
             platforms = [
                 load_platform_config(name, "platforms")
                 for name in list_registered_platforms("platforms", include_archived=True)
@@ -141,7 +141,12 @@ class SystemLinks(unittest.TestCase):
                     for owner in owners:
                         entries.setdefault(owner, []).append(fe)
 
-            places = _copy_places(db)
+            # Where each content has a card.
+            places: dict[str, set[tuple[str, str, str]]] = {}
+            for mfr, consoles in cls.sections.items():
+                for console, files in consoles.items():
+                    for f in files:
+                        places.setdefault(f["sha1"], set()).add((mfr, console, f["name"]))
             by_path = {entry.get("path"): sha1 for sha1, entry in db["files"].items()}
             # Id -> the (manufacturer, console) sections holding its files.
             cls.held: dict[str, set[tuple[str, str]]] = {}
@@ -210,7 +215,7 @@ class SystemLinks(unittest.TestCase):
     def test_parents_are_sections(self) -> None:
         sections = {
             (mfr, console)
-            for mfr, consoles in self.manufacturers.items() for console in consoles
+            for mfr, consoles in self.sections.items() for console in consoles
         }
         self.assertEqual(
             sorted(k for k, v in siterender.SYSTEM_PARENTS.items() if v not in sections), [])

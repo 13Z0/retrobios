@@ -84,8 +84,34 @@ class MetaFields(unittest.TestCase):
         match = re.search(r'data-pagefind-meta="aliases:([^"]*)"', text)
         self.assertIsNotNone(match, "no aliases field on the PlayStation page")
         self.assertIn("psx", unescape(match[1]).split())
-        dreamcast = (DOCS / "systems" / "sega-dreamcast.md").read_text(encoding="utf-8")
+        # The Dreamcast section's page: its own, or Sega's when it fits there.
+        own = DOCS / "systems" / "sega-dreamcast.md"
+        dreamcast = (own if own.is_file() else DOCS / "systems" / "sega.md").read_text(
+            encoding="utf-8")
         self.assertRegex(dreamcast, r'data-pagefind-meta="aliases:[^"]*\bdc\b')
+
+
+class SystemPartsSitUnderTheirMaker(unittest.TestCase):
+    """The crumbs say where a system part sits, read from its parent: field.
+    The "Part of" line under them said it again (round 5, 6.9)."""
+
+    def test_every_part_names_its_maker_as_parent(self) -> None:
+        pages = sorted((DOCS / "systems").glob("*.md"))
+        if not pages:
+            self.skipTest("site pages not generated")
+        makers = {page.stem for page in pages}
+        orphans = []
+        for page in pages:
+            text = page.read_text(encoding="utf-8")
+            front = text.split("\n---\n", 1)[0]
+            parent = re.search(r"^parent:\n  label: .+\n  link: /retrobios/systems/([a-z0-9-]+)/$",
+                               front, re.M)
+            if parent is None:
+                continue
+            if parent[1] not in makers:
+                orphans.append(page.name)
+            self.assertNotIn("\nPart of [", text, page.name)
+        self.assertEqual(orphans, [])
 
 
 class MovedPlatformPages(unittest.TestCase):
