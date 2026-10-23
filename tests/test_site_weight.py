@@ -100,7 +100,7 @@ class AnEmulatorWithTooManyCardsIsSplit(unittest.TestCase):
         main = pages["big"]
         anchors = generate_site.emulator_file_anchors(files)
         for anchor in anchors:
-            self.assertIn(f'<span id="{anchor}"></span>', main)
+            self.assertIn(f'<a id="{anchor}" href=', main)
         self.assertIn('class="rb-card-index"', main)
         self.assertNotIn("rb-file-title", main)
         self.assertIn(f'id="{anchors[0]}" class="rb-file-title"', pages["big-files-1"])

@@ -41,6 +41,7 @@ class Page:
     empty_headers: int = 0
     runtime_diagrams: int = 0
     size: int = 0
+    elements: int = 0
     # A moved page's old address: a meta refresh to the new one, no content.
     redirect: str = ""
 
@@ -52,6 +53,15 @@ class Page:
 # The largest page was 10.5 MB (systems/game-engines/) and took 21 s of
 # main-thread work on a throttled phone. Split pages now top out at 0.9 MB.
 MAX_PAGE_BYTES = 1_000_000
+# Elements outside scripts and styles: the browser lays out and styles each.
+# emulators/mame held 13,300 and blocked the main thread for 235 ms. Its
+# index now carries each card's id on the link itself.
+MAX_PAGE_ELEMENTS = 10_000
+# Pages allowed past it, each with the reason, removed when it comes under.
+OVER_ELEMENT_BUDGET = {
+    # One table of every file to source, 10,193 elements on 2026-10-23.
+    "gaps-files-to-source/index.html": "the file table is not split",
+}
 # Pagefind loads its index in pieces: the metadata, then the chunks the words
 # typed fall in (stored compressed). 59 KB for the largest chunk and 7.5 KB of
 # metadata on 2026-10-22, 5.2 MB for the whole index on disk.
@@ -77,6 +87,8 @@ class _PageParser(HTMLParser):
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         data = {key: value or "" for key, value in attrs}
+        if tag not in ("script", "style"):
+            self.page.elements += 1
         if tag in _LITERAL_TAGS:
             self._literal_depth += 1
         if re.fullmatch(r"h[1-6]", tag):
@@ -282,6 +294,9 @@ def _check_pages(
             report(path, f"{page.runtime_diagrams} diagram(s) drawn by a script at runtime")
         if page.size > MAX_PAGE_BYTES:
             report(path, f"{page.size:,} bytes of HTML, over the {MAX_PAGE_BYTES:,} budget")
+        if page.elements > MAX_PAGE_ELEMENTS \
+                and path.relative_to(site).as_posix() not in OVER_ELEMENT_BUDGET:
+            report(path, f"{page.elements:,} elements, over the {MAX_PAGE_ELEMENTS:,} budget")
         jumps = _heading_jumps(page.headings)
         if jumps:
             report(path, f"heading levels skipped: {sorted(set(jumps))}")

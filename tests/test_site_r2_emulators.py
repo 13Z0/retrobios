@@ -124,7 +124,7 @@ class RequiredFilesComeFirst(unittest.TestCase):
         row = next(line for line in page.splitlines() if "req.bin" in line and "| yes |" in line)
         self.assertIn("(#file-req-bin", row)
         self.assertIn("| Japan |", row)
-        self.assertIn("MD5\u00a0`abababab`", row)
+        self.assertIn(f'MD5\u00a0<code title="{"ab" * 16}">{"ab" * 6}</code>', row)
         # The required row is the first one.
         table = page.index("| File | Region | Required | Hash |")
         self.assertLess(page.index("req.bin", table), page.index("f000.bin", table))
@@ -152,7 +152,7 @@ class TheSummaryLineIsProse(unittest.TestCase):
             {"name": "a.pak", "category": "game_data"}, {"name": "b.pak", "category": "game_data"}]
         for f in files[:164]:
             f["required"] = True
-        text = "\n".join(gs._emulator_file_summary(files, lambda _f: True))
+        text = "\n".join(gs._emulator_file_summary(files))
         self.assertNotIn(" | ", text)
         self.assertNotIn("1399", text)
         self.assertIn("1,401 optional", text)

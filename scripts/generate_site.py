@@ -5239,6 +5239,15 @@ def generate_emulators_index(profiles: dict) -> str:
     return "\n".join(lines) + "\n"
 
 
+def comes_with_app(f: dict) -> bool:
+    """The emulator installs the file in every build the profile documents.
+
+    ``bundled`` narrowed by ``mode`` is installed by one build only, and the
+    other build still reads it from the user's folder.
+    """
+    return f.get("bundled") is True and not f.get("mode")
+
+
 def _file_badges(f: dict, in_repo: bool) -> list[str]:
     """The status chips shown beside a file name.
 
@@ -5258,7 +5267,14 @@ def _file_badges(f: dict, in_repo: bool) -> list[str]:
     archive = f.get("archive", "")
     ftype = f.get("type", "")
     badges = []
-    if required:
+    shipped = comes_with_app(f)
+    if shipped:
+        # NetherSX2's three interface fonts sat beside the BIOS as
+        # "required" and "missing": the app ships them, nobody fetches them.
+        badges.append(
+            '<span class="rb-badge rb-badge-info">comes with the app</span>'
+        )
+    elif required:
         badges.append(
             '<span class="rb-badge rb-badge-danger">required</span>'
         )
@@ -5266,18 +5282,18 @@ def _file_badges(f: dict, in_repo: bool) -> list[str]:
         badges.append(
             '<span class="rb-badge rb-badge-muted">optional</span>'
         )
-    if in_repo:
-        badges.append(
-            '<span class="rb-badge rb-badge-success">in repo</span>'
-        )
+    # Whether the collection holds a file the app ships says nothing to
+    # the reader: no status chip.
+    if shipped:
+        status = ""
+    elif in_repo:
+        status = '<span class="rb-badge rb-badge-success">in repo</span>'
     elif f.get("unsourceable"):
-        badges.append(
-            '<span class="rb-badge rb-badge-muted">unsourceable</span>'
-        )
+        status = '<span class="rb-badge rb-badge-muted">unsourceable</span>'
     else:
-        badges.append(
-            '<span class="rb-badge rb-badge-warning">missing</span>'
-        )
+        status = '<span class="rb-badge rb-badge-warning">missing</span>'
+    if status:
+        badges.append(status)
     if hle:
         badges.append(
             '<span class="rb-badge rb-badge-info">HLE fallback</span>'
@@ -5299,7 +5315,7 @@ def _file_badges(f: dict, in_repo: bool) -> list[str]:
         badges.append(
             f'<span class="rb-badge rb-badge-muted">{storage}</span>'
         )
-    if bundled:
+    if bundled and not shipped:
         # Said in words: the pack leaves the file out because the emulator,
         # in the build the entry names, already installs it.
         build = f" {f['mode']}" if f.get("mode") in ("standalone", "libretro") else ""
@@ -5685,6 +5701,32 @@ def _directory_copies(entry: dict, consumers: FileConsumers) -> list[str]:
             f"([browse]({tree}))"]
 
 
+ROMSET_FAQ = "../wiki/technical-faq.md#which-mame-version-do-the-arcade-bios-sets-match"
+_MAME_RELEASE = re.compile(r"^0\.\d")
+
+
+def emulator_romset(profile: dict) -> str:
+    """The romset an arcade emulator's sets must match, "MAME 0.78", or "".
+
+    ``mame_version`` where the profile has one (MAME4droid 2024 is app
+    1.38.1 on MAME 0.289), else the version of a MAME build or of a
+    FinalBurn core, whose sets follow its own release.
+    """
+    if profile.get("type") in ("alias", "launcher", "test"):
+        return ""
+    emulator = str(profile.get("emulator", ""))
+    version = str(profile.get("core_version") or "")
+    if profile.get("mame_version"):
+        return f"MAME {profile['mame_version']}"
+    if "MAME" in emulator and _MAME_RELEASE.match(version):
+        return f"MAME {version}"
+    if emulator.startswith("FinalBurn Neo") and version:
+        return f"FinalBurn Neo {version}"
+    if (emulator.startswith("FB Alpha") or "FBA" in emulator) and version:
+        return f"FB Alpha {version}"
+    return ""
+
+
 def _render_metadata_rows(profile: dict) -> list[str]:
     """Scalar profile fields, one table row each.
 
@@ -5692,6 +5734,9 @@ def _render_metadata_rows(profile: dict) -> list[str]:
     row: a dict rendered into a table cell is unreadable.
     """
     lines: list[str] = []
+    romset = emulator_romset(profile)
+    if romset:
+        lines.append(f"| Romset | [{romset}]({ROMSET_FAQ}) |")
     for field, label in [
         ("core", "Core ID"),
         ("core_name", "Core name"),
@@ -5713,7 +5758,12 @@ def _render_metadata_rows(profile: dict) -> list[str]:
         val = profile.get(field)
         if val is None or val == "" or isinstance(val, (dict, list)):
             continue
-        if field == "bios_size" and isinstance(val, int):
+        if field == "bios_directory" and profile.get("type") == "standalone" \
+                and not str(val).startswith(("/", "~", "$")) and ":" not in str(val):
+            # A bare `bios/` read as a place on the device: it is a folder
+            # inside the app's own data folder, which the notes describe.
+            lines.append(f"| {label} | {_code(val)}, inside the app's own data folder |")
+        elif field == "bios_size" and isinstance(val, int):
             lines.append(f"| {label} | {_fmt_size(val)} ({val:,} bytes) |")
         elif isinstance(val, str) and val.startswith("http"):
             lines.append(f"| {label} | [{val}]({val}) |")
@@ -5970,45 +6020,42 @@ def _availability_check(
     return _file_available
 
 
-def _emulator_file_summary(
-    files: list[dict], available: Callable[[dict], bool]
-) -> list[str]:
-    """The counts above an emulator's file table, and its categories.
-
-    Counted by slot, as verify --emulator and the gaps page count: raze
-    lists every GRP its code accepts under one name, and holding one fills
-    the slot. Counted per entry, the page announced 46 missing where 12
-    slots are empty.
-    """
+def _emulator_slots(files: list[dict]) -> list[list[dict]]:
+    """The entries of each slot, as verify --emulator and the gaps page
+    count them, leaving out the slots the app ships."""
     from cross_reference import slot_key
 
     slots: dict[tuple, list[dict]] = {}
     for f in files:
         slots.setdefault(slot_key(f), []).append(f)
-    in_repo_count = sum(1 for group in slots.values() if any(available(f) for f in group))
-    unsourceable_count = sum(
-        1 for group in slots.values()
-        if not any(available(f) for f in group) and all(f.get("unsourceable") for f in group)
-    )
-    missing_count = len(slots) - in_repo_count - unsourceable_count
-    req_count = sum(1 for group in slots.values() if any(f.get("required") for f in group))
-    hle_count = sum(1 for group in slots.values() if any(f.get("hle_fallback") for f in group))
+    return [group for group in slots.values() if not all(comes_with_app(f) for f in group)]
+
+
+def _emulator_file_summary(files: list[dict]) -> list[str]:
+    """What the emulator reads, above its file table, and its categories.
+
+    Counted by slot, as verify --emulator and the gaps page count: raze
+    lists every GRP its code accepts under one name, and holding one fills
+    the slot. Counted per entry, the page announced 46 missing where 12
+    slots are empty. The files the app ships are counted apart: NetherSX2
+    said "4 required" for one BIOS and three fonts in its package.
+    """
+    slots = _emulator_slots(files)
+    shipped = sum(1 for f in files if comes_with_app(f))
+    req_count = sum(1 for group in slots if any(f.get("required") for f in group))
+    hle_count = sum(1 for group in slots if any(f.get("hle_fallback") for f in group))
 
     # Sentences, one number format: the line read "1,563 files | 164
     # required, 1399 optional | 1563 in repo".
-    held = [f"{in_repo_count:,} in repo", f"{missing_count:,} missing"]
-    if unsourceable_count:
-        held.append(f"{unsourceable_count:,} unsourceable")
-    if hle_count:
-        held.append(f"{hle_count:,} with HLE fallback")
     total = f"**{_count(len(slots), 'file')}**"
-    if len(slots) != len(files):
-        total += f" ({len(files):,} accepted versions)"
-    lines = [
-        f"{total}: {req_count:,} required, {len(slots) - req_count:,} optional. "
-        f"{_said_as_list(held)}.",
-        "",
-    ]
+    if sum(len(group) for group in slots) != len(slots):
+        total += f" ({sum(len(group) for group in slots):,} accepted versions)"
+    line = f"{total}: {req_count:,} required, {len(slots) - req_count:,} optional."
+    if hle_count:
+        line += f" {hle_count:,} {'has' if hle_count == 1 else 'have'} an HLE fallback."
+    if shipped:
+        line += f" {_count(shipped, 'more file')} {'comes' if shipped == 1 else 'come'} with the app."
+    lines = [line, ""]
 
     categories = [f.get("category", "bios") for f in files]
     if "game_data" in categories or "bios_zip" in categories:
@@ -6021,6 +6068,23 @@ def _emulator_file_summary(
         ]
         lines.extend([f"By kind: {_said_as_list(cats)}.", ""])
     return lines
+
+
+def _emulator_held_line(files: list[dict], available: Callable[[dict], bool]) -> list[str]:
+    """What this collection holds of them, one quiet line under the table:
+    a reader comes for what the emulator needs, the project's counts after."""
+    slots = _emulator_slots(files)
+    if not slots:
+        return []
+    in_repo = sum(1 for group in slots if any(available(f) for f in group))
+    unsourceable = sum(
+        1 for group in slots
+        if not any(available(f) for f in group) and all(f.get("unsourceable") for f in group)
+    )
+    held = [f"{in_repo:,} in repo", f"{len(slots) - in_repo - unsourceable:,} missing"]
+    if unsourceable:
+        held.append(f"{unsourceable:,} unsourceable")
+    return [f"<p><small>In this collection: {_said_as_list(held)}.</small></p>", ""]
 
 
 def _said_as_list(items: list[str]) -> str:
@@ -6077,8 +6141,18 @@ def _data_tree_page(ref: str, entry: dict, pages: list[tuple[str, list[str]]],
     part = f" (part {index + 1} of {len(pages)})" if len(pages) > 1 else ""
     readers = _said_as_list([f"[{_escape_tags(display)}]({key}.md#data-directories)"
                              for key, display in _DATA_READERS.get(ref, [])])
+    # A file list out of the search: "dolphin" found three parts of the
+    # dolphin-sys tree, on their title, before the Dolphin page.
+    front: dict = {"level": "reference", "search": "exclude"}
+    # The reader the tree is named after (dolphin for dolphin-sys), else
+    # the first by name.
+    readers = _DATA_READERS.get(ref) or []
+    owner = max(readers, default=None,
+                key=lambda reader: len(reader[0]) if ref.startswith(f"{reader[0]}-") else 0)
+    if owner:
+        front["parent"] = {"label": owner[1], "link": f"{owner[0]}.md"}
     lines = [
-        "---", "level: reference", "---", "",
+        "---", yaml.safe_dump(front, sort_keys=False, allow_unicode=True).rstrip("\n"), "---", "",
         f"# The {ref} data directory{part}", "",
         f"{entry.get('description') or 'A data directory'}: "
         f"{_count(len(members), 'file')}, as the packs ship them."
@@ -6103,7 +6177,8 @@ EMULATOR_CARDS_PER_PAGE = 220
 # The headings an emulator's cards go under, in page order: what it needs
 # first. DuckStation's three required BIOS were cards 12 to 14 under one
 # heading, and MAME opened on 25 floppy sound samples.
-CARD_SECTIONS = (("required", "Required"), ("optional", "Optional"), ("game_data", "Game data"))
+CARD_SECTIONS = (("required", "Required"), ("optional", "Optional"), ("game_data", "Game data"),
+                 ("with_app", "Comes with the app"))
 _SECTION_RANK = {key: rank for rank, (key, _title) in enumerate(CARD_SECTIONS)}
 
 # Below this many cards the page is one screen of them, and a table above
@@ -6112,6 +6187,8 @@ EMULATOR_SUMMARY_MIN = 6
 
 
 def _card_section(f: dict) -> str:
+    if comes_with_app(f):
+        return "with_app"
     if f.get("category") == "game_data":
         return "game_data"
     return "required" if f.get("required") else "optional"
@@ -6135,35 +6212,64 @@ def emulator_parts(name: str, files: list) -> list[tuple[str, list[int]]]:
             for index, start in enumerate(range(0, len(files), size))]
 
 
-def _sectioned(files: list, indexes: list[int], render: Callable[[list[int]], list[str]]) -> list[str]:
-    """Each section's heading, then ``render`` of its entries among ``indexes``."""
+def _sectioned(files: list, indexes: list[int], render: Callable[[list[int]], list[str]],
+               fold: bool = False) -> list[str]:
+    """Each section's heading, then ``render`` of its entries among ``indexes``.
+
+    ``fold``: every section after Required in one closed block, for a page
+    whose table above already lists each entry.
+    """
     lines: list[str] = []
     for key, title in CARD_SECTIONS:
         group = [i for i in indexes if _card_section(files[i]) == key]
-        if group:
-            lines.extend([f"## {title}", "", *render(group)])
+        if not group:
+            continue
+        body = render(group)
+        if fold and key != "required":
+            body = markup.details("note", _count(len(group), "file"), body)
+        lines.extend([f"## {title}", "", *body])
     return lines
 
 
 def _hash_short(f: dict) -> str:
-    """The shortest way to tell two dumps apart in a table: an md5 or crc32 prefix."""
+    """The shortest way to tell two dumps apart in a table: the first 12
+    characters of an md5, crc32 or sha1, the whole value in its title."""
     for field in ("md5", "crc32", "sha1"):
         value = f.get(field)
         value = value[0] if isinstance(value, list) and value else value
         if value:
-            short = str(value).lower().split(",")[0].strip().removeprefix("0x")[:8]
+            full = html.escape(str(value).lower().split(",")[0].strip().removeprefix("0x"))
             # Kept on one line: the label above the value doubled each row.
-            return f"{field.upper()}\u00a0{_code(short)}"
+            return f'{field.upper()}\u00a0<code title="{full}">{full[:12]}</code>'
     return ""
 
 
-def _summary_row(f: dict, link: str, ids: str = "") -> str:
-    shown = str(f.get("path") or f.get("name", ""))
-    return (f"| {ids}[{_code(shown)}]({link}) | {_region_words(f.get('region'), 3) or '-'} "
-            f"| {'yes' if f.get('required') else 'no'} | {_hash_short(f) or '-'} |")
+def _summary_table(files: list[dict], indexes: list[int], cell: Callable[[int, str], str]) -> list[str]:
+    """The table of an emulator's entries, one row each, ``cell`` writing
+    the linked name of entry i from its shown path.
 
-
-_SUMMARY_HEAD = ["| File | Region | Required | Hash |", "|------|--------|----------|------|"]
+    A column every row leaves empty is not written: AetherSX2's Region
+    column held "-" on every row and pushed Required off a phone screen.
+    Nor is Required when every row gives the same answer, which the
+    section heading or the count above already says: in MAME's index it
+    turned 1,564 rows into label and value pairs on a phone.
+    """
+    rows = []
+    for i in indexes:
+        f = files[i]
+        needed = "with the app" if comes_with_app(f) else "yes" if f.get("required") else "no"
+        rows.append((cell(i, str(f.get("path") or f.get("name", ""))),
+                     _region_words(f.get("region"), 3), needed, _hash_short(f)))
+    keep = [0] + [column for column in (1, 3) if any(row[column] for row in rows)]
+    if len({row[2] for row in rows}) > 1:
+        keep.append(2)
+    keep.sort()
+    heads = ("File", "Region", "Required", "Hash")
+    return [
+        "| " + " | ".join(heads[c] for c in keep) + " |",
+        "|" + "|".join("------" for _c in keep) + "|",
+        *("| " + " | ".join(row[c] or "-" for c in keep) + " |" for row in rows),
+    ]
 
 
 def plan_emulator_pages(profiles: dict) -> None:
@@ -6207,7 +6313,8 @@ def _emulator_intro(emu_name: str, profile: dict) -> str:
         label = system_name(sys_id)
         if label not in names:
             names.append(label)
-    files = [f for f in profile.get("files") or [] if isinstance(f, dict)]
+    # What the app installs itself is no file for the reader to get.
+    files = [f for f in profile.get("files") or [] if isinstance(f, dict) and not comes_with_app(f)]
     required = [f for f in files if f.get("required") is True]
     sentences = []
     if names:
@@ -6307,10 +6414,19 @@ def emulator_pages(
 
     part_pages: dict[str, str] = {}
     intro = _emulator_intro(emu_name, profile)
+    romset = emulator_romset(profile)
     lines = [
         f"# {emu_name}",
         "",
         *([intro, ""] if intro else []),
+    ]
+    if romset and any(isinstance(f, dict) and f.get("category") == "bios_zip" for f in files):
+        # The commonest arcade failure is a set from another MAME version,
+        # and its answer sat on a Reference page no arcade page linked.
+        lines.extend([f"Its BIOS ZIPs must come from the {romset} romset. "
+                      f"[Which version each core reads]({ROMSET_FAQ}).", ""])
+    card_start = len(lines)
+    lines += [
         markup.block_open("div", 'class="rb-meta-card"'),
         "",
         "| Detail | Value |",
@@ -6374,9 +6490,6 @@ def emulator_pages(
     if systems:
         sys_links = list(dict.fromkeys(_named_system_link(s, "../") for s in systems))
         lines.append(f"| Systems | {', '.join(sys_links)} |")
-    mame_ver = profile.get("mame_version", "")
-    if mame_ver:
-        lines.append(f"| MAME version | {mame_ver} |")
     author = profile.get("author", "")
     if author:
         lines.append(f"| Author | {author} |")
@@ -6387,6 +6500,9 @@ def emulator_pages(
     lines.append("")
     lines.append("</div>")
     lines.append("")
+    # Reference for the few who check a revision: stacked on a phone, the
+    # card took two screens above the files.
+    lines[card_start:] = markup.details("note", "About this profile", lines[card_start:])
 
     lines.extend(_install_block(name, profile))
 
@@ -6407,7 +6523,8 @@ def emulator_pages(
         _file_available = _availability_check(db, data_names)
 
         lines.extend(["## Files", ""])
-        lines.extend(_emulator_file_summary(files, _file_available))
+        lines.extend(_emulator_file_summary(files))
+        held = _emulator_held_line(files, _file_available)
 
         anchors = emulator_file_anchors(files)
         aliases = emulator_file_aliases(files, anchors)
@@ -6418,15 +6535,21 @@ def emulator_pages(
         parts = emulator_parts(name, files)
         if not parts:
             order = _display_order(files)
-            if len(files) >= EMULATOR_SUMMARY_MIN:
-                lines.extend(search_excluded([
-                    *_SUMMARY_HEAD,
-                    *(_summary_row(files[i], f"#{anchors[i]}") for i in order),
-                ]))
+            indexed = len(files) >= EMULATOR_SUMMARY_MIN
+            if indexed:
+                lines.extend(search_excluded(_summary_table(
+                    files, order, lambda i, shown: f"[{_code(shown)}](#{anchors[i]})")))
+                lines.append("")
+            lines.extend(held)
+            # Below the table, which indexes them, the cards past the
+            # required ones fold: DuckStation's page was 59 phone screens,
+            # 102 optional cards after its three BIOS.
             lines.extend(_sectioned(
-                files, order, lambda group: [line for i in group for line in cards[i]]))
+                files, order, lambda group: [line for i in group for line in cards[i]],
+                fold=indexed))
         else:
             lines.extend(_card_index(emu_name, files, anchors, aliases, parts))
+            lines.extend(held)
             for number, (stem, entries) in enumerate(parts, 1):
                 part_pages[stem] = _emulator_part_page(
                     name, emu_name, number, parts, [cards[i] for i in entries],
@@ -6506,16 +6629,18 @@ def _card_index(
     """
     page_of = {index: stem for stem, entries in parts for index in entries}
 
+    def cell(i: int, shown: str) -> str:
+        # The id sits on the link itself, one element fewer per row: MAME's
+        # 1,564 rows put 13,300 elements on its page.
+        href = markup.site_href(f"emulators/{page_of[i]}/#{anchors[i]}")
+        alias = f'<span id="{aliases[i]}"></span>' if aliases[i] else ""
+        return (f'{alias}<a id="{anchors[i]}" href="{href}">'
+                f"<code>{html.escape(shown, quote=False)}</code></a>")
+
     def table(group: list[int]) -> list[str]:
-        rows = [
-            _summary_row(
-                files[i], f"{page_of[i]}.md#{anchors[i]}",
-                "".join(f'<span id="{a}"></span>' for a in (anchors[i], aliases[i]) if a))
-            for i in group
-        ]
         return [
             markup.block_open("section", f'class="rb-card-index" {markup.search_exclude()}'),
-            "", *_SUMMARY_HEAD, *rows, "", "</section>", "",
+            "", *_summary_table(files, group, cell), "", "</section>", "",
         ]
 
     return [
