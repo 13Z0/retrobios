@@ -10,6 +10,19 @@ upstream_commit: "7d8dea42e221b13521270c423b61add41a741b97"
 core_version: "Git"
 display_name: "Nintendo - DS (melonDS)"
 systems: [nintendo-ds, nintendo-dsi]
+data_root:
+  windows:
+    path: "<folder of melonDS.exe>"
+    source_ref: "upstream src/frontend/qt_sdl/main.cpp:182-184, 196-205, upstream src/frontend/qt_sdl/CMakeLists.txt:197-202"
+    note: "portable beside melonDS.exe when that folder exists. A build with the PORTABLE option off uses the Qt config location"
+  macos:
+    path: "~/Library/Preferences/melonDS"
+    source_ref: "upstream src/frontend/qt_sdl/main.cpp:182-200, 206-211"
+    note: "portable beside melonDS.app when that folder exists"
+  linux:
+    path: "$XDG_CONFIG_HOME/melonDS, else ~/.config/melonDS"
+    source_ref: "upstream src/frontend/qt_sdl/main.cpp:182-184, 196-200, 206-211"
+    note: "portable beside the executable when that folder exists"
 
 notes: |
   FreeBIOS fallback for DS mode (NTR), while DSi mode requires all native files.
@@ -91,8 +104,9 @@ files:
     note: "Any regional dump works. Nocash footer required (DSi eMMC CID/CPU at EOF-0x40 or 0xFF800). AES keys derived from ARM7i BIOS offset 0x8308."
 
   - name: dsi_sd_card.bin
+    standalone_path: "dsisd.bin"
     system: nintendo-dsi
     description: "DSi SD card image"
     required: false
-    source_ref: "source src/frontend/Util_ROM.cpp:237-243, source src/libretro/libretro.cpp:837, 553"
+    source_ref: "source src/frontend/Util_ROM.cpp:237-243, source src/libretro/libretro.cpp:837, 553, upstream src/frontend/qt_sdl/Config.cpp:120, upstream src/FATStorage.cpp:1024-1025"
     note: "Created if missing, requires melonds_dsi_sdcard core option enabled"
