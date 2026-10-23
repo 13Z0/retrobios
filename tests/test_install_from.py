@@ -17,6 +17,7 @@ import errno
 import io
 import json
 import os
+import re
 import subprocess
 import threading
 import sys
@@ -596,6 +597,28 @@ class UnreadableCopies(FromFolder):
                                  proc.stdout + proc.stderr)
                 self.assertIn(line, proc.stdout)
                 self.assertNotIn("notes.txt", proc.stdout)
+
+    def test_names_on_the_card_cannot_drive_the_terminal(self):
+        """The plain output printed the paths it found as they are: a name
+        holding ESC cleared the screen or set the clipboard (OSC 52)."""
+        hostile = "x\x1b]52;c;eA==\x07\x1b[2J"
+        self.locked(f"{hostile}/scph5501.bin", US)
+        self.keep(f"{hostile}/gba_bios.bin", GBA)
+        (self.dest / f"pcsx{hostile}").mkdir(parents=True)
+        (self.dest / f"pcsx{hostile}" / "extra.bin").write_bytes(EXTRA)
+        for options in (("--check",), ("--dry-run",), ("--check", "--verbose"), ()):
+            with self.subTest(options=options):
+                proc = self.install(*options)
+                self.assertNotIn("Traceback", proc.stderr)
+                for stream in (proc.stdout, proc.stderr):
+                    self.assertIsNone(re.search(r"[\x00-\x09\x0b-\x1f\x7f-\x9f]", stream),
+                                      stream)
+                self.assertIn("x?]52;c;eA==??[2J", proc.stdout)
+        proc = self.run_installer("--manifest", str(self.list), "--no-input",
+                                  "--from", str(self.root / hostile))
+        self.assertEqual(proc.returncode, 1)
+        self.assertNotIn("\x1b", proc.stderr)
+        self.assertIn("x?]52;c;eA==??[2J", proc.stderr)
 
     def test_an_unreadable_copy_is_an_event(self):
         path = self.locked("psx/scph5501.bin", US).resolve()

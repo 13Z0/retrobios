@@ -7003,6 +7003,24 @@ _MEMBER_ERRORS = (OSError, EOFError, RuntimeError, NotImplementedError,
                   zipfile.BadZipFile, zlib.error)
 
 
+# C0 and C1 controls, DEL and lone surrogates: a file, folder or core name
+# holding ESC would drive the terminal (clear it, or set the clipboard with
+# OSC 52) instead of being shown.
+_CONTROLS = re.compile("[\x00-\x1f\x7f-\x9f\ud800-\udfff]")
+
+
+def screen_text(text: str) -> str:
+    """Text as a terminal shows it, every control character a "?"."""
+    return _CONTROLS.sub("?", text)
+
+
+def shown_lines(lines: list[str]) -> list[str]:
+    """Lines for the terminal, a blank line opening one kept as it is: the
+    paths in them come from folders anyone may have filled."""
+    return [("\n" + screen_text(line[1:])) if line.startswith("\n") else screen_text(line)
+            for line in lines]
+
+
 class LocalCopy(NamedTuple):
     """A file found on this machine with the contents an entry wants."""
     index: FolderIndex
@@ -7016,11 +7034,12 @@ class LocalCopy(NamedTuple):
     def where(self) -> str:
         """The copy as the folder it was found in names it."""
         rel = self.index.relative(self.path)
-        return f"{rel}, inside as {self.member}" if self.member else rel
+        return screen_text(f"{rel}, inside as {self.member}" if self.member else rel)
 
     def named(self) -> str:
         """The copy by its full path, the member first when it is one."""
-        return f"{self.member} inside {self.path}" if self.member else str(self.path)
+        return screen_text(f"{self.member} inside {self.path}" if self.member
+                           else str(self.path))
 
 
 # The archives a FolderIndex keeps open at once.
@@ -7727,7 +7746,7 @@ def check_lines(
     if len(shown) < len(plain):
         lines.append(f"    ... and {len(plain) - len(shown)} more missing "
                      "(--verbose lists them all)")
-    return lines
+    return shown_lines(lines)
 
 
 def bios_folder_index(
@@ -7829,7 +7848,7 @@ def _check_copy_lines(
         them = "it" if count == 1 else "them"
         lines.append(f"  {label} holds {count} of these files: a run without --check "
                      f"copies {them}.")
-    return lines
+    return shown_lines(lines)
 
 
 def _counts_by_folder(
@@ -7885,7 +7904,7 @@ def copy_plan_lines(
             lines.append(f"    {entry['dest']}: {why}" if why else f"    {entry['dest']}")
         if len(chosen) > 10 and not every:
             lines.append(f"    ... and {len(chosen) - 10} more (--verbose lists them all)")
-    return lines
+    return shown_lines(lines)
 
 
 def emit_copies(
@@ -7914,7 +7933,7 @@ class Unreadable(NamedTuple):
 
     def line(self) -> str:
         where = f"{self.member} inside {self.path}" if self.member else str(self.path)
-        return f"{where} could not be read: {self.why}"
+        return screen_text(f"{where} could not be read: {self.why}")
 
 
 def unreadable_copies(
@@ -7936,7 +7955,7 @@ def unreadable_lines(found: list[Unreadable], every: bool) -> list[str]:
     if len(found) > len(lines):
         lines.append(f"  ... and {len(found) - len(lines)} more could not be read "
                      "(--verbose lists them all)")
-    return lines
+    return shown_lines(lines)
 
 
 def emit_unreadable(plat: str, found: list[Unreadable]) -> None:
@@ -7951,7 +7970,7 @@ def sources_line(
 ) -> str:
     """Where the files of a run that copied some came from, in words:
     "38 files copied from E:\\, 4 downloaded, 2 still missing." """
-    parts = [(count, f"copied from {label}") for label, count in folders]
+    parts = [(count, f"copied from {screen_text(label)}") for label, count in folders]
     parts.append((fixed, "fixed from copies already in the BIOS folder"))
     parts.append((shared, "copied from another place of the BIOS folder"))
     if not any(count for count, _what in parts):
@@ -8515,17 +8534,17 @@ def _open_from_folders(folders: list[Path]) -> None:
             reason, what = problem
             message = f"{label} {what}: --from names the folder to copy BIOS files from"
             EVENTS.emit("error", stage="from", reason=reason, platform="", message=message)
-            print(f"Error: {message}.", file=sys.stderr)
+            print(f"Error: {screen_text(message)}.", file=sys.stderr)
             sys.exit(1)
         index = FolderIndex(Path(os.path.expanduser(label)), label)
         LOCAL.folders.append(index)
-        print(f"  Copying BIOS files from: {label}")
+        print(f"  Copying BIOS files from: {screen_text(label)}")
         if index.truncated:
-            print(f"  Read the first {MAX_SCANNED_FILES:,} files of {label} only. Name "
-                  "the folder that holds the BIOS files to search it all.")
+            print(f"  Read the first {MAX_SCANNED_FILES:,} files of {screen_text(label)} "
+                  "only. Name the folder that holds the BIOS files to search it all.")
         for drive in index.other_drives:
-            print(f"  Did not go into {drive}: it is another drive. Name it with --from "
-                  "to read it too.")
+            print(f"  Did not go into {screen_text(str(drive))}: it is another drive. Name "
+                  "it with --from to read it too.")
         EVENTS.emit("scanned", folder=label, files=index.files, truncated=index.truncated,
                     other_drives=[str(drive) for drive in index.other_drives])
 
@@ -9699,17 +9718,6 @@ def _char_width(char: str) -> int:
 def cell_width(text: str) -> int:
     """Terminal cells the text takes: a CJK character two, an accent none."""
     return sum(_char_width(char) for char in text)
-
-
-# C0 and C1 controls, DEL and lone surrogates: a file, folder or core name
-# holding ESC would drive the terminal (clear it, or set the clipboard with
-# OSC 52) instead of being shown.
-_CONTROLS = re.compile("[\x00-\x1f\x7f-\x9f\ud800-\udfff]")
-
-
-def screen_text(text: str) -> str:
-    """Text as a terminal shows it, every control character a "?"."""
-    return _CONTROLS.sub("?", text)
 
 
 def ascii_text(text: str) -> str:
@@ -12726,8 +12734,8 @@ def _tui_startup(args: argparse.Namespace) -> tuple[TuiState, list[tuple]] | Non
     for folder in folders:
         problem = from_folder_problem(str(folder))
         if problem is not None:
-            print(f"Error: {folder} {problem[1]}: --from names the folder to copy BIOS "
-                  "files from.", file=sys.stderr)
+            print(f"Error: {screen_text(str(folder))} {problem[1]}: --from names the folder "
+                  "to copy BIOS files from.", file=sys.stderr)
             return None
     return tui_start(args, os_type)
 
