@@ -1,4 +1,4 @@
-emulator: pce-emu
+emulator: "PCE.emu"
 type: standalone
 core_classification: community_fork
 source: "https://github.com/Rakashazi/emu-ex-plus-alpha"

@@ -1,4 +1,4 @@
-emulator: openbor
+emulator: "OpenBOR"
 type: standalone
 core_classification: game_engine
 source: "https://github.com/DCurrent/openbor"

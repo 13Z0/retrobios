@@ -1,4 +1,4 @@
-emulator: yabasanshiro
+emulator: "YabaSanshiro"
 type: libretro
 core_classification: official_port
 source: "https://github.com/libretro/yabause/tree/yabasanshiro"

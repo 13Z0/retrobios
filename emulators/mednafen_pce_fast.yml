@@ -1,4 +1,4 @@
-emulator: mednafen_pce_fast
+emulator: "Beetle PCE Fast"
 type: libretro
 core_classification: community_fork
 source: "https://github.com/libretro/beetle-pce-fast-libretro"

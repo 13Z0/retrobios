@@ -1,4 +1,4 @@
-emulator: ep128emu_core
+emulator: "ep128emu"
 type: libretro
 core_classification: community_fork
 display_name: "Enterprise - 64/128 (ep128emu)"

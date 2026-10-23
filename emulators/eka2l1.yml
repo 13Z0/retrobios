@@ -1,4 +1,4 @@
-emulator: eka2l1
+emulator: "EKA2L1"
 type: standalone + libretro
 core_classification: community_fork
 source:

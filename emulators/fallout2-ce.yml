@@ -1,4 +1,4 @@
-emulator: fallout2-ce
+emulator: "Fallout 2 Community Edition"
 type: standalone
 core_classification: game_engine
 source: "https://github.com/alexbatalov/fallout2-ce"

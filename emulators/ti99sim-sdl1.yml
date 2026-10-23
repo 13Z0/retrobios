@@ -1,4 +1,4 @@
-emulator: ti99sim-sdl1
+emulator: "TI-99/Sim 0.15.0"
 display_name: "TI-99/Sim 0.15.0 (SDL1)"
 type: standalone
 core_classification: frozen_snapshot

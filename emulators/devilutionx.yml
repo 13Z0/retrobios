@@ -1,4 +1,4 @@
-emulator: devilutionx
+emulator: "DevilutionX"
 type: standalone
 core_classification: game_engine
 source: "https://github.com/diasurgical/DevilutionX"

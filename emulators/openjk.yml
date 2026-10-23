@@ -1,4 +1,4 @@
-emulator: openjk
+emulator: "OpenJK"
 type: standalone
 core_classification: game_engine
 source: "https://github.com/JACoders/OpenJK"

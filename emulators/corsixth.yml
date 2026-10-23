@@ -1,4 +1,4 @@
-emulator: corsixth
+emulator: "CorsixTH"
 type: standalone
 core_classification: game_engine
 source: "https://github.com/CorsixTH/CorsixTH"

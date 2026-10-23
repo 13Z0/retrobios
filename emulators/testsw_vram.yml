@@ -1,4 +1,4 @@
-emulator: testsw_vram
+emulator: "TestSW VRAM"
 type: libretro
 core_classification: pure_libretro
 source: "https://github.com/libretro/libretro-samples"

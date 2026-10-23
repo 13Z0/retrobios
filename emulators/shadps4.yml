@@ -1,4 +1,4 @@
-emulator: shadps4
+emulator: "shadPS4"
 type: standalone
 source: "https://github.com/shadps4-emu/shadPS4"
 upstream: "https://github.com/shadps4-emu/shadPS4"

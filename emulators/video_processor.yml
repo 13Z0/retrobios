@@ -1,4 +1,4 @@
-emulator: video_processor
+emulator: "V4L2"
 type: utility
 core_classification: pure_libretro
 source: "https://github.com/libretro/libretro-video-processor"

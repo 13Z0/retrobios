@@ -1,4 +1,4 @@
-emulator: testaudio_playback_wav
+emulator: "TestAudio Playback Wav"
 type: libretro
 core_classification: pure_libretro
 source: "https://github.com/libretro/libretro-samples"

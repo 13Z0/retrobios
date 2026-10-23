@@ -1,4 +1,4 @@
-emulator: mednafen_snes
+emulator: "Beetle bsnes"
 type: libretro
 core_classification: frozen_snapshot
 source: "https://github.com/libretro/beetle-bsnes-libretro"

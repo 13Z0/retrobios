@@ -1,4 +1,4 @@
-emulator: sdlpop
+emulator: "SDLPoP"
 type: standalone
 core_classification: game_engine
 source: "https://github.com/NagyD/SDLPoP"

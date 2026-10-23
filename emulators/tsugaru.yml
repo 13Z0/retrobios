@@ -1,4 +1,4 @@
-emulator: tsugaru
+emulator: "Tsugaru"
 display_name: Tsugaru
 type: standalone
 source: "https://github.com/captainys/TOWNSEMU"

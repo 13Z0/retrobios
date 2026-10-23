@@ -1,4 +1,4 @@
-emulator: x64sdl
+emulator: "VICE SDL"
 type: libretro
 core_classification: community_fork
 source: "https://github.com/r-type/sdlvice-libretro"

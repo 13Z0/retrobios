@@ -1,4 +1,4 @@
-emulator: play
+emulator: "Play!"
 type: libretro
 core_classification: official_port
 source: "https://github.com/jpd002/Play-"

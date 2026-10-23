@@ -1,4 +1,4 @@
-emulator: project64
+emulator: "Project64"
 type: standalone
 core_classification: other
 source: "https://github.com/project64/project64"

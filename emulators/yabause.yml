@@ -1,4 +1,4 @@
-emulator: yabause
+emulator: "Yabause"
 type: libretro
 core_classification: community_fork
 source: "https://github.com/libretro/yabause"

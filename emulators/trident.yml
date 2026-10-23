@@ -1,4 +1,4 @@
-emulator: trident
+emulator: "Trident"
 display_name: "Nintendo - 3DS (Trident)"
 type: libretro
 core_classification: community_fork

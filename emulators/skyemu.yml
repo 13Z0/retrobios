@@ -1,4 +1,4 @@
-emulator: skyemu
+emulator: "SkyEmu"
 type: standalone + libretro
 core_classification: official_port
 source: https://github.com/skylersaleh/SkyEmu/blob/v5/src/libretro.c

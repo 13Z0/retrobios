@@ -1,4 +1,4 @@
-emulator: xm6pro68k
+emulator: "XM6 Pro-68k"
 type: standalone
 core_classification: enhanced_fork
 source: "https://mijet.eludevisibility.org/XM6%20Pro-68k/XM6%20Pro-68k.html"

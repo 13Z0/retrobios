@@ -1,4 +1,4 @@
-emulator: radio
+emulator: "Radio"
 type: utility
 core_classification: pure_libretro
 source: "https://git.libretro.com/libretro/libretro-radio"

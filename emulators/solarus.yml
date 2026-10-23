@@ -1,4 +1,4 @@
-emulator: solarus
+emulator: "Solarus"
 type: standalone
 core_classification: game_engine
 source: "https://gitlab.com/solarus-games/solarus"

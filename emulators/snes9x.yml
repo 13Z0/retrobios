@@ -1,4 +1,4 @@
-emulator: snes9x
+emulator: "Snes9x"
 type: libretro
 core_classification: official_port
 source: "https://github.com/libretro/snes9x"

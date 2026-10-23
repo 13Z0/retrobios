@@ -1,4 +1,4 @@
-emulator: vitavoyager
+emulator: "vitaVoyager"
 type: libretro
 core_classification: community_fork
 source: "https://github.com/libretro/vitavoyager"

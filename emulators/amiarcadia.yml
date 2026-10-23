@@ -1,4 +1,4 @@
-emulator: amiarcadia
+emulator: "AmiArcadia"
 type: libretro
 core_classification: official_port
 source: "https://github.com/warmenhoven/amiarcadia"

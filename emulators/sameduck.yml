@@ -1,4 +1,4 @@
-emulator: sameduck
+emulator: "SameDuck"
 type: libretro
 core_classification: official_port
 source: "https://github.com/LIJI32/SameBoy"

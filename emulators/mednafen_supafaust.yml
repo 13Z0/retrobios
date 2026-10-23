@@ -1,4 +1,4 @@
-emulator: mednafen_supafaust
+emulator: "Beetle Supafaust"
 type: libretro
 core_classification: community_fork
 source: "https://github.com/libretro/supafaust"

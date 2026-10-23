@@ -1,4 +1,4 @@
-emulator: xm6typeg
+emulator: "XM6 TypeG"
 type: standalone
 core_classification: enhanced_fork
 source: "http://retropc.net/pi/xm6/index.html"

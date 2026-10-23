@@ -1,4 +1,4 @@
-emulator: fallout1-ce
+emulator: "Fallout Community Edition"
 type: standalone
 core_classification: game_engine
 source: "https://github.com/alexbatalov/fallout1-ce"

@@ -1,4 +1,4 @@
-emulator: gopher64
+emulator: "Gopher64"
 type: standalone
 core_classification: other
 source: "https://github.com/gopher64/gopher64"

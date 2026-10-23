@@ -1,4 +1,4 @@
-emulator: swanstation
+emulator: "SwanStation"
 type: libretro
 core_classification: community_fork
 source: "https://github.com/libretro/swanstation"

@@ -1,4 +1,4 @@
-emulator: future-pinball-fploader
+emulator: "BAM FPLoader"
 type: standalone
 core_classification: enhanced_fork
 source: "https://github.com/ravarcade/BAM_FPloader"

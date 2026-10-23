@@ -1,4 +1,4 @@
-emulator: mednafen_pce
+emulator: "Beetle PCE"
 type: libretro
 core_classification: community_fork
 source: "https://github.com/libretro/beetle-pce-libretro"

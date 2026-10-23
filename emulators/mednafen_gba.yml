@@ -1,4 +1,4 @@
-emulator: "mednafen_gba"
+emulator: "Beetle GBA"
 type: libretro
 core_classification: frozen_snapshot
 source: "https://github.com/libretro/beetle-gba-libretro"

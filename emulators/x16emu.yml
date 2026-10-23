@@ -1,4 +1,4 @@
-emulator: x16emu
+emulator: "Commander X16 Emulator"
 type: standalone
 source: "https://github.com/X16Community/x16-emulator"
 upstream: "https://github.com/X16Community/x16-emulator"

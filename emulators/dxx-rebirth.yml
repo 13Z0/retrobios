@@ -1,4 +1,4 @@
-emulator: dxx-rebirth
+emulator: "DXX-Rebirth"
 type: standalone
 core_classification: game_engine
 source: "https://github.com/dxx-rebirth/dxx-rebirth"

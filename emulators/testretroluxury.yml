@@ -1,4 +1,4 @@
-emulator: testretroluxury
+emulator: "Test RetroLuxury"
 type: libretro
 core_classification: pure_libretro
 source: "https://github.com/libretro/retroluxury"

@@ -1,4 +1,4 @@
-emulator: pokketstation
+emulator: "Pokket"
 type: libretro
 core_classification: official_port
 source: "https://github.com/mentalfoundry/Pokket"

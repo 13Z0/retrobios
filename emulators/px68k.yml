@@ -1,4 +1,4 @@
-emulator: px68k
+emulator: "PX68k"
 type: libretro
 core_classification: community_fork
 source: "https://github.com/libretro/px68k-libretro"

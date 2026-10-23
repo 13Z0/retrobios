@@ -1,7 +1,7 @@
 # mesen-s - SNES / Game Boy / Game Boy Color emulator
 # Profiled from: libretro/Mesen-S (libretro port) + SourMesen/Mesen-S (upstream)
 
-emulator: mesen-s
+emulator: "Mesen-S"
 display_name: "Mesen-S"
 type: libretro
 core_classification: official_port

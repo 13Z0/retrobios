@@ -1,4 +1,4 @@
-emulator: beetle_saturn
+emulator: "Beetle Saturn"
 type: libretro
 core_classification: community_fork
 core: mednafen_saturn_libretro

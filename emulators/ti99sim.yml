@@ -1,4 +1,4 @@
-emulator: ti99sim
+emulator: "TI-99/Sim"
 display_name: "TI-99/Sim"
 type: standalone
 source: https://github.com/christianhaitian/ti99sim

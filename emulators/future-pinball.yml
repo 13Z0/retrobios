@@ -1,4 +1,4 @@
-emulator: future-pinball
+emulator: "Future Pinball"
 type: standalone
 core_classification: game_engine
 source: "https://futurepinball.com/"

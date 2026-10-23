@@ -1,4 +1,4 @@
-emulator: visual-pinball
+emulator: "Visual Pinball X"
 type: standalone
 core_classification: game_engine
 source: "https://github.com/vpinball/vpinball"

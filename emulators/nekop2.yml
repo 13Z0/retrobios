@@ -1,4 +1,4 @@
-emulator: nekop2
+emulator: "Neko Project II"
 type: libretro
 core_classification: community_fork
 source: "https://github.com/libretro/libretro-meowPC98"

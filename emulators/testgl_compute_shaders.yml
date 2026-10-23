@@ -1,4 +1,4 @@
-emulator: testgl_compute_shaders
+emulator: "TestGL ComputeShaders"
 type: libretro
 core_classification: pure_libretro
 source: "https://github.com/libretro/libretro-samples"

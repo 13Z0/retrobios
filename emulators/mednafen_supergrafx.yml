@@ -1,4 +1,4 @@
-emulator: mednafen_supergrafx
+emulator: "Beetle SuperGrafx"
 type: libretro
 core_classification: community_fork
 source: "https://github.com/libretro/beetle-supergrafx-libretro"

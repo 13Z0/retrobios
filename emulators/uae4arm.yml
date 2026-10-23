@@ -1,4 +1,4 @@
-emulator: uae4arm
+emulator: "UAE4ARM"
 type: libretro
 core_classification: community_fork
 cores: [uae4arm, "uae4arm_32b"]

@@ -1,4 +1,4 @@
-emulator: beebem
+emulator: "BeebEm"
 type: standalone
 core_classification: other
 source: "https://github.com/stardot/beebem-windows"

@@ -1,4 +1,4 @@
-emulator: ruffle
+emulator: "Ruffle"
 type: standalone
 core_classification: game_engine
 source: "https://github.com/ruffle-rs/ruffle"

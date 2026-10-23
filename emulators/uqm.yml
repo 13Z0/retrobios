@@ -1,4 +1,4 @@
-emulator: uqm
+emulator: "The Ur-Quan Masters"
 type: standalone
 core_classification: game_engine
 source: "https://github.com/juj/sc2-uqm"

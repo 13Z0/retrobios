@@ -1,4 +1,4 @@
-emulator: testinput_buttontest
+emulator: "Button Test"
 type: libretro
 core_classification: pure_libretro
 source: "https://github.com/libretro/libretro-samples"

@@ -1,4 +1,4 @@
-emulator: ymir
+emulator: "Ymir"
 type: standalone + libretro
 core_classification: community_fork
 source:
