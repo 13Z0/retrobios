@@ -1,7 +1,7 @@
 """Round 2, package 2: the site's components and runtime.
 
 Source checks always run. Checks on the built site read website/dist and
-skip when no build is there; the stacking rule runs the plugin under node
+skip when no build is there. The stacking rule runs the plugin under node
 and skips without node or the site's node_modules.
 """
 
