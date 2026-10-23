@@ -5,7 +5,7 @@ source: "https://github.com/libretro/mame2003-plus-libretro"
 upstream: "https://www.mamedev.org"
 logo: "https://raw.githubusercontent.com/mamedev/mame/master/docs/source/images/MAMElogo.svg"
 profiled_date: "2026-03-24"
-source_commit: "f073a5af73503e782ae2e01dc84d7904028e5203"
+source_commit: "ffc68e38d9e6eca1b64dc8f50175b63447d37e49"
 core_version: "2003-Plus"
 display_name: "Arcade (MAME 2003-Plus)"
 mame_version: "0.78 (plus backports)"
@@ -33,6 +33,10 @@ systems:
   - zn1-video-system
   - zn1-acclaim
   - zn1-atlus
+  - zn1-atari
+  - zn1-raizing
+  - sega-model2
+  - namco-system11
   - century-cvs
   - arcade
 
@@ -54,8 +58,9 @@ notes: |
   Requires a mame2003-plus-specific romset for full CRC32/SHA1 compatibility.
 
   Neo Geo uses mame.sm1, mamelo.lo, sfix.sfx naming. PGM uses pgm_p01s.rom naming.
-  ZN-1/ZN-2 boards are present but most games are NOT_WORKING (incomplete PS1
-  emulation in the 0.78 codebase). PGM and ST-V have partial support.
+  ZN-1/ZN-2 sets are named after the board BIOS (coh1000c, coh3002c, ...) and
+  each BIOS set carries the CAT702 key of the main board. Namco System 11 games
+  run the C76 BIOS from namcoc76.zip. PGM and ST-V have partial support.
 
   Data files go in {system_dir}/mame2003-plus/. Samples in samples/ subfolder,
   artwork in artwork/ subfolder (both per-game ZIPs). hiscore.dat is compiled
@@ -69,10 +74,10 @@ files:
     required: false
     category: game_data
     system: arcade
-    sha1: "c086306096722da7f02f624e7efb447659aca1d3"
-    md5: "2f60c1ed69c152dea95e734979ca2ecb"
-    size: 131878
-    source_ref: "src/hiscore.c:15,102-116,248, src/cpuexec.c:296-298"
+    sha1: "d41b1c32e9f5bee0cfca766a64f208dda081858b"
+    md5: "8be16faf51b064050359c10aa3850c27"
+    size: 131902
+    source_ref: "src/hiscore.c:15,102-116,248, src/cpuexec.c:345-347"
     note: >-
       high score definitions, compiled into binary and spawned on first run.
       metadata/hiscore.dat of the core repository. The compiled copy
@@ -108,7 +113,7 @@ files:
   # Artwork the core repository ships in metadata/artwork. artwork_load_artwork_file
   # opens <driver>.art inside artwork/<driver>.zip, walking the clone chain, when
   # the Display Artwork core option keeps its enabled default.
-  # ref: src/artwork.c:2242-2258, src/fileio.c:246-248, src/mame2003/core_options.c:223-236
+  # ref: src/artwork.c:2242-2258, src/fileio.c:246-248, src/mame2003/core_options.c:226-239
 
   - name: "blueshrk.zip"
     path: "mame2003-plus/artwork/blueshrk.zip"
@@ -123,6 +128,17 @@ files:
     note: >
       metadata/artwork of the core repository at source_commit. The core zip
       carries the library alone.
+
+  - name: "dotron.zip"
+    path: "mame2003-plus/artwork/dotron.zip"
+    required: false
+    category: game_data
+    system: arcade
+    size: 2010009
+    sha1: "c6d6579ffe0f709ff7861747ba17cb2931dce1b5"
+    md5: "e284ec87c3d7978628c78d8031b7dd98"
+    description: "Discs of Tron backdrop"
+    source_ref: "src/artwork.c:2242-2258, src/fileio.c:246-248"
 
   - name: "frogs.zip"
     path: "mame2003-plus/artwork/frogs.zip"
@@ -270,7 +286,7 @@ files:
     category: bios_zip
     system: igs-pgm
     note: "PGM system BIOS - 68K program, text tiles, samples"
-    source_ref: "src/drivers/pgm.c:3459-3468"
+    source_ref: "src/drivers/pgm.c:4305-4314"
     contents:
       - name: pgm_p01s.rom
         description: 68K BIOS
@@ -293,7 +309,7 @@ files:
     category: bios_zip
     system: sega-stv
     note: "ST-V (Saturn-based arcade) BIOS, 6 region variants"
-    source_ref: "src/drivers/stv.c:3741-3767"
+    source_ref: "src/drivers/stv.c:3742-3768"
     contents:
       - name: epr19730.ic8
         description: Japan
@@ -322,7 +338,7 @@ files:
     category: bios_zip
     system: sega-megaplay
     note: "Mega Play BIOS, 2 versions"
-    source_ref: "src/drivers/segac2.c:5794-5804"
+    source_ref: "src/drivers/segac2.c:5996-6006"
     contents:
       - name: ep15294.ic2
         description: Mega Play BIOS v1
@@ -339,7 +355,7 @@ files:
     category: bios_zip
     system: sega-megatech
     note: "Mega Tech BIOS - menu/instruction screen processor"
-    source_ref: "src/drivers/segac2.c:5434-5437"
+    source_ref: "src/drivers/segac2.c:5636-5639"
     contents:
       - name: epr12664.20
         description: Mega Tech BIOS
@@ -479,88 +495,217 @@ files:
         crc32: "d5fa95f5"
 
   # ---------------------------------------------------------
-  # ZN-1/ZN-2 PlayStation-based arcade boards
-  # Most are NOT_WORKING in mame2003-plus due to
-  # incomplete PS1 emulation in the 0.78 codebase
+  # ZN-1/ZN-2 PlayStation-based arcade boards. Each BIOS set holds
+  # the board BIOS and the CAT702 security key of the main board.
   # ---------------------------------------------------------
 
-  # Capcom ZN-1
-  - name: cpzn1.zip
+  - name: coh1000c.zip
     required: true
     category: bios_zip
     system: zn1-capcom
-    note: "Capcom ZN-1 BIOS (PS1-based). Most games NOT_WORKING"
-    source_ref: "src/drivers/zn.c:1016-1018"
+    note: "Capcom ZN-1 BIOS"
+    source_ref: "src/drivers/zn.c:3473-3478, 3487-3500, 5993"
     contents:
-      - name: coh1002c.bin
-        description: Capcom ZN-1 BIOS
+      - name: "m534002c-13.ic353"
+        description: BIOS
         size: 524288
         crc32: "50033af6"
+        sha1: "486d92ff6c7f1e54f8e0ef41cd9116eca0e10e1a"
+      - name: "cp01.ic652"
+        description: CAT702 key, main board
+        size: 8
+        crc32: "bb7ba033"
+        sha1: "966f3aee5d00e1312c455f855915d621e6cb0672"
 
-  # Capcom ZN-2
-  - name: cpzn2.zip
+  - name: coh3002c.zip
     required: true
     category: bios_zip
     system: zn2-capcom
-    note: "Capcom ZN-2 BIOS (PS1-based). Most games NOT_WORKING"
-    source_ref: "src/drivers/zn.c:1274-1276"
+    note: "Capcom ZN-2 BIOS"
+    source_ref: "src/drivers/zn.c:3480-3485, 3921-3934, 6014"
     contents:
-      - name: coh3002c.bin
-        description: Capcom ZN-2 BIOS
+      - name: "m534002c-59.ic353"
+        description: BIOS
         size: 524288
         crc32: "e860ea8b"
+        sha1: "66e7e1d4e426466b8f48a2ba055a91b475569504"
+      - name: "cp10.ic652"
+        description: CAT702 key, main board
+        size: 8
+        crc32: "7808fcef"
+        sha1: "3c3fb8227b05dace042dc1429b9f2355b1a15638"
 
-  # Taito FX-1
-  - name: taitofx1.zip
+  - name: coh1000t.zip
     required: true
     category: bios_zip
     system: zn1-taito
-    note: "Taito FX-1 BIOS (PS1-based). Most games NOT_WORKING"
-    source_ref: "src/drivers/zn.c:1579-1581"
+    note: "Taito FX-1 BIOS"
+    source_ref: "src/drivers/zn.c:5127-5132, 5134-5136, 6101"
     contents:
-      - name: coh1002t.bin
-        description: Taito FX-1 BIOS
+      - name: "m534002c-14.ic353"
+        description: BIOS
         size: 524288
         crc32: "e3f23b6e"
+        sha1: "e18907cf8c6ba54d96edba0a9a00487a90219e0d"
+      - name: "tt01.ic652"
+        description: CAT702 key, main board
+        size: 8
+        crc32: "daac13e7"
+        sha1: "96d94f2b06fb7ecd91454969f4959a583ffb9d5a"
 
-  # Tecmo TPS
-  - name: tps.zip
+  - name: coh1002m.zip
     required: true
     category: bios_zip
     system: zn1-tecmo
-    note: "Tecmo TPS BIOS (PS1-based). Most games NOT_WORKING"
-    source_ref: "src/drivers/zn.c:1466-1468"
+    note: "Tecmo TPS BIOS"
+    source_ref: "src/drivers/zn.c:4662-4667, 4672-4674, 6066"
     contents:
-      - name: coh1002m.bin
-        description: Tecmo TPS BIOS
+      - name: "m534002c-61.ic353"
+        description: BIOS
         size: 524288
         crc32: "69ffbcb4"
+        sha1: "03eb2febfab3fcde716defff291babd9392de965"
+      - name: "mg01.ic652"
+        description: CAT702 key, main board
+        size: 8
+        crc32: "50dc8322"
+        sha1: "cef4011c6c06d6fce546e1db5d9fbae155eabf57"
 
-  # Video System / Taito KN
-  - name: sncwgltd.zip
-    required: false
+  - name: coh1002v.zip
+    required: true
     category: bios_zip
     system: zn1-video-system
-    note: "Video System KN BIOS (PS1-based). NOT_WORKING"
-    source_ref: "src/drivers/zn.c:1555-1557"
+    note: "Video System ZN-1 BIOS"
+    source_ref: "src/drivers/zn.c:5026-5031, 5044-5046, 6089"
     contents:
-      - name: coh1002v.bin
-        description: KN BIOS
+      - name: "coh-1002v.ic353"
+        description: BIOS
         size: 524288
         crc32: "5ff165f3"
+        sha1: "8f59314c1093446b9bcb06d232244da6df78e206"
+      - name: "kn01.ic652"
+        description: CAT702 key, main board
+        size: 8
+        crc32: "1ce271df"
+        sha1: "b01479dc75a4a8a86bee7ac7cd10af2bda332544"
 
-  # Acclaim PSX
-  - name: acpsx.zip
+  - name: coh1000a.zip
     required: true
     category: bios_zip
     system: zn1-acclaim
-    note: "Acclaim PSX BIOS (PS1-based). NOT_WORKING"
-    source_ref: "src/drivers/zn.c:1815-1817"
+    note: "Acclaim ZN-1 BIOS"
+    source_ref: "src/drivers/zn.c:5888-5893, 5895-5897, 6057"
     contents:
-      - name: coh1000a.bin
-        description: Acclaim PSX BIOS
+      - name: "m534002c-15.ic353"
+        description: BIOS
         size: 524288
         crc32: "8d8d0764"
+        sha1: "7ee83d317190bb1cef2f8f01c81eaaae47150ebb"
+      - name: "ac01.ic652"
+        description: CAT702 key, main board
+        size: 8
+        crc32: "c425eaf5"
+        sha1: "decf77ab50f7f58c641c3214a11647924f3a8998"
+
+  - name: coh1001l.zip
+    required: true
+    category: bios_zip
+    system: zn1-atlus
+    note: "Atlus ZN-1 BIOS"
+    source_ref: "src/drivers/zn.c:5090-5095, 5097-5099, 6096"
+    contents:
+      - name: "m534002c-17.ic353"
+        description: BIOS
+        size: 524288
+        crc32: "6721146b"
+        sha1: "9511d24bfe25eb180fb2db0835b131cb4a12730e"
+      - name: "at01.ic652"
+        description: CAT702 key, main board
+        size: 8
+        crc32: "181668b3"
+        sha1: "8d2fe1facb4473cc20b4b477aaf881f9280939cf"
+
+  - name: coh1000w.zip
+    required: true
+    category: bios_zip
+    system: zn1-atari
+    note: "Time Warner ZN-1 BIOS"
+    source_ref: "src/drivers/zn.c:5858-5863, 5865-5867, 6046"
+    contents:
+      - name: "msm27c402zb.ic353"
+        description: BIOS
+        size: 524288
+        crc32: "45e8a4b4"
+        sha1: "815488d8563c85f97fbc3384ff21f08e4c88b7b7"
+      - name: "tw01.ic652"
+        description: CAT702 key, main board
+        size: 8
+        crc32: "1cac067e"
+        sha1: "8e87941bfb374172628c8a37647e3a66b7166aa8"
+
+  - name: coh1002e.zip
+    required: true
+    category: bios_zip
+    system: zn1-raizing
+    note: "Eighting / Raizing ZN-1 BIOS"
+    source_ref: "src/drivers/zn.c:5566-5571, 5573-5575, 6130"
+    contents:
+      - name: "m27c402cz-54.ic353"
+        description: BIOS
+        size: 524288
+        crc32: "910f3a8b"
+        sha1: "cd68532967a25f476a6d73473ec6b6f4df2e1689"
+      - name: "et01.ic652"
+        description: CAT702 key, main board
+        size: 8
+        crc32: "a7dd922e"
+        sha1: "1069c1d9015028a51a1b314cfacb014ea90aa425"
+
+  # ---------------------------------------------------------
+  # Sega Model 2 I/O boards. The games load the I/O board ROM with
+  # ROM_LOAD_OPTIONAL and simulate the board when it is absent.
+  # ---------------------------------------------------------
+  - name: model1io.zip
+    required: false
+    category: bios_zip
+    system: sega-model2
+    note: "Model 1 I/O board BIOS, read by Daytona USA and Desert Tank"
+    source_ref: "src/drivers/model2.c:3321-3324, 3432-3433, 3479-3480, 7030, 7033-7034"
+    contents:
+      - name: "epr-14869c.25"
+        description: I/O board Z80 program
+        size: 65536
+        crc32: "24b68e64"
+        sha1: "c19d044d4c2fe551474492aa51922587394dd371"
+
+  - name: model1io2.zip
+    required: false
+    category: bios_zip
+    system: sega-model2
+    note: "Model 1 I/O board 2 BIOS, read by Virtua Cop"
+    source_ref: "src/drivers/model2.c:3326-3329, 3372-3373, 7031-7032"
+    contents:
+      - name: "epr-17181.6"
+        description: I/O board Z80 program
+        size: 65536
+        crc32: "1add2b82"
+        sha1: "81892251d466f630a96af25bde652c20e47d7ede"
+
+  # ---------------------------------------------------------
+  # Namco System 11 (namcoc76.zip)
+  # ---------------------------------------------------------
+  - name: namcoc76.zip
+    required: true
+    category: bios_zip
+    system: namco-system11
+    note: "Namco C76 (M37702) internal BIOS, runs sound, inputs and coins"
+    source_ref: "src/drivers/namcos11.c:1294-1300, 2262"
+    contents:
+      - name: "c76.bin"
+        description: C76 internal BIOS
+        size: 16384
+        crc32: "399faac7"
+        sha1: "ceb184ef0486caf715dd997101999785f67a40b8"
 
   # Century Electronics CVS
   - name: cvs.zip
@@ -581,11 +726,3 @@ files:
         description: PROM
         size: 32
         crc32: "b5221cec"
-
-  # Atlus PSX (PSARC95) - BIOS ROM is NO_DUMP
-  # - name: psarc95.zip
-  #   note: "PSARC95 BIOS is NO_DUMP (coh1002e.bin), games won't boot"
-
-  # Atari PSX - BIOS ROM is NO_DUMP
-  # - name: atpsx.zip
-  #   note: "Atari PSX BIOS is NO_DUMP (coh1000t.bin), games won't boot"
