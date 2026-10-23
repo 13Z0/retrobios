@@ -44,7 +44,7 @@
   },
   "0be048cd378625afd99338ada53bde434cc4613f": {
     "from": [
-      "bios/Commodore/C128/vice/PET/basic-2.901465-01-02.bin"
+      "bios/Commodore/PET/vice/PET/basic-2.901465-01-02.bin"
     ],
     "transform": "quarter 4"
   },
@@ -56,7 +56,7 @@
   },
   "1330580c0614d3556a389da4649488ba04a60908": {
     "from": [
-      "bios/Commodore/C128/vice/PET/basic-1.901439-09-05-02-06.bin"
+      "bios/Commodore/PET/vice/PET/basic-1.901439-09-05-02-06.bin"
     ],
     "transform": "quarter 1"
   },
@@ -68,13 +68,13 @@
   },
   "1bc0ebf27c9bb62ad71bca40313e874234cab6ac": {
     "from": [
-      "bios/Commodore/C128/vice/PET/basic-2.901465-01-02.bin"
+      "bios/Commodore/PET/vice/PET/basic-2.901465-01-02.bin"
     ],
     "transform": "second half"
   },
   "1f5abdcbb305e08ca3d352eadcff6a58542d86d7": {
     "from": [
-      "bios/Commodore/C128/vice/PET/basic-2.901465-01-02.bin"
+      "bios/Commodore/PET/vice/PET/basic-2.901465-01-02.bin"
     ],
     "transform": "quarter 3"
   },
@@ -122,7 +122,7 @@
   },
   "3622111f486d0e137022523657394befa92bde44": {
     "from": [
-      "bios/Commodore/C128/vice/PET/basic-2.901465-01-02.bin"
+      "bios/Commodore/PET/vice/PET/basic-2.901465-01-02.bin"
     ],
     "transform": "first half"
   },
@@ -160,7 +160,7 @@
   },
   "4081e365ff53bd5b8675a232a4793f6a1d087543": {
     "from": [
-      "bios/Commodore/C128/vice/PET/kernal-2.901465-03.bin"
+      "bios/Commodore/PET/vice/PET/kernal-2.901465-03.bin"
     ],
     "transform": "second half"
   },
@@ -199,7 +199,7 @@
   },
   "4bf2c20c51a63d213886957485ebef336bb803d0": {
     "from": [
-      "bios/Commodore/C128/vice/PET/basic-1.901439-09-05-02-06.bin"
+      "bios/Commodore/PET/vice/PET/basic-1.901439-09-05-02-06.bin"
     ],
     "transform": "quarter 3"
   },
@@ -224,8 +224,8 @@
   },
   "5ab17ee70467152bf2130e3f48a2aa81e9df93c9": {
     "from": [
-      "bios/Commodore/C128/vice/PET/basic-4.901465-23-20-21.bin",
-      "bios/Commodore/C128/vice/PET/kernal-4.901465-22.bin"
+      "bios/Commodore/PET/vice/PET/basic-4.901465-23-20-21.bin",
+      "bios/Commodore/PET/vice/PET/kernal-4.901465-22.bin"
     ],
     "transform": "concatenated"
   },
@@ -249,7 +249,7 @@
   },
   "70c0f4fa67a70995b168668c957c3fcf2c8641bd": {
     "from": [
-      "bios/Commodore/C128/vice/PET/basic-1.901439-09-05-02-06.bin"
+      "bios/Commodore/PET/vice/PET/basic-1.901439-09-05-02-06.bin"
     ],
     "transform": "quarter 2"
   },
@@ -268,13 +268,13 @@
   },
   "89639e3dbf517eeac7b307ba59df708c99728e66": {
     "from": [
-      "bios/Commodore/C128/vice/PET/basic-2.901465-01-02.bin"
+      "bios/Commodore/PET/vice/PET/basic-2.901465-01-02.bin"
     ],
     "transform": "quarter 2"
   },
   "8b26c86586787cd615c72f858307d18147872fb3": {
     "from": [
-      "bios/Commodore/C128/vice/PET/basic-2.901465-01-02.bin"
+      "bios/Commodore/PET/vice/PET/basic-2.901465-01-02.bin"
     ],
     "transform": "quarter 1"
   },
@@ -293,7 +293,7 @@
   },
   "960717282878e7de893d87242ddf9d1512be162e": {
     "from": [
-      "bios/Commodore/C128/vice/PET/kernal-1.901439-04-07.bin"
+      "bios/Commodore/PET/vice/PET/kernal-1.901439-04-07.bin"
     ],
     "transform": "first half"
   },
@@ -341,13 +341,13 @@
   },
   "d293972d529023d8fd1f493149e4777b5c253a69": {
     "from": [
-      "bios/Commodore/C128/vice/PET/basic-1.901439-09-05-02-06.bin"
+      "bios/Commodore/PET/vice/PET/basic-1.901439-09-05-02-06.bin"
     ],
     "transform": "quarter 4"
   },
   "d440f2510bc52e20c3d6bc8b9ded9cea7f462a9c": {
     "from": [
-      "bios/Commodore/C128/vice/PET/kernal-1.901439-04-07.bin"
+      "bios/Commodore/PET/vice/PET/kernal-1.901439-04-07.bin"
     ],
     "transform": "second half"
   },
@@ -396,7 +396,7 @@
   },
   "fcc939d58c9bda5b54d6fb818ed4d0804e5ac377": {
     "from": [
-      "bios/Commodore/C128/vice/PET/kernal-2.901465-03.bin"
+      "bios/Commodore/PET/vice/PET/kernal-2.901465-03.bin"
     ],
     "transform": "first half"
   }

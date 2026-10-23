@@ -6,7 +6,7 @@
   "platform": "retroarch",
   "display_name": "RetroArch",
   "version": "1.0",
-  "generated": "2026-10-22T13:12:21Z",
+  "generated": "2026-10-23T07:43:10Z",
   "base_destination": "system",
   "detect": [
     {
@@ -4855,7 +4855,7 @@
       "sha1": "cc73b0386b84383b4841e58a1c328cb67b0121d8",
       "sha256": "9084463cf766f9082e93bfa002888b7acb102b5f29fe282386fb4bacaa4a523c",
       "size": 2048,
-      "repo_path": "bios/Galaksija/CHRGEN.BIN",
+      "repo_path": "bios/Galaksija/Galaksija/CHRGEN.BIN",
       "cores": null,
       "systems": [
         "galaksija"
@@ -4865,7 +4865,7 @@
           "sha1": "cc73b0386b84383b4841e58a1c328cb67b0121d8",
           "sha256": "9084463cf766f9082e93bfa002888b7acb102b5f29fe282386fb4bacaa4a523c",
           "size": 2048,
-          "repo_path": "bios/Galaksija/CHRGEN.BIN",
+          "repo_path": "bios/Galaksija/Galaksija/CHRGEN.BIN",
           "cores": [
             "galaksija"
           ]
@@ -4877,7 +4877,7 @@
       "sha1": "aea7a4c0c7ffe1f212f7b9faecfd728862ac6904",
       "sha256": "d7f03bf65c1f98c9c1226f4e1d1ecd4ac778a2dc4a332568ab0d5fee7ede9042",
       "size": 4096,
-      "repo_path": "bios/Galaksija/ROM1.BIN",
+      "repo_path": "bios/Galaksija/Galaksija/ROM1.BIN",
       "cores": null,
       "systems": [
         "galaksija"
@@ -4887,7 +4887,7 @@
           "sha1": "aea7a4c0c7ffe1f212f7b9faecfd728862ac6904",
           "sha256": "d7f03bf65c1f98c9c1226f4e1d1ecd4ac778a2dc4a332568ab0d5fee7ede9042",
           "size": 4096,
-          "repo_path": "bios/Galaksija/ROM1.BIN",
+          "repo_path": "bios/Galaksija/Galaksija/ROM1.BIN",
           "cores": [
             "galaksija"
           ]
@@ -4899,7 +4899,7 @@
       "sha1": "5d5ab4313a2d0effe7572bb129193b64cab002c1",
       "sha256": "7d93fe474fcc98c06a6d96e533f8935e4e707edf0792d3e9d679ea68404375de",
       "size": 4096,
-      "repo_path": "bios/Galaksija/ROM2.BIN",
+      "repo_path": "bios/Galaksija/Galaksija/ROM2.BIN",
       "cores": null,
       "systems": [
         "galaksija"
@@ -4909,7 +4909,7 @@
           "sha1": "5d5ab4313a2d0effe7572bb129193b64cab002c1",
           "sha256": "7d93fe474fcc98c06a6d96e533f8935e4e707edf0792d3e9d679ea68404375de",
           "size": 4096,
-          "repo_path": "bios/Galaksija/ROM2.BIN",
+          "repo_path": "bios/Galaksija/Galaksija/ROM2.BIN",
           "cores": [
             "galaksija"
           ]
@@ -4920,7 +4920,7 @@
           "sha1": "5d5ab4313a2d0effe7572bb129193b64cab002c1",
           "sha256": "7d93fe474fcc98c06a6d96e533f8935e4e707edf0792d3e9d679ea68404375de",
           "size": 4096,
-          "repo_path": "bios/Galaksija/ROM2.BIN",
+          "repo_path": "bios/Galaksija/Galaksija/ROM2.BIN",
           "systems": [
             "galaksija"
           ]
@@ -4931,7 +4931,7 @@
           "sha1": "5d5ab4313a2d0effe7572bb129193b64cab002c1",
           "sha256": "7d93fe474fcc98c06a6d96e533f8935e4e707edf0792d3e9d679ea68404375de",
           "size": 4096,
-          "repo_path": "bios/Galaksija/ROM2.BIN",
+          "repo_path": "bios/Galaksija/Galaksija/ROM2.BIN",
           "cores": [
             "galaksija"
           ]
@@ -6367,7 +6367,7 @@
       "sha1": "bf861922dcb78c316360e3e742f4f70ff63c9bc3",
       "sha256": "806400ec0df94b0755de6c5b8249d6b6a9866124c5ddbdac198bde22499bfb8b",
       "size": 4194304,
-      "repo_path": "bios/Nintendo/64DD/64DD_IPL_v12_JPN.bin",
+      "repo_path": "bios/Nintendo/Nintendo 64DD/64DD_IPL.bin",
       "cores": null,
       "systems": [
         "nintendo-64dd"
@@ -6377,7 +6377,7 @@
           "sha1": "bf861922dcb78c316360e3e742f4f70ff63c9bc3",
           "sha256": "806400ec0df94b0755de6c5b8249d6b6a9866124c5ddbdac198bde22499bfb8b",
           "size": 4194304,
-          "repo_path": "bios/Nintendo/64DD/64DD_IPL_v12_JPN.bin",
+          "repo_path": "bios/Nintendo/Nintendo 64DD/64DD_IPL.bin",
           "cores": [
             "parallel_n64"
           ]
@@ -6389,7 +6389,7 @@
       "sha1": "bf861922dcb78c316360e3e742f4f70ff63c9bc3",
       "sha256": "806400ec0df94b0755de6c5b8249d6b6a9866124c5ddbdac198bde22499bfb8b",
       "size": 4194304,
-      "repo_path": "bios/Nintendo/64DD/64DD_IPL_v12_JPN.bin",
+      "repo_path": "bios/Nintendo/Nintendo 64DD/64DD_IPL.bin",
       "cores": null,
       "systems": [
         "nintendo-64dd"
@@ -6399,7 +6399,7 @@
           "sha1": "bf861922dcb78c316360e3e742f4f70ff63c9bc3",
           "sha256": "806400ec0df94b0755de6c5b8249d6b6a9866124c5ddbdac198bde22499bfb8b",
           "size": 4194304,
-          "repo_path": "bios/Nintendo/64DD/64DD_IPL_v12_JPN.bin",
+          "repo_path": "bios/Nintendo/Nintendo 64DD/64DD_IPL.bin",
           "cores": [
             "mupen64plus_next"
           ]
@@ -6411,7 +6411,7 @@
       "sha1": "24f67bdea115a2c847c8813a262502ee1607b7df",
       "sha256": "ba65f690eb04ec92db67c0e299e21ad71de087d6d5de8a9cb17a62eaab563c17",
       "size": 16384,
-      "repo_path": "bios/Nintendo/DS/NDS_Bios7.bin",
+      "repo_path": "bios/Nintendo/Nintendo DS/NDS_Bios7.bin",
       "cores": null,
       "systems": [
         "nintendo-ds"
@@ -6421,7 +6421,7 @@
           "sha1": "24f67bdea115a2c847c8813a262502ee1607b7df",
           "sha256": "ba65f690eb04ec92db67c0e299e21ad71de087d6d5de8a9cb17a62eaab563c17",
           "size": 16384,
-          "repo_path": "bios/Nintendo/DS/NDS_Bios7.bin",
+          "repo_path": "bios/Nintendo/Nintendo DS/NDS_Bios7.bin",
           "cores": [
             "desmume",
             "melonds",
@@ -6436,7 +6436,7 @@
       "sha1": "bfaac75f101c135e32e2aaf541de6b1be4c8c62d",
       "sha256": "1693983a7707ae394786fa526c0552457888a51d4e410d715ef07acd5a540555",
       "size": 4096,
-      "repo_path": "bios/Nintendo/DS/NDS_Bios9.bin",
+      "repo_path": "bios/Nintendo/Nintendo DS/NDS_Bios9.bin",
       "cores": null,
       "systems": [
         "nintendo-ds"
@@ -6446,7 +6446,7 @@
           "sha1": "bfaac75f101c135e32e2aaf541de6b1be4c8c62d",
           "sha256": "1693983a7707ae394786fa526c0552457888a51d4e410d715ef07acd5a540555",
           "size": 4096,
-          "repo_path": "bios/Nintendo/DS/NDS_Bios9.bin",
+          "repo_path": "bios/Nintendo/Nintendo DS/NDS_Bios9.bin",
           "cores": [
             "desmume",
             "melonds",
@@ -6486,7 +6486,7 @@
       "sha1": "24f67bdea115a2c847c8813a262502ee1607b7df",
       "sha256": "ba65f690eb04ec92db67c0e299e21ad71de087d6d5de8a9cb17a62eaab563c17",
       "size": 16384,
-      "repo_path": "bios/Nintendo/DS/NDS_Bios7.bin",
+      "repo_path": "bios/Nintendo/Nintendo DS/NDS_Bios7.bin",
       "cores": null,
       "systems": [
         "nintendo-ds"
@@ -6497,7 +6497,7 @@
       "sha1": "bfaac75f101c135e32e2aaf541de6b1be4c8c62d",
       "sha256": "1693983a7707ae394786fa526c0552457888a51d4e410d715ef07acd5a540555",
       "size": 4096,
-      "repo_path": "bios/Nintendo/DS/NDS_Bios9.bin",
+      "repo_path": "bios/Nintendo/Nintendo DS/NDS_Bios9.bin",
       "cores": null,
       "systems": [
         "nintendo-ds"
@@ -6508,7 +6508,7 @@
       "sha1": "d2a5af338f09c5cbdd5d7628db5b9c075c69b616",
       "sha256": "1d7c771de535e6e07182fc9820ac32e76c6f0b5bcefd256a861fdfab144761ec",
       "size": 131072,
-      "repo_path": "bios/Nintendo/Nintendo DS/dsi_firmware.bin",
+      "repo_path": "bios/Nintendo/Nintendo DSi/dsi_firmware.bin",
       "cores": null,
       "systems": [
         "nintendo-ds",
@@ -6522,7 +6522,7 @@
           "sha1": "d2a5af338f09c5cbdd5d7628db5b9c075c69b616",
           "sha256": "1d7c771de535e6e07182fc9820ac32e76c6f0b5bcefd256a861fdfab144761ec",
           "size": 131072,
-          "repo_path": "bios/Nintendo/Nintendo DS/dsi_firmware.bin",
+          "repo_path": "bios/Nintendo/Nintendo DSi/dsi_firmware.bin",
           "cores": [
             "melonds",
             "melonds_ds"
@@ -6535,7 +6535,7 @@
       "sha1": "b48f44194fe918aaaec5298861479512b581d661",
       "sha256": "f57d9bf00529bec35d58404faff029a193fd2ccda0a83403ec4e6cc32626721b",
       "size": 251658304,
-      "repo_path": "bios/Nintendo/DS/dsi_nand.bin",
+      "repo_path": "bios/Nintendo/Nintendo DSi/dsi_nand.bin",
       "cores": null,
       "systems": [
         "nintendo-ds",
@@ -6551,7 +6551,7 @@
           "sha1": "b48f44194fe918aaaec5298861479512b581d661",
           "sha256": "f57d9bf00529bec35d58404faff029a193fd2ccda0a83403ec4e6cc32626721b",
           "size": 251658304,
-          "repo_path": "bios/Nintendo/DS/dsi_nand.bin",
+          "repo_path": "bios/Nintendo/Nintendo DSi/dsi_nand.bin",
           "cores": [
             "melonds",
             "melonds_ds"
@@ -6566,7 +6566,7 @@
       "sha1": "c7c7570bfe51c3c7c5da3b01331b94e7e7cb4f53",
       "sha256": "12a03016ba07cfd874fc002df49a2c6eb2414eb7cfa395c2043035ec5e9193e8",
       "size": 65536,
-      "repo_path": "bios/Nintendo/DS/NDS_Bios7i.bin",
+      "repo_path": "bios/Nintendo/Nintendo DSi/NDS_Bios7i.bin",
       "cores": null,
       "systems": [
         "nintendo-ds",
@@ -6577,7 +6577,7 @@
           "sha1": "c7c7570bfe51c3c7c5da3b01331b94e7e7cb4f53",
           "sha256": "12a03016ba07cfd874fc002df49a2c6eb2414eb7cfa395c2043035ec5e9193e8",
           "size": 65536,
-          "repo_path": "bios/Nintendo/DS/NDS_Bios7i.bin",
+          "repo_path": "bios/Nintendo/Nintendo DSi/NDS_Bios7i.bin",
           "cores": [
             "melonds",
             "melonds_ds"
@@ -6589,7 +6589,7 @@
           "sha1": "a3aa751eb6bdaaf8a827ba9e03576a6f1ab0f547",
           "sha256": "2946281e730e71f7cafdb125f5cb60fed944ca5d610ee1e082c441b602b5f4e2",
           "size": 65536,
-          "repo_path": "bios/Nintendo/Nintendo DS/biosdsi7.bin",
+          "repo_path": "bios/Nintendo/Nintendo DSi/biosdsi7.bin",
           "systems": [
             "nintendo-dsi"
           ]
@@ -6598,7 +6598,7 @@
           "sha1": "d2b17224e156ee5e55b5d8d9f323b1c9b86dd951",
           "sha256": "28a13952901b4065ef3f08c3252b49a00b6525e301b7ddaa3a390b4c7cbef901",
           "size": 65536,
-          "repo_path": "bios/Nintendo/DS/dsi_bios7.bin",
+          "repo_path": "bios/Nintendo/Nintendo DSi/dsi_bios7.bin",
           "systems": [
             "nintendo-ds"
           ]
@@ -6609,7 +6609,7 @@
           "sha1": "c7c7570bfe51c3c7c5da3b01331b94e7e7cb4f53",
           "sha256": "12a03016ba07cfd874fc002df49a2c6eb2414eb7cfa395c2043035ec5e9193e8",
           "size": 65536,
-          "repo_path": "bios/Nintendo/DS/NDS_Bios7i.bin",
+          "repo_path": "bios/Nintendo/Nintendo DSi/NDS_Bios7i.bin",
           "cores": [
             "melonds",
             "melonds_ds"
@@ -6622,7 +6622,7 @@
       "sha1": "719b9eef33692406d7170ff526069615759c4dfc",
       "sha256": "6e9f70b51dc4f26289b597f14e2513620c2af964374a95f4c5a62b5cad199afc",
       "size": 65536,
-      "repo_path": "bios/Nintendo/DS/NDS_Bios9i.bin",
+      "repo_path": "bios/Nintendo/Nintendo DSi/NDS_Bios9i.bin",
       "cores": null,
       "systems": [
         "nintendo-ds",
@@ -6633,7 +6633,7 @@
           "sha1": "719b9eef33692406d7170ff526069615759c4dfc",
           "sha256": "6e9f70b51dc4f26289b597f14e2513620c2af964374a95f4c5a62b5cad199afc",
           "size": 65536,
-          "repo_path": "bios/Nintendo/DS/NDS_Bios9i.bin",
+          "repo_path": "bios/Nintendo/Nintendo DSi/NDS_Bios9i.bin",
           "cores": [
             "melonds",
             "melonds_ds"
@@ -6645,7 +6645,7 @@
           "sha1": "7bf549b8be9e48ab0cdc9b0fdadd49a5131f97eb",
           "sha256": "47538922a8e8a8e79b922ff1203863ef5c40d9c54656a8d2c89c56ece52029ce",
           "size": 65536,
-          "repo_path": "bios/Nintendo/Nintendo DS/biosdsi9.bin",
+          "repo_path": "bios/Nintendo/Nintendo DSi/biosdsi9.bin",
           "systems": [
             "nintendo-dsi"
           ]
@@ -6654,7 +6654,7 @@
           "sha1": "db61fa39ddbc5f5ed71fb19cda47609ef0201723",
           "sha256": "664c608bd6ccfe583e87b3b924afa00f8697dc7ca92eeb6d206d68abb03d2e10",
           "size": 65536,
-          "repo_path": "bios/Nintendo/DS/dsi_bios9.bin",
+          "repo_path": "bios/Nintendo/Nintendo DSi/dsi_bios9.bin",
           "systems": [
             "nintendo-ds"
           ]
@@ -6665,7 +6665,7 @@
           "sha1": "719b9eef33692406d7170ff526069615759c4dfc",
           "sha256": "6e9f70b51dc4f26289b597f14e2513620c2af964374a95f4c5a62b5cad199afc",
           "size": 65536,
-          "repo_path": "bios/Nintendo/DS/NDS_Bios9i.bin",
+          "repo_path": "bios/Nintendo/Nintendo DSi/NDS_Bios9i.bin",
           "cores": [
             "melonds",
             "melonds_ds"
@@ -13994,7 +13994,7 @@
       "sha1": "67ddbcd018f03ed74b6e013074d92cc5f1f51c80",
       "sha256": "848aa2423f6755f44a6503302b0afc8a469e37378ea88de4e039846fcab779a1",
       "size": 1073060,
-      "repo_path": "bios/Vircon/Vircon32Bios.v32",
+      "repo_path": "bios/Vircon/Vircon32/Vircon32Bios.v32",
       "cores": null,
       "systems": [
         "vircon32"
@@ -14004,7 +14004,7 @@
           "sha1": "67ddbcd018f03ed74b6e013074d92cc5f1f51c80",
           "sha256": "848aa2423f6755f44a6503302b0afc8a469e37378ea88de4e039846fcab779a1",
           "size": 1073060,
-          "repo_path": "bios/Vircon/Vircon32Bios.v32",
+          "repo_path": "bios/Vircon/Vircon32/Vircon32Bios.v32",
           "cores": [
             "vircon32"
           ]
@@ -82193,7 +82193,7 @@
       "sha1": "3be9cd41b646fefa00d80f1c3433a06146e97c59",
       "sha256": "629b630f695d004b788aa23bcfa4acb84d405d4b22d136c7cf93571dd89ee4a1",
       "size": 8192,
-      "repo_path": "bios/Commodore/C128/vice/PET/basic-1.901439-09-05-02-06.bin",
+      "repo_path": "bios/Commodore/PET/vice/PET/basic-1.901439-09-05-02-06.bin",
       "cores": [
         "vice"
       ]
@@ -82203,7 +82203,7 @@
       "sha1": "9322a9f0354b9049847d98d3a045fbec860a6264",
       "sha256": "5b426b5c50350e5d50c4308a81288bb34f310d7384bcc43c66a0e18716a4cdbe",
       "size": 8192,
-      "repo_path": "bios/Commodore/C128/vice/PET/basic-2.901465-01-02.bin",
+      "repo_path": "bios/Commodore/PET/vice/PET/basic-2.901465-01-02.bin",
       "cores": [
         "vice"
       ]
@@ -82213,7 +82213,7 @@
       "sha1": "d70bec479e1e3a0d0908a4897066e9959bbc11c8",
       "sha256": "71bb94523f666fc10a2da1b15790620d07ef0ed9696a37922cbea28d8f468025",
       "size": 12288,
-      "repo_path": "bios/Commodore/C128/vice/PET/basic-4.901465-23-20-21.bin",
+      "repo_path": "bios/Commodore/PET/vice/PET/basic-4.901465-23-20-21.bin",
       "cores": [
         "vice"
       ]
@@ -82223,7 +82223,7 @@
       "sha1": "32dc08828e88c74d6433156e64d402b564556308",
       "sha256": "397b8ca539372d6e731ebd426077976c00e714cd140dc00e66b6af7e0fc0b3de",
       "size": 4096,
-      "repo_path": "bios/Commodore/C128/vice/PET/kernal-1.901439-04-07.bin",
+      "repo_path": "bios/Commodore/PET/vice/PET/kernal-1.901439-04-07.bin",
       "cores": [
         "vice"
       ]
@@ -82233,7 +82233,7 @@
       "sha1": "38742bdf449f629bcba6276ef24d3daeb7da6e84",
       "sha256": "056d5e84a6e4f2b5b40a4109f49515c2496a4bf99139a9f59abe486ded5cd03d",
       "size": 4096,
-      "repo_path": "bios/Commodore/C128/vice/PET/kernal-2.901465-03.bin",
+      "repo_path": "bios/Commodore/PET/vice/PET/kernal-2.901465-03.bin",
       "cores": [
         "vice"
       ]
@@ -82243,7 +82243,7 @@
       "sha1": "96a0fa56e0c937da92971d9c99d504e44e898806",
       "sha256": "7cf8678b748bda1ffedee69ea54888feb3f5ec66dca8143375cbdf8c3de4d573",
       "size": 4096,
-      "repo_path": "bios/Commodore/C128/vice/PET/kernal-4.901465-22.bin",
+      "repo_path": "bios/Commodore/PET/vice/PET/kernal-4.901465-22.bin",
       "cores": [
         "vice"
       ]
@@ -82253,7 +82253,7 @@
       "sha1": "f02f5fb492ba93dbbd390f24c10f7a832dec432a",
       "sha256": "86dc50795651de9f99c886ea61bd412f5372fa4940eec7b550a9fa2d2dfffc13",
       "size": 2048,
-      "repo_path": "bios/Commodore/C128/vice/PET/edit-1-n.901439-03.bin",
+      "repo_path": "bios/Commodore/PET/vice/PET/edit-1-n.901439-03.bin",
       "cores": [
         "vice"
       ]
@@ -82263,7 +82263,7 @@
       "sha1": "5e5502ce32f5a7e387d65efe058916282041e54b",
       "sha256": "5338b1dffebd695f6110c9995e16f7536bb63a909c2a0062b4789de46904ade9",
       "size": 2048,
-      "repo_path": "bios/Commodore/C128/vice/PET/edit-2-n.901447-24.bin",
+      "repo_path": "bios/Commodore/PET/vice/PET/edit-2-n.901447-24.bin",
       "cores": [
         "vice"
       ]
@@ -82273,7 +82273,7 @@
       "sha1": "174ace3a8c0348cd21d39cc864e2adc58b0101a9",
       "sha256": "448483549a95c5828ca509081d9f621a569fdcd3fcd9bbacdeef036ea18ea628",
       "size": 2048,
-      "repo_path": "bios/Commodore/C128/vice/PET/edit-2-b.901474-01.bin",
+      "repo_path": "bios/Commodore/PET/vice/PET/edit-2-b.901474-01.bin",
       "cores": [
         "vice"
       ]
@@ -82283,7 +82283,7 @@
       "sha1": "05af284c914d53a52987b5f602466de75765f650",
       "sha256": "e851f8c61b9ae8d81236e093ba9efbb21576d7eeab4f82435ba3be5e081d8d48",
       "size": 2048,
-      "repo_path": "bios/Commodore/C128/vice/PET/edit-4-40-n-50Hz.901498-01.bin",
+      "repo_path": "bios/Commodore/PET/vice/PET/edit-4-40-n-50Hz.901498-01.bin",
       "cores": [
         "vice"
       ]
@@ -82293,7 +82293,7 @@
       "sha1": "9f91fbabfdd532d003d2508f399574ba8ec6ee5f",
       "sha256": "eaf7889580a437869b69b2cf4443d7971645c0e1ebc22199921b4749a07369d1",
       "size": 2048,
-      "repo_path": "bios/Commodore/C128/vice/PET/edit-4-40-b-50Hz.ts.bin",
+      "repo_path": "bios/Commodore/PET/vice/PET/edit-4-40-b-50Hz.ts.bin",
       "cores": [
         "vice"
       ]
@@ -82303,7 +82303,7 @@
       "sha1": "81975eab31a8f4f51ae2a20d099a567c7b3f2dd1",
       "sha256": "c4863ecf4a61e9c1d1e600b6dcefe4672b386072ef1033f12c0ead814de4ad9c",
       "size": 2048,
-      "repo_path": "bios/Commodore/C128/vice/PET/edit-4-80-b-50Hz.901474-04_.bin",
+      "repo_path": "bios/Commodore/PET/vice/PET/edit-4-80-b-50Hz.901474-04_.bin",
       "cores": [
         "vice"
       ]
@@ -82313,7 +82313,7 @@
       "sha1": "3e067cc621e4beafca2b90cb8f6dba975df2855b",
       "sha256": "697390d9cd7da9e77d71935b0bf71d1181f624e0be802cbfb472803861443340",
       "size": 2048,
-      "repo_path": "bios/Commodore/C128/vice/PET/characters-1.901447-08.bin",
+      "repo_path": "bios/Commodore/PET/vice/PET/characters-1.901447-08.bin",
       "cores": [
         "vice"
       ]
@@ -82323,7 +82323,7 @@
       "sha1": "0157a2d55b7ac4eaeb38475889ebeea52e2593db",
       "sha256": "da3374c21d6ea440cef5f338ce3f524e0a1e40dcb1ef64446c695f92c636f1fa",
       "size": 2048,
-      "repo_path": "bios/Commodore/C128/vice/PET/characters-2.901447-10.bin",
+      "repo_path": "bios/Commodore/PET/vice/PET/characters-2.901447-10.bin",
       "cores": [
         "vice"
       ]
@@ -82333,7 +82333,7 @@
       "sha1": "bf346f11595a3e65e55d6aeeaa2c0cec807b66c7",
       "sha256": "e6a9d1b829ef498c3d69e5c892a06a947a9baf5d4e6f43f60ef814371038a311",
       "size": 4096,
-      "repo_path": "bios/Commodore/C128/vice/PET/characters.901640-01.bin",
+      "repo_path": "bios/Commodore/PET/vice/PET/characters.901640-01.bin",
       "cores": [
         "vice"
       ]
@@ -82343,7 +82343,7 @@
       "sha1": "0414b3ab847c8977eb05c2fcc72efcf2f9d92871",
       "sha256": "a55aace69825d605e89bb177f0b749325418f4c22250d35e53d567cc63919404",
       "size": 4096,
-      "repo_path": "bios/Commodore/C128/vice/PET/waterloo-a000.901898-01.bin",
+      "repo_path": "bios/Commodore/PET/vice/PET/waterloo-a000.901898-01.bin",
       "cores": [
         "vice"
       ]
@@ -82353,7 +82353,7 @@
       "sha1": "df154939b934d0aeeb376813ec1ba0d43c2a3378",
       "sha256": "d815b0d554c4998e9acfe23fc81ea4027e0f422c095d642f3d589bffb0b8fc47",
       "size": 4096,
-      "repo_path": "bios/Commodore/C128/vice/PET/waterloo-b000.901898-02.bin",
+      "repo_path": "bios/Commodore/PET/vice/PET/waterloo-b000.901898-02.bin",
       "cores": [
         "vice"
       ]
@@ -82363,7 +82363,7 @@
       "sha1": "6c5b0cce97068f8841112ba6d5cd8e568b562fa3",
       "sha256": "f8d2bc9eae09da569983236706139d0a11e1cfc626f701124c92b610d1ebe86e",
       "size": 4096,
-      "repo_path": "bios/Commodore/C128/vice/PET/waterloo-c000.901898-03.bin",
+      "repo_path": "bios/Commodore/PET/vice/PET/waterloo-c000.901898-03.bin",
       "cores": [
         "vice"
       ]
@@ -82373,7 +82373,7 @@
       "sha1": "b42a2050a319a1ffca7868a8d8d635fadd37ec37",
       "sha256": "11df5991bbbfd2f2b7a708a4327dc3f7593834c48292abfde9f91d0485f21acf",
       "size": 4096,
-      "repo_path": "bios/Commodore/C128/vice/PET/waterloo-d000.901898-04.bin",
+      "repo_path": "bios/Commodore/PET/vice/PET/waterloo-d000.901898-04.bin",
       "cores": [
         "vice"
       ]
@@ -82383,7 +82383,7 @@
       "sha1": "e8ce8347451a001214a5e71a13081b38b4be23bc",
       "sha256": "9d733b7a2938532aabaf614750563f9bf3f76223c584014fe0fec4d5733f7682",
       "size": 2048,
-      "repo_path": "bios/Commodore/C128/vice/PET/waterloo-e000.901897-01.bin",
+      "repo_path": "bios/Commodore/PET/vice/PET/waterloo-e000.901897-01.bin",
       "cores": [
         "vice"
       ]
@@ -82393,7 +82393,7 @@
       "sha1": "9b4a5134d20345171e7303445f87c4e0b9addc96",
       "sha256": "e0cf60892ffa404e33828ea1175822d196272c88b5a8c1fde12823e886a31f31",
       "size": 4096,
-      "repo_path": "bios/Commodore/C128/vice/PET/waterloo-f000.901898-05.bin",
+      "repo_path": "bios/Commodore/PET/vice/PET/waterloo-f000.901898-05.bin",
       "cores": [
         "vice"
       ]
@@ -82403,7 +82403,7 @@
       "sha1": "9409f92e167984096fe4d5913714bff6214c3b2d",
       "sha256": "e5fba50567b9b6e85edfa53b3f32c4bef1dd158942b088c855a6b64875ee4511",
       "size": 16384,
-      "repo_path": "bios/Commodore/C128/vice/CBM-II/basic-901242+3-04a.bin",
+      "repo_path": "bios/Commodore/CBM-II/vice/CBM-II/basic-901242+3-04a.bin",
       "cores": [
         "vice"
       ]
@@ -82413,7 +82413,7 @@
       "sha1": "53314b4d565cc405a67a0936b935e6e08955580d",
       "sha256": "0c3fa48c3821f6cae3ff33cab2717a8449fd9da6d8dc18281a3002f2f39f08ee",
       "size": 16384,
-      "repo_path": "bios/Commodore/C128/vice/CBM-II/basic-901240+1-03.bin",
+      "repo_path": "bios/Commodore/CBM-II/vice/CBM-II/basic-901240+1-03.bin",
       "cores": [
         "vice"
       ]
@@ -82423,7 +82423,7 @@
       "sha1": "e69531d45f5993f8e53c6bd9ab2a7bc10fe2d02f",
       "sha256": "169257e77d112d7600cfa452c2ddc04dd44cb4880209194ead07884a799932fa",
       "size": 16384,
-      "repo_path": "bios/Commodore/C128/vice/CBM-II/basic-901235+6-02.bin",
+      "repo_path": "bios/Commodore/CBM-II/vice/CBM-II/basic-901235+6-02.bin",
       "cores": [
         "vice"
       ]
@@ -82433,7 +82433,7 @@
       "sha1": "abb26418b9e1614a8f52bdeee0822d4a96071439",
       "sha256": "a3132af49a31f6f563c28cea88e4b17d768bd6b7831da8605a8721dd014d67ab",
       "size": 8192,
-      "repo_path": "bios/Commodore/C128/vice/CBM-II/kernal-901244-04a.bin",
+      "repo_path": "bios/Commodore/CBM-II/vice/CBM-II/kernal-901244-04a.bin",
       "cores": [
         "vice"
       ]
@@ -82443,7 +82443,7 @@
       "sha1": "097197d4d08e0b82e0466a5f1fbd49a24f3d2523",
       "sha256": "66ae5a60ec9e34c076e8a5d6b1df75046fdf57f6fdc87bdd7ed4e915688b6b2a",
       "size": 8192,
-      "repo_path": "bios/Commodore/C128/vice/CBM-II/kernal-901234-02.bin",
+      "repo_path": "bios/Commodore/CBM-II/vice/CBM-II/kernal-901234-02.bin",
       "cores": [
         "vice"
       ]
@@ -82463,7 +82463,7 @@
       "sha1": "e63bf18da48e5a53c99ef127c1ae721333d1d102",
       "sha256": "9ee7de848178c504d5a8de450435d2876489dba328d3d839a679d77f1d7fba70",
       "size": 4096,
-      "repo_path": "bios/Commodore/C128/vice/CBM-II/chargen-901237-01.bin",
+      "repo_path": "bios/Commodore/CBM-II/vice/CBM-II/chargen-901237-01.bin",
       "cores": [
         "vice"
       ]
@@ -82473,7 +82473,7 @@
       "sha1": "e7f3cbc8e282f79a00c3e95d75c8d725ee3c6287",
       "sha256": "a6f97a57ddd24aba9df43758551269fe3c869e0501fec8d67732e4756d4a8857",
       "size": 4096,
-      "repo_path": "bios/Commodore/C128/vice/CBM-II/chargen-901232-01.bin",
+      "repo_path": "bios/Commodore/CBM-II/vice/CBM-II/chargen-901232-01.bin",
       "cores": [
         "vice"
       ]
@@ -88842,7 +88842,7 @@
       "sha1": "557be97016b8e990a286226b1ec933986a70805d",
       "sha256": "110316cc4fe65b0ffc2eb5127539c726e9220f145cb5b0811e2baf05d190dfa4",
       "size": 400592,
-      "repo_path": "bios/Acorn/BBC/.variants/bbcm.zip.4cc3e25a",
+      "repo_path": "bios/Acorn/BBC Micro/.variants/bbcm.zip.4cc3e25a",
       "cores": [
         "mame"
       ]
@@ -88852,7 +88852,7 @@
       "sha1": "8809bb953f0d8ec01dae1df2a94ec09913f924ba",
       "sha256": "6b68708e806e3893d987fa0f8cc990ba7f4e4fb2933e9b871bb57458306dfd1e",
       "size": 100096,
-      "repo_path": "bios/Acorn/BBC/bbcmc.zip",
+      "repo_path": "bios/Acorn/BBC Micro/bbcmc.zip",
       "cores": [
         "mame"
       ]
@@ -109230,7 +109230,7 @@
       "sha1": "e84e5b987aa2380fffceab64a79299b934d3749a",
       "sha256": "7941dd821a5c4e9eb7ba45c15827baea78f56143a6483b42902889bd1e0e00d8",
       "size": 29561,
-      "repo_path": "bios/Acorn/BBC/atom.zip",
+      "repo_path": "bios/Acorn/BBC Micro/atom.zip",
       "cores": [
         "mamemess"
       ]
@@ -109417,7 +109417,7 @@
       "sha1": "3b71f43ff30f4b15b5cd85dd9e95ebc7e84eb5a3",
       "sha256": "30e14955ebf1352266dc2ff8067e68104607e750abb9d3b36582b8af909fcb58",
       "size": 1048576,
-      "repo_path": "bios/Nintendo/Nintendo DS/dsi_sd_card.bin",
+      "repo_path": "bios/Nintendo/Nintendo DSi/dsi_sd_card.bin",
       "cores": [
         "melonds"
       ],
@@ -109640,7 +109640,7 @@
       "sha1": "3b71f43ff30f4b15b5cd85dd9e95ebc7e84eb5a3",
       "sha256": "30e14955ebf1352266dc2ff8067e68104607e750abb9d3b36582b8af909fcb58",
       "size": 1048576,
-      "repo_path": "bios/Nintendo/Nintendo DS/dsi_sd_card.bin",
+      "repo_path": "bios/Nintendo/Nintendo DSi/dsi_sd_card.bin",
       "cores": [
         "noods"
       ],
@@ -112193,7 +112193,7 @@
       "sha1": "97bb88094a51457a8dcad98c58be22a2d0fa9a37",
       "sha256": "7323bcc168c5a45ff10749b339960e98314740a734c30d4b9f3337001f9e703d",
       "size": 28795076,
-      "repo_path": "bios/Game Engines/DOOM/freedoom1.wad",
+      "repo_path": "bios/Id Software/Doom/freedoom1.wad",
       "cores": [
         "prboom"
       ],
@@ -112221,7 +112221,7 @@
       "sha1": "6d559b7ceece4f5ad457415049711992370d520a",
       "sha256": "5e701c806a8d3a03700f7fef97b7ad62d0aed50fd240dfac26cdf39ac3d0a8d5",
       "size": 14943400,
-      "repo_path": "bios/Game Engines/DOOM/doom2.wad",
+      "repo_path": "bios/Id Software/Doom/v1.666/doom2.wad",
       "cores": [
         "prboom"
       ],
@@ -112277,7 +112277,7 @@
       "sha1": "975f781e6d801c0a23e3caa33f70493efe68a880",
       "sha256": "a8772e088847032510d97ba2312406a6998f21cbab44d4ff10696faa9c0ecd4b",
       "size": 28787748,
-      "repo_path": "bios/Game Engines/DOOM/freedoom2.wad",
+      "repo_path": "bios/Id Software/Doom/freedoom2.wad",
       "cores": [
         "prboom"
       ],
@@ -112313,7 +112313,7 @@
       "sha1": "9d071480b3e882cce13fc9be627fb6ea2ec0c2eb",
       "sha256": "e9ed3f53cb011f1ae897b66fcfe46692c8c2d73e147bbe1e36a9bf1f79a4cc63",
       "size": 20417448,
-      "repo_path": "bios/Game Engines/DOOM/blasphem.wad",
+      "repo_path": "bios/Id Software/Doom/blasphem.wad",
       "cores": [
         "prboom"
       ],
@@ -112779,7 +112779,7 @@
       "sha1": "8c20ff26ebfefbf9b050b67af8083704003595ba",
       "sha256": "0d6487d6832488130bc94b1ec5ee71766717b929c249693327089e461460ae40",
       "size": 16027,
-      "repo_path": "bios/sdlpal/desc.dat",
+      "repo_path": "bios/sdlpal/sdlpal/desc.dat",
       "cores": [
         "sdlpal"
       ],
@@ -115497,7 +115497,7 @@
       "sha1": "24f67bdea115a2c847c8813a262502ee1607b7df",
       "sha256": "ba65f690eb04ec92db67c0e299e21ad71de087d6d5de8a9cb17a62eaab563c17",
       "size": 16384,
-      "repo_path": "bios/Nintendo/DS/NDS_Bios7.bin",
+      "repo_path": "bios/Nintendo/Nintendo DS/NDS_Bios7.bin",
       "cores": [
         "skyemu"
       ],
@@ -115513,7 +115513,7 @@
       "sha1": "bfaac75f101c135e32e2aaf541de6b1be4c8c62d",
       "sha256": "1693983a7707ae394786fa526c0552457888a51d4e410d715ef07acd5a540555",
       "size": 4096,
-      "repo_path": "bios/Nintendo/DS/NDS_Bios9.bin",
+      "repo_path": "bios/Nintendo/Nintendo DS/NDS_Bios9.bin",
       "cores": [
         "skyemu"
       ],
@@ -116057,7 +116057,7 @@
       "sha1": "7d006f8943171a4d50ae89bf2fca12b764d27e8b",
       "sha256": "4149fc5552f8932f28b7999de506f2b2a6cf3093140b7bfcdcc88ade51d970d2",
       "size": 251658304,
-      "repo_path": "bios/Nintendo/DS/DSi_Nand_AUS.bin",
+      "repo_path": "bios/Nintendo/Nintendo DSi/DSi_Nand_AUS.bin",
       "cores": [
         "melonds"
       ],
@@ -116072,7 +116072,7 @@
       "sha1": "4b3b3de0cb2c2aef80daa68394d5b804b8706d9f",
       "sha256": "f5ab272f9c62a63d059934f146bf66c2abbfe5e864d852ab7708f97b53ad0fcb",
       "size": 251658304,
-      "repo_path": "bios/Nintendo/DS/DSi_Nand_CHN.bin",
+      "repo_path": "bios/Nintendo/Nintendo DSi/DSi_Nand_CHN.bin",
       "cores": [
         "melonds"
       ],
@@ -116087,7 +116087,7 @@
       "sha1": "bc4091b6cab4feba3812ac0f23e23d0353481ecf",
       "sha256": "e577488f582921bdbfaa12a6255832cf646f5ad9f29214d78404e6005714e8bc",
       "size": 251658304,
-      "repo_path": "bios/Nintendo/DS/DSi_Nand_EUR.bin",
+      "repo_path": "bios/Nintendo/Nintendo DSi/DSi_Nand_EUR.bin",
       "cores": [
         "melonds"
       ],
@@ -116102,7 +116102,7 @@
       "sha1": "c82d60626ac05b49ccec0cfb30001d4a3f31c5b9",
       "sha256": "6b4c33a189794cd04a7b1359cbf3db86a24ca2c69e1cbefda545d0b34f4b5743",
       "size": 251658304,
-      "repo_path": "bios/Nintendo/DS/DSi_Nand_JPN.bin",
+      "repo_path": "bios/Nintendo/Nintendo DSi/DSi_Nand_JPN.bin",
       "cores": [
         "melonds"
       ],
@@ -116117,7 +116117,7 @@
       "sha1": "4b061953d8f870bcda006ce86ce136f112cc1793",
       "sha256": "9d5ec8ff568b0cde27b9817d9f4901437806265aca59557e69905ed571c120a7",
       "size": 251658304,
-      "repo_path": "bios/Nintendo/DS/DSi_Nand_KOR.bin",
+      "repo_path": "bios/Nintendo/Nintendo DSi/DSi_Nand_KOR.bin",
       "cores": [
         "melonds"
       ],
@@ -116132,7 +116132,7 @@
       "sha1": "ef08ae02c5fbe1a22a208c36e25607f5a9d5ae98",
       "sha256": "42c2c2e4029a05b25a5d61054b29e8192f93d8a33d535d16b3ef128d5dfc83f4",
       "size": 251658304,
-      "repo_path": "bios/Nintendo/DS/DSi_Nand_USA.bin",
+      "repo_path": "bios/Nintendo/Nintendo DSi/DSi_Nand_USA.bin",
       "cores": [
         "melonds"
       ],

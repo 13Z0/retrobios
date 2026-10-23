@@ -40,13 +40,13 @@ bios/Valve/Half-Life/valve/.variants/pak0.pak.2c57b84f
 bios/Arcade/MAME/artwork/snspell.zip
 bios/Arcade/MAME/MAME 0.174 Arcade XML.dat
 bios/Sony/PlayStation Vita/.variants/PSP2UPDAT.PUP.3ae832c9
-bios/Nintendo/DS/DSi_Nand_JPN.bin
-bios/Nintendo/DS/DSi_Nand_EUR.bin
-bios/Nintendo/DS/DSi_Nand_USA.bin
-bios/Nintendo/DS/DSi_Nand_AUS.bin
-bios/Nintendo/DS/DSi_Nand_CHN.bin
-bios/Nintendo/DS/DSi_Nand_KOR.bin
-bios/Nintendo/DS/dsi_nand.bin
+bios/Nintendo/Nintendo DSi/DSi_Nand_JPN.bin
+bios/Nintendo/Nintendo DSi/DSi_Nand_EUR.bin
+bios/Nintendo/Nintendo DSi/DSi_Nand_USA.bin
+bios/Nintendo/Nintendo DSi/DSi_Nand_AUS.bin
+bios/Nintendo/Nintendo DSi/DSi_Nand_CHN.bin
+bios/Nintendo/Nintendo DSi/DSi_Nand_KOR.bin
+bios/Nintendo/Nintendo DSi/dsi_nand.bin
 
 # QEMU EDK2 firmware (64MB each)
 bios/QEMU/edk2-aarch64-code.fd
@@ -78,7 +78,7 @@ bios/Arcade/fba2012/samples/ghox.zip
 bios/Arcade/fba2012/samples/tekipaki.zip
 bios/Arcade/fba2012/samples/vimana.zip
 bios/Nintendo/Switch/Firmware_batocera43.zip
-bios/Nintendo/DS/.variants/dsi_nand.bin.8b79a73c
+bios/Nintendo/Nintendo DSi/.variants/dsi_nand.bin.8b79a73c
 
 # Wii NAND backup (528MB, fetched from large-files release)
 bios/Nintendo/Wii/nand.bin
@@ -103,9 +103,9 @@ bios/Blizzard/Diablo/fonts.mpq
 bios/Toys for Bob/The Ur-Quan Masters/uqm-0.8.0-voice.uqm
 bios/Toys for Bob/The Ur-Quan Masters/uqm-remix-disc2.uqm
 bios/Toys for Bob/The Ur-Quan Masters/uqm-remix-disc4-1.uqm
-bios/Game Engines/DOOM/action2.wad
-bios/Game Engines/DOOM/harm1.wad
-bios/Game Engines/DOOM/delaweare.wad
+bios/Id Software/Doom/action2.wad
+bios/Id Software/Doom/harm1.wad
+bios/Id Software/Doom/delaweare.wad
 
 # Output-directory locks (artifact_lock)
 .lock
