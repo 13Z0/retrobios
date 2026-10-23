@@ -24,11 +24,11 @@
     "xemu/component_manifest.json",
     "xroar/component_manifest.json"
   ],
-  "summary": "2021 kept, 37 files added, 1 hash updated to the emulator source, 52 required flags aligned with the code, 95 hashes added to an existing entry",
+  "summary": "2021 kept, 81 files added, 1 hash updated to the emulator source, 52 required flags aligned with the code, 94 hashes added to an existing entry",
   "counts": {
     "kept": 2021,
-    "added": 37,
-    "not_added": 975,
+    "added": 81,
+    "not_added": 1027,
     "not_kept": 0
   },
   "changes": [
@@ -397,6 +397,17 @@
       "new": "b31a246b69493c35194fe0bac120dc37"
     },
     {
+      "kind": "added",
+      "system": "fbneo",
+      "name": "segasp.zip",
+      "destination": "dc/segasp.zip",
+      "field": null,
+      "old": null,
+      "new": {
+        "required": true
+      }
+    },
+    {
       "kind": "requirement_corrected",
       "system": "nds",
       "name": "bios7.bin",
@@ -627,6 +638,17 @@
       "new": "8974193e76cf255ebc40fe20b95b405db2cc1ea07910584380e50c6d9ca181aa"
     },
     {
+      "kind": "added",
+      "system": "3do",
+      "name": "3do.xml",
+      "destination": "mame/hash/3do.xml",
+      "field": null,
+      "old": null,
+      "new": {
+        "required": false
+      }
+    },
+    {
       "kind": "requirement_corrected",
       "system": "amiga",
       "name": "kick34005.A500",
@@ -670,15 +692,6 @@
       "field": "required",
       "old": false,
       "new": true
-    },
-    {
-      "kind": "hash_filled",
-      "system": "amiga",
-      "name": "AmigaVision.rom",
-      "destination": "bios/AmigaVision.rom",
-      "field": "sha256",
-      "old": null,
-      "new": "6d43840d4099a74170ea0f0425b6257c3891ebcaa39c4d1840075a9ab22b5707"
     },
     {
       "kind": "hash_filled",
@@ -753,6 +766,193 @@
       "new": false
     },
     {
+      "kind": "added",
+      "system": "apple2gs",
+      "name": "apple2_flop_clcracked.xml",
+      "destination": "mame/hash/apple2_flop_clcracked.xml",
+      "field": null,
+      "old": null,
+      "new": {
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "apple2gs",
+      "name": "apple2_flop_misc.xml",
+      "destination": "mame/hash/apple2_flop_misc.xml",
+      "field": null,
+      "old": null,
+      "new": {
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "apple2gs",
+      "name": "apple2_flop_orig.xml",
+      "destination": "mame/hash/apple2_flop_orig.xml",
+      "field": null,
+      "old": null,
+      "new": {
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "apple2gs",
+      "name": "apple2gs_flop_clcracked.xml",
+      "destination": "mame/hash/apple2gs_flop_clcracked.xml",
+      "field": null,
+      "old": null,
+      "new": {
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "apple2gs",
+      "name": "apple2gs_flop_misc.xml",
+      "destination": "mame/hash/apple2gs_flop_misc.xml",
+      "field": null,
+      "old": null,
+      "new": {
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "apple2gs",
+      "name": "apple2gs_flop_orig.xml",
+      "destination": "mame/hash/apple2gs_flop_orig.xml",
+      "field": null,
+      "old": null,
+      "new": {
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "apple2gs",
+      "name": "a2diskiing.zip",
+      "destination": "a2diskiing.zip",
+      "field": null,
+      "old": null,
+      "new": {
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "apple2gs",
+      "name": "a2focdrv.zip",
+      "destination": "a2focdrv.zip",
+      "field": null,
+      "old": null,
+      "new": {
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "apple2gs",
+      "name": "a2hsscsi.zip",
+      "destination": "a2hsscsi.zip",
+      "field": null,
+      "old": null,
+      "new": {
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "apple2gs",
+      "name": "a2memexp.zip",
+      "destination": "a2memexp.zip",
+      "field": null,
+      "old": null,
+      "new": {
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "apple2gs",
+      "name": "a2mouse.zip",
+      "destination": "a2mouse.zip",
+      "field": null,
+      "old": null,
+      "new": {
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "apple2gs",
+      "name": "a2parprn.zip",
+      "destination": "a2parprn.zip",
+      "field": null,
+      "old": null,
+      "new": {
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "apple2gs",
+      "name": "a2pdromdr.zip",
+      "destination": "a2pdromdr.zip",
+      "field": null,
+      "old": null,
+      "new": {
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "apple2gs",
+      "name": "a2pic.zip",
+      "destination": "a2pic.zip",
+      "field": null,
+      "old": null,
+      "new": {
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "apple2gs",
+      "name": "ace80.zip",
+      "destination": "ace80.zip",
+      "field": null,
+      "old": null,
+      "new": {
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "apple2gs",
+      "name": "d2fdc.zip",
+      "destination": "d2fdc.zip",
+      "field": null,
+      "old": null,
+      "new": {
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "apple2gs",
+      "name": "ibsap2.zip",
+      "destination": "ibsap2.zip",
+      "field": null,
+      "old": null,
+      "new": {
+        "required": false
+      }
+    },
+    {
       "kind": "requirement_corrected",
       "system": "apple2",
       "name": "a2diskiing.zip",
@@ -796,6 +996,17 @@
       "field": "required",
       "old": false,
       "new": true
+    },
+    {
+      "kind": "added",
+      "system": "cdimono1",
+      "name": "cdi.xml",
+      "destination": "mame/hash/cdi.xml",
+      "field": null,
+      "old": null,
+      "new": {
+        "required": false
+      }
     },
     {
       "kind": "hash_filled",
@@ -942,6 +1153,39 @@
       "new": "822d76ccacf7e228477acdb7165f474512408c2fdf3edb93dfabdafdf0a69bd1"
     },
     {
+      "kind": "added",
+      "system": "enterprise",
+      "name": "ep64_cart.xml",
+      "destination": "mame/hash/ep64_cart.xml",
+      "field": null,
+      "old": null,
+      "new": {
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "enterprise",
+      "name": "ep64_cass.xml",
+      "destination": "mame/hash/ep64_cass.xml",
+      "field": null,
+      "old": null,
+      "new": {
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "enterprise",
+      "name": "ep64_flop.xml",
+      "destination": "mame/hash/ep64_flop.xml",
+      "field": null,
+      "old": null,
+      "new": {
+        "required": false
+      }
+    },
+    {
       "kind": "requirement_corrected",
       "system": "gamecom",
       "name": "gamecom.zip",
@@ -951,6 +1195,17 @@
       "new": true
     },
     {
+      "kind": "added",
+      "system": "gamecom",
+      "name": "gamecom.xml",
+      "destination": "mame/hash/gamecom.xml",
+      "field": null,
+      "old": null,
+      "new": {
+        "required": false
+      }
+    },
+    {
       "kind": "requirement_corrected",
       "system": "gmaster",
       "name": "gmaster.zip",
@@ -958,6 +1213,17 @@
       "field": "required",
       "old": false,
       "new": true
+    },
+    {
+      "kind": "added",
+      "system": "gmaster",
+      "name": "gmaster.xml",
+      "destination": "mame/hash/gmaster.xml",
+      "field": null,
+      "old": null,
+      "new": {
+        "required": false
+      }
     },
     {
       "kind": "requirement_corrected",
@@ -1257,6 +1523,160 @@
       "new": "d55daa439b673b0e3f5897f99ac37ecb45f974d1862b4dadb85dec34af99cb42"
     },
     {
+      "kind": "added",
+      "system": "mac2",
+      "name": "mac128k.zip",
+      "destination": "mac128k.zip",
+      "field": null,
+      "old": null,
+      "new": {
+        "required": true
+      }
+    },
+    {
+      "kind": "added",
+      "system": "mac2",
+      "name": "mac512k.zip",
+      "destination": "mac512k.zip",
+      "field": null,
+      "old": null,
+      "new": {
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "mac2",
+      "name": "macplus.zip",
+      "destination": "macplus.zip",
+      "field": null,
+      "old": null,
+      "new": {
+        "required": true
+      }
+    },
+    {
+      "kind": "added",
+      "system": "mac2",
+      "name": "macse.zip",
+      "destination": "macse.zip",
+      "field": null,
+      "old": null,
+      "new": {
+        "required": true
+      }
+    },
+    {
+      "kind": "added",
+      "system": "mac2",
+      "name": "macclasc.zip",
+      "destination": "macclasc.zip",
+      "field": null,
+      "old": null,
+      "new": {
+        "required": true
+      }
+    },
+    {
+      "kind": "added",
+      "system": "mac2",
+      "name": "mac2fdhd.zip",
+      "destination": "mac2fdhd.zip",
+      "field": null,
+      "old": null,
+      "new": {
+        "required": true
+      }
+    },
+    {
+      "kind": "added",
+      "system": "mac2",
+      "name": "maciix.zip",
+      "destination": "maciix.zip",
+      "field": null,
+      "old": null,
+      "new": {
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "mac2",
+      "name": "maclc3.zip",
+      "destination": "maclc3.zip",
+      "field": null,
+      "old": null,
+      "new": {
+        "required": true
+      }
+    },
+    {
+      "kind": "added",
+      "system": "mac2",
+      "name": "mac_cdrom.xml",
+      "destination": "mame/hash/mac_cdrom.xml",
+      "field": null,
+      "old": null,
+      "new": {
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "mac2",
+      "name": "mac_flop.xml",
+      "destination": "mame/hash/mac_flop.xml",
+      "field": null,
+      "old": null,
+      "new": {
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "mac2",
+      "name": "mac_flop_clcracked.xml",
+      "destination": "mame/hash/mac_flop_clcracked.xml",
+      "field": null,
+      "old": null,
+      "new": {
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "mac2",
+      "name": "mac_flop_orig.xml",
+      "destination": "mame/hash/mac_flop_orig.xml",
+      "field": null,
+      "old": null,
+      "new": {
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "mac2",
+      "name": "mac_hdd.xml",
+      "destination": "mame/hash/mac_hdd.xml",
+      "field": null,
+      "old": null,
+      "new": {
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "mac2",
+      "name": "mac_hdflop.xml",
+      "destination": "mame/hash/mac_hdflop.xml",
+      "field": null,
+      "old": null,
+      "new": {
+        "required": false
+      }
+    },
+    {
       "kind": "requirement_corrected",
       "system": "snes",
       "name": "BS-X.bin",
@@ -1338,6 +1758,17 @@
       "new": true
     },
     {
+      "kind": "added",
+      "system": "scv",
+      "name": "scv.xml",
+      "destination": "mame/hash/scv.xml",
+      "field": null,
+      "old": null,
+      "new": {
+        "required": false
+      }
+    },
+    {
       "kind": "requirement_corrected",
       "system": "supracan",
       "name": "umc6650.zip",
@@ -1356,6 +1787,28 @@
       "new": true
     },
     {
+      "kind": "added",
+      "system": "vectrex",
+      "name": "vectrex.zip",
+      "destination": "vectrex.zip",
+      "field": null,
+      "old": null,
+      "new": {
+        "required": true
+      }
+    },
+    {
+      "kind": "added",
+      "system": "vectrex",
+      "name": "vectrex.xml",
+      "destination": "mame/hash/vectrex.xml",
+      "field": null,
+      "old": null,
+      "new": {
+        "required": false
+      }
+    },
+    {
       "kind": "requirement_corrected",
       "system": "vsmile",
       "name": "vsmile.zip",
@@ -1363,6 +1816,28 @@
       "field": "required",
       "old": false,
       "new": true
+    },
+    {
+      "kind": "added",
+      "system": "vsmile",
+      "name": "vsmile_cart.xml",
+      "destination": "mame/hash/vsmile_cart.xml",
+      "field": null,
+      "old": null,
+      "new": {
+        "required": false
+      }
+    },
+    {
+      "kind": "added",
+      "system": "vsmile",
+      "name": "vsmilem_cart.xml",
+      "destination": "mame/hash/vsmilem_cart.xml",
+      "field": null,
+      "old": null,
+      "new": {
+        "required": false
+      }
     },
     {
       "kind": "requirement_corrected",
@@ -1822,7 +2297,6 @@
     "3do/panafz1-kanji.bin sha256",
     "3do/panafz10ja-anvil-kanji.bin sha256",
     "3do/panafz1j-kanji.bin sha256",
-    "amiga/AmigaVision.rom sha256",
     "atari800/ROM_OS_BB02R3V4 sha256",
     "atari800/ROM_OS_CC01R4 sha256",
     "atari800/ROM_OS_BB01R59 sha256",
@@ -1895,7 +2369,7 @@
   "hashes_cleared": [],
   "requirements_corrected": 52,
   "withheld": [],
-  "found_by_content": 107,
+  "found_by_content": 97,
   "removal_candidates": [
     {
       "system": "mame",
@@ -8421,6 +8895,21 @@
       "system": "amiga",
       "name": "kick40060.CD32.full",
       "destination": "bios/kick40060.CD32.full",
+      "verdict": "candidate",
+      "reason": "no profile of a core the platform runs names it",
+      "cores_examined": [
+        "amiberry",
+        "fsuae",
+        "puae",
+        "puae2021",
+        "uae4arm"
+      ],
+      "unresolved_cores": []
+    },
+    {
+      "system": "amiga",
+      "name": "AmigaVision.rom",
+      "destination": "bios/AmigaVision.rom",
       "verdict": "candidate",
       "reason": "no profile of a core the platform runs names it",
       "cores_examined": [

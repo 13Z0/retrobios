@@ -3009,8 +3009,7 @@
           "md5": "646773759326fbac3b2311fd8c8793ee",
           "system": "amiga",
           "description": "Kickstart 4.0 ROM for AmigaVision.",
-          "required": "Yes, for AmigaVision",
-          "sha256": "6d43840d4099a74170ea0f0425b6257c3891ebcaa39c4d1840075a9ab22b5707"
+          "required": "Yes, for AmigaVision"
         },
         {
           "filename": "kick40063.A600",
@@ -5190,6 +5189,214 @@
           "md5": "11e59253c578c8f16ea2375ec398e4e9",
           "system": "vsmile",
           "description": " V.SMILE TV Learning System BIOS"
+        },
+        {
+          "filename": "segasp.zip",
+          "system": "fbneo",
+          "required": "Required",
+          "paths": "$bios_path/dc"
+        },
+        {
+          "filename": "3do.xml",
+          "system": "3do",
+          "paths": "$bios_path/mame/hash"
+        },
+        {
+          "filename": "apple2_flop_clcracked.xml",
+          "system": "apple2gs",
+          "paths": "$bios_path/mame/hash"
+        },
+        {
+          "filename": "apple2_flop_misc.xml",
+          "system": "apple2gs",
+          "paths": "$bios_path/mame/hash"
+        },
+        {
+          "filename": "apple2_flop_orig.xml",
+          "system": "apple2gs",
+          "paths": "$bios_path/mame/hash"
+        },
+        {
+          "filename": "apple2gs_flop_clcracked.xml",
+          "system": "apple2gs",
+          "paths": "$bios_path/mame/hash"
+        },
+        {
+          "filename": "apple2gs_flop_misc.xml",
+          "system": "apple2gs",
+          "paths": "$bios_path/mame/hash"
+        },
+        {
+          "filename": "apple2gs_flop_orig.xml",
+          "system": "apple2gs",
+          "paths": "$bios_path/mame/hash"
+        },
+        {
+          "filename": "a2diskiing.zip",
+          "system": "apple2gs"
+        },
+        {
+          "filename": "a2focdrv.zip",
+          "system": "apple2gs"
+        },
+        {
+          "filename": "a2hsscsi.zip",
+          "system": "apple2gs"
+        },
+        {
+          "filename": "a2memexp.zip",
+          "system": "apple2gs"
+        },
+        {
+          "filename": "a2mouse.zip",
+          "system": "apple2gs"
+        },
+        {
+          "filename": "a2parprn.zip",
+          "system": "apple2gs"
+        },
+        {
+          "filename": "a2pdromdr.zip",
+          "system": "apple2gs"
+        },
+        {
+          "filename": "a2pic.zip",
+          "system": "apple2gs"
+        },
+        {
+          "filename": "ace80.zip",
+          "system": "apple2gs"
+        },
+        {
+          "filename": "d2fdc.zip",
+          "system": "apple2gs"
+        },
+        {
+          "filename": "ibsap2.zip",
+          "system": "apple2gs"
+        },
+        {
+          "filename": "cdi.xml",
+          "system": "cdimono1",
+          "paths": "$bios_path/mame/hash"
+        },
+        {
+          "filename": "ep64_cart.xml",
+          "system": "enterprise",
+          "paths": "$bios_path/mame/hash"
+        },
+        {
+          "filename": "ep64_cass.xml",
+          "system": "enterprise",
+          "paths": "$bios_path/mame/hash"
+        },
+        {
+          "filename": "ep64_flop.xml",
+          "system": "enterprise",
+          "paths": "$bios_path/mame/hash"
+        },
+        {
+          "filename": "gamecom.xml",
+          "system": "gamecom",
+          "paths": "$bios_path/mame/hash"
+        },
+        {
+          "filename": "gmaster.xml",
+          "system": "gmaster",
+          "paths": "$bios_path/mame/hash"
+        },
+        {
+          "filename": "mac128k.zip",
+          "system": "mac2",
+          "required": "Required"
+        },
+        {
+          "filename": "mac512k.zip",
+          "system": "mac2"
+        },
+        {
+          "filename": "macplus.zip",
+          "system": "mac2",
+          "required": "Required"
+        },
+        {
+          "filename": "macse.zip",
+          "system": "mac2",
+          "required": "Required"
+        },
+        {
+          "filename": "macclasc.zip",
+          "system": "mac2",
+          "required": "Required"
+        },
+        {
+          "filename": "mac2fdhd.zip",
+          "system": "mac2",
+          "required": "Required"
+        },
+        {
+          "filename": "maciix.zip",
+          "system": "mac2"
+        },
+        {
+          "filename": "maclc3.zip",
+          "system": "mac2",
+          "required": "Required"
+        },
+        {
+          "filename": "mac_cdrom.xml",
+          "system": "mac2",
+          "paths": "$bios_path/mame/hash"
+        },
+        {
+          "filename": "mac_flop.xml",
+          "system": "mac2",
+          "paths": "$bios_path/mame/hash"
+        },
+        {
+          "filename": "mac_flop_clcracked.xml",
+          "system": "mac2",
+          "paths": "$bios_path/mame/hash"
+        },
+        {
+          "filename": "mac_flop_orig.xml",
+          "system": "mac2",
+          "paths": "$bios_path/mame/hash"
+        },
+        {
+          "filename": "mac_hdd.xml",
+          "system": "mac2",
+          "paths": "$bios_path/mame/hash"
+        },
+        {
+          "filename": "mac_hdflop.xml",
+          "system": "mac2",
+          "paths": "$bios_path/mame/hash"
+        },
+        {
+          "filename": "scv.xml",
+          "system": "scv",
+          "paths": "$bios_path/mame/hash"
+        },
+        {
+          "filename": "vectrex.zip",
+          "system": "vectrex",
+          "required": "Required"
+        },
+        {
+          "filename": "vectrex.xml",
+          "system": "vectrex",
+          "paths": "$bios_path/mame/hash"
+        },
+        {
+          "filename": "vsmile_cart.xml",
+          "system": "vsmile",
+          "paths": "$bios_path/mame/hash"
+        },
+        {
+          "filename": "vsmilem_cart.xml",
+          "system": "vsmile",
+          "paths": "$bios_path/mame/hash"
         }
       ]
     }
