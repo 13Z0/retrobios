@@ -152,6 +152,16 @@ class ExistenceReportsWhatThePackReports(unittest.TestCase):
         self.assertEqual(result["status"], verify.Status.OK)
         self.assertIn("declared hash 9d2ff233", result["discrepancy"])
 
+    def test_the_file_found_is_named(self):
+        """RetroArch, Lakka and RetroPie pages showed no "Served by" line:
+        existence mode returned no path, where the hash modes return one."""
+        sys.path.insert(0, str(REPO_ROOT / "scripts"))
+        import verify  # noqa: PLC0415
+
+        found = verify.verify_entry_existence({"name": "a.bin"}, "bios/X/Y/a.bin")
+        self.assertEqual(found["path"], "bios/X/Y/a.bin")
+        self.assertNotIn("path", verify.verify_entry_existence({"name": "a.bin"}, None))
+
 
 class TheDestinationsFlagNeedsAPack(unittest.TestCase):
     """--destinations describes a platform's full pack: another mode refuses it."""

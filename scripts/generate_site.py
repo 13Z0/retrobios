@@ -416,6 +416,11 @@ def data_as_of(moment: datetime | None = None) -> str:
             f"Data as of {moment.day} {moment.strftime('%B %Y')}</time>")
 
 
+def _date_line() -> str:
+    """The date a page closes on, in the words of data_as_of()."""
+    return f'<div class="rb-timestamp">{data_as_of()}.</div>'
+
+
 
 
 # Home page
@@ -2199,6 +2204,7 @@ def decorate_markdown_pages(docs: Path) -> dict[str, str]:
             browser_title=browser_title,
             description=description, structured=structured, terms=terms,
             search=authored.get("search") != "exclude",
+            logo=str(authored.get("logo") or ""),
         )
         write_decorated(docs / target, text)
         # One file per page: a page that gained or lost its components
@@ -2339,6 +2345,50 @@ def _file_runs(body: list[str], budget: int) -> list[list[str]]:
     return [head + run for run in runs]
 
 
+# A list moved off a reference page (gaps, provenance) is cut in parts of
+# at most this much Markdown: about 450 KB of HTML each.
+LIST_PART_BUDGET = 300_000
+
+
+def _blocks_in_runs(blocks: list[list[str]], budget: int) -> list[list[str]]:
+    """Blocks (table rows, folded lists) in runs of at most ``budget``
+    characters, a block never cut."""
+    runs: list[list[str]] = [[]]
+    size = 0
+    for block in blocks:
+        weight = sum(len(line) + 1 for line in block)
+        if runs[-1] and size + weight > budget:
+            runs.append([])
+            size = 0
+        runs[-1].extend(block)
+        size += weight
+    return runs
+
+
+def _list_pages(
+    stem: str, title: str, intro: str, head: list[str], blocks: list[list[str]],
+    moved: dict[str, str], budget: int = LIST_PART_BUDGET,
+) -> str:
+    """Pages of their own for a long list: ``head`` (a table header, say)
+    opens each part, ``blocks`` are cut between parts. Returns where the list
+    went, as the page it left says it."""
+    runs = _blocks_in_runs(blocks, budget)
+    stems = [stem + (f"-{n}" if n > 1 else "") for n in range(1, len(runs) + 1)]
+    for n, (here, run) in enumerate(zip(stems, runs), 1):
+        part = f" (part {n} of {len(runs)})" if len(runs) > 1 else ""
+        moved[here] = "\n".join([
+            "---", "level: reference", "---", "",
+            f"# {title}{part}", "", intro, "",
+            *([", ".join(f"[part {i}]({other}.md)" if other != here else f"part {i}"
+                         for i, other in enumerate(stems, 1)), ""] if len(runs) > 1 else []),
+            *head, *run, "", _date_line(),
+        ]) + "\n"
+    if len(stems) == 1:
+        return f"[a page of their own]({stems[0]}.md)"
+    return "pages of their own: " + ", ".join(
+        f"[part {i}]({other}.md)" for i, other in enumerate(stems, 1))
+
+
 @functools.lru_cache(maxsize=1)
 def _collection_sha1_by_path() -> dict[str, str]:
     """The sha1 of each file the collection holds, by its path."""
@@ -2354,13 +2404,13 @@ def _system_heading_link(sys_id: str, prefix: str = "") -> str:
     writes. A system with no section of its own is named, never sent to the
     page a storage folder chose.
     """
-    from siterender import _own_section
+    from siterender import system_section
 
     name = _escape_tags(system_name(sys_id))
-    section = _own_section(sys_id)
+    section = system_section(sys_id)
     if section is not None:
-        mfr, console = section
-        name = f"[{name}]({console_href(_slug(mfr), console, prefix)})"
+        slug, console = section
+        name = f"[{name}]({console_href(slug, console, prefix)})"
     return f"{name} <small>{_escape_tags(sys_id)}</small>"
 
 
@@ -2374,7 +2424,7 @@ def _served_line(f: dict) -> str:
     if f.get("status") == "missing":
         return "Not held"
     if not path:
-        # verify reports no path in existence mode: nothing to name.
+        # A slot the pack fills from a release asset or leaves to the user.
         return ""
     sha1 = _collection_sha1_by_path().get(path, "")
     label = "Served by" if f.get("status") == "ok" else "Held, not the declared hash"
@@ -2580,7 +2630,7 @@ def _render_platform_systems(
                         for i, other in enumerate(stems, 1))] if len(runs) > 1 else []),
                     "", "## Files", "",
                     *search_excluded(run),
-                    "", f"*Generated on {_timestamp()}*",
+                    "", _date_line(),
                 ]) + "\n"
             where = (f"[a page of their own]({stems[0]}.md)" if len(stems) == 1 else
                      "pages of their own: " + ", ".join(
@@ -2921,6 +2971,7 @@ def generate_platform_page(
     # The mark is drawn beside the title from the front matter: floated
     # beside the first line at 48 px it read as a broken image.
     logo_url = registry.get(name, {}).get("logo", "")
+    logo_url = local_images().get(logo_url, logo_url)
 
     homepage = config.get("homepage", "")
     version = config.get("version", "")
@@ -3086,7 +3137,7 @@ def generate_platform_page(
                                  (name, display), moved, config)
     )
 
-    lines.append(f"*Generated on {_timestamp()}*")
+    lines.extend(["", _date_line()])
     return "\n".join(lines) + "\n"
 
 
@@ -3222,12 +3273,15 @@ def file_location_items(
     for ref, files in sorted((members or {}).items()):
         if ref not in owners:
             continue
-        for _member, info in sorted(files.items()):
+        # A large tree is listed on pages of its own (data_tree_pages).
+        page_of = {member: stem for stem, names in data_tree_pages(ref, files)
+                   for member in names}
+        for member, info in sorted(files.items()):
             sha1 = str(info.get("sha1", ""))
             if sha1 and sha1 not in known:
                 known.add(sha1)
-                items.append({"sha1": sha1,
-                              "url": f"emulators/{owners[ref]}/#sha1-{sha1[:12]}"})
+                page = page_of.get(member, owners[ref])
+                items.append({"sha1": sha1, "url": f"emulators/{page}/#sha1-{sha1[:12]}"})
     return sorted(items, key=lambda item: item["sha1"])
 
 
@@ -3434,8 +3488,7 @@ def generate_systems_index(manufacturers: dict) -> str:
         ]
         for name, mfr, console, count in rows:
             cell = name.replace("|", "-")
-            anchor = _slugify_anchor(console)
-            href = f"{_slug(mfr)}.md" + (f"#{anchor}" if anchor else "")
+            href = console_href(_slug(mfr), console).removeprefix("systems/")
             lines.append(f"| [{cell}]({href}) | {count:,} | [{mfr}]({_slug(mfr)}.md) |")
         lines.append("")
 
@@ -3527,9 +3580,13 @@ def _date_in_words(stamp: str) -> str:
 
 
 def generate_provenance_page(
-    db: dict, report: dict, derivable: dict[str, dict] | None = None
+    db: dict, report: dict, derivable: dict[str, dict] | None = None,
+    moved: dict[str, str] | None = None,
 ) -> str:
-    """Page explaining the verified dump badges and listing catalog gaps."""
+    """Page explaining the verified dump badges and listing catalog gaps.
+
+    With ``moved``, each catalog's wanted list goes to a page of its own,
+    keyed by stem: the three lists made a 694 KB page."""
     matched_files = count_catalog_matched(db)
     total_files = compute_composition(db)["systems"]["files"]
     # When each catalog was read: a 76-day-old snapshot showed no age.
@@ -3664,6 +3721,7 @@ def generate_provenance_page(
             for dat in entry.get("dats") or [entry.get("dat", "")]:
                 by_dat.setdefault(dat, []).append(entry)
         lines.extend([f"### {label}", ""])
+        blocks: list[list[str]] = []
         for dat in sorted(by_dat):
             entries = by_dat[dat]
             table = ["| Name | Description | SHA1 |", "|------|-------------|------|"]
@@ -3679,7 +3737,20 @@ def generate_provenance_page(
                         f"`{hit['archive']}` as `{hit['member']}`."
                     )
                 table.append(f"| `{name}` | {desc} | `{sha1}` |")
-            lines.extend(markup.details("note", f"{dat} ({len(entries)})", table))
+            blocks.append(markup.details("note", f"{dat} ({len(entries)})", table))
+        if moved is None:
+            lines.extend(line for block in blocks for line in block)
+            continue
+        where = _list_pages(
+            f"provenance-{_slugify_anchor(source)}", f"Wanted from {label}",
+            f"Dumps {label} catalogues and the collection lacks, by DAT. Part of "
+            f"[Dump provenance](provenance.md#{_slugify_anchor(label)}).",
+            [], blocks, moved,
+        )
+        lines.extend([
+            f"{_count(len(data['missing']), 'dump')} in {_count(len(by_dat), 'DAT')}: "
+            f"listed on {where}.", "",
+        ])
 
     if derived_entries:
         lines.extend(
@@ -3701,7 +3772,7 @@ def generate_provenance_page(
             lines.append(f"| `{name}` | {sources} | {how.get('transform', '')} | `{sha1}` |")
         lines.append("")
 
-    lines.append(f'<div class="rb-timestamp">Generated on {_timestamp()}.</div>')
+    lines.extend(["", _date_line()])
     return "\n".join(lines) + "\n"
 
 
@@ -4110,10 +4181,12 @@ def system_install_choices(coverages: dict) -> dict[str, dict[str, list[tuple[st
 
 
 # A manufacturer page above this much Markdown becomes a summary with one
-# page per console, and a console above it is cut into parts. 500 KB of
-# Markdown renders to about 750 KB of HTML: game-engines was one 10.5 MB
-# page that took 21 s of main-thread work on a phone.
-SYSTEM_PAGE_BUDGET = 500_000
+# page per console, and a console above it is cut into parts. Measured as
+# MkDocs Markdown, a page renders to up to 1.8 times its size in HTML with
+# its structured data: at 500 KB the Sony page was 849 KB, and every page
+# stays under 600 KB from 300 KB. game-engines was one 10.5 MB page that
+# took 21 s of main-thread work on a phone.
+SYSTEM_PAGE_BUDGET = 300_000
 
 # A system card: whether it is a variant, its lines, its sha1.
 Card = tuple[bool, list[str], str]
@@ -4289,11 +4362,12 @@ def _console_heading(manufacturer: str, console: str) -> str:
     """A console's heading: its icon hidden from screen readers, then the
     name with no space before it. The space read as "Section titled
     “ PlayStation”" on five of seven Sony headings."""
+    anchor = f" {{ #{console_anchor(manufacturer, console)} }}"
     icon = _icon_name(manufacturer, console)
     if not _icon_available.get(icon):
-        return f"## {console}"
+        return f"## {console}{anchor}"
     image = markup.image("", _icon_url(icon), width="24", **{"aria-hidden": "true"})
-    return f"## {image}{console}"
+    return f"## {image}{console}{anchor}"
 
 
 _NEXT_FROM_SYSTEMS = [
@@ -4355,7 +4429,7 @@ def system_pages(
             lines.extend(_cards_markdown(cards))
             lines.append("")
         lines.extend(_next_block(_NEXT_FROM_SYSTEMS))
-        lines.append(f'<div class="rb-timestamp">Generated on {_timestamp()}.</div>')
+        lines.extend(["", _date_line()])
         return "\n".join(lines) + "\n"
 
     def card_weight(card: list[str]) -> int:
@@ -4452,12 +4526,12 @@ def system_pages(
             lines.append("")
             lines.extend(_next_block([f"[{manufacturer}]({slug}.md), every section"]
                                      + _NEXT_FROM_SYSTEMS))
-            lines.append(f'<div class="rb-timestamp">Generated on {_timestamp()}.</div>')
+            lines.extend(["", _date_line()])
             held = {sha1 for _variant, _card, sha1 in part}
             pages[stem] = ("\n".join(lines) + "\n", {console: [
                 f for f in consoles[console] if str(f.get("sha1", "")) in held]})
     summary.extend(_next_block(_NEXT_FROM_SYSTEMS))
-    summary.append(f'<div class="rb-timestamp">Generated on {_timestamp()}.</div>')
+    summary.extend(["", _date_line()])
     kept = {console: files for console, files in consoles.items() if console not in moved}
     return {slug: ("\n".join(summary) + "\n", kept), **pages}
 
@@ -4498,13 +4572,13 @@ def _named_system_link(sys_id: str, prefix: str = "") -> str:
     The emulator pages printed the id ("sony-playstation") where every
     other page says "Sony PlayStation". The id stays in the address only.
     """
-    from siterender import _page_by_norm  # noqa: PLC0415
+    from siterender import system_section  # noqa: PLC0415
 
     name = system_name(sys_id).replace("[", r"\[").replace("]", r"\]")
-    page = _system_page_map.get(sys_id) or _page_by_norm(sys_id)
-    if not page:
+    section = system_section(sys_id)
+    if not section:
         return name
-    slug, console = page
+    slug, console = section
     return f"[{name}]({console_href(slug, console, prefix)})"
 
 
@@ -4543,6 +4617,16 @@ def _region_words(value: object, most: int = 0) -> str:
 _CATEGORY_WORDS = {"bios": "BIOS", "game_data": "game data", "bios_zip": "BIOS ZIP"}
 
 
+INITIAL_DIGITS = "0 to 9"
+
+
+def emulator_initial(display: str) -> str:
+    """The letter an emulator is filed under, in the navigation and on the
+    index alike. A name that does not open on a letter goes under "0 to 9"."""
+    initial = display[:1].upper()
+    return initial if "A" <= initial <= "Z" else INITIAL_DIGITS
+
+
 def generate_emulators_index(profiles: dict) -> str:
     unique = {
         k: v for k, v in profiles.items() if v.get("type") not in ("alias", "test")
@@ -4562,13 +4646,13 @@ def generate_emulators_index(profiles: dict) -> str:
         "",
         "Each page is one emulator: the files it reads, whether it starts games "
         "without them, and the line of its source code that says so. The "
-        "classification below says how a core relates to the emulator it comes "
-        "from, which tells how far its own files can differ.",
+        "kind says how a core relates to the emulator it comes from, which "
+        "tells how far its own files can differ.",
         "",
         f"**{len(unique):,}** emulator profiles, **{total_files:,}** files total, **{len(aliases):,}** aliases.",
         "",
-        "| Classification | Count | Description |",
-        "|---------------|-------|-------------|",
+        "| Kind | Count | Description |",
+        "|------|-------|-------------|",
     ]
 
     cls_desc = {
@@ -4601,28 +4685,25 @@ def generate_emulators_index(profiles: dict) -> str:
             continue
         label = CLS_LABELS.get(cls, cls)
         desc = cls_desc.get(cls, "")
-        lines.append(f"| [{label}](#{cls}) | {len(entries)} | {desc} |")
+        lines.append(f"| {label} | {len(entries)} | {desc} |")
     lines.append("")
 
-    for cls in cls_order:
-        entries = by_class.get(cls, [])
-        if not entries:
-            continue
-        label = CLS_LABELS.get(cls, cls)
-        desc = cls_desc.get(cls, "")
-        lines.extend(
-            [
-                f"## {label} {{ #{cls} }}",
-                "",
-                f"{desc}. {_count(len(entries), 'profile')}.",
-                "",
-                "| Emulator | Systems | Files |",
-                "|--------|---------|-------|",
-            ]
-        )
-
+    # One section per initial, the groups the navigation draws: its letter
+    # links land on the section of the same name.
+    by_initial: dict[str, list[tuple[str, dict]]] = {}
+    for name, p in unique.items():
+        by_initial.setdefault(emulator_initial(str(p.get("emulator", name))), []).append((name, p))
+    for initial in sorted(by_initial, key=lambda g: (g != INITIAL_DIGITS, g)):
+        lines.extend([
+            f"## {initial}",
+            "",
+            "| Emulator | Kind | Systems | Files |",
+            "|--------|------|---------|-------|",
+        ])
+        entries = sorted(by_initial[initial], key=lambda e: str(e[1].get("emulator", e[0])).casefold())
         for name, p in entries:
             emu_name = p.get("emulator", name)
+            cls = p.get("core_classification", "other")
             systems = list(dict.fromkeys(
                 _named_system_link(s, "../") for s in p.get("systems") or []))
             files = p.get("files", [])
@@ -4631,7 +4712,7 @@ def generate_emulators_index(profiles: dict) -> str:
                 sys_str += f" and {len(systems) - 3} more"
             file_count = len(files)
             file_str = f"{file_count:,}" if file_count else "-"
-            lines.append(f"| [{emu_name}]({name}.md) | {sys_str} | {file_str} |")
+            lines.append(f"| [{emu_name}]({name}.md) | {CLS_LABEL_ONE.get(cls, cls)} | {sys_str} | {file_str} |")
         lines.append("")
 
     if aliases:
@@ -5440,14 +5521,73 @@ def _said_as_list(items: list[str]) -> str:
 # Data directory members and revisions, read once per build.
 _DATA_MEMBERS: dict[str, dict[str, dict]] = {}
 _DATA_REVISIONS: dict[str, dict] = {}
+# The emulator pages that list each data directory, by ref.
+_DATA_READERS: dict[str, list[tuple[str, str]]] = {}
+
+# A data directory listing more files than this goes to pages of its own,
+# this many files each: Dolphin's Sys tree put 2,164 rows and 16,900
+# elements on the Dolphin page, read on a phone.
+DATA_TREE_ROWS = 400
+DATA_TREE_ROWS_PER_PAGE = 1_000
+
+
+def data_tree_pages(ref: str, members: dict[str, dict]) -> list[tuple[str, list[str]]]:
+    """The pages under emulators/ listing a large data directory, with the
+    members each holds in name order, or none when the tree is listed on
+    the pages of the emulators reading it."""
+    if len(members) <= DATA_TREE_ROWS:
+        return []
+    names = sorted(members)
+    stem = f"data-{_slugify_anchor(ref)}"
+    return [(stem + (f"-{n}" if n > 1 else ""), names[start:start + DATA_TREE_ROWS_PER_PAGE])
+            for n, start in enumerate(range(0, len(names), DATA_TREE_ROWS_PER_PAGE), 1)]
+
+
+def _data_member_table(members: dict[str, dict], names: list[str], anchors: set[str]) -> list[str]:
+    """A data directory's files with their size and sha1, each sha1 an
+    anchor the first time the page lists it (``anchors``, the page's ids)."""
+    table = ["| File | Size | SHA1 |", "|------|-----:|------|"]
+    for member in names:
+        info = members[member]
+        sha1 = str(info.get("sha1", ""))
+        # One id per page: two members can hold the same bytes (every empty
+        # file), and Dolphin's trees share Sys.
+        anchor = f"sha1-{sha1[:12]}"
+        span = "" if anchor in anchors else f'<span id="{anchor}"></span>'
+        anchors.add(anchor)
+        table.append(f"| {span}{_code(member)} | {_fmt_size(int(info.get('size', 0)))} | {_code(sha1)} |")
+    return table
+
+
+def _data_tree_page(ref: str, entry: dict, pages: list[tuple[str, list[str]]],
+                    index: int) -> str:
+    """One page of a large data directory's file list."""
+    stem, names = pages[index]
+    members = _DATA_MEMBERS.get(ref) or {}
+    part = f" (part {index + 1} of {len(pages)})" if len(pages) > 1 else ""
+    readers = _said_as_list([f"[{_escape_tags(display)}]({key}.md#data-directories)"
+                             for key, display in _DATA_READERS.get(ref, [])])
+    lines = [
+        "---", "level: reference", "---", "",
+        f"# The {ref} data directory{part}", "",
+        f"{entry.get('description') or 'A data directory'}: "
+        f"{_count(len(members), 'file')}, as the packs ship them."
+        + (f" Read by {readers}." if readers else ""), "",
+    ]
+    if len(pages) > 1:
+        lines.extend([", ".join(f"[part {i}]({other}.md)" if other != stem else f"part {i}"
+                                for i, (other, _names) in enumerate(pages, 1)), ""])
+    lines.extend(search_excluded(_data_member_table(members, names, set())))
+    lines.extend(["", _date_line()])
+    return "\n".join(lines) + "\n"
 
 
 # An emulator page lists at most this many file cards: MAME's 1,564 made a
 # 3 MB page. Past it, the cards go to pages of their own and the emulator's
 # page keeps a table of every entry, each row holding the card's old
 # anchor. A count, not a size: system cards link to these cards and are
-# written before them.
-EMULATOR_CARDS_PER_PAGE = 400
+# written before them. At 400 a part of MAME's cards was 805 KB of HTML.
+EMULATOR_CARDS_PER_PAGE = 220
 
 
 # The headings an emulator's cards go under, in page order: what it needs
@@ -5818,19 +5958,16 @@ def emulator_pages(
             if dd.get("source_ref"):
                 lines.append(f"    - Source: {_source_ref_markdown(profile, dd['source_ref'])}")
             members = _DATA_MEMBERS.get(ref) or {}
-            if members:
-                table = ["| File | Size | SHA1 |", "|------|-----:|------|"]
-                for member, info in sorted(members.items()):
-                    sha1 = str(info.get("sha1", ""))
-                    # One id per page: two members can hold the same bytes
-                    # (every empty file), and Dolphin's trees share Sys.
-                    anchor = f"sha1-{sha1[:12]}"
-                    span = "" if anchor in member_anchors else f'<span id="{anchor}"></span>'
-                    member_anchors.add(anchor)
-                    table.append(
-                        f"| {span}{_code(member)} "
-                        f"| {_fmt_size(int(info.get('size', 0)))} | {_code(sha1)} |"
-                    )
+            tree_pages = data_tree_pages(ref, members)
+            if tree_pages:
+                where = (f"[a page of their own]({tree_pages[0][0]}.md)" if len(tree_pages) == 1
+                         else "pages of their own: " + ", ".join(
+                             f"[part {i}]({stem}.md)" for i, (stem, _names) in enumerate(tree_pages, 1)))
+                lines.append(f"    - {_count(len(members), 'file')}, listed on {where}")
+                for index, (stem, _names) in enumerate(tree_pages):
+                    part_pages[stem] = _data_tree_page(ref, entry, tree_pages, index)
+            elif members:
+                table = _data_member_table(members, sorted(members), member_anchors)
                 lines.append("")
                 lines.extend(markup.details(
                     "info", f"{_count(len(members), 'file')}, as the packs ship them",
@@ -5844,7 +5981,7 @@ def emulator_pages(
         "[Every system](../systems/index.md), and the files each one needs",
         "[When a game does not start](../wiki/troubleshooting.md)",
     ]))
-    lines.extend([f"*Generated on {_timestamp()}*"])
+    lines.extend(["", _date_line()])
     return {name: "\n".join(lines) + "\n", **part_pages}
 
 
@@ -5901,7 +6038,7 @@ def _emulator_part_page(
                     lambda group: [line for i in group for line in cards[i]]),
     ]
     lines.extend(_next_block([f"[{emu_name}]({name}.md), the profile and every entry"]))
-    lines.extend([f"*Generated on {_timestamp()}*"])
+    lines.extend(["", _date_line()])
     return "\n".join(lines) + "\n"
 
 
@@ -6194,8 +6331,12 @@ def generate_gap_analysis(
     data_names: set[str] | None = None,
     registry: dict | None = None,
     gap_report: dict | None = None,
+    moved: dict[str, str] | None = None,
 ) -> str:
     """Generate a unified gap analysis page.
+
+    With ``moved``, the list of files to source goes to pages of its own,
+    keyed by stem: on the page it made 662 KB of HTML.
 
     Combines verification results (from coverages/verify.py) with source
     provenance (from cross_reference) into a single truth dashboard.
@@ -6560,19 +6701,19 @@ def generate_gap_analysis(
 
         if src_missing_details:
             req_src = [m for m in src_missing_details if m["required"]]
-            lines.extend([
-                "### Files to source",
-                "",
+            counted = (
                 f"{_count(len(src_missing_details), 'file')}, {len(req_src)} required."
                 + (
                     f" They come from {_count(entries, 'entry', 'entries')}: a file "
                     "declared with the same hash at several places is listed once."
                     if entries != len(src_missing_details) else ""
-                ),
-                "",
+                )
+            )
+            head = [
                 "| File | Destination | Expected | Emulator | Required | Affects platforms | Source ref |",
                 "|------|-------------|----------|----------|----------|------------------|-----------|",
-            ])
+            ]
+            rows: list[str] = []
             for m in sorted(
                 src_missing_details,
                 key=lambda x: (not x["required"], x["name"]),
@@ -6596,12 +6737,23 @@ def generate_gap_analysis(
                     f"[{_escape_tags(display)}](emulators/{key}.md)"
                     for display, key in zip(m["emulators"], m["emu_keys"])
                 )
-                lines.append(
+                rows.append(
                     f"| `{m['name']}` | {destination} | {expected} | {emulators} | {req} | "
                     f"{plat_badges} | "
                     f"{_source_ref_markdown(profiles[m['emu_keys'][0]], m['source_ref'])} |"
                 )
-            lines.append("")
+            lines.extend(["### Files to source", "", counted, ""])
+            if moved is None:
+                lines.extend([*head, *rows, ""])
+            else:
+                where = _list_pages(
+                    "gaps-files-to-source", "Files to source",
+                    f"{counted} Each is a file an emulator loads that no platform lists and "
+                    "the collection does not hold. Part of "
+                    "[What the packs do not hold](gaps.md#files-to-source).",
+                    head, [[row] for row in rows], moved,
+                )
+                lines.extend([f"Listed on {where}.", ""])
         if bundled_rows:
             emulators = sorted({emulator for emulator, _name in bundled_rows})
             lines.extend([
@@ -6641,7 +6793,7 @@ def generate_gap_analysis(
             )
         lines.append("")
 
-    lines.extend(["", f'<div class="rb-timestamp">Generated on {_timestamp()}.</div>'])
+    lines.extend(["", _date_line()])
     return "\n".join(lines) + "\n"
 
 
@@ -6769,7 +6921,7 @@ def _xref_platform_rows(config: dict, unique: dict) -> tuple[int, list[str]]:
                             if upstream.startswith("http") else (_escape_tags(upstream) or "-"))
         rows.append(
             f"| [{_escape_tags(p.get('emulator', emu_name))}](emulators/{emu_name}.md) "
-            f"| {CLS_LABELS.get(cls_raw, cls_raw)} | {sys_str or '-'} | {file_str} "
+            f"| {CLS_LABEL_ONE.get(cls_raw, cls_raw)} | {sys_str or '-'} | {file_str} "
             f"| {upstream_display} |"
         )
     return len(matched), rows
@@ -6851,7 +7003,7 @@ def _render_xref_by_upstream(
         members = by_upstream[key]
         cores = sorted(c for c, _url, _rest in members)
         classifications = sorted({
-            CLS_LABELS.get(unique[c].get("core_classification", "-"),
+            CLS_LABEL_ONE.get(unique[c].get("core_classification", "-"),
                            unique[c].get("core_classification", "-"))
             for c in cores
         })
@@ -6912,7 +7064,7 @@ def generate_cross_reference(
     lines.extend(_render_xref_by_platform(coverages, unique, moved))
     lines.extend(_render_xref_by_upstream(coverages, unique))
 
-    lines.extend(["", f"*Generated on {_timestamp()}*"])
+    lines.extend(["", _date_line()])
     return "\n".join(lines) + "\n"
 
 
@@ -7062,7 +7214,7 @@ def generate_wiki_data_model(db: dict, profiles: dict) -> str:
         "## Static API and bulk exports",
         "",
         "The website publishes versioned JSON, CSV and SQLite metadata generated "
-        "from these same structures. Start with the [Data & API](../data.md) "
+        "from these same structures. Start with the [Data and API](../data.md) "
         "catalog. Each downloadable artifact carries a SHA256 in "
         "`api/v1/catalog.json`.",
         "",
@@ -7348,11 +7500,9 @@ def _emulator_nav(profiles: dict) -> list:
     groups: dict[str, list[tuple[str, str]]] = {}
     for key, profile in nav_emulators(profiles).items():
         display = str(profile.get("emulator", key))
-        initial = display[:1].upper()
-        label = initial if "A" <= initial <= "Z" else "0 to 9"
-        groups.setdefault(label, []).append((display, f"emulators/{key}.md"))
+        groups.setdefault(emulator_initial(display), []).append((display, f"emulators/{key}.md"))
     nav: list = ["emulators/index.md"]
-    for label in sorted(groups, key=lambda g: (g != "0 to 9", g)):
+    for label in sorted(groups, key=lambda g: (g != INITIAL_DIGITS, g)):
         items = sorted(groups[label], key=lambda e: e[0].casefold())
         nav.append({label: [{display: path} for display, path in items]})
     return nav
@@ -7755,6 +7905,17 @@ def _generate(args: argparse.Namespace) -> None:
     print("Generating emulator pages...")
     _DATA_MEMBERS.update(data_directory_members())
     _DATA_REVISIONS.update(data_directory_revisions())
+    for key in sorted(profiles):
+        if profiles[key].get("type") in ("alias", "test"):
+            continue
+        display = str(profiles[key].get("emulator", key))
+        for tree in page_data_directories(key, profiles):
+            readers = _DATA_READERS.setdefault(str(tree.get("ref", "")), [])
+            if (key, display) not in readers:
+                readers.append((key, display))
+    for ref, members in _DATA_MEMBERS.items():
+        for stem, _names in data_tree_pages(ref, members):
+            PART_PAGES.add(f"emulators/{stem}.md")
     write_if_changed(
         str(docs / "emulators" / "index.md"), generate_emulators_index(profiles)
     )
@@ -7810,12 +7971,15 @@ def _generate(args: argparse.Namespace) -> None:
         write_if_changed(str(docs / f"{stem}.md"), tables_out_of_search(page))
 
     print("Generating gap analysis page...")
+    gap_pages: dict[str, str] = {}
     write_if_changed(
         str(docs / "gaps.md"),
         tables_out_of_search(generate_gap_analysis(
-            profiles, coverages, db, suppl_names, registry, gap_report
+            profiles, coverages, db, suppl_names, registry, gap_report, gap_pages,
         )) + reference_next(),
     )
+    for stem, page in gap_pages.items():
+        write_if_changed(str(docs / f"{stem}.md"), tables_out_of_search(page))
 
     print("Generating updated platform files page...")
     write_if_changed(
@@ -7828,12 +7992,15 @@ def _generate(args: argparse.Namespace) -> None:
 
     print("Generating dump provenance page...")
     provenance_report = build_report(db, load_provenance_snapshots())
+    provenance_pages: dict[str, str] = {}
     write_if_changed(
         str(docs / "provenance.md"),
         tables_out_of_search(
-            generate_provenance_page(db, provenance_report, load_derivable())
+            generate_provenance_page(db, provenance_report, load_derivable(), provenance_pages)
         ) + reference_next(),
     )
+    for stem, page in provenance_pages.items():
+        write_if_changed(str(docs / f"{stem}.md"), tables_out_of_search(page))
 
     # Wiki pages: copy manually maintained sources + generate dynamic ones
     print("Generating wiki pages...")
@@ -7895,7 +8062,7 @@ def _generate(args: argparse.Namespace) -> None:
         print(f"Removed {stale} page(s) nothing produced this run")
 
 
-from sitediagrams import prepare_page, unresolved_images  # noqa: E402,F401
+from sitediagrams import local_images, prepare_page, unresolved_images  # noqa: E402,F401
 from sitewrite import (  # noqa: E402,F401
     _produced,
     _record,
@@ -7927,6 +8094,7 @@ from siterender import (  # noqa: E402,F401
     system_name,
     card_page,
     console_href,
+    console_anchor,
     record_console_pages,
     record_emulator_cards,
     emulator_card_page,

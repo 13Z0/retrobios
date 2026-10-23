@@ -1,9 +1,12 @@
-"""A platform system links to the page of the folder its files live in.
+"""A system is placed by the folder its files live in, and a link to it
+goes to the section named after it.
 
 The site mapped each system by the bare name of its first file, the last
 console written winning: MiSTer's boot.rom sits under a dozen consoles, so
 wonderswan and tiger-game-com linked to VideoBrain, ngpc and tandy-coco to
-TI-99. Reads the repository: skips when the database is absent.
+TI-99. A link then followed that folder, not the name it printed:
+emerson-arcadia-2001 led to the Saturn and sega-naomi to the Dreamcast.
+Reads the repository: skips when the database is absent.
 """
 
 from __future__ import annotations
@@ -76,14 +79,14 @@ class OtherSpellingsOfOneSystem(unittest.TestCase):
         self.addCleanup(siterender.set_system_page_map, saved)
         siterender.set_system_page_map(mapping)
 
-    def test_a_profile_spelling_links_to_the_platform_page(self):
+    def test_a_profile_spelling_finds_the_platform_page(self):
         import siterender
 
         self._install({"sega-mega-drive": ("sega", "Mega Drive")})
-        self.assertIn("systems/sega.md#mega-drive", siterender._system_link("sega-megadrive"))
+        self.assertEqual(siterender._page_by_norm("sega-megadrive"), ("sega", "Mega Drive"))
         self._install({"sega-mega-drive": ("sega", "Mega Drive"),
                        "megadrive": ("other", "Elsewhere")})
-        self.assertEqual(siterender._system_link("sega-megadrive"), "sega-megadrive")
+        self.assertIsNone(siterender._page_by_norm("sega-megadrive"))
 
     def test_a_table_of_the_same_size_replaces_the_other_spellings(self):
         """The index of other spellings was kept while the table kept its
@@ -91,10 +94,9 @@ class OtherSpellingsOfOneSystem(unittest.TestCase):
         import siterender
 
         self._install({"sega-mega-drive": ("sega", "Mega Drive")})
-        self.assertIn("systems/sega.md#", siterender._system_link("sega-megadrive"))
+        self.assertEqual(siterender._page_by_norm("sega-megadrive"), ("sega", "Mega Drive"))
         self._install({"sega-mega-drive": ("other", "Elsewhere")})
-        self.assertEqual(siterender._system_link("sega-megadrive"),
-                         "[sega-megadrive](systems/other.md#elsewhere)")
+        self.assertEqual(siterender._page_by_norm("sega-megadrive"), ("other", "Elsewhere"))
 
     def test_a_system_only_profiles_name_is_placed_by_their_files(self):
         manufacturers = {"Commodore": {"PET": [{"name": "basic4.bin"}]}}
@@ -259,6 +261,73 @@ class SystemEmulatorsWhenNoIdMatches(unittest.TestCase):
             gs._system_emulators("sega-megadrive", self.index, [{"name": "airlbios.zip"}]),
             ["genesis"],
         )
+
+
+DOCS = REPO_ROOT / "website" / "src" / "content" / "docs"
+
+
+@unittest.skipUnless((REPO_ROOT / "database.json").is_file()
+                     and (DOCS / "systems" / "sony.md").is_file(), "site not generated")
+class EverySystemLinkLandsOnItsSection(unittest.TestCase):
+    """Every system id of every platform and profile, linked as the pages
+    link it, against the generated pages: the anchor exists on its target
+    page, and the heading there is the one system_name() reads."""
+
+    @classmethod
+    def setUpClass(cls):
+        import re
+
+        import siterender
+        import sitestarlight
+        from common import (
+            list_registered_platforms, load_database, load_emulator_profiles, load_platform_config,
+        )
+
+        db = load_database(str(REPO_ROOT / "database.json"))
+        profiles = load_emulator_profiles(str(REPO_ROOT / "emulators"), skip_aliases=False)
+        siterender.set_console_sections(gs._group_by_manufacturer(db), siterender.program_names(profiles))
+        platforms = REPO_ROOT / "platforms"
+        ids = {str(sid) for profile in profiles.values() for sid in profile.get("systems") or []}
+        for name in list_registered_platforms(str(platforms), include_archived=True):
+            ids |= {str(sid) for sid in load_platform_config(name, str(platforms)).get("systems") or {}}
+        cls.ids = sorted(ids)
+        cls.siterender = siterender
+        heading = re.compile(r"^##\s+(?:<img [^>]*>)?(?P<text>.+?)\s*\{\s*#(?P<id>[^\s}]+)[^}]*\}\s*$", re.M)
+        cls.headings: dict[str, dict[str, str]] = {}
+        for page in (DOCS / "systems").glob("*.md*"):
+            text = page.read_text(encoding="utf-8")
+            cls.headings[page.name.rsplit(".", 1)[0]] = {
+                m["id"]: m["text"] for m in heading.finditer(text)}
+            cls.headings[page.name.rsplit(".", 1)[0]].update(
+                dict.fromkeys(sitestarlight.heading_ids(text) - cls.headings[page.name.rsplit(".", 1)[0]].keys(), ""))
+
+    def test_every_anchor_exists_and_names_the_system(self):
+        import re
+        import urllib.parse
+
+        linked = 0
+        for sys_id in self.ids:
+            link = self.siterender._system_link(sys_id)
+            match = re.fullmatch(r"\[[^\]]*\]\(systems/(?P<page>[^)#]+)\.md(?:#(?P<anchor>[^)]+))?\)", link)
+            if not match:
+                self.assertEqual(link, sys_id)
+                continue
+            linked += 1
+            page = urllib.parse.unquote(match["page"])
+            with self.subTest(system=sys_id, link=link):
+                self.assertIn(page, self.headings)
+                if match["anchor"]:
+                    self.assertIn(match["anchor"], self.headings[page])
+                    _slug, console = self.siterender.system_section(sys_id)
+                    self.assertEqual(self.headings[page][match["anchor"]], console)
+        self.assertGreater(linked, 200)
+
+    def test_a_system_without_a_section_of_its_name_is_not_sent_elsewhere(self):
+        for sys_id in ("emerson-arcadia-2001", "sega-naomi"):
+            with self.subTest(system=sys_id):
+                link = self.siterender._system_link(sys_id)
+                self.assertNotIn("#saturn", link)
+                self.assertNotIn("#dreamcast", link)
 
 
 if __name__ == "__main__":

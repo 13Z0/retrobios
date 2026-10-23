@@ -189,12 +189,13 @@ def verify_entry_existence(
     resolve_status: str = "",
     platform_display: str = "",
 ) -> dict:
-    """RetroArch verification: path_is_valid(), a file that exists is OK."""
+    """RetroArch verification: path_is_valid(), a file that exists is OK.
+    The result names the collection file found, as the hash modes do."""
     name = file_entry.get("name", "")
     required = file_entry.get("required", True)
     if not local_path:
         return {"name": name, "status": Status.MISSING, "required": required}
-    result = {"name": name, "status": Status.OK, "required": required}
+    result = {"name": name, "status": Status.OK, "required": required, "path": local_path}
     if resolve_status == "hash_mismatch":
         # The frontend reads no bytes, so the file stays, and the declared hash
         # it contradicts is reported, as the pack does.

@@ -217,18 +217,6 @@
 .rb-stat-value { display: block; font-size: 1.25rem; font-weight: 700; font-variant-numeric: tabular-nums; }
 .rb-stat-label { display: block; font-size: 0.75rem; color: var(--rb-text-secondary); }
 
-/* Logos float right beside the opening paragraph */
-.sl-markdown-content img[align='right'] {
-	float: right;
-	width: 56px;
-	height: 56px;
-	object-fit: contain;
-	margin: 0 0 0.6rem 1rem;
-	padding: 4px;
-	border: 1px solid var(--rb-border);
-	border-radius: 4px;
-	background: #fff;
-}
 .sl-markdown-content img[src*='assets/logos/'] { padding: 2px; border-radius: 2px; background: #fff; }
 /* A system icon beside a console heading holds its box before it loads:
    it pushed every card below it down once it arrived. */
@@ -357,10 +345,38 @@
 .rb-meta-card td a { word-break: normal; }
 .rb-meta-card td:first-child { font-weight: 600; color: var(--rb-text-secondary); width: 11rem; }
 
-/* Cross-reference by upstream: the address column wraps instead of pushing
-   the cores and platforms off screen. */
-.sl-markdown-content .sl-heading-wrapper:has(> #by-upstream-emulator) + section td:has(a[href^='http']) {
+/* Cross-reference by upstream, the last table of its page: the address
+   column wraps instead of pushing the cores and platforms off screen. */
+.sl-markdown-content .sl-heading-wrapper:has(> #by-upstream-emulator) ~ section td:has(a[href^='http']) {
 	max-width: 22rem;
+	overflow-wrap: anywhere;
+}
+/* Beside the column, the five columns share its width: at 1440 px the
+   Platforms column sat 100 px past the edge. */
+@media (min-width: 50rem) {
+	.sl-markdown-content .sl-heading-wrapper:has(> #by-upstream-emulator) ~ section table {
+		display: table;
+		table-layout: fixed;
+		width: 100%;
+	}
+	.sl-markdown-content .sl-heading-wrapper:has(> #by-upstream-emulator) ~ section td {
+		overflow-wrap: anywhere;
+	}
+	.sl-markdown-content .sl-heading-wrapper:has(> #by-upstream-emulator) ~ section th:nth-child(1) { width: 25%; }
+	.sl-markdown-content .sl-heading-wrapper:has(> #by-upstream-emulator) ~ section th:nth-child(2) { width: 26%; }
+	.sl-markdown-content .sl-heading-wrapper:has(> #by-upstream-emulator) ~ section th:nth-child(3) { width: 15%; }
+	.sl-markdown-content .sl-heading-wrapper:has(> #by-upstream-emulator) ~ section th:nth-child(4) { width: 20%; }
+	.sl-markdown-content .sl-heading-wrapper:has(> #by-upstream-emulator) ~ section th:nth-child(5) { width: 14%; }
+}
+
+/* The id a platform writes for a system, beside the name in its heading:
+   smaller and quieter than the name, set as code. */
+.sl-markdown-content :is(h2, h3) small {
+	margin-left: 0.4em;
+	font-family: var(--sl-font-mono);
+	font-size: 0.65em;
+	font-weight: 400;
+	color: var(--rb-text-secondary);
 	overflow-wrap: anywhere;
 }
 

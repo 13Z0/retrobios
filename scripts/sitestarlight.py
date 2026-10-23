@@ -406,6 +406,7 @@ def finalize_page(
     structured: dict,
     terms: dict[str, str],
     search: bool = True,
+    logo: str = "",
 ) -> tuple[str, str]:
     """The Starlight file for a page body: its path under the content
     collection and its text."""
@@ -446,6 +447,8 @@ def finalize_page(
         front["slug"] = stem
     if level:
         front["level"] = level
+    if logo:
+        front["logo"] = logo
     if weight:
         front["searchWeight"] = weight
     if rel == NOT_FOUND:

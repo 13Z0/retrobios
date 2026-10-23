@@ -330,7 +330,9 @@ def setups() -> tuple[str, ...]:
 
 def setups_named(named: list[str]) -> str:
     """*named*, then how many other setups there are: "A, B and 15 more"."""
-    others = len(setups()) - len(named)
+    from siteguides import setup_count
+
+    others = setup_count() - len(named)
     return ", ".join(named) + (f" and {others} more" if others else "")
 
 
