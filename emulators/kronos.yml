@@ -6,7 +6,7 @@ source_branch: kronos
 upstream: "https://github.com/FCare/Kronos"
 profiled_date: "2026-03-24"
 source_commit: "3791ffb2221fda61d70aec5cca376418caf05669"
-upstream_commit: "d0384bc33aad06bfa9cf5cd308c4bd7ae6cfc814"
+upstream_commit: "d451a55253e2e75bcef704ec8ade2085d298212c"
 core_version: "v2.6.0"
 display_name: "Sega - Saturn/ST-V (Kronos)"
 cores:

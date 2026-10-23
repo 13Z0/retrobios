@@ -4,7 +4,7 @@ core_classification: game_engine
 source: "https://github.com/FWGS/xash3d-fwgs"
 upstream: "https://github.com/FWGS/xash3d-fwgs"
 profiled_date: "2026-10-04"
-source_commit: "1414fc281b6dc986378ea7ae35086c62d782a865"
+source_commit: "d6b54aaf6c1d8518e08404a842f3f6ee02cef3cc"
 core_version: "0.21+git"
 display_name: "Xash3D FWGS"
 cores: [xash3d_fwgs, xash3d]

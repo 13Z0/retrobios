@@ -5,7 +5,7 @@ source: "https://github.com/libretro/jollycv"
 upstream: "https://gitlab.com/jgemu/jollycv"
 profiled_date: "2026-09-17"
 source_commit: "2790d59c7194d29e83f8603ffd7e9da17f11575e"
-upstream_commit: "18875ffdb1891cec04217cf02928af563a3af9d8"
+upstream_commit: "3caacb22143543d5c7de4f3208def645a2ec0ab5"
 core_version: "2.1.0"
 display_name: "ColecoVision/CreatiVision/My Vision (JollyCV)"
 cores:

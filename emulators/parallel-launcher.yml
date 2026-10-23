@@ -5,7 +5,7 @@ source: "https://gitlab.com/parallel-launcher/parallel-launcher"
 upstream: "https://gitlab.com/parallel-launcher/parallel-n64"
 profiled_date: "2026-08-08"
 source_commit: "8dc2a83770c57bc00e1b1fae0aed71f2120cc875"
-upstream_commit: "11574ac28d27faaaef4b5bc3c1ca50fb2ed98b83"
+upstream_commit: "a9028b23bd5ee8b465eefc64320fd7701f3430fa"
 core_version: "9.0.5"
 display_name: "Nintendo - Nintendo 64 (Parallel Launcher)"
 cores:

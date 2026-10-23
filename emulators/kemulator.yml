@@ -5,7 +5,7 @@ source: "https://github.com/shinovon/KEmulator"
 upstream: "https://github.com/shinovon/KEmulator"
 author: "shinovon"
 profiled_date: "2026-08-11"
-source_commit: "769149212e167512b7792953f7646e543d29b9af"
+source_commit: "f7e6bf9f2da4d3620ed08cdda1de696d87a5dc0e"
 core_version: "2.21.5"
 display_name: "Mobile - J2ME (KEmulator nnmod)"
 cores:

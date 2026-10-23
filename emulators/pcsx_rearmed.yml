@@ -5,6 +5,7 @@ source: "https://github.com/libretro/pcsx_rearmed"
 upstream: "https://github.com/notaz/pcsx_rearmed"
 profiled_date: "2026-03-25"
 source_commit: "c8816799b50388e61cfe237fe2cdbb7d8175f20a"
+upstream_commit: "8b6c163575e6ce9a0537553e0d4ed4225315955e"
 core_version: "r25"
 display_name: "Sony - PlayStation (PCSX ReARMed)"
 cores: [pcsx_rearmed, pcsx_rearmed_neon, pcsx_rearmed_interpreter, "pcsx_rearmed_32b"]

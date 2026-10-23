@@ -4,7 +4,7 @@ core_classification: official_port
 source: "https://github.com/libretro/mame"
 upstream: "https://github.com/mamedev/mame"
 profiled_date: "2026-03-24"
-source_commit: "9069f39340f2d2b1795df8e71bb1d3d0fbc76598"
+source_commit: "5f5a07748ce5c239c4118463ce8e6473743d4859"
 upstream_commit: "f34f02505e32c1993c6a782b6814232cbfc74e36"
 core_version: "0.289"
 display_name: "Arcade (MAME/Arcade)"

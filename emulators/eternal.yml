@@ -4,7 +4,7 @@ core_classification: community_fork
 source: "https://codeberg.org/iyzsong/eternal-libretro"
 upstream: "https://github.com/adriancable/eternal"
 source_commit: "13adf143aea822ebc1ee23722a80e93a7979e4c9"
-upstream_commit: "17c8ab87de7f308f48f4990ed62c48b86173797d"
+upstream_commit: "23d4d6c7c9f930fa72568ce795c9147af09d56ee"
 profiled_date: "2026-09-17"
 core_version: "0.0"
 display_name: "Eternal Computer"

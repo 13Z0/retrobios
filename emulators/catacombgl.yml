@@ -4,7 +4,7 @@ core_classification: game_engine
 source: "https://github.com/ArnoAnsems/CatacombGL"
 upstream: "https://github.com/ArnoAnsems/CatacombGL"
 profiled_date: "2026-10-04"
-source_commit: "7d3b859a17f7edf02ce47f2d22e8b291e4ef0c91"
+source_commit: "dd7d337fff89c32285b096190f6419828860bfe0"
 core_version: "0.5.7 Beta"
 display_name: "Catacomb 3-D (CatacombGL)"
 cores: [catacombgl]

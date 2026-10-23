@@ -6,7 +6,7 @@ upstream: "https://github.com/xemu-project/xemu"
 author: "rfandango"
 profiled_date: "2026-08-11"
 source_commit: "e64e336d27dc8a56b67f441ec36bfddc1379cb6e"
-upstream_commit: "26fcbe54f17e496bdf530dad9f237e74e2f943fc"
+upstream_commit: "25e1ee2fd59a451f2ab57e825b4f8a5414220c8b"
 core_version: "0.3.1"
 display_name: "Microsoft - Xbox (hakuX)"
 cores:

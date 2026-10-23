@@ -4,6 +4,7 @@ core_classification: community_fork
 source: "https://github.com/StillJC/ArcadeDuck"
 upstream: "https://github.com/stenzek/duckstation"
 source_commit: "26caf9cd27915a331fa32dc174489383b308ecad"
+upstream_commit: "938c6d2a03e523d0e4275aa753f289a987bcb016"
 profiled_date: "2026-10-20"
 core_version: "latest (26caf9c)"
 display_name: "Arcade - Sony ZN-1, Namco System 11, Konami GV/GQ (ArcadeDuck)"
