@@ -1,15 +1,15 @@
  RetroBIOS: Options
 
- > Preferred regions: north-america, ja
+ > Preferred regions: North America, Ja
    Leave out game data: no
    Installed cores only: no (1 found)
    Cores: all
    Parallel downloads: 8
-   BIOS folder: ~/.config/retroarch/sys
+   BIOS folder: ~/.config...ch/system
    Preview the file list
    Show the command line
 
  Sets --region
 
 
- A/Enter Change  B/Esc Back
+ A Open  B Back  <> Set  ? Help

@@ -9,4 +9,4 @@
 
 
  2 of 3 systems: 4 files, 1.0 MB
- A/Enter Continue  B/Esc Back
+ A Continue  B Back  X Tick  ? Help

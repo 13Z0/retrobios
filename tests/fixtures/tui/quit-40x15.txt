@@ -12,4 +12,4 @@
 
 
 
- A/Enter Choose  B/Esc Stay
+ A/Enter Quit  B/Esc Stay

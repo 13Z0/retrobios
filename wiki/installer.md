@@ -92,8 +92,10 @@ play, with the total to download under the list. **Options** sets the
 preferred regions, game data, the installed cores only, the cores, the parallel
 downloads and the folder. Each row names the option it sets, and **Show the
 command line** gives the same choice as one command for a script. **Preview the
-file list** shows what would be downloaded and writes nothing. When a choice
-changes the plan, the exact count appears before the install starts.
+file list** shows what would be downloaded and writes nothing. Back on the plan
+after a change of options, the folder is checked again, so its numbers are the
+exact ones for the new choice. Ticked systems get their exact count before the
+install starts.
 
 | Action | Keyboard | Controller |
 |--------|----------|------------|
@@ -106,14 +108,19 @@ changes the plan, the exact count appears before the install starts.
 | Options | `o`, Tab | Y |
 | Filter a long list | `/` then type | the Filter row |
 | Keys of the screen | `?`, F1 | |
+| Stop an install | Esc, `q`, Ctrl+C | B, Start+Select |
 | Quit | `q`, Ctrl+C | B on the first screen |
 
-The bottom line of each screen names its keys, with both spellings (`A/Enter`,
-`B/Esc`), since A and B swap places between controller layouts. On the regions
-screen, Left and Right move the region under the cursor up and down the order of
-preference. During the download, Ctrl+C stops after the files in progress, a
-second Ctrl+C stops at once, and the result says how many were installed. The result stays printed in the
-terminal once the screen closes, with the command that repeats the run.
+The bottom line of each screen names what A does on the row under the cursor,
+with both spellings (`A/Enter`, `B/Esc`), since A and B swap places between
+controller layouts. A narrow screen shortens them to `A`, `B` and `X`. On the
+regions screen, Left and Right move the region under the cursor up and down the
+order of preference. During the download, a stop waits for the files in
+progress, and a second one stops at once. Start+Select on a handheld ends the
+installer with a signal (SIGTERM), which stops it the same way. Either way the
+result says how many files were installed, and it stays printed in the terminal
+once the screen closes, with the command that repeats the run. A run that failed
+keeps its log and names it, and every other run leaves nothing behind.
 
 It opens only for an install, at a terminal of at least 40 columns and 12 rows
 that is not `TERM=dumb`. A listing, `--check`, `--dry-run`, `--events`,
@@ -1099,6 +1106,7 @@ kind, and each kind has exactly the keys below, in this order. The schema is
 | `start` | `schema`, `installer`, `mode` | First line. `schema` is 1, `installer` the identity `--version` prints, `mode` one of `install`, `check`, `dry-run`, `list` |
 | `detect` | `os`, `os_name`, `platforms` | Once the platforms are known. `os_name` comes from `/etc/os-release`. `platforms` lists `{platform, name, bios_dir}`, and is empty when nothing supported was found |
 | `error` | `stage`, `reason`, `platform`, `message` | The file list could not be read (`stage` is `manifest`). `reason` is `network`, `not_found` or `invalid`, `clock` when the server's certificate was refused and the system clock reads a date before the installer was written, or `no_ca` when the machine holds no list of trusted certificates (`SSL_CERT_FILE` names one). `message` says it in words |
+| `checking` | `files_done`, `files_total` | While the files already in the folder are read and hashed, at most every half second and once at the end. `files_total` counts the files found in place |
 | `file` | `platform`, `dest`, `systems`, `size`, `state` | Each file of the list after the check. `state` is `present` (hash verified), `wrong_hash` or `missing` |
 | `system` | `platform`, `system`, `name`, `files`, `present`, `missing`, `wrong_hash`, `bytes_needed` | Each system, sorted by id, and with `--system` only the systems named. Files with no system count under `other`. `name` is the platform's own name for it |
 | `check` | `platform`, `name`, `bios_dir`, `files`, `present`, `missing`, `wrong_hash`, `bytes_needed`, `data_missing`, `not_installable` | The platform's totals. `data_missing` counts data-tree files to fetch, `not_installable` the files the collection cannot supply |

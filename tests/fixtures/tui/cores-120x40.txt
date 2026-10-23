@@ -37,4 +37,4 @@
 
 
 
- A/Enter Done  B/Esc Back  X/Space Tick  ? Help
+ A/Enter Filter  B/Esc Back  X/Space Tick  ? Help

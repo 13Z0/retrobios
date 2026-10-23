@@ -2,7 +2,7 @@
 
  Each row is an option of the command line, named on the right.
 
- > Preferred regions: north-america, japan                             --region
+ > Preferred regions: North America, Japan                             --region
    Leave out game data: no                                       --no-game-data
    Installed cores only: no (1 found)                         --installed-cores
    Cores: all                                                            --core
@@ -21,4 +21,4 @@
 
 
 
- A/Enter Change  B/Esc Back  Left/Right Set  ? Help
+ A/Enter Open  B/Esc Back  Left/Right Set  ? Help

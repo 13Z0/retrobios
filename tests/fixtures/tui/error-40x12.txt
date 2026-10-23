@@ -3,10 +3,10 @@
    Could not fetch the file list for
      retroarch after 3 attempts: [Errno
      -2] Name or service not known
-
- > Try again
-   Choose another setup or folder
+   Address:
+     https://raw.githubusercontent.com/
+     Abdess/retrobios/main/install/
+     retroarch.json
+ > Choose another setup or folder
    Quit
-
-
- A/Enter Choose  B/Esc Back
+ A/Enter Back  B/Esc Back

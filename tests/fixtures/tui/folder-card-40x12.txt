@@ -9,4 +9,4 @@
 
 
 
- A/Enter Choose  B/Esc Back  ? Help
+ A/Enter Browse  B/Esc Back  ? Help

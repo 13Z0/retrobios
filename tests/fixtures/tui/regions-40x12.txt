@@ -5,8 +5,8 @@
    region, the best one found is
    installed.
 
- > [1] north-america
-   [ ] japan
+ > [1] North America
+   [ ] Japan
 
 
- A/Enter Tick  B/Esc Done
+ A Tick  B Done  <> Order  ? Help

@@ -3,7 +3,7 @@
  The folder for RetroArch:
  > ~/bios_
 
- Quotes are removed, ~ and variables are expanded.
+ Ctrl-U clears. Quotes are removed, ~ and variables are expanded.
 
 
 
@@ -37,4 +37,4 @@
 
 
 
- Enter Use this folder  Esc Back
+ Enter Use this folder  Esc Back  Ctrl-U Clear

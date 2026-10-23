@@ -1,12 +1,12 @@
  RetroBIOS: Which setup?
 
    Filter (/ to type)
- > RetroArch
+ > RetroArch        muOS, JE...firmware
    Batocera
    Recalbox
    RetroBat
    EmuDeck
    Lakka
    RetroDECK
- 1-8 of 19
- A/Enter Choose  B/Esc Back  / Filter
+ 1-7 of 18
+ A Choose  B Back  / Filter  ? Help

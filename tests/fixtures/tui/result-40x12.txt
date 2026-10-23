@@ -8,5 +8,5 @@
    /home/user/.config/retroarch/
    retrobios-backup/2026-10-23_1200
  To put them back: python3 install.py
- 1-8 of 20
+ 1-4 of 9
  A/Enter Exit  Up/Down Scroll

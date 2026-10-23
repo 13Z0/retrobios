@@ -9,4 +9,4 @@
    Choose systems
    Options
    Quit
- A/Enter Install  B/Esc Back
+ A Install  B Back  Y Options  ? Help

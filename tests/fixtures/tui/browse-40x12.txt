@@ -9,4 +9,4 @@
    system/
 
 
- A/Enter Open  B/Esc Back  ? Help
+ A Use this folder  B Back  ? Help

@@ -2,8 +2,8 @@
 
  Found on this machine:
 
- > RetroArch                                         ~/.config/retroarch/system
-   KNULLI (Batocera files)                                       /userdata/bios
+ > RetroArch
+   KNULLI (Batocera files)
    Another setup or folder
 
  BIOS folder: /home/user/.config/retroarch/system
