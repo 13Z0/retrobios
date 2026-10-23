@@ -2578,6 +2578,39 @@ class AuditRoundFour(unittest.TestCase):
         self.assertIn(line, install.tui_outcome(state)[1])
 
 
+class NarrowSystemNames(unittest.TestCase):
+    """At 40 columns the size column took half the line: Game Boy, Game Boy
+    Advance and Game Boy Color all read "Nintendo Gam"."""
+
+    def test_the_name_comes_before_the_size(self):
+        state = checked_state()
+        names = {"nintendo-gb": "Nintendo Game Boy", "nintendo-gba": "Nintendo Game Boy Advance",
+                 "nintendo-gbc": "Nintendo Game Boy Color",
+                 "videoton-tvc": "Videoton TV Computer"}
+        state.manifest = {**state.manifest, "system_titles": names}
+        state.systems = [
+            {"event": "system", "platform": "retroarch", "system": system, "name": system,
+             "files": 30, "present": 0, "missing": 30, "wrong_hash": 0,
+             "bytes_needed": 30 * 1024 * 1024}
+            for system in names]
+        state.files = [{"event": "file", "platform": "retroarch", "dest": f"s{n}.bin",
+                        "systems": list(names), "size": 1024, "state": "missing"}
+                       for n in range(27)]
+        state.ticked = set(names)
+        state.stack.append("systems")
+        for cols, rows in ((40, 15), (40, 12), (52, 15)):
+            with self.subTest(size=f"{cols}x{rows}"):
+                text = "\n".join(install.tui_view(state, cols, rows))
+                for name in names.values():
+                    self.assertIn(name, text)
+                self.assertNotIn("...", text)
+                for line in text.splitlines():
+                    self.assertLessEqual(install.cell_width(line), cols)
+        # Wide, the full form stays.
+        self.assertIn("3 files, 30.0 MB + 27 shared",
+                      "\n".join(install.tui_view(state, 120, 40)))
+
+
 class Crash(unittest.TestCase):
     """An unexpected error ends on one sentence and a log, never a traceback."""
 

@@ -10178,6 +10178,9 @@ class TuiRow(NamedTuple):
     right: str = ""
     value: object = None
     style: str = ""
+    # Shorter forms of right, longest first, for a narrow screen: the label
+    # keeps its room before the right-hand text does.
+    narrow: tuple = ()
 
 
 # Screens that scroll text instead of listing rows.
@@ -10358,16 +10361,21 @@ def _system_rows(state: TuiState) -> list[TuiRow]:
         need = _needed(row)
         count, size = shared.get(row["system"], (0, 0))
         own, own_size = need - count, row["bytes_needed"] - size
+        narrow: tuple = ()
         if not need:
             right = "in place"
         elif not count:
             right = f"{_plural(need, 'file')}, {format_size(row['bytes_needed'])}"
+            narrow = (format_size(row["bytes_needed"]),)
         elif not own:
             right = f"{_plural(need, 'file')}, {format_size(size)}, all shared"
+            narrow = (f"{format_size(size)}, shared", format_size(size))
         else:
             right = f"{_plural(own, 'file')}, {format_size(own_size)} + {count} shared"
+            narrow = (f"{format_size(own_size)} + {count} shared",
+                      f"{format_size(own_size)} + {count} sh.", format_size(own_size))
         rows.append(TuiRow("system", f"{box} {label}", right, row["system"],
-                           "" if need else "dim"))
+                           "" if need else "dim", narrow))
     return rows
 
 
@@ -11292,8 +11300,20 @@ _ROW_VERBS = {
 
 
 def _row_line(row: TuiRow, focused: bool, width: int) -> TuiLine:
-    right = middle(row.right, max(12, width // 2)) if row.right else ""
-    text = _columns(("> " if focused else "  ") + row.label, right, width)
+    left = ("> " if focused else "  ") + row.label
+    if row.narrow:
+        # The name first: the longest right-hand form that leaves it whole,
+        # else none at all when that is what keeps it whole. Nintendo Game
+        # Boy, Game Boy Advance and Game Boy Color read alike once cut.
+        whole = width - cell_width(left) - 2
+        right = next((form for form in (row.right, *row.narrow)
+                      if cell_width(form) <= whole), "")
+        if not right and cell_width(left) > width:
+            right = row.narrow[-1]
+        text = _columns(left, right, width)
+    else:
+        right = middle(row.right, max(12, width // 2)) if row.right else ""
+        text = _columns(left, right, width)
     return _styled(text, "focus" if focused else row.style)
 
 
