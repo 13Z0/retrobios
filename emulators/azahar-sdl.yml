@@ -13,6 +13,12 @@ built_by: [knulli]
 systems:
   - nintendo-3ds
 
+data_root:
+  linux:
+    path: "$XDG_DATA_HOME/azahar-emu, else ~/.local/share/azahar-emu"
+    source_ref: "src/common/file_util.cpp:783-800, 844-855, src/common/common_paths.h:44-45"
+    note: "A user folder in the working directory is used instead when it exists."
+
 notes: |
   Fork of Azahar by johndoe6345789 that keeps the SDL2 frontend
   (src/citra_sdl) beside a libretro port. ENABLE_SDL2_FRONTEND links it into
@@ -20,9 +26,8 @@ notes: |
   ref: CMakeLists.txt:101, src/CMakeLists.txt:196-206, src/citra_meta/CMakeLists.txt:1-7,
   src/citra_meta/CMakeLists.txt:47
 
-  Data dir: azahar-emu under XDG_DATA_HOME (Azahar on Windows and macOS), with
-  citra-emu and lime3ds-emu kept as legacy locations. A user/ directory in the
-  working directory takes precedence. sysdata/ and nand/ sit under it, and the
+  Data dir: the one data_root names, with citra-emu and lime3ds-emu kept as
+  legacy locations. sysdata/ and nand/ sit under it, and the
   SDL2 config can move nand/ with use_custom_storage and nand_directory.
   ref: src/common/common_paths.h:19-49, src/common/file_util.cpp:844-899,
   src/common/file_util.cpp:902-904, src/citra_sdl/config.cpp:217-222
