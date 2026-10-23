@@ -5,7 +5,7 @@ source: "https://github.com/TASEmulators/freej2me-plus"
 upstream: "https://github.com/hex007/freej2me"
 profiled_date: "2026-10-04"
 source_commit: "3933e75ef927a95eab9f5e065f0b76dabf336069"
-upstream_commit: "eb4ac87e9a0b212ba701691eb67ee4892b2b1173"
+upstream_commit: "8b9bc8a19baf26e3d92f88934a64a32f1cbc2795"
 core_version: "1.53"
 display_name: "Mobile - J2ME (FreeJ2ME-Plus)"
 cores:
