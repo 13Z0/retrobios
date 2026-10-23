@@ -31,7 +31,7 @@ import sys
 import urllib.error
 import urllib.parse
 import urllib.request
-from collections.abc import Callable
+from collections.abc import Callable, Iterator
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -6340,10 +6340,6 @@ def generate_which_pack() -> str:
     return "\n".join(lines) + "\n"
 
 
-# Letters each alphabetical group of the emulators navigation covers.
-EMULATOR_NAV_GROUPS = ("ABC", "DEF", "GHIJKL", "MNO", "PQR", "STU", "VWXYZ")
-
-
 def nav_emulators(profiles: dict) -> dict[str, dict]:
     """The emulators listed in the navigation, by key.
 
@@ -6359,34 +6355,20 @@ def nav_emulators(profiles: dict) -> dict[str, dict]:
 
 
 def _emulator_nav(profiles: dict) -> list:
-    """Emulators in alphabetical groups ("A to C"), then by initial.
-
-    Material writes the open section of the navigation into every page: a
-    group of 96 emulators put 65 KB of links before each emulator page's
-    content. One initial is at most 60.
-    """
-    groups: dict[str, dict[str, list[tuple[str, str]]]] = {}
+    """Emulators by initial (A, B, C), one level deep. A name that does not
+    open on a letter goes under "0 to 9". The route middleware draws every
+    initial but the open one as a single link, so a page carries the links
+    of one initial only."""
+    groups: dict[str, list[tuple[str, str]]] = {}
     for key, profile in nav_emulators(profiles).items():
         display = str(profile.get("emulator", key))
         initial = display[:1].upper()
-        letters = next((g for g in EMULATOR_NAV_GROUPS if initial in g), "")
-        label = f"{letters[0]} to {letters[-1]}" if letters else "0 to 9"
-        sub = initial if letters else label
-        groups.setdefault(label, {}).setdefault(sub, []).append((display, f"emulators/{key}.md"))
-
-    def entries(items: list[tuple[str, str]]) -> list[dict]:
-        return [{d: path} for d, path in sorted(items, key=lambda e: e[0].casefold())]
-
-    order = ["0 to 9"] + [f"{g[0]} to {g[-1]}" for g in EMULATOR_NAV_GROUPS]
+        label = initial if "A" <= initial <= "Z" else "0 to 9"
+        groups.setdefault(label, []).append((display, f"emulators/{key}.md"))
     nav: list = ["emulators/index.md"]
-    for label in order:
-        if label not in groups:
-            continue
-        subs = groups[label]
-        if len(subs) == 1:
-            nav.append({label: entries(next(iter(subs.values())))})
-        else:
-            nav.append({label: [{sub: entries(subs[sub])} for sub in sorted(subs)]})
+    for label in sorted(groups, key=lambda g: (g != "0 to 9", g)):
+        items = sorted(groups[label], key=lambda e: e[0].casefold())
+        nav.append({label: [{display: path} for display, path in items]})
     return nav
 
 
@@ -6435,16 +6417,20 @@ def _h1(markdown: str) -> str:
     return match.group(1).strip() if match else ""
 
 
-def wiki_nav(wiki_dir: Path | None = None) -> dict[str, list[tuple[int, object]]]:
+NavPlace = tuple[int, object, str]
+
+
+def wiki_nav(wiki_dir: Path | None = None) -> dict[str, list[NavPlace]]:
     """Wiki pages by tab, each at the place its front matter gives.
 
     A page states `level:` (its tab), `order:` (its place in the tab, the
     smallest first) and, when the navigation names it otherwise than its
-    first heading, `nav_title:`. `nav: false` keeps a page out on purpose.
-    A page that says neither raises, naming what to add.
+    first heading, `nav_title:`. `group:` files it under a labelled group
+    of its tab. `nav: false` keeps a page out on purpose. A page that says
+    neither raises, naming what to add.
     """
     wiki_dir = Path(wiki_dir) if wiki_dir else _REPO_ROOT / WIKI_SRC_DIR
-    tabs: dict[str, list[tuple[int, object]]] = {level: [] for level in TABS}
+    tabs: dict[str, list[NavPlace]] = {level: [] for level in TABS}
     for page in sorted(wiki_dir.glob("*.md")):
         where = f"{WIKI_SRC_DIR}/{page.name}"
         text = page.read_text(encoding="utf-8")
@@ -6466,13 +6452,40 @@ def wiki_nav(wiki_dir: Path | None = None) -> dict[str, list[tuple[int, object]]
             )
         path = f"{WIKI_SRC_DIR}/{page.name}"
         if page.name == "index.md":
-            tabs[level].append((order, path))
+            tabs[level].append((order, path, ""))
             continue
         title = meta.get("nav_title") or _h1(text)
         if not title:
             raise NavError(f"{where}: no `# ` heading and no `nav_title:` to name it")
-        tabs[level].append((order, {str(title): path}))
+        group = meta.get("group") or ""
+        if not isinstance(group, str):
+            raise NavError(f"{where}: `group:` names a group of the {TABS[level]} tab (found {group!r})")
+        tabs[level].append((order, {str(title): path}, group))
     return tabs
+
+
+def _overview_anchors(nav: list, docs: Path) -> dict[str, set[str]]:
+    """The heading ids of each overview page the navigation names, where a
+    group of the sidebar finds its own section."""
+    def overviews(value: object) -> Iterator[str]:
+        if isinstance(value, str):
+            yield value
+        elif isinstance(value, list):
+            for entry in value:
+                yield from overviews(entry)
+        elif isinstance(value, dict):
+            for child in value.values():
+                if isinstance(child, list):
+                    yield from overviews(child)
+
+    anchors: dict[str, set[str]] = {}
+    for rel in overviews(nav):
+        stem = rel.rsplit(".", 1)[0]
+        page = next((docs / f"{stem}{suffix}" for suffix in (".md", ".mdx")
+                     if (docs / f"{stem}{suffix}").is_file()), None)
+        if page:
+            anchors[rel] = sitestarlight.heading_ids(page.read_text(encoding="utf-8"))
+    return anchors
 
 
 def _nav_target(entry: object) -> str:
@@ -6495,8 +6508,10 @@ def generate_nav(
 
     The generated pages hold the places below. A wiki page takes its own
     place from its front matter (wiki_nav), so a new page needs no edit here.
+    A group of a tab sits at the place of its first page, its pages in their
+    own order.
     """
-    generated: dict[str, list[tuple[int, object]]] = {
+    generated: dict[str, list[tuple]] = {
         "start": [(0, "index.md"), (20, {"Get your files": "which-pack.md"})],
         "setup": [(10 * i, item)
                   for i, item in enumerate(_platform_nav(coverages, registry or {}))],
@@ -6506,27 +6521,40 @@ def generate_nav(
             (20, {"Emulators": _emulator_nav(profiles)}),
         ],
         "reference": [
-            (20, {"What the packs do not hold": "gaps.md"}),
-            (30, {"Cores by platform": "cross-reference.md"}),
-            (40, {"Dump provenance": "provenance.md"}),
-            (50, {"Updated platform files": "exports.md"}),
-            (60, {"Data and API": "data.md"}),
-            (70, {"Find a file": "files/index.md"}),
-            (80, {"Data model": "wiki/data-model.md"}),
+            # Find a file first: the one tool a reader comes to with a file in hand.
+            (5, {"Find a file": "files/index.md"}, "Checking files"),
+            (20, {"What the packs do not hold": "gaps.md"}, "Checking files"),
+            (30, {"Cores by platform": "cross-reference.md"}, "Checking files"),
+            (40, {"Dump provenance": "provenance.md"}, "Checking files"),
+            (60, {"Data and API": "data.md"}, "Data"),
+            (64, {"Data model": "wiki/data-model.md"}, "Data"),
+            (68, {"Updated platform files": "exports.md"}, "Data"),
         ],
         "contribute": [(0, "contributing.md")],
     }
     wiki = wiki_nav(wiki_dir)
     nav = []
     for level, label in TABS.items():
-        entries = sorted(generated[level] + wiki[level], key=lambda item: item[0])
-        for (first, a), (second, b) in zip(entries, entries[1:]):
+        places = [(place[0], place[1], place[2] if len(place) > 2 else "")
+                  for place in generated[level]]
+        entries = sorted(places + wiki[level], key=lambda item: item[0])
+        for (first, a, _), (second, b, _) in zip(entries, entries[1:]):
             if first == second:
                 raise NavError(
                     f"{label} tab: {_nav_target(a)} and {_nav_target(b)} both take "
                     f"order {first}; give one of them a free number"
                 )
-        nav.append({label: [entry for _order, entry in entries]})
+        items: list = []
+        groups: dict[str, list] = {}
+        for _order, entry, group in entries:
+            if not group:
+                items.append(entry)
+            elif group in groups:
+                groups[group].append(entry)
+            else:
+                groups[group] = [entry]
+                items.append({group: groups[group]})
+        nav.append({label: items})
     return nav
 
 
@@ -6859,7 +6887,11 @@ def _generate(args: argparse.Namespace) -> None:
     generated = site / "src" / "generated"
     generated.mkdir(parents=True, exist_ok=True)
     write_if_changed(str(generated / "sidebar.json"),
-                     json.dumps(sitestarlight.sidebar(nav, present), indent=1) + "\n")
+                     json.dumps(sitestarlight.sidebar(nav, present, _overview_anchors(nav, docs)),
+                                indent=1) + "\n")
+    write_if_changed(str(generated / "redirects.json"),
+                     json.dumps(sitestarlight.redirects(profiles, present), indent=1,
+                                sort_keys=True) + "\n")
     write_if_changed(str(generated / "lastmod.json"),
                      json.dumps(dict(sorted(lastmod.items())), indent=1) + "\n")
     system_ids = set(_system_page_map) | {
