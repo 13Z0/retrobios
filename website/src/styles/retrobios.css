@@ -333,6 +333,32 @@
 .sl-markdown-content table { font-variant-numeric: tabular-nums; }
 .sl-markdown-content table th { font-weight: 600; }
 .sl-markdown-content table[role='region']:focus-visible { outline: 2px solid var(--rb-link); outline-offset: 2px; }
+/* A hash in a table cell is its first 12 characters, the full value in the
+   title: one line, dotted to say there is more on hover. */
+.sl-markdown-content td code[title] {
+	white-space: nowrap;
+	text-decoration: underline dotted;
+	text-underline-offset: 0.2em;
+	cursor: help;
+}
+@media (min-width: 50rem) {
+	/* The reason a file is listed reads as a sentence, not a word per line. */
+	.sl-markdown-content :is(td.rb-reason, td[data-label='Reason']) { min-width: 12rem; }
+
+	/* Get your files: every group table shares one set of columns. */
+	.sl-markdown-content :is(table.rb-packs, table:has(td[data-label='Runs on']):has(td[data-label='ZIP'])) {
+		display: table;
+		table-layout: fixed;
+		width: 100%;
+	}
+	.sl-markdown-content :is(table.rb-packs, table:has(td[data-label='Runs on']):has(td[data-label='ZIP'])) th:nth-child(1) { width: 18%; }
+	.sl-markdown-content :is(table.rb-packs, table:has(td[data-label='Runs on']):has(td[data-label='ZIP'])) th:nth-child(2) { width: 20%; }
+	.sl-markdown-content :is(table.rb-packs, table:has(td[data-label='Runs on']):has(td[data-label='ZIP'])) th:nth-child(3) { width: 40%; }
+	.sl-markdown-content :is(table.rb-packs, table:has(td[data-label='Runs on']):has(td[data-label='ZIP'])) th:nth-child(4) { width: 22%; }
+	.sl-markdown-content :is(table.rb-packs, table:has(td[data-label='Runs on']):has(td[data-label='ZIP'])) td { overflow-wrap: break-word; }
+}
+/* A ZIP part link or button never breaks across two lines. */
+.sl-markdown-content :is(table.rb-packs, table:has(td[data-label='Runs on']):has(td[data-label='ZIP'])) td:last-child :is(a, .rb-button) { white-space: nowrap; }
 
 /* Key and value cards: the empty header row is not drawn */
 .rb-meta-card thead,
@@ -416,7 +442,7 @@ body:has(.rb-sys-file, .rb-file-entry) { --sl-content-width: 54rem; }
 .sl-markdown-content :is(.rb-sys-file, .rb-file-entry) li { margin: 0.1rem 0; }
 .rb-hash {
 	font-family: var(--sl-font-mono);
-	font-size: 0.78rem;
+	font-size: 0.8125rem;
 	color: var(--rb-text-secondary);
 	overflow-wrap: anywhere;
 }
@@ -448,7 +474,15 @@ body:has(.rb-sys-file, .rb-file-entry) { --sl-content-width: 54rem; }
 }
 .sl-markdown-content .rb-facts :is(dt, dd) { margin: 0; padding: 0; }
 .sl-markdown-content .rb-facts dt { font-size: 0.8rem; font-weight: 400; color: var(--rb-text-secondary); }
-.sl-markdown-content .rb-facts dd { min-width: 0; overflow-wrap: break-word; }
+.sl-markdown-content .rb-facts dd { min-width: 0; overflow-wrap: break-word; line-height: 1.8; }
+/* A badge link in a card keeps a 24 px target, rows 4 px apart (WCAG 2.5.8). */
+.sl-markdown-content .rb-facts :is(.rb-badge:has(> a), a.rb-badge) {
+	display: inline-flex;
+	align-items: center;
+	min-height: 24px;
+	margin-block: 2px;
+	vertical-align: middle;
+}
 .sl-markdown-content .rb-facts code { overflow-wrap: anywhere; }
 @media (max-width: 30rem) {
 	.sl-markdown-content dl.rb-facts { grid-template-columns: minmax(0, 1fr); gap: 0; }
@@ -636,22 +670,24 @@ site-search .pagefind-ui__result-tags { display: none; }
 }
 .sl-menu-button:has(~ :popover-open) { box-shadow: none; background: var(--sl-color-accent-low); }
 
-/* Sidebar: small grey group labels, regular links, the current page on a
-   tinted background with no bar or rule beside it. */
+/* Sidebar: small grey group labels above 14 px links, top-level links as
+   large as the children, the current page on a tinted background with no
+   bar or rule beside it. */
 #starlight__sidebar .top-level summary .large {
 	font-size: var(--sl-text-xs);
 	font-weight: 600;
 	color: var(--rb-text-secondary);
 }
-#starlight__sidebar .top-level a { font-weight: 400; }
+#starlight__sidebar .top-level a { font-size: var(--sl-text-sm); font-weight: 400; }
 #starlight__sidebar .top-level a[aria-current='page'] {
 	background: var(--sl-color-accent-low);
 	color: var(--sl-color-accent-high);
 	font-weight: 600;
 }
 
-/* OS tabs wrap on a narrow phone instead of hiding the last one. */
-starlight-tabs [role='tablist'] { flex-wrap: wrap; }
+/* OS tabs stay on one row and scroll sideways on a narrow phone. */
+starlight-tabs [role='tablist'] { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+starlight-tabs [role='tablist']::-webkit-scrollbar { display: none; }
 starlight-tabs [role='tab'] { white-space: nowrap; }
 
 /* A page without "On this page" keeps the column, and the search box above
@@ -713,10 +749,10 @@ starlight-tabs [role='tab'] { white-space: nowrap; }
 		color: var(--rb-text-secondary);
 	}
 
-	/* On a phone every command wraps: the end of a one-liner is never off-screen. */
-	.sl-markdown-content .expressive-code pre > code { white-space: pre-wrap; overflow-wrap: anywhere; }
-	.sl-markdown-content :is(.rb-sys-file, .rb-file-entry) ul,
-	.rb-hash { font-size: 0.75rem; }
+	/* On a phone every command wraps: the end of a one-liner is never
+	   off-screen. A word is cut only when it cannot fit on a line. */
+	.sl-markdown-content .expressive-code pre > code { white-space: pre-wrap; }
+	.sl-markdown-content :is(.rb-sys-file, .rb-file-entry) ul { font-size: 0.75rem; }
 }
 
 @media (max-width: 50rem) {

@@ -156,9 +156,11 @@ class ThemeStylesheet(unittest.TestCase):
         permalink = next(b for s, b in _blocks(self.css) if s == ".rb-permalink")
         self.assertIn("min-height: 24px", permalink)
 
-    # 1.10
-    def test_os_tabs_wrap(self):
-        self.assertIn("flex-wrap: wrap", _rules(self.css, "starlight-tabs [role='tablist']")[0])
+    # 1.10, then round 3 item 1.3: one row that scrolls instead of two rows
+    def test_os_tabs_stay_reachable(self):
+        tablist = _rules(self.css, "starlight-tabs [role='tablist']")[0]
+        self.assertIn("flex-wrap: nowrap", tablist)
+        self.assertIn("overflow-x: auto", tablist)
         self.assertIn("white-space: nowrap", _rules(self.css, "starlight-tabs [role='tab']")[0])
 
     # 1.11
