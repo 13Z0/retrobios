@@ -1017,8 +1017,8 @@ SYSTEM_PARENTS: dict[str, tuple[str, str]] = {
     "videobrain": ("VideoBrain", "Family Computer"),
     # Files kept at the maker's root, so each file is a heading of its own
     # on a page that is the machine's: the first one leads there.
-    "galaksija": ("Galaksija", "CHRGEN.BIN"),
-    "vircon32": ("Vircon", "Vircon32Bios.v32"),
+    "galaksija": ("Galaksija", "Galaksija"),
+    "vircon32": ("Vircon", "Vircon32"),
     # Games, filed with the game whose folder holds their data
     "dinothawr": ("Dinothawr", "Dinothawr"),
     "doom": ("Id Software", "Doom"),

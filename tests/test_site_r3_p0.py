@@ -72,8 +72,6 @@ UNLINKED: dict[str, str] = {
     # Files filed with another machine: a link would name the wrong one.
     "atom": "atom.zip is filed with the BBC Micro",
     "commodore-c64-supercpu": "VICE's tree under the C128",
-    "commodore-cbm-ii": "VICE's tree under the C128",
-    "commodore-pet": "VICE's tree under the C128",
     "emerson-arcadia-2001": "ar_bios.zip is filed with the Saturn",
     "naomi2": "naomi2.zip is filed with the Dreamcast",
     "neogeo64": "the platform declares the Neo Geo's neogeo.zip",
@@ -248,7 +246,7 @@ class SystemLinks(unittest.TestCase):
         self.assertIsNone(siterender.system_section("igs-pgm"))
 
     def test_folder_votes_stay_out(self) -> None:
-        for sys_id in ("emerson-arcadia-2001", "naomi2", "commodore-pet"):
+        for sys_id in ("emerson-arcadia-2001", "naomi2"):
             with self.subTest(sys_id=sys_id):
                 self.assertIsNone(siterender.system_section(sys_id))
                 self.assertNotIn(sys_id, siterender.SYSTEM_PARENTS)
