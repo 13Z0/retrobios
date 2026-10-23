@@ -945,22 +945,25 @@ python install.py --platform retroarch --dest /storage/emulated/0/RetroArch/syst
 
 RetroBIOS also runs on the handheld itself, in the
 [full-screen interface](#the-full-screen-interface), with the controller.
-Take the file for your system from the
-[latest release](https://github.com/Abdess/retrobios/releases/latest), copy
-it to the SD card, then start RetroBIOS from the menu.
+Copy the file for your system to the SD card, then start RetroBIOS from the
+menu.
+
+The files below ship with the next release. Until then, build them from a
+clone of the repository with `python scripts/build_port.py`, which writes all
+four into `dist/`, or use the computer route at the end of this section.
 
 | System | File | Copy it to | Start it from |
 |--------|------|------------|---------------|
-| Any system with [PortMaster](https://portmaster.games/): ArkOS, dArkOS, ROCKNIX, AmberELEC, JELOS, muOS, Knulli | `RetroBIOS.zip` | PortMaster's `autoinstall` folder: `/roms/ports/PortMaster/autoinstall/` on ROCKNIX and AmberELEC, `/roms/tools/PortMaster/autoinstall/` on ArkOS, `/mmc/MUOS/PortMaster/autoinstall/` on muOS, `/userdata/system/.local/share/PortMaster/autoinstall/` on Knulli | Ports, after opening PortMaster once |
-| Batocera, Knulli | `RetroBIOS-batocera.zip`, extracted | `roms/ports` on the SHARE partition | Ports, after updating the game list |
 | muOS | `RetroBIOS.muxapp` | `ARCHIVE` at the root of the card, then install it from the Archive Manager | Applications |
+| Any other system with [PortMaster](https://portmaster.games/): ArkOS, dArkOS, ROCKNIX, AmberELEC, JELOS, Knulli | `RetroBIOS.zip` | PortMaster's `autoinstall` folder: `/roms/ports/PortMaster/autoinstall/` on ROCKNIX and AmberELEC, `/roms/tools/PortMaster/autoinstall/` on ArkOS, `/userdata/system/.local/share/PortMaster/autoinstall/` on Knulli | Ports, after opening PortMaster once |
+| Batocera, Knulli | `RetroBIOS-batocera.zip`, extracted | `roms/ports` on the SHARE partition | Ports, after updating the game list |
 | ArkOS, dArkOS | `RetroBIOS-tools.zip`, extracted | `tools` on the EASYROMS partition | Options, then Tools |
 | ROCKNIX, JELOS | `RetroBIOS-tools.zip`, extracted | `/storage/.config/modules`, over the network share or SSH | Tools |
 | AmberELEC | `RetroBIOS-tools.zip`, extracted | `/storage/.config/distribution/modules` | Tools |
 
-A release cut before these files existed carries none of them. From a clone
-of the repository, `python scripts/build_port.py` writes all four into
-`dist/`.
+`RetroBIOS.zip` also installs on muOS, from `MUOS/PortMaster/autoinstall/`
+on the first card (`/mnt/mmc` on the device). It then shows the interface in
+muxterm, as the muOS app does.
 
 | Button | Action |
 |--------|--------|
@@ -970,17 +973,18 @@ of the repository, `python scripts/build_port.py` writes all four into
 | X | Tick or untick a system |
 | Y | Options |
 | L1, R1 | Page up, page down |
-| Start + Select | Quit at once (PortMaster port, Tools) |
+| Hold Select, then Start | Quit at once (PortMaster port, muOS, Tools) |
 
-On muOS the interface runs in muxterm, which already reads Start, B, Y (tick)
-and the D-pad. A, X, L1 and R1 come from PortMaster's gptokeyb2 when
-PortMaster is installed, and Menu quits.
+Start pressed first also chooses the line in focus: hold Select first. A
+running install is then stopped the way B stops it, and the last screen says
+what it wrote. On muOS without PortMaster, muxterm reads the pad itself: Y
+ticks a system, Select shows its keyboard, and Menu quits.
 
 **Without Wi-Fi.** On a computer, download the BIOS pack whose name contains
 your system (every part, for a pack in parts) and copy it next to RetroBIOS:
 into `ports/retrobios` for the PortMaster port and on Batocera, to the root
-of the card on muOS, into the `retrobios` folder of the Tools entry. With no
-connection, RetroBIOS installs from it, as
+of either card on muOS, into the `retrobios` folder of the Tools entry. With
+no connection, RetroBIOS installs from it, as
 [`--from-pack`](#without-a-network-offline-install) does. With no pack there,
 it names the pack and the folder.
 
@@ -995,27 +999,23 @@ still comes from the pack, so the pack is needed too.
 first use and the Tools entry then reuses. That runtime uses the system's
 OpenSSL 1.1, so on an image with OpenSSL 3 only it may not download (not
 tried on a device). The BIOS folder must be one the installer detects, see
-[Platform detection](#platform-detection).
+[Platform detection](#platform-detection). On a read-only or full card,
+RetroBIOS keeps its log in `retrobios` under `XDG_RUNTIME_DIR` or `/tmp`, and the interface names the
+folder it cannot write.
 
 **Where no terminal shows.** The PortMaster port draws on the console, or in
 foot or xterm under a desktop session. Where neither can, it opens
 PortMaster's own screens instead: the same check, update and choice of
 systems, one list at a time. On Batocera and Knulli the visible terminal is
 not verified on a device yet: RetroBIOS tries xterm or foot, then console 4,
-and `retrobios/log.txt` names the route it took.
+and stops when console 4 does not come to the front. `retrobios/log.txt`
+names each route it tried, and `log.prev.txt` keeps the run before.
 
 **From a computer.** Onion, MinUI, NextUI, Allium, GarlicOS and the Switch
-have no Python 3 to run the installer. Put the card in a computer and run the
-[one-line command](#one-line) there with
+have no Python 3 to run the installer. Put the card in a computer and run
+the [one-line command](#one-line) there with
 `--platform <platform> --dest <BIOS folder on the card>`. This works for
 every system above too.
-
-**Which installer runs.** Each file carries `install.py`, the one the
-one-line command of the same commit downloads: `scripts/build_port.py`
-refuses any other (it compares it with the SHA-256 `install.sh` pins). The
-file lists come from `main`. The launchers in `ports/` start it with `--tui`,
-and read it through [Machine-readable events](#machine-readable-events) for
-the rest.
 
 ## Without a network (offline install) { #without-a-network-offline-install }
 
@@ -1141,6 +1141,13 @@ The build scripts need 3.9 and are not bound by this.
 
 Every change to `install.py` recomputes the SHA-256 pinned in `install.sh` and
 `install.ps1` in the same commit. The tests compare the pins with the file.
+
+The [handheld](#on-a-handheld-the-retrobios-port) archives each carry
+`install.py`, the one the one-line command of the same commit downloads:
+`scripts/build_port.py` refuses any other (it compares it with the SHA-256
+`install.sh` pins). The file lists come from `main`. The launchers in
+`ports/` start it with `--tui`, and read it through
+[Machine-readable events](#machine-readable-events) for the rest.
 
 Narrowing by system, core, region or target replays the pack builder's rules
 from fields the manifest carries, and a parity test compares an installer
