@@ -82,8 +82,16 @@ else
     # shellcheck source=/dev/null
     source "$control"
     declare -F get_controls >/dev/null && get_controls
-    # It carries its own kill flag (-sudokill).
-    [ -n "${GPTOKEYB:-}" ] && mapper="$GPTOKEYB" kill_flag=""
+    # Its kill flag is -sudokill (control-gen.cpp:31), which kills through
+    # sudo, and ROCKNIX's sudo is a stub that runs nothing (busybox
+    # scripts/sudo): Start + Select would end the run only 3 s later,
+    # through the mapper's exit. -1 kills as the user it runs as, root.
+    if [ -n "${GPTOKEYB:-}" ]; then
+      mapper="$GPTOKEYB"
+      case "$mapper" in
+        *" -sudokill"|*" -1"|*" -k") mapper="${mapper% *}" ;;
+      esac
+    fi
     ESUDO="$saved_esudo" controlfolder="$saved_folder"
   fi
 fi

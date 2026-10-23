@@ -177,11 +177,98 @@ class ControllerMappings(unittest.TestCase):
         targets = {a["trigger"]: a["target"] for a in keys["actions_player1"]}
         self.assertEqual((targets["x"], targets["y"]), (["KEY_SPACE"], ["KEY_TAB"]))
         # muxterm sends Y as Space on its own (MustardOS/terminal input.c):
-        # where gptokeyb runs beside it, muxterm is told to leave the pad.
+        # where gptokeyb runs beside it, muxterm is told to leave the pad
+        # (assert_muxterm_hides_every_pad).
         for launcher in (PORTS / "muos" / "mux_launch.sh", PORTS / "RetroBIOS" / "RetroBIOS.sh"):
-            text = launcher.read_text()
-            self.assertIn("SDL_GAMECONTROLLER_IGNORE_DEVICES_EXCEPT=0x0001/0x0001", text)
+            self.assertIn("rb_muxterm ", launcher.read_text())
         self.assertFalse((PORTS / "muos" / "muxterm.gptk").exists())
+
+
+def sdl_vidpid(bus: int, vendor: int, product: int, version: int, name: str) -> tuple[int, int]:
+    """The vendor and product SDL 2 reads back from the GUID it builds for
+    a device: SDL_CreateJoystickGUID, then SDL_GetJoystickGUIDInfo
+    (libsdl-org/SDL release-2.30.x src/joystick/SDL_joystick.c). A vendor of
+    0 makes the GUID carry the name instead of the ids."""
+    data = bytearray(16)
+    struct.pack_into("<HH", data, 0, bus, 0x5a5a)
+    if vendor:
+        struct.pack_into("<HHHHH", data, 4, vendor, 0, product, 0, version)
+    else:
+        raw = name.encode()[:11]
+        data[4:4 + len(raw)] = raw
+    words = struct.unpack("<8H", bytes(data))
+    if (words[0] < 0x20 or words[0] == 0xFF) and words[3] == 0 and words[5] == 0:
+        return words[2], words[4]
+    return 0, 0
+
+
+def sdl_vidpid_list(hint: str) -> list[int]:
+    """SDL_LoadVIDPIDListFromHint: every pair of 0x numbers."""
+    entries = []
+    for vendor, product in re.findall(r"0x([0-9a-fA-F]+)[^x]*?0x([0-9a-fA-F]+)", hint):
+        entries.append((int(vendor, 16) & 0xFFFF) << 16 | (int(product, 16) & 0xFFFF))
+    return entries
+
+
+# Input devices a muOS device lists in /proc/bus/input/devices: the H700
+# pad before 2026-08-28 (gpio-keys, 0001:0001, MustardOS internal
+# f6a14e3121 device/rg35xx-plus/control/gamecontrollerdb/modern.txt), the
+# muinput pad after it (0x756d), a USB and a Bluetooth pad, gptokeyb2's
+# uinput keyboard, and pads whose vendor is 0.
+PADS = [
+    (0x19, 0x0001, 0x0001, 0x0100, "Deeplay-keys"),
+    (0x19, 0x0001, 0x0001, 0x0100, "muOS-Keys"),
+    (0x06, 0x756d, 0x6b6d, 0x0001, "muOS-Keys"),
+    (0x03, 0x045e, 0x028e, 0x0114, "Microsoft X-Box 360 pad"),
+    (0x05, 0x057e, 0x2009, 0x8111, "Pro Controller"),
+    (0x06, 0x0000, 0x0000, 0x0000, "Fake Keyboard"),
+]
+PADS += [(bus, 0, product, 1, "pad"[:length] + "x" * max(0, length - 3))
+         for bus in (0x03, 0x05, 0x06, 0x19, 0xFF) for product in (0, 1, 0x2009)
+         for length in range(13)]
+PADS += [(bus, vendor, product, 1, "pad")
+         for bus in (0x03, 0x05, 0x19) for vendor in (1, 0x0079, 0xFFFF)
+         for product in (0, 1, 0xFFFF)]
+
+
+def assert_muxterm_hides_every_pad(test: unittest.TestCase, hint: str) -> None:
+    """muxterm reads the pad itself (T/input.c:303-317) while gptokeyb2
+    sends its keys, so every button would act twice. The launchers set
+    SDL_GAMECONTROLLER_IGNORE_DEVICES_EXCEPT, which hides from SDL every
+    device it does not name (SDL_gamecontroller.c:2145-2150, applied to the
+    joystick layer by SDL_ShouldIgnoreJoystick, SDL_joystick.c:3006)."""
+    allowed = sdl_vidpid_list(hint)
+    # An empty list allows every device.
+    test.assertTrue(allowed, hint)
+    for pad in PADS:
+        vendor, product = sdl_vidpid(*pad)
+        with test.subTest(pad=pad):
+            test.assertNotIn(vendor << 16 | product, allowed)
+
+
+def assert_muxterm_mapping(test: unittest.TestCase, args: list[str], shared: Path) -> None:
+    """muxterm keeps PgUp and PgDn for its scrollback and never writes them
+    to the terminal (T/input.c:352-360): in muxterm, L1 and R1 send nothing,
+    so they cannot scroll the interface away. Every other button is
+    retrobios.gptk's."""
+    test.assertEqual(args[-2], "-c")
+    mapping = read_gptk(Path(args[-1]))
+    expected = read_gptk(shared)
+    expected["l1"] = expected["r1"] = ['\\"']
+    test.assertEqual(mapping, expected)
+
+
+class TheSdlModel(unittest.TestCase):
+    def test_it_reads_the_ids_as_sdl_does(self):
+        self.assertEqual(sdl_vidpid(0x19, 1, 1, 0x100, "Deeplay-keys"), (1, 1))
+        self.assertEqual(sdl_vidpid(0x05, 0, 0x2009, 1, "pad"), (0, 0))
+        self.assertEqual(sdl_vidpid(0x05, 0, 0x2009, 1, "ab"), (0x6261, 0))
+        self.assertEqual(sdl_vidpid_list("0x0001/0x0001, 0x045e/0x028e"),
+                         [0x00010001, 0x045e028e])
+
+    def test_the_first_hint_allowed_the_h700_pad(self):
+        with self.assertRaises(AssertionError):
+            assert_muxterm_hides_every_pad(unittest.TestCase(), "0x0001/0x0001")
 
 
 class TheArchives(unittest.TestCase):
@@ -300,6 +387,8 @@ if "--engine" in sys.argv:
 
     signal.signal(signal.SIGINT, summary)
     signal.signal(signal.SIGTERM, other)
+    with open(os.path.join(state, "engine.pid"), "w") as fh:
+        fh.write(str(os.getpid()))
     note("engine.ready")
     time.sleep(60)
     sys.exit(0)
@@ -309,17 +398,32 @@ with open(calls, "a") as fh:
                          "stdout": tty(1), "term": os.environ.get("TERM", ""),
                          "pythonhome": os.environ.get("PYTHONHOME", ""),
                          "base_url": os.environ.get("RETROBIOS_BASE_URL", ""),
+                         "offline": os.environ.get("RETROBIOS_INSTALL_OFFLINE", ""),
+                         "idle_exit": os.environ.get("RETROBIOS_IDLE_EXIT"),
                          "pad": os.environ.get("RETROBIOS_PAD")}) + "\n")
 if "--check" in sys.argv:
+    # install.py --check --events: detection is local, then the file list.
+    # With RETROBIOS_INSTALL_OFFLINE the file list stops the run at once
+    # with reason offline. Otherwise it is downloaded: a closed loopback
+    # port refuses at once, any other address is three tries of 30 s on a
+    # device without a network (FAKE_CURL, the probe that found it so).
+    offline = os.environ.get("RETROBIOS_INSTALL_OFFLINE", "") not in ("", "0")
+    base_url = os.environ.get("RETROBIOS_BASE_URL", "")
+    no_network = os.environ.get("FAKE_CURL", "0") in ("5", "6", "7", "28")
     if os.environ.get("FAKE_DETECT_HANG"):
         time.sleep(60)
+    print(json.dumps({"event": "start", "mode": "check"}), flush=True)
     print(json.dumps({"event": "detect", "os": "linux", "os_name": "Fake OS",
                       "platforms": [{"platform": os.environ.get("FAKE_PLATFORM", "retroarch"),
                                      "name": os.environ.get("FAKE_PLATFORM_NAME", "RetroArch"),
-                                     "bios_dir": "/roms/bios"}]}))
-    print(json.dumps({"event": "error", "stage": "manifest", "reason": "network",
+                                     "bios_dir": "/roms/bios"}]}), flush=True)
+    if no_network and not offline and not base_url.startswith("http://127.0.0.1"):
+        time.sleep(90)
+    print(json.dumps({"event": "error", "stage": "manifest",
+                      "reason": "offline" if offline else "network",
                       "platform": os.environ.get("FAKE_PLATFORM", "retroarch"),
-                      "message": "unreachable"}))
+                      "message": "this run makes no network request (--offline)" if offline
+                      else "unreachable"}))
     print(json.dumps({"event": "end", "code": 1}))
     sys.exit(1)
 if os.environ.get("FAKE_REFUSE"):
@@ -329,6 +433,21 @@ if os.environ.get("FAKE_REFUSE"):
 if os.environ.get("FAKE_RAW") and os.isatty(0):
     import tty as _tty
     _tty.setraw(0)
+if os.environ.get("FAKE_DRAIN") and os.isatty(0):
+    # What the console still holds when the interface starts: bytes a
+    # question left behind are read as the interface's first keys.
+    # TCSANOW, as install.py sets its mode: TCSAFLUSH would discard them.
+    import select as _select
+    import termios as _termios
+    import tty as _tty
+    _tty.setraw(0, _termios.TCSANOW)
+    left = b""
+    while _select.select([0], [], [], 0.3)[0]:
+        chunk = os.read(0, 64)
+        if not chunk:
+            break
+        left += chunk
+    note("ui.input", left.hex())
 if os.environ.get("FAKE_HOLD"):
     # The interface up and waiting for a key until a signal ends it. With
     # FAKE_ENGINE an install runs, and SIGTERM gives it 2 s to say what it
@@ -354,9 +473,14 @@ if os.environ.get("FAKE_HOLD"):
             print("Error: " + os.environ["FAKE_TERM_ERROR"], file=sys.stderr)
         sys.exit(128 + signum)
 
-    if not os.environ.get("FAKE_NO_HANDLER"):
+    if os.environ.get("FAKE_IGNORE_TERM"):
+        # An interface stuck where its signal handler never runs.
+        signal.signal(signal.SIGTERM, signal.SIG_IGN)
+    elif not os.environ.get("FAKE_NO_HANDLER"):
         signal.signal(signal.SIGTERM, stop)
         signal.signal(signal.SIGHUP, stop)
+    with open(os.path.join(state, "ui.pid"), "w") as fh:
+        fh.write(str(os.getpid()))
     note("ui.ready")
     time.sleep(60)
     sys.exit(0)
@@ -371,12 +495,13 @@ PGREP = shutil.which("pgrep", path="/usr/bin:/bin") or "pgrep"
 PKILL = shutil.which("pkill", path="/usr/bin:/bin") or "pkill"
 
 # gptokeyb as PortsMaster/gptokeyb runs it: kill mode takes the argument
-# after the flag (`-1`, `-k` or `-sudokill`) as its target. Start + Select (FAKE_PRESS, once the
-# interface is up) is doKillMode in src/util.cpp: pkill -f on the target,
-# which also matches gptokeyb's own command line (SDL turns that SIGTERM
-# into an event it does not read there), 3 s, then pkill -9 -f and exit.
-# Stopped otherwise by a SIGTERM, which it records. FAKE_MAPPER_DIES is a
-# mapper that cannot start (no /dev/uinput).
+# after the flag (`-1`, `-k` or `-sudokill`) as its target. Start + Select
+# (FAKE_PRESS, once FAKE_PRESS_AT exists, by default once the interface is
+# up) is doKillMode in src/util.cpp: pkill -f on the target, which also
+# matches gptokeyb's own command line (SDL turns that SIGTERM into an event
+# it does not read there), 3 s, then pkill -9 -f and exit. `-sudokill` runs
+# both through sudo. Stopped otherwise by a SIGTERM, which it records.
+# FAKE_MAPPER_DIES is a mapper that cannot start (no /dev/uinput).
 FAKE_MAPPER = f'''#!/bin/bash
 printf '%s\\n' "$@" > "$FAKE_STATE/mapper.args"
 echo $$ > "$FAKE_STATE/mapper.pid"
@@ -385,32 +510,39 @@ if [ -n "${{FAKE_MAPPER_DIES:-}}" ]; then
   echo "gptokeyb: cannot open /dev/uinput" >&2
   exit 1
 fi
-name=""
+name="" sudo=""
 while [ $# -gt 0 ]; do
   case "$1" in
-    -1|-k|-sudokill) name="$2"; shift 2 ;;
+    -1|-k) name="$2"; shift 2 ;;
+    -sudokill) name="$2" sudo="sudo"; shift 2 ;;
     -c) shift 2 ;;
     *) shift ;;
   esac
 done
 killing=""
 trap '[ -n "$killing" ] || {{ echo stopped > "$FAKE_STATE/mapper.stopped"; exit 0; }}' TERM
-until [ -n "${{FAKE_PRESS:-}}" ] && [ -e "$FAKE_STATE/ui.ready" ]; do sleep 0.1; done
+until [ -n "${{FAKE_PRESS:-}}" ] && [ -e "$FAKE_STATE/${{FAKE_PRESS_AT:-ui.ready}}" ]; do sleep 0.1; done
 killing=1
 echo "kill $name" >> "$FAKE_STATE/mapper.log"
-{PKILL} -f "$name"
+$sudo {PKILL} -f "$name"
 sleep 3
-if {PGREP} -f "$name" > /dev/null; then {PKILL} -9 -f "$name"; fi
+if {PGREP} -f "$name" > /dev/null; then $sudo {PKILL} -9 -f "$name"; fi
 exit 0
 '''
 
 # gptokeyb2 as PortsMaster/gptokeyb2 src/util.c kills: SIGKILL only, by
 # process name (pkill -9 NAME) unless -X, then pgrep -f and kill -9 on every
 # match but its own ancestry and children. It quits after a kill, and keeps
-# running when it has no process name.
+# running when it has no process name. FAKE_MAPPER_STAYS is gptokeyb2
+# before 2026-10-05, which keeps running after a -X kill (an inner
+# `int status` shadows the result, 23581b62ec src/util.c:486-519).
 FAKE_GPTOKEYB2 = f'''#!/bin/bash
 printf '%s\\n' "$@" > "$FAKE_STATE/mapper.args"
 echo $$ > "$FAKE_STATE/mapper.pid"
+if [ -n "${{FAKE_MAPPER_DIES:-}}" ]; then
+  echo "gptokeyb2: cannot open /dev/uinput" >&2
+  exit 1
+fi
 want_kill="" name=""
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -421,7 +553,7 @@ while [ $# -gt 0 ]; do
   esac
 done
 trap 'echo stopped > "$FAKE_STATE/mapper.stopped"; exit 0' TERM
-until [ -n "${{FAKE_PRESS:-}}" ] && [ -e "$FAKE_STATE/ui.ready" ]; do sleep 0.1; done
+until [ -n "${{FAKE_PRESS:-}}" ] && [ -e "$FAKE_STATE/${{FAKE_PRESS_AT:-ui.ready}}" ]; do sleep 0.1; done
 echo "kill $name" >> "$FAKE_STATE/mapper.log"
 if [ -z "$name" ]; then
   while :; do sleep 0.1; done
@@ -442,8 +574,19 @@ if [ -n "$want_kill" ]; then
 else
   {PKILL} -9 "$name"
 fi
+if [ -n "${{FAKE_MAPPER_STAYS:-}}" ]; then
+  while :; do sleep 0.1; done
+fi
 exit 0
 '''
+
+# ROCKNIX's /usr/bin/sudo: a stub that runs nothing (ROCKNIX distribution
+# packages/sysutils/busybox/scripts/sudo).
+ROCKNIX_SUDO = """#!/bin/sh
+printf '%s\\n' "sudo $*" >> "$FAKE_STATE/tools.log"
+echo " You are 'root' so 'sudo' is not required or supported"
+exit 1
+"""
 
 FAKE_RECORDER = """#!/bin/sh
 printf '%s\\n' "$(basename "$0") $*" >> "$FAKE_STATE/tools.log"
@@ -472,6 +615,8 @@ done
 FAKE_TERMAPP = """#!/bin/sh
 printf '%s\\n' "$(basename "$0") $*" >> "$FAKE_STATE/tools.log"
 printf '%s\\n' "${SDL_GAMECONTROLLER_IGNORE_DEVICES_EXCEPT:-}" > "$FAKE_STATE/termapp.sdl"
+printf '%s\\n' "${SDL_GAMECONTROLLER_IGNORE_DEVICES:-}" > "$FAKE_STATE/termapp.sdl_ignore"
+echo $$ > "$FAKE_STATE/termapp.pid"
 if [ -n "$FAKE_TERM_FAILS" ]; then
   echo "$(basename "$0"): Can't open display" >&2
   exit 1
@@ -540,7 +685,8 @@ class Device:
         (self.root / "fb").write_text("640,480\n")
         environ = {k: v for k, v in os.environ.items()
                    if k not in ("DISPLAY", "WAYLAND_DISPLAY", "RETROBIOS_BASE_URL",
-                                "XAUTHORITY", "XDG_RUNTIME_DIR")}
+                                "RETROBIOS_INSTALL_OFFLINE", "RETROBIOS_IDLE_EXIT",
+                                "RETROBIOS_PAD", "XAUTHORITY", "XDG_RUNTIME_DIR")}
         self.env = {
             **environ,
             "PATH": f"{self.bin}{os.pathsep}{os.environ['PATH']}",
@@ -621,7 +767,7 @@ class Device:
 
     def _reap(self) -> None:
         """A fake the launcher failed to stop must not outlive the test."""
-        for name in ("mapper.pid",):
+        for name in ("mapper.pid", "ui.pid", "engine.pid"):
             path = self.state / name
             if path.exists():
                 try:
@@ -669,6 +815,29 @@ class Device:
 
     def assert_console_restored(self) -> None:
         self.test.assertEqual(termios.tcgetattr(self.slave), self.before)
+
+
+def sentinels(token: str) -> list[int]:
+    """The Start + Select sentinels of a run: `bash -c SCRIPT TOKEN`, where
+    the mapper carries the token after its own path."""
+    found = []
+    for entry in Path("/proc").iterdir():
+        if not entry.name.isdigit():
+            continue
+        try:
+            argv = (entry / "cmdline").read_bytes().split(b"\0")
+        except OSError:
+            continue
+        if len(argv) > 3 and argv[1] == b"-c" and argv[3] == token.encode():
+            found.append(int(entry.name))
+    return found
+
+
+def wait_until(test: unittest.TestCase, check, timeout: float, what: str) -> None:
+    end = time.monotonic() + timeout
+    while not check():
+        test.assertLess(time.monotonic(), end, what)
+        time.sleep(0.1)
 
 
 CONTROL_TXT = '''
@@ -727,6 +896,7 @@ class ThePortMasterPort(unittest.TestCase):
         installer = str(self.gamedir / "install.py")
         self.assertEqual(call["argv0"], installer)
         self.assertEqual(call["pad"], "gptokeyb")
+        self.assertEqual(call["idle_exit"], "300")
         # Kill mode on the Start + Select sentinel, never on the installer's
         # path, which the engine's command line carries too.
         args = device.mapper_args()
@@ -734,6 +904,7 @@ class ThePortMasterPort(unittest.TestCase):
         self.assertRegex(args[1], r"^retrobios-stop-\d+x$")
         self.assertEqual(args[2:], ["-c", str(self.gamedir / "retrobios.gptk")])
         device.assert_mapper_stopped()
+        self.assertEqual(sentinels(args[1]), [])
         device.assert_console_restored()
         # Reset when the console is taken and again when it is handed back.
         self.assertEqual(device.screen.count("\x1bc"), 2)
@@ -790,9 +961,8 @@ class ThePortMasterPort(unittest.TestCase):
         device.assert_console_restored()
 
     def test_offline_says_so_at_once_and_bounds_the_detection(self):
-        """The file-list download is three tries of 30 s: the detection run
-        is pointed at a closed loopback port and stopped after
-        RB_DETECT_LIMIT, with a line on the console from the start."""
+        """A detection run that hangs is stopped after RB_DETECT_LIMIT, with
+        a line on the console from the start."""
         device = self.device(FAKE_CURL="28")
         pack = self.gamedir / "RetroArch_Lakka_v1.22.2_BIOS_Pack.zip"
         pack.write_bytes(b"")
@@ -802,12 +972,35 @@ class ThePortMasterPort(unittest.TestCase):
         screen = device.screen
         self.assertIn("Checking the connection", screen)
         self.assertIn("No connection. Looking for the BIOS folder", screen)
-        [check] = [c for c in device.calls() if "--check" in c["args"]]
-        self.assertEqual(check["base_url"], "http://127.0.0.1:9")
         [call] = device.tui_calls()
         # The detection was stopped: no platform, the first pack.
         self.assertEqual(call["args"], ["--tui", "--from-pack", str(pack)])
-        self.assertEqual(call["base_url"], "")
+        log = (self.gamedir / "log.txt").read_text()
+        self.assertIn("the detection run took over 2 s and was stopped", log)
+
+    def test_the_detection_is_told_to_make_no_request(self):
+        """RETROBIOS_INSTALL_OFFLINE: install.py detects, then stops where
+        the file list would download, at once and with reason offline
+        (install.py _network_allowed). The interface run does not inherit
+        it, and no address is borrowed for the detection."""
+        device = self.device(FAKE_CURL="7")
+        pack = self.gamedir / "RetroArch_Lakka_v1.22.2_BIOS_Pack.zip"
+        pack.write_bytes(b"")
+        proc = device.run(["bash", self.script])
+        self.assertEqual(proc.returncode, 0, proc.stderr.decode())
+        self.assertLess(device.elapsed, 15)
+        [check] = [c for c in device.calls() if "--check" in c["args"]]
+        self.assertEqual(check["args"], ["--check", "--events"])
+        self.assertEqual((check["offline"], check["base_url"]), ("1", ""))
+        detected = (self.gamedir / "run" / "detect.jsonl").read_text().splitlines()
+        self.assertEqual([json.loads(line)["event"] for line in detected],
+                         ["start", "detect", "error", "end"])
+        self.assertEqual(json.loads(detected[2])["reason"], "offline")
+        [call] = device.tui_calls()
+        self.assertEqual(call["args"], ["--tui", "--from-pack", str(pack),
+                                        "--platform", "retroarch"])
+        self.assertEqual((call["offline"], call["base_url"]), ("", ""))
+        self.assertNotIn("took over", (self.gamedir / "log.txt").read_text())
 
     def test_a_certificate_failure_is_not_offline(self):
         # curl 60: the network answered, install.py reports the certificate.
@@ -955,9 +1148,11 @@ class ThePortMasterPort(unittest.TestCase):
         [call] = device.tui_calls()
         self.assertEqual(call["args"], ["--tui"])
         self.assertEqual(device.tools(), [f"muxterm --gl -- bash {self.gamedir}/tui.txt here"])
-        self.assertEqual(device.lines("termapp.sdl"), ["0x0001/0x0001"])
-        self.assertEqual(device.mapper_args()[2:], ["-c", str(self.gamedir / "retrobios.gptk")])
+        [hint] = device.lines("termapp.sdl")
+        assert_muxterm_hides_every_pad(self, hint)
+        assert_muxterm_mapping(self, device.mapper_args(), self.gamedir / "retrobios.gptk")
         self.assertEqual(call["pad"], "gptokeyb")
+        self.assertEqual(call["idle_exit"], "300")
         self.assertEqual(self.dialog(device), ["FINISH"])
 
     def test_on_muos_without_muxterm_the_log_says_why_the_screens_open(self):
@@ -1027,12 +1222,72 @@ class ThePortMasterPort(unittest.TestCase):
         """Nothing moves the interface once gptokeyb is gone: it is asked to
         stop instead of waiting for a key forever."""
         device = self.device()
-        proc = device.spawn(["bash", self.script], FAKE_HOLD="1")
+        proc = device.spawn(["bash", self.script], FAKE_HOLD="1", RB_DEAD_WAIT="1",
+                            RB_MESSAGE_WAIT="300")
         device.wait_for("ui.ready")
         os.kill(int((device.state / "mapper.pid").read_text()), signal.SIGKILL)
         self.assertEqual(proc.wait(timeout=20), 143)
         self.assertEqual(device.lines("ui.log"), ["signal 15"])
+        # The interface disappears: the console says why, for RB_DEAD_WAIT.
+        screen = " ".join(device._drain().split())
+        self.assertIn("gptokeyb, which turns the buttons into keys, stopped during the run",
+                      screen)
         device.assert_console_restored()
+
+    def test_start_select_with_an_interface_that_ignores_sigterm(self):
+        """An interface that does not stop within RB_STOP_GRACE is killed,
+        and the engine it started in its own session with it."""
+        device = self.device()
+        proc = device.run(["bash", self.script], FAKE_HOLD="1", FAKE_ENGINE="1",
+                          FAKE_IGNORE_TERM="1", FAKE_PRESS="1", RB_STOP_GRACE="1",
+                          RB_MESSAGE_WAIT="300")
+        self.assertEqual(proc.returncode, 137, proc.stderr.decode())
+        self.assertLess(device.elapsed, 15)
+        engine = int((device.state / "engine.pid").read_text())
+        wait_until(self, lambda: not Path(f"/proc/{engine}").exists(), 5,
+                   "the engine outlived the interface")
+        log = (self.gamedir / "log.txt").read_text()
+        self.assertIn("the interface did not stop within 1 s", log)
+        device.assert_console_restored()
+
+    def test_an_interface_that_ignores_sigterm_without_pkill(self):
+        """With no working pkill, the engines cannot be found: the interface
+        itself is still killed after RB_STOP_GRACE."""
+        device = self.device()
+        device.tool("pkill", "#!/bin/sh\necho 'pkill: applet not found' >&2\nexit 127\n")
+        proc = device.run(["bash", self.script], FAKE_HOLD="1", FAKE_IGNORE_TERM="1",
+                          FAKE_PRESS="1", RB_STOP_GRACE="1", RB_MESSAGE_WAIT="300")
+        self.assertEqual(proc.returncode, 137, proc.stderr.decode())
+        self.assertLess(device.elapsed, 15)
+        ui = int((device.state / "ui.pid").read_text())
+        self.assertFalse(Path(f"/proc/{ui}").exists())
+
+    def test_the_sentinel_ends_when_the_launcher_is_killed(self):
+        """SIGKILL leaves the launcher no trap: the sentinel ends by itself
+        once the launcher is gone."""
+        device = self.device()
+        proc = device.spawn(["bash", self.script], FAKE_HOLD="1")
+        device.wait_for("ui.ready")
+        token = device.mapper_args()[1]
+        self.assertEqual(len(sentinels(token)), 1)
+        proc.kill()
+        proc.wait(timeout=5)
+        wait_until(self, lambda: not sentinels(token), 10, "the sentinel outlived the launcher")
+
+    def test_a_closed_terminal_ends_the_run(self):
+        """The terminal app closed (muxterm's Menu, foot's window): the run
+        inside it stops the interface and ends the run, and no other route
+        or screen opens after it."""
+        device = self.device(WAYLAND_DISPLAY="wayland-1")
+        device.tool("foot", FAKE_TERMAPP)
+        proc = device.spawn(["bash", self.script], FAKE_HOLD="1")
+        device.wait_for("ui.ready")
+        # FAKE_TERMAPP execs its command: its pid is the run inside it.
+        os.kill(int((device.state / "termapp.pid").read_text()), signal.SIGHUP)
+        self.assertEqual(proc.wait(timeout=20), 143)
+        self.assertEqual(device.lines("ui.log"), ["signal 15"])
+        self.assertEqual(self.dialog(device), ["FINISH"])
+        device.assert_mapper_stopped()
 
     def test_sigterm_to_the_launcher_stops_the_interface_and_restores(self):
         """A firmware that signals the launcher alone: the trap stops the
@@ -1086,10 +1341,12 @@ class ThePortMasterPort(unittest.TestCase):
         runtime = device.root / "runtime"
         runtime.mkdir(mode=0o555)
         self.addCleanup(runtime.chmod, 0o755)
-        proc = device.run(["bash", self.script])
+        proc = device.run(["bash", self.script], RB_DEAD_WAIT="2")
         self.assertEqual(proc.returncode, 1)
         self.assertEqual(device.calls(), [])
         self.assertIn("the SD card may be read-only or full", " ".join(device.screen.split()))
+        # Left on the console long enough to read before the menu redraws.
+        self.assertGreaterEqual(device.elapsed, 2)
 
     def test_the_previous_log_is_kept(self):
         device = self.device()
@@ -1125,6 +1382,7 @@ class TheBatoceraPort(unittest.TestCase):
         # evmapy reads RetroBIOS.sh.keys: no gptokeyb is started.
         self.assertEqual(device.mapper_args(), [])
         self.assertEqual(call["pad"], "evmapy")
+        self.assertEqual(call["idle_exit"], "300")
 
     def test_the_x_cookie_goes_with_the_display(self):
         """S31emulationstation starts X with XAUTHORITY=/var/lib/.Xauthority:
@@ -1218,13 +1476,15 @@ class TheMuosApp(unittest.TestCase):
                                           f"muxterm --gl -- bash {app}/tui.txt here"])
         # muxterm leaves the pad to gptokeyb2, which sends each button once
         # with the interface's mapping: Y is Tab (Options), not muxterm's Space.
-        self.assertEqual(device.lines("termapp.sdl"), ["0x0001/0x0001"])
+        [hint] = device.lines("termapp.sdl")
+        assert_muxterm_hides_every_pad(self, hint)
         args = device.mapper_args()
         self.assertEqual(args[0], "-X")
         self.assertRegex(args[1], r"^retrobios-stop-\d+x$")
-        self.assertEqual(args[2:], ["-c", str(app / "retrobios.gptk")])
-        self.assertEqual(read_gptk(app / "retrobios.gptk")["y"], ["tab"])
+        assert_muxterm_mapping(self, args, app / "retrobios.gptk")
+        self.assertEqual(read_gptk(Path(args[-1]))["y"], ["tab"])
         self.assertEqual(call["pad"], "gptokeyb")
+        self.assertEqual(call["idle_exit"], "300")
         device.assert_mapper_stopped()
 
     def test_muxterm_alone_without_gptokeyb2(self):
@@ -1233,6 +1493,7 @@ class TheMuosApp(unittest.TestCase):
         self.assertEqual(proc.returncode, 0, proc.stderr.decode())
         [call] = device.tui_calls()
         self.assertEqual(call["pad"], "muxterm")
+        self.assertEqual(call["idle_exit"], "300")
         # muxterm then reads the pad itself.
         self.assertEqual(device.lines("termapp.sdl"), [""])
         self.assertEqual(device.mapper_args(), [])
@@ -1256,6 +1517,54 @@ class TheMuosApp(unittest.TestCase):
         self.assertLess(device.elapsed, 10)
         self.assertEqual(device.lines("ui.log"), ["signal 15"])
         device.assert_console_restored()
+
+    def test_start_select_with_a_gptokeyb2_that_keeps_running(self):
+        """gptokeyb2 before 2026-10-05 keeps running after its -X kill: only
+        the sentinel's end says Start + Select was pressed."""
+        device, app = self.device(muxterm=True)
+        proc = device.run([str(app / "mux_launch.sh"), str(app)], FAKE_HOLD="1",
+                          FAKE_PRESS="1", FAKE_MAPPER_STAYS="1", RB_MESSAGE_WAIT="300")
+        self.assertEqual(proc.returncode, 143, proc.stderr.decode())
+        self.assertLess(device.elapsed, 10)
+        self.assertEqual(device.lines("ui.log"), ["signal 15"])
+        self.assertIn("Start + Select", (app / "log.txt").read_text())
+        device.assert_mapper_stopped()
+
+    def test_a_gptokeyb2_that_cannot_start_is_named(self):
+        device, app = self.device(muxterm=False)
+        proc = device.run([str(app / "mux_launch.sh"), str(app)], FAKE_MAPPER_DIES="1",
+                          RB_CONSOLE=device.console, RB_DEAD_WAIT="1")
+        self.assertEqual(proc.returncode, 1)
+        self.assertEqual(device.tui_calls(), [])
+        screen = " ".join(device.screen.split())
+        self.assertIn("gptokeyb2, which turns the buttons into keys, stopped as soon as it "
+                      "started", screen)
+
+    def test_an_arrow_at_the_question_leaves_nothing_behind(self):
+        """An arrow is three bytes: the first answers the question, the rest
+        must not reach the interface as two more keys."""
+        device, app = self.device(muxterm=False)
+        _sd1, sd2, _pack = self.two_cards(device)
+        proc = device.run([str(app / "mux_launch.sh"), str(app)], keys="\x1b[B",
+                          FAKE_CURL="7", FAKE_DRAIN="1", RB_CONSOLE=device.console,
+                          RB_BIOS_DEST=str(sd2))
+        self.assertEqual(proc.returncode, 0, proc.stderr.decode())
+        [call] = device.tui_calls()
+        self.assertNotIn("--from", call["args"])
+        self.assertEqual(device.lines("ui.input"), [""])
+
+    def test_start_select_at_the_question_starts_no_interface(self):
+        device, app = self.device(muxterm=False)
+        _sd1, sd2, _pack = self.two_cards(device)
+        proc = device.run([str(app / "mux_launch.sh"), str(app)], FAKE_CURL="7",
+                          FAKE_PRESS="1", FAKE_PRESS_AT="calls.jsonl", RB_MESSAGE_WAIT="300",
+                          RB_CONSOLE=device.console, RB_BIOS_DEST=str(sd2))
+        self.assertEqual(proc.returncode, 143, proc.stderr.decode())
+        self.assertLess(device.elapsed, 10)
+        self.assertEqual(device.tui_calls(), [])
+        # Never started: an interface started then stopped at once would
+        # end the same way, before Python records anything.
+        self.assertFalse((app / "run" / "tui.err").exists())
 
     def test_on_the_console_without_muxterm(self):
         device, app = self.device(muxterm=False)
@@ -1376,6 +1685,7 @@ class TheToolsEntry(unittest.TestCase):
         [call] = device.tui_calls()
         self.assertEqual((call["stdin"], call["term"]), (device.console, "linux"))
         self.assertEqual(call["pad"], "gptokeyb")
+        self.assertEqual(call["idle_exit"], "300")
         args = device.mapper_args()
         self.assertEqual(args[0], "-1")
         self.assertRegex(args[1], r"^retrobios-stop-\d+x$")
@@ -1454,26 +1764,11 @@ class TheToolsEntry(unittest.TestCase):
         etc = device.root / "fs" / "etc"
         etc.mkdir(parents=True)
         (etc / "os-release").write_text('NAME="ROCKNIX"\n')
+        device.tool("sudo", ROCKNIX_SUDO)
 
-    def test_rocknix_runs_in_the_terminal_tools_opens(self):
-        device, tools = self.device()
-        self.rocknix(device)
-        proc = device.run(["bash", str(tools / "RetroBIOS.sh")], stdio_tty=True, TERM="xterm")
-        self.assertEqual(proc.returncode, 0, proc.stderr.decode())
-        [call] = device.tui_calls()
-        self.assertEqual((call["stdin"], call["stdout"]), (device.console, device.console))
-        self.assertEqual(call["term"], "xterm")
-        self.assertEqual(call["pad"], "gptokeyb")
-        # The terminal app owns its window: no console reset, no font.
-        self.assertNotIn("\x1bc", device.screen)
-        self.assertEqual([t for t in device.tools() if t.startswith("setfont")], [])
-
-    def test_rocknix_loads_the_controller_list_its_own_tools_load(self):
-        """control-gen_init.sh writes control.ini, which names the pad's
-        controller list and the GPTOKEYB to start (ROCKNIX fex-emu's Start
-        FEXConfig.sh). Its ESUDO is not this launcher's."""
-        device, tools = self.device()
-        self.rocknix(device)
+    def control_ini(self, device: Device) -> None:
+        """control-gen_init.sh writes control.ini as control-gen.cpp:31
+        does: `ESUDOKILL="-sudokill"`, and GPTOKEYB with it."""
         folder = device.root / "fs" / "storage" / ".config" / "gptokeyb"
         shutil.copy(device.bin / "gptokeyb", device.root / "gptokeyb-rocknix")
         device.tool("control-gen_init.sh", f'''#!/bin/sh
@@ -1490,14 +1785,56 @@ param_device="fake pad"
 GPTOKEYB="$controlfolder/gptokeyb-rocknix $ESUDOKILL"
 INI
 ''')
+
+    def test_rocknix_runs_in_the_terminal_tools_opens(self):
+        device, tools = self.device()
+        self.rocknix(device)
         proc = device.run(["bash", str(tools / "RetroBIOS.sh")], stdio_tty=True, TERM="xterm")
         self.assertEqual(proc.returncode, 0, proc.stderr.decode())
-        args = device.mapper_args()
-        self.assertEqual(args[0], "-sudokill")
-        self.assertRegex(args[1], r"^retrobios-stop-\d+x$")
+        [call] = device.tui_calls()
+        self.assertEqual((call["stdin"], call["stdout"]), (device.console, device.console))
+        self.assertEqual(call["term"], "xterm")
+        self.assertEqual(call["pad"], "gptokeyb")
+        self.assertEqual(call["idle_exit"], "300")
+        # The terminal app owns its window: no console reset, no font.
+        self.assertNotIn("\x1bc", device.screen)
+        self.assertEqual([t for t in device.tools() if t.startswith("setfont")], [])
+
+    def test_rocknix_loads_the_controller_list_its_own_tools_load(self):
+        """control-gen_init.sh writes control.ini, which names the pad's
+        controller list and the GPTOKEYB to start (ROCKNIX fex-emu's Start
+        FEXConfig.sh). Its ESUDO is not this launcher's."""
+        device, tools = self.device()
+        self.rocknix(device)
+        self.control_ini(device)
+        proc = device.run(["bash", str(tools / "RetroBIOS.sh")], stdio_tty=True, TERM="xterm")
+        self.assertEqual(proc.returncode, 0, proc.stderr.decode())
+        self.assertEqual(device.lines("mapper.args")[0], "-1")
+        self.assertRegex(device.mapper_args()[1], r"^retrobios-stop-\d+x$")
         self.assertEqual(device.lines("mapper.db"), [f"{device.root}/gamecontrollerdb.txt"])
+        started = [t for t in device.tools() if t.startswith("sudo")]
+        self.assertEqual(started, [])
         # Stopped without the sudo control.ini names.
         device.assert_mapper_stopped()
+
+    def test_rocknix_start_select_with_its_controller_setup(self):
+        """control.ini's `-sudokill` runs the kill through sudo, which on
+        ROCKNIX runs nothing: the mapper is started with -1, and Start +
+        Select ends the run at once instead of 3 s later through the
+        liveness watch."""
+        device, tools = self.device()
+        self.rocknix(device)
+        self.control_ini(device)
+        proc = device.run(["bash", str(tools / "RetroBIOS.sh")], stdio_tty=True, TERM="xterm",
+                          FAKE_HOLD="1", FAKE_PRESS="1", RB_MESSAGE_WAIT="300")
+        self.assertEqual(proc.returncode, 143, proc.stderr.decode())
+        self.assertLess(device.elapsed, 10)
+        self.assertEqual(device.lines("ui.log"), ["signal 15"])
+        log = (tools / "retrobios" / "log.txt").read_text()
+        self.assertIn("Start + Select: the interface is asked to stop", log)
+        self.assertNotIn("the controller mapper stopped", log)
+        self.assertNotIn("You are 'root'", log)
+        device.assert_mapper_gone()
 
     def test_rocknix_offline_names_no_pack_the_releases_lack(self):
         """No release pack spells ROCKNIX, and install.py refuses one named
@@ -1527,6 +1864,28 @@ INI
         device.assert_mapper_gone()
 
 
+class TheLiveness(unittest.TestCase):
+    def test_a_zombie_is_not_running(self):
+        """A process that exited and that its parent has not reaped still
+        has /proc/PID: rb_alive reads its state."""
+        pid = os.fork()
+        if pid == 0:
+            os._exit(0)
+        self.addCleanup(os.waitpid, pid, 0)
+        wait_until(self, lambda: Path(f"/proc/{pid}/stat").read_text().split(") ")[1][0] == "Z",
+                   5, "no zombie")
+        proc = subprocess.run(
+            ["bash", "-c", 'source "$1"; rb_alive "$2" && echo alive || echo gone', "bash",
+             str(PORTS / "shared" / "tui.txt"), str(pid)],
+            capture_output=True, text=True, check=False)
+        self.assertEqual(proc.stdout.strip(), "gone", proc.stderr)
+        proc = subprocess.run(
+            ["bash", "-c", 'source "$1"; rb_alive "$$" && echo alive || echo gone', "bash",
+             str(PORTS / "shared" / "tui.txt")],
+            capture_output=True, text=True, check=False)
+        self.assertEqual(proc.stdout.strip(), "alive", proc.stderr)
+
+
 class TheDocs(unittest.TestCase):
     def test_the_offline_packs_named_are_the_ones_that_serve(self):
         """The wiki names the pack each firmware takes offline: the release
@@ -1551,6 +1910,27 @@ class TheDocs(unittest.TestCase):
         for value in ("gptokeyb", "muxterm", "evmapy", "miyoo"):
             self.assertIn(f"| `{value}` |", text)
             self.assertIn(value, tui)
+
+    def handheld(self) -> str:
+        text = (REPO_ROOT / "wiki" / "installer.md").read_text(encoding="utf-8")
+        start = text.index("## On a handheld")
+        end = text.find("\n## ", start + 1)
+        return text[start:end if end != -1 else len(text)]
+
+    def test_the_idle_limit_is_documented(self):
+        """Every launcher sets RETROBIOS_IDLE_EXIT for the interface: a
+        mapper that runs but never opens the pad leaves no button to quit."""
+        self.assertIn("`RETROBIOS_IDLE_EXIT`", self.handheld())
+        self.assertIn("RETROBIOS_IDLE_EXIT", (PORTS / "shared" / "tui.txt").read_text())
+
+    def test_no_page_buttons_are_promised_in_muxterm(self):
+        """muxterm keeps PgUp and PgDn for its scrollback (T/input.c:352-360)."""
+        readme = " ".join((PORTS / "muos" / "README.md").read_text().split())
+        self.assertNotIn("L1 and R1 to page", readme)
+        self.assertIn("L1 and R1 do nothing in muxterm", readme)
+        rows = [line for line in self.handheld().splitlines() if line.startswith("| L1, R1 |")]
+        self.assertEqual(len(rows), 1)
+        self.assertIn("not in muxterm", rows[0])
 
     def test_muos_paths_are_the_card_muos_mounts(self):
         """muOS mounts the first card at /mnt/mmc (MustardOS internal

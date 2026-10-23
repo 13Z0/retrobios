@@ -1060,13 +1060,18 @@ muxterm, as the muOS app does.
 | B, Select | Back, and quit on the first screen |
 | X | Tick or untick a system |
 | Y | Options |
-| L1, R1 | Page up, page down |
+| L1, R1 | Page up, page down (not in muxterm, which keeps them for its own scrollback) |
 | Hold Select, then Start | Quit at once (PortMaster port, muOS, Tools) |
 
 Start pressed first also chooses the line in focus: hold Select first. A
 running install is then stopped the way B stops it, and the last screen says
 what it wrote. On muOS without PortMaster, muxterm reads the pad itself: Y
 ticks a system, Select shows its keyboard, and Menu quits.
+
+Each launcher also sets `RETROBIOS_IDLE_EXIT` to 300: with no button pressed
+on its first screen for 5 minutes, the interface closes by itself. A pad the
+system has no mapping for sends nothing, and would otherwise leave the
+console stuck on the interface with no way out.
 
 Each launcher tells the interface which buttons reach it, in
 `RETROBIOS_PAD`, so the hints can name them:
