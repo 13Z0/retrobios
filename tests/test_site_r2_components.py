@@ -84,8 +84,10 @@ class TablesStackWhenBuilt(unittest.TestCase):
             "action": {"labels": ["A", "B", "C"], "rows": 40, "action": True},
             "pair": {"labels": ["Where", "BIOS folder"], "rows": 3, "action": False},
             "short-start": {"labels": ["System", "Runs", "BIOS folder"], "rows": 8, "action": False, "level": "start"},
-            "long-setup": {"labels": ["System", "Files", "Status", "Emulators"], "rows": 97, "action": False, "level": "setup"},
+            "long-setup": {"labels": ["System", "Files", "Status"], "rows": 97, "action": False, "level": "setup"},
             "reference": {"labels": ["A", "B", "C"], "rows": 5, "action": False, "level": "reference"},
+            # Four columns do not fit a phone column, on any page (round 3).
+            "wide": {"labels": ["File", "Region", "Required", "Hash"], "rows": 105, "action": False, "level": "reference"},
         }
         script = (
             f"import {{ stackKind }} from {json.dumps(PLUGIN.as_uri())};"
@@ -98,7 +100,7 @@ class TablesStackWhenBuilt(unittest.TestCase):
         )
         self.assertEqual(json.loads(result.stdout), {
             "zip-header": "true", "action": "true", "pair": "kv",
-            "short-start": "true", "long-setup": None, "reference": None,
+            "short-start": "true", "long-setup": None, "reference": None, "wide": "true",
         })
 
 
@@ -142,7 +144,7 @@ class SearchAnswersAHashAndShowsNoFileDump(unittest.TestCase):
         self.assertIn("Look up this hash", source)
         self.assertIn("files/?hash=${value}", source)
         self.assertIn("endsWith('#_top')", source)
-        self.assertIn("tag.dataset.pagefindUiMeta === 'files'", source)
+        self.assertIn("UNSHOWN_FIELDS.has(tag.dataset.pagefindUiMeta ?? '')", source)
         # Pagefind's display rules beat the hidden attribute without this.
         self.assertIn("#starlight__search [hidden] { display: none !important; }", _read(COMPONENTS / "Header.astro"))
 
@@ -167,8 +169,8 @@ def _title_block(html: str) -> str:
 
 class LevelBadgeOnlyWhereItAddsSomething(unittest.TestCase):
     def test_badge_follows_the_crumb(self):
-        # A tab root has no crumb and keeps its badge.
-        self.assertIn('class="rb-level rb-level-setup', _title_block(_built("platforms")))
+        # A tab root: the header tab already says it (round 3, 2.1).
+        self.assertNotIn('class="rb-level ', _title_block(_built("platforms")))
         # Under the "Start here" or "Your setup" crumb the badge repeated it.
         for page in ("which-pack", "platforms/batocera"):
             with self.subTest(page=page):
@@ -181,7 +183,7 @@ class TitleLogo(unittest.TestCase):
     def test_front_matter_field(self):
         self.assertIn("logo: z.string().optional()", _read(WEBSITE / "src" / "content.config.ts"))
         title = _read(COMPONENTS / "PageTitle.astro")
-        self.assertIn('<img src={logoSrc} alt="" height="40" />', title)
+        self.assertIn('<img class="rb-title-mark" src={logoSrc} alt="" width={MARK} height={MARK} />', title)
 
 
 class FooterSaysWhoAndWhen(unittest.TestCase):
@@ -200,10 +202,10 @@ class FooterSaysWhoAndWhen(unittest.TestCase):
 class FindAFileGivesAVerdict(unittest.TestCase):
     def test_lookup_renderer(self):
         source = _read(SITE_TS)
-        self.assertIn("', held in the collection at '", source)
+        self.assertIn("'Held in the collection at '", source)
         self.assertIn("['Setup', 'Name as declared', 'Destination', 'Hash matched', 'Required']", source)
         self.assertIn("api/v1/platforms/${item.owner}.json", source)
-        self.assertIn("api/v1/systems/${slug}.json", source)
+        self.assertIn("api/v1/systems/${words.slice(0, size).join('-')}.json", source)
         style = _read(COMPONENTS / "MarkdownContent.astro")
         self.assertIn("max-width: 40rem;", style)
         self.assertIn("width: 100%;", style)

@@ -192,7 +192,7 @@ class TheIntegrationItems(unittest.TestCase):
             with self.subTest(platform=key):
                 block = re.search(r'<div class="rb-title-logo[^"]*">.*?</div>', html, re.S)
                 self.assertIsNotNone(block)
-                self.assertRegex(block[0], r'<img src="/retrobios/assets/logos/')
+                self.assertRegex(block[0], r'<img\b[^>]*\bsrc="/retrobios/assets/logos/')
                 self.assertNotIn("align=", html.split("<main", 1)[-1])
 
     def test_every_emulator_letter_lands_on_its_section(self):
