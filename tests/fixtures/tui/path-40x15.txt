@@ -1,0 +1,15 @@
+ RetroBIOS: Type a path
+
+ The folder for RetroArch:
+ > ~/bios_
+
+ Quotes are removed, ~ and variables
+   are expanded.
+
+
+
+
+
+
+
+ Enter Use this folder  Esc Back

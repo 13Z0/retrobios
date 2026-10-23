@@ -1,0 +1,40 @@
+ RetroBIOS: Which setup?
+
+ Choose the setup that will use the BIOS files.
+
+   Filter (/ to type)
+ > RetroArch
+   Batocera
+   Recalbox
+   RetroBat
+   EmuDeck
+   Lakka
+   RetroDECK
+   ROCKNIX
+   RomM
+   BizHawk
+   MiSTer FPGA
+   RetroPie
+   AmberELEC
+   EmuELEC
+   KNULLI
+   MinUI
+   NextUI
+   MyMinUI
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ A/Enter Choose  B/Esc Back  / Filter  ? Help
