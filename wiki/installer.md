@@ -1075,7 +1075,8 @@ Each launcher tells the interface which buttons reach it, in
 
 | Value | Input | Set by |
 |-------|-------|--------|
-| `gptokeyb` | gptokeyb or gptokeyb2 with `retrobios.gptk`, the table above | the PortMaster port, the Tools entry, the muOS app with PortMaster |
+| `gptokeyb` | gptokeyb or gptokeyb2 with `retrobios.gptk`, the table above | the PortMaster port and the Tools entry |
+| `gptokeyb_muxterm` | the same, inside muxterm, which keeps L1 and R1 for its scrollback: no button pages | the muOS app with PortMaster |
 | `muxterm` | muxterm's own keys: D-pad, Start as Enter, B as Backspace, Y as Space | the muOS app without PortMaster |
 | `evmapy` | `RetroBIOS.sh.keys`, the same buttons as the table | the Batocera and Knulli port |
 | `miyoo` | buttons that are already keys: A as Space, Start as Enter, L1 and R1 as E and T, L2 as Tab, R2 as Backspace | no launcher yet |
@@ -1334,7 +1335,7 @@ RetroArch folder that holds only `scph5501.bin`, in the order written:
 | `FORCE_COLOR`, `CLICOLOR_FORCE` | Colour even when the output is a pipe or a file, set to any value but `0` or an empty one. `NO_COLOR` wins over both, and the progress line stays one line per file |
 | `SSL_CERT_FILE`, `SSL_CERT_DIR` | The trusted certificates to check servers with, for a Python that finds none of its own |
 | `RETROBIOS_PLAIN`, `ACCESSIBLE` | Set to anything but `0`: the questions come line by line, as with `--plain`, instead of the full-screen interface |
-| `RETROBIOS_PAD` | The buttons a handheld launcher's mapper sends to the full screen (`gptokeyb`, `muxterm`, `evmapy`, `miyoo`), so its hints name them. See [On a handheld](#on-a-handheld-the-retrobios-port) |
+| `RETROBIOS_PAD` | The buttons a handheld launcher's mapper sends to the full screen (`gptokeyb`, `gptokeyb_muxterm`, `muxterm`, `evmapy`, `miyoo`), so its hints name them. See [On a handheld](#on-a-handheld-the-retrobios-port) |
 | `RETROBIOS_IDLE_EXIT` | Seconds the full screen's first screen waits for a first button. With none pressed, it closes with exit status 0 |
 | `HTTPS_PROXY`, `NO_PROXY` | Honoured for every download through the standard library's default proxy handling: one names the proxy, the other the hosts to reach directly |
 

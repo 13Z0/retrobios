@@ -10039,7 +10039,7 @@ def plain_requested(args: argparse.Namespace, env: Mapping[str, str] | None = No
 # (ports/shared/tui.txt exports RB_PAD as this), so the bar names those
 # buttons and no others.
 TUI_PAD_ENV = "RETROBIOS_PAD"
-TUI_PAD_ROUTES = ("gptokeyb", "muxterm", "evmapy", "miyoo")
+TUI_PAD_ROUTES = ("gptokeyb", "gptokeyb_muxterm", "muxterm", "evmapy", "miyoo")
 # Set by Steam for what it starts, and by gamescope: a controller may be
 # all there is, mapped by Steam Input to keys nobody here can name.
 _STEAM_MARKERS = ("SteamGamepadUI", "SteamDeck", "SteamGameId", "GAMESCOPE_WAYLAND_DISPLAY")
@@ -10251,6 +10251,7 @@ def _filter_row(state: TuiState) -> TuiRow:
         return TuiRow("filter", f"Filter: {text}")
     # A pad has no / and no letters: muxterm's own keyboard types.
     how = {"muxterm": "Select shows a keyboard", "gptokeyb": "with a keyboard",
+           "gptokeyb_muxterm": "with a keyboard",
            "evmapy": "with a keyboard", "miyoo": "with a keyboard"}.get(state.pad, "/ to type")
     return TuiRow("filter", f"Filter ({how})", style="dim")
 
@@ -11280,6 +11281,9 @@ _ROUTE_KEYS: dict[str, dict[str, str | None]] = {
     "miyoo": {"A/Enter": "A", "B/Esc": "R2", "X/Space": "A", "Y/o": "L2", "?": None,
               "/": None, "Ctrl-C": None, "Enter": "Start", "Esc": None, "Ctrl-U": None},
 }
+# gptokeyb2 with retrobios.gptk inside muxterm, which no longer reads the pad:
+# the gptokeyb buttons.
+_ROUTE_KEYS["gptokeyb_muxterm"] = _ROUTE_KEYS["gptokeyb"]
 
 
 def _route_hint(state: TuiState, parts: tuple) -> tuple:
@@ -11858,6 +11862,7 @@ _STOP_KEYS = {
     "both": ("B or Ctrl-C", "B, Ctrl-C or Start+Select"),
     "keys": ("Esc or Ctrl-C", "Esc or Ctrl-C"),
     "gptokeyb": ("B", "B or Start+Select"),
+    "gptokeyb_muxterm": ("B", "B or Start+Select"),
     "evmapy": ("B", "B"),
     "muxterm": ("B", "B"),
     "miyoo": ("R2", "R2"),
@@ -12124,6 +12129,9 @@ _HELP_KEYS: dict[str, dict[str, str | None]] = {
               "back": "R2, Esc, Backspace", "stop": "R2, Esc, Ctrl-C", "kill": None,
               "enter": "Start, Enter", "esc": "Esc"},
 }
+# muxterm keeps PgUp and PgDn for its scrollback even when gptokeyb2 owns the
+# pad, and the launcher sends nothing on L1 and R1 there.
+_HELP_KEYS["gptokeyb_muxterm"] = {**_HELP_KEYS["gptokeyb"], "page": None}
 
 
 def _route_extras(state: TuiState) -> list[tuple[str, str]]:
@@ -12140,7 +12148,7 @@ def _help_lines(state: TuiState) -> list[tuple[str, str]]:
     names = _HELP_KEYS.get(state.pad, _HELP_KEYS["both"])
     # gptokeyb's kill: Start pressed first also chooses the row in focus.
     kill = ([(names["kill"], "Quit at once")]
-            if state.pad == "gptokeyb" else [])
+            if state.pad in ("gptokeyb", "gptokeyb_muxterm") else [])
     if screen == "installing":
         return [(names["stop"], "Stop: what is done stays done"),
                 *([(names["kill"], "Stop")] if names["kill"] else []),
