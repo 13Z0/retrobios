@@ -13,6 +13,7 @@ library_name: "dolphin-emu"
 cores:
   - dolphin
   - "dolphin-gui"
+  - "dolphin-sa"
 systems: [nintendo-gamecube, nintendo-wii, sega-triforce]
 data_root:
   android:

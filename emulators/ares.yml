@@ -6,7 +6,7 @@ profiled_date: "2026-10-23"
 source_commit: "c76aaffa6e69778baf9a66d1da04298ac2ed7d1d"
 core_version: "v148"
 display_name: "ares"
-cores: [ares]
+cores: [ares, "ares-sa"]
 mode: standalone
 found_by: content
 systems:

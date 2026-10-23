@@ -12,6 +12,7 @@ core_version: "r2.6.0.4a"
 display_name: "Nintendo - DS (DraStic)"
 cores:
   - drastic
+  - "drastic-sa"
 systems:
   - nintendo-ds
 mode: standalone

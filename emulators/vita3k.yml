@@ -8,6 +8,7 @@ core_version: "0.2.1"
 display_name: "Vita3K (PS Vita)"
 cores:
   - vita3k
+  - "vita3k-sa"
 systems: [sony-playstation-vita]
 
 # Standalone emulator, no libretro core exists.

@@ -14,6 +14,8 @@ cores:
   - "flycast-next"
   - "flycastsa"
   - "flycast_32b"
+  - "flycast-sa"
+  - "flycast-dev"
 systems:
   - sega-dreamcast
   - sega-naomi

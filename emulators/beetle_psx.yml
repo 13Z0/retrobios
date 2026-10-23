@@ -7,7 +7,7 @@ profiled_date: "2026-03-29"
 source_commit: "9bcc75d0a3e8310a273afb8fac1409224ff42c29"
 core_version: "v0.9.44.1"
 display_name: "Sony - PlayStation (Beetle PSX)"
-cores: [beetle_psx, mednafen_psx, mednafen_psx_hw]
+cores: [beetle_psx, mednafen_psx, mednafen_psx_hw, "beetle-psx"]
 systems: [sony-playstation]
 notes: >
   Region-based BIOS selection: the core picks JP/NA/EU firmware based on disc region.

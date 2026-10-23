@@ -12,6 +12,7 @@ display_name: "Sega - Model 3 (Supermodel, Sinden fork)"
 verification: existence
 cores:
   - "supermodel3"
+  - "supermodel-sa"
 systems:
   - "sega-model3"
   - "real3d-pro1000"

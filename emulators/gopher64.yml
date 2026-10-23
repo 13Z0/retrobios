@@ -9,6 +9,7 @@ core_version: "v1.1.42"
 display_name: "Nintendo - Nintendo 64 (gopher64)"
 cores:
   - gopher64
+  - "gopher64-sa"
 systems:
   - nintendo-64
 mode: standalone

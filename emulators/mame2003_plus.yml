@@ -13,6 +13,7 @@ mame_version: "0.78 (plus backports)"
 cores:
   - mame2003_plus
   - mame078plus
+  - "mame2003-plus"
 
 systems:
   - snk-neogeo-mvs

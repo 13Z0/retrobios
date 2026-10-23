@@ -9,7 +9,7 @@ upstream_commit: "3be6336a1de6f32ccc4f57bf80c988163fe6bf7a"
 core_version: "2.0-rc2"
 display_name: "Nintendo - Nintendo 64 (ParaLLEl N64)"
 systems: [nintendo-64, nintendo-64dd]
-cores: [parallel_n64, parallel_n64_debug, "parallel_n64_32b"]
+cores: [parallel_n64, parallel_n64_debug, "parallel_n64_32b", "parallel-n64"]
 
 files:
   - name: "64DD_IPL.bin"

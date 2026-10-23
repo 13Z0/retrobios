@@ -8,7 +8,7 @@ profiled_date: "2026-03-23"
 source_commit: "938c6d2a03e523d0e4275aa753f289a987bcb016"
 core_version: "v0.1-12070"
 display_name: "Sony - PlayStation (DuckStation)"
-cores: [duckstation, "Duckstation"]
+cores: [duckstation, "Duckstation", "duckstation-sa"]
 found_by: content
 systems: [sony-playstation]
 bios_size: 524288  # 0x80000 (512 KB), also accepts PS2 (4 MB) and PS3 (0x3E66F0)

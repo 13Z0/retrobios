@@ -10,6 +10,7 @@ display_name: "Sega - MS/GG (SMS Plus GX)"
 cores:
   - smsplus
   - smsplus_gx
+  - "smsplus-gx"
 systems:
   - sega-master-system
   - sega-game-gear

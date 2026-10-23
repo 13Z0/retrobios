@@ -14,6 +14,7 @@ library_name: "Cemu"
 save_folder_once: true
 cores:
   - cemu
+  - "cemu-sa"
 systems: [nintendo-wiiu]
 
 data_directories:

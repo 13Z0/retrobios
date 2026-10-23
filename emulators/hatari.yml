@@ -12,6 +12,7 @@ display_name: "Atari - ST/STE/TT/Falcon (Hatari)"
 cores:
   - hatari
   - "HATARISA"
+  - "hatarisa"
 systems:
   - atari-st
   - atari-ste

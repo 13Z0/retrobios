@@ -12,6 +12,7 @@ display_name: "Sony - PlayStation 2 (ARMSX2)"
 cores:
   - armsx2
   - armsx2_libretro
+  - "armsx2-sa"
 systems:
   - sony-playstation-2
 

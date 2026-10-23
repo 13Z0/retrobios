@@ -7,7 +7,7 @@ profiled_date: "2026-10-04"
 source_commit: "c26ce2e6ca2a0c770f140cb25dde0d30073ca8f7"
 core_version: "4.15pre"
 display_name: "GZDoom"
-cores: ["GZDoom"]
+cores: ["GZDoom", "gzdoom-sa"]
 systems: [doom, heretic, hexen, strife, chex]
 
 notes: |

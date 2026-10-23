@@ -10,6 +10,7 @@ core_version: "SVN"
 display_name: "Nintendo - Game Boy Advance (VBA Next)"
 cores:
   - vba_next
+  - "vba-next"
 systems:
   - nintendo-gba
 

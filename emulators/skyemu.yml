@@ -10,6 +10,7 @@ display_name: "Nintendo - Game Boy/GBA/NDS (SkyEmu)"
 
 cores:
   - skyemu
+  - "skyemu-sa"
 
 systems:
   - nintendo-gb

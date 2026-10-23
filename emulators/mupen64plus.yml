@@ -12,6 +12,7 @@ display_name: "Nintendo - Nintendo 64 (Mupen64Plus)"
 cores:
   - "mupen64plus"
   - "mupen64plussa"
+  - "mupen64plus-sa"
 systems:
   - nintendo-64
   - nintendo-64dd

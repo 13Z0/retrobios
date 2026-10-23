@@ -16,6 +16,7 @@ core_version:
 display_name: "Microsoft - Xbox (xemu)"
 cores:
   - xemu
+  - "xemu-sa"
 systems:
   - microsoft-xbox
 

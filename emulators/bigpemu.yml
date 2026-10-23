@@ -10,6 +10,7 @@ core_version: "1.221"
 display_name: "BigPEmu (Atari Jaguar)"
 cores:
   - bigpemu
+  - "bigpemu-sa"
 systems:
   - atari-jaguar
   - atari-jaguarcd
