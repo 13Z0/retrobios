@@ -17,6 +17,20 @@ systems:
   - tandy-1000
 mode: standalone
 
+data_root:
+  windows:
+    path: "%LOCALAPPDATA%/DOSBox"
+    source_ref: "src/misc/cross.cpp:67-101"
+    note: "dosbox-staging.conf beside the executable makes that folder the root instead"
+  macos:
+    path: "~/Library/Preferences/DOSBox"
+    source_ref: "src/misc/cross.cpp:54-63"
+    note: "dosbox-staging.conf beside the executable makes that folder the root instead"
+  linux:
+    path: "$XDG_CONFIG_HOME/dosbox"
+    source_ref: "src/misc/cross.cpp:108-171, src/misc/fs_utils_posix.cpp:100-105"
+    note: "~/.config/dosbox when XDG_CONFIG_HOME is unset, ~/.dosbox when that folder cannot be used. dosbox-staging.conf beside the executable makes that folder the root instead"
+
 notes: |
   Continuation of DOSBox on a C++23 codebase, SDL3, libmt32emu and FluidSynth
   from vcpkg. The machine setting selects a video adapter (hercules, cga,
