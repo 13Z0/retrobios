@@ -41,7 +41,9 @@ class Guide:
     README inside the pack. `logo_owner` and `logo_licence` credit the
     logo the registry links. `runs_on` names the hardware, in the project's
     own words, for its tile and its row. `terminal` replaces the shared
-    "On the device" text with how this system opens a terminal. `lead` comes
+    "On the device" text with how this system opens a terminal. `card_run`
+    names the computers that can open the BIOS folder on the device's card,
+    when not every one can. `lead` comes
     before the folder table, `finish` closes the guide. `{folders}` in
     `pack_manual` is the folder list of the page, so the README and the page
     cannot name two folders for one device.
@@ -66,6 +68,7 @@ class Guide:
     terminal: str = ""
     lead: str = ""
     finish: str = ""
+    card_run: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -180,10 +183,13 @@ def _guide(name: str, data: object, extract_to: str, terminals: dict) -> Guide:
     if missing:
         raise GuideError(f"{where}: missing {', '.join(missing)}")
     run = _texts(data["run"], f"{where}.run")
-    unknown_tabs = [key for key in run if key not in terminals]
-    if unknown_tabs:
-        raise GuideError(f"{where}.run: no terminal named {', '.join(unknown_tabs)}")
+    card_run = _texts(data["card_run"], f"{where}.card_run") if "card_run" in data else ()
+    for key, tabs in (("run", run), ("card_run", card_run)):
+        unknown_tabs = [tab for tab in tabs if tab not in terminals]
+        if unknown_tabs:
+            raise GuideError(f"{where}.{key}: no terminal named {', '.join(unknown_tabs)}")
     values: dict = {
+        "card_run": card_run,
         "summary": _text(data["summary"], f"{where}.summary"),
         "folders": _folder_rows(data["folders"], extract_to, f"{where}.folders"),
         "run": run,

@@ -10,6 +10,7 @@
 # `{folders}` in it is the folder list of the page.
 # `runs_on` names the hardware in the project's own words, cited beside it.
 # `terminal` is how this system opens a terminal, from its own documentation.
+# `card_run` names the computers that open the device's card, when not all do.
 # `lead` comes before the folder table, `finish` closes the guide.
 # `logo_owner` and `logo_licence` credit the logo the registry links: it is
 # shown only to name the platform, with the licence of the repository the
@@ -214,7 +215,13 @@ handheld_guide:
     folder_source: https://github.com/game-de-it/plumOS-XU20V32/blob/main/docs/developer/storage-and-updates.md
     devices: [MagicX XU20 V32]
     devices_source: https://github.com/game-de-it/plumOS-XU20V32
+  # RetroOZ publishes no build source. Its wiki keeps games under /roms and
+  # sends BIOS questions to the ArkOS wiki, whose folder is bios in roms. The
+  # 0.60 image sets system_directory "/roms/bios" (retroarch32/retroarch.cfg:3046).
+  # Written as the device path: no RetroOZ page names the card's parts.
   - name: RetroOZ
+    folder: '`/roms/bios`, as the device names it'
+    folder_source: https://github.com/southoz/RetroOZ/wiki/Home/4ce4fafb78d647d422e9e468d5bd9cbc63dbe3ea
     devices: [OGS, OGA, RGB10Max, RGB10Max2]
     devices_source: https://github.com/southoz/RetroOZ/wiki
   - name: UnofficialOS
@@ -618,6 +625,9 @@ guides:
     # is the network folder above.
     terminal: >-
       Press **F4** in the game menu for a terminal. Paste the line. Press Enter.
+    # The BIOS folder is on the card's Linux partition (pack_manual below):
+    # from a computer, only Linux opens it.
+    card_run: [linux]
     notes:
     - >-
       Install with `--platform retropie`, not RetroArch's files. The command does not run on
