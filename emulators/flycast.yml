@@ -27,6 +27,27 @@ standalone_directories:
   - "$HOME/.local/share/flycast"
   - "FLYCAST_BIOS_PATH"
 
+data_root:
+  android:
+    path: "Android/data/com.flycast.emulator/files/data"
+    source_ref: "shell/android-studio/flycast/src/main/java/com/flycast/emulator/BaseGLActivity.java:92-97,442-447, shell/android-studio/flycast/src/main/jni/src/Android.cpp:143-159, shell/android-studio/flycast/build.gradle.kts:21"
+    note: "data/ under the home directory set in the app settings, getFilesDir() when no external storage is mounted"
+  ios:
+    path: "Documents"
+    source_ref: "shell/apple/emulator-ios/emulator/FlycastViewController.mm:198-201"
+    note: "the app's sandbox Documents folder, with no data/ subfolder"
+  windows:
+    path: "<folder of flycast.exe>/data"
+    source_ref: "core/windows/winmain.cpp:59-78"
+    note: "the UWP build uses data/ under the app's LocalFolder (core/windows/winmain.cpp:80-89)"
+  macos:
+    path: "~/Library/Application Support/Flycast/data"
+    source_ref: "shell/apple/emulator-osx/emulator-osx/osx-main.mm:78-102"
+    note: "~/.flycast/data when ~/.flycast exists. A second running instance appends its number to the folder"
+  linux:
+    path: "$XDG_DATA_HOME/flycast, else ~/.local/share/flycast"
+    source_ref: "core/linux-dist/main.cpp:74-99,247"
+
 notes: |
   The libretro core is built from flyinghead/flycast, the same tree as the
   standalone emulator: the wrapper lives in shell/libretro and is compiled
@@ -48,13 +69,9 @@ notes: |
   configures, then in its data directory, then in the system data
   directories, then in the content directories, and writes the flash back to
   the data directory (core/oslib/oslib.cpp:118-196,
-  core/stdclass.cpp:95-125). The data directory is $XDG_DATA_HOME/flycast/,
-  else ~/.local/share/flycast/, on Linux (core/linux-dist/main.cpp:74-99), and
-  the data/ folder of the configuration directory on Windows, Android and
-  macOS (core/windows/winmain.cpp:73-78, core/windows/winmain.cpp:86-89,
-  shell/android-studio/flycast/src/main/jni/src/Android.cpp:149-159,
-  shell/apple/emulator-osx/emulator-osx/osx-main.mm:97-101).
-  standalone_path is relative to the data directory. The BIOS paths are the
+  core/stdclass.cpp:95-125). The data directory, given per system in
+  data_root, is the data/ folder of the configuration directory except on
+  Linux and iOS. standalone_path is relative to it. The BIOS paths are the
   Dreamcast.BiosPath setting (core/cfg/option.cpp:144), the system data
   directories take $FLYCAST_BIOS_PATH (core/linux-dist/main.cpp:198-202), and
   find_user_data_dir() returns the data directory
