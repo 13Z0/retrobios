@@ -103,8 +103,11 @@ def _read_record(dist: Path, tag: str, owners: dict[str, list[str]]) -> dict:
         members: dict[str, int] = {}
         for path in paths:
             with zipfile.ZipFile(path) as archive:
+                # A part's marker names its siblings and is not pack content:
+                # the manifest's pack_files is counted before any split.
                 for info in archive.infolist():
-                    members[info.filename] = info.file_size
+                    if not split_pack.is_marker(info.filename):
+                        members[info.filename] = info.file_size
         packs[name] = {
             "files": len(members),
             "extracted_size": sum(members.values()),

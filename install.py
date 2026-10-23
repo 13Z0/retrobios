@@ -39,6 +39,7 @@ import urllib.parse
 import urllib.request
 import xml.etree.ElementTree as ET
 import zipfile
+import zlib
 from collections.abc import Callable, Iterator
 from pathlib import Path, PurePosixPath
 from typing import BinaryIO, NamedTuple, TextIO
@@ -2922,6 +2923,7 @@ def _fetch_json(url: str, limit: int, label: str) -> object:
     A 4xx answer or an invalid document is final: asking again changes
     nothing.
     """
+    _network_allowed(label)
     for attempt in range(1, MAX_RETRIES + 1):
         try:
             with urllib.request.urlopen(url, timeout=30) as resp:
@@ -2946,7 +2948,16 @@ def _fetch_json(url: str, limit: int, label: str) -> object:
 
 
 def fetch_manifest(plat: str) -> dict:
-    """Download platform manifest JSON."""
+    """Download platform manifest JSON, or read the one this run was given."""
+    if LOCAL.manifest is not None:
+        return read_local_manifest(LOCAL.manifest, plat)
+    if LOCAL.pack is not None:
+        try:
+            return _validate_manifest(LOCAL.pack.manifest(plat), plat)
+        except ValueError as exc:
+            print(f"  The file list in {LOCAL.pack.name} is not valid: {exc}",
+                  file=sys.stderr)
+            sys.exit(1)
     url = MANIFEST_URL.format(platform=plat)
     try:
         return _validate_manifest(_fetch_json(url, MAX_MANIFEST_BYTES, "manifest"), plat)
@@ -3979,6 +3990,9 @@ def _download_one(
             return f["dest"], False, NOT_WRITABLE
         return f["dest"], False, exc.strerror or str(exc)
 
+    if LOCAL.pack is not None:
+        return _extract_from_pack(f, bios_path, dest, progress)
+    _network_allowed(f["dest"])
     if f.get("release_asset"):
         url = RELEASE_URL.format(asset=urllib.parse.quote(f["release_asset"], safe=""))
     else:
@@ -4380,6 +4394,7 @@ def _folder_writable(path: Path) -> bool:
 # Options that take a value, as a hint gives them back.
 _VALUED_OPTIONS = (
     "--system", "--core", "--emulator", "--region", "--target", "--cores-dir", "--save-dir",
+    "--from-pack", "--manifest",
 )
 
 
@@ -4567,6 +4582,7 @@ def _report_outcome(
     assumed: set[Path] | None = None,
     omitted_entries: list[dict] | None = None,
     platform_of: dict[Path, str] | None = None,
+    hints: list[str] | None = None,
 ) -> None:
     """Close the run on what happened, and leave with a status that says so.
 
@@ -4574,7 +4590,8 @@ def _report_outcome(
     which reads as success to a person and to a script alike.
     """
     if transferred and seconds > 0:
-        print(f"\n{format_size(transferred)} downloaded in "
+        verb = "copied from the pack" if LOCAL.pack is not None else "downloaded"
+        print(f"\n{format_size(transferred)} {verb} in "
               f"{format_duration(seconds)} ({format_size(int(transferred / seconds))}/s).")
     reasons = {reason for _dest, reason in failures or []}
     if failures and len(failures) > 1 and len(reasons) == 1 and reasons != {""}:
@@ -4652,6 +4669,8 @@ def _report_outcome(
     if omitted:
         for line in _omission_lines(omitted, omitted_entries or []):
             print(line)
+    for line in hints or []:
+        print(line)
     print("To check this later, run the same command with --check.")
 
 
@@ -4774,8 +4793,9 @@ def _print_plan(
         if len(by_system[system]) > 8:
             print(f"    ... and {len(by_system[system]) - 8} more")
     for entry, needed in trees:
+        source = LOCAL.pack.name if LOCAL.pack is not None else entry["url"]
         print(f"  {term.bold(entry['ref'] + ' data')}  {_sized(list(needed.values()))}, "
-              f"from {entry['url']}")
+              f"from {source}")
     for folder, (count, size) in sorted((kept or {}).items()):
         print(f"\n  Would keep {_plural(count, 'file')} you have ({format_size(size)}), "
               f"whose contents differ, in {folder}")
@@ -4875,6 +4895,7 @@ def download_files(
 
 def _fetch_archive(url: str, directory: Path) -> Path:
     """A data directory's source archive, in *directory*, retried like files."""
+    _network_allowed(url)
     reason: Exception | None = None
     for attempt in range(1, MAX_RETRIES + 1):
         handle = tempfile.NamedTemporaryFile(dir=directory, suffix=".archive", delete=False)
@@ -4981,8 +5002,13 @@ def install_data_directory(entry: dict, bios_path: Path) -> dict:
     try:
         root.mkdir(parents=True, exist_ok=True)
         with tempfile.TemporaryDirectory(dir=root) as scratch:
-            archive = _fetch_archive(entry["url"], Path(scratch))
-            for rel, declared, opener in _archive_members(archive, entry):
+            if LOCAL.pack is not None:
+                # The pack holds the tree where it extracts, already mapped.
+                members = LOCAL.pack.tree(entry.get("dest", ""))
+            else:
+                archive = _fetch_archive(entry["url"], Path(scratch))
+                members = _archive_members(archive, entry)
+            for rel, declared, opener in members:
                 meta = needed.pop(rel, None)
                 if meta is None:
                     continue
@@ -5841,6 +5867,744 @@ def _requested_narrowing(
     return systems, cores, regions
 
 
+# A pack too large for one release file is published as ZIP parts
+# (scripts/split_pack.py), each holding at its root a marker that names the
+# pack, the part and every part with its size. Extracted with the files,
+# the markers say which part a folder lacks.
+_PART_FILE = re.compile(r"^(?P<stem>.+_BIOS_Pack)\.part(?P<index>\d+)of(?P<count>\d+)\.zip$")
+_PART_MARKER = re.compile(r"^(?P<stem>.+_BIOS_Pack)\.part(?P<index>\d+)of(?P<count>\d+)\.txt$")
+MAX_MARKER_BYTES = 64 * 1024
+MAX_PARTS = 999
+
+
+class PackPart(NamedTuple):
+    """What one part's marker says, and the folder it was found in."""
+
+    pack: str
+    index: int
+    count: int
+    parts: tuple[tuple[str, int], ...]
+    folder: Path
+
+
+def read_part_marker(path: Path) -> PackPart | None:
+    """The marker at path, None when it is not one split_pack wrote."""
+    match = _PART_MARKER.match(path.name)
+    if match is None:
+        return None
+    try:
+        with open(path, "rb") as handle:
+            text = handle.read(MAX_MARKER_BYTES).decode("utf-8")
+    except (OSError, UnicodeDecodeError):
+        return None
+    pack = ""
+    index = count = 0
+    parts: list[tuple[str, int]] = []
+    for line in text.splitlines():
+        key, _sep, value = line.partition(":")
+        value = value.strip()
+        if key == "pack":
+            pack = value
+        elif key == "part":
+            numbers = value.split(" of ")
+            if len(numbers) == 2 and all(n.isdigit() for n in numbers):
+                index, count = int(numbers[0]), int(numbers[1])
+        elif key == "file":
+            size, _space, name = value.partition(" ")
+            if size.isdigit() and _PART_FILE.match(name.strip()):
+                parts.append((name.strip(), int(size)))
+    if (
+        not pack.endswith("_BIOS_Pack.zip")
+        or not 1 <= index <= count <= MAX_PARTS
+        or len(parts) != count
+        or (index, count) != (int(match["index"]), int(match["count"]))
+    ):
+        return None
+    return PackPart(pack, index, count, tuple(parts), path.parent)
+
+
+def find_part_markers(root: Path) -> list[PackPart]:
+    """Markers in root and in the folders right below it.
+
+    A part extracted into a folder named after itself (the default of
+    several archive tools) leaves its marker one level down.
+    """
+    found: list[PackPart] = []
+    try:
+        entries = sorted(root.iterdir())
+    except OSError:
+        return found
+    for entry in entries:
+        if entry.is_file():
+            marker = read_part_marker(entry)
+            if marker:
+                found.append(marker)
+        elif entry.is_dir() and not entry.is_symlink() and entry.name != BACKUP_DIR:
+            try:
+                below = sorted(entry.iterdir())
+            except OSError:
+                continue
+            for child in below:
+                marker = read_part_marker(child) if child.is_file() else None
+                if marker:
+                    found.append(marker)
+    return found
+
+
+def split_pack_lines(root: Path) -> list[str]:
+    """What --check says about the parts of a pack extracted into root: one
+    missing, or one extracted into a folder of its own."""
+    by_pack: dict[str, list[PackPart]] = {}
+    for marker in find_part_markers(root):
+        by_pack.setdefault(marker.pack, []).append(marker)
+    lines: list[str] = []
+    for pack, markers in sorted(by_pack.items()):
+        listed = max(markers, key=lambda m: m.count)
+        here = {m.index for m in markers if m.folder == root and m.count == listed.count}
+        missing = [n for n in range(1, listed.count + 1) if n not in here]
+        deep = sorted({m.folder for m in markers if m.folder != root})
+        if not missing and not deep:
+            continue
+        lines.append(f"\n  {pack} comes in {listed.count} parts, all needed.")
+        for folder in deep:
+            names = sorted(m.index for m in markers if m.folder == folder)
+            which = ", ".join(str(n) for n in names)
+            lines.append(f"    {'Parts' if len(names) > 1 else 'Part'} {which} went into "
+                         f"{folder}, a folder of its own: move what it holds up into {root}.")
+        absent = [n for n in missing
+                  if not any(m.index == n and m.folder != root for m in markers)]
+        for number in absent:
+            name, size = listed.parts[number - 1]
+            lines.append(f"    missing: part {number}, {name} ({format_size(size)})")
+        if absent:
+            lines.append(f"    Download {'it' if len(absent) == 1 else 'them'} and extract "
+                         f"into {root}, beside the other parts.")
+    return lines
+
+
+class PackSource:
+    """A pack already downloaded, whole or in parts, read in place of the network.
+
+    Every file it gives is checked against the hashes the file list records,
+    as a download is.
+    """
+
+    def __init__(self, paths: list[Path]) -> None:
+        self.files = self._resolve(paths)
+        first = _PART_FILE.match(self.files[0].name)
+        self.name = f"{first['stem']}.zip" if first else self.files[0].name
+        self.archives: list[zipfile.ZipFile] = []
+        self.members: dict[str, tuple[zipfile.ZipFile, zipfile.ZipInfo]] = {}
+        try:
+            for path in self.files:
+                archive = zipfile.ZipFile(path)
+                self.archives.append(archive)
+                for info in archive.infolist():
+                    if not info.is_dir():
+                        self.members.setdefault(info.filename, (archive, info))
+        except (OSError, zipfile.BadZipFile) as exc:
+            self.close()
+            raise ValueError(f"{path.name} cannot be read as a ZIP ({exc}). A download "
+                             "cut short gives this: download it again.") from exc
+        self.listed = self._pack_list()
+        self.by_sha1 = {f["sha1"]: f["path"] for f in self.listed}
+
+    @staticmethod
+    def _resolve(paths: list[Path]) -> list[Path]:
+        """The archives of one pack: a whole ZIP, or every one of its parts."""
+        given: list[Path] = []
+        for path in paths:
+            if path.is_dir():
+                given += sorted(p for p in path.iterdir()
+                                if p.is_file() and p.name.endswith(".zip")
+                                and "_BIOS_Pack" in p.name)
+            elif path.is_file():
+                given.append(path)
+            else:
+                raise ValueError(f"{path} does not exist")
+        if not given:
+            raise ValueError(f"no pack ZIP in {', '.join(map(str, paths))}")
+        packs: dict[str, list[Path]] = {}
+        for path in given:
+            part = _PART_FILE.match(path.name)
+            packs.setdefault(f"{part['stem']}.zip" if part else path.name, []).append(path)
+        if len(packs) > 1:
+            raise ValueError(f"these are several packs ({', '.join(sorted(packs))}): "
+                             "name the one to install from")
+        name, chosen = next(iter(packs.items()))
+        whole = [p for p in chosen if not _PART_FILE.match(p.name)]
+        if whole:
+            return whole[:1]
+        count = int(_PART_FILE.match(chosen[0].name)["count"])
+        if count > MAX_PARTS or any(
+            int(_PART_FILE.match(p.name)["count"]) != count for p in chosen
+        ):
+            raise ValueError(f"the parts of {name} disagree on how many there are")
+        stem = name[: -len(".zip")]
+        folders = list(dict.fromkeys(p.parent for p in chosen))
+        found: list[Path] = []
+        missing: list[str] = []
+        for number in range(1, count + 1):
+            part_name = f"{stem}.part{number}of{count}.zip"
+            place = next((folder / part_name for folder in folders
+                          if (folder / part_name).is_file()), None)
+            if place is None:
+                missing.append(part_name)
+            else:
+                found.append(place)
+        if missing:
+            where = ", ".join(map(str, folders))
+            raise ValueError(f"{name} comes in {count} parts and {len(missing)} "
+                             f"{'is' if len(missing) == 1 else 'are'} not in {where}: "
+                             f"{', '.join(missing)}")
+        return found
+
+    def _pack_list(self) -> list[dict]:
+        """The file list the pack carries, every file with its SHA-1 and size."""
+        held = self.members.get("manifest.json")
+        if held is None:
+            raise ValueError(f"{self.name} holds no manifest.json. Name the file list "
+                             "with --manifest.")
+        archive, info = held
+        if info.file_size > MAX_MANIFEST_BYTES:
+            raise ValueError(f"the manifest.json of {self.name} exceeds "
+                             f"{MAX_MANIFEST_BYTES} bytes")
+        try:
+            data = json.loads(archive.read(info).decode("utf-8"))
+        except (OSError, zipfile.BadZipFile, UnicodeDecodeError, json.JSONDecodeError) as exc:
+            raise ValueError(f"the manifest.json of {self.name} cannot be read: {exc}") from exc
+        files = data.get("files") if isinstance(data, dict) else None
+        if not isinstance(files, list):
+            raise ValueError(f"the manifest.json of {self.name} lists no files")
+        listed = []
+        for item in files:
+            if (
+                isinstance(item, dict)
+                and isinstance(item.get("path"), str)
+                and isinstance(item.get("sha1"), str)
+                and _SHA1_RE.fullmatch(item["sha1"].lower())
+                and isinstance(item.get("size"), int)
+            ):
+                listed.append({"path": item["path"], "sha1": item["sha1"].lower(),
+                               "size": item["size"]})
+        return listed
+
+    def platforms(self) -> list[str]:
+        """The platforms the pack's name spells, several for a grouped pack."""
+        stem = "_" + self.name[: -len("_BIOS_Pack.zip")] + "_"
+        return [plat for plat in AVAILABLE_PLATFORMS
+                if f"_{PLATFORM_NAMES[plat].replace(' ', '_')}_" in stem]
+
+    def manifest(self, plat: str) -> dict:
+        """A file list for plat built from the pack's own: the same files at
+        the same places, as extracting the pack would leave them."""
+        return {
+            "manifest_version": 2,
+            "platform": plat,
+            "files": [
+                {"dest": f["path"], "sha1": f["sha1"], "size": f["size"],
+                 "repo_path": f"bios/{f['path']}"}
+                for f in self.listed
+            ],
+        }
+
+    def find(self, entry: dict) -> tuple[zipfile.ZipFile, zipfile.ZipInfo] | None:
+        """The member holding an entry's bytes: by its SHA-1 in the pack's list,
+        else at its destination. The size has to agree either way."""
+        sha1 = str(entry.get("sha1", "")).lower()
+        for name in (self.by_sha1.get(sha1), entry.get("dest")):
+            held = self.members.get(name) if isinstance(name, str) else None
+            if held is not None and held[1].file_size == entry.get("size"):
+                return held
+        return None
+
+    def tree(self, prefix: str) -> Iterator[tuple[str, int, Callable[[], BinaryIO]]]:
+        """(path in the tree, size, opener) of every member below prefix."""
+        lead = f"{prefix.rstrip('/')}/" if prefix else ""
+        for name, (archive, info) in self.members.items():
+            if name.startswith(lead):
+                yield name[len(lead):], info.file_size, (
+                    lambda archive=archive, info=info: archive.open(info))
+
+    def close(self) -> None:
+        for archive in self.archives:
+            archive.close()
+        self.archives = []
+
+
+class LocalSources:
+    """Where this run reads instead of the network: a file list, a pack."""
+
+    def __init__(self) -> None:
+        self.manifest: Path | None = None
+        self.pack: PackSource | None = None
+
+    @property
+    def offline(self) -> bool:
+        return self.pack is not None
+
+    def reset(self) -> None:
+        if self.pack is not None:
+            self.pack.close()
+        self.manifest = None
+        self.pack = None
+
+
+LOCAL = LocalSources()
+NOT_IN_PACK = "not in the pack"
+
+
+class _Offline(OSError):
+    """A network request in a run told to make none."""
+
+
+def _network_allowed(what: str) -> None:
+    if LOCAL.offline:
+        raise _Offline(f"{what}: this run reads a pack and makes no network request")
+
+
+def read_local_manifest(path: Path, plat: str) -> dict:
+    """A file list saved on disk, checked as a downloaded one is."""
+    try:
+        with open(path, "rb") as handle:
+            raw = handle.read(MAX_MANIFEST_BYTES + 1)
+    except OSError as exc:
+        print(f"  Cannot read the file list {path}: {exc.strerror or exc}.", file=sys.stderr)
+        sys.exit(1)
+    try:
+        if len(raw) > MAX_MANIFEST_BYTES:
+            raise ValueError(f"it exceeds {MAX_MANIFEST_BYTES} bytes")
+        try:
+            data = json.loads(raw.decode("utf-8"))
+        except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+            raise ValueError(f"not JSON ({exc})") from exc
+        return _validate_manifest(data, plat)
+    except ValueError as exc:
+        EVENTS.emit("error", stage="manifest", reason="invalid", platform=plat,
+                    message=f"the file list is not valid: {exc}")
+        print(f"  The file list {path} is not valid for {plat}: {exc}", file=sys.stderr)
+        sys.exit(1)
+
+
+def local_manifest_platform(path: Path) -> str | None:
+    """The platform a saved file list names, None when it names none."""
+    try:
+        with open(path, "rb") as handle:
+            data = json.loads(handle.read(MAX_MANIFEST_BYTES).decode("utf-8"))
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError):
+        return None
+    plat = data.get("platform") if isinstance(data, dict) else None
+    return plat if plat in AVAILABLE_PLATFORMS else None
+
+
+def _extract_from_pack(
+    f: dict, bios_path: Path, dest: Path, progress: Progress | None,
+) -> tuple[str, bool, str]:
+    """Copy one file out of the pack, checked like a download."""
+    pack = LOCAL.pack
+    held = pack.find(f) if pack is not None else None
+    if held is None:
+        return f["dest"], False, NOT_IN_PACK
+    archive, info = held
+    expected = {name: f[name].lower() for name in ("sha256", "sha1") if f.get(name)}
+    tmp_path: Path | None = None
+    counted = 0
+    try:
+        with archive.open(info) as src, tempfile.NamedTemporaryFile(
+            mode="wb", dir=dest.parent, prefix=f".{dest.name}.", suffix=".part",
+            delete=False,
+        ) as out:
+            tmp_path = Path(out.name)
+            size = 0
+            while True:
+                if _stop.is_set():
+                    raise _Interrupted()
+                chunk = src.read(min(1024 * 1024, f["size"] + 1 - size))
+                if not chunk:
+                    break
+                size += len(chunk)
+                if size > f["size"]:
+                    raise ValueError("the pack holds more bytes than the list records")
+                out.write(chunk)
+                if progress is not None:
+                    progress.add(len(chunk))
+                    counted += len(chunk)
+        if size != f["size"]:
+            raise ValueError(f"the pack holds {size} bytes, the list records {f['size']}")
+        actual = _digest_file(tmp_path, tuple(expected))
+        for name, label in (("sha256", "SHA-256"), ("sha1", "SHA-1")):
+            if name in expected and actual[name] != expected[name]:
+                raise ValueError(f"{label} mismatch in the pack")
+        os.chmod(tmp_path, (0o777 if f.get("executable") else 0o666) & ~_UMASK)
+        _clear_read_only(dest)
+        KEPT.keep(*_kept_slot(*_entry_place(bios_path, f)), dest, expected, tmp_path)
+        os.replace(tmp_path, dest)
+        tmp_path = None
+        return f["dest"], True, ""
+    except _Interrupted:
+        return f["dest"], False, "stopped"
+    except _NotKept as exc:
+        return f["dest"], False, f"{NOT_KEPT} ({exc})"
+    except (OSError, ValueError, zipfile.BadZipFile, zlib.error) as exc:
+        if progress is not None and counted:
+            progress.add(-counted)
+        if isinstance(exc, OSError) and _write_refused(exc):
+            return f["dest"], False, READ_ONLY if _read_only_file(dest) else NOT_WRITABLE
+        return f["dest"], False, str(exc)
+    finally:
+        if tmp_path is not None and tmp_path.exists():
+            tmp_path.unlink()
+
+
+# Files --check reads to tell why a file is refused: past these, the folder
+# is not one a person filled by hand, and walking it costs more than it tells.
+MAX_SCANNED_FILES = 200_000
+_ARCHIVE_SUFFIXES = (".zip", ".7z", ".rar")
+# Cores named on the line that says who opens a file, before "and N more".
+SHOWN_CORES = 4
+
+
+class FolderIndex:
+    """The files under a BIOS folder, by name and by size, hashed on demand."""
+
+    def __init__(self, root: Path) -> None:
+        self.root = root = root.resolve()
+        self.by_name: dict[str, list[Path]] = {}
+        self.by_size: dict[int, list[Path]] = {}
+        self.size: dict[Path, int] = {}
+        self.archives: list[Path] = []
+        self._sha1: dict[Path, str] = {}
+        self._members: dict[Path, list[str]] = {}
+        seen = 0
+        for folder, dirs, names in os.walk(root):
+            dirs[:] = sorted(d for d in dirs if d != BACKUP_DIR)
+            for name in sorted(names):
+                path = Path(folder) / name
+                try:
+                    if not path.is_file():
+                        continue
+                    size = path.stat().st_size
+                except OSError:
+                    continue
+                self.by_name.setdefault(name.casefold(), []).append(path)
+                self.by_size.setdefault(size, []).append(path)
+                self.size[path] = size
+                if name.casefold().endswith(_ARCHIVE_SUFFIXES):
+                    self.archives.append(path)
+                seen += 1
+                if seen >= MAX_SCANNED_FILES:
+                    return
+
+    def seed(self, path: Path, sha1: str) -> None:
+        """A SHA-1 already known, so the file is not read again."""
+        self._sha1[path] = sha1
+
+    def sha1(self, path: Path) -> str:
+        if path not in self._sha1:
+            try:
+                self._sha1[path] = _sha1_file(path)
+            except OSError:
+                self._sha1[path] = ""
+        return self._sha1[path]
+
+    def holding(self, sizes: set[int], sha1s: set[str]) -> list[Path]:
+        """Files whose contents are one of sha1s, read only when the size fits."""
+        return [path for size in sorted(sizes) for path in self.by_size.get(size, [])
+                if self.sha1(path) in sha1s]
+
+    def zip_members(self, path: Path) -> list[str]:
+        if path not in self._members:
+            try:
+                with zipfile.ZipFile(path) as archive:
+                    self._members[path] = [n.rsplit("/", 1)[-1].casefold()
+                                           for n in archive.namelist()]
+            except (OSError, zipfile.BadZipFile):
+                self._members[path] = []
+        return self._members[path]
+
+    def relative(self, path: Path) -> str:
+        try:
+            return path.relative_to(self.root).as_posix()
+        except ValueError:
+            return str(path)
+
+
+def _copies(entry: dict) -> list[dict]:
+    """Every copy the list knows for an entry: its own, other cores', the
+    platform's declared one."""
+    return [entry, *entry.get("alternatives", []), *entry.get("slot_choices", []),
+            *entry.get("declared_choices", [])]
+
+
+def readers(entry: dict, manifest: dict) -> list[str]:
+    """The cores that open an entry: as its copies name them, else every core
+    the platform runs for its systems."""
+    named = sorted({core for copy in _copies(entry) for core in copy.get("cores") or []})
+    if named:
+        return named
+    system_cores = manifest.get("system_cores") or {}
+    return sorted({core for system in entry_systems(entry)
+                   for core in system_cores.get(system, [])})
+
+
+def opened_line(entry: dict, manifest: dict, bios_path: Path) -> str:
+    """Where the emulators read an entry, and which ones."""
+    try:
+        where = _entry_path(bios_path, entry)
+    except ValueError:
+        where = bios_path / str(entry.get("dest"))
+    cores = readers(entry, manifest)
+    if not cores:
+        return f"opened at {where}"
+    shown = ", ".join(cores[:SHOWN_CORES])
+    if len(cores) > SHOWN_CORES:
+        shown += f" and {len(cores) - SHOWN_CORES} more"
+    return f"opened at {where} by {shown}"
+
+
+def _known_destinations(files: list[dict]) -> set[str]:
+    return {str(f.get("dest", "")).casefold() for f in files}
+
+
+def _content_owner(sha1: str, entry: dict, files: list[dict]) -> str:
+    """Why a file holding sha1 is not the one entry wants, if the list knows."""
+    for copy in entry.get("alternatives", []) + entry.get("slot_choices", []):
+        if copy.get("sha1") == sha1 and copy.get("cores"):
+            return (f"another revision: the copy {', '.join(copy['cores'])} "
+                    "reads, not the one this list installs here")
+    for copy in entry.get("declared_choices", []):
+        if copy.get("sha1") == sha1:
+            return ("another revision: the one the platform's own list declares, "
+                    "not the one the cores read")
+    for other in files:
+        if other is entry or other.get("dest") == entry.get("dest"):
+            continue
+        if any(copy.get("sha1") == sha1 for copy in _copies(other)):
+            regions = [r for r in other.get("regions") or [] if r != WORLD_REGION]
+            if regions:
+                return (f"another region: the contents of {other['dest']} "
+                        f"({', '.join(regions)})")
+            return f"another file: the contents of {other['dest']}"
+    return ""
+
+
+def _found_elsewhere(
+    entry: dict, index: FolderIndex, bios_path: Path, files: list[dict],
+    known: set[str],
+) -> tuple[str, str]:
+    """(reason, folder too deep) for an entry missing at its place."""
+    dest = str(entry.get("dest", ""))
+    name = dest.rsplit("/", 1)[-1]
+    sizes = {copy.get("size") for copy in _copies(entry) if isinstance(copy.get("size"), int)}
+    sha1s = {copy.get("sha1") for copy in _copies(entry) if copy.get("sha1")}
+    try:
+        expected = _entry_path(bios_path, entry)
+    except ValueError:
+        return "", ""
+    same_name = [p for p in index.by_name.get(name.casefold(), []) if p != expected]
+    matching = [p for p in same_name if index.size[p] in sizes and index.sha1(p) in sha1s]
+    for path in matching or same_name:
+        rel = index.relative(path)
+        contents = "" if path in matching else ", with other contents"
+        # A dest below the save directory is not below this folder: a copy
+        # here under the same tail is in the wrong place, not too deep.
+        below = entry.get("root") != "save"
+        if below and rel.endswith("/" + dest) and path.name == name:
+            extra = rel[: -len(dest) - 1]
+            top = index.root.name
+            if extra.casefold() == top.casefold():
+                return (f"nested folder: it is at {top}/{rel}{contents}, a "
+                        f"{top} folder inside {top}"), extra
+            depth = extra.count("/") + 1
+            levels = "one folder" if depth == 1 else f"{depth} folders"
+            return f"{levels} too deep: it is at {rel}{contents}", extra
+        if path.parent == expected.parent and path.name != name:
+            return f"case of the name: the folder holds {path.name}{contents}", ""
+        if path.name.casefold() == name.casefold():
+            return f"wrong folder: it is at {rel}{contents}", ""
+    above = index.root.parent / dest
+    if index.root.parent != index.root and above.is_file():
+        return f"one folder too high: it is at {above}", ""
+    for path in index.holding(sizes, sha1s):
+        rel = index.relative(path)
+        if rel.casefold() in known:
+            return f"its contents are at {rel}: copy that file to {dest}", ""
+        return f"a name no core opens: its contents are at {rel}, rename it {name}", ""
+    if name.casefold().endswith(_ARCHIVE_SUFFIXES):
+        return "", ""
+    stem = name.rsplit(".", 1)[0].casefold()
+    folders = {expected.parent, index.root}
+    for path in index.archives:
+        if path.parent not in folders or index.relative(path).casefold() in known:
+            continue
+        lowered = path.name.casefold()
+        if lowered.endswith(".zip") and name.casefold() in index.zip_members(path):
+            return f"still zipped: it is inside {index.relative(path)}", ""
+        if lowered.rsplit(".", 1)[0] == stem:
+            return f"still zipped: {index.relative(path)} needs extracting", ""
+    return "", ""
+
+
+def _wrong_contents(entry: dict, path: Path, index: FolderIndex, files: list[dict]) -> str:
+    """Why the file at an entry's place is not the one the list installs."""
+    try:
+        size = path.stat().st_size
+        with open(path, "rb") as handle:
+            head = handle.read(4)
+    except OSError:
+        return ""
+    sha1 = index.sha1(path)
+    owner = _content_owner(sha1, entry, files)
+    if owner:
+        return owner
+    if head == b"PK\x03\x04" and not str(entry.get("dest", "")).casefold().endswith(".zip"):
+        return "still zipped: this file is a ZIP archive, extract what it holds"
+    expected = {copy.get("size") for copy in _copies(entry) if isinstance(copy.get("size"), int)}
+    if size not in expected:
+        want = " or ".join(f"{s:,}" for s in sorted(expected))
+        return f"wrong size: {size:,} bytes, the list expects {want}"
+    return "same size, other contents: another dump, or a damaged copy"
+
+
+class Diagnosis(NamedTuple):
+    reasons: dict[int, str]
+    deep: dict[str, int]
+
+
+def diagnose(
+    missing: list[dict], mismatched: list[dict], files: list[dict], bios_path: Path,
+    verified: list[dict] | None = None,
+) -> Diagnosis:
+    """The reason --check gives for each file it flags, from what the folder
+    holds and what the list records: id(entry) -> reason, and the folders
+    holding files too deep with how many. The files the check verified are
+    not read again: their SHA-1 is the one the list records."""
+    reasons: dict[int, str] = {}
+    deep: dict[str, int] = {}
+    if not bios_path.is_dir() or not (missing or mismatched):
+        return Diagnosis(reasons, deep)
+    index = FolderIndex(bios_path)
+    for entry in verified or []:
+        if entry.get("sha1"):
+            try:
+                index.seed(_entry_path(bios_path, entry), entry["sha1"].lower())
+            except ValueError:
+                continue
+    known = _known_destinations(files)
+    for entry in missing:
+        reason, extra = _found_elsewhere(entry, index, bios_path, files, known)
+        if reason:
+            reasons[id(entry)] = reason
+        if extra:
+            deep[extra] = deep.get(extra, 0) + 1
+    for entry in mismatched:
+        try:
+            path = _entry_path(bios_path, entry)
+        except ValueError:
+            continue
+        reason = _wrong_contents(entry, path, index, files)
+        if reason:
+            reasons[id(entry)] = reason
+    return Diagnosis(reasons, deep)
+
+
+def check_lines(
+    missing: list[dict], mismatched: list[dict], files: list[dict], manifest: dict,
+    bios_path: Path, every: bool, verified: list[dict] | None = None,
+) -> list[str]:
+    """The files --check flags, each with why and where its cores read it.
+
+    "missing: scph5501.bin" left a user with the file one folder too deep,
+    or still in its ZIP, to guess. A flagged file with a reason is always
+    listed. Plain missing ones stop at ten unless every is set.
+    """
+    found = diagnose(missing, mismatched, files, bios_path, verified)
+    lines = []
+    for extra, count in sorted(found.deep.items(), key=lambda item: -item[1]):
+        if count >= 3:
+            lines.append(f"  {_plural(count, 'file')} sit too deep, in "
+                         f"{bios_path / extra}: move what it holds up into {bios_path}.")
+    explained = [e for e in missing if id(e) in found.reasons]
+    plain = [e for e in missing if id(e) not in found.reasons]
+    shown = plain if every else plain[:10]
+
+    def block(label: str, entry: dict) -> list[str]:
+        game = " (game data)" if entry.get("category") == GAME_DATA else ""
+        rows = [f"    {label}: {entry['dest']}{game}"]
+        if id(entry) in found.reasons:
+            rows.append(f"      {found.reasons[id(entry)]}")
+        rows.append(f"      {opened_line(entry, manifest, bios_path)}")
+        return rows
+
+    for entry in mismatched:
+        lines += block("wrong hash", entry)
+    for entry in explained:
+        lines += block("missing", entry)
+    for entry in shown:
+        lines += block("missing", entry)
+    if len(shown) < len(plain):
+        lines.append(f"    ... and {len(plain) - len(shown)} more missing "
+                     "(--verbose lists them all)")
+    return lines
+
+
+# Below this a download is small enough that narrowing it is not worth a line.
+BULK_HINT_FROM = 100 * 1024 * 1024
+
+
+def _bytes(files: list[dict]) -> int:
+    return sum(f.get("size", 0) for f in files)
+
+
+def bulk_hint(
+    to_download: list[dict], manifest: dict, systems_chosen: bool, cores_chosen: bool,
+) -> list[str]:
+    """Name what pulls most of a download, when narrowing saves over half of it.
+
+    `--system 3do` fetched 349 MB for RetroArch, and `--core opera` 12.5 MB:
+    the arcade cores that also read 3DO pulled the rest, and nothing said so.
+    """
+    total = _bytes(to_download)
+    if total < BULK_HINT_FROM:
+        return []
+    systems = {s for entry in to_download for s in entry_systems(entry)}
+    if not cores_chosen and len(systems) == 1:
+        system = next(iter(systems))
+        candidates = (manifest.get("system_cores") or {}).get(system) or []
+        by_core: dict[str, int] = {}
+        for entry in to_download:
+            for core in entry.get("cores") or []:
+                by_core[core] = by_core.get(core, 0) + entry.get("size", 0)
+        kept = {core: _bytes(_filter_by_target(to_download, [core])) for core in candidates}
+        if by_core and kept:
+            heavy = max(sorted(by_core), key=lambda core: by_core[core])
+            light = min(sorted(kept), key=lambda core: kept[core])
+            saved = total - kept[light]
+            if saved * 2 > total:
+                return [
+                    f"  {heavy} pulls {format_size(by_core[heavy])} of this "
+                    f"{format_size(total)} download for {system}. --core {light} "
+                    f"keeps {format_size(kept[light])} of it and saves "
+                    f"{format_size(saved)} ({saved * 100 // total}%)."
+                ]
+    if not systems_chosen and len(systems) > 1:
+        alone: dict[str, int] = {}
+        for entry in to_download:
+            own = entry_systems(entry)
+            if len(own) == 1:
+                alone[own[0]] = alone.get(own[0], 0) + entry.get("size", 0)
+        if alone:
+            heavy = max(sorted(alone), key=lambda system: alone[system])
+            if alone[heavy] * 2 > total:
+                return [
+                    f"  {heavy} pulls {format_size(alone[heavy])} of this "
+                    f"{format_size(total)} download. --system naming the systems "
+                    f"you play leaves it out and saves {format_size(alone[heavy])} "
+                    f"({alone[heavy] * 100 // total}%), --list-systems names them."
+                ]
+    return []
+
+
 def _help_epilog() -> str:
     """Examples in the form the run was started with, and where the rest is."""
     run = _INVOCATION.launcher()
@@ -6031,6 +6795,22 @@ def main() -> None:
              f"(a dated folder inside {BACKUP_DIR})",
     )
     parser.add_argument(
+        "--from-pack",
+        action="append",
+        type=Path,
+        metavar="PATH",
+        help="install from a pack already downloaded: its ZIP, one of its parts "
+             "(the others are found beside it) or the folder holding them. "
+             "Makes no network request, and checks every file's hash",
+    )
+    parser.add_argument(
+        "--manifest",
+        type=Path,
+        metavar="FILE",
+        help="read the file list from FILE (install/<platform>.json) instead "
+             "of downloading it",
+    )
+    parser.add_argument(
         "--version",
         action="version",
         version=f"retrobios installer {installer_id()} (ref {RELEASE_REF})",
@@ -6065,7 +6845,7 @@ def main() -> None:
                  "cores_dir", "save_dir", "system", "core", "region", "no_game_data",
                  "list_systems",
                  "list_cores", "romm_firmware", "list_emulators", "events", "quiet",
-                 "yes", "verbose")
+                 "yes", "verbose", "from_pack", "manifest")
         given = [name for name in alone if getattr(args, name)]
         if args.jobs != 8:
             given.append("jobs")
@@ -6075,6 +6855,12 @@ def main() -> None:
         sys.exit(restore_kept(args.restore, args.dry_run))
     if args.every_board and args.target:
         parser.error("--every-board installs every board; --target names one")
+    if args.from_pack and args.target:
+        parser.error("--target reads a core list from the network, which --from-pack "
+                     "does not use")
+    if (args.from_pack or args.manifest) and (args.list_platforms or args.list_targets):
+        parser.error("--from-pack and --manifest give a file list, which --list-platforms "
+                     "and --list-targets do not read")
     if args.no_game_data and (args.list_platforms or args.list_targets):
         parser.error("--no-game-data narrows a file list, not --list-platforms "
                      "or --list-targets")
@@ -6120,6 +6906,44 @@ def _run(args: argparse.Namespace) -> None:
     finally:
         if sys.stdout is captured:
             sys.stdout = real_stdout
+
+
+def _open_local_sources(args: argparse.Namespace) -> None:
+    """Take the file list and the pack this run was given, and the platform
+    they are for when none is named."""
+    LOCAL.reset()
+    if args.manifest is not None:
+        LOCAL.manifest = args.manifest
+        named = local_manifest_platform(args.manifest)
+        if args.platform is None and named:
+            args.platform = named
+            print(f"  File list: {args.manifest} ({display_name(named)})")
+    if not args.from_pack:
+        return
+    try:
+        LOCAL.pack = PackSource(args.from_pack)
+    except ValueError as exc:
+        print(f"Error: {exc}", file=sys.stderr)
+        sys.exit(1)
+    pack = LOCAL.pack
+    parts = len(pack.files)
+    print(f"  Pack: {pack.name}"
+          + (f", {parts} parts" if parts > 1 or _PART_FILE.match(pack.files[0].name) else ""))
+    spelled = pack.platforms()
+    if args.platform is not None:
+        plat = normalize_platform(args.platform)
+        if spelled and plat not in spelled:
+            print(f"Error: {pack.name} is a pack for "
+                  f"{' and '.join(display_name(n) for n in spelled)}, not "
+                  f"{display_name(plat)}.", file=sys.stderr)
+            sys.exit(1)
+    elif len(spelled) == 1:
+        args.platform = spelled[0]
+    else:
+        among = (" (" + ", ".join(spelled) + ")") if spelled else ""
+        print(f"Error: name the platform {pack.name} is installed for with "
+              f"--platform{among}.", file=sys.stderr)
+        sys.exit(1)
 
 
 def _missing_dest(dest: Path, ask: bool) -> None:
@@ -6254,6 +7078,7 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
     os_type = detect_os()
     if os_type == "wsl":
         _enter_wsl()
+    _open_local_sources(args)
 
     # Early exit for listing
     if args.list_platforms:
@@ -6404,6 +7229,7 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
     files_pending = 0
     failures: list[tuple[str, str]] = []
     installed_paths: list[Path] = []
+    bulk_lines: list[str] = []
 
     # --target is checked for every platform before anything is written, as
     # --installed-cores is below: EmuDeck installed 3.2 GB and only then was
@@ -6454,7 +7280,12 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
     for plat_name, bios_path in platforms:
         if bios_path not in installed_paths:
             installed_paths.append(bios_path)
-        print(f"\nFetching file index for {plat_name}...")
+        if LOCAL.manifest is not None:
+            print(f"\nReading the file index for {plat_name} from {LOCAL.manifest}...")
+        elif LOCAL.pack is not None:
+            print(f"\nReading the file index for {plat_name} from {LOCAL.pack.name}...")
+        else:
+            print(f"\nFetching file index for {plat_name}...")
         manifest = fetch_manifest(plat_name)
         files = manifest.get("files", [])
         omitted_files = manifest.get("omitted_files", [])
@@ -6510,7 +7341,7 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
         # narrows to it: a Batocera RPi4 took 8.6 GiB where its board needs
         # 5.5. Only on the device itself, where the board file exists.
         target = args.target
-        if not target and not args.every_board and args.dest is None:
+        if not target and not args.every_board and args.dest is None and not LOCAL.offline:
             board = detect_board(plat_name)
             if board:
                 known = fetch_targets(plat_name) or {}
@@ -6687,6 +7518,12 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
 
         # Mismatched files need re-download
         to_download.extend(mismatched)
+        hint = [] if LOCAL.pack is not None else bulk_hint(
+            to_download, manifest,
+            systems_chosen=bool(selection and selection[0]),
+            cores_chosen=bool((selection and selection[1]) or args.emulator
+                              or args.installed_cores or target),
+        )
 
         narrowed = bool(
             target or args.system or args.core or args.region or args.installed_cores
@@ -6712,15 +7549,14 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                 # 8000 missing files, it hid behind "... and 8059 more".
                 wrong = {id(entry) for entry in mismatched}
                 missing = [entry for entry in to_download if id(entry) not in wrong]
-                shown = missing if args.verbose else missing[:10]
+                # A pack extracted from some of its parts: the part is named
+                # before the hundreds of files it holds.
+                for line in split_pack_lines(bios_path):
+                    print(line)
                 print(f"\n  {_plural(len(to_download), 'file')} to download:")
-                for entry in mismatched:
-                    print(f"    wrong hash: {entry['dest']}")
-                for entry in shown:
-                    print(f"    missing: {entry['dest']}")
-                if len(shown) < len(missing):
-                    print(f"    ... and {len(missing) - len(shown)} more missing "
-                          "(--verbose lists them all)")
+                for line in check_lines(missing, mismatched, files, manifest, bios_path,
+                                        args.verbose, up_to_date):
+                    print(line)
                 print("  Run the same command without --check to fetch them; "
                       "a file with a wrong hash is replaced, and the one in place "
                       f"kept in {BACKUP_DIR} beside the BIOS folder.")
@@ -6752,6 +7588,8 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                 for entry, needed in trees for rel in needed
             ], bios_path)
             _print_plan(to_download, bios_path, term, trees, kept)
+            for line in hint:
+                print(line)
             continue
 
         if to_download:
@@ -6771,7 +7609,11 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                 files_pending += len(to_download)
                 continue
             EVENTS.emit("download", platform=plat_name, files=len(to_download), bytes=dl_size)
-            print(f"\nDownloading {len(to_download)} files ({format_size(dl_size)})...")
+            if LOCAL.pack is not None:
+                print(f"\nCopying {len(to_download)} files ({format_size(dl_size)}) "
+                      f"from {LOCAL.pack.name}...")
+            else:
+                print(f"\nDownloading {len(to_download)} files ({format_size(dl_size)})...")
             print("  Press Ctrl+C to stop. Running the same command again "
                   "carries on from here.")
             # Checked before the folder is created: a run stopped for space
@@ -6797,6 +7639,7 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                 to_download, bios_path, jobs=args.jobs, verbose=args.verbose,
                 term=term, progress=progress,
             )
+            bulk_lines += hint
             total_downloaded += len(to_download) - len(failed)
             files_pending += len(failed)
             if interrupted:
@@ -6829,7 +7672,8 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                              "the source (the pack has them)")
                 print(line)
                 if counts["error"]:
-                    print(f"  {entry['ref']}: could not read {entry['url']}: "
+                    print(f"  {entry['ref']}: could not read "
+                          f"{LOCAL.pack.name if LOCAL.pack is not None else entry['url']}: "
                           f"{counts['error']}", file=sys.stderr)
                     failures.append((entry["ref"], counts["error"]))
                     total_errors += 1
@@ -6898,6 +7742,7 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
             assumed=assumed_dests,
             omitted_entries=omitted_seen,
             platform_of={path: plat for plat, path in platforms},
+            hints=bulk_lines,
         )
 
 

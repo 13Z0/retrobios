@@ -446,8 +446,11 @@ class DownloaderCase(unittest.TestCase):
             "pack staged in the system temp directory",
         )
         searched = list(self.dest.parent.iterdir()) + list(self.dest.rglob("*"))
+        # A part's marker is extracted on purpose: install.py --check reads it.
         leftovers = sorted(
-            p.name for p in searched if "_BIOS_Pack" in p.name or p.name.startswith(".")
+            p.name for p in searched
+            if ("_BIOS_Pack" in p.name or p.name.startswith("."))
+            and not split_pack.is_marker(p.name)
         )
         self.assertEqual(leftovers, [], "download staging left behind")
 
@@ -573,6 +576,12 @@ class ZipPartsCase(DownloaderCase):
     """A pack published as parts that are each an archive."""
 
     zip_parts = True
+    # Bytes deflate cannot shrink: each member outweighs the marker a part
+    # carries, so the pack splits in two.
+    payload = {
+        "bios/scph5501.bin": b"".join(hashlib.sha256(b"us%d" % n).digest() for n in range(64)),
+        "bios/dc/dc_boot.bin": b"".join(hashlib.sha256(b"dc%d" % n).digest() for n in range(64)),
+    }
 
 
 class ZipPartsTests:

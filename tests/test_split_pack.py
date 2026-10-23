@@ -67,6 +67,8 @@ class SplitFixture(unittest.TestCase):
             with zipfile.ZipFile(part) as archive:
                 self.assertIsNone(archive.testzip())
                 for name in archive.namelist():
+                    if split_pack.is_marker(name):
+                        continue
                     self.assertNotIn(name, found, "a file sits in two parts")
                     found[name] = archive.read(name)
         return found
@@ -135,6 +137,61 @@ class PartsAreArchives(SplitFixture):
                 for info in archive.infolist():
                     modes[info.filename] = info.external_attr >> 16
         self.assertTrue(modes["bin/engine"] & stat.S_IXUSR)
+
+
+class EachPartNamesItsSiblings(SplitFixture):
+    """A part extracted alone looked like a complete pack. Each part now
+    carries a marker naming the pack, its number and every part with its
+    size, so a missing one can be named from the extracted folder."""
+
+    def _markers(self, parts: list[Path]) -> dict[str, str]:
+        found = {}
+        for part in parts:
+            with zipfile.ZipFile(part) as archive:
+                names = [n for n in archive.namelist() if split_pack.is_marker(n)]
+                self.assertEqual(len(names), 1, part.name)
+                found[part.name] = archive.read(names[0]).decode("utf-8")
+        return found
+
+    def test_every_part_carries_one_marker(self):
+        parts = split_pack.split_pack(self.pack, limit=LIMIT)
+        count = len(parts)
+        for index, part in enumerate(parts, 1):
+            with zipfile.ZipFile(part) as archive:
+                self.assertIn(f"Demo_1.0_BIOS_Pack.part{index}of{count}.txt",
+                              archive.namelist())
+
+    def test_the_marker_names_the_pack_the_part_and_every_size(self):
+        parts = split_pack.split_pack(self.pack, limit=LIMIT)
+        count = len(parts)
+        for index, (name, text) in enumerate(self._markers(parts).items(), 1):
+            with self.subTest(part=name):
+                lines = text.splitlines()
+                self.assertIn("pack: Demo_1.0_BIOS_Pack.zip", lines)
+                self.assertIn(f"part: {index} of {count}", lines)
+                listed = [line.split()[1:] for line in lines if line.startswith("file:")]
+                self.assertEqual(
+                    listed,
+                    [[str(p.stat().st_size), p.name] for p in parts],
+                )
+
+    def test_the_parts_still_fit_with_their_markers(self):
+        for part in split_pack.split_pack(self.pack, limit=LIMIT):
+            self.assertLess(part.stat().st_size, LIMIT)
+
+    def test_a_pack_holding_a_marker_name_is_refused(self):
+        members = dict(self.members)
+        members["Demo_1.0_BIOS_Pack.part1of2.txt"] = b"x"
+        self.pack.unlink()
+        self._build(self.pack, members)
+        with self.assertRaises(ValueError):
+            split_pack.split_pack(self.pack, limit=LIMIT)
+        self.assertTrue(self.pack.is_file())
+
+    def test_a_marker_is_not_a_part(self):
+        self.assertTrue(split_pack.is_marker("Demo_BIOS_Pack.part2of3.txt"))
+        self.assertFalse(split_pack.is_part("Demo_BIOS_Pack.part2of3.txt"))
+        self.assertFalse(split_pack.is_marker("Demo_BIOS_Pack.part2of3.zip"))
 
 
 class SplitHoldsTheDirectory(SplitFixture):

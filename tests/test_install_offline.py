@@ -1,0 +1,502 @@
+"""What --check says about a refused file, and an install with no network.
+
+A user with the BIOS one folder too deep, still in its ZIP or under another
+name read "missing: scph5501.bin" and nothing else. --check now names the
+reason and where each core opens the file. A pack extracted from some of
+its parts is named by the part it lacks. And a pack downloaded once
+installs again from disk, --from-pack, every file checked by its hash.
+"""
+
+from __future__ import annotations
+
+import contextlib
+import hashlib
+import io
+import json
+import os
+import shutil
+import socket
+import subprocess
+import sys
+import tempfile
+import unittest
+import zipfile
+from pathlib import Path
+
+REPO_ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(REPO_ROOT))
+sys.path.insert(0, str(REPO_ROOT / "scripts"))
+sys.path.insert(0, str(REPO_ROOT / "tests"))
+
+import install  # noqa: E402
+import split_pack  # noqa: E402
+from test_install_selection import FakeRepository  # noqa: E402
+
+US = b"us bios " * 64
+JP = b"jp bios " * 64
+EU = b"eu bios " * 64
+GBA = b"gba bios" * 32
+EXTRA = b"pcsx extra"
+
+
+def _sha1(data: bytes) -> str:
+    return hashlib.sha1(data).hexdigest()
+
+
+def _entry(dest: str, data: bytes, systems: list[str], **fields) -> dict:
+    return {
+        "dest": dest, "sha1": _sha1(data), "size": len(data),
+        "repo_path": f"bios/{dest.replace('/', '_')}", "cores": None,
+        "systems": systems, **fields,
+    }
+
+
+def manifest() -> dict:
+    """A small RetroArch list: two regions of one BIOS, a core file with a
+    second revision, a file in a subfolder."""
+    return {
+        "manifest_version": 2,
+        "platform": "retroarch",
+        "files": [
+            _entry("scph5501.bin", US, ["sony-playstation"], regions=["north-america"]),
+            _entry("scph5500.bin", JP, ["sony-playstation"], regions=["japan"]),
+            _entry("gba_bios.bin", GBA, ["nintendo-gba"]),
+            _entry("pcsx/extra.bin", EXTRA, ["sony-playstation"], cores=["pcsx_rearmed"],
+                   alternatives=[{"sha1": _sha1(EU), "size": len(EU),
+                                  "repo_path": "bios/eu", "cores": ["beetle_psx"]},
+                                 {"sha1": _sha1(EXTRA), "size": len(EXTRA),
+                                  "repo_path": "bios/x", "cores": ["pcsx_rearmed"]}]),
+        ],
+        "system_cores": {"sony-playstation": ["beetle_psx", "pcsx_rearmed"],
+                         "nintendo-gba": ["mgba"]},
+    }
+
+
+PAYLOAD = {"scph5501.bin": US, "scph5500.bin": JP, "gba_bios.bin": GBA,
+           "pcsx/extra.bin": EXTRA}
+
+
+def _closed_port() -> int:
+    with socket.socket() as sock:
+        sock.bind(("127.0.0.1", 0))
+        return sock.getsockname()[1]
+
+
+def _offline_env() -> dict:
+    """An environment where any request the installer makes is refused."""
+    env = dict(os.environ)
+    env["RETROBIOS_BASE_URL"] = f"http://127.0.0.1:{_closed_port()}"
+    env["HTTPS_PROXY"] = env["HTTP_PROXY"] = f"http://127.0.0.1:{_closed_port()}"
+    return env
+
+
+class Scratch(unittest.TestCase):
+    def setUp(self):
+        scratch = REPO_ROOT / "tmp"
+        scratch.mkdir(exist_ok=True)
+        self.root = Path(tempfile.mkdtemp(dir=scratch))
+        self.addCleanup(shutil.rmtree, self.root, True)
+        self.dest = self.root / "system"
+        self.list = self.root / "retroarch.json"
+        self.list.write_text(json.dumps(manifest()))
+
+    def run_installer(self, *options: str) -> subprocess.CompletedProcess:
+        return subprocess.run(
+            [sys.executable, str(REPO_ROOT / "install.py"), "--platform", "retroarch",
+             "--dest", str(self.dest), *options],
+            env=_offline_env(), capture_output=True, text=True, timeout=120,
+            check=False, stdin=subprocess.DEVNULL,
+        )
+
+    def place(self, relative: str, data: bytes) -> Path:
+        path = self.dest / relative
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(data)
+        return path
+
+    def check(self) -> str:
+        proc = self.run_installer("--check", "--manifest", str(self.list), "--verbose")
+        self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
+        return proc.stdout
+
+    def complete(self, *skip: str) -> None:
+        for name, data in PAYLOAD.items():
+            if name not in skip:
+                self.place(name, data)
+
+
+class CheckNamesWhyAFileIsRefused(Scratch):
+    def test_another_region_is_named(self):
+        self.complete("scph5501.bin")
+        self.place("scph5501.bin", JP)
+        out = self.check()
+        self.assertIn("wrong hash: scph5501.bin", out)
+        self.assertIn("another region: the contents of scph5500.bin (japan)", out)
+
+    def test_another_revision_names_the_core_that_reads_it(self):
+        self.complete("pcsx/extra.bin")
+        self.place("pcsx/extra.bin", EU)
+        out = self.check()
+        self.assertIn("another revision: the copy beetle_psx reads", out)
+
+    def test_a_wrong_size_is_measured(self):
+        self.complete("gba_bios.bin")
+        self.place("gba_bios.bin", b"short")
+        self.assertIn(f"wrong size: 5 bytes, the list expects {len(GBA):,}", self.check())
+
+    def test_a_zip_under_the_file_name_is_still_zipped(self):
+        self.complete("gba_bios.bin")
+        buffer = io.BytesIO()
+        with zipfile.ZipFile(buffer, "w") as archive:
+            archive.writestr("gba_bios.bin", GBA)
+        self.place("gba_bios.bin", buffer.getvalue())
+        self.assertIn("still zipped: this file is a ZIP archive", self.check())
+
+    def test_a_file_inside_an_archive_is_still_zipped(self):
+        self.complete("gba_bios.bin")
+        self.dest.mkdir(exist_ok=True)
+        with zipfile.ZipFile(self.dest / "GBA BIOS.zip", "w") as archive:
+            archive.writestr("bios/gba_bios.bin", GBA)
+        self.assertIn("still zipped: it is inside GBA BIOS.zip", self.check())
+
+    def test_a_case_difference_is_named(self):
+        probe = self.root / "CaseProbe"
+        probe.write_text("x")
+        if (self.root / "caseprobe").exists():
+            self.skipTest("this filesystem does not keep case")
+        self.complete("gba_bios.bin")
+        self.place("GBA_BIOS.BIN", GBA)
+        self.assertIn("case of the name: the folder holds GBA_BIOS.BIN", self.check())
+
+    def test_a_nested_bios_folder_is_named(self):
+        for name, data in PAYLOAD.items():
+            self.place(f"system/{name}", data)
+        out = self.check()
+        self.assertIn("nested folder: it is at system/system/scph5501.bin", out)
+        self.assertIn(f"4 files sit too deep, in {self.dest.resolve() / 'system'}", out)
+
+    def test_a_wrong_folder_is_named(self):
+        self.complete("pcsx/extra.bin")
+        self.place("beetle/extra.bin", EXTRA)
+        self.assertIn("wrong folder: it is at beetle/extra.bin", self.check())
+
+    def test_a_folder_too_deep_is_named(self):
+        self.complete("gba_bios.bin")
+        self.place("gba/roms/gba_bios.bin", GBA)
+        self.assertIn("2 folders too deep: it is at gba/roms/gba_bios.bin", self.check())
+
+    def test_a_folder_too_high_is_named(self):
+        self.complete("gba_bios.bin")
+        (self.root / "gba_bios.bin").write_bytes(GBA)
+        self.assertIn(f"one folder too high: it is at {self.root.resolve() / 'gba_bios.bin'}",
+                      self.check())
+
+    def test_a_name_no_core_opens_is_named(self):
+        self.complete("scph5501.bin")
+        self.place("PSX BIOS (USA).bin", US)
+        self.assertIn("a name no core opens: its contents are at PSX BIOS (USA).bin, "
+                      "rename it scph5501.bin", self.check())
+
+    def test_a_save_directory_file_left_in_the_bios_folder_is_in_the_wrong_folder(self):
+        """A pack carries the save directory's files under saves/: extracted
+        into the BIOS folder they sit beside it, not too deep in it."""
+        self.place("saves/azahar/keys.txt", b"keys")
+        saves = self.root / "saves"
+        saves.mkdir()
+        install._SAVE_DIRS[self.dest] = install.SavePlace(saves, False)
+        self.addCleanup(install._SAVE_DIRS.pop, self.dest, None)
+        entry = _entry("azahar/keys.txt", b"keys", ["nintendo-3ds"], root="save")
+        found = install.diagnose([entry], [], [entry], self.dest)
+        self.assertEqual(found.reasons[id(entry)],
+                         "wrong folder: it is at saves/azahar/keys.txt")
+        self.assertEqual(found.deep, {})
+
+    def test_each_flagged_file_says_where_its_cores_open_it(self):
+        self.complete("scph5501.bin", "pcsx/extra.bin")
+        out = self.check()
+        here = self.dest.resolve()
+        self.assertIn(f"opened at {here / 'scph5501.bin'} by beetle_psx, pcsx_rearmed", out)
+        self.assertIn(f"opened at {here / 'pcsx' / 'extra.bin'} by beetle_psx, pcsx_rearmed",
+                      out)
+
+    def test_a_complete_folder_says_nothing_more(self):
+        self.complete()
+        proc = self.run_installer("--check", "--manifest", str(self.list))
+        self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+        self.assertNotIn("opened at", proc.stdout)
+
+
+def _pack(directory: Path, name: str, members: dict[str, bytes]) -> Path:
+    """A pack as generate_pack writes one: the files and a manifest.json."""
+    listed = [{"path": path, "sha1": _sha1(data), "md5": hashlib.md5(data).hexdigest(),
+               "size": len(data), "status": "verified", "name": path.rsplit("/", 1)[-1]}
+              for path, data in members.items()]
+    path = directory / name
+    with zipfile.ZipFile(path, "w", zipfile.ZIP_DEFLATED) as archive:
+        for member, data in members.items():
+            archive.writestr(member, data)
+        archive.writestr("README.txt", b"read me\n")
+        archive.writestr("manifest.json", json.dumps({"files": listed}))
+    return path
+
+
+def _noise(seed: str, size: int) -> bytes:
+    """Bytes deflate cannot shrink."""
+    return b"".join(hashlib.sha256(f"{seed}{n}".encode()).digest()
+                    for n in range(size // 32))
+
+
+BIG = {f"dir{n}/file{n}.bin": _noise(str(n), 2048) for n in range(4)}
+
+
+class SplitParts(Scratch):
+    def split(self) -> list[Path]:
+        downloads = self.root / "downloads"
+        downloads.mkdir()
+        pack = _pack(downloads, "RetroArch_v1_BIOS_Pack.zip", BIG)
+        parts = split_pack.split_pack(pack, limit=pack.stat().st_size // 3)
+        self.assertGreater(len(parts), 2)
+        return parts
+
+    def extract(self, parts: list[Path], into: Path | None = None) -> None:
+        for part in parts:
+            with zipfile.ZipFile(part) as archive:
+                archive.extractall(into or self.dest)
+
+    def list_of_pack(self) -> None:
+        self.list.write_text(json.dumps({
+            "manifest_version": 2, "platform": "retroarch",
+            "files": [_entry(path, data, ["arcade"]) for path, data in BIG.items()],
+        }))
+
+    def test_check_names_the_part_missing_from_the_folder(self):
+        parts = self.split()
+        self.list_of_pack()
+        self.extract(parts[:1] + parts[2:])
+        out = self.check()
+        count = len(parts)
+        self.assertIn(f"RetroArch_v1_BIOS_Pack.zip comes in {count} parts, all needed.", out)
+        self.assertIn(f"missing: part 2, RetroArch_v1_BIOS_Pack.part2of{count}.zip", out)
+        self.assertNotIn("missing: part 1,", out)
+
+    def test_check_names_a_part_extracted_into_a_folder_of_its_own(self):
+        parts = self.split()
+        self.list_of_pack()
+        self.extract(parts[1:])
+        own = self.dest / parts[0].stem
+        self.extract(parts[:1], own)
+        out = self.check()
+        self.assertIn(f"Part 1 went into {own}, a folder of its own", out)
+        self.assertNotIn("missing: part 1,", out)
+
+    def test_a_complete_set_of_parts_says_nothing(self):
+        parts = self.split()
+        self.list_of_pack()
+        self.extract(parts)
+        proc = self.run_installer("--check", "--manifest", str(self.list))
+        self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+        self.assertNotIn("comes in", proc.stdout)
+
+    def test_from_pack_finds_the_other_parts_beside_one(self):
+        parts = self.split()
+        proc = self.run_installer("--from-pack", str(parts[1]))
+        self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+        for path, data in BIG.items():
+            self.assertEqual((self.dest / path).read_bytes(), data)
+
+    def test_from_pack_names_a_part_that_is_not_there(self):
+        parts = self.split()
+        parts[1].unlink()
+        proc = self.run_installer("--from-pack", str(parts[0]))
+        self.assertEqual(proc.returncode, 1)
+        self.assertIn(f"not in {parts[0].parent}: {parts[1].name}", proc.stderr)
+        self.assertFalse(self.dest.exists())
+
+
+class FromPackInstallsOffline(Scratch):
+    def setUp(self):
+        super().setUp()
+        self.downloads = self.root / "downloads"
+        self.downloads.mkdir()
+        self.pack = _pack(self.downloads, "RetroArch_v1_BIOS_Pack.zip", PAYLOAD)
+
+    def installed(self) -> dict[str, bytes]:
+        return {p.relative_to(self.dest).as_posix(): p.read_bytes()
+                for p in self.dest.rglob("*") if p.is_file()}
+
+    def test_the_pack_installs_with_no_network(self):
+        proc = self.run_installer("--from-pack", str(self.pack))
+        self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+        self.assertEqual(self.installed(), PAYLOAD)
+        self.assertIn("Copying 4 files", proc.stdout)
+        self.assertNotIn("Fetching", proc.stdout)
+
+    def test_the_folder_holding_the_pack_is_enough(self):
+        proc = self.run_installer("--from-pack", str(self.downloads))
+        self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+        self.assertEqual(self.installed(), PAYLOAD)
+
+    def test_the_platform_is_read_from_the_pack_name(self):
+        proc = subprocess.run(
+            [sys.executable, str(REPO_ROOT / "install.py"), "--dest", str(self.dest),
+             "--from-pack", str(self.pack), "--no-input"],
+            env=_offline_env(), capture_output=True, text=True, timeout=120,
+            check=False, stdin=subprocess.DEVNULL,
+        )
+        self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+        self.assertEqual(self.installed(), PAYLOAD)
+
+    def test_a_pack_for_another_platform_is_refused(self):
+        proc = subprocess.run(
+            [sys.executable, str(REPO_ROOT / "install.py"), "--platform", "batocera",
+             "--dest", str(self.dest), "--from-pack", str(self.pack)],
+            env=_offline_env(), capture_output=True, text=True, timeout=120,
+            check=False, stdin=subprocess.DEVNULL,
+        )
+        self.assertEqual(proc.returncode, 1)
+        self.assertIn("is a pack for RetroArch, not Batocera", proc.stderr)
+
+    def test_a_file_whose_bytes_differ_from_the_list_is_refused(self):
+        """The hash is checked against the list the run reads, not trusted
+        from the archive that carries both."""
+        listed = manifest()
+        listed["files"][0]["sha1"] = _sha1(b"something else")
+        self.list.write_text(json.dumps(listed))
+        proc = self.run_installer("--from-pack", str(self.pack), "--manifest", str(self.list))
+        self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
+        self.assertIn("scph5501.bin", proc.stdout)
+        self.assertFalse((self.dest / "scph5501.bin").exists())
+        self.assertEqual((self.dest / "gba_bios.bin").read_bytes(), GBA)
+
+    def test_with_a_saved_list_the_choice_options_apply(self):
+        proc = self.run_installer("--from-pack", str(self.pack), "--manifest",
+                                  str(self.list), "--system", "nintendo-gba")
+        self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+        self.assertEqual(self.installed(), {"gba_bios.bin": GBA})
+
+    def test_a_file_the_pack_does_not_hold_fails_by_name(self):
+        listed = manifest()
+        listed["files"].append(_entry("absent.bin", b"absent", ["nintendo-gba"]))
+        self.list.write_text(json.dumps(listed))
+        proc = self.run_installer("--from-pack", str(self.pack), "--manifest", str(self.list))
+        self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
+        self.assertIn("absent.bin (not in the pack)", proc.stdout)
+
+    def test_a_data_tree_is_rebuilt_from_the_pack(self):
+        """The tree's source archive is never fetched: the pack holds it
+        where it extracts."""
+        tree = {"Sys/GC/font.bin": b"font bytes", "Sys/Wii/setting.txt": b"setting"}
+        self.pack = _pack(self.downloads, "RetroArch_v1_BIOS_Pack.zip",
+                          {**PAYLOAD, **{f"dolphin-emu/{k}": v for k, v in tree.items()}})
+        listed = manifest()
+        listed["data_directories"] = [{
+            "ref": "dolphin-sys", "dest": "dolphin-emu", "type": "zip",
+            "url": "https://example.invalid/dolphin.zip", "systems": ["nintendo-gba"],
+            "files": {rel: {"sha1": _sha1(data), "size": len(data)}
+                      for rel, data in tree.items()},
+        }]
+        self.list.write_text(json.dumps(listed))
+        proc = self.run_installer("--from-pack", str(self.pack), "--manifest", str(self.list))
+        self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+        self.assertIn("dolphin-sys: 2 installed", proc.stdout)
+        for rel, data in tree.items():
+            self.assertEqual((self.dest / "dolphin-emu" / rel).read_bytes(), data)
+
+    def test_a_cut_download_is_named(self):
+        self.pack.write_bytes(self.pack.read_bytes()[:100])
+        proc = self.run_installer("--from-pack", str(self.pack))
+        self.assertEqual(proc.returncode, 1)
+        self.assertIn("cannot be read as a ZIP", proc.stderr)
+
+    def test_target_is_refused_with_from_pack(self):
+        proc = self.run_installer("--from-pack", str(self.pack), "--target", "switch")
+        self.assertEqual(proc.returncode, 2)
+        self.assertIn("--target", proc.stderr)
+
+    def test_no_request_leaves_the_process(self):
+        """The guard holds in the code, not only in the test's dead proxy."""
+        install.LOCAL.reset()
+        install.LOCAL.pack = install.PackSource([self.pack])
+        self.addCleanup(install.LOCAL.reset)
+        with self.assertRaises(OSError):
+            install._fetch_json("http://example.invalid/x.json", 10, "manifest")
+
+
+class ManifestFromDisk(unittest.TestCase):
+    def test_a_saved_list_installs_without_fetching_the_list(self):
+        with FakeRepository() as repo:
+            saved = repo.root / "saved.json"
+            served = repo.root / "install" / "retroarch.json"
+            saved.write_bytes(served.read_bytes())
+            served.unlink()
+            proc = repo.run("--manifest", str(saved))
+            self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+            self.assertEqual(len(repo.installed()), 5)
+
+    def test_a_list_for_another_platform_is_refused(self):
+        with FakeRepository() as repo:
+            saved = repo.root / "saved.json"
+            data = json.loads((repo.root / "install" / "retroarch.json").read_text())
+            data["platform"] = "batocera"
+            saved.write_text(json.dumps(data))
+            proc = repo.run("--manifest", str(saved))
+            self.assertEqual(proc.returncode, 1)
+            self.assertIn("not valid for retroarch", proc.stderr)
+
+
+def _sized(dest: str, size: int, systems: list[str], cores: list[str] | None = None) -> dict:
+    return {"dest": dest, "size": size, "sha1": "0" * 40, "systems": systems,
+            "cores": cores, "repo_path": f"bios/{dest}"}
+
+
+MB = 1024 * 1024
+
+
+class TheSummaryNamesTheBulk(unittest.TestCase):
+    def test_a_core_pulling_most_of_a_system_is_named_with_the_saving(self):
+        files = [
+            _sized("opera.bin", 12 * MB, ["3do"]),
+            _sized("mame/3do.zip", 300 * MB, ["3do"], ["mame"]),
+            _sized("mame/3do_m2.zip", 37 * MB, ["3do"], ["mame"]),
+        ]
+        lines = install.bulk_hint(files, {"system_cores": {"3do": ["mame", "opera"]}},
+                                  systems_chosen=True, cores_chosen=False)
+        self.assertEqual(lines, [
+            "  mame pulls 337.0 MB of this 349.0 MB download for 3do. --core opera "
+            "keeps 12.0 MB of it and saves 337.0 MB (96%)."
+        ])
+
+    def test_a_system_pulling_most_of_the_download_is_named(self):
+        files = [_sized("a.zip", 400 * MB, ["arcade"]), _sized("b.bin", 50 * MB, ["nes"]),
+                 _sized("c.bin", 10 * MB, ["gba"])]
+        lines = install.bulk_hint(files, {}, systems_chosen=False, cores_chosen=False)
+        self.assertEqual(len(lines), 1)
+        self.assertIn("arcade pulls 400.0 MB of this 460.0 MB download", lines[0])
+        self.assertIn("saves 400.0 MB (86%)", lines[0])
+
+    def test_nothing_is_said_under_half(self):
+        files = [_sized("a.zip", 100 * MB, ["arcade"]), _sized("b.bin", 100 * MB, ["nes"])]
+        self.assertEqual(install.bulk_hint(files, {}, False, False), [])
+
+    def test_nothing_is_said_for_a_small_download(self):
+        files = [_sized("a.zip", 40 * MB, ["arcade"]), _sized("b.bin", 1 * MB, ["nes"])]
+        self.assertEqual(install.bulk_hint(files, {}, False, False), [])
+
+    def test_a_chosen_core_is_not_second_guessed(self):
+        files = [_sized("opera.bin", 12 * MB, ["3do"]),
+                 _sized("mame/3do.zip", 300 * MB, ["3do"], ["mame"])]
+        self.assertEqual(install.bulk_hint(
+            files, {"system_cores": {"3do": ["mame", "opera"]}}, True, True), [])
+
+    def test_the_end_summary_prints_the_line(self):
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            install._report_outcome([Path("/x")], 3, 0, 0, 0, False,
+                                    hints=["  arcade pulls most of it."])
+        text = out.getvalue()
+        self.assertIn("  arcade pulls most of it.", text)
+        self.assertLess(text.index("Done."), text.index("arcade pulls"))
+
+
+if __name__ == "__main__":
+    unittest.main()
