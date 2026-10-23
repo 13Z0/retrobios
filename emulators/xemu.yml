@@ -19,6 +19,20 @@ cores:
 systems:
   - microsoft-xbox
 
+data_root:
+  windows:
+    path: "%APPDATA%/xemu/xemu"
+    source_ref: "ui/xemu-settings.cc:51-63, 73-92"
+    note: "xemu.toml beside xemu.exe makes its folder the root"
+  macos:
+    path: "~/Library/Application Support/xemu/xemu"
+    source_ref: "ui/xemu-settings.cc:51-63, 73-92"
+    note: "xemu.toml beside the executable makes its folder the root"
+  linux:
+    path: "$XDG_DATA_HOME/xemu/xemu, else ~/.local/share/xemu/xemu"
+    source_ref: "ui/xemu-settings.cc:51-63, 73-92"
+    note: "xemu.toml beside the executable makes its folder the root"
+
 notes: |
   Full-system Xbox emulator built on QEMU. One tree builds the standalone
   application and, with the libretro build option, a core in which a shim
