@@ -698,7 +698,14 @@ class FirstInstallWalkthrough(unittest.TestCase):
         step3 = _section(self.run, "The file index and the download")
         step4 = _section(self.run, "The end of the run")
         step5 = _section(self.run, "A later check")
-        self.assertIn(re.search(r"Done\. \d+ files installed", step4).group(0), self.text)
+        # First install names the three endings a run prints, and no count:
+        # a figure from one setup read as the size of every install.
+        source = (ROOT / "install.py").read_text(encoding="utf-8")
+        for ending in ("Done.", "Finished with errors.", "Nothing was installed."):
+            with self.subTest(ending=ending):
+                self.assertIn(f"`{ending}`", _section(self.text, "5. Read the last line"))
+                self.assertIn(f'"\\n{ending} ', source)
+        self.assertNotRegex(self.text, r"Done\. \d+ files")
         count, size = re.search(r"\n  (\d+) files \(([\d.]+ [KMG]B)\)", step3).groups()
         self.assertIn(f"0/{count} present", step3)
         self.assertIn(f"Downloading {count} files ({size})", step3)

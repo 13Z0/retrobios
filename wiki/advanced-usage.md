@@ -1,6 +1,6 @@
 ---
-level: reference
-order: 100
+level: contribute
+order: 80
 ---
 
 # Build your own packs

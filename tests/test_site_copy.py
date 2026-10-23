@@ -35,7 +35,6 @@ START_PAGES = {
     "wiki/troubleshooting.md": 300,
     "wiki/faq.md": 450,
     "wiki/glossary.md": 200,
-    "wiki/getting-started.md": 120,
 }
 # Level 1: the guide part of each setup page, above its Reference heading.
 SETUP_CEILING = 220

@@ -1,10 +1,9 @@
 ---
 level: start
 order: 50
-nav_title: Common questions
 ---
 
-# FAQ
+# Common questions
 
 ## Do I need BIOS files?
 
@@ -14,35 +13,54 @@ many home computers. For NES or Super Nintendo cartridges, usually not.
 
 ## How do I know which BIOS I need?
 
-Run the installer with `--dry-run`. It lists what it would install and changes
+Run the command with `--dry-run`. It lists what it would install and changes
 nothing.
 
+<!-- os-tabs -->
 ```sh
 curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh -s -- --dry-run
 ```
 
-Your setup's page also lists every file, console by console.
+Your setup's page lists every file.
+
+## Do I need every file of a console?
+
+No. A console often has one BIOS per region. The ZIP holds them all. To keep
+only yours, add your region, like `--region us`.
+
+## Zip or unzip? { #zip-or-unzip }
+
+Unzip the ZIP you downloaded once, into the folder your setup's page names.
+Leave the ZIP files inside it as they are, like `neogeo.zip`. Arcade emulators
+read them zipped.
+
+## Does a BIOS work on every setup?
+
+The same file usually works everywhere. Some setups also check the version and
+report one they do not expect. Arcade files like `neogeo.zip` change with the
+emulator. The command installs the version your setup expects.
+
+## Can I play without the BIOS?
+
+Sometimes. Some emulators carry a stand-in for it. Some games then glitch or
+do not start.
 
 ## Is the command safe? { #is-piping-the-installer-into-a-shell-safe }
 
-- It checks the installer's fingerprint before running it. If the download
-  does not match its expected fingerprint, it stops.
-- It checks every file before saving it.
-- It writes only in your BIOS folder.
+- It checks the installer's fingerprint first. If it does not match its expected
+  fingerprint, it stops.
+- It checks each file before saving it.
+- It writes in your BIOS folder. For some emulators it also adds files to your
+  save folder.
+- It never changes or deletes a game or a save.
+- It keeps any file it replaces in a `retrobios-backup` folder, next to your
+  BIOS folder. `--restore` puts it back
+  ([details](installer.md#files-you-already-had)).
 
-To read the script before you run it:
-
-```sh
-curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh -o install.sh
-less install.sh && sh install.sh
-```
-
+Read the script first: [install.sh](https://github.com/Abdess/retrobios/blob/main/install.sh),
+[install.ps1](https://github.com/Abdess/retrobios/blob/main/install.ps1) and
+[install.py](https://github.com/Abdess/retrobios/blob/main/install.py).
 Details: [How the installer checks itself](installer.md#what-the-bootstrap-does).
-
-## Will it change my other files?
-
-No. It never touches games or saves, or a file it does not know. It replaces a
-BIOS file with the wrong contents, and keeps yours.
 
 ## Windows or my antivirus blocks the command
 
@@ -51,35 +69,22 @@ It holds the same files.
 
 ## Can I run it again?
 
-Yes. That is how you update. It downloads only what is missing or wrong.
-
-## Can I undo it?
-
-Yes. It keeps every file it replaces in a `retrobios-backup` folder, beside
-your BIOS folder. The end of the run prints the line that puts them back: the
-same command with `--restore` and that folder.
-
-Details: [Files you already had](installer.md#files-you-already-had).
+Yes, to update. It downloads only what is missing or wrong.
 
 ## Fill an SD card from a computer?
 
-Yes. Name your setup and the BIOS folder on the card:
+Yes. Name your setup and the BIOS folder on the card. On Windows, `E:` stands
+for the card.
 
+<!-- os-tabs windows: --platform retroarch --dest E:\retroarch\cores\system -->
 ```sh
 curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh \
   | sh -s -- --platform retroarch --dest /path/to/sdcard/retroarch/cores/system
 ```
 
-On Windows the line is different. Details: [Passing options](installer.md#passing-options).
-
-## Does a BIOS work on every setup?
-
-Yes. Only the folder changes, and sometimes the name.
-
 ## Why is a file missing from the ZIP?
 
-Some files come with the emulator when you install it. The ZIP leaves those
-out.
+Some files come with the emulator. The ZIP leaves those out.
 
 ## Required or optional?
 
@@ -93,19 +98,10 @@ Most of the time, a BIOS file is missing or is the wrong version.
 
 ## Is this legal?
 
-Laws on copying console firmware differ by country. The question is not
-settled, and nothing here is legal advice. Details: [The project's legal position](legal.md).
+Laws differ by country, and nothing here is legal advice. Details, and how to
+ask for a file to be removed: [Is it legal?](legal.md)
 
-To ask for a file to be removed, [open an issue](https://github.com/Abdess/retrobios/issues)
-and name the file. A file is removed when the owner of its rights asks.
+## Next steps
 
-## Why keep recent consoles too?
-
-Files disappear when stores close, like the 3DS and Wii U shops in 2023. We keep
-them while they can still be found.
-
-:::tip[Next]
 - [Get your files](../which-pack.md)
 - [Words used on this site](glossary.md)
-:::
-

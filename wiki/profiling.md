@@ -1,7 +1,6 @@
 ---
 level: contribute
 order: 10
-nav_title: Profiling an emulator
 ---
 
 # Profiling guide

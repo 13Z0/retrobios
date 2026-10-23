@@ -1,7 +1,6 @@
 ---
 level: start
 order: 10
-nav_title: What BIOS files are
 ---
 
 # What is a BIOS?
@@ -18,8 +17,8 @@ a copy of the BIOS. That copy is a file: a **BIOS file**.
 
 ## How it works
 
-1. You pick a game in your game menu.
-2. The menu starts the emulator.
+1. You pick a game in your setup's menu.
+2. The setup starts the emulator.
 3. The emulator opens the BIOS file in your **BIOS folder**.
 4. The game starts.
 
@@ -57,10 +56,10 @@ then glitch or do not start. The real file works best, so we include it.
 
 ## Is it legal?
 
-Laws differ by country. [Read the project's position](faq.md#is-this-legal).
+Laws differ by country. [Is it legal?](legal.md)
 
-:::tip[Next]
+## Next steps
+
 - [Get your files](../which-pack.md)
 - [Words used on this site](glossary.md)
-:::
 

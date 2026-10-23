@@ -8,8 +8,8 @@ order: 120
 Answers to "how do you know?" questions: how a file is identified, why one BIOS
 has several fingerprints, why some files are not BIOS, and which MAME version an
 arcade set belongs to. Each answer gives a real file as its example, so you can
-check it on the system pages. Questions asked before installing are in the
-[FAQ](faq.md).
+check it on the system pages. Questions asked before installing are in
+[Common questions](faq.md).
 
 ## What's a hash/checksum?
 
@@ -143,8 +143,8 @@ Running `verify.py --emulator <core> --verbose` shows the emulator-level ground 
 
 It reaches only as far as the profiles do. Files no profile states a value for are platform-only, and nothing can be said about their content. The footer of the platform report gives that ratio as `Ground truth: N/M files have emulator validation`.
 
-:::tip[Next]
-- [Reference index](index.md), every reference page in one list
+## Next steps
+
+- [Reference](index.md), every reference page in one list
 - For contributors: [How to contribute](../contributing.md)
-:::
 

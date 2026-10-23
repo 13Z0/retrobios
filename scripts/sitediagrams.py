@@ -42,12 +42,20 @@ PLACEHOLDER = re.compile(r"(?m)^([ \t]*)<!--\s*image:\s*([A-Za-z0-9_-]+)\s*-->[ 
 PLACEHOLDER_ANYWHERE = re.compile(r"<!--\s*image:\s*([A-Za-z0-9_-]+)\s*-->")
 
 FONT = "system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif"
-TITLE_SIZE = 14
-TEXT_SIZE = 12.5
-LINE = 17
-PAD = 10
+# The stylesheet sets the page font on every <text>, so a path takes the
+# mono font from an inline style, which outranks it.
+MONO_STYLE = "font-family: var(--sl-font-mono, ui-monospace, SFMono-Regular, Menlo, monospace)"
 WIDE = 720
 NARROW = 340
+# The wide drawing is scaled to a column about 700 px wide: these sizes read
+# at 14 px of body text there, the size of the prose around the figure.
+COLUMN = 700
+TEXT_SIZE = round(14 * WIDE / COLUMN, 1)
+TITLE_SIZE = round(15 * WIDE / COLUMN, 1)
+LINE = 20
+PAD = 12
+# A box holds a title and at most this many lines: the rest is the caption's.
+MAX_BOX_LINES = 3
 
 # Default colours for an SVG read outside the page. The stylesheet replaces
 # them on the site through the rb-d-* classes.
@@ -58,13 +66,20 @@ ACCENT = "#3b3f7a"
 MUTED = "#546e7a"
 
 
+class Mono(str):
+    """A path or a name typed as is: drawn in the mono font on a line of its
+    own, never broken."""
+
+
 def _width(text: str, size: float, bold: bool = False) -> float:
-    """Rough advance of a sans-serif string: 0.56 em a character, 0.6 bold."""
-    return len(text) * size * (0.6 if bold else 0.56)
+    """Rough advance of a string: 0.56 em a character, 0.6 bold or mono."""
+    return len(text) * size * (0.6 if bold or isinstance(text, Mono) else 0.56)
 
 
 def wrap(text: str, width: float, size: float, bold: bool = False) -> list[str]:
-    """Greedy word wrap against the estimated advance."""
+    """Greedy word wrap against the estimated advance. A Mono line stays whole."""
+    if isinstance(text, Mono):
+        return [text]
     lines: list[str] = []
     current = ""
     for word in text.split():
@@ -111,10 +126,11 @@ def _text(x: float, y: float, value: str, size: float = TEXT_SIZE,
           bold: bool = False, anchor: str = "start", cls: str = "") -> str:
     weight = ' font-weight="600"' if bold else ""
     klass = f' class="{cls}"' if cls else ""
+    style = f' style="{MONO_STYLE}"' if isinstance(value, Mono) else ""
     fill = MUTED if cls == "rb-d-muted" else ("#ffffff" if cls == "rb-d-numtext" else INK)
     return (
         f'<text x="{_n(x)}" y="{_n(y)}" font-size="{_n(size)}"{weight} '
-        f'text-anchor="{anchor}" fill="{fill}"{klass}>{escape(value)}</text>'
+        f'text-anchor="{anchor}" fill="{fill}"{klass}{style}>{escape(value)}</text>'
     )
 
 
@@ -167,13 +183,19 @@ def _line(points: list[tuple[float, float]], head: bool = True) -> list[str]:
     return out
 
 
-def _box_height(box: Box, width: float) -> tuple[list[str], list[str], float]:
+def box_lines(box: Box, width: float) -> tuple[list[str], list[str]]:
+    """The title and body lines of *box* drawn *width* wide, as wrapped."""
     inner = width - 2 * PAD
     title_lines = wrap(box.title, inner - (_badge_side(box.number) + 8 if box.number else 0),
                        TITLE_SIZE, True)
     body: list[str] = []
     for line in box.lines:
         body.extend(wrap(line, inner, TEXT_SIZE))
+    return title_lines, body
+
+
+def _box_height(box: Box, width: float) -> tuple[list[str], list[str], float]:
+    title_lines, body = box_lines(box, width)
     height = PAD + len(title_lines) * LINE + (6 if body else 0) + len(body) * LINE + PAD
     if box.number:
         height = max(height, PAD * 2 + 20)
@@ -187,7 +209,7 @@ def _draw_box(box: Box, x: float, y: float, width: float, height: float,
     if box.number:
         out.extend(_badge(x + PAD, y + PAD, box.number))
         tx += _badge_side(box.number) + 8
-    cy = y + PAD + 13
+    cy = y + PAD + 15
     for line in title_lines:
         out.append(_text(tx, cy, line, TITLE_SIZE, True))
         cy += LINE
@@ -216,9 +238,10 @@ def flow(boxes: list[Box], vertical: bool, total: float) -> tuple[float, float, 
     width = (total - gap * (len(boxes) - 1) - 2) / len(boxes)
     measured = [_box_height(box, width) for box in boxes]
     height = max(m[2] for m in measured)
-    for index, (box, (title_lines, body, _)) in enumerate(zip(boxes, measured)):
+    for index, (box, (title_lines, body, own)) in enumerate(zip(boxes, measured)):
         x = 1 + index * (width + gap)
-        out.extend(_draw_box(box, x, 1, width, height, title_lines, body))
+        # A box is as tall as its lines, centred on the row the arrows run along.
+        out.extend(_draw_box(box, x, 1 + (height - own) / 2, width, own, title_lines, body))
         if index < len(boxes) - 1:
             mid = 1 + height / 2
             out.extend(_line([(x + width, mid), (x + width + gap - 1, mid)]))
@@ -239,8 +262,8 @@ def columns(boxes: list[Box], vertical: bool, total: float) -> tuple[float, floa
     width = (total - gap * (len(boxes) - 1) - 2) / len(boxes)
     measured = [_box_height(box, width) for box in boxes]
     height = max(m[2] for m in measured)
-    for index, (box, (title_lines, body, _)) in enumerate(zip(boxes, measured)):
-        out.extend(_draw_box(box, 1 + index * (width + gap), 1, width, height, title_lines, body))
+    for index, (box, (title_lines, body, own)) in enumerate(zip(boxes, measured)):
+        out.extend(_draw_box(box, 1 + index * (width + gap), 1, width, own, title_lines, body))
     return total, height + 2, out
 
 
@@ -297,12 +320,27 @@ def registry() -> dict:
 
 
 @lru_cache(maxsize=None)
+def setups() -> tuple[str, ...]:
+    """The registered setups, archived ones included: each has its own page,
+    pack and file list, so every count of setups on the site is this one."""
+    from common import list_registered_platforms
+
+    return tuple(sorted(list_registered_platforms(str(ROOT / "platforms"), include_archived=True)))
+
+
+def setups_named(named: list[str]) -> str:
+    """*named*, then how many other setups there are: "A, B and 15 more"."""
+    others = len(setups()) - len(named)
+    return ", ".join(named) + (f" and {others} more" if others else "")
+
+
+@lru_cache(maxsize=None)
 def platform_modes() -> dict[str, tuple[str, str, str | None]]:
     """name -> (display name, verification mode, hash rule) for every platform."""
-    from common import list_registered_platforms, load_platform_config
+    from common import load_platform_config
 
     out: dict[str, tuple[str, str, str | None]] = {}
-    for name in sorted(list_registered_platforms(str(ROOT / "platforms"), include_archived=True)):
+    for name in setups():
         config = load_platform_config(name, str(ROOT / "platforms"))
         rule = registry().get(name, {}).get("hash_rule") or config.get("hash_rule")
         out[name] = (config.get("platform", name), config.get("verification_mode", ""), rule)
@@ -335,64 +373,70 @@ def emulator_names() -> dict[str, str]:
 
 
 def _bios_chain_boxes() -> list[Box]:
-    active = sum(1 for entry in registry().values() if entry.get("status") == "active")
-    frontends = [_display(platform) for platform, _ in CHAIN_EXAMPLES]
-    emulators = [emulator_names()[emulator] for _, emulator in CHAIN_EXAMPLES]
-    folders = [f"{_display(platform)}: {_folder(platform)}" for platform, _ in CHAIN_EXAMPLES]
+    platform, _emulator = CHAIN_EXAMPLES[0]
     return [
         Box("Your device", ["A PC, a Steam Deck, a handheld or a TV box"], number="1"),
-        Box("Frontend", [
-            "The menu you pick a game from:",
-            f"{', '.join(frontends)} and {active - len(frontends)} more",
-        ], number="2"),
-        Box("Emulator", [
-            "Starts the game and reads its BIOS:",
-            ", ".join(emulators),
-        ], number="3"),
-        Box("BIOS folder", folders + ["The pack or the installer fills it"],
+        Box("Setup", ["The menu you pick a game from"], number="2"),
+        Box("Emulator", ["Starts the game and reads its BIOS"], number="3"),
+        Box("BIOS folder", [f"{_display(platform)} reads", Mono(_folder(platform))],
             accent=True, number="4"),
     ]
 
 
+def _bios_chain_caption() -> str:
+    """The examples the boxes leave out, read from the registry and profiles."""
+    named = setups_named([_display(platform) for platform, _ in CHAIN_EXAMPLES])
+    pairs = ", ".join(
+        f"{_display(platform)} starts {emulator_names()[emulator]}"
+        for platform, emulator in CHAIN_EXAMPLES
+    )
+    folders = ", ".join(f"{_display(platform)} {_folder(platform)}" for platform, _ in CHAIN_EXAMPLES)
+    return (
+        f"Setups: {named}. Examples: {pairs}. "
+        f"BIOS folders: {folders}. The ZIP or the command fills that folder."
+    )
+
+
 def _install_boxes() -> list[Box]:
-    detected = sum(1 for entry in registry().values() if entry.get("install", {}).get("detect"))
     return [
-        Box("Run one command", ["The same line on Linux, macOS, Windows and handhelds"], number="1"),
-        Box("Find the setup", [f"Looks for {detected} frontends and their BIOS folders"], number="2"),
-        Box("Read the folder", ["Hashes the files already there"], number="3"),
-        Box("Download the rest", ["Only what is missing or different"], number="4"),
-        Box("Check each file", ["Its SHA-1 must match before it is saved"], accent=True, number="5"),
+        Box("Finds your setup", ["And the folder it reads"], number="1"),
+        Box("Looks at your files", ["The ones already in the folder"], number="2"),
+        Box("Downloads the rest", ["Only what is missing or different"], number="3"),
+        Box("Checks each file", ["Before saving it"], accent=True, number="4"),
     ]
 
 
 MODE_TEXT = {
-    "existence": ("Name only", "Only the file's name and place count. Its content is not read."),
+    "existence": ("Name only", "Only the name and place count."),
     "md5": ("MD5 fingerprint", "The content must match an MD5 the platform lists."),
     "sha1": ("SHA-1 fingerprint", "The content must match a SHA-1 the platform lists."),
 }
 
 
-def _mode_boxes() -> list[Box]:
+def _modes() -> dict[str, list[str]]:
+    """Mode -> the platforms checking that way, RomM's size rule named."""
     by_mode: dict[str, list[str]] = {mode: [] for mode in MODE_TEXT}
     for display, mode, rule in platform_modes().values():
         label = f"{display} (size, then any hash)" if rule == "size_and_any_hash" else display
         by_mode.setdefault(mode, []).append(label)
+    return {mode: sorted(names, key=str.casefold) for mode, names in by_mode.items()}
+
+
+def _mode_boxes() -> list[Box]:
+    """Each way of checking and how many platforms use it. The names are in
+    the caption: eleven of them do not fit in three lines of a box."""
     boxes = []
     for mode, (title, text) in MODE_TEXT.items():
-        names = sorted(by_mode.get(mode, []), key=str.casefold)
-        count = f"{len(names)} platform" + ("" if len(names) == 1 else "s")
-        boxes.append(Box(title, [text, f"{count}: " + ", ".join(names)]))
+        count = len(_modes().get(mode, []))
+        boxes.append(Box(title, [text, f"{count} platform" + ("" if count == 1 else "s")]))
     return boxes
 
 
 def _mode_summary() -> str:
-    parts = []
-    for mode, (title, _) in MODE_TEXT.items():
-        names = sorted(
-            (display for display, m, _ in platform_modes().values() if m == mode), key=str.casefold
-        )
-        parts.append(f"{title}: {', '.join(names)}.")
-    return " ".join(parts)
+    return " ".join(
+        f"{title}: {', '.join(_modes().get(mode, []))}."
+        for mode, (title, _) in MODE_TEXT.items()
+    )
 
 
 # MinUI names a BIOS folder after the tag in parentheses of the ROM folder.
@@ -529,21 +573,20 @@ def _figures() -> dict[str, Figure]:
         "bios-chain": Figure(
             "bios-chain",
             "How a BIOS file is used",
-            "A device runs a frontend, the frontend starts an emulator, and the emulator "
-            "reads BIOS files from one folder. The pack or the installer fills that folder.",
-            "The frontend is the menu, the emulator runs the game, and the BIOS folder is the "
-            "one place both look. Filling that folder is all a pack does.",
+            "A device runs a setup, the setup starts an emulator, and the emulator "
+            "reads BIOS files from one folder. The ZIP or the command fills that folder.",
+            _bios_chain_caption(),
             lambda: flow(chain(), False, WIDE),
             lambda: flow(chain(), True, NARROW),
         ),
         "install-flow": Figure(
             "install-flow",
-            "What the installer does",
-            "Install flow: run the command, the installer finds your setup, reads the BIOS "
-            "folder, downloads what is missing or different, then checks each file before "
+            "What the command does",
+            "The command finds your setup and its BIOS folder, looks at the files already "
+            "there, downloads what is missing or different, then checks each file before "
             "saving it.",
             "Running the command again repeats the same steps and downloads only what changed.",
-            lambda: flow(install(), False, WIDE),
+            lambda: grid(install(), 2, WIDE),
             lambda: flow(install(), True, NARROW),
         ),
         "verification-modes": Figure(
@@ -551,7 +594,7 @@ def _figures() -> dict[str, Figure]:
             "How each platform checks a file",
             "Three ways platforms check a BIOS file. " + _mode_summary(),
             "Each platform's own check, read from its source code. A file that passes on one "
-            "platform can be refused on another.",
+            "platform can be refused on another. " + _mode_summary(),
             lambda: columns(_mode_boxes(), False, WIDE),
             lambda: columns(_mode_boxes(), True, NARROW),
         ),
@@ -689,9 +732,174 @@ def localize_images(markdown: str, page: Path) -> str:
     return IMG_SRC.sub(swap, IMAGE_LINK.sub(swap, markdown))
 
 
+# Installer commands on wiki pages. The page keeps the Linux line, readable
+# where the Markdown is read as is, and the site shows it in one tab per
+# system, the Windows form written by the same function as the setup pages'.
+
+OS_TABS = re.compile(
+    r"(?m)^(?P<indent>[ \t]*)<!--\s*os-tabs(?:\s+windows:\s*(?P<windows>.*?))?\s*-->[ \t]*\n"
+    r"(?P=indent)```(?:sh|bash)[^\n]*\n(?P<body>.*?)\n(?P=indent)```[ \t]*$",
+    re.S,
+)
+OS_TAB_KEYS = ("windows", "macos", "linux", "steamdeck")
+FENCE_TITLES = {"sh": "Terminal", "powershell": "PowerShell"}
+
+
+def _installer_args(body: str) -> str:
+    """The options of a one-line install command, continuation lines joined."""
+    from siteguides import INSTALL_BASE
+
+    line = " ".join(part.strip().rstrip("\\").strip() for part in body.splitlines())
+    match = re.fullmatch(rf"curl -fsSL {re.escape(INSTALL_BASE)}/install\.sh \| sh(?: -s -- (.+))?", line)
+    if not match:
+        raise ValueError(f"an os-tabs block holds no install command: {line!r}")
+    return match.group(1) or ""
+
+
+def expand_commands(markdown: str) -> str:
+    """Each install command marked `<!-- os-tabs -->` as Windows, macOS,
+    Linux and Steam Deck tabs. `<!-- os-tabs windows: ARGS -->` gives the
+    Windows tab its own options, for a path written another way there."""
+    if "os-tabs" not in markdown:
+        return markdown
+    from siteguides import TERMINALS, install_command
+
+    def replace(match: re.Match[str]) -> str:
+        indent = match.group("indent")
+        args = _installer_args(match.group("body"))
+        items = []
+        for key in OS_TAB_KEYS:
+            label, _how, shell = TERMINALS[key]
+            own = match.group("windows") if key == "windows" and match.group("windows") else args
+            items.append((label, [f'```{shell} title="{FENCE_TITLES[shell]}"',
+                                  install_command(shell, own), "```"]))
+        return "\n".join(markup.tabs(items, indent)).rstrip("\n")
+
+    return OS_TABS.sub(replace, markdown)
+
+
+# The installer's options at a glance, read from its argument parser.
+
+OPTIONS_MARKER = re.compile(r"(?m)^<!--\s*installer-options\s*-->[ \t]*$")
+_SEE_LINK = re.compile(r"\(#([a-z0-9-]+)\)")
+
+
+def _string(node: ast.expr, constants: dict[str, str]) -> str:
+    if isinstance(node, ast.Constant) and isinstance(node.value, str):
+        return node.value
+    if isinstance(node, ast.JoinedStr):
+        parts = []
+        for value in node.values:
+            if isinstance(value, ast.FormattedValue) and isinstance(value.value, ast.Name):
+                parts.append(constants[value.value.id])
+            else:
+                parts.append(_string(value, constants))
+        return "".join(parts)
+    raise ValueError(f"install.py: an option help that is not a string: {ast.unparse(node)}")
+
+
+@lru_cache(maxsize=None)
+def installer_options() -> tuple[tuple[str, str], ...]:
+    """(usage, help) for each option of install.py, in the order --help lists them."""
+    tree = ast.parse((ROOT / "install.py").read_text(encoding="utf-8"))
+    constants = {
+        node.targets[0].id: node.value.value
+        for node in tree.body
+        if isinstance(node, ast.Assign) and isinstance(node.targets[0], ast.Name)
+        and isinstance(node.value, ast.Constant) and isinstance(node.value.value, str)
+    }
+    main = next(node for node in tree.body if isinstance(node, ast.FunctionDef) and node.name == "main")
+    options = []
+    for node in ast.walk(main):
+        if not (isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute)
+                and node.func.attr == "add_argument"):
+            continue
+        flags = [arg.value for arg in node.args if isinstance(arg, ast.Constant)]
+        keywords = {kw.arg: kw.value for kw in node.keywords}
+        action = keywords.get("action")
+        takes_value = not (isinstance(action, ast.Constant)
+                           and action.value in ("store_true", "store_false", "version"))
+        metavar = ""
+        if takes_value:
+            given = keywords.get("metavar")
+            metavar = given.value if isinstance(given, ast.Constant) else flags[0].lstrip("-").upper()
+        usage = ", ".join(f"{flag} {metavar}".strip() for flag in flags)
+        options.append((usage, _string(keywords["help"], constants) if "help" in keywords else ""))
+    # argparse's own, added to every parser.
+    options.append(("--help, -h", "show this help message and exit"))
+    return tuple(options)
+
+
+def _sentences(text: str) -> str:
+    """A help string as sentences: capitalised, clauses split, a full stop."""
+    parts = [part.strip() for part in text.split("; ")]
+    text = ". ".join(part[0].upper() + part[1:] for part in parts if part)
+    text = re.sub(r"(?<![\w`])(--[a-z][a-z-]*)", r"`\1`", text)
+    return text.replace("|", "\\|") + ("" if text.endswith(".") else ".")
+
+
+def options_table(markdown: str) -> list[str]:
+    """One row per option: what it does, and the section that says more,
+    the one the option's row in the page's own Options table sends to."""
+    sections: dict[str, str] = {}
+    for line in markdown.splitlines():
+        flag = re.match(r"\| `(--[a-z-]+)", line)
+        see = _SEE_LINK.search(line)
+        if flag and see:
+            sections[flag.group(1)] = see.group(1)
+    headings = {
+        re.sub(r"[^a-z0-9 -]", "", title.lower()).strip().replace(" ", "-"): title
+        for title in re.findall(r"(?m)^##+ (.+?)(?:\s*\{[^}]*\})?\s*$", markdown)
+    }
+    rows = ["| Option | What it does | More |", "|---|---|---|"]
+    for usage, help_text in installer_options():
+        anchor = sections.get(usage.split()[0].rstrip(","))
+        more = f"[{headings.get(anchor, anchor)}](#{anchor})" if anchor else ""
+        rows.append(f"| `{usage}` | {_sentences(help_text)} | {more} |")
+    return rows
+
+
+def expand_options(markdown: str) -> str:
+    if "installer-options" not in markdown:
+        return markdown
+    return OPTIONS_MARKER.sub(lambda _m: "\n".join(options_table(markdown)), markdown)
+
+
+# Example hashes in the documentation stay out of search, so a hash typed in
+# the search box finds the file card that holds it, not a page quoting it.
+
+HASH_SPAN = re.compile(r"`[^`\n]*\b(?:[0-9a-f]{64}|[0-9a-f]{40}|[0-9a-f]{32})\b[^`\n]*`")
+HASH_TEXT = re.compile(r"\b(?:[0-9a-f]{64}|[0-9a-f]{40}|[0-9a-f]{32})\b")
+FENCE = re.compile(r"(?m)^(?P<indent>[ \t]*)(?P<mark>```|~~~)[^\n]*\n.*?\n(?P=indent)(?P=mark)[ \t]*$", re.S)
+
+
+def hide_hashes(markdown: str) -> str:
+    """Wrap each code block and code span quoting a hash in a search exclusion."""
+    if not HASH_TEXT.search(markdown):
+        return markdown
+    attribute = markup.search_exclude()
+    pieces: list[str] = []
+    position = 0
+    for match in FENCE.finditer(markdown):
+        pieces.append(HASH_SPAN.sub(lambda m: f"<span {attribute}>{m.group(0)}</span>",
+                                    markdown[position:match.start()]))
+        block = match.group(0)
+        if HASH_TEXT.search(block):
+            indent = match.group("indent")
+            block = f"{indent}<div {attribute}>\n\n{block}\n\n{indent}</div>"
+        pieces.append(block)
+        position = match.end()
+    pieces.append(HASH_SPAN.sub(lambda m: f"<span {attribute}>{m.group(0)}</span>",
+                                markdown[position:]))
+    return "".join(pieces)
+
+
 def prepare_page(markdown: str, page: Path) -> str:
     """Everything this module does to a page before it is decorated."""
-    return resolve_images(localize_images(markdown, page))
+    markdown = expand_options(expand_commands(resolve_images(localize_images(markdown, page))))
+    if page.parts[:1] == ("wiki",):
+        markdown = hide_hashes(markdown)
+    return markdown
 
 
 # Sharing cards: one 1200x630 card per section of the site, rendered to PNG
@@ -711,8 +919,7 @@ def og_card_svg(section: str, logo_png: bytes) -> str:
     import base64
 
     title, tagline = OG_SECTIONS[section]
-    active = sum(1 for entry in registry().values() if entry.get("status") == "active")
-    tagline = tagline.format(frontends=f"RetroArch, Batocera, EmuDeck and {active - 3} more")
+    tagline = tagline.format(frontends=setups_named(["RetroArch", "Batocera", "EmuDeck"]))
     logo = base64.b64encode(logo_png).decode("ascii")
     body = [
         '<rect width="1200" height="630" fill="#2b2e5c"/>',

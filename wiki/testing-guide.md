@@ -1,7 +1,6 @@
 ---
 level: contribute
 order: 40
-nav_title: Testing
 ---
 
 # Testing guide
@@ -56,7 +55,7 @@ Every module in `tests/`, by the area it guards.
 | Handheld port | stubbed PortMaster dialogs, fake installer | `test_port` |
 | Truth and native export | synthetic + cached originals | `test_export_counts`, `test_export_native_layer`, `test_export_report`, `test_exporters`, `test_truth_data_dir_readers`, `test_truth_diff`, `test_truth_layout` |
 | Scrapers, upstream and provenance | inline sources, synthetic | `test_check_freshness`, `test_dedup`, `test_elec_scrapers`, `test_fbneo_parser`, `test_find_pinned_revision`, `test_hash_merge`, `test_launchers`, `test_launchers_emudeck`, `test_launchers_recalbox`, `test_launchers_retrobat`, `test_launchers_retrodeck`, `test_launchers_retropie`, `test_launchers_rocknix`, `test_mame_devices`, `test_mame_parser`, `test_mame_ref_audit`, `test_profile_sync`, `test_provenance`, `test_refresh_data_dirs`, `test_refresh_failures`, `test_refresh_stale`, `test_retrodeck_scraper_errors`, `test_romset_recipes`, `test_scraper_contract`, `test_upstream`, `test_upstream_index` |
-| Site, docs and repository contracts | rendered pages, sources | `test_contributing_text`, `test_coverage_cache`, `test_data_dir_refs`, `test_dataclass_defaults`, `test_doc_pages`, `test_doc_surfaces`, `test_optional_dependencies`, `test_prose_style`, `test_schema_semantic_gate`, `test_site_availability`, `test_site_content_data`, `test_site_copy`, `test_site_cores`, `test_site_emulator_page`, `test_site_exports`, `test_site_funnel`, `test_site_images`, `test_site_picker`, `test_site_platform_hashes`, `test_site_r2_components`, `test_site_r2_css`, `test_site_r2_emulators`, `test_site_r2_entry`, `test_site_r2_nav`, `test_site_r2_p0`, `test_site_render`, `test_site_system_links`, `test_site_validation`, `test_site_weight`, `test_site_write`, `test_validate_pr`, `test_validate_pr_flow`, `test_validate_pr_hashes`, `test_workflow_paths` |
+| Site, docs and repository contracts | rendered pages, sources | `test_contributing_text`, `test_coverage_cache`, `test_data_dir_refs`, `test_dataclass_defaults`, `test_doc_pages`, `test_doc_surfaces`, `test_optional_dependencies`, `test_prose_style`, `test_schema_semantic_gate`, `test_site_availability`, `test_site_content_data`, `test_site_copy`, `test_site_cores`, `test_site_emulator_page`, `test_site_exports`, `test_site_funnel`, `test_site_images`, `test_site_picker`, `test_site_platform_hashes`, `test_site_r2_components`, `test_site_r2_css`, `test_site_r2_emulators`, `test_site_r2_entry`, `test_site_r2_nav`, `test_site_r2_p0`, `test_site_r2_wiki`, `test_site_render`, `test_site_system_links`, `test_site_validation`, `test_site_weight`, `test_site_write`, `test_validate_pr`, `test_validate_pr_flow`, `test_validate_pr_hashes`, `test_workflow_paths` |
 
 ## Test architecture
 
@@ -398,11 +397,12 @@ nav_title: Save files    # only when the menu names it otherwise than its headin
   two without renumbering. The generated pages (systems, emulators, the gaps
   and data pages) hold fixed places among them, set in `generate_nav`.
 - `nav_title` is the menu label. Without it the menu shows the page's `# `
-  heading. It is not `title`, which both MkDocs and Astro Starlight read as
-  the page's own title.
+  heading, which is the rule: a page keeps one name in the menu, its heading
+  and the links to it. It is not `title`, which both MkDocs and Astro
+  Starlight read as the page's own title.
+- `group` places a Reference page under a group of that tab, such as
+  `Checking files` or `Data`.
 - `nav: false` keeps a page out of the menu on purpose.
-  `getting-started.md` does, since it only links the pages that took its
-  content.
 
 `python scripts/generate_site.py` stops with the page's name when `level` or
 `order` is missing, or when two pages of a tab take the same `order`.

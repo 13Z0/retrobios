@@ -1,6 +1,6 @@
 ---
-level: explore
-order: 30
+level: setup
+order: 100
 ---
 
 # All installer options
@@ -19,6 +19,13 @@ How the command protects your machine is under
 [What the bootstrap does](#what-the-bootstrap-does) and
 [Trust boundary](#trust-boundary). The BIOS folder of each setup is on
 [Get your files](../which-pack.md).
+
+## Options at a glance
+
+Read from the installer's own option list, the one `--help` prints. The
+[Options](#options) table below gives each one in full.
+
+<!-- installer-options -->
 
 ## One line
 
@@ -810,7 +817,7 @@ what it must hash to.
 Entries the collection cannot satisfy are not silently dropped: they travel in
 `omitted_files` with a reason, and the run prints the count before downloading
 anything. `not_found` means no file in the collection matches the entry, which
-is what the [gap analysis](../gaps.md) tracks.
+is what the gap analysis tracks (Reference: [What the packs do not hold](../gaps.md)).
 
 Some cores read a whole tree of data rather than a few files: Dolphin's `Sys/`,
 PPSSPP's assets, blueMSX's machines. These are not files of the collection, so
@@ -950,7 +957,7 @@ no event at all. A program reads a missing `end` as that case.
 
 | Variable | Effect |
 |----------|--------|
-| `RETROBIOS_REF` | Branch or tag the file list and the files committed to the repository are read from. Defaults to `main`. Files the manifest marks `release_asset` always come from the `large-files` release, whatever the ref, and that release replaces an asset in place when it is rebuilt. Each release deletes the previous release tags ([release process](release-process.md#cutting-a-release)), so a tag holds a file list until the next release |
+| `RETROBIOS_REF` | Branch or tag the file list and the files committed to the repository are read from. Defaults to `main`. Files the manifest marks `release_asset` always come from the `large-files` release, whatever the ref, and that release replaces an asset in place when it is rebuilt. Each release deletes the previous release tags, so a tag holds a file list until the next release. For contributors: [release process](release-process.md#cutting-a-release) |
 | `RETROBIOS_BASE_URL` | Base URL for the manifest and the files it declares. HTTPS only, plain HTTP allowed to loopback for end-to-end tests. Whoever controls this base controls the expected hashes, hence the check. A file list that cannot be fetched names the address, and this variable when it is set |
 | `RETROBIOS_OS` | Names the host outright (`linux`, `wsl`, `windows`, `darwin`, `android`) instead of detecting it |
 | `EXTERNAL_STORAGE` | Android only, the shared storage root RetroArch builds its default directories from. Defaults to `/storage/emulated/0` |

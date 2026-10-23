@@ -186,7 +186,7 @@ class SlicesLeaveWithTheirRelease(unittest.TestCase):
     """Parts named `.zip.001` were cut by v2026.09.04, deleted since. A page
     explaining a layout no release serves buries the one the user has."""
 
-    PAGES = ("README.md", "wiki/getting-started.md", "wiki/troubleshooting.md")
+    PAGES = ("README.md", "wiki/troubleshooting.md")
 
     def setUp(self):
         assets = [a for p in RECORD.get("packs", {}).values() for a in p["assets"]]
@@ -236,7 +236,6 @@ class DestIsTheBiosFolder(unittest.TestCase):
 
     PAGES = (
         "README.md",
-        "wiki/getting-started.md",
         "wiki/installer.md",
         "wiki/faq.md",
         "wiki/first-install.md",
@@ -269,7 +268,7 @@ class ShownOutputIsPrintedOutput(unittest.TestCase):
                     self.assertIn(literal, source)
 
     def test_samples_match_a_shape(self):
-        section = _section(_read("wiki/verification-modes.md"), "### Reading the output")
+        section = _section(_read("wiki/reading-reports.md"), "### Reading the output")
         blocks = re.findall(r"```\n(.*?)```", section, re.DOTALL)
         self.assertTrue(blocks)
         for block in blocks:
