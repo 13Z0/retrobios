@@ -2,10 +2,17 @@
 //   node measure.mjs weight <base url> <page>...
 //   node measure.mjs search <base url> starlight|mkdocs <query>...
 // Transfer sizes are bytes on the wire (gzip from serve.mjs), by type.
-import { chromium } from 'playwright-core';
+// playwright-core is resolved from website/node_modules, above this file,
+// wherever the command is run from. It is not a dependency of the build:
+//   npm install --no-save --prefix website playwright-core
+const { chromium } = await import('playwright-core').catch((error) => {
+	console.error(`playwright-core is not in website/node_modules (${error.code}): `
+		+ 'npm install --no-save --prefix website playwright-core');
+	process.exit(2);
+});
 
 const [mode, base, ...rest] = process.argv.slice(2);
-const browser = await chromium.launch({ executablePath: '/usr/bin/google-chrome' });
+const browser = await chromium.launch({ executablePath: process.env.CHROME_PATH || '/usr/bin/google-chrome' });
 
 const track = (page) => {
 	const rows = [];

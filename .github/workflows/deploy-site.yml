@@ -134,6 +134,16 @@ jobs:
           npm run build --prefix website
           python scripts/validate_site.py --site-dir website/dist
 
+      # The queries a visitor types must reach the page that answers them,
+      # read through the site's own search box, and the home page must stay
+      # under its weight budget. A miss blocks the deploy. The browser driver
+      # is not a dependency of the build: pinned here, not saved to the
+      # lockfile, and it drives the Chrome the runner image ships.
+      - name: Search gate
+        run: |
+          npm install --no-save --prefix website playwright-core@1.58.0
+          python website/tools/search_gate.py --site-dir website/dist
+
       # write_if_changed() compares content with its timestamp line stripped,
       # so a run that only moves the clock leaves the file untouched and this
       # stays a real staleness check rather than a guaranteed failure.
