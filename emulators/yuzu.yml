@@ -4,7 +4,10 @@ core_classification: official_port
 source: "https://github.com/yuzu-emu-mirror/yuzu"
 upstream: "https://github.com/yuzu-emu/yuzu"
 profiled_date: "2026-03-26"
-upstream_gone: "GitHub withdrew the repository for legal reasons: the API answers HTTP 451 for both yuzu-emu/yuzu and the yuzu-emu-mirror copy. Observed 2026-09-04. No mirror found that serves file content."
+source_commit: "15e6e48bef0216480661444a8d8b348c1cca47bb"
+pin_frozen: "The analysed revision, the one the EA 4176 build documented here comes from. yuzu stopped in March 2024 and the mirror's later commits are a fork's."
+upstream_gone: "GitHub withdrew the repository for legal reasons: the API answers HTTP 451 for both yuzu-emu/yuzu and the yuzu-emu-mirror copy. Observed 2026-09-04. The fork Zenfone-5-X00QD-4-19/yuzu, pushed 2024-03-05, still serves the analysed commit."
+source_mirror: "https://github.com/Zenfone-5-X00QD-4-19/yuzu"
 core_version: "EA 4176"
 display_name: "Yuzu (Nintendo Switch)"
 cores:
