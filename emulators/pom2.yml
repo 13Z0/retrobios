@@ -13,6 +13,20 @@ systems:
   - apple-ii
 mode: standalone
 
+data_root:
+  windows:
+    path: "%LOCALAPPDATA%/POM2"
+    source_ref: "src/ResourcePaths.cpp:95-124"
+    note: "Searched before the files shipped beside the executable."
+  macos:
+    path: "~/Library/Application Support/POM2"
+    source_ref: "src/ResourcePaths.cpp:95-124"
+    note: "Searched before the files shipped in the bundle."
+  linux:
+    path: "$XDG_DATA_HOME/POM2"
+    source_ref: "src/ResourcePaths.cpp:95-124"
+    note: "~/.local/share/POM2 when XDG_DATA_HOME is unset. Searched before the install tree."
+
 notes: |
   Apple ][, ][+, //e, //c and //c+ emulator by Arnaud Verhille, C++ with an
   ImGui frontend, plus a browser build and a headless CLI. Nine machine
