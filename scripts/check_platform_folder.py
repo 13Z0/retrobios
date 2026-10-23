@@ -1,21 +1,17 @@
-"""Check a BIOS folder against one platform's list, from the published data only.
-
-    python check_platform_folder.py batocera path/to/bios
-"""
+"""Check a BIOS folder against one platform's list, from the published data only:
+python check_platform_folder.py batocera path/to/bios. Exit 1 on a file wrong or missing."""
 from __future__ import annotations
 
 import hashlib
 import json
 import sys
+import urllib.error
 import urllib.request
 import zipfile
 from pathlib import Path
 
 API = "https://abdess.github.io/retrobios/api/v1/platforms/"
-
-
-# The digest each mode compares. Without one (existence) a file need only be present.
-DIGESTS = {"md5": "md5", "sha1": "sha1"}
+DIGESTS = {"md5": "md5", "sha1": "sha1"}  # without one (existence), presence passes
 
 
 def accepts(entry: dict, path: Path, mode: str) -> bool:
@@ -43,8 +39,7 @@ def accepts(entry: dict, path: Path, mode: str) -> bool:
 
 
 def check(platform: str, root: Path, api: str = API) -> list[tuple[str, str]]:
-    """(destination, ok | wrong | missing) for each entry. Entries with no destination
-    (EmuDeck) name no file: their system passes when any file in root has their hash."""
+    """(destination, ok | wrong | missing) per entry. With no destination (EmuDeck), any file with its hash passes."""
     with urllib.request.urlopen(f"{api}{platform}.json") as response:
         contract = json.load(response)["items"][0]["contract"]
     mode, results = contract["verification_mode"], []
@@ -62,7 +57,13 @@ def check(platform: str, root: Path, api: str = API) -> list[tuple[str, str]]:
 
 
 if __name__ == "__main__":
-    found = check(sys.argv[1], Path(sys.argv[2]))
+    try:
+        found = check(sys.argv[1], Path(sys.argv[2]))
+    except urllib.error.HTTPError as error:  # a 404: no platform has that name
+        with urllib.request.urlopen(API.replace("platforms/", "catalog.json")) as response:
+            known = sorted(i["url"][10:-5] for i in json.load(response)["items"] if i["url"].startswith("manifests/"))
+        sys.exit(f"unknown platform: {sys.argv[1]}. Known: {', '.join(known)}" if error.code == 404 else error)
     for verdict in ("ok", "wrong", "missing"):
         names = sorted({dest for dest, seen in found if seen == verdict})
         print(f"{verdict}: {len(names)}" + "".join(f"\n  {name}" for name in names if verdict != "ok"))
+    sys.exit(int(any(seen != "ok" for _dest, seen in found)))
