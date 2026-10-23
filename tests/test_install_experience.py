@@ -595,6 +595,44 @@ class AFolderThisUserCannotEnter(unittest.TestCase):
         self.assertIn(str(lock), errors[0]["message"])
 
 
+class ADetectedFolderUnderAClosedOne(unittest.TestCase):
+    """retroarch.cfg naming a system_directory under a folder this user
+    cannot open, with no --dest: the case probe raised PermissionError and
+    the run, and the interface before its first screen, ended on a
+    traceback. The refusal --dest gets is the one detection gets."""
+
+    @unittest.skipIf(os.name == "nt" or os.geteuid() == 0,
+                     "a folder without search permission is POSIX")
+    def test_it_is_refused_in_words(self):
+        with FakeRepository() as repo:
+            home = repo.root / "home"
+            lock = repo.root / "lock"
+            (home / ".config" / "retroarch").mkdir(parents=True)
+            lock.mkdir()
+            (home / ".config" / "retroarch" / "retroarch.cfg").write_text(
+                f'system_directory = "{lock / "system"}"\n')
+            env = {**repo.env(), "HOME": str(home), "XDG_CONFIG_HOME": str(home / ".config"),
+                   "RETROBIOS_OS": "linux"}
+            command = [sys.executable, str(REPO_ROOT / "install.py"), "--platform",
+                       "retroarch", "--no-input"]
+            os.chmod(lock, 0o000)
+            try:
+                runs = {name: subprocess.run(command + extra, env=env, capture_output=True,
+                                             text=True, timeout=60, stdin=subprocess.DEVNULL)
+                        for name, extra in (("check", ["--check"]), ("install", []))}
+                kinds = install.tell_apart([("retroarch", lock / "system", "RetroArch"),
+                                            ("retroarch", repo.dest, "RetroArch")])
+            finally:
+                os.chmod(lock, 0o755)
+        for name, proc in runs.items():
+            with self.subTest(run=name):
+                self.assertNotIn("Traceback", proc.stderr)
+                self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
+                self.assertIn(f"this user cannot open {lock} (Permission denied)",
+                              proc.stderr)
+        self.assertEqual(len(kinds), 2)
+
+
 class OutputToAFileAsksNothing(unittest.TestCase):
     """`install.py > log.txt` at a terminal: the menu went into the file
     and the run waited on an answer to a prompt nobody could see."""

@@ -484,6 +484,10 @@ if os.environ.get("FAKE_HOLD"):
     note("ui.ready")
     time.sleep(60)
     sys.exit(0)
+if os.environ.get("FAKE_IDLE_ERROR"):
+    # RETROBIOS_IDLE_EXIT on an error screen: the idle line, then the error.
+    print("No button pressed, closing.", file=sys.stderr)
+    print("Error: " + os.environ["FAKE_IDLE_ERROR"], file=sys.stderr)
 if os.environ.get("FAKE_ERROR"):
     print("Error: " + os.environ["FAKE_ERROR"], file=sys.stderr)
 sys.exit(int(os.environ.get("FAKE_CODE", "0")))
@@ -1195,6 +1199,19 @@ class ThePortMasterPort(unittest.TestCase):
         self.assertLess(device.elapsed, 10)
         self.assertNotIn("Press A", device.screen)
         device.assert_mapper_gone()
+        device.assert_console_restored()
+
+    def test_an_idle_close_on_an_error_names_the_error_at_once(self):
+        """The interface closed for want of a button: the mapper never
+        opened the pad, so no A can close a message. The error it closed is
+        named, for RB_DEAD_WAIT seconds, not the idle line for 300."""
+        device = self.device()
+        proc = device.run(["bash", self.script], FAKE_IDLE_ERROR="could not reach the file list",
+                          FAKE_CODE="1", RB_MESSAGE_WAIT="300", RB_DEAD_WAIT="1")
+        self.assertEqual(proc.returncode, 1)
+        self.assertLess(device.elapsed, 10)
+        self.assertIn("could not reach the file list", device.screen)
+        self.assertNotIn("No button pressed", device.screen)
         device.assert_console_restored()
 
     def test_start_select_before_the_interface_handles_signals(self):

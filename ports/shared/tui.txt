@@ -876,6 +876,12 @@ rb_here() {
     # Ended by Start + Select or a signal: the player asked to leave, and no
     # button may be left to close a message.
     :
+  elif [ "$status" != "0" ] && [ "$(head -n 1 "$RB_STATE/tui.err" 2>/dev/null)" = "No button pressed, closing." ]; then
+    # Closed for want of a button: the mapper never opened the pad, so no A
+    # is coming. The error it closed is the next line, shown for
+    # RB_DEAD_WAIT seconds.
+    RB_MESSAGE_WAIT="$RB_DEAD_WAIT" rb_message \
+      "$(sed -n 2p "$RB_STATE/tui.err") The messages are in $RB_LOG."
   elif [ "$status" != "0" ] && [ -s "$RB_STATE/tui.err" ]; then
     # The first line of the farewell: the error screen it closes was read.
     rb_message "$(head -n 1 "$RB_STATE/tui.err") The messages are in $RB_LOG."

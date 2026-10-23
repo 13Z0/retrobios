@@ -1387,7 +1387,7 @@ PowerShell as Administrator only for a protected folder.
 
 When a folder above the BIOS folder cannot be opened at all (`/root/...` run
 without `sudo`, a card mounted for another user), the run stops before it
-starts: `this user cannot open /root/.config (Permission denied), which holds
+starts: `this user cannot open /root (Permission denied), which holds
 /root/.config/retroarch/system`. The full-screen interface says the same on
 the folder screen and asks for another folder.
 

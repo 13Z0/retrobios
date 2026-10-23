@@ -8767,6 +8767,19 @@ def _open_from_folders(folders: list[Path]) -> None:
                     other_drives=[str(drive) for drive in index.other_drives])
 
 
+def _refuse_closed(dest: Path, named: str) -> None:
+    """End the run, with its name, on a folder above dest this user cannot open."""
+    closed = closed_folder(dest)
+    if closed is None:
+        return
+    message = closed_folder_words(dest, closed)
+    EVENTS.emit("error", stage="dest", reason="unreadable", platform="", message=message)
+    print(f"Error: {screen_text(message)}. Give this user access to it, run as "
+          f"its owner, or choose another folder than the one {named}.",
+          file=sys.stderr)
+    sys.exit(1)
+
+
 def _missing_dest(dest: Path, ask: bool, named: str = "named with --dest") -> None:
     """Say that a --dest folder does not exist before anything goes there.
 
@@ -8777,14 +8790,7 @@ def _missing_dest(dest: Path, ask: bool, named: str = "named with --dest") -> No
     at a terminal the run asks first, and the answer defaults to no. A
     folder above it this user cannot open ends the run with its name.
     """
-    closed = closed_folder(dest)
-    if closed is not None:
-        message = closed_folder_words(dest, closed)
-        EVENTS.emit("error", stage="dest", reason="unreadable", platform="", message=message)
-        print(f"Error: {screen_text(message)}. Give this user access to it, run as "
-              f"its owner, or choose another folder than the one {named}.",
-              file=sys.stderr)
-        sys.exit(1)
+    _refuse_closed(dest, named)
     if dest.exists():
         return
     nearest = dest.absolute()
@@ -9207,6 +9213,11 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
 
     if args.dest is not None and not listing:
         _missing_dest(args.dest, interactive and not (args.check or args.dry_run or args.yes))
+    elif not listing:
+        # A system_directory under /root read from retroarch.cfg, run without
+        # sudo: the case probe raised PermissionError before any line.
+        for _name, path in platforms:
+            _refuse_closed(path, "detected here")
 
     total_downloaded = 0
     total_up_to_date = 0
@@ -12495,7 +12506,7 @@ def _install_kind(path: Path) -> str:
                          ("/snap/", "Snap")):
         if marker in text:
             return word
-    if (path.parent / "retroarch.cfg").is_file():
+    if _is_file(path.parent / "retroarch.cfg"):
         return "portable"
     return ""
 
