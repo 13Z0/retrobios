@@ -34,19 +34,19 @@ data_root:
 files:
   - name: "prod.keys"
     required: true
-    path: "switch/prod.keys"
+    path: "system/prod.keys"
     note: "Switch production keys for NCA decryption"
     source_ref: "src/Ryujinx.HLE/FileSystem/VirtualFileSystem.cs:238"
 
   - name: "title.keys"
     required: false
-    path: "switch/title.keys"
+    path: "system/title.keys"
     note: "Per-title decryption keys, needed for specific game content"
     source_ref: "src/Ryujinx.HLE/FileSystem/VirtualFileSystem.cs:239"
 
   - name: "console.keys"
     required: false
-    path: "switch/console.keys"
+    path: "system/console.keys"
     note: "Console-specific keys for encrypted content"
     source_ref: "src/Ryujinx.HLE/FileSystem/VirtualFileSystem.cs:240"
 
