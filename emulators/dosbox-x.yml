@@ -18,6 +18,18 @@ systems:
   - pc-98
 mode: standalone
 
+data_root:
+  windows:
+    path: "%LOCALAPPDATA%/DOSBox-X"
+    source_ref: "src/misc/cross.cpp:102-126, 197-230"
+  macos:
+    path: "~/Library/Preferences"
+    source_ref: "src/misc/cross.cpp:197-230"
+  linux:
+    path: "$XDG_CONFIG_HOME/dosbox-x"
+    source_ref: "src/misc/cross.cpp:197-230"
+    note: "~/.config/dosbox-x when XDG_CONFIG_HOME is unset or not absolute"
+
 notes: |
   Fork of DOSBox SVN with its own DOS kernel. The machine setting picks the
   emulated hardware: mda, cga and its composite variants, hercules,
@@ -38,7 +50,8 @@ notes: |
   directory. On Linux the configuration directory is $XDG_CONFIG_HOME/dosbox-x
   or ~/.config/dosbox-x, and the resource directory is $APPDIR/usr/share/dosbox-x
   inside an AppImage, otherwise $XDG_DATA_HOME/dosbox-x, then
-  /usr/local/share/dosbox-x, then /usr/share/dosbox-x. Windows uses C:\DOSBox-X.
+  /usr/local/share/dosbox-x, then /usr/share/dosbox-x. The Windows resource
+  directory is C:\DOSBox-X.
   ref: src/ints/int10.cpp:1442-1485, src/misc/cross.cpp:129-194, 197-230
 
   Configuration: -conf and -userconf name the files to read. Otherwise
