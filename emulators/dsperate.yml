@@ -14,6 +14,12 @@ systems:
   - nintendo-ds
   - nintendo-dsi
 
+data_root:
+  linux:
+    path: "$XDG_CONFIG_HOME/dsperate"
+    source_ref: "src/frontend/sdl/config.cpp:31-41"
+    note: "~/.config/dsperate when XDG_CONFIG_HOME is unset. System files are read wherever the [paths] keys of the ini point."
+
 notes: |
   Nintendo DS emulator for ARM handhelds with a DSi mode. ROCKNIX installs the
   release tarball for its architecture and runs it with --config pointing at
