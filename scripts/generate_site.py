@@ -3273,12 +3273,15 @@ def file_location_items(
     for ref, files in sorted((members or {}).items()):
         if ref not in owners:
             continue
-        for _member, info in sorted(files.items()):
+        # A large tree is listed on pages of its own (data_tree_pages).
+        page_of = {member: stem for stem, names in data_tree_pages(ref, files)
+                   for member in names}
+        for member, info in sorted(files.items()):
             sha1 = str(info.get("sha1", ""))
             if sha1 and sha1 not in known:
                 known.add(sha1)
-                items.append({"sha1": sha1,
-                              "url": f"emulators/{owners[ref]}/#sha1-{sha1[:12]}"})
+                page = page_of.get(member, owners[ref])
+                items.append({"sha1": sha1, "url": f"emulators/{page}/#sha1-{sha1[:12]}"})
     return sorted(items, key=lambda item: item["sha1"])
 
 
@@ -5518,6 +5521,65 @@ def _said_as_list(items: list[str]) -> str:
 # Data directory members and revisions, read once per build.
 _DATA_MEMBERS: dict[str, dict[str, dict]] = {}
 _DATA_REVISIONS: dict[str, dict] = {}
+# The emulator pages that list each data directory, by ref.
+_DATA_READERS: dict[str, list[tuple[str, str]]] = {}
+
+# A data directory listing more files than this goes to pages of its own,
+# this many files each: Dolphin's Sys tree put 2,164 rows and 16,900
+# elements on the Dolphin page, read on a phone.
+DATA_TREE_ROWS = 400
+DATA_TREE_ROWS_PER_PAGE = 1_000
+
+
+def data_tree_pages(ref: str, members: dict[str, dict]) -> list[tuple[str, list[str]]]:
+    """The pages under emulators/ listing a large data directory, with the
+    members each holds in name order, or none when the tree is listed on
+    the pages of the emulators reading it."""
+    if len(members) <= DATA_TREE_ROWS:
+        return []
+    names = sorted(members)
+    stem = f"data-{_slugify_anchor(ref)}"
+    return [(stem + (f"-{n}" if n > 1 else ""), names[start:start + DATA_TREE_ROWS_PER_PAGE])
+            for n, start in enumerate(range(0, len(names), DATA_TREE_ROWS_PER_PAGE), 1)]
+
+
+def _data_member_table(members: dict[str, dict], names: list[str], anchors: set[str]) -> list[str]:
+    """A data directory's files with their size and sha1, each sha1 an
+    anchor the first time the page lists it (``anchors``, the page's ids)."""
+    table = ["| File | Size | SHA1 |", "|------|-----:|------|"]
+    for member in names:
+        info = members[member]
+        sha1 = str(info.get("sha1", ""))
+        # One id per page: two members can hold the same bytes (every empty
+        # file), and Dolphin's trees share Sys.
+        anchor = f"sha1-{sha1[:12]}"
+        span = "" if anchor in anchors else f'<span id="{anchor}"></span>'
+        anchors.add(anchor)
+        table.append(f"| {span}{_code(member)} | {_fmt_size(int(info.get('size', 0)))} | {_code(sha1)} |")
+    return table
+
+
+def _data_tree_page(ref: str, entry: dict, pages: list[tuple[str, list[str]]],
+                    index: int) -> str:
+    """One page of a large data directory's file list."""
+    stem, names = pages[index]
+    members = _DATA_MEMBERS.get(ref) or {}
+    part = f" (part {index + 1} of {len(pages)})" if len(pages) > 1 else ""
+    readers = _said_as_list([f"[{_escape_tags(display)}]({key}.md#data-directories)"
+                             for key, display in _DATA_READERS.get(ref, [])])
+    lines = [
+        "---", "level: reference", "---", "",
+        f"# The {ref} data directory{part}", "",
+        f"{entry.get('description') or 'A data directory'}: "
+        f"{_count(len(members), 'file')}, as the packs ship them."
+        + (f" Read by {readers}." if readers else ""), "",
+    ]
+    if len(pages) > 1:
+        lines.extend([", ".join(f"[part {i}]({other}.md)" if other != stem else f"part {i}"
+                                for i, (other, _names) in enumerate(pages, 1)), ""])
+    lines.extend(search_excluded(_data_member_table(members, names, set())))
+    lines.extend(["", _date_line()])
+    return "\n".join(lines) + "\n"
 
 
 # An emulator page lists at most this many file cards: MAME's 1,564 made a
@@ -5896,19 +5958,16 @@ def emulator_pages(
             if dd.get("source_ref"):
                 lines.append(f"    - Source: {_source_ref_markdown(profile, dd['source_ref'])}")
             members = _DATA_MEMBERS.get(ref) or {}
-            if members:
-                table = ["| File | Size | SHA1 |", "|------|-----:|------|"]
-                for member, info in sorted(members.items()):
-                    sha1 = str(info.get("sha1", ""))
-                    # One id per page: two members can hold the same bytes
-                    # (every empty file), and Dolphin's trees share Sys.
-                    anchor = f"sha1-{sha1[:12]}"
-                    span = "" if anchor in member_anchors else f'<span id="{anchor}"></span>'
-                    member_anchors.add(anchor)
-                    table.append(
-                        f"| {span}{_code(member)} "
-                        f"| {_fmt_size(int(info.get('size', 0)))} | {_code(sha1)} |"
-                    )
+            tree_pages = data_tree_pages(ref, members)
+            if tree_pages:
+                where = (f"[a page of their own]({tree_pages[0][0]}.md)" if len(tree_pages) == 1
+                         else "pages of their own: " + ", ".join(
+                             f"[part {i}]({stem}.md)" for i, (stem, _names) in enumerate(tree_pages, 1)))
+                lines.append(f"    - {_count(len(members), 'file')}, listed on {where}")
+                for index, (stem, _names) in enumerate(tree_pages):
+                    part_pages[stem] = _data_tree_page(ref, entry, tree_pages, index)
+            elif members:
+                table = _data_member_table(members, sorted(members), member_anchors)
                 lines.append("")
                 lines.extend(markup.details(
                     "info", f"{_count(len(members), 'file')}, as the packs ship them",
@@ -7846,6 +7905,17 @@ def _generate(args: argparse.Namespace) -> None:
     print("Generating emulator pages...")
     _DATA_MEMBERS.update(data_directory_members())
     _DATA_REVISIONS.update(data_directory_revisions())
+    for key in sorted(profiles):
+        if profiles[key].get("type") in ("alias", "test"):
+            continue
+        display = str(profiles[key].get("emulator", key))
+        for tree in page_data_directories(key, profiles):
+            readers = _DATA_READERS.setdefault(str(tree.get("ref", "")), [])
+            if (key, display) not in readers:
+                readers.append((key, display))
+    for ref, members in _DATA_MEMBERS.items():
+        for stem, _names in data_tree_pages(ref, members):
+            PART_PAGES.add(f"emulators/{stem}.md")
     write_if_changed(
         str(docs / "emulators" / "index.md"), generate_emulators_index(profiles)
     )
