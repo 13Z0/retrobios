@@ -648,12 +648,13 @@ what the options name, everything by default.
 | `--romm-firmware TEMPLATE` | RomM: where each platform's firmware goes in the library, as `filesystem.structure.firmware` in RomM's `config.yml` says (`{platform}/bios` for a library laid out as `{platform}/roms`). Read from `config.yml` beside the library when it is there. See [RomM firmware layout](#romm-firmware-layout) |
 | `--no-input` | Never ask a question, even at a terminal |
 | `--check` | Report and exit without writing |
-| `--dry-run` | Show what would be downloaded, by system and with sizes, without writing anything |
+| `--dry-run` | Show what would be downloaded, the totals first, then by system and with sizes, without writing anything. A plan taller than the screen names the ten largest systems, and `--verbose` lists every system and file |
 | `--yes`, `-y` | Do not ask before a download of 1 GB or more |
 | `--quiet`, `-q` | Print only failures and the final summary. Implies `--no-input` |
 | `--events` | Write the run as JSON events on standard output, one object per line, and the usual text on standard error. Implies `--no-input`. See [Machine-readable events](#machine-readable-events) |
 | `--from FOLDER` | Copy the BIOS files a folder holds (an old SD card, a backup, a ZIP) instead of downloading them, each one recognised by its hash and copied, never moved. Repeat for several folders. See [Copy from an old card](#copy-from-an-old-card) |
 | `--from-pack PATH` | Install from a pack already downloaded: its ZIP, one of its parts (the others are found in the same folder), or the folder holding them. Makes no network request and checks every file's hash. See [Without a network](#without-a-network-offline-install) |
+| `--offline` | Make no network request. `--check`, `--from`, `--from-pack` and `--manifest` work without one, the file list stops the run at once when none of them gives it, and a file the run would download fails at once. `RETROBIOS_INSTALL_OFFLINE=1` does the same. Refused with `--target` and `--list-targets`, which read a core list from the network |
 | `--manifest FILE` | Read the file list from FILE, a copy of `install/<platform>.json`, instead of downloading it. See [Without a network](#without-a-network-offline-install) |
 | `--restore FOLDER` | Put back the files a run replaced and kept in FOLDER, a dated folder inside `retrobios-backup`. Takes no other option but `--dry-run` and `--no-input`. See [Files you already had](#files-you-already-had) |
 | `--tui` | Open the full-screen interface, or stop with the reason it cannot open here (code 2) instead of falling back to the questions. Wins over `RETROBIOS_PLAIN` and `ACCESSIBLE`. See [The full-screen interface](#the-full-screen-interface) |
@@ -1095,6 +1096,10 @@ pack: `--system`, `--core`, `--region` and `--no-game-data` then apply as
 they do online, and a file of the list the pack does not hold fails as
 `not in the pack`. The list's platform has to be the one installed for.
 
+`--offline` forbids every request, for a device with no Wi-Fi: `--check`
+still names the platform and its folder, then stops at the file list unless
+`--manifest` or `--from-pack` gives it.
+
 ## Where the files come from
 
 Each manifest entry names either `repo_path`, served from the repository at the
@@ -1247,7 +1252,7 @@ other schemas under `api/v1/schemas/`.
 |------|------|------|
 | `start` | `schema`, `installer`, `mode` | First line. `schema` is 1, `installer` the identity `--version` prints, `mode` one of `install`, `check`, `dry-run`, `list` |
 | `detect` | `os`, `os_name`, `platforms` | Once the platforms are known. `os_name` comes from `/etc/os-release`. `platforms` lists `{platform, name, bios_dir}`, and is empty when nothing supported was found |
-| `error` | `stage`, `reason`, `platform`, `message` | The file list could not be read (`stage` is `manifest`): `reason` is `network`, `not_found` or `invalid`, `clock` when the server's certificate was refused and the system clock reads a date before the installer was written, or `no_ca` when the machine holds no list of trusted certificates (`SSL_CERT_FILE` names one). A folder named with `--from` cannot be read (`stage` is `from`, `reason` `not_found`, `not_a_folder` for a file that is no ZIP, `unreadable`, or `system` for the root of the system, `/proc`, `/sys` or `/dev`). `message` says it in words |
+| `error` | `stage`, `reason`, `platform`, `message` | The file list could not be read (`stage` is `manifest`): `reason` is `network`, `not_found` or `invalid`, `clock` when the server's certificate was refused and the system clock reads a date before the installer was written, `no_ca` when the machine holds no list of trusted certificates (`SSL_CERT_FILE` names one), or `offline` when `--offline` forbids the request. A folder named with `--from` cannot be read (`stage` is `from`, `reason` `not_found`, `not_a_folder` for a file that is no ZIP, `unreadable`, or `system` for the root of the system, `/proc`, `/sys` or `/dev`). `message` says it in words |
 | `scanned` | `folder`, `files`, `truncated`, `other_drives` | Each folder named with `--from`, once read and before `detect`. `files` counts the files found, `truncated` is true when the search stopped at 200,000 of them, and `other_drives` lists the folders below it on another drive, which were not entered |
 | `checking` | `files_done`, `files_total` | While the files already in the folder are read and hashed, at most every half second and once at the end. `files_total` counts the files found in place |
 | `file` | `platform`, `dest`, `systems`, `size`, `state` | Each file of the list after the check. `state` is `present` (hash verified), `wrong_hash` or `missing` |
@@ -1274,6 +1279,7 @@ no event at all. A program reads a missing `end` as that case.
 |----------|--------|
 | `RETROBIOS_REF` | Branch or tag the file list and the files committed to the repository are read from. Defaults to `main`. Files the manifest marks `release_asset` always come from the `large-files` release, whatever the ref, and that release replaces an asset in place when it is rebuilt. Each release deletes the previous release tags, so a tag holds a file list until the next release. For contributors: [release process](release-process.md#cutting-a-release) |
 | `RETROBIOS_BASE_URL` | Base URL for the manifest and the files it declares. HTTPS only, plain HTTP allowed to loopback for end-to-end tests. Whoever controls this base controls the expected hashes, hence the check. A file list that cannot be fetched names the address, and this variable when it is set |
+| `RETROBIOS_INSTALL_OFFLINE` | Set to anything but `0`: no network request, as with `--offline`. The runs the full-screen interface starts inherit it. `RETROBIOS_OFFLINE` is the build scripts' own and leaves the installer alone |
 | `RETROBIOS_OS` | Names the host outright (`linux`, `wsl`, `windows`, `darwin`, `android`) instead of detecting it |
 | `EXTERNAL_STORAGE` | Android only, the shared storage root RetroArch builds its default directories from. Defaults to `/storage/emulated/0` |
 | `RETROBIOS_INSTALL_URL` | Where the bootstrap fetches `install.py`. HTTPS only |
@@ -1295,7 +1301,9 @@ The common cases, with the short answer, are on
 The installer fetches its manifest, then downloads only the repository or
 `large-files` release objects it needs. When a download fails, check that
 `https://github.com` opens. Behind a proxy, set `HTTPS_PROXY` in the
-environment. A file that fails three attempts is counted and reported at the
+environment. A connection that does not open within 4 seconds counts as
+none, so a dropped network gives its error in about 15 seconds. Once a
+connection is open, a slow transfer keeps the full timeout. A file that fails three attempts is counted and reported at the
 end, and the next run fetches only what is still missing.
 
 The reason is said in words: no internet connection or a name that could not

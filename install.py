@@ -98,6 +98,11 @@ RELEASE_URL = (
     "https://github.com/Abdess/retrobios/releases/download/large-files/{asset}"
 )
 MAX_RETRIES = 3
+# Seconds a connection has to open. A dropped network cost three tries of a
+# 30-second timeout, 93 s, before the error: a connection that does not open
+# now fails in this time, and once open a read waits as long as before, so
+# a slow line is not cut.
+CONNECT_TIMEOUT = 4.0
 MAX_MANIFEST_BYTES = 16 * 1024 * 1024
 MAX_TARGETS_BYTES = 4 * 1024 * 1024
 MAX_MANIFEST_FILES = 100_000
@@ -3150,10 +3155,13 @@ def network_words(
 ) -> tuple[str, str]:
     """The reason a request failed, and the same in words a beginner reads.
 
-    The reason is clock, no_ca or network. Offline, the run printed
+    The reason is clock, no_ca, network, or offline for a request the run
+    was told not to make. Offline, the run printed
     "[Errno -2] Name or service not known": the raw text now follows the
     words only under --verbose.
     """
+    if isinstance(exc, _Offline):
+        return "offline", str(exc)
     reason = getattr(exc, "reason", None)
     inner = reason if isinstance(reason, BaseException) else exc
     raw = str(reason or exc)
@@ -3206,6 +3214,49 @@ def _address_lines(url: str) -> list[str]:
         lines.append("  RETROBIOS_BASE_URL is set in this environment and chose that "
                      "address: unset it to read from the project itself.")
     return lines
+
+
+def _open_socket(
+    address: tuple[str, int], timeout: object, source_address: object = None,
+) -> socket.socket:
+    """A connection given CONNECT_TIMEOUT to open, then the caller's timeout."""
+    bounded = isinstance(timeout, (int, float))
+    limit = min(CONNECT_TIMEOUT, timeout) if bounded else CONNECT_TIMEOUT
+    sock = socket.create_connection(address, limit, source_address)
+    sock.settimeout(timeout if bounded else socket.getdefaulttimeout())
+    return sock
+
+
+class _BoundedHTTPConnection(http.client.HTTPConnection):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self._create_connection = _open_socket
+
+
+class _BoundedHTTPHandler(urllib.request.HTTPHandler):
+    def do_open(self, http_class: Any, req: Any, **kwargs: Any) -> Any:
+        return super().do_open(_BoundedHTTPConnection, req, **kwargs)
+
+
+def install_bounded_opener() -> None:
+    """Every request of the run opens its connection in CONNECT_TIMEOUT.
+
+    The proxy variables are read as before: build_opener keeps its
+    ProxyHandler, and only the HTTP and HTTPS handlers are replaced.
+    """
+    handlers: list[type] = [_BoundedHTTPHandler]
+    if hasattr(http.client, "HTTPSConnection"):
+        class _BoundedHTTPSConnection(http.client.HTTPSConnection):
+            def __init__(self, *args: Any, **kwargs: Any) -> None:
+                super().__init__(*args, **kwargs)
+                self._create_connection = _open_socket
+
+        class _BoundedHTTPSHandler(urllib.request.HTTPSHandler):
+            def do_open(self, http_class: Any, req: Any, **kwargs: Any) -> Any:
+                return super().do_open(_BoundedHTTPSConnection, req, **kwargs)
+
+        handlers.append(_BoundedHTTPSHandler)
+    urllib.request.install_opener(urllib.request.build_opener(*handlers))
 
 
 def _fetch_json(
@@ -3293,6 +3344,11 @@ def fetch_manifest(plat: str) -> dict:
         EVENTS.emit("error", stage="manifest", reason=code, platform=plat,
                     message=words if code != "network"
                     else f"the file list could not be fetched: {words}")
+        if code == "offline":
+            print(f"  No file list for {plat}: {OFFLINE_WORDS}. Give it with "
+                  "--manifest FILE (a copy of install/<platform>.json) or "
+                  "--from-pack PACK, or run without --offline.", file=sys.stderr)
+            sys.exit(1)
         if code != "network":
             print(f"  Could not fetch the file list for {plat}.", file=sys.stderr)
             print(f"  {words}.", file=sys.stderr)
@@ -4343,7 +4399,8 @@ def _download_one(
 
     if LOCAL.pack is not None:
         return _extract_from_pack(f, bios_path, dest, progress)
-    _network_allowed(f["dest"])
+    if offline_requested():
+        return f["dest"], False, OfflineReason(f"not fetched: {OFFLINE_WORDS}")
     if f.get("release_asset"):
         url = RELEASE_URL.format(asset=urllib.parse.quote(f["release_asset"], safe=""))
     else:
@@ -4776,6 +4833,7 @@ class Invocation:
             ("--no-game-data", args.no_game_data),
             ("--declared-only", args.declared_only),
             ("--standalone-copies", args.standalone_copies),
+            ("--offline", getattr(args, "offline", False)),
             ("--check", args.check),
             ("--dry-run", args.dry_run),
         ):
@@ -4892,6 +4950,10 @@ def _plural(count: int, word: str) -> str:
     return f"{count} {word}" if count == 1 else f"{count} {word}s"
 
 
+class OfflineReason(str):
+    """A file not fetched because the run was told to make no request."""
+
+
 class NetworkReason(str):
     """A failure the connection caused: cut, timed out, refused by a server
     or a proxy. The summary names the network instead of the folder."""
@@ -4989,11 +5051,15 @@ def _report_outcome(
                       "(or delete them), then run again.")
     if any(isinstance(reason, NetworkReason) for _dest, reason in failures or []):
         advice.append(NETWORK_FAILURE_ADVICE)
+    if any(isinstance(reason, OfflineReason) for _dest, reason in failures or []):
+        advice.append("  These files come from the network, which --offline does not "
+                      "use: run without --offline, or name a pack with --from-pack.")
     paths = paths + [folder for folder in elsewhere if folder not in paths]
 
     if errors and not downloaded:
         print(f"\nNothing was installed. {_plural(errors, 'file')} failed.")
-        if failures and all(isinstance(r, NetworkReason) for _d, r in failures):
+        if failures and all(isinstance(r, (NetworkReason, OfflineReason))
+                            for _d, r in failures):
             # The folder was never the problem: naming it as the place being
             # written to sent people looking at their disk.
             print(f"Destination: {_locations(paths)}")
@@ -5104,6 +5170,12 @@ def installer_id() -> str:
         return "unknown"
 
 
+# A --dry-run plan: file names per system, the systems shown when the
+# listing is taller than the screen, and the lines around the listing.
+PLAN_FILES_PER_SYSTEM = 8
+PLAN_LARGEST_SYSTEMS = 10
+PLAN_FRAME_LINES = 6
+
 # Answers that stop: every menu before this one taught q as quit.
 _REFUSALS = ("n", "q", "quit", "exit", "stop", "abort")
 
@@ -5119,42 +5191,61 @@ def _print_plan(
     trees: list[tuple[dict, dict[str, dict]]] = (),
     kept: dict[Path, list[int]] | None = None,
     copied: list[str] = (),
+    verbose: bool = False,
 ) -> None:
-    """What a real run would fetch, by system, and nothing written.
+    """What a real run would fetch: the totals first, then by system, and
+    nothing written.
 
     The data trees count in the total and come before the closing line:
     printed after it, they left 2636 RetroArch files out of the figure a
-    user plans an SD card from.
+    user plans an SD card from. A listing taller than the screen pushed the
+    total out of sight (599 lines for RetroArch): it gives way to the
+    largest systems, and --verbose lists every file.
     """
     total = sum(f.get("size", 0) for f in to_download)
     trees = [(entry, needed) for entry, needed in trees if needed]
     tree_files = sum(len(needed) for _entry, needed in trees)
     tree_size = sum(meta.get("size", 0) for _entry, needed in trees for meta in needed.values())
-    for line in copied:
-        print(line)
-    if not to_download and not trees:
-        if not copied:
-            print("\n  All files up to date. A real run would download nothing.")
-            return
-        print("\n  Nothing to download.")
     parts = []
     if to_download:
         parts.append(f"{_plural(len(to_download), 'file')} ({format_size(total)})")
     if trees:
         parts.append(f"{_plural(tree_files, 'data file')} ({format_size(tree_size)}, "
                      f"extracted from {_plural(len(trees), 'archive')})")
+    if not parts and not copied:
+        print("\n  All files up to date. A real run would download nothing.")
+        return
     if parts:
         print(f"\nWould download {' and '.join(parts)} to {bios_path}:")
+    for line in copied:
+        print(line)
+    if not parts:
+        print("\n  Nothing to download.")
     by_system: dict[str, list[dict]] = {}
     for entry in to_download:
         system = ", ".join(entry_systems(entry)) or "other"
         by_system.setdefault(system, []).append(entry)
+    shown = None if verbose else PLAN_FILES_PER_SYSTEM
+    listing: list[str] = []
     for system in sorted(by_system):
-        print(f"  {term.bold(system)}  {_sized(by_system[system])}")
-        for entry in sorted(by_system[system], key=lambda e: e["dest"])[:8]:
-            print(f"    {entry['dest']}  {term.dim(format_size(entry.get('size', 0)))}")
-        if len(by_system[system]) > 8:
-            print(f"    ... and {len(by_system[system]) - 8} more")
+        entries = sorted(by_system[system], key=lambda e: e["dest"])
+        listing.append(f"  {term.bold(system)}  {_sized(entries)}")
+        listing += [f"    {entry['dest']}  {term.dim(format_size(entry.get('size', 0)))}"
+                    for entry in entries[:shown]]
+        if shown is not None and len(entries) > shown:
+            listing.append(f"    ... and {len(entries) - shown} more")
+    screen = shutil.get_terminal_size((80, 24)).lines
+    if verbose or len(listing) + len(trees) + PLAN_FRAME_LINES <= screen:
+        for line in listing:
+            print(line)
+    else:
+        largest = sorted(by_system, key=lambda s: (-_bytes(by_system[s]), s))
+        print(f"  {_plural(len(largest), 'system')}, the largest first:")
+        for system in largest[:PLAN_LARGEST_SYSTEMS]:
+            print(f"  {term.bold(system)}  {_sized(by_system[system])}")
+        if len(largest) > PLAN_LARGEST_SYSTEMS:
+            print(f"  ... and {len(largest) - PLAN_LARGEST_SYSTEMS} more systems: "
+                  "--verbose lists every system and its files.")
     for entry, needed in trees:
         source = LOCAL.pack.name if LOCAL.pack is not None else entry["url"]
         print(f"  {term.bold(entry['ref'] + ' data')}  {_sized(list(needed.values()))}, "
@@ -5573,7 +5664,8 @@ def _install_standalone_folders(
             pending += len(to_download)
             continue
         if args.dry_run:
-            _print_plan(to_download, folder, term, kept=plan_kept(mismatched, folder))
+            _print_plan(to_download, folder, term, kept=plan_kept(mismatched, folder),
+                        verbose=args.verbose)
             continue
         if not to_download:
             print("  All files up to date.")
@@ -6596,7 +6688,8 @@ class LocalSources:
 
     @property
     def offline(self) -> bool:
-        return self.pack is not None
+        """No network request in this run: a pack is read, or --offline."""
+        return self.pack is not None or offline_requested()
 
     def reset(self) -> None:
         if self.pack is not None:
@@ -6614,9 +6707,22 @@ class _Offline(OSError):
     """A network request in a run told to make none."""
 
 
+# --offline, or this variable set to anything but 0, which every run the
+# full-screen interface starts inherits. RETROBIOS_OFFLINE stays the build
+# scripts' own: CI and the test suite set it for every process they start.
+OFFLINE_VARIABLE = "RETROBIOS_INSTALL_OFFLINE"
+OFFLINE_WORDS = "this run makes no network request (--offline)"
+
+
+def offline_requested() -> bool:
+    return os.environ.get(OFFLINE_VARIABLE, "") not in ("", "0")
+
+
 def _network_allowed(what: str) -> None:
-    if LOCAL.offline:
+    if LOCAL.pack is not None:
         raise _Offline(f"{what}: this run reads a pack and makes no network request")
+    if offline_requested():
+        raise _Offline(f"{what}: {OFFLINE_WORDS}")
 
 
 def read_local_manifest(path: Path, plat: str) -> dict:
@@ -7981,6 +8087,13 @@ def main() -> None:
              "Makes no network request, and checks every file's hash",
     )
     parser.add_argument(
+        "--offline",
+        action="store_true",
+        help="make no network request: --check, --from, --from-pack and --manifest "
+             "work without one, and a file the run would download fails at once "
+             f"({OFFLINE_VARIABLE}=1 does the same)",
+    )
+    parser.add_argument(
         "--from",
         action="append",
         type=Path,
@@ -8088,6 +8201,13 @@ def main() -> None:
         sys.exit(restore_kept(args.restore, args.dry_run))
     if args.every_board and args.target:
         parser.error("--every-board installs every board; --target names one")
+    if args.offline:
+        # The runs the full-screen interface starts read it from here.
+        os.environ[OFFLINE_VARIABLE] = "1"
+    if offline_requested() and (args.target or args.list_targets):
+        parser.error("--target and --list-targets read a core list from the network, "
+                     "which --offline does not use")
+    install_bounded_opener()
     if args.from_pack and args.target:
         parser.error("--target reads a core list from the network, which --from-pack "
                      "does not use")
@@ -9050,7 +9170,8 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
             ], bios_path)
             _print_plan([f for f in to_download if id(f) not in copies], bios_path, term,
                         trees, kept, copy_plan_lines(to_download, copies, bios_index,
-                                                     bios_path, files, args.verbose, True))
+                                                     bios_path, files, args.verbose, True),
+                        verbose=args.verbose)
             for line in unreadable_lines(unread, args.verbose):
                 print(line)
             for line in hint:

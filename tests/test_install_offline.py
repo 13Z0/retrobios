@@ -21,6 +21,7 @@ import sys
 import tempfile
 import time
 import unittest
+import unittest.mock
 import zipfile
 from pathlib import Path
 
@@ -587,6 +588,172 @@ class TheSummaryNamesTheBulk(unittest.TestCase):
         text = out.getvalue()
         self.assertIn("  arcade pulls most of it.", text)
         self.assertLess(text.index("Done."), text.index("arcade pulls"))
+
+
+class OfflineMakesNoRequest(Scratch):
+    """A handheld with no Wi-Fi ran --check against a loopback address to
+    learn its platform, since nothing said "make no request"."""
+
+    def _served(self, *options: str, env: dict | None = None):
+        import test_install_selection  # noqa: PLC0415
+
+        hits: list[str] = []
+        with FakeRepository() as repo, unittest.mock.patch.object(
+                test_install_selection._QuietHandler, "log_message",
+                lambda handler, *args: hits.append(handler.path)):
+            started = time.monotonic()
+            proc = subprocess.run(
+                repo.command(*options), env={**repo.env(), **(env or {})},
+                capture_output=True, text=True, timeout=60, check=False,
+                stdin=subprocess.DEVNULL)
+            elapsed = time.monotonic() - started
+            installed = repo.installed()
+        return proc, hits, elapsed, installed
+
+    def test_check_names_the_platform_and_stops_at_the_file_list(self):
+        for options, env in (((("--offline",)), None),
+                             ((), {"RETROBIOS_INSTALL_OFFLINE": "1"})):
+            with self.subTest(options=options, env=env):
+                proc, hits, elapsed, installed = self._served(
+                    *options, "--check", "--events", env=env)
+                self.assertEqual(hits, [])
+                self.assertLess(elapsed, 30)
+                self.assertEqual(proc.returncode, 1, proc.stderr)
+                events = [json.loads(line) for line in proc.stdout.splitlines()]
+                self.assertEqual([e["event"] for e in events],
+                                 ["start", "detect", "error", "end"])
+                self.assertEqual(events[1]["platforms"][0]["platform"], "retroarch")
+                self.assertEqual((events[2]["stage"], events[2]["reason"]),
+                                 ("manifest", "offline"))
+                self.assertIn("no network request", events[2]["message"])
+                self.assertIn("--manifest", proc.stderr)
+                self.assertNotIn("attempts", proc.stderr)
+                self.assertEqual(installed, [])
+
+    def test_a_copy_lands_and_the_rest_fails_at_once(self):
+        old = self.root / "old"
+        old.mkdir()
+        (old / "scph5501.bin").write_bytes(US)
+        proc = self.run_installer("--offline", "--manifest", str(self.list),
+                                  "--from", str(old), "--no-input")
+        self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
+        self.assertEqual((self.dest / "scph5501.bin").read_bytes(), US)
+        self.assertFalse((self.dest / "gba_bios.bin").exists())
+        self.assertIn("no network request", proc.stdout + proc.stderr)
+        self.assertIn("run without --offline", proc.stdout + proc.stderr)
+        self.assertNotIn("trying again", proc.stderr)
+
+    def test_modes_that_need_the_network_refuse_it(self):
+        for extra in (["--target", "switch"], ["--list-targets"]):
+            with self.subTest(extra=extra):
+                proc = self.run_installer("--offline", *extra)
+                self.assertEqual(proc.returncode, 2, proc.stderr)
+                self.assertIn("--offline", proc.stderr)
+
+    def test_a_listing_and_a_pack_need_no_network_anyway(self):
+        proc = self.run_installer("--offline", "--list-platforms")
+        self.assertEqual(proc.returncode, 0, proc.stderr)
+
+
+class ANetworkThatDroppedFailsFast(unittest.TestCase):
+    """A dropped network cost 93 s before the line-mode error: three tries
+    of a 30-second timeout spent waiting for a connection that never opened."""
+
+    def test_the_connection_is_bounded_and_the_read_is_not(self):
+        calls: list[tuple] = []
+
+        class Sock:
+            def settimeout(self, value):
+                calls.append(("read", value))
+
+        def create(address, timeout, source_address=None):
+            calls.append(("connect", timeout))
+            return Sock()
+
+        with unittest.mock.patch.object(install.socket, "create_connection", create):
+            install._open_socket(("example.org", 443), 60)
+            install._open_socket(("example.org", 443), 2)
+        self.assertEqual(calls, [("connect", install.CONNECT_TIMEOUT), ("read", 60),
+                                 ("connect", 2), ("read", 2)])
+
+    def test_three_tries_that_never_connect_end_within_fifteen_seconds(self):
+        waited = sum(install._retry_delay(n, None) for n in range(1, install.MAX_RETRIES))
+        self.assertLessEqual(install.MAX_RETRIES * install.CONNECT_TIMEOUT + waited, 15)
+
+    def test_a_slow_answer_on_an_open_connection_still_arrives(self):
+        import http.server  # noqa: PLC0415
+        import threading  # noqa: PLC0415
+
+        delay = install.CONNECT_TIMEOUT + 1
+
+        class Slow(http.server.BaseHTTPRequestHandler):
+            def do_GET(self):  # noqa: N802 - stdlib name
+                time.sleep(delay)
+                body = b'{"ok": true}'
+                self.send_response(200)
+                self.send_header("Content-Length", str(len(body)))
+                self.end_headers()
+                self.wfile.write(body)
+
+            def log_message(self, *args):
+                return
+
+        server = http.server.ThreadingHTTPServer(("127.0.0.1", 0), Slow)
+        threading.Thread(target=server.serve_forever, daemon=True).start()
+        self.addCleanup(server.server_close)
+        self.addCleanup(server.shutdown)
+        install.install_bounded_opener()
+        self.addCleanup(install.urllib.request.install_opener, None)
+        url = f"http://127.0.0.1:{server.server_address[1]}/list.json"
+        started = time.monotonic()
+        self.assertEqual(install._fetch_json(url, 1024, "file list", attempts=1), {"ok": True})
+        self.assertGreaterEqual(time.monotonic() - started, delay - 0.5)
+
+
+class ADryRunOpensOnItsTotals(Scratch):
+    """A full --dry-run printed 599 lines, the total scrolled away above
+    eight file names for each of 66 systems."""
+
+    def setUp(self):
+        super().setUp()
+        files = [
+            {"dest": f"sys{n:02d}/file{k}.bin", "sha1": _sha1(b"%d-%d" % (n, k)),
+             "size": 1000 * (n + 1), "repo_path": f"bios/sys{n:02d}_{k}", "cores": None,
+             "systems": [f"system-{n:02d}"]}
+            for n in range(40) for k in range(3)
+        ]
+        self.list.write_text(json.dumps({"manifest_version": 2, "platform": "retroarch",
+                                         "files": files}))
+
+    def _plan(self, *options: str) -> list[str]:
+        proc = subprocess.run(
+            [sys.executable, str(REPO_ROOT / "install.py"), "--platform", "retroarch",
+             "--dest", str(self.dest), "--manifest", str(self.list), "--dry-run",
+             "--no-input", *options],
+            env={**_offline_env(), "LINES": "24", "COLUMNS": "80"},
+            capture_output=True, text=True, timeout=120, check=False,
+            stdin=subprocess.DEVNULL)
+        self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+        lines = proc.stdout.splitlines()
+        return lines[next(i for i, line in enumerate(lines)
+                          if line.startswith("Would download")):]
+
+    def test_the_total_comes_first_and_the_largest_systems_after(self):
+        plan = self._plan()
+        self.assertTrue(plan[0].startswith("Would download 120 files"), plan[0])
+        self.assertLessEqual(len(plan), 24, "\n".join(plan))
+        self.assertIn("system-39", plan[2])
+        self.assertTrue(any("30 more systems" in line and "--verbose" in line
+                            for line in plan), "\n".join(plan))
+        self.assertFalse(any("file0.bin" in line for line in plan))
+        self.assertEqual(plan[-1].strip(), "Nothing was written. Run without --dry-run to install.")
+
+    def test_verbose_lists_every_system_and_its_files(self):
+        plan = self._plan("--verbose")
+        self.assertTrue(plan[0].startswith("Would download 120 files"), plan[0])
+        for n in range(40):
+            self.assertTrue(any(line.strip().startswith(f"system-{n:02d}") for line in plan), n)
+        self.assertTrue(any("sys00/file0.bin" in line for line in plan))
 
 
 if __name__ == "__main__":
