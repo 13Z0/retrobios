@@ -14,6 +14,12 @@ systems:
   - apple-ii
 mode: standalone
 
+data_root:
+  macos:
+    path: "~/Library/Application Support/com.applewin.marianipro"
+    source_ref: "source/frontends/mariani/AppDelegate.mm:1471-1485, Mariani.xcodeproj/project.pbxproj:3623"
+    note: "Holds the debugger symbol tables, scripts and printer output. ROMs are read from Mariani.app/Contents/Resources only."
+
 notes: |
   Cocoa frontend for AppleWin, macOS only, shipped as Mariani.app and carrying
   AppleWin 1.31.0.5 (resource/version.h). ES-DE launches it with --d1 for the
@@ -499,7 +505,7 @@ analysis:
     source_ref: "source/frontends/mariani/MarianiFrame.cpp:156-232, source/frontends/mariani/AppDelegate.mm:1465-1469, source/linux/linuxframe.cpp:133-145"
 
   support_directory:
-    path: "~/Library/Application Support/<bundle id>/"
+    path: "~/Library/Application Support/com.applewin.marianipro/"
     holds: "debugger symbol tables, debugger scripts, printer output, g_sProgramDir"
     source_ref: "source/frontends/mariani/AppDelegate.mm:1471-1485, source/frontends/mariani/MarianiFrame.cpp:36"
 
