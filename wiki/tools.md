@@ -513,6 +513,15 @@ the recale would have left rather than the one on disk, and a pin held back by
 prose that the same pass would have moved is not reported as blocked. Drop
 `--dry-run` and the same pass writes, recale before bump on each profile.
 
+A moved pin also moves the links the site draws into the cited sources: a
+path is linked only where `website/src/data/source-paths.json` records it in
+the tree the profile pins. Refresh that record after a pin moves or a profile
+is added, and commit it with the profiles:
+
+```bash
+python scripts/sitesources.py --fetch
+```
+
 A forge can also go for good. A 451, a 410 or a host that stops resolving
 is reported as `upstream gone` in its own bucket rather than retried and
 printed as a failure every pass, and the profile leaves the review backlog,
@@ -622,6 +631,10 @@ patches from and reports an original that is absent, that came from another
 URL than the one the platform YAML names, or that was fetched before the
 platform YAML was last rewritten.
 
+The `profiles` area always checks `website/src/data/source-paths.json`
+against the profiles, offline: a recorded tree that no profile pins any more
+is `STALE` until `sitesources.py --fetch` runs again.
+
 ```bash
 python scripts/check_freshness.py
 python scripts/check_freshness.py --only platforms,targets
@@ -694,6 +707,7 @@ python scripts/refresh_stale.py --only platforms,targets --jobs 6
 | `find_pinned_revision.py` | Walk the upstream commits that touched a file and return the revision whose bytes match a platform's pinned md5 (`--write` saves them) |
 | `generate_readme.py` | Generate README.md and CONTRIBUTING.md from database |
 | `generate_site.py` | Generate the site (this documentation) into the Starlight project in `website/` |
+| `sitesources.py` | Record which cited source paths each pinned upstream tree holds, for the site's source links (`--fetch` reads a tree no cache holds) |
 | `validate_site.py` | Validate rendered metadata, heading order, image alternatives, JSON-LD, local resources, links and fragments, and the page size and search index budgets |
 | `romset_recipes.py` | Identify which emulator version an arcade archive matches, and rebuild a pinned archive from ROMs already held |
 | `scraper/romset_dat_importer.py` | Fetch and import per-set recipes from MAME `-listxml` or FBNeo DATs into `recipes/`. `--fetch` alone takes the newest MAME release, and FBNeo DATs are refreshed by git blob sha. `--fetch <revision>` reads FBNeo at that tag, branch or commit |

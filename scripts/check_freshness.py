@@ -1240,6 +1240,33 @@ def _check_installer_pins() -> Finding:
 # --- profiles ---------------------------------------------------------------
 
 
+def check_source_paths(profiles: dict) -> Finding:
+    """The site links a cited path only where source-paths.json records it
+    in the tree the profile pins. A recorded tree no profile pins any more
+    means a pin moved and `sitesources.py --fetch` was not run after it."""
+    import sitesources  # noqa: PLC0415
+
+    pinned = {
+        sitesources.tree_key(repo, pin)
+        for profile in profiles.values() if sitesources.cited_paths(profile)
+        for repo, pin in sitesources.profile_trees(profile)
+    }
+    try:
+        recorded = set(json.loads(sitesources.SOURCE_PATHS.read_text(encoding="utf-8")))
+    except (OSError, ValueError) as exc:
+        return Finding("profiles", "source-paths.json", ERROR, detail=str(exc))
+    orphaned = sorted(recorded - pinned)
+    return Finding(
+        "profiles",
+        "source-paths.json",
+        STALE if orphaned else OK,
+        local=f"{len(recorded)} trees",
+        detail=(f"{len(orphaned)} recorded trees no profile pins: run "
+                "scripts/sitesources.py --fetch") if orphaned
+        else "every recorded tree is a pinned one",
+    )
+
+
 def check_profiles(run: bool, offline: bool) -> list[Finding]:
     if not run:
         return [
@@ -1482,6 +1509,7 @@ def main() -> int:
     if "ci" in areas:
         findings.extend(check_ci(args.cache_dir, args.offline))
     if "profiles" in areas:
+        findings.append(check_source_paths(profiles))
         findings.extend(check_profiles(args.profiles, args.offline))
 
     if args.json:
