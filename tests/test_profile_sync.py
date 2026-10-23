@@ -3599,6 +3599,37 @@ class TestCollectCitations(unittest.TestCase):
         citation = collect_citations(document)[0]
         self.assertEqual(citation.ref, "x.c:100")
 
+    def test_spaced_lone_number_closing_the_citation_joins_the_run(self):
+        # vkquake wrote `(Quake/bgmusic.c:29, 321).` and cemu a list of ten
+        # lines of .gitlab-ci.yml: only the first number was ever compared.
+        cases = {
+            "music (Quake/bgmusic.c:29, 321).\n": [(29, 29), (321, 321)],
+            "(ref: a/b.cpp:1586-1633, 2646).\n": [(1586, 1633), (2646, 2646)],
+            "jobs in .gitlab-ci.yml:110, 116, 139-140\n": [
+                (110, 110), (116, 116), (139, 140)
+            ],
+            "read at x.c:5, 6; then y\n": [(5, 5), (6, 6)],
+        }
+        for text, spans in cases.items():
+            citation = collect_citations({"notes": text})[0]
+            self.assertEqual(
+                [(p.start, p.end) for p in citation.parts], spans, text
+            )
+            line = text.splitlines()[0]
+            self.assertEqual(
+                [line[lo:hi] for lo, hi in citation.spans],
+                [p.raw for p in citation.parts],
+            )
+
+    def test_spaced_number_list_followed_by_a_word_stays_prose(self):
+        for text in (
+            "It reads x.c:5, 6, 7 players at once.\n",
+            "It reads x.c:5, 6 and 7 at once.\n",
+            "Lines 3, 4 and 5, version 2, 3 players.\n",
+        ):
+            refs = [c.ref for c in collect_citations({"notes": text})]
+            self.assertEqual(refs, ["x.c:5"] if "x.c" in text else [], text)
+
     def test_declared_repository_name_is_not_external(self):
         document = {
             "upstream": "https://github.com/o/mednafen",

@@ -231,6 +231,14 @@ PROSE_CONT_RE = re.compile(r",(?P<range>\d+(?:-\d+)?)(?![\w-])(?!\.\d)")
 # A spaced continuation is accepted only for a range: `x.c:55-71, 80-147`
 # follows the source_ref convention, while `x.c:100, 200 files` is prose.
 PROSE_CONT_SPACED_RE = re.compile(r", +(?P<range>\d+-\d+)(?![\w-])(?!\.\d)")
+# A spaced single line joins the run only inside a list that closes the
+# citation: `bgmusic.c:29, 321)` and `.gitlab-ci.yml:110, 116, 139, 400`
+# end on a bracket, a semicolon, a sentence end or the line end, while in
+# `x.c:100, 200 files` a word follows and the number is prose.
+PROSE_CONT_LIST_RE = re.compile(
+    r"(?:, +\d+(?:-\d+)?(?![\w-])(?!\.\d))+(?=[)\];]|\.(?!\w)|\s*$)"
+)
+_PROSE_LIST_RANGE_RE = re.compile(r"\d+(?:-\d+)?")
 # Words that read as prose before a filename. Anything else in project
 # position marks the citation external, the way `munt ROMInfo.cpp` does in
 # a source_ref: the profile does not declare that repository.
@@ -391,6 +399,15 @@ def _prose_runs(
             end = match.end()
             while True:
                 cont = PROSE_CONT_RE.match(line, end)
+                if cont is None and (listed := PROSE_CONT_LIST_RE.match(line, end)):
+                    spans.extend(
+                        (item.start(), item.end())
+                        for item in _PROSE_LIST_RANGE_RE.finditer(
+                            line, end, listed.end()
+                        )
+                    )
+                    end = listed.end()
+                    break
                 if cont is None:
                     cont = PROSE_CONT_SPACED_RE.match(line, end)
                 if cont is None:
