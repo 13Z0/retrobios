@@ -6,7 +6,7 @@
   "platform": "recalbox",
   "display_name": "Recalbox",
   "version": "1.0",
-  "generated": "2026-10-23T07:11:31Z",
+  "generated": "2026-10-23T11:13:30Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -4373,7 +4373,7 @@
       "sha1": "9451a1a09d8f75944dbd6f91193fc360f1de80ac",
       "sha256": "ed28568574716eef5d7c0fde2568d7a47a6e4b1fbca81daff3be05e45723466d",
       "size": 16384,
-      "repo_path": "bios/Oric/Oric/basic11b.rom",
+      "repo_path": "bios/Tangerine/Oric/basic11b.rom",
       "cores": null,
       "systems": [
         "oricatmos"
@@ -4384,7 +4384,7 @@
       "sha1": "333116e6884d85aaa4dfc7578a91cceeea66d016",
       "sha256": "83d341dab126092f7a6d56f6a92bca0643ff3aa6529d896085004f958c9be2ff",
       "size": 16384,
-      "repo_path": "bios/Oric/Oric/basic10.rom",
+      "repo_path": "bios/Tangerine/Oric/basic10.rom",
       "cores": null,
       "systems": [
         "oricatmos"
@@ -4395,7 +4395,7 @@
       "sha1": "447975ed022379fb6b80a22fa37c2d188ca3aa88",
       "sha256": "257430f54fdc1c98bf0ddad97c6a609885b25130910c4ba370d6f51e3699b2d3",
       "size": 8192,
-      "repo_path": "bios/Oric/Oric/bd500.rom",
+      "repo_path": "bios/Tangerine/Oric/bd500.rom",
       "cores": null,
       "systems": [
         "oricatmos"
@@ -4406,7 +4406,7 @@
       "sha1": "70e59b8abd67092f050462abc6cb5271e4c15f01",
       "sha256": "60d9aaaa7e787080779acbf8ad7af81fe9b8851af5e395c2f3bf10c114a76a23",
       "size": 2048,
-      "repo_path": "bios/Oric/Oric/jasmin.rom",
+      "repo_path": "bios/Tangerine/Oric/jasmin.rom",
       "cores": null,
       "systems": [
         "oricatmos"
@@ -4417,7 +4417,7 @@
       "sha1": "0d2ef6e67322f48f4b7e08d8bbe68827e2074561",
       "sha256": "1b82882eeaddba463e3f89218fd9eb30147345e540bbccf96bf30c14d2e45941",
       "size": 8192,
-      "repo_path": "bios/Oric/Oric/microdis.rom",
+      "repo_path": "bios/Tangerine/Oric/microdis.rom",
       "cores": null,
       "systems": [
         "oricatmos"
@@ -4428,7 +4428,7 @@
       "sha1": "7afc276cb118adff72e4f16698f94bf3b2c64146",
       "sha256": "a142c6a9f9ccf25ce4e7ab64107bc2210ee7f68557fe3a8bbb60d1587da814ae",
       "size": 16384,
-      "repo_path": "bios/Oric/Oric/pravetz.rom",
+      "repo_path": "bios/Tangerine/Oric/pravetz.rom",
       "cores": null,
       "systems": [
         "oricatmos"
@@ -4439,7 +4439,7 @@
       "sha1": "746a2996967282281a980842a93642ad7d740f9e",
       "sha256": "d58cb6f47f808d8c890310d1c6a46e92df05971f5952bcb4f4cf88d1faf37eb6",
       "size": 512,
-      "repo_path": "bios/Oric/Oric/8dos2.rom",
+      "repo_path": "bios/Tangerine/Oric/8dos2.rom",
       "cores": null,
       "systems": [
         "oricatmos"
@@ -4450,7 +4450,7 @@
       "sha1": "9e9af51dae3199cccf49ab3f0d47e2b9be4ba97d",
       "sha256": "49921a9f932f7ecc2947b9b08f0451a393dc48f55317209c44338dc8bcf227ee",
       "size": 16384,
-      "repo_path": "bios/Oric/Oric/teleass.rom",
+      "repo_path": "bios/Tangerine/Oric/teleass.rom",
       "cores": null,
       "systems": [
         "oricatmos"
@@ -4461,7 +4461,7 @@
       "sha1": "f5f70a0eb59f8cd6c261e179ae78ef906f68ed63",
       "sha256": "08eaf63a55a7659a6da7c91cf4a57bb0e2e21ff856d0957928605aa5feed09c6",
       "size": 16384,
-      "repo_path": "bios/Oric/Oric/hyperbas.rom",
+      "repo_path": "bios/Tangerine/Oric/hyperbas.rom",
       "cores": null,
       "systems": [
         "oricatmos"
@@ -4472,7 +4472,7 @@
       "sha1": "86fc8dc0932f983efa199e31ae05a4424772f959",
       "sha256": "0ed991887342fba9e4b71668ff4c14ed93c2b3a19b4874dd0282404a1c442094",
       "size": 16384,
-      "repo_path": "bios/Oric/Oric/telmon24.rom",
+      "repo_path": "bios/Tangerine/Oric/telmon24.rom",
       "cores": null,
       "systems": [
         "oricatmos"
@@ -4923,7 +4923,7 @@
       "sha1": "b083518fffb7f66b03c23b7eb4f868e62dc5a987",
       "sha256": "a73a06c23ed38370e58a11fb1b86f7ea4c547061a60d7aa62bae446235fd2dff",
       "size": 65536,
-      "repo_path": "bios/Roland/MT32_CONTROL.ROM",
+      "repo_path": "bios/Roland/MT-32/MT32_CONTROL.ROM",
       "cores": null,
       "systems": [
         "scummvm"
@@ -4934,7 +4934,7 @@
       "sha1": "f6b1eebc4b2d200ec6d3d21d51325d5b48c60252",
       "sha256": "d9164063f293410cf33f2f64cdcea6893b44723fe41938e07ec9aef58b406238",
       "size": 524288,
-      "repo_path": "bios/Roland/MT32_PCM.ROM",
+      "repo_path": "bios/Roland/MT-32/MT32_PCM.ROM",
       "cores": null,
       "systems": [
         "scummvm"
@@ -11465,7 +11465,7 @@
       "sha1": "289cc298ad532b702461bfc738009d9ebe8025ea",
       "sha256": "0dc50190bb7ea3fb212c970346b771a511772b528801e7eda6d27efda8c40698",
       "size": 1048576,
-      "repo_path": "bios/Roland/CM32L_PCM.ROM",
+      "repo_path": "bios/Roland/CM-32L/CM32L_PCM.ROM",
       "cores": [
         "dosbox",
         "dosbox_pure"
@@ -33696,7 +33696,7 @@
       "sha1": "b083518fffb7f66b03c23b7eb4f868e62dc5a987",
       "sha256": "a73a06c23ed38370e58a11fb1b86f7ea4c547061a60d7aa62bae446235fd2dff",
       "size": 65536,
-      "repo_path": "bios/Roland/MT32_CONTROL.ROM",
+      "repo_path": "bios/Roland/MT-32/MT32_CONTROL.ROM",
       "cores": [
         "amiberry"
       ],
@@ -33709,7 +33709,7 @@
       "sha1": "f6b1eebc4b2d200ec6d3d21d51325d5b48c60252",
       "sha256": "d9164063f293410cf33f2f64cdcea6893b44723fe41938e07ec9aef58b406238",
       "size": 524288,
-      "repo_path": "bios/Roland/MT32_PCM.ROM",
+      "repo_path": "bios/Roland/MT-32/MT32_PCM.ROM",
       "cores": [
         "amiberry"
       ],
@@ -33722,7 +33722,7 @@
       "sha1": "a439fbb390da38cada95a7cbb1d6ca199cd66ef8",
       "sha256": "08d68695e5bff6bbcbb751d6e4453db9f5ead0b5f41e86480798a04376dfe090",
       "size": 65536,
-      "repo_path": "bios/Roland/CM32L_CONTROL.ROM",
+      "repo_path": "bios/Roland/CM-32L/CM32L_CONTROL.ROM",
       "cores": [
         "amiberry"
       ],
@@ -33735,7 +33735,7 @@
       "sha1": "289cc298ad532b702461bfc738009d9ebe8025ea",
       "sha256": "0dc50190bb7ea3fb212c970346b771a511772b528801e7eda6d27efda8c40698",
       "size": 1048576,
-      "repo_path": "bios/Roland/CM32L_PCM.ROM",
+      "repo_path": "bios/Roland/CM-32L/CM32L_PCM.ROM",
       "cores": [
         "amiberry"
       ],
@@ -37962,7 +37962,7 @@
       "sha1": "01f7a84d5a1973623eabd2be6c2cbac1ce5096a6",
       "sha256": "62eaf60c3be8047599f3ef06874b86d479d9b74cf90efcd2d83f35db8c662144",
       "size": 16384,
-      "repo_path": "bios/Oric/Oric/kernel.rom",
+      "repo_path": "bios/Tangerine/Oric/kernel.rom",
       "cores": [
         "oricutron"
       ],
@@ -37975,7 +37975,7 @@
       "sha1": "926b95e1cb574d4914dbed0681729a7c1a4bc68d",
       "sha256": "2f799c82479b64ca4fda7ed76bdc65bfb56596625061fba91933fed473fc9ae8",
       "size": 16384,
-      "repo_path": "bios/Oric/Oric/shell.rom",
+      "repo_path": "bios/Tangerine/Oric/shell.rom",
       "cores": [
         "oricutron"
       ],
@@ -38566,7 +38566,7 @@
       "sha1": "a439fbb390da38cada95a7cbb1d6ca199cd66ef8",
       "sha256": "08d68695e5bff6bbcbb751d6e4453db9f5ead0b5f41e86480798a04376dfe090",
       "size": 65536,
-      "repo_path": "bios/Roland/CM32L_CONTROL.ROM",
+      "repo_path": "bios/Roland/CM-32L/CM32L_CONTROL.ROM",
       "cores": [
         "scummvm"
       ],
@@ -38579,7 +38579,7 @@
       "sha1": "289cc298ad532b702461bfc738009d9ebe8025ea",
       "sha256": "0dc50190bb7ea3fb212c970346b771a511772b528801e7eda6d27efda8c40698",
       "size": 1048576,
-      "repo_path": "bios/Roland/CM32L_PCM.ROM",
+      "repo_path": "bios/Roland/CM-32L/CM32L_PCM.ROM",
       "cores": [
         "scummvm"
       ],
@@ -40193,7 +40193,7 @@
       "sha1": "f6b1eebc4b2d200ec6d3d21d51325d5b48c60252",
       "sha256": "d9164063f293410cf33f2f64cdcea6893b44723fe41938e07ec9aef58b406238",
       "size": 524288,
-      "repo_path": "bios/Roland/MT32_PCM.ROM",
+      "repo_path": "bios/Roland/MT-32/MT32_PCM.ROM",
       "cores": [
         "dosbox",
         "dosbox_pure"
@@ -41098,7 +41098,7 @@
       "sha1": "9451a1a09d8f75944dbd6f91193fc360f1de80ac",
       "sha256": "ed28568574716eef5d7c0fde2568d7a47a6e4b1fbca81daff3be05e45723466d",
       "size": 16384,
-      "repo_path": "bios/Oric/Oric/basic11b.rom",
+      "repo_path": "bios/Tangerine/Oric/basic11b.rom",
       "cores": [
         "oricutron"
       ],
@@ -41111,7 +41111,7 @@
       "sha1": "333116e6884d85aaa4dfc7578a91cceeea66d016",
       "sha256": "83d341dab126092f7a6d56f6a92bca0643ff3aa6529d896085004f958c9be2ff",
       "size": 16384,
-      "repo_path": "bios/Oric/Oric/basic10.rom",
+      "repo_path": "bios/Tangerine/Oric/basic10.rom",
       "cores": [
         "oricutron"
       ],
@@ -41124,7 +41124,7 @@
       "sha1": "7afc276cb118adff72e4f16698f94bf3b2c64146",
       "sha256": "a142c6a9f9ccf25ce4e7ab64107bc2210ee7f68557fe3a8bbb60d1587da814ae",
       "size": 16384,
-      "repo_path": "bios/Oric/Oric/pravetz.rom",
+      "repo_path": "bios/Tangerine/Oric/pravetz.rom",
       "cores": [
         "oricutron"
       ],
@@ -41137,7 +41137,7 @@
       "sha1": "9e9af51dae3199cccf49ab3f0d47e2b9be4ba97d",
       "sha256": "49921a9f932f7ecc2947b9b08f0451a393dc48f55317209c44338dc8bcf227ee",
       "size": 16384,
-      "repo_path": "bios/Oric/Oric/teleass.rom",
+      "repo_path": "bios/Tangerine/Oric/teleass.rom",
       "cores": [
         "oricutron"
       ],
@@ -41150,7 +41150,7 @@
       "sha1": "f5f70a0eb59f8cd6c261e179ae78ef906f68ed63",
       "sha256": "08eaf63a55a7659a6da7c91cf4a57bb0e2e21ff856d0957928605aa5feed09c6",
       "size": 16384,
-      "repo_path": "bios/Oric/Oric/hyperbas.rom",
+      "repo_path": "bios/Tangerine/Oric/hyperbas.rom",
       "cores": [
         "oricutron"
       ],
@@ -41163,7 +41163,7 @@
       "sha1": "86fc8dc0932f983efa199e31ae05a4424772f959",
       "sha256": "0ed991887342fba9e4b71668ff4c14ed93c2b3a19b4874dd0282404a1c442094",
       "size": 16384,
-      "repo_path": "bios/Oric/Oric/telmon24.rom",
+      "repo_path": "bios/Tangerine/Oric/telmon24.rom",
       "cores": [
         "oricutron"
       ],
@@ -41176,7 +41176,7 @@
       "sha1": "0d2ef6e67322f48f4b7e08d8bbe68827e2074561",
       "sha256": "1b82882eeaddba463e3f89218fd9eb30147345e540bbccf96bf30c14d2e45941",
       "size": 8192,
-      "repo_path": "bios/Oric/Oric/microdis.rom",
+      "repo_path": "bios/Tangerine/Oric/microdis.rom",
       "cores": [
         "oricutron"
       ],
@@ -41189,7 +41189,7 @@
       "sha1": "447975ed022379fb6b80a22fa37c2d188ca3aa88",
       "sha256": "257430f54fdc1c98bf0ddad97c6a609885b25130910c4ba370d6f51e3699b2d3",
       "size": 8192,
-      "repo_path": "bios/Oric/Oric/bd500.rom",
+      "repo_path": "bios/Tangerine/Oric/bd500.rom",
       "cores": [
         "oricutron"
       ],
@@ -41202,7 +41202,7 @@
       "sha1": "70e59b8abd67092f050462abc6cb5271e4c15f01",
       "sha256": "60d9aaaa7e787080779acbf8ad7af81fe9b8851af5e395c2f3bf10c114a76a23",
       "size": 2048,
-      "repo_path": "bios/Oric/Oric/jasmin.rom",
+      "repo_path": "bios/Tangerine/Oric/jasmin.rom",
       "cores": [
         "oricutron"
       ],
@@ -41215,7 +41215,7 @@
       "sha1": "746a2996967282281a980842a93642ad7d740f9e",
       "sha256": "d58cb6f47f808d8c890310d1c6a46e92df05971f5952bcb4f4cf88d1faf37eb6",
       "size": 512,
-      "repo_path": "bios/Oric/Oric/8dos2.rom",
+      "repo_path": "bios/Tangerine/Oric/8dos2.rom",
       "cores": [
         "oricutron"
       ],
@@ -41437,7 +41437,7 @@
       "sha1": "b083518fffb7f66b03c23b7eb4f868e62dc5a987",
       "sha256": "a73a06c23ed38370e58a11fb1b86f7ea4c547061a60d7aa62bae446235fd2dff",
       "size": 65536,
-      "repo_path": "bios/Roland/MT32_CONTROL.ROM",
+      "repo_path": "bios/Roland/MT-32/MT32_CONTROL.ROM",
       "cores": [
         "scummvm"
       ],
@@ -41450,7 +41450,7 @@
       "sha1": "f6b1eebc4b2d200ec6d3d21d51325d5b48c60252",
       "sha256": "d9164063f293410cf33f2f64cdcea6893b44723fe41938e07ec9aef58b406238",
       "size": 524288,
-      "repo_path": "bios/Roland/MT32_PCM.ROM",
+      "repo_path": "bios/Roland/MT-32/MT32_PCM.ROM",
       "cores": [
         "scummvm"
       ],

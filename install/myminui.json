@@ -6,7 +6,7 @@
   "platform": "myminui",
   "display_name": "MyMinUI",
   "version": "1.0",
-  "generated": "2026-10-23T07:11:31Z",
+  "generated": "2026-10-23T11:13:30Z",
   "base_destination": "",
   "detect": [
     {
@@ -127,7 +127,7 @@
       "sha1": "f6b1eebc4b2d200ec6d3d21d51325d5b48c60252",
       "sha256": "d9164063f293410cf33f2f64cdcea6893b44723fe41938e07ec9aef58b406238",
       "size": 524288,
-      "repo_path": "bios/Roland/MT32_PCM.ROM",
+      "repo_path": "bios/Roland/MT-32/MT32_PCM.ROM",
       "cores": [
         "dosbox_pure"
       ]
@@ -137,7 +137,7 @@
       "sha1": "289cc298ad532b702461bfc738009d9ebe8025ea",
       "sha256": "0dc50190bb7ea3fb212c970346b771a511772b528801e7eda6d27efda8c40698",
       "size": 1048576,
-      "repo_path": "bios/Roland/CM32L_PCM.ROM",
+      "repo_path": "bios/Roland/CM-32L/CM32L_PCM.ROM",
       "cores": [
         "dosbox_pure"
       ]

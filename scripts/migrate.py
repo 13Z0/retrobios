@@ -193,8 +193,8 @@ BIOS_FILE_MAP = {
     "psxonpsp660.bin": ("Sony", "PlayStation"),
     "PSXONPSP660.BIN": ("Sony", "PlayStation Portable"),
     "scummvm.zip": ("ScummVM", "ScummVM"),
-    "MT32_CONTROL.ROM": ("ScummVM", "ScummVM"),
-    "MT32_PCM.ROM": ("ScummVM", "ScummVM"),
+    "MT32_CONTROL.ROM": ("Roland", "MT-32"),
+    "MT32_PCM.ROM": ("Roland", "MT-32"),
 }
 
 PATH_PREFIX_MAP = {
@@ -208,7 +208,7 @@ PATH_PREFIX_MAP = {
     "vice/": ("Commodore", "C128"),
     "bk/": ("Elektronika", "BK"),
     "dragon/": ("Dragon", "Dragon"),
-    "oricutron/": ("Oric", "Oric"),
+    "oricutron/": ("Tangerine", "Oric"),
     "trs80coco/": ("Tandy", "CoCo"),
     "ti994a/": ("Texas Instruments", "TI-99"),
     "gamecube/": ("Nintendo", "GameCube"),
