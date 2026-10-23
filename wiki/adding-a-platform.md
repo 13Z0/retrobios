@@ -160,6 +160,7 @@ platforms:
   myplatform:
     config: myplatform.yml           # platform YAML filename in platforms/
     status: active                   # active or archived
+    release_pack: true               # optional: a release publishes its ZIP
     device_group: handheld           # computer, gaming-os, handheld, fpga or server
     scraper: myplatform              # matches PLATFORM_NAME, null if hand-maintained
     schedule: weekly                 # re-scrape cadence, run by hand: weekly, monthly, or null
@@ -681,6 +682,12 @@ A new platform is archived-by-default nowhere: `status: active` puts it in
 `list_platforms.py`, the CI matrix, and the scrapers. Set
 `status: archived` to keep the configuration without the automation. Archived
 platforms are excluded unless `--all` or `--include-archived` is passed.
+
+A new platform has no release ZIP: `release_pack: true` is set for the setups
+most people download, and the installer serves every other one from its
+manifest. `generate_pack.py --platform myplatform` still builds its pack.
+[Which platforms get a pack](release-process.md#which-platforms-get-a-pack)
+says how the list is read from download counts.
 
 Check the output for:
 

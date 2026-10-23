@@ -9,13 +9,13 @@ order: 50
 
 - **Yes** for PlayStation 1 and 2, Saturn and Neo Geo.
 - **Better with it** for Dreamcast: some games need it.
-- **Usually not** for NES or Super Nintendo cartridges.
+- **Usually not** for NES or Super Nintendo.
 
 [What is a BIOS?](what-are-bios-files.md)
 
 ## How do I know which BIOS I need?
 
-Run the command with `--dry-run`. It lists the files, changing nothing.
+Add `--dry-run`. It lists the files, changing nothing.
 
 <!-- os-tabs -->
 ```sh
@@ -24,23 +24,21 @@ curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | 
 
 ## Do I need every file of a console?
 
-No. A console often has one BIOS per region. To keep only yours, add your
-region, like `--region us`.
+No. To keep only your region's BIOS, add it, like `--region us`.
 
 ## Does the BIOS set the game's language?
 
-Rarely. It comes from the game. Some games follow the console's setting, like
-Flycast's **Language** option.
+Rarely. It comes from the game. Some games follow the console's setting, like Flycast's **Language**
+option.
 
 ## Zip or unzip? { #zip-or-unzip }
 
-Unzip the ZIP you downloaded into the folder your setup's page names. Keep
+Unzip it into the folder your setup's page names. Leave
 the ZIPs inside zipped, like `neogeo.zip`.
 
 ## Does a BIOS work on every setup?
 
-Usually. The command installs the version each setup expects, like its
-`neogeo.zip`.
+Usually. The command installs each setup's own version, like its `neogeo.zip`.
 
 ## My arcade game does not start
 
@@ -50,35 +48,39 @@ Reference: [Which version each emulator reads](technical-faq.md#which-mame-versi
 ## Keys, firmware or BIOS?
 
 - **BIOS** or **firmware**: the console's own program, like `scph5501.bin`.
-- Some newer consoles need a system update, like `PS3UPDAT.PUP`, installed from the
+- Newer consoles need a system update, like `PS3UPDAT.PUP`, installed from the
   emulator's menu.
 - **Keys** unlock encrypted games, like `prod.keys` for Switch.
 
 ## Can I play without the BIOS?
 
-Sometimes. Some emulators carry a stand-in, and some games then fail.
+Sometimes, with an emulator's stand-in, but some games fail.
 
 ## Is the command safe? { #is-piping-the-installer-into-a-shell-safe }
 
-- It stops if the installer does not match its expected fingerprint, then
-  checks each file before saving it.
-- It writes in your BIOS folder, and for some emulators in your save folder.
+- It stops if the installer does not match its expected fingerprint, and checks
+  each file.
+- It writes in your BIOS folder, and for some emulators your save folder.
 - It never touches a game or a save.
-- It keeps any file it replaces in `retrobios-backup`, next to your BIOS
-  folder. `--restore` puts it back.
+- It keeps each file it replaces in `retrobios-backup`. `--restore` puts it
+  back.
 
 Read them first: [install.sh](https://github.com/Abdess/retrobios/blob/main/install.sh),
 [install.ps1](https://github.com/Abdess/retrobios/blob/main/install.ps1),
 [install.py](https://github.com/Abdess/retrobios/blob/main/install.py).
-[How the installer checks itself](installer.md#what-the-bootstrap-does).
 
 ## Windows or my antivirus blocks the command
 
-Download your setup's ZIP from [Get your files](../which-pack.md) instead.
+Use your setup's ZIP, if it has one: [Get your files](../which-pack.md).
+
+## Why is there no ZIP for my setup?
+
+ZIPs are made for the setups most people download. The command installs every
+setup's files and checks each one. `--dry-run` shows the list first.
 
 ## Fill an SD card from a computer?
 
-Yes. Name your setup and the BIOS folder on the card. For RetroArch on a Switch
+Yes. Name your setup and the card's BIOS folder. For RetroArch on a Switch
 card in drive `E:`:
 
 <!-- os-tabs windows: --platform retroarch --dest E:\retroarch\cores\system -->
@@ -89,7 +91,7 @@ curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh \
 
 ## No internet on the device?
 
-Unzip your setup's ZIP into the folder its page names. To check each file, use
+Fill its folder from a computer, as above, or unzip your ZIP and check it with
 `--from-pack`: [Without a network](installer.md#without-a-network-offline-install).
 
 ## My setup is not in the list
@@ -100,11 +102,11 @@ Unzip your setup's ZIP into the folder its page names. To check each file, use
 
 ## Why is a file missing from the ZIP?
 
-Some come with the emulator, so the ZIP leaves them out.
+Some come with the emulator, so the ZIP skips them.
 
 ## My game shows a black screen
 
-A BIOS file is often missing: [When a game does not start](troubleshooting.md).
+Often a missing BIOS: [When a game does not start](troubleshooting.md).
 
 ## Is this legal?
 

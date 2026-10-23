@@ -14,7 +14,8 @@ everyday words (BIOS, emulator, core, hash) are in the [glossary](glossary.md).
 
 **Pack**
 :   One ZIP file with every BIOS file a setup uses. A pack over 2 GB comes in
-    several parts, and every part is needed.
+    several parts, and every part is needed. A release publishes packs for the
+    setups the registry marks `release_pack`, and the installer serves the rest.
 
 **Profile and source_ref**
 :   A profile records which files one emulator opens, read from its code.

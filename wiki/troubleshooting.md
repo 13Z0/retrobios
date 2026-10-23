@@ -24,25 +24,23 @@ Read the count line:
   1/109 present (0 verified, 1 wrong hash)
 ```
 
-- **`wrong hash`**: another region, model, or damaged. Batocera says
-  `UNTESTED`.
+- **`wrong hash`**: another region or model, or damaged.
 - **Fewer present than the total**: files are missing.
 - **A line under a file**, like `still zipped`, says what to fix.
 - **`0 wrong hash`, all present**: go to step 3.
 
 ## 2. Fix the files
 
-Run it again without `--check`. It adds missing files and replaces wrong ones.
+Run it without `--check`. It adds missing files and replaces wrong ones.
 
 ## 3. Check the folder and the names
 
-- **Right folder?** [Get your files](../which-pack.md) names the one your setup
-  reads.
+- **Right folder?** [Get your files](../which-pack.md) names it.
 - **Exact name?** `scph5501.bin` and `SCPH-5501.BIN` differ. On Linux,
   capitals count too.
 - **A `bios` folder inside your BIOS folder?** Move its files up one level.
-- **Unzipped by hand on Linux?** Run the command once. It adds names that
-  differ by capitals only.
+- **Unzipped by hand on Linux?** The command adds names that differ by
+  capitals.
 - **A ZIP in parts, like `Pack.part1of2.zip`?** Unzip every part into one
   folder.
 
@@ -58,17 +56,16 @@ version.
 
 ## The BIOS is fine, the game still fails
 
-- **Another emulator?** Each one reads its own files. Its page lists them.
+- **Another emulator?** Each reads its own files, listed on its page.
 - **A BIOS setting?** Some emulators can skip the BIOS. In PCSX ReARMed, set
   **BIOS Selection** to **Auto**.
-- **A disc game in several files?** Open its `.cue` or `.m3u` file, not a
-  `.bin`.
+- **A disc in several files?** Open its `.cue` or `.m3u`, not a `.bin`.
 
 ## If the command fails { #installation-script-fails }
 
 - **Network error:** try again once github.com opens.
-- **`The clock reads ...`:** the date is wrong. Let it sync over Wi-Fi, or set
-  it, then run again.
+- **`The clock reads ...`:** the date is wrong. Sync it over Wi-Fi or set it,
+  then run again.
 - **Permission denied:** do what the message says. It names what to run.
 - **No setup found:** name it and its folder:
 
