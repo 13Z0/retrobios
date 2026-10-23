@@ -3,45 +3,55 @@ type: standalone
 core_classification: game_engine
 source: "https://github.com/Novum/vkQuake"
 upstream: "https://sourceforge.net/projects/quakespasm/"
-profiled_date: "2026-10-17"
-source_commit: "6f9c012a9176ee36663fd7a6d30b6291a0dbbcc1"
-core_version: "1.33.0"
+profiled_date: "2026-10-23"
+source_commit: "80ec4293066505fefc1714408abd887369185c74"
+core_version: "1.37.1"
 display_name: "Quake (vkQuake)"
 cores: ["vkquake"]
 systems: [quake]
 
 notes: |
-  Vulkan Quake engine derived from QuakeSpasm. VKQUAKE_VERSION 1.33,
-  VKQUAKE_VER_PATCH 0 (Quake/quakever.h:37-41). GAMENAME = "id1"
-  (Quake/quakedef.h:37).
+  Vulkan Quake engine derived from QuakeSpasm. VKQUAKE_VERSION 1.37,
+  VKQUAKE_VER_PATCH 1 (Quake/quakever.h:37-41). GAMENAME = "id1"
+  (Quake/quakedef.h:36).
 
   COM_InitFilesystem takes the base directory from -basedir, otherwise
-  host_parms->basedir (Quake/common.c:2463-2467). COM_AddGameDirectory
+  host_parms->basedir (Quake/common.c:3877-3881). Without -basedir, when
+  that directory holds neither id1/pak0.pak nor QuakeEX.kpf, it looks for a
+  Steam, GOG or Epic Games Store install of Quake or of the rerelease
+  (Quake/common.c:3888-3895, 3159-3171). COM_AddGameDirectory
   opens <basedir>/<dir>/pak0.pak, pak1.pak, ... and stops at the first
-  index that does not open (Quake/common.c:2241-2245). Right after
+  index that does not open (Quake/common.c:2882-2886). Right after
   id1/pak0.pak it mounts vkquake.pak, built from Misc/vq_pak and embedded
-  in the binary (Quake/common.c:2257-2282). It carries default.cfg, three
-  menu pictures and entity fixes, no gfx.wad and no palette.
+  in the binary (Quake/common.c:2898-2923). It carries default.cfg, menu
+  pictures, a console background, crosshair images and entity fixes, no
+  gfx.wad and no palette (Misc/vq_pak/vq_pak_contents.txt).
 
   gfx.wad and gfx/colormap.lmp come from id1/pak0.pak, and without either the
-  engine stops with Sys_Error (Quake/wad.c:80-87, Quake/host.c:1093-1095).
+  engine stops with Sys_Error (Quake/wad.c:80-87, Quake/host.c:1415-1417).
   gfx/pop.lmp, present only in the registered id1/pak1.pak, sets the
-  registered cvar (Quake/common.c:1458-1484).
+  registered cvar (Quake/common.c:2023-2049).
 
   COM_LoadPackFile compares the file count (339) and the CRC of the pak
   directory against id1/pak0.pak v1.00, v1.01 and v1.06
-  (Quake/common.c:56-59, 2105-2118). A mismatch only sets com_modified;
+  (Quake/common.c:58-61, 2773-2786). A mismatch only sets com_modified,
   the file is still mounted. With com_modified set and no gfx/pop.lmp the
-  engine stops (Quake/common.c:1464-1470), so -game, -hipnotic and -rogue,
+  engine stops (Quake/common.c:2029-2035), so -game, -hipnotic and -rogue,
   whose paks differ from id1/pak0.pak, need the registered id1/pak1.pak.
 
   -rogue and -hipnotic add rogue/ and hipnotic/ after id1/
-  (Quake/common.c:2507-2510). Batocera 43.1 runs
+  (Quake/common.c:3948-3951). Batocera 43.1 runs
   `vkquake -basedir /userdata/roms/quake` and adds -hipnotic or -rogue
   from the ROM name (configgen generators/vkquake/vkquakeGenerator.py).
 
   Background music is streamed from <game>/music/trackNN.<ext>, ogg, opus,
   flac, mp3 and wav, when present (Quake/bgmusic.c:29, 321).
+
+  Localized strings for the 2021 rerelease content are read from
+  localization/loc_<language>.txt, falling back to loc_english.txt, first
+  through the search path, then as a loose file in the base directory, then
+  inside <basedir>/QuakeEX.kpf (Quake/common.c:4300-4302, 4322-4326,
+  4612-4619).
 
 files:
   - name: "pak0.pak"
@@ -49,7 +59,7 @@ files:
     system: quake
     path: "id1/pak0.pak"
     required: true
-    source_ref: "Quake/common.c:2241-2245 (pak%i.pak loop), 2496 (id1 by default); Quake/wad.c:80-87 (gfx.wad fatal)"
+    source_ref: "Quake/common.c:2882-2886 (pak%i.pak loop), Quake/common.c:3937 (id1 by default), Quake/wad.c:80-87 (gfx.wad fatal)"
     note: "Shareware and registered Quake data, one file in both releases. Directory CRC compared to v1.00, v1.01, v1.06, but a mismatch does not refuse the file."
 
   - name: "pak1.pak"
@@ -57,7 +67,7 @@ files:
     system: quake
     path: "id1/pak1.pak"
     required: false
-    source_ref: "Quake/common.c:2241-2245 (pak%i.pak loop), 1458-1470 (gfx/pop.lmp, registered check)"
+    source_ref: "Quake/common.c:2882-2886 (pak%i.pak loop), Quake/common.c:2023-2035 (gfx/pop.lmp, registered check)"
     note: "Registered episodes 2 to 4. Read only after pak0.pak opens. Needed by -hipnotic, -rogue and -game."
     unsourceable: "retail data the collection does not hold, and a same-named file of another game must not stand in"
 
@@ -66,7 +76,7 @@ files:
     system: quake
     path: "hipnotic/pak0.pak"
     required: false
-    source_ref: "Quake/common.c:2509-2510 (-hipnotic), 2241-2245 (pak%i.pak loop)"
+    source_ref: "Quake/common.c:3950-3951 (-hipnotic), Quake/common.c:2882-2886 (pak%i.pak loop)"
     note: "Scourge of Armagon data. Loaded with -hipnotic."
     unsourceable: "retail data the collection does not hold, and a same-named file of another game must not stand in"
 
@@ -75,6 +85,15 @@ files:
     system: quake
     path: "rogue/pak0.pak"
     required: false
-    source_ref: "Quake/common.c:2507-2508 (-rogue), 2241-2245 (pak%i.pak loop)"
+    source_ref: "Quake/common.c:3948-3949 (-rogue), Quake/common.c:2882-2886 (pak%i.pak loop)"
     note: "Dissolution of Eternity data. Loaded with -rogue."
     unsourceable: "retail data the collection does not hold, and a same-named file of another game must not stand in"
+
+  - name: "QuakeEX.kpf"
+    category: game_data
+    system: quake
+    path: "QuakeEX.kpf"
+    required: false
+    source_ref: "Quake/common.c:4322-4326 (localization fallback), Quake/common.c:3159-3171 (rerelease data directory test)"
+    note: "Zip archive of the 2021 rerelease. Opened only for localization/loc_<language>.txt when no loose copy is found, and tested by the store detection to tell a rerelease folder."
+    unsourceable: "retail data the collection does not hold"
