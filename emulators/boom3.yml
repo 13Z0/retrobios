@@ -4,7 +4,7 @@ core_classification: game_engine
 source: "https://github.com/libretro/boom3"
 upstream: "https://github.com/dhewm/dhewm3"
 profiled_date: "2026-03-23"
-source_commit: "132dfddbc216af8b5196a61e815219b531f7c1b4"
+source_commit: "efe140ce8fdf8793f5a6fbba062fb34df7f55a81"
 core_version: "git"
 display_name: "Doom 3 (boom3)"
 cores: [boom3, boom3_xp]
@@ -14,18 +14,47 @@ notes: >
   Doom 3 source port based on dhewm3 (GPL Doom 3 engine). The core accepts
   .pk4 extensions (retro_get_system_info sets valid_extensions = "pk4").
   Content is loaded directly from the .pk4 file path - the engine extracts
-  the grandparent directory as fs_basepath (libretro.cpp:2381,2449-2450
+  the grandparent directory as fs_basepath (neo/sys/libretro/libretro.cpp:4242,4310-4311
   via extract_directory called twice on info->path) and expects the standard
   Doom 3 directory layout with base/ containing pak000.pk4 through pak008.pk4.
-  BASE_GAMEDIR is hardcoded to "base" (Licensee.h:58). One binary serves both
+  BASE_GAMEDIR is "base" (neo/framework/Licensee.h:58), and content in a
+  directory under another name is mounted in its place through fs_gamedirname
+  (neo/sys/libretro/libretro.cpp:3248-3262). One binary serves both
   games: content in a directory named d3xp, or the doom_game core option,
-  passes "+set fs_game d3xp" (libretro.cpp:1635-1643, 2384-2405) to load the
+  passes "+set fs_game d3xp" (neo/sys/libretro/libretro.cpp:3238-3246,4245-4271) to load the
   Resurrection of Evil expansion from a d3xp/ subdirectory alongside base/.
-  The filesystem code (FileSystem.cpp:2207)
+  The filesystem code (neo/framework/FileSystem.cpp:2318)
   scans for .pk4 files in the game directory and loads them in order, with
   higher-numbered paks overriding lower ones. The core requires OpenGL
-  (RETRO_ENVIRONMENT_SET_HW_RENDER) and XRGB8888 pixel format. All required
-  files are commercial Doom 3 game data, not engine firmware. No BIOS or
+  (RETRO_ENVIRONMENT_SET_HW_RENDER) and XRGB8888 pixel format. The game
+  data is the commercial Doom 3 release, not engine firmware. No BIOS or
   system files are needed in the RetroArch system directory.
 
-files: []
+  Builds made with HAVE_VR=1 (the Windows x64, Linux x64 and Linux arm64
+  jobs, .gitlab-ci.yml:87, 101, 109) offer the boom3_vr_enable option. With it
+  on, the core passes "+set fs_vr 1" and the filesystem mounts base_vr/ over
+  base/ and d3xp_vr/ over d3xp/ (neo/sys/libretro/libretro.cpp:3264-3272,
+  neo/framework/FileSystem.cpp:2440-2472). These replacement packs carry the
+  hand and weapon models of Doom3Quest and ship in the core's repository under
+  tools/vr_paks/compiled.
+
+files:
+  - name: "pak399.pk4"
+    path: "base_vr/pak399.pk4"
+    system: doom3
+    category: game_data
+    load_from: content_dir
+    required: false
+    description: "VR hand and weapon models (Doom3Quest), mounted over base/"
+    source_ref: "neo/sys/libretro/libretro.cpp:4313-4335, neo/framework/FileSystem.cpp:2440-2450"
+    note: "Read in VR builds with boom3_vr_enable on. base_vr/ sits beside base/, one level above the loaded .pk4. When the file is absent the core shows a notification and the game still starts."
+
+  - name: "pak399roe.pk4"
+    path: "d3xp_vr/pak399roe.pk4"
+    system: doom3
+    category: game_data
+    load_from: content_dir
+    required: false
+    description: "VR replacement pack for Resurrection of Evil, mounted over d3xp/"
+    source_ref: "neo/framework/FileSystem.cpp:2465-2472"
+    note: "Mounted in VR builds when fs_game is d3xp. The code reads every .pk4 in d3xp_vr/ and names none, this is the pack the core's repository ships for it."
