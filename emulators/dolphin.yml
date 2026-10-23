@@ -14,6 +14,23 @@ cores:
   - dolphin
   - "dolphin-gui"
 systems: [nintendo-gamecube, nintendo-wii, sega-triforce]
+data_root:
+  android:
+    path: "Android/data/org.dolphinemu.dolphinemu/files"
+    source_ref: "upstream Source/Android/app/src/main/java/org/dolphinemu/dolphinemu/utils/DirectoryInitialization.kt:88-119, 320-324, upstream Source/Android/app/build.gradle.kts:39, upstream Source/Android/jni/MainAndroid.cpp:360-364"
+    note: "/sdcard/dolphin-emu when that folder exists, storage access is legacy and the files folder is empty"
+  windows:
+    path: "%APPDATA%/Dolphin Emulator"
+    source_ref: "upstream Source/Core/UICommon/UICommon.cpp:330-333, 359-400, 481, upstream Source/Core/Common/CommonPaths.h:14-15"
+    note: "Documents/Dolphin Emulator when that folder already exists. portable.txt or the LocalUserConfig registry value makes User beside Dolphin.exe the root, the UserConfigPath registry value overrides"
+  macos:
+    path: "~/Library/Application Support/Dolphin"
+    source_ref: "upstream Source/Core/UICommon/UICommon.cpp:408-414, 435-448, 481, upstream Source/Core/Common/CommonPaths.h:16-17"
+    note: "portable.txt beside the executable makes its User folder the root, DOLPHIN_EMU_USERPATH overrides"
+  linux:
+    path: "$XDG_DATA_HOME/dolphin-emu, else ~/.local/share/dolphin-emu"
+    source_ref: "upstream Source/Core/UICommon/UICommon.cpp:408-414, 435-443, 449-477, upstream Source/Core/Common/CommonPaths.h:20-21"
+    note: "~/.dolphin-emu when that folder exists outside Flatpak. portable.txt beside the executable makes its user folder the root, DOLPHIN_EMU_USERPATH overrides"
 
 # path: is where the libretro core reads a file, standalone_path: where the
 # standalone app reads it under its User directory.
