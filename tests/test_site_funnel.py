@@ -229,7 +229,8 @@ class DeepLinksCarryALabel(unittest.TestCase):
 
 class GuidePagesEndOnANextStep(unittest.TestCase):
     def test_home_picker_and_platform_page(self):
-        for page in ("index.md", "which-pack.md", "platforms/batocera.md",
+        # The home page has none: its hero buttons are the next step.
+        for page in ("which-pack.md", "platforms/batocera.md",
                      "wiki/first-install.md", "wiki/troubleshooting.md",
                      "wiki/what-are-bios-files.md", "wiki/faq.md"):
             if page.startswith(("index", "which", "platforms")):
@@ -239,16 +240,18 @@ class GuidePagesEndOnANextStep(unittest.TestCase):
                 path = REPO_ROOT / page
             with self.subTest(page=page):
                 text = path.read_text(encoding="utf-8")
-                self.assertTrue(":::tip[Next]" in text or "## What comes next" in text)
+                self.assertTrue(any(mark in text for mark in (
+                    "## Next steps", ":::tip[Next]", "## What comes next")))
 
     def test_the_platform_page_opens_on_its_guide(self):
         """The folder came after four counters and a metadata table, and was
         the pack-relative `bios/` where Batocera reads /userdata/bios/."""
         sitepages.require()
         text = sitepages.page("platforms/batocera.md").read_text(encoding="utf-8")
+        # Batocera runs on its own device: the computer route comes first.
         order = [text.index(h) for h in (
-            "## Where the files go", "## Install", "## Download", "## How to check",
-            "## Reference: every file by system",
+            "## Where the files go", "## From your computer", "## On the device",
+            "## How to check", "## Reference: every file by system",
         )]
         self.assertEqual(order, sorted(order))
         self.assertLess(text.index("`/userdata/bios/`"), text.index("rb-stat-value"))

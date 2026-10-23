@@ -7,6 +7,10 @@
 # `extract_to` for that platform, the one place that folder is written.
 # `run` names the terminals below, in the order the page shows them.
 # `pack_manual` is the manual part of the README inside the pack, plain text.
+# `{folders}` in it is the folder list of the page.
+# `runs_on` names the hardware in the project's own words, cited beside it.
+# `terminal` is how this system opens a terminal, from its own documentation.
+# `lead` comes before the folder table, `finish` closes the guide.
 # `logo_owner` and `logo_licence` credit the logo the registry links: it is
 # shown only to name the platform, with the licence of the repository the
 # file was taken from when that repository states one.
@@ -16,15 +20,17 @@
 
 install_base: https://raw.githubusercontent.com/Abdess/retrobios/main
 
-# Is it safe: shown under every command on a guide page.
+# Is it safe: shown on the home page and under every command on a guide page.
+# Where it writes follows install.py: the BIOS folder, the frontend's save
+# folder for the entries a manifest files under `root: save`
+# (place_save_entries), and retrobios-backup beside the folder written to.
 trust_items:
 - It checks each file before saving it.
-- It writes only in your BIOS folder.
-- It never touches games or saves.
-- It never moves or deletes files it does not know.
+- It writes in your BIOS folder. For some emulators it also adds files to your save folder.
+- It never changes or deletes a game or a save.
 - >-
-  It keeps any file it replaces in a `retrobios-backup` folder, beside your BIOS folder.
-  The same command with `--restore` puts it back.
+  It keeps any file it replaces in a `retrobios-backup` folder, next to your BIOS folder.
+  `--restore` puts it back.
 
 # Order of the groups on the picker, in the navigation and on the home page.
 # `anchor` is the section id on the device picker: two keep the ids the page
@@ -33,7 +39,7 @@ trust_items:
 # and use its pack.
 device_groups:
   computer:
-    label: Computers and Steam Deck
+    label: Computers (Windows, Mac, Linux) and Steam Deck
     description: An emulator app on a computer or a Steam Deck.
     anchor: computers-and-steam-deck
     also_runs:
@@ -44,12 +50,11 @@ device_groups:
       runs_on: Windows
       folder: The folder of the RetroArch it starts
   gaming-os:
-    label: Game systems for PCs and small boards
-    description: >-
-      A system that starts straight into a game menu, on a PC or a Raspberry Pi.
+    label: Raspberry Pi and mini PCs
+    description: A system that starts straight into a game menu.
     anchor: game-systems
   handheld:
-    label: Handhelds and TV boxes
+    label: Handhelds and TV boxes (Anbernic, Retroid, Miyoo)
     description: The system your handheld or TV box starts.
     anchor: handhelds
     also_runs:
@@ -137,8 +142,7 @@ guides:
     more_folders_detected: true
     more_folders_note: LaunchBox and other launchers use the folder RetroArch reads.
     run: [windows, macos, linux, steamdeck, android]
-    notes:
-    - >-
+    lead: >-
       **Not sure?** In RetroArch, open **Settings > Directory > System/BIOS**. It shows
       the folder.
     reference_notes:
@@ -161,21 +165,27 @@ guides:
 
       Option C: Manual (handheld / SD card)
       -------------------------------------
-      Anbernic, Retroid, Miyoo, Trimui, etc.:
       1. Connect your SD card to your PC
-      2. Find the BIOS folder (usually BIOS/ or system/)
+      2. Find the BIOS folder in the list below
       3. Extract all files from this archive directly into that folder
       4. Eject SD card and reboot your device
 
-      Common paths by device:
-        Anbernic (ArkOS/JELOS): BIOS/
-        Retroid (RetroArch):     RetroArch/system/
-        Miyoo Mini (Onion OS):   BIOS/
-        Steam Deck (RetroArch):  ~/.config/retroarch/system/
+      Folders by device:
+        {folders}
     logo_owner: libretro
     logo_licence: repository licence GPL-3.0
   batocera:
-    summary: A system that starts straight into a game menu.
+    summary: A system that starts straight into a game menu, on a PC, a Raspberry Pi or a handheld.
+    # batocera.org/download: x86-64 desktop PC and laptop, Raspberry, Steam Deck OLED,
+    # Anbernic and AYN handhelds.
+    runs_on: PCs, Raspberry Pi, Steam Deck, handhelds
+    # wiki.batocera.org/access_the_batocera_via_ssh: root@batocera.local, password
+    # linux, SSH on by default. wiki.batocera.org (file manager): xterm in the
+    # Applications menu of the F1 file manager, Xorg builds (x86_64) only.
+    terminal: >-
+      On a PC, press **F1** on the system list, then open **xterm** in the Applications
+      menu. From a computer, open a terminal over the network with `ssh
+      root@batocera.local`, password `linux`. Paste the line. Press Enter.
     folders:
     - where: On Batocera
     - where: From Windows, over your home network
@@ -185,7 +195,8 @@ guides:
     run: [device]
     download_hint: From a computer, use the network folder above.
     pack_manual: |
-      The terminal is F1 from the Batocera menu, or SSH.
+      The terminal is xterm, in the Applications menu of the F1 file
+      manager (PC only), or SSH: ssh root@batocera.local, password linux.
 
       Option B: Manual (network share)
       --------------------------------
@@ -206,8 +217,15 @@ guides:
     logo_owner: Batocera
     logo_licence: repository licence MIT
   recalbox:
-    summary: >-
-      A system that starts straight into a game menu and sets up its emulators.
+    summary: A system that starts straight into a game menu, on a board, a PC or a handheld.
+    # recalbox.com: "TV, PC or handheld?", 13 supported boards and consoles.
+    runs_on: Boards, PCs, handhelds
+    # wiki.recalbox.com/en/tutorials/system/access/root-access-terminal-cli: Alt+F2 with
+    # a keyboard. SSH user root, password recalboxroot or the one set when flashing 10.0+.
+    terminal: >-
+      With a keyboard, press **Alt+F2**. From a computer, open a terminal over the network
+      with `ssh root@recalbox`, password `recalboxroot` or the one you set. Paste the line.
+      Press Enter.
     folders:
     - where: On Recalbox
     - where: From Windows, over your home network
@@ -219,7 +237,6 @@ guides:
       --------------------------------
       1. On your PC, open the Recalbox network share:
          - Windows: \\RECALBOX\share\bios\
-         - Mac/Linux: smb://recalbox/share/bios/
       2. Extract all files from this archive directly into the share
 
       Option C: Manual (SD card)
@@ -258,14 +275,23 @@ guides:
     summary: Installs your emulators and adds your games to Steam.
     folders:
     - where: Steam Deck and Linux
+    # EmuDeck functions/helperFunctions.sh:89-99 (getSDPath, the card's mount point)
+    # and functions/jsonToBashVars.sh:128-132 (biosPath "$globPath/Emulation/bios"),
+    # dragoonDorise/EmuDeck dddb3022.
+    - where: Steam Deck, installed on the SD card
+      path: '`Emulation/bios/` on the card, under `/run/media/`'
     - where: Windows, by default
       path: '`C:\Emulation\bios\`'
     - where: macOS
     run: [steamdeck, linux, windows, macos]
     notes:
     - >-
-      The `bios` folder is inside the Emulation folder you chose in EmuDeck. If you chose
-      the SD card, it is on the card.
+      The `bios` folder is inside the Emulation folder you chose in EmuDeck.
+    # emudeck-electron src/renderer/translations/en.json:416-418 (b06bfcf5): the
+    # "Bios files checker".
+    finish: >-
+      EmuDeck's **Bios files checker** shows the files too. Return to Gaming Mode and start
+      a game.
     reference_notes:
     - >-
       The installer reads the Emulation folder from EmuDeck's settings (`emulationPath`
@@ -280,13 +306,24 @@ guides:
     logo_owner: EmuDeck
     logo_licence: repository licence GPL-3.0
   lakka:
-    summary: A system that starts straight into RetroArch.
+    summary: A system that starts straight into RetroArch, on a Raspberry Pi or a small PC.
+    # lakka.tv: "transforms a small computer", "a Raspberry Pi".
+    runs_on: Raspberry Pi, small computers
     folders:
     - where: On Lakka
+    # lakka.tv/doc/Accessing-Lakka-filesystem: Samba in Settings > Services, share System.
+    - where: From Windows, over your home network
+      path: '`\\LAKKA\System\`'
     run: [device]
     notes:
     - >-
-      You can also reach the folder from a computer, over your home network.
+      For the network folder, turn on **Samba** in Lakka's **Settings > Services**.
+    # lakka.tv/doc/Accessing-Lakka-command-line-interface: SSH in Settings > Services,
+    # user root, password root.
+    terminal: >-
+      Turn on **SSH**, a terminal over the network, in Lakka's **Settings > Services**. From
+      a computer, connect with `ssh root@lakka`, password `root`. Paste the line. Press
+      Enter.
     reference_notes:
     - The folder is reachable over SSH and over the network share.
     pack_manual: |
@@ -296,7 +333,6 @@ guides:
       --------------------------
       1. On Lakka: Settings > Services > Samba Enable
       2. On your PC, open the System share: \\LAKKA\System\
-         (macOS and Linux: smb://lakka/System)
       3. Extract all files from this archive directly into that share
 
       Option C: Via SSH
@@ -365,12 +401,20 @@ guides:
     logo_licence: GitHub organisation avatar of rommapp
   rocknix:
     summary: A system for handhelds.
+    # rocknix.org: "an immutable Linux distribution for handheld gaming devices".
+    runs_on: Handhelds
     folders:
     - where: On ROCKNIX
     run: [device]
     notes:
     - >-
       You can also reach the folder from a computer, over your home network.
+    # rocknix.org/faqs and rocknix.org/play/add-games: SSH off by default, turned on in
+    # Network Settings, user root, the password shown in System Settings > Security.
+    terminal: >-
+      Turn on **SSH**, a terminal over the network, in **Network Settings**. From a
+      computer, connect as `root`, with the password shown in **System Settings >
+      Security**. Paste the line. Press Enter.
     reference_notes:
     - >-
       ROCKNIX runs on ARM and x86 handhelds, among them the RG35XX (H700) and the RG552
@@ -379,9 +423,15 @@ guides:
     logo_licence: GitHub organisation avatar of ROCKNIX
   amberelec:
     summary: A system for Anbernic handhelds.
+    # amberelec.org: "optimized for the RG351P/M/V/MP and RG552".
+    runs_on: Anbernic RG351 and RG552
     folders:
     - where: On AmberELEC
     run: [device]
+    # amberelec.org/guides/getting-to-know-amberelec.html: host AmberELEC, root, amberelec.
+    terminal: >-
+      From a computer, open a terminal over the network with `ssh root@AmberELEC`, password
+      `amberelec`. Paste the line. Press Enter.
     reference_notes:
     - >-
       AmberELEC runs on the RG351P, RG351V, RG351MP, RG353, RG503 and RG552. Its list
@@ -391,9 +441,20 @@ guides:
     logo_licence: GitHub organisation avatar of AmberELEC
   emuelec:
     summary: A system for TV boxes and some handhelds.
+    # EmuELEC wiki Supported-Devices.md: Amlogic boxes, Odroid-GO Advance and Super,
+    # GameForce Chi.
+    runs_on: TV boxes, Odroid Go handhelds
     folders:
     - where: On EmuELEC
+    # EmuELEC wiki (35b92c78) Backup-and-Recovery-options.md:4 (\\EMUELEC, roms share)
+    # and Bios.md (/storage/roms/bios).
+    - where: From Windows, over your home network
+      path: '`\\EMUELEC\roms\`'
     run: [device]
+    # EmuELEC wiki How-to-SSH-into-EmuELEC.md:38-44: root, password emuelec.
+    terminal: >-
+      From a computer, open a terminal over the network with `ssh root@emuelec`, password
+      `emuelec`. Paste the line. Press Enter.
     reference_notes:
     - >-
       EmuELEC runs on Amlogic TV boxes, the Odroid Go Advance, GameForce and RK356x devices.
@@ -402,10 +463,24 @@ guides:
     logo_owner: EmuELEC
     logo_licence: GitHub organisation avatar of EmuELEC
   knulli:
-    summary: A system for handhelds, based on Batocera.
+    summary: A system for handhelds and bartops, based on Batocera.
+    # knulli.org: "retro gaming devices (handhelds, bartops, etc.)".
+    runs_on: Handhelds, bartops
     folders:
     - where: On KNULLI
+    # knulli.org/play/add-games/network-transfer: \\KNULLI, its share folder, Samba
+    # off by default. The share is /userdata, so bios is under it.
+    - where: From Windows, over your home network
+      path: '`\\KNULLI\share\bios\`'
     run: [device]
+    notes:
+    - >-
+      For the network folder, turn on **SAMBA** in **System Settings > Services**.
+    # knulli.org/configure/ssh: SSH in System Settings > Services, root, password linux.
+    terminal: >-
+      Turn on **SSH**, a terminal over the network, in **System Settings > Services**. From
+      a computer, connect with `ssh root@KNULLI`, password `linux`. Paste the line. Press
+      Enter.
     reference_notes:
     - >-
       KNULLI runs on handhelds among them the RG35XX family (H700) and the TrimUI Smart
@@ -413,14 +488,24 @@ guides:
     logo_owner: KNULLI
     logo_licence: GitHub organisation avatar of knulli-cfw
   retropie:
-    summary: Installs RetroArch and other emulators on a Raspberry Pi.
+    summary: Installs RetroArch and other emulators on a Raspberry Pi or a PC.
+    # RetroPie docs index.md (175f5b15): Raspberry Pi, PC and Odroid.
+    runs_on: Raspberry Pi, PC, Odroid
     folders:
     - where: On the Raspberry Pi
+    # RetroPie-Setup scriptmodules/supplementary/samba.sh:49-52 (46128cd2) shares
+    # $home/RetroPie/BIOS as "bios", and docs/Transferring-Roms.md:29 names \\RETROPIE.
+    - where: From Windows, over your home network
+      path: '`\\RETROPIE\bios\`'
     run: [device]
+    # RetroPie docs/FAQ.md:193 (F4 in EmulationStation, its game menu), 175f5b15. The computer route
+    # is the network folder above.
+    terminal: >-
+      Press **F4** in the game menu for a terminal. Paste the line. Press Enter.
     notes:
     - >-
-      Use the RetroPie pack, not the RetroArch one. On RetroPie 4.8, Python is too old
-      for the command: use the pack there.
+      Use the RetroPie pack, not RetroArch's. The command does not run on RetroPie 4.8: use
+      the pack there.
     reference_notes:
     - >-
       RetroPie also installs standalone emulators (openMSX, PCSX2, XRoar, Amiberry and
@@ -469,13 +554,26 @@ guides:
   misterfpga:
     summary: >-
       A board that recreates old consoles in hardware, not in software.
+    # mister-devel.github.io/MkDocs_MiSTer: "an FPGA board called the DE10-Nano".
+    runs_on: Its own board
     folders:
     - where: On the MiSTer SD card
       path: '`/media/fat/games/`, one subfolder per core'
+    # mister-devel.github.io/MkDocs_MiSTer/setup/games: run samba_on from the Scripts
+    # menu, then \\MiSTer\sdcard\.
+    - where: From Windows, over your home network
+      path: '`\\MiSTer\sdcard\games\`'
     run: [device]
+    # mister-devel.github.io/MkDocs_MiSTer/advanced/network: F9 for a Linux terminal,
+    # SSH user root, password 1.
+    terminal: >-
+      Press **F9** in the MiSTer menu and log in as `root`, password `1`. Or from a
+      computer, open a terminal over the network as `root`. Paste the line. Press Enter.
     notes:
     - >-
       Each file goes in its console's folder, like `/media/fat/games/3DO/boot.rom`.
+    - >-
+      For the network folder, run **samba_on** from the MiSTer Scripts menu.
     reference_notes:
     - >-
       MiSTer runs FPGA cores on a DE10-Nano board. Only the files the MiSTer BIOS database
@@ -484,7 +582,9 @@ guides:
     logo_owner: MiSTer FPGA
     logo_licence: GitHub organisation avatar of MiSTer-devel
   minui:
-    summary: A simple game menu for handhelds. It runs from the SD card.
+    summary: A simple game menu for Anbernic, Miyoo and Trimui handhelds, on the SD card.
+    # shauninman/MinUI README (dbf89435) lines 3, 65-91.
+    runs_on: Anbernic, Miyoo, Trimui handhelds
     folders:
     - where: On the SD card
       path: '`Bios/<TAG>/`, one folder per console'
@@ -506,8 +606,9 @@ guides:
     logo_owner: Shaun Inman
     logo_licence: GitHub avatar of shauninman, the author of MinUI
   nextui:
-    summary: >-
-      A game menu for handhelds, based on MinUI. It runs from the SD card.
+    summary: A game menu for TrimUI handhelds, based on MinUI, on the SD card.
+    # LoveRetro/NextUI README (5291344b) lines 37, 89-94.
+    runs_on: TrimUI Brick, Smart Pro
     folders:
     - where: On the SD card
       path: '`Bios/<TAG>/`, one folder per console'
@@ -524,8 +625,9 @@ guides:
     logo_owner: LoveRetro
     logo_licence: GitHub organisation avatar of LoveRetro
   myminui:
-    summary: >-
-      A game menu for handhelds, based on MinUI. It runs from the SD card.
+    summary: A game menu for Anbernic and Miyoo handhelds, based on MinUI, on the SD card.
+    # Turro75/MyMinUI README (72ed4f3d) lines 9-35.
+    runs_on: Anbernic, Miyoo handhelds
     folders:
     - where: On the SD card
       path: '`Bios/<TAG>/`, one folder per console'

@@ -85,9 +85,15 @@ from siteguides import (
     GROUP_ANCHORS,
     GUIDES,
     Guide,
+    FENCE_TITLES,
     INSTALL_BASE,
     TERMINALS,
+    TRUST_ITEMS,
+    detected_systems as _detected_systems,
+    fence,
+    folder_list,
     install_command,
+    setup_count,
     platform_args,
     terminal_tabs,
     trust_box,
@@ -398,7 +404,16 @@ def _system_pages_from_data(
 
 
 def _timestamp() -> str:
+    """The build time for data files (stats, API records), ISO 8601."""
     return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
+def data_as_of(moment: datetime | None = None) -> str:
+    """The build date for a reader, in words, with the machine form beside it.
+    A raw ISO stamp ("2026-10-22T22:43:08Z") closed the home page."""
+    moment = moment or datetime.now(timezone.utc)
+    return (f'<time datetime="{moment.strftime("%Y-%m-%dT%H:%M:%SZ")}">'
+            f"Data as of {moment.day} {moment.strftime('%B %Y')}</time>")
 
 
 
@@ -425,8 +440,36 @@ def _group_members(coverages: dict, registry: dict, group: str) -> list[str]:
 
 
 def _next_block(links: list[str]) -> list[str]:
-    """Where to go from here, at the end of a page."""
-    return markup.aside("tip", "Next", [f"- {link}" for link in links])
+    """Where to go from here, at the end of a page: a plain heading and a
+    list. A tinted callout with a side stripe said the same as the pager."""
+    return ["## Next steps", "", *(f"- {link}" for link in links), ""]
+
+
+def _tiles(registry: dict, members: list[str], display: dict[str, str], prefix: str = "") -> list[str]:
+    """The setup tiles of one device group: logo, name and the hardware it runs on."""
+    return markup.platform_tiles([
+        (display[name], f"{prefix}platforms/{name}.md",
+         str(registry.get(name, {}).get("logo") or ""),
+         GUIDES[name].runs_on or _runs_on(registry.get(name, {}), GUIDES[name]))
+        for name in members
+    ])
+
+
+def setup_picker(registry: dict, display: dict[str, str], prefix: str = "") -> list[str]:
+    """Every setup as a tile, under the device group it belongs to. The
+    setups alone in their group share one row: "MiSTer FPGA" above
+    "MiSTer FPGA" said nothing."""
+    lines: list[str] = []
+    alone: list[str] = []
+    for group, (label, _description) in DEVICE_GROUPS.items():
+        members = _group_keys(registry, group, display)
+        if len(members) == 1:
+            alone += members
+        elif members:
+            lines += [f"**{label}**", "", *_tiles(registry, members, display, prefix)]
+    if alone:
+        lines += ["**Other setups**", "", *_tiles(registry, alone, display, prefix)]
+    return lines
 
 
 def generate_home(
@@ -441,11 +484,13 @@ def generate_home(
 
     The figures about the collection, the cards to the deeper pages and the
     call for help sat below the steps and doubled the page: they are on the
-    Explore index, one tab further."""
-    registry = registry or {}
-    names = sorted((cov["platform"] for cov in coverages.values()), key=str.casefold)
-    named = [n for n in ("RetroArch", "Batocera", "EmuDeck") if n in names]
-    others = len(names) - len(named)
+    Explore index, one tab further. No date and no "next" box: the hero
+    buttons say where to go."""
+    registry = registry or load_platform_registry(platforms_dir)
+    display = {key: load_platform_config(key, platforms_dir).get("platform", key)
+               for key in registry}
+    named = [n for n in ("RetroArch", "Batocera", "EmuDeck") if n in display.values()]
+    others = setup_count() - len(named)
     works_with = ", ".join(named) + (f" and {others} more" if others else "")
 
     lines = [
@@ -459,6 +504,9 @@ def generate_home(
         + markup.button("What is a BIOS?", "wiki/what-are-bios-files.md"),
         "",
         f"Free. No account. Works with {works_with}.",
+        "",
+        "- A game says BIOS missing? [When a game does not start](wiki/troubleshooting.md)",
+        "- Have a file already? Reference: [Check it](files/index.md)",
         "",
         "## Do I need it?",
         "",
@@ -477,31 +525,14 @@ def generate_home(
         ]),
         "## Pick your device",
         "",
-    ]
-    lines += markup.card_grid([
-        (label, [", ".join(
-            f"[{coverages[name]['platform']}](platforms/{name}.md)"
-            for name in _group_members(coverages, registry, group)
-        )])
-        for group, (label, _description) in DEVICE_GROUPS.items()
-        if _group_members(coverages, registry, group)
-    ])
-    lines += [
+        *setup_picker(registry, display),
         "## Is it safe?",
         "",
-        "- It writes only in your BIOS folder.",
-        "- It checks every file before saving it.",
-        "- It keeps any file it replaces, in a `retrobios-backup` folder.",
-        "- It never touches your games or saves.",
+        *(f"- {item}" for item in TRUST_ITEMS),
         "",
         "[How the command is checked](wiki/faq.md#is-piping-the-installer-into-a-shell-safe). "
-        "[Is it legal?](wiki/faq.md#is-this-legal)",
+        "Details: [Is it legal?](wiki/legal.md)",
         "",
-        *_next_block([
-            "[Get your files](which-pack.md)",
-            "[What is a BIOS?](wiki/what-are-bios-files.md)",
-        ]),
-        f'<div class="rb-timestamp">Generated on {_timestamp()}.</div>',
     ]
     return "\n".join(lines) + "\n"
 
@@ -537,7 +568,7 @@ def generate_explore_index(db: dict, coverages: dict, profiles: dict) -> str:
         markup.block_open("div", 'class="rb-stats"'),
         "",
         *_stat(f"{total_files:,}", COLLECTION_FILES_LABEL),
-        *_stat(str(len(coverages)), "Setups supported"),
+        *_stat(str(setup_count()), "Setups supported"),
         *_stat(str(emulator_count), "Emulators documented"),
         *_stat(_fmt_size(total_size), "Size of the collection"),
         "</div>",
@@ -572,15 +603,58 @@ def compute_stats(db: dict, coverages: dict, profiles: dict) -> dict:
     }
 
 
+def _release_date(tag: str) -> str:
+    """The date a release tag names (v2026.10.10), in words, or empty."""
+    match = re.fullmatch(r"v(\d{4})\.(\d{2})\.(\d{2})", tag or "")
+    if not match:
+        return ""
+    moment = datetime(int(match[1]), int(match[2]), int(match[3]))
+    return f"{moment.day} {moment.strftime('%B %Y')}"
+
+
+def _pack_version(pack_name: str) -> str:
+    """The platform version a pack was built for, from its name
+    (Batocera_43.1_BIOS_Pack.zip is 43.1)."""
+    stem = pack_name.removesuffix("_BIOS_Pack.zip")
+    return stem.rsplit("_", 1)[1] if "_" in stem else ""
+
+
+def release_line(platform_name: str, record: dict) -> list[str]:
+    """Which release the buttons serve, with its checksums and signature, and
+    the version gap when the page describes a newer platform than the pack."""
+    tag = record.get("tag")
+    pack_name = release_record.pack_name_for(platform_name, record)
+    if not tag or not pack_name:
+        return []
+    base = f"{REPO_URL}/releases/download/{tag}"
+    built = _release_date(tag)
+    lines = [
+        f"Pack {tag}{f', built {built}' if built else ''}. "
+        f"[SHA256SUMS.txt]({base}/SHA256SUMS.txt) "
+        f"[signature]({base}/SHA256SUMS.txt.sig)",
+    ]
+    config = load_platform_config(platform_name, "platforms")
+    page_version = str(config.get("version") or "")
+    pack_version = _pack_version(pack_name)
+    if page_version and pack_version and page_version.lstrip("v") != pack_version.lstrip("v"):
+        display = config.get("platform", platform_name)
+        lines.append(f"This pack was built for {display} {pack_version}. The command "
+                     f"installs the files for {display} {page_version}.")
+    return lines
+
+
 def _pack_buttons(platform_name: str, label: str = "Pack") -> str:
-    """Buttons to the files of the platform's pack in the recorded release."""
-    return download_links(
+    """Buttons to the files of the platform's pack in the recorded release,
+    and the release they come from under them."""
+    record = release_record.load_record()
+    buttons = download_links(
         platform_name,
-        release_record.load_record(),
+        record,
         REPO_URL,
         label,
         button=lambda text, url: markup.button(text, url, primary=True),
     )
+    return "\n\n".join([buttons, *release_line(platform_name, record)])
 
 
 def _released_files(platform_name: str) -> str:
@@ -1466,6 +1540,7 @@ def _page_description(markdown: str, relative: Path, title: str) -> str:
         "provenance.md": "Hash-based comparison of RetroBIOS metadata with No-Intro, Redump and TOSEC catalog snapshots.",
         "explore.md": "Systems, emulators and installer options to explore, with the figures of the BIOS collection.",
         "which-pack.md": "Pick your device or setup and get its BIOS files: the folder they go in, one command that installs and checks them, or a ZIP pack to extract.",
+        "contributing.md": "Add a BIOS file the collection lacks from the browser, checked on arrival, or add a platform or an emulator profile.",
     }
     if key in specific:
         return specific[key]
@@ -1500,7 +1575,9 @@ def _page_description(markdown: str, relative: Path, title: str) -> str:
         ):
             continue
         plain = _plain_markdown(stripped)
-        if len(plain) >= 35:
+        # A paragraph that ends on a colon introduces what follows: alone,
+        # it describes nothing ("One file needs no clone and no local setup:").
+        if len(plain) >= 35 and not plain.endswith(":"):
             return _shorten(plain)
     return f"{title}: RetroBIOS source-traced retrogaming firmware reference."
 
@@ -2012,7 +2089,8 @@ def generate_platform_index(coverages: dict, registry: dict | None = None) -> st
         members = _group_members(coverages, registry, group)
         if not members:
             continue
-        lines += [f"## {label}", "", description, ""]
+        # One setup: its card says what the group description would.
+        lines += [f"## {label}", "", *([description, ""] if len(members) > 1 else [])]
         lines += markup.card_grid([
             (f"[{coverages[name]['platform']}]({name}.md)", [GUIDES[name].summary])
             for name in members
@@ -2023,7 +2101,7 @@ def generate_platform_index(coverages: dict, registry: dict | None = None) -> st
         "",
         level_label("reference"),
         "",
-        f"{len(coverages)} supported platforms with {total_present:,} verified files.",
+        f"{setup_count()} supported platforms with {total_present:,} verified files.",
         "",
         "| Platform | On its BIOS list | Files in the pack | Checked by | Status | Download |",
         "|----------|------:|------:|-----------|--------|----------|",
@@ -2354,12 +2432,102 @@ def _folder_rows(rows: tuple[tuple[str, str], ...], indent: str = "") -> list[st
     ]
 
 
+# Shown in the "On the device" tab of a guide that has no `terminal:` of its own.
+DEVICE_TERMINAL_FALLBACK = "Or fill the folder from your computer, with the ZIP."
+
+
+def _computer_first(name: str, guide: Guide) -> bool:
+    """A system that runs only on its own device, with a ZIP to download: a
+    beginner fills its folder from a computer more easily than from a
+    terminal on the TV. Without a ZIP the command is the only route."""
+    pack = release_record.pack_for(name, release_record.load_record())
+    return guide.run == ("device",) and bool(pack and pack.get("assets"))
+
+
+def _ships_neogeo(name: str) -> bool:
+    """Whether the setup's files hold `neogeo.zip`, the archive a reader most
+    often unzips by mistake: arcade BIOS sets are read zipped."""
+    manifest = _REPO_ROOT / "install" / f"{name}.json"
+    if not manifest.is_file():
+        return False
+    files = json.loads(manifest.read_text(encoding="utf-8")).get("files", [])
+    return any(f.get("dest", "").rsplit("/", 1)[-1] == "neogeo.zip" for f in files)
+
+
+def _guide_download(name: str, display: str, guide: Guide, extract_to: str | None,
+                    heading: str) -> list[str]:
+    """The pack: its buttons, its size, and where it is unzipped."""
+    lines = [heading, ""]
+    record = release_record.load_record()
+    pack = release_record.pack_for(name, record)
+    network = any(label.startswith("From ") for label, _path in guide.folders)
+    if pack and pack.get("assets"):
+        parts = len(pack["assets"])
+        bullets = [
+            f"{_fmt_size(pack['download_size'])} to download, "
+            f"{_fmt_size(pack['extracted_size'])} once unzipped."
+        ]
+        if parts > 1:
+            bullets.append("You need both parts." if parts == 2 else f"You need all {parts} parts.")
+        if _computer_first(name, guide) and network:
+            target = "the network folder above"
+        else:
+            target = f"`{extract_to}`" if extract_to else "your BIOS folder"
+        bullets.append(f"Unzip {'them all' if parts > 1 else 'it'} into {target}."
+                       + (" Files like `neogeo.zip` stay zipped." if _ships_neogeo(name) else ""))
+        if guide.download_hint and not _computer_first(name, guide):
+            bullets.append(guide.download_hint)
+        lines += [
+            _pack_buttons(name, f"Download {display} Pack"),
+            "",
+            *(f"- {b}" for b in bullets),
+            "",
+        ]
+    elif record.get("tag"):
+        lines += [
+            f"No {display} ZIP yet. The command installs the same files.",
+            "",
+        ]
+    else:
+        lines += [_pack_buttons(name, f"Download {display} Pack"), ""]
+    return lines
+
+
+def _guide_install(name: str, guide: Guide, heading: str) -> list[str]:
+    """The command, in a tab per place it runs, and whether it is safe."""
+    lines = [
+        heading,
+        "",
+        "The command finds the folder, downloads what is missing, and checks "
+        "each file.",
+        "",
+    ]
+    if guide.on_card:
+        lines += [
+            "Put the SD card in a computer. On Windows, note its letter, like "
+            "**E:**. Put the card's path after `--dest`.",
+            "",
+        ]
+    device = guide.terminal or f"{TERMINALS['device'][1]} {DEVICE_TERMINAL_FALLBACK}"
+    return [
+        *lines,
+        *terminal_tabs(guide.run, platform_args(name, guide), how={"device": device}),
+        *trust_box("../"),
+    ]
+
+
 def _platform_guide(name: str, display: str, cov: dict, registry: dict, no_list: bool) -> list[str]:
-    """The guide part of a platform page: folder, command, pack, check, next."""
+    """The guide part of a platform page: folder, command, pack, check, next.
+
+    A system that runs only on its own device puts the computer route
+    (download, unzip into the network folder) before the command."""
     guide = GUIDES[name]
     entry = registry.get(name, {})
     extract_to = entry.get("extract_to")
-    lines = ["## Where the files go", "", *_folder_rows(guide.folders)]
+    lines = ["## Where the files go", ""]
+    if guide.lead:
+        lines += [guide.lead, ""]
+    lines += _folder_rows(guide.folders)
     if extract_to:
         lines.append(f"| Unzip the pack into | `{extract_to}` |")
     lines.append("")
@@ -2375,54 +2543,19 @@ def _platform_guide(name: str, display: str, cov: dict, registry: dict, no_list:
             "",
             *([guide.more_folders_note, ""] if guide.more_folders_note else []),
         ])
-    lines += [
-        *(["<!-- image: minui-card -->", ""] if guide.on_card else []),
-        "## Install",
-        "",
-        "The command finds the folder, downloads what is missing, and checks "
-        "each file.",
-        "",
-    ]
     if guide.on_card:
+        lines += ["<!-- image: minui-card -->", ""]
+    if _computer_first(name, guide):
         lines += [
-            "Put the SD card in a computer. On Windows, note its letter, like "
-            "**E:**. Put the card's path after `--dest`.",
-            "",
-        ]
-    lines += [
-        *terminal_tabs(guide.run, platform_args(name, guide)),
-        *trust_box("../"),
-        "## Download",
-        "",
-    ]
-    record = release_record.load_record()
-    pack = release_record.pack_for(name, record)
-    if pack and pack.get("assets"):
-        parts = len(pack["assets"])
-        bullets = [
-            f"{_fmt_size(pack['download_size'])} to download, "
-            f"{_fmt_size(pack['extracted_size'])} once unzipped."
-        ]
-        if parts > 1:
-            bullets.append("You need both parts." if parts == 2 else f"You need all {parts} parts.")
-        target = f"`{extract_to}`" if extract_to else "your BIOS folder"
-        bullets.append(f"Unzip {'them all' if parts > 1 else 'it'} into {target}.")
-        if guide.download_hint:
-            bullets.append(guide.download_hint)
-        lines += [
-            _pack_buttons(name, f"Download {display} Pack"),
-            "",
-            *(f"- {b}" for b in bullets),
-            "",
-        ]
-    elif record.get("tag"):
-        lines += [
-            f"No {display} pack in release {record['tag']} yet. The command above "
-            "installs the same files.",
-            "",
+            *_guide_download(name, display, guide, extract_to,
+                             "## From your computer { #download }"),
+            *_guide_install(name, guide, "## On the device { #install }"),
         ]
     else:
-        lines += [_pack_buttons(name, f"Download {display} Pack"), ""]
+        lines += [
+            *_guide_install(name, guide, "## Install"),
+            *_guide_download(name, display, guide, extract_to, "## Download"),
+        ]
     check_args = {key: f"{args} --check" for key, args in platform_args(name, guide).items()}
     lines += [
         "## How to check",
@@ -2434,6 +2567,7 @@ def _platform_guide(name: str, display: str, cov: dict, registry: dict, no_list:
         "",
         _check_sentence(display, cov["mode"], cov["config"], no_list),
         "",
+        *([guide.finish, ""] if guide.finish else []),
         *_next_block([
             "[First install, step by step](../wiki/first-install.md)",
             "[When a game does not start](../wiki/troubleshooting.md)",
@@ -4378,8 +4512,7 @@ def install_commands(args: str = "", indent: str = "") -> list[str]:
         ("Windows (PowerShell):", "powershell"),
         ("Android (Termux, after `pkg install python` and `termux-setup-storage`):", "sh"),
     ):
-        lines += [f"{indent}{label}", "", f"{indent}```{shell}",
-                  f"{indent}{install_command(shell, args)}", f"{indent}```", ""]
+        lines += [f"{indent}{label}", "", *fence(shell, install_command(shell, args), indent), ""]
     return lines
 
 
@@ -4416,15 +4549,11 @@ def _platform_install_block(name: str, display: str, on_card: bool = False) -> l
             "",
             "Linux, macOS:",
             "",
-            "```sh",
-            install_command("sh", f"--platform {name} --dest /path/to/card"),
-            "```",
+            *fence("sh", install_command("sh", f"--platform {name} --dest /path/to/card")),
             "",
             "Windows (PowerShell, E: being the card):",
             "",
-            "```powershell",
-            install_command("powershell", f"--platform {name} --dest E:\\"),
-            "```",
+            *fence("powershell", install_command("powershell", f"--platform {name} --dest E:\\")),
         ], opened=True)
     return markup.details("tip", "Install with one command", [
         f"The installer downloads the files of the {display} pack that are "
@@ -4436,22 +4565,31 @@ def _platform_install_block(name: str, display: str, on_card: bool = False) -> l
     ], opened=True)
 
 
+def _ps_quote(value: str) -> str:
+    """A PowerShell argument: bare when plain, single-quoted otherwise."""
+    return value if re.fullmatch(r"[\w.+-]+", value) else "'" + value.replace("'", "''") + "'"
+
+
 def _console_install_block(console: str, declared: list[tuple[str, str]]) -> list[str]:
-    """Each platform's command for one console, by the system id it gives it."""
+    """Each platform's command for one console, by the system id it gives it,
+    for a terminal and for PowerShell."""
     if not declared:
         return []
-    lines = [
-        "Each platform names the system its own way. On Windows, run the "
-        "same options through `&([scriptblock]::Create((irm "
-        f"{INSTALL_BASE}/install.ps1)))`.",
+    sh = [install_command("sh", f"--platform {platform} --system {shlex.quote(system)}")
+          for platform, system in declared]
+    ps = [install_command("powershell", f"--platform {platform} --system {_ps_quote(system)}")
+          for platform, system in declared]
+    return search_excluded(markup.details("tip", f"Install the {console} files", [
+        "Each platform names the system its own way.",
         "",
-        "```sh",
-    ]
-    lines += [
-        install_command("sh", f"--platform {platform} --system {shlex.quote(system)}")
-        for platform, system in declared
-    ]
-    return search_excluded(markup.details("tip", f"Install the {console} files", [*lines, "```"]))
+        "Linux, macOS, Steam Deck:",
+        "",
+        *fence("sh", "\n".join(sh)),
+        "",
+        "Windows (PowerShell):",
+        "",
+        *fence("powershell", "\n".join(ps)),
+    ]))
 
 
 def _render_platform_details(profile: dict) -> list[str]:
@@ -6105,9 +6243,9 @@ def generate_not_found() -> str:
 
 
 def reference_next() -> str:
-    return "\n" + "\n".join(markup.aside("tip", "Next", [
-        "- [Reference index](wiki/index.md), every reference page in one list",
-        "- For contributors: [How to contribute](contributing.md)",
+    return "\n" + "\n".join(_next_block([
+        "[Reference index](wiki/index.md), every reference page in one list",
+        "For contributors: [How to contribute](contributing.md)",
     ]))
 
 
@@ -6327,24 +6465,11 @@ def _pack_cell(name: str, record: dict, prefix: str = "") -> str:
     """The pack's parts and size, or the command where the release has none."""
     pack = release_record.pack_for(name, record)
     if record.get("tag") and not (pack and pack.get("assets")):
-        return (f"Not in {record['tag']}: "
-                f"[use the command]({prefix}platforms/{name}.md#install)")
+        return f"No ZIP yet. [Use the command]({prefix}platforms/{name}.md#install)."
     display = load_platform_config(name, "platforms").get("platform", name)
     links = download_links(name, record, REPO_URL, display)
     size = pack.get("download_size") if pack else None
     return f"{links} ({_fmt_size(size)})" if size else links
-
-
-def _detected_systems(registry: dict, platform: str) -> list[tuple[str, str]]:
-    """Named systems a platform runs on, handhelds that run RetroArch for one,
-    with the BIOS folder the installer writes on each, read from the
-    detection rules of the registry."""
-    seen: dict[str, str] = {}
-    for rule in (registry.get(platform, {}).get("install") or {}).get("detect") or []:
-        name, folder = rule.get("name"), rule.get("bios_path")
-        if name and folder and rule.get("installs", True) and name not in seen:
-            seen[name] = folder
-    return sorted(seen.items(), key=lambda item: item[0].casefold())
 
 
 def _group_keys(registry: dict, group: str, display: dict[str, str]) -> list[str]:
@@ -6368,75 +6493,41 @@ def _own_root_folders(registry: dict) -> dict[str, str]:
 
 
 def generate_which_pack() -> str:
-    """The device picker: every registered platform, grouped by the device it
-    runs on, with its BIOS folder, its pack and its page.
+    """The device picker: every registered platform as a tile under the
+    device it runs on, then one table per device with its BIOS folder and
+    its ZIP, the console picker, and the command for a setup not listed.
 
-    The command comes first: it finds the setup by itself, and the tables
-    below it serve the reader who downloads a ZIP."""
+    The tiles are the choice. A second set of cards, five tables and the
+    picker offered the same choice three times."""
     registry = load_platform_registry("platforms")
     record = release_record.load_record()
     display = {key: load_platform_config(key, "platforms").get("platform", key) for key in registry}
     own_root = _own_root_folders(registry)
+    all_tabs = ("windows", "macos", "linux", "steamdeck", "android")
     lines = [
         "# Get your files",
         "",
-        "Two ways to fill your BIOS folder.",
-        "",
-        "- **[One command](#quick-install)**: finds your folder and checks each "
-        "file.",
-        "- **[A ZIP file](#manual-download)**: download it, unzip it into your "
-        "BIOS folder.",
-        "",
-        "## One command { #quick-install }",
-        "",
-        "A **terminal** is a window where you type commands.",
-        "",
-        *terminal_tabs(("windows", "macos", "linux", "steamdeck", "android"), {}),
-        "On Batocera, Recalbox and other game systems, run it on the device. "
-        "Your setup's page shows how.",
-        "",
-        *trust_box(""),
-        "It then asks what to install. Press **Enter** for everything.",
-        "",
-        "```",
-        "  Enter) install everything",
-        "  i) only what the installed cores read",
-        "  c) choose systems, cores and regions",
-        "  q) quit",
-        "```",
-        "",
-        "**Check your folder later.** Add `--check`. It changes nothing.",
-        "",
-        *terminal_tabs(("windows", "macos", "linux", "steamdeck", "android"),
-                       dict.fromkeys(TERMINALS, "--check"), steps=False),
-        *markup.details("note", "Fill an SD card from a computer", [
-            "Name your setup and the BIOS folder on the card. For RetroArch on a "
-            "Nintendo Switch:",
-            "",
-            "```sh",
-            install_command(
-                "sh", "--platform retroarch --dest /path/to/sdcard/retroarch/cores/system"),
-            "```",
-        ]),
-        "Details: [All installer options](wiki/installer.md).",
+        "Pick your setup. Its page gives the folder, the command and the ZIP.",
         "",
         "## Pick your setup",
         "",
+        *setup_picker(registry, display),
+        "## Folders and ZIP files { #manual-download }",
+        "",
+        "- A big ZIP comes in parts, like `Pack.part1of2.zip`. Download every part.",
+        "- Unzip them all into the BIOS folder of your setup. Put the files "
+        "straight in it, not in a new folder.",
+        "- Some files inside stay zipped, like `neogeo.zip`. Leave them as they are.",
+        "- **Unzip into** means the ZIP holds its own top folder. Unzip it there.",
+        "",
     ]
-    lines += markup.card_grid([
-        (label, [f"[{', '.join(display[k] for k in members)}](#{GROUP_ANCHORS[group]})"])
-        for group, (label, _description) in DEVICE_GROUPS.items()
-        for members in [_group_keys(registry, group, display)]
-        if members
-    ])
-    for group, (label, description) in DEVICE_GROUPS.items():
+    no_zip = False
+    for group, (label, _description) in DEVICE_GROUPS.items():
         members = _group_keys(registry, group, display)
         if not members:
             continue
         lines += [
-            f"## {label} {{ #{GROUP_ANCHORS[group]} }}",
-            "",
-            description,
+            f"### {label} {{ #{GROUP_ANCHORS[group]} }}",
             "",
             "| Setup | Runs on | BIOS folder | ZIP |",
             "|-------|---------|-------------|-----|",
@@ -6445,9 +6536,11 @@ def generate_which_pack() -> str:
             guide = GUIDES[key]
             folder = (f"Unzip into `{own_root[key]}`" if key in own_root
                       else _folder_cell(key, guide))
+            pack = release_record.pack_for(key, record)
+            no_zip |= bool(record.get("tag") and not (pack and pack.get("assets")))
             lines.append(
                 f"| [{display[key]}](platforms/{key}.md) | "
-                f"{_runs_on(registry[key], guide)} | {folder} | "
+                f"{guide.runs_on or _runs_on(registry[key], guide)} | {folder} | "
                 f"{_pack_cell(key, record)} |"
             )
         for setup, _summary, uses, runs_on, folder in ALSO_RUNS.get(group, ()):
@@ -6466,27 +6559,55 @@ def generate_which_pack() -> str:
                 *(f"| {name} | [RetroArch](platforms/retroarch.md) | `{folder}` |"
                   for name, folder in _detected_systems(registry, "retroarch")),
             ])
+    if no_zip:
+        lines += ["Setups added after the last release have no ZIP until the next one.", ""]
     lines += [
-        "## Download a ZIP { #manual-download }",
-        "",
-        "1. Find your setup in the tables above.",
-        "2. Download its ZIP. A big one comes in parts, like "
-        "`Pack.part1of2.zip` and `Pack.part2of2.zip`. Download every part.",
-        "3. Unzip every part into the folder named in the table.",
-        "",
-        "A row that says **Unzip into** has a ZIP that holds its own top folder. "
-        "Unzip it there, not into the BIOS folder.",
-        "",
         f"The ZIPs come from the [latest release]({RELEASE_URL}). The command may "
         "install newer files.",
         "",
         "## Only some consoles?",
         "",
-        "Run the command and press **c** when it asks.",
-        "",
-        "Or pick them here, and get the files and the command.",
+        "Pick them here, and get the files and the command. Or run the command "
+        "below and press **c** when it asks.",
         "",
         "<FilePicker />",
+        "",
+        "## Not in the list? One command finds it { #quick-install }",
+        "",
+        "A **terminal** is a window where you type commands.",
+        "",
+        *terminal_tabs(all_tabs, {}),
+        "On Batocera, Recalbox and other game systems, run it on the device. "
+        "Your setup's page shows how.",
+        "",
+        "The command asks what to install. Press **Enter** for everything.",
+        "",
+        "```text title=\"What it asks\"",
+        "  Enter) install everything",
+        "  i) only what the installed cores read",
+        "  c) choose systems, cores and regions",
+        "  q) quit",
+        "```",
+        "",
+        *trust_box(""),
+        "**Check your folder later.** Add `--check`. It changes nothing.",
+        "",
+        *terminal_tabs(all_tabs, dict.fromkeys(TERMINALS, "--check"), steps=False),
+        *markup.details("note", "Fill an SD card from a computer", [
+            "Name your setup and the BIOS folder on the card. For RetroArch on a "
+            "Nintendo Switch:",
+            "",
+            "Linux, macOS:",
+            "",
+            *fence("sh", install_command(
+                "sh", "--platform retroarch --dest /path/to/sdcard/retroarch/cores/system")),
+            "",
+            "Windows (PowerShell, E: being the card):",
+            "",
+            *fence("powershell", install_command(
+                "powershell", "--platform retroarch --dest E:\\retroarch\\cores\\system")),
+        ]),
+        "Details: [All installer options](wiki/installer.md).",
         "",
         *_next_block([
             "[First install, step by step](wiki/first-install.md)",

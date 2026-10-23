@@ -962,13 +962,14 @@ class TheOneLinerIsWhereUsersLand(unittest.TestCase):
                "verified": 0, "missing": 0, "details": [], "config": {"systems": {}}}
         page = generate_site.generate_platform_page("batocera", cov)
         self.assertIn("install.sh | sh -s -- --platform batocera", page)
-        self.assertLess(page.index("--platform batocera"), page.index("rb-button"))
-        # Batocera runs the command on the device itself. A platform detected
-        # on Windows gets the PowerShell form.
+        # Batocera runs the command on the device itself, so its page opens on
+        # the computer route. A platform detected on Windows gets the
+        # PowerShell form, and its command comes before the ZIP.
         cov = dict(cov, platform="RetroArch", mode="existence")
         page = generate_site.generate_platform_page("retroarch", cov)
         self.assertIn("install.ps1))) --platform retroarch", page)
         self.assertIn("install.sh | sh -s -- --platform retroarch", page)
+        self.assertLess(page.index("--platform retroarch"), page.index("rb-button"))
 
         entry = {"name": "a.bin", "sha1": "a" * 40, "md5": "b" * 32, "size": 3,
                  "path": "bios/Recalbox/MSX/a.bin"}

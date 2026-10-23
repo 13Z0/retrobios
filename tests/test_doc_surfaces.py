@@ -179,7 +179,7 @@ class DownloadLinksNameTheFile(unittest.TestCase):
             row = next(line for line in page.splitlines() if line.startswith(f"| [{label}]("))
             with self.subTest(platform=key):
                 self.assertNotIn("/releases/", row)
-                self.assertIn(f"Not in {RECORD['tag']}: [use the command](platforms/{key}.md#install)", row)
+                self.assertIn(f"No ZIP yet. [Use the command](platforms/{key}.md#install).", row)
 
 
 class SlicesLeaveWithTheirRelease(unittest.TestCase):

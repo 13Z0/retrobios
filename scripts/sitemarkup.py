@@ -184,6 +184,37 @@ def card_grid(cards: list[tuple[str, list[str]]]) -> list[str]:
     return [*lines, "</div>", ""]
 
 
+def initials(name: str) -> str:
+    """Up to two capitals of a name, for a setup that has no logo: MyMinUI is MM."""
+    capitals = [c for c in name if c.isupper()]
+    return "".join(capitals[:2]) or name[:2].upper()
+
+
+def _tile_mark(name: str, logo: str) -> str:
+    if logo:
+        return f'<img class="rb-card-logo" src="{html.escape(logo)}" alt="" width="40" height="40">'
+    # The same square as a logo, drawn on white like the logos are.
+    return ('<svg class="rb-card-logo" viewBox="0 0 40 40" width="40" height="40" aria-hidden="true">'
+            '<text x="20" y="25" text-anchor="middle" font-size="14" font-weight="700" '
+            f'fill="#2b2e5c">{html.escape(initials(name))}</text></svg>')
+
+
+def platform_tiles(tiles: list[tuple[str, str, str, str]]) -> list[str]:
+    """One link per setup: its logo (or its initials), its name and where it
+    runs. *tiles* are (name, target, logo, runs_on).
+
+    One HTML line: a grid of links is a menu, not prose, and the Markdown
+    around it reads none of it."""
+    links = "".join(
+        f'<a class="rb-card rb-tile" href="{html.escape(target)}">'
+        f"{_tile_mark(name, logo)}"
+        f'<strong class="rb-tile-name">{html.escape(name)}</strong>'
+        f'<span class="rb-tile-runs">{inline_html(runs_on)}</span></a>'
+        for name, target, logo, runs_on in tiles
+    )
+    return [f'<div class="rb-cards rb-tiles">{links}</div>', ""]
+
+
 def steps(items: list[str]) -> list[str]:
     """An ordered list drawn as numbered steps."""
     return [block_open("div", 'class="rb-steps"'), "",
