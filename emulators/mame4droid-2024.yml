@@ -93,6 +93,12 @@ systems:
   - videosystem-zn1
   - virtuality-su2000
 
+data_root:
+  android:
+    path: "Android/data/com.seleuco.mame4d2024/files"
+    source_ref: "source android-MAME4droid/app/src/main/java/com/seleuco/mame4droid/helpers/MainHelper.java:175-211, source android-MAME4droid/app/src/main/java/com/seleuco/mame4droid/helpers/DialogHelper.java:131-150, source android-MAME4droid/app/src/main/java/com/seleuco/mame4droid/MAME4droid.java:188-212, source android-MAME4droid/app/build.gradle:20"
+    note: "Android/media/com.seleuco.mame4d2024 on Android TV. The installation path setting can name another folder"
+
 notes: |
   Android port of MAME 0.289 by David Valdeita (Seleuco), package
   com.seleuco.mame4d2024, app version 1.38.1. The repository carries the
@@ -107,8 +113,8 @@ notes: |
   myosd_droid_initMyOSD chdirs into it, so every relative MAME path resolves
   there: roms, hash, samples, artwork, ctrlr, cheat, crosshair, plugins,
   language and software, with fonts and ini files at the root. The directory
-  is /sdcard/Android/data/com.seleuco.mame4d2024/files, /sdcard/MAME4droid or
-  the app's external media folder, picked in the settings. When a Storage
+  is the one data_root gives, or the folder the installation path setting
+  names. When a Storage
   Access Framework folder is chosen for ROMs the app prepends it to rompath,
   artpath, samplepath and swpath and keeps the installation directory as the
   second entry. With the mame.ini setting on it passes no path at all and
