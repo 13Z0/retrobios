@@ -213,9 +213,19 @@ jobs:
         run: python3.9 -m pip install pyyaml "jsonschema[format-nongpl]==4.25.1"
 
       # markdown: the site validation test renders a wiki line to prove the
-      # heading guard's premise, and skipped on every run without it.
+      # heading guard's premise, and skipped on every run without it. pyte
+      # reads the installer's full screen back in its end-to-end tests,
+      # hypothesis fuzzes its key decoder, and vermin holds install.py to 3.8.
       - name: Install dependencies
-        run: pip install pyyaml "jsonschema[format-nongpl]==4.26.0" "markdown==3.10.2"
+        run: pip install pyyaml "jsonschema[format-nongpl]==4.26.0" "markdown==3.10.2" "pyte==0.8.2" "hypothesis==6.170.8" "vermin==1.9.2"
+
+      # The full screen also runs under the 3.8 floor: the end-to-end tests
+      # start install.py with the interpreter that runs them.
+      - name: Install the screen tests' dependency for Python 3.8
+        run: python3.8 -m pip install "pyte==0.8.2"
+
+      - name: Hold install.py to Python 3.8
+        run: vermin --no-tips -t=3.8- --violations install.py
 
       # The site is built as deploy-site.yml builds it, from the lockfile.
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1  # v7.1.0
@@ -256,6 +266,12 @@ jobs:
         env:
           RETROBIOS_OFFLINE: "1"
         run: python -m unittest discover -s tests -t . -v
+
+      - name: Run the full-screen interface tests on Python 3.8
+        if: ${{ !cancelled() }}
+        env:
+          RETROBIOS_OFFLINE: "1"
+        run: python3.8 -m unittest tests.test_install_tui -v
 
       # deploy-site.yml runs this after the merge, and a dead link or a stray
       # heading failed it there with nothing in front of it. Run whatever the

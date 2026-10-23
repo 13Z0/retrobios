@@ -1,0 +1,15 @@
+ RetroBIOS: Quit?
+
+ Quit without installing? Nothing was
+   written.
+
+ > Quit
+   Stay
+
+
+
+
+
+
+
+ A/Enter Quit  B/Esc Stay

@@ -1,0 +1,12 @@
+ RetroBIOS: Cores
+
+ Tick the cores you use. With none
+   ticked, every core's files are kept.
+
+ > Filter (/ to type)
+   [ ] mesen
+   [x] pcsx_rearmed
+
+
+
+ A Filter  B Back  X Tick  ? Help

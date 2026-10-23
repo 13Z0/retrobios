@@ -1,0 +1,24 @@
+ RetroBIOS: Browse for a folder
+
+ /home/user/.config/retroarch
+
+ > Use this folder
+   ..
+   /media/user/SDCARD (NextUI card)
+   cores/
+   system/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ A/Enter Use this folder  B/Esc Back  ? Help

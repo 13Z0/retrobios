@@ -15,18 +15,23 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import codecs
 import concurrent.futures
+import contextlib
 import datetime
 import errno
+import functools
 import hashlib
 import http.client
 import io
 import json
 import os
 import platform
+import queue
 import re
 import shlex
 import shutil
+import signal
 import socket
 import stat
 import subprocess
@@ -35,13 +40,15 @@ import tarfile
 import tempfile
 import threading
 import time
+import traceback
+import unicodedata
 import urllib.error
 import urllib.parse
 import urllib.request
 import xml.etree.ElementTree as ET
 import zipfile
 import zlib
-from collections.abc import Callable, Collection, Iterator
+from collections.abc import Callable, Collection, Iterator, Mapping
 from pathlib import Path, PurePosixPath
 from typing import BinaryIO, NamedTuple, TextIO
 
@@ -493,6 +500,8 @@ EVENT_KEYS: dict[str, tuple[str, ...]] = {
     "file": ("platform", "dest", "systems", "size", "state"),
     "system": ("platform", "system", "name", "files", "present", "missing",
                "wrong_hash", "bytes_needed"),
+    # The files in place being read, at most every half second, and the last.
+    "checking": ("files_done", "files_total"),
     "check": ("platform", "name", "bios_dir", "files", "present", "missing",
               "wrong_hash", "bytes_needed", "data_missing", "not_installable"),
     "download": ("platform", "files", "bytes"),
@@ -3102,7 +3111,9 @@ def _address_lines(url: str) -> list[str]:
     return lines
 
 
-def _fetch_json(url: str, limit: int, label: str) -> object:
+def _fetch_json(
+    url: str, limit: int, label: str, attempts: int = MAX_RETRIES, timeout: float = 30,
+) -> object:
     """A JSON document, tried MAX_RETRIES times like every file download.
 
     A file list fetched once ended the run on one timeout over flaky Wi-Fi.
@@ -3110,26 +3121,26 @@ def _fetch_json(url: str, limit: int, label: str) -> object:
     nothing.
     """
     _network_allowed(label)
-    for attempt in range(1, MAX_RETRIES + 1):
+    for attempt in range(1, attempts + 1):
         try:
-            with urllib.request.urlopen(url, timeout=30) as resp:
+            with urllib.request.urlopen(url, timeout=timeout) as resp:
                 return _read_limited_json(resp, limit, label)
         except urllib.error.HTTPError as exc:
-            if exc.code < 500 and exc.code != 429 or attempt == MAX_RETRIES:
+            if exc.code < 500 and exc.code != 429 or attempt == attempts:
                 raise
             delay = _retry_delay(attempt, exc.headers.get("Retry-After") if exc.headers else None)
             problem = f"HTTP {exc.code}"
         except (urllib.error.URLError, OSError, http.client.HTTPException) as exc:
             code, problem = network_words(exc)
             # A wrong clock or no certificate list fails every attempt alike.
-            if attempt == MAX_RETRIES or code != "network":
+            if attempt == attempts or code != "network":
                 if isinstance(exc, http.client.HTTPException):
                     raise ConnectionError(f"connection cut: {exc!r}") from exc
                 raise
             delay = _retry_delay(attempt, None)
         # Said, or three 30-second attempts read as a frozen program.
         print(f"  The {label} did not arrive ({problem}), trying again "
-              f"({attempt + 1}/{MAX_RETRIES}) in {delay:.0f} s.", file=sys.stderr)
+              f"({attempt + 1}/{attempts}) in {delay:.0f} s.", file=sys.stderr)
         time.sleep(delay)
     raise AssertionError("unreachable")
 
@@ -3833,13 +3844,20 @@ def check_local(
                 lambda item: (item[0], _classify_local(item[0], item[1])), present
             )
             live = term is not None and term.live and not term.quiet
-            last = 0.0
+            last = evented = 0.0
             for done, (entry, verdict) in enumerate(verdicts, 1):
                 if verdict == "up_to_date":
                     up_to_date.append(entry)
                 else:
                     mismatched.append(entry)
                 now = time.monotonic()
+                # The program driving the installer gets the count the
+                # terminal gets: a screen with a bare timer over 6 GB on an
+                # SD card read as hung.
+                if EVENTS.on and (now - evented >= EVENT_PROGRESS_INTERVAL
+                                  or done == len(present)):
+                    evented = now
+                    EVENTS.emit("checking", files_done=done, files_total=len(present))
                 if live and (now - last >= 0.1 or done == len(present)):
                     last = now
                     print(f"\r  read {done}/{len(present)}", end="", file=term.stream,
@@ -6908,7 +6926,9 @@ def main() -> None:
     _INVOCATION.os_type = detect_os()
     parser = argparse.ArgumentParser(
         allow_abbrev=False,
-        description="Download missing BIOS files for retrogaming emulators.",
+        description="Download missing BIOS files for retrogaming emulators. "
+                    "For questions line by line, as a screen reader reads them, "
+                    "add --plain.",
         epilog=_help_epilog(),
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
@@ -7090,6 +7110,20 @@ def main() -> None:
              "of downloading it",
     )
     parser.add_argument(
+        "--tui",
+        action="store_true",
+        help="open the full-screen interface, which a keyboard or a controller "
+             "drives. It opens by itself for an install at a terminal of 40x12 "
+             "or more",
+    )
+    parser.add_argument(
+        "--plain",
+        action="store_true",
+        help="ask the questions line by line instead of the full-screen "
+             "interface, as a screen reader reads them (RETROBIOS_PLAIN=1 or "
+             "ACCESSIBLE=1 do the same)",
+    )
+    parser.add_argument(
         "--version",
         action="version",
         version=f"retrobios installer {installer_id()} (ref {RELEASE_REF})",
@@ -7119,6 +7153,15 @@ def main() -> None:
         or args.list_systems or args.list_cores or args.list_emulators
     ):
         parser.error("--quiet applies to an install, not to --check, --dry-run or a listing")
+    if args.tui and args.plain:
+        parser.error("--tui and --plain ask for two different interfaces")
+    if args.tui:
+        reason = tui_blocker(args)
+        if reason:
+            # The reason alone: fourteen lines of usage hid it.
+            print(f"{parser.prog}: error: --tui cannot open the full-screen interface "
+                  f"here: {reason}", file=sys.stderr)
+            sys.exit(2)
     if args.restore is not None:
         # The folder says where each file goes: nothing else applies.
         alone = ("platform", "dest", "target", "every_board", "check", "list_platforms",
@@ -7145,6 +7188,8 @@ def main() -> None:
     if args.no_game_data and (args.list_platforms or args.list_targets):
         parser.error("--no-game-data narrows a file list, not --list-platforms "
                      "or --list-targets")
+    if args.tui or not (plain_requested(args) or tui_blocker(args)):
+        sys.exit(run_tui(args))
     if args.events:
         # The events own stdout. The text a person reads goes to stderr, so a
         # program never has to tell one from the other.
@@ -8049,6 +8094,2575 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
             platform_of={path: plat for plat, path in platforms},
             hints=bulk_lines,
         )
+
+
+# Full-screen interface
+#
+# A bare run at a terminal opens it, and --tui asks for it. It decides and the
+# installer acts: every check and install is this file run again as a child,
+# with --events, the contract the handheld port reads, and the choices made on
+# screen as its options. The line questions stay behind --plain, for screen
+# readers and for any terminal this cannot drive. Stdlib only: curses is
+# missing from Windows CPython and from some Buildroot images.
+
+TUI_MIN_COLS = 40
+TUI_MIN_ROWS = 12
+# Text stops growing past this width: on a 200-column window a row and its
+# size sat a whole screen apart.
+TUI_MAX_WIDTH = 100
+# An arrow key arrives as Esc and two more characters, Esc alone as itself:
+# past this wait an Esc with nothing after it is the key.
+TUI_ESC_WAIT = 0.04
+TUI_FRAME = 0.1
+_PASTE_START = "\x1b[200~"
+_PASTE_END = "\x1b[201~"
+# Turned on by the interface, so a pasted path arrives as one piece and its
+# newline does not submit it half typed.
+_SCREEN_ON = "\x1b[?1049h\x1b[?25l\x1b[?2004h\x1b[2J"
+_SCREEN_OFF = "\x1b[?2004l\x1b[0m\x1b[?25h\x1b[?1049l"
+_STYLES = {"title": "\x1b[1m", "focus": "\x1b[7m", "dim": "\x1b[2m"}
+
+
+class TuiKey(NamedTuple):
+    """One key press: a name ("up", "enter"), or "char" or "paste" and the text."""
+
+    name: str
+    text: str = ""
+
+
+_CSI_KEYS = {"A": "up", "B": "down", "C": "right", "D": "left", "H": "home", "F": "end",
+             "Z": "shift-tab"}
+_TILDE_KEYS = {"1": "home", "7": "home", "4": "end", "8": "end", "5": "pgup", "6": "pgdn",
+               "3": "delete", "11": "f1"}
+_SS3_KEYS = {"A": "up", "B": "down", "C": "right", "D": "left", "H": "home", "F": "end",
+             "P": "f1", "M": "enter"}
+# msvcrt.getwch gives these after a \x00 or \xe0 prefix.
+_WINDOWS_KEYS = {"H": "up", "P": "down", "K": "left", "M": "right", "I": "pgup",
+                 "Q": "pgdn", "G": "home", "O": "end", "S": "delete", ";": "f1"}
+
+
+def _plain_key(char: str) -> TuiKey | None:
+    """The key one character stands for, None for a control nobody bound."""
+    named = {"\r": "enter", "\n": "enter", "\x7f": "backspace", "\x08": "backspace",
+             "\t": "tab", "\x1b": "esc", "\x03": "ctrl-c", "\x04": "ctrl-d",
+             "\x15": "ctrl-u"}.get(char)
+    if named:
+        return TuiKey(named)
+    if char < " " or unicodedata.category(char) in ("Cc", "Cs"):
+        return None
+    return TuiKey("char", char)
+
+
+def _csi_key(params: str, final: str) -> TuiKey | None:
+    if final == "~":
+        if params == "200":
+            return TuiKey("paste-start")
+        name = _TILDE_KEYS.get(params.split(";")[0])
+        return TuiKey(name) if name else None
+    name = _CSI_KEYS.get(final)
+    if name is None:
+        return None
+    if params in ("", "1"):
+        return TuiKey(name)
+    if params == "1;2" and name in ("up", "down"):
+        return TuiKey(f"shift-{name}")
+    return None
+
+
+def _escape(buffer: str) -> tuple[int, TuiKey | None]:
+    """The sequence at the start of buffer: the characters it takes and its
+    key (None for one nobody bound), or 0 while more are needed to tell."""
+    if len(buffer) < 2:
+        return 0, None
+    if buffer[1] == "[":
+        if buffer[2:3] == "M":
+            # An X10 mouse report: three bytes of position follow.
+            return (6, None) if len(buffer) >= 6 else (0, None)
+        for end in range(2, len(buffer)):
+            code = ord(buffer[end])
+            if 0x40 <= code <= 0x7E:
+                return end + 1, _csi_key(buffer[2:end], buffer[end])
+            if not 0x20 <= code <= 0x3F:
+                return 1, TuiKey("esc")
+        return 0, None
+    if buffer[1] == "O":
+        if len(buffer) < 3:
+            return 0, None
+        name = _SS3_KEYS.get(buffer[2])
+        return 3, TuiKey(name) if name else None
+    return 1, TuiKey("esc")
+
+
+class KeyDecoder:
+    """Keys from what a terminal sends, however the reads split it.
+
+    Unknown sequences (F13, mouse reports) are dropped, never taken as text.
+    """
+
+    def __init__(self) -> None:
+        self.buffer = ""
+        self.paste: str | None = None
+
+    def feed(self, text: str) -> list[TuiKey]:
+        self.buffer += text
+        return self._drain(final=False)
+
+    def flush(self) -> list[TuiKey]:
+        """What is left once the wait for the rest of a sequence is over.
+
+        An open paste stays open: over SSH its end arrives later than 40 ms.
+        """
+        return self._drain(final=True)
+
+    def close_paste(self) -> list[TuiKey]:
+        """The paste so far, its end never seen, without its newlines."""
+        text = "".join(char for char in self.paste or "" if char >= " " and char != "\x7f")
+        self.paste = None
+        return [TuiKey("paste", text)] if text else []
+
+    @property
+    def waiting(self) -> bool:
+        return bool(self.buffer) or self.paste is not None
+
+    def _drain(self, final: bool) -> list[TuiKey]:
+        keys: list[TuiKey] = []
+        while self.buffer:
+            if self.paste is not None:
+                end = self.buffer.find(_PASTE_END)
+                if end < 0:
+                    # The end marker may be cut between two reads.
+                    keep = next((n for n in range(len(_PASTE_END) - 1, 0, -1)
+                                 if self.buffer.endswith(_PASTE_END[:n])), 0)
+                    cut = len(self.buffer) - keep
+                    self.paste += self.buffer[:cut]
+                    self.buffer = self.buffer[cut:]
+                    break
+                self.paste += self.buffer[:end]
+                self.buffer = self.buffer[end + len(_PASTE_END):]
+                keys += self.close_paste()
+                continue
+            if self.buffer[0] == "\x1b":
+                taken, key = _escape(self.buffer)
+                if not taken:
+                    if final:
+                        if self.buffer == "\x1b":
+                            keys.append(TuiKey("esc"))
+                        self.buffer = ""
+                    break
+                self.buffer = self.buffer[taken:]
+                if key is not None and key.name == "paste-start":
+                    self.paste = ""
+                elif key is not None:
+                    keys.append(key)
+                continue
+            key = _plain_key(self.buffer[0])
+            self.buffer = self.buffer[1:]
+            if key is not None:
+                keys.append(key)
+        return keys
+
+
+def decode_windows_key(first: str, read_next: Callable[[], str]) -> TuiKey | None:
+    """A key from msvcrt.getwch: arrows and pages come as a prefix, then a code."""
+    if first in ("\x00", "\xe0"):
+        name = _WINDOWS_KEYS.get(read_next())
+        return TuiKey(name) if name else None
+    return _plain_key(first)
+
+
+def _char_width(char: str) -> int:
+    if unicodedata.combining(char) or unicodedata.category(char) in ("Mn", "Me", "Cf"):
+        return 0
+    return 2 if unicodedata.east_asian_width(char) in ("W", "F") else 1
+
+
+def cell_width(text: str) -> int:
+    """Terminal cells the text takes: a CJK character two, an accent none."""
+    return sum(_char_width(char) for char in text)
+
+
+# C0 and C1 controls, DEL and lone surrogates: a file, folder or core name
+# holding ESC would drive the terminal (clear it, or set the clipboard with
+# OSC 52) instead of being shown.
+_CONTROLS = re.compile("[\x00-\x1f\x7f-\x9f\ud800-\udfff]")
+
+
+def screen_text(text: str) -> str:
+    """Text as a terminal shows it, every control character a "?"."""
+    return _CONTROLS.sub("?", text)
+
+
+def ascii_text(text: str) -> str:
+    """The text in ASCII, accents dropped (Edition) and any other character
+    as one ? per cell it took, so the columns stay where they were."""
+    if text.isascii():
+        return text
+    plain = "".join(char for char in unicodedata.normalize("NFKD", text)
+                    if not unicodedata.combining(char))
+    return "".join(char if char.isascii() else "?" * _char_width(char) for char in plain)
+
+
+def fit(text: str, width: int) -> str:
+    """The text cut to width cells, never through a character."""
+    text = screen_text(text)
+    kept: list[str] = []
+    used = 0
+    for char in text:
+        size = _char_width(char)
+        if used + size > width:
+            break
+        kept.append(char)
+        used += size
+    return "".join(kept)
+
+
+def middle(text: str, width: int) -> str:
+    """A long path cut in its middle, its start and its last folders kept."""
+    if cell_width(text) <= width:
+        return text
+    if width <= 3:
+        return fit(text, width)
+    room = width - 3
+    tail = fit(text[::-1], room // 2)[::-1]
+    return fit(text, room - cell_width(tail)) + "..." + tail
+
+
+def _pad(text: str, width: int) -> str:
+    return text + " " * max(0, width - cell_width(text))
+
+
+def _columns(left: str, right: str, width: int) -> str:
+    """left, and right against the edge when both fit, else left alone."""
+    room = width - cell_width(right) - 2
+    if not right or room < 8:
+        return fit(left, width)
+    return _pad(fit(left, room), room) + "  " + right
+
+
+def _split_word(word: str, room: int) -> list[str]:
+    """A word longer than room, cut after a slash where it can be: a path
+    read /home/us and er/bios when cut anywhere."""
+    pieces = []
+    while cell_width(word) > room:
+        head = fit(word, max(room, 1))
+        cut = head.rfind("/") + 1
+        if cut <= len(head) // 3:
+            cut = len(head)
+        pieces.append(word[:cut])
+        word = word[cut:]
+    return pieces + [word] if word else pieces
+
+
+def _wrap(text: str, width: int, indent: str = "  ") -> list[str]:
+    """Lines of at most width cells, the ones after the first indented."""
+    if cell_width(text) <= width:
+        return [text]
+    lead = text[:len(text) - len(text.lstrip(" "))]
+    lines: list[str] = []
+    line = ""
+    for word in text.split():
+        for piece in _split_word(word, width - len(lead + indent)):
+            prefix = lead + indent if lines else lead
+            longer = f"{line} {piece}" if line else piece
+            if not line or cell_width(prefix + longer) <= width:
+                line = longer
+            else:
+                lines.append(prefix + line)
+                line = piece
+    lines.append((lead + indent if lines else lead) + line)
+    return lines
+
+
+class TuiLine(str):
+    """A screen line and how it is drawn: "title", "focus", "dim" or plain."""
+
+    style = ""
+
+
+def _styled(text: str, style: str = "") -> TuiLine:
+    line = TuiLine(screen_text(text))
+    line.style = style
+    return line
+
+
+def _short_path(path: Path | None, home: Path) -> str:
+    if path is None:
+        return ""
+    text = str(path)
+    home_text = str(home)
+    if home_text not in ("", "/", ".") and (text == home_text
+                                           or text.startswith(home_text + os.sep)):
+        return "~" + text[len(home_text):]
+    return text
+
+
+def _folded(text: str) -> str:
+    """Text compared without case or accents, as a filter reads it."""
+    decomposed = unicodedata.normalize("NFKD", text)
+    return "".join(char for char in decomposed if not unicodedata.combining(char)).casefold()
+
+
+class TuiState:
+    """Everything the screens show. Nothing here touches the terminal."""
+
+    def __init__(self, os_type: str = "linux", home: Path | None = None) -> None:
+        self.os_type = os_type
+        self.home = home or Path("/home/user")
+        self.stack: list = ["setup"]
+        self.focus: dict = {}
+        self.filters: dict = {}
+        self.editing: str = ""
+        self.help: bool = False
+        self.status: str = ""
+        self.cols: int = 80
+        self.rows: int = 24
+        self.now: float = 0.0
+        # (platform, folder, label) for each setup found here.
+        self.setups: list = []
+        self.notes: list = []
+        self.platform: str = ""
+        self.dest: Path | None = None
+        # A --dest given without --platform: the list asks whose files go there.
+        self.dest_given: Path | None = None
+        self.folder_default: Path | None = None
+        self.path_text: str = ""
+        self.browse_dir: Path | None = None
+        self.browse_rows: list = []
+        self.manifest: dict | None = None
+        self.manifest_for: str = ""
+        self.manifest_path: Path | None = None
+        self.manifest_given: bool = False
+        self.error: list = []
+        self.error_title: str = ""
+        self.error_code: int = 1
+        # Typed over in one key: a field opening on a long path took one
+        # Backspace per character before anything could be typed.
+        self.path_selected: bool = False
+        # The ticks kept across a check run again for new options.
+        self.keep_ticked: set | None = None
+        # (files read, files to read) while the check hashes what is in place.
+        self.reading: tuple | None = None
+        # The child run in progress: check, confirm, preview or install.
+        self.run: str = ""
+        self.running: bool = False
+        self.run_id: int = 0
+        self.started: float = 0.0
+        self.checked_flags: list = []
+        self.check: dict | None = None
+        self.files: list = []
+        self.systems: list = []
+        self.facts: dict = {}
+        self.dry: dict | None = None
+        self.dry_files: list = []
+        self.dry_summary: dict | None = None
+        # Choices, each one an option of the command line.
+        self.ticked: set = set()
+        self.cli_systems: list = []
+        self.regions: list = []
+        self.cli_regions: list = []
+        self.cores: list = []
+        self.no_game_data: bool = False
+        self.installed_only: bool = False
+        self.jobs: int = 8
+        self.passthrough: list = []
+        # The install.
+        self.download: dict | None = None
+        self.progress: dict | None = None
+        # (time, bytes done) of the last progress events: a partial copy
+        # resumed counts in the first one and never in a speed.
+        self.samples: list = []
+        self.finished: list = []
+        self.summary: dict | None = None
+        self.code: int | None = None
+        self.stopping: bool = False
+        self.tail: list = []
+        self.log: str = ""
+        self.exit_code: int | None = None
+
+    @property
+    def screen(self) -> str:
+        return self.stack[-1]
+
+
+def _env_on(env: Mapping[str, str], name: str) -> bool:
+    return env.get(name, "") not in ("", "0")
+
+
+def plain_requested(args: argparse.Namespace, env: Mapping[str, str] | None = None) -> bool:
+    """Whether the line questions were asked for: --plain, RETROBIOS_PLAIN, ACCESSIBLE."""
+    env = os.environ if env is None else env
+    return bool(args.plain) or _env_on(env, "RETROBIOS_PLAIN") or _env_on(env, "ACCESSIBLE")
+
+
+def _terminal_size(stream: TextIO) -> tuple[int, int]:
+    try:
+        size = os.get_terminal_size(stream.fileno())
+    except (OSError, ValueError, AttributeError, io.UnsupportedOperation):
+        return 0, 0
+    return size.columns, size.lines
+
+
+def tui_blocker(
+    args: argparse.Namespace, stdin: TextIO | None = None, stdout: TextIO | None = None,
+    env: Mapping[str, str] | None = None,
+) -> str:
+    """Why the full-screen interface cannot run here, "" when it can."""
+    env = os.environ if env is None else env
+    stdin = stdin or sys.stdin
+    stdout = stdout or sys.stdout
+    for flag, given in (
+        ("--check", args.check), ("--dry-run", args.dry_run),
+        ("--list-platforms", args.list_platforms), ("--list-targets", args.list_targets),
+        ("--list-systems", args.list_systems), ("--list-cores", args.list_cores),
+        ("--list-emulators", args.list_emulators), ("--events", args.events),
+        ("--quiet", args.quiet), ("--no-input", args.no_input),
+        ("--restore", args.restore is not None), ("--yes", args.yes),
+    ):
+        if given:
+            return f"{flag} runs without questions"
+    for name, stream in (("input", stdin), ("output", stdout)):
+        isatty = getattr(stream, "isatty", None)
+        if not (isatty and isatty()):
+            return f"the {name} is not a terminal"
+    if os.name != "nt" and env.get("TERM", "") in ("", "dumb"):
+        return "TERM is dumb or not set"
+    # A pseudo-terminal nobody sized reports 0x0: script(1) fed from a pipe
+    # is one, and the line questions run there as they always have.
+    cols, rows = _terminal_size(stdout)
+    if cols < TUI_MIN_COLS or rows < TUI_MIN_ROWS:
+        return (f"the terminal is {cols}x{rows}, smaller than "
+                f"{TUI_MIN_COLS}x{TUI_MIN_ROWS}")
+    if os.name == "nt":
+        try:
+            import msvcrt  # noqa: F401, PLC0415
+        except ImportError:
+            return "this Python has no msvcrt to read keys"
+        if not _enable_ansi():
+            return "this console does not draw escape sequences (Windows 10 or later does)"
+        return ""
+    try:
+        import termios  # noqa: PLC0415
+    except ImportError:
+        return "this Python has no termios to read keys"
+    try:
+        termios.tcgetattr(stdin.fileno())
+    except (termios.error, OSError, ValueError, AttributeError,
+            io.UnsupportedOperation) as exc:
+        return f"single key presses cannot be read here ({exc})"
+    return ""
+
+
+def tui_flags(state: TuiState) -> list[tuple[str, str | None]]:
+    """The options that carry the choices made on screen, CLI ones included."""
+    flags = list(state.passthrough)
+    needed = {row["system"] for row in state.systems
+              if row["missing"] + row["wrong_hash"] > 0}
+    if state.systems and not needed <= state.ticked:
+        flags += [("--system", name) for name in sorted(state.ticked)]
+    else:
+        flags += [("--system", name) for name in state.cli_systems]
+    flags += [("--core", name) for name in state.cores]
+    if state.regions:
+        flags.append(("--region", ",".join(state.regions)))
+    if state.no_game_data:
+        flags.append(("--no-game-data", None))
+    if state.installed_only and not any(flag == "--cores-dir" for flag, _v in flags):
+        flags.append(("--installed-cores", None))
+    if state.jobs != 8:
+        flags.append(("--jobs", str(state.jobs)))
+    return flags
+
+
+_TUI_MODES = {
+    "check": ["--check", "--events"],
+    "confirm": ["--dry-run", "--events"],
+    "preview": ["--dry-run", "--events"],
+    "install": ["--events", "--yes"],
+}
+
+
+def tui_argv(state: TuiState, run: str, python: str, script: str) -> list[str]:
+    """The child that does what the screen decided."""
+    # --dest=VALUE: a folder typed as -x would otherwise be read as an option.
+    argv = [python, script, f"--platform={state.platform}", f"--dest={state.dest}"]
+    if state.manifest_path is not None:
+        argv.append(f"--manifest={state.manifest_path}")
+    argv += [flag if value is None else f"{flag}={value}" for flag, value in tui_flags(state)]
+    return argv + _TUI_MODES[run]
+
+
+def tui_command(state: TuiState) -> str:
+    """The same choice as one command, in the form the run was started with."""
+    hint = Invocation()
+    hint.os_type = state.os_type
+    hint.options = ([("--manifest", str(state.manifest_path))]
+                    if state.manifest_given and state.manifest_path else [])
+    hint.options += tui_flags(state)
+    return hint.command(state.platform, state.dest)
+
+class TuiRow(NamedTuple):
+    """One row a screen lists: what Enter does on it, and what it shows."""
+
+    action: str
+    label: str
+    right: str = ""
+    value: object = None
+    style: str = ""
+
+
+# Screens that scroll text instead of listing rows.
+_PAGERS = ("preview", "command", "result")
+_CHECKLISTS = ("systems", "cores")
+
+
+def _needed(row: dict) -> int:
+    return row["missing"] + row["wrong_hash"]
+
+
+def _tui_system_label(row: dict, titles: dict | None = None) -> str:
+    """The name a person reads: the file list's title when it has one, the
+    platform's own name when it is one (Sony - PlayStation), the id with the
+    platform's short name otherwise (psx)."""
+    title = (titles or {}).get(row["system"])
+    if isinstance(title, str) and title.strip():
+        return title.strip()
+    name = row.get("name") or row["system"]
+    if name == row["system"]:
+        return name
+    if " " in name or any(char.isupper() for char in name):
+        return name
+    return f"{row['system']} ({name})"
+
+
+def _matches(text: str, needle: str) -> bool:
+    return not needle or _folded(needle) in _folded(text)
+
+
+def _filter_row(state: TuiState) -> TuiRow:
+    text = state.filters.get(state.screen, "")
+    if state.editing == state.screen:
+        return TuiRow("filter", f"Filter: {text}_")
+    if text:
+        return TuiRow("filter", f"Filter: {text}")
+    return TuiRow("filter", "Filter (/ to type)", style="dim")
+
+
+def _system_titles(state: TuiState) -> dict:
+    titles = (state.manifest or {}).get("system_titles")
+    return titles if isinstance(titles, dict) else {}
+
+
+def _sorted_systems(state: TuiState) -> list[dict]:
+    """Systems with something to download first, the ones in place last, each
+    group in the order of the names a person reads."""
+    titles = _system_titles(state)
+    return sorted(state.systems, key=lambda row: (
+        _needed(row) == 0, _tui_system_label(row, titles).casefold()))
+
+
+# Region names as a person writes them, where title case alone is wrong.
+_REGION_TITLES = {"asia-ntsc": "Asia (NTSC)", "asia-pal": "Asia (PAL)",
+                  "uk": "United Kingdom", WORLD_REGION: "World"}
+
+
+def region_title(name: str) -> str:
+    """north-america as North America, asia-ntsc as Asia (NTSC)."""
+    return _REGION_TITLES.get(name) or " ".join(
+        word.capitalize() for word in name.split("-"))
+
+
+def tui_choices(state: TuiState) -> dict[str, list[str]]:
+    """What the file list lets one narrow to, read from the list itself."""
+    manifest = state.manifest or {}
+    return available_choices(manifest.get("files", []), manifest.get("omitted_files", []))
+
+
+def tui_rows(state: TuiState) -> list[TuiRow]:
+    """The rows of the current screen, in the order they are shown."""
+    screen = state.screen
+    if screen == "setup":
+        # The focused one's folder is spelled out below the list.
+        rows = [TuiRow("setup", label, value=index)
+                for index, (_plat, _path, label) in enumerate(state.setups)]
+        return rows + [TuiRow("another", "Another setup or folder")]
+    if screen == "platforms":
+        needle = state.filters.get(screen, "")
+        systems = _systems_reading()
+        return [_filter_row(state)] + [
+            TuiRow("platform", display_name(plat), ", ".join(systems.get(plat, [])), plat)
+            for plat in AVAILABLE_PLATFORMS
+            if _matches(" ".join([plat, display_name(plat), *systems.get(plat, [])]), needle)
+        ]
+    if screen == "folder":
+        rows = [TuiRow("default", "Use this folder")] if state.folder_default else []
+        return rows + [TuiRow("browse", "Browse for a folder"), TuiRow("type", "Type a path")]
+    if screen == "browse":
+        return list(state.browse_rows)
+    if screen == "create":
+        label = "Create the whole path" if state.facts.get("risky") else "Create it and continue"
+        return [TuiRow("create", label), TuiRow("other", "Choose another folder")]
+    if screen == "cardroot":
+        return [TuiRow("cardroot", "Use the card root"), TuiRow("other", "Choose another folder")]
+    if screen == "plan":
+        return _plan_rows(state)
+    if screen == "systems":
+        return _system_rows(state)
+    if screen == "options":
+        return _option_rows(state)
+    if screen == "regions":
+        ranked = [TuiRow("region", f"[{rank}] {region_title(name)}", value=name)
+                  for rank, name in enumerate(state.regions, 1)]
+        known = sorted(set(tui_choices(state)["regions"]) | set(state.cli_regions),
+                       key=region_title)
+        return ranked + [TuiRow("region", f"[ ] {region_title(name)}", value=name)
+                         for name in known if name not in state.regions]
+    if screen == "cores":
+        needle = state.filters.get(screen, "")
+        return [_filter_row(state)] + [
+            TuiRow("core", f"[{'x' if name in state.cores else ' '}] {name}", value=name)
+            for name in tui_choices(state)["cores"] if _matches(name, needle)
+        ]
+    if screen == "confirm":
+        if state.running or state.dry is None:
+            return []
+        return [TuiRow("install", "Install"), TuiRow("back", "Back")]
+    if screen == "error":
+        rows = ([TuiRow("retry", "Try again")]
+                if state.run == "check" and state.error_title else [])
+        return rows + [TuiRow("back", "Choose another setup or folder" if state.run == "check"
+                              else "Back"),
+                       TuiRow("quit", "Quit")]
+    if screen == "quit":
+        return [TuiRow("quit", "Quit"), TuiRow("stay", "Stay")]
+    return []
+
+
+def _plan_rows(state: TuiState) -> list[TuiRow]:
+    check = state.check or {}
+    if not (_needed(check) if check else 0) and not check.get("data_missing"):
+        return [TuiRow("close", "Close"), TuiRow("options", "Options")]
+    size = check.get("bytes_needed", 0)
+    label = f"Install {format_size(size)}" if size >= CONFIRM_FROM_BYTES else "Install"
+    rows = [TuiRow("install", label)]
+    if state.facts.get("writable") is False:
+        # Every file would fail alike: the way out is another folder.
+        rows = [TuiRow("folder", "Choose another folder"), TuiRow("install", "Install anyway")]
+    if records_selection((state.manifest or {}).get("files", [])) and len(state.systems) > 1:
+        rows.append(TuiRow("systems", "Choose systems"))
+    return rows + [TuiRow("options", "Options"), TuiRow("quit", "Quit")]
+
+
+def _system_rows(state: TuiState) -> list[TuiRow]:
+    needle = state.filters.get("systems", "")
+    titles = _system_titles(state)
+    rows = [TuiRow("all", "All"), TuiRow("none", "None"), _filter_row(state)]
+    for row in _sorted_systems(state):
+        label = _tui_system_label(row, titles)
+        if not _matches(f"{label} {row['system']}", needle):
+            continue
+        box = "[x]" if row["system"] in state.ticked else "[ ]"
+        need = _needed(row)
+        right = (f"{_plural(need, 'file')}, {format_size(row['bytes_needed'])}"
+                 if need else "in place")
+        rows.append(TuiRow("system", f"{box} {label}", right, row["system"],
+                           "" if need else "dim"))
+    return rows
+
+
+def _cores_dir_given(state: TuiState) -> bool:
+    return any(flag == "--cores-dir" for flag, _value in state.passthrough)
+
+
+def _yes(value: bool) -> str:
+    return "yes" if value else "no"
+
+
+def _option_rows(state: TuiState) -> list[TuiRow]:
+    manifest = state.manifest or {}
+    choices = tui_choices(state)
+    rows = []
+    if choices["regions"]:
+        rows.append(TuiRow("regions", "Preferred regions: "
+                           + (", ".join(map(region_title, state.regions)) or "any"),
+                           "--region"))
+    if manifest.get("categorized"):
+        rows.append(TuiRow("game_data", f"Leave out game data: {_yes(state.no_game_data)}",
+                           "--no-game-data"))
+    found = len(state.facts.get("cores", []))
+    if _cores_dir_given(state):
+        rows.append(TuiRow("installed", "Installed cores only: yes, implied by --cores-dir",
+                           "--cores-dir"))
+    elif state.platform in CORE_PLATFORMS and "system_cores" in manifest and found:
+        rows.append(TuiRow("installed", f"Installed cores only: "
+                           f"{_yes(state.installed_only)} ({found} found)",
+                           "--installed-cores"))
+    if choices["cores"]:
+        chosen = f"{len(state.cores)} chosen" if state.cores else "all"
+        rows.append(TuiRow("cores", f"Cores: {chosen}", "--core"))
+    rows += [
+        TuiRow("jobs", f"Parallel downloads: {state.jobs}", "--jobs"),
+        TuiRow("folder", f"BIOS folder: {_short_path(state.dest, state.home)}", "--dest",
+               style="path"),
+        TuiRow("preview", "Preview the file list", "--dry-run"),
+        TuiRow("command", "Show the command line"),
+    ]
+    return rows
+
+
+def _push(state: TuiState, screen: str, focus: int = 0) -> list[tuple]:
+    state.stack.append(screen)
+    state.focus[screen] = focus
+    return []
+
+
+def _replace(state: TuiState, screen: str) -> None:
+    state.stack[-1] = screen
+    state.focus[screen] = 0
+
+
+def _back(state: TuiState) -> list[tuple]:
+    effects = [("kill",)] if state.running else []
+    if state.running:
+        # What the stopped run still reports belongs to no screen.
+        state.running = False
+        state.run_id += 1
+    if len(state.stack) == 1:
+        state.stack.append("quit")
+        state.focus["quit"] = 0
+        return effects
+    state.stack.pop()
+    if state.screen == "checking" and not state.running:
+        # Stay after Esc on a check started from the command line: a
+        # Checking screen nothing feeds counted seconds forever.
+        return effects + _start_check(state)
+    if state.screen == "plan" and _counts_predate_options(state):
+        # The plan's numbers were read under the options before: they are
+        # read again, the systems ticked kept.
+        needed = {row["system"] for row in state.systems if _needed(row)}
+        state.keep_ticked = None if needed <= state.ticked else set(state.ticked)
+        return effects + _start_check(state)
+    return effects
+
+
+def tui_quit(state: TuiState, code: int = 130) -> list[tuple]:
+    """Leave now: with the install's own code once it ran, else 130."""
+    if state.screen == "result":
+        code = state.code if state.code is not None else 1
+    elif state.screen == "error":
+        code = state.error_code
+    state.exit_code = code
+    return [("kill",)] if state.running else []
+
+
+def tui_interrupt(state: TuiState) -> list[tuple]:
+    """Ctrl-C: an install stops and says what it did, anything else ends."""
+    if state.run == "install" and state.running:
+        if state.stopping:
+            return [("kill",)]
+        state.stopping = True
+        return [("stop",)]
+    return tui_quit(state)
+
+
+def _start_run(state: TuiState, run: str) -> list[tuple]:
+    state.run = run
+    state.running = True
+    state.run_id += 1
+    state.started = state.now
+    if run == "check":
+        # The systems of an earlier check go first: ticks read against them
+        # dropped the --system the command line gave.
+        state.check, state.files, state.systems, state.reading = None, [], [], None
+        state.checked_flags = tui_flags(state)
+    elif run in ("confirm", "preview"):
+        state.dry, state.dry_files, state.dry_summary = None, [], None
+    else:
+        state.download = state.progress = state.reading = None
+        state.samples = []
+        state.finished, state.summary, state.code, state.stopping = [], None, None, False
+    return [("run", run)]
+
+
+def _start_check(state: TuiState) -> list[tuple]:
+    """Check the chosen folder, after fetching the file list once."""
+    if "plan" in state.stack:
+        del state.stack[state.stack.index("plan"):]
+    while state.stack and state.stack[-1] in ("checking", "error", "create"):
+        state.stack.pop()
+    state.stack.append("checking")
+    state.facts, state.ticked = {}, set()
+    if state.manifest is not None and state.manifest_for == state.platform:
+        return _start_run(state, "check")
+    state.manifest = None
+    state.run, state.run_id = "check", state.run_id + 1
+    state.started = state.now
+    return [("fetch", state.platform)]
+
+
+def _choose(state: TuiState, plat: str, dest: Path) -> list[tuple]:
+    state.platform, state.dest = plat, dest
+    if plat in CARD_PLATFORMS and card_platform(dest) is None:
+        # The engine refuses a folder inside the card, the list writing
+        # Bios/<TAG>/ below the root: the root is offered instead.
+        for parent in list(dest.absolute().parents)[:2]:
+            holder = card_platform(parent)
+            if holder:
+                state.facts = {"card_root": parent, "card": holder}
+                return _push(state, "cardroot")
+    if not dest.exists():
+        nearest = _nearest_folder(dest)
+        missing = len(dest.absolute().parts) - len(nearest.parts)
+        state.facts = {"nearest": nearest, "risky": nearest.parent == nearest or missing > 2}
+        # A path whose start was mistyped would be created from the root:
+        # the safe answer is the one under A.
+        return _push(state, "create", 1 if state.facts["risky"] else 0)
+    return _start_check(state)
+
+
+def _open_folder_screen(state: TuiState, default: Path | None) -> list[tuple]:
+    state.folder_default = default
+    return _push(state, "folder")
+
+
+def _mounted_cards() -> list[Path]:
+    """Mount points of removable media, where a card or a share appears.
+
+    A handheld's card is most often prepared on a PC with a card reader: on
+    Windows every drive but the system one may be that card.
+    """
+    if os.name == "nt":
+        system = os.environ.get("SystemDrive", "C:").upper()
+        return [Path(f"{letter}:\\") for letter in "DEFGHIJKLMNOPQRSTUVWXYZ"
+                if f"{letter}:" != system and os.path.exists(f"{letter}:\\")]
+    found: list[Path] = []
+    for root in (Path("/media"), Path("/run/media"), Path("/mnt"), Path("/Volumes")):
+        try:
+            children = sorted(root.iterdir())
+        except OSError:
+            continue
+        for child in children:
+            # WSL's own mounts, and the Windows system drive, hold no card.
+            if child.name in ("wsl", "wslg") or (root.name == "mnt" and child.name == "c"):
+                continue
+            if os.path.ismount(child):
+                found.append(child)
+            elif root.name in ("media", "run") or root == Path("/run/media"):
+                # /media/<user>/<label> and /run/media/<user>/<label>.
+                try:
+                    found += [g for g in sorted(child.iterdir()) if os.path.ismount(g)]
+                except OSError:
+                    continue
+    return found
+
+
+def _browse_rows(folder: Path | None) -> tuple[list[TuiRow], str]:
+    """A directory's rows for the browser, cards first, and what went wrong."""
+    if folder is None:
+        drives = [Path(f"{letter}:\\") for letter in "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                  if os.path.exists(f"{letter}:\\")]
+        return [TuiRow("dir", str(drive), value=drive) for drive in drives], ""
+    rows = [TuiRow("use", "Use this folder"), TuiRow("up", "..", value=folder.parent)]
+    for card in _mounted_cards():
+        if card != folder:
+            plat = card_platform(card)
+            what = f"{display_name(plat)} card" if plat else "card or drive"
+            rows.append(TuiRow("dir", f"{card} ({what})", value=card))
+    try:
+        entries = [entry for entry in os.scandir(folder) if entry.is_dir()]
+    except OSError as exc:
+        return rows, f"Cannot open this folder: {exc.strerror or exc}"
+    entries.sort(key=lambda entry: (entry.name.startswith("."), entry.name.casefold()))
+    rows += [TuiRow("dir", f"{entry.name}/", value=Path(entry.path)) for entry in entries]
+    return rows, ""
+
+
+def _browse_to(state: TuiState, folder: Path | None, came_from: Path | None = None) -> None:
+    state.browse_dir = folder
+    state.browse_rows, state.status = _browse_rows(folder)
+    focus = 0
+    for index, row in enumerate(state.browse_rows):
+        if came_from is not None and row.action == "dir" and row.value == came_from:
+            focus = index
+    state.focus["browse"] = focus
+
+
+def _nearest_folder(path: Path) -> Path:
+    probe = path.absolute()
+    while not probe.is_dir() and probe.parent != probe:
+        probe = probe.parent
+    return probe
+
+
+def typed_path(text: str) -> Path | None:
+    """A folder typed or pasted: quotes off, ~ and variables expanded."""
+    # Explorer's "Copy as path" quotes both ends, a half-selected copy one.
+    text = text.strip().strip("\"'").strip()
+    if not text:
+        return None
+    return Path(os.path.expanduser(os.path.expandvars(text)))
+
+
+def _tui_folder_facts(state: TuiState) -> dict:
+    """Free space, whether the folder takes files, and the cores found."""
+    probe = _nearest_folder(state.dest)
+    try:
+        free: int | None = shutil.disk_usage(probe).free
+    except OSError:
+        free = None
+    cores = (installed_cores(core_dirs(state.platform, state.dest))
+             if state.platform in CORE_PLATFORMS else [])
+    return {"free": free, "writable": _folder_writable(state.dest), "cores": cores}
+
+
+def _activate(state: TuiState, row: TuiRow) -> list[tuple]:
+    screen, action = state.screen, row.action
+    if action == "filter":
+        state.editing = screen
+        return []
+    if screen == "setup":
+        if action == "another":
+            return _push(state, "platforms", _platform_focus(state, "retroarch"))
+        plat, path, _label = state.setups[row.value]
+        return _choose(state, plat, path)
+    if screen == "platforms":
+        if state.dest_given is not None:
+            return _choose(state, row.value, state.dest_given)
+        state.platform = row.value
+        default = None if row.value in CARD_PLATFORMS else _default_dest(state.os_type, row.value)
+        return _open_folder_screen(state, default)
+    if screen == "folder":
+        if action == "default":
+            return _choose(state, state.platform, state.folder_default)
+        if action == "browse":
+            _push(state, "browse")
+            _browse_to(state, _nearest_folder(state.folder_default or state.home))
+            return []
+        state.path_text = str(state.folder_default or "")
+        state.path_selected = bool(state.path_text)
+        return _push(state, "path")
+    if screen == "browse":
+        if action == "use":
+            return _choose(state, state.platform, state.browse_dir)
+        if action == "up" and state.browse_dir is not None:
+            if row.value == state.browse_dir:
+                _browse_to(state, None if os.name == "nt" else state.browse_dir)
+            else:
+                _browse_to(state, row.value, came_from=state.browse_dir)
+            return []
+        _browse_to(state, row.value)
+        return []
+    if screen == "create":
+        if action == "create":
+            state.stack.pop()
+            return _start_check(state)
+        return _back(state)
+    if screen == "cardroot":
+        if action == "cardroot":
+            state.stack.pop()
+            return _choose(state, state.platform, state.facts["card_root"])
+        return _back(state)
+    if screen == "plan":
+        if action == "install":
+            return _begin_install(state)
+        if action == "close":
+            state.exit_code = 0
+            return []
+        if action == "quit":
+            return tui_quit(state)
+        if action == "folder":
+            return _open_folder_screen(state, state.dest)
+        # On the first system, so A continues and the D-pad ticks.
+        return _push(state, action, 3 if action == "systems" else 0)
+    if screen == "systems":
+        if action == "all":
+            state.ticked = {row["system"] for row in state.systems}
+        elif action == "none":
+            state.ticked = set()
+        else:
+            return _begin_install(state)
+        return []
+    if screen == "options":
+        return _option(state, action, 0)
+    if screen == "regions":
+        _toggle_region(state, row.value)
+        return []
+    if screen == "cores":
+        return _back(state)
+    if screen == "confirm":
+        if action == "install":
+            state.stack.pop()
+            return _install_now(state)
+        return _back(state)
+    if screen == "error":
+        if action == "retry":
+            return _start_check(state)
+        if action == "quit":
+            return tui_quit(state, state.error_code)
+        return _back(state)
+    if screen == "quit":
+        if action == "quit":
+            return tui_quit(state)
+        return _back(state)
+    return []
+
+
+def _systems_reading() -> dict[str, list[str]]:
+    """The device systems that get each platform's files, as detection knows
+    them: someone on muOS or ArkOS looks for that name, not RetroArch."""
+    names: dict[str, list[str]] = {}
+    for rule in _EMBEDDED_RULES:
+        if (rule.manifest and rule.name != display_name(rule.manifest)
+                and rule.name not in names.setdefault(rule.manifest, [])):
+            names[rule.manifest].append(rule.name)
+    return names
+
+
+def _platform_focus(state: TuiState, plat: str) -> int:
+    """The platform list's row for plat, below its filter row."""
+    return 1 + AVAILABLE_PLATFORMS.index(plat) if plat in AVAILABLE_PLATFORMS else 1
+
+
+def _option(state: TuiState, action: str, step: int) -> list[tuple]:
+    """A row of the options: step 0 is Enter, -1 and 1 are Left and Right."""
+    if action == "game_data":
+        state.no_game_data = step > 0 if step else not state.no_game_data
+    elif action == "installed" and not _cores_dir_given(state):
+        state.installed_only = step > 0 if step else not state.installed_only
+    elif action == "jobs":
+        state.jobs = max(1, min(32, state.jobs + (step or 1)))
+    elif action == "cores":
+        # On the first core: the filter row under A opened a field a
+        # controller cannot type into.
+        return _push(state, action, 1 if tui_choices(state)["cores"] else 0)
+    elif action in ("regions", "command"):
+        return _push(state, action)
+    elif action == "folder":
+        return _open_folder_screen(state, state.dest)
+    elif action == "preview":
+        _push(state, "preview")
+        return _start_run(state, "preview")
+    return []
+
+
+def _toggle_region(state: TuiState, name: str) -> None:
+    if name in state.regions:
+        state.regions.remove(name)
+    else:
+        state.regions.append(name)
+    rows = tui_rows(state)
+    state.focus["regions"] = next((i for i, row in enumerate(rows) if row.value == name), 0)
+
+
+def _move_region(state: TuiState, name: str, step: int) -> None:
+    if name not in state.regions:
+        return
+    index = state.regions.index(name)
+    target = max(0, min(len(state.regions) - 1, index + step))
+    state.regions.insert(target, state.regions.pop(index))
+    state.focus["regions"] = target
+
+
+def _begin_install(state: TuiState) -> list[tuple]:
+    if state.systems and not state.ticked:
+        state.status = "No system is ticked: tick one, or choose All."
+        return []
+    if tui_flags(state) != state.checked_flags:
+        _push(state, "confirm")
+        return _start_run(state, "confirm")
+    return _install_now(state)
+
+
+def _install_now(state: TuiState) -> list[tuple]:
+    _push(state, "installing")
+    return _start_run(state, "install")
+
+
+def _same_plan(one: dict | None, other: dict | None) -> bool:
+    keys = ("missing", "wrong_hash", "bytes_needed", "data_missing")
+    return bool(one and other) and all(one[k] == other[k] for k in keys)
+
+
+def _fail(state: TuiState, lines: list[str], code: int) -> list[tuple]:
+    state.error_title = ""
+    state.error = [line for line in lines if line.strip()] or [
+        f"The installer stopped with code {code} and said nothing."]
+    state.error_code = code or 1
+    state.running = False
+    _replace(state, "error")
+    return []
+
+
+def _tick(state: TuiState, row: TuiRow, on: bool | None) -> None:
+    if state.screen == "systems" and row.action == "system":
+        chosen = state.ticked
+    elif state.screen == "cores" and row.action == "core":
+        chosen = set(state.cores)
+    else:
+        return
+    value = row.value
+    want = (value not in chosen) if on is None else on
+    if state.screen == "systems":
+        if want:
+            state.ticked.add(value)
+        else:
+            state.ticked.discard(value)
+    elif want and value not in state.cores:
+        state.cores.append(value)
+    elif not want and value in state.cores:
+        state.cores.remove(value)
+
+
+def _edit_text(text: str, key: TuiKey, selected: bool = False) -> str | None:
+    """The field after a key, None when the key is not an edit. A selected
+    text is replaced by what is typed or pasted, and cleared by Backspace."""
+    if key.name in ("char", "paste"):
+        return key.text if selected else text + key.text
+    if key.name in ("backspace", "delete"):
+        return "" if selected else text[:-1]
+    if key.name == "ctrl-u":
+        return ""
+    return None
+
+
+def _filter_key(state: TuiState, key: TuiKey) -> list[tuple]:
+    """Typing in a list's filter. It never ticks or unticks anything, and
+    focus never lands on All or None: the next A or X there undid a choice."""
+    screen = state.screen
+    edited = _edit_text(state.filters.get(screen, ""), key)
+    rows = tui_rows(state)
+    filter_row = next((i for i, row in enumerate(rows) if row.action == "filter"), 0)
+    if edited is not None:
+        state.filters[screen] = edited
+        state.focus[screen] = filter_row
+        return []
+    if key.name == "esc":
+        state.filters[screen] = ""
+    state.editing = ""
+    rows = tui_rows(state)
+    if key.name in ("enter", "down") and len(rows) > filter_row + 1:
+        state.focus[screen] = filter_row + 1
+    else:
+        state.focus[screen] = filter_row
+    return []
+
+
+def _path_key(state: TuiState, key: TuiKey) -> list[tuple]:
+    edited = _edit_text(state.path_text, key, state.path_selected)
+    if edited is not None:
+        state.path_text, state.path_selected = edited, False
+        return []
+    if key.name == "esc":
+        return _back(state)
+    if key.name == "enter":
+        path = typed_path(state.path_text)
+        if path is None:
+            state.status = "Type a folder first."
+            return []
+        state.stack.pop()
+        return _choose(state, state.platform, path)
+    return []
+
+
+def _pager_key(state: TuiState, key: TuiKey) -> list[tuple]:
+    screen = state.screen
+    top = state.focus.get(screen, 0)
+    page = max(1, state.rows - 5)
+    name, char = key.name, key.text if key.name == "char" else ""
+    if name == "up" or char == "k":
+        top -= 1
+    elif name == "down" or char == "j":
+        top += 1
+    elif name == "pgup":
+        top -= page
+    elif name == "pgdn":
+        top += page
+    elif name == "home" or char == "g":
+        top = 0
+    elif name == "end" or char == "G":
+        top = 1 << 30
+    elif name in ("enter", "esc", "backspace") or char == " ":
+        if screen == "result":
+            return tui_quit(state)
+        return _back(state)
+    state.focus[screen] = max(0, min(top, _pager_last(state, _pager_items(state))))
+    return []
+
+
+def _pager_last(state: TuiState, items: list) -> int:
+    """The first item shown when the end of a pager is in view, found from
+    the end: only the last screenful is wrapped."""
+    width = min(state.cols, TUI_MAX_WIDTH) - 2
+    room = max(1, state.rows - 4)
+    used, index = 0, len(items)
+    while index > 0:
+        size = len(_text_lines([items[index - 1]], width))
+        if used + size > room:
+            break
+        used += size
+        index -= 1
+    return index
+
+
+def tui_update(state: TuiState, key: TuiKey) -> list[tuple]:
+    """What a key does on the current screen, and the work it starts."""
+    if key.name in ("ctrl-c", "ctrl-d"):
+        return tui_interrupt(state)
+    if state.cols < TUI_MIN_COLS or state.rows < TUI_MIN_ROWS:
+        return []
+    if state.help:
+        state.help = False
+        return []
+    state.status = ""
+    screen = state.screen
+    if screen == "path":
+        return _path_key(state, key)
+    if state.editing:
+        return _filter_key(state, key)
+    char = key.text if key.name == "char" else ""
+    if key.name == "f1" or char == "?":
+        state.help = True
+        return []
+    if screen == "checking":
+        if char == "q":
+            return tui_quit(state)
+        return _back(state) if key.name in ("esc", "backspace") else []
+    if screen == "installing":
+        # B, Esc and q are the stops a controller or a plain keyboard has.
+        if key.name in ("esc", "backspace") or char == "q":
+            return tui_interrupt(state)
+        return []
+    if char == "q":
+        return tui_quit(state)
+    if screen in _PAGERS:
+        return _pager_key(state, key)
+    rows = tui_rows(state)
+    if not rows:
+        return _back(state) if key.name in ("esc", "backspace") else []
+    focus = max(0, min(state.focus.get(screen, 0), len(rows) - 1))
+    row = rows[focus]
+    last = len(rows) - 1
+    page = max(1, state.rows - 6)
+    wrap = len(rows) < 10
+    name = key.name
+    if name == "up" or char == "k":
+        focus = last if wrap and focus == 0 else max(0, focus - 1)
+    elif name == "down" or char == "j":
+        focus = 0 if wrap and focus == last else min(last, focus + 1)
+    elif name == "pgup":
+        focus = max(0, focus - page)
+    elif name == "pgdn":
+        focus = min(last, focus + page)
+    elif name == "home" or char == "g":
+        focus = 0
+    elif name == "end" or char == "G":
+        focus = last
+    elif name in ("esc", "backspace") and state.filters.get(screen):
+        # The filter goes first, the screen with the second press, and the
+        # row in focus stays in focus.
+        state.filters[screen] = ""
+        rows = tui_rows(state)
+        focus = next((i for i, item in enumerate(rows)
+                      if item.action == row.action and item.value == row.value), focus)
+    elif name in ("esc", "backspace"):
+        return _back(state)
+    elif (name == "tab" or char == "o") and screen in ("plan", "systems", "confirm"):
+        return _push(state, "options")
+    elif char == "/" and any(item.action == "filter" for item in rows):
+        state.editing = screen
+        return []
+    elif screen == "regions" and (name == "enter" or char == " "):
+        return _activate(state, row)
+    elif screen == "regions" and name in ("left", "shift-up"):
+        _move_region(state, row.value, -1)
+        return []
+    elif screen == "regions" and name in ("right", "shift-down"):
+        _move_region(state, row.value, 1)
+        return []
+    elif screen in _CHECKLISTS and row.action in ("system", "core") and (
+            char == " " or name in ("right", "left")):
+        _tick(state, row, None if char == " " else name == "right")
+        return []
+    elif screen in _CHECKLISTS and char == " ":
+        # X on All, None or the filter: only A, an explicit choice, acts there.
+        return []
+    elif screen == "systems" and char in ("a", "n"):
+        return _activate(state, rows[0 if char == "a" else 1])
+    elif screen == "options" and name in ("left", "right"):
+        return _option(state, row.action, 1 if name == "right" else -1) \
+            if row.action in ("game_data", "installed", "jobs") else []
+    elif name == "enter" or char == " ":
+        return _activate(state, row)
+    state.focus[screen] = focus
+    return []
+
+
+def _take_event(state: TuiState, event: dict) -> None:
+    kind = event.get("event")
+    if kind == "checking" and state.run in ("check", "install"):
+        state.reading = (event["files_done"], event["files_total"])
+    elif state.run == "check":
+        if kind == "check":
+            state.check = event
+        elif kind == "file" and event.get("state") != "present":
+            state.files.append(event)
+        elif kind == "system":
+            state.systems.append(event)
+    elif state.run in ("confirm", "preview"):
+        if kind == "check":
+            state.dry = event
+        elif kind == "file" and event.get("state") != "present":
+            state.dry_files.append(event)
+        elif kind == "summary":
+            state.dry_summary = event
+    elif state.run == "install":
+        if kind == "download":
+            state.download = event
+        elif kind in ("progress", "downloaded"):
+            state.progress = event
+            state.samples = [sample for sample in state.samples
+                             if sample[0] >= state.now - 10] + [
+                (state.now, event["bytes_done"])]
+            if kind == "downloaded":
+                state.finished.append((event["dest"], event["ok"], event["reason"]))
+        elif kind == "summary":
+            state.summary = event
+
+
+def tui_receive(state: TuiState, message: tuple) -> list[tuple]:
+    """What the file list fetch and the child runs report back."""
+    kind = message[0]
+    if kind == "manifest":
+        _kind, plat, manifest = message
+        if plat != state.platform or state.screen != "checking":
+            return []
+        state.manifest, state.manifest_for = manifest, plat
+        return _start_run(state, "check")
+    if kind == "manifest_failed":
+        _kind, plat, title, lines, code = message
+        if plat != state.platform or state.screen != "checking":
+            return []
+        _fail(state, lines, code)
+        state.error_title = title
+        return []
+    _kind, run_id, *rest = message
+    if run_id != state.run_id:
+        return []
+    if kind == "event":
+        _take_event(state, rest[0])
+        return []
+    code, tail = rest
+    state.running = False
+    state.tail = [line for line in tail if not line.startswith("RetroBIOS ")]
+    tail = state.tail
+    if state.run == "check":
+        if state.check is None:
+            return _fail(state, tail, code)
+        state.ticked = {row["system"] for row in state.systems if _needed(row)}
+        if state.keep_ticked is not None:
+            state.ticked = state.keep_ticked & {row["system"] for row in state.systems}
+            state.keep_ticked = None
+        state.facts = _tui_folder_facts(state)
+        _replace(state, "plan")
+    elif state.run == "confirm" and state.screen == "confirm":
+        if state.dry is None:
+            return _fail(state, tail, code)
+        if _same_plan(state.check, state.dry):
+            state.stack.pop()
+            return _install_now(state)
+    elif state.run == "install":
+        state.code = 130 if state.stopping and code < 0 else code if code >= 0 else 128 - code
+        _replace(state, "result")
+    return []
+
+
+# Shorter key names for a narrow bar: at 40 columns "X/Space Tick" was cut,
+# and nothing said how to tick with a controller.
+_SHORT_KEYS = (("A/Enter ", "A "), ("B/Esc ", "B "), ("X/Space ", "X "), ("Y/o ", "Y "),
+               ("Left/Right ", "<> "), ("Up/Down ", "^v "))
+
+
+def _hint(width: int, *parts: str) -> str:
+    """The keys that matter now, short names first given up, then whole
+    entries from the right."""
+    full = "  ".join(parts)
+    if cell_width(full) <= width:
+        return full
+    short = []
+    for part in parts:
+        for long_name, short_name in _SHORT_KEYS:
+            if part.startswith(long_name):
+                part = short_name + part[len(long_name):]
+        short.append(part)
+    text = ""
+    for part in short:
+        longer = f"{text}  {part}" if text else part
+        if cell_width(longer) > width:
+            break
+        text = longer
+    return text or fit(short[0], width)
+
+
+# What A does on each kind of row: the bar names it for the row in focus.
+_ROW_VERBS = {
+    "install": "Install", "close": "Close", "quit": "Quit", "systems": "Open",
+    "options": "Open", "setup": "Continue", "another": "Open", "platform": "Choose",
+    "default": "Use this folder", "browse": "Browse", "type": "Type a path",
+    "use": "Use this folder", "up": "Go up", "dir": "Open", "create": "Create",
+    "other": "Choose another", "cardroot": "Use the root", "all": "Tick all",
+    "none": "Untick all", "filter": "Filter", "system": "Continue", "core": "Done",
+    "region": "Tick", "regions": "Open", "cores": "Open", "command": "Open",
+    "preview": "Open", "folder": "Choose", "game_data": "Change", "installed": "Change",
+    "jobs": "Change", "retry": "Try again", "back": "Back", "stay": "Stay",
+}
+
+
+def _row_line(row: TuiRow, focused: bool, width: int) -> TuiLine:
+    right = middle(row.right, max(12, width // 2)) if row.right else ""
+    text = _columns(("> " if focused else "  ") + row.label, right, width)
+    return _styled(text, "focus" if focused else row.style)
+
+
+def _text_lines(items: list, width: int) -> list[TuiLine]:
+    lines: list[TuiLine] = []
+    for item in items:
+        style = getattr(item, "style", "")
+        for piece in _wrap(str(item), width):
+            lines.append(_styled(fit(piece, width), style))
+    return lines
+
+
+def _scrolled(lines: list[TuiLine], first: int, height: int, lead: int = 0) -> list[TuiLine]:
+    """height lines of a longer list from first, the last one saying where.
+    The lead rows (All, None, Filter) are not counted among the entries."""
+    if len(lines) <= height:
+        return lines
+    shown = max(1, height - 1)
+    first = max(0, min(first, len(lines) - shown))
+    end = first + shown
+    count = len(lines) - lead
+    where = f"{max(1, first + 1 - lead)}-{max(1, end - lead)} of {count}"
+    return lines[first:end] + [_styled(where, "dim")]
+
+
+def _compose(
+    state: TuiState, width: int, height: int, before: list, rows: list[TuiRow],
+    after: list = (), footer: list = (),
+) -> list[TuiLine]:
+    """Text, then the rows, then more text, in height lines. The rows are
+    always shown, scrolled around the focus when they do not fit."""
+    footer_lines = _text_lines(list(footer), width)
+    room = max(1, height - len(footer_lines))
+    focus = max(0, min(state.focus.get(state.screen, 0), len(rows) - 1)) if rows else 0
+    row_lines = [_row_line(row, index == focus, width) for index, row in enumerate(rows)]
+    if len(row_lines) >= room:
+        first = focus - (room - 1) // 2
+        lead = next((i for i, row in enumerate(rows)
+                     if row.action not in ("all", "none", "filter")), 0)
+        body = _scrolled(row_lines, first, room, lead)
+    else:
+        budget = room - len(row_lines)
+        top: list[TuiLine] = []
+        for item in before:
+            lines = _text_lines([item], width)
+            if len(top) + len(lines) > budget:
+                break
+            top += lines
+        budget -= len(top)
+        gap = [_styled("")] if top and row_lines and budget > 0 else []
+        budget -= len(gap)
+        tail = _text_lines(list(after), width)
+        bottom = ([_styled("")] + tail)[:budget] if tail and budget > 1 else []
+        body = top + gap + row_lines + bottom
+    body += [_styled("")] * (room - len(body))
+    return body + footer_lines
+
+
+def _pager(state: TuiState, width: int, height: int, items: list) -> list[TuiLine]:
+    """The items in view, from the first shown on, each wrapped alone: the
+    8,000 lines of a full preview were wrapped again at every key."""
+    first = max(0, min(state.focus.get(state.screen, 0), _pager_last(state, items)))
+    if len(items) <= height and first == 0:
+        lines = _text_lines(items, width)
+        if len(lines) <= height:
+            return lines
+    room = max(1, height - 1)
+    lines: list[TuiLine] = []
+    index = first
+    while index < len(items) and len(lines) < room:
+        lines += _text_lines([items[index]], width)
+        index += 1
+    whole = index if len(lines) <= room else index - 1
+    lines = lines[:room]
+    return lines + [_styled(f"{first + 1}-{max(first + 1, whole)} of {len(items)}", "dim")]
+
+
+def _plan_lines(check: dict, dest: Path | None, state: TuiState) -> list:
+    need = _needed(check)
+    data = check.get("data_missing", 0)
+    if need:
+        headline = (f"{_plural(need, 'file')} to download, "
+                    f"{format_size(check['bytes_needed'])}")
+        if data:
+            headline += f", and {_plural(data, 'data file')}"
+    elif data:
+        headline = f"{_plural(data, 'data file')} to fetch"
+    else:
+        headline = "Everything is in place"
+    wrong = check["wrong_hash"]
+    lines: list = [
+        _styled(headline, "title"),
+        f"{check['present']} in place, {check['missing']} missing, "
+        f"{wrong} wrong {'copy' if wrong == 1 else 'copies'}",
+        f"BIOS folder: {_short_path(dest, state.home)}",
+    ]
+    free = state.facts.get("free")
+    if free is not None:
+        lines.append(f"Free space: {format_size(free)}")
+        if check["bytes_needed"] > free:
+            lines.append("Not enough free space for this download: free some, or "
+                         "choose another folder in Options.")
+    if wrong:
+        lines.append("They are replaced, and the old copies are kept in a backup folder.")
+    if state.facts.get("writable") is False:
+        lines.insert(1, "You cannot write to this folder: choose another one, or run "
+                     + ("the installer as an administrator." if state.os_type == "windows"
+                        else "the installer with sudo."))
+    if check.get("not_installable"):
+        lines.append(f"{_plural(check['not_installable'], 'file')} of the list "
+                     f"{'is' if check['not_installable'] == 1 else 'are'} not in "
+                     "the collection.")
+    return lines
+
+
+def _view_setup(state: TuiState, width: int, height: int) -> tuple:
+    rows = tui_rows(state)
+    focus = rows[min(state.focus.get("setup", 0), len(rows) - 1)]
+    after = ([f"BIOS folder: {state.setups[focus.value][1]}"]
+             if focus.action == "setup" else [])
+    before = ["Found on this machine:" if state.setups else "Nothing was found here."]
+    return ("Where do you play?",
+            _compose(state, width, height, before, rows, after + state.notes),
+            ("A/Enter Continue", "B/Esc Quit", "? Help"))
+
+
+def _view_platforms(state: TuiState, width: int, height: int) -> tuple:
+    rows = tui_rows(state)
+    if state.dest_given is not None:
+        title = "Whose files go there?"
+        before = [f"Choose the setup that reads {_short_path(state.dest_given, state.home)}."]
+    else:
+        title = "Which setup?"
+        before = ["Choose the setup that will use the BIOS files."]
+    needle = state.filters.get("platforms", "")
+    after = [f"No setup matches '{needle}'."] if len(rows) == 1 and needle else []
+    return (title, _compose(state, width, height, before, rows, after),
+            ("A/Enter Choose", "B/Esc Back", "/ Filter", "? Help"))
+
+
+def _view_folder(state: TuiState, width: int, height: int) -> tuple:
+    name = display_name(state.platform)
+    if state.platform in CARD_PLATFORMS:
+        title = "Where is the SD card?"
+        before = [f"{name} keeps its BIOS files on its SD card. Choose the card's "
+                  "root folder, the one holding .system."]
+    elif state.folder_default is not None:
+        title = "Which folder?"
+        before = [f"{name} reads its BIOS files from:", str(state.folder_default)]
+    else:
+        title = "Which folder?"
+        before = [f"No usual {name} folder here: browse for it or type it."]
+    return (title, _compose(state, width, height, before, tui_rows(state)),
+            ("A/Enter Choose", "B/Esc Back", "? Help"))
+
+
+def _view_browse(state: TuiState, width: int, height: int) -> tuple:
+    where = "Drives" if state.browse_dir is None else middle(str(state.browse_dir), width)
+    after = [state.status] if state.status else []
+    return ("Browse for a folder",
+            _compose(state, width, height, [where], tui_rows(state), after),
+            ("A/Enter Open", "B/Esc Back", "? Help"))
+
+
+def _view_path(state: TuiState, width: int, height: int) -> tuple:
+    text = state.path_text + "_"
+    if cell_width(text) > width - 2:
+        text = "..." + fit(text[::-1], width - 5)[::-1]
+    lines = [f"The folder for {display_name(state.platform)}:", _styled(f"> {text}", "focus"),
+             "", ("Typing or pasting replaces it. " if state.path_selected else "")
+             + "Ctrl-U clears. Quotes are removed, ~ and variables are expanded."]
+    if state.status:
+        lines.append(state.status)
+    return ("Type a path", _compose(state, width, height, lines, []),
+            ("Enter Use this folder", "Esc Back", "Ctrl-U Clear"))
+
+
+def _view_create(state: TuiState, width: int, height: int) -> tuple:
+    before = [f"{state.dest} does not exist.",
+              f"The nearest folder that does: {state.facts.get('nearest', '')}"]
+    if state.facts.get("risky"):
+        before.append("Every folder of this path would be made: check its start before "
+                      "creating it.")
+    return ("Create the folder?", _compose(state, width, height, before, tui_rows(state)),
+            ("A/Enter Choose", "B/Esc Back"))
+
+
+def _view_cardroot(state: TuiState, width: int, height: int) -> tuple:
+    name = display_name(state.facts.get("card", ""))
+    before = [f"{state.dest} is inside a {name} card. {name} reads its BIOS files under "
+              f"the card's root: {state.facts.get('card_root', '')}"]
+    return ("Use the card root?", _compose(state, width, height, before, tui_rows(state)),
+            ("A/Enter Choose", "B/Esc Back"))
+
+
+def _view_checking(state: TuiState, width: int, height: int) -> tuple:
+    lines = [f"{display_name(state.platform)}: {_short_path(state.dest, state.home)}", ""]
+    elapsed = format_duration(max(0.0, state.now - state.started))
+    if state.manifest is None:
+        lines.append(f"Getting the file list... {elapsed}")
+    else:
+        files = len(state.manifest.get("files", []))
+        lines += [f"File list: {_plural(files, 'file')}.", _reading_line(state, elapsed)]
+    return ("Checking", _compose(state, width, height, lines, []),
+            ("Ctrl-C Quit", "B/Esc Back"))
+
+
+def _reading_line(state: TuiState, elapsed: str) -> str:
+    if state.reading:
+        done, total = state.reading
+        return f"Reading the files already in the folder: {done} of {total}"
+    return f"Reading the files already in the folder... {elapsed}"
+
+
+def _choice_line(state: TuiState) -> list[str]:
+    """What the plan's numbers do not include yet. The options are read
+    again by a check of their own, so only ticked systems are left here."""
+    if tui_flags(state) == state.checked_flags:
+        return []
+    return [f"For your {len(state.ticked)} of {len(state.systems)} systems, the exact "
+            "count comes before the install."]
+
+
+def _view_plan(state: TuiState, width: int, height: int) -> tuple:
+    check = state.check or {}
+    lines = _plan_lines(check, state.dest, state)
+    lines[1:1] = _choice_line(state)
+    if state.status:
+        lines.append(state.status)
+    rows = tui_rows(state)
+    return (display_name(state.platform, state.manifest),
+            _compose(state, width, height, lines, rows),
+            ("A/Enter Install", "B/Esc Back", "Y/o Options", "? Help"))
+
+
+def _counts_predate_options(state: TuiState) -> bool:
+    """Whether the check's counts were read under other options than the
+    ones chosen since: a region or a core changes what each system needs."""
+    def others(flags: list) -> list:
+        return [flag for flag in flags if flag[0] != "--system"]
+    return others(tui_flags(state)) != others(state.checked_flags)
+
+
+def _ticked_files(state: TuiState) -> list[dict]:
+    return [event for event in state.files
+            if set(event["systems"]) & state.ticked
+            or (not event["systems"] and OTHER_SYSTEMS in state.ticked)]
+
+
+def _view_systems(state: TuiState, width: int, height: int) -> tuple:
+    rows = tui_rows(state)
+    if width < 60:
+        # The name first: the size alone stays beside it, the count is in
+        # the total below.
+        rows = [row._replace(right=row.right.split(", ")[-1]) for row in rows]
+    elif width >= 78:
+        # The id --system takes, beside a name that does not show it.
+        # Only where it fits whole: a cut id ("maker26-co") said nothing.
+        rows = [row._replace(label=f"{row.label}  {row.value}")
+                if row.action == "system" and row.value not in row.label
+                and cell_width(f"> {row.label}  {row.value}  {row.right}") + 2 <= width
+                else row for row in rows]
+    chosen = _ticked_files(state)
+    footer = [f"{len(state.ticked)} of {len(state.systems)} systems: "
+              f"{_plural(len(chosen), 'file')}, "
+              f"{format_size(sum(e['size'] for e in chosen))}"
+              + (" before your options" if _counts_predate_options(state) else "")]
+    needle = state.filters.get("systems", "")
+    after = [f"No system matches '{needle}'."] if len(rows) == 3 and needle else []
+    if state.status:
+        after.append(state.status)
+    return ("Choose systems",
+            _compose(state, width, height, [], rows, after, footer),
+            ("A/Enter Continue", "B/Esc Back", "X/Space Tick", "? Help"))
+
+
+def _view_options(state: TuiState, width: int, height: int) -> tuple:
+    rows = tui_rows(state)
+    before = ["Each row is an option of the command line, named on the right."]
+    after: list = []
+    if width < 60:
+        # A value cut to make room for its flag said nothing: the flag of
+        # the focused row is named below instead.
+        focus = rows[min(state.focus.get("options", 0), len(rows) - 1)]
+        before = []
+        after = [f"Sets {focus.right}"] if focus.right else []
+        rows = [row._replace(right="") for row in rows]
+    # A folder is cut in its middle, its last levels being what tells it apart.
+    room = width - 4 - (0 if width < 60 else 2 + max(cell_width(r.right) for r in rows))
+    rows = [row._replace(label="BIOS folder: " + middle(row.label[13:], room - 13), style="")
+            if row.style == "path" else row for row in rows]
+    return ("Options", _compose(state, width, height, before, rows, after),
+            ("A/Enter Change", "B/Esc Back", "Left/Right Set", "? Help"))
+
+
+def _view_regions(state: TuiState, width: int, height: int) -> tuple:
+    before = ["Tick the regions to keep, best first. Where a system has one BIOS "
+              "per region, the best one found is installed."]
+    return ("Preferred regions",
+            _compose(state, width, height, before, tui_rows(state)),
+            ("A/Enter Tick", "B/Esc Done", "Left/Right Order", "? Help"))
+
+
+def _view_cores(state: TuiState, width: int, height: int) -> tuple:
+    before = ["Tick the cores you use. With none ticked, every core's files are kept."]
+    return ("Cores", _compose(state, width, height, before, tui_rows(state)),
+            ("A/Enter Done", "B/Esc Back", "X/Space Tick", "? Help"))
+
+
+_STATE_WORDS = {"missing": "missing", "wrong_hash": "wrong copy"}
+
+
+def _pager_items(state: TuiState) -> list:
+    """The text of a screen that scrolls, the same for its view and its keys."""
+    if state.screen == "result":
+        return tui_outcome(state)[1]
+    if state.screen == "command":
+        return ["The same choice without questions:", "", tui_command(state)]
+    if state.running:
+        items = ["Counting the files for these choices..."]
+    elif state.dry is None:
+        items = state.tail or ["The preview did not finish."]
+    else:
+        items = [f"{_plural(_needed(state.dry), 'file')} to download, "
+                 f"{format_size(state.dry['bytes_needed'])}. Nothing is written.", ""]
+        items += [f"{_STATE_WORDS.get(event['state'], event['state']):<10} "
+                  f"{format_size(event['size']):>9}  {event['dest']}"
+                  for event in state.dry_files]
+        for kept in (state.dry_summary or {}).get("kept") or []:
+            items.append(f"Replaced files would be kept in {kept['folder']}")
+    return items
+
+
+def _view_preview(state: TuiState, width: int, height: int) -> tuple:
+    return ("Preview", _pager(state, width, height, _pager_items(state)),
+            ("A/Enter Back", "Up/Down Scroll"))
+
+
+def _view_command(state: TuiState, width: int, height: int) -> tuple:
+    return ("Command line", _pager(state, width, height, _pager_items(state)),
+            ("A/Enter Back",))
+
+
+def _view_confirm(state: TuiState, width: int, height: int) -> tuple:
+    if state.running or state.dry is None:
+        lines: list = ["Counting the files for these choices..."]
+    else:
+        lines = _plan_lines(state.dry, state.dest, state)
+    return ("Confirm", _compose(state, width, height, lines, tui_rows(state)),
+            ("A/Enter Install", "B/Esc Back", "? Help"))
+
+
+def _bar(share: float, width: int) -> str:
+    room = max(4, width - 7)
+    filled = int(share * room)
+    return f"[{'#' * filled}{'-' * (room - filled)}] {int(share * 100):3d}%"
+
+
+def _view_installing(state: TuiState, width: int, height: int) -> tuple:
+    lines: list = []
+    if state.download is None:
+        elapsed = format_duration(max(0.0, state.now - state.started))
+        lines.append(_reading_line(state, elapsed))
+    else:
+        total = state.download["bytes"]
+        progress = state.progress or {}
+        done = progress.get("bytes_done", 0)
+        lines.append(_bar(min(done / total, 1.0) if total else 1.0, width))
+        lines.append(f"{format_size(done)} of {format_size(total)}")
+        window = [sample for sample in state.samples if sample[0] >= state.now - 5]
+        start, base = window[0] if window else (state.now, done)
+        seconds = state.now - start
+        speed = (done - base) / seconds if seconds >= 1 else 0
+        if speed > 0:
+            lines.append(f"{format_size(int(speed))}/s, "
+                         f"{format_duration((total - done) / speed)} left")
+        files_done = progress.get("files_done", 0)
+        lines.append(f"{files_done} of {_plural(state.download['files'], 'file')}")
+        if files_done >= state.download["files"] and state.summary is None:
+            lines.append("Finishing...")
+    lines.append(_styled("Stopping, finishing the files in flight. Press B or Ctrl-C "
+                         "again to stop now." if state.stopping
+                         else "B, Ctrl-C or Start+Select stops. What is done stays done.",
+                         "dim"))
+    room = height - len(lines) - 1
+    failed = [item for item in reversed(state.finished) if not item[1]]
+    good = [item for item in reversed(state.finished) if item[1]]
+    shown = (failed + good)[:max(0, room)]
+    if shown:
+        lines.append("")
+        lines += [f"{'ok    ' if ok else 'FAILED'} {dest}" + (f" ({reason})" if reason else "")
+                  for dest, ok, reason in shown]
+    return ("Installing", _compose(state, width, height, lines, []),
+            ("B/Esc Stop", "? Help"))
+
+
+def tui_outcome(state: TuiState) -> tuple[str, list[str]]:
+    """The result in words, first what happened, then where and what next."""
+    summary = state.summary or {}
+    # Killed by the second Ctrl-C, the child wrote no summary: what it
+    # reported finished is what is installed.
+    installed = summary.get("installed", sum(1 for _dest, ok, _why in state.finished if ok))
+    failed = summary.get("failed") or []
+    up_to_date = summary.get("up_to_date", 0)
+    total = (state.download or {}).get("files", 0)
+    if summary.get("interrupted") or state.code == 130:
+        title = "Stopped"
+        head = (f"Stopped: {installed} of {total} installed, run again to finish."
+                if total else "Stopped. Run again to carry on: what is done stays done.")
+    elif failed and installed:
+        title = "Finished with errors"
+        head = f"{installed} installed, {len(failed)} failed."
+    elif failed:
+        title = "Nothing installed"
+        head = f"Nothing was installed: {_plural(len(failed), 'file')} failed."
+    elif not summary:
+        title = "Stopped"
+        head = f"The installer stopped with code {state.code}."
+    elif installed:
+        title = "Done"
+        head = f"{_plural(installed, 'file')} installed."
+        if up_to_date:
+            head += f" {_plural(up_to_date, 'file')} already in place."
+    else:
+        title = "Done"
+        head = "Everything is in place."
+    lines = [head, f"BIOS folder: {state.dest}"]
+    causes: dict[str, list[str]] = {}
+    for failure in failed:
+        causes.setdefault(failure["reason"], []).append(failure["dest"])
+    shown = 0
+    for reason, dests in causes.items():
+        if len(dests) > 3:
+            # A read-only folder fails every file alike: said once.
+            lines.append(f"  {len(dests)} files failed ({reason or 'no reason given'}), "
+                         f"the first {dests[0]}")
+            continue
+        for dest in dests:
+            if shown < 20:
+                lines.append(f"  failed: {dest}" + (f" ({reason})" if reason else ""))
+            shown += 1
+    if shown > 20:
+        lines.append(f"  ... and {shown - 20} more")
+    if not summary:
+        lines += [f"  {line}" for line in state.tail[-8:]]
+    run = Invocation()
+    run.os_type = state.os_type
+    for kept in summary.get("kept") or []:
+        lines.append(f"The files it replaced are kept in {kept['folder']}")
+        lines.append(f"To put them back: {run.launcher()} --restore "
+                     f"{run.word(str(kept['folder']))}")
+    skipped = summary.get("skipped") or []
+    if skipped:
+        count = sum(group["files"] for group in skipped)
+        needed = sum(group["required"] for group in skipped)
+        lines.append(f"{_plural(count, 'file')} of the list "
+                     f"{'is' if count == 1 else 'are'} not in the collection"
+                     + ("." if not needed
+                        else ", and an emulator needs it to start." if count == 1
+                        else f", {needed} of them needed to start an emulator."))
+    for group in summary.get("left_out") or []:
+        lines.append(f"Left out as {group['label']}: {_plural(group['files'], 'file')}.")
+    lines += ["Same choice without questions:", f"  {tui_command(state)}"]
+    if tui_keeps_log(state):
+        lines.append(f"Details: {state.log}")
+    return title, lines
+
+
+def tui_keeps_log(state: TuiState) -> bool:
+    """Whether the run's log is kept: when a failure names it, and only then.
+    57 folders of logs from stopped and finished runs were left in /tmp."""
+    if state.screen == "crashed":
+        return True
+    return bool(state.log) and state.code not in (0, 130, None)
+
+
+def _view_result(state: TuiState, width: int, height: int) -> tuple:
+    title, lines = tui_outcome(state)
+    return (title, _pager(state, width, height, lines), ("A/Enter Exit", "Up/Down Scroll"))
+
+
+def _view_error(state: TuiState, width: int, height: int) -> tuple:
+    return (state.error_title or "Something went wrong",
+            _compose(state, width, height, state.error, tui_rows(state)),
+            ("A/Enter Choose", "B/Esc Back"))
+
+
+def _view_quit(state: TuiState, width: int, height: int) -> tuple:
+    return ("Quit?",
+            _compose(state, width, height, ["Quit without installing? Nothing was written."],
+                     tui_rows(state)),
+            ("A/Enter Choose", "B/Esc Stay"))
+
+
+_TUI_VIEWS: dict[str, Callable[[TuiState, int, int], tuple]] = {
+    "setup": _view_setup, "platforms": _view_platforms, "folder": _view_folder,
+    "browse": _view_browse, "path": _view_path, "create": _view_create,
+    "checking": _view_checking, "plan": _view_plan, "systems": _view_systems,
+    "options": _view_options, "regions": _view_regions, "cores": _view_cores,
+    "preview": _view_preview, "command": _view_command, "confirm": _view_confirm,
+    "installing": _view_installing, "result": _view_result, "error": _view_error,
+    "quit": _view_quit, "cardroot": _view_cardroot,
+}
+
+
+def _help_lines(state: TuiState) -> list[tuple[str, str]]:
+    screen = state.screen
+    if screen == "installing":
+        return [("B/Esc, Ctrl-C", "Stop: what is done stays done"),
+                ("Start+Select", "Stop"), ("?, F1", "This help")]
+    if screen == "path":
+        return [("Enter", "Use this folder"), ("Backspace", "Delete a character"),
+                ("Ctrl-U", "Clear"), ("Esc", "Back"), ("Ctrl-C", "Quit")]
+    keys = [("Up/Down, k/j", "Move")]
+    if len(tui_rows(state)) > 9 or screen in _PAGERS:
+        keys += [("PgUp/PgDn, L1/R1", "Page"), ("Home/End, g/G", "First, last")]
+    primary = _primary(state) or _TUI_VIEWS[screen](state, 80, 24)[2][0]
+    keys.append(("A/Enter, Start", primary.split(" ", 1)[-1]))
+    if screen in _CHECKLISTS:
+        keys.append(("X, Right/Left", "Tick, untick"))
+    if screen == "systems":
+        keys.append(("a, n", "All, none"))
+    if screen in ("platforms", "systems", "cores"):
+        keys.append(("/", "Filter (Esc clears)"))
+    if screen == "regions":
+        keys.append(("Left/Right", "Move a region up or down the order"))
+    if screen == "options":
+        keys.append(("Left/Right", "Change a value"))
+    if screen in ("plan", "systems", "confirm"):
+        keys.append(("Y, o, Tab", "Options"))
+    back = "Quit" if len(state.stack) == 1 else "Back"
+    keys += [("B/Esc, Backspace", back), ("q, Ctrl-C", "Quit"), ("?, F1", "This help")]
+    return keys
+
+
+def _primary(state: TuiState) -> str | None:
+    """What A does on the row in focus, for the first entry of the bar."""
+    if state.screen in _PAGERS:
+        return None
+    rows = tui_rows(state)
+    if not rows:
+        return None
+    row = rows[max(0, min(state.focus.get(state.screen, 0), len(rows) - 1))]
+    verb = _ROW_VERBS.get(row.action)
+    return f"A/Enter {verb}" if verb else None
+
+
+def _view_help(state: TuiState, width: int, height: int) -> tuple:
+    keys = _help_lines(state)
+    column = min(22, max(cell_width(key) for key, _what in keys) + 2)
+    lines = [f"{_pad(key, column)}{what}" for key, what in keys]
+    if state.screen in ("setup", "plan", "browse", "folder") and state.dest is not None:
+        lines += ["", f"BIOS folder: {state.dest}"]
+    return ("Keys", _compose(state, width, height, lines, []), ("Any key closes this help",))
+
+
+
+
+def tui_view(state: TuiState, cols: int, rows: int) -> list[str]:
+    """The screen as rows lines of at most cols cells, from the state alone."""
+    if cols < TUI_MIN_COLS or rows < TUI_MIN_ROWS:
+        lines = [_styled("")] * rows
+        text = fit("Make the window larger", cols)
+        if rows:
+            lines[rows // 2] = _styled(" " * max(0, (cols - cell_width(text)) // 2) + text)
+        return lines
+    width = min(cols, TUI_MAX_WIDTH) - 2
+    height = rows - 3
+    view = _view_help if state.help else _TUI_VIEWS[state.screen]
+    title, body, hint = view(state, width, height)
+    primary = _primary(state) if not state.help and hint[0].startswith("A/Enter") else None
+    if primary:
+        hint = (primary, *hint[1:])
+    lines = [_styled(fit(f" RetroBIOS: {title}", cols), "title"), _styled("")]
+    lines += [_styled(fit(" " + line, cols), line.style) for line in body[:height]]
+    lines += [_styled("")] * (rows - 1 - len(lines))
+    # Never the last cell of the screen: a terminal may scroll when it is written.
+    lines.append(_styled(fit(" " + _hint(width, *hint), cols - 1), "dim"))
+    return lines
+
+def _setup_label(plat: str, path: Path) -> str:
+    system = detected_os(plat, path)
+    name = display_name(plat)
+    return f"{system} ({name} files)" if system and system != name else name
+
+
+def _install_kind(path: Path) -> str:
+    """What sets one install of a frontend apart from another of the same."""
+    # The config detection read it from says how it was installed: the
+    # Flatpak's system directory can be anywhere its config names.
+    found = _RETROARCH_CONFIGS.get(path)
+    text = path.as_posix() + (" " + Path(found[0]).as_posix() if found else "")
+    for marker, word in (("/.var/app/", "Flatpak"), ("/steamapps/", "Steam"),
+                         ("/snap/", "Snap")):
+        if marker in text:
+            return word
+    if (path.parent / "retroarch.cfg").is_file():
+        return "portable"
+    return "/".join(path.parts[-2:])
+
+
+def tell_apart(setups: list[tuple]) -> list[tuple]:
+    """Two setups that read alike get the word that separates them: the
+    Flatpak and the native RetroArch were both "RetroArch" at 40 columns."""
+    labels = [label for _plat, _path, label in setups]
+    return [(plat, path, f"{label} ({_install_kind(path)})" if labels.count(label) > 1
+             else label) for plat, path, label in setups]
+
+
+def _tui_passthrough(args: argparse.Namespace) -> list[tuple[str, str | None]]:
+    """Options the screens do not change, handed to every run unchanged."""
+    flags: list[tuple[str, str | None]] = []
+    for flag in ("--target", "--romm-firmware"):
+        value = getattr(args, flag[2:].replace("-", "_"))
+        if value is not None:
+            flags.append((flag, str(value)))
+    for flag in ("--save-dir", "--cores-dir"):
+        value = getattr(args, flag[2:].replace("-", "_"))
+        if value is not None:
+            flags.append((flag, str(Path(value).absolute())))
+    flags += [("--emulator", name) for name in args.emulator or []]
+    flags += [("--from-pack", str(Path(pack).absolute())) for pack in args.from_pack or []]
+    for flag in ("--every-board", "--standalone-copies", "--verbose"):
+        if getattr(args, flag[2:].replace("-", "_")):
+            flags.append((flag, None))
+    return flags
+
+
+def tui_start(
+    args: argparse.Namespace, os_type: str, detect: bool = True,
+) -> tuple[TuiState, list[tuple]]:
+    """The first screen, from what is found here and what the command named."""
+    state = TuiState(os_type=os_type, home=Path.home())
+    state.cli_systems = list(args.system or [])
+    state.regions = resolve_regions(args.region) if args.region else []
+    state.cli_regions = list(state.regions)
+    state.cores = list(dict.fromkeys(
+        token.strip() for value in args.core or [] for token in value.split(",")
+        if token.strip()))
+    state.no_game_data = bool(args.no_game_data)
+    state.installed_only = bool(args.installed_cores)
+    state.jobs = args.jobs
+    state.passthrough = _tui_passthrough(args)
+    if args.manifest is not None:
+        state.manifest_path = Path(args.manifest).absolute()
+        state.manifest_given = True
+    plat = normalize_platform(args.platform) if args.platform else ""
+    if detect:
+        captured = io.StringIO()
+        with contextlib.redirect_stdout(captured), contextlib.redirect_stderr(captured):
+            found = detect_platforms(os_type)
+            frontends = detect_frontends(os_type)
+            cards = [(card_platform(mount), mount) for mount in _mounted_cards()]
+        state.setups = [(name, path, _setup_label(name, path)) for name, path in found]
+        state.setups += [(card, mount, f"{display_name(card)} SD card")
+                         for card, mount in cards if card and (card, mount) not in found]
+        state.setups = tell_apart(state.setups)
+        if "esde" in frontends:
+            state.notes.append("ES-DE found: its BIOS files go to each emulator, "
+                               "not to ES-DE itself.")
+        state.notes += [line.strip() for line in captured.getvalue().splitlines()
+                        if line.strip()]
+    if plat and args.dest is not None:
+        state.stack = []
+        return state, _choose(state, plat, Path(args.dest))
+    if plat:
+        matched = [setup for setup in state.setups if setup[0] == plat]
+        if len(matched) == 1:
+            state.stack = []
+            return state, _choose(state, plat, matched[0][1])
+        if matched:
+            state.setups = matched
+            return state, []
+        state.platform = plat
+        state.stack = []
+        default = None if plat in CARD_PLATFORMS else _default_dest(os_type, plat)
+        return state, _open_folder_screen(state, default)
+    if args.dest is not None:
+        card = card_platform(Path(args.dest))
+        if card:
+            state.stack = []
+            return state, _choose(state, card, Path(args.dest))
+        state.dest_given = Path(args.dest)
+    if state.dest_given is not None or not state.setups:
+        found_names = list(dict.fromkeys(setup[0] for setup in state.setups))
+        default = found_names[0] if len(found_names) == 1 else "retroarch"
+        state.stack = ["platforms"]
+        state.focus["platforms"] = _platform_focus(state, default)
+    return state, []
+
+
+def _log_tail(path: Path, count: int = 12) -> list[str]:
+    """The last lines a child wrote for a person, which say why it stopped."""
+    try:
+        text = path.read_text(encoding="utf-8", errors="replace")
+    except OSError as exc:
+        return [f"The log {path} cannot be read: {exc.strerror or exc}"]
+    lines = [line.rstrip() for line in text.replace("\r", "\n").splitlines()]
+    # The banner says which installer ran, not what went wrong.
+    return [line for line in lines if line.strip() and not line.startswith("RetroBIOS ")
+            ][-count:]
+
+
+class _EngineRun:
+    """This installer run as a child with --events, read line by line."""
+
+    def __init__(self, argv: list[str], log: Path, inbox: queue.Queue, run_id: int) -> None:
+        self.log = log
+        # Its own session: a signal typed at the terminal reaches the
+        # interface alone, which forwards one Ctrl-C and waits for the summary.
+        options: dict = {} if os.name == "nt" else {"start_new_session": True}
+        with open(log, "w", encoding="utf-8", errors="replace") as handle:
+            self.proc = subprocess.Popen(
+                argv, stdin=subprocess.DEVNULL, stdout=subprocess.PIPE, stderr=handle,
+                text=True, encoding="utf-8", errors="replace", **options,
+            )
+        threading.Thread(target=self._read, args=(inbox, run_id), daemon=True).start()
+
+    def _read(self, inbox: queue.Queue, run_id: int) -> None:
+        assert self.proc.stdout is not None
+        for line in self.proc.stdout:
+            line = line.strip()
+            if not line.startswith("{"):
+                continue
+            try:
+                event = json.loads(line)
+            except ValueError:
+                continue
+            if isinstance(event, dict):
+                inbox.put(("event", run_id, event))
+        code = self.proc.wait()
+        inbox.put(("ended", run_id, code, _log_tail(self.log)))
+
+    def running(self) -> bool:
+        return self.proc.poll() is None
+
+    def interrupt(self, from_key: bool) -> None:
+        if not self.running():
+            return
+        if os.name != "nt":
+            self.proc.send_signal(signal.SIGINT)
+        elif from_key:
+            # The child shares the console: Ctrl-C read as a key reached no
+            # one, so it is sent to the console, this process ignoring it.
+            os.kill(0, signal.CTRL_C_EVENT)  # type: ignore[attr-defined]
+
+    def stop(self, grace: float) -> None:
+        """End the child, letting it write its summary for up to grace seconds."""
+        if not self.running():
+            return
+        if grace:
+            self.interrupt(from_key=True)
+            try:
+                self.proc.wait(timeout=grace)
+                return
+            except subprocess.TimeoutExpired:
+                # It ignored Ctrl-C for that long: it is stopped outright.
+                self.proc.kill()
+        self.proc.kill()
+        self.proc.wait()
+
+
+# One try, for a screen with Try again on it: three tries of 30 s were 85 s
+# of a bare timer before the error said there was no network.
+TUI_FETCH_TIMEOUT = 15
+
+
+def _tui_fetch(plat: str, inbox: queue.Queue, log: io.StringIO) -> None:
+    """The file list, fetched once in this process, or what went wrong."""
+    if LOCAL.manifest is not None or LOCAL.pack is not None:
+        mark = len(log.getvalue())
+        try:
+            inbox.put(("manifest", plat, fetch_manifest(plat)))
+        except SystemExit as exc:
+            inbox.put(("manifest_failed", plat, "", log.getvalue()[mark:].splitlines(),
+                       _event_exit_code(exc.code)))
+        return
+    url = MANIFEST_URL.format(platform=plat)
+    try:
+        data = _fetch_json(url, MAX_MANIFEST_BYTES, "file list", attempts=1,
+                           timeout=TUI_FETCH_TIMEOUT)
+        inbox.put(("manifest", plat, _validate_manifest(data, plat)))
+        return
+    except ValueError as exc:
+        title, lines = "The file list is not valid", [f"What arrived is not a file list: {exc}."]
+    except urllib.error.HTTPError as exc:
+        title = "No file list"
+        lines = [f"There is no file list for {display_name(plat)} at this address."
+                 if exc.code == 404 else f"The server answered HTTP {exc.code}."]
+    except (urllib.error.URLError, OSError) as exc:
+        code, words = network_words(exc)
+        title = {"clock": "The clock is wrong",
+                 "no_ca": "No trusted certificates"}.get(code, "No connection")
+        lines = [words[0].upper() + words[1:] + "."]
+        if code == "network":
+            lines = [f"The list of BIOS files could not be downloaded: {words}.",
+                     "Check the Wi-Fi or the cable, then choose Try again."]
+    if os.environ.get("RETROBIOS_BASE_URL"):
+        lines.append(f"RETROBIOS_BASE_URL chose the address: {url}")
+    inbox.put(("manifest_failed", plat, title, lines, 1))
+
+
+class _TuiTerminal:
+    """The terminal in raw mode: keys in, frames out, put back as found."""
+
+    def __init__(self, stdin: TextIO, stdout: TextIO) -> None:
+        self.stdin, self.stdout = stdin, stdout
+        self.fd = stdin.fileno()
+        self.saved: list | None = None
+        self.decoder = KeyDecoder()
+        self.text = codecs.getincrementaldecoder(
+            getattr(stdin, "encoding", None) or "utf-8")(errors="replace")
+        self.encoding = getattr(stdout, "encoding", None) or "utf-8"
+        locale_name = os.environ.get("LC_ALL") or os.environ.get("LANG") or ""
+        try:
+            utf8 = codecs.lookup(self.encoding).name == "utf-8"
+        except LookupError:
+            utf8 = False
+        # Python turns a C locale into UTF-8 for itself, not for the
+        # terminal: a console font there has no CJK, often no accents.
+        self.ascii = not utf8 or locale_name in ("C", "POSIX")
+        self.ended = False
+        self.heard = 0.0
+        self.frame: list[tuple[str, str]] = []
+
+    def enter(self) -> None:
+        if os.name != "nt":
+            import termios  # noqa: PLC0415
+
+            # Entered again after a stop, the mode to go back to stays the
+            # one found the first time.
+            if self.saved is None:
+                self.saved = termios.tcgetattr(self.fd)
+            mode = termios.tcgetattr(self.fd)
+            mode[0] &= ~(termios.ICRNL | termios.INLCR | termios.IGNCR | termios.IXON)
+            # ISIG off: Ctrl-C arrives as a key and is forwarded once, by hand.
+            mode[3] &= ~(termios.ICANON | termios.ECHO | termios.ISIG | termios.IEXTEN)
+            mode[6][termios.VMIN] = 1
+            mode[6][termios.VTIME] = 0
+            termios.tcsetattr(self.fd, termios.TCSANOW, mode)
+        self.write(_SCREEN_ON)
+
+    def leave(self) -> None:
+        """The main screen and the mode found, the mode even when the write
+        fails: a closed window answers EIO."""
+        try:
+            self.write(_SCREEN_OFF)
+        finally:
+            if self.saved is not None:
+                import termios  # noqa: PLC0415
+
+                saved, self.saved = self.saved, None
+                termios.tcsetattr(self.fd, termios.TCSADRAIN, saved)
+
+    def write(self, text: str) -> None:
+        self.stdout.write(text.encode(self.encoding, "replace").decode(self.encoding))
+        self.stdout.flush()
+
+    def size(self) -> tuple[int, int]:
+        return _terminal_size(self.stdout)
+
+    def draw(self, lines: list[str], cols: int) -> None:
+        """Rewrite the lines that changed since the last frame, and only those."""
+        out = [] if self.frame else ["\x1b[H\x1b[2J"]
+        frame = [(str(line), getattr(line, "style", "")) for line in lines]
+        for index, (text, style) in enumerate(frame):
+            if index < len(self.frame) and self.frame[index] == (text, style):
+                continue
+            text = screen_text(text)
+            if getattr(self, "ascii", False):
+                text = ascii_text(text)
+            if style == "focus":
+                text = _pad(text, min(cols, TUI_MAX_WIDTH) - (index == len(frame) - 1))
+            out.append(f"\x1b[{index + 1};1H{_STYLES.get(style, '')}{text}\x1b[0m\x1b[K")
+        self.frame = frame
+        if out:
+            self.write("".join(out))
+
+    def keys(self, timeout: float) -> list[TuiKey]:
+        if os.name == "nt":
+            return self._console_keys(timeout)
+        if self.ended:
+            time.sleep(timeout)
+            return []
+        import select  # noqa: PLC0415
+
+        if not select.select([self.fd], [], [], timeout)[0]:
+            # A paste whose end never came, after a second of silence.
+            if self.decoder.paste is not None and time.monotonic() - self.heard > 1:
+                return self.decoder.close_paste()
+            return []
+        keys = self._read()
+        while self.decoder.buffer and not self.ended:
+            if select.select([self.fd], [], [], TUI_ESC_WAIT)[0]:
+                keys += self._read()
+            else:
+                keys += self.decoder.flush()
+                break
+        return keys
+
+    def _read(self) -> list[TuiKey]:
+        data = os.read(self.fd, 4096)
+        self.heard = time.monotonic()
+        if not data:
+            # The terminal went away: what Ctrl-D at a question does.
+            self.ended = True
+            return [TuiKey("ctrl-d")]
+        return self.decoder.feed(self.text.decode(data))
+
+    def _console_keys(self, timeout: float) -> list[TuiKey]:
+        import msvcrt  # noqa: PLC0415
+
+        end = time.monotonic() + timeout
+        keys: list[TuiKey] = []
+        while True:
+            while msvcrt.kbhit():  # type: ignore[attr-defined]
+                key = decode_windows_key(msvcrt.getwch(),  # type: ignore[attr-defined]
+                                         msvcrt.getwch)  # type: ignore[attr-defined]
+                if key is not None:
+                    keys.append(key)
+            if keys or time.monotonic() >= end:
+                return keys
+            time.sleep(0.01)
+
+
+def tui_farewell(state: TuiState) -> list[str]:
+    """What stays in the terminal once the full screen is gone."""
+    return [screen_text(line) for line in _farewell_lines(state)]
+
+
+def _farewell_lines(state: TuiState) -> list[str]:
+    if state.screen != "result" and state.download is not None:
+        # An install ran: what it wrote is said, whatever ended it.
+        title, lines = tui_outcome(state)
+        return [f"RetroBIOS: {title}", *lines]
+    if state.screen == "crashed":
+        return [f"RetroBIOS stopped on an unexpected error. What it was is in {state.log}."]
+    if state.screen == "result":
+        title, lines = tui_outcome(state)
+        return [f"RetroBIOS: {title}", *lines]
+    if state.screen == "error":
+        return [f"RetroBIOS: {state.error_title or 'something went wrong'}",
+                *(line.replace("then choose Try again", "then run the installer again")
+                  for line in state.error)]
+    if state.exit_code == 0:
+        return [f"RetroBIOS: everything is in place in {state.dest}."]
+    return ["RetroBIOS: stopped. Nothing was installed."]
+
+
+def run_tui(args: argparse.Namespace) -> int:
+    """The full-screen interface, until it closes: the exit code it ends with."""
+    os_type = _INVOCATION.os_type or detect_os()
+    if os_type == "wsl":
+        _enter_wsl()
+    _open_local_sources(args)
+    state, effects = tui_start(args, os_type)
+    work = Path(tempfile.mkdtemp(prefix="retrobios-tui-"))
+    script = str(Path(__file__).resolve())
+    inbox: queue.Queue = queue.Queue()
+    current: list[_EngineRun] = []
+    written: dict[str, Path] = {}
+    flags = {"interrupt": False, "resized": False, "suspend": False, "resume": False,
+             "term": 0}
+    # Start+Select on a handheld is gptokeyb's pkill: SIGTERM, then SIGKILL
+    # 3 s later. The install gets 2 s to say what it wrote.
+    terminating = {"signal": 0, "deadline": 0.0}
+    ignore_interrupt_until = [0.0]
+    terminal = _TuiTerminal(sys.stdin, sys.stdout)
+    real_out, real_err = sys.stdout, sys.stderr
+    buffer = io.StringIO()
+    handlers: dict[int, object] = {}
+
+    def perform(todo: list[tuple], from_key: bool = True) -> None:
+        for effect in todo:
+            kind = effect[0]
+            if kind == "fetch":
+                threading.Thread(target=_tui_fetch, args=(effect[1], inbox, buffer),
+                                 daemon=True).start()
+            elif kind == "run":
+                for run in current:
+                    run.stop(0)
+                current.clear()
+                if not state.manifest_given and not args.from_pack and state.manifest:
+                    if state.platform not in written:
+                        path = work / f"{state.platform}.json"
+                        path.write_text(json.dumps(state.manifest), encoding="utf-8")
+                        written[state.platform] = path
+                    state.manifest_path = written[state.platform]
+                log = work / f"{effect[1]}.log"
+                if effect[1] == "install":
+                    state.log = str(log)
+                try:
+                    current.append(_EngineRun(
+                        tui_argv(state, effect[1], sys.executable, script), log, inbox,
+                        state.run_id))
+                except OSError as exc:
+                    inbox.put(("ended", state.run_id, 1,
+                               [f"The installer could not be started: {exc}"]))
+            elif kind == "stop":
+                for run in current:
+                    run.interrupt(from_key)
+                if os.name == "nt" and from_key:
+                    ignore_interrupt_until[0] = time.monotonic() + 1.0
+            elif kind == "kill":
+                for run in current:
+                    run.stop(0)
+
+    def on_interrupt(_signum: int, _frame: object) -> None:
+        flags["interrupt"] = True
+
+    def on_resize(_signum: int, _frame: object) -> None:
+        flags["resized"] = True
+
+    def on_stop(signum: int, _frame: object) -> None:
+        flags["term"] = flags["term"] or signum
+
+    def on_suspend(_signum: int, _frame: object) -> None:
+        flags["suspend"] = True
+
+    def on_resume(_signum: int, _frame: object) -> None:
+        flags["resume"] = True
+
+    try:
+        for name, handler in (("SIGINT", on_interrupt), ("SIGWINCH", on_resize),
+                              ("SIGTERM", on_stop), ("SIGHUP", on_stop),
+                              ("SIGTSTP", on_suspend), ("SIGCONT", on_resume)):
+            number = getattr(signal, name, None)
+            if number is not None:
+                handlers[number] = signal.signal(number, handler)
+        sys.stdout = sys.stderr = buffer
+        terminal.enter()
+        perform(effects)
+        while state.exit_code is None:
+            if flags["suspend"]:
+                # Stopped from outside (kill -TSTP): the shell gets its
+                # terminal back as it lent it, and the screen returns on fg.
+                flags["suspend"] = False
+                terminal.leave()
+                os.kill(os.getpid(), signal.SIGSTOP)  # type: ignore[attr-defined]
+                flags["resume"] = True
+            if flags["resume"]:
+                flags["resume"] = False
+                terminal.enter()
+                terminal.frame = []
+            cols, rows = terminal.size()
+            if (cols, rows) != (state.cols, state.rows) or flags["resized"]:
+                flags["resized"] = False
+                state.cols, state.rows = cols, rows
+                terminal.frame = []
+            state.now = time.monotonic()
+            terminal.draw(tui_view(state, cols, rows), cols)
+            for key in terminal.keys(TUI_FRAME):
+                state.now = time.monotonic()
+                perform(tui_update(state, key))
+                if state.exit_code is not None:
+                    break
+            if flags["interrupt"]:
+                flags["interrupt"] = False
+                if time.monotonic() >= ignore_interrupt_until[0]:
+                    perform(tui_interrupt(state), from_key=False)
+            if flags["term"] and not terminating["signal"]:
+                terminating["signal"] = flags["term"]
+                if state.run == "install" and state.running:
+                    terminating["deadline"] = time.monotonic() + 2
+                    if not state.stopping:
+                        perform(tui_interrupt(state))
+                elif state.screen == "result" and state.code is not None:
+                    state.exit_code = state.code
+                else:
+                    state.exit_code = 128 + terminating["signal"]
+            if terminating["signal"] and state.running and \
+                    time.monotonic() > terminating["deadline"]:
+                perform([("kill",)])
+            while state.exit_code is None:
+                try:
+                    message = inbox.get_nowait()
+                except queue.Empty:
+                    break
+                state.now = time.monotonic()
+                perform(tui_receive(state, message))
+            if terminating["signal"] and state.screen == "result":
+                # The result is printed in the terminal on the way out.
+                state.exit_code = state.code if state.code is not None else 1
+    except Exception:  # noqa: BLE001
+        # A traceback is where every reporter of #71, #73 and #74 stopped:
+        # it goes to a file, and the terminal says one sentence.
+        crash = work / "error.log"
+        crash.write_text(traceback.format_exc(), encoding="utf-8")
+        state.log, state.code, state.exit_code = str(crash), 1, 1
+        state.stack = ["crashed"]
+    finally:
+        # Each step on its own: a write the closed window refuses, or a
+        # second signal while the install writes its summary, must not
+        # skip the ones after it and leave the terminal raw.
+        problems = _tui_cleanup(terminal, current, handlers, state)
+        sys.stdout, sys.stderr = real_out, real_err
+        for path in written.values():
+            if path.exists():
+                path.unlink()
+        if not tui_keeps_log(state):
+            shutil.rmtree(work, ignore_errors=True)
+    stream = sys.stderr if state.screen in ("error", "crashed") else sys.stdout
+    lines = tui_farewell(state)
+    if problems:
+        lines.append(f"The terminal may not be restored ({problems[0]}): type reset "
+                     "and press Enter if it looks wrong.")
+    try:
+        for line in lines:
+            print(line, file=stream)
+    except OSError:
+        # The terminal is gone: the exit code is all that still reaches anyone.
+        return state.exit_code if state.exit_code is not None else 1
+    return state.exit_code if state.exit_code is not None else 1
+
+
+def _tui_cleanup(
+    terminal: _TuiTerminal, runs: list[_EngineRun], handlers: dict, state: TuiState,
+) -> list[str]:
+    """Stop the child, put the terminal and the signal handlers back: what failed."""
+    failures: tuple = (OSError, ValueError)
+    if os.name != "nt":
+        import termios  # noqa: PLC0415
+
+        failures += (termios.error,)
+    problems: list[str] = []
+
+    def step(action: Callable[[], object]) -> None:
+        try:
+            action()
+        except failures as exc:
+            problems.append(str(exc) or type(exc).__name__)
+
+    for name in ("SIGTERM", "SIGHUP", "SIGTSTP"):
+        number = getattr(signal, name, None)
+        if number is not None:
+            step(functools.partial(signal.signal, number, signal.SIG_IGN))
+    # An install stopped by a signal still gets to write its summary.
+    for run in runs:
+        step(functools.partial(run.stop, 10 if state.running and state.run == "install"
+                               else 0))
+    step(terminal.leave)
+    for number, previous in handlers.items():
+        step(functools.partial(signal.signal, number, previous))
+    return problems
 
 
 def _line_buffered_stdout() -> None:

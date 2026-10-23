@@ -1,0 +1,15 @@
+ RetroBIOS: RetroArch
+
+ 4 files to download, 1.0 MB
+ 1 in place, 3 missing, 1 wrong copy
+ BIOS folder:
+   ~/.config/retroarch/system
+ Free space: 50.0 GB
+ They are replaced, and the old copies
+   are kept in a backup folder.
+
+ > Install
+   Choose systems
+   Options
+   Quit
+ A Install  B Back  Y Options  ? Help

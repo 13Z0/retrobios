@@ -1,0 +1,15 @@
+ RetroBIOS: Preview
+
+ 4 files to download, 1.0 MB. Nothing
+   is written.
+
+ missing     512.0 KB  scph5500.bin
+ wrong copy  512.0 KB  scph5501.bin
+ missing          4 B  pcsx/extra.bin
+ missing      16.0 KB  gba_bios.bin
+
+
+
+
+
+ A/Enter Back  Up/Down Scroll

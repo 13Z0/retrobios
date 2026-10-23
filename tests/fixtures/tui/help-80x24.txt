@@ -1,0 +1,24 @@
+ RetroBIOS: Keys
+
+ Up/Down, k/j      Move
+ A/Enter, Start    Install
+ Y, o, Tab         Options
+ B/Esc, Backspace  Back
+ q, Ctrl-C         Quit
+ ?, F1             This help
+
+ BIOS folder: /home/user/.config/retroarch/system
+
+
+
+
+
+
+
+
+
+
+
+
+
+ Any key closes this help

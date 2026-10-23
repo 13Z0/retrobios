@@ -1,0 +1,15 @@
+ RetroBIOS: Which folder?
+
+ RetroArch reads its BIOS files from:
+ /home/user/.config/retroarch/system
+
+ > Use this folder
+   Browse for a folder
+   Type a path
+
+
+
+
+
+
+ A Use this folder  B Back  ? Help
