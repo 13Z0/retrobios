@@ -239,6 +239,7 @@ files:
 
   - name: "hatari.cfg"
     path: null
+    standalone_path: "hatari.cfg"
     description: "Hatari configuration file"
     required: false
     storage: user_provided
@@ -253,6 +254,7 @@ files:
 
   - name: "hatari.nvram"
     path: null
+    standalone_path: "hatari.nvram"
     description: "TT and Falcon NVRAM contents, 50 bytes"
     required: false
     has_builtin: true
