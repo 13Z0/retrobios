@@ -545,6 +545,74 @@ class TheOneLinerNarrows(unittest.TestCase):
             self.assertEqual(repo.installed(), ["pcsx/extra.bin", "scph5501.bin"])
 
     @unittest.skipUnless(shutil.which("script"), "script(1) provides the terminal")
+    def test_a_quoted_folder_typed_at_the_prompt(self):
+        """The quotes "Copy as path" adds were kept: the files went into a
+        folder named `"` under the current directory, created without the
+        question --dest asks, and the run said Done."""
+        with FakeRepository() as repo:
+            home = repo.root / "home"
+            home.mkdir()
+            # Read for the standalone emulator folders, of which there are none.
+            (repo.root / "install" / "emudeck.json").write_text(json.dumps(
+                {"manifest_version": 2, "platform": "emudeck", "files": []}))
+            card = repo.root / "My Card" / "bios"
+            env = dict(repo.env(), HOME=str(home), USERPROFILE=str(home),
+                       XDG_CONFIG_HOME=str(home), RETROBIOS_OS="linux")
+            command = f"{shlex.quote(sys.executable)} {shlex.quote(str(REPO_ROOT / 'install.py'))}"
+            for answer, code in (("n", 2), ("y", 0)):
+                with self.subTest(answer=answer):
+                    proc = subprocess.run(
+                        ["script", "-qec", command, "/dev/null"],
+                        input=f'1\n"{card}"\n{answer}\n\n', env=env, cwd=repo.root,
+                        capture_output=True, text=True, timeout=60, check=False,
+                    )
+                    self.assertEqual(proc.returncode, code, proc.stdout + proc.stderr)
+                    self.assertIn(f"Create 2 folders under {repo.root}?", proc.stdout)
+                    self.assertFalse((repo.root / '"').exists())
+            self.assertEqual(len([p for p in card.rglob("*") if p.is_file()]), 5)
+
+    def test_q_at_every_menu_stops_on_130(self):
+        """`install.sh && retroarch` started RetroArch after a q, which left
+        with 0 where Ctrl+C and Ctrl+D leave with 130."""
+        files = [{"dest": "a.bin", "size": 1, "systems": ["nintendo-gba"]}]
+        menus = (
+            lambda: install._choose_platform("Platform:"),
+            lambda: install._pick("Systems:", [("nintendo-gba", files)]),
+            lambda: install._prompt_custom_selection("retroarch", files, []),
+        )
+        for menu in menus:
+            with self.subTest(menu=menu), \
+                    mock.patch("builtins.input", lambda _prompt="": "q"), \
+                    mock.patch("sys.stdout", new_callable=lambda: open(os.devnull, "w")), \
+                    self.assertRaises(SystemExit) as stop:
+                menu()
+            self.assertEqual(stop.exception.code, 130)
+
+    @unittest.skipIf(os.name == "nt", "a pseudo-terminal is a POSIX one")
+    def test_ctrl_d_at_the_first_question_has_nothing_to_carry_on(self):
+        import pty  # noqa: PLC0415
+
+        with FakeRepository() as repo:
+            home = repo.root / "home"
+            home.mkdir()
+            (repo.root / "install" / "emudeck.json").write_text(json.dumps(
+                {"manifest_version": 2, "platform": "emudeck", "files": []}))
+            env = dict(repo.env(), HOME=str(home), USERPROFILE=str(home),
+                       XDG_CONFIG_HOME=str(home), RETROBIOS_OS="linux")
+            leader, follower = pty.openpty()
+            proc = subprocess.Popen(
+                [sys.executable, str(REPO_ROOT / "install.py")], stdin=follower,
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=env, text=True,
+            )
+            os.close(follower)
+            os.write(leader, b"\x04")
+            out, err = proc.communicate(timeout=60)
+            os.close(leader)
+        self.assertEqual(proc.returncode, 130, out + err)
+        self.assertIn("Stopped. Nothing was installed.", out)
+        self.assertNotIn("carry on", out)
+
+    @unittest.skipUnless(shutil.which("script"), "script(1) provides the terminal")
     def test_enter_installs_everything_at_a_terminal(self):
         with FakeRepository() as repo:
             command = " ".join(shlex.quote(part) for part in repo.command())

@@ -392,7 +392,8 @@ class ExitStatusTable(unittest.TestCase):
         section = _section(_page("installer.md"), "Exit status")
         documented = {int(row[0].strip("`")) for row in _table_rows(section)}
         raised = {int(code) for code in re.findall(r"sys\.exit\((\d+)\)", source)}
-        self.assertEqual(documented, raised | {2})
+        # 0 is a run that returns, 2 the code argparse leaves with.
+        self.assertEqual(documented, raised | {0, 2})
         self.assertIn("install.py: error:", section)
         for option in set(re.findall(r"(--[a-z][a-z-]+)", section)):
             self.assertIn(f'"{option}"', source, option)

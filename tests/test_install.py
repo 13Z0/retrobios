@@ -1784,7 +1784,7 @@ class TestDetectedPlatformPrompt(unittest.TestCase):
     def test_q_quits_and_the_menu_says_so(self):
         result, out = self._answer("q")
         self.assertIsInstance(result, SystemExit)
-        self.assertEqual(result.code, 0)
+        self.assertEqual(result.code, 130)
         self.assertIn("q) quit", out)
 
     def test_a_wrong_answer_names_the_choices(self):
@@ -1820,11 +1820,51 @@ class TestManualPlatformPrompt(unittest.TestCase):
             chosen = install._prompt_manual_platform("linux")
         self.assertEqual(chosen, [("batocera", install.DEFAULT_DESTS["batocera"])])
 
-    def test_quit_exits_cleanly(self):
+    def test_quit_stops_like_ctrl_c(self):
+        """`install.sh && retroarch` went on to start RetroArch with no BIOS
+        after a q, which left with 0 where Ctrl+C leaves with 130."""
         with unittest.mock.patch("builtins.input", lambda _prompt="": "q"):
             with self.assertRaises(SystemExit) as raised:
                 install._prompt_manual_platform("linux")
-        self.assertEqual(raised.exception.code, 0)
+        self.assertEqual(raised.exception.code, 130)
+
+    def test_quotes_around_a_typed_folder_are_dropped(self):
+        """Explorer's "Copy as path" quotes the folder: the files went into a
+        folder named `"` under the current directory, and the run said Done."""
+        root = Path(_tempdir(self))
+        for typed in (f'"{root}/My Card/bios"', f"'{root}/My Card/bios'",
+                      f'  "{root}/My Card/bios"  '):
+            answers = iter(["1", typed])
+            with self.subTest(typed=typed), \
+                    unittest.mock.patch("builtins.input", lambda _prompt="": next(answers)), \
+                    contextlib.redirect_stdout(io.StringIO()):
+                chosen = install._prompt_manual_platform("linux")
+            self.assertEqual(chosen, [("retroarch", root / "My Card" / "bios")])
+
+    def test_home_and_variables_are_expanded_on_every_system(self):
+        for os_type in ("linux", "windows", "darwin"):
+            answers = iter(["1", '"~/$RB_TEST_DIR/bios"'])
+            with self.subTest(os_type=os_type), \
+                    unittest.mock.patch.dict(os.environ, {"RB_TEST_DIR": "cards"}), \
+                    unittest.mock.patch("builtins.input", lambda _prompt="": next(answers)), \
+                    contextlib.redirect_stdout(io.StringIO()):
+                chosen = install._prompt_manual_platform(os_type)
+            self.assertEqual(chosen[0][1], Path.home() / "cards" / "bios")
+
+    def test_a_default_folder_not_there_is_not_found(self):
+        """With nothing installed, Enter printed "Found RetroArch at" a
+        folder that did not exist."""
+        root = Path(_tempdir(self))
+        answers = iter(["1", ""])
+        out = io.StringIO()
+        with unittest.mock.patch.object(install, "_default_dest",
+                                        return_value=root / "retroarch" / "system"), \
+                unittest.mock.patch("builtins.input", lambda _prompt="": next(answers)), \
+                contextlib.redirect_stdout(out):
+            install._prompt_manual_platform("linux")
+        self.assertIn("default BIOS folder", out.getvalue())
+        self.assertIn("will be created", out.getvalue())
+        self.assertNotIn("Found", out.getvalue())
 
     def test_a_wrong_answer_says_what_to_type(self):
         answers = iter(["99", "1", ""])

@@ -283,6 +283,8 @@ def _os_default_dests(os_type: str) -> dict[str, Path]:
 # Set when the run is interrupted, so queued downloads end instead of draining
 # the pool: every future is submitted before the first one completes.
 _stop = threading.Event()
+# Set once a run starts writing: Ctrl+C before that has nothing to carry on.
+_writing = threading.Event()
 
 class _Interrupted(Exception):
     """Raised inside a worker once the run has been stopped."""
@@ -4852,6 +4854,7 @@ def download_files(
     failed: list[tuple[str, str]] = []
     interrupted = False
     _stop.clear()
+    _writing.set()
     term = term or Terminal()
     if progress is None:
         progress = Progress(len(files), sum(f.get("size", 0) for f in files), term)
@@ -5018,6 +5021,7 @@ def install_data_directory(entry: dict, bios_path: Path) -> dict:
               "not_kept": []}
     if not needed:
         return counts
+    _writing.set()
     try:
         root.mkdir(parents=True, exist_ok=True)
         with tempfile.TemporaryDirectory(dir=root) as scratch:
@@ -5393,7 +5397,7 @@ def _choose_platform(title: str, default: str = "") -> str:
         if not choice and default:
             return default
         if choice.lower() == "q":
-            sys.exit(0)
+            _quit()
         if choice.isdigit() and 1 <= int(choice) <= len(AVAILABLE_PLATFORMS):
             return AVAILABLE_PLATFORMS[int(choice) - 1]
         key = _name_key(choice)
@@ -5416,10 +5420,24 @@ def _prompt_manual_platform(os_type: str) -> list[tuple[str, Path]]:
         )
         if default_dest is not None:
             break
-    dest = Path(raw).expanduser() if raw else default_dest
-    if os_type == "windows" and raw:
-        dest = Path(os.path.expandvars(raw))
-    return [(plat, dest)]
+    if raw:
+        return [(plat, _typed_folder(raw))]
+    state = "" if default_dest.exists() else ". It does not exist yet and will be created"
+    print(f"  {display_name(plat)}'s default BIOS folder: {default_dest}{state}.")
+    return [(plat, default_dest)]
+
+
+def _typed_folder(raw: str) -> Path:
+    """A folder typed at a question, read as a shell reads an argument.
+
+    Explorer's "Copy as path" puts quotes around it, and users quote a path
+    with spaces: kept, they sent the files into a folder named `"` under
+    the current directory, and the run said Done.
+    """
+    text = raw.strip()
+    if len(text) >= 2 and text[0] == text[-1] and text[0] in "'\"":
+        text = text[1:-1].strip()
+    return Path(os.path.expandvars(os.path.expanduser(text)))
 
 
 # Platforms with no install location of their own: the BIOS folder sits
@@ -5500,7 +5518,7 @@ def _prompt_platform_choice(
     while True:
         choice = _ask("> ").lower()
         if choice == "q":
-            sys.exit(0)
+            _quit()
         idx = int(choice) if choice.isdigit() else 0
         if 1 <= idx <= len(platforms):
             return [platforms[idx - 1]]
@@ -5524,6 +5542,12 @@ def _ask(prompt: str) -> str:
         raise KeyboardInterrupt from None
 
 
+def _quit() -> None:
+    """q at a question ends the run where Ctrl+C does, on 130: with 0,
+    `install.sh && retroarch` started RetroArch on no BIOS."""
+    sys.exit(130)
+
+
 def _sized(files: list[dict]) -> str:
     return f"{_plural(len(files), 'file')}, {format_size(sum(f.get('size', 0) for f in files))}"
 
@@ -5543,7 +5567,7 @@ def _pick(title: str, rows: list[tuple[str, list[dict]]], ordered: bool = False)
         if not text:
             return []
         if text.lower() == "q":
-            sys.exit(0)
+            _quit()
         try:
             chosen = parse_selection(text, len(rows), ordered=ordered)
         except ValueError as exc:
@@ -5579,7 +5603,7 @@ def _prompt_custom_selection(
         if answer == "":
             return None
         if answer == "q":
-            sys.exit(0)
+            _quit()
         if answer == "i" and installed is not None:
             return INSTALLED_ONLY
         if answer == "c":
@@ -6971,7 +6995,7 @@ def _open_local_sources(args: argparse.Namespace) -> None:
         sys.exit(1)
 
 
-def _missing_dest(dest: Path, ask: bool) -> None:
+def _missing_dest(dest: Path, ask: bool, named: str = "named with --dest") -> None:
     """Say that a --dest folder does not exist before anything goes there.
 
     A typo (~/.config/retroarh/system) was created with every missing
@@ -6990,7 +7014,7 @@ def _missing_dest(dest: Path, ask: bool) -> None:
     if missing > 1 and ask:
         answer = _ask(f"  Create {_plural(missing, 'folder')} under {nearest}? [y/N] ")
         if not answer.strip().lower().startswith("y"):
-            print("  Nothing installed. Check the folder named with --dest, then run "
+            print(f"  Nothing installed. Check the folder {named}, then run "
                   "the command again.")
             sys.exit(2)
 
@@ -7212,8 +7236,13 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                     print(line)
                 sys.exit(1)
             platforms = _prompt_manual_platform(os_type)
-        for name, path in platforms:
-            print(f"  Found {found_label(name, path)}")
+            plat, typed = platforms[0]
+            if typed != _default_dest(os_type, plat):
+                _missing_dest(typed, not (args.check or args.dry_run or args.yes),
+                              "typed")
+        else:
+            for name, path in platforms:
+                print(f"  Found {found_label(name, path)}")
 
     conflict = os_conflict(platforms)
     if conflict and not interactive and not listing:
@@ -7800,7 +7829,11 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         # Outside the download phase (fetching the file list, checking the
         # files present, rebuilding data directories): nothing is half
-        # written there, and a socket traceback read as a crash.
-        print("\nStopped. Run the same command again to carry on from here. "
-              "Nothing is lost.")
+        # written there, and a socket traceback read as a crash. Stopped at
+        # a question, nothing has started, and there is nothing to carry on.
+        if _writing.is_set():
+            print("\nStopped. Run the same command again to carry on from here. "
+                  "Nothing is lost.")
+        else:
+            print("\nStopped. Nothing was installed.")
         sys.exit(130)
