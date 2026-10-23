@@ -43,14 +43,11 @@ Run it without `--check`. It adds missing files and replaces wrong ones.
 ## 3. Check the folder and the names
 
 - **Right folder?** [Get your files](../which-pack.md) names it.
-- **Exact name?** `scph5501.bin` and `SCPH-5501.BIN` differ. On Linux,
-  capitals count too. The command adds names that differ by capitals.
+- **Exact name?** `scph5501.bin` and `SCPH-5501.BIN` differ.
 - **A `bios` folder inside your BIOS folder?** Move its files up one level.
 - **BIOS setting on a subfolder, like `system/dc`?** Point it at the BIOS
-  folder itself. Some emulators add their own, like `dc/` for Flycast, and
-  the command puts the files there.
-- **A ZIP in parts, like `Pack.part1of2.zip`?** Unzip every part into one
-  folder.
+  folder. Emulators add their own, like `dc/` for Flycast.
+- **A ZIP in parts?** Unzip every part into one folder.
 
 <!-- Flycast's libretro port appends "dc/" to the system directory:
 shell/libretro/libretro.cpp:2252-2253, emulators/flycast.yml. -->
@@ -60,10 +57,9 @@ shell/libretro/libretro.cpp:2252-2253, emulators/flycast.yml. -->
 It needs its BIOS set, like `neogeo.zip`, and a game set for the same emulator
 version.
 
-- Keep `neogeo.zip` zipped.
-- A game set for another MAME version often fails.
+- Another MAME version's game set often fails.
   Details: [the version of each emulator](technical-faq.md#which-mame-version-do-the-arcade-bios-sets-match).
-- Run the command once. It installs the BIOS sets your emulators read.
+- Run the command once. It installs the BIOS sets.
 
 ## The BIOS is fine, the game still fails
 
@@ -71,17 +67,13 @@ version.
 - **A BIOS setting?** Some emulators can skip the BIOS. In PCSX ReARMed, set
   **BIOS Selection** to **Auto**.
 - **The screen says "Please insert PlayStation CD-ROM"?** The BIOS works.
-  The game did not load: open its `.cue` or `.m3u` file, not a `.bin`. A
-  disc from another region shows it too.
-
-<!-- The message comes from the console's CD-ROM region check:
-libretro/swanstation README.md:36 (cc94ebcd). -->
+  The game did not load: open its `.cue` or `.m3u` file, not a `.bin`.
 
 ## If the command fails { #installation-script-fails }
 
 - **Network error:** try again later.
 - **`The clock reads ...`:** set the right date.
-- **Permission denied:** do what the message says. It names what to run.
+- **Permission denied:** do what the message says.
 - **No setup found:** name it and its folder:
 
 <!-- os-tabs windows: --platform retroarch --dest C:\path\to\RetroArch\system -->

@@ -85,7 +85,6 @@ class TroubleshootingSaysTheWordsOnScreen(unittest.TestCase):
         section = _flat(_section(self.text, "The BIOS is fine, the game still fails"))
         self.assertIn('"Please insert PlayStation CD-ROM"?** The BIOS works.', section)
         self.assertIn("open its `.cue` or `.m3u` file, not a `.bin`", section)
-        self.assertIn("swanstation README.md:36", section)
 
     def test_terms_for_search(self):
         terms = _front(self.text)["terms"]
@@ -192,7 +191,8 @@ class FaqLabels(unittest.TestCase):
     def test_no_reference_label(self):
         self.assertNotRegex(self.text, r"(?m)^Reference:")
         arcade = _section(self.text, "My arcade game fails (which MAME version?)")
-        self.assertIn(f"Which version each emulator reads: [the list]({ARCADE_ANCHOR}).", arcade)
+        self.assertIn(f"Game sets must match the emulator's version:\n[the list]({ARCADE_ANCHOR}).",
+                      arcade)
 
     def test_the_card_sentence(self):
         self.assertIn("For RetroArch on a Switch,\nwith the card in drive `E:`, run:", self.text)
