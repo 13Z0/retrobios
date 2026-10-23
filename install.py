@@ -392,6 +392,9 @@ class Progress:
         self.files = 0
         self.bytes = 0
         self.resumed = 0
+        # Bytes that came from this machine and not the network: a copy
+        # found here, the pack, a resumed partial copy.
+        self.local = 0
         # Files written to their place, which a stopped run counts: the
         # queue's length said "118 files installed" over 8 on disk.
         self.installed = 0
@@ -400,11 +403,16 @@ class Progress:
         self._evented = self.start
         self._lock = threading.Lock()
 
-    def add(self, count: int, resumed: bool = False) -> None:
+    def add(self, count: int, resumed: bool = False, network: bool | None = None) -> None:
+        """count bytes written, resumed ones left out of the speed. network
+        is whether they came over the network, by default unless resumed."""
         with self._lock:
             self.bytes += count
             if resumed:
                 self.resumed += count
+            fetched = not resumed if network is None else network
+            if not fetched:
+                self.local += count
             now = time.monotonic()
             if self.term.live and not self.term.quiet and now - self._drawn >= 0.1:
                 self._drawn = now
@@ -413,10 +421,18 @@ class Progress:
                 self._evented = now
                 EVENTS.emit("progress", files_done=self.files, files_total=self.total_files,
                             bytes_done=self.bytes, bytes_total=self.expected_bytes)
+                self.emit_transfer()
+
+    def emit_transfer(self) -> None:
+        """The transfer event: of the bytes done, those this machine held
+        and those the network brought."""
+        EVENTS.emit("transfer", bytes_local=self.local,
+                    bytes_network=self.bytes - self.local)
 
     def forget_resumed(self, count: int) -> None:
         with self._lock:
             self.resumed -= count
+            self.local -= count
 
     def transferred(self) -> int:
         """Bytes fetched by this run, a resumed partial copy excluded."""
@@ -521,6 +537,11 @@ EVENT_KEYS: dict[str, tuple[str, ...]] = {
     "unreadable": ("platform", "folder", "path", "member", "reason"),
     "download": ("platform", "files", "bytes"),
     "progress": ("files_done", "files_total", "bytes_done", "bytes_total"),
+    # Right after each progress event, and once when the files of a
+    # download event are done: bytes_done split into the bytes this machine
+    # held (a copy found here, the pack, a resumed partial copy) and the
+    # bytes the network brought. A speed is bytes_network over time.
+    "transfer": ("bytes_local", "bytes_network"),
     "downloaded": ("dest", "ok", "reason", "size", "files_done", "files_total",
                    "bytes_done", "bytes_total"),
     # failed: [{"dest", "reason"}]. skipped: [{"reason", "label", "files",
@@ -5172,6 +5193,7 @@ def download_files(
         if not future.cancelled() and future.exception() is None and future.result()[1]
     )
     progress.finish()
+    progress.emit_transfer()
     return failed, interrupted
 
 
@@ -6634,7 +6656,7 @@ def _write_verified(
                     raise ValueError(f"{held_in} holds more bytes than the list records")
                 out.write(chunk)
                 if progress is not None:
-                    progress.add(len(chunk), resumed=local)
+                    progress.add(len(chunk), resumed=local, network=False)
                     counted += len(chunk)
         if size != f["size"]:
             raise ValueError(f"{held_in} holds {size} bytes, the list records {f['size']}")
@@ -6654,7 +6676,7 @@ def _write_verified(
         return f["dest"], False, f"{NOT_KEPT} ({exc})"
     except (_SourceUnreadable, ValueError, *_MEMBER_ERRORS) as exc:
         if progress is not None and counted:
-            progress.add(-counted, resumed=local)
+            progress.add(-counted, resumed=local, network=False)
         if isinstance(exc, OSError) and _write_refused(exc):
             return f["dest"], False, READ_ONLY if _read_only_file(dest) else NOT_WRITABLE
         return f["dest"], False, str(exc)

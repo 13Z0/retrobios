@@ -748,6 +748,56 @@ class WhereTheSearchGoes(FromFolder):
         self.assertLess(kinds.index("scanned"), kinds.index("detect"))
 
 
+class LocalAndNetworkBytes(unittest.TestCase):
+    """The engine knows which bytes came from this machine. The interface
+    guessed it to show a download speed: the transfer event tells it."""
+
+    def test_the_counts_follow_each_source_and_each_rollback(self):
+        out = io.StringIO()
+        install.EVENTS.open(out)
+        self.addCleanup(setattr, install.EVENTS, "stream", None)
+        term = install.Terminal()
+        term.live, term.quiet = False, True
+        with mock.patch.object(install, "EVENT_PROGRESS_INTERVAL", 0):
+            progress = install.Progress(3, 100, term)
+            progress.add(10, resumed=True)            # a partial copy resumed
+            progress.add(20)                          # from the network
+            progress.add(30, resumed=True, network=False)  # a copy found here
+            progress.add(15, network=False)           # the pack
+            progress.add(-30, resumed=True, network=False)
+            progress.add(-30)                         # a download dropped,
+            progress.forget_resumed(10)               # its resumed part too
+        self.assertEqual((progress.bytes, progress.local), (15, 15))
+        events = [json.loads(line) for line in out.getvalue().splitlines()]
+        transfers = [e for e in events if e["event"] == "transfer"]
+        progresses = [e for e in events if e["event"] == "progress"]
+        self.assertEqual(len(transfers), len(progresses))
+        self.assertEqual([(t["bytes_local"], t["bytes_network"]) for t in transfers][:4],
+                         [(10, 0), (10, 20), (40, 20), (55, 20)])
+        for transfer, update in zip(transfers, progresses):
+            self.assertEqual(transfer["bytes_local"] + transfer["bytes_network"],
+                             update["bytes_done"])
+
+    def test_an_install_from_a_folder_and_the_network_splits_them(self):
+        with FakeRepository() as repo:
+            old = repo.root / "old"
+            payloads = FakeRepository.PAYLOADS
+            old.mkdir()
+            (old / "a.bin").write_bytes(payloads["scph5500.bin"][0])
+            (old / "b.bin").write_bytes(payloads["gba_bios.bin"][0])
+            proc = repo.run("--from", str(old), "--no-input", "--events")
+            self.assertEqual(proc.returncode, 0, proc.stderr)
+            events = _events(proc)
+        local = len(payloads["scph5500.bin"][0]) + len(payloads["gba_bios.bin"][0])
+        total = sum(len(p[0]) for p in payloads.values())
+        kinds = [e["event"] for e in events]
+        last = len(kinds) - 1 - kinds[::-1].index("transfer")
+        self.assertEqual(events[last], {"event": "transfer", "bytes_local": local,
+                                        "bytes_network": total - local})
+        self.assertLess(kinds.index("download"), last)
+        self.assertLess(last, kinds.index("summary"))
+
+
 class AFolderAroundTheBiosFolder(FromFolder):
     """--from names a folder holding the BIOS folder: an archive this run
     replaces was a source of members while it was being written."""
