@@ -16,6 +16,12 @@ systems:
   - nintendo-64dd
 mode: standalone
 
+data_root:
+  android:
+    path: "/data/data/org.mupen64plusae.v3.alpha/files"
+    source_ref: "app/src/main/java/paulscode/android/mupen64plusae/persistent/AppData.java:389-391"
+    note: "Private storage of the package. The 64DD IPL and Transfer Pak files are picked in the settings and copied in."
+
 notes: |
   Android front end under the paulscode.android.mupen64plusae namespace,
   published as org.mupen64plusae.v3.alpha (app/build.gradle:24). Everything it
