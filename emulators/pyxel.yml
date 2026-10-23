@@ -4,8 +4,7 @@ core_classification: game_engine
 source: "https://github.com/kitao/pyxel"
 upstream: "https://github.com/kitao/pyxel"
 profiled_date: "2026-10-04"
-source_commit: "50f9bd77780c993aca62b5b221766bde5791081d"
-upstream_gone: "github.com/kitao/pyxel answers HTTP 404 to the API and the web, with no redirect. Observed 2026-10-18, no mirror found."
+source_commit: "5d8e7b4f37c106684c1e91692772569a32a5e3d4"
 core_version: "v2.9.9"
 display_name: "Pyxel"
 cores: [pyxel]
