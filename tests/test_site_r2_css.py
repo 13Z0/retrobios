@@ -213,3 +213,18 @@ class ThemeStylesheet(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class DeviceTilesAndHeaderLogo(unittest.TestCase):
+    """The device tiles had no style once merged: every line underlined and one
+    tall block per setup on a phone. The header logo was sized from the whole
+    header, tab row included, and grew to 84 px."""
+
+    def test_a_tile_is_one_compact_link(self):
+        css = CSS_PATH.read_text(encoding="utf-8")
+        self.assertRegex(css, r"a\.rb-tile \{[^}]*grid-template-columns: 40px 1fr")
+        self.assertRegex(css, r"a\.rb-tile \{[^}]*text-decoration: none")
+
+    def test_the_header_logo_follows_the_top_bar(self):
+        css = CSS_PATH.read_text(encoding="utf-8")
+        self.assertIn("header .site-title img { height: calc(4rem - 2 * var(--sl-nav-pad-y))", css)

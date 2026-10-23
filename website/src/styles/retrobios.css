@@ -272,6 +272,26 @@
 	vertical-align: middle;
 }
 
+/* Device tiles: the whole tile is the link. Logo on the left, name over
+   what it runs on, so a phone shows a short row per setup. */
+.sl-markdown-content .rb-tiles { grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr)); gap: 0.6rem; }
+.sl-markdown-content .rb-cards > a.rb-tile {
+	display: grid;
+	grid-template-columns: 40px 1fr;
+	grid-template-rows: auto auto;
+	column-gap: 0.75rem;
+	row-gap: 0.1rem;
+	align-items: center;
+	align-content: center;
+	padding: 0.6rem 0.75rem;
+	color: var(--sl-color-white);
+	text-decoration: none;
+}
+.sl-markdown-content a.rb-tile .rb-card-logo { grid-row: 1 / span 2; }
+.sl-markdown-content a.rb-tile .rb-tile-name { color: var(--sl-color-text-accent); font-weight: 600; line-height: 1.3; }
+.sl-markdown-content a.rb-tile .rb-tile-runs { color: var(--sl-color-gray-3); font-size: var(--sl-text-sm); line-height: 1.35; }
+.sl-markdown-content a.rb-tile:hover .rb-tile-name { text-decoration: underline; }
+
 /* Numbered steps */
 .sl-markdown-content .rb-steps > ol {
 	counter-reset: rb-step;
@@ -704,4 +724,10 @@ starlight-tabs [role='tab'] { white-space: nowrap; }
 		animation-duration: 0.01ms !important;
 		animation-iteration-count: 1 !important;
 	}
+}
+
+/* Starlight sizes the header logo from --sl-nav-height, which also holds the
+   tab row from 50rem up. Size it from the top bar alone. */
+@media (min-width: 50rem) {
+	header .site-title img { height: calc(4rem - 2 * var(--sl-nav-pad-y)); width: auto; }
 }
