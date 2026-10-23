@@ -15,6 +15,12 @@ systems:
   - sega-chihiro
 mode: standalone
 
+data_root:
+  windows:
+    path: "%APPDATA%/Cxbx-Reloaded"
+    source_ref: "src/common/Settings.cpp:78-82,187-205,902-937,968-996"
+    note: "answering Yes to the portable mode question on first run puts it in the folder of cxbx.exe instead, and the settings can name a custom location"
+
 notes: |
   Windows x86 emulator running Xbox and Sega Chihiro titles. The kernel is
   reimplemented and XBE code executes natively, so no Xbox flash ROM or MCPX
