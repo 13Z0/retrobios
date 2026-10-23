@@ -12,14 +12,30 @@ cores:
 systems: [nintendo-switch]
 mode: standalone
 
+data_root:
+  windows:
+    path: "%APPDATA%/sudachi"
+    source_ref: "src/common/fs/path_util.cpp:90-96, CMakeLists.txt:68"
+    note: "A user folder beside sudachi.exe is used instead when it exists."
+  linux:
+    path: "$XDG_DATA_HOME/sudachi, else ~/.local/share/sudachi"
+    source_ref: "src/common/fs/path_util.cpp:105-115, 303-311"
+    note: "A user folder in the working directory is used instead when it exists."
+  macos:
+    path: "$XDG_DATA_HOME/sudachi, else ~/.local/share/sudachi"
+    source_ref: "src/common/fs/path_util.cpp:105-115, 303-311"
+    note: "A user folder in the working directory is used instead when it exists."
+  android:
+    path: "Android/data/org.sudachi.sudachi_emu/files"
+    source_ref: "src/android/app/src/main/java/org/sudachi/sudachi_emu/utils/DirectoryInitialization.kt:41-42, src/common/fs/path_util.cpp:100-101"
+    note: "relWithDebInfo, debug and ea builds append .relWithDebInfo, .debug or .ea to the package name."
+
 notes: |
   Sudachi is a standalone Nintendo Switch emulator forked from yuzu early
   access 4176 (README.md:1-4). Keys are read from the keys directory of the user data
-  directory (src/common/fs/fs_paths.h:8-9, 18). On Windows the portable
-  build uses a user folder next to sudachi.exe when it exists, otherwise
-  %APPDATA%/sudachi (src/common/fs/path_util.cpp:90-96, CMakeLists.txt:68).
-  RetroBat creates that user folder before launching sudachi.exe -g <rom>
-  and never copies keys itself.
+  directory named in data_root (src/common/fs/fs_paths.h:8-9, 18).
+  RetroBat creates the user folder beside sudachi.exe before launching
+  sudachi.exe -g <rom> and never copies keys itself.
   Key loading stops when neither prod.keys nor title.keys exists
   (src/core/crypto/key_manager.cpp:649-652).
   Firmware (system NCAs) is installed through the UI (Tools, Install
