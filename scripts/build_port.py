@@ -103,7 +103,6 @@ def archive_members(name: str, root: Path = REPO_ROOT) -> list[tuple[str, Path]]
         source = ports / "muos"
         members = [
             ("RetroBIOS/mux_launch.sh", source / "mux_launch.sh"),
-            ("RetroBIOS/muxterm.gptk", source / "muxterm.gptk"),
             ("RetroBIOS/README.md", source / "README.md"),
             *_engine("RetroBIOS", root),
         ]

@@ -28,8 +28,10 @@ GAMEDIR="/$directory/ports/retrobios"
 cd "$GAMEDIR" || exit 1
 
 # Appended to, as the launcher and install.py also write this file: a tee
-# writing from its own offset would overwrite their lines.
-: > "$GAMEDIR/log.txt" && exec > >(tee -a "$GAMEDIR/log.txt") 2>&1
+# writing from its own offset would overwrite their lines. The previous run's
+# is kept, for a player who starts again before reading it.
+[ -s "$GAMEDIR/log.txt" ] && mv -f "$GAMEDIR/log.txt" "$GAMEDIR/log.prev.txt" 2>/dev/null
+{ : > "$GAMEDIR/log.txt"; } 2>/dev/null && exec > >(tee -a "$GAMEDIR/log.txt") 2>&1
 
 # PortMasterDialog.txt has shipped with PortMaster since before 2024.02.26,
 # and the 8.5.23 copy JELOS and KOLOS preinstall has no funcs.txt to source
@@ -48,17 +50,33 @@ RB_CONSOLE="${CUR_TTY:-/dev/tty0}"
 RB_MAPPER="$GPTOKEYB"
 RB_FALLBACK=1
 RB_PACK_PATH="$GAMEDIR:/$directory/ports:/$directory"
-# ArkOS and dArkOS, as control.txt tells them apart (its plymouth theme): the
-# games card is /$directory, roms2 when fstab mounts a second card, and its
-# bios folder is the one RetroArch reads. The other card's is offered.
+# ArkOS and dArkOS, as control.txt tells them apart (its plymouth theme):
+# their two card folders are offered to each other, and the destination is
+# the one RetroArch reads. control.txt names the card PortMaster runs from
+# roms2 whenever fstab mounts a second card, even when RetroArch still reads
+# /roms/bios, so RetroArch's own setting decides, as in the Tools entry.
 if [ -e "${RB_ARK_MARKER:-/usr/share/plymouth/themes/text.plymouth}" ]; then
   RB_OTHER_CARDS="${RB_OTHER_CARDS:-/roms/bios:/roms2/bios}"
-  RB_BIOS_DEST="/$directory/bios"
+  RB_BIOS_DEST=$(awk -F'"' '/^system_directory *=/ { print $2; exit }' \
+    "${RB_RETROARCH_CFG:-/home/ark/.config/retroarch/retroarch.cfg}" 2>/dev/null)
+  RB_BIOS_DEST="${RB_BIOS_DEST:-/$directory/bios}"
 fi
 # shellcheck source=../shared/tui.txt
 source "$GAMEDIR/tui.txt"
 # shellcheck source=retrobios/screens.txt
 source "$GAMEDIR/screens.txt"
+rb_open_log keep
+
+# muOS: PortMaster's mod_muOS.txt points CUR_TTY at /dev/null, so there is no
+# console to draw on. muxterm, the terminal muOS's Terminal core runs, shows
+# the interface instead. It is told to leave the pad alone (an SDL hint) so
+# that gptokeyb sends every button once, with this port's mapping: muxterm
+# sends Y as Space, where the interface reads Y as Options. The hint allows
+# one vendor and product id, 0001:0001, which no pad carries.
+RB_MUXTERM="${RB_MUXTERM:-/opt/muos/frontend/muxterm}"
+if [ -x "$RB_MUXTERM" ] && [ -n "$RB_MAPPER" ]; then
+  RB_TERMAPP=(env SDL_GAMECONTROLLER_IGNORE_DEVICES_EXCEPT=0x0001/0x0001 "$RB_MUXTERM" --gl --)
+fi
 
 export SDL_GAMECONTROLLERCONFIG="$sdl_controllerconfig"
 

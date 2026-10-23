@@ -18,14 +18,20 @@ RB_PACK_PATH="$RB_DIR:$HERE:/userdata"
 RB_LOG="$RB_DIR/log.txt"
 
 # The X11 builds start EmulationStation on display :0, which a script run
-# from it does not always inherit.
-if [ -z "${DISPLAY:-}" ] && [ -z "${WAYLAND_DISPLAY:-}" ] && [ -S /tmp/.X11-unix/X0 ]; then
+# from it does not always inherit, with the cookie S31emulationstation
+# exports: xterm is refused the display without it.
+if [ -z "${DISPLAY:-}" ] && [ -z "${WAYLAND_DISPLAY:-}" ] \
+    && [ -S "${RB_X_SOCKET:-/tmp/.X11-unix/X0}" ]; then
   export DISPLAY=:0
+fi
+RB_XAUTH="${RB_XAUTH:-/var/lib/.Xauthority}"
+if [ -n "${DISPLAY:-}" ] && [ -z "${XAUTHORITY:-}" ] && [ -f "$RB_XAUTH" ]; then
+  export XAUTHORITY="$RB_XAUTH"
 fi
 
 # shellcheck source=../shared/tui.txt
 source "$RB_DIR/tui.txt"
-: > "$RB_LOG"
+rb_open_log fresh
 rb_select_python
 # A launcher's own arguments are not install.py's (muOS passes the app folder).
 # shellcheck disable=SC2119

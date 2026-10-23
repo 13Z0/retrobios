@@ -17,7 +17,8 @@ options, L1 and R1 to page. B on the first screen closes it.
 EmulationStation covers the text console on Batocera and Knulli, and no
 terminal for a script is documented there. RetroBIOS opens xterm (the X11
 builds) or foot when either is installed, else switches to console 4, runs
-there, and switches back. Which of the two shows up on a given build is not
-verified. If the screen stays black, `retrobios/log.txt` says which route
+there, and switches back. When console 4 does not come to the front within
+3 s, it switches back and stops. Which of the two shows up on a given build
+is not verified. If nothing shows, `retrobios/log.txt` says which route
 was taken, and the computer route always works: with the card mounted, run
 the one-line command from abdess.github.io/retrobios/wiki/installer.

@@ -13,7 +13,8 @@ the missing ones: downloaded with a network connection, or from a pack copied
 into the `retrobios` folder without one.
 
 Controls: D-pad to move, A or Start to choose, B or Select to go back, X to
-tick a system, Y for the options, L1 and R1 to page, Start + Select to quit.
+tick a system, Y for the options, L1 and R1 to page. To quit, hold Select, then press Start: Start pressed
+first would also choose the line in focus.
 
 ArkOS has Python 3.7, older than the installer needs: RetroBIOS uses the
 Python runtime the RetroBIOS PortMaster port downloads, so start that port
