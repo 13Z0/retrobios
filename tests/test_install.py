@@ -17,6 +17,7 @@ import subprocess
 import sys
 import tempfile
 import threading
+import time
 import unittest
 from types import SimpleNamespace
 import unittest.mock
@@ -2367,6 +2368,48 @@ class FileListsAreRetried(unittest.TestCase):
         self.assertEqual(caught.exception.code, 1)
         self.assertIn("HTTPS_PROXY", err.getvalue())
         self.assertIn(f"after {install.MAX_RETRIES} attempts", err.getvalue())
+
+
+class ASilentServerIsBounded(unittest.TestCase):
+    """A server that takes the connection and never answers held line mode
+    93 s: three waits of 30 s for a first byte that never came."""
+
+    def test_two_short_waits_then_the_reason(self):
+        import socket
+        import threading
+
+        listener = socket.socket()
+        listener.bind(("127.0.0.1", 0))
+        listener.listen(8)
+        self.addCleanup(listener.close)
+        held = []
+
+        def accept():
+            while True:
+                try:
+                    conn, _addr = listener.accept()
+                except OSError:
+                    return
+                held.append(conn)
+
+        threading.Thread(target=accept, daemon=True).start()
+        self.addCleanup(lambda: [conn.close() for conn in held])
+        port = listener.getsockname()[1]
+        err = io.StringIO()
+        start = time.monotonic()
+        with unittest.mock.patch.object(install, "LIST_TIMEOUT", 0.5), \
+                unittest.mock.patch.object(install, "_retry_delay", return_value=0), \
+                unittest.mock.patch.object(install, "MANIFEST_URL",
+                                           f"http://127.0.0.1:{port}/{{platform}}.json"), \
+                contextlib.redirect_stderr(err):
+            with self.assertRaises(SystemExit):
+                install.fetch_manifest("retroarch")
+        elapsed = time.monotonic() - start
+        self.assertLess(elapsed, 5)
+        self.assertEqual(len(held), install.STALLED_ATTEMPTS)
+        self.assertIn(f"after {install.STALLED_ATTEMPTS} attempts", err.getvalue())
+        # A download keeps its own, longer wait between chunks.
+        self.assertGreater(install.LIST_TIMEOUT, 1)
 
 
 class TargetListFailureIsNotAnAnswer(unittest.TestCase):

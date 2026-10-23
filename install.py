@@ -3322,16 +3322,34 @@ def install_bounded_opener() -> None:
     urllib.request.install_opener(urllib.request.build_opener(*handlers))
 
 
+# The wait for each answer of a file list, its first byte included: a
+# server that takes the connection and never answers (a captive portal, a
+# stuck proxy) held the run 93 s on three waits of 30 s. A list is a few
+# MB, never a slow stream.
+LIST_TIMEOUT = 15.0
+# Attempts after a server that took the connection went silent: once more,
+# a stall is rarely a blip.
+STALLED_ATTEMPTS = 2
+
+
+def _stalled(exc: BaseException) -> bool:
+    """Whether exc is a wait that ran out, the connection made."""
+    reason = getattr(exc, "reason", None)
+    return isinstance(exc, socket.timeout) or isinstance(reason, socket.timeout)
+
+
 def _fetch_json(
-    url: str, limit: int, label: str, attempts: int = MAX_RETRIES, timeout: float = 30,
+    url: str, limit: int, label: str, attempts: int = MAX_RETRIES,
+    timeout: float | None = None,
 ) -> object:
     """A JSON document, tried MAX_RETRIES times like every file download.
 
     A file list fetched once ended the run on one timeout over flaky Wi-Fi.
     A 4xx answer or an invalid document is final: asking again changes
-    nothing.
+    nothing, and a server gone silent is asked once more only.
     """
     _network_allowed(label)
+    timeout = LIST_TIMEOUT if timeout is None else timeout
     for attempt in range(1, attempts + 1):
         try:
             with urllib.request.urlopen(url, timeout=timeout) as resp:
@@ -3344,9 +3362,12 @@ def _fetch_json(
         except (urllib.error.URLError, OSError, http.client.HTTPException) as exc:
             code, problem = network_words(exc)
             # A wrong clock or no certificate list fails every attempt alike.
-            if attempt == attempts or code != "network":
+            if (attempt == attempts or code != "network"
+                    or (_stalled(exc) and attempt >= STALLED_ATTEMPTS)):
                 if isinstance(exc, http.client.HTTPException):
                     raise ConnectionError(f"connection cut: {exc!r}") from exc
+                # How many were made, for the line that says so.
+                exc.attempts = attempt  # type: ignore[union-attr]
                 raise
             delay = _retry_delay(attempt, None)
         # Said, or three 30-second attempts read as a frozen program.
@@ -3416,7 +3437,8 @@ def fetch_manifest(plat: str) -> dict:
             print(f"  Could not fetch the file list for {plat}.", file=sys.stderr)
             print(f"  {words}.", file=sys.stderr)
             sys.exit(1)
-        print(f"  Could not fetch the file list for {plat} after {MAX_RETRIES} "
+        tries = getattr(exc, "attempts", MAX_RETRIES)
+        print(f"  Could not fetch the file list for {plat} after {tries} "
               f"attempts: {words}", file=sys.stderr)
         for line in _address_lines(url):
             print(line, file=sys.stderr)
