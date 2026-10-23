@@ -160,11 +160,11 @@ class FileCardsLinkTheReadingEntry(unittest.TestCase):
         consumers.emulator_entries = {"s": {"duckstation": 1}, "t": {"blastem": 2}}
         consumers.emulator_files = {"duckstation": files, "blastem": files}
         self.assertEqual(generate_site._emulator_links("s", consumers), [
-            "[duckstation](../emulators/duckstation.md#file-scph5501-bin)",
+            "[DuckStation](../emulators/duckstation.md#file-scph5501-bin)",
             "[other](../emulators/other.md)",
         ])
         self.assertEqual(generate_site._emulator_links("t", consumers),
-                         ["[blastem](../emulators/blastem.md#file-tmss-md-d0fd0c16)"])
+                         ["[BlastEm](../emulators/blastem.md#file-tmss-md-d0fd0c16)"])
 
 
 class DirectoryMembersNameTheirEmulator(unittest.TestCase):
@@ -193,7 +193,7 @@ class DirectoryMembersNameTheirEmulator(unittest.TestCase):
         index = self.consumers.emulator_entries[self.SHA1]["alephone"]
         self.assertEqual(files[index].get("type"), "directory")
         self.assertEqual(generate_site._emulator_links(self.SHA1, self.consumers),
-                         ["[alephone](../emulators/alephone.md#file-marathon-plugins)"])
+                         ["[Aleph One](../emulators/alephone.md#file-marathon-plugins)"])
 
     def test_the_directory_card_points_at_its_copies(self):
         import generate_site
@@ -360,12 +360,12 @@ class TheSearchSkipsLinkLists(unittest.TestCase):
         self.assertIn("<code>a.bin</code>", lines[2])
         text = "\n".join(lines)
         searched, _sep, skipped = text.partition('<dl class="rb-facts" data-pagefind-ignore>')
-        for label in ("MD5", "Emulators", "Packed for its emulators by"):
+        for label in ("MD5", "Emulators", "Packed for its emulators by", "On the setup's list"):
             self.assertIn(f"<dt>{label}</dt>", skipped)
             self.assertNotIn(f">{label}</dt>", searched)
-        # The platforms line names the file as each setup does: the site
-        # search reads it, so a file name finds its card.
-        self.assertRegex(searched, r'<dl class="rb-facts">\n<dt[^>]*>On the setup\'s list</dt>')
+        # The card's title is what the search reads (round 4, V6): the setup
+        # list made every excerpt a run of names and paths.
+        self.assertNotIn('<dl class="rb-facts">', searched)
 
     def test_a_game_data_card_skips_its_name_too(self):
         import generate_site
