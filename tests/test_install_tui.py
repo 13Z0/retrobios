@@ -75,6 +75,7 @@ def _args(**given) -> argparse.Namespace:
         no_input=False, dry_run=False, yes=False, quiet=False, events=False,
         restore=None, from_pack=None, manifest=None, tui=False, plain=False,
     )
+    values["from"] = None
     values.update(given)
     return argparse.Namespace(**values)
 
@@ -454,7 +455,7 @@ class Flow(unittest.TestCase):
         rows = install.tui_rows(state)
         self.assertEqual([row.right for row in rows], [
             "--region", "--no-game-data", "--installed-cores", "--core", "--jobs", "--dest",
-            "--dry-run", ""])
+            "--from", "--dry-run", ""])
         press(state, "enter")
         self.assertEqual(state.screen, "regions")
         # Ticked in the order of preference, then moved up.
@@ -498,7 +499,7 @@ class Flow(unittest.TestCase):
     def test_preview_is_a_dry_run(self):
         state = checked_state()
         press(state, "o")
-        state.focus["options"] = 6
+        state.focus["options"] = 7
         self.assertEqual(press(state, "enter"), [("run", "preview")])
         self.assertEqual(install.tui_argv(state, "preview", "py", "i.py")[-2:],
                          ["--dry-run", "--events"])
@@ -669,7 +670,7 @@ class Flow(unittest.TestCase):
     def test_events_of_an_abandoned_run_are_ignored(self):
         state = checked_state()
         press(state, "o")
-        state.focus["options"] = 6
+        state.focus["options"] = 7
         press(state, "enter")
         old = state.run_id
         self.assertEqual(press(state, "esc"), [("kill",)])
@@ -1576,6 +1577,121 @@ class WorkFolders(unittest.TestCase):
         self.assertFalse(work.exists())
 
 
+def found(dest: str, folder: str, reason: str = "") -> dict:
+    return {"event": "found", "platform": "retroarch", "dest": dest, "folder": folder,
+            "path": f"{folder}/{dest}", "member": "", "reason": reason}
+
+
+class CopyFromAnOldCard(unittest.TestCase):
+    """--from in the interface: a row on the plan, the browser, the counts."""
+
+    def recheck(self, state: install.TuiState, events: list) -> None:
+        for event in [*FILES, *SYSTEMS, *events, CHECK]:
+            install.tui_receive(state, ("event", state.run_id, event))
+        with mock.patch.object(install, "_tui_folder_facts", return_value={
+                "free": 50 * 1024 ** 3, "writable": True, "cores": []}):
+            install.tui_receive(state, ("ended", state.run_id, 1, []))
+
+    def test_the_plan_offers_it_and_the_browser_adds_the_folder(self):
+        old = Path(tempfile.mkdtemp(dir=REPO_ROOT / "tmp"))
+        self.addCleanup(shutil.rmtree, old, True)
+        (old / "bios").mkdir()
+        (old / "backup.zip").write_bytes(b"PK")
+        state = checked_state()
+        row = next(i for i, r in enumerate(install.tui_rows(state)) if r.action == "fromcard")
+        self.assertEqual(install.tui_rows(state)[row].label,
+                         "Copy the BIOS files from your old card or a folder")
+        state.focus["plan"] = row
+        state.home = old
+        with mock.patch.object(install, "_mounted_cards", return_value=[]):
+            press(state, "enter")
+            self.assertEqual((state.screen, state.browse_for), ("browse", "from"))
+            labels = [r.label for r in install.tui_rows(state)]
+            self.assertEqual(labels, ["Use this folder", "..", "bios/", "backup.zip"])
+            self.assertIn("Choose the old card", "\n".join(install.tui_view(state, 80, 24)))
+            effects = press(state, "enter")
+        self.assertEqual(effects, [("run", "check")])
+        self.assertEqual(state.from_folders, [old])
+        self.assertIn(f"--from={old}", install.tui_argv(state, "check", "py", "i.py"))
+        self.recheck(state, [found("scph5500.bin", str(old)), found("gba_bios.bin", str(old))])
+        self.assertEqual(state.screen, "plan")
+        text = "".join("".join(install.tui_view(state, 120, 40)).split())
+        self.assertIn("".join(f"2 found in {old}, 2 to download (512.0 KB)".split()), text)
+        # A second folder from the options: --from twice.
+        press(state, "o")
+        state.focus["options"] = next(i for i, r in enumerate(install.tui_rows(state))
+                                      if r.action == "from")
+        self.assertEqual(install.tui_rows(state)[state.focus["options"]].right, "--from")
+        with mock.patch.object(install, "_mounted_cards", return_value=[]):
+            press(state, "enter")
+            # It opens beside the first folder: the second card sits next to it.
+            self.assertEqual(state.browse_dir, old.parent)
+            install._browse_to(state, old)
+            state.focus["browse"] = 3
+            self.assertEqual(press(state, "enter"), [("run", "check")])
+        self.assertEqual(state.from_folders, [old, old / "backup.zip"])
+        self.assertEqual([flag for flag in install.tui_argv(state, "check", "py", "i.py")
+                          if flag.startswith("--from=")],
+                         [f"--from={old}", f"--from={old / 'backup.zip'}"])
+
+    def test_left_takes_the_last_folder_back(self):
+        state = checked_state()
+        state.from_folders = [Path("/media/old")]
+        state.stack.append("options")
+        state.focus["options"] = next(i for i, r in enumerate(install.tui_rows(state))
+                                      if r.action == "from")
+        self.assertEqual(press(state, "left"), [("run", "check")])
+        self.assertEqual(state.from_folders, [])
+
+    def test_the_command_line_folders_are_kept(self):
+        with mock.patch.object(install, "detect_platforms", return_value=[]), \
+                mock.patch.object(install, "detect_frontends", return_value=[]), \
+                mock.patch.object(install, "_mounted_cards", return_value=[]):
+            args = _args(platform="retroarch", dest=SYSTEM_DIR)
+            setattr(args, "from", [Path("/media/old")])
+            state, _effects = install.tui_start(args, "linux")
+        self.assertEqual(state.from_folders, [Path("/media/old")])
+        self.assertIn(("--from", "/media/old"), install.tui_flags(state))
+
+    def test_files_in_the_wrong_place_are_said_and_listed(self):
+        state = checked_state()
+        state.platform, state.dest = "retroarch", SYSTEM_DIR
+        install._start_check(state)
+        self.recheck(state, [found("scph5500.bin", str(SYSTEM_DIR),
+                                   "nested folder: bios/scph5500.bin")])
+        text = " ".join(line.strip() for line in install.tui_view(state, 120, 40))
+        self.assertIn("1 file is in the wrong place, it will be copied where the emulators "
+                      "read it.", text)
+        row = next(i for i, r in enumerate(install.tui_rows(state)) if r.action == "misplaced")
+        state.focus["plan"] = row
+        press(state, "enter")
+        self.assertEqual(state.screen, "misplaced")
+        self.assertIn("scph5500.bin: nested folder: bios/scph5500.bin",
+                      "\n".join(install.tui_view(state, 80, 24)))
+        press(state, "esc")
+        self.assertEqual(state.screen, "plan")
+
+    def test_a_local_copy_is_no_download_speed(self):
+        state = checked_state()
+        press(state, "enter")
+        mega = 1024 * 1024
+        events = [(9.0, {"event": "found", **found("big.bin", "/media/old")}),
+                  (9.0, {"event": "download", "platform": "retroarch", "files": 2,
+                         "bytes": 300 * mega}),
+                  (10.0, {"event": "downloaded", "dest": "big.bin", "ok": True, "reason": "",
+                          "size": 200 * mega, "files_done": 1, "files_total": 2,
+                          "bytes_done": 200 * mega, "bytes_total": 300 * mega}),
+                  (11.0, {"event": "progress", "files_done": 1, "files_total": 2,
+                          "bytes_done": 201 * mega, "bytes_total": 300 * mega}),
+                  (12.0, {"event": "progress", "files_done": 1, "files_total": 2,
+                          "bytes_done": 202 * mega, "bytes_total": 300 * mega})]
+        for when, event in events:
+            state.now = when
+            install.tui_receive(state, ("event", state.run_id, event))
+        text = "\n".join(install.tui_view(state, 80, 24))
+        self.assertIn("1.0 MB/s, 1:38 left", text)
+
+
 class Crash(unittest.TestCase):
     """An unexpected error ends on one sentence and a log, never a traceback."""
 
@@ -1875,6 +1991,36 @@ class EndToEnd(unittest.TestCase):
         self.assertNotIn("Nothing was installed", after)
         time.sleep(1)
         self.assertEqual(len(repo.installed()), on_disk)
+
+    def test_copy_from_an_old_card(self):
+        repo = self.repo()
+        old = Path(self.env["HOME"]) / "oldcard"
+        (old / "bios").mkdir(parents=True)
+        for name in ("scph5500.bin", "scph5501.bin", "gba_bios.bin"):
+            payload = FakeRepository.PAYLOADS[name][0]
+            (old / "bios" / name).write_bytes(payload)
+        term = self.start("--platform", "retroarch", "--dest", str(repo.dest))
+        term.wait("5 files to download")
+        term.send(DOWN, DOWN, "\r")
+        term.wait("Choose the old card")
+        for _ in range(12):
+            if "> oldcard/" in term.text():
+                break
+            term.send(DOWN)
+        term.send("\r")
+        term.wait("> Use this folder")
+        term.send("\r")
+        screen = term.wait("found in")
+        # The folder wraps at a slash: compared without the spaces.
+        self.assertIn("".join(f"3 found in {old}, 2 to download (8 B)".split()),
+                      "".join(screen.split()))
+        # Checked again, the plan opens on Install.
+        term.send("\r")
+        term.wait("files installed.")
+        term.send("\r")
+        self.assertEqual(term.close(), 0)
+        self.assertEqual(len(repo.installed()), 5)
+        self.assertIn(f"--from {old}", term.after().replace("\n", " "))
 
     def test_ctrl_c_on_the_first_screen(self):
         self.repo()

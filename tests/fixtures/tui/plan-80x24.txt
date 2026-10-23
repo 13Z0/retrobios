@@ -9,9 +9,9 @@
 
  > Install
    Choose systems
+   Copy the BIOS files from your old card or a folder
    Options
    Quit
-
 
 
 

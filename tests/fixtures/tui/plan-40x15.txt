@@ -7,9 +7,9 @@
  Free space: 50.0 GB
  They are replaced, and the old copies
    are kept in a backup folder.
-
  > Install
    Choose systems
+   Copy from your old card or a folder
    Options
    Quit
  A Install  B Back  Y Options  ? Help

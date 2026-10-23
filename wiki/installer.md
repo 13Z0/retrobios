@@ -92,7 +92,12 @@ play, with the total to download under the list. **Options** sets the
 preferred regions, game data, the installed cores only, the cores, the parallel
 downloads and the folder. Each row names the option it sets, and **Show the
 command line** gives the same choice as one command for a script. **Preview the
-file list** shows what would be downloaded and writes nothing. Back on the plan
+file list** shows what would be downloaded and writes nothing. **Copy the BIOS
+files from your old card or a folder** opens the folder browser, mounted cards
+first, and adds [`--from`](#copy-from-an-old-card): the plan then says how many
+files that folder holds and how many are left to download. Files the BIOS
+folder holds at the wrong place are counted on the plan, and **Show the files
+in the wrong place** lists each one with its reason. Back on the plan
 after a change of options, the folder is checked again, so its numbers are the
 exact ones for the new choice. Ticked systems get their exact count before the
 install starts.

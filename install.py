@@ -8966,6 +8966,14 @@ class TuiState:
         self.keep_ticked: set | None = None
         # (files read, files to read) while the check hashes what is in place.
         self.reading: tuple | None = None
+        # Folders to copy BIOS files from (--from), and what the check found.
+        self.from_folders: list = []
+        self.found: list = []
+        # What the browser is choosing: the BIOS folder, or one to copy from.
+        self.browse_for: str = "dest"
+        # Files an install copies from this machine, whose bytes are no download.
+        self.local_dests: set = set()
+        self.local_done: int = 0
         # The child run in progress: check, confirm, preview or install.
         self.run: str = ""
         self.running: bool = False
@@ -9057,8 +9065,10 @@ def tui_blocker(
         return (f"the terminal is {cols}x{rows}, smaller than "
                 f"{TUI_MIN_COLS}x{TUI_MIN_ROWS}")
     if os.name == "nt":
+        import importlib  # noqa: PLC0415
+
         try:
-            import msvcrt  # noqa: F401, PLC0415
+            importlib.import_module("msvcrt")
         except ImportError:
             return "this Python has no msvcrt to read keys"
         if not _enable_ansi():
@@ -9094,6 +9104,7 @@ def tui_flags(state: TuiState) -> list[tuple[str, str | None]]:
         flags.append(("--installed-cores", None))
     if state.jobs != 8:
         flags.append(("--jobs", str(state.jobs)))
+    flags += [("--from", str(folder)) for folder in state.from_folders]
     return flags
 
 
@@ -9135,7 +9146,7 @@ class TuiRow(NamedTuple):
 
 
 # Screens that scroll text instead of listing rows.
-_PAGERS = ("preview", "command", "result")
+_PAGERS = ("preview", "command", "result", "misplaced")
 _CHECKLISTS = ("systems", "cores")
 
 
@@ -9270,9 +9281,13 @@ def _plan_rows(state: TuiState) -> list[TuiRow]:
     rows = [TuiRow("install", label)]
     if state.facts.get("writable") is False:
         # Every file would fail alike: the way out is another folder.
-        rows = [TuiRow("folder", "Choose another folder"), TuiRow("install", "Install anyway")]
+        rows = [TuiRow("folder", "Choose another folder"), TuiRow("install", "Install anyway"),
+                *rows[1:]]
     if records_selection((state.manifest or {}).get("files", [])) and len(state.systems) > 1:
         rows.append(TuiRow("systems", "Choose systems"))
+    rows.append(TuiRow("fromcard", "Copy the BIOS files from your old card or a folder"))
+    if _tui_misplaced(state):
+        rows.append(TuiRow("misplaced", "Show the files in the wrong place"))
     return rows + [TuiRow("options", "Options"), TuiRow("quit", "Quit")]
 
 
@@ -9323,10 +9338,12 @@ def _option_rows(state: TuiState) -> list[TuiRow]:
     if choices["cores"]:
         chosen = f"{len(state.cores)} chosen" if state.cores else "all"
         rows.append(TuiRow("cores", f"Cores: {chosen}", "--core"))
+    copied = ", ".join(str(folder) for folder in state.from_folders) or "none"
     rows += [
         TuiRow("jobs", f"Parallel downloads: {state.jobs}", "--jobs"),
         TuiRow("folder", f"BIOS folder: {_short_path(state.dest, state.home)}", "--dest",
                style="path"),
+        TuiRow("from", f"Copy from: {copied}", "--from"),
         TuiRow("preview", "Preview the file list", "--dry-run"),
         TuiRow("command", "Show the command line"),
     ]
@@ -9397,12 +9414,13 @@ def _start_run(state: TuiState, run: str) -> list[tuple]:
         # The systems of an earlier check go first: ticks read against them
         # dropped the --system the command line gave.
         state.check, state.files, state.systems, state.reading = None, [], [], None
+        state.found = []
         state.checked_flags = tui_flags(state)
     elif run in ("confirm", "preview"):
         state.dry, state.dry_files, state.dry_summary = None, [], None
     else:
         state.download = state.progress = state.reading = None
-        state.samples = []
+        state.samples, state.local_dests, state.local_done = [], set(), 0
         state.finished, state.summary, state.code, state.stopping = [], None, None, False
     return [("run", run)]
 
@@ -9479,8 +9497,9 @@ def _mounted_cards() -> list[Path]:
     return found
 
 
-def _browse_rows(folder: Path | None) -> tuple[list[TuiRow], str]:
-    """A directory's rows for the browser, cards first, and what went wrong."""
+def _browse_rows(folder: Path | None, zips: bool = False) -> tuple[list[TuiRow], str]:
+    """A directory's rows for the browser, cards first, and what went wrong.
+    With zips, the ZIP files too: a backup is often one archive."""
     if folder is None:
         drives = [Path(f"{letter}:\\") for letter in "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
                   if os.path.exists(f"{letter}:\\")]
@@ -9492,17 +9511,21 @@ def _browse_rows(folder: Path | None) -> tuple[list[TuiRow], str]:
             what = f"{display_name(plat)} card" if plat else "card or drive"
             rows.append(TuiRow("dir", f"{card} ({what})", value=card))
     try:
-        entries = [entry for entry in os.scandir(folder) if entry.is_dir()]
+        entries = list(os.scandir(folder))
     except OSError as exc:
         return rows, f"Cannot open this folder: {exc.strerror or exc}"
     entries.sort(key=lambda entry: (entry.name.startswith("."), entry.name.casefold()))
-    rows += [TuiRow("dir", f"{entry.name}/", value=Path(entry.path)) for entry in entries]
+    rows += [TuiRow("dir", f"{entry.name}/", value=Path(entry.path))
+             for entry in entries if entry.is_dir()]
+    if zips:
+        rows += [TuiRow("zip", entry.name, value=Path(entry.path)) for entry in entries
+                 if entry.is_file() and entry.name.lower().endswith(".zip")]
     return rows, ""
 
 
 def _browse_to(state: TuiState, folder: Path | None, came_from: Path | None = None) -> None:
     state.browse_dir = folder
-    state.browse_rows, state.status = _browse_rows(folder)
+    state.browse_rows, state.status = _browse_rows(folder, state.browse_for == "from")
     focus = 0
     for index, row in enumerate(state.browse_rows):
         if came_from is not None and row.action == "dir" and row.value == came_from:
@@ -9558,6 +9581,7 @@ def _activate(state: TuiState, row: TuiRow) -> list[tuple]:
         if action == "default":
             return _choose(state, state.platform, state.folder_default)
         if action == "browse":
+            state.browse_for = "dest"
             _push(state, "browse")
             _browse_to(state, _nearest_folder(state.folder_default or state.home))
             return []
@@ -9565,6 +9589,13 @@ def _activate(state: TuiState, row: TuiRow) -> list[tuple]:
         state.path_selected = bool(state.path_text)
         return _push(state, "path")
     if screen == "browse":
+        if action in ("use", "zip") and state.browse_for == "from":
+            chosen = state.browse_dir if action == "use" else row.value
+            if chosen not in state.from_folders:
+                state.from_folders.append(chosen)
+            state.browse_for = "dest"
+            # The check runs again with it: the plan then says what it holds.
+            return _start_check(state)
         if action == "use":
             return _choose(state, state.platform, state.browse_dir)
         if action == "up" and state.browse_dir is not None:
@@ -9595,6 +9626,10 @@ def _activate(state: TuiState, row: TuiRow) -> list[tuple]:
             return tui_quit(state)
         if action == "folder":
             return _open_folder_screen(state, state.dest)
+        if action == "fromcard":
+            return _open_from_browser(state)
+        if action == "misplaced":
+            return _push(state, "misplaced")
         # On the first system, so A continues and the D-pad ticks.
         return _push(state, action, 3 if action == "systems" else 0)
     if screen == "systems":
@@ -9662,9 +9697,24 @@ def _option(state: TuiState, action: str, step: int) -> list[tuple]:
         return _push(state, action)
     elif action == "folder":
         return _open_folder_screen(state, state.dest)
+    elif action == "from" and step < 0:
+        if state.from_folders:
+            state.from_folders.pop()
+            return _start_check(state)
+    elif action == "from":
+        return _open_from_browser(state)
     elif action == "preview":
         _push(state, "preview")
         return _start_run(state, "preview")
+    return []
+
+
+def _open_from_browser(state: TuiState) -> list[tuple]:
+    """The browser, to name an old card, a backup or a ZIP to copy from."""
+    state.browse_for = "from"
+    _push(state, "browse")
+    start = state.from_folders[-1].parent if state.from_folders else state.home
+    _browse_to(state, _nearest_folder(start))
     return []
 
 
@@ -9913,7 +9963,8 @@ def tui_update(state: TuiState, key: TuiKey) -> list[tuple]:
         return _activate(state, rows[0 if char == "a" else 1])
     elif screen == "options" and name in ("left", "right"):
         return _option(state, row.action, 1 if name == "right" else -1) \
-            if row.action in ("game_data", "installed", "jobs") else []
+            if row.action in ("game_data", "installed", "jobs") \
+            or (row.action == "from" and name == "left") else []
     elif name == "enter" or char == " ":
         return _activate(state, row)
     state.focus[screen] = focus
@@ -9924,6 +9975,10 @@ def _take_event(state: TuiState, event: dict) -> None:
     kind = event.get("event")
     if kind == "checking" and state.run in ("check", "install"):
         state.reading = (event["files_done"], event["files_total"])
+    elif kind == "found" and state.run == "check":
+        state.found.append(event)
+    elif kind == "found" and state.run == "install":
+        state.local_dests.add(event["dest"])
     elif state.run == "check":
         if kind == "check":
             state.check = event
@@ -9943,9 +9998,13 @@ def _take_event(state: TuiState, event: dict) -> None:
             state.download = event
         elif kind in ("progress", "downloaded"):
             state.progress = event
+            if kind == "downloaded" and event["dest"] in state.local_dests:
+                # A copy from an old card or a folder: its bytes come from
+                # this machine, and a speed counting them was not the network's.
+                state.local_done += event["size"]
             state.samples = [sample for sample in state.samples
                              if sample[0] >= state.now - 10] + [
-                (state.now, event["bytes_done"])]
+                (state.now, event["bytes_done"] - state.local_done)]
             if kind == "downloaded":
                 state.finished.append((event["dest"], event["ok"], event["reason"]))
         elif kind == "summary":
@@ -10037,6 +10096,7 @@ _ROW_VERBS = {
     "region": "Tick", "regions": "Open", "cores": "Open", "command": "Open",
     "preview": "Open", "folder": "Choose", "game_data": "Change", "installed": "Change",
     "jobs": "Change", "retry": "Try again", "back": "Back", "stay": "Stay",
+    "fromcard": "Choose", "from": "Add a folder", "misplaced": "Show", "zip": "Copy from it",
 }
 
 
@@ -10120,18 +10180,46 @@ def _pager(state: TuiState, width: int, height: int, items: list) -> list[TuiLin
     return lines + [_styled(f"{first + 1}-{max(first + 1, whole)} of {len(items)}", "dim")]
 
 
+def _tui_misplaced(state: TuiState) -> list[dict]:
+    """The files the BIOS folder holds at another place, each with its reason."""
+    return [event for event in state.found if event["reason"]]
+
+
+def _tui_found_elsewhere(state: TuiState) -> dict[str, list[dict]]:
+    """The files a --from folder holds, by the folder as it was named."""
+    found: dict[str, list[dict]] = {}
+    for event in state.found:
+        if not event["reason"]:
+            found.setdefault(event["folder"], []).append(event)
+    return found
+
+
 def _plan_lines(check: dict, dest: Path | None, state: TuiState) -> list:
     need = _needed(check)
     data = check.get("data_missing", 0)
+    # A file found on this machine is copied, not downloaded: the count and
+    # the size to download leave it out, from the check's own events.
+    local = {event["dest"] for event in state.found} if check is state.check else set()
+    sizes = {event["dest"]: event["size"] for event in state.files}
+    copied = [dest_ for dest_ in local if dest_ in sizes]
+    fetch = max(0, need - len(copied))
+    fetch_bytes = max(0, check["bytes_needed"] - sum(sizes[dest_] for dest_ in copied))
+    elsewhere = _tui_found_elsewhere(state) if check is state.check else {}
+    if elsewhere:
+        where = ", ".join(f"{len(events)} found in {folder}"
+                          for folder, events in elsewhere.items())
+        headline = (f"{where}, {fetch} to download ({format_size(fetch_bytes)})"
+                    if fetch else f"{where}, nothing to download")
+    elif need and fetch:
+        headline = f"{_plural(fetch, 'file')} to download, {format_size(fetch_bytes)}"
+    elif need:
+        headline = f"{_plural(len(copied), 'file')} to copy from this machine"
     if need:
-        headline = (f"{_plural(need, 'file')} to download, "
-                    f"{format_size(check['bytes_needed'])}")
         if data:
             headline += f", and {_plural(data, 'data file')}"
-    elif data:
-        headline = f"{_plural(data, 'data file')} to fetch"
-    else:
-        headline = "Everything is in place"
+    if not need:
+        headline = (f"{_plural(data, 'data file')} to fetch" if data
+                    else "Everything is in place")
     wrong = check["wrong_hash"]
     lines: list = [
         _styled(headline, "title"),
@@ -10147,6 +10235,13 @@ def _plan_lines(check: dict, dest: Path | None, state: TuiState) -> list:
                          "choose another folder in Options.")
     if wrong:
         lines.append("They are replaced, and the old copies are kept in a backup folder.")
+    misplaced = _tui_misplaced(state) if check is state.check else []
+    if misplaced:
+        lines.insert(1, f"{_plural(len(misplaced), 'file')} "
+                     f"{'is' if len(misplaced) == 1 else 'are'} in the wrong place, "
+                     f"{'it' if len(misplaced) == 1 else 'they'} will be copied where the "
+                     "emulators read "
+                     f"{'it' if len(misplaced) == 1 else 'them'}.")
     if state.facts.get("writable") is False:
         lines.insert(1, "You cannot write to this folder: choose another one, or run "
                      + ("the installer as an administrator." if state.os_type == "windows"
@@ -10202,7 +10297,10 @@ def _view_folder(state: TuiState, width: int, height: int) -> tuple:
 def _view_browse(state: TuiState, width: int, height: int) -> tuple:
     where = "Drives" if state.browse_dir is None else middle(str(state.browse_dir), width)
     after = [state.status] if state.status else []
-    return ("Browse for a folder",
+    if state.browse_for == "from":
+        after.insert(0, "Choose the old card, a backup folder or a ZIP: its BIOS files "
+                     "are copied, each one checked, nothing on it is changed.")
+    return ("Copy from" if state.browse_for == "from" else "Browse for a folder",
             _compose(state, width, height, [where], tui_rows(state), after),
             ("A/Enter Open", "B/Esc Back", "? Help"))
 
@@ -10273,6 +10371,9 @@ def _view_plan(state: TuiState, width: int, height: int) -> tuple:
     if state.status:
         lines.append(state.status)
     rows = tui_rows(state)
+    if width < 54:
+        rows = [row._replace(label="Copy from your old card or a folder")
+                if row.action == "fromcard" else row for row in rows]
     return (display_name(state.platform, state.manifest),
             _compose(state, width, height, lines, rows),
             ("A/Enter Install", "B/Esc Back", "Y/o Options", "? Help"))
@@ -10357,6 +10458,8 @@ _STATE_WORDS = {"missing": "missing", "wrong_hash": "wrong copy"}
 
 def _pager_items(state: TuiState) -> list:
     """The text of a screen that scrolls, the same for its view and its keys."""
+    if state.screen == "misplaced":
+        return [f"{event['dest']}: {event['reason']}" for event in _tui_misplaced(state)]
     if state.screen == "result":
         return tui_outcome(state)[1]
     if state.screen == "command":
@@ -10378,6 +10481,11 @@ def _pager_items(state: TuiState) -> list:
 
 def _view_preview(state: TuiState, width: int, height: int) -> tuple:
     return ("Preview", _pager(state, width, height, _pager_items(state)),
+            ("A/Enter Back", "Up/Down Scroll"))
+
+
+def _view_misplaced(state: TuiState, width: int, height: int) -> tuple:
+    return ("Files in the wrong place", _pager(state, width, height, _pager_items(state)),
             ("A/Enter Back", "Up/Down Scroll"))
 
 
@@ -10413,9 +10521,10 @@ def _view_installing(state: TuiState, width: int, height: int) -> tuple:
         lines.append(_bar(min(done / total, 1.0) if total else 1.0, width))
         lines.append(f"{format_size(done)} of {format_size(total)}")
         window = [sample for sample in state.samples if sample[0] >= state.now - 5]
-        start, base = window[0] if window else (state.now, done)
+        fetched = done - state.local_done
+        start, base = window[0] if window else (state.now, fetched)
         seconds = state.now - start
-        speed = (done - base) / seconds if seconds >= 1 else 0
+        speed = (fetched - base) / seconds if seconds >= 1 else 0
         if speed > 0:
             lines.append(f"{format_size(int(speed))}/s, "
                          f"{format_duration((total - done) / speed)} left")
@@ -10544,7 +10653,7 @@ _TUI_VIEWS: dict[str, Callable[[TuiState, int, int], tuple]] = {
     "options": _view_options, "regions": _view_regions, "cores": _view_cores,
     "preview": _view_preview, "command": _view_command, "confirm": _view_confirm,
     "installing": _view_installing, "result": _view_result, "error": _view_error,
-    "quit": _view_quit, "cardroot": _view_cardroot,
+    "quit": _view_quit, "cardroot": _view_cardroot, "misplaced": _view_misplaced,
 }
 
 
@@ -10679,6 +10788,7 @@ def tui_start(
     state.cli_systems = list(args.system or [])
     state.regions = resolve_regions(args.region) if args.region else []
     state.cli_regions = list(state.regions)
+    state.from_folders = [Path(folder).absolute() for folder in getattr(args, "from") or []]
     state.cores = list(dict.fromkeys(
         token.strip() for value in args.core or [] for token in value.split(",")
         if token.strip()))

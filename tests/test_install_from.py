@@ -331,20 +331,30 @@ class EventsForAFolder(FromFolder):
 class TheInterfaceReadsAFoundEvent(unittest.TestCase):
     """The full-screen interface drives the engine through --events. A
     found event, which an install writes for a misplaced file even without
-    --from, leaves its screens as they were."""
+    --from, is what the plan counts after a check and what the download
+    speed leaves out during an install. Elsewhere it changes nothing."""
 
     FOUND = {"event": "found", "platform": "retroarch", "dest": "scph5501.bin",
              "folder": "/bios", "path": "/bios/bios/scph5501.bin", "member": "",
              "reason": "nested folder: it is at bios/bios/scph5501.bin"}
 
-    def test_every_run_ignores_it(self):
-        for run in ("check", "confirm", "preview", "install"):
+    def receive(self, run: str) -> tuple:
+        state = install.TuiState()
+        state.run, state.run_id, state.running = run, 3, True
+        before = copy.deepcopy(vars(state))
+        self.assertEqual(install.tui_receive(state, ("event", 3, dict(self.FOUND))), [])
+        return state, before
+
+    def test_a_check_counts_it_and_an_install_copies_it(self):
+        state, _before = self.receive("check")
+        self.assertEqual(state.found, [self.FOUND])
+        state, _before = self.receive("install")
+        self.assertEqual(state.local_dests, {"scph5501.bin"})
+
+    def test_a_dry_run_ignores_it(self):
+        for run in ("confirm", "preview"):
             with self.subTest(run=run):
-                state = install.TuiState()
-                state.run, state.run_id, state.running = run, 3, True
-                before = copy.deepcopy(vars(state))
-                self.assertEqual(install.tui_receive(state, ("event", 3, dict(self.FOUND))),
-                                 [])
+                state, before = self.receive(run)
                 self.assertEqual(vars(state), before)
 
 
