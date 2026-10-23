@@ -149,6 +149,25 @@ class RenderedSiteValidation(unittest.TestCase):
         self.assertTrue(any("images missing alt" in issue for issue in issues))
         self.assertTrue(any("broken local link" in issue for issue in issues))
 
+    def test_a_redirect_is_judged_by_its_target(self):
+        """A moved page's old address holds only a meta refresh. It has no
+        title or landmark to check, but a target that is gone is reported."""
+        (self.site / "index.html").write_text(
+            _page("Home", "Unique home description."), encoding="utf-8"
+        )
+        for name, target in (("old", "/retrobios/"), ("lost", "/retrobios/gone/")):
+            folder = self.site / name
+            folder.mkdir()
+            (folder / "index.html").write_text(
+                f'<!doctype html><title>Redirecting to: {target}</title>'
+                f'<meta http-equiv="refresh" content="0;url={target}">'
+                f'<a href="{target}">Redirecting</a>',
+                encoding="utf-8",
+            )
+        issues = validate_site(self.site, self.config)
+        self.assertFalse([i for i in issues if "old/" in i], issues)
+        self.assertTrue(any("lost/" in i and "broken local link" in i for i in issues), issues)
+
     def test_duplicate_search_metadata_fails(self):
         (self.site / "index.html").write_text(
             _page("Repeated", "Repeated description."), encoding="utf-8"

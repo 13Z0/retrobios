@@ -41,6 +41,8 @@ class Page:
     empty_headers: int = 0
     runtime_diagrams: int = 0
     size: int = 0
+    # A moved page's old address: a meta refresh to the new one, no content.
+    redirect: str = ""
 
 
 # Budgets the site was brought under on 2026-10-22, with room to grow. A
@@ -90,6 +92,8 @@ class _PageParser(HTMLParser):
             self.page.lang = data.get("lang", "")
         elif tag == "title":
             self._title_depth += 1
+        elif tag == "meta" and data.get("http-equiv", "").lower() == "refresh":
+            self.page.redirect = data.get("content", "").partition("url=")[2]
         elif tag == "meta" and data.get("name", "").lower() == "description":
             self.page.descriptions.append(data.get("content", "").strip())
         elif tag == "h1":
@@ -347,7 +351,10 @@ def validate_site(site: Path, base_path: str = "/retrobios/") -> list[str]:
     titles: dict[str, list[Path]] = defaultdict(list)
     descriptions: dict[str, list[Path]] = defaultdict(list)
 
-    issues.extend(_check_pages(pages, site, titles, descriptions))
+    # A redirect has no page to judge, only a target. The link check below
+    # still follows its link, so a redirect to nowhere is reported.
+    content = {path: page for path, page in pages.items() if not page.redirect}
+    issues.extend(_check_pages(content, site, titles, descriptions))
 
     for label, values in (("title", titles), ("description", descriptions)):
         for value, paths in values.items():
