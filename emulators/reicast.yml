@@ -13,6 +13,12 @@ cores:
 systems:
   - "sega-dreamcast"
 
+data_root:
+  linux:
+    path: "$XDG_DATA_HOME/reicast, else ~/.local/share/reicast"
+    source_ref: "core/linux-dist/main.cpp:287-326,396, shell/linux/Makefile:254"
+    note: "~/.reicast when that folder exists. The boot ROM and flash are read from its data/ subfolder, which Recalbox replaces with /recalbox/share/bios/dc"
+
 notes: |
   Dreamcast emulator descended from nullDC. The Linux build is compiled
   for one platform, and the default is dreamcast, which sets the ROM prefix
@@ -33,8 +39,9 @@ notes: |
   (ref: core/nullDC.cpp:183-200, core/hw/holly/sb_mem.cpp:58-64).
 
   Upstream resolves the directory as <data dir>/data/, the data dir
-  being $XDG_DATA_HOME/reicast or ~/.local/share/reicast, then each
-  $XDG_DATA_DIRS entry plus /reicast (ref: core/stdclass.cpp:83-100,
+  being ~/.reicast when it exists, else $XDG_DATA_HOME/reicast or
+  ~/.local/share/reicast, then each $XDG_DATA_DIRS entry plus /reicast
+  (ref: core/nullDC.cpp:182-188, core/stdclass.cpp:83-100,
   core/linux-dist/main.cpp:287-326, 355-379). Recalbox patches
   nullDC.cpp to read and write both files in /recalbox/share/bios/dc/,
   which is the path given below.
