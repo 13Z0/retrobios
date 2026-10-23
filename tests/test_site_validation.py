@@ -372,8 +372,12 @@ class PlatformPagesPrintTheDeclaredCrc32(unittest.TestCase):
         from tests import sitepages  # noqa: PLC0415
 
         sitepages.require()
-        page = sitepages.page("platforms/retroarch.md")
-        self.assertIn("CRC32: `91e93107`", page.read_text(encoding="utf-8"))
+        # The page and the systems moved to pages of their own.
+        text = "".join(
+            path.read_text(encoding="utf-8") for path in sitepages.pages()
+            if sitepages.name(path) == "platforms/retroarch.md"
+            or sitepages.name(path).startswith("platforms/retroarch-"))
+        self.assertIn("CRC32: `91e93107`", text)
 
 
 class PlainHouseStyle(unittest.TestCase):

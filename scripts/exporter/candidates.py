@@ -41,6 +41,37 @@ def _entry_hashes(entry: dict) -> set[str]:
     return values
 
 
+def _declared_hashes(entry: dict) -> dict[str, set[str]]:
+    """Hash field -> the values a platform entry declares, alt_md5 as md5."""
+    found = {f: set(_hash_values(entry, f)) for f in HASH_FIELDS}
+    found["md5"] |= set(_hash_values(entry, "alt_md5"))
+    return {f: values for f, values in found.items() if values}
+
+
+def _same(declared: str, accepted: str) -> bool:
+    """Equal, or a cut md5 that starts the accepted one."""
+    return declared == accepted or (
+        _CUT_MD5 <= len(declared) < _FULL_MD5 and accepted.startswith(declared)
+    )
+
+
+def _accepts(profile_entry: dict, declared: dict[str, set[str]]) -> bool:
+    """True when the profile entry, or a member of its archive, accepts a
+    hash the platform entry declares."""
+    accepted = _entry_hashes(profile_entry)
+    return any(_same(d, a) for values in declared.values() for d in values for a in accepted)
+
+
+def _contradicts(profile_entry: dict, declared: dict[str, set[str]]) -> bool:
+    """True when both sides state the same kind of hash and no value agrees:
+    the profile entry describes another dump under the same name."""
+    for field_name, values in declared.items():
+        own = set(_hash_values(profile_entry, field_name))
+        if own and not any(_same(d, a) for d in values for a in own):
+            return True
+    return False
+
+
 @dataclass
 class ReadEvidence:
     """What the examined profiles open, indexed for one lookup per entry."""
@@ -373,20 +404,34 @@ class EntryCategories:
                 )
 
     def _matching(self, key: str, kind: str, entry: dict) -> list[dict]:
-        """The profile entries of `key` that name the platform entry."""
+        """The profile entries of `key` that read the platform entry.
+
+        A platform entry that declares a hash is answered by the profile
+        entries accepting that hash: one name covers several revisions
+        (DuckStation lists scph1001.bin v2.2 at bios.cpp:36 and v2.0 at
+        bios.cpp:42), and a match by name cited the line of another dump.
+        A same-named entry is kept, marked `"by": "name"`, only when no
+        entry accepts the hash and its own hashes do not contradict it.
+        """
         names = {
             str(n).casefold()
             for n in (entry.get("name"), *(entry.get("aliases") or []))
             if n
         }
-        found = []
+        declared = _declared_hashes(entry)
+        by_hash: list[dict] = []
+        by_name: list[dict] = []
         for f in self._profiles[key].get("files") or []:
             if not isinstance(f, dict) or (f.get("category") == GAME_DATA) != (kind == GAME_DATA):
                 continue
+            cited = {k: f[k] for k in ("name", "source_ref") if f.get(k)}
+            if declared and _accepts(f, declared):
+                by_hash.append(cited)
+                continue
             own = {str(n).casefold() for n in (f.get("name"), *(f.get("aliases") or [])) if n}
-            if own & names:
-                found.append({k: f[k] for k in ("name", "source_ref") if f.get(k)})
-        return found
+            if own & names and not (declared and _contradicts(f, declared)):
+                by_name.append({**cited, "by": "name"})
+        return by_hash or by_name
 
     def explain(self, entry: dict, destination: str, system: str) -> dict:
         """The category of an entry and what establishes it."""

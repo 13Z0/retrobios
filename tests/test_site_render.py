@@ -312,7 +312,9 @@ class TheSearchLandsOnTheCard(unittest.TestCase):
 
         by_system = {f"system-{i:02d}": [{"name": f"f{i}.bin", "status": "ok"}]
                      for i in range(11)}
-        lines = generate_site._render_platform_systems(by_system, {}, {})
+        names = {sys_id: f"System {sys_id[-2:]}" for sys_id in by_system}
+        with mock.patch.dict(siterender.SYSTEM_NAMES, names):
+            lines = generate_site._render_platform_systems(by_system, {}, {})
         headings = [line for line in lines if line.startswith("### ")]
         self.assertEqual(len(headings), 11)
         self.assertTrue(headings[0].endswith("{ #system-00 }"))

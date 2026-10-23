@@ -622,7 +622,9 @@ class APlatformPageNamesTheFileItTranscribes(unittest.TestCase):
             return generate_site.generate_platform_page("p", cov)
 
         tag = "https://raw.githubusercontent.com/o/r/batocera-43.1/x/batocera-systems"
-        self.assertIn(f"| Transcribed from | <{tag}> |", page(tag))
+        self.assertIn(
+            "| Transcribed from | [batocera-systems at tag batocera-43.1]"
+            "(https://github.com/o/r/blob/batocera-43.1/x/batocera-systems) |", page(tag))
         branch = "https://raw.githubusercontent.com/o/r/master/x.json"
         self.assertIn("revision read is not recorded", page(branch))
         self.assertIn("revision read is not recorded", page("https://github.com/RetroDECK/components"))

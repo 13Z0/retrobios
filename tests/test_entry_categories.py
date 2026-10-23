@@ -88,9 +88,11 @@ class Evidence(unittest.TestCase):
     def test_game_data_names_its_reader_and_reference(self):
         found = self.cats.explain({"name": "diabdat.mpq"}, "ports/diablo/diabdat.mpq", "diablo")
         self.assertEqual(found["category"], GAME_DATA)
+        # The platform entry declares no hash: the reader is matched by name.
         self.assertEqual(found["read_by"], [{
             "emulator": "devilutionx", "proof": "name", "runs_system": True,
-            "entries": [{"name": "diabdat.mpq", "source_ref": "Source/init.cpp:120"}]}])
+            "entries": [{"name": "diabdat.mpq", "source_ref": "Source/init.cpp:120",
+                         "by": "name"}]}])
         self.assertEqual(verify.category_evidence_text(found),
                          "read by devilutionx (diabdat.mpq at Source/init.cpp:120)")
 

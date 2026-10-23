@@ -33,12 +33,17 @@ class SiteCoreCounts(unittest.TestCase):
         for name in list_registered_platforms(platforms, include_archived=True):
             config = load_platform_config(name, platforms)
             coverages[name] = {"platform": config.get("platform", name), "config": config}
-        page = generate_site.generate_cross_reference(coverages, profiles)
+        moved: dict[str, str] = {}
+        page = generate_site.generate_cross_reference(coverages, profiles, moved)
         shown = {
             m.group(1): int(m.group(2))
-            for m in re.finditer(
-                r'<summary>([^<]+)</summary>\n\n.*\n\n\*\*(\d+) cores', page)
+            for m in re.finditer(r"^\| \[([^\]]+)\]\(platforms/[^)]+\) \| (\d+)", page, re.M)
         }
+        for name, cov in coverages.items():
+            with self.subTest(page=name):
+                rows = [line for line in moved[f"cross-reference-{name}"].splitlines()
+                        if line.startswith("| [")]
+                self.assertEqual(len(rows), shown[cov["platform"]])
         for name, cov in coverages.items():
             with self.subTest(platform=name):
                 expected = len(resolve_platform_cores(cov["config"], unique))
