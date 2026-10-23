@@ -4,7 +4,7 @@ core_classification: other
 source: "https://github.com/JetSetIlly/Gopher2600"
 upstream: "https://github.com/JetSetIlly/Gopher2600"
 profiled_date: "2026-08-08"
-source_commit: "3b0e186983c6e13af6e2f2f42530138a10d6b31b"
+source_commit: "7d59ca0ec7555d0e81ef525ecd2486ba4bb31e9e"
 core_version: "v0.57.0"
 display_name: "Atari - 2600 (Gopher2600)"
 cores:
@@ -38,14 +38,15 @@ notes: |
   The demo unit is recognised by MD5 of the 256 bytes at 0x300 of the loaded
   image (hardware/memory/cartridge/supercharger/demounit.go:58,78). When that image carries more than 2048 bytes it
   holds the Schweber chip and the carousel together, otherwise the eight ROMs
-  are read from the directory of the loaded file (demounit_controller.go:
-  178-200). A read error or a length other than 8192 logs and returns nil, and
-  the peripheral is left unplugged.
+  are read from the directory of the loaded file
+  (hardware/memory/cartridge/supercharger/demounit_controller.go:178-200). A
+  read error or a length other than 8192 logs and returns nil, and the
+  peripheral is left unplugged.
 
   stella.pro is Stella's cartridge properties database, read from the
   configuration directory (properties/properties.go:28,48-58). It is loaded by
   NewDebugger (debugger/debugger.go:357), which drives play as well as debug
-  (gopher2600.go:261,307,326), so it applies to the plain `gopher2600 <rom>`
+  (gopher2600.go:261,308,327), so it applies to the plain `gopher2600 <rom>`
   invocation. A missing file is logged and start-up continues. The ROM selector
   then falls back to the filename and no television specification is inferred
   from the cartridge name.
@@ -63,9 +64,12 @@ notes: |
   directory are written by the emulator or authored by hand: preferences,
   debugger_imgui.ini, managerState, managerHotkeys, savekey, fa2_nvram,
   elf_nvram, regression, patches and setupDB. ARM map files and DWARF sources
-  are read from a project build tree beside the ROM. AtariVox speech calls the
-  festival binary as a process, with the path taken from preferences
-  (hardware/preferences/atarivox_preferences.go:51).
+  are read from a project build tree beside the ROM. AtariVox speech uses the
+  SpeakJet emulation compiled in, on by default
+  (hardware/peripherals/atarivox/atarivox.go:152-170,
+  hardware/preferences/atarivox_preferences.go:78-83). With it off, the
+  festival binary is called as a process, its path taken from preferences
+  (hardware/preferences/atarivox_preferences.go:59).
 
 files:
   - name: "Supercharger BIOS.bin"
