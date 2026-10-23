@@ -318,7 +318,11 @@ class EverySystemLinkLandsOnItsSection(unittest.TestCase):
                 self.assertIn(page, self.headings)
                 if match["anchor"]:
                     self.assertIn(match["anchor"], self.headings[page])
-                    _slug, console = self.siterender.system_section(sys_id)
+                    slug, console = self.siterender.system_section(sys_id)
+                    # The Arcade folder of sets no board claims is headed by
+                    # what it holds, its id staying the folder's.
+                    if slug == "arcade":
+                        console = gs._section_label("Arcade", console)
                     self.assertEqual(self.headings[page][match["anchor"]], console)
         self.assertGreater(linked, 200)
 

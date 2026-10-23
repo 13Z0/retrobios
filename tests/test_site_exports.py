@@ -1054,7 +1054,7 @@ class EveryPageLinksItsOwnData(unittest.TestCase):
                  "path": "bios/Sony/PlayStation/a.bin"}
         page = generate_site.generate_system_page(
             "Sony", {"PlayStation": [entry]}, FileConsumers({"files": {}}))
-        self.assertIn("[JSON](../api/v1/systems/sony.json)", page)
+        self.assertIn(" as JSON](../api/v1/systems/sony.json)", page)
 
         item = generate_site.system_export_item("sony", "Sony", {"PlayStation": [entry]})
         self.assertEqual(item["consoles"]["PlayStation"][0]["sha1"], "a" * 40)

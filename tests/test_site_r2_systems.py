@@ -87,8 +87,18 @@ class TheConsoleBiosComesFirst(unittest.TestCase):
         names = [re.search(r"<code>(.*?)</code>", card[2])[1] for _v, card, _s in cards]
         self.assertEqual(names, sorted(names, key=str.casefold))
 
+    def required_only(self) -> types.SimpleNamespace:
+        """The BIOS readers alone: an emulator reading only an optional
+        file runs without the BIOS, and two of four would say so."""
+        return _consumers({
+            "4" * 40: [{"name": "scph5501.bin", "required": True, "priority": 2,
+                        "region": ["north-america"]}],
+            "5" * 40: [{"name": "scph5500.bin", "required": True, "priority": 5,
+                        "region": ["japan"]}],
+        })
+
     def test_the_section_opens_on_the_bios_by_region(self):
-        lines = gs._start_with(self.files, self.consumers)
+        lines = gs._start_with(self.files, self.required_only())
         self.assertEqual(lines[0], "**Start with** the BIOS for the region of your games:")
         self.assertIn("- **North America**: `scph5501.bin`", lines)
         self.assertIn("- **Japan**: `scph5500.bin`", lines)
@@ -113,7 +123,7 @@ class TheConsoleBiosComesFirst(unittest.TestCase):
         self.assertEqual(gs._start_with([_file("a.bin", "a")], _consumers({})), [])
 
     def test_the_page_carries_the_line_under_the_console(self):
-        page = gs.generate_system_page("Sony", {"PlayStation": self.files}, self.consumers)
+        page = gs.generate_system_page("Sony", {"PlayStation": self.files}, self.required_only())
         heading = page.index("## PlayStation")
         self.assertLess(heading, page.index("**Start with**"))
         self.assertLess(page.index("**Start with**"), page.index('class="rb-sys-file"'))
@@ -156,23 +166,19 @@ class TheCardLinesSayWhatTheyMean(unittest.TestCase):
 
     def test_labels_and_display_names(self):
         text = "\n".join(self.lines)
-        self.assertIn("<dt data-pagefind-ignore>On the setup's list</dt><dd><a href=\"../"
-                      "platforms/batocera.md#sony-playstation\">Batocera</a>: scph5501.bin</dd>",
-                      text)
-        self.assertIn("<dt>Packed for its emulators by</dt><dd><a href=\"../platforms/"
-                      "retrobat.md\">RetroBat</a>: bios/scph5501.bin</dd>", text)
+        # Grouped by where the setups put the file (round 4, 6.9).
+        self.assertIn("<dt>On the setup's list</dt><dd><code>scph5501.bin</code>: <a href=\"../"
+                      "platforms/batocera.md#sony-playstation\">Batocera</a></dd>", text)
+        self.assertIn("<dt>Packed for its emulators by</dt><dd><code>bios/scph5501.bin</code>: "
+                      "<a href=\"../platforms/retrobat.md\">RetroBat</a></dd>", text)
         self.assertNotIn("Platforms:", text)
         self.assertNotIn("Also installed by", text)
 
-    def test_the_setup_list_is_searched_and_the_rest_is_not(self):
+    def test_the_facts_are_out_of_the_search(self):
+        # The setup list made every card's excerpt a run of names and
+        # paths (round 4, V6): the card's title is what the search reads.
         lists = [line for line in self.lines if line.startswith("<dl")]
-        self.assertEqual(lists, ['<dl class="rb-facts">', '<dl class="rb-facts" data-pagefind-ignore>'])
-        searched = "\n".join(self.lines).split('<dl class="rb-facts">', 1)[1].split("</dl>")[0]
-        self.assertIn("On the setup's list", searched)
-        self.assertNotIn("SHA1", searched)
-        # The label stays out of the excerpt: the search ran the two
-        # together, "On the setup's listAmberELEC".
-        self.assertIn("<dt data-pagefind-ignore>On the setup's list</dt><dd>", searched)
+        self.assertEqual(lists, ['<dl class="rb-facts" data-pagefind-ignore>'])
 
     def test_the_page_defines_both_lines(self):
         page = gs.generate_system_page("Sony", {"PlayStation": [_file("scph5501.bin", "4")]},
@@ -246,7 +252,7 @@ class TheSystemsIndexListsConsoles(unittest.TestCase):
         # A program's folder under Other is named alone, in its own table.
         consoles = page.split("## Emulator folders")[0]
         self.assertNotIn("ScummVM", consoles)
-        self.assertIn("| [ScummVM](other.md#scummvm) | 1 | [Other](other.md) |",
+        self.assertIn("| [ScummVM](../emulators/scummvm.md) | [1 file](other.md#scummvm) |",
                       page.split("## Emulator folders")[1])
         self.assertNotIn("TheXTech", consoles)
         self.assertIn("| [TheXTech](game-engines.md#thextech)", page)

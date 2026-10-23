@@ -137,12 +137,12 @@ class ArcadeSetsAreNamedWhereverFiled(unittest.TestCase):
                                 "system": "snk-neogeo-mvs"})],
         }, db_files=[self.aes, neogeo, mega_cd, shader])
 
-    def test_one_line_per_system_and_the_arcade_set_linked(self) -> None:
+    def test_the_file_most_emulators_read_leads_and_the_arcade_set_is_linked(self) -> None:
         lines = gs._start_with([self.aes], self.consumers, section=("SNK", "Neo Geo"))
-        self.assertEqual(lines[0], "**Start with** the files of your machine:")
         link = f"[`neogeo.zip`](/retrobios/files/?sha1={'2' * 40})"
-        self.assertIn(f"- **SNK Neo Geo MVS**: {link}", lines)
-        self.assertIn("- **SNK Neo Geo AES**: `aes.zip`", lines)
+        self.assertEqual(lines[0], f"**Start with** {link}. Keep it zipped. "
+                                   "mame0, mame1 and mame2 read it.")
+        self.assertIn("Geolith reads `aes.zip` instead.", lines)
 
     def test_another_consoles_file_or_an_emulators_folder_is_left_out(self) -> None:
         text = "\n".join(gs._start_with([self.aes], self.consumers, section=("SNK", "Neo Geo")))
@@ -190,13 +190,12 @@ class CardsSayWhichReleaseTheSetMatches(unittest.TestCase):
             return "\n".join(gs._system_file_card(f, _consumers({})))
 
     def test_the_matching_releases_as_runs(self) -> None:
-        self.assertIn("<dt>Romset</dt><dd>MAME 0.190 to 0.195, 0.220, FBNeo 1.0.0.03</dd>",
-                      self.card())
+        self.assertIn("<dt>Romset</dt><dd>Same contents as MAME 0.190 to 0.195, 0.220 and "
+                      "FBNeo 1.0.0.03</dd>", self.card())
 
-    def test_no_match_names_what_was_compared(self) -> None:
+    def test_no_match_counts_what_is_missing(self) -> None:
         self.releases["set.zip"] = self.releases["set.zip"][2:]
-        with mock.patch.object(gs, "_romset_coverage", return_value="MAME 0.190 to 0.289"):
-            self.assertIn("<dd>No match in MAME 0.190 to 0.289</dd>", self.card())
+        self.assertIn("<dd>No match: missing 1 ROM of MAME 0.289</dd>", self.card())
 
     def test_no_recipe_no_line(self) -> None:
         self.releases = {}
@@ -256,7 +255,8 @@ class TheBuiltPages(unittest.TestCase):
         page = (DIST / "systems" / "nintendo" / "index.html").read_text(encoding="utf-8")
         start = page.index('id="nintendo-ds"')
         section = page[start:page.index('id="nintendo-dsi"')]
-        opening = section[:section.index('class="rb-sys-file"')]
+        # The section may have moved to a page of its own: no card follows.
+        opening = section.split('class="rb-sys-file"')[0]
         self.assertRegex(opening, r"No file needed|Start with")
         self.assertNotRegex(opening.casefold(), r"dsi_|bios7i|bios9i")
 
