@@ -111,11 +111,13 @@ export default defineConfig({
 			// every other query. Two fields name the page's subject in other words
 			// and weigh half a title: `aliases`, the ids setups file a system under
 			// (psx, dreamcast, gba), and `devices`, the handhelds and boxes a
-			// setup's own site names (R36S, Miyoo Mini). Two more weigh as much as
-			// a title, since each names what a reader types to reach the page:
-			// `consoles`, the consoles a manufacturer page holds (Neo Geo,
-			// WonderSwan Color), and `terms`, the words of a task or a message on
-			// screen (bios not found, mame version, check dump). All of them are
+			// setup's own site names (R36S, Miyoo Mini). `consoles`, the consoles a
+			// manufacturer page holds (Neo Geo, WonderSwan Color), weighs as much
+			// as a title. `terms`, the words of a task or a message on screen (bios
+			// not found, which mame version, check my dump), weighs twice that: a
+			// field match scores below a title match, and at 10 the MAME parts,
+			// whose card titles name MAME files, came before the version table
+			// for "which mame version". All of them are
 			// attributes on an empty element, so no text of theirs reaches an
 			// excerpt.
 			pagefind: {
@@ -124,7 +126,7 @@ export default defineConfig({
 					termFrequency: 0.5,
 					termSaturation: 1.4,
 					termSimilarity: 9,
-					metaWeights: { title: 10, files: 0.5, aliases: 5, devices: 5, consoles: 10, terms: 10 },
+					metaWeights: { title: 10, files: 0.5, aliases: 5, devices: 5, consoles: 10, terms: 20 },
 				},
 			},
 			plugins: [

@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import socket
 import subprocess
 import sys
@@ -60,7 +61,9 @@ QUERIES: dict[str, tuple[tuple[str, ...], int]] = {
     # The platforms' own names for a console (psx, dc, gba), a search field
     # of its page. Flycast's page names dc_boot.bin and where it goes.
     "psx bios": (("systems/sony",), 3),
-    "dc bios missing": (("systems/sega", "emulators/flycast/"), 3),
+    # Step 3 of the troubleshooting page answers it too: a BIOS setting on
+    # system/dc, while Flycast adds dc/ itself.
+    "dc bios missing": (("systems/sega", "emulators/flycast/", "wiki/troubleshooting/"), 3),
     "gba bios": (("systems/nintendo",), 3),
     # The words an emulator prints, and the page that answers them.
     "bios not found": (("wiki/troubleshooting/",), 3),
@@ -91,11 +94,16 @@ def _free_port() -> int:
         return int(probe.getsockname()[1])
 
 
+# Node's compile cache fills /tmp (a 4 GB tmpfs under WSL): every node this
+# gate starts runs without it.
+NODE_ENV = {**os.environ, "NODE_DISABLE_COMPILE_CACHE": "1"}
+
+
 @contextmanager
 def served(site_dir: Path) -> Iterator[str]:
     """The build served by serve.mjs on a free port, for the run."""
     port = _free_port()
-    server = subprocess.Popen(["node", str(TOOLS / "serve.mjs"), str(site_dir), str(port)])
+    server = subprocess.Popen(["node", str(TOOLS / "serve.mjs"), str(site_dir), str(port)], env=NODE_ENV)
     url = f"http://127.0.0.1:{port}{BASE}"
     try:
         for _ in range(100):
@@ -118,7 +126,7 @@ def run_gate(base: str) -> int:
     root = "/" + base.split("/", 3)[3]
     run = subprocess.run(
         ["node", str(TOOLS / "measure.mjs"), "search", base, "starlight-ui", *QUERIES],
-        capture_output=True, text=True, check=False,
+        capture_output=True, text=True, check=False, env=NODE_ENV,
     )
     if run.returncode:
         print(run.stderr.strip() or f"measure.mjs exited with {run.returncode}", file=sys.stderr)
@@ -146,7 +154,7 @@ def home_weight(base: str) -> float:
     """The home page's transfer at 390 px, once the network is idle."""
     run = subprocess.run(
         ["node", str(TOOLS / "measure.mjs"), "weight", base, ""],
-        capture_output=True, text=True, check=True,
+        capture_output=True, text=True, check=True, env=NODE_ENV,
     )
     return float(json.loads(run.stdout.splitlines()[0])["total_kb"])
 

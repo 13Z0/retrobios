@@ -263,7 +263,7 @@ class TheReferencePagesAnswerTheirWords(unittest.TestCase):
     def test_find_or_check_a_file(self):
         page = generate_site.generate_files_page()
         self.assertTrue(page.startswith(
-            "---\nterms: check dump, md5 check, verify bios file, check hash\n---\n"))
+            "---\nterms: check my dump, md5 check, verify bios file, check hash\n---\n"))
         self.assertIn("\n# Find or check a file\n\nCheck a BIOS dump: paste its hash "
                       "or choose the file.\n", page)
 

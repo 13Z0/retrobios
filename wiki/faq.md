@@ -1,6 +1,7 @@
 ---
 level: start
 order: 50
+terms: ios, iphone, ipad
 ---
 
 # Common questions
@@ -58,7 +59,8 @@ Sometimes, with an emulator's stand-in, but some games fail.
 
 ## Is the command safe? { #is-piping-the-installer-into-a-shell-safe }
 
-- It checks the installer and each file against their fingerprints.
+- It stops if the installer does not match its expected fingerprint, and
+  checks each file.
 - It writes in your BIOS folder, and for some emulators your save folder.
 - It never touches a game or a save.
 - It keeps each file it replaces in `retrobios-backup`. `--restore` puts it
@@ -101,7 +103,7 @@ Fill its folder from a computer, as above, or unzip your ZIP and check it with
 
 ## Why is a file missing from the ZIP?
 
-Some come with the emulator, so the ZIP skips them.
+Some come with the emulator.
 
 ## My game shows a black screen
 
