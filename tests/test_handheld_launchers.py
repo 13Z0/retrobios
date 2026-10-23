@@ -1556,7 +1556,9 @@ class TheDocs(unittest.TestCase):
         """muOS mounts the first card at /mnt/mmc (MustardOS internal
         mux_launch.sh, GET_VAR storage/rom/mount)."""
         text = (REPO_ROOT / "wiki" / "installer.md").read_text(encoding="utf-8")
-        section = text[text.index("## On a handheld"):text.index("## Without a network")]
+        start = text.index("## On a handheld")
+        end = text.find("\n## ", start + 1)
+        section = text[start:end if end != -1 else len(text)]
         self.assertNotIn("/mmc/MUOS", section.replace("/mnt/mmc", ""))
         self.assertIn("`MUOS/PortMaster/autoinstall/`", section)
 
