@@ -1,0 +1,3621 @@
+emulator: "VICE (SDL2)"
+type: standalone
+core_classification: other
+source: "https://github.com/VICE-Team/svn-mirror"
+upstream: "https://sourceforge.net/projects/vice-emu/"
+logo: "https://raw.githubusercontent.com/VICE-Team/svn-mirror/main/vice/data/common/vice-logo-black.svg"
+profiled_date: "2026-10-24"
+source_commit: "81546e60c222fe4aef750b890b0dbe3a5ac280d8"
+pin_frozen: "ROCKNIX, the only platform that ships it, builds this revision (ROCKNIX projects/ROCKNIX/packages/emulators/standalone/vice-sa/package.mk:5). Later commits are not part of that build."
+core_version: "3.8"
+display_name: "Commodore - 8-bit computers (VICE SDL2)"
+mode: standalone
+cores:
+  - vice-sa
+systems:
+  - commodore-c64
+  - commodore-c64dtv
+  - commodore-c128
+  - commodore-vic20
+  - commodore-plus4
+  - commodore-pet
+  - commodore-cbm-ii
+
+data_root:
+  linux:
+    path: "$XDG_DATA_HOME/vice"
+    source_ref: "vice/src/arch/shared/archdep_default_sysfile_pathlist.c:104-139, vice/src/arch/shared/archdep_xdg.c:81-92"
+    note: "~/.local/share/vice when XDG_DATA_HOME is unset. First directory of the search path, before the executable's directory and the installed data directory."
+  macos:
+    path: "$XDG_DATA_HOME/vice"
+    source_ref: "vice/src/arch/shared/archdep_default_sysfile_pathlist.c:104-139, vice/src/arch/shared/archdep_xdg.c:81-92"
+    note: "~/.local/share/vice when XDG_DATA_HOME is unset. A bundled build reads its installed data from Contents/share/vice beside the executable."
+  windows:
+    path: "<folder of the VICE executables>"
+    source_ref: "vice/src/arch/shared/archdep_default_sysfile_pathlist.c:127-139, vice/src/arch/shared/archdep_get_vice_datadir.c:53-54"
+    note: "The SDL build has no per-user data folder on Windows. Its data directory is the executable's folder."
+
+notes: |
+  VICE 3.8 with the SDL2 user interface. ROCKNIX builds the 3.8 release
+  tarball with --enable-sdl2ui and --enable-gtk3ui=no (ROCKNIX
+  projects/ROCKNIX/packages/emulators/standalone/vice-sa/package.mk:5-13).
+  The tarball's sources are svn trunk r44900, where the version moved to
+  3.8, apart from the generated vicedate.h. make install builds every
+  emulator (x64, x64sc, x64dtv, xscpu64, x128, xvic, xpet, xplus4, xcbm2,
+  xcbm5x0, vsid) and copies the SDL2 set of each data directory to
+  $(datadir)/vice (vice/configure.ac:3464, vice/data/C64/Makefile.am:102-104,
+  vice/data/DRIVES/Makefile.am:3, vice/data/PRINTER/Makefile.am:3). Every
+  file below with bundled set is part of that set.
+
+  A system file is looked up as <dir>/<MACHINE>/<name>, or under DRIVES or
+  PRINTER, in each directory of the search path in turn:
+  $XDG_DATA_HOME/vice on Linux and macOS, then the executable's directory,
+  then the installed data directory. The Directory resource or -directory
+  replaces the list, $$ standing for the default one. A name not found
+  there is tried as ./<name>
+  (vice/src/arch/shared/archdep_default_sysfile_pathlist.c:79-139,
+  vice/src/sysfile.c:56-149, vice/src/sysfile.c:245-271). sysfile_load
+  refuses a file shorter than the size its caller asks, drops the first two
+  bytes of a file two bytes too long and truncates a longer one
+  (vice/src/sysfile.c:287-307).
+
+  Each machine loads the ROMs its resources name in mem_load at startup. A
+  failed load stops machine initialisation and VICE exits
+  (vice/src/init.c:288-291, vice/src/main.c:418-420). x128 loads its
+  international and seven national Kernal and character ROMs every time,
+  so all of them are required. The other ROMs are read when a machine
+  model or a ROM resource selects them. A drive ROM is read for the drive
+  types in use, and a missing one turns hardware-level emulation of that
+  drive type off (vice/src/drive/driverom.c:96-116). xscpu64 also refuses
+  an SCPU64 ROM whose size is not a power of two
+  (vice/src/scpu64/scpu64rom.c:80-81). The SDL menu font is read from the
+  machine's character ROM, or from the Plus/4 Kernal
+  (vice/src/arch/sdl/x64sc_ui.c:282, vice/src/arch/sdl/xplus4_ui.c:263,
+  vice/src/arch/sdl/uifonts.c:133-140).
+
+  A palette file is read when the chip's ExternalPalette resource is on.
+  Otherwise, or when the file is missing, the palette is computed
+  (vice/src/video/video-color.c:930-955). The keymap is
+  sdl_sym.vkm or sdl_pos.vkm, with the host layout appended and, on the
+  PET, the emulated keyboard type inserted. A keymap without that form is
+  read as a user keymap (vice/src/keymap.c:1251-1280).
+
+  Installed files no code opens by their name: the .vrs romset files, read
+  only through -romsetfile, the monitor symbol files c64mem.sym and
+  scpu64mem.sym, the sdl_joymap_*.vjm files, which JoyMapFile opens with no
+  machine subdirectory (vice/src/joyport/joystick.c:2141), and
+  chargen-325167-01.bin, edit-4-40-b-60Hz.ts.bin,
+  edit-4-40-n-60Hz.901499-01.bin, edit-4-80-b-50Hz.901474-04.bin,
+  edit-4-80-b-60Hz.901474-03.bin, edit-4-b-noCRTC.901474-02.bin,
+  hre-9000.324992-02.bin, hre-a000.324993-02.bin and 3022-901472-06.bin,
+  which only a romset file or a ROM name resource set by the user reaches
+  (vice/src/c128/c128rom.h:80, vice/src/pet/petrom.h:64-73).
+
+  ROCKNIX launches x128, x64sc, xplus4 and xvic with -joymenucontrol, after
+  writing sdl-hotkeys-<MACHINE>.vhk and sdl-joymap-<MACHINE>.vjm to
+  /storage/.config/vice when they are missing (ROCKNIX
+  projects/ROCKNIX/packages/emulators/standalone/vice-sa/scripts/start_vice.sh:9-85).
+
+files:
+  # CMD drive ROMs. Named by the drive resources, not part of the release.
+  - name: "dos2000-cs-33cc6f.bin"
+    path: "DRIVES/dos2000-cs-33cc6f.bin"
+    required: false
+    min_size: 32768
+    validation: [size]
+    description: "CMD FD-2000 DOS"
+    source_ref: "vice/src/drive/driverom.h:47, vice/src/drive/driverom.h:95, vice/src/drive/iec/iec-resources.c:331, vice/src/drive/iec/iecrom.c:136-137"
+
+  - name: "dos4000-fd-350022.bin"
+    path: "DRIVES/dos4000-fd-350022.bin"
+    required: false
+    min_size: 32768
+    validation: [size]
+    description: "CMD FD-4000 DOS"
+    source_ref: "vice/src/drive/driverom.h:48, vice/src/drive/driverom.h:96, vice/src/drive/iec/iec-resources.c:333, vice/src/drive/iec/iecrom.c:142-143"
+
+  - name: "bootromCMDHD-v2-80.bin"
+    path: "DRIVES/bootromCMDHD-v2-80.bin"
+    required: false
+    min_size: 16384
+    validation: [size]
+    description: "CMD HD boot ROM"
+    source_ref: "vice/src/drive/driverom.h:49, vice/src/drive/driverom.h:97, vice/src/drive/iec/iec-resources.c:335, vice/src/drive/iec/iecrom.c:148-149"
+
+  - name: "basic-901226-01.bin"
+    system: commodore-c64
+    path: "C64/basic-901226-01.bin"
+    required: true
+    bundled: true
+    min_size: 8192
+    validation: [size]
+    sha1: "79015323128650c742a3694c9429aa91f355905e"
+    md5: "57af4ae21d4b705c2991d98ed5c1f7b8"
+    crc32: "f833d117"
+    source_ref: "vice/src/c64/c64rom.h:31, vice/src/c64/c64-resources.c:371, vice/src/c64/vsid-resources.c:266, vice/src/c64/c64rom.c:276, vice/src/c64/c64rom.c:300-332"
+
+  - name: "chargen-901225-01.bin"
+    system: commodore-c64
+    path: "C64/chargen-901225-01.bin"
+    required: true
+    bundled: true
+    min_size: 4096
+    validation: [size]
+    sha1: "adc7c31e18c7c7413d54802ef2f4193da14711aa"
+    md5: "12a4202f5331d45af846af6c58fba946"
+    crc32: "ec4272ee"
+    source_ref: "vice/src/c64/c64rom.h:60, vice/src/c64/c64-resources.c:365, vice/src/c64/c64model.c:106, vice/src/c64/c64rom.c:292, vice/src/c64/c64rom.c:300-332"
+
+  - name: "chargen-906143-02.bin"
+    system: commodore-c64
+    path: "C64/chargen-906143-02.bin"
+    required: false
+    bundled: true
+    min_size: 4096
+    validation: [size]
+    sha1: "0fad19dbcdb12461c99657b2979dbb5c2e47b527"
+    md5: "cf32a93c0a693ed359a4f483ef6db53d"
+    crc32: "1604f6c1"
+    source_ref: "vice/src/c64/c64rom.h:61, vice/src/c64/c64model.c:151, vice/src/c64/c64scmodel.c:165, vice/src/c64/c64rom.c:292, vice/src/c64/c64rom.c:300-332"
+
+  - name: "kernal-901227-01.bin"
+    system: commodore-c64
+    path: "C64/kernal-901227-01.bin"
+    required: false
+    bundled: true
+    min_size: 8192
+    validation: [size]
+    sha1: "87cc04d61fc748b82df09856847bb5c2754a2033"
+    md5: "1ae0ea224f2b291dafa2c20b990bb7d4"
+    crc32: "dce782fa"
+    source_ref: "vice/src/c64/c64rom.h:50, vice/src/c64/c64-resources.c:233, vice/src/c64/vsid-resources.c:130, vice/src/c64/c64rom.c:223, vice/src/c64/c64rom.c:300-332"
+
+  - name: "kernal-901227-02.bin"
+    system: commodore-c64
+    path: "C64/kernal-901227-02.bin"
+    required: false
+    bundled: true
+    min_size: 8192
+    validation: [size]
+    sha1: "0e2e4ee3f2d41f00bed72f9ab588b83e306fdb13"
+    md5: "7360b296d64e18b88f6cf52289fd99a1"
+    crc32: "a5c687b3"
+    source_ref: "vice/src/c64/c64rom.h:51, vice/src/c64/c64-resources.c:234, vice/src/c64/vsid-resources.c:131, vice/src/c64/c64rom.c:223, vice/src/c64/c64rom.c:300-332"
+
+  - name: "kernal-901227-03.bin"
+    system: commodore-c64
+    path: "C64/kernal-901227-03.bin"
+    required: true
+    bundled: true
+    min_size: 8192
+    validation: [size]
+    sha1: "1d503e56df85a62fee696e7618dc5b4e781df1bb"
+    md5: "39065497630802346bce17963f13c092"
+    crc32: "dbe3e7c7"
+    source_ref: "vice/src/c64/c64rom.h:52, vice/src/c64/c64-resources.c:235, vice/src/c64/c64-resources.c:368, vice/src/c64/c64rom.c:223, vice/src/c64/c64rom.c:300-332"
+
+  - name: "kernal-251104-04.bin"
+    system: commodore-c64
+    path: "C64/kernal-251104-04.bin"
+    required: false
+    bundled: true
+    min_size: 8192
+    validation: [size]
+    sha1: "aa136e91ecf3c5ac64f696b3dbcbfc5ba0871c98"
+    md5: "187b8c713b51931e070872bd390b472a"
+    crc32: "2c5965d4"
+    source_ref: "vice/src/c64/c64rom.h:54, vice/src/c64/c64-resources.c:237, vice/src/c64/vsid-resources.c:134, vice/src/c64/c64rom.c:223, vice/src/c64/c64rom.c:300-332"
+
+  - name: "kernal-901246-01.bin"
+    system: commodore-c64
+    path: "C64/kernal-901246-01.bin"
+    required: false
+    bundled: true
+    min_size: 8192
+    validation: [size]
+    sha1: "6c4fa9465f6091b174df27dfe679499df447503c"
+    md5: "da92801e3a03b005b746a4dd0b639c7c"
+    crc32: "789c8cc5"
+    source_ref: "vice/src/c64/c64rom.h:55, vice/src/c64/c64-resources.c:239, vice/src/c64/vsid-resources.c:136, vice/src/c64/c64rom.c:223, vice/src/c64/c64rom.c:300-332"
+
+  - name: "kernal-390852-01.bin"
+    system: commodore-c64
+    path: "C64/kernal-390852-01.bin"
+    required: false
+    bundled: true
+    min_size: 8192
+    validation: [size]
+    sha1: "3ad6cc1837c679a11f551ad1cf1a32dd84ace719"
+    md5: "ddee89b0fed19572da5245ea68ff11b5"
+    crc32: "505365d4"
+    source_ref: "vice/src/c64/c64rom.h:53, vice/src/c64/c64-resources.c:238, vice/src/c64/vsid-resources.c:135, vice/src/c64/c64rom.c:223, vice/src/c64/c64rom.c:300-332"
+
+  - name: "kernal-906145-02.bin"
+    system: commodore-c64
+    path: "C64/kernal-906145-02.bin"
+    required: false
+    bundled: true
+    min_size: 8192
+    validation: [size]
+    sha1: "4ff0f11e80f4b57430d8f0c3799ed0f0e0f4565d"
+    md5: "479553fd53346ec84054f0b1c6237397"
+    crc32: "3a9ef6f1"
+    source_ref: "vice/src/c64/c64rom.h:49, vice/src/c64/c64-resources.c:236, vice/src/c64/vsid-resources.c:133, vice/src/c64/c64rom.c:223, vice/src/c64/c64rom.c:300-332"
+
+  - name: "c64hq.vpl"
+    system: commodore-c64
+    path: "C64/c64hq.vpl"
+    required: false
+    bundled: true
+    size: 396
+    sha1: "6ccfde9f0d7a5798c3b4e9e63d1b5ab6e6a55b11"
+    md5: "df2d9c3c4e0ea8dd4dde212e75837f37"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "c64s.vpl"
+    system: commodore-c64
+    path: "C64/c64s.vpl"
+    required: false
+    bundled: true
+    size: 395
+    sha1: "5ab9e1270511a2db659fbb834f5638022705639a"
+    md5: "27714950d66bc30157e76b03f7b9aa71"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "ccs64.vpl"
+    system: commodore-c64
+    path: "C64/ccs64.vpl"
+    required: false
+    bundled: true
+    size: 396
+    sha1: "9db2c8f3a00d6b2499fab62ba6bbc2b1263e28ab"
+    md5: "68f98a1b2dbed8ac9ead5322b0956af3"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "frodo.vpl"
+    system: commodore-c64
+    path: "C64/frodo.vpl"
+    required: false
+    bundled: true
+    size: 396
+    sha1: "de1fac3c53284871512c354e959a73a82928243b"
+    md5: "f61c10680d65c4dd3a6e5641541420a4"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "godot.vpl"
+    system: commodore-c64
+    path: "C64/godot.vpl"
+    required: false
+    bundled: true
+    size: 396
+    sha1: "4704bbef67401535f991ef30652d4273251ecc19"
+    md5: "444503dc1e3ba339c725ad15dde74f24"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "pc64.vpl"
+    system: commodore-c64
+    path: "C64/pc64.vpl"
+    required: false
+    bundled: true
+    size: 396
+    sha1: "20fd2e1316b038c27e5f2ce4d767d8b51a7ff84a"
+    md5: "3909fbb2d639b6a9348400d7768cbfac"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "vice.vpl"
+    system: commodore-c64
+    path: "C64/vice.vpl"
+    required: false
+    bundled: true
+    size: 412
+    sha1: "ba22ec7dec324c0f4fa5066a6f51a43f4c706b2a"
+    md5: "efbb1548989015a24741df907cb4aaf0"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "pepto-ntsc-sony.vpl"
+    system: commodore-c64
+    path: "C64/pepto-ntsc-sony.vpl"
+    required: false
+    bundled: true
+    size: 591
+    sha1: "6f2f4a540c6ba56ecaefc94c1df7f2a748d36bb0"
+    md5: "d576ab346aa9dfd6494dcebd04955768"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "pepto-ntsc.vpl"
+    system: commodore-c64
+    path: "C64/pepto-ntsc.vpl"
+    required: false
+    bundled: true
+    size: 582
+    sha1: "50c6021584b3409801577dd92b40ef07cbae8a6c"
+    md5: "f1e8832dbffdbcb68365662c5c58c180"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "pepto-pal.vpl"
+    system: commodore-c64
+    path: "C64/pepto-pal.vpl"
+    required: false
+    bundled: true
+    size: 493
+    sha1: "d4d062dc812a8e136a4a8696959672890e5b9543"
+    md5: "4e558f47252c97a9782163c1a871c5f2"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "pepto-palold.vpl"
+    system: commodore-c64
+    path: "C64/pepto-palold.vpl"
+    required: false
+    bundled: true
+    size: 522
+    sha1: "e6798b75fb7c6b2949db131d277aecbf9f0f5e0e"
+    md5: "a068287002e36d6c7d3fb25c35232777"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "community-colors.vpl"
+    system: commodore-c64
+    path: "C64/community-colors.vpl"
+    required: false
+    bundled: true
+    size: 367
+    sha1: "61f063dcaa351ed25b61aa6f7b29c811db1fff97"
+    md5: "eb33aa86d6a5021f377752e0dbb9e1e7"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "colodore.vpl"
+    system: commodore-c64
+    path: "C64/colodore.vpl"
+    required: false
+    bundled: true
+    size: 443
+    sha1: "52f2b60079e05275ba2f09a77e17bb37409c7eb5"
+    md5: "5060c9d964f0f9a14f2588594b1fd130"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "ptoing.vpl"
+    system: commodore-c64
+    path: "C64/ptoing.vpl"
+    required: false
+    bundled: true
+    size: 397
+    sha1: "df864e55c3fe2d672ee62ab3ff405b2b6c31824b"
+    md5: "77ca107a9839b6a8e422c9683f503428"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "deekay.vpl"
+    system: commodore-c64
+    path: "C64/deekay.vpl"
+    required: false
+    bundled: true
+    size: 403
+    sha1: "ae9ae759c576c72c7fc2262927a8ed8070a7ad15"
+    md5: "ba6bc9a21a0dba5fa269f6edfbf5483c"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "cjam.vpl"
+    system: commodore-c64
+    path: "C64/cjam.vpl"
+    required: false
+    bundled: true
+    size: 461
+    sha1: "cbce1243f3264c23c5b301dacd127decd2eb8725"
+    md5: "ebcd8e904bb54ca65d6707da2842573e"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "palette.vpl"
+    system: commodore-c64
+    path: "C64/palette.vpl"
+    required: false
+    bundled: true
+    size: 442
+    sha1: "20496aa23d1c4e177c6f7160f1de5346de7b2a58"
+    md5: "e1cc28bec07c37b8d8175735214146aa"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "pixcen.vpl"
+    system: commodore-c64
+    path: "C64/pixcen.vpl"
+    required: false
+    bundled: true
+    size: 438
+    sha1: "baab5d246b24b7445f9f5d26ba84c7214e7b62c2"
+    md5: "078976216cc2fb8397570285b3100b0d"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "rgb.vpl"
+    system: commodore-c64
+    path: "C64/rgb.vpl"
+    required: false
+    bundled: true
+    size: 491
+    sha1: "0a6b1b89e4a5dabc796184a87cb477f771cc0c6c"
+    md5: "6f40bdb9d5830810d8d5cf7f3cb16fba"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "the64.vpl"
+    system: commodore-c64
+    path: "C64/the64.vpl"
+    required: false
+    bundled: true
+    size: 418
+    sha1: "b0e9f92d6b41045fdfd6a26591a36a720ee562e4"
+    md5: "105ec378998fbea7aa0adb3d979322e1"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "palette_6569R1_v1r.vpl"
+    system: commodore-c64
+    path: "C64/palette_6569R1_v1r.vpl"
+    required: false
+    bundled: true
+    size: 496
+    sha1: "7af800bc88c4039b7203a187fea0725830145657"
+    md5: "844cb65cc09d54cdcfed5750909ca698"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "palette_6569R5_v1r.vpl"
+    system: commodore-c64
+    path: "C64/palette_6569R5_v1r.vpl"
+    required: false
+    bundled: true
+    size: 496
+    sha1: "1f5b841ea7f5e2f1a6ad1a9b55a4c106f1442024"
+    md5: "65cd164c319839661797630a70f780e2"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "palette_8565R2_v1r.vpl"
+    system: commodore-c64
+    path: "C64/palette_8565R2_v1r.vpl"
+    required: false
+    bundled: true
+    size: 496
+    sha1: "983645d05e4b539d00db2c1ba4ddae1e985b4ac0"
+    md5: "cd3ff94f09ab710bf3a9d01555e96f4b"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "palette_C64_amber.vpl"
+    system: commodore-c64
+    path: "C64/palette_C64_amber.vpl"
+    required: false
+    bundled: true
+    size: 503
+    sha1: "e8e0ea943478b44bd2131864bb2824371ca21db8"
+    md5: "c7820d3e806344331e9e20e82a956894"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "palette_C64_cyan.vpl"
+    system: commodore-c64
+    path: "C64/palette_C64_cyan.vpl"
+    required: false
+    bundled: true
+    size: 492
+    sha1: "4fcdd68d6a968831260f1f5062206a91d5b77b05"
+    md5: "d6c01a3adc2554b725d55f5be84e3307"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "palette_C64_green.vpl"
+    system: commodore-c64
+    path: "C64/palette_C64_green.vpl"
+    required: false
+    bundled: true
+    size: 503
+    sha1: "1b9d93dfe042b2db1aad4289fdbee0bf1449f8fc"
+    md5: "04cd20eab568255ab47455daae0f0dd2"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "sdl_pos.vkm"
+    system: commodore-c64
+    path: "C64/sdl_pos.vkm"
+    required: false
+    bundled: true
+    size: 10429
+    sha1: "fae9d20650874868a2e329e89326f98adb0774a5"
+    md5: "212b802751906868764c4abe58578818"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_pos_uk.vkm"
+    system: commodore-c64
+    path: "C64/sdl_pos_uk.vkm"
+    required: false
+    bundled: true
+    size: 10501
+    sha1: "abd325a2f1db18852ec1ee8d462763613c219409"
+    md5: "1ded1353428afbb9c688c98f6dbcee37"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_pos_ch.vkm"
+    system: commodore-c64
+    path: "C64/sdl_pos_ch.vkm"
+    required: false
+    bundled: true
+    size: 12001
+    sha1: "cfd53d577c02d9866b17aaeb804b226567cf17c0"
+    md5: "257e3520d9414248cf7121f11546efb3"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_pos_da.vkm"
+    system: commodore-c64
+    path: "C64/sdl_pos_da.vkm"
+    required: false
+    bundled: true
+    size: 11334
+    sha1: "bd45c52758d75a6757f7b95de3d9fd3ada08a567"
+    md5: "787aa4d4c4e9798ad85b088fa5675193"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_pos_de.vkm"
+    system: commodore-c64
+    path: "C64/sdl_pos_de.vkm"
+    required: false
+    bundled: true
+    size: 11493
+    sha1: "599fc223f434d63ca8682f2f7bfdd484392c616d"
+    md5: "a634e3b691847b4da44096cb69a93bb0"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_pos_fi.vkm"
+    system: commodore-c64
+    path: "C64/sdl_pos_fi.vkm"
+    required: false
+    bundled: true
+    size: 11340
+    sha1: "abbcb3bb0b671800018f8a51b8f1f39d0a96d02d"
+    md5: "39a71d5c5d25ca87b54205b4aa9763f8"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_pos_no.vkm"
+    system: commodore-c64
+    path: "C64/sdl_pos_no.vkm"
+    required: false
+    bundled: true
+    size: 11215
+    sha1: "d1c31406a3c22cd2c168baa819976dee3ba4a969"
+    md5: "a5e63924882a7334477fe69db1cd5676"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_pos_tr.vkm"
+    system: commodore-c64
+    path: "C64/sdl_pos_tr.vkm"
+    required: false
+    bundled: true
+    size: 10423
+    sha1: "ef005ec8cf5b106ff63477e66be058f60efc90e0"
+    md5: "3ced2d548fd3dcfe63d4e90dac8f1866"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_keyrah.vkm"
+    system: commodore-c64
+    path: "C64/sdl_keyrah.vkm"
+    required: false
+    bundled: true
+    size: 12455
+    sha1: "ac3969d3c0c8e33d2a1704cc50dca50814f2b337"
+    md5: "4af3c010e377adbd12afaf183506f483"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_keyrah_de.vkm"
+    system: commodore-c64
+    path: "C64/sdl_keyrah_de.vkm"
+    required: false
+    bundled: true
+    size: 11924
+    sha1: "56fe76b8dade0f639c7afbd81b6c0b45bb186fea"
+    md5: "41a6f59f3aeb20bf7f40976f5972dd37"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_keyrah_retropie.vkm"
+    system: commodore-c64
+    path: "C64/sdl_keyrah_retropie.vkm"
+    required: false
+    bundled: true
+    size: 12469
+    sha1: "c87b98c24a653bbfa34ddd2e233bdad5dc706522"
+    md5: "0adb1b146f6fa6d5c9abe6c8fdfb2e0a"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_keyrah_retropie_de.vkm"
+    system: commodore-c64
+    path: "C64/sdl_keyrah_retropie_de.vkm"
+    required: false
+    bundled: true
+    size: 12443
+    sha1: "ce55aebe2bc9f4e2dcb5a1ab206800c3596effb9"
+    md5: "83ccc3a2b5a79113643fbdfee6d4a220"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_keyrah_combian.vkm"
+    system: commodore-c64
+    path: "C64/sdl_keyrah_combian.vkm"
+    required: false
+    bundled: true
+    size: 12523
+    sha1: "25eb41fdd31792868537ae8319718644e55aa831"
+    md5: "529728b1be3d5da5969f9889d1de02db"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_sym.vkm"
+    system: commodore-c64
+    path: "C64/sdl_sym.vkm"
+    required: false
+    bundled: true
+    size: 11128
+    sha1: "4413187e1ed4f8da4332210053720a9fad84d034"
+    md5: "6250577cea0f4d31f42f107e686d872f"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_sym_uk.vkm"
+    system: commodore-c64
+    path: "C64/sdl_sym_uk.vkm"
+    required: false
+    bundled: true
+    size: 11212
+    sha1: "d9ad092e440d92429676faafeaf6c4b7cc0577c7"
+    md5: "c1ed8b86baa6c8da31cac9f24ecded09"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_sym_de.vkm"
+    system: commodore-c64
+    path: "C64/sdl_sym_de.vkm"
+    required: false
+    bundled: true
+    size: 13705
+    sha1: "21b5e48c52aa43153189d2fa98f3ed9edace7711"
+    md5: "11218b422e22afab39bc177ac0348fa0"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_sym_nl.vkm"
+    system: commodore-c64
+    path: "C64/sdl_sym_nl.vkm"
+    required: false
+    bundled: true
+    size: 11356
+    sha1: "b3a102d56bfd4703fd8157e34bb5b228aadc9e2b"
+    md5: "13d0e762d1715ec044b51d5684014f36"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_sym_it.vkm"
+    system: commodore-c64
+    path: "C64/sdl_sym_it.vkm"
+    required: false
+    bundled: true
+    size: 11722
+    sha1: "e1b34f7ba3686f3c0ddb1319bffee25821a57b22"
+    md5: "dc66406fad5308c7036e49c5722e306e"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_sym_fr.vkm"
+    system: commodore-c64
+    path: "C64/sdl_sym_fr.vkm"
+    required: false
+    bundled: true
+    size: 11481
+    sha1: "56990de62e38a9464a782b00fa0d7f1bb5092299"
+    md5: "09f986b03daee625240f5d2b19de68fc"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_sym_tr.vkm"
+    system: commodore-c64
+    path: "C64/sdl_sym_tr.vkm"
+    required: false
+    bundled: true
+    size: 11177
+    sha1: "0b99b4f1bd7c042e0668167c29797d0f10e5b2e3"
+    md5: "e1cb48e46010a5983d68ef5338670537"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_sym_da.vkm"
+    system: commodore-c64
+    path: "C64/sdl_sym_da.vkm"
+    required: false
+    bundled: true
+    size: 11390
+    sha1: "c99e1e8a24c9232ccf962d49b73701ffd1703fa7"
+    md5: "dbfdfb0198e285e89cd10bca0a0d9c70"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "basic-901226-01.bin"
+    system: commodore-c64dtv
+    path: "C64DTV/basic-901226-01.bin"
+    required: true
+    bundled: true
+    min_size: 8192
+    validation: [size]
+    sha1: "79015323128650c742a3694c9429aa91f355905e"
+    md5: "57af4ae21d4b705c2991d98ed5c1f7b8"
+    crc32: "f833d117"
+    source_ref: "vice/src/c64/c64rom.h:31, vice/src/c64/c64-resources.c:371, vice/src/c64/vsid-resources.c:266, vice/src/c64/c64rom.c:276, vice/src/c64/c64rom.c:300-332"
+
+  - name: "chargen-901225-01.bin"
+    system: commodore-c64dtv
+    path: "C64DTV/chargen-901225-01.bin"
+    required: true
+    bundled: true
+    min_size: 4096
+    validation: [size]
+    sha1: "adc7c31e18c7c7413d54802ef2f4193da14711aa"
+    md5: "12a4202f5331d45af846af6c58fba946"
+    crc32: "ec4272ee"
+    source_ref: "vice/src/c64/c64rom.h:60, vice/src/c64/c64-resources.c:365, vice/src/c64/c64model.c:106, vice/src/c64/c64rom.c:292, vice/src/c64/c64rom.c:300-332"
+
+  - name: "kernal-901227-03.bin"
+    system: commodore-c64dtv
+    path: "C64DTV/kernal-901227-03.bin"
+    required: true
+    bundled: true
+    min_size: 8192
+    validation: [size]
+    sha1: "1d503e56df85a62fee696e7618dc5b4e781df1bb"
+    md5: "39065497630802346bce17963f13c092"
+    crc32: "dbe3e7c7"
+    source_ref: "vice/src/c64/c64rom.h:52, vice/src/c64/c64-resources.c:235, vice/src/c64/c64-resources.c:368, vice/src/c64/c64rom.c:223, vice/src/c64/c64rom.c:300-332"
+
+  - name: "dtvrom.bin"
+    system: commodore-c64dtv
+    path: "C64DTV/dtvrom.bin"
+    required: false
+    bundled: true
+    sha1: "72b4c8da075646cc9940e4377004c81192c7b0b1"
+    md5: "d6efbc538195f53cfc209543640cde71"
+    crc32: "242daa5a"
+    source_ref: "vice/src/c64dtv/c64dtvflash.c:52, vice/src/c64dtv/c64dtvflash.c:53, vice/src/c64dtv/c64dtvflash.c:54, vice/src/c64dtv/c64dtvflash.c:460-475"
+
+  - name: "spiff.vpl"
+    system: commodore-c64dtv
+    path: "C64DTV/spiff.vpl"
+    required: false
+    bundled: true
+    size: 2506
+    sha1: "a500a1428e787f308726024d9c7d118572d01b54"
+    md5: "e6f0e43686b959fa53c78f4d89ca9416"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "sdl_keyrah.vkm"
+    system: commodore-c64dtv
+    path: "C64DTV/sdl_keyrah.vkm"
+    required: false
+    bundled: true
+    size: 12455
+    sha1: "ac3969d3c0c8e33d2a1704cc50dca50814f2b337"
+    md5: "4af3c010e377adbd12afaf183506f483"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_keyrah_de.vkm"
+    system: commodore-c64dtv
+    path: "C64DTV/sdl_keyrah_de.vkm"
+    required: false
+    bundled: true
+    size: 11924
+    sha1: "56fe76b8dade0f639c7afbd81b6c0b45bb186fea"
+    md5: "41a6f59f3aeb20bf7f40976f5972dd37"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_keyrah_retropie.vkm"
+    system: commodore-c64dtv
+    path: "C64DTV/sdl_keyrah_retropie.vkm"
+    required: false
+    bundled: true
+    size: 12469
+    sha1: "c87b98c24a653bbfa34ddd2e233bdad5dc706522"
+    md5: "0adb1b146f6fa6d5c9abe6c8fdfb2e0a"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_keyrah_retropie_de.vkm"
+    system: commodore-c64dtv
+    path: "C64DTV/sdl_keyrah_retropie_de.vkm"
+    required: false
+    bundled: true
+    size: 12443
+    sha1: "ce55aebe2bc9f4e2dcb5a1ab206800c3596effb9"
+    md5: "83ccc3a2b5a79113643fbdfee6d4a220"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_keyrah_combian.vkm"
+    system: commodore-c64dtv
+    path: "C64DTV/sdl_keyrah_combian.vkm"
+    required: false
+    bundled: true
+    size: 12523
+    sha1: "25eb41fdd31792868537ae8319718644e55aa831"
+    md5: "529728b1be3d5da5969f9889d1de02db"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_pos.vkm"
+    system: commodore-c64dtv
+    path: "C64DTV/sdl_pos.vkm"
+    required: false
+    bundled: true
+    size: 10429
+    sha1: "fae9d20650874868a2e329e89326f98adb0774a5"
+    md5: "212b802751906868764c4abe58578818"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_pos_uk.vkm"
+    system: commodore-c64dtv
+    path: "C64DTV/sdl_pos_uk.vkm"
+    required: false
+    bundled: true
+    size: 10501
+    sha1: "abd325a2f1db18852ec1ee8d462763613c219409"
+    md5: "1ded1353428afbb9c688c98f6dbcee37"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_pos_ch.vkm"
+    system: commodore-c64dtv
+    path: "C64DTV/sdl_pos_ch.vkm"
+    required: false
+    bundled: true
+    size: 12001
+    sha1: "cfd53d577c02d9866b17aaeb804b226567cf17c0"
+    md5: "257e3520d9414248cf7121f11546efb3"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_pos_da.vkm"
+    system: commodore-c64dtv
+    path: "C64DTV/sdl_pos_da.vkm"
+    required: false
+    bundled: true
+    size: 11334
+    sha1: "bd45c52758d75a6757f7b95de3d9fd3ada08a567"
+    md5: "787aa4d4c4e9798ad85b088fa5675193"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_pos_de.vkm"
+    system: commodore-c64dtv
+    path: "C64DTV/sdl_pos_de.vkm"
+    required: false
+    bundled: true
+    size: 11493
+    sha1: "599fc223f434d63ca8682f2f7bfdd484392c616d"
+    md5: "a634e3b691847b4da44096cb69a93bb0"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_pos_fi.vkm"
+    system: commodore-c64dtv
+    path: "C64DTV/sdl_pos_fi.vkm"
+    required: false
+    bundled: true
+    size: 11340
+    sha1: "abbcb3bb0b671800018f8a51b8f1f39d0a96d02d"
+    md5: "39a71d5c5d25ca87b54205b4aa9763f8"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_pos_no.vkm"
+    system: commodore-c64dtv
+    path: "C64DTV/sdl_pos_no.vkm"
+    required: false
+    bundled: true
+    size: 11215
+    sha1: "d1c31406a3c22cd2c168baa819976dee3ba4a969"
+    md5: "a5e63924882a7334477fe69db1cd5676"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_pos_tr.vkm"
+    system: commodore-c64dtv
+    path: "C64DTV/sdl_pos_tr.vkm"
+    required: false
+    bundled: true
+    size: 10423
+    sha1: "ef005ec8cf5b106ff63477e66be058f60efc90e0"
+    md5: "3ced2d548fd3dcfe63d4e90dac8f1866"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_sym.vkm"
+    system: commodore-c64dtv
+    path: "C64DTV/sdl_sym.vkm"
+    required: false
+    bundled: true
+    size: 11128
+    sha1: "4413187e1ed4f8da4332210053720a9fad84d034"
+    md5: "6250577cea0f4d31f42f107e686d872f"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_sym_uk.vkm"
+    system: commodore-c64dtv
+    path: "C64DTV/sdl_sym_uk.vkm"
+    required: false
+    bundled: true
+    size: 11212
+    sha1: "d9ad092e440d92429676faafeaf6c4b7cc0577c7"
+    md5: "c1ed8b86baa6c8da31cac9f24ecded09"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_sym_de.vkm"
+    system: commodore-c64dtv
+    path: "C64DTV/sdl_sym_de.vkm"
+    required: false
+    bundled: true
+    size: 13702
+    sha1: "1bf117df333e51d7eb90b3b75517b263a65b1401"
+    md5: "a3bdd8ded94e6930ec9529ce542b7523"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_sym_fr.vkm"
+    system: commodore-c64dtv
+    path: "C64DTV/sdl_sym_fr.vkm"
+    required: false
+    bundled: true
+    size: 11481
+    sha1: "56990de62e38a9464a782b00fa0d7f1bb5092299"
+    md5: "09f986b03daee625240f5d2b19de68fc"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_sym_nl.vkm"
+    system: commodore-c64dtv
+    path: "C64DTV/sdl_sym_nl.vkm"
+    required: false
+    bundled: true
+    size: 11356
+    sha1: "b3a102d56bfd4703fd8157e34bb5b228aadc9e2b"
+    md5: "13d0e762d1715ec044b51d5684014f36"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_sym_tr.vkm"
+    system: commodore-c64dtv
+    path: "C64DTV/sdl_sym_tr.vkm"
+    required: false
+    bundled: true
+    size: 11177
+    sha1: "0b99b4f1bd7c042e0668167c29797d0f10e5b2e3"
+    md5: "e1cb48e46010a5983d68ef5338670537"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_sym_da.vkm"
+    system: commodore-c64dtv
+    path: "C64DTV/sdl_sym_da.vkm"
+    required: false
+    bundled: true
+    size: 11390
+    sha1: "c99e1e8a24c9232ccf962d49b73701ffd1703fa7"
+    md5: "dbfdfb0198e285e89cd10bca0a0d9c70"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "basic64-901226-01.bin"
+    system: commodore-c128
+    path: "C128/basic64-901226-01.bin"
+    required: true
+    bundled: true
+    min_size: 8192
+    validation: [size]
+    sha1: "79015323128650c742a3694c9429aa91f355905e"
+    md5: "57af4ae21d4b705c2991d98ed5c1f7b8"
+    crc32: "f833d117"
+    source_ref: "vice/src/c128/c128rom.h:101, vice/src/c128/c128-resources.c:624, vice/src/c128/c128rom.c:650, vice/src/c128/c128rom.c:658-815"
+
+  - name: "kernal64-901227-03.bin"
+    system: commodore-c128
+    path: "C128/kernal64-901227-03.bin"
+    required: true
+    bundled: true
+    min_size: 8192
+    validation: [size]
+    sha1: "1d503e56df85a62fee696e7618dc5b4e781df1bb"
+    md5: "39065497630802346bce17963f13c092"
+    crc32: "dbe3e7c7"
+    source_ref: "vice/src/c128/c128rom.h:104, vice/src/c128/c128-resources.c:622, vice/src/c128/c128rom.c:296, vice/src/c128/c128rom.c:629, vice/src/c128/c128rom.c:658-815"
+
+  - name: "kernal64-325179-01.bin"
+    system: commodore-c128
+    path: "C128/kernal64-325179-01.bin"
+    required: false
+    bundled: true
+    min_size: 8192
+    validation: [size]
+    sha1: "b4862cac7b9319d8e912887c97fc270d4c239349"
+    md5: "8fa940c39225d40f37ddf7082fba8b21"
+    crc32: "dd2976d2"
+    source_ref: "vice/src/c128/c128rom.h:106, vice/src/c128/c128rom.c:322, vice/src/c128/c128rom.c:629, vice/src/c128/c128rom.c:658-815"
+
+  - name: "kernal64-325182-01.bin"
+    system: commodore-c128
+    path: "C128/kernal64-325182-01.bin"
+    required: false
+    bundled: true
+    min_size: 8192
+    validation: [size]
+    sha1: "e4f52d9b36c030eb94524eb49f6f0774c1d02e5e"
+    md5: "27e26dbb267c8ebf1cd47105a6ca71e7"
+    crc32: "f10c2c25"
+    source_ref: "vice/src/c128/c128rom.h:107, vice/src/c128/c128rom.c:326, vice/src/c128/c128rom.c:629, vice/src/c128/c128rom.c:658-815"
+
+  - name: "basichi-318019-04.bin"
+    system: commodore-c128
+    path: "C128/basichi-318019-04.bin"
+    required: true
+    bundled: true
+    min_size: 16384
+    validation: [size]
+    sha1: "c4fb4a714e48a7bf6c28659de0302183a0e0d6c0"
+    md5: "87bb251707d0a2c915d6e0c69fdb0fed"
+    crc32: "6e2c91a7"
+    source_ref: "vice/src/c128/c128rom.h:98, vice/src/c128/c128-resources.c:620, vice/src/c128/c128rom.c:432, vice/src/c128/c128rom.c:658-815"
+
+  - name: "basiclo-318018-04.bin"
+    system: commodore-c128
+    path: "C128/basiclo-318018-04.bin"
+    required: true
+    bundled: true
+    min_size: 16384
+    validation: [size]
+    sha1: "d53a7884404f7d18ebd60dd3080c8f8d71067441"
+    md5: "b86ce827c9108fbc7b9e02c690e81a23"
+    crc32: "9f9c355b"
+    source_ref: "vice/src/c128/c128rom.h:97, vice/src/c128/c128-resources.c:618, vice/src/c128/c128rom.c:416, vice/src/c128/c128rom.c:658-815"
+
+  - name: "chargen-315079-01.bin"
+    system: commodore-c128
+    path: "C128/chargen-315079-01.bin"
+    required: true
+    bundled: true
+    min_size: 8192
+    validation: [size]
+    sha1: "638f8aff51c2ac4f99a55b12c4f8c985ef4bebd3"
+    md5: "ec9e71614010c4efb851b83bcd685e9c"
+    crc32: "fe5a2db1"
+    source_ref: "vice/src/c128/c128rom.h:78, vice/src/c128/c128-resources.c:606, vice/src/c128/c128rom.c:486-613, vice/src/c128/c128rom.c:658-815"
+
+  - name: "chargen-390059-01.bin"
+    system: commodore-c128
+    path: "C128/chargen-390059-01.bin"
+    required: true
+    bundled: true
+    min_size: 8192
+    validation: [size]
+    sha1: "29ed066d513f2d5c09ff26d9166ba23c2afb2b3f"
+    md5: "46b3cb2140f244c0ed1150c819e7bdc4"
+    crc32: "6aaaafe6"
+    source_ref: "vice/src/c128/c128rom.h:75, vice/src/c128/c128-resources.c:602, vice/src/c128/c128rom.c:486-613, vice/src/c128/c128rom.c:658-815"
+
+  - name: "chargen-325181-01.bin"
+    system: commodore-c128
+    path: "C128/chargen-325181-01.bin"
+    required: true
+    bundled: true
+    min_size: 8192
+    validation: [size]
+    sha1: "aca3f7321ee7e6152f1f0afad646ae41964de4fb"
+    md5: "06e46af13d13aa869218275e64d48b00"
+    crc32: "7a70d9b8"
+    source_ref: "vice/src/c128/c128rom.h:79, vice/src/c128/c128-resources.c:608, vice/src/c128/c128rom.h:84, vice/src/c128/c128-resources.c:616, vice/src/c128/c128rom.c:486-613, vice/src/c128/c128rom.c:658-815"
+
+  - name: "chargen-325173-01D.bin"
+    system: commodore-c128
+    path: "C128/chargen-325173-01D.bin"
+    required: true
+    bundled: true
+    min_size: 8192
+    validation: [size]
+    sha1: "c995aeb892becc312389f745d030397e1c26c532"
+    md5: "9d48ba877773b6795a113fc63819b885"
+    crc32: "b7821651"
+    source_ref: "vice/src/c128/c128rom.h:77, vice/src/c128/c128-resources.c:604, vice/src/c128/c128rom.c:486-613, vice/src/c128/c128rom.c:658-815"
+
+  - name: "chargen-325078-02.bin"
+    system: commodore-c128
+    path: "C128/chargen-325078-02.bin"
+    required: true
+    bundled: true
+    min_size: 8192
+    validation: [size]
+    sha1: "8875db19c12da68cfb14709bd9ab524e140b3197"
+    md5: "a69b20ac7b5cfe9510d61b7e189b5790"
+    crc32: "1059b482"
+    source_ref: "vice/src/c128/c128rom.h:83, vice/src/c128/c128-resources.c:614, vice/src/c128/c128rom.c:486-613, vice/src/c128/c128rom.c:658-815"
+
+  - name: "chargen-325167-02.bin"
+    system: commodore-c128
+    path: "C128/chargen-325167-02.bin"
+    required: true
+    bundled: true
+    min_size: 8192
+    validation: [size]
+    sha1: "eb50b78b0faa7f4c8ab8a285700cbdf8667d8f40"
+    md5: "a507edf403b0f00fad2310182647f9cb"
+    crc32: "80773d0e"
+    source_ref: "vice/src/c128/c128rom.h:76, vice/src/c128/c128rom.h:81, vice/src/c128/c128-resources.c:610, vice/src/c128/c128rom.h:82, vice/src/c128/c128-resources.c:612, vice/src/c128/c128rom.c:486-613, vice/src/c128/c128rom.c:658-815"
+
+  - name: "kernal-318020-05.bin"
+    system: commodore-c128
+    path: "C128/kernal-318020-05.bin"
+    required: true
+    bundled: true
+    min_size: 16384
+    validation: [size]
+    sha1: "ceb6e1a1bf7e08eb9cbc651afa29e26adccf38ab"
+    md5: "01f6903033b90cd506cde7802ec743c3"
+    crc32: "ba456b8e"
+    source_ref: "vice/src/c128/c128rom.h:87, vice/src/c128/c128-resources.c:626, vice/src/c128/c128rom.c:122-249, vice/src/c128/c128rom.c:658-815"
+
+  - name: "kernal-315078-03.bin"
+    system: commodore-c128
+    path: "C128/kernal-315078-03.bin"
+    required: true
+    bundled: true
+    min_size: 16384
+    validation: [size]
+    sha1: "3629b3fa28b6a30bcc027b647f26654929ed1b0f"
+    md5: "9837409b6bdb7ce055409fa3eb3e9cf0"
+    crc32: "bff7550b"
+    source_ref: "vice/src/c128/c128rom.h:89, vice/src/c128/c128-resources.c:630, vice/src/c128/c128rom.c:122-249, vice/src/c128/c128rom.c:658-815"
+
+  - name: "kernalfi"
+    system: commodore-c128
+    path: "C128/kernalfi"
+    required: true
+    bundled: true
+    min_size: 16384
+    validation: [size]
+    sha1: "d08e7991a6df14a843e92daafaf6756337959ba4"
+    md5: "0a0eb549ec08624de11cf1f249f6f3dc"
+    crc32: "d3ecea84"
+    source_ref: "vice/src/c128/c128rom.h:90, vice/src/c128/c128-resources.c:632, vice/src/c128/c128rom.c:122-249, vice/src/c128/c128rom.c:658-815"
+
+  - name: "kernalfr"
+    system: commodore-c128
+    path: "C128/kernalfr"
+    required: true
+    bundled: true
+    min_size: 16384
+    validation: [size]
+    sha1: "a0680d04db3232fa9f58598e5c9f09c4fe94f601"
+    md5: "7a7747aa70fd63402c6a95fba0bd6806"
+    crc32: "2df282b8"
+    source_ref: "vice/src/c128/c128rom.h:91, vice/src/c128/c128-resources.c:634, vice/src/c128/c128rom.c:122-249, vice/src/c128/c128rom.c:658-815"
+
+  - name: "kernalit"
+    system: commodore-c128
+    path: "C128/kernalit"
+    required: true
+    bundled: true
+    min_size: 16384
+    validation: [size]
+    sha1: "592a626eb2b5372596ac374d3505c3ce78dd040f"
+    md5: "142c8bd5934e9d97addb6776a2f2e8b8"
+    crc32: "74d6b084"
+    source_ref: "vice/src/c128/c128rom.h:92, vice/src/c128/c128-resources.c:636, vice/src/c128/c128rom.c:122-249, vice/src/c128/c128rom.c:658-815"
+
+  - name: "kernalno"
+    system: commodore-c128
+    path: "C128/kernalno"
+    required: true
+    bundled: true
+    min_size: 16384
+    validation: [size]
+    sha1: "00fe2fd610a812121befab1e7238fa882c0f8257"
+    md5: "498fdedaeab458931b6103d52d5a3ea1"
+    crc32: "a5406848"
+    source_ref: "vice/src/c128/c128rom.h:93, vice/src/c128/c128-resources.c:638, vice/src/c128/c128rom.c:122-249, vice/src/c128/c128rom.c:658-815"
+
+  - name: "kernal-318034-01.bin"
+    system: commodore-c128
+    path: "C128/kernal-318034-01.bin"
+    required: true
+    bundled: true
+    min_size: 16384
+    validation: [size]
+    sha1: "925177c99ee7e02870c32ad62a054db1327cf0c2"
+    md5: "7852922295c103f067ba3c0f56378a95"
+    crc32: "1cf7f729"
+    source_ref: "vice/src/c128/c128rom.h:94, vice/src/c128/c128-resources.c:640, vice/src/c128/c128rom.c:122-249, vice/src/c128/c128rom.c:658-815"
+
+  - name: "kernal-325172-01.bin"
+    system: commodore-c128
+    path: "C128/kernal-325172-01.bin"
+    required: true
+    bundled: true
+    min_size: 16384
+    validation: [size]
+    sha1: "98c34e0dec9f52d7862b56bb287d2573eb3f6364"
+    md5: "90907477d39db1b8fe1732692278a0e9"
+    crc32: "d311dab1"
+    source_ref: "vice/src/c128/c128rom.h:88, vice/src/c128/c128-resources.c:628, vice/src/c128/c128rom.c:122-249, vice/src/c128/c128rom.c:658-815"
+
+  - name: "c64hq.vpl"
+    system: commodore-c128
+    path: "C128/c64hq.vpl"
+    required: false
+    bundled: true
+    size: 396
+    sha1: "6ccfde9f0d7a5798c3b4e9e63d1b5ab6e6a55b11"
+    md5: "df2d9c3c4e0ea8dd4dde212e75837f37"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "c64s.vpl"
+    system: commodore-c128
+    path: "C128/c64s.vpl"
+    required: false
+    bundled: true
+    size: 396
+    sha1: "f22d9053401ee7ff0e9e811d23ccb74acf377980"
+    md5: "09fe9489968cb1e2b8d5e21d9ea6241e"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "ccs64.vpl"
+    system: commodore-c128
+    path: "C128/ccs64.vpl"
+    required: false
+    bundled: true
+    size: 396
+    sha1: "9db2c8f3a00d6b2499fab62ba6bbc2b1263e28ab"
+    md5: "68f98a1b2dbed8ac9ead5322b0956af3"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "frodo.vpl"
+    system: commodore-c128
+    path: "C128/frodo.vpl"
+    required: false
+    bundled: true
+    size: 396
+    sha1: "de1fac3c53284871512c354e959a73a82928243b"
+    md5: "f61c10680d65c4dd3a6e5641541420a4"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "godot.vpl"
+    system: commodore-c128
+    path: "C128/godot.vpl"
+    required: false
+    bundled: true
+    size: 396
+    sha1: "4704bbef67401535f991ef30652d4273251ecc19"
+    md5: "444503dc1e3ba339c725ad15dde74f24"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "pc64.vpl"
+    system: commodore-c128
+    path: "C128/pc64.vpl"
+    required: false
+    bundled: true
+    size: 396
+    sha1: "20fd2e1316b038c27e5f2ce4d767d8b51a7ff84a"
+    md5: "3909fbb2d639b6a9348400d7768cbfac"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "vdc_deft.vpl"
+    system: commodore-c128
+    path: "C128/vdc_deft.vpl"
+    required: false
+    bundled: true
+    size: 431
+    sha1: "85a559db4052a4274e20e7f990881f095705f2ef"
+    md5: "bd58220f07f2290209d237bc2c2f06b4"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "vdc_comp.vpl"
+    system: commodore-c128
+    path: "C128/vdc_comp.vpl"
+    required: false
+    bundled: true
+    size: 431
+    sha1: "43bc9a6937d3d3dd7f839d7663b2a50d00b8a8d3"
+    md5: "a76bd0c5f640c1f9c494af85a1f1ea2a"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "vdc_scart.vpl"
+    system: commodore-c128
+    path: "C128/vdc_scart.vpl"
+    required: false
+    bundled: true
+    size: 455
+    sha1: "db87dafdd06d4a3fc6099a803e85dfd508675e16"
+    md5: "d83152c62f97f26d0ae98ea6f0c81c99"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "vice.vpl"
+    system: commodore-c128
+    path: "C128/vice.vpl"
+    required: false
+    bundled: true
+    size: 413
+    sha1: "b6e2229b10cd6e73beb364b226c113634a999908"
+    md5: "8693dc35ab3cc10f61008469ab7b940a"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "pepto-ntsc-sony.vpl"
+    system: commodore-c128
+    path: "C128/pepto-ntsc-sony.vpl"
+    required: false
+    bundled: true
+    size: 591
+    sha1: "6f2f4a540c6ba56ecaefc94c1df7f2a748d36bb0"
+    md5: "d576ab346aa9dfd6494dcebd04955768"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "pepto-ntsc.vpl"
+    system: commodore-c128
+    path: "C128/pepto-ntsc.vpl"
+    required: false
+    bundled: true
+    size: 583
+    sha1: "f94f96984264cb771ef1e128365f209697714b8f"
+    md5: "2ac60dc5155a2fc3a3ad21ea732505eb"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "pepto-pal.vpl"
+    system: commodore-c128
+    path: "C128/pepto-pal.vpl"
+    required: false
+    bundled: true
+    size: 402
+    sha1: "88a2209694f64f7167f239646aedcd0d09dc51bb"
+    md5: "b40adb69ef1a6bf46a51acc9428e1d76"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "pepto-palold.vpl"
+    system: commodore-c128
+    path: "C128/pepto-palold.vpl"
+    required: false
+    bundled: true
+    size: 522
+    sha1: "e6798b75fb7c6b2949db131d277aecbf9f0f5e0e"
+    md5: "a068287002e36d6c7d3fb25c35232777"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "community-colors.vpl"
+    system: commodore-c128
+    path: "C128/community-colors.vpl"
+    required: false
+    bundled: true
+    size: 367
+    sha1: "61f063dcaa351ed25b61aa6f7b29c811db1fff97"
+    md5: "eb33aa86d6a5021f377752e0dbb9e1e7"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "colodore.vpl"
+    system: commodore-c128
+    path: "C128/colodore.vpl"
+    required: false
+    bundled: true
+    size: 443
+    sha1: "52f2b60079e05275ba2f09a77e17bb37409c7eb5"
+    md5: "5060c9d964f0f9a14f2588594b1fd130"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "ptoing.vpl"
+    system: commodore-c128
+    path: "C128/ptoing.vpl"
+    required: false
+    bundled: true
+    size: 397
+    sha1: "df864e55c3fe2d672ee62ab3ff405b2b6c31824b"
+    md5: "77ca107a9839b6a8e422c9683f503428"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "deekay.vpl"
+    system: commodore-c128
+    path: "C128/deekay.vpl"
+    required: false
+    bundled: true
+    size: 403
+    sha1: "ae9ae759c576c72c7fc2262927a8ed8070a7ad15"
+    md5: "ba6bc9a21a0dba5fa269f6edfbf5483c"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "cjam.vpl"
+    system: commodore-c128
+    path: "C128/cjam.vpl"
+    required: false
+    bundled: true
+    size: 461
+    sha1: "cbce1243f3264c23c5b301dacd127decd2eb8725"
+    md5: "ebcd8e904bb54ca65d6707da2842573e"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "palette.vpl"
+    system: commodore-c128
+    path: "C128/palette.vpl"
+    required: false
+    bundled: true
+    size: 442
+    sha1: "20496aa23d1c4e177c6f7160f1de5346de7b2a58"
+    md5: "e1cc28bec07c37b8d8175735214146aa"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "pixcen.vpl"
+    system: commodore-c128
+    path: "C128/pixcen.vpl"
+    required: false
+    bundled: true
+    size: 438
+    sha1: "baab5d246b24b7445f9f5d26ba84c7214e7b62c2"
+    md5: "078976216cc2fb8397570285b3100b0d"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "rgb.vpl"
+    system: commodore-c128
+    path: "C128/rgb.vpl"
+    required: false
+    bundled: true
+    size: 491
+    sha1: "0a6b1b89e4a5dabc796184a87cb477f771cc0c6c"
+    md5: "6f40bdb9d5830810d8d5cf7f3cb16fba"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "the64.vpl"
+    system: commodore-c128
+    path: "C128/the64.vpl"
+    required: false
+    bundled: true
+    size: 412
+    sha1: "286ebf56233f251ad18002c1b51e017996f662cc"
+    md5: "97720ec72227956dc011f8d627ffcece"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "palette_6569R1_v1r.vpl"
+    system: commodore-c128
+    path: "C128/palette_6569R1_v1r.vpl"
+    required: false
+    bundled: true
+    size: 496
+    sha1: "7af800bc88c4039b7203a187fea0725830145657"
+    md5: "844cb65cc09d54cdcfed5750909ca698"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "palette_6569R5_v1r.vpl"
+    system: commodore-c128
+    path: "C128/palette_6569R5_v1r.vpl"
+    required: false
+    bundled: true
+    size: 496
+    sha1: "1f5b841ea7f5e2f1a6ad1a9b55a4c106f1442024"
+    md5: "65cd164c319839661797630a70f780e2"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "palette_8565R2_v1r.vpl"
+    system: commodore-c128
+    path: "C128/palette_8565R2_v1r.vpl"
+    required: false
+    bundled: true
+    size: 496
+    sha1: "983645d05e4b539d00db2c1ba4ddae1e985b4ac0"
+    md5: "cd3ff94f09ab710bf3a9d01555e96f4b"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "palette_C64_amber.vpl"
+    system: commodore-c128
+    path: "C128/palette_C64_amber.vpl"
+    required: false
+    bundled: true
+    size: 503
+    sha1: "e8e0ea943478b44bd2131864bb2824371ca21db8"
+    md5: "c7820d3e806344331e9e20e82a956894"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "palette_C64_cyan.vpl"
+    system: commodore-c128
+    path: "C128/palette_C64_cyan.vpl"
+    required: false
+    bundled: true
+    size: 492
+    sha1: "4fcdd68d6a968831260f1f5062206a91d5b77b05"
+    md5: "d6c01a3adc2554b725d55f5be84e3307"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "palette_C64_green.vpl"
+    system: commodore-c128
+    path: "C128/palette_C64_green.vpl"
+    required: false
+    bundled: true
+    size: 503
+    sha1: "1b9d93dfe042b2db1aad4289fdbee0bf1449f8fc"
+    md5: "04cd20eab568255ab47455daae0f0dd2"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "sdl_sym.vkm"
+    system: commodore-c128
+    path: "C128/sdl_sym.vkm"
+    required: false
+    bundled: true
+    size: 14960
+    sha1: "f813e5309f7a3ff9dc493ecd53c6533da46a2ec0"
+    md5: "31d63decb534bc2ba666bfc96c1a71d9"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_sym_de.vkm"
+    system: commodore-c128
+    path: "C128/sdl_sym_de.vkm"
+    required: false
+    bundled: true
+    size: 15017
+    sha1: "d5b535ebd0e6edf9bc635ae2cc4b89f253b432e4"
+    md5: "86d0c7e78ab2491287ba50af95800658"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_sym_fr.vkm"
+    system: commodore-c128
+    path: "C128/sdl_sym_fr.vkm"
+    required: false
+    bundled: true
+    size: 15471
+    sha1: "483b12f4d7eacd83111369f7d8f8fb255588fe6f"
+    md5: "2a246eebb0fd6a80cdb6df4e7d33240b"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_pos.vkm"
+    system: commodore-c128
+    path: "C128/sdl_pos.vkm"
+    required: false
+    bundled: true
+    size: 11598
+    sha1: "f6d3e354966faaa8882445bbf105983ebeda6e84"
+    md5: "3c0d4d849833c6343f13cc45247da301"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_pos_de.vkm"
+    system: commodore-c128
+    path: "C128/sdl_pos_de.vkm"
+    required: false
+    bundled: true
+    size: 11552
+    sha1: "30ec5ccd94376f854378ec49f3b18c8cf2b64693"
+    md5: "4a1ba41db16530d69ef5f43a4943c08f"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_v128.vkm"
+    system: commodore-c128
+    path: "C128/sdl_v128.vkm"
+    required: false
+    bundled: true
+    size: 11101
+    sha1: "1e098961a04b31dcb2eaec6839f7cb05613b82ed"
+    md5: "0ab085484f0d336dbee035912373e253"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "basic-901486-01.bin"
+    system: commodore-vic20
+    path: "VIC20/basic-901486-01.bin"
+    required: true
+    bundled: true
+    min_size: 8192
+    validation: [size]
+    sha1: "587d1e90950675ab6b12d91248a3f0d640d02e8d"
+    md5: "8b9237706f47a9b3498d8f881ef0244d"
+    crc32: "db4c43c1"
+    source_ref: "vice/src/vic20/vic20rom.h:43, vice/src/vic20/vic20-resources.c:217, vice/src/vic20/vic20rom.c:156-159, vice/src/vic20/vic20rom.c:186-218"
+
+  - name: "chargen-901460-03.bin"
+    system: commodore-vic20
+    path: "VIC20/chargen-901460-03.bin"
+    required: true
+    bundled: true
+    min_size: 4096
+    validation: [size]
+    sha1: "4fd85ab6647ee2ac7ba40f729323f2472d35b9b4"
+    md5: "d390e340e94e1bef0f2fdfe9fa850993"
+    crc32: "83e032a6"
+    source_ref: "vice/src/vic20/vic20rom.h:56, vice/src/vic20/vic20-resources.c:213, vice/src/vic20/vic20model.c:57, vice/src/vic20/vic20rom.c:175-178, vice/src/vic20/vic20rom.c:186-218"
+
+  - name: "chargen-901460-02.bin"
+    system: commodore-vic20
+    path: "VIC20/chargen-901460-02.bin"
+    required: false
+    bundled: true
+    min_size: 4096
+    validation: [size]
+    sha1: "dae61ac03065aa2904af5c123ce821855898c555"
+    md5: "7e6e41b5b60fec798743afd7063b42ed"
+    crc32: "fcfd8a4b"
+    source_ref: "vice/src/vic20/vic20rom.h:57, vice/src/vic20/vic20model.c:60, vice/src/vic20/vic20rom.c:175-178, vice/src/vic20/vic20rom.c:186-218"
+
+  - name: "kernal.901486-02.bin"
+    system: commodore-vic20
+    path: "VIC20/kernal.901486-02.bin"
+    required: false
+    bundled: true
+    min_size: 8192
+    validation: [size]
+    sha1: "c9ead45e6674d1042ca6199160e8583c23aeac22"
+    md5: "317f93bcbc5ee15da085a51a306f2c61"
+    crc32: "336900d7"
+    source_ref: "vice/src/vic20/vic20rom.h:51, vice/src/vic20/vic20model.c:60, vice/src/vic20/vic20rom.c:112-115, vice/src/vic20/vic20rom.c:186-218"
+
+  - name: "kernal.901486-06.bin"
+    system: commodore-vic20
+    path: "VIC20/kernal.901486-06.bin"
+    required: false
+    bundled: true
+    min_size: 8192
+    validation: [size]
+    sha1: "06de7ec017a5e78bd6746d89c2ecebb646efeb19"
+    md5: "0313e31e5f31e1f739c2377792460d67"
+    crc32: "e5e7c174"
+    source_ref: "vice/src/vic20/vic20rom.h:52, vice/src/vic20/vic20model.c:58, vice/src/vic20/vic20model.c:59, vice/src/vic20/vic20rom.c:112-115, vice/src/vic20/vic20rom.c:186-218"
+
+  - name: "kernal.901486-07.bin"
+    system: commodore-vic20
+    path: "VIC20/kernal.901486-07.bin"
+    required: true
+    bundled: true
+    min_size: 8192
+    validation: [size]
+    sha1: "ce0137ed69f003a299f43538fa9eee27898e621e"
+    md5: "f0587624dcd7685710a8fdb35939617f"
+    crc32: "4be07cb4"
+    source_ref: "vice/src/vic20/vic20rom.h:53, vice/src/vic20/vic20-resources.c:215, vice/src/vic20/vic20model.c:57, vice/src/vic20/vic20rom.c:112-115, vice/src/vic20/vic20rom.c:186-218"
+
+  - name: "vice.vpl"
+    system: commodore-vic20
+    path: "VIC20/vice.vpl"
+    required: false
+    bundled: true
+    size: 416
+    sha1: "1492266e2b207e705df520de909fbf1fc766b910"
+    md5: "b634494164879de37f6551a237688df5"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "mike-pal.vpl"
+    system: commodore-vic20
+    path: "VIC20/mike-pal.vpl"
+    required: false
+    bundled: true
+    size: 410
+    sha1: "939549863b1f4615c45ea9b617e0634eb019b7cd"
+    md5: "915f94864df73db772e7d619fcec6429"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "mike-ntsc.vpl"
+    system: commodore-vic20
+    path: "VIC20/mike-ntsc.vpl"
+    required: false
+    bundled: true
+    size: 276
+    sha1: "1b44d090065e905bbc9ea50ef39c8af46bf365c7"
+    md5: "0251591771634ea33f118d817658c8b9"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "colodore_vic.vpl"
+    system: commodore-vic20
+    path: "VIC20/colodore_vic.vpl"
+    required: false
+    bundled: true
+    size: 281
+    sha1: "10d8292bd522217f36f5d81c6f061a1e29a27616"
+    md5: "fc9fb56671a270436e5e795c7b5b090e"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "PALette.vpl"
+    system: commodore-vic20
+    path: "VIC20/PALette.vpl"
+    required: false
+    bundled: true
+    size: 515
+    sha1: "146c78709cbcc8290b024be4c09273207034b571"
+    md5: "940636b7e7b46d27d629310286e966f5"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "sdl_sym.vkm"
+    system: commodore-vic20
+    path: "VIC20/sdl_sym.vkm"
+    required: false
+    bundled: true
+    size: 11203
+    sha1: "a819941369c5f32da9801b45b94b01264eeff724"
+    md5: "6debf9836447f7fd8a45fb5002be29cb"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_sym_de.vkm"
+    system: commodore-vic20
+    path: "VIC20/sdl_sym_de.vkm"
+    required: false
+    bundled: true
+    size: 13827
+    sha1: "9598465a8fcac443d40e07b7b6e0ff52dbc63ed2"
+    md5: "4db934fa0b757b857eb63ff6c4b370d2"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_pos.vkm"
+    system: commodore-vic20
+    path: "VIC20/sdl_pos.vkm"
+    required: false
+    bundled: true
+    size: 10567
+    sha1: "5054e6692bfc37cf96e21bcb9175fb358678f979"
+    md5: "58de41dfe59f5fa529af16695e4bcffb"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_pos_fr.vkm"
+    system: commodore-vic20
+    path: "VIC20/sdl_pos_fr.vkm"
+    required: false
+    bundled: true
+    size: 10601
+    sha1: "2f23e14e2a6afee7ee9a2c3d6d6bd3ea0c84db8f"
+    md5: "9ed9bbc52587174f45ff579622c4364f"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_pos_fi.vkm"
+    system: commodore-vic20
+    path: "VIC20/sdl_pos_fi.vkm"
+    required: false
+    bundled: true
+    size: 10496
+    sha1: "42c20caea883e2af014c5a27a1867ec62bd7540d"
+    md5: "df643260606297689c8cf7d737733180"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "3plus1-317053-01.bin"
+    system: commodore-plus4
+    path: "PLUS4/3plus1-317053-01.bin"
+    required: true
+    bundled: true
+    min_size: 16384
+    validation: [size]
+    sha1: "3b69f6e7cb4c18bb08e203fb18b7dabfa853390f"
+    md5: "2994d5463ef8524deb4231a9c764767c"
+    crc32: "4fd1d8cb"
+    source_ref: "vice/src/plus4/plus4rom.h:40, vice/src/plus4/plus4-resources.c:222, vice/src/plus4/plus4model.c:68, vice/src/plus4/plus4memrom.c:132, vice/src/plus4/plus4rom.c:121-188"
+
+  - name: "3plus1-317054-01.bin"
+    system: commodore-plus4
+    path: "PLUS4/3plus1-317054-01.bin"
+    required: true
+    bundled: true
+    min_size: 16384
+    validation: [size]
+    sha1: "0ad7ac2db7da692d972e586ca0dfd747d82c7693"
+    md5: "ac34591c820fe607d527e04e95bce465"
+    crc32: "109de2fc"
+    source_ref: "vice/src/plus4/plus4rom.h:41, vice/src/plus4/plus4-resources.c:224, vice/src/plus4/plus4model.c:68, vice/src/plus4/plus4memrom.c:152, vice/src/plus4/plus4rom.c:121-188"
+
+  - name: "basic-318006-01.bin"
+    system: commodore-plus4
+    path: "PLUS4/basic-318006-01.bin"
+    required: true
+    bundled: true
+    min_size: 16384
+    validation: [size]
+    sha1: "161c96b4ad20f3a4f2321808e37a5ded26a135dd"
+    md5: "44a4ae400e3b4f7533a47ae0df1be78c"
+    crc32: "74eaae87"
+    source_ref: "vice/src/plus4/plus4rom.h:33, vice/src/plus4/plus4-resources.c:220, vice/src/plus4/plus4model.c:66, vice/src/plus4/plus4rom.c:111-112, vice/src/plus4/plus4rom.c:121-188"
+
+  - name: "kernal-318004-05.bin"
+    system: commodore-plus4
+    path: "PLUS4/kernal-318004-05.bin"
+    required: true
+    bundled: true
+    min_size: 16384
+    validation: [size]
+    sha1: "7c7e07f016391174a557e790c4ef1cbe33512cdb"
+    md5: "89f5263665a8dc10c8f8abc38f5f7eb9"
+    crc32: "71c07bd4"
+    source_ref: "vice/src/plus4/plus4rom.h:36, vice/src/plus4/plus4-resources.c:218, vice/src/plus4/plus4model.c:66, vice/src/plus4/plus4rom.c:89-90, vice/src/plus4/plus4rom.c:121-188"
+
+  - name: "kernal-318005-05.bin"
+    system: commodore-plus4
+    path: "PLUS4/kernal-318005-05.bin"
+    required: false
+    bundled: true
+    min_size: 16384
+    validation: [size]
+    sha1: "a3d9e5be091b98de39a046ab167fb7632d053682"
+    md5: "b3c450c36a88b491281d18fdf3e94ab0"
+    crc32: "70295038"
+    source_ref: "vice/src/plus4/plus4rom.h:37, vice/src/plus4/plus4model.c:67, vice/src/plus4/plus4model.c:69, vice/src/plus4/plus4rom.c:89-90, vice/src/plus4/plus4rom.c:121-188"
+
+  - name: "kernal-318004-01.bin"
+    system: commodore-plus4
+    path: "PLUS4/kernal-318004-01.bin"
+    required: false
+    bundled: true
+    min_size: 16384
+    validation: [size]
+    sha1: "3c77caf72914c1c0a0875b3a7f6935cd30c54201"
+    md5: "a213823557421b66f9813ff19af48c01"
+    crc32: "dbdc3319"
+    source_ref: "vice/src/plus4/plus4rom.h:35, vice/src/plus4/plus4model.c:71, vice/src/plus4/plus4rom.c:89-90, vice/src/plus4/plus4rom.c:121-188"
+
+  - name: "kernal-364.bin"
+    system: commodore-plus4
+    path: "PLUS4/kernal-364.bin"
+    required: false
+    bundled: true
+    min_size: 16384
+    validation: [size]
+    sha1: "b9a5b5dacd57ca117ef0b3af29e91998bf4d7e5f"
+    md5: "7abb51257595b233a1a63ae58c330a65"
+    crc32: "84fd4f7a"
+    source_ref: "vice/src/plus4/plus4rom.h:38, vice/src/plus4/plus4model.c:70, vice/src/plus4/plus4rom.c:89-90, vice/src/plus4/plus4rom.c:121-188"
+
+  - name: "c2lo-364.bin"
+    system: commodore-plus4
+    path: "PLUS4/c2lo-364.bin"
+    required: false
+    bundled: true
+    min_size: 16384
+    validation: [size]
+    sha1: "59af401cbb2194f689898271c6e8aafa28a7af11"
+    md5: "0073ace3874a2c5ca5de9cf64cdfbbd4"
+    crc32: "5227c2ee"
+    source_ref: "vice/src/plus4/plus4rom.h:43, vice/src/plus4/plus4model.c:70, vice/src/plus4/plus4memrom.c:173, vice/src/plus4/plus4rom.c:121-188"
+
+  - name: "yape-pal.vpl"
+    system: commodore-plus4
+    path: "PLUS4/yape-pal.vpl"
+    required: false
+    bundled: true
+    size: 1298
+    sha1: "11842819c25f7b9d9ec6ce3683990081b088a63e"
+    md5: "ed367f4b939828e7d174160446b800ed"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "yape-ntsc.vpl"
+    system: commodore-plus4
+    path: "PLUS4/yape-ntsc.vpl"
+    required: false
+    bundled: true
+    size: 2579
+    sha1: "7e5013a31ae1f7df9785d665ee0aa61182a041b5"
+    md5: "aef7d6105d95fbfa7561138c6ca3f0f8"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "colodore_ted.vpl"
+    system: commodore-plus4
+    path: "PLUS4/colodore_ted.vpl"
+    required: false
+    bundled: true
+    size: 1293
+    sha1: "aca4e277a41397a995d7c49e0bcfb544ecbf9ba2"
+    md5: "b28e221594dfbe58e548ee5ef1804982"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "ITU-R_BT601_CRT.vpl"
+    system: commodore-plus4
+    path: "PLUS4/ITU-R_BT601_CRT.vpl"
+    required: false
+    bundled: true
+    size: 1415
+    sha1: "80a1919af2399f76a32d8afbdd2747a9d99cd65f"
+    md5: "1c89832b6567305c68a77fc75e2aa539"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "ITU-R_BT709_HDTV.vpl"
+    system: commodore-plus4
+    path: "PLUS4/ITU-R_BT709_HDTV.vpl"
+    required: false
+    bundled: true
+    size: 1416
+    sha1: "87f21759846c876cc45adf4b401a223249994bfb"
+    md5: "911d05f8d73b8bd45236058cb4640d7a"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "ITU-R_BT2020.vpl"
+    system: commodore-plus4
+    path: "PLUS4/ITU-R_BT2020.vpl"
+    required: false
+    bundled: true
+    size: 1412
+    sha1: "20e81f9f882025655b675565e8ea0ea073e2bef8"
+    md5: "e77f9ae600ec58680d44448999fe55ee"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "sdl_sym_de.vkm"
+    system: commodore-plus4
+    path: "PLUS4/sdl_sym_de.vkm"
+    required: false
+    bundled: true
+    size: 11553
+    sha1: "bec1d31a75919fdcbe2b468a90d01eabb302dbaf"
+    md5: "a407f1c2da1141111c8aa9f1781320a2"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_sym.vkm"
+    system: commodore-plus4
+    path: "PLUS4/sdl_sym.vkm"
+    required: false
+    bundled: true
+    size: 11110
+    sha1: "63941ad1d65c3c5b1baada5c5374307d80df17c1"
+    md5: "21f2d055b0552f6eeccc28689dba1025"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_pos_fr.vkm"
+    system: commodore-plus4
+    path: "PLUS4/sdl_pos_fr.vkm"
+    required: false
+    bundled: true
+    size: 10696
+    sha1: "0a50de3d1ecaa80697e4e4769da0026d4911d112"
+    md5: "f70f7990e250a9052a197e35c2d00911"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_pos.vkm"
+    system: commodore-plus4
+    path: "PLUS4/sdl_pos.vkm"
+    required: false
+    bundled: true
+    size: 10600
+    sha1: "39cea0d1a29469ec3528a7766facb1a318f78740"
+    md5: "ddada51b167bf0bd0a6b8ce6538d55e8"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "basic-1.901439-09-05-02-06.bin"
+    system: commodore-pet
+    path: "PET/basic-1.901439-09-05-02-06.bin"
+    required: false
+    bundled: true
+    min_size: 8192
+    validation: [size]
+    sha1: "3be9cd41b646fefa00d80f1c3433a06146e97c59"
+    md5: "f328e785835907006604423222db7bbf"
+    crc32: "aff78300"
+    source_ref: "vice/src/pet/petrom.h:55, vice/src/pet/petmodel.c:91, vice/src/pet/petrom.c:534, vice/src/pet/petrom.c:756-817"
+
+  - name: "basic-2.901465-01-02.bin"
+    system: commodore-pet
+    path: "PET/basic-2.901465-01-02.bin"
+    required: false
+    bundled: true
+    min_size: 8192
+    validation: [size]
+    sha1: "9322a9f0354b9049847d98d3a045fbec860a6264"
+    md5: "b69739387bebe999227ae0cf25aa1e91"
+    crc32: "cf35e68b"
+    source_ref: "vice/src/pet/petrom.h:56, vice/src/pet/petmodel.c:110, vice/src/pet/petmodel.c:129, vice/src/pet/petrom.c:534, vice/src/pet/petrom.c:756-817"
+
+  - name: "basic-4.901465-23-20-21.bin"
+    system: commodore-pet
+    path: "PET/basic-4.901465-23-20-21.bin"
+    required: true
+    bundled: true
+    min_size: 8192
+    validation: [size]
+    sha1: "d70bec479e1e3a0d0908a4897066e9959bbc11c8"
+    md5: "d22d2a1912a0cdbd9e7c8b103541b2c6"
+    crc32: "2a940f0a"
+    source_ref: "vice/src/pet/petrom.h:57, vice/src/pet/pet-resources.c:442, vice/src/pet/petmodel.c:186, vice/src/pet/petrom.c:534, vice/src/pet/petrom.c:756-817"
+
+  - name: "kernal-1.901439-04-07.bin"
+    system: commodore-pet
+    path: "PET/kernal-1.901439-04-07.bin"
+    required: false
+    bundled: true
+    min_size: 4096
+    validation: [size]
+    sha1: "32dc08828e88c74d6433156e64d402b564556308"
+    md5: "61b7e2fd04d63b0702951ba40899cd72"
+    crc32: "f0186492"
+    source_ref: "vice/src/pet/petrom.h:51, vice/src/pet/petmodel.c:89, vice/src/pet/petrom.c:581, vice/src/pet/petrom.c:756-817"
+
+  - name: "kernal-2.901465-03.bin"
+    system: commodore-pet
+    path: "PET/kernal-2.901465-03.bin"
+    required: false
+    bundled: true
+    min_size: 4096
+    validation: [size]
+    sha1: "38742bdf449f629bcba6276ef24d3daeb7da6e84"
+    md5: "51a38bfef8f9e72cb64bf7d874b4c8c6"
+    crc32: "f02238e2"
+    source_ref: "vice/src/pet/petrom.h:52, vice/src/pet/petmodel.c:108, vice/src/pet/petmodel.c:127, vice/src/pet/petrom.c:581, vice/src/pet/petrom.c:756-817"
+
+  - name: "kernal-4.901465-22.bin"
+    system: commodore-pet
+    path: "PET/kernal-4.901465-22.bin"
+    required: true
+    bundled: true
+    min_size: 4096
+    validation: [size]
+    sha1: "96a0fa56e0c937da92971d9c99d504e44e898806"
+    md5: "16ec21443ea5431ab63d511061054e6f"
+    crc32: "cc5298a1"
+    source_ref: "vice/src/pet/petrom.h:53, vice/src/pet/pet-resources.c:438, vice/src/pet/petmodel.c:184, vice/src/pet/petrom.c:581, vice/src/pet/petrom.c:756-817"
+
+  - name: "edit-1-n.901439-03.bin"
+    system: commodore-pet
+    path: "PET/edit-1-n.901439-03.bin"
+    required: false
+    bundled: true
+    min_size: 2048
+    validation: [size]
+    sha1: "f02f5fb492ba93dbbd390f24c10f7a832dec432a"
+    md5: "ef9bd0e62dfc47eb463fef20d0344826"
+    crc32: "9e1c5cea"
+    source_ref: "vice/src/pet/petrom.h:59, vice/src/pet/petmodel.c:90, vice/src/pet/petrom.c:612, vice/src/pet/petrom.c:756-817"
+
+  - name: "edit-2-n.901447-24.bin"
+    system: commodore-pet
+    path: "PET/edit-2-n.901447-24.bin"
+    required: false
+    bundled: true
+    min_size: 2048
+    validation: [size]
+    sha1: "5e5502ce32f5a7e387d65efe058916282041e54b"
+    md5: "cb8e8404c0b28eda10469792dfd1dbc2"
+    crc32: "e459ab32"
+    source_ref: "vice/src/pet/petrom.h:60, vice/src/pet/petmodel.c:109, vice/src/pet/petmodel.c:128, vice/src/pet/petrom.c:612, vice/src/pet/petrom.c:756-817"
+
+  - name: "edit-2-b.901474-01.bin"
+    system: commodore-pet
+    path: "PET/edit-2-b.901474-01.bin"
+    required: false
+    bundled: true
+    min_size: 2048
+    validation: [size]
+    sha1: "174ace3a8c0348cd21d39cc864e2adc58b0101a9"
+    md5: "7f87889ca7ee2537f0c1993d35d0fb18"
+    crc32: "05db957e"
+    source_ref: "vice/src/pet/petrom.h:61, vice/src/pet/petmodel.c:166, vice/src/pet/petrom.c:612, vice/src/pet/petrom.c:756-817"
+
+  - name: "edit-4-40-b-50Hz.ts.bin"
+    system: commodore-pet
+    path: "PET/edit-4-40-b-50Hz.ts.bin"
+    required: false
+    bundled: true
+    min_size: 2048
+    validation: [size]
+    sha1: "9f91fbabfdd532d003d2508f399574ba8ec6ee5f"
+    md5: "8e69e040489098522846b1b1c63682c2"
+    crc32: "16fb070c"
+    source_ref: "vice/src/pet/petrom.h:65, vice/src/pet/petmodel.c:223, vice/src/pet/petrom.c:612, vice/src/pet/petrom.c:756-817"
+
+  - name: "edit-4-40-n-50Hz.901498-01.bin"
+    system: commodore-pet
+    path: "PET/edit-4-40-n-50Hz.901498-01.bin"
+    required: false
+    bundled: true
+    min_size: 2048
+    validation: [size]
+    sha1: "05af284c914d53a52987b5f602466de75765f650"
+    md5: "b76d756e7ac8752ae0035f3ce5f1383c"
+    crc32: "3370e359"
+    source_ref: "vice/src/pet/petrom.h:62, vice/src/pet/petmodel.c:185, vice/src/pet/petmodel.c:204, vice/src/pet/petrom.c:612, vice/src/pet/petrom.c:756-817"
+
+  - name: "edit-4-80-b-50Hz.901474-04_.bin"
+    system: commodore-pet
+    path: "PET/edit-4-80-b-50Hz.901474-04_.bin"
+    required: true
+    bundled: true
+    min_size: 2048
+    validation: [size]
+    sha1: "81975eab31a8f4f51ae2a20d099a567c7b3f2dd1"
+    md5: "3a0e2ef328040aa30b30a8134426879a"
+    crc32: "845a44e6"
+    source_ref: "vice/src/pet/petrom.h:63, vice/src/pet/pet-resources.c:440, vice/src/pet/petmodel.c:242, vice/src/pet/petrom.c:612, vice/src/pet/petrom.c:756-817"
+
+  - name: "chargen.de"
+    system: commodore-pet
+    path: "PET/chargen.de"
+    required: false
+    bundled: true
+    min_size: 2048
+    validation: [size]
+    sha1: "a4f0df13473d7f9cd31fd62cfcab11318e2fb1dc"
+    md5: "f099504e32bec9e1e81b6d2600b15277"
+    crc32: "3bb8cb87"
+    source_ref: "vice/src/pet/petrom.h:49, vice/src/arch/sdl/menu_rom.c:404, vice/src/pet/petrom.c:506, vice/src/pet/petrom.c:756-817"
+
+  - name: "characters-1.901447-08.bin"
+    system: commodore-pet
+    path: "PET/characters-1.901447-08.bin"
+    required: false
+    bundled: true
+    min_size: 2048
+    validation: [size]
+    sha1: "3e067cc621e4beafca2b90cb8f6dba975df2855b"
+    md5: "29a82eb54e73ebc5673c718c489b174b"
+    crc32: "54f32f45"
+    source_ref: "vice/src/pet/petrom.h:46, vice/src/pet/petmodel.c:88, vice/src/pet/petrom.c:506, vice/src/pet/petrom.c:756-817"
+
+  - name: "characters-2.901447-10.bin"
+    system: commodore-pet
+    path: "PET/characters-2.901447-10.bin"
+    required: true
+    bundled: true
+    min_size: 2048
+    validation: [size]
+    sha1: "0157a2d55b7ac4eaeb38475889ebeea52e2593db"
+    md5: "9880432e633b15998d58884ff34c4e70"
+    crc32: "d8408674"
+    source_ref: "vice/src/pet/petrom.h:47, vice/src/pet/pet-resources.c:436, vice/src/pet/petmodel.c:107, vice/src/pet/petrom.c:506, vice/src/pet/petrom.c:756-817"
+
+  - name: "characters.901640-01.bin"
+    system: commodore-pet
+    path: "PET/characters.901640-01.bin"
+    required: false
+    bundled: true
+    min_size: 2048
+    validation: [size]
+    sha1: "bf346f11595a3e65e55d6aeeaa2c0cec807b66c7"
+    md5: "dd30641d9e6a221edd725d1e529dcbdb"
+    crc32: "ee8229c4"
+    source_ref: "vice/src/pet/petrom.h:48, vice/src/pet/petmodel.c:297, vice/src/pet/petrom.c:506, vice/src/pet/petrom.c:756-817"
+
+  - name: "waterloo-a000.901898-01.bin"
+    system: commodore-pet
+    path: "PET/waterloo-a000.901898-01.bin"
+    required: false
+    bundled: true
+    min_size: 4096
+    validation: [size]
+    sha1: "0414b3ab847c8977eb05c2fcc72efcf2f9d92871"
+    md5: "6eb1c1bfa6ce1444737794432966dfcc"
+    crc32: "728a998b"
+    source_ref: "vice/src/pet/petrom.h:75, vice/src/pet/petmodel.c:305, vice/src/pet/petrom.c:747, vice/src/pet/petrom.c:756-817"
+
+  - name: "waterloo-b000.901898-02.bin"
+    system: commodore-pet
+    path: "PET/waterloo-b000.901898-02.bin"
+    required: false
+    bundled: true
+    min_size: 4096
+    validation: [size]
+    sha1: "df154939b934d0aeeb376813ec1ba0d43c2a3378"
+    md5: "537498d75ecf761d4991f9ebd85129ca"
+    crc32: "6beb7c62"
+    source_ref: "vice/src/pet/petrom.h:76, vice/src/pet/petmodel.c:306, vice/src/pet/petrom.c:747, vice/src/pet/petrom.c:756-817"
+
+  - name: "waterloo-c000.901898-03.bin"
+    system: commodore-pet
+    path: "PET/waterloo-c000.901898-03.bin"
+    required: false
+    bundled: true
+    min_size: 4096
+    validation: [size]
+    sha1: "6c5b0cce97068f8841112ba6d5cd8e568b562fa3"
+    md5: "3e8dd04902dc9fee172084698f84695f"
+    crc32: "5db4983d"
+    source_ref: "vice/src/pet/petrom.h:77, vice/src/pet/petmodel.c:307, vice/src/pet/petrom.c:747, vice/src/pet/petrom.c:756-817"
+
+  - name: "waterloo-d000.901898-04.bin"
+    system: commodore-pet
+    path: "PET/waterloo-d000.901898-04.bin"
+    required: false
+    bundled: true
+    min_size: 4096
+    validation: [size]
+    sha1: "b42a2050a319a1ffca7868a8d8d635fadd37ec37"
+    md5: "80f4d2351ee19673820989919c7c1e9b"
+    crc32: "f55fc559"
+    source_ref: "vice/src/pet/petrom.h:78, vice/src/pet/petmodel.c:308, vice/src/pet/petrom.c:747, vice/src/pet/petrom.c:756-817"
+
+  - name: "waterloo-e000.901897-01.bin"
+    system: commodore-pet
+    path: "PET/waterloo-e000.901897-01.bin"
+    required: false
+    bundled: true
+    min_size: 2048
+    validation: [size]
+    sha1: "e8ce8347451a001214a5e71a13081b38b4be23bc"
+    md5: "a740ff5d0d1132ab18cfc1974fca908d"
+    crc32: "b2cee903"
+    source_ref: "vice/src/pet/petrom.h:79, vice/src/pet/petmodel.c:309, vice/src/pet/petrom.c:747, vice/src/pet/petrom.c:756-817"
+
+  - name: "waterloo-f000.901898-05.bin"
+    system: commodore-pet
+    path: "PET/waterloo-f000.901898-05.bin"
+    required: false
+    bundled: true
+    min_size: 4096
+    validation: [size]
+    sha1: "9b4a5134d20345171e7303445f87c4e0b9addc96"
+    md5: "049e2d26fde71a741f6075ecbf0a432d"
+    crc32: "f42df0cb"
+    source_ref: "vice/src/pet/petrom.h:80, vice/src/pet/petmodel.c:310, vice/src/pet/petrom.c:747, vice/src/pet/petrom.c:756-817"
+
+  - name: "2001-blueish.vpl"
+    system: commodore-pet
+    path: "PET/2001-blueish.vpl"
+    required: false
+    bundled: true
+    size: 206
+    sha1: "1099dc11cf0003781c6c374de34ba31c447f8ee4"
+    md5: "dfddf1ac2fc21e83df6614823f6d7a0b"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "amber.vpl"
+    system: commodore-pet
+    path: "PET/amber.vpl"
+    required: false
+    bundled: true
+    size: 165
+    sha1: "90681d9aafdf4fec1d091a459b253ea864730911"
+    md5: "d3f691024913c6f7408e3eaf7f96f57a"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "green.vpl"
+    system: commodore-pet
+    path: "PET/green.vpl"
+    required: false
+    bundled: true
+    size: 165
+    sha1: "3582c760e7d900ecf13b8624fa8ce0b60c9394b1"
+    md5: "519d91188672810f39d07cc1fedd9d52"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "white.vpl"
+    system: commodore-pet
+    path: "PET/white.vpl"
+    required: false
+    bundled: true
+    size: 163
+    sha1: "feec2754d507b07409ab515f738275c37428fd66"
+    md5: "dffe2b81706a2b4f5d818d40eee77135"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "sdl_sym.vkm"
+    system: commodore-pet
+    path: "PET/sdl_sym.vkm"
+    required: false
+    bundled: true
+    size: 771
+    sha1: "95ec08b0bd4a35ff78a71748aaa106ffb7456a8e"
+    md5: "af80471e07372676ea421225d0579f02"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_pos.vkm"
+    system: commodore-pet
+    path: "PET/sdl_pos.vkm"
+    required: false
+    bundled: true
+    size: 771
+    sha1: "85330c6555d818db4f870622f605b2acfbf4e650"
+    md5: "3e0d64a0d6e523b86ff313077eeb6ca8"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_buuk_sym.vkm"
+    system: commodore-pet
+    path: "PET/sdl_buuk_sym.vkm"
+    required: false
+    bundled: true
+    size: 12132
+    sha1: "5a73b9ebb8a05a6f0066da791fa6c28f09c206bf"
+    md5: "8583ca9593d760f3614e1b6ff6476596"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_buuk_sym_de.vkm"
+    system: commodore-pet
+    path: "PET/sdl_buuk_sym_de.vkm"
+    required: false
+    bundled: true
+    size: 12376
+    sha1: "5540350f6edbfc27ee6968186c230f7247c2998c"
+    md5: "7fd7059e2b8d543fc234a92f7cac7250"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_buuk_pos.vkm"
+    system: commodore-pet
+    path: "PET/sdl_buuk_pos.vkm"
+    required: false
+    bundled: true
+    size: 11462
+    sha1: "35ced5846d4d7fef8a70635e7864fa049c38983e"
+    md5: "442110e0f1b58d8b7b48e3384c87543a"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_buuk_pos_de.vkm"
+    system: commodore-pet
+    path: "PET/sdl_buuk_pos_de.vkm"
+    required: false
+    bundled: true
+    size: 11525
+    sha1: "f0b6368b74fd8703513f36efbeb16e1a58f7f0b0"
+    md5: "3412ce01aa0cdc575533ff4943fe0be9"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_grus_sym.vkm"
+    system: commodore-pet
+    path: "PET/sdl_grus_sym.vkm"
+    required: false
+    bundled: true
+    size: 11457
+    sha1: "c5ba5837958596b5f6276c66fd44e86a752e9f3e"
+    md5: "c6cf48f6febb66a9319fe64d0311f78c"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_grus_sym_de.vkm"
+    system: commodore-pet
+    path: "PET/sdl_grus_sym_de.vkm"
+    required: false
+    bundled: true
+    size: 11611
+    sha1: "a62455034f1397321db4bc9b68cffedaa61aa3d9"
+    md5: "9f25b90179165a18c6cea096d9efc442"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_grus_pos.vkm"
+    system: commodore-pet
+    path: "PET/sdl_grus_pos.vkm"
+    required: false
+    bundled: true
+    size: 10458
+    sha1: "23533c2138f2d26fd884c355159e1cef05ab1fe2"
+    md5: "bc6a458bb714280b8f97f4f515d4e6e5"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_grus_pos_de.vkm"
+    system: commodore-pet
+    path: "PET/sdl_grus_pos_de.vkm"
+    required: false
+    bundled: true
+    size: 10515
+    sha1: "73a5aaa1dd323cc29a325434d5cea5a37454c979"
+    md5: "8805a6f6e47df34c8b4b1e6e30231b4c"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "basic-901242+3-04a.bin"
+    system: commodore-cbm-ii
+    path: "CBM-II/basic-901242+3-04a.bin"
+    required: true
+    bundled: true
+    min_size: 16384
+    validation: [size]
+    sha1: "9409f92e167984096fe4d5913714bff6214c3b2d"
+    md5: "3ad5c7182006bcad1597583dbc8505c9"
+    crc32: "a8ff9372"
+    source_ref: "vice/src/cbm2/cbm2rom.h:45, vice/src/cbm2/cbm2-resources.c:224, vice/src/cbm2/cbm2model.c:66, vice/src/cbm2/cbm2rom.c:170, vice/src/cbm2/cbm2rom.c:247-316"
+
+  - name: "basic-901240+1-03.bin"
+    system: commodore-cbm-ii
+    path: "CBM-II/basic-901240+1-03.bin"
+    required: false
+    bundled: true
+    min_size: 16384
+    validation: [size]
+    sha1: "53314b4d565cc405a67a0936b935e6e08955580d"
+    md5: "6a505014e543c62e99668080a3b80b40"
+    crc32: "5db15870"
+    source_ref: "vice/src/cbm2/cbm2rom.h:46, vice/src/cbm2/cbm2model.c:68, vice/src/cbm2/cbm2model.c:69, vice/src/cbm2/cbm2rom.c:170, vice/src/cbm2/cbm2rom.c:247-316"
+
+  - name: "basic-901235+6-02.bin"
+    system: commodore-cbm-ii
+    path: "CBM-II/basic-901235+6-02.bin"
+    required: true
+    bundled: true
+    min_size: 16384
+    validation: [size]
+    sha1: "e69531d45f5993f8e53c6bd9ab2a7bc10fe2d02f"
+    md5: "5a9559ceaf1a0bef0e721242c67a030d"
+    crc32: "9a468e5d"
+    source_ref: "vice/src/cbm2/cbm2rom.h:47, vice/src/cbm2/cbm2model.c:64, vice/src/cbm2/cbm2model.c:65, vice/src/cbm2/cbm5x0rom.c:140, vice/src/cbm2/cbm5x0rom.c:217-286"
+
+  - name: "chargen-901225-01.bin"
+    system: commodore-cbm-ii
+    path: "CBM-II/chargen-901225-01.bin"
+    required: true
+    bundled: true
+    min_size: 4096
+    validation: [size]
+    sha1: "adc7c31e18c7c7413d54802ef2f4193da14711aa"
+    md5: "12a4202f5331d45af846af6c58fba946"
+    crc32: "ec4272ee"
+    source_ref: "vice/src/cbm2/cbm2rom.h:41, vice/src/cbm2/cbm2model.c:64, vice/src/cbm2/cbm2model.c:65, vice/src/cbm2/cbm5x0rom.c:82, vice/src/cbm2/cbm5x0rom.c:217-286"
+
+  - name: "chargen-901237-01.bin"
+    system: commodore-cbm-ii
+    path: "CBM-II/chargen-901237-01.bin"
+    required: true
+    bundled: true
+    min_size: 4096
+    validation: [size]
+    sha1: "e63bf18da48e5a53c99ef127c1ae721333d1d102"
+    md5: "2818722af27ceae6952c08cf83a076f9"
+    crc32: "1acf5098"
+    source_ref: "vice/src/cbm2/cbm2rom.h:42, vice/src/cbm2/cbm2-resources.c:220, vice/src/cbm2/cbm2model.c:66, vice/src/cbm2/cbm2rom.c:99-100, vice/src/cbm2/cbm2rom.c:247-316"
+
+  - name: "chargen-901232-01.bin"
+    system: commodore-cbm-ii
+    path: "CBM-II/chargen-901232-01.bin"
+    required: false
+    bundled: true
+    min_size: 4096
+    validation: [size]
+    sha1: "e7f3cbc8e282f79a00c3e95d75c8d725ee3c6287"
+    md5: "03f32477905d77e2135857076ec31efa"
+    crc32: "3a350bc3"
+    source_ref: "vice/src/cbm2/cbm2rom.h:43, vice/src/cbm2/cbm2model.c:72, vice/src/cbm2/cbm2model.c:73, vice/src/cbm2/cbm2rom.c:99-100, vice/src/cbm2/cbm2rom.c:247-316"
+
+  - name: "kernal-901244-04a.bin"
+    system: commodore-cbm-ii
+    path: "CBM-II/kernal-901244-04a.bin"
+    required: true
+    bundled: true
+    min_size: 8192
+    validation: [size]
+    sha1: "abb26418b9e1614a8f52bdeee0822d4a96071439"
+    md5: "e0346953e77bd1353ebf53aaa5b6f0b0"
+    crc32: "09a5667e"
+    source_ref: "vice/src/cbm2/cbm2rom.h:49, vice/src/cbm2/cbm2-resources.c:222, vice/src/cbm2/cbm2model.c:66, vice/src/cbm2/cbm2rom.c:154, vice/src/cbm2/cbm2rom.c:247-316"
+
+  - name: "kernal-901234-02.bin"
+    system: commodore-cbm-ii
+    path: "CBM-II/kernal-901234-02.bin"
+    required: true
+    bundled: true
+    min_size: 8192
+    validation: [size]
+    sha1: "097197d4d08e0b82e0466a5f1fbd49a24f3d2523"
+    md5: "1a19593625acdc5af96a5e78b1a23f37"
+    crc32: "f46bbd2b"
+    source_ref: "vice/src/cbm2/cbm2rom.h:50, vice/src/cbm2/cbm2model.c:64, vice/src/cbm2/cbm2model.c:65, vice/src/cbm2/cbm5x0rom.c:124, vice/src/cbm2/cbm5x0rom.c:217-286"
+
+  - name: "c64hq.vpl"
+    system: commodore-cbm-ii
+    path: "CBM-II/c64hq.vpl"
+    required: false
+    bundled: true
+    size: 396
+    sha1: "6ccfde9f0d7a5798c3b4e9e63d1b5ab6e6a55b11"
+    md5: "df2d9c3c4e0ea8dd4dde212e75837f37"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "c64s.vpl"
+    system: commodore-cbm-ii
+    path: "CBM-II/c64s.vpl"
+    required: false
+    bundled: true
+    size: 395
+    sha1: "5ab9e1270511a2db659fbb834f5638022705639a"
+    md5: "27714950d66bc30157e76b03f7b9aa71"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "ccs64.vpl"
+    system: commodore-cbm-ii
+    path: "CBM-II/ccs64.vpl"
+    required: false
+    bundled: true
+    size: 396
+    sha1: "9db2c8f3a00d6b2499fab62ba6bbc2b1263e28ab"
+    md5: "68f98a1b2dbed8ac9ead5322b0956af3"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "frodo.vpl"
+    system: commodore-cbm-ii
+    path: "CBM-II/frodo.vpl"
+    required: false
+    bundled: true
+    size: 396
+    sha1: "de1fac3c53284871512c354e959a73a82928243b"
+    md5: "f61c10680d65c4dd3a6e5641541420a4"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "godot.vpl"
+    system: commodore-cbm-ii
+    path: "CBM-II/godot.vpl"
+    required: false
+    bundled: true
+    size: 396
+    sha1: "4704bbef67401535f991ef30652d4273251ecc19"
+    md5: "444503dc1e3ba339c725ad15dde74f24"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "pc64.vpl"
+    system: commodore-cbm-ii
+    path: "CBM-II/pc64.vpl"
+    required: false
+    bundled: true
+    size: 396
+    sha1: "20fd2e1316b038c27e5f2ce4d767d8b51a7ff84a"
+    md5: "3909fbb2d639b6a9348400d7768cbfac"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "pepto-ntsc-sony.vpl"
+    system: commodore-cbm-ii
+    path: "CBM-II/pepto-ntsc-sony.vpl"
+    required: false
+    bundled: true
+    size: 591
+    sha1: "6f2f4a540c6ba56ecaefc94c1df7f2a748d36bb0"
+    md5: "d576ab346aa9dfd6494dcebd04955768"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "pepto-ntsc.vpl"
+    system: commodore-cbm-ii
+    path: "CBM-II/pepto-ntsc.vpl"
+    required: false
+    bundled: true
+    size: 583
+    sha1: "f94f96984264cb771ef1e128365f209697714b8f"
+    md5: "2ac60dc5155a2fc3a3ad21ea732505eb"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "pepto-pal.vpl"
+    system: commodore-cbm-ii
+    path: "CBM-II/pepto-pal.vpl"
+    required: false
+    bundled: true
+    size: 493
+    sha1: "d4d062dc812a8e136a4a8696959672890e5b9543"
+    md5: "4e558f47252c97a9782163c1a871c5f2"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "pepto-palold.vpl"
+    system: commodore-cbm-ii
+    path: "CBM-II/pepto-palold.vpl"
+    required: false
+    bundled: true
+    size: 522
+    sha1: "e6798b75fb7c6b2949db131d277aecbf9f0f5e0e"
+    md5: "a068287002e36d6c7d3fb25c35232777"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "community-colors.vpl"
+    system: commodore-cbm-ii
+    path: "CBM-II/community-colors.vpl"
+    required: false
+    bundled: true
+    size: 367
+    sha1: "61f063dcaa351ed25b61aa6f7b29c811db1fff97"
+    md5: "eb33aa86d6a5021f377752e0dbb9e1e7"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "colodore.vpl"
+    system: commodore-cbm-ii
+    path: "CBM-II/colodore.vpl"
+    required: false
+    bundled: true
+    size: 443
+    sha1: "52f2b60079e05275ba2f09a77e17bb37409c7eb5"
+    md5: "5060c9d964f0f9a14f2588594b1fd130"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "ptoing.vpl"
+    system: commodore-cbm-ii
+    path: "CBM-II/ptoing.vpl"
+    required: false
+    bundled: true
+    size: 397
+    sha1: "df864e55c3fe2d672ee62ab3ff405b2b6c31824b"
+    md5: "77ca107a9839b6a8e422c9683f503428"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "deekay.vpl"
+    system: commodore-cbm-ii
+    path: "CBM-II/deekay.vpl"
+    required: false
+    bundled: true
+    size: 403
+    sha1: "ae9ae759c576c72c7fc2262927a8ed8070a7ad15"
+    md5: "ba6bc9a21a0dba5fa269f6edfbf5483c"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "cjam.vpl"
+    system: commodore-cbm-ii
+    path: "CBM-II/cjam.vpl"
+    required: false
+    bundled: true
+    size: 461
+    sha1: "cbce1243f3264c23c5b301dacd127decd2eb8725"
+    md5: "ebcd8e904bb54ca65d6707da2842573e"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "rgb.vpl"
+    system: commodore-cbm-ii
+    path: "CBM-II/rgb.vpl"
+    required: false
+    bundled: true
+    size: 491
+    sha1: "0a6b1b89e4a5dabc796184a87cb477f771cc0c6c"
+    md5: "6f40bdb9d5830810d8d5cf7f3cb16fba"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "the64.vpl"
+    system: commodore-cbm-ii
+    path: "CBM-II/the64.vpl"
+    required: false
+    bundled: true
+    size: 418
+    sha1: "b0e9f92d6b41045fdfd6a26591a36a720ee562e4"
+    md5: "105ec378998fbea7aa0adb3d979322e1"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "palette_6569R1_v1r.vpl"
+    system: commodore-cbm-ii
+    path: "CBM-II/palette_6569R1_v1r.vpl"
+    required: false
+    bundled: true
+    size: 496
+    sha1: "7af800bc88c4039b7203a187fea0725830145657"
+    md5: "844cb65cc09d54cdcfed5750909ca698"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "palette_6569R5_v1r.vpl"
+    system: commodore-cbm-ii
+    path: "CBM-II/palette_6569R5_v1r.vpl"
+    required: false
+    bundled: true
+    size: 496
+    sha1: "1f5b841ea7f5e2f1a6ad1a9b55a4c106f1442024"
+    md5: "65cd164c319839661797630a70f780e2"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "palette_8565R2_v1r.vpl"
+    system: commodore-cbm-ii
+    path: "CBM-II/palette_8565R2_v1r.vpl"
+    required: false
+    bundled: true
+    size: 496
+    sha1: "983645d05e4b539d00db2c1ba4ddae1e985b4ac0"
+    md5: "cd3ff94f09ab710bf3a9d01555e96f4b"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "palette_C64_amber.vpl"
+    system: commodore-cbm-ii
+    path: "CBM-II/palette_C64_amber.vpl"
+    required: false
+    bundled: true
+    size: 503
+    sha1: "e8e0ea943478b44bd2131864bb2824371ca21db8"
+    md5: "c7820d3e806344331e9e20e82a956894"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "palette_C64_cyan.vpl"
+    system: commodore-cbm-ii
+    path: "CBM-II/palette_C64_cyan.vpl"
+    required: false
+    bundled: true
+    size: 492
+    sha1: "4fcdd68d6a968831260f1f5062206a91d5b77b05"
+    md5: "d6c01a3adc2554b725d55f5be84e3307"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "palette_C64_green.vpl"
+    system: commodore-cbm-ii
+    path: "CBM-II/palette_C64_green.vpl"
+    required: false
+    bundled: true
+    size: 503
+    sha1: "1b9d93dfe042b2db1aad4289fdbee0bf1449f8fc"
+    md5: "04cd20eab568255ab47455daae0f0dd2"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "vice.vpl"
+    system: commodore-cbm-ii
+    path: "CBM-II/vice.vpl"
+    required: false
+    bundled: true
+    size: 412
+    sha1: "ba22ec7dec324c0f4fa5066a6f51a43f4c706b2a"
+    md5: "efbb1548989015a24741df907cb4aaf0"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "palette.vpl"
+    system: commodore-cbm-ii
+    path: "CBM-II/palette.vpl"
+    required: false
+    bundled: true
+    size: 442
+    sha1: "20496aa23d1c4e177c6f7160f1de5346de7b2a58"
+    md5: "e1cc28bec07c37b8d8175735214146aa"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "pixcen.vpl"
+    system: commodore-cbm-ii
+    path: "CBM-II/pixcen.vpl"
+    required: false
+    bundled: true
+    size: 438
+    sha1: "baab5d246b24b7445f9f5d26ba84c7214e7b62c2"
+    md5: "078976216cc2fb8397570285b3100b0d"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "amber.vpl"
+    system: commodore-cbm-ii
+    path: "CBM-II/amber.vpl"
+    required: false
+    bundled: true
+    size: 124
+    sha1: "b71e7747b6c9930e00e42e96cd839cb4315db359"
+    md5: "5caf522ace440604fc7b96e7bde3a3e8"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "green.vpl"
+    system: commodore-cbm-ii
+    path: "CBM-II/green.vpl"
+    required: false
+    bundled: true
+    size: 124
+    sha1: "549cbc5908ca9a19a6d4de564f9db25870eb08a5"
+    md5: "c4fb96b05fb2329c69e16174c9f886c3"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "white.vpl"
+    system: commodore-cbm-ii
+    path: "CBM-II/white.vpl"
+    required: false
+    bundled: true
+    size: 130
+    sha1: "c10eda38a249e7bc43044de3646e7c80ebea68aa"
+    md5: "eb1f6c67d1aaf82810c9e13d26dd883b"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "sdl_sym.vkm"
+    system: commodore-cbm-ii
+    path: "CBM-II/sdl_sym.vkm"
+    required: false
+    bundled: true
+    size: 11407
+    sha1: "7f966a42f4f4962b90627974cbb1023d68e05b34"
+    md5: "4810c46e065930e5e9100da116093e95"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_pos.vkm"
+    system: commodore-cbm-ii
+    path: "CBM-II/sdl_pos.vkm"
+    required: false
+    bundled: true
+    size: 11307
+    sha1: "1e03fe40eae814b485d86ee0ce53bddceda440e4"
+    md5: "ad6a3da39acc057189bc4476cd31546b"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "scpu64"
+    system: commodore-c64
+    path: "SCPU64/scpu64"
+    required: true
+    bundled: true
+    min_size: 65536
+    validation: [size]
+    sha1: "f5b6da17ee8206ff0d2258e1d6e8b798147c2650"
+    md5: "006862e9a52d987970435988e3803c71"
+    crc32: "89c1a062"
+    source_ref: "vice/src/scpu64/scpu64-resources.c:234, vice/src/scpu64/scpu64.c:518, vice/src/scpu64/scpu64.c:759, vice/src/scpu64/scpu64rom.c:80-81, vice/src/scpu64/scpu64rom.c:93-118"
+
+  - name: "chargen-901225-01.bin"
+    system: commodore-c64
+    path: "SCPU64/chargen-901225-01.bin"
+    required: true
+    bundled: true
+    min_size: 4096
+    validation: [size]
+    sha1: "adc7c31e18c7c7413d54802ef2f4193da14711aa"
+    md5: "12a4202f5331d45af846af6c58fba946"
+    crc32: "ec4272ee"
+    source_ref: "vice/src/scpu64/scpu64rom.h:36, vice/src/c64/c64-resources.c:365, vice/src/c64/c64model.c:106, vice/src/scpu64/scpu64rom.c:63, vice/src/scpu64/scpu64rom.c:93-118"
+
+  - name: "chargen-906143-02.bin"
+    system: commodore-c64
+    path: "SCPU64/chargen-906143-02.bin"
+    required: false
+    bundled: true
+    min_size: 4096
+    validation: [size]
+    sha1: "0fad19dbcdb12461c99657b2979dbb5c2e47b527"
+    md5: "cf32a93c0a693ed359a4f483ef6db53d"
+    crc32: "1604f6c1"
+    source_ref: "vice/src/scpu64/scpu64rom.h:37, vice/src/c64/c64model.c:151, vice/src/c64/c64scmodel.c:165, vice/src/scpu64/scpu64rom.c:63, vice/src/scpu64/scpu64rom.c:93-118"
+
+  - name: "c64hq.vpl"
+    system: commodore-c64
+    path: "SCPU64/c64hq.vpl"
+    required: false
+    bundled: true
+    size: 396
+    sha1: "6ccfde9f0d7a5798c3b4e9e63d1b5ab6e6a55b11"
+    md5: "df2d9c3c4e0ea8dd4dde212e75837f37"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "c64s.vpl"
+    system: commodore-c64
+    path: "SCPU64/c64s.vpl"
+    required: false
+    bundled: true
+    size: 395
+    sha1: "5ab9e1270511a2db659fbb834f5638022705639a"
+    md5: "27714950d66bc30157e76b03f7b9aa71"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "ccs64.vpl"
+    system: commodore-c64
+    path: "SCPU64/ccs64.vpl"
+    required: false
+    bundled: true
+    size: 396
+    sha1: "9db2c8f3a00d6b2499fab62ba6bbc2b1263e28ab"
+    md5: "68f98a1b2dbed8ac9ead5322b0956af3"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "frodo.vpl"
+    system: commodore-c64
+    path: "SCPU64/frodo.vpl"
+    required: false
+    bundled: true
+    size: 396
+    sha1: "de1fac3c53284871512c354e959a73a82928243b"
+    md5: "f61c10680d65c4dd3a6e5641541420a4"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "godot.vpl"
+    system: commodore-c64
+    path: "SCPU64/godot.vpl"
+    required: false
+    bundled: true
+    size: 396
+    sha1: "4704bbef67401535f991ef30652d4273251ecc19"
+    md5: "444503dc1e3ba339c725ad15dde74f24"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "pc64.vpl"
+    system: commodore-c64
+    path: "SCPU64/pc64.vpl"
+    required: false
+    bundled: true
+    size: 396
+    sha1: "20fd2e1316b038c27e5f2ce4d767d8b51a7ff84a"
+    md5: "3909fbb2d639b6a9348400d7768cbfac"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "vice.vpl"
+    system: commodore-c64
+    path: "SCPU64/vice.vpl"
+    required: false
+    bundled: true
+    size: 412
+    sha1: "ba22ec7dec324c0f4fa5066a6f51a43f4c706b2a"
+    md5: "efbb1548989015a24741df907cb4aaf0"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "pepto-ntsc-sony.vpl"
+    system: commodore-c64
+    path: "SCPU64/pepto-ntsc-sony.vpl"
+    required: false
+    bundled: true
+    size: 591
+    sha1: "6f2f4a540c6ba56ecaefc94c1df7f2a748d36bb0"
+    md5: "d576ab346aa9dfd6494dcebd04955768"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "pepto-ntsc.vpl"
+    system: commodore-c64
+    path: "SCPU64/pepto-ntsc.vpl"
+    required: false
+    bundled: true
+    size: 583
+    sha1: "f94f96984264cb771ef1e128365f209697714b8f"
+    md5: "2ac60dc5155a2fc3a3ad21ea732505eb"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "pepto-pal.vpl"
+    system: commodore-c64
+    path: "SCPU64/pepto-pal.vpl"
+    required: false
+    bundled: true
+    size: 402
+    sha1: "88a2209694f64f7167f239646aedcd0d09dc51bb"
+    md5: "b40adb69ef1a6bf46a51acc9428e1d76"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "pepto-palold.vpl"
+    system: commodore-c64
+    path: "SCPU64/pepto-palold.vpl"
+    required: false
+    bundled: true
+    size: 522
+    sha1: "e6798b75fb7c6b2949db131d277aecbf9f0f5e0e"
+    md5: "a068287002e36d6c7d3fb25c35232777"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "community-colors.vpl"
+    system: commodore-c64
+    path: "SCPU64/community-colors.vpl"
+    required: false
+    bundled: true
+    size: 367
+    sha1: "61f063dcaa351ed25b61aa6f7b29c811db1fff97"
+    md5: "eb33aa86d6a5021f377752e0dbb9e1e7"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "colodore.vpl"
+    system: commodore-c64
+    path: "SCPU64/colodore.vpl"
+    required: false
+    bundled: true
+    size: 443
+    sha1: "52f2b60079e05275ba2f09a77e17bb37409c7eb5"
+    md5: "5060c9d964f0f9a14f2588594b1fd130"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "ptoing.vpl"
+    system: commodore-c64
+    path: "SCPU64/ptoing.vpl"
+    required: false
+    bundled: true
+    size: 397
+    sha1: "df864e55c3fe2d672ee62ab3ff405b2b6c31824b"
+    md5: "77ca107a9839b6a8e422c9683f503428"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "deekay.vpl"
+    system: commodore-c64
+    path: "SCPU64/deekay.vpl"
+    required: false
+    bundled: true
+    size: 403
+    sha1: "ae9ae759c576c72c7fc2262927a8ed8070a7ad15"
+    md5: "ba6bc9a21a0dba5fa269f6edfbf5483c"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "cjam.vpl"
+    system: commodore-c64
+    path: "SCPU64/cjam.vpl"
+    required: false
+    bundled: true
+    size: 461
+    sha1: "cbce1243f3264c23c5b301dacd127decd2eb8725"
+    md5: "ebcd8e904bb54ca65d6707da2842573e"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "palette.vpl"
+    system: commodore-c64
+    path: "SCPU64/palette.vpl"
+    required: false
+    bundled: true
+    size: 442
+    sha1: "20496aa23d1c4e177c6f7160f1de5346de7b2a58"
+    md5: "e1cc28bec07c37b8d8175735214146aa"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "pixcen.vpl"
+    system: commodore-c64
+    path: "SCPU64/pixcen.vpl"
+    required: false
+    bundled: true
+    size: 438
+    sha1: "baab5d246b24b7445f9f5d26ba84c7214e7b62c2"
+    md5: "078976216cc2fb8397570285b3100b0d"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "rgb.vpl"
+    system: commodore-c64
+    path: "SCPU64/rgb.vpl"
+    required: false
+    bundled: true
+    size: 491
+    sha1: "0a6b1b89e4a5dabc796184a87cb477f771cc0c6c"
+    md5: "6f40bdb9d5830810d8d5cf7f3cb16fba"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "the64.vpl"
+    system: commodore-c64
+    path: "SCPU64/the64.vpl"
+    required: false
+    bundled: true
+    size: 418
+    sha1: "b0e9f92d6b41045fdfd6a26591a36a720ee562e4"
+    md5: "105ec378998fbea7aa0adb3d979322e1"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "palette_6569R1_v1r.vpl"
+    system: commodore-c64
+    path: "SCPU64/palette_6569R1_v1r.vpl"
+    required: false
+    bundled: true
+    size: 496
+    sha1: "7af800bc88c4039b7203a187fea0725830145657"
+    md5: "844cb65cc09d54cdcfed5750909ca698"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "palette_6569R5_v1r.vpl"
+    system: commodore-c64
+    path: "SCPU64/palette_6569R5_v1r.vpl"
+    required: false
+    bundled: true
+    size: 496
+    sha1: "1f5b841ea7f5e2f1a6ad1a9b55a4c106f1442024"
+    md5: "65cd164c319839661797630a70f780e2"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "palette_8565R2_v1r.vpl"
+    system: commodore-c64
+    path: "SCPU64/palette_8565R2_v1r.vpl"
+    required: false
+    bundled: true
+    size: 496
+    sha1: "983645d05e4b539d00db2c1ba4ddae1e985b4ac0"
+    md5: "cd3ff94f09ab710bf3a9d01555e96f4b"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "palette_C64_amber.vpl"
+    system: commodore-c64
+    path: "SCPU64/palette_C64_amber.vpl"
+    required: false
+    bundled: true
+    size: 503
+    sha1: "e8e0ea943478b44bd2131864bb2824371ca21db8"
+    md5: "c7820d3e806344331e9e20e82a956894"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "palette_C64_cyan.vpl"
+    system: commodore-c64
+    path: "SCPU64/palette_C64_cyan.vpl"
+    required: false
+    bundled: true
+    size: 492
+    sha1: "4fcdd68d6a968831260f1f5062206a91d5b77b05"
+    md5: "d6c01a3adc2554b725d55f5be84e3307"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "palette_C64_green.vpl"
+    system: commodore-c64
+    path: "SCPU64/palette_C64_green.vpl"
+    required: false
+    bundled: true
+    size: 503
+    sha1: "1b9d93dfe042b2db1aad4289fdbee0bf1449f8fc"
+    md5: "04cd20eab568255ab47455daae0f0dd2"
+    source_ref: "vice/src/video/video-color.c:870-882, vice/src/video/video-color.c:930-938, vice/src/palette.c:228-249"
+    note: "Read only when the chip's ExternalPalette resource is on and its PaletteFile names it. Otherwise the palette is computed."
+
+  - name: "sdl_keyrah.vkm"
+    system: commodore-c64
+    path: "SCPU64/sdl_keyrah.vkm"
+    required: false
+    bundled: true
+    size: 12455
+    sha1: "ac3969d3c0c8e33d2a1704cc50dca50814f2b337"
+    md5: "4af3c010e377adbd12afaf183506f483"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_keyrah_de.vkm"
+    system: commodore-c64
+    path: "SCPU64/sdl_keyrah_de.vkm"
+    required: false
+    bundled: true
+    size: 11924
+    sha1: "56fe76b8dade0f639c7afbd81b6c0b45bb186fea"
+    md5: "41a6f59f3aeb20bf7f40976f5972dd37"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_keyrah_retropie.vkm"
+    system: commodore-c64
+    path: "SCPU64/sdl_keyrah_retropie.vkm"
+    required: false
+    bundled: true
+    size: 12469
+    sha1: "c87b98c24a653bbfa34ddd2e233bdad5dc706522"
+    md5: "0adb1b146f6fa6d5c9abe6c8fdfb2e0a"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_keyrah_retropie_de.vkm"
+    system: commodore-c64
+    path: "SCPU64/sdl_keyrah_retropie_de.vkm"
+    required: false
+    bundled: true
+    size: 12443
+    sha1: "ce55aebe2bc9f4e2dcb5a1ab206800c3596effb9"
+    md5: "83ccc3a2b5a79113643fbdfee6d4a220"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_keyrah_combian.vkm"
+    system: commodore-c64
+    path: "SCPU64/sdl_keyrah_combian.vkm"
+    required: false
+    bundled: true
+    size: 12523
+    sha1: "25eb41fdd31792868537ae8319718644e55aa831"
+    md5: "529728b1be3d5da5969f9889d1de02db"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_pos.vkm"
+    system: commodore-c64
+    path: "SCPU64/sdl_pos.vkm"
+    required: false
+    bundled: true
+    size: 10429
+    sha1: "fae9d20650874868a2e329e89326f98adb0774a5"
+    md5: "212b802751906868764c4abe58578818"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_pos_uk.vkm"
+    system: commodore-c64
+    path: "SCPU64/sdl_pos_uk.vkm"
+    required: false
+    bundled: true
+    size: 10501
+    sha1: "abd325a2f1db18852ec1ee8d462763613c219409"
+    md5: "1ded1353428afbb9c688c98f6dbcee37"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_pos_ch.vkm"
+    system: commodore-c64
+    path: "SCPU64/sdl_pos_ch.vkm"
+    required: false
+    bundled: true
+    size: 12001
+    sha1: "cfd53d577c02d9866b17aaeb804b226567cf17c0"
+    md5: "257e3520d9414248cf7121f11546efb3"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_pos_da.vkm"
+    system: commodore-c64
+    path: "SCPU64/sdl_pos_da.vkm"
+    required: false
+    bundled: true
+    size: 11334
+    sha1: "bd45c52758d75a6757f7b95de3d9fd3ada08a567"
+    md5: "787aa4d4c4e9798ad85b088fa5675193"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_pos_de.vkm"
+    system: commodore-c64
+    path: "SCPU64/sdl_pos_de.vkm"
+    required: false
+    bundled: true
+    size: 11245
+    sha1: "9ddbc003b060e858d16a064725a5a7b5843d466e"
+    md5: "4b054ded6e7957807d906769b8dcf998"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_pos_fi.vkm"
+    system: commodore-c64
+    path: "SCPU64/sdl_pos_fi.vkm"
+    required: false
+    bundled: true
+    size: 11340
+    sha1: "abbcb3bb0b671800018f8a51b8f1f39d0a96d02d"
+    md5: "39a71d5c5d25ca87b54205b4aa9763f8"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_pos_no.vkm"
+    system: commodore-c64
+    path: "SCPU64/sdl_pos_no.vkm"
+    required: false
+    bundled: true
+    size: 11215
+    sha1: "d1c31406a3c22cd2c168baa819976dee3ba4a969"
+    md5: "a5e63924882a7334477fe69db1cd5676"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_pos_tr.vkm"
+    system: commodore-c64
+    path: "SCPU64/sdl_pos_tr.vkm"
+    required: false
+    bundled: true
+    size: 10423
+    sha1: "ef005ec8cf5b106ff63477e66be058f60efc90e0"
+    md5: "3ced2d548fd3dcfe63d4e90dac8f1866"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_sym.vkm"
+    system: commodore-c64
+    path: "SCPU64/sdl_sym.vkm"
+    required: false
+    bundled: true
+    size: 11128
+    sha1: "4413187e1ed4f8da4332210053720a9fad84d034"
+    md5: "6250577cea0f4d31f42f107e686d872f"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_sym_uk.vkm"
+    system: commodore-c64
+    path: "SCPU64/sdl_sym_uk.vkm"
+    required: false
+    bundled: true
+    size: 11212
+    sha1: "d9ad092e440d92429676faafeaf6c4b7cc0577c7"
+    md5: "c1ed8b86baa6c8da31cac9f24ecded09"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_sym_de.vkm"
+    system: commodore-c64
+    path: "SCPU64/sdl_sym_de.vkm"
+    required: false
+    bundled: true
+    size: 13702
+    sha1: "1bf117df333e51d7eb90b3b75517b263a65b1401"
+    md5: "a3bdd8ded94e6930ec9529ce542b7523"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_sym_nl.vkm"
+    system: commodore-c64
+    path: "SCPU64/sdl_sym_nl.vkm"
+    required: false
+    bundled: true
+    size: 11356
+    sha1: "b3a102d56bfd4703fd8157e34bb5b228aadc9e2b"
+    md5: "13d0e762d1715ec044b51d5684014f36"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_sym_fr.vkm"
+    system: commodore-c64
+    path: "SCPU64/sdl_sym_fr.vkm"
+    required: false
+    bundled: true
+    size: 11481
+    sha1: "56990de62e38a9464a782b00fa0d7f1bb5092299"
+    md5: "09f986b03daee625240f5d2b19de68fc"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_sym_tr.vkm"
+    system: commodore-c64
+    path: "SCPU64/sdl_sym_tr.vkm"
+    required: false
+    bundled: true
+    size: 11177
+    sha1: "0b99b4f1bd7c042e0668167c29797d0f10e5b2e3"
+    md5: "e1cb48e46010a5983d68ef5338670537"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "sdl_sym_da.vkm"
+    system: commodore-c64
+    path: "SCPU64/sdl_sym_da.vkm"
+    required: false
+    bundled: true
+    size: 11390
+    sha1: "c99e1e8a24c9232ccf962d49b73701ffd1703fa7"
+    md5: "dbfdfb0198e285e89cd10bca0a0d9c70"
+    source_ref: "vice/src/keymap.c:1251-1280, vice/src/keymap.c:1332-1348, vice/src/keymap.c:700-716"
+
+  - name: "dos1540-325302+3-01.bin"
+    path: "DRIVES/dos1540-325302+3-01.bin"
+    required: false
+    bundled: true
+    min_size: 16384
+    validation: [size]
+    sha1: "3477c14e0c79faa445224dad16534f04ed143e44"
+    md5: "87e849da3c87549848550fe4dd4d1aae"
+    crc32: "718d42b1"
+    source_ref: "vice/src/drive/driverom.h:85, vice/src/drive/iec/iec-resources.c:318, vice/src/drive/driverom.c:96-116"
+
+  - name: "dos1541-325302-01+901229-05.bin"
+    path: "DRIVES/dos1541-325302-01+901229-05.bin"
+    required: false
+    bundled: true
+    min_size: 16384
+    validation: [size]
+    sha1: "ab16f56989b27d89babe5f89c5a8cb3da71a82f0"
+    md5: "a0ce8439d1b8dcf2e1430461f7233a72"
+    crc32: "57224cde"
+    source_ref: "vice/src/drive/driverom.h:86, vice/src/drive/iec/iec-resources.c:321, vice/src/drive/driverom.c:96-116"
+
+  - name: "dos1551-318008-01.bin"
+    path: "DRIVES/dos1551-318008-01.bin"
+    required: false
+    bundled: true
+    min_size: 16384
+    validation: [size]
+    sha1: "fae3c788ad9a6cc2dbdfbcf6c0264b2ca921d55e"
+    md5: "0c767bf0a84d7751af056e53a074c9e2"
+    crc32: "6d16d024"
+    source_ref: "vice/src/drive/driverom.h:89, vice/src/drive/tcbm/tcbm-resources.c:50, vice/src/drive/driverom.c:96-116"
+
+  - name: "dos1541ii-251968-03.bin"
+    path: "DRIVES/dos1541ii-251968-03.bin"
+    required: false
+    bundled: true
+    min_size: 16384
+    validation: [size]
+    sha1: "d3b78c3dbac55f5199f33f3fe0036439811f7fb3"
+    md5: "ada295382a1f2df772a7e5c5c6f34215"
+    crc32: "899fa3c5"
+    source_ref: "vice/src/drive/driverom.h:87, vice/src/drive/iec/iec-resources.c:323, vice/src/drive/driverom.c:96-116"
+
+  - name: "dos1570-315090-01.bin"
+    path: "DRIVES/dos1570-315090-01.bin"
+    required: false
+    bundled: true
+    min_size: 32768
+    validation: [size]
+    sha1: "5fc06dc82ff6840f183bd43a4d9b8a16956b2f56"
+    md5: "f0799353f0e22cf7d783e447adcafde2"
+    crc32: "5a0c7937"
+    source_ref: "vice/src/drive/driverom.h:90, vice/src/drive/iec/iec-resources.c:325, vice/src/drive/driverom.c:96-116"
+
+  - name: "dos1571-310654-05.bin"
+    path: "DRIVES/dos1571-310654-05.bin"
+    required: false
+    bundled: true
+    min_size: 32768
+    validation: [size]
+    sha1: "f1be619c106641a685f6609e4d43d6fc9eac1e70"
+    md5: "dae964d64b7843ff86c008d396dda208"
+    crc32: "5755bae3"
+    source_ref: "vice/src/drive/driverom.h:91, vice/src/drive/iec/iec-resources.c:327, vice/src/drive/driverom.c:96-116"
+
+  - name: "dos1571cr-318047-01.bin"
+    path: "DRIVES/dos1571cr-318047-01.bin"
+    required: false
+    bundled: true
+    min_size: 32768
+    validation: [size]
+    sha1: "14ee7a0fb7e1c59c51fbf781f944387037daa3ee"
+    md5: "f9158328494b3e269f86ef419792c2e5"
+    crc32: "f24efcc4"
+    source_ref: "vice/src/drive/driverom.h:92, vice/src/drive/iec128dcr/iec128dcr-resources.c:50, vice/src/drive/driverom.c:96-116"
+
+  - name: "dos1581-318045-02.bin"
+    path: "DRIVES/dos1581-318045-02.bin"
+    required: false
+    bundled: true
+    min_size: 32768
+    validation: [size]
+    sha1: "01228eae6f066bd9b7b2b6a7fa3f667e41dad393"
+    md5: "6a82f92aea2a3afa190fe32d565f39e7"
+    crc32: "a9011b84"
+    source_ref: "vice/src/drive/driverom.h:93, vice/src/drive/iec/iec-resources.c:329, vice/src/drive/driverom.c:96-116"
+
+  - name: "dos2031-901484-03+05.bin"
+    path: "DRIVES/dos2031-901484-03+05.bin"
+    required: false
+    bundled: true
+    min_size: 16384
+    validation: [size]
+    sha1: "c53e180a96649ceb3f421739e8dc66faba7cba44"
+    md5: "3454c06fd2275f5bcbfe936dcdf8059b"
+    crc32: "21b80fdf"
+    source_ref: "vice/src/drive/driverom.h:70, vice/src/drive/ieee/ieee-resources.c:103, vice/src/drive/driverom.c:96-116"
+
+  - name: "dos1001-901887+8-01.bin"
+    path: "DRIVES/dos1001-901887+8-01.bin"
+    required: false
+    bundled: true
+    min_size: 16384
+    validation: [size]
+    sha1: "d50b093828888146596f17ae0df9ef3dfde71b05"
+    md5: "2d967790361aa77de87a24fb93e342f9"
+    crc32: "87e6a94e"
+    source_ref: "vice/src/drive/driverom.h:67, vice/src/drive/ieee/ieee-resources.c:112, vice/src/drive/driverom.c:96-116"
+
+  - name: "dos2040-901468-06+07.bin"
+    path: "DRIVES/dos2040-901468-06+07.bin"
+    required: false
+    bundled: true
+    min_size: 8192
+    validation: [size]
+    sha1: "e37b3bfd801eb19dea50cf8b4a6af8613c3520d3"
+    md5: "3efff682000fd841b4dd6560bf53e37c"
+    crc32: "d04c1fbb"
+    source_ref: "vice/src/drive/driverom.h:73, vice/src/drive/ieee/ieee-resources.c:106, vice/src/drive/driverom.c:96-116"
+
+  - name: "dos3040-901468-11-13.bin"
+    path: "DRIVES/dos3040-901468-11-13.bin"
+    required: false
+    bundled: true
+    min_size: 12288
+    validation: [size]
+    sha1: "02bd4b0c8508b3874b95799a9a63caf369c837de"
+    md5: "139e72a58b7ddb2f92ceb18c8735c53c"
+    crc32: "f4967a7f"
+    source_ref: "vice/src/drive/driverom.h:76, vice/src/drive/ieee/ieee-resources.c:108, vice/src/drive/driverom.c:96-116"
+
+  - name: "dos4040-901468-14-16.bin"
+    path: "DRIVES/dos4040-901468-14-16.bin"
+    required: false
+    bundled: true
+    min_size: 12288
+    validation: [size]
+    sha1: "245abbe76581558d270cdbb6fe55f56748403d8e"
+    md5: "2fce6a76c738d1a10c189bf0660d868e"
+    crc32: "40e0ebaa"
+    source_ref: "vice/src/drive/driverom.h:79, vice/src/drive/ieee/ieee-resources.c:110, vice/src/drive/driverom.c:96-116"
+
+  - name: "dos9000-300516+7-revC.bin"
+    path: "DRIVES/dos9000-300516+7-revC.bin"
+    required: false
+    bundled: true
+    min_size: 16384
+    validation: [size]
+    sha1: "c48df2cbb0eea656c3243df7ea8bfefcd171b8e8"
+    md5: "d6d4df6f2811767de6f5bf46ad7fba69"
+    crc32: "632a328e"
+    source_ref: "vice/src/drive/driverom.h:82, vice/src/drive/ieee/ieee-resources.c:114, vice/src/drive/driverom.c:96-116"
+
+  - name: "1520.vpl"
+    path: "PRINTER/1520.vpl"
+    required: false
+    bundled: true
+    size: 168
+    sha1: "0313f8d032bb8fbb4908c74456d96a495757f350"
+    md5: "e860567d5dd0c4304651af528bfd7b2d"
+    source_ref: "vice/src/printerdrv/drv-1520.c:1260-1264, vice/src/palette.c:228-249"
+    note: "Printer output palette, read when the driver starts. The driver fails without it."
+
+  - name: "nl10.vpl"
+    path: "PRINTER/nl10.vpl"
+    required: false
+    bundled: true
+    size: 89
+    sha1: "fac729cfc8eddc8989481530b403c5ddc0ac974c"
+    md5: "4af12115e2d687ba54bc901c150eed1a"
+    source_ref: "vice/src/printerdrv/drv-nl10.c:2064-2068, vice/src/palette.c:228-249"
+    note: "Printer output palette, read when the driver starts. The driver fails without it."
+
+  - name: "nl10.bin"
+    path: "PRINTER/nl10.bin"
+    required: false
+    bundled: true
+    min_size: 32768
+    validation: [size]
+    sha1: "bc2189547e47f6bfaaa115c31dc8a35c353a384e"
+    md5: "3d020f8c0e11cda0a9aa3e208d94d85a"
+    crc32: "be5ef7bd"
+    source_ref: "vice/src/printerdrv/printer.h:88, vice/src/printerdrv/drv-nl10.c:2258, vice/src/printerdrv/drv-nl10.c:2267"
+
+  - name: "mps803.vpl"
+    path: "PRINTER/mps803.vpl"
+    required: false
+    bundled: true
+    size: 89
+    sha1: "fac729cfc8eddc8989481530b403c5ddc0ac974c"
+    md5: "4af12115e2d687ba54bc901c150eed1a"
+    source_ref: "vice/src/printerdrv/drv-mps803.c:1512-1516, vice/src/palette.c:228-249"
+    note: "Printer output palette, read when the driver starts. The driver fails without it."
+
+  - name: "mps801.bin"
+    path: "PRINTER/mps801.bin"
+    required: false
+    bundled: true
+    min_size: 4096
+    validation: [size]
+    sha1: "fbc1fdef19d1c6b238ede63f6632ab8bccd1b75a"
+    md5: "79ce9adf3a091e7b6bf117649b5669b9"
+    crc32: "c1fbd1f3"
+    source_ref: "vice/src/printerdrv/printer.h:79, vice/src/printerdrv/drv-mps803.c:1189, vice/src/printerdrv/drv-mps803.c:1190, vice/src/printerdrv/drv-mps803.c:1190"
+
+  - name: "cbm1526-325341-08.bin"
+    path: "PRINTER/cbm1526-325341-08.bin"
+    required: false
+    bundled: true
+    min_size: 8192
+    validation: [size]
+    sha1: "25880091979b21fdaf713b53ef2f1cb8063a3505"
+    md5: "64cbe9b63e23d51270a65541edff1e18"
+    crc32: "38f85b4a"
+    source_ref: "vice/src/printerdrv/printer.h:80, vice/src/printerdrv/drv-mps803.c:1232"
+
+  - name: "mps803-D7811G-111-U32053A.bin"
+    path: "PRINTER/mps803-D7811G-111-U32053A.bin"
+    required: false
+    bundled: true
+    min_size: 4096
+    validation: [size]
+    sha1: "69ee52b09d87ac3c0a5105a4f0af1e862d2a5814"
+    md5: "5a30d28a1bd7f195b817efb730a3ce4d"
+    crc32: "8500525c"
+    source_ref: "vice/src/printerdrv/printer.h:82, vice/src/printerdrv/drv-mps803.c:1271, vice/src/printerdrv/drv-mps803.c:1272, vice/src/printerdrv/drv-mps803.c:1272"
+
+  - name: "2022-901472-04.bin"
+    path: "PRINTER/2022-901472-04.bin"
+    required: false
+    bundled: true
+    min_size: 4096
+    validation: [size]
+    sha1: "62be6bcf3a3aa844d629e8a52b30e01864cc8266"
+    md5: "84efbc8c9ca34127112eb257a4224ba8"
+    crc32: "9bf3c9f8"
+    source_ref: "vice/src/printerdrv/printer.h:84, vice/src/printerdrv/drv-mps803.c:1067, vice/src/printerdrv/drv-mps803.c:1068, vice/src/printerdrv/drv-mps803.c:1068"
+
+  - name: "4023-325360-02.bin"
+    path: "PRINTER/4023-325360-02.bin"
+    required: false
+    bundled: true
+    min_size: 8192
+    validation: [size]
+    sha1: "7a8c43d2e205f58d83709c04bc7795602a892ddd"
+    md5: "67f2d4407f28b07f82a134e3eb6fd539"
+    crc32: "c6bb0977"
+    source_ref: "vice/src/printerdrv/printer.h:85, vice/src/printerdrv/drv-mps803.c:1107, vice/src/printerdrv/drv-mps803.c:1108, vice/src/printerdrv/drv-mps803.c:1108"
+
+  - name: "8023-325320-02.bin"
+    path: "PRINTER/8023-325320-02.bin"
+    required: false
+    bundled: true
+    min_size: 8192
+    validation: [size]
+    sha1: "31c2ad049e368cc90b47fb20f5f4ed155a191b59"
+    md5: "1f320b32cca59126c8a38fe5fc07428e"
+    crc32: "e5c4a58c"
+    source_ref: "vice/src/printerdrv/printer.h:86, vice/src/printerdrv/drv-mps803.c:1148, vice/src/printerdrv/drv-mps803.c:1149, vice/src/printerdrv/drv-mps803.c:1149"
+
