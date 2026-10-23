@@ -1,6 +1,7 @@
 ---
 level: setup
 order: 100
+terms: manifest, events, exit code, schema
 ---
 
 # All installer options
@@ -22,10 +23,13 @@ How the command protects your machine is under
 
 ## Options at a glance
 
-Read from the installer's own option list, the one `--help` prints. The
-[Options](#options) table below gives each one in full.
+Each links to its row in the [Options](#options) table.
 
-<!-- installer-options -->
+- **Where and for what**: [`--platform`](#option-platform), [`--dest`](#option-dest), [`--target`](#option-target), [`--every-board`](#option-every-board), [`--save-dir`](#option-save-dir), [`--romm-firmware`](#option-romm-firmware), [`--standalone-copies`](#option-standalone-copies)
+- **Fewer files**: [`--system`](#option-system), [`--core`](#option-core), [`--emulator`](#option-emulator), [`--region`](#option-region), [`--no-game-data`](#option-no-game-data), [`--installed-cores`](#option-installed-cores), [`--cores-dir`](#option-cores-dir)
+- **Look first**: [`--check`](#option-check), [`--dry-run`](#option-dry-run), [`--list-platforms`](#option-list-platforms), [`--list-targets`](#option-list-targets), [`--list-systems`](#option-list-systems), [`--list-cores`](#option-list-cores), [`--list-emulators`](#option-list-emulators)
+- **From files you have**: [`--from`](#option-from), [`--from-pack`](#option-from-pack), [`--manifest`](#option-manifest), [`--restore`](#option-restore)
+- **How the run talks**: [`--tui`](#option-tui), [`--plain`](#option-plain), [`--no-input`](#option-no-input), [`--yes`](#option-yes), [`--quiet`](#option-quiet), [`--verbose`](#option-verbose), [`--events`](#option-events), [`--jobs`](#option-jobs), [`--version`](#option-version), [`--help`](#option-help)
 
 ## One line
 
@@ -46,16 +50,27 @@ needed, and Python 3.8 is the floor both bootstraps enforce before handing over:
 python install.py
 ```
 
-A package that must not change under its users pins the installer to a
-release tag, and the file lists to the same tag with `RETROBIOS_REF`:
+### For packagers { #for-packagers }
+
+A package that must not change under its users takes the installer and its
+file list from one release. Each release carries `install.py`, `install.sh`,
+`install.ps1` and the file list of every platform (`retroarch.json` and the
+others from `install/`), all listed in the signed `SHA256SUMS.txt`:
 
 ```bash
-curl -fsSLO https://raw.githubusercontent.com/Abdess/retrobios/<tag>/install.py
-RETROBIOS_REF=<tag> python3 install.py
+base=https://github.com/Abdess/retrobios/releases/download/<tag>
+curl -fsSLO "$base/install.py" -O "$base/retroarch.json" -O "$base/SHA256SUMS.txt"
+sha256sum --check --ignore-missing SHA256SUMS.txt
+RETROBIOS_REF=<tag> python3 install.py --manifest retroarch.json
 ```
 
-A tag lasts until the next release deletes it. What `RETROBIOS_REF` does not
-pin is listed under [Environment overrides](#environment-overrides).
+For contributors: [Verifying a release](release-process.md#verifying-a-release)
+checks the signature of the list. Each release deletes the previous tag and its assets,
+so `releases/latest/download/install.py` and the other files under
+`releases/latest/download/` are the stable addresses: they serve the latest
+release, whose `SHA256SUMS.txt` names the bytes. v2026.10.10 and the releases
+before it carry neither the installer nor the file lists. What `RETROBIOS_REF`
+does not pin is listed under [Environment overrides](#environment-overrides).
 
 ## Passing options
 
@@ -78,6 +93,36 @@ from the text and calling it passes the arguments through:
 &([scriptblock]::Create((irm https://raw.githubusercontent.com/Abdess/retrobios/main/install.ps1))) `
   --platform retroarch --dest D:\bios
 ```
+
+## Without a network (offline install) { #without-a-network-offline-install }
+
+<span id="without-a-network"></span>
+
+A pack downloaded once installs again with no network, on this machine or on
+one that has none:
+
+```bash
+python install.py --from-pack ~/Downloads/RetroArch_v1.22.2_BIOS_Pack.zip
+python install.py --from-pack ~/Downloads/RetroArch_v1.22.2_BIOS_Pack.part1of3.zip
+python install.py --from-pack ~/Downloads --dest /media/card/retroarch/system
+```
+
+One part is enough to name a split pack: the others are taken from the same
+folder, and a part that is not there is named before anything is written.
+The platform is read from the pack's name when `--platform` is not given. The
+file list is the one the pack carries (`manifest.json`), with each file's
+SHA-1 and size, and every file is checked against it before it takes its
+place. A data tree (Dolphin's `Sys/`, PPSSPP's assets) comes from the pack
+too, not from its source archive. `--target` reads a core list from the
+network and is refused with `--from-pack`. A board found on the device is not
+applied either: every board's files are installed.
+
+`--manifest FILE` reads the file list from a copy of `install/<platform>.json`
+instead of downloading it. Alone, the files still come from the repository.
+With `--from-pack`, the run reads that list and takes every file from the
+pack: `--system`, `--core`, `--region` and `--no-game-data` then apply as
+they do online, and a file of the list the pack does not hold fails as
+`not in the pack`. The list's platform has to be the one installed for.
 
 ## The full-screen interface { #the-full-screen-interface }
 
@@ -623,41 +668,41 @@ what the options name, everything by default.
 
 | Option | Effect |
 |--------|--------|
-| `--platform NAME` | Install for this platform instead of the detected one. A system `--list-platforms` names under its own files (`muos`, `arkos`) stands for the file list it gets, and the run says which. Unknown names are refused with the closest ones |
-| `--dest PATH` | Destination directory, overriding detection. Without `--platform`, the file list is the platform detected here: at a terminal the installer asks, Enter taking the one found, and otherwise it uses the one found, RetroArch's when nothing is found, and refuses when several are. The run prints whose list it is. A folder that does not exist is named with the nearest one that does, then created. When more than its last level is missing (a mistyped path), a run at a terminal asks first, and the answer defaults to no |
-| `--target NAME` | Keep only the files the cores of that hardware target need, and the systems they emulate. An unknown target is refused rather than ignored, since carrying on would install everything. On Batocera, Recalbox, ROCKNIX and Lakka the board is read from the system (`batocera.arch`, `recalbox.arch`, `HW_DEVICE`, `LIBREELEC_DEVICE` or `LIBREELEC_PROJECT`) and applied when no `--target` is given |
-| `--every-board` | Install the files of every board instead of the one the system names, for a card that moves between devices |
-| `--installed-cores` | Keep only what the cores already installed read (RetroArch, Lakka, RetroPie). See [Installed cores](#installed-cores) |
-| `--cores-dir PATH` | The folder RetroArch loads its cores from, for `--installed-cores` when it is not found. Implies `--installed-cores` |
-| `--save-dir PATH` | The frontend's save directory (RetroArch's `savefile_directory`), for the files some cores read there, when the run cannot find it. The core's own folder is still added below it when the frontend sorts saves by core |
-| `--system NAMES` | Install only these systems. Comma-separated or repeated. `--list-systems` prints the names, `other` included. A short name the platform does not use (`gba`, `psx`) is refused with the ids it may stand for, never taken in their place |
-| `--core NAMES` | Keep the platform's own list and only the extra files these cores load. `--list-cores` prints the names |
-| `--emulator NAMES` | Install what these emulators read on the detected platform, and nothing else: their own files and the platform's files of the systems they run. Each emulator page on the site gives this command. `--list-emulators` prints the names, buildbot names such as `mednafen_psx` included |
-| `--region LIST` | Preferred regions, best first (`us,eu,jp`): keep one BIOS per region where a system has several. Accepts the names and aliases of `generate_pack.py --region` |
-| `--no-game-data` | Leave out game data (a game's own files, not firmware) and install the firmware only. What it leaves out is named. See [Firmware without game data](#firmware-without-game-data) |
-| `--list-systems` | Print a platform's systems with the files and size each holds, the files other systems share too counted apart |
-| `--list-cores` | Print the cores whose extra files a platform installs |
-| `--list-emulators` | Print every name `--emulator` accepts, each buildbot name beside the emulator it stands for |
-| `--romm-firmware TEMPLATE` | RomM: where each platform's firmware goes in the library, as `filesystem.structure.firmware` in RomM's `config.yml` says (`{platform}/bios` for a library laid out as `{platform}/roms`). Read from `config.yml` beside the library when it is there. See [RomM firmware layout](#romm-firmware-layout) |
-| `--no-input` | Never ask a question, even at a terminal |
-| `--check` | Report and exit without writing |
-| `--dry-run` | Show what would be downloaded, by system and with sizes, without writing anything |
-| `--yes`, `-y` | Do not ask before a download of 1 GB or more |
-| `--quiet`, `-q` | Print only failures and the final summary. Implies `--no-input` |
-| `--events` | Write the run as JSON events on standard output, one object per line, and the usual text on standard error. Implies `--no-input`. See [Machine-readable events](#machine-readable-events) |
-| `--from FOLDER` | Copy the BIOS files a folder holds (an old SD card, a backup, a ZIP) instead of downloading them, each one recognised by its hash and copied, never moved. Repeat for several folders. See [Copy from an old card](#copy-from-an-old-card) |
-| `--from-pack PATH` | Install from a pack already downloaded: its ZIP, one of its parts (the others are found in the same folder), or the folder holding them. Makes no network request and checks every file's hash. See [Without a network](#without-a-network-offline-install) |
-| `--manifest FILE` | Read the file list from FILE, a copy of `install/<platform>.json`, instead of downloading it. See [Without a network](#without-a-network-offline-install) |
-| `--restore FOLDER` | Put back the files a run replaced and kept in FOLDER, a dated folder inside `retrobios-backup`. Takes no other option but `--dry-run` and `--no-input`. See [Files you already had](#files-you-already-had) |
-| `--tui` | Open the full-screen interface, or stop with the reason it cannot open here (code 2) instead of falling back to the questions. Wins over `RETROBIOS_PLAIN` and `ACCESSIBLE`. See [The full-screen interface](#the-full-screen-interface) |
-| `--plain` | Ask the questions line by line instead of the full-screen interface, the mode for a screen reader. See [The full-screen interface](#the-full-screen-interface) |
-| `--version` | Print the installer's identity, the first 12 hex digits of the SHA-256 the bootstraps pin |
-| `--list-platforms` | Print the supported platforms and what was detected here |
-| `--list-targets` | Print the hardware targets a platform publishes, with the core count each carries |
-| `--jobs N`, `-j N` | Parallel downloads, 1 to 32, default 8 |
-| `--verbose`, `-v` | Print per-attempt failures and hash mismatches |
-| `--standalone-copies` | Also copy into detected standalone emulator directories |
-| `--help`, `-h` | Print the option list, a few examples in the form the run was started with, and the address of this page |
+| <span id="option-platform"></span>`--platform NAME` | Install for this platform instead of the detected one. A system `--list-platforms` names under its own files (`muos`, `arkos`) stands for the file list it gets, and the run says which. Unknown names are refused with the closest ones |
+| <span id="option-dest"></span>`--dest PATH` | Destination directory, overriding detection. Without `--platform`, the file list is the platform detected here: at a terminal the installer asks, Enter taking the one found, and otherwise it uses the one found, RetroArch's when nothing is found, and refuses when several are. The run prints whose list it is. A folder that does not exist is named with the nearest one that does, then created. When more than its last level is missing (a mistyped path), a run at a terminal asks first, and the answer defaults to no |
+| <span id="option-target"></span>`--target NAME` | Keep only the files the cores of that hardware target need, and the systems they emulate. An unknown target is refused rather than ignored, since carrying on would install everything. On Batocera, Recalbox, ROCKNIX and Lakka the board is read from the system (`batocera.arch`, `recalbox.arch`, `HW_DEVICE`, `LIBREELEC_DEVICE` or `LIBREELEC_PROJECT`) and applied when no `--target` is given |
+| <span id="option-every-board"></span>`--every-board` | Install the files of every board instead of the one the system names, for a card that moves between devices |
+| <span id="option-installed-cores"></span>`--installed-cores` | Keep only what the cores already installed read (RetroArch, Lakka, RetroPie). See [Installed cores](#installed-cores) |
+| <span id="option-cores-dir"></span>`--cores-dir PATH` | The folder RetroArch loads its cores from, for `--installed-cores` when it is not found. Implies `--installed-cores` |
+| <span id="option-save-dir"></span>`--save-dir PATH` | The frontend's save directory (RetroArch's `savefile_directory`), for the files some cores read there, when the run cannot find it. The core's own folder is still added below it when the frontend sorts saves by core |
+| <span id="option-system"></span>`--system NAMES` | Install only these systems. Comma-separated or repeated. `--list-systems` prints the names, `other` included. A short name the platform does not use (`gba`, `psx`) is refused with the ids it may stand for, never taken in their place |
+| <span id="option-core"></span>`--core NAMES` | Keep the platform's own list and only the extra files these cores load. `--list-cores` prints the names |
+| <span id="option-emulator"></span>`--emulator NAMES` | Install what these emulators read on the detected platform, and nothing else: their own files and the platform's files of the systems they run. Each emulator page on the site gives this command. `--list-emulators` prints the names, buildbot names such as `mednafen_psx` included |
+| <span id="option-region"></span>`--region LIST` | Preferred regions, best first (`us,eu,jp`): keep one BIOS per region where a system has several. Accepts the names and aliases of `generate_pack.py --region` |
+| <span id="option-no-game-data"></span>`--no-game-data` | Leave out game data (a game's own files, not firmware) and install the firmware only. What it leaves out is named. See [Firmware without game data](#firmware-without-game-data) |
+| <span id="option-list-systems"></span>`--list-systems` | Print a platform's systems with the files and size each holds, the files other systems share too counted apart |
+| <span id="option-list-cores"></span>`--list-cores` | Print the cores whose extra files a platform installs |
+| <span id="option-list-emulators"></span>`--list-emulators` | Print every name `--emulator` accepts, each buildbot name beside the emulator it stands for |
+| <span id="option-romm-firmware"></span>`--romm-firmware TEMPLATE` | RomM: where each platform's firmware goes in the library, as `filesystem.structure.firmware` in RomM's `config.yml` says (`{platform}/bios` for a library laid out as `{platform}/roms`). Read from `config.yml` beside the library when it is there. See [RomM firmware layout](#romm-firmware-layout) |
+| <span id="option-no-input"></span>`--no-input` | Never ask a question, even at a terminal |
+| <span id="option-check"></span>`--check` | Report and exit without writing |
+| <span id="option-dry-run"></span>`--dry-run` | Show what would be downloaded, by system and with sizes, without writing anything |
+| <span id="option-yes"></span>`--yes`, `-y` | Do not ask before a download of 1 GB or more |
+| <span id="option-quiet"></span>`--quiet`, `-q` | Print only failures and the final summary. Implies `--no-input` |
+| <span id="option-events"></span>`--events` | Write the run as JSON events on standard output, one object per line, and the usual text on standard error. Implies `--no-input`. See [Machine-readable events](#machine-readable-events) |
+| <span id="option-from"></span>`--from FOLDER` | Copy the BIOS files a folder holds (an old SD card, a backup, a ZIP) instead of downloading them, each one recognised by its hash and copied, never moved. Repeat for several folders. See [Copy from an old card](#copy-from-an-old-card) |
+| <span id="option-from-pack"></span>`--from-pack PATH` | Install from a pack already downloaded: its ZIP, one of its parts (the others are found in the same folder), or the folder holding them. Makes no network request and checks every file's hash. See [Without a network](#without-a-network-offline-install) |
+| <span id="option-manifest"></span>`--manifest FILE` | Read the file list from FILE, a copy of `install/<platform>.json`, instead of downloading it. See [Without a network](#without-a-network-offline-install) |
+| <span id="option-restore"></span>`--restore FOLDER` | Put back the files a run replaced and kept in FOLDER, a dated folder inside `retrobios-backup`. Takes no other option but `--dry-run` and `--no-input`. See [Files you already had](#files-you-already-had) |
+| <span id="option-tui"></span>`--tui` | Open the full-screen interface, or stop with the reason it cannot open here (code 2) instead of falling back to the questions. Wins over `RETROBIOS_PLAIN` and `ACCESSIBLE`. See [The full-screen interface](#the-full-screen-interface) |
+| <span id="option-plain"></span>`--plain` | Ask the questions line by line instead of the full-screen interface, the mode for a screen reader. See [The full-screen interface](#the-full-screen-interface) |
+| <span id="option-version"></span>`--version` | Print the installer's identity, the first 12 hex digits of the SHA-256 the bootstraps pin |
+| <span id="option-list-platforms"></span>`--list-platforms` | Print the supported platforms and what was detected here |
+| <span id="option-list-targets"></span>`--list-targets` | Print the hardware targets a platform publishes, with the core count each carries |
+| <span id="option-jobs"></span>`--jobs N`, `-j N` | Parallel downloads, 1 to 32, default 8 |
+| <span id="option-verbose"></span>`--verbose`, `-v` | Print per-attempt failures and hash mismatches |
+| <span id="option-standalone-copies"></span>`--standalone-copies` | Also copy into detected standalone emulator directories |
+| <span id="option-help"></span>`--help`, `-h` | Print the option list, a few examples in the form the run was started with, and the address of this page |
 
 `--check` reads the same file list, hashes the destination and exits, with
 code 1 when a file is missing or does not match and 0 when every one does. Files
@@ -1024,36 +1069,6 @@ file lists come from `main`. The launchers in `ports/` start it with `--tui`,
 and read it through [Machine-readable events](#machine-readable-events) for
 the rest.
 
-## Without a network (offline install) { #without-a-network-offline-install }
-
-<span id="without-a-network"></span>
-
-A pack downloaded once installs again with no network, on this machine or on
-one that has none:
-
-```bash
-python install.py --from-pack ~/Downloads/RetroArch_v1.22.2_BIOS_Pack.zip
-python install.py --from-pack ~/Downloads/RetroArch_v1.22.2_BIOS_Pack.part1of3.zip
-python install.py --from-pack ~/Downloads --dest /media/card/retroarch/system
-```
-
-One part is enough to name a split pack: the others are taken from the same
-folder, and a part that is not there is named before anything is written.
-The platform is read from the pack's name when `--platform` is not given. The
-file list is the one the pack carries (`manifest.json`), with each file's
-SHA-1 and size, and every file is checked against it before it takes its
-place. A data tree (Dolphin's `Sys/`, PPSSPP's assets) comes from the pack
-too, not from its source archive. `--target` reads a core list from the
-network and is refused with `--from-pack`. A board found on the device is not
-applied either: every board's files are installed.
-
-`--manifest FILE` reads the file list from a copy of `install/<platform>.json`
-instead of downloading it. Alone, the files still come from the repository.
-With `--from-pack`, the run reads that list and takes every file from the
-pack: `--system`, `--core`, `--region` and `--no-game-data` then apply as
-they do online, and a file of the list the pack does not hold fails as
-`not in the pack`. The list's platform has to be the one installed for.
-
 ## Where the files come from
 
 Each manifest entry names either `repo_path`, served from the repository at the
@@ -1165,11 +1180,11 @@ fields, the installer refuses to narrow rather than install everything.
 | `141` | the output was piped to a reader that closed early (`--list-platforms \| head`) |
 
 `install.ps1` passes the installer's code on unchanged: run as a file it exits
-with it, run through `irm \| iex` it sets `$LASTEXITCODE` (an `exit` there
+with it, run through `irm | iex` it sets `$LASTEXITCODE` (an `exit` there
 would close the PowerShell window). It declares no parameter of its own, so
 every argument reaches `install.py` as typed, short forms such as `-v`
 included. Its body runs in a script block of its own,
-so `irm \| iex` leaves neither its variables nor its `$ErrorActionPreference`
+so `irm | iex` leaves neither its variables nor its `$ErrorActionPreference`
 in the session.
 
 Failures that are per-file, such as a download exhausting its three attempts,
@@ -1211,6 +1226,17 @@ Schema 1 can gain a kind (`found` came with `--from`), never a key of an
 existing kind: a reader skips a kind it does not know. An option refused
 before the run starts (`install.py: error:`, code 2) writes
 no event at all. A program reads a missing `end` as that case.
+
+Five lines of a run of `--check --events --system sony-playstation` on a
+RetroArch folder that holds only `scph5501.bin`, in the order written:
+
+```json
+{"event": "start", "schema": 1, "installer": "c90676dcc433", "mode": "check"}
+{"event": "file", "platform": "retroarch", "dest": "scph5501.bin", "systems": ["sony-playstation"], "size": 524288, "state": "present"}
+{"event": "check", "platform": "retroarch", "name": "RetroArch", "bios_dir": "system", "files": 118, "present": 1, "missing": 117, "wrong_hash": 0, "bytes_needed": 344457216, "data_missing": 0, "not_installable": 0}
+{"event": "summary", "mode": "check", "installed": 0, "up_to_date": 1, "pending": 117, "failed": [], "skipped": [], "left_out": [], "kept": [], "interrupted": false}
+{"event": "end", "code": 1}
+```
 
 ## Environment overrides
 
