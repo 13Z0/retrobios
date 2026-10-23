@@ -20,6 +20,20 @@ systems:
   - microsoft-xbox-360
   - microsoft-xbox
 
+data_root:
+  windows:
+    path: "%USERPROFILE%/Documents/Xenia"
+    source_ref: "src/xenia/app/xenia_main.cc:533-547, src/xenia/base/filesystem_win.cc:52-61"
+    note: "portable.txt beside the executable, the portable flag or the storage_root setting replaces it"
+  macos:
+    path: "$XDG_DATA_HOME/Xenia, else ~/.local/share/Xenia"
+    source_ref: "src/xenia/app/xenia_main.cc:533-547, src/xenia/base/filesystem_posix.cc:82-108"
+    note: "portable.txt beside the executable, the portable flag or the storage_root setting replaces it"
+  linux:
+    path: "$XDG_DATA_HOME/Xenia, else ~/.local/share/Xenia"
+    source_ref: "src/xenia/app/xenia_main.cc:533-547, src/xenia/base/filesystem_posix.cc:82-108"
+    note: "portable.txt beside the executable, the portable flag or the storage_root setting replaces it"
+
 notes: |
   Xbox 360 emulator forked from Xenia Canary, with a wxWidgets front end, a
   game library, and Direct3D 12, Vulkan and Metal backends. Releases are tagged
