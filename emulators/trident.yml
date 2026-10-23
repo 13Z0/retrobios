@@ -28,7 +28,7 @@ notes: >-
   library_name "Trident" (src/libretro_core.cpp:29, 243, 280-285).
   3dsTrident builds the vendor/Panda3DS submodule, DanAlexMorton/Panda3DS
   at 69095ee6, a fork of wheremyfoodat/Panda3DS from their merge base
-  944b9892; the libretro wrapper and the files cited below are in that tree.
+  944b9892. The libretro wrapper and the files cited below are in that tree.
 
 files:
   - name: aes_keys.txt
