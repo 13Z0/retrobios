@@ -103,9 +103,9 @@ class WhatASearchSnippetSays(unittest.TestCase):
         gs.PAGE_DATA[rel.as_posix()] = {}
         text = gs._page_description("# Lutro\n", rel, "Lutro")
         self.assertNotIn("hashes", text)
-        self.assertIn("No BIOS or firmware file is required.", text)
+        self.assertIn("It needs no BIOS or firmware file.", text)
         gs.PAGE_DATA[rel.as_posix()] = {"hasPart": [{"name": "a.bin"}]}
-        self.assertIn("paths, hashes", gs._page_description("# Lutro\n", rel, "Lutro"))
+        self.assertNotIn("needs no BIOS", gs._page_description("# Lutro\n", rel, "Lutro"))
 
     def test_a_long_paragraph_is_cut_at_a_word(self):
         plain = ("files/?sha1= is the address that does not move: it opens the card "

@@ -179,14 +179,15 @@ class SiteReferenceContracts(unittest.TestCase):
         self.assertNotIn("\n    #if FEATURE", rendered)
 
     def test_browser_titles_distinguish_emulators_from_system_pages(self):
-        self.assertEqual(
-            _browser_title(Path("emulators/qemu.md"), "QEMU"),
-            "QEMU emulator firmware",
-        )
-        self.assertEqual(
-            _browser_title(Path("systems/qemu.md"), "QEMU"),
-            "QEMU systems",
-        )
+        from unittest import mock  # noqa: PLC0415
+
+        import generate_site  # noqa: PLC0415
+
+        pages = {"systems/qemu.md": {}, "emulators/qemu.md": {"hasPart": [{"name": "a"}]}}
+        with mock.patch.dict(generate_site.PAGE_DATA, pages, clear=True):
+            self.assertEqual(_browser_title(Path("emulators/qemu.md"), "QEMU"),
+                             "QEMU emulator BIOS files")
+            self.assertEqual(_browser_title(Path("systems/qemu.md"), "QEMU"), "QEMU BIOS files")
 
     ACCEPTED = (
         ("md5", "c87a52c277f7952b41c639fc7bf0a43b"),
@@ -581,7 +582,8 @@ class OnlyAPinnedProfileClaimsAPin(unittest.TestCase):
         with mock.patch.dict(generate_site.PAGE_DATA, pages, clear=True):
             pinned = generate_site._page_description("", Path("emulators/pinned.md"), "P")
             loose = generate_site._page_description("", Path("emulators/redream.md"), "R")
-        self.assertIn("source-pinned", pinned)
+        # A search snippet is level 0: the pin is on the page, not in it.
+        self.assertNotIn("source-pinned", pinned)
         self.assertNotIn("source-pinned", loose)
 
 

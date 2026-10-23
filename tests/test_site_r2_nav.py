@@ -233,7 +233,7 @@ class ReferenceGrouped(unittest.TestCase):
         reference = self._reference()
         groups = {next(iter(item)): next(iter(item.values())) for item in reference
                   if isinstance(item, dict) and isinstance(next(iter(item.values())), list)}
-        self.assertEqual(groups["Checking files"][0], {"Find a file": "files/index.md"})
+        self.assertEqual(groups["Checking files"][0], {"Find or check a file": "files/index.md"})
         self.assertIn({"What the packs do not hold": "gaps.md"}, groups["Checking files"])
         self.assertEqual(groups["Data"][:3], [{"Data and API": "data.md"},
                                               {"Data model": "wiki/data-model.md"},
@@ -250,7 +250,7 @@ class ReferenceGrouped(unittest.TestCase):
             reference = self._reference(wiki)
         group = next(item["Checking files"] for item in reference
                      if isinstance(item, dict) and "Checking files" in item)
-        self.assertEqual(group[:2], [{"Find a file": "files/index.md"},
+        self.assertEqual(group[:2], [{"Find or check a file": "files/index.md"},
                                      {"How each platform checks files": "wiki/modes.md"}])
 
 
