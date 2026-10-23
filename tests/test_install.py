@@ -1808,6 +1808,16 @@ class TestManualPlatformPrompt(unittest.TestCase):
             chosen, [("retroarch", Path.home() / ".config" / "retroarch" / "system")]
         )
 
+    def test_enter_takes_retroarch_as_the_dest_menu_does(self):
+        """The --dest menu offered `[Enter for RetroArch]` and this one, the
+        same list, had no default."""
+        answers = iter(["", ""])
+        out = io.StringIO()
+        with unittest.mock.patch("builtins.input", lambda _prompt="": next(answers)), \
+                contextlib.redirect_stdout(out):
+            chosen = install._prompt_manual_platform("linux")
+        self.assertEqual(chosen[0][0], "retroarch")
+
     def test_name_and_explicit_directory(self):
         answers = iter(["batocera", "~/my bios"])
         with unittest.mock.patch("builtins.input", lambda _prompt="": next(answers)):

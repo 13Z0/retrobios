@@ -5603,7 +5603,8 @@ def _choose_platform(title: str, default: str = "") -> str:
 
 def _prompt_manual_platform(os_type: str) -> list[tuple[str, Path]]:
     """Ask for a platform and a BIOS directory when nothing was detected."""
-    plat = _choose_platform("Choose the platform to install for:")
+    plat = _choose_platform("No supported platform found here. Choose the one to "
+                            "install for:", "retroarch")
     default_dest = _default_dest(os_type, plat)
     raw = ""
     while not raw:
