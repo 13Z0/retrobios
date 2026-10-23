@@ -938,6 +938,8 @@ class ProfileReport:
     repo: str | None = None
     repos: list[str] = field(default_factory=list)
     pinned_tag: str | None = None
+    # Set when pinned_tag carries a pin_frozen reason rather than a tag name.
+    pin_frozen: bool = False
     host: str | None = None
     pin: str | None = None
     pin_origin: str | None = None
@@ -1534,6 +1536,7 @@ def build_report(
     # its refs at code the build never had, so it is judged like a frozen tag:
     # against itself.
     frozen = str(profile.get("pin_frozen") or "").strip()
+    report.pin_frozen = bool(frozen)
     report.pinned_tag = frozen or detect_pinned_tag(
         profile, views, cache_dir, offline
     )
@@ -2056,10 +2059,11 @@ def format_report(report: ProfileReport, changed_only: bool = False) -> str:
             f"  {report.pin[:7]} -> {report.head[:7]}   pin: {report.pin_origin}"
         )
     if report.pinned_tag:
-        lines.append(
-            f"  pinned to tag {report.pinned_tag}: checked against its own "
-            "revision, not against HEAD"
+        held = (
+            f"pin held ({report.pinned_tag})" if report.pin_frozen
+            else f"pinned to tag {report.pinned_tag}"
         )
+        lines.append(f"  {held}: checked against its own revision, not against HEAD")
     elif report.pin and report.pin == report.head:
         lines.append("  pin is HEAD: checked for self-consistency")
     if report.upstream_tag and not report.pinned_tag:
@@ -3868,7 +3872,20 @@ def _apply_writes(
             for pin in pins_changed(before, after):
                 print(f"{name}: {bumped}{pin} -> {str(after[pin])[:7]}")
         if not args.dry_run and (applied or moved):
+            original = path.read_bytes()
             path.write_bytes(target.read_bytes())
+            # The guard above read the prose under the pins the profile held.
+            # A bump that moves upstream_commit can leave prose the report
+            # judged in the fork under the new upstream pin (dolphin-mmjr2,
+            # hatari, xenios): read it again on what was written.
+            left = realign_prose(path, args.cache_dir, args.offline, dry_run=True)
+            if moved and left:
+                path.write_bytes(original)
+                print(
+                    f"{name}: the bump would leave {len(left)} prose citation(s) "
+                    "under an older pin, nothing was written; read them first",
+                    file=sys.stderr,
+                )
 
 
 def _cited_paths(report: ProfileReport) -> list[str]:

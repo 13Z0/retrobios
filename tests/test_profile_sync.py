@@ -2723,6 +2723,21 @@ class TestWriteDryRun(unittest.TestCase):
         self.assertNotIn("source_commit", output)
         self.assertEqual(self.path.read_text(), before)
 
+    def test_a_bump_that_leaves_stale_prose_is_rolled_back(self):
+        """dolphin-mmjr2, hatari, xenios: the bump moved upstream_commit only,
+        and prose the report had judged in the fork fell under the new
+        upstream pin. The guard had read it under the old pins."""
+        from unittest import mock
+
+        before = self.path.read_text()
+        answers = iter([[], ["notes: a.c:10 (a.c:10 changed)"]])
+        with mock.patch.object(
+            profile_sync, "realign_prose", side_effect=lambda *a, **k: next(answers)
+        ), contextlib.redirect_stderr(io.StringIO()) as err:
+            self._run(self._args(rebase_refs=True, dry_run=False), self._shifted())
+        self.assertEqual(self.path.read_text(), before)
+        self.assertIn("nothing was written", err.getvalue())
+
     def test_a_planned_bump_reads_the_prose_the_rebase_would_have_left(self):
         """The pin is blocked by prose until the rebase moves it.
 
