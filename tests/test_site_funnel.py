@@ -209,10 +209,15 @@ class DeepLinksCarryALabel(unittest.TestCase):
             if level not in ("start", "setup"):
                 continue
             text = FENCED.sub("", page.read_text(encoding="utf-8"))
-            heading = ""
+            # The headings the line sits under, by depth: a system's h3 sits
+            # in the "## Reference: every file by system" section.
+            headings: dict[int, str] = {}
             for line in text.splitlines():
-                if re.match(r"#{1,3} ", line):
-                    heading = line.lstrip("#").strip()
+                level_match = re.match(r"(#{1,3}) ", line)
+                if level_match:
+                    depth = len(level_match[1])
+                    headings = {d: h for d, h in headings.items() if d < depth}
+                    headings[depth] = line.lstrip("#").strip()
                 for match in LINK.finditer(line):
                     target = by_url.get(match.group(1))
                     if target not in levels:
@@ -221,7 +226,8 @@ class DeepLinksCarryALabel(unittest.TestCase):
                     if ORDER.index(deeper) - ORDER.index(level) < 2:
                         continue
                     label = f"{generate_site.LEVELS[deeper]}:"
-                    if label not in line[: match.start()] and not heading.startswith(label):
+                    if label not in line[: match.start()] and not any(
+                            heading.startswith(label) for heading in headings.values()):
                         offenders.append(f"{page.relative_to(DOCS)}: {match.group(0)}")
         self.assertEqual(offenders, [], "\n".join(offenders[:30]))
 

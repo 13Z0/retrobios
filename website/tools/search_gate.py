@@ -26,13 +26,28 @@ QUERIES: dict[str, tuple[tuple[str, ...], int]] = {
     "neogeo.zip": (("emulators/fbneo", "emulators/mame", "systems/snk/", "systems/arcade"), 1),
     "retroarch system folder": (("platforms/retroarch/",), 1),
     "installer": (("wiki/installer/", "wiki/first-install/"), 1),
-    # The file's card on its system page, where it is downloaded.
-    "scph5501": (("systems/sony/",), 3),
+    # The file's card on its system page, where it is downloaded. "systems/sony"
+    # holds the manufacturer page and the console's own (systems/sony-playstation/).
+    "scph5501": (("systems/sony",), 3),
     "md5": (("wiki/verification-modes/",), 1),
     "where do bios files go": (("which-pack/", "wiki/first-install/"), 1),
     "dolphin": (("emulators/dolphin/",), 1),
     "duckstation": (("emulators/duckstation/",), 1),
-    "playstation bios": (("systems/sony/",), 3),
+    # A console and "bios": the console's page, before any setup's list for it.
+    "playstation bios": (("systems/sony",), 3),
+    "dreamcast bios": (("systems/sega",), 3),
+    "neo geo bios": (("systems/snk",), 3),
+    "wonderswan color": (("systems/bandai",), 3),
+    # The platforms' own names for a console (psx, dc, gba), a search field
+    # of its page.
+    "psx bios": (("systems/sony",), 3),
+    "dc bios missing": (("systems/sega",), 3),
+    "gba bios": (("systems/nintendo",), 3),
+    "bios not found": (("wiki/troubleshooting/",), 3),
+    "offline install": (("wiki/installer/",), 3),
+    "which mame version": (("wiki/technical-faq/",), 3),
+    # A device name: the guide of the handhelds that run it.
+    "r36s": (("platforms/", "which-pack/"), 3),
     "steam deck": (("platforms/emudeck/", "platforms/retrodeck/", "which-pack/"), 1),
     "knulli": (("platforms/knulli/",), 1),
 }
