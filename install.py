@@ -12044,7 +12044,9 @@ _HELP_KEYS: dict[str, dict[str, str | None]] = {
                "tick": "X, Space, Right/Left", "options": "Y, Tab, o",
                "back": "B, Select, Esc", "stop": "B, Esc, Ctrl-C", "kill": None,
                "enter": "A, Enter", "esc": "B, Esc"},
-    "muxterm": {"move": "D-pad, Up/Down", "page": "PgUp/PgDn", "ok": "Start, Enter",
+    # muxterm keeps PgUp and PgDn for its own scrollback, and its L1 and R1
+    # send nothing: no key pages a list there.
+    "muxterm": {"move": "D-pad, Up/Down", "page": None, "ok": "Start, Enter",
                 "tick": "Y, Space, Right/Left", "options": "o, Tab",
                 "back": "B, Esc, Backspace", "stop": "B, Esc, Ctrl-C", "kill": None,
                 "enter": "Start, Enter", "esc": "Esc"},
@@ -12080,7 +12082,8 @@ def _help_lines(state: TuiState) -> list[tuple[str, str]]:
                 *_route_extras(state)]
     keys = [(names["move"], "Move")]
     if len(tui_rows(state)) > 9 or screen in _PAGERS:
-        keys += [(names["page"], "Page"), ("Home/End, g/G", "First, last")]
+        keys += [*([(names["page"], "Page")] if names["page"] else []),
+                 ("Home/End, g/G", "First, last")]
     primary = _primary(state) or _TUI_VIEWS[screen](state, 80, 24)[2][0]
     ok = names["ok"]
     if state.pad == "miyoo" and screen in _CHECKLISTS:

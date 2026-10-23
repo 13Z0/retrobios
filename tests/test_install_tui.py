@@ -1097,6 +1097,13 @@ class PadRoutes(unittest.TestCase):
                       "Close the terminal"):
             self.assertIn(words, muxterm)
         self.assertNotIn("Start+Select", muxterm)
+        # muxterm keeps PgUp and PgDn for its scrollback, and L1 and R1
+        # send nothing: no paging is offered there, on a list or a pager.
+        for screen in ("systems", "result", "plan"):
+            with self.subTest(screen=screen):
+                text = help_text("muxterm", screen)
+                for words in ("L1", "R1", "PgUp", "PgDn", "Page"):
+                    self.assertNotIn(words, text)
         miyoo = help_text("miyoo", "systems")
         for words in ("Start, Enter", "A, Space, Right/Left", "R2, Esc, Backspace",
                       "L2, Tab, o", "Sends no key here"):
