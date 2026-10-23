@@ -50,6 +50,8 @@ notes: |
   $HOME/Library/Application Support/DOSBoxPure on macOS, else the working
   directory. The system folder can be redirected with the path_system key in
   DOSBoxPure.cfg. It is returned to the core as RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY.
+  Paths below are relative to the base directory, the system folder being
+  its system subfolder.
   ref: main.cpp:1980-2045,973-974
 
   System directory scan (recursive, DBP_ScanSystem):
@@ -112,6 +114,7 @@ files:
   # -- MT-32 control ROMs (64 KB, pair with MT32_PCM.ROM) --
 
   - name: "MT32_CONTROL.ROM"
+    path: "system/MT32_CONTROL.ROM"
     description: "MT-32 Control v1.04"
     required: false
     hle_fallback: true
@@ -121,6 +124,7 @@ files:
     source_ref: "upstream src/gui/mt32emu.h:5112, upstream src/gui/mt32emu.h:5129"
 
   - name: "MT32_CONTROL.ROM"
+    path: "system/MT32_CONTROL.ROM"
     description: "MT-32 Control v1.05"
     required: false
     hle_fallback: true
@@ -130,6 +134,7 @@ files:
     source_ref: "upstream src/gui/mt32emu.h:5113, upstream src/gui/mt32emu.h:5130"
 
   - name: "MT32_CONTROL.ROM"
+    path: "system/MT32_CONTROL.ROM"
     description: "MT-32 Control v1.06"
     required: false
     hle_fallback: true
@@ -139,6 +144,7 @@ files:
     source_ref: "upstream src/gui/mt32emu.h:5114, upstream src/gui/mt32emu.h:5131"
 
   - name: "MT32_CONTROL.ROM"
+    path: "system/MT32_CONTROL.ROM"
     description: "MT-32 Control v1.07"
     required: false
     hle_fallback: true
@@ -148,6 +154,7 @@ files:
     source_ref: "upstream src/gui/mt32emu.h:5115, upstream src/gui/mt32emu.h:5132"
 
   - name: "MT32_CONTROL.ROM"
+    path: "system/MT32_CONTROL.ROM"
     description: "MT-32 Control BlueRidge"
     required: false
     hle_fallback: true
@@ -159,6 +166,7 @@ files:
   # -- MT-32 v2.x control ROMs (128 KB, pair with MT32_PCM.ROM) --
 
   - name: "MT32_CONTROL.ROM"
+    path: "system/MT32_CONTROL.ROM"
     description: "MT-32 Control v2.03"
     required: false
     hle_fallback: true
@@ -168,6 +176,7 @@ files:
     source_ref: "upstream src/gui/mt32emu.h:5118, upstream src/gui/mt32emu.h:5135"
 
   - name: "MT32_CONTROL.ROM"
+    path: "system/MT32_CONTROL.ROM"
     description: "MT-32 Control v2.04"
     required: false
     hle_fallback: true
@@ -177,6 +186,7 @@ files:
     source_ref: "upstream src/gui/mt32emu.h:5119, upstream src/gui/mt32emu.h:5136"
 
   - name: "MT32_CONTROL.ROM"
+    path: "system/MT32_CONTROL.ROM"
     description: "MT-32 Control v2.06"
     required: false
     hle_fallback: true
@@ -186,6 +196,7 @@ files:
     source_ref: "upstream src/gui/mt32emu.h:5120, upstream src/gui/mt32emu.h:5137"
 
   - name: "MT32_CONTROL.ROM"
+    path: "system/MT32_CONTROL.ROM"
     description: "MT-32 Control v2.07"
     required: false
     hle_fallback: true
@@ -197,6 +208,7 @@ files:
   # -- CM-32L / LAPC-I control ROMs (64 KB, pair with CM32L_PCM.ROM) --
 
   - name: "CM32L_CONTROL.ROM"
+    path: "system/CM32L_CONTROL.ROM"
     description: "CM-32L/LAPC-I Control v1.00"
     required: false
     hle_fallback: true
@@ -206,6 +218,7 @@ files:
     source_ref: "upstream src/gui/mt32emu.h:5122, upstream src/gui/mt32emu.h:5139"
 
   - name: "CM32L_CONTROL.ROM"
+    path: "system/CM32L_CONTROL.ROM"
     description: "CM-32L/LAPC-I Control v1.02"
     required: false
     hle_fallback: true
@@ -217,6 +230,7 @@ files:
   # -- CM-32LN / CM-500 / LAPC-N control ROM (64 KB, pairs with CM32L_PCM.ROM) --
 
   - name: "CM32LN_CONTROL.ROM"
+    path: "system/CM32LN_CONTROL.ROM"
     description: "CM-32LN/CM-500/LAPC-N Control v1.00"
     required: false
     hle_fallback: true
@@ -228,6 +242,7 @@ files:
   # -- PCM ROMs --
 
   - name: "MT32_PCM.ROM"
+    path: "system/MT32_PCM.ROM"
     description: "MT-32 PCM ROM"
     required: false
     hle_fallback: true
@@ -238,6 +253,7 @@ files:
     note: "accepted by every MT-32 control ROM, v1.x and v2.x (pcmCount 128)"
 
   - name: "CM32L_PCM.ROM"
+    path: "system/CM32L_PCM.ROM"
     description: "CM-32L/CM-64/LAPC-I PCM ROM"
     required: false
     hle_fallback: true
@@ -253,6 +269,7 @@ files:
   # -- General MIDI SoundFont --
 
   - name: "DOSBOX.SF2"
+    path: "system/DOSBOX.SF2"
     description: "General MIDI SoundFont (any .sf2/.sf3 accepted)"
     aliases: ["GeneralUser-GS.sf2"]
     required: false
