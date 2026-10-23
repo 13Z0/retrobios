@@ -47,6 +47,12 @@ systems:
 # Games that include all their assets (FullPackageFlag) need nothing extra.
 # Games relying on RPG Maker RTP need the matching RTP installed.
 
+data_root:
+  android:
+    path: "<folder picked at first launch>"
+    source_ref: "upstream builds/android/app/src/main/java/org/easyrpg/player/settings/SettingsManager.java:49-52, 304-315, 341-347, upstream builds/android/app/src/main/java/org/easyrpg/player/player/EasyRpgPlayerActivity.java:438-446, upstream src/filefinder_rtp.cpp:78-92"
+    note: "config.ini stays in Android/data/org.easyrpg.player/files"
+
 notes: |
   No BIOS or firmware required. All files listed below are optional runtime
   data that improve compatibility and audio quality.
