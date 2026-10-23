@@ -14,6 +14,24 @@ cores:
 systems:
   - nintendo-3ds
 
+data_root:
+  windows:
+    path: "%APPDATA%/Azahar"
+    source_ref: "src/common/file_util.cpp:945-958, src/common/common_paths.h:24-25"
+    note: "A user folder beside the executable is used instead when it exists."
+  linux:
+    path: "$XDG_DATA_HOME/azahar-emu, else ~/.local/share/azahar-emu"
+    source_ref: "src/common/file_util.cpp:904-921, 965-975, src/common/common_paths.h:44-45"
+    note: "A user folder in the working directory is used instead when it exists."
+  macos:
+    path: "~/Library/Application Support/Azahar"
+    source_ref: "src/common/file_util.cpp:965-975, 999-1012, src/common/common_paths.h:34-40"
+    note: "$XDG_DATA_HOME/azahar-emu is kept when it, or the XDG config or cache folder, already exists, and a user folder in the working directory takes precedence over both."
+  android:
+    path: "the folder picked in the setup wizard"
+    source_ref: "src/android/app/src/main/java/org/citra/citra_emu/utils/PermissionsHandler.kt:19,49-56, src/android/app/src/main/java/org/citra/citra_emu/utils/DirectoryInitialization.kt:90-98, src/common/file_util.cpp:961-962"
+    note: "No default: the user grants a folder through the system picker, stored as CITRA_DIRECTORY, and every user path is resolved inside it."
+
 # path: is where the libretro core reads a file below the save directory the
 # frontend hands it (load_from), standalone_path: where the standalone app
 # reads it under its user directory.
@@ -32,10 +50,9 @@ notes: |
   The core reports library_name "Azahar".
   ref: src/citra_libretro/environment.cpp:269
 
-  Standalone data dir: azahar-emu under XDG_DATA_HOME (Azahar on Windows and
-  macOS), with citra-emu and lime3ds-emu kept as legacy locations. A user/
-  directory beside the executable (Windows) or in the working directory takes
-  precedence. sysdata/, nand/ and sdmc/ sit under the user directory.
+  The standalone user directory is the one data_root names per system, with
+  citra-emu and lime3ds-emu (Citra and Lime3DS on Windows and macOS) kept as
+  legacy locations. sysdata/, nand/ and sdmc/ sit under it.
   ref: src/common/common_paths.h:19-49, src/common/file_util.cpp:943-972,
   src/common/file_util.cpp:1023-1025
 
