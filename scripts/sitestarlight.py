@@ -417,6 +417,32 @@ def page_aliases(rel: str) -> list[str]:
     return list(_page_aliases.get(rel, []))
 
 
+# Search fields a page's own front matter fills, never typed here.
+SEARCH_FIELDS = ("consoles", "terms")
+
+
+def field_words(value: object) -> list[str]:
+    """The words of a front matter search field: a list, or one string
+    with its words or phrases split at commas."""
+    if isinstance(value, str):
+        return [part.strip() for part in value.split(",") if part.strip()]
+    if isinstance(value, (list, tuple)):
+        return [str(part).strip() for part in value if str(part).strip()]
+    return []
+
+
+def _neighbour(rel: str, value: object) -> object:
+    """A `prev:` or `next:` the page states, its link resolved like any
+    other link of the page."""
+    if isinstance(value, dict) and value.get("link"):
+        # Starlight writes the link as given: a site path gets the base.
+        link = resolve(rel, str(value["link"]))
+        if link.startswith("/") and not link.startswith(BASE):
+            link = BASE + link.lstrip("/")
+        return {**value, "link": link}
+    return value
+
+
 _NEXT_STEPS = re.compile(r"^## Next steps\b[^\n]*\n+(?P<list>(?:[ \t]*[-*] .*\n?)+)", re.M)
 
 
@@ -445,11 +471,20 @@ def finalize_page(
     search: bool = True,
     logo: str = "",
     parent: dict | None = None,
+    authored: dict | None = None,
 ) -> tuple[str, str]:
     """The Starlight file for a page body: its path under the content
     collection and its text. *parent* ({label, link}, the link written
     relative to the page) is the page a part page belongs to: the route
-    middleware makes it the last crumb and marks it in the sidebar."""
+    middleware makes it the last crumb and marks it in the sidebar.
+
+    *authored* is the front matter the page was written with. Its
+    `searchWeight`, `prev` and `next` win over the computed ones (a part
+    page states its neighbours and its weight), and its `consoles` and
+    `terms` become search fields (astro.config.mjs, metaWeights): the
+    consoles a manufacturer page holds sections for, and the words a page
+    answers that its text does not say, as an error message words them."""
+    authored = authored or {}
     title, title_id, body = split_title(markdown)
     body = body.lstrip("\n")
     body = rewrite_links(body, rel)
@@ -468,6 +503,8 @@ def finalize_page(
                   r'<span data-pagefind-ignore class="\1"', body)
     if rel.startswith("systems/"):
         body += file_names_meta(body) + search_field("aliases", page_aliases(rel))
+    for key in SEARCH_FIELDS:
+        body += search_field(key, field_words(authored.get(key)))
     components = used_components(body)
     stem = rel.rsplit(".", 1)[0]
     if components:
@@ -492,6 +529,7 @@ def finalize_page(
     if parent:
         front["parent"] = {"label": str(parent["label"]),
                            "link": resolve(rel, str(parent["link"]))}
+    weight = authored.get("searchWeight", weight)
     if weight:
         front["searchWeight"] = weight
     if rel == NOT_FOUND:
@@ -512,6 +550,9 @@ def finalize_page(
     elif step:
         # The page's own "Next steps" list and the next link agree.
         front["next"] = step
+    for side in ("prev", "next"):
+        if rel != NOT_FOUND and side in authored:
+            front[side] = _neighbour(rel, authored[side])
     front["head"] = page_head(rel, level, front["title"], browser_title, structured)
     if structured.get("dateModified"):
         front["lastmod"] = str(structured["dateModified"])

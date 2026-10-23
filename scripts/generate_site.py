@@ -2109,12 +2109,23 @@ def _browser_title(relative: Path, title: str) -> str:
     }
     if key in index_titles:
         return index_titles[key]
-    if key in PART_PAGES:
+    # A console page is filed with the parts of its manufacturer's page, and
+    # titled "Sega: Dreamcast". A part names its range of files.
+    part = key in PART_PAGES and (
+        not key.startswith("systems/") or ": " not in title
+        or re.search(r", part \d+ of \d+$", title))
+    if part:
         return title
+    # The words a web search for a console or an emulator types: "dreamcast
+    # bios", "duckstation bios". The h1 and the sidebar keep the name.
     if key.startswith("emulators/"):
-        return f"{title} emulator firmware"
+        has_files = PAGE_DATA.get(key, {}).get("hasPart")
+        # Lexaloffle, QEMU and ScummVM name a system page too.
+        own = " emulator" if f"systems/{relative.name}" in PAGE_DATA else ""
+        return f"{title}{own} BIOS files" if has_files else f"{title} emulator"
     if key.startswith("systems/"):
-        return f"{title} systems"
+        maker, _, console = title.partition(": ")
+        return f"{console} BIOS files ({maker})" if console else f"{title} BIOS files"
     return title
 
 
@@ -2157,45 +2168,129 @@ def _page_description(markdown: str, relative: Path, title: str) -> str:
     }
     if key in specific:
         return specific[key]
-    if key in PART_PAGES:
-        return (f"{title}: every file with its hashes, size, source references "
-                "and who reads it.")
+    # What a search engine shows is the page's own first sentence: 707 pages
+    # shared five templates of level 3 words ("source-pinned", "provenance").
+    browser = _browser_title(relative, title)
+    held = re.search(r"\bThis part holds (.+?)\.(?: |$)", markdown, re.M)
+    if key in PART_PAGES and held:
+        return _shorten(f"{browser}. This part holds {_plain_markdown(held[1])}.", 155)
+    lead = _lead(markdown)
+    if key in PART_PAGES and re.search(r"\bpart \d+ of \d+", title):
+        # The parts of one list open on the same sentence.
+        first = _first_paragraph(lead) or _first_paragraph(markdown)
+        return _shorten(f"{title}. {first}", 155)
     if key.startswith(f"{release_record.GET_DIR}/"):
-        return (f"{title}: the BIOS files of this setup, as the ZIP of the latest "
-                "release or one command, at an address that stays the same.")
-    if key.startswith("platforms/") and relative.stem != "index":
-        return (f"{title}: where the BIOS files go, the command that installs them, the pack, "
-                "and every file by system with its hashes.")
-    if key.startswith("emulators/") and relative.stem != "index":
-        # Pinned only when the profile names the revision it was read at:
-        # 48 pages without one called themselves source-pinned.
-        about = PAGE_DATA.get(key, {}).get("about", {})
-        pinned = any(a.get("version") for a in (about if isinstance(about, list) else [about]))
-        kind = "source-pinned emulator firmware profile" if pinned else "emulator firmware profile"
-        if not PAGE_DATA.get(key, {}).get("hasPart"):
-            # 152 cores that load no file announced paths and hashes.
-            kind = kind.replace(" firmware", "")
-            trees = (" The data directories it reads are listed."
-                     if "\n## Data directories\n" in markdown else "")
-            return f"{title}: {kind}. No BIOS or firmware file is required.{trees}"
-        return f"{title}: {kind} with paths, hashes, requirements and validation behavior."
+        size = re.search(r"^- (.+ to download\b.*?)\.?$", markdown, re.M)
+        if size:
+            return _shorten(f"{title}: the BIOS pack of this setup, {_plain_markdown(size[1])}. "
+                            "The address stays the same and always gives the latest ZIP.", 155)
+        return _shorten(_first_paragraph(lead) or title, 155)
     if key.startswith("systems/") and relative.stem != "index":
-        return f"{title}: indexed firmware files, hashes, variants, provenance and platform or emulator usage."
+        return _system_description(markdown, browser)
+    if key.startswith("emulators/") and relative.stem != "index":
+        return _emulator_description(markdown, key, title, _first_paragraph(lead))
+    first = _first_paragraph(lead, minimum=35)
+    questions = [_plain_markdown(re.sub(r"\s*\{[^}]*\}\s*$", "", heading))
+                 for heading in re.findall(r"^## (.+\?)(?:[ \t]*\{[^}]*\})?[ \t]*$", markdown, re.M)]
+    if not first and len(questions) >= 3:
+        # A page of questions with no intro: its first paragraph is the
+        # answer to one of them ("Run the command with --dry-run").
+        return _shorten(f"{title}: {' '.join(questions)}", 155)
+    first = first or _first_paragraph(markdown, minimum=35)
+    if first:
+        return _shorten(first, 155)
+    return f"{title}: RetroBIOS source-traced retrogaming firmware reference."
 
-    paragraphs = re.split(r"\n\s*\n", markdown)
-    for paragraph in paragraphs:
+
+def _lead(markdown: str) -> str:
+    """The text a page opens with, before its first section, details
+    block or ignored section (the install box, the profile table)."""
+    return re.split(r"^(?:## |<details|<section)", markdown, maxsplit=1, flags=re.M)[0]
+
+
+def _emulator_description(markdown: str, key: str, title: str, intro: str) -> str:
+    """An emulator page by its intro sentence ("DuckStation emulates Sony
+    PlayStation. It picks the BIOS for your game's region: ..."), or by
+    its profile table when the profile names no system."""
+    notes = re.search(r"<summary>Technical notes</summary>\s*\n\n(.+?)(?:\n\n|$)", markdown, re.S)
+    if not intro and notes:
+        sentence = re.split(r"(?<=\.)\s", _plain_markdown(notes[1]), maxsplit=1)[0]
+        intro = f"{title}: {sentence[:1].lower()}{sentence[1:]}"
+    if not intro:
+        row = {name: _plain_markdown(value) for name, value in re.findall(
+            r"^\| (Type|Classification|Version) \| (.+?) \|$", markdown, re.M)}
+        kind = row.get("Classification") or row.get("Type") or "emulator"
+        version = row.get("Version", "")
+        known = f", version {version}" if version and version[0].isdigit() else ""
+        intro = f"{title}: {kind.lower()}{known}."
+    elif title not in intro:
+        # "It reads 1 file": the profile names no system to open on.
+        intro = f"{title}: {intro[:1].lower()}{intro[1:]}"
+    # An alias page sends the reader to the core whose files it shares.
+    if PAGE_DATA.get(key, {}).get("hasPart") or "uses the same firmware as" in intro:
+        return _shorten(intro, 155)
+    needs = "It needs no BIOS or firmware file."
+    if "\n## Data directories" in markdown:
+        needs = "It needs no BIOS or firmware file, only the data folders listed."
+    return _shorten(f"{intro} {needs}", 155)
+
+
+# Lines a page opens with that say where it sits, not what it holds.
+_PLACE_LINES = ("Part of ", "This part holds ", "On a card, ")
+
+
+def _first_paragraph(markdown: str, minimum: int = 1) -> str:
+    """The first paragraph of prose of a page body, as plain text: no
+    heading, table, list, fence, admonition or HTML block, and none that
+    only says where the page sits."""
+    for paragraph in re.split(r"\n\s*\n", markdown):
         stripped = paragraph.strip()
         if (
             not stripped
-            or stripped.startswith(("#", "|", "```", "???", ":::", "<", "- ", "* "))
+            or stripped.startswith(("#", "|", "```", "???", ":::", "<", "- ", "* ", "import "))
         ):
             continue
         plain = _plain_markdown(stripped)
+        if plain.startswith(_PLACE_LINES):
+            continue
         # A paragraph that ends on a colon introduces what follows: alone,
         # it describes nothing ("One file needs no clone and no local setup:").
-        if len(plain) >= 35 and not plain.endswith(":"):
-            return _shorten(plain)
-    return f"{title}: RetroBIOS source-traced retrogaming firmware reference."
+        if len(plain) >= minimum and not plain.endswith(":"):
+            return plain
+    return ""
+
+
+# Section headings of a system page that are not a console.
+_NOT_A_CONSOLE = {"Next steps", "Files", "Other files"}
+_CARD_TITLE = re.compile(r'class="rb-file-title"[^>]*><code>([^<]+)</code>')
+
+
+def _system_description(markdown: str, browser: str) -> str:
+    """A system page by what it holds: a manufacturer page by its consoles,
+    a console page by its "Start with" line, else by its first files."""
+    consoles = [
+        _plain_markdown(re.sub(r"\s*\{[^}]*\}\s*$", "", heading))
+        for heading in re.findall(r"^## (.+?)[ \t]*$", markdown, re.M)
+    ]
+    consoles = [name for name in consoles if name and name not in _NOT_A_CONSOLE]
+    if len(consoles) > 1:
+        shown = consoles if len(consoles) <= 4 else consoles[:3] + [f"{len(consoles) - 3} more"]
+        return _shorten(f"{browser} for {_said_as_list(shown)}, one card per file with its "
+                        "hashes and the emulators that read it.", 155)
+    start = re.search(r"^\*\*Start with\*\*(?P<line>.*)$(?P<list>(?:\n+- .*)*)", markdown, re.M)
+    if start:
+        # "Start with the files of your machine:" introduces one line per machine.
+        machines = [_plain_markdown(item) for item in re.findall(r"^- (.+)$", start["list"], re.M)]
+        text = _plain_markdown(start["line"]).lstrip(": ")
+        said = "; ".join(machines) if machines and text.endswith(":") else text
+        return _shorten(f"{browser}. Start with {said}", 155)
+    names = list(dict.fromkeys(html.unescape(name) for name in _CARD_TITLE.findall(markdown)))
+    if names:
+        shown = names if len(names) <= 3 else names[:3] + [f"{len(names) - 3} more"]
+        return _shorten(f"{browser}: {_said_as_list(shown)}, with their hashes and the "
+                        "emulators that read them.", 155)
+    return _shorten(f"{browser}, one card per file with its hashes and the emulators "
+                    "that read it.", 155)
 
 
 # Structured data a page generator knows beyond its text, by page path
@@ -2555,15 +2650,25 @@ LEVELS = {
 # - A guide behind the first two levels (reference, options, contributing)
 #   names everything a reader types, and ranks after the page that answers.
 # - A launcher, an alias or a frozen copy answers a name after the emulator.
-SEARCH_WEIGHT = {"start": 10, "setup": 1.5, "reference": 0.5, "contribute": 0.5}
+# - A part of a split page (a console's files, 5 of 9) holds cards, each found
+#   by its own heading, and ranks after the page that answers the question.
+SEARCH_WEIGHT = {"start": 10, "setup": 1.5, "reference": 0.5, "contribute": 0.5, "part": 0.5}
 SYSTEM_PAGE_WEIGHT = 5
 DEEP_GUIDE_WEIGHT = 0.5
 SEARCH_DEMOTED: set[str] = set()
+# A tool page a reader reaches by a task, not its name: "check my dump",
+# "md5 check" found emulator pages and never the page that checks a file.
+SEARCH_WEIGHT_OF_PAGE = {"files/index.md": 2}
 DEMOTED_WEIGHT = 0.5
 
 
 def search_weight(relative: Path, level: str) -> float | None:
-    """The search weight of a page, None for the default."""
+    """The search weight of a page, None for the default. A part page
+    states its own in its front matter: search_weight(path, "part")."""
+    if level == "part":
+        return SEARCH_WEIGHT["part"]
+    if relative.as_posix() in SEARCH_WEIGHT_OF_PAGE:
+        return SEARCH_WEIGHT_OF_PAGE[relative.as_posix()]
     if relative.as_posix() in SEARCH_DEMOTED:
         return DEMOTED_WEIGHT
     if relative.parts[0] == "systems":
@@ -2643,7 +2748,7 @@ def decorate_markdown_pages(docs: Path) -> dict[str, str]:
 
         title = _page_title(markdown, relative)
         browser_title = _browser_title(relative, title)
-        description = _page_description(markdown, relative, title)
+        description = str(authored.get("description") or _page_description(markdown, relative, title))
         if relative.name == "index.md":
             page_path = "" if len(relative.parts) == 1 else "/".join(relative.parts[:-1]) + "/"
         else:
@@ -2675,6 +2780,7 @@ def decorate_markdown_pages(docs: Path) -> dict[str, str]:
             search=authored.get("search") != "exclude",
             logo=str(authored.get("logo") or ""),
             parent=authored.get("parent"),
+            authored=authored,
         )
         write_decorated(docs / target, text)
         # One file per page: a page that gained or lost its components
@@ -8855,7 +8961,7 @@ def generate_nav(
         ],
         "reference": [
             # Find a file first: the one tool a reader comes to with a file in hand.
-            (5, {"Find a file": "files/index.md"}, "Checking files"),
+            (5, {"Find or check a file": "files/index.md"}, "Checking files"),
             (20, {"What the packs do not hold": "gaps.md"}, "Checking files"),
             (30, {"Cores by platform": "cross-reference.md"}, "Checking files"),
             (40, {"Dump provenance": "provenance.md"}, "Checking files"),

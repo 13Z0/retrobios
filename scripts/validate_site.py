@@ -25,6 +25,7 @@ from urllib.parse import unquote, urlsplit
 class Page:
     path: Path
     title: str = ""
+    h1: str = ""
     lang: str = ""
     descriptions: list[str] = field(default_factory=list)
     canonical: list[str] = field(default_factory=list)
@@ -66,6 +67,11 @@ OVER_ELEMENT_BUDGET: dict[str, str] = {}
 MAX_PAGEFIND_CHUNK_BYTES = 150_000
 MAX_PAGEFIND_META_BYTES = 50_000
 MAX_PAGEFIND_TOTAL_BYTES = 12_000_000
+# Pages whose description is one text once the page's own name is taken
+# out. 707 pages shared five templates ("X: source-pinned emulator
+# firmware profile with paths, hashes..."), and a search engine showed the
+# same line under every result.
+MAX_SHARED_DESCRIPTION = 10
 
 
 # Text inside these is shown as written, so markup there is not a leftover.
@@ -78,6 +84,8 @@ class _PageParser(HTMLParser):
         self.page = Page(path)
         self._title_depth = 0
         self._title_parts: list[str] = []
+        self._h1_depth = 0
+        self._h1_parts: list[str] = []
         self._jsonld_depth = 0
         self._jsonld_parts: list[str] = []
         self._literal_depth = 0
@@ -108,6 +116,7 @@ class _PageParser(HTMLParser):
             self.page.descriptions.append(data.get("content", "").strip())
         elif tag == "h1":
             self.page.h1_count += 1
+            self._h1_depth += 1
         elif tag == "main":
             self.page.main_count += 1
         elif tag == "img" and "alt" not in data:
@@ -148,6 +157,8 @@ class _PageParser(HTMLParser):
             self._header_parts = None
         if tag == "title":
             self._title_depth -= 1
+        elif tag == "h1" and self._h1_depth:
+            self._h1_depth -= 1
         elif tag == "script" and self._jsonld_depth:
             self.page.jsonld.append("".join(self._jsonld_parts).strip())
             self._jsonld_depth -= 1
@@ -158,6 +169,8 @@ class _PageParser(HTMLParser):
             self._header_parts.append(data)
         if self._title_depth:
             self._title_parts.append(data)
+        if self._h1_depth:
+            self._h1_parts.append(data)
         if self._jsonld_depth:
             self._jsonld_parts.append(data)
         if not self._literal_depth and "**" in data:
@@ -166,6 +179,7 @@ class _PageParser(HTMLParser):
     def close(self) -> None:
         super().close()
         self.page.title = "".join(self._title_parts).strip()
+        self.page.h1 = re.sub(r"\s+", " ", "".join(self._h1_parts)).strip()
 
 
 def _parse_page(path: Path) -> Page:
@@ -322,6 +336,31 @@ def _check_pages(
     return issues
 
 
+def description_template(page: Page, site_name: str = "RetroBIOS") -> str:
+    """A page's description with its own names taken out: its h1 and its
+    window title. What is left is the text it shares with its template."""
+    text = page.descriptions[0] if page.descriptions else ""
+    names = {page.h1, page.title.removesuffix(f" - {site_name}").strip()}
+    for name in sorted(filter(None, names), key=len, reverse=True):
+        text = text.replace(name, "")
+    return re.sub(r"\s+", " ", text).strip()
+
+
+def _check_description_templates(pages: dict, site: Path) -> list[str]:
+    """No more than MAX_SHARED_DESCRIPTION pages share one description
+    once their names are taken out."""
+    shared: dict[str, list[Path]] = defaultdict(list)
+    for path, page in pages.items():
+        if path.relative_to(site) != Path("404.html") and page.descriptions:
+            shared[description_template(page)].append(path)
+    return [
+        f"{len(paths)} pages share the description {text!r} after their name: "
+        + ", ".join(str(path.relative_to(site)) for path in paths[:3])
+        for text, paths in shared.items()
+        if len(paths) > MAX_SHARED_DESCRIPTION
+    ]
+
+
 def _check_links(pages: dict, site: Path, base_path: str) -> list[str]:
     """Every local link and fragment resolves to something on disk."""
     issues: list[str] = []
@@ -422,6 +461,7 @@ def validate_site(
                 rendered = ", ".join(str(path.relative_to(site)) for path in paths[:5])
                 issues.append(f"duplicate {label} {value!r}: {rendered}")
 
+    issues.extend(_check_description_templates(content, site))
     issues.extend(_check_links(pages, site, base_path))
     issues.extend(_check_pagefind(site))
     if platforms_dir is not None:

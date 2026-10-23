@@ -3,19 +3,36 @@
 
 Runs measure.mjs against a served build, through the site's own search box,
 and checks each query's expected pages against the rank it must reach: the
-first result, or the first three.
+first result, or the first three. Exits 1 when a query misses.
 
+    python website/tools/search_gate.py --site-dir website/dist
     python website/tools/search_gate.py http://127.0.0.1:4321/retrobios/
+
+With --site-dir the build is served by serve.mjs (as GitHub Pages serves it)
+on a free port for the run. The browser driver is playwright-core in
+website/node_modules (npm install --no-save --prefix website playwright-core)
+and Chrome at /usr/bin/google-chrome, or CHROME_PATH.
 """
 
 from __future__ import annotations
 
+import argparse
 import json
+import socket
 import subprocess
 import sys
+import time
+import urllib.error
+import urllib.request
+from collections.abc import Iterator
+from contextlib import contextmanager
 from pathlib import Path
 
 TOOLS = Path(__file__).resolve().parent
+BASE = "/retrobios/"
+# What the home page transfers on a phone, everything it loads before a
+# visitor does anything (gzip, as GitHub Pages serves it).
+HOME_BUDGET_KB = 80
 
 # Query: (pages that answer it, as path prefixes under the site, and the rank one
 # of them must reach). An emulator name must find the emulator itself first,
@@ -29,23 +46,38 @@ QUERIES: dict[str, tuple[tuple[str, ...], int]] = {
     # The file's card on its system page, where it is downloaded. "systems/sony"
     # holds the manufacturer page and the console's own (systems/sony-playstation/).
     "scph5501": (("systems/sony",), 3),
-    "md5": (("wiki/verification-modes/",), 1),
+    # How a setup checks a hash, or the page that checks one.
+    "md5": (("wiki/verification-modes/", "files/"), 1),
     "where do bios files go": (("which-pack/", "wiki/first-install/"), 1),
     "dolphin": (("emulators/dolphin/",), 1),
     "duckstation": (("emulators/duckstation/",), 1),
-    # A console and "bios": the console's page, before any setup's list for it.
-    "playstation bios": (("systems/sony",), 3),
+    # A console and "bios": the console's own page first, before any setup's
+    # list for it or a part of its manufacturer's page.
+    "playstation bios": (("systems/sony-playstation/",), 1),
     "dreamcast bios": (("systems/sega",), 3),
     "neo geo bios": (("systems/snk",), 3),
     "wonderswan color": (("systems/bandai",), 3),
     # The platforms' own names for a console (psx, dc, gba), a search field
-    # of its page.
+    # of its page. Flycast's page names dc_boot.bin and where it goes.
     "psx bios": (("systems/sony",), 3),
-    "dc bios missing": (("systems/sega",), 3),
+    "dc bios missing": (("systems/sega", "emulators/flycast/"), 3),
     "gba bios": (("systems/nintendo",), 3),
+    # The words an emulator prints, and the page that answers them.
     "bios not found": (("wiki/troubleshooting/",), 3),
+    "please insert playstation cd-rom": (("wiki/troubleshooting/",), 3),
     "offline install": (("wiki/installer/",), 3),
-    "which mame version": (("wiki/technical-faq/",), 3),
+    # The table of versions, or the FAQ answer headed with the question,
+    # which links it.
+    "which mame version": (("wiki/technical-faq/", "wiki/faq/"), 3),
+    # Checking a dump is what the Find a file page does.
+    "check my dump": (("files/",), 1),
+    "md5 check": (("files/",), 1),
+    # A tool author's words: the data reference or the installer's.
+    "manifest": (("data/", "wiki/installer/"), 3),
+    "events": (("data/", "wiki/installer/"), 3),
+    "exit code": (("data/", "wiki/installer/"), 3),
+    "rate limit": (("data/", "wiki/installer/"), 3),
+    "ios": (("wiki/faq/",), 3),
     # A device name: the guide of the handhelds that run it.
     "r36s": (("platforms/", "which-pack/"), 3),
     "steam deck": (("platforms/emudeck/", "platforms/retrodeck/", "which-pack/"), 1),
@@ -53,13 +85,44 @@ QUERIES: dict[str, tuple[tuple[str, ...], int]] = {
 }
 
 
-def main() -> int:
-    base = sys.argv[1] if len(sys.argv) > 1 else "http://127.0.0.1:4321/retrobios/"
+def _free_port() -> int:
+    with socket.socket() as probe:
+        probe.bind(("127.0.0.1", 0))
+        return int(probe.getsockname()[1])
+
+
+@contextmanager
+def served(site_dir: Path) -> Iterator[str]:
+    """The build served by serve.mjs on a free port, for the run."""
+    port = _free_port()
+    server = subprocess.Popen(["node", str(TOOLS / "serve.mjs"), str(site_dir), str(port)])
+    url = f"http://127.0.0.1:{port}{BASE}"
+    try:
+        for _ in range(100):
+            try:
+                with urllib.request.urlopen(url, timeout=2):
+                    break
+            except (urllib.error.URLError, ConnectionError):
+                if server.poll() is not None:
+                    raise RuntimeError(f"serve.mjs exited with {server.returncode}") from None
+                time.sleep(0.1)
+        else:
+            raise RuntimeError(f"serve.mjs did not answer on {url}")
+        yield url
+    finally:
+        server.terminate()
+        server.wait(timeout=10)
+
+
+def run_gate(base: str) -> int:
     root = "/" + base.split("/", 3)[3]
     run = subprocess.run(
         ["node", str(TOOLS / "measure.mjs"), "search", base, "starlight-ui", *QUERIES],
-        capture_output=True, text=True, check=True,
+        capture_output=True, text=True, check=False,
     )
+    if run.returncode:
+        print(run.stderr.strip() or f"measure.mjs exited with {run.returncode}", file=sys.stderr)
+        return 1
     answered = 0
     for line in run.stdout.splitlines():
         result = json.loads(line)
@@ -70,10 +133,38 @@ def main() -> int:
         top = [entry.split(" | ") for entry in result["top"][:3]]
         hit = any(href[len(root):].startswith(pages) for _title, href in top[:rank])
         answered += hit
-        titles = "; ".join(title for title, _href in top)
-        print(f"{'ok  ' if hit else 'MISS'} {result['query']!r} (top {rank}): {titles}")
+        shown = "; ".join(f"{title} ({href[len(root):] or '/'})" for title, href in top)
+        print(f"{'ok  ' if hit else 'MISS'} {result['query']!r} (top {rank}): {shown}")
     print(f"{answered}/{len(QUERIES)} queries answered")
-    return 0 if answered == len(QUERIES) else 1
+    home = home_weight(base)
+    print(f"{'ok  ' if home <= HOME_BUDGET_KB else 'OVER'} home: {home:.1f} KB "
+          f"transferred at 390 px (budget {HOME_BUDGET_KB} KB)")
+    return 0 if answered == len(QUERIES) and home <= HOME_BUDGET_KB else 1
+
+
+def home_weight(base: str) -> float:
+    """The home page's transfer at 390 px, once the network is idle."""
+    run = subprocess.run(
+        ["node", str(TOOLS / "measure.mjs"), "weight", base, ""],
+        capture_output=True, text=True, check=True,
+    )
+    return float(json.loads(run.stdout.splitlines()[0])["total_kb"])
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument("url", nargs="?", default="http://127.0.0.1:4321/retrobios/",
+                        help="a served build, under /retrobios/ (default: %(default)s)")
+    parser.add_argument("--site-dir", type=Path,
+                        help="serve this build for the run instead of reading URL")
+    args = parser.parse_args()
+    if args.site_dir is None:
+        return run_gate(args.url)
+    if not (args.site_dir / "pagefind").is_dir():
+        print(f"{args.site_dir}: no built site with a search index", file=sys.stderr)
+        return 1
+    with served(args.site_dir) as url:
+        return run_gate(url)
 
 
 if __name__ == "__main__":
