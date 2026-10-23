@@ -62,7 +62,7 @@ RB_MAPPER_NEEDED="${RB_MAPPER_NEEDED:-1}"
 RB_PAD="${RB_PAD:-}"
 RB_RUNTIME="python_3.11"
 RB_RELEASES="github.com/Abdess/retrobios/releases/latest"
-RB_PC_ROUTE="On a computer, with this SD card mounted, the same installer fills the card: install.py --platform NAME --dest BIOS-FOLDER-ON-THE-CARD. Instructions: abdess.github.io/retrobios/wiki/installer"
+RB_PC_ROUTE="On a computer, with this SD card mounted, the same installer fills the card: install.py finds a muOS, Knulli or ROCKNIX card by itself, and any other with install.py --platform NAME --dest BIOS-FOLDER-ON-THE-CARD. Instructions: abdess.github.io/retrobios/wiki/installer"
 RB_PYTHON="${RB_PYTHON:-}"
 RB_PYTHONHOME="${RB_PYTHONHOME:-}"
 RB_PYTHON_PROBLEM="${RB_PYTHON_PROBLEM:-}"
@@ -284,17 +284,17 @@ rb_online() {
 }
 
 # The system and BIOS folder install.py finds here, read without a network:
-# detection is local, and the run stops where the file list would download.
-# That download is sent to a loopback port nothing listens on, so it fails
-# at once instead of retrying three times 30 s on a network already found
-# missing.
+# detection is local, and RETROBIOS_INSTALL_OFFLINE stops the run at once
+# where the file list would download (reason offline), instead of three
+# tries of 30 s on a network already found missing. Set for this run only:
+# the interface's own run reads a pack, which makes no request either.
 rb_detect() {
   RB_PLATFORM=""
   RB_PLATFORM_NAME=""
   RB_BIOS_DIR=""
   mkdir -p "$RB_STATE"
   rb_pycmd
-  RETROBIOS_BASE_URL="http://127.0.0.1:9" rb_bounded "$RB_DETECT_LIMIT" \
+  RETROBIOS_INSTALL_OFFLINE=1 rb_bounded "$RB_DETECT_LIMIT" \
     "${RB_PYCMD[@]}" "$RB_INSTALL" --check --events > "$RB_STATE/detect.jsonl" 2>> "$RB_LOG"
   [ $? = 124 ] && rb_say "the detection run took over $RB_DETECT_LIMIT s and was stopped"
   local kind a b c
@@ -412,6 +412,36 @@ rb_terminal_app() {
     RB_TERMAPP=(xterm -fullscreen -e)
   else
     return 1
+  fi
+}
+
+# The only pad SDL may show muxterm: vendor 0, product 1, which no device
+# can carry. SDL builds a GUID from the ids only when the vendor is not 0,
+# else from the name, and reads a name GUID back as vendor 0 and product 0
+# (SDL_CreateJoystickGUID and SDL_GetJoystickGUIDInfo, SDL_joystick.c), so
+# a pad plugged in later is hidden too. The first list, 0001:0001, is the
+# id gpio-keys gives the H700 pad on muOS before 2026-08-28: every button
+# acted twice there.
+RB_SDL_NO_PAD="0x0000/0x0001"
+
+# muxterm, muOS's terminal, as the terminal app. It reads the pad itself
+# (Y as Space, where the interface reads Y as Options), so with a mapper it
+# is told to leave the pad alone and each button is sent once. muxterm also
+# keeps PgUp and PgDn for its scrollback and never writes them to the
+# interface (MustardOS/terminal input.c): L1 and R1 send nothing there,
+# rather than scroll the interface out of sight. Run after rb_open_log.
+rb_muxterm() {
+  if [ -z "${RB_MAPPER:-}" ]; then
+    RB_TERMAPP=("$1" --gl --)
+    RB_PAD="muxterm"
+    return 0
+  fi
+  RB_TERMAPP=(env "SDL_GAMECONTROLLER_IGNORE_DEVICES_EXCEPT=$RB_SDL_NO_PAD" "$1" --gl --)
+  if awk '$1 == "l1" || $1 == "r1" { print $1 " = \\\""; next } { print }' \
+      "$RB_GPTK" > "$RB_STATE/muxterm.gptk" 2>> "$RB_LOG"; then
+    RB_GPTK="$RB_STATE/muxterm.gptk"
+  else
+    rb_say "$RB_STATE/muxterm.gptk cannot be written: L1 and R1 scroll muxterm"
   fi
 }
 
@@ -581,10 +611,13 @@ rb_vt_leave() {
 # wrote. So the target is a sentinel, a process this launcher owns whose
 # command line alone carries the token: when it dies, the launcher asks the
 # interface to stop, and the interface gives a running install its 2 s.
+# It also ends once the launcher is gone, which a SIGKILL leaves no trap
+# to say.
 rb_stop_start() {
   RB_STOP_TOKEN="retrobios-stop-${$}x"
-  bash -c 'exec {f}<> <(:); while :; do read -r -t 3600 -u "$f" _; done' \
-    "$RB_STOP_TOKEN" > /dev/null 2>&1 &
+  # shellcheck disable=SC2016 # expanded by the inner bash
+  bash -c 'exec {f}<> <(:); while [ -d "/proc/$1" ]; do read -r -t 5 -u "$f" _; done' \
+    "$RB_STOP_TOKEN" "$$" > /dev/null 2>&1 &
   RB_STOP_PID=$!
 }
 
@@ -628,8 +661,26 @@ rb_mapper_stop() {
   rb_stop_end
 }
 
+# The mapper's own name, gptokeyb or gptokeyb2, past sudo and its options.
+rb_mapper_name() {
+  local word
+  # shellcheck disable=SC2086 # RB_MAPPER is a command and its flags
+  for word in $RB_MAPPER; do
+    case "$word" in
+      sudo|-*|*=*) ;;
+      *) printf '%s\n' "${word##*/}"; return 0 ;;
+    esac
+  done
+  printf 'gptokeyb\n'
+}
+
+# "run" when the mapper stopped during the run: the interface just went.
 rb_mapper_text() {
-  printf '%s\n' "The controller cannot be read: gptokeyb, which turns the buttons into keys, stopped as soon as it started. What it said is in $RB_LOG. $RB_PC_ROUTE"
+  if [ "${1:-}" = "run" ]; then
+    printf '%s\n' "The controller stopped responding: $(rb_mapper_name), which turns the buttons into keys, stopped during the run, so RetroBIOS closed. What it said is in $RB_LOG. Start RetroBIOS again."
+    return 0
+  fi
+  printf '%s\n' "The controller cannot be read: $(rb_mapper_name), which turns the buttons into keys, stopped as soon as it started. What it said is in $RB_LOG. $RB_PC_ROUTE"
 }
 
 # --- Messages -------------------------------------------------------------
@@ -816,6 +867,10 @@ rb_here() {
     if [ "${RB_FALLBACK:-0}" != "1" ]; then
       rb_message "$(tail -n 1 "$RB_STATE/tui.err") The messages are in $RB_LOG."
     fi
+  elif [ "$RB_STOPPED" = "mapper" ]; then
+    # The interface disappeared: why, for RB_DEAD_WAIT seconds, since no
+    # button is left to close it.
+    rb_message "$(rb_mapper_text run)"
   elif [ -n "$RB_STOPPED" ] || [ "$status" -ge 128 ]; then
     # Ended by Start + Select or a signal: the player asked to leave, and no
     # button may be left to close a message.
@@ -891,6 +946,9 @@ rb_launch() {
     printf '%s\n' "$RB_STATE_PROBLEM" >&2
     if rb_is_console "$RB_CONSOLE"; then
       printf '\r\n%s\r\n' "$RB_STATE_PROBLEM" > "$RB_CONSOLE" 2>/dev/null
+      # No mapper runs yet to close it with a button: left in view a while
+      # before the menu draws over it.
+      rb_nap "$RB_DEAD_WAIT"
     fi
     return 1
   fi
@@ -898,6 +956,10 @@ rb_launch() {
   export RB_DIR RB_INSTALL RB_EVENTS RB_STATE RB_LOG RB_PACK_PATH RB_FALLBACK
   export RB_OTHER_CARDS RB_BIOS_DEST RB_STOP_GRACE RB_DEAD_WAIT RB_DETECT_LIMIT
   export RB_PYTHON RB_PYTHONHOME RB_PYTHON_PROBLEM RB_MESSAGE_WAIT RB_ROUTE_TABLE
+  # A mapper that runs but never opens the pad (one SDL has no mapping for)
+  # leaves no button to move the interface or end the run: it closes by
+  # itself after this many seconds on its first screen with nothing pressed.
+  export RETROBIOS_IDLE_EXIT="${RETROBIOS_IDLE_EXIT:-300}"
   # The interface names the buttons of this route in its hints.
   if [ -z "$RB_PAD" ] && [ -n "${RB_MAPPER:-}" ]; then
     RB_PAD="gptokeyb"
@@ -931,9 +993,10 @@ if [ "${BASH_SOURCE[0]}" = "$0" ]; then
   case "${1:-}" in
     here)
       shift
-      # The terminal app closed or the launcher signalled: the interface
-      # gets its time to stop.
-      trap 'rb_ui_stop; exit 143' TERM HUP
+      # The terminal app closed (muxterm's Menu) or the launcher signalled:
+      # the interface gets its time to stop, and the status says the run
+      # ended, so the launcher opens no other route after it.
+      trap 'rb_ui_stop; printf "143\n" > "$RB_STATE/status"; exit 143' TERM HUP
       rb_here "$@"
       exit $?
       ;;

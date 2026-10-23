@@ -1061,7 +1061,7 @@ muxterm, as the muOS app does.
 | B, Select | Back, and quit on the first screen |
 | X | Tick or untick a system |
 | Y | Options |
-| L1, R1 | Page up, page down |
+| L1, R1 | Page up, page down (not in muxterm, which keeps them for its own scrollback) |
 | Hold Select, then Start | Quit at once (PortMaster port, muOS, Tools) |
 
 Start pressed first also chooses the line in focus: hold Select first. A
@@ -1070,6 +1070,11 @@ what it wrote. On muOS without PortMaster, muxterm reads the pad itself: Y
 ticks a system, Select shows its keyboard, and Menu quits. L1 and R1 do not
 page there: muxterm keeps PgUp and PgDn for its own scrollback, so a list
 moves with the D-pad.
+
+Each launcher also sets `RETROBIOS_IDLE_EXIT` to 300: with no button pressed
+on its first screen for 5 minutes, the interface closes by itself. A pad the
+system has no mapping for sends nothing, and would otherwise leave the
+console stuck on the interface with no way out.
 
 Each launcher tells the interface which buttons reach it, in
 `RETROBIOS_PAD`, so the hints can name them:
@@ -1126,9 +1131,10 @@ names each route it tried, and `log.prev.txt` keeps the run before.
 
 **From a computer.** Onion, MinUI, NextUI, Allium, GarlicOS and the Switch
 have no Python 3 to run the installer. Put the card in a computer and run
-the [one-line command](#one-line) there with
-`--platform <platform> --dest <BIOS folder on the card>`. This works for
-every system above too.
+the [one-line command](#one-line) there: it finds a mounted Onion,
+spruceOS, MinUI, muOS, Knulli or ROCKNIX card by itself. For a card it does
+not recognise, add `--platform <platform> --dest <BIOS folder on the card>`.
+This works for every system above too.
 
 ## Where the files come from
 

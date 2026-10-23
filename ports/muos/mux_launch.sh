@@ -46,17 +46,9 @@ if [ -x "$PM_DIR/gptokeyb2" ]; then
 fi
 if [ -x "$MUXTERM" ]; then
   RB_ROUTES="app"
-  if [ -n "${RB_MAPPER:-}" ]; then
-    # muxterm reads the pad itself and sends Y as Space (MustardOS/terminal
-    # input.c), where the interface reads Y as Options. The SDL hint allows
-    # only vendor and product 0001:0001, which no pad carries, so muxterm
-    # leaves the pad to gptokeyb2 and every button is sent once.
-    RB_TERMAPP=(env SDL_GAMECONTROLLER_IGNORE_DEVICES_EXCEPT=0x0001/0x0001 "$MUXTERM" --gl --)
-  else
-    # No gptokeyb2: muxterm's own buttons are all there is.
-    RB_TERMAPP=("$MUXTERM" --gl --)
-    RB_PAD="muxterm"
-  fi
+  # With gptokeyb2, muxterm leaves the pad to it. Without, muxterm's own
+  # buttons are all there is.
+  rb_muxterm "$MUXTERM"
 else
   RB_ROUTES="vt"
   RB_CONSOLE="${RB_CONSOLE:-/dev/tty0}"
