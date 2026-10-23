@@ -642,6 +642,26 @@ class Flow(unittest.TestCase):
         self.assertEqual(effects, [("fetch", "retroarch")])
         self.assertEqual(state.dest, root)
 
+    def test_a_holds_no_bios_folder_root_never_takes_a(self):
+        """With no usual folder the browser opens at HOME, on Use this
+        folder: A five times installed the BIOS files into ~. At HOME or a
+        drive's root, A goes into the first folder instead."""
+        home = Path(tempfile.mkdtemp(dir=REPO_ROOT / "tmp"))
+        self.addCleanup(shutil.rmtree, home, True)
+        (home / "Games").mkdir()
+        state = install.TuiState(os_type="linux", home=home)
+        state.platform = "retroarch"
+        state.stack = ["folder"]
+        state.folder_default = None
+        with mock.patch.object(install, "_mounted_cards", return_value=[]):
+            install._browse_to(state, home)
+            self.assertEqual(state.browse_rows[state.focus["browse"]].label, "Games/")
+            install._browse_to(state, home / "Games")
+            self.assertEqual(state.browse_rows[state.focus["browse"]].label,
+                             "Use this folder")
+            install._browse_to(state, Path(home.anchor))
+            self.assertNotEqual(state.browse_rows[state.focus["browse"]].action, "use")
+
     def test_cards_are_listed_first(self):
         card = Path(tempfile.mkdtemp(dir=REPO_ROOT / "tmp"))
         self.addCleanup(shutil.rmtree, card, True)

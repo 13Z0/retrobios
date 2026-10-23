@@ -10924,6 +10924,12 @@ def _browse_to(state: TuiState, folder: Path | None, came_from: Path | None = No
     state.browse_dir = folder
     state.browse_rows, state.status = _browse_rows(folder, state.browse_for == "from")
     focus = 0
+    if (folder is not None and state.browse_for != "from"
+            and folder in (state.home, Path(folder.anchor))):
+        # No frontend reads its BIOS files from HOME or a drive's root: A
+        # pressed through the screens installed into ~. A goes deeper there.
+        focus = next((index for index, row in enumerate(state.browse_rows)
+                      if row.action == "dir" and row.value != folder.parent), 0)
     for index, row in enumerate(state.browse_rows):
         if came_from is not None and row.action == "dir" and row.value == came_from:
             focus = index

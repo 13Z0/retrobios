@@ -11,7 +11,7 @@
 
     $ErrorActionPreference = "Stop"
     $defaultInstallUrl = "https://raw.githubusercontent.com/Abdess/retrobios/main/install.py"
-    $defaultInstallSha256 = "04070f071adf988291854cf4ad8fb6e7a34f8044cfbcb710ba660863c2c6b19e"
+    $defaultInstallSha256 = "23f334efb9e37ba1c2542b8599db7af6e67dfd5e0061d39cb507765f2594bd45"
     $maximumInstallerBytes = 2MB
     $installerExit = 0
     $installer = if ($PSScriptRoot) { Join-Path $PSScriptRoot "install.py" } else { $null }
