@@ -1,18 +1,31 @@
 emulator: "YabaSanshiro"
-type: libretro
+type: standalone + libretro
 core_classification: official_port
-source: "https://github.com/libretro/yabause/tree/yabasanshiro"
+source:
+  libretro: "https://github.com/libretro/yabause/tree/yabasanshiro"
+  standalone: "https://github.com/sydarn/yabause/tree/pi4-update"
 upstream: "https://github.com/devmiyax/yabause"
-profiled_date: "2026-03-25"
-source_commit: "09ed8e5b2e97e7a848ea2514545c34c7b809e399"
-core_version: "v2.6.8"
+profiled_date: "2026-10-24"
+source_commit:
+  libretro: "09ed8e5b2e97e7a848ea2514545c34c7b809e399"
+  standalone: "a40dace1ae0af3ebd45848549fdf396f40e3930f"
+core_version:
+  libretro: "v2.6.8"
+  standalone: "1.11.beta3"
 display_name: "Sega - Saturn (YabaSanshiro)"
 cores:
   - yabasanshiro
   - "yabasanshiro-2"
   - "yabasanshiroSA"
+  - "yabasanshiro-sa"
 systems:
   - sega-saturn
+
+data_root:
+  linux:
+    path: "~/.yabasanshiro"
+    source_ref: "yabause/src/retro_arena/main.cpp:292-301"
+    note: "Created at startup. Holds backup.bin, keymapv2.json, the per-game settings files, save states and screenshots. No firmware is read from it."
 
 notes: |
   YabaSanshiro is a Sega Saturn emulator by devmiyax, forked from Yabause.
@@ -33,9 +46,32 @@ notes: |
   BIOS loading: retro_load_game() at yabause/src/libretro/libretro.c:1048-1071.
   Core load: LoadBios() at yabause/src/memory.c:1353-1356, T123Load() at yabause/src/memory.h:219-289.
 
+  Standalone: the retro_arena SDL2 front end of the sydarn/yabause
+  pi4-update branch, built with -DYAB_PORTS=retro_arena. It prints version
+  1.11.beta3 (yabause/CMakeLists.txt:15-18, yabause/src/config.h.in:5). It
+  opens a BIOS only at the path given with -b or --bios, under any name.
+  Without it biospath stays NULL and the core runs its HLE BIOS
+  (yabause/src/retro_arena/main.cpp:161, yabause/src/retro_arena/main.cpp:230-234,
+  yabause/src/retro_arena/main.cpp:325-328, yabause/src/yabause.c:373-388).
+  The image is read through T123Load, which truncates a file above 512 KiB
+  and checks nothing else (yabause/src/memory.c:1400-1403,
+  yabause/src/memory.h:219-242). A -b path that cannot be read stops
+  YabauseInit. The MPEG card and ROM cartridge paths stay empty, so no
+  other firmware is read.
+
+  ROCKNIX passes -b with the first of saturn_bios.bin, sega_101.bin,
+  mpr-17933.bin, mpr-18811-mx.ic1, mpr-19367-mx.ic1 and stvbios.zip found
+  under its BIOS folder when its use_hlebios setting is 1
+  (ROCKNIX projects/ROCKNIX/packages/emulators/standalone/yabasanshiro-sa/scripts/start_yabasanshiro.sh:80-91).
+  AmberELEC passes saturn_bios.bin from its BIOS folder unless HLE is
+  selected (AmberELEC packages/games/emulators/yabasanshiroSA/yabasanshiro.sh:63-70).
+  Both build the pi4-update tip and patch the home directory to
+  /storage/.config/yabasanshiro.
+
 files:
   - name: "saturn_bios.bin"
     system: sega-saturn
+    mode: libretro
     priority: 1
     required: true
     hle_fallback: true
@@ -44,6 +80,7 @@ files:
 
   - name: "sega_101.bin"
     system: sega-saturn
+    mode: libretro
     priority: 2
     required: false
     hle_fallback: true
@@ -52,6 +89,7 @@ files:
 
   - name: "mpr-17933.bin"
     system: sega-saturn
+    mode: libretro
     priority: 3
     required: false
     hle_fallback: true
