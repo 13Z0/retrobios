@@ -2842,17 +2842,30 @@ class TestDeliberatelyFrozenPin(TestBuildReport):
             source = profile.get("source")
             if isinstance(source, str):
                 by_source.setdefault(source.rstrip("/").lower(), []).append(name)
+        # A version a platform builds (built_by: mame0258, mame2014) is not
+        # the same program as the repository's other cores: mame2015-libretro
+        # builds mame2014, mess2015 and cdi2015, three system sets. And a
+        # live build can add a system its frozen revision lacked
+        # (advancemame's coh1002v, after advmame-1.4), so the frozen one's
+        # systems are a subset, not an equal set.
         pairs = 0
         for names in by_source.values():
-            frozen = [n for n in names if str(profiles[n].get("pin_frozen") or "").strip()]
-            live = [n for n in names if n not in frozen]
+            frozen = [
+                n for n in names
+                if str(profiles[n].get("pin_frozen") or "").strip()
+                and not profiles[n].get("built_by")
+            ]
+            live = [
+                n for n in names
+                if n not in frozen and not str(profiles[n].get("pin_frozen") or "").strip()
+            ]
             for old in frozen:
                 for new in live:
                     pairs += 1
                     with self.subTest(frozen=old, live=new):
-                        self.assertEqual(
-                            sorted(profiles[old].get("systems") or []),
-                            sorted(profiles[new].get("systems") or []),
+                        self.assertLessEqual(
+                            set(profiles[old].get("systems") or []),
+                            set(profiles[new].get("systems") or []),
                         )
                         if (old, new) not in builds_differ:
                             self.assertEqual(profiles[old].get("type"), profiles[new].get("type"))
@@ -4794,6 +4807,55 @@ class UpstreamVendoredAsASubmodule(unittest.TestCase):
     def test_an_upstream_the_port_does_not_vendor_keeps_its_tip(self):
         views = self._views({"src-pin": {"deps/zlib": "other"}, "src-head": {}})
         self.assertEqual(views[1].head, "nesbox-tip")
+
+
+class RealignReadsThePathAsWritten(unittest.TestCase):
+    """hatarib cites hatari/src/tos.c, a path of hatariB. When only
+    upstream_commit moved, realign stripped the hatari/ prefix, read
+    hatari/hatari's src/tos.c and proposed moving a correct citation."""
+
+    def test_an_unmoved_repository_carrying_the_path_keeps_it(self):
+        from unittest import mock  # noqa: PLC0415
+
+        fork = profile_sync.upstream.make_repo("github.com", "b", "hatariB")
+        up = profile_sync.upstream.make_repo("github.com", "hatari", "hatari")
+        trees = {(fork, "fork-pin"): {"hatari/src/tos.c"},
+                 (up, "old"): {"src/tos.c"}, (up, "new"): {"src/tos.c"}}
+
+        def fetch(repo, sha, path, *a, **k):
+            return ["line"] * 40 if path in trees.get((repo, sha), set()) else None
+
+        part = profile_sync.RefPart("hatari/src/tos.c", 10, 10, "10")
+        with mock.patch.object(profile_sync.upstream, "fetch_file", side_effect=fetch), \
+                mock.patch.object(profile_sync, "_resolve_at",
+                                  return_value=("found", ("src/tos.c", ["x"] * 40))):
+            result = profile_sync._realign_part(
+                part, [(up, "old", "new")], "cache", True,
+                pinned=[(fork, "fork-pin"), (up, "new")],
+            )
+        self.assertIsNone(result)
+
+
+class RealignGivesASharedPathToTheFirstRepository(unittest.TestCase):
+    """freej2me-plus and hex007/freej2me both hold src/libretro/: with only
+    upstream_commit moved, the fork's citations were read in upstream."""
+
+    def test_the_source_declared_first_keeps_it(self):
+        from unittest import mock  # noqa: PLC0415
+
+        fork = profile_sync.upstream.make_repo("github.com", "t", "freej2me-plus")
+        up = profile_sync.upstream.make_repo("github.com", "hex007", "freej2me")
+        part = profile_sync.RefPart("src/libretro/freej2me_libretro.c", 39, 46, "39-46")
+        with mock.patch.object(
+            profile_sync.upstream, "fetch_file", return_value=["line"] * 99
+        ), mock.patch.object(
+            profile_sync, "_resolve_at", return_value=("found", (part.path, ["x"] * 99))
+        ):
+            result = profile_sync._realign_part(
+                part, [(up, "eb4ac87", "8b9bc8a")], "cache", True,
+                pinned=[(fork, "3933e75"), (up, "8b9bc8a")],
+            )
+        self.assertIsNone(result)
 
 
 class UpstreamForkedByThePort(unittest.TestCase):

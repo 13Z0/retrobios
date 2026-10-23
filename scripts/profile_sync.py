@@ -3469,8 +3469,31 @@ def _realign_part(
     """
     if is_external_citation(part.path):
         return None
+    # The path as written decides first, as attribution does: a prefix is
+    # stripped only when no declared repository carries the path itself.
+    # hatarib's hatari/src/tos.c lives in hatariB, which did not move, and
+    # stripping the prefix read it as hatari/hatari's src/tos.c instead.
+    # Between two repositories that both carry the path, the one declared
+    # first owns it, as in attribution: freej2me-plus and hex007/freej2me
+    # both hold src/libretro/, and the citations describe the fork.
+    literal = [
+        (repo, written, current) for repo, written, current in pairs
+        if upstream.fetch_file(repo, written, part.path, cache_dir, offline) is not None
+    ]
+    moved = {repo for repo, _written, _current in pairs}
+    order = [repo for repo, _pin in pinned]
+    first_moved = min(
+        (order.index(repo) for repo, _w, _c in literal if repo in order),
+        default=len(order),
+    )
+    if any(
+        upstream.fetch_file(repo, pin, part.path, cache_dir, offline) is not None
+        for index, (repo, pin) in enumerate(pinned)
+        if repo not in moved and (not literal or index < first_moved)
+    ):
+        return None
     unclear = None
-    for repo, written, current in pairs:
+    for repo, written, current in literal or pairs:
         state, payload = _resolve_at(repo, written, part.path, cache_dir, offline)
         if state == "unclear":
             unclear = payload
@@ -3493,7 +3516,6 @@ def _realign_part(
         return "skip", f"{part.path}:{part.start} {anchored.status.lower()}"
     if unclear:
         return "skip", f"{part.path}: {unclear}"
-    moved = {repo for repo, _written, _current in pairs}
     if any(
         upstream.fetch_file(repo, pin, part.path, cache_dir, offline) is not None
         for repo, pin in pinned
