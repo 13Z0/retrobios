@@ -13,6 +13,20 @@ systems:
   - nintendo-nes
 mode: standalone
 
+data_root:
+  windows:
+    path: "%LOCALAPPDATA%/Plastic/Plastic/data"
+    source_ref: "plastic_ui/src/main.rs:19-32"
+    note: "Holds only the save states the emulator writes, under saved_states."
+  macos:
+    path: "~/Library/Application Support/Amjad50.Plastic.Plastic"
+    source_ref: "plastic_ui/src/main.rs:19-32"
+    note: "Holds only the save states the emulator writes, under saved_states."
+  linux:
+    path: "$XDG_DATA_HOME/plastic"
+    source_ref: "plastic_ui/src/main.rs:19-32"
+    note: "~/.local/share/plastic when XDG_DATA_HOME is unset. Holds only the save states the emulator writes, under saved_states."
+
 notes: |
   NES emulator written in Rust by Amjad Alsharafi. The emulation lives in the
   plastic_core crate and two binaries drive it: plastic, an egui window, and
