@@ -377,6 +377,9 @@ class Progress:
         self.files = 0
         self.bytes = 0
         self.resumed = 0
+        # Files written to their place, which a stopped run counts: the
+        # queue's length said "118 files installed" over 8 on disk.
+        self.installed = 0
         self.start = time.monotonic()
         self._drawn = 0.0
         self._evented = self.start
@@ -4841,10 +4844,10 @@ def download_files(
     """Download files in parallel.
 
     Returns the destinations that failed, each with its reason, and whether
-    the run was interrupted. Every future is submitted up front, so a bare
-    KeyboardInterrupt would let the pool drain the queue in full: the stop
-    flag is what makes Ctrl+C end the run rather than only stop the
-    reporting.
+    the run was interrupted. progress.installed counts the files written.
+    Every future is submitted up front, so a bare KeyboardInterrupt would
+    let the pool drain the queue in full: the stop flag is what makes Ctrl+C
+    end the run rather than only stop the reporting.
     """
     failed: list[tuple[str, str]] = []
     interrupted = False
@@ -4859,14 +4862,24 @@ def download_files(
             for f in files
         }
         refused = False
+        refused_events = 0
         try:
             for future in concurrent.futures.as_completed(future_map):
                 dest, success, reason = future.result()
                 if refused:
                     # The folder they all go in refused the first: each
-                    # would fail alike, counted without a line of its own.
+                    # would fail alike, counted without a line of its own,
+                    # though a program reading the events still gets one.
                     if not success:
                         failed.append((dest, NOT_WRITABLE))
+                        refused_events += 1
+                        EVENTS.emit(
+                            "downloaded", dest=dest, ok=False, reason=NOT_WRITABLE,
+                            size=future_map[future].get("size", 0),
+                            files_done=progress.files + refused_events,
+                            files_total=progress.total_files, bytes_done=progress.bytes,
+                            bytes_total=progress.expected_bytes,
+                        )
                     continue
                 if _stop.is_set():
                     continue
@@ -4889,6 +4902,12 @@ def download_files(
             _stop.set()
             progress.finish()
             print("\n  Stopping. Files already installed are kept.")
+    # The pool has run every future by now: a file that landed after Ctrl+C
+    # is on disk and counts.
+    progress.installed = sum(
+        1 for future in future_map
+        if not future.cancelled() and future.exception() is None and future.result()[1]
+    )
     progress.finish()
     return failed, interrupted
 
@@ -5201,7 +5220,7 @@ def _install_standalone_folders(
             to_download, folder, jobs=args.jobs, verbose=args.verbose,
             term=term, progress=progress,
         )
-        downloaded += len(to_download) - len(failed)
+        downloaded += progress.installed
         errors += len(failed)
         failures.extend((str(folder / dest), reason) for dest, reason in failed)
         transferred += progress.transferred()
@@ -7646,10 +7665,9 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                 term=term, progress=progress,
             )
             bulk_lines += hint
-            total_downloaded += len(to_download) - len(failed)
-            files_pending += len(failed)
-            if interrupted:
-                files_pending += max(len(to_download) - progress.files, 0)
+            total_downloaded += progress.installed
+            files_pending += len(to_download) - progress.installed if interrupted \
+                else len(failed)
             total_errors += len(failed)
             failures.extend(failed)
             total_bytes += progress.transferred()

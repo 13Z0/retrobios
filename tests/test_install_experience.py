@@ -404,6 +404,101 @@ class ReviewCases(unittest.TestCase):
         progress.add(40)
         self.assertEqual(progress.transferred(), 40)
 
+class _HeldHandler(http.server.BaseHTTPRequestHandler):
+    """Serves the manifest and first.bin at once, every other file once released."""
+
+    files: dict[str, bytes] = {}
+    manifest = b""
+    release = threading.Event()
+
+    def log_message(self, *args) -> None:  # noqa: D102
+        pass
+
+    def do_GET(self) -> None:  # noqa: N802, D102
+        if self.path.endswith(".json"):
+            body = self.manifest
+        else:
+            name = self.path.rsplit("/", 1)[-1]
+            if name != "first.bin":
+                self.release.wait(30)
+            body = self.files[name]
+        self.send_response(200)
+        self.send_header("Content-Length", str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
+
+
+class AStoppedRunCountsWhatLanded(unittest.TestCase):
+    """Stopped at 8 of 118 files, the summary said "118 files installed":
+    every queued file was counted, written or not, and a user who read it
+    did not run the command again."""
+
+    @unittest.skipIf(os.name == "nt", "SIGINT is sent the POSIX way")
+    def test_only_the_written_file_is_counted(self):
+        import signal  # noqa: PLC0415
+        import time  # noqa: PLC0415
+
+        files = {name: name.encode() * 64 for name in ("first.bin", "second.bin", "third.bin")}
+        manifest = {"manifest_version": 2, "platform": "retroarch", "files": [
+            {"dest": name, "size": len(data), "sha1": hashlib.sha1(data).hexdigest(),
+             "repo_path": f"bios/{name}", "cores": None}
+            for name, data in files.items()
+        ]}
+        _HeldHandler.files, _HeldHandler.manifest = files, json.dumps(manifest).encode()
+        _HeldHandler.release = threading.Event()
+        httpd = http.server.ThreadingHTTPServer(("127.0.0.1", 0), _HeldHandler)
+        threading.Thread(target=httpd.serve_forever, daemon=True).start()
+        self.addCleanup(httpd.server_close)
+        self.addCleanup(httpd.shutdown)
+        self.addCleanup(_HeldHandler.release.set)
+        with tempfile.TemporaryDirectory(dir=REPO_ROOT / "tmp") as tmp:
+            dest = Path(tmp) / "bios"
+            env = dict(os.environ,
+                       RETROBIOS_BASE_URL=f"http://127.0.0.1:{httpd.server_address[1]}")
+            proc = subprocess.Popen(
+                [sys.executable, str(REPO_ROOT / "install.py"), "--platform", "retroarch",
+                 "--dest", str(dest), "--no-input"],
+                env=env, stdin=subprocess.DEVNULL, stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE, text=True,
+            )
+            deadline = time.monotonic() + 30
+            while not (dest / "first.bin").exists() and time.monotonic() < deadline:
+                time.sleep(0.05)
+            time.sleep(0.2)
+            proc.send_signal(signal.SIGINT)
+            time.sleep(0.3)
+            _HeldHandler.release.set()
+            out, err = proc.communicate(timeout=60)
+            written = sorted(p.name for p in dest.iterdir() if not p.name.startswith("."))
+        self.assertEqual(proc.returncode, 130, out + err)
+        self.assertEqual(written, ["first.bin"])
+        self.assertIn("Stopped. 1 file installed.", out)
+
+
+class ARefusedFolderReportsEachFile(unittest.TestCase):
+    """A read-only folder ended the run on its first refusal, and --events
+    wrote one `downloaded` line for seven failed files, while the events
+    table promises one per finished file."""
+
+    @unittest.skipIf(os.name == "nt" or os.geteuid() == 0,
+                     "a read-only folder is refused by POSIX permissions")
+    def test_one_event_per_file_with_the_reason(self):
+        with FakeRepository() as repo:
+            repo.dest.mkdir()
+            os.chmod(repo.dest, 0o555)
+            try:
+                proc = repo.run("--events")
+            finally:
+                os.chmod(repo.dest, 0o755)
+        events = [json.loads(line) for line in proc.stdout.splitlines()]
+        downloaded = [e for e in events if e["event"] == "downloaded"]
+        self.assertEqual(proc.returncode, 2, proc.stderr)
+        self.assertEqual(len(downloaded), len(FakeRepository.PAYLOADS))
+        self.assertEqual({e["reason"] for e in downloaded}, {install.NOT_WRITABLE})
+        self.assertEqual(sorted(e["files_done"] for e in downloaded),
+                         list(range(1, len(downloaded) + 1)))
+
+
 class WindowsMandatoryLock(unittest.TestCase):
     """Issue 82: on Windows the partial copy's lock is mandatory, so hashing
     it by reopening its path failed with a sharing violation, and every file
