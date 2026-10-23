@@ -211,8 +211,6 @@ class ThemeStylesheet(unittest.TestCase):
                     self.assertGreaterEqual(_ratio(fg, back), need, f"{fg} on {back}")
 
 
-if __name__ == "__main__":
-    unittest.main()
 
 
 class DeviceTilesAndHeaderLogo(unittest.TestCase):
@@ -228,3 +226,6 @@ class DeviceTilesAndHeaderLogo(unittest.TestCase):
     def test_the_header_logo_follows_the_top_bar(self):
         css = CSS_PATH.read_text(encoding="utf-8")
         self.assertIn("header .site-title img { height: calc(4rem - 2 * var(--sl-nav-pad-y))", css)
+
+if __name__ == "__main__":
+    unittest.main()

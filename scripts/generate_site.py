@@ -768,7 +768,9 @@ def _sha256_path(path: Path) -> str:
     return digest.hexdigest()
 
 
-def _verify_outcomes(coverage: dict, sha1_by_path: dict[str, str]):
+def _verify_outcomes(
+    coverage: dict, sha1_by_path: dict[str, str]
+) -> Callable[[str, str], dict]:
     """For each declared entry, in declaration order: what verify found.
 
     Returns a function of (system, name) giving the next outcome for that

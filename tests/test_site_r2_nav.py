@@ -61,10 +61,12 @@ def _present(nav: list) -> set[str]:
     return {t for t in _targets(nav) if not t.startswith("http")}
 
 
+# The setups index writes one `## <label>` per device group, so its anchors
+# follow the labels in platforms/_guides.yml instead of a copy of them.
+from siteguides import DEVICE_GROUPS  # noqa: E402
+
 ANCHORS = {
-    "platforms/index.md": {"computers-and-steam-deck", "handhelds-and-tv-boxes",
-                           "game-systems-for-pcs-and-small-boards", "mister-fpga",
-                           "self-hosted-game-library"},
+    "platforms/index.md": {sitestarlight.toc_slug(label) for label, _ in DEVICE_GROUPS.values()},
     "systems/index.md": {"consoles-and-computers"},
 }
 
