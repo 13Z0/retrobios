@@ -2525,6 +2525,22 @@ class AuditRoundThree(unittest.TestCase):
                          sorted(path.name for path in (running, failed, unknown, other)))
 
 
+class IdleExit(unittest.TestCase):
+    def test_the_variable(self):
+        for value, seconds in (("30", 30.0), (" 2.5 ", 2.5), ("", None), ("0", None),
+                               ("-4", None), ("soon", None), ("inf", None), ("nan", None)):
+            with self.subTest(value=value):
+                self.assertEqual(install.tui_idle_exit({install.TUI_IDLE_ENV: value}),
+                                 seconds)
+        self.assertIsNone(install.tui_idle_exit({}))
+
+    def test_the_farewell(self):
+        state = fresh_state()
+        state.idle_closed, state.exit_code = True, 0
+        self.assertEqual(install.tui_farewell(state),
+                         ["RetroBIOS: No button pressed, closing."])
+
+
 class AuditRoundFour(unittest.TestCase):
     """tui_audit_3.md, each finding held where it was found."""
 
@@ -3043,6 +3059,26 @@ class EndToEnd(unittest.TestCase):
         term.status = os.WEXITSTATUS(status)
         self.assertEqual(term.status, 129)
         self.assertEqual(list(scratch.glob("retrobios-tui-*/error.log")), [])
+
+    def test_no_key_on_the_first_screen_closes_it(self):
+        """A mapper that never opens the pad left the first screen up for
+        good: a handheld then has no way out but the power button."""
+        self.repo()
+        self.env[install.TUI_IDLE_ENV] = "1"
+        term = self.start()
+        term.wait("Where do you play?")
+        self.assertEqual(term.close(), 0)
+        self.assertIn("No button pressed, closing.", term.after())
+        # A key pressed, the screen stays: the person is there.
+        term = self.start()
+        term.wait("Where do you play?")
+        term.send(DOWN)
+        end = time.monotonic() + 2.5
+        while time.monotonic() < end:
+            term._pump(0.05)
+        self.assertEqual(os.waitpid(term.pid, os.WNOHANG), (0, 0))
+        term.send("q")
+        self.assertEqual(term.close(), 130)
 
     def test_a_desktop_names_its_keys_and_a_pad_its_buttons(self):
         self.repo()

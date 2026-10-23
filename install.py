@@ -9965,6 +9965,8 @@ class TuiState:
         self.dry: dict | None = None
         self.dry_files: list = []
         self.dry_summary: dict | None = None
+        # Closed by RETROBIOS_IDLE_EXIT, no key ever pressed.
+        self.idle_closed = False
         # The check run's summary: what it left out and why.
         self.check_summary: dict | None = None
         # The confirm screen waits for A even when the plan is unchanged:
@@ -10019,6 +10021,24 @@ TUI_PAD_ROUTES = ("gptokeyb", "muxterm", "evmapy", "miyoo")
 # Set by Steam for what it starts, and by gamescope: a controller may be
 # all there is, mapped by Steam Input to keys nobody here can name.
 _STEAM_MARKERS = ("SteamGamepadUI", "SteamDeck", "SteamGameId", "GAMESCOPE_WAYLAND_DISPLAY")
+
+
+# Seconds the first screen waits for a first key before it closes, set by a
+# launcher whose mapper may never open the pad: the screen would otherwise
+# hold a handheld that has no other way out.
+TUI_IDLE_ENV = "RETROBIOS_IDLE_EXIT"
+TUI_IDLE_WORDS = "No button pressed, closing."
+
+
+def tui_idle_exit(env: Mapping[str, str] | None = None) -> float | None:
+    """The seconds RETROBIOS_IDLE_EXIT names, None when unset or not a
+    positive number."""
+    env = os.environ if env is None else env
+    try:
+        seconds = float(env.get(TUI_IDLE_ENV, "").strip())
+    except ValueError:
+        return None
+    return seconds if 0 < seconds < float("inf") else None
 
 
 def tui_pad_route(os_type: str, env: Mapping[str, str] | None = None) -> str:
@@ -12580,6 +12600,8 @@ def tui_farewell(state: TuiState) -> list[str]:
 
 
 def _farewell_lines(state: TuiState) -> list[str]:
+    if state.idle_closed:
+        return [f"RetroBIOS: {TUI_IDLE_WORDS}"]
     if state.screen != "result" and state.download is not None:
         # An install ran: what it wrote is said, whatever ended it.
         title, lines = tui_outcome(state)
@@ -12705,6 +12727,8 @@ def run_tui(args: argparse.Namespace) -> int:
             number = getattr(signal, name, None)
             if number is not None:
                 handlers[number] = signal.signal(number, handler)
+        idle = tui_idle_exit()
+        first_screen, opened, pressed = state.screen, time.monotonic(), False
         sys.stdout = sys.stderr = buffer
         try:
             _prune_work_folders(work.parent, time.time())
@@ -12735,10 +12759,15 @@ def run_tui(args: argparse.Namespace) -> int:
             state.now = time.monotonic()
             terminal.draw(tui_view(state, cols, rows), cols)
             for key in terminal.keys(TUI_FRAME):
+                pressed = True
                 state.now = time.monotonic()
                 perform(tui_update(state, key))
                 if state.exit_code is not None:
                     break
+            if (idle is not None and not pressed and state.exit_code is None
+                    and state.screen == first_screen
+                    and time.monotonic() - opened >= idle):
+                state.idle_closed, state.exit_code = True, 0
             if flags["interrupt"]:
                 flags["interrupt"] = False
                 if time.monotonic() >= ignore_interrupt_until[0]:
