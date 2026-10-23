@@ -1784,7 +1784,7 @@ class TestDetectedPlatformPrompt(unittest.TestCase):
     def test_q_quits_and_the_menu_says_so(self):
         result, out = self._answer("q")
         self.assertIsInstance(result, SystemExit)
-        self.assertEqual(result.code, 0)
+        self.assertEqual(result.code, 130)
         self.assertIn("q) quit", out)
 
     def test_a_wrong_answer_names_the_choices(self):
@@ -1808,6 +1808,16 @@ class TestManualPlatformPrompt(unittest.TestCase):
             chosen, [("retroarch", Path.home() / ".config" / "retroarch" / "system")]
         )
 
+    def test_enter_takes_retroarch_as_the_dest_menu_does(self):
+        """The --dest menu offered `[Enter for RetroArch]` and this one, the
+        same list, had no default."""
+        answers = iter(["", ""])
+        out = io.StringIO()
+        with unittest.mock.patch("builtins.input", lambda _prompt="": next(answers)), \
+                contextlib.redirect_stdout(out):
+            chosen = install._prompt_manual_platform("linux")
+        self.assertEqual(chosen[0][0], "retroarch")
+
     def test_name_and_explicit_directory(self):
         answers = iter(["batocera", "~/my bios"])
         with unittest.mock.patch("builtins.input", lambda _prompt="": next(answers)):
@@ -1820,11 +1830,51 @@ class TestManualPlatformPrompt(unittest.TestCase):
             chosen = install._prompt_manual_platform("linux")
         self.assertEqual(chosen, [("batocera", install.DEFAULT_DESTS["batocera"])])
 
-    def test_quit_exits_cleanly(self):
+    def test_quit_stops_like_ctrl_c(self):
+        """`install.sh && retroarch` went on to start RetroArch with no BIOS
+        after a q, which left with 0 where Ctrl+C leaves with 130."""
         with unittest.mock.patch("builtins.input", lambda _prompt="": "q"):
             with self.assertRaises(SystemExit) as raised:
                 install._prompt_manual_platform("linux")
-        self.assertEqual(raised.exception.code, 0)
+        self.assertEqual(raised.exception.code, 130)
+
+    def test_quotes_around_a_typed_folder_are_dropped(self):
+        """Explorer's "Copy as path" quotes the folder: the files went into a
+        folder named `"` under the current directory, and the run said Done."""
+        root = Path(_tempdir(self))
+        for typed in (f'"{root}/My Card/bios"', f"'{root}/My Card/bios'",
+                      f'  "{root}/My Card/bios"  '):
+            answers = iter(["1", typed])
+            with self.subTest(typed=typed), \
+                    unittest.mock.patch("builtins.input", lambda _prompt="": next(answers)), \
+                    contextlib.redirect_stdout(io.StringIO()):
+                chosen = install._prompt_manual_platform("linux")
+            self.assertEqual(chosen, [("retroarch", root / "My Card" / "bios")])
+
+    def test_home_and_variables_are_expanded_on_every_system(self):
+        for os_type in ("linux", "windows", "darwin"):
+            answers = iter(["1", '"~/$RB_TEST_DIR/bios"'])
+            with self.subTest(os_type=os_type), \
+                    unittest.mock.patch.dict(os.environ, {"RB_TEST_DIR": "cards"}), \
+                    unittest.mock.patch("builtins.input", lambda _prompt="": next(answers)), \
+                    contextlib.redirect_stdout(io.StringIO()):
+                chosen = install._prompt_manual_platform(os_type)
+            self.assertEqual(chosen[0][1], Path.home() / "cards" / "bios")
+
+    def test_a_default_folder_not_there_is_not_found(self):
+        """With nothing installed, Enter printed "Found RetroArch at" a
+        folder that did not exist."""
+        root = Path(_tempdir(self))
+        answers = iter(["1", ""])
+        out = io.StringIO()
+        with unittest.mock.patch.object(install, "_default_dest",
+                                        return_value=root / "retroarch" / "system"), \
+                unittest.mock.patch("builtins.input", lambda _prompt="": next(answers)), \
+                contextlib.redirect_stdout(out):
+            install._prompt_manual_platform("linux")
+        self.assertIn("default BIOS folder", out.getvalue())
+        self.assertIn("will be created", out.getvalue())
+        self.assertNotIn("Found", out.getvalue())
 
     def test_a_wrong_answer_says_what_to_type(self):
         answers = iter(["99", "1", ""])
@@ -3261,7 +3311,8 @@ class AChunkedCutIsADownloadFailure(unittest.TestCase):
                 unittest.mock.patch.object(install, "_retry_delay", return_value=0):
             dest, ok, reason = install._download_one(entry, Path(_tempdir(self)))
         self.assertFalse(ok)
-        self.assertIn("IncompleteRead", reason)
+        self.assertEqual(reason, "the connection was cut")
+        self.assertIsInstance(reason, install.NetworkReason)
 
 
 
@@ -3718,6 +3769,21 @@ class ATypoGetsTheClosestName(unittest.TestCase):
         self.assertEqual(install.normalize_platform("MiSTer FPGA"), "misterfpga")
         self.assertEqual(install.normalize_platform("RetroArch "), "retroarch")
         self.assertEqual(install.normalize_platform("RetroDECK"), "retrodeck")
+
+    def test_a_system_name_stands_for_the_list_it_gets(self):
+        """--list-platforms printed `muOS: retroarch`, and --platform muos
+        answered "Unknown platform"."""
+        for typed, plat in (("muos", "retroarch"), ("muOS", "retroarch"),
+                            ("ArkOS", "retroarch"), ("PAN4ELEC", "amberelec"),
+                            ("JELOS", "retroarch")):
+            out = io.StringIO()
+            with self.subTest(typed=typed), contextlib.redirect_stdout(out):
+                self.assertEqual(install.normalize_platform(typed), plat)
+            self.assertIn(f"--platform {plat}", out.getvalue())
+
+    def test_a_system_that_gets_no_list_is_still_refused(self):
+        with contextlib.redirect_stderr(io.StringIO()), self.assertRaises(SystemExit):
+            install.normalize_platform("TrimUI")
 
     def test_a_platform_typo_is_answered_with_one_name(self):
         err = io.StringIO()
@@ -4672,7 +4738,27 @@ class HandheldSystemsByTheirOwnFiles(unittest.TestCase):
             {"/usr/trimui/": "", "/mnt/SDCARD/.system/res/": ""})
         self.assertEqual(found, [])
         self.assertIn("MinUI found here", err)
+        self.assertIn("--platform minui", err)
+        self.assertIn("--dest", err)
         self.assertNotIn("TrimUI", err)
+
+    def test_a_minui_card_on_its_device_gets_its_file_list(self):
+        """--list-platforms said the MinUI layout was not written yet, while
+        --from-pack and --dest wrote it: on the device the card root is the
+        folder, and the card's version.txt names which of the three it is."""
+        for release, plat, shown in (("MinUI-20251127-0", "minui", "MinUI"),
+                                     ("NextUI-20250601-1", "nextui", "NextUI"),
+                                     ("MyMinUI-20260809b-0", "myminui", "MyMinUI")):
+            with self.subTest(release=release):
+                root, found, name = self._one({
+                    "/usr/trimui/": "", "/mnt/SDCARD/.system/res/": "",
+                    "/mnt/SDCARD/.system/version.txt": release + "\n"})
+                self.assertEqual((found, name), ((plat, root / "mnt/SDCARD"), shown))
+
+    def test_the_listing_says_what_the_minui_family_gets(self):
+        line = next(line for line in install._system_lines() if line.startswith("MinUI:"))
+        self.assertNotIn("does not write", line)
+        self.assertIn("minui, nextui or myminui", line)
 
     def test_two_unrelated_systems_are_refused(self):
         _root, found, names, _err = self._found(
@@ -4918,6 +5004,31 @@ def _events(proc: subprocess.CompletedProcess) -> list[dict]:
     return [json.loads(line) for line in proc.stdout.splitlines()]
 
 
+class SystemEventsFollowTheChoice(unittest.TestCase):
+    """--system nintendo-gba wrote `system` events for nintendo-ds, gb and
+    gbc: SkyEmu's files carry four systems, and each was described by the
+    few of its files the choice kept."""
+
+    def test_only_the_chosen_systems_are_described(self):
+        files = [{"dest": "gba_bios.bin", "size": 1, "systems": ["nintendo-gba"]},
+                 {"dest": "SkyEmu/dmg.bin", "size": 1,
+                  "systems": ["nintendo-gb", "nintendo-gba"]}]
+        stream = io.StringIO()
+        install.EVENTS.open(stream)
+        self.addCleanup(setattr, install.EVENTS, "stream", None)
+        install._emit_check("retroarch", {}, Path("/b"), files, [], [], 0, 0,
+                            chosen=["nintendo-gba"])
+        systems = [json.loads(line)["system"] for line in stream.getvalue().splitlines()
+                   if json.loads(line)["event"] == "system"]
+        self.assertEqual(systems, ["nintendo-gba"])
+        stream.seek(0)
+        stream.truncate()
+        install._emit_check("retroarch", {}, Path("/b"), files, [], [], 0, 0)
+        systems = [json.loads(line)["system"] for line in stream.getvalue().splitlines()
+                   if json.loads(line)["event"] == "system"]
+        self.assertEqual(systems, ["nintendo-gb", "nintendo-gba"])
+
+
 class EventsDescribeTheRun(unittest.TestCase, _SyntheticTree):
     """--events: the handheld port reads the run as JSON lines on stdout and
     never parses the text, which goes to stderr."""
@@ -5035,6 +5146,91 @@ class EventsDescribeTheRun(unittest.TestCase, _SyntheticTree):
             self.assertIsNotNone(row, kind)
             for key in keys:
                 self.assertIn(f"`{key}`", row, f"{kind}.{key}")
+
+
+class NetworkFailuresInPlainWords(unittest.TestCase):
+    """Offline, the run printed "[Errno -2] Name or service not known". A
+    beginner needs "no internet connection", and the raw text only under
+    --verbose."""
+
+    def _words(self, reason: BaseException, **kwargs) -> tuple[str, str]:
+        return install.network_words(urllib.error.URLError(reason), **kwargs)
+
+    def test_the_common_failures(self):
+        import ssl  # noqa: PLC0415
+
+        cases = (
+            (socket.gaierror(-2, "Name or service not known"), "no internet connection"),
+            (socket.timeout("timed out"), "timed out"),
+            (ConnectionRefusedError(111, "Connection refused"), "refused the connection"),
+            (OSError(101, "Network is unreachable"), "no internet connection"),
+            (ssl.SSLCertVerificationError(1, "certificate verify failed"),
+             "certificate was rejected"),
+        )
+        with unittest.mock.patch.object(install, "_ca_bundle_found", return_value=True):
+            for reason, words in cases:
+                with self.subTest(reason=reason):
+                    code, text = self._words(reason)
+                    self.assertEqual(code, "network")
+                    self.assertIn(words, text)
+                    self.assertNotIn("Errno", text)
+
+    def test_verbose_keeps_the_raw_text(self):
+        _code, text = self._words(socket.gaierror(-2, "Name or service not known"),
+                                  verbose=True)
+        self.assertIn("Name or service not known", text)
+
+    def test_a_clock_in_the_past_is_named(self):
+        """A handheld with no clock battery boots in 1980, and every
+        certificate then reads as not yet valid."""
+        import datetime  # noqa: PLC0415
+        import ssl  # noqa: PLC0415
+
+        error = ssl.SSLCertVerificationError(1, "certificate is not yet valid")
+        with unittest.mock.patch.object(install, "_ca_bundle_found", return_value=True):
+            code, text = self._words(error, today=datetime.date(1980, 1, 1))
+            self.assertEqual(code, "clock")
+            self.assertIn("The clock reads 1980-01-01", text)
+            self.assertIn("set the date", text)
+            code, _text = self._words(error, today=install.CLOCK_FLOOR)
+            self.assertEqual(code, "network")
+
+    def test_no_certificate_list_names_ssl_cert_file(self):
+        import ssl  # noqa: PLC0415
+
+        error = ssl.SSLCertVerificationError(1, "unable to get local issuer certificate")
+        with unittest.mock.patch.object(install, "_ca_bundle_found", return_value=False):
+            code, text = self._words(error)
+        self.assertEqual(code, "no_ca")
+        self.assertIn("SSL_CERT_FILE", text)
+
+    def test_a_certificate_list_is_looked_for_where_openssl_and_systems_keep_it(self):
+        root = Path(_tempdir(self))
+        bundle = root / "cert.pem"
+        paths = SimpleNamespace(cafile=str(root / "none.pem"), capath=str(root / "none"),
+                                openssl_cafile=str(root / "no.pem"),
+                                openssl_capath=str(root / "no"))
+        with unittest.mock.patch("ssl.get_default_verify_paths", return_value=paths), \
+                unittest.mock.patch.object(install, "CA_BUNDLES", ()), \
+                unittest.mock.patch.dict(os.environ, {"SSL_CERT_FILE": "", "SSL_CERT_DIR": ""}):
+            self.assertFalse(install._ca_bundle_found())
+            with unittest.mock.patch.object(install, "CA_BUNDLES", (str(bundle),)):
+                self.assertFalse(install._ca_bundle_found())
+                bundle.write_text("x")
+                self.assertTrue(install._ca_bundle_found())
+
+    def test_a_file_list_out_of_reach_by_name_says_so(self):
+        env = {**os.environ, "RETROBIOS_BASE_URL": "https://retrobios-nohost.invalid",
+               "HOME": _tempdir(self)}
+        proc = subprocess.run(
+            [sys.executable, str(REPO_ROOT / "install.py"), "--platform", "retroarch",
+             "--dest", _tempdir(self), "--check"],
+            env=env, capture_output=True, text=True, timeout=120, check=False,
+            stdin=subprocess.DEVNULL,
+        )
+        self.assertEqual(proc.returncode, 1)
+        self.assertIn("no internet connection", proc.stderr)
+        self.assertNotIn("Errno", proc.stderr)
 
 
 class AFileYouHadIsKept(unittest.TestCase):
