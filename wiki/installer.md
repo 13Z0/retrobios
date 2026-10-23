@@ -1,7 +1,7 @@
 ---
 level: setup
 order: 100
-terms: manifest, events, exit code, schema
+terms: manifest, events, exit code, schema, packager, pin, reproducible
 ---
 
 # All installer options
@@ -47,24 +47,21 @@ python install.py
 ### For packagers { #for-packagers }
 
 A package that must not change under its users takes the installer and its
-file list from one release. Each release carries `install.py`, `install.sh`,
-`install.ps1` and the file list of every platform (`retroarch.json` and the
-others from `install/`), all listed in the signed `SHA256SUMS.txt`:
+file list from one commit. `install.sh` of that commit pins the SHA-256 of its
+`install.py`, and `RETROBIOS_REF` makes the installer download every file from
+the same commit:
 
 ```bash
-base=https://github.com/Abdess/retrobios/releases/download/<tag>
-curl -fsSLO "$base/install.py" -O "$base/retroarch.json" -O "$base/SHA256SUMS.txt"
-sha256sum --check --ignore-missing SHA256SUMS.txt
-RETROBIOS_REF=<tag> python3 install.py --manifest retroarch.json
+commit=<commit>
+base=https://raw.githubusercontent.com/Abdess/retrobios/$commit
+curl -fsSLO "$base/install.py" -O "$base/install/retroarch.json"
+pin=$(curl -fsSL "$base/install.sh" | sed -n 's/^DEFAULT_INSTALL_SHA256="\(.*\)"$/\1/p')
+echo "$pin  install.py" | sha256sum --check
+RETROBIOS_REF=$commit python3 install.py --manifest retroarch.json
 ```
 
-For contributors: [Verifying a release](release-process.md#verifying-a-release)
-checks the signature of the list. Each release deletes the previous tag and its assets,
-so `releases/latest/download/install.py` and the other files under
-`releases/latest/download/` are the stable addresses: they serve the latest
-release, whose `SHA256SUMS.txt` names the bytes. v2026.10.10 and the releases
-before it carry neither the installer nor the file lists. What `RETROBIOS_REF`
-does not pin is listed under [Environment overrides](#environment-overrides).
+What `RETROBIOS_REF` does not pin is listed under
+[Environment overrides](#environment-overrides).
 
 ## Passing options
 

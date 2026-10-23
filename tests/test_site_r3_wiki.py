@@ -198,8 +198,9 @@ class SetupsWithoutAPage(unittest.TestCase):
         for words in ("--dest", "ES-DE", "LaunchBox", "iPhone"):
             with self.subTest(words=words):
                 self.assertIn(words, section)
-        # No folder is written: the copy names none it cannot cite.
-        self.assertNotRegex(section, r"[~/\\][A-Za-z]")
+        # No folder is written: the copy names none it cannot cite. Link
+        # targets are pages of this site, not folders.
+        self.assertNotRegex(re.sub(r"\]\([^)]*\)", "]", section), r"[~/\\][A-Za-z]")
 
     def test_the_installer_fills_the_emulators_a_launcher_starts(self):
         installer = _flat(_wiki("installer.md"))
@@ -234,11 +235,12 @@ class ExitStatusAndPinnedInstaller(unittest.TestCase):
             with self.subTest(field=field):
                 self.assertIn(f'"{field}"', fields)
 
-    def test_a_packager_pins_installer_and_lists_to_one_tag(self):
+    def test_a_packager_pins_installer_and_lists_to_one_commit(self):
+        # No release carries the installer yet: the section pins a commit.
         section = _section(self.text, "One line")
-        self.assertIn("releases/download/<tag>", section)
+        self.assertIn("raw.githubusercontent.com/Abdess/retrobios/$commit", section)
         self.assertIn("$base/install.py", section)
-        self.assertIn("RETROBIOS_REF=<tag>", section)
+        self.assertIn("RETROBIOS_REF=$commit", section)
         self.assertIn('os.environ.get("RETROBIOS_REF"', self.source)
 
 

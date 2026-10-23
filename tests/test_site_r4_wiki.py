@@ -262,15 +262,18 @@ class PinnedInstaller(unittest.TestCase):
                 self.assertIn(f"dist/{name}", upload)
         self.assertIn("install/*.json", upload)
 
-    def test_the_installer_page_names_the_release_addresses(self):
+    def test_the_installer_page_pins_one_commit(self):
+        # v2026.10.10 carries no install.py: until a release does, the
+        # section pins a commit, never a release address.
         text = _wiki("installer.md")
         section = _flat(_section(text, "For packagers"))
-        for words in ("releases/download/<tag>", "--manifest retroarch.json",
-                      "sha256sum --check", "SHA256SUMS.txt", "releases/latest/download/",
-                      "release-process.md#verifying-a-release"):
+        for words in ("raw.githubusercontent.com/Abdess/retrobios/$commit",
+                      '"$base/install/retroarch.json"', "--manifest retroarch.json",
+                      "sha256sum --check", "RETROBIOS_REF=$commit"):
             with self.subTest(words=words):
                 self.assertIn(words, section)
-        self.assertNotIn("raw.githubusercontent.com/Abdess/retrobios/<tag>/install.py", text)
+        self.assertNotIn("releases/download/", section)
+        self.assertNotIn("releases/latest/download/", section)
         terms = _front(text)["terms"]
         for word in ("manifest", "events", "exit code", "schema"):
             with self.subTest(term=word):
