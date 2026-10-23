@@ -8933,6 +8933,14 @@ def _unknown_target(target: str, plat: str, targets: dict) -> None:
         print(f"  {plat} publishes no target list", file=sys.stderr)
 
 
+def _is_terminal(stream: TextIO) -> bool:
+    isatty = getattr(stream, "isatty", None)
+    try:
+        return bool(isatty and isatty())
+    except (OSError, ValueError):
+        return False
+
+
 def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
     """One run of the installer, once the options are read."""
     KEPT.reset()
@@ -8940,6 +8948,13 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
     interactive = sys.stdin.isatty() and not args.no_input and not args.quiet
     listing = (args.list_targets or args.list_systems or args.list_cores
                or args.list_emulators)
+    if interactive and not _is_terminal(real_stdout):
+        # A question goes to stdout: sent to a file, it waited on an answer
+        # to a prompt nobody could see.
+        interactive = False
+        if not listing and not args.check:
+            print("Output goes to a file, so nothing is asked: the run goes on as "
+                  "with --no-input.", file=sys.stderr)
     print(f"{term.bold('RetroBIOS')} {term.dim(installer_id())}\n")
 
     os_type = detect_os()

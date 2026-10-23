@@ -566,6 +566,30 @@ class AFolderThisUserCannotEnter(unittest.TestCase):
         self.assertEqual(state, "wrong_hash")
 
 
+class OutputToAFileAsksNothing(unittest.TestCase):
+    """`install.py > log.txt` at a terminal: the menu went into the file
+    and the run waited on an answer to a prompt nobody could see."""
+
+    @unittest.skipIf(os.name == "nt", "a pseudo-terminal for stdin")
+    def test_the_run_goes_on_as_with_no_input(self):
+        import pty
+
+        master, slave = pty.openpty()
+        try:
+            with FakeRepository() as repo:
+                proc = subprocess.run(
+                    repo.command(), env=repo.env(), stdin=slave, capture_output=True,
+                    text=True, timeout=60, check=False)
+                installed = repo.installed()
+        finally:
+            os.close(master)
+            os.close(slave)
+        self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+        self.assertIn("nothing is asked", proc.stderr)
+        self.assertNotIn("Enter) install everything", proc.stdout)
+        self.assertEqual(len(installed), len(FakeRepository.PAYLOADS))
+
+
 class _Tty(io.StringIO):
     def isatty(self) -> bool:
         return True
