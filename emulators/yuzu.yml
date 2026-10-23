@@ -49,6 +49,20 @@ files:
     note: "Amiibo decryption keys (two InternalKey structs, 0x50 bytes each)"
     source_ref: "src/core/hle/service/nfc/common/amiibo_crypto.cpp:273-294"
 
+data_root:
+  windows:
+    path: "%APPDATA%/yuzu"
+    source_ref: "src/common/fs/path_util.cpp:90-96, CMakeLists.txt:67"
+    note: "A user folder beside yuzu.exe is used instead when it exists."
+  linux:
+    path: "$XDG_DATA_HOME/yuzu, else ~/.local/share/yuzu"
+    source_ref: "src/common/fs/path_util.cpp:105-115, 303-311"
+    note: "A user folder in the working directory is used instead when it exists."
+  android:
+    path: "Android/data/org.yuzu.yuzu_emu/files"
+    source_ref: "src/android/app/src/main/java/org/yuzu/yuzu_emu/utils/DirectoryInitialization.kt:41-42, src/common/fs/path_util.cpp:100-101"
+    note: "relWithDebInfo, debug and ea builds append .relWithDebInfo, .debug or .ea to the package name."
+
 notes: |
   Yuzu is the original standalone Nintendo Switch emulator, created by bunnei (author of Citra).
   Legally shut down by Nintendo in March 2024 via lawsuit settlement. Permanently frozen.
