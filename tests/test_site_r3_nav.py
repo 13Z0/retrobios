@@ -202,7 +202,10 @@ class BuiltSite(unittest.TestCase):
     def test_search_fields_hold_no_text(self) -> None:
         texts = []
         for path in (DIST / "systems").rglob("index.html"):
-            for match in re.finditer(r"<(\w+)[^>]*data-pagefind-meta=[^>]*>([^<]*)</\1>",
+            # The search fields are attributes on empty spans. The title
+            # meta reads the visible h1 since round 4 item 2.4.
+            for match in re.finditer(r'<(\w+)[^>]*data-pagefind-meta="(?:files|aliases|devices|consoles|terms):'
+                                     r'[^>]*>([^<]*)</\1>',
                                      path.read_text(encoding="utf-8")):
                 if match[2].strip():
                     texts.append(str(path.relative_to(DIST)))

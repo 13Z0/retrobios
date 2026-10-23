@@ -214,7 +214,7 @@ class SearchFields(unittest.TestCase):
 
     def test_declared_and_never_shown(self):
         config = _read(CONFIG)
-        self.assertIn("metaWeights: { title: 10, files: 0.5, aliases: 5, devices: 5, consoles: 10, terms: 20 },", config)
+        self.assertIn("metaWeights: { title: 10, files: 0.5, aliases: 5, devices: 5, consoles: 10, terms: 30 },", config)
         self.assertIn("const UNSHOWN_FIELDS = new Set(['files', 'aliases', 'devices', 'consoles', 'terms']);", _read(SITE_TS))
 
 

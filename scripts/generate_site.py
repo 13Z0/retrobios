@@ -10201,8 +10201,12 @@ def _generate(args: argparse.Namespace) -> None:
             data_dirs=page_data_directories(name, profiles),
         )
         PAGE_DATA[f"emulators/{name}.md"] = emulator_structured_data(profile)
+        # A frozen copy answers after the emulator: a frozen_snapshot, and a
+        # profile pinned to the revision one platform builds (pin_frozen).
+        # Reicast and Flycast 2021 LE answered "dc bios missing" before Flycast.
         if (profile.get("type") in ("launcher", "alias")
-                or profile.get("core_classification") in ("launcher", "alias", "frozen_snapshot")):
+                or profile.get("core_classification") in ("launcher", "alias", "frozen_snapshot")
+                or profile.get("pin_frozen")):
             SEARCH_DEMOTED.add(f"emulators/{name}.md")
         files = profile.get("files") or []
         for stem, entries in emulator_parts(name, files):

@@ -61,9 +61,7 @@ QUERIES: dict[str, tuple[tuple[str, ...], int]] = {
     # The platforms' own names for a console (psx, dc, gba), a search field
     # of its page. Flycast's page names dc_boot.bin and where it goes.
     "psx bios": (("systems/sony",), 3),
-    # Step 3 of the troubleshooting page answers it too: a BIOS setting on
-    # system/dc, while Flycast adds dc/ itself.
-    "dc bios missing": (("systems/sega", "emulators/flycast/", "wiki/troubleshooting/"), 3),
+    "dc bios missing": (("systems/sega", "emulators/flycast/"), 3),
     "gba bios": (("systems/nintendo",), 3),
     # The words an emulator prints, and the page that answers them.
     "bios not found": (("wiki/troubleshooting/",), 3),
@@ -71,7 +69,8 @@ QUERIES: dict[str, tuple[tuple[str, ...], int]] = {
     "offline install": (("wiki/installer/",), 3),
     # The table of versions, or the FAQ answer headed with the question,
     # which links it.
-    "which mame version": (("wiki/technical-faq/", "wiki/faq/"), 3),
+    # The version table before any MAME part, whose card titles name MAME files.
+    "which mame version": (("wiki/technical-faq/", "wiki/faq/"), 1),
     # Checking a dump is what the Find a file page does.
     "check my dump": (("files/",), 1),
     "md5 check": (("files/",), 1),
