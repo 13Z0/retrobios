@@ -426,6 +426,42 @@ class ACoreWithNoFileOfItsOwn(unittest.TestCase):
         self.assertIn("always kept", line)
 
 
+class FilesSharedBySystemsAreCountedApart(unittest.TestCase):
+    """`3do 1704 files, 349.0 MB`: 1689 of them are MAME's hash and plugin
+    files, which six systems carry. Picking 3DO, one expects its BIOS."""
+
+    FILES = [
+        {"dest": "panafz10.bin", "size": 4, "cores": None, "systems": ["3do"]},
+        {"dest": "mame/hash/a.xml", "size": 100, "cores": None,
+         "systems": ["3do", "philips-cdi"]},
+        {"dest": "mame/hash/b.xml", "size": 50, "cores": None,
+         "systems": ["3do", "philips-cdi"]},
+        {"dest": "gba_bios.bin", "size": 8, "cores": None, "systems": ["nintendo-gba"]},
+    ]
+
+    def _listing(self) -> str:
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            install._print_choices("retroarch", self.FILES, [], systems=True)
+        return out.getvalue()
+
+    def test_the_listing(self):
+        lines = {line.split()[0]: line for line in self._listing().splitlines()}
+        self.assertIn("1 file, 4 B, and 2 files, 150 B shared with other systems",
+                      lines["3do"])
+        self.assertIn("2 files, 150 B, all shared with other systems", lines["philips-cdi"])
+        self.assertTrue(lines["nintendo-gba"].endswith("1 file, 8 B"))
+
+    def test_the_systems_step(self):
+        answers = iter(["c", ""])
+        out = io.StringIO()
+        with mock.patch("builtins.input", lambda _prompt="": next(answers)), \
+                contextlib.redirect_stdout(out):
+            install._prompt_custom_selection("retroarch", self.FILES, [])
+        self.assertIn("1 file, 4 B, and 2 files, 150 B shared with other systems",
+                      out.getvalue())
+
+
 class TheBoundaryChecksTheNewFields(unittest.TestCase):
     def _manifest(self, **extra):
         entry = {"dest": "a.bin", "sha1": "a" * 40, "size": 1,

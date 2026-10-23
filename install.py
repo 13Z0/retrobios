@@ -5742,12 +5742,32 @@ def _sized(files: list[dict]) -> str:
 NO_CORE_FILES = "no extra file: it reads the platform's own, always kept"
 
 
+def _core_sized(files: list[dict]) -> str:
+    return _sized(files) if files else NO_CORE_FILES
+
+
+def _system_sized(files: list[dict]) -> str:
+    """A system's files, those other systems share counted apart.
+
+    `3do 1704 files, 349.0 MB` read as the 3DO BIOS: 1689 of them are the
+    MAME hash and plugin files six systems carry.
+    """
+    shared = [f for f in files if len(entry_systems(f)) > 1]
+    if not shared:
+        return _sized(files)
+    if len(shared) == len(files):
+        return f"{_sized(shared)}, all shared with other systems"
+    own = [f for f in files if len(entry_systems(f)) <= 1]
+    return f"{_sized(own)}, and {_sized(shared)} shared with other systems"
+
+
 def _pick(
-    title: str, rows: list[tuple[str, list[dict]]], ordered: bool = False, empty: str = "",
+    title: str, rows: list[tuple[str, list[dict]]], ordered: bool = False,
+    sizer: Callable[[list[dict]], str] = _sized,
 ) -> list[str]:
     """Numbered list of names. An empty answer keeps every one.
 
-    empty is said instead of "0 files, 0 B" for a name that holds none.
+    sizer says what each name holds.
     """
     if not rows:
         return []
@@ -5755,8 +5775,7 @@ def _pick(
     width = len(str(len(rows)))
     name_width = min(max(len(name) for name, _files in rows), 32)
     for index, (name, files) in enumerate(rows, 1):
-        print(f"  {index:>{width}}) {name:<{name_width}}  "
-              f"{_sized(files) if files or not empty else empty}")
+        print(f"  {index:>{width}}) {name:<{name_width}}  {sizer(files)}")
     hint = "order of preference, e.g. 2,1" if ordered else "e.g. 1,3-5"
     while True:
         text = _ask(f"Numbers ({hint}), Enter for all, q to quit: ")
@@ -5814,7 +5833,7 @@ def _prompt_custom_selection(
     systems = _pick("Systems:", [
         (name, [f for f in files if _chosen(f, {name})])
         for name in choices["systems"]
-    ])
+    ], sizer=_system_sized)
     kept, kept_omitted = narrow(files, omitted, systems, [], [])
 
     cores: list[str] = []
@@ -5826,7 +5845,7 @@ def _prompt_custom_selection(
             (name, _filter_by_target(
                 [f for f in kept if f.get("cores") is not None], [name]))
             for name in core_names
-        ], empty=NO_CORE_FILES)
+        ], sizer=_core_sized)
         kept, kept_omitted = narrow(kept, kept_omitted, [], cores, [])
 
     regions: list[str] = []
@@ -5887,8 +5906,8 @@ def _print_choices(
             if systems
             else _filter_by_target([f for f in files if f.get("cores") is not None], [name])
         )
-        shown = NO_CORE_FILES if not systems and not held else _sized(held)
-        print(f"  {labels[name]:<{width}}  {shown}")
+        print(f"  {labels[name]:<{width}}  "
+              f"{_system_sized(held) if systems else _core_sized(held)}")
 
 
 def emulator_names(manifest: dict, files: list[dict], omitted: list[dict]) -> dict[str, str]:
