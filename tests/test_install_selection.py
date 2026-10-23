@@ -13,6 +13,7 @@ import functools
 import hashlib
 import http.server
 import importlib.util
+import io
 import json
 import os
 import random
@@ -310,6 +311,24 @@ class CommandLineChoices(unittest.TestCase):
             install.resolve_choices(["sega-saturn"], self.KNOWN, "system")
         self.assertIn("sega-saturn", str(ctx.exception))
         self.assertIn("nintendo-gba", str(ctx.exception))
+
+    def test_a_short_name_is_suggested_never_taken(self):
+        """`--system gba`, `psx` and `ps1` were refused on RetroArch with no
+        suggestion, though nintendo-gba holds the very letters."""
+        known = [f"system-{i}" for i in range(40)] + [
+            "nintendo-gb", "nintendo-gba", "nintendo-gbc", "sony-playstation",
+            "sony-playstation-2", "sega-mega-drive"]
+        for typed, meant in (("gba", "nintendo-gba"), ("psx", "sony-playstation"),
+                             ("ps1", "sony-playstation"), ("PS2", "sony-playstation-2"),
+                             ("genesis", "sega-mega-drive"), ("gb", "nintendo-gb")):
+            with self.subTest(typed=typed), self.assertRaises(ValueError) as ctx:
+                install.resolve_choices([typed], known, "system")
+            self.assertIn(f"Did you mean: {meant}", str(ctx.exception))
+
+    def test_a_short_name_for_a_system_the_list_lacks_is_not_suggested(self):
+        with self.assertRaises(ValueError) as ctx:
+            install.resolve_choices(["psx"], [f"system-{i}" for i in range(40)], "system")
+        self.assertNotIn("sony-playstation", str(ctx.exception))
 
     def test_an_empty_list_is_refused(self):
         with self.assertRaises(ValueError):

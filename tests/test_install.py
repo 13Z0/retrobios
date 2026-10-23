@@ -3759,6 +3759,21 @@ class ATypoGetsTheClosestName(unittest.TestCase):
         self.assertEqual(install.normalize_platform("RetroArch "), "retroarch")
         self.assertEqual(install.normalize_platform("RetroDECK"), "retrodeck")
 
+    def test_a_system_name_stands_for_the_list_it_gets(self):
+        """--list-platforms printed `muOS: retroarch`, and --platform muos
+        answered "Unknown platform"."""
+        for typed, plat in (("muos", "retroarch"), ("muOS", "retroarch"),
+                            ("ArkOS", "retroarch"), ("PAN4ELEC", "amberelec"),
+                            ("JELOS", "retroarch")):
+            out = io.StringIO()
+            with self.subTest(typed=typed), contextlib.redirect_stdout(out):
+                self.assertEqual(install.normalize_platform(typed), plat)
+            self.assertIn(f"--platform {plat}", out.getvalue())
+
+    def test_a_system_that_gets_no_list_is_still_refused(self):
+        with contextlib.redirect_stderr(io.StringIO()), self.assertRaises(SystemExit):
+            install.normalize_platform("TrimUI")
+
     def test_a_platform_typo_is_answered_with_one_name(self):
         err = io.StringIO()
         with contextlib.redirect_stderr(err), self.assertRaises(SystemExit) as raised:

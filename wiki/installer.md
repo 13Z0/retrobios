@@ -493,14 +493,14 @@ what the options name, everything by default.
 
 | Option | Effect |
 |--------|--------|
-| `--platform NAME` | Install for this platform instead of the detected one. Unknown names are refused with the available list |
+| `--platform NAME` | Install for this platform instead of the detected one. A system `--list-platforms` names under its own files (`muos`, `arkos`) stands for the file list it gets, and the run says which. Unknown names are refused with the closest ones |
 | `--dest PATH` | Destination directory, overriding detection. Without `--platform`, the file list is the platform detected here: at a terminal the installer asks, Enter taking the one found, and otherwise it uses the one found, RetroArch's when nothing is found, and refuses when several are. The run prints whose list it is. A folder that does not exist is named with the nearest one that does, then created. When more than its last level is missing (a mistyped path), a run at a terminal asks first, and the answer defaults to no |
 | `--target NAME` | Keep only the files the cores of that hardware target need, and the systems they emulate. An unknown target is refused rather than ignored, since carrying on would install everything. On Batocera, Recalbox, ROCKNIX and Lakka the board is read from the system (`batocera.arch`, `recalbox.arch`, `HW_DEVICE`, `LIBREELEC_DEVICE` or `LIBREELEC_PROJECT`) and applied when no `--target` is given |
 | `--every-board` | Install the files of every board instead of the one the system names, for a card that moves between devices |
 | `--installed-cores` | Keep only what the cores already installed read (RetroArch, Lakka, RetroPie). See [Installed cores](#installed-cores) |
 | `--cores-dir PATH` | The folder RetroArch loads its cores from, for `--installed-cores` when it is not found. Implies `--installed-cores` |
 | `--save-dir PATH` | The frontend's save directory (RetroArch's `savefile_directory`), for the files some cores read there, when the run cannot find it. The core's own folder is still added below it when the frontend sorts saves by core |
-| `--system NAMES` | Install only these systems. Comma-separated or repeated. `--list-systems` prints the names, `other` included |
+| `--system NAMES` | Install only these systems. Comma-separated or repeated. `--list-systems` prints the names, `other` included. A short name the platform does not use (`gba`, `psx`) is refused with the ids it may stand for, never taken in their place |
 | `--core NAMES` | Keep the platform's own list and only the extra files these cores load. `--list-cores` prints the names |
 | `--emulator NAMES` | Install what these emulators read on the detected platform, and nothing else: their own files and the platform's files of the systems they run. Each emulator page on the site gives this command. `--list-emulators` prints the names, buildbot names such as `mednafen_psx` included |
 | `--region LIST` | Preferred regions, best first (`us,eu,jp`): keep one BIOS per region where a system has several. Accepts the names and aliases of `generate_pack.py --region` |

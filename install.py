@@ -2236,15 +2236,58 @@ def _name_key(name: str) -> str:
 SHORT_LIST = 12
 
 
+# Names people type for a system, each with its id. Only ever suggested:
+# --system gba, psx and ps1 were refused with no hint on RetroArch, whose
+# list names no system that way, and taking one in silence could install
+# another console than the one meant.
+SYSTEM_SHORT_NAMES = {
+    **dict.fromkeys(("psx", "ps1", "ps", "playstation1"), "sony-playstation"),
+    "ps2": "sony-playstation-2", "ps3": "sony-playstation-3", "psp": "sony-psp",
+    **dict.fromkeys(("vita", "psvita"), "sony-playstation-vita"),
+    "gb": "nintendo-gb", "gbc": "nintendo-gbc", "gba": "nintendo-gba",
+    **dict.fromkeys(("nes", "famicom", "fc"), "nintendo-nes"), "fds": "nintendo-fds",
+    **dict.fromkeys(("snes", "sfc", "superfamicom"), "nintendo-snes"),
+    "n64": "nintendo-64", "n64dd": "nintendo-64dd", "sgb": "nintendo-sgb",
+    **dict.fromkeys(("nds", "ds"), "nintendo-ds"), "dsi": "nintendo-dsi",
+    "3ds": "nintendo-3ds", "wiiu": "nintendo-wii-u", "switch": "nintendo-switch",
+    **dict.fromkeys(("gc", "ngc", "gcn", "gamecube"), "nintendo-gamecube"),
+    "pokemini": "nintendo-pokemon-mini",
+    **dict.fromkeys(("md", "gen", "genesis", "megadrive"), "sega-mega-drive"),
+    **dict.fromkeys(("scd", "segacd", "megacd"), "sega-mega-cd"),
+    "32x": "sega-32x", **dict.fromkeys(("sms", "mastersystem"), "sega-master-system"),
+    **dict.fromkeys(("gg", "gamegear"), "sega-game-gear"),
+    **dict.fromkeys(("ss", "saturn"), "sega-saturn"),
+    **dict.fromkeys(("dc", "dreamcast"), "sega-dreamcast"),
+    **dict.fromkeys(("naomi", "atomiswave"), "sega-dreamcast-arcade"),
+    **dict.fromkeys(("pce", "tg16", "turbografx", "turbografx16", "pcengine",
+                     "supergrafx"), "nec-pc-engine"),
+    **dict.fromkeys(("pcecd", "tgcd", "turbografxcd"), "nec-pc-engine-cd"),
+    "pcfx": "nec-pc-fx",
+    **dict.fromkeys(("mvs", "aes"), "snk-neogeo"),
+    **dict.fromkeys(("neocd", "neogeocd"), "snk-neogeo-cd"),
+    **dict.fromkeys(("msx", "msx2"), "microsoft-msx"),
+    "c64": "commodore-c64", "c128": "commodore-c128",
+    **dict.fromkeys(("amiga", "cd32"), "commodore-amiga"),
+    "x68k": "sharp-x68000", **dict.fromkeys(("jag", "jaguar"), "atari-jaguar"),
+    **dict.fromkeys(("st", "atarist"), "atari-st"), "a800": "atari-400-800",
+    **dict.fromkeys(("coleco", "colecovision"), "coleco-colecovision"),
+    **dict.fromkeys(("intv", "intellivision"), "mattel-intellivision"),
+    "o2": "magnavox-odyssey2", "channelf": "fairchild-channel-f",
+    **dict.fromkeys(("zx", "spectrum", "zxspectrum"), "sinclair-zx-spectrum"),
+    "cpc": "amstrad-cpc", "bbc": "acorn-bbc-micro", "apple2": "apple-ii",
+}
+
+
 def did_you_mean(
     typed: list[str], known: list[str], listing: str,
-    aliases: dict[str, str] | None = None,
+    aliases: dict[str, str] | None = None, inside_from: int = 4,
 ) -> str:
     """The closest known names to what was typed, and the option listing them all.
 
     A typo was answered with every name the platform has, up to 400 on one
     line, with no hint that playstation is sony-playstation. An alias close
-    to what was typed suggests the name it stands for.
+    to what was typed suggests the name it stands for. A name holding what
+    was typed, inside_from letters or more, is suggested too.
     """
     import difflib  # noqa: PLC0415
 
@@ -2259,9 +2302,12 @@ def did_you_mean(
         if not key:
             continue
         matches = difflib.get_close_matches(key, list(by_key), n=3, cutoff=0.6)
-        if len(key) >= 4:
+        if len(key) >= inside_from:
             matches += sorted(k for k in by_key if key in k and k not in matches)
-        close += [by_key[k] for k in matches if by_key[k] not in close]
+        for k in matches:
+            # Two aliases of one system (psx, ps1) name it once.
+            if by_key[k] not in close:
+                close.append(by_key[k])
     if close:
         return f"Did you mean: {', '.join(close[:3])}? {listing} lists all {len(known)}."
     if len(known) <= SHORT_LIST:
@@ -2279,6 +2325,13 @@ def normalize_platform(name: str) -> str:
     for plat in AVAILABLE_PLATFORMS:
         if key and key in (_name_key(plat), _name_key(display_name(plat))):
             return plat
+    # --list-platforms prints `muOS: retroarch`, and --platform muos was
+    # refused: a system named there stands for the list it gets.
+    for rule in _EMBEDDED_RULES:
+        if key and rule.manifest and key == _name_key(rule.name):
+            print(f"  {rule.name} gets the {display_name(rule.manifest)} file list: "
+                  f"--platform {rule.manifest}.")
+            return rule.manifest
     print(f"Unknown platform '{name.strip()}'. "
           + did_you_mean([name], list(AVAILABLE_PLATFORMS), "--list-platforms"),
           file=sys.stderr)
@@ -3423,9 +3476,15 @@ def resolve_choices(
             raise ValueError(f"unknown {label}: {', '.join(unknown)}. This list records none.")
         listing = {"system": "--list-systems", "emulator": "--list-emulators"}.get(
             label, "--list-cores")
+        hints, inside_from = aliases, 4
+        if label == "system":
+            # gba is the end of nintendo-gba: three letters are enough here.
+            hints = {**{short: name for short, name in SYSTEM_SHORT_NAMES.items()
+                        if name in known}, **aliases}
+            inside_from = 3
         raise ValueError(
             f"unknown {label}: {', '.join(unknown)}. "
-            f"{did_you_mean(unknown, known, listing, aliases)}"
+            f"{did_you_mean(unknown, known, listing, hints, inside_from)}"
         )
     if values and not chosen:
         raise ValueError(f"--{label} needs at least one name")
@@ -7139,7 +7198,8 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
         print("Available platforms:")
         for p in AVAILABLE_PLATFORMS:
             print(f"  {p}")
-        print("\nSystems recognized by their own files:")
+        print("\nSystems recognized by their own files, and the file list each gets "
+              "(--platform takes either name):")
         for line in _system_lines():
             print(f"  {line}")
         detected = detect_platforms(os_type)
