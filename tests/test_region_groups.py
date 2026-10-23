@@ -68,10 +68,10 @@ class TheEnterpriseKeepsItsRom(unittest.TestCase):
         from common import load_emulator_profiles
 
         profiles = load_emulator_profiles(str(REPO_ROOT / "emulators"))
-        for name in ("ep128emu", "ep128emu_core"):
-            entry = next(f for f in profiles[name]["files"] if f["name"] == "brd.rom")
-            with self.subTest(profile=name):
-                self.assertFalse(entry.get("region"))
+        entry = next(
+            f for f in profiles["ep128emu_core"]["files"] if f["name"] == "brd.rom"
+        )
+        self.assertFalse(entry.get("region"))
 
 
 class TheGroupTakesThePlatformSpelling(unittest.TestCase):

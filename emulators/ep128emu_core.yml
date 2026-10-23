@@ -6,11 +6,12 @@ source: https://github.com/libretro/ep128emu-core
 upstream: https://github.com/istvan-v/ep128emu
 profiled_date: "2026-03-30"
 source_commit: "6af5d03de220e6effcd0ffcd99e0fb8e8c77cc9e"
-core_version: "1.2.10"
+core_version: "v1.2.13"
 
 cores:
   - ep128emu_core
   - ep128emu-core
+  - ep128emu
 
 systems:
   - enterprise-64
@@ -21,10 +22,16 @@ systems:
 
 notes: >-
   Emulates Enterprise 64/128, Videoton TVC, Amstrad CPC 464/664/6128,
-  and ZX Spectrum 16/48/128. All ROMs are embedded in the binary since
-  v1.1.0, and external files override built-in data. Content type is
-  auto-detected and determines machine configuration and ROM selection.
-  Custom ROM mappings are possible via .ep128cfg config files placed in
+  and ZX Spectrum 16/48/128. ROMs are read from <system_dir>/ep128emu/roms/
+  (core/core.cpp:59). The content type is detected from the extension and
+  header (core/main.cpp) and selects the machine and the ROM layout
+  (core/core.cpp:195-412). For each ROM slot the core opens the file by
+  name, then the alternative names of rom_names_ep128emu_tosec
+  (core/core.hpp:81-119, TOSEC names and split OS/BASIC halves for the
+  CPC), then the copy compiled into roms/roms.hpp under "_default_<name>"
+  (core/core.cpp:513-548). Every ROM has a built-in copy except
+  ide12.rom. The md5 values are those of the built-in copies. Custom ROM
+  mappings are possible via .ep128cfg config files placed in
   ep128emu/config/ or next to content. The .info declares epd19hft.rom
   and zt19hfnt.rom, and no code path in the core opens either file. The
   .info does not list epdos16f.rom and exdos14isdos10uk.rom, which the
@@ -35,147 +42,287 @@ files:
   - name: exos21.rom
     description: Enterprise 128 Expandible OS 2.1
     path: ep128emu/roms/exos21.rom
+    system: enterprise-128
+    md5: f36f24cbb87745fbd2714e4df881db09
+    size: 32768
     required: false
-    source_ref: "source core/core.cpp:235-238, source roms/roms.hpp:18472-21205"
+    hle_fallback: true
+    has_builtin: true
+    note: "Default OS for EP128 machines."
+    source_ref: "source core/core.cpp:235-238, source roms/roms.hpp:18473-21206"
     aliases:
       - EXOS21.ROM
 
   - name: exos20.rom
     description: Enterprise 64 Expandible OS 2.0
     path: ep128emu/roms/exos20.rom
+    system: enterprise-64
+    md5: 5ad3baaad3b5156d6b60b34229a676fb
+    size: 32768
     required: false
-    source_ref: "source core/core.cpp:227-230, source roms/roms.hpp:15738-18471"
+    hle_fallback: true
+    has_builtin: true
+    note: "OS for the EP64 machine types."
+    source_ref: "source core/core.cpp:227-230, source roms/roms.hpp:15739-18472"
     aliases:
       - EXOS20.ROM
 
   - name: exos24uk.rom
     description: Enterprise 128 Expandible OS 2.4 (enhanced, fast memory test)
     path: ep128emu/roms/exos24uk.rom
+    system: enterprise-128
+    md5: 55af78f877a21ca45eb2df68a74fcc60
+    size: 65536
     required: false
-    source_ref: "source core/core.cpp:215-222, source roms/roms.hpp:32838-38302"
+    hle_fallback: true
+    has_builtin: true
+    note: "Loaded across segments 0-3 when the ep128emu_romv option is Enhanced, and for hard disk content."
+    source_ref: "source core/core.cpp:212-223, source core/core.cpp:309-322, source core/main.cpp:260-265, source roms/roms.hpp:32839-38303"
 
   - name: basic21.rom
     description: Enterprise 128 BASIC Interpreter v2.1
     path: ep128emu/roms/basic21.rom
+    system: enterprise-128
+    md5: e972fe42b398c9ff1d93ff014786aec6
+    size: 16384
     required: false
-    source_ref: "source core/core.cpp:249, source core/core.cpp:267, source core/core.cpp:277, source roms/roms.hpp:3433-4801"
+    hle_fallback: true
+    has_builtin: true
+    note: "Loaded as the cartridge on EP128 machine types, except the NOCART ones."
+    source_ref: "source core/core.cpp:249, source core/core.cpp:267, source core/core.cpp:277, source roms/roms.hpp:3434-4802"
 
   - name: basic20.rom
     description: Enterprise 64 BASIC Interpreter v2.0
     path: ep128emu/roms/basic20.rom
+    system: enterprise-64
+    md5: 8e18edce4a7acb2c33cc0ab18f988482
+    size: 16384
     required: false
-    source_ref: "source core/core.cpp:247, source core/core.cpp:265, source core/core.cpp:275, source roms/roms.hpp:2064-3432"
+    hle_fallback: true
+    has_builtin: true
+    note: "Loaded as the cartridge on EP64 machine types, except the NOCART ones."
+    source_ref: "source core/core.cpp:247, source core/core.cpp:265, source core/core.cpp:275, source roms/roms.hpp:2065-3433"
 
   - name: exdos13.rom
     description: Enterprise 128 Disk Controller v1.3
     path: ep128emu/roms/exdos13.rom
+    system: enterprise-128
+    md5: ddff70c014d1958dc75378b6c9aab6f8
+    size: 32768
     required: false
-    source_ref: "source core/core.cpp:304-307, source roms/roms.hpp:13004-15737"
+    hle_fallback: true
+    has_builtin: true
+    note: "Loaded across segments 0x20-0x21 for file, disk and hard disk content, except on the IS-DOS machine types."
+    source_ref: "source core/core.cpp:302-308, source roms/roms.hpp:13005-15738"
     aliases:
       - EXDOS14.ROM
 
   - name: exdos14isdos10uk.rom
     description: Enterprise 128 IS-DOS (CP/M compatible disk system)
     path: ep128emu/roms/exdos14isdos10uk.rom
+    system: enterprise-128
+    md5: f91c4a507cc6895bdd9c43df4f021df3
+    size: 32768
     required: false
-    source_ref: "source core/core.cpp:296-299, source roms/roms.hpp:30103-32836"
+    hle_fallback: true
+    has_builtin: true
+    note: "Loaded across segments 0x20-0x21 in place of exdos13.rom for the IS-DOS disk machine types."
+    source_ref: "source core/core.cpp:294-300, source roms/roms.hpp:30104-32837"
 
   - name: epfileio.rom
     description: Enterprise 128 Direct File I/O
     path: ep128emu/roms/epfileio.rom
+    system: enterprise-128
+    md5: a68ebcbc73a4d2178d755b7755bf18fe
+    size: 16384
     required: false
-    source_ref: "source core/core.cpp:284-285, source roms/roms.hpp:9-1377"
+    hle_fallback: true
+    has_builtin: true
+    note: "Loaded into segment 0x10 for file and DTF content. The ROM sits in the source tree, but the core zip holds the library only."
+    source_ref: "source core/core.cpp:282-285, source roms/roms.hpp:10-1378"
 
   - name: epdos16f.rom
     description: Enterprise 128 EP-DOS v1.6f (Hungarian font and CLKOFF)
     path: ep128emu/roms/epdos16f.rom
+    system: enterprise-128
+    md5: 6593dff00ab32a4b1fc084674ededf2b
+    size: 32768
     required: false
-    source_ref: "source core/core.cpp:253-256, source roms/roms.hpp:43779-46512"
+    hle_fallback: true
+    has_builtin: true
+    note: "Loaded across segments 0x06-0x07 with hun.rom for the Hungarian locale."
+    source_ref: "source core/core.cpp:251-256, source roms/roms.hpp:43780-46513"
 
   - name: hun.rom
     description: Enterprise 128 Hungarian language extension
     path: ep128emu/roms/hun.rom
+    system: enterprise-128
+    md5: 22167938f142c222f40992839aa21a06
+    size: 16384
     required: false
-    source_ref: "source core/core.cpp:243, source roms/roms.hpp:41039-42407"
+    hle_fallback: true
+    has_builtin: true
+    note: "Loaded into segment 4 when the content name carries the TOSEC tag [req zrom]."
+    source_ref: "source core/core.cpp:240-244, source core/core.hpp:221-226, source core/main.cpp:890-898, source roms/roms.hpp:41040-42408"
 
   - name: brd.rom
     description: Enterprise 128 German language extension
     path: ep128emu/roms/brd.rom
+    system: enterprise-128
+    md5: 6af0402906944fd134004b85097c8524
+    size: 16384
     required: false
-    source_ref: "source core/core.cpp:261, source roms/roms.hpp:42409-43777"
+    hle_fallback: true
+    has_builtin: true
+    note: "Loaded into segment 4 when the content name carries the TOSEC tag [req brd-rom]."
+    source_ref: "source core/core.cpp:258-262, source core/core.hpp:221-226, source core/main.cpp:890-898, source roms/roms.hpp:42410-43778"
 
   - name: zt19uk.rom
     description: Enterprise 128 ZozoTools extension (DTF file loading)
     path: ep128emu/roms/zt19uk.rom
+    system: enterprise-128
+    md5: 228540b6be83ae2acd7569c8ff0f91d0
+    size: 32768
     required: false
-    source_ref: "source core/core.cpp:288-291, source roms/roms.hpp:38304-41037"
+    hle_fallback: true
+    has_builtin: true
+    note: "Loaded across segments 0x40-0x41 for DTF content."
+    source_ref: "source core/core.cpp:286-292, source roms/roms.hpp:38305-41038"
+
+  - name: ide12.rom
+    description: Enterprise IDE controller ROM v1.2
+    path: ep128emu/roms/ide12.rom
+    system: enterprise-128
+    required: false
+    note: "Loaded into segment 0x42 for hard disk content (.vhd, or a disk image whose header marks a hard disk). roms.hpp holds no built-in copy, so without the file the core throws \"ROM file not found!\" and that content does not start."
+    source_ref: "source core/core.cpp:309-322, source core/core.cpp:537-546, source core/main.cpp:1055-1062, source core/main.cpp:1081-1084"
 
   - name: tvc22_sys.rom
     description: Videoton TVC system ROM v2.2
     path: ep128emu/roms/tvc22_sys.rom
+    system: videoton-tvc
+    md5: 8c54285f541930cde766069942bad0f2
+    size: 16384
     required: false
-    source_ref: "source core/core.cpp:328-329, source roms/roms.hpp:21206-22574"
+    hle_fallback: true
+    has_builtin: true
+    note: "System ROM for every TVC machine type."
+    source_ref: "source core/core.cpp:328-329, source roms/roms.hpp:21207-22575"
     aliases:
       - TVC22_D6_D4.64K
 
   - name: tvc22_ext.rom
     description: Videoton TVC extension ROM v2.2
     path: ep128emu/roms/tvc22_ext.rom
+    system: videoton-tvc
+    md5: 5ce95a26ceed5bec73995d83568da9cf
+    size: 8192
     required: false
-    source_ref: "source core/core.cpp:330-331, source roms/roms.hpp:22575-23260"
+    hle_fallback: true
+    has_builtin: true
+    note: "Loaded with tvc22_sys.rom on every TVC machine type."
+    source_ref: "source core/core.cpp:330-331, source roms/roms.hpp:22576-23261"
     aliases:
       - TVC22_D7.64K
 
   - name: tvcfileio.rom
     description: Videoton TVC Direct File I/O
     path: ep128emu/roms/tvcfileio.rom
+    system: videoton-tvc
+    md5: a2cf86ba8e7fc58b242137fe59036832
+    size: 8192
     required: false
-    source_ref: "source core/core.cpp:334-335, source roms/roms.hpp:1378-2063"
+    hle_fallback: true
+    has_builtin: true
+    note: "Loaded for the TVC64_FILE machine type. The ROM sits in the source tree, but the core zip holds the library only."
+    source_ref: "source core/core.cpp:332-336, source roms/roms.hpp:1379-2064"
 
   - name: tvc_dos12d.rom
     description: Videoton TVC disk BIOS v1.2d
     path: ep128emu/roms/tvc_dos12d.rom
+    system: videoton-tvc
+    md5: 88dc7876d584f90e4106f91444ab23b7
+    size: 16384
     required: false
-    source_ref: "source core/core.cpp:339-340, source roms/roms.hpp:23261-24629"
+    hle_fallback: true
+    has_builtin: true
+    note: "Loaded for the TVC64_DISK machine type."
+    source_ref: "source core/core.cpp:337-341, source roms/roms.hpp:23262-24630"
     aliases:
       - VT-DOS12-DISK.ROM
 
   - name: cpc464.rom
     description: Amstrad CPC 464 OS + BASIC
     path: ep128emu/roms/cpc464.rom
+    system: amstrad-cpc
+    md5: a993f85b88ac4350cf4d41554e87fe4f
+    size: 32768
     required: false
-    source_ref: "source core/core.cpp:353-356, source roms/roms.hpp:4802-7535"
+    hle_fallback: true
+    has_builtin: true
+    note: "OS half into segment 0x10, BASIC half into segment 0x00, for the CPC_464_TAPE machine type."
+    source_ref: "source core/core.cpp:350-357, source roms/roms.hpp:4803-7536"
 
   - name: cpc664.rom
     description: Amstrad CPC 664 OS + BASIC
     path: ep128emu/roms/cpc664.rom
+    system: amstrad-cpc
+    md5: 5a384a2310f472c7857888371c00ed66
+    size: 32768
     required: false
-    source_ref: "source core/core.cpp:361-364, source roms/roms.hpp:7536-10269"
+    hle_fallback: true
+    has_builtin: true
+    note: "Loaded for the CPC_664_DISK machine type."
+    source_ref: "source core/core.cpp:358-365, source roms/roms.hpp:7537-10270"
 
   - name: cpc6128.rom
     description: Amstrad CPC 6128 OS + BASIC
     path: ep128emu/roms/cpc6128.rom
+    system: amstrad-cpc
+    md5: b96280dc6c95a48857b4b8eb931533ae
+    size: 32768
     required: false
-    source_ref: "source core/core.cpp:370-373, source roms/roms.hpp:10270-13003"
+    hle_fallback: true
+    has_builtin: true
+    note: "Default CPC machine, used for every CPC type other than 464 tape and 664 disk."
+    source_ref: "source core/core.cpp:366-374, source roms/roms.hpp:10271-13004"
 
   - name: cpc_amsdos.rom
     description: Amstrad CPC AMSDOS disk BIOS
     path: ep128emu/roms/cpc_amsdos.rom
+    system: amstrad-cpc
+    md5: 25629dfe870d097469c217b95fdc1c95
+    size: 16384
     required: false
-    source_ref: "source core/core.cpp:377-378, source roms/roms.hpp:24630-25998"
+    hle_fallback: true
+    has_builtin: true
+    note: "Loaded into segment 0x07 for the CPC_DISK and CPC_664_DISK machine types."
+    source_ref: "source core/core.cpp:375-379, source roms/roms.hpp:24631-25999"
     aliases:
       - AMSDOS_0.5.ROM
 
   - name: zx128.rom
     description: ZX Spectrum 128 ROM
     path: ep128emu/roms/zx128.rom
+    system: zx-spectrum
+    md5: 85fede415f4294cc777517d7eada482e
+    size: 32768
     required: false
-    source_ref: "source core/core.cpp:400-403, source roms/roms.hpp:27368-30101"
+    hle_fallback: true
+    has_builtin: true
+    note: "Loaded across segments 0x00-0x01 for the ZX128 machine types."
+    source_ref: "source core/core.cpp:398-404, source roms/roms.hpp:27369-30102"
 
   - name: zx48.rom
     description: ZX Spectrum 48 ROM
     path: ep128emu/roms/zx48.rom
+    system: zx-spectrum
+    md5: 4c42a2f075212361c3117015b107ff68
+    size: 16384
     required: false
-    source_ref: "source core/core.cpp:407-408, source roms/roms.hpp:25999-27367"
+    hle_fallback: true
+    has_builtin: true
+    note: "Loaded into segment 0x00 for the ZX16 and ZX48 machine types."
+    source_ref: "source core/core.cpp:405-409, source roms/roms.hpp:26000-27368"
     aliases:
       - 48.rom
