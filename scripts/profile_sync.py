@@ -2179,20 +2179,16 @@ def check_version(
     declared = str(profile.get("core_version") or "")
     if not declared:
         return None
-    tags = upstream.list_tags(repo, cache_dir, offline)
     release = upstream.latest_release(repo, cache_dir, offline)
-    matches = declared in tags
-    commit = (
-        upstream.resolve_tag_commit(repo, declared, cache_dir, offline)
-        if matches
-        else None
-    )
+    # Asked by name: the first page of tags misses a release that a project
+    # publishing nightlies has pushed past a hundred newer tags.
+    commit = upstream.tag_commit(repo, declared, cache_dir, offline)
     return VersionReport(
         declared,
-        tags[0] if tags else None,
+        upstream.newest_tag(repo, cache_dir, offline),
         release.tag if release else None,
         release.date if release else None,
-        matches,
+        commit is not None,
         commit,
     )
 
@@ -3462,31 +3458,37 @@ def realign_prose(
     return messages
 
 
-def _refuse_dirty_tree(emulators_dir: str) -> None:
-    """Writes need a clean profile tree to roll back to."""
+def _refuse_dirty_tree(emulators_dir: str, names: list[str]) -> None:
+    """Writes need a clean copy of each profile they touch to roll back to.
+
+    Only the selected profiles count: a pass writing one profile after
+    another used to refuse every profile after the first it wrote.
+    """
     try:
-        dirty = emulators_dir_is_dirty(emulators_dir)
+        dirty = emulators_dir_is_dirty(emulators_dir, names)
     except RuntimeError as e:
         print(f"{e}. Pass --force to write anyway.", file=sys.stderr)
         raise SystemExit(1) from e
     if dirty:
         print(
-            f"{emulators_dir} carries uncommitted changes. "
-            "Commit them first or pass --force.",
+            f"{emulators_dir} carries uncommitted changes to the selected "
+            "profiles. Commit them first or pass --force.",
             file=sys.stderr,
         )
         raise SystemExit(1)
 
 
-def emulators_dir_is_dirty(emulators_dir: str) -> bool:
+def emulators_dir_is_dirty(emulators_dir: str, names: list[str] | None = None) -> bool:
     """True when the profile directory carries uncommitted changes.
 
-    Git is asked from inside the directory, so a profile tree that lives in
-    another repository answers for itself. A directory git cannot read is
-    never reported clean: the writes have nothing to roll back to.
+    ``names`` narrows the question to those profiles. Git is asked from
+    inside the directory, so a profile tree that lives in another
+    repository answers for itself. A directory git cannot read is never
+    reported clean: the writes have nothing to roll back to.
     """
+    paths = [f"{name}.yml" for name in names] if names is not None else ["."]
     result = subprocess.run(
-        ["git", "-C", emulators_dir, "status", "--porcelain", "--", "."],
+        ["git", "-C", emulators_dir, "status", "--porcelain", "--", *paths],
         capture_output=True,
         text=True,
         check=False,
@@ -4227,7 +4229,7 @@ def main() -> None:
         or args.realign_prose or args.attribute_refs
     )
     if writes and not args.dry_run and not args.force:
-        _refuse_dirty_tree(args.emulators_dir)
+        _refuse_dirty_tree(args.emulators_dir, list(selected))
 
     # A profile that could not be compared or written is not a profile with
     # nothing to review: it stays in every output and fails the run.

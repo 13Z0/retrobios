@@ -614,6 +614,73 @@ def list_tags(repo: Repo, cache_dir: str, offline: bool = False) -> list[str]:
     return [t["name"] for t in payload if isinstance(t, dict) and t.get("name")]
 
 
+GITHUB_GRAPHQL = "https://api.github.com/graphql"
+_NEWEST_TAG_QUERY = (
+    "query($owner:String!,$name:String!){repository(owner:$owner,name:$name)"
+    "{refs(refPrefix:\"refs/tags/\",first:1,"
+    "orderBy:{field:TAG_COMMIT_DATE,direction:DESC}){nodes{name}}}}"
+)
+
+
+def _github_graphql(
+    query: str, variables: dict, cache_dir: str, offline: bool
+) -> object | None:
+    """A cached GitHub GraphQL answer, or None without a token.
+
+    GraphQL refuses anonymous calls, so an untokened run keeps the REST
+    answer it already had.
+    """
+    from common import github_token  # noqa: PLC0415
+
+    body = json.dumps({"query": query, "variables": variables}, sort_keys=True)
+    target = Path(cache_dir) / "_api" / f"{hashlib.sha256(body.encode()).hexdigest()}.json"
+    if target.is_file():
+        fresh = time.time() - target.stat().st_mtime <= MOVING_TTL
+        if fresh or offline:
+            return json.loads(target.read_text(encoding="utf-8"))
+    token = github_token()
+    if offline or not token:
+        return None
+    headers = _headers(GITHUB_GRAPHQL, accept_json=True)
+    headers["Content-Type"] = "application/json"
+    req = urllib.request.Request(
+        GITHUB_GRAPHQL, data=body.encode(), headers=headers, method="POST"
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=30) as resp:
+            payload = json.loads(resp.read().decode())
+    except urllib.error.HTTPError as exc:
+        raise _http_failure(GITHUB_GRAPHQL, exc) from exc
+    except (urllib.error.URLError, http.client.HTTPException, OSError) as exc:
+        raise UpstreamError(f"{GITHUB_GRAPHQL}: {exc}") from exc
+    if not isinstance(payload, dict) or payload.get("errors"):
+        return None
+    write_cache(target, json.dumps(payload))
+    return payload
+
+
+def newest_tag(repo: Repo, cache_dir: str, offline: bool = False) -> str | None:
+    """The tag on the newest commit.
+
+    GitHub's REST listing sorts tags by name: nesoid lists 2.5 before 2.5-4,
+    gargoyle stable-20090825 before 2026.1.1. GraphQL sorts by commit date.
+    Elsewhere, or without a token, the forge's own first entry.
+    """
+    if repo.family == "github":
+        payload = _github_graphql(
+            _NEWEST_TAG_QUERY, {"owner": repo.owner, "name": repo.name},
+            cache_dir, offline,
+        )
+        try:
+            nodes = payload["data"]["repository"]["refs"]["nodes"]
+        except (TypeError, KeyError):
+            nodes = None
+        if isinstance(nodes, list):
+            return nodes[0].get("name") if nodes else None
+    tags = list_tags(repo, cache_dir, offline)
+    return tags[0] if tags else None
+
+
 def resolve_tag_commit(
     repo: Repo, tag: str, cache_dir: str, offline: bool = False
 ) -> str | None:
@@ -630,6 +697,22 @@ def resolve_tag_commit(
     return None
 
 
+def _named_tag_commit(
+    repo: Repo, tag: str, cache_dir: str, offline: bool
+) -> str | None:
+    """A GitLab or Forgejo tag's commit, asked for by name."""
+    quoted = urllib.parse.quote(tag, safe="")
+    if repo.family == "gitlab":
+        url = f"{repo.api_base}/projects/{_project(repo)}/repository/tags/{quoted}"
+    else:
+        url = f"{repo.api_base}/repos/{repo.slug}/tags/{quoted}"
+    payload = _api(url, cache_dir, offline, absent_max_age=MOVING_TTL)
+    commit = payload.get("commit") if isinstance(payload, dict) else None
+    if not isinstance(commit, dict):
+        return None
+    return commit.get("id") or commit.get("sha")
+
+
 def tag_commit(
     repo: Repo, tag: str, cache_dir: str, offline: bool = False
 ) -> str | None:
@@ -640,7 +723,9 @@ def tag_commit(
     An annotated tag points at a tag object, which is dereferenced.
     """
     if repo.family != "github":
-        return resolve_tag_commit(repo, tag, cache_dir, offline)
+        return _named_tag_commit(repo, tag, cache_dir, offline) or resolve_tag_commit(
+            repo, tag, cache_dir, offline
+        )
     quoted = urllib.parse.quote(tag)
     # A tag pushed after the first lookup must be seen: the 404 expires,
     # the commit a tag names does not.
