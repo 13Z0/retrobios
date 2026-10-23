@@ -23,7 +23,9 @@ _ENTRY_START = re.compile(r'^(\s{4})"([^"]+)":\s*\{')
 _INDENT = " " * 4
 # One BIOS item: a dict literal with no nested braces.
 _ITEM = re.compile(r"\{[^{}\n]*\}")
-_MD5_VALUE = re.compile(r'("md5"\s*:\s*")[^"]*(")')
+# The md5 of one item: a string, or a list of strings since batocera.linux
+# 6b08b873 (checkBios accepts any of them).
+_MD5_VALUE = re.compile(r'("md5"\s*:\s*)("[^"]*"|\[[^\[\]]*\])')
 
 
 _STRING = re.compile(r'"(?:[^"\\\n]|\\.)*"')
@@ -56,6 +58,17 @@ def _closing_line(text: str, start: int) -> int | None:
     return None
 
 
+def _md5_literal(value: str | list[str], spaced: bool = True) -> str:
+    """An md5 as the script writes it: a quoted string, or a list of them
+    with Batocera's spacing inside the brackets (`[ "a", "b" ]`)."""
+    if isinstance(value, str):
+        return f'"{value}"'
+    if not value:
+        return "[]"
+    inner = ", ".join(f'"{v}"' for v in value)
+    return f"[ {inner} ]" if spaced else f"[{inner}]"
+
+
 def _note_key(text: str) -> tuple[str, str]:
     """(file, zippedFile) of the item a line holds, ("", "") for none."""
     path = re.search(r'"file"\s*:\s*"([^"]+)"', text)
@@ -68,7 +81,8 @@ class Exporter(BaseExporter):
 
     # checkBios compares one md5 for a plain file. altmd5 is read only for
     # a zippedFile: retrodream's boot.bin written with the first of four
-    # md5 refused the three other dumps the core accepts.
+    # md5 refused the three other dumps the core accepts. An item the
+    # platform writes with a list of md5 keeps its list (md5_list).
     SINGLE_HASH_FIELD = "md5"
 
     # checkBios reads emulator names from es_systems, and Batocera's
@@ -164,8 +178,25 @@ class Exporter(BaseExporter):
             return False
         return fe.platform is not None or self._addition_keys(fe) is not None
 
+    @staticmethod
+    def md5_list(fe: NativeFile) -> bool:
+        """Whether the platform writes this item's md5 as a list. Its
+        checker then accepts any listed value, so every one is written."""
+        return fe.platform is not None and bool(fe.platform.get("md5_list"))
+
+    def md5_value(self, fe: NativeFile) -> str | list[str]:
+        """The md5 an item is written with, in the form the platform used."""
+        if self.md5_list(fe):
+            return fe.hashes("md5")
+        return self.single_value(fe, "md5")
+
+    def written(self, fe: NativeFile, field_name: str) -> str:
+        if field_name == "md5" and self.md5_list(fe):
+            return ",".join(fe.hashes("md5"))
+        return super().written(fe, field_name)
+
     def states(self, fe: NativeFile, field_name: str) -> bool:
-        if field_name == "md5" and "md5" in fe.filled:
+        if field_name == "md5" and "md5" in fe.filled and not self.md5_list(fe):
             return bool(self.single_value(fe, "md5"))
         return super().states(fe, field_name)
 
@@ -222,7 +253,7 @@ class Exporter(BaseExporter):
     def _bios_item(self, fe: NativeFile, runner: list[str] | None, originals: dict) -> str:
         # The platform states an unhashed file as an empty md5 rather
         # than leaving it out, and so do we.
-        item = [f'"md5": "{self.single_value(fe, "md5")}"']
+        item = [f'"md5": {_md5_literal(self.md5_value(fe))}']
         alt = fe.native("alt_md5", "")
         if alt:
             item.append(f'"altmd5": "{alt}"')
@@ -379,7 +410,11 @@ class Exporter(BaseExporter):
             if {k for k in {*ours, *theirs} if ours.get(k) != theirs.get(k)} - {"md5"}:
                 return None
             patched = _MD5_VALUE.sub(
-                lambda m: m.group(1) + str(ours["md5"]) + m.group(2), match.group(0), count=1
+                lambda m: m.group(1) + _md5_literal(
+                    ours["md5"], spaced=not m.group(2).startswith("[\"")
+                ),
+                match.group(0),
+                count=1,
             )
             edits.append((match.start(), match.end(), patched))
         if last is None:

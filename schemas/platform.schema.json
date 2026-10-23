@@ -510,6 +510,10 @@
           "type": "string",
           "description": "Display name the platform gives its own system"
         },
+        "md5_list": {
+          "type": "boolean",
+          "description": "Batocera: the platform writes md5 as a list of strings, any of which matches. md5 holds the items comma-joined, in order"
+        },
         "alt_md5": {
           "type": "string",
           "pattern": "^[a-fA-F0-9]{32}(,[a-fA-F0-9]{32})*$",

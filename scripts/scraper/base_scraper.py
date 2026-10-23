@@ -74,6 +74,25 @@ class ChangeSet:
 MAX_RESPONSE_SIZE = 50 * 1024 * 1024  # 50 MB
 
 
+def md5_field(raw: object) -> tuple[list[str], bool]:
+    """The md5 values a batocera-systems item declares, and whether it
+    writes them as a list.
+
+    Since batocera.linux 6b08b873 an item's md5 is one string or a list of
+    strings, and checkBios accepts a file whose md5 is any of them. The
+    platform YAML joins the values with commas, as it does for Recalbox, and
+    records the list form so the export writes a list back as a list: a
+    one-item list and an empty one are not the same text as a string.
+    """
+    if raw is None:
+        return [], False
+    if isinstance(raw, str):
+        return ([raw] if raw else []), False
+    if isinstance(raw, list) and all(isinstance(item, str) for item in raw):
+        return [item for item in raw if item], True
+    raise ValueError(f"md5 is neither a string nor a list of strings: {raw!r}")
+
+
 def requirement_entry(req: BiosRequirement) -> dict:
     """Serialize a requirement to a platform YAML file entry.
 

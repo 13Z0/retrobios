@@ -529,7 +529,7 @@ class ShortMd5Handling(unittest.TestCase):
         from scraper import batocera_scraper
 
         scraper = inspect.getsource(batocera_scraper)
-        self.assertIn("md5 = _resolve_truncated_md5(", scraper)
+        self.assertIn("_resolve_truncated_md5(value, md5_index) for value in values", scraper)
         resolver = inspect.getsource(common.resolve_local_file)
         self.assertIn("if len(md5_candidate) < 32:", resolver)
         self.assertIn("_md5_name_ok(path)", resolver)
