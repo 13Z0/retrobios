@@ -14,6 +14,12 @@ systems:
   - nintendo-switch
 mode: standalone
 
+data_root:
+  android:
+    path: "Android/data/skyline.emu/files"
+    source_ref: "app/src/main/java/emu/skyline/SkylineApplication.kt:19, app/src/main/java/emu/skyline/EmulationActivity.kt:235"
+    note: "keys/ is read from the internal files directory instead, which only the in-app key importer writes (app/src/main/cpp/skyline/os.cpp:35)."
+
 notes: |
   The GitHub repository skyline-emu/skyline was replaced by an archival notice on
   2026-08-18, so the pinned revision is served by Software Heritage. The same tree
