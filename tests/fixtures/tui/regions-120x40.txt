@@ -1,0 +1,40 @@
+ RetroBIOS: Preferred regions
+
+ Tick the regions to keep, best first. Where a system has one BIOS per region, the best one found
+   is installed.
+
+ > [1] North America
+   [ ] Japan
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ A/Enter Tick  B/Esc Done  Left/Right Order  ? Help

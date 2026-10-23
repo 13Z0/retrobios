@@ -4,7 +4,7 @@ core_classification: official_port
 source: "https://github.com/drhelius/Gearsystem"
 upstream: "https://github.com/drhelius/Gearsystem"
 profiled_date: "2026-03-23"
-source_commit: "3c86cbefe71cb7b18df54d0bc3aeedf552081da5"
+source_commit: "e18e795ad3bb421a81e416c95248eae885a5e3ab"
 core_version: "3.2.0"
 display_name: "Sega - MS/GG/SG-1000 (Gearsystem)"
 cores:
@@ -44,7 +44,7 @@ files:
 platform_details:
   mastersystem:
     bios_filename: "bios.sms"
-    source_ref: "src/Memory.cpp:267-272"
+    source_ref: "src/Memory.cpp:238-243"
     note: |
       Boot ROM loaded via LoadBootromSMS() -> LoadBootroom(path, false).
       Raw binary read, stored in m_pBootromSMS. Bank count computed as
@@ -52,7 +52,7 @@ platform_details:
 
   gamegear:
     bios_filename: "bios.gg"
-    source_ref: "src/Memory.cpp:274-279"
+    source_ref: "src/Memory.cpp:245-250"
     note: |
       Boot ROM loaded via LoadBootromGG() -> LoadBootroom(path, true).
       Raw binary read, stored in m_pBootromGG. Same bank computation.
@@ -61,5 +61,5 @@ platform_details:
   sg1000:
     bios_filename: null
     note: |
-      No BIOS support. src/Memory.cpp:381-384 returns false from IsBootromEnabled()
+      No BIOS support. src/Memory.cpp:352-355 returns false from IsBootromEnabled()
       when IsSG1000() or IsGameGearInSMSMode() is true.

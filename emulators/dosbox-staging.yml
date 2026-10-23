@@ -3,7 +3,7 @@ type: standalone
 core_classification: enhanced_fork
 source: "https://github.com/dosbox-staging/dosbox-staging"
 upstream: "https://github.com/dosbox-staging/dosbox-staging"
-source_commit: "54bafc7c17e1cbb06f94dddb5803629369d6e219"
+source_commit: "400bc406cac0b2e7cd3e5f93e34d6fb9f08c80bd"
 profiled_date: "2026-08-08"
 core_version: "0.84.0-alpha"
 display_name: "DOS (DOSBox Staging)"
@@ -82,7 +82,7 @@ notes: |
   SoundFont name from the RIFF INFO chunk and the stem of the file, symbolic
   links resolved, select reverb, chorus and filter presets for four known
   banks.
-  ref: src/midi/fluidsynth.cpp:107-230, 672-689, 816-883, 1229-1252
+  ref: src/midi/fluidsynth.cpp:107-230, 673-690, 776-843, 1058-1081
 
   Bundled data ships with the program and is read from the resources directory
   next to the executable: FreeDOS codepages and keyboard layouts, translations,
@@ -90,11 +90,11 @@ notes: |
   mounted Y: drive utilities, the web interface and the manual pages.
   ref: src/misc/support.cpp:300-320, src/dos/dos_code_page.cpp:1828, src/dos/dos_keyboard_layout.cpp:70,
        src/misc/messages.cpp:1073, src/gui/render/shader_manager.cpp:236,404, src/ints/int10_modes.cpp:2302,
-       src/audio/disk_noise.cpp:187, src/shell/autoexec.cpp:759
+       src/audio/disk_noise.cpp:185, src/shell/autoexec.cpp:764
 
   BIOSTEST.COM loads an arbitrary BIOS image at F000:0 and is compiled only
   when the debugger is enabled, which is off by default.
-  ref: src/dos/CMakeLists.txt:81-83, biostest.h
+  ref: src/dos/CMakeLists.txt:82-84, biostest.h
 
 files:
   # File names are documentation only: libmt32emu and the Sound Canvas plugin
@@ -605,7 +605,7 @@ files:
       Any SoundFont loads. GeneralUser GS, Fluid R3, the AWE32 4MB GM/GS/MT
       bank and the Trevor0402 SC-55 SoundFont are recognised by filename or
       RIFF INFO name and get their own reverb, chorus and filter presets
-    source_ref: "src/midi/fluidsynth.cpp:133-154, src/midi/fluidsynth.cpp:672-689, src/midi/fluidsynth.cpp:816-883, src/midi/fluidsynth.cpp:1227-1242"
+    source_ref: "src/midi/fluidsynth.cpp:133-154, src/midi/fluidsynth.cpp:673-690, src/midi/fluidsynth.cpp:776-843, src/midi/fluidsynth.cpp:1056-1071"
 
   - name: "GeneralUser-GS.sf2"
     path: "soundfonts/GeneralUser-GS.sf2"
@@ -618,7 +618,7 @@ files:
       SoundFont directories. A file whose stem or RIFF INFO name contains
       GeneralUser is identified as GeneralUser GS, whatever the rest of the
       name, and gets its own chorus and reverb parameters in auto mode
-    source_ref: "src/midi/fluidsynth.cpp:194-230, src/midi/fluidsynth.cpp:842-848, src/midi/fluidsynth.cpp:430-434, src/midi/fluidsynth.cpp:573-577, src/midi/fluidsynth.cpp:1133-1158"
+    source_ref: "src/midi/fluidsynth.cpp:194-230, src/midi/fluidsynth.cpp:802-808, src/midi/fluidsynth.cpp:430-434, src/midi/fluidsynth.cpp:573-577, src/midi/fluidsynth.cpp:962-987"
 
   - name: "FluidR3_GM.sf2"
     path: "soundfonts/FluidR3_GM.sf2"
@@ -629,7 +629,7 @@ files:
       .sf2 extension. A file whose RIFF INFO name contains Fluid R3, or whose
       stem contains FluidR3, Fluid_R3 or Fluid-R3, is identified as Fluid R3:
       auto mode then turns the chorus off and keeps the default reverb
-    source_ref: "src/midi/fluidsynth.cpp:194-230, src/midi/fluidsynth.cpp:863-868, src/midi/fluidsynth.cpp:443-446, src/midi/fluidsynth.cpp:567-571, src/midi/fluidsynth.cpp:1133-1158"
+    source_ref: "src/midi/fluidsynth.cpp:194-230, src/midi/fluidsynth.cpp:823-828, src/midi/fluidsynth.cpp:443-446, src/midi/fluidsynth.cpp:567-571, src/midi/fluidsynth.cpp:962-987"
 
   # -- PCjr system ROM --
 

@@ -5,71 +5,82 @@ source: "https://github.com/blueminder/supermodel-dojo"
 upstream: "https://github.com/trzy/Supermodel"
 author: "blueminder"
 profiled_date: "2026-08-12"
-source_commit: "ff8cde225298fe5c4ad47fba3c581b2cd19ffc41"
-upstream_commit: "77d28eec84a5ededaa23bb31bc74db631cbe5530"
-core_version: "dojo-preview6"
+source_commit: "d409fe784b8328d798098708adc760900bcc6937"
+upstream_commit: "98fcbff223e23b1530c8f899aca2fc4fd5663ab4"
+core_version: "v0.3a-20261022-git-d409fe7"
 display_name: "Sega - Model 3 (Supermodel Dojo)"
 verification: existence
 cores:
   - supermodel-dojo
 systems:
   - sega-model3
+  - real3d-pro1000
 mode: standalone
 
 notes: |
   Fork of Supermodel adding delay based netplay, session replay with mid replay
-  takeover, a training mode, and a launcher binary built from Frontend/. The
+  takeover, a training mode, and an in-emulator GUI that lists the sets, the
+  replays and the settings when the binary starts without arguments. The
   emulator side is upstream merged forward: the dojo branch takes trzy/Supermodel
-  at 77d28ee of 2026-05-28 through merge 627f023, and the commits after it are
-  launcher fixes. The two repositories are not linked on GitHub, so the pin is
-  read from the merge itself, whose second parent 77d28ee resolves in both trees
-  while the first does not.
-  ref: README.md:4-20, Makefiles/Rules.inc:179-186
+  at 98fcbff of 2026-10-20 through merge ab1ecae, and the commits after it are
+  netplay, replay and release changes. The two repositories are not linked on
+  GitHub, so the pin is read from the merge itself, whose second parent 98fcbff
+  resolves in both trees.
+  ref: README.md:3-20, Src/OSD/SDL/Main.cpp:2565-2597
 
   Windows and macOS return relative names, Config/, Assets/, NVRAM/, Saves/,
-  resolved against the working directory, which is where the release archive puts
-  them and where ES-DE starts the process. Linux uses the working directory when
-  no home directory resolves, $HOME/.supermodel-dojo/<dir> when that directory
-  exists, otherwise $HOME/.config/supermodel-dojo/Config and
+  Replays/, ROMs/, resolved against the working directory, which is where the
+  release archive puts them and where ES-DE starts the process. Linux uses the
+  working directory when no home directory resolves, $HOME/.supermodel-dojo/<dir>
+  when that directory exists, otherwise $HOME/.config/supermodel-dojo/Config and
   $HOME/.local/share/supermodel-dojo/<dir> under the XDG variables, and falls back
   to the Config/Games.xml and Assets/ sitting next to the binary when the home copy
-  is absent. Replays/ is a path type there and a working directory folder on Windows.
-  ref: Src/OSD/Windows/FileSystemPath.cpp:28-56, Src/OSD/OSX/FileSystemPath.cpp:28-54,
-       Src/OSD/Unix/FileSystemPath.cpp:63-77, 127-138, 141-195, Src/Dojo/Replay.cpp:24-30,
-       es-de resources/systems/windows/es_systems.xml:171
+  is absent. ROMs/ is the default ROMDirectory, where the GUI looks for
+  <set>.zip.
+  ref: Src/OSD/Windows/FileSystemPath.cpp:28-60, Src/OSD/OSX/FileSystemPath.cpp:28-58,
+       Src/OSD/Unix/FileSystemPath.cpp:63-77, 130-141, 144-198, Src/Dojo/Replay.cpp:28-31,
+       Src/OSD/SDL/Main.cpp:1796, es-de resources/systems/windows/es_systems.xml:171
 
   ROM sets are MAME format per game archives identified by the CRC32 values in
-  Games.xml, 63 sets at this revision. A parent set holds the ROMs a regional
+  Games.xml, 64 sets at this revision. A parent set holds the ROMs a regional
   variant reuses, a relation between versions of one game rather than a shared
   BIOS: a split child archive makes the loader open <parent>.zip from the same
   directory. Each Model 3 board carries its own program, video, sound and drive
   board ROMs, so no system ROM is read outside those archives.
-  ref: Config/Games.xml, Src/GameLoader.cpp:325-560, Src/GameLoader.cpp:979-1010
+  ref: Config/Games.xml, Src/GameLoader.cpp:371-610, Src/GameLoader.cpp:1029-1060
+
+  Games.xml also declares the set pro1000, the Real3D Pro-1000 image generator,
+  whose cpu_rom and init_rom regions are the flash images of the Pro-1000 SDK
+  update. The machine refuses to start without either region. A scsi_rom region
+  is optional, a synthetic image is built when it is absent, and that image takes
+  the logo model from Assets/ when both 3dlogo files are there.
+  ref: Config/Games.xml:1404-1428, Src/Pro1000/Pro1000.cpp:2128-2160,
+       Src/OSD/SDL/Main.cpp:2737-2740
 
   The emulator writes and reads back its own Supermodel.ini, generated from the
   built in Dojo defaults whenever it is absent, plus NVRAM/<game>.nv,
   Saves/<game>.st<slot> and Replays/<game>_<timestamp>.supr with a .st0 sidecar
   when the session starts from a save state.
-  ref: Src/OSD/SDL/Main.cpp:1572-1592, 2425, 713-741, 775-798,
-       Src/OSD/DojoConfigFile.h:31, Src/Dojo/Replay.cpp:19-50
+  ref: Src/OSD/SDL/Main.cpp:1677-1697, 2568, 724-752, 786-809,
+       Src/OSD/DojoConfigFile.h:31, Src/Dojo/Replay.cpp:23-51
 
   Two reads take a path the user chooses and have no fixed name: the MP3 tracks
   named inside Music.xml, and external GLSL vertex and fragment shaders for the
   legacy 3D engine, whose config keys are empty by default so the built in shader
   source is compiled instead.
-  ref: Src/Sound/MPEG/MpegAudio.cpp:71-86, Src/OSD/SDL/Main.cpp:1692-1693,
-       Src/Graphics/Shader.cpp:93-99
+  ref: Src/Sound/MPEG/MpegAudio.cpp:71-86, Src/OSD/SDL/Main.cpp:1800-1801,
+       Src/Graphics/Shader.cpp:100-106
 
-  The repository publishes two release trains. The Dojo builds carry the
-  dojo-preview tags, Preview 6 of 2025-04-27 being the current one, and ship
-  supermodel.exe, the dojo.exe launcher, Assets/ and Config/. The
-  v0.3a-<date>-git-<rev> releases come from a workflow that fires only on the
-  master branch, which tracks upstream: the archive of 2026-06-25 holds Games.xml,
-  Music.xml and both crosshair names in its binary and none of the Dojo strings.
-  A build stamps its version from the commit date and short sha, and the tree
-  falls back to 0.3a-WIP.
+  The v0.3a-<date>-git-<rev> releases are built from the dojo branch and named
+  Supermodel Dojo. The archive of 2026-10-22 ships the supermodel binary,
+  Assets/, Config/Games.xml, Config/Music.xml and empty NVRAM/, ROMs/ and Saves/
+  folders, plus wnaspi32.dll on Windows, the ASPI bridge that lets Pro-1000 host
+  programs reach the emulated machine. A build stamps its version from the commit
+  date and short sha, and the tree falls back to 0.3a-WIP. The older dojo-preview
+  tags, Preview 6 of 2025-04-27 the last, shipped a separate launcher.
   ref: .github/workflows/release.yml:4-5, .github/workflows/release.yml:21,
-       Makefiles/Rules.inc:289-291, Src/Version.h:32
+       .github/workflows/release.yml:48-49, Makefiles/Rules.inc:325-327,
+       Src/Version.h:32
 
   ES-DE reaches it through the SUPERMODEL-DOJO find rule, present in the Windows
   set alone among the seven, for the arcade, mame and model3 systems.
@@ -78,14 +89,14 @@ notes: |
 
 files:
   - name: Games.xml
-    size: 152643
-    sha1: 681e3362f0251d2e26e6bc2e06157c027f5f3116
+    size: 152634
+    sha1: bb937d4841ae039d9d5f16b33bf5ba0382e41081
     path: "Config/Games.xml"
     required: true
     bundled: true
     description: "ROM set definitions"
     note: "Parsed at startup into the game database. Every ROM region, file name and CRC32 the loader matches against comes from here, so an unreadable file leaves no set to resolve and the launch returns before the emulator is built. The path is a config key, so -game-xml-file moves it."
-    source_ref: "source Src/OSD/SDL/Main.cpp:117, 1684, 2143, 2509-2520, source Src/GameLoader.cpp:551-561, 1016-1019, source Src/OSD/Windows/FileSystemPath.cpp:28-32"
+    source_ref: "source Src/OSD/SDL/Main.cpp:126, Src/OSD/SDL/Main.cpp:1789, Src/OSD/SDL/Main.cpp:2280, Src/OSD/SDL/Main.cpp:2663-2674, source Src/GameLoader.cpp:601-611, Src/GameLoader.cpp:1066-1069, source Src/OSD/Windows/FileSystemPath.cpp:28-32"
 
   - name: p1crosshair.bmp
     path: "Assets/p1crosshair.bmp"
@@ -94,7 +105,7 @@ files:
     bundled: true
     description: "Player 1 light gun crosshair texture"
     note: "Both bitmaps are read on every launch whatever CrosshairStyle holds, since the load runs before the style decides anything, and a null surface aborts startup ahead of the Model 3 object. 32 bit BMP with alpha, sides a multiple of 2."
-    source_ref: "upstream Src/OSD/SDL/Crosshair.cpp:34-51, source Src/OSD/SDL/Main.cpp:2563-2569, source Assets/DIR.txt"
+    source_ref: "upstream Src/OSD/SDL/Crosshair.cpp:34-51, source Src/OSD/SDL/Main.cpp:2723-2729, source Assets/DIR.txt"
 
   - name: p2crosshair.bmp
     path: "Assets/p2crosshair.bmp"
@@ -103,12 +114,42 @@ files:
     bundled: true
     description: "Player 2 light gun crosshair texture"
     note: "Read in the same call as the player 1 bitmap and equally fatal when it fails to load."
-    source_ref: "upstream Src/OSD/SDL/Crosshair.cpp:35, 49-51, source Src/OSD/SDL/Main.cpp:2563-2569"
+    source_ref: "upstream Src/OSD/SDL/Crosshair.cpp:35, 49-51, source Src/OSD/SDL/Main.cpp:2723-2729"
 
   - name: Music.xml
     path: "Config/Music.xml"
     required: false
     bundled: true
     description: "Custom MPEG music track map"
-    note: "Consulted only for a game with a DSB1 or DSB2 board, and skipped when the file is absent. Maps an MPEG ROM offset to an MP3 the user supplies. Shipped in the v0.3a-20260528-git-77d28ee archives and absent from dojo-preview6."
-    source_ref: "source Src/OSD/SDL/Main.cpp:118, 967, source Src/Sound/MPEG/MpegAudio.cpp:88-108"
+    note: "Consulted only for a game with a DSB1 or DSB2 board, and skipped when the file is absent. Maps an MPEG ROM offset to an MP3 the user supplies. Shipped in the v0.3a-20261022-git-d409fe7 archives, the Windows zip with CRLF line endings (sha1 4c556c3a848ef61205a53a9a73ba5e46970d445f)."
+    source_ref: "source Src/OSD/SDL/Main.cpp:127, Src/OSD/SDL/Main.cpp:989, source Src/Sound/MPEG/MpegAudio.cpp:88-108"
+
+  - name: "pro1000.zip"
+    required: true
+    category: bios_zip
+    system: real3d-pro1000
+    description: "Real3D Pro-1000 firmware set (SDK flash update, loop code 5.4, INIT ROM 54)"
+    note: "Loaded as the content of the pro1000 machine, the set picked by the CRC32 of its members. Required to run the Pro-1000 only, Model 3 games never read it."
+    source_ref: "source Config/Games.xml:1404-1428, source Src/Pro1000/Pro1000.cpp:2128-2142, source Src/GameLoader.cpp:1029-1043"
+    contents:
+      - name: "p1_p4.bin"
+        description: "Flash parts 1 and 4, boot stub and loop code, loaded at 0xFFF00000"
+        crc32: "6026a0db"
+      - name: "p2.bin"
+        description: "Flash part 2, INIT ROM, loaded at 0xFFF80000"
+        crc32: "945bbcf5"
+
+  - name: "3dlogo.cmem"
+    path: "Assets/3dlogo.cmem"
+    required: false
+    system: real3d-pro1000
+    description: "Pro-1000 SDK logo model, culling data"
+    note: "Read with 3dlogo.pmem into the synthetic SCSI ROM when the set has no scsi_rom region. Both files or neither, one alone is rejected with an error. The .pmem size must equal the polygon word count in the .cmem header, so both come from one model. The machine boots without them."
+    source_ref: "source Src/Pro1000/SyntheticSCSIROM.cpp:102-127, source Src/Pro1000/SyntheticSCSIROM.cpp:159-163, source Src/Pro1000/SyntheticSCSIROM.cpp:232"
+
+  - name: "3dlogo.pmem"
+    path: "Assets/3dlogo.pmem"
+    required: false
+    system: real3d-pro1000
+    description: "Pro-1000 SDK logo model, polygon data"
+    source_ref: "source Src/Pro1000/SyntheticSCSIROM.cpp:104-106, source Src/Pro1000/SyntheticSCSIROM.cpp:119-127, source Src/Pro1000/SyntheticSCSIROM.cpp:159-163"

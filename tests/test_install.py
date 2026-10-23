@@ -5049,6 +5049,9 @@ class EventsDescribeTheRun(unittest.TestCase, _SyntheticTree):
             {"event": "detect", "os": "linux", "os_name": install._os_name(),
              "platforms": [{"platform": "retroarch", "name": "RetroArch",
                             "bios_dir": str(self.bios)}]},
+            # a.bin and b.bin are in place: the first read and the last.
+            {"event": "checking", "files_done": 1, "files_total": 2},
+            {"event": "checking", "files_done": 2, "files_total": 2},
             {"event": "file", "platform": "retroarch", "dest": "a.bin",
              "systems": ["sys-a"], "size": 100, "state": "present"},
             {"event": "file", "platform": "retroarch", "dest": "b.bin",

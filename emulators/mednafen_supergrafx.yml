@@ -4,7 +4,7 @@ core_classification: community_fork
 source: "https://github.com/libretro/beetle-supergrafx-libretro"
 upstream: "https://mednafen.github.io/"
 profiled_date: "2026-10-04"
-source_commit: "eabaaa438b1732d05ff206a97e700f845d6bfa96"
+source_commit: "9c11dcd213a79d57d2c86313971631af801f2cdc"
 core_version: "v1.29.0"
 display_name: "NEC - PC Engine SuperGrafx (Beetle SuperGrafx)"
 cores: [mednafen_supergrafx, beetle_supergrafx]

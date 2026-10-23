@@ -5,7 +5,7 @@ cores: [puae, uae]
 source: "https://github.com/libretro/libretro-uae"
 upstream: "https://github.com/GnoStiC/PUAE"
 profiled_date: "2026-03-24"
-source_commit: "6536174a80d74e6c325aaa5390ff091fac8761d0"
+source_commit: "7387937066b1b693816c3b4e2b7a0c601d41363d"
 core_version: "5.3.1"
 display_name: "Commodore - Amiga (PUAE)"
 systems:

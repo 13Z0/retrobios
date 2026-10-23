@@ -4,7 +4,7 @@ core_classification: game_engine
 source: "https://github.com/suijingfeng/vkQuake3"
 upstream: "https://github.com/ioquake/ioq3"
 profiled_date: "2026-10-17"
-source_commit: "5300b32803c1c61bc3b6bdf86a084c1db1a217ad"
+source_commit: "650bd625eb725446279c6176804b554e2e1c98f3"
 core_version: "1.36"
 display_name: "Quake III Arena (vkQuake3)"
 cores: ["vkquake3"]

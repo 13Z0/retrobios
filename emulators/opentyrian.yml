@@ -5,6 +5,7 @@ source: "https://github.com/trapexit/libretro-opentyrian"
 upstream: "https://github.com/opentyrian/opentyrian"
 profiled_date: "2026-03-24"
 source_commit: "3e9df7a6bc486190ad5085586d0c4e9cb1baf14c"
+upstream_commit: "ac5d0e71f4245744350c6116ce24f10624da58f8"
 core_version: "1.0.0.6"
 display_name: "Tyrian (OpenTyrian)"
 cores: [opentyrian, tyrian]

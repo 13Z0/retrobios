@@ -15,10 +15,12 @@ verification: existence
 
 notes: |
   UAE4All2 is Lubomyr's Android and Pandora Amiga emulator. RetroPie builds
-  its own branch (retropie) with Makefile.pi, which defines GP2X, PANDORA,
-  RASPBERRY and USE_GUICHAN but not ANDROIDSDL (Makefile.pi:31-34, 109). The
-  Amiga Forever lookup under com.cloanto.amigaforever.essentials is therefore
-  compiled out. AndroidAppSettings.cfg:178 names the version 2.3.6.2.
+  its own branch (retropie), forked from lubomyr's master at 0f919a3
+  (upstream_commit, their merge base), with Makefile.pi, which defines GP2X,
+  PANDORA, RASPBERRY and USE_GUICHAN but not ANDROIDSDL
+  (Makefile.pi:31-34, 109). The Amiga Forever lookup under
+  com.cloanto.amigaforever.essentials is therefore compiled out.
+  AndroidAppSettings.cfg:178 names the version 2.3.6.2.
 
   The emulator runs from its install directory and takes it as launchDir
   (src/main.cpp:219). Kickstarts are read from launchDir/kickstarts/, which

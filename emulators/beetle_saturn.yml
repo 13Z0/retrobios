@@ -5,7 +5,7 @@ core: mednafen_saturn_libretro
 source: "https://github.com/libretro/beetle-saturn-libretro"
 upstream: "https://mednafen.github.io/"
 profiled_date: "2026-10-05"
-source_commit: "65f05fa66f83e65e33be83aa433d883b4fd9509a"
+source_commit: "d0d841784845da0278a9a49554cc4cc01597ee2c"
 core_version: "v1.32.1"
 display_name: "Sega - Saturn (Beetle Saturn)"
 cores:
@@ -17,46 +17,46 @@ systems:
 
 notes: |
   Libretro port of Mednafen's Saturn emulation module, converted to C and
-  reporting v1.32.1 (libretro.c:57). Every firmware file is read from the
+  reporting v1.32.1 (libretro.c:58). Every firmware file is read from the
   system directory: MDFN_MakeFName joins retro_base_directory and the bare
-  name for MDFNMKF_FIRMWARE (libretro.c:2267-2268), and the BIOS path is
+  name for MDFNMKF_FIRMWARE (libretro.c:2347-2348), and the BIOS path is
   built the same way (mednafen/ss/ss.c:1867-1869).
 
   Region comes from the disc header and the region table of
-  mednafen/ss/db.c (libretro.c:1147-1149) and can be forced by the
-  beetle_saturn_region option (libretro.c:488-510, libretro.c:1153-1154).
+  mednafen/ss/db.c (libretro.c:1113-1115) and can be forced by the
+  beetle_saturn_region option (libretro.c:454-476, libretro.c:1119-1120).
   With no content loaded the region defaults to North America
-  (libretro.c:1103, libretro.c:1300-1301). The BIOS filename is hard-coded
+  (libretro.c:1069, libretro.c:1266-1267). The BIOS filename is hard-coded
   per region (mednafen/ss/ss.c:1845-1848): sega_101.bin for Japan and Asia
   NTSC, mpr-17933.bin for every other area. The file must be exactly 524288
   bytes and InitCommon returns false when it is absent, of another size or
   short on read (mednafen/ss/ss.c:1943-1947, mednafen/ss/ss.c:1961-1984).
   The sha256 of the loaded image is kept only to refuse a save state made
-  under another BIOS (mednafen/ss/ss.c:1988, mednafen/ss/ss.c:2589-2608).
+  under another BIOS (mednafen/ss/ss.c:1988, mednafen/ss/ss.c:2594-2613).
   ss.bios_sanity answers true (mednafen/settings.c:50-51) but nothing in the
   port reads it: the name and hash table that upstream checks under that
   setting is not carried over.
 
   The cartridge is chosen by the game table of mednafen/ss/db.c or by the
-  beetle_saturn_cart option (libretro.c:512-530, libretro.c:1157-1158). The
+  beetle_saturn_cart option (libretro.c:478-496, libretro.c:1123-1124). The
   KOF95 and Ultraman ROM carts are opened from the system directory under
   the names of mednafen/settings.c:62-65 (mednafen/ss/cart.c:197-216). An
   absent file leaves the cart slot on the dummy handlers and the load goes
   on (mednafen/ss/cart.c:209).
 
   ST-V content is a game ZIP or a bare ROM matched against the ST-V game
-  table (libretro.c:1207-1227, libretro.c:1261-1281). The cabinet region of
+  table (libretro.c:1173-1193, libretro.c:1227-1247). The cabinet region of
   the matched game selects one of three ST-V BIOS images
   (mednafen/ss/ss.c:1829-1843), and the beetle_saturn_region option is not
-  applied on that path (libretro.c:1217, libretro.c:1275). The image is read
+  applied on that path (libretro.c:1183, libretro.c:1241). The image is read
   as a bare file from the system directory or, when that file is absent, as
   the member of the same name in stvbios.zip there, matched without regard
-  to case (mednafen/ss/ss.c:1875-1949, zip_reader.c:358-365). Either form
+  to case (mednafen/ss/ss.c:1875-1949, zip_reader.c:350-357). Either form
   may be 131072 or 524288 bytes (mednafen/ss/ss.c:1911-1912,
   mednafen/ss/ss.c:1962).
 
   The Video CD Card is driven through the CD block. With the
-  beetle_saturn_mpeg_card option enabled (libretro.c:578-586, default
+  beetle_saturn_mpeg_card option enabled (libretro.c:544-552, default
   disabled), CDB_Init opens mpeg_card.bin in the system directory and
   MPEG_Init keeps up to 0x80000 bytes of it (mednafen/settings.c:52-53,
   mednafen/settings.c:68-69, mednafen/ss/cdb.c:1315-1332,
@@ -86,7 +86,7 @@ files:
     validation: {core: [size], upstream: [size, sha256]}
     sha256: "96e106f740ab448cf89f0dd49dfbac7fe5391cb6bd6e14ad5e3061c13330266f"
     note: "Saturn BIOS v1.00a (North America and Europe), loaded for every area other than Japan and Asia NTSC, and when no content is loaded. Disc area E maps to EU_PAL and the code has no Oceania area (disc.c:162-165). The port checks the size only. The sha256 is the value upstream Mednafen 1.32.1 holds for this filename in its ss.bios_sanity table (src/ss/ss.cpp, BIOSDB)."
-    source_ref: "mednafen/ss/ss.c:1847-1848 (region filename), mednafen/ss/ss.c:1867-1873 (open), mednafen/ss/ss.c:1961-1984 (size check, read), mednafen/ss/ss.c:1988 (sha256 for save states), libretro.c:1103 (default area)"
+    source_ref: "mednafen/ss/ss.c:1847-1848 (region filename), mednafen/ss/ss.c:1867-1873 (open), mednafen/ss/ss.c:1961-1984 (size check, read), mednafen/ss/ss.c:1988 (sha256 for save states), libretro.c:1069 (default area)"
 
   - name: "mpr-18811-mx.ic1"
     system: sega-saturn
@@ -94,7 +94,7 @@ files:
     min_size: 2097152
     validation: [size]
     note: "King of Fighters '95 ROM cart. Selected by the game table for MK-81088 and T-3101G or by the beetle_saturn_cart option. The first 0x200000 bytes are read. A shorter file installs a zeroed cart, an absent file leaves the slot empty."
-    source_ref: "mednafen/settings.c:62-63 (filename), mednafen/ss/cart.c:197-216 (open), mednafen/ss/cart/rom.c:67-68 (read), mednafen/ss/db.c:90-91 (game table), libretro.c:527 (option)"
+    source_ref: "mednafen/settings.c:62-63 (filename), mednafen/ss/cart.c:197-216 (open), mednafen/ss/cart/rom.c:67-68 (read), mednafen/ss/db.c:90-91 (game table), libretro.c:493 (option)"
 
   - name: "mpr-19367-mx.ic1"
     system: sega-saturn
@@ -102,7 +102,7 @@ files:
     min_size: 2097152
     validation: [size]
     note: "Ultraman: Hikari no Kyojin Densetsu ROM cart. Selected by the game table for T-13308G or by the beetle_saturn_cart option. The first 0x200000 bytes are read. A shorter file installs a zeroed cart, an absent file leaves the slot empty."
-    source_ref: "mednafen/settings.c:64-65 (filename), mednafen/ss/cart.c:197-216 (open), mednafen/ss/cart/rom.c:67-68 (read), mednafen/ss/db.c:92 (game table), libretro.c:529 (option)"
+    source_ref: "mednafen/settings.c:64-65 (filename), mednafen/ss/cart.c:197-216 (open), mednafen/ss/cart/rom.c:67-68 (read), mednafen/ss/db.c:92 (game table), libretro.c:495 (option)"
 
   - name: "epr-20091.ic8"
     system: sega-stv
@@ -137,7 +137,7 @@ files:
     required: false
     description: "ST-V BIOS archive"
     note: "Opened only when the bare ST-V BIOS file for the cabinet region is absent. The member of the same name is matched without regard to case and must be 131072 or 524288 bytes. No hash is checked."
-    source_ref: "mednafen/ss/ss.c:1888-1941 (open, member lookup, size check, extract), zip_reader.c:358-365 (case-insensitive lookup)"
+    source_ref: "mednafen/ss/ss.c:1888-1941 (open, member lookup, size check, extract), zip_reader.c:350-357 (case-insensitive lookup)"
     contents:
       - name: "epr-20091.ic8"
         description: "Japan and Asia NTSC"
@@ -158,5 +158,5 @@ files:
     required: false
     min_size: 262144
     validation: [size]
-    note: "Action Replay 4M Plus firmware. The first 0x40000 bytes are read as big-endian words and a shorter file leaves the cart slot empty. No hash is checked. Unfinished in source (mednafen/ss/cart/ar4mp.c:22-24), needs CPU UBC emulation. Neither the beetle_saturn_cart option (libretro.c:512-530) nor the game table of mednafen/ss/db.c yields CART_AR4MP, so the case is not reached."
+    note: "Action Replay 4M Plus firmware. The first 0x40000 bytes are read as big-endian words and a shorter file leaves the cart slot empty. No hash is checked. Unfinished in source (mednafen/ss/cart/ar4mp.c:22-24), needs CPU UBC emulation. Neither the beetle_saturn_cart option (libretro.c:478-496) nor the game table of mednafen/ss/db.c yields CART_AR4MP, so the case is not reached."
     source_ref: "mednafen/settings.c:66-67 (filename), mednafen/ss/cart.c:218-236 (CART_AR4MP case), mednafen/ss/cart/ar4mp.c:181 (0x40000-byte read)"

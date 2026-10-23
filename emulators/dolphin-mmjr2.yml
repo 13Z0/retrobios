@@ -23,8 +23,8 @@ notes: |
   selective merge of Dolphin Official carrying that label rather than a
   checkout of it: at Dolphin 5.0-18025 the memory subsystem has already moved
   behind Core::System, and here it has not, so no single Dolphin revision
-  matches the tree. upstream_commit is the Dolphin revision the upstream
-  citations were read at, not a base of this tree.
+  matches the tree. Every citation below reads this tree, and upstream_commit
+  is the Dolphin revision it was last compared with, not a base of this tree.
   ref: Source/Android/app/build.gradle:32, Source/Android/app/build.gradle:135
 
   Two roots. The user directory is mmjr-revamp at the root of external storage.
@@ -128,7 +128,7 @@ files:
     on_mismatch: warn
     description: "GameCube boot ROM, NTSC-U directory"
     note: "Read whole into a 2 MiB buffer with no size check, then descrambled from 0x100 for 0x1afe00 bytes. The crc32 gate runs when the IPL itself is booted and only warns: the four non-PAL dumps, the Brazilian MPAL one included, pass here without complaint. Discs with the Brazilian country code B and SYSCONF countries of the Americas map to NTSC-U, so Latin America reads this directory too (Source/Core/DiscIO/Enums.cpp:172-173, 223-225)."
-    source_ref: "source Source/Core/Core/Config/MainSettings.cpp:594-600, source Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp:105-113, source Source/Core/Core/HW/EXI/EXI_DeviceIPL.h:43, upstream Source/Core/Core/Boot/Boot.cpp:408-442, source Source/Core/Core/Boot/Boot.cpp:444-449"
+    source_ref: "source Source/Core/Core/Config/MainSettings.cpp:594-600, source Source/Core/Core/HW/EXI/EXI_DeviceIPL.cpp:105-113, source Source/Core/Core/HW/EXI/EXI_DeviceIPL.h:43, source Source/Core/Core/Boot/Boot.cpp:408-442, source Source/Core/Core/Boot/Boot.cpp:444-449"
 
   - name: IPL.bin
     path: GC/EUR/IPL.bin
@@ -306,7 +306,7 @@ files:
     required: false
     description: "Mii database imported into the emulated Wii Remote"
     note: "Read from the NAND root when an emulated Wii Remote is reset, and copied into both Mii blocks of its EEPROM. Absent, the EEPROM keeps its default contents."
-    source_ref: "upstream Source/Core/Core/HW/WiimoteEmu/WiimoteEmu.cpp:156-165"
+    source_ref: "source Source/Core/Core/HW/WiimoteEmu/WiimoteEmu.cpp:156-165"
 
   - name: nwc24msg.cfg
     path: Wii/shared2/wc24/nwc24msg.cfg
@@ -318,7 +318,7 @@ files:
     validation: [size]
     description: "WiiConnect24 account configuration"
     note: "Read as one packed structure, so a shorter file fails the read and a default configuration is generated and written back. A file that reads is then checked for the WcCf magic, its own checksum, an id generation under 0x20 and version 8, each mismatch logged."
-    source_ref: "upstream Source/Core/Core/IOS/Network/KD/NWC24Config.cpp:17, source Source/Core/Core/IOS/Network/KD/NWC24Config.cpp:24-38, source Source/Core/Core/IOS/Network/KD/NWC24Config.cpp:90-117, source Source/Core/Core/IOS/Network/KD/NWC24Config.h:87-109"
+    source_ref: "source Source/Core/Core/IOS/Network/KD/NWC24Config.cpp:17, source Source/Core/Core/IOS/Network/KD/NWC24Config.cpp:24-38, source Source/Core/Core/IOS/Network/KD/NWC24Config.cpp:90-117, source Source/Core/Core/IOS/Network/KD/NWC24Config.h:87-109"
 
   - name: nwc24dl.bin
     path: Wii/shared2/wc24/nwc24dl.bin
@@ -429,7 +429,7 @@ files:
     required: false
     description: "user title database"
     note: "One title id equals name pair per line, ids of four characters and up. titles.txt is read only when wiitdb.txt yields nothing. Overlays the per-language databases shipped in the Sys directory, which cover ten languages. The Portuguese and Russian files also present there are never registered."
-    source_ref: "source Source/Core/Core/TitleDatabase.cpp:29-51, upstream Source/Core/Core/TitleDatabase.cpp:54-58, source Source/Core/Core/TitleDatabase.cpp:63-79"
+    source_ref: "source Source/Core/Core/TitleDatabase.cpp:29-51, source Source/Core/Core/TitleDatabase.cpp:54-58, source Source/Core/Core/TitleDatabase.cpp:63-79"
 
   - name: mios-ipl.map
     path: Maps/mios-ipl.map

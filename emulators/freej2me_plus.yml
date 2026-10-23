@@ -4,7 +4,7 @@ core_classification: enhanced_fork
 source: "https://github.com/TASEmulators/freej2me-plus"
 upstream: "https://github.com/hex007/freej2me"
 profiled_date: "2026-10-04"
-source_commit: "68069d79aa6ed106eb788a640a8294a0db55fdcd"
+source_commit: "3933e75ef927a95eab9f5e065f0b76dabf336069"
 upstream_commit: "8b9bc8a19baf26e3d92f88934a64a32f1cbc2795"
 core_version: "1.53"
 display_name: "Mobile - J2ME (FreeJ2ME-Plus)"
@@ -26,10 +26,10 @@ notes: |
   the host PATH, and the start failure message asks for Java 6 or newer. The
   jar is built by ant from build.xml, which writes the libretro variant as
   freej2me_plus-lr.jar.
-  ref: src/libretro/freej2me_libretro.c:38-45,
-       src/libretro/freej2me_libretro.c:859-888,
-       src/libretro/freej2me_libretro.c:1556-1582,
-       src/libretro/freej2me_libretro.c:1679-1688,
+  ref: src/libretro/freej2me_libretro.c:39-46,
+       src/libretro/freej2me_libretro.c:875-904,
+       src/libretro/freej2me_libretro.c:1567-1593,
+       src/libretro/freej2me_libretro.c:1690-1699,
        src/libretro/freej2me_libretro.h:80,
        build.xml:86-99
 
@@ -37,8 +37,8 @@ notes: |
   SYSTEM_NOT_FOUND message and returns from retro_init before any process is
   created, so nothing loads. The message text still names freej2me-lr.jar,
   the file the original core opens. This core opens freej2me_plus-lr.jar.
-  ref: src/libretro/freej2me_libretro.c:339-346,
-       src/libretro/freej2me_libretro.c:866-872,
+  ref: src/libretro/freej2me_libretro.c:340-347,
+       src/libretro/freej2me_libretro.c:867-873,
        src/libretro/freej2me_libretro.h:73-79
 
   Every relative path the jar opens resolves against the system directory,
@@ -54,7 +54,7 @@ notes: |
        src/org/recompile/freej2me/Config.java:186-206,
        src/org/recompile/mobile/Mobile.java:121-123,
        src/org/recompile/mobile/Mobile.java:135,
-       src/libretro/freej2me_libretro.c:926-934,
+       src/libretro/freej2me_libretro.c:937-945,
        src/org/recompile/freej2me/Libretro.java:201-205,
        src/javax/microedition/rms/RecordStore.java:111
 
@@ -66,13 +66,13 @@ notes: |
   freej2me_system/customFont/. Off, the AWT SansSerif, Monospaced and Dialog
   faces are used. Both directories are created with a placeholder file when
   missing, and neither file has a fixed name.
-  ref: src/libretro/freej2me_libretro.c:464-469,
-       src/libretro/freej2me_libretro.c:480-485,
+  ref: src/libretro/freej2me_libretro.c:465-470,
+       src/libretro/freej2me_libretro.c:481-486,
        src/org/recompile/freej2me/Libretro.java:240,
        src/org/recompile/freej2me/Libretro.java:254,
        src/org/recompile/mobile/Mobile.java:1056-1064,
        src/javax/microedition/media/Manager.java:55,
-       src/javax/microedition/media/Manager.java:328-351,
+       src/javax/microedition/media/Manager.java:329-352,
        src/org/recompile/mobile/PlatformFont.java:63,
        src/org/recompile/mobile/PlatformFont.java:133-154
 
@@ -84,7 +84,7 @@ files:
     validation: [existence]
     description: "FreeJ2ME-Plus libretro Java application"
     note: "Java program the native core launches with java -jar from the system directory root. Built by ant from build.xml at the pinned revision. The code reads no size and no hash."
-    source_ref: "source src/libretro/freej2me_libretro.c:38-45 (freej2meapp), source src/libretro/freej2me_libretro.c:859-875 (GET_SYSTEM_DIRECTORY, freej2me_present, SYSTEM_NOT_FOUND_MSG), source src/libretro/freej2me_libretro.c:339-346 (access F_OK), upstream src/libretro/freej2me_libretro.c:877-888 (java -jar argv), source build.xml:86-99 (destfile)"
+    source_ref: "source src/libretro/freej2me_libretro.c:39-46 (freej2meapp), source src/libretro/freej2me_libretro.c:860-876 (GET_SYSTEM_DIRECTORY, freej2me_present, SYSTEM_NOT_FOUND_MSG), source src/libretro/freej2me_libretro.c:340-347 (access F_OK), upstream src/libretro/freej2me_libretro.c:893-904 (java -jar argv), source build.xml:86-99 (destfile)"
 
   - name: "<soundfont>.sf2"
     system: j2me
@@ -94,7 +94,7 @@ files:
     category: game_data
     description: "MIDI soundbank for J2ME audio"
     note: "First .sf2 or .gm in the directory listing, loaded through MidiSystem.getSoundbank when the freej2me_midifont option is on. A rejected file is logged and the JVM default soundbank stays."
-    source_ref: "source src/javax/microedition/media/Manager.java:55, source src/javax/microedition/media/Manager.java:328-351, source src/org/recompile/mobile/Mobile.java:1056-1058"
+    source_ref: "source src/javax/microedition/media/Manager.java:55, source src/javax/microedition/media/Manager.java:329-352, source src/org/recompile/mobile/Mobile.java:1056-1058"
 
   - name: "<font>.ttf"
     system: j2me

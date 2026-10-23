@@ -22,8 +22,9 @@ notes: |
   (omicron-player/omicron-loader/src/main/java/org/github/msx80/omicron/fantasyconsole/cartridges/JarCartridge.java:20-25,
   omicron-player/omicron-engine/src/main/java/org/github/msx80/omicron/GameRun.java:74-100).
   The libretro core is the experimental frontend of the same repository. The
-  libretro fork is the 2020-09-29 tree plus a GitLab CI file and a Makefile
-  that takes the JNI headers from JAVA_HOME. The CI builds the shared
+  libretro fork is the 2020-09-29 tree (upstream_commit, their merge base)
+  plus a GitLab CI file and a Makefile that takes the JNI headers from
+  JAVA_HOME. The CI builds the shared
   library for Linux x64, i686 and aarch64 only (.gitlab-ci.yml:48-66).
 
   retro_load_game builds <system_dir>/omicron/omicron.jar and refuses the

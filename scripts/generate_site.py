@@ -8532,6 +8532,18 @@ def generate_which_pack() -> str:
             *fence("powershell", install_command(
                 "powershell", "--platform retroarch --dest E:\\retroarch\\cores\\system")),
         ]),
+        *markup.details("note", "Copy the BIOS files from your old card", [
+            "Plug the old card in and add `--from` with its folder. The BIOS files "
+            "found there are copied, and the rest downloaded. The old card is only read.",
+            "",
+            "Linux, macOS:",
+            "",
+            *fence("sh", install_command("sh", "--from /media/me/OLDCARD")),
+            "",
+            "Windows (PowerShell, E: being the old card):",
+            "",
+            *fence("powershell", install_command("powershell", "--from E:\\")),
+        ]),
         "Details: [All installer options](wiki/installer.md).",
         "",
         *_next_block([

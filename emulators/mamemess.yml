@@ -4,8 +4,8 @@ core_classification: official_port
 source: "https://github.com/libretro/mame"
 upstream: "https://github.com/mamedev/mame"
 profiled_date: "2026-03-29"
-source_commit: "9069f39340f2d2b1795df8e71bb1d3d0fbc76598"
-upstream_commit: "728d957663041fbc943806bf151584acd03e2160"
+source_commit: "5f5a07748ce5c239c4118463ce8e6473743d4859"
+upstream_commit: "61a222977fd29f22ce11fbea3f7c290fd7ced091"
 core_version: "0.287"
 display_name: "Multi (MAME/MESS)"
 
@@ -912,7 +912,7 @@ files:
     required: true
     category: bios_zip
     system: casio-pv2000
-    source_ref: "upstream src/mame/casio/pv2000.cpp:416-419"
+    source_ref: "upstream src/mame/casio/pv2000.cpp:415-418"
     contents:
       - name: hn613128pc64.bin
         description: Z80 BASIC ROM

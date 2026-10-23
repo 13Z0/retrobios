@@ -387,6 +387,14 @@ class TestAnchorBlock(unittest.TestCase):
             self.assertEqual(result.status, "CHANGED")
             self.assertEqual(result.start, line)
 
+    def test_a_file_rewritten_line_for_line_is_changed_not_gone(self):
+        # fheroes2 version.txt:1 went from 1.0.11 to 1.1.17. With no
+        # unchanged line left the file read GONE and held the whole recale.
+        result = anchor_block(["1.0.11"], ["1.1.17"], 1, 1)
+        self.assertEqual((result.status, result.start, result.end), ("CHANGED", 1, 1))
+        result = anchor_block(["a = 1", "b = 2"], ["a = 3", "b = 4"], 2, 2)
+        self.assertEqual((result.status, result.start), ("CHANGED", 2))
+
     def test_gone_when_content_vanished(self):
         result = anchor_block(["a", "unique marker", "b"], ["x"] * 200, 2, 2)
         self.assertEqual(result.status, "GONE")
@@ -2723,6 +2731,21 @@ class TestWriteDryRun(unittest.TestCase):
         self.assertNotIn("source_commit", output)
         self.assertEqual(self.path.read_text(), before)
 
+    def test_a_bump_that_leaves_stale_prose_is_rolled_back(self):
+        """dolphin-mmjr2, hatari, xenios: the bump moved upstream_commit only,
+        and prose the report had judged in the fork fell under the new
+        upstream pin. The guard had read it under the old pins."""
+        from unittest import mock
+
+        before = self.path.read_text()
+        answers = iter([[], ["notes: a.c:10 (a.c:10 changed)"]])
+        with mock.patch.object(
+            profile_sync, "realign_prose", side_effect=lambda *a, **k: next(answers)
+        ), contextlib.redirect_stderr(io.StringIO()) as err:
+            self._run(self._args(rebase_refs=True, dry_run=False), self._shifted())
+        self.assertEqual(self.path.read_text(), before)
+        self.assertIn("nothing was written", err.getvalue())
+
     def test_a_planned_bump_reads_the_prose_the_rebase_would_have_left(self):
         """The pin is blocked by prose until the rebase moves it.
 
@@ -2961,6 +2984,34 @@ class TestRebaseWaitsForThePin(unittest.TestCase):
         self.assertFalse(profile_sync.pending_recale(report))
         self.assertEqual(rebase_refs(self.path, report), ["a.c:10-12 -> a.c:30-32"])
 
+    def test_chained_shifts_are_judged_at_their_own_entry(self):
+        # tr1x: cut2 508->531, cut3 531->552, cut4 552->575. Once written,
+        # cut3 and cut4 read as pending on the values cut2 and cut3 took.
+        text = (
+            'emulator: Test\nsource: "https://github.com/o/n"\n'
+            'source_commit: "pin"\nfiles:\n'
+            + "".join(
+                f'  - name: "cut{n}.mp3"\n    source_ref: "g.json5:{line}"\n'
+                for n, line in ((2, 508), (3, 531), (4, 552))
+            )
+        )
+        self.path.write_text(text, encoding="utf-8")
+        entries = [
+            EntryReport(
+                f"cut{n}.mp3", f"g.json5:{old}", "SHIFTED",
+                [PartResult(RefPart("g.json5", old, old), "SHIFTED", None, new, new, [])],
+                "ref", f"files[cut{n}.mp3].source_ref",
+            )
+            for n, old, new in ((2, 508, 531), (3, 531, 552), (4, 552, 575))
+        ]
+        report = self._report(entries, {"SHIFTED": 3})
+        self.assertEqual(len(rebase_refs(self.path, report)), 3)
+        written = self.path.read_text()
+        self.assertIn('source_ref: "g.json5:575"', written)
+        self.assertEqual(
+            profile_sync.pending_recale(report, text=written), 0
+        )
+
 
 class TestBumpCommit(unittest.TestCase):
     def setUp(self):
@@ -2998,6 +3049,24 @@ class TestBumpCommit(unittest.TestCase):
         )
         self.assertEqual(profile_sync.pending_recale(report), 0)
         self.assertTrue(bump_commit(self.path, report))
+
+    def test_refused_on_a_build_a_platform_compiles(self):
+        # mame0258 documents the MAME Recalbox builds: libretro/mame HEAD
+        # is a later release, and every ref still anchors there.
+        self.path.write_text(SAMPLE + "built_by: [recalbox]\n", encoding="utf-8")
+        part = PartResult(
+            RefPart("a.c", 10, 12, "a.c:10-12"), "ANCHORED", None, 10, 12, []
+        )
+        report = ProfileReport(
+            name="p", repo="o/n", pin="pin", head="newhead",
+            entries=[
+                EntryReport("a.bin", "a.c:10-12, (just a note)", "ANCHORED", [part])
+            ],
+            counts={"ANCHORED": 1},
+        )
+        with contextlib.redirect_stderr(io.StringIO()):
+            self.assertFalse(bump_commit(self.path, report))
+        self.assertNotIn("newhead", self.path.read_text())
 
     def test_refused_when_no_ref_reads_the_pinned_repository(self):
         """gam4980: every bare libretro.c ref anchored in upstream, and the
@@ -3134,6 +3203,7 @@ class TestCheckVersion(unittest.TestCase):
                 "tagsha" if tag == "v3.0.0" else None
             )
         )
+        profile_sync.upstream.tag_commit = profile_sync.upstream.resolve_tag_commit
 
     def tearDown(self):
         (
@@ -3170,6 +3240,55 @@ class TestCheckVersion(unittest.TestCase):
     def test_no_warning_when_tag_commit_matches_pin(self):
         result = check_version({"core_version": "v3.0.0"}, self.repo, self.dir, False)
         self.assertIsNone(version_warning(result, "tagsha"))
+
+    def test_warning_says_which_side_of_the_tag_the_pin_is(self):
+        # 52 warnings read alike: a build after its release and a pin older
+        # than the release it claims could not be told apart.
+        result = check_version({"core_version": "v3.0.0"}, self.repo, self.dir, False)
+        self.assertIn("4 commits after the tag", version_warning(result, "p", (4, 0)))
+        self.assertIn("core_version is later than the code",
+                      version_warning(result, "p", (0, 9)))
+        self.assertIn("off the tag's history", version_warning(result, "p", (2, 3)))
+
+    def test_warning_names_a_release_the_pin_already_contains(self):
+        result = check_version({"core_version": "v3.0.0"}, self.repo, self.dir, False)
+        warning = version_warning(result, "tagsha", None, "v3.1.0")
+        self.assertIn("already contains release v3.1.0", warning)
+
+
+class TestAncestry(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.saved = profile_sync.upstream._http_json
+
+    def tearDown(self):
+        profile_sync.upstream._http_json = self.saved
+        self.tmp.cleanup()
+
+    def test_github_answers_both_directions_at_once(self):
+        calls = []
+
+        def answer(url):
+            calls.append(url)
+            return {"ahead_by": 3, "behind_by": 0}
+
+        profile_sync.upstream._http_json = answer
+        repo = profile_sync.upstream.parse_repo("https://github.com/o/n")
+        self.assertEqual(
+            profile_sync.upstream.ancestry(repo, "tag", "pin", self.tmp.name), (3, 0)
+        )
+        self.assertEqual(len(calls), 1)
+
+    def test_gitlab_is_asked_both_ways(self):
+        def answer(url):
+            forward = "from=tag&to=pin" in url
+            return {"commits": [{}] * (0 if forward else 5)}
+
+        profile_sync.upstream._http_json = answer
+        repo = profile_sync.upstream.parse_repo("https://gitlab.com/o/n")
+        self.assertEqual(
+            profile_sync.upstream.ancestry(repo, "tag", "pin", self.tmp.name), (0, 5)
+        )
 
 
 HASH_PROFILE = {
@@ -3218,6 +3337,44 @@ class TestDetectNewFiles(unittest.TestCase):
     def test_source_file_extensions_are_not_matched(self):
         found, _ = detect_new_files(['#include "driver.cpp"'], set())
         self.assertEqual(found, [])
+
+    def test_a_printf_conversion_is_not_part_of_the_name(self):
+        # sdl2trs src/trs_options.c:864-866 builds "%slevel2.rom" and the
+        # report named slevel2.rom.
+        lines = [
+            'snprintf(romfile1, sizeof(romfile1), "%slevel2.rom", ROM_PATH);',
+            'snprintf(name, 64, "%02dcart.bin", slot);',
+        ]
+        found, _ = detect_new_files(lines, set(), path="src/trs_options.c")
+        self.assertEqual(found, [(1, "level2.rom"), (2, "cart.bin")])
+
+    def test_a_quoted_name_with_spaces_is_read_whole(self):
+        # virtualjaguar libretro.c:5815-5816 opens "Jaguar CD BIOS.rom",
+        # reported as BIOS.rom. A sentence still yields the name it holds.
+        lines = [
+            'snprintf(path, n, "%s%c%s", dir, slash, "Jaguar CD BIOS.rom");',
+            'log("Please insert bios.bin first");',
+            'message(STATUS "Packing patches.zip")',
+            '#define ROM ".bin.hex.iii.rom"',
+        ]
+        found, _ = detect_new_files(lines, set(), path="libretro.c")
+        self.assertEqual(
+            found,
+            [(1, "Jaguar CD BIOS.rom"), (2, "bios.bin"), (3, "patches.zip")],
+        )
+
+    def test_an_identifier_in_code_is_not_a_file(self):
+        # pcee2 reads config keys EE.bios and IOP.bios and a field psm_s.pal.
+        lines = [
+            "cfg.EE.bios = load(path);",
+            "if (psm_s.pal) {",
+            "// loads boot.rom from the system directory",
+            'open("ipl.rom");',
+        ]
+        found, _ = detect_new_files(lines, set(), path="src/core/config.cpp")
+        self.assertEqual(found, [(3, "boot.rom"), (4, "ipl.rom")])
+        found, _ = detect_new_files(["Copy EE.bios here"], set(), path="README.md")
+        self.assertEqual(found, [(1, "EE.bios")])
 
 
 class TestWatchHashes(unittest.TestCase):
@@ -3516,6 +3673,37 @@ class TestCollectCitations(unittest.TestCase):
         citation = collect_citations(document)[0]
         self.assertEqual(citation.ref, "x.c:100")
 
+    def test_spaced_lone_number_closing_the_citation_joins_the_run(self):
+        # vkquake wrote `(Quake/bgmusic.c:29, 321).` and cemu a list of ten
+        # lines of .gitlab-ci.yml: only the first number was ever compared.
+        cases = {
+            "music (Quake/bgmusic.c:29, 321).\n": [(29, 29), (321, 321)],
+            "(ref: a/b.cpp:1586-1633, 2646).\n": [(1586, 1633), (2646, 2646)],
+            "jobs in .gitlab-ci.yml:110, 116, 139-140\n": [
+                (110, 110), (116, 116), (139, 140)
+            ],
+            "read at x.c:5, 6; then y\n": [(5, 5), (6, 6)],
+        }
+        for text, spans in cases.items():
+            citation = collect_citations({"notes": text})[0]
+            self.assertEqual(
+                [(p.start, p.end) for p in citation.parts], spans, text
+            )
+            line = text.splitlines()[0]
+            self.assertEqual(
+                [line[lo:hi] for lo, hi in citation.spans],
+                [p.raw for p in citation.parts],
+            )
+
+    def test_spaced_number_list_followed_by_a_word_stays_prose(self):
+        for text in (
+            "It reads x.c:5, 6, 7 players at once.\n",
+            "It reads x.c:5, 6 and 7 at once.\n",
+            "Lines 3, 4 and 5, version 2, 3 players.\n",
+        ):
+            refs = [c.ref for c in collect_citations({"notes": text})]
+            self.assertEqual(refs, ["x.c:5"] if "x.c" in text else [], text)
+
     def test_declared_repository_name_is_not_external(self):
         document = {
             "upstream": "https://github.com/o/mednafen",
@@ -3561,6 +3749,13 @@ files:
   - name: "a.bin"
     source_ref: "a.c:10-12"
 '''
+
+# One run written twice in a folded scalar: no physical line carries the
+# folded sentence, and the run alone is not unique.
+FOLDED_TWICE = PROSE_SAMPLE.replace(
+    "files:",
+    "twice: >\n  Read at (q.c:7) first\n  and again at (q.c:7) later.\nfiles:",
+)
 
 
 class TestRebaseProse(unittest.TestCase):
@@ -3629,6 +3824,18 @@ class TestRebaseProse(unittest.TestCase):
         self.assertIn("(a.c:10)", self.path.read_text())
 
     def test_ambiguous_sentence_location_is_left_alone(self):
+        self.path.write_text(FOLDED_TWICE, encoding="utf-8")
+        part = PartResult(RefPart("q.c", 7, 7, "7"), "SHIFTED", None, 9, 9, [])
+        applied = rebase_refs(
+            self.path, self._report([self._prose_entry("q.c:7", [part], "twice")])
+        )
+        self.assertEqual(applied, [])
+        self.assertEqual(self.path.read_text(), FOLDED_TWICE)
+
+    def test_one_sentence_in_two_fields_moves_in_both(self):
+        # emucorex cites CMakeLists.txt:706 in notes and in exclusion_note on
+        # identical lines: neither was unique in the file, one was left, and
+        # the pin refused to follow.
         text = PROSE_SAMPLE.replace(
             "files:",
             'quirks: |\n  The loader appends dc/ to the system directory '
@@ -3636,11 +3843,37 @@ class TestRebaseProse(unittest.TestCase):
         )
         self.path.write_text(text, encoding="utf-8")
         part = PartResult(RefPart("a.c", 10, 10, "10"), "SHIFTED", None, 14, 14, [])
-        applied = rebase_refs(
-            self.path, self._report([self._prose_entry("a.c:10", [part])])
+        report = self._report([
+            self._prose_entry("a.c:10", [part]),
+            self._prose_entry("a.c:10", [part], "quirks"),
+        ])
+        self.assertEqual(
+            rebase_refs(self.path, report),
+            ["notes: a.c:10 -> a.c:14", "quirks: a.c:10 -> a.c:14"],
         )
-        self.assertEqual(applied, [])
-        self.assertEqual(self.path.read_text(), text)
+        written = self.path.read_text()
+        self.assertEqual(written, text.replace("(a.c:10)", "(a.c:14)"))
+        self.assertEqual(profile_sync.pending_recale(report, text=written), 0)
+        self.assertTrue(bump_commit(self.path, report))
+
+    def test_a_refused_recale_names_the_citation_and_writes_nothing(self):
+        # The structured ref could move, the prose could not: the run
+        # printed nothing, wrote nothing, and the pin stayed.
+        self.path.write_text(FOLDED_TWICE, encoding="utf-8")
+        prose = PartResult(RefPart("q.c", 7, 7, "7"), "SHIFTED", None, 9, 9, [])
+        structured = PartResult(RefPart("a.c", 10, 12), "SHIFTED", None, 14, 16, [])
+        report = self._report([
+            self._prose_entry("q.c:7", [prose], "twice"),
+            EntryReport("a.bin", "a.c:10-12", "SHIFTED", [structured]),
+        ])
+        err = io.StringIO()
+        with contextlib.redirect_stderr(err):
+            self.assertEqual(rebase_refs(self.path, report), [])
+        self.assertIn(
+            "p: not recaled, cannot move twice: q.c:7 (0 lines carry its sentence)",
+            err.getvalue(),
+        )
+        self.assertEqual(self.path.read_text(), FOLDED_TWICE)
 
     def test_folded_scalar_moves_through_its_run_token(self):
         text = PROSE_SAMPLE.replace(
@@ -3727,14 +3960,12 @@ class TestPendingProse(unittest.TestCase):
         self.assertTrue(bump_commit(self.path, report))
 
     def test_unwritable_prose_blocks_the_pin(self):
-        text = PROSE_SAMPLE.replace(
-            "files:",
-            'quirks: |\n  The loader appends dc/ to the system directory '
-            '(a.c:10) and reads\n  nothing else.\nfiles:',
-        )
-        self.path.write_text(text, encoding="utf-8")
-        part = PartResult(RefPart("a.c", 10, 10, "10"), "SHIFTED", None, 14, 14, [])
+        self.path.write_text(FOLDED_TWICE, encoding="utf-8")
+        part = PartResult(RefPart("q.c", 7, 7, "7"), "SHIFTED", None, 9, 9, [])
         report = self._report([part])
+        report.entries[0] = EntryReport(
+            "twice", "q.c:7", "SHIFTED", [part], "prose", "twice"
+        )
         self.assertEqual(rebase_refs(self.path, report), [])
         self.assertFalse(bump_commit(self.path, report))
 
@@ -3783,24 +4014,46 @@ class TestWrappedProse(unittest.TestCase):
         }
         self.assertEqual(runs, {"src/config.rs:76-78,95-99": True})
 
-    def test_a_wrapped_run_that_moves_holds_the_pin(self):
+    def _report(self, ref, parts):
+        return ProfileReport(
+            name="p", repo="o/n", pin="pin", head="newhead",
+            entries=[EntryReport("adam", ref, "SHIFTED", parts, "prose", "adam")],
+            counts={"SHIFTED": 1},
+        )
+
+    def test_a_wrapped_run_moves_on_both_lines_and_the_pin_follows(self):
+        # gearcoleco put its four ranges on the line after `libretro.cpp:`,
+        # and the run held the pin with nothing written and nothing said.
         parts = [
             PartResult(RefPart("libretro.cpp", 2372, 2373, "2372-2373"),
                        "SHIFTED", None, 2381, 2382, []),
             PartResult(RefPart("libretro.cpp", 2429, 2433, "2429-2433"),
                        "SHIFTED", None, 2438, 2442, []),
         ]
-        entry = EntryReport(
-            "adam", "libretro.cpp:2372-2373, 2429-2433", "SHIFTED", parts,
-            "prose", "adam",
+        report = self._report("libretro.cpp:2372-2373, 2429-2433", parts)
+        self.assertEqual(len(rebase_refs(self.path, report)), 1)
+        text = self.path.read_text()
+        self.assertIn("(libretro.cpp:\n  2381-2382, 2438-2442) and by", text)
+        self.assertTrue(bump_commit(self.path, report))
+
+    def test_a_break_before_the_colon_moves_the_next_line(self):
+        # playdiaemu wrote `.../src/content.rs` and `:111-199` one line apart.
+        text = PROSE_SAMPLE.replace(
+            "files:",
+            "adam: |\n  ZIP archives from the game path (src/content.rs\n"
+            "  :111-199). No other file is opened.\nfiles:",
         )
-        report = ProfileReport(
-            name="p", repo="o/n", pin="pin", head="newhead",
-            entries=[entry], counts={"SHIFTED": 1},
+        self.path.write_text(text, encoding="utf-8")
+        part = PartResult(RefPart("src/content.rs", 111, 199, "111-199"),
+                          "CHANGED", None, 111, 204, [])
+        report = self._report("src/content.rs:111-199", [part])
+        report.counts = {"CHANGED": 1}
+        self.assertEqual(
+            rebase_refs(self.path, report, accept_changed=True),
+            ["adam: src/content.rs:111-199 -> src/content.rs:111-204"],
         )
-        self.assertEqual(rebase_refs(self.path, report), [])
-        self.assertFalse(bump_commit(self.path, report))
-        self.assertEqual(self.path.read_text(), self.TEXT)
+        self.assertIn("(src/content.rs\n  :111-204). No", self.path.read_text())
+        self.assertTrue(bump_commit(self.path, report, accept_changed=True))
 
 
 class TestOpcodeCache(unittest.TestCase):
@@ -3853,19 +4106,41 @@ class TestCommentCitations(unittest.TestCase):
             [c.ref for c in profile_sync.collect_citations(document, self.TEXT)],
         )
 
-    def test_a_comment_run_that_moves_holds_the_pin(self):
-        field = profile_sync.comment_citations(self.TEXT)[0].field
+    def _report(self, index, part):
+        field = profile_sync.comment_citations(self.TEXT)[index].field
+        return ProfileReport(
+            name="p", repo="o/n", pin="pin", head="newhead",
+            entries=[EntryReport("comment", f"{part.part.path}:{part.part.raw}",
+                                 part.status, [part], "prose", field)],
+            counts={part.status: 1},
+        )
+
+    def test_a_comment_run_moves_and_the_pin_follows(self):
+        # amiarcadia `# da.h:3-5` and mame2003_plus `core_options.c:223-236`
+        # held the pin, and --rebase-refs wrote nothing and said nothing.
         part = PartResult(RefPart("src/cpu.c", 3212, 3451, "3212-3451"),
                           "SHIFTED", None, 3268, 3507, [])
-        report = ProfileReport(
-            name="p", repo="o/n", pin="pin", head="newhead",
-            entries=[EntryReport("comment", "src/cpu.c:3212-3451", "SHIFTED",
-                                 [part], "prose", field)],
-            counts={"SHIFTED": 1},
+        report = self._report(0, part)
+        self.assertEqual(
+            rebase_refs(self.path, report),
+            ["comment line 10: src/cpu.c:3212-3451 -> src/cpu.c:3268-3507"],
         )
-        self.assertEqual(rebase_refs(self.path, report), [])
-        self.assertFalse(bump_commit(self.path, report))
-        self.assertEqual(self.path.read_text(), self.TEXT)
+        self.assertEqual(
+            self.path.read_text(),
+            self.TEXT.replace("src/cpu.c:3212-3451", "src/cpu.c:3268-3507"),
+        )
+        self.assertTrue(bump_commit(self.path, report))
+
+    def test_a_renamed_comment_path_is_rewritten(self):
+        # bennugd `libretro.c:887-910` in a comment: RENAMED to
+        # libretro/libretro.c, same lines, and nothing moved.
+        part = PartResult(RefPart("z.c", 9, 9, "9"), "RENAMED", "src/z.c", 9, 9, [])
+        report = self._report(1, part)
+        self.assertEqual(
+            rebase_refs(self.path, report), ["comment line 16: z.c:9 -> src/z.c:9"]
+        )
+        self.assertIn('"a.c:10-12"  # see src/z.c:9', self.path.read_text())
+        self.assertTrue(bump_commit(self.path, report))
 
 
 class TestRealignProse(unittest.TestCase):
@@ -4462,6 +4737,19 @@ class TestEmulatorsDirStatus(unittest.TestCase):
             self._git("init", "-q", cwd=root)
             Path(root, "a.yml").write_text("emulator: a\n")
             self.assertTrue(profile_sync.emulators_dir_is_dirty(root))
+
+    def test_only_the_selected_profiles_count(self):
+        # A loop of --emulator X --rebase-refs refused every profile after
+        # the first one it wrote.
+        with tempfile.TemporaryDirectory() as root:
+            self._git("init", "-q", cwd=root)
+            Path(root, "a.yml").write_text("emulator: a\n")
+            Path(root, "b.yml").write_text("emulator: b\n")
+            self._git("add", "a.yml", "b.yml", cwd=root)
+            self._git("-c", "user.name=t", "-c", "user.email=t@t", "commit", "-qm", "p", cwd=root)
+            Path(root, "a.yml").write_text("emulator: a2\n")
+            self.assertTrue(profile_sync.emulators_dir_is_dirty(root, ["a"]))
+            self.assertFalse(profile_sync.emulators_dir_is_dirty(root, ["b"]))
 
     def test_a_tree_outside_any_repository_is_not_clean(self):
         with tempfile.TemporaryDirectory() as root, mock.patch.dict(

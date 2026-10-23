@@ -136,6 +136,14 @@
         "uniqueItems": true
       }
     },
+    "system_titles": {
+      "description": "Each system id with the name a person reads for it, the one the site prints (Sony PlayStation). A system the site cannot name is absent.",
+      "type": "object",
+      "additionalProperties": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
     "system_names": {
       "description": "Each platform system with the names the platform's own file gives it (native_system), which the installer accepts for --system.",
       "type": "object",

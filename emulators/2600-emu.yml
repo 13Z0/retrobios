@@ -5,7 +5,7 @@ source: "https://github.com/Rakashazi/emu-ex-plus-alpha"
 upstream: "https://github.com/stella-emu/stella"
 profiled_date: "2026-08-11"
 source_commit: "1c12fac5ce49badaadff2e2f210dcc30b89f4943"
-upstream_commit: "d55b1aec0d067a4c901a6dcdf81cb8f579685659"
+upstream_commit: "2c3d7023e9136f75c789803b44f119d8749dc104"
 core_version: "1.5.85"
 display_name: "Atari - 2600 (2600.emu)"
 mode: standalone

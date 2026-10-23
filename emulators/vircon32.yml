@@ -4,7 +4,8 @@ core_classification: official_port
 source: "https://github.com/vircon32/vircon32-libretro"
 upstream: "https://github.com/vircon32/ComputerSoftware"
 profiled_date: "2026-03-25"
-source_commit: "dd78c5cea1fcaa382b7492d0d813d6c1534914d7"
+source_commit: "35a4042b06c30f232edb3f3abb47a10bcd8ec240"
+upstream_commit: "ea62bc7caad34f483945eadb114cf7d9c26cf54c"
 core_version: "2026.2.18"
 display_name: "Vircon32"
 cores:
@@ -26,7 +27,7 @@ notes: |
   2. If found, load it via Console.LoadBiosFile() (external override)
   3. If not found, load the embedded BIOS via LoadEmbeddedBios()
 
-  This runs inside context_reset() (libretro.cpp:473-474), which is called
+  This runs inside context_reset() (libretro.cpp:537-538), which is called
   whenever the OpenGL context is (re)created.
 
   The BIOS file format is a V32 ROM with a specific signature

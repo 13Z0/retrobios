@@ -5,6 +5,7 @@ source: "https://github.com/libretro/stella2023"
 upstream: "https://github.com/stella-emu/stella"
 profiled_date: "2026-03-25"
 source_commit: "ba52c43b9eda950eb0c0eec69cda9b17dee8c39b"
+upstream_commit: "2c3d7023e9136f75c789803b44f119d8749dc104"
 core_version: "7.0_pre"
 display_name: "Atari - 2600 (Stella 2023)"
 cores:

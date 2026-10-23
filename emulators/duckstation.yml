@@ -5,7 +5,7 @@ source: "https://github.com/stenzek/duckstation"
 upstream: "https://github.com/stenzek/duckstation"
 logo: "https://raw.githubusercontent.com/stenzek/duckstation/master/data/resources/images/duck.png"
 profiled_date: "2026-03-23"
-source_commit: "4122fed9ad3e6e5c2ecf1516cd51675a5931623e"
+source_commit: "938c6d2a03e523d0e4275aa753f289a987bcb016"
 core_version: "v0.1-12070"
 display_name: "Sony - PlayStation (DuckStation)"
 cores: [duckstation, "Duckstation"]
@@ -28,19 +28,19 @@ notes: |
 
   The console region picks the image, Auto by default. NTSC-U answers the
   licence string `Sony Computer Entertainment Amer  ica` (two spaces, as
-  src/core/system.cpp:959 spells it), a SCUS or SLUS
+  src/core/system.cpp:972 spells it), a SCUS or SLUS
   executable, and every disc whose region the detector cannot read
   (DiscRegion::Other, NonPS1), so a disc of any other market boots an NTSC-U image.
-  ref: src/core/system.cpp:650-662, 926-995, 1723-1724, 1755
+  ref: src/core/system.cpp:663-675, 939-1008, 1738-1739, 1755
   ref: src/core/bios.cpp:397-436 (FindBIOSImageInDirectory keeps a region match)
-  ref: src/core/settings.h:595 (DEFAULT_CONSOLE_REGION = Auto)
+  ref: src/core/settings.h:605 (DEFAULT_CONSOLE_REGION = Auto)
 
   ImageInfo gained a version and an expected_filename field after the previous
   profiling pass. Neither takes part in identification: expected_filename is read
   only by the two settings screens, which fall back to the real filename when it
   is null.
   ref: src/core/bios.h:41-43 (field declarations)
-  ref: src/duckstation-qt/biossettingswidget.cpp:149, src/core/fullscreenui_settings.cpp:3281
+  ref: src/duckstation-qt/biossettingswidget.cpp:153, src/core/fullscreenui_settings.cpp:3317
   Lower priority = preferred. PS2 deprioritized (>= 100) for dynamic fast boot.
   Late PAL deprioritized (>= 150) due to additional regional checks.
   OpenBIOS detected by signature at offset 0x78, not by hash.

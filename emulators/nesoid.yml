@@ -6,7 +6,7 @@ upstream: "https://sourceforge.net/p/nesoid/code"
 author: "Yongzh (androidemu.com)"
 profiled_date: "2026-08-12"
 source_commit: "b2ff53fefa56a668aad4a579af85adc672d7a791"
-core_version: "2.5"
+core_version: "2.5-4"
 display_name: "Nintendo - NES / Famicom (Nesoid)"
 mode: standalone
 cores:
@@ -45,7 +45,7 @@ notes: |
   raises is discarded (app/jni/neslib/drivers/android/debug.c:4-11).
 
   The activity accepts a name ending .nes, .fds or .zip caselessly and refuses
-  anything else before the loader runs (EmulatorActivity.java:933-957,
+  anything else before the loader runs (app/src/main/java/com/androidemu/nes/EmulatorActivity.java:933-957,
   app/src/main/res/values/arrays.xml:4-8). An archive is opened by the core,
   which keeps the first entry ending .nes, .fds, .nsf, .unf, .nez or .unif, and
   a plain file also opens gzipped (app/jni/neslib/file.c:192-232,250-273).
@@ -66,21 +66,21 @@ notes: |
   calls FCEUI_SetBaseDirectory, which leaves that buffer empty
   (app/jni/neslib/general.c:46,52-56,215). The settings screen still writes the
   fdsRom preference and still shows the chosen path, but no code reads it back
-  (EmulatorSettingsFragment.java:96-99,150-156,195-210,
+  (app/src/main/java/com/androidemu/nes/EmulatorSettingsFragment.java:96-99,150-156,195-210,
   app/src/main/res/xml/preferences.xml:240-251). Disk switching went the same
   way: the menu asks the engine for fdsTotalSides and fdsCurrentDisk, which
   Yongzh's builds answer and the fork's does not, the base class returning zero
-  for any name (EmulatorActivity.java:417,969,1244-1249,
+  for any name (app/src/main/java/com/androidemu/nes/EmulatorActivity.java:417,969,1244-1249,
   app/jni/common/emuengine.h:49).
 
   The Game Genie ROM is a second path the user picks, kept across both families.
   loadGameGenie passes it to the engine only while the Enable Game Genie switch
   is on, the setter duplicates it into FSettings.GameGenie and OpenGenie reads it
-  once the content has loaded (EmulatorActivity.java:870-874,
+  once the content has loaded (app/src/main/java/com/androidemu/nes/EmulatorActivity.java:870-874,
   app/jni/neslib/drivers/android/nesengine.cpp:242-243,
   app/jni/neslib/svga.c:132-140, app/jni/neslib/fce.c:1201-1203). Both pickers
   list names ending .nes, .rom or .bin
-  (EmulatorSettingsFragment.java:179-210, FileChooser.java:157-172).
+  (app/src/main/java/com/androidemu/nes/EmulatorSettingsFragment.java:179-210, app/src/main/java/com/androidemu/nes/FileChooser.java:157-172).
 
   A palette named after the content is read from the pal directory of the same
   unset base directory as the disk BIOS, 192 bytes taken as 64 RGB triples. A
@@ -97,12 +97,12 @@ notes: |
   FCEU_LoadGameCheats reads at load and FCEU_FlushGameCheats rewrites at close
   (app/jni/neslib/cheat.c:183-208,272-300, app/jni/neslib/fce.c:1080,1213).
   The application writes its own files through Java paths instead: state slots
-  at <content>.ss<n> beside the content (StateSlotsActivity.java:39-45,135-140),
+  at <content>.ss<n> beside the content (app/src/main/java/com/androidemu/nes/StateSlotsActivity.java:39-45,135-140),
   an XML cheat list at <content>.cht, also beside the content
-  (Cheats.java:37-46,105-160), key profiles under its data directory
-  (KeyProfilesActivity.java:47-60,92-100), PNG screenshots under screenshot/ on
-  external storage (EmulatorActivity.java:1258-1281) and a netplay state
-  exchanged through its cache directory (EmulatorActivity.java:1292-1293).
+  (app/src/main/java/com/androidemu/Cheats.java:37-46,105-160), key profiles under its data directory
+  (app/src/main/java/com/androidemu/nes/KeyProfilesActivity.java:47-60,92-100), PNG screenshots under screenshot/ on
+  external storage (app/src/main/java/com/androidemu/nes/EmulatorActivity.java:1258-1281) and a netplay state
+  exchanged through its cache directory (app/src/main/java/com/androidemu/nes/EmulatorActivity.java:1292-1293).
 
 files:
   - name: disksys.rom
@@ -177,8 +177,8 @@ exclusion_note: >
   ref: app/jni/neslib/general.c:196-213,222-238, app/jni/neslib/cart.c:641-700,
        app/jni/neslib/fds.c:845-870,915-930, app/jni/neslib/cheat.c:183-208,
        272-300, app/jni/neslib/fce.c:1080,1145-1177,1206,1213,
-       EmulatorActivity.java:949-957,1258-1293, Cheats.java:37-46,
-       StateSlotsActivity.java:39-45,135-140,
-       KeyProfilesActivity.java:47-60,92-100, app/jni/neslib/Android.mk:193-197,
-       HelpActivity.java:14-22, MainActivity.java:20,
-       EmulatorSettingsFragment.java:30-31
+       app/src/main/java/com/androidemu/nes/EmulatorActivity.java:949-957,1258-1293, app/src/main/java/com/androidemu/Cheats.java:37-46,
+       app/src/main/java/com/androidemu/nes/StateSlotsActivity.java:39-45,135-140,
+       app/src/main/java/com/androidemu/nes/KeyProfilesActivity.java:47-60,92-100, app/jni/neslib/Android.mk:193-197,
+       app/src/main/java/com/androidemu/nes/HelpActivity.java:14-22, app/src/main/java/com/androidemu/nes/MainActivity.java:20,
+       app/src/main/java/com/androidemu/nes/EmulatorSettingsFragment.java:30-31

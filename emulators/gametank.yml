@@ -5,7 +5,7 @@ source: "https://github.com/Sundownersport/gametank-libretro"
 upstream: "https://github.com/clydeshaffer/GameTankEmulator"
 profiled_date: "2026-10-20"
 source_commit: "1a6f2608ae302d613ac17ae8584c7239ae47044b"
-upstream_commit: "9896544460d5bb7dd89c2d2bc0f5c97a6f31d2e0"
+upstream_commit: "be32deab74b7778647273fa5616d1ea92e3e1267"
 core_version: "1.0.1"
 display_name: "Clydeware - GameTank (GameTank)"
 cores:

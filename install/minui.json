@@ -6,7 +6,7 @@
   "platform": "minui",
   "display_name": "MinUI",
   "version": "1.0",
-  "generated": "2026-10-22T05:12:35Z",
+  "generated": "2026-10-23T12:47:02Z",
   "base_destination": "",
   "detect": [
     {
@@ -39,6 +39,7 @@
   },
   "system_cores": {},
   "system_names": {},
+  "system_titles": {},
   "files": [
     {
       "dest": "Bios/MGBA/gb_bios.bin",

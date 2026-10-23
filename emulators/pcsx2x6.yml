@@ -7,7 +7,8 @@ upstream: "https://github.com/PCSX2/pcsx2"
 profiled_date: "2026-08-08"
 source_commit: "583f0e90907d69bb2db670f570d0865260fcc71b"
 upstream_commit: "5c611f85e13ba250a69c155c678482b219b10d48"
-core_version: "v0.2.20"
+prose_written_at: "583f0e90907d69bb2db670f570d0865260fcc71b"
+core_version: "v0.2.22"
 display_name: "Namco - System 246 / 256 (PCSX2x6)"
 cores:
   - pcsx2x6
@@ -162,7 +163,7 @@ files:
     size: 7941
     description: "Arcade game database"
     note: "Keyed by NM gameid, one entry per arcade title, carrying the board variant, the media type, the boot program and the GS fixes. Supplies the platform and media values a minimal .acgame leaves out. Console error when missing."
-    source_ref: "upstream pcsx2/GameDatabase.cpp:39, source pcsx2/GameDatabase.cpp:979-990, source pcsx2/VMManager.cpp:1385-1415"
+    source_ref: "source pcsx2/GameDatabase.cpp:39, source pcsx2/GameDatabase.cpp:979-990, source pcsx2/VMManager.cpp:1385-1415"
 
   - name: RedumpDatabase.yaml
     path: bin/resources/RedumpDatabase.yaml
@@ -184,7 +185,7 @@ files:
     size: 1312
     description: "Bundled patch archive"
     note: "Opened read-only from the resources folder. Built-in patches are unavailable and an on-screen error is shown when it cannot be opened. Fetched from the patches repository at build time, not committed."
-    source_ref: "upstream pcsx2/Patch.cpp:117, source pcsx2/Patch.cpp:289-315, upstream .github/workflows/linux_build_qt.yml:129"
+    source_ref: "source pcsx2/Patch.cpp:117, source pcsx2/Patch.cpp:289-315, source .github/workflows/linux_build_qt.yml:129"
 
   - name: game_controller_db.txt
     path: bin/resources/game_controller_db.txt
@@ -195,4 +196,4 @@ files:
     size: 515563
     description: "SDL controller mapping database"
     note: "A copy in the user data root takes precedence over the one in resources. Fed to SDL as a hint. Without either, SDL falls back to its built-in mappings and an error is logged."
-    source_ref: "upstream pcsx2/Input/SDLInputSource.cpp:24, source pcsx2/Input/SDLInputSource.cpp:614-629"
+    source_ref: "source pcsx2/Input/SDLInputSource.cpp:24, source pcsx2/Input/SDLInputSource.cpp:614-629"

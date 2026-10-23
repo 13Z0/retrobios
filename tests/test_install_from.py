@@ -12,6 +12,7 @@ never moved, and checked again once written.
 from __future__ import annotations
 
 import contextlib
+import copy
 import io
 import json
 import subprocess
@@ -325,6 +326,26 @@ class EventsForAFolder(FromFolder):
         error = next(e for e in events if e["event"] == "error")
         self.assertEqual((error["stage"], error["reason"]), ("from", "not_found"))
         self.assertEqual(events[-1], {"event": "end", "code": 1})
+
+
+class TheInterfaceReadsAFoundEvent(unittest.TestCase):
+    """The full-screen interface drives the engine through --events. A
+    found event, which an install writes for a misplaced file even without
+    --from, leaves its screens as they were."""
+
+    FOUND = {"event": "found", "platform": "retroarch", "dest": "scph5501.bin",
+             "folder": "/bios", "path": "/bios/bios/scph5501.bin", "member": "",
+             "reason": "nested folder: it is at bios/bios/scph5501.bin"}
+
+    def test_every_run_ignores_it(self):
+        for run in ("check", "confirm", "preview", "install"):
+            with self.subTest(run=run):
+                state = install.TuiState()
+                state.run, state.run_id, state.running = run, 3, True
+                before = copy.deepcopy(vars(state))
+                self.assertEqual(install.tui_receive(state, ("event", 3, dict(self.FOUND))),
+                                 [])
+                self.assertEqual(vars(state), before)
 
 
 class MisplacedInTheBiosFolder(Scratch):

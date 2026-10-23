@@ -28,8 +28,9 @@ exclusion_note: >
 
 notes: |
   Fork of higan by hex_usr (nSide v009r16, README.txt:1-4), synchronised with
-  higan v106r25: Emulator::Version is "106.25" (nSide/emulator/emulator.hpp:16)
-  and retro_get_system_info announces it as library_version under the name
+  higan v106r25, the release commit upstream_commit names: Emulator::Version
+  is "106.25" (nSide/emulator/emulator.hpp:16) and retro_get_system_info
+  announces it as library_version under the name
   "higan (Super Famicom Balanced)" (nSide/target-libretro/libretro.cpp:87-93,
   nSide/target-libretro/libretro-sfc.cpp:486). The balanced profile keeps a
   scanline-based PPU, and the accuracy profile is refused at build time

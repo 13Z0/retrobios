@@ -4,7 +4,7 @@ core_classification: official_port
 source: "https://github.com/flyinghead/flycast"
 logo: "https://raw.githubusercontent.com/flyinghead/flycast/master/shell/linux/flycast.png"
 profiled_date: "2026-10-21"
-source_commit: "34ad8c8262c82db237a8b9cee0d8046d9cdd6f78"
+source_commit: "6d81b998169b916ad7d7d6f403f7dc2c18e2aea5"
 core_version: "Git"
 display_name: "Sega - Dreamcast/Naomi (Flycast)"
 cores:
@@ -41,7 +41,7 @@ notes: |
   System SP) load MAME-format BIOS archives.
 
   The libretro port appends "dc/" to the system directory
-  (shell/libretro/libretro.cpp:2249-2250). All files below are relative to
+  (shell/libretro/libretro.cpp:2252-2253). All files below are relative to
   system_dir/dc/.
 
   The standalone emulator looks for each file in the BIOS paths the user

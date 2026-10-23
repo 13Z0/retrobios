@@ -1,0 +1,40 @@
+ RetroBIOS: Where do you play?
+
+ Found on this machine:
+
+ > RetroArch
+   KNULLI (Batocera files)
+   Another setup or folder
+
+ BIOS folder: /home/user/.config/retroarch/system
+ ES-DE found: its BIOS files go to each emulator, not to ES-DE itself.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ A/Enter Continue  B/Esc Quit  ? Help

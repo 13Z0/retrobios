@@ -4,7 +4,7 @@ core_classification: official_port
 source: https://github.com/skylersaleh/SkyEmu/blob/v5/src/libretro.c
 upstream: https://github.com/skylersaleh/SkyEmu
 profiled_date: "2026-03-25"
-source_commit: "01516d6798e3652b583e6a366085bb51c43b528d"
+source_commit: "9b6bbb6aa73cebae6cb52ea60d04f803acadc480"
 core_version: "v5"
 display_name: "Nintendo - Game Boy/GBA/NDS (SkyEmu)"
 
@@ -23,7 +23,7 @@ notes: |
   stub firmware (NDS), and HLE boot skip (GB/GBC). BIOS loading controlled by core options
   (default: on). Files loaded from system_dir/SkyEmu/ subdirectory.
   Standalone validates exact BIOS file size, while libretro only rejects files exceeding buffer.
-  The .info does not list gb_bios.bin, which the code reads (gb.h:1603).
+  The .info does not list gb_bios.bin, which the code reads (src/gb.h:1603).
 
 files:
   - name: cgb_boot.bin
@@ -47,25 +47,25 @@ files:
     path: SkyEmu/gba_bios.bin
     required: false
     hle_fallback: true
-    source_ref: "src/gba.h:1726-1730"
+    source_ref: "src/gba.h:1743-1747"
 
   - name: nds7.bin
     description: NDS ARM7 BIOS
     path: SkyEmu/nds7.bin
     required: false
     hle_fallback: true
-    source_ref: "src/nds.h:3088-3089"
+    source_ref: "src/nds.h:3105-3106"
 
   - name: nds9.bin
     description: NDS ARM9 BIOS
     path: SkyEmu/nds9.bin
     required: false
     hle_fallback: true
-    source_ref: "src/nds.h:3091-3092"
+    source_ref: "src/nds.h:3108-3109"
 
   - name: firmware.bin
     description: NDS firmware
     path: SkyEmu/firmware.bin
     required: false
     hle_fallback: true
-    source_ref: "src/nds.h:3094, 3200-3268"
+    source_ref: "src/nds.h:3111, src/nds.h:3217-3285"

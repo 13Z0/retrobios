@@ -5,10 +5,10 @@ source: "https://github.com/sashkinbro/EmuCoreX"
 upstream: "https://github.com/PCSX2/pcsx2"
 author: "Oleksandr (sashkinbro)"
 profiled_date: "2026-10-04"
-source_commit: "9884c9f9a0c5d5df2f0c0c064ec41029a4528d72"
-prose_written_at: "9884c9f9a0c5d5df2f0c0c064ec41029a4528d72"
+source_commit: "bda532f311a77c828a4e6bdb4667d9e92dfdf62f"
+prose_written_at: "bda532f311a77c828a4e6bdb4667d9e92dfdf62f"
 upstream_commit: "c10a5c9ad951c517dc48b722b5b84eb9bf7fdb42"
-core_version: "0.4.7"
+core_version: "0.5.1"
 display_name: "Sony - PlayStation 2 (EmuCoreX)"
 cores:
   - emucorex
@@ -28,7 +28,7 @@ notes: |
   ref: app/build.gradle.kts:66-70, app/build.gradle.kts:97,
        app/src/main/AndroidManifest.xml:90-104,
        app/src/main/cpp/ARM_ANDROID/CMakeLists.txt:78-82,
-       app/src/main/cpp/ARM_ANDROID/CMakeLists.txt:359-360
+       app/src/main/cpp/ARM_ANDROID/CMakeLists.txt:361-362
 
   The whole upstream core is linked, with three files swapped out of the target:
   Achievements.cpp, Host/SDLAudioStream.cpp and Input/SDLInputSource.cpp are
@@ -37,8 +37,8 @@ notes: |
   DX11 and DX12 renderers sit in the Windows branch of the core CMakeLists.
   ref: app/src/main/cpp/ARM_ANDROID/CMakeLists.txt:259-272,
        app/src/main/cpp/ARM_ANDROID/CMakeLists.txt:59-60,
-       app/src/main/cpp/pcsx2/pcsx2/CMakeLists.txt:706,
-       app/src/main/cpp/pcsx2/pcsx2/CMakeLists.txt:723-734
+       app/src/main/cpp/pcsx2/pcsx2/CMakeLists.txt:710,
+       app/src/main/cpp/pcsx2/pcsx2/CMakeLists.txt:727-738
 
   Storage. The data root is the app files directory. The app creates cache,
   resources, inis, sstates and memcards under it, then copies the whole resources
@@ -46,12 +46,12 @@ notes: |
   DataRoot, Resources, Settings and Cache from that root, and the launcher sets
   Folders for Bios, Savestates, MemoryCards, Textures, Cheats, Patches and Logs
   per run.
-  ref: app/src/main/java/com/sbro/emucorex/core/NativeApp.kt:30,
-       app/src/main/java/com/sbro/emucorex/core/NativeApp.kt:430-432,
-       app/src/main/java/com/sbro/emucorex/core/NativeApp.kt:563-570,
-       app/src/main/java/com/sbro/emucorex/core/NativeApp.kt:587-619,
-       app/src/main/cpp/ARM_ANDROID/src/runtime/upstream_vm_bridge.cpp:261-265,
-       app/src/main/java/com/sbro/emucorex/core/EmulatorBridge.kt:612-618
+  ref: app/src/main/java/com/sbro/emucorex/core/NativeApp.kt:31,
+       app/src/main/java/com/sbro/emucorex/core/NativeApp.kt:448-450,
+       app/src/main/java/com/sbro/emucorex/core/NativeApp.kt:581-588,
+       app/src/main/java/com/sbro/emucorex/core/NativeApp.kt:605-637,
+       app/src/main/cpp/ARM_ANDROID/src/runtime/upstream_vm_bridge.cpp:281-285,
+       app/src/main/java/com/sbro/emucorex/core/EmulatorBridge.kt:665-671
 
   A BIOS image is required and boot stops without one: LoadBIOS returning false
   makes VMManager report that a PlayStation 2 BIOS is needed. Only a GS dump
@@ -76,7 +76,7 @@ notes: |
        app/src/main/cpp/pcsx2/pcsx2/ps2/BiosTools.cpp:278-314,
        app/src/main/cpp/pcsx2/pcsx2/ps2/BiosTools.cpp:337-391,
        app/src/main/cpp/pcsx2/pcsx2/ps2/BiosTools.cpp:365-367 (ROM window cleared),
-       app/src/main/cpp/pcsx2/pcsx2/VMManager.cpp:1898-1912
+       app/src/main/cpp/pcsx2/pcsx2/VMManager.cpp:1901-1915
 
   An arcade launch starts from a manifest carrying an NM game id and a board
   generation. It selects the board BIOS by name from the BIOS folder,
@@ -84,8 +84,8 @@ notes: |
   keeps the configured BIOS with a warning when that file is absent. The dongle,
   memory card, boot ELF, SRAM and media the manifest names are per-title content
   resolved beside it.
-  ref: app/src/main/cpp/pcsx2/pcsx2/VMManager.cpp:1530-1598,
-       app/src/main/cpp/pcsx2/pcsx2/VMManager.cpp:1608-1733
+  ref: app/src/main/cpp/pcsx2/pcsx2/VMManager.cpp:1533-1601,
+       app/src/main/cpp/pcsx2/pcsx2/VMManager.cpp:1611-1736
 
   The app runs its own gate before launching. A candidate is a .bin, .rom, .7d
   or .8g between 512 KB and 8 MB. It passes when the core's IsBIOS accepts it,
@@ -95,7 +95,7 @@ notes: |
   ref: app/src/main/java/com/sbro/emucorex/core/BiosValidator.kt:13-21,
        app/src/main/java/com/sbro/emucorex/core/BiosValidator.kt:112-146,
        app/src/main/java/com/sbro/emucorex/core/BiosValidator.kt:177-185,
-       app/src/main/cpp/ARM_ANDROID/src/jni/native_app_jni.cpp:493-515
+       app/src/main/cpp/ARM_ANDROID/src/jni/native_app_jni.cpp:644-666
 
   A BIOS folder picked through the storage access framework is copied flat into
   imported-bios under the external files directory, and Folders/Bios points there.
@@ -124,8 +124,8 @@ notes: |
        app/src/main/cpp/pcsx2/pcsx2/ImGui/ImGuiManager.cpp:224-229,
        app/src/main/cpp/pcsx2/pcsx2/ImGui/ImGuiManager.cpp:296-316,
        app/src/main/cpp/pcsx2/pcsx2/ImGui/ImGuiManager.cpp:483-536,
-       app/src/main/cpp/ARM_ANDROID/src/runtime/upstream_vm_bridge.cpp:384-412,
-       app/src/main/cpp/ARM_ANDROID/src/runtime/upstream_vm_bridge.cpp:437
+       app/src/main/cpp/ARM_ANDROID/src/runtime/upstream_vm_bridge.cpp:405-433,
+       app/src/main/cpp/ARM_ANDROID/src/runtime/upstream_vm_bridge.cpp:474
 
   The three achievement sounds are the one resource the code reads that the tree
   does not carry. Their directory holds only the README naming their origin,
@@ -136,8 +136,8 @@ notes: |
   every notification.
   ref: app/src/main/cpp/pcsx2/bin/resources/sounds/achievements/README.txt:1-3,
        app/src/main/cpp/ARM_ANDROID/src/integration/pcsx2_achievements_android.cpp:81-83,
-       app/src/main/cpp/pcsx2/pcsx2/Config.h:1371-1374,
-       app/src/main/cpp/pcsx2/pcsx2/Pcsx2Config.cpp:1963-1966
+       app/src/main/cpp/pcsx2/pcsx2/Config.h:1381-1384,
+       app/src/main/cpp/pcsx2/pcsx2/Pcsx2Config.cpp:1983-1986
 
 files:
   - name: ps2-0230a-20080220.bin
@@ -176,7 +176,7 @@ files:
       comes from the EXTINFO serial. A System 246 arcade manifest selects this
       name from the BIOS folder. Byte-identical to the r27v1602f.7d member of the
       MAME sys246 set.
-    source_ref: "source app/src/main/cpp/pcsx2/pcsx2/ps2/BiosTools.cpp:16-17, source app/src/main/cpp/pcsx2/pcsx2/ps2/BiosTools.cpp:150-151, source app/src/main/cpp/pcsx2/pcsx2/ps2/BiosTools.cpp:176-190, source app/src/main/cpp/pcsx2/pcsx2/ps2/BiosTools.cpp:365-367, source app/src/main/cpp/pcsx2/pcsx2/VMManager.cpp:1590-1598, source app/src/main/java/com/sbro/emucorex/core/BiosValidator.kt:13-21"
+    source_ref: "source app/src/main/cpp/pcsx2/pcsx2/ps2/BiosTools.cpp:16-17, source app/src/main/cpp/pcsx2/pcsx2/ps2/BiosTools.cpp:150-151, source app/src/main/cpp/pcsx2/pcsx2/ps2/BiosTools.cpp:176-190, source app/src/main/cpp/pcsx2/pcsx2/ps2/BiosTools.cpp:365-367, source app/src/main/cpp/pcsx2/pcsx2/VMManager.cpp:1593-1601, source app/src/main/java/com/sbro/emucorex/core/BiosValidator.kt:13-21"
 
   - name: r27v1602f.8g
     path: bios/r27v1602f.8g
@@ -193,7 +193,7 @@ files:
       size gate. A System 256 or Super 256 arcade manifest selects this name
       from the BIOS folder. Byte-identical to the r27v1602f.8g member of the
       MAME sys256 set.
-    source_ref: "source app/src/main/cpp/pcsx2/pcsx2/ps2/BiosTools.cpp:16-17, source app/src/main/cpp/pcsx2/pcsx2/ps2/BiosTools.cpp:150-151, source app/src/main/cpp/pcsx2/pcsx2/ps2/BiosTools.cpp:176-190, source app/src/main/cpp/pcsx2/pcsx2/ps2/BiosTools.cpp:365-367, source app/src/main/cpp/pcsx2/pcsx2/VMManager.cpp:1590-1598, source app/src/main/java/com/sbro/emucorex/core/BiosValidator.kt:13-21"
+    source_ref: "source app/src/main/cpp/pcsx2/pcsx2/ps2/BiosTools.cpp:16-17, source app/src/main/cpp/pcsx2/pcsx2/ps2/BiosTools.cpp:150-151, source app/src/main/cpp/pcsx2/pcsx2/ps2/BiosTools.cpp:176-190, source app/src/main/cpp/pcsx2/pcsx2/ps2/BiosTools.cpp:365-367, source app/src/main/cpp/pcsx2/pcsx2/VMManager.cpp:1593-1601, source app/src/main/java/com/sbro/emucorex/core/BiosValidator.kt:13-21"
 
   - name: ps2-0230a-20080220.rom1
     path: bios/ps2-0230a-20080220.rom1
@@ -285,7 +285,7 @@ files:
       Read into the ROM region at 0x3C0000 when the IOP program counter reaches
       0x1630 and the setting is longer than three characters. The launcher fills
       it from the boot parameters when the picked file is an IRX. Empty otherwise.
-    source_ref: "source app/src/main/cpp/pcsx2/pcsx2/ps2/BiosTools.cpp:263-276, source app/src/main/cpp/pcsx2/pcsx2/ps2/BiosTools.cpp:406-407, source app/src/main/cpp/pcsx2/pcsx2/R3000AInterpreter.cpp:220, source app/src/main/cpp/pcsx2/pcsx2/arm64/iop/iR3000A-arm64.cpp:1695, source app/src/main/cpp/pcsx2/pcsx2/VMManager.cpp:1846, source app/src/main/cpp/ARM_ANDROID/src/runtime/upstream_vm_bridge.cpp:462-467"
+    source_ref: "source app/src/main/cpp/pcsx2/pcsx2/ps2/BiosTools.cpp:263-276, source app/src/main/cpp/pcsx2/pcsx2/ps2/BiosTools.cpp:406-407, source app/src/main/cpp/pcsx2/pcsx2/R3000AInterpreter.cpp:220, source app/src/main/cpp/pcsx2/pcsx2/arm64/iop/iR3000A-arm64.cpp:1932, source app/src/main/cpp/pcsx2/pcsx2/VMManager.cpp:1849, source app/src/main/cpp/ARM_ANDROID/src/runtime/upstream_vm_bridge.cpp:503-508"
 
   - name: GameIndex.yaml
     path: resources/GameIndex.yaml
@@ -301,7 +301,24 @@ files:
       drives per-title rounding modes, clamp modes, GS hacks and memory card
       filters. The Kotlin catalog reads the same file straight out of the package
       for the compatibility badges it draws.
-    source_ref: "source app/src/main/cpp/pcsx2/pcsx2/GameDatabase.cpp:39, source app/src/main/cpp/pcsx2/pcsx2/GameDatabase.cpp:1036-1037, source app/src/main/java/com/sbro/emucorex/ui/gamedb/GameDbCatalogRepository.kt:97, source app/src/main/java/com/sbro/emucorex/ui/gamedb/GameDbCatalogRepository.kt:202"
+    source_ref: "source app/src/main/cpp/pcsx2/pcsx2/GameDatabase.cpp:43, source app/src/main/cpp/pcsx2/pcsx2/GameDatabase.cpp:1225-1233, source app/src/main/cpp/pcsx2/pcsx2/GameDatabase.cpp:1274-1277, source app/src/main/java/com/sbro/emucorex/ui/gamedb/GameDbCatalogRepository.kt:105, source app/src/main/java/com/sbro/emucorex/ui/gamedb/GameDbCatalogRepository.kt:271"
+
+  - name: emucorex_overrides.yaml
+    path: resources/emucorex_overrides.yaml
+    system: sony-playstation-2
+    required: false
+    bundled: true
+    sha1: 5fbbd96df996a3695cc3afec3501c0dca4da3c2d
+    size: 40064
+    category: game_data
+    description: "per-title fix overlay for the game database"
+    note: >-
+      Read from the resources directory right after GameIndex.yaml. Each serial
+      it names is merged into the entry the base database gave, and a list it
+      carries for that title, such as game fixes, speed hacks, GS hardware fixes
+      or patches, replaces the base one. A missing file is skipped without a
+      message.
+    source_ref: "source app/src/main/cpp/pcsx2/pcsx2/GameDatabase.cpp:45, source app/src/main/cpp/pcsx2/pcsx2/GameDatabase.cpp:393-396, source app/src/main/cpp/pcsx2/pcsx2/GameDatabase.cpp:1225-1233, source app/src/main/cpp/pcsx2/pcsx2/GameDatabase.cpp:1264-1270, source app/src/main/cpp/pcsx2/pcsx2/GameDatabase.cpp:1274-1278"
 
   - name: RedumpDatabase.yaml
     path: resources/RedumpDatabase.yaml
@@ -315,7 +332,7 @@ files:
     note: >-
       Opened from the resources directory and parsed into the hash database used
       to name a disc from its dump.
-    source_ref: "source app/src/main/cpp/pcsx2/pcsx2/GameDatabase.cpp:1141, source app/src/main/cpp/pcsx2/pcsx2/GameDatabase.cpp:1198-1199"
+    source_ref: "source app/src/main/cpp/pcsx2/pcsx2/GameDatabase.cpp:1341, source app/src/main/cpp/pcsx2/pcsx2/GameDatabase.cpp:1398-1399"
 
   - name: patches.zip
     path: resources/patches.zip
@@ -332,7 +349,7 @@ files:
       reported once and the built-in patches are dropped for the session. The
       app logs an error at startup when the copied archive is missing or holds
       no pnach.
-    source_ref: "source app/src/main/cpp/pcsx2/pcsx2/Patch.cpp:118, source app/src/main/cpp/pcsx2/pcsx2/Patch.cpp:290-317, source app/src/main/java/com/sbro/emucorex/core/NativeApp.kt:432-433, source app/src/main/java/com/sbro/emucorex/core/NativeApp.kt:621-635"
+    source_ref: "source app/src/main/cpp/pcsx2/pcsx2/Patch.cpp:118, source app/src/main/cpp/pcsx2/pcsx2/Patch.cpp:290-317, source app/src/main/java/com/sbro/emucorex/core/NativeApp.kt:450-451, source app/src/main/java/com/sbro/emucorex/core/NativeApp.kt:639-653"
 
   - name: Roboto-Regular.ttf
     path: resources/fonts/Roboto-Regular.ttf
@@ -343,7 +360,7 @@ files:
     note: >-
       Read by the adapter's own font setup before the VM starts and handed to the
       core as the standard font. An empty font list is logged as a setup failure.
-    source_ref: "source app/src/main/cpp/ARM_ANDROID/src/runtime/upstream_vm_bridge.cpp:384-392, source app/src/main/cpp/ARM_ANDROID/src/runtime/upstream_vm_bridge.cpp:402-411, source app/src/main/cpp/ARM_ANDROID/src/runtime/upstream_vm_bridge.cpp:437"
+    source_ref: "source app/src/main/cpp/ARM_ANDROID/src/runtime/upstream_vm_bridge.cpp:405-413, source app/src/main/cpp/ARM_ANDROID/src/runtime/upstream_vm_bridge.cpp:423-432, source app/src/main/cpp/ARM_ANDROID/src/runtime/upstream_vm_bridge.cpp:474"
 
   - name: Twemoji.Mozilla.ttf
     path: resources/fonts/Twemoji.Mozilla.ttf
@@ -354,11 +371,11 @@ files:
     note: >-
       Read by the same font setup and appended as the emoji face. Skipped when the
       file cannot be read.
-    source_ref: "source app/src/main/cpp/ARM_ANDROID/src/runtime/upstream_vm_bridge.cpp:393-400, source app/src/main/cpp/ARM_ANDROID/src/runtime/upstream_vm_bridge.cpp:402-411"
+    source_ref: "source app/src/main/cpp/ARM_ANDROID/src/runtime/upstream_vm_bridge.cpp:414-421, source app/src/main/cpp/ARM_ANDROID/src/runtime/upstream_vm_bridge.cpp:423-432"
 
   - name: tfx.glsl
-    size: 52705
-    sha1: 373792e3bc3c89226bff1852dca3eaf5a8ae4a80
+    size: 53534
+    sha1: d740ae6e3e3da1175ebd4b78136e027aa5feb194
     path: resources/shaders/vulkan/tfx.glsl
     system: sony-playstation-2
     required: true
@@ -367,11 +384,11 @@ files:
     note: >-
       Read from the resources directory when the Vulkan device is created. A read
       failure is reported and device creation fails.
-    source_ref: "source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/Common/GSDevice.cpp:404-407, source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/Vulkan/GSDeviceVK.cpp:2531-2535"
+    source_ref: "source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/Common/GSDevice.cpp:406-409, source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/Vulkan/GSDeviceVK.cpp:2639-2643"
 
   - name: convert.glsl
-    size: 14941
-    sha1: 705d20d39a910d58a070fb86780ac58c8007591c
+    size: 14100
+    sha1: df6810fe9798582cf7e0b2f4d55eb099c7b155cd
     path: resources/shaders/vulkan/convert.glsl
     system: sony-playstation-2
     required: true
@@ -380,7 +397,7 @@ files:
     note: >-
       Read when the conversion pipelines are compiled and again as the vertex
       stage of the FXAA pipeline.
-    source_ref: "source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/Vulkan/GSDeviceVK.cpp:4901-4905, source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/Vulkan/GSDeviceVK.cpp:5247-5251"
+    source_ref: "source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/Vulkan/GSDeviceVK.cpp:5144-5148, source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/Vulkan/GSDeviceVK.cpp:5490-5494"
 
   - name: present.glsl
     size: 13440
@@ -390,7 +407,7 @@ files:
     required: true
     bundled: true
     description: "Vulkan presentation shader"
-    source_ref: "source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/Vulkan/GSDeviceVK.cpp:5076-5080"
+    source_ref: "source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/Vulkan/GSDeviceVK.cpp:5319-5323"
 
   - name: interlace.glsl
     size: 6329
@@ -400,7 +417,7 @@ files:
     required: true
     bundled: true
     description: "Vulkan deinterlacing shader"
-    source_ref: "source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/Vulkan/GSDeviceVK.cpp:5126-5130"
+    source_ref: "source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/Vulkan/GSDeviceVK.cpp:5369-5373"
 
   - name: merge.glsl
     size: 759
@@ -410,7 +427,7 @@ files:
     required: true
     bundled: true
     description: "Vulkan field merge shader"
-    source_ref: "source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/Vulkan/GSDeviceVK.cpp:5177-5181"
+    source_ref: "source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/Vulkan/GSDeviceVK.cpp:5420-5424"
 
   - name: shadeboost.glsl
     size: 1831
@@ -420,7 +437,7 @@ files:
     required: true
     bundled: true
     description: "Vulkan brightness and contrast shader"
-    source_ref: "source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/Vulkan/GSDeviceVK.cpp:5282-5286"
+    source_ref: "source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/Vulkan/GSDeviceVK.cpp:5525-5529"
 
   - name: cas.glsl
     path: resources/shaders/vulkan/cas.glsl
@@ -433,7 +450,7 @@ files:
       contents of the common headers. The Vulkan device compiles the CAS
       pipelines unconditionally and returns on a failure, so a missing file stops
       device creation rather than dropping the feature.
-    source_ref: "source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/Vulkan/GSDeviceVK.cpp:2569-2570, source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/Vulkan/GSDeviceVK.cpp:5333-5335, source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/Common/GSDevice.cpp:1194-1205"
+    source_ref: "source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/Vulkan/GSDeviceVK.cpp:2677-2678, source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/Vulkan/GSDeviceVK.cpp:5576-5578, source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/Common/GSDevice.cpp:1270-1281"
 
   - name: imgui.glsl
     size: 791
@@ -443,7 +460,7 @@ files:
     required: true
     bundled: true
     description: "Vulkan overlay shader"
-    source_ref: "source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/Vulkan/GSDeviceVK.cpp:5359-5362"
+    source_ref: "source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/Vulkan/GSDeviceVK.cpp:5602-5605"
 
   - name: tfx_vgs.glsl
     size: 14156
@@ -455,7 +472,7 @@ files:
     description: "OpenGL texture and framebuffer vertex shader"
     note: >-
       Read from the resources directory when the OpenGL device is created.
-    source_ref: "source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/Common/GSDevice.cpp:404-407, source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp:918-924"
+    source_ref: "source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/Common/GSDevice.cpp:406-409, source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp:922-928"
 
   - name: tfx_fs.glsl
     size: 37479
@@ -465,17 +482,17 @@ files:
     required: true
     bundled: true
     description: "OpenGL texture and framebuffer fragment shader"
-    source_ref: "source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp:919-924"
+    source_ref: "source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp:923-928"
 
   - name: convert.glsl
-    size: 16416
-    sha1: 35910b67070342cdd6ec4d68eb2e56b39d350543
+    size: 14159
+    sha1: 63daf461f408b97523fe8956a8ee5bd2c0042ebf
     path: resources/shaders/opengl/convert.glsl
     system: sony-playstation-2
     required: true
     bundled: true
     description: "OpenGL format conversion shader"
-    source_ref: "source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp:602-606"
+    source_ref: "source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp:606-610"
 
   - name: present.glsl
     size: 14894
@@ -485,7 +502,7 @@ files:
     required: true
     bundled: true
     description: "OpenGL presentation shader"
-    source_ref: "source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp:688-692"
+    source_ref: "source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp:692-696"
 
   - name: interlace.glsl
     size: 5983
@@ -495,7 +512,7 @@ files:
     required: true
     bundled: true
     description: "OpenGL deinterlacing shader"
-    source_ref: "source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp:747-751"
+    source_ref: "source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp:751-755"
 
   - name: merge.glsl
     size: 579
@@ -505,7 +522,7 @@ files:
     required: true
     bundled: true
     description: "OpenGL field merge shader"
-    source_ref: "source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp:724-728"
+    source_ref: "source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp:728-732"
 
   - name: shadeboost.glsl
     size: 1548
@@ -515,7 +532,7 @@ files:
     required: true
     bundled: true
     description: "OpenGL brightness and contrast shader"
-    source_ref: "source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp:767-768, source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp:2868-2872"
+    source_ref: "source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp:771-772, source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp:2899-2903"
 
   - name: cas.glsl
     size: 2483
@@ -529,7 +546,7 @@ files:
       Read as a compute program with the two include lines substituted, and
       tried only on an ES 3.2 context or on GL 4.2 with compute shaders. A
       failure turns CAS sharpening off.
-    source_ref: "source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp:771, source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp:3068-3088, source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/Common/GSDevice.cpp:1194-1205"
+    source_ref: "source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp:775, source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp:3099-3119, source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/Common/GSDevice.cpp:1270-1281"
 
   - name: imgui.glsl
     size: 637
@@ -539,7 +556,7 @@ files:
     required: true
     bundled: true
     description: "OpenGL overlay shader"
-    source_ref: "source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp:3152-3156"
+    source_ref: "source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp:3183-3187"
 
   - name: fxaa.fx
     size: 17432
@@ -555,7 +572,7 @@ files:
       file stops device creation there. On OpenGL the program is compiled beside
       the shadeboost one in the device creation chain, which returns on a read
       failure.
-    source_ref: "source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/Vulkan/GSDeviceVK.cpp:2556-2561, source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/Vulkan/GSDeviceVK.cpp:5254-5258, source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp:767-768, source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp:2611-2619"
+    source_ref: "source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/Vulkan/GSDeviceVK.cpp:2664-2669, source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/Vulkan/GSDeviceVK.cpp:5497-5501, source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp:771-772, source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp:2642-2650"
 
   - name: ffx_a.h
     path: resources/shaders/common/ffx_a.h
@@ -568,7 +585,7 @@ files:
       of the CAS shader, the compilers having no include support. It shares the
       fate of the CAS shader it is pasted into: fatal to device creation on
       Vulkan, and only the sharpening feature on OpenGL.
-    source_ref: "source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/Common/GSDevice.cpp:1194-1205, source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/Vulkan/GSDeviceVK.cpp:2569-2570, source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp:771"
+    source_ref: "source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/Common/GSDevice.cpp:1270-1281, source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/Vulkan/GSDeviceVK.cpp:2677-2678, source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp:775"
 
   - name: ffx_cas.h
     path: resources/shaders/common/ffx_cas.h
@@ -579,7 +596,7 @@ files:
     note: >-
       Read and substituted the same way as the other CAS header, with the same
       consequence per renderer when it is missing.
-    source_ref: "source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/Common/GSDevice.cpp:1194-1205, source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/Vulkan/GSDeviceVK.cpp:2569-2570, source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp:771"
+    source_ref: "source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/Common/GSDevice.cpp:1270-1281, source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/Vulkan/GSDeviceVK.cpp:2677-2678, source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/OpenGL/GSDeviceOGL.cpp:775"
 
   - name: message.wav
     path: resources/sounds/achievements/message.wav
@@ -593,10 +610,10 @@ files:
       Played from the resources directory whenever an achievement notification is
       raised and no custom sound is configured. Sound effects and the notification
       sound both default on. The vendored tree carries only the README for this
-      directory, but the released APK (EmuCoreX.v0.4.7.apk) ships the file at
+      directory, but the released APK (EmuCoreX.v0.5.1.apk) ships the file at
       15696 bytes, as upstream v2.8.0 does. The Android sound callback returns
       without playing when the path is not a file.
-    source_ref: "source app/src/main/cpp/ARM_ANDROID/src/integration/pcsx2_achievements_android.cpp:81, source app/src/main/cpp/ARM_ANDROID/src/integration/pcsx2_achievements_android.cpp:1245-1250, source app/src/main/cpp/pcsx2/pcsx2/Pcsx2Config.cpp:1963-1966, source app/src/main/java/com/sbro/emucorex/core/NativeApp.kt:461-467"
+    source_ref: "source app/src/main/cpp/ARM_ANDROID/src/integration/pcsx2_achievements_android.cpp:81, source app/src/main/cpp/ARM_ANDROID/src/integration/pcsx2_achievements_android.cpp:1245-1250, source app/src/main/cpp/pcsx2/pcsx2/Pcsx2Config.cpp:1983-1986, source app/src/main/java/com/sbro/emucorex/core/NativeApp.kt:479-485"
 
   - name: unlock.wav
     path: resources/sounds/achievements/unlock.wav
@@ -671,7 +688,7 @@ files:
       parses as the TEX0 hash, optional CLUT hash, optional region size and format
       that the texture cache looks it up by. A directory whose case does not match
       is reported.
-    source_ref: "source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/HW/GSTextureReplacements.cpp:36-42, source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/HW/GSTextureReplacements.cpp:328-331, source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/HW/GSTextureReplacements.cpp:442-500"
+    source_ref: "source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/HW/GSTextureReplacements.cpp:36-42, source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/HW/GSTextureReplacements.cpp:330-333, source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/HW/GSTextureReplacements.cpp:444-502"
 
   - name: "<driver>.zip"
     system: sony-playstation-2
@@ -686,10 +703,12 @@ files:
       segment being refused, and the Vulkan library it holds is recorded in a
       driver_name.txt written beside it. The install is removed when that library
       does not start with the ELF magic or when its GPU vendor, taken from the
-      catalog or from markers in the library, does not match the device. The
+      catalog or from markers in the library, does not match the device. A
+      library named libvulkan_malisx2.so is also refused unless the GL renderer
+      reports a Mali or Immortalis G57, G68, G77, G78, G615 or G715. The
       renderer then resolves the driver through adrenotools from that pair. The
       system loader is used when no driver is configured.
-    source_ref: "source app/src/main/java/com/sbro/emucorex/core/GpuDriverCatalogRepository.kt:143-147, source app/src/main/java/com/sbro/emucorex/core/GpuDriverCatalogRepository.kt:76-87, source app/src/main/java/com/sbro/emucorex/core/GpuDriverManager.kt:98-170, source app/src/main/java/com/sbro/emucorex/core/GpuDriverManager.kt:172-181, source app/src/main/java/com/sbro/emucorex/core/GpuDriverManager.kt:214-228, source app/src/main/cpp/ARM_ANDROID/src/runtime/android_runtime.cpp:138-152, source app/src/main/cpp/ARM_ANDROID/src/runtime/android_runtime.cpp:401-402, source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/Vulkan/VKLoader.cpp:136, source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/Vulkan/VKLoader.cpp:200-206"
+    source_ref: "source app/src/main/java/com/sbro/emucorex/core/GpuDriverCatalogRepository.kt:143-147, source app/src/main/java/com/sbro/emucorex/core/GpuDriverCatalogRepository.kt:76-87, source app/src/main/java/com/sbro/emucorex/core/GpuDriverManager.kt:98-176, source app/src/main/java/com/sbro/emucorex/core/GpuDriverManager.kt:178-195, source app/src/main/java/com/sbro/emucorex/core/GpuDriverManager.kt:228-242, source app/src/main/java/com/sbro/emucorex/core/GpuDriverCompatibility.kt:204-208, source app/src/main/java/com/sbro/emucorex/core/GpuDriverCompatibility.kt:244-257, source app/src/main/cpp/ARM_ANDROID/src/runtime/android_runtime.cpp:249-263, source app/src/main/cpp/ARM_ANDROID/src/runtime/android_runtime.cpp:581, source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/Vulkan/VKLoader.cpp:136, source app/src/main/cpp/pcsx2/pcsx2/GS/Renderers/Vulkan/VKLoader.cpp:201-207"
 
 exclusion_note: >
   Left out are the parts of the bundled resource tree that this platform compiles
@@ -718,12 +737,12 @@ exclusion_note: >
        app/src/main/cpp/pcsx2/pcsx2/ImGui/ImGuiManager.cpp:224-229,
        app/src/main/cpp/pcsx2/pcsx2/ImGui/ImGuiManager.cpp:483-536,
        app/src/main/cpp/pcsx2/pcsx2/ImGui/FullscreenUI.cpp:323,
-       app/src/main/cpp/pcsx2/pcsx2/CMakeLists.txt:706,
-       app/src/main/cpp/pcsx2/pcsx2/CMakeLists.txt:723-734,
+       app/src/main/cpp/pcsx2/pcsx2/CMakeLists.txt:710,
+       app/src/main/cpp/pcsx2/pcsx2/CMakeLists.txt:727-738,
        app/src/main/cpp/pcsx2/pcsx2/Input/SDLInputSource.cpp:24,
        app/src/main/cpp/ARM_ANDROID/CMakeLists.txt:259-263,
-       app/src/main/cpp/pcsx2/pcsx2/Pcsx2Config.cpp:2452-2466,
+       app/src/main/cpp/pcsx2/pcsx2/Pcsx2Config.cpp:2472-2486,
        app/src/main/cpp/pcsx2/pcsx2/GameList.cpp:1376,
        app/src/main/cpp/pcsx2/pcsx2/ImGui/FullscreenUI.cpp:3640,
        app/src/main/java/com/sbro/emucorex/data/ps2/Ps2CatalogRepository.kt:235-248,
-       app/src/main/java/com/sbro/emucorex/core/NativeApp.kt:434-436
+       app/src/main/java/com/sbro/emucorex/core/NativeApp.kt:452-454

@@ -5,6 +5,7 @@ source: "https://github.com/7800-devtools/a7800"
 upstream: "https://github.com/mamedev/mame"
 profiled_date: "2026-08-08"
 source_commit: "7a2afdc1ea08fc331b16b750d8c1f02d4ef62fc8"
+upstream_commit: "61a222977fd29f22ce11fbea3f7c290fd7ced091"
 core_version: "5.2"
 display_name: "Atari - 7800 (A7800)"
 cores:
