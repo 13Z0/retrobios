@@ -96,8 +96,7 @@ class EveryPlatformOnThePicker(unittest.TestCase):
     def test_every_wiki_page_is_in_the_navigation(self):
         """A wiki page is published as soon as it exists, but a page left out
         of the nav is reachable only by a link and MkDocs says so at info
-        level. getting-started.md is kept out on purpose: it only links the
-        pages that took its content, for the old links that point to it."""
+        level."""
         def targets(entries) -> list[str]:
             found = []
             for entry in entries:
@@ -109,7 +108,7 @@ class EveryPlatformOnThePicker(unittest.TestCase):
             return found
 
         nav = " ".join(targets(generate_site.generate_nav({}, {}, {}, {})))
-        kept_out = {"getting-started.md"}
+        kept_out: set[str] = set()
         wiki = Path(__file__).resolve().parents[1] / "wiki"
         missing = sorted(
             p.name for p in wiki.glob("*.md")
@@ -239,7 +238,13 @@ class GuidePagesEndOnANextStep(unittest.TestCase):
                 path = REPO_ROOT / page
             with self.subTest(page=page):
                 text = path.read_text(encoding="utf-8")
-                self.assertTrue(":::tip[Next]" in text or "## What comes next" in text)
+                if page.startswith("wiki/"):
+                    # A plain list: an aside drew a coloured stripe and an icon.
+                    self.assertIn("\n## Next steps\n", text)
+                    self.assertNotIn(":::tip[Next]", text)
+                else:
+                    self.assertTrue(":::tip[Next]" in text or "## Next steps" in text
+                                    or "## What comes next" in text)
 
     def test_the_platform_page_opens_on_its_guide(self):
         """The folder came after four counters and a metadata table, and was

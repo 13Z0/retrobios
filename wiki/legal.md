@@ -1,10 +1,9 @@
 ---
-level: explore
-order: 40
-nav_title: "Is it legal?"
+level: start
+order: 55
 ---
 
-# The project's legal position
+# Is it legal?
 
 Redistributing firmware is not settled law. Below is the reasoning the project acts on, with the strength of each argument, so anyone can weigh it. None of it is legal advice, and none of it has been tested in court.
 
@@ -41,8 +40,8 @@ This reflects the project's good-faith understanding, not legal advice.
 
 A rights holder, or anyone acting for one, can [open an issue](https://github.com/Abdess/retrobios/issues) identifying the file by path or hash. A file whose removal is requested by its rights holder is removed from the repository and from the next release. No formal notice is required and none will be demanded. State the file and the basis of the claim. The same channel is open to anyone else with a concern about a specific file.
 
-:::tip[Next]
-- [FAQ](faq.md)
+## Next steps
+
+- [Common questions](faq.md)
 - [What is a BIOS?](what-are-bios-files.md)
-:::
 

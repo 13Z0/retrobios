@@ -1,10 +1,9 @@
 ---
 level: start
 order: 30
-nav_title: First install, step by step
 ---
 
-# First install
+# First install, step by step
 
 From an empty BIOS folder to games that start.
 
@@ -20,34 +19,43 @@ system, then press Enter.
 
 Open the Start menu. Type **PowerShell** and open it.
 
-```powershell
+```powershell title="PowerShell"
 irm https://raw.githubusercontent.com/Abdess/retrobios/main/install.ps1 | iex
 ```
 
 </TabItem>
-<TabItem label="Mac">
+<TabItem label="macOS">
 
 Open **Terminal**. It is in Applications, then Utilities.
 
-```sh
+```sh title="Terminal"
 curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh
 ```
 
 </TabItem>
-<TabItem label="Linux and Steam Deck">
+<TabItem label="Linux">
 
-On a Steam Deck, switch to Desktop Mode and open **Konsole**.
+Open a terminal.
 
-```sh
+```sh title="Terminal"
 curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh
 ```
 
 </TabItem>
-<TabItem label="Android">
+<TabItem label="Steam Deck">
+
+Switch to Desktop Mode and open **Konsole**.
+
+```sh title="Terminal"
+curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh
+```
+
+</TabItem>
+<TabItem label="Android (Termux)">
 
 Install **Termux**, a terminal app. Run these three lines in it.
 
-```sh
+```sh title="Terminal"
 pkg install python
 termux-setup-storage
 curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh
@@ -56,22 +64,20 @@ curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | 
 </TabItem>
 </Tabs>
 
-
-On Batocera, Recalbox and other game systems, follow
+On Batocera, Recalbox and similar setups, follow
 [your setup's page](../which-pack.md).
-
-<!-- image: install-flow -->
 
 ## 2. Check the folder it found
 
 It shows your setup and its BIOS folder:
 
 ```
-  Found Batocera at /userdata/bios
+  Found <your setup> at <its folder>
 ```
 
 - **Right folder?** Go on.
-- **Wrong folder?** Press Ctrl+C to stop. Then see [If it stops](#if-it-stops).
+- **Wrong folder?** Press Ctrl+C. Run the command again with `--dest` and your
+  folder.
 
 ## 3. Choose what to install
 
@@ -86,22 +92,25 @@ It shows your setup and its BIOS folder:
 
 ## 4. Wait
 
-It shows one line per file. You can stop with Ctrl+C at any time. Run the
-command again to carry on.
+You can stop with Ctrl+C at any time. Run the command again to carry on.
 
-## 5. Look for "Done."
+## 5. Read the last line
 
-```
-Done. 14481 files installed, 0 files already up to date.
-Location: /userdata/bios
-```
+- **`Done.`** All files are in place.
+- **`Finished with errors.`** Some files failed. Run the same command again.
+  It retries only those.
+- **`Nothing was installed.`** The lines above it say why. See
+  [If it stops](#if-it-stops).
 
-`Done.` means it worked. It may list files it could not install.
+## What the command does
+
+<!-- image: install-flow -->
 
 ## Check it later
 
 Add `--check` to the same command. It changes nothing.
 
+<!-- os-tabs -->
 ```sh
 curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh -s -- --check
 ```
@@ -110,11 +119,8 @@ All good when you see `0 wrong hash`.
 
 ## Undo
 
-It keeps every file it replaces in a `retrobios-backup` folder, beside your
-BIOS folder. Nothing is deleted.
-
-To put your files back, run the command with `--restore` and that folder. The
-end of the run prints the exact line.
+It keeps every file it replaces in a `retrobios-backup` folder, next to your
+BIOS folder. The end of the run prints the line that puts them back.
 
 ## If it stops
 
@@ -141,8 +147,8 @@ The download was cut short. Nothing was changed. Run the command again.
 
 ### Cannot create ...
 
-You do not have the right to write there. On Batocera, Recalbox and ROCKNIX,
-put `sudo` and a space before the command. It then runs as the administrator.
+You do not have the right to write there. Do what the message says. It names
+what to run.
 
 ### Not enough space on the drive holding ...
 
@@ -153,9 +159,8 @@ drive.
 
 See [When a game does not start](troubleshooting.md).
 
-:::tip[Next]
+## Next steps
+
 - [Your setup's page](../which-pack.md): its folder and how it checks files
 - [When a game does not start](troubleshooting.md)
 - Details: [Reading the installer's output, line by line](installer.md#reading-a-run)
-:::
-

@@ -1,7 +1,6 @@
 ---
 level: start
 order: 60
-nav_title: Glossary
 ---
 
 # Words used on this site
@@ -22,6 +21,12 @@ nav_title: Glossary
 **BIOS folder**
 :   The folder where your setup looks for BIOS files.
 
+**Pack**
+:   The ZIP file with every BIOS file for one setup.
+
+**Platform**
+:   A setup, as the project's data calls it.
+
 **ZIP**
 :   One file that holds many files. You unzip it to get them out.
 
@@ -34,6 +39,9 @@ nav_title: Glossary
 **Hash**
 :   A fingerprint of a file's contents. A different file gets a different hash.
 
+**MD5** / **SHA-1**
+:   Two kinds of hash, a file's fingerprint. Setups that check files list one.
+
 **Region**
 :   Where a console was sold: Japan, North America, Europe.
 
@@ -43,9 +51,9 @@ nav_title: Glossary
 **Game data**
 :   Files from your own copy of a PC game, like Doom. Not a BIOS.
 
-:::tip[Next]
+## Next steps
+
 - [What is a BIOS?](what-are-bios-files.md)
 - [Get your files](../which-pack.md)
-- Reference: [Terms of the reference pages](reference-terms.md)
-:::
+- For contributors: [Terms of the reference pages](reference-terms.md)
 
