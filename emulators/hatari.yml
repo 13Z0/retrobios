@@ -18,6 +18,20 @@ systems:
   - atari-tt
   - atari-falcon
 
+data_root:
+  windows:
+    path: "%USERPROFILE%/AppData/Local/Hatari"
+    source_ref: "upstream src/paths.c:24-29, upstream src/paths.c:201-274"
+    note: "Holds hatari.cfg, hatari.nvram and auto.sav. The default tos.img is read from the directory of the executable."
+  macos:
+    path: "~/Library/Application Support/Hatari"
+    source_ref: "upstream src/paths.c:24-29, upstream src/paths.c:201-274"
+    note: "Holds hatari.cfg, hatari.nvram and auto.sav. The default tos.img is read from the bundle's Resources folder."
+  linux:
+    path: "~/.config/hatari"
+    source_ref: "upstream src/paths.c:24-29, upstream src/paths.c:201-274"
+    note: "~/.hatari is used instead when it exists and ~/.config/hatari does not. Holds hatari.cfg, hatari.nvram and auto.sav. The default tos.img is read from ../share/hatari beside the bin directory."
+
 notes: |
   The main branch of libretro/hatari is the upstream Hatari tree with its
   experimental libretro target in src/retro, which upstream added in
