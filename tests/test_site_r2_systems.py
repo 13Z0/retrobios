@@ -102,11 +102,12 @@ class TheConsoleBiosComesFirst(unittest.TestCase):
         # Brazil says nothing Latin America does not.
         self.assertIn("- **North America, Latin America**: `scph5501.bin`", lines)
 
-    def test_a_long_list_is_counted(self):
+    def test_a_long_list_names_the_first_and_counts_the_rest(self):
         files = [_file(f"rom{i}.bin", "abcdefgh"[i]) for i in range(8)]
         consumers = _consumers({f["sha1"]: [{"required": True}] for f in files})
         self.assertEqual(gs._start_with(files, consumers)[0],
-                         "**Start with** the 8 files an emulator requires. They come first below.")
+                         "**Start with**: `rom0.bin`, `rom1.bin`, `rom2.bin` and 5 more files. "
+                         "They come first below.")
 
     def test_no_required_file_no_line(self):
         self.assertEqual(gs._start_with([_file("a.bin", "a")], _consumers({})), [])
@@ -213,14 +214,14 @@ class FileFactsAreAGrid(unittest.TestCase):
 
 class ConsoleHeadingsStartWithTheName(unittest.TestCase):
     """The icon and a space came before the name: "Section titled
-    “ PlayStation”" on five of seven Sony headings."""
+    “ PlayStation”" on five of seven Sony headings. Round 3 removed the
+    icon altogether."""
 
-    def test_the_icon_is_hidden_and_touches_the_name(self):
+    def test_no_icon_even_when_one_exists(self):
         icon = siterender._icon_name("Sony", "PlayStation")
         with mock.patch.dict(siterender._icon_available, {icon: True}):
-            heading = gs._console_heading("Sony", "PlayStation")
-        self.assertRegex(heading, r'^## <img [^>]*aria-hidden="true"[^>]*>PlayStation \{ #playstation \}$')
-        self.assertIn('alt=""', heading)
+            self.assertEqual(gs._console_heading("Sony", "PlayStation"),
+                             "## PlayStation { #playstation }")
 
     def test_no_icon_no_image(self):
         icon = siterender._icon_name("Nobody", "Nothing")
