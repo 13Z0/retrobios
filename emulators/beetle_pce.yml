@@ -5,19 +5,22 @@ source: "https://github.com/libretro/beetle-pce-libretro"
 upstream: "https://mednafen.github.io/"
 profiled_date: "2026-03-24"
 source_commit: "b96c11e095b6a40a412d2da02766ae1c3f4fd539"
-core_version: "v0.9.38.7"
+core_version: "v1.29.0"
 display_name: "NEC - PC Engine / SuperGrafx / CD (Beetle PCE)"
-cores: [mednafen_pce]
+cores: [beetle_pce, mednafen_pce, pce, beetle-pce]
 systems: [nec-pc-engine]
 verification: existence
 notes: >
-  Libretro port of Mednafen's PCE-Accurate module. BIOS loaded from system
-  directory at CD-ROM load time via PCE_LoadCD() in mednafen/pce/pce.cpp:441-460.
-  Core option "pce_cdbios" selects which card image to use (default: System Card 3).
-  DetectGECD() auto-detects Games Express discs and switches to gexpress.pce.
-  Arcade Card mode (pce_arcadecard option, enabled by default) extends System Card 3
-  with extra RAM mapping via SYSCARD_ARCADE enum.
-  No hash or size validation on BIOS load: file_open() then HuC_Load() reads data directly.
+  Libretro port of Mednafen's PCE module (libretro.cpp:30), with SuperGrafx
+  and CD support. The BIOS is loaded from the system directory at CD-ROM
+  load time via PCE_LoadCD() in mednafen/pce/pce.cpp:441-460, so HuCard
+  content runs without it. Core option "pce_cdbios" selects which card image
+  to use (default: System Card 3). DetectGECD() auto-detects Games Express
+  discs and switches to the pce.gecdbios setting, fixed to gexpress.pce.
+  Arcade Card mode (pce_arcadecard option, enabled by default) extends System
+  Card 3 with extra RAM mapping via the SYSCARD_ARCADE enum.
+  No hash or size validation on BIOS load: file_open() then HuC_Load() reads
+  the data directly.
   DetectSGXCD() reads sector data to decide SGX mode but uses the same BIOS files.
 
 files:
