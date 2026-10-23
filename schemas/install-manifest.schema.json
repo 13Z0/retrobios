@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/Abdess/retrobios/schemas/install-manifest.schema.json",
+  "$id": "https://abdess.github.io/retrobios/api/v1/schemas/install-manifest.schema.json",
   "title": "RetroBIOS installer manifest",
   "type": "object",
   "additionalProperties": false,
@@ -54,21 +54,26 @@
     },
     "platform": {
       "type": "string",
-      "minLength": 1
+      "minLength": 1,
+      "description": "Registry key of the platform (batocera)."
     },
     "display_name": {
       "type": "string",
-      "minLength": 1
+      "minLength": 1,
+      "description": "Name the site shows for the platform."
     },
     "version": {
-      "type": "string"
+      "type": "string",
+      "description": "Version of the platform's own list this manifest was built from."
     },
     "generated": {
       "type": "string",
-      "format": "date-time"
+      "format": "date-time",
+      "description": "When the manifest was written."
     },
     "base_destination": {
-      "type": "string"
+      "type": "string",
+      "description": "The BIOS folder entries are written below, as the platform names it. Empty when entries start one level higher (RetroDECK)."
     },
     "detect": {
       "type": "array",
@@ -84,11 +89,13 @@
     },
     "total_files": {
       "type": "integer",
-      "minimum": 0
+      "minimum": 0,
+      "description": "Number of entries in files."
     },
     "total_size": {
       "type": "integer",
-      "minimum": 0
+      "minimum": 0,
+      "description": "Bytes of the files in files."
     },
     "pack_files": {
       "description": "Files the platform's pack holds once extracted: this list, the data directories and the pack's own documents.",
@@ -102,7 +109,8 @@
     },
     "total_omitted": {
       "type": "integer",
-      "minimum": 0
+      "minimum": 0,
+      "description": "Number of entries in omitted_files."
     },
     "core_names": {
       "description": "Each core a file names, with the other names it goes by upstream (the buildbot's mednafen_psx for beetle_psx).",
@@ -331,13 +339,15 @@
             "pattern": "^[^/\\\\]+$"
           }
         }
-      }
+      },
+      "description": "Files the pack needs and the repository cannot serve, with the reason."
     },
     "files": {
       "type": "array",
       "items": {
         "$ref": "#/$defs/file"
-      }
+      },
+      "description": "Every file the installer fetches, one entry per destination."
     },
     "case_variants": {
       "description": "Files the folded list serves under another case, installed only where the target directory keeps case.",
@@ -459,22 +469,27 @@
       "properties": {
         "dest": {
           "type": "string",
-          "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+$"
+          "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+$",
+          "description": "Path below base_destination, or below the save directory when root is save."
         },
         "sha1": {
           "type": "string",
-          "pattern": "^[a-f0-9]{40}$"
+          "pattern": "^[a-f0-9]{40}$",
+          "description": "SHA1 of the copy the repository serves. The installer checks it after download."
         },
         "sha256": {
           "type": "string",
-          "pattern": "^[a-f0-9]{64}$"
+          "pattern": "^[a-f0-9]{64}$",
+          "description": "SHA256 of the same copy."
         },
         "size": {
           "type": "integer",
-          "minimum": 0
+          "minimum": 0,
+          "description": "Bytes of the same copy."
         },
         "repo_path": {
-          "type": "string"
+          "type": "string",
+          "description": "Path in the repository. Fetched from https://raw.githubusercontent.com/Abdess/retrobios/<ref>/<repo_path>, ref being main unless RETROBIOS_REF names a tag."
         },
         "cores": {
           "oneOf": [
@@ -488,14 +503,17 @@
               },
               "uniqueItems": true
             }
-          ]
+          ],
+          "description": "Profiles whose core brings the file into the pack. Null for a file the platform's own list declares."
         },
         "storage": {
-          "const": "release"
+          "const": "release",
+          "description": "release when the file is a large-files release asset."
         },
         "release_asset": {
           "type": "string",
-          "pattern": "^[^/\\\\]+$"
+          "pattern": "^[^/\\\\]+$",
+          "description": "Asset of the large-files release, fetched from https://github.com/Abdess/retrobios/releases/download/large-files/<asset> instead of repo_path."
         },
         "systems": {
           "description": "Every platform system that declares the file, for the installer's --system.",
@@ -929,5 +947,6 @@
         }
       ]
     }
-  }
+  },
+  "description": "What a platform's pack installs, one file per entry, as install.py reads it. The platform's list says what the setup checks, this list says what the pack writes: the list's files plus every file the setup's cores load."
 }

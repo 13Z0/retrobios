@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/Abdess/retrobios/schemas/site-api-envelope.schema.json",
+  "$id": "https://abdess.github.io/retrobios/api/v1/schemas/site-api-envelope.schema.json",
   "title": "RetroBIOS static API v1 envelope",
   "type": "object",
   "additionalProperties": false,
@@ -22,7 +22,11 @@
     "commit": {
       "type": "string",
       "pattern": "^[0-9a-f]{40}$",
-      "description": "The repository commit the data was read at."
+      "description": "The repository commit the data was read at. Every envelope carries it when the site is built from a git checkout."
+    },
+    "license": {
+      "type": "string",
+      "description": "The terms the metadata is offered under, from LICENSE. They never cover BIOS or firmware files (NOTICE)."
     },
     "kind": {
       "type": "string",
@@ -33,7 +37,10 @@
         "systems",
         "verification-and-coverage-gaps",
         "file-locations",
-        "file-lookup"
+        "file-lookup",
+        "index",
+        "system-index",
+        "core-index"
       ]
     },
     "count": {
@@ -115,7 +122,8 @@
                   "type": "string"
                 },
                 "profile": {
-                  "type": "object"
+                  "type": "object",
+                  "description": "The profile as its YAML states it, valid against emulator.schema.json (https://abdess.github.io/retrobios/api/v1/schemas/emulator.schema.json)."
                 }
               }
             }
@@ -150,10 +158,15 @@
                   "type": "string"
                 },
                 "contract": {
-                  "type": "object"
+                  "type": "object",
+                  "description": "The platform's list as the tools load it, valid against platform.schema.json (https://abdess.github.io/retrobios/api/v1/schemas/platform.schema.json). Entries a shared group adds carry shared_group, and a Recalbox ZIP entry carries zip_digest."
                 },
                 "coverage": {
                   "type": "object"
+                },
+                "registry": {
+                  "type": "object",
+                  "description": "The platform's registry entry beside its list: install detection, logo, scraper and schedule. Not part of the list."
                 }
               }
             }
@@ -261,7 +274,8 @@
                   "pattern": "^[0-9a-f]{40}$"
                 },
                 "url": {
-                  "type": "string"
+                  "type": "string",
+                  "description": "Site-absolute path of the file's card, starting at /retrobios/."
                 }
               }
             }
@@ -384,7 +398,8 @@
                   "type": "string"
                 },
                 "url": {
-                  "type": "string"
+                  "type": "string",
+                  "description": "Site-absolute path of the page that shows the value, starting at /retrobios/. Prefix https://abdess.github.io for a full URL."
                 },
                 "sha1": {
                   "type": "string",
@@ -392,6 +407,129 @@
                 },
                 "owner": {
                   "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "index"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "items": {
+            "items": {
+              "type": "object",
+              "required": [
+                "title",
+                "url"
+              ],
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "url": {
+                  "type": "string",
+                  "description": "Relative to this document's URL."
+                },
+                "description": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "system-index"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "items": {
+            "items": {
+              "type": "object",
+              "required": [
+                "id",
+                "name",
+                "manufacturer",
+                "url",
+                "sha1"
+              ],
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "description": "The system id a platform list or an emulator profile writes."
+                },
+                "name": {
+                  "type": "string",
+                  "description": "The name the site shows for the id."
+                },
+                "manufacturer": {
+                  "type": "string"
+                },
+                "url": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Site-absolute path of the console section holding the id's files, null when no section holds them."
+                },
+                "sha1": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "pattern": "^[0-9a-f]{40}$"
+                  },
+                  "description": "SHA1 of each collection file a platform list or an emulator profile names for the id."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "kind": {
+            "const": "core-index"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "items": {
+            "items": {
+              "type": "object",
+              "required": [
+                "name",
+                "profile"
+              ],
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "description": "A core name as the buildbot or a platform writes it (mednafen_psx), a profile id, or an alias profile."
+                },
+                "profile": {
+                  "type": "string",
+                  "description": "The profile id whose api/v1/emulators/<id>.json and page describe it."
+                },
+                "preferred": {
+                  "type": "boolean",
+                  "description": "The profile a platform list naming this core gets: its own key first, else the first claimant."
                 }
               }
             }
