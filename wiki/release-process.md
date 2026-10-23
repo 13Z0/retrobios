@@ -213,7 +213,9 @@ python scripts/pipeline.py --include-archived
 # 2. A release file must be under 2 GiB. A larger pack becomes parts that are
 #    each a ZIP of whole files (Pack.part1of2.zip): any tool opens one, and
 #    the parts extracted into one folder are the pack. Each part is read back
-#    and the set compared with the pack before the pack is removed.
+#    and the set compared with the pack before the pack is removed. Each part
+#    also holds a marker (Pack.part1of2.txt) naming every part and its size,
+#    which install.py --check reads to name a part missing from a folder.
 python scripts/split_pack.py dist/
 
 # 2b. The handheld port, RetroBIOS.zip, built from ports/RetroBIOS with the
