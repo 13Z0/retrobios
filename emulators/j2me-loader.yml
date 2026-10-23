@@ -4,8 +4,8 @@ core_classification: community_fork
 source: "https://github.com/nikita36078/J2ME-Loader"
 upstream: "https://github.com/nikita36078/J2ME-Loader"
 author: "Nikita Shakarun"
-profiled_date: "2026-10-20"
-source_commit: "752b93afa80f657fa515f560bebf7904d219f73a"
+profiled_date: "2026-10-23"
+source_commit: "c1aff868a674ea0c9fd9d565dfb4819987ee447f"
 core_version: "1.8.2"
 display_name: "Mobile - J2ME (J2ME Loader)"
 cores:
@@ -32,10 +32,13 @@ notes: |
   fs/e, all written by the app, plus shaders/ and soundbanks/, created empty when
   the directory is initialized and read from. fs/c and fs/e are the JSR-75
   drives, data/ is RMS storage, converted/ holds converted.dex and res.jar per
-  MIDlet.
-  ref: app/src/main/java/ru/playsoftware/j2meloader/config/Config.java:47-61,
-       app/src/main/java/ru/playsoftware/j2meloader/config/Config.java:155-161,
-       app/src/main/java/ru/playsoftware/j2meloader/util/FileUtils.java:166-181
+  MIDlet. The config screen has a file list for shaders/ and soundbanks/ that
+  copies the files the user picks into that directory under their display name.
+  ref: app/src/main/java/ru/playsoftware/j2meloader/config/ConfigFilesActivity.java:76-83,
+       app/src/main/java/ru/playsoftware/j2meloader/config/ConfigFilesActivity.java:129-141,
+       app/src/main/java/ru/playsoftware/j2meloader/config/Config.java:47-61,
+       app/src/main/java/ru/playsoftware/j2meloader/config/Config.java:159-165,
+       app/src/main/java/ru/playsoftware/j2meloader/util/FileUtils.java:213-228
 
   The shader and property assets are read through ContextHolder.getAssetAsString,
   which rethrows an IOException as RuntimeException instead of degrading, so an
@@ -51,7 +54,7 @@ notes: |
        app/src/main/java/ru/woesss/j2me/mmapi/synth/SynthPluginFactory.java:36-54
 
   The package carries every native library for arm64-v8a, armeabi-v7a, x86 and
-  x86_64. The hashes below are those of the x86_64 build, version 1.8.2-dev-1964,
+  x86_64. The hashes below are those of the x86_64 build, version 1.8.2-dev-1973,
   the continuous release built from source_commit.
 
 files:
@@ -77,7 +80,7 @@ files:
     category: game_data
     description: "Default microedition system properties"
     note: "Read from assets/defaults when a profile is created and again when the config screen or updateSystemProperties fills the field. Each line becomes a System.setProperty pair at MIDlet startup, carrying microedition.configuration, microedition.platform, the JSR version strings and the vendor identity values."
-    source_ref: "app/src/main/java/ru/playsoftware/j2meloader/config/ProfileModel.java:201, app/src/main/java/ru/playsoftware/j2meloader/config/ProfilesManager.java:185, app/src/main/java/ru/playsoftware/j2meloader/config/ConfigActivity.java:636, app/src/main/java/javax/microedition/shell/MicroLoader.java:249-256"
+    source_ref: "app/src/main/java/ru/playsoftware/j2meloader/config/ProfileModel.java:201, app/src/main/java/ru/playsoftware/j2meloader/config/ProfilesManager.java:185, app/src/main/java/ru/playsoftware/j2meloader/config/ConfigActivity.java:680, app/src/main/java/javax/microedition/shell/MicroLoader.java:249-256"
 
   - name: simple.vsh
     system: j2me
@@ -191,9 +194,9 @@ files:
     system: j2me
     required: true
     bundled: true
-    size: 416488
-    sha1: "74171083847c3836e1ffb9470d3b7e3e7dafe242"
-    md5: "0e273cd2a17253fa9f0f475f95283777"
+    size: 417496
+    sha1: "a9f584627b3c000c936749f6c88db5187e1cdd4f"
+    md5: "c19559b2fcf1ab091d7455b4c54fbafd"
     category: game_data
     description: "JSR-184 M3G engine"
     note: "Named by System.loadLibrary(\"javam3g\") outside any catch, the first time the toolkit reports the UI thread available. Built by ndkBuild from the m3g sources against GLES 1.1."
@@ -279,7 +282,7 @@ files:
     category: game_data
     description: "DLS sound bank for MIDI playback"
     note: "The config screen lists every regular file in the sound banks directory with no extension filter, and the selected name is kept as a path when the file exists. EAS_LoadDLSCollection reads it with the header search flag off. A rejected file throws and the plugin is skipped."
-    source_ref: "app/src/main/java/ru/playsoftware/j2meloader/config/ConfigActivity.java:277-301, app/src/main/java/javax/microedition/shell/MicroLoader.java:285-288, app/src/main/cpp/mmapi_eas/eas_player.cpp:112-126, app/src/main/cpp/mmapi_eas/eas_player_jni.cpp:16-28"
+    source_ref: "app/src/main/java/ru/playsoftware/j2meloader/config/ConfigActivity.java:315-339, app/src/main/java/javax/microedition/shell/MicroLoader.java:285-288, app/src/main/cpp/mmapi_eas/eas_player.cpp:112-126, app/src/main/cpp/mmapi_eas/eas_player_jni.cpp:16-28"
 
   - name: "<soundbank>.sf2"
     path: "soundbanks/<soundbank>.sf2"
@@ -289,7 +292,7 @@ files:
     category: game_data
     description: "SoundFont sound bank for MIDI playback"
     note: "Same selection path as the DLS bank. tsf_load_filename parses it, and a null result throws IllegalArgumentException so the plugin is skipped."
-    source_ref: "app/src/main/java/ru/playsoftware/j2meloader/config/ConfigActivity.java:277-301, app/src/main/cpp/mmapi_tsf/tsf_player.cpp:87-94, app/src/main/cpp/mmapi_tsf/tsf_player_jni.cpp:15-27"
+    source_ref: "app/src/main/java/ru/playsoftware/j2meloader/config/ConfigActivity.java:315-339, app/src/main/cpp/mmapi_tsf/tsf_player.cpp:87-94, app/src/main/cpp/mmapi_tsf/tsf_player_jni.cpp:15-27"
 
   - name: "<shader>.ini"
     path: "shaders/<shader>.ini"
@@ -299,7 +302,7 @@ files:
     category: game_data
     description: "Shader descriptor read from the emulator directory"
     note: "The config screen creates the shaders directory, lists every file ending in .ini and parses it as sections opened by a bracketed name, keeping the entries that name both a Vertex and a Fragment file. Name, Author, OutputResolution, Upscaling and four SettingName/SettingDefaultValue/SettingMinValue/SettingMaxValue/SettingStep groups are also read, which is the PPSSPP post-processing descriptor format."
-    source_ref: "app/src/main/java/ru/playsoftware/j2meloader/config/ConfigActivity.java:368-399, app/src/main/java/ru/playsoftware/j2meloader/config/ShaderInfo.java:101-206, app/src/main/java/ru/playsoftware/j2meloader/util/FileUtils.java:156-164"
+    source_ref: "app/src/main/java/ru/playsoftware/j2meloader/config/ConfigActivity.java:406-437, app/src/main/java/ru/playsoftware/j2meloader/config/ShaderInfo.java:101-206, app/src/main/java/ru/playsoftware/j2meloader/util/FileUtils.java:203-211"
 
   - name: "<shader>.vsh"
     path: "shaders/<shader>.vsh"
@@ -309,7 +312,7 @@ files:
     category: game_data
     description: "Vertex shader named by a descriptor"
     note: "Read whole from the shaders directory when the selected filter names it, then compiled in place of the built-in blitter. An unreadable file yields an empty string, the program fails to build and the bundled default is used after a toast."
-    source_ref: "app/src/main/java/javax/microedition/lcdui/graphics/ShaderProgram.java:45-57, app/src/main/java/javax/microedition/shell/MicroLoader.java:272-276, app/src/main/java/ru/playsoftware/j2meloader/util/FileUtils.java:156-164"
+    source_ref: "app/src/main/java/javax/microedition/lcdui/graphics/ShaderProgram.java:45-57, app/src/main/java/javax/microedition/shell/MicroLoader.java:272-276, app/src/main/java/ru/playsoftware/j2meloader/util/FileUtils.java:203-211"
 
   - name: "<shader>.fsh"
     path: "shaders/<shader>.fsh"
