@@ -478,6 +478,9 @@ class AReleaseProfileDescribesItsOwnRelease(unittest.TestCase):
                          ("a" * 40, "b" * 40))
         self.assertEqual(profile["cores"], ["mame0278"])
         self.assertEqual(profile["built_by"], ["recalbox"])
+        # libretro/mame HEAD is a later release: the profile is judged
+        # against the revision the platform builds.
+        self.assertIn("recalbox builds libretro/mame", profile["pin_frozen"])
         files = {f["name"]: f for f in profile["files"]}
         self.assertEqual(sorted(files), ["neogeo.zip", "newset.zip"])
         self.assertEqual(files["neogeo.zip"]["system"], "snk-neogeo-mvs")

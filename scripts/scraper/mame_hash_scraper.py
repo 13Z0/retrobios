@@ -470,6 +470,13 @@ def release_profile(
         "display_name": f"Arcade (MAME {version})",
         "cores": cores,
         "built_by": built_by,
+        # The pin is the commit the platform builds, so the profile is judged
+        # against its own revision: libretro/mame HEAD is a later release.
+        "pin_frozen": (
+            f"{', '.join(built_by)} build{'s' if len(built_by) == 1 else ''} "
+            f"libretro/mame at this revision for the {version} release. "
+            "Later commits are not part of that build."
+        ),
         "systems": list(reference.get("systems") or []),
         "notes": (
             f"libretro/mame built at the {version} release. BIOS root sets "
@@ -498,6 +505,12 @@ def _write_release(args: argparse.Namespace) -> None:
         args.release, bios_sets, commit, args.source_commit, args.core, reference,
         args.built_by,
     )
+    # A reason a reader wrote, citing the platform's own build file, outlives
+    # a regeneration: the derived one says less.
+    if Path(args.profile).is_file():
+        previous = yaml_load(Path(args.profile).read_text(encoding="utf-8")) or {}
+        if str(previous.get("pin_frozen") or "").strip():
+            profile["pin_frozen"] = previous["pin_frozen"]
     text = yaml.safe_dump(profile, sort_keys=False, allow_unicode=True, width=100)
     # Citations are written double-quoted in every profile: left bare, each
     # regeneration rewrote all of them.
