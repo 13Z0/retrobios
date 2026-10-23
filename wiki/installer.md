@@ -26,9 +26,9 @@ How the command protects your machine is under
 Each links to its row in the [Options](#options) table.
 
 - **Where and for what**: [`--platform`](#option-platform), [`--dest`](#option-dest), [`--target`](#option-target), [`--every-board`](#option-every-board), [`--save-dir`](#option-save-dir), [`--romm-firmware`](#option-romm-firmware), [`--standalone-copies`](#option-standalone-copies)
-- **Fewer files**: [`--system`](#option-system), [`--core`](#option-core), [`--emulator`](#option-emulator), [`--region`](#option-region), [`--no-game-data`](#option-no-game-data), [`--installed-cores`](#option-installed-cores), [`--cores-dir`](#option-cores-dir)
+- **Fewer files**: [`--system`](#option-system), [`--core`](#option-core), [`--emulator`](#option-emulator), [`--region`](#option-region), [`--no-game-data`](#option-no-game-data), [`--installed-cores`](#option-installed-cores), [`--cores-dir`](#option-cores-dir), [`--declared-only`](#option-declared-only)
 - **Look first**: [`--check`](#option-check), [`--dry-run`](#option-dry-run), [`--list-platforms`](#option-list-platforms), [`--list-targets`](#option-list-targets), [`--list-systems`](#option-list-systems), [`--list-cores`](#option-list-cores), [`--list-emulators`](#option-list-emulators)
-- **From files you have**: [`--from`](#option-from), [`--from-pack`](#option-from-pack), [`--manifest`](#option-manifest), [`--restore`](#option-restore)
+- **From files you have**: [`--from`](#option-from), [`--from-pack`](#option-from-pack), [`--manifest`](#option-manifest), [`--offline`](#option-offline), [`--restore`](#option-restore)
 - **How the run talks**: [`--tui`](#option-tui), [`--plain`](#option-plain), [`--no-input`](#option-no-input), [`--yes`](#option-yes), [`--quiet`](#option-quiet), [`--verbose`](#option-verbose), [`--events`](#option-events), [`--jobs`](#option-jobs), [`--version`](#option-version), [`--help`](#option-help)
 
 ## One line
@@ -232,7 +232,8 @@ below the BIOS folder: Azahar's keys, shared font and NAND files, Citra's
 `sysdata`, Dolphin's `User` tree. The file list marks them `root: save`, and
 the run writes them below the save directory, which it names before checking
 files (`5 files read from RetroArch's save directory go to ...`). For a
-RetroArch found by its `retroarch.cfg`, that is `savefile_directory` as
+RetroArch found by its `retroarch.cfg` (with `--dest` too, when the folder is
+the config's `system_directory`, as in the full screen), that is `savefile_directory` as
 RetroArch expands it (`:` for its own folder, `~` for the home), `saves/`
 beside the config when the value is `default`, empty, or names no folder, and
 the core's own folder below it when `sort_savefiles_enable` is on, as it is by
@@ -242,7 +243,7 @@ the save directory beside it (`saves`, `/storage/savefiles` on Lakka).
 applies, or when `savefiles_in_content_dir` or
 `sort_savefiles_by_content_enable` keeps saves beside each game, those files
 are left out and the run says why, like the other entries the list cannot
-install.
+install. The full screen says so on its plan and its result.
 
 Batocera, KNULLI, Recalbox, RetroBat and RetroDECK write the save directory at
 each launch, one folder per system (`by_system` in the file list). Their lists
@@ -1066,7 +1067,9 @@ muxterm, as the muOS app does.
 Start pressed first also chooses the line in focus: hold Select first. A
 running install is then stopped the way B stops it, and the last screen says
 what it wrote. On muOS without PortMaster, muxterm reads the pad itself: Y
-ticks a system, Select shows its keyboard, and Menu quits.
+ticks a system, Select shows its keyboard, and Menu quits. L1 and R1 do not
+page there: muxterm keeps PgUp and PgDn for its own scrollback, so a list
+moves with the D-pad.
 
 Each launcher also sets `RETROBIOS_IDLE_EXIT` to 300: with no button pressed
 on its first screen for 5 minutes, the interface closes by itself. A pad the
@@ -1083,7 +1086,12 @@ Each launcher tells the interface which buttons reach it, in
 | `evmapy` | `RetroBIOS.sh.keys`, the same buttons as the table | the Batocera and Knulli port |
 | `miyoo` | buttons that are already keys: A as Space, Start as Enter, L1 and R1 as E and T, L2 as Tab, R2 as Backspace | no launcher yet |
 
-A launcher with no mapper at all (a keyboard) leaves it unset. On a Miyoo, B,
+A launcher with no mapper at all (a keyboard) leaves it unset.
+A launcher can also set `RETROBIOS_IDLE_EXIT` to a number of seconds: when
+no button reaches the first screen for that long, before any choice, the
+interface closes with `No button pressed, closing.` and exit status 0. A
+mapper that never opened the pad would otherwise hold the device on that
+screen. On a Miyoo, B,
 X, Y and Select are Left Ctrl, Shift, Alt and Right Ctrl: pressed alone, a
 modifier sends nothing to a terminal, so the interface goes back with R2
 instead, and the bottom line says so.
@@ -1240,13 +1248,15 @@ fields, the installer refuses to narrow rather than install everything.
 |------|---------|
 | `0` | everything asked for is installed or already up to date |
 | `1` | a failure: the one-liner could not download or verify `install.py`, or found no Python 3.8 (nothing was run), an unusable base URL, an unknown platform or target, `--installed-cores` with no core found, a manifest that fails validation, a fetch that never succeeded, no platform to install for in a non-interactive run, some files failed while others installed, `--check` found files to fetch, a `--from-pack` pack that cannot be read, lacks a part or is for another platform, a `--from` folder that does not exist or cannot be read, or `--restore` could not put a file back |
-| `2` | nothing was installed: every file the run tried failed (a BIOS folder that cannot be written, for one), the drive has too little free space for the download (checked before any folder is created), or the question about a folder that does not exist, named with `--dest` or typed at the folder question, was answered no. Also an option the installer refused before any download: an unknown option, `--jobs` outside 1 to 32, `--target` with `--every-board` or `--from-pack`. The message then starts with `install.py: error:`. With `--restore`, a folder that is not a dated folder inside `retrobios-backup` |
+| `2` | nothing was installed: every file the run tried failed (a BIOS folder that cannot be written, for one), the drive has too little free space for the download (checked before any folder is created), or the question about a folder that does not exist, named with `--dest` or typed at the folder question, was answered no. Also an option the installer refused before any download: an unknown option, `--jobs` outside 1 to 32, `--target` with `--every-board` or `--from-pack`, `--target` or `--list-targets` with `--offline` (or `RETROBIOS_INSTALL_OFFLINE` set), which read a core list from the network. The message then starts with `install.py: error:`. With `--restore`, a folder that is not a dated folder inside `retrobios-backup` |
 | `130` | stopped with Ctrl+C, or with `q`, Ctrl+C or Ctrl+D at a question. Run the same command again to carry on |
 | `141` | the output was piped to a reader that closed early (`--list-platforms \| head`) |
 
 The full screen ended by SIGTERM (Start+Select on a handheld) before any
 install exits `143`. During an install it stops the install first, and exits
-`130`.
+`130`. Its window or terminal closed (SIGHUP) exits `129`, during an install
+too: the install is stopped as Ctrl+C stops it, and the last lines go
+nowhere, no one being left to read them.
 
 `install.ps1` passes the installer's code on unchanged: run as a file it exits
 with it, run through `irm | iex` it sets `$LASTEXITCODE` (an `exit` there
@@ -1298,7 +1308,9 @@ other schemas under `api/v1/schemas/`.
 Schema 1 can gain a kind (`found` came with `--from`, `declared` with `--declared-only`), never a key of an
 existing kind: a reader skips a kind it does not know. An option refused
 before the run starts (`install.py: error:`, code 2) writes
-no event at all. A program reads a missing `end` as that case.
+no event at all. A program reads a missing `end` as that case, or as a
+crash: an error the installer did not expect ends the process on a Python
+traceback, on standard error, without an `end` line.
 
 Five lines of a run of `--check --events --system sony-playstation` on a
 RetroArch folder that holds only `scph5501.bin`, in the order written:
@@ -1327,6 +1339,8 @@ RetroArch folder that holds only `scph5501.bin`, in the order written:
 | `FORCE_COLOR`, `CLICOLOR_FORCE` | Colour even when the output is a pipe or a file, set to any value but `0` or an empty one. `NO_COLOR` wins over both, and the progress line stays one line per file |
 | `SSL_CERT_FILE`, `SSL_CERT_DIR` | The trusted certificates to check servers with, for a Python that finds none of its own |
 | `RETROBIOS_PLAIN`, `ACCESSIBLE` | Set to anything but `0`: the questions come line by line, as with `--plain`, instead of the full-screen interface |
+| `RETROBIOS_PAD` | The buttons a handheld launcher's mapper sends to the full screen (`gptokeyb`, `muxterm`, `evmapy`, `miyoo`), so its hints name them. See [On a handheld](#on-a-handheld-the-retrobios-port) |
+| `RETROBIOS_IDLE_EXIT` | Seconds the full screen's first screen waits for a first button. With none pressed, it closes with exit status 0 |
 | `HTTPS_PROXY`, `NO_PROXY` | Honoured for every download through the standard library's default proxy handling: one names the proxy, the other the hosts to reach directly |
 
 ## When something goes wrong
@@ -1341,7 +1355,10 @@ The installer fetches its manifest, then downloads only the repository or
 `https://github.com` opens. Behind a proxy, set `HTTPS_PROXY` in the
 environment. A connection that does not open within 4 seconds counts as
 none, so a dropped network gives its error in about 15 seconds. Once a
-connection is open, a slow transfer keeps the full timeout. A file that fails three attempts is counted and reported at the
+connection is open, a slow transfer keeps the full timeout. The file list
+is the exception: a server that takes the connection and then sends nothing
+(a Wi-Fi sign-in page, a stuck proxy) gets 15 seconds per wait and two
+attempts, about 30 seconds in all. A file that fails three attempts is counted and reported at the
 end, and the next run fetches only what is still missing.
 
 The reason is said in words: no internet connection or a name that could not

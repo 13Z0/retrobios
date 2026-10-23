@@ -493,6 +493,19 @@ class TheBoundaryChecksTheNewFields(unittest.TestCase):
             with self.subTest(field=field, value=bad), self.assertRaises(ValueError):
                 install._validate_manifest(manifest, "retroarch")
 
+    def test_the_system_titles(self):
+        """A title is read as text by --system and the interface: a list or
+        a number there raised mid-run instead of at the boundary."""
+        good = self._manifest()
+        good["system_titles"] = {"sony-playstation": "Sony PlayStation"}
+        install._validate_manifest(good, "retroarch")
+        for bad in (["x"], {"s": ["Sony"]}, {"s": None}, {"s": 5}, {"s": ""},
+                    {"": "Sony"}, {"s": "x" * 257}, {"s" * 257: "Sony"}):
+            manifest = self._manifest()
+            manifest["system_titles"] = bad
+            with self.subTest(value=bad), self.assertRaises(ValueError):
+                install._validate_manifest(manifest, "retroarch")
+
 
 class _QuietHandler(http.server.SimpleHTTPRequestHandler):
     def log_message(self, format, *args):  # noqa: A002 - stdlib signature
@@ -1486,6 +1499,39 @@ class TheTitleASetupPrints(unittest.TestCase):
         manifest = {"system_names": {"arcade": ["Sony PlayStation"]},
                     "system_titles": {"sony-playstation": "Sony PlayStation"}}
         self.assertEqual(install.system_aliases(manifest)["Sony PlayStation"], "arcade")
+
+
+class SomethingElseAtADestination(unittest.TestCase):
+    """A folder, or a file this user cannot read, at a destination ended
+    --check and the install on an IsADirectoryError traceback."""
+
+    def prepare(self, repo: FakeRepository) -> None:
+        (repo.dest / "scph5500.bin").mkdir(parents=True)
+        unreadable = repo.dest / "scph5501.bin"
+        unreadable.write_bytes(b"x")
+        unreadable.chmod(0)
+
+    @unittest.skipIf(os.name == "nt" or (hasattr(os, "geteuid") and os.geteuid() == 0),
+                     "a mode of 0 stops no read on Windows or as root")
+    def test_each_says_why_in_the_check_and_the_install(self):
+        with FakeRepository() as repo:
+            self.prepare(repo)
+            proc = repo.run("--check")
+            self.assertEqual(proc.returncode, 1, proc.stderr)
+            self.assertNotIn("Traceback", proc.stderr)
+            self.assertIn("    wrong hash: scph5500.bin\n      a folder sits where this "
+                          "file goes: move it away, then run again", proc.stdout)
+            self.assertIn("    wrong hash: scph5501.bin\n      could not be read "
+                          "(Permission denied)", proc.stdout)
+            proc = repo.run("--yes")
+            self.assertEqual(proc.returncode, 1, proc.stderr)
+            self.assertNotIn("Traceback", proc.stderr)
+            self.assertIn("failed: scph5500.bin (a folder sits where this file goes",
+                          proc.stdout)
+            self.assertIn("failed: scph5501.bin (file in place could not be kept aside",
+                          proc.stdout)
+            self.assertTrue((repo.dest / "scph5500.bin").is_dir())
+            self.assertIn("gba_bios.bin", repo.installed())
 
 
 if __name__ == "__main__":
