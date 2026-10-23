@@ -213,7 +213,7 @@ class HashLookupGivesOneVerdict(unittest.TestCase):
         source = _read(SITE_TS)
         self.assertNotIn("'match' : 'matches'", source)
         self.assertIn("count(platforms.length, 'declaration', 'declarations')} by ${count(setups.size, 'setup', 'setups')}", source)
-        self.assertIn("count(setups.size, 'setup lists', 'setups list')", source)
+        self.assertIn("count(listers.size, 'setup lists', 'setups list')", source)
         self.assertIn("'file in the collection', 'files in the collection'", source)
 
     def test_emulators_by_name(self):
@@ -291,14 +291,16 @@ class SearchFoldsPagesUnderAHash(unittest.TestCase):
 
     def test_search_fields_are_weighted_and_never_shown(self):
         config = _read(CONFIG)
-        self.assertIn("metaWeights: { title: 10, files: 0.5, aliases: 5, devices: 5 },", config)
-        self.assertIn("const UNSHOWN_FIELDS = new Set(['files', 'aliases', 'devices']);", _read(SITE_TS))
+        self.assertIn("metaWeights: { title: 10, files: 0.5, aliases: 5, devices: 5, consoles: 10, terms: 10 },", config)
+        self.assertIn("const UNSHOWN_FIELDS = new Set(['files', 'aliases', 'devices', 'consoles', 'terms']);", _read(SITE_TS))
 
 
-class OsTabsKeepTheChoiceInView(unittest.TestCase):
-    def test_the_row_scrolls_not_the_page(self):
+class OsTabsNeverScrollThePage(unittest.TestCase):
+    """The tabs wrap since round 4 (retrobios.css): the script picks the
+    visitor's tab and never scrolls the page."""
+
+    def test_no_page_scroll(self):
         source = _read(SITE_TS)
-        self.assertIn("list.scrollLeft", source)
         self.assertNotIn("scrollIntoView", source)
         self.assertIn("osTabs();", source)
 

@@ -1,7 +1,8 @@
 // Progressive enhancement of the generated pages: table captions, filters
 // and keyboard scrolling, the hash lookup on files/ (a pasted hash or a file
 // hashed on this device), moved cards, a hash typed in the search, glossary
-// terms on a tap, the OS tabs kept in view, and the 404 page's hints.
+// terms on a tap, the OS tab of the visitor's system, the current page in
+// the sidebar, and the 404 page's hints.
 // Which tables stack on a phone is decided when the page is built
 // (src/plugins/rehype-stack-tables.mjs), so the layout is right on first paint.
 
@@ -262,7 +263,11 @@ const lookupValues = async (values: string[]): Promise<Item[]> => {
 	return shards.flat().filter((item) => wanted.has(item.value));
 };
 
-type Held = { name: string; path: string; sha1: string; size: number };
+type Held = { name: string; path: string; sha1: string; size: number; md5?: string; crc32?: string; sha256?: string };
+
+// Every hash of a collection file, lower case.
+const heldHashes = (file: Held) =>
+	[file.sha1, file.md5, file.crc32, file.sha256].filter((value): value is string => !!value).map((value) => value.toLowerCase());
 type Declared = { name?: string; destination?: string; required?: boolean; [hash: string]: unknown };
 type ProfileFile = { name?: string; region?: string | string[]; category?: string; [field: string]: unknown };
 type Reader = { name: string; files: ProfileFile[] };
@@ -334,15 +339,21 @@ const heldFile = async (item: Item): Promise<Held | undefined> => {
 	return undefined;
 };
 
+// Whether an entry of a list declares one of *values*, under any of its
+// hash fields. Recalbox writes several MD5 in one field, separated by commas.
+const HASH_FIELDS = ['sha1', 'md5', 'crc32', 'sha256'];
+const declares = (entry: Record<string, unknown>, values: Set<string>) =>
+	HASH_FIELDS.some((field) =>
+		String(entry[field] ?? '').toLowerCase().split(',').some((hash) => values.has(hash.trim())));
+
 // A setup's own entry for the value, from its contract in api/v1/platforms/:
-// where the file goes and whether the setup requires it. Recalbox writes
-// several MD5 in one field, separated by commas.
-const declaredEntry = async (item: Item): Promise<Declared | undefined> => {
+// where the file goes and whether the setup requires it. *values* are the
+// hashes of the file the value names.
+const declaredEntry = async (item: Item, values: Set<string>): Promise<Declared | undefined> => {
 	const system = decodeURIComponent(new URL(item.url, siteRoot()).hash.slice(1));
 	const data = await json(`api/v1/platforms/${item.owner}.json`);
 	const files: Declared[] = data.items?.[0]?.contract?.systems?.[system]?.files ?? [];
-	const holds = (entry: Declared) =>
-		String(entry[item.algorithm] ?? '').toLowerCase().split(',').map((hash) => hash.trim()).includes(item.value);
+	const holds = (entry: Declared) => declares(entry, values);
 	return files.find((entry) => holds(entry) && entry.name === item.name) ?? files.find(holds);
 };
 
@@ -355,9 +366,8 @@ const readerProfile = async (owner: string): Promise<Reader | undefined> => {
 };
 
 // The entry of a profile that reads the value: by name and hash, else by hash.
-const readerEntry = (reader: Reader | undefined, item: Item): ProfileFile | undefined => {
-	const holds = (entry: ProfileFile) =>
-		String(entry[item.algorithm] ?? '').toLowerCase().split(',').map((hash) => hash.trim()).includes(item.value);
+const readerEntry = (reader: Reader | undefined, item: Item, values: Set<string>): ProfileFile | undefined => {
+	const holds = (entry: ProfileFile) => declares(entry, values);
 	return reader?.files.find((entry) => holds(entry) && entry.name === item.name) ?? reader?.files.find(holds);
 };
 
@@ -414,21 +424,38 @@ const distinct = (items: Item[], key: (item: Item) => string) => {
 // how many setups list it under which names. Then where the collection
 // holds it, the setups that list it (where it goes, whether it is
 // required), and the emulators that read it, by name.
-const renderMatches = async (status: HTMLElement, result: HTMLElement, items: Item[]) => {
+//
+// A setup or a profile declares one hash of a file, the one its list
+// writes. When the value matches a file of the collection, the lists are
+// read under every hash of that file, so the MD5, the SHA1, the CRC32 and
+// the SHA256 of one dump give one answer. Setups and emulators are counted
+// per file, by its SHA1.
+const renderMatches = async (status: HTMLElement, result: HTMLElement, found: Item[]) => {
+	const held = distinct(found.filter((item) => item.layer === 'collection'), (item) => item.sha1 ?? item.url);
+	const files = await Promise.all(held.map((item) => heldFile(item).catch(() => undefined)));
+	const looked = new Set(found.map((item) => item.value));
+	const others = [...new Set(files.flatMap((file) => (file ? heldHashes(file) : [])))].filter((value) => !looked.has(value));
+	const items = others.length ? [...found, ...(await lookupValues(others).catch(() => [] as Item[]))] : found;
+	// The file a declaration names: the SHA1 the record carries, else the
+	// collection file one of whose hashes it declares.
+	const fileOf = (item: Item) =>
+		item.sha1 ?? files.find((file) => file && heldHashes(file).includes(item.value))?.sha1;
+	const valuesOf = (item: Item) => {
+		const file = files.find((each) => each && each.sha1 === fileOf(item));
+		return new Set([item.value, ...(file ? heldHashes(file) : [])]);
+	};
 	const byLayer = (layer: string) => items.filter((item) => item.layer === layer);
-	const held = distinct(byLayer('collection'), (item) => item.sha1 ?? item.url);
 	const platforms = distinct(byLayer('platform'), (item) => `${item.owner}|${item.name}|${item.url}`);
 	const emulators = distinct(byLayer('emulator'), (item) => `${item.owner}|${item.name}|${item.url}`);
 	const owners = [...new Set(emulators.map((item) => item.owner ?? ''))];
-	const [files, entries, names, readers] = await Promise.all([
-		Promise.all(held.map((item) => heldFile(item).catch(() => undefined))),
-		Promise.all(platforms.map((item) => declaredEntry(item).catch(() => undefined))),
+	const [entries, names, readers] = await Promise.all([
+		Promise.all(platforms.map((item) => declaredEntry(item, valuesOf(item)).catch(() => undefined))),
 		json('data/picker/index.json').catch(() => []) as Promise<{ platform: string; name: string }[]>,
 		Promise.all(owners.map((owner) => readerProfile(owner))),
 	]);
 	const setupName = new Map(names.map((entry) => [entry.platform, entry.name]));
 	const reader = new Map(owners.map((owner, index) => [owner, readers[index]]));
-	const readEntries = emulators.map((item) => readerEntry(reader.get(item.owner ?? ''), item));
+	const readEntries = emulators.map((item) => readerEntry(reader.get(item.owner ?? ''), item, valuesOf(item)));
 	const setups = new Set(platforms.map((item) => item.owner));
 
 	const counted = [
@@ -452,8 +479,11 @@ const renderMatches = async (status: HTMLElement, result: HTMLElement, items: It
 		const what: (Node | string)[] = system
 			? [', ', link(item.url, system), category ? ` ${category}` : ' file']
 			: category ? [`, a ${category} file`] : [];
+		// The setups that list this file, whatever hash their list writes.
+		const listing = platforms.filter((declared) => (fileOf(declared) ?? item.sha1) === item.sha1);
+		const listers = new Set(listing.map((declared) => declared.owner));
 		const others = new Map<string, Set<string>>();
-		for (const declared of platforms) {
+		for (const declared of listing) {
 			const other = declared.name ?? '';
 			if (anyName(other) || other === name) continue;
 			if (!others.has(other)) others.set(other, new Set());
@@ -466,17 +496,17 @@ const renderMatches = async (status: HTMLElement, result: HTMLElement, items: It
 			if (position) named.push(position === otherNames.length - 1 ? ' and ' : ', ');
 			named.push(code(other));
 		});
-		const listing: (Node | string)[] = setups.size
+		const verdict: (Node | string)[] = listers.size
 			? [
-				` ${count(setups.size, 'setup lists', 'setups list')} it`,
+				` ${count(listers.size, 'setup lists', 'setups list')} it`,
 				...(renamed.size
-					? [`, ${renamed.size.toLocaleString('en')} of them under the ${otherNames.length === 1 ? 'name' : 'names'} `, ...named]
+					? [`, ${renamed.size.toLocaleString('en')} of them under ${otherNames.length === 1 ? 'another name' : 'other names'}: `, ...named]
 					: []),
 				'.',
 			]
 			: [];
 		blocks.push(
-			paragraph('This is ', code(name), ...what, ...(regions ? [` for ${regions}`] : []), '.', ...listing),
+			paragraph('This is ', code(name), ...what, ...(regions ? [` for ${regions}`] : []), '.', ...verdict),
 			paragraph(
 				...(file ? ['Held in the collection at ', code(file.path), '. SHA1 ', code(file.sha1), `, ${formatSize(file.size)}. `] : []),
 				link(item.url, 'Open its card'),
@@ -697,11 +727,11 @@ const hashLookupRow = (drawer: HTMLElement, value: string) => {
 
 // Pagefind lists a page's title twice: once for the page and once for the
 // anchor of its h1 (#_top). The second title is hidden, its excerpt kept.
-// The `files`, `aliases` and `devices` fields weigh in the ranking and are
-// never shown: a result is not a list of 120 names. Pagefind reuses
+// The `files`, `aliases`, `devices`, `consoles` and `terms` fields weigh in
+// the ranking and are never shown: a result is not a list of 120 names. Pagefind reuses
 // its nodes from one query to the next, so both are worked out again on
 // every change.
-const UNSHOWN_FIELDS = new Set(['files', 'aliases', 'devices']);
+const UNSHOWN_FIELDS = new Set(['files', 'aliases', 'devices', 'consoles', 'terms']);
 
 const tidyResults = (root: Element) => {
 	for (const title of root.querySelectorAll<HTMLElement>('.pagefind-ui__result-nested > .pagefind-ui__result-title')) {
@@ -751,29 +781,69 @@ const hashSearch = () => {
 	);
 };
 
-// The OS tabs scroll sideways on a phone instead of wrapping to a second
-// row (retrobios.css): the chosen one is kept in view, on load and on a
-// change, by scrolling the row and never the page.
-const keepTabInView = (tab: Element) => {
-	const list = tab.closest('[role="tablist"]');
-	if (!list) return;
-	const row = list.getBoundingClientRect();
-	const box = tab.getBoundingClientRect();
-	if (box.left < row.left) list.scrollLeft -= row.left - box.left;
-	else if (box.right > row.right) list.scrollLeft += box.right - row.right;
+// The OS tabs open on the visitor's own system: the tab its label names, on
+// every tab set of the page that shares the "os" sync key. A tab the
+// visitor chose before (Starlight keeps it under the sync key and restores
+// it as the page draws) wins over the guess, and the guess is not saved as
+// a choice. No tab is for iOS or ChromeOS: those keep the first tab.
+const OS_SYNC_KEY = 'os';
+const OS_TAB_RULES: [RegExp, string][] = [
+	[/SteamOS|Valve Steam/i, 'Steam Deck'],
+	[/Android/i, 'Android (Termux)'],
+	[/iPhone|iPad|iPod|CrOS|Chrome OS/i, ''],
+	[/Mac/i, 'macOS'],
+	[/Win/i, 'Windows'],
+	[/Linux|X11/i, 'Linux'],
+];
+
+const osTabLabel = (userAgent: string, platform: string): string =>
+	OS_TAB_RULES.find(([pattern]) => pattern.test(userAgent) || pattern.test(platform))?.[1] ?? '';
+// End of the OS tab rule.
+
+type SyncedTabs = HTMLElement & { tabs: HTMLElement[]; switchTab(tab: HTMLElement, index: number, sync?: boolean): void };
+
+const savedTab = (key: string): string | null => {
+	try {
+		return localStorage.getItem(`starlight-synced-tabs__${key}`);
+	} catch {
+		// Storage refused (a private window, blocked site data): no saved tab.
+		return null;
+	}
 };
 
 const osTabs = () => {
-	const selected = () => document.querySelectorAll('starlight-tabs [role="tab"][aria-selected="true"]').forEach(keepTabInView);
-	if (!document.querySelector('starlight-tabs')) return;
-	const later = () => requestAnimationFrame(selected);
-	for (const type of ['click', 'keyup']) {
-		document.addEventListener(type, (event) => {
-			if ((event.target as Element | null)?.closest?.('starlight-tabs [role="tab"]')) later();
-		});
-	}
-	if (document.readyState === 'complete') later();
-	else addEventListener('load', later, { once: true });
+	const sets = [...document.querySelectorAll<SyncedTabs>(`starlight-tabs[data-sync-key="${OS_SYNC_KEY}"]`)];
+	if (!sets.length || savedTab(OS_SYNC_KEY)) return;
+	const agent = navigator as Navigator & { userAgentData?: { platform?: string } };
+	const label = osTabLabel(navigator.userAgent, agent.userAgentData?.platform ?? '');
+	if (!label) return;
+	customElements.whenDefined('starlight-tabs').then(() => {
+		for (const set of sets) {
+			const index = set.tabs.findIndex((tab) => tab.textContent?.trim() === label);
+			if (index > 0 && set.tabs[index].getAttribute('aria-selected') !== 'true') set.switchTab(set.tabs[index], index, false);
+		}
+	});
+};
+
+// The sidebar lists 91 manufacturers: the current page's link sat below the
+// pane, out of sight. On load, and when the phone menu opens, the pane
+// scrolls so the link sits a third of the way down. Only the pane scrolls,
+// never the page.
+const showCurrentPage = () => {
+	const pane = document.getElementById('starlight__sidebar');
+	if (!pane) return;
+	const reveal = () => {
+		const current = pane.querySelector<HTMLElement>('[aria-current="page"]');
+		if (!current) return;
+		const box = pane.getBoundingClientRect();
+		const link = current.getBoundingClientRect();
+		if (link.top >= box.top && link.bottom <= box.bottom) return;
+		pane.scrollTop += link.top - box.top - pane.clientHeight / 3;
+	};
+	reveal();
+	pane.addEventListener('toggle', (event) => {
+		if ((event as ToggleEvent).newState === 'open') requestAnimationFrame(reveal);
+	});
 };
 
 // A glossary term shows its definition on hover; a tap or Enter shows it
@@ -825,4 +895,5 @@ enhanceTables();
 hashSearch();
 glossaryTerms();
 osTabs();
+showCurrentPage();
 notFound();
