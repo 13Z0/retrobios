@@ -2778,6 +2778,60 @@ class Crash(unittest.TestCase):
         self.assertNotIn("Traceback", err.getvalue() + out.getvalue())
 
 
+@unittest.skipIf(os.name == "nt" or os.geteuid() == 0,
+                 "a folder without search permission is POSIX")
+class AFolderThisUserCannotOpen(unittest.TestCase):
+    """A BIOS folder under a folder this user cannot enter: given with
+    --dest the interface ended on a traceback before its first screen, and
+    typed on the folder screen it ended on a crash log."""
+
+    def setUp(self):
+        base = Path(tempfile.mkdtemp(dir=REPO_ROOT / "tmp"))
+        self.addCleanup(shutil.rmtree, base, True)
+        self.lock = base / "lock"
+        self.lock.mkdir()
+        os.chmod(self.lock, 0o000)
+        self.addCleanup(os.chmod, self.lock, 0o755)
+        self.dest = self.lock / "system"
+
+    def said(self, state: install.TuiState) -> str:
+        return " ".join(" ".join(install.tui_view(state, 200, 40)).split())
+
+    def test_typed_it_stays_on_the_path_screen(self):
+        state = fresh_state()
+        state.platform = "retroarch"
+        state.stack = ["setup", "folder", "path"]
+        state.path_text = str(self.dest)
+        self.assertEqual(install.tui_update(state, Key("enter")), [])
+        self.assertEqual(state.screen, "path")
+        self.assertEqual(state.path_text, str(self.dest))
+        self.assertIn(f"This user cannot open {install._short_path(self.lock, state.home)} "
+                      "(Permission denied)", self.said(state))
+
+    def test_given_with_dest_opens_the_folder_screen(self):
+        args = _args(platform="retroarch", dest=str(self.dest))
+        with mock.patch.object(install, "detect_platforms", return_value=[]), \
+                mock.patch.object(install, "_mounted_cards", return_value=[]):
+            state, effects = install.tui_start(args, "linux")
+        self.assertEqual(effects, [])
+        self.assertEqual(state.screen, "folder")
+        self.assertIn(f"This user cannot open {install._short_path(self.lock, state.home)} "
+                      "(Permission denied)", self.said(state))
+        self.assertIn("choose another folder", self.said(state))
+
+    def test_chosen_from_the_setups(self):
+        state = fresh_state()
+        state.setups = [("retroarch", self.dest, "RetroArch")]
+        state.stack = ["setup"]
+        self.assertEqual(install.tui_update(state, Key("enter")), [])
+        self.assertEqual(state.screen, "folder")
+        self.assertIn(f"This user cannot open {install._short_path(self.lock, state.home)} "
+                      "(Permission denied)", self.said(state))
+
+    def test_the_nearest_folder_stops_above_it(self):
+        self.assertEqual(install._nearest_folder(self.dest / "deeper"), self.lock)
+
+
 # POSIX modules a Windows Python does not have: importing one raises there.
 POSIX_ONLY = ("termios", "tty", "pty", "fcntl", "select", "resource", "pwd", "grp")
 # The signal names a Windows Python defines.

@@ -1289,7 +1289,7 @@ other schemas under `api/v1/schemas/`.
 |------|------|------|
 | `start` | `schema`, `installer`, `mode` | First line. `schema` is 1, `installer` the identity `--version` prints, `mode` one of `install`, `check`, `dry-run`, `list` |
 | `detect` | `os`, `os_name`, `platforms` | Once the platforms are known. `os_name` comes from `/etc/os-release`. `platforms` lists `{platform, name, bios_dir}`, and is empty when nothing supported was found |
-| `error` | `stage`, `reason`, `platform`, `message` | The file list could not be read (`stage` is `manifest`): `reason` is `network`, `not_found` or `invalid`, `clock` when the server's certificate was refused and the system clock reads a date before the installer was written, `no_ca` when the machine holds no list of trusted certificates (`SSL_CERT_FILE` names one), or `offline` when `--offline` forbids the request. A folder named with `--from` cannot be read (`stage` is `from`, `reason` `not_found`, `not_a_folder` for a file that is no ZIP, `unreadable`, or `system` for the root of the system, `/proc`, `/sys` or `/dev`). `message` says it in words |
+| `error` | `stage`, `reason`, `platform`, `message` | The file list could not be read (`stage` is `manifest`): `reason` is `network`, `not_found` or `invalid`, `clock` when the server's certificate was refused and the system clock reads a date before the installer was written, `no_ca` when the machine holds no list of trusted certificates (`SSL_CERT_FILE` names one), or `offline` when `--offline` forbids the request. A folder named with `--from` cannot be read (`stage` is `from`, `reason` `not_found`, `not_a_folder` for a file that is no ZIP, `unreadable`, or `system` for the root of the system, `/proc`, `/sys` or `/dev`). The BIOS folder sits under a folder this user cannot open (`stage` is `dest`, `reason` `unreadable`), and the run ends with code 1 before anything is written. Two systems are detected on one machine and no `--dest` names the folder (`stage` is `detect`, `reason` `conflict`). `message` says it in words |
 | `scanned` | `folder`, `files`, `truncated`, `other_drives` | Each folder named with `--from`, once read and before `detect`. `files` counts the files found, `truncated` is true when the search stopped at 200,000 of them, and `other_drives` lists the folders below it on another drive, which were not entered |
 | `checking` | `files_done`, `files_total` | While the files already in the folder are read and hashed, at most every half second and once at the end. `files_total` counts the files found in place |
 | `file` | `platform`, `dest`, `systems`, `size`, `state` | Each file of the list after the check. `state` is `present` (hash verified), `wrong_hash` or `missing` |
@@ -1381,6 +1381,12 @@ The installer needs to write to the BIOS folder. On Linux and macOS, check who
 owns it (`ls -la`). On Batocera, Recalbox and ROCKNIX the folder belongs to
 root, so the same command with `sudo` in front of it succeeds. On Windows, run
 PowerShell as Administrator only for a protected folder.
+
+When a folder above the BIOS folder cannot be opened at all (`/root/...` run
+without `sudo`, a card mounted for another user), the run stops before it
+starts: `this user cannot open /root/.config (Permission denied), which holds
+/root/.config/retroarch/system`. The full-screen interface says the same on
+the folder screen and asks for another folder.
 
 A file system mounted read-only refuses root too, so the installer does not
 suggest `sudo` for it. Linux remounts a card or drive read-only after an error,

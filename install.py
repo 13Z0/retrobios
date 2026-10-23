@@ -4173,12 +4173,49 @@ def _exists(path: Path) -> bool:
         return False
 
 
+def _is_dir(path: Path) -> bool:
+    """Path.is_dir(), False where the place cannot be looked at."""
+    try:
+        return path.is_dir()
+    except OSError:
+        return False
+
+
 def _is_file(path: Path) -> bool:
     """Path.is_file(), False where the place cannot be looked at."""
     try:
         return path.is_file()
     except OSError:
         return False
+
+
+def closed_folder(path: Path) -> tuple[Path, str] | None:
+    """The folder above path this user cannot open, and why in words, or
+    None when path can be looked at, there or not.
+
+    A BIOS folder under /root run without sudo, or a card mounted at 0700
+    for another user: Path.exists() raised PermissionError before the
+    first line said where.
+    """
+    try:
+        path.exists()
+        return None
+    except OSError as exc:
+        failure = exc
+    probe = path.absolute()
+    for folder in (*reversed(probe.parents), probe):
+        try:
+            os.stat(folder)
+        except OSError as exc:
+            if exc.errno in (errno.ENOENT, errno.ENOTDIR):
+                return None
+            return folder.parent, exc.strerror or str(exc)
+    return probe, failure.strerror or str(failure)
+
+
+def closed_folder_words(dest: Path, closed: tuple[Path, str]) -> str:
+    folder, why = closed
+    return f"this user cannot open {folder} ({why}), which holds {dest}"
 
 
 def unreachable_words(exc: OSError) -> str:
@@ -8737,8 +8774,17 @@ def _missing_dest(dest: Path, ask: bool, named: str = "named with --dest") -> No
     parent, filled, and reported done in a folder no platform reads, and
     --check said only "0/7 present". One missing level is a BIOS folder not
     made yet and is created. Several make a path that may be mistyped:
-    at a terminal the run asks first, and the answer defaults to no.
+    at a terminal the run asks first, and the answer defaults to no. A
+    folder above it this user cannot open ends the run with its name.
     """
+    closed = closed_folder(dest)
+    if closed is not None:
+        message = closed_folder_words(dest, closed)
+        EVENTS.emit("error", stage="dest", reason="unreadable", platform="", message=message)
+        print(f"Error: {screen_text(message)}. Give this user access to it, run as "
+              f"its owner, or choose another folder than the one {named}.",
+              file=sys.stderr)
+        sys.exit(1)
     if dest.exists():
         return
     nearest = dest.absolute()
@@ -10699,7 +10745,22 @@ def _start_check(state: TuiState) -> list[tuple]:
     return [("fetch", state.platform)]
 
 
+def _closed_status(state: TuiState, closed: tuple[Path, str]) -> str:
+    return (f"This user cannot open {_short_path(closed[0], state.home)} ({closed[1]}): "
+            "choose another folder, or give this user access to it.")
+
+
 def _choose(state: TuiState, plat: str, dest: Path) -> list[tuple]:
+    closed = closed_folder(dest)
+    if closed is not None:
+        # Nothing can be checked or written there: the folder is asked
+        # again, on the screen that chose it when it can say why.
+        state.platform, state.status = plat, _closed_status(state, closed)
+        if state.stack and state.screen in ("folder", "browse", "path"):
+            return []
+        state.folder_default = (None if plat in CARD_PLATFORMS
+                                else _default_dest(state.os_type, plat))
+        return _push(state, "folder")
     card = card_system(dest)
     if card and card[0] == plat and card[1] != dest:
         # A muOS or KNULLI card's root: that system reads a folder below it.
@@ -10801,8 +10862,9 @@ def _browse_to(state: TuiState, folder: Path | None, came_from: Path | None = No
 
 
 def _nearest_folder(path: Path) -> Path:
+    """The deepest folder on path that exists and can be looked at."""
     probe = path.absolute()
-    while not probe.is_dir() and probe.parent != probe:
+    while not _is_dir(probe) and probe.parent != probe:
         probe = probe.parent
     return probe
 
@@ -11100,6 +11162,10 @@ def _path_key(state: TuiState, key: TuiKey) -> list[tuple]:
         path = typed_path(state.path_text)
         if path is None:
             state.status = "Type a folder first."
+            return []
+        closed = closed_folder(path)
+        if closed is not None:
+            state.status = _closed_status(state, closed)
             return []
         state.stack.pop()
         return _choose(state, state.platform, path)
@@ -11759,7 +11825,8 @@ def _view_folder(state: TuiState, width: int, height: int) -> tuple:
     else:
         title = "Which folder?"
         before = [f"No usual {name} folder here: browse for it or type it."]
-    return (title, _compose(state, width, height, before, tui_rows(state)),
+    after = [state.status] if state.status else []
+    return (title, _compose(state, width, height, before, tui_rows(state), after),
             ("A/Enter Choose", "B/Esc Back", "? Help"))
 
 

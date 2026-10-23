@@ -565,6 +565,35 @@ class AFolderThisUserCannotEnter(unittest.TestCase):
                 os.chmod(locked, 0o755)
         self.assertEqual(state, "wrong_hash")
 
+    @unittest.skipIf(os.name == "nt" or os.geteuid() == 0,
+                     "a folder without search permission is POSIX")
+    def test_a_bios_folder_under_it_is_refused_in_words(self):
+        """--dest /root/.config/retroarch/system without sudo: _missing_dest
+        ended --check and the install on a PermissionError traceback."""
+        with FakeRepository() as repo:
+            lock = repo.root / "lock"
+            lock.mkdir()
+            repo.dest = lock / "system"
+            os.chmod(lock, 0o000)
+            try:
+                runs = {"check": repo.run("--check"), "install": repo.run(),
+                        "events": repo.run("--events")}
+            finally:
+                os.chmod(lock, 0o755)
+            self.assertFalse(repo.dest.exists())
+        for name, proc in runs.items():
+            with self.subTest(run=name):
+                self.assertNotIn("Traceback", proc.stderr)
+                self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
+                self.assertIn(f"this user cannot open {lock} (Permission denied)",
+                              proc.stderr)
+                self.assertIn("choose another folder", proc.stderr)
+        events = [json.loads(line) for line in runs["events"].stdout.splitlines()]
+        errors = [e for e in events if e["event"] == "error"]
+        self.assertEqual([(e["stage"], e["reason"]) for e in errors],
+                         [("dest", "unreadable")])
+        self.assertIn(str(lock), errors[0]["message"])
+
 
 class OutputToAFileAsksNothing(unittest.TestCase):
     """`install.py > log.txt` at a terminal: the menu went into the file
