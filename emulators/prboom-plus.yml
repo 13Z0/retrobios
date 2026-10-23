@@ -13,6 +13,16 @@ systems:
   - doom
 mode: standalone
 
+data_root:
+  macos:
+    path: "~/Library/Application Support/prboom-plus"
+    source_ref: "prboom2/src/SDL/i_system.c:341-383"
+    note: "~/.prboom-plus instead when that folder exists"
+  linux:
+    path: "$XDG_DATA_HOME/prboom-plus"
+    source_ref: "prboom2/src/SDL/i_system.c:341-383"
+    note: "~/.local/share/prboom-plus when XDG_DATA_HOME is unset (SDL_GetPrefPath), ~/.prboom-plus instead when that folder exists"
+
 notes: |
   Doom source port forked from PrBoom, with the software and OpenGL renderers
   in a single binary. FindIWADFile accepts doom2f, doom2, plutonia, tnt, doom,
@@ -44,9 +54,9 @@ notes: |
   extension is appended only when the name as written is missing
   (SDL/i_system.c:532-538). The config directory is the directory holding the
   binary on Windows (SDL/i_system.c:289-311), and ~/.prboom-plus or the
-  XDG path from SDL_GetPrefPath elsewhere (SDL/i_system.c:347-383). The macOS
-  build replaces the list with ~/Library/Application Support/PrBoom-Plus, the
-  bundle resource path, and the bare name (MAC/i_system.m:57-59, 117-142).
+  path from SDL_GetPrefPath elsewhere (SDL/i_system.c:347-383). macOS takes
+  that branch too: the CMake build defines no MACOSX and does not compile
+  MAC/i_system.m (prboom2/src/CMakeLists.txt:450-471).
 
   snd_midiplayer picks the MIDI backend and defaults to fluidsynth on Windows,
   sdl elsewhere (prboom2/src/m_misc.c:444-450). Only the sdl value leaves
