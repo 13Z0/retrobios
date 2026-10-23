@@ -63,7 +63,8 @@ def _links(tag: str, assets: list[str]) -> str:
     base = f"https://github.com/{REPO}/releases/download/{tag}"
     if len(assets) == 1:
         return f"[{assets[0]}]({base}/{assets[0]})"
-    return " + ".join(f"[part {n}]({base}/{asset})" for n, asset in enumerate(assets, 1))
+    parts = " + ".join(f"[part {n}]({base}/{asset})" for n, asset in enumerate(assets, 1))
+    return f"{len(assets)} files, all needed: {parts}"
 
 
 def render(record: dict, platforms_dir: str, whats_new: str) -> str:

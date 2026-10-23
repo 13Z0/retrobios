@@ -111,6 +111,15 @@ class DownloadLinksNameTheFile(unittest.TestCase):
             )
         self.assertIn("part 1 of 2", cell)
 
+    def test_a_split_pack_says_how_many_files_to_download(self):
+        """One link taken for the pack left half of it out of the folder."""
+        self.assertIn(
+            "Download, 2 files, all needed: ",
+            download_links("batocera", SPLIT_RECORD, "../..", "Download"),
+        )
+        buttons = download_links("batocera", SPLIT_RECORD, REPO, "Pack", " { .x }")
+        self.assertTrue(buttons.startswith("2 files to download, all needed: "), buttons)
+
     def test_buttons_carry_their_attributes_on_each_part(self):
         cell = download_links("batocera", SPLIT_RECORD, REPO, "Pack", " { .x }")
         self.assertEqual(cell.count("{ .x }"), 2)

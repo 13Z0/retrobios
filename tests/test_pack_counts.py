@@ -341,6 +341,11 @@ class TheTableDescribesTheRelease(unittest.TestCase):
         self.assertTrue(f"| RetroArch | {files:,} |" in readme)
 
 
+def _incompressible(seed: int) -> bytes:
+    """960 bytes deflate cannot shrink, so a member outweighs a part marker."""
+    return b"".join(hashlib.sha256(bytes([seed, n])).digest() for n in range(30))
+
+
 class ReleaseRecord(unittest.TestCase):
     OWNERS = {
         "Whole_1.0_BIOS_Pack.zip": ["whole"],
@@ -356,7 +361,7 @@ class ReleaseRecord(unittest.TestCase):
         self._pack("Whole_1.0_BIOS_Pack.zip", {"a.bin": b"a" * 10, "README.txt": b"r"})
         big = self._pack(
             "Demo_2.0_BIOS_Pack.zip",
-            {f"dir/file{n}.bin": bytes([n]) * 700 + bytes(range(256)) for n in range(6)},
+            {f"dir/file{n}.bin": _incompressible(n) for n in range(6)},
         )
         self.parts = split_pack.split_pack(big, limit=big.stat().st_size - 1)
 
@@ -375,7 +380,7 @@ class ReleaseRecord(unittest.TestCase):
         self.assertEqual(record["tag"], "v1")
         demo = record["packs"]["Demo_2.0_BIOS_Pack.zip"]
         self.assertEqual(demo["files"], 6)
-        self.assertEqual(demo["extracted_size"], 6 * (700 + 256))
+        self.assertEqual(demo["extracted_size"], 6 * 960)
         self.assertEqual(demo["assets"], [part.name for part in self.parts])
         self.assertEqual(
             demo["download_size"], sum(part.stat().st_size for part in self.parts)
@@ -399,7 +404,7 @@ class ReleaseRecord(unittest.TestCase):
         pack, leaves both: summed, the download size doubled."""
         self._pack(
             "Demo_2.0_BIOS_Pack.zip",
-            {f"dir/file{n}.bin": bytes([n]) * 700 + bytes(range(256)) for n in range(6)},
+            {f"dir/file{n}.bin": _incompressible(n) for n in range(6)},
         )
         with self.assertRaises(release_record.UnfinishedSplitError):
             release_record.build_record(self.dist, "v1", owners=self.OWNERS)

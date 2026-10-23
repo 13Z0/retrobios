@@ -236,7 +236,9 @@ def download_links(
     """Markdown links to the files of a platform's pack in the recorded release.
 
     A pack published whole gets one link labelled *label*. A pack in parts
-    gets one link per part, since every part is needed. *repo* is the
+    gets one link per part, since every part is needed, after the number of
+    files to download: a reader who took one link for the pack extracted
+    half of it. *repo* is the
     repository URL, absolute or relative, and *attrs* an attribute list
     put after each link, or *button* the function that draws each link as a
     button on the site. Without a recorded release the link is the latest
@@ -263,8 +265,8 @@ def download_links(
         for number, url in enumerate(urls, 1)
     ]
     if styled:
-        return " ".join(parts)
-    return f"{label}: " + ", ".join(parts)
+        return f"{len(urls)} files to download, all needed: " + " ".join(parts)
+    return f"{label}, {len(urls)} files, all needed: " + ", ".join(parts)
 
 
 def extract_targets(platforms_dir: str) -> list[tuple[str, str]]:
