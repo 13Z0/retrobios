@@ -171,11 +171,16 @@ class BaseExporter(ABC):
         hands back a file poorer than the one it corrects. The requirement
         only gates what we would be adding.
         """
+        return cls._carried(fe, require, cls.SINGLE_HASH_FIELD)
+
+    @classmethod
+    def _carried(cls, fe: NativeFile, require: str, single: str | None) -> bool:
+        """writable(), with the field held to one value named by the caller:
+        a checker that reads a list for an entry holds it to none."""
         if fe.platform is not None:
             return True
         if not cls.can_add() or (cls.keys_by_system() and fe.foreign_system):
             return False
-        single = cls.SINGLE_HASH_FIELD
         if single and len(set(fe.hashes(single))) > 1:
             # One value checked: written with the first, the addition
             # refuses every other dump the core accepts.
@@ -206,6 +211,12 @@ class BaseExporter(ABC):
         if field_name == self.SINGLE_HASH_FIELD:
             return self.single_value(fe, field_name)
         return ",".join(fe.hashes(field_name))
+
+    def written_list(self, fe: NativeFile, field_name: str) -> list[str] | None:
+        """The values of a hash field the render writes as a list, None when
+        it writes one string. The report shows a list as a list: joined, it
+        reads as one value the checker never compares."""
+        return None
 
     def required_value(self, fe: NativeFile) -> bool:
         """The requirement the render writes for an entry.

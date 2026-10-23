@@ -21,7 +21,9 @@ sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
 from common import resolve_local_file  # noqa: E402
 from exporter import discover_exporters  # noqa: E402
-from exporter.baseline import build_native_model  # noqa: E402
+from export_native import landed_changes  # noqa: E402
+from exporter.baseline import NativeFile, build_native_model  # noqa: E402
+from exporter.batocera_exporter import md5_list_support  # noqa: E402
 from scraper import rocknix_scraper  # noqa: E402
 from scraper.base_scraper import md5_field, requirement_entry  # noqa: E402
 from scraper.batocera_scraper import (  # noqa: E402
@@ -30,6 +32,7 @@ from scraper.batocera_scraper import (  # noqa: E402
     platform_systems,
     requirements_from_systems,
 )
+from siteexports import describe_change  # noqa: E402
 from verify import Status, verify_entry_md5  # noqa: E402
 
 A = "dc2b9bf8da62ec93e868cfd29f0d067d"
@@ -202,6 +205,236 @@ class VerifyAcceptsAnyListedMd5(unittest.TestCase):
         with zipfile.ZipFile(archive, "w") as zf:
             zf.writestr("rom.bin", member)
         self.assertEqual(verify_entry_md5(entry, str(archive))["status"], Status.OK)
+
+
+# checkBios as batocera.linux 6b08b873 writes it: a plain file's md5 goes
+# through md5Matches, a member's through checkInsideZip, both reading lists.
+LIST_CHECKER = """def md5Matches(computed, expected):
+    if isinstance(expected, list):
+        expectedList = expected
+    else:
+        expectedList = [expected]
+    return computed in expectedList
+
+def checkInsideZip(container, fileName, md5sums):
+    if not isinstance(md5sums, list):
+        md5sums = [md5sums]
+    import zipfile
+    from hashlib import md5
+    with zipfile.ZipFile(container) as archive:
+        for fname in archive.namelist():
+            if fname.casefold() == fileName.casefold():
+                if md5sums == [""] or md5sums == []:
+                    return True
+                return md5(archive.read(fname)).hexdigest() in md5sums
+    return False
+
+def checkBios(systems, prefix, filterROMs):
+    from hashlib import md5
+    from os.path import isfile
+    missingBios = {}
+    for system in systems.keys():
+        for file in systems[system]["biosFiles"]:
+            filepath = prefix + "/" + file["file"]
+            if not isfile(filepath):
+                missingBios.setdefault(system, {})[file["file"]] = "MISSING"
+            elif not "zippedFile" in file:
+                with open(filepath, "rb") as handle:
+                    digest = md5(handle.read()).hexdigest()
+                if not md5Matches(digest, file["md5"]) and file["md5"] != "" and file["md5"] != []:
+                    missingBios.setdefault(system, {})[file["file"]] = "UNTESTED"
+            elif 'altmd5' in file:
+                if not checkInsideZip(filepath, file["zippedFile"], [file["md5"], file["altmd5"]]):
+                    missingBios.setdefault(system, {})[file["file"]] = "UNTESTED"
+            elif not checkInsideZip(filepath, file["zippedFile"], file["md5"]):
+                missingBios.setdefault(system, {})[file["file"]] = "UNTESTED"
+    return missingBios
+"""
+
+# batocera-43.1's checker: one md5, compared with `!=`.
+STRING_CHECKER = """def checkInsideZip(container, fileName, md5sum):
+    return md5sum == ""
+
+def checkBios(systems, prefix, filterROMs):
+    missingBios = {}
+    for system in systems.keys():
+        for file in systems[system]["biosFiles"]:
+            if "zippedFile" in file:
+                checkInsideZip(prefix, file["zippedFile"], file["md5"])
+            elif "" != file["md5"]:
+                missingBios[system] = file["file"]
+    return missingBios
+"""
+
+DATA = SCRIPT.split("def checkBios")[0]
+LISTING = DATA + LIST_CHECKER
+STRINGS = DATA + STRING_CHECKER
+D = "e" * 32
+F = "f" * 32
+SECOND = hashlib.md5(b"second").hexdigest()
+
+
+class ListSupportIsReadFromTheChecker(unittest.TestCase):
+    def test_the_list_checker_reads_lists_for_both_kinds(self):
+        self.assertEqual(md5_list_support(LISTING), {"file", "zippedFile"})
+
+    def test_the_string_checker_reads_none(self):
+        self.assertEqual(md5_list_support(STRINGS), frozenset())
+        self.assertEqual(md5_list_support(SCRIPT), frozenset())
+
+    def test_a_list_test_on_another_parameter_is_not_support(self):
+        checker = LIST_CHECKER.replace(
+            "isinstance(expected, list)", "isinstance(computed, list)"
+        )
+        self.assertEqual(md5_list_support(DATA + checker), {"zippedFile"})
+
+    def test_a_script_that_does_not_parse_reads_none(self):
+        self.assertEqual(md5_list_support(LISTING + "\ndef (\n"), frozenset())
+
+    def test_the_cached_originals(self):
+        """The pins cached today (batocera-43.1 and the forks) read one md5."""
+        root = REPO_ROOT / ".cache" / "upstream-native"
+        scripts = [
+            root / name / filename
+            for name, filename in (
+                ("batocera", "batocera-systems"), ("rocknix", "rocknix-systems"),
+                ("amberelec", "batocera-systems"), ("emuelec", "batocera-systems"),
+                ("knulli", "knulli-systems"),
+            )
+            if (root / name / filename).is_file()
+        ]
+        if not scripts:
+            self.skipTest(".cache/upstream-native/ is not filled")
+        for path in scripts:
+            text = path.read_text(encoding="utf-8", errors="replace")
+            expected = frozenset() if "md5Matches" not in text else {"file"}
+            with self.subTest(path.parent.name):
+                self.assertLessEqual(expected, md5_list_support(text))
+
+
+class SeveralAcceptedMd5BecomeAList(unittest.TestCase):
+    """Every md5 the truth accepts, once the pinned checker reads a list."""
+
+    CORRECTED = {
+        "name": "scph5500.bin", "path": "scph5500.bin", "md5": [C, D],
+        "_cores": ["pcsx_rearmed"],
+    }
+    ADDED = {
+        "name": "scph7001.bin", "path": "scph7001.bin", "md5": [D, F],
+        "_cores": ["pcsx_rearmed"],
+    }
+
+    @staticmethod
+    def _export(truth_files: list[dict], script: str):
+        scraped = _scraped(script)
+        scraped["cores"] = ["pcsx_rearmed"]
+        systems, report = build_native_model(
+            {"systems": {"sony-playstation": {"files": truth_files}}}, scraped
+        )
+        exporter = discover_exporters()["batocera"]()
+        produced = exporter.render(
+            systems, report, {"batocera-systems": script}, scraped
+        )["batocera-systems"]
+        files = {fe.name: fe for system in systems.values() for fe in system.files}
+        return produced, landed_changes(exporter, systems), exporter, files
+
+    def test_a_string_item_with_several_accepted_becomes_a_list(self):
+        produced, changes, _, _ = self._export([self.CORRECTED], LISTING)
+        self.assertEqual(
+            produced, LISTING.replace(f'"md5": "{C}"', f'"md5": [ "{C}", "{D}" ]')
+        )
+        record = next(r for r in changes.records if r["kind"] == "hash_corrected")
+        self.assertEqual((record["old"], record["new"]), (C, [C, D]))
+        self.assertEqual(changes.lists, 1)
+
+    def test_an_addition_with_several_accepted_is_written_as_a_list(self):
+        produced, changes, exporter, files = self._export([self.ADDED], LISTING)
+        self.assertTrue(exporter.lands(files["scph7001.bin"]))
+        self.assertIn(
+            f'{{ "md5": [ "{D}", "{F}" ], "file": "bios/scph7001.bin", '
+            '"emulator": "libretro", "core": "pcsx_rearmed" }',
+            produced,
+        )
+        record = next(r for r in changes.records if r["kind"] == "added")
+        self.assertEqual(record["new"]["md5"], [D, F])
+        self.assertEqual(changes.lists, 1)
+
+    def test_an_empty_md5_is_filled_with_the_list(self):
+        """Left empty while one value was all the item could hold."""
+        produced, changes, _, _ = self._export([self.CORRECTED], LISTING.replace(C, ""))
+        self.assertEqual(
+            produced, LISTING.replace(f'"md5": "{C}"', f'"md5": [ "{C}", "{D}" ]')
+        )
+        record = next(r for r in changes.records if r["kind"] == "hash_filled")
+        self.assertEqual(record["new"], [C, D])
+        strings = STRINGS.replace(C, "")
+        self.assertEqual(self._export([self.CORRECTED], strings)[0], strings)
+
+    def test_one_accepted_md5_stays_a_string(self):
+        produced, changes, _, _ = self._export([dict(self.CORRECTED, md5=D)], LISTING)
+        self.assertEqual(produced, LISTING.replace(C, D))
+        self.assertEqual(changes.lists, 0)
+
+    def test_without_the_checker_the_export_is_unchanged(self):
+        """The string checker keeps the first md5 and refuses the addition,
+        as every export did before the checker read lists."""
+        produced, changes, exporter, files = self._export(
+            [self.CORRECTED, self.ADDED], STRINGS
+        )
+        self.assertEqual(produced, STRINGS)
+        self.assertFalse(exporter.lands(files["scph7001.bin"]))
+        self.assertEqual(changes.lists, 0)
+
+    def test_the_written_list_passes_the_checker(self):
+        """Run the produced script: either listed md5 passes, another fails."""
+        produced, _, _, _ = self._export([dict(self.CORRECTED, md5=[C, SECOND])], LISTING)
+        namespace: dict = {"__name__": "batocera_systems"}
+        exec(compile(produced, "batocera-systems", "exec"), namespace)  # noqa: S102
+        item = namespace["systems"]["psx"]["biosFiles"][0]
+        self.assertEqual(item["md5"], [C, SECOND])
+        scratch = REPO_ROOT / "tmp"
+        with tempfile.TemporaryDirectory(dir=scratch if scratch.is_dir() else None) as tmp:
+            (Path(tmp) / "bios").mkdir()
+            systems = {"psx": {"name": "PSX", "biosFiles": [item]}}
+            for payload, missing in (
+                (b"second", {}),
+                (b"other", {"psx": {"bios/scph5500.bin": "UNTESTED"}}),
+            ):
+                (Path(tmp) / "bios" / "scph5500.bin").write_bytes(payload)
+                with self.subTest(payload):
+                    self.assertEqual(namespace["checkBios"](systems, tmp, False), missing)
+
+    def test_an_item_with_altmd5_stays_a_string(self):
+        """checkBios nests [md5, altmd5]: a list there matches no digest."""
+        exporter = discover_exporters()["batocera"]()
+        exporter._md5_lists = md5_list_support(LISTING)
+        platform = {"name": "pack.zip", "md5": A, "alt_md5": B, "zipped_file": "rom.bin"}
+        fe = NativeFile("pack.zip", "pack.zip", "psx", platform=platform,
+                        truth={"md5": [A, B, D]})
+        self.assertFalse(exporter.md5_list(fe))
+        self.assertTrue(exporter.md5_list(
+            NativeFile("rom.zip", "rom.zip", "psx", truth={"md5": [A, B]},
+                       platform={"name": "rom.zip", "md5": A, "zipped_file": "rom.bin"})
+        ))
+
+    def test_the_formats_that_share_the_script_read_the_same_checker(self):
+        for name in ("rocknix", "amberelec", "emuelec", "knulli"):
+            fe = NativeFile("boot.bin", "boot.bin", "dc", truth={"md5": [A, B]})
+            with self.subTest(name):
+                exporter = discover_exporters()[name]()
+                self.assertFalse(exporter.md5_list(fe))
+                exporter._md5_lists = md5_list_support(LISTING)
+                self.assertTrue(exporter.md5_list(fe))
+                self.assertEqual(exporter.written_list(fe, "md5"), [A, B])
+
+
+class SitePageShowsAList(unittest.TestCase):
+    def test_a_list_reads_as_any_of_its_values(self):
+        line = describe_change({
+            "kind": "hash_corrected", "system": "psx", "name": "scph5500.bin",
+            "field": "md5", "old": C, "new": [C, D],
+        })
+        self.assertEqual(line, f"`psx/scph5500.bin` md5 `{C}` becomes `{C}` or `{D}`")
 
 
 if __name__ == "__main__":

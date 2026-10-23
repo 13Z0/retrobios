@@ -483,6 +483,15 @@ class LandedChanges:
     def requirements(self) -> int:
         return sum(r["kind"] == "requirement_corrected" for r in self.records)
 
+    @property
+    def lists(self) -> int:
+        """Entries whose md5 is written as a list of accepted values."""
+        return sum(
+            isinstance(r["new"], list)
+            or (isinstance(r["new"], dict) and isinstance(r["new"].get("md5"), list))
+            for r in self.records
+        )
+
 
 def _change(
     kind: str, entry: object, field_name: str | None, old: object, new: object
@@ -498,8 +507,18 @@ def _change(
     }
 
 
-def _platform_value(entry: object, field_name: str) -> str:
-    return ",".join(_hash_values(entry.platform or {}, field_name))
+def _platform_value(entry: object, field_name: str) -> str | list[str]:
+    values = _hash_values(entry.platform or {}, field_name)
+    if (entry.platform or {}).get(f"{field_name}_list"):
+        return values
+    return ",".join(values)
+
+
+def _written_value(exporter: object, entry: object, field_name: str) -> str | list[str]:
+    """A hash field as the render writes it: a list where the checker reads
+    one, so the report never shows several values as one."""
+    listed = exporter.written_list(entry, field_name)
+    return listed if listed is not None else exporter.written(entry, field_name)
 
 
 def _added_fields(exporter: object, entry: object) -> dict:
@@ -508,7 +527,7 @@ def _added_fields(exporter: object, entry: object) -> dict:
     written: dict[str, object] = {
         name: value
         for name in HASH_FIELDS
-        if name in carried and (value := exporter.written(entry, name))
+        if name in carried and (value := _written_value(exporter, entry, name))
     }
     if "size" in carried and entry.size() is not None:
         written["size"] = entry.size()
@@ -560,11 +579,27 @@ def landed_changes(exporter: object, systems: dict) -> LandedChanges:
                 records.append(_change(
                     "hash_corrected", entry, field_name,
                     _platform_value(entry, field_name),
-                    exporter.written(entry, field_name),
+                    _written_value(exporter, entry, field_name),
                 ))
+            # A list the truth extends with values the platform's own lacks:
+            # no contradiction, so no correction in the model, and still a
+            # new value in the file.
+            for field_name in HASH_FIELDS:
+                listed = exporter.written_list(entry, field_name)
+                if (
+                    listed is not None
+                    and field_name not in entry.corrections
+                    and field_name not in entry.filled
+                    and listed != _hash_values(entry.platform, field_name)
+                    and exporter.states(entry, field_name)
+                ):
+                    records.append(_change(
+                        "hash_corrected", entry, field_name,
+                        _platform_value(entry, field_name), listed,
+                    ))
             records.extend(
                 _change("hash_filled", entry, field_name, None,
-                        exporter.written(entry, field_name))
+                        _written_value(exporter, entry, field_name))
                 for field_name in entry.filled
                 if exporter.fills(entry, field_name)
             )
@@ -671,6 +706,7 @@ def export_platform(
     resized, cleared = changes.resized, changes.cleared
     unsized = changes.unsized
     requirements = changes.requirements
+    lists = changes.lists
 
     landed = 0
     refused = 0
@@ -703,6 +739,7 @@ def export_platform(
             (len(unsized), "size", "", "removed"),
             (len(cleared), "hash", "", "removed"),
             (lost, "entry", "entries", "removed, the format cannot state them"),
+            (lists, "md5 list", "", "written, any listed value passes"),
         )
         parts += [
             f"{_count(number, noun, plural)} {verb}"

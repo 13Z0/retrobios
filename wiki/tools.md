@@ -1024,3 +1024,14 @@ Located in `scripts/exporter/`. Each inherits `BaseExporter`, defined in
 | `bizhawk_exporter` | `FirmwareDatabase.cs`, BizHawk's own C# |
 | `misterfpga_exporter` | hash and size in MiSTer's BiosDB (`bios_db.json`) |
 | `retropie_exporter` | the `rp_module_help` prose of each scriptmodule, by adding a file name the package's emulator reads |
+
+The five script formats (Batocera, ROCKNIX, KNULLI, AmberELEC, EmuELEC) write
+an md5 as one string or, where the checker reads one, as a list. The export
+reads the checker of the pinned file, never a version number: when `checkBios`
+hands an item's md5 to a function that tests it with `isinstance(..., list)`
+(`md5Matches` since batocera.linux `6b08b873`), an entry whose emulator code
+accepts several dumps is written with all of them. Without that code, an entry
+keeps the one md5 it can hold, and an addition that would need several is left
+out and counted. An item with `altmd5` keeps a string, since the checker wraps
+it in a list of its own. The report gives a list as a list, and the summary
+counts the lists written.

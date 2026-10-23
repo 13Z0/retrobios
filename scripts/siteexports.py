@@ -40,6 +40,9 @@ CHANGE_RECORDS = {
 
 
 def _value(value: object) -> str:
+    """One value in code, or a list the checker reads as any of its values."""
+    if isinstance(value, list):
+        return " or ".join(f"`{v}`" for v in value) if value else "`[]`"
     return f"`{value}`"
 
 
