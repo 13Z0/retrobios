@@ -16,6 +16,7 @@ RB_ROUTES="app vt"
 RB_VT_SWITCH="${RB_VT_SWITCH:-4}"
 RB_PACK_PATH="$RB_DIR:$HERE:/userdata"
 RB_LOG="$RB_DIR/log.txt"
+RB_PAD="evmapy"
 
 # The X11 builds start EmulationStation on display :0, which a script run
 # from it does not always inherit, with the cookie S31emulationstation

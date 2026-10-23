@@ -1013,6 +1013,18 @@ running install is then stopped the way B stops it, and the last screen says
 what it wrote. On muOS without PortMaster, muxterm reads the pad itself: Y
 ticks a system, Select shows its keyboard, and Menu quits.
 
+Each launcher tells the interface which buttons reach it, in
+`RETROBIOS_PAD`, so the hints can name them:
+
+| Value | Input | Set by |
+|-------|-------|--------|
+| `gptokeyb` | gptokeyb or gptokeyb2 with `retrobios.gptk`, the table above | the PortMaster port, the Tools entry, the muOS app with PortMaster |
+| `muxterm` | muxterm's own keys: D-pad, Start as Enter, B as Backspace, Y as Space | the muOS app without PortMaster |
+| `evmapy` | `RetroBIOS.sh.keys`, the same buttons as the table | the Batocera and Knulli port |
+| `miyoo` | buttons that are already keys, A as Space and B as Left Ctrl | no launcher yet |
+
+A launcher with no mapper at all (a keyboard) leaves it unset.
+
 **Without Wi-Fi.** On a computer, download the BIOS pack that serves your
 system (every part, for a pack in parts): RetroArch's on muOS, ArkOS,
 dArkOS and JELOS, Batocera's on Batocera. Copy it next to RetroBIOS: into

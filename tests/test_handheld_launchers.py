@@ -308,7 +308,8 @@ with open(calls, "a") as fh:
     fh.write(json.dumps({"argv0": sys.argv[0], "args": sys.argv[1:], "stdin": tty(0),
                          "stdout": tty(1), "term": os.environ.get("TERM", ""),
                          "pythonhome": os.environ.get("PYTHONHOME", ""),
-                         "base_url": os.environ.get("RETROBIOS_BASE_URL", "")}) + "\n")
+                         "base_url": os.environ.get("RETROBIOS_BASE_URL", ""),
+                         "pad": os.environ.get("RETROBIOS_PAD")}) + "\n")
 if "--check" in sys.argv:
     if os.environ.get("FAKE_DETECT_HANG"):
         time.sleep(60)
@@ -725,6 +726,7 @@ class ThePortMasterPort(unittest.TestCase):
         self.assertEqual(call["term"], "linux")
         installer = str(self.gamedir / "install.py")
         self.assertEqual(call["argv0"], installer)
+        self.assertEqual(call["pad"], "gptokeyb")
         # Kill mode on the Start + Select sentinel, never on the installer's
         # path, which the engine's command line carries too.
         args = device.mapper_args()
@@ -955,6 +957,7 @@ class ThePortMasterPort(unittest.TestCase):
         self.assertEqual(device.tools(), [f"muxterm --gl -- bash {self.gamedir}/tui.txt here"])
         self.assertEqual(device.lines("termapp.sdl"), ["0x0001/0x0001"])
         self.assertEqual(device.mapper_args()[2:], ["-c", str(self.gamedir / "retrobios.gptk")])
+        self.assertEqual(call["pad"], "gptokeyb")
         self.assertEqual(self.dialog(device), ["FINISH"])
 
     def test_on_muos_without_muxterm_the_log_says_why_the_screens_open(self):
@@ -1121,6 +1124,7 @@ class TheBatoceraPort(unittest.TestCase):
                          [f"xterm -fullscreen -e bash {ports}/retrobios/tui.txt here"])
         # evmapy reads RetroBIOS.sh.keys: no gptokeyb is started.
         self.assertEqual(device.mapper_args(), [])
+        self.assertEqual(call["pad"], "evmapy")
 
     def test_the_x_cookie_goes_with_the_display(self):
         """S31emulationstation starts X with XAUTHORITY=/var/lib/.Xauthority:
@@ -1220,13 +1224,15 @@ class TheMuosApp(unittest.TestCase):
         self.assertRegex(args[1], r"^retrobios-stop-\d+x$")
         self.assertEqual(args[2:], ["-c", str(app / "retrobios.gptk")])
         self.assertEqual(read_gptk(app / "retrobios.gptk")["y"], ["tab"])
+        self.assertEqual(call["pad"], "gptokeyb")
         device.assert_mapper_stopped()
 
     def test_muxterm_alone_without_gptokeyb2(self):
         device, app = self.device(muxterm=True, gptokeyb2=False)
         proc = device.run([str(app / "mux_launch.sh"), str(app)])
         self.assertEqual(proc.returncode, 0, proc.stderr.decode())
-        self.assertEqual(len(device.tui_calls()), 1)
+        [call] = device.tui_calls()
+        self.assertEqual(call["pad"], "muxterm")
         # muxterm then reads the pad itself.
         self.assertEqual(device.lines("termapp.sdl"), [""])
         self.assertEqual(device.mapper_args(), [])
@@ -1369,12 +1375,22 @@ class TheToolsEntry(unittest.TestCase):
         self.assertEqual(proc.returncode, 0, proc.stderr.decode())
         [call] = device.tui_calls()
         self.assertEqual((call["stdin"], call["term"]), (device.console, "linux"))
+        self.assertEqual(call["pad"], "gptokeyb")
         args = device.mapper_args()
         self.assertEqual(args[0], "-1")
         self.assertRegex(args[1], r"^retrobios-stop-\d+x$")
         self.assertEqual(args[2:], ["-c", str(tools / "retrobios" / "retrobios.gptk")])
         device.assert_mapper_stopped()
         device.assert_console_restored()
+
+    def test_the_previous_log_is_kept(self):
+        device, tools = self.device()
+        self.arkos(device)
+        log = tools / "retrobios" / "log.txt"
+        log.write_text("the failure\n")
+        device.run(["bash", str(tools / "RetroBIOS.sh")], RB_CONSOLE=device.console)
+        self.assertEqual((tools / "retrobios" / "log.prev.txt").read_text(), "the failure\n")
+        self.assertNotIn("the failure", log.read_text())
 
     def test_arkos_sudo_keeps_the_controller_list(self):
         """sudo's env_reset would drop SDL_GAMECONTROLLERCONFIG_FILE, and a
@@ -1447,6 +1463,7 @@ class TheToolsEntry(unittest.TestCase):
         [call] = device.tui_calls()
         self.assertEqual((call["stdin"], call["stdout"]), (device.console, device.console))
         self.assertEqual(call["term"], "xterm")
+        self.assertEqual(call["pad"], "gptokeyb")
         # The terminal app owns its window: no console reset, no font.
         self.assertNotIn("\x1bc", device.screen)
         self.assertEqual([t for t in device.tools() if t.startswith("setfont")], [])
@@ -1525,6 +1542,15 @@ class TheDocs(unittest.TestCase):
             self.assertIsNone(served[name], name)
         text = (REPO_ROOT / "wiki" / "installer.md").read_text(encoding="utf-8")
         self.assertIn("The releases carry no pack for ROCKNIX,\nKnulli or AmberELEC", text)
+
+    def test_every_pad_value_is_documented(self):
+        """RETROBIOS_PAD is a contract the interface reads: each value tui.txt
+        names has its row in the handheld section."""
+        text = (REPO_ROOT / "wiki" / "installer.md").read_text(encoding="utf-8")
+        tui = (PORTS / "shared" / "tui.txt").read_text()
+        for value in ("gptokeyb", "muxterm", "evmapy", "miyoo"):
+            self.assertIn(f"| `{value}` |", text)
+            self.assertIn(value, tui)
 
     def test_muos_paths_are_the_card_muos_mounts(self):
         """muOS mounts the first card at /mnt/mmc (MustardOS internal

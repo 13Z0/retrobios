@@ -55,6 +55,7 @@ if [ -x "$MUXTERM" ]; then
   else
     # No gptokeyb2: muxterm's own buttons are all there is.
     RB_TERMAPP=("$MUXTERM" --gl --)
+    RB_PAD="muxterm"
   fi
 else
   RB_ROUTES="vt"

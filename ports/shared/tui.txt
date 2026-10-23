@@ -30,6 +30,10 @@
 #   RB_BIOS_DEST   the one of them the firmware reads, never offered as the
 #                  other card
 #   RB_FALLBACK    1 when the launcher has screens of its own to fall back to
+#   RB_PAD         the input route, exported to the interface as
+#                  RETROBIOS_PAD: gptokeyb (retrobios.gptk, the default when
+#                  RB_MAPPER is set), muxterm (muxterm's own keys), evmapy
+#                  (RetroBIOS.sh.keys), miyoo (buttons already keys)
 #   ESUDO          sudo where the launcher needs it, as PortMaster sets it
 
 RB_LIB="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/$(basename "${BASH_SOURCE[0]}")"
@@ -55,6 +59,7 @@ RB_STOP_GRACE="${RB_STOP_GRACE:-10}"
 RB_DEAD_WAIT="${RB_DEAD_WAIT:-10}"
 RB_DETECT_LIMIT="${RB_DETECT_LIMIT:-20}"
 RB_MAPPER_NEEDED="${RB_MAPPER_NEEDED:-1}"
+RB_PAD="${RB_PAD:-}"
 RB_RUNTIME="python_3.11"
 RB_RELEASES="github.com/Abdess/retrobios/releases/latest"
 RB_PC_ROUTE="On a computer, with this SD card mounted, the same installer fills the card: install.py --platform NAME --dest BIOS-FOLDER-ON-THE-CARD. Instructions: abdess.github.io/retrobios/wiki/installer"
@@ -893,6 +898,13 @@ rb_launch() {
   export RB_DIR RB_INSTALL RB_EVENTS RB_STATE RB_LOG RB_PACK_PATH RB_FALLBACK
   export RB_OTHER_CARDS RB_BIOS_DEST RB_STOP_GRACE RB_DEAD_WAIT RB_DETECT_LIMIT
   export RB_PYTHON RB_PYTHONHOME RB_PYTHON_PROBLEM RB_MESSAGE_WAIT RB_ROUTE_TABLE
+  # The interface names the buttons of this route in its hints.
+  if [ -z "$RB_PAD" ] && [ -n "${RB_MAPPER:-}" ]; then
+    RB_PAD="gptokeyb"
+  fi
+  if [ -n "$RB_PAD" ]; then
+    export RETROBIOS_PAD="$RB_PAD"
+  fi
   trap 'rb_cleanup; exit 143' TERM HUP
   for route in $RB_ROUTES; do
     rb_route_ready "$route" || continue
