@@ -5203,8 +5203,9 @@ struct BurnDriver BurnDrvneogeo = {
                 data = zf.read("dc/testbios.zip")
             self.assertEqual(hl.md5(data).hexdigest(), h["md5"])
 
-    def test_211_pack_rebuilds_zip_without_declared_hash(self):
-        """ZIPs without declared hash are rebuilt deterministically."""
+    def test_211_pack_keeps_zip_bytes_without_declared_hash(self):
+        """A ZIP with no declared hash keeps the collection's bytes, so it
+        hashes to what the install list publishes."""
         import io
         import tempfile
 
@@ -5220,8 +5221,7 @@ struct BurnDriver BurnDrvneogeo = {
             self.assertIsNotNone(zip_path)
             with zipfile.ZipFile(zip_path) as zf:
                 data = zf.read("dc/testbios.zip")
-            # Outer hash differs (1980 timestamps), inner content identical
-            self.assertNotEqual(hl.md5(data).hexdigest(), h["md5"])
+            self.assertEqual(hl.md5(data).hexdigest(), h["md5"])
             with zipfile.ZipFile(io.BytesIO(data)) as inner:
                 self.assertEqual(inner.read("rom.bin"), b"rom_content_bytes")
 
