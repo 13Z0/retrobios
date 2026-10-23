@@ -16,6 +16,23 @@ systems:
   - nintendo-switch
 mode: standalone
 
+data_root:
+  android:
+    path: "Android/data/org.kenjinx.android/files"
+    source_ref: "src/KenjinxAndroid/app/src/main/java/org/kenjinx/android/MainActivity.kt:279,294, src/LibKenjinx/LibKenjinx.cs:59-68, src/Ryujinx.Common/Configuration/AppDataManager.cs:84-95"
+  windows:
+    path: "%APPDATA%/Ryujinx"
+    source_ref: "src/Ryujinx.Common/Configuration/AppDataManager.cs:11-12, 52-82"
+    note: "A portable folder beside the executable is used instead when it exists."
+  linux:
+    path: "$XDG_CONFIG_HOME/Ryujinx, else ~/.config/Ryujinx"
+    source_ref: "src/Ryujinx.Common/Configuration/AppDataManager.cs:11-12, 52-82"
+    note: "A portable folder beside the executable is used instead when it exists."
+  macos:
+    path: "~/Library/Application Support/Ryujinx"
+    source_ref: "src/Ryujinx.Common/Configuration/AppDataManager.cs:11-12, 52-82"
+    note: "A portable folder beside the executable or beside the app bundle is used instead when it exists."
+
 notes: |
   Nintendo Switch emulator in C#, a fork of the Ryujinx line maintained by
   KeatonTheBot. Two builds come out of one repository: the desktop Avalonia
