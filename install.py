@@ -696,9 +696,9 @@ def _declared_state(copy: dict, entry: dict, bios_path: Path) -> str:
         path = _entry_path(bios_path, entry)
     except ValueError:
         return "missing"
-    if not path.is_file():
-        return "missing" if not path.exists() else "wrong_hash"
     try:
+        if not path.is_file():
+            return "missing" if not path.exists() else "wrong_hash"
         verdict = _classify_local(copy, path)
     except OSError:
         return "wrong_hash"
@@ -1443,7 +1443,7 @@ def _rule_matches(rule: _OsRule, release: dict[str, str]) -> bool:
         except OSError:
             return False
         return re.search(pattern, text, re.IGNORECASE | re.MULTILINE) is not None
-    return all(_on_device(value).exists() for value in rule.values)
+    return all(_exists(_on_device(value)) for value in rule.values)
 
 
 def _config_files(pattern: str) -> list[tuple[Path, Path]]:
@@ -4090,7 +4090,13 @@ def _classify_local(entry: dict, dest: Path) -> str:
         for name in ("sha256", "sha1")
         if entry.get(name)
     }
-    if not dest.is_file():
+    try:
+        is_file = dest.is_file()
+    except OSError:
+        # A folder above it this user cannot enter: what sits there is not
+        # known to be the right file.
+        return "mismatched"
+    if not is_file:
         # A folder at the file's place: --check says so, an install fails
         # on that file alone.
         return "mismatched"
@@ -4105,6 +4111,39 @@ def _classify_local(entry: dict, dest: Path) -> str:
     if all(actual[name] == value for name, value in expected.items()):
         return "up_to_date"
     return "mismatched"
+
+
+def _held(path: Path) -> bool:
+    """Whether something may sit at path. A place that cannot be looked at
+    (a folder above it this user cannot enter, a card that answers a read
+    error) counts as held, so the file is reported unreadable and the run
+    goes on with the others: Path.exists() lets PermissionError through."""
+    try:
+        return path.exists()
+    except OSError:
+        return True
+
+
+def _exists(path: Path) -> bool:
+    """Path.exists(), False where the place cannot be looked at."""
+    try:
+        return path.exists()
+    except OSError:
+        return False
+
+
+def _is_file(path: Path) -> bool:
+    """Path.is_file(), False where the place cannot be looked at."""
+    try:
+        return path.is_file()
+    except OSError:
+        return False
+
+
+def unreachable_words(exc: OSError) -> str:
+    """Why the place of a file could not be looked at, in words."""
+    return (f"could not be read ({exc.strerror or exc}): this user may not "
+            f"have access to its folder")
 
 
 def check_local(
@@ -4122,7 +4161,7 @@ def check_local(
 
     for f in files:
         dest = _entry_path(bios_path, f)
-        if dest.exists():
+        if _held(dest):
             present.append((f, dest))
         else:
             to_download.append(f)
@@ -4362,7 +4401,7 @@ def _move_aside(dest: Path, kept: Path) -> None:
         os.rename(dest, kept)
         return
     except OSError:
-        if not dest.is_file():
+        if not _is_file(dest):
             raise
     scratch = kept.parent / f".{kept.name}.part"
     try:
@@ -4497,7 +4536,11 @@ def _download_one(
         if _write_refused(exc):
             return f["dest"], False, NOT_WRITABLE
         return f["dest"], False, exc.strerror or str(exc)
-    if dest.is_dir():
+    try:
+        in_place_folder = dest.is_dir()
+    except OSError as exc:
+        return f["dest"], False, unreachable_words(exc)
+    if in_place_folder:
         # Fetched, it failed only at the rename, on an errno and two paths.
         return f["dest"], False, FOLDER_IN_PLACE
 
@@ -4752,7 +4795,7 @@ def _replace_released(source: Path, dest: Path, expected: dict[str, str]) -> Non
             os.replace(source, dest)
             return
         except FileNotFoundError:
-            if expected and dest.is_file() and _digest_file(dest, tuple(expected)) == expected:
+            if expected and _is_file(dest) and _digest_file(dest, tuple(expected)) == expected:
                 return
             raise
         except PermissionError as exc:
@@ -4771,7 +4814,7 @@ def _drop_full_partial(dest: Path, expected_size: int) -> None:
     left to it.
     """
     path = dest.parent / f".{dest.name}.part"
-    if not path.is_file():
+    if not _is_file(path):
         return
     try:
         handle = _claim_partial(path)
@@ -4913,7 +4956,7 @@ def _clear_read_only(dest: Path) -> None:
 
 
 def _read_only_file(dest: Path) -> bool:
-    return dest.is_file() and not os.access(dest, os.W_OK) and _folder_writable(dest.parent)
+    return _is_file(dest) and not os.access(dest, os.W_OK) and _folder_writable(dest.parent)
 
 
 def _folder_writable(path: Path) -> bool:
@@ -5017,7 +5060,7 @@ def _on_read_only_mount(path: Path) -> bool:
     if not hasattr(os, "statvfs"):
         return False
     probe = path
-    while not probe.exists() and probe.parent != probe:
+    while not _held(probe) and probe.parent != probe:
         probe = probe.parent
     try:
         return bool(os.statvfs(probe).f_flag & os.ST_RDONLY)
@@ -5247,7 +5290,7 @@ def _absent_required(omitted: list[dict], bios_path: Path) -> list[dict]:
         if not entry.get("required", True) or not dest:
             continue
         try:
-            placed = _entry_path(bios_path, {**entry, "dest": dest}).is_file()
+            placed = _is_file(_entry_path(bios_path, {**entry, "dest": dest}))
         except ValueError:
             # A path climbing out of the folder is never one we read, and one
             # below a save directory this run does not know is not looked at.
@@ -5576,11 +5619,12 @@ def data_directory_state(entry: dict, bios_path: Path) -> tuple[Path, dict[str, 
     present = 0
     for rel, meta in entry["files"].items():
         target = _destination_path(root, rel)
-        if (
-            target.is_file()
-            and target.stat().st_size == meta["size"]
-            and _sha1_file(target) == meta["sha1"]
-        ):
+        try:
+            held = (target.is_file() and target.stat().st_size == meta["size"]
+                    and _sha1_file(target) == meta["sha1"])
+        except OSError:
+            held = False
+        if held:
             present += 1
         else:
             needed[rel] = meta
@@ -7701,9 +7745,9 @@ def _wrong_contents(
     owners: dict[str, list[dict]] | None = None,
 ) -> str:
     """Why the file at an entry's place is not the one the list installs."""
-    if path.is_dir():
-        return FOLDER_IN_PLACE
     try:
+        if path.is_dir():
+            return FOLDER_IN_PLACE
         size = path.stat().st_size
         with open(path, "rb") as handle:
             head = handle.read(4)
@@ -8721,7 +8765,7 @@ def _card_rule_matches(rule: _OsRule, root: Path) -> bool:
         except OSError:
             return False
         return re.search(pattern, text, re.MULTILINE) is not None
-    return all((root / value).exists() for value in rule.values)
+    return all(_exists(root / value) for value in rule.values)
 
 
 def card_system(root: Path) -> tuple[str, Path, str] | None:
