@@ -94,10 +94,6 @@ class SemanticManifestValidation(unittest.TestCase):
         self.assertIn("total_files does not equal len(files)", errors[0])
 
 
-if __name__ == "__main__":
-    unittest.main()
-
-
 try:
     import jsonschema
 except ImportError:
@@ -122,3 +118,7 @@ class DataRootIsKeyedBySystem(unittest.TestCase):
         self.assertTrue(self._errors({"amiga": {"path": "x", "source_ref": "y"}}))
         self.assertTrue(self._errors({"windows": {"path": "%APPDATA%/X"}}))
         self.assertTrue(self._errors({}))
+
+
+if __name__ == "__main__":
+    unittest.main()

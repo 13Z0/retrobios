@@ -558,7 +558,7 @@ def _event_schema_errors() -> list[str]:
     """install-events.schema.json is EVENT_KEYS written out, and a valid schema."""
     import generate_event_schema  # noqa: PLC0415
 
-    path = generate_event_schema.OUTPUT
+    path = ROOT / "schemas" / generate_event_schema.OUTPUT.name
     label = path.relative_to(ROOT).as_posix()
     if not path.is_file():
         return [f"{label}: missing, run python scripts/generate_event_schema.py"]
@@ -567,7 +567,7 @@ def _event_schema_errors() -> list[str]:
     ):
         return [f"{label}: differs from EVENT_KEYS in install.py, run "
                 "python scripts/generate_event_schema.py"]
-    _validator(path.name)
+    Draft202012Validator.check_schema(_load_json(path))
     return []
 
 
