@@ -6,7 +6,7 @@
   <a href="https://github.com/Abdess/retrobios/actions/workflows/deploy-site.yml"><img src="https://github.com/Abdess/retrobios/actions/workflows/deploy-site.yml/badge.svg" alt="Site"></a>
 </p>
 
-BIOS and firmware files for AmberELEC, Batocera, BizHawk, EmuDeck, EmuELEC, KNULLI, Lakka, MiSTer FPGA, MinUI, MyMinUI, NextUI, ROCKNIX, Recalbox, RetroArch, RetroBat, RetroDECK, RetroPie, and RomM, one pack per platform.
+BIOS and firmware files for AmberELEC, Batocera, BizHawk, EmuDeck, EmuELEC, KNULLI, Lakka, MiSTer FPGA, MinUI, MyMinUI, NextUI, ROCKNIX, Recalbox, RetroArch, RetroBat, RetroDECK, RetroPie, and RomM.
 
 A pack holds the files its emulators read, as their source code names them, and leaves out what the emulators install themselves.
 
@@ -37,7 +37,7 @@ Every option, and what the installer detects and writes, is on the [installer pa
 
 ## Download BIOS packs
 
-One pack per platform, and it holds everything the platform runs: its own BIOS list plus every file its emulator cores load. Pick your platform, download the ZIP, extract to the BIOS path. The installer above does the same file by file. At a terminal it asks whether to install everything or to choose systems, cores and regions, and `--system`, `--core`, `--region` and `--target` make the same choice without questions. For a bare minimum, build your own pack below.
+A pack holds everything its platform runs: its own BIOS list plus every file its emulator cores load. Pick your platform, download the ZIP, extract to the BIOS path. Each Download link is a page that keeps its address from one release to the next. The installer above does the same file by file. At a terminal it asks whether to install everything or to choose systems, cores and regions, and `--system`, `--core`, `--region` and `--target` make the same choice without questions. For a bare minimum, build your own pack below.
 
 A pack over 2 GB comes in several parts (`Pack.part1of2.zip`, `Pack.part2of2.zip`), and every part is needed. Each part is an ordinary ZIP: extract them all into the same folder.
 
@@ -47,38 +47,28 @@ The Files column counts what a pack holds once extracted, the figure a file mana
 
 | Platform | Files | Extracted size | Extract to | Download |
 |----------|------:|---------------:|-----------|----------|
-| AmberELEC | - | - | `/storage/roms/` | Not in v2026.10.10: [use the installer](https://abdess.github.io/retrobios/wiki/installer/) |
-| Batocera | 12,810 | 7.5 GB | `/userdata/bios/` | Download, 3 files, all needed: [part 1 of 3](../../releases/download/v2026.10.10/Batocera_43.1_BIOS_Pack.part1of3.zip), [part 2 of 3](../../releases/download/v2026.10.10/Batocera_43.1_BIOS_Pack.part2of3.zip), [part 3 of 3](../../releases/download/v2026.10.10/Batocera_43.1_BIOS_Pack.part3of3.zip) |
-| BizHawk | 950 | 2.4 GB | `Firmware/` | [Download](../../releases/download/v2026.10.10/BizHawk_2.11.1_BIOS_Pack.zip) |
-| EmuDeck | 620 | 3.2 GB | `~/Emulation/bios/` | [Download](../../releases/download/v2026.10.10/EmuDeck_2.7EA_BIOS_Pack.zip) |
-| EmuELEC | - | - | `/storage/roms/` | Not in v2026.10.10: [use the installer](https://abdess.github.io/retrobios/wiki/installer/) |
-| KNULLI | - | - | `/userdata/bios/` | Not in v2026.10.10: [use the installer](https://abdess.github.io/retrobios/wiki/installer/) |
-| Lakka | 8,504 | 6.0 GB | `/storage/system/` | Download, 2 files, all needed: [part 1 of 2](../../releases/download/v2026.10.10/RetroArch_Lakka_v1.22.2_BIOS_Pack.part1of2.zip), [part 2 of 2](../../releases/download/v2026.10.10/RetroArch_Lakka_v1.22.2_BIOS_Pack.part2of2.zip) |
-| MiSTer FPGA | 83 | 29 MB | `/media/fat/games/` | [Download](../../releases/download/v2026.10.10/MiSTer_FPGA_2026-09-29_BIOS_Pack.zip) |
-| MinUI | - | - | `<SD card>/` | Not in v2026.10.10: [use the installer](https://abdess.github.io/retrobios/wiki/installer/) |
-| MyMinUI | - | - | `<SD card>/` | Not in v2026.10.10: [use the installer](https://abdess.github.io/retrobios/wiki/installer/) |
-| NextUI | - | - | `<SD card>/` | Not in v2026.10.10: [use the installer](https://abdess.github.io/retrobios/wiki/installer/) |
-| ROCKNIX | 5,804 | 6.1 GB | `/storage/roms/bios/` | Download, 2 files, all needed: [part 1 of 2](../../releases/download/v2026.10.10/ROCKNIX_20261001_BIOS_Pack.part1of2.zip), [part 2 of 2](../../releases/download/v2026.10.10/ROCKNIX_20261001_BIOS_Pack.part2of2.zip) |
-| Recalbox | 3,222 | 3.9 GB | `/recalbox/share/bios/` | Download, 2 files, all needed: [part 1 of 2](../../releases/download/v2026.10.10/Recalbox_10.1.1_BIOS_Pack.part1of2.zip), [part 2 of 2](../../releases/download/v2026.10.10/Recalbox_10.1.1_BIOS_Pack.part2of2.zip) |
-| RetroArch | 8,504 | 6.0 GB | `system/` | Download, 2 files, all needed: [part 1 of 2](../../releases/download/v2026.10.10/RetroArch_Lakka_v1.22.2_BIOS_Pack.part1of2.zip), [part 2 of 2](../../releases/download/v2026.10.10/RetroArch_Lakka_v1.22.2_BIOS_Pack.part2of2.zip) |
-| RetroBat | 12,399 | 7.9 GB | `bios/` | Download, 3 files, all needed: [part 1 of 3](../../releases/download/v2026.10.10/RetroBat_8.2.1_BIOS_Pack.part1of3.zip), [part 2 of 3](../../releases/download/v2026.10.10/RetroBat_8.2.1_BIOS_Pack.part2of3.zip), [part 3 of 3](../../releases/download/v2026.10.10/RetroBat_8.2.1_BIOS_Pack.part3of3.zip) |
-| RetroDECK | 7,793 | 8.0 GB | `~/retrodeck/` | Download, 3 files, all needed: [part 1 of 3](../../releases/download/v2026.10.10/RetroDECK_0.10.10b_BIOS_Pack.part1of3.zip), [part 2 of 3](../../releases/download/v2026.10.10/RetroDECK_0.10.10b_BIOS_Pack.part2of3.zip), [part 3 of 3](../../releases/download/v2026.10.10/RetroDECK_0.10.10b_BIOS_Pack.part3of3.zip) |
-| RetroPie * | 12,533 | 8.1 GB | `~/RetroPie/BIOS/` | Download, 3 files, all needed: [part 1 of 3](../../releases/download/v2026.10.10/RetroPie_4.8.12_BIOS_Pack.part1of3.zip), [part 2 of 3](../../releases/download/v2026.10.10/RetroPie_4.8.12_BIOS_Pack.part2of3.zip), [part 3 of 3](../../releases/download/v2026.10.10/RetroPie_4.8.12_BIOS_Pack.part3of3.zip) |
-| RomM | 1,087 | 1.5 GB | `library/bios/` | [Download](../../releases/download/v2026.10.10/RomM_5.3.1_BIOS_Pack.zip) |
+| AmberELEC | - | - | `/storage/roms/` | [Use the command](https://abdess.github.io/retrobios/get/amberelec/) |
+| Batocera | 12,810 | 7.5 GB | `/userdata/bios/` | [Download](https://abdess.github.io/retrobios/get/batocera/) |
+| BizHawk | - | - | `Firmware/` | [Use the command](https://abdess.github.io/retrobios/get/bizhawk/) |
+| EmuDeck | 620 | 3.2 GB | `~/Emulation/bios/` | [Download](https://abdess.github.io/retrobios/get/emudeck/) |
+| EmuELEC | - | - | `/storage/roms/` | [Use the command](https://abdess.github.io/retrobios/get/emuelec/) |
+| KNULLI | - | - | `/userdata/bios/` | [Use the command](https://abdess.github.io/retrobios/get/knulli/) |
+| Lakka | - | - | `/storage/system/` | [Use the command](https://abdess.github.io/retrobios/get/lakka/) |
+| MiSTer FPGA | 83 | 29 MB | `/media/fat/games/` | [Download](https://abdess.github.io/retrobios/get/misterfpga/) |
+| MinUI | - | - | `<SD card>/` | [Use the command](https://abdess.github.io/retrobios/get/minui/) |
+| MyMinUI | - | - | `<SD card>/` | [Use the command](https://abdess.github.io/retrobios/get/myminui/) |
+| NextUI | - | - | `<SD card>/` | [Use the command](https://abdess.github.io/retrobios/get/nextui/) |
+| ROCKNIX | - | - | `/storage/roms/bios/` | [Use the command](https://abdess.github.io/retrobios/get/rocknix/) |
+| Recalbox | - | - | `/recalbox/share/bios/` | [Use the command](https://abdess.github.io/retrobios/get/recalbox/) |
+| RetroArch | 8,504 | 6.0 GB | `system/` | [Download](https://abdess.github.io/retrobios/get/retroarch/) |
+| RetroBat | 12,399 | 7.9 GB | `bios/` | [Download](https://abdess.github.io/retrobios/get/retrobat/) |
+| RetroDECK | - | - | `~/retrodeck/` | [Use the command](https://abdess.github.io/retrobios/get/retrodeck/) |
+| RetroPie * | - | - | `~/RetroPie/BIOS/` | [Use the command](https://abdess.github.io/retrobios/get/retropie/) |
+| RomM | 1,087 | 1.5 GB | `library/bios/` | [Download](https://abdess.github.io/retrobios/get/romm/) |
 
-The AmberELEC pack holds its own `bios/` folder. Unzip it into `/storage/roms/`.
+ZIPs are made for the setups most people download. The others read "Use the command": the installer above installs every file for them and checks each one, and `--dry-run` shows what it would install ([why no ZIP](https://abdess.github.io/retrobios/wiki/faq/#why-is-there-no-zip-for-my-setup)).
 
-The EmuELEC pack holds its own `bios/` folder. Unzip it into `/storage/roms/`.
-
-The MinUI pack holds its own `Bios/` folder. Unzip it into `<SD card>/`.
-
-The MyMinUI pack holds its own `Bios/` folder. Unzip it into `<SD card>/`.
-
-The NextUI pack holds its own `Bios/` folder. Unzip it into `<SD card>/`.
-
-The RetroDECK pack holds its own `bios/` folder. Unzip it into `~/retrodeck/`.
-
-\* Archived: the configuration is kept and packs are still built, but upstream is no longer scraped on a schedule.
+\* Archived: the configuration is kept and the installer serves it, but upstream is no longer scraped on a schedule.
 
 ## What's included
 
@@ -209,4 +199,4 @@ The scripts and tooling are released under the [MIT License](LICENSE).
 The BIOS and firmware files are not covered by that license: they are third-party system software, preserved and provided for personal backup, archival, and interoperability with emulation software. [NOTICE](NOTICE) sets out their status and how to ask for a file to be removed.
 The reasoning, and where it is weakest, is in [the project's legal position](https://abdess.github.io/retrobios/wiki/legal/).
 
-*Auto-generated on 2026-10-23T14:56:58Z*
+*Auto-generated on 2026-10-23T15:16:48Z*

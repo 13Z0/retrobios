@@ -22,7 +22,8 @@ order: 60
 :   The folder where your setup looks for BIOS files.
 
 **Pack**
-:   The ZIP file with every BIOS file for one setup.
+:   The ZIP file with every BIOS file for one setup. Made for the setups most
+    people download.
 
 **Platform**
 :   A setup, as the project's data calls it.

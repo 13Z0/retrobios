@@ -391,6 +391,31 @@ def _save_folder_once_paths(path: Path, document: dict) -> list[str]:
     ]
 
 
+def _registry_contract() -> list[str]:
+    """The registry against its schema, and a release that still ships a pack.
+
+    `release_pack` is the only list of the ZIPs a release publishes: a
+    registry where no active platform carries it would cut a release with
+    no pack at all, and every download link would lead to the command.
+    """
+    registry_path = ROOT / "platforms" / "_registry.yml"
+    if not registry_path.is_file():
+        return []
+    with registry_path.open(encoding="utf-8") as handle:
+        registry = yaml_load(handle) or {}
+    label = str(registry_path.relative_to(ROOT))
+    out = _errors(_validator("registry.schema.json"), registry, label)
+    platforms = registry.get("platforms") or {}
+    if isinstance(platforms, dict) and not any(
+        isinstance(entry, dict)
+        and entry.get("release_pack") is True
+        and entry.get("status", "active") == "active"
+        for entry in platforms.values()
+    ):
+        out.append(f"{label}: no active platform has release_pack: true")
+    return out
+
+
 def _save_directory_blocks() -> list[str]:
     """Each registry save_directory is null or a folder and a by_core flag.
 
@@ -572,6 +597,7 @@ def main() -> int:
     errors.extend(_unknown_data_dir_refs())
     errors.extend(_repository_layout_in_profiles())
     errors.extend(_save_directory_blocks())
+    errors.extend(_registry_contract())
 
     if not args.source_only:
         database_path = ROOT / "database.json"

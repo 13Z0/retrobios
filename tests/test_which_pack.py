@@ -26,20 +26,25 @@ class WhichPackRows(unittest.TestCase):
     """
 
     def test_platform_rows_name_their_own_pack(self):
+        """A row links its own get/ page, never another setup's and never a
+        release asset: the asset URL dies with its tag."""
         import generate_site  # noqa: PLC0415
         import release_record  # noqa: PLC0415
 
-        record = release_record.load_record()
+        record = release_record.load_advertised()
         page = generate_site.generate_which_pack()
         row = re.compile(r"^\| \[[^\]]+\]\(platforms/([a-z0-9]+)\.md\) \|(.*)$", re.M)
-        asset = re.compile(r"/releases/download/[^/]+/([^)\s\"]+)[)\"]")
+        get = re.compile(r'href="get/([a-z0-9]+)\.md"')
         checked = 0
         for key, rest in row.findall(page):
-            linked = set(asset.findall(rest))
-            pack = release_record.pack_for(key, record) or {}
+            linked = set(get.findall(rest))
+            pack = release_record.pack_for(key, record)
             with self.subTest(platform=key):
-                self.assertLessEqual(linked, set(pack.get("assets") or []))
+                self.assertNotIn("/releases/download/", rest)
+                self.assertLessEqual(linked, {key})
                 if pack:
                     checked += 1
-                    self.assertTrue(linked)
-        self.assertGreater(checked, 5)
+                    self.assertEqual(linked, {key})
+                elif not generate_site.has_release_pack(key):
+                    self.assertIn(f"No ZIP. [Use the command](platforms/{key}.md#install).", rest)
+        self.assertGreater(checked, 3)

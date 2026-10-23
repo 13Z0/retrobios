@@ -1132,8 +1132,8 @@ file rather than followed.
 `install.py` runs on the user's machine, often an older handheld, so it stays
 on Python 3.8 and the standard library alone. The RetroPie 4.8 images
 (`retropie-buster-4.8-*.img.gz`) are Debian Buster, whose `python3` is 3.7.3:
-there the bootstrap stops before running anything, and the RetroPie pack from
-the releases page is the way to install
+there the bootstrap stops before running anything, and the way to install is
+the command run on a computer with the Pi's network folder as `--dest`
 ([first install](first-install.md#error-python-38-or-newer-is-required)).
 Tests refuse any 3.9 syntax or API, and one runs the installer end to end under
 a real 3.8 interpreter, which CI installs beside 3.12 so the check cannot skip.
@@ -1312,10 +1312,10 @@ left out.
 
 `scripts/download.py --list` and `scripts/download.sh --list` print the packs of
 a release. A pack's name lists every platform it serves. Releases up to
-v2026.10.10 ship RetroArch and Lakka as one `RetroArch_Lakka` pack, and the
-next ones give Lakka its own, since Lakka runs on Linux where two names that
-differ by case are two files. The installer and the download scripts find the
-right pack either way.
+v2026.10.10 ship RetroArch and Lakka as one `RetroArch_Lakka` pack. Later
+releases publish packs only for the setups most people download, so Lakka,
+which runs on Linux where two names that differ by case are two files, is
+served by the installer. The download scripts name the installer for a setup without a pack.
 
 Parts named `Pack.part1of2.zip` are ordinary ZIPs: unzip each one into the same
 folder, and check that all of them were downloaded. The name says how many

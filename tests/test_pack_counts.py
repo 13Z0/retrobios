@@ -536,8 +536,8 @@ class TheReleaseNotesReadTheRecord(unittest.TestCase):
         text = self.render()
         row = next(line for line in text.splitlines() if line.startswith("| RetroArch"))
         self.assertIn("8,504", row)
-        self.assertIn("part1of2.zip", row)
-        self.assertIn("part2of2.zip", row)
+        self.assertIn("[Download, 2 parts](https://abdess.github.io/retrobios/get/retroarch/)", row)
+        self.assertNotIn("/releases/download/", row)
         self.assertIn("`system/`", row)
         self.assertIn("| Platform | Download | Extracted size | Files |", text)
 

@@ -85,6 +85,15 @@ class Pack:
     expected_parts: int = 1
 
 
+# A release publishes packs for the setups most people download. The others
+# are served file by file by the installer.
+NO_PACK_HINT = (
+    "A setup without a pack is served by the installer:\n"
+    "  curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh"
+    " | sh -s -- --platform <name>"
+)
+
+
 def get_latest_release() -> dict:
     """Fetch latest release info from GitHub API."""
     url = f"{API}/repos/{REPO}/releases/latest"
@@ -319,6 +328,7 @@ def show_info(platform: str, release: dict) -> None:
     if not pack:
         print(f"Platform '{platform}' not found in release.")
         print("Available:", ", ".join(list_platforms(release)))
+        print(NO_PACK_HINT)
         sys.exit(1)
 
     print(f"  Platform: {pack.platform}")
@@ -389,6 +399,7 @@ To check files already in place, use: python install.py --check
     if not pack:
         print(f"Platform '{args.platform}' not found in release.")
         print("Available:", ", ".join(list_platforms(release)))
+        print(NO_PACK_HINT)
         sys.exit(1)
 
     dest = Path(os.path.expanduser(args.dest))

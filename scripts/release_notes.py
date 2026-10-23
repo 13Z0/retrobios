@@ -4,8 +4,10 @@
 The notes carried the pack table, typed by hand from figures release.json
 already held: a copied cell or an old collection total at the top is how
 issue 81 happened. Install commands, the parts sentence and the table come
-from the record and the registry. The maintainer writes what changed, and
-that text is appended as given.
+from the record and the registry. Each row links the platform's page under
+get/ on the site, which outlives the release, and the setups the registry
+does not mark release_pack are named with the command. The maintainer writes
+what changed, and that text is appended as given.
 
 Usage:
     python scripts/release_notes.py --whats-new tmp/whats-new.md --output notes.md
@@ -19,10 +21,17 @@ import sys
 from pathlib import Path
 
 import release_record
-from common import load_platform_registry, write_text_atomic
+from common import (
+    list_registered_platforms,
+    list_release_pack_platforms,
+    load_platform_config,
+    load_platform_registry,
+    write_text_atomic,
+)
 
 REPO = "Abdess/retrobios"
 RAW = f"https://raw.githubusercontent.com/{REPO}/main"
+SITE = "https://abdess.github.io/retrobios/"
 
 
 def _size(count: int) -> str:
@@ -36,22 +45,48 @@ def _display(pack: str) -> str:
     return pack.split("_BIOS_Pack", 1)[0].replace("_", " ")
 
 
+def _owner(name: str, pack: dict) -> str:
+    """The platform a pack is named after: RetroArch_Lakka is RetroArch's."""
+    key = _match_key(name)
+    return sorted(
+        pack.get("platforms", ()), key=lambda p: key.find(_match_key(p)) % (len(key) + 1)
+    )[0]
+
+
 def _extract_folders(record: dict, platforms_dir: str) -> dict[str, str]:
     """Pack name to the folder the registry says it extracts into."""
     registry = load_platform_registry(platforms_dir)
     folders: dict[str, str] = {}
     for name, pack in sorted(record.get("packs", {}).items()):
-        # A shared pack extracts where the platform it is named after does:
-        # RetroArch_Lakka is RetroArch's.
-        key = _match_key(name)
-        for platform in sorted(
-            pack.get("platforms", ()), key=lambda p: key.find(_match_key(p)) % (len(key) + 1)
-        ):
-            folder = registry.get(platform, {}).get("extract_to")
-            if folder:
-                folders[name] = folder
-                break
+        folder = registry.get(_owner(name, pack), {}).get("extract_to")
+        if folder:
+            folders[name] = folder
     return folders
+
+
+def without_pack(platforms_dir: str) -> list[str]:
+    """Display names of the registered setups no release publishes a ZIP for."""
+    released = set(list_release_pack_platforms(platforms_dir, include_archived=True))
+    names = [
+        str(load_platform_config(key, platforms_dir).get("platform", key))
+        for key in list_registered_platforms(platforms_dir, include_archived=True)
+        if key not in released
+    ]
+    return sorted(names, key=str.casefold)
+
+
+def no_pack_paragraph(platforms_dir: str) -> list[str]:
+    """One paragraph naming the setups served by the command alone."""
+    names = without_pack(platforms_dir)
+    if not names:
+        return []
+    listed = ", ".join(names[:-1]) + f" and {names[-1]}" if len(names) > 1 else names[0]
+    return [
+        (f"No ZIP for {listed}. ZIPs are made for the setups most people download."
+         " The command above installs every file for these setups and checks each one."
+         " Add `--dry-run` to see what it would install."),
+        "",
+    ]
 
 
 def _match_key(value: str) -> str:
@@ -59,16 +94,14 @@ def _match_key(value: str) -> str:
     return re.sub(r"[^a-z0-9]", "", value.lower())
 
 
-def _links(tag: str, assets: list[str]) -> str:
-    base = f"https://github.com/{REPO}/releases/download/{tag}"
-    if len(assets) == 1:
-        return f"[{assets[0]}]({base}/{assets[0]})"
-    parts = " + ".join(f"[part {n}]({base}/{asset})" for n, asset in enumerate(assets, 1))
-    return f"{len(assets)} files, all needed: {parts}"
+def _link(name: str, pack: dict) -> str:
+    """The pack's permanent page, which lists the files of the current release."""
+    parts = len(pack["assets"])
+    label = "Download" if parts == 1 else f"Download, {parts} parts"
+    return f"[{label}]({release_record.get_page(_owner(name, pack), SITE)})"
 
 
 def render(record: dict, platforms_dir: str, whats_new: str) -> str:
-    tag = record["tag"]
     packs = record.get("packs", {})
     folders = _extract_folders(record, platforms_dir)
     lines = [
@@ -89,8 +122,9 @@ def render(record: dict, platforms_dir: str, whats_new: str) -> str:
         "",
         "### Download a pack",
         "",
-        ("One pack per platform, the complete one: the BIOS list the platform"
-         " publishes plus every file its emulators open. Files is what the pack"
+        ("One complete pack for each platform below: the BIOS list the platform"
+         " publishes plus every file its emulators open. Each link is a page"
+         " that keeps its address from one release to the next. Files is what the pack"
          " holds once extracted, the count a file manager shows. Extracted size"
          " is the space those files take, and the download is smaller."),
         "",
@@ -109,11 +143,11 @@ def render(record: dict, platforms_dir: str, whats_new: str) -> str:
     for name, pack in sorted(packs.items(), key=lambda item: -item[1]["extracted_size"]):
         folder = folders.get(name)
         lines.append(
-            f"| {_display(name)} | {_links(tag, pack['assets'])} |"
+            f"| {_display(name)} | {_link(name, pack)} |"
             f" {_size(pack['extracted_size'])} | {pack['files']:,} |"
             f" {f'`{folder}`' if folder else '-'} |"
         )
-    lines += ["", whats_new.strip(), ""]
+    lines += ["", *no_pack_paragraph(platforms_dir), whats_new.strip(), ""]
     return "\n".join(lines)
 
 

@@ -4,7 +4,8 @@
 This complements Starlight's own link check (starlight-links-validator,
 which fails the build) with checks on the rendered HTML: metadata,
 heading structure, image alternatives, duplicate IDs, structured data, local
-resources, links and fragments, and the budgets of what a visitor downloads.
+resources, links and fragments, the budgets of what a visitor downloads, and
+a get/ download page for every registered platform.
 """
 
 from __future__ import annotations
@@ -349,7 +350,54 @@ def _check_links(pages: dict, site: Path, base_path: str) -> list[str]:
     return issues
 
 
-def validate_site(site: Path, base_path: str = "/retrobios/") -> list[str]:
+RELEASE_DOWNLOAD = "https://github.com/Abdess/retrobios/releases/download/"
+
+
+def _check_get_pages(
+    pages: dict, site: Path, platforms_dir: Path, record_path: Path,
+) -> list[str]:
+    """get/<platform>/ resolves for every registered platform, as a page.
+
+    Links outside the site keep these addresses across releases, so a
+    missing one is a dead download link for whoever followed it. A platform
+    with a pack in the release record links every one of its assets at the
+    recorded tag, and one without links none and gives the command.
+    """
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    import release_record  # noqa: PLC0415
+    from common import list_registered_platforms, list_release_pack_platforms  # noqa: PLC0415
+
+    if not (platforms_dir / "_registry.yml").is_file():
+        return [f"no platform registry in {platforms_dir}"]
+    record = release_record.load_advertised(record_path, str(platforms_dir))
+    released = set(list_release_pack_platforms(str(platforms_dir), include_archived=True))
+    issues: list[str] = []
+    for platform in list_registered_platforms(str(platforms_dir), include_archived=True):
+        rel = f"{release_record.GET_DIR}/{platform}/index.html"
+        page = pages.get((site / rel).resolve())
+        if page is None or page.redirect:
+            issues.append(f"{rel}: no download page for {platform}")
+            continue
+        assets = [link for link in page.links if link.startswith(RELEASE_DOWNLOAD)]
+        pack = release_record.pack_for(platform, record)
+        if platform in released and pack:
+            expected = {f"{RELEASE_DOWNLOAD}{record['tag']}/{a}" for a in pack["assets"]}
+            missing = sorted(expected - set(assets))
+            if missing:
+                issues.append(f"{rel}: does not link {', '.join(missing)}")
+        elif platform not in released:
+            packs = [a for a in assets if "_BIOS_Pack" in a]
+            if packs:
+                issues.append(f"{rel}: links a pack for a setup without one: {packs[0]}")
+            if "install.sh" not in (site / rel).read_text(encoding="utf-8"):
+                issues.append(f"{rel}: gives no install command")
+    return issues
+
+
+def validate_site(
+    site: Path, base_path: str = "/retrobios/", platforms_dir: Path | None = None,
+    record_path: Path | None = None,
+) -> list[str]:
     site = site.resolve()
     if not site.is_dir():
         return [f"site directory does not exist: {site}"]
@@ -376,6 +424,9 @@ def validate_site(site: Path, base_path: str = "/retrobios/") -> list[str]:
 
     issues.extend(_check_links(pages, site, base_path))
     issues.extend(_check_pagefind(site))
+    if platforms_dir is not None:
+        issues.extend(_check_get_pages(
+            pages, site, platforms_dir, record_path or platforms_dir.parent / "release.json"))
 
     return issues
 
@@ -395,13 +446,21 @@ def main() -> None:
         help="the path the site is served under (default: %(default)s)",
     )
     parser.add_argument(
+        "--platforms-dir", default="platforms", type=Path,
+        help="registry whose platforms each need a get/ page (default: %(default)s)",
+    )
+    parser.add_argument(
+        "--record", default="release.json", type=Path,
+        help="release record the get/ pages link (default: %(default)s)",
+    )
+    parser.add_argument(
         "--max-errors", type=int, default=100,
         help="stop listing after this many errors (default: %(default)s)",
     )
     args = parser.parse_args()
 
     try:
-        issues = validate_site(Path(args.site_dir), args.base)
+        issues = validate_site(Path(args.site_dir), args.base, args.platforms_dir, args.record)
     except (OSError, RuntimeError, ValueError) as exc:
         print(f"Site validation failed: {exc}", file=sys.stderr)
         raise SystemExit(1) from exc

@@ -57,6 +57,7 @@ from common import (
     canonical_target_name,
     platform_files_target,
     list_registered_platforms,
+    list_release_pack_platforms,
     list_system_ids,
     load_data_dir_registry,
     load_database,
@@ -2623,7 +2624,9 @@ def _run_verify_packs(args: argparse.Namespace) -> None:
     if args.platform:
         platforms = [args.platform]
     elif args.all:
-        platforms = list_registered_platforms(
+        # The packs --all builds: a platform without release_pack has no pack
+        # to check, and its absence from the directory is no failure.
+        platforms = list_release_pack_platforms(
             args.platforms_dir, include_archived=args.include_archived
         )
     else:
@@ -3112,7 +3115,9 @@ def _main(held: contextlib.ExitStack) -> None:
         help="Platform name (e.g., retroarch)",
     )
     parser.add_argument(
-        "--all", action="store_true", help="Generate packs for all active platforms"
+        "--all", action="store_true",
+        help="Generate the release packs (release_pack in the registry), or with"
+        " --manifest the install manifests of every platform",
     )
     parser.add_argument(
         "--emulator", "-e", help="Emulator profile name(s), comma-separated"
@@ -3264,10 +3269,14 @@ def _main(held: contextlib.ExitStack) -> None:
             )
         return
     if args.list:
-        # Archived platforms build like the others but have no release pack.
+        # Every platform builds with --platform. --all builds the release
+        # packs only, the others are served by the installer.
         active = set(list_registered_platforms(args.platforms_dir))
+        released = set(list_release_pack_platforms(args.platforms_dir, include_archived=True))
         for p in list_platforms(args.platforms_dir):
-            print(p if p in active else f"{p} (archived)")
+            marks = [m for m, on in (("archived", p not in active),
+                                     ("installer only", p not in released)) if on]
+            print(f"{p} ({', '.join(marks)})" if marks else p)
         return
     if args.list_emulators:
         list_emulator_profiles(args.emulators_dir)
@@ -3393,15 +3402,20 @@ def _main(held: contextlib.ExitStack) -> None:
     system_filter = getattr(args, "system_ids", None)
 
     # Platform mode
-    if args.all:
-        # Install manifests cover every registered platform. "Archived" means
+    if args.all and args.manifest:
+        # Install manifests cover every registered platform: the installer
+        # serves each one, with or without a release pack. "Archived" means
         # upstream is no longer scraped on a schedule, not that the platform
-        # lost its users: its packs still ship, so the installer still needs
-        # its file list.
-        platforms = list_registered_platforms(
-            args.platforms_dir,
-            include_archived=args.include_archived or args.manifest,
+        # lost its users.
+        platforms = list_registered_platforms(args.platforms_dir, include_archived=True)
+    elif args.all:
+        # A release publishes the packs the registry marks release_pack and
+        # nothing else: a pack built for another platform is one nobody uploads.
+        platforms = list_release_pack_platforms(
+            args.platforms_dir, include_archived=args.include_archived
         )
+        if not platforms:
+            parser.error("no registered platform has release_pack: true")
     elif args.platform:
         platforms = [args.platform]
     else:
@@ -4816,10 +4830,11 @@ def _expected_pack_names(
         }
         for p in platforms
     }
-    # Groups depend on which platforms a run built: --all alone or with
-    # --include-archived. Both compositions are names a pack can carry.
+    # Groups depend on which platforms a run built: the release packs of
+    # --all, alone or with --include-archived. Both compositions are names a
+    # pack can carry.
     for include_archived in (False, True):
-        pool = list_registered_platforms(
+        pool = list_release_pack_platforms(
             platforms_dir, include_archived=include_archived
         )
         cache = None

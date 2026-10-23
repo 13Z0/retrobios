@@ -5,7 +5,9 @@ Run on the draft before publishing it, and on the published release at any
 time. Every pack asset release.json names must be on the release at the sha256
 SHA256SUMS.txt lists for it, as must each handheld launcher (RetroBIOS.zip
 and the others build_port.py writes) the list names, the parts of a pack must add up to the download
-size the README prints, and nothing else may be attached. An upload that
+size the README prints, and nothing else may be attached. The record holds
+one pack for each platform the registry marks release_pack, and no other
+pack. An upload that
 failed in the loop, or a part re-uploaded from an older build, otherwise
 publishes a release that `sha256sum --check` rejects for every user.
 
@@ -29,6 +31,7 @@ from pathlib import Path
 sys.path.insert(0, os.path.dirname(__file__))
 from build_port import ARCHIVES
 from check_release_assets import digests_of
+from common import list_release_pack_platforms
 from largefiles import LARGE_FILES_REPO
 from release_record import RECORD, load_record
 
@@ -69,15 +72,31 @@ def compare_release(
     assets: dict[str, Asset],
     tag: str,
     local_files: dict[str, str] | None = None,
+    released: set[str] | None = None,
 ) -> list[Finding]:
     """Every way the release can differ from what was built.
 
     *local_files* maps a file kept beside the packs (the checksum list, its
     signature) to its local sha256: the copy on the release must be that one.
+    *released* names the platforms the registry marks release_pack: each one
+    has a recorded pack, and no recorded pack serves only other platforms.
     """
     findings: list[Finding] = []
     if record.get("tag") != tag:
         findings.append(Finding("tag", tag, f"release.json records {record.get('tag')}"))
+    if released is not None:
+        packs = record.get("packs", {})
+        served = {p for pack in packs.values() for p in pack.get("platforms", ())}
+        for platform in sorted(released - served):
+            findings.append(Finding(
+                "no-pack", platform, "release_pack: true, no pack in release.json"
+            ))
+        for pack_name, pack in sorted(packs.items()):
+            if not set(pack.get("platforms", ())) & released:
+                findings.append(Finding(
+                    "not-released", pack_name,
+                    "serves no platform marked release_pack in platforms/_registry.yml",
+                ))
 
     recorded = {
         name: pack_name
@@ -167,6 +186,10 @@ def main() -> int:
         help=f"local {SUMS} the packs were listed in. Its copy and signature on "
         f"the release must be these files (default: the list attached to the release)",
     )
+    parser.add_argument(
+        "--platforms-dir", default="platforms",
+        help="registry whose release_pack platforms each need a pack (default: %(default)s)",
+    )
     parser.add_argument("--json", action="store_true", help="JSON output")
     args = parser.parse_args()
 
@@ -199,7 +222,8 @@ def main() -> int:
         print(f"ERROR: {SUMS}: {exc}", file=sys.stderr)
         return 2
 
-    findings = compare_release(record, sums, assets, tag, local_files)
+    released = set(list_release_pack_platforms(args.platforms_dir, include_archived=True))
+    findings = compare_release(record, sums, assets, tag, local_files, released)
     if args.json:
         print(json.dumps(
             {"tag": tag, "draft": draft, "assets": len(assets),

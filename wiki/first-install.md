@@ -96,7 +96,7 @@ curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | 
 
 ## 4. Wait
 
-You can stop with Ctrl+C at any time. Run the command again to carry on.
+Ctrl+C stops it. Run the command again to carry on.
 
 ## 5. Read the last line
 
@@ -119,7 +119,7 @@ Add `--check` to the same command. It changes nothing.
 curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh -s -- --check
 ```
 
-All good when every file is present:
+All good:
 
 ```
   109/109 present (109 verified, 0 wrong hash)
@@ -127,8 +127,8 @@ All good when every file is present:
 
 ## Undo
 
-It keeps every file it replaces in a `retrobios-backup` folder, next to your
-BIOS folder. The end of the run prints the line that puts them back.
+Every file it replaces goes to a `retrobios-backup` folder next to your BIOS
+folder. The last lines say how to put them back.
 
 ## If it stops
 
@@ -146,8 +146,8 @@ The message shows the command that installs Python. Run it, then run the
 installer again.
 
 A RetroPie 4.8 image has Python 3.7.3, and its update command finds nothing
-newer. Use the [RetroPie ZIP](../platforms/retropie.md#download) there,
-unzipped into `~/RetroPie/BIOS/`.
+newer. Run the command on a computer, with
+`--platform retropie --dest \\RETROPIE\bios\`.
 
 ### Error: the downloaded installer does not match its expected fingerprint.
 
@@ -155,13 +155,11 @@ The download was cut short. Nothing was changed. Run the command again.
 
 ### Cannot create ...
 
-You do not have the right to write there. Do what the message says. It names
-what to run.
+You cannot write there. Do what the message says.
 
 ### Not enough space on the drive holding ...
 
-It stopped before writing. Free some space, or use `--dest` to pick another
-drive.
+Nothing was written. Free some space, or pick another drive with `--dest`.
 
 ### The game still does not start
 

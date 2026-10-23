@@ -70,6 +70,8 @@ yaml = require_yaml()
 from generate_readme import (
     compute_coverage,
     platform_coverages,
+    NO_PACK,
+    asset_links,
     contributing_text,
     download_links,
     extract_notes,
@@ -115,7 +117,8 @@ RELEASE_URL = f"{REPO_URL}/releases/latest"
 # metadata. The BIOS files themselves are under NOTICE, never this.
 DATA_LICENSE = "MIT (LICENSE: scripts, tooling, schemas, documentation and metadata)"
 SITE_URL = "https://abdess.github.io/retrobios/"
-GENERATED_DIRS = ["platforms", "systems", "emulators", "wiki", "api", "downloads"]
+GENERATED_DIRS = ["platforms", "systems", "emulators", "wiki", "api", "downloads",
+                  release_record.GET_DIR]
 # Generated directories of files served as they are, not pages.
 PUBLIC_DIRS = ("api", "downloads")
 
@@ -696,22 +699,113 @@ def version_line(platform_name: str, record: dict, named: bool = False) -> str:
     return f"Made for {made_from}. {OTHER_VERSION}"
 
 
-def _pack_buttons(platform_name: str, label: str = "Pack") -> str:
-    """Buttons to the files of the platform's pack in the recorded release,
-    the release they come from, and the setup version its list was read at.
-    "Does this pack fit my version?" is the first question a frontend user
-    asks."""
-    record = release_record.load_record()
+# Why a setup has no ZIP, answered once on the FAQ.
+NO_ZIP_FAQ = "wiki/faq.md#why-is-there-no-zip-for-my-setup"
+
+
+def has_release_pack(platform_name: str) -> bool:
+    """Whether a release publishes a ZIP for the platform (`release_pack`)."""
+    entry = load_platform_registry("platforms").get(platform_name) or {}
+    return entry.get("release_pack") is True
+
+
+def no_zip_line(display: str) -> str:
+    """The one line a setup without a release pack shows where the ZIP would be."""
+    return f"No ZIP for {display}. The command installs every file and checks it."
+
+
+def get_page_link(platform_name: str, prefix: str = "") -> str:
+    """The platform's permanent download page, as a site link."""
+    return f"{prefix}{release_record.GET_DIR}/{platform_name}.md"
+
+
+def _pack_buttons(platform_name: str, label: str = "Pack", prefix: str = "../",
+                  display: str | None = None) -> str:
+    """The way to the platform's ZIP from its setup page: a button to its
+    get/ page, the release it comes from, and the setup version its list
+    was read at. "Does this pack fit my version?" is the first question a
+    frontend user asks. A setup with no release pack gets the line that
+    says so, and why."""
+    if not has_release_pack(platform_name):
+        display = display or load_platform_config(platform_name, "platforms").get(
+            "platform", platform_name)
+        return f"{no_zip_line(display)} [Why no ZIP?]({prefix}{NO_ZIP_FAQ})"
+    record = release_record.load_advertised()
     buttons = download_links(
         platform_name,
         record,
-        REPO_URL,
         label,
         button=lambda text, url: markup.button(text, url, primary=True),
+        page=get_page_link(platform_name, prefix),
     )
     released = release_line(platform_name, record)
     return "\n\n".join([buttons, *released,
                         version_line(platform_name, record, named=len(released) > 1)])
+
+
+def generate_get_page(platform_name: str) -> str:
+    """get/<platform>/: the address a link outside the site can keep.
+
+    Every release deletes the previous tag, and with it each asset URL: six
+    of the eight links a wiki had to our packs went dead. This page lists
+    the files of the pack the current release holds, read from release.json,
+    or the command when no release publishes one. The release process
+    never touches it: committing release.json rebuilds it."""
+    config = load_platform_config(platform_name, "platforms")
+    display = config.get("platform", platform_name)
+    record = release_record.load_advertised()
+    pack = release_record.pack_for(platform_name, record)
+    released = has_release_pack(platform_name)
+    lines = ["---", "search: exclude", "---", "", f"# Download {display}", ""]
+    if released and pack and pack.get("assets"):
+        parts = len(pack["assets"])
+        release = release_line(platform_name, record)
+        extract_to = (load_platform_registry("platforms").get(platform_name) or {}).get("extract_to")
+        lines += [
+            "This address stays the same. It always gives the latest ZIP.",
+            "",
+            asset_links(platform_name, record, REPO_URL, f"Download {display} Pack",
+                        button=lambda text, url: markup.button(text, url, primary=True)),
+            "",
+            f"- {_fmt_size(pack['download_size'])} to download, "
+            f"{_fmt_size(pack['extracted_size'])} once unzipped.",
+            *(["- You need both parts." if parts == 2 else f"- You need all {parts} parts."]
+              if parts > 1 else []),
+            f"- Unzip {'them all' if parts > 1 else 'it'} into "
+            + (f"`{extract_to}`." if extract_to else "your BIOS folder."),
+            "",
+            *(line for text in release for line in (text, "")),
+            version_line(platform_name, record, named=len(release) > 1),
+            "",
+        ]
+    elif released and record.get("tag"):
+        lines += [
+            f"No {display} ZIP yet. The next release has one. "
+            "The command installs every file and checks it.",
+            "",
+            *install_commands(f"--platform {platform_name}"),
+        ]
+    elif released:
+        lines += [
+            "This address stays the same. It always gives the latest ZIP.",
+            "",
+            markup.button(f"Download {display} Pack", RELEASE_URL, primary=True),
+            "",
+        ]
+    else:
+        lines += [
+            no_zip_line(display),
+            "",
+            *install_commands(f"--platform {platform_name}"),
+            f"[Why no ZIP?](../{NO_ZIP_FAQ})",
+            "",
+        ]
+    lines += _next_block([
+        f"[{display}](../platforms/{platform_name}.md#install): the folder, "
+        "and how to run the command on the device",
+        "[All installer options](../wiki/installer.md)",
+    ])
+    return "\n".join(lines)
 
 
 # The home tile counts the whole collection. Labelled "Files" above a table
@@ -2066,6 +2160,9 @@ def _page_description(markdown: str, relative: Path, title: str) -> str:
     if key in PART_PAGES:
         return (f"{title}: every file with its hashes, size, source references "
                 "and who reads it.")
+    if key.startswith(f"{release_record.GET_DIR}/"):
+        return (f"{title}: the BIOS files of this setup, as the ZIP of the latest "
+                "release or one command, at an address that stays the same.")
     if key.startswith("platforms/") and relative.stem != "index":
         return (f"{title}: where the BIOS files go, the command that installs them, the pack, "
                 "and every file by system with its hashes.")
@@ -2487,7 +2584,7 @@ def page_level(relative: Path) -> str:
     path = relative.as_posix()
     if path in ("index.md", "which-pack.md"):
         return "start"
-    if relative.parts[0] == "platforms":
+    if relative.parts[0] in ("platforms", release_record.GET_DIR):
         return "setup"
     if relative.parts[0] in ("systems", "emulators") or path == "explore.md":
         return "explore"
@@ -2647,8 +2744,9 @@ def setup_table(coverages: dict, registry: dict | None = None) -> list[str]:
         status = registry.get(name, {}).get("status")
         archived |= status == "archived"
         listed = f"{cov['total']:,}" if cov["total"] else "No list of its own"
-        files, _size = release_totals(name, release_record.load_record())
-        zipped = f"{files:,}" if files else "No ZIP yet"
+        files, _size = release_totals(name, release_record.load_advertised())
+        zipped = (f"{files:,}" if files
+                  else "No ZIP yet" if has_release_pack(name) else "No ZIP")
         lines.append(
             f"| [{cov['platform']}](../platforms/{name}.md)"
             f"{' (archived)' if status == 'archived' else ''} | {listed} | {zipped} | "
@@ -2659,8 +2757,10 @@ def setup_table(coverages: dict, registry: dict | None = None) -> list[str]:
         "The ZIP adds the files its emulators load to the files on the setup's own list.",
         "",
     ]
+    lines += ["No ZIP: the setup is served by the command alone. "
+              f"[Why?](../{NO_ZIP_FAQ})", ""]
     if archived:
-        lines += ["An archived setup keeps its page and its ZIP. Its list is no longer "
+        lines += ["An archived setup keeps its page and the command. Its list is no longer "
                   "read again on a schedule.", ""]
     return lines
 
@@ -3220,7 +3320,7 @@ def _computer_first(name: str, guide: Guide) -> bool:
     """A system that runs only on its own device, with a ZIP to download: a
     beginner fills its folder from a computer more easily than from a
     terminal on the TV. Without a ZIP the command is the only route."""
-    pack = release_record.pack_for(name, release_record.load_record())
+    pack = release_record.pack_for(name, release_record.load_advertised())
     return guide.run == ("device",) and bool(pack and pack.get("assets"))
 
 
@@ -3238,7 +3338,7 @@ def _guide_download(name: str, display: str, guide: Guide, extract_to: str | Non
                     heading: str) -> list[str]:
     """The pack: its buttons, its size, and where it is unzipped."""
     lines = [heading, ""]
-    record = release_record.load_record()
+    record = release_record.load_advertised()
     pack = release_record.pack_for(name, record)
     network = any(label.startswith("From ") for label, _path in guide.folders)
     if pack and pack.get("assets"):
@@ -3263,6 +3363,8 @@ def _guide_download(name: str, display: str, guide: Guide, extract_to: str | Non
             *(f"- {b}" for b in bullets),
             "",
         ]
+    elif not has_release_pack(name):
+        lines += [_pack_buttons(name, display=display), ""]
     elif record.get("tag"):
         made_from = setup_version(name)
         lines += [
@@ -3386,12 +3488,13 @@ def _platform_guide(name: str, display: str, cov: dict, registry: dict, no_list:
     if guide.lead:
         lines += [guide.lead, ""]
     lines += _folder_rows(guide.folders)
-    if extract_to:
+    if extract_to and has_release_pack(name):
         lines.append(f"| Unzip the pack into | `{extract_to}` |")
     lines.append("")
     for note in guide.notes:
         lines += [note, ""]
-    lines += [line for note in extract_notes("platforms") if f"The {display} pack " in note
+    lines += [line for note in extract_notes("platforms", released_only=True)
+              if f"The {display} pack " in note
               for line in (note, "")]
     if guide.more_folders:
         detected = _detected_systems(registry, name) if guide.more_folders_detected else []
@@ -3573,7 +3676,7 @@ def generate_platform_page(
         detect = (registry.get(name, {}).get("install") or {}).get("detect") or []
         on_card = any(rule.get("method") == "card_marker" for rule in detect)
         lines.extend(["", *_platform_install_block(name, display, on_card)])
-        lines.extend(["", _pack_buttons(name, f"Download {display} Pack")])
+        lines.extend(["", _pack_buttons(name, f"Download {display} Pack", display=display)])
     lines.append("")
 
     # The declaration behind each detail, by system and name in declaration
@@ -8377,15 +8480,17 @@ def _folder_cell(name: str, guide: Guide, prefix: str = "") -> str:
 
 def _pack_cell(name: str, record: dict, prefix: str = "") -> str:
     """The pack's parts and size, or the command where the release has none."""
+    if not has_release_pack(name):
+        return f"No ZIP. [{NO_PACK}]({prefix}platforms/{name}.md#install)."
     pack = release_record.pack_for(name, record)
     if record.get("tag") and not (pack and pack.get("assets")):
-        return f"No ZIP yet. [Use the command]({prefix}platforms/{name}.md#install)."
-    # Small buttons, one per part, the size after the last: links wrapped
-    # mid-label ("part 1 of / 3") in a narrow cell.
-    links = download_links(name, record, REPO_URL, "ZIP",
-                           button=lambda text, url: markup.button(text, url))
+        return f"No ZIP yet. [{NO_PACK}]({prefix}platforms/{name}.md#install)."
+    # One small button to the setup's get/ page, which lists every part, and
+    # the size after it.
+    link = download_links(name, record, "ZIP", page=get_page_link(name, prefix),
+                          button=lambda text, url: markup.button(text, url))
     size = pack.get("download_size") if pack else None
-    return f"{links} ({_fmt_size(size)})" if size else links
+    return f"{link} ({_fmt_size(size)})" if size else link
 
 
 def _group_keys(registry: dict, group: str, display: dict[str, str]) -> list[str]:
@@ -8462,7 +8567,7 @@ def generate_which_pack() -> str:
     The tiles are the choice. Open tables under them listed every setup a
     second time and made the page 11,800 px tall on a phone."""
     registry = load_platform_registry("platforms")
-    record = release_record.load_record()
+    record = release_record.load_advertised()
     display = {key: load_platform_config(key, "platforms").get("platform", key) for key in registry}
     all_tabs = ("windows", "macos", "linux", "steamdeck", "android")
     lines = [
@@ -8485,10 +8590,12 @@ def generate_which_pack() -> str:
         *markup.details("note", "Every folder and ZIP in one table",
                         _folder_tables(registry, record, display)),
     ]
-    no_zip = any(not (pack and pack.get("assets"))
-                 for pack in (release_record.pack_for(key, record) for key in registry))
-    if record.get("tag") and no_zip:
+    pending = any(has_release_pack(key) and not (pack and pack.get("assets"))
+                  for key, pack in ((key, release_record.pack_for(key, record)) for key in registry))
+    if record.get("tag") and pending:
         lines += ["Setups added after the last release have no ZIP until the next one.", ""]
+    lines += ["No ZIP on a row: the command serves that setup. ZIPs are made for the "
+              f"setups most people download. [Why?]({NO_ZIP_FAQ})", ""]
     lines += [
         f"The ZIPs come from the [latest release]({RELEASE_URL}). The command may "
         "install newer files.",
@@ -9126,6 +9233,14 @@ def _generate(args: argparse.Namespace) -> None:
 
     print("Generating which-pack page...")
     write_if_changed(str(docs / "which-pack.md"), generate_which_pack())
+
+    # One permanent download address per registered platform, archived ones
+    # included: the README's table links each of them.
+    print("Generating download pages...")
+    get_dir = docs / release_record.GET_DIR
+    get_dir.mkdir(parents=True, exist_ok=True)
+    for name in platform_names:
+        write_if_changed(str(get_dir / f"{name}.md"), generate_get_page(name))
 
     print("Generating contributing page...")
     write_if_changed(str(docs / "contributing.md"), generate_contributing())

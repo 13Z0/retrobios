@@ -20,6 +20,8 @@ sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
 import release_record  # noqa: E402
 from generate_readme import (  # noqa: E402
+    SITE_URL,
+    asset_links,
     contributing_text,
     download_links,
     download_table,
@@ -96,15 +98,17 @@ class TheDownloadTablesFollowTheRegistry(unittest.TestCase):
                         self.assertIn(label, row.split(" | ")[1])
 
 
-class DownloadLinksNameTheFile(unittest.TestCase):
+class AssetLinksNameTheFile(unittest.TestCase):
+    """The get/ page of a platform links the files of its pack."""
+
     def test_a_whole_pack_links_its_asset(self):
         self.assertEqual(
-            download_links("romm", SPLIT_RECORD, "../..", "Download"),
+            asset_links("romm", SPLIT_RECORD, "../..", "Download"),
             "[Download](../../releases/download/v2000.01.01/RomM_1_BIOS_Pack.zip)",
         )
 
     def test_a_split_pack_links_every_part(self):
-        cell = download_links("batocera", SPLIT_RECORD, "../..", "Download")
+        cell = asset_links("batocera", SPLIT_RECORD, "../..", "Download")
         for part in ("part1of2", "part2of2"):
             self.assertIn(
                 f"releases/download/v2000.01.01/Batocera_1_BIOS_Pack.{part}.zip", cell
@@ -115,81 +119,110 @@ class DownloadLinksNameTheFile(unittest.TestCase):
         """One link taken for the pack left half of it out of the folder."""
         self.assertIn(
             "Download, 2 files, all needed: ",
-            download_links("batocera", SPLIT_RECORD, "../..", "Download"),
+            asset_links("batocera", SPLIT_RECORD, "../..", "Download"),
         )
-        buttons = download_links("batocera", SPLIT_RECORD, REPO, "Pack", " { .x }")
+        buttons = asset_links("batocera", SPLIT_RECORD, REPO, "Pack", " { .x }")
         self.assertTrue(buttons.startswith("2 files to download, all needed: "), buttons)
 
     def test_buttons_carry_their_attributes_on_each_part(self):
-        cell = download_links("batocera", SPLIT_RECORD, REPO, "Pack", " { .x }")
+        cell = asset_links("batocera", SPLIT_RECORD, REPO, "Pack", " { .x }")
         self.assertEqual(cell.count("{ .x }"), 2)
-
-    def test_a_release_without_the_pack_names_the_installer(self):
-        self.assertEqual(
-            download_links("bizhawk", SPLIT_RECORD, "../..", "Download"),
-            "Not in v2000.01.01: "
-            "[use the installer](https://abdess.github.io/retrobios/wiki/installer/)",
-        )
 
     def test_without_a_recorded_release_the_link_is_the_release_page(self):
         self.assertEqual(
-            download_links("bizhawk", {}, "../..", "Download"),
+            asset_links("romm", {}, "../..", "Download"),
             "[Download](../../releases/latest)",
         )
 
-    def test_the_readme_table_links_each_recorded_pack(self):
+
+class DownloadLinksKeepTheirAddress(unittest.TestCase):
+    """Every release deletes the previous tag and its asset URLs: six of the
+    eight links a community wiki had to our packs answered 404. A download
+    cell links the platform's get/ page, which outlives the release."""
+
+    def test_a_released_pack_links_its_get_page(self):
+        self.assertEqual(
+            download_links("romm", SPLIT_RECORD, "Download", site=SITE_URL),
+            f"[Download]({SITE_URL}get/romm/)",
+        )
+        self.assertEqual(
+            download_links("batocera", SPLIT_RECORD, "Download", site=SITE_URL),
+            f"[Download]({SITE_URL}get/batocera/)",
+        )
+
+    def test_a_setup_without_a_release_pack_reads_use_the_command(self):
+        self.assertEqual(
+            download_links("bizhawk", SPLIT_RECORD, "Download", site=SITE_URL),
+            f"[Use the command]({SITE_URL}get/bizhawk/)",
+        )
+
+    def test_a_marked_setup_the_release_lacks_has_no_zip_yet(self):
+        self.assertEqual(
+            download_links("retroarch", SPLIT_RECORD, "Download", site=SITE_URL),
+            f"No ZIP yet: [use the command]({SITE_URL}get/retroarch/)",
+        )
+
+    def test_without_a_recorded_release_the_get_page_answers(self):
+        self.assertEqual(
+            download_links("romm", {}, "Download", site=SITE_URL),
+            f"[Download]({SITE_URL}get/romm/)",
+        )
+
+    def test_the_readme_table_links_get_pages(self):
         coverages = {
             "batocera": {"platform": "Batocera"},
+            "bizhawk": {"platform": "BizHawk"},
             "romm": {"platform": "RomM"},
         }
         rows = download_table(coverages, set(), {}, SPLIT_RECORD)[2:]
-        self.assertEqual(len(rows), 2)
+        self.assertEqual(len(rows), 3)
         for row in rows:
-            self.assertNotIn("releases/latest", row)
-            self.assertIn("releases/download/v2000.01.01/", row)
+            self.assertNotIn("/releases/", row)
+            self.assertIn(f"{SITE_URL}get/", row)
+        self.assertIn("[Use the command]", next(r for r in rows if "BizHawk" in r))
 
-    def test_the_generated_readme_links_every_released_asset(self):
+    def test_the_generated_readme_links_every_get_page(self):
         if not RECORD.get("packs"):
             self.skipTest("release.json is not written")
+        from common import list_registered_platforms, list_release_pack_platforms
+
         readme = _read("README.md")
-        for pack in RECORD["packs"].values():
-            for asset in pack["assets"]:
-                with self.subTest(asset=asset):
-                    self.assertIn(
-                        f"../../releases/download/{RECORD['tag']}/{asset})", readme
-                    )
+        table = _section(readme, "## Download BIOS packs")
+        self.assertNotIn("/releases/download/", table)
+        released = set(list_release_pack_platforms("platforms", include_archived=True))
+        for key in list_registered_platforms("platforms", include_archived=True):
+            with self.subTest(platform=key):
+                self.assertIn(f"]({SITE_URL}get/{key}/)", table)
+                row = next(line for line in table.splitlines()
+                           if f"get/{key}/)" in line)
+                if key not in released:
+                    self.assertIn("[Use the command]", row)
 
-    def test_the_download_page_rows_link_assets(self):
-        if not RECORD.get("packs"):
-            self.skipTest("release.json is not written")
+    def test_the_download_page_rows_link_get_pages(self):
         page = _which_pack()
         rows = [line for line in page.splitlines() if line.startswith("| ")]
         self.assertTrue(rows)
         for row in rows:
-            self.assertNotIn("releases/latest", row)
-        for pack in RECORD["packs"].values():
-            for asset in pack["assets"]:
-                self.assertRegex(page, re.escape(f"/releases/download/{RECORD['tag']}/{asset}")
-                                 + r"[)\"]")
+            self.assertNotIn("/releases/", row)
 
-    def test_a_platform_the_release_lacks_links_no_release(self):
+    def test_a_platform_without_a_zip_offers_the_command(self):
         """KNULLI, AmberELEC and EmuELEC were registered after the recorded
-        release: a row for them linked a release page holding no such pack.
-        Every platform is on the picker now, so the row offers the command."""
-        if not RECORD.get("packs"):
-            self.skipTest("release.json is not written")
+        release, and the platforms without release_pack never get a ZIP: a
+        row for them offers the command."""
         from common import list_registered_platforms, load_platform_config
-        from release_record import pack_for
+        import generate_site
 
+        record = release_record.load_advertised()
         page = _which_pack()
         for key in list_registered_platforms("platforms", include_archived=True):
-            if pack_for(key, RECORD) is not None:
+            if release_record.pack_for(key, record) is not None:
                 continue
             label = load_platform_config(key, "platforms").get("platform", key)
             row = next(line for line in page.splitlines() if line.startswith(f"| [{label}]("))
+            state = "No ZIP yet." if generate_site.has_release_pack(key) else "No ZIP."
             with self.subTest(platform=key):
                 self.assertNotIn("/releases/", row)
-                self.assertIn(f"No ZIP yet. [Use the command](platforms/{key}.md#install).", row)
+                self.assertIn(f"{state} [Use the command](platforms/{key}.md#install).", row)
 
 
 class SlicesLeaveWithTheirRelease(unittest.TestCase):

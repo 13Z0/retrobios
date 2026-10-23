@@ -206,8 +206,9 @@ pipeline runs here, the archives are checked here, and `gh` uploads them.
 
 ```bash
 # 1. Full pipeline, online, so data directories and MAME/FBNeo hashes are
-#    fresh. --include-archived builds RetroPie too, archived but still served,
-#    and holds its pack to the same consistency and integrity checks.
+#    fresh. It builds the packs of the platforms marked release_pack (see
+#    "Which platforms get a pack" below) and the install manifests of every
+#    platform, RetroPie included with --include-archived.
 python scripts/pipeline.py --include-archived
 
 # 2. A release file must be under 2 GiB. A larger pack becomes parts that are
@@ -279,6 +280,43 @@ gh release list --json tagName,createdAt \
   | tail -n +2 | while read tag; do gh release delete "$tag" --yes --cleanup-tag; done
 ```
 
+## Which platforms get a pack { #which-platforms-get-a-pack }
+
+`release_pack: true` in `platforms/_registry.yml` is the list. `generate_pack.py
+--all` builds those packs and no other, `--verify-packs` and the consistency
+step of the pipeline check those, `release_record.py` refuses any other pack
+in `dist/`, and `check_release.py` reports a marked platform without a pack.
+The README, the download page, each setup page and the release notes read the
+same field: a platform without it shows "No ZIP" and the command. Its install
+manifest is written all the same, and `generate_pack.py --platform NAME` still
+builds its pack for anyone who wants one.
+
+The list follows downloads. In v2026.10.10, part 1 of each pack was fetched
+7,251 times for RetroArch, 2,909 for EmuDeck, 1,988 for RetroBat, 1,933 for
+Batocera and 1,003 for RomM, then 751 for RetroPie, 642 for Recalbox, 516 for
+RetroDECK, 450 for MiSTer, 386 for ROCKNIX and 361 for BizHawk. The first five
+are 83% of downloads for 17 GB of the 35 GB all packs weighed. MiSTer stays
+for its 17 MB. To revisit the list, read the counts of the latest release,
+counting a whole pack or the first part of a split one, so each download
+counts once:
+
+```bash
+gh api repos/Abdess/retrobios/releases/latest --jq '.assets[]
+  | select(.name | test("_BIOS_Pack(\\.part1of[0-9]+)?\\.zip$"))
+  | "\(.download_count)\t\(.name)"' | sort -rn
+```
+
+Then add or remove the field and regenerate the README and the site.
+
+Every platform has a page at `get/<platform>/` on the site, its permanent
+download address. It lists the files of the pack the latest release holds,
+read from `release.json`, or gives the command when there is no pack. The
+README, the setup pages and the release notes link it, never an asset URL:
+step 6 deletes the previous tag, and with it every link to its assets. Six of
+the eight links one community wiki had to our packs answered 404 that way.
+Committing `release.json` in step 5 rebuilds these pages, so the release
+never touches them.
+
 ## Verifying a release
 
 `SHA256SUMS.txt` is signed with a key used for nothing else. Its public half
@@ -323,8 +361,8 @@ fingerprint, `SHA256:jUcTBhDS5DhmheXuVhAzh3pb04uI0caOAaiZzWXvrk4`.
 Rotating the key means committing the new public half to `allowed_signers`
 and keeping the retired line, so signatures on past releases keep verifying.
 
-One pack per platform, the full one: the platform's list plus everything its
-cores load. Platform-only and per-emulator packs are build options, not
+One pack per platform marked `release_pack`, the full one: the platform's list
+plus everything its cores load. Platform-only and per-emulator packs are build options, not
 release assets, since a lighter pack means a core that fails with no message.
 The release notes are written by `release_notes.py`: the install commands,
 the pack table and its parts sentence come from `release.json`, then what

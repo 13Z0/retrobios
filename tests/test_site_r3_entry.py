@@ -140,10 +140,15 @@ class PackNamesItsVersion(unittest.TestCase):
                          f"RetroArch {load_platform_config('retroarch', 'platforms')['version'].lstrip('v')}")
 
     def test_every_setup_page_names_a_version(self):
+        """A setup with a release ZIP names the version it was made for. One
+        without says there is no ZIP: the command installs current files."""
         for key in REGISTRY:
             with self.subTest(platform=key):
                 text = _guide_part(_page(f"platforms/{key}.md"))
-                self.assertRegex(text, r"(?:[Mm]ade for|This pack was built for) \S")
+                if generate_site.has_release_pack(key):
+                    self.assertRegex(text, r"(?:[Mm]ade for|This pack was built for) \S")
+                else:
+                    self.assertIn(generate_site.no_zip_line(_display(key)), text)
 
 
 class SetupPagesOfferPartOfThePack(unittest.TestCase):
@@ -214,10 +219,12 @@ class GetYourFilesListsEachSetupOnce(unittest.TestCase):
                     self.assertTrue(release_record.pack_for(key, record))
 
     def test_parts_are_buttons_with_the_size_after(self):
-        rows = [line for line in self.text.splitlines() if "Part 1 of" in line]
+        """A row links the setup's get/ page, which lists every part, with the
+        download size after the button."""
+        rows = [line for line in self.text.splitlines() if ">ZIP</a>" in line]
         self.assertTrue(rows)
         for row in rows:
-            self.assertRegex(row, r'<a class="rb-button" href="[^"]+">Part 1 of \d</a>')
+            self.assertRegex(row, r'<a class="rb-button" href="/retrobios/get/[a-z0-9]+/">ZIP</a>')
             self.assertRegex(row, r"</a> \(\d[\d.]* [KMG]B\) \|$")
 
     def test_the_zip_note(self):

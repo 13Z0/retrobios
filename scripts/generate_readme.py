@@ -229,22 +229,23 @@ def release_totals(platform_name: str, record: dict) -> tuple[int | None, int | 
     return pack["files"], pack["extracted_size"]
 
 
-def download_links(
+NO_PACK = "Use the command"
+
+
+def asset_links(
     platform_name: str, record: dict, repo: str, label: str, attrs: str = "",
     button: Callable[[str, str], str] | None = None,
 ) -> str:
     """Markdown links to the files of a platform's pack in the recorded release.
 
-    A pack published whole gets one link labelled *label*. A pack in parts
-    gets one link per part, since every part is needed, after the number of
-    files to download: a reader who took one link for the pack extracted
-    half of it. *repo* is the
-    repository URL, absolute or relative, and *attrs* an attribute list
-    put after each link, or *button* the function that draws each link as a
-    button on the site. Without a recorded release the link is the latest
-    release page. A release recorded without this platform's pack says so and
-    names the installer, which reads the file lists on main: a button to the
-    release served six platforms a page with no pack for them.
+    Written on the platform's get/ page only: every other surface links that
+    page, whose address does not change with the release. A pack published
+    whole gets one link labelled *label*. A pack in parts gets one link per
+    part, since every part is needed, after the number of files to download:
+    a reader who took one link for the pack extracted half of it. *repo* is
+    the repository URL, *attrs* an attribute list put after each link, or
+    *button* the function that draws each link as a button. Without a
+    recorded release the link is the latest release page.
     """
     pack = release_record.pack_for(platform_name, record)
     tag = record.get("tag")
@@ -252,10 +253,8 @@ def download_links(
     def link(text: str, url: str) -> str:
         return button(text, url) if button else f"[{text}]({url}){attrs}"
 
-    if not tag:
+    if not tag or not assets:
         return link(label, f"{repo}/releases/latest")
-    if not assets:
-        return f"Not in {tag}: [use the installer]({SITE_URL}wiki/installer/)"
     urls = [f"{repo}/releases/download/{tag}/{asset}" for asset in assets]
     if len(urls) == 1:
         return link(label, urls[0])
@@ -267,6 +266,34 @@ def download_links(
     if styled:
         return f"{len(urls)} files to download, all needed: " + " ".join(parts)
     return f"{label}, {len(urls)} files, all needed: " + ", ".join(parts)
+
+
+def download_links(
+    platform_name: str, record: dict, label: str, attrs: str = "",
+    button: Callable[[str, str], str] | None = None,
+    site: str = "", platforms_dir: str = "platforms", page: str | None = None,
+) -> str:
+    """The download cell of a platform: its permanent get/ page.
+
+    *record* is the release record reduced to the release_pack platforms
+    (release_record.advertised). A platform with a pack in it gets *label*
+    linked to its page, which lists the files of the current release. A
+    platform marked release_pack but missing from the release, added since,
+    gets "No ZIP yet". Any other platform is served by the installer, and
+    the cell says so instead of staying empty. *site* is the site root the
+    get/ address hangs from, or *page* the address itself as the site links
+    it, and *attrs* and *button* style the link.
+    """
+    page = page or release_record.get_page(platform_name, site)
+    def link(text: str) -> str:
+        return button(text, page) if button else f"[{text}]({page}){attrs}"
+
+    if (load_platform_registry(platforms_dir).get(platform_name) or {}).get("release_pack") is not True:
+        return link(NO_PACK)
+    pack = release_record.pack_for(platform_name, record)
+    if record.get("tag") and not (pack and pack.get("assets")):
+        return f"No ZIP yet: {link(NO_PACK.lower())}"
+    return link(label)
 
 
 def extract_targets(platforms_dir: str) -> list[tuple[str, str]]:
@@ -296,11 +323,17 @@ def own_root(config: dict) -> str:
     return tops.pop() if len(tops) == 1 else "bios"
 
 
-def extract_notes(platforms_dir: str) -> list[str]:
-    """A pack whose entries carry their own root extracts above the BIOS folder."""
+def extract_notes(platforms_dir: str, released_only: bool = False) -> list[str]:
+    """A pack whose entries carry their own root extracts above the BIOS folder.
+
+    *released_only* keeps the platforms a release publishes a pack for.
+    """
     folders = dict(extract_targets(platforms_dir))
+    registry = load_platform_registry(platforms_dir)
     notes = []
-    for key in sorted(load_platform_registry(platforms_dir)):
+    for key in sorted(registry):
+        if released_only and registry[key].get("release_pack") is not True:
+            continue
         config = load_platform_config(key, platforms_dir)
         display = config.get("platform", key)
         if config.get("base_destination") == "" and display in folders:
@@ -340,9 +373,19 @@ def download_table(
             f"| {display} | {f'{files:,}' if files else '-'} |"
             f" {format_size(size) if size else '-'} |"
             f" {extract_paths.get(cov['platform'], '')} |"
-            f" {download_links(name, record, REPO_PATH, 'Download')} |"
+            f" {download_links(name, record, 'Download', site=SITE_URL)} |"
         )
     return lines
+
+
+def no_pack_line() -> str:
+    """Why some rows read "Use the command", in one sentence."""
+    return (
+        "ZIPs are made for the setups most people download. The others read"
+        f" \"{NO_PACK}\": the installer above installs every file for them and"
+        " checks each one, and `--dry-run` shows what it would install"
+        f" ([why no ZIP]({SITE_URL}wiki/faq/#why-is-there-no-zip-for-my-setup))."
+    )
 
 
 def _names_list(coverages: dict) -> str:
@@ -500,7 +543,7 @@ def generate_readme(db: dict, platforms_dir: str, db_path: str = "database.json"
         '<img src="https://github.com/Abdess/retrobios/actions/workflows/deploy-site.yml/badge.svg" alt="Site"></a>',
         "</p>",
         "",
-        f"BIOS and firmware files for {_names_list(coverages)}, one pack per platform.",
+        f"BIOS and firmware files for {_names_list(coverages)}.",
         "",
         "A pack holds the files its emulators read, as their source code names"
         " them, and leaves out what the emulators install themselves.",
@@ -532,7 +575,7 @@ def generate_readme(db: dict, platforms_dir: str, db_path: str = "database.json"
         "",
         "## Download BIOS packs",
         "",
-        "One pack per platform, and it holds everything the platform runs: its own BIOS list plus every file its emulator cores load. Pick your platform, download the ZIP, extract to the BIOS path. The installer above does the same file by file. At a terminal it asks whether to install everything or to choose systems, cores and regions, and `--system`, `--core`, `--region` and `--target` make the same choice without questions. For a bare minimum, build your own pack below.",
+        "A pack holds everything its platform runs: its own BIOS list plus every file its emulator cores load. Pick your platform, download the ZIP, extract to the BIOS path. Each Download link is a page that keeps its address from one release to the next. The installer above does the same file by file. At a terminal it asks whether to install everything or to choose systems, cores and regions, and `--system`, `--core`, `--region` and `--target` make the same choice without questions. For a bare minimum, build your own pack below.",
         "",
         "A pack over 2 GB comes in several parts (`Pack.part1of2.zip`,"
         " `Pack.part2of2.zip`), and every part is needed. Each part is an"
@@ -564,16 +607,18 @@ def generate_readme(db: dict, platforms_dir: str, db_path: str = "database.json"
 
     lines.extend(
         download_table(
-            coverages, archived, extract_paths, release_record.load_record()
+            coverages, archived, extract_paths,
+            release_record.load_advertised(platforms_dir=platforms_dir),
         )
     )
+    lines.extend(["", no_pack_line()])
 
-    lines.extend(_paragraphs(extract_notes(platforms_dir)))
+    lines.extend(_paragraphs(extract_notes(platforms_dir, released_only=True)))
     if archived:
         lines.extend(
             [
                 "",
-                "\\* Archived: the configuration is kept and packs are still built,"
+                "\\* Archived: the configuration is kept and the installer serves it,"
                 " but upstream is no longer scraped on a schedule.",
             ]
         )
