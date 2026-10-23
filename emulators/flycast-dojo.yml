@@ -23,6 +23,18 @@ systems:
 mode: standalone
 verification: existence
 
+data_root:
+  windows:
+    path: "<folder of flycast.exe>/data"
+    source_ref: "core/windows/winmain.cpp:77-99"
+  macos:
+    path: "~/Library/Application Support/Flycast/data"
+    source_ref: "shell/apple/emulator-osx/emulator-osx/osx-main.mm:106-132"
+    note: "~/.flycast/data when ~/.flycast exists. A second running instance appends its number to the folder"
+  linux:
+    path: "$XDG_DATA_HOME/flycast-dojo, else ~/.local/share/flycast-dojo"
+    source_ref: "core/linux-dist/main.cpp:148-178,340"
+
 notes: |
   Fork of Flycast adding rollback and delay netplay, a lobby, spectating,
   replay recording and a training mode. The Dojo 7 releases are tagged on the
