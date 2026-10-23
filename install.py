@@ -7198,6 +7198,10 @@ class FolderIndex:
         # was opened again, its directory parsed again, for each member.
         self._zips: dict[Path, zipfile.ZipFile] = {}
         self._zip_lock = threading.Lock()
+        # The places this run writes, resolved. An archive among them is
+        # never kept open: Windows refuses to move aside or replace a file
+        # a process holds, and a --from folder can hold the BIOS folder.
+        self._written: set[Path] = set()
         # (path, member or "") -> (its size or None when unknown, why) of each
         # file, member or folder below root that could not be read.
         self.unreadable: dict[tuple[Path, str], tuple[int | None, str]] = {}
@@ -7275,7 +7279,7 @@ class FolderIndex:
         A few stay open, the least recently read closed first: a card of
         MAME sets would otherwise hold a descriptor per archive. Closing
         one leaves a member being read open until it is closed itself.
-        Only archives the list does not install are read this way.
+        An archive this run writes is never read this way (see writes).
         """
         archive = self._zips.pop(path, None)
         if archive is None:
@@ -7285,15 +7289,38 @@ class FolderIndex:
         self._zips[path] = archive
         return archive
 
+    def writes(self, paths: Collection[Path]) -> None:
+        """Note the places this run writes, resolved, and close the archives
+        among them: the next read of one opens it and closes it at once."""
+        with self._zip_lock:
+            self._written.update(paths)
+            for held in [held for held in self._zips if self._is_written(held)]:
+                self._zips.pop(held).close()
+
+    def _is_written(self, path: Path) -> bool:
+        return bool(self._written) and (
+            path in self._written or Path(os.path.realpath(path)) in self._written)
+
     def infolist(self, path: Path) -> list[zipfile.ZipInfo]:
         with self._zip_lock:
+            if self._is_written(path):
+                with zipfile.ZipFile(path) as archive:
+                    return archive.infolist()
             return self._archive(path).infolist()
 
     @contextlib.contextmanager
     def open_member(self, path: Path, member: str) -> Iterator[BinaryIO]:
         """A member of an archive under the folder, read from any thread."""
         with self._zip_lock:
-            handle = self._archive(path).open(member)
+            if self._is_written(path):
+                archive = zipfile.ZipFile(path)
+                try:
+                    handle = archive.open(member)
+                finally:
+                    # The member holds the file until it is closed itself.
+                    archive.close()
+            else:
+                handle = self._archive(path).open(member)
         try:
             yield handle
         finally:
@@ -7913,6 +7940,8 @@ def plan_local_copies(
             written.add(Path(os.path.realpath(_entry_path(bios_path, entry))))
         except ValueError:
             continue
+    for index in ([bios_index] if bios_index is not None else []) + folders:
+        index.writes(written)
     copies: dict[int, LocalCopy] = {}
     for entry in entries:
         copy = None
