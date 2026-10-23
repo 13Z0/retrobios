@@ -2225,7 +2225,7 @@ def version_warning(
     """Flag a declared version that names a tag away from the resolved pin.
 
     ``relation`` is the pin's (ahead, behind) count against the tag commit.
-    A pin after its tag is a build between two releases; a pin before it
+    A pin after its tag is a build between two releases. A pin before it
     describes code the declared release had already replaced.
     ``passed_release`` is a later release the pin already contains, which
     core_version should name instead.
