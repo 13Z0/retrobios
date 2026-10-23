@@ -6,7 +6,7 @@
   "platform": "retrobat",
   "display_name": "RetroBat",
   "version": "1.0",
-  "generated": "2026-10-22T13:12:21Z",
+  "generated": "2026-10-23T07:14:35Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -4721,7 +4721,7 @@
       "sha1": "e84e5b987aa2380fffceab64a79299b934d3749a",
       "sha256": "7941dd821a5c4e9eb7ba45c15827baea78f56143a6483b42902889bd1e0e00d8",
       "size": 29561,
-      "repo_path": "bios/Acorn/BBC/atom.zip",
+      "repo_path": "bios/Acorn/BBC Micro/atom.zip",
       "cores": null,
       "systems": [
         "atom"
@@ -4845,7 +4845,7 @@
       "sha1": "4243b6acdcf9d9c2e28142cf8b32971016105923",
       "sha256": "d30208902157fa163cec939ab5c3e92457c3944aa2558804e72872135cd381d9",
       "size": 298715,
-      "repo_path": "bios/Acorn/BBC/bbcm.zip",
+      "repo_path": "bios/Acorn/BBC Micro/bbcm.zip",
       "cores": null,
       "systems": [
         "bbcmicro"
@@ -4855,7 +4855,7 @@
           "sha1": "557be97016b8e990a286226b1ec933986a70805d",
           "sha256": "110316cc4fe65b0ffc2eb5127539c726e9220f145cb5b0811e2baf05d190dfa4",
           "size": 400592,
-          "repo_path": "bios/Acorn/BBC/.variants/bbcm.zip.4cc3e25a",
+          "repo_path": "bios/Acorn/BBC Micro/.variants/bbcm.zip.4cc3e25a",
           "cores": [
             "mame"
           ]
@@ -4867,7 +4867,7 @@
       "sha1": "8809bb953f0d8ec01dae1df2a94ec09913f924ba",
       "sha256": "6b68708e806e3893d987fa0f8cc990ba7f4e4fb2933e9b871bb57458306dfd1e",
       "size": 100096,
-      "repo_path": "bios/Acorn/BBC/bbcmc.zip",
+      "repo_path": "bios/Acorn/BBC Micro/bbcmc.zip",
       "cores": null,
       "systems": [
         "bbcmicro"
@@ -4877,7 +4877,7 @@
           "sha1": "8809bb953f0d8ec01dae1df2a94ec09913f924ba",
           "sha256": "6b68708e806e3893d987fa0f8cc990ba7f4e4fb2933e9b871bb57458306dfd1e",
           "size": 100096,
-          "repo_path": "bios/Acorn/BBC/bbcmc.zip",
+          "repo_path": "bios/Acorn/BBC Micro/bbcmc.zip",
           "cores": [
             "mame"
           ]
@@ -7900,7 +7900,7 @@
       "sha1": "bf861922dcb78c316360e3e742f4f70ff63c9bc3",
       "sha256": "806400ec0df94b0755de6c5b8249d6b6a9866124c5ddbdac198bde22499bfb8b",
       "size": 4194304,
-      "repo_path": "bios/Nintendo/64DD/64DD_IPL_v12_JPN.bin",
+      "repo_path": "bios/Nintendo/Nintendo 64DD/64DD_IPL.bin",
       "cores": null,
       "systems": [
         "nintendo-64dd"
@@ -7911,7 +7911,7 @@
       "sha1": "3c5b93ca231550c68693a14f03cea8d5dbd1be9e",
       "sha256": "e9fec87a45fba02399e88064b9e2f8cf0f2106e351c58279a87f05da5bc984ad",
       "size": 4194304,
-      "repo_path": "bios/Nintendo/64DD/64DD_IPL_USA.bin",
+      "repo_path": "bios/Nintendo/Nintendo 64DD/64DD_IPL_US.n64",
       "cores": null,
       "systems": [
         "nintendo-64dd"
@@ -7922,7 +7922,7 @@
       "sha1": "10c4173c2a7eb09c6579818f72ef18fa0b6d32de",
       "sha256": "9c2962a8b994a29e4cd04b3a6e4ed730a751414655ab6a9799ebf5fc08b79d44",
       "size": 4194304,
-      "repo_path": "bios/Nintendo/64DD/64DD_IPL_DEV.bin",
+      "repo_path": "bios/Nintendo/Nintendo 64DD/64DD_IPL_DEV.bin",
       "cores": null,
       "systems": [
         "nintendo-64dd"
@@ -7958,7 +7958,7 @@
       "sha1": "24f67bdea115a2c847c8813a262502ee1607b7df",
       "sha256": "ba65f690eb04ec92db67c0e299e21ad71de087d6d5de8a9cb17a62eaab563c17",
       "size": 16384,
-      "repo_path": "bios/Nintendo/DS/NDS_Bios7.bin",
+      "repo_path": "bios/Nintendo/Nintendo DS/NDS_Bios7.bin",
       "cores": null,
       "systems": [
         "nintendo-ds"
@@ -7968,7 +7968,7 @@
           "sha1": "24f67bdea115a2c847c8813a262502ee1607b7df",
           "sha256": "ba65f690eb04ec92db67c0e299e21ad71de087d6d5de8a9cb17a62eaab563c17",
           "size": 16384,
-          "repo_path": "bios/Nintendo/DS/NDS_Bios7.bin",
+          "repo_path": "bios/Nintendo/Nintendo DS/NDS_Bios7.bin",
           "cores": [
             "desmume",
             "melonds",
@@ -7983,7 +7983,7 @@
       "sha1": "bfaac75f101c135e32e2aaf541de6b1be4c8c62d",
       "sha256": "1693983a7707ae394786fa526c0552457888a51d4e410d715ef07acd5a540555",
       "size": 4096,
-      "repo_path": "bios/Nintendo/DS/NDS_Bios9.bin",
+      "repo_path": "bios/Nintendo/Nintendo DS/NDS_Bios9.bin",
       "cores": null,
       "systems": [
         "nintendo-ds"
@@ -7993,7 +7993,7 @@
           "sha1": "bfaac75f101c135e32e2aaf541de6b1be4c8c62d",
           "sha256": "1693983a7707ae394786fa526c0552457888a51d4e410d715ef07acd5a540555",
           "size": 4096,
-          "repo_path": "bios/Nintendo/DS/NDS_Bios9.bin",
+          "repo_path": "bios/Nintendo/Nintendo DS/NDS_Bios9.bin",
           "cores": [
             "desmume",
             "melonds",
@@ -8008,7 +8008,7 @@
       "sha1": "719b9eef33692406d7170ff526069615759c4dfc",
       "sha256": "6e9f70b51dc4f26289b597f14e2513620c2af964374a95f4c5a62b5cad199afc",
       "size": 65536,
-      "repo_path": "bios/Nintendo/DS/NDS_Bios9i.bin",
+      "repo_path": "bios/Nintendo/Nintendo DSi/NDS_Bios9i.bin",
       "cores": null,
       "systems": [
         "nintendo-ds"
@@ -8018,7 +8018,7 @@
           "sha1": "719b9eef33692406d7170ff526069615759c4dfc",
           "sha256": "6e9f70b51dc4f26289b597f14e2513620c2af964374a95f4c5a62b5cad199afc",
           "size": 65536,
-          "repo_path": "bios/Nintendo/DS/NDS_Bios9i.bin",
+          "repo_path": "bios/Nintendo/Nintendo DSi/NDS_Bios9i.bin",
           "cores": [
             "melonds",
             "melonds_ds"
@@ -8030,7 +8030,7 @@
           "sha1": "db61fa39ddbc5f5ed71fb19cda47609ef0201723",
           "sha256": "664c608bd6ccfe583e87b3b924afa00f8697dc7ca92eeb6d206d68abb03d2e10",
           "size": 65536,
-          "repo_path": "bios/Nintendo/DS/dsi_bios9.bin",
+          "repo_path": "bios/Nintendo/Nintendo DSi/dsi_bios9.bin",
           "systems": [
             "nintendo-ds"
           ]
@@ -8041,7 +8041,7 @@
           "sha1": "719b9eef33692406d7170ff526069615759c4dfc",
           "sha256": "6e9f70b51dc4f26289b597f14e2513620c2af964374a95f4c5a62b5cad199afc",
           "size": 65536,
-          "repo_path": "bios/Nintendo/DS/NDS_Bios9i.bin",
+          "repo_path": "bios/Nintendo/Nintendo DSi/NDS_Bios9i.bin",
           "cores": [
             "melonds",
             "melonds_ds"
@@ -8054,7 +8054,7 @@
       "sha1": "c7c7570bfe51c3c7c5da3b01331b94e7e7cb4f53",
       "sha256": "12a03016ba07cfd874fc002df49a2c6eb2414eb7cfa395c2043035ec5e9193e8",
       "size": 65536,
-      "repo_path": "bios/Nintendo/DS/NDS_Bios7i.bin",
+      "repo_path": "bios/Nintendo/Nintendo DSi/NDS_Bios7i.bin",
       "cores": null,
       "systems": [
         "nintendo-ds"
@@ -8064,7 +8064,7 @@
           "sha1": "c7c7570bfe51c3c7c5da3b01331b94e7e7cb4f53",
           "sha256": "12a03016ba07cfd874fc002df49a2c6eb2414eb7cfa395c2043035ec5e9193e8",
           "size": 65536,
-          "repo_path": "bios/Nintendo/DS/NDS_Bios7i.bin",
+          "repo_path": "bios/Nintendo/Nintendo DSi/NDS_Bios7i.bin",
           "cores": [
             "melonds",
             "melonds_ds"
@@ -8076,7 +8076,7 @@
           "sha1": "d2b17224e156ee5e55b5d8d9f323b1c9b86dd951",
           "sha256": "28a13952901b4065ef3f08c3252b49a00b6525e301b7ddaa3a390b4c7cbef901",
           "size": 65536,
-          "repo_path": "bios/Nintendo/DS/dsi_bios7.bin",
+          "repo_path": "bios/Nintendo/Nintendo DSi/dsi_bios7.bin",
           "systems": [
             "nintendo-ds"
           ]
@@ -8087,7 +8087,7 @@
           "sha1": "c7c7570bfe51c3c7c5da3b01331b94e7e7cb4f53",
           "sha256": "12a03016ba07cfd874fc002df49a2c6eb2414eb7cfa395c2043035ec5e9193e8",
           "size": 65536,
-          "repo_path": "bios/Nintendo/DS/NDS_Bios7i.bin",
+          "repo_path": "bios/Nintendo/Nintendo DSi/NDS_Bios7i.bin",
           "cores": [
             "melonds",
             "melonds_ds"
@@ -8100,7 +8100,7 @@
       "sha1": "d2a5af338f09c5cbdd5d7628db5b9c075c69b616",
       "sha256": "1d7c771de535e6e07182fc9820ac32e76c6f0b5bcefd256a861fdfab144761ec",
       "size": 131072,
-      "repo_path": "bios/Nintendo/Nintendo DS/dsi_firmware.bin",
+      "repo_path": "bios/Nintendo/Nintendo DSi/dsi_firmware.bin",
       "cores": null,
       "systems": [
         "nintendo-ds"
@@ -8110,7 +8110,7 @@
           "sha1": "d2a5af338f09c5cbdd5d7628db5b9c075c69b616",
           "sha256": "1d7c771de535e6e07182fc9820ac32e76c6f0b5bcefd256a861fdfab144761ec",
           "size": 131072,
-          "repo_path": "bios/Nintendo/Nintendo DS/dsi_firmware.bin",
+          "repo_path": "bios/Nintendo/Nintendo DSi/dsi_firmware.bin",
           "cores": [
             "melonds",
             "melonds_ds"
@@ -9535,7 +9535,7 @@
       "sha1": "9feb7e3a3570c8686f696de127796add77e19ba9",
       "sha256": "20342b6856ddf0f1702169ce97d98d140a5339a431670a394b793251f83bdcff",
       "size": 5065220,
-      "repo_path": "bios/VTech/VSmile/vsmile.zip",
+      "repo_path": "bios/VTech/V.Smile/vsmilem/vsmile.zip",
       "cores": null,
       "systems": [
         "vtech-vsmile"
@@ -11159,7 +11159,7 @@
       "sha1": "bf861922dcb78c316360e3e742f4f70ff63c9bc3",
       "sha256": "806400ec0df94b0755de6c5b8249d6b6a9866124c5ddbdac198bde22499bfb8b",
       "size": 4194304,
-      "repo_path": "bios/Nintendo/64DD/64DD_IPL_v12_JPN.bin",
+      "repo_path": "bios/Nintendo/Nintendo 64DD/64DD_IPL.bin",
       "cores": [
         "ares"
       ],
@@ -11178,7 +11178,7 @@
       "sha1": "3c5b93ca231550c68693a14f03cea8d5dbd1be9e",
       "sha256": "e9fec87a45fba02399e88064b9e2f8cf0f2106e351c58279a87f05da5bc984ad",
       "size": 4194304,
-      "repo_path": "bios/Nintendo/64DD/64DD_IPL_USA.bin",
+      "repo_path": "bios/Nintendo/Nintendo 64DD/64DD_IPL_US.n64",
       "cores": [
         "ares"
       ],
@@ -11197,7 +11197,7 @@
       "sha1": "10c4173c2a7eb09c6579818f72ef18fa0b6d32de",
       "sha256": "9c2962a8b994a29e4cd04b3a6e4ed730a751414655ab6a9799ebf5fc08b79d44",
       "size": 4194304,
-      "repo_path": "bios/Nintendo/64DD/64DD_IPL_DEV.bin",
+      "repo_path": "bios/Nintendo/Nintendo 64DD/64DD_IPL_DEV.bin",
       "cores": [
         "ares",
         "bizhawk"
@@ -12589,7 +12589,7 @@
       "sha1": "bf861922dcb78c316360e3e742f4f70ff63c9bc3",
       "sha256": "806400ec0df94b0755de6c5b8249d6b6a9866124c5ddbdac198bde22499bfb8b",
       "size": 4194304,
-      "repo_path": "bios/Nintendo/64DD/64DD_IPL_v12_JPN.bin",
+      "repo_path": "bios/Nintendo/Nintendo 64DD/64DD_IPL.bin",
       "cores": [
         "bizhawk",
         "project64"
@@ -12603,7 +12603,7 @@
       "sha1": "3c5b93ca231550c68693a14f03cea8d5dbd1be9e",
       "sha256": "e9fec87a45fba02399e88064b9e2f8cf0f2106e351c58279a87f05da5bc984ad",
       "size": 4194304,
-      "repo_path": "bios/Nintendo/64DD/64DD_IPL_USA.bin",
+      "repo_path": "bios/Nintendo/Nintendo 64DD/64DD_IPL_US.n64",
       "cores": [
         "bizhawk",
         "project64"
@@ -12617,7 +12617,7 @@
       "sha1": "24f67bdea115a2c847c8813a262502ee1607b7df",
       "sha256": "ba65f690eb04ec92db67c0e299e21ad71de087d6d5de8a9cb17a62eaab563c17",
       "size": 16384,
-      "repo_path": "bios/Nintendo/DS/NDS_Bios7.bin",
+      "repo_path": "bios/Nintendo/Nintendo DS/NDS_Bios7.bin",
       "cores": [
         "bizhawk"
       ],
@@ -12630,7 +12630,7 @@
       "sha1": "bfaac75f101c135e32e2aaf541de6b1be4c8c62d",
       "sha256": "1693983a7707ae394786fa526c0552457888a51d4e410d715ef07acd5a540555",
       "size": 4096,
-      "repo_path": "bios/Nintendo/DS/NDS_Bios9.bin",
+      "repo_path": "bios/Nintendo/Nintendo DS/NDS_Bios9.bin",
       "cores": [
         "bizhawk"
       ],
@@ -12643,7 +12643,7 @@
       "sha1": "c7c7570bfe51c3c7c5da3b01331b94e7e7cb4f53",
       "sha256": "12a03016ba07cfd874fc002df49a2c6eb2414eb7cfa395c2043035ec5e9193e8",
       "size": 65536,
-      "repo_path": "bios/Nintendo/DS/NDS_Bios7i.bin",
+      "repo_path": "bios/Nintendo/Nintendo DSi/NDS_Bios7i.bin",
       "cores": [
         "bizhawk"
       ],
@@ -12656,7 +12656,7 @@
       "sha1": "719b9eef33692406d7170ff526069615759c4dfc",
       "sha256": "6e9f70b51dc4f26289b597f14e2513620c2af964374a95f4c5a62b5cad199afc",
       "size": 65536,
-      "repo_path": "bios/Nintendo/DS/NDS_Bios9i.bin",
+      "repo_path": "bios/Nintendo/Nintendo DSi/NDS_Bios9i.bin",
       "cores": [
         "bizhawk"
       ],
@@ -12669,7 +12669,7 @@
       "sha1": "ede9add041614eaa232059c63d8613b83fe4e954",
       "sha256": "23250a16807e891e900004956139cebb6cb0bb66bbf5cea1cd598672a47195f6",
       "size": 262144,
-      "repo_path": "bios/Nintendo/DS/NDS_Firmware_1.bin",
+      "repo_path": "bios/Nintendo/Nintendo DS/NDS_Firmware_1.bin",
       "cores": [
         "bizhawk"
       ],
@@ -12682,7 +12682,7 @@
       "sha1": "22a7547dbc302bcbfb4005cfb5a2d426d3f85ac6",
       "sha256": "892fca81cbb124ffec38f8624dd4dfb9c7eb37334a57aca9c7a033b31b3fb2fb",
       "size": 262144,
-      "repo_path": "bios/Nintendo/DS/NDS_Firmware [b1].bin",
+      "repo_path": "bios/Nintendo/Nintendo DS/NDS_Firmware [b1].bin",
       "cores": [
         "bizhawk"
       ],
@@ -12695,7 +12695,7 @@
       "sha1": "ae22de59fbf3f35ccfbeacaeba6fa87ac5e7b14b",
       "sha256": "dda30945f375dcefa14127a4924f7c8757e56c7c2fb0b61f80302ef586a8da45",
       "size": 262144,
-      "repo_path": "bios/Nintendo/DS/NDS_Firmware [b2].bin",
+      "repo_path": "bios/Nintendo/Nintendo DS/NDS_Firmware [b2].bin",
       "cores": [
         "bizhawk"
       ],
@@ -12721,7 +12721,7 @@
       "sha1": "2ef20b45d12cf00657d4b1bd37a5cc8506923440",
       "sha256": "cbc313e21ec386fd967b498a56bcecb885c2c03e8615432bc44f7afe5bee4d66",
       "size": 262144,
-      "repo_path": "bios/Nintendo/DS/NDS_Firmware_2.bin",
+      "repo_path": "bios/Nintendo/Nintendo DS/NDS_Firmware_2.bin",
       "cores": [
         "bizhawk"
       ],
@@ -12734,7 +12734,7 @@
       "sha1": "87dae2500e889737af51f4a5b5845770a62482f5",
       "sha256": "330c59198faec64b40e96cc875b422d340fc9ab1a9e32e9bd9b7baa1dbe6ba7f",
       "size": 262144,
-      "repo_path": "bios/Nintendo/DS/NDS_Lite_Firmware.bin",
+      "repo_path": "bios/Nintendo/Nintendo DS/NDS_Lite_Firmware.bin",
       "cores": [
         "bizhawk"
       ],
@@ -34854,7 +34854,7 @@
       "sha1": "24f67bdea115a2c847c8813a262502ee1607b7df",
       "sha256": "ba65f690eb04ec92db67c0e299e21ad71de087d6d5de8a9cb17a62eaab563c17",
       "size": 16384,
-      "repo_path": "bios/Nintendo/DS/NDS_Bios7.bin",
+      "repo_path": "bios/Nintendo/Nintendo DS/NDS_Bios7.bin",
       "cores": [
         "nosgba"
       ],
@@ -34867,7 +34867,7 @@
       "sha1": "bfaac75f101c135e32e2aaf541de6b1be4c8c62d",
       "sha256": "1693983a7707ae394786fa526c0552457888a51d4e410d715ef07acd5a540555",
       "size": 4096,
-      "repo_path": "bios/Nintendo/DS/NDS_Bios9.bin",
+      "repo_path": "bios/Nintendo/Nintendo DS/NDS_Bios9.bin",
       "cores": [
         "nosgba"
       ],
@@ -39022,7 +39022,7 @@
       "sha1": "67ddbcd018f03ed74b6e013074d92cc5f1f51c80",
       "sha256": "848aa2423f6755f44a6503302b0afc8a469e37378ea88de4e039846fcab779a1",
       "size": 1073060,
-      "repo_path": "bios/Vircon/Vircon32Bios.v32",
+      "repo_path": "bios/Vircon/Vircon32/Vircon32Bios.v32",
       "cores": [
         "vircon32"
       ]
@@ -40823,7 +40823,7 @@
       "sha1": "c82d60626ac05b49ccec0cfb30001d4a3f31c5b9",
       "sha256": "6b4c33a189794cd04a7b1359cbf3db86a24ca2c69e1cbefda545d0b34f4b5743",
       "size": 251658304,
-      "repo_path": "bios/Nintendo/DS/DSi_Nand_JPN.bin",
+      "repo_path": "bios/Nintendo/Nintendo DSi/DSi_Nand_JPN.bin",
       "cores": [
         "bizhawk",
         "melonds"
@@ -40845,7 +40845,7 @@
       "sha1": "bc4091b6cab4feba3812ac0f23e23d0353481ecf",
       "sha256": "e577488f582921bdbfaa12a6255832cf646f5ad9f29214d78404e6005714e8bc",
       "size": 251658304,
-      "repo_path": "bios/Nintendo/DS/DSi_Nand_EUR.bin",
+      "repo_path": "bios/Nintendo/Nintendo DSi/DSi_Nand_EUR.bin",
       "cores": [
         "bizhawk",
         "melonds"
@@ -40867,7 +40867,7 @@
       "sha1": "ef08ae02c5fbe1a22a208c36e25607f5a9d5ae98",
       "sha256": "42c2c2e4029a05b25a5d61054b29e8192f93d8a33d535d16b3ef128d5dfc83f4",
       "size": 251658304,
-      "repo_path": "bios/Nintendo/DS/DSi_Nand_USA.bin",
+      "repo_path": "bios/Nintendo/Nintendo DSi/DSi_Nand_USA.bin",
       "cores": [
         "bizhawk",
         "melonds"
@@ -40889,7 +40889,7 @@
       "sha1": "7d006f8943171a4d50ae89bf2fca12b764d27e8b",
       "sha256": "4149fc5552f8932f28b7999de506f2b2a6cf3093140b7bfcdcc88ade51d970d2",
       "size": 251658304,
-      "repo_path": "bios/Nintendo/DS/DSi_Nand_AUS.bin",
+      "repo_path": "bios/Nintendo/Nintendo DSi/DSi_Nand_AUS.bin",
       "cores": [
         "bizhawk",
         "melonds"
@@ -40911,7 +40911,7 @@
       "sha1": "4b3b3de0cb2c2aef80daa68394d5b804b8706d9f",
       "sha256": "f5ab272f9c62a63d059934f146bf66c2abbfe5e864d852ab7708f97b53ad0fcb",
       "size": 251658304,
-      "repo_path": "bios/Nintendo/DS/DSi_Nand_CHN.bin",
+      "repo_path": "bios/Nintendo/Nintendo DSi/DSi_Nand_CHN.bin",
       "cores": [
         "bizhawk",
         "melonds"
@@ -40933,7 +40933,7 @@
       "sha1": "4b061953d8f870bcda006ce86ce136f112cc1793",
       "sha256": "9d5ec8ff568b0cde27b9817d9f4901437806265aca59557e69905ed571c120a7",
       "size": 251658304,
-      "repo_path": "bios/Nintendo/DS/DSi_Nand_KOR.bin",
+      "repo_path": "bios/Nintendo/Nintendo DSi/DSi_Nand_KOR.bin",
       "cores": [
         "bizhawk",
         "melonds"
@@ -48915,7 +48915,7 @@
       "sha1": "97bb88094a51457a8dcad98c58be22a2d0fa9a37",
       "sha256": "7323bcc168c5a45ff10749b339960e98314740a734c30d4b9f3337001f9e703d",
       "size": 28795076,
-      "repo_path": "bios/Game Engines/DOOM/freedoom1.wad",
+      "repo_path": "bios/Id Software/Doom/freedoom1.wad",
       "cores": [
         "gzdoom",
         "prboom",
@@ -48928,7 +48928,7 @@
       "sha1": "975f781e6d801c0a23e3caa33f70493efe68a880",
       "sha256": "a8772e088847032510d97ba2312406a6998f21cbab44d4ff10696faa9c0ecd4b",
       "size": 28787748,
-      "repo_path": "bios/Game Engines/DOOM/freedoom2.wad",
+      "repo_path": "bios/Id Software/Doom/freedoom2.wad",
       "cores": [
         "gzdoom",
         "prboom",
@@ -48941,7 +48941,7 @@
       "sha1": "42c36e9d0610bf70c710ca79c7098ef3b1b00059",
       "sha256": "d9adc4d792627e7fc47b09067b15486da724010c71dd12831e1cf8e0755b68ad",
       "size": 22218796,
-      "repo_path": "bios/Game Engines/DOOM/freedm.wad",
+      "repo_path": "bios/Id Software/Doom/freedm.wad",
       "cores": [
         "gzdoom",
         "uzdoom"
@@ -48966,7 +48966,7 @@
       "sha1": "9d071480b3e882cce13fc9be627fb6ea2ec0c2eb",
       "sha256": "e9ed3f53cb011f1ae897b66fcfe46692c8c2d73e147bbe1e36a9bf1f79a4cc63",
       "size": 20417448,
-      "repo_path": "bios/Game Engines/DOOM/blasphem.wad",
+      "repo_path": "bios/Id Software/Doom/blasphem.wad",
       "cores": [
         "gzdoom",
         "prboom",
@@ -49039,7 +49039,7 @@
       "sha1": "f0581563604543060c1dce2f148fd74412adb8b8",
       "sha256": "81662798c479458a1b2a2071a223e09501386157be5679fa9ec511c437471dd2",
       "size": 19191031,
-      "repo_path": "bios/Game Engines/DOOM/chex3.wad",
+      "repo_path": "bios/Id Software/Doom/chex3.wad",
       "cores": [
         "gzdoom",
         "uzdoom"
@@ -49051,7 +49051,7 @@
       "sha1": "9fd331b9d53006af1884e89eaeb97b17b8572b71",
       "sha256": "b838dc9a394fe708df7239994b37c14c21e34f81d4cc921e060fc9c16b8ba240",
       "size": 19321722,
-      "repo_path": "bios/Game Engines/DOOM/hacx.wad",
+      "repo_path": "bios/Id Software/Doom/hacx.wad",
       "cores": [
         "gzdoom",
         "uzdoom"
@@ -49063,7 +49063,7 @@
       "sha1": "f9ce49ed020f560cb1963634b529bc450e598a65",
       "sha256": "7f63d58b4e360825a09ee086e8d733b2cd37cea882d785d2658cbc77ba7b1b74",
       "size": 20504847,
-      "repo_path": "bios/Game Engines/DOOM/hacx2.wad",
+      "repo_path": "bios/Id Software/Doom/hacx2.wad",
       "cores": [
         "gzdoom",
         "uzdoom"
@@ -49075,7 +49075,7 @@
       "sha1": "0da97921963442f2b22959ab941744d815c4f50d",
       "sha256": "519844764bdf262b71f8ebefe48726e1b15077908ad4055cb8e07834c1596f1c",
       "size": 209908382,
-      "repo_path": "bios/Game Engines/DOOM/action2.wad",
+      "repo_path": "bios/Id Software/Doom/action2.wad",
       "cores": [
         "gzdoom",
         "uzdoom"
@@ -49089,7 +49089,7 @@
       "sha1": "d7c5f9095fd5f1ebfe14ecd97ca31503e2a02964",
       "sha256": "b98b74422479f865c12251965f8e69e112c93095fc622d6ca24510b7e3de45fb",
       "size": 58396393,
-      "repo_path": "bios/Game Engines/DOOM/harm1.wad",
+      "repo_path": "bios/Id Software/Doom/harm1.wad",
       "cores": [
         "gzdoom",
         "uzdoom"
@@ -49103,7 +49103,7 @@
       "sha1": "cf1f2f508766666a88af165968001dcb6680141e",
       "sha256": "d076ed44f8d4ec11b2d68f95bd851192e8c7b4a103417e2558825d51447b6901",
       "size": 45202919,
-      "repo_path": "bios/Game Engines/DOOM/square1.pk3",
+      "repo_path": "bios/Id Software/Doom/square1.pk3",
       "cores": [
         "gzdoom",
         "uzdoom"
@@ -49115,7 +49115,7 @@
       "sha1": "b1319702b200d95adf8da277fa237c7c0318a1b6",
       "sha256": "43eebe953c0c0f5b3147cad49d9e43f038018f1a2defa99e529e4e5537783977",
       "size": 83219726,
-      "repo_path": "bios/Game Engines/DOOM/delaweare.wad",
+      "repo_path": "bios/Id Software/Doom/delaweare.wad",
       "cores": [
         "gzdoom",
         "uzdoom"
@@ -49129,7 +49129,7 @@
       "sha1": "a9cc79f7383dffb5447da109b0bd9e283424cff2",
       "sha256": "657edbf16ec17b4baf59e9e9469ed90f9f386f391f24ca80200171af2e878feb",
       "size": 20592999,
-      "repo_path": "bios/Game Engines/DOOM/rotwb.wad",
+      "repo_path": "bios/Id Software/Doom/rotwb.wad",
       "cores": [
         "gzdoom",
         "uzdoom"
@@ -95851,7 +95851,7 @@
       "sha1": "3b71f43ff30f4b15b5cd85dd9e95ebc7e84eb5a3",
       "sha256": "30e14955ebf1352266dc2ff8067e68104607e750abb9d3b36582b8af909fcb58",
       "size": 1048576,
-      "repo_path": "bios/Nintendo/Nintendo DS/dsi_sd_card.bin",
+      "repo_path": "bios/Nintendo/Nintendo DSi/dsi_sd_card.bin",
       "cores": [
         "melonds"
       ]
@@ -95861,7 +95861,7 @@
       "sha1": "b48f44194fe918aaaec5298861479512b581d661",
       "sha256": "f57d9bf00529bec35d58404faff029a193fd2ccda0a83403ec4e6cc32626721b",
       "size": 251658304,
-      "repo_path": "bios/Nintendo/DS/dsi_nand.bin",
+      "repo_path": "bios/Nintendo/Nintendo DSi/dsi_nand.bin",
       "cores": [
         "melonds_ds",
         "melonds"
@@ -95894,7 +95894,7 @@
       "sha1": "bf861922dcb78c316360e3e742f4f70ff63c9bc3",
       "sha256": "806400ec0df94b0755de6c5b8249d6b6a9866124c5ddbdac198bde22499bfb8b",
       "size": 4194304,
-      "repo_path": "bios/Nintendo/64DD/64DD_IPL_v12_JPN.bin",
+      "repo_path": "bios/Nintendo/Nintendo 64DD/64DD_IPL.bin",
       "cores": [
         "mupen64plus_next"
       ],
@@ -96083,7 +96083,7 @@
       "sha1": "3b71f43ff30f4b15b5cd85dd9e95ebc7e84eb5a3",
       "sha256": "30e14955ebf1352266dc2ff8067e68104607e750abb9d3b36582b8af909fcb58",
       "size": 1048576,
-      "repo_path": "bios/Nintendo/Nintendo DS/dsi_sd_card.bin",
+      "repo_path": "bios/Nintendo/Nintendo DSi/dsi_sd_card.bin",
       "cores": [
         "noods"
       ],
@@ -96557,7 +96557,7 @@
       "sha1": "bf861922dcb78c316360e3e742f4f70ff63c9bc3",
       "sha256": "806400ec0df94b0755de6c5b8249d6b6a9866124c5ddbdac198bde22499bfb8b",
       "size": 4194304,
-      "repo_path": "bios/Nintendo/64DD/64DD_IPL_v12_JPN.bin",
+      "repo_path": "bios/Nintendo/Nintendo 64DD/64DD_IPL.bin",
       "cores": [
         "parallel_n64"
       ],
@@ -97124,7 +97124,7 @@
       "sha1": "bf861922dcb78c316360e3e742f4f70ff63c9bc3",
       "sha256": "806400ec0df94b0755de6c5b8249d6b6a9866124c5ddbdac198bde22499bfb8b",
       "size": 4194304,
-      "repo_path": "bios/Nintendo/64DD/64DD_IPL_v12_JPN.bin",
+      "repo_path": "bios/Nintendo/Nintendo 64DD/64DD_IPL.bin",
       "cores": [
         "rosalies-mupen-gui"
       ],
@@ -97143,7 +97143,7 @@
       "sha1": "3c5b93ca231550c68693a14f03cea8d5dbd1be9e",
       "sha256": "e9fec87a45fba02399e88064b9e2f8cf0f2106e351c58279a87f05da5bc984ad",
       "size": 4194304,
-      "repo_path": "bios/Nintendo/64DD/64DD_IPL_USA.bin",
+      "repo_path": "bios/Nintendo/Nintendo 64DD/64DD_IPL_US.n64",
       "cores": [
         "rosalies-mupen-gui"
       ],
@@ -97162,7 +97162,7 @@
       "sha1": "10c4173c2a7eb09c6579818f72ef18fa0b6d32de",
       "sha256": "9c2962a8b994a29e4cd04b3a6e4ed730a751414655ab6a9799ebf5fc08b79d44",
       "size": 4194304,
-      "repo_path": "bios/Nintendo/64DD/64DD_IPL_DEV.bin",
+      "repo_path": "bios/Nintendo/Nintendo 64DD/64DD_IPL_DEV.bin",
       "cores": [
         "rosalies-mupen-gui"
       ],

@@ -6,7 +6,7 @@
   "platform": "romm",
   "display_name": "RomM",
   "version": "1.0",
-  "generated": "2026-10-22T13:12:21Z",
+  "generated": "2026-10-23T07:11:31Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -10729,7 +10729,7 @@
       "sha1": "bf861922dcb78c316360e3e742f4f70ff63c9bc3",
       "sha256": "806400ec0df94b0755de6c5b8249d6b6a9866124c5ddbdac198bde22499bfb8b",
       "size": 4194304,
-      "repo_path": "bios/Nintendo/64DD/64DD_IPL_v12_JPN.bin",
+      "repo_path": "bios/Nintendo/Nintendo 64DD/64DD_IPL.bin",
       "cores": null,
       "systems": [
         "nintendo-64dd"
@@ -10740,7 +10740,7 @@
       "sha1": "24f67bdea115a2c847c8813a262502ee1607b7df",
       "sha256": "ba65f690eb04ec92db67c0e299e21ad71de087d6d5de8a9cb17a62eaab563c17",
       "size": 16384,
-      "repo_path": "bios/Nintendo/DS/NDS_Bios7.bin",
+      "repo_path": "bios/Nintendo/Nintendo DS/NDS_Bios7.bin",
       "cores": null,
       "systems": [
         "nintendo-ds"
@@ -10751,7 +10751,7 @@
       "sha1": "bfaac75f101c135e32e2aaf541de6b1be4c8c62d",
       "sha256": "1693983a7707ae394786fa526c0552457888a51d4e410d715ef07acd5a540555",
       "size": 4096,
-      "repo_path": "bios/Nintendo/DS/NDS_Bios9.bin",
+      "repo_path": "bios/Nintendo/Nintendo DS/NDS_Bios9.bin",
       "cores": null,
       "systems": [
         "nintendo-ds"
@@ -14125,7 +14125,7 @@
       "sha1": "97bb88094a51457a8dcad98c58be22a2d0fa9a37",
       "sha256": "7323bcc168c5a45ff10749b339960e98314740a734c30d4b9f3337001f9e703d",
       "size": 28795076,
-      "repo_path": "bios/Game Engines/DOOM/freedoom1.wad",
+      "repo_path": "bios/Id Software/Doom/freedoom1.wad",
       "cores": [
         "prboom"
       ],
@@ -14153,7 +14153,7 @@
       "sha1": "6d559b7ceece4f5ad457415049711992370d520a",
       "sha256": "5e701c806a8d3a03700f7fef97b7ad62d0aed50fd240dfac26cdf39ac3d0a8d5",
       "size": 14943400,
-      "repo_path": "bios/Game Engines/DOOM/doom2.wad",
+      "repo_path": "bios/Id Software/Doom/v1.666/doom2.wad",
       "cores": [
         "prboom"
       ],
@@ -14209,7 +14209,7 @@
       "sha1": "975f781e6d801c0a23e3caa33f70493efe68a880",
       "sha256": "a8772e088847032510d97ba2312406a6998f21cbab44d4ff10696faa9c0ecd4b",
       "size": 28787748,
-      "repo_path": "bios/Game Engines/DOOM/freedoom2.wad",
+      "repo_path": "bios/Id Software/Doom/freedoom2.wad",
       "cores": [
         "prboom"
       ],

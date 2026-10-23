@@ -6,7 +6,7 @@
   "platform": "misterfpga",
   "display_name": "MiSTer FPGA",
   "version": "1.0",
-  "generated": "2026-10-22T05:12:35Z",
+  "generated": "2026-10-23T07:11:31Z",
   "base_destination": "games",
   "detect": [
     {
@@ -462,7 +462,7 @@
       "sha1": "bf861922dcb78c316360e3e742f4f70ff63c9bc3",
       "sha256": "806400ec0df94b0755de6c5b8249d6b6a9866124c5ddbdac198bde22499bfb8b",
       "size": 4194304,
-      "repo_path": "bios/Nintendo/64DD/64DD_IPL_v12_JPN.bin",
+      "repo_path": "bios/Nintendo/Nintendo 64DD/64DD_IPL.bin",
       "cores": null,
       "systems": [
         "nintendo-64"
@@ -473,7 +473,7 @@
       "sha1": "10c4173c2a7eb09c6579818f72ef18fa0b6d32de",
       "sha256": "9c2962a8b994a29e4cd04b3a6e4ed730a751414655ab6a9799ebf5fc08b79d44",
       "size": 4194304,
-      "repo_path": "bios/Nintendo/64DD/64DD_IPL_DEV.bin",
+      "repo_path": "bios/Nintendo/Nintendo 64DD/64DD_IPL_DEV.bin",
       "cores": null,
       "systems": [
         "nintendo-64"
@@ -484,7 +484,7 @@
       "sha1": "3c5b93ca231550c68693a14f03cea8d5dbd1be9e",
       "sha256": "e9fec87a45fba02399e88064b9e2f8cf0f2106e351c58279a87f05da5bc984ad",
       "size": 4194304,
-      "repo_path": "bios/Nintendo/64DD/64DD_IPL_USA.bin",
+      "repo_path": "bios/Nintendo/Nintendo 64DD/64DD_IPL_US.n64",
       "cores": null,
       "systems": [
         "nintendo-64"

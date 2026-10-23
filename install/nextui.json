@@ -6,7 +6,7 @@
   "platform": "nextui",
   "display_name": "NextUI",
   "version": "1.0",
-  "generated": "2026-10-22T13:12:21Z",
+  "generated": "2026-10-23T07:11:31Z",
   "base_destination": "",
   "detect": [
     {
@@ -3043,7 +3043,7 @@
       "sha1": "97bb88094a51457a8dcad98c58be22a2d0fa9a37",
       "sha256": "7323bcc168c5a45ff10749b339960e98314740a734c30d4b9f3337001f9e703d",
       "size": 28795076,
-      "repo_path": "bios/Game Engines/DOOM/freedoom1.wad",
+      "repo_path": "bios/Id Software/Doom/freedoom1.wad",
       "cores": [
         "prboom"
       ],
@@ -3065,7 +3065,7 @@
       "sha1": "6d559b7ceece4f5ad457415049711992370d520a",
       "sha256": "5e701c806a8d3a03700f7fef97b7ad62d0aed50fd240dfac26cdf39ac3d0a8d5",
       "size": 14943400,
-      "repo_path": "bios/Game Engines/DOOM/doom2.wad",
+      "repo_path": "bios/Id Software/Doom/v1.666/doom2.wad",
       "cores": [
         "prboom"
       ],
@@ -3109,7 +3109,7 @@
       "sha1": "975f781e6d801c0a23e3caa33f70493efe68a880",
       "sha256": "a8772e088847032510d97ba2312406a6998f21cbab44d4ff10696faa9c0ecd4b",
       "size": 28787748,
-      "repo_path": "bios/Game Engines/DOOM/freedoom2.wad",
+      "repo_path": "bios/Id Software/Doom/freedoom2.wad",
       "cores": [
         "prboom"
       ],
@@ -3142,7 +3142,7 @@
       "sha1": "9d071480b3e882cce13fc9be627fb6ea2ec0c2eb",
       "sha256": "e9ed3f53cb011f1ae897b66fcfe46692c8c2d73e147bbe1e36a9bf1f79a4cc63",
       "size": 20417448,
-      "repo_path": "bios/Game Engines/DOOM/blasphem.wad",
+      "repo_path": "bios/Id Software/Doom/blasphem.wad",
       "cores": [
         "prboom"
       ],
