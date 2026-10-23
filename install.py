@@ -9023,6 +9023,18 @@ def _is_terminal(stream: TextIO) -> bool:
         return False
 
 
+def _output_kind(stream: TextIO) -> str:
+    """"pipe" or "file" for what stream writes to, "" when neither is known.
+    `| tee log.txt` shows every line, `> log.txt` none of them."""
+    try:
+        mode = os.fstat(stream.fileno()).st_mode
+    except (OSError, ValueError, AttributeError, io.UnsupportedOperation):
+        return ""
+    if stat.S_ISFIFO(mode) or stat.S_ISSOCK(mode):
+        return "pipe"
+    return "file" if stat.S_ISREG(mode) else ""
+
+
 def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
     """One run of the installer, once the options are read."""
     KEPT.reset()
@@ -9035,8 +9047,12 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
         # to a prompt nobody could see.
         interactive = False
         if not listing and not args.check:
-            print("Output goes to a file, so nothing is asked: the run goes on as "
-                  "with --no-input.", file=sys.stderr)
+            kind = _output_kind(real_stdout)
+            where = f"Output goes to a {kind}" if kind else "Output is not a terminal"
+            undo = "the pipe" if kind == "pipe" else "the redirection"
+            print(f"{where}, so nothing is asked: the run goes on as with --no-input. "
+                  f"Add --no-input to say so, or run it without {undo} to answer.",
+                  file=sys.stderr)
     print(f"{term.bold('RetroBIOS')} {term.dim(installer_id())}\n")
 
     os_type = detect_os()

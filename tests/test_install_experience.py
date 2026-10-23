@@ -618,6 +618,40 @@ class OutputToAFileAsksNothing(unittest.TestCase):
         self.assertNotIn("Enter) install everything", proc.stdout)
         self.assertEqual(len(installed), len(FakeRepository.PAYLOADS))
 
+    @unittest.skipIf(os.name == "nt", "a pseudo-terminal for stdin")
+    def test_a_pipe_is_named_a_pipe(self):
+        """`install.py | tee log.txt` was told its output went to a file."""
+        import pty
+
+        master, slave = pty.openpty()
+        self.addCleanup(os.close, master)
+        self.addCleanup(os.close, slave)
+        with FakeRepository() as repo:
+            piped = subprocess.run(
+                [*repo.command(), "--dry-run"], env=repo.env(), stdin=slave,
+                capture_output=True, text=True, timeout=60, check=False)
+            log = repo.root / "log.txt"
+            with open(log, "w", encoding="utf-8") as handle:
+                filed = subprocess.run(
+                    [*repo.command(), "--dry-run"], env=repo.env(), stdin=slave,
+                    stdout=handle, stderr=subprocess.PIPE, text=True, timeout=60,
+                    check=False)
+        self.assertIn("Output goes to a pipe, so nothing is asked", piped.stderr)
+        self.assertIn("run it without the pipe to answer", piped.stderr)
+        self.assertIn("Output goes to a file, so nothing is asked", filed.stderr)
+        self.assertIn("run it without the redirection to answer", filed.stderr)
+        for proc in (piped, filed):
+            self.assertIn("Add --no-input to say so", proc.stderr)
+
+    def test_the_kind_of_output(self):
+        self.assertEqual(install._output_kind(io.StringIO()), "")
+        read, write = os.pipe()
+        with open(read, "rb") as reader, open(write, "w") as writer:
+            self.assertEqual(install._output_kind(writer), "pipe")
+            del reader
+        with tempfile.TemporaryFile("w", dir=REPO_ROOT / "tmp") as handle:
+            self.assertEqual(install._output_kind(handle), "file")
+
 
 class _Tty(io.StringIO):
     def isatty(self) -> bool:
