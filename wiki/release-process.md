@@ -218,16 +218,19 @@ python scripts/pipeline.py --include-archived
 #    which install.py --check reads to name a part missing from a folder.
 python scripts/split_pack.py dist/
 
-# 2b. The handheld port, RetroBIOS.zip, built from ports/RetroBIOS with the
-#     installer the bootstraps pin. It is a release file, listed in the
-#     checksums below, and check_release.py holds it to them.
+# 2b. The handheld launchers, each carrying the installer the bootstraps pin:
+#     RetroBIOS.zip (the PortMaster port), RetroBIOS-batocera.zip (Batocera
+#     and Knulli Ports), RetroBIOS.muxapp (muOS Applications) and
+#     RetroBIOS-tools.zip (the Tools menu of ArkOS, dArkOS, ROCKNIX, JELOS,
+#     AmberELEC). They are release files, listed in the checksums below, and
+#     check_release.py compares each asset with its line there.
 python scripts/build_port.py
 
 # 3. Checksums of the files as published, then sign the list. The checksums
 #    answer corruption, and the signature answers a rewritten release, which is
 #    the one thing a checksum published beside its own artifacts cannot
 #    answer.
-(cd dist && sha256sum *.zip > SHA256SUMS.txt)
+(cd dist && sha256sum *.zip RetroBIOS.muxapp > SHA256SUMS.txt)
 ssh-keygen -Y sign -f ~/.ssh/retrobios_signing -n file dist/SHA256SUMS.txt
 
 # 4. Record what each pack holds, read from the archives just checked:
@@ -249,7 +252,7 @@ python scripts/release_notes.py --whats-new tmp/whats-new.md --output tmp/notes.
 #    A public release with half its assets is a broken download for everyone
 #    during the whole upload.
 gh release create "v${DATE}" --draft --title "BIOS Pack v${DATE}" --notes-file tmp/notes.md
-for f in dist/SHA256SUMS.txt dist/SHA256SUMS.txt.sig dist/*.zip; do
+for f in dist/SHA256SUMS.txt dist/SHA256SUMS.txt.sig dist/*.zip dist/RetroBIOS.muxapp; do
   [ -f "$f" ] && gh release upload "v${DATE}" "$f#$(basename "$f")" --clobber
 done
 #    A count does not see a failed upload beside a stray file, nor a part

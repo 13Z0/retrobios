@@ -1,7 +1,12 @@
 #!/bin/bash
+# shellcheck shell=bash
 # RetroBIOS screens, drawn by PortMaster's own GUI (pugwash fifo_control)
 # through the functions of PortMasterDialog.txt. Sourced by RetroBIOS.sh
-# after PortMasterDialog.txt.
+# after PortMasterDialog.txt and tui.txt.
+#
+# They are the port's fallback: RetroBIOS.sh opens them only when no terminal
+# can show install.py --tui, that is under a compositor that has neither foot
+# nor xterm, or when the interface refuses the console it was given.
 #
 # Only what PortMaster 2024.02.26 and the 8.5.23 copy JELOS and KOLOS ship
 # is used: PortMasterDialogInit, PortMasterDialog, PortMasterDialogResult,
@@ -13,95 +18,40 @@
 # and their wait for an answer gives up after 30 seconds: rb_answer keeps
 # waiting while pugwash is alive.
 #
-# Inputs: GAMEDIR, controlfolder, ESUDO, and RB_INSTALL (install.py).
+# pugwash starts in "no-check" mode, never "no-harbour": only with
+# HarbourMaster loaded does it apply the A/B fix PortMaster keeps for Miyoo,
+# TrimUI, Knulli and the Xbox-layout ArkOS and AmberELEC pads.
+#
+# Inputs: GAMEDIR, controlfolder, ESUDO, and what tui.txt defines
+# (RB_INSTALL, RB_STATE, RB_LOG, rb_py, rb_online, rb_find_pack).
 
-RB_STATE="${RB_STATE:-$GAMEDIR/run}"
-RB_LOG="${RB_LOG:-$GAMEDIR/log.txt}"
-RB_INSTALL="${RB_INSTALL:-$GAMEDIR/install.py}"
 RB_EVENTS="${RB_EVENTS:-$GAMEDIR/rbevents.py}"
-RB_RUNTIME="python_3.11"
-RB_PC_ROUTE="On a computer, with this SD card mounted, the same installer fills the card: install.py --platform NAME --dest BIOS-FOLDER-ON-THE-CARD. Instructions: abdess.github.io/retrobios/wiki/installer"
-RB_PYTHON=""
-RB_PYTHONHOME=""
-RB_MOUNTED=""
-RB_PYTHON_PROBLEM=""
+RB_SOURCE_ARGS=()
+# Read by tui.txt's rb_python_text.
+# shellcheck disable=SC2034
+RB_PYTHON_PROBLEM="${RB_PYTHON_PROBLEM:-}"
 
-rb_arch() {
-  uname -m
-}
+# --- Python runtime -------------------------------------------------------
 
-rb_py() {
-  if [ -n "$RB_PYTHONHOME" ]; then
-    PYTHONHOME="$RB_PYTHONHOME" "$RB_PYTHON" "$@"
-  else
-    "$RB_PYTHON" "$@"
-  fi
-}
-
-# --- Python ---------------------------------------------------------------
-
-rb_python_ok() {
-  "$@" -c 'import sys; sys.exit(0 if sys.version_info >= (3, 8) else 1)' >/dev/null 2>&1
-}
-
-# The OS python3 when it is 3.8 or newer, else PortMaster's python_3.11
-# runtime on aarch64, mounted as PortMaster's own Python ports do. Sets
-# RB_PYTHON_PROBLEM when neither can run install.py.
-rb_select_python() {
-  if command -v python3 >/dev/null 2>&1 && rb_python_ok python3; then
-    RB_PYTHON="python3"
-    return 0
-  fi
-  if [ "$(rb_arch)" != "aarch64" ]; then
-    RB_PYTHON_PROBLEM="old"
+# tui.txt's rb_runtime calls this when the runtime is not on the card yet:
+# PortMaster downloads it the way its own ports get theirs.
+rb_fetch_runtime() {
+  local squashfs="$1" answer
+  if [ -z "$(PortMasterIPCheck)" ]; then
+    RB_PYTHON_PROBLEM="runtime_offline"
     return 1
   fi
-  rb_runtime
-}
-
-rb_runtime() {
-  local python_dir="$HOME/$RB_RUNTIME"
-  local squashfs="$controlfolder/libs/$RB_RUNTIME.squashfs"
-  if [ ! -f "$squashfs" ]; then
-    if [ -z "$(PortMasterIPCheck)" ]; then
-      RB_PYTHON_PROBLEM="runtime_offline"
-      return 1
-    fi
-    PortMasterDialogInit "no-check"
-    PortMasterDialog "messages_begin"
-    PortMasterDialog "message" "This system's Python is older than 3.8. Downloading PortMaster's $RB_RUNTIME runtime."
-    local answer
-    answer=$(rb_answer "check_runtime" "$RB_RUNTIME.squashfs")
-    PortMasterDialog "messages_end"
-    PortMasterDialogExit
-    if [ "$answer" != "OKAY" ] || [ ! -f "$squashfs" ]; then
-      RB_PYTHON_PROBLEM="runtime_failed"
-      return 1
-    fi
-  fi
-  mkdir -p "$python_dir"
-  if [ "${PM_CAN_MOUNT:-Y}" != "N" ]; then
-    $ESUDO umount "$python_dir" >/dev/null 2>&1
-  fi
-  if ! $ESUDO mount "$squashfs" "$python_dir"; then
-    RB_PYTHON_PROBLEM="runtime_failed"
-    return 1
-  fi
-  RB_MOUNTED="$python_dir"
-  RB_PYTHON="$python_dir/bin/python3"
-  RB_PYTHONHOME="$python_dir"
-  if ! PYTHONHOME="$python_dir" rb_python_ok "$RB_PYTHON"; then
+  PortMasterDialogInit "no-check"
+  PortMasterDialog "messages_begin"
+  PortMasterDialog "message" "This system's Python is older than 3.8. Downloading PortMaster's $RB_RUNTIME runtime."
+  answer=$(rb_answer "check_runtime" "$RB_RUNTIME.squashfs")
+  PortMasterDialog "messages_end"
+  PortMasterDialogExit
+  if [ "$answer" != "OKAY" ] || [ ! -f "$squashfs" ]; then
     RB_PYTHON_PROBLEM="runtime_failed"
     return 1
   fi
   return 0
-}
-
-rb_release_python() {
-  if [ -n "$RB_MOUNTED" ] && [ "${PM_CAN_MOUNT:-Y}" != "N" ]; then
-    $ESUDO umount "$RB_MOUNTED" >/dev/null 2>&1
-  fi
-  RB_MOUNTED=""
 }
 
 # --- Dialog primitives ----------------------------------------------------
@@ -174,12 +124,19 @@ rb_notice() {
 
 # --- Reading install.py ---------------------------------------------------
 
-# Run a --check and read its records into RB_* variables.
+# Run a --check and read its records into RB_* variables. Without a network
+# the files come from a pack on the card, when there is one.
 rb_check() {
   mkdir -p "$RB_STATE"
   PortMasterDialog "messages_begin"
   PortMasterDialog "message" "Reading the BIOS folder and the file list."
-  rb_py "$RB_INSTALL" --check --events "${RB_PLATFORM_ARGS[@]}" > "$RB_STATE/check.jsonl" 2>> "$RB_LOG"
+  RB_SOURCE_ARGS=()
+  if ! rb_online; then
+    local pack
+    pack=$(rb_find_pack)
+    [ -n "$pack" ] && RB_SOURCE_ARGS=(--from-pack "$pack")
+  fi
+  rb_py "$RB_INSTALL" --check --events "${RB_SOURCE_ARGS[@]}" "${RB_PLATFORM_ARGS[@]}" > "$RB_STATE/check.jsonl" 2>> "$RB_LOG"
   PortMasterDialog "messages_end"
   rb_py "$RB_EVENTS" status "$RB_STATE/check.jsonl" > "$RB_STATE/status.tsv" 2>> "$RB_LOG"
   rb_read_status "$RB_STATE/status.tsv"
@@ -235,15 +192,7 @@ rb_pending() {
 # --- Screens --------------------------------------------------------------
 
 rb_screen_no_python() {
-  local found
-  found=$(python3 --version 2>&1 | awk '{print $2}')
-  local text
-  case "$RB_PYTHON_PROBLEM" in
-    old) text="Python 3.8 or newer is needed. This system has ${found:-none}, and PortMaster's Python runtime exists for aarch64 only, and this device is $(rb_arch)." ;;
-    runtime_offline) text="Python 3.8 or newer is needed. This system has ${found:-none}, and PortMaster's $RB_RUNTIME runtime needs a connection to download." ;;
-    *) text="Python 3.8 or newer is needed. This system has ${found:-none}, and PortMaster's $RB_RUNTIME runtime could not be installed or run." ;;
-  esac
-  rb_notice "Python 3.8 or newer is needed" "$text $RB_PC_ROUTE" "quit" "Quit" > /dev/null
+  rb_notice "Python 3.8 or newer is needed" "$(rb_python_text)" "quit" "Quit" > /dev/null
 }
 
 # What the check found when it found nothing to show: no platform, no
@@ -256,7 +205,7 @@ rb_screen_problem() {
   elif [ "$RB_DETECTED" = "0" ]; then
     rb_notice "No BIOS folder found" "install.py knows no BIOS folder on $RB_OS_NAME. $RB_PC_ROUTE" "check" "Check again" "quit" "Quit"
   elif [ "$RB_ERROR" = "network" ]; then
-    rb_notice "No connection" "$RB_OS_NAME, BIOS folder $RB_BIOS_DIR. The list of files to check comes from the internet, and so do the files: without a connection nothing can be checked or downloaded. Connect to Wi-Fi, then check again." "check" "Check again" "quit" "Quit"
+    rb_notice "No connection" "$RB_OS_NAME, BIOS folder $RB_BIOS_DIR. $(rb_pack_text)" "check" "Check again" "quit" "Quit"
   elif [ "$RB_ERROR" = "invalid" ]; then
     rb_notice "The file list is newer than this port" "$RB_ERROR_TEXT. Update RetroBIOS from PortMaster, or use the installer on a computer. $RB_PC_ROUTE" "check" "Check again" "quit" "Quit"
   else
@@ -354,7 +303,7 @@ rb_update() {
   PortMasterDialog "message" "Downloading to $RB_BIOS_DIR."
   PortMasterDialog "progress" "Starting" 0 1
   local kind a b c d e f
-  rb_py "$RB_INSTALL" --events "${RB_PLATFORM_ARGS[@]}" "${args[@]}" 2>> "$RB_LOG" \
+  rb_py "$RB_INSTALL" --events "${RB_SOURCE_ARGS[@]}" "${RB_PLATFORM_ARGS[@]}" "${args[@]}" 2>> "$RB_LOG" \
     | rb_py "$RB_EVENTS" follow "$RB_STATE/summary.tsv" 2>> "$RB_LOG" \
     | while IFS=$'\t' read -r kind a b c d e f; do
         case "$kind" in
@@ -425,15 +374,14 @@ rb_screen_summary() {
 
 # --- Flow -----------------------------------------------------------------
 
+# The screens, once rb_select_python has run.
 rb_main() {
-  if ! rb_select_python; then
-    PortMasterDialogInit "no-harbour"
+  PortMasterDialogInit "no-check"
+  if [ -z "$RB_PYTHON" ]; then
     rb_screen_no_python
     PortMasterDialogExit
-    rb_release_python
     return 1
   fi
-  PortMasterDialogInit "no-harbour"
   RB_PLATFORM_ARGS=()
   local action systems chosen
   rb_check
@@ -466,6 +414,5 @@ rb_main() {
     esac
   done
   PortMasterDialogExit
-  rb_release_python
   return 0
 }

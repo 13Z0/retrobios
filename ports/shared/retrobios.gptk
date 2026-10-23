@@ -1,0 +1,31 @@
+# RetroBIOS full-screen interface: the menu keys dArkOS, AmberELEC and the
+# PortMaster dialog ports give gptokeyb. A chooses, B goes back, X ticks a
+# system, Y opens the options, L1 and R1 page through a list. Start + Select
+# closes the interface (gptokeyb kill mode).
+back = esc
+start = enter
+guide = \"
+a = enter
+b = esc
+x = space
+y = tab
+l1 = pageup
+l2 = \"
+l3 = \"
+r1 = pagedown
+r2 = \"
+r3 = \"
+up = up
+up = repeat
+down = down
+down = repeat
+left = left
+right = right
+left_analog_up = up
+left_analog_down = down
+left_analog_left = left
+left_analog_right = right
+right_analog_up = \"
+right_analog_down = \"
+right_analog_left = \"
+right_analog_right = \"

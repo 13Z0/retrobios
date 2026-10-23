@@ -1,9 +1,10 @@
-"""The PortMaster port: its archive, its event reader and its screens.
+"""The PortMaster port: its archive, its event reader and its fallback screens.
 
 The screens are driven here with PortMasterDialog's functions replaced by
 stubs that record each command and answer from a script, and with a fake
 install.py that writes canned --events streams. What a device adds (pugwash
-drawing, the pad, mount, the network) is not exercised.
+drawing, the pad, mount, the network) is not exercised. The full-screen
+route of the port, and the other launchers, are in test_handheld_launchers.
 """
 from __future__ import annotations
 
@@ -12,6 +13,7 @@ import importlib.util
 import io
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -22,6 +24,7 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 PORT = REPO_ROOT / "ports" / "RetroBIOS"
+SHARED = REPO_ROOT / "ports" / "shared"
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 
 import build_port  # noqa: E402
@@ -29,8 +32,7 @@ import build_port  # noqa: E402
 _spec = importlib.util.spec_from_file_location("install", REPO_ROOT / "install.py")
 install = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(install)
-_spec = importlib.util.spec_from_file_location(
-    "rbevents", PORT / "retrobios" / "rbevents.py")
+_spec = importlib.util.spec_from_file_location("rbevents", SHARED / "rbevents.py")
 rbevents = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(rbevents)
 
@@ -46,13 +48,6 @@ def _tempdir(test: unittest.TestCase) -> Path:
 
 
 class EveryScriptParses(unittest.TestCase):
-    def test_bash_n(self):
-        for script in SCRIPTS:
-            with self.subTest(script=script.name):
-                proc = subprocess.run(["bash", "-n", str(script)], capture_output=True,
-                                      text=True, check=False)
-                self.assertEqual(proc.returncode, 0, proc.stderr)
-
     def test_only_dialog_functions_the_oldest_releases_have(self):
         """PortMaster 2024.02.26 and 8.5.23 define these in PortMasterDialog.txt,
         and have no funcs.txt: pm_message and the rest would be undefined."""
@@ -62,13 +57,21 @@ class EveryScriptParses(unittest.TestCase):
                     "messages_begin", "message", "messages_end", "progress",
                     "progress_clear", "check_runtime"}
         text = "\n".join(path.read_text(encoding="utf-8") for path in SCRIPTS)
-        import re  # noqa: PLC0415
         used = set(re.findall(r"\b(PortMasterDialog\w*|PortMasterIPCheck)\b", text))
         self.assertLessEqual(used - {"PortMasterDialog.txt"}, known)
         self.assertNotRegex(text, r"\bpm_message\b|\bpm_platform_helper\b")
         sent = set(re.findall(r'(?:PortMasterDialog|rb_answer) "(\w+)"', text))
         self.assertLessEqual(sent, commands)
         self.assertNotIn("register_clear_info", text)
+
+    def test_pugwash_applies_the_button_layout(self):
+        """Under no-harbour pugwash skips apply_button_mapping, so A and B
+        land swapped on the devices PortMaster fixes (PortMaster-GUI
+        pugwash/main.py, app.py): every start is no-check."""
+        text = (PORT / "retrobios" / "screens.txt").read_text(encoding="utf-8")
+        inits = re.findall(r'PortMasterDialogInit "([\w-]+)"', text)
+        self.assertTrue(inits)
+        self.assertEqual(set(inits), {"no-check"})
 
 
 class ThePortArchive(unittest.TestCase):
@@ -90,7 +93,8 @@ class ThePortArchive(unittest.TestCase):
         self.assertEqual({n.split("/")[0] for n in names if "/" in n}, {"retrobios"})
         self.assertEqual([n for n in names if n.endswith(".sh")], ["RetroBIOS.sh"])
         for member in ("retrobios/install.py", "retrobios/rbevents.py",
-                       "retrobios/screens.txt", "retrobios/gameinfo.xml",
+                       "retrobios/screens.txt", "retrobios/tui.txt",
+                       "retrobios/retrobios.gptk", "retrobios/gameinfo.xml",
                        "retrobios/retrobios.md", "retrobios/licenses/LICENSE-retrobios.txt"):
             self.assertIn(member, names)
         self.assertEqual(port["version"], 4)
@@ -105,21 +109,6 @@ class ThePortArchive(unittest.TestCase):
         self.assertEqual(bundled, build_port.pinned_installer_sha256())
         install_sh = (REPO_ROOT / "install.sh").read_text(encoding="utf-8")
         self.assertIn(f'DEFAULT_INSTALL_SHA256="{bundled}"', install_sh)
-
-    def test_an_unpinned_installer_is_refused(self):
-        root = _tempdir(self)
-        for name in ("install.py", "install.sh", "LICENSE", "NOTICE"):
-            shutil.copy(REPO_ROOT / name, root / name)
-        shutil.copytree(PORT, root / "ports" / "RetroBIOS")
-        with (root / "install.py").open("a") as fh:
-            fh.write("\n")
-        with self.assertRaises(ValueError):
-            build_port.build_port(self.out / "x.zip", root)
-
-    def test_reproducible(self):
-        first = self._build("a.zip").read_bytes()
-        second = self._build("b.zip").read_bytes()
-        self.assertEqual(first, second)
 
 
 class EventRecords(unittest.TestCase):
@@ -277,10 +266,12 @@ PortMasterDialogResult() {
     *) echo "$answer" ;;
   esac
 }
+source "$RB_SHARED/tui.txt"
 source "$GAMEDIR/screens.txt"
 if [ -n "$FAKE_ARCH" ]; then
   rb_arch() { echo "$FAKE_ARCH"; }
 fi
+rb_select_python
 rb_main
 trace STATUS "$?"
 '''
@@ -289,7 +280,7 @@ trace STATUS "$?"
 class TheScreens(unittest.TestCase):
     """Which screens the port shows, scenario by scenario."""
 
-    def run_port(self, scenario: str, answers: list[str], **env: str) -> list[tuple]:
+    def run_port(self, scenario: str, answers: list[str], before=None, **env: str) -> list[tuple]:
         work = _tempdir(self)
         (work / "install.py").write_text(FAKE_INSTALL)
         (work / "driver.sh").write_text(DRIVER)
@@ -299,12 +290,21 @@ class TheScreens(unittest.TestCase):
         # The oldest Python install.py supports, where it is installed: the
         # event reader runs on whatever the device has.
         (bin_dir / "python3").symlink_to(shutil.which("python3.8") or sys.executable)
+        # The network probe: 0 answers, 7 cannot connect.
+        (bin_dir / "curl").write_text('#!/bin/sh\nexit "${FAKE_CURL:-0}"\n')
+        (bin_dir / "curl").chmod(0o755)
+        (work / "packs").mkdir()
+        if before is not None:
+            before(work)
         self.work = work
         full_env = {
             **os.environ,
             "PATH": f"{bin_dir}{os.pathsep}{os.environ['PATH']}",
             "HOME": str(work),
             "GAMEDIR": str(PORT / "retrobios"),
+            "RB_SHARED": str(SHARED),
+            "RB_EVENTS": str(SHARED / "rbevents.py"),
+            "RB_PACK_PATH": str(work / "packs"),
             "controlfolder": str(work / "PortMaster"),
             "ESUDO": "",
             "RB_STATE": str(work / "run"),
@@ -367,7 +367,7 @@ class TheScreens(unittest.TestCase):
         self.assertEqual(self.lists(shown), [("menu", ["status", "check", "quit"])])
         menu = shown[[s[0] for s in shown].index("list")][2]
         self.assertEqual(menu["status"][0], "Fake OS 1.0: all 3 BIOS files present")
-        self.assertEqual(shown[0], ("INIT", "no-harbour"))
+        self.assertEqual(shown[0], ("INIT", "no-check"))
         self.assertEqual(shown[-2:], [("EXIT",), ("STATUS", "0")])
         self.assertEqual(self.calls(), ["--check --events"])
 
@@ -417,8 +417,26 @@ class TheScreens(unittest.TestCase):
         self.assertEqual(self.lists(shown), [("notice", ["info", "check", "quit"])])
         notice = shown[[s[0] for s in shown].index("list")][2]
         self.assertEqual(notice["info"][0], "No connection")
-        self.assertIn("Connect to Wi-Fi", notice["info"][1])
+        self.assertIn("connect to Wi-Fi", notice["info"][1])
         self.assertIn("/roms/bios", notice["info"][1])
+        # Where a pack goes, and which one.
+        self.assertIn(f"copy it into {self.work / 'packs'} on the SD card", notice["info"][1])
+        self.assertIn("whose name contains RetroArch", notice["info"][1])
+
+    def test_offline_with_a_pack_on_the_card(self):
+        pack = None
+
+        def place(work: Path) -> None:
+            nonlocal pack
+            pack = work / "packs" / "RetroArch_Lakka_v1.22.2_BIOS_Pack.zip"
+            pack.write_bytes(b"")
+
+        shown = self.run_port("missing", ["update", "quit"], FAKE_CURL="7", before=place)
+        self.assertEqual(self.calls()[:2], [
+            f"--check --events --from-pack {pack}",
+            f"--events --from-pack {pack} --platform retroarch",
+        ])
+        self.assertEqual(shown[-1], ("STATUS", "0"))
 
     def test_detection_failure(self):
         shown = self.run_port("nodetect", ["check", "quit"])

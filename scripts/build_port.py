@@ -1,14 +1,25 @@
 #!/usr/bin/env python3
-"""Build the PortMaster port in ports/RetroBIOS into dist/RetroBIOS.zip.
+"""Build the handheld launchers in ports/ into their archives in dist/.
 
-The archive has the layout PortMaster's own release build gives a port
+    RetroBIOS.zip            the PortMaster port (ports/RetroBIOS)
+    RetroBIOS-batocera.zip   Batocera and Knulli, from Ports (ports/batocera)
+    RetroBIOS.muxapp         muOS, from Applications (ports/muos)
+    RetroBIOS-tools.zip      the Tools menu of ArkOS, dArkOS, ROCKNIX, JELOS
+                             and AmberELEC (ports/tools)
+
+Each carries ports/shared (tui.txt, which runs the full-screen interface,
+rbevents.py and the controller mapping) beside its own launcher. The
+PortMaster archive has the layout PortMaster's own release build gives a port
 (PortMaster-New tools/build_release.py): the launch script at the top, and
 one folder holding port.json, gameinfo.xml, the README as <name>.md, the
-licenses and the port's files. install.py is copied from the repository
-root, and only when it is the installer the bootstraps pin, so the port
-runs the same bytes as the one-line command of the same commit. Members are
-written as the packs write theirs: fixed timestamps, sorted names, the
-executable bit read from the source, so the same tree gives the same zip.
+licenses and the port's files. A muOS application archive is extracted into
+the applications folder, so its top folder is the application.
+
+install.py is copied from the repository root, and only when it is the
+installer the bootstraps pin, so every launcher runs the same bytes as the
+one-line command of the same commit. Members are written as the packs write
+theirs: fixed timestamps, sorted names, the executable bit read from the
+source, so the same tree gives the same archives.
 
 Usage:
     python scripts/build_port.py
@@ -27,10 +38,14 @@ from pathlib import Path
 from artifacts import ArtifactLockBusy, artifact_lock
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-PORT_SOURCE = REPO_ROOT / "ports" / "RetroBIOS"
 PORT_DIR = "retrobios"
 PORT_SCRIPT = "RetroBIOS.sh"
 PORT_ZIP = "RetroBIOS.zip"
+BATOCERA_ZIP = "RetroBIOS-batocera.zip"
+MUOS_APP = "RetroBIOS.muxapp"
+TOOLS_ZIP = "RetroBIOS-tools.zip"
+# Every archive a release attaches, in the order the release notes list them.
+ARCHIVES = (PORT_ZIP, BATOCERA_ZIP, MUOS_APP, TOOLS_ZIP)
 _PIN = re.compile(r'^DEFAULT_INSTALL_SHA256="([0-9a-f]{64})"$', re.MULTILINE)
 
 
@@ -42,66 +57,115 @@ def pinned_installer_sha256(root: Path = REPO_ROOT) -> str:
     return found.group(1)
 
 
-def port_members(root: Path = REPO_ROOT) -> list[tuple[str, Path]]:
-    """(name in the archive, source file) for every member, sorted by name."""
-    source = root / "ports" / "RetroBIOS"
+def _engine(folder: str, root: Path, mapping: bool = True) -> list[tuple[str, Path]]:
+    """What every launcher runs: the installer, the interface launcher, the
+    event reader, the licenses, and the gptokeyb mapping where one is read."""
+    shared = root / "ports" / "shared"
     members = [
-        (PORT_SCRIPT, source / PORT_SCRIPT),
-        (f"{PORT_DIR}/port.json", source / "port.json"),
-        (f"{PORT_DIR}/gameinfo.xml", source / "gameinfo.xml"),
-        (f"{PORT_DIR}/{PORT_DIR}.md", source / "README.md"),
-        (f"{PORT_DIR}/install.py", root / "install.py"),
-        (f"{PORT_DIR}/licenses/LICENSE-retrobios.txt", root / "LICENSE"),
-        (f"{PORT_DIR}/licenses/NOTICE-retrobios.txt", root / "NOTICE"),
+        (f"{folder}/install.py", root / "install.py"),
+        (f"{folder}/tui.txt", shared / "tui.txt"),
+        (f"{folder}/rbevents.py", shared / "rbevents.py"),
+        (f"{folder}/licenses/LICENSE-retrobios.txt", root / "LICENSE"),
+        (f"{folder}/licenses/NOTICE-retrobios.txt", root / "NOTICE"),
     ]
-    members += [
-        (f"{PORT_DIR}/{path.relative_to(source / PORT_DIR).as_posix()}", path)
-        for path in sorted((source / PORT_DIR).rglob("*"))
-        if path.is_file() and "__pycache__" not in path.parts
-    ]
-    names = [name for name, _path in members]
+    if mapping:
+        members.append((f"{folder}/retrobios.gptk", shared / "retrobios.gptk"))
+    return members
+
+
+def archive_members(name: str, root: Path = REPO_ROOT) -> list[tuple[str, Path]]:
+    """(name in the archive, source file) for every member of *name*, sorted."""
+    ports = root / "ports"
+    if name == PORT_ZIP:
+        source = ports / "RetroBIOS"
+        members = [
+            (PORT_SCRIPT, source / PORT_SCRIPT),
+            (f"{PORT_DIR}/port.json", source / "port.json"),
+            (f"{PORT_DIR}/gameinfo.xml", source / "gameinfo.xml"),
+            (f"{PORT_DIR}/{PORT_DIR}.md", source / "README.md"),
+            *_engine(PORT_DIR, root),
+        ]
+        members += [
+            (f"{PORT_DIR}/{path.relative_to(source / PORT_DIR).as_posix()}", path)
+            for path in sorted((source / PORT_DIR).rglob("*"))
+            if path.is_file() and "__pycache__" not in path.parts
+        ]
+    elif name == BATOCERA_ZIP:
+        source = ports / "batocera"
+        members = [
+            (PORT_SCRIPT, source / PORT_SCRIPT),
+            (f"{PORT_SCRIPT}.keys", source / f"{PORT_SCRIPT}.keys"),
+            (f"{PORT_DIR}/README.md", source / "README.md"),
+            # evmapy reads RetroBIOS.sh.keys: no gptokeyb there.
+            *_engine(PORT_DIR, root, mapping=False),
+        ]
+    elif name == MUOS_APP:
+        source = ports / "muos"
+        members = [
+            ("RetroBIOS/mux_launch.sh", source / "mux_launch.sh"),
+            ("RetroBIOS/muxterm.gptk", source / "muxterm.gptk"),
+            ("RetroBIOS/README.md", source / "README.md"),
+            *_engine("RetroBIOS", root),
+        ]
+    elif name == TOOLS_ZIP:
+        source = ports / "tools"
+        members = [
+            (PORT_SCRIPT, source / PORT_SCRIPT),
+            (f"{PORT_DIR}/README.md", source / "README.md"),
+            *_engine(PORT_DIR, root),
+        ]
+    else:
+        raise ValueError(f"no launcher archive is named {name}")
+    names = [member for member, _path in members]
     if len(set(names)) != len(names):
-        raise ValueError("two port members share a name")
+        raise ValueError(f"two members of {name} share a name")
     return sorted(members)
 
 
-def build_port(output: Path, root: Path = REPO_ROOT) -> Path:
-    """Write the port archive to *output* and return it."""
+def build_archive(name: str, output: Path, root: Path = REPO_ROOT) -> Path:
+    """Write the launcher archive *name* to *output* and return it."""
     pinned = pinned_installer_sha256(root)
     actual = hashlib.sha256((root / "install.py").read_bytes()).hexdigest()
     if actual != pinned:
         raise ValueError(
             f"install.py is {actual[:12]}, install.sh pins {pinned[:12]}: "
-            "re-pin the bootstraps before building the port"
+            "re-pin the bootstraps before building the launchers"
         )
     # The packs' member writer: imported here, as it loads the whole
-    # pack builder, which a caller reading PORT_ZIP does not need.
+    # pack builder, which a caller reading ARCHIVES does not need.
     from generate_pack import _add_pack_member  # noqa: PLC0415
 
+    members = archive_members(name, root)
     output.parent.mkdir(parents=True, exist_ok=True)
     scratch = output.with_name(f".{output.name}.tmp")
     with zipfile.ZipFile(scratch, "w", zipfile.ZIP_DEFLATED, compresslevel=9) as zf:
-        for name, path in port_members(root):
-            _add_pack_member(zf, str(path), name)
+        for member, path in members:
+            _add_pack_member(zf, str(path), member)
     scratch.replace(output)
     return output
 
 
+def build_port(output: Path, root: Path = REPO_ROOT) -> Path:
+    """Write the PortMaster port archive to *output* and return it."""
+    return build_archive(PORT_ZIP, output, root)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(
-        allow_abbrev=False, description="Build the RetroBIOS PortMaster port"
+        allow_abbrev=False, description="Build the RetroBIOS handheld launchers"
     )
     parser.add_argument("--output-dir", type=Path, default=REPO_ROOT / "dist",
-                        help="where RetroBIOS.zip is written (default: dist/)")
+                        help="where the archives are written (default: dist/)")
     args = parser.parse_args()
     try:
         with artifact_lock(str(args.output_dir)):
-            path = build_port(args.output_dir / PORT_ZIP)
+            paths = [build_archive(name, args.output_dir / name) for name in ARCHIVES]
     except (ArtifactLockBusy, OSError, ValueError) as exc:
         print(f"Error: {exc}", file=sys.stderr)
         return 1
-    digest = hashlib.sha256(path.read_bytes()).hexdigest()
-    print(f"{path} ({path.stat().st_size} bytes, sha256 {digest})")
+    for path in paths:
+        digest = hashlib.sha256(path.read_bytes()).hexdigest()
+        print(f"{path} ({path.stat().st_size} bytes, sha256 {digest})")
     return 0
 
 
