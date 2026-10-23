@@ -665,15 +665,43 @@ def _emit_check(
         bytes_needed=sum(entry.get("size", 0) for entry in needed),
         data_missing=data_missing, not_installable=not_installable,
     )
-    own = [entry for entry in files if entry.get("cores") is None]
-    own_needed = [entry for entry in own if id(entry) not in present]
-    own_wrong = sum(1 for entry in own if id(entry) in wrong)
+    # The copy the platform itself checks at each of its slots, which is
+    # what --declared-only checks: a core's copy served in its place is
+    # judged against the platform's.
+    own_states = []
+    for entry in files:
+        if entry.get("cores") is not None:
+            continue
+        copy = declared_copy(entry)
+        if copy is entry or copy.get("sha1") == entry.get("sha1"):
+            state = ("present" if id(entry) in present
+                     else "wrong_hash" if id(entry) in wrong else "missing")
+        else:
+            state = _declared_state(copy, entry, bios_path)
+        own_states.append((entry["dest"], copy.get("size", 0), state))
     EVENTS.emit(
-        "declared", platform=plat, files=len(own), present=len(own) - len(own_needed),
-        missing=len(own_needed) - own_wrong, wrong_hash=own_wrong,
-        bytes_needed=sum(entry.get("size", 0) for entry in own_needed),
-        dests=[entry["dest"] for entry in own],
+        "declared", platform=plat, files=len(own_states),
+        present=sum(1 for _d, _s, state in own_states if state == "present"),
+        missing=sum(1 for _d, _s, state in own_states if state == "missing"),
+        wrong_hash=sum(1 for _d, _s, state in own_states if state == "wrong_hash"),
+        bytes_needed=sum(size for _d, size, state in own_states if state != "present"),
+        dests=[dest for dest, _s, _state in own_states],
     )
+
+
+def _declared_state(copy: dict, entry: dict, bios_path: Path) -> str:
+    """present, missing or wrong_hash: the file at entry's place against copy."""
+    try:
+        path = _entry_path(bios_path, entry)
+    except ValueError:
+        return "missing"
+    if not path.is_file():
+        return "missing" if not path.exists() else "wrong_hash"
+    try:
+        verdict = _classify_local(copy, path)
+    except OSError:
+        return "wrong_hash"
+    return "present" if verdict == "up_to_date" else "wrong_hash"
 
 
 def leave_out_game_data(
@@ -697,15 +725,40 @@ def keep_declared(files: list[dict], omitted: list[dict]) -> tuple[list[dict], l
 
     A slot a core contradicts gets the platform's copy, and no core copy
     stays behind as an alternative: narrowing by cores afterwards would
-    otherwise put a core's file back where a dropped system's was.
+    otherwise put a core's file back where a dropped system's was. Which of
+    the platform's declarations answers is left to that narrowing, as
+    without --declared-only: the first whose systems remain.
     """
     def own(entries: list[dict]) -> list[dict]:
-        return [
-            {k: v for k, v in _settle_slot(entry, set()).items() if k != "alternatives"}
-            for entry in entries if entry.get("cores") is None
-        ]
+        result = []
+        for entry in entries:
+            if entry.get("cores") is not None:
+                continue
+            kept = {k: v for k, v in _settle_slot(entry, set()).items()
+                    if k not in ("alternatives", "declared_copy")}
+            declared = entry.get("declared_choices") or []
+            if len(declared) > 1:
+                kept["declared_choices"] = declared
+            result.append(kept)
+        return result
 
     return own(files), own(omitted)
+
+
+def declared_copy(entry: dict) -> dict:
+    """The copy the platform's own list checks at a platform file's slot.
+
+    A narrowing that serves a core's copy there records the platform's
+    answer beside it, and an entry not yet settled answers by its first
+    declaration. Otherwise the entry is the platform's copy itself.
+    """
+    recorded = entry.get("declared_copy")
+    if recorded is not None:
+        return recorded
+    declared = entry.get("declared_choices")
+    if declared:
+        return declared[0]
+    return entry
 
 
 def _left_out_lines(left_out: list[dict], every: bool) -> list[str]:
@@ -3428,22 +3481,28 @@ def _settle_slot(
     declared = entry.get("declared_choices")
     if declared is None:
         return entry
+    platform_copy = next(
+        (c for c in declared
+         if kept_system is None or any(kept_system(s) for s in c["systems"])),
+        declared[0],
+    )
     copy = next(
         (c for c in entry.get("slot_choices", []) if chosen.intersection(c["cores"])),
         None,
     )
     if copy is None or "sha1" not in copy:
-        copy = next(
-            (c for c in declared
-             if kept_system is None or any(kept_system(s) for s in c["systems"])),
-            declared[0],
-        )
+        copy = platform_copy
     kept = {
         k: v for k, v in entry.items()
-        if k not in _COPY_FIELDS and k not in ("slot_choices", "declared_choices")
+        if k not in _COPY_FIELDS
+        and k not in ("slot_choices", "declared_choices", "declared_copy")
     }
     kept.update((k, copy[k]) for k in _COPY_FIELDS if k in copy and k != "cores")
     kept["cores"] = None
+    if copy is not platform_copy and copy.get("sha1") != platform_copy.get("sha1"):
+        # What the platform checks here, for the `declared` event.
+        kept["declared_copy"] = {k: platform_copy[k] for k in _COPY_FIELDS
+                                 if k in platform_copy and k != "cores"}
     return kept
 
 

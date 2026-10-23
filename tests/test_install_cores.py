@@ -288,6 +288,56 @@ class APlatformFileSettledByCoresAndSystems(unittest.TestCase):
         self.assertEqual(self.served(["dsi"]), "c")
         self.assertEqual(self.served(["nds"]), "b")
 
+    def test_declared_only_keeps_the_declaration_whose_system_remains(self):
+        """--declared-only settled the slot on the first declaration before
+        the cores narrowed it: on a target without melonds it checked the
+        nintendo-dsi copy, the platform the nintendo-ds one."""
+        manifest = self.manifest()
+        for names, letter in ((["nds"], "b"), (["dsi"], "c"), (["melonds"], "c"),
+                              (["desmume"], "b")):
+            with self.subTest(names=names):
+                files, omitted = install.keep_declared(manifest["files"], [])
+                files, _ = install.narrow_to_cores(manifest, names, files, omitted)
+                self.assertEqual(files[0]["sha1"][0], letter)
+
+    def test_the_declared_event_judges_the_copy_the_platform_checks(self):
+        """melonds' copy is served at the slot, the platform checks its own:
+        the event and a --declared-only check give the same answer."""
+        import hashlib
+
+        tmp = Path(tempfile.mkdtemp(dir=REPO_ROOT / "tmp"))
+        self.addCleanup(shutil.rmtree, tmp, True)
+        payloads = {letter: letter.encode() * 3 for letter in "abc"}
+        manifest = self.manifest()
+        entry = manifest["files"][0]
+
+        def real(copy: dict, letter: str) -> None:
+            copy.update(sha1=hashlib.sha1(payloads[letter]).hexdigest(),
+                        sha256=hashlib.sha256(payloads[letter]).hexdigest(), size=3)
+
+        real(entry, "a")
+        real(entry["slot_choices"][1], "a")
+        real(entry["declared_choices"][0], "c")
+        real(entry["declared_choices"][1], "b")
+        (tmp / "dsi_bios9.bin").write_bytes(payloads["c"])
+
+        def declared_event(files: list[dict]) -> dict:
+            _todo, fine, wrong = install.check_local(files, tmp)
+            with mock.patch.object(install.EVENTS, "emit") as emit:
+                install._emit_check("retroarch", manifest, tmp, files, fine, wrong, 0, 0)
+            return next(call.kwargs for call in emit.call_args_list
+                        if call.args[0] == "declared")
+
+        for names in (None, ["melonds"], ["desmume", "melonds"]):
+            with self.subTest(names=names):
+                served = manifest["files"]
+                own, _ = install.keep_declared(manifest["files"], [])
+                if names is not None:
+                    served, _ = install.narrow_to_cores(manifest, names)
+                    own, _ = install.narrow_to_cores(manifest, names, own, [])
+                self.assertEqual(declared_event(served), declared_event(own))
+                self.assertEqual(declared_event(own)["present"], 1)
+
     def test_the_boundary_checks_every_copy(self):
         install._validate_manifest(self.manifest(), "retroarch")
         bad_choices = (
