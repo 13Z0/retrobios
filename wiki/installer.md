@@ -1068,7 +1068,8 @@ no event at all. A program reads a missing `end` as that case.
 | `RETROBIOS_INSTALL_URL` | Where the bootstrap fetches `install.py`. HTTPS only |
 | `RETROBIOS_INSTALL_SHA256` | The SHA-256 the bootstrap requires of that installer, 64 hex characters. When either of these two is set and the fingerprint does not match, the error names the variable instead of suggesting a retry |
 | `RETROBIOS_BOOTSTRAP` | Set by `install.sh` (`sh`) and `install.ps1` (`ps1`) for the temporary installer they run, so that its hints give back the one-line command rather than `python3 install.py` |
-| `NO_COLOR` | Plain text, no colour, even at a terminal. `TERM=dumb` also turns the live progress line off |
+| `NO_COLOR` | Plain text, no colour, even at a terminal, when set to any value but an empty one. `TERM=dumb` also turns the live progress line off |
+| `FORCE_COLOR`, `CLICOLOR_FORCE` | Colour even when the output is a pipe or a file, set to any value but `0` or an empty one. `NO_COLOR` wins over both, and the progress line stays one line per file |
 | `SSL_CERT_FILE`, `SSL_CERT_DIR` | The trusted certificates to check servers with, for a Python that finds none of its own |
 | `HTTPS_PROXY`, `NO_PROXY` | Honoured for every download through the standard library's default proxy handling: one names the proxy, the other the hosts to reach directly |
 

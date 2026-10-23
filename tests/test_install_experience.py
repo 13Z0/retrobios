@@ -499,6 +499,66 @@ class ARefusedFolderReportsEachFile(unittest.TestCase):
                          list(range(1, len(downloaded) + 1)))
 
 
+class _Tty(io.StringIO):
+    def isatty(self) -> bool:
+        return True
+
+
+class ColourFollowsNoColorOrg(unittest.TestCase):
+    """no-color.org: only a NO_COLOR that is set and not empty turns colour
+    off. An empty one, as `NO_COLOR= cmd` leaves, turned it off too."""
+
+    def _colour(self, **env: str) -> bool:
+        clean = {k: v for k, v in os.environ.items()
+                 if k not in ("NO_COLOR", "FORCE_COLOR", "CLICOLOR_FORCE", "TERM")}
+        with mock.patch.dict(os.environ, {**clean, **env}, clear=True), \
+                mock.patch.object(install, "_enable_ansi", return_value=True):
+            return install.Terminal(_Tty()).colour
+
+    def test_an_empty_no_color_leaves_colour_on(self):
+        self.assertTrue(self._colour())
+        self.assertTrue(self._colour(NO_COLOR=""))
+        self.assertFalse(self._colour(NO_COLOR="1"))
+
+    def test_force_color_paints_a_pipe(self):
+        with mock.patch.object(install, "_enable_ansi", return_value=True):
+            for env, expected in (({}, False), ({"FORCE_COLOR": "1"}, True),
+                                  ({"CLICOLOR_FORCE": "1"}, True),
+                                  ({"FORCE_COLOR": "0"}, False),
+                                  ({"FORCE_COLOR": "1", "NO_COLOR": "1"}, False)):
+                clean = {k: v for k, v in os.environ.items()
+                         if k not in ("NO_COLOR", "FORCE_COLOR", "CLICOLOR_FORCE")}
+                with self.subTest(env=env), \
+                        mock.patch.dict(os.environ, {**clean, **env}, clear=True):
+                    term = install.Terminal(io.StringIO())
+                    self.assertEqual(term.colour, expected)
+                    self.assertFalse(term.live)
+
+
+class SmallWordings(unittest.TestCase):
+    def test_check_asks_which_to_check(self):
+        """--check with several platforms asked "Install for:", and
+        installs nothing."""
+        out = io.StringIO()
+        with mock.patch("builtins.input", lambda _prompt="": "1"), \
+                contextlib.redirect_stdout(out):
+            install._prompt_platform_choice(
+                [("emudeck", Path("/e")), ("retroarch", Path("/r"))], "Check:")
+        self.assertIn("Check:", out.getvalue())
+        self.assertNotIn("Install for:", out.getvalue())
+
+    def test_nothing_detected_is_said(self):
+        with tempfile.TemporaryDirectory(dir=REPO_ROOT / "tmp") as home:
+            env = dict(os.environ, HOME=home, USERPROFILE=home, XDG_CONFIG_HOME=home,
+                       RETROBIOS_OS="linux")
+            proc = subprocess.run(
+                [sys.executable, str(REPO_ROOT / "install.py"), "--list-platforms"],
+                env=env, capture_output=True, text=True, timeout=60, check=False,
+            )
+        self.assertEqual(proc.returncode, 0, proc.stderr)
+        self.assertIn("Detected on this system: none", proc.stdout)
+
+
 class WindowsMandatoryLock(unittest.TestCase):
     """Issue 82: on Windows the partial copy's lock is mandatory, so hashing
     it by reopening its path failed with a sharing violation, and every file

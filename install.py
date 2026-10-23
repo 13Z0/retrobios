@@ -325,6 +325,9 @@ class Terminal:
     """What the output stream can show: a live line, colour, or neither.
 
     A pipe or a log gets plain lines, and NO_COLOR and TERM=dumb are honoured.
+    As no-color.org reads it, an empty NO_COLOR is not set: `NO_COLOR= cmd`
+    turned colour off. FORCE_COLOR or CLICOLOR_FORCE paints a pipe, for a
+    log viewer that shows colour, and never makes the line live.
     """
 
     def __init__(self, stream: TextIO | None = None, quiet: bool = False) -> None:
@@ -332,8 +335,10 @@ class Terminal:
         self.quiet = quiet
         isatty = getattr(self.stream, "isatty", None)
         self.live = bool(isatty and isatty()) and os.environ.get("TERM") != "dumb"
+        forced = any(os.environ.get(name, "0") not in ("", "0")
+                     for name in ("FORCE_COLOR", "CLICOLOR_FORCE"))
         self.colour = (
-            self.live and "NO_COLOR" not in os.environ and _enable_ansi()
+            (self.live or forced) and not os.environ.get("NO_COLOR") and _enable_ansi()
         )
         if not self.colour:
             self.live = self.live and os.name != "nt"
@@ -5680,10 +5685,10 @@ def _manual_usage_hint(os_type: str, listing: str = "") -> list[str]:
 
 
 def _prompt_platform_choice(
-    platforms: list[tuple[str, Path]],
+    platforms: list[tuple[str, Path]], title: str = "Install for:",
 ) -> list[tuple[str, Path]]:
     """Prompt user to choose among detected platforms."""
-    print("\nInstall for:")
+    print(f"\n{title}")
     for i, (name, path) in enumerate(platforms, 1):
         system = detected_os(name, path)
         label = f"{system}, {display_name(name)} files" if system and system != display_name(name) \
@@ -7343,6 +7348,8 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
             for name, path in detected:
                 system = detected_os(name, path)
                 print(f"  {name}: {path}" + (f" ({system})" if system else ""))
+        else:
+            print("\nDetected on this system: none")
         return
 
     # Platform detection or override. A destination taken from the default
@@ -7463,7 +7470,9 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
         ])
 
     if len(platforms) > 1 and not listing and interactive:
-        platforms = _prompt_platform_choice(platforms)
+        # --check installs nothing, and "Install for:" said it would.
+        platforms = _prompt_platform_choice(
+            platforms, "Check:" if args.check else "Install for:")
 
     if args.dest is not None and not listing:
         _missing_dest(args.dest, interactive and not (args.check or args.dry_run or args.yes))
