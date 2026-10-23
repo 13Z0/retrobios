@@ -677,6 +677,10 @@ class Device:
         # A probe that cannot connect is offline (curl exit 7).
         self.tool("curl", '#!/bin/sh\nexit "${FAKE_CURL:-0}"\n')
         self.tool("pgrep", '#!/bin/sh\nexit "${FAKE_PGREP:-1}"\n')
+        # A runner's real sudo needs no password: the Tools entry then ran
+        # the fake mapper as root, with a reset environment, and recorded
+        # nothing. A device has no sudo unless a test gives it one.
+        self.tool("sudo", "#!/bin/sh\nexit 1\n")
         fonts = self.root / "fonts"
         fonts.mkdir()
         for name in ("Lat7-TerminusBold32x16", "Lat7-TerminusBold22x11",

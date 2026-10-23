@@ -2818,6 +2818,21 @@ class Pty:
     def text(self) -> str:
         return "\n".join(line.rstrip() for line in self.screen.display)
 
+    def settle(self, quiet: float = 0.3, timeout: float = 10.0) -> str:
+        """The screen once nothing more arrives for `quiet` seconds.
+
+        text() shows only what was read: a loop that sent a key and looked
+        again saw the screen before the key, and on a slow runner pressed
+        Enter twelve rows past the folder it was looking for.
+        """
+        end = time.monotonic() + timeout
+        while time.monotonic() < end:
+            if not select.select([self.fd], [], [], quiet)[0]:
+                break
+            if not self._pump(0):
+                break
+        return self.text()
+
     def wait(self, needle: str, timeout: float = 20.0) -> str:
         end = time.monotonic() + timeout
         while time.monotonic() < end:
@@ -3124,9 +3139,10 @@ class EndToEnd(unittest.TestCase):
         term.send(DOWN, DOWN, "\r")
         term.wait("Choose the old card")
         for _ in range(12):
-            if "> oldcard/" in term.text():
+            if "> oldcard/" in term.settle():
                 break
             term.send(DOWN)
+        self.assertIn("> oldcard/", term.settle())
         term.send("\r")
         term.wait("> Use this folder")
         term.send("\r")
