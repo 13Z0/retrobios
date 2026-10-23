@@ -7837,6 +7837,11 @@ def _generate(args: argparse.Namespace) -> None:
     )
     print(f"  {len(_system_page_map)} system IDs mapped to pages")
     set_console_sections(manufacturers, program_names(profiles))
+    from siterender import link_coverage, system_ids  # noqa: PLC0415
+
+    linked, total = link_coverage(
+        system_ids(profiles, [cov["config"] for cov in coverages.values()]))
+    print(f"  {linked} of {total} system ids linked")
 
     print("Generating system pages...")
 
