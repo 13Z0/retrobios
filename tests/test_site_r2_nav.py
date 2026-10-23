@@ -65,9 +65,20 @@ def _present(nav: list) -> set[str]:
 # follow the labels in platforms/_guides.yml instead of a copy of them.
 from siteguides import DEVICE_GROUPS  # noqa: E402
 
+def _index_anchors(markdown: str) -> set[str]:
+    """The heading ids a generated page carries once written."""
+    _title, title_id, body = sitestarlight.split_title(markdown)
+    return sitestarlight.heading_ids(sitestarlight.pin_heading_ids(body, title_id))
+
+
 ANCHORS = {
     "platforms/index.md": {sitestarlight.toc_slug(label) for label, _ in DEVICE_GROUPS.values()},
     "systems/index.md": {"consoles-and-computers"},
+    "emulators/index.md": _index_anchors(generate_site.generate_emulators_index({
+        "duckstation": {"emulator": "DuckStation", "systems": ["sony-playstation"]},
+        "dolphin": {"emulator": "Dolphin", "systems": ["nintendo-gamecube"]},
+        "mame": {"emulator": "MAME", "systems": ["arcade"]},
+    })),
 }
 
 
@@ -109,7 +120,7 @@ class GroupsAreGroups(unittest.TestCase):
         self.assertEqual(explore["Explore/Systems"], {"href": "/retrobios/systems/", "prune": True})
         self.assertEqual(explore["Explore/Systems/Consoles and computers"]["href"],
                          "/retrobios/systems/#consoles-and-computers")
-        self.assertEqual(explore["Explore/Emulators/D"], {"href": "/retrobios/emulators/", "prune": True})
+        self.assertEqual(explore["Explore/Emulators/D"], {"href": "/retrobios/emulators/#d", "prune": True})
 
     def test_no_group_points_at_one_of_its_own_pages(self):
         """The overview a group opens on is its own index page or a section of
@@ -137,6 +148,17 @@ class EmulatorsOneLevelDeep(unittest.TestCase):
         })
         self.assertEqual(nav, ["emulators/index.md", {"D": [
             {"Dolphin": "emulators/dolphin.md"}, {"DuckStation": "emulators/duckstation.md"}]}])
+
+    def test_every_initial_has_its_section_on_the_index(self):
+        """A letter in the sidebar lands on the section of that letter."""
+        from common import load_emulator_profiles
+
+        profiles = load_emulator_profiles(str(REPO_ROOT / "emulators"))
+        anchors = _index_anchors(generate_site.generate_emulators_index(profiles))
+        for group in generate_site._emulator_nav(profiles)[1:]:
+            (label, _pages), = group.items()
+            with self.subTest(initial=label):
+                self.assertIn(sitestarlight.toc_slug(label), anchors)
 
     def test_every_initial_holds_pages(self):
         from common import load_emulator_profiles

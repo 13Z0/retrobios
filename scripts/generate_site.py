@@ -2199,6 +2199,7 @@ def decorate_markdown_pages(docs: Path) -> dict[str, str]:
             browser_title=browser_title,
             description=description, structured=structured, terms=terms,
             search=authored.get("search") != "exclude",
+            logo=str(authored.get("logo") or ""),
         )
         write_decorated(docs / target, text)
         # One file per page: a page that gained or lost its components
@@ -2921,6 +2922,7 @@ def generate_platform_page(
     # The mark is drawn beside the title from the front matter: floated
     # beside the first line at 48 px it read as a broken image.
     logo_url = registry.get(name, {}).get("logo", "")
+    logo_url = local_images().get(logo_url, logo_url)
 
     homepage = config.get("homepage", "")
     version = config.get("version", "")
@@ -4543,6 +4545,16 @@ def _region_words(value: object, most: int = 0) -> str:
 _CATEGORY_WORDS = {"bios": "BIOS", "game_data": "game data", "bios_zip": "BIOS ZIP"}
 
 
+INITIAL_DIGITS = "0 to 9"
+
+
+def emulator_initial(display: str) -> str:
+    """The letter an emulator is filed under, in the navigation and on the
+    index alike. A name that does not open on a letter goes under "0 to 9"."""
+    initial = display[:1].upper()
+    return initial if "A" <= initial <= "Z" else INITIAL_DIGITS
+
+
 def generate_emulators_index(profiles: dict) -> str:
     unique = {
         k: v for k, v in profiles.items() if v.get("type") not in ("alias", "test")
@@ -4562,13 +4574,13 @@ def generate_emulators_index(profiles: dict) -> str:
         "",
         "Each page is one emulator: the files it reads, whether it starts games "
         "without them, and the line of its source code that says so. The "
-        "classification below says how a core relates to the emulator it comes "
-        "from, which tells how far its own files can differ.",
+        "kind says how a core relates to the emulator it comes from, which "
+        "tells how far its own files can differ.",
         "",
         f"**{len(unique):,}** emulator profiles, **{total_files:,}** files total, **{len(aliases):,}** aliases.",
         "",
-        "| Classification | Count | Description |",
-        "|---------------|-------|-------------|",
+        "| Kind | Count | Description |",
+        "|------|-------|-------------|",
     ]
 
     cls_desc = {
@@ -4601,28 +4613,25 @@ def generate_emulators_index(profiles: dict) -> str:
             continue
         label = CLS_LABELS.get(cls, cls)
         desc = cls_desc.get(cls, "")
-        lines.append(f"| [{label}](#{cls}) | {len(entries)} | {desc} |")
+        lines.append(f"| {label} | {len(entries)} | {desc} |")
     lines.append("")
 
-    for cls in cls_order:
-        entries = by_class.get(cls, [])
-        if not entries:
-            continue
-        label = CLS_LABELS.get(cls, cls)
-        desc = cls_desc.get(cls, "")
-        lines.extend(
-            [
-                f"## {label} {{ #{cls} }}",
-                "",
-                f"{desc}. {_count(len(entries), 'profile')}.",
-                "",
-                "| Emulator | Systems | Files |",
-                "|--------|---------|-------|",
-            ]
-        )
-
+    # One section per initial, the groups the navigation draws: its letter
+    # links land on the section of the same name.
+    by_initial: dict[str, list[tuple[str, dict]]] = {}
+    for name, p in unique.items():
+        by_initial.setdefault(emulator_initial(str(p.get("emulator", name))), []).append((name, p))
+    for initial in sorted(by_initial, key=lambda g: (g != INITIAL_DIGITS, g)):
+        lines.extend([
+            f"## {initial}",
+            "",
+            "| Emulator | Kind | Systems | Files |",
+            "|--------|------|---------|-------|",
+        ])
+        entries = sorted(by_initial[initial], key=lambda e: str(e[1].get("emulator", e[0])).casefold())
         for name, p in entries:
             emu_name = p.get("emulator", name)
+            cls = p.get("core_classification", "other")
             systems = list(dict.fromkeys(
                 _named_system_link(s, "../") for s in p.get("systems") or []))
             files = p.get("files", [])
@@ -4631,7 +4640,7 @@ def generate_emulators_index(profiles: dict) -> str:
                 sys_str += f" and {len(systems) - 3} more"
             file_count = len(files)
             file_str = f"{file_count:,}" if file_count else "-"
-            lines.append(f"| [{emu_name}]({name}.md) | {sys_str} | {file_str} |")
+            lines.append(f"| [{emu_name}]({name}.md) | {CLS_LABELS.get(cls, cls)} | {sys_str} | {file_str} |")
         lines.append("")
 
     if aliases:
@@ -7348,11 +7357,9 @@ def _emulator_nav(profiles: dict) -> list:
     groups: dict[str, list[tuple[str, str]]] = {}
     for key, profile in nav_emulators(profiles).items():
         display = str(profile.get("emulator", key))
-        initial = display[:1].upper()
-        label = initial if "A" <= initial <= "Z" else "0 to 9"
-        groups.setdefault(label, []).append((display, f"emulators/{key}.md"))
+        groups.setdefault(emulator_initial(display), []).append((display, f"emulators/{key}.md"))
     nav: list = ["emulators/index.md"]
-    for label in sorted(groups, key=lambda g: (g != "0 to 9", g)):
+    for label in sorted(groups, key=lambda g: (g != INITIAL_DIGITS, g)):
         items = sorted(groups[label], key=lambda e: e[0].casefold())
         nav.append({label: [{display: path} for display, path in items]})
     return nav
@@ -7895,7 +7902,7 @@ def _generate(args: argparse.Namespace) -> None:
         print(f"Removed {stale} page(s) nothing produced this run")
 
 
-from sitediagrams import prepare_page, unresolved_images  # noqa: E402,F401
+from sitediagrams import local_images, prepare_page, unresolved_images  # noqa: E402,F401
 from sitewrite import (  # noqa: E402,F401
     _produced,
     _record,

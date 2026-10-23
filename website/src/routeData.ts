@@ -92,9 +92,8 @@ export const onRequest = defineRouteMiddleware(async (context, next) => {
 			trail(route.sidebar, [topic.label]) ??
 			(segments.length > 1 ? folderTrail(route.sidebar, [topic.label], `${BASE}${segments[0]}/`) : []);
 		for (const crumb of groups) {
-			// A group introduced by the page itself is the page; one with no
-			// section of its own (the initial D of the emulators) adds nothing
-			// to the crumb before it.
+			// A group introduced by the page itself is the page, and one with
+			// no section of its own adds nothing to the crumb before it.
 			if (crumb.href === path) continue;
 			if (crumb.href && crumb.href === crumbs.at(-1)?.href) continue;
 			crumbs.push(crumb);

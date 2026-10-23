@@ -172,10 +172,10 @@ class TheIndexNamesEmulatorsAndSystems(unittest.TestCase):
             "duckstation": {"emulator": "DuckStation", "core_classification": "official_port",
                             "systems": ["sony-playstation"], "files": _files(3)},
         })
-        self.assertIn("| Emulator | Systems | Files |", page)
+        self.assertIn("| Emulator | Kind | Systems | Files |", page)
+        self.assertIn("\n## D\n", page)
         self.assertNotIn("| Engine |", page)
         self.assertNotIn(" -- ", page)
-        self.assertIn("1 profile.", page)
         row = next(line for line in page.splitlines() if line.startswith("| [DuckStation]"))
         self.assertIn(f"[{siterender.system_name('sony-playstation')}]", row)
         self.assertIn("(../systems/sony.md#playstation)", row)
