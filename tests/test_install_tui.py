@@ -28,7 +28,7 @@ import threading
 import time
 import unittest
 import warnings
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 from unittest import mock
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -656,9 +656,10 @@ class Flow(unittest.TestCase):
                 mock.patch.object(install, "detect_frontends", return_value=[]):
             state, effects = install.tui_start(_args(), "linux")
         self.assertEqual((state.screen, effects), ("setup", []))
-        self.assertEqual(state.setups, [("minui", card, "MinUI SD card")])
+        label = f"MinUI SD card ({card.name})"
+        self.assertEqual(state.setups, [("minui", card, label)])
         self.assertEqual([row.label for row in install.tui_rows(state)],
-                         ["MinUI SD card", "Another setup or folder"])
+                         [label, "Another setup or folder"])
 
     def test_an_error_offers_another_try(self):
         state = fresh_state()
@@ -717,9 +718,11 @@ class PlanWarnings(unittest.TestCase):
     def test_a_folder_that_cannot_take_the_files_says_so_first(self):
         state = checked_state({"free": 1024, "writable": False, "cores": []})
         text = " ".join(install.tui_view(state, 120, 40))
-        self.assertIn("Not enough free space for this download", text)
-        self.assertIn("You cannot write to this folder: choose another one, or run the "
-                      "installer with sudo.", text)
+        self.assertIn("Not enough free space: 1.0 MB needed.", text)
+        self.assertIn("You cannot write to this folder: choose another one.", text)
+        # sudo changes the home folder: the advice names this one.
+        self.assertIn("Or run it as root, this folder named: sudo python3 install.py "
+                      f"--platform retroarch --dest {SYSTEM_DIR}", " ".join(text.split()))
         rows = install.tui_rows(state)
         self.assertEqual([row.action for row in rows[:2]], ["folder", "install"])
         self.assertEqual(state.focus.get("plan", 0), 0)
@@ -880,6 +883,7 @@ def golden_states() -> dict:
     installing.run, installing.running = "install", True
     installing.download = {"event": "download", "files": 4, "bytes": 1064964}
     installing.samples, installing.now = [(100.0, 12672), (104.0, 540672)], 104.0
+    installing.network = 540672
     installing.progress = {"files_done": 2, "files_total": 4, "bytes_done": 540672,
                            "bytes_total": 1064964}
     installing.finished = [("gba_bios.bin", True, ""), ("scph5500.bin", False, "HTTP 404")]
@@ -1100,6 +1104,10 @@ class SmallFixes(unittest.TestCase):
             install.tui_receive(state, ("event", state.run_id, {
                 "event": "progress", "files_done": 0, "files_total": 2,
                 "bytes_done": done, "bytes_total": 1000 * mega}))
+            # The partial copy resumed is counted local by the engine.
+            install.tui_receive(state, ("event", state.run_id, {
+                "event": "transfer", "bytes_local": 500 * mega,
+                "bytes_network": done - 500 * mega}))
         text = "\n".join(install.tui_view(state, 80, 24))
         self.assertIn("1.0 MB/s, 8:18 left", text)
 
@@ -1248,8 +1256,9 @@ class CleanupSurvivesABrokenTerminal(unittest.TestCase):
             code = install.run_tui(_args())
             self.assertIs(sys.stdout, tty)
         self.assertEqual(code, 1)
-        # The crash keeps its log, and nothing else of the run.
-        self.assertEqual(sorted(path.name for path in work.iterdir()), ["error.log"])
+        # The crash keeps its log, marked kept, and nothing else of the run.
+        self.assertEqual(sorted(path.name for path in work.iterdir()),
+                         ["error.log", "kept", "owner"])
         self.assertEqual(termios.tcgetattr(slave), before)
         for number, handler in handlers.items():
             self.assertEqual(signal.getsignal(number), handler)
@@ -1384,7 +1393,7 @@ class AuditRoundTwo(unittest.TestCase):
         _title, lines = install.tui_outcome(state)
         self.assertEqual([line for line in lines if "failed" in line],
                          ["Nothing was installed: 50 files failed.",
-                          "  50 files failed (folder not writable), the first f0.bin"])
+                          "  50 files failed, all for one reason: folder not writable."])
 
     def test_p2_6_a_folder_inside_a_card_offers_its_root(self):
         card = Path(tempfile.mkdtemp(dir=REPO_ROOT / "tmp"))
@@ -1444,7 +1453,12 @@ class AuditRoundTwo(unittest.TestCase):
                                      ("retroarch", SYSTEM_DIR, "RetroArch"),
                                      ("emudeck", HOME / "Emulation/bios", "EmuDeck")])
         self.assertEqual([label for _p, _f, label in setups],
-                         ["RetroArch (Flatpak)", "RetroArch (retroarch/system)", "EmuDeck"])
+                         ["RetroArch (Flatpak)", "RetroArch (installed)", "EmuDeck"])
+        # Two that no package names keep the end of their folder.
+        twice = install.tell_apart([("retroarch", SYSTEM_DIR, "RetroArch"),
+                                    ("retroarch", HOME / "ra2/system", "RetroArch")])
+        self.assertEqual([label for _p, _f, label in twice],
+                         ["RetroArch (retroarch/system)", "RetroArch (ra2/system)"])
         state = fresh_state()
         state.setups = setups
         self.assertIn("RetroArch (Flatpak)", "\n".join(install.tui_view(state, 40, 15)))
@@ -1634,7 +1648,8 @@ class CopyFromAnOldCard(unittest.TestCase):
         self.recheck(state, [found("scph5500.bin", str(old)), found("gba_bios.bin", str(old))])
         self.assertEqual(state.screen, "plan")
         text = "".join("".join(install.tui_view(state, 120, 40)).split())
-        self.assertIn("".join(f"2 found in {old}, 2 to download (512.0 KB)".split()), text)
+        # The folder by its name: the whole path pushed the BIOS folder off.
+        self.assertIn("".join(f"2 found in {old.name}, 2 to download (512.0 KB)".split()), text)
         # A second folder from the options: --from twice.
         press(state, "o")
         state.focus["options"] = next(i for i, r in enumerate(install.tui_rows(state))
@@ -1655,11 +1670,15 @@ class CopyFromAnOldCard(unittest.TestCase):
     def test_left_takes_the_last_folder_back(self):
         state = checked_state()
         state.from_folders = [Path("/media/old")]
+        state.checked_flags = install.tui_flags(state)
         state.stack.append("options")
         state.focus["options"] = next(i for i, r in enumerate(install.tui_rows(state))
                                       if r.action == "from")
-        self.assertEqual(press(state, "left"), [("run", "check")])
-        self.assertEqual(state.from_folders, [])
+        # Said, and the screen stays: Back to the plan counts again.
+        self.assertEqual(press(state, "left"), [])
+        self.assertEqual((state.screen, state.from_folders), ("options", []))
+        self.assertIn("No longer copying from old.", "\n".join(install.tui_view(state, 80, 24)))
+        self.assertEqual(press(state, "esc"), [("run", "check")])
 
     def test_the_command_line_folders_are_kept(self):
         with mock.patch.object(install, "detect_platforms", return_value=[]), \
@@ -1699,15 +1718,511 @@ class CopyFromAnOldCard(unittest.TestCase):
                   (10.0, {"event": "downloaded", "dest": "big.bin", "ok": True, "reason": "",
                           "size": 200 * mega, "files_done": 1, "files_total": 2,
                           "bytes_done": 200 * mega, "bytes_total": 300 * mega}),
+                  # The engine says which bytes came from this machine.
+                  (10.0, {"event": "transfer", "bytes_local": 200 * mega,
+                          "bytes_network": 0}),
                   (11.0, {"event": "progress", "files_done": 1, "files_total": 2,
                           "bytes_done": 201 * mega, "bytes_total": 300 * mega}),
+                  (11.0, {"event": "transfer", "bytes_local": 200 * mega,
+                          "bytes_network": mega}),
                   (12.0, {"event": "progress", "files_done": 1, "files_total": 2,
-                          "bytes_done": 202 * mega, "bytes_total": 300 * mega})]
+                          "bytes_done": 202 * mega, "bytes_total": 300 * mega}),
+                  (12.0, {"event": "transfer", "bytes_local": 200 * mega,
+                          "bytes_network": 2 * mega})]
         for when, event in events:
             state.now = when
             install.tui_receive(state, ("event", state.run_id, event))
         text = "\n".join(install.tui_view(state, 80, 24))
         self.assertIn("1.0 MB/s, 1:38 left", text)
+
+
+class AuditRoundThree(unittest.TestCase):
+    """tui_audit_2.md: its P1 and P2 findings, each held by a test."""
+
+    CARDS = {
+        "muOS": ({"MUOS/": ""}, "retroarch", "MUOS/bios"),
+        "Onion": ({".tmp_update/onionVersion/version.txt": "4.3.1\n"}, "retroarch", "BIOS"),
+        "spruceOS": ({"spruce/": ""}, "retroarch", "BIOS"),
+        "KNULLI": ({"system/batocera.conf": "a=1\nsystem.hostname=KNULLI\n"}, "knulli",
+                   "bios"),
+        "ROCKNIX": ({".config/system/configs/system.cfg": "root.password=rocknix\n"},
+                    "rocknix", "roms/bios"),
+    }
+
+    def card(self, files: dict) -> Path:
+        root = Path(tempfile.mkdtemp(dir=REPO_ROOT / "tmp"))
+        self.addCleanup(shutil.rmtree, root, True)
+        for name, text in files.items():
+            path = root / name
+            if name.endswith("/"):
+                path.mkdir(parents=True, exist_ok=True)
+            else:
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text(text, encoding="utf-8")
+        return root
+
+    # P1-1: a handheld's card mounted on a computer.
+
+    def test_p1_1_each_card_by_its_own_files(self):
+        for name, (files, plat, folder) in self.CARDS.items():
+            with self.subTest(card=name):
+                root = self.card(files)
+                self.assertEqual(install.card_system(root), (plat, root / folder, name))
+
+    def test_p1_1_a_card_nothing_names_is_left_alone(self):
+        self.assertIsNone(install.card_system(self.card({"roms/": "", "BIOS/": ""})))
+        # Batocera's share and a KNULLI board seeded with its name read alike.
+        self.assertIsNone(install.card_system(self.card({
+            "system/batocera.conf": "system.hostname=BATOCERA\n"})))
+
+    def test_p1_1_the_card_rules_are_the_device_rules(self):
+        # The folder and the marker come from the rule the device reads, so
+        # they are never written twice.
+        rules = {rule.name: rule for rule in install._card_rules()}
+        self.assertLessEqual({"muOS", "Onion", "spruceOS", "CrossMix-OS", "Allium", "Koriki",
+                              "KNULLI", "ROCKNIX"}, set(rules))
+        device = {rule.name: rule for rule in install._EMBEDDED_RULES
+                  if rule.values and rule.values[0].startswith(install._CARD_MOUNTS)}
+        for name, rule in device.items():
+            if rule.bios and rule.manifest:
+                with self.subTest(system=name):
+                    self.assertTrue(rule.bios.endswith("/" + rules[name].bios))
+        self.assertEqual(install.DEFAULT_DESTS["knulli"], Path("/userdata") / "bios")
+        self.assertEqual(install.DEFAULT_DESTS["rocknix"], Path("/storage") / "roms/bios")
+
+    def test_p1_1_the_first_screen_offers_the_card_folder(self):
+        root = self.card(self.CARDS["muOS"][0])
+        with mock.patch.object(install, "_mounted_cards", return_value=[root]), \
+                mock.patch.object(install, "detect_platforms", return_value=[]), \
+                mock.patch.object(install, "detect_frontends", return_value=[]):
+            state, effects = install.tui_start(_args(), "linux")
+        label = f"muOS SD card ({root.name})"
+        self.assertEqual(state.setups, [("retroarch", root / "MUOS" / "bios", label)])
+        text = " ".join(" ".join(install.tui_view(state, 120, 40)).split())
+        self.assertIn(f"> {label}", text)
+        self.assertIn(f"BIOS folder: {root / 'MUOS' / 'bios'}", text)
+        (root / "MUOS" / "bios").mkdir()
+        self.assertEqual(press(state, "enter"), [("fetch", "retroarch")])
+        self.assertEqual(state.dest, root / "MUOS" / "bios")
+
+    def test_p1_1_a_drive_letter_names_the_card(self):
+        self.assertEqual(install._mount_name(PureWindowsPath("E:\\")), "E:\\")
+        self.assertEqual(install._mount_name(Path("/media/me/MUOS")), "MUOS")
+
+    def test_p1_1_on_the_device_its_card_is_not_offered_twice(self):
+        root = self.card(self.CARDS["muOS"][0])
+        bound = Path("/run/muos/storage/bios")
+        with mock.patch.object(install, "_mounted_cards", return_value=[root]), \
+                mock.patch.object(install, "detect_platforms", return_value=[("retroarch",
+                                                                              bound)]), \
+                mock.patch.object(install, "detect_frontends", return_value=[]), \
+                mock.patch.dict(install._DETECTED_OS, {("retroarch", bound): "muOS"}):
+            state, _effects = install.tui_start(_args(), "linux")
+        self.assertEqual([setup[1] for setup in state.setups], [bound])
+
+    def test_p1_1_browsing_to_the_card_root_uses_its_folder(self):
+        root = self.card(self.CARDS["KNULLI"][0])
+        with mock.patch.object(install, "_mounted_cards", return_value=[root]):
+            rows, _error = install._browse_rows(REPO_ROOT / "tests")
+        self.assertEqual(rows[2].label, f"{root} (KNULLI card)")
+        state = fresh_state()
+        install._choose(state, "knulli", root)
+        self.assertEqual(state.dest, root / "bios")
+        # Another platform's list keeps the folder it was given.
+        install._choose(state, "batocera", root)
+        self.assertEqual(state.dest, root)
+
+    def test_p1_1_the_command_line_writes_where_muos_reads(self):
+        root = self.card(self.CARDS["muOS"][0])
+        with FakeRepository() as repo:
+            proc = install_run("--platform", "muos", "--dest", str(root), "--yes",
+                               env=repo.env())
+        self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+        self.assertIn(f"muOS card: RetroArch files, in {root / 'MUOS' / 'bios'}", proc.stdout)
+        self.assertEqual(sorted(path.name for path in root.iterdir()), ["MUOS"])
+        self.assertTrue((root / "MUOS" / "bios" / "scph5501.bin").is_file())
+
+    def test_p1_1_a_folder_that_is_no_muos_card_is_refused(self):
+        root = self.card({"roms/": ""})
+        proc = install_run("--platform", "muos", "--dest", str(root), "--yes")
+        self.assertEqual(proc.returncode, 1)
+        self.assertIn(f"{root} is not a muOS card: it holds no MUOS.", proc.stderr)
+        self.assertIn("--dest <card>/MUOS/bios", proc.stderr)
+        self.assertEqual(list(root.iterdir()), [root / "roms"])
+        # Its BIOS folder named outright is taken as given.
+        self.assertEqual(install.card_dest("muos", "retroarch", root / "MUOS" / "bios"),
+                         ("retroarch", root / "MUOS" / "bios"))
+        # On the device, the folder muOS binds it to.
+        bound = Path("/run/muos/storage/bios")
+        self.assertEqual(install.card_dest("muos", "retroarch", bound), ("retroarch", bound))
+        # A list named by its own name says which list, not which card.
+        self.assertEqual(install.card_dest("retroarch", "retroarch", root),
+                         ("retroarch", root))
+
+    # P1-2: Space is X on PortMaster and Y on muxterm.
+
+    def test_p1_2_space_on_install_opens_the_confirm_screen(self):
+        state = checked_state()
+        self.assertEqual(install.tui_rows(state)[0].action, "install")
+        self.assertEqual(press(state, " "), [("run", "confirm")])
+        self.assertEqual(state.screen, "confirm")
+        # The same plan comes back: the screen still waits for A.
+        install.tui_receive(state, ("event", state.run_id, dict(CHECK)))
+        self.assertEqual(install.tui_receive(state, ("ended", state.run_id, 0, [])), [])
+        self.assertEqual(state.screen, "confirm")
+        self.assertEqual(install.tui_rows(state)[0].action, "install")
+        self.assertEqual(press(state, " "), [])
+        self.assertEqual(state.screen, "confirm")
+        self.assertEqual(press(state, "enter"), [("run", "install")])
+
+    def test_p1_2_space_never_closes_or_quits(self):
+        for action in ("quit", "close"):
+            with self.subTest(row=action):
+                state = checked_state()
+                if action == "close":
+                    state.check = {**CHECK, "missing": 0, "wrong_hash": 0, "bytes_needed": 0}
+                rows = install.tui_rows(state)
+                state.focus["plan"] = next(i for i, r in enumerate(rows) if r.action == action)
+                self.assertEqual(press(state, " "), [])
+                self.assertIsNone(state.exit_code)
+        state = checked_state()
+        state.focus["plan"] = next(i for i, r in enumerate(install.tui_rows(state))
+                                   if r.action == "options")
+        press(state, " ")
+        self.assertEqual(state.screen, "options")
+
+    def test_p1_2_enter_still_installs_in_three_presses(self):
+        state = checked_state()
+        self.assertEqual(press(state, "enter"), [("run", "install")])
+        self.assertEqual(state.screen, "installing")
+
+    # P2-1: a card too small for the download.
+
+    def test_p2_1_another_folder_comes_first_when_space_is_short(self):
+        state = checked_state({"free": 1024, "writable": True, "cores": []})
+        self.assertEqual([row.label for row in install.tui_rows(state)[:2]],
+                         ["Choose another folder", "Install anyway"])
+        self.assertEqual(press(state, "enter"), [])
+        self.assertEqual(state.screen, "folder")
+
+    FULL_TAIL = [
+        "  Checking existing files...",
+        "    0/50 present (0 verified, 0 wrong hash)",
+        "  Downloading 50 files (845.7 KB)...",
+        "Not enough space on the drive holding /media/me/MUOS/MUOS/bios.",
+        "  Needed: 1.2 GB. Free: 300.0 MB.",
+        "  Free up 920.0 MB, or install to another drive:",
+        "    python3 install.py --platform retroarch --dest '<folder on another drive>'",
+    ]
+
+    def test_p2_1_a_full_card_is_said_in_words(self):
+        root = self.card(self.CARDS["muOS"][0])
+        state = checked_state()
+        state.dest, state.log = root / "MUOS" / "bios", "/tmp/retrobios-tui-x/install.log"
+        state.stack.append("result")
+        state.code, state.tail = 2, list(self.FULL_TAIL)
+        with mock.patch.object(install, "_mounted_cards", return_value=[root]):
+            title, lines = install.tui_outcome(state)
+        self.assertEqual(title, "Not enough space")
+        self.assertEqual(lines[0], "The card is full: 1.2 GB needed, 300.0 MB free.")
+        self.assertIn("Free some space, or run again and choose another folder.", lines)
+        text = "\n".join(lines)
+        for raw in ("Checking existing files", "Downloading", "stopped with code", "Details:"):
+            self.assertNotIn(raw, text)
+        self.assertFalse(install.tui_keeps_log(state))
+
+    def test_p2_1_advice_never_names_the_interface_list(self):
+        if hasattr(os, "geteuid") and os.geteuid() == 0:
+            self.skipTest("root writes to a read-only folder")
+        folder = self.card({})
+        folder.chmod(0o555)
+        self.addCleanup(folder.chmod, 0o755)
+        with FakeRepository() as repo:
+            listed = repo.root / "install" / "retroarch.json"
+            proc = install_run("--platform", "retroarch", "--dest", str(folder),
+                               f"--manifest={listed}", "--yes",
+                               env={**repo.env(), install.TUI_LIST_ENV: "1"})
+        self.assertIn("sudo", proc.stdout + proc.stderr)
+        self.assertNotIn("--manifest", proc.stdout + proc.stderr)
+
+    # P2-2: the BIOS folder line on a handheld screen.
+
+    def test_p2_2_the_plan_keeps_the_folder_at_handheld_sizes(self):
+        zipped = "/home/me/a/long/path/to/the/Downloads/PSX BIOS.zip"
+        for cols, rows in ((40, 12), (40, 15)):
+            with self.subTest(size=f"{cols}x{rows}"):
+                state = checked_state()
+                state.dest = Path("/home/someone/with/a/long/path/.config/retroarch/system")
+                state.found = [found("scph5500.bin", zipped)]
+                state.cols, state.rows = cols, rows
+                lines = [line.strip() for line in install.tui_view(state, cols, rows)]
+                folder = next(line for line in lines if line.startswith("BIOS folder: "))
+                self.assertTrue(folder.endswith("retroarch/system"), folder)
+                self.assertIn("...", folder)
+                self.assertIn("1 found in PSX BIOS.zip,", " ".join(lines))
+                self.assertNotIn("/home/me/a/long", " ".join(lines))
+
+    # P2-3: where the files came from.
+
+    def test_p2_3_the_result_says_what_came_from_the_card(self):
+        state = checked_state()
+        state.stack.append("result")
+        state.code, state.download = 0, {"files": 5, "bytes": 10}
+        state.local_dests = {"scph5500.bin": ("/media/me/OLD", ""),
+                             "scph5501.bin": ("/media/me/OLD", ""),
+                             "gba_bios.bin": (str(SYSTEM_DIR), "one folder too deep")}
+        state.finished = [("scph5500.bin", True, ""), ("scph5501.bin", True, ""),
+                          ("gba_bios.bin", True, ""), ("pcsx/extra.bin", True, ""),
+                          ("fc/disksys.rom", False, "HTTP 404")]
+        state.summary = {"installed": 4, "up_to_date": 0, "failed": [
+            {"dest": "fc/disksys.rom", "reason": "HTTP 404"}]}
+        _title, lines = install.tui_outcome(state)
+        self.assertEqual(lines[1], "2 files copied from OLD, 1 fixed from copies "
+                                   "already in the BIOS folder, 1 downloaded, 1 still missing.")
+        # The line mode's own sentence, from the same counts.
+        self.assertEqual(lines[1], install.sources_line([("OLD", 2)], 1, 1, 1))
+
+    def test_p2_3_a_run_that_copied_nothing_adds_no_line(self):
+        state = install.TuiState()
+        state.summary, state.finished = {"installed": 2, "failed": []}, [("a", True, "")]
+        self.assertEqual(install._tui_sources(state, 2, 0), "")
+
+    # P2-4 and P2-5: the systems list.
+
+    def systems_state(self) -> install.TuiState:
+        state = checked_state()
+        state.systems = [*state.systems,
+                         {"system": "other", "name": "other", "files": 2, "present": 0,
+                          "missing": 2, "wrong_hash": 0, "bytes_needed": 300},
+                         {"system": "3do", "name": "3do", "files": 3, "present": 0,
+                          "missing": 3, "wrong_hash": 0, "bytes_needed": 600}]
+        state.files = [*state.files,
+                       {"event": "file", "dest": "panafz1.bin", "systems": ["3do"],
+                        "size": 100, "state": "missing"},
+                       {"event": "file", "dest": "mame/hash/a.xml", "systems": ["3do", "mac"],
+                        "size": 200, "state": "missing"},
+                       {"event": "file", "dest": "mame/hash/b.xml", "systems": ["3do", "mac"],
+                        "size": 300, "state": "missing"}]
+        state.ticked |= {"other", "3do"}
+        state.stack.append("systems")
+        return state
+
+    def test_p2_4_the_other_row_is_named_and_explained(self):
+        state = self.systems_state()
+        rows = install.tui_rows(state)
+        other = next(i for i, row in enumerate(rows) if row.value == "other")
+        self.assertEqual(rows[other].label, "[x] Other systems and game engines")
+        state.focus["systems"] = other
+        text = " ".join(" ".join(install.tui_view(state, 80, 24)).split())
+        self.assertIn("Other systems and game engines: what cores load for systems this "
+                      "setup does not list", text)
+
+    def test_p2_5_shared_files_are_counted_apart(self):
+        state = self.systems_state()
+        rows = install.tui_rows(state)
+        three = next(i for i, row in enumerate(rows) if row.value == "3do")
+        self.assertEqual(rows[three].right, "1 file, 100 B + 2 shared")
+        state.focus["systems"] = three
+        text = " ".join(" ".join(install.tui_view(state, 80, 24)).split())
+        self.assertIn("2 of these files are shared with other systems, counted once", text)
+        # The line mode counts the same files apart.
+        self.assertIn("and 2 files, 500 B shared with other systems", install._system_sized([
+            {"dest": "panafz1.bin", "size": 100, "systems": ["3do"]},
+            {"dest": "a.xml", "size": 200, "systems": ["3do", "mac"]},
+            {"dest": "b.xml", "size": 300, "systems": ["3do", "mac"]}]))
+        narrow = install.tui_view(state, 40, 15)
+        self.assertTrue(any("100 B + 2 shared" in line for line in narrow), narrow)
+
+    # P2-6: a file that cannot be supplied, by name, where it matters.
+
+    def unavailable_state(self) -> install.TuiState:
+        state = checked_state()
+        state.manifest = {**MANIFEST, "system_titles": {"nintendo-gba": "Game Boy Advance"},
+                          "omitted_files": [
+                              {"dest": "gba_extra.bin", "system": "nintendo-gba",
+                               "required": True, "reason": "not_found"},
+                              {"dest": "optional.bin", "system": "nintendo-gba",
+                               "required": False, "reason": "not_found"}]}
+        state.stack.append("result")
+        state.code, state.download = 0, {"files": 1, "bytes": 1}
+        state.summary = {"installed": 1, "up_to_date": 0, "failed": []}
+        return state
+
+    def test_p2_6_the_missing_file_is_named_with_its_system(self):
+        state = self.unavailable_state()
+        _title, lines = install.tui_outcome(state)
+        self.assertIn("Not available here, and needed to start its emulator: gba_extra.bin "
+                      "(Game Boy Advance). Your own copy goes in the BIOS folder.", lines)
+        self.assertNotIn("collection", " ".join(lines))
+
+    def test_p2_6_it_is_left_out_when_it_does_not_concern_the_run(self):
+        state = self.unavailable_state()
+        state.ticked = {"sony-playstation"}
+        self.assertEqual(install._unavailable_lines(state), [])
+        state = self.unavailable_state()
+        state.summary = {"installed": 1, "failed": [], "interrupted": True}
+        self.assertFalse(any("Not available" in line for line in install.tui_outcome(state)[1]))
+
+    # P3: small fixes the audit listed.
+
+    def fetch_failure(self, error: BaseException, env: dict | None = None) -> tuple:
+        inbox = __import__("queue").Queue()
+        with mock.patch.object(install, "_fetch_json", side_effect=error), \
+                mock.patch.dict(os.environ, env or {}):
+            for name in ("HTTPS_PROXY", "https_proxy", "ALL_PROXY", "all_proxy"):
+                if name not in (env or {}):
+                    os.environ.pop(name, None)
+            install._tui_fetch("retroarch", inbox, io.StringIO())
+        _kind, _plat, title, lines, _code = inbox.get_nowait()
+        return title, lines
+
+    def test_p3_the_clock_names_the_row_to_choose(self):
+        import ssl
+
+        error = urllib_error(ssl.SSLCertVerificationError("certificate is not yet valid"))
+        words = install.network_words(error, today=install.datetime.date(1980, 1, 1))
+        with mock.patch.object(install, "network_words", return_value=words):
+            _title, lines = self.fetch_failure(error)
+        self.assertTrue(lines[0].endswith("then choose Try again."), lines[0])
+
+    def test_p3_a_proxy_in_the_way_is_named_not_shown(self):
+        error = urllib_error(ConnectionRefusedError(111, "Connection refused"))
+        _title, lines = self.fetch_failure(
+            error, {"HTTPS_PROXY": "http://me:secret@10.0.0.1:3128"})
+        self.assertIn("HTTPS_PROXY is set, so the connection goes through a proxy: check "
+                      "that it answers.", lines)
+        self.assertNotIn("secret", " ".join(lines))
+        _title, lines = self.fetch_failure(error)
+        self.assertFalse(any("PROXY" in line for line in lines))
+
+    def test_p3_a_list_that_is_no_json_is_said_in_words(self):
+        try:
+            install.json.loads("<html>")
+        except install.json.JSONDecodeError as cause:
+            error = ValueError(f"invalid file list: {cause}")
+            error.__cause__ = cause
+        title, lines = self.fetch_failure(error)
+        self.assertEqual(title, "The file list is not valid")
+        self.assertNotIn("Expecting value", " ".join(lines))
+        self.assertIn("a Wi-Fi sign-in page or a cut download looks like this.", lines[0])
+
+    def test_p3_the_preview_counts_its_files_only(self):
+        state = checked_state()
+        state.stack += ["options", "preview"]
+        state.dry = dict(CHECK)
+        state.dry_files = [{**FILES[0], "dest": f"f{n}.bin"} for n in range(40)]
+        state.rows = 24
+        lines = [line.strip() for line in install.tui_view(state, 80, 24)]
+        self.assertIn("1-18 of 40", lines)
+
+    def test_p3_game_data_reads_without_a_double_negative(self):
+        state = checked_state()
+        label = next(row.label for row in install._option_rows(state)
+                     if row.action == "game_data")
+        self.assertEqual(label, "Game data: kept")
+        state.no_game_data = True
+        label = next(row.label for row in install._option_rows(state)
+                     if row.action == "game_data")
+        self.assertEqual(label, "Game data: left out, firmware only")
+
+    def test_p3_the_plan_says_which_config_named_the_folder(self):
+        config = HOME / ".config/retroarch/retroarch.cfg"
+        with mock.patch.dict(install._RETROARCH_CONFIGS, {SYSTEM_DIR: (config, config.parent)}):
+            text = "\n".join(install.tui_view(checked_state(), 80, 24))
+        self.assertIn("Named by ~/.config/retroarch/retroarch.cfg", text)
+
+    # The engine's own events (main, after the second audit).
+
+    def test_the_speed_is_the_network_bytes(self):
+        state = checked_state()
+        state.stack.append("installing")
+        state.run, state.running = "install", True
+        install.tui_receive(state, ("event", state.run_id,
+                                    {"event": "download", "files": 4, "bytes": 4 << 20}))
+        for now, done, network in ((100.0, 1 << 20, 0), (102.0, 3 << 20, 1 << 20)):
+            state.now = now
+            install.tui_receive(state, ("event", state.run_id, {
+                "event": "progress", "files_done": 1, "files_total": 4, "bytes_done": done,
+                "bytes_total": 4 << 20}))
+            install.tui_receive(state, ("event", state.run_id, {
+                "event": "transfer", "bytes_local": done - network, "bytes_network": network}))
+        text = "\n".join(install.tui_view(state, 80, 24))
+        # 1 MB from the network in 2 s, whatever came from the old card.
+        self.assertIn("512.0 KB/s, 0:02 left", text)
+
+    def test_the_plan_says_what_the_scan_left_out(self):
+        state = checked_state()
+        state.from_folders = [Path("E:\\")]
+        install._start_check(state)
+        events = [{"event": "scanned", "folder": "E:\\", "files": 200000, "truncated": True,
+                   "other_drives": ["E:\\D"]},
+                  {"event": "unreadable", "platform": "retroarch", "folder": "E:\\",
+                   "path": "E:\\bios\\scph5501.bin", "member": "", "reason": "Permission denied"},
+                  {"event": "unreadable", "platform": "retroarch", "folder": "E:\\",
+                   "path": "E:\\backup.zip", "member": "gba_bios.bin",
+                   "reason": "it is encrypted, a password is needed"}]
+        for event in [*FILES, *SYSTEMS, *events, CHECK]:
+            install.tui_receive(state, ("event", state.run_id, event))
+        with mock.patch.object(install, "_tui_folder_facts", return_value={
+                "free": 50 * 1024 ** 3, "writable": True, "cores": []}):
+            install.tui_receive(state, ("ended", state.run_id, 1, []))
+        text = " ".join(" ".join(install.tui_view(state, 120, 40)).split())
+        self.assertIn("Read the first 200,000 files of E:\\.", text)
+        self.assertIn("E:\\D is another drive: add it to copy from it too.", text)
+        self.assertIn("2 files on your old card could not be read.", text)
+        rows = install.tui_rows(state)
+        state.focus["plan"] = next(i for i, row in enumerate(rows) if row.action == "unreadable")
+        press(state, "enter")
+        self.assertEqual(state.screen, "unreadable")
+        self.assertEqual(install._pager_items(state), [
+            "E:\\bios\\scph5501.bin: Permission denied",
+            "E:\\backup.zip, gba_bios.bin: it is encrypted, a password is needed"])
+
+    def test_the_interface_does_not_index_the_folders_itself(self):
+        missing = REPO_ROOT / "tmp" / "no-such-old-card"
+        err = io.StringIO()
+        with mock.patch.object(install, "FolderIndex", side_effect=AssertionError("indexed")), \
+                mock.patch.object(install, "detect_os", return_value="linux"), \
+                mock.patch.object(install, "tui_start", side_effect=AssertionError("opened")), \
+                mock.patch.object(sys, "stderr", err):
+            self.assertEqual(install.run_tui(_args(**{"from": [missing]})), 1)
+        self.assertIn(f"Error: {missing} does not exist: --from names the folder", err.getvalue())
+
+    # Work folders: only a kill no handler sees leaves one, and the next
+    # run takes it away.
+
+    def test_work_folders_left_behind_are_pruned(self):
+        import subprocess
+
+        root = Path(tempfile.mkdtemp(dir=REPO_ROOT / "tmp"))
+        self.addCleanup(shutil.rmtree, root, True)
+        gone = subprocess.Popen([sys.executable, "-c", "pass"])
+        gone.wait()
+        now = time.time()
+        week = install.TUI_KEEP_SECONDS
+
+        def folder(name: str, pid: int | None, kept: bool, age: float) -> Path:
+            path = root / f"{install.TUI_WORK_PREFIX}{name}"
+            path.mkdir()
+            if pid is not None:
+                (path / install.TUI_OWNER).write_text(str(pid))
+            if kept:
+                (path / install.TUI_KEPT).write_text("")
+            os.utime(path, (now - age, now - age))
+            return path
+
+        killed = folder("killed", gone.pid, False, 60)
+        running = folder("running", os.getpid(), False, 2 * week)
+        failed = folder("failed", gone.pid, True, 60)
+        failed_old = folder("failed-old", gone.pid, True, 2 * week)
+        unknown = folder("unknown", None, False, 60)
+        unknown_old = folder("unknown-old", None, False, 2 * week)
+        other = root / "something-else"
+        other.mkdir()
+        removed = install._prune_work_folders(root, now)
+        self.assertEqual(sorted(removed), sorted([killed, failed_old, unknown_old]))
+        self.assertEqual(sorted(path.name for path in root.iterdir()),
+                         sorted(path.name for path in (running, failed, unknown, other)))
 
 
 class Crash(unittest.TestCase):
@@ -2030,11 +2545,14 @@ class EndToEnd(unittest.TestCase):
         term.send("\r")
         screen = term.wait("found in")
         # The folder wraps at a slash: compared without the spaces.
-        self.assertIn("".join(f"3 found in {old}, 2 to download (8 B)".split()),
-                      "".join(screen.split()))
+        self.assertIn("3 found in oldcard, 2 to download (8 B)", screen)
         # Checked again, the plan opens on Install.
         term.send("\r")
-        term.wait("files installed.")
+        screen = term.wait("files installed.")
+        # Where each came from, as the line mode says it.
+        self.assertIn("5 files installed.", screen)
+        self.assertIn("3 files copied from", screen)
+        self.assertIn("2 downloaded.", screen)
         term.send("\r")
         self.assertEqual(term.close(), 0)
         self.assertEqual(len(repo.installed()), 5)

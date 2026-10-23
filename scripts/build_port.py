@@ -46,6 +46,8 @@ MUOS_APP = "RetroBIOS.muxapp"
 TOOLS_ZIP = "RetroBIOS-tools.zip"
 # Every archive a release attaches, in the order the release notes list them.
 ARCHIVES = (PORT_ZIP, BATOCERA_ZIP, MUOS_APP, TOOLS_ZIP)
+# Which release pack serves each platform, read by tui.txt offline.
+PACKS_TABLE = "packs.txt"
 _PIN = re.compile(r'^DEFAULT_INSTALL_SHA256="([0-9a-f]{64})"$', re.MULTILINE)
 
 
@@ -57,7 +59,7 @@ def pinned_installer_sha256(root: Path = REPO_ROOT) -> str:
     return found.group(1)
 
 
-def _engine(folder: str, root: Path, mapping: bool = True) -> list[tuple[str, Path]]:
+def _engine(folder: str, root: Path, mapping: bool = True) -> list[tuple[str, Path | None]]:
     """What every launcher runs: the installer, the interface launcher, the
     event reader, the licenses, and the gptokeyb mapping where one is read."""
     shared = root / "ports" / "shared"
@@ -67,14 +69,17 @@ def _engine(folder: str, root: Path, mapping: bool = True) -> list[tuple[str, Pa
         (f"{folder}/rbevents.py", shared / "rbevents.py"),
         (f"{folder}/licenses/LICENSE-retrobios.txt", root / "LICENSE"),
         (f"{folder}/licenses/NOTICE-retrobios.txt", root / "NOTICE"),
+        # Written by build_archive from the registry.
+        (f"{folder}/{PACKS_TABLE}", None),
     ]
     if mapping:
         members.append((f"{folder}/retrobios.gptk", shared / "retrobios.gptk"))
     return members
 
 
-def archive_members(name: str, root: Path = REPO_ROOT) -> list[tuple[str, Path]]:
-    """(name in the archive, source file) for every member of *name*, sorted."""
+def archive_members(name: str, root: Path = REPO_ROOT) -> list[tuple[str, Path | None]]:
+    """(name in the archive, source file) for every member of *name*, sorted.
+    The source is None for the packs table build_archive writes."""
     ports = root / "ports"
     if name == PORT_ZIP:
         source = ports / "RetroBIOS"
@@ -103,7 +108,6 @@ def archive_members(name: str, root: Path = REPO_ROOT) -> list[tuple[str, Path]]
         source = ports / "muos"
         members = [
             ("RetroBIOS/mux_launch.sh", source / "mux_launch.sh"),
-            ("RetroBIOS/muxterm.gptk", source / "muxterm.gptk"),
             ("RetroBIOS/README.md", source / "README.md"),
             *_engine("RetroBIOS", root),
         ]
@@ -122,6 +126,40 @@ def archive_members(name: str, root: Path = REPO_ROOT) -> list[tuple[str, Path]]
     return sorted(members)
 
 
+def release_pack_labels(root: Path = REPO_ROOT) -> dict[str, str]:
+    """Platform -> the platform part of the release pack that serves it.
+
+    Only the platforms the registry marks release_pack have a pack, grouped
+    as the release builds them (pipeline.py --include-archived). install.py
+    refuses a pack whose name does not spell the platform, so a platform
+    outside these groups has no pack to copy, whatever its file list.
+    """
+    from common import (  # noqa: PLC0415
+        group_identical_platforms,
+        list_release_pack_platforms,
+        load_platform_config,
+    )
+    from generate_pack import _name_part, _platform_pack_stem  # noqa: PLC0415
+
+    platforms_dir = str(root / "platforms")
+    pool = list_release_pack_platforms(platforms_dir, include_archived=True)
+    labels: dict[str, str] = {}
+    for group, representative in group_identical_platforms(pool, platforms_dir):
+        stem = _platform_pack_stem(group, representative, platforms_dir)
+        config = load_platform_config(representative, platforms_dir)
+        version = config.get("version", config.get("dat_version", ""))
+        tag = f"_{_name_part(str(version))}" if version else ""
+        label = stem[: -len(tag)] if tag and stem.endswith(tag) else stem
+        for platform in group:
+            labels[platform] = label
+    return dict(sorted(labels.items()))
+
+
+def _packs_table(root: Path) -> bytes:
+    return "".join(f"{platform}\t{label}\n"
+                   for platform, label in release_pack_labels(root).items()).encode()
+
+
 def build_archive(name: str, output: Path, root: Path = REPO_ROOT) -> Path:
     """Write the launcher archive *name* to *output* and return it."""
     pinned = pinned_installer_sha256(root)
@@ -138,9 +176,14 @@ def build_archive(name: str, output: Path, root: Path = REPO_ROOT) -> Path:
     members = archive_members(name, root)
     output.parent.mkdir(parents=True, exist_ok=True)
     scratch = output.with_name(f".{output.name}.tmp")
-    with zipfile.ZipFile(scratch, "w", zipfile.ZIP_DEFLATED, compresslevel=9) as zf:
-        for member, path in members:
-            _add_pack_member(zf, str(path), member)
+    table = output.with_name(f".{output.name}.{PACKS_TABLE}")
+    table.write_bytes(_packs_table(root))
+    try:
+        with zipfile.ZipFile(scratch, "w", zipfile.ZIP_DEFLATED, compresslevel=9) as zf:
+            for member, path in members:
+                _add_pack_member(zf, str(path or table), member)
+    finally:
+        table.unlink()
     scratch.replace(output)
     return output
 

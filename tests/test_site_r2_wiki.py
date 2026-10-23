@@ -125,15 +125,21 @@ class FirstInstallEnds(unittest.TestCase):
     """C7, B15: the page said `Done.` may list failures, and sent a wrong
     folder to a section with no answer for it."""
 
-    def test_the_wrong_folder_answer_is_dest(self):
-        section = _section(_wiki("first-install.md"), "2. Check the folder it found")
-        self.assertIn("--dest", section)
+    def test_the_wrong_folder_answer_is_on_the_screen(self):
+        # The one-liner opens the full screen: its first screen has the
+        # answer, a row the page names as the interface spells it.
+        import install
+
+        section = _section(_wiki("first-install.md"), "2. Check the setup it found")
+        state = install.TuiState()
+        row = install.tui_rows(state)[-1].label
+        self.assertIn(f"**{row}**", section)
         self.assertIn("<your setup>", section)
         self.assertNotIn("Batocera", section)
 
     def test_the_diagram_follows_the_steps(self):
         text = _wiki("first-install.md")
-        self.assertLess(text.index("## 5. Read the last line"), text.index("<!-- image: install-flow -->"))
+        self.assertLess(text.index("## 5. Read the result"), text.index("<!-- image: install-flow -->"))
 
 
 class OneNamePerPage(unittest.TestCase):

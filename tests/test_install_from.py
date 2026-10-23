@@ -353,7 +353,8 @@ class TheInterfaceReadsAFoundEvent(unittest.TestCase):
         state, _before = self.receive("check")
         self.assertEqual(state.found, [self.FOUND])
         state, _before = self.receive("install")
-        self.assertEqual(state.local_dests, {"scph5501.bin"})
+        self.assertEqual(list(state.local_dests), ["scph5501.bin"])
+        self.assertEqual(state.local_dests["scph5501.bin"][0], self.FOUND["folder"])
 
     def test_a_dry_run_ignores_it(self):
         for run in ("confirm", "preview"):

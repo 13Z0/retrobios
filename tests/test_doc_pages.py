@@ -699,13 +699,14 @@ class FirstInstallWalkthrough(unittest.TestCase):
         step3 = _section(self.run, "The file index and the download")
         step4 = _section(self.run, "The end of the run")
         step5 = _section(self.run, "A later check")
-        # First install names the three endings a run prints, and no count:
-        # a figure from one setup read as the size of every install.
+        # First install names the three endings the full screen shows as
+        # its title, and no count: a figure from one setup read as the size
+        # of every install.
         source = (ROOT / "install.py").read_text(encoding="utf-8")
-        for ending in ("Done.", "Finished with errors.", "Nothing was installed."):
+        for ending in ("Done", "Finished with errors", "Nothing installed"):
             with self.subTest(ending=ending):
-                self.assertIn(f"`{ending}`", _section(self.text, "5. Read the last line"))
-                self.assertIn(f'"\\n{ending} ', source)
+                self.assertIn(f"**{ending}**", _section(self.text, "5. Read the result"))
+                self.assertIn(f'title = "{ending}"', source)
         self.assertNotRegex(self.text, r"Done\. \d+ files")
         count, size = re.search(r"\n  (\d+) files \(([\d.]+ [KMG]B)\)", step3).groups()
         self.assertIn(f"0/{count} present", step3)
@@ -726,15 +727,17 @@ class FirstInstallWalkthrough(unittest.TestCase):
             self.assertIn(f"all {required} belong", step4)
             self.assertIn(f"other {total - required} are optional", step4)
 
-    def test_no_platform_detected_reads_like_the_installer(self):
-        source = (ROOT / "install.py").read_text(encoding="utf-8")
-        branch = source.split('print("  No supported platform detected.")', 1)[1][:1600]
-        self.assertIn("if not interactive or listing:", branch)
-        self.assertIn("_prompt_manual_platform(os_type)", branch)
+    def test_nothing_found_reads_like_the_installer(self):
+        # The one-liner hands the terminal to the installer, which opens the
+        # full screen: its first screen says the heading and offers the row.
+        import install
+
         self.assertIn('"$INSTALLER" "$@" </dev/tty', (ROOT / "install.sh").read_text(encoding="utf-8"))
-        section = _section(self.text, "No supported platform detected.")
-        self.assertIn("a menu follows", section)
-        self.assertIn("--no-input", section)
+        state = install.TuiState()
+        screen = "\n".join(install.tui_view(state, 80, 24))
+        self.assertIn("Nothing was found here.", screen)
+        section = _section(self.text, "Nothing was found here.")
+        self.assertIn(f"**{install.tui_rows(state)[-1].label}**", section)
         self.assertNotIn("cannot stop and ask", section)
 
 

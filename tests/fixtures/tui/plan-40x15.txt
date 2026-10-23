@@ -1,12 +1,12 @@
  RetroBIOS: RetroArch
 
  4 files to download, 1.0 MB
+ BIOS folder: ~/.co.../retroarch/system
  1 in place, 3 missing, 1 wrong copy
- BIOS folder:
-   ~/.config/retroarch/system
  Free space: 50.0 GB
  They are replaced, and the old copies
    are kept in a backup folder.
+
  > Install
    Choose systems
    Copy from your old card or a folder

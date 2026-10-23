@@ -251,11 +251,21 @@ class SmallCopyFixes(unittest.TestCase):
         self.assertIn("`retroarch/cores/system/` on the SD card", guides)
         self.assertIn("--dest E:\\retroarch\\cores\\system", section)
 
-    def test_the_end_line_is_the_printed_one(self):
-        section = _section(_wiki("first-install.md"), "5. Read the last line")
-        self.assertIn("`N files installed, M already up to date.`", section)
-        source = (REPO_ROOT / "install.py").read_text(encoding="utf-8")
-        self.assertIn("installed, \"\n          f\"{_plural(up_to_date, 'file')} already up to date.", source)
+    def test_the_end_is_the_shown_one(self):
+        # The one-liner opens the full screen: the page names the titles
+        # its result screen shows, as tui_outcome writes them.
+        import install
+
+        section = _section(_wiki("first-install.md"), "5. Read the result")
+        state = install.TuiState()
+        state.stack, state.code = ["result"], 0
+        for summary in ({"installed": 3, "up_to_date": 0, "failed": []},
+                        {"installed": 2, "failed": [{"dest": "a.bin", "reason": "HTTP 404"}]},
+                        {"installed": 0, "failed": [{"dest": "a.bin", "reason": "HTTP 404"}]}):
+            state.summary = summary
+            title, _lines = install.tui_outcome(state)
+            with self.subTest(title=title):
+                self.assertIn(f"**{title}**", section)
 
 
 class CommunityAnswers(unittest.TestCase):

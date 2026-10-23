@@ -15,6 +15,8 @@ ROOT="${RB_ROOT:-}"
 RB_DIR="$HERE/retrobios"
 RB_LOG="$RB_DIR/log.txt"
 ESUDO=""
+MAPPER_SUDO=""
+kill_flag="-1"
 OS_NAME=""
 if [ -f "$ROOT/etc/os-release" ]; then
   OS_NAME=$(awk -F= '$1 == "NAME" { gsub(/"/, "", $2); print $2 }' "$ROOT/etc/os-release")
@@ -49,6 +51,10 @@ if [ -d "$ROOT/opt/system" ] && [ -d "$ROOT/opt/inttools" ]; then
   mapper=$(rb_gptokeyb "$ROOT/opt/inttools/gptokeyb" "$controlfolder/gptokeyb")
   [ -f "$ROOT/opt/inttools/gamecontrollerdb.txt" ] \
     && export SDL_GAMECONTROLLERCONFIG_FILE="$ROOT/opt/inttools/gamecontrollerdb.txt"
+  # sudo's env_reset drops the controller list exported above, and a pad
+  # SDL does not know then sends nothing: PortMaster keeps it the same way
+  # on ArkOS (control.txt, ESUDO).
+  [ -n "$ESUDO" ] && MAPPER_SUDO="sudo --preserve-env=SDL_GAMECONTROLLERCONFIG_FILE"
 elif [ "$OS_NAME" = "AmberELEC" ]; then
   RB_ROUTES="vt"
   RB_CONSOLE="${RB_CONSOLE:-/dev/console}"
@@ -65,15 +71,29 @@ else
   RB_PACK_PATH="$RB_DIR:$HERE:/storage/roms"
   controlfolder="/storage/roms/ports/PortMaster"
   mapper=$(rb_gptokeyb "$ROOT/usr/bin/gptokeyb" "$controlfolder/gptokeyb")
+  # ROCKNIX's own tools load the pad's controller list first (fex-emu's
+  # Start FEXConfig.sh: control-gen_init.sh, control.ini, get_controls), and
+  # start the GPTOKEYB it names. control.ini also sets ESUDO and
+  # controlfolder, which this launcher keeps as they were.
+  control="$ROOT/storage/.config/gptokeyb/control.ini"
+  command -v control-gen_init.sh >/dev/null 2>&1 && control-gen_init.sh >/dev/null 2>&1
+  if [ -f "$control" ]; then
+    saved_esudo="$ESUDO" saved_folder="$controlfolder"
+    # shellcheck source=/dev/null
+    source "$control"
+    declare -F get_controls >/dev/null && get_controls
+    # It carries its own kill flag (-sudokill).
+    [ -n "${GPTOKEYB:-}" ] && mapper="$GPTOKEYB" kill_flag=""
+    ESUDO="$saved_esudo" controlfolder="$saved_folder"
+  fi
 fi
-# Kill mode on the installer's own path: Start + Select closes the
-# interface, never another program.
+# Kill mode: Start + Select closes the interface, never another program.
 RB_MAPPER=""
-[ -n "$mapper" ] && RB_MAPPER="$ESUDO $mapper -1"
+[ -n "$mapper" ] && RB_MAPPER="${MAPPER_SUDO:-$ESUDO} $mapper $kill_flag"
 
 # shellcheck source=../shared/tui.txt
 source "$RB_DIR/tui.txt"
-: > "$RB_LOG"
+rb_open_log fresh
 rb_select_python
 # A launcher's own arguments are not install.py's (muOS passes the app folder).
 # shellcheck disable=SC2119

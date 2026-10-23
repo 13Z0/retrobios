@@ -1,8 +1,8 @@
  RetroBIOS: Confirm
 
  1 file to download, 16.0 KB
- 0 in place, 1 missing, 0 wrong copies
  BIOS folder: ~/.config/retroarch/system
+ 0 in place, 1 missing, 0 wrong copies
  Free space: 50.0 GB
 
  > Install

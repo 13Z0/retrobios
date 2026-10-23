@@ -38,7 +38,8 @@ Run it without `--check`. It adds missing files and replaces wrong ones.
 - **Right folder?** [Get your files](../which-pack.md) names it.
 - **Exact name?** `scph5501.bin` and `SCPH-5501.BIN` differ. On Linux,
   capitals count too.
-- **A `bios` folder inside your BIOS folder?** Move its files up one level.
+- **A `bios` folder inside your BIOS folder?** Run the installer: it copies
+  those files up one level.
 - **Unzipped by hand on Linux?** The command adds names that differ by
   capitals.
 - **A ZIP in parts, like `Pack.part1of2.zip`?** Unzip every part into one
