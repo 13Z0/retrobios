@@ -569,8 +569,14 @@ def _os_name() -> str:
 def _emit_check(
     plat: str, manifest: dict, bios_path: Path, files: list[dict], up_to_date: list[dict],
     mismatched: list[dict], data_missing: int, not_installable: int,
+    chosen: list[str] | None = None,
 ) -> None:
-    """One event per file, per system and per platform after a check."""
+    """One event per file, per system and per platform after a check.
+
+    With systems chosen, only those are described: a file of SkyEmu's
+    carries four systems, and --system nintendo-gba described gb, gbc and
+    ds by the few files the choice kept of them.
+    """
     present = {id(entry) for entry in up_to_date}
     wrong = {id(entry) for entry in mismatched}
     systems: dict[str, dict[str, int]] = {}
@@ -591,6 +597,8 @@ def _emit_check(
                 counts["bytes_needed"] += size
     names = manifest.get("system_names") or {}
     for system in sorted(systems):
+        if chosen and system not in chosen:
+            continue
         EVENTS.emit("system", platform=plat, system=system,
                     name=", ".join(names.get(system) or [system]), **systems[system])
     needed = [entry for entry in files if id(entry) not in present]
@@ -7832,6 +7840,7 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
             _emit_check(
                 plat_name, manifest, bios_path, files, up_to_date, mismatched,
                 sum(len(state[1]) for _entry, state in data_states), len(omitted_files),
+                chosen=selection[0] if selection else None,
             )
         total_verified += len(up_to_date)
 

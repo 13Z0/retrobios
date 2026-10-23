@@ -4994,6 +4994,31 @@ def _events(proc: subprocess.CompletedProcess) -> list[dict]:
     return [json.loads(line) for line in proc.stdout.splitlines()]
 
 
+class SystemEventsFollowTheChoice(unittest.TestCase):
+    """--system nintendo-gba wrote `system` events for nintendo-ds, gb and
+    gbc: SkyEmu's files carry four systems, and each was described by the
+    few of its files the choice kept."""
+
+    def test_only_the_chosen_systems_are_described(self):
+        files = [{"dest": "gba_bios.bin", "size": 1, "systems": ["nintendo-gba"]},
+                 {"dest": "SkyEmu/dmg.bin", "size": 1,
+                  "systems": ["nintendo-gb", "nintendo-gba"]}]
+        stream = io.StringIO()
+        install.EVENTS.open(stream)
+        self.addCleanup(setattr, install.EVENTS, "stream", None)
+        install._emit_check("retroarch", {}, Path("/b"), files, [], [], 0, 0,
+                            chosen=["nintendo-gba"])
+        systems = [json.loads(line)["system"] for line in stream.getvalue().splitlines()
+                   if json.loads(line)["event"] == "system"]
+        self.assertEqual(systems, ["nintendo-gba"])
+        stream.seek(0)
+        stream.truncate()
+        install._emit_check("retroarch", {}, Path("/b"), files, [], [], 0, 0)
+        systems = [json.loads(line)["system"] for line in stream.getvalue().splitlines()
+                   if json.loads(line)["event"] == "system"]
+        self.assertEqual(systems, ["nintendo-gb", "nintendo-gba"])
+
+
 class EventsDescribeTheRun(unittest.TestCase, _SyntheticTree):
     """--events: the handheld port reads the run as JSON lines on stdout and
     never parses the text, which goes to stderr."""
