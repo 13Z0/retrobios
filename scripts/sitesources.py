@@ -5,17 +5,21 @@ was written against, so a permalink is pinned, never guessed."""
 
 from __future__ import annotations
 
+import argparse
 import functools
+import json
 import re
+import sys
 import urllib.parse
+from collections.abc import Iterator
 from dataclasses import dataclass
 from pathlib import Path
-import urllib.request
 
 import upstream
 from siterender import _by_mode
 from sourceref import (
-    _prose_runs, is_binary_citation, ref_role, source_ref_values, split_source_ref,
+    _HEX_ADDRESS_RE, _prose_runs, is_binary_citation, ref_role, source_ref_values,
+    split_source_ref,
 )
 
 
@@ -154,43 +158,159 @@ def _source_permalink(repo: upstream.Repo, pin: str, path: str,
                 url += f"-L{end}"
     return url
 
-# The tree listings profile_sync caches. Read offline only: a page build
-# never calls a forge, and a listing it does not find leaves the link as the
-# profile's declarations alone decide it.
+# The tree listings profile_sync caches, read only by the command that
+# writes SOURCE_PATHS. The pages read that file: the deploy has no tree
+# cache, and a citation it could not check was linked into whichever
+# repository the profile declared, 30 of them to a 404.
 TREE_CACHE = Path(__file__).resolve().parent.parent / upstream.CACHE_DIR
+SOURCE_PATHS = (Path(__file__).resolve().parent.parent
+                / "website" / "src" / "data" / "source-paths.json")
+
+
+def tree_key(repo: upstream.Repo, pin: str) -> str:
+    """How SOURCE_PATHS names one repository at one revision."""
+    return f"{repo.host}/{repo.slug}@{pin}"
 
 
 @functools.lru_cache(maxsize=None)
-def _tree_paths(repo: upstream.Repo, pin: str) -> frozenset[str] | None:
-    """Every file of a repository at a revision, None when not cached or
-    truncated (a missing path would then prove nothing)."""
-    if not repo.api_base:
-        return None  # a browse-only forge: no listing to read
-    paths, truncated = upstream.list_tree(repo, pin, str(TREE_CACHE), offline=True)
-    return frozenset(paths) if paths and not truncated else None
+def _verified() -> dict[str, frozenset[str]]:
+    """The committed record, empty when it has not been written."""
+    try:
+        data = json.loads(SOURCE_PATHS.read_text(encoding="utf-8"))
+    except FileNotFoundError:
+        return {}
+    return {key: frozenset(paths) for key, paths in data.items()}
 
 
-def tree_holds(repo: upstream.Repo, pin: str, path: str) -> bool | None:
-    """Whether the repository holds ``path`` at ``pin``: None when its tree
-    is not cached. trident cites src/core/loader/ncch.cpp, a Panda3DS file,
-    and the page linked it into 3dsTrident, where it is a 404."""
-    paths = _tree_paths(repo, pin)
-    return None if paths is None else path in paths
+@functools.lru_cache(maxsize=None)
+def _tree_paths(repo: upstream.Repo, pin: str) -> frozenset[str]:
+    """The cited paths of a repository at a revision that its tree holds."""
+    return _verified().get(tree_key(repo, pin), frozenset())
+
+
+def tree_holds(repo: upstream.Repo, pin: str, path: str) -> bool:
+    """Whether ``path`` was found in the repository's tree at ``pin``.
+
+    trident cites src/core/loader/ncch.cpp, a Panda3DS file, and the page
+    linked it into 3dsTrident, where it is a 404. A path no tree confirmed,
+    on a forge whose tree cannot be read or a revision not cached when the
+    record was written, is not linked: no link beats a link to nothing.
+    """
+    return path in _tree_paths(repo, pin)
 
 
 def _holder(
-    candidates: list[tuple[upstream.Repo, str]], path: str, default: tuple | None,
+    candidates: list[tuple[upstream.Repo, str]], path: str,
 ) -> tuple[upstream.Repo, str] | None:
     """The pinned repository that holds ``path``, source before upstream as
-    profile_sync.select_views orders them. Without every tree cached, the
-    declarations decide (``default``). A path no cached tree holds links
-    nowhere: no link beats a link to a file that is not there."""
-    verdicts = [tree_holds(repo, pin, path) for repo, pin in candidates]
-    if not candidates or None in verdicts:
-        if default is not None and tree_holds(*default, path) is False:
+    profile_sync.select_views orders them."""
+    return next((cand for cand in candidates if tree_holds(*cand, path)), None)
+
+
+def _cached_tree(
+    repo: upstream.Repo, pin: str, cache_dirs: list[Path], fetch: bool = False,
+) -> frozenset[str] | None:
+    """Every file of a repository at a revision, None when not cached or
+    truncated (a missing path would then prove nothing). Each cache is read
+    in turn. With *fetch*, a tree none holds is fetched into the last one."""
+    if not repo.api_base:
+        return None  # a browse-only forge: no listing to read
+    for index, cache_dir in enumerate(cache_dirs):
+        online = fetch and index == len(cache_dirs) - 1
+        try:
+            paths, truncated = upstream.list_tree(repo, pin, str(cache_dir), offline=not online)
+        except upstream.UpstreamError as exc:
+            print(f"  {tree_key(repo, pin)}: {exc}", file=sys.stderr)
             return None
-        return default
-    return next((cand for cand, held in zip(candidates, verdicts) if held), None)
+        if paths and not truncated:
+            return frozenset(paths)
+    return None
+
+
+def _walk(value: object) -> Iterator[tuple[str, object]]:
+    """Every (key, value) of a profile, nested lists and mappings included."""
+    if isinstance(value, dict):
+        for key, item in value.items():
+            yield str(key), item
+            yield from _walk(item)
+    elif isinstance(value, list):
+        for item in value:
+            yield from _walk(item)
+
+
+def cited_paths(profile: dict) -> set[str]:
+    """Every path a page of the profile could link: the parts of each
+    source_ref and the file:line citations of its prose."""
+    paths: set[str] = set()
+    for key, value in _walk(profile):
+        if key == "source_ref" and isinstance(value, (str, dict)):
+            for _label, refs in source_ref_values(value):
+                paths.update(ref_role(part.path)[1] for part in split_source_ref(refs))
+        elif isinstance(value, str) and ":" in value:
+            for _n, _span, _spans, parts, _run, _wrapped in _prose_runs(value):
+                paths.update(part.path for part in parts)
+    return {path for path in paths
+            if _PATH_RE.fullmatch(path) and not is_binary_citation(path)}
+
+
+def profile_trees(profile: dict) -> list[tuple[upstream.Repo, str]]:
+    """Every repository and revision a page of the profile can link into."""
+    found: list[tuple[upstream.Repo, str]] = []
+    labels = {""} | {
+        str(mode) for field in ("source", "upstream", "source_commit", "upstream_commit")
+        if isinstance(profile.get(field), dict) for mode in profile[field]}
+    for label in sorted(labels):
+        for pair in _forge_sources(profile, label) + list(role_sources(profile, label).values()):
+            if pair not in found:
+                found.append(pair)
+    return found
+
+
+def _listed_directories(
+    repo: upstream.Repo, pin: str, paths: set[str], cache_dirs: list[Path], fetch: bool,
+) -> frozenset[str] | None:
+    """The cited paths found by listing their directories one by one, for a
+    tree the forge truncates (aps3e vendors RPCS3 whole). A directory that
+    cannot be listed confirms none of its paths. None off GitHub, the one
+    forge with that call."""
+    if repo.family != "github":
+        return None
+    found: set[str] = set()
+    for folder in sorted({path.rpartition("/")[0] for path in paths} - {""}):
+        names = None
+        for index, cache_dir in enumerate(cache_dirs):
+            online = fetch and index == len(cache_dirs) - 1
+            try:
+                names = upstream.list_directory(repo, pin, folder, str(cache_dir), offline=not online)
+            except upstream.UpstreamError:
+                names = None
+            if names is not None:
+                break
+        found.update(f"{folder}/{name}" for name in names or ())
+    return frozenset(found)
+
+
+def build_source_paths(
+    profiles: dict, cache_dirs: list[Path], fetch: bool = False,
+) -> tuple[dict[str, list[str]], list[str]]:
+    """The cited paths each cached tree holds, and the trees not cached."""
+    held: dict[str, set[str]] = {}
+    unread: set[str] = set()
+    for _name, profile in sorted(profiles.items()):
+        paths = cited_paths(profile)
+        if not paths:
+            continue
+        for repo, pin in profile_trees(profile):
+            tree = _cached_tree(repo, pin, cache_dirs, fetch)
+            if tree is None:
+                tree = _listed_directories(repo, pin, paths, cache_dirs, fetch)
+            if tree is None:
+                unread.add(tree_key(repo, pin))
+                continue
+            found = paths & tree
+            if found:
+                held.setdefault(tree_key(repo, pin), set()).update(found)
+    return {key: sorted(paths) for key, paths in sorted(held.items())}, sorted(unread)
 
 
 def _commit_url(repo: upstream.Repo, pin: str) -> str:
@@ -279,11 +399,11 @@ def _source_ref_markdown(profile: dict, value: str | dict | None) -> str:
     """Render source_ref values as pinned links when their forge is known.
 
     A profile can declare two repositories: the libretro port in ``source`` and
-    the original emulator in ``upstream``. Which of the two carries a given
-    path cannot be decided without reading their trees, and this generator runs
-    offline. Rather than guess, an unattributable path is rendered as plain
+    the original emulator in ``upstream``. A path links into the one whose
+    tree SOURCE_PATHS says holds it. Any other path is rendered as plain
     code: a citation with no link still names the file and the lines, while a
-    link to the wrong repository is a false citation.
+    link to the wrong repository is a false citation. An address inside a
+    shipped binary reads as one (offset 0x8094-0x80ac in libnes.so).
     """
     rendered_groups: list[str] = []
     path_re = re.compile(r"^[A-Za-z0-9_.@/+~-]+$")
@@ -292,7 +412,13 @@ def _source_ref_markdown(profile: dict, value: str | dict | None) -> str:
         by_role = role_sources(profile, label)
         rendered: list[str] = []
         current_role = ""
+        binary = ""
         for part in split_source_ref(refs):
+            if is_binary_citation(part.path):
+                text, binary = _binary_citation(part.path, binary)
+                rendered.append(text)
+                continue
+            binary = ""
             role, bare = ref_role(part.path)
             if bare != part.path or role:
                 current_role = role
@@ -311,20 +437,14 @@ def _source_ref_markdown(profile: dict, value: str | dict | None) -> str:
             # broke 470 links. Two repositories and no tree to read: no link.
             selected: tuple[upstream.Repo, str] | None = None
             real_path = part.path
-            # A shipped binary (`DesktopKinect.dll`, `0x10037130-0x100371de`
-            # continuing a BAM.dll range) is no path of either repository:
-            # without a cached tree the single declared one took it.
-            if path_re.fullmatch(part.path) and not is_binary_citation(part.path):
+            if path_re.fullmatch(part.path):
                 if current_role:
                     # Only the repository the part names, or no link at all.
                     selected = by_role.get(current_role)
-                    if selected is not None and tree_holds(*selected, part.path) is False:
+                    if selected is not None and not tree_holds(*selected, part.path):
                         selected = None
                 else:
-                    selected = _holder(
-                        candidates, part.path,
-                        candidates[0] if len(candidates) == 1 else None,
-                    )
+                    selected = _holder(candidates, part.path)
 
             tag = (f" ({role_label(profile, current_role, part.path)})"
                    if current_role and _two_repositories(profile) else "")
@@ -342,6 +462,22 @@ def _source_ref_markdown(profile: dict, value: str | dict | None) -> str:
             text = f"**{label}:** {text}"
         rendered_groups.append(text)
     return ", ".join(rendered_groups)
+
+
+def _binary_citation(path: str, previous: str) -> tuple[str, str]:
+    """A part citing code inside a shipped binary, and the binary it names.
+
+    `Nesoid 2.5.0 libnes.so 0x455a4-0x45694, 0x8094-0x80ac` cites two
+    ranges of one library: the bare address continues the binary before it.
+    No revision of a repository holds those bytes, so nothing is linked.
+    """
+    found = _HEX_ADDRESS_RE.search(path)
+    if found is None:
+        return f"`{path}`", path
+    binary = path[:found.start()].rstrip(" :") or previous
+    if not binary:
+        return f"`{path}`", ""
+    return f"offset `{path[found.start():]}` in `{binary}`", binary
 
 
 def link_prose_citations(profile: dict, text: str) -> str:
@@ -381,7 +517,7 @@ def link_prose_citations(profile: dict, text: str) -> str:
                 continue
             if any(lo <= path_span[0] < hi for lo, hi in guarded):
                 continue
-            if tree_holds(repo, pin, path) is False:
+            if not tree_holds(repo, pin, path):
                 continue
             for index, ((lo, hi), part) in enumerate(zip(spans, parts)):
                 start = path_span[0] if index == 0 else lo
@@ -494,3 +630,44 @@ def launcher_ref_markdown(source: ListSource | None, ref: str) -> str:
         else:
             rendered.append(f"[`{display}`]({source.browse(part.path, part.start, part.end)})")
     return ", ".join(rendered)
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(
+        allow_abbrev=False,
+        description="Record which cited source paths the cached upstream trees hold",
+    )
+    parser.add_argument(
+        "--cache-dir", type=Path, action="append",
+        help=f"tree listings profile_sync cached, read in the order given (default: {TREE_CACHE})",
+    )
+    parser.add_argument(
+        "--fetch", action="store_true",
+        help="fetch a tree no cache holds into the last --cache-dir",
+    )
+    parser.add_argument(
+        "--emulators-dir", default="emulators",
+        help="profiles whose citations are checked (default: %(default)s)",
+    )
+    parser.add_argument(
+        "--output", type=Path, default=SOURCE_PATHS,
+        help="record the site reads (default: %(default)s)",
+    )
+    args = parser.parse_args()
+    cache_dirs = args.cache_dir or [TREE_CACHE]
+    if not args.fetch and not any(path.is_dir() for path in cache_dirs):
+        print(f"Error: no tree cache at {', '.join(map(str, cache_dirs))}", file=sys.stderr)
+        return 1
+    from common import load_emulator_profiles, write_if_changed  # noqa: PLC0415
+
+    profiles = load_emulator_profiles(args.emulators_dir, skip_aliases=False)
+    held, unread = build_source_paths(profiles, cache_dirs, args.fetch)
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    write_if_changed(str(args.output), json.dumps(held, indent=1, sort_keys=True) + "\n")
+    print(f"{sum(map(len, held.values()))} paths held in {len(held)} trees, "
+          f"{len(unread)} trees not cached: {args.output}")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

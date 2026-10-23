@@ -1,4 +1,5 @@
 {
+  "schema_version": 1,
   "tag": "v2026.10.10",
   "packs": {
     "Batocera_43.1_BIOS_Pack.zip": {

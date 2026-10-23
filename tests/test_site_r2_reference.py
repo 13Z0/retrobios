@@ -208,7 +208,7 @@ class PlatformReferenceInWords(unittest.TestCase):
         systems = {"sony-playstation": {"files": [{"name": "f.bin"}]}}
         page = self._page("md5", "md5", systems)
         name = siterender.system_name("sony-playstation")
-        self.assertIn(f"| [{name}](#sony-playstation) <small>sony-playstation</small> |", page)
+        self.assertIn(f"| [{name}](#sony-playstation) <small data-pagefind-ignore>sony-playstation</small> |", page)
         heading = next(line for line in page.splitlines() if line.startswith("### ")
                        and "sony-playstation" in line)
         self.assertIn(name, heading)
@@ -335,7 +335,7 @@ class DatesAndNames(unittest.TestCase):
                          '<time datetime="2026-08-07">7 August 2026</time>')
 
     def test_data_page_title(self):
-        self.assertTrue(generate_site.generate_data_page([]).startswith("# Data and API\n"))
+        self.assertIn("\n---\n\n# Data and API\n", generate_site.generate_data_page([]))
 
 
 @unittest.skipUnless((DIST / "platforms" / "batocera" / "index.html").is_file(),
