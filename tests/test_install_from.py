@@ -748,6 +748,25 @@ class WhereTheSearchGoes(FromFolder):
         self.assertLess(kinds.index("scanned"), kinds.index("detect"))
 
 
+class AFolderAroundTheBiosFolder(FromFolder):
+    """--from names a folder holding the BIOS folder: an archive this run
+    replaces was a source of members while it was being written."""
+
+    def test_an_archive_being_replaced_gives_no_member(self):
+        new_set = b"the archive the list installs" * 4
+        inner = b"a rom inside the old archive" * 3
+        _zip(self.dest / "set.zip", {"inner.bin": inner})
+        files = [_entry("set.zip", new_set, ["x"]), _entry("inner.bin", inner, ["x"])]
+        around = install.FolderIndex(self.root)
+        copies = install.plan_local_copies(files, self.dest, None, [around])
+        self.assertEqual(copies, {})
+        _zip(self.old / "copy.zip", {"inner.bin": inner})
+        copies = install.plan_local_copies(files, self.dest, None,
+                                           [install.FolderIndex(self.root)])
+        self.assertEqual([copies[id(e)].where() for e in files if id(e) in copies],
+                         ["old card/copy.zip, inside as inner.bin"])
+
+
 class ManySameSizedFiles(FromFolder):
     """A card of 16 KB ROMs and a list of 16 KB entries: each entry sorted
     and walked every file of its size."""
