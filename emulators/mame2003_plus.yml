@@ -33,8 +33,8 @@ systems:
   - zn1-video-system
   - zn1-acclaim
   - zn1-atlus
-  - zn1-atari
-  - zn1-raizing
+  - atari-zn1
+  - eighting-zn1
   - sega-model2
   - namco-system11
   - century-cvs
@@ -628,7 +628,7 @@ files:
   - name: coh1000w.zip
     required: true
     category: bios_zip
-    system: zn1-atari
+    system: atari-zn1
     note: "Time Warner ZN-1 BIOS"
     source_ref: "src/drivers/zn.c:5858-5863, 5865-5867, 6046"
     contents:
@@ -646,7 +646,7 @@ files:
   - name: coh1002e.zip
     required: true
     category: bios_zip
-    system: zn1-raizing
+    system: eighting-zn1
     note: "Eighting / Raizing ZN-1 BIOS"
     source_ref: "src/drivers/zn.c:5566-5571, 5573-5575, 6130"
     contents:
