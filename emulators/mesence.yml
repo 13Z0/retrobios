@@ -788,7 +788,7 @@ files:
     required: false
     bundled: true
     description: "librashader runtime for RetroArch-format shader presets"
-    note: "Opened from the working directory, which the UI sets to the home folder, by LoadLibraryW on Windows and dlopen on Linux. The Windows and Linux builds embed it in Dependencies.zip and extract it there at startup, the macOS build ships none. Without it every librashader call is a no-op and shader presets are unavailable."
+    note: "Opened from the working directory, which the UI sets to the home folder, by LoadLibraryW on Windows and dlopen on Linux. The Windows and Linux builds embed it in Dependencies.zip and extract it there at startup, the macOS build ships none. The build workflow downloads it from SourMesen/librashader's nightly release on every build, and release 2.2.1 predates it. Without it every librashader call is a no-op and shader presets are unavailable."
     source_ref: "source Utilities/Video/librashader_ld.h:45-88, 1615-1632, source Utilities/Video/LibrashaderUtilities.h:36-62, source UI/Program.cs:53-57, source UI/Utilities/DependencyHelper.cs:14-64, source .github/workflows/build.yml:43-48, 106-111"
 
 platform_details:

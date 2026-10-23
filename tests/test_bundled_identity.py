@@ -38,6 +38,9 @@ UNIDENTIFIED = {
     "idtech4a++": 1,
     "ikemen": 32,
     "jl-mod": 9,
+    # librashader comes from SourMesen/librashader's nightly release, which
+    # the build workflow downloads on every build.
+    "mesence": 1,
     "msx-emu": 9,
     "nethersx2": 2,
     "nethersx2-turnip": 2,
