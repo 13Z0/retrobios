@@ -974,7 +974,6 @@ SYSTEM_NAMES: dict[str, str] = {
     "gameplan-mpu1": "Game Plan MPU-1",
     "gamepock": "Epoch Game Pocket Computer",
     "gametank": "GameTank console",
-    "gba": "Nintendo Game Boy Advance",
     "gearbox": "Half-Life: Opposing Force",
     "ghostship": "Super Mario 64",
     "glulx": "Glulx",
