@@ -49,7 +49,8 @@ def _display(key: str) -> str:
 class HandheldWayIn(unittest.TestCase):
     def test_android_and_linux_tiles_on_home_and_get_your_files(self):
         tiles = siteguides.GROUP_TILES.get("handheld", ())
-        self.assertEqual([tile.name for tile in tiles], ["Android", "Linux handhelds"])
+        self.assertEqual([tile.name for tile in tiles],
+                         ["Android", "Linux handhelds", "iPhone and iPad"])
         for name in ("index.md", "which-pack.md"):
             text = _page(name)
             with self.subTest(page=name):
@@ -228,10 +229,11 @@ class GetYourFilesListsEachSetupOnce(unittest.TestCase):
             self.assertRegex(row, r"</a> \(\d[\d.]* [KMG]B\) \|$")
 
     def test_the_zip_note(self):
+        text = re.sub(r"</?abbr[^>]*>", "", self.text)
         for line in ("A big ZIP comes in parts, like `Pack.part1of2.zip`. Download every part.",
                      "Leave the ZIPs inside, like `neogeo.zip`, as they are.",
                      "Their setup's page says where to unzip them."):
-            self.assertIn(line, self.text)
+            self.assertIn(line, text)
         self.assertNotIn("**Unzip into** means", self.text)
 
 
@@ -264,9 +266,10 @@ class HomeCopy(unittest.TestCase):
         home = re.sub(r"</?abbr[^>]*>", "", _page("index.md"))
         self.assertIn("- **Yes** for PlayStation 1 and 2, Saturn and Neo Geo.", home)
         self.assertIn("- **Better with it** for Dreamcast: some games need it.", home)
-        # The level label opens its line, never the middle of a sentence.
-        self.assertNotIn("? Reference:", home)
-        self.assertIn("- Reference: [Check your file]", home)
+        # A question and the link that answers it: no level label, which
+        # read as a broken crumb beside the Reference tab (round 4).
+        self.assertNotIn("Reference:", home.split("\n---\n", 1)[-1])
+        self.assertIn("- Have a file? [Check it]", home)
         self.assertIn("BIOS missing, even with the file there?", home)
 
     def test_flycast_boots_without_the_dreamcast_bios(self):

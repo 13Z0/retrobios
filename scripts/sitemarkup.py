@@ -185,7 +185,10 @@ def card_grid(cards: list[tuple[str, list[str]]]) -> list[str]:
 
 
 def initials(name: str) -> str:
-    """Up to two capitals of a name, for a setup that has no logo: MyMinUI is MM."""
+    """Up to two capitals of a name, for a setup that has no logo: MyMinUI is MM.
+    A name written from a lowercase prefix keeps it: iPhone is iP, not PP."""
+    if len(name) > 1 and name[0].islower() and name[1].isupper():
+        return name[:2]
     capitals = [c for c in name if c.isupper()]
     return "".join(capitals[:2]) or name[:2].upper()
 
