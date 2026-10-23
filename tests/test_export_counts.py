@@ -417,11 +417,13 @@ class OneMd5FormatsAddWhole(unittest.TestCase):
     def test_an_addition_with_several_md5_is_refused(self):
         from exporter.batocera_exporter import Exporter as Batocera  # noqa: PLC0415
 
-        several = NativeFile("boot.bin", "boot.bin", "dc", truth={"md5": [A, B, C]})
+        several = NativeFile("boot.bin", "boot.bin", "dc", truth={"md5": [A, B, C]},
+                           runners=[(False, "flycast")])
         single = NativeFile("boot2.bin", "boot2.bin", "dc", truth={"md5": A},
                           runners=[(False, "flycast")])
-        self.assertFalse(Batocera.writable(several))
-        self.assertTrue(Batocera.writable(single))
+        # A checker that compares one md5, as every cached pin does.
+        self.assertFalse(Batocera().writable(several))
+        self.assertTrue(Batocera().writable(single))
 
     def test_retrobat_refuses_it_too(self):
         # RetroBat's batocera-systems.json holds one md5 per entry: the

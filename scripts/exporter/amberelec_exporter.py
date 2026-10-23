@@ -9,7 +9,6 @@ every build, and an addition is written the same way.
 
 from __future__ import annotations
 
-from .base_exporter import BaseExporter
 from .baseline import NativeFile
 from .batocera_exporter import Exporter as BatoceraExporter
 
@@ -24,10 +23,8 @@ class Exporter(BatoceraExporter):
 
     PATH_PREFIX = ""
 
-    @classmethod
-    def writable(cls, fe: NativeFile, require: str = "") -> bool:
-        # The list gates nothing on a runner, so an addition needs none.
-        return BaseExporter.writable.__func__(cls, fe, require)
+    # The list gates nothing on a runner, so an addition needs none.
+    RUNNER_GATED = False
 
     def _addition_keys(self, fe: NativeFile) -> list[tuple[str, str | None]] | None:
         return []

@@ -58,6 +58,80 @@ def _closing_line(text: str, start: int) -> int | None:
     return None
 
 
+def _md5_subscript(node: ast.expr) -> bool:
+    """`file["md5"]`: an item's md5 as checkBios reads it."""
+    return (
+        isinstance(node, ast.Subscript)
+        and isinstance(node.slice, ast.Constant)
+        and node.slice.value == "md5"
+    )
+
+
+def _names_member(call: ast.Call) -> bool:
+    """Whether a call also passes the item's zippedFile."""
+    return any(
+        isinstance(arg, ast.Subscript)
+        and isinstance(arg.slice, ast.Constant)
+        and arg.slice.value == "zippedFile"
+        for arg in call.args
+    )
+
+
+def _list_parameters(function: ast.FunctionDef) -> set[str]:
+    """Parameters the function tests with `isinstance(<parameter>, list)`."""
+    names = {arg.arg for arg in function.args.args}
+    return {
+        node.args[0].id
+        for node in ast.walk(function)
+        if isinstance(node, ast.Call)
+        and isinstance(node.func, ast.Name)
+        and node.func.id == "isinstance"
+        and len(node.args) == 2
+        and isinstance(node.args[0], ast.Name)
+        and node.args[0].id in names
+        and isinstance(node.args[1], ast.Name)
+        and node.args[1].id == "list"
+    }
+
+
+def md5_list_support(script: str) -> frozenset[str]:
+    """The items whose md5 the script's checker reads as a list.
+
+    "file" when checkBios hands a plain file's md5 to a function that takes
+    a list (batocera.linux 6b08b873: `md5Matches(md5, file["md5"])`),
+    "zippedFile" when it does so for a member of an archive
+    (`checkInsideZip(filepath, file["zippedFile"], file["md5"])`). Read from
+    the parsed checker, never executed and never from a version number:
+    a fork can take the change at any revision, or never.
+    """
+    try:
+        tree = ast.parse(script)
+    except SyntaxError:
+        return frozenset()
+    functions = {
+        node.name: node for node in tree.body if isinstance(node, ast.FunctionDef)
+    }
+    check = functions.get("checkBios")
+    if check is None:
+        return frozenset()
+    support: set[str] = set()
+    for call in ast.walk(check):
+        if not (isinstance(call, ast.Call) and isinstance(call.func, ast.Name)):
+            continue
+        callee = functions.get(call.func.id)
+        if callee is None:
+            continue
+        takes_list = _list_parameters(callee)
+        parameters = [arg.arg for arg in callee.args.args]
+        if any(
+            _md5_subscript(arg) and index < len(parameters)
+            and parameters[index] in takes_list
+            for index, arg in enumerate(call.args)
+        ):
+            support.add("zippedFile" if _names_member(call) else "file")
+    return frozenset(support)
+
+
 def _md5_literal(value: str | list[str], spaced: bool = True) -> str:
     """An md5 as the script writes it: a quoted string, or a list of them
     with Batocera's spacing inside the brackets (`[ "a", "b" ]`)."""
@@ -82,8 +156,13 @@ class Exporter(BaseExporter):
     # checkBios compares one md5 for a plain file. altmd5 is read only for
     # a zippedFile: retrodream's boot.bin written with the first of four
     # md5 refused the three other dumps the core accepts. An item the
-    # platform writes with a list of md5 keeps its list (md5_list).
+    # platform writes with a list of md5 keeps its list (md5_list), and a
+    # checker that reads lists (md5_list_support) gets every accepted md5.
     SINGLE_HASH_FIELD = "md5"
+
+    # Whether an addition must name the emulator and core checkBios gates
+    # it on.
+    RUNNER_GATED = True
 
     # checkBios reads emulator names from es_systems, and Batocera's
     # standalone_cores are those names. ROCKNIX's list holds package names
@@ -100,6 +179,9 @@ class Exporter(BaseExporter):
         # The emulator and core each system entry of the original is gated
         # on, read by render.
         self._gates: dict[str, tuple[str, str] | None] = {}
+        # The items the pinned checker reads an md5 list for, read by
+        # render from the platform's own file.
+        self._md5_lists: frozenset[str] = frozenset()
 
     @staticmethod
     def platform_name() -> str:
@@ -121,15 +203,15 @@ class Exporter(BaseExporter):
     def carries() -> frozenset[str]:
         return frozenset({"md5"})
 
-    @classmethod
-    def writable(cls, fe: NativeFile, require: str = "") -> bool:
+    def writable(self, fe: NativeFile, require: str = "") -> bool:
         """An addition the format can state whole."""
-        if fe.platform is None and not cls._usable_runners(fe):
+        if fe.platform is None and self.RUNNER_GATED and not self._usable_runners(fe):
             # Written without its core's emulator and core, checkBios asks
             # every build for it (the defect _runner_keys repairs for the
             # platform's own items).
             return False
-        return super().writable(fe, require)
+        single = None if self.lists_accepted(fe) else self.SINGLE_HASH_FIELD
+        return self._carried(fe, require, single)
 
     @classmethod
     def _usable_runners(cls, fe: NativeFile) -> list[tuple[bool, str]]:
@@ -178,11 +260,33 @@ class Exporter(BaseExporter):
             return False
         return fe.platform is not None or self._addition_keys(fe) is not None
 
-    @staticmethod
-    def md5_list(fe: NativeFile) -> bool:
-        """Whether the platform writes this item's md5 as a list. Its
-        checker then accepts any listed value, so every one is written."""
-        return fe.platform is not None and bool(fe.platform.get("md5_list"))
+    def md5_list(self, fe: NativeFile) -> bool:
+        """Whether this item's md5 is written as a list: the platform wrote
+        it so, or the truth accepts several and the checker reads a list."""
+        if fe.platform is not None and fe.platform.get("md5_list"):
+            return True
+        return self.lists_accepted(fe)
+
+    def lists_accepted(self, fe: NativeFile) -> bool:
+        """Whether the pinned checker reads a list for this item and the
+        truth accepts more than one md5 for it.
+
+        A single md5 stays a string, as the maintainers write it. An item
+        with altmd5 stays one string: checkBios hands
+        `[file["md5"], file["altmd5"]]` to checkInsideZip, and a list there
+        nests a list no digest equals.
+        """
+        kind = "zippedFile" if fe.native("zipped_file", "") else "file"
+        return (
+            kind in self._md5_lists
+            and not fe.native("alt_md5", "")
+            and len(set(fe.hashes("md5"))) > 1
+        )
+
+    def written_list(self, fe: NativeFile, field_name: str) -> list[str] | None:
+        if field_name == "md5" and self.md5_list(fe):
+            return fe.hashes("md5")
+        return None
 
     def md5_value(self, fe: NativeFile) -> str | list[str]:
         """The md5 an item is written with, in the form the platform used."""
@@ -525,6 +629,7 @@ class Exporter(BaseExporter):
                 "script, and the rest of it is the checker"
             )
 
+        self._md5_lists = md5_list_support(original)
         head, body, tail = self._split_original(original)
         spans = self._entry_spans(body)
         for key, (start, end) in spans.items():
