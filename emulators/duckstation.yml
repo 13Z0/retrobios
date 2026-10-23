@@ -6,7 +6,7 @@ upstream: "https://github.com/stenzek/duckstation"
 logo: "https://raw.githubusercontent.com/stenzek/duckstation/master/data/resources/images/duck.png"
 profiled_date: "2026-03-23"
 source_commit: "4122fed9ad3e6e5c2ecf1516cd51675a5931623e"
-core_version: "v0.1"
+core_version: "v0.1-12070"
 display_name: "Sony - PlayStation (DuckStation)"
 cores: [duckstation, "Duckstation"]
 found_by: content
@@ -27,7 +27,8 @@ notes: |
   Each image has: region, region_check, fast_boot_patch type, priority score.
 
   The console region picks the image, Auto by default. NTSC-U answers the
-  "Sony Computer Entertainment Amer  ica" licence string, a SCUS or SLUS
+  licence string `Sony Computer Entertainment Amer  ica` (two spaces, as
+  src/core/system.cpp:959 spells it), a SCUS or SLUS
   executable, and every disc whose region the detector cannot read
   (DiscRegion::Other, NonPS1), so a disc of any other market boots an NTSC-U image.
   ref: src/core/system.cpp:650-662, 926-995, 1723-1724, 1755

@@ -153,6 +153,21 @@ CLS_LABELS = {
     "other": "Other",
 }
 
+# The same classes said of one emulator: its page read "Classification:
+# Official ports".
+CLS_LABEL_ONE = {
+    "official_port": "Official port",
+    "community_fork": "Community fork",
+    "pure_libretro": "Pure libretro",
+    "game_engine": "Game engine",
+    "enhanced_fork": "Enhanced fork",
+    "frozen_snapshot": "Frozen snapshot",
+    "embedded_hle": "Embedded HLE",
+    "launcher": "Launcher",
+    "unclassified": "Unclassified",
+    "other": "Other",
+}
+
 
 def _copy_places(db: dict) -> dict[str, set[tuple[str, str, str]]]:
     """sha1 -> every (manufacturer, console, file name) holding a copy.
@@ -3710,6 +3725,57 @@ def generate_system_page(
 # Emulator pages
 
 
+def _named_system_link(sys_id: str, prefix: str = "") -> str:
+    """A system by its display name, linked where _system_link links it.
+
+    The emulator pages printed the id ("sony-playstation") where every
+    other page says "Sony PlayStation". The id stays in the address only.
+    """
+    from siterender import _page_by_norm  # noqa: PLC0415
+
+    name = system_name(sys_id).replace("[", r"\[").replace("]", r"\]")
+    page = _system_page_map.get(sys_id) or _page_by_norm(sys_id)
+    if not page:
+        return name
+    slug, console = page
+    return f"[{name}]({console_href(slug, console, prefix)})"
+
+
+def _distinct_spellings(names: list) -> list[str]:
+    """Names as a reader tells them apart: one per spelling, ignoring case.
+
+    DuckStation's cores list `Duckstation` for EmuELEC, whose launch name is
+    spelled so, and the page read "duckstation, Duckstation". The profile
+    keeps both, the core lookup being case-sensitive.
+    """
+    seen: dict[str, str] = {}
+    for name in map(str, names):
+        seen.setdefault(name.casefold(), name)
+    return list(seen.values())
+
+
+# Region slugs whose words are not the slug title-cased.
+_REGION_WORDS = {
+    "uk": "UK",
+    "asia-ntsc": "Asia (NTSC)",
+    "asia-pal": "Asia (PAL)",
+    "world": "every region",
+}
+
+
+def _region_words(value: object, most: int = 0) -> str:
+    """A region: value in words. ``most`` caps the regions named, the rest
+    counted: one Saturn BIOS serves seven."""
+    raw = value if isinstance(value, list) else [value] if value else []
+    words = [_REGION_WORDS.get(str(r), str(r).replace("-", " ").title()) for r in raw]
+    if most and len(words) > most:
+        words = words[:most] + [f"{len(words) - most} more"]
+    return _said_as_list(words)
+
+
+_CATEGORY_WORDS = {"bios": "BIOS", "game_data": "game data", "bios_zip": "BIOS ZIP"}
+
+
 def generate_emulators_index(profiles: dict) -> str:
     unique = {
         k: v for k, v in profiles.items() if v.get("type") not in ("alias", "test")
@@ -3781,22 +3847,23 @@ def generate_emulators_index(profiles: dict) -> str:
             [
                 f"## {label} {{ #{cls} }}",
                 "",
-                f"*{desc}* -- {len(entries)} profiles",
+                f"{desc}. {_count(len(entries), 'profile')}.",
                 "",
-                "| Engine | Systems | Files |",
+                "| Emulator | Systems | Files |",
                 "|--------|---------|-------|",
             ]
         )
 
         for name, p in entries:
             emu_name = p.get("emulator", name)
-            systems = p.get("systems", [])
+            systems = list(dict.fromkeys(
+                _named_system_link(s, "../") for s in p.get("systems") or []))
             files = p.get("files", [])
             sys_str = ", ".join(systems[:3])
             if len(systems) > 3:
-                sys_str += f" +{len(systems) - 3}"
+                sys_str += f" and {len(systems) - 3} more"
             file_count = len(files)
-            file_str = str(file_count) if file_count else "-"
+            file_str = f"{file_count:,}" if file_count else "-"
             lines.append(f"| [{emu_name}]({name}.md) | {sys_str} | {file_str} |")
         lines.append("")
 
@@ -3863,14 +3930,12 @@ def _file_badges(f: dict, in_repo: bool) -> list[str]:
         )
     if category and category != "bios":
         badges.append(
-            f'<span class="rb-badge rb-badge-info">{category}</span>'
+            f'<span class="rb-badge rb-badge-info">{_CATEGORY_WORDS.get(category, category)}</span>'
         )
     if region:
-        region_str = (
-            ", ".join(region) if isinstance(region, list) else str(region)
-        )
+        # Labelled: "optional in repo japan" read as one run-on phrase.
         badges.append(
-            f'<span class="rb-badge rb-badge-muted">{region_str}</span>'
+            f'<span class="rb-badge rb-badge-muted">Region: {_region_words(region)}</span>'
         )
     if storage and storage != "embedded":
         badges.append(
@@ -4064,7 +4129,7 @@ def _render_emulator_file(
     if found:
         details.append(f"Found by: {found}")
     if fsystem:
-        details.append(f"System: {_system_link(fsystem, '../')}")
+        details.append(f"System: {_named_system_link(fsystem, '../')}")
     if size:
         if isinstance(size, list):
             size_str = " / ".join(_fmt_size(s) for s in size)
@@ -4567,33 +4632,38 @@ def _emulator_file_summary(
     req_count = sum(1 for group in slots.values() if any(f.get("required") for f in group))
     hle_count = sum(1 for group in slots.values() if any(f.get("hle_fallback") for f in group))
 
-    held = f"{in_repo_count} in repo, {missing_count} missing"
+    # Sentences, one number format: the line read "1,563 files | 164
+    # required, 1399 optional | 1563 in repo".
+    held = [f"{in_repo_count:,} in repo", f"{missing_count:,} missing"]
     if unsourceable_count:
-        held += f", {unsourceable_count} unsourceable"
+        held.append(f"{unsourceable_count:,} unsourceable")
+    if hle_count:
+        held.append(f"{hle_count:,} with HLE fallback")
     total = f"**{_count(len(slots), 'file')}**"
     if len(slots) != len(files):
-        total += f" ({len(files)} accepted versions)"
-    parts = [
-        total,
-        f"{req_count} required, {len(slots) - req_count} optional",
-        held,
+        total += f" ({len(files):,} accepted versions)"
+    lines = [
+        f"{total}: {req_count:,} required, {len(slots) - req_count:,} optional. "
+        f"{_said_as_list(held)}.",
+        "",
     ]
-    if hle_count:
-        parts.append(f"{hle_count} with HLE fallback")
-    lines = [" | ".join(parts)]
 
     categories = [f.get("category", "bios") for f in files]
     if "game_data" in categories or "bios_zip" in categories:
         cats = [
-            f"{categories.count(key)} {label}"
+            f"{categories.count(key):,} {label}"
             for key, label in (
-                ("bios", "BIOS"), ("game_data", "game data"), ("bios_zip", "BIOS ZIPs")
+                ("bios", "BIOS"), ("bios_zip", "BIOS ZIPs"), ("game_data", "game data")
             )
             if categories.count(key)
         ]
-        lines.append(f"Categories: {', '.join(cats)}")
-    lines.append("")
+        lines.extend([f"By kind: {_said_as_list(cats)}.", ""])
     return lines
+
+
+def _said_as_list(items: list[str]) -> str:
+    """"a, b and c"."""
+    return ", ".join(items[:-1]) + f" and {items[-1]}" if len(items) > 1 else "".join(items)
 
 
 # Data directory members and revisions, read once per build.
@@ -4609,15 +4679,70 @@ _DATA_REVISIONS: dict[str, dict] = {}
 EMULATOR_CARDS_PER_PAGE = 400
 
 
-def emulator_parts(name: str, files: list) -> list[tuple[str, range]]:
+# The headings an emulator's cards go under, in page order: what it needs
+# first. DuckStation's three required BIOS were cards 12 to 14 under one
+# heading, and MAME opened on 25 floppy sound samples.
+CARD_SECTIONS = (("required", "Required"), ("optional", "Optional"), ("game_data", "Game data"))
+_SECTION_RANK = {key: rank for rank, (key, _title) in enumerate(CARD_SECTIONS)}
+
+# Below this many cards the page is one screen of them, and a table above
+# would repeat it.
+EMULATOR_SUMMARY_MIN = 6
+
+
+def _card_section(f: dict) -> str:
+    if f.get("category") == "game_data":
+        return "game_data"
+    return "required" if f.get("required") else "optional"
+
+
+def _display_order(files: list) -> list[int]:
+    """Entry indexes in page order: required, optional, then game data,
+    each in profile order."""
+    return sorted(range(len(files)), key=lambda i: _SECTION_RANK[_card_section(files[i])])
+
+
+def emulator_parts(name: str, files: list) -> list[tuple[str, list[int]]]:
     """The pages an emulator's cards go to, with the entries each holds,
-    or none when they fit on the emulator's page. Balanced, in profile order."""
+    or none when they fit on the emulator's page. Balanced, in page order."""
     if len(files) <= EMULATOR_CARDS_PER_PAGE:
         return []
+    order = _display_order(files)
     count = -(-len(files) // EMULATOR_CARDS_PER_PAGE)
     size = -(-len(files) // count)
-    return [(f"{name}-files-{index + 1}", range(start, min(start + size, len(files))))
+    return [(f"{name}-files-{index + 1}", order[start:start + size])
             for index, start in enumerate(range(0, len(files), size))]
+
+
+def _sectioned(files: list, indexes: list[int], render: Callable[[list[int]], list[str]]) -> list[str]:
+    """Each section's heading, then ``render`` of its entries among ``indexes``."""
+    lines: list[str] = []
+    for key, title in CARD_SECTIONS:
+        group = [i for i in indexes if _card_section(files[i]) == key]
+        if group:
+            lines.extend([f"## {title}", "", *render(group)])
+    return lines
+
+
+def _hash_short(f: dict) -> str:
+    """The shortest way to tell two dumps apart in a table: an md5 or crc32 prefix."""
+    for field in ("md5", "crc32", "sha1"):
+        value = f.get(field)
+        value = value[0] if isinstance(value, list) and value else value
+        if value:
+            short = str(value).lower().split(",")[0].strip().removeprefix("0x")[:8]
+            # Kept on one line: the label above the value doubled each row.
+            return f"{field.upper()}\u00a0{_code(short)}"
+    return ""
+
+
+def _summary_row(f: dict, link: str, ids: str = "") -> str:
+    shown = str(f.get("path") or f.get("name", ""))
+    return (f"| {ids}[{_code(shown)}]({link}) | {_region_words(f.get('region'), 3) or '-'} "
+            f"| {'yes' if f.get('required') else 'no'} | {_hash_short(f) or '-'} |")
+
+
+_SUMMARY_HEAD = ["| File | Region | Required | Hash |", "|------|--------|----------|------|"]
 
 
 def plan_emulator_pages(profiles: dict) -> None:
@@ -4662,25 +4787,50 @@ def _emulator_intro(emu_name: str, profile: dict) -> str:
         if label not in names:
             names.append(label)
     files = [f for f in profile.get("files") or [] if isinstance(f, dict)]
-    required = sum(1 for f in files if f.get("required") is True)
+    required = [f for f in files if f.get("required") is True]
     sentences = []
     if names:
         shown = names if len(names) <= 4 else names[:3] + [f"{len(names) - 3} more systems"]
-        listed = shown[0] if len(shown) == 1 else ", ".join(shown[:-1]) + f" and {shown[-1]}"
-        sentences.append(f"{emu_name} emulates {listed}.")
-    if files:
+        sentences.append(f"{emu_name} emulates {_said_as_list(shown)}.")
+    by_region = _regional_choice(required)
+    if by_region:
+        # DuckStation needs the BIOS of the game's region, not all three: the
+        # page said "3 of them required" and read as "get all of these".
+        others = len(files) - len(required)
+        sentences.append(f"It picks the BIOS for your game's region: {by_region}.")
+        if others:
+            sentences.append(
+                f"The {_count(others, 'other file')} {'is' if others == 1 else 'are'} optional.")
+    elif files:
         sentences.append(
-            f"It reads {_count(len(files), 'file')}, {required} of them required: "
+            f"It reads {_count(len(files), 'file')}, {len(required):,} of them required: "
             "without a required file it does not start games."
             if required else
             f"It reads {_count(len(files), 'file')}, none of them required: it starts "
             "games without them."
         )
+    if required and len(names) > 1:
+        sentences.append("A required file is needed only by the machines that use it.")
         if profile.get("found_by") == "content":
             sentences.append("It recognises a file by its contents, so any file name works.")
         if any(f.get("source_ref") for f in files):
             sentences.append("Each file below cites the line of source code that reads it.")
     return " ".join(sentences)
+
+
+def _regional_choice(required: list[dict], most: int = 6) -> str:
+    """The required files as one choice by region, or "" when they are not one.
+
+    Only when every required entry carries a region: and they name at least
+    two: region: is the territory the code selects the file for, so the
+    reader needs the one of the game's region.
+    """
+    if not required or len(required) > most or not all(f.get("region") for f in required):
+        return ""
+    if len({_region_words(f["region"]) for f in required}) < 2:
+        return ""
+    choices = [f"{f.get('name', '')} ({_region_words(f['region'], 3)})" for f in required]
+    return ", ".join(choices[:-1]) + f" or {choices[-1]}"
 
 
 def emulator_pages(
@@ -4747,7 +4897,7 @@ def emulator_pages(
         f"| Type | {emu_type} |",
     ]
     if classification:
-        cls_display = CLS_LABELS.get(classification, classification)
+        cls_display = CLS_LABEL_ONE.get(classification, classification)
         lines.append(f"| Classification | {cls_display} |")
     if isinstance(source_raw, dict):
         parts = []
@@ -4799,9 +4949,9 @@ def emulator_pages(
         f"[JSON](../api/v1/emulators/{name}.json) |"
     )
     if cores:
-        lines.append(f"| Cores | {', '.join(str(c) for c in cores)} |")
+        lines.append(f"| Cores | {', '.join(_distinct_spellings(cores))} |")
     if systems:
-        sys_links = [_system_link(s, "../") for s in systems]
+        sys_links = list(dict.fromkeys(_named_system_link(s, "../") for s in systems))
         lines.append(f"| Systems | {', '.join(sys_links)} |")
     mame_ver = profile.get("mame_version", "")
     if mame_ver:
@@ -4846,8 +4996,14 @@ def emulator_pages(
         ]
         parts = emulator_parts(name, files)
         if not parts:
-            for card in cards:
-                lines.extend(card)
+            order = _display_order(files)
+            if len(files) >= EMULATOR_SUMMARY_MIN:
+                lines.extend(search_excluded([
+                    *_SUMMARY_HEAD,
+                    *(_summary_row(files[i], f"#{anchors[i]}") for i in order),
+                ]))
+            lines.extend(_sectioned(
+                files, order, lambda group: [line for i in group for line in cards[i]]))
         else:
             lines.extend(_card_index(emu_name, files, anchors, aliases, parts))
             for number, (stem, entries) in enumerate(parts, 1):
@@ -4931,26 +5087,27 @@ def _card_index(
     before the split lands on the row, and site.js follows it to the card.
     """
     page_of = {index: stem for stem, entries in parts for index in entries}
-    lines = [
+
+    def table(group: list[int]) -> list[str]:
+        rows = [
+            _summary_row(
+                files[i], f"{page_of[i]}.md#{anchors[i]}",
+                "".join(f'<span id="{a}"></span>' for a in (anchors[i], aliases[i]) if a))
+            for i in group
+        ]
+        return [
+            markup.block_open("section", f'class="rb-card-index" {markup.search_exclude()}'),
+            "", *_SUMMARY_HEAD, *rows, "", "</section>", "",
+        ]
+
+    return [
         f"{emu_name} reads more files than one page holds: each entry below "
-        f"links to its card, on {_count(len(parts), 'page')} by profile order "
+        f"links to its card, on {_count(len(parts), 'page')}: "
         + ", ".join(f"[{number}]({stem}.md)" for number, (stem, _e) in enumerate(parts, 1))
         + ".",
         "",
-        markup.block_open("section", f'class="rb-card-index" {markup.search_exclude()}'),
-        "",
-        "| File | Required | Category |",
-        "|------|----------|----------|",
+        *_sectioned(files, _display_order(files), table),
     ]
-    for index, (f, anchor, alias) in enumerate(zip(files, anchors, aliases)):
-        ids = "".join(f'<span id="{a}"></span>' for a in (anchor, alias) if a)
-        shown = str(f.get("path") or f.get("name", ""))
-        lines.append(
-            f"| {ids}[{_code(shown)}]({page_of[index]}.md#{anchor}) "
-            f"| {'yes' if f.get('required') else 'no'} | {f.get('category', 'bios')} |"
-        )
-    lines.extend(["", "</section>", ""])
-    return lines
 
 
 def _emulator_part_page(
@@ -4967,11 +5124,10 @@ def _emulator_part_page(
         "",
         f"Part of [{emu_name}]({name}.md), whose page has the profile, the install "
         f"command and every entry. This part holds {_count(len(files), 'entry', 'entries')}, "
-        f"{_code(first)} to {_code(last)}, in the profile's order. The other parts: {others}.",
+        f"{_code(first)} to {_code(last)}. The other parts: {others}.",
         "",
-        "## Files",
-        "",
-        *(line for card in cards for line in card),
+        *_sectioned(files, list(range(len(files))),
+                    lambda group: [line for i in group for line in cards[i]]),
     ]
     lines.extend(_next_block([f"[{emu_name}]({name}.md), the profile and every entry"]))
     lines.extend([f"*Generated on {_timestamp()}*"])
