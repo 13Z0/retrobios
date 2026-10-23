@@ -18,6 +18,20 @@ systems:
 bios_directory: "bios/"
 resources_directory: "resources/"
 
+data_root:
+  android:
+    path: "Android/data/xyz.aethersx2.android/files"
+    source_ref: "app-release-unsigned.apk classes.dex xyz.aethersx2.android.NativeLibrary.initializeOnce"
+    note: "getExternalFilesDir(null), the app data directory when no external storage is mounted"
+  macos:
+    path: "~/Library/Application Support/AetherSX2"
+    source_ref: "AetherSX2-release MacOS/AetherSX2 0x100a3d37d"
+    note: "portable.ini beside the app puts it there instead"
+  linux:
+    path: "$XDG_CONFIG_HOME/aethersx2, else ~/.config/aethersx2"
+    source_ref: "aethersx2 v1.5-3606 usr/share/aethersx2 0x9b83f0-0x9b8798"
+    note: "portable.ini beside the binary puts it there instead"
+
 notes: |
   PlayStation 2 emulator for ARM, built on PCSX2 and carrying its own AArch64
   recompilers. The application itself is closed source. The PCSX2-derived files
@@ -31,8 +45,7 @@ notes: |
   ref: aethersx2/pcsx2/CMakeLists.txt:1585, aethersx2/pcsx2/Mdec.cpp:1
 
   A BIOS image is required and boot stops without one. It belongs in the bios
-  folder of the data directory, Library/Application Support/AetherSX2 on macOS
-  and Android/data/xyz.aethersx2.android on Android, and the Folders section of
+  folder of the data directory given in data_root, and the Folders section of
   PCSX2.ini names another path when set.
   ref: AetherSX2-release MacOS/AetherSX2, aethersx2 archive/desktop/mac/README.md
 
