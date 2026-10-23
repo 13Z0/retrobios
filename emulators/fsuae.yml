@@ -15,10 +15,30 @@ found_by: content
 systems:
   - amiga
 
+data_root:
+  windows:
+    path: "%APPDATA%/FS-UAE/Data"
+    source_ref: "od-fs/fsuae/fsuae-init.c:75-82, 84-117"
+    note: "A Portable.ini starting with # FS-UAE in the folder of the executable or one of its parents makes Data beside it the root"
+  macos:
+    path: "~/Library/Application Support/FS-UAE/Data"
+    source_ref: "od-fs/fsuae/fsuae-init.c:75-82, 84-117"
+    note: "A Portable.ini starting with # FS-UAE in the folder of the executable or one of its parents makes Data beside it the root"
+  linux:
+    path: "$XDG_DATA_HOME/FS-UAE/Data, else ~/.local/share/FS-UAE/Data"
+    source_ref: "od-fs/fsuae/fsuae-init.c:75-82, 84-117"
+    note: "A Portable.ini starting with # FS-UAE in the folder of the executable or one of its parents makes Data beside it the root"
+
 notes: |
   FS-UAE is an Amiga emulator by Frode Solheim, based on UAE/WinUAE.
 
-  Standalone: scans --kickstarts_dir for .rom/.bin files (default: Documents/FS-UAE/Kickstarts/).
+  Standalone: the launcher walks ROMs/Kickstart, ROMs/Kickstarts, ROM/Kickstart
+  and ROM/Kickstarts under the data directory, with lowercase variants on Linux,
+  and the Amiga Forever shared ROM folder. Every .rom, .bin or model-suffixed
+  file up to 8 MB is handed to the emulator with its CRC32 and SHA-1. rom.key
+  is read from the folder of the encrypted ROM being loaded.
+  ref: od-fs/python/fsuae/services/pathservice.py:47-57, od-fs/python/fsuae/roms/romservice.py:25-75,
+  od-fs/python/app/app_init.py:83-86, od-fs/fsuae/fsuae-messages.cpp:83-104, rommgr.cpp:2001-2012
   Batocera overrides to bios/amiga/ via --kickstarts_dir (batocera fsuaePaths.py:8, batocera fsuaeGenerator.py:68).
   Libretro port: scans save_dir/fsuae/Kickstarts/ (frozen at v2.7.15), and
   reads rom.key there. The base directory is <save_dir>/fsuae, the build
