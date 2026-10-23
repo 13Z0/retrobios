@@ -548,6 +548,108 @@ class ACopyThatFails(FromFolder):
                                  f"Permission denied, and {install.NOT_IN_PACK}")
 
 
+def _patched_zip(path: Path, name: str, data: bytes, flags: int = 0,
+                 method: int | None = None) -> Path:
+    """A stored ZIP of one member, its headers then given other flags or
+    another compression method: zipfile writes neither encryption nor
+    methods it cannot read."""
+    _zip(path, {})
+    with zipfile.ZipFile(path, "w", zipfile.ZIP_STORED) as archive:
+        archive.writestr(name, data)
+    raw = bytearray(path.read_bytes())
+    for signature, at in ((b"PK\x03\x04", 6), (b"PK\x01\x02", 8)):
+        start = raw.find(signature)
+        raw[start + at] |= flags
+        if method is not None:
+            raw[start + at + 2:start + at + 4] = method.to_bytes(2, "little")
+    path.write_bytes(bytes(raw))
+    return path
+
+
+class UnreadableCopies(FromFolder):
+    """A copy that could not be read was cached as no match and dropped:
+    the user saw a file to download that the old card held."""
+
+    def setUp(self):
+        super().setUp()
+        self.keep("scph5500.bin", JP)
+        self.keep("pcsx/extra.bin", EXTRA)
+        self.keep("gba_bios.bin", GBA)
+
+    def locked(self, relative: str, data: bytes) -> Path:
+        _unprivileged(self)
+        path = self.keep(relative, data)
+        path.chmod(0)
+        self.addCleanup(path.chmod, 0o644)
+        return path
+
+    def test_a_file_of_mode_000_is_named_in_every_mode(self):
+        path = self.locked("psx/scph5501.bin", US).resolve()
+        self.locked("notes.txt", b"not the size of any file")
+        line = f"{path} could not be read: Permission denied"
+        for options in (("--check",), ("--dry-run",), ()):
+            with self.subTest(options=options):
+                proc = self.install(*options)
+                self.assertEqual(proc.returncode, 1 if options != ("--dry-run",) else 0,
+                                 proc.stdout + proc.stderr)
+                self.assertIn(line, proc.stdout)
+                self.assertNotIn("notes.txt", proc.stdout)
+
+    def test_an_unreadable_copy_is_an_event(self):
+        path = self.locked("psx/scph5501.bin", US).resolve()
+        proc = self.install("--check", "--events")
+        events = _events(proc)
+        for event in events:
+            self.assertEqual(list(event), ["event", *install.EVENT_KEYS[event["event"]]])
+        self.assertEqual([e for e in events if e["event"] == "unreadable"], [{
+            "event": "unreadable", "platform": "retroarch", "folder": str(self.old),
+            "path": str(path), "member": "", "reason": "Permission denied"}])
+        kinds = [e["event"] for e in events]
+        self.assertLess(kinds.index("found"), kinds.index("unreadable"))
+
+    def test_a_copy_found_elsewhere_leaves_the_unreadable_one_unnamed(self):
+        self.locked("psx/scph5501.bin", US)
+        self.keep("psx/copy.bin", US)
+        proc = self.install("--check")
+        self.assertNotIn("could not be read", proc.stdout)
+
+    def test_a_folder_of_mode_000_is_named(self):
+        _unprivileged(self)
+        folder = self.old / "psx"
+        folder.mkdir()
+        folder.chmod(0)
+        self.addCleanup(folder.chmod, 0o755)
+        proc = self.install("--check")
+        self.assertIn(f"{folder.resolve()} could not be read: Permission denied", proc.stdout)
+
+    def test_members_that_cannot_be_read_say_why(self):
+        for flags, method, words in (
+                (0x1, None, "it is encrypted, a password is needed"),
+                (0, 6, "it is packed with a compression method this installer "
+                       "cannot read")):
+            with self.subTest(words=words):
+                archive = _patched_zip(self.old / "psx.zip", "scph5501.bin", US,
+                                       flags, method).resolve()
+                proc = self.install("--check")
+                self.assertIn(f"scph5501.bin inside {archive} could not be read: {words}",
+                              proc.stdout)
+
+    def test_an_input_output_error_is_named(self):
+        self.keep("psx/scph5501.bin", US)
+        index = install.FolderIndex(self.old)
+        entry = json.loads(self.list.read_text())["files"][0]
+        failing = OSError(errno.EIO, "Input/output error")
+        with mock.patch.object(install, "_sha1_file", side_effect=failing):
+            self.assertIsNone(index.find(entry))
+        found = install.unreadable_copies([entry], {}, [index])
+        # scph5500.bin holds another region of the same size: read too.
+        self.assertEqual([item.line() for item in found], [
+            f"{(self.old / 'psx' / 'scph5501.bin').resolve()} could not be read: "
+            "Input/output error",
+            f"{(self.old / 'scph5500.bin').resolve()} could not be read: "
+            "Input/output error"])
+
+
 class ManySameSizedFiles(FromFolder):
     """A card of 16 KB ROMs and a list of 16 KB entries: each entry sorted
     and walked every file of its size."""

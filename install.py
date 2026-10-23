@@ -510,6 +510,10 @@ EVENT_KEYS: dict[str, tuple[str, ...]] = {
     # a folder named with --from (reason empty). member names the ZIP member
     # when path is an archive, else "". Its copy is a downloaded event.
     "found": ("platform", "dest", "folder", "path", "member", "reason"),
+    # What a folder named with --from holds that could not be read, of the
+    # size of a file no copy was found for, or of no known size (a folder,
+    # a ZIP that would not open). member as in found, reason in words.
+    "unreadable": ("platform", "folder", "path", "member", "reason"),
     "download": ("platform", "files", "bytes"),
     "progress": ("files_done", "files_total", "bytes_done", "bytes_total"),
     "downloaded": ("dest", "ok", "reason", "size", "files_done", "files_total",
@@ -6732,12 +6736,20 @@ class FolderIndex:
         self._loose_named: dict[tuple[int, str], list[Path]] | None = None
         self._member_named: dict[int, dict[str, list[tuple[Path, str]]]] = {}
         self._scans: dict[tuple[str, int, str], _HashScan] = {}
+        self._member_size: dict[tuple[Path, str], int] = {}
+        # (path, member or "") -> (its size or None when unknown, why) of each
+        # file, member or folder below root that could not be read.
+        self.unreadable: dict[tuple[Path, str], tuple[int | None, str]] = {}
         if root.is_file():
             if root.name.casefold().endswith(".zip"):
                 self.archives.append(root)
             return
         seen = 0
-        for folder, dirs, names in os.walk(root):
+
+        def unlisted(exc: OSError) -> None:
+            self._unread(Path(exc.filename or root), "", None, exc)
+
+        for folder, dirs, names in os.walk(root, onerror=unlisted):
             dirs[:] = sorted(d for d in dirs
                              if d != BACKUP_DIR and d.casefold() not in SYSTEM_FOLDERS)
             for name in sorted(names):
@@ -6753,7 +6765,8 @@ class FolderIndex:
                     if not path.is_file():
                         continue
                     size = path.stat().st_size
-                except OSError:
+                except OSError as exc:
+                    self._unread(path, "", None, exc)
                     continue
                 self.by_name.setdefault(name.casefold(), []).append(path)
                 self.by_size.setdefault(size, []).append(path)
@@ -6769,11 +6782,17 @@ class FolderIndex:
         """A SHA-1 already known, so the file is not read again."""
         self._sha1[path] = sha1
 
+    def _unread(self, path: Path, member: str, size: int | None, exc: BaseException) -> None:
+        """Note a file, a member or a folder that could not be read: a copy
+        the run needs may be the one, and it is named instead of dropped."""
+        self.unreadable.setdefault((path, member), (size, unreadable_words(exc)))
+
     def sha1(self, path: Path) -> str:
         if path not in self._sha1:
             try:
                 self._sha1[path] = _sha1_file(path)
-            except OSError:
+            except OSError as exc:
+                self._unread(path, "", self.size.get(path), exc)
                 self._sha1[path] = ""
         return self._sha1[path]
 
@@ -6789,10 +6808,20 @@ class FolderIndex:
                         value = _digest_handle(handle, (algorithm,))[algorithm]
                 else:
                     value = _digest_file(path, (algorithm,))[algorithm]
-            except _MEMBER_ERRORS:
+            except _MEMBER_ERRORS as exc:
+                size = self._member_size.get((path, member)) if member else self.size.get(path)
+                self._unread(path, member, size, exc)
                 value = ""
             self._digests[key] = value
         return self._digests[key]
+
+    def unreadable_for(self, sizes: Collection[int]) -> list[tuple[Path, str, str]]:
+        """(path, member, why) of what could not be read and may hold a file
+        of one of sizes: its size is one of them, or unknown (a folder, an
+        archive whose list of members could not be read)."""
+        return sorted((path, member, why)
+                      for (path, member), (size, why) in self.unreadable.items()
+                      if size is None or size in sizes)
 
     def _scan(self, kind: str, size: int, algorithm: str) -> _HashScan:
         """The files (kind "loose") or ZIP members ("member") of one size,
@@ -6839,12 +6868,18 @@ class FolderIndex:
                 try:
                     with zipfile.ZipFile(path) as archive:
                         infos = archive.infolist()
-                except (OSError, zipfile.BadZipFile):
+                except OSError as exc:
+                    # A ZIP that will not open may hold anything: named. A
+                    # damaged one is a download cut short, not a copy.
+                    self._unread(path, "", None, exc)
+                    continue
+                except zipfile.BadZipFile:
                     continue
                 for info in infos:
                     if not info.is_dir():
                         self._member_sizes.setdefault(info.file_size, []).append(
                             (path, info.filename))
+                        self._member_size[(path, info.filename)] = info.file_size
         return self._member_sizes.get(size, [])
 
     def find(self, entry: dict, skip: Collection[Path] = ()) -> LocalCopy | None:
@@ -7459,6 +7494,47 @@ def emit_copies(
                   if copy.index is bios_index else "")
         EVENTS.emit("found", platform=plat, dest=entry["dest"], folder=copy.index.label,
                     path=str(copy.path), member=copy.member, reason=reason)
+
+
+class Unreadable(NamedTuple):
+    """A file, ZIP member or folder below a --from folder that could not be
+    read, and may be a file the run still needs."""
+    index: FolderIndex
+    path: Path
+    member: str
+    why: str
+
+    def line(self) -> str:
+        where = f"{self.member} inside {self.path}" if self.member else str(self.path)
+        return f"{where} could not be read: {self.why}"
+
+
+def unreadable_copies(
+    entries: list[dict], copies: dict[int, LocalCopy], folders: list[FolderIndex],
+) -> list[Unreadable]:
+    """What the --from folders hold that could not be read, of the size of
+    a file no copy was found for, or of no known size: dropped silently,
+    a file a user had read as one to download."""
+    sizes = {e["size"] for e in entries
+             if id(e) not in copies and isinstance(e.get("size"), int)}
+    if not sizes:
+        return []
+    return [Unreadable(index, *held) for index in folders
+            for held in index.unreadable_for(sizes)]
+
+
+def unreadable_lines(found: list[Unreadable], every: bool) -> list[str]:
+    lines = [f"  {item.line()}" for item in (found if every else found[:10])]
+    if len(found) > len(lines):
+        lines.append(f"  ... and {len(found) - len(lines)} more could not be read "
+                     "(--verbose lists them all)")
+    return lines
+
+
+def emit_unreadable(plat: str, found: list[Unreadable]) -> None:
+    for item in found:
+        EVENTS.emit("unreadable", platform=plat, folder=item.index.label,
+                    path=str(item.path), member=item.member, reason=item.why)
 
 
 def sources_line(
@@ -8553,6 +8629,7 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
         if bios_index is not None:
             bios_indexes.append(bios_index)
         copies = plan_local_copies(to_download, bios_path, bios_index, LOCAL.folders)
+        unread = unreadable_copies(to_download, copies, LOCAL.folders)
         hint = [] if LOCAL.pack is not None else bulk_hint(
             to_download, manifest,
             systems_chosen=bool(selection and selection[0]),
@@ -8577,6 +8654,7 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                 chosen=selection[0] if selection else None,
             )
             emit_copies(plat_name, to_download, copies, bios_index, bios_path, files)
+            emit_unreadable(plat_name, unread)
         total_verified += len(up_to_date)
 
         if args.check:
@@ -8594,6 +8672,8 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                 print(f"\n  {_plural(len(to_download), 'file')} to download:")
                 for line in check_lines(missing, mismatched, files, manifest, bios_path,
                                         args.verbose, up_to_date, bios_index, copies):
+                    print(line)
+                for line in unreadable_lines(unread, args.verbose):
                     print(line)
                 print("  Run the same command without --check to fetch them; "
                       "a file with a wrong hash is replaced, and the one in place "
@@ -8628,6 +8708,8 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
             _print_plan([f for f in to_download if id(f) not in copies], bios_path, term,
                         trees, kept, copy_plan_lines(to_download, copies, bios_index,
                                                      bios_path, files, args.verbose, True))
+            for line in unreadable_lines(unread, args.verbose):
+                print(line)
             for line in hint:
                 print(line)
             continue
@@ -8653,6 +8735,10 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                 files_pending += len(to_download)
                 continue
             EVENTS.emit("download", platform=plat_name, files=len(to_download), bytes=dl_size)
+            if unread:
+                print()
+                for line in unreadable_lines(unread, args.verbose):
+                    print(line)
             if copies:
                 print()
                 for line in copy_plan_lines(to_download, copies, bios_index, bios_path,
