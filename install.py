@@ -4046,9 +4046,18 @@ def _classify_local(entry: dict, dest: Path) -> str:
         for name in ("sha256", "sha1")
         if entry.get(name)
     }
+    if not dest.is_file():
+        # A folder at the file's place: --check says so, an install fails
+        # on that file alone.
+        return "mismatched"
     if not expected:
         return "up_to_date"
-    actual = _digest_file(dest, tuple(expected))
+    try:
+        actual = _digest_file(dest, tuple(expected))
+    except OSError:
+        # Unreadable (no permission, a read error on a failing card): its
+        # contents are not known to be the right ones.
+        return "mismatched"
     if all(actual[name] == value for name, value in expected.items()):
         return "up_to_date"
     return "mismatched"
@@ -4444,6 +4453,9 @@ def _download_one(
         if _write_refused(exc):
             return f["dest"], False, NOT_WRITABLE
         return f["dest"], False, exc.strerror or str(exc)
+    if dest.is_dir():
+        # Fetched, it failed only at the rename, on an errno and two paths.
+        return f["dest"], False, FOLDER_IN_PLACE
 
     if copy is not None:
         result = _copy_local(f, bios_path, dest, copy, progress)
@@ -4834,6 +4846,7 @@ READ_ONLY = "file in place is read-only"
 # A file in place whose content differs, which could not be moved aside: it
 # is left as it is rather than lost.
 NOT_KEPT = "file in place could not be kept aside"
+FOLDER_IN_PLACE = "a folder sits where this file goes: move it away, then run again"
 
 
 def _clear_read_only(dest: Path) -> None:
@@ -7539,12 +7552,14 @@ def _wrong_contents(
     owners: dict[str, list[dict]] | None = None,
 ) -> str:
     """Why the file at an entry's place is not the one the list installs."""
+    if path.is_dir():
+        return FOLDER_IN_PLACE
     try:
         size = path.stat().st_size
         with open(path, "rb") as handle:
             head = handle.read(4)
-    except OSError:
-        return ""
+    except OSError as exc:
+        return f"could not be read ({exc.strerror or exc}): its contents are unknown"
     sha1 = index.sha1(path)
     owner = _content_owner(sha1, entry, files, owners)
     if owner:

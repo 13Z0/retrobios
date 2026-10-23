@@ -1501,5 +1501,38 @@ class TheTitleASetupPrints(unittest.TestCase):
         self.assertEqual(install.system_aliases(manifest)["Sony PlayStation"], "arcade")
 
 
+class SomethingElseAtADestination(unittest.TestCase):
+    """A folder, or a file this user cannot read, at a destination ended
+    --check and the install on an IsADirectoryError traceback."""
+
+    def prepare(self, repo: FakeRepository) -> None:
+        (repo.dest / "scph5500.bin").mkdir(parents=True)
+        unreadable = repo.dest / "scph5501.bin"
+        unreadable.write_bytes(b"x")
+        unreadable.chmod(0)
+
+    @unittest.skipIf(os.name == "nt" or (hasattr(os, "geteuid") and os.geteuid() == 0),
+                     "a mode of 0 stops no read on Windows or as root")
+    def test_each_says_why_in_the_check_and_the_install(self):
+        with FakeRepository() as repo:
+            self.prepare(repo)
+            proc = repo.run("--check")
+            self.assertEqual(proc.returncode, 1, proc.stderr)
+            self.assertNotIn("Traceback", proc.stderr)
+            self.assertIn("    wrong hash: scph5500.bin\n      a folder sits where this "
+                          "file goes: move it away, then run again", proc.stdout)
+            self.assertIn("    wrong hash: scph5501.bin\n      could not be read "
+                          "(Permission denied)", proc.stdout)
+            proc = repo.run("--yes")
+            self.assertEqual(proc.returncode, 1, proc.stderr)
+            self.assertNotIn("Traceback", proc.stderr)
+            self.assertIn("failed: scph5500.bin (a folder sits where this file goes",
+                          proc.stdout)
+            self.assertIn("failed: scph5501.bin (file in place could not be kept aside",
+                          proc.stdout)
+            self.assertTrue((repo.dest / "scph5500.bin").is_dir())
+            self.assertIn("gba_bios.bin", repo.installed())
+
+
 if __name__ == "__main__":
     unittest.main()
