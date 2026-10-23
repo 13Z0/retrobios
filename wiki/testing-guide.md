@@ -274,13 +274,16 @@ pins).
 
 Each launcher then runs from its extracted archive on a simulated device: a
 pseudo-terminal stands for the console, and fakes stand for `install.py`,
-gptokeyb, setfont, chvt, curl, foot, xterm, muxterm, PortMaster's
-`control.txt` and muOS's `retro.sh`. The checks: gptokeyb starts in kill mode
-on the installer's path and is stopped, the console's settings and font are
-put back, an offline run picks the pack of its system from the card or says
-where to put one, a refused console falls back to PortMaster's screens, and
-each firmware's terminal is the one used. What reaches the screen and the
-pad on a real device is not exercised.
+gptokeyb and gptokeyb2 (each killing the way its source does), setfont,
+chvt, curl, sudo, foot, xterm, muxterm, PortMaster's `control.txt` and
+muOS's `retro.sh`. The checks: gptokeyb's kill reaches only the Start +
+Select sentinel and the interface then stops with its result written, the
+console's settings and font are put back, an offline run says so at once,
+picks the pack of its system from the card or says where to put one, and
+each firmware's terminal is the one used. The fakes also fail: a mapper that
+dies, a chvt the compositor refuses, a terminal app that cannot open, a
+read-only card. None of these may leave a console waiting for a button.
+What reaches the screen and the pad on a real device is not exercised.
 
 ```bash
 python -m unittest tests.test_handheld_launchers -v

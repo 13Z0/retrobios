@@ -5,18 +5,23 @@
 #
 # Sourced by every launcher (the PortMaster port, the Batocera and Knulli
 # port, the muOS app, the Tools entry), each of which sets the inputs below
-# and calls rb_select_python, then rb_launch. Run as `bash tui.txt here`, it
-# is the part that runs inside a terminal app the launcher opened.
+# and calls rb_open_log, rb_select_python, then rb_launch. Run as
+# `bash tui.txt here`, it is the part that runs inside a terminal app the
+# launcher opened.
 #
 # Inputs, all optional:
 #   RB_ROUTES      where to look for a terminal, in order: here (this
 #                  script's own stdin and stdout), app (foot or xterm in the
 #                  graphical session), vt (a Linux console). Default "app vt".
+#                  A route that fails to show the interface hands over to the
+#                  next one.
 #   RB_CONSOLE     the console of the vt route (default /dev/tty0)
 #   RB_VT_SWITCH   a console number to switch to when a graphical session
 #                  covers the current one (Batocera, Knulli)
 #   RB_MAPPER      the command that starts gptokeyb, kill flag included
 #                  ("$GPTOKEYB" in a PortMaster port), empty for none
+#   RB_MAPPER_NEEDED  0 when the terminal reads the pad itself, so the
+#                  interface still has buttons without the mapper
 #   RB_GPTK        its mapping (default retrobios.gptk next to this file)
 #   RB_PACK_PATH   folders searched for a pack when there is no network,
 #                  separated by ":", the first one named to the player
@@ -25,6 +30,10 @@
 #   RB_BIOS_DEST   the one of them the firmware reads, never offered as the
 #                  other card
 #   RB_FALLBACK    1 when the launcher has screens of its own to fall back to
+#   RB_PAD         the input route, exported to the interface as
+#                  RETROBIOS_PAD: gptokeyb (retrobios.gptk, the default when
+#                  RB_MAPPER is set), muxterm (muxterm's own keys), evmapy
+#                  (RetroBIOS.sh.keys), miyoo (buttons already keys)
 #   ESUDO          sudo where the launcher needs it, as PortMaster sets it
 
 RB_LIB="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/$(basename "${BASH_SOURCE[0]}")"
@@ -44,31 +53,139 @@ RB_FB="${RB_FB:-/sys/class/graphics/fb0/virtual_size}"
 RB_ROUTE_TABLE="${RB_ROUTE_TABLE:-/proc/net/route}"
 RB_VT_ACTIVE="${RB_VT_ACTIVE:-/sys/class/tty/tty0/active}"
 RB_PROBE_URL="${RETROBIOS_BASE_URL:-https://raw.githubusercontent.com/Abdess/retrobios/}"
+# Seconds: the interface's time to write its result once asked to stop, the
+# wait for a button when the mapper is gone, the offline detection run.
+RB_STOP_GRACE="${RB_STOP_GRACE:-10}"
+RB_DEAD_WAIT="${RB_DEAD_WAIT:-10}"
+RB_DETECT_LIMIT="${RB_DETECT_LIMIT:-20}"
+RB_MAPPER_NEEDED="${RB_MAPPER_NEEDED:-1}"
+RB_PAD="${RB_PAD:-}"
 RB_RUNTIME="python_3.11"
 RB_RELEASES="github.com/Abdess/retrobios/releases/latest"
 RB_PC_ROUTE="On a computer, with this SD card mounted, the same installer fills the card: install.py --platform NAME --dest BIOS-FOLDER-ON-THE-CARD. Instructions: abdess.github.io/retrobios/wiki/installer"
 RB_PYTHON="${RB_PYTHON:-}"
 RB_PYTHONHOME="${RB_PYTHONHOME:-}"
 RB_PYTHON_PROBLEM="${RB_PYTHON_PROBLEM:-}"
+RB_MAPPER_PID="${RB_MAPPER_PID:-}"
+RB_STOP_PID="${RB_STOP_PID:-}"
+RB_STOP_TOKEN="${RB_STOP_TOKEN:-}"
+RB_STATE_PROBLEM=""
 RB_MOUNTED=""
-RB_MAPPER_PID=""
+RB_UI_PID=""
+RB_APP_PID=""
+RB_STOPPED=""
 RB_TTY=""
 RB_STTY=""
 RB_FONT_BACK=""
 RB_VT_BACK=""
 RB_ROUTE=""
+RB_ROUTE_FAILED=""
+RB_NAP_FD=""
+RB_KEY=""
 RB_TERMAPP=()
+RB_PYCMD=()
 
 rb_arch() {
   uname -m
 }
 
-rb_py() {
+rb_say() {
+  printf '%s\n' "RetroBIOS: $*" >> "$RB_LOG" 2>/dev/null
+}
+
+# The interpreter as one command, so it can be started in the background and
+# signalled itself: a function run with & is a subshell whose python child a
+# kill does not reach.
+rb_pycmd() {
   if [ -n "$RB_PYTHONHOME" ]; then
-    PYTHONHOME="$RB_PYTHONHOME" "$RB_PYTHON" "$@"
+    RB_PYCMD=(env "PYTHONHOME=$RB_PYTHONHOME" "$RB_PYTHON")
   else
-    "$RB_PYTHON" "$@"
+    RB_PYCMD=("$RB_PYTHON")
   fi
+}
+
+rb_py() {
+  rb_pycmd
+  "${RB_PYCMD[@]}" "$@"
+}
+
+# A pause without a child process, in fractions of a second, which busybox
+# sleep does not always take: a read that times out on a pipe this shell
+# holds both ends of.
+rb_nap() {
+  if [ -z "$RB_NAP_FD" ]; then
+    exec {RB_NAP_FD}<> <(:) || RB_NAP_FD="none"
+  fi
+  if [ "$RB_NAP_FD" = "none" ]; then
+    sleep 1
+  else
+    read -r -t "$1" -u "$RB_NAP_FD" _
+  fi
+  return 0
+}
+
+# Whether a process runs. /proc, not kill -0: the mapper may run as root
+# under sudo, and kill -0 on it fails for a user. A zombie is not running.
+rb_alive() {
+  local stat
+  [ -n "${1:-}" ] || return 1
+  { read -r stat < "/proc/$1/stat"; } 2>/dev/null || return 1
+  stat="${stat##*) }"
+  [ "${stat%% *}" != "Z" ]
+}
+
+# Runs a command for at most $1 seconds: status 124 when it was stopped.
+rb_bounded() {
+  local limit="$1" pid waited=0
+  shift
+  "$@" &
+  pid=$!
+  while rb_alive "$pid"; do
+    if [ "$waited" -ge $((limit * 4)) ]; then
+      kill "$pid" 2>/dev/null
+      wait "$pid" 2>/dev/null
+      return 124
+    fi
+    rb_nap 0.25
+    waited=$((waited + 1))
+  done
+  wait "$pid"
+}
+
+# --- State and log --------------------------------------------------------
+
+rb_can_write() {
+  mkdir -p "$1" 2>/dev/null || return 1
+  { printf 'x' > "$1/.probe"; } 2>/dev/null || return 1
+  rm -f "$1/.probe"
+}
+
+# The folder the run keeps its state in, and its log, started afresh with the
+# previous one kept as log.prev.txt. A read-only or full card moves both to
+# XDG_RUNTIME_DIR or /tmp: the interface then runs and says itself what it
+# cannot write. "fresh" starts the log, "keep" leaves it as the launcher
+# opened it.
+rb_open_log() {
+  local spare="${XDG_RUNTIME_DIR:-/tmp}/retrobios" moved=""
+  if ! rb_can_write "$RB_STATE" || ! { : >> "$RB_LOG"; } 2>/dev/null; then
+    moved="$RB_DIR"
+    RB_STATE="$spare/run"
+    RB_LOG="$spare/log.txt"
+    if ! rb_can_write "$RB_STATE"; then
+      RB_STATE_PROBLEM="RetroBIOS cannot write to $moved or to $spare: the SD card may be read-only or full."
+      return 1
+    fi
+  fi
+  if [ "${1:-}" != "keep" ] || [ -n "$moved" ]; then
+    if [ -s "$RB_LOG" ]; then
+      mv -f "$RB_LOG" "${RB_LOG%.txt}.prev.txt" 2>/dev/null
+    fi
+    : > "$RB_LOG"
+  fi
+  if [ -n "$moved" ]; then
+    rb_say "$moved cannot be written (read-only or full card): the log and the run's files are in $spare"
+  fi
+  return 0
 }
 
 # --- Python ---------------------------------------------------------------
@@ -144,20 +261,22 @@ rb_python_text() {
 
 # Whether the file list can be reached. Only a failure to resolve or to
 # connect counts as offline: a certificate refused by an old curl still means
-# a network, and install.py names that problem itself.
+# a network, and install.py names that problem itself. Bounded as a whole:
+# GNU wget retries a timeout 20 times.
 rb_online() {
   local code
   if command -v curl >/dev/null 2>&1; then
-    curl -sSI --max-time 8 "$RB_PROBE_URL" >/dev/null 2>&1
+    rb_bounded 8 curl -sSI --connect-timeout 5 --max-time 7 "$RB_PROBE_URL" >/dev/null 2>&1
     code=$?
     case "$code" in
-      5|6|7|28) return 1 ;;
+      5|6|7|28|124) return 1 ;;
       *) return 0 ;;
     esac
   fi
   if command -v wget >/dev/null 2>&1; then
-    wget -q --spider -T 8 "$RB_PROBE_URL" >/dev/null 2>&1
-    [ $? -ne 4 ]
+    rb_bounded 8 wget -q --spider -T 7 "$RB_PROBE_URL" >/dev/null 2>&1
+    code=$?
+    [ "$code" -ne 4 ] && [ "$code" -ne 124 ]
     return
   fi
   # Neither tool: a default route is the best guess there is.
@@ -166,12 +285,18 @@ rb_online() {
 
 # The system and BIOS folder install.py finds here, read without a network:
 # detection is local, and the run stops where the file list would download.
+# That download is sent to a loopback port nothing listens on, so it fails
+# at once instead of retrying three times 30 s on a network already found
+# missing.
 rb_detect() {
   RB_PLATFORM=""
   RB_PLATFORM_NAME=""
   RB_BIOS_DIR=""
   mkdir -p "$RB_STATE"
-  rb_py "$RB_INSTALL" --check --events > "$RB_STATE/detect.jsonl" 2>> "$RB_LOG"
+  rb_pycmd
+  RETROBIOS_BASE_URL="http://127.0.0.1:9" rb_bounded "$RB_DETECT_LIMIT" \
+    "${RB_PYCMD[@]}" "$RB_INSTALL" --check --events > "$RB_STATE/detect.jsonl" 2>> "$RB_LOG"
+  [ $? = 124 ] && rb_say "the detection run took over $RB_DETECT_LIMIT s and was stopped"
   local kind a b c
   while IFS=$'\t' read -r kind a b c; do
     if [ "$kind" = "platform" ]; then
@@ -184,9 +309,10 @@ rb_detect() {
   done < <(rb_py "$RB_EVENTS" status "$RB_STATE/detect.jsonl" 2>> "$RB_LOG")
 }
 
-# The first pack in RB_PACK_PATH, one whose name spells this system first:
-# install.py reads the platform from the same spelling (Name_With_Underscores
-# between two underscores).
+# The first pack in RB_PACK_PATH whose name spells this system: install.py
+# reads the platform from the same spelling (Name_With_Underscores between
+# two underscores) and refuses a pack named for another. Any pack only when
+# the system is not known, since install.py then reads it from the name.
 rb_find_pack() {
   local dir file base stem first="" want=""
   if [ -n "${RB_PLATFORM_NAME:-}" ]; then
@@ -203,11 +329,25 @@ rb_find_pack() {
         printf '%s\n' "$file"
         return 0
       fi
-      [ -z "$first" ] && first="$file"
+      [ -z "$want" ] && [ -z "$first" ] && first="$file"
     done
   done
   [ -n "$first" ] && printf '%s\n' "$first"
   return 0
+}
+
+# How the release pack that serves this system is named: the platforms of its
+# group, as packs.txt lists them. build_port.py writes packs.txt from the
+# registry's release_pack platforms, so a system with no line has no pack.
+rb_pack_label() {
+  [ -n "${RB_PLATFORM:-}" ] && [ -f "$RB_DIR/packs.txt" ] || return 1
+  awk -F'\t' -v p="$RB_PLATFORM" '$1 == p { print $2; found = 1; exit } END { exit !found }' \
+    "$RB_DIR/packs.txt"
+}
+
+# Whether the system is known to have no release pack.
+rb_no_pack_serves() {
+  [ -n "${RB_PLATFORM:-}" ] && [ -f "$RB_DIR/packs.txt" ] && ! rb_pack_label > /dev/null
 }
 
 rb_same_dir() {
@@ -235,8 +375,14 @@ rb_other_card() {
 }
 
 rb_pack_text() {
-  local dir="${RB_PACK_PATH%%:*}" pack
-  if [ -n "${RB_PLATFORM_NAME:-}" ]; then
+  local dir="${RB_PACK_PATH%%:*}" pack label
+  if rb_no_pack_serves; then
+    printf '%s\n' "No network connection, and the releases carry no BIOS pack for ${RB_PLATFORM_NAME:-$RB_PLATFORM}: connect to Wi-Fi and start RetroBIOS again. $RB_PC_ROUTE"
+    return 0
+  fi
+  if label=$(rb_pack_label); then
+    pack="the $label BIOS pack (a file whose name starts with ${label}_ and ends in _BIOS_Pack.zip)"
+  elif [ -n "${RB_PLATFORM_NAME:-}" ]; then
     pack="the BIOS pack whose name contains ${RB_PLATFORM_NAME// /_}"
   else
     pack="the BIOS pack for this system (a file whose name ends in _BIOS_Pack.zip)"
@@ -269,42 +415,48 @@ rb_terminal_app() {
   fi
 }
 
-# Sets RB_ROUTE to the first of RB_ROUTES that can show text: here, app,
-# vt, or none.
-rb_route() {
-  local route
-  RB_ROUTE="none"
-  for route in $RB_ROUTES; do
-    case "$route" in
-      here)
-        if [ -t 0 ] && [ -t 1 ]; then
-          RB_ROUTE="here"
-          return 0
-        fi
-        ;;
-      app)
-        if rb_terminal_app; then
-          RB_ROUTE="app"
-          return 0
-        fi
-        ;;
-      vt)
-        # A compositor or X server holds the console it runs on: text
-        # written there is never seen, so the console needs a switch.
-        if rb_graphical; then
-          if [ -n "${RB_VT_SWITCH:-}" ] && command -v chvt >/dev/null 2>&1 \
-              && [ -n "$(rb_active_vt)" ]; then
-            RB_ROUTE="vt"
-            return 0
-          fi
-        elif [ -c "$RB_CONSOLE" ]; then
-          RB_ROUTE="vt"
-          return 0
-        fi
-        ;;
-    esac
-  done
+# A console a terminal can be read from. PortMaster's mod_muOS.txt sets
+# CUR_TTY to /dev/null, a character device that is no console at all. A
+# console this user cannot open yet (rb_vt_enter opens it up) is judged by
+# its name.
+rb_is_console() {
+  [ -c "$1" ] || return 1
+  if [ -r "$1" ] && [ -w "$1" ]; then
+    { [ -t 0 ]; } < "$1" 2>/dev/null
+    return
+  fi
+  case "$1" in
+    /dev/tty[0-9]*|/dev/console|/dev/pts/*) return 0 ;;
+  esac
   return 1
+}
+
+# Whether a route can show text here. A compositor or X server holds the
+# console it runs on: text written there is never seen, so the console needs
+# a switch.
+rb_route_ready() {
+  case "$1" in
+    here)
+      [ -t 0 ] && [ -t 1 ]
+      ;;
+    app)
+      rb_terminal_app
+      ;;
+    vt)
+      if rb_graphical; then
+        [ -n "${RB_VT_SWITCH:-}" ] && command -v chvt >/dev/null 2>&1 \
+          && [ -n "$(rb_active_vt)" ]
+      elif rb_is_console "$RB_CONSOLE"; then
+        return 0
+      else
+        rb_say "$RB_CONSOLE is not a console: no route on it"
+        return 1
+      fi
+      ;;
+    *)
+      return 1
+      ;;
+  esac
 }
 
 # The largest Terminus font that keeps 56 columns and 20 rows, the way
@@ -368,12 +520,34 @@ rb_active_vt() {
   printf '%s\n' "$active"
 }
 
+# chvt, and whether the console really came to the front. chvt waits for the
+# switch (VT_WAITACTIVE): a compositor that keeps the display would hold it
+# forever, so it gets 3 s.
+rb_chvt() {
+  local pid waited=0
+  $ESUDO chvt "$1" >> "$RB_LOG" 2>&1 &
+  pid=$!
+  while [ "$waited" -lt 12 ]; do
+    [ "$(rb_active_vt)" = "$1" ] && return 0
+    rb_nap 0.25
+    waited=$((waited + 1))
+  done
+  $ESUDO kill "$pid" >/dev/null 2>&1
+  return 1
+}
+
 rb_vt_enter() {
   RB_TTY="$RB_CONSOLE"
   if rb_graphical && [ -n "${RB_VT_SWITCH:-}" ]; then
     RB_VT_BACK=$(rb_active_vt)
+    if ! rb_chvt "$RB_VT_SWITCH"; then
+      rb_say "console $RB_VT_SWITCH did not come to the front (console ${RB_VT_BACK:-?} still is)"
+      [ -n "$RB_VT_BACK" ] && rb_chvt "$RB_VT_BACK"
+      RB_TTY=""
+      RB_VT_BACK=""
+      return 1
+    fi
     RB_TTY="${RB_VT_PREFIX:-/dev/tty}$RB_VT_SWITCH"
-    $ESUDO chvt "$RB_VT_SWITCH" >> "$RB_LOG" 2>&1
   fi
   if [ ! -r "$RB_TTY" ] || [ ! -w "$RB_TTY" ]; then
     $ESUDO chmod 666 "$RB_TTY" >> "$RB_LOG" 2>&1
@@ -391,32 +565,98 @@ rb_vt_leave() {
     stty "$RB_STTY" < "$RB_TTY" 2>/dev/null
   fi
   if [ -n "$RB_VT_BACK" ]; then
-    $ESUDO chvt "$RB_VT_BACK" >> "$RB_LOG" 2>&1
+    rb_chvt "$RB_VT_BACK"
   fi
   RB_TTY=""
   RB_STTY=""
   RB_VT_BACK=""
 }
 
-# gptokeyb on a name only this installer's processes carry: kill mode runs
-# pkill -f on it, and the path of install.py is in the command line of the
-# interface and of every run it starts, never in python3's alone.
+# --- Controller and Start + Select ----------------------------------------
+
+# Start + Select is the mapper's kill mode: gptokeyb runs pkill -f on its
+# target, then pkill -9 3 s later, and gptokeyb2 -X runs kill -9 at once.
+# Either would reach the interface's engine too, whose command line carries
+# the installer's path, and SIGKILL leaves no time to say what an install
+# wrote. So the target is a sentinel, a process this launcher owns whose
+# command line alone carries the token: when it dies, the launcher asks the
+# interface to stop, and the interface gives a running install its 2 s.
+rb_stop_start() {
+  RB_STOP_TOKEN="retrobios-stop-${$}x"
+  bash -c 'exec {f}<> <(:); while :; do read -r -t 3600 -u "$f" _; done' \
+    "$RB_STOP_TOKEN" > /dev/null 2>&1 &
+  RB_STOP_PID=$!
+}
+
+rb_stop_requested() {
+  [ -n "$RB_STOP_PID" ] && ! rb_alive "$RB_STOP_PID"
+}
+
+rb_stop_end() {
+  [ -n "$RB_STOP_PID" ] || return 0
+  kill "$RB_STOP_PID" >/dev/null 2>&1
+  RB_STOP_PID=""
+}
+
+# The mapper, checked half a second after it starts: where it is the only
+# input, a mapper that exits at once leaves an interface nothing can move.
 rb_mapper_start() {
   [ -n "${RB_MAPPER:-}" ] || return 0
+  [ -n "$RB_MAPPER_PID" ] && return 0
+  rb_stop_start
   # shellcheck disable=SC2086 # RB_MAPPER is a command and its flags, as $GPTOKEYB is
-  $RB_MAPPER "$RB_INSTALL" -c "$RB_GPTK" >> "$RB_LOG" 2>&1 &
+  $RB_MAPPER "$RB_STOP_TOKEN" -c "$RB_GPTK" >> "$RB_LOG" 2>&1 &
   RB_MAPPER_PID=$!
+  rb_nap 0.5
+  if ! rb_alive "$RB_MAPPER_PID"; then
+    rb_say "the controller mapper ($RB_MAPPER) stopped as soon as it started"
+  fi
+}
+
+# The mapper was started, is needed, and is no longer running.
+rb_mapper_gone() {
+  [ -n "${RB_MAPPER:-}" ] && [ -n "$RB_MAPPER_PID" ] && [ "$RB_MAPPER_NEEDED" != "0" ] \
+    && ! rb_alive "$RB_MAPPER_PID"
 }
 
 rb_mapper_stop() {
-  [ -n "$RB_MAPPER_PID" ] || return 0
-  $ESUDO kill "$RB_MAPPER_PID" >/dev/null 2>&1
-  wait "$RB_MAPPER_PID" 2>/dev/null
+  if [ -n "$RB_MAPPER_PID" ]; then
+    $ESUDO kill "$RB_MAPPER_PID" >/dev/null 2>&1
+    wait "$RB_MAPPER_PID" 2>/dev/null
+  fi
   RB_MAPPER_PID=""
+  rb_stop_end
 }
 
-# A screen of text on the current terminal, closed by any button.
-rb_message() {
+rb_mapper_text() {
+  printf '%s\n' "The controller cannot be read: gptokeyb, which turns the buttons into keys, stopped as soon as it started. What it said is in $RB_LOG. $RB_PC_ROUTE"
+}
+
+# --- Messages -------------------------------------------------------------
+
+# One key into RB_KEY. False when none came: the wait ran out, Start + Select
+# was pressed, or the mapper is gone and only a keyboard is left, which gets
+# RB_DEAD_WAIT seconds.
+rb_read_key() {
+  local limit="${RB_MESSAGE_WAIT:-300}" waited=0 code
+  RB_KEY=""
+  while [ "$waited" -lt "$limit" ]; do
+    rb_stop_requested && return 1
+    if rb_mapper_gone && [ "$limit" -gt "$RB_DEAD_WAIT" ]; then
+      limit="$RB_DEAD_WAIT"
+      [ "$waited" -lt "$limit" ] || return 1
+    fi
+    IFS= read -r -s -n 1 -t 1 RB_KEY
+    code=$?
+    [ "$code" = 0 ] && return 0
+    # The end of the input, not a timeout.
+    [ "$code" -gt 128 ] || return 1
+    waited=$((waited + 1))
+  done
+  return 1
+}
+
+rb_screen() {
   local cols
   cols=$(stty size 2>/dev/null | awk '{print $2}')
   case "$cols" in
@@ -426,60 +666,133 @@ rb_message() {
   printf '\033[2J\033[H'
   printf 'RetroBIOS\n\n'
   printf '%s\n' "$1" | fold -s -w $((cols - 1))
-  printf '\n%s\n' "Press A or Enter to close."
-  read -r -s -n 1 -t "${RB_MESSAGE_WAIT:-300}" _
+  printf '\n%s\n' "$2"
+}
+
+# A screen of text on the current terminal, closed by any button.
+rb_message() {
+  rb_screen "$1" "Press A or Enter to close."
+  rb_read_key
   printf '\033[2J\033[H'
 }
 
 # A question on the current terminal: true for A or Enter, false for B, Esc,
 # any other button or no answer.
 rb_ask() {
-  local cols key
-  cols=$(stty size 2>/dev/null | awk '{print $2}')
-  case "$cols" in
-    ''|*[!0-9]*) cols=40 ;;
-  esac
-  [ "$cols" -ge 20 ] || cols=40
-  printf '\033[2J\033[H'
-  printf 'RetroBIOS\n\n'
-  printf '%s\n' "$1" | fold -s -w $((cols - 1))
-  printf '\n%s\n' "A or Enter: yes. B or Esc: no."
-  if ! IFS= read -r -s -n 1 -t "${RB_MESSAGE_WAIT:-300}" key; then
+  rb_screen "$1" "A or Enter: yes. B or Esc: no."
+  if ! rb_read_key; then
     printf '\033[2J\033[H'
     return 1
   fi
   # The rest of an escape sequence (an arrow) is not a second answer.
   read -r -s -t 0.05 -n 8 _ 2>/dev/null
   printf '\033[2J\033[H'
-  [ -z "$key" ] || [ "$key" = " " ]
+  [ -z "$RB_KEY" ] || [ "$RB_KEY" = " " ]
 }
 
 # --- The run --------------------------------------------------------------
+
+# The interface itself, watched: Start + Select or a mapper gone (nothing
+# moves it any more) asks it to stop with SIGTERM, then SIGKILL after
+# RB_STOP_GRACE seconds. Its stdin is named, since a background command in a
+# script reads /dev/null otherwise.
+rb_interface() {
+  local status naps=0
+  rb_pycmd
+  # A Ctrl-C typed while the terminal still sends signals reaches the
+  # interface on its own: this shell keeps watching.
+  trap ':' INT
+  "${RB_PYCMD[@]}" "$RB_INSTALL" --tui "$@" <&0 2> "$RB_STATE/tui.err" &
+  RB_UI_PID=$!
+  while rb_alive "$RB_UI_PID"; do
+    if [ -z "$RB_STOPPED" ]; then
+      if rb_stop_requested; then
+        RB_STOPPED="start_select"
+        rb_say "Start + Select: the interface is asked to stop"
+      elif rb_mapper_gone; then
+        RB_STOPPED="mapper"
+        rb_say "the controller mapper stopped: the interface is asked to stop"
+      fi
+      [ -n "$RB_STOPPED" ] && kill -TERM "$RB_UI_PID" 2>/dev/null
+    else
+      naps=$((naps + 1))
+      if [ "$naps" -ge $((RB_STOP_GRACE * 4)) ]; then
+        rb_say "the interface did not stop within $RB_STOP_GRACE s"
+        kill -KILL "$RB_UI_PID" 2>/dev/null
+        rb_kill_engines
+      fi
+    fi
+    rb_nap 0.25
+  done
+  wait "$RB_UI_PID"
+  status=$?
+  trap - INT
+  RB_UI_PID=""
+  return "$status"
+}
+
+# An engine the interface started survives it when the interface is killed:
+# it runs in its own session.
+rb_kill_engines() {
+  command -v pkill >/dev/null 2>&1 || return 0
+  pkill -KILL -f "$RB_INSTALL" >/dev/null 2>&1
+}
+
+rb_ui_stop() {
+  local naps=0
+  rb_alive "$RB_UI_PID" || return 0
+  kill -TERM "$RB_UI_PID" 2>/dev/null
+  while rb_alive "$RB_UI_PID" && [ "$naps" -lt $((RB_STOP_GRACE * 4)) ]; do
+    rb_nap 0.25
+    naps=$((naps + 1))
+  done
+  if rb_alive "$RB_UI_PID"; then
+    kill -KILL "$RB_UI_PID" 2>/dev/null
+    rb_kill_engines
+  fi
+  RB_UI_PID=""
+}
 
 # The interface on the current terminal: install.py --tui, from a pack on the
 # card when there is no network. The status also goes to RB_STATE/status,
 # since a terminal app does not always pass its child's on.
 rb_here() {
-  local status pack args=()
+  local status pack args=() other
   mkdir -p "$RB_STATE"
   rm -f "$RB_STATE/status"
   case "${TERM:-}" in
     ''|dumb|unknown) export TERM=xterm ;;
   esac
+  if rb_mapper_gone; then
+    rb_message "$(rb_mapper_text)"
+    printf '1\n' > "$RB_STATE/status"
+    return 1
+  fi
   if [ -z "$RB_PYTHON" ]; then
     rb_message "$(rb_python_text)"
     printf '1\n' > "$RB_STATE/status"
     return 1
   fi
-  local other
+  printf '\033[2J\033[HRetroBIOS\n\nChecking the connection...\n'
   if ! rb_online; then
+    printf 'No connection. Looking for the BIOS folder and a pack on the card...\n'
     # Detection also names the BIOS folder the other card must not be.
     rb_detect
+    if rb_no_pack_serves; then
+      # Copying from the other card needs a file list too: nothing to ask.
+      rb_message "$(rb_pack_text)"
+      printf '1\n' > "$RB_STATE/status"
+      return 1
+    fi
     other=$(rb_other_card)
     if [ -n "$other" ] && rb_ask "Copy the BIOS files from your other card? $other holds files. RetroBIOS copies the ones this system needs, each checked by its hash, and leaves that card as it is."; then
       args=(--from "$other")
     fi
     pack=$(rb_find_pack)
+    if rb_stop_requested; then
+      printf '143\n' > "$RB_STATE/status"
+      return 143
+    fi
     if [ -z "$pack" ]; then
       if [ "${#args[@]}" -gt 0 ]; then
         # --from needs the list of files, which comes from the network or a pack.
@@ -495,7 +808,7 @@ rb_here() {
       args+=(--platform "$RB_PLATFORM")
     fi
   fi
-  rb_py "$RB_INSTALL" --tui "${args[@]}" "$@" 2> "$RB_STATE/tui.err"
+  rb_interface "${args[@]}" "$@"
   status=$?
   cat "$RB_STATE/tui.err" >> "$RB_LOG" 2>/dev/null
   if [ "$status" = "2" ] && grep -q -- "--tui cannot open" "$RB_STATE/tui.err"; then
@@ -503,59 +816,124 @@ rb_here() {
     if [ "${RB_FALLBACK:-0}" != "1" ]; then
       rb_message "$(tail -n 1 "$RB_STATE/tui.err") The messages are in $RB_LOG."
     fi
+  elif [ -n "$RB_STOPPED" ] || [ "$status" -ge 128 ]; then
+    # Ended by Start + Select or a signal: the player asked to leave, and no
+    # button may be left to close a message.
+    :
   elif [ "$status" != "0" ] && [ -s "$RB_STATE/tui.err" ]; then
-    rb_message "$(tail -n 1 "$RB_STATE/tui.err") The messages are in $RB_LOG."
+    # The first line of the farewell: the error screen it closes was read.
+    rb_message "$(head -n 1 "$RB_STATE/tui.err") The messages are in $RB_LOG."
   fi
   printf '%s\n' "$status" > "$RB_STATE/status"
   return "$status"
 }
 
 rb_cleanup() {
+  rb_ui_stop
+  if rb_alive "$RB_APP_PID"; then
+    kill -TERM "$RB_APP_PID" 2>/dev/null
+    wait "$RB_APP_PID" 2>/dev/null
+  fi
+  RB_APP_PID=""
   rb_vt_leave
   rb_mapper_stop
 }
 
-# The whole session: the terminal, the mapper, the interface, then the
-# console, its font and the mapper put back. Returns the interface's status,
-# 125 when no terminal could show it.
-rb_launch() {
-  local status
-  mkdir -p "$RB_STATE"
-  if ! rb_route; then
-    printf '%s\n' "RetroBIOS: no terminal to show the interface on (routes: $RB_ROUTES)" >> "$RB_LOG"
-    return 125
-  fi
-  export RB_DIR RB_INSTALL RB_EVENTS RB_STATE RB_LOG RB_PACK_PATH RB_FALLBACK
-  export RB_OTHER_CARDS RB_BIOS_DEST
-  export RB_PYTHON RB_PYTHONHOME RB_PYTHON_PROBLEM RB_MESSAGE_WAIT RB_ROUTE_TABLE
-  trap 'rb_cleanup; exit 143' TERM HUP
-  rb_mapper_start
+# One route: sets RB_ROUTE_FAILED when it could not show the interface, so
+# the next route is tried.
+rb_route_run() {
+  local status code
+  RB_ROUTE_FAILED=""
   case "$RB_ROUTE" in
     here)
       rb_here "$@"
       status=$?
       ;;
     app)
-      "${RB_TERMAPP[@]}" bash "$RB_LIB" here "$@" 2>> "$RB_LOG"
-      status=$(cat "$RB_STATE/status" 2>/dev/null)
+      rm -f "$RB_STATE/status"
+      "${RB_TERMAPP[@]}" bash "$RB_LIB" here "$@" 2>> "$RB_LOG" &
+      RB_APP_PID=$!
+      wait "$RB_APP_PID"
+      code=$?
+      RB_APP_PID=""
+      if [ -f "$RB_STATE/status" ]; then
+        status=$(cat "$RB_STATE/status")
+      else
+        # foot or xterm refused to open (no display, no XAUTHORITY): the
+        # interface never ran.
+        rb_say "${RB_TERMAPP[0]} ended with status $code before the interface ran"
+        RB_ROUTE_FAILED=1
+        return 1
+      fi
       ;;
     vt)
-      rb_vt_enter
+      if ! rb_vt_enter; then
+        RB_ROUTE_FAILED=1
+        return 1
+      fi
       export TERM=linux
       # shellcheck disable=SC2094 # a console is read and written at once by design
       rb_here "$@" < "$RB_TTY" > "$RB_TTY" 2>> "$RB_LOG"
       status=$?
+      rb_vt_leave
       ;;
   esac
+  return "${status:-1}"
+}
+
+# The whole session: the terminal, the mapper, the interface, then the
+# console, its font and the mapper put back. Returns the interface's status,
+# 125 when no terminal could show it.
+rb_launch() {
+  local status="" route
+  RB_STOPPED=""
+  if [ -n "$RB_STATE_PROBLEM" ]; then
+    printf '%s\n' "$RB_STATE_PROBLEM" >&2
+    if rb_is_console "$RB_CONSOLE"; then
+      printf '\r\n%s\r\n' "$RB_STATE_PROBLEM" > "$RB_CONSOLE" 2>/dev/null
+    fi
+    return 1
+  fi
+  mkdir -p "$RB_STATE"
+  export RB_DIR RB_INSTALL RB_EVENTS RB_STATE RB_LOG RB_PACK_PATH RB_FALLBACK
+  export RB_OTHER_CARDS RB_BIOS_DEST RB_STOP_GRACE RB_DEAD_WAIT RB_DETECT_LIMIT
+  export RB_PYTHON RB_PYTHONHOME RB_PYTHON_PROBLEM RB_MESSAGE_WAIT RB_ROUTE_TABLE
+  # The interface names the buttons of this route in its hints.
+  if [ -z "$RB_PAD" ] && [ -n "${RB_MAPPER:-}" ]; then
+    RB_PAD="gptokeyb"
+  fi
+  if [ -n "$RB_PAD" ]; then
+    export RETROBIOS_PAD="$RB_PAD"
+  fi
+  trap 'rb_cleanup; exit 143' TERM HUP
+  for route in $RB_ROUTES; do
+    rb_route_ready "$route" || continue
+    rb_mapper_start
+    export RB_MAPPER RB_MAPPER_PID RB_MAPPER_NEEDED RB_STOP_PID
+    RB_ROUTE="$route"
+    rb_say "showing the interface by the $route route"
+    rb_route_run "$@"
+    status=$?
+    [ -z "$RB_ROUTE_FAILED" ] && break
+    status=""
+  done
   rb_cleanup
   trap - TERM HUP
-  return "${status:-1}"
+  if [ -z "$status" ]; then
+    RB_ROUTE="none"
+    rb_say "no terminal to show the interface on (routes: $RB_ROUTES)"
+    return 125
+  fi
+  return "$status"
 }
 
 if [ "${BASH_SOURCE[0]}" = "$0" ]; then
   case "${1:-}" in
     here)
       shift
+      # The terminal app closed or the launcher signalled: the interface
+      # gets its time to stop.
+      trap 'rb_ui_stop; exit 143' TERM HUP
       rb_here "$@"
       exit $?
       ;;
