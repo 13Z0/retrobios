@@ -354,15 +354,16 @@ class TheSearchSkipsLinkLists(unittest.TestCase):
         consumers.installed = {sha1: {"batocera": {"bios/a.bin"}}}
         consumers.emulators = {sha1: {"duckstation"}}
         entry = {"name": "a.bin", "sha1": sha1, "md5": "b" * 32, "size": 3}
-        text = "\n".join(generate_site._system_file_card(entry, consumers))
-        searched, _sep, skipped = text.partition("<section data-pagefind-ignore>")
-        self.assertIn("<code>a.bin</code>", searched)
-        self.assertNotIn("- MD5:", searched)
-        for line in ("- MD5:", "- Emulators:", "- Also installed by:"):
-            self.assertIn(line, skipped)
+        lines = generate_site._system_file_card(entry, consumers)
+        self.assertIn("<code>a.bin</code>", lines[2])
+        text = "\n".join(lines)
+        searched, _sep, skipped = text.partition('<dl class="rb-facts" data-pagefind-ignore>')
+        for label in ("MD5", "Emulators", "Packed for its emulators by"):
+            self.assertIn(f"<dt>{label}</dt>", skipped)
+            self.assertNotIn(f">{label}</dt>", searched)
         # The platforms line names the file as each setup does: the site
         # search reads it, so a file name finds its card.
-        self.assertIn("- Platforms:", searched + skipped.split("</section>", 1)[1])
+        self.assertRegex(searched, r'<dl class="rb-facts">\n<dt[^>]*>On the setup\'s list</dt>')
 
     def test_a_game_data_card_skips_its_name_too(self):
         import generate_site

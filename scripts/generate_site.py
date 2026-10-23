@@ -2771,9 +2771,12 @@ def generate_files_page() -> str:
     return "\n".join([
         "# Find a file",
         "",
-        "Paste a hash from clrmamepro, RomVault, an emulator log or a platform's "
-        "BIOS list. The page lists the file in the collection that has it, the "
-        "platforms that declare it and the emulators that check for it.",
+        "A hash is a fingerprint of a file's contents ([Glossary](../wiki/glossary.md)). "
+        "Tools such as clrmamepro and RomVault print one, and so do emulator logs "
+        "and the BIOS lists of setups.",
+        "",
+        "Paste it below. The page shows the file in the collection that has it, the "
+        "setups that list it and the emulators that check for it.",
         "",
         '<form class="rb-file-lookup" action="./" method="get">',
         '<label for="rb-hash">SHA1, MD5, CRC32 or SHA256</label> ',
@@ -2793,8 +2796,8 @@ def generate_files_page() -> str:
         "",
         "A file's card lives on its manufacturer's page, and a file refiled "
         "between manufacturers moves with it. `files/?sha1=<sha1>` is the address "
-        "that does not move: it opens the card wherever it is now. Each card's "
-        "**permalink** is that address.",
+        "that does not move: it opens the card wherever it is now. The link icon "
+        "beside each card's name is that address.",
         "",
         "## The index behind it",
         "",
@@ -3027,7 +3030,22 @@ def _group_by_manufacturer(db: dict) -> dict[str, dict[str, list]]:
     return manufacturers
 
 
+def _console_display(manufacturer: str, console: str) -> str:
+    """A console section's name as the reader looks for it: the heading
+    system_name gives its id, or the folder alone under a program's top
+    (Other, Arcade), where "Other mame" would name nothing."""
+    from siterender import _PROGRAM_TOPS, _heading_name  # noqa: PLC0415
+
+    return console if manufacturer in _PROGRAM_TOPS else _heading_name(manufacturer, console)
+
+
 def generate_systems_index(manufacturers: dict) -> str:
+    """Every console in one table, found by its own name.
+
+    The index listed 74 manufacturers and no console: someone looking for
+    PlayStation had to know it is filed under Sony, and Other hid 91
+    sections. Manufacturer pages stay the containers.
+    """
     total_mfr = len(manufacturers)
     total_consoles = sum(len(c) for c in manufacturers.values())
     # A copy filed under two folders appears on both pages, counted once here.
@@ -3039,38 +3057,52 @@ def generate_systems_index(manufacturers: dict) -> str:
     lines = [
         "# Systems",
         "",
-        "Every BIOS file the collection holds, by manufacturer and console. Open "
-        "a console to see each file, the emulators that read it and the setups "
-        "that list it.",
+        "Every BIOS file the collection holds, by console. Open a console to "
+        "see each file, the emulators that read it and the setups that list it.",
         "",
-        f"{total_mfr} manufacturers, {total_consoles} consoles, "
-        f"{total_files:,} files in the repository.",
+        f"{_count(total_consoles, 'console')}, {_count(total_files, 'file')} in the "
+        f"repository, from {_count(total_mfr, 'manufacturer')}.",
         "",
     ]
 
-    machines = [m for m in sorted(manufacturers, key=str.casefold) if m not in GAME_DATA_TOPS]
-    games = [m for m in sorted(manufacturers, key=str.casefold) if m in GAME_DATA_TOPS]
-    for heading, names in (("Consoles and computers", machines),
-                           ("Game engines and PC games", games)):
-        if not names:
+    # Other holds one folder per emulator: a7800 or altirra in the console
+    # table named no console.
+    def kind(mfr: str) -> str:
+        if mfr in GAME_DATA_TOPS:
+            return "games"
+        return "programs" if mfr == "Other" else "consoles"
+
+    for heading, group, first, note in (
+        ("Consoles and computers", "consoles", "Console", ""),
+        ("Emulator folders", "programs", "Folder",
+         "Files kept under the emulator that reads them, not under a console."),
+        ("Game engines and PC games", "games", "Name",
+         "Game engines and PC games hold the files a game engine reads, such "
+         "as the data of a game, rather than the BIOS of a machine."),
+    ):
+        rows = sorted(
+            ((_console_display(mfr, console), mfr, console, len(files))
+             for mfr, consoles in manufacturers.items() if kind(mfr) == group
+             for console, files in consoles.items()),
+            key=lambda row: (row[0].casefold(), row[1].casefold(), row[2]),
+        )
+        if not rows:
             continue
+        lines += [f"## {heading}", ""]
+        if note:
+            lines += [note, ""]
         lines += [
-            f"## {heading}",
-            "",
-            "| Manufacturer | Consoles | Files |",
-            "|-------------|----------|-------|",
+            # The count before the maker: on a phone the last column is
+            # the one scrolled off, and most names carry the maker already.
+            f"| {first} | Files | Maker |",
+            "|---------|------:|-------|",
         ]
-        for mfr in names:
-            consoles = manufacturers[mfr]
-            file_count = sum(len(files) for files in consoles.values())
-            lines.append(f"| [{mfr}]({_slug(mfr)}.md) | {len(consoles)} | {file_count} |")
+        for name, mfr, console, count in rows:
+            cell = name.replace("|", "-")
+            anchor = _slugify_anchor(console)
+            href = f"{_slug(mfr)}.md" + (f"#{anchor}" if anchor else "")
+            lines.append(f"| [{cell}]({href}) | {count:,} | [{mfr}]({_slug(mfr)}.md) |")
         lines.append("")
-    if games:
-        lines += [
-            "Game engines and PC games hold the files a game engine reads, such "
-            "as the data of a game, rather than the BIOS of a machine.",
-            "",
-        ]
 
     return "\n".join(lines) + "\n"
 
@@ -3349,21 +3381,46 @@ def _fetch_url(path: str) -> str:
     )
 
 
-def _platform_links(sha1: str, consumers: FileConsumers) -> list[str]:
-    """Each platform declaring the file: a link to its system section, and
+_platform_names: dict[str, str] = {}
+
+
+def _platform_display(name: str) -> str:
+    """A setup's name as its platform file writes it: Batocera, not batocera."""
+    display = _platform_names.get(name)
+    if display is None:
+        try:
+            config = load_platform_config(name, str(_REPO_ROOT / "platforms"))
+        except FileNotFoundError:
+            config = {}
+        display = _platform_names[name] = str(config.get("platform") or name)
+    return display
+
+
+# A setup, the link to its page, and where it puts the file.
+Place = tuple[str, str, list[str]]
+
+
+def _platform_places(sha1: str, consumers: FileConsumers) -> list[Place]:
+    """Each platform declaring the file, linked to its system section, with
     the destination it gives the file."""
     systems_of = getattr(consumers, "platform_systems", {}).get(sha1, {})
     destinations_of = getattr(consumers, "platform_destinations", {}).get(sha1, {})
-    links: list[str] = []
-    for platform in sorted(consumers.platforms.get(sha1, ())):
+    places: list[Place] = []
+    for platform in consumers.platforms.get(sha1, ()):
         section = sorted(systems_of.get(platform, ()))
         fragment = f"#{section[0].replace(' ', '-')}" if section else ""
-        link = f"[{platform}](../platforms/{platform}.md{fragment})"
-        destinations = sorted(destinations_of.get(platform, ()))
-        if destinations:
-            link += " " + ", ".join(_code(d) for d in destinations)
-        links.append(link)
-    return links
+        places.append((_platform_display(platform), f"../platforms/{platform}.md{fragment}",
+                       sorted(destinations_of.get(platform, ()))))
+    return sorted(places, key=lambda place: place[0].casefold())
+
+
+def _platform_links(sha1: str, consumers: FileConsumers) -> list[str]:
+    """Each platform declaring the file, as Markdown: its name, linked to
+    its system section, then the destination it gives the file."""
+    return [
+        f"[{name}]({href})" + (": " + ", ".join(_code(d) for d in dests) if dests else "")
+        for name, href, dests in _platform_places(sha1, consumers)
+    ]
 
 
 _card_anchors: dict[str, tuple[list, list[str]]] = {}
@@ -3397,16 +3454,60 @@ def _emulator_links(sha1: str, consumers: FileConsumers) -> list[str]:
     return links
 
 
-def _installed_links(sha1: str, consumers: FileConsumers, declared: set[str]) -> list[str]:
+def _installed_places(sha1: str, consumers: FileConsumers, declared: set[str]) -> list[Place]:
     """Each pack installing the file that its platform's list does not name,
     with the place the pack gives it."""
-    links = []
-    for platform, dests in sorted(getattr(consumers, "installed", {}).get(sha1, {}).items()):
-        if platform in declared:
-            continue
-        where = ", ".join(_code(d) for d in sorted(dests) if d)
-        links.append(f"[{platform}](../platforms/{platform}.md)" + (f" {where}" if where else ""))
-    return links
+    places = [
+        (_platform_display(platform), f"../platforms/{platform}.md", sorted(d for d in dests if d))
+        for platform, dests in getattr(consumers, "installed", {}).get(sha1, {}).items()
+        if platform not in declared
+    ]
+    return sorted(places, key=lambda place: place[0].casefold())
+
+
+def _places_text(places: list[Place]) -> str:
+    """Setups as "Lakka: scph1000.bin", the name linked to its page and the
+    destination as text: a code chip per path made the line a row of
+    boxes."""
+    def plain(text: str) -> str:
+        return html.escape(text, quote=False).replace("`", "&#96;")
+
+    return ", ".join(
+        f"[{name}]({href})" + (": " + " and ".join(plain(d) for d in dests) if dests else "")
+        for name, href, dests in places
+    )
+
+
+def _inline_card_html(text: str) -> str:
+    """A card value written in Markdown (code spans, links), as the HTML a
+    fact list holds. HTML already in the value is kept."""
+    out: list[str] = []
+    for part in re.split(r"(`[^`]*`)", text):
+        if len(part) > 1 and part.startswith("`") and part.endswith("`"):
+            out.append(f"<code>{html.escape(part[1:-1], quote=False)}</code>")
+        else:
+            out.append(re.sub(r"\[([^\]]+)\]\(([^)\s]+)\)", r'<a href="\2">\1</a>', part))
+    return "".join(out)
+
+
+# A link icon, the way a heading anchor is drawn: the word "permalink" was
+# read as part of every card title, by the search and by screen readers.
+# Drawn once per page and used by each card: inline, its 400 bytes were
+# 100 KB on the Sony page.
+PERMALINK_SYMBOL = (
+    '<svg aria-hidden="true" style="display:none"><symbol id="rb-link-icon" '
+    'viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" '
+    'stroke-linecap="round" stroke-linejoin="round">'
+    '<path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/>'
+    '<path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></symbol></svg>'
+)
+_PERMALINK_ICON = ('<svg aria-hidden="true" width="16" height="16">'
+                   '<use href="#rb-link-icon"/></svg>')
+
+
+def _icon_symbol() -> list[str]:
+    """The icon's drawing, for a page of cards. None in the yardstick."""
+    return [PERMALINK_SYMBOL, ""] if markup.starlight() else []
 
 
 def _system_file_card(
@@ -3425,6 +3526,7 @@ def _system_file_card(
     # Who reads this file, not who reads a file of this name
     plats = sorted(consumers.platforms.get(sha1_full, ()))
     emus = sorted(consumers.emulators.get(sha1_full, ()))
+    installed = _installed_places(sha1_full, consumers, set(plats))
 
     anchor = f"sha1-{sha1_full[:12]}" if sha1_full != "unknown" else ""
     # A copy filed under two consoles of one maker is listed twice on its
@@ -3434,56 +3536,87 @@ def _system_file_card(
             anchor = ""
         else:
             anchored.add(anchor)
+    skip = markup.search_exclude()
     lines = [markup.block_open("div", 'class="rb-sys-file"'), ""]
-    # The heading's own link is this page's, the second link is the file's
-    # own address, resolved by content wherever its card moves.
+    # The heading's own link is this page's, the icon is the file's own
+    # address, resolved by content wherever its card moves.
+    # The yardstick keeps the word, the size the page budget was set on.
+    icon = _PERMALINK_ICON if markup.starlight() else "permalink"
     permalink = (
         f' <a class="rb-permalink" href="{markup.site_href(f"files/?sha1={sha1_full}")}" '
-        f'title="Permanent link, by content">permalink</a>'
+        f'aria-label="Permanent link to {html.escape(name)}" '
+        f'title="Permanent link, by content" {skip}>{icon}</a>'
     ) if anchor else ""
+    # A file nothing reads said so nowhere: 53 of 248 Sony cards had no
+    # emulator, platform or pack line and looked unfinished.
+    unread = (f' <span class="rb-badge rb-badge-muted" {skip}>No reader</span>'
+              if not (emus or plats or installed) else "")
     lines.append(_card_title(
-        f'{_code(name)} <span class="rb-badge rb-badge-muted">{size}</span>{permalink}',
+        f'{_code(name)} <span class="rb-badge rb-badge-muted">{size}</span>{unread}{permalink}',
         anchor, searchable,
     ))
     lines.append("")
-    # Every hash in full: the site search indexes text, not a title
-    # attribute, so a pasted md5 or crc32 (what clrmamepro, RomVault or an
-    # emulator log prints) found nothing behind a 12-character prefix.
-    for label, value in (("SHA1", sha1_full), ("MD5", md5_full),
-                         ("CRC32", f.get("crc32")), ("SHA256", f.get("sha256"))):
-        if value and value != "unknown":
-            lines.append(f'- {label}: {markup.hash_value(value)}')
-    if emus:
-        lines.append(f"- Emulators: {', '.join(_emulator_links(sha1_full, consumers))}")
-    provenance = f.get("provenance", {})
-    if provenance:
-        lines.extend(_provenance_lines(provenance, "../"))
-    if f.get("path"):
-        # The card named a file, its hashes and provenance, but not where to
-        # get it: a user missing scph5501.bin found the reference and no way
-        # to the bytes.
-        lines.append(f"- Collection path: {_code(f['path'])} ([download]({_fetch_url(f['path'])}))")
+
+    # Each fact: its label, its values, whether the search reads it. What a
+    # setup does with the file comes first, the fingerprints last.
+    facts: list[tuple[str, list[str], bool]] = []
     if plats:
         # Each link lands on the platform's system section, and says where
-        # that platform puts the file: from the card, retrodeck sent the
-        # reader to the top of a 2,000-file page.
-        lines.append(f"- Platforms: {', '.join(_platform_links(sha1_full, consumers))}")
-    installed = _installed_links(sha1_full, consumers, set(plats))
+        # that platform puts the file. The site search reads this line: it
+        # names the file as each setup names it, and with the name only in
+        # its title the card ranked below every guide citing scph5501 as an
+        # example.
+        facts.append(("On the setup's list",
+                      [_places_text(_platform_places(sha1_full, consumers))], True))
     if installed:
         # The packs that carry the file for their cores: a RetroBat user
         # looking up scph5501.bin found every platform but RetroBat, whose
         # pack installs it for six cores.
-        lines.append(f"- Also installed by: {', '.join(installed)}")
-    # The title stays searchable: the file name is what a reader types. On
-    # the site the platforms line does too: it names the file as each setup
-    # names it, and with the name only in its title the card ranked below
-    # every guide citing scph5501 as an example. The size yardstick keeps
-    # its one block.
-    at = next((i for i, line in enumerate(lines) if line.startswith("- Platforms:")), None)
-    if markup.starlight() and searchable and at is not None:
-        lines[4:] = [*search_excluded(lines[4:at]), lines[at], *search_excluded(lines[at + 1:])]
+        facts.append(("Packed for its emulators by", [_places_text(installed)], False))
+    if emus:
+        facts.append(("Emulators", [", ".join(_emulator_links(sha1_full, consumers))], False))
+    if f.get("path"):
+        # The card named a file, its hashes and provenance, but not where to
+        # get it: a user missing scph5501.bin found the reference and no way
+        # to the bytes.
+        facts.append(("Collection path",
+                      [f"{_code(f['path'])} ([download]({_fetch_url(f['path'])}))"], False))
+    catalogued = [line.split(": ", 1)[1]
+                  for line in _provenance_lines(f.get("provenance") or {}, "../")]
+    if catalogued:
+        facts.append(("Catalogued", catalogued, False))
+    # Every hash in full: the site search indexes text, not a title
+    # attribute, so a pasted md5 or crc32 (what clrmamepro, RomVault or an
+    # emulator log prints) found nothing behind a 12-character prefix.
+    # files/?hash= finds them, and the index skips them.
+    for label, value in (("SHA1", sha1_full), ("MD5", md5_full),
+                         ("CRC32", f.get("crc32")), ("SHA256", f.get("sha256"))):
+        if value and value != "unknown":
+            facts.append((label, [f'<span class="rb-hash">{html.escape(str(value))}</span>'],
+                          False))
+
+    if not markup.starlight():
+        # The size yardstick pages are cut by: the list a card was when the
+        # budget was set, so a fact grid moves no card to another page.
+        lines.extend(search_excluded([f"- {label}: {', '.join(values)}"
+                                      for label, values, _searched in facts]))
     else:
-        lines[4:] = search_excluded(lines[4:])
+        # A grid of facts, label then value: two bullet lists of code chips
+        # read as a dump. What the search skips is one list with one
+        # attribute: on each row it was 77 KB of the Sony page.
+        read = [fact for fact in facts if fact[2] and searchable]
+        skipped = [fact for fact in facts if fact not in read]
+        for group, attributes in ((read, ""), (skipped, f" {skip}")):
+            if group:
+                lines.append(f'<dl class="rb-facts"{attributes}>')
+                # One value cell per label: the grid pairs each dt with one dd.
+                # A searched value keeps its label out: the excerpt ran the two
+                # together, "On the setup's listAmberELEC".
+                label_skip = f" {skip}" if not attributes else ""
+                lines.extend(f"<dt{label_skip}>{label}</dt><dd>"
+                             + "<br>".join(_inline_card_html(v) for v in values) + "</dd>"
+                             for label, values, _searched in group)
+                lines.append("</dl>")
     lines.extend(["", "</div>", ""])
     return lines
 
@@ -3636,22 +3769,142 @@ SYSTEM_PAGE_BUDGET = 500_000
 Card = tuple[bool, list[str], str]
 
 
+def _reading_entries(sha1: str, consumers: FileConsumers) -> list[dict]:
+    """The profile entries that read a file, one per emulator."""
+    files_of = getattr(consumers, "emulator_files", {})
+    entries = []
+    for emulator, index in getattr(consumers, "emulator_entries", {}).get(sha1, {}).items():
+        files = files_of.get(emulator) or []
+        if 0 <= index < len(files) and isinstance(files[index], dict):
+            entries.append(files[index])
+    return entries
+
+
+_NO_PRIORITY = 1 << 30
+
+
+def _card_rank(f: dict, consumers: FileConsumers) -> tuple:
+    """Where a file's card sits in its console: the files an emulator
+    requires first, then by the emulators' search order (smallest first),
+    then by how many setups list the file, then by name.
+
+    By byte order the PlayStation section opened on LibPS.exe and
+    PSX_DTLH2000.bin, capitals first, and scph5501.bin was 28th.
+    """
+    sha1 = str(f.get("sha1", ""))
+    entries = _reading_entries(sha1, consumers)
+    priorities = [e["priority"] for e in entries if isinstance(e.get("priority"), int)]
+    return (
+        not any(e.get("required", True) for e in entries),
+        min(priorities, default=_NO_PRIORITY),
+        -len(consumers.platforms.get(sha1, ())),
+        f["name"].casefold(), f["name"], f.get("path", ""),
+    )
+
+
+def _by_name(f: dict) -> tuple:
+    return f["name"].casefold(), f["name"], f.get("path", "")
+
+
 def _console_cards(
     manufacturer: str,
     files: list[dict],
     consumers: FileConsumers,
     anchored: set[str],
+    by_name: bool = False,
 ) -> list[Card]:
-    """Each card of one console, primaries by name then variants, with
-    whether it is a variant."""
+    """Each card of one console, primaries then variants, with whether it
+    is a variant. ``by_name`` orders by name alone, for a console cut into
+    parts named by their first and last file."""
     searchable = manufacturer not in GAME_DATA_TOPS
+    order = _by_name if by_name else (lambda f: _card_rank(f, consumers))
     main_files = [f for f in files if "/.variants/" not in f["path"]]
     variant_files = [f for f in files if "/.variants/" in f["path"]]
     cards = [(False, _system_file_card(f, consumers, anchored, searchable), str(f.get("sha1", "")))
-             for f in sorted(main_files, key=lambda x: x["name"])]
+             for f in sorted(main_files, key=order)]
     cards += [(True, _system_file_card(v, consumers, anchored, searchable), str(v.get("sha1", "")))
-              for v in sorted(variant_files, key=lambda x: (x["name"], x["path"]))]
+              for v in sorted(variant_files, key=order)]
     return cards
+
+
+# A "Start with" line names this many files at most: Game Engines'
+# TheXTech requires 2,014.
+START_WITH_NAMES = 6
+
+
+def _region_order() -> dict[str, int]:
+    from region import REGION_TREE, WORLD  # noqa: PLC0415
+
+    ordered = [WORLD]
+    for parent, members in REGION_TREE.items():
+        ordered += [parent, *sorted(members)]
+    return {region: index for index, region in enumerate(ordered)}
+
+
+_REGION_WORDS = {"uk": "UK", "asia-ntsc": "Asia (NTSC)", "asia-pal": "Asia (PAL)"}
+
+
+def _region_word(region: str) -> str:
+    return _REGION_WORDS.get(region) or region.replace("-", " ").title()
+
+
+def _start_with(files: list[dict], consumers: FileConsumers, first_below: bool = True) -> list[str]:
+    """The line a console section opens on: the files an emulator requires,
+    by the region the emulator picks each for.
+
+    Read from the profiles' required and region fields, never typed per
+    system. A section where no emulator requires a file gets no line.
+    """
+    from region import _PARENT  # noqa: PLC0415
+
+    order = _region_order()
+    by_region: dict[str, list[str]] = {}
+    plain: list[str] = []
+    primaries = [f for f in files if "/.variants/" not in f["path"]]
+    for f in sorted(primaries, key=lambda f: _card_rank(f, consumers)):
+        required = [e for e in _reading_entries(str(f.get("sha1", "")), consumers)
+                    if e.get("required", True)]
+        if not required:
+            continue
+        regions = {str(r) for e in required for r in e.get("region") or []}
+        for names in [by_region.setdefault(r, []) for r in regions] or [plain]:
+            if f["name"] not in names:
+                names.append(f["name"])
+    # A territory its region answers the same way adds nothing: Brazil
+    # under Latin America.
+    by_region = {r: names for r, names in by_region.items()
+                 if by_region.get(_PARENT.get(r, "")) != names}
+    # Regions that need the same files share a line.
+    regional: dict[tuple[str, ...], list[str]] = {}
+    for region in sorted(by_region, key=lambda r: (order.get(r, len(order)), r)):
+        names = by_region[region]
+        same = next((rs for rs, held in regional.items() if held == names), None)
+        if same is None:
+            regional[(region,)] = names
+        else:
+            regional[(*same, region)] = regional.pop(same)
+    if not regional and not plain:
+        return []
+
+    def named(names: list[str], lead: str) -> str:
+        if len(names) <= START_WITH_NAMES:
+            return f"{lead}: {', '.join(_code(n) for n in names)}"
+        where = ", first below" if first_below else ""
+        return f"{lead}: {_count(len(names), 'more file' if regional else 'file')}{where}"
+
+    if not regional:
+        if len(plain) > START_WITH_NAMES:
+            where = " They come first below." if first_below else ""
+            return [f"**Start with** the {_count(len(plain), 'file')} an emulator requires.{where}",
+                    ""]
+        return [named(plain, "**Start with**") + ".", ""]
+    lines = ["**Start with** the BIOS for the region of your games:", ""]
+    for regions in sorted(regional, key=lambda rs: (order.get(rs[0], len(order)), rs)):
+        lead = ", ".join(_region_word(r) for r in regions)
+        lines.append(f"- **{lead}**: {', '.join(_code(n) for n in regional[regions])}")
+    if plain:
+        lines.append(named(plain, "- **Some emulators also require**"))
+    return [*lines, ""]
 
 
 def _cards_markdown(cards: list[Card]) -> list[str]:
@@ -3680,6 +3933,17 @@ def _parts(cards: list[Card], budget: int, sizes: list[int] | None = None) -> li
         parts[-1].append(card)
         size += weight
     return parts
+
+
+def _console_heading(manufacturer: str, console: str) -> str:
+    """A console's heading: its icon hidden from screen readers, then the
+    name with no space before it. The space read as "Section titled
+    “ PlayStation”" on five of seven Sony headings."""
+    icon = _icon_name(manufacturer, console)
+    if not _icon_available.get(icon):
+        return f"## {console}"
+    image = markup.image("", _icon_url(icon), width="24", **{"aria-hidden": "true"})
+    return f"## {image}{console}"
 
 
 _NEXT_FROM_SYSTEMS = [
@@ -3721,15 +3985,22 @@ def system_pages(
         "first, the others under \"Variants\". To install the files of one "
         "console, open its \"Install\" box."
     )
+    # The two setup lines of a card differ, and only a code comment said how.
+    key = (
+        "On a card, **On the setup's list** names the setups whose own BIOS "
+        "list has the file. **Packed for its emulators by** names the setups "
+        "whose pack adds it because one of their emulators reads it."
+    )
     def whole_page(sections: dict[str, list[Card]]) -> str:
         lines = [
-            f"# {manufacturer}", "", intro, "",
+            f"# {manufacturer}", "", intro, "", key, "",
             f"The files below by console, with every hash, are also published as {json_link}.",
-            "",
+            "", *_icon_symbol(),
         ]
         for console, cards in sections.items():
-            lines.append(f"## {system_icon_markdown(manufacturer, console)}{console}")
+            lines.append(_console_heading(manufacturer, console))
             lines.append("")
+            lines.extend(_start_with(consoles[console], consumers))
             lines.extend(_console_install_block(console, (installs or {}).get(console, [])))
             lines.extend(_cards_markdown(cards))
             lines.append("")
@@ -3764,16 +4035,17 @@ def system_pages(
 
     pages: dict[str, tuple[str, dict[str, list]]] = {}
     summary = [
-        f"# {manufacturer}", "", intro, "",
+        f"# {manufacturer}", "", intro, "", key, "",
         f"The files below by console, with every hash, are also published as {json_link}. "
         f"The largest sections have a page of their own, linked from their heading.",
-        "",
+        "", *_icon_symbol(),
     ]
     summary_anchors: set[str] = set()
     for console in sorted(consoles):
-        summary.append(f"## {system_icon_markdown(manufacturer, console)}{console}")
+        summary.append(_console_heading(manufacturer, console))
         summary.append("")
         if console not in moved:
+            summary.extend(_start_with(consoles[console], consumers))
             summary.extend(_console_install_block(console, (installs or {}).get(console, [])))
             summary.extend(_cards_markdown(
                 _console_cards(manufacturer, consoles[console], consumers, summary_anchors)))
@@ -3781,11 +4053,18 @@ def system_pages(
             continue
         # Cards are rendered again for their own page: the anchors a page
         # holds are its own.
-        cards = _console_cards(manufacturer, consoles[console], consumers, set())
-        with markup.using("mkdocs"):
-            sizes = [card_weight(card) for _variant, card, _sha1
-                     in _console_cards(manufacturer, consoles[console], consumers, set())]
-        parts = _parts(cards, budget, sizes)
+        def cut(by_name: bool) -> list[list[Card]]:
+            cards = _console_cards(manufacturer, consoles[console], consumers, set(), by_name)
+            with markup.using("mkdocs"):
+                sizes = [card_weight(card) for _variant, card, _sha1 in _console_cards(
+                    manufacturer, consoles[console], consumers, set(), by_name)]
+            return _parts(cards, budget, sizes)
+
+        # One page keeps the required files first. Parts are named by their
+        # first and last file, so a console cut in parts goes by name.
+        parts = cut(False)
+        if len(parts) > 1:
+            parts = cut(True)
         base = f"{slug}-{_slugify_anchor(console) or 'files'}"
         stems = [base if index == 0 else f"{base}-{index + 1}" for index in range(len(parts))]
         record_console_pages(slug, console, stems, [
@@ -3793,6 +4072,7 @@ def system_pages(
         ])
         title = f"{manufacturer}: {console}"
         count = _count(len(consoles[console]), "file")
+        summary.extend(_start_with(consoles[console], consumers, first_below=False))
         if len(stems) == 1:
             summary.append(f"{count}, on [their own page]({stems[0]}.md).")
         else:
@@ -3807,12 +4087,15 @@ def system_pages(
                 f"# {heading}", "",
                 f"Part of [{manufacturer}]({slug}.md), in [Systems](index.md). "
                 f"Every hash of these files is also published as {json_link}.",
-                "",
+                "", *_icon_symbol(),
             ]
             if len(stems) > 1:
                 others = ", ".join(
                     f"[part {i + 1}]({other}.md)" for i, other in enumerate(stems) if i != index)
                 lines.extend([f"This part holds {_part_range(part)}. The others: {others}.", ""])
+            if index == 0:
+                lines.extend(_start_with(consoles[console], consumers, first_below=len(stems) == 1))
+            lines.extend([key, ""])
             lines.extend(_console_install_block(console, (installs or {}).get(console, [])))
             lines.extend(["## Files", ""])
             lines.extend(_cards_markdown(part))
