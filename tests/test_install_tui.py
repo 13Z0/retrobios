@@ -1444,13 +1444,14 @@ class CleanupSurvivesABrokenTerminal(unittest.TestCase):
                 mock.patch.object(sys, "stderr", out):
             code = install.run_tui(_args())
             self.assertIs(sys.stdout, out)
-        self.assertEqual(code, 1)
+        # A window that answers EIO is a closed window: its signal's code,
+        # not a crash.
+        self.assertEqual(code, 129)
         # The farewell found no terminal: what still flushes at exit goes to
         # the null device, and the exit code stays the one returned.
         self.assertEqual(os.fstat(screen_fd).st_rdev, os.stat(os.devnull).st_rdev)
-        # The crash keeps its log, marked kept, and nothing else of the run.
-        self.assertEqual(sorted(path.name for path in work.iterdir()),
-                         ["error.log", "kept", "owner"])
+        # No crash log is kept, and nothing else of the run.
+        self.assertFalse(work.exists())
         self.assertEqual(termios.tcgetattr(slave), before)
         for number, handler in handlers.items():
             self.assertEqual(signal.getsignal(number), handler)
@@ -2858,6 +2859,31 @@ class EndToEnd(unittest.TestCase):
                 term.status = os.WEXITSTATUS(status)
                 self.assertTrue(os.WIFEXITED(status))
                 self.assertEqual(term.status, 129)
+
+    def test_closing_the_window_while_it_installs(self):
+        """The changing screen fails to draw on the closed window: that is
+        the window's signal, not a crash with a log kept."""
+        repo = self.repo(GameDataRepository, slow=True)
+        scratch = repo.root / "scratch"
+        scratch.mkdir()
+        self.env["TMPDIR"] = str(scratch)
+        term = self.start("--platform", "retroarch", "--dest", str(repo.dest), "--jobs", "1")
+        term.wait("> Install")
+        term.send("\r")
+        term.wait("1 of 6 files")
+        os.close(term.fd)
+        end = time.monotonic() + 20
+        while time.monotonic() < end:
+            pid, status = os.waitpid(term.pid, os.WNOHANG)
+            if pid:
+                break
+            time.sleep(0.05)
+        else:
+            os.kill(term.pid, 9)
+            self.fail("still running once its window closed")
+        term.status = os.WEXITSTATUS(status)
+        self.assertEqual(term.status, 129)
+        self.assertEqual(list(scratch.glob("retrobios-tui-*/error.log")), [])
 
     def test_a_desktop_names_its_keys_and_a_pad_its_buttons(self):
         self.repo()

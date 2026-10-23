@@ -12500,13 +12500,14 @@ def run_tui(args: argparse.Namespace) -> int:
             if terminating["signal"] and state.screen == "result":
                 # The result is printed in the terminal on the way out.
                 state.exit_code = state.code if state.code is not None else 1
-    except Exception:  # noqa: BLE001
-        # A traceback is where every reporter of #71, #73 and #74 stopped:
-        # it goes to a file, and the terminal says one sentence.
-        crash = work / "error.log"
-        crash.write_text(traceback.format_exc(), encoding="utf-8")
-        state.log, state.code, state.exit_code = str(crash), 1, 1
-        state.stack = ["crashed"]
+    except Exception as exc:  # noqa: BLE001
+        if flags["term"] or _closed_terminal(exc):
+            # The window closed under a screen that was changing, or the
+            # SIGCONT that comes with its SIGHUP put the screen back: the
+            # write failed before the signal was read. That is its exit.
+            state.exit_code = 128 + (flags["term"] or getattr(signal, "SIGHUP", 1))
+        else:
+            _tui_crashed(state, work)
     finally:
         # Each step on its own: a write the closed window refuses, or a
         # second signal while the install writes its summary, must not
@@ -12558,6 +12559,32 @@ def _tui_startup(args: argparse.Namespace) -> tuple[TuiState, list[tuple]] | Non
                   "files from.", file=sys.stderr)
             return None
     return tui_start(args, os_type)
+
+
+# What a write to a closed window or a closed pipe answers.
+_CLOSED_TERMINAL = frozenset({errno.EIO, errno.EPIPE, errno.ENXIO})
+
+
+def _closed_terminal(exc: BaseException) -> bool:
+    """Whether exc is the terminal gone: an OSError, or a termios.error,
+    whose first argument is the errno, answering EIO, EPIPE or ENXIO."""
+    if isinstance(exc, OSError):
+        return exc.errno in _CLOSED_TERMINAL
+    if type(exc).__name__ == "error" and type(exc).__module__ == "termios":
+        return bool(exc.args) and exc.args[0] in _CLOSED_TERMINAL
+    return False
+
+
+def _tui_crashed(state: TuiState, work: Path) -> None:
+    """A traceback is where every reporter of #71, #73 and #74 stopped: it
+    goes to a file, and the terminal says one sentence."""
+    crash = work / "error.log"
+    try:
+        crash.write_text(traceback.format_exc(), encoding="utf-8")
+    except OSError as exc:
+        print(f"The error could not be written to {crash}: {exc}", file=sys.stderr)
+    state.log, state.code, state.exit_code = str(crash), 1, 1
+    state.stack = ["crashed"]
 
 
 def _restore_handlers(handlers: dict) -> None:
