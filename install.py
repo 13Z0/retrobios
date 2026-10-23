@@ -3069,6 +3069,15 @@ def _validate_manifest(data: object, plat: str) -> dict:
             _check_tags(mapping, key, field)
             if mapping[key] is None:
                 raise ValueError(f"invalid {field} for {key}")
+    titles = data.get("system_titles")
+    if titles is not None:
+        if not isinstance(titles, dict) or len(titles) > MAX_MANIFEST_FILES:
+            raise ValueError("invalid system_titles")
+        for key, title in titles.items():
+            if not isinstance(key, str) or not 0 < len(key) <= 256:
+                raise ValueError("invalid system_titles key")
+            if not isinstance(title, str) or not 0 < len(title) <= 256:
+                raise ValueError(f"invalid system_titles for {key}")
 
     copies = data.get("standalone_copies", [])
     if not isinstance(copies, list) or len(copies) > 10_000:

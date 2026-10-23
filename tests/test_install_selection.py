@@ -493,6 +493,19 @@ class TheBoundaryChecksTheNewFields(unittest.TestCase):
             with self.subTest(field=field, value=bad), self.assertRaises(ValueError):
                 install._validate_manifest(manifest, "retroarch")
 
+    def test_the_system_titles(self):
+        """A title is read as text by --system and the interface: a list or
+        a number there raised mid-run instead of at the boundary."""
+        good = self._manifest()
+        good["system_titles"] = {"sony-playstation": "Sony PlayStation"}
+        install._validate_manifest(good, "retroarch")
+        for bad in (["x"], {"s": ["Sony"]}, {"s": None}, {"s": 5}, {"s": ""},
+                    {"": "Sony"}, {"s": "x" * 257}, {"s" * 257: "Sony"}):
+            manifest = self._manifest()
+            manifest["system_titles"] = bad
+            with self.subTest(value=bad), self.assertRaises(ValueError):
+                install._validate_manifest(manifest, "retroarch")
+
 
 class _QuietHandler(http.server.SimpleHTTPRequestHandler):
     def log_message(self, format, *args):  # noqa: A002 - stdlib signature
