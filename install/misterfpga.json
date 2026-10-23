@@ -6,7 +6,7 @@
   "platform": "misterfpga",
   "display_name": "MiSTer FPGA",
   "version": "1.0",
-  "generated": "2026-10-23T07:11:31Z",
+  "generated": "2026-10-23T12:47:02Z",
   "base_destination": "games",
   "detect": [
     {
@@ -92,6 +92,48 @@
     "tiger-game-com": [
       "GameCom"
     ]
+  },
+  "system_titles": {
+    "3do": "3DO",
+    "apple-iigs": "Apple IIGS",
+    "atari-jaguar": "Atari Jaguar",
+    "atari-lynx": "Atari Lynx",
+    "bally-astrocade": "Bally Astrocade",
+    "casio-pv2000": "Casio PV-2000",
+    "coco3": "Tandy Color Computer 3",
+    "creativision": "VTech CreatiVision",
+    "epoch-scv": "Epoch Super Cassette Vision",
+    "gamate": "Bit Corporation Gamate",
+    "gameking": "TimeTop GameKing",
+    "interact": "Interact Home Computer",
+    "loopy": "Casio Loopy",
+    "marty": "Fujitsu FM Towns Marty",
+    "mattel-intellivision": "Mattel Intellivision",
+    "microsoft-msx": "Microsoft MSX",
+    "nec-pc-88": "NEC PC-88",
+    "nec-pc-engine-cd": "NEC PC Engine CD",
+    "ngpc": "SNK Neo Geo Pocket Color",
+    "nintendo-64": "Nintendo 64",
+    "nintendo-gb": "Nintendo Game Boy",
+    "nintendo-gba": "Nintendo Game Boy Advance",
+    "nintendo-nes": "Nintendo NES",
+    "nintendo-pokemon-mini": "Nintendo Pokemon Mini",
+    "nintendo-sgb": "Nintendo Super Game Boy",
+    "nintendo-snes": "Nintendo SNES",
+    "philips-cdi": "Philips CD-i",
+    "pocket-challenge-v2": "Benesse Pocket Challenge V2",
+    "sega-mega-cd": "Sega Mega CD",
+    "sega-saturn": "Sega Saturn",
+    "snk-neogeo": "SNK Neo Geo",
+    "snk-neogeo-cd": "SNK Neo Geo CD",
+    "sony-playstation": "Sony PlayStation",
+    "studio-ii": "RCA Studio II",
+    "superacan": "Funtech Super A'Can",
+    "ti99": "Texas Instruments TI-99",
+    "tiger-game-com": "Tiger Game.com",
+    "videobrain": "Umtech VideoBrain",
+    "wonderswan": "Bandai WonderSwan",
+    "wonderswan-color": "Bandai WonderSwan Color"
   },
   "files": [
     {

@@ -6,7 +6,7 @@
   "platform": "myminui",
   "display_name": "MyMinUI",
   "version": "1.0",
-  "generated": "2026-10-23T11:13:30Z",
+  "generated": "2026-10-23T12:47:02Z",
   "base_destination": "",
   "detect": [
     {
@@ -91,6 +91,7 @@
   },
   "system_cores": {},
   "system_names": {},
+  "system_titles": {},
   "files": [
     {
       "dest": "Bios/DOS/MT32_CONTROL.ROM",

@@ -6,7 +6,7 @@
   "platform": "bizhawk",
   "display_name": "BizHawk",
   "version": "1.0",
-  "generated": "2026-10-23T07:11:31Z",
+  "generated": "2026-10-23T12:47:02Z",
   "base_destination": "Firmware",
   "detect": [
     {
@@ -130,6 +130,40 @@
     "texas-instruments-ti-83": [
       "TI83"
     ]
+  },
+  "system_titles": {
+    "3do": "3DO",
+    "apple-ii": "Apple II",
+    "atari-7800": "Atari 7800",
+    "atari-lynx": "Atari Lynx",
+    "coleco-colecovision": "ColecoVision",
+    "commodore-amiga": "Commodore Amiga",
+    "commodore-c64": "Commodore C64",
+    "doom": "Doom",
+    "fairchild-channel-f": "Fairchild Channel F",
+    "gce-vectrex": "GCE Vectrex",
+    "mattel-intellivision": "Mattel Intellivision",
+    "microsoft-msx": "Microsoft MSX",
+    "nec-pc-engine-cd": "NEC PC Engine CD",
+    "nec-pc-fx": "NEC PC-FX",
+    "nintendo-3ds": "Nintendo 3DS",
+    "nintendo-64dd": "Nintendo 64DD",
+    "nintendo-ds": "Nintendo DS",
+    "nintendo-gb": "Nintendo Game Boy",
+    "nintendo-gba": "Nintendo Game Boy Advance",
+    "nintendo-gbc": "Nintendo Game Boy Color",
+    "nintendo-nes": "Nintendo NES",
+    "nintendo-satellaview": "Nintendo Satellaview",
+    "nintendo-snes": "Nintendo SNES",
+    "philips-videopac": "Philips Videopac",
+    "sega-32x": "Sega 32X",
+    "sega-game-gear": "Sega Game Gear",
+    "sega-master-system": "Sega Master System",
+    "sega-mega-drive": "Sega Mega Drive",
+    "sega-saturn": "Sega Saturn",
+    "sinclair-zx-spectrum": "Sinclair ZX Spectrum",
+    "sony-playstation": "Sony PlayStation",
+    "texas-instruments-ti-83": "Texas Instruments TI-83"
   },
   "files": [
     {
