@@ -31,14 +31,15 @@ If step 3 fails, you see "BIOS missing" or a black screen.
 - **Better with it:** Dreamcast. Some games need it.
 - **Usually not:** NES, Super Nintendo, Mega Drive, Game Boy and Game Boy
   Advance.
-- **Add-ons need their own:** the Famicom Disk System and the Mega-CD.
+- **Add-ons need their own:** the Famicom Disk System and the Mega CD.
 
 Details: [Every console, one by one](../systems/index.md)
 
 ## The name must match
 
-An emulator looks for one exact name. A PlayStation emulator looks for
-`scph5501.bin`. A file with another name is not found.
+Most emulators look for one exact name, like `scph5501.bin`. A file with
+another name is not found. A few, like DuckStation, read any name and check
+what the file holds.
 
 ## The version must match
 
