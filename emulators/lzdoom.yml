@@ -9,6 +9,12 @@ display_name: "LZDoom"
 cores: [lzdoom, "LZDoom"]
 systems: [doom, heretic, hexen, strife, chex]
 
+data_root:
+  linux:
+    path: "~/.config/lzdoom"
+    source_ref: "src/posix/unix/i_specialpaths.cpp:44-99, src/version.h:100-104"
+    note: "created on first run, and the first directory of the default FileSearch and IWADSearch lists"
+
 notes: |
   Legacy branch of GZDoom 3.x maintained by drfrag for older GPUs and
   OpenGL 2 hardware, built as lzdoom. The profiled revision is tag 3.88b,
