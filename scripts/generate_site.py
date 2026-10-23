@@ -531,7 +531,7 @@ def generate_home(
         "",
         "- BIOS missing, even with the file there? "
         "[When a game does not start](wiki/troubleshooting.md)",
-        "- Reference: [Check your file](files/index.md)",
+        "- Have a file? [Check it](files/index.md)",
         "",
         "## Do I need it?",
         "",
@@ -585,9 +585,9 @@ def generate_explore_index(db: dict, coverages: dict, profiles: dict) -> str:
                 "[All installer options](wiki/installer.md)"]),
             ("How files are checked", [
                 "Each setup checks its files its own way: by name, by MD5 or by SHA1.", "",
-                "Reference: [How each platform checks files](wiki/verification-modes.md)"]),
+                "[How each platform checks files](wiki/verification-modes.md)"]),
             ("Data and API", ["Every file and hash as JSON, CSV and SQLite.", "",
-                              "Reference: [Data and API](data.md)"]),
+                              "[Data and API](data.md)"]),
         ]),
         "## The collection",
         "",
@@ -2699,21 +2699,25 @@ def generate_platform_index(coverages: dict, registry: dict | None = None) -> st
     lines = [
         "# Your setup",
         "",
-        "Each setup's page gives the folder, the command and the ZIP.",
+        "Each setup's page gives the folder and the command.",
         "",
     ]
-    for group, (label, description) in DEVICE_GROUPS.items():
+    for group, (label, _description) in DEVICE_GROUPS.items():
         members = _group_members(coverages, registry, group)
         if not members:
             continue
-        # One setup: its card says what the group description would.
-        lines += [f"## {label}", "", *([description, ""] if len(members) > 1 else [])]
+        # The group label names the devices, and each card carries its
+        # setup's own sentence. The kinds of device that run a setup
+        # follow, as on the home tiles.
+        lines += [f"## {label}", ""]
         lines += markup.card_grid([
-            (f"[{coverages[name]['platform']}]({name}.md)", [GUIDES[name].summary])
-            for name in members
+            *((f"[{coverages[name]['platform']}]({name}.md)", [GUIDES[name].summary])
+              for name in members),
+            *((f"[{tile.name}](../{tile.link})", [tile.text])
+              for tile in GROUP_TILES.get(group, ())),
         ])
     lines += [
-        f"Reference: [Every setup side by side](../{SETUP_TABLE_LINK})",
+        f"Comparing setups? [Every setup side by side](../{SETUP_TABLE_LINK})",
         "",
     ]
     return "\n".join(lines) + "\n"
@@ -3312,6 +3316,26 @@ SAFE_LINK = "[Is it safe?](../index.md#is-it-safe)"
 OFFLINE_LINE = ("No internet on the device? "
                 "[Install from the ZIP](../wiki/installer.md#without-a-network-offline-install).")
 
+
+def _network_share(name: str, guide: Guide) -> str:
+    """The network folder a computer fills, for a setup that runs on its own
+    device and has no ZIP: the command runs on the computer and writes
+    there. Empty when the page cites no such folder."""
+    if guide.run != ("device",) or _computer_first(name, guide):
+        return ""
+    for label, path in guide.folders:
+        if label.startswith("From Windows") and path.startswith("`\\\\"):
+            return path.strip("`").rstrip("\\")
+    return ""
+
+
+def _offline_line(name: str) -> list[str]:
+    """The offline line, on a setup whose ZIP a release publishes: the
+    installer reads that ZIP with no network (`--from-pack`)."""
+    pack = release_record.pack_for(name, release_record.load_advertised())
+    return [OFFLINE_LINE, ""] if pack and pack.get("assets") else []
+
+
 # Shown in the "On the device" tab of a guide that has no `terminal:` of its own.
 DEVICE_TERMINAL_FALLBACK = "Or fill the folder from your computer, with the ZIP."
 
@@ -3422,13 +3446,26 @@ def devices_meta(devices: tuple[str, ...]) -> str:
 HANDHELD_ROW_DEVICES = 6
 
 
+# Where a handheld row with no cited folder sends the reader: the setting
+# that shows RetroArch's BIOS folder, the words of the RetroArch page.
+RETROARCH_FOLDER_SETTING = ("In RetroArch, open **Settings > Directory > System/BIOS**. "
+                            "It shows the folder.")
+# After a folder on a part of the card only Linux reads.
+LINUX_ONLY_HINT = ("Copy from a Linux computer, or check the folder in RetroArch's "
+                   "**Settings > Directory > System/BIOS**.")
+
+
 def _handheld_row(system: HandheldSystem) -> str:
     shown = ", ".join(system.devices[:HANDHELD_ROW_DEVICES])
     more = len(system.devices) - HANDHELD_ROW_DEVICES
     devices = (f"{shown}{f' and {more} more' if more > 0 else ''} "
                f"([list]({system.devices_source}))" if system.devices else "")
-    folder = (f"{system.folder} ([source]({system.folder_source}))" if system.folder
-              else "Not written by the system. The command finds it on the device.")
+    if not system.folder:
+        folder = RETROARCH_FOLDER_SETTING
+    else:
+        folder = f"{system.folder} ([source]({system.folder_source}))"
+        if system.linux_only:
+            folder += f". {LINUX_ONLY_HINT}"
     return f"| {system.name} | {devices} | {folder} |"
 
 
@@ -3452,6 +3489,8 @@ def generate_handheld_guide(guide: HandheldGuide) -> str:
         "",
         devices_meta(guide.devices),
         "",
+        "[Download](#download)",
+        "",
         "## Where the files go { #where-the-files-go }",
         "",
         "Put the SD card in a computer. Find your system below.",
@@ -3461,6 +3500,7 @@ def generate_handheld_guide(guide: HandheldGuide) -> str:
         *(_handheld_row(system) for system in guide.systems),
         "",
         *_guide_download(guide.uses, display, uses, None, "## Download { #download }"),
+        *_offline_line(guide.uses),
         "## Fill the card from a computer { #install }",
         "",
         "On Windows, note the card's letter, like **E:**. Put its BIOS folder after "
@@ -3506,18 +3546,31 @@ def _platform_guide(name: str, display: str, cov: dict, registry: dict, no_list:
         ])
     if guide.on_card:
         lines += ["<!-- image: minui-card -->", ""]
+    share = _network_share(name, guide)
     if _computer_first(name, guide):
         lines += [
             *_guide_download(name, display, guide, extract_to,
                              "## From your computer { #download }"),
-            OFFLINE_LINE,
+            *_offline_line(name),
+            *_guide_install(name, guide, "## On the device { #install }"),
+        ]
+    elif share:
+        lines += [
+            "## From your computer { #from-your-computer }",
+            "",
+            "Needs the device on your network. Run the command on the computer.",
+            "",
+            *terminal_tabs(("windows",), {"windows": f"--platform {name} --dest {share}"}),
+            SAFE_LINK,
             "",
             *_guide_install(name, guide, "## On the device { #install }"),
+            *_guide_download(name, display, guide, extract_to, "## Download"),
         ]
     else:
         lines += [
             *_guide_install(name, guide, "## Install"),
             *_guide_download(name, display, guide, extract_to, "## Download"),
+            *_offline_line(name),
         ]
     check_args = {key: f"{args} --check" for key, args in platform_args(name, guide).items()}
     lines += [
@@ -8559,6 +8612,44 @@ def _folder_tables(registry: dict, record: dict, display: dict[str, str]) -> lis
     return lines
 
 
+# iPhone and iPad: no terminal, so each app is filled its own way. Every
+# step is the app's own: RetroArch's iOS guide (Files app, On My iPhone >
+# RetroArch) and platform_darwin.m (system under Documents/RetroArch), the
+# DS BIOS rows of Delta's Settings.storyboard, Provenance's import guide.
+IOS_SOURCES = {
+    "retroarch_docs": "https://github.com/libretro/docs/blob/"
+                      "cfa4c1a17e586c01d3a48e9eda12b6c989f8954f/docs/guides/install-ios.md?plain=1#L94",
+    "retroarch_code": "https://github.com/libretro/RetroArch/blob/"
+                      "5333a7c5a59e268470834a96f86047d3cb6139a9/frontend/drivers/platform_darwin.m#L438-L459",
+    "delta": "https://github.com/rileytestut/Delta/blob/"
+             "c1d3d068e019e6493eed45654569db3cc5beb86a/Delta/Base.lproj/Settings.storyboard#L2448-L2500",
+    "provenance": "https://wiki.provenance-emu.com/using-provenance/importing-roms",
+}
+IOS_DEVICES = ("iPhone", "iPad", "iOS", "Delta", "Provenance")
+
+
+def ios_section() -> list[str]:
+    """The section the iPhone and iPad tile opens: the consoles picked on a
+    computer, then each app's own way in."""
+    return [
+        "## iPhone and iPad { #iphone-and-ipad }",
+        "",
+        devices_meta(IOS_DEVICES),
+        "",
+        "[Pick the consoles](which-pack.md?platform=retroarch#only-some-consoles) "
+        "on a computer. Copy them to the app.",
+        "",
+        "- **RetroArch**: Files app, **On My iPhone > RetroArch**, then "
+        f"`RetroArch/system/` ([docs]({IOS_SOURCES['retroarch_docs']}), "
+        f"[code]({IOS_SOURCES['retroarch_code']})).",
+        "- **Delta**, for DS games: import `bios7.bin`, `bios9.bin` and `firmware.bin` "
+        f"in **Settings**, under **Nintendo DS** ([code]({IOS_SOURCES['delta']})).",
+        "- **Provenance**: share the file, then **Copy to Provenance** "
+        f"([docs]({IOS_SOURCES['provenance']})).",
+        "",
+    ]
+
+
 def generate_which_pack() -> str:
     """The device picker: every registered platform as a tile under the
     device it runs on, the ZIP advice with every folder and ZIP in one closed
@@ -8573,7 +8664,7 @@ def generate_which_pack() -> str:
     lines = [
         "# Get your files",
         "",
-        "Pick your setup. Its page gives the folder, the command and the ZIP.",
+        "Pick your setup. Its page gives the folder and the command.",
         "",
         "## Pick your setup",
         "",
@@ -8607,6 +8698,7 @@ def generate_which_pack() -> str:
         "",
         "<FilePicker />",
         "",
+        *ios_section(),
         "## Not in the list? One command finds it { #quick-install }",
         "",
         "A **terminal** is a window where you type commands.",
@@ -8617,7 +8709,7 @@ def generate_which_pack() -> str:
         "",
         "The command asks what to install. Press **Enter** for everything.",
         "",
-        "```text title=\"What it asks\"",
+        "```text title=\"What it asks\" frame=\"terminal\"",
         "  Enter) install everything",
         "  i) only what the installed cores read",
         "  c) choose systems, cores and regions",
