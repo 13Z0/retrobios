@@ -73,7 +73,8 @@ class TheHeaderReadsAsWords(unittest.TestCase):
         self.assertIn("| Classification | Official port |", self.page)
 
     def test_cores_once_per_spelling(self):
-        self.assertIn("| Cores | duckstation |", self.page)
+        # duckstation-sa is ROCKNIX's name for the standalone build.
+        self.assertIn("| Cores | duckstation, duckstation-sa |", self.page)
 
     def test_systems_by_name(self):
         row = next(line for line in self.page.splitlines() if line.startswith("| Systems |"))
