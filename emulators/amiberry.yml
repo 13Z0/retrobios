@@ -2273,14 +2273,16 @@ files:
     standalone_path: "gvp-series-ii-guru-rom.rom"
     system: commodore-amiga
     required: false
-    size: 32768
+    size: 32624
     crc32: "756103b1"
     sha1: "7f1335eaf5b7ce73c5231173261da5aae7249645"
     validation: [sha1]
     found_by: content
     note: >
       GVP Series II Guru ROM, ROM id 110. Boot ROM of the GVP Series II
-      controller. Without it the controller has no boot ROM.
+      controller. Without it the controller has no boot ROM. The table
+      gives 32768 bytes, the dump its SHA-1 identifies is 32624, and the
+      scan matches by checksum.
     source_ref: "source src/rommgr.cpp:708-709, source src/expansion.cpp:5743-5749, source src/a2091.cpp:4489"
 
   - name: "alfapower-v6.10.rom"
