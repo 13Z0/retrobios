@@ -1,8 +1,8 @@
  RetroBIOS: RetroArch
 
  Everything is in place
- 5 in place, 0 missing, 0 wrong copies
  BIOS folder: ~/.config/retroarch/system
+ 5 in place, 0 missing, 0 wrong copies
  Free space: 50.0 GB
 
  > Close

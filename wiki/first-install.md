@@ -67,44 +67,44 @@ curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | 
 On Batocera, Recalbox and similar setups, see
 [Get your files](../which-pack.md).
 
-## 2. Check the folder it found
+## 2. Check the setup it found
 
-It shows your setup and its BIOS folder:
-
-```
-  Found <your setup> at <its folder>
-```
-
-- **Right folder?** Go on.
-- **Wrong folder?** Press Ctrl+C. Run it again with your folder:
-
-<!-- os-tabs windows: --dest D:\path\to\bios -->
-```sh
-curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh -s -- --dest ~/path/to/bios
-```
-
-## 3. Choose what to install
+It opens a menu:
 
 ```
-  Enter) install everything
-  i) only what the installed cores read
-  c) choose systems, cores and regions
-  q) quit
+ RetroBIOS: Where do you play?
+ Found on this machine:
+ > <your setup>
+   Another setup or folder
+ BIOS folder: <its folder>
 ```
 
-**Enter** installs everything. **c** lets you pick consoles.
+- **Right folder?** Press Enter.
+- **Wrong folder?** Choose **Another setup or folder**, then browse to yours.
+- **A handheld's SD card in a reader?** It is listed, as **muOS SD card**.
+
+Arrows move, Enter chooses, Esc goes back. A controller's A and B do the same.
+
+## 3. Install
+
+The next screen counts the missing files and the free space.
+Press Enter on **Install**. **Choose systems** keeps the consoles you
+play.
+
+**Old card?** In a card reader, choose **Copy the BIOS files from your old
+card or a folder**, then the card. It stays unchanged.
 
 ## 4. Wait
 
-Ctrl+C stops it. Run the command again to carry on.
+B or Ctrl+C stops it. Run it again to carry on.
 
-## 5. Read the last line
+## 5. Read the result
 
-- **`Done.`** `N files installed, M already up to date.` All files are in place.
-- **`Finished with errors.`** Some files failed. Run the same command again.
-  It retries only those.
-- **`Nothing was installed.`** The lines above it say why. See
-  [If it stops](#if-it-stops).
+- **Done**: all files are in place.
+- **Finished with errors**: run the command again. It retries only those.
+- **Nothing installed**: the screen says why. See [If it stops](#if-it-stops).
+
+For questions line by line (screen readers), add `--plain`.
 
 ## What the command does
 
@@ -127,18 +127,14 @@ All good:
 
 ## Undo
 
-Every file it replaces goes to a `retrobios-backup` folder next to your BIOS
-folder. The last lines say how to put them back.
+Files it replaces go to a `retrobios-backup` folder beside your BIOS folder.
+The result says how to restore them.
 
 ## If it stops
 
-### No supported platform detected.
+### Nothing was found here.
 
-At a terminal, a menu follows. Pick your setup by its number, then type its
-BIOS folder, or press Enter for the usual one.
-
-With `--no-input`, or without a terminal, it stops and prints the command to
-use.
+Choose **Another setup or folder**, then your setup and its folder.
 
 ### Error: Python 3.8 or newer is required.
 
@@ -157,9 +153,9 @@ The download was cut short. Nothing was changed. Run the command again.
 
 You cannot write there. Do what the message says.
 
-### Not enough space on the drive holding ...
+### The card is full
 
-Nothing was written. Free some space, or pick another drive with `--dest`.
+Nothing was written. Free some space, or choose another folder.
 
 ### The game still does not start
 
