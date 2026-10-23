@@ -156,11 +156,11 @@ class ThemeStylesheet(unittest.TestCase):
         permalink = next(b for s, b in _blocks(self.css) if s == ".rb-permalink")
         self.assertIn("min-height: 24px", permalink)
 
-    # 1.10, then round 3 item 1.3: one row that scrolls instead of two rows
+    # 1.10, then round 4 item 1.1: the row wraps, every tab on screen
     def test_os_tabs_stay_reachable(self):
         tablist = _rules(self.css, "starlight-tabs [role='tablist']")[0]
-        self.assertIn("flex-wrap: nowrap", tablist)
-        self.assertIn("overflow-x: auto", tablist)
+        self.assertIn("flex-wrap: wrap", tablist)
+        self.assertIn("overflow-x: visible", tablist)
         self.assertIn("white-space: nowrap", _rules(self.css, "starlight-tabs [role='tab']")[0])
 
     # 1.11
@@ -176,7 +176,7 @@ class ThemeStylesheet(unittest.TestCase):
         self.assertIn("contain-intrinsic-size: auto 320px", cards)
         self.assertIn("--sl-content-width: 54rem", _rules(self.css, "body:has(.rb-sys-file, .rb-file-entry)")[0])
         facts = _rules(self.css, "dl.rb-facts")[0]
-        self.assertIn("grid-template-columns: 9rem minmax(0, 1fr)", facts)
+        self.assertIn("grid-template-columns: 11rem minmax(0, 1fr)", facts)
         self.assertRegex(self.css, r"@media \(max-width: 30rem\) \{\s*\.sl-markdown-content dl\.rb-facts \{ grid-template-columns: minmax\(0, 1fr\)")
 
     # 1.13
