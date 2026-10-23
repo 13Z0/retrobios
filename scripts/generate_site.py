@@ -2355,13 +2355,13 @@ def _system_heading_link(sys_id: str, prefix: str = "") -> str:
     writes. A system with no section of its own is named, never sent to the
     page a storage folder chose.
     """
-    from siterender import _own_section
+    from siterender import system_section
 
     name = _escape_tags(system_name(sys_id))
-    section = _own_section(sys_id)
+    section = system_section(sys_id)
     if section is not None:
-        mfr, console = section
-        name = f"[{name}]({console_href(_slug(mfr), console, prefix)})"
+        slug, console = section
+        name = f"[{name}]({console_href(slug, console, prefix)})"
     return f"{name} <small>{_escape_tags(sys_id)}</small>"
 
 
@@ -3436,8 +3436,7 @@ def generate_systems_index(manufacturers: dict) -> str:
         ]
         for name, mfr, console, count in rows:
             cell = name.replace("|", "-")
-            anchor = _slugify_anchor(console)
-            href = f"{_slug(mfr)}.md" + (f"#{anchor}" if anchor else "")
+            href = console_href(_slug(mfr), console).removeprefix("systems/")
             lines.append(f"| [{cell}]({href}) | {count:,} | [{mfr}]({_slug(mfr)}.md) |")
         lines.append("")
 
@@ -4291,11 +4290,12 @@ def _console_heading(manufacturer: str, console: str) -> str:
     """A console's heading: its icon hidden from screen readers, then the
     name with no space before it. The space read as "Section titled
     “ PlayStation”" on five of seven Sony headings."""
+    anchor = f" {{ #{console_anchor(manufacturer, console)} }}"
     icon = _icon_name(manufacturer, console)
     if not _icon_available.get(icon):
-        return f"## {console}"
+        return f"## {console}{anchor}"
     image = markup.image("", _icon_url(icon), width="24", **{"aria-hidden": "true"})
-    return f"## {image}{console}"
+    return f"## {image}{console}{anchor}"
 
 
 _NEXT_FROM_SYSTEMS = [
@@ -4500,13 +4500,13 @@ def _named_system_link(sys_id: str, prefix: str = "") -> str:
     The emulator pages printed the id ("sony-playstation") where every
     other page says "Sony PlayStation". The id stays in the address only.
     """
-    from siterender import _page_by_norm  # noqa: PLC0415
+    from siterender import system_section  # noqa: PLC0415
 
     name = system_name(sys_id).replace("[", r"\[").replace("]", r"\]")
-    page = _system_page_map.get(sys_id) or _page_by_norm(sys_id)
-    if not page:
+    section = system_section(sys_id)
+    if not section:
         return name
-    slug, console = page
+    slug, console = section
     return f"[{name}]({console_href(slug, console, prefix)})"
 
 
@@ -7934,6 +7934,7 @@ from siterender import (  # noqa: E402,F401
     system_name,
     card_page,
     console_href,
+    console_anchor,
     record_console_pages,
     record_emulator_cards,
     emulator_card_page,

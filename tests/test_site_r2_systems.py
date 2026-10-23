@@ -219,13 +219,13 @@ class ConsoleHeadingsStartWithTheName(unittest.TestCase):
         icon = siterender._icon_name("Sony", "PlayStation")
         with mock.patch.dict(siterender._icon_available, {icon: True}):
             heading = gs._console_heading("Sony", "PlayStation")
-        self.assertRegex(heading, r'^## <img [^>]*aria-hidden="true"[^>]*>PlayStation$')
+        self.assertRegex(heading, r'^## <img [^>]*aria-hidden="true"[^>]*>PlayStation \{ #playstation \}$')
         self.assertIn('alt=""', heading)
 
     def test_no_icon_no_image(self):
         icon = siterender._icon_name("Nobody", "Nothing")
         with mock.patch.dict(siterender._icon_available, {icon: False}):
-            self.assertEqual(gs._console_heading("Nobody", "Nothing"), "## Nothing")
+            self.assertEqual(gs._console_heading("Nobody", "Nothing"), "## Nothing { #nothing }")
 
 
 class TheSystemsIndexListsConsoles(unittest.TestCase):

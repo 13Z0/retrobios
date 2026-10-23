@@ -170,13 +170,31 @@ def split_system_stems() -> set[str]:
     return {stem for stems in _console_pages.values() for stem in stems}
 
 
+# (manufacturer slug, console) -> the id of the console's heading. Two
+# folders spelled alike (Sega's "Mega CD" and "Mega-CD") share a slug, and
+# the second heading took "mega-cd_1" while every link said "mega-cd".
+_console_anchors: dict[tuple[str, str], str] = {}
+
+
+def _manufacturer_slug(manufacturer: str) -> str:
+    return manufacturer.lower().replace(" ", "-")
+
+
+def console_anchor(manufacturer: str, console: str) -> str:
+    """The id of a console's heading on its manufacturer's page."""
+    from sitestarlight import toc_slug
+
+    key = (_manufacturer_slug(manufacturer), console)
+    return _console_anchors.get(key) or toc_slug(console)
+
+
 def console_href(slug: str, console: str, prefix: str = "") -> str:
     """Where a console's files are: its own page, or its section of the
     manufacturer's page (also where a console cut into parts lists them)."""
     stems = _console_pages.get((slug, console))
     if stems and len(stems) == 1:
         return f"{prefix}systems/{urllib.parse.quote(stems[0])}.md"
-    return f"{prefix}systems/{urllib.parse.quote(slug)}.md#{_slugify_anchor(console)}"
+    return f"{prefix}systems/{urllib.parse.quote(slug)}.md#{console_anchor(slug, console)}"
 
 
 def card_page(path: str, sha1: str) -> str:
@@ -204,11 +222,33 @@ def emulator_card_page(emulator: str, anchor: str) -> str:
     return _emulator_card_pages.get((emulator, anchor), emulator)
 
 
+def system_section(sys_id: str) -> tuple[str, str] | None:
+    """The console section a system id is named after, as (manufacturer
+    slug, console): its own section, else the one section whose heading
+    reads system_name(). The folder a system's files sit in is no answer:
+    Emerson's Arcadia 2001 led to the Saturn and Sega's NAOMI to the
+    Dreamcast."""
+    own = _own_section(sys_id)
+    if own is not None:
+        return _manufacturer_slug(own[0]), own[1]
+    try:
+        name = system_name(sys_id)
+    except KeyError:
+        return None
+    places = _sections_by_name.get(name.casefold(), set())
+    if len(places) != 1:
+        return None
+    mfr, console = next(iter(places))
+    if mfr in _PROGRAM_TOPS:
+        return None
+    return _manufacturer_slug(mfr), console
+
+
 def _system_link(sys_id: str, prefix: str = "") -> str:
-    """Generate a markdown link to a system page with anchor."""
-    page = _system_page_map.get(sys_id) or _page_by_norm(sys_id)
-    if page:
-        slug, console = page
+    """A system id linked to the section named after it, or the bare id."""
+    section = system_section(sys_id)
+    if section:
+        slug, console = section
         return f"[{sys_id}]({console_href(slug, console, prefix)})"
     return sys_id
 
@@ -322,6 +362,8 @@ _PROGRAM_TOPS = frozenset({"Other", "Arcade"})
 
 # Normalized id -> the console sections spelled that way.
 _console_sections: dict[str, set[tuple[str, str]]] = {}
+# A console section by the name its heading reads (Bandai WonderSwan).
+_sections_by_name: dict[str, set[tuple[str, str]]] = {}
 # Emulator and engine names. A heading spelled like one (Game Engines >
 # Solarus, ZC > ZC210) files that program's copies and names no system.
 _program_names: set[str] = set()
@@ -355,7 +397,21 @@ def set_console_sections(
         {(mfr, console) for mfr, consoles in sections.items() for console in consoles}
         if isinstance(sections, dict) else set(sections)
     )
+    from sitestarlight import _unique, toc_slug
+
     _console_sections.clear()
+    _sections_by_name.clear()
+    _console_anchors.clear()
+    by_maker: dict[str, list[str]] = {}
+    for mfr, console in pairs:
+        by_maker.setdefault(mfr, []).append(console)
+        for name in {_heading_name(mfr, console).casefold(), console.casefold()}:
+            _sections_by_name.setdefault(name, set()).add((mfr, console))
+    # In the order the page lists them, after the page title's own id.
+    for mfr, consoles in by_maker.items():
+        used = {toc_slug(mfr)}
+        for console in sorted(consoles):
+            _console_anchors[(_manufacturer_slug(mfr), console)] = _unique(toc_slug(console), used)
     for mfr, console in pairs:
         spelled = console.lower().replace(" ", "-")
         slug = mfr.lower().replace(" ", "-")
