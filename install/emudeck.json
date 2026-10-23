@@ -6,7 +6,7 @@
   "platform": "emudeck",
   "display_name": "EmuDeck",
   "version": "1.0",
-  "generated": "2026-10-23T11:13:30Z",
+  "generated": "2026-10-23T12:47:02Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -69599,7 +69599,7 @@
       "sha1": "764ec667084bc237c1de6bd1db7541ad8cb59975",
       "sha256": "a66bc2ea040ec792308259ee96ba57b4c88de48fbce244714800b6b6340c730d",
       "size": 29270,
-      "repo_path": "bios/Arcade/FBAlpha 2012/samples/dkong.zip",
+      "repo_path": "bios/Arcade/fba2012/samples/dkong.zip",
       "cores": [
         "fbalpha2012"
       ],
@@ -69610,7 +69610,7 @@
       "sha1": "2725373cc8e6e3c04bca4bf7bd0b027be6bec058",
       "sha256": "73b9e51295fe7412712ccf73c7010d92181aa12d420c40c1c6bc4f8b948e5a11",
       "size": 300220,
-      "repo_path": "bios/Arcade/FBAlpha 2012/samples/dkongjr.zip",
+      "repo_path": "bios/Arcade/fba2012/samples/dkongjr.zip",
       "cores": [
         "fbalpha2012"
       ],
@@ -69621,7 +69621,7 @@
       "sha1": "9e52cc30850cf9e1855fbd2e26f987cbc05b910a",
       "sha256": "a9e936f78c9db009fa9561ebb35dc374b343ba38037133ae30e95906ab0ac312",
       "size": 243090,
-      "repo_path": "bios/Arcade/FBAlpha 2012/samples/galaga.zip",
+      "repo_path": "bios/Arcade/fba2012/samples/galaga.zip",
       "cores": [
         "fbalpha2012"
       ],
