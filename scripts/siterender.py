@@ -223,14 +223,20 @@ def emulator_card_page(emulator: str, anchor: str) -> str:
 
 
 def system_section(sys_id: str) -> tuple[str, str] | None:
-    """The console section a system id is named after, as (manufacturer
-    slug, console): its own section, else the one section whose heading
-    reads system_name(). The folder a system's files sit in is no answer:
-    Emerson's Arcadia 2001 led to the Saturn and Sega's NAOMI to the
-    Dreamcast."""
+    """The console section a system id leads to, as (manufacturer slug,
+    console): its own section, else the parent SYSTEM_PARENTS names, else
+    the one section whose heading reads system_name(). The folder a
+    system's files sit in is no answer by itself: Emerson's Arcadia 2001
+    led to the Saturn and Sega's NAOMI to the Dreamcast.
+
+    A heading under Arcade counts when it reads the name exactly (Namco
+    System 246). One under Other never does, its headings name programs."""
     own = _own_section(sys_id)
     if own is not None:
         return _manufacturer_slug(own[0]), own[1]
+    parent = SYSTEM_PARENTS.get(sys_id)
+    if parent is not None and parent in _section_pairs:
+        return _manufacturer_slug(parent[0]), parent[1]
     try:
         name = system_name(sys_id)
     except KeyError:
@@ -239,7 +245,9 @@ def system_section(sys_id: str) -> tuple[str, str] | None:
     if len(places) != 1:
         return None
     mfr, console = next(iter(places))
-    if mfr in _PROGRAM_TOPS:
+    if mfr in _NAMELESS_TOPS or (
+        mfr in _PROGRAM_TOPS and console.casefold() in _program_names
+    ):
         return None
     return _manufacturer_slug(mfr), console
 
@@ -359,7 +367,12 @@ def _by_mode(value: str | dict, mode: str) -> str:
 # Folders that file copies by the emulator or board that loads them. Their
 # headings name a program, not a system.
 _PROGRAM_TOPS = frozenset({"Other", "Arcade"})
+# Of those, the top whose headings never name a system, even read whole.
+# An Arcade heading can (Namco System 246), an Other one cannot.
+_NAMELESS_TOPS = frozenset({"Other"})
 
+# Every (manufacturer, console) section the system pages carry.
+_section_pairs: set[tuple[str, str]] = set()
 # Normalized id -> the console sections spelled that way.
 _console_sections: dict[str, set[tuple[str, str]]] = {}
 # A console section by the name its heading reads (Bandai WonderSwan).
@@ -402,6 +415,8 @@ def set_console_sections(
     _console_sections.clear()
     _sections_by_name.clear()
     _console_anchors.clear()
+    _section_pairs.clear()
+    _section_pairs.update(pairs)
     by_maker: dict[str, list[str]] = {}
     for mfr, console in pairs:
         by_maker.setdefault(mfr, []).append(console)
@@ -927,3 +942,172 @@ SYSTEM_NAMES: dict[str, str] = {
     "zx-spectrum": "Sinclair ZX Spectrum",
     "zx-spectrum-128": "Sinclair ZX Spectrum 128",
 }
+
+
+# A system id with no section of its own -> the (manufacturer, console)
+# section holding its files: a model, a regional name or an add-on of the
+# machine that section covers, or a game whose data that section files.
+# Reviewed entry by entry against the files the profiles and platforms
+# declare for the id, never decided by a vote of the folders those files
+# sit in. A section that is not the machine stays out of this table even
+# when it holds a copy: NAOMI's naomi2.zip filed with the Dreamcast, the
+# PET's ROMs in VICE's tree under the C128, the Arcadia's under the Saturn.
+SYSTEM_PARENTS: dict[str, tuple[str, str]] = {
+    # Nintendo. The twin folders (DS and Nintendo DS, 64DD and Nintendo
+    # 64DD) gave each name two headings and no link.
+    "64dd": ("Nintendo", "Nintendo 64DD"),
+    "nintendo-64dd": ("Nintendo", "Nintendo 64DD"),
+    "nintendo-ds": ("Nintendo", "Nintendo DS"),
+    "nintendo-dsi": ("Nintendo", "Nintendo DS"),
+    "famicom": ("Nintendo", "NES"),
+    "super-famicom": ("Nintendo", "SNES"),
+    # Bandai: the Color boot ROMs, and those of Benesse's WonderSwan-based
+    # Pocket Challenge V2, sit with the WonderSwan.
+    "wonderswan-color": ("Bandai", "WonderSwan"),
+    "bandai-wswanc": ("Bandai", "WonderSwan"),
+    "pocket-challenge-v2": ("Bandai", "WonderSwan"),
+    # SNK
+    "ngpc": ("SNK", "Neo Geo Pocket"),
+    "snk-ngpc": ("SNK", "Neo Geo Pocket"),
+    "neo-geo-pocket-color": ("SNK", "Neo Geo Pocket"),
+    "snk-neogeo-aes": ("SNK", "Neo Geo"),
+    "snk-neogeo-mvs": ("SNK", "Neo Geo"),
+    # Sega. The VMU is the Dreamcast's memory card, its images sit there.
+    # Sega's arcade section holds the OutRun board ROMs Cannonball reads.
+    "sega-genesis": ("Sega", "Mega Drive"),
+    "mega-cd-32x": ("Sega", "Mega CD"),
+    "sega-vmu": ("Sega", "Dreamcast"),
+    "sega-outrun": ("Sega", "Arcade"),
+    # NEC and Pioneer: both LaserActive packs (LD-ROM2 and Mega LD) file
+    # their BIOS under the LaserActive.
+    "nec-supergrafx": ("NEC", "PC Engine"),
+    "supergrafx": ("NEC", "PC Engine"),
+    "supergrafx-cd": ("NEC", "PC Engine CD"),
+    "pc-engine-ld": ("Pioneer", "LaserActive"),
+    "mega-ld": ("Pioneer", "LaserActive"),
+    # Microsoft MSX generations
+    "microsoft-msx2": ("Microsoft", "MSX"),
+    "msx2": ("Microsoft", "MSX"),
+    "msx2plus": ("Microsoft", "MSX"),
+    "msx2+": ("Microsoft", "MSX"),
+    "msxturboR": ("Microsoft", "MSX"),
+    "msxturbor": ("Microsoft", "MSX"),
+    # Sinclair: 128-0.rom and 128-1.rom, and Timex's tc2048.rom.
+    "zx-spectrum-128": ("Sinclair", "ZX Spectrum"),
+    "timex-tc2048": ("Sinclair", "ZX Spectrum"),
+    # Acorn: os12.rom and basic2.rom for the Model B and B+, and the
+    # Master Compact's bbcmc.zip.
+    "bbc-micro-b": ("Acorn", "BBC Micro"),
+    "bbc-micro-bplus": ("Acorn", "BBC Micro"),
+    "bbc-master-compact": ("Acorn", "BBC Micro"),
+    # Atari: falcon.img, ste.img and tt.img sit with the ST TOS images.
+    "atari-ste": ("Atari", "ST"),
+    "atari-tt": ("Atari", "ST"),
+    "atari-falcon": ("Atari", "ST"),
+    # Home computers filed under their family
+    "apple-iie": ("Apple", "Apple II"),
+    "apf-m1000": ("APF", "Imagination Machine"),
+    "apfm1000": ("APF", "Imagination Machine"),
+    "bbk-longman-4980": ("BBK", "A4980"),
+    "bbk-longman-4988": ("BBK", "A4988"),
+    "coco3": ("Tandy", "CoCo"),
+    "commodore-cdtv": ("Commodore", "Amiga"),
+    "dragon32": ("Dragon", "Dragon"),
+    "dragon64": ("Dragon", "Dragon"),
+    "enterprise-64": ("Enterprise", "64-128"),
+    "enterprise-128": ("Enterprise", "64-128"),
+    "fm77av": ("Fujitsu", "FM-7"),
+    "gamepock": ("Epoch", "Game Pocket"),
+    "ibm-pcjr": ("IBM", "PC"),
+    "ibm-xt": ("IBM", "PC"),
+    "marty": ("Fujitsu", "FM Towns"),
+    "mz700": ("Sharp", "MZ"),
+    "mz80k": ("Sharp", "MZ"),
+    "oricatmos": ("Oric", "Oric"),
+    "palm-os": ("Palm", "Palm"),
+    "philips-vg5k": ("Philips", "VG5000"),
+    "vg5k": ("Philips", "VG5000"),
+    "videobrain": ("VideoBrain", "Family Computer"),
+    # Files kept at the maker's root, so each file is a heading of its own
+    # on a page that is the machine's: the first one leads there.
+    "galaksija": ("Galaksija", "CHRGEN.BIN"),
+    "vircon32": ("Vircon", "Vircon32Bios.v32"),
+    # Games, filed with the game whose folder holds their data
+    "dinothawr": ("Dinothawr", "Dinothawr"),
+    "doom": ("Id Software", "Doom"),
+    "ctf": ("Id Software", "Quake II"),
+    "teamarena": ("Id Software", "Quake III Arena"),
+    "enemyterritory": ("Id Software", "Wolfenstein Enemy Territory"),
+    "gearbox": ("Valve", "Half-Life"),
+    "dmc": ("Valve", "Half-Life"),
+    "ricochet": ("Valve", "Half-Life"),
+    "tfc": ("Valve", "Half-Life"),
+    "mohaa": ("Electronic Arts", "Medal of Honor Allied Assault"),
+    "mohaa-breakthrough": ("Electronic Arts", "Medal of Honor Allied Assault"),
+    "mohaa-spearhead": ("Electronic Arts", "Medal of Honor Allied Assault"),
+    "ur-quan-masters": ("Toys for Bob", "The Ur-Quan Masters"),
+    "star-control-2": ("Toys for Bob", "The Ur-Quan Masters"),
+    # The collection's general arcade section, where naomi.zip, neogeo.zip
+    # and the other board sets sit.
+    "arcade": ("Arcade", "Arcade"),
+}
+
+
+def system_ids(profiles: dict[str, dict], platforms: list[dict]) -> set[str]:
+    """Every system id a page can name: the platforms' and the profiles'."""
+    ids = {str(sys_id) for config in platforms for sys_id in config.get("systems", {})}
+    for profile in profiles.values():
+        ids.update(str(sys_id) for sys_id in profile.get("systems") or [])
+        for entry in profile.get("files") or []:
+            if not isinstance(entry, dict):
+                continue
+            if entry.get("system"):
+                ids.add(str(entry["system"]))
+            ids.update(str(sys_id) for sys_id in entry.get("systems") or [])
+    return ids
+
+
+def link_coverage(ids: set[str]) -> tuple[int, int]:
+    """How many of ``ids`` lead to a section, and how many there are."""
+    return sum(1 for sys_id in ids if system_section(sys_id)), len(ids)
+
+
+# A system id -> the names the platforms' own files give it, built once.
+_search_aliases: dict[str, list[str]] = {}
+_search_aliases_built = [False]
+# A native name as a person types it: no space, no comma. RetroArch's
+# native names are No-Intro titles ("Sony - PlayStation") and stay out.
+_ALIAS_SHAPE = re.compile(r"[A-Za-z0-9][A-Za-z0-9_.+-]*")
+
+
+def system_search_aliases(sys_id: str) -> list[str]:
+    """The native system ids the platform YAMLs file ``sys_id`` under
+    (psx, dreamcast, gba), sorted, for search. Read from each platform's
+    own entries by common.platform_system_names, never typed by hand."""
+    if not _search_aliases_built[0]:
+        from common import (
+            list_registered_platforms,
+            load_platform_config,
+            platform_system_names,
+        )
+
+        platforms_dir = str(_REPO_ROOT / "platforms")
+        index: dict[str, set[str]] = {}
+        for platform in list_registered_platforms(platforms_dir, include_archived=True):
+            config = load_platform_config(platform, platforms_dir)
+            names = platform_system_names(config, list(config.get("systems", {})))
+            for owner, spelled in names.items():
+                index.setdefault(owner, set()).update(
+                    name for name in spelled if _ALIAS_SHAPE.fullmatch(name)
+                )
+        # Search ignores case: one spelling per word, the lower-case one
+        # when a platform writes it (psx, not PSX).
+        _search_aliases.clear()
+        for owner, names in index.items():
+            spellings: dict[str, str] = {}
+            for name in sorted(names, key=lambda n: (n != n.lower(), n)):
+                spellings.setdefault(name.casefold(), name)
+            if spellings:
+                _search_aliases[owner] = sorted(spellings.values(), key=str.casefold)
+        _search_aliases_built[0] = True
+    return list(_search_aliases.get(str(sys_id), []))
