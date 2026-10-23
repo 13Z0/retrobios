@@ -88,8 +88,8 @@ notes: |
 
   Each package is opened from the game data directory, data/ under the
   install directory, then from data/ under the app-data directory, where
-  the downloader saves audioremaster.bin. Package paths below are written
-  under sonic3-air/, which stands for either root.
+  the downloader saves audioremaster.bin. Package paths below are relative
+  to either root, the app-data one being the folder named in data_root.
   ref: Oxygen/oxygenengine/source/oxygen/engine/EngineMain.cpp:643-651,
        Oxygen/oxygenengine/source/oxygen/application/Configuration.cpp:288-289
 
@@ -116,7 +116,7 @@ files:
       satisfies the same post-modification check.
 
   - name: "enginedata.bin"
-    path: "sonic3-air/data/enginedata.bin"
+    path: "data/enginedata.bin"
     category: game_data
     system: sonic3-air
     required: true
@@ -137,7 +137,7 @@ files:
       and APK.
 
   - name: "gamedata.bin"
-    path: "sonic3-air/data/gamedata.bin"
+    path: "data/gamedata.bin"
     category: game_data
     system: sonic3-air
     required: true
@@ -155,7 +155,7 @@ files:
       v26.03.28.0 Windows zip, Linux tar.gz and APK.
 
   - name: "audiodata.bin"
-    path: "sonic3-air/data/audiodata.bin"
+    path: "data/audiodata.bin"
     category: game_data
     system: sonic3-air
     required: true
@@ -173,7 +173,7 @@ files:
       and APK.
 
   - name: "audioremaster.bin"
-    path: "sonic3-air/data/audioremaster.bin"
+    path: "data/audioremaster.bin"
     category: game_data
     system: sonic3-air
     required: false
