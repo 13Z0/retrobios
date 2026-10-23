@@ -1,6 +1,8 @@
 ---
 // Breadcrumbs, the level label and the title. The trail says which tab a
-// deep page belongs to; the label says who the page is written for.
+// deep page belongs to; the label says who the page is written for, and is
+// left out where the first crumb already names that tab. A page with a
+// `logo` (a path under the site root) shows it beside its title.
 const PAGE_TITLE_ID = '_top';
 
 const LABELS = {
@@ -11,8 +13,20 @@ const LABELS = {
 	contribute: 'For contributors',
 } as const;
 
-const { title, level } = Astro.locals.starlightRoute.entry.data;
+// The tab each level is read in, as the header names it.
+const TABS = {
+	start: 'Start here',
+	setup: 'Your setup',
+	explore: 'Explore',
+	reference: 'Reference',
+	contribute: 'Contribute',
+} as const;
+
+const { title, level, logo } = Astro.locals.starlightRoute.entry.data;
 const crumbs = Astro.locals.rbBreadcrumbs ?? [];
+const badge = level && crumbs[0]?.label !== TABS[level] && crumbs[0]?.label !== LABELS[level];
+const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
+const logoSrc = logo && (/^(https?:)?\//.test(logo) ? logo : base + logo);
 ---
 
 {
@@ -26,8 +40,17 @@ const crumbs = Astro.locals.rbBreadcrumbs ?? [];
 		</nav>
 	)
 }
-{level && <span class={`rb-level rb-level-${level}`}>{LABELS[level]}</span>}
-<h1 id={PAGE_TITLE_ID}>{title}</h1>
+{badge && <span class={`rb-level rb-level-${level}`}>{LABELS[level]}</span>}
+{
+	logoSrc ? (
+		<div class="rb-title-logo">
+			<img src={logoSrc} alt="" height="40" />
+			<h1 id={PAGE_TITLE_ID}>{title}</h1>
+		</div>
+	) : (
+		<h1 id={PAGE_TITLE_ID}>{title}</h1>
+	)
+}
 
 <style>
 	h1 {
@@ -36,5 +59,19 @@ const crumbs = Astro.locals.rbBreadcrumbs ?? [];
 		line-height: var(--sl-line-height-headings);
 		font-weight: 700;
 		color: var(--sl-color-white);
+	}
+	.rb-title-logo {
+		display: flex;
+		gap: 0.75rem;
+		align-items: center;
+		margin-top: 0.25rem;
+	}
+	.rb-title-logo h1 { margin-top: 0; }
+	.rb-title-logo img {
+		flex: none;
+		width: auto;
+		height: 40px;
+		max-width: 8rem;
+		object-fit: contain;
 	}
 </style>

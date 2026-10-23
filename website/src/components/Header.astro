@@ -1,0 +1,88 @@
+---
+// Starlight's header bar, and under it the five sections of the site as
+// tabs: the funnel (Start here to Contribute) is the site's structure, so it
+// sits where every docs site puts its sections. On a phone the tabs stay the
+// first row of the menu, where the sidebar lists them.
+import Default from '@astrojs/starlight/components/Header.astro';
+
+const topics = Astro.locals.starlightSidebarTopics?.topics ?? [];
+---
+
+<div class="rb-header-bar"><Default /></div>
+{
+	topics.length > 0 && (
+		<nav class="rb-tabs print:hidden" aria-label="Sections">
+			<ul>
+				{topics.map((topic) => (
+					<li>
+						<a href={topic.link} aria-current={topic.isCurrent ? 'true' : undefined}>
+							{topic.label}
+						</a>
+					</li>
+				))}
+			</ul>
+		</nav>
+	)
+}
+
+<!-- Global: the bar height and the sidebar's topic list belong to other components. -->
+<style is:global>
+	.rb-header-bar { height: 100%; }
+	.rb-tabs { display: none; }
+
+	/* "Look up this hash", the first result of a hash typed in the search (site.ts). */
+	.rb-search-hash {
+		margin: 1rem 0 0;
+		padding: 0.75rem 1rem;
+		border: 1px solid var(--sl-color-gray-5);
+		border-radius: 0.5rem;
+		overflow-wrap: anywhere;
+	}
+	.rb-search-hash a { font-weight: 600; }
+	/* Pagefind's own display rules would show what site.ts hides. */
+	#starlight__search [hidden] { display: none !important; }
+
+	@media (min-width: 50rem) {
+		:root {
+			--rb-nav-bar: 4rem;
+			--rb-tab-row: 2.75rem;
+			--sl-nav-height: calc(var(--rb-nav-bar) + var(--rb-tab-row));
+		}
+		.rb-header-bar { height: calc(100% - var(--rb-tab-row)); }
+		.site-title { height: calc(var(--rb-nav-bar) - 2 * var(--sl-nav-pad-y)); }
+		.rb-tabs {
+			display: block;
+			position: absolute;
+			inset-inline: 0;
+			bottom: 0;
+			height: var(--rb-tab-row);
+			padding-inline: var(--sl-nav-pad-x);
+		}
+		.rb-tabs ul {
+			display: flex;
+			gap: 1.75rem;
+			height: 100%;
+			margin: 0;
+			padding: 0;
+			list-style: none;
+		}
+		.rb-tabs li { display: flex; }
+		.rb-tabs a {
+			display: flex;
+			align-items: center;
+			border-bottom: 2px solid transparent;
+			color: var(--sl-color-gray-2);
+			font-size: var(--sl-text-sm);
+			text-decoration: none;
+			white-space: nowrap;
+		}
+		.rb-tabs a:hover { color: var(--sl-color-white); }
+		.rb-tabs a[aria-current] {
+			border-bottom-color: currentColor;
+			color: var(--sl-color-white);
+			font-weight: 600;
+		}
+		/* The header holds the sections: the sidebar lists the pages of one. */
+		.sidebar-content ul.starlight-sidebar-topics { display: none; }
+	}
+</style>

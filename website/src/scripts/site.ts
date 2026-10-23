@@ -1,6 +1,8 @@
 // Progressive enhancement of the generated pages: table captions, filters
-// and phone layout, the hash lookup on files/, moved cards, a hash typed in
-// the search, glossary terms on a tap, and the 404 page's hints.
+// and keyboard scrolling, the hash lookup on files/, moved cards, a hash
+// typed in the search, glossary terms on a tap, and the 404 page's hints.
+// Which tables stack on a phone is decided when the page is built
+// (src/plugins/rehype-stack-tables.mjs), so the layout is right on first paint.
 
 const HASH_LENGTHS: Record<number, string> = { 8: 'CRC32', 32: 'MD5', 40: 'SHA1', 64: 'SHA256' };
 const LAYER_LABELS: Record<string, string> = {
@@ -17,16 +19,39 @@ const isHash = (value: string) => /^[0-9a-f]+$/.test(value) && value.length in H
 
 // Tables
 
+// The heading a table sits under: the nearest one before it, looking up
+// through the blocks that hold it, else the page title.
 const headingText = (element: Element): string => {
-	let cursor: Element | null = element;
-	while (cursor) {
-		cursor = cursor.previousElementSibling;
-		if (!cursor) break;
-		const heading = /^H[1-6]$/.test(cursor.tagName) ? cursor : cursor.querySelector('h1, h2, h3, h4, h5, h6');
-		if (heading && cursor.classList.contains('sl-heading-wrapper')) return heading.textContent!.trim();
-		if (/^H[1-6]$/.test(cursor.tagName)) return cursor.textContent!.trim();
+	for (let block: Element | null = element; block && !block.matches('.sl-markdown-content'); block = block.parentElement) {
+		for (let cursor = block.previousElementSibling; cursor; cursor = cursor.previousElementSibling) {
+			const heading = /^H[1-6]$/.test(cursor.tagName)
+				? cursor
+				: cursor.classList.contains('sl-heading-wrapper')
+					? cursor.querySelector('h1, h2, h3, h4, h5, h6')
+					: null;
+			if (heading?.textContent?.trim()) return heading.textContent.trim();
+		}
 	}
-	return document.querySelector('h1')?.textContent?.trim() || 'Data table';
+	return document.querySelector('h1')?.textContent?.trim() || document.title;
+};
+
+// Each table's name, once per page: two tables under one heading are told
+// apart by their order, so no two regions share a label (axe landmark-unique).
+const tableNames = new WeakMap<HTMLTableElement, string>();
+const tableName = (table: HTMLTableElement): string => {
+	let name = tableNames.get(table);
+	if (name) return name;
+	const tables = [...document.querySelectorAll<HTMLTableElement>('.sl-markdown-content table')];
+	const seen = new Map<string, number>();
+	for (const each of tables) {
+		const heading = headingText(each);
+		const count = (seen.get(heading) ?? 0) + 1;
+		seen.set(heading, count);
+		tableNames.set(each, count === 1 ? heading : `${heading}, table ${count}`);
+	}
+	name = tableNames.get(table) ?? headingText(table);
+	tableNames.set(table, name);
+	return name;
 };
 
 // A table that overflows is a named stop in the tab order, so a keyboard
@@ -39,30 +64,14 @@ const markScrollable = (tables: HTMLTableElement[]) => {
 };
 
 const setScrollable = (table: HTMLTableElement, overflows: boolean) => {
-	const heading = table.dataset.rbHeading ?? 'Data table';
 	if (overflows) {
 		table.tabIndex = 0;
 		table.setAttribute('role', 'region');
-		table.setAttribute('aria-label', `${heading}, scrollable table`);
+		table.setAttribute('aria-label', `${tableName(table)}, scrollable table`);
 	} else if (table.getAttribute('role') === 'region') {
 		table.removeAttribute('tabindex');
 		table.removeAttribute('role');
 		table.removeAttribute('aria-label');
-	}
-};
-
-// A table whose rows end in an action (a button, a pack to download) is laid
-// out one block per row on a phone, each cell under its column name, so the
-// action never sits behind a horizontal scroll.
-const stackActionTable = (table: HTMLTableElement) => {
-	if (!table.querySelector('tbody :is(.rb-button, a[href*="/releases/download/"], a[href$="/releases/latest"])')) return;
-	const labels = [...table.querySelectorAll('thead th')].map((cell) => cell.textContent!.trim());
-	if (!labels.length) return;
-	table.dataset.rbStack = 'true';
-	for (const row of table.querySelectorAll('tbody tr')) {
-		[...row.children].forEach((cell, column) => {
-			if (labels[column] && !cell.hasAttribute('data-label')) cell.setAttribute('data-label', labels[column]);
-		});
 	}
 };
 
@@ -104,15 +113,13 @@ const enhanceTables = () => {
 	const tables = [...document.querySelectorAll<HTMLTableElement>('.sl-markdown-content table')];
 	const enhance = (table: HTMLTableElement) => {
 		for (const cell of table.querySelectorAll('thead th')) if (!cell.hasAttribute('scope')) cell.setAttribute('scope', 'col');
-		const heading = headingText(table);
-		table.dataset.rbHeading = heading;
+		const heading = tableName(table);
 		if (!table.querySelector('caption') && !table.closest('.rb-meta-card')) {
 			const caption = document.createElement('caption');
 			caption.className = 'rb-visually-hidden';
 			caption.textContent = heading;
 			table.prepend(caption);
 		}
-		stackActionTable(table);
 		filterTable(table, tables.indexOf(table), heading);
 	};
 	// A table is set up and measured when it nears the screen. Doing all of
@@ -160,32 +167,164 @@ const lookupShard = (value: string): Promise<Item[]> =>
 		.then((response) => (response.ok ? response.json() : { items: [] }))
 		.then((shard) => shard.items || []);
 
-const renderMatches = (status: HTMLElement, value: string, items: Item[]) => {
-	status.textContent = '';
-	const heading = document.createElement('p');
-	heading.textContent = `${items.length} ${items.length === 1 ? 'match' : 'matches'} for ${HASH_LENGTHS[value.length]} ${value}:`;
-	status.append(heading);
-	for (const [layer, label] of Object.entries(LAYER_LABELS)) {
-		const found = items.filter((item) => item.layer === layer);
-		if (!found.length) continue;
-		const title = document.createElement('p');
-		const strong = document.createElement('strong');
-		strong.textContent = label;
-		title.append(strong);
+type Held = { name: string; path: string; sha1: string; size: number };
+type Declared = { name?: string; destination?: string; required?: boolean; [hash: string]: unknown };
+
+const json = (path: string) =>
+	fetch(new URL(path, siteRoot())).then((response) => (response.ok ? response.json() : Promise.reject(response.status)));
+
+const formatSize = (bytes: number) =>
+	bytes >= 1024 ** 3 ? `${(bytes / 1024 ** 3).toFixed(1)} GB`
+	: bytes >= 1024 ** 2 ? `${(bytes / 1024 ** 2).toFixed(1)} MB`
+	: bytes >= 1024 ? `${(bytes / 1024).toFixed(1)} KB`
+	: `${bytes} B`;
+
+const code = (text: string) => {
+	const element = document.createElement('code');
+	element.textContent = text;
+	return element;
+};
+
+const link = (url: string, ...content: (Node | string)[]) => {
+	const element = document.createElement('a');
+	element.href = new URL(url, siteRoot()).href;
+	element.append(...content);
+	return element;
+};
+
+const paragraph = (...content: (Node | string)[]) => {
+	const element = document.createElement('p');
+	element.append(...content);
+	return element;
+};
+
+const strong = (text: string) => {
+	const element = document.createElement('strong');
+	element.textContent = text;
+	return element;
+};
+
+// The card a collection match points at, read from its manufacturer's file
+// of api/v1/systems/: the path in the collection and the size.
+const heldFile = async (item: Item & { sha1?: string }): Promise<Held | undefined> => {
+	const slug = /^systems\/([^/]+)\//.exec(item.url)?.[1];
+	if (!slug || !item.sha1) return undefined;
+	const data = await json(`api/v1/systems/${slug}.json`);
+	for (const files of Object.values<Held[]>(data.items?.[0]?.consoles ?? {})) {
+		const found = files.find((file) => file.sha1 === item.sha1);
+		if (found) return found;
+	}
+	return undefined;
+};
+
+// A setup's own entry for the value, from its contract in api/v1/platforms/:
+// where the file goes and whether the setup requires it. Recalbox writes
+// several MD5 in one field, separated by commas.
+const declaredEntry = async (item: Item, value: string): Promise<Declared | undefined> => {
+	const system = decodeURIComponent(new URL(item.url, siteRoot()).hash.slice(1));
+	const data = await json(`api/v1/platforms/${item.owner}.json`);
+	const files: Declared[] = data.items?.[0]?.contract?.systems?.[system]?.files ?? [];
+	const holds = (entry: Declared) =>
+		String(entry[item.algorithm] ?? '').toLowerCase().split(',').map((hash) => hash.trim()).includes(value);
+	return files.find((entry) => holds(entry) && entry.name === item.name) ?? files.find(holds);
+};
+
+const setupTable = (rows: { item: Item; entry?: Declared; setup: string }[]) => {
+	const table = document.createElement('table');
+	const head = table.createTHead().insertRow();
+	for (const label of ['Setup', 'Name as declared', 'Destination', 'Hash matched', 'Required']) {
+		const cell = document.createElement('th');
+		cell.scope = 'col';
+		cell.textContent = label;
+		head.append(cell);
+	}
+	const body = table.createTBody();
+	for (const { item, entry, setup } of rows) {
+		const row = body.insertRow();
+		const name = entry?.name ?? item.name ?? '';
+		// EmuDeck lists a hash with no file name: any file that has it passes.
+		const named = name && !name.includes(':');
+		const destination = entry?.destination;
+		const cells: (Node | string)[] = [
+			link(item.url, setup),
+			named ? code(name) : 'Any name',
+			destination ? code(destination) : '-',
+			item.algorithm.toUpperCase(),
+			entry?.required === undefined ? '-' : entry.required ? 'Yes' : 'No',
+		];
+		cells.forEach((content, column) => {
+			const cell = row.insertCell();
+			cell.dataset.label = head.cells[column].textContent!;
+			cell.append(content);
+		});
+	}
+	table.dataset.rbStack = 'true';
+	return table;
+};
+
+// The answer first: which file this is and where the collection holds it,
+// then the setups that list it (where it goes, whether it is required),
+// then the emulators that read it.
+const renderMatches = async (status: HTMLElement, result: HTMLElement, value: string, items: Item[]) => {
+	const byLayer = (layer: string) => items.filter((item) => item.layer === layer);
+	const held = byLayer('collection');
+	const platforms = byLayer('platform');
+	const [files, entries, names] = await Promise.all([
+		Promise.all(held.map((item) => heldFile(item).catch(() => undefined))),
+		Promise.all(platforms.map((item) => declaredEntry(item, value).catch(() => undefined))),
+		json('data/picker/index.json').catch(() => []) as Promise<{ platform: string; name: string }[]>,
+	]);
+	const setupName = new Map(names.map((entry) => [entry.platform, entry.name]));
+	status.textContent = `${items.length.toLocaleString('en')} ${items.length === 1 ? 'match' : 'matches'} for ${HASH_LENGTHS[value.length]} ${value}.`;
+	const blocks: Node[] = [];
+	held.forEach((item, index) => {
+		const file = files[index];
+		const name = file?.name ?? item.name ?? value;
+		blocks.push(
+			file
+				? paragraph('This is ', code(name), ', held in the collection at ', code(file.path), '.')
+				: paragraph('This is ', code(name), ', held in the collection.'),
+			paragraph(
+				...(file ? ['SHA1 ', code(file.sha1), `, ${formatSize(file.size)}. `] : []),
+				link(item.url, 'Open its card'),
+				'.',
+			),
+		);
+	});
+	if (!held.length) blocks.push(paragraph('No file in the collection has this hash.'));
+	const shipped = byLayer('data-directory');
+	if (shipped.length) {
 		const list = document.createElement('ul');
-		for (const item of found) {
+		for (const item of shipped) {
 			const row = document.createElement('li');
-			const link = document.createElement('a');
-			link.href = new URL(item.url, siteRoot()).href;
-			const code = document.createElement('code');
-			code.textContent = item.name || item.value;
-			link.append(code);
-			row.append(link);
-			if (item.owner) row.append(` (${item.owner})`);
+			row.append(link(item.url, code(item.name || item.value)));
 			list.append(row);
 		}
-		status.append(title, list);
+		blocks.push(paragraph(strong(LAYER_LABELS['data-directory'])), list);
 	}
+	if (platforms.length) {
+		const owners = new Set(platforms.map((item) => item.owner));
+		blocks.push(
+			paragraph(strong(`Setups that list it (${owners.size})`)),
+			setupTable(platforms.map((item, index) => ({
+				item,
+				entry: entries[index],
+				setup: setupName.get(item.owner ?? '') ?? item.owner ?? '',
+			}))),
+		);
+	}
+	const readers = byLayer('emulator');
+	if (readers.length) {
+		const list = document.createElement('ul');
+		for (const item of readers) {
+			const row = document.createElement('li');
+			row.append(link(item.url, item.owner ?? item.name ?? ''));
+			if (item.name && item.name !== held[0]?.name) row.append(' as ', code(item.name));
+			list.append(row);
+		}
+		blocks.push(paragraph(strong(`${LAYER_LABELS.emulator} (${readers.length})`)), list);
+	}
+	result.replaceChildren(...blocks);
 };
 
 // files/?sha1=<sha1> is a file's content address and opens its card
@@ -194,6 +333,9 @@ const renderMatches = (status: HTMLElement, value: string, items: Item[]) => {
 const resolveFileAddress = () => {
 	const status = document.getElementById('rb-file-lookup-status');
 	if (!status) return;
+	const result = document.createElement('div');
+	result.id = 'rb-file-lookup-result';
+	status.after(result);
 	const params = new URLSearchParams(location.search);
 	const permalink = params.has('sha1');
 	const value = normalizeHash(params.get('sha1') || params.get('hash') || '');
@@ -214,7 +356,7 @@ const resolveFileAddress = () => {
 			if (permalink && new Set(cards.map((item) => item.url)).size === 1) {
 				location.replace(new URL(cards[0].url, siteRoot()));
 			} else if (matches.length) {
-				renderMatches(status, prefix ? matches[0].value : value, prefix ? cards : matches);
+				return renderMatches(status, result, prefix ? matches[0].value : value, prefix ? cards : matches);
 			} else {
 				status.textContent = 'No file the site knows has this hash.';
 			}
@@ -240,8 +382,65 @@ const followMovedCard = () => {
 	if (match && !target) location.replace(new URL(`files/?sha1=${match[1]}`, siteRoot()));
 };
 
-// The site search holds no hashes: Enter on one opens the lookup.
+// The site search holds no hashes. A hash typed in it gets "Look up this
+// hash" as its first result, and Enter opens the lookup.
+const hashLookupRow = (drawer: Element, value: string) => {
+	let row = drawer.querySelector<HTMLElement>(':scope > .rb-search-hash');
+	if (!isHash(value)) {
+		row?.remove();
+		return;
+	}
+	if (!row) {
+		row = document.createElement('p');
+		row.className = 'rb-search-hash';
+		drawer.prepend(row);
+	}
+	const target = new URL(`files/?hash=${value}`, siteRoot()).href;
+	if (row.querySelector('a')?.href === target) return;
+	const anchor = document.createElement('a');
+	anchor.href = target;
+	anchor.append('Look up this hash');
+	row.replaceChildren(anchor, ` ${HASH_LENGTHS[value.length]} `, code(value));
+};
+
+// Pagefind lists a page's title twice: once for the page and once for the
+// anchor of its h1 (#_top). The second title is hidden, its excerpt kept.
+// The `files` field of a system page weighs its file names in the ranking
+// and is never shown: a result is not a list of 120 names. Pagefind reuses
+// its nodes from one query to the next, so both are worked out again on
+// every change.
+const tidyResults = (root: Element) => {
+	for (const title of root.querySelectorAll<HTMLElement>('.pagefind-ui__result-nested > .pagefind-ui__result-title')) {
+		title.hidden = !!title.querySelector('a')?.getAttribute('href')?.endsWith('#_top');
+	}
+	for (const tags of root.querySelectorAll<HTMLElement>('.pagefind-ui__result-tags')) {
+		let shown = 0;
+		for (const tag of tags.querySelectorAll<HTMLElement>('.pagefind-ui__result-tag')) {
+			tag.hidden = tag.dataset.pagefindUiMeta === 'files';
+			if (!tag.hidden) shown += 1;
+		}
+		tags.hidden = shown === 0;
+	}
+};
+
 const hashSearch = () => {
+	const root = document.getElementById('starlight__search');
+	if (root) {
+		const refresh = () => {
+			tidyResults(root);
+			const input = root.querySelector<HTMLInputElement>('input');
+			const drawer = root.querySelector('.pagefind-ui__drawer');
+			if (input && drawer) hashLookupRow(drawer, normalizeHash(input.value));
+		};
+		new MutationObserver(refresh).observe(root, {
+			childList: true,
+			subtree: true,
+			characterData: true,
+			attributes: true,
+			attributeFilter: ['href', 'data-pagefind-ui-meta'],
+		});
+		root.addEventListener('input', refresh);
+	}
 	document.addEventListener(
 		'keydown',
 		(event) => {

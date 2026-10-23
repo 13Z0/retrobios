@@ -20,3 +20,14 @@ const { searchWeight } = Astro.locals.starlightRoute.entry.data;
 <script>
 	import '../scripts/site.ts';
 </script>
+
+<!-- Global: the lookup form on files/ is written by the generator. Its input
+     keeps to the column on a phone (size="66" made it 707 px wide). -->
+<style is:global>
+	.sl-markdown-content .rb-file-lookup input {
+		width: 100%;
+		min-width: 0;
+		max-width: 40rem;
+		box-sizing: border-box;
+	}
+</style>
