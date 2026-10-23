@@ -124,7 +124,7 @@ class PackNamesItsVersion(unittest.TestCase):
             self.skipTest("release.json has no Batocera pack")
         block = generate_site._pack_buttons("batocera")
         version = generate_site._pack_version(release_record.pack_name_for("batocera", record))
-        self.assertIn(f"Made from the BIOS list of Batocera {version}. "
+        self.assertIn(f"Made for Batocera {version}. "
                       + generate_site.OTHER_VERSION, block)
 
     def test_a_version_gap_is_said_once(self):
@@ -142,7 +142,7 @@ class PackNamesItsVersion(unittest.TestCase):
         for key in REGISTRY:
             with self.subTest(platform=key):
                 text = _guide_part(_page(f"platforms/{key}.md"))
-                self.assertRegex(text, r"(?:from the BIOS list of|This pack was built for) \S")
+                self.assertRegex(text, r"(?:[Mm]ade for|This pack was built for) \S")
 
 
 class SetupPagesOfferPartOfThePack(unittest.TestCase):
@@ -151,7 +151,7 @@ class SetupPagesOfferPartOfThePack(unittest.TestCase):
             with self.subTest(platform=key):
                 text = _guide_part(_page(f"platforms/{key}.md"))
                 self.assertIn(f"/retrobios/which-pack/?platform={key}#only-some-consoles", text)
-                self.assertIn("or press **c** when the command asks.", text)
+                self.assertIn("or press **c** in the command.", text)
 
     def test_the_anchor_exists(self):
         self.assertIn("## Only some consoles?", _page("which-pack.md"))
@@ -159,8 +159,18 @@ class SetupPagesOfferPartOfThePack(unittest.TestCase):
     def test_a_file_in_place_but_missing_is_answered(self):
         for key in REGISTRY:
             with self.subTest(platform=key):
-                self.assertIn("In place but reported missing?",
+                self.assertIn("Reported missing anyway?",
                               _guide_part(_page(f"platforms/{key}.md")))
+
+
+class SafetyListIsLinked(unittest.TestCase):
+    def test_setup_pages_link_the_home_list(self):
+        for key in REGISTRY:
+            with self.subTest(platform=key):
+                text = _guide_part(_page(f"platforms/{key}.md"))
+                self.assertIn("[Is it safe?](/retrobios/#is-it-safe)", text)
+                self.assertNotIn("<summary>Is it safe?</summary>", text)
+        self.assertIn("## Is it safe? { #is-it-safe }", _page("index.md"))
 
 
 class OfflineLine(unittest.TestCase):

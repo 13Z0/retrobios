@@ -660,8 +660,7 @@ def release_line(platform_name: str, record: dict) -> list[str]:
 
 # What a reader on another version of the setup does with the pack. Our data
 # says which list the pack was made from, not what an older list lacks.
-OTHER_VERSION = ("Another version? After copying, `--check` names any file missing "
-                 "or different.")
+OTHER_VERSION = "Other version? Run `--check` after copying."
 
 
 def setup_version(platform_name: str, record: dict | None = None) -> str:
@@ -686,7 +685,7 @@ def version_line(platform_name: str, record: dict, named: bool = False) -> str:
     made_from = setup_version(platform_name, record)
     if named or not made_from:
         return OTHER_VERSION
-    return f"Made from the BIOS list of {made_from}. {OTHER_VERSION}"
+    return f"Made for {made_from}. {OTHER_VERSION}"
 
 
 def _pack_buttons(platform_name: str, label: str = "Pack") -> str:
@@ -2816,13 +2815,10 @@ def _check_sentence(display: str, mode: str, config: dict, no_list: bool) -> str
         return (f"{display} has no BIOS list, so it checks nothing itself. Each "
                 "emulator looks for its own files when a game starts.")
     if config.get("hash_rule") == "size_and_any_hash":
-        return (f"{display} checks each file's size and fingerprint too. It "
-                "reports a file with the wrong size or contents.")
+        return f"{display} also checks each file's size and contents."
     if digest_algorithm(mode):
-        return (f"{display} checks each file's fingerprint too. It reports a file "
-                "with the wrong contents.")
-    return (f"{display} only checks that a file with the right name is there. "
-            "`--check` also checks what is inside.")
+        return f"{display} also checks each file's contents."
+    return f"{display} checks names only. `--check` also checks contents."
 
 
 def _folder_rows(rows: tuple[tuple[str, str], ...], indent: str = "") -> list[str]:
@@ -2837,7 +2833,11 @@ def _folder_rows(rows: tuple[tuple[str, str], ...], indent: str = "") -> list[st
 # sample): the file is there and the setup still reports it missing.
 # `--check` lists every file whose hash is wrong by name (install.py, the
 # "wrong hash" lines of check_lines).
-MISSING_IN_PLACE = "In place but reported missing? `--check` names a file with the wrong contents."
+MISSING_IN_PLACE = "Reported missing anyway? `--check` names a wrong file."
+
+# Under every command of a setup page: the safety list is the one the home
+# page shows in full, so the setup page links it.
+SAFE_LINK = "[Is it safe?](../index.md#is-it-safe)"
 
 # Under "From your computer": a device with no network installs from the ZIP
 # (`--from-pack`). The id is the one wiki/installer.md gives its section.
@@ -2899,7 +2899,7 @@ def _guide_download(name: str, display: str, guide: Guide, extract_to: str | Non
         made_from = setup_version(name)
         lines += [
             f"No {display} ZIP yet. The command installs the same files"
-            + (f", from the BIOS list of {made_from}." if made_from else "."),
+            + (f", made for {made_from}." if made_from else "."),
             "",
         ]
     else:
@@ -2911,7 +2911,7 @@ def only_some_consoles(name: str, prefix: str = "") -> list[str]:
     """The way to a smaller download, in the words Get your files uses."""
     return [
         f"Only some consoles? [Pick them]({prefix}which-pack.md?platform={name}"
-        "#only-some-consoles), or press **c** when the command asks.",
+        "#only-some-consoles), or press **c** in the command.",
         "",
     ]
 
@@ -2921,8 +2921,7 @@ def _guide_install(name: str, guide: Guide, heading: str) -> list[str]:
     lines = [
         heading,
         "",
-        "The command finds the folder, downloads what is missing, and checks "
-        "each file.",
+        "It finds the folder and checks each file.",
         "",
     ]
     if guide.on_card:
@@ -2935,7 +2934,8 @@ def _guide_install(name: str, guide: Guide, heading: str) -> list[str]:
     return [
         *lines,
         *terminal_tabs(guide.run, platform_args(name, guide), how={"device": device}),
-        *trust_box("../"),
+        SAFE_LINK,
+        "",
     ]
 
 
@@ -2997,7 +2997,8 @@ def generate_handheld_guide(guide: HandheldGuide) -> str:
         "`--dest`, written as in the table.",
         "",
         *terminal_tabs(("windows", "macos", "linux"), args),
-        *trust_box("../"),
+        SAFE_LINK,
+        "",
         *_next_block([
             f"[{display}]({guide.uses}.md): every folder and every file",
             "[When a game does not start](../wiki/troubleshooting.md)",
