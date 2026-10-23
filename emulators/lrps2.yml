@@ -1,12 +1,12 @@
 # LRPS2 - libretro PlayStation 2 core
-# Source: https://github.com/libretro/ps2
+# Source: https://github.com/libretro/parallel-ps2
 # Upstream: https://github.com/PCSX2/pcsx2
 
 emulator: LRPS2
 type: libretro
 core_classification: community_fork
 bios_mode: agnostic
-source: "https://github.com/libretro/ps2"
+source: "https://github.com/libretro/parallel-ps2"
 upstream: "https://github.com/PCSX2/pcsx2"
 profiled_date: "2026-10-21"
 source_commit: "6664c60294ee05fe5e8c7645ab7da546dae78ed2"
