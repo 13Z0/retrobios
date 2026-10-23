@@ -16,8 +16,9 @@ systems:
 mode: standalone
 
 notes: |
-  Apple-focused fork of Xenia, based on Xenia Edge, published from the xenios
-  branch as xenios_macos_apple_silicon.dmg, xenios_macos_intel.dmg,
+  Apple-focused fork of Xenia, based on Xenia Edge at their merge base
+  07021f0 (upstream_commit), published from the xenios branch as
+  xenios_macos_apple_silicon.dmg, xenios_macos_intel.dmg,
   xenios_macos_universal.dmg and xenios_ios_iphone_ipad.ipa. The macOS build
   names its bundle and executable Xenia-edge, the iOS build XeniOS
   (src/xenia/app/CMakeLists.txt:11-13, 175, 339-341). ES-DE runs it through the
