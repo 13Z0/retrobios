@@ -1247,6 +1247,7 @@ def resolve_local_file(
     # When dest_hint contains a path, also try its basename as a name
     # (handles emulator profiles where name: is descriptive and path: is
     # the actual filename, e.g. name: "MDA font ROM", path: "mda.rom")
+    own_names = list(names_to_try)
     if dest_hint:
         hint_base = dest_hint.rsplit("/", 1)[-1] if "/" in dest_hint else dest_hint
         if hint_base and hint_base not in names_to_try:
@@ -1491,12 +1492,19 @@ def resolve_local_file(
 
     if not has_strong_hash and not unsourceable:
         candidates = []
-        for try_name in names_to_try:
-            for match_sha1 in by_name.get(try_name, []):
-                if match_sha1 in files_db and _size_ok(match_sha1):
-                    path = files_db[match_sha1]["path"]
-                    if os.path.exists(path) and path not in candidates:
-                        candidates.append(path)
+        # The entry's own names first, the destination's basename only when
+        # none of them answers. melonDS Nightly's dsi_nand.bin is read at
+        # dsi/nand.bin: with the DSi image absent from the checkout, the
+        # basename let the Wii nand.bin outrank the entry's own DSi variant.
+        for tier in (own_names, names_to_try[len(own_names):]):
+            for try_name in tier:
+                for match_sha1 in by_name.get(try_name, []):
+                    if match_sha1 in files_db and _size_ok(match_sha1):
+                        path = files_db[match_sha1]["path"]
+                        if os.path.exists(path) and path not in candidates:
+                            candidates.append(path)
+            if candidates:
+                break
         if candidates and all("/.variants/" in p for p in candidates):
             # Only variants answer the exact casing, but the primary they
             # stand in for may be stored under another one: x1 asked for

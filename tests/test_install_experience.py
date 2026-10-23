@@ -404,6 +404,169 @@ class ReviewCases(unittest.TestCase):
         progress.add(40)
         self.assertEqual(progress.transferred(), 40)
 
+class _HeldHandler(http.server.BaseHTTPRequestHandler):
+    """Serves the manifest and first.bin at once, every other file once released."""
+
+    files: dict[str, bytes] = {}
+    manifest = b""
+    release = threading.Event()
+
+    def log_message(self, *args) -> None:  # noqa: D102
+        pass
+
+    def do_GET(self) -> None:  # noqa: N802, D102
+        if self.path.endswith(".json"):
+            body = self.manifest
+        else:
+            name = self.path.rsplit("/", 1)[-1]
+            if name != "first.bin":
+                self.release.wait(30)
+            body = self.files[name]
+        self.send_response(200)
+        self.send_header("Content-Length", str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
+
+
+class AStoppedRunCountsWhatLanded(unittest.TestCase):
+    """Stopped at 8 of 118 files, the summary said "118 files installed":
+    every queued file was counted, written or not, and a user who read it
+    did not run the command again."""
+
+    @unittest.skipIf(os.name == "nt", "SIGINT is sent the POSIX way")
+    def test_only_the_written_file_is_counted(self):
+        import signal  # noqa: PLC0415
+        import time  # noqa: PLC0415
+
+        files = {name: name.encode() * 64 for name in ("first.bin", "second.bin", "third.bin")}
+        manifest = {"manifest_version": 2, "platform": "retroarch", "files": [
+            {"dest": name, "size": len(data), "sha1": hashlib.sha1(data).hexdigest(),
+             "repo_path": f"bios/{name}", "cores": None}
+            for name, data in files.items()
+        ]}
+        _HeldHandler.files, _HeldHandler.manifest = files, json.dumps(manifest).encode()
+        _HeldHandler.release = threading.Event()
+        httpd = http.server.ThreadingHTTPServer(("127.0.0.1", 0), _HeldHandler)
+        threading.Thread(target=httpd.serve_forever, daemon=True).start()
+        self.addCleanup(httpd.server_close)
+        self.addCleanup(httpd.shutdown)
+        self.addCleanup(_HeldHandler.release.set)
+        with tempfile.TemporaryDirectory(dir=REPO_ROOT / "tmp") as tmp:
+            dest = Path(tmp) / "bios"
+            env = dict(os.environ,
+                       RETROBIOS_BASE_URL=f"http://127.0.0.1:{httpd.server_address[1]}")
+            log = Path(tmp) / "out.txt"
+            # The held files are released once the run says it is stopping,
+            # not after a fixed pause: under load the stop landed after the
+            # release, all three files arrived, and nothing was stopped.
+            with open(log, "w", encoding="utf-8") as out_file:
+                proc = subprocess.Popen(
+                    [sys.executable, str(REPO_ROOT / "install.py"), "--platform", "retroarch",
+                     "--dest", str(dest), "--no-input"],
+                    env=env, stdin=subprocess.DEVNULL, stdout=out_file,
+                    stderr=subprocess.STDOUT, text=True,
+                )
+                deadline = time.monotonic() + 30
+                while not (dest / "first.bin").exists() and time.monotonic() < deadline:
+                    time.sleep(0.05)
+                time.sleep(0.2)
+                proc.send_signal(signal.SIGINT)
+                while ("Stopping." not in log.read_text(encoding="utf-8")
+                       and time.monotonic() < deadline):
+                    time.sleep(0.05)
+                _HeldHandler.release.set()
+                proc.wait(timeout=60)
+            out = err = log.read_text(encoding="utf-8")
+            written = sorted(p.name for p in dest.iterdir() if not p.name.startswith("."))
+        self.assertEqual(proc.returncode, 130, out + err)
+        self.assertEqual(written, ["first.bin"])
+        self.assertIn("Stopped. 1 file installed.", out)
+
+
+class ARefusedFolderReportsEachFile(unittest.TestCase):
+    """A read-only folder ended the run on its first refusal, and --events
+    wrote one `downloaded` line for seven failed files, while the events
+    table promises one per finished file."""
+
+    @unittest.skipIf(os.name == "nt" or os.geteuid() == 0,
+                     "a read-only folder is refused by POSIX permissions")
+    def test_one_event_per_file_with_the_reason(self):
+        with FakeRepository() as repo:
+            repo.dest.mkdir()
+            os.chmod(repo.dest, 0o555)
+            try:
+                proc = repo.run("--events")
+            finally:
+                os.chmod(repo.dest, 0o755)
+        events = [json.loads(line) for line in proc.stdout.splitlines()]
+        downloaded = [e for e in events if e["event"] == "downloaded"]
+        self.assertEqual(proc.returncode, 2, proc.stderr)
+        self.assertEqual(len(downloaded), len(FakeRepository.PAYLOADS))
+        self.assertEqual({e["reason"] for e in downloaded}, {install.NOT_WRITABLE})
+        self.assertEqual(sorted(e["files_done"] for e in downloaded),
+                         list(range(1, len(downloaded) + 1)))
+
+
+class _Tty(io.StringIO):
+    def isatty(self) -> bool:
+        return True
+
+
+class ColourFollowsNoColorOrg(unittest.TestCase):
+    """no-color.org: only a NO_COLOR that is set and not empty turns colour
+    off. An empty one, as `NO_COLOR= cmd` leaves, turned it off too."""
+
+    def _colour(self, **env: str) -> bool:
+        clean = {k: v for k, v in os.environ.items()
+                 if k not in ("NO_COLOR", "FORCE_COLOR", "CLICOLOR_FORCE", "TERM")}
+        with mock.patch.dict(os.environ, {**clean, **env}, clear=True), \
+                mock.patch.object(install, "_enable_ansi", return_value=True):
+            return install.Terminal(_Tty()).colour
+
+    def test_an_empty_no_color_leaves_colour_on(self):
+        self.assertTrue(self._colour())
+        self.assertTrue(self._colour(NO_COLOR=""))
+        self.assertFalse(self._colour(NO_COLOR="1"))
+
+    def test_force_color_paints_a_pipe(self):
+        with mock.patch.object(install, "_enable_ansi", return_value=True):
+            for env, expected in (({}, False), ({"FORCE_COLOR": "1"}, True),
+                                  ({"CLICOLOR_FORCE": "1"}, True),
+                                  ({"FORCE_COLOR": "0"}, False),
+                                  ({"FORCE_COLOR": "1", "NO_COLOR": "1"}, False)):
+                clean = {k: v for k, v in os.environ.items()
+                         if k not in ("NO_COLOR", "FORCE_COLOR", "CLICOLOR_FORCE")}
+                with self.subTest(env=env), \
+                        mock.patch.dict(os.environ, {**clean, **env}, clear=True):
+                    term = install.Terminal(io.StringIO())
+                    self.assertEqual(term.colour, expected)
+                    self.assertFalse(term.live)
+
+
+class SmallWordings(unittest.TestCase):
+    def test_check_asks_which_to_check(self):
+        """--check with several platforms asked "Install for:", and
+        installs nothing."""
+        out = io.StringIO()
+        with mock.patch("builtins.input", lambda _prompt="": "1"), \
+                contextlib.redirect_stdout(out):
+            install._prompt_platform_choice(
+                [("emudeck", Path("/e")), ("retroarch", Path("/r"))], "Check:")
+        self.assertIn("Check:", out.getvalue())
+        self.assertNotIn("Install for:", out.getvalue())
+
+    def test_nothing_detected_is_said(self):
+        with tempfile.TemporaryDirectory(dir=REPO_ROOT / "tmp") as home:
+            env = dict(os.environ, HOME=home, USERPROFILE=home, XDG_CONFIG_HOME=home,
+                       RETROBIOS_OS="linux")
+            proc = subprocess.run(
+                [sys.executable, str(REPO_ROOT / "install.py"), "--list-platforms"],
+                env=env, capture_output=True, text=True, timeout=60, check=False,
+            )
+        self.assertEqual(proc.returncode, 0, proc.stderr)
+        self.assertIn("Detected on this system: none", proc.stdout)
+
+
 class WindowsMandatoryLock(unittest.TestCase):
     """Issue 82: on Windows the partial copy's lock is mandatory, so hashing
     it by reopening its path failed with a sharing violation, and every file

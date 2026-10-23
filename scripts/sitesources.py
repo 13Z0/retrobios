@@ -14,7 +14,9 @@ import urllib.request
 
 import upstream
 from siterender import _by_mode
-from sourceref import _prose_runs, ref_role, source_ref_values, split_source_ref
+from sourceref import (
+    _prose_runs, is_binary_citation, ref_role, source_ref_values, split_source_ref,
+)
 
 
 def _repo_pins(profile: dict, field: str, label: str) -> list[tuple[str, str, str]]:
@@ -309,7 +311,10 @@ def _source_ref_markdown(profile: dict, value: str | dict | None) -> str:
             # broke 470 links. Two repositories and no tree to read: no link.
             selected: tuple[upstream.Repo, str] | None = None
             real_path = part.path
-            if path_re.fullmatch(part.path):
+            # A shipped binary (`DesktopKinect.dll`, `0x10037130-0x100371de`
+            # continuing a BAM.dll range) is no path of either repository:
+            # without a cached tree the single declared one took it.
+            if path_re.fullmatch(part.path) and not is_binary_citation(part.path):
                 if current_role:
                     # Only the repository the part names, or no link at all.
                     selected = by_role.get(current_role)

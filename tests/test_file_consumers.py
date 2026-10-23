@@ -173,6 +173,124 @@ class ReadersFollowTheDataTrees(unittest.TestCase):
         self.assertIn("dolphin", self._readers({}))
 
 
+class TheDestinationBasenameComesLast(unittest.TestCase):
+    """melonDS Nightly reads dsi_nand.bin at dsi/nand.bin. With the DSi image
+    absent from the checkout and only its variant left, the destination's
+    basename let the Wii nand.bin outrank the entry's own name, and the site
+    named melonDS Nightly a reader of the Wii NAND."""
+
+    def setUp(self):
+        self._tree = tempfile.TemporaryDirectory()
+        root = Path(self._tree.name)
+        files = {}
+        by_name: dict[str, list[str]] = {}
+        for rel, payload in (
+            ("bios/Nintendo/Wii/nand.bin", b"wii nand"),
+            ("bios/Nintendo/Nintendo DSi/.variants/dsi_nand.bin.8b79a73c", b"dsi nand"),
+        ):
+            path = root / rel
+            path.parent.mkdir(parents=True)
+            path.write_bytes(payload)
+            sha1 = hashlib.sha1(payload).hexdigest()
+            name = "dsi_nand.bin" if "dsi_nand" in rel else path.name
+            files[sha1] = {"name": name, "sha1": sha1, "path": str(path),
+                           "md5": hashlib.md5(payload).hexdigest(), "size": len(payload)}
+            by_name.setdefault(name, []).append(sha1)
+        self.wii = hashlib.sha1(b"wii nand").hexdigest()
+        self.dsi = hashlib.sha1(b"dsi nand").hexdigest()
+        self.db = {"files": files, "indexes": {
+            "by_name": by_name, "by_md5": {}, "by_path_suffix": {}}}
+        self.entry = {"name": "dsi_nand.bin", "path": "dsi/nand.bin", "agnostic": True}
+
+    def tearDown(self):
+        self._tree.cleanup()
+
+    def test_the_resolver_keeps_the_entry_name(self):
+        from common import resolve_local_file
+
+        path, status = resolve_local_file(
+            {**self.entry, "source_profile": "melonds-nightly"}, self.db,
+            dest_hint=self.entry["path"],
+        )
+        self.assertEqual((path, status), (self.db["files"][self.dsi]["path"], "name_exact"))
+
+    def test_the_wii_nand_has_no_ds_reader(self):
+        consumers = FileConsumers(self.db, data_dir_registry={})
+        consumers.add_emulators({"melonds-nightly": {"type": "standalone", "files": [self.entry]}})
+        self.assertEqual(consumers.emulators.get(self.wii), None)
+        self.assertEqual(consumers.emulators.get(self.dsi), {"melonds-nightly"})
+
+    def test_a_descriptive_name_still_reaches_the_basename(self):
+        """name: "MDA font ROM", path: "mda.rom" is the case the basename step serves."""
+        from common import resolve_local_file
+
+        path, _ = resolve_local_file(
+            {"name": "Wii NAND image", "path": "nand.bin"}, self.db, dest_hint="nand.bin",
+        )
+        self.assertEqual(path, self.db["files"][self.wii]["path"])
+
+
+class EveryReaderIsTheEmulatorPackFile(unittest.TestCase):
+    """Each emulator FileConsumers credits with a file is one whose entry the
+    emulator pack resolves to that file: the same entry fields (archive
+    members, owner), destination hint, ZIP index and data trees. The pairing
+    omitted the archive members, and gngeopi and neo-emu were credited with
+    the MAME neogeo.zip while their pack carries the one holding the ROMs
+    they open."""
+
+    def test_pairings_agree_with_the_resolver(self):
+        import json
+        import os
+
+        from common import (
+            build_zip_contents_index, load_data_dir_registry,
+            load_emulator_profiles, resolve_local_file,
+        )
+        from validation import with_archive_members
+
+        db_path = REPO_ROOT / "database.json"
+        if not db_path.exists():
+            self.skipTest("database.json absent")
+        previous = os.getcwd()
+        os.chdir(REPO_ROOT)
+        self.addCleanup(os.chdir, previous)
+        db = json.loads(db_path.read_text(encoding="utf-8"))
+        zips = build_zip_contents_index(db)
+        registry = load_data_dir_registry(str(REPO_ROOT / "platforms"))
+        profiles = load_emulator_profiles(str(REPO_ROOT / "emulators"))
+        consumers = FileConsumers(db, zips, registry)
+        consumers.add_emulators(profiles)
+        sha1_by_path = {e["path"]: s for s, e in db["files"].items()}
+
+        expected: set[tuple[str, str]] = set()
+        from_trees: set[tuple[str, str]] = set()
+        for name, profile in profiles.items():
+            if profile.get("type") == "alias":
+                continue
+            files = profile.get("files") or []
+            for entry in files:
+                if not isinstance(entry, dict) or not entry.get("name"):
+                    continue
+                members = consumers.directory_members(entry)
+                if members:
+                    from_trees |= {(sha1, name) for sha1 in members.values()}
+                    continue
+                path, status = resolve_local_file(
+                    {**with_archive_members(entry, files), "source_profile": name},
+                    db, zips, dest_hint=entry.get("path") or "",
+                    data_dir_registry=registry,
+                )
+                if path and status not in ("not_found", "hash_mismatch"):
+                    sha1 = sha1_by_path.get(path)
+                    if sha1:
+                        expected.add((sha1, name))
+        credited = {
+            (sha1, name) for sha1, names in consumers.emulators.items() for name in names
+        }
+        self.assertEqual(sorted(expected - credited), [])
+        self.assertEqual(sorted(credited - expected - from_trees), [])
+
+
 def tearDownModule():
     _TMP.cleanup()
 

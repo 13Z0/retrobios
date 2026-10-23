@@ -477,11 +477,32 @@ class TheSummaryNamesTheBulk(unittest.TestCase):
             _sized("mame/3do_m2.zip", 37 * MB, ["3do"], ["mame"]),
         ]
         lines = install.bulk_hint(files, {"system_cores": {"3do": ["mame", "opera"]}},
-                                  systems_chosen=True, cores_chosen=False)
+                                  systems_chosen=True, cores_chosen=False,
+                                  accepted={"mame", "opera"})
         self.assertEqual(lines, [
             "  mame pulls 337.0 MB of this 349.0 MB download for 3do. --core opera "
             "keeps 12.0 MB of it and saves 337.0 MB (96%)."
         ])
+
+    def test_only_a_core_the_option_accepts_is_advised(self):
+        """`--core ares keeps 11.0 MB` was printed, and `--core ares` then
+        answered "unknown core": ares emulates the PlayStation and loads no
+        file of its own, and --core takes only the cores that do."""
+        files = [
+            _sized("scph5501.bin", 1 * MB, ["sony-playstation"]),
+            _sized("ps2_bios.bin", 300 * MB, ["sony-playstation"], ["duckstation"]),
+            _sized("pcsx/extra.bin", 2 * MB, ["sony-playstation"], ["pcsx_rearmed"]),
+        ]
+        manifest = {"system_cores": {"sony-playstation": ["ares", "duckstation",
+                                                          "pcsx_rearmed"]}}
+        lines = install.bulk_hint(files, manifest, True, False,
+                                  accepted={"duckstation", "pcsx_rearmed"})
+        self.assertEqual(len(lines), 1)
+        self.assertIn("--core pcsx_rearmed keeps 3.0 MB", lines[0])
+        self.assertNotIn("ares", lines[0])
+        self.assertEqual(install.bulk_hint(files, manifest, True, False,
+                                           accepted={"duckstation"}), [])
+        self.assertEqual(install.bulk_hint(files, manifest, True, False), [])
 
     def test_a_system_pulling_most_of_the_download_is_named(self):
         files = [_sized("a.zip", 400 * MB, ["arcade"]), _sized("b.bin", 50 * MB, ["nes"]),

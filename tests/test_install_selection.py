@@ -9,10 +9,12 @@ to one answer.
 
 from __future__ import annotations
 
+import contextlib
 import functools
 import hashlib
 import http.server
 import importlib.util
+import io
 import json
 import os
 import random
@@ -311,6 +313,24 @@ class CommandLineChoices(unittest.TestCase):
         self.assertIn("sega-saturn", str(ctx.exception))
         self.assertIn("nintendo-gba", str(ctx.exception))
 
+    def test_a_short_name_is_suggested_never_taken(self):
+        """`--system gba`, `psx` and `ps1` were refused on RetroArch with no
+        suggestion, though nintendo-gba holds the very letters."""
+        known = [f"system-{i}" for i in range(40)] + [
+            "nintendo-gb", "nintendo-gba", "nintendo-gbc", "sony-playstation",
+            "sony-playstation-2", "sega-mega-drive"]
+        for typed, meant in (("gba", "nintendo-gba"), ("psx", "sony-playstation"),
+                             ("ps1", "sony-playstation"), ("PS2", "sony-playstation-2"),
+                             ("genesis", "sega-mega-drive"), ("gb", "nintendo-gb")):
+            with self.subTest(typed=typed), self.assertRaises(ValueError) as ctx:
+                install.resolve_choices([typed], known, "system")
+            self.assertIn(f"Did you mean: {meant}", str(ctx.exception))
+
+    def test_a_short_name_for_a_system_the_list_lacks_is_not_suggested(self):
+        with self.assertRaises(ValueError) as ctx:
+            install.resolve_choices(["psx"], [f"system-{i}" for i in range(40)], "system")
+        self.assertNotIn("sony-playstation", str(ctx.exception))
+
     def test_an_empty_list_is_refused(self):
         with self.assertRaises(ValueError):
             install.resolve_regions([" , "])
@@ -332,6 +352,114 @@ class CommandLineChoices(unittest.TestCase):
         for bad in ("0", "6", "4-2", "x", "1-"):
             with self.subTest(text=bad), self.assertRaises(ValueError):
                 install.parse_selection(bad, 5)
+
+
+class DecliningTheSizePointsAtTheChoice(unittest.TestCase):
+    """Saying no to `Download 8.4 GB?` printed "--system, --core and
+    --region install less (see --help)": a 91-line help for someone who had
+    just passed the c entry that does it."""
+
+    def _run(self, answers: list[str], *options: str) -> str:
+        replies = iter(answers)
+        out = io.StringIO()
+        with FakeRepository() as repo, \
+                mock.patch.object(sys, "argv", ["install.py", "--platform", "retroarch",
+                                                "--dest", str(repo.dest), *options]), \
+                mock.patch.object(install, "MANIFEST_URL",
+                                  repo.env()["RETROBIOS_BASE_URL"] + "/install/{platform}.json"), \
+                mock.patch.object(install, "RAW_FILE_URL",
+                                  repo.env()["RETROBIOS_BASE_URL"] + "/{path}"), \
+                mock.patch.object(install, "CONFIRM_FROM_BYTES", 1), \
+                mock.patch("sys.stdin", mock.Mock(isatty=lambda: True)), \
+                mock.patch("builtins.input", lambda _prompt="": next(replies)), \
+                contextlib.redirect_stdout(out):
+            try:
+                install.main()
+            except SystemExit:
+                pass
+            self.assertEqual(repo.installed(), [])
+        return out.getvalue()
+
+    def test_install_everything_then_no_names_the_c_entry(self):
+        out = self._run(["", "n"])
+        self.assertIn("type c at the first question", out)
+        self.assertNotIn("see --help", out)
+
+    def test_options_given_keep_the_option_advice(self):
+        out = self._run(["n"], "--system", "sony-playstation")
+        self.assertIn("--system, --core and --region install less", out)
+
+
+class ACoreWithNoFileOfItsOwn(unittest.TestCase):
+    """pcsx_rearmed, swanstation and pcsx1 showed `0 files, 0 B` in the
+    cores step and in --list-cores, which reads as "this core gets nothing":
+    their files are the platform's own, which are always kept."""
+
+    FILES = [
+        {"dest": "scph5501.bin", "size": 5, "cores": None, "systems": ["sony-playstation"],
+         "declared_choices": [], "slot_choices": [{"cores": ["pcsx_rearmed"]}]},
+        {"dest": "ps2.bin", "size": 9, "cores": ["duckstation"],
+         "systems": ["sony-playstation"]},
+    ]
+
+    def _line(self, out: str, core: str) -> str:
+        return next(line for line in out.splitlines() if line.strip().startswith(core)
+                    or f") {core}" in line)
+
+    def test_the_listing_says_its_files_are_the_platforms(self):
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            install._print_choices("retroarch", self.FILES, [], systems=False)
+        line = self._line(out.getvalue(), "pcsx_rearmed")
+        self.assertNotIn("0 files", line)
+        self.assertIn("always kept", line)
+        self.assertIn("1 file, 9 B", self._line(out.getvalue(), "duckstation"))
+
+    def test_the_cores_step_says_so_too(self):
+        answers = iter(["c", "", ""])
+        out = io.StringIO()
+        with mock.patch("builtins.input", lambda _prompt="": next(answers)), \
+                contextlib.redirect_stdout(out):
+            install._prompt_custom_selection("retroarch", self.FILES, [])
+        line = self._line(out.getvalue(), "pcsx_rearmed")
+        self.assertNotIn("0 files", line)
+        self.assertIn("always kept", line)
+
+
+class FilesSharedBySystemsAreCountedApart(unittest.TestCase):
+    """`3do 1704 files, 349.0 MB`: 1689 of them are MAME's hash and plugin
+    files, which six systems carry. Picking 3DO, one expects its BIOS."""
+
+    FILES = [
+        {"dest": "panafz10.bin", "size": 4, "cores": None, "systems": ["3do"]},
+        {"dest": "mame/hash/a.xml", "size": 100, "cores": None,
+         "systems": ["3do", "philips-cdi"]},
+        {"dest": "mame/hash/b.xml", "size": 50, "cores": None,
+         "systems": ["3do", "philips-cdi"]},
+        {"dest": "gba_bios.bin", "size": 8, "cores": None, "systems": ["nintendo-gba"]},
+    ]
+
+    def _listing(self) -> str:
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            install._print_choices("retroarch", self.FILES, [], systems=True)
+        return out.getvalue()
+
+    def test_the_listing(self):
+        lines = {line.split()[0]: line for line in self._listing().splitlines()}
+        self.assertIn("1 file, 4 B, and 2 files, 150 B shared with other systems",
+                      lines["3do"])
+        self.assertIn("2 files, 150 B, all shared with other systems", lines["philips-cdi"])
+        self.assertTrue(lines["nintendo-gba"].endswith("1 file, 8 B"))
+
+    def test_the_systems_step(self):
+        answers = iter(["c", ""])
+        out = io.StringIO()
+        with mock.patch("builtins.input", lambda _prompt="": next(answers)), \
+                contextlib.redirect_stdout(out):
+            install._prompt_custom_selection("retroarch", self.FILES, [])
+        self.assertIn("1 file, 4 B, and 2 files, 150 B shared with other systems",
+                      out.getvalue())
 
 
 class TheBoundaryChecksTheNewFields(unittest.TestCase):
@@ -543,6 +671,74 @@ class TheOneLinerNarrows(unittest.TestCase):
             self.assertIn("pcsx_rearmed", out)
             self.assertIn("--system sony-playstation --region north-america", out)
             self.assertEqual(repo.installed(), ["pcsx/extra.bin", "scph5501.bin"])
+
+    @unittest.skipUnless(shutil.which("script"), "script(1) provides the terminal")
+    def test_a_quoted_folder_typed_at_the_prompt(self):
+        """The quotes "Copy as path" adds were kept: the files went into a
+        folder named `"` under the current directory, created without the
+        question --dest asks, and the run said Done."""
+        with FakeRepository() as repo:
+            home = repo.root / "home"
+            home.mkdir()
+            # Read for the standalone emulator folders, of which there are none.
+            (repo.root / "install" / "emudeck.json").write_text(json.dumps(
+                {"manifest_version": 2, "platform": "emudeck", "files": []}))
+            card = repo.root / "My Card" / "bios"
+            env = dict(repo.env(), HOME=str(home), USERPROFILE=str(home),
+                       XDG_CONFIG_HOME=str(home), RETROBIOS_OS="linux")
+            command = f"{shlex.quote(sys.executable)} {shlex.quote(str(REPO_ROOT / 'install.py'))}"
+            for answer, code in (("n", 2), ("y", 0)):
+                with self.subTest(answer=answer):
+                    proc = subprocess.run(
+                        ["script", "-qec", command, "/dev/null"],
+                        input=f'1\n"{card}"\n{answer}\n\n', env=env, cwd=repo.root,
+                        capture_output=True, text=True, timeout=60, check=False,
+                    )
+                    self.assertEqual(proc.returncode, code, proc.stdout + proc.stderr)
+                    self.assertIn(f"Create 2 folders under {repo.root}?", proc.stdout)
+                    self.assertFalse((repo.root / '"').exists())
+            self.assertEqual(len([p for p in card.rglob("*") if p.is_file()]), 5)
+
+    def test_q_at_every_menu_stops_on_130(self):
+        """`install.sh && retroarch` started RetroArch after a q, which left
+        with 0 where Ctrl+C and Ctrl+D leave with 130."""
+        files = [{"dest": "a.bin", "size": 1, "systems": ["nintendo-gba"]}]
+        menus = (
+            lambda: install._choose_platform("Platform:"),
+            lambda: install._pick("Systems:", [("nintendo-gba", files)]),
+            lambda: install._prompt_custom_selection("retroarch", files, []),
+        )
+        for menu in menus:
+            with self.subTest(menu=menu), \
+                    mock.patch("builtins.input", lambda _prompt="": "q"), \
+                    mock.patch("sys.stdout", new_callable=lambda: open(os.devnull, "w")), \
+                    self.assertRaises(SystemExit) as stop:
+                menu()
+            self.assertEqual(stop.exception.code, 130)
+
+    @unittest.skipIf(os.name == "nt", "a pseudo-terminal is a POSIX one")
+    def test_ctrl_d_at_the_first_question_has_nothing_to_carry_on(self):
+        import pty  # noqa: PLC0415
+
+        with FakeRepository() as repo:
+            home = repo.root / "home"
+            home.mkdir()
+            (repo.root / "install" / "emudeck.json").write_text(json.dumps(
+                {"manifest_version": 2, "platform": "emudeck", "files": []}))
+            env = dict(repo.env(), HOME=str(home), USERPROFILE=str(home),
+                       XDG_CONFIG_HOME=str(home), RETROBIOS_OS="linux")
+            leader, follower = pty.openpty()
+            proc = subprocess.Popen(
+                [sys.executable, str(REPO_ROOT / "install.py")], stdin=follower,
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=env, text=True,
+            )
+            os.close(follower)
+            os.write(leader, b"\x04")
+            out, err = proc.communicate(timeout=60)
+            os.close(leader)
+        self.assertEqual(proc.returncode, 130, out + err)
+        self.assertIn("Stopped. Nothing was installed.", out)
+        self.assertNotIn("carry on", out)
 
     @unittest.skipUnless(shutil.which("script"), "script(1) provides the terminal")
     def test_enter_installs_everything_at_a_terminal(self):

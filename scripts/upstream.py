@@ -30,6 +30,10 @@ ABSENT = "\0absent\0"
 GITHUB_COMPARE_CAP = 300
 RETRIES = 3
 RETRY_BACKOFF = (0.5, 2.0)
+# A 429 is waited out, as base_scraper does: git.libretro.com answers it
+# a few hundred requests into a pass and serves again a minute later.
+RATE_LIMIT_WAITS = (5.0, 20.0, 60.0)
+RATE_LIMIT_WAIT_CAP = 120.0
 GITHUB_HOSTS = frozenset(
     {"github.com", "api.github.com", "raw.githubusercontent.com"}
 )
@@ -85,6 +89,9 @@ _HOSTS: dict[str, tuple[str, str, str]] = {
 
 
 _sleep = time.sleep
+# Hosts still refusing after every wait. Asking them again in the same pass
+# only spends the waits again, while the other forges keep answering.
+_exhausted_hosts: set[str] = set()
 
 
 class UpstreamError(Exception):
@@ -93,6 +100,10 @@ class UpstreamError(Exception):
 
 class RateLimitError(UpstreamError):
     """The forge refused the request for quota reasons."""
+
+    def __init__(self, message: str, host: str = "") -> None:
+        super().__init__(message)
+        self.host = host
 
 
 class NotCachedError(UpstreamError):
@@ -232,15 +243,16 @@ def _http_failure(url: str, exc: urllib.error.HTTPError) -> UpstreamError:
     GitHub reports exhaustion with X-RateLimit-Remaining: 0, and 429 is the
     standard quota status everywhere, so those two are the only fatal cases.
     """
+    host = urllib.parse.urlsplit(url).hostname or ""
     if exc.code == 429:
-        return RateLimitError(f"{url}: HTTP 429")
+        return RateLimitError(f"{url}: HTTP 429", host)
     if exc.code in (410, 451):
         reason = "withdrawn for legal reasons" if exc.code == 451 else "gone"
         return GoneError(f"{url}: HTTP {exc.code}, {reason}")
     if exc.code == 403 and exc.headers is not None:
         remaining = exc.headers.get("X-RateLimit-Remaining")
         if remaining is not None and remaining.strip() == "0":
-            return RateLimitError(f"{url}: HTTP 403, quota exhausted")
+            return RateLimitError(f"{url}: HTTP 403, quota exhausted", host)
     return UpstreamError(f"{url}: HTTP {exc.code}")
 
 
@@ -278,15 +290,37 @@ def _resolver_answers() -> bool:
     return True
 
 
+def _rate_limit_wait(exc: urllib.error.HTTPError, waited: int) -> float | None:
+    """Seconds to wait before asking again, or None when waiting is futile.
+
+    GitHub's exhausted quota (403) resets on the hour. A 429 names its wait
+    in Retry-After, which is followed up to a cap, else the fixed steps.
+    """
+    if exc.code != 429 or waited >= len(RATE_LIMIT_WAITS):
+        return None
+    retry_after = (exc.headers.get("Retry-After") or "").strip() if exc.headers else ""
+    if retry_after.isdigit():
+        delay = float(retry_after)
+        return delay if delay <= RATE_LIMIT_WAIT_CAP else None
+    return RATE_LIMIT_WAITS[waited]
+
+
 def _fetch(url: str, accept_json: bool = False) -> bytes | None:
     """Body of a GET, or None on 404.
 
     A pass over every profile issues thousands of requests, so a dropped
     connection or a transient 5xx is a certainty rather than an accident.
-    Those are retried, a definitive answer from the forge is not.
+    Those are retried, a definitive answer from the forge is not. A rate
+    limit is waited out, and a host that outlasts the waits is not asked
+    again in this process.
     """
+    host = urllib.parse.urlsplit(url).hostname or ""
+    if host in _exhausted_hosts:
+        raise RateLimitError(f"{url}: {host} rate limited earlier in this run", host)
     failure: UpstreamError | None = None
-    for attempt in range(RETRIES):
+    attempt = 0
+    waited = 0
+    while True:
         req = urllib.request.Request(url, headers=_headers(url, accept_json))
         try:
             with urllib.request.urlopen(req, timeout=30) as resp:
@@ -295,15 +329,24 @@ def _fetch(url: str, accept_json: bool = False) -> bytes | None:
             if exc.code == 404:
                 return None
             failure = _http_failure(url, exc)
-            if isinstance(failure, RateLimitError) or exc.code < 500:
+            if isinstance(failure, RateLimitError):
+                delay = _rate_limit_wait(exc, waited)
+                if delay is None:
+                    _exhausted_hosts.add(host)
+                    raise failure from exc
+                waited += 1
+                _sleep(delay)
+                continue
+            if exc.code < 500:
                 raise failure from exc
         except (urllib.error.URLError, http.client.HTTPException, OSError) as exc:
             if _host_is_unresolvable(exc):
                 raise GoneError(f"{url}: host does not resolve") from exc
             failure = UpstreamError(f"{url}: {exc}")
-        if attempt + 1 < RETRIES:
-            _sleep(RETRY_BACKOFF[attempt])
-    raise failure
+        attempt += 1
+        if attempt >= RETRIES:
+            raise failure
+        _sleep(RETRY_BACKOFF[attempt - 1])
 
 
 def _http_text(url: str) -> str | None:
@@ -780,12 +823,28 @@ def list_tree(
     payload = _api(url, cache_dir, offline)
     if not isinstance(payload, dict):
         return [], True
+    entries = list(payload.get("tree") or [])
+    truncated = bool(payload.get("truncated"))
+    # Forgejo pages a recursive tree, 1000 entries at a time, and says how
+    # many there are: mirrors/Ryujinx holds 4704, and read as one page every
+    # citation past the first thousand was unverifiable. GitHub reports no
+    # count, its truncation is final.
+    total = payload.get("total_count")
+    if truncated and repo.family == "forgejo" and isinstance(total, int):
+        for page in range(2, MAX_TREE_PAGES + 1):
+            if len(entries) >= total:
+                break
+            more = _api(f"{url}&page={page}", cache_dir, offline)
+            if not isinstance(more, dict) or not more.get("tree"):
+                break
+            entries.extend(more["tree"])
+        truncated = len(entries) < total
     paths = [
         entry["path"]
-        for entry in payload.get("tree") or []
+        for entry in entries
         if isinstance(entry, dict) and entry.get("type") == "blob" and entry.get("path")
     ]
-    return paths, bool(payload.get("truncated"))
+    return paths, truncated
 
 
 def list_gitlinks(

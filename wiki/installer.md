@@ -544,19 +544,19 @@ what the options name, everything by default.
 
 | Option | Effect |
 |--------|--------|
-| `--platform NAME` | Install for this platform instead of the detected one. Unknown names are refused with the available list |
+| `--platform NAME` | Install for this platform instead of the detected one. A system `--list-platforms` names under its own files (`muos`, `arkos`) stands for the file list it gets, and the run says which. Unknown names are refused with the closest ones |
 | `--dest PATH` | Destination directory, overriding detection. Without `--platform`, the file list is the platform detected here: at a terminal the installer asks, Enter taking the one found, and otherwise it uses the one found, RetroArch's when nothing is found, and refuses when several are. The run prints whose list it is. A folder that does not exist is named with the nearest one that does, then created. When more than its last level is missing (a mistyped path), a run at a terminal asks first, and the answer defaults to no |
 | `--target NAME` | Keep only the files the cores of that hardware target need, and the systems they emulate. An unknown target is refused rather than ignored, since carrying on would install everything. On Batocera, Recalbox, ROCKNIX and Lakka the board is read from the system (`batocera.arch`, `recalbox.arch`, `HW_DEVICE`, `LIBREELEC_DEVICE` or `LIBREELEC_PROJECT`) and applied when no `--target` is given |
 | `--every-board` | Install the files of every board instead of the one the system names, for a card that moves between devices |
 | `--installed-cores` | Keep only what the cores already installed read (RetroArch, Lakka, RetroPie). See [Installed cores](#installed-cores) |
 | `--cores-dir PATH` | The folder RetroArch loads its cores from, for `--installed-cores` when it is not found. Implies `--installed-cores` |
 | `--save-dir PATH` | The frontend's save directory (RetroArch's `savefile_directory`), for the files some cores read there, when the run cannot find it. The core's own folder is still added below it when the frontend sorts saves by core |
-| `--system NAMES` | Install only these systems. Comma-separated or repeated. `--list-systems` prints the names, `other` included |
+| `--system NAMES` | Install only these systems. Comma-separated or repeated. `--list-systems` prints the names, `other` included. A short name the platform does not use (`gba`, `psx`) is refused with the ids it may stand for, never taken in their place |
 | `--core NAMES` | Keep the platform's own list and only the extra files these cores load. `--list-cores` prints the names |
 | `--emulator NAMES` | Install what these emulators read on the detected platform, and nothing else: their own files and the platform's files of the systems they run. Each emulator page on the site gives this command. `--list-emulators` prints the names, buildbot names such as `mednafen_psx` included |
 | `--region LIST` | Preferred regions, best first (`us,eu,jp`): keep one BIOS per region where a system has several. Accepts the names and aliases of `generate_pack.py --region` |
 | `--no-game-data` | Leave out game data (a game's own files, not firmware) and install the firmware only. What it leaves out is named. See [Firmware without game data](#firmware-without-game-data) |
-| `--list-systems` | Print a platform's systems with the files and size each holds |
+| `--list-systems` | Print a platform's systems with the files and size each holds, the files other systems share too counted apart |
 | `--list-cores` | Print the cores whose extra files a platform installs |
 | `--list-emulators` | Print every name `--emulator` accepts, each buildbot name beside the emulator it stands for |
 | `--romm-firmware TEMPLATE` | RomM: where each platform's firmware goes in the library, as `filesystem.structure.firmware` in RomM's `config.yml` says (`{platform}/bios` for a library laid out as `{platform}/roms`). Read from `config.yml` beside the library when it is there. See [RomM firmware layout](#romm-firmware-layout) |
@@ -634,7 +634,7 @@ rewrites both to `/roms2/bios`: a second card is followed through them.
 | `/mnt/plumos-user` | plumOS | RetroArch | `/mnt/plumos-user/bios`, which its launcher appends to every RetroArch run |
 | `/etc/os-release` `ID=plumos` without the folder above | plumOS | none | its builds choose a folder per launch: named, not installed to |
 | `/usr/trimui` | TrimUI | none | no published source names the stock firmware's folder: named, not installed to |
-| `/mnt/SDCARD/.system/res` or `/mnt/sdcard/.system/res` | MinUI | none | MinUI, MyMinUI and NextUI give each core its own `Bios/<tag>/`, a layout not written yet: named, not installed to |
+| `/mnt/SDCARD/.system/res` or `/mnt/sdcard/.system/res` | MinUI, NextUI or MyMinUI, as the first line of the card's `.system/version.txt` names it | MinUI, NextUI or MyMinUI | the card root, below which the list writes `Bios/<tag>/`. Without `version.txt` the three cannot be told apart: named, not installed to, and the message gives `--platform` and `--dest` to use |
 | `/mnt/vendor/bin/dmenu.bin` | Anbernic stock firmware | RetroArch | `/mnt/mmc/bios` |
 
 AmberELEC, EmuELEC and KNULLI install the BIOS list they publish themselves. TheRA is not detected: no
@@ -745,9 +745,9 @@ for EmuDeck (`C:\Emulation\bios` on Windows), `/storage/roms/bios` for ROCKNIX,
 directory for RetroArch. BizHawk has no such folder: it reads `Firmware`
 beside its executable wherever the archive was extracted, so a forced
 `--platform bizhawk` that finds no install stops and asks for `--dest`. MinUI,
-NextUI and MyMinUI keep their files on the SD card, which the installer reads
-from a computer it is mounted on: a forced `--platform minui` stops and asks
-for the card's root as `--dest`, and a `--dest` that is a folder inside such a
+NextUI and MyMinUI keep their files on the SD card. Run on the device, the
+installer finds the card root. From a computer the card is mounted on, a
+forced `--platform minui` stops and asks for the card's root as `--dest`, and a `--dest` that is a folder inside such a
 card (its `Bios/`) is refused with the root to name instead. On Android a forced `--platform retroarch` falls back to
 `<shared storage>/RetroArch/system` instead, a home directory there belonging
 to Termux rather than to the frontend. Pass `--dest` to say where instead of
@@ -879,9 +879,10 @@ are PortMaster's own, so the port carries no graphics code.
 
 - From PortMaster's catalog, once the port is accepted there: open PortMaster,
   find RetroBIOS under the Other genre, install.
-- `RetroBIOS.zip`, attached to each [release](https://github.com/Abdess/retrobios/releases/latest)
-  cut since the port was added, copied into PortMaster's
-  autoinstall folder. Starting PortMaster then installs it, with or without a
+- `RetroBIOS.zip`, copied into PortMaster's autoinstall folder. The release
+  process attaches it to each [release](https://github.com/Abdess/retrobios/releases/latest)
+  cut after the port was added. Releases cut before carry none: when the
+  latest one lists no `RetroBIOS.zip`, build it from a clone (below). Starting PortMaster then installs it, with or without a
   network connection. PortMaster's FAQ names the folder: `/roms/ports/PortMaster/autoinstall/`
   on AmberELEC and ROCKNIX, `/roms/tools/PortMaster/autoinstall/` on ArkOS,
   `/mmc/MUOS/PortMaster/autoinstall/` on muOS,
@@ -1065,8 +1066,8 @@ fields, the installer refuses to narrow rather than install everything.
 |------|---------|
 | `0` | everything asked for is installed or already up to date |
 | `1` | a failure: the one-liner could not download or verify `install.py`, or found no Python 3.8 (nothing was run), an unusable base URL, an unknown platform or target, `--installed-cores` with no core found, a manifest that fails validation, a fetch that never succeeded, no platform to install for in a non-interactive run, some files failed while others installed, `--check` found files to fetch, a `--from-pack` pack that cannot be read, lacks a part or is for another platform, or `--restore` could not put a file back |
-| `2` | nothing was installed: every file the run tried failed (a BIOS folder that cannot be written, for one), the drive has too little free space for the download (checked before any folder is created), or the question about a `--dest` folder that does not exist was answered no. Also an option the installer refused before any download: an unknown option, `--jobs` outside 1 to 32, `--target` with `--every-board` or `--from-pack`. The message then starts with `install.py: error:`. With `--restore`, a folder that is not a dated folder inside `retrobios-backup` |
-| `130` | stopped with Ctrl+C, or with Ctrl+C or Ctrl+D at a question. Run the same command again to carry on |
+| `2` | nothing was installed: every file the run tried failed (a BIOS folder that cannot be written, for one), the drive has too little free space for the download (checked before any folder is created), or the question about a folder that does not exist, named with `--dest` or typed at the folder question, was answered no. Also an option the installer refused before any download: an unknown option, `--jobs` outside 1 to 32, `--target` with `--every-board` or `--from-pack`. The message then starts with `install.py: error:`. With `--restore`, a folder that is not a dated folder inside `retrobios-backup` |
+| `130` | stopped with Ctrl+C, or with `q`, Ctrl+C or Ctrl+D at a question. Run the same command again to carry on |
 | `141` | the output was piped to a reader that closed early (`--list-platforms \| head`) |
 
 `install.ps1` passes the installer's code on unchanged: run as a file it exits
@@ -1097,9 +1098,9 @@ kind, and each kind has exactly the keys below, in this order. The schema is
 |------|------|------|
 | `start` | `schema`, `installer`, `mode` | First line. `schema` is 1, `installer` the identity `--version` prints, `mode` one of `install`, `check`, `dry-run`, `list` |
 | `detect` | `os`, `os_name`, `platforms` | Once the platforms are known. `os_name` comes from `/etc/os-release`. `platforms` lists `{platform, name, bios_dir}`, and is empty when nothing supported was found |
-| `error` | `stage`, `reason`, `platform`, `message` | The file list could not be read (`stage` is `manifest`). `reason` is `network`, `not_found` or `invalid` |
+| `error` | `stage`, `reason`, `platform`, `message` | The file list could not be read (`stage` is `manifest`). `reason` is `network`, `not_found` or `invalid`, `clock` when the server's certificate was refused and the system clock reads a date before the installer was written, or `no_ca` when the machine holds no list of trusted certificates (`SSL_CERT_FILE` names one). `message` says it in words |
 | `file` | `platform`, `dest`, `systems`, `size`, `state` | Each file of the list after the check. `state` is `present` (hash verified), `wrong_hash` or `missing` |
-| `system` | `platform`, `system`, `name`, `files`, `present`, `missing`, `wrong_hash`, `bytes_needed` | Each system, sorted by id. Files with no system count under `other`. `name` is the platform's own name for it |
+| `system` | `platform`, `system`, `name`, `files`, `present`, `missing`, `wrong_hash`, `bytes_needed` | Each system, sorted by id, and with `--system` only the systems named. Files with no system count under `other`. `name` is the platform's own name for it |
 | `check` | `platform`, `name`, `bios_dir`, `files`, `present`, `missing`, `wrong_hash`, `bytes_needed`, `data_missing`, `not_installable` | The platform's totals. `data_missing` counts data-tree files to fetch, `not_installable` the files the collection cannot supply |
 | `download` | `platform`, `files`, `bytes` | Before the downloads start |
 | `progress` | `files_done`, `files_total`, `bytes_done`, `bytes_total` | At most every half second while bytes arrive |
@@ -1121,7 +1122,9 @@ no event at all. A program reads a missing `end` as that case.
 | `RETROBIOS_INSTALL_URL` | Where the bootstrap fetches `install.py`. HTTPS only |
 | `RETROBIOS_INSTALL_SHA256` | The SHA-256 the bootstrap requires of that installer, 64 hex characters. When either of these two is set and the fingerprint does not match, the error names the variable instead of suggesting a retry |
 | `RETROBIOS_BOOTSTRAP` | Set by `install.sh` (`sh`) and `install.ps1` (`ps1`) for the temporary installer they run, so that its hints give back the one-line command rather than `python3 install.py` |
-| `NO_COLOR` | Plain text, no colour, even at a terminal. `TERM=dumb` also turns the live progress line off |
+| `NO_COLOR` | Plain text, no colour, even at a terminal, when set to any value but an empty one. `TERM=dumb` also turns the live progress line off |
+| `FORCE_COLOR`, `CLICOLOR_FORCE` | Colour even when the output is a pipe or a file, set to any value but `0` or an empty one. `NO_COLOR` wins over both, and the progress line stays one line per file |
+| `SSL_CERT_FILE`, `SSL_CERT_DIR` | The trusted certificates to check servers with, for a Python that finds none of its own |
 | `RETROBIOS_PLAIN`, `ACCESSIBLE` | Set to anything but `0`: the questions come line by line, as with `--plain`, instead of the full-screen interface |
 | `HTTPS_PROXY`, `NO_PROXY` | Honoured for every download through the standard library's default proxy handling: one names the proxy, the other the hosts to reach directly |
 
@@ -1137,6 +1140,19 @@ The installer fetches its manifest, then downloads only the repository or
 `https://github.com` opens. Behind a proxy, set `HTTPS_PROXY` in the
 environment. A file that fails three attempts is counted and reported at the
 end, and the next run fetches only what is still missing.
+
+The reason is said in words: no internet connection or a name that could not
+be looked up, a connection that timed out, was refused or was cut, a
+certificate that was rejected. `--verbose` adds the text Python gave. Two
+causes are not the network and are not retried:
+
+- `The clock reads 1980-01-01`: a device without a clock battery starts on an
+  old date, and every certificate then looks not yet valid. Connect to Wi-Fi
+  and let the time sync, or set the date, then run again.
+- `This system has no list of trusted certificates`: install the
+  `ca-certificates` package, or name a certificate bundle with `SSL_CERT_FILE`.
+  When the system keeps one where this Python does not look, the message names
+  it. Certificate checks are never turned off.
 
 ### Permission denied
 

@@ -18,6 +18,7 @@ import argparse
 import codecs
 import concurrent.futures
 import contextlib
+import datetime
 import errno
 import hashlib
 import http.client
@@ -46,7 +47,7 @@ import urllib.request
 import xml.etree.ElementTree as ET
 import zipfile
 import zlib
-from collections.abc import Callable, Iterator, Mapping
+from collections.abc import Callable, Collection, Iterator, Mapping
 from pathlib import Path, PurePosixPath
 from typing import BinaryIO, NamedTuple, TextIO
 
@@ -289,6 +290,8 @@ def _os_default_dests(os_type: str) -> dict[str, Path]:
 # Set when the run is interrupted, so queued downloads end instead of draining
 # the pool: every future is submitted before the first one completes.
 _stop = threading.Event()
+# Set once a run starts writing: Ctrl+C before that has nothing to carry on.
+_writing = threading.Event()
 
 class _Interrupted(Exception):
     """Raised inside a worker once the run has been stopped."""
@@ -328,6 +331,9 @@ class Terminal:
     """What the output stream can show: a live line, colour, or neither.
 
     A pipe or a log gets plain lines, and NO_COLOR and TERM=dumb are honoured.
+    As no-color.org reads it, an empty NO_COLOR is not set: `NO_COLOR= cmd`
+    turned colour off. FORCE_COLOR or CLICOLOR_FORCE paints a pipe, for a
+    log viewer that shows colour, and never makes the line live.
     """
 
     def __init__(self, stream: TextIO | None = None, quiet: bool = False) -> None:
@@ -335,8 +341,10 @@ class Terminal:
         self.quiet = quiet
         isatty = getattr(self.stream, "isatty", None)
         self.live = bool(isatty and isatty()) and os.environ.get("TERM") != "dumb"
+        forced = any(os.environ.get(name, "0") not in ("", "0")
+                     for name in ("FORCE_COLOR", "CLICOLOR_FORCE"))
         self.colour = (
-            self.live and "NO_COLOR" not in os.environ and _enable_ansi()
+            (self.live or forced) and not os.environ.get("NO_COLOR") and _enable_ansi()
         )
         if not self.colour:
             self.live = self.live and os.name != "nt"
@@ -383,6 +391,9 @@ class Progress:
         self.files = 0
         self.bytes = 0
         self.resumed = 0
+        # Files written to their place, which a stopped run counts: the
+        # queue's length said "118 files installed" over 8 on disk.
+        self.installed = 0
         self.start = time.monotonic()
         self._drawn = 0.0
         self._evented = self.start
@@ -479,8 +490,10 @@ EVENT_KEYS: dict[str, tuple[str, ...]] = {
     "start": ("schema", "installer", "mode"),
     # platforms: [{"platform", "name", "bios_dir"}], empty when none is found.
     "detect": ("os", "os_name", "platforms"),
-    # stage: manifest (reason: network, not_found or invalid) or detect
-    # (reason: conflict, two systems found on one machine).
+    # stage: manifest (reason: network, not_found, invalid, clock for a
+    # refused certificate under a clock set in the past, or no_ca for no
+    # trusted certificates on the machine) or detect (reason: conflict, two
+    # systems found on one machine).
     "error": ("stage", "reason", "platform", "message"),
     # state: present (hash verified), wrong_hash or missing.
     "file": ("platform", "dest", "systems", "size", "state"),
@@ -562,8 +575,14 @@ def _os_name() -> str:
 def _emit_check(
     plat: str, manifest: dict, bios_path: Path, files: list[dict], up_to_date: list[dict],
     mismatched: list[dict], data_missing: int, not_installable: int,
+    chosen: list[str] | None = None,
 ) -> None:
-    """One event per file, per system and per platform after a check."""
+    """One event per file, per system and per platform after a check.
+
+    With systems chosen, only those are described: a file of SkyEmu's
+    carries four systems, and --system nintendo-gba described gb, gbc and
+    ds by the few files the choice kept of them.
+    """
     present = {id(entry) for entry in up_to_date}
     wrong = {id(entry) for entry in mismatched}
     systems: dict[str, dict[str, int]] = {}
@@ -584,6 +603,8 @@ def _emit_check(
                 counts["bytes_needed"] += size
     names = manifest.get("system_names") or {}
     for system in sorted(systems):
+        if chosen and system not in chosen:
+            continue
         EVENTS.emit("system", platform=plat, system=system,
                     name=", ".join(names.get(system) or [system]), **systems[system])
     needed = [entry for entry in files if id(entry) not in present]
@@ -1255,8 +1276,9 @@ _EMBEDDED_RULES: tuple[_OsRule, ...] = (
     _OsRule("", "TrimUI", "file_exists", ("/usr/trimui",), None),
     # MinUI, MyMinUI and NextUI keep their system in .system at the card root
     # (MinUI dbf89435, workspace/all/common/defines.h:14-16) and give each core
-    # Bios/<tag>/ (workspace/all/minarch/minarch.c:2942), a layout the
-    # installer does not write.
+    # Bios/<tag>/ (workspace/all/minarch/minarch.c:2942). Their file lists
+    # write that layout below the card root, and the card's version.txt
+    # says which of the three it is (card_platform).
     _OsRule("", "MinUI", "file_exists", ("/mnt/SDCARD/.system/res",), None, base="TrimUI"),
     _OsRule("", "MinUI", "file_exists", ("/mnt/sdcard/.system/res",), None, base="TrimUI"),
     _OsRule("retroarch", "Anbernic stock firmware", "file_exists",
@@ -1266,9 +1288,13 @@ _EMBEDDED_RULES: tuple[_OsRule, ...] = (
 # Why a system found here gets no folder: said once per run.
 _NO_FOLDER = {
     "TrimUI": "its firmware publishes no source naming the folder its RetroArch reads",
-    "MinUI": "MinUI, MyMinUI and NextUI give each core its own Bios/<tag>/ folder, "
-             "a layout the installer does not write yet",
+    "MinUI": f"its card names no release in {CARD_MARKER}, which tells MinUI, NextUI "
+             "and MyMinUI apart. Name the card's root and the one it runs: "
+             "--platform minui (or nextui, myminui) --dest /mnt/SDCARD",
 }
+# A system found by its card, with the end of the path that proves it: the
+# card root is what comes before.
+_CARD_SYSTEMS = {"MinUI": "/.system/res"}
 
 # (platform, BIOS folder) -> the name the system found there gives itself.
 _DETECTED_OS: dict[tuple[str, Path], str] = {}
@@ -1338,15 +1364,23 @@ def _detect_embedded() -> list[tuple[str, Path]]:
         if name in bases:
             continue
         rules = [rule for rule in matched if rule.name == name]
-        folder = _os_system_dir(rules) if rules[0].manifest else None
+        plat = rules[0].manifest
+        folder = _os_system_dir(rules) if plat else None
+        if name in _CARD_SYSTEMS:
+            marker = next(value for rule in rules for value in rule.values
+                          if value.endswith(_CARD_SYSTEMS[name]))
+            root = _on_device(marker[:-len(_CARD_SYSTEMS[name])])
+            plat = card_platform(root) or ""
+            if plat:
+                folder, name = root, display_name(plat)
         if folder is None:
             reason = _NO_FOLDER.get(
                 name, "nothing on it names the folder its RetroArch reads")
-            print(f"{name} found here, but {reason}. Name the folder with --dest.",
-                  file=sys.stderr)
+            closing = "" if name in _CARD_SYSTEMS else " Name the folder with --dest."
+            print(f"{name} found here, but {reason}.{closing}", file=sys.stderr)
             continue
-        _DETECTED_OS[(rules[0].manifest, folder)] = name
-        found.append((rules[0].manifest, folder))
+        _DETECTED_OS[(plat, folder)] = name
+        found.append((plat, folder))
     return found
 
 
@@ -1366,7 +1400,10 @@ def _system_lines() -> list[str]:
     lines = []
     for name in dict.fromkeys(rule.name for rule in _EMBEDDED_RULES):
         plat = next(rule.manifest for rule in _EMBEDDED_RULES if rule.name == name)
-        if plat:
+        if name in _CARD_SYSTEMS:
+            lines.append(f"{name}: minui, nextui or myminui, as the card's {CARD_MARKER} "
+                         "names it (from a computer: --dest <card root>)")
+        elif plat:
             lines.append(f"{name}: {plat}")
         else:
             lines.append(f"{name}: not installed to, {_NO_FOLDER[name]} (use --dest)")
@@ -2237,15 +2274,58 @@ def _name_key(name: str) -> str:
 SHORT_LIST = 12
 
 
+# Names people type for a system, each with its id. Only ever suggested:
+# --system gba, psx and ps1 were refused with no hint on RetroArch, whose
+# list names no system that way, and taking one in silence could install
+# another console than the one meant.
+SYSTEM_SHORT_NAMES = {
+    **dict.fromkeys(("psx", "ps1", "ps", "playstation1"), "sony-playstation"),
+    "ps2": "sony-playstation-2", "ps3": "sony-playstation-3", "psp": "sony-psp",
+    **dict.fromkeys(("vita", "psvita"), "sony-playstation-vita"),
+    "gb": "nintendo-gb", "gbc": "nintendo-gbc", "gba": "nintendo-gba",
+    **dict.fromkeys(("nes", "famicom", "fc"), "nintendo-nes"), "fds": "nintendo-fds",
+    **dict.fromkeys(("snes", "sfc", "superfamicom"), "nintendo-snes"),
+    "n64": "nintendo-64", "n64dd": "nintendo-64dd", "sgb": "nintendo-sgb",
+    **dict.fromkeys(("nds", "ds"), "nintendo-ds"), "dsi": "nintendo-dsi",
+    "3ds": "nintendo-3ds", "wiiu": "nintendo-wii-u", "switch": "nintendo-switch",
+    **dict.fromkeys(("gc", "ngc", "gcn", "gamecube"), "nintendo-gamecube"),
+    "pokemini": "nintendo-pokemon-mini",
+    **dict.fromkeys(("md", "gen", "genesis", "megadrive"), "sega-mega-drive"),
+    **dict.fromkeys(("scd", "segacd", "megacd"), "sega-mega-cd"),
+    "32x": "sega-32x", **dict.fromkeys(("sms", "mastersystem"), "sega-master-system"),
+    **dict.fromkeys(("gg", "gamegear"), "sega-game-gear"),
+    **dict.fromkeys(("ss", "saturn"), "sega-saturn"),
+    **dict.fromkeys(("dc", "dreamcast"), "sega-dreamcast"),
+    **dict.fromkeys(("naomi", "atomiswave"), "sega-dreamcast-arcade"),
+    **dict.fromkeys(("pce", "tg16", "turbografx", "turbografx16", "pcengine",
+                     "supergrafx"), "nec-pc-engine"),
+    **dict.fromkeys(("pcecd", "tgcd", "turbografxcd"), "nec-pc-engine-cd"),
+    "pcfx": "nec-pc-fx",
+    **dict.fromkeys(("mvs", "aes"), "snk-neogeo"),
+    **dict.fromkeys(("neocd", "neogeocd"), "snk-neogeo-cd"),
+    **dict.fromkeys(("msx", "msx2"), "microsoft-msx"),
+    "c64": "commodore-c64", "c128": "commodore-c128",
+    **dict.fromkeys(("amiga", "cd32"), "commodore-amiga"),
+    "x68k": "sharp-x68000", **dict.fromkeys(("jag", "jaguar"), "atari-jaguar"),
+    **dict.fromkeys(("st", "atarist"), "atari-st"), "a800": "atari-400-800",
+    **dict.fromkeys(("coleco", "colecovision"), "coleco-colecovision"),
+    **dict.fromkeys(("intv", "intellivision"), "mattel-intellivision"),
+    "o2": "magnavox-odyssey2", "channelf": "fairchild-channel-f",
+    **dict.fromkeys(("zx", "spectrum", "zxspectrum"), "sinclair-zx-spectrum"),
+    "cpc": "amstrad-cpc", "bbc": "acorn-bbc-micro", "apple2": "apple-ii",
+}
+
+
 def did_you_mean(
     typed: list[str], known: list[str], listing: str,
-    aliases: dict[str, str] | None = None,
+    aliases: dict[str, str] | None = None, inside_from: int = 4,
 ) -> str:
     """The closest known names to what was typed, and the option listing them all.
 
     A typo was answered with every name the platform has, up to 400 on one
     line, with no hint that playstation is sony-playstation. An alias close
-    to what was typed suggests the name it stands for.
+    to what was typed suggests the name it stands for. A name holding what
+    was typed, inside_from letters or more, is suggested too.
     """
     import difflib  # noqa: PLC0415
 
@@ -2260,9 +2340,12 @@ def did_you_mean(
         if not key:
             continue
         matches = difflib.get_close_matches(key, list(by_key), n=3, cutoff=0.6)
-        if len(key) >= 4:
+        if len(key) >= inside_from:
             matches += sorted(k for k in by_key if key in k and k not in matches)
-        close += [by_key[k] for k in matches if by_key[k] not in close]
+        for k in matches:
+            # Two aliases of one system (psx, ps1) name it once.
+            if by_key[k] not in close:
+                close.append(by_key[k])
     if close:
         return f"Did you mean: {', '.join(close[:3])}? {listing} lists all {len(known)}."
     if len(known) <= SHORT_LIST:
@@ -2280,6 +2363,13 @@ def normalize_platform(name: str) -> str:
     for plat in AVAILABLE_PLATFORMS:
         if key and key in (_name_key(plat), _name_key(display_name(plat))):
             return plat
+    # --list-platforms prints `muOS: retroarch`, and --platform muos was
+    # refused: a system named there stands for the list it gets.
+    for rule in _EMBEDDED_RULES:
+        if key and rule.manifest and key == _name_key(rule.name):
+            print(f"  {rule.name} gets the {display_name(rule.manifest)} file list: "
+                  f"--platform {rule.manifest}.")
+            return rule.manifest
     print(f"Unknown platform '{name.strip()}'. "
           + did_you_mean([name], list(AVAILABLE_PLATFORMS), "--list-platforms"),
           file=sys.stderr)
@@ -2909,6 +2999,102 @@ NETWORK_ADVICE = ("  Check the connection, and HTTPS_PROXY if this network needs
                   f"  More help: {TROUBLESHOOTING_PAGE}")
 
 
+# The installer was written after this day. A clock that reads earlier is
+# wrong, and TLS then finds every certificate not yet valid: a handheld
+# with no clock battery boots on 1970 or 1980.
+CLOCK_FLOOR = datetime.date(2026, 1, 1)
+# Where systems keep their trusted certificates, for a Python built to look
+# elsewhere: Debian, Fedora, openSUSE, the BSDs and macOS, Homebrew, Termux.
+CA_BUNDLES = (
+    "/etc/ssl/certs/ca-certificates.crt", "/etc/pki/tls/certs/ca-bundle.crt",
+    "/etc/ssl/ca-bundle.pem", "/etc/pki/tls/cacert.pem", "/etc/ssl/cert.pem",
+    "/usr/local/etc/openssl/cert.pem", "/opt/homebrew/etc/openssl@3/cert.pem",
+    "/data/data/com.termux/files/usr/etc/tls/cert.pem",
+)
+# Set from --verbose: the error text Python gives stays beside the words.
+_RAW_ERRORS = threading.Event()
+
+
+def _default_ca_present() -> bool:
+    """Whether the certificates this Python reads by default exist."""
+    import ssl  # noqa: PLC0415
+
+    paths = ssl.get_default_verify_paths()
+    for value in (os.environ.get("SSL_CERT_FILE"), paths.cafile, paths.openssl_cafile):
+        if value and Path(value).is_file():
+            return True
+    for value in (os.environ.get("SSL_CERT_DIR"), paths.capath, paths.openssl_capath):
+        try:
+            if value and any(Path(value).iterdir()):
+                return True
+        except OSError:
+            continue
+    return False
+
+
+def _known_bundle() -> str:
+    """A certificate bundle the system keeps where this Python does not look."""
+    return next((path for path in CA_BUNDLES if Path(path).is_file()), "")
+
+
+def _ca_bundle_found() -> bool:
+    """Whether any list of trusted certificates is on this machine.
+
+    Windows verifies against its own store, which Python reads directly.
+    """
+    return os.name == "nt" or _default_ca_present() or bool(_known_bundle())
+
+
+def network_words(
+    exc: BaseException, today: datetime.date | None = None, verbose: bool | None = None,
+) -> tuple[str, str]:
+    """The reason a request failed, and the same in words a beginner reads.
+
+    The reason is clock, no_ca or network. Offline, the run printed
+    "[Errno -2] Name or service not known": the raw text now follows the
+    words only under --verbose.
+    """
+    reason = getattr(exc, "reason", None)
+    inner = reason if isinstance(reason, BaseException) else exc
+    raw = str(reason or exc)
+    code, words = "network", ""
+    cert_error = getattr(sys.modules.get("ssl"), "SSLCertVerificationError", None)
+    if cert_error is not None and isinstance(inner, cert_error):
+        today = today or datetime.date.today()
+        if not _ca_bundle_found():
+            code = "no_ca"
+            words = ("This system has no list of trusted certificates to check the "
+                     "server with. Install the ca-certificates package, or name a "
+                     "certificate bundle with SSL_CERT_FILE, then run again")
+        elif today < CLOCK_FLOOR:
+            code = "clock"
+            words = (f"The clock reads {today.isoformat()}: connect to Wi-Fi and let the "
+                     "time sync, or set the date, then run again")
+        else:
+            words = "the server's certificate was rejected"
+            bundle = "" if _default_ca_present() else _known_bundle()
+            words += (f": this Python reads no certificate list, run again with "
+                      f"SSL_CERT_FILE={bundle}" if bundle
+                      else ", which a proxy or a filter on this network can cause")
+    elif isinstance(inner, socket.gaierror):
+        words = "no internet connection, or the server name could not be looked up"
+    elif isinstance(inner, (socket.timeout, TimeoutError)):
+        words = "the connection timed out"
+    elif isinstance(inner, ConnectionRefusedError):
+        words = "the server refused the connection"
+    elif isinstance(inner, OSError) and inner.errno in (
+            errno.ENETUNREACH, errno.EHOSTUNREACH, errno.ENETDOWN):
+        words = "no internet connection: the network cannot be reached"
+    elif isinstance(inner, (ConnectionResetError, ConnectionAbortedError,
+                            http.client.HTTPException)):
+        words = "the connection was cut"
+    if not words:
+        return code, raw
+    if _RAW_ERRORS.is_set() if verbose is None else verbose:
+        words += f" [{raw}]"
+    return code, words
+
+
 def _address_lines(url: str) -> list[str]:
     """The address that failed, and the override that chose it if one did.
 
@@ -2940,12 +3126,13 @@ def _fetch_json(url: str, limit: int, label: str) -> object:
             delay = _retry_delay(attempt, exc.headers.get("Retry-After") if exc.headers else None)
             problem = f"HTTP {exc.code}"
         except (urllib.error.URLError, OSError, http.client.HTTPException) as exc:
-            if attempt == MAX_RETRIES:
+            code, problem = network_words(exc)
+            # A wrong clock or no certificate list fails every attempt alike.
+            if attempt == MAX_RETRIES or code != "network":
                 if isinstance(exc, http.client.HTTPException):
                     raise ConnectionError(f"connection cut: {exc!r}") from exc
                 raise
             delay = _retry_delay(attempt, None)
-            problem = str(getattr(exc, "reason", None) or exc)
         # Said, or three 30-second attempts read as a frozen program.
         print(f"  The {label} did not arrive ({problem}), trying again "
               f"({attempt + 1}/{MAX_RETRIES}) in {delay:.0f} s.", file=sys.stderr)
@@ -2966,7 +3153,7 @@ def fetch_manifest(plat: str) -> dict:
             sys.exit(1)
     url = MANIFEST_URL.format(platform=plat)
     try:
-        return _validate_manifest(_fetch_json(url, MAX_MANIFEST_BYTES, "manifest"), plat)
+        return _validate_manifest(_fetch_json(url, MAX_MANIFEST_BYTES, "file list"), plat)
     except ValueError as exc:
         EVENTS.emit("error", stage="manifest", reason="invalid", platform=plat,
                     message=f"the file list is not valid: {exc}")
@@ -3000,11 +3187,16 @@ def fetch_manifest(plat: str) -> dict:
         print(NETWORK_ADVICE, file=sys.stderr)
         sys.exit(1)
     except (urllib.error.URLError, OSError) as exc:
-        EVENTS.emit("error", stage="manifest", reason="network", platform=plat,
-                    message=f"the file list could not be fetched: "
-                            f"{getattr(exc, 'reason', None) or exc}")
+        code, words = network_words(exc)
+        EVENTS.emit("error", stage="manifest", reason=code, platform=plat,
+                    message=words if code != "network"
+                    else f"the file list could not be fetched: {words}")
+        if code != "network":
+            print(f"  Could not fetch the file list for {plat}.", file=sys.stderr)
+            print(f"  {words}.", file=sys.stderr)
+            sys.exit(1)
         print(f"  Could not fetch the file list for {plat} after {MAX_RETRIES} "
-              f"attempts: {getattr(exc, 'reason', None) or exc}", file=sys.stderr)
+              f"attempts: {words}", file=sys.stderr)
         for line in _address_lines(url):
             print(line, file=sys.stderr)
         print(NETWORK_ADVICE, file=sys.stderr)
@@ -3020,7 +3212,7 @@ def fetch_targets(plat: str) -> "dict | None":
     """
     url = TARGETS_URL.format(platform=plat)
     try:
-        return _validate_targets(_fetch_json(url, MAX_TARGETS_BYTES, "targets manifest"))
+        return _validate_targets(_fetch_json(url, MAX_TARGETS_BYTES, "target list"))
     except urllib.error.HTTPError as exc:
         if exc.code == 404:
             return {}
@@ -3034,7 +3226,7 @@ def fetch_targets(plat: str) -> "dict | None":
         return None
     except (urllib.error.URLError, OSError) as exc:
         print(f"  Error: failed to fetch targets for {plat}: "
-              f"{getattr(exc, 'reason', None) or exc}", file=sys.stderr)
+              f"{network_words(exc)[1]}", file=sys.stderr)
         for line in _address_lines(url):
             print(line, file=sys.stderr)
         print(NETWORK_ADVICE, file=sys.stderr)
@@ -3424,9 +3616,15 @@ def resolve_choices(
             raise ValueError(f"unknown {label}: {', '.join(unknown)}. This list records none.")
         listing = {"system": "--list-systems", "emulator": "--list-emulators"}.get(
             label, "--list-cores")
+        hints, inside_from = aliases, 4
+        if label == "system":
+            # gba is the end of nintendo-gba: three letters are enough here.
+            hints = {**{short: name for short, name in SYSTEM_SHORT_NAMES.items()
+                        if name in known}, **aliases}
+            inside_from = 3
         raise ValueError(
             f"unknown {label}: {', '.join(unknown)}. "
-            f"{did_you_mean(unknown, known, listing, aliases)}"
+            f"{did_you_mean(unknown, known, listing, hints, inside_from)}"
         )
     if values and not chosen:
         raise ValueError(f"--{label} needs at least one name")
@@ -4176,7 +4374,7 @@ def _download_one(
                 reason = READ_ONLY if _read_only_file(dest) else NOT_WRITABLE
                 refused = True
             elif _transfer_failure(exc):
-                reason = NetworkReason(getattr(exc, "reason", "") or exc)
+                reason = NetworkReason(network_words(exc)[1])
             else:
                 reason = str(getattr(exc, "reason", "") or exc)
             if verbose:
@@ -4847,14 +5045,15 @@ def download_files(
     """Download files in parallel.
 
     Returns the destinations that failed, each with its reason, and whether
-    the run was interrupted. Every future is submitted up front, so a bare
-    KeyboardInterrupt would let the pool drain the queue in full: the stop
-    flag is what makes Ctrl+C end the run rather than only stop the
-    reporting.
+    the run was interrupted. progress.installed counts the files written.
+    Every future is submitted up front, so a bare KeyboardInterrupt would
+    let the pool drain the queue in full: the stop flag is what makes Ctrl+C
+    end the run rather than only stop the reporting.
     """
     failed: list[tuple[str, str]] = []
     interrupted = False
     _stop.clear()
+    _writing.set()
     term = term or Terminal()
     if progress is None:
         progress = Progress(len(files), sum(f.get("size", 0) for f in files), term)
@@ -4865,14 +5064,24 @@ def download_files(
             for f in files
         }
         refused = False
+        refused_events = 0
         try:
             for future in concurrent.futures.as_completed(future_map):
                 dest, success, reason = future.result()
                 if refused:
                     # The folder they all go in refused the first: each
-                    # would fail alike, counted without a line of its own.
+                    # would fail alike, counted without a line of its own,
+                    # though a program reading the events still gets one.
                     if not success:
                         failed.append((dest, NOT_WRITABLE))
+                        refused_events += 1
+                        EVENTS.emit(
+                            "downloaded", dest=dest, ok=False, reason=NOT_WRITABLE,
+                            size=future_map[future].get("size", 0),
+                            files_done=progress.files + refused_events,
+                            files_total=progress.total_files, bytes_done=progress.bytes,
+                            bytes_total=progress.expected_bytes,
+                        )
                     continue
                 if _stop.is_set():
                     continue
@@ -4895,6 +5104,12 @@ def download_files(
             _stop.set()
             progress.finish()
             print("\n  Stopping. Files already installed are kept.")
+    # The pool has run every future by now: a file that landed after Ctrl+C
+    # is on disk and counts.
+    progress.installed = sum(
+        1 for future in future_map
+        if not future.cancelled() and future.exception() is None and future.result()[1]
+    )
     progress.finish()
     return failed, interrupted
 
@@ -5005,6 +5220,7 @@ def install_data_directory(entry: dict, bios_path: Path) -> dict:
               "not_kept": []}
     if not needed:
         return counts
+    _writing.set()
     try:
         root.mkdir(parents=True, exist_ok=True)
         with tempfile.TemporaryDirectory(dir=root) as scratch:
@@ -5207,7 +5423,7 @@ def _install_standalone_folders(
             to_download, folder, jobs=args.jobs, verbose=args.verbose,
             term=term, progress=progress,
         )
-        downloaded += len(to_download) - len(failed)
+        downloaded += progress.installed
         errors += len(failed)
         failures.extend((str(folder / dest), reason) for dest, reason in failed)
         transferred += progress.transferred()
@@ -5380,7 +5596,7 @@ def _choose_platform(title: str, default: str = "") -> str:
         if not choice and default:
             return default
         if choice.lower() == "q":
-            sys.exit(0)
+            _quit()
         if choice.isdigit() and 1 <= int(choice) <= len(AVAILABLE_PLATFORMS):
             return AVAILABLE_PLATFORMS[int(choice) - 1]
         key = _name_key(choice)
@@ -5393,7 +5609,8 @@ def _choose_platform(title: str, default: str = "") -> str:
 
 def _prompt_manual_platform(os_type: str) -> list[tuple[str, Path]]:
     """Ask for a platform and a BIOS directory when nothing was detected."""
-    plat = _choose_platform("Choose the platform to install for:")
+    plat = _choose_platform("No supported platform found here. Choose the one to "
+                            "install for:", "retroarch")
     default_dest = _default_dest(os_type, plat)
     raw = ""
     while not raw:
@@ -5403,10 +5620,24 @@ def _prompt_manual_platform(os_type: str) -> list[tuple[str, Path]]:
         )
         if default_dest is not None:
             break
-    dest = Path(raw).expanduser() if raw else default_dest
-    if os_type == "windows" and raw:
-        dest = Path(os.path.expandvars(raw))
-    return [(plat, dest)]
+    if raw:
+        return [(plat, _typed_folder(raw))]
+    state = "" if default_dest.exists() else ". It does not exist yet and will be created"
+    print(f"  {display_name(plat)}'s default BIOS folder: {default_dest}{state}.")
+    return [(plat, default_dest)]
+
+
+def _typed_folder(raw: str) -> Path:
+    """A folder typed at a question, read as a shell reads an argument.
+
+    Explorer's "Copy as path" puts quotes around it, and users quote a path
+    with spaces: kept, they sent the files into a folder named `"` under
+    the current directory, and the run said Done.
+    """
+    text = raw.strip()
+    if len(text) >= 2 and text[0] == text[-1] and text[0] in "'\"":
+        text = text[1:-1].strip()
+    return Path(os.path.expandvars(os.path.expanduser(text)))
 
 
 # Platforms with no install location of their own: the BIOS folder sits
@@ -5469,10 +5700,10 @@ def _manual_usage_hint(os_type: str, listing: str = "") -> list[str]:
 
 
 def _prompt_platform_choice(
-    platforms: list[tuple[str, Path]],
+    platforms: list[tuple[str, Path]], title: str = "Install for:",
 ) -> list[tuple[str, Path]]:
     """Prompt user to choose among detected platforms."""
-    print("\nInstall for:")
+    print(f"\n{title}")
     for i, (name, path) in enumerate(platforms, 1):
         system = detected_os(name, path)
         label = f"{system}, {display_name(name)} files" if system and system != display_name(name) \
@@ -5487,7 +5718,7 @@ def _prompt_platform_choice(
     while True:
         choice = _ask("> ").lower()
         if choice == "q":
-            sys.exit(0)
+            _quit()
         idx = int(choice) if choice.isdigit() else 0
         if 1 <= idx <= len(platforms):
             return [platforms[idx - 1]]
@@ -5511,26 +5742,62 @@ def _ask(prompt: str) -> str:
         raise KeyboardInterrupt from None
 
 
+def _quit() -> None:
+    """q at a question ends the run where Ctrl+C does, on 130: with 0,
+    `install.sh && retroarch` started RetroArch on no BIOS."""
+    sys.exit(130)
+
+
 def _sized(files: list[dict]) -> str:
     return f"{_plural(len(files), 'file')}, {format_size(sum(f.get('size', 0) for f in files))}"
 
 
-def _pick(title: str, rows: list[tuple[str, list[dict]]], ordered: bool = False) -> list[str]:
-    """Numbered list of names. An empty answer keeps every one."""
+# A core whose files are all the platform's own. "pcsx_rearmed 0 files,
+# 0 B" read as a core that gets nothing.
+NO_CORE_FILES = "no extra file: it reads the platform's own, always kept"
+
+
+def _core_sized(files: list[dict]) -> str:
+    return _sized(files) if files else NO_CORE_FILES
+
+
+def _system_sized(files: list[dict]) -> str:
+    """A system's files, those other systems share counted apart.
+
+    `3do 1704 files, 349.0 MB` read as the 3DO BIOS: 1689 of them are the
+    MAME hash and plugin files six systems carry.
+    """
+    shared = [f for f in files if len(entry_systems(f)) > 1]
+    if not shared:
+        return _sized(files)
+    if len(shared) == len(files):
+        return f"{_sized(shared)}, all shared with other systems"
+    own = [f for f in files if len(entry_systems(f)) <= 1]
+    return f"{_sized(own)}, and {_sized(shared)} shared with other systems"
+
+
+def _pick(
+    title: str, rows: list[tuple[str, list[dict]]], ordered: bool = False,
+    sizer: Callable[[list[dict]], str] = _sized,
+) -> list[str]:
+    """Numbered list of names. An empty answer keeps every one.
+
+    sizer says what each name holds.
+    """
     if not rows:
         return []
     print(f"\n{title}")
     width = len(str(len(rows)))
     name_width = min(max(len(name) for name, _files in rows), 32)
     for index, (name, files) in enumerate(rows, 1):
-        print(f"  {index:>{width}}) {name:<{name_width}}  {_sized(files)}")
+        print(f"  {index:>{width}}) {name:<{name_width}}  {sizer(files)}")
     hint = "order of preference, e.g. 2,1" if ordered else "e.g. 1,3-5"
     while True:
         text = _ask(f"Numbers ({hint}), Enter for all, q to quit: ")
         if not text:
             return []
         if text.lower() == "q":
-            sys.exit(0)
+            _quit()
         try:
             chosen = parse_selection(text, len(rows), ordered=ordered)
         except ValueError as exc:
@@ -5566,7 +5833,7 @@ def _prompt_custom_selection(
         if answer == "":
             return None
         if answer == "q":
-            sys.exit(0)
+            _quit()
         if answer == "i" and installed is not None:
             return INSTALLED_ONLY
         if answer == "c":
@@ -5581,7 +5848,7 @@ def _prompt_custom_selection(
     systems = _pick("Systems:", [
         (name, [f for f in files if _chosen(f, {name})])
         for name in choices["systems"]
-    ])
+    ], sizer=_system_sized)
     kept, kept_omitted = narrow(files, omitted, systems, [], [])
 
     cores: list[str] = []
@@ -5593,7 +5860,7 @@ def _prompt_custom_selection(
             (name, _filter_by_target(
                 [f for f in kept if f.get("cores") is not None], [name]))
             for name in core_names
-        ])
+        ], sizer=_core_sized)
         kept, kept_omitted = narrow(kept, kept_omitted, [], cores, [])
 
     regions: list[str] = []
@@ -5654,7 +5921,8 @@ def _print_choices(
             if systems
             else _filter_by_target([f for f in files if f.get("cores") is not None], [name])
         )
-        print(f"  {labels[name]:<{width}}  {_sized(held)}")
+        print(f"  {labels[name]:<{width}}  "
+              f"{_system_sized(held) if systems else _core_sized(held)}")
 
 
 def emulator_names(manifest: dict, files: list[dict], omitted: list[dict]) -> dict[str, str]:
@@ -6570,11 +6838,15 @@ def _bytes(files: list[dict]) -> int:
 
 def bulk_hint(
     to_download: list[dict], manifest: dict, systems_chosen: bool, cores_chosen: bool,
+    accepted: Collection[str] = (),
 ) -> list[str]:
     """Name what pulls most of a download, when narrowing saves over half of it.
 
     `--system 3do` fetched 349 MB for RetroArch, and `--core opera` 12.5 MB:
     the arcade cores that also read 3DO pulled the rest, and nothing said so.
+    accepted holds the names --core takes. Drawn from every core of the
+    system, the advice named ares, which loads no file of its own, and
+    `--core ares` was then refused.
     """
     total = _bytes(to_download)
     if total < BULK_HINT_FROM:
@@ -6582,7 +6854,8 @@ def bulk_hint(
     systems = {s for entry in to_download for s in entry_systems(entry)}
     if not cores_chosen and len(systems) == 1:
         system = next(iter(systems))
-        candidates = (manifest.get("system_cores") or {}).get(system) or []
+        candidates = [core for core in (manifest.get("system_cores") or {}).get(system) or []
+                      if core in accepted]
         by_core: dict[str, int] = {}
         for entry in to_download:
             for core in entry.get("cores") or []:
@@ -6844,6 +7117,8 @@ def main() -> None:
     )
 
     args = parser.parse_args()
+    if args.verbose:
+        _RAW_ERRORS.set()
     if args.cores_dir:
         args.installed_cores = True
     _INVOCATION.record(args)
@@ -6980,7 +7255,7 @@ def _open_local_sources(args: argparse.Namespace) -> None:
         sys.exit(1)
 
 
-def _missing_dest(dest: Path, ask: bool) -> None:
+def _missing_dest(dest: Path, ask: bool, named: str = "named with --dest") -> None:
     """Say that a --dest folder does not exist before anything goes there.
 
     A typo (~/.config/retroarh/system) was created with every missing
@@ -6999,7 +7274,7 @@ def _missing_dest(dest: Path, ask: bool) -> None:
     if missing > 1 and ask:
         answer = _ask(f"  Create {_plural(missing, 'folder')} under {nearest}? [y/N] ")
         if not answer.strip().lower().startswith("y"):
-            print("  Nothing installed. Check the folder named with --dest, then run "
+            print(f"  Nothing installed. Check the folder {named}, then run "
                   "the command again.")
             sys.exit(2)
 
@@ -7119,7 +7394,8 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
         print("Available platforms:")
         for p in AVAILABLE_PLATFORMS:
             print(f"  {p}")
-        print("\nSystems recognized by their own files:")
+        print("\nSystems recognized by their own files, and the file list each gets "
+              "(--platform takes either name):")
         for line in _system_lines():
             print(f"  {line}")
         detected = detect_platforms(os_type)
@@ -7128,6 +7404,8 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
             for name, path in detected:
                 system = detected_os(name, path)
                 print(f"  {name}: {path}" + (f" ({system})" if system else ""))
+        else:
+            print("\nDetected on this system: none")
         return
 
     # Platform detection or override. A destination taken from the default
@@ -7221,8 +7499,13 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                     print(line)
                 sys.exit(1)
             platforms = _prompt_manual_platform(os_type)
-        for name, path in platforms:
-            print(f"  Found {found_label(name, path)}")
+            plat, typed = platforms[0]
+            if typed != _default_dest(os_type, plat):
+                _missing_dest(typed, not (args.check or args.dry_run or args.yes),
+                              "typed")
+        else:
+            for name, path in platforms:
+                print(f"  Found {found_label(name, path)}")
 
     conflict = os_conflict(platforms)
     if conflict and not interactive and not listing:
@@ -7243,7 +7526,9 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
         ])
 
     if len(platforms) > 1 and not listing and interactive:
-        platforms = _prompt_platform_choice(platforms)
+        # --check installs nothing, and "Install for:" said it would.
+        platforms = _prompt_platform_choice(
+            platforms, "Check:" if args.check else "Install for:")
 
     if args.dest is not None and not listing:
         _missing_dest(args.dest, interactive and not (args.check or args.dry_run or args.yes))
@@ -7445,7 +7730,11 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                 args.emulator, manifest, plat_name, files, omitted_files
             )
 
+        # What --core resolves against, for advice that names one.
+        core_choices = set(available_choices(files, omitted_files)["cores"])
         selection = _requested_narrowing(args, plat_name, files, omitted_files, manifest)
+        # What declining the size question points back at, when it was asked.
+        smaller = ""
         if (
             selection is None
             and interactive
@@ -7461,6 +7750,13 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                 plat_name, files, omitted_files, installed,
                 display_name(plat_name, manifest),
             )
+            if selection is None:
+                smaller = ("  Nothing downloaded. To install less, run the same command "
+                           "again and type c at the first question to choose systems")
+                if installed is not None:
+                    smaller += (f", or i for only what the installed cores read "
+                                f"({format_size(_bytes(installed[0]))})")
+                smaller += "."
             if selection == INSTALLED_ONLY:
                 files, omitted_files = installed
                 print("\n  Same choice without questions: "
@@ -7557,6 +7853,7 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
             systems_chosen=bool(selection and selection[0]),
             cores_chosen=bool((selection and selection[1]) or args.emulator
                               or args.installed_cores or target),
+            accepted=core_choices,
         )
 
         narrowed = bool(
@@ -7572,6 +7869,7 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
             _emit_check(
                 plat_name, manifest, bios_path, files, up_to_date, mismatched,
                 sum(len(state[1]) for _entry, state in data_states), len(omitted_files),
+                chosen=selection[0] if selection else None,
             )
         total_verified += len(up_to_date)
 
@@ -7636,7 +7934,9 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                     f"\nDownload {format_size(dl_size)} to {bios_path}? [Y/n] "
                 )
             ):
-                print("  Nothing downloaded. --system, --core and --region "
+                # A beginner who just passed the c entry was sent to a
+                # 91-line --help.
+                print(smaller or "  Nothing downloaded. --system, --core and --region "
                       "install less (see --help).")
                 total_up_to_date += len(up_to_date)
                 total_declined += len(to_download)
@@ -7674,10 +7974,9 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                 term=term, progress=progress,
             )
             bulk_lines += hint
-            total_downloaded += len(to_download) - len(failed)
-            files_pending += len(failed)
-            if interrupted:
-                files_pending += max(len(to_download) - progress.files, 0)
+            total_downloaded += progress.installed
+            files_pending += len(to_download) - progress.installed if interrupted \
+                else len(failed)
             total_errors += len(failed)
             failures.extend(failed)
             total_bytes += progress.transferred()
@@ -9909,7 +10208,11 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         # Outside the download phase (fetching the file list, checking the
         # files present, rebuilding data directories): nothing is half
-        # written there, and a socket traceback read as a crash.
-        print("\nStopped. Run the same command again to carry on from here. "
-              "Nothing is lost.")
+        # written there, and a socket traceback read as a crash. Stopped at
+        # a question, nothing has started, and there is nothing to carry on.
+        if _writing.is_set():
+            print("\nStopped. Run the same command again to carry on from here. "
+                  "Nothing is lost.")
+        else:
+            print("\nStopped. Nothing was installed.")
         sys.exit(130)

@@ -25,6 +25,32 @@ _LOCATED_RE = re.compile(r"^[^\s:]+:\d+(?:-\d+)?$")
 REPO_ROLES = ("source", "upstream")
 
 
+_BINARY_SUFFIXES = (
+    ".dll", ".exe", ".so", ".dylib", ".apk", ".elf", ".o", ".a", ".jar", ".dex",
+)
+_HEX_ADDRESS_RE = re.compile(r"\b0x[0-9a-fA-F]{2,}")
+
+
+def is_binary_citation(path: str) -> bool:
+    """True when a ref locates code inside a shipped binary, not a source file.
+
+    `BAM.dll 1.5-408 .text:0x100c3960-0x100c3a97`, `libmain.so LoadNES
+    0x3bb49` and `.rdata dialog filter` were read by disassembly. No revision
+    of any repository holds those bytes, so the ref can neither anchor nor
+    break: 77 parts of `future-pinball-fploader` alone were reported GONE.
+    """
+    if _HEX_ADDRESS_RE.search(path):
+        return True
+    if " " not in path:
+        # A bare `DesktopKinect.dll` names a shipped library, never a source
+        # file: no directory, no line, only its import table to read.
+        return "/" not in path and path.lower().endswith(_BINARY_SUFFIXES)
+    head = path.split(" ", 1)[0]
+    if head.lower().endswith(_BINARY_SUFFIXES):
+        return True
+    return head.startswith(".") and "/" not in head
+
+
 def ref_role(path: str) -> tuple[str, str]:
     """The role word a cited path opens with, and the path without it."""
     word, _, rest = path.partition(" ")

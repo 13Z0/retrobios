@@ -47,10 +47,6 @@ KNOWN_SHARED: dict[str, tuple[frozenset[str], str]] = {
         frozenset({"Magnavox", "Philips"}),
         "Odyssey 2 and Videopac are one machine sold under two names",
     ),
-    "0d2ef6e67322f48f4b7e08d8bbe68827e2074561": (
-        frozenset({"Oric", "Tangerine"}),
-        "Oric Microdisc ROM, the Oric being a Tangerine machine",
-    ),
     "286b2e1fb21cc79851da01666db6c0b0e88f25e3": (
         frozenset({"Infocom", "ZC"}),
         "one soundfont shipped by two interpreters",

@@ -6,7 +6,7 @@
   "platform": "rocknix",
   "display_name": "ROCKNIX",
   "version": "1.0",
-  "generated": "2026-10-23T07:43:10Z",
+  "generated": "2026-10-23T12:47:02Z",
   "base_destination": "bios",
   "detect": [
     {
@@ -3799,7 +3799,7 @@
       "sha1": "f6b1eebc4b2d200ec6d3d21d51325d5b48c60252",
       "sha256": "d9164063f293410cf33f2f64cdcea6893b44723fe41938e07ec9aef58b406238",
       "size": 524288,
-      "repo_path": "bios/Roland/MT32_PCM.ROM",
+      "repo_path": "bios/Roland/MT-32/MT32_PCM.ROM",
       "cores": [
         "dosbox",
         "dosbox_core",
@@ -3811,7 +3811,7 @@
       "sha1": "289cc298ad532b702461bfc738009d9ebe8025ea",
       "sha256": "0dc50190bb7ea3fb212c970346b771a511772b528801e7eda6d27efda8c40698",
       "size": 1048576,
-      "repo_path": "bios/Roland/CM32L_PCM.ROM",
+      "repo_path": "bios/Roland/CM-32L/CM32L_PCM.ROM",
       "cores": [
         "dosbox",
         "dosbox_core",
@@ -49858,7 +49858,7 @@
       "sha1": "f402170ee4f374c304a7ce0b139d6cecb1732aff",
       "sha256": "8244f3e5eaca828cc0a6a963f1fad15d68d8d3c0b5c80b8451b3067a85f14ae1",
       "size": 131072,
-      "repo_path": "bios/QEMU/bios.bin",
+      "repo_path": "bios/QEMU/QEMU/bios.bin",
       "cores": [
         "qemu"
       ]
@@ -49868,7 +49868,7 @@
       "sha1": "5fe6078506094333106e6b3f33c7185dea7f0268",
       "sha256": "f1d4f396011197eb989029659cde250751cc711c336b8fbbe6f77cfe0dc5dcd8",
       "size": 262144,
-      "repo_path": "bios/QEMU/bios-256k.bin",
+      "repo_path": "bios/QEMU/QEMU/bios-256k.bin",
       "cores": [
         "qemu"
       ]
@@ -49878,7 +49878,7 @@
       "sha1": "56f33ced7ea0f7581d776396a0ac6cfe2c7c9257",
       "sha256": "42780e1ab9161752848475529a25c39d7c76baee82a1b2ddff666c2f7de7bbee",
       "size": 131072,
-      "repo_path": "bios/QEMU/bios-microvm.bin",
+      "repo_path": "bios/QEMU/QEMU/bios-microvm.bin",
       "cores": [
         "qemu"
       ]
@@ -49888,7 +49888,7 @@
       "sha1": "339d3a93c967491c9f1fffe963484386f48bd22c",
       "sha256": "9b9dfc6c25740d6225625570d71cab6805cc9216e68c8932e343266daaeb8c4b",
       "size": 65536,
-      "repo_path": "bios/QEMU/qboot.rom",
+      "repo_path": "bios/QEMU/QEMU/qboot.rom",
       "cores": [
         "qemu"
       ]
@@ -49898,7 +49898,7 @@
       "sha1": "63d87e2a6618c3a9b2aabecf03ac2456e5e63410",
       "sha256": "f0defab87465236d0d22b6000bd2c270e05a56ff3bb7fd209a56069caed86d57",
       "size": 38912,
-      "repo_path": "bios/QEMU/vgabios.bin",
+      "repo_path": "bios/QEMU/QEMU/vgabios.bin",
       "cores": [
         "qemu"
       ]
@@ -49908,7 +49908,7 @@
       "sha1": "883eb2657ce29661a0466b6b41ce75411f37aad9",
       "sha256": "305d3b15f67e65f1899a1664621f6b471e4345d33fd9eb4f6320b4559f6a04f2",
       "size": 38912,
-      "repo_path": "bios/QEMU/vgabios-cirrus.bin",
+      "repo_path": "bios/QEMU/QEMU/vgabios-cirrus.bin",
       "cores": [
         "qemu"
       ]
@@ -49918,7 +49918,7 @@
       "sha1": "87fbc0ecb1ee7d4d8c8c88c7d8a2fb3ec8f99ea5",
       "sha256": "651513519f9e0d5b99d3b051a8f5c68db69e987339b59a441d371068c34c146b",
       "size": 39424,
-      "repo_path": "bios/QEMU/vgabios-stdvga.bin",
+      "repo_path": "bios/QEMU/QEMU/vgabios-stdvga.bin",
       "cores": [
         "qemu"
       ]
@@ -49928,7 +49928,7 @@
       "sha1": "9e2edd3d835219cde63a20e2cd58107d7e96ef5b",
       "sha256": "d5fd6992dfdf0c980996b79c5ea13b9c8b36342c1dc94fcd682a6c3e8df850ff",
       "size": 28672,
-      "repo_path": "bios/QEMU/vgabios-bochs-display.bin",
+      "repo_path": "bios/QEMU/QEMU/vgabios-bochs-display.bin",
       "cores": [
         "qemu"
       ]
@@ -49938,7 +49938,7 @@
       "sha1": "49df9be557f0f0277c8fedb889257e279586d536",
       "sha256": "31b26b2288ed5594b65a234e797ee7105d225d48086170b27ab518c3fb69b7de",
       "size": 28672,
-      "repo_path": "bios/QEMU/vgabios-ramfb.bin",
+      "repo_path": "bios/QEMU/QEMU/vgabios-ramfb.bin",
       "cores": [
         "qemu"
       ]
@@ -49948,7 +49948,7 @@
       "sha1": "ded141cacdebf557ec552597cbf57cd989cec3e2",
       "sha256": "9d4d1f32a7e059de82c09c19fc25e276a39d96a1a516605a32ba704596e10d8e",
       "size": 39424,
-      "repo_path": "bios/QEMU/vgabios-ati.bin",
+      "repo_path": "bios/QEMU/QEMU/vgabios-ati.bin",
       "cores": [
         "qemu"
       ]
@@ -49958,7 +49958,7 @@
       "sha1": "527227abd5f3348c382d4b02703389fbeb83b067",
       "sha256": "e81cc2807ebb9a1467b1933d192a4313424b499b73e7674257f07cd2171e01c7",
       "size": 39424,
-      "repo_path": "bios/QEMU/vgabios-qxl.bin",
+      "repo_path": "bios/QEMU/QEMU/vgabios-qxl.bin",
       "cores": [
         "qemu"
       ]
@@ -49968,7 +49968,7 @@
       "sha1": "cddc53b94793609d1e837d78cd5468fcc1ed9164",
       "sha256": "746f38c2023dbbc071503113f970bcf69d49c6e7c55fa8c0e3748dbccba42772",
       "size": 39424,
-      "repo_path": "bios/QEMU/vgabios-virtio.bin",
+      "repo_path": "bios/QEMU/QEMU/vgabios-virtio.bin",
       "cores": [
         "qemu"
       ]
@@ -49978,7 +49978,7 @@
       "sha1": "c54901ab8f526ab201ebf1b3ecdf711e38e6c259",
       "sha256": "c12841eb2b057b6d99bfbc7ab72bea896e2b5cd694c93b026d7510de2b68ca11",
       "size": 39424,
-      "repo_path": "bios/QEMU/vgabios-vmware.bin",
+      "repo_path": "bios/QEMU/QEMU/vgabios-vmware.bin",
       "cores": [
         "qemu"
       ]
@@ -49988,7 +49988,7 @@
       "sha1": "670c9cc79b4859944705eece710dc332188b79b4",
       "sha256": "cdf057a71b07e3b52b19cbe210bdefa59250d01a9810b960f7fe1f98eed95a27",
       "size": 9216,
-      "repo_path": "bios/QEMU/kvmvapic.bin",
+      "repo_path": "bios/QEMU/QEMU/kvmvapic.bin",
       "cores": [
         "qemu"
       ]
@@ -49998,7 +49998,7 @@
       "sha1": "fd19bef7f5647960952520389f448364762ed948",
       "sha256": "1ecfb26c19da9dc00cdec0d0d738db69aeea4f1231c0c0ffc483ff69b3cda6ce",
       "size": 1024,
-      "repo_path": "bios/QEMU/linuxboot.bin",
+      "repo_path": "bios/QEMU/QEMU/linuxboot.bin",
       "cores": [
         "qemu"
       ]
@@ -50008,7 +50008,7 @@
       "sha1": "0bff50c10727bd9c85c831ea92b7a52699959992",
       "sha256": "9c49e255340c78fc12e54ed043462bca02fb7fca29b7cfab62ff88a5344b6950",
       "size": 1536,
-      "repo_path": "bios/QEMU/linuxboot_dma.bin",
+      "repo_path": "bios/QEMU/QEMU/linuxboot_dma.bin",
       "cores": [
         "qemu"
       ]
@@ -50018,7 +50018,7 @@
       "sha1": "a8b58ae464fc6fb26799432ae867bf57c546ff80",
       "sha256": "13a3f9f119797b8776105f020f36572ce6a20fa2c60d3b8112818bfaefcdd348",
       "size": 1024,
-      "repo_path": "bios/QEMU/multiboot.bin",
+      "repo_path": "bios/QEMU/QEMU/multiboot.bin",
       "cores": [
         "qemu"
       ]
@@ -50028,7 +50028,7 @@
       "sha1": "32ab1cf336b674bfb154eb7a939a3e3275a92647",
       "sha256": "e01667420ee78a318ea44627d2dd68058d3377d024e6eb7237700afe2e86507d",
       "size": 1024,
-      "repo_path": "bios/QEMU/multiboot_dma.bin",
+      "repo_path": "bios/QEMU/QEMU/multiboot_dma.bin",
       "cores": [
         "qemu"
       ]
@@ -50038,7 +50038,7 @@
       "sha1": "c2191e6495103c1f43e9b6ca8930e44c2245e476",
       "sha256": "918ff03a118615c2f4611a5df2d9496aabe099b5cfaaf69e544ebf973305d59d",
       "size": 1536,
-      "repo_path": "bios/QEMU/pvh.bin",
+      "repo_path": "bios/QEMU/QEMU/pvh.bin",
       "cores": [
         "qemu"
       ]
@@ -50048,7 +50048,7 @@
       "sha1": "368e8e9827ae8757a7449319831078b6d5efb83f",
       "sha256": "981a728f95b7a01645645e9b753cfb764c9eb59266fa888ac58d7008fbb48c10",
       "size": 67072,
-      "repo_path": "bios/QEMU/pxe-e1000.rom",
+      "repo_path": "bios/QEMU/QEMU/pxe-e1000.rom",
       "cores": [
         "qemu"
       ]
@@ -50058,7 +50058,7 @@
       "sha1": "b19572c9c2a11f03282df81c0397aceed409a86c",
       "sha256": "07b89a742e0f6d0e92dafe57b0f28c493436d0e1e07b7b77e728490c1f7b45dd",
       "size": 61440,
-      "repo_path": "bios/QEMU/pxe-eepro100.rom",
+      "repo_path": "bios/QEMU/QEMU/pxe-eepro100.rom",
       "cores": [
         "qemu"
       ]
@@ -50068,7 +50068,7 @@
       "sha1": "f37f43f89dc99afe0442ee0b7a431ee790ad6bf6",
       "sha256": "bb9c0eaad36b9b4ce26c5f348bd05a832c8bf83ef38391db0ce9b51de8523ac7",
       "size": 61440,
-      "repo_path": "bios/QEMU/pxe-ne2k_pci.rom",
+      "repo_path": "bios/QEMU/QEMU/pxe-ne2k_pci.rom",
       "cores": [
         "qemu"
       ]
@@ -50078,7 +50078,7 @@
       "sha1": "13a039bf9916f1db42d3a019591d372b4cf4aee9",
       "sha256": "92358396c05b3346c6bfd52bbf2a47978d0a8c6ddea932ee091a24faefbd489e",
       "size": 61440,
-      "repo_path": "bios/QEMU/pxe-pcnet.rom",
+      "repo_path": "bios/QEMU/QEMU/pxe-pcnet.rom",
       "cores": [
         "qemu"
       ]
@@ -50088,7 +50088,7 @@
       "sha1": "7b512c0a7a13bc3c254a25237e4d4612170f4391",
       "sha256": "d491351e37a50eb5a40e98a9f6b4d85010ee60fb9e64129d65ea10839287f138",
       "size": 61440,
-      "repo_path": "bios/QEMU/pxe-rtl8139.rom",
+      "repo_path": "bios/QEMU/QEMU/pxe-rtl8139.rom",
       "cores": [
         "qemu"
       ]
@@ -50098,7 +50098,7 @@
       "sha1": "3e3f77cfe70af904133db94f27ec24e3c9c43648",
       "sha256": "6994337fe07783a6233072e33771dc4f58260edc3269debe677a5227b264bfdc",
       "size": 60416,
-      "repo_path": "bios/QEMU/pxe-virtio.rom",
+      "repo_path": "bios/QEMU/QEMU/pxe-virtio.rom",
       "cores": [
         "qemu"
       ]
@@ -50108,7 +50108,7 @@
       "sha1": "a3df5fc33ab0190f470b34104ff3c0679cecbab6",
       "sha256": "f37222fcdf0481bfbaf7a16d9aaf740aeb41d3d24c187801eb6e9a628cec0fc8",
       "size": 159232,
-      "repo_path": "bios/QEMU/efi-e1000.rom",
+      "repo_path": "bios/QEMU/QEMU/efi-e1000.rom",
       "cores": [
         "qemu"
       ]
@@ -50118,7 +50118,7 @@
       "sha1": "1d37f3ae6748d4deefe9fd5188a2f557bf265d61",
       "sha256": "102c20348be2d0ebe45a77b076b31848182c2f7b4364775b6bc2ece6e97b4024",
       "size": 159232,
-      "repo_path": "bios/QEMU/efi-e1000e.rom",
+      "repo_path": "bios/QEMU/QEMU/efi-e1000e.rom",
       "cores": [
         "qemu"
       ]
@@ -50128,7 +50128,7 @@
       "sha1": "956d9592fea33374ef0f1900a185b6e1109ea765",
       "sha256": "2b5b55ba8afae7b5ef7116606babf60e6ceaa531c345d54542857cc3fbe3912e",
       "size": 159232,
-      "repo_path": "bios/QEMU/efi-eepro100.rom",
+      "repo_path": "bios/QEMU/QEMU/efi-eepro100.rom",
       "cores": [
         "qemu"
       ]
@@ -50138,7 +50138,7 @@
       "sha1": "adb7199f545fdb66c325b142c8dbc4cddb99a20d",
       "sha256": "9925e0a34547118110479d8fc4e01092a0a73e0a236416e9ff862655b46751f7",
       "size": 157696,
-      "repo_path": "bios/QEMU/efi-ne2k_pci.rom",
+      "repo_path": "bios/QEMU/QEMU/efi-ne2k_pci.rom",
       "cores": [
         "qemu"
       ]
@@ -50148,7 +50148,7 @@
       "sha1": "9e5a4bb247c6a1777c89117ca091f94342b9046d",
       "sha256": "71c494fde94efa9871cf43868d7e3c8f4190e406d47a5102a2a21b36ded8a162",
       "size": 157696,
-      "repo_path": "bios/QEMU/efi-pcnet.rom",
+      "repo_path": "bios/QEMU/QEMU/efi-pcnet.rom",
       "cores": [
         "qemu"
       ]
@@ -50158,7 +50158,7 @@
       "sha1": "99a1e431cc0cb0a78d5803875dfa687e12a947f4",
       "sha256": "4cdd69a7f5c6ce7aec3a3f20a034dc80e1d22aa37a739c364378952d997a32c7",
       "size": 160768,
-      "repo_path": "bios/QEMU/efi-rtl8139.rom",
+      "repo_path": "bios/QEMU/QEMU/efi-rtl8139.rom",
       "cores": [
         "qemu"
       ]
@@ -50168,7 +50168,7 @@
       "sha1": "1596e9b97f0bc8b5ff3e444235690a549ee982c6",
       "sha256": "26be36901db7f8181c306cc62bd74891d8646528965a78e40cceadba5dd7c8e7",
       "size": 160768,
-      "repo_path": "bios/QEMU/efi-virtio.rom",
+      "repo_path": "bios/QEMU/QEMU/efi-virtio.rom",
       "cores": [
         "qemu"
       ]
@@ -50178,7 +50178,7 @@
       "sha1": "6557242402387a6319a0db6abb916ada48e1391c",
       "sha256": "33e833123ad9831df94b2d623a17f91e4c779e3cb799baa97058f5972676a32a",
       "size": 156672,
-      "repo_path": "bios/QEMU/efi-vmxnet3.rom",
+      "repo_path": "bios/QEMU/QEMU/efi-vmxnet3.rom",
       "cores": [
         "qemu"
       ]
@@ -50188,7 +50188,7 @@
       "sha1": "eac1a94b8e0d7c53fd5df001c36794ec34c7c724",
       "sha256": "2df617a6fd1bae41ec7c0e3bceca96c928a5a88d8dc198468d34733393ab2792",
       "size": 3653632,
-      "repo_path": "bios/QEMU/edk2-x86_64-code.fd",
+      "repo_path": "bios/QEMU/QEMU/edk2-x86_64-code.fd",
       "cores": [
         "qemu"
       ]
@@ -50198,7 +50198,7 @@
       "sha1": "617abe2746696bb4a309d72cecb446dc76a2a61e",
       "sha256": "54b5cf8601a787ad84e2d68ea979cabb111d20e3b635ad27376c4875e743db64",
       "size": 3653632,
-      "repo_path": "bios/QEMU/edk2-x86_64-secure-code.fd",
+      "repo_path": "bios/QEMU/QEMU/edk2-x86_64-secure-code.fd",
       "cores": [
         "qemu"
       ]
@@ -50208,7 +50208,7 @@
       "sha1": "45b8faebdfaaf19d16e3a7c5f60d69214685071c",
       "sha256": "69cebad2dac0fe52e3025836bdd09bf79d01741e4a79c680e0faa837c3fbb80f",
       "size": 3653632,
-      "repo_path": "bios/QEMU/edk2-i386-code.fd",
+      "repo_path": "bios/QEMU/QEMU/edk2-i386-code.fd",
       "cores": [
         "qemu"
       ]
@@ -50218,7 +50218,7 @@
       "sha1": "6982abec8ef2ed7c8293163d5a0bd69a01a2126f",
       "sha256": "d95514ab60349ebc9355a761d4687f18e9787e66515593ea3bd98ea0131b0659",
       "size": 3653632,
-      "repo_path": "bios/QEMU/edk2-i386-secure-code.fd",
+      "repo_path": "bios/QEMU/QEMU/edk2-i386-secure-code.fd",
       "cores": [
         "qemu"
       ]
@@ -50228,7 +50228,7 @@
       "sha1": "b62e676c9317a32aaa9ee1d76268d8c55663bd6e",
       "sha256": "5d2ac383371b408398accee7ec27c8c09ea5b74a0de0ceea6513388b15be5d1e",
       "size": 540672,
-      "repo_path": "bios/QEMU/edk2-i386-vars.fd",
+      "repo_path": "bios/QEMU/QEMU/edk2-i386-vars.fd",
       "cores": [
         "qemu"
       ]
@@ -50238,7 +50238,7 @@
       "sha1": "514edbce58bfa877170673c1799351a7dab3b6df",
       "sha256": "c0c78f7443cce15bcc91a8b6966e759c8c5cf5c80ac0086d5d79b0455fc9ccb5",
       "size": 67108864,
-      "repo_path": "bios/QEMU/edk2-aarch64-code.fd",
+      "repo_path": "bios/QEMU/QEMU/edk2-aarch64-code.fd",
       "cores": [
         "qemu"
       ],
@@ -50250,7 +50250,7 @@
       "sha1": "c20f01c28b59b388abb9d0febeec45d801a632f0",
       "sha256": "f9fcba7e85ab206efd88316c46ce9d7783c063abc9dd2b7b37df41cc8c0d2153",
       "size": 67108864,
-      "repo_path": "bios/QEMU/edk2-arm-code.fd",
+      "repo_path": "bios/QEMU/QEMU/edk2-arm-code.fd",
       "cores": [
         "qemu"
       ],
@@ -50262,7 +50262,7 @@
       "sha1": "b051167e0e57bd13d77ed92ef7b474872f44ec6d",
       "sha256": "b3b855c5a80310168051164986855692d1bdb06e67619856177965cd87c6774f",
       "size": 67108864,
-      "repo_path": "bios/QEMU/edk2-arm-vars.fd",
+      "repo_path": "bios/QEMU/QEMU/edk2-arm-vars.fd",
       "cores": [
         "qemu"
       ],
@@ -50274,7 +50274,7 @@
       "sha1": "2c8633d881ece0c4794d740138a318f7e9af480c",
       "sha256": "8d74d1658106d4b748f2b56e1b689aad9977f7a485eb7a5654884b0b419c4ed9",
       "size": 33554432,
-      "repo_path": "bios/QEMU/edk2-riscv-code.fd",
+      "repo_path": "bios/QEMU/QEMU/edk2-riscv-code.fd",
       "cores": [
         "qemu"
       ]
@@ -50284,7 +50284,7 @@
       "sha1": "c4e6cce4247ba8f32f528c1c69f49228f616677f",
       "sha256": "ea8094e953b1215444bd001ee1cf22818f1f7f8abcb158e62180cbaa6c1f70af",
       "size": 33554432,
-      "repo_path": "bios/QEMU/edk2-riscv-vars.fd",
+      "repo_path": "bios/QEMU/QEMU/edk2-riscv-vars.fd",
       "cores": [
         "qemu"
       ]
@@ -50294,7 +50294,7 @@
       "sha1": "0ef5051dcb318c0bc45d1908f8318d6eece8686a",
       "sha256": "f1d9bdb018e59ff65e39ce60cc0f9199af73d1770c34137ce423e04662cf96c8",
       "size": 677196,
-      "repo_path": "bios/QEMU/openbios-ppc",
+      "repo_path": "bios/QEMU/QEMU/openbios-ppc",
       "cores": [
         "qemu"
       ],
@@ -50305,7 +50305,7 @@
       "sha1": "a03a94acfe555804d66cc6c74760ae1375a71a64",
       "sha256": "9a9047e0d949097724dec83260f04fc1dd1e55af0b7debbcad3889ff7114ffb7",
       "size": 995000,
-      "repo_path": "bios/QEMU/slof.bin",
+      "repo_path": "bios/QEMU/QEMU/slof.bin",
       "cores": [
         "qemu"
       ]
@@ -50315,7 +50315,7 @@
       "sha1": "8052069aa9714c23be05b4e62fb245a3d572cb0f",
       "sha256": "6de4771f2f686482d387532115004cddaaa9d2bb39ef18d81e9629b11195c106",
       "size": 2527328,
-      "repo_path": "bios/QEMU/skiboot.lid",
+      "repo_path": "bios/QEMU/QEMU/skiboot.lid",
       "cores": [
         "qemu"
       ]
@@ -50325,7 +50325,7 @@
       "sha1": "fc737b34a390f5752cb7e35b33d71f4f438ab607",
       "sha256": "8c88070f252075111468e7b2a8043209e7798c3fb136326227390ea50f168f13",
       "size": 3456,
-      "repo_path": "bios/QEMU/vof.bin",
+      "repo_path": "bios/QEMU/QEMU/vof.bin",
       "cores": [
         "qemu"
       ]
@@ -50335,7 +50335,7 @@
       "sha1": "5d1184609b87f78635f0575467a1c3f440900ff0",
       "sha256": "cf97201f9403212ab75287bf209bfb7710cb5f253e8fe80723cf43760a9e8a12",
       "size": 16384,
-      "repo_path": "bios/QEMU/vof-nvram.bin",
+      "repo_path": "bios/QEMU/QEMU/vof-nvram.bin",
       "cores": [
         "qemu"
       ]
@@ -50345,7 +50345,7 @@
       "sha1": "9ea03f249f856cdcb4399cc1f5a5031729379911",
       "sha256": "f0250e391566bca7b5e643c43b761ab9629a0b82427792a772e80c8b97836425",
       "size": 421720,
-      "repo_path": "bios/QEMU/u-boot.e500",
+      "repo_path": "bios/QEMU/QEMU/u-boot.e500",
       "cores": [
         "qemu"
       ],
@@ -50356,7 +50356,7 @@
       "sha1": "0399a79ac0cf77f0da70af9baec7548a3b368f0a",
       "sha256": "be88ed96a6f50d5ba8ad7bf019f48e7f73acee95402d90d0dac3775d9c7a8d03",
       "size": 524288,
-      "repo_path": "bios/QEMU/u-boot-sam460-20100605.bin",
+      "repo_path": "bios/QEMU/QEMU/u-boot-sam460-20100605.bin",
       "cores": [
         "qemu"
       ]
@@ -50366,7 +50366,7 @@
       "sha1": "638c6262a6eb579ec3d1c9292566ac94c942dc15",
       "sha256": "d8697354bde8a7ac9e6fe3a5fbca03698de623e95433a59c248e8e09b882c6b8",
       "size": 18752,
-      "repo_path": "bios/QEMU/qemu_vga.ndrv",
+      "repo_path": "bios/QEMU/QEMU/qemu_vga.ndrv",
       "cores": [
         "qemu"
       ]
@@ -50376,7 +50376,7 @@
       "sha1": "5a4f2124c8f093f8aee99fbcebcf5d17d789ff26",
       "sha256": "6ca2ed8f39e6e4fe3a88e84c0153836a8811cbb8c6a2019c33b63de372706733",
       "size": 382080,
-      "repo_path": "bios/QEMU/openbios-sparc32",
+      "repo_path": "bios/QEMU/QEMU/openbios-sparc32",
       "cores": [
         "qemu"
       ],
@@ -50387,7 +50387,7 @@
       "sha1": "c6e215fe460629d35688ab8e51faf6f765827cd6",
       "sha256": "9c976bc634115fee073e788b8812aed263213380e16fbee55ca04d4c3cb4def8",
       "size": 1593408,
-      "repo_path": "bios/QEMU/openbios-sparc64",
+      "repo_path": "bios/QEMU/QEMU/openbios-sparc64",
       "cores": [
         "qemu"
       ],
@@ -50398,7 +50398,7 @@
       "sha1": "5f1792a73ee47d78b2160191ecb2c92f353f93ad",
       "sha256": "92da99a770ab24f96c33c78382940cac8b25e88cb110634c1b32aa2d8cb852e7",
       "size": 1402,
-      "repo_path": "bios/QEMU/QEMU,tcx.bin",
+      "repo_path": "bios/QEMU/QEMU/QEMU,tcx.bin",
       "cores": [
         "qemu"
       ]
@@ -50408,7 +50408,7 @@
       "sha1": "619b86fb02faf8f682474be3f0653b58015008ba",
       "sha256": "a99f3a06fdac5cf5d72bd0fd24647d897302c3ff8e918add65168185f8cbdf4d",
       "size": 850,
-      "repo_path": "bios/QEMU/QEMU,cgthree.bin",
+      "repo_path": "bios/QEMU/QEMU/QEMU,cgthree.bin",
       "cores": [
         "qemu"
       ]
@@ -50418,7 +50418,7 @@
       "sha1": "47b0870aaa45a7aa0d48847fd905908fb06f3e9f",
       "sha256": "9f8da7264c7438fe4a24a2215e81893586f5cfafcd6e5fd0059fccc31a4e8839",
       "size": 153728,
-      "repo_path": "bios/QEMU/palcode-clipper",
+      "repo_path": "bios/QEMU/QEMU/palcode-clipper",
       "cores": [
         "qemu"
       ],
@@ -50429,7 +50429,7 @@
       "sha1": "7a23dfdeef3d78ffc89d86e89fc06a36f1e4386f",
       "sha256": "1ebbd077b2b4c0f26dc0649124f8d5d56f925279dc6fc66c8adca9bb5f7855fc",
       "size": 268312,
-      "repo_path": "bios/QEMU/opensbi-riscv32-generic-fw_dynamic.bin",
+      "repo_path": "bios/QEMU/QEMU/opensbi-riscv32-generic-fw_dynamic.bin",
       "cores": [
         "qemu"
       ]
@@ -50439,7 +50439,7 @@
       "sha1": "6883bfd1991c0ef0d67b0967e7dcbd60420dd480",
       "sha256": "f61451043f3ab1bb83eef32100678fde818508c682b97591a08a46683705a167",
       "size": 272504,
-      "repo_path": "bios/QEMU/opensbi-riscv64-generic-fw_dynamic.bin",
+      "repo_path": "bios/QEMU/QEMU/opensbi-riscv64-generic-fw_dynamic.bin",
       "cores": [
         "qemu"
       ]
@@ -50449,7 +50449,7 @@
       "sha1": "7b4fa888d32ca8ddbc752f7442e4d055cee1871a",
       "sha256": "0985865e94e3a4f2a4db9c62a2cc2cf32075d4df8e7ddf641633e92840683b65",
       "size": 42608,
-      "repo_path": "bios/QEMU/s390-ccw.img",
+      "repo_path": "bios/QEMU/QEMU/s390-ccw.img",
       "cores": [
         "qemu"
       ],
@@ -50460,7 +50460,7 @@
       "sha1": "f6cec671408117bd9a31e982682662f27ef4fb2c",
       "sha256": "ef4ef1630a8111dfe132be467818f121537c7e86c94238273a2073b114ab256e",
       "size": 67232,
-      "repo_path": "bios/QEMU/s390-netboot.img",
+      "repo_path": "bios/QEMU/QEMU/s390-netboot.img",
       "cores": [
         "qemu"
       ],
@@ -50471,7 +50471,7 @@
       "sha1": "605c36ede6c120c6cc7efe147a75a3dc4b7e4fb0",
       "sha256": "3dd2013c37f9468d3c905a2efd607bf317686e7a2aa7d139baee772b0f70b74c",
       "size": 167820,
-      "repo_path": "bios/QEMU/hppa-firmware.img",
+      "repo_path": "bios/QEMU/QEMU/hppa-firmware.img",
       "cores": [
         "qemu"
       ],
@@ -50482,7 +50482,7 @@
       "sha1": "b42f6d4ca74073de6c038579b4a9323ad0a6b398",
       "sha256": "a531f03a9f982a7e8811cdf3bc670f3c40d6d8b12c465f637247b16b18b851e0",
       "size": 206024,
-      "repo_path": "bios/QEMU/hppa-firmware64.img",
+      "repo_path": "bios/QEMU/QEMU/hppa-firmware64.img",
       "cores": [
         "qemu"
       ],
@@ -50493,7 +50493,7 @@
       "sha1": "22a75d26a0591d2c7763765b6381fa2f73de43e1",
       "sha256": "1e643db3e209e801f30f4492fdbdafca3e8f251a7b8e12239249eb480f081003",
       "size": 768,
-      "repo_path": "bios/QEMU/npcm7xx_bootrom.bin",
+      "repo_path": "bios/QEMU/QEMU/npcm7xx_bootrom.bin",
       "cores": [
         "qemu"
       ]
@@ -50503,7 +50503,7 @@
       "sha1": "ebdf1745479f4ec88459bbd9ef16ee1114018508",
       "sha256": "36a49d253e2bd907a54ca5e61965438b65fac0cf152c9b11f83c0c965203f218",
       "size": 3211,
-      "repo_path": "bios/QEMU/bamboo.dtb",
+      "repo_path": "bios/QEMU/QEMU/bamboo.dtb",
       "cores": [
         "qemu"
       ]
@@ -50513,7 +50513,7 @@
       "sha1": "8a2fda0b4f23a92eb44776b5d7ffe951987062da",
       "sha256": "3e7ed2ed8637d8c8a1e619d8a280bc2da853e7a17eab689597c7b69770e503b0",
       "size": 9779,
-      "repo_path": "bios/QEMU/canyonlands.dtb",
+      "repo_path": "bios/QEMU/QEMU/canyonlands.dtb",
       "cores": [
         "qemu"
       ]
@@ -50523,7 +50523,7 @@
       "sha1": "892d265838866869b8a8ef104252ff5b2fda156f",
       "sha256": "37bda496b0b4216cce70626492b43d9aaf0d5fcdefcce45efa09d5c583770c69",
       "size": 9882,
-      "repo_path": "bios/QEMU/petalogix-ml605.dtb",
+      "repo_path": "bios/QEMU/QEMU/petalogix-ml605.dtb",
       "cores": [
         "qemu"
       ]
@@ -50533,7 +50533,7 @@
       "sha1": "976600e3f89ecc1f3564b7077f53c58e0b565280",
       "sha256": "ef9f3112b7d9258cfad362dba8338ce9a8bdce59dec4d47c690b28fbefc841d7",
       "size": 8161,
-      "repo_path": "bios/QEMU/petalogix-s3adsp1800.dtb",
+      "repo_path": "bios/QEMU/QEMU/petalogix-s3adsp1800.dtb",
       "cores": [
         "qemu"
       ]
@@ -52594,7 +52594,7 @@
       "sha1": "b083518fffb7f66b03c23b7eb4f868e62dc5a987",
       "sha256": "a73a06c23ed38370e58a11fb1b86f7ea4c547061a60d7aa62bae446235fd2dff",
       "size": 65536,
-      "repo_path": "bios/Roland/MT32_CONTROL.ROM",
+      "repo_path": "bios/Roland/MT-32/MT32_CONTROL.ROM",
       "cores": [
         "amiberry"
       ]
@@ -52604,7 +52604,7 @@
       "sha1": "f6b1eebc4b2d200ec6d3d21d51325d5b48c60252",
       "sha256": "d9164063f293410cf33f2f64cdcea6893b44723fe41938e07ec9aef58b406238",
       "size": 524288,
-      "repo_path": "bios/Roland/MT32_PCM.ROM",
+      "repo_path": "bios/Roland/MT-32/MT32_PCM.ROM",
       "cores": [
         "amiberry"
       ]
@@ -52614,7 +52614,7 @@
       "sha1": "a439fbb390da38cada95a7cbb1d6ca199cd66ef8",
       "sha256": "08d68695e5bff6bbcbb751d6e4453db9f5ead0b5f41e86480798a04376dfe090",
       "size": 65536,
-      "repo_path": "bios/Roland/CM32L_CONTROL.ROM",
+      "repo_path": "bios/Roland/CM-32L/CM32L_CONTROL.ROM",
       "cores": [
         "amiberry"
       ]
@@ -52624,7 +52624,7 @@
       "sha1": "289cc298ad532b702461bfc738009d9ebe8025ea",
       "sha256": "0dc50190bb7ea3fb212c970346b771a511772b528801e7eda6d27efda8c40698",
       "size": 1048576,
-      "repo_path": "bios/Roland/CM32L_PCM.ROM",
+      "repo_path": "bios/Roland/CM-32L/CM32L_PCM.ROM",
       "cores": [
         "amiberry"
       ]
@@ -55066,7 +55066,7 @@
       "sha1": "764ec667084bc237c1de6bd1db7541ad8cb59975",
       "sha256": "a66bc2ea040ec792308259ee96ba57b4c88de48fbce244714800b6b6340c730d",
       "size": 29270,
-      "repo_path": "bios/Arcade/FBAlpha 2012/samples/dkong.zip",
+      "repo_path": "bios/Arcade/fba2012/samples/dkong.zip",
       "cores": [
         "fbalpha2012"
       ],
@@ -55077,7 +55077,7 @@
       "sha1": "2725373cc8e6e3c04bca4bf7bd0b027be6bec058",
       "sha256": "73b9e51295fe7412712ccf73c7010d92181aa12d420c40c1c6bc4f8b948e5a11",
       "size": 300220,
-      "repo_path": "bios/Arcade/FBAlpha 2012/samples/dkongjr.zip",
+      "repo_path": "bios/Arcade/fba2012/samples/dkongjr.zip",
       "cores": [
         "fbalpha2012"
       ],
@@ -55088,7 +55088,7 @@
       "sha1": "9e52cc30850cf9e1855fbd2e26f987cbc05b910a",
       "sha256": "a9e936f78c9db009fa9561ebb35dc374b343ba38037133ae30e95906ab0ac312",
       "size": 243090,
-      "repo_path": "bios/Arcade/FBAlpha 2012/samples/galaga.zip",
+      "repo_path": "bios/Arcade/fba2012/samples/galaga.zip",
       "cores": [
         "fbalpha2012"
       ],
@@ -76778,7 +76778,7 @@
       "sha1": "2aa01b414a703880192277f9ce0dae193e9d2c8d",
       "sha256": "32a92bc476d476ad1befa6894edfddf5a7abe298fb02683e41f3b5f2ba5c9cd6",
       "size": 141072,
-      "repo_path": "bios/QEMU/u-boot.bin",
+      "repo_path": "bios/QEMU/QEMU/u-boot.bin",
       "cores": [
         "qemu"
       ]
@@ -76788,7 +76788,7 @@
       "sha1": "358abab78f3bfba72b7b45cb5dd66ce4411e2618",
       "sha256": "2fb484617cc7273d971d55a5367cac91a8f86aa0de54e7e155837d09a0599bc7",
       "size": 298835,
-      "repo_path": "bios/QEMU/mips_bios.bin",
+      "repo_path": "bios/QEMU/QEMU/mips_bios.bin",
       "cores": [
         "qemu"
       ]
@@ -76798,7 +76798,7 @@
       "sha1": "daa15fb1b8829da5c5bd473243acf19cd0f17a74",
       "sha256": "40232429030f906513bb5482c21d8b3f49626ab7808920382e065a2949caf99f",
       "size": 300324,
-      "repo_path": "bios/QEMU/mipsel_bios.bin",
+      "repo_path": "bios/QEMU/QEMU/mipsel_bios.bin",
       "cores": [
         "qemu"
       ]
@@ -76808,7 +76808,7 @@
       "sha1": "8e99ed6157811282b7570f5f2e13b81a3913497e",
       "sha256": "fcdf6bb2cb7885a4a62f31fcb0d5e368bac7b6cea28f40c6dfa678af22fea20a",
       "size": 561168,
-      "repo_path": "bios/QEMU/bios_loongson3.bin",
+      "repo_path": "bios/QEMU/QEMU/bios_loongson3.bin",
       "cores": [
         "qemu"
       ]
@@ -76818,7 +76818,7 @@
       "sha1": "41c43f4e8956169ab7602230a3a63934b26d65de",
       "sha256": "81576c8581e6765a73a8b5070dfb3758bcc3b0737461d481ec97ab5b67751771",
       "size": 442384,
-      "repo_path": "bios/QEMU/pmon_2e.bin",
+      "repo_path": "bios/QEMU/QEMU/pmon_2e.bin",
       "cores": [
         "qemu"
       ]
@@ -76828,7 +76828,7 @@
       "sha1": "f2a9ce387019bf272c6e3459d961b30f28942ac5",
       "sha256": "05ad753fb594e656cf078023ec189e09e2a7655a780de993b75b8c51ed6b09ca",
       "size": 1048576,
-      "repo_path": "bios/QEMU/MacROM.bin",
+      "repo_path": "bios/QEMU/QEMU/MacROM.bin",
       "cores": [
         "qemu"
       ]
@@ -76838,7 +76838,7 @@
       "sha1": "3df540b7517f27b3a76e31f193821d04e5805f89",
       "sha256": "93bb5d776bc5a7d609448a3fdb54f1c51653423a7baa5d9b6bcb7fa40b126f87",
       "size": 4194304,
-      "repo_path": "bios/QEMU/canon-a1100-rom1.bin",
+      "repo_path": "bios/QEMU/QEMU/canon-a1100-rom1.bin",
       "cores": [
         "qemu"
       ]
@@ -76848,7 +76848,7 @@
       "sha1": "1dd1b6fd8cb47b055c729cbecda56fe1dc83d6c1",
       "sha256": "9d96ed4b0c1a3af09d9e0ac927f3d456c058eaf8c2fa4c167eac7437ee9a80df",
       "size": 11248,
-      "repo_path": "bios/QEMU/virtex-ml507.dtb",
+      "repo_path": "bios/QEMU/QEMU/virtex-ml507.dtb",
       "cores": [
         "qemu"
       ]
@@ -77074,7 +77074,7 @@
       "sha1": "b083518fffb7f66b03c23b7eb4f868e62dc5a987",
       "sha256": "a73a06c23ed38370e58a11fb1b86f7ea4c547061a60d7aa62bae446235fd2dff",
       "size": 65536,
-      "repo_path": "bios/Roland/MT32_CONTROL.ROM",
+      "repo_path": "bios/Roland/MT-32/MT32_CONTROL.ROM",
       "cores": [
         "scummvm"
       ]
@@ -77084,7 +77084,7 @@
       "sha1": "f6b1eebc4b2d200ec6d3d21d51325d5b48c60252",
       "sha256": "d9164063f293410cf33f2f64cdcea6893b44723fe41938e07ec9aef58b406238",
       "size": 524288,
-      "repo_path": "bios/Roland/MT32_PCM.ROM",
+      "repo_path": "bios/Roland/MT-32/MT32_PCM.ROM",
       "cores": [
         "scummvm"
       ]
@@ -77094,7 +77094,7 @@
       "sha1": "a439fbb390da38cada95a7cbb1d6ca199cd66ef8",
       "sha256": "08d68695e5bff6bbcbb751d6e4453db9f5ead0b5f41e86480798a04376dfe090",
       "size": 65536,
-      "repo_path": "bios/Roland/CM32L_CONTROL.ROM",
+      "repo_path": "bios/Roland/CM-32L/CM32L_CONTROL.ROM",
       "cores": [
         "scummvm"
       ]
@@ -77104,7 +77104,7 @@
       "sha1": "289cc298ad532b702461bfc738009d9ebe8025ea",
       "sha256": "0dc50190bb7ea3fb212c970346b771a511772b528801e7eda6d27efda8c40698",
       "size": 1048576,
-      "repo_path": "bios/Roland/CM32L_PCM.ROM",
+      "repo_path": "bios/Roland/CM-32L/CM32L_PCM.ROM",
       "cores": [
         "scummvm"
       ]
