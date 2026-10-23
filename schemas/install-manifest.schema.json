@@ -177,17 +177,21 @@
         "properties": {
           "dest": {
             "type": "string",
-            "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+$"
+            "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+$",
+            "description": "Where the file would go, below base_destination, or below the save directory when root is save."
           },
           "name": {
             "type": "string",
-            "minLength": 1
+            "minLength": 1,
+            "description": "File name the declaration gives."
           },
           "system": {
-            "type": "string"
+            "type": "string",
+            "description": "System id of the declaration. Empty when the core's file names none."
           },
           "required": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "The platform or the core needs the file to run, as the declaration says."
           },
           "reason": {
             "enum": [
@@ -200,6 +204,18 @@
               "no_save_directory",
               "no_core_folder",
               "no_save_system"
+            ],
+            "description": "Why the file is left out, as a code. enumDescriptions gives the meaning of each code, in the order of enum.",
+            "enumDescriptions": [
+              "The platform checks the hash and the only copy held contradicts the one it declares, so the frontend would refuse it.",
+              "The collection holds no copy the declaration accepts.",
+              "The declaration keeps the file outside the repository (storage: external). The pack builder downloads it from its own address, the installer does not.",
+              "The user supplies the file (storage: user_provided). The pack writes its instructions in its place.",
+              "The platform keeps one folder per system and has none for the system the core's file belongs to.",
+              "The platform lists each system folder flat (firmware_folder_flat) and the file would sit in a subfolder it does not read.",
+              "The core reads the file below the save directory and the platform has no save directory a pack can fill.",
+              "The frontend sorts saves by core and the core's profile does not name its folder (core_folder).",
+              "The launcher gives each system its own save folder and no system of the platform runs the core."
             ]
           },
           "category": {
@@ -222,7 +238,8 @@
                 },
                 "uniqueItems": true
               }
-            ]
+            ],
+            "description": "Profiles whose core wants the file. Null for a file the platform's own list declares."
           },
           "regions": {
             "description": "The regions the emulator code selects the file for. Absent when it never competes.",
@@ -336,7 +353,8 @@
                     "type": "string"
                   },
                   "minItems": 1,
-                  "uniqueItems": true
+                  "uniqueItems": true,
+                  "description": "Profiles of the cores that claim the destination together."
                 }
               }
             }
@@ -385,40 +403,48 @@
         ],
         "properties": {
           "ref": {
-            "type": "string"
+            "type": "string",
+            "description": "Key of the data directory in platforms/_data_dirs.yml."
           },
           "dest": {
             "type": "string",
-            "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).*$"
+            "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).*$",
+            "description": "Folder below base_destination the tree is rebuilt in. Empty for base_destination itself."
           },
           "url": {
             "type": "string",
-            "pattern": "^https://"
+            "pattern": "^https://",
+            "description": "HTTPS address of the source archive the installer downloads."
           },
           "type": {
             "enum": [
               "zip",
               "tarball"
-            ]
+            ],
+            "description": "Format of the source archive: zip, or tarball (gzip)."
           },
           "strip_components": {
             "type": "integer",
-            "minimum": 0
+            "minimum": 0,
+            "description": "With type zip: leading path parts dropped from each member."
           },
           "source_path": {
-            "type": "string"
+            "type": "string",
+            "description": "With type tarball: only members below this path are kept, relative to it."
           },
           "exclude": {
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "description": "First path parts left out of the tree."
           },
           "systems": {
             "type": "array",
             "items": {
               "type": "string"
-            }
+            },
+            "description": "Platform systems whose cores read the tree."
           },
           "files": {
             "type": "object",
@@ -432,14 +458,17 @@
               "properties": {
                 "sha1": {
                   "type": "string",
-                  "pattern": "^[a-f0-9]{40}$"
+                  "pattern": "^[a-f0-9]{40}$",
+                  "description": "SHA1 the file must have."
                 },
                 "size": {
                   "type": "integer",
-                  "minimum": 0
+                  "minimum": 0,
+                  "description": "Bytes of the file."
                 }
               }
-            }
+            },
+            "description": "Every file of the tree by its path below dest. A member whose sha1 differs is refused."
           }
         }
       }
@@ -455,10 +484,12 @@
       "properties": {
         "folder": {
           "type": "string",
-          "pattern": "^[^/\\\\.][^/\\\\]*(/[^/\\\\.][^/\\\\]*)*$"
+          "pattern": "^[^/\\\\.][^/\\\\]*(/[^/\\\\.][^/\\\\]*)*$",
+          "description": "Pack folder holding the save entries, also the save directory's default place beside the BIOS directory."
         },
         "by_core": {
-          "type": "boolean"
+          "type": "boolean",
+          "description": "true when the frontend inserts each core's library_name (core_folder) below the save directory."
         },
         "by_system": {
           "description": "true when the platform's launcher hands each core <save directory>/<system> at each launch (Batocera, RetroBat). Each dest then starts with that system's folder, and no frontend config read at install time changes it.",
@@ -631,25 +662,31 @@
             "properties": {
               "sha1": {
                 "type": "string",
-                "pattern": "^[a-f0-9]{40}$"
+                "pattern": "^[a-f0-9]{40}$",
+                "description": "SHA1 of this copy."
               },
               "sha256": {
                 "type": "string",
-                "pattern": "^[a-f0-9]{64}$"
+                "pattern": "^[a-f0-9]{64}$",
+                "description": "SHA256 of this copy."
               },
               "size": {
                 "type": "integer",
-                "minimum": 0
+                "minimum": 0,
+                "description": "Bytes of this copy."
               },
               "repo_path": {
-                "type": "string"
+                "type": "string",
+                "description": "Path of this copy in the repository, fetched as the entry's repo_path is."
               },
               "storage": {
-                "const": "release"
+                "const": "release",
+                "description": "release when this copy is a large-files release asset."
               },
               "release_asset": {
                 "type": "string",
-                "pattern": "^[^/\\\\]+$"
+                "pattern": "^[^/\\\\]+$",
+                "description": "Asset of the large-files release holding this copy, fetched instead of repo_path."
               },
               "cores": {
                 "type": "array",
@@ -657,10 +694,12 @@
                   "type": "string"
                 },
                 "minItems": 1,
-                "uniqueItems": true
+                "uniqueItems": true,
+                "description": "Profiles whose core reads this copy."
               },
               "executable": {
-                "type": "boolean"
+                "type": "boolean",
+                "description": "The repository keeps this copy executable."
               }
             }
           }
@@ -677,25 +716,31 @@
             "properties": {
               "sha1": {
                 "type": "string",
-                "pattern": "^[a-f0-9]{40}$"
+                "pattern": "^[a-f0-9]{40}$",
+                "description": "SHA1 of this copy."
               },
               "sha256": {
                 "type": "string",
-                "pattern": "^[a-f0-9]{64}$"
+                "pattern": "^[a-f0-9]{64}$",
+                "description": "SHA256 of this copy."
               },
               "size": {
                 "type": "integer",
-                "minimum": 0
+                "minimum": 0,
+                "description": "Bytes of this copy."
               },
               "repo_path": {
-                "type": "string"
+                "type": "string",
+                "description": "Path of this copy in the repository, fetched as the entry's repo_path is."
               },
               "storage": {
-                "const": "release"
+                "const": "release",
+                "description": "release when this copy is a large-files release asset."
               },
               "release_asset": {
                 "type": "string",
-                "pattern": "^[^/\\\\]+$"
+                "pattern": "^[^/\\\\]+$",
+                "description": "Asset of the large-files release holding this copy, fetched instead of repo_path."
               },
               "cores": {
                 "type": "array",
@@ -703,10 +748,12 @@
                   "type": "string"
                 },
                 "minItems": 1,
-                "uniqueItems": true
+                "uniqueItems": true,
+                "description": "Profiles whose presence puts this copy in the slot."
               },
               "executable": {
-                "type": "boolean"
+                "type": "boolean",
+                "description": "The repository keeps this copy executable."
               }
             }
           }
@@ -728,28 +775,35 @@
             "properties": {
               "sha1": {
                 "type": "string",
-                "pattern": "^[a-f0-9]{40}$"
+                "pattern": "^[a-f0-9]{40}$",
+                "description": "SHA1 of this copy."
               },
               "sha256": {
                 "type": "string",
-                "pattern": "^[a-f0-9]{64}$"
+                "pattern": "^[a-f0-9]{64}$",
+                "description": "SHA256 of this copy."
               },
               "size": {
                 "type": "integer",
-                "minimum": 0
+                "minimum": 0,
+                "description": "Bytes of this copy."
               },
               "repo_path": {
-                "type": "string"
+                "type": "string",
+                "description": "Path of this copy in the repository, fetched as the entry's repo_path is."
               },
               "storage": {
-                "const": "release"
+                "const": "release",
+                "description": "release when this copy is a large-files release asset."
               },
               "release_asset": {
                 "type": "string",
-                "pattern": "^[^/\\\\]+$"
+                "pattern": "^[^/\\\\]+$",
+                "description": "Asset of the large-files release holding this copy, fetched instead of repo_path."
               },
               "executable": {
-                "type": "boolean"
+                "type": "boolean",
+                "description": "The repository keeps this copy executable."
               },
               "systems": {
                 "type": "array",
@@ -758,7 +812,8 @@
                   "minLength": 1
                 },
                 "minItems": 1,
-                "uniqueItems": true
+                "uniqueItems": true,
+                "description": "Platform systems whose declaration this copy answers."
               }
             }
           }
@@ -797,13 +852,16 @@
             "properties": {
               "name": {
                 "type": "string",
-                "minLength": 1
+                "minLength": 1,
+                "description": "File name the declaration gives."
               },
               "system": {
-                "type": "string"
+                "type": "string",
+                "description": "System id of the declaration. Empty when the core's file names none."
               },
               "required": {
-                "type": "boolean"
+                "type": "boolean",
+                "description": "The platform or the core needs the file to run, as the declaration says."
               },
               "reason": {
                 "enum": [
@@ -813,6 +871,15 @@
                   "user_provided",
                   "no_platform_slug",
                   "below_platform_folder"
+                ],
+                "description": "Why the file is left out, as a code. enumDescriptions gives the meaning of each code, in the order of enum.",
+                "enumDescriptions": [
+                  "The platform checks the hash and the only copy held contradicts the one it declares, so the frontend would refuse it.",
+                  "The collection holds no copy the declaration accepts.",
+                  "The declaration keeps the file outside the repository (storage: external). The pack builder downloads it from its own address, the installer does not.",
+                  "The user supplies the file (storage: user_provided). The pack writes its instructions in its place.",
+                  "The platform keeps one folder per system and has none for the system the core's file belongs to.",
+                  "The platform lists each system folder flat (firmware_folder_flat) and the file would sit in a subfolder it does not read."
                 ]
               },
               "cores": {
@@ -827,7 +894,8 @@
                     },
                     "uniqueItems": true
                   }
-                ]
+                ],
+                "description": "Profiles whose core wants the file. Null for a file the platform's own list declares."
               },
               "regions": {
                 "description": "The regions the emulator code selects the file for. Absent when it never competes.",
@@ -949,7 +1017,8 @@
           "properties": {
             "repo_path": {
               "type": "string",
-              "pattern": "^bios/"
+              "pattern": "^bios/",
+              "description": "Without release_asset, the copy is served from the repository's bios/ tree."
             }
           },
           "not": {
