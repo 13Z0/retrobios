@@ -175,12 +175,17 @@ class GetYourFilesOrder(unittest.TestCase):
     def test_a_setup_after_the_release_says_no_zip_yet(self):
         text = _page("which-pack.md")
         self.assertNotIn("Not in v", text)
-        record = release_record.load_record()
-        missing = [k for k in REGISTRY if not release_record.pack_for(k, record)]
-        if record.get("tag") and missing:
+        record = release_record.load_advertised()
+        pending = [k for k in REGISTRY if REGISTRY[k].get("release_pack")
+                   and not release_record.pack_for(k, record)]
+        if record.get("tag") and pending:
             self.assertIn("No ZIP yet. [Use the command]", text)
             self.assertIn("Setups added after the last release have no ZIP until the next one.",
                           text)
+        else:
+            self.assertNotIn("No ZIP yet.", text)
+        if any(not entry.get("release_pack") for entry in REGISTRY.values()):
+            self.assertIn("No ZIP. [Use the command]", text)
 
     def test_zip_advice_answers_the_usual_mistakes(self):
         text = _page("which-pack.md")

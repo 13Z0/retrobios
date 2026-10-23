@@ -530,7 +530,7 @@ guides:
     - >-
       AmberELEC runs on the RG351P, RG351V, RG351MP, RG353, RG503 and RG552. Its list
       names files under `/storage/roms`: `bios/` for most, `neogeo/` for the rest. The
-      pack holds those folders.
+      command fills those folders.
     logo_owner: AmberELEC
     logo_licence: GitHub organisation avatar of AmberELEC
   emuelec:
@@ -553,7 +553,7 @@ guides:
     - >-
       EmuELEC runs on Amlogic TV boxes, the Odroid Go Advance, GameForce and RK356x devices.
       Its list names files under `/storage/roms`: `bios/` for most, `neogeo/` and `ports/`
-      for the rest. The pack holds those folders.
+      for the rest. The command fills those folders.
     logo_owner: EmuELEC
     logo_licence: GitHub organisation avatar of EmuELEC
   knulli:
@@ -598,15 +598,15 @@ guides:
       Press **F4** in the game menu for a terminal. Paste the line. Press Enter.
     notes:
     - >-
-      Use the RetroPie pack, not RetroArch's. The command does not run on RetroPie 4.8: use
-      the pack there.
+      Install with `--platform retropie`, not RetroArch's files. The command does not run on
+      RetroPie 4.8: run it on a computer there, with the network folder above after `--dest`.
     reference_notes:
     - >-
       RetroPie also installs standalone emulators (openMSX, PCSX2, XRoar, Amiberry and
-      others) whose files only the RetroPie pack carries.
+      others) whose files only the RetroPie file list carries.
     - >-
-      RetroPie is archived in this project: its configuration is kept and its pack is
-      still built, but its upstream list is no longer read again on a schedule.
+      RetroPie is archived in this project: its configuration is kept and the command
+      serves it, but its upstream list is no longer read again on a schedule.
     pack_manual: |
       Option B: Via network share
       --------------------------

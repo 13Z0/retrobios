@@ -429,7 +429,9 @@ class TheSitePageOfACardPlatform(unittest.TestCase):
         self.assertNotIn("0/0", page)
         self.assertNotIn("## Systems overview", page)
         self.assertIn("| `Bios/PS/` | [pcsx_rearmed](../emulators/pcsx_rearmed.md) |", page)
-        self.assertIn("| Unzip the pack into | `<SD card>/` |", page)
+        # MinUI has no release pack: no unzip row, the command instead.
+        self.assertNotIn("| Unzip the pack into |", page)
+        self.assertIn("No ZIP for MinUI. The command installs every file and checks it.", page)
 
 
 if __name__ == "__main__":

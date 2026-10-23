@@ -115,6 +115,8 @@ EOF
         echo "Error: Platform '$platform' not found in latest release."
         echo "Available platforms:"
         platform_names "$release_json"
+        echo "A setup without a pack is served by the installer:"
+        echo "  curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh -s -- --platform <name>"
         exit 1
     fi
 
