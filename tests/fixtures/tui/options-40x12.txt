@@ -6,7 +6,7 @@
    Cores: all
    Parallel downloads: 8
    BIOS folder: ~/.config...ch/system
+   Copy from: none
    Preview the file list
    Show the command line
-
  A Open  B Back  <> Set  ? Help
