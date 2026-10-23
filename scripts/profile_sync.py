@@ -2300,23 +2300,95 @@ def declared_hashes(profile: dict) -> set[str]:
     return hashes
 
 
+# Sources where a filename is a string. Outside a literal or a comment,
+# `EE.bios` is a config key and `psm_s.pal` a struct field (pcee2).
+CODE_SUFFIXES = (
+    ".c", ".cc", ".cpp", ".cxx", ".h", ".hh", ".hpp", ".hxx", ".inc", ".inl",
+    ".m", ".mm", ".rs", ".java", ".kt", ".cs", ".swift",
+)
+_PRINTF_SPEC_RE = re.compile(
+    r"[-+ #0]*(?:\d+|\*)?(?:\.\d+)?(?:hh|h|ll|l|z|j|t|L)?[diouxXsScpfFeEgGaA]"
+)
+_TITLE_WORD_RE = re.compile(r"[A-Z0-9][\w.()&'+-]*")
+
+
+def _string_literal(line: str, index: int) -> tuple[int, int] | None:
+    """Bounds of the double-quoted literal holding index, None outside one."""
+    start = None
+    position = 0
+    while position < len(line):
+        char = line[position]
+        if char == "\\" and start is not None:
+            position += 2
+            continue
+        if char == '"':
+            if start is None:
+                start = position + 1
+            else:
+                if start <= index < position:
+                    return start, position
+                start = None
+        position += 1
+    return None
+
+
+def _in_comment(line: str, index: int) -> bool:
+    before = line[:index]
+    return "//" in before or "/*" in before or line.lstrip().startswith(("*", "#"))
+
+
+def file_literal(line: str, start: int, end: int, code: bool) -> str | None:
+    """The filename a match stands for, None when it names no file.
+
+    A printf conversion glued to the name is not part of it: sdl2trs writes
+    `"%slevel2.rom"` with ROM_PATH in front. A name with spaces is read
+    whole: virtualjaguar opens `"Jaguar CD BIOS.rom"`, and the match alone
+    was `BIOS.rom`. Such a name is written as a title, so `"Please insert
+    bios.bin"` and `"Packing patches.zip"` still yield the file alone. In
+    a code file a match outside any string or comment is an identifier and
+    names nothing.
+    """
+    name = line[start:end]
+    if start and line[start - 1] == "%":
+        spec = _PRINTF_SPEC_RE.match(name)
+        if spec:
+            name = name[spec.end():]
+    literal = _string_literal(line, start)
+    if literal is None:
+        if code and not _in_comment(line, start):
+            return None
+    elif literal[1] == end and line[start - 1:start] == " ":
+        words = line[literal[0]:start].split() + [name]
+        if all(_TITLE_WORD_RE.fullmatch(word) for word in words):
+            return line[literal[0]:end]
+    base = os.path.basename(name)
+    # `".bin.hex.iii.rom"` (sdl2trs) lists extensions, it names no file.
+    if base.startswith(".") or not _FILE_RE.fullmatch(base):
+        return None
+    return base
+
+
 def detect_new_files(
-    head_lines: list[str], known: set[str], cap: int = 25
+    head_lines: list[str], known: set[str], cap: int = 25, path: str = ""
 ) -> tuple[list[tuple[int, str]], int]:
     """Filename literals at HEAD the profile does not declare."""
     found: list[tuple[int, str]] = []
     seen: set[str] = set()
     elided = 0
+    code = path.lower().endswith(CODE_SUFFIXES)
     for number, line in enumerate(head_lines, start=1):
-        for match in _FILE_RE.findall(line):
-            name = os.path.basename(match).casefold()
+        for match in _FILE_RE.finditer(line):
+            literal = file_literal(line, match.start(), match.end(), code)
+            if literal is None:
+                continue
+            name = literal.casefold()
             if name in known or name in seen:
                 continue
             seen.add(name)
             if len(found) >= cap:
                 elided += 1
                 continue
-            found.append((number, os.path.basename(match)))
+            found.append((number, literal))
     return found, elided
 
 
@@ -4050,10 +4122,12 @@ def _detect(
             or []
         )
         if args.detect_new_files:
-            found, elided = detect_new_files(head_lines, names)
+            found, elided = detect_new_files(head_lines, names, path=path)
             at_pin = {
                 name.casefold()
-                for _, name in detect_new_files(pin_lines, names, cap=sys.maxsize)[0]
+                for _, name in detect_new_files(
+                    pin_lines, names, cap=sys.maxsize, path=path
+                )[0]
             }
             new_files.extend(
                 {"path": path, "line": number, "name": name,

@@ -3310,6 +3310,44 @@ class TestDetectNewFiles(unittest.TestCase):
         found, _ = detect_new_files(['#include "driver.cpp"'], set())
         self.assertEqual(found, [])
 
+    def test_a_printf_conversion_is_not_part_of_the_name(self):
+        # sdl2trs src/trs_options.c:864-866 builds "%slevel2.rom" and the
+        # report named slevel2.rom.
+        lines = [
+            'snprintf(romfile1, sizeof(romfile1), "%slevel2.rom", ROM_PATH);',
+            'snprintf(name, 64, "%02dcart.bin", slot);',
+        ]
+        found, _ = detect_new_files(lines, set(), path="src/trs_options.c")
+        self.assertEqual(found, [(1, "level2.rom"), (2, "cart.bin")])
+
+    def test_a_quoted_name_with_spaces_is_read_whole(self):
+        # virtualjaguar libretro.c:5815-5816 opens "Jaguar CD BIOS.rom",
+        # reported as BIOS.rom. A sentence still yields the name it holds.
+        lines = [
+            'snprintf(path, n, "%s%c%s", dir, slash, "Jaguar CD BIOS.rom");',
+            'log("Please insert bios.bin first");',
+            'message(STATUS "Packing patches.zip")',
+            '#define ROM ".bin.hex.iii.rom"',
+        ]
+        found, _ = detect_new_files(lines, set(), path="libretro.c")
+        self.assertEqual(
+            found,
+            [(1, "Jaguar CD BIOS.rom"), (2, "bios.bin"), (3, "patches.zip")],
+        )
+
+    def test_an_identifier_in_code_is_not_a_file(self):
+        # pcee2 reads config keys EE.bios and IOP.bios and a field psm_s.pal.
+        lines = [
+            "cfg.EE.bios = load(path);",
+            "if (psm_s.pal) {",
+            "// loads boot.rom from the system directory",
+            'open("ipl.rom");',
+        ]
+        found, _ = detect_new_files(lines, set(), path="src/core/config.cpp")
+        self.assertEqual(found, [(3, "boot.rom"), (4, "ipl.rom")])
+        found, _ = detect_new_files(["Copy EE.bios here"], set(), path="README.md")
+        self.assertEqual(found, [(1, "EE.bios")])
+
 
 class TestWatchHashes(unittest.TestCase):
     def test_finds_new_sha1(self):
