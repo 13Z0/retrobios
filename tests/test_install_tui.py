@@ -399,6 +399,20 @@ class Flow(unittest.TestCase):
         press(state, "enter")
         self.assertEqual(state.exit_code, 0)
 
+    def test_every_run_reads_the_folders_given_with_from(self):
+        """--tui --from OLD: the check and the install both copy from OLD."""
+        args = _args(**{"from": [Path("old-card"), Path("backup.zip")],
+                        "from_pack": [Path("pack.zip")]})
+        flags = install._tui_passthrough(args)
+        self.assertIn(("--from", str(Path("old-card").absolute())), flags)
+        self.assertIn(("--from", str(Path("backup.zip").absolute())), flags)
+        self.assertIn(("--from-pack", str(Path("pack.zip").absolute())), flags)
+        state = checked_state()
+        state.passthrough = flags
+        for run in ("check", "install"):
+            self.assertIn(f"--from={Path('old-card').absolute()}",
+                          install.tui_argv(state, run, "py", "i.py"))
+
     def test_the_check_runs_with_the_command_line_choices(self):
         state = fresh_state()
         state.passthrough = [("--target", "switch")]
