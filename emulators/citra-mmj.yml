@@ -13,12 +13,19 @@ systems:
   - nintendo-3ds
 mode: standalone
 
+data_root:
+  android:
+    path: "Android/data/org.citra.emu/files/citra-emu"
+    source_ref: "src/android/app/src/main/java/org/citra/emu/utils/CitraDirectory.java:61-94"
+    note: "Before Android 10, or under legacy external storage, citra-emu at the root of shared storage is used instead. The com.antutu.ABenchMark package reads Android/data/com.antutu.ABenchMark/files/citra-emu."
+
 notes: |
   Citra fork for Android, shipped as four APKs of the same build per release:
   the org.citra.emu package, a com.antutu.ABenchMark package, and a
-  StorageAccess variant of each. The user directory is citra-emu at the root of
-  external storage, and Android/data/org.citra.emu/files/citra-emu for the
-  StorageAccess builds. External files live in sysdata/ and nand/ below it.
+  StorageAccess variant of each. The user directory is citra-emu in the app's
+  external files directory from Android 10 on, and at the root of external
+  storage on earlier versions or under legacy storage, as data_root gives.
+  External files live in sysdata/ and nand/ below it.
   ref: src/android/app/src/main/java/org/citra/emu/utils/CitraDirectory.java:61-94,
        src/common/common_paths.h:23-29, src/common/file_util.cpp:398-430
 
