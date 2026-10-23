@@ -2923,6 +2923,10 @@ class AFolderThisUserCannotOpen(unittest.TestCase):
         state.stack = ["setup"]
         self.assertEqual(install.tui_update(state, Key("enter")), [])
         self.assertEqual(state.screen, "folder")
+        # The folder found is the one RetroArch reads: its built-in default
+        # is not, and was offered with Enter on "Use this folder".
+        self.assertIsNone(state.folder_default)
+        self.assertNotIn("reads its BIOS files from", self.said(state))
         self.assertIn(f"This user cannot open {install._short_path(self.lock, state.home)} "
                       "(Permission denied)", self.said(state))
 

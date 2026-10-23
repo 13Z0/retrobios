@@ -9217,7 +9217,10 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
         # A system_directory under /root read from retroarch.cfg, run without
         # sudo: the case probe raised PermissionError before any line.
         for _name, path in platforms:
-            _refuse_closed(path, "detected here")
+            if closed_folder(path) is not None and len(platforms) > 1:
+                print("  Nothing was installed. Name one platform with --platform "
+                      "to install it alone.", file=sys.stderr)
+            _refuse_closed(path, "detected here (name another with --dest)")
 
     total_downloaded = 0
     total_up_to_date = 0
@@ -10791,8 +10794,10 @@ def _choose(state: TuiState, plat: str, dest: Path) -> list[tuple]:
         state.platform, state.status = plat, _closed_status(state, closed)
         if state.stack and state.screen in ("folder", "browse", "path"):
             return []
-        state.folder_default = (None if plat in CARD_PLATFORMS
-                                else _default_dest(state.os_type, plat))
+        # The folder found here is the one the frontend reads: the built-in
+        # default beside it is one it does not, offered as "reads its BIOS
+        # files from" and filled with Enter.
+        state.folder_default = None
         return _push(state, "folder")
     card = card_system(dest)
     if card and card[0] == plat and card[1] != dest:

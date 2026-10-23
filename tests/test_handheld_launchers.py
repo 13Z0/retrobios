@@ -486,7 +486,7 @@ if os.environ.get("FAKE_HOLD"):
     sys.exit(0)
 if os.environ.get("FAKE_IDLE_ERROR"):
     # RETROBIOS_IDLE_EXIT on an error screen: the idle line, then the error.
-    print("No button pressed, closing.", file=sys.stderr)
+    print("RetroBIOS: No button pressed, closing.", file=sys.stderr)
     print("Error: " + os.environ["FAKE_IDLE_ERROR"], file=sys.stderr)
 if os.environ.get("FAKE_ERROR"):
     print("Error: " + os.environ["FAKE_ERROR"], file=sys.stderr)
@@ -1213,6 +1213,15 @@ class ThePortMasterPort(unittest.TestCase):
         self.assertIn("could not reach the file list", device.screen)
         self.assertNotIn("No button pressed", device.screen)
         device.assert_console_restored()
+
+    def test_the_idle_line_is_the_one_install_py_writes(self):
+        """The launcher keyed on the words without install.py's prefix, and
+        its fake printed them the same way: the test passed, the device
+        still waited 300 s."""
+        line = f"RetroBIOS: {install.TUI_IDLE_WORDS}"
+        tui = (REPO_ROOT / "ports" / "shared" / "tui.txt").read_text(encoding="utf-8")
+        self.assertIn(f'= "{line}" ]', tui)
+        self.assertIn(f'print("{line}", file=sys.stderr)', FAKE_INSTALL)
 
     def test_start_select_before_the_interface_handles_signals(self):
         """A SIGTERM before run_tui installs its handlers ends Python on the
