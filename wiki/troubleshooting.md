@@ -1,7 +1,7 @@
 ---
 level: start
 order: 40
-terms: bios not found, bios missing, firmware missing, bios error
+terms: bios not found, bios missing, firmware missing, bios error, check my bios folder, check bios folder
 ---
 
 # When a game does not start
@@ -33,7 +33,7 @@ Read the count line:
 
 - **`wrong hash`**: another region or model, or damaged.
 - **Fewer present than the total**: files are missing.
-- **A line under a file**, like `still zipped`, says what to fix.
+- **A line under a file**, like `still zipped`, says the fix.
 - **`0 wrong hash`, all present**: go to step 3.
 
 ## 2. Fix the files
@@ -44,11 +44,11 @@ Without `--check`, it adds missing files and replaces wrong ones.
 
 - **Right folder?** [Get your files](../which-pack.md) names it.
 - **Exact name?** `scph5501.bin` and `SCPH-5501.BIN` differ.
-- **A `bios` folder inside your BIOS folder?** Run the installer: it copies
-  those files up one level.
+- **A `bios` folder inside your BIOS folder?** The installer copies those
+  files up one level.
 - **BIOS setting on a subfolder, like `system/dc`?** Point it at the BIOS
   folder. Emulators add their own, like `dc/` for Flycast.
-- **A ZIP in parts, like `Pack.part1of2.zip`?** Unzip every part into one
+- **A ZIP in parts, like `Pack.part1of2.zip`?** Unzip all parts into one
   folder.
 
 <!-- Flycast's libretro port appends "dc/" to the system directory:
@@ -65,7 +65,7 @@ version.
 
 ## The BIOS is fine, the game still fails
 
-- **Another emulator?** Each reads its own files, listed on its page.
+- **Another emulator?** Each reads the files listed on its page.
 - **A BIOS setting?** Some emulators can skip the BIOS. In PCSX ReARMed, set
   **BIOS Selection** to **Auto**.
 - **The screen says "Please insert PlayStation CD-ROM"?** The BIOS works.
@@ -76,9 +76,14 @@ version.
 - **Network error:** try again later.
 - **`The clock reads ...`:** set the right date.
 - **Permission denied:** do what the message says.
-- **No setup found:** name it and its folder:
+- **`No supported platform detected`:** name the folder. Not sure? Open
+  RetroArch's **Settings > Directory > System/BIOS**.
 
-<!-- os-tabs windows: --platform retroarch --dest C:\path\to\RetroArch\system -->
+<!-- The folders RetroArch reads by default, as install.py writes them
+(_os_default_dests, _macos_retroarch_base) and the RetroArch setup page
+cites them. Steam Deck: the Flatpak build. -->
+
+<!-- os-tabs windows: --platform retroarch --dest C:\RetroArch-Win64\system macos: --platform retroarch --dest ~/Documents/RetroArch/system steamdeck: --platform retroarch --dest ~/.var/app/org.libretro.RetroArch/config/retroarch/system -->
 ```sh
 curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh -s -- --platform retroarch --dest ~/.config/retroarch/system
 ```

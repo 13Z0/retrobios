@@ -141,8 +141,12 @@ Choose **Another setup or folder**, then your setup and its folder.
 The message shows the command that installs Python. Run it, then run the
 installer again.
 
-A RetroPie 4.8 image has Python 3.7.3, and its update command finds nothing
-newer. Run it on a computer, the `bios` share open:
+RetroPie 4.8 has Python 3.7.3, and its update finds nothing newer. Run it on
+a computer, with RetroPie's `bios` share open, `\\RETROPIE\bios` from Windows:
+
+<!-- RetroPie-Setup scriptmodules/supplementary/samba.sh:49-52 (46128cd2) shares
+$home/RetroPie/BIOS as "bios", and RetroPie docs/Transferring-Roms.md:29 names
+\\RETROPIE. -->
 
 <!-- os-tabs windows: --platform retropie --dest \\RETROPIE\bios\ -->
 ```sh

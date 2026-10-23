@@ -1,6 +1,7 @@
 ---
 level: start
 order: 55
+terms: license
 ---
 
 # Is it legal?
