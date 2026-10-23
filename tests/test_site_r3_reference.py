@@ -200,7 +200,10 @@ class TheContractsValidate(unittest.TestCase):
     """8.4: registry keys leave the contract, every $id is its served URL."""
 
     def test_every_contract_validates_against_the_platform_schema(self):
-        from jsonschema import Draft202012Validator  # noqa: PLC0415
+        try:
+            from jsonschema import Draft202012Validator  # noqa: PLC0415
+        except ImportError:
+            self.skipTest("jsonschema is a tooling dependency")
 
         from common import list_registered_platforms, load_platform_config  # noqa: PLC0415
 
@@ -228,7 +231,10 @@ class TheContractsValidate(unittest.TestCase):
         self.assertEqual(published, {p.name for p in (REPO_ROOT / "schemas").glob("*.schema.json")})
 
     def test_the_built_api_validates(self):
-        from jsonschema import Draft202012Validator  # noqa: PLC0415
+        try:
+            from jsonschema import Draft202012Validator  # noqa: PLC0415
+        except ImportError:
+            self.skipTest("jsonschema is a tooling dependency")
 
         schemas = {p.name: json.loads(p.read_text()) for p in (REPO_ROOT / "schemas").glob("*.json")}
         envelope = Draft202012Validator(schemas["site-api-envelope.schema.json"])

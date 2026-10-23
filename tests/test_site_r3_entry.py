@@ -221,7 +221,7 @@ class GetYourFilesListsEachSetupOnce(unittest.TestCase):
             self.assertRegex(row, r"</a> \(\d[\d.]* [KMG]B\) \|$")
 
     def test_the_zip_note(self):
-        for line in ("A big ZIP comes in parts. Download every part.",
+        for line in ("A big ZIP comes in parts, like `Pack.part1of2.zip`. Download every part.",
                      "Leave the ZIPs inside, like `neogeo.zip`, as they are.",
                      "Their setup's page says where to unzip them."):
             self.assertIn(line, self.text)
