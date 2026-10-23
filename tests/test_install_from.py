@@ -13,12 +13,15 @@ from __future__ import annotations
 
 import contextlib
 import copy
+import errno
 import io
 import json
+import os
 import subprocess
 import sys
 import time
 import unittest
+import urllib.error
 import zipfile
 from pathlib import Path
 from unittest import mock
@@ -479,6 +482,70 @@ class MisplacedInTheBiosFolder(Scratch):
             self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
             self.assertNotIn("fixed", proc.stdout)
             self.assertNotIn("copied from", proc.stdout)
+
+
+def _unprivileged(test: unittest.TestCase) -> None:
+    if os.name != "posix" or os.geteuid() == 0:
+        test.skipTest("a file of mode 000 is read here anyway")
+
+
+class ACopyThatFails(FromFolder):
+    """A copy found by the plan that cannot be read when it is copied:
+    it read as "folder not writable", and a download failing after it lost
+    the first reason."""
+
+    def setUp(self):
+        super().setUp()
+        self.entry = json.loads(self.list.read_text())["files"][0]
+        self.source = self.keep("old/scph5501.bin", US)
+        self.copy = install.FolderIndex(self.old).find(self.entry)
+        self.assertIsNotNone(self.copy)
+        self.addCleanup(install.LOCAL.reset)
+        self.dest.mkdir()
+
+    def test_an_unreadable_source_falls_back_and_names_both_reasons(self):
+        _unprivileged(self)
+        self.source.chmod(0)
+        self.addCleanup(self.source.chmod, 0o644)
+        refused = urllib.error.URLError(ConnectionRefusedError(111, "Connection refused"))
+        with mock.patch.object(install, "_retry_delay", return_value=0), \
+                mock.patch.object(install.urllib.request, "urlopen", side_effect=refused):
+            dest, ok, reason = install._download_one(self.entry, self.dest, copy=self.copy)
+        self.assertFalse(ok)
+        self.assertTrue(reason.startswith(
+            f"{self.source.resolve()} could not be read: Permission denied, and "), reason)
+        self.assertNotIn(install.NOT_WRITABLE, reason)
+        self.assertIsInstance(reason, install.NetworkReason)
+
+    def test_a_read_error_is_the_source_and_not_the_folder(self):
+        class Failing(io.BytesIO):
+            def read(self, *_args):
+                raise OSError(errno.EIO, "Input/output error")
+
+        for source, words in (
+                (lambda: Failing(b""), "Input/output error"),
+                (mock.Mock(side_effect=PermissionError(errno.EACCES, "Permission denied")),
+                 "Permission denied")):
+            with self.subTest(words=words):
+                result = install._write_verified(
+                    self.entry, self.dest, self.dest / "scph5501.bin", source, None,
+                    "the copy in E:\\", named="E:\\bios\\a.bin")
+                self.assertEqual(result, ("scph5501.bin", False,
+                                          f"E:\\bios\\a.bin could not be read: {words}"))
+        self.assertEqual(list(self.dest.iterdir()), [], "no temporary file is left")
+
+    def test_a_run_reading_a_pack_falls_back_to_the_pack_only(self):
+        _unprivileged(self)
+        self.source.chmod(0)
+        self.addCleanup(self.source.chmod, 0o644)
+        install.LOCAL.pack = mock.Mock(find=mock.Mock(return_value=None))
+        with mock.patch.object(install.urllib.request, "urlopen",
+                               side_effect=AssertionError("network")):
+            _dest, ok, reason = install._download_one(self.entry, self.dest, copy=self.copy)
+        install.LOCAL.pack = None
+        self.assertFalse(ok)
+        self.assertEqual(reason, f"{self.source.resolve()} could not be read: "
+                                 f"Permission denied, and {install.NOT_IN_PACK}")
 
 
 class ManySameSizedFiles(FromFolder):

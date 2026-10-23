@@ -4221,9 +4221,17 @@ def _download_one(
         if result[2] in ("stopped", NOT_WRITABLE, READ_ONLY) or result[2].startswith(NOT_KEPT):
             return result
         # The copy went or changed since it was read (a card pulled out, a
-        # file another run replaced): the file is fetched as if never found.
+        # file another run replaced): the file is fetched as if never found,
+        # and a fetch that fails too names both reasons.
         if verbose:
             print(f"    {f['dest']}: {result[2]}, fetching it instead", file=sys.stderr)
+        fetched = _download_one(f, bios_path, verbose, progress)
+        why = fetched[2]
+        if (fetched[1] or why in ("stopped", NOT_WRITABLE, READ_ONLY)
+                or why.startswith(NOT_KEPT)):
+            return fetched
+        both = f"{result[2]}, and {why}"
+        return fetched[0], False, NetworkReason(both) if isinstance(why, NetworkReason) else both
 
     if LOCAL.pack is not None:
         return _extract_from_pack(f, bios_path, dest, progress)
@@ -6529,7 +6537,7 @@ def _extract_from_pack(
         return f["dest"], False, NOT_IN_PACK
     archive, info = held
     return _write_verified(f, bios_path, dest, lambda: archive.open(info), progress,
-                           "the pack")
+                           "the pack", named=f"{info.filename} inside {archive.filename}")
 
 
 @contextlib.contextmanager
@@ -6549,30 +6557,67 @@ def _copy_local(
     """Copy one file found on this machine to its place, checked like a
     download. Its bytes count as already here, not in the download speed."""
     return _write_verified(f, bios_path, dest, lambda: _open_copy(copy), progress,
-                           f"the copy in {copy.index.label}", local=True)
+                           f"the copy in {copy.index.label}", local=True,
+                           named=copy.named())
+
+
+class _SourceUnreadable(Exception):
+    """The bytes to write could not be read: the source's fault, never the
+    folder's, so it falls back like any copy that failed."""
+
+
+def unreadable_words(exc: BaseException) -> str:
+    """Why a file or a ZIP member could not be read, in words."""
+    if isinstance(exc, RuntimeError) and "encrypted" in str(exc):
+        return "it is encrypted, a password is needed"
+    if isinstance(exc, NotImplementedError):
+        return "it is packed with a compression method this installer cannot read"
+    if isinstance(exc, (zipfile.BadZipFile, zlib.error, EOFError)):
+        return "it is damaged"
+    if isinstance(exc, OSError) and exc.strerror:
+        return exc.strerror
+    return str(exc) or type(exc).__name__
 
 
 def _write_verified(
     f: dict, bios_path: Path, dest: Path,
     source: Callable[[], ContextManager[BinaryIO]], progress: Progress | None,
-    held_in: str, local: bool = False,
+    held_in: str, local: bool = False, named: str = "",
 ) -> tuple[str, bool, str]:
     """Write the bytes source opens at dest once they match the list's size
-    and hashes, the file in place kept aside first when it differs."""
+    and hashes, the file in place kept aside first when it differs.
+
+    The source is opened before the temporary file, and its read errors
+    are told apart from the write errors: a copy that could not be read
+    was reported as a folder not writable. named is the source in the
+    reason then, held_in when empty."""
     expected = {name: f[name].lower() for name in ("sha256", "sha1") if f.get(name)}
     tmp_path: Path | None = None
     counted = 0
+
+    def unreadable(exc: BaseException) -> _SourceUnreadable:
+        return _SourceUnreadable(f"{named or held_in} could not be read: "
+                                 f"{unreadable_words(exc)}")
+
     try:
-        with source() as src, tempfile.NamedTemporaryFile(
-            mode="wb", dir=dest.parent, prefix=f".{dest.name}.", suffix=".part",
-            delete=False,
-        ) as out:
+        with contextlib.ExitStack() as stack:
+            try:
+                src = stack.enter_context(source())
+            except _MEMBER_ERRORS as exc:
+                raise unreadable(exc) from exc
+            out = stack.enter_context(tempfile.NamedTemporaryFile(
+                mode="wb", dir=dest.parent, prefix=f".{dest.name}.", suffix=".part",
+                delete=False,
+            ))
             tmp_path = Path(out.name)
             size = 0
             while True:
                 if _stop.is_set():
                     raise _Interrupted()
-                chunk = src.read(min(1024 * 1024, f["size"] + 1 - size))
+                try:
+                    chunk = src.read(min(1024 * 1024, f["size"] + 1 - size))
+                except _MEMBER_ERRORS as exc:
+                    raise unreadable(exc) from exc
                 if not chunk:
                     break
                 size += len(chunk)
@@ -6598,7 +6643,7 @@ def _write_verified(
         return f["dest"], False, "stopped"
     except _NotKept as exc:
         return f["dest"], False, f"{NOT_KEPT} ({exc})"
-    except (ValueError, *_MEMBER_ERRORS) as exc:
+    except (_SourceUnreadable, ValueError, *_MEMBER_ERRORS) as exc:
         if progress is not None and counted:
             progress.add(-counted, resumed=local)
         if isinstance(exc, OSError) and _write_refused(exc):
@@ -6646,6 +6691,10 @@ class LocalCopy(NamedTuple):
         """The copy as the folder it was found in names it."""
         rel = self.index.relative(self.path)
         return f"{rel}, inside as {self.member}" if self.member else rel
+
+    def named(self) -> str:
+        """The copy by its full path, the member first when it is one."""
+        return f"{self.member} inside {self.path}" if self.member else str(self.path)
 
 
 class FolderIndex:
