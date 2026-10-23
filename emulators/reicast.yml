@@ -42,13 +42,13 @@ notes: |
   being ~/.reicast when it exists, else $XDG_DATA_HOME/reicast or
   ~/.local/share/reicast, then each $XDG_DATA_DIRS entry plus /reicast
   (ref: core/nullDC.cpp:182-188, core/stdclass.cpp:83-100,
-  core/linux-dist/main.cpp:287-326, 355-379). Recalbox patches
-  nullDC.cpp to read and write both files in /recalbox/share/bios/dc/,
-  which is the path given below.
+  core/linux-dist/main.cpp:287-326, 355-379). The paths below are
+  relative to that data dir. Recalbox patches nullDC.cpp to read and
+  write both files in /recalbox/share/bios/dc/ instead.
 
 files:
   - name: "dc_boot.bin"
-    path: "dc/dc_boot.bin"
+    path: "data/dc_boot.bin"
     aliases: ["dc_boot.bin.bin", "dc_bios.bin", "dc_bios.bin.bin"]
     system: "sega-dreamcast"
     required: false
@@ -59,7 +59,7 @@ files:
     source_ref: "core/hw/holly/sb_mem.cpp:20, 30-36, core/types.h:211, 215"
     note: "First of the four names that reads 2097152 bytes wins. Missing, the HLE BIOS runs."
   - name: "dc_nvmem.bin"
-    path: "dc/dc_nvmem.bin"
+    path: "data/dc_nvmem.bin"
     aliases: ["dc_flash_wb.bin", "dc_flash.bin", "dc_flash.bin.bin"]
     system: "sega-dreamcast"
     required: false
