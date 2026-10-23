@@ -7561,6 +7561,8 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
         # What --core resolves against, for advice that names one.
         core_choices = set(available_choices(files, omitted_files)["cores"])
         selection = _requested_narrowing(args, plat_name, files, omitted_files, manifest)
+        # What declining the size question points back at, when it was asked.
+        smaller = ""
         if (
             selection is None
             and interactive
@@ -7576,6 +7578,13 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                 plat_name, files, omitted_files, installed,
                 display_name(plat_name, manifest),
             )
+            if selection is None:
+                smaller = ("  Nothing downloaded. To install less, run the same command "
+                           "again and type c at the first question to choose systems")
+                if installed is not None:
+                    smaller += (f", or i for only what the installed cores read "
+                                f"({format_size(_bytes(installed[0]))})")
+                smaller += "."
             if selection == INSTALLED_ONLY:
                 files, omitted_files = installed
                 print("\n  Same choice without questions: "
@@ -7752,7 +7761,9 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                     f"\nDownload {format_size(dl_size)} to {bios_path}? [Y/n] "
                 )
             ):
-                print("  Nothing downloaded. --system, --core and --region "
+                # A beginner who just passed the c entry was sent to a
+                # 91-line --help.
+                print(smaller or "  Nothing downloaded. --system, --core and --region "
                       "install less (see --help).")
                 total_up_to_date += len(up_to_date)
                 total_declined += len(to_download)

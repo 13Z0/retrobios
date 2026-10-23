@@ -354,6 +354,42 @@ class CommandLineChoices(unittest.TestCase):
                 install.parse_selection(bad, 5)
 
 
+class DecliningTheSizePointsAtTheChoice(unittest.TestCase):
+    """Saying no to `Download 8.4 GB?` printed "--system, --core and
+    --region install less (see --help)": a 91-line help for someone who had
+    just passed the c entry that does it."""
+
+    def _run(self, answers: list[str], *options: str) -> str:
+        replies = iter(answers)
+        out = io.StringIO()
+        with FakeRepository() as repo, \
+                mock.patch.object(sys, "argv", ["install.py", "--platform", "retroarch",
+                                                "--dest", str(repo.dest), *options]), \
+                mock.patch.object(install, "MANIFEST_URL",
+                                  repo.env()["RETROBIOS_BASE_URL"] + "/install/{platform}.json"), \
+                mock.patch.object(install, "RAW_FILE_URL",
+                                  repo.env()["RETROBIOS_BASE_URL"] + "/{path}"), \
+                mock.patch.object(install, "CONFIRM_FROM_BYTES", 1), \
+                mock.patch("sys.stdin", mock.Mock(isatty=lambda: True)), \
+                mock.patch("builtins.input", lambda _prompt="": next(replies)), \
+                contextlib.redirect_stdout(out):
+            try:
+                install.main()
+            except SystemExit:
+                pass
+            self.assertEqual(repo.installed(), [])
+        return out.getvalue()
+
+    def test_install_everything_then_no_names_the_c_entry(self):
+        out = self._run(["", "n"])
+        self.assertIn("type c at the first question", out)
+        self.assertNotIn("see --help", out)
+
+    def test_options_given_keep_the_option_advice(self):
+        out = self._run(["n"], "--system", "sony-playstation")
+        self.assertIn("--system, --core and --region install less", out)
+
+
 class ACoreWithNoFileOfItsOwn(unittest.TestCase):
     """pcsx_rearmed, swanstation and pcsx1 showed `0 files, 0 B` in the
     cores step and in --list-cores, which reads as "this core gets nothing":
