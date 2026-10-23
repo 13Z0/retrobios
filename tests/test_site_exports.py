@@ -358,10 +358,11 @@ class AVariantShowsWhoPinsIt(unittest.TestCase):
         page = generate_site.generate_system_page(
             "Entex", {"Adventure Vision": [primary, variant]}, consumers)
         block = page[page.index("<summary>Variants (1)</summary>"):]
-        self.assertIn("- Collection path: `bios/Entex/Adventure Vision/.variants/advision.zip.1c086064`", block)
-        self.assertIn("[batocera](../platforms/batocera.md)", block)
-        self.assertIn("[retrobat](../platforms/retrobat.md)", block)
-        self.assertIn('<code class="rb-hash">' + "c" * 40 + "</code>", block)
+        self.assertIn("<dt>Collection path</dt><dd><code>bios/Entex/Adventure Vision/"
+                      ".variants/advision.zip.1c086064</code>", block)
+        self.assertIn('<a href="../platforms/batocera.md">Batocera</a>', block)
+        self.assertIn('<a href="../platforms/retrobat.md">RetroBat</a>', block)
+        self.assertIn('<span class="rb-hash">' + "c" * 40 + "</span>", block)
         self.assertIn("Catalogued", block)
 
 
@@ -461,7 +462,7 @@ class ASystemCardLandsOnThePlatformsSection(unittest.TestCase):
         )
         self.assertEqual(
             _platform_links("s", consumers),
-            ["[retrodeck](../platforms/retrodeck.md#sony-playstation) `bios/scph5000.bin`"],
+            ["[RetroDECK](../platforms/retrodeck.md#sony-playstation): `bios/scph5000.bin`"],
         )
 
 
@@ -745,7 +746,7 @@ class ACardNamesThePacksThatInstallIt(unittest.TestCase):
         import json as _json
 
         from cross_reference import FileConsumers
-        from generate_site import _installed_links
+        from generate_site import _installed_places
 
         with tempfile.TemporaryDirectory(dir=ROOT / "tmp") as tmp:
             Path(tmp, "retrobat.json").write_text(_json.dumps({
@@ -755,9 +756,9 @@ class ACardNamesThePacksThatInstallIt(unittest.TestCase):
             }))
             consumers = FileConsumers({"files": {}})
             consumers.add_manifests(tmp)
-        links = _installed_links("a" * 40, consumers, set())
-        self.assertEqual(links, ["[retrobat](../platforms/retrobat.md) `scph5501.bin`"])
-        self.assertEqual(_installed_links("a" * 40, consumers, {"retrobat"}), [])
+        places = _installed_places("a" * 40, consumers, set())
+        self.assertEqual(places, [("RetroBat", "../platforms/retrobat.md", ["scph5501.bin"])])
+        self.assertEqual(_installed_places("a" * 40, consumers, {"retrobat"}), [])
 
 
 class ProseCitationsLinkToThePin(unittest.TestCase):

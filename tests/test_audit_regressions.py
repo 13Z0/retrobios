@@ -4963,7 +4963,7 @@ class CollectionCardsCarryFullHashes(unittest.TestCase):
                  "crc32": "504086c1", "sha256": "b" * 64}
         text = "\n".join(_system_file_card(entry, FileConsumers({}, {})))
         for value in (entry["sha1"], entry["md5"], entry["crc32"], entry["sha256"]):
-            self.assertIn(f">{value}</code>", text)
+            self.assertIn(f'<span class="rb-hash">{value}</span>', text)
 
 
 
