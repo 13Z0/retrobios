@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
-"""Turn install.py --events into tab-separated records for the launcher.
+"""Turn install.py --events into tab-separated records for the launchers.
 
-The launcher is bash and draws through PortMaster's dialog FIFO, so it reads
-one record per line with `IFS=$'\\t' read`. Text fields are cleaned for that
-FIFO: PortMasterDialog sends its arguments through an unquoted
-`echo $(printf ...)`, where a tab or newline splits a field and `*`, `?` or
-`[` expand as a file pattern.
+The launchers are bash, so they read one record per line with
+`IFS=$'\\t' read`: tui.txt reads the system and its BIOS folder to name the
+pack an offline run needs, and the PortMaster screens draw through
+PortMaster's dialog FIFO. Text fields are cleaned for that FIFO:
+PortMasterDialog sends its arguments through an unquoted `echo $(printf ...)`,
+where a tab or newline splits a field and `*`, `?` or `[` expand as a file
+pattern.
 
     rbevents.py status EVENTS        records of a --check run
     rbevents.py follow SUMMARY       an install run on stdin: progress

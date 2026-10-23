@@ -1,0 +1,10 @@
+# RetroBIOS inside muxterm (gptokeyb2). muxterm already sends the D-pad as
+# arrows, Start as Enter, B as Backspace and Y as Space to the program it
+# runs (MustardOS/terminal input.c and osk.c), so mapping those here too
+# would press each key twice. Only what muxterm leaves unmapped is added.
+[controls]
+overlay = clear
+a = enter
+x = space
+l1 = pageup
+r1 = pagedown

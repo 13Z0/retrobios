@@ -10665,6 +10665,10 @@ def _tui_passthrough(args: argparse.Namespace) -> list[tuple[str, str | None]]:
             flags.append((flag, str(Path(value).absolute())))
     flags += [("--emulator", name) for name in args.emulator or []]
     flags += [("--from-pack", str(Path(pack).absolute())) for pack in args.from_pack or []]
+    # The handheld launchers start --tui --from the other card: without it here
+    # the runs downloaded what that card holds.
+    flags += [("--from", str(Path(folder).absolute()))
+              for folder in getattr(args, "from", None) or []]
     for flag in ("--every-board", "--standalone-copies", "--verbose"):
         if getattr(args, flag[2:].replace("-", "_")):
             flags.append((flag, None))

@@ -55,7 +55,7 @@ Every module in `tests/`, by the area it guards.
 | Slots and regions | synthetic + profiles | `test_region`, `test_region_agnostic_scan`, `test_region_groups`, `test_region_held`, `test_region_platform_index`, `test_region_required_only`, `test_slot`, `test_slots`, `test_slots_shipped_file` |
 | Hardware targets and systems | synthetic + target files | `test_extract_targets`, `test_lakka_targets`, `test_libretro_slugs`, `test_system_ids`, `test_system_selection`, `test_target_names`, `test_target_scrapers`, `test_target_systems`, `test_target_verify` |
 | Installer and downloads | loopback server | `test_check_release`, `test_download`, `test_install`, `test_install_cores`, `test_install_experience`, `test_install_from`, `test_install_offline`, `test_install_selection`, `test_install_tui` |
-| Handheld port | stubbed PortMaster dialogs, fake installer | `test_port` |
+| Handheld launchers | a pty as the console, fake installer and firmware tools, stubbed PortMaster dialogs | `test_handheld_launchers`, `test_port` |
 | Truth and native export | synthetic + cached originals | `test_export_counts`, `test_export_native_layer`, `test_export_report`, `test_exporters`, `test_truth_data_dir_readers`, `test_truth_diff`, `test_truth_layout` |
 | Scrapers, upstream and provenance | inline sources, synthetic | `test_batocera_md5_list`, `test_check_freshness`, `test_contributing_text`, `test_coverage_cache`, `test_data_dir_refs`, `test_dataclass_defaults`, `test_dedup`, `test_doc_pages`, `test_doc_surfaces`, `test_elec_scrapers`, `test_fbneo_parser`, `test_find_pinned_revision`, `test_hash_merge`, `test_launchers`, `test_launchers_emudeck`, `test_launchers_recalbox`, `test_launchers_retrobat`, `test_launchers_retrodeck`, `test_launchers_retropie`, `test_launchers_rocknix`, `test_mame_devices`, `test_mame_parser`, `test_mame_ref_audit`, `test_optional_dependencies`, `test_profile_sync`, `test_prose_style`, `test_provenance`, `test_refresh_data_dirs`, `test_refresh_failures`, `test_refresh_stale`, `test_retrodeck_scraper_errors`, `test_romset_recipes`, `test_schema_semantic_gate`, `test_scraper_contract`, `test_site_availability`, `test_site_content_data`, `test_site_copy`, `test_site_cores`, `test_site_emulator_page`, `test_site_exports`, `test_site_funnel`, `test_site_images`, `test_site_picker`, `test_site_platform_hashes`, `test_site_r2_components`, `test_site_r2_css`, `test_site_r2_emulators`, `test_site_r2_entry`, `test_site_r2_gate`, `test_site_r2_nav`, `test_site_r2_p0`, `test_site_r2_reference`, `test_site_r2_systems`, `test_site_r2_wiki`, `test_site_r3_collection`, `test_site_r3_components`, `test_site_r3_css`, `test_site_r3_emulators`, `test_site_r3_entry`, `test_site_r3_nav`, `test_site_r3_p0`, `test_site_r4_p0`, `test_site_r3_reference`, `test_site_r3_systems`, `test_site_r3_wiki`, `test_site_render`, `test_site_system_links`, `test_site_validation`, `test_site_weight`, `test_site_write`, `test_source_ref_targets`, `test_upstream`, `test_upstream_index`, `test_validate_pr`, `test_validate_pr_flow`, `test_validate_pr_hashes`, `test_workflow_paths` |
 
@@ -262,18 +262,40 @@ python scripts/generate_pack.py --all --verify-packs --output-dir dist/
 Integrated as pipeline step 6/8 (runs after consistency check, before
 README generation). Requires packs in `dist/`, skip with `--skip-packs`.
 
+### test_handheld_launchers.py
+
+The launchers in `ports/`: the PortMaster port, the Batocera and Knulli
+port, the muOS app and the Tools entry, all built on `ports/shared/tui.txt`.
+`bash -n` and `shellcheck` on every script (skipped where shellcheck is not
+installed), the gptokeyb and evmapy mappings decoded by the interface's own
+key decoder, and the four archives `scripts/build_port.py` writes (layout,
+reproducibility, the bundled `install.py` equal to the one `install.sh`
+pins).
+
+Each launcher then runs from its extracted archive on a simulated device: a
+pseudo-terminal stands for the console, and fakes stand for `install.py`,
+gptokeyb, setfont, chvt, curl, foot, xterm, muxterm, PortMaster's
+`control.txt` and muOS's `retro.sh`. The checks: gptokeyb starts in kill mode
+on the installer's path and is stopped, the console's settings and font are
+put back, an offline run picks the pack of its system from the card or says
+where to put one, a refused console falls back to PortMaster's screens, and
+each firmware's terminal is the one used. What reaches the screen and the
+pad on a real device is not exercised.
+
+```bash
+python -m unittest tests.test_handheld_launchers -v
+```
+
 ### test_port.py
 
-The PortMaster port in `ports/RetroBIOS/`. `bash -n` on its scripts, the
-archive `scripts/build_port.py` writes (layout, reproducibility, the bundled
-`install.py` equal to the one `install.sh` pins), and the event reader. The
-screens run in bash with PortMasterDialog's functions replaced by stubs that
-record each command and answer from a script, against a fake `install.py`
-whose event streams follow `EVENT_KEYS`: all files present, some missing
-(update everything, choose systems), no network, no BIOS folder detected,
-Python too old, and an answer that arrives after the 30-second wait of the
-older PortMaster releases. Drawing, the pad, `mount` and the network belong
-to a device and are not exercised.
+The PortMaster port's fallback screens, drawn by pugwash, and its event
+reader. The screens run in bash with PortMasterDialog's functions replaced by
+stubs that record each command and answer from a script, against a fake
+`install.py` whose event streams follow `EVENT_KEYS`: all files present, some
+missing (update everything, choose systems), no network with and without a
+pack on the card, no BIOS folder detected, Python too old, and an answer that
+arrives after the 30-second wait of the older PortMaster releases. Drawing,
+the pad, `mount` and the network belong to a device and are not exercised.
 
 ```bash
 python -m unittest tests.test_port -v

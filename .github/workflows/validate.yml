@@ -227,6 +227,11 @@ jobs:
       - name: Hold install.py to Python 3.8
         run: vermin --no-tips -t=3.8- --violations install.py
 
+      # The handheld launchers' test runs shellcheck and fails under CI
+      # without it. The Ubuntu image ships it: this names it if one stops.
+      - name: Check that shellcheck is installed
+        run: shellcheck --version
+
       # The site is built as deploy-site.yml builds it, from the lockfile.
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1  # v7.1.0
         with:

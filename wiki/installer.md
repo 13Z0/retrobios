@@ -936,67 +936,81 @@ elsewhere. A custom BIOS directory is still named directly:
 python install.py --platform retroarch --dest /storage/emulated/0/RetroArch/system
 ```
 
-## On a handheld: the RetroBIOS port
+## On a handheld { #on-a-handheld-the-retrobios-port }
 
-On a Linux handheld that runs [PortMaster](https://portmaster.games/) (ArkOS,
-ROCKNIX, AmberELEC, muOS, KNULLI and the others it supports), the installer
-also runs from the device itself, as a port with gamepad screens. The screens
-are PortMaster's own, so the port carries no graphics code.
+RetroBIOS also runs on the handheld itself, in the
+[full-screen interface](#the-full-screen-interface), with the controller.
+Take the file for your system from the
+[latest release](https://github.com/Abdess/retrobios/releases/latest), copy
+it to the SD card, then start RetroBIOS from the menu.
 
-**Getting it.** Two ways:
+| System | File | Copy it to | Start it from |
+|--------|------|------------|---------------|
+| Any system with [PortMaster](https://portmaster.games/): ArkOS, dArkOS, ROCKNIX, AmberELEC, JELOS, muOS, Knulli | `RetroBIOS.zip` | PortMaster's `autoinstall` folder: `/roms/ports/PortMaster/autoinstall/` on ROCKNIX and AmberELEC, `/roms/tools/PortMaster/autoinstall/` on ArkOS, `/mmc/MUOS/PortMaster/autoinstall/` on muOS, `/userdata/system/.local/share/PortMaster/autoinstall/` on Knulli | Ports, after opening PortMaster once |
+| Batocera, Knulli | `RetroBIOS-batocera.zip`, extracted | `roms/ports` on the SHARE partition | Ports, after updating the game list |
+| muOS | `RetroBIOS.muxapp` | `ARCHIVE` at the root of the card, then install it from the Archive Manager | Applications |
+| ArkOS, dArkOS | `RetroBIOS-tools.zip`, extracted | `tools` on the EASYROMS partition | Options, then Tools |
+| ROCKNIX, JELOS | `RetroBIOS-tools.zip`, extracted | `/storage/.config/modules`, over the network share or SSH | Tools |
+| AmberELEC | `RetroBIOS-tools.zip`, extracted | `/storage/.config/distribution/modules` | Tools |
 
-- From PortMaster's catalog, once the port is accepted there: open PortMaster,
-  find RetroBIOS under the Other genre, install.
-- `RetroBIOS.zip`, copied into PortMaster's autoinstall folder. The release
-  process attaches it to each [release](https://github.com/Abdess/retrobios/releases/latest)
-  cut after the port was added. Releases cut before carry none: when the
-  latest one lists no `RetroBIOS.zip`, build it from a clone (below). Starting PortMaster then installs it, with or without a
-  network connection. PortMaster's FAQ names the folder: `/roms/ports/PortMaster/autoinstall/`
-  on AmberELEC and ROCKNIX, `/roms/tools/PortMaster/autoinstall/` on ArkOS,
-  `/mmc/MUOS/PortMaster/autoinstall/` on muOS,
-  `/userdata/system/.local/share/PortMaster/autoinstall/` on KNULLI.
+A release cut before these files existed carries none of them. From a clone
+of the repository, `python scripts/build_port.py` writes all four into
+`dist/`.
 
-From a clone of the repository, `python scripts/build_port.py` builds the
-same archive into `dist/RetroBIOS.zip`.
+| Button | Action |
+|--------|--------|
+| D-pad | Move |
+| A, Start | Choose, continue |
+| B, Select | Back, and quit on the first screen |
+| X | Tick or untick a system |
+| Y | Options |
+| L1, R1 | Page up, page down |
+| Start + Select | Quit at once (PortMaster port, Tools) |
 
-**What it shows.** RetroBIOS appears among the ports. Started, it runs
-`install.py --check --events` and opens on the result: the system's name,
-how many BIOS files are present, missing, or present with a hash that does
-not match. The menu
-offers to update everything missing, to choose systems (each listed with what
-it lacks, selected or cleared with A), to check again, or to quit. An update
-shows a progress bar, one step per file, then what was installed, what failed
-and why, and what the collection cannot supply. Every list has its own Back or
-Quit entry, since older PortMaster releases do not read B there.
+On muOS the interface runs in muxterm, which already reads Start, B, Y (tick)
+and the D-pad. A, X, L1 and R1 come from PortMaster's gptokeyb2 when
+PortMaster is installed, and Menu quits.
 
-**What it needs.**
+**Without Wi-Fi.** On a computer, download the BIOS pack whose name contains
+your system (every part, for a pack in parts) and copy it next to RetroBIOS:
+into `ports/retrobios` for the PortMaster port and on Batocera, to the root
+of the card on muOS, into the `retrobios` folder of the Tools entry. With no
+connection, RetroBIOS installs from it, as
+[`--from-pack`](#without-a-network-offline-install) does. With no pack there,
+it names the pack and the folder.
 
-- A network connection: the list of files to check comes from the internet,
-  as do the files. Without one the port says so and offers to check again.
-- Python 3.8 or newer. The port uses the system's `python3` when it is recent
-  enough, else PortMaster's `python_3.11` runtime on aarch64 devices, which it
-  downloads through PortMaster on first use. An armhf device with an older
-  Python is told so, with the computer route below.
-- A BIOS folder the installer detects (see [Platform detection](#platform-detection)).
-  On a system it does not know yet, the port says it found no BIOS folder.
+On a two-card device, RetroBIOS without Wi-Fi first asks to **copy the BIOS
+files from your other card**: muOS's `MUOS/bios` on the card the system does
+not read, or the other of `/roms/bios` and `/roms2/bios` on ArkOS and dArkOS.
+A says yes, as [`--from`](#copy-from-an-old-card) does. The list of files
+still comes from the pack, so the pack is needed too.
 
-**The computer route.** With the SD card mounted on a computer, the one-line
-command fills it, naming the platform and the card's BIOS folder:
-`--platform <platform> --dest <BIOS folder on the card>`. The port's screens
-for an unknown system or an old Python name this route.
+**What it needs.** Python 3.8 or newer: the system's, else PortMaster's
+`python_3.11` runtime on aarch64, which the PortMaster port downloads on
+first use and the Tools entry then reuses. That runtime uses the system's
+OpenSSL 1.1, so on an image with OpenSSL 3 only it may not download (not
+tried on a device). The BIOS folder must be one the installer detects, see
+[Platform detection](#platform-detection).
 
-**Which installer runs.** The archive carries `install.py`, the file the
-one-line command of the same commit downloads: the build refuses any other
-(`scripts/build_port.py` compares it with the SHA-256 `install.sh` pins). A
-port that downloaded the installer at each start against a pinned SHA-256
-would stop working at the next change to `install.py`, since the pin is fixed
-when the port is built. The file lists come from `main`, as for the one-line
-command. A newer port version carries a newer installer. When a list is in a
-format the carried installer does not read, the port says to update it.
+**Where no terminal shows.** The PortMaster port draws on the console, or in
+foot or xterm under a desktop session. Where neither can, it opens
+PortMaster's own screens instead: the same check, update and choice of
+systems, one list at a time. On Batocera and Knulli the visible terminal is
+not verified on a device yet: RetroBIOS tries xterm or foot, then console 4,
+and `retrobios/log.txt` names the route it took.
 
-The launcher (`ports/RetroBIOS/RetroBIOS.sh`) and its screens
-(`retrobios/screens.txt`) read the installer through
-[Machine-readable events](#machine-readable-events) only.
+**From a computer.** Onion, MinUI, NextUI, Allium, GarlicOS and the Switch
+have no Python 3 to run the installer. Put the card in a computer and run the
+[one-line command](#one-line) there with
+`--platform <platform> --dest <BIOS folder on the card>`. This works for
+every system above too.
+
+**Which installer runs.** Each file carries `install.py`, the one the
+one-line command of the same commit downloads: `scripts/build_port.py`
+refuses any other (it compares it with the SHA-256 `install.sh` pins). The
+file lists come from `main`. The launchers in `ports/` start it with `--tui`,
+and read it through [Machine-readable events](#machine-readable-events) for
+the rest.
 
 ## Without a network (offline install) { #without-a-network-offline-install }
 
