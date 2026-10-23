@@ -4,8 +4,8 @@ core_classification: official_port
 source: "https://github.com/joamag/boytacean"
 upstream: "https://github.com/joamag/boytacean"
 profiled_date: "2026-03-23"
-source_commit: "2eb66337ad1732087c26076ec5bd7d08fe9f6e93"
-core_version: "0.11.5"
+source_commit: "4d806d0770f117cc8e6ac0fe75b95aa9dc39fc4f"
+core_version: "0.13.2"
 display_name: "Nintendo - Game Boy / Color (Boytacean)"
 cores:
   - boytacean
@@ -19,12 +19,12 @@ notes: |
   Libretro: all boot ROMs compiled into binary as static byte arrays in
   src/data.rs. load_boot_static() copies from arrays. No filesystem
   access, no RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY. No external files.
-  ref: frontends/libretro/src/core.rs:402 instance.load(true) -> src/gb.rs:1427 -> load_boot_static
+  ref: frontends/libretro/src/core.rs:402 instance.load(true) -> src/gb.rs:1377 -> load_boot_static at src/gb.rs:1414
 
   Standalone (SDL): also defaults to embedded boot ROMs via load(true).
   User can override via --boot-rom-path CLI argument with any boot ROM
-  file. load_boot_file() with hardcoded ./res/boot/*.bin paths exists in
-  src/gb.rs:1477 but is not called from any frontend.
+  file (frontends/sdl/src/main.rs:1138-1143). load_boot_file() with hardcoded ./res/boot/*.bin paths exists in
+  src/gb.rs:1427 but is not called from any frontend.
 
   Boot ROM defaults: DmgBootix (DMG), CgbBoytacean (CGB), both open-source.
 
