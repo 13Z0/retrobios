@@ -371,6 +371,7 @@ class DecliningTheSizePointsAtTheChoice(unittest.TestCase):
                                   repo.env()["RETROBIOS_BASE_URL"] + "/{path}"), \
                 mock.patch.object(install, "CONFIRM_FROM_BYTES", 1), \
                 mock.patch("sys.stdin", mock.Mock(isatty=lambda: True)), \
+                mock.patch.object(install, "_is_terminal", return_value=True), \
                 mock.patch("builtins.input", lambda _prompt="": next(replies)), \
                 contextlib.redirect_stdout(out):
             try:
@@ -741,14 +742,26 @@ class TheOneLinerNarrows(unittest.TestCase):
             env = dict(repo.env(), HOME=str(home), USERPROFILE=str(home),
                        XDG_CONFIG_HOME=str(home), RETROBIOS_OS="linux")
             leader, follower = pty.openpty()
+            # The question needs the output on the terminal too: sent to a
+            # pipe, the run asks nothing.
             proc = subprocess.Popen(
                 [sys.executable, str(REPO_ROOT / "install.py")], stdin=follower,
-                stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=env, text=True,
+                stdout=follower, stderr=subprocess.PIPE, env=env, text=True,
             )
             os.close(follower)
             os.write(leader, b"\x04")
-            out, err = proc.communicate(timeout=60)
+            err = proc.communicate(timeout=60)[1]
+            chunks = []
+            while True:
+                try:
+                    chunk = os.read(leader, 65536)
+                except OSError:
+                    break
+                if not chunk:
+                    break
+                chunks.append(chunk)
             os.close(leader)
+            out = b"".join(chunks).decode("utf-8", "replace")
         self.assertEqual(proc.returncode, 130, out + err)
         self.assertIn("Stopped. Nothing was installed.", out)
         self.assertNotIn("carry on", out)
