@@ -2,7 +2,9 @@
 // Starlight's footer (edit link, previous and next), who keeps the project
 // and where to report a problem, the release the packs come from, and the
 // licence line. The release is read from release.json, written when the
-// packs were published: the site may be newer than the packs.
+// packs were published: the site may be newer than the packs. None of it
+// is in the search index: "MIT for the tooling" was the excerpt of short
+// pages, and "bios", "release" and "problem" matched every page.
 import Default from '@astrojs/starlight/components/Footer.astro';
 import release from '../../../release.json';
 
@@ -19,6 +21,7 @@ const tag: string = release.tag;
 const date = releaseDate(tag);
 ---
 
+<div class="rb-footer-root" data-pagefind-ignore>
 <Default />
 <div class="rb-footer">
 	<p>
@@ -33,8 +36,11 @@ const date = releaseDate(tag);
 		archival and interoperability.
 	</p>
 </div>
+</div>
 
 <style>
+	/* The wrapper only keeps the footer out of the search index: it adds no box. */
+	.rb-footer-root { display: contents; }
 	.rb-footer {
 		margin-top: 1.5rem;
 		padding-top: 1rem;

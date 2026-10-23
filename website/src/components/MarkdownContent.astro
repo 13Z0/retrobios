@@ -51,4 +51,11 @@ const { searchWeight } = Astro.locals.starlightRoute.entry.data;
 	.sl-markdown-content .rb-file-pick-note { color: var(--sl-color-gray-3); font-size: var(--sl-text-sm); }
 	.sl-markdown-content .rb-file-pick-hashes code { overflow-wrap: anywhere; }
 	.sl-markdown-content .rb-file-pick-hashes[hidden] { display: none; }
+	/* On touch the copy button is always shown, and it covered the end of a
+	   command's first line. A titled frame (Terminal, PowerShell) has a
+	   header row with room on its right: the button sits there. */
+	@media (pointer: coarse) {
+		.expressive-code .frame.has-title .copy { inset-block-start: calc(var(--ec-brdWd) + 0.0625rem); }
+		.expressive-code .frame.has-title .copy button { width: 2rem; height: 2rem; }
+	}
 </style>

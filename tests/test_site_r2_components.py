@@ -52,7 +52,7 @@ class TablesStackWhenBuilt(unittest.TestCase):
     def test_the_plugin_is_registered_and_the_runtime_rule_is_gone(self):
         config = _read(CONFIG)
         self.assertIn("import stackTables from './src/plugins/rehype-stack-tables.mjs'", config)
-        self.assertIn("hastPlugins: [stackTables()]", config)
+        self.assertIn("hastPlugins: [stackTables(), ", config)
         self.assertNotIn("stackActionTable", _read(SITE_TS))
 
     def test_setup_tables_carry_the_layout_in_the_html(self):
