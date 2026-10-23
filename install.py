@@ -6394,6 +6394,12 @@ def _found_elsewhere(
 ) -> tuple[str, str]:
     """(reason, folder too deep) for an entry missing at its place."""
     dest = str(entry.get("dest", ""))
+    if entry.get("case_variant"):
+        # A pack is read on Windows and macOS too, where two names that
+        # differ only by case are one file: it carries one of the pair. Moving
+        # the other copy here would take it from the core that opens it.
+        return ("a second name the pack leaves out: Windows and macOS see it "
+                "as the same file. Run the command without --check to add it"), ""
     name = dest.rsplit("/", 1)[-1]
     sizes = {copy.get("size") for copy in _copies(entry) if isinstance(copy.get("size"), int)}
     sha1s = {copy.get("sha1") for copy in _copies(entry) if copy.get("sha1")}
@@ -7294,7 +7300,7 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
         if variants and case_kept:
             # The list is folded for Windows and macOS, but here bios.col and
             # BIOS.col are two files that two cores open.
-            files = files + variants
+            files = files + [{**variant, "case_variant": True} for variant in variants]
         if not case_kept:
             files, folded = fold_case_twins(files)
             if folded:

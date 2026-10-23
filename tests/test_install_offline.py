@@ -168,6 +168,23 @@ class CheckNamesWhyAFileIsRefused(Scratch):
         self.place("GBA_BIOS.BIN", GBA)
         self.assertIn("case of the name: the folder holds GBA_BIOS.BIN", self.check())
 
+    def test_a_case_twin_the_pack_leaves_out_is_not_a_wrong_folder(self):
+        """np2kai/2608_bd.wav and np2/2608_bd.wav hold the same bytes. Told
+        "wrong folder", a user moved np2's copy and broke that core."""
+        probe = self.root / "CaseProbe"
+        probe.write_text("x")
+        if (self.root / "caseprobe").exists():
+            self.skipTest("this filesystem does not keep case")
+        data = json.loads(self.list.read_text())
+        twin = next(f for f in data["files"] if f["dest"] == "gba_bios.bin")
+        data["case_variants"] = [{**twin, "dest": "twin/gba_bios.bin"}]
+        self.list.write_text(json.dumps(data))
+        self.complete()
+        out = self.check()
+        self.assertIn("missing: twin/gba_bios.bin", out)
+        self.assertIn("a second name the pack leaves out", out)
+        self.assertNotIn("wrong folder: it is at gba_bios.bin", out)
+
     def test_a_nested_bios_folder_is_named(self):
         for name, data in PAYLOAD.items():
             self.place(f"system/{name}", data)
