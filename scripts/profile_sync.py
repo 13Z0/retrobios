@@ -46,6 +46,8 @@ from sourceref import (  # noqa: F401  (re-exported for callers and tests)  # no
     _PROSE_LIST_DELIMITERS,
     _REF_RE,
     _SPLIT_RE,
+    _BINARY_SUFFIXES,
+    _HEX_ADDRESS_RE,
     PROSE_CITE_RE,
     PROSE_CONT_RE,
     PROSE_CONT_SPACED_RE,
@@ -58,6 +60,7 @@ from sourceref import (  # noqa: F401  (re-exported for callers and tests)  # no
     _prose_external,
     _prose_runs,
     _trim_prose,
+    is_binary_citation,
     parse_source_ref,
     ref_prose_text,
     ref_role,
@@ -195,31 +198,7 @@ def is_external_citation(path: str) -> bool:
     return "/" not in head and "." not in head
 
 
-_BINARY_SUFFIXES = (
-    ".dll", ".exe", ".so", ".dylib", ".apk", ".elf", ".o", ".a", ".jar", ".dex",
-)
-_HEX_ADDRESS_RE = re.compile(r"\b0x[0-9a-fA-F]{2,}")
 _VERSION_WORD_RE = re.compile(r"v?\d+(\.\d+)+[\w.-]*")
-
-
-def is_binary_citation(path: str) -> bool:
-    """True when a ref locates code inside a shipped binary, not a source file.
-
-    `BAM.dll 1.5-408 .text:0x100c3960-0x100c3a97`, `libmain.so LoadNES
-    0x3bb49` and `.rdata dialog filter` were read by disassembly. No revision
-    of any repository holds those bytes, so the ref can neither anchor nor
-    break: 77 parts of `future-pinball-fploader` alone were reported GONE.
-    """
-    if _HEX_ADDRESS_RE.search(path):
-        return True
-    if " " not in path:
-        # A bare `DesktopKinect.dll` names a shipped library, never a source
-        # file: no directory, no line, only its import table to read.
-        return "/" not in path and path.lower().endswith(_BINARY_SUFFIXES)
-    head = path.split(" ", 1)[0]
-    if head.lower().endswith(_BINARY_SUFFIXES):
-        return True
-    return head.startswith(".") and "/" not in head
 
 
 def strip_repo_word(

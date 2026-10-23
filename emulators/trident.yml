@@ -3,9 +3,10 @@ display_name: "Nintendo - 3DS (Trident)"
 type: libretro
 core_classification: community_fork
 source: https://github.com/DanAlexMorton/3dsTrident
-upstream: https://github.com/wheremyfoodat/Panda3DS
+upstream: https://github.com/DanAlexMorton/Panda3DS
 profiled_date: "2026-03-25"
 source_commit: "b97b0befa326105e181838bc6fa11c546de8294d"
+upstream_commit: "69095ee6d68d21eacac8d1517f0b7b4ed27884d3"
 core_version: git
 library_name: "Trident"
 
@@ -24,8 +25,10 @@ notes: >-
   Files are resolved from the RetroArch save directory
   (<save_dir>/Emulator Files/sysdata/), not the system directory, or from
   the working directory when the frontend gives none. The core reports
-  library_name "Trident". The wrapper is vendor/Panda3DS at 69095ee6
-  (DanAlexMorton/Panda3DS src/libretro_core.cpp:30, 243, 280-285).
+  library_name "Trident" (src/libretro_core.cpp:29, 243, 280-285).
+  3dsTrident builds the vendor/Panda3DS submodule, DanAlexMorton/Panda3DS
+  at 69095ee6, a fork of wheremyfoodat/Panda3DS from their merge base
+  944b9892; the libretro wrapper and the files cited below are in that tree.
 
 files:
   - name: aes_keys.txt
