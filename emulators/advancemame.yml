@@ -3,8 +3,8 @@ type: standalone
 core_classification: enhanced_fork
 source: "https://github.com/amadvance/advancemame"
 upstream: "https://www.mamedev.org"
-profiled_date: "2026-08-08"
-source_commit: "21f8f6f79d8a9abe9f23b1a070841963774cf65d"
+profiled_date: "2026-10-23"
+source_commit: "ebe8322f87f699f0426757f542720f7b30e305cd"
 core_version: "5.0"
 mame_version: "0.106"
 display_name: "Arcade (AdvanceMAME)"
@@ -36,6 +36,7 @@ systems:
   - atlus-zn1
   - atari-zn1
   - acclaim-zn1
+  - videosystem-zn1
   - hyper-neogeo64
   - arcadia-systems
   - exidy-maxaflex
@@ -46,12 +47,12 @@ systems:
 
 notes: |
   MAME 0.106 core (src/version.c:12) carrying its own video layer and driver
-  backports from later MAME releases. Twenty-six BIOS root sets, each a
-  NOT_A_DRIVER entry (src/driver.h:180) registered in src/mamedriv.c.
-  src/drivers/macs.c:613 declares a twenty-seventh, macs2bios, that
+  backports from later MAME releases. Twenty-seven BIOS root sets, each a
+  NOT_A_DRIVER entry (src/driver.h:180) registered in src/mamedriv.c, release
+  5.0 having all but coh1002v, which came with the Video System PSX driver.
+  src/drivers/macs.c:613 declares a twenty-eighth, macs2bios, that
   src/mamedriv.c never registers, so no build reaches it and the five MACS
-  games all parent to macsbios. The set is unchanged between release 5.0 and
-  the profiled commit.
+  games all parent to macsbios.
 
   ROM archives are searched under dir_rom, defaulting to $home/rom:$data/rom
   on Linux and Mac OS X and to rom on DOS and Windows, in the forms
@@ -78,17 +79,17 @@ notes: |
   The support files sit directly in $home or $data
   (advance/osd/fileio.c:81,88-90, advance/linux/file.c:249-256). A language
   file is read too, under whatever name misc_languagefile carries
-  (advance/osd/glue.c:715-716). The project ships none, English being built
+  (advance/osd/glue.c:855-856). The project ships none, English being built
   into the binary (src/ui_text.c:263-265). Samples and
   artwork are per-game archives under dir_sample and dir_artwork, ZIP only,
   named after the driver: WAV members for samples
-  (src/sound/samples.c:198-200), a <driver>.art layout and its PNGs for
+  (src/sound/samples.c:226-228), a <driver>.art layout and its PNGs for
   artwork (src/artwork.c:2119,2224).
 
   misc_historyfile and misc_infofile were retired and are discarded when found
   in a configuration file (advance/osd/emu.c:517-518), leaving history.dat and
   mameinfo.dat unread. options.controller is pinned to zero
-  (advance/osd/glue.c:708), so no controller file is read either. blitmax.dat,
+  (advance/osd/glue.c:848), so no controller file is read either. blitmax.dat,
   startup.dat and help.dat are compiled into the binary
   (advance/osd/video.c:1787,1795, advance/osd/ui.c:1575).
 
@@ -105,9 +106,9 @@ files:
     source_ref: "src/hiscore.c:28,133-147,313, src/mame.c:1105-1106"
     note: >-
       High score definitions, selected by misc_hiscorefile
-      (advance/osd/glue.c:800,3293). Absent, hiscore_open matches no entry and
+      (advance/osd/glue.c:940,3473). Absent, hiscore_open matches no entry and
       no high score is restored or saved. support/hiscore.dat, installed by
-      MAME_INSTALL_DATAFILES (advance/advance.mak:29-31). is_mem_range reads
+      MAME_INSTALL_DATAFILES (advance/advance.mak:30-32). is_mem_range reads
       only "cpu:addr:len:start:end" lines under a "gamename:" header.
 
   - name: cheat.dat
@@ -121,7 +122,7 @@ files:
     source_ref: "src/cheat.c:8682,8751"
     note: >-
       Cheat definitions, selected by misc_cheatfile
-      (advance/osd/glue.c:799,3291) and read only when misc_cheat is on, which
+      (advance/osd/glue.c:939,3471) and read only when misc_cheat is on, which
       it is not by default. Absent, the cheat menu reads "cheat database not
       found" (src/cheat.c:2536). Installed beside hiscore.dat by
       MAME_INSTALL_DATAFILES, and shipped in the 5.0 Windows zip and .deb.
@@ -214,7 +215,7 @@ files:
     required: true
     category: bios_zip
     system: igs-pgm
-    source_ref: "src/drivers/pgm.c:3708-3719,5487"
+    source_ref: "src/drivers/pgm.c:4413-4424, src/drivers/pgm.c:6902"
     contents:
       - name: pgm_p01s.rom
         description: 68000 BIOS
@@ -539,7 +540,7 @@ files:
     required: true
     category: bios_zip
     system: capcom-zn1
-    source_ref: "src/drivers/zn.c:3127-3129,4513"
+    source_ref: "src/drivers/zn.c:3179-3181, src/drivers/zn.c:4607"
     contents:
       - name: coh-1000c.353
         size: 524288
@@ -551,7 +552,7 @@ files:
     required: true
     category: bios_zip
     system: capcom-zn2
-    source_ref: "src/drivers/zn.c:3362-3364,4531"
+    source_ref: "src/drivers/zn.c:3414-3416, src/drivers/zn.c:4625"
     contents:
       - name: coh-3002c.353
         size: 524288
@@ -563,7 +564,7 @@ files:
     required: true
     category: bios_zip
     system: tecmo-tps
-    source_ref: "src/drivers/zn.c:3805-3807,4578"
+    source_ref: "src/drivers/zn.c:3857-3859, src/drivers/zn.c:4672"
     contents:
       - name: coh-1002m.353
         size: 524288
@@ -575,7 +576,7 @@ files:
     required: true
     category: bios_zip
     system: taito-fx1
-    source_ref: "src/drivers/zn.c:4040-4042,4603"
+    source_ref: "src/drivers/zn.c:4134-4136, src/drivers/zn.c:4703"
     contents:
       - name: coh-1000t.353
         size: 524288
@@ -587,7 +588,7 @@ files:
     required: true
     category: bios_zip
     system: eighting-zn1
-    source_ref: "src/drivers/zn.c:4312-4314,4630"
+    source_ref: "src/drivers/zn.c:4406-4408, src/drivers/zn.c:4730"
     contents:
       - name: coh-1002e.353
         size: 524288
@@ -599,7 +600,7 @@ files:
     required: true
     category: bios_zip
     system: atlus-zn1
-    source_ref: "src/drivers/zn.c:4483-4485,4642"
+    source_ref: "src/drivers/zn.c:4577-4579, src/drivers/zn.c:4742"
     contents:
       - name: coh-1001l.353
         size: 524288
@@ -611,7 +612,7 @@ files:
     required: true
     category: bios_zip
     system: atari-zn1
-    source_ref: "src/drivers/zn.c:4398-4400,4558"
+    source_ref: "src/drivers/zn.c:4492-4494, src/drivers/zn.c:4652"
     contents:
       - name: coh-1000w.353
         size: 524288
@@ -623,12 +624,24 @@ files:
     required: true
     category: bios_zip
     system: acclaim-zn1
-    source_ref: "src/drivers/zn.c:4421-4423,4567"
+    source_ref: "src/drivers/zn.c:4515-4517, src/drivers/zn.c:4661"
     contents:
       - name: coh-1000a.353
         size: 524288
         crc32: "8d8d0764"
         sha1: "7ee83d317190bb1cef2f8f01c81eaaae47150ebb"
+
+  # Video System PSX
+  - name: coh1002v.zip
+    required: true
+    category: bios_zip
+    system: videosystem-zn1
+    source_ref: "src/drivers/zn.c:4062-4068, src/drivers/zn.c:4692"
+    contents:
+      - name: coh-1002v.ic353
+        size: 524288
+        crc32: "5ff165f3"
+        sha1: "8f59314c1093446b9bcb06d232244da6df78e206"
 
   # SNK Hyper Neo Geo 64
   - name: hng64.zip
