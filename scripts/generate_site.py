@@ -1869,7 +1869,9 @@ def _schema_field_rows(schema: dict, keys: tuple[str, ...]) -> list[str]:
     for key in keys:
         text = str((props.get(key) or {}).get("description") or "")
         if text:
-            rows.append(f"| `{key}` | {_escape_tags(_URL_TEMPLATE.sub(r'`\g<0>`', text))} |")
+            # Python before 3.12 refuses a backslash inside an f-string expression.
+            described = _escape_tags(_URL_TEMPLATE.sub(r"`\g<0>`", text))
+            rows.append(f"| `{key}` | {described} |")
     return rows
 
 
