@@ -40,10 +40,10 @@ the ZIPs inside zipped, like `neogeo.zip`.
 
 Usually. The command installs each setup's own version, like its `neogeo.zip`.
 
-## My arcade game does not start
+## My arcade game fails (which MAME version?) { #my-arcade-game-does-not-start }
 
 The game set must match the emulator's version, and `neogeo.zip` stays zipped.
-Reference: [Which version each emulator reads](technical-faq.md#which-mame-version-do-the-arcade-bios-sets-match).
+Which version each emulator reads: [the list](technical-faq.md#which-mame-version-do-the-arcade-bios-sets-match).
 
 ## Keys, firmware or BIOS?
 
@@ -80,8 +80,8 @@ setup's files and checks each one. `--dry-run` shows the list first.
 
 ## Fill an SD card from a computer?
 
-Yes. Name your setup and the card's BIOS folder. For RetroArch on a Switch
-card in drive `E:`:
+Yes. Name your setup and the card's BIOS folder. For RetroArch on a Switch,
+with the card in drive `E:`, run:
 
 <!-- os-tabs windows: --platform retroarch --dest E:\retroarch\cores\system -->
 ```sh
@@ -98,7 +98,7 @@ Fill its folder from a computer, as above, or unzip your ZIP and check it with
 
 - Name your emulator's BIOS folder with `--dest`.
 - ES-DE, LaunchBox: the command fills the folders of the emulators they start.
-- iPhone, iPad: no terminal. Use the ZIP.
+- iPhone, iPad (iOS): no terminal. Use the ZIP.
 
 ## Why is a file missing from the ZIP?
 
@@ -107,6 +107,12 @@ Some come with the emulator, so the ZIP skips them.
 ## My game shows a black screen
 
 Often a missing BIOS: [When a game does not start](troubleshooting.md).
+
+## Can I copy my own console's BIOS? { #copy-your-own-bios }
+
+Yes. The emulators explain how: [PCSX2](https://pcsx2.net/docs/setup/bios/)
+for PlayStation 2, [melonDS](https://melonds.kuribo64.net/faq.php) for DS and
+DSi.
 
 ## Is this legal?
 
