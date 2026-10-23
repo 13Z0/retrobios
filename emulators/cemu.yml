@@ -27,6 +27,20 @@ data_directories:
     mode: standalone
     source_ref: "source src/Cafe/GraphicPack/GraphicPack2.cpp:96-111, upstream src/gui/wxgui/DownloadGraphicPacksWindow.cpp:234-238"
 
+data_root:
+  windows:
+    path: "%APPDATA%/Cemu"
+    source_ref: "upstream src/gui/wxgui/CemuApp.cpp:74-86,90-123"
+    note: "portable/ next to Cemu.exe when that folder exists, or the folder of Cemu.exe when settings.xml sits there"
+  macos:
+    path: "~/Library/Application Support/Cemu"
+    source_ref: "upstream src/gui/wxgui/CemuApp.cpp:175-203"
+    note: "portable/ next to Cemu.app when that folder exists"
+  linux:
+    path: "$XDG_DATA_HOME/Cemu, else ~/.local/share/Cemu"
+    source_ref: "upstream src/gui/wxgui/CemuApp.cpp:127-171"
+    note: "portable/ next to the executable or the AppImage when that folder exists. Configuration sits in $XDG_CONFIG_HOME/Cemu, else ~/.config/Cemu"
+
 notes: |
   Wii U emulator. The libretro core is a fork of the Cemu tree with the wx
   application removed, kept merged with upstream, with the frontend glue in
@@ -50,9 +64,9 @@ notes: |
   does not read settings.xml. The Cemu
   subdirectory is not doubled when the frontend already hands over a
   directory of that name (saves sorted per core). Standalone Cemu uses the
-  portable directory next to the executable when it exists, otherwise
-  %APPDATA%/Cemu on Windows, XDG_DATA_HOME/Cemu and XDG_CONFIG_HOME/Cemu on
-  Linux, and the MLC defaults to <user data>/mlc01. path: entries below are
+  portable directory next to the executable when it exists, otherwise the
+  user data directory given per system in data_root, and the MLC defaults to
+  <user data>/mlc01. path: entries below are
   the libretro destination under the system directory, or under the save
   directory for the MLC (load_from), and standalone_path: is relative to the
   Cemu user data directory, which holds the MLC by default (load_from
