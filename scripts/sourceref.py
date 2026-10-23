@@ -392,13 +392,19 @@ def _prose_runs(
             ):
                 path_start -= 1
                 path = "." + path
-            role = _prose_role(line, path_start)
-            if not role and _prose_external(line, path_start, known):
+            # A path opening its line reads its role or project word at the
+            # end of the line before: genesis_plus_gx_expanded wrapped
+            # `(Batocera` and `package/batocera/...mk:7` one line apart.
+            lead = line[:path_start]
+            if number and not lead.strip():
+                lead = lines[number - 1].rstrip() + " "
+            role = _prose_role(lead, len(lead))
+            if not role and _prose_external(lead, len(lead), known):
                 # Kept with its project word, the source_ref convention: the
                 # report looks for the project inside the declared trees
                 # (mupen64plus-ae vendors `rice Config.cpp`) and calls the
                 # citation EXTERNAL only when none carries it.
-                before = line[:path_start].rstrip()
+                before = lead.rstrip()
                 word = before[max(before.rfind(" "), before.rfind("\t"),
                                   before.rfind("(")) + 1:]
                 path = f"{word} {path}"

@@ -19,6 +19,7 @@ import re
 import subprocess
 import sys
 import tempfile
+from collections import Counter
 from collections.abc import Callable, Iterable, Iterator, Sequence
 from dataclasses import asdict, dataclass, field, replace
 from datetime import date
@@ -316,6 +317,37 @@ class Citation:
     in_comment: bool = False
 
 
+def _list_segments(items: list) -> list[object]:
+    """The field path segment naming each list item.
+
+    A name keys its entry. supermodel declares Games.xml twice, once per
+    build mode, and both notes answered to files[Games.xml].note: the
+    history read one note's citations against the other's text. A repeated
+    name takes its build mode, or its index when the mode repeats too.
+    """
+    keys: list[tuple[str | None, str | None]] = []
+    for item in items:
+        name = item.get("name") if isinstance(item, dict) else None
+        mode = item.get("mode") if isinstance(item, dict) else None
+        keys.append((
+            None if name is None else str(name),
+            mode if isinstance(mode, str) else None,
+        ))
+    names = Counter(name for name, _ in keys if name is not None)
+    modes = Counter(key for key in keys if key[0] is not None)
+    segments: list[object] = []
+    for index, (name, mode) in enumerate(keys):
+        if name is None:
+            segments.append(index)
+        elif names[name] == 1:
+            segments.append(name)
+        elif mode and modes[(name, mode)] == 1:
+            segments.append(f"{name}@{mode}")
+        else:
+            segments.append(f"{name}#{index}")
+    return segments
+
+
 def _walk_document(
     node: object, where: str = ""
 ) -> Iterator[tuple[str, str, dict | list, object, Any]]:
@@ -336,9 +368,9 @@ def _walk_document(
             else:
                 yield from _walk_document(value, spot)
     elif isinstance(node, list):
+        segments = _list_segments(node)
         for index, item in enumerate(node):
-            segment = item.get("name") if isinstance(item, dict) else None
-            spot = f"{where}[{segment if segment is not None else index}]"
+            spot = f"{where}[{segments[index]}]"
             if isinstance(item, str):
                 yield "str", spot, node, index, item
             else:
@@ -1104,7 +1136,20 @@ def select_views(
             continue
         seen.add((repo.host, repo.slug))
         views.append(RepoView(repo, pin, head, origin, field))
-    return _follow_fork_base(_follow_submodule(views, cache_dir, offline), cache_dir, offline)
+    views = _follow_fork_base(_follow_submodule(views, cache_dir, offline), cache_dir, offline)
+    return _hold_upstream(profile, views)
+
+
+def _hold_upstream(profile: dict, views: list[RepoView]) -> list[RepoView]:
+    """An upstream tree the port vendors or synced to is judged at that
+    revision: aps3e carries RPCS3 1f080485, yaps2 PCSX2 342db515."""
+    if not str(profile.get("upstream_frozen") or "").strip():
+        return views
+    return [
+        replace(view, head=view.pin, origin=f"{view.origin}, held")
+        if view.field == "upstream" else view
+        for view in views
+    ]
 
 
 def _follow_submodule(
@@ -2515,7 +2560,25 @@ def insert_after_line(text: str, key: str, new_line: str) -> str:
 
 
 def _field_value(line: str) -> str:
-    return line.split(":", 1)[1].strip().strip('"').strip("'")
+    """The value of a `key: value` line as the loader reads it.
+
+    etlegacy quotes `(FS_FOpenFileRead \\"pak0.pk3\\")` inside a double-quoted
+    source_ref: stripping the outer quotes keeps the backslashes, and the
+    line never equalled the parsed value it was searched for.
+    """
+    raw = line.split(":", 1)[1].strip()
+    try:
+        parsed = yaml.safe_load(raw)
+    except yaml.YAMLError:
+        parsed = None
+    if isinstance(parsed, str):
+        return parsed
+    return raw.strip('"').strip("'")
+
+
+def _double_quoted(value: str) -> str:
+    """A YAML double-quoted scalar reading back as value."""
+    return '"' + value.replace("\\", "\\\\").replace('"', '\\"') + '"'
 
 
 def find_field_line(text: str, key: str, expected: str, start: int = 0) -> int:
@@ -2543,7 +2606,7 @@ def replace_field_line(text: str, key: str, expected: str, value: str,
     lines = text.splitlines()
     line = lines[index]
     indent = line[: len(line) - len(line.lstrip())]
-    lines[index] = f'{indent}{key}: "{value}"'
+    lines[index] = f"{indent}{key}: {_double_quoted(value)}"
     joined = "\n".join(lines) + ("\n" if text.endswith("\n") else "")
     return joined, index
 
@@ -2631,6 +2694,9 @@ def _prose_moves(
     return moves
 
 
+_RANGE_TOKEN_RE = re.compile(r"\d+(?:-\d+)?")
+
+
 def _run_after_moves(
     parts: Sequence[RefPart],
     moves: dict[int, tuple[int, int, str | None]],
@@ -2652,6 +2718,17 @@ def _run_after_moves(
             ranges.append(f"{start}" if end == start else f"{start}-{end}")
         else:
             ranges.append(part.raw)
+    # The separators stay as written. boom3 writes `libretro.cpp:1635-1643,
+    # 2384-2405` in a folded scalar, rewritten whole there, and a joined
+    # `3238-3246,4245-4266` no longer read as the intended document.
+    written = run.partition(":")[2]
+    tokens = list(_RANGE_TOKEN_RE.finditer(written))
+    if len(tokens) == len(parts) and all(
+        token.group() == part.raw for token, part in zip(tokens, parts)
+    ):
+        for token, rendered in reversed(list(zip(tokens, ranges))):
+            written = written[:token.start()] + rendered + written[token.end():]
+        return f"{new_path or parts[0].path}:{written}"
     return f"{new_path or parts[0].path}:{','.join(ranges)}"
 
 
@@ -4318,6 +4395,12 @@ def _passed_release(
     commit = upstream.tag_commit(repo, version.latest_release, args.cache_dir, args.offline)
     if not commit:
         return None
+    if version.tag_commit and version.tag_commit != commit:
+        # A project can publish a release older than its newest tag:
+        # pcsx2x6's latest release is v0.2.20, its declared tag v0.2.22.
+        older = upstream.ancestry(repo, commit, version.tag_commit, args.cache_dir, args.offline)
+        if older and older[1] == 0:
+            return None
     if commit == pin:
         return version.latest_release
     relation = upstream.ancestry(repo, commit, pin, args.cache_dir, args.offline)

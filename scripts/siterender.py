@@ -963,7 +963,6 @@ SYSTEM_NAMES: dict[str, str] = {
     "mega-ld": "Sega Mega LD",
     "microdigital-tk85": "Microdigital TK85",
     "microsoft-msx2": "MSX2",
-    "microsoft-xbox-360": "Microsoft Xbox 360",
     "midway-mcr": "Midway MCR",
     "mips": "MIPS",
     "mips64": "MIPS64",

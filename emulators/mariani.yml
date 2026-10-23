@@ -5,7 +5,7 @@ source: "https://github.com/sh95014/AppleWin"
 upstream: "https://github.com/AppleWin/AppleWin"
 profiled_date: "2026-08-12"
 source_commit: "51893cab7e8a3d1298734848f4fd616f2e1831fb"
-upstream_commit: "75bd90d16a2e4eb16026bf615685ee2a02dfc0d6"
+upstream_commit: "3e8054b4627624398e4589f7f27b3d40a6b9718e"
 core_version: "1.7"
 display_name: "Apple - Apple II (Mariani)"
 cores:
