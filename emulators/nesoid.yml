@@ -141,7 +141,7 @@ files:
       16 KB further in, so such a file needs at least 16656 bytes. Anything else
       is read as a raw 4352 byte image. A failed open or a short read leaves the
       Game Genie off and the content still runs. No hash is compared.
-    source_ref: "app/jni/neslib/cart.c:475-521 (open and format branch), app/jni/neslib/svga.c:132-140 (setter), app/jni/neslib/drivers/android/nesengine.cpp:242-243, app/jni/neslib/fce.c:1201-1203 (call site), EmulatorActivity.java:870-874, EmulatorSettingsFragment.java:179-193 (picker)"
+    source_ref: "app/jni/neslib/cart.c:475-521 (open and format branch), app/jni/neslib/svga.c:132-140 (setter), app/jni/neslib/drivers/android/nesengine.cpp:242-243, app/jni/neslib/fce.c:1201-1203 (call site), app/src/main/java/com/androidemu/nes/EmulatorActivity.java:870-874, app/src/main/java/com/androidemu/nes/EmulatorSettingsFragment.java:179-193 (picker)"
 
   - name: "<game>.pal"
     system: nintendo-nes

@@ -780,12 +780,28 @@ def list_tree(
     payload = _api(url, cache_dir, offline)
     if not isinstance(payload, dict):
         return [], True
+    entries = list(payload.get("tree") or [])
+    truncated = bool(payload.get("truncated"))
+    # Forgejo pages a recursive tree, 1000 entries at a time, and says how
+    # many there are: mirrors/Ryujinx holds 4704, and read as one page every
+    # citation past the first thousand was unverifiable. GitHub reports no
+    # count, its truncation is final.
+    total = payload.get("total_count")
+    if truncated and repo.family == "forgejo" and isinstance(total, int):
+        for page in range(2, MAX_TREE_PAGES + 1):
+            if len(entries) >= total:
+                break
+            more = _api(f"{url}&page={page}", cache_dir, offline)
+            if not isinstance(more, dict) or not more.get("tree"):
+                break
+            entries.extend(more["tree"])
+        truncated = len(entries) < total
     paths = [
         entry["path"]
-        for entry in payload.get("tree") or []
+        for entry in entries
         if isinstance(entry, dict) and entry.get("type") == "blob" and entry.get("path")
     ]
-    return paths, bool(payload.get("truncated"))
+    return paths, truncated
 
 
 def list_gitlinks(

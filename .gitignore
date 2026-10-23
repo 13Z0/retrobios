@@ -49,9 +49,9 @@ bios/Nintendo/Nintendo DSi/DSi_Nand_KOR.bin
 bios/Nintendo/Nintendo DSi/dsi_nand.bin
 
 # QEMU EDK2 firmware (64MB each)
-bios/QEMU/edk2-aarch64-code.fd
-bios/QEMU/edk2-arm-code.fd
-bios/QEMU/edk2-arm-vars.fd
+bios/QEMU/QEMU/edk2-aarch64-code.fd
+bios/QEMU/QEMU/edk2-arm-code.fd
+bios/QEMU/QEMU/edk2-arm-vars.fd
 
 # ScummVM data bundle (79MB, fetched from large-files release)
 bios/ScummVM/scummvm.zip

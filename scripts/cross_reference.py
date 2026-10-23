@@ -53,6 +53,7 @@ from validation import (
     outside_gap_scope,
     read_from_save_dir,
     unread_on,
+    with_archive_members,
 )
 
 yaml = require_yaml()
@@ -563,7 +564,12 @@ class FileConsumers:
                         for dest, sha1 in members.items()
                     ]
                 else:
-                    found = [self.sha1_of(entry, entry.get("path") or "", owner=name)]
+                    # The archive members the profile reads decide between
+                    # same-named copies, as in the emulator pack and verify.
+                    found = [self.sha1_of(
+                        with_archive_members(entry, files), entry.get("path") or "",
+                        owner=name,
+                    )]
                 for sha1 in found:
                     if sha1:
                         self.emulators.setdefault(sha1, set()).add(name)

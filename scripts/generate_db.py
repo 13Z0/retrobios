@@ -414,7 +414,7 @@ def main() -> int:
         print(f"  Preserved {preserved} large file entries from existing database")
 
     try:
-        platform_aliases = _collect_all_aliases(files)
+        platform_aliases = _collect_all_aliases(files, aliases)
     except UnreadableSource as exc:
         for source in exc.sources:
             print(f"Error: cannot read {source}", file=sys.stderr)
@@ -492,10 +492,11 @@ class UnreadableSource(Exception):
         self.sources = sources
 
 
-def _collect_all_aliases(files: dict) -> dict:
+def _collect_all_aliases(files: dict, copies: dict | None = None) -> dict:
     """Collect alternate filenames from platform YAMLs, core-info, and known aliases.
 
     Registers alternate names so generate_pack can resolve files stored under different names.
+    ``copies`` maps a sha1 to the other files the scan found with that content.
     """
     md5_to_sha1 = {}
     name_to_sha1 = {}
@@ -504,6 +505,18 @@ def _collect_all_aliases(files: dict) -> dict:
         md5_to_sha1[entry["md5"]] = sha1
         name_to_sha1[entry["name"]] = sha1
         name_count[entry["name"]] = name_count.get(entry["name"], 0) + 1
+    # The contents held under each name, every copy counted and not only the
+    # primary: which copy of identical bytes is primary follows path order.
+    # Keyed on primaries alone, project64's 64DD_IPL_v12_JPN.bin stopped
+    # naming its content once 64DD_IPL.bin sorted first, and its aliases
+    # 64dd_ipl_J.bin and 64DD_IPL_JP.n64 went with it.
+    holders: dict[str, set[str]] = {}
+    for sha1, entry in files.items():
+        holders.setdefault(entry["name"], set()).add(sha1)
+    for sha1, copy_list in (copies or {}).items():
+        if sha1 in files:
+            for copy in copy_list:
+                holders.setdefault(copy["name"], set()).add(sha1)
 
     aliases = {}
 
@@ -598,11 +611,11 @@ def _collect_all_aliases(files: dict) -> dict:
                     entry_aliases.insert(0, entry_name)
                 if not entry_aliases:
                     continue
-                if not matched and entry_name and name_count.get(entry_name) == 1:
-                    # A name carried by several files names none of them:
+                if not matched and len(holders.get(entry_name, ())) == 1:
+                    # A name carried by several contents names none of them:
                     # quasi88's disk.rom aliases went to whichever
                     # disk.rom the scan met last, a Tandy CoCo ROM.
-                    matched = {name_to_sha1[entry_name]}
+                    matched = set(holders[entry_name])
                 for sha in sorted(matched):
                     for alias_name in entry_aliases:
                         _add_alias(alias_name, sha)

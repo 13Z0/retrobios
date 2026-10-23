@@ -52,7 +52,7 @@ files:
     validation: [existence, size]
     min_size: 262144
     category: bios
-    source_ref: "PCE.emu/src/main/Main.cc:80-91 (throws without it), PCE.emu/src/main/options.cc:275-301 (path resolution), PCE.emu/src/main/EmuMenuViews.cc:176-191 (selection), src/pce_fast/pce.cpp:477-483 + src/pce_fast/huc.cpp:284-304 (default module load), src/pce/pce.cpp:645-653 (accurate module load), src/pce_fast/pce.cpp:663 + src/pce/pce.cpp:1094 (name)"
+    source_ref: "PCE.emu/src/main/Main.cc:80-91 (throws without it), PCE.emu/src/main/options.cc:275-301 (path resolution), PCE.emu/src/main/EmuMenuViews.cc:176-191 (selection), PCE.emu/src/pce_fast/pce.cpp:477-483, PCE.emu/src/pce_fast/huc.cpp:284-304 (default module load), PCE.emu/src/pce/pce.cpp:645-653 (accurate module load), PCE.emu/src/pce_fast/pce.cpp:663, PCE.emu/src/pce/pce.cpp:1094 (name)"
     note: >
       min_size comes from the fixed 262144-byte read in pce_fast
       (huc.cpp:302) with Stream::read throwing on a short file
@@ -64,7 +64,7 @@ files:
     required: false
     validation: [existence]
     category: bios
-    source_ref: "src/pce/pce.cpp:512-551 (DetectGECD), src/pce/pce.cpp:644-646 (gecdbios branch), src/pce/huc.cpp:225-316 (size-agnostic read), src/pce/pce.cpp:1095 (name)"
+    source_ref: "PCE.emu/src/pce/pce.cpp:512-551 (DetectGECD), PCE.emu/src/pce/pce.cpp:644-646 (gecdbios branch), PCE.emu/src/pce/huc.cpp:225-316 (size-agnostic read), PCE.emu/src/pce/pce.cpp:1095 (name)"
     note: >
       Reached only when the accurate module runs and DetectGECD matches the
       disc, since pce_fast has no Games Express branch. Served through the same

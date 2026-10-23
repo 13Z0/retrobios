@@ -6,7 +6,7 @@
   "platform": "retrodeck",
   "display_name": "RetroDECK",
   "version": "1.0",
-  "generated": "2026-10-23T07:43:10Z",
+  "generated": "2026-10-23T11:13:30Z",
   "base_destination": "",
   "detect": [
     {
@@ -42234,7 +42234,7 @@
       "sha1": "f6b1eebc4b2d200ec6d3d21d51325d5b48c60252",
       "sha256": "d9164063f293410cf33f2f64cdcea6893b44723fe41938e07ec9aef58b406238",
       "size": 524288,
-      "repo_path": "bios/Roland/MT32_PCM.ROM",
+      "repo_path": "bios/Roland/MT-32/MT32_PCM.ROM",
       "cores": [
         "dosbox",
         "dosbox_core",
@@ -42246,7 +42246,7 @@
       "sha1": "289cc298ad532b702461bfc738009d9ebe8025ea",
       "sha256": "0dc50190bb7ea3fb212c970346b771a511772b528801e7eda6d27efda8c40698",
       "size": 1048576,
-      "repo_path": "bios/Roland/CM32L_PCM.ROM",
+      "repo_path": "bios/Roland/CM-32L/CM32L_PCM.ROM",
       "cores": [
         "dosbox",
         "dosbox_core",
@@ -113471,7 +113471,7 @@
       "sha1": "eac1a94b8e0d7c53fd5df001c36794ec34c7c724",
       "sha256": "2df617a6fd1bae41ec7c0e3bceca96c928a5a88d8dc198468d34733393ab2792",
       "size": 3653632,
-      "repo_path": "bios/QEMU/edk2-x86_64-code.fd",
+      "repo_path": "bios/QEMU/QEMU/edk2-x86_64-code.fd",
       "cores": [
         "qemu"
       ]
@@ -113481,7 +113481,7 @@
       "sha1": "617abe2746696bb4a309d72cecb446dc76a2a61e",
       "sha256": "54b5cf8601a787ad84e2d68ea979cabb111d20e3b635ad27376c4875e743db64",
       "size": 3653632,
-      "repo_path": "bios/QEMU/edk2-x86_64-secure-code.fd",
+      "repo_path": "bios/QEMU/QEMU/edk2-x86_64-secure-code.fd",
       "cores": [
         "qemu"
       ]
@@ -113491,7 +113491,7 @@
       "sha1": "45b8faebdfaaf19d16e3a7c5f60d69214685071c",
       "sha256": "69cebad2dac0fe52e3025836bdd09bf79d01741e4a79c680e0faa837c3fbb80f",
       "size": 3653632,
-      "repo_path": "bios/QEMU/edk2-i386-code.fd",
+      "repo_path": "bios/QEMU/QEMU/edk2-i386-code.fd",
       "cores": [
         "qemu"
       ]
@@ -113501,7 +113501,7 @@
       "sha1": "6982abec8ef2ed7c8293163d5a0bd69a01a2126f",
       "sha256": "d95514ab60349ebc9355a761d4687f18e9787e66515593ea3bd98ea0131b0659",
       "size": 3653632,
-      "repo_path": "bios/QEMU/edk2-i386-secure-code.fd",
+      "repo_path": "bios/QEMU/QEMU/edk2-i386-secure-code.fd",
       "cores": [
         "qemu"
       ]
@@ -113511,7 +113511,7 @@
       "sha1": "b62e676c9317a32aaa9ee1d76268d8c55663bd6e",
       "sha256": "5d2ac383371b408398accee7ec27c8c09ea5b74a0de0ceea6513388b15be5d1e",
       "size": 540672,
-      "repo_path": "bios/QEMU/edk2-i386-vars.fd",
+      "repo_path": "bios/QEMU/QEMU/edk2-i386-vars.fd",
       "cores": [
         "qemu"
       ]
@@ -113521,7 +113521,7 @@
       "sha1": "514edbce58bfa877170673c1799351a7dab3b6df",
       "sha256": "c0c78f7443cce15bcc91a8b6966e759c8c5cf5c80ac0086d5d79b0455fc9ccb5",
       "size": 67108864,
-      "repo_path": "bios/QEMU/edk2-aarch64-code.fd",
+      "repo_path": "bios/QEMU/QEMU/edk2-aarch64-code.fd",
       "cores": [
         "qemu"
       ],
@@ -113533,7 +113533,7 @@
       "sha1": "c20f01c28b59b388abb9d0febeec45d801a632f0",
       "sha256": "f9fcba7e85ab206efd88316c46ce9d7783c063abc9dd2b7b37df41cc8c0d2153",
       "size": 67108864,
-      "repo_path": "bios/QEMU/edk2-arm-code.fd",
+      "repo_path": "bios/QEMU/QEMU/edk2-arm-code.fd",
       "cores": [
         "qemu"
       ],
@@ -113545,7 +113545,7 @@
       "sha1": "b051167e0e57bd13d77ed92ef7b474872f44ec6d",
       "sha256": "b3b855c5a80310168051164986855692d1bdb06e67619856177965cd87c6774f",
       "size": 67108864,
-      "repo_path": "bios/QEMU/edk2-arm-vars.fd",
+      "repo_path": "bios/QEMU/QEMU/edk2-arm-vars.fd",
       "cores": [
         "qemu"
       ],
@@ -113557,7 +113557,7 @@
       "sha1": "2c8633d881ece0c4794d740138a318f7e9af480c",
       "sha256": "8d74d1658106d4b748f2b56e1b689aad9977f7a485eb7a5654884b0b419c4ed9",
       "size": 33554432,
-      "repo_path": "bios/QEMU/edk2-riscv-code.fd",
+      "repo_path": "bios/QEMU/QEMU/edk2-riscv-code.fd",
       "cores": [
         "qemu"
       ]
@@ -113567,7 +113567,7 @@
       "sha1": "c4e6cce4247ba8f32f528c1c69f49228f616677f",
       "sha256": "ea8094e953b1215444bd001ee1cf22818f1f7f8abcb158e62180cbaa6c1f70af",
       "size": 33554432,
-      "repo_path": "bios/QEMU/edk2-riscv-vars.fd",
+      "repo_path": "bios/QEMU/QEMU/edk2-riscv-vars.fd",
       "cores": [
         "qemu"
       ]
@@ -115411,7 +115411,7 @@
       "sha1": "b083518fffb7f66b03c23b7eb4f868e62dc5a987",
       "sha256": "a73a06c23ed38370e58a11fb1b86f7ea4c547061a60d7aa62bae446235fd2dff",
       "size": 65536,
-      "repo_path": "bios/Roland/MT32_CONTROL.ROM",
+      "repo_path": "bios/Roland/MT-32/MT32_CONTROL.ROM",
       "cores": [
         "amiberry"
       ],
@@ -115424,7 +115424,7 @@
       "sha1": "f6b1eebc4b2d200ec6d3d21d51325d5b48c60252",
       "sha256": "d9164063f293410cf33f2f64cdcea6893b44723fe41938e07ec9aef58b406238",
       "size": 524288,
-      "repo_path": "bios/Roland/MT32_PCM.ROM",
+      "repo_path": "bios/Roland/MT-32/MT32_PCM.ROM",
       "cores": [
         "amiberry"
       ],
@@ -115437,7 +115437,7 @@
       "sha1": "a439fbb390da38cada95a7cbb1d6ca199cd66ef8",
       "sha256": "08d68695e5bff6bbcbb751d6e4453db9f5ead0b5f41e86480798a04376dfe090",
       "size": 65536,
-      "repo_path": "bios/Roland/CM32L_CONTROL.ROM",
+      "repo_path": "bios/Roland/CM-32L/CM32L_CONTROL.ROM",
       "cores": [
         "amiberry"
       ],
@@ -115450,7 +115450,7 @@
       "sha1": "289cc298ad532b702461bfc738009d9ebe8025ea",
       "sha256": "0dc50190bb7ea3fb212c970346b771a511772b528801e7eda6d27efda8c40698",
       "size": 1048576,
-      "repo_path": "bios/Roland/CM32L_PCM.ROM",
+      "repo_path": "bios/Roland/CM-32L/CM32L_PCM.ROM",
       "cores": [
         "amiberry"
       ],
@@ -126836,7 +126836,7 @@
       "sha1": "2aa01b414a703880192277f9ce0dae193e9d2c8d",
       "sha256": "32a92bc476d476ad1befa6894edfddf5a7abe298fb02683e41f3b5f2ba5c9cd6",
       "size": 141072,
-      "repo_path": "bios/QEMU/u-boot.bin",
+      "repo_path": "bios/QEMU/QEMU/u-boot.bin",
       "cores": [
         "qemu"
       ]
@@ -126846,7 +126846,7 @@
       "sha1": "358abab78f3bfba72b7b45cb5dd66ce4411e2618",
       "sha256": "2fb484617cc7273d971d55a5367cac91a8f86aa0de54e7e155837d09a0599bc7",
       "size": 298835,
-      "repo_path": "bios/QEMU/mips_bios.bin",
+      "repo_path": "bios/QEMU/QEMU/mips_bios.bin",
       "cores": [
         "qemu"
       ]
@@ -126856,7 +126856,7 @@
       "sha1": "daa15fb1b8829da5c5bd473243acf19cd0f17a74",
       "sha256": "40232429030f906513bb5482c21d8b3f49626ab7808920382e065a2949caf99f",
       "size": 300324,
-      "repo_path": "bios/QEMU/mipsel_bios.bin",
+      "repo_path": "bios/QEMU/QEMU/mipsel_bios.bin",
       "cores": [
         "qemu"
       ]
@@ -126866,7 +126866,7 @@
       "sha1": "8e99ed6157811282b7570f5f2e13b81a3913497e",
       "sha256": "fcdf6bb2cb7885a4a62f31fcb0d5e368bac7b6cea28f40c6dfa678af22fea20a",
       "size": 561168,
-      "repo_path": "bios/QEMU/bios_loongson3.bin",
+      "repo_path": "bios/QEMU/QEMU/bios_loongson3.bin",
       "cores": [
         "qemu"
       ]
@@ -126876,7 +126876,7 @@
       "sha1": "41c43f4e8956169ab7602230a3a63934b26d65de",
       "sha256": "81576c8581e6765a73a8b5070dfb3758bcc3b0737461d481ec97ab5b67751771",
       "size": 442384,
-      "repo_path": "bios/QEMU/pmon_2e.bin",
+      "repo_path": "bios/QEMU/QEMU/pmon_2e.bin",
       "cores": [
         "qemu"
       ]
@@ -126886,7 +126886,7 @@
       "sha1": "f2a9ce387019bf272c6e3459d961b30f28942ac5",
       "sha256": "05ad753fb594e656cf078023ec189e09e2a7655a780de993b75b8c51ed6b09ca",
       "size": 1048576,
-      "repo_path": "bios/QEMU/MacROM.bin",
+      "repo_path": "bios/QEMU/QEMU/MacROM.bin",
       "cores": [
         "qemu"
       ]
@@ -126896,7 +126896,7 @@
       "sha1": "3df540b7517f27b3a76e31f193821d04e5805f89",
       "sha256": "93bb5d776bc5a7d609448a3fdb54f1c51653423a7baa5d9b6bcb7fa40b126f87",
       "size": 4194304,
-      "repo_path": "bios/QEMU/canon-a1100-rom1.bin",
+      "repo_path": "bios/QEMU/QEMU/canon-a1100-rom1.bin",
       "cores": [
         "qemu"
       ]
@@ -126906,7 +126906,7 @@
       "sha1": "1dd1b6fd8cb47b055c729cbecda56fe1dc83d6c1",
       "sha256": "9d96ed4b0c1a3af09d9e0ac927f3d456c058eaf8c2fa4c167eac7437ee9a80df",
       "size": 11248,
-      "repo_path": "bios/QEMU/virtex-ml507.dtb",
+      "repo_path": "bios/QEMU/QEMU/virtex-ml507.dtb",
       "cores": [
         "qemu"
       ]
@@ -127081,7 +127081,7 @@
       "sha1": "b083518fffb7f66b03c23b7eb4f868e62dc5a987",
       "sha256": "a73a06c23ed38370e58a11fb1b86f7ea4c547061a60d7aa62bae446235fd2dff",
       "size": 65536,
-      "repo_path": "bios/Roland/MT32_CONTROL.ROM",
+      "repo_path": "bios/Roland/MT-32/MT32_CONTROL.ROM",
       "cores": [
         "scummvm"
       ],
@@ -127094,7 +127094,7 @@
       "sha1": "f6b1eebc4b2d200ec6d3d21d51325d5b48c60252",
       "sha256": "d9164063f293410cf33f2f64cdcea6893b44723fe41938e07ec9aef58b406238",
       "size": 524288,
-      "repo_path": "bios/Roland/MT32_PCM.ROM",
+      "repo_path": "bios/Roland/MT-32/MT32_PCM.ROM",
       "cores": [
         "scummvm"
       ],
@@ -127107,7 +127107,7 @@
       "sha1": "a439fbb390da38cada95a7cbb1d6ca199cd66ef8",
       "sha256": "08d68695e5bff6bbcbb751d6e4453db9f5ead0b5f41e86480798a04376dfe090",
       "size": 65536,
-      "repo_path": "bios/Roland/CM32L_CONTROL.ROM",
+      "repo_path": "bios/Roland/CM-32L/CM32L_CONTROL.ROM",
       "cores": [
         "scummvm"
       ],
@@ -127120,7 +127120,7 @@
       "sha1": "289cc298ad532b702461bfc738009d9ebe8025ea",
       "sha256": "0dc50190bb7ea3fb212c970346b771a511772b528801e7eda6d27efda8c40698",
       "size": 1048576,
-      "repo_path": "bios/Roland/CM32L_PCM.ROM",
+      "repo_path": "bios/Roland/CM-32L/CM32L_PCM.ROM",
       "cores": [
         "scummvm"
       ],

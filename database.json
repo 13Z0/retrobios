@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-23T07:43:10Z",
+  "generated_at": "2026-10-23T11:13:30Z",
   "total_files": 19711,
   "total_size": 16808555694,
   "bios_dir": "bios",
@@ -127315,16 +127315,6 @@
         }
       }
     },
-    "5996972d3e033f6c525c1988c563b4ffe4c58f22": {
-      "path": "bios/Microsoft/Chihiro/cerbios.bin",
-      "name": "cerbios.bin",
-      "size": 262144,
-      "sha1": "5996972d3e033f6c525c1988c563b4ffe4c58f22",
-      "md5": "f23d7e00ae8fbf88908ed1f9165f35eb",
-      "sha256": "b2dba4425355c42a15f9dd2b62158213ea9485de137739d95582e695da404958",
-      "crc32": "a73a4d20",
-      "adler32": "8c41bfd4"
-    },
     "bf5fb954db868e523febccc68549ed9187961076": {
       "path": "bios/Microsoft/MSX/.variants/CARTS.SHA.bf5fb954",
       "name": "CARTS.SHA",
@@ -134852,216 +134842,6 @@
       "sha256": "afc1cc8b693f2b68d23ca203aa4d4eb4266baad4ab718f013a33b915d39574ef",
       "crc32": "343a0710",
       "adler32": "328b8b49"
-    },
-    "746a2996967282281a980842a93642ad7d740f9e": {
-      "path": "bios/Oric/Oric/8dos2.rom",
-      "name": "8dos2.rom",
-      "size": 512,
-      "sha1": "746a2996967282281a980842a93642ad7d740f9e",
-      "md5": "5f3cd5a4307fed7a9dfe8faa4c044273",
-      "sha256": "d58cb6f47f808d8c890310d1c6a46e92df05971f5952bcb4f4cf88d1faf37eb6",
-      "crc32": "efc88d2b",
-      "adler32": "82ebe76f"
-    },
-    "3e8f851df9319891fb9849c922437468df98915d": {
-      "path": "bios/Oric/Oric/Bas122de.pch",
-      "name": "Bas122de.pch",
-      "size": 2037,
-      "sha1": "3e8f851df9319891fb9849c922437468df98915d",
-      "md5": "80fe771abf403e67f5640b2107c375c9",
-      "sha256": "cf3d0e680a362084aadb184a4a57a35432e5af885aa2f7838578e3116fb57c2e",
-      "crc32": "bfaaa640",
-      "adler32": "20bea5df"
-    },
-    "c92aa5e5fedf94a01519867fd8235f33731b8191": {
-      "path": "bios/Oric/Oric/Bas122fr.pch",
-      "name": "Bas122fr.pch",
-      "size": 2037,
-      "sha1": "c92aa5e5fedf94a01519867fd8235f33731b8191",
-      "md5": "61e9414a2c0e2f71b5a25233506b4bf3",
-      "sha256": "52d5bda9d4624da09a6efa8a9fe1c956e602ead506822f205486e915e9ba88a7",
-      "crc32": "169dc64a",
-      "adler32": "c207a5d1"
-    },
-    "ee9dc592128ff337be5ef0bfb6d059752296b445": {
-      "path": "bios/Oric/Oric/Bas122uk.pch",
-      "name": "Bas122uk.pch",
-      "size": 2037,
-      "sha1": "ee9dc592128ff337be5ef0bfb6d059752296b445",
-      "md5": "120a23e1566195050983764e7d4543ce",
-      "sha256": "a5340b6e01719a736a328cfff3a7449ddf77f76f138b07024648b6fcf15368de",
-      "crc32": "3a0be9f6",
-      "adler32": "1a00a5de"
-    },
-    "bda81f64be319d8793d284bf9d40f01d19b33515": {
-      "path": "bios/Oric/Oric/Oric/colour.rom",
-      "name": "colour.rom",
-      "size": 128,
-      "sha1": "bda81f64be319d8793d284bf9d40f01d19b33515",
-      "md5": "c888b36bf0fc222c3585c3fabe556d21",
-      "sha256": "c24fd91c9f0687bf2033abd7747d3f5b162bba4f23692640f69ee62eb404b293",
-      "crc32": "d50fca65",
-      "adler32": "e82c1d5b"
-    },
-    "6c62326403ecdf3d120fa7ffea47f4f1d5b40020": {
-      "path": "bios/Oric/Oric/basic10.pch",
-      "name": "basic10.pch",
-      "size": 2016,
-      "sha1": "6c62326403ecdf3d120fa7ffea47f4f1d5b40020",
-      "md5": "c3944a435cc249196db09290aa17e9cf",
-      "sha256": "2152eafd6573626b7467402838352d4cfbf22f43b4f9940eee7048aea7098dc1",
-      "crc32": "801dea4e",
-      "adler32": "8baea102"
-    },
-    "333116e6884d85aaa4dfc7578a91cceeea66d016": {
-      "path": "bios/Oric/Oric/basic10.rom",
-      "name": "basic10.rom",
-      "size": 16384,
-      "sha1": "333116e6884d85aaa4dfc7578a91cceeea66d016",
-      "md5": "ebe418ec8a6c85d5ac32956c9a96c179",
-      "sha256": "83d341dab126092f7a6d56f6a92bca0643ff3aa6529d896085004f958c9be2ff",
-      "crc32": "f18710b4",
-      "adler32": "7c6b1a61"
-    },
-    "9451a1a09d8f75944dbd6f91193fc360f1de80ac": {
-      "path": "bios/Oric/Oric/basic11b.rom",
-      "name": "basic11b.rom",
-      "size": 16384,
-      "sha1": "9451a1a09d8f75944dbd6f91193fc360f1de80ac",
-      "md5": "a330779c42ad7d0c4ac6ef9e92788ec6",
-      "sha256": "ed28568574716eef5d7c0fde2568d7a47a6e4b1fbca81daff3be05e45723466d",
-      "crc32": "c3a92bef",
-      "adler32": "4d981bd9"
-    },
-    "447975ed022379fb6b80a22fa37c2d188ca3aa88": {
-      "path": "bios/Oric/Oric/bd500.rom",
-      "name": "bd500.rom",
-      "size": 8192,
-      "sha1": "447975ed022379fb6b80a22fa37c2d188ca3aa88",
-      "md5": "2b6498fd29a0adbf1c529762c02c33ab",
-      "sha256": "257430f54fdc1c98bf0ddad97c6a609885b25130910c4ba370d6f51e3699b2d3",
-      "crc32": "61952e34",
-      "adler32": "4d7e15ec"
-    },
-    "e7c32e4f75a58c87de1672e4dbd0794083535a60": {
-      "path": "bios/Oric/Oric/empty_orix.rom",
-      "name": "empty_orix.rom",
-      "size": 16384,
-      "sha1": "e7c32e4f75a58c87de1672e4dbd0794083535a60",
-      "md5": "af3cec316a4960be1c9987599066c792",
-      "sha256": "d1ca02145bc2d539ed45097712046228caf0e04d591ba4463a0ff2a0dad90f45",
-      "crc32": "c98b4655",
-      "adler32": "10b105dc"
-    },
-    "f5f70a0eb59f8cd6c261e179ae78ef906f68ed63": {
-      "path": "bios/Oric/Oric/hyperbas.rom",
-      "name": "hyperbas.rom",
-      "size": 16384,
-      "sha1": "f5f70a0eb59f8cd6c261e179ae78ef906f68ed63",
-      "md5": "364bf095e0dc4222d75354d50b8cddfc",
-      "sha256": "08eaf63a55a7659a6da7c91cf4a57bb0e2e21ff856d0957928605aa5feed09c6",
-      "crc32": "1d96ab50",
-      "adler32": "f69457ec"
-    },
-    "70e59b8abd67092f050462abc6cb5271e4c15f01": {
-      "path": "bios/Oric/Oric/jasmin.rom",
-      "name": "jasmin.rom",
-      "size": 2048,
-      "sha1": "70e59b8abd67092f050462abc6cb5271e4c15f01",
-      "md5": "5136f764a7dbd1352519351fbb53a9f3",
-      "sha256": "60d9aaaa7e787080779acbf8ad7af81fe9b8851af5e395c2f3bf10c114a76a23",
-      "crc32": "37220e89",
-      "adler32": "a9993e51"
-    },
-    "01f7a84d5a1973623eabd2be6c2cbac1ce5096a6": {
-      "path": "bios/Oric/Oric/kernel.rom",
-      "name": "kernel.rom",
-      "size": 16384,
-      "sha1": "01f7a84d5a1973623eabd2be6c2cbac1ce5096a6",
-      "md5": "1d63b6289c7e3566d411cf0682e401bc",
-      "sha256": "62eaf60c3be8047599f3ef06874b86d479d9b74cf90efcd2d83f35db8c662144",
-      "crc32": "356231a6",
-      "adler32": "c1d39847"
-    },
-    "0d2ef6e67322f48f4b7e08d8bbe68827e2074561": {
-      "path": "bios/Oric/Oric/microdis.rom",
-      "name": "microdis.rom",
-      "size": 8192,
-      "sha1": "0d2ef6e67322f48f4b7e08d8bbe68827e2074561",
-      "md5": "df864344d2a2091c3f952bd1c5ce1707",
-      "sha256": "1b82882eeaddba463e3f89218fd9eb30147345e540bbccf96bf30c14d2e45941",
-      "crc32": "a9664a9c",
-      "adler32": "b4326558"
-    },
-    "7afc276cb118adff72e4f16698f94bf3b2c64146": {
-      "path": "bios/Oric/Oric/pravetz.rom",
-      "name": "pravetz.rom",
-      "size": 16384,
-      "sha1": "7afc276cb118adff72e4f16698f94bf3b2c64146",
-      "md5": "8712a22e7e078de3343667d9fc1f2390",
-      "sha256": "a142c6a9f9ccf25ce4e7ab64107bc2210ee7f68557fe3a8bbb60d1587da814ae",
-      "crc32": "58079502",
-      "adler32": "e5c81c95"
-    },
-    "3dd12d7ba54fee06a7e20dadb2c278a23a17af50": {
-      "path": "bios/Oric/Oric/pravetzt.pch",
-      "name": "pravetzt.pch",
-      "size": 2390,
-      "sha1": "3dd12d7ba54fee06a7e20dadb2c278a23a17af50",
-      "md5": "eaa5158b07b439faab0db30e357f0af2",
-      "sha256": "191b5e58d65eee4b2ae74aefd882b0df44d321be6c226349293fad7c10fcdcbf",
-      "crc32": "46bab02d",
-      "adler32": "4a13f713"
-    },
-    "926b95e1cb574d4914dbed0681729a7c1a4bc68d": {
-      "path": "bios/Oric/Oric/shell.rom",
-      "name": "shell.rom",
-      "size": 16384,
-      "sha1": "926b95e1cb574d4914dbed0681729a7c1a4bc68d",
-      "md5": "642e8504adc72e7c16384dbdc1665fa2",
-      "sha256": "2f799c82479b64ca4fda7ed76bdc65bfb56596625061fba91933fed473fc9ae8",
-      "crc32": "8d166635",
-      "adler32": "a9d0bac9"
-    },
-    "9e9af51dae3199cccf49ab3f0d47e2b9be4ba97d": {
-      "path": "bios/Oric/Oric/teleass.rom",
-      "name": "teleass.rom",
-      "size": 16384,
-      "sha1": "9e9af51dae3199cccf49ab3f0d47e2b9be4ba97d",
-      "md5": "2324c9cc227c1327a72a667c97ed2990",
-      "sha256": "49921a9f932f7ecc2947b9b08f0451a393dc48f55317209c44338dc8bcf227ee",
-      "crc32": "68b0fde6",
-      "adler32": "a1258c43"
-    },
-    "35f92a0477a88f5cf564971125047ffcfa02ec10": {
-      "path": "bios/Oric/Oric/telmatic.rom",
-      "name": "telmatic.rom",
-      "size": 8192,
-      "sha1": "35f92a0477a88f5cf564971125047ffcfa02ec10",
-      "md5": "0a814078410353744e2947a8e9342e4e",
-      "sha256": "f213042b9b166b443b8a5a336a325ba4a2ae9482db369754932a7b3c802ed980",
-      "crc32": "94358dc6",
-      "adler32": "8c7a9749"
-    },
-    "d8ce5b1405b6428969493efeb6f3aa2027c41bdc": {
-      "path": "bios/Oric/Oric/telmon24.pch",
-      "name": "telmon24.pch",
-      "size": 218,
-      "sha1": "d8ce5b1405b6428969493efeb6f3aa2027c41bdc",
-      "md5": "82a22231d402cd3284c698ba16a51d1d",
-      "sha256": "3ca567f014a71ea24734559ee63df8184886f17debeef41c4bf4cd6313d70bd1",
-      "crc32": "29e86dbc",
-      "adler32": "32334634"
-    },
-    "86fc8dc0932f983efa199e31ae05a4424772f959": {
-      "path": "bios/Oric/Oric/telmon24.rom",
-      "name": "telmon24.rom",
-      "size": 16384,
-      "sha1": "86fc8dc0932f983efa199e31ae05a4424772f959",
-      "md5": "9a432244d9ee4a49e8ddcde64af94e05",
-      "sha256": "0ed991887342fba9e4b71668ff4c14ed93c2b3a19b4874dd0282404a1c442094",
-      "crc32": "aa727c5d",
-      "adler32": "13643247"
     },
     "451c85c46b92e6ad2ad930f055ccf0fe3049936d": {
       "path": "bios/Other/Clock Signal/AppleII/scsi.rom",
@@ -165124,7 +164904,7 @@
       "adler32": "9f865ebb"
     },
     "f2a9ce387019bf272c6e3459d961b30f28942ac5": {
-      "path": "bios/QEMU/MacROM.bin",
+      "path": "bios/QEMU/QEMU/MacROM.bin",
       "name": "MacROM.bin",
       "size": 1048576,
       "sha1": "f2a9ce387019bf272c6e3459d961b30f28942ac5",
@@ -165134,7 +164914,7 @@
       "adler32": "e6360545"
     },
     "619b86fb02faf8f682474be3f0653b58015008ba": {
-      "path": "bios/QEMU/QEMU,cgthree.bin",
+      "path": "bios/QEMU/QEMU/QEMU,cgthree.bin",
       "name": "QEMU,cgthree.bin",
       "size": 850,
       "sha1": "619b86fb02faf8f682474be3f0653b58015008ba",
@@ -165144,7 +164924,7 @@
       "adler32": "036bc8fb"
     },
     "5f1792a73ee47d78b2160191ecb2c92f353f93ad": {
-      "path": "bios/QEMU/QEMU,tcx.bin",
+      "path": "bios/QEMU/QEMU/QEMU,tcx.bin",
       "name": "QEMU,tcx.bin",
       "size": 1402,
       "sha1": "5f1792a73ee47d78b2160191ecb2c92f353f93ad",
@@ -165154,7 +164934,7 @@
       "adler32": "fb001da8"
     },
     "9dda4cbcc1d3f6d38c10fee3de53b9abd5e47ec0": {
-      "path": "bios/QEMU/ast27x0_bootrom.bin",
+      "path": "bios/QEMU/QEMU/ast27x0_bootrom.bin",
       "name": "ast27x0_bootrom.bin",
       "size": 28564,
       "sha1": "9dda4cbcc1d3f6d38c10fee3de53b9abd5e47ec0",
@@ -165164,7 +164944,7 @@
       "adler32": "452a899b"
     },
     "ebdf1745479f4ec88459bbd9ef16ee1114018508": {
-      "path": "bios/QEMU/bamboo.dtb",
+      "path": "bios/QEMU/QEMU/bamboo.dtb",
       "name": "bamboo.dtb",
       "size": 3211,
       "sha1": "ebdf1745479f4ec88459bbd9ef16ee1114018508",
@@ -165174,7 +164954,7 @@
       "adler32": "caeec677"
     },
     "5fe6078506094333106e6b3f33c7185dea7f0268": {
-      "path": "bios/QEMU/bios-256k.bin",
+      "path": "bios/QEMU/QEMU/bios-256k.bin",
       "name": "bios-256k.bin",
       "size": 262144,
       "sha1": "5fe6078506094333106e6b3f33c7185dea7f0268",
@@ -165184,7 +164964,7 @@
       "adler32": "c2dd4a56"
     },
     "56f33ced7ea0f7581d776396a0ac6cfe2c7c9257": {
-      "path": "bios/QEMU/bios-microvm.bin",
+      "path": "bios/QEMU/QEMU/bios-microvm.bin",
       "name": "bios-microvm.bin",
       "size": 131072,
       "sha1": "56f33ced7ea0f7581d776396a0ac6cfe2c7c9257",
@@ -165194,7 +164974,7 @@
       "adler32": "0b74f3f0"
     },
     "f402170ee4f374c304a7ce0b139d6cecb1732aff": {
-      "path": "bios/QEMU/bios.bin",
+      "path": "bios/QEMU/QEMU/bios.bin",
       "name": "bios.bin",
       "size": 131072,
       "sha1": "f402170ee4f374c304a7ce0b139d6cecb1732aff",
@@ -165204,7 +164984,7 @@
       "adler32": "95b05338"
     },
     "8e99ed6157811282b7570f5f2e13b81a3913497e": {
-      "path": "bios/QEMU/bios_loongson3.bin",
+      "path": "bios/QEMU/QEMU/bios_loongson3.bin",
       "name": "bios_loongson3.bin",
       "size": 561168,
       "sha1": "8e99ed6157811282b7570f5f2e13b81a3913497e",
@@ -165214,7 +164994,7 @@
       "adler32": "70af376f"
     },
     "3df540b7517f27b3a76e31f193821d04e5805f89": {
-      "path": "bios/QEMU/canon-a1100-rom1.bin",
+      "path": "bios/QEMU/QEMU/canon-a1100-rom1.bin",
       "name": "canon-a1100-rom1.bin",
       "size": 4194304,
       "sha1": "3df540b7517f27b3a76e31f193821d04e5805f89",
@@ -165224,7 +165004,7 @@
       "adler32": "9810a0e7"
     },
     "8a2fda0b4f23a92eb44776b5d7ffe951987062da": {
-      "path": "bios/QEMU/canyonlands.dtb",
+      "path": "bios/QEMU/QEMU/canyonlands.dtb",
       "name": "canyonlands.dtb",
       "size": 9779,
       "sha1": "8a2fda0b4f23a92eb44776b5d7ffe951987062da",
@@ -165234,7 +165014,7 @@
       "adler32": "20f37484"
     },
     "514edbce58bfa877170673c1799351a7dab3b6df": {
-      "path": "bios/QEMU/edk2-aarch64-code.fd",
+      "path": "bios/QEMU/QEMU/edk2-aarch64-code.fd",
       "name": "edk2-aarch64-code.fd",
       "size": 67108864,
       "sha1": "514edbce58bfa877170673c1799351a7dab3b6df",
@@ -165244,7 +165024,7 @@
       "adler32": "40bc1dc3"
     },
     "c20f01c28b59b388abb9d0febeec45d801a632f0": {
-      "path": "bios/QEMU/edk2-arm-code.fd",
+      "path": "bios/QEMU/QEMU/edk2-arm-code.fd",
       "name": "edk2-arm-code.fd",
       "size": 67108864,
       "sha1": "c20f01c28b59b388abb9d0febeec45d801a632f0",
@@ -165254,7 +165034,7 @@
       "adler32": "82f50279"
     },
     "b051167e0e57bd13d77ed92ef7b474872f44ec6d": {
-      "path": "bios/QEMU/edk2-arm-vars.fd",
+      "path": "bios/QEMU/QEMU/edk2-arm-vars.fd",
       "name": "edk2-arm-vars.fd",
       "size": 67108864,
       "sha1": "b051167e0e57bd13d77ed92ef7b474872f44ec6d",
@@ -165264,7 +165044,7 @@
       "adler32": "07a25505"
     },
     "45b8faebdfaaf19d16e3a7c5f60d69214685071c": {
-      "path": "bios/QEMU/edk2-i386-code.fd",
+      "path": "bios/QEMU/QEMU/edk2-i386-code.fd",
       "name": "edk2-i386-code.fd",
       "size": 3653632,
       "sha1": "45b8faebdfaaf19d16e3a7c5f60d69214685071c",
@@ -165274,7 +165054,7 @@
       "adler32": "40366717"
     },
     "6982abec8ef2ed7c8293163d5a0bd69a01a2126f": {
-      "path": "bios/QEMU/edk2-i386-secure-code.fd",
+      "path": "bios/QEMU/QEMU/edk2-i386-secure-code.fd",
       "name": "edk2-i386-secure-code.fd",
       "size": 3653632,
       "sha1": "6982abec8ef2ed7c8293163d5a0bd69a01a2126f",
@@ -165284,7 +165064,7 @@
       "adler32": "a9298ccb"
     },
     "b62e676c9317a32aaa9ee1d76268d8c55663bd6e": {
-      "path": "bios/QEMU/edk2-i386-vars.fd",
+      "path": "bios/QEMU/QEMU/edk2-i386-vars.fd",
       "name": "edk2-i386-vars.fd",
       "size": 540672,
       "sha1": "b62e676c9317a32aaa9ee1d76268d8c55663bd6e",
@@ -165294,7 +165074,7 @@
       "adler32": "8b83dcdb"
     },
     "2c8633d881ece0c4794d740138a318f7e9af480c": {
-      "path": "bios/QEMU/edk2-riscv-code.fd",
+      "path": "bios/QEMU/QEMU/edk2-riscv-code.fd",
       "name": "edk2-riscv-code.fd",
       "size": 33554432,
       "sha1": "2c8633d881ece0c4794d740138a318f7e9af480c",
@@ -165304,7 +165084,7 @@
       "adler32": "63a4c181"
     },
     "c4e6cce4247ba8f32f528c1c69f49228f616677f": {
-      "path": "bios/QEMU/edk2-riscv-vars.fd",
+      "path": "bios/QEMU/QEMU/edk2-riscv-vars.fd",
       "name": "edk2-riscv-vars.fd",
       "size": 33554432,
       "sha1": "c4e6cce4247ba8f32f528c1c69f49228f616677f",
@@ -165314,7 +165094,7 @@
       "adler32": "dc1a5505"
     },
     "eac1a94b8e0d7c53fd5df001c36794ec34c7c724": {
-      "path": "bios/QEMU/edk2-x86_64-code.fd",
+      "path": "bios/QEMU/QEMU/edk2-x86_64-code.fd",
       "name": "edk2-x86_64-code.fd",
       "size": 3653632,
       "sha1": "eac1a94b8e0d7c53fd5df001c36794ec34c7c724",
@@ -165324,7 +165104,7 @@
       "adler32": "b542445f"
     },
     "617abe2746696bb4a309d72cecb446dc76a2a61e": {
-      "path": "bios/QEMU/edk2-x86_64-secure-code.fd",
+      "path": "bios/QEMU/QEMU/edk2-x86_64-secure-code.fd",
       "name": "edk2-x86_64-secure-code.fd",
       "size": 3653632,
       "sha1": "617abe2746696bb4a309d72cecb446dc76a2a61e",
@@ -165334,7 +165114,7 @@
       "adler32": "9d7c7175"
     },
     "a3df5fc33ab0190f470b34104ff3c0679cecbab6": {
-      "path": "bios/QEMU/efi-e1000.rom",
+      "path": "bios/QEMU/QEMU/efi-e1000.rom",
       "name": "efi-e1000.rom",
       "size": 159232,
       "sha1": "a3df5fc33ab0190f470b34104ff3c0679cecbab6",
@@ -165344,7 +165124,7 @@
       "adler32": "280ff49b"
     },
     "1d37f3ae6748d4deefe9fd5188a2f557bf265d61": {
-      "path": "bios/QEMU/efi-e1000e.rom",
+      "path": "bios/QEMU/QEMU/efi-e1000e.rom",
       "name": "efi-e1000e.rom",
       "size": 159232,
       "sha1": "1d37f3ae6748d4deefe9fd5188a2f557bf265d61",
@@ -165354,7 +165134,7 @@
       "adler32": "90521649"
     },
     "956d9592fea33374ef0f1900a185b6e1109ea765": {
-      "path": "bios/QEMU/efi-eepro100.rom",
+      "path": "bios/QEMU/QEMU/efi-eepro100.rom",
       "name": "efi-eepro100.rom",
       "size": 159232,
       "sha1": "956d9592fea33374ef0f1900a185b6e1109ea765",
@@ -165364,7 +165144,7 @@
       "adler32": "c4244d48"
     },
     "adb7199f545fdb66c325b142c8dbc4cddb99a20d": {
-      "path": "bios/QEMU/efi-ne2k_pci.rom",
+      "path": "bios/QEMU/QEMU/efi-ne2k_pci.rom",
       "name": "efi-ne2k_pci.rom",
       "size": 157696,
       "sha1": "adb7199f545fdb66c325b142c8dbc4cddb99a20d",
@@ -165374,7 +165154,7 @@
       "adler32": "08f89a5e"
     },
     "9e5a4bb247c6a1777c89117ca091f94342b9046d": {
-      "path": "bios/QEMU/efi-pcnet.rom",
+      "path": "bios/QEMU/QEMU/efi-pcnet.rom",
       "name": "efi-pcnet.rom",
       "size": 157696,
       "sha1": "9e5a4bb247c6a1777c89117ca091f94342b9046d",
@@ -165384,7 +165164,7 @@
       "adler32": "8c51a7bf"
     },
     "99a1e431cc0cb0a78d5803875dfa687e12a947f4": {
-      "path": "bios/QEMU/efi-rtl8139.rom",
+      "path": "bios/QEMU/QEMU/efi-rtl8139.rom",
       "name": "efi-rtl8139.rom",
       "size": 160768,
       "sha1": "99a1e431cc0cb0a78d5803875dfa687e12a947f4",
@@ -165394,7 +165174,7 @@
       "adler32": "020e62ee"
     },
     "1596e9b97f0bc8b5ff3e444235690a549ee982c6": {
-      "path": "bios/QEMU/efi-virtio.rom",
+      "path": "bios/QEMU/QEMU/efi-virtio.rom",
       "name": "efi-virtio.rom",
       "size": 160768,
       "sha1": "1596e9b97f0bc8b5ff3e444235690a549ee982c6",
@@ -165404,7 +165184,7 @@
       "adler32": "8ce8ce07"
     },
     "6557242402387a6319a0db6abb916ada48e1391c": {
-      "path": "bios/QEMU/efi-vmxnet3.rom",
+      "path": "bios/QEMU/QEMU/efi-vmxnet3.rom",
       "name": "efi-vmxnet3.rom",
       "size": 156672,
       "sha1": "6557242402387a6319a0db6abb916ada48e1391c",
@@ -165414,7 +165194,7 @@
       "adler32": "368193a7"
     },
     "605c36ede6c120c6cc7efe147a75a3dc4b7e4fb0": {
-      "path": "bios/QEMU/hppa-firmware.img",
+      "path": "bios/QEMU/QEMU/hppa-firmware.img",
       "name": "hppa-firmware.img",
       "size": 167820,
       "sha1": "605c36ede6c120c6cc7efe147a75a3dc4b7e4fb0",
@@ -165424,7 +165204,7 @@
       "adler32": "cfc8d575"
     },
     "b42f6d4ca74073de6c038579b4a9323ad0a6b398": {
-      "path": "bios/QEMU/hppa-firmware64.img",
+      "path": "bios/QEMU/QEMU/hppa-firmware64.img",
       "name": "hppa-firmware64.img",
       "size": 206024,
       "sha1": "b42f6d4ca74073de6c038579b4a9323ad0a6b398",
@@ -165434,7 +165214,7 @@
       "adler32": "b4a5cfa1"
     },
     "670c9cc79b4859944705eece710dc332188b79b4": {
-      "path": "bios/QEMU/kvmvapic.bin",
+      "path": "bios/QEMU/QEMU/kvmvapic.bin",
       "name": "kvmvapic.bin",
       "size": 9216,
       "sha1": "670c9cc79b4859944705eece710dc332188b79b4",
@@ -165444,7 +165224,7 @@
       "adler32": "da17ec01"
     },
     "fd19bef7f5647960952520389f448364762ed948": {
-      "path": "bios/QEMU/linuxboot.bin",
+      "path": "bios/QEMU/QEMU/linuxboot.bin",
       "name": "linuxboot.bin",
       "size": 1024,
       "sha1": "fd19bef7f5647960952520389f448364762ed948",
@@ -165454,7 +165234,7 @@
       "adler32": "2ddc6510"
     },
     "0bff50c10727bd9c85c831ea92b7a52699959992": {
-      "path": "bios/QEMU/linuxboot_dma.bin",
+      "path": "bios/QEMU/QEMU/linuxboot_dma.bin",
       "name": "linuxboot_dma.bin",
       "size": 1536,
       "sha1": "0bff50c10727bd9c85c831ea92b7a52699959992",
@@ -165464,7 +165244,7 @@
       "adler32": "46702910"
     },
     "358abab78f3bfba72b7b45cb5dd66ce4411e2618": {
-      "path": "bios/QEMU/mips_bios.bin",
+      "path": "bios/QEMU/QEMU/mips_bios.bin",
       "name": "mips_bios.bin",
       "size": 298835,
       "sha1": "358abab78f3bfba72b7b45cb5dd66ce4411e2618",
@@ -165474,7 +165254,7 @@
       "adler32": "1f516c85"
     },
     "daa15fb1b8829da5c5bd473243acf19cd0f17a74": {
-      "path": "bios/QEMU/mipsel_bios.bin",
+      "path": "bios/QEMU/QEMU/mipsel_bios.bin",
       "name": "mipsel_bios.bin",
       "size": 300324,
       "sha1": "daa15fb1b8829da5c5bd473243acf19cd0f17a74",
@@ -165484,7 +165264,7 @@
       "adler32": "4e362aa7"
     },
     "a8b58ae464fc6fb26799432ae867bf57c546ff80": {
-      "path": "bios/QEMU/multiboot.bin",
+      "path": "bios/QEMU/QEMU/multiboot.bin",
       "name": "multiboot.bin",
       "size": 1024,
       "sha1": "a8b58ae464fc6fb26799432ae867bf57c546ff80",
@@ -165494,7 +165274,7 @@
       "adler32": "d9320a10"
     },
     "32ab1cf336b674bfb154eb7a939a3e3275a92647": {
-      "path": "bios/QEMU/multiboot_dma.bin",
+      "path": "bios/QEMU/QEMU/multiboot_dma.bin",
       "name": "multiboot_dma.bin",
       "size": 1024,
       "sha1": "32ab1cf336b674bfb154eb7a939a3e3275a92647",
@@ -165504,7 +165284,7 @@
       "adler32": "44b92f10"
     },
     "22a75d26a0591d2c7763765b6381fa2f73de43e1": {
-      "path": "bios/QEMU/npcm7xx_bootrom.bin",
+      "path": "bios/QEMU/QEMU/npcm7xx_bootrom.bin",
       "name": "npcm7xx_bootrom.bin",
       "size": 768,
       "sha1": "22a75d26a0591d2c7763765b6381fa2f73de43e1",
@@ -165514,7 +165294,7 @@
       "adler32": "b604f177"
     },
     "732d7ebd8496debd6455f19db8e1d8d1a8be1f33": {
-      "path": "bios/QEMU/npcm8xx_bootrom.bin",
+      "path": "bios/QEMU/QEMU/npcm8xx_bootrom.bin",
       "name": "npcm8xx_bootrom.bin",
       "size": 672,
       "sha1": "732d7ebd8496debd6455f19db8e1d8d1a8be1f33",
@@ -165524,7 +165304,7 @@
       "adler32": "7eea86ca"
     },
     "0ef5051dcb318c0bc45d1908f8318d6eece8686a": {
-      "path": "bios/QEMU/openbios-ppc",
+      "path": "bios/QEMU/QEMU/openbios-ppc",
       "name": "openbios-ppc",
       "size": 677196,
       "sha1": "0ef5051dcb318c0bc45d1908f8318d6eece8686a",
@@ -165534,7 +165314,7 @@
       "adler32": "f515649e"
     },
     "5a4f2124c8f093f8aee99fbcebcf5d17d789ff26": {
-      "path": "bios/QEMU/openbios-sparc32",
+      "path": "bios/QEMU/QEMU/openbios-sparc32",
       "name": "openbios-sparc32",
       "size": 382080,
       "sha1": "5a4f2124c8f093f8aee99fbcebcf5d17d789ff26",
@@ -165544,7 +165324,7 @@
       "adler32": "9e10189e"
     },
     "c6e215fe460629d35688ab8e51faf6f765827cd6": {
-      "path": "bios/QEMU/openbios-sparc64",
+      "path": "bios/QEMU/QEMU/openbios-sparc64",
       "name": "openbios-sparc64",
       "size": 1593408,
       "sha1": "c6e215fe460629d35688ab8e51faf6f765827cd6",
@@ -165554,7 +165334,7 @@
       "adler32": "9f0bb62b"
     },
     "7a23dfdeef3d78ffc89d86e89fc06a36f1e4386f": {
-      "path": "bios/QEMU/opensbi-riscv32-generic-fw_dynamic.bin",
+      "path": "bios/QEMU/QEMU/opensbi-riscv32-generic-fw_dynamic.bin",
       "name": "opensbi-riscv32-generic-fw_dynamic.bin",
       "size": 268312,
       "sha1": "7a23dfdeef3d78ffc89d86e89fc06a36f1e4386f",
@@ -165564,7 +165344,7 @@
       "adler32": "e7947756"
     },
     "6883bfd1991c0ef0d67b0967e7dcbd60420dd480": {
-      "path": "bios/QEMU/opensbi-riscv64-generic-fw_dynamic.bin",
+      "path": "bios/QEMU/QEMU/opensbi-riscv64-generic-fw_dynamic.bin",
       "name": "opensbi-riscv64-generic-fw_dynamic.bin",
       "size": 272504,
       "sha1": "6883bfd1991c0ef0d67b0967e7dcbd60420dd480",
@@ -165574,7 +165354,7 @@
       "adler32": "c5a7609b"
     },
     "47b0870aaa45a7aa0d48847fd905908fb06f3e9f": {
-      "path": "bios/QEMU/palcode-clipper",
+      "path": "bios/QEMU/QEMU/palcode-clipper",
       "name": "palcode-clipper",
       "size": 153728,
       "sha1": "47b0870aaa45a7aa0d48847fd905908fb06f3e9f",
@@ -165584,7 +165364,7 @@
       "adler32": "05450b4a"
     },
     "a4c1a8d4b15ade6653364286a160759b5b4caa85": {
-      "path": "bios/QEMU/pegasos2.dtb",
+      "path": "bios/QEMU/QEMU/pegasos2.dtb",
       "name": "pegasos2.dtb",
       "size": 2963,
       "sha1": "a4c1a8d4b15ade6653364286a160759b5b4caa85",
@@ -165594,7 +165374,7 @@
       "adler32": "e806983b"
     },
     "892d265838866869b8a8ef104252ff5b2fda156f": {
-      "path": "bios/QEMU/petalogix-ml605.dtb",
+      "path": "bios/QEMU/QEMU/petalogix-ml605.dtb",
       "name": "petalogix-ml605.dtb",
       "size": 9882,
       "sha1": "892d265838866869b8a8ef104252ff5b2fda156f",
@@ -165604,7 +165384,7 @@
       "adler32": "8f21ee45"
     },
     "976600e3f89ecc1f3564b7077f53c58e0b565280": {
-      "path": "bios/QEMU/petalogix-s3adsp1800.dtb",
+      "path": "bios/QEMU/QEMU/petalogix-s3adsp1800.dtb",
       "name": "petalogix-s3adsp1800.dtb",
       "size": 8161,
       "sha1": "976600e3f89ecc1f3564b7077f53c58e0b565280",
@@ -165614,7 +165394,7 @@
       "adler32": "185d9ccf"
     },
     "41c43f4e8956169ab7602230a3a63934b26d65de": {
-      "path": "bios/QEMU/pmon_2e.bin",
+      "path": "bios/QEMU/QEMU/pmon_2e.bin",
       "name": "pmon_2e.bin",
       "size": 442384,
       "sha1": "41c43f4e8956169ab7602230a3a63934b26d65de",
@@ -165624,7 +165404,7 @@
       "adler32": "fb8015a3"
     },
     "d8bf94da3e018ac22c1f63246acc3aa1e9a07992": {
-      "path": "bios/QEMU/pnv-pnor.bin",
+      "path": "bios/QEMU/QEMU/pnv-pnor.bin",
       "name": "pnv-pnor.bin",
       "size": 139264,
       "sha1": "d8bf94da3e018ac22c1f63246acc3aa1e9a07992",
@@ -165634,7 +165414,7 @@
       "adler32": "7f496f5e"
     },
     "c2191e6495103c1f43e9b6ca8930e44c2245e476": {
-      "path": "bios/QEMU/pvh.bin",
+      "path": "bios/QEMU/QEMU/pvh.bin",
       "name": "pvh.bin",
       "size": 1536,
       "sha1": "c2191e6495103c1f43e9b6ca8930e44c2245e476",
@@ -165644,7 +165424,7 @@
       "adler32": "dda68210"
     },
     "368e8e9827ae8757a7449319831078b6d5efb83f": {
-      "path": "bios/QEMU/pxe-e1000.rom",
+      "path": "bios/QEMU/QEMU/pxe-e1000.rom",
       "name": "pxe-e1000.rom",
       "size": 67072,
       "sha1": "368e8e9827ae8757a7449319831078b6d5efb83f",
@@ -165654,7 +165434,7 @@
       "adler32": "0be29edc"
     },
     "b19572c9c2a11f03282df81c0397aceed409a86c": {
-      "path": "bios/QEMU/pxe-eepro100.rom",
+      "path": "bios/QEMU/QEMU/pxe-eepro100.rom",
       "name": "pxe-eepro100.rom",
       "size": 61440,
       "sha1": "b19572c9c2a11f03282df81c0397aceed409a86c",
@@ -165664,7 +165444,7 @@
       "adler32": "a4e05846"
     },
     "f37f43f89dc99afe0442ee0b7a431ee790ad6bf6": {
-      "path": "bios/QEMU/pxe-ne2k_pci.rom",
+      "path": "bios/QEMU/QEMU/pxe-ne2k_pci.rom",
       "name": "pxe-ne2k_pci.rom",
       "size": 61440,
       "sha1": "f37f43f89dc99afe0442ee0b7a431ee790ad6bf6",
@@ -165674,7 +165454,7 @@
       "adler32": "2fe4f846"
     },
     "13a039bf9916f1db42d3a019591d372b4cf4aee9": {
-      "path": "bios/QEMU/pxe-pcnet.rom",
+      "path": "bios/QEMU/QEMU/pxe-pcnet.rom",
       "name": "pxe-pcnet.rom",
       "size": 61440,
       "sha1": "13a039bf9916f1db42d3a019591d372b4cf4aee9",
@@ -165684,7 +165464,7 @@
       "adler32": "7394ee46"
     },
     "7b512c0a7a13bc3c254a25237e4d4612170f4391": {
-      "path": "bios/QEMU/pxe-rtl8139.rom",
+      "path": "bios/QEMU/QEMU/pxe-rtl8139.rom",
       "name": "pxe-rtl8139.rom",
       "size": 61440,
       "sha1": "7b512c0a7a13bc3c254a25237e4d4612170f4391",
@@ -165694,7 +165474,7 @@
       "adler32": "f8f8e946"
     },
     "3e3f77cfe70af904133db94f27ec24e3c9c43648": {
-      "path": "bios/QEMU/pxe-virtio.rom",
+      "path": "bios/QEMU/QEMU/pxe-virtio.rom",
       "name": "pxe-virtio.rom",
       "size": 60416,
       "sha1": "3e3f77cfe70af904133db94f27ec24e3c9c43648",
@@ -165704,7 +165484,7 @@
       "adler32": "3aa8ab28"
     },
     "339d3a93c967491c9f1fffe963484386f48bd22c": {
-      "path": "bios/QEMU/qboot.rom",
+      "path": "bios/QEMU/QEMU/qboot.rom",
       "name": "qboot.rom",
       "size": 65536,
       "sha1": "339d3a93c967491c9f1fffe963484386f48bd22c",
@@ -165714,7 +165494,7 @@
       "adler32": "258694b8"
     },
     "638c6262a6eb579ec3d1c9292566ac94c942dc15": {
-      "path": "bios/QEMU/qemu_vga.ndrv",
+      "path": "bios/QEMU/QEMU/qemu_vga.ndrv",
       "name": "qemu_vga.ndrv",
       "size": 18752,
       "sha1": "638c6262a6eb579ec3d1c9292566ac94c942dc15",
@@ -165724,7 +165504,7 @@
       "adler32": "83efe2ac"
     },
     "7b4fa888d32ca8ddbc752f7442e4d055cee1871a": {
-      "path": "bios/QEMU/s390-ccw.img",
+      "path": "bios/QEMU/QEMU/s390-ccw.img",
       "name": "s390-ccw.img",
       "size": 42608,
       "sha1": "7b4fa888d32ca8ddbc752f7442e4d055cee1871a",
@@ -165734,7 +165514,7 @@
       "adler32": "e8e35133"
     },
     "f6cec671408117bd9a31e982682662f27ef4fb2c": {
-      "path": "bios/QEMU/s390-netboot.img",
+      "path": "bios/QEMU/QEMU/s390-netboot.img",
       "name": "s390-netboot.img",
       "size": 67232,
       "sha1": "f6cec671408117bd9a31e982682662f27ef4fb2c",
@@ -165744,7 +165524,7 @@
       "adler32": "d80aa006"
     },
     "8052069aa9714c23be05b4e62fb245a3d572cb0f": {
-      "path": "bios/QEMU/skiboot.lid",
+      "path": "bios/QEMU/QEMU/skiboot.lid",
       "name": "skiboot.lid",
       "size": 2527328,
       "sha1": "8052069aa9714c23be05b4e62fb245a3d572cb0f",
@@ -165754,7 +165534,7 @@
       "adler32": "25153bd7"
     },
     "a03a94acfe555804d66cc6c74760ae1375a71a64": {
-      "path": "bios/QEMU/slof.bin",
+      "path": "bios/QEMU/QEMU/slof.bin",
       "name": "slof.bin",
       "size": 995000,
       "sha1": "a03a94acfe555804d66cc6c74760ae1375a71a64",
@@ -165764,7 +165544,7 @@
       "adler32": "14a181dd"
     },
     "0399a79ac0cf77f0da70af9baec7548a3b368f0a": {
-      "path": "bios/QEMU/u-boot-sam460-20100605.bin",
+      "path": "bios/QEMU/QEMU/u-boot-sam460-20100605.bin",
       "name": "u-boot-sam460-20100605.bin",
       "size": 524288,
       "sha1": "0399a79ac0cf77f0da70af9baec7548a3b368f0a",
@@ -165774,7 +165554,7 @@
       "adler32": "27b1d275"
     },
     "2aa01b414a703880192277f9ce0dae193e9d2c8d": {
-      "path": "bios/QEMU/u-boot.bin",
+      "path": "bios/QEMU/QEMU/u-boot.bin",
       "name": "u-boot.bin",
       "size": 141072,
       "sha1": "2aa01b414a703880192277f9ce0dae193e9d2c8d",
@@ -165784,7 +165564,7 @@
       "adler32": "fa1dde04"
     },
     "9ea03f249f856cdcb4399cc1f5a5031729379911": {
-      "path": "bios/QEMU/u-boot.e500",
+      "path": "bios/QEMU/QEMU/u-boot.e500",
       "name": "u-boot.e500",
       "size": 421720,
       "sha1": "9ea03f249f856cdcb4399cc1f5a5031729379911",
@@ -165794,7 +165574,7 @@
       "adler32": "310e0a2c"
     },
     "ded141cacdebf557ec552597cbf57cd989cec3e2": {
-      "path": "bios/QEMU/vgabios-ati.bin",
+      "path": "bios/QEMU/QEMU/vgabios-ati.bin",
       "name": "vgabios-ati.bin",
       "size": 39424,
       "sha1": "ded141cacdebf557ec552597cbf57cd989cec3e2",
@@ -165804,7 +165584,7 @@
       "adler32": "1db966fe"
     },
     "9e2edd3d835219cde63a20e2cd58107d7e96ef5b": {
-      "path": "bios/QEMU/vgabios-bochs-display.bin",
+      "path": "bios/QEMU/QEMU/vgabios-bochs-display.bin",
       "name": "vgabios-bochs-display.bin",
       "size": 28672,
       "sha1": "9e2edd3d835219cde63a20e2cd58107d7e96ef5b",
@@ -165814,7 +165594,7 @@
       "adler32": "34ab824a"
     },
     "883eb2657ce29661a0466b6b41ce75411f37aad9": {
-      "path": "bios/QEMU/vgabios-cirrus.bin",
+      "path": "bios/QEMU/QEMU/vgabios-cirrus.bin",
       "name": "vgabios-cirrus.bin",
       "size": 38912,
       "sha1": "883eb2657ce29661a0466b6b41ce75411f37aad9",
@@ -165824,7 +165604,7 @@
       "adler32": "cf318bfe"
     },
     "527227abd5f3348c382d4b02703389fbeb83b067": {
-      "path": "bios/QEMU/vgabios-qxl.bin",
+      "path": "bios/QEMU/QEMU/vgabios-qxl.bin",
       "name": "vgabios-qxl.bin",
       "size": 39424,
       "sha1": "527227abd5f3348c382d4b02703389fbeb83b067",
@@ -165834,7 +165614,7 @@
       "adler32": "4f6f1e0d"
     },
     "49df9be557f0f0277c8fedb889257e279586d536": {
-      "path": "bios/QEMU/vgabios-ramfb.bin",
+      "path": "bios/QEMU/QEMU/vgabios-ramfb.bin",
       "name": "vgabios-ramfb.bin",
       "size": 28672,
       "sha1": "49df9be557f0f0277c8fedb889257e279586d536",
@@ -165844,7 +165624,7 @@
       "adler32": "5efbca4a"
     },
     "87fbc0ecb1ee7d4d8c8c88c7d8a2fb3ec8f99ea5": {
-      "path": "bios/QEMU/vgabios-stdvga.bin",
+      "path": "bios/QEMU/QEMU/vgabios-stdvga.bin",
       "name": "vgabios-stdvga.bin",
       "size": 39424,
       "sha1": "87fbc0ecb1ee7d4d8c8c88c7d8a2fb3ec8f99ea5",
@@ -165854,7 +165634,7 @@
       "adler32": "36a71e0d"
     },
     "cddc53b94793609d1e837d78cd5468fcc1ed9164": {
-      "path": "bios/QEMU/vgabios-virtio.bin",
+      "path": "bios/QEMU/QEMU/vgabios-virtio.bin",
       "name": "vgabios-virtio.bin",
       "size": 39424,
       "sha1": "cddc53b94793609d1e837d78cd5468fcc1ed9164",
@@ -165864,7 +165644,7 @@
       "adler32": "43ea1f0d"
     },
     "c54901ab8f526ab201ebf1b3ecdf711e38e6c259": {
-      "path": "bios/QEMU/vgabios-vmware.bin",
+      "path": "bios/QEMU/QEMU/vgabios-vmware.bin",
       "name": "vgabios-vmware.bin",
       "size": 39424,
       "sha1": "c54901ab8f526ab201ebf1b3ecdf711e38e6c259",
@@ -165874,7 +165654,7 @@
       "adler32": "48a01e0d"
     },
     "63d87e2a6618c3a9b2aabecf03ac2456e5e63410": {
-      "path": "bios/QEMU/vgabios.bin",
+      "path": "bios/QEMU/QEMU/vgabios.bin",
       "name": "vgabios.bin",
       "size": 38912,
       "sha1": "63d87e2a6618c3a9b2aabecf03ac2456e5e63410",
@@ -165884,7 +165664,7 @@
       "adler32": "70dd56fe"
     },
     "1dd1b6fd8cb47b055c729cbecda56fe1dc83d6c1": {
-      "path": "bios/QEMU/virtex-ml507.dtb",
+      "path": "bios/QEMU/QEMU/virtex-ml507.dtb",
       "name": "virtex-ml507.dtb",
       "size": 11248,
       "sha1": "1dd1b6fd8cb47b055c729cbecda56fe1dc83d6c1",
@@ -165894,7 +165674,7 @@
       "adler32": "d2b0afba"
     },
     "5d1184609b87f78635f0575467a1c3f440900ff0": {
-      "path": "bios/QEMU/vof-nvram.bin",
+      "path": "bios/QEMU/QEMU/vof-nvram.bin",
       "name": "vof-nvram.bin",
       "size": 16384,
       "sha1": "5d1184609b87f78635f0575467a1c3f440900ff0",
@@ -165904,7 +165684,7 @@
       "adler32": "98f3a82e"
     },
     "fc737b34a390f5752cb7e35b33d71f4f438ab607": {
-      "path": "bios/QEMU/vof.bin",
+      "path": "bios/QEMU/QEMU/vof.bin",
       "name": "vof.bin",
       "size": 3456,
       "sha1": "fc737b34a390f5752cb7e35b33d71f4f438ab607",
@@ -191418,7 +191198,7 @@
       "adler32": "ab36789b"
     },
     "a439fbb390da38cada95a7cbb1d6ca199cd66ef8": {
-      "path": "bios/Roland/CM32L_CONTROL.ROM",
+      "path": "bios/Roland/CM-32L/CM32L_CONTROL.ROM",
       "name": "CM32L_CONTROL.ROM",
       "size": 65536,
       "sha1": "a439fbb390da38cada95a7cbb1d6ca199cd66ef8",
@@ -191428,7 +191208,7 @@
       "adler32": "586ed7ae"
     },
     "289cc298ad532b702461bfc738009d9ebe8025ea": {
-      "path": "bios/Roland/CM32L_PCM.ROM",
+      "path": "bios/Roland/CM-32L/CM32L_PCM.ROM",
       "name": "CM32L_PCM.ROM",
       "size": 1048576,
       "sha1": "289cc298ad532b702461bfc738009d9ebe8025ea",
@@ -191438,7 +191218,7 @@
       "adler32": "884b72ba"
     },
     "b083518fffb7f66b03c23b7eb4f868e62dc5a987": {
-      "path": "bios/Roland/MT32_CONTROL.ROM",
+      "path": "bios/Roland/MT-32/MT32_CONTROL.ROM",
       "name": "MT32_CONTROL.ROM",
       "size": 65536,
       "sha1": "b083518fffb7f66b03c23b7eb4f868e62dc5a987",
@@ -191448,7 +191228,7 @@
       "adler32": "1e07fec4"
     },
     "f6b1eebc4b2d200ec6d3d21d51325d5b48c60252": {
-      "path": "bios/Roland/MT32_PCM.ROM",
+      "path": "bios/Roland/MT-32/MT32_PCM.ROM",
       "name": "MT32_PCM.ROM",
       "size": 524288,
       "sha1": "f6b1eebc4b2d200ec6d3d21d51325d5b48c60252",
@@ -193227,6 +193007,16 @@
       "sha256": "6a8bf30a5a0942f500d1d617506a99552e33774207d3e895258abafe35979641",
       "crc32": "b1642de4",
       "adler32": "11d8aee2"
+    },
+    "5996972d3e033f6c525c1988c563b4ffe4c58f22": {
+      "path": "bios/Sega/Chihiro/cerbios.bin",
+      "name": "cerbios.bin",
+      "size": 262144,
+      "sha1": "5996972d3e033f6c525c1988c563b4ffe4c58f22",
+      "md5": "f23d7e00ae8fbf88908ed1f9165f35eb",
+      "sha256": "b2dba4425355c42a15f9dd2b62158213ea9485de137739d95582e695da404958",
+      "crc32": "a73a4d20",
+      "adler32": "8c41bfd4"
     },
     "77197fba2781ed1d81402c48bd743adb26d3161a": {
       "path": "bios/Sega/Chihiro/fpr-23887_29lv160te.ic4",
@@ -201207,6 +200997,216 @@
       "sha256": "dd9c48c06081b3e7caeb7651bdb176d6c7fc057ede1415eeb1cde4abe499106d",
       "crc32": "99a449b5",
       "adler32": "a32774de"
+    },
+    "746a2996967282281a980842a93642ad7d740f9e": {
+      "path": "bios/Tangerine/Oric/8dos2.rom",
+      "name": "8dos2.rom",
+      "size": 512,
+      "sha1": "746a2996967282281a980842a93642ad7d740f9e",
+      "md5": "5f3cd5a4307fed7a9dfe8faa4c044273",
+      "sha256": "d58cb6f47f808d8c890310d1c6a46e92df05971f5952bcb4f4cf88d1faf37eb6",
+      "crc32": "efc88d2b",
+      "adler32": "82ebe76f"
+    },
+    "3e8f851df9319891fb9849c922437468df98915d": {
+      "path": "bios/Tangerine/Oric/Bas122de.pch",
+      "name": "Bas122de.pch",
+      "size": 2037,
+      "sha1": "3e8f851df9319891fb9849c922437468df98915d",
+      "md5": "80fe771abf403e67f5640b2107c375c9",
+      "sha256": "cf3d0e680a362084aadb184a4a57a35432e5af885aa2f7838578e3116fb57c2e",
+      "crc32": "bfaaa640",
+      "adler32": "20bea5df"
+    },
+    "c92aa5e5fedf94a01519867fd8235f33731b8191": {
+      "path": "bios/Tangerine/Oric/Bas122fr.pch",
+      "name": "Bas122fr.pch",
+      "size": 2037,
+      "sha1": "c92aa5e5fedf94a01519867fd8235f33731b8191",
+      "md5": "61e9414a2c0e2f71b5a25233506b4bf3",
+      "sha256": "52d5bda9d4624da09a6efa8a9fe1c956e602ead506822f205486e915e9ba88a7",
+      "crc32": "169dc64a",
+      "adler32": "c207a5d1"
+    },
+    "ee9dc592128ff337be5ef0bfb6d059752296b445": {
+      "path": "bios/Tangerine/Oric/Bas122uk.pch",
+      "name": "Bas122uk.pch",
+      "size": 2037,
+      "sha1": "ee9dc592128ff337be5ef0bfb6d059752296b445",
+      "md5": "120a23e1566195050983764e7d4543ce",
+      "sha256": "a5340b6e01719a736a328cfff3a7449ddf77f76f138b07024648b6fcf15368de",
+      "crc32": "3a0be9f6",
+      "adler32": "1a00a5de"
+    },
+    "bda81f64be319d8793d284bf9d40f01d19b33515": {
+      "path": "bios/Tangerine/Oric/Oric/colour.rom",
+      "name": "colour.rom",
+      "size": 128,
+      "sha1": "bda81f64be319d8793d284bf9d40f01d19b33515",
+      "md5": "c888b36bf0fc222c3585c3fabe556d21",
+      "sha256": "c24fd91c9f0687bf2033abd7747d3f5b162bba4f23692640f69ee62eb404b293",
+      "crc32": "d50fca65",
+      "adler32": "e82c1d5b"
+    },
+    "6c62326403ecdf3d120fa7ffea47f4f1d5b40020": {
+      "path": "bios/Tangerine/Oric/basic10.pch",
+      "name": "basic10.pch",
+      "size": 2016,
+      "sha1": "6c62326403ecdf3d120fa7ffea47f4f1d5b40020",
+      "md5": "c3944a435cc249196db09290aa17e9cf",
+      "sha256": "2152eafd6573626b7467402838352d4cfbf22f43b4f9940eee7048aea7098dc1",
+      "crc32": "801dea4e",
+      "adler32": "8baea102"
+    },
+    "333116e6884d85aaa4dfc7578a91cceeea66d016": {
+      "path": "bios/Tangerine/Oric/basic10.rom",
+      "name": "basic10.rom",
+      "size": 16384,
+      "sha1": "333116e6884d85aaa4dfc7578a91cceeea66d016",
+      "md5": "ebe418ec8a6c85d5ac32956c9a96c179",
+      "sha256": "83d341dab126092f7a6d56f6a92bca0643ff3aa6529d896085004f958c9be2ff",
+      "crc32": "f18710b4",
+      "adler32": "7c6b1a61"
+    },
+    "9451a1a09d8f75944dbd6f91193fc360f1de80ac": {
+      "path": "bios/Tangerine/Oric/basic11b.rom",
+      "name": "basic11b.rom",
+      "size": 16384,
+      "sha1": "9451a1a09d8f75944dbd6f91193fc360f1de80ac",
+      "md5": "a330779c42ad7d0c4ac6ef9e92788ec6",
+      "sha256": "ed28568574716eef5d7c0fde2568d7a47a6e4b1fbca81daff3be05e45723466d",
+      "crc32": "c3a92bef",
+      "adler32": "4d981bd9"
+    },
+    "447975ed022379fb6b80a22fa37c2d188ca3aa88": {
+      "path": "bios/Tangerine/Oric/bd500.rom",
+      "name": "bd500.rom",
+      "size": 8192,
+      "sha1": "447975ed022379fb6b80a22fa37c2d188ca3aa88",
+      "md5": "2b6498fd29a0adbf1c529762c02c33ab",
+      "sha256": "257430f54fdc1c98bf0ddad97c6a609885b25130910c4ba370d6f51e3699b2d3",
+      "crc32": "61952e34",
+      "adler32": "4d7e15ec"
+    },
+    "e7c32e4f75a58c87de1672e4dbd0794083535a60": {
+      "path": "bios/Tangerine/Oric/empty_orix.rom",
+      "name": "empty_orix.rom",
+      "size": 16384,
+      "sha1": "e7c32e4f75a58c87de1672e4dbd0794083535a60",
+      "md5": "af3cec316a4960be1c9987599066c792",
+      "sha256": "d1ca02145bc2d539ed45097712046228caf0e04d591ba4463a0ff2a0dad90f45",
+      "crc32": "c98b4655",
+      "adler32": "10b105dc"
+    },
+    "f5f70a0eb59f8cd6c261e179ae78ef906f68ed63": {
+      "path": "bios/Tangerine/Oric/hyperbas.rom",
+      "name": "hyperbas.rom",
+      "size": 16384,
+      "sha1": "f5f70a0eb59f8cd6c261e179ae78ef906f68ed63",
+      "md5": "364bf095e0dc4222d75354d50b8cddfc",
+      "sha256": "08eaf63a55a7659a6da7c91cf4a57bb0e2e21ff856d0957928605aa5feed09c6",
+      "crc32": "1d96ab50",
+      "adler32": "f69457ec"
+    },
+    "70e59b8abd67092f050462abc6cb5271e4c15f01": {
+      "path": "bios/Tangerine/Oric/jasmin.rom",
+      "name": "jasmin.rom",
+      "size": 2048,
+      "sha1": "70e59b8abd67092f050462abc6cb5271e4c15f01",
+      "md5": "5136f764a7dbd1352519351fbb53a9f3",
+      "sha256": "60d9aaaa7e787080779acbf8ad7af81fe9b8851af5e395c2f3bf10c114a76a23",
+      "crc32": "37220e89",
+      "adler32": "a9993e51"
+    },
+    "01f7a84d5a1973623eabd2be6c2cbac1ce5096a6": {
+      "path": "bios/Tangerine/Oric/kernel.rom",
+      "name": "kernel.rom",
+      "size": 16384,
+      "sha1": "01f7a84d5a1973623eabd2be6c2cbac1ce5096a6",
+      "md5": "1d63b6289c7e3566d411cf0682e401bc",
+      "sha256": "62eaf60c3be8047599f3ef06874b86d479d9b74cf90efcd2d83f35db8c662144",
+      "crc32": "356231a6",
+      "adler32": "c1d39847"
+    },
+    "0d2ef6e67322f48f4b7e08d8bbe68827e2074561": {
+      "path": "bios/Tangerine/Oric/microdis.rom",
+      "name": "microdis.rom",
+      "size": 8192,
+      "sha1": "0d2ef6e67322f48f4b7e08d8bbe68827e2074561",
+      "md5": "df864344d2a2091c3f952bd1c5ce1707",
+      "sha256": "1b82882eeaddba463e3f89218fd9eb30147345e540bbccf96bf30c14d2e45941",
+      "crc32": "a9664a9c",
+      "adler32": "b4326558"
+    },
+    "7afc276cb118adff72e4f16698f94bf3b2c64146": {
+      "path": "bios/Tangerine/Oric/pravetz.rom",
+      "name": "pravetz.rom",
+      "size": 16384,
+      "sha1": "7afc276cb118adff72e4f16698f94bf3b2c64146",
+      "md5": "8712a22e7e078de3343667d9fc1f2390",
+      "sha256": "a142c6a9f9ccf25ce4e7ab64107bc2210ee7f68557fe3a8bbb60d1587da814ae",
+      "crc32": "58079502",
+      "adler32": "e5c81c95"
+    },
+    "3dd12d7ba54fee06a7e20dadb2c278a23a17af50": {
+      "path": "bios/Tangerine/Oric/pravetzt.pch",
+      "name": "pravetzt.pch",
+      "size": 2390,
+      "sha1": "3dd12d7ba54fee06a7e20dadb2c278a23a17af50",
+      "md5": "eaa5158b07b439faab0db30e357f0af2",
+      "sha256": "191b5e58d65eee4b2ae74aefd882b0df44d321be6c226349293fad7c10fcdcbf",
+      "crc32": "46bab02d",
+      "adler32": "4a13f713"
+    },
+    "926b95e1cb574d4914dbed0681729a7c1a4bc68d": {
+      "path": "bios/Tangerine/Oric/shell.rom",
+      "name": "shell.rom",
+      "size": 16384,
+      "sha1": "926b95e1cb574d4914dbed0681729a7c1a4bc68d",
+      "md5": "642e8504adc72e7c16384dbdc1665fa2",
+      "sha256": "2f799c82479b64ca4fda7ed76bdc65bfb56596625061fba91933fed473fc9ae8",
+      "crc32": "8d166635",
+      "adler32": "a9d0bac9"
+    },
+    "9e9af51dae3199cccf49ab3f0d47e2b9be4ba97d": {
+      "path": "bios/Tangerine/Oric/teleass.rom",
+      "name": "teleass.rom",
+      "size": 16384,
+      "sha1": "9e9af51dae3199cccf49ab3f0d47e2b9be4ba97d",
+      "md5": "2324c9cc227c1327a72a667c97ed2990",
+      "sha256": "49921a9f932f7ecc2947b9b08f0451a393dc48f55317209c44338dc8bcf227ee",
+      "crc32": "68b0fde6",
+      "adler32": "a1258c43"
+    },
+    "35f92a0477a88f5cf564971125047ffcfa02ec10": {
+      "path": "bios/Tangerine/Oric/telmatic.rom",
+      "name": "telmatic.rom",
+      "size": 8192,
+      "sha1": "35f92a0477a88f5cf564971125047ffcfa02ec10",
+      "md5": "0a814078410353744e2947a8e9342e4e",
+      "sha256": "f213042b9b166b443b8a5a336a325ba4a2ae9482db369754932a7b3c802ed980",
+      "crc32": "94358dc6",
+      "adler32": "8c7a9749"
+    },
+    "d8ce5b1405b6428969493efeb6f3aa2027c41bdc": {
+      "path": "bios/Tangerine/Oric/telmon24.pch",
+      "name": "telmon24.pch",
+      "size": 218,
+      "sha1": "d8ce5b1405b6428969493efeb6f3aa2027c41bdc",
+      "md5": "82a22231d402cd3284c698ba16a51d1d",
+      "sha256": "3ca567f014a71ea24734559ee63df8184886f17debeef41c4bf4cd6313d70bd1",
+      "crc32": "29e86dbc",
+      "adler32": "32334634"
+    },
+    "86fc8dc0932f983efa199e31ae05a4424772f959": {
+      "path": "bios/Tangerine/Oric/telmon24.rom",
+      "name": "telmon24.rom",
+      "size": 16384,
+      "sha1": "86fc8dc0932f983efa199e31ae05a4424772f959",
+      "md5": "9a432244d9ee4a49e8ddcde64af94e05",
+      "sha256": "0ed991887342fba9e4b71668ff4c14ed93c2b3a19b4874dd0282404a1c442094",
+      "crc32": "aa727c5d",
+      "adler32": "13643247"
     },
     "ce08f6a808701fc6672230a790167ee485157561": {
       "path": "bios/Texas Instruments/TI-83/TI83_102.rom",
@@ -214894,7 +214894,6 @@
       "62e761035cb657903761800f4437b8af": "5a65b922b562cb1f57dab51b73151283f0e20c7a",
       "0cd5946c6473e42e8e4c2137785e427f": "f9608bb4ad1cfe3640d02844c7ad8e0bcd974917",
       "d5530f74681ec6e0f282dab42e6b1c5f": "618563e512ff5665183664f52270fa9606c9d289",
-      "f23d7e00ae8fbf88908ed1f9165f35eb": "5996972d3e033f6c525c1988c563b4ffe4c58f22",
       "74b0f217fa0e2b8bb5a2f8e2ecc69da3": "bf5fb954db868e523febccc68549ed9187961076",
       "254bfa82fa9b34c82d7b9766b193c303": "b7068e2aab02072852ca249596b7550ac632c4c2",
       "5353336d9c81946fa17582daccbb5cae": "1ef3956f7f918873fb9b031339bba45d1e5e5878",
@@ -215546,27 +215545,6 @@
       "3b6cd137d963bfc996d0b3dd38a5a130": "d08ffcf19945b63c7baf35d9965a9cd6bf61332b",
       "6924e3c6a145f16d4383253048ea0f9c": "cd34a0ee9b7a8cbb9c9eae34739704a9dd4dd413",
       "64a95a4a884cf4cc15a566b856603193": "34e5be43effe08435b4535b68b45bb9e61d384e9",
-      "5f3cd5a4307fed7a9dfe8faa4c044273": "746a2996967282281a980842a93642ad7d740f9e",
-      "80fe771abf403e67f5640b2107c375c9": "3e8f851df9319891fb9849c922437468df98915d",
-      "61e9414a2c0e2f71b5a25233506b4bf3": "c92aa5e5fedf94a01519867fd8235f33731b8191",
-      "120a23e1566195050983764e7d4543ce": "ee9dc592128ff337be5ef0bfb6d059752296b445",
-      "c888b36bf0fc222c3585c3fabe556d21": "bda81f64be319d8793d284bf9d40f01d19b33515",
-      "c3944a435cc249196db09290aa17e9cf": "6c62326403ecdf3d120fa7ffea47f4f1d5b40020",
-      "ebe418ec8a6c85d5ac32956c9a96c179": "333116e6884d85aaa4dfc7578a91cceeea66d016",
-      "a330779c42ad7d0c4ac6ef9e92788ec6": "9451a1a09d8f75944dbd6f91193fc360f1de80ac",
-      "2b6498fd29a0adbf1c529762c02c33ab": "447975ed022379fb6b80a22fa37c2d188ca3aa88",
-      "af3cec316a4960be1c9987599066c792": "e7c32e4f75a58c87de1672e4dbd0794083535a60",
-      "364bf095e0dc4222d75354d50b8cddfc": "f5f70a0eb59f8cd6c261e179ae78ef906f68ed63",
-      "5136f764a7dbd1352519351fbb53a9f3": "70e59b8abd67092f050462abc6cb5271e4c15f01",
-      "1d63b6289c7e3566d411cf0682e401bc": "01f7a84d5a1973623eabd2be6c2cbac1ce5096a6",
-      "df864344d2a2091c3f952bd1c5ce1707": "0d2ef6e67322f48f4b7e08d8bbe68827e2074561",
-      "8712a22e7e078de3343667d9fc1f2390": "7afc276cb118adff72e4f16698f94bf3b2c64146",
-      "eaa5158b07b439faab0db30e357f0af2": "3dd12d7ba54fee06a7e20dadb2c278a23a17af50",
-      "642e8504adc72e7c16384dbdc1665fa2": "926b95e1cb574d4914dbed0681729a7c1a4bc68d",
-      "2324c9cc227c1327a72a667c97ed2990": "9e9af51dae3199cccf49ab3f0d47e2b9be4ba97d",
-      "0a814078410353744e2947a8e9342e4e": "35f92a0477a88f5cf564971125047ffcfa02ec10",
-      "82a22231d402cd3284c698ba16a51d1d": "d8ce5b1405b6428969493efeb6f3aa2027c41bdc",
-      "9a432244d9ee4a49e8ddcde64af94e05": "86fc8dc0932f983efa199e31ae05a4424772f959",
       "d260e5ea815f73c8b15155fa2ffb97c3": "451c85c46b92e6ad2ad930f055ccf0fe3049936d",
       "06c4104c60e6eacd29cc87d54aa7d224": "227ec84ea3dcb9b3d3db15a543ac19e5923732d8",
       "a77c7946128ca0b2c5e5a66b17c99dae": "5f461811edd22c08d5fb0e13a7bae99ee571c9f6",
@@ -221355,6 +221333,7 @@
       "7ca240eb19818825f9d59d26b3037f69": "a7e0143dee5a47e679fd5155e58e717813912692",
       "080b53f5d3952a8a07981f9f66997887": "b3480714b11fc49b449660431f85d4ba92f799ba",
       "a5d31549c638f0dc0ad4f3bb163ba4b7": "f63eca9a1b1e92ee1582ff5e4c0db55193f97e33",
+      "f23d7e00ae8fbf88908ed1f9165f35eb": "5996972d3e033f6c525c1988c563b4ffe4c58f22",
       "f8d4a97e47840e45598721a527d07ea5": "77197fba2781ed1d81402c48bd743adb26d3161a",
       "284c29e927164692f4884563859319d5": "45d94d0c39be1cb3db9fab6610a88a550adda4e9",
       "e80075c0dfcd39ab2bea972d150e0ba1": "ff161eaa16b36b519eeab26364b99f59b9e8128c",
@@ -221921,6 +221900,27 @@
       "71f71d32cbb5e2fcc7d11e8735c97b6e": "bc58ac28be4854fb198b895c7fd999f599b5a961",
       "8a0f1567df8f166f4056a6a71ef7dce5": "497eea6e0ed80501ca3beee714d71a5815495b07",
       "3424f1a2df9d971024a50955cb05e067": "beff39b4edb449c66b704e1c64ee6ed58e30a868",
+      "5f3cd5a4307fed7a9dfe8faa4c044273": "746a2996967282281a980842a93642ad7d740f9e",
+      "80fe771abf403e67f5640b2107c375c9": "3e8f851df9319891fb9849c922437468df98915d",
+      "61e9414a2c0e2f71b5a25233506b4bf3": "c92aa5e5fedf94a01519867fd8235f33731b8191",
+      "120a23e1566195050983764e7d4543ce": "ee9dc592128ff337be5ef0bfb6d059752296b445",
+      "c888b36bf0fc222c3585c3fabe556d21": "bda81f64be319d8793d284bf9d40f01d19b33515",
+      "c3944a435cc249196db09290aa17e9cf": "6c62326403ecdf3d120fa7ffea47f4f1d5b40020",
+      "ebe418ec8a6c85d5ac32956c9a96c179": "333116e6884d85aaa4dfc7578a91cceeea66d016",
+      "a330779c42ad7d0c4ac6ef9e92788ec6": "9451a1a09d8f75944dbd6f91193fc360f1de80ac",
+      "2b6498fd29a0adbf1c529762c02c33ab": "447975ed022379fb6b80a22fa37c2d188ca3aa88",
+      "af3cec316a4960be1c9987599066c792": "e7c32e4f75a58c87de1672e4dbd0794083535a60",
+      "364bf095e0dc4222d75354d50b8cddfc": "f5f70a0eb59f8cd6c261e179ae78ef906f68ed63",
+      "5136f764a7dbd1352519351fbb53a9f3": "70e59b8abd67092f050462abc6cb5271e4c15f01",
+      "1d63b6289c7e3566d411cf0682e401bc": "01f7a84d5a1973623eabd2be6c2cbac1ce5096a6",
+      "df864344d2a2091c3f952bd1c5ce1707": "0d2ef6e67322f48f4b7e08d8bbe68827e2074561",
+      "8712a22e7e078de3343667d9fc1f2390": "7afc276cb118adff72e4f16698f94bf3b2c64146",
+      "eaa5158b07b439faab0db30e357f0af2": "3dd12d7ba54fee06a7e20dadb2c278a23a17af50",
+      "642e8504adc72e7c16384dbdc1665fa2": "926b95e1cb574d4914dbed0681729a7c1a4bc68d",
+      "2324c9cc227c1327a72a667c97ed2990": "9e9af51dae3199cccf49ab3f0d47e2b9be4ba97d",
+      "0a814078410353744e2947a8e9342e4e": "35f92a0477a88f5cf564971125047ffcfa02ec10",
+      "82a22231d402cd3284c698ba16a51d1d": "d8ce5b1405b6428969493efeb6f3aa2027c41bdc",
+      "9a432244d9ee4a49e8ddcde64af94e05": "86fc8dc0932f983efa199e31ae05a4424772f959",
       "4edf419caa9fb0542b4fed8bcd8b54c2": "ce08f6a808701fc6672230a790167ee485157561",
       "28308683219bc1242b3a423f05061e69": "8399e384804d8d29866caa4c8763d7a61946a467",
       "02d48eaad98a74619e2f68de23ac212f": "33877ff637dc5f4c5388799fd7e2159b48e72893",
@@ -254745,9 +254745,6 @@
       "IVOICE.BIN": [
         "618563e512ff5665183664f52270fa9606c9d289"
       ],
-      "cerbios.bin": [
-        "5996972d3e033f6c525c1988c563b4ffe4c58f22"
-      ],
       "CARTS.SHA": [
         "bf5fb954db868e523febccc68549ed9187961076",
         "69dd7344e4dfa7e250973a71bbb3e8aa6fb08d81"
@@ -256453,69 +256450,6 @@
       "SYM.ROM": [
         "34e5be43effe08435b4535b68b45bb9e61d384e9",
         "b184f1c1febf66c8168fcae0b8aa37a5754f79db"
-      ],
-      "8dos2.rom": [
-        "746a2996967282281a980842a93642ad7d740f9e"
-      ],
-      "Bas122de.pch": [
-        "3e8f851df9319891fb9849c922437468df98915d"
-      ],
-      "Bas122fr.pch": [
-        "c92aa5e5fedf94a01519867fd8235f33731b8191"
-      ],
-      "Bas122uk.pch": [
-        "ee9dc592128ff337be5ef0bfb6d059752296b445"
-      ],
-      "colour.rom": [
-        "bda81f64be319d8793d284bf9d40f01d19b33515"
-      ],
-      "basic10.pch": [
-        "6c62326403ecdf3d120fa7ffea47f4f1d5b40020"
-      ],
-      "basic10.rom": [
-        "333116e6884d85aaa4dfc7578a91cceeea66d016"
-      ],
-      "basic11b.rom": [
-        "9451a1a09d8f75944dbd6f91193fc360f1de80ac"
-      ],
-      "bd500.rom": [
-        "447975ed022379fb6b80a22fa37c2d188ca3aa88"
-      ],
-      "empty_orix.rom": [
-        "e7c32e4f75a58c87de1672e4dbd0794083535a60"
-      ],
-      "hyperbas.rom": [
-        "f5f70a0eb59f8cd6c261e179ae78ef906f68ed63"
-      ],
-      "jasmin.rom": [
-        "70e59b8abd67092f050462abc6cb5271e4c15f01"
-      ],
-      "kernel.rom": [
-        "01f7a84d5a1973623eabd2be6c2cbac1ce5096a6"
-      ],
-      "microdis.rom": [
-        "0d2ef6e67322f48f4b7e08d8bbe68827e2074561"
-      ],
-      "pravetz.rom": [
-        "7afc276cb118adff72e4f16698f94bf3b2c64146"
-      ],
-      "pravetzt.pch": [
-        "3dd12d7ba54fee06a7e20dadb2c278a23a17af50"
-      ],
-      "shell.rom": [
-        "926b95e1cb574d4914dbed0681729a7c1a4bc68d"
-      ],
-      "teleass.rom": [
-        "9e9af51dae3199cccf49ab3f0d47e2b9be4ba97d"
-      ],
-      "telmatic.rom": [
-        "35f92a0477a88f5cf564971125047ffcfa02ec10"
-      ],
-      "telmon24.pch": [
-        "d8ce5b1405b6428969493efeb6f3aa2027c41bdc"
-      ],
-      "telmon24.rom": [
-        "86fc8dc0932f983efa199e31ae05a4424772f959"
       ],
       "ADT-1.40.rom": [
         "227ec84ea3dcb9b3d3db15a543ac19e5923732d8"
@@ -270360,6 +270294,9 @@
       "beena.zip": [
         "f63eca9a1b1e92ee1582ff5e4c0db55193f97e33"
       ],
+      "cerbios.bin": [
+        "5996972d3e033f6c525c1988c563b4ffe4c58f22"
+      ],
       "fpr-23887_29lv160te.ic4": [
         "77197fba2781ed1d81402c48bd743adb26d3161a"
       ],
@@ -271846,6 +271783,69 @@
       "vis.zip": [
         "beff39b4edb449c66b704e1c64ee6ed58e30a868"
       ],
+      "8dos2.rom": [
+        "746a2996967282281a980842a93642ad7d740f9e"
+      ],
+      "Bas122de.pch": [
+        "3e8f851df9319891fb9849c922437468df98915d"
+      ],
+      "Bas122fr.pch": [
+        "c92aa5e5fedf94a01519867fd8235f33731b8191"
+      ],
+      "Bas122uk.pch": [
+        "ee9dc592128ff337be5ef0bfb6d059752296b445"
+      ],
+      "colour.rom": [
+        "bda81f64be319d8793d284bf9d40f01d19b33515"
+      ],
+      "basic10.pch": [
+        "6c62326403ecdf3d120fa7ffea47f4f1d5b40020"
+      ],
+      "basic10.rom": [
+        "333116e6884d85aaa4dfc7578a91cceeea66d016"
+      ],
+      "basic11b.rom": [
+        "9451a1a09d8f75944dbd6f91193fc360f1de80ac"
+      ],
+      "bd500.rom": [
+        "447975ed022379fb6b80a22fa37c2d188ca3aa88"
+      ],
+      "empty_orix.rom": [
+        "e7c32e4f75a58c87de1672e4dbd0794083535a60"
+      ],
+      "hyperbas.rom": [
+        "f5f70a0eb59f8cd6c261e179ae78ef906f68ed63"
+      ],
+      "jasmin.rom": [
+        "70e59b8abd67092f050462abc6cb5271e4c15f01"
+      ],
+      "kernel.rom": [
+        "01f7a84d5a1973623eabd2be6c2cbac1ce5096a6"
+      ],
+      "microdis.rom": [
+        "0d2ef6e67322f48f4b7e08d8bbe68827e2074561"
+      ],
+      "pravetz.rom": [
+        "7afc276cb118adff72e4f16698f94bf3b2c64146"
+      ],
+      "pravetzt.pch": [
+        "3dd12d7ba54fee06a7e20dadb2c278a23a17af50"
+      ],
+      "shell.rom": [
+        "926b95e1cb574d4914dbed0681729a7c1a4bc68d"
+      ],
+      "teleass.rom": [
+        "9e9af51dae3199cccf49ab3f0d47e2b9be4ba97d"
+      ],
+      "telmatic.rom": [
+        "35f92a0477a88f5cf564971125047ffcfa02ec10"
+      ],
+      "telmon24.pch": [
+        "d8ce5b1405b6428969493efeb6f3aa2027c41bdc"
+      ],
+      "telmon24.rom": [
+        "86fc8dc0932f983efa199e31ae05a4424772f959"
+      ],
       "TI83_102.rom": [
         "ce08f6a808701fc6672230a790167ee485157561"
       ],
@@ -272116,6 +272116,9 @@
       "Amsdos.rom": [
         "39102c8e9cb55fcc0b9b62098780ed4a3cb6a4bb"
       ],
+      "AMSDOS_0.5.ROM": [
+        "39102c8e9cb55fcc0b9b62098780ed4a3cb6a4bb"
+      ],
       "boot-16.rom": [
         "d4181c9f046aafc3fb326b381baac809d9e38d16"
       ],
@@ -272123,6 +272126,12 @@
         "d4181c9f046aafc3fb326b381baac809d9e38d16"
       ],
       "c600.rom": [
+        "d4181c9f046aafc3fb326b381baac809d9e38d16"
+      ],
+      "controller.rom": [
+        "d4181c9f046aafc3fb326b381baac809d9e38d16"
+      ],
+      "diskII.prom": [
         "d4181c9f046aafc3fb326b381baac809d9e38d16"
       ],
       "DISK2.rom": [
@@ -272262,6 +272271,12 @@
       "Kickstart v1.3 r34.5 (1987)(Commodore)(A500-A1000-A2000-CDTV)[!].rom": [
         "891e9a547772fe0c6c19b610baf8bc4ea7fcb785"
       ],
+      "Kickstart v1.3 rev 34.5 (1987)(Commodore)(A500-A1000-A2000-CDTV)[!].rom": [
+        "891e9a547772fe0c6c19b610baf8bc4ea7fcb785"
+      ],
+      "Kickstart v1.3 rev 34.5 (1987)(Commodore)(A500-A1000-A2000-CDTV).rom": [
+        "891e9a547772fe0c6c19b610baf8bc4ea7fcb785"
+      ],
       "amiga-os-205.rom": [
         "02843c4253bbd29aba535b0aa3bd9a85034ecde4"
       ],
@@ -272274,6 +272289,9 @@
       "Kickstart v2.05 r37.350 (1992)(Commodore)(A600HD)[!].rom": [
         "02843c4253bbd29aba535b0aa3bd9a85034ecde4"
       ],
+      "Kickstart v2.05 rev 37.350 (1992)(Commodore)(A600HD)[!].rom": [
+        "02843c4253bbd29aba535b0aa3bd9a85034ecde4"
+      ],
       "cd32.rom": [
         "3525be8887f79b5929e017b42380a79edfee542d"
       ],
@@ -272281,6 +272299,9 @@
         "3525be8887f79b5929e017b42380a79edfee542d"
       ],
       "Kickstart v3.1 r40.60 (1993)(Commodore)(CD32).rom": [
+        "3525be8887f79b5929e017b42380a79edfee542d"
+      ],
+      "Kickstart v3.1 rev 40.60 (1993)(Commodore)(CD32).rom": [
         "3525be8887f79b5929e017b42380a79edfee542d"
       ],
       "cd32ext.rom": [
@@ -272295,6 +272316,12 @@
       "amiga-os-310-cd32-ext.rom": [
         "5bef3d628ce59cc02a66e6e4ae0da48f60e78f7f"
       ],
+      "CD32 Extended.ROM": [
+        "5bef3d628ce59cc02a66e6e4ae0da48f60e78f7f"
+      ],
+      "CD32 Extended-ROM rev 40.60 (1993)(Commodore)(CD32).rom": [
+        "5bef3d628ce59cc02a66e6e4ae0da48f60e78f7f"
+      ],
       "cdtv.rom": [
         "7ba40ffa17e500ed9fed041f3424bd81d9c907be"
       ],
@@ -272302,8 +272329,10 @@
         "7ba40ffa17e500ed9fed041f3424bd81d9c907be"
       ],
       "CDTV Extended-ROM v1.0 (1991)(Commodore)(CDTV)[!].rom": [
-        "7ba40ffa17e500ed9fed041f3424bd81d9c907be",
-        "5bc114bba29f60a614a311745b3e2464bfa06846"
+        "7ba40ffa17e500ed9fed041f3424bd81d9c907be"
+      ],
+      "CDTV Extended.ROM": [
+        "7ba40ffa17e500ed9fed041f3424bd81d9c907be"
       ],
       "kick20.rom": [
         "c5839f5cb98a7a8947065c3ed2f14f5f42e334a1"
@@ -272314,16 +272343,37 @@
       "Kickstart v2.04 r37.175 (1991)(Commodore)(A500+)[!].rom": [
         "c5839f5cb98a7a8947065c3ed2f14f5f42e334a1"
       ],
+      "kick204.rom": [
+        "c5839f5cb98a7a8947065c3ed2f14f5f42e334a1"
+      ],
+      "Kickstart v2.04 rev 37.175 (1991)(Commodore)(A500+)[!].rom": [
+        "c5839f5cb98a7a8947065c3ed2f14f5f42e334a1"
+      ],
+      "Kickstart v2.04 rev 37.175 (1991)(Commodore)(A500+).rom": [
+        "c5839f5cb98a7a8947065c3ed2f14f5f42e334a1"
+      ],
       "kick33180.A500": [
         "11f9e62cf299f72184835b7b2a70a16333fc0d88"
       ],
       "Kickstart v1.2 r33.180 (1986)(Commodore)(A500-A1000-A2000)[!].rom": [
         "11f9e62cf299f72184835b7b2a70a16333fc0d88"
       ],
+      "Kickstart v1.2 rev 33.180 (1986)(Commodore)(A500-A2000)[!].rom": [
+        "11f9e62cf299f72184835b7b2a70a16333fc0d88"
+      ],
+      "Kickstart v1.2 rev 33.180 (1986)(Commodore)(A500-A1000-A2000).rom": [
+        "11f9e62cf299f72184835b7b2a70a16333fc0d88"
+      ],
       "kick40063.A600": [
         "3b7f1493b27e212830f989f26ca76c02049f09ca"
       ],
       "amiga-os-310-a600.rom": [
+        "3b7f1493b27e212830f989f26ca76c02049f09ca"
+      ],
+      "Kickstart v3.1 rev 40.63 (1993)(Commodore)(A500-A600-A2000)[!].rom": [
+        "3b7f1493b27e212830f989f26ca76c02049f09ca"
+      ],
+      "Kickstart v3.1 rev 40.63 (1993)(Commodore)(A500-A600-A2000).rom": [
         "3b7f1493b27e212830f989f26ca76c02049f09ca"
       ],
       "kick40068.A1200": [
@@ -272335,10 +272385,19 @@
       "AmigaVision.rom": [
         "e21545723fe8374e91342617604f1b3d703094f1"
       ],
+      "Kickstart v3.1 rev 40.68 (1993)(Commodore)(A1200)[!].rom": [
+        "e21545723fe8374e91342617604f1b3d703094f1"
+      ],
+      "Kickstart v3.1 rev 40.68 (1993)(Commodore)(A1200).rom": [
+        "e21545723fe8374e91342617604f1b3d703094f1"
+      ],
       "kick40068.A4000": [
         "5fe04842d04a489720f0f4bb0e46948199406f49"
       ],
       "Kickstart v3.1 r40.68 (1993)(Commodore)(A4000).rom": [
+        "5fe04842d04a489720f0f4bb0e46948199406f49"
+      ],
+      "Kickstart v3.1 rev 40.68 (1993)(Commodore)(A4000).rom": [
         "5fe04842d04a489720f0f4bb0e46948199406f49"
       ],
       "1541 ROM": [
@@ -272555,6 +272614,21 @@
       "d64tano.rom": [
         "1983b4fb398e3dd9668d424c666c5a0b3f1e2b69"
       ],
+      "d64rom1": [
+        "1983b4fb398e3dd9668d424c666c5a0b3f1e2b69"
+      ],
+      "dragrom": [
+        "1983b4fb398e3dd9668d424c666c5a0b3f1e2b69"
+      ],
+      "Dragon Data Ltd - Dragon 64 - IC17": [
+        "1983b4fb398e3dd9668d424c666c5a0b3f1e2b69"
+      ],
+      "Dragon Data Ltd - TANO IC18": [
+        "1983b4fb398e3dd9668d424c666c5a0b3f1e2b69"
+      ],
+      "Eurohard S.A. - Dragon 200 IC18": [
+        "1983b4fb398e3dd9668d424c666c5a0b3f1e2b69"
+      ],
       "alpha_ba": [
         "1983b4fb398e3dd9668d424c666c5a0b3f1e2b69"
       ],
@@ -272570,6 +272644,18 @@
       "d64tano2.rom": [
         "e3c8986bb1d44269c4587b04f1ca27a70b0aaa2e"
       ],
+      "d64rom2": [
+        "e3c8986bb1d44269c4587b04f1ca27a70b0aaa2e"
+      ],
+      "Dragon Data Ltd - Dragon 64 - IC18": [
+        "e3c8986bb1d44269c4587b04f1ca27a70b0aaa2e"
+      ],
+      "Dragon Data Ltd - TANO IC17": [
+        "e3c8986bb1d44269c4587b04f1ca27a70b0aaa2e"
+      ],
+      "Eurohard S.A. - Dragon 200 IC17": [
+        "e3c8986bb1d44269c4587b04f1ca27a70b0aaa2e"
+      ],
       "deltados.rom": [
         "686ebb5f39dd4fc907a0b748867d0a022d2f1a60"
       ],
@@ -272580,6 +272666,9 @@
         "6033a0535136c40c47137e4d1cd9273c06d5fdff"
       ],
       "Expandible OS v2.0 (1984)(Intelligent Software).bin": [
+        "6033a0535136c40c47137e4d1cd9273c06d5fdff"
+      ],
+      "EXOS20.ROM": [
         "6033a0535136c40c47137e4d1cd9273c06d5fdff"
       ],
       "zx48.rom": [
@@ -274332,6 +274421,9 @@
       "n88knj1.rom": [
         "82e11a177af6a5091dd67f50a2f4bafda84d6556"
       ],
+      "kanji1.rom": [
+        "82e11a177af6a5091dd67f50a2f4bafda84d6556"
+      ],
       "fx-scsi.rom": [
         "65482a23ac5c10a6095aee1db5824cca54ead6e5"
       ],
@@ -274349,6 +274441,10 @@
         "1db57a1e8b6e4096f811587f9eab0c6675fd9755"
       ],
       "gb_bios.bin": [
+        "4ed31ec6b0b175bb109c0eb5fd3d193da823339f",
+        "1db57a1e8b6e4096f811587f9eab0c6675fd9755"
+      ],
+      "dmg0_rom.bin": [
         "4ed31ec6b0b175bb109c0eb5fd3d193da823339f",
         "1db57a1e8b6e4096f811587f9eab0c6675fd9755"
       ],
@@ -274395,6 +274491,9 @@
       "IPL_JAP.n64": [
         "bf861922dcb78c316360e3e742f4f70ff63c9bc3"
       ],
+      "64dd_ipl_J.bin": [
+        "bf861922dcb78c316360e3e742f4f70ff63c9bc3"
+      ],
       "64DD_IPL_USA.bin": [
         "3c5b93ca231550c68693a14f03cea8d5dbd1be9e"
       ],
@@ -274402,6 +274501,9 @@
         "3c5b93ca231550c68693a14f03cea8d5dbd1be9e"
       ],
       "boot5.rom": [
+        "3c5b93ca231550c68693a14f03cea8d5dbd1be9e"
+      ],
+      "64dd_ipl_U.bin": [
         "3c5b93ca231550c68693a14f03cea8d5dbd1be9e"
       ],
       "nds7.bin": [
@@ -274485,9 +274587,6 @@
       ],
       "SNES_SGB_RevB_(World).sfc": [
         "973e10840db683cf3faf61bd443090786b3a9f04"
-      ],
-      "pravetzt.rom": [
-        "7afc276cb118adff72e4f16698f94bf3b2c64146"
       ],
       "squirreljme-0.3.0-test.jar": [
         "600cf0440594b0c69339ba4b626a47288b342d77"
@@ -275659,6 +275758,12 @@
       "boot.bin": [
         "8951d1bb219ab2ff8583033d2119c899cc81f18c"
       ],
+      "dc_boot.bin.bin": [
+        "8951d1bb219ab2ff8583033d2119c899cc81f18c"
+      ],
+      "dc_bios.bin.bin": [
+        "8951d1bb219ab2ff8583033d2119c899cc81f18c"
+      ],
       "bios.gg": [
         "914aa165e3d879f060be77870d345b60cfeb4ede"
       ],
@@ -275678,6 +275783,9 @@
         "c315672807d8ddb8d91443729405c766dd95cae7"
       ],
       "bios.sms": [
+        "c315672807d8ddb8d91443729405c766dd95cae7"
+      ],
+      "BIOS.sms": [
         "c315672807d8ddb8d91443729405c766dd95cae7"
       ],
       "bios_CD_E.bin": [
@@ -275723,7 +275831,8 @@
         "b3c20fbe57cd2eb595e9edac86817e5948dccae4"
       ],
       "mpr-17933.bin": [
-        "faa8ea183a6d7bbe5d4e03bb1332519800d3fbc3"
+        "faa8ea183a6d7bbe5d4e03bb1332519800d3fbc3",
+        "df94c5b4d47eb3cc404d88b33a8fda237eaf4720"
       ],
       "saturn_bios_E.bin": [
         "faa8ea183a6d7bbe5d4e03bb1332519800d3fbc3"
@@ -275962,7 +276071,8 @@
         "ec0121bb8e2a209044309780d2efc2559c9a0ef1"
       ],
       "SCPH-70004_BIOS_V12_EUR_200.ROM1": [
-        "cc44355ded232a2ba5309bb24d4cd55af08696b2"
+        "cc44355ded232a2ba5309bb24d4cd55af08696b2",
+        "747e36b086aceceb300c72c0d1bbab38e2920e63"
       ],
       "SCPH-90006_BIOS_VX_HK _230.ROM2": [
         "b96cf94772f01b8434038285896467884a84b0c2"
@@ -276426,6 +276536,9 @@
       "microdisc.rom": [
         "0d2ef6e67322f48f4b7e08d8bbe68827e2074561"
       ],
+      "pravetzt.rom": [
+        "7afc276cb118adff72e4f16698f94bf3b2c64146"
+      ],
       "custom0.sf2": [
         "286b2e1fb21cc79851da01666db6c0b0e88f25e3"
       ],
@@ -276722,9 +276835,6 @@
         "884515605ee243577ab20767ef8c1a7368e4e407"
       ],
       "bsx_bios.rom": [
-        "4891d739a8a8b67923681bad4fb67edab2e90e50"
-      ],
-      "BS-X.bios": [
         "4891d739a8a8b67923681bad4fb67edab2e90e50"
       ],
       "neo-epo.sp1": [
@@ -278370,9 +278480,6 @@
       "DMG_ROM.bin": [
         "1db57a1e8b6e4096f811587f9eab0c6675fd9755"
       ],
-      "dmg0_rom.bin": [
-        "1db57a1e8b6e4096f811587f9eab0c6675fd9755"
-      ],
       "EXOS21.ROM": [
         "55315b20fecb4441a07ee4bc5dc7153f396e0a2e"
       ],
@@ -278529,9 +278636,6 @@
       "Parallel.rom": [
         "c75c751589cbcc1ad4ab4f63676af7abadd86f5b"
       ],
-      "FdsBios.bin": [
-        "af5af53f66982e749643fdf8b2acbb7d4d3ed229"
-      ],
       "POCKSTAT.ROM": [
         "6ae880493ddde880827d1e9f08e9cb2c38f9f2ec"
       ],
@@ -278588,12 +278692,6 @@
       ],
       "Kickstart v1.1 rev 32.34 (1986)(Commodore)(A1000)(PAL).rom": [
         "16df8b5fd524c5a1c7584b2457ac15aff9e3ad6d"
-      ],
-      "amiga-os-130-cdtv-ext.rom": [
-        "5bc114bba29f60a614a311745b3e2464bfa06846"
-      ],
-      "CDTV Extended-ROM v1.0 (1992)(Commodore)(CDTV).rom": [
-        "5bc114bba29f60a614a311745b3e2464bfa06846"
       ],
       "SeaBIOS (128 KB)": [
         "f402170ee4f374c304a7ce0b139d6cecb1732aff"
@@ -291778,7 +291876,6 @@
       "cbce86f7": "5a65b922b562cb1f57dab51b73151283f0e20c7a",
       "683a4158": "f9608bb4ad1cfe3640d02844c7ad8e0bcd974917",
       "0de7579d": "618563e512ff5665183664f52270fa9606c9d289",
-      "a73a4d20": "5996972d3e033f6c525c1988c563b4ffe4c58f22",
       "d42f4444": "bf5fb954db868e523febccc68549ed9187961076",
       "ac7d92b4": "b7068e2aab02072852ca249596b7550ac632c4c2",
       "a068cba9": "1ef3956f7f918873fb9b031339bba45d1e5e5878",
@@ -292430,27 +292527,6 @@
       "3843dcf5": "d08ffcf19945b63c7baf35d9965a9cd6bf61332b",
       "1eed61f5": "cd34a0ee9b7a8cbb9c9eae34739704a9dd4dd413",
       "343a0710": "34e5be43effe08435b4535b68b45bb9e61d384e9",
-      "efc88d2b": "746a2996967282281a980842a93642ad7d740f9e",
-      "bfaaa640": "3e8f851df9319891fb9849c922437468df98915d",
-      "169dc64a": "c92aa5e5fedf94a01519867fd8235f33731b8191",
-      "3a0be9f6": "ee9dc592128ff337be5ef0bfb6d059752296b445",
-      "d50fca65": "bda81f64be319d8793d284bf9d40f01d19b33515",
-      "801dea4e": "6c62326403ecdf3d120fa7ffea47f4f1d5b40020",
-      "f18710b4": "333116e6884d85aaa4dfc7578a91cceeea66d016",
-      "c3a92bef": "9451a1a09d8f75944dbd6f91193fc360f1de80ac",
-      "61952e34": "447975ed022379fb6b80a22fa37c2d188ca3aa88",
-      "c98b4655": "e7c32e4f75a58c87de1672e4dbd0794083535a60",
-      "1d96ab50": "f5f70a0eb59f8cd6c261e179ae78ef906f68ed63",
-      "37220e89": "70e59b8abd67092f050462abc6cb5271e4c15f01",
-      "356231a6": "01f7a84d5a1973623eabd2be6c2cbac1ce5096a6",
-      "a9664a9c": "0d2ef6e67322f48f4b7e08d8bbe68827e2074561",
-      "58079502": "7afc276cb118adff72e4f16698f94bf3b2c64146",
-      "46bab02d": "3dd12d7ba54fee06a7e20dadb2c278a23a17af50",
-      "8d166635": "926b95e1cb574d4914dbed0681729a7c1a4bc68d",
-      "68b0fde6": "9e9af51dae3199cccf49ab3f0d47e2b9be4ba97d",
-      "94358dc6": "35f92a0477a88f5cf564971125047ffcfa02ec10",
-      "29e86dbc": "d8ce5b1405b6428969493efeb6f3aa2027c41bdc",
-      "aa727c5d": "86fc8dc0932f983efa199e31ae05a4424772f959",
       "5aff85d3": "451c85c46b92e6ad2ad930f055ccf0fe3049936d",
       "8314fed0": "227ec84ea3dcb9b3d3db15a543ac19e5923732d8",
       "9ec2dbd0": "5f461811edd22c08d5fb0e13a7bae99ee571c9f6",
@@ -298239,6 +298315,7 @@
       "a85bb823": "a7e0143dee5a47e679fd5155e58e717813912692",
       "95344b04": "b3480714b11fc49b449660431f85d4ba92f799ba",
       "b1642de4": "f63eca9a1b1e92ee1582ff5e4c0db55193f97e33",
+      "a73a4d20": "5996972d3e033f6c525c1988c563b4ffe4c58f22",
       "13034372": "77197fba2781ed1d81402c48bd743adb26d3161a",
       "fb55e65e": "ff161eaa16b36b519eeab26364b99f59b9e8128c",
       "c295a8c2": "cdf247154e28c4b352b962a4a523587f2fde9305",
@@ -298804,6 +298881,27 @@
       "6377a7f8": "bc58ac28be4854fb198b895c7fd999f599b5a961",
       "e6fda693": "497eea6e0ed80501ca3beee714d71a5815495b07",
       "99a449b5": "beff39b4edb449c66b704e1c64ee6ed58e30a868",
+      "efc88d2b": "746a2996967282281a980842a93642ad7d740f9e",
+      "bfaaa640": "3e8f851df9319891fb9849c922437468df98915d",
+      "169dc64a": "c92aa5e5fedf94a01519867fd8235f33731b8191",
+      "3a0be9f6": "ee9dc592128ff337be5ef0bfb6d059752296b445",
+      "d50fca65": "bda81f64be319d8793d284bf9d40f01d19b33515",
+      "801dea4e": "6c62326403ecdf3d120fa7ffea47f4f1d5b40020",
+      "f18710b4": "333116e6884d85aaa4dfc7578a91cceeea66d016",
+      "c3a92bef": "9451a1a09d8f75944dbd6f91193fc360f1de80ac",
+      "61952e34": "447975ed022379fb6b80a22fa37c2d188ca3aa88",
+      "c98b4655": "e7c32e4f75a58c87de1672e4dbd0794083535a60",
+      "1d96ab50": "f5f70a0eb59f8cd6c261e179ae78ef906f68ed63",
+      "37220e89": "70e59b8abd67092f050462abc6cb5271e4c15f01",
+      "356231a6": "01f7a84d5a1973623eabd2be6c2cbac1ce5096a6",
+      "a9664a9c": "0d2ef6e67322f48f4b7e08d8bbe68827e2074561",
+      "58079502": "7afc276cb118adff72e4f16698f94bf3b2c64146",
+      "46bab02d": "3dd12d7ba54fee06a7e20dadb2c278a23a17af50",
+      "8d166635": "926b95e1cb574d4914dbed0681729a7c1a4bc68d",
+      "68b0fde6": "9e9af51dae3199cccf49ab3f0d47e2b9be4ba97d",
+      "94358dc6": "35f92a0477a88f5cf564971125047ffcfa02ec10",
+      "29e86dbc": "d8ce5b1405b6428969493efeb6f3aa2027c41bdc",
+      "aa727c5d": "86fc8dc0932f983efa199e31ae05a4424772f959",
       "7ee5d27b": "ce08f6a808701fc6672230a790167ee485157561",
       "926f72a4": "8399e384804d8d29866caa4c8763d7a61946a467",
       "dccb73d3": "33877ff637dc5f4c5388799fd7e2159b48e72893",
@@ -311490,7 +311588,6 @@
       "1aeb614856beba95463166daf09304b414d5617d3f37d221724b3337fc4b2722": "5a65b922b562cb1f57dab51b73151283f0e20c7a",
       "a80b6841182547d08635ad30a6af71441c4c9eed9391b3dd22feb30d8e50cc85": "f9608bb4ad1cfe3640d02844c7ad8e0bcd974917",
       "dabade432af1523f43029057071ca8c1ed3604498c784603e8733023382ad7a5": "618563e512ff5665183664f52270fa9606c9d289",
-      "b2dba4425355c42a15f9dd2b62158213ea9485de137739d95582e695da404958": "5996972d3e033f6c525c1988c563b4ffe4c58f22",
       "0a09940701f40647a2715271b43c9ab0d82bd488871427ad627b7e0f462f5dda": "bf5fb954db868e523febccc68549ed9187961076",
       "e33df7537335c0b6402ced6b3be70ef305e9158896e90b7939f8d406e5184b03": "b7068e2aab02072852ca249596b7550ac632c4c2",
       "01f43988d825d48a46915199b6cd42ae1505bdf83d642511204c50ecdf95c741": "1ef3956f7f918873fb9b031339bba45d1e5e5878",
@@ -312142,27 +312239,6 @@
       "eab425e6e65430232ec87a776d352f8fe1be4905df3a6bdaa0941c03e20069bc": "d08ffcf19945b63c7baf35d9965a9cd6bf61332b",
       "662bc6c693c88040531fbe51186ce203e188d1c67ad788b2013b3c91ce595420": "cd34a0ee9b7a8cbb9c9eae34739704a9dd4dd413",
       "afc1cc8b693f2b68d23ca203aa4d4eb4266baad4ab718f013a33b915d39574ef": "34e5be43effe08435b4535b68b45bb9e61d384e9",
-      "d58cb6f47f808d8c890310d1c6a46e92df05971f5952bcb4f4cf88d1faf37eb6": "746a2996967282281a980842a93642ad7d740f9e",
-      "cf3d0e680a362084aadb184a4a57a35432e5af885aa2f7838578e3116fb57c2e": "3e8f851df9319891fb9849c922437468df98915d",
-      "52d5bda9d4624da09a6efa8a9fe1c956e602ead506822f205486e915e9ba88a7": "c92aa5e5fedf94a01519867fd8235f33731b8191",
-      "a5340b6e01719a736a328cfff3a7449ddf77f76f138b07024648b6fcf15368de": "ee9dc592128ff337be5ef0bfb6d059752296b445",
-      "c24fd91c9f0687bf2033abd7747d3f5b162bba4f23692640f69ee62eb404b293": "bda81f64be319d8793d284bf9d40f01d19b33515",
-      "2152eafd6573626b7467402838352d4cfbf22f43b4f9940eee7048aea7098dc1": "6c62326403ecdf3d120fa7ffea47f4f1d5b40020",
-      "83d341dab126092f7a6d56f6a92bca0643ff3aa6529d896085004f958c9be2ff": "333116e6884d85aaa4dfc7578a91cceeea66d016",
-      "ed28568574716eef5d7c0fde2568d7a47a6e4b1fbca81daff3be05e45723466d": "9451a1a09d8f75944dbd6f91193fc360f1de80ac",
-      "257430f54fdc1c98bf0ddad97c6a609885b25130910c4ba370d6f51e3699b2d3": "447975ed022379fb6b80a22fa37c2d188ca3aa88",
-      "d1ca02145bc2d539ed45097712046228caf0e04d591ba4463a0ff2a0dad90f45": "e7c32e4f75a58c87de1672e4dbd0794083535a60",
-      "08eaf63a55a7659a6da7c91cf4a57bb0e2e21ff856d0957928605aa5feed09c6": "f5f70a0eb59f8cd6c261e179ae78ef906f68ed63",
-      "60d9aaaa7e787080779acbf8ad7af81fe9b8851af5e395c2f3bf10c114a76a23": "70e59b8abd67092f050462abc6cb5271e4c15f01",
-      "62eaf60c3be8047599f3ef06874b86d479d9b74cf90efcd2d83f35db8c662144": "01f7a84d5a1973623eabd2be6c2cbac1ce5096a6",
-      "1b82882eeaddba463e3f89218fd9eb30147345e540bbccf96bf30c14d2e45941": "0d2ef6e67322f48f4b7e08d8bbe68827e2074561",
-      "a142c6a9f9ccf25ce4e7ab64107bc2210ee7f68557fe3a8bbb60d1587da814ae": "7afc276cb118adff72e4f16698f94bf3b2c64146",
-      "191b5e58d65eee4b2ae74aefd882b0df44d321be6c226349293fad7c10fcdcbf": "3dd12d7ba54fee06a7e20dadb2c278a23a17af50",
-      "2f799c82479b64ca4fda7ed76bdc65bfb56596625061fba91933fed473fc9ae8": "926b95e1cb574d4914dbed0681729a7c1a4bc68d",
-      "49921a9f932f7ecc2947b9b08f0451a393dc48f55317209c44338dc8bcf227ee": "9e9af51dae3199cccf49ab3f0d47e2b9be4ba97d",
-      "f213042b9b166b443b8a5a336a325ba4a2ae9482db369754932a7b3c802ed980": "35f92a0477a88f5cf564971125047ffcfa02ec10",
-      "3ca567f014a71ea24734559ee63df8184886f17debeef41c4bf4cd6313d70bd1": "d8ce5b1405b6428969493efeb6f3aa2027c41bdc",
-      "0ed991887342fba9e4b71668ff4c14ed93c2b3a19b4874dd0282404a1c442094": "86fc8dc0932f983efa199e31ae05a4424772f959",
       "5e1efe51b2c8be901ab4283c671bd84364a574845b7269f92bdddc4dae9ae5d5": "451c85c46b92e6ad2ad930f055ccf0fe3049936d",
       "224b6d041e3491ed95928241206772dbbae1ab86779d02548f0b02a13884e0d3": "227ec84ea3dcb9b3d3db15a543ac19e5923732d8",
       "482c8e4eab3cf02fe7c2815df3bbccdef96ae4bc8c5e3e24265fc3943e72b535": "5f461811edd22c08d5fb0e13a7bae99ee571c9f6",
@@ -317951,6 +318027,7 @@
       "736773e82afccac7fa253d0d43b13f0f23c365fbbbf860597b68e13286f3ea4f": "a7e0143dee5a47e679fd5155e58e717813912692",
       "086285c30b1453ab797ace7dcd7665440fa187cfc6407d391d3bb96fba9f549f": "b3480714b11fc49b449660431f85d4ba92f799ba",
       "6a8bf30a5a0942f500d1d617506a99552e33774207d3e895258abafe35979641": "f63eca9a1b1e92ee1582ff5e4c0db55193f97e33",
+      "b2dba4425355c42a15f9dd2b62158213ea9485de137739d95582e695da404958": "5996972d3e033f6c525c1988c563b4ffe4c58f22",
       "44c6f9a25a133d38d719a9adf08c914f7e64736f26446d8c84555b983a95e5b7": "77197fba2781ed1d81402c48bd743adb26d3161a",
       "e0be3fc086fd478c9879f983af743bada512dedab144667039e8c147e502ce6d": "45d94d0c39be1cb3db9fab6610a88a550adda4e9",
       "df47c364fd16a4816d43f4b542544e902c8e62d8835fc5bd15eb3f83feca06e8": "ff161eaa16b36b519eeab26364b99f59b9e8128c",
@@ -318517,6 +318594,27 @@
       "24a286c1818d14c003d9aec26bf2a1fe307a173fc2731e4757583a1c0b96d78b": "bc58ac28be4854fb198b895c7fd999f599b5a961",
       "a351c2d792a73e9e0dbd7533821087b9a3fe3545006d2f7e7d7d4b10342f5ce7": "497eea6e0ed80501ca3beee714d71a5815495b07",
       "dd9c48c06081b3e7caeb7651bdb176d6c7fc057ede1415eeb1cde4abe499106d": "beff39b4edb449c66b704e1c64ee6ed58e30a868",
+      "d58cb6f47f808d8c890310d1c6a46e92df05971f5952bcb4f4cf88d1faf37eb6": "746a2996967282281a980842a93642ad7d740f9e",
+      "cf3d0e680a362084aadb184a4a57a35432e5af885aa2f7838578e3116fb57c2e": "3e8f851df9319891fb9849c922437468df98915d",
+      "52d5bda9d4624da09a6efa8a9fe1c956e602ead506822f205486e915e9ba88a7": "c92aa5e5fedf94a01519867fd8235f33731b8191",
+      "a5340b6e01719a736a328cfff3a7449ddf77f76f138b07024648b6fcf15368de": "ee9dc592128ff337be5ef0bfb6d059752296b445",
+      "c24fd91c9f0687bf2033abd7747d3f5b162bba4f23692640f69ee62eb404b293": "bda81f64be319d8793d284bf9d40f01d19b33515",
+      "2152eafd6573626b7467402838352d4cfbf22f43b4f9940eee7048aea7098dc1": "6c62326403ecdf3d120fa7ffea47f4f1d5b40020",
+      "83d341dab126092f7a6d56f6a92bca0643ff3aa6529d896085004f958c9be2ff": "333116e6884d85aaa4dfc7578a91cceeea66d016",
+      "ed28568574716eef5d7c0fde2568d7a47a6e4b1fbca81daff3be05e45723466d": "9451a1a09d8f75944dbd6f91193fc360f1de80ac",
+      "257430f54fdc1c98bf0ddad97c6a609885b25130910c4ba370d6f51e3699b2d3": "447975ed022379fb6b80a22fa37c2d188ca3aa88",
+      "d1ca02145bc2d539ed45097712046228caf0e04d591ba4463a0ff2a0dad90f45": "e7c32e4f75a58c87de1672e4dbd0794083535a60",
+      "08eaf63a55a7659a6da7c91cf4a57bb0e2e21ff856d0957928605aa5feed09c6": "f5f70a0eb59f8cd6c261e179ae78ef906f68ed63",
+      "60d9aaaa7e787080779acbf8ad7af81fe9b8851af5e395c2f3bf10c114a76a23": "70e59b8abd67092f050462abc6cb5271e4c15f01",
+      "62eaf60c3be8047599f3ef06874b86d479d9b74cf90efcd2d83f35db8c662144": "01f7a84d5a1973623eabd2be6c2cbac1ce5096a6",
+      "1b82882eeaddba463e3f89218fd9eb30147345e540bbccf96bf30c14d2e45941": "0d2ef6e67322f48f4b7e08d8bbe68827e2074561",
+      "a142c6a9f9ccf25ce4e7ab64107bc2210ee7f68557fe3a8bbb60d1587da814ae": "7afc276cb118adff72e4f16698f94bf3b2c64146",
+      "191b5e58d65eee4b2ae74aefd882b0df44d321be6c226349293fad7c10fcdcbf": "3dd12d7ba54fee06a7e20dadb2c278a23a17af50",
+      "2f799c82479b64ca4fda7ed76bdc65bfb56596625061fba91933fed473fc9ae8": "926b95e1cb574d4914dbed0681729a7c1a4bc68d",
+      "49921a9f932f7ecc2947b9b08f0451a393dc48f55317209c44338dc8bcf227ee": "9e9af51dae3199cccf49ab3f0d47e2b9be4ba97d",
+      "f213042b9b166b443b8a5a336a325ba4a2ae9482db369754932a7b3c802ed980": "35f92a0477a88f5cf564971125047ffcfa02ec10",
+      "3ca567f014a71ea24734559ee63df8184886f17debeef41c4bf4cd6313d70bd1": "d8ce5b1405b6428969493efeb6f3aa2027c41bdc",
+      "0ed991887342fba9e4b71668ff4c14ed93c2b3a19b4874dd0282404a1c442094": "86fc8dc0932f983efa199e31ae05a4424772f959",
       "9e443aa45fe8dde921c91fbebfb510afcb2a8566d3fc34e5b6bdadfa50fa42a9": "ce08f6a808701fc6672230a790167ee485157561",
       "faed05692fbb2efa86d3dc64c5e5d48de34cb761058dde8347fad8e3b185f93c": "8399e384804d8d29866caa4c8763d7a61946a467",
       "1e4b3144defa48b102e91818b0ee3b53a7e06906ba5394d7bd3ab3e8161b2e15": "33877ff637dc5f4c5388799fd7e2159b48e72893",
@@ -476942,12 +477040,6 @@
       "Intellivision/IVOICE.BIN": [
         "618563e512ff5665183664f52270fa9606c9d289"
       ],
-      "Microsoft/Chihiro/cerbios.bin": [
-        "5996972d3e033f6c525c1988c563b4ffe4c58f22"
-      ],
-      "Chihiro/cerbios.bin": [
-        "5996972d3e033f6c525c1988c563b4ffe4c58f22"
-      ],
       "Microsoft/MSX/.variants/CARTS.SHA.bf5fb954": [
         "bf5fb954db868e523febccc68549ed9187961076"
       ],
@@ -484252,135 +484344,6 @@
       ],
       "N-Gage/SYM.ROM": [
         "34e5be43effe08435b4535b68b45bb9e61d384e9"
-      ],
-      "Oric/Oric/8dos2.rom": [
-        "746a2996967282281a980842a93642ad7d740f9e"
-      ],
-      "Oric/8dos2.rom": [
-        "746a2996967282281a980842a93642ad7d740f9e"
-      ],
-      "Oric/Oric/Bas122de.pch": [
-        "3e8f851df9319891fb9849c922437468df98915d"
-      ],
-      "Oric/Bas122de.pch": [
-        "3e8f851df9319891fb9849c922437468df98915d"
-      ],
-      "Oric/Oric/Bas122fr.pch": [
-        "c92aa5e5fedf94a01519867fd8235f33731b8191"
-      ],
-      "Oric/Bas122fr.pch": [
-        "c92aa5e5fedf94a01519867fd8235f33731b8191"
-      ],
-      "Oric/Oric/Bas122uk.pch": [
-        "ee9dc592128ff337be5ef0bfb6d059752296b445"
-      ],
-      "Oric/Bas122uk.pch": [
-        "ee9dc592128ff337be5ef0bfb6d059752296b445"
-      ],
-      "Oric/Oric/Oric/colour.rom": [
-        "bda81f64be319d8793d284bf9d40f01d19b33515"
-      ],
-      "Oric/Oric/colour.rom": [
-        "bda81f64be319d8793d284bf9d40f01d19b33515"
-      ],
-      "Oric/colour.rom": [
-        "bda81f64be319d8793d284bf9d40f01d19b33515"
-      ],
-      "Oric/Oric/basic10.pch": [
-        "6c62326403ecdf3d120fa7ffea47f4f1d5b40020"
-      ],
-      "Oric/basic10.pch": [
-        "6c62326403ecdf3d120fa7ffea47f4f1d5b40020"
-      ],
-      "Oric/Oric/basic10.rom": [
-        "333116e6884d85aaa4dfc7578a91cceeea66d016"
-      ],
-      "Oric/basic10.rom": [
-        "333116e6884d85aaa4dfc7578a91cceeea66d016"
-      ],
-      "Oric/Oric/basic11b.rom": [
-        "9451a1a09d8f75944dbd6f91193fc360f1de80ac"
-      ],
-      "Oric/basic11b.rom": [
-        "9451a1a09d8f75944dbd6f91193fc360f1de80ac"
-      ],
-      "Oric/Oric/bd500.rom": [
-        "447975ed022379fb6b80a22fa37c2d188ca3aa88"
-      ],
-      "Oric/bd500.rom": [
-        "447975ed022379fb6b80a22fa37c2d188ca3aa88"
-      ],
-      "Oric/Oric/empty_orix.rom": [
-        "e7c32e4f75a58c87de1672e4dbd0794083535a60"
-      ],
-      "Oric/empty_orix.rom": [
-        "e7c32e4f75a58c87de1672e4dbd0794083535a60"
-      ],
-      "Oric/Oric/hyperbas.rom": [
-        "f5f70a0eb59f8cd6c261e179ae78ef906f68ed63"
-      ],
-      "Oric/hyperbas.rom": [
-        "f5f70a0eb59f8cd6c261e179ae78ef906f68ed63"
-      ],
-      "Oric/Oric/jasmin.rom": [
-        "70e59b8abd67092f050462abc6cb5271e4c15f01"
-      ],
-      "Oric/jasmin.rom": [
-        "70e59b8abd67092f050462abc6cb5271e4c15f01"
-      ],
-      "Oric/Oric/kernel.rom": [
-        "01f7a84d5a1973623eabd2be6c2cbac1ce5096a6"
-      ],
-      "Oric/kernel.rom": [
-        "01f7a84d5a1973623eabd2be6c2cbac1ce5096a6"
-      ],
-      "Oric/Oric/microdis.rom": [
-        "0d2ef6e67322f48f4b7e08d8bbe68827e2074561"
-      ],
-      "Oric/microdis.rom": [
-        "0d2ef6e67322f48f4b7e08d8bbe68827e2074561"
-      ],
-      "Oric/Oric/pravetz.rom": [
-        "7afc276cb118adff72e4f16698f94bf3b2c64146"
-      ],
-      "Oric/pravetz.rom": [
-        "7afc276cb118adff72e4f16698f94bf3b2c64146"
-      ],
-      "Oric/Oric/pravetzt.pch": [
-        "3dd12d7ba54fee06a7e20dadb2c278a23a17af50"
-      ],
-      "Oric/pravetzt.pch": [
-        "3dd12d7ba54fee06a7e20dadb2c278a23a17af50"
-      ],
-      "Oric/Oric/shell.rom": [
-        "926b95e1cb574d4914dbed0681729a7c1a4bc68d"
-      ],
-      "Oric/shell.rom": [
-        "926b95e1cb574d4914dbed0681729a7c1a4bc68d"
-      ],
-      "Oric/Oric/teleass.rom": [
-        "9e9af51dae3199cccf49ab3f0d47e2b9be4ba97d"
-      ],
-      "Oric/teleass.rom": [
-        "9e9af51dae3199cccf49ab3f0d47e2b9be4ba97d"
-      ],
-      "Oric/Oric/telmatic.rom": [
-        "35f92a0477a88f5cf564971125047ffcfa02ec10"
-      ],
-      "Oric/telmatic.rom": [
-        "35f92a0477a88f5cf564971125047ffcfa02ec10"
-      ],
-      "Oric/Oric/telmon24.pch": [
-        "d8ce5b1405b6428969493efeb6f3aa2027c41bdc"
-      ],
-      "Oric/telmon24.pch": [
-        "d8ce5b1405b6428969493efeb6f3aa2027c41bdc"
-      ],
-      "Oric/Oric/telmon24.rom": [
-        "86fc8dc0932f983efa199e31ae05a4424772f959"
-      ],
-      "Oric/telmon24.rom": [
-        "86fc8dc0932f983efa199e31ae05a4424772f959"
       ],
       "Other/Clock Signal/AppleII/scsi.rom": [
         "451c85c46b92e6ad2ad930f055ccf0fe3049936d"
@@ -512961,227 +512924,464 @@
       "LaserActive/laseractive_dyw_1322a.bin": [
         "b1e48d1f5e494a6cbece61cfca4469dea33fba4b"
       ],
+      "QEMU/QEMU/MacROM.bin": [
+        "f2a9ce387019bf272c6e3459d961b30f28942ac5"
+      ],
       "QEMU/MacROM.bin": [
         "f2a9ce387019bf272c6e3459d961b30f28942ac5"
+      ],
+      "QEMU/QEMU/QEMU,cgthree.bin": [
+        "619b86fb02faf8f682474be3f0653b58015008ba"
       ],
       "QEMU/QEMU,cgthree.bin": [
         "619b86fb02faf8f682474be3f0653b58015008ba"
       ],
+      "QEMU/QEMU/QEMU,tcx.bin": [
+        "5f1792a73ee47d78b2160191ecb2c92f353f93ad"
+      ],
       "QEMU/QEMU,tcx.bin": [
         "5f1792a73ee47d78b2160191ecb2c92f353f93ad"
+      ],
+      "QEMU/QEMU/ast27x0_bootrom.bin": [
+        "9dda4cbcc1d3f6d38c10fee3de53b9abd5e47ec0"
       ],
       "QEMU/ast27x0_bootrom.bin": [
         "9dda4cbcc1d3f6d38c10fee3de53b9abd5e47ec0"
       ],
+      "QEMU/QEMU/bamboo.dtb": [
+        "ebdf1745479f4ec88459bbd9ef16ee1114018508"
+      ],
       "QEMU/bamboo.dtb": [
         "ebdf1745479f4ec88459bbd9ef16ee1114018508"
+      ],
+      "QEMU/QEMU/bios-256k.bin": [
+        "5fe6078506094333106e6b3f33c7185dea7f0268"
+      ],
+      "QEMU/QEMU/bios-microvm.bin": [
+        "56f33ced7ea0f7581d776396a0ac6cfe2c7c9257"
       ],
       "QEMU/bios-microvm.bin": [
         "56f33ced7ea0f7581d776396a0ac6cfe2c7c9257"
       ],
+      "QEMU/QEMU/bios.bin": [
+        "f402170ee4f374c304a7ce0b139d6cecb1732aff"
+      ],
+      "QEMU/QEMU/bios_loongson3.bin": [
+        "8e99ed6157811282b7570f5f2e13b81a3913497e"
+      ],
       "QEMU/bios_loongson3.bin": [
         "8e99ed6157811282b7570f5f2e13b81a3913497e"
+      ],
+      "QEMU/QEMU/canon-a1100-rom1.bin": [
+        "3df540b7517f27b3a76e31f193821d04e5805f89"
       ],
       "QEMU/canon-a1100-rom1.bin": [
         "3df540b7517f27b3a76e31f193821d04e5805f89"
       ],
+      "QEMU/QEMU/canyonlands.dtb": [
+        "8a2fda0b4f23a92eb44776b5d7ffe951987062da"
+      ],
       "QEMU/canyonlands.dtb": [
         "8a2fda0b4f23a92eb44776b5d7ffe951987062da"
+      ],
+      "QEMU/QEMU/edk2-aarch64-code.fd": [
+        "514edbce58bfa877170673c1799351a7dab3b6df"
       ],
       "QEMU/edk2-aarch64-code.fd": [
         "514edbce58bfa877170673c1799351a7dab3b6df"
       ],
+      "QEMU/QEMU/edk2-arm-code.fd": [
+        "c20f01c28b59b388abb9d0febeec45d801a632f0"
+      ],
       "QEMU/edk2-arm-code.fd": [
         "c20f01c28b59b388abb9d0febeec45d801a632f0"
+      ],
+      "QEMU/QEMU/edk2-arm-vars.fd": [
+        "b051167e0e57bd13d77ed92ef7b474872f44ec6d"
       ],
       "QEMU/edk2-arm-vars.fd": [
         "b051167e0e57bd13d77ed92ef7b474872f44ec6d"
       ],
+      "QEMU/QEMU/edk2-i386-code.fd": [
+        "45b8faebdfaaf19d16e3a7c5f60d69214685071c"
+      ],
       "QEMU/edk2-i386-code.fd": [
         "45b8faebdfaaf19d16e3a7c5f60d69214685071c"
+      ],
+      "QEMU/QEMU/edk2-i386-secure-code.fd": [
+        "6982abec8ef2ed7c8293163d5a0bd69a01a2126f"
       ],
       "QEMU/edk2-i386-secure-code.fd": [
         "6982abec8ef2ed7c8293163d5a0bd69a01a2126f"
       ],
+      "QEMU/QEMU/edk2-i386-vars.fd": [
+        "b62e676c9317a32aaa9ee1d76268d8c55663bd6e"
+      ],
       "QEMU/edk2-i386-vars.fd": [
         "b62e676c9317a32aaa9ee1d76268d8c55663bd6e"
+      ],
+      "QEMU/QEMU/edk2-riscv-code.fd": [
+        "2c8633d881ece0c4794d740138a318f7e9af480c"
       ],
       "QEMU/edk2-riscv-code.fd": [
         "2c8633d881ece0c4794d740138a318f7e9af480c"
       ],
+      "QEMU/QEMU/edk2-riscv-vars.fd": [
+        "c4e6cce4247ba8f32f528c1c69f49228f616677f"
+      ],
       "QEMU/edk2-riscv-vars.fd": [
         "c4e6cce4247ba8f32f528c1c69f49228f616677f"
+      ],
+      "QEMU/QEMU/edk2-x86_64-code.fd": [
+        "eac1a94b8e0d7c53fd5df001c36794ec34c7c724"
       ],
       "QEMU/edk2-x86_64-code.fd": [
         "eac1a94b8e0d7c53fd5df001c36794ec34c7c724"
       ],
+      "QEMU/QEMU/edk2-x86_64-secure-code.fd": [
+        "617abe2746696bb4a309d72cecb446dc76a2a61e"
+      ],
       "QEMU/edk2-x86_64-secure-code.fd": [
         "617abe2746696bb4a309d72cecb446dc76a2a61e"
+      ],
+      "QEMU/QEMU/efi-e1000.rom": [
+        "a3df5fc33ab0190f470b34104ff3c0679cecbab6"
       ],
       "QEMU/efi-e1000.rom": [
         "a3df5fc33ab0190f470b34104ff3c0679cecbab6"
       ],
+      "QEMU/QEMU/efi-e1000e.rom": [
+        "1d37f3ae6748d4deefe9fd5188a2f557bf265d61"
+      ],
       "QEMU/efi-e1000e.rom": [
         "1d37f3ae6748d4deefe9fd5188a2f557bf265d61"
+      ],
+      "QEMU/QEMU/efi-eepro100.rom": [
+        "956d9592fea33374ef0f1900a185b6e1109ea765"
       ],
       "QEMU/efi-eepro100.rom": [
         "956d9592fea33374ef0f1900a185b6e1109ea765"
       ],
+      "QEMU/QEMU/efi-ne2k_pci.rom": [
+        "adb7199f545fdb66c325b142c8dbc4cddb99a20d"
+      ],
       "QEMU/efi-ne2k_pci.rom": [
         "adb7199f545fdb66c325b142c8dbc4cddb99a20d"
+      ],
+      "QEMU/QEMU/efi-pcnet.rom": [
+        "9e5a4bb247c6a1777c89117ca091f94342b9046d"
       ],
       "QEMU/efi-pcnet.rom": [
         "9e5a4bb247c6a1777c89117ca091f94342b9046d"
       ],
+      "QEMU/QEMU/efi-rtl8139.rom": [
+        "99a1e431cc0cb0a78d5803875dfa687e12a947f4"
+      ],
       "QEMU/efi-rtl8139.rom": [
         "99a1e431cc0cb0a78d5803875dfa687e12a947f4"
+      ],
+      "QEMU/QEMU/efi-virtio.rom": [
+        "1596e9b97f0bc8b5ff3e444235690a549ee982c6"
       ],
       "QEMU/efi-virtio.rom": [
         "1596e9b97f0bc8b5ff3e444235690a549ee982c6"
       ],
+      "QEMU/QEMU/efi-vmxnet3.rom": [
+        "6557242402387a6319a0db6abb916ada48e1391c"
+      ],
       "QEMU/efi-vmxnet3.rom": [
         "6557242402387a6319a0db6abb916ada48e1391c"
+      ],
+      "QEMU/QEMU/hppa-firmware.img": [
+        "605c36ede6c120c6cc7efe147a75a3dc4b7e4fb0"
       ],
       "QEMU/hppa-firmware.img": [
         "605c36ede6c120c6cc7efe147a75a3dc4b7e4fb0"
       ],
+      "QEMU/QEMU/hppa-firmware64.img": [
+        "b42f6d4ca74073de6c038579b4a9323ad0a6b398"
+      ],
       "QEMU/hppa-firmware64.img": [
         "b42f6d4ca74073de6c038579b4a9323ad0a6b398"
+      ],
+      "QEMU/QEMU/kvmvapic.bin": [
+        "670c9cc79b4859944705eece710dc332188b79b4"
       ],
       "QEMU/kvmvapic.bin": [
         "670c9cc79b4859944705eece710dc332188b79b4"
       ],
+      "QEMU/QEMU/linuxboot.bin": [
+        "fd19bef7f5647960952520389f448364762ed948"
+      ],
       "QEMU/linuxboot.bin": [
         "fd19bef7f5647960952520389f448364762ed948"
+      ],
+      "QEMU/QEMU/linuxboot_dma.bin": [
+        "0bff50c10727bd9c85c831ea92b7a52699959992"
       ],
       "QEMU/linuxboot_dma.bin": [
         "0bff50c10727bd9c85c831ea92b7a52699959992"
       ],
+      "QEMU/QEMU/mips_bios.bin": [
+        "358abab78f3bfba72b7b45cb5dd66ce4411e2618"
+      ],
       "QEMU/mips_bios.bin": [
         "358abab78f3bfba72b7b45cb5dd66ce4411e2618"
+      ],
+      "QEMU/QEMU/mipsel_bios.bin": [
+        "daa15fb1b8829da5c5bd473243acf19cd0f17a74"
       ],
       "QEMU/mipsel_bios.bin": [
         "daa15fb1b8829da5c5bd473243acf19cd0f17a74"
       ],
+      "QEMU/QEMU/multiboot.bin": [
+        "a8b58ae464fc6fb26799432ae867bf57c546ff80"
+      ],
       "QEMU/multiboot.bin": [
         "a8b58ae464fc6fb26799432ae867bf57c546ff80"
+      ],
+      "QEMU/QEMU/multiboot_dma.bin": [
+        "32ab1cf336b674bfb154eb7a939a3e3275a92647"
       ],
       "QEMU/multiboot_dma.bin": [
         "32ab1cf336b674bfb154eb7a939a3e3275a92647"
       ],
+      "QEMU/QEMU/npcm7xx_bootrom.bin": [
+        "22a75d26a0591d2c7763765b6381fa2f73de43e1"
+      ],
       "QEMU/npcm7xx_bootrom.bin": [
         "22a75d26a0591d2c7763765b6381fa2f73de43e1"
+      ],
+      "QEMU/QEMU/npcm8xx_bootrom.bin": [
+        "732d7ebd8496debd6455f19db8e1d8d1a8be1f33"
       ],
       "QEMU/npcm8xx_bootrom.bin": [
         "732d7ebd8496debd6455f19db8e1d8d1a8be1f33"
       ],
+      "QEMU/QEMU/openbios-ppc": [
+        "0ef5051dcb318c0bc45d1908f8318d6eece8686a"
+      ],
       "QEMU/openbios-ppc": [
         "0ef5051dcb318c0bc45d1908f8318d6eece8686a"
+      ],
+      "QEMU/QEMU/openbios-sparc32": [
+        "5a4f2124c8f093f8aee99fbcebcf5d17d789ff26"
       ],
       "QEMU/openbios-sparc32": [
         "5a4f2124c8f093f8aee99fbcebcf5d17d789ff26"
       ],
+      "QEMU/QEMU/openbios-sparc64": [
+        "c6e215fe460629d35688ab8e51faf6f765827cd6"
+      ],
       "QEMU/openbios-sparc64": [
         "c6e215fe460629d35688ab8e51faf6f765827cd6"
+      ],
+      "QEMU/QEMU/opensbi-riscv32-generic-fw_dynamic.bin": [
+        "7a23dfdeef3d78ffc89d86e89fc06a36f1e4386f"
       ],
       "QEMU/opensbi-riscv32-generic-fw_dynamic.bin": [
         "7a23dfdeef3d78ffc89d86e89fc06a36f1e4386f"
       ],
+      "QEMU/QEMU/opensbi-riscv64-generic-fw_dynamic.bin": [
+        "6883bfd1991c0ef0d67b0967e7dcbd60420dd480"
+      ],
       "QEMU/opensbi-riscv64-generic-fw_dynamic.bin": [
         "6883bfd1991c0ef0d67b0967e7dcbd60420dd480"
+      ],
+      "QEMU/QEMU/palcode-clipper": [
+        "47b0870aaa45a7aa0d48847fd905908fb06f3e9f"
       ],
       "QEMU/palcode-clipper": [
         "47b0870aaa45a7aa0d48847fd905908fb06f3e9f"
       ],
+      "QEMU/QEMU/pegasos2.dtb": [
+        "a4c1a8d4b15ade6653364286a160759b5b4caa85"
+      ],
       "QEMU/pegasos2.dtb": [
         "a4c1a8d4b15ade6653364286a160759b5b4caa85"
+      ],
+      "QEMU/QEMU/petalogix-ml605.dtb": [
+        "892d265838866869b8a8ef104252ff5b2fda156f"
       ],
       "QEMU/petalogix-ml605.dtb": [
         "892d265838866869b8a8ef104252ff5b2fda156f"
       ],
+      "QEMU/QEMU/petalogix-s3adsp1800.dtb": [
+        "976600e3f89ecc1f3564b7077f53c58e0b565280"
+      ],
       "QEMU/petalogix-s3adsp1800.dtb": [
         "976600e3f89ecc1f3564b7077f53c58e0b565280"
+      ],
+      "QEMU/QEMU/pmon_2e.bin": [
+        "41c43f4e8956169ab7602230a3a63934b26d65de"
       ],
       "QEMU/pmon_2e.bin": [
         "41c43f4e8956169ab7602230a3a63934b26d65de"
       ],
+      "QEMU/QEMU/pnv-pnor.bin": [
+        "d8bf94da3e018ac22c1f63246acc3aa1e9a07992"
+      ],
       "QEMU/pnv-pnor.bin": [
         "d8bf94da3e018ac22c1f63246acc3aa1e9a07992"
+      ],
+      "QEMU/QEMU/pvh.bin": [
+        "c2191e6495103c1f43e9b6ca8930e44c2245e476"
       ],
       "QEMU/pvh.bin": [
         "c2191e6495103c1f43e9b6ca8930e44c2245e476"
       ],
+      "QEMU/QEMU/pxe-e1000.rom": [
+        "368e8e9827ae8757a7449319831078b6d5efb83f"
+      ],
       "QEMU/pxe-e1000.rom": [
         "368e8e9827ae8757a7449319831078b6d5efb83f"
+      ],
+      "QEMU/QEMU/pxe-eepro100.rom": [
+        "b19572c9c2a11f03282df81c0397aceed409a86c"
       ],
       "QEMU/pxe-eepro100.rom": [
         "b19572c9c2a11f03282df81c0397aceed409a86c"
       ],
+      "QEMU/QEMU/pxe-ne2k_pci.rom": [
+        "f37f43f89dc99afe0442ee0b7a431ee790ad6bf6"
+      ],
       "QEMU/pxe-ne2k_pci.rom": [
         "f37f43f89dc99afe0442ee0b7a431ee790ad6bf6"
+      ],
+      "QEMU/QEMU/pxe-pcnet.rom": [
+        "13a039bf9916f1db42d3a019591d372b4cf4aee9"
       ],
       "QEMU/pxe-pcnet.rom": [
         "13a039bf9916f1db42d3a019591d372b4cf4aee9"
       ],
+      "QEMU/QEMU/pxe-rtl8139.rom": [
+        "7b512c0a7a13bc3c254a25237e4d4612170f4391"
+      ],
       "QEMU/pxe-rtl8139.rom": [
         "7b512c0a7a13bc3c254a25237e4d4612170f4391"
+      ],
+      "QEMU/QEMU/pxe-virtio.rom": [
+        "3e3f77cfe70af904133db94f27ec24e3c9c43648"
       ],
       "QEMU/pxe-virtio.rom": [
         "3e3f77cfe70af904133db94f27ec24e3c9c43648"
       ],
+      "QEMU/QEMU/qboot.rom": [
+        "339d3a93c967491c9f1fffe963484386f48bd22c"
+      ],
       "QEMU/qboot.rom": [
         "339d3a93c967491c9f1fffe963484386f48bd22c"
+      ],
+      "QEMU/QEMU/qemu_vga.ndrv": [
+        "638c6262a6eb579ec3d1c9292566ac94c942dc15"
       ],
       "QEMU/qemu_vga.ndrv": [
         "638c6262a6eb579ec3d1c9292566ac94c942dc15"
       ],
+      "QEMU/QEMU/s390-ccw.img": [
+        "7b4fa888d32ca8ddbc752f7442e4d055cee1871a"
+      ],
       "QEMU/s390-ccw.img": [
         "7b4fa888d32ca8ddbc752f7442e4d055cee1871a"
+      ],
+      "QEMU/QEMU/s390-netboot.img": [
+        "f6cec671408117bd9a31e982682662f27ef4fb2c"
       ],
       "QEMU/s390-netboot.img": [
         "f6cec671408117bd9a31e982682662f27ef4fb2c"
       ],
+      "QEMU/QEMU/skiboot.lid": [
+        "8052069aa9714c23be05b4e62fb245a3d572cb0f"
+      ],
       "QEMU/skiboot.lid": [
         "8052069aa9714c23be05b4e62fb245a3d572cb0f"
+      ],
+      "QEMU/QEMU/slof.bin": [
+        "a03a94acfe555804d66cc6c74760ae1375a71a64"
       ],
       "QEMU/slof.bin": [
         "a03a94acfe555804d66cc6c74760ae1375a71a64"
       ],
+      "QEMU/QEMU/u-boot-sam460-20100605.bin": [
+        "0399a79ac0cf77f0da70af9baec7548a3b368f0a"
+      ],
       "QEMU/u-boot-sam460-20100605.bin": [
         "0399a79ac0cf77f0da70af9baec7548a3b368f0a"
+      ],
+      "QEMU/QEMU/u-boot.bin": [
+        "2aa01b414a703880192277f9ce0dae193e9d2c8d"
       ],
       "QEMU/u-boot.bin": [
         "2aa01b414a703880192277f9ce0dae193e9d2c8d"
       ],
+      "QEMU/QEMU/u-boot.e500": [
+        "9ea03f249f856cdcb4399cc1f5a5031729379911"
+      ],
       "QEMU/u-boot.e500": [
         "9ea03f249f856cdcb4399cc1f5a5031729379911"
+      ],
+      "QEMU/QEMU/vgabios-ati.bin": [
+        "ded141cacdebf557ec552597cbf57cd989cec3e2"
       ],
       "QEMU/vgabios-ati.bin": [
         "ded141cacdebf557ec552597cbf57cd989cec3e2"
       ],
+      "QEMU/QEMU/vgabios-bochs-display.bin": [
+        "9e2edd3d835219cde63a20e2cd58107d7e96ef5b"
+      ],
       "QEMU/vgabios-bochs-display.bin": [
         "9e2edd3d835219cde63a20e2cd58107d7e96ef5b"
+      ],
+      "QEMU/QEMU/vgabios-cirrus.bin": [
+        "883eb2657ce29661a0466b6b41ce75411f37aad9"
       ],
       "QEMU/vgabios-cirrus.bin": [
         "883eb2657ce29661a0466b6b41ce75411f37aad9"
       ],
+      "QEMU/QEMU/vgabios-qxl.bin": [
+        "527227abd5f3348c382d4b02703389fbeb83b067"
+      ],
       "QEMU/vgabios-qxl.bin": [
         "527227abd5f3348c382d4b02703389fbeb83b067"
+      ],
+      "QEMU/QEMU/vgabios-ramfb.bin": [
+        "49df9be557f0f0277c8fedb889257e279586d536"
       ],
       "QEMU/vgabios-ramfb.bin": [
         "49df9be557f0f0277c8fedb889257e279586d536"
       ],
+      "QEMU/QEMU/vgabios-stdvga.bin": [
+        "87fbc0ecb1ee7d4d8c8c88c7d8a2fb3ec8f99ea5"
+      ],
+      "QEMU/QEMU/vgabios-virtio.bin": [
+        "cddc53b94793609d1e837d78cd5468fcc1ed9164"
+      ],
       "QEMU/vgabios-virtio.bin": [
         "cddc53b94793609d1e837d78cd5468fcc1ed9164"
+      ],
+      "QEMU/QEMU/vgabios-vmware.bin": [
+        "c54901ab8f526ab201ebf1b3ecdf711e38e6c259"
       ],
       "QEMU/vgabios-vmware.bin": [
         "c54901ab8f526ab201ebf1b3ecdf711e38e6c259"
       ],
+      "QEMU/QEMU/vgabios.bin": [
+        "63d87e2a6618c3a9b2aabecf03ac2456e5e63410"
+      ],
+      "QEMU/QEMU/virtex-ml507.dtb": [
+        "1dd1b6fd8cb47b055c729cbecda56fe1dc83d6c1"
+      ],
       "QEMU/virtex-ml507.dtb": [
         "1dd1b6fd8cb47b055c729cbecda56fe1dc83d6c1"
       ],
+      "QEMU/QEMU/vof-nvram.bin": [
+        "5d1184609b87f78635f0575467a1c3f440900ff0"
+      ],
       "QEMU/vof-nvram.bin": [
         "5d1184609b87f78635f0575467a1c3f440900ff0"
+      ],
+      "QEMU/QEMU/vof.bin": [
+        "fc737b34a390f5752cb7e35b33d71f4f438ab607"
       ],
       "QEMU/vof.bin": [
         "fc737b34a390f5752cb7e35b33d71f4f438ab607"
@@ -556221,16 +556421,28 @@
       "Pro-1000/pro1000.zip": [
         "94e1e19004b2d87735b6874d07d9ca2cca2b418c"
       ],
-      "Roland/CM32L_CONTROL.ROM": [
+      "Roland/CM-32L/CM32L_CONTROL.ROM": [
         "a439fbb390da38cada95a7cbb1d6ca199cd66ef8"
       ],
-      "Roland/CM32L_PCM.ROM": [
+      "CM-32L/CM32L_CONTROL.ROM": [
+        "a439fbb390da38cada95a7cbb1d6ca199cd66ef8"
+      ],
+      "Roland/CM-32L/CM32L_PCM.ROM": [
         "289cc298ad532b702461bfc738009d9ebe8025ea"
       ],
-      "Roland/MT32_CONTROL.ROM": [
+      "CM-32L/CM32L_PCM.ROM": [
+        "289cc298ad532b702461bfc738009d9ebe8025ea"
+      ],
+      "Roland/MT-32/MT32_CONTROL.ROM": [
         "b083518fffb7f66b03c23b7eb4f868e62dc5a987"
       ],
-      "Roland/MT32_PCM.ROM": [
+      "MT-32/MT32_CONTROL.ROM": [
+        "b083518fffb7f66b03c23b7eb4f868e62dc5a987"
+      ],
+      "Roland/MT-32/MT32_PCM.ROM": [
+        "f6b1eebc4b2d200ec6d3d21d51325d5b48c60252"
+      ],
+      "MT-32/MT32_PCM.ROM": [
         "f6b1eebc4b2d200ec6d3d21d51325d5b48c60252"
       ],
       "Roland/mt32-roms/ctrl_cm32l_1_00.rom": [
@@ -557501,6 +557713,12 @@
       ],
       "Beena/beena.zip": [
         "f63eca9a1b1e92ee1582ff5e4c0db55193f97e33"
+      ],
+      "Sega/Chihiro/cerbios.bin": [
+        "5996972d3e033f6c525c1988c563b4ffe4c58f22"
+      ],
+      "Chihiro/cerbios.bin": [
+        "5996972d3e033f6c525c1988c563b4ffe4c58f22"
       ],
       "Sega/Chihiro/fpr-23887_29lv160te.ic4": [
         "77197fba2781ed1d81402c48bd743adb26d3161a"
@@ -561434,6 +561652,135 @@
       ],
       "VIS/vis.zip": [
         "beff39b4edb449c66b704e1c64ee6ed58e30a868"
+      ],
+      "Tangerine/Oric/8dos2.rom": [
+        "746a2996967282281a980842a93642ad7d740f9e"
+      ],
+      "Oric/8dos2.rom": [
+        "746a2996967282281a980842a93642ad7d740f9e"
+      ],
+      "Tangerine/Oric/Bas122de.pch": [
+        "3e8f851df9319891fb9849c922437468df98915d"
+      ],
+      "Oric/Bas122de.pch": [
+        "3e8f851df9319891fb9849c922437468df98915d"
+      ],
+      "Tangerine/Oric/Bas122fr.pch": [
+        "c92aa5e5fedf94a01519867fd8235f33731b8191"
+      ],
+      "Oric/Bas122fr.pch": [
+        "c92aa5e5fedf94a01519867fd8235f33731b8191"
+      ],
+      "Tangerine/Oric/Bas122uk.pch": [
+        "ee9dc592128ff337be5ef0bfb6d059752296b445"
+      ],
+      "Oric/Bas122uk.pch": [
+        "ee9dc592128ff337be5ef0bfb6d059752296b445"
+      ],
+      "Tangerine/Oric/Oric/colour.rom": [
+        "bda81f64be319d8793d284bf9d40f01d19b33515"
+      ],
+      "Oric/Oric/colour.rom": [
+        "bda81f64be319d8793d284bf9d40f01d19b33515"
+      ],
+      "Oric/colour.rom": [
+        "bda81f64be319d8793d284bf9d40f01d19b33515"
+      ],
+      "Tangerine/Oric/basic10.pch": [
+        "6c62326403ecdf3d120fa7ffea47f4f1d5b40020"
+      ],
+      "Oric/basic10.pch": [
+        "6c62326403ecdf3d120fa7ffea47f4f1d5b40020"
+      ],
+      "Tangerine/Oric/basic10.rom": [
+        "333116e6884d85aaa4dfc7578a91cceeea66d016"
+      ],
+      "Oric/basic10.rom": [
+        "333116e6884d85aaa4dfc7578a91cceeea66d016"
+      ],
+      "Tangerine/Oric/basic11b.rom": [
+        "9451a1a09d8f75944dbd6f91193fc360f1de80ac"
+      ],
+      "Oric/basic11b.rom": [
+        "9451a1a09d8f75944dbd6f91193fc360f1de80ac"
+      ],
+      "Tangerine/Oric/bd500.rom": [
+        "447975ed022379fb6b80a22fa37c2d188ca3aa88"
+      ],
+      "Oric/bd500.rom": [
+        "447975ed022379fb6b80a22fa37c2d188ca3aa88"
+      ],
+      "Tangerine/Oric/empty_orix.rom": [
+        "e7c32e4f75a58c87de1672e4dbd0794083535a60"
+      ],
+      "Oric/empty_orix.rom": [
+        "e7c32e4f75a58c87de1672e4dbd0794083535a60"
+      ],
+      "Tangerine/Oric/hyperbas.rom": [
+        "f5f70a0eb59f8cd6c261e179ae78ef906f68ed63"
+      ],
+      "Oric/hyperbas.rom": [
+        "f5f70a0eb59f8cd6c261e179ae78ef906f68ed63"
+      ],
+      "Tangerine/Oric/jasmin.rom": [
+        "70e59b8abd67092f050462abc6cb5271e4c15f01"
+      ],
+      "Oric/jasmin.rom": [
+        "70e59b8abd67092f050462abc6cb5271e4c15f01"
+      ],
+      "Tangerine/Oric/kernel.rom": [
+        "01f7a84d5a1973623eabd2be6c2cbac1ce5096a6"
+      ],
+      "Oric/kernel.rom": [
+        "01f7a84d5a1973623eabd2be6c2cbac1ce5096a6"
+      ],
+      "Tangerine/Oric/microdis.rom": [
+        "0d2ef6e67322f48f4b7e08d8bbe68827e2074561"
+      ],
+      "Oric/microdis.rom": [
+        "0d2ef6e67322f48f4b7e08d8bbe68827e2074561"
+      ],
+      "Tangerine/Oric/pravetz.rom": [
+        "7afc276cb118adff72e4f16698f94bf3b2c64146"
+      ],
+      "Oric/pravetz.rom": [
+        "7afc276cb118adff72e4f16698f94bf3b2c64146"
+      ],
+      "Tangerine/Oric/pravetzt.pch": [
+        "3dd12d7ba54fee06a7e20dadb2c278a23a17af50"
+      ],
+      "Oric/pravetzt.pch": [
+        "3dd12d7ba54fee06a7e20dadb2c278a23a17af50"
+      ],
+      "Tangerine/Oric/shell.rom": [
+        "926b95e1cb574d4914dbed0681729a7c1a4bc68d"
+      ],
+      "Oric/shell.rom": [
+        "926b95e1cb574d4914dbed0681729a7c1a4bc68d"
+      ],
+      "Tangerine/Oric/teleass.rom": [
+        "9e9af51dae3199cccf49ab3f0d47e2b9be4ba97d"
+      ],
+      "Oric/teleass.rom": [
+        "9e9af51dae3199cccf49ab3f0d47e2b9be4ba97d"
+      ],
+      "Tangerine/Oric/telmatic.rom": [
+        "35f92a0477a88f5cf564971125047ffcfa02ec10"
+      ],
+      "Oric/telmatic.rom": [
+        "35f92a0477a88f5cf564971125047ffcfa02ec10"
+      ],
+      "Tangerine/Oric/telmon24.pch": [
+        "d8ce5b1405b6428969493efeb6f3aa2027c41bdc"
+      ],
+      "Oric/telmon24.pch": [
+        "d8ce5b1405b6428969493efeb6f3aa2027c41bdc"
+      ],
+      "Tangerine/Oric/telmon24.rom": [
+        "86fc8dc0932f983efa199e31ae05a4424772f959"
+      ],
+      "Oric/telmon24.rom": [
+        "86fc8dc0932f983efa199e31ae05a4424772f959"
       ],
       "Texas Instruments/TI-83/TI83_102.rom": [
         "ce08f6a808701fc6672230a790167ee485157561"
@@ -580706,12 +581053,6 @@
       "scerts/CACERT_NINTENDO_CA.der": [
         "b5229455dd26c1f53c73060e9089b391389e1f75"
       ],
-      "Oric/Oric/pravetzt.rom": [
-        "7afc276cb118adff72e4f16698f94bf3b2c64146"
-      ],
-      "Oric/pravetzt.rom": [
-        "7afc276cb118adff72e4f16698f94bf3b2c64146"
-      ],
       "Other/SquirrelJME/squirreljme-0.3.0-test.jar": [
         "600cf0440594b0c69339ba4b626a47288b342d77"
       ],
@@ -594115,6 +594456,12 @@
       ],
       "Oric/microdisc.rom": [
         "0d2ef6e67322f48f4b7e08d8bbe68827e2074561"
+      ],
+      "Tangerine/Oric/pravetzt.rom": [
+        "7afc276cb118adff72e4f16698f94bf3b2c64146"
+      ],
+      "Oric/pravetzt.rom": [
+        "7afc276cb118adff72e4f16698f94bf3b2c64146"
       ],
       "ZC/ZC210/zc210/sf2/custom0.sf2": [
         "286b2e1fb21cc79851da01666db6c0b0e88f25e3"
