@@ -155,8 +155,8 @@ class SampleCoresLeaveTheNavigation(unittest.TestCase):
         self.assertEqual(nav[0], "emulators/index.md")
         groups = {next(iter(group)): next(iter(group.values())) for group in nav[1:]}
         self.assertEqual(groups, {
-            "D to F": [{"DuckStation": "emulators/duckstation.md"}],
-            "V to Z": [{"zx81": "emulators/zx.md"}],
+            "D": [{"DuckStation": "emulators/duckstation.md"}],
+            "Z": [{"zx81": "emulators/zx.md"}],
         })
 
 

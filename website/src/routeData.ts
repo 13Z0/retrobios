@@ -1,63 +1,70 @@
-// What each page knows of its place in the site, computed once per page:
-// - breadcrumbs: the tab and the groups above the page;
-// - previous and next: the reading order runs on from one tab into the next,
-//   so the last Start here page leads to Your setup;
-// - a pruned sidebar: a group that does not hold the page becomes one link
-//   to its first page, so an emulator page does not carry the 600 links of
-//   every other emulator (the equivalent of Material's navigation.prune).
+// What each page knows of its place in the site, computed once per page
+// from what scripts/sitestarlight.py writes beside the sidebar:
+// - breadcrumbs: the tab and the groups above the page, each linked to the
+//   page or the section that introduces it, never to a sibling page;
+// - previous and next: the reading order of `reading`. Start here runs on
+//   into Your setup, every other tab is read on its own, and a system,
+//   emulator or platform page has none;
+// - a pruned sidebar: in the tabs listing every system and emulator, a
+//   group that does not hold the page becomes one link to its overview, so
+//   an emulator page does not carry the links of every other emulator. The
+//   groups of the other tabs stay groups.
 import { defineRouteMiddleware, type StarlightRouteData } from '@astrojs/starlight/route-data';
 import sidebar from './generated/sidebar.json' with { type: 'json' };
 
 type Entry = StarlightRouteData['sidebar'][number];
 type Link = Extract<Entry, { type: 'link' }>;
-type Item = { label: string; link?: string; items?: Item[] };
+type Group = { href: string | null; prune: boolean };
 export type Crumb = { label: string; href?: string };
 
 const BASE = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 const withBase = (link: string) => (link.startsWith(BASE) ? link : BASE + link.replace(/^\//, ''));
 
-const flatten = (items: Item[]): { label: string; link: string }[] =>
-	items.flatMap((item) => (item.items ? flatten(item.items) : item.link && !item.link.startsWith('http') ? [{ label: item.label, link: item.link }] : []));
+const GROUPS = sidebar.groups as Record<string, Group>;
+const RUNS = sidebar.reading as { label: string; link: string }[][];
 
-// Every listed page in reading order, tab after tab.
-const READING_ORDER = sidebar.topics.flatMap((topic) =>
-	flatten(topic.items as Item[]).map((entry) => ({ ...entry, label: entry.label === 'Overview' ? topic.label : entry.label })),
-);
+const groupOf = (trail: string[]): Group | undefined => GROUPS[trail.join('/')];
 
 const holdsCurrent = (entry: Entry): boolean =>
 	entry.type === 'link' ? entry.isCurrent : entry.entries.some(holdsCurrent);
 
-const firstLink = (entry: Entry): string | undefined =>
-	entry.type === 'link' ? entry.href : entry.entries.map(firstLink).find(Boolean);
-
-const prune = (entries: Entry[]): Entry[] =>
+const prune = (entries: Entry[], trail: string[]): Entry[] =>
 	entries.map((entry) => {
 		if (entry.type === 'link') return entry;
-		if (holdsCurrent(entry)) return { ...entry, collapsed: false, entries: prune(entry.entries) };
-		const href = firstLink(entry);
-		return href ? { type: 'link', label: entry.label, href, isCurrent: false, badge: entry.badge, attrs: {} } : entry;
+		const here = [...trail, entry.label];
+		if (holdsCurrent(entry)) return { ...entry, collapsed: false, entries: prune(entry.entries, here) };
+		const group = groupOf(here);
+		if (group?.prune && group.href) {
+			return { type: 'link', label: entry.label, href: withBase(group.href), isCurrent: false, badge: entry.badge, attrs: {} };
+		}
+		return { ...entry, entries: prune(entry.entries, here) };
 	});
 
 // The groups above the current page, outermost first.
-const trail = (entries: Entry[], path: string): Crumb[] | undefined => {
+const trail = (entries: Entry[], labels: string[]): Crumb[] | undefined => {
 	for (const entry of entries) {
 		if (entry.type === 'link') {
 			if (entry.isCurrent) return [];
 			continue;
 		}
-		const below = trail(entry.entries, path);
-		if (below) return [{ label: entry.label, href: firstLink(entry) }, ...below];
+		const here = [...labels, entry.label];
+		const below = trail(entry.entries, here);
+		if (below) {
+			const href = groupOf(here)?.href;
+			return [{ label: entry.label, href: href ? withBase(href) : undefined }, ...below];
+		}
 	}
 	return undefined;
 };
 
 // A page the navigation does not list (part of a split page) sits under the
 // group holding the pages of its folder.
-const folderTrail = (entries: Entry[], folder: string): Crumb[] => {
+const folderTrail = (entries: Entry[], labels: string[], folder: string): Crumb[] => {
+	const links = (entry: Entry): string[] => (entry.type === 'link' ? [entry.href] : entry.entries.flatMap(links));
 	for (const entry of entries) {
-		if (entry.type !== 'group') continue;
-		const links = entry.entries.map(firstLink).filter(Boolean) as string[];
-		if (links.some((href) => href.startsWith(folder))) return [{ label: entry.label, href: links[0] }];
+		if (entry.type !== 'group' || !links(entry).some((href) => href.startsWith(folder))) continue;
+		const href = groupOf([...labels, entry.label])?.href;
+		return [{ label: entry.label, href: href ? withBase(href) : undefined }];
 	}
 	return [];
 };
@@ -78,19 +85,28 @@ export const onRequest = defineRouteMiddleware(async (context, next) => {
 
 	const topic = context.locals.starlightSidebarTopics?.topics.find((t) => t.isCurrent);
 	const crumbs: Crumb[] = [];
-	if (topic && withBase(topic.link) !== path) {
+	if (topic && withBase(topic.link) !== path && route.id !== '404') {
 		crumbs.push({ label: topic.label, href: withBase(topic.link) });
 		const segments = path.slice(BASE.length).split('/').filter(Boolean);
-		const groups = trail(route.sidebar, path) ?? (segments.length > 1 ? folderTrail(route.sidebar, `${BASE}${segments[0]}/`) : []);
-		crumbs.push(...groups.filter((crumb) => crumb.href !== path));
+		const groups =
+			trail(route.sidebar, [topic.label]) ??
+			(segments.length > 1 ? folderTrail(route.sidebar, [topic.label], `${BASE}${segments[0]}/`) : []);
+		for (const crumb of groups) {
+			// A group introduced by the page itself is the page; one with no
+			// section of its own (the initial D of the emulators) adds nothing
+			// to the crumb before it.
+			if (crumb.href === path) continue;
+			if (crumb.href && crumb.href === crumbs.at(-1)?.href) continue;
+			crumbs.push(crumb);
+		}
 	}
 	context.locals.rbBreadcrumbs = crumbs;
 
-	const position = READING_ORDER.findIndex((entry) => withBase(entry.link) === path);
-	if (position !== -1) {
-		if (!route.pagination.prev && position > 0) route.pagination.prev = asLink(READING_ORDER[position - 1]);
-		if (!route.pagination.next && position < READING_ORDER.length - 1) route.pagination.next = asLink(READING_ORDER[position + 1]);
-	}
+	const { prev, next: following } = route.entry.data;
+	const run = RUNS.find((pages) => pages.some((entry) => withBase(entry.link) === path));
+	const position = run ? run.findIndex((entry) => withBase(entry.link) === path) : -1;
+	if (prev === undefined) route.pagination.prev = run && position > 0 ? asLink(run[position - 1]) : undefined;
+	if (following === undefined) route.pagination.next = run && position < run.length - 1 ? asLink(run[position + 1]) : undefined;
 
-	route.sidebar = prune(route.sidebar);
+	route.sidebar = prune(route.sidebar, [topic?.label ?? '']);
 });

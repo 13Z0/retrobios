@@ -134,18 +134,19 @@ class APlatformSystemOverItsBudgetMoves(unittest.TestCase):
 
 
 class TheNavigationOpensOneInitial(unittest.TestCase):
-    def test_a_group_of_several_initials_is_nested(self):
+    def test_one_group_per_initial_one_level_deep(self):
         profiles = {
             key: {"emulator": name, "systems": ["s"]}
-            for key, name in (("a1", "Alpha"), ("b1", "Beta"), ("b2", "bravo"), ("z", "Zed"))
+            for key, name in (("a1", "Alpha"), ("b1", "Beta"), ("b2", "bravo"), ("z", "Zed"),
+                              ("n", "2ship"))
         }
         nav = generate_site._emulator_nav(profiles)
-        groups = {next(iter(g)): next(iter(g.values())) for g in nav[1:]}
-        self.assertEqual(groups["A to C"], [
+        self.assertEqual(nav[1:], [
+            {"0 to 9": [{"2ship": "emulators/n.md"}]},
             {"A": [{"Alpha": "emulators/a1.md"}]},
             {"B": [{"Beta": "emulators/b1.md"}, {"bravo": "emulators/b2.md"}]},
+            {"Z": [{"Zed": "emulators/z.md"}]},
         ])
-        self.assertEqual(groups["V to Z"], [{"Zed": "emulators/z.md"}])
 
 
 class TheTableOfContentsOfACardPageStopsAtLevelTwo(unittest.TestCase):

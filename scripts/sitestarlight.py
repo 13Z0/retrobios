@@ -311,14 +311,33 @@ def og_section(rel: str, level: str) -> str:
     return "reference"
 
 
+# Sharing cards of their own, made by scripts/make_og_cards.py: one per
+# platform page, titled with the platform's name.
+OG_DIR = Path(__file__).resolve().parent.parent / "docs_assets" / "og"
+
+
+def og_image(rel: str, level: str) -> str:
+    """The sharing card's address: the page's own when it has one, else
+    its section's."""
+    own = re.fullmatch(r"platforms/([a-z0-9_-]+)\.md", rel)
+    if own and own[1] != "index" and (OG_DIR / "platforms" / f"{own[1]}.png").is_file():
+        return f"{SITE_URL}assets/og/platforms/{own[1]}.png"
+    return f"{SITE_URL}assets/og/{og_section(rel, level)}.png"
+
+
+NOT_FOUND = "404.md"
+
+
 def page_head(rel: str, level: str, title: str, browser_title: str, structured: dict) -> list[dict]:
-    """What a page adds to its head: its own window title, the sharing
-    card of its section, and its structured data."""
-    section = og_section(rel, level)
-    image = f"{SITE_URL}assets/og/{section}.png"
+    """What a page adds to its head: its own window title, its sharing
+    card (og_image), and its structured data. The page a stale link
+    lands on asks not to be indexed and describes nothing."""
     head: list[dict] = []
     if browser_title != title:
         head.append({"tag": "title", "content": f"{browser_title} - RetroBIOS"})
+    if rel == NOT_FOUND:
+        return head + [{"tag": "meta", "attrs": {"name": "robots", "content": "noindex"}}]
+    image = og_image(rel, level)
     head += [
         {"tag": "meta", "attrs": {"property": "og:image", "content": image}},
         {"tag": "meta", "attrs": {"property": "og:image:width", "content": "1200"}},
@@ -359,6 +378,21 @@ def file_names_meta(body: str) -> str:
     if not names:
         return ""
     return f'\n<span data-pagefind-meta="files" hidden>{html.escape(" ".join(names))}</span>\n'
+
+
+_NEXT_STEPS = re.compile(r"^## Next steps\b[^\n]*\n+(?P<list>(?:[ \t]*[-*] .*\n?)+)", re.M)
+
+
+def next_step(body: str) -> dict | None:
+    """The first link of the page's "Next steps" list, as the theme's
+    `next:` front matter."""
+    match = _NEXT_STEPS.search(body)
+    if not match:
+        return None
+    link = MD_LINK.search(match["list"])
+    if not link or link["bang"]:
+        return None
+    return {"link": link["url"], "label": re.sub(r"[*_`]", "", link["text"]).strip()}
 
 
 def finalize_page(
@@ -414,7 +448,9 @@ def finalize_page(
         front["level"] = level
     if weight:
         front["searchWeight"] = weight
-    if rel.startswith(CARD_PAGES):
+    if rel == NOT_FOUND:
+        front["tableOfContents"] = False
+    elif rel.startswith(CARD_PAGES):
         sections = len(re.findall(r"^## ", body, re.M))
         # A page of cards under one or two headings has nothing to list, and
         # the table of contents watches every block of the page to follow
@@ -423,6 +459,13 @@ def finalize_page(
             {"minHeadingLevel": 2, "maxHeadingLevel": 2} if sections > 2 else False)
     if not search:
         front["pagefind"] = False
+    step = next_step(body)
+    if rel == NOT_FOUND or not reads_in_order(rel):
+        front["prev"] = False
+        front["next"] = False
+    elif step:
+        # The page's own "Next steps" list and the next link agree.
+        front["next"] = step
     front["head"] = page_head(rel, level, front["title"], browser_title, structured)
     if structured.get("dateModified"):
         front["lastmod"] = str(structured["dateModified"])
@@ -436,15 +479,62 @@ def _sidebar_link(rel: str) -> str:
     return page_url(rel)[len(BASE) - 1:]
 
 
-def sidebar(nav: list, present: set[str]) -> dict:
-    """The navigation as Starlight topics, one per tab.
+# Tabs whose groups hold pages by the hundred (every system, every
+# emulator): a group that does not hold the current page is drawn as one
+# link to its overview, so an emulator page does not carry the links of
+# every other emulator.
+PRUNED_TABS = ("explore",)
+
+# Reading runs from one tab into the next only here: the last Start here
+# page leads to Your setup. Every other tab is read on its own.
+CHAINED_TABS = (("start-here", "your-setup"),)
+
+
+def topic_id(label: str) -> str:
+    return re.sub(r"[^a-z]+", "-", label.lower()).strip("-")
+
+
+def heading_ids(text: str) -> set[str]:
+    """The anchors a page's headings carry, as written by pin_heading_ids."""
+    ids = {match[1] for match in re.finditer(r"\{[^{}\n]*#([^\s}]+)[^{}\n]*\}[ \t]*$", text, re.M)}
+    return ids | {match["id"] for match in ID_ATTR.finditer(text)}
+
+
+def reads_in_order(rel: str) -> bool:
+    """A page the previous and next links pass through. A system, emulator
+    or platform page is reached by its name, not read after its neighbour
+    in the alphabet: "SNK, Sony, Sord" is no reading order."""
+    return not rel.startswith(CARD_PAGES) or rel.endswith("/index.md")
+
+
+def sidebar(nav: list, present: set[str], anchors: dict[str, set[str]] | None = None) -> dict:
+    """The navigation as Starlight topics, one per tab, with what the route
+    middleware (website/src/routeData.ts) reads beside it.
 
     A page the navigation does not list (the parts of a split page) joins
     the topic that holds most pages of its directory.
-    """
-    owner: dict[str, str] = {}
 
-    def item(entry: object, topic: str) -> dict | None:
+    `groups` gives each group, keyed by the labels from its tab down, the
+    page that introduces it: its own overview page, or the heading named
+    after it on the overview above it (`anchors` lists each page's heading
+    ids). A group with neither has no address, never the address of its
+    first page, which is a sibling of the page being read. `prune` marks the
+    groups drawn as one link when they do not hold the current page.
+
+    `reading` is the order of the previous and next links, one list per run
+    of tabs read in sequence.
+    """
+    anchors = anchors or {}
+    owner: dict[str, str] = {}
+    groups: dict[str, dict] = {}
+
+    def label_of(entry: object) -> str:
+        return next(iter(entry)) if isinstance(entry, dict) else ""
+
+    def overview_of(value: list) -> str | None:
+        return next((v for v in value if isinstance(v, str)), None)
+
+    def item(entry: object, topic: str, trail: tuple[str, ...], parent: str | None) -> dict | None:
         if isinstance(entry, str):
             owner[entry] = topic
             return {"label": "Overview", "link": _sidebar_link(entry)} if entry in present else None
@@ -454,14 +544,33 @@ def sidebar(nav: list, present: set[str]) -> dict:
                 return {"label": label, "link": value}
             owner[value] = topic
             return {"label": label, "link": _sidebar_link(value)} if value in present else None
-        children = [child for child in (item(v, topic) for v in value) if child]
-        return {"label": label, "items": children, "collapsed": True} if children else None
+        if "/" in label:
+            raise ValueError(f"a navigation group label holds a slash: {label!r}")
+        own = overview_of(value)
+        here = (*trail, label)
+        href = None
+        if own and own in present:
+            href = page_url(own)
+        elif parent and parent in present:
+            anchor = toc_slug(label)
+            if anchor in anchors.get(parent, set()):
+                href = f"{page_url(parent)}#{anchor}"
+            elif topic in PRUNED_TABS:
+                # Drawn as a link, it needs an address: the overview it
+                # sits under, never one of its own pages.
+                href = page_url(parent)
+        children = [child for child in (item(v, topic, here, own or parent) for v in value) if child]
+        if not children:
+            return None
+        groups["/".join(here)] = {"href": href, "prune": topic in PRUNED_TABS and href is not None}
+        return {"label": label, "items": children, "collapsed": True}
 
     topics = []
     for tab in nav:
         (label, value), = tab.items()
-        topic = re.sub(r"[^a-z]+", "-", label.lower()).strip("-")
-        children = [child for child in (item(v, topic) for v in value) if child]
+        topic = topic_id(label)
+        children = [child for child in (item(v, topic, (label,), overview_of(value)) for v in value)
+                    if child]
         if children:
             topics.append({"id": topic, "label": label, "link": next(_links(children))["link"],
                            "items": children})
@@ -470,9 +579,11 @@ def sidebar(nav: list, present: set[str]) -> dict:
     for rel, topic in owner.items():
         tally = votes.setdefault(rel.rpartition("/")[0], {})
         tally[topic] = tally.get(topic, 0) + 1
-    extra: dict[str, list[str]] = {}
-    # The page a stale link lands on belongs to no tab.
-    exclude: list[str] = ["/404"]
+    # The page a stale link lands on opens on the first tab: its sidebar
+    # is the way back in. Excluded from every tab, the theme named the tabs
+    # by their position, 0 to 4.
+    extra: dict[str, list[str]] = {topics[0]["id"]: ["/404"]} if topics else {}
+    exclude: list[str] = []
     for rel in sorted(present - owner.keys()):
         tally = votes.get(rel.rpartition("/")[0])
         path = "/" + (_sidebar_link(rel).strip("/") or "index")
@@ -480,7 +591,70 @@ def sidebar(nav: list, present: set[str]) -> dict:
             extra.setdefault(max(tally, key=tally.get), []).append(path)
         else:
             exclude.append(path)
-    return {"topics": topics, "options": {"topics": extra, "exclude": exclude}}
+    return {"topics": topics, "options": {"topics": extra, "exclude": exclude},
+            "groups": groups, "reading": _reading(nav, present)}
+
+
+def _reading(nav: list, present: set[str]) -> list[list[dict]]:
+    """The previous and next links, in runs. An overview is named after the
+    group or tab it opens ("Your setup", not "Overview")."""
+    def walk(value: list, name: str) -> Iterator[dict]:
+        for entry in value:
+            if isinstance(entry, str):
+                if entry in present and reads_in_order(entry):
+                    yield {"label": name, "link": page_url(entry)}
+                continue
+            (label, target), = entry.items()
+            if isinstance(target, list):
+                yield from walk(target, label)
+            elif not target.startswith("http") and target in present and reads_in_order(target):
+                yield {"label": label, "link": page_url(target)}
+
+    tabs = {topic_id(label): list(walk(value, label))
+            for tab in nav for label, value in tab.items()}
+    runs: list[list[dict]] = []
+    previous = ""
+    for tab, pages in tabs.items():
+        if runs and (previous, tab) in CHAINED_TABS:
+            runs[-1].extend(pages)
+        else:
+            runs.append(list(pages))
+        previous = tab
+    return [run for run in runs if run]
+
+
+# Addresses that once held a page, and where its content went.
+MOVED_PAGES = {"wiki/getting-started.md": "which-pack.md"}
+
+_CORE_NAME = re.compile(r"[a-z0-9_-]+")
+
+
+def redirects(profiles: dict, present: set[str]) -> dict[str, str]:
+    """Old and alternative addresses, for src/generated/redirects.json.
+
+    A page that moved, once its source is gone, and each name a profile's
+    `cores:` gives the emulator (the buildbot's `mednafen_psx` for
+    beetle_psx), to the profile's page. A name two profiles claim, or one
+    that is already a page's address, is left out. Addresses are written
+    under the site root, without its base."""
+    def address(rel: str) -> str:
+        return "/" + page_url(rel)[len(BASE):]
+
+    out = {address(old): address(new) for old, new in MOVED_PAGES.items()
+           if old not in present and new in present}
+    pages = {rel.casefold() for rel in present}
+    claims: dict[str, set[str]] = {}
+    for key, profile in profiles.items():
+        if f"emulators/{key}.md" not in present:
+            continue
+        for name in profile.get("cores") or []:
+            name = str(name)
+            if _CORE_NAME.fullmatch(name) and name != key:
+                claims.setdefault(name, set()).add(key)
+    for name, keys in sorted(claims.items()):
+        if len(keys) == 1 and f"emulators/{name}.md".casefold() not in pages:
+            out[address(f"emulators/{name}.md")] = address(f"emulators/{next(iter(keys))}.md")
+    return out
 
 
 def _links(items: list[dict]) -> Iterator[dict]:
