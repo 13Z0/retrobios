@@ -38,12 +38,12 @@ the ZIPs inside zipped, like `neogeo.zip`.
 
 ## Does a BIOS work on every setup?
 
-Usually. The command installs each setup's own version, like its `neogeo.zip`.
+Usually. The command installs each setup's own, like its `neogeo.zip`.
 
-## My arcade game does not start
+## My arcade game fails (which MAME version?) { #my-arcade-game-does-not-start }
 
-The game set must match the emulator's version, and `neogeo.zip` stays zipped.
-Reference: [Which version each emulator reads](technical-faq.md#which-mame-version-do-the-arcade-bios-sets-match).
+Game sets must match the emulator's version:
+[the list](technical-faq.md#which-mame-version-do-the-arcade-bios-sets-match).
 
 ## Keys, firmware or BIOS?
 
@@ -58,8 +58,7 @@ Sometimes, with an emulator's stand-in, but some games fail.
 
 ## Is the command safe? { #is-piping-the-installer-into-a-shell-safe }
 
-- It stops if the installer does not match its expected fingerprint, and checks
-  each file.
+- It checks the installer and each file against their fingerprints.
 - It writes in your BIOS folder, and for some emulators your save folder.
 - It never touches a game or a save.
 - It keeps each file it replaces in `retrobios-backup`. `--restore` puts it
@@ -80,8 +79,8 @@ setup's files and checks each one. `--dry-run` shows the list first.
 
 ## Fill an SD card from a computer?
 
-Yes. Name your setup and the card's BIOS folder. For RetroArch on a Switch
-card in drive `E:`:
+Name your setup and the card's BIOS folder. For RetroArch on a Switch,
+with the card in drive `E:`, run:
 
 <!-- os-tabs windows: --platform retroarch --dest E:\retroarch\cores\system -->
 ```sh
@@ -97,8 +96,8 @@ Fill its folder from a computer, as above, or unzip your ZIP and check it with
 ## My setup is not in the list
 
 - Name your emulator's BIOS folder with `--dest`.
-- ES-DE, LaunchBox: the command fills the folders of the emulators they start.
-- iPhone, iPad: no terminal. Use the ZIP.
+- ES-DE, LaunchBox: the command fills their emulators' folders.
+- iPhone, iPad (iOS): no terminal. Use the ZIP.
 
 ## Why is a file missing from the ZIP?
 
@@ -107,6 +106,11 @@ Some come with the emulator, so the ZIP skips them.
 ## My game shows a black screen
 
 Often a missing BIOS: [When a game does not start](troubleshooting.md).
+
+## Can I copy my own console's BIOS? { #copy-your-own-bios }
+
+Yes: [PCSX2](https://pcsx2.net/docs/setup/bios/) for PlayStation 2,
+[melonDS](https://melonds.kuribo64.net/faq.php) for DS and DSi.
 
 ## Is this legal?
 

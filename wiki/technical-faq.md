@@ -1,6 +1,7 @@
 ---
 level: reference
 order: 120
+terms: mame version, romset version, which mame
 ---
 
 # Technical questions
@@ -119,6 +120,29 @@ The [dump provenance](../provenance.md) page has the current coverage
 per catalog and the full list of catalogued dumps still missing.
 
 ## Which MAME version do the arcade BIOS sets match?
+
+Your game sets and BIOS sets must come from the same version as your arcade
+emulator.
+
+| Emulator, as RetroArch names it | Sets from |
+|---|---|
+| MAME 2000 | MAME 0.37b5 |
+| MAME 2003, MAME 2003 Midway | MAME 0.78 |
+| MAME 2003-Plus | MAME 0.78, with later fixes |
+| MAME 2009 | MAME 0.135u4 |
+| MAME 2010 | MAME 0.139 |
+| MAME 2014, MAME 2015 | MAME 0.160 |
+| MAME 2016 | MAME 0.174 |
+| MAME/MESS | MAME 0.287 |
+| MAME, MAME/Arcade | MAME 0.289 |
+| FB Alpha 2012 CPS-1, FB Alpha 2012 CPS-2 | FB Alpha 0.2.97.28 |
+| FB Alpha 2012, FB Alpha 2012 CPS-3, FB Alpha 2012 Neo Geo | FB Alpha 0.2.97.29 |
+| FB Alpha 2019 | FB Alpha 0.2.97.44 |
+| FinalBurn Neo, FinalBurn Neo (Neo-Geo), FinalBurn Neo (CPS-1 / CPS-2) | FinalBurn Neo 1.0.0.2 |
+
+Each emulator's page names its version too.
+
+### How this is known
 
 Arcade BIOS sets are coupled to the romset version, so there is one
 profile per MAME core generation: MAME 2000 (0.37b5), MAME 2003 (0.78),

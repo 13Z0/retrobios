@@ -1,6 +1,7 @@
 ---
 level: start
 order: 40
+terms: bios not found, bios missing, firmware missing, bios error
 ---
 
 # When a game does not start
@@ -11,7 +12,13 @@ Most often a BIOS file is missing or wrong.
 
 <span id="game-wont-start-black-screen"></span><span id="my-setup-says-untested"></span>
 
-Run the command with `--check`. It changes nothing.
+<!-- Words as emulators print them: snes9x bsx.cpp:1232 "BS: BIOS not found!"
+(1bcc369e), puNES src/core/fds.c:312 "bios not found" (b1758ec2), Gearcoleco
+platforms/libretro/libretro.cpp:866 "OS-7 BIOS missing" (23d0ec28), RetroArch
+intl/msg_hash_us.h:32805 "One or more firmware files are missing" (5333a7c5). -->
+
+Your emulator says **BIOS not found**, **BIOS missing** or **firmware
+missing**? Run the command with `--check`. It changes nothing.
 
 <!-- os-tabs -->
 ```sh
@@ -36,37 +43,39 @@ Run it without `--check`. It adds missing files and replaces wrong ones.
 ## 3. Check the folder and the names
 
 - **Right folder?** [Get your files](../which-pack.md) names it.
-- **Exact name?** `scph5501.bin` and `SCPH-5501.BIN` differ. On Linux,
-  capitals count too.
+- **Exact name?** `scph5501.bin` and `SCPH-5501.BIN` differ.
 - **A `bios` folder inside your BIOS folder?** Run the installer: it copies
   those files up one level.
-- **Unzipped by hand on Linux?** The command adds names that differ by
-  capitals.
+- **BIOS setting on a subfolder, like `system/dc`?** Point it at the BIOS
+  folder. Emulators add their own, like `dc/` for Flycast.
 - **A ZIP in parts, like `Pack.part1of2.zip`?** Unzip every part into one
   folder.
+
+<!-- Flycast's libretro port appends "dc/" to the system directory:
+shell/libretro/libretro.cpp:2252-2253, emulators/flycast.yml. -->
 
 ## An arcade game does not start
 
 It needs its BIOS set, like `neogeo.zip`, and a game set for the same emulator
 version.
 
-- Keep `neogeo.zip` zipped.
-- A game set for another MAME version often fails.
-  Details: [the version of each emulator](../emulators/index.md).
-- Run the command once. It installs the BIOS sets your emulators read.
+- Another MAME version's game set often fails.
+  Details: [the version of each emulator](technical-faq.md#which-mame-version-do-the-arcade-bios-sets-match).
+- Run the command once. It installs the BIOS sets.
 
 ## The BIOS is fine, the game still fails
 
 - **Another emulator?** Each reads its own files, listed on its page.
 - **A BIOS setting?** Some emulators can skip the BIOS. In PCSX ReARMed, set
   **BIOS Selection** to **Auto**.
-- **A disc in several files?** Open its `.cue` or `.m3u`, not a `.bin`.
+- **The screen says "Please insert PlayStation CD-ROM"?** The BIOS works.
+  The game did not load: open its `.cue` or `.m3u` file, not a `.bin`.
 
 ## If the command fails { #installation-script-fails }
 
 - **Network error:** try again later.
 - **`The clock reads ...`:** set the right date.
-- **Permission denied:** do what the message says. It names what to run.
+- **Permission denied:** do what the message says.
 - **No setup found:** name it and its folder:
 
 <!-- os-tabs windows: --platform retroarch --dest C:\path\to\RetroArch\system -->
