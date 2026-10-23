@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-10-23T07:43:10Z",
+  "generated_at": "2026-10-23T10:56:06Z",
   "total_files": 19711,
   "total_size": 16808555694,
   "bios_dir": "bios",
@@ -272116,6 +272116,9 @@
       "Amsdos.rom": [
         "39102c8e9cb55fcc0b9b62098780ed4a3cb6a4bb"
       ],
+      "AMSDOS_0.5.ROM": [
+        "39102c8e9cb55fcc0b9b62098780ed4a3cb6a4bb"
+      ],
       "boot-16.rom": [
         "d4181c9f046aafc3fb326b381baac809d9e38d16"
       ],
@@ -272123,6 +272126,12 @@
         "d4181c9f046aafc3fb326b381baac809d9e38d16"
       ],
       "c600.rom": [
+        "d4181c9f046aafc3fb326b381baac809d9e38d16"
+      ],
+      "controller.rom": [
+        "d4181c9f046aafc3fb326b381baac809d9e38d16"
+      ],
+      "diskII.prom": [
         "d4181c9f046aafc3fb326b381baac809d9e38d16"
       ],
       "DISK2.rom": [
@@ -272262,6 +272271,12 @@
       "Kickstart v1.3 r34.5 (1987)(Commodore)(A500-A1000-A2000-CDTV)[!].rom": [
         "891e9a547772fe0c6c19b610baf8bc4ea7fcb785"
       ],
+      "Kickstart v1.3 rev 34.5 (1987)(Commodore)(A500-A1000-A2000-CDTV)[!].rom": [
+        "891e9a547772fe0c6c19b610baf8bc4ea7fcb785"
+      ],
+      "Kickstart v1.3 rev 34.5 (1987)(Commodore)(A500-A1000-A2000-CDTV).rom": [
+        "891e9a547772fe0c6c19b610baf8bc4ea7fcb785"
+      ],
       "amiga-os-205.rom": [
         "02843c4253bbd29aba535b0aa3bd9a85034ecde4"
       ],
@@ -272274,6 +272289,9 @@
       "Kickstart v2.05 r37.350 (1992)(Commodore)(A600HD)[!].rom": [
         "02843c4253bbd29aba535b0aa3bd9a85034ecde4"
       ],
+      "Kickstart v2.05 rev 37.350 (1992)(Commodore)(A600HD)[!].rom": [
+        "02843c4253bbd29aba535b0aa3bd9a85034ecde4"
+      ],
       "cd32.rom": [
         "3525be8887f79b5929e017b42380a79edfee542d"
       ],
@@ -272281,6 +272299,9 @@
         "3525be8887f79b5929e017b42380a79edfee542d"
       ],
       "Kickstart v3.1 r40.60 (1993)(Commodore)(CD32).rom": [
+        "3525be8887f79b5929e017b42380a79edfee542d"
+      ],
+      "Kickstart v3.1 rev 40.60 (1993)(Commodore)(CD32).rom": [
         "3525be8887f79b5929e017b42380a79edfee542d"
       ],
       "cd32ext.rom": [
@@ -272295,6 +272316,12 @@
       "amiga-os-310-cd32-ext.rom": [
         "5bef3d628ce59cc02a66e6e4ae0da48f60e78f7f"
       ],
+      "CD32 Extended.ROM": [
+        "5bef3d628ce59cc02a66e6e4ae0da48f60e78f7f"
+      ],
+      "CD32 Extended-ROM rev 40.60 (1993)(Commodore)(CD32).rom": [
+        "5bef3d628ce59cc02a66e6e4ae0da48f60e78f7f"
+      ],
       "cdtv.rom": [
         "7ba40ffa17e500ed9fed041f3424bd81d9c907be"
       ],
@@ -272302,8 +272329,10 @@
         "7ba40ffa17e500ed9fed041f3424bd81d9c907be"
       ],
       "CDTV Extended-ROM v1.0 (1991)(Commodore)(CDTV)[!].rom": [
-        "7ba40ffa17e500ed9fed041f3424bd81d9c907be",
-        "5bc114bba29f60a614a311745b3e2464bfa06846"
+        "7ba40ffa17e500ed9fed041f3424bd81d9c907be"
+      ],
+      "CDTV Extended.ROM": [
+        "7ba40ffa17e500ed9fed041f3424bd81d9c907be"
       ],
       "kick20.rom": [
         "c5839f5cb98a7a8947065c3ed2f14f5f42e334a1"
@@ -272314,16 +272343,37 @@
       "Kickstart v2.04 r37.175 (1991)(Commodore)(A500+)[!].rom": [
         "c5839f5cb98a7a8947065c3ed2f14f5f42e334a1"
       ],
+      "kick204.rom": [
+        "c5839f5cb98a7a8947065c3ed2f14f5f42e334a1"
+      ],
+      "Kickstart v2.04 rev 37.175 (1991)(Commodore)(A500+)[!].rom": [
+        "c5839f5cb98a7a8947065c3ed2f14f5f42e334a1"
+      ],
+      "Kickstart v2.04 rev 37.175 (1991)(Commodore)(A500+).rom": [
+        "c5839f5cb98a7a8947065c3ed2f14f5f42e334a1"
+      ],
       "kick33180.A500": [
         "11f9e62cf299f72184835b7b2a70a16333fc0d88"
       ],
       "Kickstart v1.2 r33.180 (1986)(Commodore)(A500-A1000-A2000)[!].rom": [
         "11f9e62cf299f72184835b7b2a70a16333fc0d88"
       ],
+      "Kickstart v1.2 rev 33.180 (1986)(Commodore)(A500-A2000)[!].rom": [
+        "11f9e62cf299f72184835b7b2a70a16333fc0d88"
+      ],
+      "Kickstart v1.2 rev 33.180 (1986)(Commodore)(A500-A1000-A2000).rom": [
+        "11f9e62cf299f72184835b7b2a70a16333fc0d88"
+      ],
       "kick40063.A600": [
         "3b7f1493b27e212830f989f26ca76c02049f09ca"
       ],
       "amiga-os-310-a600.rom": [
+        "3b7f1493b27e212830f989f26ca76c02049f09ca"
+      ],
+      "Kickstart v3.1 rev 40.63 (1993)(Commodore)(A500-A600-A2000)[!].rom": [
+        "3b7f1493b27e212830f989f26ca76c02049f09ca"
+      ],
+      "Kickstart v3.1 rev 40.63 (1993)(Commodore)(A500-A600-A2000).rom": [
         "3b7f1493b27e212830f989f26ca76c02049f09ca"
       ],
       "kick40068.A1200": [
@@ -272335,10 +272385,19 @@
       "AmigaVision.rom": [
         "e21545723fe8374e91342617604f1b3d703094f1"
       ],
+      "Kickstart v3.1 rev 40.68 (1993)(Commodore)(A1200)[!].rom": [
+        "e21545723fe8374e91342617604f1b3d703094f1"
+      ],
+      "Kickstart v3.1 rev 40.68 (1993)(Commodore)(A1200).rom": [
+        "e21545723fe8374e91342617604f1b3d703094f1"
+      ],
       "kick40068.A4000": [
         "5fe04842d04a489720f0f4bb0e46948199406f49"
       ],
       "Kickstart v3.1 r40.68 (1993)(Commodore)(A4000).rom": [
+        "5fe04842d04a489720f0f4bb0e46948199406f49"
+      ],
+      "Kickstart v3.1 rev 40.68 (1993)(Commodore)(A4000).rom": [
         "5fe04842d04a489720f0f4bb0e46948199406f49"
       ],
       "1541 ROM": [
@@ -272555,6 +272614,21 @@
       "d64tano.rom": [
         "1983b4fb398e3dd9668d424c666c5a0b3f1e2b69"
       ],
+      "d64rom1": [
+        "1983b4fb398e3dd9668d424c666c5a0b3f1e2b69"
+      ],
+      "dragrom": [
+        "1983b4fb398e3dd9668d424c666c5a0b3f1e2b69"
+      ],
+      "Dragon Data Ltd - Dragon 64 - IC17": [
+        "1983b4fb398e3dd9668d424c666c5a0b3f1e2b69"
+      ],
+      "Dragon Data Ltd - TANO IC18": [
+        "1983b4fb398e3dd9668d424c666c5a0b3f1e2b69"
+      ],
+      "Eurohard S.A. - Dragon 200 IC18": [
+        "1983b4fb398e3dd9668d424c666c5a0b3f1e2b69"
+      ],
       "alpha_ba": [
         "1983b4fb398e3dd9668d424c666c5a0b3f1e2b69"
       ],
@@ -272570,6 +272644,18 @@
       "d64tano2.rom": [
         "e3c8986bb1d44269c4587b04f1ca27a70b0aaa2e"
       ],
+      "d64rom2": [
+        "e3c8986bb1d44269c4587b04f1ca27a70b0aaa2e"
+      ],
+      "Dragon Data Ltd - Dragon 64 - IC18": [
+        "e3c8986bb1d44269c4587b04f1ca27a70b0aaa2e"
+      ],
+      "Dragon Data Ltd - TANO IC17": [
+        "e3c8986bb1d44269c4587b04f1ca27a70b0aaa2e"
+      ],
+      "Eurohard S.A. - Dragon 200 IC17": [
+        "e3c8986bb1d44269c4587b04f1ca27a70b0aaa2e"
+      ],
       "deltados.rom": [
         "686ebb5f39dd4fc907a0b748867d0a022d2f1a60"
       ],
@@ -272580,6 +272666,9 @@
         "6033a0535136c40c47137e4d1cd9273c06d5fdff"
       ],
       "Expandible OS v2.0 (1984)(Intelligent Software).bin": [
+        "6033a0535136c40c47137e4d1cd9273c06d5fdff"
+      ],
+      "EXOS20.ROM": [
         "6033a0535136c40c47137e4d1cd9273c06d5fdff"
       ],
       "zx48.rom": [
@@ -274332,6 +274421,9 @@
       "n88knj1.rom": [
         "82e11a177af6a5091dd67f50a2f4bafda84d6556"
       ],
+      "kanji1.rom": [
+        "82e11a177af6a5091dd67f50a2f4bafda84d6556"
+      ],
       "fx-scsi.rom": [
         "65482a23ac5c10a6095aee1db5824cca54ead6e5"
       ],
@@ -274349,6 +274441,10 @@
         "1db57a1e8b6e4096f811587f9eab0c6675fd9755"
       ],
       "gb_bios.bin": [
+        "4ed31ec6b0b175bb109c0eb5fd3d193da823339f",
+        "1db57a1e8b6e4096f811587f9eab0c6675fd9755"
+      ],
+      "dmg0_rom.bin": [
         "4ed31ec6b0b175bb109c0eb5fd3d193da823339f",
         "1db57a1e8b6e4096f811587f9eab0c6675fd9755"
       ],
@@ -274395,6 +274491,9 @@
       "IPL_JAP.n64": [
         "bf861922dcb78c316360e3e742f4f70ff63c9bc3"
       ],
+      "64dd_ipl_J.bin": [
+        "bf861922dcb78c316360e3e742f4f70ff63c9bc3"
+      ],
       "64DD_IPL_USA.bin": [
         "3c5b93ca231550c68693a14f03cea8d5dbd1be9e"
       ],
@@ -274402,6 +274501,9 @@
         "3c5b93ca231550c68693a14f03cea8d5dbd1be9e"
       ],
       "boot5.rom": [
+        "3c5b93ca231550c68693a14f03cea8d5dbd1be9e"
+      ],
+      "64dd_ipl_U.bin": [
         "3c5b93ca231550c68693a14f03cea8d5dbd1be9e"
       ],
       "nds7.bin": [
@@ -275659,6 +275761,12 @@
       "boot.bin": [
         "8951d1bb219ab2ff8583033d2119c899cc81f18c"
       ],
+      "dc_boot.bin.bin": [
+        "8951d1bb219ab2ff8583033d2119c899cc81f18c"
+      ],
+      "dc_bios.bin.bin": [
+        "8951d1bb219ab2ff8583033d2119c899cc81f18c"
+      ],
       "bios.gg": [
         "914aa165e3d879f060be77870d345b60cfeb4ede"
       ],
@@ -275678,6 +275786,9 @@
         "c315672807d8ddb8d91443729405c766dd95cae7"
       ],
       "bios.sms": [
+        "c315672807d8ddb8d91443729405c766dd95cae7"
+      ],
+      "BIOS.sms": [
         "c315672807d8ddb8d91443729405c766dd95cae7"
       ],
       "bios_CD_E.bin": [
@@ -275723,7 +275834,8 @@
         "b3c20fbe57cd2eb595e9edac86817e5948dccae4"
       ],
       "mpr-17933.bin": [
-        "faa8ea183a6d7bbe5d4e03bb1332519800d3fbc3"
+        "faa8ea183a6d7bbe5d4e03bb1332519800d3fbc3",
+        "df94c5b4d47eb3cc404d88b33a8fda237eaf4720"
       ],
       "saturn_bios_E.bin": [
         "faa8ea183a6d7bbe5d4e03bb1332519800d3fbc3"
@@ -275962,7 +276074,8 @@
         "ec0121bb8e2a209044309780d2efc2559c9a0ef1"
       ],
       "SCPH-70004_BIOS_V12_EUR_200.ROM1": [
-        "cc44355ded232a2ba5309bb24d4cd55af08696b2"
+        "cc44355ded232a2ba5309bb24d4cd55af08696b2",
+        "747e36b086aceceb300c72c0d1bbab38e2920e63"
       ],
       "SCPH-90006_BIOS_VX_HK _230.ROM2": [
         "b96cf94772f01b8434038285896467884a84b0c2"
@@ -276722,9 +276835,6 @@
         "884515605ee243577ab20767ef8c1a7368e4e407"
       ],
       "bsx_bios.rom": [
-        "4891d739a8a8b67923681bad4fb67edab2e90e50"
-      ],
-      "BS-X.bios": [
         "4891d739a8a8b67923681bad4fb67edab2e90e50"
       ],
       "neo-epo.sp1": [
@@ -278370,9 +278480,6 @@
       "DMG_ROM.bin": [
         "1db57a1e8b6e4096f811587f9eab0c6675fd9755"
       ],
-      "dmg0_rom.bin": [
-        "1db57a1e8b6e4096f811587f9eab0c6675fd9755"
-      ],
       "EXOS21.ROM": [
         "55315b20fecb4441a07ee4bc5dc7153f396e0a2e"
       ],
@@ -278529,9 +278636,6 @@
       "Parallel.rom": [
         "c75c751589cbcc1ad4ab4f63676af7abadd86f5b"
       ],
-      "FdsBios.bin": [
-        "af5af53f66982e749643fdf8b2acbb7d4d3ed229"
-      ],
       "POCKSTAT.ROM": [
         "6ae880493ddde880827d1e9f08e9cb2c38f9f2ec"
       ],
@@ -278588,12 +278692,6 @@
       ],
       "Kickstart v1.1 rev 32.34 (1986)(Commodore)(A1000)(PAL).rom": [
         "16df8b5fd524c5a1c7584b2457ac15aff9e3ad6d"
-      ],
-      "amiga-os-130-cdtv-ext.rom": [
-        "5bc114bba29f60a614a311745b3e2464bfa06846"
-      ],
-      "CDTV Extended-ROM v1.0 (1992)(Commodore)(CDTV).rom": [
-        "5bc114bba29f60a614a311745b3e2464bfa06846"
       ],
       "SeaBIOS (128 KB)": [
         "f402170ee4f374c304a7ce0b139d6cecb1732aff"

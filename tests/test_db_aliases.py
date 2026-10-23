@@ -191,5 +191,64 @@ class DrasticNamesTheDSDumps(unittest.TestCase):
         )
 
 
+class AliasesFollowContentNotPrimaryCopy(unittest.TestCase):
+    """Two copies of one IPL dump: 64DD_IPL.bin and 64DD_IPL_v12_JPN.bin.
+    The scan keeps the first by path order as primary and lists the other as
+    a copy. project64 names the second and declares no hash, so its aliases
+    attached only while that copy happened to be primary."""
+
+    PROFILE = (
+        'files:\n  - name: "64DD_IPL_v12_JPN.bin"\n'
+        '    aliases: ["64DD_IPL_JP.n64", "64dd_ipl_J.bin"]\n'
+    )
+
+    def _aliases(self, primary: str, copy: str) -> dict:
+        files = {"s": {"name": primary, "path": f"bios/N64DD/{primary}", "md5": "m"}}
+        copies = {"s": [{"name": copy, "path": f"bios/N64DD/{copy}"}]}
+        with tempfile.TemporaryDirectory(dir=REPO_ROOT / "tmp") as tmp:
+            previous = os.getcwd()
+            os.chdir(tmp)
+            try:
+                Path("emulators").mkdir()
+                Path("emulators/p.yml").write_text(self.PROFILE)
+                return generate_db._collect_all_aliases(files, copies)
+            finally:
+                os.chdir(previous)
+
+    def test_either_copy_primary_gives_the_same_names(self):
+        names = []
+        for primary, copy in (
+            ("64DD_IPL.bin", "64DD_IPL_v12_JPN.bin"),
+            ("64DD_IPL_v12_JPN.bin", "64DD_IPL.bin"),
+        ):
+            aliases = self._aliases(primary, copy)
+            names.append({a["name"] for a in aliases.get("s", [])})
+        self.assertEqual(names[0], names[1])
+        self.assertEqual(names[0], {"64DD_IPL_JP.n64", "64dd_ipl_J.bin"})
+
+    def test_a_copy_of_other_content_makes_the_name_ambiguous(self):
+        files = {
+            "a": {"name": "BS-X.bin", "path": "bios/SNES/BS-X.bin", "md5": "m1"},
+            "b": {"name": "Satellaview_BS-X.sfc", "path": "bios/SNES/x.sfc", "md5": "m2"},
+        }
+        copies = {"b": [{"name": "BS-X.bin", "path": "bios/Satellaview/BS-X.bin"}]}
+        with tempfile.TemporaryDirectory(dir=REPO_ROOT / "tmp") as tmp:
+            previous = os.getcwd()
+            os.chdir(tmp)
+            try:
+                Path("emulators").mkdir()
+                Path("emulators/s.yml").write_text(
+                    'files:\n  - name: "BS-X.bin"\n    aliases: ["BS-X.bios"]\n'
+                )
+                aliases = generate_db._collect_all_aliases(files, copies)
+            finally:
+                os.chdir(previous)
+        self.assertEqual(aliases, {})
+
+    def test_the_build_passes_the_scan_copies(self):
+        source = (REPO_ROOT / "scripts" / "generate_db.py").read_text(encoding="utf-8")
+        self.assertIn("_collect_all_aliases(files, aliases)", source)
+
+
 if __name__ == "__main__":
     unittest.main()
