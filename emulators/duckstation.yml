@@ -13,6 +13,20 @@ found_by: content
 systems: [sony-playstation]
 bios_size: 524288  # 0x80000 (512 KB), also accepts PS2 (4 MB) and PS3 (0x3E66F0)
 verification: md5
+data_root:
+  windows:
+    path: "%LOCALAPPDATA%/DuckStation"
+    source_ref: "src/core/core.cpp:151-158, 160-196"
+    note: "Documents/DuckStation when that folder already exists. portable.txt or settings.ini beside the executable makes its folder the root"
+  macos:
+    path: "~/Library/Application Support/DuckStation"
+    source_ref: "src/core/core.cpp:151-158, 224-231"
+    note: "portable.txt or settings.ini beside the executable makes its folder the root"
+  linux:
+    path: "$XDG_CONFIG_HOME/duckstation, else ~/.local/share/duckstation"
+    source_ref: "src/core/core.cpp:144-158, 197-222"
+    note: "portable.txt or settings.ini beside the executable, or beside the AppImage, makes that folder the root"
+
 notes: |
   DuckStation auto-detects BIOS by MD5 hash from a flat scan of the BIOS directory.
   ref: src/core/bios.cpp:460-482 (FindBIOSImagesInDirectory, scans all files by size)
@@ -46,8 +60,10 @@ notes: |
   OpenBIOS detected by signature at offset 0x78, not by hash.
   ref: src/core/bios.cpp:142-147
 
-  Standalone: BIOS dir = EmuFolders::Bios (configurable, default bios/).
-  ref: src/core/bios.cpp:375,380
+  Standalone: BIOS dir = EmuFolders::Bios, bios/ under the data root unless
+  BIOS/SearchDirectory names another folder.
+  ref: src/core/bios.cpp:378,383
+  ref: src/core/settings.cpp:2982,3015
   Libretro: BIOS dir = RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY (flat).
   The libretro core was removed by the author (license change to non-commercial).
   The .info file and buildbot builds still exist from community forks.
@@ -56,6 +72,7 @@ files:
   # -- PS1 BIOS images (priority <= 20, preferred) --
 
   - name: "scph1000.bin"
+    standalone_path: "bios/scph1000.bin"
     description: "SCPH-1000, DTL-H1000 (v1.0)"
     region: [japan]
     required: false
@@ -66,6 +83,7 @@ files:
     source_ref: "src/core/bios.cpp:35"
 
   - name: "scph1001.bin"
+    standalone_path: "bios/scph1001.bin"
     description: "SCPH-1001, 5003, DTL-H1201, H3001 (v2.2 12-04-95 A)"
     region: [north-america, latin-america]
     required: false
@@ -76,6 +94,7 @@ files:
     source_ref: "src/core/bios.cpp:36"
 
   - name: "scph1002a.bin"
+    standalone_path: "bios/scph1002a.bin"
     description: "SCPH-1002, DTL-H1002 (v2.0 05-10-95 E)"
     region: [europe, oceania]
     required: false
@@ -86,6 +105,7 @@ files:
     source_ref: "src/core/bios.cpp:37"
 
   - name: "scph1002b.bin"
+    standalone_path: "bios/scph1002b.bin"
     description: "SCPH-1002, DTL-H1102 (v2.1 07-17-95 E)"
     region: [europe, oceania]
     required: false
@@ -96,6 +116,7 @@ files:
     source_ref: "src/core/bios.cpp:38"
 
   - name: "scph1002c.bin"
+    standalone_path: "bios/scph1002c.bin"
     description: "SCPH-1002, DTL-H1202, H3002 (v2.2 12-04-95 E)"
     region: [europe, oceania]
     required: false
@@ -106,6 +127,7 @@ files:
     source_ref: "src/core/bios.cpp:39"
 
   - name: "dtlh1100.bin"
+    standalone_path: "bios/dtlh1100.bin"
     description: "DTL-H1100 (v2.2 03-06-96 D)"
     region: [japan]
     required: false
@@ -116,6 +138,7 @@ files:
     source_ref: "src/core/bios.cpp:40"
 
   - name: "scph3000.bin"
+    standalone_path: "bios/scph3000.bin"
     description: "SCPH-3000, DTL-H1000H (v1.1 01-22-95)"
     region: [japan]
     required: false
@@ -126,6 +149,7 @@ files:
     source_ref: "src/core/bios.cpp:41"
 
   - name: "scph1001_v20.bin"
+    standalone_path: "bios/scph1001_v20.bin"
     description: "SCPH-1001, DTL-H1001 (v2.0 05-07-95 A)"
     region: [north-america, latin-america]
     required: false
@@ -136,6 +160,7 @@ files:
     source_ref: "src/core/bios.cpp:42"
 
   - name: "scph3500.bin"
+    standalone_path: "bios/scph3500.bin"
     description: "SCPH-3500 (v2.1 07-17-95 J)"
     region: [japan]
     required: false
@@ -146,6 +171,7 @@ files:
     source_ref: "src/core/bios.cpp:43"
 
   - name: "scph1001_v21.bin"
+    standalone_path: "bios/scph1001_v21.bin"
     description: "SCPH-1001, DTL-H1101 (v2.1 07-17-95 A)"
     region: [north-america, latin-america]
     required: false
@@ -156,6 +182,7 @@ files:
     source_ref: "src/core/bios.cpp:44"
 
   - name: "scph5000.bin"
+    standalone_path: "bios/scph5000.bin"
     description: "SCPH-5000, DTL-H1200, H3000 (v2.2 12-04-95 J)"
     region: [japan]
     required: false
@@ -166,6 +193,7 @@ files:
     source_ref: "src/core/bios.cpp:45"
 
   - name: "scph5500.bin"
+    standalone_path: "bios/scph5500.bin"
     description: "SCPH-5500 (v3.0 09-09-96 J)"
     region: [japan]
     required: true
@@ -176,6 +204,7 @@ files:
     source_ref: "src/core/bios.cpp:46"
 
   - name: "scph5501.bin"
+    standalone_path: "bios/scph5501.bin"
     description: "SCPH-5501, 5503, 7003 (v3.0 11-18-96 A)"
     region: [north-america, latin-america]
     required: true
@@ -186,6 +215,7 @@ files:
     source_ref: "src/core/bios.cpp:47"
 
   - name: "scph5502.bin"
+    standalone_path: "bios/scph5502.bin"
     description: "SCPH-5502, 5552 (v3.0 01-06-97 E)"
     region: [europe, oceania]
     required: true
@@ -196,6 +226,7 @@ files:
     source_ref: "src/core/bios.cpp:48"
 
   - name: "scph7000.bin"
+    standalone_path: "bios/scph7000.bin"
     description: "SCPH-7000, 7500, 9000 (v4.0 08-18-97 J)"
     region: [japan]
     required: false
@@ -206,6 +237,7 @@ files:
     source_ref: "src/core/bios.cpp:49"
 
   - name: "scph7000w.bin"
+    standalone_path: "bios/scph7000w.bin"
     description: "SCPH-7000W (v4.1 11-14-97 A)"
     region: [japan]
     required: false
@@ -216,6 +248,7 @@ files:
     source_ref: "src/core/bios.cpp:50"
 
   - name: "scph7001.bin"
+    standalone_path: "bios/scph7001.bin"
     description: "SCPH-7001, 7501, 7503, 9001, 9003, 9903 (v4.1 12-16-97 A)"
     region: [north-america, latin-america]
     required: false
@@ -226,6 +259,7 @@ files:
     source_ref: "src/core/bios.cpp:51"
 
   - name: "scph7002.bin"
+    standalone_path: "bios/scph7002.bin"
     description: "SCPH-7002, 7502, 9002 (v4.1 12-16-97 E)"
     region: [europe, oceania]
     required: false
@@ -236,6 +270,7 @@ files:
     source_ref: "src/core/bios.cpp:52"
 
   - name: "scph100.bin"
+    standalone_path: "bios/scph100.bin"
     description: "SCPH-100 (v4.3 03-11-00 J)"
     region: [japan]
     required: false
@@ -246,6 +281,7 @@ files:
     source_ref: "src/core/bios.cpp:53"
 
   - name: "scph101_v44.bin"
+    standalone_path: "bios/scph101_v44.bin"
     description: "SCPH-101 (v4.4 03-24-00 A)"
     region: [north-america, latin-america]
     required: false
@@ -256,6 +292,7 @@ files:
     source_ref: "src/core/bios.cpp:54"
 
   - name: "scph101_v45.bin"
+    standalone_path: "bios/scph101_v45.bin"
     description: "SCPH-101 (v4.5 05-25-00 A)"
     region: [north-america, latin-america]
     required: false
@@ -266,6 +303,7 @@ files:
     source_ref: "src/core/bios.cpp:55"
 
   - name: "scph102_v44.bin"
+    standalone_path: "bios/scph102_v44.bin"
     description: "SCPH-102 (v4.4 03-24-00 E)"
     region: [europe, oceania]
     required: false
@@ -276,6 +314,7 @@ files:
     source_ref: "src/core/bios.cpp:56"
 
   - name: "scph102_v45.bin"
+    standalone_path: "bios/scph102_v45.bin"
     description: "SCPH-102 (v4.5 05-25-00 E)"
     region: [europe, oceania]
     required: false
@@ -286,6 +325,7 @@ files:
     source_ref: "src/core/bios.cpp:57"
 
   - name: "scph1000r.bin"
+    standalone_path: "bios/scph1000r.bin"
     description: "SCPH-1000R (v4.5 05-25-00 J)"
     region: [japan]
     required: false
@@ -300,6 +340,7 @@ files:
   # Requires Type2 fast boot patch. All have region_check=true.
 
   - name: "ps2_scph18000.bin"
+    standalone_path: "bios/ps2_scph18000.bin"
     description: "PS2, SCPH-18000 (v5.0 10-27-00 J)"
     region: [japan]
     required: false
@@ -310,6 +351,7 @@ files:
     source_ref: "src/core/bios.cpp:59"
 
   - name: "ps2_scph30003.bin"
+    standalone_path: "bios/ps2_scph30003.bin"
     description: "PS2, SCPH-30003 (v5.0 09-02-00 E)"
     region: [europe, oceania]
     required: false
@@ -320,6 +362,7 @@ files:
     source_ref: "src/core/bios.cpp:60"
 
   - name: "ps2_dtlh10000_0117.bin"
+    standalone_path: "bios/ps2_dtlh10000_0117.bin"
     description: "PS2, DTL-H10000 (v5.0 01/17/00 T)"
     region: [world]
     required: false
@@ -330,6 +373,7 @@ files:
     source_ref: "src/core/bios.cpp:61"
 
   - name: "ps2_scph10000_0117.bin"
+    standalone_path: "bios/ps2_scph10000_0117.bin"
     description: "PS2, SCPH-10000 (v5.0 01/17/00 T)"
     region: [world]
     required: false
@@ -340,6 +384,7 @@ files:
     source_ref: "src/core/bios.cpp:62"
 
   - name: "ps2_dtlh10000_0217.bin"
+    standalone_path: "bios/ps2_dtlh10000_0217.bin"
     description: "PS2, DTL-H10000 (v5.0 02/17/00 T)"
     region: [world]
     required: false
@@ -350,6 +395,7 @@ files:
     source_ref: "src/core/bios.cpp:63"
 
   - name: "ps2_scph10000_15000.bin"
+    standalone_path: "bios/ps2_scph10000_15000.bin"
     description: "PS2, SCPH-10000/SCPH-15000 (v5.0 02/17/00 T)"
     region: [world]
     required: false
@@ -360,6 +406,7 @@ files:
     source_ref: "src/core/bios.cpp:64"
 
   - name: "ps2_dtlh10000_0224.bin"
+    standalone_path: "bios/ps2_dtlh10000_0224.bin"
     description: "PS2, DTL-H10000 (v5.0 02/24/00 T)"
     region: [world]
     required: false
@@ -370,6 +417,7 @@ files:
     source_ref: "src/core/bios.cpp:65"
 
   - name: "ps2_dtlh30001.bin"
+    standalone_path: "bios/ps2_dtlh30001.bin"
     description: "PS2, DTL-H30001 (v5.0 07/27/00 A)"
     region: [north-america, latin-america]
     required: false
@@ -380,6 +428,7 @@ files:
     source_ref: "src/core/bios.cpp:66"
 
   - name: "ps2_scph30001_0727.bin"
+    standalone_path: "bios/ps2_scph30001_0727.bin"
     description: "PS2, SCPH-30001 (v5.0 07/27/00 A)"
     region: [north-america, latin-america]
     required: false
@@ -390,6 +439,7 @@ files:
     source_ref: "src/core/bios.cpp:67"
 
   - name: "ps2_scph30001_0902.bin"
+    standalone_path: "bios/ps2_scph30001_0902.bin"
     description: "PS2, SCPH-30001 (v5.0 09/02/00 A)"
     region: [north-america, latin-america]
     required: false
@@ -400,6 +450,7 @@ files:
     source_ref: "src/core/bios.cpp:68"
 
   - name: "ps2_dtlh30002.bin"
+    standalone_path: "bios/ps2_dtlh30002.bin"
     description: "PS2, DTL-H30002 (v5.0 09/02/00 E)"
     region: [europe, oceania]
     required: false
@@ -410,6 +461,7 @@ files:
     source_ref: "src/core/bios.cpp:69"
 
   - name: "ps2_dtlh30102_0902.bin"
+    standalone_path: "bios/ps2_dtlh30102_0902.bin"
     description: "PS2, DTL-H30102 (v5.0 09/02/00 E)"
     region: [europe, oceania]
     required: false
@@ -420,6 +472,7 @@ files:
     source_ref: "src/core/bios.cpp:70"
 
   - name: "ps2_scph30002_0902.bin"
+    standalone_path: "bios/ps2_scph30002_0902.bin"
     description: "PS2, SCPH-30002/SCPH-30003/SCPH-30004 (v5.0 09/02/00 E)"
     region: [europe, oceania]
     required: false
@@ -430,6 +483,7 @@ files:
     source_ref: "src/core/bios.cpp:71"
 
   - name: "ps2_scph18000_gh003.bin"
+    standalone_path: "bios/ps2_scph18000_gh003.bin"
     description: "PS2, SCPH-18000 (GH-003) (v5.0 10/27/00 J)"
     region: [japan]
     required: false
@@ -440,6 +494,7 @@ files:
     source_ref: "src/core/bios.cpp:72"
 
   - name: "ps2_scph18000_gh008.bin"
+    standalone_path: "bios/ps2_scph18000_gh008.bin"
     description: "PS2, SCPH-18000 (GH-008) (v5.0 10/27/00 J)"
     region: [japan]
     required: false
@@ -450,6 +505,7 @@ files:
     source_ref: "src/core/bios.cpp:73"
 
   - name: "ps2_dtlh30101.bin"
+    standalone_path: "bios/ps2_dtlh30101.bin"
     description: "PS2, DTL-H30101 (v5.0 12/28/00 A)"
     region: [north-america, latin-america]
     required: false
@@ -460,6 +516,7 @@ files:
     source_ref: "src/core/bios.cpp:74"
 
   - name: "ps2_scph30001_35001.bin"
+    standalone_path: "bios/ps2_scph30001_35001.bin"
     description: "PS2, SCPH-30001/SCPH-35001 (v5.0 12/28/00 A)"
     region: [north-america, latin-america]
     required: false
@@ -470,6 +527,7 @@ files:
     source_ref: "src/core/bios.cpp:75"
 
   - name: "ps2_dtlh30102_1228.bin"
+    standalone_path: "bios/ps2_dtlh30102_1228.bin"
     description: "PS2, DTL-H30102 (v5.0 12/28/00 E)"
     region: [europe, oceania]
     required: false
@@ -480,6 +538,7 @@ files:
     source_ref: "src/core/bios.cpp:76"
 
   - name: "ps2_scph30002_1228.bin"
+    standalone_path: "bios/ps2_scph30002_1228.bin"
     description: "PS2, SCPH-30002/SCPH-30003/SCPH-30004/SCHP-35002/SCPH-35003/SCPH-35004 (v5.0 12/28/00 E)"
     region: [europe, oceania]
     required: false
@@ -490,6 +549,7 @@ files:
     source_ref: "src/core/bios.cpp:77"
 
   - name: "ps2_dtlh30000.bin"
+    standalone_path: "bios/ps2_dtlh30000.bin"
     description: "PS2, DTL-H30000 (v5.0 01/18/01 J)"
     region: [japan]
     required: false
@@ -500,6 +560,7 @@ files:
     source_ref: "src/core/bios.cpp:78"
 
   - name: "ps2_scph30000_35000.bin"
+    standalone_path: "bios/ps2_scph30000_35000.bin"
     description: "PS2, SCPH-30000/SCPH-35000 (v5.0 01/18/01 J)"
     region: [japan]
     required: false
@@ -510,6 +571,7 @@ files:
     source_ref: "src/core/bios.cpp:79"
 
   - name: "ps2_scph30001r_0427.bin"
+    standalone_path: "bios/ps2_scph30001r_0427.bin"
     description: "PS2, SCPH-30001R (v5.0 04/27/01 A)"
     region: [north-america, latin-america]
     required: false
@@ -520,6 +582,7 @@ files:
     source_ref: "src/core/bios.cpp:80"
 
   - name: "ps2_scph30000_0427.bin"
+    standalone_path: "bios/ps2_scph30000_0427.bin"
     description: "PS2, SCPH-30000 (v5.0 04/27/01 J)"
     region: [japan]
     required: false
@@ -530,6 +593,7 @@ files:
     source_ref: "src/core/bios.cpp:81"
 
   - name: "ps2_scph30001r_0704.bin"
+    standalone_path: "bios/ps2_scph30001r_0704.bin"
     description: "PS2, SCPH-30001R (v5.0 07/04/01 A)"
     region: [north-america, latin-america]
     required: false
@@ -540,6 +604,7 @@ files:
     source_ref: "src/core/bios.cpp:82"
 
   - name: "ps2_scph30002r_0704.bin"
+    standalone_path: "bios/ps2_scph30002r_0704.bin"
     description: "PS2, SCPH-30002R/SCPH-30003R/SCPH-30004R (v5.0 07/04/01 E)"
     region: [europe, oceania]
     required: false
@@ -550,6 +615,7 @@ files:
     source_ref: "src/core/bios.cpp:83"
 
   - name: "ps2_scph30001r_1004.bin"
+    standalone_path: "bios/ps2_scph30001r_1004.bin"
     description: "PS2, SCPH-30001R (v5.0 10/04/01 A)"
     region: [north-america, latin-america]
     required: false
@@ -560,6 +626,7 @@ files:
     source_ref: "src/core/bios.cpp:84"
 
   - name: "ps2_scph30002r_1004.bin"
+    standalone_path: "bios/ps2_scph30002r_1004.bin"
     description: "PS2, SCPH-30002R/SCPH-30003R/SCPH-30004R (v5.0 10/04/01 E)"
     region: [europe, oceania]
     required: false
@@ -570,6 +637,7 @@ files:
     source_ref: "src/core/bios.cpp:85"
 
   - name: "ps2_scph30005r.bin"
+    standalone_path: "bios/ps2_scph30005r.bin"
     description: "PS2, SCPH-30005R/SCPH-30006R/SCPH-30007R (v5.0 07/30/01 J)"
     region: [japan]
     required: false
@@ -580,6 +648,7 @@ files:
     source_ref: "src/core/bios.cpp:86"
 
   - name: "ps2_scph39001.bin"
+    standalone_path: "bios/ps2_scph39001.bin"
     description: "PS2, SCPH-39001 (v5.0 02/07/02 A)"
     region: [north-america, latin-america]
     required: false
@@ -590,6 +659,7 @@ files:
     source_ref: "src/core/bios.cpp:87"
 
   - name: "ps2_scph39002.bin"
+    standalone_path: "bios/ps2_scph39002.bin"
     description: "PS2, SCPH-39002/SCPH-39003/SCPH-39004 (v5.0 03/19/02 E)"
     region: [europe, oceania]
     required: false
@@ -600,6 +670,7 @@ files:
     source_ref: "src/core/bios.cpp:88"
 
   - name: "ps2_scph37000_39000.bin"
+    standalone_path: "bios/ps2_scph37000_39000.bin"
     description: "PS2, SCPH-37000/SCPH-39000 (v5.0 04/26/02 J)"
     region: [japan]
     required: false
@@ -610,6 +681,7 @@ files:
     source_ref: "src/core/bios.cpp:89"
 
   - name: "ps2_scph39008.bin"
+    standalone_path: "bios/ps2_scph39008.bin"
     description: "PS2, SCPH-39008 (v5.0 04/26/02 E)"
     region: [europe, oceania]
     required: false
@@ -620,6 +692,7 @@ files:
     source_ref: "src/core/bios.cpp:90"
 
   - name: "ps2_scph39005.bin"
+    standalone_path: "bios/ps2_scph39005.bin"
     description: "PS2, SCPH-39005/SCPH-39006/SCPH-39007 (v5.0 04/26/02 J)"
     region: [japan]
     required: false
@@ -630,6 +703,7 @@ files:
     source_ref: "src/core/bios.cpp:91"
 
   - name: "ps2_dtlh50000.bin"
+    standalone_path: "bios/ps2_dtlh50000.bin"
     description: "PS2, DTL-H50000 (v5.0 02/06/03 J)"
     region: [japan]
     required: false
@@ -640,6 +714,7 @@ files:
     source_ref: "src/core/bios.cpp:92"
 
   - name: "ps2_scph50000_55000.bin"
+    standalone_path: "bios/ps2_scph50000_55000.bin"
     description: "PS2, SCPH-50000/SCPH-55000 (v5.0 02/06/03 J)"
     region: [japan]
     required: false
@@ -650,6 +725,7 @@ files:
     source_ref: "src/core/bios.cpp:93"
 
   - name: "ps2_dtlh50002.bin"
+    standalone_path: "bios/ps2_dtlh50002.bin"
     description: "PS2, DTL-H50002 (v5.0 02/27/03 E)"
     region: [europe, oceania]
     required: false
@@ -660,6 +736,7 @@ files:
     source_ref: "src/core/bios.cpp:94"
 
   - name: "ps2_scph50002_0227.bin"
+    standalone_path: "bios/ps2_scph50002_0227.bin"
     description: "PS2, SCPH-50002/SCPH-50003/SCPH-50004 (v5.0 02/27/03 E)"
     region: [europe, oceania]
     required: false
@@ -670,6 +747,7 @@ files:
     source_ref: "src/core/bios.cpp:95"
 
   - name: "ps2_dtlh50001_0325.bin"
+    standalone_path: "bios/ps2_dtlh50001_0325.bin"
     description: "PS2, DTL-H50001 (v5.0 03/25/03 A)"
     region: [north-america, latin-america]
     required: false
@@ -680,6 +758,7 @@ files:
     source_ref: "src/core/bios.cpp:96"
 
   - name: "ps2_scph50001_0325.bin"
+    standalone_path: "bios/ps2_scph50001_0325.bin"
     description: "PS2, SCPH-50001 (v5.0 03/25/03 A)"
     region: [north-america, latin-america]
     required: false
@@ -690,6 +769,7 @@ files:
     source_ref: "src/core/bios.cpp:97"
 
   - name: "ps2_dtlh50009.bin"
+    standalone_path: "bios/ps2_dtlh50009.bin"
     description: "PS2, DTL-H50009 (v5.0 02/24/03 J)"
     region: [japan]
     required: false
@@ -700,6 +780,7 @@ files:
     source_ref: "src/core/bios.cpp:98"
 
   - name: "ps2_desr5000.bin"
+    standalone_path: "bios/ps2_desr5000.bin"
     description: "PS2, DESR-5000/DESR-5100/DESR-7000/DESR-7100 (v5.0 10/28/03 J)"
     region: [japan]
     required: false
@@ -710,6 +791,7 @@ files:
     source_ref: "src/core/bios.cpp:99"
 
   - name: "ps2_scph55000_0623.bin"
+    standalone_path: "bios/ps2_scph55000_0623.bin"
     description: "PS2, SCPH-55000 (v5.0 06/23/03 J)"
     region: [japan]
     required: false
@@ -720,6 +802,7 @@ files:
     source_ref: "src/core/bios.cpp:100"
 
   - name: "ps2_dtlh50001_0623.bin"
+    standalone_path: "bios/ps2_dtlh50001_0623.bin"
     description: "PS2, DTL-H50001 (v5.0 06/23/03 A)"
     region: [north-america, latin-america]
     required: false
@@ -730,6 +813,7 @@ files:
     source_ref: "src/core/bios.cpp:101"
 
   - name: "ps2_scph50001_0623.bin"
+    standalone_path: "bios/ps2_scph50001_0623.bin"
     description: "PS2, SCPH-50001/SCPH-50010 (v5.0 06/23/03 A)"
     region: [north-america, latin-america]
     required: false
@@ -740,6 +824,7 @@ files:
     source_ref: "src/core/bios.cpp:102"
 
   - name: "ps2_scph50002_0623.bin"
+    standalone_path: "bios/ps2_scph50002_0623.bin"
     description: "PS2, SCPH-50002/SCPH-50003/SCPH-50004 (v5.0 06/23/03 E)"
     region: [europe, oceania]
     required: false
@@ -750,6 +835,7 @@ files:
     source_ref: "src/core/bios.cpp:103"
 
   - name: "ps2_scph50006.bin"
+    standalone_path: "bios/ps2_scph50006.bin"
     description: "PS2, SCPH-50006/SCPH-50007 (v5.0 06/23/03 J)"
     region: [japan]
     required: false
@@ -760,6 +846,7 @@ files:
     source_ref: "src/core/bios.cpp:104"
 
   - name: "ps2_scph50005.bin"
+    standalone_path: "bios/ps2_scph50005.bin"
     description: "PS2, SCPH-50005 (v5.0 06/23/03 J)"
     region: [japan]
     required: false
@@ -770,6 +857,7 @@ files:
     source_ref: "src/core/bios.cpp:105"
 
   - name: "ps2_scph50008.bin"
+    standalone_path: "bios/ps2_scph50008.bin"
     description: "PS2, SCPH-50008 (v5.0 06/23/03 E)"
     region: [europe, oceania]
     required: false
@@ -780,6 +868,7 @@ files:
     source_ref: "src/core/bios.cpp:106"
 
   - name: "ps2_scph50009.bin"
+    standalone_path: "bios/ps2_scph50009.bin"
     description: "PS2, SCPH-50009 (v5.0 06/23/03 J)"
     region: [japan]
     required: false
@@ -790,6 +879,7 @@ files:
     source_ref: "src/core/bios.cpp:107"
 
   - name: "ps2_scph50000_0822.bin"
+    standalone_path: "bios/ps2_scph50000_0822.bin"
     description: "PS2, SCPH-50000 (v5.0 08/22/03 J)"
     region: [japan]
     required: false
@@ -800,6 +890,7 @@ files:
     source_ref: "src/core/bios.cpp:108"
 
   - name: "ps2_scph50004_0822.bin"
+    standalone_path: "bios/ps2_scph50004_0822.bin"
     description: "PS2, SCPH-50004 (v5.0 08/22/03 E)"
     region: [europe, oceania]
     required: false
@@ -810,6 +901,7 @@ files:
     source_ref: "src/core/bios.cpp:109"
 
   - name: "ps2_scph50011.bin"
+    standalone_path: "bios/ps2_scph50011.bin"
     description: "PS2, SCPH-50011 (v5.0 03/29/04 A)"
     region: [north-america, latin-america]
     required: false
@@ -820,6 +912,7 @@ files:
     source_ref: "src/core/bios.cpp:110"
 
   - name: "ps2_scph70000.bin"
+    standalone_path: "bios/ps2_scph70000.bin"
     description: "PS2, SCPH-70000 (v5.0 06/14/04 J)"
     region: [japan]
     required: false
@@ -830,6 +923,7 @@ files:
     source_ref: "src/core/bios.cpp:111"
 
   - name: "ps2_scph70001.bin"
+    standalone_path: "bios/ps2_scph70001.bin"
     description: "PS2, SCPH-70001/SCPH-70011/SCPH-70012 (v5.0 06/14/04 A)"
     region: [north-america, latin-america]
     required: false
@@ -840,6 +934,7 @@ files:
     source_ref: "src/core/bios.cpp:112"
 
   - name: "ps2_scph70002.bin"
+    standalone_path: "bios/ps2_scph70002.bin"
     description: "PS2, SCPH-70002/SCPH-70003/SCPH-70004/SCPH-70008 (v5.0 06/14/04 E)"
     region: [europe, oceania]
     required: false
@@ -850,6 +945,7 @@ files:
     source_ref: "src/core/bios.cpp:113"
 
   - name: "ps2_scph70002_alt.bin"
+    standalone_path: "bios/ps2_scph70002_alt.bin"
     description: "PS2, SCPH-70002 (v5.0 06/14/04 E)"
     region: [europe, oceania]
     required: false
@@ -860,6 +956,7 @@ files:
     source_ref: "src/core/bios.cpp:114"
 
   - name: "ps2_dtlh70002.bin"
+    standalone_path: "bios/ps2_dtlh70002.bin"
     description: "PS2, DTL-H70002 (v5.0 06/14/04 E)"
     region: [europe, oceania]
     required: false
@@ -870,6 +967,7 @@ files:
     source_ref: "src/core/bios.cpp:115"
 
   - name: "ps2_scph70005.bin"
+    standalone_path: "bios/ps2_scph70005.bin"
     description: "PS2, SCPH-70005/SCPH-70006/SCPH-70007 (v5.0 06/14/04 J)"
     region: [japan]
     required: false
@@ -880,6 +978,7 @@ files:
     source_ref: "src/core/bios.cpp:116"
 
   - name: "ps2_desr5500.bin"
+    standalone_path: "bios/ps2_desr5500.bin"
     description: "PS2, DESR-5500/DESR-5700/DESR-7500/DESR-7700 (v5.0 09/17/04 J)"
     region: [japan]
     required: false
@@ -890,6 +989,7 @@ files:
     source_ref: "src/core/bios.cpp:117"
 
   - name: "ps2_dtlh75000.bin"
+    standalone_path: "bios/ps2_dtlh75000.bin"
     description: "PS2, DTL-H75000 (v5.0 06/20/05 J)"
     region: [japan]
     required: false
@@ -900,6 +1000,7 @@ files:
     source_ref: "src/core/bios.cpp:118"
 
   - name: "ps2_scph75000.bin"
+    standalone_path: "bios/ps2_scph75000.bin"
     description: "PS2, SCPH-75000 (v5.0 06/20/05 J)"
     region: [japan]
     required: false
@@ -910,6 +1011,7 @@ files:
     source_ref: "src/core/bios.cpp:119"
 
   - name: "ps2_dtlh75000a.bin"
+    standalone_path: "bios/ps2_dtlh75000a.bin"
     description: "PS2, DTL-H75000A (v5.0 06/20/05 A)"
     region: [north-america, latin-america]
     required: false
@@ -920,6 +1022,7 @@ files:
     source_ref: "src/core/bios.cpp:120"
 
   - name: "ps2_scph75001.bin"
+    standalone_path: "bios/ps2_scph75001.bin"
     description: "PS2, SCPH-75001/SCPH-75010 (v5.0 06/20/05 A)"
     region: [north-america, latin-america]
     required: false
@@ -930,6 +1033,7 @@ files:
     source_ref: "src/core/bios.cpp:121"
 
   - name: "ps2_scph75002.bin"
+    standalone_path: "bios/ps2_scph75002.bin"
     description: "PS2, SCPH-75002/SCPH-75003/SCPH-75004/SCPH-75008 (v5.0 06/20/05 E)"
     region: [europe, oceania]
     required: false
@@ -940,6 +1044,7 @@ files:
     source_ref: "src/core/bios.cpp:122"
 
   - name: "ps2_scph75006.bin"
+    standalone_path: "bios/ps2_scph75006.bin"
     description: "PS2, SCPH-75006 (v5.0 06/20/05 J)"
     region: [japan]
     required: false
@@ -950,6 +1055,7 @@ files:
     source_ref: "src/core/bios.cpp:123"
 
   - name: "ps2_scph77000.bin"
+    standalone_path: "bios/ps2_scph77000.bin"
     description: "PS2, SCPH-77000 (v5.0 02/10/06 J)"
     region: [japan]
     required: false
@@ -960,6 +1066,7 @@ files:
     source_ref: "src/core/bios.cpp:124"
 
   - name: "ps2_scph77001.bin"
+    standalone_path: "bios/ps2_scph77001.bin"
     description: "PS2, SCPH-77001/SCPH-77010 (v5.0 02/10/06 A)"
     region: [north-america, latin-america]
     required: false
@@ -970,6 +1077,7 @@ files:
     source_ref: "src/core/bios.cpp:125"
 
   - name: "ps2_scph77002.bin"
+    standalone_path: "bios/ps2_scph77002.bin"
     description: "PS2, SCPH-77002/SCPH-77003/SCPH-77004/SCPH-77008 (v5.0 02/10/06 E)"
     region: [europe, oceania]
     required: false
@@ -980,6 +1088,7 @@ files:
     source_ref: "src/core/bios.cpp:126"
 
   - name: "ps2_scph77006.bin"
+    standalone_path: "bios/ps2_scph77006.bin"
     description: "PS2, SCPH-77006/SCPH-77007 (v5.0 02/10/06 J)"
     region: [japan]
     required: false
@@ -990,6 +1099,7 @@ files:
     source_ref: "src/core/bios.cpp:127"
 
   - name: "ps2_dtlh90000_j.bin"
+    standalone_path: "bios/ps2_dtlh90000_j.bin"
     description: "PS2, DTL-H90000 (v5.0 09/05/06 J)"
     region: [japan]
     required: false
@@ -1000,6 +1110,7 @@ files:
     source_ref: "src/core/bios.cpp:128"
 
   - name: "ps2_scph79000_90000.bin"
+    standalone_path: "bios/ps2_scph79000_90000.bin"
     description: "PS2, SCPH-79000/SCPH-90000 (v5.0 09/05/06 J)"
     region: [japan]
     required: false
@@ -1010,6 +1121,7 @@ files:
     source_ref: "src/core/bios.cpp:129"
 
   - name: "ps2_dtlh90000_a.bin"
+    standalone_path: "bios/ps2_dtlh90000_a.bin"
     description: "PS2, DTL-H90000 (v5.0 09/05/06 A)"
     region: [north-america, latin-america]
     required: false
@@ -1020,6 +1132,7 @@ files:
     source_ref: "src/core/bios.cpp:130"
 
   - name: "ps2_scph79001_90001.bin"
+    standalone_path: "bios/ps2_scph79001_90001.bin"
     description: "PS2, SCPH-79001/SCPH-79010/SCPH-90001 (v5.0 09/05/06 A)"
     region: [north-america, latin-america]
     required: false
@@ -1030,6 +1143,7 @@ files:
     source_ref: "src/core/bios.cpp:131"
 
   - name: "ps2_scph79002_90002.bin"
+    standalone_path: "bios/ps2_scph79002_90002.bin"
     description: "PS2, SCPH-79002/SCPH-79003/SCPH-79004/SCPH-79008/SCPH-90002/SCPH-90003/SCPH-90004 (v5.0 09/05/06 E)"
     region: [europe, oceania]
     required: false
@@ -1040,6 +1154,7 @@ files:
     source_ref: "src/core/bios.cpp:132"
 
   - name: "ps2_scph79006_90006.bin"
+    standalone_path: "bios/ps2_scph79006_90006.bin"
     description: "PS2, SCPH-79006/SCPH-79007/SCPH-90006/SCPH-90007 (v5.0 09/05/06 J)"
     region: [japan]
     required: false
@@ -1050,6 +1165,7 @@ files:
     source_ref: "src/core/bios.cpp:133"
 
   - name: "ps2_scph90000_0220.bin"
+    standalone_path: "bios/ps2_scph90000_0220.bin"
     description: "PS2, SCPH-90000 (v5.0 02/20/08 J)"
     region: [japan]
     required: false
@@ -1060,6 +1176,7 @@ files:
     source_ref: "src/core/bios.cpp:134"
 
   - name: "ps2_scph90001_0220.bin"
+    standalone_path: "bios/ps2_scph90001_0220.bin"
     description: "PS2, SCPH-90001/SCPH-90010 (v5.0 02/20/08 A)"
     region: [north-america, latin-america]
     required: false
@@ -1070,6 +1187,7 @@ files:
     source_ref: "src/core/bios.cpp:135"
 
   - name: "ps2_scph90002_0220.bin"
+    standalone_path: "bios/ps2_scph90002_0220.bin"
     description: "PS2, SCPH-90002/SCPH-90003/SCPH-90004/SCPH-90008 (v5.0 02/20/08 E)"
     region: [europe, oceania]
     required: false
@@ -1080,6 +1198,7 @@ files:
     source_ref: "src/core/bios.cpp:136"
 
   - name: "ps2_scph90005_0220.bin"
+    standalone_path: "bios/ps2_scph90005_0220.bin"
     description: "PS2, SCPH-90005/SCPH-90006/SCPH-90007 (v5.0 02/20/08 J)"
     region: [japan]
     required: false
@@ -1090,6 +1209,7 @@ files:
     source_ref: "src/core/bios.cpp:137"
 
   - name: "ps2_kdl22px300.bin"
+    standalone_path: "bios/ps2_kdl22px300.bin"
     description: "PS2, KDL-22PX300 (v5.0 04/15/10 E)"
     region: [europe, oceania]
     required: false
@@ -1103,6 +1223,7 @@ files:
   # -- OpenBIOS (signature-based detection, no fixed hash) --
 
   - name: "openbios.bin"
+    standalone_path: "bios/openbios.bin"
     description: "OpenBIOS"
     region: [world]
     required: false
