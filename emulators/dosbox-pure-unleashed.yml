@@ -18,6 +18,20 @@ systems:
 mode: standalone
 verification: sha1
 
+data_root:
+  windows:
+    path: "%APPDATA%/DOSBoxPure"
+    source_ref: "main.cpp:1980-2029"
+    note: "used only when the user has created it, else the folder of the executable. DOSBoxPure.cfg in the working directory makes that directory the root instead"
+  macos:
+    path: "~/Library/Application Support/DOSBoxPure"
+    source_ref: "main.cpp:1980-2029"
+    note: "the working directory when it cannot be written. DOSBoxPure.cfg in the working directory takes precedence"
+  linux:
+    path: "~/.config/DOSBoxPure"
+    source_ref: "main.cpp:1980-2029"
+    note: "the working directory when it cannot be written. DOSBoxPure.cfg in the working directory takes precedence"
+
 notes: |
   Desktop build of DOSBox Pure by the same author. The repository holds only
   the platform layer (main.cpp, vfs_implementation.cpp) and compiles the
@@ -29,13 +43,14 @@ notes: |
   the emulated DOS machine, not as separate emulated hardware.
 
   System directory: the program keeps DOSBoxPure.cfg in a base directory and
-  creates saves and system folders next to it. Base directory is
+  creates saves and system folders next to it. A DOSBoxPure.cfg in the working
+  directory selects that directory. Otherwise the base directory is
   %APPDATA%\DOSBoxPure on Windows when the user creates that folder, else the
   directory of the executable; $HOME/.config/DOSBoxPure on Linux and
   $HOME/Library/Application Support/DOSBoxPure on macOS, else the working
   directory. The system folder can be redirected with the path_system key in
   DOSBoxPure.cfg. It is returned to the core as RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY.
-  ref: main.cpp:1985-2045,973-974
+  ref: main.cpp:1980-2045,973-974
 
   System directory scan (recursive, DBP_ScanSystem):
     *.SF2 and *.SF3 listed as General MIDI SoundFonts, any file whose last
