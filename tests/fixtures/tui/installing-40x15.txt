@@ -4,12 +4,12 @@
  528.0 KB of 1.0 MB
  128.9 KB/s, 0:04 left
  2 of 4 files
- What is done stays done if you stop.
+ B, Ctrl-C or Start+Select stops. What
+   is done stays done.
 
  FAILED scph5500.bin (HTTP 404)
  ok     gba_bios.bin
 
 
 
-
- Ctrl-C / Start+Select stops
+ B/Esc Stop  ? Help

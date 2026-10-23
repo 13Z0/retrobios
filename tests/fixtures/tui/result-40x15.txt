@@ -11,5 +11,5 @@
    --restore
    /home/user/.config/retroarch/
    retrobios-backup/2026-10-23_1200
- 1-11 of 20
+ 1-5 of 9
  A/Enter Exit  Up/Down Scroll

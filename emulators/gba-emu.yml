@@ -5,7 +5,7 @@ source: "https://github.com/Rakashazi/emu-ex-plus-alpha"
 upstream: "https://github.com/visualboyadvance-m/visualboyadvance-m"
 profiled_date: "2026-08-11"
 source_commit: "1c12fac5ce49badaadff2e2f210dcc30b89f4943"
-upstream_commit: "fbd043dea0920a2356c44e1458a160455403c640"
+upstream_commit: "8124d84a655e5261bee5eeb9f43c18630ec58a61"
 core_version: "1.5.85"
 display_name: "Nintendo - Game Boy Advance (GBA.emu)"
 mode: standalone
@@ -37,7 +37,7 @@ notes: |
   (GBA.emu/src/core/gba/gba.cpp:3758-3778). Nothing else about the file is
   examined: CPUIsGBABios, the extension test upstream passes to utilLoad, has no
   caller here (GBA.emu/src/core/gba/gba.cpp:1655-1675, upstream
-  src/core/gba/gba.cpp:4975-4986).
+  src/core/gba/gba.cpp:5165-5176).
 
   Without a file the app runs on the built-in myROM stub copied into the BIOS
   area (GBA.emu/src/core/gba/gba.cpp:131-305,3776-3778) and on the service call

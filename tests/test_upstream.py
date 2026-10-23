@@ -910,5 +910,79 @@ class TestCurrentSlug(unittest.TestCase):
             )
 
 
+
+class TestNewestTag(unittest.TestCase):
+    """GitHub's REST tag list is sorted by name: nesoid lists 2.5 before
+    2.5-4, so the first entry was reported as the latest tag."""
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.repo = make_repo("github.com", "o", "n")
+        self.saved = (upstream._github_graphql, upstream.list_tags)
+        upstream.list_tags = lambda repo, cache, offline=False: ["2.5", "2.5-4"]
+
+    def tearDown(self):
+        upstream._github_graphql, upstream.list_tags = self.saved
+        self.tmp.cleanup()
+
+    def test_commit_date_order_wins(self):
+        upstream._github_graphql = lambda *a: {
+            "data": {"repository": {"refs": {"nodes": [{"name": "2.5-4"}]}}}
+        }
+        self.assertEqual(upstream.newest_tag(self.repo, self.tmp.name), "2.5-4")
+
+    def test_without_a_token_the_forge_order_stays(self):
+        upstream._github_graphql = lambda *a: None
+        self.assertEqual(upstream.newest_tag(self.repo, self.tmp.name), "2.5")
+
+
+class TestNamedTagCommit(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.saved = upstream._http_json
+
+    def tearDown(self):
+        upstream._http_json = self.saved
+        self.tmp.cleanup()
+
+    def test_gitlab_tag_is_asked_by_name(self):
+        asked = []
+
+        def answer(url):
+            asked.append(url)
+            return {"name": "1.2.35", "commit": {"id": "c74fc36"}}
+
+        upstream._http_json = answer
+        repo = parse_repo("https://gitlab.com/jengun/sdltrs")
+        self.assertEqual(upstream.tag_commit(repo, "1.2.35", self.tmp.name), "c74fc36")
+        self.assertTrue(asked[0].endswith("/repository/tags/1.2.35"))
+
+
+class TestForkBase(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.saved = upstream._http_json
+
+    def tearDown(self):
+        upstream._http_json = self.saved
+        self.tmp.cleanup()
+
+    def test_the_merge_base_github_names(self):
+        asked = []
+
+        def answer(url):
+            asked.append(url)
+            return {"merge_base_commit": {"sha": "base"}, "status": "diverged"}
+
+        upstream._http_json = answer
+        up, fork = make_repo("github.com", "o", "up"), make_repo("github.com", "f", "port")
+        self.assertEqual(upstream.fork_base(up, "tip", fork, "head", self.tmp.name), "base")
+        self.assertTrue(asked[0].endswith("/repos/o/up/compare/tip...f:port:head"))
+
+    def test_no_network_is_none(self):
+        upstream._http_json = lambda url: None
+        up, fork = make_repo("github.com", "o", "up"), make_repo("github.com", "f", "port")
+        self.assertIsNone(upstream.fork_base(up, "tip", fork, "head", self.tmp.name))
+
 if __name__ == "__main__":
     unittest.main()

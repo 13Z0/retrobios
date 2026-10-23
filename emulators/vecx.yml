@@ -4,7 +4,7 @@ core_classification: community_fork
 source: "https://github.com/libretro/libretro-vecx"
 upstream: "https://github.com/jhawthorn/vecx"
 profiled_date: "2026-03-25"
-source_commit: "8f671cc9d737f2890c3ce19e177e2984dcae121f"
+source_commit: "dccff5402a16d1ea7c112095a8e42632bf149506"
 core_version: "SVN"
 display_name: "GCE - Vectrex (vecx)"
 cores:
@@ -22,7 +22,7 @@ notes: |
     - skip.h   - modified BIOS that skips the intro
 
   The default build uses STANDARD_BIOS via #define at libretro.c:20.
-  At load time (retro_load_game, libretro.c:736):
+  At load time (retro_load_game, libretro.c:737):
     memcpy(rom, bios_data, bios_data_size);
   This copies the compiled-in BIOS data into the rom[8192] array
   (vecx.c:40, mapped at 0xE000-0xFFFF via vecx.c:437-439).

@@ -50,7 +50,7 @@ import zipfile
 import zlib
 from collections.abc import Callable, Collection, Iterator, Mapping
 from pathlib import Path, PurePosixPath
-from typing import BinaryIO, NamedTuple, TextIO
+from typing import BinaryIO, ContextManager, NamedTuple, TextIO
 
 # Manifests are read from the same ref the bootstrap verified this installer
 # against, so a file list and the code reading it always come from one commit.
@@ -494,14 +494,22 @@ EVENT_KEYS: dict[str, tuple[str, ...]] = {
     # stage: manifest (reason: network, not_found, invalid, clock for a
     # refused certificate under a clock set in the past, or no_ca for no
     # trusted certificates on the machine) or detect (reason: conflict, two
-    # systems found on one machine).
+    # systems found on one machine) or from (reason: not_found or
+    # not_a_folder, a folder named with --from).
     "error": ("stage", "reason", "platform", "message"),
     # state: present (hash verified), wrong_hash or missing.
     "file": ("platform", "dest", "systems", "size", "state"),
     "system": ("platform", "system", "name", "files", "present", "missing",
                "wrong_hash", "bytes_needed"),
+    # The files in place being read, at most every half second, and the last.
+    "checking": ("files_done", "files_total"),
     "check": ("platform", "name", "bios_dir", "files", "present", "missing",
               "wrong_hash", "bytes_needed", "data_missing", "not_installable"),
+    # A file to install that this machine already holds: misplaced in the
+    # BIOS folder (folder is its bios_dir, reason says why in words) or in
+    # a folder named with --from (reason empty). member names the ZIP member
+    # when path is an archive, else "". Its copy is a downloaded event.
+    "found": ("platform", "dest", "folder", "path", "member", "reason"),
     "download": ("platform", "files", "bytes"),
     "progress": ("files_done", "files_total", "bytes_done", "bytes_total"),
     "downloaded": ("dest", "ok", "reason", "size", "files_done", "files_total",
@@ -3109,7 +3117,9 @@ def _address_lines(url: str) -> list[str]:
     return lines
 
 
-def _fetch_json(url: str, limit: int, label: str) -> object:
+def _fetch_json(
+    url: str, limit: int, label: str, attempts: int = MAX_RETRIES, timeout: float = 30,
+) -> object:
     """A JSON document, tried MAX_RETRIES times like every file download.
 
     A file list fetched once ended the run on one timeout over flaky Wi-Fi.
@@ -3117,26 +3127,26 @@ def _fetch_json(url: str, limit: int, label: str) -> object:
     nothing.
     """
     _network_allowed(label)
-    for attempt in range(1, MAX_RETRIES + 1):
+    for attempt in range(1, attempts + 1):
         try:
-            with urllib.request.urlopen(url, timeout=30) as resp:
+            with urllib.request.urlopen(url, timeout=timeout) as resp:
                 return _read_limited_json(resp, limit, label)
         except urllib.error.HTTPError as exc:
-            if exc.code < 500 and exc.code != 429 or attempt == MAX_RETRIES:
+            if exc.code < 500 and exc.code != 429 or attempt == attempts:
                 raise
             delay = _retry_delay(attempt, exc.headers.get("Retry-After") if exc.headers else None)
             problem = f"HTTP {exc.code}"
         except (urllib.error.URLError, OSError, http.client.HTTPException) as exc:
             code, problem = network_words(exc)
             # A wrong clock or no certificate list fails every attempt alike.
-            if attempt == MAX_RETRIES or code != "network":
+            if attempt == attempts or code != "network":
                 if isinstance(exc, http.client.HTTPException):
                     raise ConnectionError(f"connection cut: {exc!r}") from exc
                 raise
             delay = _retry_delay(attempt, None)
         # Said, or three 30-second attempts read as a frozen program.
         print(f"  The {label} did not arrive ({problem}), trying again "
-              f"({attempt + 1}/{MAX_RETRIES}) in {delay:.0f} s.", file=sys.stderr)
+              f"({attempt + 1}/{attempts}) in {delay:.0f} s.", file=sys.stderr)
         time.sleep(delay)
     raise AssertionError("unreachable")
 
@@ -3840,13 +3850,20 @@ def check_local(
                 lambda item: (item[0], _classify_local(item[0], item[1])), present
             )
             live = term is not None and term.live and not term.quiet
-            last = 0.0
+            last = evented = 0.0
             for done, (entry, verdict) in enumerate(verdicts, 1):
                 if verdict == "up_to_date":
                     up_to_date.append(entry)
                 else:
                     mismatched.append(entry)
                 now = time.monotonic()
+                # The program driving the installer gets the count the
+                # terminal gets: a screen with a bare timer over 6 GB on an
+                # SD card read as hung.
+                if EVENTS.on and (now - evented >= EVENT_PROGRESS_INTERVAL
+                                  or done == len(present)):
+                    evented = now
+                    EVENTS.emit("checking", files_done=done, files_total=len(present))
                 if live and (now - last >= 0.1 or done == len(present)):
                     last = now
                     print(f"\r  read {done}/{len(present)}", end="", file=term.stream,
@@ -4179,9 +4196,10 @@ def restore_kept(run: Path, dry_run: bool = False) -> int:
 
 def _download_one(
     f: dict, bios_path: Path, verbose: bool = False,
-    progress: Progress | None = None,
+    progress: Progress | None = None, copy: LocalCopy | None = None,
 ) -> tuple[str, bool, str]:
-    """Download a single file. Returns (dest, success, reason it failed)."""
+    """Download a single file, or copy it from where copy found it on this
+    machine. Returns (dest, success, reason it failed)."""
     if _stop.is_set():
         return str(f.get("dest", "?")), False, "stopped"
     try:
@@ -4194,6 +4212,18 @@ def _download_one(
         if _write_refused(exc):
             return f["dest"], False, NOT_WRITABLE
         return f["dest"], False, exc.strerror or str(exc)
+
+    if copy is not None:
+        result = _copy_local(f, bios_path, dest, copy, progress)
+        if result[1]:
+            copy.index.count_copy(copy.misplaced)
+            return result
+        if result[2] in ("stopped", NOT_WRITABLE, READ_ONLY) or result[2].startswith(NOT_KEPT):
+            return result
+        # The copy went or changed since it was read (a card pulled out, a
+        # file another run replaced): the file is fetched as if never found.
+        if verbose:
+            print(f"    {f['dest']}: {result[2]}, fetching it instead", file=sys.stderr)
 
     if LOCAL.pack is not None:
         return _extract_from_pack(f, bios_path, dest, progress)
@@ -4599,7 +4629,7 @@ def _folder_writable(path: Path) -> bool:
 # Options that take a value, as a hint gives them back.
 _VALUED_OPTIONS = (
     "--system", "--core", "--emulator", "--region", "--target", "--cores-dir", "--save-dir",
-    "--from-pack", "--manifest",
+    "--from-pack", "--from", "--manifest",
 )
 
 
@@ -4788,6 +4818,7 @@ def _report_outcome(
     omitted_entries: list[dict] | None = None,
     platform_of: dict[Path, str] | None = None,
     hints: list[str] | None = None,
+    sources: str = "",
 ) -> None:
     """Close the run on what happened, and leave with a status that says so.
 
@@ -4860,6 +4891,8 @@ def _report_outcome(
     if errors:
         print(f"\nFinished with errors. {_plural(downloaded, 'file')} installed, "
               f"{_plural(errors, 'file')} failed.")
+        if sources:
+            print(f"  {sources}")
         print(f"Location: {_locations(paths)}")
         for line in kept + advice:
             print(line)
@@ -4868,6 +4901,8 @@ def _report_outcome(
 
     print(f"\nDone. {_plural(downloaded, 'file')} installed, "
           f"{_plural(up_to_date, 'file')} already up to date.")
+    if sources:
+        print(f"  {sources}")
     print(f"Location: {_locations(paths)}")
     for line in kept:
         print(line)
@@ -4966,6 +5001,7 @@ def _print_plan(
     to_download: list[dict], bios_path: Path, term: Terminal,
     trees: list[tuple[dict, dict[str, dict]]] = (),
     kept: dict[Path, list[int]] | None = None,
+    copied: list[str] = (),
 ) -> None:
     """What a real run would fetch, by system, and nothing written.
 
@@ -4977,16 +5013,21 @@ def _print_plan(
     trees = [(entry, needed) for entry, needed in trees if needed]
     tree_files = sum(len(needed) for _entry, needed in trees)
     tree_size = sum(meta.get("size", 0) for _entry, needed in trees for meta in needed.values())
+    for line in copied:
+        print(line)
     if not to_download and not trees:
-        print("\n  All files up to date. A real run would download nothing.")
-        return
+        if not copied:
+            print("\n  All files up to date. A real run would download nothing.")
+            return
+        print("\n  Nothing to download.")
     parts = []
     if to_download:
         parts.append(f"{_plural(len(to_download), 'file')} ({format_size(total)})")
     if trees:
         parts.append(f"{_plural(tree_files, 'data file')} ({format_size(tree_size)}, "
                      f"extracted from {_plural(len(trees), 'archive')})")
-    print(f"\nWould download {' and '.join(parts)} to {bios_path}:")
+    if parts:
+        print(f"\nWould download {' and '.join(parts)} to {bios_path}:")
     by_system: dict[str, list[dict]] = {}
     for entry in to_download:
         system = ", ".join(entry_systems(entry)) or "other"
@@ -5042,6 +5083,7 @@ def _check_free_space(bios_path: Path, needed: int, plat: str = "", code: int = 
 def download_files(
     files: list[dict], bios_path: Path, jobs: int = 8, verbose: bool = False,
     term: Terminal | None = None, progress: Progress | None = None,
+    copies: dict[int, LocalCopy] | None = None,
 ) -> tuple[list[tuple[str, str]], bool]:
     """Download files in parallel.
 
@@ -5061,7 +5103,8 @@ def download_files(
 
     with concurrent.futures.ThreadPoolExecutor(max_workers=jobs) as pool:
         future_map = {
-            pool.submit(_download_one, f, bios_path, verbose, progress): f
+            pool.submit(_download_one, f, bios_path, verbose, progress,
+                        (copies or {}).get(id(f))): f
             for f in files
         }
         refused = False
@@ -6408,11 +6451,14 @@ class PackSource:
 
 
 class LocalSources:
-    """Where this run reads instead of the network: a file list, a pack."""
+    """Where this run reads instead of the network: a file list, a pack, the
+    folders it copies BIOS files from."""
 
     def __init__(self) -> None:
         self.manifest: Path | None = None
         self.pack: PackSource | None = None
+        # The folders named with --from, read once for every platform.
+        self.folders: list[FolderIndex] = []
 
     @property
     def offline(self) -> bool:
@@ -6423,6 +6469,7 @@ class LocalSources:
             self.pack.close()
         self.manifest = None
         self.pack = None
+        self.folders = []
 
 
 LOCAL = LocalSources()
@@ -6481,11 +6528,42 @@ def _extract_from_pack(
     if held is None:
         return f["dest"], False, NOT_IN_PACK
     archive, info = held
+    return _write_verified(f, bios_path, dest, lambda: archive.open(info), progress,
+                           "the pack")
+
+
+@contextlib.contextmanager
+def _open_copy(copy: LocalCopy) -> Iterator[BinaryIO]:
+    """The bytes of a copy found on this machine, opened for reading only."""
+    if not copy.member:
+        with open(copy.path, "rb") as handle:
+            yield handle
+        return
+    with zipfile.ZipFile(copy.path) as archive, archive.open(copy.member) as handle:
+        yield handle
+
+
+def _copy_local(
+    f: dict, bios_path: Path, dest: Path, copy: LocalCopy, progress: Progress | None,
+) -> tuple[str, bool, str]:
+    """Copy one file found on this machine to its place, checked like a
+    download. Its bytes count as already here, not in the download speed."""
+    return _write_verified(f, bios_path, dest, lambda: _open_copy(copy), progress,
+                           f"the copy in {copy.index.label}", local=True)
+
+
+def _write_verified(
+    f: dict, bios_path: Path, dest: Path,
+    source: Callable[[], ContextManager[BinaryIO]], progress: Progress | None,
+    held_in: str, local: bool = False,
+) -> tuple[str, bool, str]:
+    """Write the bytes source opens at dest once they match the list's size
+    and hashes, the file in place kept aside first when it differs."""
     expected = {name: f[name].lower() for name in ("sha256", "sha1") if f.get(name)}
     tmp_path: Path | None = None
     counted = 0
     try:
-        with archive.open(info) as src, tempfile.NamedTemporaryFile(
+        with source() as src, tempfile.NamedTemporaryFile(
             mode="wb", dir=dest.parent, prefix=f".{dest.name}.", suffix=".part",
             delete=False,
         ) as out:
@@ -6499,17 +6577,17 @@ def _extract_from_pack(
                     break
                 size += len(chunk)
                 if size > f["size"]:
-                    raise ValueError("the pack holds more bytes than the list records")
+                    raise ValueError(f"{held_in} holds more bytes than the list records")
                 out.write(chunk)
                 if progress is not None:
-                    progress.add(len(chunk))
+                    progress.add(len(chunk), resumed=local)
                     counted += len(chunk)
         if size != f["size"]:
-            raise ValueError(f"the pack holds {size} bytes, the list records {f['size']}")
+            raise ValueError(f"{held_in} holds {size} bytes, the list records {f['size']}")
         actual = _digest_file(tmp_path, tuple(expected))
         for name, label in (("sha256", "SHA-256"), ("sha1", "SHA-1")):
             if name in expected and actual[name] != expected[name]:
-                raise ValueError(f"{label} mismatch in the pack")
+                raise ValueError(f"{label} mismatch in {held_in}")
         os.chmod(tmp_path, (0o777 if f.get("executable") else 0o666) & ~_UMASK)
         _clear_read_only(dest)
         KEPT.keep(*_kept_slot(*_entry_place(bios_path, f)), dest, expected, tmp_path)
@@ -6520,9 +6598,9 @@ def _extract_from_pack(
         return f["dest"], False, "stopped"
     except _NotKept as exc:
         return f["dest"], False, f"{NOT_KEPT} ({exc})"
-    except (OSError, ValueError, zipfile.BadZipFile, zlib.error) as exc:
+    except (ValueError, *_MEMBER_ERRORS) as exc:
         if progress is not None and counted:
-            progress.add(-counted)
+            progress.add(-counted, resumed=local)
         if isinstance(exc, OSError) and _write_refused(exc):
             return f["dest"], False, READ_ONLY if _read_only_file(dest) else NOT_WRITABLE
         return f["dest"], False, str(exc)
@@ -6539,23 +6617,85 @@ _ARCHIVE_SUFFIXES = (".zip", ".7z", ".rar")
 SHOWN_CORES = 4
 
 
-class FolderIndex:
-    """The files under a BIOS folder, by name and by size, hashed on demand."""
+# Folders a system writes on a drive for itself. No BIOS file a person
+# copied is in them, and a Mac's Spotlight index alone holds thousands.
+SYSTEM_FOLDERS = frozenset(name.casefold() for name in (
+    ".Spotlight-V100", ".Trashes", ".fseventsd", ".TemporaryItems",
+    ".DocumentRevisions-V100", "System Volume Information", "$RECYCLE.BIN",
+))
+# A Mac copying to a FAT or exFAT card writes ._name beside every file: its
+# Finder data, 4 KB, never the file.
+APPLE_DOUBLE = "._"
+# Errors a member of someone's ZIP can raise on reading: damaged, encrypted
+# (RuntimeError), or packed with a method zipfile lacks.
+_MEMBER_ERRORS = (OSError, EOFError, RuntimeError, NotImplementedError,
+                  zipfile.BadZipFile, zlib.error)
 
-    def __init__(self, root: Path) -> None:
+
+class LocalCopy(NamedTuple):
+    """A file found on this machine with the contents an entry wants."""
+    index: FolderIndex
+    path: Path
+    # The member holding the bytes when path is a ZIP, else "".
+    member: str = ""
+    # In the BIOS folder at a place no entry of the list names: a mistake
+    # the copy fixes. A copy from another entry's place is no mistake.
+    misplaced: bool = False
+
+    def where(self) -> str:
+        """The copy as the folder it was found in names it."""
+        rel = self.index.relative(self.path)
+        return f"{rel}, inside as {self.member}" if self.member else rel
+
+
+class FolderIndex:
+    """The files under a folder, by name and by size, hashed on demand.
+
+    The folder is only read. A link is followed only where it leads to a
+    file inside the folder, so an old card holding a link to the home
+    folder is not walked through it. A ZIP named as the root is read as a
+    folder holding that one archive.
+    """
+
+    def __init__(self, root: Path, label: str = "") -> None:
+        self.label = label or str(root)
         self.root = root = root.resolve()
         self.by_name: dict[str, list[Path]] = {}
         self.by_size: dict[int, list[Path]] = {}
         self.size: dict[Path, int] = {}
         self.archives: list[Path] = []
+        # Name a ._ file stands beside (casefolded) -> the ._ files.
+        self.apple_double: dict[str, list[Path]] = {}
+        # The list's destinations, casefolded (an archive among them is not
+        # unpacked for its members) and as the list writes them.
+        self.sealed: set[str] = set()
+        self.listed: set[str] = set()
+        self.truncated = False
+        self.copied = 0
+        self.fixed = 0
+        self._lock = threading.Lock()
         self._sha1: dict[Path, str] = {}
+        self._digests: dict[tuple[Path, str, str], str] = {}
         self._members: dict[Path, list[str]] = {}
+        self._member_sizes: dict[int, list[tuple[Path, str]]] | None = None
+        if root.is_file():
+            if root.name.casefold().endswith(".zip"):
+                self.archives.append(root)
+            return
         seen = 0
         for folder, dirs, names in os.walk(root):
-            dirs[:] = sorted(d for d in dirs if d != BACKUP_DIR)
+            dirs[:] = sorted(d for d in dirs
+                             if d != BACKUP_DIR and d.casefold() not in SYSTEM_FOLDERS)
             for name in sorted(names):
                 path = Path(folder) / name
+                if name.startswith(APPLE_DOUBLE):
+                    self.apple_double.setdefault(name[2:].casefold(), []).append(path)
+                    continue
+                if name.startswith(".") and name.endswith(".part"):
+                    continue  # a download of this installer, not finished
                 try:
+                    if path.is_symlink() and not _inside(path, root):
+                        continue
                     if not path.is_file():
                         continue
                     size = path.stat().st_size
@@ -6568,6 +6708,7 @@ class FolderIndex:
                     self.archives.append(path)
                 seen += 1
                 if seen >= MAX_SCANNED_FILES:
+                    self.truncated = True
                     return
 
     def seed(self, path: Path, sha1: str) -> None:
@@ -6581,6 +6722,23 @@ class FolderIndex:
             except OSError:
                 self._sha1[path] = ""
         return self._sha1[path]
+
+    def digest(self, path: Path, algorithm: str, member: str = "") -> str:
+        """The file's (or the member's) digest, read once, "" when unreadable."""
+        if algorithm == "sha1" and not member:
+            return self.sha1(path)
+        key = (path, member, algorithm)
+        if key not in self._digests:
+            try:
+                if member:
+                    with zipfile.ZipFile(path) as archive, archive.open(member) as handle:
+                        value = _digest_handle(handle, (algorithm,))[algorithm]
+                else:
+                    value = _digest_file(path, (algorithm,))[algorithm]
+            except _MEMBER_ERRORS:
+                value = ""
+            self._digests[key] = value
+        return self._digests[key]
 
     def holding(self, sizes: set[int], sha1s: set[str]) -> list[Path]:
         """Files whose contents are one of sha1s, read only when the size fits."""
@@ -6597,11 +6755,70 @@ class FolderIndex:
                 self._members[path] = []
         return self._members[path]
 
+    def _members_of_size(self, size: int) -> list[tuple[Path, str]]:
+        """(archive, member) of every ZIP member of that size, the
+        archives' directories read once, the first time one is asked."""
+        if self._member_sizes is None:
+            self._member_sizes = {}
+            for path in self.archives:
+                if (not path.name.casefold().endswith(".zip")
+                        or self.relative(path).casefold() in self.sealed):
+                    continue
+                try:
+                    with zipfile.ZipFile(path) as archive:
+                        infos = archive.infolist()
+                except (OSError, zipfile.BadZipFile):
+                    continue
+                for info in infos:
+                    if not info.is_dir():
+                        self._member_sizes.setdefault(info.file_size, []).append(
+                            (path, info.filename))
+        return self._member_sizes.get(size, [])
+
+    def find(self, entry: dict, skip: Collection[Path] = ()) -> LocalCopy | None:
+        """A copy of the entry's own contents: its size first, then its hash,
+        loose files before ZIP members, a file of the same name first."""
+        size = entry.get("size")
+        if not isinstance(size, int) or isinstance(size, bool):
+            return None
+        algorithm = "sha1" if entry.get("sha1") else "sha256"
+        wanted = str(entry.get(algorithm) or "").lower()
+        if not wanted:
+            return None
+        name = str(entry.get("dest", "")).rsplit("/", 1)[-1].casefold()
+        loose = sorted(self.by_size.get(size, []), key=lambda p: p.name.casefold() != name)
+        for path in loose:
+            if path not in skip and self.digest(path, algorithm) == wanted:
+                return LocalCopy(self, path)
+        members = sorted(self._members_of_size(size),
+                         key=lambda item: item[1].rsplit("/", 1)[-1].casefold() != name)
+        for path, member in members:
+            if self.digest(path, algorithm, member) == wanted:
+                return LocalCopy(self, path, member)
+        return None
+
+    def count_copy(self, misplaced: bool = False) -> None:
+        with self._lock:
+            if misplaced:
+                self.fixed += 1
+            else:
+                self.copied += 1
+
     def relative(self, path: Path) -> str:
         try:
-            return path.relative_to(self.root).as_posix()
+            rel = path.relative_to(self.root).as_posix()
         except ValueError:
             return str(path)
+        return rel if rel != "." else path.name
+
+
+def _inside(path: Path, root: Path) -> bool:
+    """Whether a link at path leads to a place under root."""
+    try:
+        Path(os.path.realpath(path)).relative_to(root)
+    except ValueError:
+        return False
+    return True
 
 
 def _copies(entry: dict) -> list[dict]:
@@ -6663,6 +6880,59 @@ def _content_owner(sha1: str, entry: dict, files: list[dict]) -> str:
     return ""
 
 
+def _place_reason(
+    entry: dict, path: Path, index: FolderIndex, expected: Path, known: set[str],
+    contents: str = "",
+) -> tuple[str, str]:
+    """(reason, folder too deep) for an entry's file found at path in the
+    BIOS folder, or ("", "") when that place says nothing. contents is
+    ", with other contents" for a file of the right name and wrong bytes."""
+    dest = str(entry.get("dest", ""))
+    name = dest.rsplit("/", 1)[-1]
+    rel = index.relative(path)
+    # A dest below the save directory is not below this folder: a copy
+    # here under the same tail is in the wrong place, not too deep.
+    below = entry.get("root") != "save"
+    if below and rel.endswith("/" + dest) and path.name == name:
+        extra = rel[: -len(dest) - 1]
+        top = index.root.name
+        if extra.casefold() == top.casefold():
+            return (f"nested folder: it is at {top}/{rel}{contents}, a "
+                    f"{top} folder inside {top}"), extra
+        depth = extra.count("/") + 1
+        levels = "one folder" if depth == 1 else f"{depth} folders"
+        return f"{levels} too deep: it is at {rel}{contents}", extra
+    if path.name.casefold() == name.casefold():
+        if path.parent == expected.parent and path.name != name:
+            return (f"case of the name: the folder holds {path.name}{contents}, "
+                    f"the cores open {name}"), ""
+        return f"wrong folder: it is at {rel}{contents}", ""
+    if contents:
+        return "", ""
+    if rel.casefold() in known:
+        return f"its contents are at {rel}: copy that file to {dest}", ""
+    return f"a name no core opens: its contents are at {rel}, rename it {name}", ""
+
+
+def _copy_reason(entry: dict, copy: LocalCopy, bios_path: Path, known: set[str]) -> str:
+    """Why a copy found in the BIOS folder is not at the entry's place."""
+    if not copy.misplaced:
+        # np2kai/2608_bd.wav and np2/2608_bd.wav hold the same bytes. Told
+        # "wrong folder", a user moved np2's copy and broke that core.
+        return f"the same file is at {copy.where()}, where the list installs it too"
+    if copy.member:
+        return f"still zipped: it is inside {copy.index.relative(copy.path)}"
+    try:
+        copy.path.relative_to(copy.index.root)
+    except ValueError:
+        return f"one folder too high: it is at {copy.path}"
+    try:
+        expected = _entry_path(bios_path, entry)
+    except ValueError:
+        return ""
+    return _place_reason(entry, copy.path, copy.index, expected, known)[0]
+
+
 def _found_elsewhere(
     entry: dict, index: FolderIndex, bios_path: Path, files: list[dict],
     known: set[str],
@@ -6685,32 +6955,15 @@ def _found_elsewhere(
     same_name = [p for p in index.by_name.get(name.casefold(), []) if p != expected]
     matching = [p for p in same_name if index.size[p] in sizes and index.sha1(p) in sha1s]
     for path in matching or same_name:
-        rel = index.relative(path)
         contents = "" if path in matching else ", with other contents"
-        # A dest below the save directory is not below this folder: a copy
-        # here under the same tail is in the wrong place, not too deep.
-        below = entry.get("root") != "save"
-        if below and rel.endswith("/" + dest) and path.name == name:
-            extra = rel[: -len(dest) - 1]
-            top = index.root.name
-            if extra.casefold() == top.casefold():
-                return (f"nested folder: it is at {top}/{rel}{contents}, a "
-                        f"{top} folder inside {top}"), extra
-            depth = extra.count("/") + 1
-            levels = "one folder" if depth == 1 else f"{depth} folders"
-            return f"{levels} too deep: it is at {rel}{contents}", extra
-        if path.parent == expected.parent and path.name != name:
-            return f"case of the name: the folder holds {path.name}{contents}", ""
-        if path.name.casefold() == name.casefold():
-            return f"wrong folder: it is at {rel}{contents}", ""
+        found = _place_reason(entry, path, index, expected, known, contents)
+        if found[0]:
+            return found
     above = index.root.parent / dest
     if index.root.parent != index.root and above.is_file():
         return f"one folder too high: it is at {above}", ""
     for path in index.holding(sizes, sha1s):
-        rel = index.relative(path)
-        if rel.casefold() in known:
-            return f"its contents are at {rel}: copy that file to {dest}", ""
-        return f"a name no core opens: its contents are at {rel}, rename it {name}", ""
+        return _place_reason(entry, path, index, expected, known)
     if name.casefold().endswith(_ARCHIVE_SUFFIXES):
         return "", ""
     stem = name.rsplit(".", 1)[0].casefold()
@@ -6723,6 +6976,10 @@ def _found_elsewhere(
             return f"still zipped: it is inside {index.relative(path)}", ""
         if lowered.rsplit(".", 1)[0] == stem:
             return f"still zipped: {index.relative(path)} needs extracting", ""
+    for path in index.apple_double.get(name.casefold(), []):
+        if path.parent == expected.parent:
+            return (f"only a Mac's ._ file: {path.name} holds Finder data, not the "
+                    f"file itself. Copy {name} again"), ""
     return "", ""
 
 
@@ -6754,7 +7011,7 @@ class Diagnosis(NamedTuple):
 
 def diagnose(
     missing: list[dict], mismatched: list[dict], files: list[dict], bios_path: Path,
-    verified: list[dict] | None = None,
+    verified: list[dict] | None = None, index: FolderIndex | None = None,
 ) -> Diagnosis:
     """The reason --check gives for each file it flags, from what the folder
     holds and what the list records: id(entry) -> reason, and the folders
@@ -6764,13 +7021,8 @@ def diagnose(
     deep: dict[str, int] = {}
     if not bios_path.is_dir() or not (missing or mismatched):
         return Diagnosis(reasons, deep)
-    index = FolderIndex(bios_path)
-    for entry in verified or []:
-        if entry.get("sha1"):
-            try:
-                index.seed(_entry_path(bios_path, entry), entry["sha1"].lower())
-            except ValueError:
-                continue
+    if index is None:
+        index = bios_folder_index(bios_path, files, verified or [])
     known = _known_destinations(files)
     for entry in missing:
         reason, extra = _found_elsewhere(entry, index, bios_path, files, known)
@@ -6792,21 +7044,26 @@ def diagnose(
 def check_lines(
     missing: list[dict], mismatched: list[dict], files: list[dict], manifest: dict,
     bios_path: Path, every: bool, verified: list[dict] | None = None,
+    index: FolderIndex | None = None, copies: dict[int, LocalCopy] | None = None,
 ) -> list[str]:
     """The files --check flags, each with why and where its cores read it.
 
     "missing: scph5501.bin" left a user with the file one folder too deep,
     or still in its ZIP, to guess. A flagged file with a reason is always
-    listed. Plain missing ones stop at ten unless every is set.
+    listed, and so is one a folder named with --from holds. Plain missing
+    ones stop at ten unless every is set.
     """
-    found = diagnose(missing, mismatched, files, bios_path, verified)
+    found = diagnose(missing, mismatched, files, bios_path, verified, index)
+    copies = copies or {}
+    known = _known_destinations(files)
     lines = []
     for extra, count in sorted(found.deep.items(), key=lambda item: -item[1]):
         if count >= 3:
             lines.append(f"  {_plural(count, 'file')} sit too deep, in "
                          f"{bios_path / extra}: move what it holds up into {bios_path}.")
-    explained = [e for e in missing if id(e) in found.reasons]
-    plain = [e for e in missing if id(e) not in found.reasons]
+    lines += _check_copy_lines(missing + mismatched, copies, index)
+    explained = [e for e in missing if id(e) in found.reasons or id(e) in copies]
+    plain = [e for e in missing if id(e) not in found.reasons and id(e) not in copies]
     shown = plain if every else plain[:10]
 
     def block(label: str, entry: dict) -> list[str]:
@@ -6814,6 +7071,16 @@ def check_lines(
         rows = [f"    {label}: {entry['dest']}{game}"]
         if id(entry) in found.reasons:
             rows.append(f"      {found.reasons[id(entry)]}")
+        copy = copies.get(id(entry))
+        if copy is not None and copy.index is index and not copy.misplaced:
+            rows.append(f"      a run without --check copies it from {copy.where()}")
+        elif copy is not None and copy.index is index:
+            where = _copy_reason(entry, copy, bios_path, known)
+            if where and where != found.reasons.get(id(entry)):
+                rows.append(f"      the right file: {where}")
+            rows.append("      a run without --check copies it into place")
+        elif copy is not None:
+            rows.append(f"      in {copy.index.label}: {copy.where()}")
         rows.append(f"      {opened_line(entry, manifest, bios_path)}")
         return rows
 
@@ -6827,6 +7094,199 @@ def check_lines(
         lines.append(f"    ... and {len(plain) - len(shown)} more missing "
                      "(--verbose lists them all)")
     return lines
+
+
+def bios_folder_index(
+    bios_path: Path, files: list[dict], verified: list[dict],
+) -> FolderIndex | None:
+    """The BIOS folder read for files misplaced in it. The files the check
+    verified are not read again: their SHA-1 is the one the list records.
+    An archive the list installs is not unpacked for its members: a MAME
+    set holding a ROM a core also reads loose is that core's to open."""
+    if not bios_path.is_dir():
+        return None
+    index = FolderIndex(bios_path)
+    for entry in verified:
+        if entry.get("sha1"):
+            try:
+                index.seed(_entry_path(bios_path, entry), entry["sha1"].lower())
+            except ValueError:
+                continue
+    index.sealed = _known_destinations(files)
+    index.listed = {str(f.get("dest", "")) for f in files}
+    return index
+
+
+def _above(entry: dict, index: FolderIndex) -> LocalCopy | None:
+    """The entry's file at its place one folder above the BIOS folder."""
+    if entry.get("root") == "save" or index.root.parent == index.root:
+        return None
+    try:
+        above = index.root.parent / _safe_relative_path(entry.get("dest"), "dest")
+        if above.stat().st_size != entry.get("size") or not above.is_file():
+            return None
+    except (OSError, ValueError):
+        return None
+    algorithm = "sha1" if entry.get("sha1") else "sha256"
+    if index.digest(above, algorithm) != str(entry.get(algorithm, "")).lower():
+        return None
+    return LocalCopy(index, above)
+
+
+def plan_local_copies(
+    entries: list[dict], bios_path: Path, bios_index: FolderIndex | None,
+    folders: list[FolderIndex],
+) -> dict[int, LocalCopy]:
+    """id(entry) -> where this machine already holds the entry's bytes: the
+    BIOS folder itself first, a file misplaced in it, then each folder named
+    with --from in turn. Every copy is found by size, then by hash."""
+    if not entries or (bios_index is None and not folders):
+        return {}
+    # A file this run replaces is no source: its place is being written.
+    written = set()
+    for entry in entries:
+        try:
+            written.add(Path(os.path.realpath(_entry_path(bios_path, entry))))
+        except ValueError:
+            continue
+    copies: dict[int, LocalCopy] = {}
+    for entry in entries:
+        copy = None
+        if bios_index is not None:
+            copy = bios_index.find(entry, written) or _above(entry, bios_index)
+        if copy is not None:
+            copy = copy._replace(misplaced=_misplaced(entry, copy, bios_index))
+        for index in folders:
+            if copy is not None:
+                break
+            copy = index.find(entry, written)
+        if copy is not None:
+            copies[id(entry)] = copy
+    return copies
+
+
+def _misplaced(entry: dict, copy: LocalCopy, index: FolderIndex) -> bool:
+    """Whether a copy in the BIOS folder sits where no other entry of the
+    list goes: GBA_BIOS.BIN for gba_bios.bin is a mistake, np2/2608_bd.wav
+    for np2kai/2608_bd.wav is the other core's file."""
+    if copy.member:
+        return True
+    rel = index.relative(copy.path)
+    if rel in index.listed:
+        return False
+    own = str(entry.get("dest", "")).casefold()
+    return rel.casefold() not in index.sealed or rel.casefold() == own
+
+
+def _check_copy_lines(
+    entries: list[dict], copies: dict[int, LocalCopy], bios_index: FolderIndex | None,
+) -> list[str]:
+    """What --check says a run would copy instead of downloading."""
+    fixed = sum(1 for e in entries if id(e) in copies and copies[id(e)].misplaced)
+    lines = []
+    if fixed:
+        verb = "is" if fixed == 1 else "are"
+        them = "it" if fixed == 1 else "them"
+        lines.append(f"  {fixed} of these files {verb} in the BIOS folder at the wrong place: "
+                     f"a run without --check copies {them} where the cores open {them}, and "
+                     f"leaves your {'copy' if fixed == 1 else 'copies'} as "
+                     f"{'it is' if fixed == 1 else 'they are'}.")
+    for label, count in _counts_by_folder(entries, copies, bios_index):
+        them = "it" if count == 1 else "them"
+        lines.append(f"  {label} holds {count} of these files: a run without --check "
+                     f"copies {them}.")
+    return lines
+
+
+def _counts_by_folder(
+    entries: list[dict], copies: dict[int, LocalCopy], bios_index: FolderIndex | None,
+) -> list[tuple[str, int]]:
+    """(folder, files) for each --from folder that gives some of entries."""
+    counts: dict[str, int] = {}
+    for entry in entries:
+        copy = copies.get(id(entry))
+        if copy is not None and copy.index is not bios_index:
+            counts[copy.index.label] = counts.get(copy.index.label, 0) + 1
+    return list(counts.items())
+
+
+def copy_plan_lines(
+    entries: list[dict], copies: dict[int, LocalCopy], bios_index: FolderIndex | None,
+    bios_path: Path, files: list[dict], every: bool, planned: bool,
+) -> list[str]:
+    """The files a run copies from this machine, by folder: the misplaced
+    ones with the reason each was not where its cores open it."""
+    known = _known_destinations(files)
+    # By --from folder, "" for the misplaced files and "=" for the ones the
+    # BIOS folder holds at another entry's place.
+    groups: dict[str, list[dict]] = {}
+    for entry in entries:
+        copy = copies.get(id(entry))
+        if copy is not None:
+            key = (copy.index.label if copy.index is not bios_index
+                   else "" if copy.misplaced else "=")
+            groups.setdefault(key, []).append(entry)
+    lines = []
+    for key in sorted(groups, key=lambda k: (k != "", k != "=")):
+        chosen = groups[key]
+        sized = f"{_plural(len(chosen), 'file')} ({format_size(_bytes(chosen))})"
+        if key == "":
+            head = (f"Would fix {sized} misplaced in the BIOS folder, copied where the "
+                    "cores open them:" if planned else
+                    f"Fixing {sized} misplaced in the BIOS folder: copied where the cores "
+                    "open them, your copies left as they are.")
+        elif key == "=":
+            head = (f"Would copy {sized} the BIOS folder already holds at another "
+                    "place of the list:" if planned else
+                    f"Copying {sized} the BIOS folder already holds at another place "
+                    "of the list.")
+        else:
+            head = (f"Would copy {sized} from {key}:" if planned else
+                    f"Copying {sized} from {key}, each one checked by hash.")
+        lines.append(f"\n  {head}" if planned else f"  {head}")
+        for entry in chosen if every else chosen[:10]:
+            copy = copies[id(entry)]
+            why = (_copy_reason(entry, copy, bios_path, known) if key == ""
+                   else f"from {copy.where()}" if key == "=" else copy.where())
+            lines.append(f"    {entry['dest']}: {why}" if why else f"    {entry['dest']}")
+        if len(chosen) > 10 and not every:
+            lines.append(f"    ... and {len(chosen) - 10} more (--verbose lists them all)")
+    return lines
+
+
+def emit_copies(
+    plat: str, entries: list[dict], copies: dict[int, LocalCopy],
+    bios_index: FolderIndex | None, bios_path: Path, files: list[dict],
+) -> None:
+    """One found event per file this machine holds, before it is copied."""
+    known = _known_destinations(files)
+    for entry in entries:
+        copy = copies.get(id(entry))
+        if copy is None:
+            continue
+        reason = (_copy_reason(entry, copy, bios_path, known)
+                  if copy.index is bios_index else "")
+        EVENTS.emit("found", platform=plat, dest=entry["dest"], folder=copy.index.label,
+                    path=str(copy.path), member=copy.member, reason=reason)
+
+
+def sources_line(
+    folders: list[tuple[str, int]], fixed: int, downloaded: int, missing: int,
+    fetched: str = "downloaded", shared: int = 0,
+) -> str:
+    """Where the files of a run that copied some came from, in words:
+    "38 files copied from E:\\, 4 downloaded, 2 still missing." """
+    parts = [(count, f"copied from {label}") for label, count in folders]
+    parts.append((fixed, "fixed from copies already in the BIOS folder"))
+    parts.append((shared, "copied from another place of the BIOS folder"))
+    if not any(count for count, _what in parts):
+        return ""
+    parts += [(downloaded, fetched), (missing, "still missing")]
+    words = []
+    for count, what in parts:
+        if count:
+            words.append(f"{_plural(count, 'file') if not words else count} {what}")
+    return ", ".join(words) + "."
 
 
 # Below this a download is small enough that narrowing it is not worth a line.
@@ -6915,7 +7375,9 @@ def main() -> None:
     _INVOCATION.os_type = detect_os()
     parser = argparse.ArgumentParser(
         allow_abbrev=False,
-        description="Download missing BIOS files for retrogaming emulators.",
+        description="Download missing BIOS files for retrogaming emulators. "
+                    "For questions line by line, as a screen reader reads them, "
+                    "add --plain.",
         epilog=_help_epilog(),
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
@@ -7090,6 +7552,15 @@ def main() -> None:
              "Makes no network request, and checks every file's hash",
     )
     parser.add_argument(
+        "--from",
+        action="append",
+        type=Path,
+        metavar="FOLDER",
+        help="copy the BIOS files found in FOLDER (an old SD card, a backup, a "
+             "ZIP) instead of downloading them: every file recognised by its "
+             "hash, never moved. Repeat for several folders",
+    )
+    parser.add_argument(
         "--manifest",
         type=Path,
         metavar="FILE",
@@ -7145,7 +7616,10 @@ def main() -> None:
     if args.tui:
         reason = tui_blocker(args)
         if reason:
-            parser.error(f"--tui cannot open the full-screen interface here: {reason}")
+            # The reason alone: fourteen lines of usage hid it.
+            print(f"{parser.prog}: error: --tui cannot open the full-screen interface "
+                  f"here: {reason}", file=sys.stderr)
+            sys.exit(2)
     if args.restore is not None:
         # The folder says where each file goes: nothing else applies.
         alone = ("platform", "dest", "target", "every_board", "check", "list_platforms",
@@ -7153,7 +7627,7 @@ def main() -> None:
                  "cores_dir", "save_dir", "system", "core", "region", "no_game_data",
                  "list_systems",
                  "list_cores", "romm_firmware", "list_emulators", "events", "quiet",
-                 "yes", "verbose", "from_pack", "manifest")
+                 "yes", "verbose", "from_pack", "manifest", "from")
         given = [name for name in alone if getattr(args, name)]
         if args.jobs != 8:
             given.append("jobs")
@@ -7166,6 +7640,12 @@ def main() -> None:
     if args.from_pack and args.target:
         parser.error("--target reads a core list from the network, which --from-pack "
                      "does not use")
+    if getattr(args, "from") and (
+        args.list_platforms or args.list_targets or args.list_systems
+        or args.list_cores or args.list_emulators
+    ):
+        parser.error("--from copies files into the BIOS folder, which a listing "
+                     "does not write")
     if (args.from_pack or args.manifest) and (args.list_platforms or args.list_targets):
         parser.error("--from-pack and --manifest give a file list, which --list-platforms "
                      "and --list-targets do not read")
@@ -7222,6 +7702,7 @@ def _open_local_sources(args: argparse.Namespace) -> None:
     """Take the file list and the pack this run was given, and the platform
     they are for when none is named."""
     LOCAL.reset()
+    _open_from_folders(getattr(args, "from", None) or [])
     if args.manifest is not None:
         LOCAL.manifest = args.manifest
         named = local_manifest_platform(args.manifest)
@@ -7254,6 +7735,28 @@ def _open_local_sources(args: argparse.Namespace) -> None:
         print(f"Error: name the platform {pack.name} is installed for with "
               f"--platform{among}.", file=sys.stderr)
         sys.exit(1)
+
+
+def _open_from_folders(folders: list[Path]) -> None:
+    """Read each folder named with --from, or stop on one that is not there."""
+    for folder in folders:
+        label = str(folder)
+        folder = Path(os.path.expanduser(label))
+        zipped = folder.is_file() and folder.name.casefold().endswith(".zip")
+        if not (folder.is_dir() or zipped):
+            reason = "not_a_folder" if folder.exists() else "not_found"
+            what = ("does not exist" if reason == "not_found"
+                    else "is neither a folder nor a ZIP")
+            message = f"{label} {what}: --from names the folder to copy BIOS files from"
+            EVENTS.emit("error", stage="from", reason=reason, platform="", message=message)
+            print(f"Error: {message}.", file=sys.stderr)
+            sys.exit(1)
+        index = FolderIndex(folder, label)
+        LOCAL.folders.append(index)
+        print(f"  Copying BIOS files from: {label}")
+        if index.truncated:
+            print(f"  Read the first {MAX_SCANNED_FILES:,} files of {label} only. Name "
+                  "the folder that holds the BIOS files to search it all.")
 
 
 def _missing_dest(dest: Path, ask: bool, named: str = "named with --dest") -> None:
@@ -7550,6 +8053,8 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
     failures: list[tuple[str, str]] = []
     installed_paths: list[Path] = []
     bulk_lines: list[str] = []
+    # The BIOS folders read for misplaced files, one per platform.
+    bios_indexes: list[FolderIndex] = []
 
     # --target is checked for every platform before anything is written, as
     # --installed-cores is below: EmuDeck installed 3.2 GB and only then was
@@ -7849,6 +8354,14 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
 
         # Mismatched files need re-download
         to_download.extend(mismatched)
+        # The files this machine already holds: misplaced in the BIOS folder
+        # (bios/bios/, a pack extracted into a folder of its own, a name in
+        # capitals, still zipped), or in a folder named with --from.
+        bios_index = (bios_folder_index(bios_path, files, up_to_date)
+                      if to_download else None)
+        if bios_index is not None:
+            bios_indexes.append(bios_index)
+        copies = plan_local_copies(to_download, bios_path, bios_index, LOCAL.folders)
         hint = [] if LOCAL.pack is not None else bulk_hint(
             to_download, manifest,
             systems_chosen=bool(selection and selection[0]),
@@ -7872,6 +8385,7 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                 sum(len(state[1]) for _entry, state in data_states), len(omitted_files),
                 chosen=selection[0] if selection else None,
             )
+            emit_copies(plat_name, to_download, copies, bios_index, bios_path, files)
         total_verified += len(up_to_date)
 
         if args.check:
@@ -7888,7 +8402,7 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                     print(line)
                 print(f"\n  {_plural(len(to_download), 'file')} to download:")
                 for line in check_lines(missing, mismatched, files, manifest, bios_path,
-                                        args.verbose, up_to_date):
+                                        args.verbose, up_to_date, bios_index, copies):
                     print(line)
                 print("  Run the same command without --check to fetch them; "
                       "a file with a wrong hash is replaced, and the one in place "
@@ -7920,19 +8434,23 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                 {"dest": f"{entry['dest']}/{rel}" if entry.get("dest") else rel}
                 for entry, needed in trees for rel in needed
             ], bios_path)
-            _print_plan(to_download, bios_path, term, trees, kept)
+            _print_plan([f for f in to_download if id(f) not in copies], bios_path, term,
+                        trees, kept, copy_plan_lines(to_download, copies, bios_index,
+                                                     bios_path, files, args.verbose, True))
             for line in hint:
                 print(line)
             continue
 
         if to_download:
             dl_size = sum(f.get("size", 0) for f in to_download)
+            fetched = [f for f in to_download if id(f) not in copies]
+            fetch_size = _bytes(fetched)
             if (
                 interactive
                 and not args.yes
-                and dl_size >= CONFIRM_FROM_BYTES
+                and fetch_size >= CONFIRM_FROM_BYTES
                 and not _confirm(
-                    f"\nDownload {format_size(dl_size)} to {bios_path}? [Y/n] "
+                    f"\nDownload {format_size(fetch_size)} to {bios_path}? [Y/n] "
                 )
             ):
                 # A beginner who just passed the c entry was sent to a
@@ -7944,7 +8462,17 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                 files_pending += len(to_download)
                 continue
             EVENTS.emit("download", platform=plat_name, files=len(to_download), bytes=dl_size)
-            if LOCAL.pack is not None:
+            if copies:
+                print()
+                for line in copy_plan_lines(to_download, copies, bios_index, bios_path,
+                                            files, args.verbose, False):
+                    print(line)
+                rest = (f" and {'copying' if LOCAL.pack is not None else 'downloading'} "
+                        f"{len(fetched)}" if fetched else "")
+                where = f" from {LOCAL.pack.name}" if fetched and LOCAL.pack is not None else ""
+                print(f"\nCopying {_plural(len(copies), 'file')} found on this machine"
+                      f"{rest}{where} ({format_size(dl_size)})...")
+            elif LOCAL.pack is not None:
                 print(f"\nCopying {len(to_download)} files ({format_size(dl_size)}) "
                       f"from {LOCAL.pack.name}...")
             else:
@@ -7972,7 +8500,7 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
             progress = Progress(len(to_download), dl_size, term)
             failed, interrupted = download_files(
                 to_download, bios_path, jobs=args.jobs, verbose=args.verbose,
-                term=term, progress=progress,
+                term=term, progress=progress, copies=copies,
             )
             bulk_lines += hint
             total_downloaded += progress.installed
@@ -8077,7 +8605,19 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
             omitted_entries=omitted_seen,
             platform_of={path: plat for plat, path in platforms},
             hints=bulk_lines,
+            sources=_run_sources(bios_indexes, total_downloaded, total_errors),
         )
+
+
+def _run_sources(bios_indexes: list[FolderIndex], installed: int, failed: int) -> str:
+    """The end line saying which folder gave how many of the files."""
+    folders = [(index.label, index.copied) for index in LOCAL.folders]
+    fixed = sum(index.fixed for index in bios_indexes)
+    shared = sum(index.copied for index in bios_indexes)
+    fetched = installed - fixed - shared - sum(count for _label, count in folders)
+    return sources_line(folders, fixed, max(fetched, 0), failed,
+                        "copied from the pack" if LOCAL.pack is not None else "downloaded",
+                        shared)
 
 
 # Full-screen interface
@@ -8128,7 +8668,8 @@ _WINDOWS_KEYS = {"H": "up", "P": "down", "K": "left", "M": "right", "I": "pgup",
 def _plain_key(char: str) -> TuiKey | None:
     """The key one character stands for, None for a control nobody bound."""
     named = {"\r": "enter", "\n": "enter", "\x7f": "backspace", "\x08": "backspace",
-             "\t": "tab", "\x1b": "esc", "\x03": "ctrl-c", "\x04": "ctrl-d"}.get(char)
+             "\t": "tab", "\x1b": "esc", "\x03": "ctrl-c", "\x04": "ctrl-d",
+             "\x15": "ctrl-u"}.get(char)
     if named:
         return TuiKey(named)
     if char < " " or unicodedata.category(char) in ("Cc", "Cs"):
@@ -8275,6 +8816,16 @@ def screen_text(text: str) -> str:
     return _CONTROLS.sub("?", text)
 
 
+def ascii_text(text: str) -> str:
+    """The text in ASCII, accents dropped (Edition) and any other character
+    as one ? per cell it took, so the columns stay where they were."""
+    if text.isascii():
+        return text
+    plain = "".join(char for char in unicodedata.normalize("NFKD", text)
+                    if not unicodedata.combining(char))
+    return "".join(char if char.isascii() else "?" * _char_width(char) for char in plain)
+
+
 def fit(text: str, width: int) -> str:
     """The text cut to width cells, never through a character."""
     text = screen_text(text)
@@ -8406,7 +8957,15 @@ class TuiState:
         self.manifest_path: Path | None = None
         self.manifest_given: bool = False
         self.error: list = []
+        self.error_title: str = ""
         self.error_code: int = 1
+        # Typed over in one key: a field opening on a long path took one
+        # Backspace per character before anything could be typed.
+        self.path_selected: bool = False
+        # The ticks kept across a check run again for new options.
+        self.keep_ticked: set | None = None
+        # (files read, files to read) while the check hashes what is in place.
+        self.reading: tuple | None = None
         # The child run in progress: check, confirm, preview or install.
         self.run: str = ""
         self.running: bool = False
@@ -8584,9 +9143,13 @@ def _needed(row: dict) -> int:
     return row["missing"] + row["wrong_hash"]
 
 
-def _tui_system_label(row: dict) -> str:
-    """The name a person reads: the platform's own when it is one (Sony -
-    PlayStation), the id with the platform's short name otherwise (psx)."""
+def _tui_system_label(row: dict, titles: dict | None = None) -> str:
+    """The name a person reads: the file list's title when it has one, the
+    platform's own name when it is one (Sony - PlayStation), the id with the
+    platform's short name otherwise (psx)."""
+    title = (titles or {}).get(row["system"])
+    if isinstance(title, str) and title.strip():
+        return title.strip()
     name = row.get("name") or row["system"]
     if name == row["system"]:
         return name
@@ -8608,9 +9171,28 @@ def _filter_row(state: TuiState) -> TuiRow:
     return TuiRow("filter", "Filter (/ to type)", style="dim")
 
 
+def _system_titles(state: TuiState) -> dict:
+    titles = (state.manifest or {}).get("system_titles")
+    return titles if isinstance(titles, dict) else {}
+
+
 def _sorted_systems(state: TuiState) -> list[dict]:
-    """Systems with something to download first, the ones in place last."""
-    return sorted(state.systems, key=lambda row: (_needed(row) == 0, row["system"]))
+    """Systems with something to download first, the ones in place last, each
+    group in the order of the names a person reads."""
+    titles = _system_titles(state)
+    return sorted(state.systems, key=lambda row: (
+        _needed(row) == 0, _tui_system_label(row, titles).casefold()))
+
+
+# Region names as a person writes them, where title case alone is wrong.
+_REGION_TITLES = {"asia-ntsc": "Asia (NTSC)", "asia-pal": "Asia (PAL)",
+                  "uk": "United Kingdom", WORLD_REGION: "World"}
+
+
+def region_title(name: str) -> str:
+    """north-america as North America, asia-ntsc as Asia (NTSC)."""
+    return _REGION_TITLES.get(name) or " ".join(
+        word.capitalize() for word in name.split("-"))
 
 
 def tui_choices(state: TuiState) -> dict[str, list[str]]:
@@ -8623,15 +9205,17 @@ def tui_rows(state: TuiState) -> list[TuiRow]:
     """The rows of the current screen, in the order they are shown."""
     screen = state.screen
     if screen == "setup":
-        rows = [TuiRow("setup", label, _short_path(path, state.home), value=index)
-                for index, (_plat, path, label) in enumerate(state.setups)]
+        # The focused one's folder is spelled out below the list.
+        rows = [TuiRow("setup", label, value=index)
+                for index, (_plat, _path, label) in enumerate(state.setups)]
         return rows + [TuiRow("another", "Another setup or folder")]
     if screen == "platforms":
         needle = state.filters.get(screen, "")
+        systems = _systems_reading()
         return [_filter_row(state)] + [
-            TuiRow("platform", display_name(plat), value=plat)
+            TuiRow("platform", display_name(plat), ", ".join(systems.get(plat, [])), plat)
             for plat in AVAILABLE_PLATFORMS
-            if _matches(f"{plat} {display_name(plat)}", needle)
+            if _matches(" ".join([plat, display_name(plat), *systems.get(plat, [])]), needle)
         ]
     if screen == "folder":
         rows = [TuiRow("default", "Use this folder")] if state.folder_default else []
@@ -8639,8 +9223,10 @@ def tui_rows(state: TuiState) -> list[TuiRow]:
     if screen == "browse":
         return list(state.browse_rows)
     if screen == "create":
-        return [TuiRow("create", "Create it and continue"),
-                TuiRow("other", "Choose another folder")]
+        label = "Create the whole path" if state.facts.get("risky") else "Create it and continue"
+        return [TuiRow("create", label), TuiRow("other", "Choose another folder")]
+    if screen == "cardroot":
+        return [TuiRow("cardroot", "Use the card root"), TuiRow("other", "Choose another folder")]
     if screen == "plan":
         return _plan_rows(state)
     if screen == "systems":
@@ -8648,10 +9234,11 @@ def tui_rows(state: TuiState) -> list[TuiRow]:
     if screen == "options":
         return _option_rows(state)
     if screen == "regions":
-        ranked = [TuiRow("region", f"[{rank}] {name}", value=name)
+        ranked = [TuiRow("region", f"[{rank}] {region_title(name)}", value=name)
                   for rank, name in enumerate(state.regions, 1)]
-        known = sorted(set(tui_choices(state)["regions"]) | set(state.cli_regions))
-        return ranked + [TuiRow("region", f"[ ] {name}", value=name)
+        known = sorted(set(tui_choices(state)["regions"]) | set(state.cli_regions),
+                       key=region_title)
+        return ranked + [TuiRow("region", f"[ ] {region_title(name)}", value=name)
                          for name in known if name not in state.regions]
     if screen == "cores":
         needle = state.filters.get(screen, "")
@@ -8664,7 +9251,8 @@ def tui_rows(state: TuiState) -> list[TuiRow]:
             return []
         return [TuiRow("install", "Install"), TuiRow("back", "Back")]
     if screen == "error":
-        rows = [TuiRow("retry", "Try again")] if state.run == "check" else []
+        rows = ([TuiRow("retry", "Try again")]
+                if state.run == "check" and state.error_title else [])
         return rows + [TuiRow("back", "Choose another setup or folder" if state.run == "check"
                               else "Back"),
                        TuiRow("quit", "Quit")]
@@ -8680,6 +9268,9 @@ def _plan_rows(state: TuiState) -> list[TuiRow]:
     size = check.get("bytes_needed", 0)
     label = f"Install {format_size(size)}" if size >= CONFIRM_FROM_BYTES else "Install"
     rows = [TuiRow("install", label)]
+    if state.facts.get("writable") is False:
+        # Every file would fail alike: the way out is another folder.
+        rows = [TuiRow("folder", "Choose another folder"), TuiRow("install", "Install anyway")]
     if records_selection((state.manifest or {}).get("files", [])) and len(state.systems) > 1:
         rows.append(TuiRow("systems", "Choose systems"))
     return rows + [TuiRow("options", "Options"), TuiRow("quit", "Quit")]
@@ -8687,9 +9278,10 @@ def _plan_rows(state: TuiState) -> list[TuiRow]:
 
 def _system_rows(state: TuiState) -> list[TuiRow]:
     needle = state.filters.get("systems", "")
+    titles = _system_titles(state)
     rows = [TuiRow("all", "All"), TuiRow("none", "None"), _filter_row(state)]
     for row in _sorted_systems(state):
-        label = _tui_system_label(row)
+        label = _tui_system_label(row, titles)
         if not _matches(f"{label} {row['system']}", needle):
             continue
         box = "[x]" if row["system"] in state.ticked else "[ ]"
@@ -8715,7 +9307,8 @@ def _option_rows(state: TuiState) -> list[TuiRow]:
     rows = []
     if choices["regions"]:
         rows.append(TuiRow("regions", "Preferred regions: "
-                           + (", ".join(state.regions) or "any"), "--region"))
+                           + (", ".join(map(region_title, state.regions)) or "any"),
+                           "--region"))
     if manifest.get("categorized"):
         rows.append(TuiRow("game_data", f"Leave out game data: {_yes(state.no_game_data)}",
                            "--no-game-data"))
@@ -8732,7 +9325,8 @@ def _option_rows(state: TuiState) -> list[TuiRow]:
         rows.append(TuiRow("cores", f"Cores: {chosen}", "--core"))
     rows += [
         TuiRow("jobs", f"Parallel downloads: {state.jobs}", "--jobs"),
-        TuiRow("folder", f"BIOS folder: {_short_path(state.dest, state.home)}", "--dest"),
+        TuiRow("folder", f"BIOS folder: {_short_path(state.dest, state.home)}", "--dest",
+               style="path"),
         TuiRow("preview", "Preview the file list", "--dry-run"),
         TuiRow("command", "Show the command line"),
     ]
@@ -8765,6 +9359,12 @@ def _back(state: TuiState) -> list[tuple]:
         # Stay after Esc on a check started from the command line: a
         # Checking screen nothing feeds counted seconds forever.
         return effects + _start_check(state)
+    if state.screen == "plan" and _counts_predate_options(state):
+        # The plan's numbers were read under the options before: they are
+        # read again, the systems ticked kept.
+        needed = {row["system"] for row in state.systems if _needed(row)}
+        state.keep_ticked = None if needed <= state.ticked else set(state.ticked)
+        return effects + _start_check(state)
     return effects
 
 
@@ -8772,7 +9372,7 @@ def tui_quit(state: TuiState, code: int = 130) -> list[tuple]:
     """Leave now: with the install's own code once it ran, else 130."""
     if state.screen == "result":
         code = state.code if state.code is not None else 1
-    elif state.screen == "error" and code != 130:
+    elif state.screen == "error":
         code = state.error_code
     state.exit_code = code
     return [("kill",)] if state.running else []
@@ -8794,12 +9394,14 @@ def _start_run(state: TuiState, run: str) -> list[tuple]:
     state.run_id += 1
     state.started = state.now
     if run == "check":
+        # The systems of an earlier check go first: ticks read against them
+        # dropped the --system the command line gave.
+        state.check, state.files, state.systems, state.reading = None, [], [], None
         state.checked_flags = tui_flags(state)
-        state.check, state.files, state.systems = None, [], []
     elif run in ("confirm", "preview"):
         state.dry, state.dry_files, state.dry_summary = None, [], None
     else:
-        state.download = state.progress = None
+        state.download = state.progress = state.reading = None
         state.samples = []
         state.finished, state.summary, state.code, state.stopping = [], None, None, False
     return [("run", run)]
@@ -8823,9 +9425,21 @@ def _start_check(state: TuiState) -> list[tuple]:
 
 def _choose(state: TuiState, plat: str, dest: Path) -> list[tuple]:
     state.platform, state.dest = plat, dest
+    if plat in CARD_PLATFORMS and card_platform(dest) is None:
+        # The engine refuses a folder inside the card, the list writing
+        # Bios/<TAG>/ below the root: the root is offered instead.
+        for parent in list(dest.absolute().parents)[:2]:
+            holder = card_platform(parent)
+            if holder:
+                state.facts = {"card_root": parent, "card": holder}
+                return _push(state, "cardroot")
     if not dest.exists():
-        state.facts = {"nearest": _nearest_folder(dest)}
-        return _push(state, "create")
+        nearest = _nearest_folder(dest)
+        missing = len(dest.absolute().parts) - len(nearest.parts)
+        state.facts = {"nearest": nearest, "risky": nearest.parent == nearest or missing > 2}
+        # A path whose start was mistyped would be created from the root:
+        # the safe answer is the one under A.
+        return _push(state, "create", 1 if state.facts["risky"] else 0)
     return _start_check(state)
 
 
@@ -8851,7 +9465,8 @@ def _mounted_cards() -> list[Path]:
         except OSError:
             continue
         for child in children:
-            if child.name in ("wsl", "wslg"):
+            # WSL's own mounts, and the Windows system drive, hold no card.
+            if child.name in ("wsl", "wslg") or (root.name == "mnt" and child.name == "c"):
                 continue
             if os.path.ismount(child):
                 found.append(child)
@@ -8904,9 +9519,8 @@ def _nearest_folder(path: Path) -> Path:
 
 def typed_path(text: str) -> Path | None:
     """A folder typed or pasted: quotes off, ~ and variables expanded."""
-    text = text.strip()
-    if len(text) >= 2 and text[0] == text[-1] and text[0] in "\"'":
-        text = text[1:-1].strip()
+    # Explorer's "Copy as path" quotes both ends, a half-selected copy one.
+    text = text.strip().strip("\"'").strip()
     if not text:
         return None
     return Path(os.path.expanduser(os.path.expandvars(text)))
@@ -8948,6 +9562,7 @@ def _activate(state: TuiState, row: TuiRow) -> list[tuple]:
             _browse_to(state, _nearest_folder(state.folder_default or state.home))
             return []
         state.path_text = str(state.folder_default or "")
+        state.path_selected = bool(state.path_text)
         return _push(state, "path")
     if screen == "browse":
         if action == "use":
@@ -8965,6 +9580,11 @@ def _activate(state: TuiState, row: TuiRow) -> list[tuple]:
             state.stack.pop()
             return _start_check(state)
         return _back(state)
+    if screen == "cardroot":
+        if action == "cardroot":
+            state.stack.pop()
+            return _choose(state, state.platform, state.facts["card_root"])
+        return _back(state)
     if screen == "plan":
         if action == "install":
             return _begin_install(state)
@@ -8973,6 +9593,8 @@ def _activate(state: TuiState, row: TuiRow) -> list[tuple]:
             return []
         if action == "quit":
             return tui_quit(state)
+        if action == "folder":
+            return _open_folder_screen(state, state.dest)
         # On the first system, so A continues and the D-pad ticks.
         return _push(state, action, 3 if action == "systems" else 0)
     if screen == "systems":
@@ -9008,6 +9630,17 @@ def _activate(state: TuiState, row: TuiRow) -> list[tuple]:
     return []
 
 
+def _systems_reading() -> dict[str, list[str]]:
+    """The device systems that get each platform's files, as detection knows
+    them: someone on muOS or ArkOS looks for that name, not RetroArch."""
+    names: dict[str, list[str]] = {}
+    for rule in _EMBEDDED_RULES:
+        if (rule.manifest and rule.name != display_name(rule.manifest)
+                and rule.name not in names.setdefault(rule.manifest, [])):
+            names[rule.manifest].append(rule.name)
+    return names
+
+
 def _platform_focus(state: TuiState, plat: str) -> int:
     """The platform list's row for plat, below its filter row."""
     return 1 + AVAILABLE_PLATFORMS.index(plat) if plat in AVAILABLE_PLATFORMS else 1
@@ -9020,8 +9653,12 @@ def _option(state: TuiState, action: str, step: int) -> list[tuple]:
     elif action == "installed" and not _cores_dir_given(state):
         state.installed_only = step > 0 if step else not state.installed_only
     elif action == "jobs":
-        state.jobs = (state.jobs - 1 + (step or 1)) % 32 + 1
-    elif action in ("regions", "cores", "command"):
+        state.jobs = max(1, min(32, state.jobs + (step or 1)))
+    elif action == "cores":
+        # On the first core: the filter row under A opened a field a
+        # controller cannot type into.
+        return _push(state, action, 1 if tui_choices(state)["cores"] else 0)
+    elif action in ("regions", "command"):
         return _push(state, action)
     elif action == "folder":
         return _open_folder_screen(state, state.dest)
@@ -9070,6 +9707,7 @@ def _same_plan(one: dict | None, other: dict | None) -> bool:
 
 
 def _fail(state: TuiState, lines: list[str], code: int) -> list[tuple]:
+    state.error_title = ""
     state.error = [line for line in lines if line.strip()] or [
         f"The installer stopped with code {code} and said nothing."]
     state.error_code = code or 1
@@ -9098,34 +9736,44 @@ def _tick(state: TuiState, row: TuiRow, on: bool | None) -> None:
         state.cores.remove(value)
 
 
-def _edit_text(text: str, key: TuiKey) -> str | None:
-    """The field after a key, None when the key is not an edit."""
+def _edit_text(text: str, key: TuiKey, selected: bool = False) -> str | None:
+    """The field after a key, None when the key is not an edit. A selected
+    text is replaced by what is typed or pasted, and cleared by Backspace."""
     if key.name in ("char", "paste"):
-        return text + key.text
+        return key.text if selected else text + key.text
     if key.name in ("backspace", "delete"):
-        return text[:-1]
+        return "" if selected else text[:-1]
+    if key.name == "ctrl-u":
+        return ""
     return None
 
 
 def _filter_key(state: TuiState, key: TuiKey) -> list[tuple]:
+    """Typing in a list's filter. It never ticks or unticks anything, and
+    focus never lands on All or None: the next A or X there undid a choice."""
     screen = state.screen
     edited = _edit_text(state.filters.get(screen, ""), key)
+    rows = tui_rows(state)
+    filter_row = next((i for i, row in enumerate(rows) if row.action == "filter"), 0)
     if edited is not None:
         state.filters[screen] = edited
-        state.focus[screen] = 0
+        state.focus[screen] = filter_row
         return []
     if key.name == "esc":
         state.filters[screen] = ""
     state.editing = ""
-    if key.name in ("enter", "down"):
-        state.focus[screen] = 1 if len(tui_rows(state)) > 1 else 0
+    rows = tui_rows(state)
+    if key.name in ("enter", "down") and len(rows) > filter_row + 1:
+        state.focus[screen] = filter_row + 1
+    else:
+        state.focus[screen] = filter_row
     return []
 
 
 def _path_key(state: TuiState, key: TuiKey) -> list[tuple]:
-    edited = _edit_text(state.path_text, key)
+    edited = _edit_text(state.path_text, key, state.path_selected)
     if edited is not None:
-        state.path_text = edited
+        state.path_text, state.path_selected = edited, False
         return []
     if key.name == "esc":
         return _back(state)
@@ -9155,16 +9803,28 @@ def _pager_key(state: TuiState, key: TuiKey) -> list[tuple]:
     elif name == "home" or char == "g":
         top = 0
     elif name == "end" or char == "G":
-        top = len(_text_lines(_pager_items(state), min(state.cols, TUI_MAX_WIDTH) - 2))
+        top = 1 << 30
     elif name in ("enter", "esc", "backspace") or char == " ":
         if screen == "result":
             return tui_quit(state)
         return _back(state)
-    total = len(_text_lines(_pager_items(state), min(state.cols, TUI_MAX_WIDTH) - 2))
-    height = state.rows - 3
-    last = total - (height - 1) if total > height else 0
-    state.focus[screen] = max(0, min(top, last))
+    state.focus[screen] = max(0, min(top, _pager_last(state, _pager_items(state))))
     return []
+
+
+def _pager_last(state: TuiState, items: list) -> int:
+    """The first item shown when the end of a pager is in view, found from
+    the end: only the last screenful is wrapped."""
+    width = min(state.cols, TUI_MAX_WIDTH) - 2
+    room = max(1, state.rows - 4)
+    used, index = 0, len(items)
+    while index > 0:
+        size = len(_text_lines([items[index - 1]], width))
+        if used + size > room:
+            break
+        used += size
+        index -= 1
+    return index
 
 
 def tui_update(state: TuiState, key: TuiKey) -> list[tuple]:
@@ -9191,6 +9851,9 @@ def tui_update(state: TuiState, key: TuiKey) -> list[tuple]:
             return tui_quit(state)
         return _back(state) if key.name in ("esc", "backspace") else []
     if screen == "installing":
+        # B, Esc and q are the stops a controller or a plain keyboard has.
+        if key.name in ("esc", "backspace") or char == "q":
+            return tui_interrupt(state)
         return []
     if char == "q":
         return tui_quit(state)
@@ -9218,9 +9881,12 @@ def tui_update(state: TuiState, key: TuiKey) -> list[tuple]:
     elif name == "end" or char == "G":
         focus = last
     elif name in ("esc", "backspace") and state.filters.get(screen):
-        # The filter goes first, the screen with the second press.
+        # The filter goes first, the screen with the second press, and the
+        # row in focus stays in focus.
         state.filters[screen] = ""
-        focus = 0
+        rows = tui_rows(state)
+        focus = next((i for i, item in enumerate(rows)
+                      if item.action == row.action and item.value == row.value), focus)
     elif name in ("esc", "backspace"):
         return _back(state)
     elif (name == "tab" or char == "o") and screen in ("plan", "systems", "confirm"):
@@ -9240,6 +9906,9 @@ def tui_update(state: TuiState, key: TuiKey) -> list[tuple]:
             char == " " or name in ("right", "left")):
         _tick(state, row, None if char == " " else name == "right")
         return []
+    elif screen in _CHECKLISTS and char == " ":
+        # X on All, None or the filter: only A, an explicit choice, acts there.
+        return []
     elif screen == "systems" and char in ("a", "n"):
         return _activate(state, rows[0 if char == "a" else 1])
     elif screen == "options" and name in ("left", "right"):
@@ -9253,7 +9922,9 @@ def tui_update(state: TuiState, key: TuiKey) -> list[tuple]:
 
 def _take_event(state: TuiState, event: dict) -> None:
     kind = event.get("event")
-    if state.run == "check":
+    if kind == "checking" and state.run in ("check", "install"):
+        state.reading = (event["files_done"], event["files_total"])
+    elif state.run == "check":
         if kind == "check":
             state.check = event
         elif kind == "file" and event.get("state") != "present":
@@ -9291,10 +9962,12 @@ def tui_receive(state: TuiState, message: tuple) -> list[tuple]:
         state.manifest, state.manifest_for = manifest, plat
         return _start_run(state, "check")
     if kind == "manifest_failed":
-        _kind, plat, lines, code = message
+        _kind, plat, title, lines, code = message
         if plat != state.platform or state.screen != "checking":
             return []
-        return _fail(state, lines, code)
+        _fail(state, lines, code)
+        state.error_title = title
+        return []
     _kind, run_id, *rest = message
     if run_id != state.run_id:
         return []
@@ -9303,11 +9976,15 @@ def tui_receive(state: TuiState, message: tuple) -> list[tuple]:
         return []
     code, tail = rest
     state.running = False
-    state.tail = tail
+    state.tail = [line for line in tail if not line.startswith("RetroBIOS ")]
+    tail = state.tail
     if state.run == "check":
         if state.check is None:
             return _fail(state, tail, code)
         state.ticked = {row["system"] for row in state.systems if _needed(row)}
+        if state.keep_ticked is not None:
+            state.ticked = state.keep_ticked & {row["system"] for row in state.systems}
+            state.keep_ticked = None
         state.facts = _tui_folder_facts(state)
         _replace(state, "plan")
     elif state.run == "confirm" and state.screen == "confirm":
@@ -9321,15 +9998,46 @@ def tui_receive(state: TuiState, message: tuple) -> list[tuple]:
         _replace(state, "result")
     return []
 
+
+# Shorter key names for a narrow bar: at 40 columns "X/Space Tick" was cut,
+# and nothing said how to tick with a controller.
+_SHORT_KEYS = (("A/Enter ", "A "), ("B/Esc ", "B "), ("X/Space ", "X "), ("Y/o ", "Y "),
+               ("Left/Right ", "<> "), ("Up/Down ", "^v "))
+
+
 def _hint(width: int, *parts: str) -> str:
-    """The keys that matter now, cut by whole entries from the right."""
-    text = ""
+    """The keys that matter now, short names first given up, then whole
+    entries from the right."""
+    full = "  ".join(parts)
+    if cell_width(full) <= width:
+        return full
+    short = []
     for part in parts:
+        for long_name, short_name in _SHORT_KEYS:
+            if part.startswith(long_name):
+                part = short_name + part[len(long_name):]
+        short.append(part)
+    text = ""
+    for part in short:
         longer = f"{text}  {part}" if text else part
         if cell_width(longer) > width:
             break
         text = longer
-    return text or fit(parts[0], width)
+    return text or fit(short[0], width)
+
+
+# What A does on each kind of row: the bar names it for the row in focus.
+_ROW_VERBS = {
+    "install": "Install", "close": "Close", "quit": "Quit", "systems": "Open",
+    "options": "Open", "setup": "Continue", "another": "Open", "platform": "Choose",
+    "default": "Use this folder", "browse": "Browse", "type": "Type a path",
+    "use": "Use this folder", "up": "Go up", "dir": "Open", "create": "Create",
+    "other": "Choose another", "cardroot": "Use the root", "all": "Tick all",
+    "none": "Untick all", "filter": "Filter", "system": "Continue", "core": "Done",
+    "region": "Tick", "regions": "Open", "cores": "Open", "command": "Open",
+    "preview": "Open", "folder": "Choose", "game_data": "Change", "installed": "Change",
+    "jobs": "Change", "retry": "Try again", "back": "Back", "stay": "Stay",
+}
 
 
 def _row_line(row: TuiRow, focused: bool, width: int) -> TuiLine:
@@ -9347,14 +10055,17 @@ def _text_lines(items: list, width: int) -> list[TuiLine]:
     return lines
 
 
-def _scrolled(lines: list[TuiLine], first: int, height: int) -> list[TuiLine]:
-    """height lines of a longer list from first, the last one saying where."""
+def _scrolled(lines: list[TuiLine], first: int, height: int, lead: int = 0) -> list[TuiLine]:
+    """height lines of a longer list from first, the last one saying where.
+    The lead rows (All, None, Filter) are not counted among the entries."""
     if len(lines) <= height:
         return lines
     shown = max(1, height - 1)
     first = max(0, min(first, len(lines) - shown))
     end = first + shown
-    return lines[first:end] + [_styled(f"{first + 1}-{end} of {len(lines)}", "dim")]
+    count = len(lines) - lead
+    where = f"{max(1, first + 1 - lead)}-{max(1, end - lead)} of {count}"
+    return lines[first:end] + [_styled(where, "dim")]
 
 
 def _compose(
@@ -9369,7 +10080,9 @@ def _compose(
     row_lines = [_row_line(row, index == focus, width) for index, row in enumerate(rows)]
     if len(row_lines) >= room:
         first = focus - (room - 1) // 2
-        body = _scrolled(row_lines, first, room)
+        lead = next((i for i, row in enumerate(rows)
+                     if row.action not in ("all", "none", "filter")), 0)
+        body = _scrolled(row_lines, first, room, lead)
     else:
         budget = room - len(row_lines)
         top: list[TuiLine] = []
@@ -9389,9 +10102,22 @@ def _compose(
 
 
 def _pager(state: TuiState, width: int, height: int, items: list) -> list[TuiLine]:
-    lines = _text_lines(items, width)
-    first = state.focus.get(state.screen, 0)
-    return _scrolled(lines, first, height)
+    """The items in view, from the first shown on, each wrapped alone: the
+    8,000 lines of a full preview were wrapped again at every key."""
+    first = max(0, min(state.focus.get(state.screen, 0), _pager_last(state, items)))
+    if len(items) <= height and first == 0:
+        lines = _text_lines(items, width)
+        if len(lines) <= height:
+            return lines
+    room = max(1, height - 1)
+    lines: list[TuiLine] = []
+    index = first
+    while index < len(items) and len(lines) < room:
+        lines += _text_lines([items[index]], width)
+        index += 1
+    whole = index if len(lines) <= room else index - 1
+    lines = lines[:room]
+    return lines + [_styled(f"{first + 1}-{max(first + 1, whole)} of {len(items)}", "dim")]
 
 
 def _plan_lines(check: dict, dest: Path | None, state: TuiState) -> list:
@@ -9422,8 +10148,9 @@ def _plan_lines(check: dict, dest: Path | None, state: TuiState) -> list:
     if wrong:
         lines.append("They are replaced, and the old copies are kept in a backup folder.")
     if state.facts.get("writable") is False:
-        lines.append("This folder cannot be written: choose another one in Options, "
-                     "or run the installer as an administrator.")
+        lines.insert(1, "You cannot write to this folder: choose another one, or run "
+                     + ("the installer as an administrator." if state.os_type == "windows"
+                        else "the installer with sudo."))
     if check.get("not_installable"):
         lines.append(f"{_plural(check['not_installable'], 'file')} of the list "
                      f"{'is' if check['not_installable'] == 1 else 'are'} not in "
@@ -9436,10 +10163,6 @@ def _view_setup(state: TuiState, width: int, height: int) -> tuple:
     focus = rows[min(state.focus.get("setup", 0), len(rows) - 1)]
     after = ([f"BIOS folder: {state.setups[focus.value][1]}"]
              if focus.action == "setup" else [])
-    if width < 60:
-        # The folder of the focused one is spelled out below: beside each
-        # name it cut both.
-        rows = [row._replace(right="") for row in rows]
     before = ["Found on this machine:" if state.setups else "Nothing was found here."]
     return ("Where do you play?",
             _compose(state, width, height, before, rows, after + state.notes),
@@ -9489,17 +10212,29 @@ def _view_path(state: TuiState, width: int, height: int) -> tuple:
     if cell_width(text) > width - 2:
         text = "..." + fit(text[::-1], width - 5)[::-1]
     lines = [f"The folder for {display_name(state.platform)}:", _styled(f"> {text}", "focus"),
-             "", "Quotes are removed, ~ and variables are expanded."]
+             "", ("Typing or pasting replaces it. " if state.path_selected else "")
+             + "Ctrl-U clears. Quotes are removed, ~ and variables are expanded."]
     if state.status:
         lines.append(state.status)
     return ("Type a path", _compose(state, width, height, lines, []),
-            ("Enter Use this folder", "Esc Back"))
+            ("Enter Use this folder", "Esc Back", "Ctrl-U Clear"))
 
 
 def _view_create(state: TuiState, width: int, height: int) -> tuple:
     before = [f"{state.dest} does not exist.",
               f"The nearest folder that does: {state.facts.get('nearest', '')}"]
+    if state.facts.get("risky"):
+        before.append("Every folder of this path would be made: check its start before "
+                      "creating it.")
     return ("Create the folder?", _compose(state, width, height, before, tui_rows(state)),
+            ("A/Enter Choose", "B/Esc Back"))
+
+
+def _view_cardroot(state: TuiState, width: int, height: int) -> tuple:
+    name = display_name(state.facts.get("card", ""))
+    before = [f"{state.dest} is inside a {name} card. {name} reads its BIOS files under "
+              f"the card's root: {state.facts.get('card_root', '')}"]
+    return ("Use the card root?", _compose(state, width, height, before, tui_rows(state)),
             ("A/Enter Choose", "B/Esc Back"))
 
 
@@ -9510,31 +10245,37 @@ def _view_checking(state: TuiState, width: int, height: int) -> tuple:
         lines.append(f"Getting the file list... {elapsed}")
     else:
         files = len(state.manifest.get("files", []))
-        lines += [f"File list: {_plural(files, 'file')}.",
-                  f"Reading the files already in the folder... {elapsed}"]
+        lines += [f"File list: {_plural(files, 'file')}.", _reading_line(state, elapsed)]
     return ("Checking", _compose(state, width, height, lines, []),
             ("Ctrl-C Quit", "B/Esc Back"))
 
 
+def _reading_line(state: TuiState, elapsed: str) -> str:
+    if state.reading:
+        done, total = state.reading
+        return f"Reading the files already in the folder: {done} of {total}"
+    return f"Reading the files already in the folder... {elapsed}"
+
+
 def _choice_line(state: TuiState) -> list[str]:
-    flags = tui_flags(state)
-    if flags == state.checked_flags:
+    """What the plan's numbers do not include yet. The options are read
+    again by a check of their own, so only ticked systems are left here."""
+    if tui_flags(state) == state.checked_flags:
         return []
-    words = " ".join(flag if value is None else f"{flag} {value}" for flag, value in flags
-                     if (flag, value) not in state.passthrough)
-    return [f"Your choices: {words}. The exact count comes before the install."]
+    return [f"For your {len(state.ticked)} of {len(state.systems)} systems, the exact "
+            "count comes before the install."]
 
 
 def _view_plan(state: TuiState, width: int, height: int) -> tuple:
     check = state.check or {}
-    lines = _plan_lines(check, state.dest, state) + _choice_line(state)
+    lines = _plan_lines(check, state.dest, state)
+    lines[1:1] = _choice_line(state)
     if state.status:
         lines.append(state.status)
     rows = tui_rows(state)
-    primary = "A/Enter Install" if rows[0].action == "install" else "A/Enter Close"
     return (display_name(state.platform, state.manifest),
             _compose(state, width, height, lines, rows),
-            (primary, "B/Esc Back", "Y/o Options", "? Help"))
+            ("A/Enter Install", "B/Esc Back", "Y/o Options", "? Help"))
 
 
 def _counts_predate_options(state: TuiState) -> bool:
@@ -9559,9 +10300,11 @@ def _view_systems(state: TuiState, width: int, height: int) -> tuple:
         rows = [row._replace(right=row.right.split(", ")[-1]) for row in rows]
     elif width >= 78:
         # The id --system takes, beside a name that does not show it.
+        # Only where it fits whole: a cut id ("maker26-co") said nothing.
         rows = [row._replace(label=f"{row.label}  {row.value}")
-                if row.action == "system" and row.value not in row.label else row
-                for row in rows]
+                if row.action == "system" and row.value not in row.label
+                and cell_width(f"> {row.label}  {row.value}  {row.right}") + 2 <= width
+                else row for row in rows]
     chosen = _ticked_files(state)
     footer = [f"{len(state.ticked)} of {len(state.systems)} systems: "
               f"{_plural(len(chosen), 'file')}, "
@@ -9587,6 +10330,10 @@ def _view_options(state: TuiState, width: int, height: int) -> tuple:
         before = []
         after = [f"Sets {focus.right}"] if focus.right else []
         rows = [row._replace(right="") for row in rows]
+    # A folder is cut in its middle, its last levels being what tells it apart.
+    room = width - 4 - (0 if width < 60 else 2 + max(cell_width(r.right) for r in rows))
+    rows = [row._replace(label="BIOS folder: " + middle(row.label[13:], room - 13), style="")
+            if row.style == "path" else row for row in rows]
     return ("Options", _compose(state, width, height, before, rows, after),
             ("A/Enter Change", "B/Esc Back", "Left/Right Set", "? Help"))
 
@@ -9658,7 +10405,7 @@ def _view_installing(state: TuiState, width: int, height: int) -> tuple:
     lines: list = []
     if state.download is None:
         elapsed = format_duration(max(0.0, state.now - state.started))
-        lines.append(f"Reading the files already in the folder... {elapsed}")
+        lines.append(_reading_line(state, elapsed))
     else:
         total = state.download["bytes"]
         progress = state.progress or {}
@@ -9676,9 +10423,10 @@ def _view_installing(state: TuiState, width: int, height: int) -> tuple:
         lines.append(f"{files_done} of {_plural(state.download['files'], 'file')}")
         if files_done >= state.download["files"] and state.summary is None:
             lines.append("Finishing...")
-    lines.append(_styled("Stopping, finishing the files in flight. Press Ctrl-C again "
-                         "to quit now." if state.stopping
-                         else "What is done stays done if you stop.", "dim"))
+    lines.append(_styled("Stopping, finishing the files in flight. Press B or Ctrl-C "
+                         "again to stop now." if state.stopping
+                         else "B, Ctrl-C or Start+Select stops. What is done stays done.",
+                         "dim"))
     room = height - len(lines) - 1
     failed = [item for item in reversed(state.finished) if not item[1]]
     good = [item for item in reversed(state.finished) if item[1]]
@@ -9688,7 +10436,7 @@ def _view_installing(state: TuiState, width: int, height: int) -> tuple:
         lines += [f"{'ok    ' if ok else 'FAILED'} {dest}" + (f" ({reason})" if reason else "")
                   for dest, ok, reason in shown]
     return ("Installing", _compose(state, width, height, lines, []),
-            ("Ctrl-C / Start+Select stops",))
+            ("B/Esc Stop", "? Help"))
 
 
 def tui_outcome(state: TuiState) -> tuple[str, list[str]]:
@@ -9722,10 +10470,22 @@ def tui_outcome(state: TuiState) -> tuple[str, list[str]]:
         title = "Done"
         head = "Everything is in place."
     lines = [head, f"BIOS folder: {state.dest}"]
-    for dest, reason in [(f["dest"], f["reason"]) for f in failed[:20]]:
-        lines.append(f"  failed: {dest}" + (f" ({reason})" if reason else ""))
-    if len(failed) > 20:
-        lines.append(f"  ... and {len(failed) - 20} more")
+    causes: dict[str, list[str]] = {}
+    for failure in failed:
+        causes.setdefault(failure["reason"], []).append(failure["dest"])
+    shown = 0
+    for reason, dests in causes.items():
+        if len(dests) > 3:
+            # A read-only folder fails every file alike: said once.
+            lines.append(f"  {len(dests)} files failed ({reason or 'no reason given'}), "
+                         f"the first {dests[0]}")
+            continue
+        for dest in dests:
+            if shown < 20:
+                lines.append(f"  failed: {dest}" + (f" ({reason})" if reason else ""))
+            shown += 1
+    if shown > 20:
+        lines.append(f"  ... and {shown - 20} more")
     if not summary:
         lines += [f"  {line}" for line in state.tail[-8:]]
     run = Invocation()
@@ -9740,13 +10500,23 @@ def tui_outcome(state: TuiState) -> tuple[str, list[str]]:
         needed = sum(group["required"] for group in skipped)
         lines.append(f"{_plural(count, 'file')} of the list "
                      f"{'is' if count == 1 else 'are'} not in the collection"
-                     + (f", {needed} of them needed to start an emulator." if needed else "."))
+                     + ("." if not needed
+                        else ", and an emulator needs it to start." if count == 1
+                        else f", {needed} of them needed to start an emulator."))
     for group in summary.get("left_out") or []:
         lines.append(f"Left out as {group['label']}: {_plural(group['files'], 'file')}.")
     lines += ["Same choice without questions:", f"  {tui_command(state)}"]
-    if state.code not in (0, None) and state.log:
+    if tui_keeps_log(state):
         lines.append(f"Details: {state.log}")
     return title, lines
+
+
+def tui_keeps_log(state: TuiState) -> bool:
+    """Whether the run's log is kept: when a failure names it, and only then.
+    57 folders of logs from stopped and finished runs were left in /tmp."""
+    if state.screen == "crashed":
+        return True
+    return bool(state.log) and state.code not in (0, 130, None)
 
 
 def _view_result(state: TuiState, width: int, height: int) -> tuple:
@@ -9755,7 +10525,7 @@ def _view_result(state: TuiState, width: int, height: int) -> tuple:
 
 
 def _view_error(state: TuiState, width: int, height: int) -> tuple:
-    return ("Something went wrong",
+    return (state.error_title or "Something went wrong",
             _compose(state, width, height, state.error, tui_rows(state)),
             ("A/Enter Choose", "B/Esc Back"))
 
@@ -9774,36 +10544,50 @@ _TUI_VIEWS: dict[str, Callable[[TuiState, int, int], tuple]] = {
     "options": _view_options, "regions": _view_regions, "cores": _view_cores,
     "preview": _view_preview, "command": _view_command, "confirm": _view_confirm,
     "installing": _view_installing, "result": _view_result, "error": _view_error,
-    "quit": _view_quit,
+    "quit": _view_quit, "cardroot": _view_cardroot,
 }
 
 
 def _help_lines(state: TuiState) -> list[tuple[str, str]]:
     screen = state.screen
     if screen == "installing":
-        return [("Ctrl-C, Start+Select", "Stop: what is done stays done"),
-                ("?, F1", "This help")]
+        return [("B/Esc, Ctrl-C", "Stop: what is done stays done"),
+                ("Start+Select", "Stop"), ("?, F1", "This help")]
     if screen == "path":
         return [("Enter", "Use this folder"), ("Backspace", "Delete a character"),
-                ("Esc", "Back"), ("Ctrl-C", "Quit")]
-    primary = _TUI_VIEWS[screen](state, 80, 24)[2][0].split(" ", 1)
-    keys = [("Up/Down, k/j", "Move"), ("PgUp/PgDn, L1/R1", "Page"),
-            ("Home/End, g/G", "First, last"),
-            ("A/Enter, Start", primary[1] if len(primary) > 1 else primary[0])]
+                ("Ctrl-U", "Clear"), ("Esc", "Back"), ("Ctrl-C", "Quit")]
+    keys = [("Up/Down, k/j", "Move")]
+    if len(tui_rows(state)) > 9 or screen in _PAGERS:
+        keys += [("PgUp/PgDn, L1/R1", "Page"), ("Home/End, g/G", "First, last")]
+    primary = _primary(state) or _TUI_VIEWS[screen](state, 80, 24)[2][0]
+    keys.append(("A/Enter, Start", primary.split(" ", 1)[-1]))
     if screen in _CHECKLISTS:
-        keys.append(("X/Space, Right/Left", "Tick, untick"))
+        keys.append(("X, Right/Left", "Tick, untick"))
     if screen == "systems":
         keys.append(("a, n", "All, none"))
     if screen in ("platforms", "systems", "cores"):
-        keys.append(("/", "Filter, Esc clears it"))
+        keys.append(("/", "Filter (Esc clears)"))
     if screen == "regions":
         keys.append(("Left/Right", "Move a region up or down the order"))
     if screen == "options":
         keys.append(("Left/Right", "Change a value"))
     if screen in ("plan", "systems", "confirm"):
         keys.append(("Y, o, Tab", "Options"))
-    keys += [("B/Esc, Backspace", "Back"), ("q, Ctrl-C", "Quit"), ("?, F1", "This help")]
+    back = "Quit" if len(state.stack) == 1 else "Back"
+    keys += [("B/Esc, Backspace", back), ("q, Ctrl-C", "Quit"), ("?, F1", "This help")]
     return keys
+
+
+def _primary(state: TuiState) -> str | None:
+    """What A does on the row in focus, for the first entry of the bar."""
+    if state.screen in _PAGERS:
+        return None
+    rows = tui_rows(state)
+    if not rows:
+        return None
+    row = rows[max(0, min(state.focus.get(state.screen, 0), len(rows) - 1))]
+    verb = _ROW_VERBS.get(row.action)
+    return f"A/Enter {verb}" if verb else None
 
 
 def _view_help(state: TuiState, width: int, height: int) -> tuple:
@@ -9813,6 +10597,8 @@ def _view_help(state: TuiState, width: int, height: int) -> tuple:
     if state.screen in ("setup", "plan", "browse", "folder") and state.dest is not None:
         lines += ["", f"BIOS folder: {state.dest}"]
     return ("Keys", _compose(state, width, height, lines, []), ("Any key closes this help",))
+
+
 
 
 def tui_view(state: TuiState, cols: int, rows: int) -> list[str]:
@@ -9827,6 +10613,9 @@ def tui_view(state: TuiState, cols: int, rows: int) -> list[str]:
     height = rows - 3
     view = _view_help if state.help else _TUI_VIEWS[state.screen]
     title, body, hint = view(state, width, height)
+    primary = _primary(state) if not state.help and hint[0].startswith("A/Enter") else None
+    if primary:
+        hint = (primary, *hint[1:])
     lines = [_styled(fit(f" RetroBIOS: {title}", cols), "title"), _styled("")]
     lines += [_styled(fit(" " + line, cols), line.style) for line in body[:height]]
     lines += [_styled("")] * (rows - 1 - len(lines))
@@ -9838,6 +10627,29 @@ def _setup_label(plat: str, path: Path) -> str:
     system = detected_os(plat, path)
     name = display_name(plat)
     return f"{system} ({name} files)" if system and system != name else name
+
+
+def _install_kind(path: Path) -> str:
+    """What sets one install of a frontend apart from another of the same."""
+    # The config detection read it from says how it was installed: the
+    # Flatpak's system directory can be anywhere its config names.
+    found = _RETROARCH_CONFIGS.get(path)
+    text = path.as_posix() + (" " + Path(found[0]).as_posix() if found else "")
+    for marker, word in (("/.var/app/", "Flatpak"), ("/steamapps/", "Steam"),
+                         ("/snap/", "Snap")):
+        if marker in text:
+            return word
+    if (path.parent / "retroarch.cfg").is_file():
+        return "portable"
+    return "/".join(path.parts[-2:])
+
+
+def tell_apart(setups: list[tuple]) -> list[tuple]:
+    """Two setups that read alike get the word that separates them: the
+    Flatpak and the native RetroArch were both "RetroArch" at 40 columns."""
+    labels = [label for _plat, _path, label in setups]
+    return [(plat, path, f"{label} ({_install_kind(path)})" if labels.count(label) > 1
+             else label) for plat, path, label in setups]
 
 
 def _tui_passthrough(args: argparse.Namespace) -> list[tuple[str, str | None]]:
@@ -9887,6 +10699,7 @@ def tui_start(
         state.setups = [(name, path, _setup_label(name, path)) for name, path in found]
         state.setups += [(card, mount, f"{display_name(card)} SD card")
                          for card, mount in cards if card and (card, mount) not in found]
+        state.setups = tell_apart(state.setups)
         if "esde" in frontends:
             state.notes.append("ES-DE found: its BIOS files go to each emulator, "
                                "not to ES-DE itself.")
@@ -9928,7 +10741,9 @@ def _log_tail(path: Path, count: int = 12) -> list[str]:
     except OSError as exc:
         return [f"The log {path} cannot be read: {exc.strerror or exc}"]
     lines = [line.rstrip() for line in text.replace("\r", "\n").splitlines()]
-    return [line for line in lines if line.strip()][-count:]
+    # The banner says which installer ran, not what went wrong.
+    return [line for line in lines if line.strip() and not line.startswith("RetroBIOS ")
+            ][-count:]
 
 
 class _EngineRun:
@@ -9990,27 +10805,44 @@ class _EngineRun:
         self.proc.wait()
 
 
+# One try, for a screen with Try again on it: three tries of 30 s were 85 s
+# of a bare timer before the error said there was no network.
+TUI_FETCH_TIMEOUT = 15
+
+
 def _tui_fetch(plat: str, inbox: queue.Queue, log: io.StringIO) -> None:
     """The file list, fetched once in this process, or what went wrong."""
-    mark = len(log.getvalue())
+    if LOCAL.manifest is not None or LOCAL.pack is not None:
+        mark = len(log.getvalue())
+        try:
+            inbox.put(("manifest", plat, fetch_manifest(plat)))
+        except SystemExit as exc:
+            inbox.put(("manifest_failed", plat, "", log.getvalue()[mark:].splitlines(),
+                       _event_exit_code(exc.code)))
+        return
+    url = MANIFEST_URL.format(platform=plat)
     try:
-        manifest = fetch_manifest(plat)
-    except SystemExit as exc:
-        inbox.put(("manifest_failed", plat, log.getvalue()[mark:].splitlines(),
-                   _event_exit_code(exc.code)))
+        data = _fetch_json(url, MAX_MANIFEST_BYTES, "file list", attempts=1,
+                           timeout=TUI_FETCH_TIMEOUT)
+        inbox.put(("manifest", plat, _validate_manifest(data, plat)))
         return
-    except (OSError, ValueError) as exc:
-        inbox.put(("manifest_failed", plat, [f"The file list could not be read: {exc}"], 1))
-        return
-    inbox.put(("manifest", plat, manifest))
-
-
-class _TuiStop(Exception):
-    """A signal that ends the interface: the terminal is restored on the way out."""
-
-    def __init__(self, signum: int) -> None:
-        super().__init__(signum)
-        self.signum = signum
+    except ValueError as exc:
+        title, lines = "The file list is not valid", [f"What arrived is not a file list: {exc}."]
+    except urllib.error.HTTPError as exc:
+        title = "No file list"
+        lines = [f"There is no file list for {display_name(plat)} at this address."
+                 if exc.code == 404 else f"The server answered HTTP {exc.code}."]
+    except (urllib.error.URLError, OSError) as exc:
+        code, words = network_words(exc)
+        title = {"clock": "The clock is wrong",
+                 "no_ca": "No trusted certificates"}.get(code, "No connection")
+        lines = [words[0].upper() + words[1:] + "."]
+        if code == "network":
+            lines = [f"The list of BIOS files could not be downloaded: {words}.",
+                     "Check the Wi-Fi or the cable, then choose Try again."]
+    if os.environ.get("RETROBIOS_BASE_URL"):
+        lines.append(f"RETROBIOS_BASE_URL chose the address: {url}")
+    inbox.put(("manifest_failed", plat, title, lines, 1))
 
 
 class _TuiTerminal:
@@ -10024,6 +10856,14 @@ class _TuiTerminal:
         self.text = codecs.getincrementaldecoder(
             getattr(stdin, "encoding", None) or "utf-8")(errors="replace")
         self.encoding = getattr(stdout, "encoding", None) or "utf-8"
+        locale_name = os.environ.get("LC_ALL") or os.environ.get("LANG") or ""
+        try:
+            utf8 = codecs.lookup(self.encoding).name == "utf-8"
+        except LookupError:
+            utf8 = False
+        # Python turns a C locale into UTF-8 for itself, not for the
+        # terminal: a console font there has no CJK, often no accents.
+        self.ascii = not utf8 or locale_name in ("C", "POSIX")
         self.ended = False
         self.heard = 0.0
         self.frame: list[tuple[str, str]] = []
@@ -10072,6 +10912,8 @@ class _TuiTerminal:
             if index < len(self.frame) and self.frame[index] == (text, style):
                 continue
             text = screen_text(text)
+            if getattr(self, "ascii", False):
+                text = ascii_text(text)
             if style == "focus":
                 text = _pad(text, min(cols, TUI_MAX_WIDTH) - (index == len(frame) - 1))
             out.append(f"\x1b[{index + 1};1H{_STYLES.get(style, '')}{text}\x1b[0m\x1b[K")
@@ -10132,13 +10974,19 @@ def tui_farewell(state: TuiState) -> list[str]:
 
 
 def _farewell_lines(state: TuiState) -> list[str]:
+    if state.screen != "result" and state.download is not None:
+        # An install ran: what it wrote is said, whatever ended it.
+        title, lines = tui_outcome(state)
+        return [f"RetroBIOS: {title}", *lines]
     if state.screen == "crashed":
         return [f"RetroBIOS stopped on an unexpected error. What it was is in {state.log}."]
     if state.screen == "result":
         title, lines = tui_outcome(state)
         return [f"RetroBIOS: {title}", *lines]
     if state.screen == "error":
-        return ["RetroBIOS: something went wrong", *state.error]
+        return [f"RetroBIOS: {state.error_title or 'something went wrong'}",
+                *(line.replace("then choose Try again", "then run the installer again")
+                  for line in state.error)]
     if state.exit_code == 0:
         return [f"RetroBIOS: everything is in place in {state.dest}."]
     return ["RetroBIOS: stopped. Nothing was installed."]
@@ -10151,12 +10999,16 @@ def run_tui(args: argparse.Namespace) -> int:
         _enter_wsl()
     _open_local_sources(args)
     state, effects = tui_start(args, os_type)
-    work = Path(tempfile.mkdtemp(prefix="retrobios-"))
+    work = Path(tempfile.mkdtemp(prefix="retrobios-tui-"))
     script = str(Path(__file__).resolve())
     inbox: queue.Queue = queue.Queue()
     current: list[_EngineRun] = []
     written: dict[str, Path] = {}
-    flags = {"interrupt": False, "resized": False, "suspend": False, "resume": False}
+    flags = {"interrupt": False, "resized": False, "suspend": False, "resume": False,
+             "term": 0}
+    # Start+Select on a handheld is gptokeyb's pkill: SIGTERM, then SIGKILL
+    # 3 s later. The install gets 2 s to say what it wrote.
+    terminating = {"signal": 0, "deadline": 0.0}
     ignore_interrupt_until = [0.0]
     terminal = _TuiTerminal(sys.stdin, sys.stdout)
     real_out, real_err = sys.stdout, sys.stderr
@@ -10205,7 +11057,7 @@ def run_tui(args: argparse.Namespace) -> int:
         flags["resized"] = True
 
     def on_stop(signum: int, _frame: object) -> None:
-        raise _TuiStop(signum)
+        flags["term"] = flags["term"] or signum
 
     def on_suspend(_signum: int, _frame: object) -> None:
         flags["suspend"] = True
@@ -10251,6 +11103,19 @@ def run_tui(args: argparse.Namespace) -> int:
                 flags["interrupt"] = False
                 if time.monotonic() >= ignore_interrupt_until[0]:
                     perform(tui_interrupt(state), from_key=False)
+            if flags["term"] and not terminating["signal"]:
+                terminating["signal"] = flags["term"]
+                if state.run == "install" and state.running:
+                    terminating["deadline"] = time.monotonic() + 2
+                    if not state.stopping:
+                        perform(tui_interrupt(state))
+                elif state.screen == "result" and state.code is not None:
+                    state.exit_code = state.code
+                else:
+                    state.exit_code = 128 + terminating["signal"]
+            if terminating["signal"] and state.running and \
+                    time.monotonic() > terminating["deadline"]:
+                perform([("kill",)])
             while state.exit_code is None:
                 try:
                     message = inbox.get_nowait()
@@ -10258,8 +11123,9 @@ def run_tui(args: argparse.Namespace) -> int:
                     break
                 state.now = time.monotonic()
                 perform(tui_receive(state, message))
-    except _TuiStop as stop:
-        state.exit_code = 128 + stop.signum
+            if terminating["signal"] and state.screen == "result":
+                # The result is printed in the terminal on the way out.
+                state.exit_code = state.code if state.code is not None else 1
     except Exception:  # noqa: BLE001
         # A traceback is where every reporter of #71, #73 and #74 stopped:
         # it goes to a file, and the terminal says one sentence.
@@ -10276,7 +11142,7 @@ def run_tui(args: argparse.Namespace) -> int:
         for path in written.values():
             if path.exists():
                 path.unlink()
-        if not (state.log and state.code not in (0, None)):
+        if not tui_keeps_log(state):
             shutil.rmtree(work, ignore_errors=True)
     stream = sys.stderr if state.screen in ("error", "crashed") else sys.stdout
     lines = tui_farewell(state)

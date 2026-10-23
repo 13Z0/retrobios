@@ -15,8 +15,8 @@ notes: |
   NUON emulator written by Mike Perry (2002-2007) and continued as
   NuanceResurrection by Carsten Waechter from the source archive released
   after the author's death. The Linux and libretro ports were merged into the
-  upstream tree in 2026 (pull request 75), so the port and the upstream share
-  the same revision.
+  upstream tree in 2026 (pull request 75), and the port's last commit is part
+  of the upstream history.
 
   The three BIOS files are not firmware dumps. bios.cof, minibios.cof and
   minibiosX.cof are Aries assembly implementations of BIOS routines,

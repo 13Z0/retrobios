@@ -231,6 +231,14 @@ PROSE_CONT_RE = re.compile(r",(?P<range>\d+(?:-\d+)?)(?![\w-])(?!\.\d)")
 # A spaced continuation is accepted only for a range: `x.c:55-71, 80-147`
 # follows the source_ref convention, while `x.c:100, 200 files` is prose.
 PROSE_CONT_SPACED_RE = re.compile(r", +(?P<range>\d+-\d+)(?![\w-])(?!\.\d)")
+# A spaced single line joins the run only inside a list that closes the
+# citation: `bgmusic.c:29, 321)` and `.gitlab-ci.yml:110, 116, 139, 400`
+# end on a bracket, a semicolon, a sentence end or the line end, while in
+# `x.c:100, 200 files` a word follows and the number is prose.
+PROSE_CONT_LIST_RE = re.compile(
+    r"(?:, +\d+(?:-\d+)?(?![\w-])(?!\.\d))+(?=[)\];]|\.(?!\w)|\s*$)"
+)
+_PROSE_LIST_RANGE_RE = re.compile(r"\d+(?:-\d+)?")
 # Words that read as prose before a filename. Anything else in project
 # position marks the citation external, the way `munt ROMInfo.cpp` does in
 # a source_ref: the profile does not declare that repository.
@@ -321,7 +329,7 @@ def resolve_project_word(path: str, trees: Iterable[list[str] | None]) -> str | 
 def _prose_runs(
     text: str, known: frozenset[str] | set[str] = frozenset()
 ) -> Iterator[tuple[
-    int, tuple[int, int], tuple[tuple[int, int], ...], tuple[RefPart, ...], str, bool
+    int, tuple[int, int], tuple[tuple[int, int], ...], tuple[RefPart, ...], str, int
 ]]:
     """Citation runs inside one prose scalar.
 
@@ -330,6 +338,10 @@ def _prose_runs(
     `main.c:112,1624-1633` cites two ranges of one file, while `x.c:100, 200`
     is a citation followed by prose. A token carrying :// is a URL, whose
     host:port shape would otherwise pass for a citation.
+
+    The last item is 0 for a run held by one line. A run wrapped onto the
+    next line gives the offset where that line's text starts in the
+    joined line, so a writer can put each span back on its own line.
     """
     lines = text.splitlines()
     for number, own in enumerate(lines):
@@ -339,10 +351,12 @@ def _prose_runs(
         # read as the run's continuation, and a run reaching into it is wrapped.
         line = own.rstrip()
         boundary = len(line)
+        joined_at = 0
         following = lines[number + 1].lstrip() if number + 1 < len(lines) else ""
         if PROSE_WRAPPED_RANGE_RE.match(following) and line[-1:].isalnum():
             # The break can fall before the colon too: jgenesis wraps
             # `.../src/config.rs` then `:76-78,95-99` on the next line.
+            joined_at = len(line)
             line += following
             following = ""
         # A numbered list after a colon (abuse: `setup.cpp:` then `1. -datadir`)
@@ -350,8 +364,10 @@ def _prose_runs(
         if not following[:1].isdigit() or PROSE_LIST_ITEM_RE.match(following):
             following = ""
         if following and line.endswith(":"):
+            joined_at = len(line)
             line += following
         elif following and line.endswith(","):
+            joined_at = len(line) + 1
             line += " " + following
         consumed = 0
         for match in PROSE_CITE_RE.finditer(line):
@@ -391,6 +407,15 @@ def _prose_runs(
             end = match.end()
             while True:
                 cont = PROSE_CONT_RE.match(line, end)
+                if cont is None and (listed := PROSE_CONT_LIST_RE.match(line, end)):
+                    spans.extend(
+                        (item.start(), item.end())
+                        for item in _PROSE_LIST_RANGE_RE.finditer(
+                            line, end, listed.end()
+                        )
+                    )
+                    end = listed.end()
+                    break
                 if cont is None:
                     cont = PROSE_CONT_SPACED_RE.match(line, end)
                 if cont is None:
@@ -405,5 +430,5 @@ def _prose_runs(
                 parts.append(RefPart(path, int(a), int(b or a), rng, role))
             yield (
                 number, path_span, tuple(spans), tuple(parts),
-                line[path_start:end], end > boundary,
+                line[path_start:end], joined_at if end > boundary else 0,
             )

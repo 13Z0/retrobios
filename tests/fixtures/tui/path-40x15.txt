@@ -3,8 +3,8 @@
  The folder for RetroArch:
  > ~/bios_
 
- Quotes are removed, ~ and variables
-   are expanded.
+ Ctrl-U clears. Quotes are removed, ~
+   and variables are expanded.
 
 
 

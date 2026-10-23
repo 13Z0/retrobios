@@ -9,4 +9,4 @@
  > Close
    Options
 
- A/Enter Close  B/Esc Back  Y/o Options
+ A Close  B Back  Y Options  ? Help

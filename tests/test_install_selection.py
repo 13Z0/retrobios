@@ -1093,6 +1093,19 @@ class ThePlatformsOwnSystemNamesAreAccepted(unittest.TestCase):
         self.assertIn('"system_names": platform_system_names(config, list(pack_systems))',
                       source)
 
+    def test_every_listed_system_gets_the_title_the_site_prints(self):
+        sys.path.insert(0, str(REPO_ROOT / "scripts"))
+        from generate_pack import system_titles  # noqa: PLC0415
+
+        files = [{"dest": "a.bin", "systems": ["sony-playstation", "nintendo-gba"]}]
+        omitted = [{"dest": "b.bin", "systems": ["3do"]}]
+        self.assertEqual(system_titles(files, omitted), {
+            "3do": "3DO",
+            "nintendo-gba": "Nintendo Game Boy Advance",
+            "sony-playstation": "Sony PlayStation",
+        })
+        self.assertEqual(system_titles([{"dest": "c.bin", "systems": ["sys-a"]}]), {})
+
     def test_a_native_name_narrows_and_lists(self):
         with FakeRepository() as repo:
             path = repo.root / "install" / "retroarch.json"

@@ -5,8 +5,8 @@ source: "https://github.com/libretro/scummvm"
 upstream: "https://github.com/scummvm/scummvm"
 logo: "https://raw.githubusercontent.com/scummvm/scummvm/master/icons/scummvm.svg"
 profiled_date: "2026-03-25"
-source_commit: "fcbce3ae815269dacdc309092bc92ccc6d3e13bb"
-upstream_commit: "fcbce3ae815269dacdc309092bc92ccc6d3e13bb"
+source_commit: "e0ddc60bfabb1efdf1e135006c8914ca59d0596c"
+upstream_commit: "e0ddc60bfabb1efdf1e135006c8914ca59d0596c"
 core_version: "2.8.0git"
 display_name: "ScummVM"
 cores: [scummvm, "SCUMMVMSA"]
@@ -84,7 +84,7 @@ files:
 
   # ================================================================
   # SoundFont (bundled with ScummVM releases)
-  # Default filename defined in libretro-defs.h:32
+  # Default filename defined in backends/platform/libretro/include/libretro-defs.h:32
   # ================================================================
 
   - name: "Roland_SC-55.sf2"

@@ -7,7 +7,7 @@ upstream: "https://git.eden-emu.dev/eden-emu/eden"
 # Codeberg copy is what keeps this profile checkable.
 source_mirror: "https://codeberg.org/eden-emu/eden"
 profiled_date: "2026-03-26"
-source_commit: "d16735f5b618942136d6ab53466e3be0a382c30a"
+source_commit: "989768aa46720e3fcab9e2111e3ddd70819c382b"
 core_version: "0.1.1"
 display_name: "Eden (Nintendo Switch)"
 cores:
@@ -18,7 +18,7 @@ analysis_commit: "9347202 (depth=1)"
 mode: standalone
 
 # Eden is a community fork of yuzu, started by Camille LaVey.
-# Key files loaded from <data_dir>/keys/ (fs_paths.h:20, path_util.cpp:158).
+# Key files loaded from <data_dir>/keys/ (src/common/fs/fs_paths.h:20, src/common/fs/path_util.cpp:158).
 # On Linux: $XDG_DATA_HOME/eden/keys/
 # On Windows: %APPDATA%/eden/keys/
 # Firmware NCAs are installed via UI (Tools > Install Firmware), not placed as files.

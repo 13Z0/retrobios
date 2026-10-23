@@ -8,8 +8,8 @@
      Abdess/retrobios/main/install/
      retroarch.json
 
- > Try again
-   Choose another setup or folder
+ > Choose another setup or folder
    Quit
 
- A/Enter Choose  B/Esc Back
+
+ A/Enter Back  B/Esc Back

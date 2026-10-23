@@ -306,11 +306,13 @@ class Citation:
     path_span: tuple[int, int] = (0, 0)
     spans: tuple = ()
     parts: tuple = ()
-    # Broken across two lines of a literal block: compared like any run,
-    # never rewritten, since no single line carries it.
+    # Broken across two lines of a literal block. joined_at is where the
+    # second line starts in the joined run line, so each span goes back to
+    # the line that holds it.
     wrapped: bool = False
-    # Written in a YAML comment, which the loaded document drops: compared,
-    # never rewritten, since no scalar holds it.
+    joined_at: int = 0
+    # Written in a YAML comment, which the loaded document drops. line is
+    # then the physical line of the file and the spans index it.
     in_comment: bool = False
 
 
@@ -388,11 +390,14 @@ def comment_citations(
             if inside_scalar(offset + column):
                 continue
             comment = line[column + 1:].rstrip("\r\n")
+            shift = column + 1
             for _, path_span, run_spans, parts, run, _ in _prose_runs(comment, known):
                 citations.append(Citation(
                     field=f"comment line {number + 1}", kind="prose", ref=run,
-                    path_span=path_span, spans=run_spans, parts=parts,
-                    in_comment=True,
+                    line=number,
+                    path_span=(path_span[0] + shift, path_span[1] + shift),
+                    spans=tuple((lo + shift, hi + shift) for lo, hi in run_spans),
+                    parts=parts, in_comment=True,
                 ))
             break
         offset += len(line)
@@ -422,22 +427,22 @@ def collect_citations(document: dict, text: str | None = None) -> list[Citation]
                     holder=holder, key=key, label=label,
                 ))
             if isinstance(value, str):
-                for line, path_span, spans, parts, run, wrapped in _prose_runs(
+                for line, path_span, spans, parts, run, joined_at in _prose_runs(
                     ref_prose_text(value), known
                 ):
                     citations.append(Citation(
                         field=field, kind="prose", ref=run, holder=holder,
                         key=key, line=line, path_span=path_span, spans=spans,
-                        parts=parts, wrapped=wrapped,
+                        parts=parts, wrapped=bool(joined_at), joined_at=joined_at,
                     ))
             continue
-        for line, path_span, spans, parts, run, wrapped in _prose_runs(
+        for line, path_span, spans, parts, run, joined_at in _prose_runs(
             value, known
         ):
             citations.append(Citation(
                 field=field, kind="prose", ref=run, holder=holder, key=key,
                 line=line, path_span=path_span, spans=spans, parts=parts,
-                wrapped=wrapped,
+                wrapped=bool(joined_at), joined_at=joined_at,
             ))
     if text is not None:
         citations.extend(comment_citations(text, known))
@@ -519,7 +524,14 @@ def _map_changed(pin: list[str], head: list[str], lo: int, hi: int) -> AnchorRes
             "CHANGED", None, None, [], f"file over {MAX_MATCH_LINES} lines"
         )
     opcodes = _opcodes(pin, head)
-    if not any(tag == "equal" for tag, *_ in opcodes):
+    # A file whose every line was edited in place keeps no equal block, yet
+    # its lines still map one to one: fheroes2 version.txt holds one line,
+    # 1.0.11 at the pin and 1.1.17 at HEAD, and read GONE.
+    rewritten_in_place = len(opcodes) == 1 and (
+        opcodes[0][0] == "replace"
+        and opcodes[0][2] - opcodes[0][1] == opcodes[0][4] - opcodes[0][3]
+    )
+    if not rewritten_in_place and not any(tag == "equal" for tag, *_ in opcodes):
         return AnchorResult("GONE", None, None, [])
     new_lo = _map_index(opcodes, lo)
     new_hi = _map_index(opcodes, max(lo, hi - 1))
@@ -938,6 +950,8 @@ class ProfileReport:
     repo: str | None = None
     repos: list[str] = field(default_factory=list)
     pinned_tag: str | None = None
+    # Set when pinned_tag carries a pin_frozen reason rather than a tag name.
+    pin_frozen: bool = False
     host: str | None = None
     pin: str | None = None
     pin_origin: str | None = None
@@ -1090,7 +1104,7 @@ def select_views(
             continue
         seen.add((repo.host, repo.slug))
         views.append(RepoView(repo, pin, head, origin, field))
-    return _follow_submodule(views, cache_dir, offline)
+    return _follow_fork_base(_follow_submodule(views, cache_dir, offline), cache_dir, offline)
 
 
 def _follow_submodule(
@@ -1126,6 +1140,34 @@ def _follow_submodule(
         followed.append(
             replace(view, head=head, origin=f"{view.origin} via {path}")
             if head else view
+        )
+    return followed
+
+
+def _follow_fork_base(
+    views: list[RepoView], cache_dir: str, offline: bool
+) -> list[RepoView]:
+    """An upstream the port is a fork of moves with what the port merged.
+
+    snes9x, kronos, np2kai and six others pinned upstream_commit on the merge
+    base of upstream with the fork, the upstream code the port carries. Read
+    against upstream's own HEAD, the bump moved it past anything the port
+    built from. Outside one fork network the HEAD stays the reference.
+    """
+    source = next((v for v in views if v.field == "source"), None)
+    if source is None:
+        return views
+    followed: list[RepoView] = []
+    for view in views:
+        if view.field != "upstream" or view.pin == view.head or " via " in view.origin:
+            followed.append(view)
+            continue
+        base = upstream.fork_base(
+            view.repo, view.head, source.repo, source.head, cache_dir, offline
+        )
+        followed.append(
+            replace(view, head=base, origin=f"{view.origin}, fork base of {source.repo.slug}")
+            if base else view
         )
     return followed
 
@@ -1534,6 +1576,7 @@ def build_report(
     # its refs at code the build never had, so it is judged like a frozen tag:
     # against itself.
     frozen = str(profile.get("pin_frozen") or "").strip()
+    report.pin_frozen = bool(frozen)
     report.pinned_tag = frozen or detect_pinned_tag(
         profile, views, cache_dir, offline
     )
@@ -2056,10 +2099,11 @@ def format_report(report: ProfileReport, changed_only: bool = False) -> str:
             f"  {report.pin[:7]} -> {report.head[:7]}   pin: {report.pin_origin}"
         )
     if report.pinned_tag:
-        lines.append(
-            f"  pinned to tag {report.pinned_tag}: checked against its own "
-            "revision, not against HEAD"
+        held = (
+            f"pin held ({report.pinned_tag})" if report.pin_frozen
+            else f"pinned to tag {report.pinned_tag}"
         )
+        lines.append(f"  {held}: checked against its own revision, not against HEAD")
     elif report.pin and report.pin == report.head:
         lines.append("  pin is HEAD: checked for self-consistency")
     if report.upstream_tag and not report.pinned_tag:
@@ -2179,20 +2223,16 @@ def check_version(
     declared = str(profile.get("core_version") or "")
     if not declared:
         return None
-    tags = upstream.list_tags(repo, cache_dir, offline)
     release = upstream.latest_release(repo, cache_dir, offline)
-    matches = declared in tags
-    commit = (
-        upstream.resolve_tag_commit(repo, declared, cache_dir, offline)
-        if matches
-        else None
-    )
+    # Asked by name: the first page of tags misses a release that a project
+    # publishing nightlies has pushed past a hundred newer tags.
+    commit = upstream.tag_commit(repo, declared, cache_dir, offline)
     return VersionReport(
         declared,
-        tags[0] if tags else None,
+        upstream.newest_tag(repo, cache_dir, offline),
         release.tag if release else None,
         release.date if release else None,
-        matches,
+        commit is not None,
         commit,
     )
 
@@ -2288,23 +2328,95 @@ def declared_hashes(profile: dict) -> set[str]:
     return hashes
 
 
+# Sources where a filename is a string. Outside a literal or a comment,
+# `EE.bios` is a config key and `psm_s.pal` a struct field (pcee2).
+CODE_SUFFIXES = (
+    ".c", ".cc", ".cpp", ".cxx", ".h", ".hh", ".hpp", ".hxx", ".inc", ".inl",
+    ".m", ".mm", ".rs", ".java", ".kt", ".cs", ".swift",
+)
+_PRINTF_SPEC_RE = re.compile(
+    r"[-+ #0]*(?:\d+|\*)?(?:\.\d+)?(?:hh|h|ll|l|z|j|t|L)?[diouxXsScpfFeEgGaA]"
+)
+_TITLE_WORD_RE = re.compile(r"[A-Z0-9][\w.()&'+-]*")
+
+
+def _string_literal(line: str, index: int) -> tuple[int, int] | None:
+    """Bounds of the double-quoted literal holding index, None outside one."""
+    start = None
+    position = 0
+    while position < len(line):
+        char = line[position]
+        if char == "\\" and start is not None:
+            position += 2
+            continue
+        if char == '"':
+            if start is None:
+                start = position + 1
+            else:
+                if start <= index < position:
+                    return start, position
+                start = None
+        position += 1
+    return None
+
+
+def _in_comment(line: str, index: int) -> bool:
+    before = line[:index]
+    return "//" in before or "/*" in before or line.lstrip().startswith(("*", "#"))
+
+
+def file_literal(line: str, start: int, end: int, code: bool) -> str | None:
+    """The filename a match stands for, None when it names no file.
+
+    A printf conversion glued to the name is not part of it: sdl2trs writes
+    `"%slevel2.rom"` with ROM_PATH in front. A name with spaces is read
+    whole: virtualjaguar opens `"Jaguar CD BIOS.rom"`, and the match alone
+    was `BIOS.rom`. Such a name is written as a title, so `"Please insert
+    bios.bin"` and `"Packing patches.zip"` still yield the file alone. In
+    a code file a match outside any string or comment is an identifier and
+    names nothing.
+    """
+    name = line[start:end]
+    if start and line[start - 1] == "%":
+        spec = _PRINTF_SPEC_RE.match(name)
+        if spec:
+            name = name[spec.end():]
+    literal = _string_literal(line, start)
+    if literal is None:
+        if code and not _in_comment(line, start):
+            return None
+    elif literal[1] == end and line[start - 1:start] == " ":
+        words = line[literal[0]:start].split() + [name]
+        if all(_TITLE_WORD_RE.fullmatch(word) for word in words):
+            return line[literal[0]:end]
+    base = os.path.basename(name)
+    # `".bin.hex.iii.rom"` (sdl2trs) lists extensions, it names no file.
+    if base.startswith(".") or not _FILE_RE.fullmatch(base):
+        return None
+    return base
+
+
 def detect_new_files(
-    head_lines: list[str], known: set[str], cap: int = 25
+    head_lines: list[str], known: set[str], cap: int = 25, path: str = ""
 ) -> tuple[list[tuple[int, str]], int]:
     """Filename literals at HEAD the profile does not declare."""
     found: list[tuple[int, str]] = []
     seen: set[str] = set()
     elided = 0
+    code = path.lower().endswith(CODE_SUFFIXES)
     for number, line in enumerate(head_lines, start=1):
-        for match in _FILE_RE.findall(line):
-            name = os.path.basename(match).casefold()
+        for match in _FILE_RE.finditer(line):
+            literal = file_literal(line, match.start(), match.end(), code)
+            if literal is None:
+                continue
+            name = literal.casefold()
             if name in known or name in seen:
                 continue
             seen.add(name)
             if len(found) >= cap:
                 elided += 1
                 continue
-            found.append((number, os.path.basename(match)))
+            found.append((number, literal))
     return found, elided
 
 
@@ -2543,16 +2655,66 @@ def _run_after_moves(
     return f"{new_path or parts[0].path}:{','.join(ranges)}"
 
 
+def _unique_line(
+    lines: list[str], target: str, window: tuple[int, int]
+) -> int | None:
+    """The one line of the window carrying target, None when not exactly one."""
+    hits = [
+        i for i in range(window[0], min(window[1], len(lines) - 1) + 1)
+        if target and target in lines[i]
+    ]
+    return hits[0] if len(hits) == 1 else None
+
+
+def scalar_windows(
+    text: str, document: object
+) -> dict[tuple[int, object], tuple[int, int]]:
+    """Physical lines each scalar spans, keyed by its holder and key.
+
+    The same sentence can sit in two fields: emucorex cites
+    CMakeLists.txt:706 in notes and in exclusion_note, on identical lines.
+    Searched over the whole file neither occurrence was unique, and only
+    the node's own lines tell them apart.
+    """
+    try:
+        root = yaml.compose(text, Loader=yaml.SafeLoader)
+    except yaml.YAMLError:
+        return {}
+    windows: dict[tuple[int, object], tuple[int, int]] = {}
+
+    def walk(value: object, node: yaml.Node | None) -> None:
+        if isinstance(value, dict) and isinstance(node, yaml.MappingNode):
+            by_key = {str(k.value): v for k, v in node.value}
+            for key, item in value.items():
+                child = by_key.get(str(key))
+                if child is None:
+                    continue
+                windows[(id(value), key)] = (
+                    child.start_mark.line, child.end_mark.line
+                )
+                walk(item, child)
+        elif isinstance(value, list) and isinstance(node, yaml.SequenceNode):
+            for index, (item, child) in enumerate(zip(value, node.value)):
+                windows[(id(value), index)] = (
+                    child.start_mark.line, child.end_mark.line
+                )
+                walk(item, child)
+
+    walk(document, root)
+    return windows
+
+
 def _apply_prose_edits(
-    text: str, jobs: list[tuple[Citation, dict]]
+    text: str, jobs: list[tuple[Citation, dict]], document: object = None
 ) -> tuple[str, list[str], list[str]]:
     """Rewrite prose citation tokens in place, nothing else.
 
-    Each run is located as the unique physical line carrying the scalar line
-    it sits on. Two candidate lines, or none, means the write cannot be
-    proved right, so the run is left alone and reported. All replacements of
-    one line are applied together, right to left, so the spans measured on
-    the original text stay valid.
+    Each scalar line a run touches is located as the unique physical line
+    carrying it. Two candidate lines, or none, means the write cannot be
+    proved right, so the run is left alone and reported with the reason. A
+    comment run is rewritten on its own physical line, once the tokens there
+    read as collected. All replacements of one line are applied together,
+    right to left, so the spans measured on the original text stay valid.
     """
     lines = text.splitlines()
     trailing = "\n" if text.endswith("\n") else ""
@@ -2561,17 +2723,10 @@ def _apply_prose_edits(
     holders: dict[tuple[int, object], tuple] = {}
     applied: list[str] = []
     left: list[str] = []
+    windows = scalar_windows(text, document) if document is not None else {}
+    whole = (0, len(lines) - 1)
 
     for citation, moves in jobs:
-        if citation.wrapped or citation.in_comment:
-            where = "in a comment" if citation.in_comment else "wrapped across lines"
-            left.append(f"{citation.field}: {citation.ref} ({where})")
-            continue
-        value = str(citation.holder[citation.key])
-        value_lines = value.splitlines()
-        if citation.line >= len(value_lines):
-            left.append(f"{citation.field}: {citation.ref} (scalar changed)")
-            continue
         replacements = []
         for index, (start, end, _) in moves.items():
             lo, hi = citation.spans[index]
@@ -2581,13 +2736,65 @@ def _apply_prose_edits(
         new_path = next((m[2] for m in moves.values() if m[2]), None)
         if new_path:
             replacements.append((*citation.path_span, new_path))
-        target = value_lines[citation.line]
-        hits = [i for i, line in enumerate(lines) if target and target in line]
-        if len(hits) == 1:
-            offset = lines[hits[0]].index(target)
-            file_edits.setdefault(hits[0], []).extend(
-                (offset + lo, offset + hi, new) for lo, hi, new in replacements
+        recaled = _run_after_moves(citation.parts, moves, citation.ref)
+
+        if citation.in_comment:
+            # The comment is read again from the text being written: a run
+            # whose tokens no longer sit at the collected offsets is left.
+            line = lines[citation.line] if citation.line < len(lines) else ""
+            expected = [p.raw for p in citation.parts] + [citation.ref.split(":", 1)[0]]
+            spans = list(citation.spans) + [citation.path_span]
+            if any(line[lo:hi] != token for (lo, hi), token in zip(spans, expected)):
+                left.append(f"{citation.field}: {citation.ref} (comment changed)")
+                continue
+            file_edits.setdefault(citation.line, []).extend(replacements)
+            applied.append(f"{citation.field}: {citation.ref} -> {recaled}")
+            continue
+
+        value = str(citation.holder[citation.key])
+        value_lines = value.splitlines()
+        last = citation.line + (1 if citation.wrapped else 0)
+        if last >= len(value_lines):
+            left.append(f"{citation.field}: {citation.ref} (scalar changed)")
+            continue
+        # A wrapped run puts its spans back on the two scalar lines it
+        # joined: playdiaemu wrote `content.rs` and `:111-199` one line apart.
+        by_line: dict[int, list[tuple[int, int, str]]] = {}
+        straddles = False
+        for lo, hi, new in replacements:
+            if citation.wrapped and lo >= citation.joined_at:
+                following = value_lines[last]
+                indent = len(following) - len(following.lstrip())
+                shift = indent - citation.joined_at
+                by_line.setdefault(last, []).append((lo + shift, hi + shift, new))
+            elif citation.wrapped and hi > citation.joined_at:
+                straddles = True
+            else:
+                by_line.setdefault(citation.line, []).append((lo, hi, new))
+        if straddles:
+            left.append(f"{citation.field}: {citation.ref} (a token spans the line break)")
+            continue
+        window = windows.get((id(citation.holder), citation.key), whole)
+        located = {
+            number: _unique_line(lines, value_lines[number], window)
+            for number in by_line
+        }
+        if citation.wrapped and (
+            None in located.values()
+            or (len(located) == 2 and located[last] != located[citation.line] + 1)
+        ):
+            left.append(
+                f"{citation.field}: {citation.ref} "
+                "(wrapped, and its two lines are not found together in the file)"
             )
+            continue
+        if None not in located.values():
+            for number, edits in by_line.items():
+                hit = located[number]
+                offset = lines[hit].index(value_lines[number])
+                file_edits.setdefault(hit, []).extend(
+                    (offset + lo, offset + hi, new) for lo, hi, new in edits
+                )
         else:
             # A folded scalar has no physical line carrying its logical one.
             # The run itself is a single word, which folding never breaks:
@@ -2599,31 +2806,31 @@ def _apply_prose_edits(
                 rf"(?<![\w/.-]){re.escape(citation.ref)}(?![\w-])"
             )
             run_hits = [
-                i for i, line in enumerate(lines) if pattern.search(line)
+                i for i in range(window[0], min(window[1], len(lines) - 1) + 1)
+                if pattern.search(lines[i])
             ]
             if (
                 len(run_hits) != 1
                 or len(pattern.findall(lines[run_hits[0]])) != 1
             ):
+                carriers = sum(
+                    1 for line in lines[window[0]:window[1] + 1]
+                    if value_lines[citation.line] and value_lines[citation.line] in line
+                )
                 left.append(
                     f"{citation.field}: {citation.ref} "
-                    f"({len(hits)} lines carry its sentence)"
+                    f"({carriers} lines carry its sentence)"
                 )
                 continue
             low = pattern.search(lines[run_hits[0]]).start()
             file_edits.setdefault(run_hits[0], []).append(
-                (low, low + len(citation.ref),
-                 _run_after_moves(citation.parts, moves, citation.ref))
+                (low, low + len(citation.ref), recaled)
             )
         slot = (id(citation.holder), citation.key)
         holders[slot] = (citation.holder, citation.key)
-        value_edits.setdefault(slot, {}).setdefault(citation.line, []).extend(
-            replacements
-        )
-        applied.append(
-            f"{citation.field}: {citation.ref} -> "
-            f"{_run_after_moves(citation.parts, moves, citation.ref)}"
-        )
+        for number, edits in by_line.items():
+            value_edits.setdefault(slot, {}).setdefault(number, []).extend(edits)
+        applied.append(f"{citation.field}: {citation.ref} -> {recaled}")
 
     for number, replacements in file_edits.items():
         lines[number] = _replace_spans(lines[number], replacements)
@@ -2648,31 +2855,54 @@ def _replace_spans(line: str, replacements: list[tuple[int, int, str]]) -> str:
     return line
 
 
-def blocks_the_pin(report: ProfileReport, accept_changed: bool = False) -> int:
-    """What would keep source_commit where it is after a recale.
+def _part_moves(part: PartResult, movable: tuple[str, ...]) -> bool:
+    """Whether a part has a new location the recale would write."""
+    return (
+        part.status in movable
+        and part.start is not None
+        and ((part.start, part.end) != (part.part.start, part.part.end)
+             or bool(part.new_path))
+    )
+
+
+def pin_blockers(report: ProfileReport, accept_changed: bool = False) -> list[str]:
+    """What would keep source_commit where it is after a recale, named.
 
     Two kinds. A ref the writer never regenerates, annotated or under a mode
-    key, whose parts have moved. And a prose run whose tokens cannot be
-    located well enough to rewrite, which stays describing the pinned
-    revision whatever else moves. Either one makes bump_commit refuse, so
-    either one has to stop the recale as well.
+    key, whose parts have moved. And a prose run whose parts disagree on
+    where its file went, which cannot be written without guessing. Either
+    one makes bump_commit refuse, so either one has to stop the recale as
+    well, and the caller says which.
     """
     movable = REBASE_STATUSES + (("CHANGED",) if accept_changed else ())
-    blocked = pending_recale(report, accept_changed)
+    blockers: list[str] = []
     for entry in report.entries or []:
-        if entry.kind != "prose" or _prose_moves(entry, movable):
+        if entry.kind == "prose":
+            if not _prose_moves(entry, movable) and any(
+                _part_moves(part, movable) for part in entry.parts
+            ):
+                blockers.append(
+                    f"{entry.field}: {entry.source_ref} "
+                    "(its parts do not agree on one new file)"
+                )
             continue
-        if any(
+        if not any(
             part.status in movable
             and part.start is not None
-            and (
-                (part.start, part.end) != (part.part.start, part.part.end)
-                or part.new_path
-            )
+            and _rendered_part(part) != _original_part(part)
             for part in entry.parts
         ):
-            blocked += 1
-    return blocked
+            continue
+        if entry.name.endswith("]"):
+            blockers.append(
+                f"{entry.name}: {entry.source_ref} (under a mode key, moved by hand)"
+            )
+        elif not _is_rewritable(entry.source_ref):
+            blockers.append(
+                f"{entry.name}: {entry.source_ref} "
+                "(annotated, a rewrite would drop the annotation)"
+            )
+    return blockers
 
 
 def _view_role(view: RepoView) -> str:
@@ -2755,17 +2985,20 @@ def rebase_refs(
     blocking = [s for s in REVIEW_STATUSES if s not in statuses]
     if any((report.counts or {}).get(s) for s in blocking):
         return []
-    if blocks_the_pin(report, accept_changed):
+    blockers = pin_blockers(report, accept_changed)
+    if blockers:
         # Something here will not move: an annotated ref, one under a mode
         # key, or a prose run this pass cannot rewrite without guessing.
         # bump_commit will refuse while it stands, and recaling the rest
         # would leave the profile describing two revisions at once. All or
         # nothing means the pin too, not only the refs.
+        _refuse_recale(path, blockers)
         return []
     text = path.read_text(encoding="utf-8")
     document = yaml.safe_load(text)
     citations = collect_citations(document, text)
     applied: list[str] = []
+    refused: list[str] = []
     cursor = 0
     pos = 0
     prose_jobs: list[tuple[Citation, dict]] = []
@@ -2773,6 +3006,11 @@ def rebase_refs(
     for entry in report.entries:
         citation, pos = _match_citation(citations, pos, entry)
         if citation is None:
+            if any(_part_moves(part, statuses) for part in entry.parts):
+                refused.append(
+                    f"{entry.field or entry.name}: {entry.source_ref} "
+                    "(the profile no longer carries it as reported)"
+                )
             continue
         if entry.kind == "prose":
             moves = _prose_moves(entry, statuses)
@@ -2783,6 +3021,15 @@ def rebase_refs(
             # The ref lives under a mode key, not on a source_ref line. The
             # entry name check also holds when the report and the document
             # disagree: a stale report must not touch a line it never read.
+            if any(
+                part.status in statuses
+                and part.start is not None
+                and _rendered_part(part) != _original_part(part)
+                for part in entry.parts
+            ):
+                refused.append(
+                    f"{entry.name}: {entry.source_ref} (under a mode key, moved by hand)"
+                )
             continue
         if not _is_rewritable(entry.source_ref):
             # Rewriting would drop the author's annotations. Still consume
@@ -2810,11 +3057,23 @@ def rebase_refs(
         citation.holder[citation.key] = new_ref
         applied.append(f"{entry.source_ref} -> {new_ref}")
 
-    text, prose_applied, _ = _apply_prose_edits(text, prose_jobs)
+    text, prose_applied, left = _apply_prose_edits(text, prose_jobs, document)
+    refused.extend(left)
+    if refused:
+        # A citation left on the pinned lines holds the pin, so writing the
+        # others would leave the profile describing two revisions.
+        _refuse_recale(path, refused)
+        return []
     applied.extend(prose_applied)
     if applied:
         apply_edit(path, text, document)
     return applied
+
+
+def _refuse_recale(path: Path, reasons: list[str]) -> None:
+    """Name each citation that keeps a recale from being written."""
+    for reason in reasons:
+        print(f"{path.stem}: not recaled, cannot move {reason}", file=sys.stderr)
 
 
 def _citation_key(ref: str) -> str:
@@ -2846,21 +3105,24 @@ def pending_recale(
     document = yaml.safe_load(text) if text is not None else None
     # A ref the writer regenerates is pending only while the file still
     # carries it as written: a bump run without the recale left lrps2's
-    # SHIFTED refs on the old lines under the new pin.
-    refs_left = (
-        {c.ref for c in collect_citations(document) if c.kind == "ref"}
-        if document is not None else set()
-    )
+    # SHIFTED refs on the old lines under the new pin. It is looked up at
+    # its own field, never by its text alone: tr1x moved cut2 508->531 and
+    # cut3 531->552, and cut3 read as pending on cut2's new value.
+    refs_left: dict[tuple[str, str], int] = {}
+    if document is not None:
+        for citation in collect_citations(document):
+            if citation.kind == "ref":
+                for slot in ((citation.field, citation.ref), ("", citation.ref)):
+                    refs_left[slot] = refs_left.get(slot, 0) + 1
     pending = 0
     for entry in report.entries or []:
         if entry.kind == "prose":
             continue
-        if (
-            _is_rewritable(entry.source_ref)
-            and not entry.name.endswith("]")
-            and entry.source_ref not in refs_left
-        ):
-            continue
+        if _is_rewritable(entry.source_ref) and not entry.name.endswith("]"):
+            slot = (entry.field, entry.source_ref)
+            if not refs_left.get(slot):
+                continue
+            refs_left[slot] -= 1
         pending += sum(
             1
             for part in entry.parts
@@ -2927,6 +3189,16 @@ def bump_commit(
     if pending_recale(report, accept_changed, text):
         return False
     document = yaml.safe_load(text)
+    if document.get("built_by"):
+        # The pin is the commit a platform builds (recalbox gsplus.mk, the
+        # mame0258 its package fetches), not a point on a moving branch:
+        # HEAD is a build nobody ships under this name.
+        print(
+            f"{path.stem}: pinned to the build {', '.join(document['built_by'])} "
+            "ships, advanced by hand",
+            file=sys.stderr,
+        )
+        return False
     if any(isinstance(document.get(f), dict) for f in ("source_commit", "upstream_commit")):
         # A pin per build mode names one revision per repository, and the
         # report heads only the primary one: rewriting str(dict) was a
@@ -3197,8 +3469,31 @@ def _realign_part(
     """
     if is_external_citation(part.path):
         return None
+    # The path as written decides first, as attribution does: a prefix is
+    # stripped only when no declared repository carries the path itself.
+    # hatarib's hatari/src/tos.c lives in hatariB, which did not move, and
+    # stripping the prefix read it as hatari/hatari's src/tos.c instead.
+    # Between two repositories that both carry the path, the one declared
+    # first owns it, as in attribution: freej2me-plus and hex007/freej2me
+    # both hold src/libretro/, and the citations describe the fork.
+    literal = [
+        (repo, written, current) for repo, written, current in pairs
+        if upstream.fetch_file(repo, written, part.path, cache_dir, offline) is not None
+    ]
+    moved = {repo for repo, _written, _current in pairs}
+    order = [repo for repo, _pin in pinned]
+    first_moved = min(
+        (order.index(repo) for repo, _w, _c in literal if repo in order),
+        default=len(order),
+    )
+    if any(
+        upstream.fetch_file(repo, pin, part.path, cache_dir, offline) is not None
+        for index, (repo, pin) in enumerate(pinned)
+        if repo not in moved and (not literal or index < first_moved)
+    ):
+        return None
     unclear = None
-    for repo, written, current in pairs:
+    for repo, written, current in literal or pairs:
         state, payload = _resolve_at(repo, written, part.path, cache_dir, offline)
         if state == "unclear":
             unclear = payload
@@ -3221,7 +3516,6 @@ def _realign_part(
         return "skip", f"{part.path}:{part.start} {anchored.status.lower()}"
     if unclear:
         return "skip", f"{part.path}: {unclear}"
-    moved = {repo for repo, _written, _current in pairs}
     if any(
         upstream.fetch_file(repo, pin, part.path, cache_dir, offline) is not None
         for repo, pin in pinned
@@ -3444,7 +3738,7 @@ def realign_prose(
             for citation, moves in jobs
         )
         return messages
-    new_text, applied, left = _apply_prose_edits(text, jobs)
+    new_text, applied, left = _apply_prose_edits(text, jobs, document)
     messages.extend(applied)
     messages.extend(f"left in place: {item}" for item in left)
     if applied:
@@ -3452,31 +3746,37 @@ def realign_prose(
     return messages
 
 
-def _refuse_dirty_tree(emulators_dir: str) -> None:
-    """Writes need a clean profile tree to roll back to."""
+def _refuse_dirty_tree(emulators_dir: str, names: list[str]) -> None:
+    """Writes need a clean copy of each profile they touch to roll back to.
+
+    Only the selected profiles count: a pass writing one profile after
+    another used to refuse every profile after the first it wrote.
+    """
     try:
-        dirty = emulators_dir_is_dirty(emulators_dir)
+        dirty = emulators_dir_is_dirty(emulators_dir, names)
     except RuntimeError as e:
         print(f"{e}. Pass --force to write anyway.", file=sys.stderr)
         raise SystemExit(1) from e
     if dirty:
         print(
-            f"{emulators_dir} carries uncommitted changes. "
-            "Commit them first or pass --force.",
+            f"{emulators_dir} carries uncommitted changes to the selected "
+            "profiles. Commit them first or pass --force.",
             file=sys.stderr,
         )
         raise SystemExit(1)
 
 
-def emulators_dir_is_dirty(emulators_dir: str) -> bool:
+def emulators_dir_is_dirty(emulators_dir: str, names: list[str] | None = None) -> bool:
     """True when the profile directory carries uncommitted changes.
 
-    Git is asked from inside the directory, so a profile tree that lives in
-    another repository answers for itself. A directory git cannot read is
-    never reported clean: the writes have nothing to roll back to.
+    ``names`` narrows the question to those profiles. Git is asked from
+    inside the directory, so a profile tree that lives in another
+    repository answers for itself. A directory git cannot read is never
+    reported clean: the writes have nothing to roll back to.
     """
+    paths = [f"{name}.yml" for name in names] if names is not None else ["."]
     result = subprocess.run(
-        ["git", "-C", emulators_dir, "status", "--porcelain", "--", "."],
+        ["git", "-C", emulators_dir, "status", "--porcelain", "--", *paths],
         capture_output=True,
         text=True,
         check=False,
@@ -3846,17 +4146,34 @@ def _apply_writes(
                 file=sys.stderr,
             )
             return
-        for line in applied:
-            print(f"{name}: {recale}{line}")
+        messages = [f"{name}: {recale}{line}" for line in applied]
         if moved:
             # Each pin the write changes, as written: a bump that only moved
             # upstream_commit announced the source_commit it already held.
             after = yaml.safe_load(target.read_text(encoding="utf-8")) or {}
             before = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
-            for pin in pins_changed(before, after):
-                print(f"{name}: {bumped}{pin} -> {str(after[pin])[:7]}")
+            messages += [
+                f"{name}: {bumped}{pin} -> {str(after[pin])[:7]}"
+                for pin in pins_changed(before, after)
+            ]
         if not args.dry_run and (applied or moved):
+            original = path.read_bytes()
             path.write_bytes(target.read_bytes())
+            # The guard above read the prose under the pins the profile held.
+            # A bump that moves upstream_commit can leave prose the report
+            # judged in the fork under the new upstream pin (dolphin-mmjr2,
+            # hatari, xenios): read it again on what was written.
+            left = realign_prose(path, args.cache_dir, args.offline, dry_run=True)
+            if moved and left:
+                path.write_bytes(original)
+                print(
+                    f"{name}: the bump would leave {len(left)} prose citation(s) "
+                    "under an older pin, nothing was written. Read them first.",
+                    file=sys.stderr,
+                )
+                return
+        for message in messages:
+            print(message)
 
 
 def _cited_paths(report: ProfileReport) -> list[str]:
@@ -3906,10 +4223,12 @@ def _detect(
             or []
         )
         if args.detect_new_files:
-            found, elided = detect_new_files(head_lines, names)
+            found, elided = detect_new_files(head_lines, names, path=path)
             at_pin = {
                 name.casefold()
-                for _, name in detect_new_files(pin_lines, names, cap=sys.maxsize)[0]
+                for _, name in detect_new_files(
+                    pin_lines, names, cap=sys.maxsize, path=path
+                )[0]
             }
             new_files.extend(
                 {"path": path, "line": number, "name": name,
@@ -4217,7 +4536,7 @@ def main() -> None:
         or args.realign_prose or args.attribute_refs
     )
     if writes and not args.dry_run and not args.force:
-        _refuse_dirty_tree(args.emulators_dir)
+        _refuse_dirty_tree(args.emulators_dir, list(selected))
 
     # A profile that could not be compared or written is not a profile with
     # nothing to review: it stays in every output and fails the run.

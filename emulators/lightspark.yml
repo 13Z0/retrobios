@@ -4,7 +4,7 @@ core_classification: game_engine
 source: "https://github.com/lightspark/lightspark"
 upstream: "https://github.com/lightspark/lightspark"
 profiled_date: "2026-08-08"
-source_commit: "bfe122834a17ab63a80f5ec36ff7c0dbfcac0321"
+source_commit: "6f07fd65cb95b88ff73e905bf78a1a8b1ddf6049"
 core_version: "0.9.0"
 display_name: "Adobe Flash (Lightspark)"
 cores:

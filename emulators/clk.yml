@@ -3,7 +3,7 @@ type: standalone
 source: "https://github.com/TomHarte/CLK"
 upstream: "https://github.com/TomHarte/CLK"
 profiled_date: "2026-03-26"
-source_commit: "53a1ee78f2f6857815f50247dbf4f76bc5c8c3d9"
+source_commit: "0f49993b4d0992ebba1fad5032d96637f3a84d1f"
 core_version: "2026-07-28"
 display_name: "Clock Signal"
 cores: [clk]
@@ -746,7 +746,7 @@ files:
     size: 32768
     crc32: "ee229390"
     required: false
-    note: "Alternative to msx.rom for the Japan region, which the analyser never sets. Only the user picks it (Analyser/Static/MSX/Target.hpp:34, Analyser/Static/MSX/StaticAnalyser.cpp:217-219)."
+    note: "Alternative to msx.rom for the Japan region, which the analyser never sets. Only the user picks it (Analyser/Static/MSX/Target.hpp:34, Analyser/Static/MSX/StaticAnalyser.cpp:218-220)."
     source_ref: "Machines/Utility/ROMCatalogue.cpp:785-792"
 
   - name: msx-american.rom
@@ -755,7 +755,7 @@ files:
     description: "American MSX BIOS"
     size: 32768
     required: false
-    note: "Alternative to msx.rom for the USA region, which the analyser sets whenever no tape is loaded (Analyser/Static/MSX/StaticAnalyser.cpp:217-219, Machines/MSX/MSX.cpp:250-259)."
+    note: "Alternative to msx.rom for the USA region, which the analyser sets whenever no tape is loaded (Analyser/Static/MSX/StaticAnalyser.cpp:218-220, Machines/MSX/MSX.cpp:251-260)."
     source_ref: "Machines/Utility/ROMCatalogue.cpp:793-800"
 
   - name: msx-european.rom
@@ -764,7 +764,7 @@ files:
     description: "European MSX BIOS"
     size: 32768
     required: false
-    note: "Alternative to msx.rom for the Europe region, which the analyser sets whenever a tape is loaded or the user picks (Analyser/Static/MSX/StaticAnalyser.cpp:217-219, Machines/MSX/MSX.cpp:261-269)."
+    note: "Alternative to msx.rom for the Europe region, which the analyser sets whenever a tape is loaded or the user picks (Analyser/Static/MSX/StaticAnalyser.cpp:218-220, Machines/MSX/MSX.cpp:262-270)."
     source_ref: "Machines/Utility/ROMCatalogue.cpp:801-808"
 
   - name: disk.rom

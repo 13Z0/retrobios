@@ -4,8 +4,8 @@ core_classification: community_fork
 source: "https://github.com/libretro/oberon-risc-emu"
 upstream: "https://github.com/pdewacht/oberon-risc-emu"
 profiled_date: "2026-03-24"
-source_commit: "532b44c31190640628fea388bb593cc247814612"
-core_version: "2020-07-01"
+source_commit: "5be71d885b87b7cd7c635bf330764fcc4f3905fe"
+core_version: "2026-08-23"
 display_name: "Oberon RISC Emulator"
 cores:
   - oberon
@@ -14,10 +14,12 @@ systems: [oberon]
 # Project Oberon RISC emulator by Peter De Wachter.
 # Emulates the Oberon RISC processor designed by Niklaus Wirth.
 # Bootloader (512 words) compiled into the binary from risc-boot.inc,
-# loaded into ROM at 0xFFFFF800 on startup (risc.c:75-77,93).
+# loaded into ROM at 0xFFFFF800 on startup (src/risc.c:75-77,93).
 # No retro_get_system_directory() call, so no files from system dir.
-# Content: .dsk disk images loaded via retro_load_game (libretro.c:209-214).
-# Upstream and libretro core emulation code (risc.c, disk.c) are identical.
+# Content: .dsk disk images loaded via retro_load_game (Libretro/libretro.c:219-227),
+# opened read-write through the frontend VFS when one is offered
+# (Libretro/libretro.c:149-162, src/disk.c:13-65).
+# risc.c is identical upstream. disk.c differs only by that VFS file layer.
 
 files: []
 

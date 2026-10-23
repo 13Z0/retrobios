@@ -4,7 +4,7 @@ core_classification: game_engine
 source: "https://github.com/TheXTech/TheXTech"
 upstream: "https://github.com/TheXTech/TheXTech"
 profiled_date: "2026-10-04"
-source_commit: "a72915cd9a2c811f2388423775f20d75bb2107bd"
+source_commit: "3ad66cb1896ea9f255e8104862e4e17c2e8a8ded"
 display_name: "TheXTech"
 cores: []
 systems: [smbx]
@@ -110,7 +110,7 @@ files:
     category: game_data
     path: "TheXTech/graphics/"
     required: true
-    source_ref: "src/main/asset_pack.cpp:274, 326-327, src/gfx.cpp:121-229, src/load_gfx.cpp:120-123"
+    source_ref: "src/main/asset_pack.cpp:274, 326-327, src/gfx.cpp:121-229, src/load_gfx.cpp:117-120"
     note: "graphics/ui/ must exist for a directory to be scanned as a pack, and GFX_t::load rejects the pack when a required UI image is missing."
 
   - name: "fonts/"
@@ -163,7 +163,7 @@ files:
     category: game_data
     path: "TheXTech/editor.ini"
     required: false
-    source_ref: "src/editor/editor_custom.cpp:962, 979, src/main/translate.cpp:888"
+    source_ref: "src/editor/editor_custom.cpp:969, src/editor/editor_custom.cpp:986, src/main/translate.cpp:889"
     note: "Item lists of the built-in editor, read when the translation table is built."
 
   - name: "intro.lvlx"
@@ -179,7 +179,7 @@ files:
     category: game_data
     path: "TheXTech/introset/"
     required: false
-    source_ref: "src/game_main.cpp:194-222, 247, src/main/level_file.cpp:321-339"
+    source_ref: "src/game_main.cpp:194-222, 247, src/main/level_file.cpp:314-332"
     note: "Directory of .lvl/.lvlx intro levels. One is picked at random when present, otherwise the root intro level is opened. The Adventures of Demo pack carries none, and these 19 levels come from the introset/ of the Nostalgic Paradise pack (Blue Edition 0.2.8b, nostalgic-paradise-stable.7z). A level reads custom graphics from introset/ and from the subfolder named after it (07/, 08/, 10/), and every other block, BGO, NPC and background ID they use is present in the Adventures of Demo graphics."
 
   - name: "outro.lvlx"

@@ -4,8 +4,8 @@ core_classification: community_fork
 source: "https://github.com/beudbeud/libretro-stv"
 upstream: "https://mednafen.github.io/"
 profiled_date: "2026-10-17"
-source_commit: "2e42ef0c5d8238c170bcf182e68951c214fc6867"
-core_version: "v1.2.1"
+source_commit: "4e899aa2951a4714f82523d2d0f00c98599fd574"
+core_version: "v1.8.0"
 display_name: "Sega - ST-V (Mednafen STV)"
 cores:
   - "mednafen_stv"
@@ -21,24 +21,26 @@ notes: |
 
   retro_init() points filesys.path_firmware at the frontend system
   directory and names the BIOS of every region
-  (ref: libretro/libretro.cpp:615-641). The ST-V BIOS is picked by SMPC
+  (ref: libretro/libretro.cpp:608-634). The ST-V BIOS is picked by SMPC
   area: Japan, Asia NTSC, Europe PAL, and North America for every other
-  area (ref: mednafen/ss/ss.cpp:1436-1446, mednafen/ss/smpc.h:32-40).
+  area (ref: mednafen/ss/ss.cpp:1521-1531, mednafen/ss/smpc.h:32-40).
   A Saturn disc takes sega_101.bin for Japan and Asia NTSC and
-  mpr-17933.bin otherwise (ref: mednafen/ss/ss.cpp:1447-1453).
+  mpr-17933.bin otherwise (ref: mednafen/ss/ss.cpp:1532-1538).
 
-  The loose file is tried first and must be exactly 524288 bytes. When it
-  is missing or the wrong size, the same name is looked up at the root of
-  stvbios.zip in the system directory, then without the leading slash
-  (ref: mednafen/ss/ss.cpp:1455-1491). With ss.bios_sanity on, the
-  default, a file named like one of the five Saturn BIOS images must
-  match its SHA-256. The ST-V images are not in that table and only the
-  size check applies (ref: mednafen/ss/ss.cpp:1493-1540, 2549).
+  The BIOS is searched in the system directory, then in the directory of
+  the loaded game. In each, the loose file is tried first and must be
+  exactly 524288 bytes. When it is missing or the wrong size, the same
+  name is looked up at the root of stvbios.zip in that directory, then
+  without the leading slash (ref: mednafen/ss/ss.cpp:1540-1582). With
+  ss.bios_sanity on, the default, a file named like one of the five
+  Saturn BIOS images must match its SHA-256. The ST-V images are not in
+  that table and only the size check applies
+  (ref: mednafen/ss/ss.cpp:1586-1633, 2646).
 
   Saturn games that need the KoF 95 or Ultraman ROM cartridge, and the
   Action Replay 4M Plus cart type, open their ROM from the firmware
   directory under the default names below
-  (ref: mednafen/ss/ss.cpp:1348-1350, 1404-1412, 2542-2544).
+  (ref: mednafen/ss/ss.cpp:1421-1423, 1477-1485, 2639-2641).
 
 files:
   - name: "epr-20091.ic8"
@@ -48,7 +50,7 @@ files:
     size: 524288
     validation: [size]
     description: "ST-V BIOS (Japan)"
-    source_ref: "libretro/libretro.cpp:636, mednafen/ss/ss.cpp:1438-1439, 1462-1468"
+    source_ref: "libretro/libretro.cpp:629, mednafen/ss/ss.cpp:1523-1524, mednafen/ss/ss.cpp:1556-1562"
   - name: "epr-19854.ic8"
     system: "sega-stv"
     region: [asia-ntsc]
@@ -56,7 +58,7 @@ files:
     size: 524288
     validation: [size]
     description: "ST-V BIOS (Asia/Taiwan)"
-    source_ref: "libretro/libretro.cpp:637, mednafen/ss/ss.cpp:1440-1441, 1462-1468"
+    source_ref: "libretro/libretro.cpp:630, mednafen/ss/ss.cpp:1525-1526, mednafen/ss/ss.cpp:1556-1562"
   - name: "epr-17952a.ic8"
     system: "sega-stv"
     region: [north-america, latin-america, brazil, south-korea, asia-pal]
@@ -64,7 +66,7 @@ files:
     size: 524288
     validation: [size]
     description: "ST-V BIOS (North America)"
-    source_ref: "libretro/libretro.cpp:638, mednafen/ss/ss.cpp:1444-1445, 1462-1468"
+    source_ref: "libretro/libretro.cpp:631, mednafen/ss/ss.cpp:1529-1530, mednafen/ss/ss.cpp:1556-1562"
     note: "Used for every SMPC area other than Japan, Asia NTSC and Europe PAL."
   - name: "epr-17954a.ic8"
     system: "sega-stv"
@@ -73,14 +75,14 @@ files:
     size: 524288
     validation: [size]
     description: "ST-V BIOS (Europe)"
-    source_ref: "libretro/libretro.cpp:639, mednafen/ss/ss.cpp:1442-1443, 1462-1468"
+    source_ref: "libretro/libretro.cpp:632, mednafen/ss/ss.cpp:1527-1528, mednafen/ss/ss.cpp:1556-1562"
   - name: "stvbios.zip"
     system: "sega-stv"
     category: bios_zip
     required: false
     description: "ST-V BIOS archive"
-    source_ref: "mednafen/ss/ss.cpp:1472-1491"
-    note: "Read only when the loose BIOS file is missing or not 524288 bytes. The member is found by the BIOS file name, and its size is not checked."
+    source_ref: "mednafen/ss/ss.cpp:1546-1548, mednafen/ss/ss.cpp:1567-1582"
+    note: "Read only when the loose BIOS file in the same directory is missing or not 524288 bytes. The system directory comes before the directory of the loaded game. The member is found by the BIOS file name, and its size is not checked."
     contents:
       - name: "epr-20091.ic8"
       - name: "epr-19854.ic8"
@@ -94,7 +96,7 @@ files:
     sha256: "dcfef4b99605f872b6c3b6d05c045385cdea3d1b702906a0ed930df7bcb7deac"
     validation: [size, sha256]
     description: "Saturn BIOS (Japan)"
-    source_ref: "libretro/libretro.cpp:640, mednafen/ss/ss.cpp:1449-1450, 1507, 1520-1521"
+    source_ref: "libretro/libretro.cpp:633, mednafen/ss/ss.cpp:1534-1535, mednafen/ss/ss.cpp:1600, mednafen/ss/ss.cpp:1613-1614"
   - name: "mpr-17933.bin"
     system: "sega-saturn"
     region: [north-america, latin-america, brazil, south-korea, asia-pal, europe, oceania]
@@ -103,22 +105,22 @@ files:
     sha256: "96e106f740ab448cf89f0dd49dfbac7fe5391cb6bd6e14ad5e3061c13330266f"
     validation: [size, sha256]
     description: "Saturn BIOS (North America/Europe)"
-    source_ref: "libretro/libretro.cpp:641, mednafen/ss/ss.cpp:1451-1452, 1509, 1520-1521"
+    source_ref: "libretro/libretro.cpp:634, mednafen/ss/ss.cpp:1536-1537, mednafen/ss/ss.cpp:1602, mednafen/ss/ss.cpp:1613-1614"
   - name: "mpr-18811-mx.ic1"
     system: "sega-saturn"
     required: false
     description: "The King of Fighters '95 ROM cartridge"
-    source_ref: "mednafen/ss/ss.cpp:1348, 1404-1412, 2542"
+    source_ref: "mednafen/ss/ss.cpp:1421, mednafen/ss/ss.cpp:1477-1485, mednafen/ss/ss.cpp:2639"
     note: "Opened only for the game that needs the cart, and that game does not start without it."
   - name: "mpr-19367-mx.ic1"
     system: "sega-saturn"
     required: false
     description: "Ultraman ROM cartridge"
-    source_ref: "mednafen/ss/ss.cpp:1349, 1404-1412, 2543"
+    source_ref: "mednafen/ss/ss.cpp:1422, mednafen/ss/ss.cpp:1477-1485, mednafen/ss/ss.cpp:2640"
     note: "Opened only for the game that needs the cart, and that game does not start without it."
   - name: "satar4mp.bin"
     system: "sega-saturn"
     required: false
     description: "Action Replay 4M Plus firmware"
-    source_ref: "mednafen/ss/ss.cpp:1350, 1404-1412, 2544"
+    source_ref: "mednafen/ss/ss.cpp:1423, mednafen/ss/ss.cpp:1477-1485, mednafen/ss/ss.cpp:2641"
     note: "Opened only when the Action Replay 4M Plus cart type is selected."

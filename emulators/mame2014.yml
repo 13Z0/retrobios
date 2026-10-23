@@ -7,6 +7,7 @@ logo: "https://raw.githubusercontent.com/mamedev/mame/master/docs/source/images/
 profiled_date: "2026-10-20"
 source_commit: "c8fe6c7399f24466808b67933b2b96feea188e0b"
 upstream_commit: "0147bb4cc82e642cf75151f039f240eb20989fbc"
+pin_frozen: "RetroBat, the only platform that ships it, distributes a build of this revision: the mame2014_libretro.dll of its win64 stable core repository reports library_version \"0.160 c8fe6c7\". Later commits are not part of that build."
 core_version: "0.160"
 display_name: "Arcade (MAME 2014)"
 mame_version: "0.160"

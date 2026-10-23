@@ -4,7 +4,7 @@ core_classification: community_fork
 source: "https://github.com/AzaharPlus/AzaharPlus"
 upstream: "https://github.com/AzaharPlus/AzaharPlus"
 profiled_date: "2026-08-08"
-source_commit: "dab27d996555ca220b7dbd106a2e5f03b6af34ac"
+source_commit: "cf9068844820f819a6eabbeeeb6a70d546e3e85a"
 core_version: "2126.0-A"
 display_name: "Nintendo - 3DS (AzaharPlus)"
 cores:
@@ -23,7 +23,7 @@ notes: |
 
   keys.txt has an AES-encrypted key blob compiled into the binary, used when the
   file is absent. ENABLE_BUILTIN_KEYBLOB defaults to ON.
-  ref: src/core/hw/aes/key.cpp:483-611, CMakeLists.txt:153
+  ref: src/core/hw/aes/key.cpp:483-611, CMakeLists.txt:160
 
   1861 title seeds are compiled in and loaded before seeddb.bin is read.
   ref: src/core/file_sys/seed_db.cpp:50-52, src/core/file_sys/seed_db.cpp:218
@@ -32,17 +32,17 @@ notes: |
   open-source replacements embedded in the binary, and ClCertA falls back to an
   embedded certificate and key pair.
   ref: src/core/file_sys/archive_ncch.cpp:174-203,
-  src/core/hle/service/http/http_c.cpp:2107-2133
+  src/core/hle/service/http/http_c.cpp:2262-2288
 
   otp.bin, movable.sed, SecureInfo_A and LocalFriendCodeSeed_B are replaced by
   embedded dummy data when enable_required_online_lle_modules is set. That
   setting defaults to false, and every loader returns a not-found status without
   it.
-  ref: src/common/settings.h:492-493
+  ref: src/common/settings.h:493-494
 
   System titles are downloaded and installed in-app from the Nintendo CDN, so
   the NAND title tree is not user-supplied.
-  ref: src/core/nus_download.cpp:13, src/core/hle/service/am/am.cpp:1219-1242
+  ref: src/core/nus_download.cpp:13, src/core/hle/service/am/am.cpp:1357-1380
 
   sector0x96.bin is defined but read by no code path.
   ref: src/common/common_paths.h:86

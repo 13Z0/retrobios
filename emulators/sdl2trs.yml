@@ -3,8 +3,8 @@ type: standalone
 core_classification: community_fork
 source: "https://gitlab.com/jengun/sdltrs"
 upstream: "http://sdltrs.sourceforge.net"
-profiled_date: "2026-08-08"
-source_commit: "cb68ce3167ae9b8e2c87f69d3a8c34ffa176a993"
+profiled_date: "2026-10-23"
+source_commit: "57c90cc6393da6c2e5d565ddfbb0c80449fc6ed2"
 core_version: "1.2.35"
 display_name: "Tandy - TRS-80 (SDL2TRS)"
 cores:
@@ -25,17 +25,17 @@ notes: |
   Three ROM slots exist, one per model family, and trs_rom_init picks one from
   trs_model. Model I takes romfile1, Model III and Model 4 share romfile3, and
   Model 4P takes romfile4p (src/trs_cmd_rom.c:868-894). The defaults are level2.rom,
-  model3.rom and model4p.rom, each prefixed by ROM_PATH (src/trs_options.c:897-899).
+  model3.rom and model4p.rom, each prefixed by ROM_PATH (src/trs_options.c:864-866).
   ROM_PATH is a build define left empty unless a packager sets it
   (src/trs_options.c:53-54, CMakeLists.txt:42), so a stock build resolves the names
   against the working directory.
 
   -rom, -r and -romfile write to the slot of the model selected at the moment
-  they are parsed (src/trs_options.c:609-619). Options are applied in command-line
-  order after the config file has been read (src/trs_options.c:1017-1037), so -m has
+  they are parsed (src/trs_options.c:597-607). Options are applied in command-line
+  order after the config file has been read (src/trs_options.c:984-1004), so -m has
   to come first to redirect them, and a model key in the config file otherwise
   decides. -rom1, -rom3 and -rom4p address a slot directly. The GUI ROM browser
-  filters on .bin, .hex, .iii and .rom (src/trs_sdl_gui.h:63, src/trs_sdl_gui.c:2591-2597).
+  filters on .bin, .hex, .iii and .rom (src/trs_sdl_gui.h:63, src/trs_sdl_gui.c:2595-2601).
 
   trs_load_rom sniffs the first byte. A colon means Intel hex, and load_hex
   rejects the file on a line checksum mismatch. A 1 or a 5 on Model III or later
@@ -54,7 +54,7 @@ notes: |
   place to boot from a hard drive (src/trs_cmd_rom.c:447-610, 882-883).
 
   The clones run off the same three slots and are recognised from the ROM data
-  rather than from an option (src/trs_clones.c:8-20, html/Features.html), so their
+  rather than from an option (src/trs_clones.c:9-21, html/Features.html), so their
   larger images load as a Model I or a Model III ROM. None has a filename of its
   own anywhere in the tree.
 
@@ -63,9 +63,9 @@ files:
     description: "TRS-80 Model I ROM"
     required: true
     max_size: 18432
-    source_ref: "src/trs_options.c:81 (romfile1), src/trs_options.c:897 (default name), src/trs_cmd_rom.c:871-884 (trs_model 1)"
+    source_ref: "src/trs_options.c:81 (romfile1), src/trs_options.c:864 (default name), src/trs_cmd_rom.c:871-884 (trs_model 1)"
     note: >
-      Model I is the model a stock configuration selects (src/trs_options.c:924), so
+      Model I is the model a stock configuration selects (src/trs_options.c:891), so
       this is the slot an unconfigured run reads. Without it the machine runs the
       compiled-in diagnostic stub and nothing else. max_size is the shared ROM
       buffer ceiling: a longer file is truncated, never rejected, and only the
@@ -75,7 +75,7 @@ files:
     description: "TRS-80 Model III and Model 4 ROM"
     required: true
     max_size: 18432
-    source_ref: "src/trs_options.c:82 (romfile3), src/trs_options.c:898 (default name), src/trs_cmd_rom.c:885-889 (trs_model 3 and 4)"
+    source_ref: "src/trs_options.c:82 (romfile3), src/trs_options.c:865 (default name), src/trs_cmd_rom.c:885-889 (trs_model 3 and 4)"
     note: >
       Serves Model III and Model 4 alike. The stub text spells out that Model 4
       mode needs a Model 3 image (src/trs_cmd_rom.c:110-115). This is the one slot
@@ -89,7 +89,7 @@ files:
     description: "TRS-80 Model 4P boot ROM"
     required: false
     max_size: 18432
-    source_ref: "src/trs_options.c:83 (romfile4p), src/trs_options.c:899 (default name), src/trs_cmd_rom.c:890-893 (trs_model 5)"
+    source_ref: "src/trs_options.c:83 (romfile4p), src/trs_options.c:866 (default name), src/trs_cmd_rom.c:890-893 (trs_model 5)"
     note: >
       Optional because the compiled-in replacement is a working boot ROM rather
       than a stub. html/index.html states the free ROM boots only Model 4
@@ -154,12 +154,12 @@ analysis:
       buffer. They arrive through romfile1 or romfile3 like any other image and
       are recognised from the ROM data, so the emulator defines no filename for
       them and no option selects them.
-    source_ref: "src/trs_clones.c:8-20 (clone table), src/trs_memory.c:63 (MAX_ROM_SIZE)"
+    source_ref: "src/trs_clones.c:9-21 (clone table), src/trs_memory.c:63 (MAX_ROM_SIZE)"
     layouts:
       - machine: "Prologica CP-300, CP-500 and CP-500 M80"
         slot: model3.rom
         image_size: 16384
-        source_ref: "src/trs_cp500.c:1-22, src/trs_cp500.c:153-160, src/trs_memory.c:1038-1041"
+        source_ref: "src/trs_cp500.c:1-22, src/trs_cp500.c:154-161, src/trs_memory.c:1038-1041"
         note: >
           14 KB of patched Model III ROM plus a 2 KB resident monitor read back
           from 0x3800-0x3FFF and banked into 0x3000-0x37FF. README.md:21 and
@@ -250,34 +250,34 @@ analysis:
     note: "Named on the command line, in the config file or in a disk set, with no fixed filename"
     entries:
       - what: "floppy images in drives 0-7, JV1, JV3 and DMK"
-        source_ref: "src/trs_options.c:587-592, src/trs_disk.c:789-921"
+        source_ref: "src/trs_options.c:584-586, src/trs_disk.c:775-913"
       - what: "hard drive images, units 0-3"
-        source_ref: "src/trs_options.c:593-598, src/trs_hard.c:311-320, src/trs_hard.c:579-665"
+        source_ref: "src/trs_options.c:587-589, src/trs_hard.c:312-320, src/trs_hard.c:569-654"
       - what: "cassette images, .cas, .cpt and .wav"
-        source_ref: "src/trs_options.c:581-586, src/trs_cassette.c:522-549"
+        source_ref: "src/trs_options.c:581-583, src/trs_cassette.c:522-557"
       - what: "stringy floppy wafers in drives 0-7, .esf"
-        source_ref: "src/trs_options.c:599-604, src/trs_stringy.c:278-316, src/trs_stringy.c:342-346"
+        source_ref: "src/trs_options.c:590-592, src/trs_stringy.c:276-317, src/trs_stringy.c:342-350"
       - what: "disk set, a plain list of the paths above"
-        source_ref: "src/trs_options.c:605-608, src/trs_disk.c:3759-3796"
+        source_ref: "src/trs_options.c:593-596, src/trs_disk.c:3753-3787"
       - what: "CMD program loaded straight into memory, from a bare argument"
-        source_ref: "src/trs_options.c:1011-1012, src/trs_cmd_rom.c:845-866"
+        source_ref: "src/trs_options.c:978-979, src/trs_cmd_rom.c:845-866"
       - what: "serial port tty, defaulting to /dev/ttyS0 on Linux"
         source_ref: "src/trs_uart.c:54-56, src/trs_uart.c:144-202"
 
   generated_files:
     written_and_read_back:
       - filename: ".sdltrs.t8c"
-        source_ref: "src/trs_options.c:936-949, src/trs_options.c:1043-1046"
+        source_ref: "src/trs_options.c:903-916, src/trs_options.c:1010-1013"
         note: "Configuration, written to the home directory on first run when none is found."
       - filename: "<name>.t8s"
         source_ref: "src/trs_state_save.c:38-66, src/trs_state_save.c:68-113"
         note: "Emulator state, written and read by the GUI or a bare command-line argument."
       - filename: "blank disk, wafer and hard drive images"
-        source_ref: "src/trs_mkdisk.c:192-308, src/trs_stringy.c:187-197"
+        source_ref: "src/trs_mkdisk.c:192-308, src/trs_stringy.c:185-195"
     written_only:
       - filename: "trsprn####.txt"
         source_ref: "src/trs_printer.c:60-81"
         note: "Printer output, numbered up to 9999 in the printer directory."
       - filename: "screenshots as BMP"
-        source_ref: "src/trs_sdl_gui.c:2673"
+        source_ref: "src/trs_sdl_gui.c:2677"
     note: "Produced by the emulator, none is user-supplied"

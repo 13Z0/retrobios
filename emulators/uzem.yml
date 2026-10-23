@@ -4,7 +4,8 @@ core_classification: pure_libretro
 source: "https://github.com/libretro/libretro-uzem"
 upstream: "https://github.com/Uzebox/uzebox"
 profiled_date: "2026-03-25"
-source_commit: "cd6004ea143435cfdb6b12e7c6779dab499f7829"
+source_commit: "d991ee94547c8294abc1c4cb73d63116aa58b5bc"
+upstream_commit: "83ad0dd9e7f73dcfa988626dda48ffd12d8077a6"
 core_version: "v2.0"
 display_name: "Uzebox (Uzem)"
 cores:
@@ -23,7 +24,7 @@ systems:
 # EEPROM is handled via RETRO_MEMORY_SAVE_RAM (uzem_libretro.cpp:407-408).
 #
 # The standalone uzem supports --boot (PC=0xF000) for bootloader mode
-# (uzem.cpp:206) and .hex format loading, neither exposed in the libretro port.
+# (oldsrcs/uzem.cpp:206) and .hex format loading, neither exposed in the libretro port.
 #
 # The .info file declares no firmware entries (firmware_count absent).
 

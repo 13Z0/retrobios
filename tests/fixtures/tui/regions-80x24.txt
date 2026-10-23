@@ -3,8 +3,8 @@
  Tick the regions to keep, best first. Where a system has one BIOS per region,
    the best one found is installed.
 
- > [1] north-america
-   [ ] japan
+ > [1] North America
+   [ ] Japan
 
 
 

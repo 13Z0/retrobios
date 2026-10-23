@@ -1,7 +1,7 @@
  RetroBIOS: Which setup?
 
    Filter (/ to type)
- > RetroArch
+ > RetroArch        muOS, JE...firmware
    Batocera
    Recalbox
    RetroBat
@@ -11,5 +11,5 @@
    ROCKNIX
    RomM
    BizHawk
- 1-11 of 19
- A/Enter Choose  B/Esc Back  / Filter
+ 1-10 of 18
+ A Choose  B Back  / Filter  ? Help

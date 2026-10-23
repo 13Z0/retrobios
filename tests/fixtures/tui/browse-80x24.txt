@@ -21,4 +21,4 @@
 
 
 
- A/Enter Open  B/Esc Back  ? Help
+ A/Enter Use this folder  B/Esc Back  ? Help

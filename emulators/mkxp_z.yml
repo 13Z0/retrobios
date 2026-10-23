@@ -7,6 +7,7 @@ source_ref: "PR #255 to mkxp-z/mkxp-z"
 upstream: "https://github.com/mkxp-z/mkxp-z"
 profiled_date: "2026-03-24"
 source_commit: "650cb0888a07d0b5044e131160ddfa53feaf595b"
+upstream_commit: "37a04d14413454551a7b6aadbb4e93e67168accb"
 core_version: "f4bc5aa"
 display_name: "RPG Maker XP/VX/VX Ace (mkxp-z)"
 cores:

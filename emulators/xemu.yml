@@ -8,10 +8,10 @@ upstream: "https://github.com/xemu-project/xemu"
 logo: "https://raw.githubusercontent.com/xemu-project/xemu/master/data/xemu_64x64.png"
 profiled_date: "2026-09-17"
 source_commit:
-  standalone: "f9b14039e5bb56ae2d8f028e31e7cc19f13f7e12"
+  standalone: "25e1ee2fd59a451f2ab57e825b4f8a5414220c8b"
   libretro: "d9804db79f87f6a6a5548b14ca4a8d5164390338"
 core_version:
-  standalone: "0.8.136-49-gf9b14039e5"
+  standalone: "0.8.139-2-g25e1ee2fd5"
   libretro: "libretro-experimental"
 display_name: "Microsoft - Xbox (xemu)"
 cores:
@@ -41,7 +41,7 @@ notes: |
   the four paths. Nothing is searched by name and only the EEPROM has a
   default location.
   ref: config_spec.yml:353-367, system/vl.c:2983-3006, system/vl.c:3030-3074,
-       ui/xemu-settings.cc:70-133, ui/xemu.c:1382-1402,
+       ui/xemu-settings.cc:70-133, ui/xemu.c:1373-1393,
        ui/xui/main-menu.cc:1553-1575
 
   The core reads the same four files from the frontend system directory, each

@@ -4,7 +4,7 @@ core_classification: embedded_hle
 source: "https://github.com/ivanizag/izapple2"
 upstream: "https://github.com/ivanizag/izapple2"
 profiled_date: "2026-08-08"
-source_commit: "877b75fcf00d5bdb88d77554a4ade3ecb8c1a166"
+source_commit: "dc28a566c9c733119b0511d9f77e1b4574e28718"
 core_version: "v2.4.0"
 display_name: "Apple - Apple II (izapple2)"
 cores:
@@ -16,18 +16,18 @@ mode: standalone
 notes: |
   Apple II emulator written in Go by Ivan Izaguirre. Boards: Apple ][ and ][+
   with 48 KB, Apple IIe and //e enhanced with 128 KB, and two clones, the Copam
-  Base 64A and the Basis 108 (setup.go:36-58).
+  Base 64A and the Basis 108 (setup.go:45-67).
 
   Every ROM the machine needs is compiled into the binary. The whole resources
   directory is embedded with //go:embed (resources.go:25-26) and the 17 machine
-  configs with //go:embed configs/*.cfg (configuration.go:51-52). LoadResource
+  configs with //go:embed configs/*.cfg (configuration.go:57-58). LoadResource
   routes a name by its prefix: <internal>/ reads the embedded filesystem,
   http:// and https:// fetch over the network, anything else is a path on disk
   (resources.go:55-88). The shipped configs name main ROM, character ROM and
   boot diskette as <internal>/ paths, so the emulator starts into DOS 3.3 with
   no file on disk. The base64a and basis108 configs set rom: <custom>, which
   dispatches to loadMultiPageRom over six embedded PROM dumps each
-  (setup.go:189-199, boardBase64a.go:7-16, boardBasis108.go:28-37).
+  (setup.go:203-213, boardBase64a.go:7-16, boardBasis108.go:28-37).
 
   Two of the 27 registered cards name an image the emulator downloads instead
   of carrying: prodosromdrive and prodosromcard3 (cardBuilder.go:86-87). Both

@@ -12,4 +12,4 @@
 
 
 
- A/Enter Done  B/Esc Back  X/Space Tick
+ A Filter  B Back  X Tick  ? Help

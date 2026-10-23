@@ -92,8 +92,10 @@ play, with the total to download under the list. **Options** sets the
 preferred regions, game data, the installed cores only, the cores, the parallel
 downloads and the folder. Each row names the option it sets, and **Show the
 command line** gives the same choice as one command for a script. **Preview the
-file list** shows what would be downloaded and writes nothing. When a choice
-changes the plan, the exact count appears before the install starts.
+file list** shows what would be downloaded and writes nothing. Back on the plan
+after a change of options, the folder is checked again, so its numbers are the
+exact ones for the new choice. Ticked systems get their exact count before the
+install starts.
 
 | Action | Keyboard | Controller |
 |--------|----------|------------|
@@ -106,14 +108,19 @@ changes the plan, the exact count appears before the install starts.
 | Options | `o`, Tab | Y |
 | Filter a long list | `/` then type | the Filter row |
 | Keys of the screen | `?`, F1 | |
+| Stop an install | Esc, `q`, Ctrl+C | B, Start+Select |
 | Quit | `q`, Ctrl+C | B on the first screen |
 
-The bottom line of each screen names its keys, with both spellings (`A/Enter`,
-`B/Esc`), since A and B swap places between controller layouts. On the regions
-screen, Left and Right move the region under the cursor up and down the order of
-preference. During the download, Ctrl+C stops after the files in progress, a
-second Ctrl+C stops at once, and the result says how many were installed. The result stays printed in the
-terminal once the screen closes, with the command that repeats the run.
+The bottom line of each screen names what A does on the row under the cursor,
+with both spellings (`A/Enter`, `B/Esc`), since A and B swap places between
+controller layouts. A narrow screen shortens them to `A`, `B` and `X`. On the
+regions screen, Left and Right move the region under the cursor up and down the
+order of preference. During the download, a stop waits for the files in
+progress, and a second one stops at once. Start+Select on a handheld ends the
+installer with a signal (SIGTERM), which stops it the same way. Either way the
+result says how many files were installed, and it stays printed in the terminal
+once the screen closes, with the command that repeats the run. A run that failed
+keeps its log and names it, and every other run leaves nothing behind.
 
 It opens only for an install, at a terminal of at least 40 columns and 12 rows
 that is not `TERM=dumb`. A listing, `--check`, `--dry-run`, `--events`,
@@ -142,11 +149,14 @@ file list is downloaded once and handed to each run.
    to choose systems, cores and regions (see below).
 4. Hashes what is already in the destination and reports how many entries are
    present, verified, or present with the wrong contents.
-5. Downloads what is missing or wrong, up to 8 files at a time. At a
+5. Copies from this machine what it already holds: a file misplaced in the
+   BIOS folder, and what a folder named with `--from` has. See
+   [Copy from an old card](#copy-from-an-old-card).
+6. Downloads what is still missing or wrong, up to 8 files at a time. At a
    terminal one line shows the progress, the speed and the time left, while in a
    log each finished file gets its own line. In an interactive run, a
    download of 1 GB or more is confirmed first (`--yes` skips the question).
-6. Verifies each download against the declared size, SHA-256 and SHA-1 before
+7. Verifies each download against the declared size, SHA-256 and SHA-1 before
    it touches the destination, then moves it into place with `os.replace` so
    a partial file is never visible. A failed attempt is retried up to three
    times, after 1, 2 then 4 seconds or the delay a `Retry-After` header asks.
@@ -154,7 +164,7 @@ file list is downloaded once and handed to each run.
    transfer stops, and the next attempt or the next run requests only the
    rest. A file already there with other contents is moved aside first, see
    [Files you already had](#files-you-already-had).
-7. Copies into standalone emulator directories, only with `--standalone-copies`.
+8. Copies into standalone emulator directories, only with `--standalone-copies`.
 
 Some cores read their system data below the frontend's save directory, not
 below the BIOS folder: Azahar's keys, shared font and NAND files, Citra's
@@ -295,6 +305,11 @@ would save, once that saving is over half:
 
 `--dry-run` prints the same line under its plan.
 
+When some files came from this machine rather than the network, a line under
+`Done` says where each came from (`38 files copied from E:\, 3 fixed from
+copies already in the BIOS folder, 4 downloaded.`). See
+[Copy from an old card](#copy-from-an-old-card).
+
 The word `Done` and a location are the confirmation. Any other ending
 (`Stopped`, `Finished with errors`, `Nothing was installed`) means something
 was left undone, and the run says which case it was.
@@ -348,16 +363,20 @@ core opens it:
 | `one folder too deep`, `2 folders too deep` | The file below its place, as a ZIP extracted into a folder of its own leaves it |
 | `one folder too high` | The file in the folder above the BIOS folder |
 | `wrong folder` | The file under its name in another folder |
-| `case of the name` | A name that differs only by capital letters, on a system where that makes two names |
+| `case of the name` | A name that differs only by capital letters, on a system where that makes two names (`the folder holds SCPH1001.BIN, the cores open scph1001.bin`) |
 | `still zipped` | The file inside a ZIP in the folder, a `.7z` or `.rar` of the same name, or a ZIP saved under the file's own name |
 | `wrong size` | A file of another size than any copy the list accepts |
 | `another region`, `another revision`, `another file` | The contents of another file of the list: another region's BIOS, the copy another core reads, or the one the platform's own list declares |
 | `a name no core opens` | The right contents under a name no core of the platform reads |
 | `same size, other contents` | Another dump, or a damaged copy |
+| `only a Mac's ._ file` | Only the `._name` file a Mac writes beside each file it copies to a FAT or exFAT card: Finder data, not the file |
 
 The reasons are read from the folder and the file list, nothing else. When
 three files or more sit too deep in the same folder, a line before the list
-names that folder once. Files with a reason are always listed. The plain
+names that folder once. A file whose exact contents are somewhere in the BIOS
+folder (too deep, in capitals, still in its ZIP, one folder too high) is put
+in place by the next install: `--check` says so under the file, with `a run
+without --check copies it into place`. Files with a reason are always listed. The plain
 missing ones stop at ten unless `--verbose` is given.
 
 A pack published in parts leaves a marker beside the files of each part
@@ -417,6 +436,54 @@ On one drive the old file is moved, not copied, so keeping it needs no space
 beyond what it already used. A link sitting at a file's name is not kept: the
 file it points to is never touched. Data trees and `--standalone-copies` keep
 their replaced files the same way, beside the folder they were in.
+
+## Copy from an old card { #copy-from-an-old-card }
+
+The card a handheld came with, a backup of an old BIOS folder, a Downloads
+folder: `--from FOLDER` copies the BIOS files it holds instead of downloading
+them.
+
+```bash
+python install.py --platform muos --dest /media/me/SD1 --from /media/me/STOCK
+python install.py --from ~/Downloads --from /media/me/backup
+python install.py --check --from /media/me/STOCK
+```
+
+Every file is recognised by its contents, never by its name:
+`PSX BIOS (USA).bin` in a subfolder lands as `scph5501.bin` when it holds those
+bytes, and a file of the right name with other bytes (an empty file left by a
+CFW, another revision) is not taken. The folder is searched with every
+subfolder, and inside each ZIP it holds, for a file the list wants loose and
+for an archive it wants whole (`neogeo.zip`). Only files whose size is one the
+list expects are hashed, so a large card is read quickly. The `._` files a Mac
+writes, the system folders (`System Volume Information`, `.Spotlight-V100`,
+`.Trashes`, `$RECYCLE.BIN`) and a link leading out of the folder are skipped.
+`--from` also takes a ZIP of an old BIOS folder.
+
+The folder is only read: each file is copied, checked against the list's
+hashes once written, and the original stays where it is. A file in place with
+other contents is kept aside first, as a download would replace it (see
+[Files you already had](#files-you-already-had)). What no folder holds is
+downloaded as usual, or taken from the pack with `--from-pack`. Several
+`--from` are read in the order given, and the end of the run says where each
+file came from:
+
+```
+Done. 44 files installed, 0 files already up to date.
+  38 files copied from E:\, 4 downloaded, 2 still missing.
+```
+
+`--check --from FOLDER` writes nothing and says how many files the folder
+would give (`E:\ holds 38 of these files: a run without --check copies
+them.`), with each file's place in it. `--dry-run` counts them apart from the
+download.
+
+The BIOS folder itself is read the same way. A file the list wants that sits
+misplaced in it, in a `bios/bios/` folder, a pack extracted into a folder of
+its own, a name in capitals on a system where case counts, a ZIP never
+extracted, or one folder above, is copied where the cores open it, with no
+`--from` needed. The misplaced copy is left as it is, and the end of the run
+counts them (`3 fixed from copies already in the BIOS folder`).
 
 ## Choosing what to install
 
@@ -566,6 +633,7 @@ what the options name, everything by default.
 | `--yes`, `-y` | Do not ask before a download of 1 GB or more |
 | `--quiet`, `-q` | Print only failures and the final summary. Implies `--no-input` |
 | `--events` | Write the run as JSON events on standard output, one object per line, and the usual text on standard error. Implies `--no-input`. See [Machine-readable events](#machine-readable-events) |
+| `--from FOLDER` | Copy the BIOS files a folder holds (an old SD card, a backup, a ZIP) instead of downloading them, each one recognised by its hash and copied, never moved. Repeat for several folders. See [Copy from an old card](#copy-from-an-old-card) |
 | `--from-pack PATH` | Install from a pack already downloaded: its ZIP, one of its parts (the others are found in the same folder), or the folder holding them. Makes no network request and checks every file's hash. See [Without a network](#without-a-network-offline-install) |
 | `--manifest FILE` | Read the file list from FILE, a copy of `install/<platform>.json`, instead of downloading it. See [Without a network](#without-a-network-offline-install) |
 | `--restore FOLDER` | Put back the files a run replaced and kept in FOLDER, a dated folder inside `retrobios-backup`. Takes no other option but `--dry-run` and `--no-input`. See [Files you already had](#files-you-already-had) |
@@ -1073,7 +1141,7 @@ fields, the installer refuses to narrow rather than install everything.
 | Code | Meaning |
 |------|---------|
 | `0` | everything asked for is installed or already up to date |
-| `1` | a failure: the one-liner could not download or verify `install.py`, or found no Python 3.8 (nothing was run), an unusable base URL, an unknown platform or target, `--installed-cores` with no core found, a manifest that fails validation, a fetch that never succeeded, no platform to install for in a non-interactive run, some files failed while others installed, `--check` found files to fetch, a `--from-pack` pack that cannot be read, lacks a part or is for another platform, or `--restore` could not put a file back |
+| `1` | a failure: the one-liner could not download or verify `install.py`, or found no Python 3.8 (nothing was run), an unusable base URL, an unknown platform or target, `--installed-cores` with no core found, a manifest that fails validation, a fetch that never succeeded, no platform to install for in a non-interactive run, some files failed while others installed, `--check` found files to fetch, a `--from-pack` pack that cannot be read, lacks a part or is for another platform, a `--from` folder that does not exist, or `--restore` could not put a file back |
 | `2` | nothing was installed: every file the run tried failed (a BIOS folder that cannot be written, for one), the drive has too little free space for the download (checked before any folder is created), or the question about a folder that does not exist, named with `--dest` or typed at the folder question, was answered no. Also an option the installer refused before any download: an unknown option, `--jobs` outside 1 to 32, `--target` with `--every-board` or `--from-pack`. The message then starts with `install.py: error:`. With `--restore`, a folder that is not a dated folder inside `retrobios-backup` |
 | `130` | stopped with Ctrl+C, or with `q`, Ctrl+C or Ctrl+D at a question. Run the same command again to carry on |
 | `141` | the output was piped to a reader that closed early (`--list-platforms \| head`) |
@@ -1106,17 +1174,21 @@ kind, and each kind has exactly the keys below, in this order. The schema is
 |------|------|------|
 | `start` | `schema`, `installer`, `mode` | First line. `schema` is 1, `installer` the identity `--version` prints, `mode` one of `install`, `check`, `dry-run`, `list` |
 | `detect` | `os`, `os_name`, `platforms` | Once the platforms are known. `os_name` comes from `/etc/os-release`. `platforms` lists `{platform, name, bios_dir}`, and is empty when nothing supported was found |
-| `error` | `stage`, `reason`, `platform`, `message` | The file list could not be read (`stage` is `manifest`). `reason` is `network`, `not_found` or `invalid`, `clock` when the server's certificate was refused and the system clock reads a date before the installer was written, or `no_ca` when the machine holds no list of trusted certificates (`SSL_CERT_FILE` names one). `message` says it in words |
+| `error` | `stage`, `reason`, `platform`, `message` | The file list could not be read (`stage` is `manifest`): `reason` is `network`, `not_found` or `invalid`, `clock` when the server's certificate was refused and the system clock reads a date before the installer was written, or `no_ca` when the machine holds no list of trusted certificates (`SSL_CERT_FILE` names one). A folder named with `--from` is not there (`stage` is `from`, `reason` `not_found`, or `not_a_folder` for a file that is no ZIP). `message` says it in words |
+| `checking` | `files_done`, `files_total` | While the files already in the folder are read and hashed, at most every half second and once at the end. `files_total` counts the files found in place |
 | `file` | `platform`, `dest`, `systems`, `size`, `state` | Each file of the list after the check. `state` is `present` (hash verified), `wrong_hash` or `missing` |
 | `system` | `platform`, `system`, `name`, `files`, `present`, `missing`, `wrong_hash`, `bytes_needed` | Each system, sorted by id, and with `--system` only the systems named. Files with no system count under `other`. `name` is the platform's own name for it |
 | `check` | `platform`, `name`, `bios_dir`, `files`, `present`, `missing`, `wrong_hash`, `bytes_needed`, `data_missing`, `not_installable` | The platform's totals. `data_missing` counts data-tree files to fetch, `not_installable` the files the collection cannot supply |
-| `download` | `platform`, `files`, `bytes` | Before the downloads start |
+| `found` | `platform`, `dest`, `folder`, `path`, `member`, `reason` | Each file to install that this machine already holds, after `check` and before anything is written, in `--check` and `--dry-run` too. `folder` is the `--from` folder as given, or the `bios_dir` of the check when the BIOS folder holds the file at another place, and then `reason` says where in words (`nested folder: ...` for a misplaced file, `the same file is at ...` for one the list installs there too). `path` is the file, and `member` the ZIP member holding the bytes when `path` is an archive, an empty string otherwise. Its copy is reported by a `downloaded` event |
+| `download` | `platform`, `files`, `bytes` | Before the downloads start. Counts the files copied from this machine too |
 | `progress` | `files_done`, `files_total`, `bytes_done`, `bytes_total` | At most every half second while bytes arrive |
-| `downloaded` | `dest`, `ok`, `reason`, `size`, `files_done`, `files_total`, `bytes_done`, `bytes_total` | Each finished file. `reason` says why one failed, and is empty otherwise |
+| `downloaded` | `dest`, `ok`, `reason`, `size`, `files_done`, `files_total`, `bytes_done`, `bytes_total` | Each finished file, downloaded or copied from where a `found` event named it. `reason` says why one failed, and is empty otherwise |
 | `summary` | `mode`, `installed`, `up_to_date`, `pending`, `failed`, `skipped`, `left_out`, `kept`, `interrupted` | The outcome. `pending` counts what a next run would still fetch, `failed` lists `{dest, reason}`, `skipped` lists `{reason, label, files, required}` for the files the collection cannot supply, `left_out` lists `{category, label, files, dests}` for what `--no-game-data` left out, and is empty without it. `kept` lists `{folder, files, bytes}`, one per backup folder, for the files in place the run moved aside before replacing them (with `--dry-run`, would move), and is empty when none. Not written for a listing |
 | `end` | `code` | Last line, with the exit status the process returns (see [Exit status](#exit-status)) |
 
-An option refused before the run starts (`install.py: error:`, code 2) writes
+Schema 1 can gain a kind (`found` came with `--from`), never a key of an
+existing kind: a reader skips a kind it does not know. An option refused
+before the run starts (`install.py: error:`, code 2) writes
 no event at all. A program reads a missing `end` as that case.
 
 ## Environment overrides

@@ -4,7 +4,7 @@ core_classification: game_engine
 source: "https://github.com/CorsixTH/CorsixTH"
 upstream: ~
 profiled_date: "2026-10-04"
-source_commit: "2d4671e267cae25847432a2e7d4f814b44f91e35"
+source_commit: "f98c9e8e1d22f638233c12b10f3a351f1484608c"
 core_version: "0.70.1"
 display_name: "Theme Hospital (CorsixTH)"
 cores: [corsixth]
@@ -21,23 +21,23 @@ notes: |
   install discovery:
     1. config.theme_hospital_install (user override) is tried first
        (:1453). If unset or wrong, the loader scans a list of common
-       paths (:1471-1489) looking for a folder that passes
+       paths (:1473-1491) looking for a folder that passes
        App:isThemeHospitalPath, which demands three subdirectories
        named data, levels and qdata (:1435-1447).
     2. Once a candidate is accepted, three sentinel files MUST exist
-       (:1521-1523):
+       (:1523-1525):
          DATA/VBlk-0.tab
          LEVELS/Level.L1
          QDATA/SPointer.dat
        Any missing file aborts init with "Invalid Theme Hospital
-       folder specified in config file..." (:1526).
-    3. DataM/Demo.dat (:1535) marks the shareware demo install. Its
+       folder specified in config file..." (:1528).
+    3. DataM/Demo.dat (:1537) marks the shareware demo install. Its
        presence switches a different corruption-size check on
        ANIMS/WINLEVEL.SMK (243188), LEVELS/LEVEL.L1 (163948) and
-       DATA/BUTTON01.DAT (252811) at :1559-1561. Full installs instead
+       DATA/BUTTON01.DAT (252811) at :1561-1563. Full installs instead
        get soft size checks on ANIMS/AREA01V.SMK, WINGAME.SMK,
-       WINLEVEL.SMK, LOSE1.SMK and INTRO/INTRO.SM4 (:1563-1567).
-    4. QData/Font00V.dat is read unconditionally (:1576) and its CRC32
+       WINLEVEL.SMK, LOSE1.SMK and INTRO/INTRO.SM4 (:1565-1569).
+    4. QData/Font00V.dat is read unconditionally (:1578) and its CRC32
        picks the charset (mik vs cp437).
 
   The install root is read as a tree. FileSystem:setRoot() lists the
@@ -50,7 +50,7 @@ notes: |
   upper-case names the DOS release ships and the lookup normalises to.
 
   The sound/music path uses the game's XMI tracks when a SoundFont is
-  available (App:findSoundFont at :1589 probes GeneralUser-GS.sf2,
+  available (App:findSoundFont at :1591 probes GeneralUser-GS.sf2,
   FluidR3_GM.sf2, FluidR3.sf3 and three Linux system paths), and the
   SoundFont is a user preference, not game data.
 
@@ -62,7 +62,7 @@ files:
     category: game_data
     required: true
     description: "Theme Hospital install directory (full game or demo)"
-    source_ref: "CorsixTH/Lua/filesystem.lua:64-76, CorsixTH/Lua/app.lua:1435-1447, 1454, 1499"
+    source_ref: "CorsixTH/Lua/filesystem.lua:64-76, CorsixTH/Lua/app.lua:1435-1447, 1454, 1501"
     note: "Accepted as an install when it holds data, levels and qdata subdirectories. The rest of the tree is opened by name on demand."
 
   - name: "VBLK-0.TAB"
@@ -71,7 +71,7 @@ files:
     category: game_data
     required: true
     description: "Theme Hospital core sprite index, sentinel checked at startup"
-    source_ref: "CorsixTH/Lua/app.lua:1521"
+    source_ref: "CorsixTH/Lua/app.lua:1523"
     note: "Looked up as Data/VBlk-0.tab."
 
   - name: "LEVEL.L1"
@@ -80,7 +80,7 @@ files:
     category: game_data
     required: true
     description: "First Theme Hospital level file, sentinel checked at startup"
-    source_ref: "CorsixTH/Lua/app.lua:1522, 1560"
+    source_ref: "CorsixTH/Lua/app.lua:1524, 1562"
     note: "Looked up as Levels/Level.L1. With the demo marker present, a size more than 1024 bytes away from 163948 is reported as corrupt and the game still starts."
 
   - name: "SPOINTER.DAT"
@@ -89,7 +89,7 @@ files:
     category: game_data
     required: true
     description: "Sprite pointer table, sentinel checked at startup"
-    source_ref: "CorsixTH/Lua/app.lua:1523"
+    source_ref: "CorsixTH/Lua/app.lua:1525"
     note: "Looked up as QData/SPointer.dat."
 
   - name: "FONT00V.DAT"
@@ -98,7 +98,7 @@ files:
     category: game_data
     required: true
     description: "Theme Hospital font, its CRC32 selects charset (mik vs cp437)"
-    source_ref: "CorsixTH/Lua/app.lua:1576-1584"
+    source_ref: "CorsixTH/Lua/app.lua:1578-1586"
     note: "Looked up as QData/Font00V.dat."
 
   - name: "DEMO.DAT"
@@ -107,5 +107,5 @@ files:
     category: game_data
     required: false
     description: "Demo marker: its presence selects the demo graphics set and the demo size checks"
-    source_ref: "CorsixTH/Lua/app.lua:1535-1539, 1558-1561"
+    source_ref: "CorsixTH/Lua/app.lua:1537-1541, 1560-1563"
     note: "Looked up as DataM/Demo.dat. Absent from a full install."

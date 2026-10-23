@@ -4,7 +4,8 @@ core_classification: community_fork
 source: "https://github.com/Spuds0588/mgba-splitscreen"
 upstream: "https://github.com/mgba-emu/mgba"
 profiled_date: "2026-10-04"
-source_commit: "b66511a35873bda9c961872813e58b35543bcfc5"
+source_commit: "f1d5975d77285f77affbfe64b7050ebd5c4b6a77"
+upstream_commit: "fd9dc5c2cbf234365068855851107e762fc6211b"
 core_version: "0.1.0"
 display_name: "Nintendo - Game Boy Advance (mGBA Splitscreen)"
 cores:
@@ -20,7 +21,7 @@ notes: |
   fixes (Four Swords handshake assist and a gated deadlock kick) on top
   of mGBA's library layer. The player instances live in
   src/platform/libretro-splitscreen/instances.c and reject anything that
-  is not a GBA ROM (instances.c:114-119).
+  is not a GBA ROM (src/platform/libretro-splitscreen/instances.c:114-119).
 
   The splitscreen wrapper never performs its own BIOS lookup. Each
   per-player mCore reaches mGBA's shared GBA core, which looks for

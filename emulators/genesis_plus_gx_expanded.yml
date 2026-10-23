@@ -3,7 +3,7 @@ type: libretro
 core_classification: enhanced_fork
 source: "https://github.com/BillyTimeGames/Genesis-Plus-GX-Expanded-Rom-Size"
 upstream: "https://github.com/ekeeke/Genesis-Plus-GX"
-profiled_date: "2026-10-20"
+profiled_date: "2026-10-23"
 source_commit: "dea3528cc0e3f54098e1fb91e3ae7e0e5d90a590"
 upstream_commit: "e366ca817f5b750ad06a8e2c5976d79b3758ea0a"
 core_version: "v1.7.4"
@@ -26,9 +26,11 @@ notes: |
   Fork of Genesis Plus GX branched from ekeeke's tree at e366ca8 (May 2022).
   Makefile.libretro builds it with MAXROMSIZE 93554432 for Sega Channel
   dumps and large hacks, and it adds a Paprium mapper (core/cart_hw/paprium.h).
-  RapidEdwin08/Genesis-Plus-GX-Expanded-Rom-Size, which Batocera builds as
-  genesisplusgx-expanded at 181e8f93, carries the same core/, libretro/ and
-  Makefile.libretro as this pin. RetroBat ships genesis_plus_gx_expanded_libretro.dll
+  RapidEdwin08/Genesis-Plus-GX-Expanded-Rom-Size, which Batocera 43.1 builds
+  as genesisplusgx-expanded at a0b5a033
+  (Batocera package/batocera/emulators/retroarch/libretro/libretro-genesisplusgx-expanded/libretro-genesisplusgx-expanded.mk:7),
+  carries the same core/, libretro/ and Makefile.libretro as this pin, and so
+  does its tip 181e8f93. RetroBat ships genesis_plus_gx_expanded_libretro.dll
   from its own core repository, and its strings carry the same file names and
   the Paprium track list.
 

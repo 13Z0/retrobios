@@ -2,8 +2,8 @@ emulator: "px68k (SDL)"
 type: standalone
 core_classification: community_fork
 source: "https://github.com/TurtleBazooka/px68k"
-profiled_date: "2026-10-20"
-source_commit: "e29ce400a030aea29b447757eeb28fef7a0c493e"
+profiled_date: "2026-10-23"
+source_commit: "bdc3d87efb9f09df88c5c6eb271f9535aaf13210"
 core_version: "0.15+K"
 display_name: "Sharp - X68000 (px68k SDL)"
 mode: standalone

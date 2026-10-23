@@ -3,8 +3,8 @@ type: standalone
 core_classification: game_engine
 source: "https://github.com/kondrak/vkQuake2"
 upstream: "https://github.com/id-Software/Quake-2"
-profiled_date: "2026-10-17"
-source_commit: "5bf9c012024884234df0f63c615daec0c740def7"
+profiled_date: "2026-10-23"
+source_commit: "6763f207229f97cffabb6fc2da72017a794b139b"
 core_version: "1.5.10"
 display_name: "Quake II (vkQuake2)"
 cores: ["vkquake2"]

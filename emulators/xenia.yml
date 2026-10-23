@@ -4,7 +4,7 @@ core_classification: community_fork
 source: "https://github.com/xenia-canary/xenia-canary"
 upstream: "https://github.com/xenia-canary/xenia-canary"
 profiled_date: "2026-03-26"
-source_commit: "7347cd12ef6e3029db3abcf17a0760d9f74f84bd"
+source_commit: "534aeb64ea1937361573e3933d121e636463b135"
 core_version: "canary"
 display_name: "Xenia Canary (Xbox 360)"
 cores:
@@ -40,7 +40,7 @@ exclusion_note: >
   Xenia is a pure high-level emulation (HLE) Xbox 360 emulator. The entire
   Xbox 360 operating system (kernel, XAM dashboard services, XBDM debug
   manager) is reimplemented in C++ as HLE modules loaded at startup
-  (src/xenia/emulator.cc:317-322). System configuration (XConfig) returns hardcoded
+  (src/xenia/emulator.cc:320-325). System configuration (XConfig) returns hardcoded
   values from xboxkrnl_xconfig.cc. Memory, CPU (JIT), GPU, APU, and HID
   subsystems are all software-emulated. No external BIOS, firmware, NAND
   flash dump, or system files are loaded from disk. The wiki confirms:

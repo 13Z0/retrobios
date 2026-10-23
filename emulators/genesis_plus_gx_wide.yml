@@ -5,6 +5,7 @@ source: "https://github.com/libretro/Genesis-Plus-GX-Wide"
 upstream: "https://github.com/ekeeke/Genesis-Plus-GX"
 profiled_date: "2026-03-23"
 source_commit: "b7ad005431f5f0b55e559f6d598d1ed2479bf13b"
+upstream_commit: "49c584764893b0505ac7f768a754f97330fa4392"
 core_version: "v1.7.4"
 display_name: "Sega - MS/GG/MD/CD (Genesis Plus GX Wide)"
 cores:

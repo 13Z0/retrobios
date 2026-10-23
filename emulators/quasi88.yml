@@ -4,7 +4,7 @@ core_classification: community_fork
 source: "https://github.com/libretro/quasi88-libretro"
 upstream: "https://www.retropc.net/showzoh/quasi88/"
 profiled_date: "2026-03-29"
-source_commit: "46d9cbd59a48ea4b330911e93740817783e0694e"
+source_commit: "7884be5277776a5d8c4fdc4e574e9b5b589945c9"
 core_version: "0.6.4"
 display_name: "NEC - PC-8000 / PC-8800 series (QUASI88)"
 cores:
@@ -17,17 +17,17 @@ systems:
 # Includes pseudo-BIOS (pbios_n88, pbios_disk) by cisc compiled into the core.
 # With pseudo-BIOS, some disk-based games boot but compatibility is limited.
 #
-# ROM search order (libretro.c:444-491):
+# ROM search order (src/LIBRETRO/libretro.c:977-1024):
 #   1. <download_dir>/<filename>
 #   2. <system_dir>/quasi88/<filename>
 #   3. <system_dir>/<filename>
 #   Each ROM entry has up to 4 alternate filenames tried in order.
 #
-# ROM loading (libretro.c:550-594):
+# ROM loading (src/LIBRETRO/libretro.c:1083-1127):
 #   N88.ROM and DISK.ROM have pseudo-BIOS fallback if missing.
 #   All other ROMs are loaded silently if present, ignored if absent.
 #
-# The original QUASI88 (memory.c:80-95) uses uppercase-first filenames
+# The original QUASI88 (src/memory.c:80-95) uses uppercase-first filenames
 # (N88.ROM, N88EXT0.ROM, etc.) while the libretro .info file uses
 # lowercase with underscore variants (n88.rom, n88_0.rom, etc.).
 # The core tries both naming conventions.
@@ -35,16 +35,16 @@ systems:
 # FONT.ROM/FONT2.ROM/FONT3.ROM are not in the .info file.
 # When missing, the core uses built-in fonts (font.h) or kanji ROM glyphs.
 #
-# Upstream supports 2HD disk ROM (8 KB) via memory.c:356-368.
-# The libretro port reads only 2 KB (2D type) at libretro.c:552.
+# Upstream supports 2HD disk ROM (8 KB) via src/memory.c:356-368.
+# The libretro port reads only 2 KB (2D type) at src/LIBRETRO/libretro.c:1085.
 #
-# font.rom divergence: libretro.c:566-571 loads 0x1000 bytes then
+# font.rom divergence: src/LIBRETRO/libretro.c:1099-1104 loads 0x1000 bytes then
 # overwrites the buffer with kanji ROM + built-in graph. The font.rom
-# data ends up unused. Upstream memory.c:427 loads FONT_SZ
+# data ends up unused. Upstream src/memory.c:427 loads FONT_SZ
 # (2048) and keeps the font data in the first half.
 #
 # OPNA rhythm samples (2608_BD.WAV etc.): loaded by upstream via
-# fmgen/opna.cpp:1271 LoadRhythmSample(), but osd_dir_rom() returns
+# src/fmgen/opna.cpp:1271 LoadRhythmSample(), but osd_dir_rom() returns
 # NULL in the libretro port (dir_rom never initialized), so the samples
 # cannot be loaded. OPNA rhythm playback is silent in the libretro core.
 
@@ -65,7 +65,7 @@ files:
     required: true
     hle_fallback: true
     note: "N88-BASIC main ROM (32 KB). Falls back to pseudo-BIOS if missing."
-    source_ref: "src/LIBRETRO/libretro.c:550-551"
+    source_ref: "src/LIBRETRO/libretro.c:1083-1084"
     aliases: ["N88.ROM"]
 
   - name: n88_0.rom
@@ -73,7 +73,7 @@ files:
     size: 8192
     required: true
     note: "N88-BASIC V2 extension ROM 0 (8 KB). Needed by most software."
-    source_ref: "src/LIBRETRO/libretro.c:555"
+    source_ref: "src/LIBRETRO/libretro.c:1088"
     aliases: ["N88_0.ROM", "N88EXT0.ROM", "n88ext0.rom"]
 
   - name: n88_1.rom
@@ -81,7 +81,7 @@ files:
     size: 8192
     required: false
     note: "N88-BASIC V1H extension ROM 1 (8 KB). For V1 High-speed mode."
-    source_ref: "src/LIBRETRO/libretro.c:556"
+    source_ref: "src/LIBRETRO/libretro.c:1089"
     aliases: ["N88_1.ROM", "N88EXT1.ROM", "n88ext1.rom"]
 
   - name: n88_2.rom
@@ -89,7 +89,7 @@ files:
     size: 8192
     required: false
     note: "N88-BASIC V1S extension ROM 2 (8 KB). For V1 Standard mode."
-    source_ref: "src/LIBRETRO/libretro.c:557"
+    source_ref: "src/LIBRETRO/libretro.c:1090"
     aliases: ["N88_2.ROM", "N88EXT2.ROM", "n88ext2.rom"]
 
   - name: n88_3.rom
@@ -97,7 +97,7 @@ files:
     size: 8192
     required: false
     note: "N88-BASIC extension ROM 3 (8 KB). Older V2 extension."
-    source_ref: "src/LIBRETRO/libretro.c:558"
+    source_ref: "src/LIBRETRO/libretro.c:1091"
     aliases: ["N88_3.ROM", "N88EXT3.ROM", "n88ext3.rom"]
 
   - name: n88n.rom
@@ -105,7 +105,7 @@ files:
     size: 32768
     required: false
     note: "N-BASIC ROM (32 KB). For PC-8001 compatible N-BASIC mode."
-    source_ref: "src/LIBRETRO/libretro.c:559"
+    source_ref: "src/LIBRETRO/libretro.c:1092"
     aliases: ["N88N.ROM", "N80.ROM", "n80.rom"]
 
   - name: n88sub.rom
@@ -114,7 +114,7 @@ files:
     required: false
     hle_fallback: true
     note: "Disk subsystem ROM (2 KB, 2D type). Falls back to pseudo-BIOS if missing."
-    source_ref: "src/LIBRETRO/libretro.c:114, src/LIBRETRO/libretro.c:552-553"
+    source_ref: "src/LIBRETRO/libretro.c:120, 1085-1086"
     aliases: ["N88SUB.ROM", "DISK.ROM", "disk.rom"]
 
   - name: n88knj1.rom
@@ -122,7 +122,7 @@ files:
     size: 131072
     required: false
     note: "Kanji ROM level 1 (128 KB). Required for Japanese text display."
-    source_ref: "src/LIBRETRO/libretro.c:560"
+    source_ref: "src/LIBRETRO/libretro.c:1093"
     aliases: ["N88KNJ1.ROM", "KANJI1.ROM", "kanji1.rom"]
 
   - name: n88knj2.rom
@@ -130,7 +130,7 @@ files:
     size: 131072
     required: false
     note: "Kanji ROM level 2 (128 KB). Extended kanji character set."
-    source_ref: "src/LIBRETRO/libretro.c:561"
+    source_ref: "src/LIBRETRO/libretro.c:1094"
     aliases: ["N88KNJ2.ROM", "KANJI2.ROM", "kanji2.rom"]
 
   - name: n88jisho.rom
@@ -138,7 +138,7 @@ files:
     size: 524288
     required: false
     note: "Dictionary ROM (512 KB). Japanese dictionary lookup."
-    source_ref: "src/LIBRETRO/libretro.c:562"
+    source_ref: "src/LIBRETRO/libretro.c:1095"
     aliases: ["N88JISHO.ROM", "JISYO.ROM", "jisyo.rom"]
 
   # Font ROMs (not in .info, core has built-in fallback via font.h)
@@ -149,7 +149,7 @@ files:
     required: false
     hle_fallback: true
     note: "ANK font ROM (2 KB). Falls back to built-in font or kanji ROM glyphs."
-    source_ref: "src/LIBRETRO/libretro.c:566"
+    source_ref: "src/LIBRETRO/libretro.c:1099"
     aliases: ["FONT.ROM"]
 
   - name: font2.rom
@@ -158,7 +158,7 @@ files:
     required: false
     hle_fallback: true
     note: "Second font ROM (up to 4 KB). Falls back to built-in ANH font."
-    source_ref: "src/LIBRETRO/libretro.c:576"
+    source_ref: "src/LIBRETRO/libretro.c:1109"
     aliases: ["FONT2.ROM"]
 
   - name: font3.rom
@@ -167,5 +167,5 @@ files:
     required: false
     hle_fallback: true
     note: "Third font ROM (up to 4 KB). Zeroed out if missing."
-    source_ref: "src/LIBRETRO/libretro.c:588"
+    source_ref: "src/LIBRETRO/libretro.c:1121"
     aliases: ["FONT3.ROM"]

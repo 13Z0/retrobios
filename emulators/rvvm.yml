@@ -4,8 +4,8 @@ core_classification: official_port
 source: "https://github.com/LekKit/RVVM"
 upstream: "https://github.com/LekKit/RVVM"
 profiled_date: "2026-03-25"
-source_commit: "d6eae2ed964ee9c65f846be657a93cd100d072a7"
-core_version: "0.6-git"
+source_commit: "e7214efa23a9ab72c489c456889af79aa552873f"
+core_version: "0.7-git"
 display_name: "RVVM"
 cores: [rvvm]
 systems: [riscv]
@@ -34,18 +34,18 @@ systems: [riscv]
 
 # Source references:
 #   libretro binding:   src/bindings/libretro/libretro.c
-#   config parsing:     libretro.c:332-421 (retro_load_game)
-#   VM init + loading:  libretro.c:288-330 (vm_init)
-#   firmware loading:   src/rvvm.c:621-628 (rvvm_load_firmware)
-#   kernel loading:     src/rvvm.c:630-638 (rvvm_load_kernel)
-#   FDT loading:        src/rvvm.c:641-648 (rvvm_load_fdt, standalone only)
-#   standalone CLI:     main.c:213-282 (rvvm_cli_configure)
+#   config parsing:     src/bindings/libretro/libretro.c:332-421 (retro_load_game)
+#   VM init + loading:  src/bindings/libretro/libretro.c:288-330 (vm_init)
+#   firmware loading:   src/core/rvvm.c:629-636 (rvvm_load_firmware)
+#   kernel loading:     src/core/rvvm.c:638-647 (rvvm_load_kernel)
+#   FDT loading:        src/core/rvvm.c:649-656 (rvvm_load_fdt, standalone only)
+#   standalone CLI:     src/main.c:211-280 (rvvm_cli_configure)
 
 files:
   - name: "fw_payload.bin"
     path: "rvvm/fw_payload.bin"
     required: true
-    source_ref: "src/bindings/libretro/libretro.c:309-314, src/core/rvvm.c:628-635"
+    source_ref: "src/bindings/libretro/libretro.c:309-314, src/core/rvvm.c:629-636"
     note: >
       M-mode firmware loaded at 0x80000000. Typically OpenSBI with U-Boot
       payload (fw_payload.bin) or standalone (fw_jump.bin). Referenced by
@@ -54,7 +54,7 @@ files:
   - name: "Image"
     path: "rvvm/Image"
     required: false
-    source_ref: "src/bindings/libretro/libretro.c:316-318, src/core/rvvm.c:637-645"
+    source_ref: "src/bindings/libretro/libretro.c:316-318, src/core/rvvm.c:638-646"
     note: >
       S-mode kernel payload loaded at offset 0x200000 (rv64) or 0x400000
       (rv32) from RAM base. Only needed with fw_jump.bin as bootrom.
@@ -64,7 +64,7 @@ files:
     path: "rvvm/machine.dtb"
     required: false
     mode: standalone
-    source_ref: "src/main.c:220, src/core/rvvm.c:648-655"
+    source_ref: "src/main.c:220, src/core/rvvm.c:649-656"
     note: >
       Custom Flattened Device Tree. The core auto-generates a DTB based on
       machine configuration. The libretro binding does not parse a dtb= key
