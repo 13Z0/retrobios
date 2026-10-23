@@ -3248,6 +3248,41 @@ class DataDirectoriesAreInstalled(unittest.TestCase):
         self.assertEqual(counts["changed"], 1)
         self.assertLess(Endless.served, 64 * 1024)
 
+    def test_a_damaged_member_is_a_reason_and_leaves_no_part(self):
+        """zlib.error and EOFError from a damaged member ended the run on a
+        traceback, and a failed write left its .part beside the tree."""
+        import zlib
+
+        work = Path(_tempdir(self))
+        entry = self._entry()
+        entry["files"] = {"Sys/GC/font.bin": {"sha1": "1" * 40, "size": 4}}
+        for error in (zlib.error("invalid stored block lengths"), EOFError(),
+                      OSError(28, "No space left on device")):
+            with self.subTest(error=type(error).__name__):
+                class Broken(io.RawIOBase):
+                    def readable(self):
+                        return True
+
+                    def readinto(self, buffer, error=error):
+                        raise error
+
+                def members(_archive, _entry):
+                    yield "Sys/GC/font.bin", 4, lambda: io.BufferedReader(Broken())
+
+                with unittest.mock.patch.object(install, "_fetch_archive",
+                                                lambda url, d: Path(d) / "a"), \
+                        unittest.mock.patch.object(install, "_archive_members", members):
+                    counts = install.install_data_directory(entry, work)
+                self.assertTrue(counts["error"])
+                self.assertEqual(counts["installed"], 0)
+                self.assertEqual([p.name for p in work.rglob("*.part")], [])
+
+    def test_offline_keeps_its_reason(self):
+        work = Path(_tempdir(self))
+        with unittest.mock.patch.dict(os.environ, {install.OFFLINE_VARIABLE: "1"}):
+            counts = install.install_data_directory(self._entry(), work)
+        self.assertIsInstance(counts["error"], install.OfflineReason)
+
     def test_a_tarball_maps_through_source_path(self):
         import io as _io
         import tarfile

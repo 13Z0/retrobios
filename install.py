@@ -4497,7 +4497,9 @@ def _download_one(
                 or why.startswith(NOT_KEPT)):
             return fetched
         both = f"{result[2]}, and {why}"
-        return fetched[0], False, NetworkReason(both) if isinstance(why, NetworkReason) else both
+        # The fetch's kind of failure stays, so the advice is the right one.
+        kind = type(why) if isinstance(why, (NetworkReason, OfflineReason)) else str
+        return fetched[0], False, kind(both)
 
     if LOCAL.pack is not None:
         return _extract_from_pack(f, bios_path, dest, progress)
@@ -5599,38 +5601,60 @@ def install_data_directory(entry: dict, bios_path: Path) -> dict:
                     continue
                 target = _destination_path(root, rel)
                 target.parent.mkdir(parents=True, exist_ok=True)
-                digest = hashlib.sha1()
-                size = 0
-                with opener() as src, tempfile.NamedTemporaryFile(
-                    dir=target.parent, prefix=f".{target.name}.", suffix=".part",
-                    delete=False,
-                ) as out:
-                    while size <= meta["size"]:
-                        chunk = src.read(min(1024 * 1024, meta["size"] + 1 - size))
-                        if not chunk:
-                            break
-                        digest.update(chunk)
-                        size += len(chunk)
-                        out.write(chunk)
-                if digest.hexdigest() == meta["sha1"] and size == meta["size"]:
-                    slot = f"{entry['dest']}/{rel}" if entry.get("dest") else rel
-                    try:
-                        KEPT.keep(*_kept_slot(bios_path, slot), target,
-                                  {"sha1": meta["sha1"]})
-                    except _NotKept as exc:
-                        Path(out.name).unlink(missing_ok=True)
-                        counts["not_kept"].append((rel, str(exc)))
-                        continue
-                    os.replace(out.name, target)
-                    counts["installed"] += 1
-                else:
-                    Path(out.name).unlink(missing_ok=True)
-                    counts["changed"] += 1
-    except (urllib.error.URLError, OSError, ValueError, zipfile.BadZipFile,
-            tarfile.TarError) as exc:
+                outcome = _install_data_member(
+                    opener, meta, target, bios_path,
+                    f"{entry['dest']}/{rel}" if entry.get("dest") else rel,
+                    rel, counts["not_kept"])
+                if outcome:
+                    counts[outcome] += 1
+    except _Offline as exc:
+        # Kept apart, so the advice is the offline one, not the network's.
+        counts["error"] = OfflineReason(str(exc))
+    except (urllib.error.URLError, OSError, ValueError, tarfile.TarError) as exc:
         counts["error"] = str(getattr(exc, "reason", None) or exc)
+    except _MEMBER_ERRORS as exc:
+        # A damaged, encrypted or unsupported member, in words.
+        counts["error"] = unreadable_words(exc)
     counts["absent"] = len(needed)
     return counts
+
+
+def _install_data_member(
+    opener: Callable[[], ContextManager[BinaryIO]], meta: dict, target: Path,
+    bios_path: Path, slot: str, rel: str, not_kept: list[tuple[str, str]],
+) -> str:
+    """Write one member of a data tree's archive at target once its bytes
+    are the recorded ones: "installed", "changed" when they are not, or ""
+    when the file in place could not be moved aside (named in not_kept).
+    A read or write error is raised, and leaves no .part behind."""
+    scratch: Path | None = None
+    try:
+        digest = hashlib.sha1()
+        size = 0
+        with opener() as src, tempfile.NamedTemporaryFile(
+            dir=target.parent, prefix=f".{target.name}.", suffix=".part", delete=False,
+        ) as out:
+            scratch = Path(out.name)
+            while size <= meta["size"]:
+                chunk = src.read(min(1024 * 1024, meta["size"] + 1 - size))
+                if not chunk:
+                    break
+                digest.update(chunk)
+                size += len(chunk)
+                out.write(chunk)
+        if digest.hexdigest() != meta["sha1"] or size != meta["size"]:
+            return "changed"
+        try:
+            KEPT.keep(*_kept_slot(bios_path, slot), target, {"sha1": meta["sha1"]})
+        except _NotKept as exc:
+            not_kept.append((rel, str(exc)))
+            return ""
+        os.replace(scratch, target)
+        scratch = None
+        return "installed"
+    finally:
+        if scratch is not None:
+            scratch.unlink(missing_ok=True)
 
 
 def select_data_directories(manifest: dict, files: list[dict], narrowed: bool) -> list[dict]:

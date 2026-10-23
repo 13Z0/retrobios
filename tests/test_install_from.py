@@ -520,6 +520,18 @@ class ACopyThatFails(FromFolder):
         self.assertNotIn(install.NOT_WRITABLE, reason)
         self.assertIsInstance(reason, install.NetworkReason)
 
+    def test_offline_the_fallback_keeps_the_offline_reason(self):
+        """The copy failed, the download was refused by --offline: the
+        joined reason lost its kind, and the advice named neither."""
+        _unprivileged(self)
+        self.source.chmod(0)
+        self.addCleanup(self.source.chmod, 0o644)
+        with mock.patch.dict(os.environ, {install.OFFLINE_VARIABLE: "1"}):
+            _dest, ok, reason = install._download_one(self.entry, self.dest, copy=self.copy)
+        self.assertFalse(ok)
+        self.assertIsInstance(reason, install.OfflineReason)
+        self.assertIn("could not be read: Permission denied, and not fetched", reason)
+
     def test_a_read_error_is_the_source_and_not_the_folder(self):
         class Failing(io.BytesIO):
             def read(self, *_args):
