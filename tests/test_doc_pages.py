@@ -682,6 +682,16 @@ class FirstInstallWalkthrough(unittest.TestCase):
         self.text = _page("first-install.md")
         self.run = _page("installer.md")
 
+    def test_the_stop_keys_are_the_ones_the_screen_names(self):
+        """The page said "B or Ctrl+C stops it" for a computer, whose screen
+        says Esc or Ctrl-C, and where the b key does nothing."""
+        import install
+
+        section = _section(self.text, "4. Wait")
+        computer = install._STOP_KEYS["keys"][0].replace("Ctrl-C", "Ctrl+C")
+        self.assertIn(f"{computer} stops", section)
+        self.assertIn(f"{install._STOP_KEYS['gptokeyb'][0]} on a handheld", section)
+
     def test_no_hand_kept_size_before_the_run(self):
         import install
 
