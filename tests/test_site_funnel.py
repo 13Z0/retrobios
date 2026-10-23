@@ -134,8 +134,11 @@ class EveryPlatformOnThePicker(unittest.TestCase):
     def test_handheld_systems_that_run_retroarch_are_named(self):
         """muOS, ArkOS and the rest are detected as RetroArch by the
         installer and were named on no page a user reads."""
-        page = _which_pack()
-        self.assertIn("| muOS | [RetroArch](platforms/retroarch.md) | `/run/muos/storage/bios` |", page)
+        from siteguides import HANDHELD_GUIDE
+
+        page = generate_site.generate_handheld_guide(HANDHELD_GUIDE)
+        self.assertIn("| muOS |", page)
+        self.assertIn("`MUOS/bios` on the card", page)
         self.assertNotIn("| TrimUI |", page)
 
 

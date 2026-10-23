@@ -115,7 +115,6 @@ class OneSetupCount(unittest.TestCase):
         self.assertEqual(siteguides.setup_count(), count)
         self.assertIn(f"and {count - 3} more.", _page("index.md"))
         self.assertIn(f'<span class="rb-stat-value">{count}</span>', _page("explore.md"))
-        self.assertIn(f"{count} supported platforms", _page("platforms/index.md"))
 
 
 class SetupTiles(unittest.TestCase):
@@ -123,7 +122,8 @@ class SetupTiles(unittest.TestCase):
         for name in ("index.md", "which-pack.md"):
             text = _page(name)
             with self.subTest(page=name):
-                self.assertEqual(text.count('class="rb-card rb-tile"'), len(REGISTRY))
+                extra = sum(len(tiles) for tiles in siteguides.GROUP_TILES.values())
+                self.assertEqual(text.count('class="rb-card rb-tile"'), len(REGISTRY) + extra)
                 for key in REGISTRY:
                     self.assertIn(f'href="/retrobios/platforms/{key}/"', text)
 

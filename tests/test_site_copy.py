@@ -37,7 +37,10 @@ START_PAGES = {
     "wiki/glossary.md": 200,
 }
 # Level 1: the guide part of each setup page, above its Reference heading.
-SETUP_CEILING = 220
+# 220 until each page also answered three asked questions in about 50 words:
+# which setup version the ZIP was made from (7 % of the community sample),
+# how to get only some consoles, and a file in place but reported missing (14 %).
+SETUP_CEILING = 280
 # The setup index is a card per setup, one sentence each.
 SETUP_INDEX_CEILING = 300
 

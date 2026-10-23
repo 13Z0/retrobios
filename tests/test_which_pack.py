@@ -32,7 +32,7 @@ class WhichPackRows(unittest.TestCase):
         record = release_record.load_record()
         page = generate_site.generate_which_pack()
         row = re.compile(r"^\| \[[^\]]+\]\(platforms/([a-z0-9]+)\.md\) \|(.*)$", re.M)
-        asset = re.compile(r"/releases/download/[^/]+/([^)\s]+)\)")
+        asset = re.compile(r"/releases/download/[^/]+/([^)\s\"]+)[)\"]")
         checked = 0
         for key, rest in row.findall(page):
             linked = set(asset.findall(rest))
