@@ -296,7 +296,7 @@ class ManifestsArePublished(unittest.TestCase):
             self.assertIn(f"| `{field}` | {generate_site._escape_tags(description)} |", page)
         self.assertIn("## Platform manifests", page)
         self.assertIn("**Licence:**", page)
-        self.assertIn("## Hosting and limits", page)
+        self.assertIn("## Hosting, rate limits and caching", page)
         # The endpoints first, the DAT below them.
         self.assertLess(page.index("## Stable JSON endpoints"), page.index("The DAT is Logiqx XML"))
 
@@ -449,7 +449,7 @@ class SourceLinksGoWhereTheFileIs(unittest.TestCase):
     def tearDown(self):
         sitesources._tree_paths.cache_clear()
 
-    def _render(self, tree: frozenset[str] | None) -> str:
+    def _render(self, tree: frozenset[str]) -> str:
         original = sitesources._tree_paths
         sitesources._tree_paths = lambda repo, pin: tree  # type: ignore[assignment]
         try:
@@ -464,9 +464,12 @@ class SourceLinksGoWhereTheFileIs(unittest.TestCase):
         self.assertIn("`src/core/loader/ncch.cpp:151-164`", text)
         self.assertNotIn("3dsTrident/blob/" + "b" * 40 + "/src/core/loader", text)
 
-    def test_without_a_cached_tree_the_declarations_decide(self):
-        text = self._render(None)
-        self.assertIn("3dsTrident/blob/" + "b" * 40 + "/src/core/loader/ncch.cpp", text)
+    def test_a_path_no_tree_confirmed_is_not_linked(self):
+        """Round 4: without a tree the declared repository took the path,
+        and the deploy, which has no tree cache, linked 30 paths to a 404."""
+        text = self._render(frozenset())
+        self.assertNotIn("](https://", text)
+        self.assertIn("`src/core/loader/ncch.cpp:151-164`", text)
 
     def test_every_rendered_link_is_in_its_cached_tree(self):
         """Offline: each link the pages render points at a path the cached

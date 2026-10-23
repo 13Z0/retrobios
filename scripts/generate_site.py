@@ -1758,8 +1758,11 @@ def system_index_items(db: dict, coverages: dict, profiles: dict) -> list[dict]:
     api/v1/systems/ is keyed by manufacturer and its consoles by display
     name: a frontend keying by system id (sony-playstation) had no way in.
     The url is the section system_section gives, the one every page links.
+    An id with no section of its own (tyrian, scummvm) that holds files
+    takes the card of its first file, else the page of the emulator naming
+    it: 28 such ids sent their hashes to no page.
     """
-    from siterender import system_ids, system_section
+    from siterender import card_page, system_ids, system_section
 
     sha1_by_path = _sha1_by_path(db)
     files = db.get("files") or {}
@@ -1795,14 +1798,31 @@ def system_index_items(db: dict, coverages: dict, profiles: dict) -> list[dict]:
             name = system_name(sys_id)
         except KeyError:
             name = sys_id
-        items.append({
-            "id": sys_id,
-            "name": name,
-            "manufacturer": manufacturers.get(section[0], "") if section else "",
-            "url": _site_path(console_href(*section)) if section else None,
-            "sha1": sorted(held.get(sys_id, set()) & files.keys()),
-        })
+        sha1s = sorted(held.get(sys_id, set()) & files.keys())
+        manufacturer = manufacturers.get(section[0], "") if section else ""
+        url = _site_path(console_href(*section)) if section else None
+        if url is None and sha1s:
+            manufacturer, url = _first_file_place(sys_id, sha1s, files, profiles, card_page)
+        items.append({"id": sys_id, "name": name, "manufacturer": manufacturer,
+                      "url": url, "sha1": sha1s})
     return items
+
+
+def _first_file_place(
+    sys_id: str, sha1s: list[str], files: dict, profiles: dict, card_page,
+) -> tuple[str, str | None]:
+    """(manufacturer, url) of the card of an id's first collection file,
+    else of the page of the first emulator naming the id."""
+    for sha1 in sha1s:
+        parts = str(files[sha1].get("path", "")).split("/")
+        if len(parts) >= 3 and parts[0] == "bios":
+            page = card_page("/".join(parts), sha1)
+            return parts[1], _site_path(f"systems/{page}.md#sha1-{sha1[:12]}")
+    for key in sorted(profiles):
+        profile = profiles[key]
+        if profile.get("type") not in ("alias", "test") and sys_id in (profile.get("systems") or []):
+            return "", _site_path(f"emulators/{key}.md")
+    return "", None
 
 
 def core_index_items(profiles: dict) -> list[dict]:
@@ -1834,14 +1854,28 @@ def _is_manifest(item: dict) -> bool:
     return item["url"].startswith("api/v1/manifests/")
 
 
+# A URL template written in prose (https://.../<ref>/<repo_path>): escaped,
+# the autolinker made a link of it, &lt;ref> on screen and a 404 behind it.
+_URL_TEMPLATE = re.compile(r"(?<!`)https?://[^\s`]*<[^\s`]*?(?=[.,;]?(?:\s|$))")
+
+
 def _schema_field_rows(schema: dict, keys: tuple[str, ...]) -> list[str]:
     """One table row per field, its description read from the schema, so the
-    page and the published contract say the same thing."""
+    page and the published contract say the same thing. A URL template is
+    written as code."""
     props = schema.get("properties") or {}
-    return [
-        f"| `{key}` | {_escape_tags(str(props[key]['description']))} |"
-        for key in keys if (props.get(key) or {}).get("description")
-    ]
+    rows = []
+    for key in keys:
+        text = str((props.get(key) or {}).get("description") or "")
+        if text:
+            rows.append(f"| `{key}` | {_escape_tags(_URL_TEMPLATE.sub(r'`\g<0>`', text))} |")
+    return rows
+
+
+def _other_fields(schema: dict, shown: tuple[str, ...]) -> list[str]:
+    """The fields a short table leaves out, every one with its description."""
+    rest = tuple(key for key in schema.get("properties") or {} if key not in shown)
+    return ["| Field | Meaning |", "|-------|---------|", *_schema_field_rows(schema, rest)]
 
 
 # The manifest fields an integrator reads first, in the order they matter.
@@ -1859,12 +1893,34 @@ def _short_sha256(item: dict, catalog: str) -> str:
     return f'<a href="{catalog}"><code title="{value}">{value[:12]}</code></a>'
 
 
+def _platforms_without_a_list(platforms_dir: Path | None = None) -> list[str]:
+    """The names of the platforms whose registry says they keep no list."""
+    platforms_dir = platforms_dir or _REPO_ROOT / "platforms"
+    names = []
+    for key, entry in sorted(load_platform_registry(str(platforms_dir)).items()):
+        if entry.get("native_list") != "none":
+            continue
+        config = platforms_dir / str(entry.get("config") or f"{key}.yml")
+        data = yaml_load(config.read_text(encoding="utf-8")) if config.is_file() else {}
+        names.append(str((data or {}).get("platform") or key))
+    return names
+
+
+def _join_names(names: list[str]) -> str:
+    return names[0] if len(names) == 1 else ", ".join(names[:-1]) + f" and {names[-1]}"
+
+
 def generate_data_page(exports: list[dict]) -> str:
     manifest_schema = json.loads(
         (_REPO_ROOT / "schemas" / "install-manifest.schema.json").read_text(encoding="utf-8"))
     snippet = (_REPO_ROOT / "scripts" / "check_platform_folder.py").read_text(encoding="utf-8")
     manifests = [item for item in exports if _is_manifest(item)]
+    no_list = _platforms_without_a_list()
     lines = [
+        "---",
+        "terms: manifest, schema, check a folder, rate limit, api",
+        "---",
+        "",
         "# Data and API",
         "",
         "RetroBIOS publishes the same metadata used by its verifier, pack builder "
@@ -1907,6 +1963,10 @@ def generate_data_page(exports: list[dict]) -> str:
         "URL prefix (`/api/v2/`), and fields may only be added compatibly within v1. "
         "Each schema's `$id` is the address it is served at.",
         "",
+        "`database.json`, `stats.json`, `release.json` and the manifests are not "
+        "envelopes. Their revision is the `commit` of `catalog.json` that lists "
+        "their SHA256.",
+        "",
         "One emulator profile without the whole list: "
         "`api/v1/emulators/<id>.json`, the envelope of `emulators.json` holding "
         "that one item, its `profile` valid against "
@@ -1923,7 +1983,10 @@ def generate_data_page(exports: list[dict]) -> str:
         "`url` of the section holding its files and their SHA1. "
         "[`cores.json`](api/v1/cores.json) gives each core name the buildbot or a "
         "platform uses (`mednafen_psx`) the profile it designates (`beetle_psx`), "
-        "whose document is `api/v1/emulators/<profile>.json`.",
+        "whose document is `api/v1/emulators/<profile>.json`. A name two profiles "
+        "claim (`pcsx2`) has one item per profile, and `preferred: true` marks the "
+        "one a platform list naming that core gets: the profile with that very id, "
+        "else the first id in alphabetical order.",
         "",
         "One hash without the whole list: `api/v1/lookup/<xx>.json`, where `<xx>` "
         "is the first two characters of the hash in lowercase, holds every SHA1, "
@@ -1931,7 +1994,27 @@ def generate_data_page(exports: list[dict]) -> str:
         "(the collection, a data directory, a platform's list or an emulator "
         "profile), the file `name`, the `url` of the page that shows it and, "
         "when one is known, the `system_name` the site gives its system. "
-        "[Find a file](files/index.md) reads it.",
+        "[Find or check a file](files/index.md) reads it.",
+        "",
+        "In a browser, the SHA1 of a file the reader picks finds its records. Web "
+        "Crypto has no MD5, and none is needed: a setup that lists a file by MD5 "
+        "or CRC32 is filed under the SHA1 of the collection file it names too.",
+        "",
+        "```js",
+        "// The records of the file a reader picked, by its SHA1.",
+        "async function lookUp(file) {",
+        "  const digest = await crypto.subtle.digest(\"SHA-1\", await file.arrayBuffer());",
+        "  const sha1 = [...new Uint8Array(digest)]",
+        "    .map((byte) => byte.toString(16).padStart(2, \"0\"))",
+        "    .join(\"\");",
+        f"  const base = \"{SITE_URL}api/v1/lookup/\";",
+        "  const response = await fetch(`${base}${sha1.slice(0, 2)}.json`);",
+        "  if (!response.ok) return [];",
+        "  const shard = await response.json();",
+        "  // layer: collection, data-directory, platform or emulator. owner: which one.",
+        "  return shard.items.filter((item) => item.value === sha1);",
+        "}",
+        "```",
         "",
         "Two kinds of `url`:",
         "",
@@ -1965,6 +2048,15 @@ def generate_data_page(exports: list[dict]) -> str:
         "|-------|---------|",
         *_schema_field_rows(manifest_schema["$defs"]["file"], MANIFEST_FILE_FIELDS),
         "",
+        *markup.details("note", "All fields", [
+            "The manifest:",
+            "",
+            *_other_fields(manifest_schema, MANIFEST_TOP_FIELDS),
+            "",
+            "Each entry of `files`:",
+            "",
+            *_other_fields(manifest_schema["$defs"]["file"], MANIFEST_FILE_FIELDS),
+        ]),
         "## Check a folder for one platform",
         "",
         "The job most tools come for: is this BIOS folder what the platform checks? "
@@ -1979,8 +2071,12 @@ def generate_data_page(exports: list[dict]) -> str:
         "Recalbox writes several accepted md5 in one field, comma separated.",
         "- `zip_digest: composite` (Recalbox): the md5 of a ZIP is that of its members "
         "read in name order, never the archive's.",
+        "- An entry with no `destination` (EmuDeck) names no file: the system "
+        "passes when any file in the BIOS folder has one of its md5.",
         "- `hash_rule: size_and_any_hash` (RomM) wants the size and any one hash. "
         "The script below does not apply it.",
+        *([f"- {_join_names(no_list)} have no list of their own (`native_list: none`). "
+           "An empty list does not mean nothing is needed."] if no_list else []),
         "",
         "```python",
         snippet.rstrip("\n"),
@@ -2057,13 +2153,17 @@ def generate_data_page(exports: list[dict]) -> str:
         "- `curated`, `shared_group` and `mirror_of` mark an entry the platform's "
         "own file does not carry.",
         "",
-        "## Hosting and limits",
+        "## Hosting, rate limits and caching",
         "",
         "- Static files on GitHub Pages, read with a plain GET. No key, no account.",
         "- Any origin may read them (`Access-Control-Allow-Origin: *`), so a "
         "browser tool can call them directly.",
         "- Responses are cached for 10 minutes (`Cache-Control: max-age=600`). "
         "Send the `ETag` back in `If-None-Match` to skip an unchanged download.",
+        "- GitHub may answer HTTP 429 to a client that sends too many requests, and "
+        "a Pages site has a soft limit of 100 GB of traffic a month ([GitHub Pages "
+        "limits](https://docs.github.com/en/pages/getting-started-with-github-pages/"
+        "github-pages-limits)). Fetch the one shard or document a question needs.",
         "- The base is the project's address, "
         f"`{SITE_URL}api/v1/`. Compare `commit` to know whether two downloads differ.",
         "",
@@ -3696,6 +3796,8 @@ def generate_platform_page(
 
     if no_list:
         lines.extend(_core_folders_section(name, config))
+    if _own_list_only(config):
+        lines.extend([f"**Cores:** {OWN_LIST_ONLY}", ""])
 
     # System summary table (quick navigation)
     lines.extend(
@@ -3726,9 +3828,12 @@ def generate_platform_page(
         if len(sys_emus) > 3:
             emu_str += f" [+{len(sys_emus) - 3}](#{anchor})"
         # The name a reader filters on, the id the list writes beside it.
+        # The id and the count are no words a reader searches for: indexed,
+        # every platform page answered a system id before its system's page.
         lines.append(
-            f"| [{_escape_tags(system_name(sys_id))}](#{anchor}) <small>{sys_id}</small> "
-            f"| {ok_count}/{total} | {status} | {emu_str} |"
+            f"| [{_escape_tags(system_name(sys_id))}](#{anchor}) "
+            f"<small data-pagefind-ignore>{sys_id}</small> "
+            f"| <span data-pagefind-ignore>{ok_count}/{total}</span> | {status} | {emu_str} |"
         )
     lines.append("")
 
@@ -3752,7 +3857,13 @@ def generate_files_page() -> str:
     address and opens the card directly.
     """
     return "\n".join([
-        "# Find a file",
+        "---",
+        "terms: check dump, md5 check, verify bios file, check hash",
+        "---",
+        "",
+        "# Find or check a file",
+        "",
+        "Check a BIOS dump: paste its hash or choose the file.",
         "",
         "A hash is a fingerprint of a file's contents ([Glossary](../wiki/glossary.md)). "
         "Tools such as clrmamepro and RomVault print one, and so do emulator logs "
@@ -3785,7 +3896,7 @@ def generate_files_page() -> str:
         "## The index behind it",
         "",
         "The lookup reads one file of [`api/v1/lookup/`](../data.md), named by the "
-        "first two characters of the hash, about 20 KB compressed. "
+        "first two characters of the hash: one of 256, never the whole index. "
         "[`api/v1/file-locations.json`](../api/v1/file-locations.json) lists every "
         "card by SHA1 in one file.",
         "",
@@ -3988,9 +4099,44 @@ def file_lookup_records(
                             "owner": key, "name": name, "url": url,
                             **({"system_name": entry_label} if entry_label else {}),
                         })
+    records += _held_under_every_hash(records, files, db.get("indexes") or {})
     unique = {json.dumps(r, sort_keys=True): r for r in records}
     return sorted(unique.values(), key=lambda r: (
         r["value"], r["layer"], r.get("owner", ""), r["name"], r["url"]))
+
+
+def _collection_sha1(files: dict, indexes: dict, algorithm: str, value: str) -> str | None:
+    """The collection file a declared value designates, None when none does."""
+    if algorithm == "sha1":
+        return value if value in files else None
+    found = indexes.get(f"by_{algorithm}", {}).get(value)
+    if isinstance(found, list):
+        found = found[0] if len(found) == 1 else None
+    return found if found in files else None
+
+
+def _held_under_every_hash(records: list[dict], files: dict, indexes: dict) -> list[dict]:
+    """A platform or emulator record whose value designates a collection
+    file, written under the file's other hashes too.
+
+    Batocera lists scph5501.bin by md5: pasted by its sha1, the file showed
+    no setup at all. Each record now carries the file's sha1, and
+    ``declared`` names the hash its owner wrote when the record is a copy.
+    """
+    copies: list[dict] = []
+    for record in records:
+        if record["layer"] not in ("platform", "emulator"):
+            continue
+        sha1 = _collection_sha1(files, indexes, record["algorithm"], record["value"])
+        if sha1 is None:
+            continue
+        record["sha1"] = sha1
+        for algorithm in HASH_ALGORITHMS:
+            for value in _hash_values(files[sha1].get(algorithm)):
+                if value != record["value"]:
+                    copies.append({**record, "value": value, "algorithm": algorithm,
+                                   "declared": record["algorithm"]})
+    return copies
 
 
 def write_lookup_shards(
@@ -7478,6 +7624,26 @@ def _ratio_cell(done: int, total: int, alarm: int = 0) -> str:
     return cell
 
 
+# GitHub's upload page for a folder of bios/: a browser upload by someone
+# without write access lands on a fork and opens a pull request.
+UPLOAD_URL = f"{REPO_URL}/upload/main/bios"
+# Rows of Files to source on one page: 601 on one page made a phone page
+# 274,509 px long.
+FILES_TO_SOURCE_PART = 100
+
+
+def _upload_folder(profile: dict) -> str:
+    """The bios/ folder a file the emulator loads is uploaded into: the
+    console folder of its first system that has one, else none."""
+    from siterender import _own_section
+
+    for sys_id in profile.get("systems") or []:
+        own = _own_section(str(sys_id))
+        if own is not None:
+            return "/".join(own)
+    return ""
+
+
 def generate_gap_analysis(
     profiles: dict,
     coverages: dict,
@@ -7891,9 +8057,11 @@ def generate_gap_analysis(
                     f"[{_escape_tags(display)}](emulators/{key}.md)"
                     for display, key in zip(m["emulators"], m["emu_keys"])
                 )
+                folder = _upload_folder(profiles[m["emu_keys"][0]])
+                upload = f"{UPLOAD_URL}/{urllib.parse.quote(folder)}" if folder else UPLOAD_URL
                 rows.append(
-                    f"| `{m['name']}` | {destination} | {expected} | {emulators} | {req} | "
-                    f"{plat_badges} | "
+                    f"| `{m['name']}` [Have it? Upload]({upload}) | {destination} | {expected} "
+                    f"| {emulators} | {req} | {plat_badges} | "
                     f"{_source_ref_markdown(profiles[m['emu_keys'][0]], m['source_ref'])} |"
                 )
             lines.extend(["### Files to source", "", counted, ""])
@@ -7905,7 +8073,8 @@ def generate_gap_analysis(
                     f"{counted} Each is a file an emulator loads that no platform lists and "
                     "the collection does not hold. Part of "
                     "[What the packs do not hold](gaps.md#files-to-source).",
-                    head, [[row] for row in rows], moved,
+                    head, [rows[i:i + FILES_TO_SOURCE_PART] for i in range(
+                        0, len(rows), FILES_TO_SOURCE_PART)], moved, budget=1,
                     parent=("What the packs do not hold", "/gaps/"),
                 )
                 lines.extend([f"Listed on {where}.", ""])
@@ -8082,6 +8251,16 @@ def _xref_platform_rows(config: dict, unique: dict) -> tuple[int, list[str]]:
     return len(matched), rows
 
 
+# What a platform that declares no core (cores: []) is told, on its page
+# and in the cross-reference.
+OWN_LIST_ONLY = "None. Its own list is the whole truth: no core profile adds a file."
+
+
+def _own_list_only(config: dict) -> bool:
+    """The platform declares `cores: []`: its own list decides alone."""
+    return isinstance(config.get("cores"), list) and not config["cores"]
+
+
 def _render_xref_by_platform(
     coverages: dict, unique: dict, moved: dict[str, str] | None = None,
 ) -> list[str]:
@@ -8102,6 +8281,12 @@ def _render_xref_by_platform(
         config = cov["config"]
         count, rows = _xref_platform_rows(config, unique)
         stem = f"cross-reference-{pname}"
+        if _own_list_only(config):
+            # cores: [] (MiSTer, BizHawk): no profile describes what they
+            # read, and a page of cores would be an empty table.
+            lines.append(f"| [{_escape_tags(display)}](platforms/{pname}.md) | 0 "
+                         f"| {OWN_LIST_ONLY} |")
+            continue
         lines.append(
             f"| [{_escape_tags(display)}](platforms/{pname}.md) | {count}"
             f"{_core_scope_note(config, unique)} | [Cores on {_escape_tags(display)}]({stem}.md) |"
@@ -9180,6 +9365,12 @@ def _generate(args: argparse.Namespace) -> None:
     )
     for stem, page in xref_pages.items():
         write_if_changed(str(docs / f"{stem}.md"), tables_out_of_search(page))
+    for pname, cov in coverages.items():
+        if _own_list_only(cov["config"]):
+            # The empty table it had is gone: its address leads to the
+            # platform's page, which says its own list decides alone.
+            sitestarlight.MOVED_PAGES.setdefault(
+                f"cross-reference-{pname}.md", f"platforms/{pname}.md")
 
     print("Generating gap analysis page...")
     gap_pages: dict[str, str] = {}

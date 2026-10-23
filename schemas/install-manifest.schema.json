@@ -23,21 +23,24 @@
   ],
   "properties": {
     "manifest_version": {
-      "const": 2
+      "const": 2,
+      "description": "Format version of the manifest. install.py refuses a version it does not know."
     },
     "source": {
       "enum": [
         "full",
         "platform",
         "truth"
-      ]
+      ],
+      "description": "Which files the pack was built from: full (the platform's list plus the files its cores load), platform (the list alone) or truth (the cores' files alone)."
     },
     "regions": {
       "type": "array",
       "items": {
         "type": "string"
       },
-      "uniqueItems": true
+      "uniqueItems": true,
+      "description": "Region priority the manifest was narrowed to, best first. Empty when it was not narrowed."
     },
     "target": {
       "type": "string",
@@ -79,13 +82,15 @@
       "type": "array",
       "items": {
         "type": "object"
-      }
+      },
+      "description": "Rules install.py follows to find this setup and its BIOS folder on a machine, one per method and operating system."
     },
     "standalone_copies": {
       "type": "array",
       "items": {
         "type": "object"
-      }
+      },
+      "description": "Files install.py also copies into the folders of standalone emulators it finds, or a note it prints when their folder exists."
     },
     "total_files": {
       "type": "integer",
@@ -497,7 +502,7 @@
         },
         "repo_path": {
           "type": "string",
-          "description": "Path in the repository. Fetched from https://raw.githubusercontent.com/Abdess/retrobios/<ref>/<repo_path>, ref being main unless RETROBIOS_REF names a tag."
+          "description": "Path in the repository. Fetched from `https://raw.githubusercontent.com/Abdess/retrobios/<ref>/<repo_path>`, ref being main unless RETROBIOS_REF names a tag."
         },
         "cores": {
           "oneOf": [
@@ -521,7 +526,7 @@
         "release_asset": {
           "type": "string",
           "pattern": "^[^/\\\\]+$",
-          "description": "Asset of the large-files release, fetched from https://github.com/Abdess/retrobios/releases/download/large-files/<asset> instead of repo_path."
+          "description": "Asset of the large-files release, fetched from `https://github.com/Abdess/retrobios/releases/download/large-files/<asset>` instead of repo_path."
         },
         "systems": {
           "description": "Every platform system that declares the file, for the installer's --system.",

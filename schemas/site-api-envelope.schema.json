@@ -403,7 +403,17 @@
                 },
                 "sha1": {
                   "type": "string",
-                  "pattern": "^[0-9a-f]{40}$"
+                  "pattern": "^[0-9a-f]{40}$",
+                  "description": "SHA1 of the collection file the value designates. A platform or emulator record that designates no collection file has none."
+                },
+                "declared": {
+                  "enum": [
+                    "sha1",
+                    "md5",
+                    "crc32",
+                    "sha256"
+                  ],
+                  "description": "On a copy of a platform or emulator record filed under another hash of its file: the algorithm of the value its owner wrote."
                 },
                 "owner": {
                   "type": "string"
