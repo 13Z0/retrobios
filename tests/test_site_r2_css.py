@@ -166,15 +166,18 @@ class ThemeStylesheet(unittest.TestCase):
     # 1.11
     def test_page_without_toc_keeps_the_column(self):
         self.assertIn("--__toc-width: initial", _rules(self.css, ":root[data-has-sidebar]:not([data-has-toc])")[0])
-        pane = _rules(self.css, ":not([data-has-toc]) .main-pane")[0]
-        self.assertIn("--sl-content-margin-inline: auto 0", pane)
+        # Round 5: one pane rule for every page with a sidebar, "On this page"
+        # or not, placed from the grid width.
+        pane = _rules(self.css, ":root[data-has-sidebar] .main-pane")[0]
+        self.assertIn("--sl-content-margin-inline: max(0rem, 100% - var(--rb-grid-width)) auto", pane)
 
     # 1.12, 1.14
     def test_card_pages(self):
         cards = next(b for s, b in _blocks(self.css) if s == ".sl-markdown-content :is(.rb-sys-file, .rb-file-entry)")
         self.assertIn("content-visibility: auto", cards)
         self.assertIn("contain-intrinsic-size: auto 320px", cards)
-        self.assertIn("--sl-content-width: 54rem", _rules(self.css, "body:has(.rb-sys-file, .rb-file-entry)")[0])
+        self.assertIn("--sl-content-width: var(--rb-grid-width)", _rules(self.css, "body:has(.rb-sys-file, .rb-file-entry)")[0])
+        self.assertEqual(_theme_tokens(self.css, ":root")["--rb-grid-width"], "54rem")
         facts = _rules(self.css, "dl.rb-facts")[0]
         self.assertIn("grid-template-columns: 11rem minmax(0, 1fr)", facts)
         self.assertRegex(self.css, r"@media \(max-width: 30rem\) \{\s*\.sl-markdown-content dl\.rb-facts \{ grid-template-columns: minmax\(0, 1fr\)")

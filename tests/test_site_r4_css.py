@@ -39,16 +39,17 @@ class ThemeStylesheetRound4(unittest.TestCase):
     # 1.2
     def test_stacked_cells_close_up_and_labels_push_rows(self):
         cell = _block(self.css, STACK)
-        for declaration in ("margin-top: 0", "display: flow-root", "line-height: 1.5",
-                            "padding: 0.125rem 0.6rem 0.125rem 8.4rem"):
+        # Round 5 tightened the values: 7.1rem column, 1.35 lines (test_site_r5_css).
+        for declaration in ("margin-top: 0", "display: flow-root", "line-height: 1.35",
+                            "padding: 0 0.6rem 0 7.1rem"):
             with self.subTest(declaration=declaration):
                 self.assertIn(declaration, cell)
         label = _block(self.css, STACK + "::before")
         self.assertIn("position: static", label)
         self.assertIn("float: left", label)
         self.assertNotIn("position: absolute", label)
-        # The label sits in the cell's left padding: 8.4 - 0.6 rem.
-        self.assertIn("margin-left: -7.8rem", label)
+        # The label sits in the cell's left padding.
+        self.assertIn("margin: 0 0.6rem 0 -7.1rem", label)
 
     # 1.3
     def test_short_inline_code_never_splits(self):

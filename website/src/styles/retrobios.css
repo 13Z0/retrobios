@@ -31,6 +31,8 @@
 	--sl-text-h2: 1.5rem;
 	--sl-text-h3: 1.2rem;
 	--sl-text-h4: 1rem;
+	/* The width the page grid is placed from: the file card column. */
+	--rb-grid-width: 54rem;
 
 	--rb-link: #aebcff;
 	--rb-link-strong: #c9d2ff;
@@ -59,6 +61,7 @@
 	--rb-diagram-fill: #252838;
 	--rb-diagram-stroke: #7c82a3;
 	--rb-diagram-accent: #aebcff;
+	--rb-select-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%23a6adc8' stroke-width='1.6'/%3E%3C/svg%3E");
 }
 
 :root[data-theme='light'] {
@@ -92,6 +95,7 @@
 	--rb-diagram-fill: #f5f6fa;
 	--rb-diagram-stroke: #8c92ac;
 	--rb-diagram-accent: #3b3f7a;
+	--rb-select-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%23546e7a' stroke-width='1.6'/%3E%3C/svg%3E");
 }
 
 /* Links and focus */
@@ -130,6 +134,10 @@
 	font-size: var(--sl-text-sm);
 	color: var(--rb-text-secondary);
 }
+/* The separator stays with the crumb after it: a long label wraps inside
+   its own box, never leaving the "/" alone at a line end. */
+.rb-breadcrumbs li { white-space: nowrap; }
+.rb-breadcrumbs li > :is(a, span) { white-space: normal; }
 .rb-breadcrumbs li + li::before { content: '/'; padding: 0 0.45rem; color: var(--rb-border-strong); }
 .rb-breadcrumbs a {
 	display: inline-block;
@@ -179,6 +187,12 @@
 	border-color: var(--rb-link-strong);
 }
 .sl-markdown-content table .rb-button { font-size: 0.8rem; padding: 0.4rem 0.8rem; }
+/* Starlight spaces blocks only after a block: the line under a button sat
+   4 px below it. */
+.sl-markdown-content :is(.rb-button, p:has(> .rb-button)) + p { margin-top: 1rem; }
+/* A search keyword marker between two blocks is inline and empty: the block
+   after it kept no gap ("iPhone and iPad" touched its first line). */
+.sl-markdown-content span[data-pagefind-meta]:empty + :is(p, ul, ol, table, div) { margin-top: var(--sl-content-gap-y); }
 
 /* Badges */
 .rb-badge {
@@ -333,6 +347,14 @@
 .sl-markdown-content table { font-variant-numeric: tabular-nums; }
 .sl-markdown-content table th { font-weight: 600; }
 .sl-markdown-content table[role='region']:focus-visible { outline: 2px solid var(--rb-link); outline-offset: 2px; }
+/* A long path in a cell breaks to fit its column, at a separator where it
+   can: the installer's detection tables and Cemu's file list pushed their
+   last column past the page at 1440 px. A last column of such paths keeps
+   room to read. */
+.sl-markdown-content table td code:not(.rb-short) { overflow-wrap: anywhere; }
+@media (min-width: 50rem) {
+	.sl-markdown-content table:not([data-rb-stack='kv']) td:last-child:not(:first-child):has(code:not(.rb-short)) { min-width: 9rem; }
+}
 /* A hash in a table cell is its first 12 characters, the full value in the
    title: one line, dotted to say there is more on hover. */
 .sl-markdown-content td code[title] {
@@ -417,7 +439,7 @@
 /* File cards on system and emulator pages. A page holds hundreds: those
    off screen are laid out when they come near, and the column is wide
    enough for a sha256 on one line. */
-body:has(.rb-sys-file, .rb-file-entry) { --sl-content-width: 54rem; }
+body:has(.rb-sys-file, .rb-file-entry) { --sl-content-width: var(--rb-grid-width); }
 .sl-markdown-content :is(.rb-sys-file, .rb-file-entry) {
 	border-top: 1px solid var(--rb-border);
 	padding: 0.75rem 0 0.25rem;
@@ -603,6 +625,21 @@ abbr.rb-term[data-open]::after {
 	font: inherit;
 }
 .sl-markdown-content .rb-file-lookup input { flex: 1 1 20rem; font-family: var(--sl-font-mono); }
+/* A choice list reads as the filter boxes do: their border, radius and
+   padding, and an arrow in the quiet text colour instead of the browser's. */
+.sl-markdown-content :is(.rb-file-lookup, .rb-picker) select,
+.sl-markdown-content select {
+	appearance: none;
+	min-width: min(100%, 16rem);
+	min-height: 44px;
+	padding: 0.55rem 2.25rem 0.55rem 0.75rem;
+	border: 1px solid var(--rb-text-secondary);
+	border-radius: 2px;
+	background: var(--sl-color-bg) var(--rb-select-arrow) no-repeat right 0.75rem center / 0.75rem;
+	color: var(--sl-color-text);
+	font: inherit;
+	cursor: pointer;
+}
 /* Both lookup labels, the hash and the file chooser, share one weight. */
 .sl-markdown-content .rb-file-lookup label { font-weight: 600; }
 .sl-markdown-content :is(.rb-file-lookup, .rb-picker) button {
@@ -699,15 +736,29 @@ site-search .pagefind-ui__result-tags { display: none; }
 starlight-tabs [role='tablist'] { flex-wrap: wrap; overflow-x: visible; row-gap: 0.25rem; }
 starlight-tabs [role='tab'] { white-space: nowrap; }
 
-/* A page without "On this page" keeps the column, and the search box above
-   it, where a page with one has them: they no longer jump between pages. */
+/* One grid on every page. Starlight places the search box, the column and
+   "On this page" from --sl-content-width, which the file card pages widen:
+   crossing from a guide to a console moved all three by 12 px. They are
+   placed from one width instead, the widest column's. Every column starts
+   on the same edge, and a narrower one leaves the room on its right.
+   A page without "On this page" keeps the same places. */
 :root[data-has-sidebar]:not([data-has-toc]) { --__toc-width: initial; }
+@media (min-width: 50rem) {
+	:root[data-has-sidebar] header.header { --sl-content-width: var(--rb-grid-width); }
+}
 @media (min-width: 72rem) {
-	:root[data-has-sidebar]:not([data-has-toc]) .main-pane {
-		--sl-content-margin-inline: auto 0;
+	:root[data-has-sidebar] .right-sidebar-container {
+		width: max(
+			var(--sl-sidebar-width),
+			calc(var(--sl-sidebar-width) + (100% - var(--rb-grid-width) - var(--sl-sidebar-width)) / 2)
+		);
+	}
+	:root[data-has-sidebar] .main-pane {
+		--sl-content-margin-inline: max(0rem, 100% - var(--rb-grid-width)) auto;
+		order: 1;
 		width: min(
 			calc(100% - var(--sl-sidebar-width)),
-			calc(var(--sl-content-width) + (100% - var(--sl-content-width) - var(--sl-sidebar-width)) / 2)
+			calc(var(--rb-grid-width) + (100% - var(--rb-grid-width) - var(--sl-sidebar-width)) / 2)
 		);
 	}
 }
@@ -727,16 +778,20 @@ starlight-tabs [role='tab'] { white-space: nowrap; }
 		clip: rect(0, 0, 0, 0);
 	}
 	.sl-markdown-content table[data-rb-stack] :is(tbody, tr) { display: block; }
-	.sl-markdown-content table[data-rb-stack] tr { padding: 0.5rem 0; border-top: 1px solid var(--rb-border); }
+	.sl-markdown-content table[data-rb-stack] tr { padding: 0.3rem 0; border-top: 1px solid var(--rb-border); }
 	/* A cell holds its label as a float in its left padding: a label on two
 	   lines pushes the row down instead of running into the next one. No
-	   sibling margin between cells. */
+	   sibling margin between cells. Values start 7.1rem in, the column of
+	   the shortest labels. A longer label takes what it needs up to 9rem and
+	   its value starts after it on that line only. One line per cell at
+	   0.875rem: a row of four short cells is 87 px, not 136. */
 	.sl-markdown-content table[data-rb-stack] td {
 		display: flow-root;
 		margin-top: 0;
-		padding: 0.125rem 0.6rem 0.125rem 8.4rem;
+		padding: 0 0.6rem 0 7.1rem;
 		border: 0;
-		line-height: 1.5;
+		font-size: 0.875rem;
+		line-height: 1.35;
 		text-align: left !important;
 		overflow-wrap: anywhere;
 	}
@@ -744,15 +799,18 @@ starlight-tabs [role='tab'] { white-space: nowrap; }
 		content: attr(data-label);
 		position: static;
 		float: left;
-		width: 7.4rem;
-		margin-left: -7.8rem;
+		width: max-content;
+		min-width: 6.5rem;
+		max-width: 9rem;
+		margin: 0 0.6rem 0 -7.1rem;
+		font-size: 0.8125rem;
 		font-weight: 600;
 		color: var(--rb-text-secondary);
 	}
 	.sl-markdown-content table[data-rb-stack] td:empty { display: none; }
 	/* A two-column table of labels and values: the label above, the value
 	   on the full width under it. */
-	.sl-markdown-content table[data-rb-stack='kv'] td { padding: 0 0.6rem; }
+	.sl-markdown-content table[data-rb-stack='kv'] td { padding: 0 0.6rem; font-size: 1rem; line-height: 1.5; }
 	.sl-markdown-content table[data-rb-stack='kv'] td::before { content: none; }
 	.sl-markdown-content table[data-rb-stack='kv'] td:first-child {
 		padding-bottom: 0.15rem;
