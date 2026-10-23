@@ -9,6 +9,7 @@ to one answer.
 
 from __future__ import annotations
 
+import contextlib
 import functools
 import hashlib
 import http.server
@@ -351,6 +352,42 @@ class CommandLineChoices(unittest.TestCase):
         for bad in ("0", "6", "4-2", "x", "1-"):
             with self.subTest(text=bad), self.assertRaises(ValueError):
                 install.parse_selection(bad, 5)
+
+
+class ACoreWithNoFileOfItsOwn(unittest.TestCase):
+    """pcsx_rearmed, swanstation and pcsx1 showed `0 files, 0 B` in the
+    cores step and in --list-cores, which reads as "this core gets nothing":
+    their files are the platform's own, which are always kept."""
+
+    FILES = [
+        {"dest": "scph5501.bin", "size": 5, "cores": None, "systems": ["sony-playstation"],
+         "declared_choices": [], "slot_choices": [{"cores": ["pcsx_rearmed"]}]},
+        {"dest": "ps2.bin", "size": 9, "cores": ["duckstation"],
+         "systems": ["sony-playstation"]},
+    ]
+
+    def _line(self, out: str, core: str) -> str:
+        return next(line for line in out.splitlines() if line.strip().startswith(core)
+                    or f") {core}" in line)
+
+    def test_the_listing_says_its_files_are_the_platforms(self):
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            install._print_choices("retroarch", self.FILES, [], systems=False)
+        line = self._line(out.getvalue(), "pcsx_rearmed")
+        self.assertNotIn("0 files", line)
+        self.assertIn("always kept", line)
+        self.assertIn("1 file, 9 B", self._line(out.getvalue(), "duckstation"))
+
+    def test_the_cores_step_says_so_too(self):
+        answers = iter(["c", "", ""])
+        out = io.StringIO()
+        with mock.patch("builtins.input", lambda _prompt="": next(answers)), \
+                contextlib.redirect_stdout(out):
+            install._prompt_custom_selection("retroarch", self.FILES, [])
+        line = self._line(out.getvalue(), "pcsx_rearmed")
+        self.assertNotIn("0 files", line)
+        self.assertIn("always kept", line)
 
 
 class TheBoundaryChecksTheNewFields(unittest.TestCase):

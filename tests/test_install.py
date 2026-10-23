@@ -4727,7 +4727,27 @@ class HandheldSystemsByTheirOwnFiles(unittest.TestCase):
             {"/usr/trimui/": "", "/mnt/SDCARD/.system/res/": ""})
         self.assertEqual(found, [])
         self.assertIn("MinUI found here", err)
+        self.assertIn("--platform minui", err)
+        self.assertIn("--dest", err)
         self.assertNotIn("TrimUI", err)
+
+    def test_a_minui_card_on_its_device_gets_its_file_list(self):
+        """--list-platforms said the MinUI layout was not written yet, while
+        --from-pack and --dest wrote it: on the device the card root is the
+        folder, and the card's version.txt names which of the three it is."""
+        for release, plat, shown in (("MinUI-20251127-0", "minui", "MinUI"),
+                                     ("NextUI-20250601-1", "nextui", "NextUI"),
+                                     ("MyMinUI-20260809b-0", "myminui", "MyMinUI")):
+            with self.subTest(release=release):
+                root, found, name = self._one({
+                    "/usr/trimui/": "", "/mnt/SDCARD/.system/res/": "",
+                    "/mnt/SDCARD/.system/version.txt": release + "\n"})
+                self.assertEqual((found, name), ((plat, root / "mnt/SDCARD"), shown))
+
+    def test_the_listing_says_what_the_minui_family_gets(self):
+        line = next(line for line in install._system_lines() if line.startswith("MinUI:"))
+        self.assertNotIn("does not write", line)
+        self.assertIn("minui, nextui or myminui", line)
 
     def test_two_unrelated_systems_are_refused(self):
         _root, found, names, _err = self._found(

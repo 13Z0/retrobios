@@ -581,7 +581,7 @@ rewrites both to `/roms2/bios`: a second card is followed through them.
 | `/mnt/plumos-user` | plumOS | RetroArch | `/mnt/plumos-user/bios`, which its launcher appends to every RetroArch run |
 | `/etc/os-release` `ID=plumos` without the folder above | plumOS | none | its builds choose a folder per launch: named, not installed to |
 | `/usr/trimui` | TrimUI | none | no published source names the stock firmware's folder: named, not installed to |
-| `/mnt/SDCARD/.system/res` or `/mnt/sdcard/.system/res` | MinUI | none | MinUI, MyMinUI and NextUI give each core its own `Bios/<tag>/`, a layout not written yet: named, not installed to |
+| `/mnt/SDCARD/.system/res` or `/mnt/sdcard/.system/res` | MinUI, NextUI or MyMinUI, as the first line of the card's `.system/version.txt` names it | MinUI, NextUI or MyMinUI | the card root, below which the list writes `Bios/<tag>/`. Without `version.txt` the three cannot be told apart: named, not installed to, and the message gives `--platform` and `--dest` to use |
 | `/mnt/vendor/bin/dmenu.bin` | Anbernic stock firmware | RetroArch | `/mnt/mmc/bios` |
 
 AmberELEC, EmuELEC and KNULLI install the BIOS list they publish themselves. TheRA is not detected: no
@@ -692,9 +692,9 @@ for EmuDeck (`C:\Emulation\bios` on Windows), `/storage/roms/bios` for ROCKNIX,
 directory for RetroArch. BizHawk has no such folder: it reads `Firmware`
 beside its executable wherever the archive was extracted, so a forced
 `--platform bizhawk` that finds no install stops and asks for `--dest`. MinUI,
-NextUI and MyMinUI keep their files on the SD card, which the installer reads
-from a computer it is mounted on: a forced `--platform minui` stops and asks
-for the card's root as `--dest`, and a `--dest` that is a folder inside such a
+NextUI and MyMinUI keep their files on the SD card. Run on the device, the
+installer finds the card root. From a computer the card is mounted on, a
+forced `--platform minui` stops and asks for the card's root as `--dest`, and a `--dest` that is a folder inside such a
 card (its `Bios/`) is refused with the root to name instead. On Android a forced `--platform retroarch` falls back to
 `<shared storage>/RetroArch/system` instead, a home directory there belonging
 to Termux rather than to the frontend. Pass `--dest` to say where instead of

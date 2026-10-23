@@ -1254,8 +1254,9 @@ _EMBEDDED_RULES: tuple[_OsRule, ...] = (
     _OsRule("", "TrimUI", "file_exists", ("/usr/trimui",), None),
     # MinUI, MyMinUI and NextUI keep their system in .system at the card root
     # (MinUI dbf89435, workspace/all/common/defines.h:14-16) and give each core
-    # Bios/<tag>/ (workspace/all/minarch/minarch.c:2942), a layout the
-    # installer does not write.
+    # Bios/<tag>/ (workspace/all/minarch/minarch.c:2942). Their file lists
+    # write that layout below the card root, and the card's version.txt
+    # says which of the three it is (card_platform).
     _OsRule("", "MinUI", "file_exists", ("/mnt/SDCARD/.system/res",), None, base="TrimUI"),
     _OsRule("", "MinUI", "file_exists", ("/mnt/sdcard/.system/res",), None, base="TrimUI"),
     _OsRule("retroarch", "Anbernic stock firmware", "file_exists",
@@ -1265,9 +1266,13 @@ _EMBEDDED_RULES: tuple[_OsRule, ...] = (
 # Why a system found here gets no folder: said once per run.
 _NO_FOLDER = {
     "TrimUI": "its firmware publishes no source naming the folder its RetroArch reads",
-    "MinUI": "MinUI, MyMinUI and NextUI give each core its own Bios/<tag>/ folder, "
-             "a layout the installer does not write yet",
+    "MinUI": f"its card names no release in {CARD_MARKER}, which tells MinUI, NextUI "
+             "and MyMinUI apart. Name the card's root and the one it runs: "
+             "--platform minui (or nextui, myminui) --dest /mnt/SDCARD",
 }
+# A system found by its card, with the end of the path that proves it: the
+# card root is what comes before.
+_CARD_SYSTEMS = {"MinUI": "/.system/res"}
 
 # (platform, BIOS folder) -> the name the system found there gives itself.
 _DETECTED_OS: dict[tuple[str, Path], str] = {}
@@ -1337,15 +1342,23 @@ def _detect_embedded() -> list[tuple[str, Path]]:
         if name in bases:
             continue
         rules = [rule for rule in matched if rule.name == name]
-        folder = _os_system_dir(rules) if rules[0].manifest else None
+        plat = rules[0].manifest
+        folder = _os_system_dir(rules) if plat else None
+        if name in _CARD_SYSTEMS:
+            marker = next(value for rule in rules for value in rule.values
+                          if value.endswith(_CARD_SYSTEMS[name]))
+            root = _on_device(marker[:-len(_CARD_SYSTEMS[name])])
+            plat = card_platform(root) or ""
+            if plat:
+                folder, name = root, display_name(plat)
         if folder is None:
             reason = _NO_FOLDER.get(
                 name, "nothing on it names the folder its RetroArch reads")
-            print(f"{name} found here, but {reason}. Name the folder with --dest.",
-                  file=sys.stderr)
+            closing = "" if name in _CARD_SYSTEMS else " Name the folder with --dest."
+            print(f"{name} found here, but {reason}.{closing}", file=sys.stderr)
             continue
-        _DETECTED_OS[(rules[0].manifest, folder)] = name
-        found.append((rules[0].manifest, folder))
+        _DETECTED_OS[(plat, folder)] = name
+        found.append((plat, folder))
     return found
 
 
@@ -1365,7 +1378,10 @@ def _system_lines() -> list[str]:
     lines = []
     for name in dict.fromkeys(rule.name for rule in _EMBEDDED_RULES):
         plat = next(rule.manifest for rule in _EMBEDDED_RULES if rule.name == name)
-        if plat:
+        if name in _CARD_SYSTEMS:
+            lines.append(f"{name}: minui, nextui or myminui, as the card's {CARD_MARKER} "
+                         "names it (from a computer: --dest <card root>)")
+        elif plat:
             lines.append(f"{name}: {plat}")
         else:
             lines.append(f"{name}: not installed to, {_NO_FOLDER[name]} (use --dest)")
@@ -5611,15 +5627,26 @@ def _sized(files: list[dict]) -> str:
     return f"{_plural(len(files), 'file')}, {format_size(sum(f.get('size', 0) for f in files))}"
 
 
-def _pick(title: str, rows: list[tuple[str, list[dict]]], ordered: bool = False) -> list[str]:
-    """Numbered list of names. An empty answer keeps every one."""
+# A core whose files are all the platform's own. "pcsx_rearmed 0 files,
+# 0 B" read as a core that gets nothing.
+NO_CORE_FILES = "no extra file: it reads the platform's own, always kept"
+
+
+def _pick(
+    title: str, rows: list[tuple[str, list[dict]]], ordered: bool = False, empty: str = "",
+) -> list[str]:
+    """Numbered list of names. An empty answer keeps every one.
+
+    empty is said instead of "0 files, 0 B" for a name that holds none.
+    """
     if not rows:
         return []
     print(f"\n{title}")
     width = len(str(len(rows)))
     name_width = min(max(len(name) for name, _files in rows), 32)
     for index, (name, files) in enumerate(rows, 1):
-        print(f"  {index:>{width}}) {name:<{name_width}}  {_sized(files)}")
+        print(f"  {index:>{width}}) {name:<{name_width}}  "
+              f"{_sized(files) if files or not empty else empty}")
     hint = "order of preference, e.g. 2,1" if ordered else "e.g. 1,3-5"
     while True:
         text = _ask(f"Numbers ({hint}), Enter for all, q to quit: ")
@@ -5689,7 +5716,7 @@ def _prompt_custom_selection(
             (name, _filter_by_target(
                 [f for f in kept if f.get("cores") is not None], [name]))
             for name in core_names
-        ])
+        ], empty=NO_CORE_FILES)
         kept, kept_omitted = narrow(kept, kept_omitted, [], cores, [])
 
     regions: list[str] = []
@@ -5750,7 +5777,8 @@ def _print_choices(
             if systems
             else _filter_by_target([f for f in files if f.get("cores") is not None], [name])
         )
-        print(f"  {labels[name]:<{width}}  {_sized(held)}")
+        shown = NO_CORE_FILES if not systems and not held else _sized(held)
+        print(f"  {labels[name]:<{width}}  {shown}")
 
 
 def emulator_names(manifest: dict, files: list[dict], omitted: list[dict]) -> dict[str, str]:
