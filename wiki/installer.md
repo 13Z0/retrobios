@@ -628,9 +628,10 @@ rather than read as having no game data.
 `--installed-cores` reads the cores a RetroArch already has and installs what
 they need. The cores are the `<name>_libretro.so` (`.dll`, `.dylib`,
 `_libretro_android.so`) files in the `libretro_directory` of the
-`retroarch.cfg` detection found, `cores/` beside RetroArch when the setting is
-unset, a `retroarch.cfg` next to the system directory for a portable install
-given with `--dest`, and the folders RetroPie (`/opt/retropie/libretrocores`)
+`retroarch.cfg` whose `system_directory` is the BIOS folder, found the same
+way with `--dest` or without, `cores/` beside RetroArch when the setting is
+unset, a `retroarch.cfg` next to the system directory for a portable install,
+and the folders RetroPie (`/opt/retropie/libretrocores`)
 and Lakka (`/usr/lib/libretro`, `/storage/cores`) install into. A core file
 is named the buildbot's way (`mednafen_psx`), and the manifest maps each name to
 the profile its files are filed under (`beetle_psx`).

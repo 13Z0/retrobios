@@ -2302,11 +2302,12 @@ def core_dirs(plat: str, bios_path: Path) -> list[Path]:
     """The directories the RetroArch writing to bios_path loads cores from.
 
     The config detection read for this system directory names them in
-    libretro_directory. Without one, a retroarch.cfg beside the system
+    libretro_directory, read here when the run was given --dest, as the
+    interface's runs all are. Without one, a retroarch.cfg beside the system
     directory is the portable layout. Unset, the setting is cores/ under
     RetroArch's own directory.
     """
-    found = _RETROARCH_CONFIGS.get(bios_path)
+    found = _retroarch_config_for(bios_path)
     if found is None and (bios_path.parent / "retroarch.cfg").is_file():
         found = (bios_path.parent / "retroarch.cfg", bios_path.parent)
     dirs: list[Path] = []
@@ -3979,9 +3980,10 @@ def _retroarch_config_for(bios_path: Path) -> tuple[Path, Path] | None:
     folder ':' expands to there.
 
     A run given --dest detects nothing, so the configs are read here, once
-    and silently, the first time a save directory is asked for: the
-    interface names every folder with --dest, and its runs sent Azahar's
-    keys.txt to a guessed folder where line mode read savefile_directory.
+    and silently, the first time a save directory or the cores folder is
+    asked for: the interface names every folder with --dest, and its runs
+    sent Azahar's keys.txt to a guessed folder where line mode read
+    savefile_directory, and found no core where line mode found them.
     """
     found = _RETROARCH_CONFIGS.get(bios_path)
     if found is not None or _CONFIGS_READ:
@@ -8713,12 +8715,12 @@ def _missing_dest(dest: Path, ask: bool, named: str = "named with --dest") -> No
             sys.exit(2)
 
 
-def _no_core_found(plat: str, bios_path: Path, searched: list[Path], dest_given: bool) -> None:
+def _no_core_found(plat: str, bios_path: Path, searched: list[Path]) -> None:
     """Refuse --installed-cores with no core, and say how to point at them.
 
-    With --dest, detection does not run, and without a retroarch.cfg beside
-    the folder nothing names the cores folder: the run stopped on "no known
-    directory" with no way forward.
+    With no retroarch.cfg naming the folder as its system_directory, and
+    none beside it, nothing names the cores folder: the run stopped on "no
+    known directory" with no way forward.
     """
     where = (f"none in {', '.join(map(str, searched))}" if searched
              else f"no retroarch.cfg was found for {bios_path} to name their folder")
@@ -8728,9 +8730,6 @@ def _no_core_found(plat: str, bios_path: Path, searched: list[Path], dest_given:
           "retroarch.cfg, cores/ beside RetroArch by default):", file=sys.stderr)
     command = _INVOCATION.command(plat, bios_path, without=("--installed-cores", "--cores-dir"))
     print(f"    {command} --cores-dir <cores folder>", file=sys.stderr)
-    if dest_given:
-        print("  Or run it without --dest: detection reads retroarch.cfg, which names "
-              "that folder.", file=sys.stderr)
     print("  Or run it without --installed-cores to install every file.", file=sys.stderr)
     sys.exit(1)
 
@@ -9156,7 +9155,7 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
             )
             sys.exit(1)
         if args.installed_cores and not cores_found[(plat_name, bios_path)]:
-            _no_core_found(plat_name, bios_path, searched, bool(args.dest))
+            _no_core_found(plat_name, bios_path, searched)
 
     for plat_name, bios_path in platforms:
         if bios_path not in installed_paths:
