@@ -1644,6 +1644,22 @@
       "ps3"
     ]
   },
+  "system_titles": {
+    "microsoft-xbox": "Microsoft Xbox",
+    "nintendo-ds": "Nintendo DS",
+    "nintendo-gamecube": "Nintendo GameCube",
+    "nintendo-gb": "Nintendo Game Boy",
+    "nintendo-gba": "Nintendo Game Boy Advance",
+    "nintendo-gbc": "Nintendo Game Boy Color",
+    "sega-dreamcast": "Sega Dreamcast",
+    "sega-game-gear": "Sega Game Gear",
+    "sega-master-system": "Sega Master System",
+    "sega-mega-cd": "Sega Mega CD",
+    "sega-saturn": "Sega Saturn",
+    "sony-playstation": "Sony PlayStation",
+    "sony-playstation-2": "Sony PlayStation 2",
+    "sony-playstation-3": "Sony PlayStation 3"
+  },
   "files": [
     {
       "dest": "xemu/bios/mcpx_1.0.bin",

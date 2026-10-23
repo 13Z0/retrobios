@@ -24,14 +24,17 @@ notes: |
        app/src/main/cpp/rpcs3/rpcs3/rpcs3_version.cpp:29
 
   Source drops land on successive branches, not on the default one. Release 2.43
-  of 2026-10-05 is the commit titled 2.43 at the head of main4. The lightweight
-  tags 2.39 to 2.43 all sit on the head of main2, the default branch, an April
-  tree that predates every one of those releases and whose generated
-  git-version.h was never filled in. main4 is the tree read here. No versionName is usable either:
-  the only gradle file committed is app/build.gradle.bak, which carries the
-  placeholder 1.19a and is renamed and completed with the signing block at build
-  time.
-  ref: aps3e/README.md, app/build.gradle.bak:16
+  of 2026-10-05 is the commit titled 2.43 at the head of main4, whose About
+  screen ends its changelog on 2.43(2026-10-05). The lightweight tags 2.39 to
+  2.43 all sit on the head of main2, the default branch, an April tree whose
+  changelog stops at 1.38(2026-04-13) and whose generated git-version.h was
+  never filled in. The 2.43.apk asset carries the 2.43 changelog and the RPCS3
+  version 20071-1f080485, so main4 is the tree read here. No versionName is
+  usable either: the only gradle file committed is app/build.gradle.bak, which
+  carries the placeholder 1.19a and is renamed and completed with the signing
+  block at build time.
+  ref: aps3e/README.md, app/src/main/java/aenu/aps3e/AboutActivity.java:227,
+       app/build.gradle.bak:16
 
   Emulator paths derive from APS3E_DATA_DIR, set by the Java layer to the
   external files directory of the package. The config directory holds dev_flash,

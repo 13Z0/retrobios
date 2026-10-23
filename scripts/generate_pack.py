@@ -12,7 +12,7 @@ and 3-tier storage (embedded/external/user_provided).
 
 from __future__ import annotations
 
-from collections.abc import Callable, Iterator
+from collections.abc import Callable, Iterable, Iterator
 
 from artifacts import _build_timestamp, set_plain_mode
 import argparse
@@ -4095,6 +4095,32 @@ def _record_unplaceable(unplaceable: list[dict], record_omission: Callable[..., 
 CASE_FOLDING_OS = frozenset({"windows", "darwin"})
 
 
+def system_titles(*entry_lists: Iterable[dict]) -> dict[str, str]:
+    """The name a person reads for each system the entries carry.
+
+    Batocera names PlayStation `psx` and the installer showed
+    `sony-playstation (psx)`: neither is what a beginner looks for. The
+    title is the one the site prints, so a system reads the same on its
+    page and in the installer. A system the site cannot name is left out,
+    and the installer shows its id: the site build refuses such a system,
+    so only a test fixture reaches here with one.
+    """
+    from siterender import system_name
+
+    ids = {
+        sys_id
+        for entries in entry_lists for entry in entries
+        for sys_id in entry.get("systems") or []
+    }
+    titles: dict[str, str] = {}
+    for sys_id in sorted(ids):
+        try:
+            titles[sys_id] = system_name(sys_id)
+        except KeyError:
+            continue
+    return titles
+
+
 def generate_manifest(
     platform_name: str,
     platforms_dir: str,
@@ -4562,6 +4588,7 @@ def generate_manifest(
         # The names the platform itself gives its systems (Batocera's psx),
         # which --system accepts beside the ids.
         "system_names": platform_system_names(config, list(pack_systems)),
+        "system_titles": system_titles(manifest_files, omitted_by_destination.values()),
         "files": manifest_files,
     }
     if data_directories:

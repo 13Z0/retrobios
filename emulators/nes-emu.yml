@@ -5,7 +5,7 @@ source: "https://github.com/Rakashazi/emu-ex-plus-alpha"
 upstream: "https://github.com/TASEmulators/fceux"
 profiled_date: "2026-08-12"
 source_commit: "1c12fac5ce49badaadff2e2f210dcc30b89f4943"
-upstream_commit: "d339f1fa0cd8b69cc637a0de3fb3f04cb28748ea"
+upstream_commit: "ac7c6cb643dd788daed2b6b8a31fe91d369a4a27"
 core_version: "1.5.85"
 display_name: "Nintendo - NES / Famicom (NES.emu)"
 mode: standalone

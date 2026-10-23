@@ -3,10 +3,10 @@ type: standalone + libretro
 core_classification: community_fork
 source: "https://github.com/libretro/libretro-cap32"
 upstream: "https://github.com/ColinPitrat/caprice32"
-profiled_date: "2026-10-06"
-source_commit: "c23855092f5f49981a5096f4d39033ff573ebca7"
-upstream_commit: "6c12c4c92360065cdc229ac9ada7551f941436b8"
-core_version: "v4.2.0"
+profiled_date: "2026-10-23"
+source_commit: "8e61dd69d948cea16c3bad734f7b9d0c2a018cc8"
+upstream_commit: "8c778bf072a06fb7c23b9cccd179041db7f79a52"
+core_version: "v4.5.4"
 display_name: "Amstrad - CPC/GX4000 (Caprice32)"
 cores:
   - cap32
@@ -29,26 +29,27 @@ notes: |
     - cap32/rom/6128p.h:  OS_6128P[65580]       - CPC+ system cartridge
     - cap32/rom/cpm.h:    CPM, CPM_SYS          - CP/M boot memory dumps
 
-  ROM selection in emulator_select_ROM() (cap32/cap32.c:1082-1114):
-    - CPC 464:     OS464_BASIC10
-    - CPC 464DDI:  OS464_BASIC10 + AMSDOS in slot 7
+  ROM selection in emulator_select_ROM() (cap32/cap32.c:1081-1111):
+    - CPC 464:     OS464_BASIC10, AMSDOS in slot 7 when the content is a disc
     - CPC 664:     OS664_BASIC664 + AMSDOS in slot 7
     - CPC 6128:    OS_BASIC11 + AMSDOS in slot 7
     - CPC+:        OS_6128P loaded as system cartridge via cpr_load()
 
-  Core option "cap32_model" accepts "464DDI" (libretro/libretro-core.c:501,
-  libretro/libretro-core.c:1035). A 464 loading disc content is switched to
-  464DDI (libretro/libretro-core.c:1364-1368).
+  Core option "cap32_model" lists "464DDI" (libretro/libretro-core.c:501),
+  but update_variables() matches only 464, 664, 6128 and 6128+ and leaves any
+  other value on the 6128 default (libretro/libretro-core.c:1035-1039). A 464
+  with disc content (slot SLOT_DSK, libretro/libretro-core.c:1865-1866) gets
+  AMSDOS in slot 7 (cap32/cap32.c:1088-1092).
 
   The array chROMFile names "cpc464.rom", "cpc664.rom", "cpc6128.rom"
   (cap32/cap32.c:353-357) and loadConfiguration() parses the rom_path,
-  slotNN and rom_mf2 keys of ./cap32.cfg (cap32/cap32.c:1846-1863), but no
+  slotNN and rom_mf2 keys of ./cap32.cfg (cap32/cap32.c:1842-1859), but no
   code opens these files. The system directory is resolved in
-  libretro/libretro-core.c:1617-1636 under a "TODO: future use to load
+  libretro/libretro-core.c:1606-1625 under a "TODO: future use to load
   custom bios" comment and no ROM is read from it.
 
   Keyboard layout patches are applied to the ROM in memory for French
-  and Spanish layouts via rom_mods.h (cap32/cap32.c:1116-1141).
+  and Spanish layouts via rom_mods.h (cap32/cap32.c:1113-1137).
 
   CP/M support assembles a 128KB snapshot from the CPM and CPM_SYS arrays
   and loads it via snapshot_load_mem() in cap32/slots.c:71-90.
@@ -65,7 +66,7 @@ files:
     md5: a993f85b88ac4350cf4d41554e87fe4f
     sha1: 56d39c463da60968d93e58b4ba0e675829412a20
     note: "CPC 464 OS + BASIC 1.0, read when model=0"
-    source_ref: "upstream src/cap32.cpp:212-217, upstream src/cap32.cpp:1013-1027, upstream rom/cpc464.rom"
+    source_ref: "upstream src/cap32.cpp:212-217, upstream src/cap32.cpp:1038-1052, upstream rom/cpc464.rom"
   - name: cpc664.rom
     system: amstrad-cpc
     required: false
@@ -75,7 +76,7 @@ files:
     md5: 5a384a2310f472c7857888371c00ed66
     sha1: 073a7665527b5bd8a148747a3947dbd3328682c8
     note: "CPC 664 OS + BASIC 1.1, read when model=1"
-    source_ref: "upstream src/cap32.cpp:212-217, upstream src/cap32.cpp:1013-1027, upstream rom/cpc664.rom"
+    source_ref: "upstream src/cap32.cpp:212-217, upstream src/cap32.cpp:1038-1052, upstream rom/cpc664.rom"
   - name: cpc6128.rom
     system: amstrad-cpc
     required: true
@@ -85,7 +86,7 @@ files:
     md5: b96280dc6c95a48857b4b8eb931533ae
     sha1: 5977adbad3f7c1e0e082cd02fe76a700d9860c30
     note: "CPC 6128 OS + BASIC 1.1, default model=2. A missing file returns ERR_CPC_ROM_MISSING"
-    source_ref: "upstream src/cap32.cpp:212-217, upstream src/cap32.cpp:1013-1027, upstream src/cap32.cpp:1799, upstream rom/cpc6128.rom"
+    source_ref: "upstream src/cap32.cpp:212-217, upstream src/cap32.cpp:1038-1052, upstream src/cap32.cpp:1848, upstream rom/cpc6128.rom"
   - name: amsdos.rom
     system: amstrad-cpc
     required: false
@@ -95,7 +96,7 @@ files:
     md5: 25629dfe870d097469c217b95fdc1c95
     sha1: 39102c8e9cb55fcc0b9b62098780ed4a3cb6a4bb
     note: "AMSDOS disc ROM, shipped cap32.cfg sets slot07=DEFAULT, skipped on the 464. A missing file clears the slot"
-    source_ref: "upstream src/cap32.cpp:1170-1178, upstream src/cap32.cpp:1245-1249, upstream cap32.cfg:205-206, 215, upstream rom/amsdos.rom"
+    source_ref: "upstream src/cap32.cpp:1202-1210, upstream src/cap32.cpp:1277-1281, upstream cap32.cfg:205-206, 215, upstream rom/amsdos.rom"
   - name: system.cpr
     system: amstrad-cpc
     required: false
@@ -105,7 +106,7 @@ files:
     md5: 39b565e648172980aa552293e667070f
     sha1: 405e341437fab8db477606238af0c20eca2e39ee
     note: "CPC+ system cartridge, default cartridge path"
-    source_ref: "upstream src/cap32.cpp:1904, upstream src/cap32.cpp:1150, upstream rom/system.cpr"
+    source_ref: "upstream src/cap32.cpp:1953, upstream src/cap32.cpp:1182, upstream rom/system.cpr"
   - name: MF2.rom
     system: amstrad-cpc
     required: false
@@ -115,16 +116,16 @@ files:
     md5: 4c9f014e91d407cc6509fad0095ab909
     sha1: 1431ec628d38f000715545dd2186b684c5fe5a6f
     note: "Multiface 2 ROM, read when mf2=1. Checks the \"MULTIFACE 2\" signature at 0x0d32"
-    source_ref: "upstream src/cap32.cpp:1252-1278, upstream rom/MF2.rom"
+    source_ref: "upstream src/cap32.cpp:1284-1310, upstream rom/MF2.rom"
 
 platform_details:
   bios_mapping:
-    source_ref: "source cap32/cap32.c:1082-1114, source cap32/cap32.c:345-349"
+    source_ref: "source cap32/cap32.c:1081-1111, source cap32/cap32.c:345-349"
     note: |
       All ROMs are embedded. emulator_select_ROM() copies the ROM array for
       CPC.model into pbROM. No filesystem lookup occurs in the libretro
       port. retro_system_bios_directory is set in
-      libretro/libretro-core.c:1617-1636 and no ROM is read from it.
+      libretro/libretro-core.c:1606-1625 and no ROM is read from it.
 
   embedded_roms:
     source_ref: "source cap32/rom/464.h, source cap32/rom/664.h, source cap32/rom/6128.h, source cap32/rom/amsdos.h, source cap32/rom/6128p.h, source cap32/rom/cpm.h"
@@ -138,10 +139,9 @@ platform_details:
       CPM, CPM_SYS          - CP/M memory dumps assembled into a 128KB snapshot
 
   model_rom_map:
-    source_ref: "source cap32/cap32.c:1082-1114"
+    source_ref: "source cap32/cap32.c:1081-1111"
     note: |
-      CPC 464:     OS464_BASIC10 only
-      CPC 464DDI:  OS464_BASIC10 + AMSDOS in ROM slot 7
+      CPC 464:     OS464_BASIC10, AMSDOS in ROM slot 7 when the content is a disc
       CPC 664:     OS664_BASIC664 + AMSDOS in ROM slot 7
       CPC 6128:    OS_BASIC11 + AMSDOS in ROM slot 7
       CPC+:        6128P system cartridge (or user-provided .cpr file)

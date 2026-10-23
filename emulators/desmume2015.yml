@@ -5,6 +5,7 @@ source: "https://github.com/libretro/desmume2015"
 upstream: "https://github.com/TASEmulators/desmume"
 profiled_date: "2026-03-23"
 source_commit: "422b688009ccb9f2917c086a8fe79c8cecb030ae"
+upstream_commit: "1275dc64f5d1f5ef18dc1bc1fa9e012024b6df1a"
 core_version: "SVN (2015 snapshot)"
 display_name: "Nintendo - DS (DeSmuME 2015)"
 cores: [desmume2015, desmume_2015]

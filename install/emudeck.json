@@ -1053,6 +1053,27 @@
     ]
   },
   "system_names": {},
+  "system_titles": {
+    "coleco-colecovision": "ColecoVision",
+    "nintendo-3ds": "Nintendo 3DS",
+    "nintendo-64": "Nintendo 64",
+    "nintendo-ds": "Nintendo DS",
+    "nintendo-gamecube": "Nintendo GameCube",
+    "nintendo-nes": "Nintendo NES",
+    "nintendo-switch": "Nintendo Switch",
+    "nintendo-wii-u": "Nintendo Wii U",
+    "panasonic-3do": "3DO",
+    "sega-dreamcast": "Sega Dreamcast",
+    "sega-dreamcast-arcade": "Sega Dreamcast-based arcade boards",
+    "sega-mega-cd": "Sega Mega CD",
+    "sega-saturn": "Sega Saturn",
+    "snk-neogeo": "SNK Neo Geo",
+    "snk-neogeo-cd": "SNK Neo Geo CD",
+    "sony-playstation": "Sony PlayStation",
+    "sony-playstation-2": "Sony PlayStation 2",
+    "sony-psp": "Sony PlayStation Portable",
+    "xbox": "Microsoft Xbox"
+  },
   "files": [
     {
       "dest": "colecovision.rom",

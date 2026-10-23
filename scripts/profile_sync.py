@@ -938,6 +938,8 @@ class ProfileReport:
     repo: str | None = None
     repos: list[str] = field(default_factory=list)
     pinned_tag: str | None = None
+    # Set when pinned_tag carries a pin_frozen reason rather than a tag name.
+    pin_frozen: bool = False
     host: str | None = None
     pin: str | None = None
     pin_origin: str | None = None
@@ -1534,6 +1536,7 @@ def build_report(
     # its refs at code the build never had, so it is judged like a frozen tag:
     # against itself.
     frozen = str(profile.get("pin_frozen") or "").strip()
+    report.pin_frozen = bool(frozen)
     report.pinned_tag = frozen or detect_pinned_tag(
         profile, views, cache_dir, offline
     )
@@ -2056,10 +2059,11 @@ def format_report(report: ProfileReport, changed_only: bool = False) -> str:
             f"  {report.pin[:7]} -> {report.head[:7]}   pin: {report.pin_origin}"
         )
     if report.pinned_tag:
-        lines.append(
-            f"  pinned to tag {report.pinned_tag}: checked against its own "
-            "revision, not against HEAD"
+        held = (
+            f"pin held ({report.pinned_tag})" if report.pin_frozen
+            else f"pinned to tag {report.pinned_tag}"
         )
+        lines.append(f"  {held}: checked against its own revision, not against HEAD")
     elif report.pin and report.pin == report.head:
         lines.append("  pin is HEAD: checked for self-consistency")
     if report.upstream_tag and not report.pinned_tag:
@@ -2179,20 +2183,16 @@ def check_version(
     declared = str(profile.get("core_version") or "")
     if not declared:
         return None
-    tags = upstream.list_tags(repo, cache_dir, offline)
     release = upstream.latest_release(repo, cache_dir, offline)
-    matches = declared in tags
-    commit = (
-        upstream.resolve_tag_commit(repo, declared, cache_dir, offline)
-        if matches
-        else None
-    )
+    # Asked by name: the first page of tags misses a release that a project
+    # publishing nightlies has pushed past a hundred newer tags.
+    commit = upstream.tag_commit(repo, declared, cache_dir, offline)
     return VersionReport(
         declared,
-        tags[0] if tags else None,
+        upstream.newest_tag(repo, cache_dir, offline),
         release.tag if release else None,
         release.date if release else None,
-        matches,
+        commit is not None,
         commit,
     )
 
@@ -3462,31 +3462,37 @@ def realign_prose(
     return messages
 
 
-def _refuse_dirty_tree(emulators_dir: str) -> None:
-    """Writes need a clean profile tree to roll back to."""
+def _refuse_dirty_tree(emulators_dir: str, names: list[str]) -> None:
+    """Writes need a clean copy of each profile they touch to roll back to.
+
+    Only the selected profiles count: a pass writing one profile after
+    another used to refuse every profile after the first it wrote.
+    """
     try:
-        dirty = emulators_dir_is_dirty(emulators_dir)
+        dirty = emulators_dir_is_dirty(emulators_dir, names)
     except RuntimeError as e:
         print(f"{e}. Pass --force to write anyway.", file=sys.stderr)
         raise SystemExit(1) from e
     if dirty:
         print(
-            f"{emulators_dir} carries uncommitted changes. "
-            "Commit them first or pass --force.",
+            f"{emulators_dir} carries uncommitted changes to the selected "
+            "profiles. Commit them first or pass --force.",
             file=sys.stderr,
         )
         raise SystemExit(1)
 
 
-def emulators_dir_is_dirty(emulators_dir: str) -> bool:
+def emulators_dir_is_dirty(emulators_dir: str, names: list[str] | None = None) -> bool:
     """True when the profile directory carries uncommitted changes.
 
-    Git is asked from inside the directory, so a profile tree that lives in
-    another repository answers for itself. A directory git cannot read is
-    never reported clean: the writes have nothing to roll back to.
+    ``names`` narrows the question to those profiles. Git is asked from
+    inside the directory, so a profile tree that lives in another
+    repository answers for itself. A directory git cannot read is never
+    reported clean: the writes have nothing to roll back to.
     """
+    paths = [f"{name}.yml" for name in names] if names is not None else ["."]
     result = subprocess.run(
-        ["git", "-C", emulators_dir, "status", "--porcelain", "--", "."],
+        ["git", "-C", emulators_dir, "status", "--porcelain", "--", *paths],
         capture_output=True,
         text=True,
         check=False,
@@ -3856,17 +3862,34 @@ def _apply_writes(
                 file=sys.stderr,
             )
             return
-        for line in applied:
-            print(f"{name}: {recale}{line}")
+        messages = [f"{name}: {recale}{line}" for line in applied]
         if moved:
             # Each pin the write changes, as written: a bump that only moved
             # upstream_commit announced the source_commit it already held.
             after = yaml.safe_load(target.read_text(encoding="utf-8")) or {}
             before = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
-            for pin in pins_changed(before, after):
-                print(f"{name}: {bumped}{pin} -> {str(after[pin])[:7]}")
+            messages += [
+                f"{name}: {bumped}{pin} -> {str(after[pin])[:7]}"
+                for pin in pins_changed(before, after)
+            ]
         if not args.dry_run and (applied or moved):
+            original = path.read_bytes()
             path.write_bytes(target.read_bytes())
+            # The guard above read the prose under the pins the profile held.
+            # A bump that moves upstream_commit can leave prose the report
+            # judged in the fork under the new upstream pin (dolphin-mmjr2,
+            # hatari, xenios): read it again on what was written.
+            left = realign_prose(path, args.cache_dir, args.offline, dry_run=True)
+            if moved and left:
+                path.write_bytes(original)
+                print(
+                    f"{name}: the bump would leave {len(left)} prose citation(s) "
+                    "under an older pin, nothing was written. Read them first.",
+                    file=sys.stderr,
+                )
+                return
+        for message in messages:
+            print(message)
 
 
 def _cited_paths(report: ProfileReport) -> list[str]:
@@ -4227,7 +4250,7 @@ def main() -> None:
         or args.realign_prose or args.attribute_refs
     )
     if writes and not args.dry_run and not args.force:
-        _refuse_dirty_tree(args.emulators_dir)
+        _refuse_dirty_tree(args.emulators_dir, list(selected))
 
     # A profile that could not be compared or written is not a profile with
     # nothing to review: it stays in every output and fails the run.

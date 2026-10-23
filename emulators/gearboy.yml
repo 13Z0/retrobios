@@ -4,7 +4,7 @@ core_classification: official_port
 source: "https://github.com/drhelius/Gearboy"
 upstream: "https://github.com/drhelius/Gearboy"
 profiled_date: "2026-03-23"
-source_commit: "214b84ed64cefc41071197cd52863deb0658a64d"
+source_commit: "8231b17f9c9007732977cd4b286eee80957e3414"
 core_version: "3.4.1"
 display_name: "Nintendo - Game Boy / Color (Gearboy)"
 cores:
@@ -27,7 +27,7 @@ files:
     required: false
     hle_fallback: true
     validation: [size]
-    source_ref: "platforms/libretro/libretro.cpp:964, platforms/libretro/libretro.cpp:408, platforms/libretro/libretro.cpp:408"
+    source_ref: "platforms/libretro/libretro.cpp:1043, platforms/libretro/libretro.cpp:474, platforms/libretro/libretro.cpp:474"
 
   - name: cgb_boot.bin
     description: Game Boy Color bootrom
@@ -35,4 +35,4 @@ files:
     required: false
     hle_fallback: true
     validation: [size]
-    source_ref: "platforms/libretro/libretro.cpp:965, platforms/libretro/libretro.cpp:409, platforms/libretro/libretro.cpp:409"
+    source_ref: "platforms/libretro/libretro.cpp:1044, platforms/libretro/libretro.cpp:475, platforms/libretro/libretro.cpp:475"

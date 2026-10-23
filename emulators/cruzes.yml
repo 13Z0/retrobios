@@ -3,7 +3,7 @@ type: libretro
 core_classification: pure_libretro
 source: "https://github.com/libretro/libretro-samples/tree/master/tests/cruzes"
 profiled_date: "2026-03-23"
-source_commit: "bce193bc1b8c9a3da43b2ead0158a69e28b37ed8"
+source_commit: "7c2ad112d7a5176de2191e473369668da8946b16"
 core_version: "0.1"
 display_name: "Cruzes"
 cores:
@@ -15,9 +15,9 @@ notes: |
   Unfinished Picross puzzle game, part of the libretro-samples repository.
   No separate upstream -- written directly for the libretro API.
 
-  supports_no_game true (cruzes.c:772), valid_extensions "" (cruzes.c:749).
-  Puzzle grid hardcoded in retro_init (cruzes.c:706-717) via load_challenge.
-  retro_load_game (cruzes.c:728-732) sets pixel format and returns true.
+  supports_no_game true (tests/cruzes/cruzes.c:772), valid_extensions "" (tests/cruzes/cruzes.c:749).
+  Puzzle grid hardcoded in retro_init (tests/cruzes/cruzes.c:706-717) via load_challenge.
+  retro_load_game (tests/cruzes/cruzes.c:728-732) sets pixel format and returns true.
   No file I/O, no RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY call.
 
   Font data (Carlito-Regular.ttf) compiled in via ttf2c (font10.h, font16.h,

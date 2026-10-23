@@ -4,7 +4,7 @@ core_classification: official_port
 source: "https://github.com/hex007/freej2me"
 upstream: "https://github.com/hex007/freej2me"
 profiled_date: "2026-03-23"
-source_commit: "fae9304b85ac1c61d0117f6c8efe528612388278"
+source_commit: "eb4ac87e9a0b212ba701691eb67ee4892b2b1173"
 core_version: "GIT"
 display_name: "Mobile - J2ME (FreeJ2ME)"
 cores:
@@ -26,5 +26,5 @@ files:
     description: "FreeJ2ME libretro Java application"
     required: true
     installed_on: [retrobat, rocknix]
-    source_ref: "src/libretro/freej2me_libretro.c:483-486 (GET_SYSTEM_DIRECTORY + fill_pathname_join + java -jar)"
+    source_ref: "src/libretro/freej2me_libretro.c:487-490 (GET_SYSTEM_DIRECTORY + fill_pathname_join + java -jar)"
     note: "Not a BIOS dump. Java emulator loaded by the native core at startup via execvp('java', '-jar', path). Built from source via 'ant'. Must be in the system directory root. ROCKNIX builds the core and the jar from freej2me-plus 1.52, which keeps the freej2me-lr.jar name, and copies the jar into its BIOS folder before each launch when it is missing."

@@ -3,7 +3,7 @@ type: standalone
 core_classification: game_engine
 source: "https://github.com/RSDKModding/RSDKv3-Decompilation"
 upstream: "https://github.com/RSDKModding/RSDKv3-Decompilation"
-source_commit: "a99e16ad15f4f824c1b9f96a61b3f8576ab648e2"
+source_commit: "c01fc0c360e8e35e791630407ea5c7a426718e54"
 profiled_date: "2026-10-04"
 display_name: "Sonic CD (RSDKv3 Decomp)"
 cores: [sonicretrocd]

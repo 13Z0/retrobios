@@ -4,7 +4,7 @@ core_classification: official_port
 source: "https://github.com/sdlpal/sdlpal"
 upstream: "https://github.com/sdlpal/sdlpal"
 profiled_date: "2026-03-25"
-source_commit: "a2e13e5ff83cf33448b3de3b8b612c07e28eacd7"
+source_commit: "d4bf69b64d335cd680555af9df90e7ec4f3006a3"
 core_version: "v2.0.1"
 display_name: "SDLPAL"
 cores:

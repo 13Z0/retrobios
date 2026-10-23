@@ -2723,6 +2723,21 @@ class TestWriteDryRun(unittest.TestCase):
         self.assertNotIn("source_commit", output)
         self.assertEqual(self.path.read_text(), before)
 
+    def test_a_bump_that_leaves_stale_prose_is_rolled_back(self):
+        """dolphin-mmjr2, hatari, xenios: the bump moved upstream_commit only,
+        and prose the report had judged in the fork fell under the new
+        upstream pin. The guard had read it under the old pins."""
+        from unittest import mock
+
+        before = self.path.read_text()
+        answers = iter([[], ["notes: a.c:10 (a.c:10 changed)"]])
+        with mock.patch.object(
+            profile_sync, "realign_prose", side_effect=lambda *a, **k: next(answers)
+        ), contextlib.redirect_stderr(io.StringIO()) as err:
+            self._run(self._args(rebase_refs=True, dry_run=False), self._shifted())
+        self.assertEqual(self.path.read_text(), before)
+        self.assertIn("nothing was written", err.getvalue())
+
     def test_a_planned_bump_reads_the_prose_the_rebase_would_have_left(self):
         """The pin is blocked by prose until the rebase moves it.
 
@@ -3152,6 +3167,7 @@ class TestCheckVersion(unittest.TestCase):
                 "tagsha" if tag == "v3.0.0" else None
             )
         )
+        profile_sync.upstream.tag_commit = profile_sync.upstream.resolve_tag_commit
 
     def tearDown(self):
         (
@@ -4529,6 +4545,19 @@ class TestEmulatorsDirStatus(unittest.TestCase):
             self._git("init", "-q", cwd=root)
             Path(root, "a.yml").write_text("emulator: a\n")
             self.assertTrue(profile_sync.emulators_dir_is_dirty(root))
+
+    def test_only_the_selected_profiles_count(self):
+        # A loop of --emulator X --rebase-refs refused every profile after
+        # the first one it wrote.
+        with tempfile.TemporaryDirectory() as root:
+            self._git("init", "-q", cwd=root)
+            Path(root, "a.yml").write_text("emulator: a\n")
+            Path(root, "b.yml").write_text("emulator: b\n")
+            self._git("add", "a.yml", "b.yml", cwd=root)
+            self._git("-c", "user.name=t", "-c", "user.email=t@t", "commit", "-qm", "p", cwd=root)
+            Path(root, "a.yml").write_text("emulator: a2\n")
+            self.assertTrue(profile_sync.emulators_dir_is_dirty(root, ["a"]))
+            self.assertFalse(profile_sync.emulators_dir_is_dirty(root, ["b"]))
 
     def test_a_tree_outside_any_repository_is_not_clean(self):
         with tempfile.TemporaryDirectory() as root, mock.patch.dict(

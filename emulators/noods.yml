@@ -5,6 +5,7 @@ source: "https://github.com/jonian/libretro-noods"
 upstream: "https://github.com/Hydr8gon/NooDS"
 profiled_date: "2026-03-24"
 source_commit: "9a2665306927ede64f4b5c109df79f4015607dbc"
+upstream_commit: "4cb1439c330248b26cdf5f8dbcfa4e5ac53dcda0"
 core_version: "Git"
 display_name: "Nintendo - DS (NooDS)"
 cores: [noods]

@@ -5,7 +5,7 @@ source: "https://github.com/teknogods/TeknoParrotUI"
 upstream: closed-source
 author: "TeknoGods"
 profiled_date: "2026-10-20"
-source_commit: "7ffcdf1c003ff322f2d8db659ab6fd7c4f982ade"
+source_commit: "b75872addc1d5cce81a62f4c1468eab59e2d3cbe"
 core_version: "TeknoParrotUI 7ffcdf1"
 display_name: "Arcade - PC-based and Sega/Namco boards (TeknoParrot)"
 cores:
