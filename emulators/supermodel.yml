@@ -19,6 +19,20 @@ cores:
 systems:
   - sega-model3
 
+data_root:
+  windows:
+    path: "<working directory>"
+    source_ref: "Src/OSD/Windows/FileSystemPath.cpp:28-51"
+    note: "Config/, Assets/, NVRAM/, Saves/ and ROMs/ are relative names, so the folder the release archive is extracted to when started from it"
+  macos:
+    path: "<working directory>"
+    source_ref: "Src/OSD/OSX/FileSystemPath.cpp:28-49"
+    note: "relative names, as on Windows"
+  linux:
+    path: "~/.local/share/supermodel, else $XDG_DATA_HOME/supermodel"
+    source_ref: "Src/OSD/Unix/FileSystemPath.cpp:51-160"
+    note: "~/.supermodel when it exists, and the working directory when Config/ is there or no home directory resolves. Config sits apart, in ~/.config/supermodel/Config or $XDG_CONFIG_HOME/supermodel/Config"
+
 notes: |
   Open-source Sega Model 3 arcade emulator by Bart Trzynadlowski (trzy) and
   contributors, under GPL-3.0. Emulates all three Model 3 steppings (1.0, 1.5,
