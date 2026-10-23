@@ -224,7 +224,7 @@ def parse(markdown: str) -> Page:
             flush()
             tab = 0
             continue
-        if "rb-button" in stripped or stripped.startswith("<FilePicker"):
+        if "rb-button" in stripped or "rb-tile" in stripped or stripped.startswith("<FilePicker"):
             act()
             continue
         if re.match(r"</?(?!abbr\b|a\b|code\b|strong\b|em\b)[A-Za-z]", stripped):
