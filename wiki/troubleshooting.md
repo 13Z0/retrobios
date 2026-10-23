@@ -28,6 +28,7 @@ Read the count line:
 - **`wrong hash`**: a file is there with the wrong contents: another region
   or model, or damaged.
 - **Fewer present than the total**: some files are missing.
+- **A line under a file**, like `still zipped`: it says what to fix.
 - **`0 wrong hash` and all present**: your files are fine. Go to step 3.
 
 ## 2. Fix the files
@@ -47,7 +48,7 @@ the wrong ones, keeping the old ones.
   differ only by capital letters, which some ZIPs leave out.
 - **A ZIP in parts will not open?** Download every part, like
   `Pack.part1of2.zip` and `Pack.part2of2.zip`. Unzip each one into the same
-  folder.
+  folder. `--check` names a part you missed.
 
 ## One console only
 
