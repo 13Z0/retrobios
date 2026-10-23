@@ -17,6 +17,7 @@ import io
 import json
 import subprocess
 import sys
+import time
 import unittest
 import zipfile
 from pathlib import Path
@@ -478,6 +479,44 @@ class MisplacedInTheBiosFolder(Scratch):
             self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
             self.assertNotIn("fixed", proc.stdout)
             self.assertNotIn("copied from", proc.stdout)
+
+
+class ManySameSizedFiles(FromFolder):
+    """A card of 16 KB ROMs and a list of 16 KB entries: each entry sorted
+    and walked every file of its size."""
+
+    def test_each_file_is_read_once_and_the_order_holds(self):
+        for n in range(3000):
+            self.keep(f"roms/r{n:04}.bin", b"%016d" % n)
+            _zip(self.old / f"sets/s{n:04}.zip", {f"m{n}.bin": b"m%015d" % n})
+        entries = [{"dest": f"e{n}.bin", "size": 16, "sha1": f"{n:040}"}
+                   for n in range(3000)]
+        wanted = [_entry("late.bin", b"%016d" % 2999, ["x"]),
+                  _entry("m5.bin", b"m%015d" % 5, ["x"]),
+                  _entry("r0007.bin", b"%016d" % 7, ["x"])]
+        index = install.FolderIndex(self.old)
+        start = time.monotonic()
+        copies = install.plan_local_copies(entries + wanted, self.dest, None, [index])
+        elapsed = time.monotonic() - start
+        self.assertEqual({e["dest"]: copies[id(e)].where() for e in wanted if id(e) in copies}, {
+            "late.bin": "roms/r2999.bin",
+            "m5.bin": "sets/s0005.zip, inside as m5.bin",
+            "r0007.bin": "roms/r0007.bin",
+        })
+        self.assertEqual(len(copies), 3)
+        self.assertLess(elapsed, 30, f"{elapsed:.1f} s")
+
+    def test_a_file_of_the_same_name_comes_first(self):
+        self.keep("a/other.bin", US)
+        self.keep("b/scph5501.bin", US)
+        _zip(self.old / "c.zip", {"x/gba.bin": GBA})
+        _zip(self.old / "d.zip", {"gba_bios.bin": GBA})
+        index = install.FolderIndex(self.old)
+        files = json.loads(self.list.read_text())["files"]
+        copies = install.plan_local_copies(files, self.dest, None, [index])
+        found = {e["dest"]: copies[id(e)].where() for e in files if id(e) in copies}
+        self.assertEqual(found["scph5501.bin"], "b/scph5501.bin")
+        self.assertEqual(found["gba_bios.bin"], "d.zip, inside as gba_bios.bin")
 
 
 class TheSummaryLine(unittest.TestCase):

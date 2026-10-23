@@ -50,7 +50,7 @@ import zipfile
 import zlib
 from collections.abc import Callable, Collection, Iterator, Mapping
 from pathlib import Path, PurePosixPath
-from typing import BinaryIO, ContextManager, NamedTuple, TextIO
+from typing import Any, BinaryIO, ContextManager, NamedTuple, TextIO
 
 # Manifests are read from the same ref the bootstrap verified this installer
 # against, so a file list and the code reading it always come from one commit.
@@ -6678,6 +6678,11 @@ class FolderIndex:
         self._digests: dict[tuple[Path, str, str], str] = {}
         self._members: dict[Path, list[str]] = {}
         self._member_sizes: dict[int, list[tuple[Path, str]]] | None = None
+        # (size, casefolded name) -> the files and the ZIP members, built
+        # the first time a copy is looked for.
+        self._loose_named: dict[tuple[int, str], list[Path]] | None = None
+        self._member_named: dict[int, dict[str, list[tuple[Path, str]]]] = {}
+        self._scans: dict[tuple[str, int, str], _HashScan] = {}
         if root.is_file():
             if root.name.casefold().endswith(".zip"):
                 self.archives.append(root)
@@ -6740,10 +6745,28 @@ class FolderIndex:
             self._digests[key] = value
         return self._digests[key]
 
-    def holding(self, sizes: set[int], sha1s: set[str]) -> list[Path]:
-        """Files whose contents are one of sha1s, read only when the size fits."""
-        return [path for size in sorted(sizes) for path in self.by_size.get(size, [])
-                if self.sha1(path) in sha1s]
+    def _scan(self, kind: str, size: int, algorithm: str) -> _HashScan:
+        """The files (kind "loose") or ZIP members ("member") of one size,
+        hashed in the order the folder was read, each read once."""
+        key = (kind, size, algorithm)
+        if key not in self._scans:
+            if kind == "loose":
+                self._scans[key] = _HashScan(
+                    self.by_size.get(size, []), lambda path: self.digest(path, algorithm))
+            else:
+                self._scans[key] = _HashScan(
+                    self._members_of_size(size),
+                    lambda item: self.digest(item[0], algorithm, item[1]))
+        return self._scans[key]
+
+    def first_holding(self, sizes: set[int], sha1s: set[str]) -> Path | None:
+        """The first file whose contents are one of sha1s, the smallest size
+        first, read only when the size fits."""
+        for size in sorted(sizes):
+            path = self._scan("loose", size, "sha1").first(sha1s)
+            if path is not None:
+                return path
+        return None
 
     def zip_members(self, path: Path) -> list[str]:
         if path not in self._members:
@@ -6786,15 +6809,27 @@ class FolderIndex:
         if not wanted:
             return None
         name = str(entry.get("dest", "")).rsplit("/", 1)[-1].casefold()
-        loose = sorted(self.by_size.get(size, []), key=lambda p: p.name.casefold() != name)
-        for path in loose:
-            if path not in skip and self.digest(path, algorithm) == wanted:
+        if self._loose_named is None:
+            self._loose_named = {}
+            for path, held in self.size.items():
+                self._loose_named.setdefault((held, path.name.casefold()), []).append(path)
+        for path in self._loose_named.get((size, name), []):
+            if not _being_written(path, skip) and self.digest(path, algorithm) == wanted:
                 return LocalCopy(self, path)
-        members = sorted(self._members_of_size(size),
-                         key=lambda item: item[1].rsplit("/", 1)[-1].casefold() != name)
-        for path, member in members:
-            if self.digest(path, algorithm, member) == wanted:
-                return LocalCopy(self, path, member)
+        path = self._scan("loose", size, algorithm).first({wanted}, skip)
+        if path is not None:
+            return LocalCopy(self, path)
+        if size not in self._member_named:
+            named = self._member_named[size] = {}
+            for item in self._members_of_size(size):
+                named.setdefault(item[1].rsplit("/", 1)[-1].casefold(), []).append(item)
+        for archive, member in self._member_named[size].get(name, []):
+            if (not _being_written(archive, skip)
+                    and self.digest(archive, algorithm, member) == wanted):
+                return LocalCopy(self, archive, member)
+        held = self._scan("member", size, algorithm).first({wanted}, skip)
+        if held is not None:
+            return LocalCopy(self, held[0], held[1])
         return None
 
     def count_copy(self, misplaced: bool = False) -> None:
@@ -6810,6 +6845,98 @@ class FolderIndex:
         except ValueError:
             return str(path)
         return rel if rel != "." else path.name
+
+
+def _being_written(path: Path, skip: Collection[Path]) -> bool:
+    """Whether a file, or the archive holding a member, is one this run
+    writes: its bytes are being replaced, so they are no source."""
+    return bool(skip) and (path in skip or Path(os.path.realpath(path)) in skip)
+
+
+class _HashScan:
+    """Candidates of one size, hashed in order and each once, so finding
+    the first that holds a digest never reads the earlier ones again: 3,000
+    same-sized files and 3,000 entries of that size cost 3,000 reads, not
+    nine million comparisons."""
+
+    def __init__(self, items: list, digest: Callable[[Any], str]) -> None:
+        self.items = items
+        self.digest = digest
+        self.read = 0
+        self.at: dict[str, list[int]] = {}
+
+    def first(self, wanted: Collection[str], skip: Collection[Path] = ()) -> Any:
+        """The first candidate, in the folder's order, whose digest is one of
+        wanted and that skip does not name, or None."""
+        best = None
+        for value in wanted:
+            for position in self.at.get(value, ()):
+                if not _being_written(self._holder(position), skip):
+                    best = position if best is None else min(best, position)
+                    break
+        if best is not None:
+            return self.items[best]
+        while self.read < len(self.items):
+            position = self.read
+            self.read += 1
+            value = self.digest(self.items[position])
+            self.at.setdefault(value, []).append(position)
+            if value in wanted and not _being_written(self._holder(position), skip):
+                return self.items[position]
+        return None
+
+    def _holder(self, position: int) -> Path:
+        item = self.items[position]
+        return item[0] if isinstance(item, tuple) else item
+
+
+class _ZippedLookup:
+    """The archives of a folder not listed as files to install, by the
+    folder holding them: each one's names read once, so telling that a
+    missing file is still zipped costs two lookups and never a walk."""
+
+    def __init__(self, index: FolderIndex, known: set[str]) -> None:
+        self.index = index
+        self._by_parent: dict[Path, list[tuple[int, Path]]] = {}
+        for position, path in enumerate(index.archives):
+            if index.relative(path).casefold() not in known:
+                self._by_parent.setdefault(path.parent, []).append((position, path))
+        # folder -> (member name -> first archive, stem -> first archive).
+        self._maps: dict[Path, tuple[dict[str, tuple[int, Path]],
+                                     dict[str, tuple[int, Path]]]] = {}
+
+    def _folder(self, folder: Path) -> tuple[dict[str, tuple[int, Path]],
+                                             dict[str, tuple[int, Path]]]:
+        if folder not in self._maps:
+            members: dict[str, tuple[int, Path]] = {}
+            stems: dict[str, tuple[int, Path]] = {}
+            for position, path in self._by_parent.get(folder, []):
+                lowered = path.name.casefold()
+                if lowered.endswith(".zip"):
+                    for member in self.index.zip_members(path):
+                        members.setdefault(member, (position, path))
+                stems.setdefault(lowered.rsplit(".", 1)[0], (position, path))
+            self._maps[folder] = (members, stems)
+        return self._maps[folder]
+
+    def reason(self, name: str, folders: Collection[Path]) -> str:
+        """Why name is missing when an archive in folders holds it or carries
+        its name: the first such archive in the order the folder was read,
+        and one holding it before one carrying its name."""
+        lowered = name.casefold()
+        stem = lowered.rsplit(".", 1)[0]
+        best: tuple[int, int, Path] | None = None
+        for folder in folders:
+            members, stems = self._folder(folder)
+            for kind, held in ((0, members.get(lowered)), (1, stems.get(stem))):
+                if held is not None and (best is None or (held[0], kind) < best[:2]):
+                    best = (held[0], kind, held[1])
+        if best is None:
+            return ""
+        where = self.index.relative(best[2])
+        if best[1] == 0:
+            return f"still zipped: it is inside {where}"
+        return f"still zipped: {where} needs extracting"
 
 
 def _inside(path: Path, root: Path) -> bool:
@@ -6858,7 +6985,19 @@ def _known_destinations(files: list[dict]) -> set[str]:
     return {str(f.get("dest", "")).casefold() for f in files}
 
 
-def _content_owner(sha1: str, entry: dict, files: list[dict]) -> str:
+def _content_owners(files: list[dict]) -> dict[str, list[dict]]:
+    """SHA-1 -> the entries one of whose copies holds it, in the list's order."""
+    owners: dict[str, list[dict]] = {}
+    for other in files:
+        for sha1 in dict.fromkeys(c.get("sha1") for c in _copies(other) if c.get("sha1")):
+            owners.setdefault(sha1, []).append(other)
+    return owners
+
+
+def _content_owner(
+    sha1: str, entry: dict, files: list[dict],
+    owners: dict[str, list[dict]] | None = None,
+) -> str:
     """Why a file holding sha1 is not the one entry wants, if the list knows."""
     for copy in entry.get("alternatives", []) + entry.get("slot_choices", []):
         if copy.get("sha1") == sha1 and copy.get("cores"):
@@ -6868,15 +7007,16 @@ def _content_owner(sha1: str, entry: dict, files: list[dict]) -> str:
         if copy.get("sha1") == sha1:
             return ("another revision: the one the platform's own list declares, "
                     "not the one the cores read")
-    for other in files:
+    if owners is None:
+        owners = _content_owners(files)
+    for other in owners.get(sha1, []):
         if other is entry or other.get("dest") == entry.get("dest"):
             continue
-        if any(copy.get("sha1") == sha1 for copy in _copies(other)):
-            regions = [r for r in other.get("regions") or [] if r != WORLD_REGION]
-            if regions:
-                return (f"another region: the contents of {other['dest']} "
-                        f"({', '.join(regions)})")
-            return f"another file: the contents of {other['dest']}"
+        regions = [r for r in other.get("regions") or [] if r != WORLD_REGION]
+        if regions:
+            return (f"another region: the contents of {other['dest']} "
+                    f"({', '.join(regions)})")
+        return f"another file: the contents of {other['dest']}"
     return ""
 
 
@@ -6935,7 +7075,7 @@ def _copy_reason(entry: dict, copy: LocalCopy, bios_path: Path, known: set[str])
 
 def _found_elsewhere(
     entry: dict, index: FolderIndex, bios_path: Path, files: list[dict],
-    known: set[str],
+    known: set[str], zipped: _ZippedLookup | None = None,
 ) -> tuple[str, str]:
     """(reason, folder too deep) for an entry missing at its place."""
     dest = str(entry.get("dest", ""))
@@ -6954,28 +7094,25 @@ def _found_elsewhere(
         return "", ""
     same_name = [p for p in index.by_name.get(name.casefold(), []) if p != expected]
     matching = [p for p in same_name if index.size[p] in sizes and index.sha1(p) in sha1s]
+    held = set(matching)
     for path in matching or same_name:
-        contents = "" if path in matching else ", with other contents"
+        contents = "" if path in held else ", with other contents"
         found = _place_reason(entry, path, index, expected, known, contents)
         if found[0]:
             return found
     above = index.root.parent / dest
     if index.root.parent != index.root and above.is_file():
         return f"one folder too high: it is at {above}", ""
-    for path in index.holding(sizes, sha1s):
-        return _place_reason(entry, path, index, expected, known)
+    holder = index.first_holding(sizes, sha1s)
+    if holder is not None:
+        return _place_reason(entry, holder, index, expected, known)
     if name.casefold().endswith(_ARCHIVE_SUFFIXES):
         return "", ""
-    stem = name.rsplit(".", 1)[0].casefold()
-    folders = {expected.parent, index.root}
-    for path in index.archives:
-        if path.parent not in folders or index.relative(path).casefold() in known:
-            continue
-        lowered = path.name.casefold()
-        if lowered.endswith(".zip") and name.casefold() in index.zip_members(path):
-            return f"still zipped: it is inside {index.relative(path)}", ""
-        if lowered.rsplit(".", 1)[0] == stem:
-            return f"still zipped: {index.relative(path)} needs extracting", ""
+    if zipped is None:
+        zipped = _ZippedLookup(index, known)
+    reason = zipped.reason(name, {expected.parent, index.root})
+    if reason:
+        return reason, ""
     for path in index.apple_double.get(name.casefold(), []):
         if path.parent == expected.parent:
             return (f"only a Mac's ._ file: {path.name} holds Finder data, not the "
@@ -6983,7 +7120,10 @@ def _found_elsewhere(
     return "", ""
 
 
-def _wrong_contents(entry: dict, path: Path, index: FolderIndex, files: list[dict]) -> str:
+def _wrong_contents(
+    entry: dict, path: Path, index: FolderIndex, files: list[dict],
+    owners: dict[str, list[dict]] | None = None,
+) -> str:
     """Why the file at an entry's place is not the one the list installs."""
     try:
         size = path.stat().st_size
@@ -6992,7 +7132,7 @@ def _wrong_contents(entry: dict, path: Path, index: FolderIndex, files: list[dic
     except OSError:
         return ""
     sha1 = index.sha1(path)
-    owner = _content_owner(sha1, entry, files)
+    owner = _content_owner(sha1, entry, files, owners)
     if owner:
         return owner
     if head == b"PK\x03\x04" and not str(entry.get("dest", "")).casefold().endswith(".zip"):
@@ -7024,18 +7164,20 @@ def diagnose(
     if index is None:
         index = bios_folder_index(bios_path, files, verified or [])
     known = _known_destinations(files)
+    zipped = _ZippedLookup(index, known)
     for entry in missing:
-        reason, extra = _found_elsewhere(entry, index, bios_path, files, known)
+        reason, extra = _found_elsewhere(entry, index, bios_path, files, known, zipped)
         if reason:
             reasons[id(entry)] = reason
         if extra:
             deep[extra] = deep.get(extra, 0) + 1
+    owners = _content_owners(files) if mismatched else {}
     for entry in mismatched:
         try:
             path = _entry_path(bios_path, entry)
         except ValueError:
             continue
-        reason = _wrong_contents(entry, path, index, files)
+        reason = _wrong_contents(entry, path, index, files, owners)
         if reason:
             reasons[id(entry)] = reason
     return Diagnosis(reasons, deep)
