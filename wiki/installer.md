@@ -1044,7 +1044,7 @@ kind, and each kind has exactly the keys below, in this order. The schema is
 |------|------|------|
 | `start` | `schema`, `installer`, `mode` | First line. `schema` is 1, `installer` the identity `--version` prints, `mode` one of `install`, `check`, `dry-run`, `list` |
 | `detect` | `os`, `os_name`, `platforms` | Once the platforms are known. `os_name` comes from `/etc/os-release`. `platforms` lists `{platform, name, bios_dir}`, and is empty when nothing supported was found |
-| `error` | `stage`, `reason`, `platform`, `message` | The file list could not be read (`stage` is `manifest`). `reason` is `network`, `not_found` or `invalid` |
+| `error` | `stage`, `reason`, `platform`, `message` | The file list could not be read (`stage` is `manifest`). `reason` is `network`, `not_found` or `invalid`, `clock` when the server's certificate was refused and the system clock reads a date before the installer was written, or `no_ca` when the machine holds no list of trusted certificates (`SSL_CERT_FILE` names one). `message` says it in words |
 | `file` | `platform`, `dest`, `systems`, `size`, `state` | Each file of the list after the check. `state` is `present` (hash verified), `wrong_hash` or `missing` |
 | `system` | `platform`, `system`, `name`, `files`, `present`, `missing`, `wrong_hash`, `bytes_needed` | Each system, sorted by id. Files with no system count under `other`. `name` is the platform's own name for it |
 | `check` | `platform`, `name`, `bios_dir`, `files`, `present`, `missing`, `wrong_hash`, `bytes_needed`, `data_missing`, `not_installable` | The platform's totals. `data_missing` counts data-tree files to fetch, `not_installable` the files the collection cannot supply |
@@ -1069,6 +1069,7 @@ no event at all. A program reads a missing `end` as that case.
 | `RETROBIOS_INSTALL_SHA256` | The SHA-256 the bootstrap requires of that installer, 64 hex characters. When either of these two is set and the fingerprint does not match, the error names the variable instead of suggesting a retry |
 | `RETROBIOS_BOOTSTRAP` | Set by `install.sh` (`sh`) and `install.ps1` (`ps1`) for the temporary installer they run, so that its hints give back the one-line command rather than `python3 install.py` |
 | `NO_COLOR` | Plain text, no colour, even at a terminal. `TERM=dumb` also turns the live progress line off |
+| `SSL_CERT_FILE`, `SSL_CERT_DIR` | The trusted certificates to check servers with, for a Python that finds none of its own |
 | `HTTPS_PROXY`, `NO_PROXY` | Honoured for every download through the standard library's default proxy handling: one names the proxy, the other the hosts to reach directly |
 
 ## When something goes wrong
@@ -1083,6 +1084,19 @@ The installer fetches its manifest, then downloads only the repository or
 `https://github.com` opens. Behind a proxy, set `HTTPS_PROXY` in the
 environment. A file that fails three attempts is counted and reported at the
 end, and the next run fetches only what is still missing.
+
+The reason is said in words: no internet connection or a name that could not
+be looked up, a connection that timed out, was refused or was cut, a
+certificate that was rejected. `--verbose` adds the text Python gave. Two
+causes are not the network and are not retried:
+
+- `The clock reads 1980-01-01`: a device without a clock battery starts on an
+  old date, and every certificate then looks not yet valid. Connect to Wi-Fi
+  and let the time sync, or set the date, then run again.
+- `This system has no list of trusted certificates`: install the
+  `ca-certificates` package, or name a certificate bundle with `SSL_CERT_FILE`.
+  When the system keeps one where this Python does not look, the message names
+  it. Certificate checks are never turned off.
 
 ### Permission denied
 

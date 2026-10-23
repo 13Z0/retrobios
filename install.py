@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import argparse
 import concurrent.futures
+import datetime
 import errno
 import hashlib
 import http.client
@@ -478,8 +479,10 @@ EVENT_KEYS: dict[str, tuple[str, ...]] = {
     "start": ("schema", "installer", "mode"),
     # platforms: [{"platform", "name", "bios_dir"}], empty when none is found.
     "detect": ("os", "os_name", "platforms"),
-    # stage: manifest (reason: network, not_found or invalid) or detect
-    # (reason: conflict, two systems found on one machine).
+    # stage: manifest (reason: network, not_found, invalid, clock for a
+    # refused certificate under a clock set in the past, or no_ca for no
+    # trusted certificates on the machine) or detect (reason: conflict, two
+    # systems found on one machine).
     "error": ("stage", "reason", "platform", "message"),
     # state: present (hash verified), wrong_hash or missing.
     "file": ("platform", "dest", "systems", "size", "state"),
@@ -2977,6 +2980,102 @@ NETWORK_ADVICE = ("  Check the connection, and HTTPS_PROXY if this network needs
                   f"  More help: {TROUBLESHOOTING_PAGE}")
 
 
+# The installer was written after this day. A clock that reads earlier is
+# wrong, and TLS then finds every certificate not yet valid: a handheld
+# with no clock battery boots on 1970 or 1980.
+CLOCK_FLOOR = datetime.date(2026, 1, 1)
+# Where systems keep their trusted certificates, for a Python built to look
+# elsewhere: Debian, Fedora, openSUSE, the BSDs and macOS, Homebrew, Termux.
+CA_BUNDLES = (
+    "/etc/ssl/certs/ca-certificates.crt", "/etc/pki/tls/certs/ca-bundle.crt",
+    "/etc/ssl/ca-bundle.pem", "/etc/pki/tls/cacert.pem", "/etc/ssl/cert.pem",
+    "/usr/local/etc/openssl/cert.pem", "/opt/homebrew/etc/openssl@3/cert.pem",
+    "/data/data/com.termux/files/usr/etc/tls/cert.pem",
+)
+# Set from --verbose: the error text Python gives stays beside the words.
+_RAW_ERRORS = threading.Event()
+
+
+def _default_ca_present() -> bool:
+    """Whether the certificates this Python reads by default exist."""
+    import ssl  # noqa: PLC0415
+
+    paths = ssl.get_default_verify_paths()
+    for value in (os.environ.get("SSL_CERT_FILE"), paths.cafile, paths.openssl_cafile):
+        if value and Path(value).is_file():
+            return True
+    for value in (os.environ.get("SSL_CERT_DIR"), paths.capath, paths.openssl_capath):
+        try:
+            if value and any(Path(value).iterdir()):
+                return True
+        except OSError:
+            continue
+    return False
+
+
+def _known_bundle() -> str:
+    """A certificate bundle the system keeps where this Python does not look."""
+    return next((path for path in CA_BUNDLES if Path(path).is_file()), "")
+
+
+def _ca_bundle_found() -> bool:
+    """Whether any list of trusted certificates is on this machine.
+
+    Windows verifies against its own store, which Python reads directly.
+    """
+    return os.name == "nt" or _default_ca_present() or bool(_known_bundle())
+
+
+def network_words(
+    exc: BaseException, today: datetime.date | None = None, verbose: bool | None = None,
+) -> tuple[str, str]:
+    """The reason a request failed, and the same in words a beginner reads.
+
+    The reason is clock, no_ca or network. Offline, the run printed
+    "[Errno -2] Name or service not known": the raw text now follows the
+    words only under --verbose.
+    """
+    reason = getattr(exc, "reason", None)
+    inner = reason if isinstance(reason, BaseException) else exc
+    raw = str(reason or exc)
+    code, words = "network", ""
+    cert_error = getattr(sys.modules.get("ssl"), "SSLCertVerificationError", None)
+    if cert_error is not None and isinstance(inner, cert_error):
+        today = today or datetime.date.today()
+        if not _ca_bundle_found():
+            code = "no_ca"
+            words = ("This system has no list of trusted certificates to check the "
+                     "server with. Install the ca-certificates package, or name a "
+                     "certificate bundle with SSL_CERT_FILE, then run again")
+        elif today < CLOCK_FLOOR:
+            code = "clock"
+            words = (f"The clock reads {today.isoformat()}: connect to Wi-Fi and let the "
+                     "time sync, or set the date, then run again")
+        else:
+            words = "the server's certificate was rejected"
+            bundle = "" if _default_ca_present() else _known_bundle()
+            words += (f": this Python reads no certificate list, run again with "
+                      f"SSL_CERT_FILE={bundle}" if bundle
+                      else ", which a proxy or a filter on this network can cause")
+    elif isinstance(inner, socket.gaierror):
+        words = "no internet connection, or the server name could not be looked up"
+    elif isinstance(inner, (socket.timeout, TimeoutError)):
+        words = "the connection timed out"
+    elif isinstance(inner, ConnectionRefusedError):
+        words = "the server refused the connection"
+    elif isinstance(inner, OSError) and inner.errno in (
+            errno.ENETUNREACH, errno.EHOSTUNREACH, errno.ENETDOWN):
+        words = "no internet connection: the network cannot be reached"
+    elif isinstance(inner, (ConnectionResetError, ConnectionAbortedError,
+                            http.client.HTTPException)):
+        words = "the connection was cut"
+    if not words:
+        return code, raw
+    if _RAW_ERRORS.is_set() if verbose is None else verbose:
+        words += f" [{raw}]"
+    return code, words
+
+
 def _address_lines(url: str) -> list[str]:
     """The address that failed, and the override that chose it if one did.
 
@@ -3008,12 +3107,13 @@ def _fetch_json(url: str, limit: int, label: str) -> object:
             delay = _retry_delay(attempt, exc.headers.get("Retry-After") if exc.headers else None)
             problem = f"HTTP {exc.code}"
         except (urllib.error.URLError, OSError, http.client.HTTPException) as exc:
-            if attempt == MAX_RETRIES:
+            code, problem = network_words(exc)
+            # A wrong clock or no certificate list fails every attempt alike.
+            if attempt == MAX_RETRIES or code != "network":
                 if isinstance(exc, http.client.HTTPException):
                     raise ConnectionError(f"connection cut: {exc!r}") from exc
                 raise
             delay = _retry_delay(attempt, None)
-            problem = str(getattr(exc, "reason", None) or exc)
         # Said, or three 30-second attempts read as a frozen program.
         print(f"  The {label} did not arrive ({problem}), trying again "
               f"({attempt + 1}/{MAX_RETRIES}) in {delay:.0f} s.", file=sys.stderr)
@@ -3034,7 +3134,7 @@ def fetch_manifest(plat: str) -> dict:
             sys.exit(1)
     url = MANIFEST_URL.format(platform=plat)
     try:
-        return _validate_manifest(_fetch_json(url, MAX_MANIFEST_BYTES, "manifest"), plat)
+        return _validate_manifest(_fetch_json(url, MAX_MANIFEST_BYTES, "file list"), plat)
     except ValueError as exc:
         EVENTS.emit("error", stage="manifest", reason="invalid", platform=plat,
                     message=f"the file list is not valid: {exc}")
@@ -3068,11 +3168,16 @@ def fetch_manifest(plat: str) -> dict:
         print(NETWORK_ADVICE, file=sys.stderr)
         sys.exit(1)
     except (urllib.error.URLError, OSError) as exc:
-        EVENTS.emit("error", stage="manifest", reason="network", platform=plat,
-                    message=f"the file list could not be fetched: "
-                            f"{getattr(exc, 'reason', None) or exc}")
+        code, words = network_words(exc)
+        EVENTS.emit("error", stage="manifest", reason=code, platform=plat,
+                    message=words if code != "network"
+                    else f"the file list could not be fetched: {words}")
+        if code != "network":
+            print(f"  Could not fetch the file list for {plat}.", file=sys.stderr)
+            print(f"  {words}.", file=sys.stderr)
+            sys.exit(1)
         print(f"  Could not fetch the file list for {plat} after {MAX_RETRIES} "
-              f"attempts: {getattr(exc, 'reason', None) or exc}", file=sys.stderr)
+              f"attempts: {words}", file=sys.stderr)
         for line in _address_lines(url):
             print(line, file=sys.stderr)
         print(NETWORK_ADVICE, file=sys.stderr)
@@ -3088,7 +3193,7 @@ def fetch_targets(plat: str) -> "dict | None":
     """
     url = TARGETS_URL.format(platform=plat)
     try:
-        return _validate_targets(_fetch_json(url, MAX_TARGETS_BYTES, "targets manifest"))
+        return _validate_targets(_fetch_json(url, MAX_TARGETS_BYTES, "target list"))
     except urllib.error.HTTPError as exc:
         if exc.code == 404:
             return {}
@@ -3102,7 +3207,7 @@ def fetch_targets(plat: str) -> "dict | None":
         return None
     except (urllib.error.URLError, OSError) as exc:
         print(f"  Error: failed to fetch targets for {plat}: "
-              f"{getattr(exc, 'reason', None) or exc}", file=sys.stderr)
+              f"{network_words(exc)[1]}", file=sys.stderr)
         for line in _address_lines(url):
             print(line, file=sys.stderr)
         print(NETWORK_ADVICE, file=sys.stderr)
@@ -4250,7 +4355,7 @@ def _download_one(
                 reason = READ_ONLY if _read_only_file(dest) else NOT_WRITABLE
                 refused = True
             elif _transfer_failure(exc):
-                reason = NetworkReason(getattr(exc, "reason", "") or exc)
+                reason = NetworkReason(network_words(exc)[1])
             else:
                 reason = str(getattr(exc, "reason", "") or exc)
             if verbose:
@@ -6959,6 +7064,8 @@ def main() -> None:
     )
 
     args = parser.parse_args()
+    if args.verbose:
+        _RAW_ERRORS.set()
     if args.cores_dir:
         args.installed_cores = True
     _INVOCATION.record(args)
