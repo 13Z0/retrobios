@@ -2576,16 +2576,21 @@ class AReadErrorIsNotAClosedWindow(unittest.TestCase):
         import pty
 
         master, slave = pty.openpty()
+        screen = open(os.dup(slave), "w", encoding="utf-8")  # noqa: SIM115
+        terminal = mock.Mock(fd=slave, stdout=screen)
         try:
             card = OSError(errno.EIO, "Input/output error", "/media/card/bios/x.bin")
-            self.assertFalse(install._closed_terminal(card, slave))
+            self.assertFalse(install._closed_terminal(card, terminal))
             self.assertFalse(install._closed_terminal(
-                OSError(errno.ENOENT, "No such file"), slave))
+                OSError(errno.ENOENT, "No such file"), terminal))
             os.close(master)
             master = -1
-            self.assertTrue(install._closed_terminal(card, slave))
-            self.assertTrue(install._closed_terminal(termios.error(errno.EIO, "gone"), slave))
+            self.assertTrue(install._closed_terminal(card, terminal))
+            self.assertTrue(install._closed_terminal(termios.error(errno.EIO, "gone"),
+                                                     terminal))
         finally:
+            with contextlib.suppress(OSError):
+                screen.close()
             os.close(slave)
             if master >= 0:
                 os.close(master)
