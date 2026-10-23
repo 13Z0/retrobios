@@ -547,7 +547,7 @@ def generate_home(
         "",
         *markup.steps([
             "**Pick your device.** Its page shows your BIOS folder.",
-            "**Run one command**, or download a ZIP file.",
+            "**Run one command.** Some setups have a ZIP.",
             "**Start a game.**",
         ]),
         "## Pick your device",
@@ -720,6 +720,49 @@ def get_page_link(platform_name: str, prefix: str = "") -> str:
     return f"{prefix}{release_record.GET_DIR}/{platform_name}.md"
 
 
+def get_page_title(platform_name: str, display: str) -> str:
+    """What a get/ page holds, by its name: the ZIP of a setup a release
+    publishes one for, the files of any other. "Download KNULLI" read as
+    the system's own download. A setup that is also an emulator (BizHawk)
+    names it last: "BizHawk BIOS files" is the title of its emulator page."""
+    kind = "BIOS pack" if has_release_pack(platform_name) else "BIOS files"
+    if (_REPO_ROOT / "emulators" / f"{platform_name}.yml").is_file():
+        return f"{kind} for {display}"
+    return f"{display} {kind}"
+
+
+def _unzip_into(platform_name: str, display: str, extract_to: str | None, parts: int) -> list[str]:
+    """Where the ZIP is unzipped, on the get/ page. A folder the registry
+    writes relative to the setup's own (`system/`, `bios/`) is named as the
+    setup's, with the way to find it."""
+    what = "them all" if parts > 1 else "it"
+    if not _setup_relative(extract_to):
+        return [f"- Unzip {what} into {_folder_words(display, extract_to)}.", ""]
+    lead = GUIDES[platform_name].lead if platform_name in GUIDES else ""
+    return [
+        f"- Unzip {what} into {_folder_words(display, extract_to)}. "
+        f"[Where is it?](../platforms/{platform_name}.md#where-the-files-go)",
+        "",
+        *([lead, ""] if lead else []),
+    ]
+
+
+def _setup_relative(extract_to: str | None) -> bool:
+    """Whether the registry writes the folder relative to the setup's own
+    (`system/`, `Firmware/`), not as a path the device reads."""
+    return bool(extract_to) and not extract_to.startswith(("/", "~", "<"))
+
+
+def _folder_words(display: str, extract_to: str | None) -> str:
+    """The folder a pack or a copy goes into, in words: the device's path,
+    or a folder of the setup named as the setup's."""
+    if not extract_to:
+        return "your BIOS folder"
+    if _setup_relative(extract_to):
+        return f"{display}'s `{extract_to.rstrip('/')}` folder"
+    return f"`{extract_to}`"
+
+
 def _pack_buttons(platform_name: str, label: str = "Pack", prefix: str = "../",
                   display: str | None = None) -> str:
     """The way to the platform's ZIP from its setup page: a button to its
@@ -757,7 +800,17 @@ def generate_get_page(platform_name: str) -> str:
     record = release_record.load_advertised()
     pack = release_record.pack_for(platform_name, record)
     released = has_release_pack(platform_name)
-    lines = ["---", "search: exclude", "---", "", f"# Download {display}", ""]
+    title = get_page_title(platform_name, display)
+    if released and pack and pack.get("assets"):
+        description = (f"The BIOS pack for {display}: {_fmt_size(pack['download_size'])} to "
+                       "download. The address stays the same and always gives the latest ZIP.")
+    else:
+        description = f"The BIOS files for {display}: one command installs and checks them."
+    lines = [
+        "---", "search: exclude", f"description: {json.dumps(description)}",
+        *_parent_front_matter((display, f"/platforms/{platform_name}/")), "---", "",
+        f"# {title}", "",
+    ]
     if released and pack and pack.get("assets"):
         parts = len(pack["assets"])
         release = release_line(platform_name, record)
@@ -772,9 +825,7 @@ def generate_get_page(platform_name: str) -> str:
             f"{_fmt_size(pack['extracted_size'])} once unzipped.",
             *(["- You need both parts." if parts == 2 else f"- You need all {parts} parts."]
               if parts > 1 else []),
-            f"- Unzip {'them all' if parts > 1 else 'it'} into "
-            + (f"`{extract_to}`." if extract_to else "your BIOS folder."),
-            "",
+            *_unzip_into(platform_name, display, extract_to, parts),
             *(line for text in release for line in (text, "")),
             version_line(platform_name, record, named=len(release) > 1),
             "",
@@ -784,7 +835,7 @@ def generate_get_page(platform_name: str) -> str:
             f"No {display} ZIP yet. The next release has one. "
             "The command installs every file and checks it.",
             "",
-            *install_commands(f"--platform {platform_name}"),
+            *_setup_routes(platform_name, display),
         ]
     elif released:
         lines += [
@@ -797,7 +848,7 @@ def generate_get_page(platform_name: str) -> str:
         lines += [
             no_zip_line(display),
             "",
-            *install_commands(f"--platform {platform_name}"),
+            *_setup_routes(platform_name, display),
             f"[Why no ZIP?](../{NO_ZIP_FAQ})",
             "",
         ]
@@ -806,6 +857,29 @@ def generate_get_page(platform_name: str) -> str:
         "and how to run the command on the device",
         "[All installer options](../wiki/installer.md)",
     ])
+    return "\n".join(lines)
+
+
+def generate_get_index() -> str:
+    """get/: the permanent page of every setup, grouped as the home tiles
+    are. A link trimmed to /get/ answered 404."""
+    registry = load_platform_registry("platforms")
+    lines = [
+        "---", "search: exclude",
+        'description: "The BIOS files of every setup, one page each. Each address stays the same."',
+        "---", "",
+        "# BIOS files by setup", "",
+        "One page per setup. Its address stays the same, so it is the one to share.", "",
+    ]
+    for group, (label, _description) in DEVICE_GROUPS.items():
+        names = [name for name, entry in registry.items() if entry.get("device_group") == group]
+        if not names:
+            continue
+        lines += [f"## {label}", ""]
+        for name in names:
+            display = load_platform_config(name, "platforms").get("platform", name)
+            lines.append(f"- [{get_page_title(name, display)}]({name}.md)")
+        lines.append("")
     return "\n".join(lines)
 
 
@@ -3633,6 +3707,12 @@ MISSING_IN_PLACE = "Reported missing anyway? `--check` names a wrong file."
 # page shows in full, so the setup page links it.
 SAFE_LINK = "[Is it safe?](../index.md#is-it-safe)"
 
+# The pass line of "How to check". `--check` prints "All files up to date."
+# only when no file is missing or wrong (install.py, the args.check branch
+# after check_local). "0 wrong hash" alone is also what an empty folder
+# prints: 0/14508 present (0 verified, 0 wrong hash).
+CHECK_PASS_LINE = "All good when it says `All files up to date.`"
+
 # Under "From your computer": a device with no network installs from the ZIP
 # (`--from-pack`). The id is the one wiki/installer.md gives its section.
 OFFLINE_LINE = ("No internet on the device? "
@@ -3656,6 +3736,71 @@ def _offline_line(name: str) -> list[str]:
     installer reads that ZIP with no network (`--from-pack`)."""
     pack = release_record.pack_for(name, release_record.load_advertised())
     return [OFFLINE_LINE, ""] if pack and pack.get("assets") else []
+
+
+# The route of a setup with no ZIP when the device has no network: the
+# command writes to any folder named after --dest (wiki/installer.md), so a
+# computer fills the device's card. The FAQ answers it with an example.
+CARD_ROUTE_FAQ = "wiki/faq.md#fill-an-sd-card-from-a-computer"
+
+
+def _card_route(name: str, display: str, guide: Guide) -> list[str]:
+    """The route with no network on the device, for a setup whose ZIP no
+    release publishes: the command run on a computer, into the card. A
+    setup with a ZIP has the offline line, a card setup's command already
+    runs on the computer. The folder named after --dest is the one the
+    command fills on the device (the registry's extract_to): AmberELEC's is
+    `/storage/roms/`, which holds `bios/` and `neogeo/`. How a computer
+    sees it is the reader's to name: no guide cites it."""
+    if guide.on_card or _offline_line(name):
+        return []
+    extract_to = (load_platform_registry("platforms").get(name) or {}).get("extract_to")
+    leaf = (extract_to or "bios").rstrip("/").rsplit("/", 1)[-1].lstrip("~") or "bios"
+    tabs = guide.card_run or ("windows", "macos", "linux")
+    args = {key: f"--platform {name} --dest "
+                 + (f"E:\\path\\to\\{leaf}" if key == "windows" else f"/path/to/{leaf}")
+            for key in tabs}
+    if guide.run != ("device",):
+        lead = ("No network here? Run the command on a computer that has one, with a USB "
+                f"drive's folder after `--dest`. Then copy it into {_folder_words(display, extract_to)}.")
+        return [lead, "", *terminal_tabs(tabs, args, steps=False)]
+    lead = ("No network? Put the device's card in your computer. After `--dest`, "
+            f"name the folder the device calls `{extract_to}`.")
+    return [lead, "", *terminal_tabs(tabs, args, steps=False),
+            f"[More on SD cards](../{CARD_ROUTE_FAQ})", ""]
+
+
+def _get_page_line(name: str, display: str) -> list[str]:
+    """The setup's get/ page, under the command of a setup with no ZIP: the
+    address a guide writer keeps. A setup with a ZIP links it by its button."""
+    if has_release_pack(name):
+        return []
+    return [f"Link to share: [{get_page_title(name, display)}](../{get_page_link(name)})", ""]
+
+
+def _setup_routes(name: str, display: str, page_link: bool = False) -> list[str]:
+    """The ways to run the command for a setup no ZIP serves first, written
+    once for its setup page and its get/ page: the network folder from a
+    computer, the card from a computer when the device has no network, and
+    the device's own terminal. *page_link* adds the get/ page, on the setup
+    page only."""
+    guide = GUIDES[name]
+    share = _network_share(name, guide)
+    card = _card_route(name, display, guide)
+    shared = _get_page_line(name, display) if page_link else []
+    if share or (card and guide.run == ("device",)):
+        computer = ["## From your computer { #from-your-computer }", ""]
+        if share:
+            computer += [
+                "Needs the device on your network. Run the command on the computer.",
+                "",
+                *terminal_tabs(("windows",), {"windows": f"--platform {name} --dest {share}"}),
+                SAFE_LINK,
+                "",
+            ]
+        return [*computer, *card,
+                *_guide_install(name, guide, "## On the device { #install }"), *shared]
+    return [*_guide_install(name, guide, "## Install"), *shared, *card]
 
 
 # Shown in the "On the device" tab of a guide that has no `terminal:` of its own.
@@ -3868,7 +4013,6 @@ def _platform_guide(name: str, display: str, cov: dict, registry: dict, no_list:
         ])
     if guide.on_card:
         lines += ["<!-- image: minui-card -->", ""]
-    share = _network_share(name, guide)
     if _computer_first(name, guide):
         lines += [
             *_guide_download(name, display, guide, extract_to,
@@ -3876,21 +4020,9 @@ def _platform_guide(name: str, display: str, cov: dict, registry: dict, no_list:
             *_offline_line(name),
             *_guide_install(name, guide, "## On the device { #install }"),
         ]
-    elif share:
-        lines += [
-            "## From your computer { #from-your-computer }",
-            "",
-            "Needs the device on your network. Run the command on the computer.",
-            "",
-            *terminal_tabs(("windows",), {"windows": f"--platform {name} --dest {share}"}),
-            SAFE_LINK,
-            "",
-            *_guide_install(name, guide, "## On the device { #install }"),
-            *_guide_download(name, display, guide, extract_to, "## Download"),
-        ]
     else:
         lines += [
-            *_guide_install(name, guide, "## Install"),
+            *_setup_routes(name, display, page_link=True),
             *_guide_download(name, display, guide, extract_to, "## Download"),
             *_offline_line(name),
         ]
@@ -3901,7 +4033,7 @@ def _platform_guide(name: str, display: str, cov: dict, registry: dict, no_list:
         "Add `--check` to the command. It changes nothing.",
         "",
         *terminal_tabs(guide.run, check_args, steps=False),
-        "All good when you see `0 wrong hash`.",
+        CHECK_PASS_LINE,
         "",
         _check_sentence(display, cov["mode"], cov["config"], no_list),
         "",
@@ -9728,6 +9860,9 @@ IOS_SOURCES = {
     "provenance": "https://wiki.provenance-emu.com/using-provenance/importing-roms",
 }
 IOS_DEVICES = ("iPhone", "iPad", "iOS", "Delta", "Provenance")
+# The same names as which-pack's search terms, the section's meta field
+# alone leaving "ios" unanswered.
+IOS_TERMS = tuple(name.lower() for name in IOS_DEVICES)
 
 
 def ios_section() -> list[str]:
@@ -9764,6 +9899,10 @@ def generate_which_pack() -> str:
     display = {key: load_platform_config(key, "platforms").get("platform", key) for key in registry}
     all_tabs = ("windows", "macos", "linux", "steamdeck", "android")
     lines = [
+        "---",
+        f"terms: {', '.join(IOS_TERMS)}",
+        "---",
+        "",
         "# Get your files",
         "",
         "Pick your setup. Its page gives the folder and the command.",
@@ -10450,6 +10589,7 @@ def _generate(args: argparse.Namespace) -> None:
     get_dir.mkdir(parents=True, exist_ok=True)
     for name in platform_names:
         write_if_changed(str(get_dir / f"{name}.md"), generate_get_page(name))
+    write_if_changed(str(get_dir / "index.md"), generate_get_index())
 
     print("Generating contributing page...")
     write_if_changed(str(docs / "contributing.md"), generate_contributing())
