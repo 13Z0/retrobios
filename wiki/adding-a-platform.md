@@ -86,7 +86,7 @@ def validate_format(self, raw_data: str) -> bool:
 | `alt_md5` | `str \| None` | A second accepted MD5 (Batocera and ROCKNIX `altmd5`) |
 | `native_path` | `str \| None` | The file reference as the platform writes it, kept when it differs from `name`. libretro writes `iplromco.dat` bare although the file lives under `keropi/`, and `ep128emu/roms/cpc464.rom` with its directory |
 | `mirror_of` | `str \| None` | The native system whose entry this one repeats under another system. The platform's own file does not carry the copy, so the export skips it |
-| `native` | `dict` | Fields the platform declares that the model has no place for, written back unchanged by the export: `native_name`, `core`, `note`, `description`, `hash_match_mandatory`, `mandatory_declared`, `alt_paths`, `component`, `required_label` |
+| `native` | `dict` | Fields the platform declares that the model has no place for, written back unchanged by the export: `native_name`, `md5_list` (a Batocera md5 written as a list), `core`, `note`, `description`, `hash_match_mandatory`, `mandatory_declared`, `alt_paths`, `component`, `required_label` |
 
 `requirement_entry()` in `base_scraper.py` is the single serializer from a
 requirement to a platform YAML entry, and every scraper goes through it.

@@ -22,6 +22,7 @@ try:
         BaseScraper,
         BiosRequirement,
         fetch_github_latest_version,
+        md5_field,
         requirement_entry,
     )
     from .rocknix_launchers import extract_launchers
@@ -31,6 +32,7 @@ except ImportError:
         BaseScraper,
         BiosRequirement,
         fetch_github_latest_version,
+        md5_field,
         requirement_entry,
     )
     from rocknix_launchers import extract_launchers
@@ -133,6 +135,10 @@ _SYSTEM_HEADER = re.compile(
     r'\s*"biosFiles"\s*:\s*\[',
 )
 _FIELD = re.compile(r'"(\w+)"\s*:\s*"([^"]*)"')
+# A field written as a list of strings (`"md5": [ "a", "b" ]`), the form
+# batocera.linux 6b08b873 gives the md5 of a file several dumps satisfy.
+_LIST_FIELD = re.compile(r'"(\w+)"\s*:\s*\[([^\[\]]*)\]')
+_LIST_ITEM = re.compile(r'"([^"]*)"')
 
 
 def _slice_bios_block(source: str, start: int) -> tuple[str, int]:
@@ -162,7 +168,9 @@ def parse_systems(source: str) -> dict[str, dict]:
         body, _ = _slice_bios_block(source, header.end() - 1)
         files = []
         for raw_entry in re.findall(r"\{[^{}]*\}", body):
-            fields = dict(_FIELD.findall(raw_entry))
+            fields: dict[str, str | list[str]] = dict(_FIELD.findall(raw_entry))
+            for key, items in _LIST_FIELD.findall(raw_entry):
+                fields[key] = _LIST_ITEM.findall(items)
             if fields.get("file"):
                 files.append(fields)
         systems[header.group("key")] = {
@@ -236,15 +244,19 @@ class Scraper(BaseScraper):
                 # Declared paths are relative to the storage root: strip the
                 # leading bios/ so destinations match base_destination
                 destination = path[len("bios/"):] if path.startswith("bios/") else path
+                values, as_list = md5_field(bios.get("md5"))
+                native: dict[str, object] = {"native_name": entry["name"]}
+                if as_list:
+                    native["md5_list"] = True
                 req = BiosRequirement(
                     name=destination.rsplit("/", 1)[-1],
                     system=system_slug,
-                    md5=bios.get("md5", "") or None,
+                    md5=",".join(values) or None,
                     alt_md5=bios.get("altmd5", "") or None,
                     destination=destination,
                     required=True,
                     native_id=key,
-                    native={"native_name": entry["name"]},
+                    native=native,
                 )
                 if bios.get("zippedFile"):
                     req.zipped_file = bios["zippedFile"]

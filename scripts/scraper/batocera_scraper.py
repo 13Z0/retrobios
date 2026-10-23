@@ -24,6 +24,7 @@ from .base_scraper import (
     BaseScraper,
     BiosRequirement,
     github_headers,
+    md5_field,
     requirement_entry,
 )
 from .batocera_launchers import extract_launchers
@@ -420,10 +421,16 @@ def requirements_from_systems(
         for bios in sys_data.get("biosFiles", []):
             declared_path = bios.get("file", "")
             file_path = declared_path
-            md5 = _resolve_truncated_md5(bios.get("md5", ""), md5_index)
+            values, as_list = md5_field(bios.get("md5"))
+            md5 = ",".join(
+                _resolve_truncated_md5(value, md5_index) for value in values
+            )
             zipped_file = bios.get("zippedFile", "")
             if strip and file_path.startswith(strip):
                 file_path = file_path[len(strip):]
+            native: dict[str, object] = {"native_name": sys_data.get("name", "")}
+            if as_list:
+                native["md5_list"] = True
             requirements.append(
                 BiosRequirement(
                     name=file_path.split("/")[-1],
@@ -434,7 +441,7 @@ def requirements_from_systems(
                     required=True,
                     zipped_file=zipped_file or None,
                     native_id=sys_key,
-                    native={"native_name": sys_data.get("name", "")},
+                    native=native,
                 )
             )
     return requirements
