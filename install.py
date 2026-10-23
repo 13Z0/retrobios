@@ -9468,7 +9468,10 @@ class TuiState:
         # Files an install copies from this machine, whose bytes are no
         # download: dest to (folder, reason), reason set for a misplaced one.
         self.local_dests: dict = {}
-        self.local_done: int = 0
+        # Per --from folder, its scanned event, and the files on those
+        # folders that could not be read (unreadable events).
+        self.scanned: list = []
+        self.unreadable: list = []
         # The child run in progress: check, confirm, preview or install.
         self.run: str = ""
         self.running: bool = False
@@ -9498,9 +9501,11 @@ class TuiState:
         # The install.
         self.download: dict | None = None
         self.progress: dict | None = None
-        # (time, bytes done) of the last progress events: a partial copy
-        # resumed counts in the first one and never in a speed.
+        # (time, bytes from the network) of the last transfer events: what
+        # came from this machine (a copy, the pack, a partial file resumed)
+        # is never in a speed.
         self.samples: list = []
+        self.network: int = 0
         self.finished: list = []
         self.summary: dict | None = None
         self.code: int | None = None
@@ -9644,7 +9649,7 @@ class TuiRow(NamedTuple):
 
 
 # Screens that scroll text instead of listing rows.
-_PAGERS = ("preview", "command", "result", "misplaced")
+_PAGERS = ("preview", "command", "result", "misplaced", "unreadable")
 _CHECKLISTS = ("systems", "cores")
 
 
@@ -9795,6 +9800,8 @@ def _plan_rows(state: TuiState) -> list[TuiRow]:
     rows.append(TuiRow("fromcard", "Copy the BIOS files from your old card or a folder"))
     if _tui_misplaced(state):
         rows.append(TuiRow("misplaced", "Show the files in the wrong place"))
+    if state.unreadable:
+        rows.append(TuiRow("unreadable", "Show the files that could not be read"))
     return rows + [TuiRow("options", "Options"), TuiRow("quit", "Quit")]
 
 
@@ -9951,13 +9958,13 @@ def _start_run(state: TuiState, run: str) -> list[tuple]:
         # The systems of an earlier check go first: ticks read against them
         # dropped the --system the command line gave.
         state.check, state.files, state.systems, state.reading = None, [], [], None
-        state.found = []
+        state.found, state.scanned, state.unreadable = [], [], []
         state.checked_flags = tui_flags(state)
     elif run in ("confirm", "preview"):
         state.dry, state.dry_files, state.dry_summary = None, [], None
     else:
         state.download = state.progress = state.reading = None
-        state.samples, state.local_dests, state.local_done = [], {}, 0
+        state.samples, state.local_dests, state.network = [], {}, 0
         state.finished, state.summary, state.code, state.stopping = [], None, None, False
     return [("run", run)]
 
@@ -10174,8 +10181,8 @@ def _activate(state: TuiState, row: TuiRow) -> list[tuple]:
             return _open_folder_screen(state, state.dest)
         if action == "fromcard":
             return _open_from_browser(state)
-        if action == "misplaced":
-            return _push(state, "misplaced")
+        if action in ("misplaced", "unreadable"):
+            return _push(state, action)
         # On the first system, so A continues and the D-pad ticks.
         return _push(state, action, 3 if action == "systems" else 0)
     if screen == "systems":
@@ -10547,6 +10554,10 @@ def _take_event(state: TuiState, event: dict) -> None:
         state.reading = (event["files_done"], event["files_total"])
     elif kind == "found" and state.run == "check":
         state.found.append(event)
+    elif kind == "scanned" and state.run == "check":
+        state.scanned.append(event)
+    elif kind == "unreadable" and state.run == "check":
+        state.unreadable.append(event)
     elif kind == "found" and state.run == "install":
         state.local_dests[event["dest"]] = (event["folder"], event["reason"])
     elif state.run == "check":
@@ -10566,15 +10577,12 @@ def _take_event(state: TuiState, event: dict) -> None:
     elif state.run == "install":
         if kind == "download":
             state.download = event
+        elif kind == "transfer":
+            state.network = event["bytes_network"]
+            state.samples = [sample for sample in state.samples
+                             if sample[0] >= state.now - 10] + [(state.now, state.network)]
         elif kind in ("progress", "downloaded"):
             state.progress = event
-            if kind == "downloaded" and event["dest"] in state.local_dests:
-                # A copy from an old card or a folder: its bytes come from
-                # this machine, and a speed counting them was not the network's.
-                state.local_done += event["size"]
-            state.samples = [sample for sample in state.samples
-                             if sample[0] >= state.now - 10] + [
-                (state.now, event["bytes_done"] - state.local_done)]
             if kind == "downloaded":
                 state.finished.append((event["dest"], event["ok"], event["reason"]))
         elif kind == "summary":
@@ -10667,6 +10675,7 @@ _ROW_VERBS = {
     "preview": "Open", "folder": "Choose", "game_data": "Change", "installed": "Change",
     "jobs": "Change", "retry": "Try again", "back": "Back", "stay": "Stay",
     "fromcard": "Choose", "from": "Add a folder", "misplaced": "Show", "zip": "Copy from it",
+    "unreadable": "Show",
 }
 
 
@@ -10772,6 +10781,20 @@ def _tui_found_elsewhere(state: TuiState) -> dict[str, list[dict]]:
     return found
 
 
+def _scan_lines(state: TuiState) -> list[str]:
+    """What the reading of the --from folders left out, one line each."""
+    lines = []
+    for scan in state.scanned:
+        if scan["truncated"]:
+            lines.append(f"Read the first {MAX_SCANNED_FILES:,} files of {scan['folder']}.")
+        lines += [f"{drive} is another drive: add it to copy from it too."
+                  for drive in scan["other_drives"]]
+    if state.unreadable:
+        count = len(state.unreadable)
+        lines.append(f"{_plural(count, 'file')} on your old card could not be read.")
+    return lines
+
+
 def _last_name(folder: str) -> str:
     """A folder or ZIP by its last name, a drive by itself (E:\\)."""
     return Path(folder).name or folder
@@ -10844,6 +10867,8 @@ def _plan_lines(check: dict, dest: Path | None, state: TuiState) -> list:
             hint.os_type = state.os_type
             lines.append("Or run it as root, this folder named: "
                          + hint.command(state.platform, dest, elevated=True))
+    if check is state.check:
+        lines += _scan_lines(state)
     if check.get("not_installable"):
         lines += _unavailable_lines(state)
     return lines
@@ -11073,6 +11098,9 @@ def _pager_items(state: TuiState) -> list:
     """The text of a screen that scrolls, the same for its view and its keys."""
     if state.screen == "misplaced":
         return [f"{event['dest']}: {event['reason']}" for event in _tui_misplaced(state)]
+    if state.screen == "unreadable":
+        return [f"{event['path']}" + (f", {event['member']}" if event["member"] else "")
+                + f": {event['reason']}" for event in state.unreadable]
     if state.screen == "result":
         return tui_outcome(state)[1]
     if state.screen == "command":
@@ -11096,6 +11124,12 @@ def _view_preview(state: TuiState, width: int, height: int) -> tuple:
     # The count and the blank line above the files are not among them.
     lead = 2 if state.dry is not None and not state.running else 0
     return ("Preview", _pager(state, width, height, _pager_items(state), lead),
+            ("A/Enter Back", "Up/Down Scroll"))
+
+
+def _view_unreadable(state: TuiState, width: int, height: int) -> tuple:
+    return ("Files that could not be read",
+            _pager(state, width, height, _pager_items(state)),
             ("A/Enter Back", "Up/Down Scroll"))
 
 
@@ -11136,10 +11170,9 @@ def _view_installing(state: TuiState, width: int, height: int) -> tuple:
         lines.append(_bar(min(done / total, 1.0) if total else 1.0, width))
         lines.append(f"{format_size(done)} of {format_size(total)}")
         window = [sample for sample in state.samples if sample[0] >= state.now - 5]
-        fetched = done - state.local_done
-        start, base = window[0] if window else (state.now, fetched)
+        start, base = window[0] if window else (state.now, state.network)
         seconds = state.now - start
-        speed = (fetched - base) / seconds if seconds >= 1 else 0
+        speed = (state.network - base) / seconds if seconds >= 1 else 0
         if speed > 0:
             lines.append(f"{format_size(int(speed))}/s, "
                          f"{format_duration((total - done) / speed)} left")
@@ -11351,6 +11384,7 @@ _TUI_VIEWS: dict[str, Callable[[TuiState, int, int], tuple]] = {
     "preview": _view_preview, "command": _view_command, "confirm": _view_confirm,
     "installing": _view_installing, "result": _view_result, "error": _view_error,
     "quit": _view_quit, "cardroot": _view_cardroot, "misplaced": _view_misplaced,
+    "unreadable": _view_unreadable,
 }
 
 
@@ -11893,7 +11927,20 @@ def run_tui(args: argparse.Namespace) -> int:
     os_type = _INVOCATION.os_type or detect_os()
     if os_type == "wsl":
         _enter_wsl()
-    _open_local_sources(args)
+    # The --from folders are read by each check, not here: indexing a large
+    # card held the first frame back. Only whether each can be read is asked.
+    folders = getattr(args, "from") or []
+    setattr(args, "from", None)
+    try:
+        _open_local_sources(args)
+    finally:
+        setattr(args, "from", folders)
+    for folder in folders:
+        problem = from_folder_problem(str(folder))
+        if problem is not None:
+            print(f"Error: {folder} {problem[1]}: --from names the folder to copy BIOS "
+                  "files from.", file=sys.stderr)
+            return 1
     state, effects = tui_start(args, os_type)
     work = Path(tempfile.mkdtemp(prefix=TUI_WORK_PREFIX))
     (work / TUI_OWNER).write_text(str(os.getpid()), encoding="utf-8")

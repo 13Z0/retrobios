@@ -883,6 +883,7 @@ def golden_states() -> dict:
     installing.run, installing.running = "install", True
     installing.download = {"event": "download", "files": 4, "bytes": 1064964}
     installing.samples, installing.now = [(100.0, 12672), (104.0, 540672)], 104.0
+    installing.network = 540672
     installing.progress = {"files_done": 2, "files_total": 4, "bytes_done": 540672,
                            "bytes_total": 1064964}
     installing.finished = [("gba_bios.bin", True, ""), ("scph5500.bin", False, "HTTP 404")]
@@ -1103,6 +1104,10 @@ class SmallFixes(unittest.TestCase):
             install.tui_receive(state, ("event", state.run_id, {
                 "event": "progress", "files_done": 0, "files_total": 2,
                 "bytes_done": done, "bytes_total": 1000 * mega}))
+            # The partial copy resumed is counted local by the engine.
+            install.tui_receive(state, ("event", state.run_id, {
+                "event": "transfer", "bytes_local": 500 * mega,
+                "bytes_network": done - 500 * mega}))
         text = "\n".join(install.tui_view(state, 80, 24))
         self.assertIn("1.0 MB/s, 8:18 left", text)
 
@@ -1713,10 +1718,17 @@ class CopyFromAnOldCard(unittest.TestCase):
                   (10.0, {"event": "downloaded", "dest": "big.bin", "ok": True, "reason": "",
                           "size": 200 * mega, "files_done": 1, "files_total": 2,
                           "bytes_done": 200 * mega, "bytes_total": 300 * mega}),
+                  # The engine says which bytes came from this machine.
+                  (10.0, {"event": "transfer", "bytes_local": 200 * mega,
+                          "bytes_network": 0}),
                   (11.0, {"event": "progress", "files_done": 1, "files_total": 2,
                           "bytes_done": 201 * mega, "bytes_total": 300 * mega}),
+                  (11.0, {"event": "transfer", "bytes_local": 200 * mega,
+                          "bytes_network": mega}),
                   (12.0, {"event": "progress", "files_done": 1, "files_total": 2,
-                          "bytes_done": 202 * mega, "bytes_total": 300 * mega})]
+                          "bytes_done": 202 * mega, "bytes_total": 300 * mega}),
+                  (12.0, {"event": "transfer", "bytes_local": 200 * mega,
+                          "bytes_network": 2 * mega})]
         for when, event in events:
             state.now = when
             install.tui_receive(state, ("event", state.run_id, event))
@@ -2118,6 +2130,63 @@ class AuditRoundThree(unittest.TestCase):
         with mock.patch.dict(install._RETROARCH_CONFIGS, {SYSTEM_DIR: (config, config.parent)}):
             text = "\n".join(install.tui_view(checked_state(), 80, 24))
         self.assertIn("Named by ~/.config/retroarch/retroarch.cfg", text)
+
+    # The engine's own events (main, after the second audit).
+
+    def test_the_speed_is_the_network_bytes(self):
+        state = checked_state()
+        state.stack.append("installing")
+        state.run, state.running = "install", True
+        install.tui_receive(state, ("event", state.run_id,
+                                    {"event": "download", "files": 4, "bytes": 4 << 20}))
+        for now, done, network in ((100.0, 1 << 20, 0), (102.0, 3 << 20, 1 << 20)):
+            state.now = now
+            install.tui_receive(state, ("event", state.run_id, {
+                "event": "progress", "files_done": 1, "files_total": 4, "bytes_done": done,
+                "bytes_total": 4 << 20}))
+            install.tui_receive(state, ("event", state.run_id, {
+                "event": "transfer", "bytes_local": done - network, "bytes_network": network}))
+        text = "\n".join(install.tui_view(state, 80, 24))
+        # 1 MB from the network in 2 s, whatever came from the old card.
+        self.assertIn("512.0 KB/s, 0:02 left", text)
+
+    def test_the_plan_says_what_the_scan_left_out(self):
+        state = checked_state()
+        state.from_folders = [Path("E:\\")]
+        install._start_check(state)
+        events = [{"event": "scanned", "folder": "E:\\", "files": 200000, "truncated": True,
+                   "other_drives": ["E:\\D"]},
+                  {"event": "unreadable", "platform": "retroarch", "folder": "E:\\",
+                   "path": "E:\\bios\\scph5501.bin", "member": "", "reason": "Permission denied"},
+                  {"event": "unreadable", "platform": "retroarch", "folder": "E:\\",
+                   "path": "E:\\backup.zip", "member": "gba_bios.bin",
+                   "reason": "it is encrypted, a password is needed"}]
+        for event in [*FILES, *SYSTEMS, *events, CHECK]:
+            install.tui_receive(state, ("event", state.run_id, event))
+        with mock.patch.object(install, "_tui_folder_facts", return_value={
+                "free": 50 * 1024 ** 3, "writable": True, "cores": []}):
+            install.tui_receive(state, ("ended", state.run_id, 1, []))
+        text = " ".join(" ".join(install.tui_view(state, 120, 40)).split())
+        self.assertIn("Read the first 200,000 files of E:\\.", text)
+        self.assertIn("E:\\D is another drive: add it to copy from it too.", text)
+        self.assertIn("2 files on your old card could not be read.", text)
+        rows = install.tui_rows(state)
+        state.focus["plan"] = next(i for i, row in enumerate(rows) if row.action == "unreadable")
+        press(state, "enter")
+        self.assertEqual(state.screen, "unreadable")
+        self.assertEqual(install._pager_items(state), [
+            "E:\\bios\\scph5501.bin: Permission denied",
+            "E:\\backup.zip, gba_bios.bin: it is encrypted, a password is needed"])
+
+    def test_the_interface_does_not_index_the_folders_itself(self):
+        missing = REPO_ROOT / "tmp" / "no-such-old-card"
+        err = io.StringIO()
+        with mock.patch.object(install, "FolderIndex", side_effect=AssertionError("indexed")), \
+                mock.patch.object(install, "detect_os", return_value="linux"), \
+                mock.patch.object(install, "tui_start", side_effect=AssertionError("opened")), \
+                mock.patch.object(sys, "stderr", err):
+            self.assertEqual(install.run_tui(_args(**{"from": [missing]})), 1)
+        self.assertIn(f"Error: {missing} does not exist: --from names the folder", err.getvalue())
 
     # Work folders: only a kill no handler sees leaves one, and the next
     # run takes it away.
