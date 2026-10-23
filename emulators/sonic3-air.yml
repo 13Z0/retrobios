@@ -9,6 +9,27 @@ display_name: "Sonic 3 - Angel Island Revisited"
 cores: [sonic3air]
 systems: [sonic3-air]
 
+data_root:
+  android:
+    path: "Android/data/org.eukaryot.sonic3air/files"
+    source_ref: "Oxygen/oxygenengine/source/oxygen/engine/EngineMain.cpp:366-375, Oxygen/sonic3air/build/_android/app/build.gradle:15"
+  ios:
+    path: "Documents"
+    source_ref: "Oxygen/sonic3air/build/_xcode/sonic3air_iosApp/main.mm:32-43"
+    note: "the app's own Documents folder, listed by the Files app under the app"
+  windows:
+    path: "%APPDATA%/Sonic3AIR"
+    source_ref: "Oxygen/oxygenengine/source/oxygen/engine/EngineMain.cpp:379-396, Oxygen/oxygenengine/source/oxygen/platform/PlatformFunctions.cpp:356-366, Oxygen/sonic3air/source/sonic3air/EngineDelegate.cpp:47"
+    note: "a savedata folder in the working directory is used instead when it exists. A redirect.json in the root can point elsewhere"
+  macos:
+    path: "~/Library/Application Support/sonic3air/Sonic3AIR"
+    source_ref: "Oxygen/sonic3air/build/_xcode/sonic3air_MacApp/AppDelegate.mm:40-53, Oxygen/oxygenengine/source/oxygen/engine/EngineMain.cpp:379-396"
+    note: "a redirect.json in the root can point elsewhere"
+  linux:
+    path: "$XDG_DATA_HOME/Sonic3AIR"
+    source_ref: "Oxygen/oxygenengine/source/oxygen/engine/EngineMain.cpp:379-396, Oxygen/oxygenengine/source/oxygen/platform/PlatformFunctions.cpp:139-152, Oxygen/oxygenengine/source/oxygen/platform/PlatformFunctions.cpp:367-372"
+    note: "~/.local/share/Sonic3AIR when XDG_DATA_HOME is unset. A savedata folder in the working directory is used instead when it exists. A redirect.json in the root can point elsewhere"
+
 notes: |
   Sonic 3 - Angel Island Revisited by Eukaryot. The Oxygen Engine runs the
   decompiled game logic (lemon scripts) against the original Genesis ROM
