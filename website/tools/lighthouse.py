@@ -31,7 +31,7 @@ def main() -> int:
     engines = dict(item.split("=", 1) for item in args[:split])
     pages = args[split + 1:]
     out.mkdir(parents=True, exist_ok=True)
-    env = {**os.environ, "CHROME_PATH": "/usr/bin/google-chrome"}
+    env = {**os.environ, "CHROME_PATH": "/usr/bin/google-chrome", "NODE_DISABLE_COMPILE_CACHE": "1"}
     for name, base in engines.items():
         for page in pages:
             slug = page.strip("/").replace("/", "_") or "home"

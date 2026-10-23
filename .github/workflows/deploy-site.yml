@@ -22,6 +22,7 @@ on:
       - "scripts/exporter/baseline.py"
       - "scripts/exporter/candidates.py"
       - "scripts/gamedata.py"
+      - "scripts/generate_event_schema.py"
       - "scripts/generate_pack.py"
       - "scripts/generate_readme.py"
       - "scripts/generate_site.py"
@@ -89,6 +90,10 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    # Node's compile cache writes under /tmp on every node run, the build
+    # and the search gate alike.
+    env:
+      NODE_DISABLE_COMPILE_CACHE: "1"
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7
 
