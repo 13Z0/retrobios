@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import re
 import sys
 import tempfile
 import unittest
@@ -357,13 +356,14 @@ class TheSearchSkipsLinkLists(unittest.TestCase):
         entry = {"name": "a.bin", "sha1": sha1, "md5": "b" * 32, "size": 3}
         lines = generate_site._system_file_card(entry, consumers)
         self.assertIn("<code>a.bin</code>", lines[2])
-        rows = {re.search(r"<dt>(.*?)</dt>", line)[1]: line for line in lines
-                if line.startswith("<div") and "<dt>" in line}
+        text = "\n".join(lines)
+        searched, _sep, skipped = text.partition('<dl class="rb-facts" data-pagefind-ignore>')
         for label in ("MD5", "Emulators", "Packed for its emulators by"):
-            self.assertTrue(rows[label].startswith("<div data-pagefind-ignore>"), label)
+            self.assertIn(f"<dt>{label}</dt>", skipped)
+            self.assertNotIn(f">{label}</dt>", searched)
         # The platforms line names the file as each setup does: the site
         # search reads it, so a file name finds its card.
-        self.assertTrue(rows["On the setup's list"].startswith("<div><dt>"))
+        self.assertRegex(searched, r'<dl class="rb-facts">\n<dt[^>]*>On the setup\'s list</dt>')
 
     def test_a_game_data_card_skips_its_name_too(self):
         import generate_site

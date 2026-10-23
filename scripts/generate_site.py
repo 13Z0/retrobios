@@ -2931,35 +2931,44 @@ def generate_systems_index(manufacturers: dict) -> str:
         "",
     ]
 
-    for heading, games, first in (("Consoles and computers", False, "Console"),
-                                  ("Game engines and PC games", True, "Name")):
+    # Other holds one folder per emulator: a7800 or altirra in the console
+    # table named no console.
+    def kind(mfr: str) -> str:
+        if mfr in GAME_DATA_TOPS:
+            return "games"
+        return "programs" if mfr == "Other" else "consoles"
+
+    for heading, group, first, note in (
+        ("Consoles and computers", "consoles", "Console", ""),
+        ("Emulator folders", "programs", "Folder",
+         "Files kept under the emulator that reads them, not under a console."),
+        ("Game engines and PC games", "games", "Name",
+         "Game engines and PC games hold the files a game engine reads, such "
+         "as the data of a game, rather than the BIOS of a machine."),
+    ):
         rows = sorted(
             ((_console_display(mfr, console), mfr, console, len(files))
-             for mfr, consoles in manufacturers.items()
-             if (mfr in GAME_DATA_TOPS) == games
+             for mfr, consoles in manufacturers.items() if kind(mfr) == group
              for console, files in consoles.items()),
             key=lambda row: (row[0].casefold(), row[1].casefold(), row[2]),
         )
         if not rows:
             continue
+        lines += [f"## {heading}", ""]
+        if note:
+            lines += [note, ""]
         lines += [
-            f"## {heading}",
-            "",
-            f"| {first} | Manufacturer | Files |",
-            "|---------|--------------|------:|",
+            # The count before the maker: on a phone the last column is
+            # the one scrolled off, and most names carry the maker already.
+            f"| {first} | Files | Maker |",
+            "|---------|------:|-------|",
         ]
         for name, mfr, console, count in rows:
             cell = name.replace("|", "-")
             anchor = _slugify_anchor(console)
             href = f"{_slug(mfr)}.md" + (f"#{anchor}" if anchor else "")
-            lines.append(f"| [{cell}]({href}) | [{mfr}]({_slug(mfr)}.md) | {count:,} |")
+            lines.append(f"| [{cell}]({href}) | {count:,} | [{mfr}]({_slug(mfr)}.md) |")
         lines.append("")
-        if games:
-            lines += [
-                "Game engines and PC games hold the files a game engine reads, such "
-                "as the data of a game, rather than the BIOS of a machine.",
-                "",
-            ]
 
     return "\n".join(lines) + "\n"
 
@@ -3467,7 +3476,10 @@ def _system_file_card(
             if group:
                 lines.append(f'<dl class="rb-facts"{attributes}>')
                 # One value cell per label: the grid pairs each dt with one dd.
-                lines.extend(f"<dt>{label}</dt><dd>"
+                # A searched value keeps its label out: the excerpt ran the two
+                # together, "On the setup's listAmberELEC".
+                label_skip = f" {skip}" if not attributes else ""
+                lines.extend(f"<dt{label_skip}>{label}</dt><dd>"
                              + "<br>".join(_inline_card_html(v) for v in values) + "</dd>"
                              for label, values, _searched in group)
                 lines.append("</dl>")

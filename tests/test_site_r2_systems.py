@@ -155,8 +155,9 @@ class TheCardLinesSayWhatTheyMean(unittest.TestCase):
 
     def test_labels_and_display_names(self):
         text = "\n".join(self.lines)
-        self.assertIn("<dt>On the setup's list</dt><dd><a href=\"../platforms/batocera.md"
-                      "#sony-playstation\">Batocera</a>: scph5501.bin</dd>", text)
+        self.assertIn("<dt data-pagefind-ignore>On the setup's list</dt><dd><a href=\"../"
+                      "platforms/batocera.md#sony-playstation\">Batocera</a>: scph5501.bin</dd>",
+                      text)
         self.assertIn("<dt>Packed for its emulators by</dt><dd><a href=\"../platforms/"
                       "retrobat.md\">RetroBat</a>: bios/scph5501.bin</dd>", text)
         self.assertNotIn("Platforms:", text)
@@ -168,6 +169,9 @@ class TheCardLinesSayWhatTheyMean(unittest.TestCase):
         searched = "\n".join(self.lines).split('<dl class="rb-facts">', 1)[1].split("</dl>")[0]
         self.assertIn("On the setup's list", searched)
         self.assertNotIn("SHA1", searched)
+        # The label stays out of the excerpt: the search ran the two
+        # together, "On the setup's listAmberELEC".
+        self.assertIn("<dt data-pagefind-ignore>On the setup's list</dt><dd>", searched)
 
     def test_the_page_defines_both_lines(self):
         page = gs.generate_system_page("Sony", {"PlayStation": [_file("scph5501.bin", "4")]},
@@ -235,12 +239,14 @@ class TheSystemsIndexListsConsoles(unittest.TestCase):
             "Game Engines": {"TheXTech": [_file("d.png", "d")]},
         }
         page = gs.generate_systems_index(groups)
-        self.assertIn("| [Sony PlayStation](sony.md#playstation) | [Sony](sony.md) | 1 |", page)
-        self.assertIn("| [Sony PlayStation 2](sony.md#playstation-2) | [Sony](sony.md) | 1 |",
+        self.assertIn("| [Sony PlayStation](sony.md#playstation) | 1 | [Sony](sony.md) |", page)
+        self.assertIn("| [Sony PlayStation 2](sony.md#playstation-2) | 1 | [Sony](sony.md) |",
                       page)
-        # A program's folder under Other is named alone.
-        self.assertIn("| [ScummVM](other.md#scummvm) | [Other](other.md) | 1 |", page)
-        consoles = page.split("## Game engines")[0]
+        # A program's folder under Other is named alone, in its own table.
+        consoles = page.split("## Emulator folders")[0]
+        self.assertNotIn("ScummVM", consoles)
+        self.assertIn("| [ScummVM](other.md#scummvm) | 1 | [Other](other.md) |",
+                      page.split("## Emulator folders")[1])
         self.assertNotIn("TheXTech", consoles)
         self.assertIn("| [TheXTech](game-engines.md#thextech)", page)
 
