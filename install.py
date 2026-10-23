@@ -9426,6 +9426,9 @@ class TuiState:
     def __init__(self, os_type: str = "linux", home: Path | None = None) -> None:
         self.os_type = os_type
         self.home = home or Path("/home/user")
+        # The buttons the bar names: a pad route (TUI_PAD_ROUTES), "keys"
+        # for a keyboard alone, "both" where the code cannot tell.
+        self.pad: str = "both"
         self.stack: list = ["setup"]
         self.focus: dict = {}
         self.filters: dict = {}
@@ -9527,6 +9530,36 @@ def plain_requested(args: argparse.Namespace, env: Mapping[str, str] | None = No
     """Whether the line questions were asked for: --plain, RETROBIOS_PLAIN, ACCESSIBLE."""
     env = os.environ if env is None else env
     return bool(args.plain) or _env_on(env, "RETROBIOS_PLAIN") or _env_on(env, "ACCESSIBLE")
+
+
+# Each handheld launcher names the buttons that reach the interface
+# (ports/shared/tui.txt exports RB_PAD as this), so the bar names those
+# buttons and no others.
+TUI_PAD_ENV = "RETROBIOS_PAD"
+TUI_PAD_ROUTES = ("gptokeyb", "muxterm", "evmapy", "miyoo")
+# Set by Steam for what it starts, and by gamescope: a controller may be
+# all there is, mapped by Steam Input to keys nobody here can name.
+_STEAM_MARKERS = ("SteamGamepadUI", "SteamDeck", "SteamGameId", "GAMESCOPE_WAYLAND_DISPLAY")
+
+
+def tui_pad_route(os_type: str, env: Mapping[str, str] | None = None) -> str:
+    """The keys the hints name: a launcher's pad route, "keys" at a desktop,
+    "both" (button and key) where nothing says which one is held."""
+    env = os.environ if env is None else env
+    named = env.get(TUI_PAD_ENV, "").strip().lower()
+    if named:
+        return named if named in TUI_PAD_ROUTES else "both"
+    if any(env.get(name) for name in _STEAM_MARKERS):
+        return "both"
+    if os_type in ("windows", "darwin", "wsl"):
+        return "keys"
+    # A Linux console is where a handheld draws: a desktop or a remote
+    # shell is a keyboard's.
+    if os_type == "linux" and env.get("TERM") != "linux" and any(
+            env.get(name) for name in ("DISPLAY", "WAYLAND_DISPLAY", "SSH_CONNECTION",
+                                       "SSH_TTY")):
+        return "keys"
+    return "both"
 
 
 def _terminal_size(stream: TextIO) -> tuple[int, int]:
@@ -9690,7 +9723,10 @@ def _filter_row(state: TuiState) -> TuiRow:
         return TuiRow("filter", f"Filter: {text}_")
     if text:
         return TuiRow("filter", f"Filter: {text}")
-    return TuiRow("filter", "Filter (/ to type)", style="dim")
+    # A pad has no / and no letters: muxterm's own keyboard types.
+    how = {"muxterm": "Select shows a keyboard", "gptokeyb": "with a keyboard",
+           "evmapy": "with a keyboard", "miyoo": "with a keyboard"}.get(state.pad, "/ to type")
+    return TuiRow("filter", f"Filter ({how})", style="dim")
 
 
 def _system_titles(state: TuiState) -> dict:
@@ -10447,6 +10483,8 @@ def tui_update(state: TuiState, key: TuiKey) -> list[tuple]:
         return _path_key(state, key)
     if state.editing:
         return _filter_key(state, key)
+    if state.pad == "miyoo":
+        key = _miyoo_key(state, key)
     char = key.text if key.name == "char" else ""
     if key.name == "f1" or char == "?":
         state.help = True
@@ -10526,6 +10564,29 @@ def tui_update(state: TuiState, key: TuiKey) -> list[tuple]:
         return _activate(state, row)
     state.focus[screen] = focus
     return []
+
+
+# A Miyoo's L1 and R1 are the keys E and T (codes 18 and 20).
+_MIYOO_PAGES = {"e": "pgup", "t": "pgdn"}
+
+
+def _miyoo_key(state: TuiState, key: TuiKey) -> TuiKey:
+    """A Miyoo's buttons as the keys they stand for, outside a text field:
+    its A is Space, the button that chooses, so it acts as Enter but where
+    it ticks a system or a core."""
+    if key.name != "char":
+        return key
+    if key.text in _MIYOO_PAGES:
+        return TuiKey(_MIYOO_PAGES[key.text])
+    if key.text != " ":
+        return key
+    if state.screen in _CHECKLISTS:
+        rows = tui_rows(state)
+        row = rows[max(0, min(state.focus.get(state.screen, 0), len(rows) - 1))] \
+            if rows else None
+        if row is not None and row.action in ("system", "core"):
+            return key
+    return TuiKey("enter")
 
 
 # Rows Space leaves alone: it is X (tick) on PortMaster and Y on muxterm, a
@@ -10640,6 +10701,55 @@ def tui_receive(state: TuiState, message: tuple) -> list[tuple]:
 # and nothing said how to tick with a controller.
 _SHORT_KEYS = (("A/Enter ", "A "), ("B/Esc ", "B "), ("X/Space ", "X "), ("Y/o ", "Y "),
                ("Left/Right ", "<> "), ("Up/Down ", "^v "))
+
+
+# The key of a hint as each route names it, None for a key it lacks. The
+# bar is written in the "both" form ("A/Enter Install"), the route's own
+# names replace it: a PC user read "A/Enter", a muOS player was told a
+# Start+Select that muxterm does not have.
+_ROUTE_KEYS: dict[str, dict[str, str | None]] = {
+    "keys": {"A/Enter": "Enter", "B/Esc": "Esc", "X/Space": "Space", "Y/o": "o"},
+    # retrobios.gptk: A Enter, B Esc, X Space, Y Tab, L1 and R1 a page,
+    # Start Enter, Select Esc, Start+Select the kill.
+    "gptokeyb": {"A/Enter": "A", "B/Esc": "B", "X/Space": "X", "Y/o": "Y", "?": None,
+                 "/": None, "Ctrl-C": "Start+Select", "Enter": "A", "Esc": "B",
+                 "Ctrl-U": None},
+    # RetroBIOS.sh.keys: the same buttons, and no combo that ends the run.
+    "evmapy": {"A/Enter": "A", "B/Esc": "B", "X/Space": "X", "Y/o": "Y", "?": None,
+               "/": None, "Ctrl-C": None, "Enter": "A", "Esc": "B", "Ctrl-U": None},
+    # muxterm's own keys: Start Enter, B Backspace, Y Space, Menu closes the
+    # terminal. A, X, L1 and R1 send nothing, Select shows its keyboard.
+    "muxterm": {"A/Enter": "Start", "B/Esc": "B", "X/Space": "Y", "Y/o": None, "?": None,
+                "/": None, "Ctrl-C": "Menu", "Enter": "Start", "Esc": None,
+                "Ctrl-U": None},
+    # Buttons that are keys already: A Space, Start Enter, L2 Tab, R2
+    # Backspace. B is Left Ctrl, a modifier: alone it sends no byte to a
+    # terminal (the console's keyboard driver only records its state), so
+    # the interface never sees it, nor X, Y and Select (Shift, Alt, Ctrl).
+    "miyoo": {"A/Enter": "A", "B/Esc": "R2", "X/Space": "A", "Y/o": "L2", "?": None,
+              "/": None, "Ctrl-C": None, "Enter": "Start", "Esc": None, "Ctrl-U": None},
+}
+
+
+def _route_hint(state: TuiState, parts: tuple) -> tuple:
+    """The bar's entries named as the run's input names them."""
+    names = _ROUTE_KEYS.get(state.pad)
+    if names is None or state.help:
+        return parts
+    named = []
+    for part in parts:
+        key, sep, what = part.partition(" ")
+        if key in names:
+            # On a Miyoo A is Space, which ticks in a checklist: Start continues.
+            mine = ("Start" if state.pad == "miyoo" and key == "A/Enter"
+                    and state.screen in _CHECKLISTS else names[key])
+            if mine is None:
+                continue
+            key = mine
+        named.append(key + sep + what)
+    if state.pad == "muxterm" and state.screen == "path":
+        named.append("Select Keyboard")
+    return tuple(named)
 
 
 def _hint(width: int, *parts: str) -> str:
@@ -11158,6 +11268,17 @@ def _bar(share: float, width: int) -> str:
     return f"[{'#' * filled}{'-' * (room - filled)}] {int(share * 100):3d}%"
 
 
+# What stops an install a second time, and the first time, per route.
+_STOP_KEYS = {
+    "both": ("B or Ctrl-C", "B, Ctrl-C or Start+Select"),
+    "keys": ("Esc or Ctrl-C", "Esc or Ctrl-C"),
+    "gptokeyb": ("B", "B or Start+Select"),
+    "evmapy": ("B", "B"),
+    "muxterm": ("B", "B"),
+    "miyoo": ("R2", "R2"),
+}
+
+
 def _view_installing(state: TuiState, width: int, height: int) -> tuple:
     lines: list = []
     if state.download is None:
@@ -11180,10 +11301,10 @@ def _view_installing(state: TuiState, width: int, height: int) -> tuple:
         lines.append(f"{files_done} of {_plural(state.download['files'], 'file')}")
         if files_done >= state.download["files"] and state.summary is None:
             lines.append("Finishing...")
-    lines.append(_styled("Stopping, finishing the files in flight. Press B or Ctrl-C "
+    stops = _STOP_KEYS.get(state.pad, _STOP_KEYS["both"])
+    lines.append(_styled(f"Stopping, finishing the files in flight. Press {stops[0]} "
                          "again to stop now." if state.stopping
-                         else "B, Ctrl-C or Start+Select stops. What is done stays done.",
-                         "dim"))
+                         else f"{stops[1]} stops. What is done stays done.", "dim"))
     room = height - len(lines) - 1
     failed = [item for item in reversed(state.finished) if not item[1]]
     good = [item for item in reversed(state.finished) if item[1]]
@@ -11388,21 +11509,68 @@ _TUI_VIEWS: dict[str, Callable[[TuiState, int, int], tuple]] = {
 }
 
 
+# The help's names for each action, per route: the buttons first, then the
+# keys a keyboard plugged in also has. None for an action the route lacks.
+_HELP_KEYS: dict[str, dict[str, str | None]] = {
+    "both": {"move": "Up/Down, k/j", "page": "PgUp/PgDn, L1/R1", "ok": "A/Enter, Start",
+             "tick": "X, Right/Left", "options": "Y, o, Tab", "back": "B/Esc, Backspace",
+             "stop": "B/Esc, Ctrl-C", "kill": "Start+Select", "enter": "Enter",
+             "esc": "Esc"},
+    "keys": {"move": "Up/Down, k/j", "page": "PgUp/PgDn", "ok": "Enter",
+             "tick": "Space, Right/Left", "options": "o, Tab", "back": "Esc, Backspace",
+             "stop": "Esc, Ctrl-C", "kill": None, "enter": "Enter", "esc": "Esc"},
+    "gptokeyb": {"move": "D-pad, Up/Down", "page": "L1/R1, PgUp/PgDn",
+                 "ok": "A, Start, Enter", "tick": "X, Space, Right/Left",
+                 "options": "Y, Tab, o", "back": "B, Select, Esc", "stop": "B, Esc, Ctrl-C",
+                 "kill": "Select, then Start", "enter": "A, Enter", "esc": "B, Esc"},
+    "evmapy": {"move": "D-pad, Up/Down", "page": "L1/R1, PgUp/PgDn", "ok": "A, Start, Enter",
+               "tick": "X, Space, Right/Left", "options": "Y, Tab, o",
+               "back": "B, Select, Esc", "stop": "B, Esc, Ctrl-C", "kill": None,
+               "enter": "A, Enter", "esc": "B, Esc"},
+    "muxterm": {"move": "D-pad, Up/Down", "page": "PgUp/PgDn", "ok": "Start, Enter",
+                "tick": "Y, Space, Right/Left", "options": "o, Tab",
+                "back": "B, Esc, Backspace", "stop": "B, Esc, Ctrl-C", "kill": None,
+                "enter": "Start, Enter", "esc": "Esc"},
+    "miyoo": {"move": "D-pad, Up/Down", "page": "L1/R1, PgUp/PgDn", "ok": "A, Start, Enter",
+              "tick": "A, Space, Right/Left", "options": "L2, Tab, o",
+              "back": "R2, Esc, Backspace", "stop": "R2, Esc, Ctrl-C", "kill": None,
+              "enter": "Start, Enter", "esc": "Esc"},
+}
+
+
+def _route_extras(state: TuiState) -> list[tuple[str, str]]:
+    """What a route's own buttons do that no key of the table says."""
+    if state.pad == "muxterm":
+        return [("Select", "Keyboard on or off"), ("Menu", "Close the terminal")]
+    if state.pad == "miyoo":
+        return [("B", "Sends no key here")]
+    return []
+
+
 def _help_lines(state: TuiState) -> list[tuple[str, str]]:
     screen = state.screen
+    names = _HELP_KEYS.get(state.pad, _HELP_KEYS["both"])
+    # gptokeyb's kill: Start pressed first also chooses the row in focus.
+    kill = ([(names["kill"], "Quit at once")]
+            if state.pad == "gptokeyb" else [])
     if screen == "installing":
-        return [("B/Esc, Ctrl-C", "Stop: what is done stays done"),
-                ("Start+Select", "Stop"), ("?, F1", "This help")]
+        return [(names["stop"], "Stop: what is done stays done"),
+                *([(names["kill"], "Stop")] if names["kill"] else []),
+                *_route_extras(state), ("?, F1", "This help")]
     if screen == "path":
-        return [("Enter", "Use this folder"), ("Backspace", "Delete a character"),
-                ("Ctrl-U", "Clear"), ("Esc", "Back"), ("Ctrl-C", "Quit")]
-    keys = [("Up/Down, k/j", "Move")]
+        return [(names["enter"], "Use this folder"), ("Backspace", "Delete a character"),
+                ("Ctrl-U", "Clear"), (names["esc"], "Back"), ("Ctrl-C", "Quit"),
+                *_route_extras(state)]
+    keys = [(names["move"], "Move")]
     if len(tui_rows(state)) > 9 or screen in _PAGERS:
-        keys += [("PgUp/PgDn, L1/R1", "Page"), ("Home/End, g/G", "First, last")]
+        keys += [(names["page"], "Page"), ("Home/End, g/G", "First, last")]
     primary = _primary(state) or _TUI_VIEWS[screen](state, 80, 24)[2][0]
-    keys.append(("A/Enter, Start", primary.split(" ", 1)[-1]))
+    ok = names["ok"]
+    if state.pad == "miyoo" and screen in _CHECKLISTS:
+        ok = names["enter"]
+    keys.append((ok, primary.split(" ", 1)[-1]))
     if screen in _CHECKLISTS:
-        keys.append(("X, Right/Left", "Tick, untick"))
+        keys.append((names["tick"], "Tick, untick"))
     if screen == "systems":
         keys.append(("a, n", "All, none"))
     if screen in ("platforms", "systems", "cores"):
@@ -11412,9 +11580,10 @@ def _help_lines(state: TuiState) -> list[tuple[str, str]]:
     if screen == "options":
         keys.append(("Left/Right", "Change a value"))
     if screen in ("plan", "systems", "confirm"):
-        keys.append(("Y, o, Tab", "Options"))
+        keys.append((names["options"], "Options"))
     back = "Quit" if len(state.stack) == 1 else "Back"
-    keys += [("B/Esc, Backspace", back), ("q, Ctrl-C", "Quit"), ("?, F1", "This help")]
+    keys += [(names["back"], back), ("q, Ctrl-C", "Quit"), *kill, *_route_extras(state),
+             ("?, F1", "This help")]
     return keys
 
 
@@ -11456,6 +11625,7 @@ def tui_view(state: TuiState, cols: int, rows: int) -> list[str]:
     primary = _primary(state) if not state.help and hint[0].startswith("A/Enter") else None
     if primary:
         hint = (primary, *hint[1:])
+    hint = _route_hint(state, hint)
     lines = [_styled(fit(f" RetroBIOS: {title}", cols), "title"), _styled("")]
     lines += [_styled(fit(" " + line, cols), line.style) for line in body[:height]]
     lines += [_styled("")] * (rows - 1 - len(lines))
@@ -11522,6 +11692,7 @@ def tui_start(
 ) -> tuple[TuiState, list[tuple]]:
     """The first screen, from what is found here and what the command named."""
     state = TuiState(os_type=os_type, home=Path.home())
+    state.pad = tui_pad_route(os_type)
     state.cli_systems = list(args.system or [])
     state.regions = resolve_regions(args.region) if args.region else []
     state.cli_regions = list(state.regions)
@@ -11737,6 +11908,7 @@ class _TuiTerminal:
         self.ended = False
         self.heard = 0.0
         self.frame: list[tuple[str, str]] = []
+        self.entered = False
 
     def enter(self) -> None:
         if os.name != "nt":
@@ -11753,13 +11925,18 @@ class _TuiTerminal:
             mode[6][termios.VMIN] = 1
             mode[6][termios.VTIME] = 0
             termios.tcsetattr(self.fd, termios.TCSANOW, mode)
+        self.entered = True
         self.write(_SCREEN_ON)
 
     def leave(self) -> None:
         """The main screen and the mode found, the mode even when the write
         fails: a closed window answers EIO."""
         try:
-            self.write(_SCREEN_OFF)
+            # Never entered (stopped while it started): the main screen and
+            # the cursor are as they were, nothing is written over them.
+            if getattr(self, "entered", True):
+                self.entered = False
+                self.write(_SCREEN_OFF)
         finally:
             if self.saved is not None:
                 import termios  # noqa: PLC0415
@@ -11924,24 +12101,31 @@ def _farewell_lines(state: TuiState) -> list[str]:
 
 def run_tui(args: argparse.Namespace) -> int:
     """The full-screen interface, until it closes: the exit code it ends with."""
-    os_type = _INVOCATION.os_type or detect_os()
-    if os_type == "wsl":
-        _enter_wsl()
-    # The --from folders are read by each check, not here: indexing a large
-    # card held the first frame back. Only whether each can be read is asked.
-    folders = getattr(args, "from") or []
-    setattr(args, "from", None)
+    flags = {"interrupt": False, "resized": False, "suspend": False, "resume": False,
+             "term": 0}
+    handlers: dict[int, object] = {}
+
+    def on_stop(signum: int, _frame: object) -> None:
+        flags["term"] = flags["term"] or signum
+
+    # Before the start, whose detection and pack opening take seconds on a
+    # handheld: a Start+Select then ended on the default action, without a
+    # word or the terminal put back.
+    for name in ("SIGTERM", "SIGHUP"):
+        number = getattr(signal, name, None)
+        if number is not None:
+            handlers[number] = signal.signal(number, on_stop)
     try:
-        _open_local_sources(args)
-    finally:
-        setattr(args, "from", folders)
-    for folder in folders:
-        problem = from_folder_problem(str(folder))
-        if problem is not None:
-            print(f"Error: {folder} {problem[1]}: --from names the folder to copy BIOS "
-                  "files from.", file=sys.stderr)
-            return 1
-    state, effects = tui_start(args, os_type)
+        started = _tui_startup(args)
+    except BaseException:
+        _restore_handlers(handlers)
+        raise
+    if started is None:
+        _restore_handlers(handlers)
+        return 1
+    state, effects = started
+    if flags["term"]:
+        state.exit_code = 128 + flags["term"]
     work = Path(tempfile.mkdtemp(prefix=TUI_WORK_PREFIX))
     (work / TUI_OWNER).write_text(str(os.getpid()), encoding="utf-8")
     _prune_work_folders(work.parent, time.time())
@@ -11949,8 +12133,6 @@ def run_tui(args: argparse.Namespace) -> int:
     inbox: queue.Queue = queue.Queue()
     current: list[_EngineRun] = []
     written: dict[str, Path] = {}
-    flags = {"interrupt": False, "resized": False, "suspend": False, "resume": False,
-             "term": 0}
     # Start+Select on a handheld is gptokeyb's pkill: SIGTERM, then SIGKILL
     # 3 s later. The install gets 2 s to say what it wrote.
     terminating = {"signal": 0, "deadline": 0.0}
@@ -11958,7 +12140,6 @@ def run_tui(args: argparse.Namespace) -> int:
     terminal = _TuiTerminal(sys.stdin, sys.stdout)
     real_out, real_err = sys.stdout, sys.stderr
     buffer = io.StringIO()
-    handlers: dict[int, object] = {}
 
     def perform(todo: list[tuple], from_key: bool = True) -> None:
         for effect in todo:
@@ -12002,9 +12183,6 @@ def run_tui(args: argparse.Namespace) -> int:
     def on_resize(_signum: int, _frame: object) -> None:
         flags["resized"] = True
 
-    def on_stop(signum: int, _frame: object) -> None:
-        flags["term"] = flags["term"] or signum
-
     def on_suspend(_signum: int, _frame: object) -> None:
         flags["suspend"] = True
 
@@ -12013,14 +12191,15 @@ def run_tui(args: argparse.Namespace) -> int:
 
     try:
         for name, handler in (("SIGINT", on_interrupt), ("SIGWINCH", on_resize),
-                              ("SIGTERM", on_stop), ("SIGHUP", on_stop),
                               ("SIGTSTP", on_suspend), ("SIGCONT", on_resume)):
             number = getattr(signal, name, None)
             if number is not None:
                 handlers[number] = signal.signal(number, handler)
         sys.stdout = sys.stderr = buffer
-        terminal.enter()
-        perform(effects)
+        if state.exit_code is None:
+            # Stopped while it started: the screen never opens.
+            terminal.enter()
+            perform(effects)
         while state.exit_code is None:
             if flags["suspend"]:
                 # Stopped from outside (kill -TSTP): the shell gets its
@@ -12100,10 +12279,62 @@ def run_tui(args: argparse.Namespace) -> int:
     try:
         for line in lines:
             print(line, file=stream)
+        stream.flush()
     except OSError:
-        # The terminal is gone: the exit code is all that still reaches anyone.
-        return state.exit_code if state.exit_code is not None else 1
+        # The terminal is gone (a closed window answers EIO, a closed pipe
+        # EPIPE): the exit code is all that still reaches anyone, and the
+        # flush at exit would replace it with 120.
+        _drop_closed_terminal()
     return state.exit_code if state.exit_code is not None else 1
+
+
+def _tui_startup(args: argparse.Namespace) -> tuple[TuiState, list[tuple]] | None:
+    """The local sources opened and the first screen chosen, None when a
+    --from folder cannot be read (said on stderr)."""
+    os_type = _INVOCATION.os_type or detect_os()
+    if os_type == "wsl":
+        _enter_wsl()
+    # The --from folders are read by each check, not here: indexing a large
+    # card held the first frame back. Only whether each can be read is asked.
+    folders = getattr(args, "from") or []
+    setattr(args, "from", None)
+    try:
+        _open_local_sources(args)
+    finally:
+        setattr(args, "from", folders)
+    for folder in folders:
+        problem = from_folder_problem(str(folder))
+        if problem is not None:
+            print(f"Error: {folder} {problem[1]}: --from names the folder to copy BIOS "
+                  "files from.", file=sys.stderr)
+            return None
+    return tui_start(args, os_type)
+
+
+def _restore_handlers(handlers: dict) -> None:
+    for number, previous in handlers.items():
+        signal.signal(number, previous)
+
+
+def _drop_closed_terminal() -> None:
+    """Point stdout and stderr at nothing once the terminal is gone, so what
+    they still hold is flushed somewhere at exit."""
+    try:
+        null = os.open(os.devnull, os.O_WRONLY)
+    except OSError:
+        # No null device to point them at: the flush at exit fails as before.
+        return
+    try:
+        for stream in (sys.stdout, sys.stderr):
+            try:
+                fd = stream.fileno()
+            except (ValueError, AttributeError, io.UnsupportedOperation):
+                # A stream with no descriptor (a test's StringIO) has no
+                # terminal behind it to lose.
+                continue
+            os.dup2(null, fd)
+    finally:
+        os.close(null)
 
 
 def _tui_cleanup(

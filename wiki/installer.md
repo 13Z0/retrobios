@@ -120,8 +120,12 @@ install starts.
 | Quit | `q`, Ctrl+C | B on the first screen |
 
 The bottom line of each screen names what A does on the row under the cursor,
-with both spellings (`A/Enter`, `B/Esc`), since A and B swap places between
-controller layouts. A narrow screen shortens them to `A`, `B` and `X`. On the
+in the names of what is held. On a computer it names the keys (`Enter Install`,
+`Esc Back`). Started by a handheld launcher, it names the buttons of that
+launcher (`A Install`, `B Back`, see `RETROBIOS_PAD` below), and `?` shows
+both the buttons and the keys. Where neither is known, in SteamOS game mode or
+on a console no launcher named, it gives both spellings (`A/Enter`, `B/Esc`),
+and a narrow screen shortens them to `A`, `B` and `X`. On the
 regions screen, Left and Right move the region under the cursor up and down the
 order of preference. During the download, a stop waits for the files in
 progress, and a second one stops at once. Start+Select on a handheld ends the
@@ -1021,9 +1025,12 @@ Each launcher tells the interface which buttons reach it, in
 | `gptokeyb` | gptokeyb or gptokeyb2 with `retrobios.gptk`, the table above | the PortMaster port, the Tools entry, the muOS app with PortMaster |
 | `muxterm` | muxterm's own keys: D-pad, Start as Enter, B as Backspace, Y as Space | the muOS app without PortMaster |
 | `evmapy` | `RetroBIOS.sh.keys`, the same buttons as the table | the Batocera and Knulli port |
-| `miyoo` | buttons that are already keys, A as Space and B as Left Ctrl | no launcher yet |
+| `miyoo` | buttons that are already keys: A as Space, Start as Enter, L1 and R1 as E and T, L2 as Tab, R2 as Backspace | no launcher yet |
 
-A launcher with no mapper at all (a keyboard) leaves it unset.
+A launcher with no mapper at all (a keyboard) leaves it unset. On a Miyoo, B,
+X, Y and Select are Left Ctrl, Shift, Alt and Right Ctrl: pressed alone, a
+modifier sends nothing to a terminal, so the interface goes back with R2
+instead, and the bottom line says so.
 
 **Without Wi-Fi.** On a computer, download the BIOS pack that serves your
 system (every part, for a pack in parts): RetroArch's on muOS, ArkOS,
