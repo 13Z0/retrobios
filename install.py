@@ -7922,6 +7922,11 @@ def main() -> None:
     if args.cores_dir:
         args.installed_cores = True
     _INVOCATION.record(args)
+    if os.environ.get(TUI_LIST_ENV):
+        # The full screen's own copy of the list, deleted when it closes: a
+        # command naming it fails once the screen is gone.
+        _INVOCATION.options = [option for option in _INVOCATION.options
+                               if option[0] != "--manifest"]
     if not 1 <= args.jobs <= 32:
         parser.error("--jobs must be between 1 and 32")
     if args.region:
@@ -8191,6 +8196,106 @@ def card_platform(root: Path) -> str | None:
     return None
 
 
+# A system that runs from its SD card names the card by where the device
+# mounts it: on a computer the card's root stands in for that mount point,
+# and its device rule then reads the same below the root.
+_CARD_MOUNTS = ("/mnt/SDCARD/", "/mnt/mmc/")
+
+# Systems whose card a computer sees as their data partition, by the file
+# their own build writes there, paths below that partition. KNULLI's is
+# /userdata: S12populateshare:15,105 copies datainit there, and every board's
+# datainit/system/batocera.conf sets system.hostname=KNULLI (knulli-cfw
+# distribution ab3a6809, board/batocera/*/fsoverlay/usr/share/batocera/).
+# ROCKNIX's is /storage: userconfig-setup:12 copies /usr/config into
+# /storage/.config, and its system.cfg sets root.password=rocknix (ROCKNIX
+# distribution 8b70f693, projects/ROCKNIX/packages/rocknix/config/system/
+# configs/system.cfg:152).
+_SHARE_RULES: tuple[_OsRule, ...] = (
+    _OsRule(_STANDIN_MANIFESTS["KNULLI"], "KNULLI", "file_matches",
+            ("system/batocera.conf", r"^system\.hostname=KNULLI\s*$"), "bios"),
+    _OsRule("rocknix", "ROCKNIX", "file_matches",
+            (".config/system/configs/system.cfg", r"^root\.password=rocknix\s*$"),
+            "roms/bios"),
+)
+
+
+def _card_rules() -> list[_OsRule]:
+    """The device rules that name a card, their paths below its root."""
+    rules = list(_SHARE_RULES)
+    for rule in _EMBEDDED_RULES:
+        if rule.method != "file_exists" or not rule.manifest or not rule.bios:
+            continue
+        mount = next((m for m in _CARD_MOUNTS if rule.bios.startswith(m)
+                      and all(value.startswith(m) for value in rule.values)), "")
+        if mount:
+            rules.append(rule._replace(
+                values=tuple(value[len(mount):] for value in rule.values),
+                bios=rule.bios[len(mount):], configs=()))
+    return rules
+
+
+def _card_rule_matches(rule: _OsRule, root: Path) -> bool:
+    if rule.method == "file_matches":
+        path, pattern = rule.values
+        try:
+            text = (root / path).read_text(encoding="utf-8", errors="replace")
+        except OSError:
+            return False
+        return re.search(pattern, text, re.MULTILINE) is not None
+    return all((root / value).exists() for value in rule.values)
+
+
+def card_system(root: Path) -> tuple[str, Path, str] | None:
+    """(file list, BIOS folder, system name) of the card mounted at root.
+
+    None when nothing on it names a system, or when two systems that would
+    write to different folders both match: the card is then the user's to
+    name, never a guess.
+    """
+    plat = card_platform(root)
+    if plat:
+        return plat, root, display_name(plat)
+    matched = [rule for rule in _card_rules() if _card_rule_matches(rule, root)]
+    bases = {rule.base for rule in matched if rule.base}
+    matched = [rule for rule in matched if rule.name not in bases]
+    targets = {(rule.manifest, rule.bios) for rule in matched}
+    if len(targets) != 1:
+        return None
+    rule = matched[0]
+    return rule.manifest, root / rule.bios, rule.name
+
+
+def card_dest(named: str, plat: str, dest: Path) -> tuple[str, Path]:
+    """The file list and folder for a --dest that names a handheld's card.
+
+    The card's root is where the user points, its BIOS folder is below it:
+    `--platform muos --dest /media/me/SD1` wrote to the root, which muOS
+    never reads. A system named on the command line whose card this is not
+    is refused with the folder it reads.
+    """
+    found = card_system(dest)
+    if found and (not plat or found[0] == plat) and found[1] != dest:
+        print(f"  {found[2]} card: {display_name(found[0])} files, in {found[1]}")
+        return found[0], found[1]
+    # Only a system named by its own name: --platform retroarch or knulli
+    # says which list, not which card.
+    key = _name_key(named)
+    rule = next((rule for rule in _card_rules() if key and key == _name_key(rule.name)
+                 and key != _name_key(display_name(rule.manifest))), None)
+    if rule is None or found:
+        return plat, dest
+    # Its folder on the card, or one its device reads (/run/muos/storage/bios).
+    own = {device.bios for device in _EMBEDDED_RULES if device.name == rule.name}
+    if dest.as_posix() in own or dest.as_posix().casefold().endswith(rule.bios.casefold()):
+        return plat, dest
+    marker = rule.values[0].split("/")[0]
+    print(f"Error: {dest} is not a {rule.name} card: it holds no {marker}. "
+          f"{rule.name} reads its BIOS files from {rule.bios} on its card: name the card's "
+          f"root (the folder holding {marker}) or that folder: --dest <card>/{rule.bios}",
+          file=sys.stderr)
+    sys.exit(1)
+
+
 def _check_card_root(plat: str, dest: Path) -> None:
     """Refuse a folder inside the card where its root is meant.
 
@@ -8288,8 +8393,12 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
     # Platform detection or override. A destination taken from the default
     # table, the platform not being found here, is only a guess.
     assumed_dests: set[Path] = set()
+    named = args.platform or ""
     if args.platform:
         args.platform = normalize_platform(args.platform)
+    if args.dest:
+        plat, args.dest = card_dest(named, args.platform or "", args.dest)
+        args.platform = plat or args.platform
     if args.platform and args.dest:
         if args.platform in CARD_PLATFORMS:
             _check_card_root(args.platform, args.dest)
@@ -9021,6 +9130,8 @@ TUI_MAX_WIDTH = 100
 # past this wait an Esc with nothing after it is the key.
 TUI_ESC_WAIT = 0.04
 TUI_FRAME = 0.1
+# Set for a child run handed the interface's own copy of the file list.
+TUI_LIST_ENV = "RETROBIOS_TUI_LIST"
 _PASTE_START = "\x1b[200~"
 _PASTE_END = "\x1b[201~"
 # Turned on by the interface, so a pasted path arrives as one piece and its
@@ -9354,9 +9465,13 @@ class TuiState:
         self.found: list = []
         # What the browser is choosing: the BIOS folder, or one to copy from.
         self.browse_for: str = "dest"
-        # Files an install copies from this machine, whose bytes are no download.
-        self.local_dests: set = set()
-        self.local_done: int = 0
+        # Files an install copies from this machine, whose bytes are no
+        # download: dest to (folder, reason), reason set for a misplaced one.
+        self.local_dests: dict = {}
+        # Per --from folder, its scanned event, and the files on those
+        # folders that could not be read (unreadable events).
+        self.scanned: list = []
+        self.unreadable: list = []
         # The child run in progress: check, confirm, preview or install.
         self.run: str = ""
         self.running: bool = False
@@ -9370,6 +9485,9 @@ class TuiState:
         self.dry: dict | None = None
         self.dry_files: list = []
         self.dry_summary: dict | None = None
+        # The confirm screen waits for A even when the plan is unchanged:
+        # it was opened by Space, which never installs by itself.
+        self.must_confirm: bool = False
         # Choices, each one an option of the command line.
         self.ticked: set = set()
         self.cli_systems: list = []
@@ -9383,9 +9501,11 @@ class TuiState:
         # The install.
         self.download: dict | None = None
         self.progress: dict | None = None
-        # (time, bytes done) of the last progress events: a partial copy
-        # resumed counts in the first one and never in a speed.
+        # (time, bytes from the network) of the last transfer events: what
+        # came from this machine (a copy, the pack, a partial file resumed)
+        # is never in a speed.
         self.samples: list = []
+        self.network: int = 0
         self.finished: list = []
         self.summary: dict | None = None
         self.code: int | None = None
@@ -9529,7 +9649,7 @@ class TuiRow(NamedTuple):
 
 
 # Screens that scroll text instead of listing rows.
-_PAGERS = ("preview", "command", "result", "misplaced")
+_PAGERS = ("preview", "command", "result", "misplaced", "unreadable")
 _CHECKLISTS = ("systems", "cores")
 
 
@@ -9544,12 +9664,20 @@ def _tui_system_label(row: dict, titles: dict | None = None) -> str:
     title = (titles or {}).get(row["system"])
     if isinstance(title, str) and title.strip():
         return title.strip()
+    if row["system"] == OTHER_SYSTEMS:
+        return OTHER_TITLE
     name = row.get("name") or row["system"]
     if name == row["system"]:
         return name
     if " " in name or any(char.isupper() for char in name):
         return name
     return f"{row['system']} ({name})"
+
+
+# What the "other" row of the systems holds, in words (OTHER_SYSTEMS).
+OTHER_TITLE = "Other systems and game engines"
+OTHER_HELP = ("Other systems and game engines: what cores load for systems this setup "
+              "does not list, such as game engines and extra computers.")
 
 
 def _matches(text: str, needle: str) -> bool:
@@ -9662,8 +9790,9 @@ def _plan_rows(state: TuiState) -> list[TuiRow]:
     size = check.get("bytes_needed", 0)
     label = f"Install {format_size(size)}" if size >= CONFIRM_FROM_BYTES else "Install"
     rows = [TuiRow("install", label)]
-    if state.facts.get("writable") is False:
-        # Every file would fail alike: the way out is another folder.
+    if state.facts.get("writable") is False or _short_of_space(state, check):
+        # Every file would fail alike, or the run would stop before the
+        # first one: the way out is another folder.
         rows = [TuiRow("folder", "Choose another folder"), TuiRow("install", "Install anyway"),
                 *rows[1:]]
     if records_selection((state.manifest or {}).get("files", [])) and len(state.systems) > 1:
@@ -9671,24 +9800,54 @@ def _plan_rows(state: TuiState) -> list[TuiRow]:
     rows.append(TuiRow("fromcard", "Copy the BIOS files from your old card or a folder"))
     if _tui_misplaced(state):
         rows.append(TuiRow("misplaced", "Show the files in the wrong place"))
+    if state.unreadable:
+        rows.append(TuiRow("unreadable", "Show the files that could not be read"))
     return rows + [TuiRow("options", "Options"), TuiRow("quit", "Quit")]
+
+
+def _short_of_space(state: TuiState, check: dict) -> bool:
+    free = state.facts.get("free")
+    return free is not None and check.get("bytes_needed", 0) > free
 
 
 def _system_rows(state: TuiState) -> list[TuiRow]:
     needle = state.filters.get("systems", "")
     titles = _system_titles(state)
     rows = [TuiRow("all", "All"), TuiRow("none", "None"), _filter_row(state)]
+    shared = _shared_needed(state)
     for row in _sorted_systems(state):
         label = _tui_system_label(row, titles)
         if not _matches(f"{label} {row['system']}", needle):
             continue
         box = "[x]" if row["system"] in state.ticked else "[ ]"
         need = _needed(row)
-        right = (f"{_plural(need, 'file')}, {format_size(row['bytes_needed'])}"
-                 if need else "in place")
+        count, size = shared.get(row["system"], (0, 0))
+        own, own_size = need - count, row["bytes_needed"] - size
+        if not need:
+            right = "in place"
+        elif not count:
+            right = f"{_plural(need, 'file')}, {format_size(row['bytes_needed'])}"
+        elif not own:
+            right = f"{_plural(need, 'file')}, {format_size(size)}, all shared"
+        else:
+            right = f"{_plural(own, 'file')}, {format_size(own_size)} + {count} shared"
         rows.append(TuiRow("system", f"{box} {label}", right, row["system"],
                            "" if need else "dim"))
     return rows
+
+
+def _shared_needed(state: TuiState) -> dict[str, tuple[int, int]]:
+    """Per system, the files to download that other systems carry too, and
+    their size: `3DO 1704 files, 349.0 MB` read as the 3DO BIOS, when 1689
+    are the MAME files six systems share. The line mode counts them apart
+    the same way (_system_sized)."""
+    shared: dict[str, tuple[int, int]] = {}
+    for event in state.files:
+        if len(event["systems"]) > 1:
+            for system in event["systems"]:
+                count, size = shared.get(system, (0, 0))
+                shared[system] = (count + 1, size + event["size"])
+    return shared
 
 
 def _cores_dir_given(state: TuiState) -> bool:
@@ -9708,7 +9867,9 @@ def _option_rows(state: TuiState) -> list[TuiRow]:
                            + (", ".join(map(region_title, state.regions)) or "any"),
                            "--region"))
     if manifest.get("categorized"):
-        rows.append(TuiRow("game_data", f"Leave out game data: {_yes(state.no_game_data)}",
+        # "Leave out game data: no" was a double negative.
+        rows.append(TuiRow("game_data", "Game data: "
+                           + ("left out, firmware only" if state.no_game_data else "kept"),
                            "--no-game-data"))
     found = len(state.facts.get("cores", []))
     if _cores_dir_given(state):
@@ -9726,7 +9887,7 @@ def _option_rows(state: TuiState) -> list[TuiRow]:
         TuiRow("jobs", f"Parallel downloads: {state.jobs}", "--jobs"),
         TuiRow("folder", f"BIOS folder: {_short_path(state.dest, state.home)}", "--dest",
                style="path"),
-        TuiRow("from", f"Copy from: {copied}", "--from"),
+        TuiRow("from", f"Copy from: {copied}", "--from", style="path"),
         TuiRow("preview", "Preview the file list", "--dry-run"),
         TuiRow("command", "Show the command line"),
     ]
@@ -9797,13 +9958,13 @@ def _start_run(state: TuiState, run: str) -> list[tuple]:
         # The systems of an earlier check go first: ticks read against them
         # dropped the --system the command line gave.
         state.check, state.files, state.systems, state.reading = None, [], [], None
-        state.found = []
+        state.found, state.scanned, state.unreadable = [], [], []
         state.checked_flags = tui_flags(state)
     elif run in ("confirm", "preview"):
         state.dry, state.dry_files, state.dry_summary = None, [], None
     else:
         state.download = state.progress = state.reading = None
-        state.samples, state.local_dests, state.local_done = [], set(), 0
+        state.samples, state.local_dests, state.network = [], {}, 0
         state.finished, state.summary, state.code, state.stopping = [], None, None, False
     return [("run", run)]
 
@@ -9825,6 +9986,10 @@ def _start_check(state: TuiState) -> list[tuple]:
 
 
 def _choose(state: TuiState, plat: str, dest: Path) -> list[tuple]:
+    card = card_system(dest)
+    if card and card[0] == plat and card[1] != dest:
+        # A muOS or KNULLI card's root: that system reads a folder below it.
+        dest = card[1]
     state.platform, state.dest = plat, dest
     if plat in CARD_PLATFORMS and card_platform(dest) is None:
         # The engine refuses a folder inside the card, the list writing
@@ -9847,6 +10012,11 @@ def _choose(state: TuiState, plat: str, dest: Path) -> list[tuple]:
 def _open_folder_screen(state: TuiState, default: Path | None) -> list[tuple]:
     state.folder_default = default
     return _push(state, "folder")
+
+
+def _mount_name(mount: Path) -> str:
+    """How a person names a mounted card: E:\\ on Windows, its label elsewhere."""
+    return mount.name or str(mount)
 
 
 def _mounted_cards() -> list[Path]:
@@ -9890,8 +10060,8 @@ def _browse_rows(folder: Path | None, zips: bool = False) -> tuple[list[TuiRow],
     rows = [TuiRow("use", "Use this folder"), TuiRow("up", "..", value=folder.parent)]
     for card in _mounted_cards():
         if card != folder:
-            plat = card_platform(card)
-            what = f"{display_name(plat)} card" if plat else "card or drive"
+            system = card_system(card)
+            what = f"{system[2]} card" if system else "card or drive"
             rows.append(TuiRow("dir", f"{card} ({what})", value=card))
     try:
         entries = list(os.scandir(folder))
@@ -10011,8 +10181,8 @@ def _activate(state: TuiState, row: TuiRow) -> list[tuple]:
             return _open_folder_screen(state, state.dest)
         if action == "fromcard":
             return _open_from_browser(state)
-        if action == "misplaced":
-            return _push(state, "misplaced")
+        if action in ("misplaced", "unreadable"):
+            return _push(state, action)
         # On the first system, so A continues and the D-pad ticks.
         return _push(state, action, 3 if action == "systems" else 0)
     if screen == "systems":
@@ -10081,9 +10251,10 @@ def _option(state: TuiState, action: str, step: int) -> list[tuple]:
     elif action == "folder":
         return _open_folder_screen(state, state.dest)
     elif action == "from" and step < 0:
+        # Said, and the screen stays: Back to the plan counts again.
         if state.from_folders:
-            state.from_folders.pop()
-            return _start_check(state)
+            removed = state.from_folders.pop()
+            state.status = f"No longer copying from {_last_name(str(removed))}."
     elif action == "from":
         return _open_from_browser(state)
     elif action == "preview":
@@ -10123,6 +10294,7 @@ def _begin_install(state: TuiState) -> list[tuple]:
     if state.systems and not state.ticked:
         state.status = "No system is ticked: tick one, or choose All."
         return []
+    state.must_confirm = False
     if tui_flags(state) != state.checked_flags:
         _push(state, "confirm")
         return _start_run(state, "confirm")
@@ -10348,10 +10520,32 @@ def tui_update(state: TuiState, key: TuiKey) -> list[tuple]:
         return _option(state, row.action, 1 if name == "right" else -1) \
             if row.action in ("game_data", "installed", "jobs") \
             or (row.action == "from" and name == "left") else []
-    elif name == "enter" or char == " ":
+    elif char == " ":
+        return _space(state, row)
+    elif name == "enter":
         return _activate(state, row)
     state.focus[screen] = focus
     return []
+
+
+# Rows Space leaves alone: it is X (tick) on PortMaster and Y on muxterm, a
+# key pressed for something else, and these end the run or write.
+_SPACE_INERT = ("install", "close", "quit")
+
+
+def _space(state: TuiState, row: TuiRow) -> list[tuple]:
+    """Space opens what a row leads to, and never installs by itself: on
+    the plan's Install it opens the confirm screen, where A installs."""
+    if row.action == "install" and state.screen == "plan":
+        if state.systems and not state.ticked:
+            state.status = "No system is ticked: tick one, or choose All."
+            return []
+        state.must_confirm = True
+        _push(state, "confirm")
+        return _start_run(state, "confirm")
+    if row.action in _SPACE_INERT:
+        return []
+    return _activate(state, row)
 
 
 def _take_event(state: TuiState, event: dict) -> None:
@@ -10360,8 +10554,12 @@ def _take_event(state: TuiState, event: dict) -> None:
         state.reading = (event["files_done"], event["files_total"])
     elif kind == "found" and state.run == "check":
         state.found.append(event)
+    elif kind == "scanned" and state.run == "check":
+        state.scanned.append(event)
+    elif kind == "unreadable" and state.run == "check":
+        state.unreadable.append(event)
     elif kind == "found" and state.run == "install":
-        state.local_dests.add(event["dest"])
+        state.local_dests[event["dest"]] = (event["folder"], event["reason"])
     elif state.run == "check":
         if kind == "check":
             state.check = event
@@ -10379,15 +10577,12 @@ def _take_event(state: TuiState, event: dict) -> None:
     elif state.run == "install":
         if kind == "download":
             state.download = event
+        elif kind == "transfer":
+            state.network = event["bytes_network"]
+            state.samples = [sample for sample in state.samples
+                             if sample[0] >= state.now - 10] + [(state.now, state.network)]
         elif kind in ("progress", "downloaded"):
             state.progress = event
-            if kind == "downloaded" and event["dest"] in state.local_dests:
-                # A copy from an old card or a folder: its bytes come from
-                # this machine, and a speed counting them was not the network's.
-                state.local_done += event["size"]
-            state.samples = [sample for sample in state.samples
-                             if sample[0] >= state.now - 10] + [
-                (state.now, event["bytes_done"] - state.local_done)]
             if kind == "downloaded":
                 state.finished.append((event["dest"], event["ok"], event["reason"]))
         elif kind == "summary":
@@ -10432,7 +10627,7 @@ def tui_receive(state: TuiState, message: tuple) -> list[tuple]:
     elif state.run == "confirm" and state.screen == "confirm":
         if state.dry is None:
             return _fail(state, tail, code)
-        if _same_plan(state.check, state.dry):
+        if _same_plan(state.check, state.dry) and not state.must_confirm:
             state.stack.pop()
             return _install_now(state)
     elif state.run == "install":
@@ -10480,6 +10675,7 @@ _ROW_VERBS = {
     "preview": "Open", "folder": "Choose", "game_data": "Change", "installed": "Change",
     "jobs": "Change", "retry": "Try again", "back": "Back", "stay": "Stay",
     "fromcard": "Choose", "from": "Add a folder", "misplaced": "Show", "zip": "Copy from it",
+    "unreadable": "Show",
 }
 
 
@@ -10493,6 +10689,10 @@ def _text_lines(items: list, width: int) -> list[TuiLine]:
     lines: list[TuiLine] = []
     for item in items:
         style = getattr(item, "style", "")
+        if style == "path":
+            # One line, cut in its middle: the end of a path tells it apart.
+            lines.append(_styled(middle(str(item), width)))
+            continue
         for piece in _wrap(str(item), width):
             lines.append(_styled(fit(piece, width), style))
     return lines
@@ -10544,7 +10744,9 @@ def _compose(
     return body + footer_lines
 
 
-def _pager(state: TuiState, width: int, height: int, items: list) -> list[TuiLine]:
+def _pager(
+    state: TuiState, width: int, height: int, items: list, lead: int = 0,
+) -> list[TuiLine]:
     """The items in view, from the first shown on, each wrapped alone: the
     8,000 lines of a full preview were wrapped again at every key."""
     first = max(0, min(state.focus.get(state.screen, 0), _pager_last(state, items)))
@@ -10560,7 +10762,9 @@ def _pager(state: TuiState, width: int, height: int, items: list) -> list[TuiLin
         index += 1
     whole = index if len(lines) <= room else index - 1
     lines = lines[:room]
-    return lines + [_styled(f"{first + 1}-{max(first + 1, whole)} of {len(items)}", "dim")]
+    start = max(1, first + 1 - lead)
+    return lines + [_styled(f"{start}-{max(start, whole - lead)} of {len(items) - lead}",
+                            "dim")]
 
 
 def _tui_misplaced(state: TuiState) -> list[dict]:
@@ -10577,6 +10781,25 @@ def _tui_found_elsewhere(state: TuiState) -> dict[str, list[dict]]:
     return found
 
 
+def _scan_lines(state: TuiState) -> list[str]:
+    """What the reading of the --from folders left out, one line each."""
+    lines = []
+    for scan in state.scanned:
+        if scan["truncated"]:
+            lines.append(f"Read the first {MAX_SCANNED_FILES:,} files of {scan['folder']}.")
+        lines += [f"{drive} is another drive: add it to copy from it too."
+                  for drive in scan["other_drives"]]
+    if state.unreadable:
+        count = len(state.unreadable)
+        lines.append(f"{_plural(count, 'file')} on your old card could not be read.")
+    return lines
+
+
+def _last_name(folder: str) -> str:
+    """A folder or ZIP by its last name, a drive by itself (E:\\)."""
+    return Path(folder).name or folder
+
+
 def _plan_lines(check: dict, dest: Path | None, state: TuiState) -> list:
     need = _needed(check)
     data = check.get("data_missing", 0)
@@ -10589,7 +10812,9 @@ def _plan_lines(check: dict, dest: Path | None, state: TuiState) -> list:
     fetch_bytes = max(0, check["bytes_needed"] - sum(sizes[dest_] for dest_ in copied))
     elsewhere = _tui_found_elsewhere(state) if check is state.check else {}
     if elsewhere:
-        where = ", ".join(f"{len(events)} found in {folder}"
+        # The folder by its last name: the whole path pushed the BIOS
+        # folder off a 40x15 screen. The Options row spells it out.
+        where = ", ".join(f"{len(events)} found in {_last_name(folder)}"
                           for folder, events in elsewhere.items())
         headline = (f"{where}, {fetch} to download ({format_size(fetch_bytes)})"
                     if fetch else f"{where}, nothing to download")
@@ -10604,35 +10829,48 @@ def _plan_lines(check: dict, dest: Path | None, state: TuiState) -> list:
         headline = (f"{_plural(data, 'data file')} to fetch" if data
                     else "Everything is in place")
     wrong = check["wrong_hash"]
+    # The folder comes second: on a 40x12 screen it is what is left once
+    # the rows are drawn, and nothing is written before it is seen.
     lines: list = [
         _styled(headline, "title"),
-        f"{check['present']} in place, {check['missing']} missing, "
-        f"{wrong} wrong {'copy' if wrong == 1 else 'copies'}",
-        f"BIOS folder: {_short_path(dest, state.home)}",
+        _styled(f"BIOS folder: {_short_path(dest, state.home)}", "path"),
     ]
+    if state.facts.get("writable") is False:
+        lines.append("You cannot write to this folder: choose another one.")
+    lines.append(f"{check['present']} in place, {check['missing']} missing, "
+                 f"{wrong} wrong {'copy' if wrong == 1 else 'copies'}")
+    found_in = _RETROARCH_CONFIGS.get(dest) if dest is not None else None
+    if found_in:
+        lines.append(_styled(f"Named by {_short_path(Path(found_in[0]), state.home)}", "path"))
     free = state.facts.get("free")
     if free is not None:
         lines.append(f"Free space: {format_size(free)}")
         if check["bytes_needed"] > free:
-            lines.append("Not enough free space for this download: free some, or "
-                         "choose another folder in Options.")
+            lines.append(f"Not enough free space: {format_size(check['bytes_needed'])} "
+                         "needed. Free some, or choose another folder.")
     if wrong:
         lines.append("They are replaced, and the old copies are kept in a backup folder.")
     misplaced = _tui_misplaced(state) if check is state.check else []
     if misplaced:
-        lines.insert(1, f"{_plural(len(misplaced), 'file')} "
+        lines.insert(3, f"{_plural(len(misplaced), 'file')} "
                      f"{'is' if len(misplaced) == 1 else 'are'} in the wrong place, "
                      f"{'it' if len(misplaced) == 1 else 'they'} will be copied where the "
                      "emulators read "
                      f"{'it' if len(misplaced) == 1 else 'them'}.")
     if state.facts.get("writable") is False:
-        lines.insert(1, "You cannot write to this folder: choose another one, or run "
-                     + ("the installer as an administrator." if state.os_type == "windows"
-                        else "the installer with sudo."))
+        if state.os_type == "windows":
+            lines.append("Or run the installer as an administrator.")
+        else:
+            # sudo changes the home folder, and with it what is detected:
+            # the folder is named so root writes here.
+            hint = Invocation()
+            hint.os_type = state.os_type
+            lines.append("Or run it as root, this folder named: "
+                         + hint.command(state.platform, dest, elevated=True))
+    if check is state.check:
+        lines += _scan_lines(state)
     if check.get("not_installable"):
-        lines.append(f"{_plural(check['not_installable'], 'file')} of the list "
-                     f"{'is' if check['not_installable'] == 1 else 'are'} not in "
-                     "the collection.")
+        lines += _unavailable_lines(state)
     return lines
 
 
@@ -10750,14 +10988,17 @@ def _choice_line(state: TuiState) -> list[str]:
 def _view_plan(state: TuiState, width: int, height: int) -> tuple:
     check = state.check or {}
     lines = _plan_lines(check, state.dest, state)
-    lines[1:1] = _choice_line(state)
+    lines[2:2] = _choice_line(state)
     if state.status:
         lines.append(state.status)
     rows = tui_rows(state)
     if width < 54:
         rows = [row._replace(label="Copy from your old card or a folder")
                 if row.action == "fromcard" else row for row in rows]
-    return (display_name(state.platform, state.manifest),
+    # A muOS card gets RetroArch's files: the title says both.
+    system = detected_os(state.platform, state.dest) if state.dest is not None else ""
+    name = display_name(state.platform, state.manifest)
+    return (f"{system} ({name} files)" if system and system != name else name,
             _compose(state, width, height, lines, rows),
             ("A/Enter Install", "B/Esc Back", "Y/o Options", "? Help"))
 
@@ -10781,7 +11022,7 @@ def _view_systems(state: TuiState, width: int, height: int) -> tuple:
     if width < 60:
         # The name first: the size alone stays beside it, the count is in
         # the total below.
-        rows = [row._replace(right=row.right.split(", ")[-1]) for row in rows]
+        rows = [row._replace(right=re.sub(r"^\d+ files?, ", "", row.right)) for row in rows]
     elif width >= 78:
         # The id --system takes, beside a name that does not show it.
         # Only where it fits whole: a cut id ("maker26-co") said nothing.
@@ -10794,6 +11035,13 @@ def _view_systems(state: TuiState, width: int, height: int) -> tuple:
               f"{_plural(len(chosen), 'file')}, "
               f"{format_size(sum(e['size'] for e in chosen))}"
               + (" before your options" if _counts_predate_options(state) else "")]
+    focused = rows[min(state.focus.get("systems", 0), len(rows) - 1)]
+    if focused.value == OTHER_SYSTEMS:
+        footer.insert(0, OTHER_HELP)
+    elif "shared" in focused.right:
+        count = _shared_needed(state)[focused.value][0]
+        footer.insert(0, f"{count} of these files are shared with other systems, "
+                      "counted once in the total.")
     needle = state.filters.get("systems", "")
     after = [f"No system matches '{needle}'."] if len(rows) == 3 and needle else []
     if state.status:
@@ -10816,10 +11064,17 @@ def _view_options(state: TuiState, width: int, height: int) -> tuple:
         rows = [row._replace(right="") for row in rows]
     # A folder is cut in its middle, its last levels being what tells it apart.
     room = width - 4 - (0 if width < 60 else 2 + max(cell_width(r.right) for r in rows))
-    rows = [row._replace(label="BIOS folder: " + middle(row.label[13:], room - 13), style="")
-            if row.style == "path" else row for row in rows]
+    rows = [_middle_label(row, room) if row.style == "path" else row for row in rows]
+    if state.status:
+        after.append(state.status)
     return ("Options", _compose(state, width, height, before, rows, after),
             ("A/Enter Change", "B/Esc Back", "Left/Right Set", "? Help"))
+
+
+def _middle_label(row: TuiRow, room: int) -> TuiRow:
+    """A row naming a folder, the folder cut in its middle to fit."""
+    name, _sep, value = row.label.partition(": ")
+    return row._replace(label=f"{name}: " + middle(value, room - len(name) - 2), style="")
 
 
 def _view_regions(state: TuiState, width: int, height: int) -> tuple:
@@ -10843,6 +11098,9 @@ def _pager_items(state: TuiState) -> list:
     """The text of a screen that scrolls, the same for its view and its keys."""
     if state.screen == "misplaced":
         return [f"{event['dest']}: {event['reason']}" for event in _tui_misplaced(state)]
+    if state.screen == "unreadable":
+        return [f"{event['path']}" + (f", {event['member']}" if event["member"] else "")
+                + f": {event['reason']}" for event in state.unreadable]
     if state.screen == "result":
         return tui_outcome(state)[1]
     if state.screen == "command":
@@ -10863,7 +11121,15 @@ def _pager_items(state: TuiState) -> list:
 
 
 def _view_preview(state: TuiState, width: int, height: int) -> tuple:
-    return ("Preview", _pager(state, width, height, _pager_items(state)),
+    # The count and the blank line above the files are not among them.
+    lead = 2 if state.dry is not None and not state.running else 0
+    return ("Preview", _pager(state, width, height, _pager_items(state), lead),
+            ("A/Enter Back", "Up/Down Scroll"))
+
+
+def _view_unreadable(state: TuiState, width: int, height: int) -> tuple:
+    return ("Files that could not be read",
+            _pager(state, width, height, _pager_items(state)),
             ("A/Enter Back", "Up/Down Scroll"))
 
 
@@ -10904,10 +11170,9 @@ def _view_installing(state: TuiState, width: int, height: int) -> tuple:
         lines.append(_bar(min(done / total, 1.0) if total else 1.0, width))
         lines.append(f"{format_size(done)} of {format_size(total)}")
         window = [sample for sample in state.samples if sample[0] >= state.now - 5]
-        fetched = done - state.local_done
-        start, base = window[0] if window else (state.now, fetched)
+        start, base = window[0] if window else (state.now, state.network)
         seconds = state.now - start
-        speed = (fetched - base) / seconds if seconds >= 1 else 0
+        speed = (state.network - base) / seconds if seconds >= 1 else 0
         if speed > 0:
             lines.append(f"{format_size(int(speed))}/s, "
                          f"{format_duration((total - done) / speed)} left")
@@ -10931,6 +11196,83 @@ def _view_installing(state: TuiState, width: int, height: int) -> tuple:
             ("B/Esc Stop", "? Help"))
 
 
+_SPACE_NEEDED = re.compile(r"Needed: (\S+ \S+)\. Free: (\S+ \S+)\.")
+
+
+def _space_stop(state: TuiState) -> re.Match | None:
+    """Needed and free, when the run stopped for lack of space."""
+    return next(filter(None, (_SPACE_NEEDED.search(line) for line in state.tail)), None)
+
+
+def _space_words(state: TuiState) -> str:
+    """The run's stop for lack of space, in words, "" for another stop."""
+    match = _space_stop(state)
+    if match is None:
+        return ""
+    dest = (state.dest or Path(".")).absolute()
+    card = any((mount == dest or mount in dest.parents) and card_system(mount)
+               for mount in _mounted_cards())
+    return f"The {'card' if card else 'drive'} is full: {match[1]} needed, {match[2]} free."
+
+
+def _tui_sources(state: TuiState, installed: int, failed: int) -> str:
+    """Where the installed files came from, as the line mode says it:
+    "6 files copied from /media/me/OLD, 42 downloaded, 2 still missing." """
+    ok = {dest for dest, good, _why in state.finished if good}
+    folders: dict[str, int] = {}
+    fixed = 0
+    for dest, (folder, reason) in state.local_dests.items():
+        if dest not in ok:
+            continue
+        if reason:
+            fixed += 1
+        else:
+            # By its name, as the plan said "6 found in old card".
+            name = _last_name(folder)
+            folders[name] = folders.get(name, 0) + 1
+    copied = fixed + sum(folders.values())
+    return sources_line(list(folders.items()), fixed, max(0, installed - copied), failed)
+
+
+def _unavailable(state: TuiState) -> tuple[list[dict], int]:
+    """The list's files RetroBIOS cannot supply for the systems chosen: the
+    ones an emulator needs to start, and how many others."""
+    listed = {row["system"] for row in state.systems}
+    chosen = state.ticked if state.systems else None
+    needed, others = [], 0
+    for entry in (state.manifest or {}).get("omitted_files") or []:
+        system = entry.get("system") if entry.get("system") in listed else OTHER_SYSTEMS
+        if chosen is not None and system not in chosen:
+            continue
+        if state.no_game_data and entry.get("category") == "game_data":
+            continue
+        if entry.get("required"):
+            needed.append(entry)
+        else:
+            others += 1
+    return needed, others
+
+
+def _unavailable_lines(state: TuiState) -> list[str]:
+    """The files that cannot be supplied and stop an emulator, by name and
+    system: "1 file ... an emulator needs it" named neither."""
+    needed, _others = _unavailable(state)
+    if not needed:
+        return []
+    titles = _system_titles(state)
+    rows = {row["system"]: row for row in state.systems}
+
+    def system(name: str) -> str:
+        return _tui_system_label(rows.get(name) or {"system": name}, titles)
+
+    names = [f"{entry['dest']} ({system(entry['system'])})" if entry.get("system")
+             else entry["dest"] for entry in needed[:3]]
+    more = f" and {len(needed) - 3} more" if len(needed) > 3 else ""
+    return [f"Not available here, and needed to start "
+            f"{'its emulator' if len(needed) == 1 else 'their emulators'}: "
+            f"{', '.join(names)}{more}. Your own copy goes in the BIOS folder."]
+
+
 def tui_outcome(state: TuiState) -> tuple[str, list[str]]:
     """The result in words, first what happened, then where and what next."""
     summary = state.summary or {}
@@ -10940,6 +11282,7 @@ def tui_outcome(state: TuiState) -> tuple[str, list[str]]:
     failed = summary.get("failed") or []
     up_to_date = summary.get("up_to_date", 0)
     total = (state.download or {}).get("files", 0)
+    space = "" if summary else _space_words(state)
     if summary.get("interrupted") or state.code == 130:
         title = "Stopped"
         head = (f"Stopped: {installed} of {total} installed, run again to finish."
@@ -10950,6 +11293,9 @@ def tui_outcome(state: TuiState) -> tuple[str, list[str]]:
     elif failed:
         title = "Nothing installed"
         head = f"Nothing was installed: {_plural(len(failed), 'file')} failed."
+    elif not summary and space:
+        title = "Not enough space"
+        head = space
     elif not summary:
         title = "Stopped"
         head = f"The installer stopped with code {state.code}."
@@ -10961,7 +11307,13 @@ def tui_outcome(state: TuiState) -> tuple[str, list[str]]:
     else:
         title = "Done"
         head = "Everything is in place."
-    lines = [head, f"BIOS folder: {state.dest}"]
+    lines = [head]
+    sources = _tui_sources(state, installed, len(failed))
+    if sources:
+        lines.append(sources)
+    lines.append(f"BIOS folder: {state.dest}")
+    if space:
+        lines.append("Free some space, or run again and choose another folder.")
     causes: dict[str, list[str]] = {}
     for failure in failed:
         causes.setdefault(failure["reason"], []).append(failure["dest"])
@@ -10969,8 +11321,8 @@ def tui_outcome(state: TuiState) -> tuple[str, list[str]]:
     for reason, dests in causes.items():
         if len(dests) > 3:
             # A read-only folder fails every file alike: said once.
-            lines.append(f"  {len(dests)} files failed ({reason or 'no reason given'}), "
-                         f"the first {dests[0]}")
+            lines.append(f"  {len(dests)} files failed, all for one reason: "
+                         f"{reason or 'none given'}.")
             continue
         for dest in dests:
             if shown < 20:
@@ -10978,7 +11330,7 @@ def tui_outcome(state: TuiState) -> tuple[str, list[str]]:
             shown += 1
     if shown > 20:
         lines.append(f"  ... and {shown - 20} more")
-    if not summary:
+    if not summary and not space:
         lines += [f"  {line}" for line in state.tail[-8:]]
     run = Invocation()
     run.os_type = state.os_type
@@ -10986,15 +11338,8 @@ def tui_outcome(state: TuiState) -> tuple[str, list[str]]:
         lines.append(f"The files it replaced are kept in {kept['folder']}")
         lines.append(f"To put them back: {run.launcher()} --restore "
                      f"{run.word(str(kept['folder']))}")
-    skipped = summary.get("skipped") or []
-    if skipped:
-        count = sum(group["files"] for group in skipped)
-        needed = sum(group["required"] for group in skipped)
-        lines.append(f"{_plural(count, 'file')} of the list "
-                     f"{'is' if count == 1 else 'are'} not in the collection"
-                     + ("." if not needed
-                        else ", and an emulator needs it to start." if count == 1
-                        else f", {needed} of them needed to start an emulator."))
+    if summary and not summary.get("interrupted") and installed + up_to_date:
+        lines += _unavailable_lines(state)
     for group in summary.get("left_out") or []:
         lines.append(f"Left out as {group['label']}: {_plural(group['files'], 'file')}.")
     lines += ["Same choice without questions:", f"  {tui_command(state)}"]
@@ -11008,7 +11353,9 @@ def tui_keeps_log(state: TuiState) -> bool:
     57 folders of logs from stopped and finished runs were left in /tmp."""
     if state.screen == "crashed":
         return True
-    return bool(state.log) and state.code not in (0, 130, None)
+    # A full card is said in words on the screen: its log adds nothing.
+    return (bool(state.log) and state.code not in (0, 130, None)
+            and _space_stop(state) is None)
 
 
 def _view_result(state: TuiState, width: int, height: int) -> tuple:
@@ -11037,6 +11384,7 @@ _TUI_VIEWS: dict[str, Callable[[TuiState, int, int], tuple]] = {
     "preview": _view_preview, "command": _view_command, "confirm": _view_confirm,
     "installing": _view_installing, "result": _view_result, "error": _view_error,
     "quit": _view_quit, "cardroot": _view_cardroot, "misplaced": _view_misplaced,
+    "unreadable": _view_unreadable,
 }
 
 
@@ -11133,15 +11481,21 @@ def _install_kind(path: Path) -> str:
             return word
     if (path.parent / "retroarch.cfg").is_file():
         return "portable"
-    return "/".join(path.parts[-2:])
+    return ""
 
 
 def tell_apart(setups: list[tuple]) -> list[tuple]:
     """Two setups that read alike get the word that separates them: the
-    Flatpak and the native RetroArch were both "RetroArch" at 40 columns."""
+    Flatpak and the native RetroArch were both "RetroArch" at 40 columns.
+    The one no package names is "installed", and two of those keep the
+    end of their folder, the only thing that tells them apart."""
     labels = [label for _plat, _path, label in setups]
-    return [(plat, path, f"{label} ({_install_kind(path)})" if labels.count(label) > 1
-             else label) for plat, path, label in setups]
+    kinds = [_install_kind(path) or "installed" for _plat, path, _label in setups]
+    named = list(zip(labels, kinds))
+    return [(plat, path, label if labels.count(label) == 1
+             else f"{label} ({kind})" if named.count((label, kind)) == 1
+             else f"{label} ({'/'.join(path.parts[-2:])})")
+            for (plat, path, label), kind in zip(setups, kinds)]
 
 
 def _tui_passthrough(args: argparse.Namespace) -> list[tuple[str, str | None]]:
@@ -11188,10 +11542,16 @@ def tui_start(
         with contextlib.redirect_stdout(captured), contextlib.redirect_stderr(captured):
             found = detect_platforms(os_type)
             frontends = detect_frontends(os_type)
-            cards = [(card_platform(mount), mount) for mount in _mounted_cards()]
+            cards = [(card_system(mount), mount) for mount in _mounted_cards()]
         state.setups = [(name, path, _setup_label(name, path)) for name, path in found]
-        state.setups += [(card, mount, f"{display_name(card)} SD card")
-                         for card, mount in cards if card and (card, mount) not in found]
+        # On the device itself its own card is the system found, by its
+        # own path (muOS reads /run/muos/storage/bios, a bind of MUOS/bios).
+        here = {detected_os(name, path) for name, path in found}
+        for card, mount in cards:
+            if card and (card[0], card[1]) not in found and card[2] not in here:
+                _DETECTED_OS.setdefault((card[0], card[1]), card[2])
+                state.setups.append((card[0], card[1],
+                                     f"{card[2]} SD card ({_mount_name(mount)})"))
         state.setups = tell_apart(state.setups)
         if "esde" in frontends:
             state.notes.append("ES-DE found: its BIOS files go to each emulator, "
@@ -11242,11 +11602,16 @@ def _log_tail(path: Path, count: int = 12) -> list[str]:
 class _EngineRun:
     """This installer run as a child with --events, read line by line."""
 
-    def __init__(self, argv: list[str], log: Path, inbox: queue.Queue, run_id: int) -> None:
+    def __init__(
+        self, argv: list[str], log: Path, inbox: queue.Queue, run_id: int,
+        env: dict | None = None,
+    ) -> None:
         self.log = log
         # Its own session: a signal typed at the terminal reaches the
         # interface alone, which forwards one Ctrl-C and waits for the summary.
         options: dict = {} if os.name == "nt" else {"start_new_session": True}
+        if env is not None:
+            options["env"] = env
         with open(log, "w", encoding="utf-8", errors="replace") as handle:
             self.proc = subprocess.Popen(
                 argv, stdin=subprocess.DEVNULL, stdout=subprocess.PIPE, stderr=handle,
@@ -11321,6 +11686,10 @@ def _tui_fetch(plat: str, inbox: queue.Queue, log: io.StringIO) -> None:
         return
     except ValueError as exc:
         title, lines = "The file list is not valid", [f"What arrived is not a file list: {exc}."]
+        if isinstance(exc.__cause__, (json.JSONDecodeError, UnicodeDecodeError)):
+            # The parser's "Expecting value: line 2 column 1" told no one anything.
+            lines = ["What arrived is not a file list: a Wi-Fi sign-in page or a cut "
+                     "download looks like this.", "Check the connection, then choose Try again."]
     except urllib.error.HTTPError as exc:
         title = "No file list"
         lines = [f"There is no file list for {display_name(plat)} at this address."
@@ -11329,10 +11698,18 @@ def _tui_fetch(plat: str, inbox: queue.Queue, log: io.StringIO) -> None:
         code, words = network_words(exc)
         title = {"clock": "The clock is wrong",
                  "no_ca": "No trusted certificates"}.get(code, "No connection")
-        lines = [words[0].upper() + words[1:] + "."]
+        # The screen's first row is Try again: "then run again" was a second way.
+        lines = [words[0].upper() + words[1:].replace(", then run again",
+                                                      ", then choose Try again") + "."]
         if code == "network":
             lines = [f"The list of BIOS files could not be downloaded: {words}.",
                      "Check the Wi-Fi or the cable, then choose Try again."]
+            proxy = next((name for name in ("HTTPS_PROXY", "https_proxy", "ALL_PROXY",
+                                            "all_proxy") if os.environ.get(name)), "")
+            if proxy:
+                # Named, never shown: the value can hold a password.
+                lines.append(f"{proxy} is set, so the connection goes through a proxy: "
+                             "check that it answers.")
     if os.environ.get("RETROBIOS_BASE_URL"):
         lines.append(f"RETROBIOS_BASE_URL chose the address: {url}")
     inbox.put(("manifest_failed", plat, title, lines, 1))
@@ -11461,6 +11838,66 @@ class _TuiTerminal:
             time.sleep(0.01)
 
 
+TUI_WORK_PREFIX = "retrobios-tui-"
+# The interface's process id, in its work folder: a folder whose process is
+# gone was left by a kill no handler sees (SIGKILL, a power cut).
+TUI_OWNER = "owner"
+# Written when a failed run's log is kept: it stays a week, then goes.
+TUI_KEPT = "kept"
+TUI_KEEP_SECONDS = 7 * 24 * 3600
+
+
+def _owner_alive(folder: Path) -> bool | None:
+    """Whether the run that made folder is still running, None when unknown."""
+    try:
+        pid = int((folder / TUI_OWNER).read_text(encoding="utf-8").strip())
+    except (OSError, ValueError):
+        return None
+    if os.name == "nt":
+        # os.kill(pid, 0) ends a process on Windows instead of asking.
+        return None
+    try:
+        os.kill(pid, 0)
+    except ProcessLookupError:
+        return False
+    except PermissionError:
+        return True
+    except OSError:
+        return None
+    return True
+
+
+def _mark_kept(work: Path) -> None:
+    try:
+        (work / TUI_KEPT).write_text("", encoding="utf-8")
+    except OSError as exc:
+        # The log is still there, only its week is not counted.
+        print(f"The log folder {work} could not be marked: {exc}", file=sys.stderr)
+
+
+def _prune_work_folders(root: Path, now: float) -> list[Path]:
+    """Remove what earlier runs of the interface left in root: the folder of
+    a run killed outright, and a failed run's log after a week. A folder
+    whose run is still going, or unknown and recent, stays."""
+    removed = []
+    try:
+        folders = [path for path in root.glob(TUI_WORK_PREFIX + "*") if path.is_dir()]
+    except OSError:
+        return removed
+    for folder in folders:
+        try:
+            age = now - folder.stat().st_mtime
+            kept = (folder / TUI_KEPT).exists()
+        except OSError:
+            continue
+        alive = _owner_alive(folder)
+        if alive or ((alive is None or kept) and age < TUI_KEEP_SECONDS):
+            continue
+        shutil.rmtree(folder, ignore_errors=True)
+        removed.append(folder)
+    return removed
+
+
 def tui_farewell(state: TuiState) -> list[str]:
     """What stays in the terminal once the full screen is gone."""
     return [screen_text(line) for line in _farewell_lines(state)]
@@ -11490,9 +11927,24 @@ def run_tui(args: argparse.Namespace) -> int:
     os_type = _INVOCATION.os_type or detect_os()
     if os_type == "wsl":
         _enter_wsl()
-    _open_local_sources(args)
+    # The --from folders are read by each check, not here: indexing a large
+    # card held the first frame back. Only whether each can be read is asked.
+    folders = getattr(args, "from") or []
+    setattr(args, "from", None)
+    try:
+        _open_local_sources(args)
+    finally:
+        setattr(args, "from", folders)
+    for folder in folders:
+        problem = from_folder_problem(str(folder))
+        if problem is not None:
+            print(f"Error: {folder} {problem[1]}: --from names the folder to copy BIOS "
+                  "files from.", file=sys.stderr)
+            return 1
     state, effects = tui_start(args, os_type)
-    work = Path(tempfile.mkdtemp(prefix="retrobios-tui-"))
+    work = Path(tempfile.mkdtemp(prefix=TUI_WORK_PREFIX))
+    (work / TUI_OWNER).write_text(str(os.getpid()), encoding="utf-8")
+    _prune_work_folders(work.parent, time.time())
     script = str(Path(__file__).resolve())
     inbox: queue.Queue = queue.Queue()
     current: list[_EngineRun] = []
@@ -11527,10 +11979,11 @@ def run_tui(args: argparse.Namespace) -> int:
                 log = work / f"{effect[1]}.log"
                 if effect[1] == "install":
                     state.log = str(log)
+                own_list = state.manifest_path in written.values()
                 try:
                     current.append(_EngineRun(
                         tui_argv(state, effect[1], sys.executable, script), log, inbox,
-                        state.run_id))
+                        state.run_id, {**os.environ, TUI_LIST_ENV: "1"} if own_list else None))
                 except OSError as exc:
                     inbox.put(("ended", state.run_id, 1,
                                [f"The installer could not be started: {exc}"]))
@@ -11637,6 +12090,8 @@ def run_tui(args: argparse.Namespace) -> int:
                 path.unlink()
         if not tui_keeps_log(state):
             shutil.rmtree(work, ignore_errors=True)
+        else:
+            _mark_kept(work)
     stream = sys.stderr if state.screen in ("error", "crashed") else sys.stdout
     lines = tui_farewell(state)
     if problems:

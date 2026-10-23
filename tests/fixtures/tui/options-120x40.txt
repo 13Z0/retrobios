@@ -3,7 +3,7 @@
  Each row is an option of the command line, named on the right.
 
  > Preferred regions: North America, Japan                                                 --region
-   Leave out game data: no                                                           --no-game-data
+   Game data: kept                                                                   --no-game-data
    Installed cores only: no (1 found)                                             --installed-cores
    Cores: all                                                                                --core
    Parallel downloads: 8                                                                     --jobs

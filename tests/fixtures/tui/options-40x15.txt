@@ -1,7 +1,7 @@
  RetroBIOS: Options
 
  > Preferred regions: North America, Ja
-   Leave out game data: no
+   Game data: kept
    Installed cores only: no (1 found)
    Cores: all
    Parallel downloads: 8
