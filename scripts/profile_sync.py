@@ -1723,8 +1723,8 @@ def build_report(
         anything that is not a browser. Letting the first refusal abort the
         report leaves the mirror unread and the profile unverifiable, so the
         repository is muted for the rest of the pass instead. A quota signal
-        still stops everything, because continuing would only burn the rest of
-        the budget on the same wall.
+        still ends the profile, and upstream stops asking that host, because
+        continuing would only burn the rest of the budget on the same wall.
         """
         # Keyed by host as well as slug: a mirror carries the same slug on
         # another forge, and muting one must not silence the other.
@@ -3847,7 +3847,7 @@ def _attach_detection(
     Kept on the report rather than printed, so --json carries them as the
     text report does. A forge that refuses is named on the report: the ref
     report already muted it, and one refusal must not end a pass over every
-    profile. A quota signal still stops everything.
+    profile. A quota signal still ends the profile.
     """
     if not report.head or not (args.detect_new_files or args.watch_hashes):
         return
@@ -3948,7 +3948,7 @@ def _print_extras(
     The ref report mutes a forge that refuses, but the extras read the same
     forge again, so a refusal here is reported on the profile's own line
     instead of ending a pass over every profile. A quota signal still
-    stops everything.
+    ends the profile.
     """
     _print_detection(report)
     if not (args.full_diff or args.tree_diff) or not report.head:
@@ -4165,8 +4165,6 @@ def main() -> None:
                     profile_path, args.cache_dir, args.offline, args.dry_run
                 ):
                     print(f"{name}: {line}")
-            except upstream.RateLimitError:
-                raise
             except upstream.UpstreamError as exc:
                 print(f"{name}: {exc}", file=sys.stderr)
                 failed.add(name)
@@ -4179,47 +4177,21 @@ def main() -> None:
 
     reports = []
     for name, profile in selected.items():
+        profile_path = Path(args.emulators_dir) / f"{name}.yml"
         try:
-            profile_path = Path(args.emulators_dir) / f"{name}.yml"
-            report = build_report(
-                name, profile, args.cache_dir, args.offline,
-                profile_path.read_text(encoding="utf-8")
-                if profile_path.is_file() else None,
-            )
-        except upstream.RateLimitError:
-            raise
-        except upstream.NotCachedError as exc:
-            # Offline with a cache that never stored this file: the profile
-            # is unverified, not wrong. Reporting GONE sent readers after
-            # files that exist.
-            report = ProfileReport(
-                name=name, entries=[], counts={}, skipped=f"offline: {exc}"
-            )
-        except upstream.GoneError as exc:
-            # The forge is not coming back: a takedown, or a host that no
-            # longer resolves. Saying so once in the summary beats repeating
-            # it on stderr every pass, and it keeps the profile out of the
-            # backlog, where nobody can act on it anyway.
-            report = ProfileReport(
-                name=name, entries=[], counts={}, skipped=f"upstream gone: {exc}"
-            )
-        except upstream.UpstreamError as exc:
-            # One unreachable forge must not abandon the other profiles.
+            report = _build_full_report(args, name, profile, profile_path, failed)
+        except upstream.RateLimitError as exc:
+            # A quota is one forge's: git.libretro.com answering 429 said
+            # nothing about the 600 profiles on GitHub. upstream stops asking
+            # that host, so the rest of the pass costs it nothing.
             print(f"{name}: {exc}", file=sys.stderr)
             report = ProfileReport(
-                name=name, entries=[], counts={}, skipped=f"upstream error: {exc}"
+                name=name, entries=[], counts={},
+                skipped=f"rate limited: {exc.host or exc}",
             )
             failed.add(name)
-        if not report.skipped and profile_path.is_file():
-            report.stale_prose = _read_stale_prose(name, profile_path, args, failed)
-        if args.check_version and profile.get("version_source"):
-            report.declared_version = str(profile.get("core_version") or "") or None
-            report.page_version = page_version(profile, args.cache_dir, args.offline)
-            report.no_genuine_copy = str(
-                profile["version_source"].get("no_genuine_copy") or "") or None
-        if args.check_version:
-            _attach_version(args, profile, report)
-        _attach_detection(args, profile, report)
+            reports.append(report)
+            continue
         reports.append(report)
         if writes:
             try:
@@ -4240,6 +4212,61 @@ def main() -> None:
         report.needs_review() or report.uncheckable() for report in reports
     )):
         raise SystemExit(1)
+
+
+def _build_full_report(
+    args: argparse.Namespace,
+    name: str,
+    profile: dict,
+    profile_path: Path,
+    failed: set[str],
+) -> ProfileReport:
+    """The report of one profile, with every section the flags ask for.
+
+    A rate limit propagates: the caller decides what one forge's quota
+    means for the pass. Any other forge failure becomes a skip.
+    """
+    try:
+        report = build_report(
+            name, profile, args.cache_dir, args.offline,
+            profile_path.read_text(encoding="utf-8")
+            if profile_path.is_file() else None,
+        )
+    except upstream.RateLimitError:
+        raise
+    except upstream.NotCachedError as exc:
+        # Offline with a cache that never stored this file: the profile
+        # is unverified, not wrong. Reporting GONE sent readers after
+        # files that exist.
+        report = ProfileReport(
+            name=name, entries=[], counts={}, skipped=f"offline: {exc}"
+        )
+    except upstream.GoneError as exc:
+        # The forge is not coming back: a takedown, or a host that no
+        # longer resolves. Saying so once in the summary beats repeating
+        # it on stderr every pass, and it keeps the profile out of the
+        # backlog, where nobody can act on it anyway.
+        report = ProfileReport(
+            name=name, entries=[], counts={}, skipped=f"upstream gone: {exc}"
+        )
+    except upstream.UpstreamError as exc:
+        # One unreachable forge must not abandon the other profiles.
+        print(f"{name}: {exc}", file=sys.stderr)
+        report = ProfileReport(
+            name=name, entries=[], counts={}, skipped=f"upstream error: {exc}"
+        )
+        failed.add(name)
+    if not report.skipped and profile_path.is_file():
+        report.stale_prose = _read_stale_prose(name, profile_path, args, failed)
+    if args.check_version and profile.get("version_source"):
+        report.declared_version = str(profile.get("core_version") or "") or None
+        report.page_version = page_version(profile, args.cache_dir, args.offline)
+        report.no_genuine_copy = str(
+            profile["version_source"].get("no_genuine_copy") or "") or None
+    if args.check_version:
+        _attach_version(args, profile, report)
+    _attach_detection(args, profile, report)
+    return report
 
 
 def _emit(

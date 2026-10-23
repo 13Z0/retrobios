@@ -4163,6 +4163,40 @@ class TestRealignProse(unittest.TestCase):
         self.assertIn("(deep.c:14)", self.path.read_text())
 
 
+class TestRateLimitEndsOneProfile(unittest.TestCase):
+    """git.libretro.com answered 429 on cemu's tree and the pass over 647
+    profiles stopped with a traceback and no report at all."""
+
+    def test_the_pass_goes_on_and_fails(self):
+        from unittest import mock
+
+        def build(name, *_args, **_kwargs):
+            if name == "cemu":
+                raise profile_sync.upstream.RateLimitError(
+                    "https://git.libretro.com/x: HTTP 429", "git.libretro.com"
+                )
+            return ProfileReport(name=name, counts={"CHANGED": 1})
+
+        out, err = io.StringIO(), io.StringIO()
+        saved = sys.argv
+        try:
+            sys.argv = ["profile_sync.py", "--all", "--json"]
+            with mock.patch.object(profile_sync, "load_emulator_profiles", return_value={}), \
+                    mock.patch.object(profile_sync, "select_profiles",
+                                      return_value={"cemu": {}, "after": {}}), \
+                    mock.patch.object(profile_sync, "_check_quota"), \
+                    mock.patch.object(profile_sync, "build_report", side_effect=build), \
+                    contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+                with self.assertRaises(SystemExit) as caught:
+                    profile_sync.main()
+        finally:
+            sys.argv = saved
+        self.assertEqual(caught.exception.code, 1)
+        by_name = {r["name"]: r for r in json.loads(out.getvalue())}
+        self.assertEqual(by_name["cemu"]["skipped"], "rate limited: git.libretro.com")
+        self.assertEqual(by_name["after"]["needs_review"], 1)
+
+
 class TestOutputModesApplyTheirFlags(unittest.TestCase):
     """--changed-only narrows --json too. Extras are refused off the text report."""
 

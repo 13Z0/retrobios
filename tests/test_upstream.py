@@ -237,9 +237,11 @@ class TestFetchRetry(unittest.TestCase):
         self._orig = (urllib.request.urlopen, upstream._sleep)
         self.slept: list[float] = []
         upstream._sleep = self.slept.append
+        upstream._exhausted_hosts.clear()
 
     def tearDown(self):
         urllib.request.urlopen, upstream._sleep = self._orig
+        upstream._exhausted_hosts.clear()
 
     def _serve(self, outcomes):
         self.calls = 0
@@ -283,11 +285,50 @@ class TestFetchRetry(unittest.TestCase):
         self.assertIsNone(upstream._fetch("https://host/x"))
         self.assertEqual(self.calls, 1)
 
-    def test_rate_limit_is_not_retried(self):
-        self._serve([_http_error(429)])
+    @staticmethod
+    def _limited(retry_after: str | None = None) -> urllib.error.HTTPError:
+        import email.message  # noqa: PLC0415
+
+        headers = email.message.Message()
+        if retry_after is not None:
+            headers["Retry-After"] = retry_after
+        return _http_error(429, headers)
+
+    def test_rate_limit_is_waited_out(self):
+        # git.libretro.com answered 429 on cemu's tree a few hundred
+        # requests into a pass, and the whole pass stopped.
+        self._serve([self._limited("7"), self._limited(), b"payload"])
+        self.assertEqual(upstream._fetch("https://host/x"), b"payload")
+        self.assertEqual(self.slept, [7.0, upstream.RATE_LIMIT_WAITS[1]])
+
+    def test_lasting_rate_limit_mutes_the_host_only(self):
+        self._serve([self._limited()])
+        with self.assertRaises(upstream.RateLimitError) as caught:
+            upstream._fetch("https://host/x")
+        self.assertEqual(caught.exception.host, "host")
+        self.assertEqual(self.calls, len(upstream.RATE_LIMIT_WAITS) + 1)
+        # The same host is not asked again, another one still is.
+        with self.assertRaises(upstream.RateLimitError):
+            upstream._fetch("https://host/y")
+        self.assertEqual(self.calls, len(upstream.RATE_LIMIT_WAITS) + 1)
+        self._serve([b"other"])
+        self.assertEqual(upstream._fetch("https://other/x"), b"other")
+
+    def test_long_retry_after_is_not_waited(self):
+        self._serve([self._limited(str(int(upstream.RATE_LIMIT_WAIT_CAP) + 1))])
         with self.assertRaises(upstream.RateLimitError):
             upstream._fetch("https://host/x")
-        self.assertEqual(self.calls, 1)
+        self.assertEqual((self.calls, self.slept), (1, []))
+
+    def test_exhausted_github_quota_is_not_waited(self):
+        import email.message  # noqa: PLC0415
+
+        headers = email.message.Message()
+        headers["X-RateLimit-Remaining"] = "0"
+        self._serve([_http_error(403, headers)])
+        with self.assertRaises(upstream.RateLimitError):
+            upstream._fetch("https://host/x")
+        self.assertEqual((self.calls, self.slept), (1, []))
 
 
 class TestGoneUpstream(unittest.TestCase):
