@@ -1072,7 +1072,8 @@ page there: muxterm keeps PgUp and PgDn for its own scrollback, so a list
 moves with the D-pad.
 
 Each launcher also sets `RETROBIOS_IDLE_EXIT` to 300: with no button pressed
-on its first screen for 5 minutes, the interface closes by itself. A pad the
+for 5 minutes since it opened, and no check or install running, the interface
+closes by itself. A pad the
 system has no mapping for sends nothing, and would otherwise leave the
 console stuck on the interface with no way out.
 
@@ -1089,9 +1090,11 @@ Each launcher tells the interface which buttons reach it, in
 
 A launcher with no mapper at all (a keyboard) leaves it unset.
 A launcher can also set `RETROBIOS_IDLE_EXIT` to a number of seconds: when
-no button reaches the first screen for that long, before any choice, the
-interface closes with `No button pressed, closing.` and exit status 0. A
-mapper that never opened the pad would otherwise hold the device on that
+no button has reached the interface since it opened, and nothing has run for
+that long, it closes with `No button pressed, closing.` and exit status 0.
+The time counts from the end of the last check, so a launcher that names the
+platform, whose interface moves on to the plan by itself, closes the same way.
+A mapper that never opened the pad would otherwise hold the device on that
 screen. On a Miyoo, B,
 X, Y and Select are Left Ctrl, Shift, Alt and Right Ctrl: pressed alone, a
 modifier sends nothing to a terminal, so the interface goes back with R2
@@ -1342,7 +1345,7 @@ RetroArch folder that holds only `scph5501.bin`, in the order written:
 | `SSL_CERT_FILE`, `SSL_CERT_DIR` | The trusted certificates to check servers with, for a Python that finds none of its own |
 | `RETROBIOS_PLAIN`, `ACCESSIBLE` | Set to anything but `0`: the questions come line by line, as with `--plain`, instead of the full-screen interface |
 | `RETROBIOS_PAD` | The buttons a handheld launcher's mapper sends to the full screen (`gptokeyb`, `gptokeyb_muxterm`, `muxterm`, `evmapy`, `miyoo`), so its hints name them. See [On a handheld](#on-a-handheld-the-retrobios-port) |
-| `RETROBIOS_IDLE_EXIT` | Seconds the full screen's first screen waits for a first button. With none pressed, it closes with exit status 0 |
+| `RETROBIOS_IDLE_EXIT` | Seconds the full screen waits for a first button, counted while nothing runs. With none pressed, it closes with exit status 0 |
 | `HTTPS_PROXY`, `NO_PROXY` | Honoured for every download through the standard library's default proxy handling: one names the proxy, the other the hosts to reach directly |
 
 ## When something goes wrong

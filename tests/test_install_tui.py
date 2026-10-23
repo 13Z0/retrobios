@@ -3176,6 +3176,18 @@ class EndToEnd(unittest.TestCase):
         term.send("q")
         self.assertEqual(term.close(), 130)
 
+    def test_no_key_on_a_screen_reached_by_itself_closes_it(self):
+        """Given --platform, as the offline launcher route is, the check
+        runs at once and the plan follows without a key: the close counted
+        only on the first screen, and never came."""
+        repo = self.repo()
+        self.env[install.TUI_IDLE_ENV] = "1"
+        term = self.start("--platform", "retroarch", "--dest", str(repo.dest))
+        term.wait("> Install")
+        self.assertEqual(term.close(), 0)
+        self.assertIn("No button pressed, closing.", term.after())
+        self.assertEqual(repo.installed(), [])
+
     def test_a_desktop_names_its_keys_and_a_pad_its_buttons(self):
         self.repo()
         for env, bar in (({"DISPLAY": ":0"}, "Enter Continue  Esc Quit  ? Help"),

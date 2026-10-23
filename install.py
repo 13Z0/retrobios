@@ -10118,9 +10118,9 @@ TUI_PAD_ROUTES = ("gptokeyb", "gptokeyb_muxterm", "muxterm", "evmapy", "miyoo")
 _STEAM_MARKERS = ("SteamGamepadUI", "SteamDeck", "SteamGameId", "GAMESCOPE_WAYLAND_DISPLAY")
 
 
-# Seconds the first screen waits for a first key before it closes, set by a
-# launcher whose mapper may never open the pad: the screen would otherwise
-# hold a handheld that has no other way out.
+# Seconds the interface waits for a first key, no run going, before it
+# closes, set by a launcher whose mapper may never open the pad: the screen
+# would otherwise hold a handheld that has no other way out.
 TUI_IDLE_ENV = "RETROBIOS_IDLE_EXIT"
 TUI_IDLE_WORDS = "No button pressed, closing."
 
@@ -12895,7 +12895,10 @@ def run_tui(args: argparse.Namespace) -> int:
             if number is not None:
                 handlers[number] = signal.signal(number, handler)
         idle = tui_idle_exit()
-        first_screen, opened, pressed = state.screen, time.monotonic(), False
+        # Counted from the moment the screen last waited for a key with no
+        # run going: given --platform, the first screen moves on by itself
+        # to the plan once the check is read, and no key comes either.
+        quiet_since, pressed = time.monotonic(), False
         sys.stdout = sys.stderr = buffer
         try:
             _prune_work_folders(work.parent, time.time())
@@ -12931,9 +12934,10 @@ def run_tui(args: argparse.Namespace) -> int:
                 perform(tui_update(state, key))
                 if state.exit_code is not None:
                     break
-            if (idle is not None and not pressed and state.exit_code is None
-                    and state.screen == first_screen
-                    and time.monotonic() - opened >= idle):
+            if state.running:
+                quiet_since = time.monotonic()
+            elif (idle is not None and not pressed and state.exit_code is None
+                    and time.monotonic() - quiet_since >= idle):
                 state.idle_closed, state.exit_code = True, 0
             if flags["interrupt"]:
                 flags["interrupt"] = False
