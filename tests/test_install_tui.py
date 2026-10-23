@@ -10,6 +10,7 @@ installs it).
 from __future__ import annotations
 
 import argparse
+import errno
 import fcntl
 import functools
 import hashlib
@@ -1801,6 +1802,31 @@ class WorkFolders(unittest.TestCase):
         work, out = self.run_to(130)
         self.assertFalse(work.exists())
 
+    def test_a_full_temp_disk_or_a_failing_pruner_still_opens(self):
+        real_write = Path.write_text
+
+        def full(path, *args, **kwargs):
+            if path.name == install.TUI_OWNER:
+                raise OSError(errno.ENOSPC, "No space left on device")
+            return real_write(path, *args, **kwargs)
+
+        with mock.patch.object(Path, "write_text", full):
+            work, out = self.run_to(0)
+        self.assertFalse(work.exists())
+        with mock.patch.object(install, "_prune_work_folders",
+                               side_effect=OSError(errno.EACCES, "denied")):
+            work, out = self.run_to(0)
+        self.assertFalse(work.exists())
+        err = io.StringIO()
+        with mock.patch.object(install.tempfile, "mkdtemp",
+                               side_effect=OSError(errno.ENOSPC, "No space left")), \
+                mock.patch.object(install, "tui_start", return_value=(fresh_state(), [])), \
+                mock.patch.object(install, "_open_local_sources"), \
+                mock.patch.object(install, "detect_os", return_value="linux"), \
+                mock.patch.object(sys, "stderr", err):
+            self.assertEqual(install.run_tui(_args()), 1)
+        self.assertIn("no work folder could be made", err.getvalue())
+
     def test_a_stop_while_it_starts_ends_on_the_farewell(self):
         """Start+Select during the detection: the signal is the interface's,
         never the default action that ended Python without a word."""
@@ -2456,8 +2482,17 @@ class AuditRoundThree(unittest.TestCase):
         unknown_old = folder("unknown-old", None, False, 2 * week)
         other = root / "something-else"
         other.mkdir()
+        # A stray or hostile owner file is an unknown owner: a number past
+        # what a pid holds raised OverflowError, and 0 or -1 name a group.
+        hostile = [folder(f"hostile{index}", None, False, 60)
+                   for index in range(3)]
+        for path, text in zip(hostile, ("9" * 40, "0", "-1")):
+            (path / install.TUI_OWNER).write_text(text)
+            self.assertIsNone(install._owner_alive(path))
         removed = install._prune_work_folders(root, now)
         self.assertEqual(sorted(removed), sorted([killed, failed_old, unknown_old]))
+        for path in hostile:
+            shutil.rmtree(path)
         self.assertEqual(sorted(path.name for path in root.iterdir()),
                          sorted(path.name for path in (running, failed, unknown, other)))
 

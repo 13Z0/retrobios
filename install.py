@@ -12279,8 +12279,9 @@ def _owner_alive(folder: Path) -> bool | None:
         pid = int((folder / TUI_OWNER).read_text(encoding="utf-8").strip())
     except (OSError, ValueError):
         return None
-    if os.name == "nt":
-        # os.kill(pid, 0) ends a process on Windows instead of asking.
+    if os.name == "nt" or pid <= 0:
+        # os.kill(pid, 0) ends a process on Windows instead of asking, and
+        # 0 or a negative number names a process group, not the run.
         return None
     try:
         os.kill(pid, 0)
@@ -12288,7 +12289,8 @@ def _owner_alive(folder: Path) -> bool | None:
         return False
     except PermissionError:
         return True
-    except OSError:
+    except (OSError, OverflowError):
+        # A number past what a pid holds is no process this run can ask.
         return None
     return True
 
@@ -12375,9 +12377,20 @@ def run_tui(args: argparse.Namespace) -> int:
     state, effects = started
     if flags["term"]:
         state.exit_code = 128 + flags["term"]
-    work = Path(tempfile.mkdtemp(prefix=TUI_WORK_PREFIX))
-    (work / TUI_OWNER).write_text(str(os.getpid()), encoding="utf-8")
-    _prune_work_folders(work.parent, time.time())
+    try:
+        work = Path(tempfile.mkdtemp(prefix=TUI_WORK_PREFIX))
+    except OSError as exc:
+        _restore_handlers(handlers)
+        print(f"Error: no work folder could be made in {tempfile.gettempdir()}: {exc}. "
+              "Free some space there, or point TMPDIR (TEMP on Windows) at another folder.", file=sys.stderr)
+        return 1
+    try:
+        (work / TUI_OWNER).write_text(str(os.getpid()), encoding="utf-8")
+    except OSError as exc:
+        # A full temp disk: the folder has no owner, and a later run leaves
+        # it a week like any unknown one. The logs fail as they come.
+        print(f"The work folder {work} could not be marked as this run's: {exc}",
+              file=sys.stderr)
     script = str(Path(__file__).resolve())
     inbox: queue.Queue = queue.Queue()
     current: list[_EngineRun] = []
@@ -12445,6 +12458,11 @@ def run_tui(args: argparse.Namespace) -> int:
             if number is not None:
                 handlers[number] = signal.signal(number, handler)
         sys.stdout = sys.stderr = buffer
+        try:
+            _prune_work_folders(work.parent, time.time())
+        except OSError as exc:
+            # What earlier runs left stays until a later run: this one opens.
+            print(f"Earlier work folders could not be removed: {exc}", file=sys.stderr)
         if state.exit_code is None:
             # Stopped while it started: the screen never opens.
             terminal.enter()
