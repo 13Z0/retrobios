@@ -128,6 +128,28 @@ All good when every file is present and none is wrong:
 
 An empty folder also shows `0 wrong hash`, with `0/109 present`.
 
+## Copy the BIOS files from your old card
+
+Before you wipe the card your device came with, or after you moved to a new
+one, plug the old card in and add `--from` with its folder:
+
+<!-- os-tabs windows: --from E:\ -->
+```sh
+curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh -s -- --from /media/me/OLDCARD
+```
+
+It copies the BIOS files it finds there, in any folder and under any name,
+and downloads only the rest. Your old card is only read. The last line says
+how many came from it:
+
+```
+  38 files copied from E:\, 4 downloaded, 2 still missing.
+```
+
+Files already in your BIOS folder but in the wrong place (a `bios` folder
+inside `bios`, a name in capitals, a ZIP you never extracted) are put where
+your emulators look, without `--from`.
+
 ## Undo
 
 It keeps every file it replaces in a `retrobios-backup` folder, next to your
