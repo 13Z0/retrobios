@@ -1,15 +1,22 @@
-# Beetle GBA (Mednafen), Game Boy Advance (libretro)
-# ref: beetle-gba-libretro/mednafen/gba, docs.libretro.com/library/beetle_gba
-# Same BIOS as mGBA/VBA-M. Read only with the gba_hle core option disabled.
 emulator: Beetle GBA (Mednafen)
 type: libretro
-cores: [mednafen_gba]
+core_classification: frozen_snapshot
 source: "https://github.com/libretro/beetle-gba-libretro"
+upstream: "https://mednafen.github.io/"
+profiled_date: "2026-03-24"
 source_commit: "b158166237b17253188cfdbe73a8a0b9fe4b3a8c"
+core_version: "v0.9.36"
+display_name: "Nintendo - Game Boy Advance (Beetle GBA)"
+cores: [beetle_gba, mednafen_gba]
 systems:
   - nintendo-gba
+notes: >
+  Mednafen v0.9.36 GBA module (libretro.cpp:73), whose GBA code derives
+  from VisualBoyAdvance (mednafen/gba/GBA.cpp:1-3). The built-in HLE BIOS
+  is used by default.
 files:
   - name: gba_bios.bin
+    description: "Game Boy Advance BIOS"
     system: nintendo-gba
     required: false
     hle_fallback: true
@@ -17,6 +24,7 @@ files:
     validation: [size]
     source_ref: "mednafen/gba/GBA.cpp:2639-2673, mednafen/settings.cpp:81-82, libretro.cpp:223-230"
     note: >
-      Read only when the gba_hle core option is disabled. It is enabled by
-      default and the core then uses its built-in HLE BIOS. A file of any size
-      other than 16384 bytes is ignored and the core falls back to HLE.
+      Read only when the gba_hle core option is disabled, a setting read at
+      startup only. It is enabled by default and the core then uses its
+      built-in HLE BIOS. A file of any size other than 16384 bytes is ignored
+      and the core falls back to HLE.
