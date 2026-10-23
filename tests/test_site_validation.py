@@ -369,7 +369,8 @@ class PlainHouseStyle(unittest.TestCase):
         "gradient": re.compile(r"gradient\("),
         "side stripe": re.compile(r"border-(?:left|inline-start)\s*:\s*\d+px"),
         "lifting card": re.compile(r"translateY\("),
-        "drop shadow": re.compile(r"box-shadow"),
+        # "box-shadow: none" removes one of Starlight's shadows.
+        "drop shadow": re.compile(r"box-shadow\s*:(?!\s*none\s*[;}])"),
         "small caps header": re.compile(r"text-transform\s*:\s*uppercase"),
         "pill": re.compile(r"border-radius\s*:\s*(?:[5-9]|\d{2,})px|50%"),
         "box-drawing rule": re.compile("[\u2500-\u257f]"),

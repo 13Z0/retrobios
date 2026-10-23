@@ -15,7 +15,8 @@
    code.rb-path        a folder path shown as a chip
    .rb-figure          a generated diagram (scripts/sitediagrams.py)
    .rb-bar             inline coverage bar, width from --v
-   .rb-details-*       collapsible block, in the callout colour of its role
+   .rb-details-*       collapsible block, neutral unless caution or danger
+   dl.rb-facts         the facts of a file card, label and value side by side
    abbr.rb-term        a glossary term, its definition on hover or tap
 */
 
@@ -23,11 +24,16 @@
 	--sl-font: system-ui, -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
 	--sl-font-mono: ui-monospace, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
 	--sl-color-accent-low: #1f2147;
-	--sl-color-accent: #8c9cf0;
+	--sl-color-accent: #aebcff;
 	--sl-color-accent-high: #c9d2ff;
+	--sl-color-text-accent: var(--sl-color-accent);
+	--sl-text-h1: 2.25rem;
+	--sl-text-h2: 1.5rem;
+	--sl-text-h3: 1.2rem;
+	--sl-text-h4: 1rem;
 
 	--rb-link: #aebcff;
-	--rb-accent: #ff9a8f;
+	--rb-link-strong: #c9d2ff;
 	--rb-surface: #252838;
 	--rb-border: #3a3d52;
 	--rb-border-strong: #5a5e7a;
@@ -57,11 +63,12 @@
 
 :root[data-theme='light'] {
 	--sl-color-accent-low: #e3e5f6;
-	--sl-color-accent: #3b3f7a;
-	--sl-color-accent-high: #2b2e5c;
+	--sl-color-accent: #273c8f;
+	--sl-color-accent-high: #1d2f73;
+	--sl-color-text-accent: var(--sl-color-accent);
 
 	--rb-link: #273c8f;
-	--rb-accent: #b42318;
+	--rb-link-strong: #1d2f73;
 	--rb-surface: #f5f6fa;
 	--rb-border: #e0e3eb;
 	--rb-border-strong: #b8bdcc;
@@ -95,14 +102,21 @@
 }
 .sl-markdown-content a:not(.rb-button):hover { text-decoration-thickness: 0.14em; }
 .sl-markdown-content a code { color: var(--rb-link); }
+/* The ring is the link colour: red is kept for what is wrong. The offset
+   puts it on the page background, never on the fill it surrounds. */
 :where(a, button, input, select, textarea, summary, abbr, [tabindex]):focus-visible {
-	outline: 3px solid var(--rb-accent);
-	outline-offset: 3px;
+	outline: 2px solid var(--rb-link);
+	outline-offset: 2px;
 }
 
-/* Type scale */
-.sl-markdown-content h2 { font-weight: 600; letter-spacing: -0.005em; }
+/* Type scale: h2 two thirds of the h1, so a page of short blocks keeps
+   one title and its sections, not a column of headlines. */
+.sl-markdown-content h2 { font-weight: 600; letter-spacing: -0.01em; }
 .sl-markdown-content h3 { font-weight: 600; }
+.sl-markdown-content :not(h1, h2, h3, h4, h5, h6, .sl-heading-wrapper) + :is(.sl-heading-wrapper.level-h2, h2) { margin-top: 2.75rem; }
+.sl-markdown-content :not(h1, h2, h3, h4, h5, h6, .sl-heading-wrapper) + :is(.sl-heading-wrapper.level-h3, h3:not(.rb-file-title)) { margin-top: 1.75rem; }
+/* A row of buttons right under a heading does not touch it. */
+.sl-markdown-content .sl-heading-wrapper:has(+ .rb-button) { margin-bottom: 0.5rem; }
 .sl-markdown-content .rb-lead { font-size: 1.05em; line-height: 1.55; max-width: 44em; }
 
 /* Breadcrumbs above the title */
@@ -159,10 +173,10 @@
 	text-decoration: none;
 }
 .sl-markdown-content .rb-button-primary { background: var(--rb-link); color: var(--sl-color-black); }
-.sl-markdown-content .rb-button:is(:hover, :focus) {
-	background: var(--rb-accent);
-	border-color: var(--rb-accent);
-	color: var(--sl-color-black);
+.sl-markdown-content .rb-button:hover { background: var(--sl-color-accent-low); }
+.sl-markdown-content .rb-button-primary:hover {
+	background: var(--rb-link-strong);
+	border-color: var(--rb-link-strong);
 }
 .sl-markdown-content table .rb-button { font-size: 0.8rem; padding: 0.4rem 0.8rem; }
 
@@ -310,13 +324,25 @@
 /* Tables */
 .sl-markdown-content table { font-variant-numeric: tabular-nums; }
 .sl-markdown-content table th { font-weight: 600; }
-.sl-markdown-content table[role='region']:focus-visible { outline: 3px solid var(--rb-accent); outline-offset: 2px; }
+.sl-markdown-content table[role='region']:focus-visible { outline: 2px solid var(--rb-link); outline-offset: 2px; }
 
 /* Key and value cards: the empty header row is not drawn */
 .rb-meta-card thead,
 .sl-markdown-content table thead:not(:has(th:not(:empty))) { display: none; }
-.rb-meta-card td { overflow-wrap: anywhere; }
-.rb-meta-card td:first-child { font-weight: 600; color: var(--rb-text-secondary); white-space: nowrap; width: 140px; }
+/* Fixed layout: the label column keeps its share and a value wraps between
+   words. Only code and long addresses break inside a word. */
+.sl-markdown-content .rb-meta-card table { display: table; table-layout: fixed; width: 100%; }
+.rb-meta-card td { overflow-wrap: break-word; }
+.rb-meta-card td code { overflow-wrap: anywhere; }
+.rb-meta-card td a { word-break: normal; }
+.rb-meta-card td:first-child { font-weight: 600; color: var(--rb-text-secondary); width: 11rem; }
+
+/* Cross-reference by upstream: the address column wraps instead of pushing
+   the cores and platforms off screen. */
+.sl-markdown-content .sl-heading-wrapper:has(> #by-upstream-emulator) + section td:has(a[href^='http']) {
+	max-width: 22rem;
+	overflow-wrap: anywhere;
+}
 
 .rb-timestamp {
 	font-size: 0.8rem;
@@ -326,10 +352,15 @@
 	border-top: 1px solid var(--rb-border);
 }
 
-/* File cards on system and emulator pages */
+/* File cards on system and emulator pages. A page holds hundreds: those
+   off screen are laid out when they come near, and the column is wide
+   enough for a sha256 on one line. */
+body:has(.rb-sys-file, .rb-file-entry) { --sl-content-width: 54rem; }
 .sl-markdown-content :is(.rb-sys-file, .rb-file-entry) {
 	border-top: 1px solid var(--rb-border);
 	padding: 0.75rem 0 0.25rem;
+	content-visibility: auto;
+	contain-intrinsic-size: auto 320px;
 }
 .sl-markdown-content :is(.rb-sys-file, .rb-file-entry) > :first-child { margin-top: 0; }
 .sl-markdown-content .rb-file-title {
@@ -355,6 +386,9 @@
 }
 .rb-hash code { background: none; padding: 0; overflow-wrap: anywhere; }
 .rb-permalink {
+	display: inline-flex;
+	align-items: center;
+	min-height: 24px;
 	margin-left: 0.4rem;
 	font-size: 0.75rem;
 	color: var(--rb-text-secondary);
@@ -363,24 +397,62 @@
 }
 :is(.rb-sys-file, .rb-file-entry):hover .rb-permalink,
 .rb-permalink:focus { opacity: 1; }
+/* No hover on a touch screen: the link is always shown there. */
+@media (hover: none) {
+	.rb-permalink { opacity: 1; }
+}
+
+/* The facts of a file card: label column, value column, one column on a phone. */
+.sl-markdown-content dl.rb-facts {
+	display: grid;
+	grid-template-columns: 9rem minmax(0, 1fr);
+	gap: 0.2rem 1rem;
+	margin: 0.4rem 0 0;
+	font-size: 0.85rem;
+}
+.sl-markdown-content .rb-facts :is(dt, dd) { margin: 0; padding: 0; }
+.sl-markdown-content .rb-facts dt { font-size: 0.8rem; font-weight: 400; color: var(--rb-text-secondary); }
+.sl-markdown-content .rb-facts dd { min-width: 0; overflow-wrap: break-word; }
+.sl-markdown-content .rb-facts code { overflow-wrap: anywhere; }
+@media (max-width: 30rem) {
+	.sl-markdown-content dl.rb-facts { grid-template-columns: minmax(0, 1fr); gap: 0; }
+	.sl-markdown-content .rb-facts dd + dt { margin-top: 0.4rem; }
+}
 :is(.rb-sys-file, .rb-file-entry):has(> .rb-file-title:target) { background: var(--rb-surface); }
 
-/* Collapsible blocks keep the callout colour of their role */
+/* Collapsible blocks are quiet: a closed block must not outweigh the
+   command it explains. Colour is kept for caution and danger. */
 .sl-markdown-content details.rb-details {
-	border: 1px solid var(--sl-color-blue);
+	border: 1px solid var(--rb-border);
 	border-radius: 4px;
-	background: var(--sl-color-blue-low);
+	background: transparent;
 	padding: 0.6rem 1rem;
 }
-.sl-markdown-content details.rb-details-tip { border-color: var(--sl-color-purple); background: var(--sl-color-purple-low); }
+.sl-markdown-content details.rb-details:not(.rb-details-caution, .rb-details-danger):has(> summary:hover) { border-color: var(--rb-border-strong); }
 .sl-markdown-content details.rb-details-caution { border-color: var(--sl-color-orange); background: var(--sl-color-orange-low); }
 .sl-markdown-content details.rb-details-danger { border-color: var(--sl-color-red); background: var(--sl-color-red-low); }
 .sl-markdown-content details.rb-details > summary {
 	min-height: 24px;
+	font-size: 0.95rem;
 	font-weight: 600;
 	cursor: pointer;
 }
+/* Starlight's chevron, which turns when the block opens, in the muted colour. */
+.sl-markdown-content details.rb-details > summary::before { background-color: var(--rb-text-secondary); }
 .sl-markdown-content details.rb-details[open] > summary { margin-bottom: 0.6rem; }
+
+/* Asides: a neutral box for notes and tips, no side stripe, no icon.
+   Caution and danger keep their colour, as a 1 px border all round. */
+.sl-markdown-content .starlight-aside {
+	border: 1px solid var(--sl-color-asides-border);
+	border-radius: 4px;
+}
+.sl-markdown-content .starlight-aside:is(.starlight-aside--note, .starlight-aside--tip) {
+	--sl-color-asides-border: var(--rb-border);
+	--sl-color-asides-text-accent: var(--sl-color-white);
+	background: var(--rb-surface);
+}
+.sl-markdown-content .starlight-aside:is(.starlight-aside--note, .starlight-aside--tip) .starlight-aside__icon { display: none; }
 
 /* Terminal output: what the screen shows, not something to type */
 .sl-markdown-content .rb-terminal .expressive-code pre { background: var(--rb-terminal-bg); color: var(--rb-terminal-fg); }
@@ -506,6 +578,59 @@ abbr.rb-term[data-open]::after {
 	cursor: pointer;
 }
 
+/* Search: a system page's file names rank it (its `files` meta field) but
+   are not printed under the result. */
+site-search .pagefind-ui__result-tags { display: none; }
+
+/* The site name keeps its size: Starlight sizes it from the h4 step. */
+.site-title { font-size: var(--sl-text-xl); }
+@media (min-width: 50rem) {
+	.site-title { font-size: var(--sl-text-2xl); }
+}
+
+/* Pagination and the phone menu button sit flat on the page. */
+.pagination-links a { box-shadow: none; border-color: var(--rb-border); }
+.pagination-links a:hover { border-color: var(--rb-border-strong); }
+.pagination-links .link-title { font-size: 1.05rem; font-weight: 600; }
+.sl-menu-button {
+	box-shadow: none;
+	border: 1px solid var(--rb-border);
+	background: transparent;
+	color: var(--sl-color-white);
+}
+.sl-menu-button:has(~ :popover-open) { box-shadow: none; background: var(--sl-color-accent-low); }
+
+/* Sidebar: small grey group labels, regular links, the current page on a
+   tinted background with no bar or rule beside it. */
+#starlight__sidebar .top-level summary .large {
+	font-size: var(--sl-text-xs);
+	font-weight: 600;
+	color: var(--rb-text-secondary);
+}
+#starlight__sidebar .top-level a { font-weight: 400; }
+#starlight__sidebar .top-level a[aria-current='page'] {
+	background: var(--sl-color-accent-low);
+	color: var(--sl-color-accent-high);
+	font-weight: 600;
+}
+
+/* OS tabs wrap on a narrow phone instead of hiding the last one. */
+starlight-tabs [role='tablist'] { flex-wrap: wrap; }
+starlight-tabs [role='tab'] { white-space: nowrap; }
+
+/* A page without "On this page" keeps the column, and the search box above
+   it, where a page with one has them: they no longer jump between pages. */
+:root[data-has-sidebar]:not([data-has-toc]) { --__toc-width: initial; }
+@media (min-width: 72rem) {
+	:root[data-has-sidebar]:not([data-has-toc]) .main-pane {
+		--sl-content-margin-inline: auto 0;
+		width: min(
+			calc(100% - var(--sl-sidebar-width)),
+			calc(var(--sl-content-width) + (100% - var(--sl-content-width) - var(--sl-sidebar-width)) / 2)
+		);
+	}
+}
+
 /* Licence line under every page */
 .rb-copyright { margin: 1.5rem 0 0; font-size: var(--sl-text-xs); color: var(--sl-color-gray-3); }
 
@@ -541,11 +666,26 @@ abbr.rb-term[data-open]::after {
 		color: var(--rb-text-secondary);
 	}
 	.sl-markdown-content table[data-rb-stack] td:empty { display: none; }
+	/* A two-column table of labels and values: the label above, the value
+	   on the full width under it. */
+	.sl-markdown-content table[data-rb-stack='kv'] td { padding: 0 0.6rem; }
+	.sl-markdown-content table[data-rb-stack='kv'] td::before { content: none; }
+	.sl-markdown-content table[data-rb-stack='kv'] td:first-child {
+		padding-bottom: 0.15rem;
+		font-size: 0.85rem;
+		font-weight: 600;
+		color: var(--rb-text-secondary);
+	}
 
 	/* On a phone every command wraps: the end of a one-liner is never off-screen. */
 	.sl-markdown-content .expressive-code pre > code { white-space: pre-wrap; overflow-wrap: anywhere; }
 	.sl-markdown-content :is(.rb-sys-file, .rb-file-entry) ul,
 	.rb-hash { font-size: 0.75rem; }
+}
+
+@media (max-width: 50rem) {
+	:root { --sl-text-h1: 1.875rem; }
+	.rb-meta-card td:first-child { width: 40%; }
 }
 
 @media (max-width: 600px) {
