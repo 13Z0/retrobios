@@ -2,9 +2,9 @@ emulator: ares
 type: standalone
 source: "https://github.com/ares-emulator/ares"
 upstream: "https://github.com/ares-emulator/ares"
-profiled_date: "2026-03-26"
-source_commit: "4cb8d92b441557cb6bcaf133c4cbc7f6819b1122"
-core_version: "v147"
+profiled_date: "2026-10-23"
+source_commit: "c76aaffa6e69778baf9a66d1da04298ac2ed7d1d"
+core_version: "v148"
 display_name: "ares"
 cores: [ares]
 mode: standalone
@@ -92,7 +92,7 @@ notes: |
   signature makes a Sufami Turbo board, serial ZBSJ a BS-X board, serial 042J
   or cartridge type 0xE3 a Super Game Boy board.
   ref: desktop-ui/emulator/super-famicom.cpp:158-217,
-       desktop-ui/emulator/emulator.cpp:155-186,
+       desktop-ui/emulator/emulator.cpp:203-234,
        mia/medium/super-famicom.cpp:88-95, mia/medium/super-famicom.cpp:570-602
 
   Systems with no firmware: Arcade, Atari 2600, Famicom, MyVision, PC Engine,
@@ -152,7 +152,7 @@ files:
     sha256: "477617917a12a30f9f43844909dc2de6e6a617430f5c9a36306c86414a670d50"
     validation: [sha256]
     description: "Master System BIOS (US)"
-    note: "Picked for NTSC-U, which the code gives every export cart outside its PAL list through the Boot/Prefer setting. The header does not tell US from Europe (mia/medium/master-system.cpp:54-63, desktop-ui/emulator/emulator.cpp:40-60)."
+    note: "Picked for NTSC-U, which the code gives every export cart outside its PAL list through the Boot/Prefer setting. The header does not tell US from Europe (mia/medium/master-system.cpp:54-63, desktop-ui/emulator/emulator.cpp:86-106)."
     source_ref: "desktop-ui/emulator/master-system.cpp:14, mia/system/master-system.cpp:8 (//optional)"
 
   - name: bios_J.sms
@@ -171,7 +171,7 @@ files:
     sha256: "477617917a12a30f9f43844909dc2de6e6a617430f5c9a36306c86414a670d50"
     validation: [sha256]
     description: "Master System BIOS (Europe), same binary as US"
-    note: "Picked for PAL, set by a hash list that also holds Korean and Australian releases or by the Boot/Prefer setting (mia/medium/master-system.cpp:54-275, desktop-ui/emulator/emulator.cpp:40-60)."
+    note: "Picked for PAL, set by a hash list that also holds Korean and Australian releases or by the Boot/Prefer setting (mia/medium/master-system.cpp:54-275, desktop-ui/emulator/emulator.cpp:86-106)."
     source_ref: "desktop-ui/emulator/master-system.cpp:16"
 
   # --- Mega CD ---
@@ -377,7 +377,7 @@ files:
     sha256: "11052b6499e466bbf0a709b1f9cb6834a9418e66680387912451e971cf8a1fef"
     validation: [sha256]
     description: "PlayStation BIOS (US)"
-    note: "Picked for NTSC-U, set by both America licence strings and for an executable. A disc with no recognised licence offers NTSC-U and PAL, and the Boot/Prefer setting picks (mia/medium/playstation.cpp:66-73, 92, desktop-ui/emulator/playstation.cpp:85-92, desktop-ui/emulator/emulator.cpp:40-58)."
+    note: "Picked for NTSC-U, set by both America licence strings and for an executable. A disc with no recognised licence offers NTSC-U and PAL, and the Boot/Prefer setting picks (mia/medium/playstation.cpp:66-73, 92, desktop-ui/emulator/playstation.cpp:85-92, desktop-ui/emulator/emulator.cpp:86-104)."
     source_ref: "desktop-ui/emulator/playstation.cpp:18, desktop-ui/emulator/playstation.cpp:85-92, mia/medium/playstation.cpp:65-73"
 
   - name: scph5500.bin
