@@ -22,6 +22,18 @@ systems:
   - colecovision
   - pioneer-laseractive
 
+data_root:
+  windows:
+    path: "<folder of blastem.exe>"
+    source_ref: "paths.c:378-397, 581-594"
+  macos:
+    path: "<folder of the blastem executable>"
+    source_ref: "paths.c:445-487, 581-594"
+  linux:
+    path: "<folder of the blastem executable>"
+    source_ref: "paths.c:445-487, 581-594"
+    note: "a package built with DATA_PATH reads that folder instead (Makefile:338-340)"
+
 notes: |
   BlastEm emulates the Mega Drive/Genesis, Sega CD, 32X, Master System, Game
   Gear, SG-1000, SC-3000, Pico, Copera, ColecoVision and the Pioneer LaserActive
