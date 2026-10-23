@@ -2999,6 +2999,24 @@ class TestBumpCommit(unittest.TestCase):
         self.assertEqual(profile_sync.pending_recale(report), 0)
         self.assertTrue(bump_commit(self.path, report))
 
+    def test_refused_on_a_build_a_platform_compiles(self):
+        # mame0258 documents the MAME Recalbox builds: libretro/mame HEAD
+        # is a later release, and every ref still anchors there.
+        self.path.write_text(SAMPLE + "built_by: [recalbox]\n", encoding="utf-8")
+        part = PartResult(
+            RefPart("a.c", 10, 12, "a.c:10-12"), "ANCHORED", None, 10, 12, []
+        )
+        report = ProfileReport(
+            name="p", repo="o/n", pin="pin", head="newhead",
+            entries=[
+                EntryReport("a.bin", "a.c:10-12, (just a note)", "ANCHORED", [part])
+            ],
+            counts={"ANCHORED": 1},
+        )
+        with contextlib.redirect_stderr(io.StringIO()):
+            self.assertFalse(bump_commit(self.path, report))
+        self.assertNotIn("newhead", self.path.read_text())
+
     def test_refused_when_no_ref_reads_the_pinned_repository(self):
         """gam4980: every bare libretro.c ref anchored in upstream, and the
         bump wrote the fork's HEAD over refs that never described it."""
@@ -3170,6 +3188,55 @@ class TestCheckVersion(unittest.TestCase):
     def test_no_warning_when_tag_commit_matches_pin(self):
         result = check_version({"core_version": "v3.0.0"}, self.repo, self.dir, False)
         self.assertIsNone(version_warning(result, "tagsha"))
+
+    def test_warning_says_which_side_of_the_tag_the_pin_is(self):
+        # 52 warnings read alike: a build after its release and a pin older
+        # than the release it claims could not be told apart.
+        result = check_version({"core_version": "v3.0.0"}, self.repo, self.dir, False)
+        self.assertIn("4 commits after the tag", version_warning(result, "p", (4, 0)))
+        self.assertIn("core_version is later than the code",
+                      version_warning(result, "p", (0, 9)))
+        self.assertIn("off the tag's history", version_warning(result, "p", (2, 3)))
+
+    def test_warning_names_a_release_the_pin_already_contains(self):
+        result = check_version({"core_version": "v3.0.0"}, self.repo, self.dir, False)
+        warning = version_warning(result, "tagsha", None, "v3.1.0")
+        self.assertIn("already contains release v3.1.0", warning)
+
+
+class TestAncestry(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.saved = profile_sync.upstream._http_json
+
+    def tearDown(self):
+        profile_sync.upstream._http_json = self.saved
+        self.tmp.cleanup()
+
+    def test_github_answers_both_directions_at_once(self):
+        calls = []
+
+        def answer(url):
+            calls.append(url)
+            return {"ahead_by": 3, "behind_by": 0}
+
+        profile_sync.upstream._http_json = answer
+        repo = profile_sync.upstream.parse_repo("https://github.com/o/n")
+        self.assertEqual(
+            profile_sync.upstream.ancestry(repo, "tag", "pin", self.tmp.name), (3, 0)
+        )
+        self.assertEqual(len(calls), 1)
+
+    def test_gitlab_is_asked_both_ways(self):
+        def answer(url):
+            forward = "from=tag&to=pin" in url
+            return {"commits": [{}] * (0 if forward else 5)}
+
+        profile_sync.upstream._http_json = answer
+        repo = profile_sync.upstream.parse_repo("https://gitlab.com/o/n")
+        self.assertEqual(
+            profile_sync.upstream.ancestry(repo, "tag", "pin", self.tmp.name), (0, 5)
+        )
 
 
 HASH_PROFILE = {

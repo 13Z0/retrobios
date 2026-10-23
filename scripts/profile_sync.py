@@ -2216,15 +2216,41 @@ def page_version(profile: dict, cache_dir: str, offline: bool) -> str | None:
     return match.group(1) if match else None
 
 
-def version_warning(report: VersionReport | None, pin: str | None) -> str | None:
-    """Flag a declared version that names a tag away from the resolved pin."""
+def version_warning(
+    report: VersionReport | None,
+    pin: str | None,
+    relation: tuple[int, int] | None = None,
+    passed_release: str | None = None,
+) -> str | None:
+    """Flag a declared version that names a tag away from the resolved pin.
+
+    ``relation`` is the pin's (ahead, behind) count against the tag commit.
+    A pin after its tag is a build between two releases. A pin before it
+    describes code the declared release had already replaced.
+    ``passed_release`` is a later release the pin already contains, which
+    core_version should name instead.
+    """
     if report is None or not report.tag_commit or not pin:
         return None
-    if report.tag_commit == pin:
+    if report.tag_commit == pin and not passed_release:
         return None
+    if passed_release:
+        return (
+            f"core_version {report.declared} is older than the code: the pin "
+            f"{pin[:7]} already contains release {passed_release}"
+        )
+    where = ""
+    if relation is not None:
+        ahead, behind = relation
+        if ahead and not behind:
+            where = f", {ahead} commits after the tag"
+        elif behind and not ahead:
+            where = f", {behind} commits before the tag: core_version is later than the code"
+        elif ahead and behind:
+            where = f", off the tag's history ({ahead} ahead, {behind} behind)"
     return (
         f"core_version {report.declared} names tag commit {report.tag_commit[:7]}, "
-        f"the pin resolved to {pin[:7]}"
+        f"the pin resolved to {pin[:7]}{where}"
     )
 
 
@@ -2901,6 +2927,16 @@ def bump_commit(
     if pending_recale(report, accept_changed, text):
         return False
     document = yaml.safe_load(text)
+    if document.get("built_by"):
+        # The pin is the commit a platform builds (recalbox gsplus.mk, the
+        # mame0258 its package fetches), not a point on a moving branch:
+        # HEAD is a build nobody ships under this name.
+        print(
+            f"{path.stem}: pinned to the build {', '.join(document['built_by'])} "
+            "ships, advanced by hand",
+            file=sys.stderr,
+        )
+        return False
     if any(isinstance(document.get(f), dict) for f in ("source_commit", "upstream_commit")):
         # A pin per build mode names one revision per repository, and the
         # report heads only the primary one: rewriting str(dict) was a
@@ -3937,7 +3973,48 @@ def _attach_version(
     except upstream.UpstreamError as exc:
         print(f"{report.name}: version check skipped: {exc}", file=sys.stderr)
         return
-    report.version_warning = version_warning(report.version, report.pin)
+    relation = None
+    passed = None
+    version = report.version
+    try:
+        if version and version.tag_commit and report.pin and version.tag_commit != report.pin:
+            relation = upstream.ancestry(
+                repo, version.tag_commit, report.pin, args.cache_dir, args.offline
+            )
+        passed = _passed_release(args, repo, version, report.pin)
+    except upstream.RateLimitError:
+        raise
+    except upstream.UpstreamError as exc:
+        print(f"{report.name}: tag ancestry unread: {exc}", file=sys.stderr)
+    report.version_warning = version_warning(version, report.pin, relation, passed)
+
+
+def _passed_release(
+    args: argparse.Namespace,
+    repo: upstream.Repo,
+    version: VersionReport | None,
+    pin: str | None,
+) -> str | None:
+    """The latest release, when the pin already contains it and core_version
+    names another one.
+
+    The latest tag is no witness: nightly, continuous and Pre-release tags
+    sort first on many forges. The latest release is a version the project
+    published as such.
+    """
+    if not version or not pin or not version.latest_release:
+        return None
+    if version.latest_release == version.declared:
+        return None
+    commit = upstream.tag_commit(repo, version.latest_release, args.cache_dir, args.offline)
+    if not commit:
+        return None
+    if commit == pin:
+        return version.latest_release
+    relation = upstream.ancestry(repo, commit, pin, args.cache_dir, args.offline)
+    if relation and relation[1] == 0:
+        return version.latest_release
+    return None
 
 
 def _print_extras(
