@@ -319,9 +319,9 @@ OG_DIR = Path(__file__).resolve().parent.parent / "docs_assets" / "og"
 def og_image(rel: str, level: str) -> str:
     """The sharing card's address: the page's own when it has one, else
     its section's."""
-    own = re.fullmatch(r"platforms/([a-z0-9_-]+)\.md", rel)
-    if own and own[1] != "index" and (OG_DIR / "platforms" / f"{own[1]}.png").is_file():
-        return f"{SITE_URL}assets/og/platforms/{own[1]}.png"
+    own = re.fullmatch(r"(platforms|systems)/([a-z0-9_-]+)\.mdx?", rel)
+    if own and own[2] != "index" and (OG_DIR / own[1] / f"{own[2]}.png").is_file():
+        return f"{SITE_URL}assets/og/{own[1]}/{own[2]}.png"
     return f"{SITE_URL}assets/og/{og_section(rel, level)}.png"
 
 

@@ -291,7 +291,11 @@ class PlatformShareCards(unittest.TestCase):
     def test_other_pages_keep_their_section_card(self):
         self.assertEqual(sitestarlight.og_image("platforms/index.md", "setup"),
                          f"{sitestarlight.SITE_URL}assets/og/setup.png")
+        # A manufacturer page has its own card since round 3 (6.6); one
+        # without a rendered card keeps its section's.
         self.assertEqual(sitestarlight.og_image("systems/sony.md", "explore"),
+                         f"{sitestarlight.SITE_URL}assets/og/systems/sony.png")
+        self.assertEqual(sitestarlight.og_image("systems/no-such-maker.md", "explore"),
                          f"{sitestarlight.SITE_URL}assets/og/explore.png")
 
 

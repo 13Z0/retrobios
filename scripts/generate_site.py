@@ -3207,7 +3207,7 @@ SAFE_LINK = "[Is it safe?](../index.md#is-it-safe)"
 # Under "From your computer": a device with no network installs from the ZIP
 # (`--from-pack`). The id is the one wiki/installer.md gives its section.
 OFFLINE_LINE = ("No internet on the device? "
-                "[Install from the ZIP](../wiki/installer.md#without-a-network).")
+                "[Install from the ZIP](../wiki/installer.md#without-a-network-offline-install).")
 
 # Shown in the "On the device" tab of a guide that has no `terminal:` of its own.
 DEVICE_TERMINAL_FALLBACK = "Or fill the folder from your computer, with the ZIP."

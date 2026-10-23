@@ -88,6 +88,8 @@ class TablesStackWhenBuilt(unittest.TestCase):
             "reference": {"labels": ["A", "B", "C"], "rows": 5, "action": False, "level": "reference"},
             # Four columns do not fit a phone column, on any page (round 3).
             "wide": {"labels": ["File", "Region", "Required", "Hash"], "rows": 105, "action": False, "level": "reference"},
+            # A hash never breaks: three columns with one overflow a phone (NetherSX2).
+            "hashes": {"labels": ["File", "Required", "Hash"], "rows": 40, "action": False, "level": "reference"},
         }
         script = (
             f"import {{ stackKind }} from {json.dumps(PLUGIN.as_uri())};"
@@ -101,6 +103,7 @@ class TablesStackWhenBuilt(unittest.TestCase):
         self.assertEqual(json.loads(result.stdout), {
             "zip-header": "true", "action": "true", "pair": "kv",
             "short-start": "true", "long-setup": None, "reference": None, "wide": "true",
+            "hashes": "true",
         })
 
 

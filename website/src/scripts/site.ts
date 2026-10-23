@@ -317,7 +317,9 @@ const CATEGORY_WORDS: Record<string, string> = { bios: 'BIOS', game_data: 'game 
 // own page (systems/sony-playstation/) is part of its manufacturer's file
 // (systems/sony.json), found by dropping words from the end of the slug.
 const heldFile = async (item: Item): Promise<Held | undefined> => {
-	const slug = /^systems\/([^/]+)\//.exec(item.url)?.[1];
+	// Lookup urls are site-absolute (/retrobios/systems/...) since the API
+	// names every address from the site root.
+	const slug = /(?:^|\/)systems\/([^/]+)\//.exec(item.url)?.[1];
 	if (!slug || !item.sha1) return undefined;
 	const words = slug.split('-');
 	for (let size = words.length; size > 0; size -= 1) {

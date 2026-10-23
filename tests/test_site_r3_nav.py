@@ -51,8 +51,13 @@ def _moved_platform_pages() -> list[Path]:
     folder = DOCS / "platforms"
     if not folder.is_dir():
         return []
+    # A guide page sits beside the setups (platforms/linux-handhelds) without
+    # being a list moved off one of them.
+    from siteguides import HANDHELD_GUIDE  # noqa: PLC0415
+
+    guides = {Path(HANDHELD_GUIDE.path).stem} if HANDHELD_GUIDE else set()
     return [path for path in sorted(folder.glob("*.md*"))
-            if path.stem not in platforms and path.stem != "index"]
+            if path.stem not in platforms and path.stem != "index" and path.stem not in guides]
 
 
 class MetaFields(unittest.TestCase):

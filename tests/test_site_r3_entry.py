@@ -181,9 +181,9 @@ class OfflineLine(unittest.TestCase):
         line = text.index("No internet on the device?")
         self.assertLess(start, line)
         self.assertLess(line, text.index("## On the device"))
-        self.assertIn("/retrobios/wiki/installer/#without-a-network", text)
-        self.assertIn("{ #without-a-network }", (REPO_ROOT / "wiki" / "installer.md").read_text(
-            encoding="utf-8"))
+        self.assertIn("/retrobios/wiki/installer/#without-a-network-offline-install", text)
+        self.assertIn("{ #without-a-network-offline-install }",
+                      (REPO_ROOT / "wiki" / "installer.md").read_text(encoding="utf-8"))
 
 
 class GetYourFilesListsEachSetupOnce(unittest.TestCase):

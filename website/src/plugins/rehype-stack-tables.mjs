@@ -12,6 +12,9 @@
 // - on a level 0 or 1 page (`level: start` or `setup`), a three-column table
 //   short enough to read as records (under RECORD_ROWS rows): one block per
 //   row. A longer one is a list scanned by column and keeps its scroll.
+// - three columns or more where a column holds hashes: a hash cannot break,
+//   so the row is wider than a phone at any length (NetherSX2's File,
+//   Required, Hash summary measured 604 px in a 358 px column).
 //
 // A table of RECORD_ROWS rows or more gets its filter box here, above it.
 // Written by site.ts once the page had painted, the box pushed the table
@@ -52,10 +55,13 @@ const holdsAction = (node) =>
 			(child.type === 'raw' && ACTION_CLASS.test(child.value ?? '')),
 	);
 
+const HASH_HEADER = /^(hash|sha-?1|sha-?256|md5|crc-?32)$/i;
+
 export const stackKind = ({ labels, rows, action, level }) => {
 	if (labels.length === 2) return 'kv';
 	if (labels.length >= WIDE_COLUMNS) return 'true';
 	if (action || DOWNLOAD_HEADER.test(labels.at(-1) ?? '')) return 'true';
+	if (labels.length > 2 && labels.some((label) => HASH_HEADER.test(label))) return 'true';
 	if (READER_LEVELS.has(level) && labels.length > 2 && rows < RECORD_ROWS) return 'true';
 	return null;
 };

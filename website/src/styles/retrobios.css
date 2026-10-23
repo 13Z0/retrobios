@@ -343,7 +343,7 @@
 }
 @media (min-width: 50rem) {
 	/* The reason a file is listed reads as a sentence, not a word per line. */
-	.sl-markdown-content :is(td.rb-reason, td[data-label='Reason']) { min-width: 12rem; }
+	.sl-markdown-content :is(td.rb-reason, td[data-label='Reason'], td:has(> .rb-reason)) { min-width: 12rem; }
 
 	/* Get your files: every group table shares one set of columns. */
 	.sl-markdown-content :is(table.rb-packs, table:has(td[data-label='Runs on']):has(td[data-label='ZIP'])) {

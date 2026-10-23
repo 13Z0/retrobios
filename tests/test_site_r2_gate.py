@@ -45,6 +45,16 @@ _ELEMENT = re.compile(r"<[a-zA-Z][a-zA-Z0-9-]*[\s/>]")
 _TAGS = re.compile(r"<[^>]+>")
 _TABLE = re.compile(r"<table\b(?P<attrs>[^>]*)>(?P<body>.*?)</table>", re.S)
 _CURRENT = re.compile(r'<a\b[^>]*aria-current="page"[^>]*>(?P<label>.*?)</a>', re.S)
+_CURRENT_HREF = re.compile(r'<a\b(?=[^>]*aria-current="page")[^>]*href="(?P<href>[^"]*)"', re.S)
+
+
+def _marked_parent(html: str, url: str) -> str | None:
+    """The page a part page names as its parent. The sidebar marks that page
+    instead of the part, and the last crumb leads to it."""
+    found = _CURRENT_HREF.search(html.split('id="starlight__sidebar"', 1)[-1])
+    if found and found["href"].rstrip("/") != url.rstrip("/"):
+        return found["href"]
+    return None
 _H1 = re.compile(r"<h1\b[^>]*>(?P<title>.*?)</h1>", re.S)
 _HEADING = re.compile(r"<h(?P<level>[2-6])\b[^>]*>(?P<inner>.*?)</h(?P=level)>", re.S)
 _CRUMBS = re.compile(r'<nav\b[^>]*aria-label="Breadcrumb"[^>]*>(?P<inner>.*?)</nav>', re.S)
@@ -128,6 +138,8 @@ class EveryBuiltPage(unittest.TestCase):
             # A tab, or a group of the sidebar, opens on its overview.
             if url in self.tab_roots or url in self.group_pages or not current or not title:
                 continue
+            if _marked_parent(html, url):
+                continue
             with self.subTest(page=url):
                 self.assertEqual(_text(current["label"]), _text(title["title"]))
 
@@ -144,10 +156,11 @@ class EveryBuiltPage(unittest.TestCase):
             crumbs = _CRUMBS.search(html)
             if not crumbs:
                 continue
+            parent = _marked_parent(html, _url(path))
             for href in _HREF.findall(crumbs["inner"]):
                 with self.subTest(page=_url(path), href=href):
                     self.assertTrue(href in self.tab_roots or href in self.group_pages
-                                    or "#" in href, href)
+                                    or "#" in href or href == parent, href)
 
     def test_phone_tables_on_reader_pages_are_stacked(self):
         """A table of three columns or more, under RECORD_ROWS rows, on a
