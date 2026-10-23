@@ -69,13 +69,10 @@ rb_open_log keep
 
 # muOS: PortMaster's mod_muOS.txt points CUR_TTY at /dev/null, so there is no
 # console to draw on. muxterm, the terminal muOS's Terminal core runs, shows
-# the interface instead. It is told to leave the pad alone (an SDL hint) so
-# that gptokeyb sends every button once, with this port's mapping: muxterm
-# sends Y as Space, where the interface reads Y as Options. The hint allows
-# one vendor and product id, 0001:0001, which no pad carries.
+# the interface instead, told to leave the pad to gptokeyb (rb_muxterm).
 RB_MUXTERM="${RB_MUXTERM:-/opt/muos/frontend/muxterm}"
 if [ -x "$RB_MUXTERM" ] && [ -n "$RB_MAPPER" ]; then
-  RB_TERMAPP=(env SDL_GAMECONTROLLER_IGNORE_DEVICES_EXCEPT=0x0001/0x0001 "$RB_MUXTERM" --gl --)
+  rb_muxterm "$RB_MUXTERM"
 fi
 
 export SDL_GAMECONTROLLERCONFIG="$sdl_controllerconfig"

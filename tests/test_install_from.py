@@ -17,7 +17,9 @@ import errno
 import io
 import json
 import os
+import re
 import subprocess
+import threading
 import sys
 import time
 import unittest
@@ -518,6 +520,18 @@ class ACopyThatFails(FromFolder):
         self.assertNotIn(install.NOT_WRITABLE, reason)
         self.assertIsInstance(reason, install.NetworkReason)
 
+    def test_offline_the_fallback_keeps_the_offline_reason(self):
+        """The copy failed, the download was refused by --offline: the
+        joined reason lost its kind, and the advice named neither."""
+        _unprivileged(self)
+        self.source.chmod(0)
+        self.addCleanup(self.source.chmod, 0o644)
+        with mock.patch.dict(os.environ, {install.OFFLINE_VARIABLE: "1"}):
+            _dest, ok, reason = install._download_one(self.entry, self.dest, copy=self.copy)
+        self.assertFalse(ok)
+        self.assertIsInstance(reason, install.OfflineReason)
+        self.assertIn("could not be read: Permission denied, and not fetched", reason)
+
     def test_a_read_error_is_the_source_and_not_the_folder(self):
         class Failing(io.BytesIO):
             def read(self, *_args):
@@ -595,6 +609,28 @@ class UnreadableCopies(FromFolder):
                                  proc.stdout + proc.stderr)
                 self.assertIn(line, proc.stdout)
                 self.assertNotIn("notes.txt", proc.stdout)
+
+    def test_names_on_the_card_cannot_drive_the_terminal(self):
+        """The plain output printed the paths it found as they are: a name
+        holding ESC cleared the screen or set the clipboard (OSC 52)."""
+        hostile = "x\x1b]52;c;eA==\x07\x1b[2J"
+        self.locked(f"{hostile}/scph5501.bin", US)
+        self.keep(f"{hostile}/gba_bios.bin", GBA)
+        (self.dest / f"pcsx{hostile}").mkdir(parents=True)
+        (self.dest / f"pcsx{hostile}" / "extra.bin").write_bytes(EXTRA)
+        for options in (("--check",), ("--dry-run",), ("--check", "--verbose"), ()):
+            with self.subTest(options=options):
+                proc = self.install(*options)
+                self.assertNotIn("Traceback", proc.stderr)
+                for stream in (proc.stdout, proc.stderr):
+                    self.assertIsNone(re.search(r"[\x00-\x09\x0b-\x1f\x7f-\x9f]", stream),
+                                      stream)
+                self.assertIn("x?]52;c;eA==??[2J", proc.stdout)
+        proc = self.run_installer("--manifest", str(self.list), "--no-input",
+                                  "--from", str(self.root / hostile))
+        self.assertEqual(proc.returncode, 1)
+        self.assertNotIn("\x1b", proc.stderr)
+        self.assertIn("x?]52;c;eA==??[2J", proc.stderr)
 
     def test_an_unreadable_copy_is_an_event(self):
         path = self.locked("psx/scph5501.bin", US).resolve()
@@ -842,6 +878,54 @@ class ManySameSizedFiles(FromFolder):
         })
         self.assertEqual(len(copies), 3)
         self.assertLess(elapsed, 30, f"{elapsed:.1f} s")
+
+    def test_one_archive_of_thousands_of_members_is_opened_once(self):
+        """Each member read reopened its ZIP and parsed its directory again:
+        4000 members of one size made 4000 parses of 4000 entries."""
+        count = 4000
+        _zip(self.old / "romset.zip", {f"m{n:04}.bin": b"m%015d" % n for n in range(count)})
+        wanted = [_entry(f"z{n}.bin", b"m%015d" % n, ["x"]) for n in (count - 1, 3, 1234)]
+        index = install.FolderIndex(self.old)
+        opened = []
+        real = zipfile.ZipFile
+
+        def counting(*args, **kwargs):
+            opened.append(args[0])
+            return real(*args, **kwargs)
+
+        start = time.monotonic()
+        with mock.patch.object(install.zipfile, "ZipFile", side_effect=counting):
+            copies = install.plan_local_copies(wanted, self.dest, None, [index])
+            self.assertEqual(len(copies), 3)
+            # The copy step reads members of the archive the plan opened,
+            # from threads.
+            results = []
+            threads = [threading.Thread(target=lambda e=e: results.append(
+                install._copy_local(e, self.dest, self.dest / e["dest"], copies[id(e)], None)))
+                for e in wanted]
+            self.dest.mkdir(parents=True, exist_ok=True)
+            for thread in threads:
+                thread.start()
+            for thread in threads:
+                thread.join()
+        elapsed = time.monotonic() - start
+        self.assertEqual(sorted(ok for _d, ok, _r in results), [True] * 3, results)
+        self.assertEqual(len(opened), 1)
+        self.assertLess(elapsed, 20, f"{elapsed:.1f} s")
+        index.close()
+        self.assertEqual(index.open_archives(), 0)
+
+    def test_a_card_of_many_archives_holds_few_open(self):
+        count = install.OPEN_ARCHIVES * 3
+        for n in range(count):
+            _zip(self.old / f"sets/s{n:03}.zip", {f"m{n}.bin": b"n%015d" % n})
+        wanted = [_entry(f"z{n}.bin", b"n%015d" % n, ["x"]) for n in range(count)]
+        index = install.FolderIndex(self.old)
+        copies = install.plan_local_copies(wanted, self.dest, None, [index])
+        self.assertEqual(len(copies), count)
+        self.assertLessEqual(index.open_archives(), install.OPEN_ARCHIVES)
+        install.LOCAL.close_indexes()
+        self.assertEqual(index.open_archives(), 0)
 
     def test_a_file_of_the_same_name_comes_first(self):
         self.keep("a/other.bin", US)

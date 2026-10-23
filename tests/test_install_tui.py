@@ -10,6 +10,8 @@ installs it).
 from __future__ import annotations
 
 import argparse
+import contextlib
+import errno
 import fcntl
 import functools
 import hashlib
@@ -17,6 +19,7 @@ import http.server
 import io
 import json
 import os
+import queue
 import re
 import select
 import shutil
@@ -1095,6 +1098,13 @@ class PadRoutes(unittest.TestCase):
                       "Close the terminal"):
             self.assertIn(words, muxterm)
         self.assertNotIn("Start+Select", muxterm)
+        # muxterm keeps PgUp and PgDn for its scrollback, and L1 and R1
+        # send nothing: no paging is offered there, on a list or a pager.
+        for screen in ("systems", "result", "plan"):
+            with self.subTest(screen=screen):
+                text = help_text("muxterm", screen)
+                for words in ("L1", "R1", "PgUp", "PgDn", "Page"):
+                    self.assertNotIn(words, text)
         miyoo = help_text("miyoo", "systems")
         for words in ("Start, Enter", "A, Space, Right/Left", "R2, Esc, Backspace",
                       "L2, Tab, o", "Sends no key here"):
@@ -1444,13 +1454,14 @@ class CleanupSurvivesABrokenTerminal(unittest.TestCase):
                 mock.patch.object(sys, "stderr", out):
             code = install.run_tui(_args())
             self.assertIs(sys.stdout, out)
-        self.assertEqual(code, 1)
+        # A window that answers EIO is a closed window: its signal's code,
+        # not a crash.
+        self.assertEqual(code, 129)
         # The farewell found no terminal: what still flushes at exit goes to
         # the null device, and the exit code stays the one returned.
         self.assertEqual(os.fstat(screen_fd).st_rdev, os.stat(os.devnull).st_rdev)
-        # The crash keeps its log, marked kept, and nothing else of the run.
-        self.assertEqual(sorted(path.name for path in work.iterdir()),
-                         ["error.log", "kept", "owner"])
+        # No crash log is kept, and nothing else of the run.
+        self.assertFalse(work.exists())
         self.assertEqual(termios.tcgetattr(slave), before)
         for number, handler in handlers.items():
             self.assertEqual(signal.getsignal(number), handler)
@@ -1800,6 +1811,31 @@ class WorkFolders(unittest.TestCase):
         work, out = self.run_to(130)
         self.assertFalse(work.exists())
 
+    def test_a_full_temp_disk_or_a_failing_pruner_still_opens(self):
+        real_write = Path.write_text
+
+        def full(path, *args, **kwargs):
+            if path.name == install.TUI_OWNER:
+                raise OSError(errno.ENOSPC, "No space left on device")
+            return real_write(path, *args, **kwargs)
+
+        with mock.patch.object(Path, "write_text", full):
+            work, out = self.run_to(0)
+        self.assertFalse(work.exists())
+        with mock.patch.object(install, "_prune_work_folders",
+                               side_effect=OSError(errno.EACCES, "denied")):
+            work, out = self.run_to(0)
+        self.assertFalse(work.exists())
+        err = io.StringIO()
+        with mock.patch.object(install.tempfile, "mkdtemp",
+                               side_effect=OSError(errno.ENOSPC, "No space left")), \
+                mock.patch.object(install, "tui_start", return_value=(fresh_state(), [])), \
+                mock.patch.object(install, "_open_local_sources"), \
+                mock.patch.object(install, "detect_os", return_value="linux"), \
+                mock.patch.object(sys, "stderr", err):
+            self.assertEqual(install.run_tui(_args()), 1)
+        self.assertIn("no work folder could be made", err.getvalue())
+
     def test_a_stop_while_it_starts_ends_on_the_farewell(self):
         """Start+Select during the detection: the signal is the interface's,
         never the default action that ended Python without a word."""
@@ -2094,6 +2130,33 @@ class AuditRoundThree(unittest.TestCase):
         # A list named by its own name says which list, not which card.
         self.assertEqual(install.card_dest("retroarch", "retroarch", root),
                          ("retroarch", root))
+
+    def test_p1_1_the_folder_named_is_compared_by_folders(self):
+        """NOTMUOS/bios ended with MUOS/bios as text and was taken for a
+        muOS card's folder."""
+        root = self.card({"roms/": ""})
+        stray = root / "NOTMUOS" / "bios"
+        with self.assertRaises(SystemExit), \
+                contextlib.redirect_stderr(io.StringIO()) as err:
+            install.card_dest("muos", "retroarch", stray)
+        self.assertIn("is not a muOS card", err.getvalue())
+        self.assertEqual(install.card_dest("muos", "retroarch", root / "muos" / "BIOS"),
+                         ("retroarch", root / "muos" / "BIOS"))
+
+    def test_p1_1_a_card_two_systems_claim_says_so(self):
+        root = self.card({"MUOS/": "", "spruce/": ""})
+        self.assertIsNone(install.card_system(root))
+        with contextlib.redirect_stdout(io.StringIO()) as out:
+            self.assertEqual(install.card_dest("retroarch", "retroarch", root),
+                             ("retroarch", root))
+        lines = out.getvalue().splitlines()
+        self.assertEqual(len(lines), 1, lines)
+        self.assertIn("holds the files of muOS and spruceOS", lines[0])
+        # The system named among them decides.
+        with contextlib.redirect_stdout(io.StringIO()) as out:
+            self.assertEqual(install.card_dest("muos", "retroarch", root),
+                             ("retroarch", root / "MUOS/bios"))
+        self.assertIn("muOS card", out.getvalue())
 
     # P1-2: Space is X on PortMaster and Y on muxterm.
 
@@ -2455,10 +2518,145 @@ class AuditRoundThree(unittest.TestCase):
         unknown_old = folder("unknown-old", None, False, 2 * week)
         other = root / "something-else"
         other.mkdir()
+        # A stray or hostile owner file is an unknown owner: a number past
+        # what a pid holds raised OverflowError, and 0 or -1 name a group.
+        hostile = [folder(f"hostile{index}", None, False, 60)
+                   for index in range(3)]
+        for path, text in zip(hostile, ("9" * 40, "0", "-1")):
+            (path / install.TUI_OWNER).write_text(text)
+            self.assertIsNone(install._owner_alive(path))
         removed = install._prune_work_folders(root, now)
         self.assertEqual(sorted(removed), sorted([killed, failed_old, unknown_old]))
+        for path in hostile:
+            shutil.rmtree(path)
         self.assertEqual(sorted(path.name for path in root.iterdir()),
                          sorted(path.name for path in (running, failed, unknown, other)))
+
+
+class IdleExit(unittest.TestCase):
+    def test_the_variable(self):
+        for value, seconds in (("30", 30.0), (" 2.5 ", 2.5), ("", None), ("0", None),
+                               ("-4", None), ("soon", None), ("inf", None), ("nan", None)):
+            with self.subTest(value=value):
+                self.assertEqual(install.tui_idle_exit({install.TUI_IDLE_ENV: value}),
+                                 seconds)
+        self.assertIsNone(install.tui_idle_exit({}))
+
+    def test_the_farewell(self):
+        state = fresh_state()
+        state.idle_closed, state.exit_code = True, 0
+        self.assertEqual(install.tui_farewell(state),
+                         ["RetroBIOS: No button pressed, closing."])
+
+
+class AuditRoundFour(unittest.TestCase):
+    """tui_audit_3.md, each finding held where it was found."""
+
+    UNPLACED = {"reason": "no_save_directory", "label": "no save directory", "files": 2,
+                "required": 0}
+
+    def test_p1_1_files_left_out_of_the_save_directory_are_said(self):
+        state = fresh_state()
+        state.stack = ["setup"]
+        with mock.patch.object(install.Path, "exists", return_value=True):
+            install.tui_update(state, Key("enter"))
+        install.tui_receive(state, ("manifest", "retroarch", MANIFEST))
+        summary = {"event": "summary", "mode": "check", "installed": 0, "up_to_date": 0,
+                   "pending": 5, "failed": [], "skipped": [self.UNPLACED], "left_out": [],
+                   "kept": [], "interrupted": False}
+        for event in [*FILES, *SYSTEMS, CHECK, summary]:
+            install.tui_receive(state, ("event", state.run_id, event))
+        with mock.patch.object(install, "_tui_folder_facts", return_value={
+                "free": 50 * 1024 ** 3, "writable": True, "cores": []}):
+            install.tui_receive(state, ("ended", state.run_id, 1, []))
+        line = ("2 files read from RetroArch's save directory left out: its place is "
+                "not known. Name it with --save-dir.")
+        plan = " ".join(" ".join(install.tui_view(state, 120, 40)).split())
+        self.assertIn(line, plan)
+        state.stack.append("result")
+        state.code = 0
+        state.summary = {**summary, "mode": "install", "installed": 5}
+        self.assertIn(line, install.tui_outcome(state)[1])
+
+
+class OfflineInTheInterface(unittest.TestCase):
+    """--offline in the full screen: a "No connection" error offering a Try
+    again that can never work, and a plan counting downloads the run
+    forbids."""
+
+    def setUp(self):
+        patcher = mock.patch.dict(os.environ, {install.OFFLINE_VARIABLE: "1"})
+        patcher.start()
+        self.addCleanup(patcher.stop)
+
+    def test_no_list_names_the_ways_that_work(self):
+        inbox = queue.Queue()
+        install._tui_fetch("retroarch", inbox, io.StringIO())
+        kind, plat, title, lines, code = inbox.get_nowait()
+        self.assertEqual((kind, title, code), ("manifest_failed",
+                                               "No internet: offline mode", 1))
+        text = " ".join(lines)
+        for words in ("--manifest", "--from-pack", "without --offline"):
+            self.assertIn(words, text)
+        state = fresh_state()
+        state.stack = ["setup"]
+        with mock.patch.object(install.Path, "exists", return_value=True):
+            install.tui_update(state, Key("enter"))
+        install.tui_receive(state, (kind, plat, title, lines, code))
+        self.assertEqual(state.screen, "error")
+        self.assertNotIn("retry", [row.action for row in install.tui_rows(state)])
+        view = "\n".join(install.tui_view(state, 80, 24))
+        self.assertIn("No internet: offline mode", view)
+        self.assertNotIn("Try again", view)
+
+    def test_the_plan_offers_no_download(self):
+        state = checked_state()
+        text = " ".join(" ".join(install.tui_view(state, 120, 40)).split())
+        self.assertNotIn("to download", text)
+        self.assertIn("need the internet, which --offline does not use", text)
+        self.assertNotIn("install", [row.action for row in install.tui_rows(state)])
+        # A file found on this machine can still be copied.
+        state.found = [{"event": "found", "platform": "retroarch", "dest": FILES[0]["dest"],
+                        "folder": "/media/old", "path": "/media/old/scph5500.bin",
+                        "member": "", "reason": ""}]
+        text = " ".join(" ".join(install.tui_view(state, 120, 40)).split())
+        self.assertIn("1 found in old,", text)
+        self.assertIn("need the internet (--offline)", text)
+        self.assertEqual(install.tui_rows(state)[0].action, "install")
+        self.assertIn("--offline", install.tui_command(state))
+
+
+class NarrowSystemNames(unittest.TestCase):
+    """At 40 columns the size column took half the line: Game Boy, Game Boy
+    Advance and Game Boy Color all read "Nintendo Gam"."""
+
+    def test_the_name_comes_before_the_size(self):
+        state = checked_state()
+        names = {"nintendo-gb": "Nintendo Game Boy", "nintendo-gba": "Nintendo Game Boy Advance",
+                 "nintendo-gbc": "Nintendo Game Boy Color",
+                 "videoton-tvc": "Videoton TV Computer"}
+        state.manifest = {**state.manifest, "system_titles": names}
+        state.systems = [
+            {"event": "system", "platform": "retroarch", "system": system, "name": system,
+             "files": 30, "present": 0, "missing": 30, "wrong_hash": 0,
+             "bytes_needed": 30 * 1024 * 1024}
+            for system in names]
+        state.files = [{"event": "file", "platform": "retroarch", "dest": f"s{n}.bin",
+                        "systems": list(names), "size": 1024, "state": "missing"}
+                       for n in range(27)]
+        state.ticked = set(names)
+        state.stack.append("systems")
+        for cols, rows in ((40, 15), (40, 12), (52, 15)):
+            with self.subTest(size=f"{cols}x{rows}"):
+                text = "\n".join(install.tui_view(state, cols, rows))
+                for name in names.values():
+                    self.assertIn(name, text)
+                self.assertNotIn("...", text)
+                for line in text.splitlines():
+                    self.assertLessEqual(install.cell_width(line), cols)
+        # Wide, the full form stays.
+        self.assertIn("3 files, 30.0 MB + 27 shared",
+                      "\n".join(install.tui_view(state, 120, 40)))
 
 
 class Crash(unittest.TestCase):
@@ -2620,6 +2818,29 @@ class GameDataRepository(FakeRepository):
         return self
 
 
+class SaveDirectoryRepository(FakeRepository):
+    """The fake repository with one file read from RetroArch's save
+    directory, as Azahar's keys.txt and 105 others of the real list."""
+
+    KEYS = b"azahar keys"
+
+    def __enter__(self) -> SaveDirectoryRepository:
+        super().__enter__()
+        path = self.root / "install" / "retroarch.json"
+        manifest = json.loads(path.read_text())
+        (self.root / "bios" / "keys.txt").write_bytes(self.KEYS)
+        manifest["files"].append({
+            "dest": "Azahar/Azahar/sysdata/keys.txt", "root": "save",
+            "core_folder": "Azahar", "sha1": hashlib.sha1(self.KEYS).hexdigest(),
+            "sha256": hashlib.sha256(self.KEYS).hexdigest(), "size": len(self.KEYS),
+            "repo_path": "bios/keys.txt", "cores": ["azahar"],
+            "systems": ["nintendo-3ds"]})
+        manifest["save_directory"] = {"folder": "saves", "by_core": True}
+        manifest["base_destination"] = "system"
+        path.write_text(json.dumps(manifest))
+        return self
+
+
 @unittest.skipUnless(pyte and pty and hasattr(pty, "fork"),
                      "screen tests need pyte (pip install pyte==0.8.2) and a pty")
 class EndToEnd(unittest.TestCase):
@@ -2670,6 +2891,49 @@ class EndToEnd(unittest.TestCase):
         self.assertIn("--platform retroarch --dest", after)
         # The cursor and the main screen come back before the result is printed.
         self.assertIn(b"\x1b[?25h\x1b[?1049l", term.raw)
+
+    def test_the_save_directory_is_the_one_line_mode_finds(self):
+        """The interface named the BIOS folder with --dest, so its runs never
+        read retroarch.cfg: keys.txt went to a guessed RetroArch/saves, or
+        was dropped without a word, where line mode writes it to the
+        savefile_directory RetroArch reads."""
+        import subprocess
+
+        def written(repo, saves: Path) -> list[str]:
+            return sorted([*repo.installed(), *(
+                "saves/" + p.relative_to(saves).as_posix()
+                for p in saves.rglob("*") if p.is_file())])
+
+        results = []
+        for mode in ("line", "interface"):
+            with self.subTest(mode=mode):
+                repo = self.repo(SaveDirectoryRepository)
+                home = Path(self.env["HOME"])
+                saves = home / "MySaves"
+                saves.mkdir()
+                cfg = home / ".config" / "retroarch" / "retroarch.cfg"
+                cfg.write_text(f'system_directory = "{repo.dest}"\n'
+                               f'savefile_directory = "{saves}"\n')
+                if mode == "line":
+                    proc = subprocess.run(
+                        [sys.executable, str(REPO_ROOT / "install.py"), "--platform",
+                         "retroarch", "--yes"], env=self.env, capture_output=True,
+                        text=True, timeout=60, check=False, stdin=subprocess.DEVNULL)
+                    self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+                    self.assertIn("6 files installed", proc.stdout)
+                else:
+                    term = self.start()
+                    term.wait("Where do you play?")
+                    term.send("\r")
+                    screen = term.wait("files to download")
+                    self.assertIn("6 files to download", screen)
+                    term.send("\r")
+                    term.wait("6 files installed.")
+                    term.send("\r")
+                    self.assertEqual(term.close(), 0)
+                results.append(written(repo, saves))
+                self.assertIn("saves/Azahar/Azahar/sysdata/keys.txt", results[-1])
+        self.assertEqual(results[0], results[1])
 
     def test_one_system_from_the_checklist(self):
         repo = self.repo()
@@ -2858,6 +3122,51 @@ class EndToEnd(unittest.TestCase):
                 term.status = os.WEXITSTATUS(status)
                 self.assertTrue(os.WIFEXITED(status))
                 self.assertEqual(term.status, 129)
+
+    def test_closing_the_window_while_it_installs(self):
+        """The changing screen fails to draw on the closed window: that is
+        the window's signal, not a crash with a log kept."""
+        repo = self.repo(GameDataRepository, slow=True)
+        scratch = repo.root / "scratch"
+        scratch.mkdir()
+        self.env["TMPDIR"] = str(scratch)
+        term = self.start("--platform", "retroarch", "--dest", str(repo.dest), "--jobs", "1")
+        term.wait("> Install")
+        term.send("\r")
+        term.wait("1 of 6 files")
+        os.close(term.fd)
+        end = time.monotonic() + 20
+        while time.monotonic() < end:
+            pid, status = os.waitpid(term.pid, os.WNOHANG)
+            if pid:
+                break
+            time.sleep(0.05)
+        else:
+            os.kill(term.pid, 9)
+            self.fail("still running once its window closed")
+        term.status = os.WEXITSTATUS(status)
+        self.assertEqual(term.status, 129)
+        self.assertEqual(list(scratch.glob("retrobios-tui-*/error.log")), [])
+
+    def test_no_key_on_the_first_screen_closes_it(self):
+        """A mapper that never opens the pad left the first screen up for
+        good: a handheld then has no way out but the power button."""
+        self.repo()
+        self.env[install.TUI_IDLE_ENV] = "1"
+        term = self.start()
+        term.wait("Where do you play?")
+        self.assertEqual(term.close(), 0)
+        self.assertIn("No button pressed, closing.", term.after())
+        # A key pressed, the screen stays: the person is there.
+        term = self.start()
+        term.wait("Where do you play?")
+        term.send(DOWN)
+        end = time.monotonic() + 2.5
+        while time.monotonic() < end:
+            term._pump(0.05)
+        self.assertEqual(os.waitpid(term.pid, os.WNOHANG), (0, 0))
+        term.send("q")
+        self.assertEqual(term.close(), 130)
 
     def test_a_desktop_names_its_keys_and_a_pad_its_buttons(self):
         self.repo()

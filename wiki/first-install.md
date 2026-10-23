@@ -83,7 +83,7 @@ It opens a menu:
 - **Wrong folder?** Choose **Another setup or folder**, then browse to yours.
 - **A handheld's SD card in a reader?** It is listed, as **muOS SD card**.
 
-Arrows move, Enter chooses, Esc goes back. A controller's A and B do the same.
+Arrows move, Enter chooses, Esc goes back. A handheld's A and B do the same.
 
 ## 3. Install
 
@@ -142,8 +142,12 @@ The message shows the command that installs Python. Run it, then run the
 installer again.
 
 A RetroPie 4.8 image has Python 3.7.3, and its update command finds nothing
-newer. Run the command on a computer, with
-`--platform retropie --dest \\RETROPIE\bios\`.
+newer. Run it on a computer, the `bios` share open:
+
+<!-- os-tabs windows: --platform retropie --dest \\RETROPIE\bios\ -->
+```sh
+curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh -s -- --platform retropie --dest <the bios share>
+```
 
 ### Error: the downloaded installer does not match its expected fingerprint.
 
