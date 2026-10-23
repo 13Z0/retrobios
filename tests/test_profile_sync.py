@@ -4912,6 +4912,32 @@ class UpstreamVendoredAsASubmodule(unittest.TestCase):
         self.assertEqual(views[1].head, "nesbox-tip")
 
 
+class AMirrorOutlivesAGoneSource(unittest.TestCase):
+    """yuzu's source answers 451. select_views stopped on it and never read
+    the source_mirror declared after it, so the profile stayed unchecked."""
+
+    def test_the_mirror_is_read_when_the_source_is_gone(self):
+        from unittest import mock  # noqa: PLC0415
+
+        gone_repo = profile_sync.upstream.make_repo("github.com", "yuzu-emu-mirror", "yuzu")
+        mirror = profile_sync.upstream.make_repo("github.com", "fork", "yuzu")
+
+        def head(repo, cache_dir, offline=False, branch=None):
+            if repo == gone_repo:
+                raise profile_sync.upstream.GoneError("HTTP 451")
+            return "mirror-head"
+
+        profile = {
+            "source": "https://github.com/yuzu-emu-mirror/yuzu",
+            "source_mirror": "https://github.com/fork/yuzu",
+            "source_commit": "pin",
+        }
+        with mock.patch.object(profile_sync.upstream, "resolve_head", side_effect=head), \
+                mock.patch.object(profile_sync, "resolve_pin", return_value=("pin", "source_commit")):
+            views = profile_sync.select_views(profile, "cache", True)
+        self.assertEqual([(v.repo, v.field) for v in views], [(mirror, "source_mirror")])
+
+
 class AHeldUpstreamStaysOnItsPin(unittest.TestCase):
     """aps3e vendors RPCS3 1f080485 and yaps2 PCSX2 342db515: a bump moved
     upstream_commit to the upstream HEAD neither port carries."""

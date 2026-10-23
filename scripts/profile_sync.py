@@ -1107,6 +1107,7 @@ def select_views(
     """
     views: list[RepoView] = []
     seen: set[tuple[str, str]] = set()
+    gone = False
     # A port living on a branch of a fork is absent from the default tip, so
     # the branch it was read from is followed when the profile names one.
     declared = str(profile.get("source_branch") or "") or None
@@ -1121,21 +1122,29 @@ def select_views(
         pin_field = "source" if field == "source_mirror" else field
         branch = declared if pin_field == "source" else None
         head = None
-        for candidate in branch_candidates(url):
-            head = upstream.resolve_head(repo, cache_dir, offline, candidate)
-            if head:
-                branch = candidate
-                break
-        pin, origin = resolve_pin(
-            profile, repo, cache_dir, offline, pin_field, mode, branch
-        )
-        if not pin:
+        try:
+            for candidate in branch_candidates(url):
+                head = upstream.resolve_head(repo, cache_dir, offline, candidate)
+                if head:
+                    branch = candidate
+                    break
+            pin, origin = resolve_pin(
+                profile, repo, cache_dir, offline, pin_field, mode, branch
+            )
+            if not pin:
+                continue
+            head = head or upstream.resolve_head(repo, cache_dir, offline, branch)
+        except upstream.GoneError:
+            # yuzu's source answers 451: the mirror declared after it is what
+            # keeps the profile checkable, so a gone repository is passed over.
+            gone = True
             continue
-        head = head or upstream.resolve_head(repo, cache_dir, offline, branch)
         if not head:
             continue
         seen.add((repo.host, repo.slug))
         views.append(RepoView(repo, pin, head, origin, field))
+    if gone and not views:
+        raise upstream.GoneError(f"{profile.get('emulator', '?')}: every declared repository is gone")
     views = _follow_fork_base(_follow_submodule(views, cache_dir, offline), cache_dir, offline)
     return _hold_upstream(profile, views)
 
@@ -1583,7 +1592,7 @@ def build_report(
             report.skipped = f"upstream gone (declared): {stated_gone}"
             return report
         raise
-    if stated_gone and views:
+    if stated_gone and any(view.field != "source_mirror" for view in views):
         # Declared dead, yet it answered. A profile that keeps saying so stops
         # being read, so the contradiction is the finding.
         report.skipped = (
