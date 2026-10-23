@@ -7,6 +7,7 @@ upstream: "https://github.com/PCSX2/pcsx2"
 profiled_date: "2026-09-17"
 source_commit: "57ea93c0ce8306063b31fe6658dab6b492bbedfe"
 upstream_commit: "342db51523f288c5ced20f5be3c679f46472cc45"
+upstream_frozen: "The tree is PCSX2 at this commit plus the fork's own commits. Later PCSX2 commits are not in the port."
 core_version: "Git"
 display_name: "Sony - PlayStation 2 (yaps2)"
 cores: [yaps2]

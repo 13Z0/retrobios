@@ -7,6 +7,7 @@ upstream: "https://github.com/xenia-canary/xenia-canary"
 profiled_date: "2026-08-11"
 source_commit: "b8c1838f21761ac463724e24105eda97b990e704"
 upstream_commit: "dc561e4df578c903087f9bdf56ff61d9ef9f2a93"
+upstream_frozen: "The xenia-canary tree vendored under app/src/main/cpp/xenia-canary is canary_experimental at this commit."
 core_version: "1.18"
 display_name: "Microsoft - Xbox 360 (aX360e)"
 cores:
