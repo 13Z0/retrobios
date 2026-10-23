@@ -467,14 +467,16 @@ body:has(.rb-sys-file, .rb-file-entry) { --sl-content-width: 54rem; }
 /* The facts of a file card: label column, value column, one column on a phone. */
 .sl-markdown-content dl.rb-facts {
 	display: grid;
-	grid-template-columns: 9rem minmax(0, 1fr);
+	grid-template-columns: 11rem minmax(0, 1fr);
 	gap: 0.2rem 1rem;
 	margin: 0.4rem 0 0;
 	font-size: 0.85rem;
 }
 .sl-markdown-content .rb-facts :is(dt, dd) { margin: 0; padding: 0; }
 .sl-markdown-content .rb-facts dt { font-size: 0.8rem; font-weight: 400; color: var(--rb-text-secondary); }
-.sl-markdown-content .rb-facts dd { min-width: 0; overflow-wrap: break-word; line-height: 1.8; }
+.sl-markdown-content .rb-facts dd { min-width: 0; min-height: 24px; overflow-wrap: break-word; line-height: 24px; }
+/* A lone link in a card value is a 24 px target too (WCAG 2.5.8). */
+.sl-markdown-content .rb-facts dd > a { display: inline-block; min-height: 24px; }
 /* A badge link in a card keeps a 24 px target, rows 4 px apart (WCAG 2.5.8). */
 .sl-markdown-content .rb-facts :is(.rb-badge:has(> a), a.rb-badge) {
 	display: inline-flex;
@@ -577,6 +579,12 @@ abbr.rb-term[data-open]::after {
 	white-space: normal;
 }
 
+/* Inline code: a flag or a name of 30 characters or fewer (marked rb-short
+   at build time) never splits, longer code wraps at its spaces and keeps them. */
+.sl-markdown-content :not(pre) > code { white-space: break-spaces; }
+.sl-markdown-content :not(pre) > code.rb-short { white-space: pre; }
+.sl-markdown-content table.rb-options td:first-child { white-space: nowrap; }
+
 /* Forms: lookup, picker, table filters */
 .rb-file-lookup,
 .rb-picker fieldset {
@@ -595,6 +603,8 @@ abbr.rb-term[data-open]::after {
 	font: inherit;
 }
 .sl-markdown-content .rb-file-lookup input { flex: 1 1 20rem; font-family: var(--sl-font-mono); }
+/* Both lookup labels, the hash and the file chooser, share one weight. */
+.sl-markdown-content .rb-file-lookup label { font-weight: 600; }
 .sl-markdown-content :is(.rb-file-lookup, .rb-picker) button {
 	background: var(--rb-link);
 	color: var(--sl-color-black);
@@ -685,9 +695,8 @@ site-search .pagefind-ui__result-tags { display: none; }
 	font-weight: 600;
 }
 
-/* OS tabs stay on one row and scroll sideways on a narrow phone. */
-starlight-tabs [role='tablist'] { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
-starlight-tabs [role='tablist']::-webkit-scrollbar { display: none; }
+/* OS tabs wrap to a second row on a narrow phone: every tab stays on screen. */
+starlight-tabs [role='tablist'] { flex-wrap: wrap; overflow-x: visible; row-gap: 0.25rem; }
 starlight-tabs [role='tab'] { white-space: nowrap; }
 
 /* A page without "On this page" keeps the column, and the search box above
@@ -719,21 +728,24 @@ starlight-tabs [role='tab'] { white-space: nowrap; }
 	}
 	.sl-markdown-content table[data-rb-stack] :is(tbody, tr) { display: block; }
 	.sl-markdown-content table[data-rb-stack] tr { padding: 0.5rem 0; border-top: 1px solid var(--rb-border); }
+	/* A cell holds its label as a float in its left padding: a label on two
+	   lines pushes the row down instead of running into the next one. No
+	   sibling margin between cells. */
 	.sl-markdown-content table[data-rb-stack] td {
-		display: block;
-		position: relative;
-		min-height: 1.6rem;
-		padding: 0.25rem 0.6rem 0.25rem 8.4rem;
+		display: flow-root;
+		margin-top: 0;
+		padding: 0.125rem 0.6rem 0.125rem 8.4rem;
 		border: 0;
+		line-height: 1.5;
 		text-align: left !important;
 		overflow-wrap: anywhere;
 	}
 	.sl-markdown-content table[data-rb-stack] td::before {
 		content: attr(data-label);
-		position: absolute;
-		top: 0.25rem;
-		left: 0.6rem;
+		position: static;
+		float: left;
 		width: 7.4rem;
+		margin-left: -7.8rem;
 		font-weight: 600;
 		color: var(--rb-text-secondary);
 	}
@@ -747,6 +759,14 @@ starlight-tabs [role='tab'] { white-space: nowrap; }
 		font-size: 0.85rem;
 		font-weight: 600;
 		color: var(--rb-text-secondary);
+	}
+	/* A stacked value column is about 14rem wide: short code moves to the
+	   next line whole, and splits only when it is wider than the column. */
+	.sl-markdown-content table[data-rb-stack] td code.rb-short {
+		display: inline-block;
+		max-width: 100%;
+		white-space: pre-wrap;
+		overflow-wrap: anywhere;
 	}
 
 	/* On a phone every command wraps: the end of a one-liner is never

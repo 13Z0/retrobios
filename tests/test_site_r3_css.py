@@ -2,7 +2,7 @@
 
 Each test fails on the stylesheet as it was before the fix: commands allowed
 to break inside any word on a phone, a sidebar whose top links outsize its
-group labels, OS tabs on two rows, badge links cut to a few pixels by the
+group labels, badge links cut to a few pixels by the
 next row, 12 px hashes, Get your files tables each sizing their own columns.
 """
 from __future__ import annotations
@@ -44,18 +44,10 @@ class ThemeStylesheetRound3(unittest.TestCase):
         self.assertIn("font-size: var(--sl-text-sm)", links)
         self.assertIn("font-weight: 400", links)
 
-    # 1.3
-    def test_os_tabs_on_one_row(self):
-        tablist = next(b for s, b in _blocks(self.css) if s == "starlight-tabs [role='tablist']")
-        self.assertIn("flex-wrap: nowrap", tablist)
-        self.assertIn("overflow-x: auto", tablist)
-        self.assertIn("scrollbar-width: none", tablist)
-        self.assertIn("display: none", _rules(self.css, "starlight-tabs [role='tablist']::-webkit-scrollbar")[0])
-
     # 1.4
     def test_badge_links_keep_a_24px_target(self):
         dd = next(b for s, b in _blocks(self.css) if s == ".sl-markdown-content .rb-facts dd")
-        self.assertIn("line-height: 1.8", dd)
+        self.assertIn("line-height: 24px", dd)
         badge = _rules(self.css, ".rb-facts :is(.rb-badge:has(> a), a.rb-badge)")[0]
         for declaration in ("display: inline-flex", "align-items: center", "min-height: 24px", "margin-block: 2px"):
             with self.subTest(declaration=declaration):
