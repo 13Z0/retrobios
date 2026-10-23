@@ -4,9 +4,9 @@ core_classification: official_port
 source: "https://github.com/libretro/FBNeo"
 upstream: "https://github.com/finalburnneo/FBNeo"
 logo: "https://raw.githubusercontent.com/finalburnneo/FBNeo/master/projectfiles/xcode/Emulator/Assets.xcassets/AppIcon.appiconset/icon_512.png"
-profiled_date: "2026-03-23"
-source_commit: "63c4190785cadd5ff84483399375871ed6e98754"
-upstream_commit: "8d47450deff3802a61559108f12bb0c846c98e36"
+profiled_date: "2026-10-23"
+source_commit: "2b0c1c0679df115cada7df9199ea2762222e58fd"
+upstream_commit: "c89fdfe3abe118dc4a006f3d887094f0d83360f0"
 core_version: "v1.0.0.2"
 display_name: "Arcade (FinalBurn Neo)"
 cores:
@@ -54,7 +54,7 @@ notes: |
   FinalBurn Neo is a multi-system arcade and console emulator. BIOS files are
   expected as MAME-format ZIP archives containing individual ROM chips. The
   libretro core searches for BIOS ZIPs in this order
-  (src/burner/libretro/libretro.cpp:881-949):
+  (src/burner/libretro/libretro.cpp:882-950):
     1. {system_dir}/fbneo/patched/{romName}
     2. {rom_dir}/{romName}
     3. {system_dir}/fbneo/{romName}
@@ -101,7 +101,7 @@ files:
     size: 131072  # 0x20000
     crc32: "91b64be3"
     note: "MVS Asia/Europe ver. 6 (1 slot) - default BIOS"
-    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1624"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1660"
 
   - name: "sp-s2.sp1"
     archive: neogeo.zip
@@ -110,7 +110,7 @@ files:
     size: 131072
     crc32: "9036d879"
     note: "MVS Asia/Europe ver. 5 (1 slot)"
-    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1625"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1661"
 
   - name: "sp-s.sp1"
     archive: neogeo.zip
@@ -119,7 +119,7 @@ files:
     size: 131072
     crc32: "c7f2fa45"
     note: "MVS Asia/Europe ver. 3 (4 slot)"
-    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1626"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1662"
 
   - name: "sp-u2.sp1"
     aliases: ["usa_2slt.bin"]
@@ -129,7 +129,7 @@ files:
     size: 131072
     crc32: "e72943de"
     note: "MVS USA ver. 5 (2 slot)"
-    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1627"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1663"
 
   - name: "sp1-u2"
     archive: neogeo.zip
@@ -138,7 +138,7 @@ files:
     size: 131072
     crc32: "62f021f4"
     note: "MVS USA ver. 5 (4 slot)"
-    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1628"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1664"
 
   - name: "sp-e.sp1"
     archive: neogeo.zip
@@ -147,7 +147,7 @@ files:
     size: 131072
     crc32: "2723a5b5"
     note: "MVS USA ver. 5 (6 slot)"
-    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1629"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1665"
 
   - name: "sp1-u4.bin"
     archive: neogeo.zip
@@ -156,7 +156,7 @@ files:
     size: 131072
     crc32: "1179a30f"
     note: "MVS USA (U4)"
-    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1630"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1666"
 
   - name: "sp1-u3.bin"
     archive: neogeo.zip
@@ -165,7 +165,7 @@ files:
     size: 131072
     crc32: "2025b7a2"
     note: "MVS USA (U3)"
-    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1631"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1667"
 
   - name: "vs-bios.rom"
     archive: neogeo.zip
@@ -174,7 +174,7 @@ files:
     size: 131072
     crc32: "f0e8f27d"
     note: "MVS Japan ver. 6"
-    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1632"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1668"
 
   - name: "sp-j2.sp1"
     archive: neogeo.zip
@@ -183,7 +183,7 @@ files:
     size: 131072
     crc32: "acede59c"
     note: "MVS Japan ver. 5"
-    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1633"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1669"
 
   - name: "sp1.jipan.1024"
     archive: neogeo.zip
@@ -192,7 +192,7 @@ files:
     size: 131072
     crc32: "9fb0abe4"
     note: "MVS Japan ver. 3 (4 slot)"
-    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1634"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1670"
 
   - name: "sp-45.sp1"
     archive: neogeo.zip
@@ -201,7 +201,7 @@ files:
     size: 524288  # 0x80000
     crc32: "03cc9f6a"
     note: "NEO-MVH MV1C (Asia)"
-    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1635"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1671"
 
   - name: "sp-j3.sp1"
     archive: neogeo.zip
@@ -210,7 +210,7 @@ files:
     size: 524288
     crc32: "486cb450"
     note: "NEO-MVH MV1C (Japan)"
-    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1636"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1672"
 
   - name: "japan-j3.bin"
     archive: neogeo.zip
@@ -219,7 +219,7 @@ files:
     size: 131072
     crc32: "dff6d41f"
     note: "MVS Japan (J3)"
-    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1637"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1673"
 
   - name: "sp1-j3.bin"
     archive: neogeo.zip
@@ -228,7 +228,7 @@ files:
     size: 131072
     crc32: "fbc6d469"
     note: "MVS Japan (J3, alt)"
-    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1638"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1674"
 
   # AES BIOS ROMs (not in MAME ROM_VERIFY builds)
   - name: "neo-po.bin"
@@ -238,7 +238,7 @@ files:
     size: 131072
     crc32: "16d0c132"
     note: "AES Japan"
-    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1640"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1676"
 
   - name: "neo-epo.bin"
     archive: neogeo.zip
@@ -247,7 +247,7 @@ files:
     size: 131072
     crc32: "d27a71f1"
     note: "AES Asia"
-    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1641"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1677"
 
   - name: "neodebug.bin"
     archive: neogeo.zip
@@ -256,7 +256,7 @@ files:
     size: 131072
     crc32: "698ebb7d"
     note: "Development Kit BIOS"
-    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1642"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1678"
 
   - name: "sp-1v1_3db8c.bin"
     archive: neogeo.zip
@@ -265,7 +265,7 @@ files:
     size: 131072
     crc32: "162f0ebe"
     note: "Deck ver. 6 (Git Ver 1.3)"
-    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1648"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1684"
 
   # Universe BIOS (third-party, multiple versions)
   - name: "uni-bios_4_0.rom"
@@ -275,7 +275,7 @@ files:
     size: 131072
     crc32: "a7aab458"
     note: "Universe BIOS ver. 4.0 (hack)"
-    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1649"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1685"
 
   - name: "uni-bios_3_3.rom"
     archive: neogeo.zip
@@ -284,7 +284,7 @@ files:
     size: 131072
     crc32: "24858466"
     note: "Universe BIOS ver. 3.3 (hack)"
-    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1650"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1686"
 
   - name: "uni-bios_3_2.rom"
     archive: neogeo.zip
@@ -293,7 +293,7 @@ files:
     size: 131072
     crc32: "a4e8b9b3"
     note: "Universe BIOS ver. 3.2 (hack)"
-    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1651"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1687"
 
   - name: "uni-bios_3_1.rom"
     archive: neogeo.zip
@@ -302,7 +302,7 @@ files:
     size: 131072
     crc32: "0c58093f"
     note: "Universe BIOS ver. 3.1 (hack)"
-    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1652"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1688"
 
   - name: "uni-bios_3_0.rom"
     archive: neogeo.zip
@@ -311,7 +311,7 @@ files:
     size: 131072
     crc32: "a97c89a9"
     note: "Universe BIOS ver. 3.0 (hack)"
-    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1653"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1689"
 
   - name: "uni-bios_2_3.rom"
     archive: neogeo.zip
@@ -320,7 +320,7 @@ files:
     size: 131072
     crc32: "27664eb5"
     note: "Universe BIOS ver. 2.3 (hack)"
-    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1654"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1690"
 
   - name: "uni-bios_2_3o.rom"
     archive: neogeo.zip
@@ -329,7 +329,7 @@ files:
     size: 131072
     crc32: "601720ae"
     note: "Universe BIOS ver. 2.3 older (hack)"
-    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1655"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1691"
 
   - name: "uni-bios_2_2.rom"
     archive: neogeo.zip
@@ -338,7 +338,7 @@ files:
     size: 131072
     crc32: "2d50996a"
     note: "Universe BIOS ver. 2.2 (hack)"
-    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1656"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1692"
 
   - name: "uni-bios_2_1.rom"
     archive: neogeo.zip
@@ -347,7 +347,7 @@ files:
     size: 131072
     crc32: "8dabf76b"
     note: "Universe BIOS ver. 2.1 (hack)"
-    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1657"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1693"
 
   - name: "uni-bios_2_0.rom"
     archive: neogeo.zip
@@ -356,7 +356,7 @@ files:
     size: 131072
     crc32: "0c12c2ad"
     note: "Universe BIOS ver. 2.0 (hack)"
-    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1658"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1694"
 
   - name: "uni-bios_1_3.rom"
     archive: neogeo.zip
@@ -365,7 +365,7 @@ files:
     size: 131072
     crc32: "b24b44a0"
     note: "Universe BIOS ver. 1.3 (hack)"
-    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1659"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1695"
 
   - name: "uni-bios_1_2.rom"
     archive: neogeo.zip
@@ -374,7 +374,7 @@ files:
     size: 131072
     crc32: "4fa698e9"
     note: "Universe BIOS ver. 1.2 (hack)"
-    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1660"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1696"
 
   - name: "uni-bios_1_2o.rom"
     archive: neogeo.zip
@@ -383,7 +383,7 @@ files:
     size: 131072
     crc32: "e19d3ce9"
     note: "Universe BIOS ver. 1.2 older (hack)"
-    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1661"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1697"
 
   - name: "uni-bios_1_1.rom"
     archive: neogeo.zip
@@ -392,7 +392,7 @@ files:
     size: 131072
     crc32: "5dda0d84"
     note: "Universe BIOS ver. 1.1 (hack)"
-    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1662"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1698"
 
   - name: "uni-bios_1_0.rom"
     archive: neogeo.zip
@@ -401,7 +401,7 @@ files:
     size: 131072
     crc32: "0ce453a0"
     note: "Universe BIOS ver. 1.0 (hack)"
-    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1663"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1699"
 
   - name: "neopen.sp1"
     archive: neogeo.zip
@@ -410,7 +410,7 @@ files:
     size: 131072
     crc32: "cb915e76"
     note: "NeoOpen BIOS v0.1 beta (hack)"
-    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1665"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1701"
 
   # Neo Geo shared ROMs (always required)
   - name: "sm1.sm1"
@@ -420,7 +420,7 @@ files:
     size: 131072
     crc32: "94416d67"
     note: "Z80 sound BIOS"
-    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1672"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1708"
 
   - name: "sfix.sfix"
     archive: neogeo.zip
@@ -429,7 +429,7 @@ files:
     size: 131072
     crc32: "c2ea0cfd"
     note: "Text layer fix tiles"
-    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1673"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1709"
 
   - name: "000-lo.lo"
     archive: neogeo.zip
@@ -438,7 +438,7 @@ files:
     size: 131072
     crc32: "5a86cff2"
     note: "Zoom lookup table"
-    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1674"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1710"
 
   # -------------------------------------------------------
   # Neo Geo Trackball BIOS (for irrmaze)
@@ -450,7 +450,7 @@ files:
     size: 131072
     crc32: "853e6b96"
     note: "Trackball BIOS / Asia MV1B 263"
-    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1764"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1800"
 
   - name: "236-bios_japan_hack.sp1"
     archive: neogeo.zip
@@ -459,7 +459,7 @@ files:
     size: 131072
     crc32: "02bf4426"
     note: "Trackball BIOS / Japan (hack)"
-    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1765"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1801"
 
   # -------------------------------------------------------
   # Neo Geo PCB BIOS (for ms5pcb, svcpcb, kf2k3pcb)
@@ -471,7 +471,7 @@ files:
     size: 524288
     crc32: "b4590283"
     note: "PCB BIOS for Metal Slug 5 PCB and SVC Chaos PCB"
-    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1811"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1847"
 
   - name: "spj.sp1"
     archive: neogeo.zip
@@ -480,7 +480,7 @@ files:
     size: 524288
     crc32: "148dd727"
     note: "PCB BIOS for KOF 2003 PCB"
-    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1899"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1935"
 
   # -------------------------------------------------------
   # Neo Geo CDZ (neocdz.zip)
@@ -492,7 +492,7 @@ files:
     size: 524288  # 0x80000
     crc32: "df9de490"
     note: "Neo Geo CD/CDZ top-loading BIOS"
-    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1983"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:2019"
 
   - name: "neocd_sz.rom"
     archive: neocdz.zip
@@ -501,7 +501,7 @@ files:
     size: 524288
     crc32: "42f6b6c4"
     note: "Neo Geo CDZ custom BIOS by SMKDan"
-    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1984"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:2020"
 
   - name: "uni-bioscd33.rom"
     archive: neocdz.zip
@@ -510,7 +510,7 @@ files:
     size: 524288
     crc32: "ff3abc59"
     note: "Universe BIOS CD ver. 3.3 (hack)"
-    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1985"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:2021"
 
   - name: "uni-bioscd32.rom"
     archive: neocdz.zip
@@ -519,7 +519,7 @@ files:
     size: 524288
     crc32: "0ffb3127"
     note: "Universe BIOS CD ver. 3.2 (hack)"
-    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1986"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:2022"
 
   - name: "000-lo.lo"
     archive: neocdz.zip
@@ -528,7 +528,7 @@ files:
     size: 131072
     crc32: "5a86cff2"
     note: "Zoom lookup table (shared with MVS)"
-    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:1988"
+    source_ref: "source src/burn/drv/neogeo/d_neogeo.cpp:2024"
 
   # -------------------------------------------------------
   # IGS PGM (pgm.zip)
@@ -937,7 +937,7 @@ files:
     size: 8192  # 0x2000
     crc32: "3aa93ef3"
     note: "ColecoVision BIOS (Coleco, 1982)"
-    source_ref: "source src/burn/drv/coleco/d_coleco.cpp:1070"
+    source_ref: "source src/burn/drv/coleco/d_coleco.cpp:1061"
 
   - name: "colecoa.rom"
     archive: coleco.zip
@@ -946,7 +946,7 @@ files:
     size: 8192
     crc32: "39bb16fc"
     note: "ColecoVision BIOS thick characters (Coleco, 1982)"
-    source_ref: "source src/burn/drv/coleco/d_coleco.cpp:1071"
+    source_ref: "source src/burn/drv/coleco/d_coleco.cpp:1062"
 
   - name: "svi603.rom"
     archive: coleco.zip
@@ -955,7 +955,7 @@ files:
     size: 8192
     crc32: "19e91b82"
     note: "SVI-603 Coleco Game Adapter (Spectravideo, 1983)"
-    source_ref: "source src/burn/drv/coleco/d_coleco.cpp:1072"
+    source_ref: "source src/burn/drv/coleco/d_coleco.cpp:1063"
 
   - name: "czz50.rom"
     archive: coleco.zip
@@ -964,7 +964,7 @@ files:
     size: 16384  # 0x4000
     crc32: "4999abc6"
     note: "Chuang Zao Zhe 50 (Bit Corporation, 1986)"
-    source_ref: "source src/burn/drv/coleco/d_coleco.cpp:1073"
+    source_ref: "source src/burn/drv/coleco/d_coleco.cpp:1064"
 
   # -------------------------------------------------------
   # ZX Spectrum (spectrum.zip, spec128.zip)
@@ -1512,7 +1512,7 @@ files:
     required: true
     size: 16384
     crc32: "81977335"
-    source_ref: "source src/burn/drv/gba/d_gba.cpp:540"
+    source_ref: "source src/burn/drv/gba/d_gba.cpp:564"
 
   - name: "st018.bin"
     archive: st018.zip
