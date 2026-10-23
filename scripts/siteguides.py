@@ -38,7 +38,12 @@ class Guide:
     and open the Reference part of the page. `download_hint` is one more
     bullet under the pack download. `pack_manual` is the manual part of the
     README inside the pack. `logo_owner` and `logo_licence` credit the
-    logo the registry links.
+    logo the registry links. `runs_on` names the hardware, in the project's
+    own words, for its tile and its row. `terminal` replaces the shared
+    "On the device" text with how this system opens a terminal. `lead` comes
+    before the folder table, `finish` closes the guide. `{folders}` in
+    `pack_manual` is the folder list of the page, so the README and the page
+    cannot name two folders for one device.
     """
 
     summary: str
@@ -56,6 +61,10 @@ class Guide:
     pack_manual: str = ""
     logo_owner: str = ""
     logo_licence: str = ""
+    runs_on: str = ""
+    terminal: str = ""
+    lead: str = ""
+    finish: str = ""
 
 
 _GUIDE_KEYS = {f.name for f in fields(Guide)}
@@ -130,7 +139,7 @@ def _guide(name: str, data: object, extract_to: str, terminals: dict) -> Guide:
         if key in data:
             values[key] = _texts(data[key], f"{where}.{key}")
     for key in ("dest", "download_hint", "more_folders_title", "more_folders_note",
-                "logo_owner", "logo_licence"):
+                "logo_owner", "logo_licence", "runs_on", "terminal", "lead", "finish"):
         if key in data:
             values[key] = _text(data[key], f"{where}.{key}")
     for key in ("on_card", "more_folders_detected"):
@@ -213,6 +222,7 @@ def load_guides(path: Path = GUIDES_FILE, registry: dict | None = None) -> dict:
     # The order the file is written in, which the pages do not depend on.
     guides = {name: guides[name] for name in raw_guides}
     return {
+        "registry": registry,
         "install_base": _text(data.get("install_base"), f"{path.name}: install_base"),
         "trust_items": _texts(data.get("trust_items"), f"{path.name}: trust_items"),
         "device_groups": groups,
@@ -231,6 +241,43 @@ ALSO_RUNS: dict[str, tuple[tuple[str, str, str, str, str], ...]] = _LOADED["also
 TERMINALS: dict[str, tuple[str, str, str]] = _LOADED["terminals"]
 TRUST_ITEMS: tuple[str, ...] = _LOADED["trust_items"]
 GUIDES: dict[str, Guide] = _LOADED["guides"]
+_REGISTRY: dict = _LOADED["registry"]
+
+
+def detected_systems(registry: dict, platform: str) -> list[tuple[str, str]]:
+    """Named systems a platform runs on, handhelds that run RetroArch for one,
+    with the BIOS folder the installer writes on each, read from the
+    detection rules of the registry."""
+    seen: dict[str, str] = {}
+    for rule in (registry.get(platform, {}).get("install") or {}).get("detect") or []:
+        name, folder = rule.get("name"), rule.get("bios_path")
+        if name and folder and rule.get("installs", True) and name not in seen:
+            seen[name] = folder
+    return sorted(seen.items(), key=lambda item: item[0].casefold())
+
+
+def folder_list(name: str, registry: dict | None = None) -> list[tuple[str, str]]:
+    """Every folder a guide names, as (where, path): the common ones, the
+    rarer builds, and the systems the registry detects when the guide says so."""
+    guide = GUIDES[name]
+    rows = [*guide.folders, *guide.more_folders]
+    if guide.more_folders_detected:
+        rows += [(system, f"`{folder}`")
+                 for system, folder in detected_systems(registry or _REGISTRY, name)]
+    return rows
+
+
+def _plain_folders(name: str) -> str:
+    rows = folder_list(name)
+    width = max(len(where) for where, _path in rows) + 1
+    return "\n".join(f"{where + ':':<{width}} {path.replace('`', '')}" for where, path in rows)
+
+
+def setup_count() -> int:
+    """Setups the site covers: every registered platform, archived ones
+    included, since each keeps its page, its pack and its command. The one
+    count every page states."""
+    return len(GUIDES)
 
 
 def pack_manual(name: str) -> str:
@@ -238,7 +285,12 @@ def pack_manual(name: str) -> str:
     guide = GUIDES.get(name)
     if not guide or not guide.pack_manual:
         return ""
-    return textwrap.indent(guide.pack_manual.rstrip("\n"), "  ") + "\n\n"
+    text = guide.pack_manual.rstrip("\n")
+    if "{folders}" in text:
+        indent = next(line[: len(line) - len(line.lstrip())]
+                      for line in text.splitlines() if "{folders}" in line)
+        text = text.replace("{folders}", textwrap.indent(_plain_folders(name), indent).lstrip())
+    return textwrap.indent(text, "  ") + "\n\n"
 
 
 def install_command(shell: str, args: str = "") -> str:
@@ -254,21 +306,29 @@ def install_command(shell: str, args: str = "") -> str:
     return f"irm {INSTALL_BASE}/install.ps1 | iex"
 
 
-def _fence(shell: str, command: str, indent: str) -> list[str]:
-    return [f"{indent}```{shell}", f"{indent}{command}", f"{indent}```"]
+# The title over each command block, by the shell it is written for.
+FENCE_TITLES = {"sh": "Terminal", "powershell": "PowerShell"}
+
+
+def fence(shell: str, command: str, indent: str = "") -> list[str]:
+    """A command block with its title, as every command on the site is shown."""
+    return [f'{indent}```{shell} title="{FENCE_TITLES[shell]}"', f"{indent}{command}", f"{indent}```"]
 
 
 def terminal_tabs(
     tabs: tuple[str, ...], args: dict[str, str], indent: str = "", steps: bool = True,
+    how: dict[str, str] | None = None,
 ) -> list[str]:
     """Content tabs, one per place the command runs, each with how to open
     the terminal there. Tab labels are shared across the site, so the reader's
-    choice carries from page to page."""
+    choice carries from page to page. *how* replaces the shared text of a tab
+    for one setup."""
     items = []
     for key in tabs:
-        label, how, shell = TERMINALS[key]
-        body = [how, ""] if steps else []
-        items.append((label, body + _fence(shell, install_command(shell, args.get(key, "")), "")))
+        label, shared, shell = TERMINALS[key]
+        text = (how or {}).get(key) or shared
+        body = [text, ""] if steps else []
+        items.append((label, body + fence(shell, install_command(shell, args.get(key, "")))))
     return markup.tabs(items, indent)
 
 
@@ -287,7 +347,7 @@ def platform_args(name: str, guide: Guide) -> dict[str, str]:
 
 
 def trust_box(prefix: str, indent: str = "") -> list[str]:
-    """Is it safe, under every command on a guide page: five plain facts."""
+    """Is it safe, under every command on a guide page: the trust items."""
     return markup.details("note", "Is it safe?", [
         *(f"- {item}" for item in TRUST_ITEMS),
         "",
