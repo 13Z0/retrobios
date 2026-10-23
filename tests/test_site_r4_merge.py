@@ -161,12 +161,28 @@ class FaqInstallsFromWhatYouHold(unittest.TestCase):
 
     def test_no_unzip_before_from_pack(self):
         section = " ".join(self._section("No internet on the device?").split())
-        self.assertIn("point `--from-pack` at your ZIP, still zipped", section)
+        self.assertIn("point `--from-pack` at your ZIP:", section)
         self.assertNotIn("unzip", section)
         install = (REPO_ROOT / "install.py").read_text(encoding="utf-8")
         self.assertIn("Install from a pack already downloaded: its ZIP, one of its parts",
                       (REPO_ROOT / "wiki" / "installer.md").read_text(encoding="utf-8"))
         self.assertIn('"--from-pack"', install)
+
+    def test_the_cards_the_interface_finds(self):
+        """Each system the SD card answer names is one install.py tells by
+        its card: a release file (_CARD_RULES) or a card rule."""
+        import install  # noqa: PLC0415
+
+        section = " ".join(self._section("Fill an SD card from a computer?").split())
+        self.assertIn("The interface finds a muOS, Onion, spruceOS, MinUI, KNULLI or ROCKNIX "
+                      "card by itself.", section)
+        known = {rule.name for rule in install._card_rules()}
+        known |= {install.display_name(name) for name, _marker, _prefix in install._CARD_RULES}
+        for name in ("muOS", "Onion", "spruceOS", "MinUI", "KNULLI", "ROCKNIX"):
+            with self.subTest(card=name):
+                self.assertIn(name, known)
+        source = (REPO_ROOT / "install.py").read_text(encoding="utf-8")
+        self.assertIn('f"{card[2]} SD card ({_mount_name(mount)})"', source)
 
     def test_a_wiped_card_links_the_copy(self):
         section = self._section("Lost or wiped card?")

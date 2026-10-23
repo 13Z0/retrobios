@@ -16,7 +16,7 @@ terms: ios, iphone, ipad
 
 ## How do I know which BIOS I need?
 
-Add `--dry-run`. It lists the files, changing nothing.
+`--dry-run` lists them and changes nothing.
 
 <!-- os-tabs -->
 ```sh
@@ -25,7 +25,7 @@ curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | 
 
 ## Do I need every file of a console?
 
-No. To keep only your region's BIOS, add it, like `--region us`.
+No. `--region us` keeps only your region's BIOS.
 
 ## Does the BIOS set the game's language?
 
@@ -49,8 +49,8 @@ Game sets must match the emulator's version:
 ## Keys, firmware or BIOS?
 
 - **BIOS** or **firmware**: the console's own program, like `scph5501.bin`.
-- Newer consoles need a system update, like `PS3UPDAT.PUP`, installed from the
-  emulator's menu.
+- Newer consoles need a system update, like `PS3UPDAT.PUP`, installed in the
+  emulator.
 - **Keys** unlock encrypted games, like `prod.keys` for Switch.
 
 ## Is the command safe? { #is-piping-the-installer-into-a-shell-safe }
@@ -67,7 +67,7 @@ Read them first: [install.sh](https://github.com/Abdess/retrobios/blob/main/inst
 
 ## Windows or my antivirus blocks the command
 
-Use your setup's ZIP, if it has one: [Get your files](../which-pack.md).
+Use your setup's ZIP, if any: [Get your files](../which-pack.md).
 
 ## Why is there no ZIP for my setup?
 
@@ -76,7 +76,8 @@ setup's files and checks each one. `--dry-run` shows the list first.
 
 ## Fill an SD card from a computer?
 
-Name your setup and the card's BIOS folder. For RetroArch on a Switch,
+The interface finds a muOS, Onion, spruceOS, MinUI, KNULLI or ROCKNIX card by
+itself. Name your setup and the card's BIOS folder. For RetroArch on a Switch,
 with the card in drive `E:`, run:
 
 <!-- os-tabs windows: --platform retroarch --dest E:\retroarch\cores\system -->
@@ -87,8 +88,7 @@ curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh \
 
 ## No internet on the device?
 
-Fill its folder from a computer, as above, or point `--from-pack` at
-your ZIP, still zipped: [Without a network](installer.md#without-a-network-offline-install).
+Fill it from a computer, as above, or point `--from-pack` at your ZIP: [Without a network](installer.md#without-a-network-offline-install).
 
 ## Lost or wiped card?
 
@@ -116,7 +116,7 @@ Yes: [PCSX2](https://pcsx2.net/docs/setup/bios/) for PlayStation 2,
 
 ## Is this legal?
 
-Laws differ by country. [Is it legal?](legal.md)
+[It depends on your country](legal.md).
 
 ## Next steps
 
