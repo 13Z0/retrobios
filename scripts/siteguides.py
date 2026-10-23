@@ -11,6 +11,7 @@ parts the pages share. The registry keeps the folder the pack unzips into
 
 from __future__ import annotations
 
+import re
 import textwrap
 from dataclasses import dataclass, fields
 from pathlib import Path
@@ -67,11 +68,65 @@ class Guide:
     finish: str = ""
 
 
+@dataclass(frozen=True)
+class Tile:
+    """A tile beside the setups of a device group that is no setup of its
+    own: a kind of device that runs one (Android handhelds run RetroArch).
+    *link* is a site path, like the setup tiles' ``platforms/<key>.md``."""
+
+    name: str
+    text: str
+    link: str
+
+
+@dataclass(frozen=True)
+class HandheldSystem:
+    """One handheld system on the handheld guide: a name the installer
+    detects, the BIOS folder seen on the card from a computer, and the
+    devices the system's own site lists. Each value comes with the address
+    of the page that states it, and is left out when no first-party page does."""
+
+    name: str
+    folder: str = ""
+    folder_source: str = ""
+    devices: tuple[str, ...] = ()
+    devices_source: str = ""
+
+
+@dataclass(frozen=True)
+class HandheldGuide:
+    """The guide page for the systems that run a setup on a handheld
+    (ArkOS, muOS, Onion... run RetroArch). *devices* are the names a reader
+    types, searched on that page; *systems* one row each."""
+
+    page: str
+    title: str
+    summary: str
+    uses: str
+    systems: tuple[HandheldSystem, ...]
+
+    @property
+    def path(self) -> str:
+        return f"platforms/{self.page}.md"
+
+    @property
+    def devices(self) -> tuple[str, ...]:
+        seen: dict[str, None] = {}
+        for system in self.systems:
+            seen.update(dict.fromkeys(system.devices))
+        return tuple(seen)
+
+
 _GUIDE_KEYS = {f.name for f in fields(Guide)}
 _REQUIRED = ("summary", "folders", "run")
-_TOP_KEYS = {"install_base", "trust_items", "device_groups", "terminals", "guides"}
-_GROUP_KEYS = {"label", "description", "anchor", "also_runs"}
+_TOP_KEYS = {"install_base", "trust_items", "device_groups", "terminals", "guides",
+             "handheld_guide"}
+_GROUP_KEYS = {"label", "description", "anchor", "also_runs", "tiles"}
 _ALSO_KEYS = ("setup", "summary", "uses", "runs_on", "folder")
+_TILE_KEYS = ("name", "text", "link")
+_HANDHELD_KEYS = {"page", "title", "summary", "uses", "systems"}
+_SYSTEM_KEYS = {"name", "folder", "folder_source", "devices", "devices_source"}
+_SOURCE = re.compile(r"https://\S+")
 _TERMINAL_KEYS = ("label", "how", "shell")
 
 
@@ -152,6 +207,72 @@ def _guide(name: str, data: object, extract_to: str, terminals: dict) -> Guide:
     return Guide(**values)
 
 
+def detected_systems(registry: dict, platform: str) -> list[tuple[str, str]]:
+    """Named systems a platform runs on, handhelds that run RetroArch for one,
+    with the BIOS folder the installer writes on each, read from the
+    detection rules of the registry."""
+    seen: dict[str, str] = {}
+    for rule in (registry.get(platform, {}).get("install") or {}).get("detect") or []:
+        name, folder = rule.get("name"), rule.get("bios_path")
+        if name and folder and rule.get("installs", True) and name not in seen:
+            seen[name] = folder
+    return sorted(seen.items(), key=lambda item: item[0].casefold())
+
+
+def _source(value: object, where: str) -> str:
+    text = _text(value, where)
+    if not _SOURCE.fullmatch(text):
+        raise GuideError(f"{where}: expected one https address, found {text!r}")
+    return text
+
+
+def _handheld_system(data: object, where: str) -> HandheldSystem:
+    if not isinstance(data, dict):
+        raise GuideError(f"{where}: expected a mapping")
+    _unknown(data, _SYSTEM_KEYS, where)
+    values: dict = {"name": _text(data.get("name"), f"{where}.name")}
+    for value, source in (("folder", "folder_source"), ("devices", "devices_source")):
+        if (value in data) != (source in data):
+            raise GuideError(f"{where}: {value} and {source} go together, "
+                             "a value is written only with the page that states it")
+        if value in data:
+            values[value] = (_texts(data[value], f"{where}.{value}") if value == "devices"
+                             else _text(data[value], f"{where}.{value}"))
+            values[source] = _source(data[source], f"{where}.{source}")
+    return HandheldSystem(**values)
+
+
+def _handheld_guide(data: object, registry: dict, guides: dict, where: str) -> HandheldGuide | None:
+    """The handheld guide, checked against the systems the registry detects
+    the setup on: one row for each, and none it does not detect."""
+    if data is None:
+        return None
+    if not isinstance(data, dict):
+        raise GuideError(f"{where}: expected a mapping")
+    _unknown(data, _HANDHELD_KEYS, where)
+    uses = _text(data.get("uses"), f"{where}.uses")
+    if uses not in guides:
+        raise GuideError(f"{where}.uses: {uses!r} is not a platform with a guide")
+    page = _text(data.get("page"), f"{where}.page")
+    if page in registry:
+        raise GuideError(f"{where}.page: {page!r} is the page of a registered platform")
+    raw = data.get("systems")
+    if not isinstance(raw, list) or not raw:
+        raise GuideError(f"{where}.systems: expected a list of systems")
+    systems = tuple(_handheld_system(row, f"{where}.systems[{i}]") for i, row in enumerate(raw))
+    named = [system.name for system in systems]
+    detected = [name for name, _folder in detected_systems(registry, uses)]
+    if sorted(named, key=str.casefold) != detected:
+        raise GuideError(
+            f"{where}.systems: one row per system the registry detects {uses} on, "
+            f"missing {sorted(set(detected) - set(named))}, "
+            f"not detected {sorted(set(named) - set(detected))}")
+    return HandheldGuide(
+        page=page, title=_text(data.get("title"), f"{where}.title"),
+        summary=_text(data.get("summary"), f"{where}.summary"), uses=uses, systems=systems,
+    )
+
+
 def load_guides(path: Path = GUIDES_FILE, registry: dict | None = None) -> dict:
     """The guides file, checked against the registry.
 
@@ -183,6 +304,7 @@ def load_guides(path: Path = GUIDES_FILE, registry: dict | None = None) -> dict:
     groups: dict[str, tuple[str, str]] = {}
     anchors: dict[str, str] = {}
     also_runs: dict[str, tuple[tuple[str, str, str, str, str], ...]] = {}
+    tiles: dict[str, tuple[Tile, ...]] = {}
     for key, entry in (data.get("device_groups") or {}).items():
         at = f"{path.name}: device_groups.{key}"
         if not isinstance(entry, dict):
@@ -203,6 +325,15 @@ def load_guides(path: Path = GUIDES_FILE, registry: dict | None = None) -> dict:
             rows.append(values)
         if rows:
             also_runs[key] = tuple(rows)
+        group_tiles = []
+        for i, row in enumerate(entry.get("tiles") or []):
+            row_at = f"{at}.tiles[{i}]"
+            if not isinstance(row, dict):
+                raise GuideError(f"{row_at}: expected a mapping")
+            _unknown(row, _TILE_KEYS, row_at)
+            group_tiles.append(Tile(*(_text(row.get(k), f"{row_at}.{k}") for k in _TILE_KEYS)))
+        if group_tiles:
+            tiles[key] = tuple(group_tiles)
 
     unregistered = sorted(set(raw_guides) - set(registry))
     if unregistered:
@@ -228,8 +359,11 @@ def load_guides(path: Path = GUIDES_FILE, registry: dict | None = None) -> dict:
         "device_groups": groups,
         "group_anchors": anchors,
         "also_runs": also_runs,
+        "tiles": tiles,
         "terminals": terminals,
         "guides": guides,
+        "handheld_guide": _handheld_guide(data.get("handheld_guide"), registry, guides,
+                                          f"{path.name}: handheld_guide"),
     }
 
 
@@ -238,22 +372,12 @@ INSTALL_BASE: str = _LOADED["install_base"]
 DEVICE_GROUPS: dict[str, tuple[str, str]] = _LOADED["device_groups"]
 GROUP_ANCHORS: dict[str, str] = _LOADED["group_anchors"]
 ALSO_RUNS: dict[str, tuple[tuple[str, str, str, str, str], ...]] = _LOADED["also_runs"]
+GROUP_TILES: dict[str, tuple[Tile, ...]] = _LOADED["tiles"]
+HANDHELD_GUIDE: HandheldGuide | None = _LOADED["handheld_guide"]
 TERMINALS: dict[str, tuple[str, str, str]] = _LOADED["terminals"]
 TRUST_ITEMS: tuple[str, ...] = _LOADED["trust_items"]
 GUIDES: dict[str, Guide] = _LOADED["guides"]
 _REGISTRY: dict = _LOADED["registry"]
-
-
-def detected_systems(registry: dict, platform: str) -> list[tuple[str, str]]:
-    """Named systems a platform runs on, handhelds that run RetroArch for one,
-    with the BIOS folder the installer writes on each, read from the
-    detection rules of the registry."""
-    seen: dict[str, str] = {}
-    for rule in (registry.get(platform, {}).get("install") or {}).get("detect") or []:
-        name, folder = rule.get("name"), rule.get("bios_path")
-        if name and folder and rule.get("installs", True) and name not in seen:
-            seen[name] = folder
-    return sorted(seen.items(), key=lambda item: item[0].casefold())
 
 
 def folder_list(name: str, registry: dict | None = None) -> list[tuple[str, str]]:
