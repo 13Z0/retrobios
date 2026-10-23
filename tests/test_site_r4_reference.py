@@ -263,14 +263,16 @@ class TheReferencePagesAnswerTheirWords(unittest.TestCase):
     def test_find_or_check_a_file(self):
         page = generate_site.generate_files_page()
         self.assertTrue(page.startswith(
-            "---\nterms: check my dump, md5 check, verify bios file, check hash\n---\n"))
+            "---\nterms: check my dump, md5 check, verify bios file, check hash, "
+            "is my bios correct, is my bios right\n---\n"))
         self.assertIn("\n# Find or check a file\n\nCheck a BIOS dump: paste its hash "
                       "or choose the file.\n", page)
 
     def test_the_data_page(self):
         page = generate_site.generate_data_page([])
         self.assertTrue(page.startswith(
-            "---\nterms: manifest, schema, check a folder, rate limit, api\n---\n"))
+            "---\nterms: manifest, schema, json schema, license, check a folder, "
+            "check bios folder script, rate limit, api\n---\n"))
         self.assertIn("## Hosting, rate limits and caching", page)
         self.assertIn("HTTP 429", page)
         self.assertIn("crypto.subtle.digest(\"SHA-1\"", page)

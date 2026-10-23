@@ -166,7 +166,7 @@
                 },
                 "registry": {
                   "type": "object",
-                  "description": "The platform's registry entry beside its list: install detection, logo, scraper and schedule. Not part of the list."
+                  "description": "The platform's registry entry beside its list: install detection, logo, scraper and schedule. Not part of the list. release_pack is the platform's own entry, never its parent's: true when a release publishes its ZIP."
                 }
               }
             }
@@ -411,9 +411,10 @@
                     "sha1",
                     "md5",
                     "crc32",
-                    "sha256"
+                    "sha256",
+                    "name"
                   ],
-                  "description": "On a copy of a platform or emulator record filed under another hash of its file: the algorithm of the value its owner wrote."
+                  "description": "On a platform or emulator record: the algorithm of the value its owner wrote, filed under that value and under the file's other hashes. name: the emulator reads the file by its name and declares no hash that matches it."
                 },
                 "owner": {
                   "type": "string"
@@ -500,6 +501,13 @@
                     "null"
                   ],
                   "description": "Site-absolute path of the console section holding the id's files, null when no section holds them."
+                },
+                "api": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Site-absolute path of the JSON document holding the id's files, api/v1/systems/<slug>.json, keyed by the manufacturer page. Null when no page holds them."
                 },
                 "sha1": {
                   "type": "array",

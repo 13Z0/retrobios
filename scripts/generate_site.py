@@ -44,6 +44,7 @@ from common import (
     compute_composition,
     count_catalog_matched,
     list_registered_platforms,
+    list_release_pack_platforms,
     load_platform_registry,
     load_database,
     load_emulator_profiles,
@@ -964,7 +965,19 @@ def _split_contract(config: dict) -> tuple[dict, dict]:
     contract = {key: value for key, value in config.items() if key in allowed}
     registry = {key: value for key, value in config.items()
                 if key not in allowed and key != "_key"}
+    # The merged config gives a child its parent's release_pack: Lakka and
+    # RetroPie said true in the API while every page said they had no ZIP.
+    # The registry's own entry decides, as it does for the pages.
+    released = config.get("_key") in _release_pack_platforms()
+    if released or "release_pack" in registry:
+        registry["release_pack"] = released
     return contract, registry
+
+
+@functools.lru_cache(maxsize=1)
+def _release_pack_platforms() -> frozenset[str]:
+    return frozenset(list_release_pack_platforms(
+        str(_REPO_ROOT / "platforms"), include_archived=True))
 
 
 # Per-entry fields a folder check needs beyond the hashes: an md5 is a ZIP
@@ -1490,6 +1503,7 @@ def generate_data_exports(
     profiles: dict,
     stats: dict,
     gap_report: dict | None = None,
+    consumers: FileConsumers | None = None,
 ) -> list[dict]:
     """Create versioned static API, CSV and SQLite metadata snapshots."""
     api = docs / "api" / "v1"
@@ -1517,8 +1531,8 @@ def generate_data_exports(
         "file-locations.json": ("file-locations", locations),
     }
     write_lookup_shards(
-        api, file_lookup_records(db, coverages, profiles, locations, members), generated_at,
-        commit,
+        api, file_lookup_records(db, coverages, profiles, locations, members, consumers),
+        generated_at, commit,
     )
     for filename, (kind, items) in envelopes.items():
         document = {
@@ -1714,6 +1728,21 @@ def generate_data_exports(
     return catalog_items
 
 
+def write_release_advertised(generated: Path) -> None:
+    """The release record as the pages read it, for the file picker.
+
+    The picker imported release.json whole and offered the ZIP of six setups
+    the registry no longer releases, while their pages said "No ZIP". It
+    reads this file instead: the platforms marked release_pack only.
+    """
+    generated.mkdir(parents=True, exist_ok=True)
+    write_if_changed(
+        str(generated / "release-advertised.json"),
+        json.dumps(release_record.load_advertised(), ensure_ascii=False, indent=1,
+                   sort_keys=True) + "\n",
+    )
+
+
 def _publish_manifests(api: Path) -> list[tuple]:
     """The install manifests and the release record, beside the API.
 
@@ -1732,6 +1761,15 @@ def _publish_manifests(api: Path) -> list[tuple]:
         _record(target)
         assets.append((target, f"Install manifest: {source.stem}", "application/json",
                        "schemas/install-manifest.schema.json"))
+    # The target lists install.py --target reads: no catalog entry, and
+    # api/v1/targets/ answered 404.
+    targets = api / "targets"
+    targets.mkdir(parents=True, exist_ok=True)
+    for source in sorted((_REPO_ROOT / "install" / "targets").glob("*.json")):
+        shutil.copy2(source, targets / source.name)
+        _record(targets / source.name)
+        assets.append((targets / source.name, f"Target list: {source.stem}",
+                       "application/json", "schemas/target-manifest.schema.json"))
     release = _REPO_ROOT / "release.json"
     if release.is_file():
         shutil.copy2(release, api / "release.json")
@@ -1791,6 +1829,7 @@ def system_index_items(db: dict, coverages: dict, profiles: dict) -> list[dict]:
             for sys_id in ids:
                 held.setdefault(sys_id, set()).update(found)
     manufacturers = {_slug(mfr): mfr for mfr in _group_by_manufacturer(db)}
+    base = urllib.parse.urlsplit(SITE_URL).path
     items = []
     for sys_id in sorted(system_ids(profiles, [c["config"] for c in coverages.values()])):
         section = system_section(sys_id)
@@ -1803,8 +1842,12 @@ def system_index_items(db: dict, coverages: dict, profiles: dict) -> list[dict]:
         url = _site_path(console_href(*section)) if section else None
         if url is None and sha1s:
             manufacturer, url = _first_file_place(sys_id, sha1s, files, profiles, card_page)
+        # The id's JSON document: api/v1/systems/ is keyed by the manufacturer
+        # page, and sony-playstation.json answered 404.
+        holder = section[0] if section else _slug(manufacturer) if manufacturer else ""
+        api = f"{base}api/v1/systems/{holder}.json" if holder else None
         items.append({"id": sys_id, "name": name, "manufacturer": manufacturer,
-                      "url": url, "sha1": sha1s})
+                      "url": url, "api": api, "sha1": sha1s})
     return items
 
 
@@ -1855,6 +1898,19 @@ def _is_manifest(item: dict) -> bool:
     return item["url"].startswith("api/v1/manifests/")
 
 
+def _is_target_list(item: dict) -> bool:
+    return item["url"].startswith("api/v1/targets/")
+
+
+def _served_schemas() -> list[tuple[str, str]]:
+    """(file name, title) of every schema api/v1/schemas/ serves, from the folder
+    the export copies: the page linked 7 of 11."""
+    return [
+        (path.name, str(json.loads(path.read_text(encoding="utf-8")).get("title") or path.stem))
+        for path in sorted((_REPO_ROOT / "schemas").glob("*.schema.json"))
+    ]
+
+
 # A URL template written in prose (https://.../<ref>/<repo_path>): escaped,
 # the autolinker made a link of it, &lt;ref> on screen and a 404 behind it.
 _URL_TEMPLATE = re.compile(r"(?<!`)https?://[^\s`]*<[^\s`]*?(?=[.,;]?(?:\s|$))")
@@ -1879,6 +1935,38 @@ def _other_fields(schema: dict, shown: tuple[str, ...]) -> list[str]:
     """The fields a short table leaves out, every one with its description."""
     rest = tuple(key for key in schema.get("properties") or {} if key not in shown)
     return ["| Field | Meaning |", "|-------|---------|", *_schema_field_rows(schema, rest)]
+
+
+def _nested_fields(schema: dict, prefix: str = "") -> list[str]:
+    """A table for every object below *schema*, at any depth, and one line
+    per code where a field lists its codes' meanings (enumDescriptions).
+
+    The top-level and `files` tables left 50 nested fields undescribed, all
+    of `omitted_files` among them: a tool could not say why a file was not
+    installed.
+    """
+    lines: list[str] = []
+    for key, spec in (schema.get("properties") or {}).items():
+        path = f"{prefix}{key}"
+        codes = spec.get("enumDescriptions")
+        if codes:
+            lines.extend([f"Codes of `{path}`:", ""])
+            lines.extend(f"- `{code}`: {text}" for code, text in zip(spec["enum"], codes))
+            lines.append("")
+        for label, child, child_path in (
+            ("Each entry of", spec.get("items"), f"{path}[]"),
+            ("Each value of", spec.get("additionalProperties"), f"{path}{{}}"),
+            ("Fields of", spec, path),
+        ):
+            if not isinstance(child, dict) or not child.get("properties"):
+                continue
+            lines.extend([
+                f"{label} `{path}`:", "",
+                "| Field | Meaning |", "|-------|---------|",
+                *_schema_field_rows(child, tuple(child["properties"])), "",
+            ])
+            lines.extend(_nested_fields(child, f"{child_path}."))
+    return lines
 
 
 # The manifest fields an integrator reads first, in the order they matter.
@@ -1918,10 +2006,12 @@ def generate_data_page(exports: list[dict]) -> str:
         (_REPO_ROOT / "schemas" / "install-manifest.schema.json").read_text(encoding="utf-8"))
     snippet = (_REPO_ROOT / "scripts" / "check_platform_folder.py").read_text(encoding="utf-8")
     manifests = [item for item in exports if _is_manifest(item)]
+    targets = [item for item in exports if _is_target_list(item)]
     no_list = _platforms_without_a_list()
     lines = [
         "---",
-        "terms: manifest, schema, check a folder, rate limit, api",
+        "terms: manifest, schema, json schema, license, check a folder, "
+        "check bios folder script, rate limit, api",
         "---",
         "",
         "# Data and API",
@@ -1949,7 +2039,8 @@ def generate_data_page(exports: list[dict]) -> str:
         "|---------|----------|--------|-----:|",
     ]
     for item in exports:
-        if item["media_type"] != "application/json" or _is_manifest(item):
+        if (item["media_type"] != "application/json" or _is_manifest(item)
+                or _is_target_list(item)):
             continue
         schema = (
             f"[JSON Schema](api/v1/{item['schema']})"
@@ -1965,6 +2056,10 @@ def generate_data_page(exports: list[dict]) -> str:
         "of this repository the data was read at. Breaking changes use a new "
         "URL prefix (`/api/v2/`), and fields may only be added compatibly within v1. "
         "Each schema's `$id` is the address it is served at.",
+        "",
+        "Schemas:",
+        "",
+        *(f"- [`{name}`](api/v1/schemas/{name}): {title}" for name, title in _served_schemas()),
         "",
         "`database.json`, `stats.json`, `release.json` and the manifests are not "
         "envelopes. Their revision is the `commit` of `catalog.json` that lists "
@@ -1983,7 +2078,8 @@ def generate_data_page(exports: list[dict]) -> str:
         "",
         "By id: [`systems.json`](api/v1/systems.json) gives each system id a platform "
         "or a profile writes (`sony-playstation`) with its name, its manufacturer, the "
-        "`url` of the section holding its files and their SHA1. "
+        "`url` of the section holding its files, the `api` document of that section "
+        "and the files' SHA1. "
         "[`cores.json`](api/v1/cores.json) gives each core name the buildbot or a "
         "platform uses (`mednafen_psx`) the profile it designates (`beetle_psx`), "
         "whose document is `api/v1/emulators/<profile>.json`. A name two profiles "
@@ -2041,6 +2137,16 @@ def generate_data_page(exports: list[dict]) -> str:
             f"[{item['url'].rsplit('/', 1)[-1].removesuffix('.json')}]({item['url']})"
             for item in manifests) + "." if manifests else "",
         "",
+        "`api/v1/targets/<platform>.json` gives each hardware target of a platform "
+        "the cores it runs, valid against "
+        "[`target-manifest.schema.json`](api/v1/schemas/target-manifest.schema.json). "
+        "`install.py --target` reads the same file. Like the manifests, they are "
+        "copied byte for byte and are not envelopes.",
+        "",
+        "Target lists: " + ", ".join(
+            f"[{item['url'].rsplit('/', 1)[-1].removesuffix('.json')}]({item['url']})"
+            for item in targets) + "." if targets else "",
+        "",
         "| Field | Meaning |",
         "|-------|---------|",
         *_schema_field_rows(manifest_schema, MANIFEST_TOP_FIELDS),
@@ -2059,6 +2165,9 @@ def generate_data_page(exports: list[dict]) -> str:
             "Each entry of `files`:",
             "",
             *_other_fields(manifest_schema["$defs"]["file"], MANIFEST_FILE_FIELDS),
+            "",
+            *_nested_fields(manifest_schema),
+            *_nested_fields(manifest_schema["$defs"]["file"], "files[]."),
         ]),
         "## Check a folder for one platform",
         "",
@@ -2088,8 +2197,12 @@ def generate_data_page(exports: list[dict]) -> str:
         "The script is [`scripts/check_platform_folder.py`]"
         f"({REPO_URL}/blob/main/scripts/check_platform_folder.py). A test runs it "
         "against the verifier on a sample folder, so the two give the same answer. "
-        "`install.py --check` answers another question: whether the folder holds "
-        "what the pack installs, the manifest above.",
+        "It exits 1 when a file is wrong or missing. For an unknown platform it "
+        "prints the known ones.",
+        "",
+        "`install.py --check` answers another question by default: whether the folder "
+        "holds what the pack installs, the manifest above. With `--declared-only`, or "
+        "from the `declared` event, `install.py --check` answers it too.",
         "",
         "## Bulk downloads",
         "",
@@ -4020,7 +4133,8 @@ def generate_files_page() -> str:
     """
     return "\n".join([
         "---",
-        "terms: check my dump, md5 check, verify bios file, check hash",
+        "terms: check my dump, md5 check, verify bios file, check hash, "
+        "is my bios correct, is my bios right",
         "---",
         "",
         "# Find or check a file",
@@ -4194,6 +4308,7 @@ def file_lookup_records(
     profiles: dict,
     locations: list[dict],
     members: dict | None = None,
+    consumers: FileConsumers | None = None,
 ) -> list[dict]:
     """Every hash the site knows, one record per value, for files/?hash=.
 
@@ -4262,9 +4377,49 @@ def file_lookup_records(
                             **({"system_name": entry_label} if entry_label else {}),
                         })
     records += _held_under_every_hash(records, files, db.get("indexes") or {})
+    for record in records:
+        if record["layer"] in ("platform", "emulator"):
+            record.setdefault("declared", record["algorithm"])
+    if consumers is not None:
+        records += _read_by_name(records, files, consumers)
     unique = {json.dumps(r, sort_keys=True): r for r in records}
     return sorted(unique.values(), key=lambda r: (
         r["value"], r["layer"], r.get("owner", ""), r["name"], r["url"]))
+
+
+def _read_by_name(records: list[dict], files: dict, consumers: FileConsumers) -> list[dict]:
+    """The emulators the file's card names that no declared hash reached.
+
+    The card counts every profile entry resolving to the file, by name
+    included: scph5501.bin named 11 emulators on its card and 9 in the
+    lookup, PCSX-ReARMed and PCSX1 reading it by name. Each is written under
+    every hash of the file, `declared` saying no hash was.
+    """
+    reached = {(r["sha1"], r["owner"]) for r in records
+               if r["layer"] == "emulator" and r.get("sha1")}
+    added: list[dict] = []
+    for sha1, emulators in sorted(consumers.emulators.items()):
+        entry = files.get(sha1)
+        if entry is None:
+            continue
+        for emulator in sorted(emulators):
+            if (sha1, emulator) in reached:
+                continue
+            index = consumers.emulator_entries.get(sha1, {}).get(emulator)
+            entries = consumers.emulator_files.get(emulator) or []
+            if index is None or index >= len(entries):
+                continue
+            anchor = _emulator_card_anchor(emulator, entries, index)
+            url = _site_path(f"emulators/{emulator_card_page(emulator, anchor)}.md#{anchor}")
+            name = str(entries[index].get("name", ""))
+            for algorithm in HASH_ALGORITHMS:
+                for value in _hash_values(entry.get(algorithm)):
+                    added.append({
+                        "value": value, "algorithm": algorithm, "layer": "emulator",
+                        "owner": emulator, "name": name, "url": url, "sha1": sha1,
+                        "declared": "name",
+                    })
+    return added
 
 
 def _collection_sha1(files: dict, indexes: dict, algorithm: str, value: str) -> str | None:
@@ -10117,8 +10272,9 @@ def _generate(args: argparse.Namespace) -> None:
 
     print("Generating static API and bulk data exports...")
     exports = generate_data_exports(
-        public, db, coverages, profiles, stats, gap_report
+        public, db, coverages, profiles, stats, gap_report, consumers
     )
+    write_release_advertised(Path(args.site_dir) / "src" / "generated")
     write_if_changed(str(docs / "data.md"), generate_data_page(exports) + reference_next())
     PAGE_DATA["data.md"] = dataset_structured_data(exports, db)
 
