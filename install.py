@@ -20,6 +20,7 @@ import concurrent.futures
 import contextlib
 import datetime
 import errno
+import functools
 import hashlib
 import http.client
 import io
@@ -8190,8 +8191,17 @@ class KeyDecoder:
         return self._drain(final=False)
 
     def flush(self) -> list[TuiKey]:
-        """What is left once the wait for the rest of a sequence is over."""
+        """What is left once the wait for the rest of a sequence is over.
+
+        An open paste stays open: over SSH its end arrives later than 40 ms.
+        """
         return self._drain(final=True)
+
+    def close_paste(self) -> list[TuiKey]:
+        """The paste so far, its end never seen, without its newlines."""
+        text = "".join(char for char in self.paste or "" if char >= " " and char != "\x7f")
+        self.paste = None
+        return [TuiKey("paste", text)] if text else []
 
     @property
     def waiting(self) -> bool:
@@ -8199,10 +8209,10 @@ class KeyDecoder:
 
     def _drain(self, final: bool) -> list[TuiKey]:
         keys: list[TuiKey] = []
-        while self.buffer or (final and self.paste is not None):
+        while self.buffer:
             if self.paste is not None:
                 end = self.buffer.find(_PASTE_END)
-                if end < 0 and not final:
+                if end < 0:
                     # The end marker may be cut between two reads.
                     keep = next((n for n in range(len(_PASTE_END) - 1, 0, -1)
                                  if self.buffer.endswith(_PASTE_END[:n])), 0)
@@ -8210,14 +8220,9 @@ class KeyDecoder:
                     self.paste += self.buffer[:cut]
                     self.buffer = self.buffer[cut:]
                     break
-                skip = len(_PASTE_END) if end >= 0 else 0
-                end = end if end >= 0 else len(self.buffer)
-                text = self.paste + self.buffer[:end]
-                self.buffer = self.buffer[end + skip:]
-                self.paste = None
-                text = "".join(char for char in text if char >= " " and char != "\x7f")
-                if text:
-                    keys.append(TuiKey("paste", text))
+                self.paste += self.buffer[:end]
+                self.buffer = self.buffer[end + len(_PASTE_END):]
+                keys += self.close_paste()
                 continue
             if self.buffer[0] == "\x1b":
                 taken, key = _escape(self.buffer)
@@ -8259,8 +8264,20 @@ def cell_width(text: str) -> int:
     return sum(_char_width(char) for char in text)
 
 
+# C0 and C1 controls, DEL and lone surrogates: a file, folder or core name
+# holding ESC would drive the terminal (clear it, or set the clipboard with
+# OSC 52) instead of being shown.
+_CONTROLS = re.compile("[\x00-\x1f\x7f-\x9f\ud800-\udfff]")
+
+
+def screen_text(text: str) -> str:
+    """Text as a terminal shows it, every control character a "?"."""
+    return _CONTROLS.sub("?", text)
+
+
 def fit(text: str, width: int) -> str:
     """The text cut to width cells, never through a character."""
+    text = screen_text(text)
     kept: list[str] = []
     used = 0
     for char in text:
@@ -8336,7 +8353,7 @@ class TuiLine(str):
 
 
 def _styled(text: str, style: str = "") -> TuiLine:
-    line = TuiLine(text)
+    line = TuiLine(screen_text(text))
     line.style = style
     return line
 
@@ -8407,6 +8424,7 @@ class TuiState:
         self.ticked: set = set()
         self.cli_systems: list = []
         self.regions: list = []
+        self.cli_regions: list = []
         self.cores: list = []
         self.no_game_data: bool = False
         self.installed_only: bool = False
@@ -8415,7 +8433,9 @@ class TuiState:
         # The install.
         self.download: dict | None = None
         self.progress: dict | None = None
-        self.first_sample: tuple | None = None
+        # (time, bytes done) of the last progress events: a partial copy
+        # resumed counts in the first one and never in a speed.
+        self.samples: list = []
         self.finished: list = []
         self.summary: dict | None = None
         self.code: int | None = None
@@ -8528,11 +8548,11 @@ _TUI_MODES = {
 
 def tui_argv(state: TuiState, run: str, python: str, script: str) -> list[str]:
     """The child that does what the screen decided."""
-    argv = [python, script, "--platform", state.platform, "--dest", str(state.dest)]
+    # --dest=VALUE: a folder typed as -x would otherwise be read as an option.
+    argv = [python, script, f"--platform={state.platform}", f"--dest={state.dest}"]
     if state.manifest_path is not None:
-        argv += ["--manifest", str(state.manifest_path)]
-    for flag, value in tui_flags(state):
-        argv += [flag] if value is None else [flag, value]
+        argv.append(f"--manifest={state.manifest_path}")
+    argv += [flag if value is None else f"{flag}={value}" for flag, value in tui_flags(state)]
     return argv + _TUI_MODES[run]
 
 
@@ -8565,8 +8585,14 @@ def _needed(row: dict) -> int:
 
 
 def _tui_system_label(row: dict) -> str:
+    """The name a person reads: the platform's own when it is one (Sony -
+    PlayStation), the id with the platform's short name otherwise (psx)."""
     name = row.get("name") or row["system"]
-    return row["system"] if name == row["system"] else f"{row['system']} ({name})"
+    if name == row["system"]:
+        return name
+    if " " in name or any(char.isupper() for char in name):
+        return name
+    return f"{row['system']} ({name})"
 
 
 def _matches(text: str, needle: str) -> bool:
@@ -8624,9 +8650,9 @@ def tui_rows(state: TuiState) -> list[TuiRow]:
     if screen == "regions":
         ranked = [TuiRow("region", f"[{rank}] {name}", value=name)
                   for rank, name in enumerate(state.regions, 1)]
+        known = sorted(set(tui_choices(state)["regions"]) | set(state.cli_regions))
         return ranked + [TuiRow("region", f"[ ] {name}", value=name)
-                         for name in tui_choices(state)["regions"]
-                         if name not in state.regions]
+                         for name in known if name not in state.regions]
     if screen == "cores":
         needle = state.filters.get(screen, "")
         return [_filter_row(state)] + [
@@ -8664,7 +8690,7 @@ def _system_rows(state: TuiState) -> list[TuiRow]:
     rows = [TuiRow("all", "All"), TuiRow("none", "None"), _filter_row(state)]
     for row in _sorted_systems(state):
         label = _tui_system_label(row)
-        if not _matches(label, needle):
+        if not _matches(f"{label} {row['system']}", needle):
             continue
         box = "[x]" if row["system"] in state.ticked else "[ ]"
         need = _needed(row)
@@ -8673,6 +8699,10 @@ def _system_rows(state: TuiState) -> list[TuiRow]:
         rows.append(TuiRow("system", f"{box} {label}", right, row["system"],
                            "" if need else "dim"))
     return rows
+
+
+def _cores_dir_given(state: TuiState) -> bool:
+    return any(flag == "--cores-dir" for flag, _value in state.passthrough)
 
 
 def _yes(value: bool) -> str:
@@ -8690,7 +8720,10 @@ def _option_rows(state: TuiState) -> list[TuiRow]:
         rows.append(TuiRow("game_data", f"Leave out game data: {_yes(state.no_game_data)}",
                            "--no-game-data"))
     found = len(state.facts.get("cores", []))
-    if state.platform in CORE_PLATFORMS and "system_cores" in manifest and found:
+    if _cores_dir_given(state):
+        rows.append(TuiRow("installed", "Installed cores only: yes, implied by --cores-dir",
+                           "--cores-dir"))
+    elif state.platform in CORE_PLATFORMS and "system_cores" in manifest and found:
         rows.append(TuiRow("installed", f"Installed cores only: "
                            f"{_yes(state.installed_only)} ({found} found)",
                            "--installed-cores"))
@@ -8728,6 +8761,10 @@ def _back(state: TuiState) -> list[tuple]:
         state.focus["quit"] = 0
         return effects
     state.stack.pop()
+    if state.screen == "checking" and not state.running:
+        # Stay after Esc on a check started from the command line: a
+        # Checking screen nothing feeds counted seconds forever.
+        return effects + _start_check(state)
     return effects
 
 
@@ -8762,7 +8799,8 @@ def _start_run(state: TuiState, run: str) -> list[tuple]:
     elif run in ("confirm", "preview"):
         state.dry, state.dry_files, state.dry_summary = None, [], None
     else:
-        state.download = state.progress = state.first_sample = None
+        state.download = state.progress = None
+        state.samples = []
         state.finished, state.summary, state.code, state.stopping = [], None, None, False
     return [("run", run)]
 
@@ -8979,7 +9017,7 @@ def _option(state: TuiState, action: str, step: int) -> list[tuple]:
     """A row of the options: step 0 is Enter, -1 and 1 are Left and Right."""
     if action == "game_data":
         state.no_game_data = step > 0 if step else not state.no_game_data
-    elif action == "installed":
+    elif action == "installed" and not _cores_dir_given(state):
         state.installed_only = step > 0 if step else not state.installed_only
     elif action == "jobs":
         state.jobs = (state.jobs - 1 + (step or 1)) % 32 + 1
@@ -8999,7 +9037,7 @@ def _toggle_region(state: TuiState, name: str) -> None:
     else:
         state.regions.append(name)
     rows = tui_rows(state)
-    state.focus["regions"] = next(i for i, row in enumerate(rows) if row.value == name)
+    state.focus["regions"] = next((i for i, row in enumerate(rows) if row.value == name), 0)
 
 
 def _move_region(state: TuiState, name: str, step: int) -> None:
@@ -9117,12 +9155,15 @@ def _pager_key(state: TuiState, key: TuiKey) -> list[tuple]:
     elif name == "home" or char == "g":
         top = 0
     elif name == "end" or char == "G":
-        top = 1 << 30
+        top = len(_text_lines(_pager_items(state), min(state.cols, TUI_MAX_WIDTH) - 2))
     elif name in ("enter", "esc", "backspace") or char == " ":
         if screen == "result":
             return tui_quit(state)
         return _back(state)
-    state.focus[screen] = max(0, top)
+    total = len(_text_lines(_pager_items(state), min(state.cols, TUI_MAX_WIDTH) - 2))
+    height = state.rows - 3
+    last = total - (height - 1) if total > height else 0
+    state.focus[screen] = max(0, min(top, last))
     return []
 
 
@@ -9229,9 +9270,11 @@ def _take_event(state: TuiState, event: dict) -> None:
     elif state.run == "install":
         if kind == "download":
             state.download = event
-            state.first_sample = (state.now, 0)
         elif kind in ("progress", "downloaded"):
             state.progress = event
+            state.samples = [sample for sample in state.samples
+                             if sample[0] >= state.now - 10] + [
+                (state.now, event["bytes_done"])]
             if kind == "downloaded":
                 state.finished.append((event["dest"], event["ok"], event["reason"]))
         elif kind == "summary":
@@ -9494,6 +9537,14 @@ def _view_plan(state: TuiState, width: int, height: int) -> tuple:
             (primary, "B/Esc Back", "Y/o Options", "? Help"))
 
 
+def _counts_predate_options(state: TuiState) -> bool:
+    """Whether the check's counts were read under other options than the
+    ones chosen since: a region or a core changes what each system needs."""
+    def others(flags: list) -> list:
+        return [flag for flag in flags if flag[0] != "--system"]
+    return others(tui_flags(state)) != others(state.checked_flags)
+
+
 def _ticked_files(state: TuiState) -> list[dict]:
     return [event for event in state.files
             if set(event["systems"]) & state.ticked
@@ -9506,10 +9557,16 @@ def _view_systems(state: TuiState, width: int, height: int) -> tuple:
         # The name first: the size alone stays beside it, the count is in
         # the total below.
         rows = [row._replace(right=row.right.split(", ")[-1]) for row in rows]
+    elif width >= 78:
+        # The id --system takes, beside a name that does not show it.
+        rows = [row._replace(label=f"{row.label}  {row.value}")
+                if row.action == "system" and row.value not in row.label else row
+                for row in rows]
     chosen = _ticked_files(state)
     footer = [f"{len(state.ticked)} of {len(state.systems)} systems: "
               f"{_plural(len(chosen), 'file')}, "
-              f"{format_size(sum(e['size'] for e in chosen))}"]
+              f"{format_size(sum(e['size'] for e in chosen))}"
+              + (" before your options" if _counts_predate_options(state) else "")]
     needle = state.filters.get("systems", "")
     after = [f"No system matches '{needle}'."] if len(rows) == 3 and needle else []
     if state.status:
@@ -9551,7 +9608,12 @@ def _view_cores(state: TuiState, width: int, height: int) -> tuple:
 _STATE_WORDS = {"missing": "missing", "wrong_hash": "wrong copy"}
 
 
-def _view_preview(state: TuiState, width: int, height: int) -> tuple:
+def _pager_items(state: TuiState) -> list:
+    """The text of a screen that scrolls, the same for its view and its keys."""
+    if state.screen == "result":
+        return tui_outcome(state)[1]
+    if state.screen == "command":
+        return ["The same choice without questions:", "", tui_command(state)]
     if state.running:
         items = ["Counting the files for these choices..."]
     elif state.dry is None:
@@ -9564,12 +9626,17 @@ def _view_preview(state: TuiState, width: int, height: int) -> tuple:
                   for event in state.dry_files]
         for kept in (state.dry_summary or {}).get("kept") or []:
             items.append(f"Replaced files would be kept in {kept['folder']}")
-    return ("Preview", _pager(state, width, height, items), ("A/Enter Back", "Up/Down Scroll"))
+    return items
+
+
+def _view_preview(state: TuiState, width: int, height: int) -> tuple:
+    return ("Preview", _pager(state, width, height, _pager_items(state)),
+            ("A/Enter Back", "Up/Down Scroll"))
 
 
 def _view_command(state: TuiState, width: int, height: int) -> tuple:
-    items = ["The same choice without questions:", "", tui_command(state)]
-    return ("Command line", _pager(state, width, height, items), ("A/Enter Back",))
+    return ("Command line", _pager(state, width, height, _pager_items(state)),
+            ("A/Enter Back",))
 
 
 def _view_confirm(state: TuiState, width: int, height: int) -> tuple:
@@ -9598,9 +9665,10 @@ def _view_installing(state: TuiState, width: int, height: int) -> tuple:
         done = progress.get("bytes_done", 0)
         lines.append(_bar(min(done / total, 1.0) if total else 1.0, width))
         lines.append(f"{format_size(done)} of {format_size(total)}")
-        start, base = state.first_sample or (state.now, 0)
+        window = [sample for sample in state.samples if sample[0] >= state.now - 5]
+        start, base = window[0] if window else (state.now, done)
         seconds = state.now - start
-        speed = (done - base) / seconds if seconds > 0.5 else 0
+        speed = (done - base) / seconds if seconds >= 1 else 0
         if speed > 0:
             lines.append(f"{format_size(int(speed))}/s, "
                          f"{format_duration((total - done) / speed)} left")
@@ -9608,7 +9676,8 @@ def _view_installing(state: TuiState, width: int, height: int) -> tuple:
         lines.append(f"{files_done} of {_plural(state.download['files'], 'file')}")
         if files_done >= state.download["files"] and state.summary is None:
             lines.append("Finishing...")
-    lines.append(_styled("Stopping. What is done stays done." if state.stopping
+    lines.append(_styled("Stopping, finishing the files in flight. Press Ctrl-C again "
+                         "to quit now." if state.stopping
                          else "What is done stays done if you stop.", "dim"))
     room = height - len(lines) - 1
     failed = [item for item in reversed(state.finished) if not item[1]]
@@ -9625,7 +9694,9 @@ def _view_installing(state: TuiState, width: int, height: int) -> tuple:
 def tui_outcome(state: TuiState) -> tuple[str, list[str]]:
     """The result in words, first what happened, then where and what next."""
     summary = state.summary or {}
-    installed = summary.get("installed", 0)
+    # Killed by the second Ctrl-C, the child wrote no summary: what it
+    # reported finished is what is installed.
+    installed = summary.get("installed", sum(1 for _dest, ok, _why in state.finished if ok))
     failed = summary.get("failed") or []
     up_to_date = summary.get("up_to_date", 0)
     total = (state.download or {}).get("files", 0)
@@ -9795,6 +9866,7 @@ def tui_start(
     state = TuiState(os_type=os_type, home=Path.home())
     state.cli_systems = list(args.system or [])
     state.regions = resolve_regions(args.region) if args.region else []
+    state.cli_regions = list(state.regions)
     state.cores = list(dict.fromkeys(
         token.strip() for value in args.core or [] for token in value.split(",")
         if token.strip()))
@@ -9953,13 +10025,17 @@ class _TuiTerminal:
             getattr(stdin, "encoding", None) or "utf-8")(errors="replace")
         self.encoding = getattr(stdout, "encoding", None) or "utf-8"
         self.ended = False
+        self.heard = 0.0
         self.frame: list[tuple[str, str]] = []
 
     def enter(self) -> None:
         if os.name != "nt":
             import termios  # noqa: PLC0415
 
-            self.saved = termios.tcgetattr(self.fd)
+            # Entered again after a stop, the mode to go back to stays the
+            # one found the first time.
+            if self.saved is None:
+                self.saved = termios.tcgetattr(self.fd)
             mode = termios.tcgetattr(self.fd)
             mode[0] &= ~(termios.ICRNL | termios.INLCR | termios.IGNCR | termios.IXON)
             # ISIG off: Ctrl-C arrives as a key and is forwarded once, by hand.
@@ -9970,12 +10046,16 @@ class _TuiTerminal:
         self.write(_SCREEN_ON)
 
     def leave(self) -> None:
-        self.write(_SCREEN_OFF)
-        if self.saved is not None:
-            import termios  # noqa: PLC0415
+        """The main screen and the mode found, the mode even when the write
+        fails: a closed window answers EIO."""
+        try:
+            self.write(_SCREEN_OFF)
+        finally:
+            if self.saved is not None:
+                import termios  # noqa: PLC0415
 
-            termios.tcsetattr(self.fd, termios.TCSADRAIN, self.saved)
-            self.saved = None
+                saved, self.saved = self.saved, None
+                termios.tcsetattr(self.fd, termios.TCSADRAIN, saved)
 
     def write(self, text: str) -> None:
         self.stdout.write(text.encode(self.encoding, "replace").decode(self.encoding))
@@ -9991,6 +10071,7 @@ class _TuiTerminal:
         for index, (text, style) in enumerate(frame):
             if index < len(self.frame) and self.frame[index] == (text, style):
                 continue
+            text = screen_text(text)
             if style == "focus":
                 text = _pad(text, min(cols, TUI_MAX_WIDTH) - (index == len(frame) - 1))
             out.append(f"\x1b[{index + 1};1H{_STYLES.get(style, '')}{text}\x1b[0m\x1b[K")
@@ -10007,17 +10088,22 @@ class _TuiTerminal:
         import select  # noqa: PLC0415
 
         if not select.select([self.fd], [], [], timeout)[0]:
+            # A paste whose end never came, after a second of silence.
+            if self.decoder.paste is not None and time.monotonic() - self.heard > 1:
+                return self.decoder.close_paste()
             return []
         keys = self._read()
-        while self.decoder.waiting and not self.ended:
+        while self.decoder.buffer and not self.ended:
             if select.select([self.fd], [], [], TUI_ESC_WAIT)[0]:
                 keys += self._read()
             else:
                 keys += self.decoder.flush()
+                break
         return keys
 
     def _read(self) -> list[TuiKey]:
         data = os.read(self.fd, 4096)
+        self.heard = time.monotonic()
         if not data:
             # The terminal went away: what Ctrl-D at a question does.
             self.ended = True
@@ -10042,6 +10128,10 @@ class _TuiTerminal:
 
 def tui_farewell(state: TuiState) -> list[str]:
     """What stays in the terminal once the full screen is gone."""
+    return [screen_text(line) for line in _farewell_lines(state)]
+
+
+def _farewell_lines(state: TuiState) -> list[str]:
     if state.screen == "crashed":
         return [f"RetroBIOS stopped on an unexpected error. What it was is in {state.log}."]
     if state.screen == "result":
@@ -10066,7 +10156,7 @@ def run_tui(args: argparse.Namespace) -> int:
     inbox: queue.Queue = queue.Queue()
     current: list[_EngineRun] = []
     written: dict[str, Path] = {}
-    flags = {"interrupt": False, "resized": False}
+    flags = {"interrupt": False, "resized": False, "suspend": False, "resume": False}
     ignore_interrupt_until = [0.0]
     terminal = _TuiTerminal(sys.stdin, sys.stdout)
     real_out, real_err = sys.stdout, sys.stderr
@@ -10117,9 +10207,16 @@ def run_tui(args: argparse.Namespace) -> int:
     def on_stop(signum: int, _frame: object) -> None:
         raise _TuiStop(signum)
 
+    def on_suspend(_signum: int, _frame: object) -> None:
+        flags["suspend"] = True
+
+    def on_resume(_signum: int, _frame: object) -> None:
+        flags["resume"] = True
+
     try:
         for name, handler in (("SIGINT", on_interrupt), ("SIGWINCH", on_resize),
-                              ("SIGTERM", on_stop), ("SIGHUP", on_stop)):
+                              ("SIGTERM", on_stop), ("SIGHUP", on_stop),
+                              ("SIGTSTP", on_suspend), ("SIGCONT", on_resume)):
             number = getattr(signal, name, None)
             if number is not None:
                 handlers[number] = signal.signal(number, handler)
@@ -10127,6 +10224,17 @@ def run_tui(args: argparse.Namespace) -> int:
         terminal.enter()
         perform(effects)
         while state.exit_code is None:
+            if flags["suspend"]:
+                # Stopped from outside (kill -TSTP): the shell gets its
+                # terminal back as it lent it, and the screen returns on fg.
+                flags["suspend"] = False
+                terminal.leave()
+                os.kill(os.getpid(), signal.SIGSTOP)  # type: ignore[attr-defined]
+                flags["resume"] = True
+            if flags["resume"]:
+                flags["resume"] = False
+                terminal.enter()
+                terminal.frame = []
             cols, rows = terminal.size()
             if (cols, rows) != (state.cols, state.rows) or flags["resized"]:
                 flags["resized"] = False
@@ -10160,12 +10268,10 @@ def run_tui(args: argparse.Namespace) -> int:
         state.log, state.code, state.exit_code = str(crash), 1, 1
         state.stack = ["crashed"]
     finally:
-        # An install stopped by a signal still gets to write its summary.
-        for run in current:
-            run.stop(10 if state.running and state.run == "install" else 0)
-        terminal.leave()
-        for number, previous in handlers.items():
-            signal.signal(number, previous)
+        # Each step on its own: a write the closed window refuses, or a
+        # second signal while the install writes its summary, must not
+        # skip the ones after it and leave the terminal raw.
+        problems = _tui_cleanup(terminal, current, handlers, state)
         sys.stdout, sys.stderr = real_out, real_err
         for path in written.values():
             if path.exists():
@@ -10173,9 +10279,48 @@ def run_tui(args: argparse.Namespace) -> int:
         if not (state.log and state.code not in (0, None)):
             shutil.rmtree(work, ignore_errors=True)
     stream = sys.stderr if state.screen in ("error", "crashed") else sys.stdout
-    for line in tui_farewell(state):
-        print(line, file=stream)
+    lines = tui_farewell(state)
+    if problems:
+        lines.append(f"The terminal may not be restored ({problems[0]}): type reset "
+                     "and press Enter if it looks wrong.")
+    try:
+        for line in lines:
+            print(line, file=stream)
+    except OSError:
+        # The terminal is gone: the exit code is all that still reaches anyone.
+        return state.exit_code if state.exit_code is not None else 1
     return state.exit_code if state.exit_code is not None else 1
+
+
+def _tui_cleanup(
+    terminal: _TuiTerminal, runs: list[_EngineRun], handlers: dict, state: TuiState,
+) -> list[str]:
+    """Stop the child, put the terminal and the signal handlers back: what failed."""
+    failures: tuple = (OSError, ValueError)
+    if os.name != "nt":
+        import termios  # noqa: PLC0415
+
+        failures += (termios.error,)
+    problems: list[str] = []
+
+    def step(action: Callable[[], object]) -> None:
+        try:
+            action()
+        except failures as exc:
+            problems.append(str(exc) or type(exc).__name__)
+
+    for name in ("SIGTERM", "SIGHUP", "SIGTSTP"):
+        number = getattr(signal, name, None)
+        if number is not None:
+            step(functools.partial(signal.signal, number, signal.SIG_IGN))
+    # An install stopped by a signal still gets to write its summary.
+    for run in runs:
+        step(functools.partial(run.stop, 10 if state.running and state.run == "install"
+                               else 0))
+    step(terminal.leave)
+    for number, previous in handlers.items():
+        step(functools.partial(signal.signal, number, previous))
+    return problems
 
 
 def _line_buffered_stdout() -> None:

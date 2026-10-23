@@ -111,8 +111,8 @@ changes the plan, the exact count appears before the install starts.
 The bottom line of each screen names its keys, with both spellings (`A/Enter`,
 `B/Esc`), since A and B swap places between controller layouts. On the regions
 screen, Left and Right move the region under the cursor up and down the order of
-preference. During the download, Ctrl+C stops after the files in progress, and
-the result says how many were installed. The result stays printed in the
+preference. During the download, Ctrl+C stops after the files in progress, a
+second Ctrl+C stops at once, and the result says how many were installed. The result stays printed in the
 terminal once the screen closes, with the command that repeats the run.
 
 It opens only for an install, at a terminal of at least 40 columns and 12 rows

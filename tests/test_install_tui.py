@@ -383,8 +383,8 @@ class Flow(unittest.TestCase):
         self.assertEqual(press(state, "enter"), [("run", "install")])
         self.assertEqual(state.screen, "installing")
         argv = install.tui_argv(state, "install", "py", "install.py")
-        self.assertEqual(argv, ["py", "install.py", "--platform", "retroarch", "--dest",
-                                str(SYSTEM_DIR), "--events", "--yes"])
+        self.assertEqual(argv, ["py", "install.py", "--platform=retroarch",
+                                f"--dest={SYSTEM_DIR}", "--events", "--yes"])
         for event in ({"event": "download", "platform": "retroarch", "files": 4,
                        "bytes": 1064964},
                       {"event": "downloaded", "dest": "gba_bios.bin", "ok": True, "reason": "",
@@ -407,8 +407,8 @@ class Flow(unittest.TestCase):
         state.platform, state.dest = "retroarch", SYSTEM_DIR
         state.manifest, state.manifest_for = MANIFEST, "retroarch"
         self.assertEqual(install._start_check(state), [("run", "check")])
-        self.assertEqual(install.tui_argv(state, "check", "py", "i.py")[6:], [
-            "--target", "switch", "--system", "psx", "--region", "north-america",
+        self.assertEqual(install.tui_argv(state, "check", "py", "i.py")[4:], [
+            "--target=switch", "--system=psx", "--region=north-america",
             "--check", "--events"])
 
     def test_one_system_goes_through_the_dry_run(self):
@@ -427,7 +427,7 @@ class Flow(unittest.TestCase):
         press(state, "right")
         self.assertEqual(press(state, "enter"), [("run", "confirm")])
         self.assertEqual(state.screen, "confirm")
-        self.assertIn("--system", install.tui_argv(state, "confirm", "py", "i.py"))
+        self.assertIn("--system=nintendo-gba", install.tui_argv(state, "confirm", "py", "i.py"))
         self.assertIn("--dry-run", install.tui_argv(state, "confirm", "py", "i.py"))
         dry = {**CHECK, "files": 1, "present": 0, "missing": 1, "wrong_hash": 0,
                "bytes_needed": 16384}
@@ -436,7 +436,7 @@ class Flow(unittest.TestCase):
         self.assertEqual(state.screen, "confirm")
         self.assertEqual(press(state, "enter"), [("run", "install")])
         argv = install.tui_argv(state, "install", "py", "i.py")
-        self.assertEqual(argv[6:], ["--system", "nintendo-gba", "--events", "--yes"])
+        self.assertEqual(argv[4:], ["--system=nintendo-gba", "--events", "--yes"])
 
     def test_a_choice_that_changes_nothing_skips_the_confirmation(self):
         state = checked_state()
@@ -472,8 +472,8 @@ class Flow(unittest.TestCase):
         self.assertTrue(state.installed_only)
         self.assertEqual(state.jobs, 10)
         argv = install.tui_argv(state, "install", "py", "i.py")
-        self.assertEqual(argv[6:], ["--region", "japan,north-america", "--no-game-data",
-                                    "--installed-cores", "--jobs", "10", "--events", "--yes"])
+        self.assertEqual(argv[4:], ["--region=japan,north-america", "--no-game-data",
+                                    "--installed-cores", "--jobs=10", "--events", "--yes"])
         self.assertIn("--region japan,north-america --no-game-data", install.tui_command(state))
 
     def test_cores_checklist(self):
@@ -848,7 +848,7 @@ def golden_states() -> dict:
     installing.stack.append("installing")
     installing.run, installing.running = "install", True
     installing.download = {"event": "download", "files": 4, "bytes": 1064964}
-    installing.first_sample, installing.now = (100.0, 0), 104.0
+    installing.samples, installing.now = [(100.0, 12672), (104.0, 540672)], 104.0
     installing.progress = {"files_done": 2, "files_total": 4, "bytes_done": 540672,
                            "bytes_total": 1064964}
     installing.finished = [("gba_bios.bin", True, ""), ("scph5500.bin", False, "HTTP 404")]
@@ -947,6 +947,263 @@ class Rendering(unittest.TestCase):
         terminal.stdout, terminal.encoding, terminal.frame = out, "ascii", []
         terminal.write("ファ")
         self.assertEqual(out.getvalue(), "??")
+
+
+class TheSectionStandsApart(unittest.TestCase):
+    def test_no_name_of_the_installer_is_defined_again(self):
+        """_run and _system_label were defined twice: the later one won, and
+        the installer's listing called the interface's."""
+        import ast
+
+        source = (REPO_ROOT / "install.py").read_text(encoding="utf-8")
+        start = source[:source.index("# Full-screen interface\n#")].count("\n") + 1
+        seen: dict = {}
+        for node in ast.parse(source).body:
+            names = [node.name] if isinstance(node, (ast.FunctionDef, ast.ClassDef)) else [
+                target.id for target in getattr(node, "targets", [])
+                if isinstance(target, ast.Name)]
+            for name in names:
+                seen.setdefault(name, []).append(node.lineno)
+        twice = {name: lines for name, lines in seen.items()
+                 if len(lines) > 1 and max(lines) >= start}
+        self.assertEqual(twice, {})
+
+
+class ControlCharacters(unittest.TestCase):
+    """Names from the file list, the folders on disk and the installer's own
+    words reach the screen: an escape sequence among them would drive the
+    terminal (clear it, or set the clipboard with OSC 52)."""
+
+    HOSTILE = "a\x1b[2Jb\x1b]52;c;x\x07c\rd\ne\x7ff\x9bg\x85h"
+
+    def test_the_cleaning(self):
+        self.assertEqual(install.screen_text(self.HOSTILE), "a?[2Jb?]52;c;x?c?d?e?f?g?h")
+        self.assertEqual(install.screen_text("ファミコン é"), "ファミコン é")
+
+    def assertClean(self, lines) -> None:
+        for line in lines:
+            self.assertIsNone(re.search(r"[\x00-\x1f\x7f-\x9f]", line), repr(line))
+
+    def test_a_file_name_in_the_preview(self):
+        state = checked_state()
+        state.stack += ["options", "preview"]
+        state.dry = dict(CHECK)
+        state.dry_files = [{**FILES[0], "dest": "\x1b[2Jevil.bin"}]
+        lines = install.tui_view(state, 80, 24)
+        self.assertClean(lines)
+        self.assertIn("?[2Jevil.bin", "\n".join(lines))
+
+    def test_a_folder_name_in_the_browser(self):
+        root = Path(tempfile.mkdtemp(dir=REPO_ROOT / "tmp"))
+        self.addCleanup(shutil.rmtree, root, True)
+        (root / "x\x1b]52;c;x\x07").mkdir()
+        state = fresh_state()
+        state.platform, state.stack = "retroarch", ["folder", "browse"]
+        with mock.patch.object(install, "_mounted_cards", return_value=[]):
+            install._browse_to(state, root)
+        lines = install.tui_view(state, 80, 24)
+        self.assertClean(lines)
+        self.assertIn("x?]52;c;x?/", "\n".join(lines))
+
+    def test_the_child_tail_on_the_error_screen(self):
+        state = fresh_state()
+        state.stack, state.run = ["setup", "error"], "check"
+        state.error = ["\x1b[31mError\x1b[0m: \x07bad\r"]
+        self.assertClean(install.tui_view(state, 40, 15))
+
+    def test_the_renderer_guards_whatever_reaches_it(self):
+        out = io.StringIO()
+        terminal = install._TuiTerminal.__new__(install._TuiTerminal)
+        terminal.stdout, terminal.encoding = out, "utf-8"
+        terminal.frame = [("", "")] * 3
+        terminal.draw(["x", "\x1b]52;c;x\x07", "z"], 40)
+        self.assertNotIn("\x1b]", out.getvalue())
+        self.assertNotIn("\x07", out.getvalue())
+
+    def test_the_farewell_is_clean(self):
+        state = checked_state()
+        state.dest = Path("/media/\x1b[2J")
+        state.stack.append("result")
+        state.code = 0
+        state.summary = {"installed": 1, "failed": [{"dest": "\x1b]0;t\x07x", "reason": "\x1b"}]}
+        self.assertClean(install.tui_farewell(state))
+
+
+class SmallFixes(unittest.TestCase):
+    def test_a_command_line_region_the_list_lacks(self):
+        state = checked_state()
+        state.cli_regions = ["europe"]
+        state.regions = list(state.cli_regions)
+        state.stack += ["options", "regions"]
+        self.assertEqual([row.value for row in install.tui_rows(state)],
+                         ["europe", "japan", "north-america"])
+        press(state, "enter")
+        self.assertEqual(state.regions, [])
+        self.assertIn("europe", [row.value for row in install.tui_rows(state)])
+        press(state, "enter")
+        self.assertEqual(state.regions, ["europe"])
+
+    def test_stay_after_esc_on_a_direct_check_checks_again(self):
+        state = fresh_state()
+        state.stack = []
+        state.manifest, state.manifest_for = MANIFEST, "retroarch"
+        install._choose(state, "retroarch", Path(REPO_ROOT))
+        self.assertEqual(state.screen, "checking")
+        self.assertEqual(press(state, "esc"), [("kill",)])
+        self.assertEqual(state.screen, "quit")
+        self.assertEqual(press(state, "down", "enter"), [("run", "check")])
+        self.assertEqual((state.stack, state.running), (["checking"], True))
+        press(state, "esc")
+        self.assertEqual(press(state, "esc"), [("run", "check")])
+
+    def test_speed_ignores_a_resumed_partial(self):
+        state = checked_state()
+        press(state, "enter")
+        mega = 1024 * 1024
+        state.now = 9.0
+        install.tui_receive(state, ("event", state.run_id, {
+            "event": "download", "platform": "retroarch", "files": 2, "bytes": 1000 * mega}))
+        # The first event carries the 500 MB already on disk.
+        for when, done in ((10.0, 500 * mega), (11.0, 501 * mega), (12.0, 502 * mega)):
+            state.now = when
+            install.tui_receive(state, ("event", state.run_id, {
+                "event": "progress", "files_done": 0, "files_total": 2,
+                "bytes_done": done, "bytes_total": 1000 * mega}))
+        text = "\n".join(install.tui_view(state, 80, 24))
+        self.assertIn("1.0 MB/s, 8:18 left", text)
+
+    def test_numbers_from_before_the_options_say_so(self):
+        state = checked_state()
+        state.stack.append("systems")
+        self.assertNotIn("before your options", "\n".join(install.tui_view(state, 80, 24)))
+        state.regions = ["japan"]
+        footer = "\n".join(install.tui_view(state, 80, 24)[-3:])
+        self.assertIn("before your options", footer)
+
+    def test_a_cores_folder_implies_the_installed_cores(self):
+        state = checked_state()
+        state.passthrough = [("--cores-dir", "/opt/cores")]
+        state.installed_only = True
+        state.stack.append("options")
+        row = next(r for r in install.tui_rows(state) if r.action == "installed")
+        self.assertEqual(row.label, "Installed cores only: yes, implied by --cores-dir")
+        state.focus["options"] = install.tui_rows(state).index(row)
+        press(state, "enter", "left")
+        self.assertTrue(state.installed_only)
+        self.assertNotIn("--installed-cores", [f for f, _v in install.tui_flags(state)])
+
+    def test_end_then_up_in_a_pager(self):
+        state = checked_state()
+        state.stack += ["options", "preview"]
+        state.dry, state.dry_files = dict(CHECK), list(FILES) * 10
+        state.cols, state.rows = 40, 15
+        press(state, "end")
+        last = install.tui_view(state, 40, 15)
+        press(state, "up")
+        self.assertNotEqual(install.tui_view(state, 40, 15), last)
+
+    def test_a_paste_slower_than_the_escape_wait_stays_one_piece(self):
+        decoder = install.KeyDecoder()
+        self.assertEqual(decoder.feed("\x1b[200~/media/"), [])
+        self.assertEqual(decoder.flush(), [])
+        self.assertTrue(decoder.waiting)
+        self.assertEqual(decoder.feed("sd\x1b[201~"), [Key("paste", "/media/sd")])
+
+    def test_values_cannot_be_read_as_options(self):
+        state = checked_state()
+        state.dest = Path("-rf")
+        state.cores = ["-x"]
+        argv = install.tui_argv(state, "install", "py", "i.py")
+        self.assertIn("--dest=-rf", argv)
+        self.assertIn("--core=-x", argv)
+        self.assertIn("--platform=retroarch", argv)
+
+    def test_the_second_ctrl_c_is_announced_and_the_result_stays_honest(self):
+        state = checked_state()
+        press(state, "enter")
+        install.tui_receive(state, ("event", state.run_id, {
+            "event": "download", "platform": "retroarch", "files": 4, "bytes": 100}))
+        install.tui_receive(state, ("event", state.run_id, {
+            "event": "downloaded", "dest": "a.bin", "ok": True, "reason": "", "size": 1,
+            "files_done": 1, "files_total": 4, "bytes_done": 1, "bytes_total": 100}))
+        press(state, "ctrl-c")
+        self.assertIn("Press Ctrl-C again to quit now.",
+                      " ".join(install.tui_view(state, 120, 40)))
+        self.assertEqual(press(state, "ctrl-c"), [("kill",)])
+        install.tui_receive(state, ("ended", state.run_id, -9, []))
+        title, lines = install.tui_outcome(state)
+        self.assertEqual((title, state.code), ("Stopped", 130))
+        self.assertEqual(lines[0], "Stopped: 1 of 4 installed, run again to finish.")
+
+    def test_systems_show_the_platform_names(self):
+        state = checked_state()
+        state.systems.append({"event": "system", "system": "sega-saturn",
+                              "name": "Sega - Saturn", "files": 1, "present": 0,
+                              "missing": 1, "wrong_hash": 0, "bytes_needed": 5})
+        state.ticked.add("sega-saturn")
+        state.stack.append("systems")
+        wide = "\n".join(install.tui_view(state, 120, 40))
+        self.assertIn("[x] Sega - Saturn", wide)
+        self.assertIn("sega-saturn", wide)
+        narrow = "\n".join(install.tui_view(state, 40, 15))
+        self.assertIn("[x] Sega - Saturn", narrow)
+        self.assertNotIn("sega-saturn", narrow)
+        press(state, "/", "s", "a", "t", "u")
+        self.assertEqual([row.value for row in install.tui_rows(state)][3:], ["sega-saturn"])
+
+
+class CleanupSurvivesABrokenTerminal(unittest.TestCase):
+    """A write that fails (EIO when the window closed, EPIPE) on the way out
+    left the terminal raw and the handlers installed."""
+
+    class Tty(io.StringIO):
+        broken = False
+
+        def __init__(self, fd: int) -> None:
+            super().__init__()
+            self.fd = fd
+
+        def isatty(self) -> bool:
+            return True
+
+        def fileno(self) -> int:
+            return self.fd
+
+        def write(self, text: str) -> int:
+            if CleanupSurvivesABrokenTerminal.Tty.broken:
+                raise OSError(5, "Input/output error")
+            return super().write(text)
+
+    def test_termios_and_handlers_come_back(self):
+        import signal
+
+        master, slave = os.openpty()
+        self.addCleanup(os.close, master)
+        self.addCleanup(os.close, slave)
+        fcntl.ioctl(slave, termios.TIOCSWINSZ, struct.pack("HHHH", 24, 80, 0, 0))
+        before = termios.tcgetattr(slave)
+        handlers = {n: signal.getsignal(n) for n in (signal.SIGINT, signal.SIGTERM)}
+        tty = self.Tty(slave)
+        real_draw = install._TuiTerminal.draw
+
+        def breaking_draw(terminal, lines, cols):
+            terminal.frame = []
+            real_draw(terminal, lines, cols)
+            CleanupSurvivesABrokenTerminal.Tty.broken = True
+
+        self.addCleanup(setattr, CleanupSurvivesABrokenTerminal.Tty, "broken", False)
+        with mock.patch.object(install._TuiTerminal, "draw", breaking_draw), \
+                mock.patch.object(install, "tui_start", return_value=(fresh_state(), [])), \
+                mock.patch.object(install, "_open_local_sources"), \
+                mock.patch.object(install, "detect_os", return_value="linux"), \
+                mock.patch.object(sys, "stdin", tty), mock.patch.object(sys, "stdout", tty), \
+                mock.patch.object(sys, "stderr", tty):
+            code = install.run_tui(_args())
+            self.assertIs(sys.stdout, tty)
+        self.assertEqual(code, 1)
+        self.assertEqual(termios.tcgetattr(slave), before)
+        for number, handler in handlers.items():
+            self.assertEqual(signal.getsignal(number), handler)
 
 
 class Crash(unittest.TestCase):
@@ -1233,6 +1490,32 @@ class EndToEnd(unittest.TestCase):
         term.send("\x03")
         self.assertEqual(term.close(), 130)
         self.assertIn(b"\x1b[?2004l\x1b[0m\x1b[?25h\x1b[?1049l", term.raw)
+
+    def test_a_stop_from_outside_gives_the_terminal_back(self):
+        import signal
+
+        self.repo()
+        term = self.start()
+        term.wait("Where do you play?")
+        mark = len(term.raw)
+        os.kill(term.pid, signal.SIGTSTP)
+        end = time.monotonic() + 10
+        stopped = False
+        while time.monotonic() < end and not stopped:
+            term._pump(0.05)
+            pid, status = os.waitpid(term.pid, os.WNOHANG | os.WUNTRACED)
+            stopped = bool(pid) and os.WIFSTOPPED(status)
+        self.assertTrue(stopped)
+        self.assertIn(b"\x1b[?25h\x1b[?1049l", term.raw[mark:])
+        mark = len(term.raw)
+        os.kill(term.pid, signal.SIGCONT)
+        term.wait("A/Enter Continue")
+        end = time.monotonic() + 5
+        while b"\x1b[?1049h" not in term.raw[mark:] and time.monotonic() < end:
+            term._pump(0.05)
+        self.assertIn(b"\x1b[?1049h", term.raw[mark:])
+        term.send("q")
+        self.assertEqual(term.close(), 130)
 
     def test_resize_redraws(self):
         self.repo()
