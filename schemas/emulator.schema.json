@@ -1,5 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://abdess.github.io/retrobios/api/v1/schemas/emulator.schema.json",
   "title": "Emulator BIOS Profile",
   "description": "One YAML per emulator core or engine, documenting every external file the code loads. Field reference: https://abdess.github.io/retrobios/wiki/profiling/",
   "type": "object",

@@ -5,9 +5,11 @@ was written against, so a permalink is pinned, never guessed."""
 
 from __future__ import annotations
 
+import functools
 import re
 import urllib.parse
 from dataclasses import dataclass
+from pathlib import Path
 import urllib.request
 
 import upstream
@@ -150,6 +152,45 @@ def _source_permalink(repo: upstream.Repo, pin: str, path: str,
                 url += f"-L{end}"
     return url
 
+# The tree listings profile_sync caches. Read offline only: a page build
+# never calls a forge, and a listing it does not find leaves the link as the
+# profile's declarations alone decide it.
+TREE_CACHE = Path(__file__).resolve().parent.parent / upstream.CACHE_DIR
+
+
+@functools.lru_cache(maxsize=None)
+def _tree_paths(repo: upstream.Repo, pin: str) -> frozenset[str] | None:
+    """Every file of a repository at a revision, None when not cached or
+    truncated (a missing path would then prove nothing)."""
+    if not repo.api_base:
+        return None  # a browse-only forge: no listing to read
+    paths, truncated = upstream.list_tree(repo, pin, str(TREE_CACHE), offline=True)
+    return frozenset(paths) if paths and not truncated else None
+
+
+def tree_holds(repo: upstream.Repo, pin: str, path: str) -> bool | None:
+    """Whether the repository holds ``path`` at ``pin``: None when its tree
+    is not cached. trident cites src/core/loader/ncch.cpp, a Panda3DS file,
+    and the page linked it into 3dsTrident, where it is a 404."""
+    paths = _tree_paths(repo, pin)
+    return None if paths is None else path in paths
+
+
+def _holder(
+    candidates: list[tuple[upstream.Repo, str]], path: str, default: tuple | None,
+) -> tuple[upstream.Repo, str] | None:
+    """The pinned repository that holds ``path``, source before upstream as
+    profile_sync.select_views orders them. Without every tree cached, the
+    declarations decide (``default``). A path no cached tree holds links
+    nowhere: no link beats a link to a file that is not there."""
+    verdicts = [tree_holds(repo, pin, path) for repo, pin in candidates]
+    if not candidates or None in verdicts:
+        if default is not None and tree_holds(*default, path) is False:
+            return None
+        return default
+    return next((cand for cand, held in zip(candidates, verdicts) if held), None)
+
+
 def _commit_url(repo: upstream.Repo, pin: str) -> str:
     """Forge-specific browser URL for one commit."""
     base = f"https://{repo.host}/{repo.owner}/{repo.name}"
@@ -272,8 +313,13 @@ def _source_ref_markdown(profile: dict, value: str | dict | None) -> str:
                 if current_role:
                     # Only the repository the part names, or no link at all.
                     selected = by_role.get(current_role)
-                elif len(candidates) == 1:
-                    selected = candidates[0]
+                    if selected is not None and tree_holds(*selected, part.path) is False:
+                        selected = None
+                else:
+                    selected = _holder(
+                        candidates, part.path,
+                        candidates[0] if len(candidates) == 1 else None,
+                    )
 
             tag = (f" ({role_label(profile, current_role, part.path)})"
                    if current_role and _two_repositories(profile) else "")
@@ -329,6 +375,8 @@ def link_prose_citations(profile: dict, text: str) -> str:
                 # `upstream a.c:5` names a repository this link would not reach.
                 continue
             if any(lo <= path_span[0] < hi for lo, hi in guarded):
+                continue
+            if tree_holds(repo, pin, path) is False:
                 continue
             for index, ((lo, hi), part) in enumerate(zip(spans, parts)):
                 start = path_span[0] if index == 0 else lo

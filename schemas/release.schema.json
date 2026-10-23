@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/Abdess/retrobios/schemas/release.schema.json",
+  "$id": "https://abdess.github.io/retrobios/api/v1/schemas/release.schema.json",
   "title": "RetroBIOS release record",
   "description": "What the packs of the latest release hold, read from the archives when the release is cut.",
   "type": "object",

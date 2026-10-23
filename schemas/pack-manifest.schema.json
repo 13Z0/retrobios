@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/Abdess/retrobios/schemas/pack-manifest.schema.json",
+  "$id": "https://abdess.github.io/retrobios/api/v1/schemas/pack-manifest.schema.json",
   "title": "RetroBIOS pack integrity manifest",
   "type": "object",
   "additionalProperties": false,

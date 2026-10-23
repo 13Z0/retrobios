@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/Abdess/retrobios/schemas/stats.schema.json",
+  "$id": "https://abdess.github.io/retrobios/api/v1/schemas/stats.schema.json",
   "title": "RetroBIOS public statistics",
   "type": "object",
   "additionalProperties": false,

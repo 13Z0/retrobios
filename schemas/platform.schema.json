@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/Abdess/retrobios/schemas/platform.schema.json",
+  "$id": "https://abdess.github.io/retrobios/api/v1/schemas/platform.schema.json",
   "title": "Platform Configuration",
   "description": "Schema for retrogaming platform BIOS configuration files",
   "type": "object",
@@ -505,6 +505,14 @@
         "curated": {
           "type": "boolean",
           "description": "Added by our scraper from the cores' source, not declared in the platform's own file"
+        },
+        "shared_group": {
+          "type": "string",
+          "description": "Set on load, never written in a platform file: the entry joined the system from this group of _shared.yml, named by the system's includes. The platform's own file does not carry it"
+        },
+        "zip_digest": {
+          "const": "composite",
+          "description": "Set on load, never written in a platform file: the md5 of this ZIP is the md5 of its members concatenated in name order, as Recalbox computes it, never the md5 of the archive bytes"
         },
         "native_name": {
           "type": "string",
