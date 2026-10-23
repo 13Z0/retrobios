@@ -113,6 +113,7 @@ class StructuredBlocks(unittest.TestCase):
 
         return "\n".join(generate_site._render_structured_blocks(profile))
 
+    @mock.patch("sitesources.tree_holds", lambda *_args: True)  # a path the record confirms
     def test_a_source_ref_in_a_block_is_a_pinned_link(self):
         """186 citations in analysis and firmware blocks were plain code."""
         page = self.render(self.profile("analysis", {"tmss": {
@@ -237,6 +238,7 @@ class ForgesUpstreamDoesNotRead(unittest.TestCase):
     """Profiles pinned on SourceForge, voidpoint.io, Bitbucket or Software
     Heritage showed no revision, and their citations were plain code."""
 
+    @mock.patch("sitesources.tree_holds", lambda *_args: True)  # a path the record confirms
     def links(self, url: str, ref: str, **extra: str) -> tuple[str, str]:
         import sitesources
 
