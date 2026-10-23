@@ -79,7 +79,7 @@ Each file is checked the way your platform checks it. Most compare a checksum, t
 
 - **995 files** the platforms' emulators load are still to be found, and 138 more cannot be sourced at all (per-user keys, user-filled slots, dumps nobody has made). Both are named in the [gap analysis](https://abdess.github.io/retrobios/gaps/)
 - **18 platforms** supported with platform-specific verification
-- **625 emulators** profiled from source (RetroArch cores + standalone)
+- **624 emulators** profiled from source (RetroArch cores + standalone)
 - **541 systems** handled by those emulators (NES, SNES, PlayStation, Saturn, Dreamcast, ...)
 - **19,910 files in the collection**, each with its SHA1, MD5, SHA256, CRC32 and Adler-32 fingerprints: 5,708 system files, 2,974 arcade ROM sets, 11,228 game and engine data files. That is every platform and emulator together, so no pack holds them all: each carries what its own emulators load, counted in the download table
 - **565 of 5,708 system files** matched to dump-preservation catalogs (No-Intro, Redump, TOSEC). Arcade sets and engine data fall outside what those catalogs index
@@ -160,7 +160,7 @@ The [documentation site](https://abdess.github.io/retrobios/) provides:
 - **Per-emulator profiles** with source code references for every file
 - **Per-system pages** showing which emulators and platforms cover each console
 - **Gap analysis** identifying missing files and undeclared core requirements
-- **Cross-reference** mapping files across 18 platforms and 625 emulators
+- **Cross-reference** mapping files across 18 platforms and 624 emulators
 - **Versioned data access** through JSON, CSV and SQLite exports with published SHA-256 checksums
 
 ## How it works
@@ -199,4 +199,4 @@ The scripts and tooling are released under the [MIT License](LICENSE).
 The BIOS and firmware files are not covered by that license: they are third-party system software, preserved and provided for personal backup, archival, and interoperability with emulation software. [NOTICE](NOTICE) sets out their status and how to ask for a file to be removed.
 The reasoning, and where it is weakest, is in [the project's legal position](https://abdess.github.io/retrobios/wiki/legal/).
 
-*Auto-generated on 2026-10-23T15:59:33Z*
+*Auto-generated on 2026-10-23T20:23:03Z*
