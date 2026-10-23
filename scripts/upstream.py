@@ -840,6 +840,26 @@ def _commits_ahead(payload: object, family: str) -> int | None:
     return value if isinstance(value, int) else None
 
 
+def fork_base(
+    repo: Repo, sha: str, fork: Repo, fork_sha: str, cache_dir: str,
+    offline: bool = False,
+) -> str | None:
+    """The commit of ``repo`` that ``fork`` at ``fork_sha`` has merged up to.
+
+    GitHub compares across a fork network and names the merge base. Two
+    repositories outside one network answer 404, and None is returned.
+    """
+    if repo.family != "github" or fork.family != "github":
+        return None
+    payload = _api(
+        f"{repo.api_base}/repos/{repo.slug}/compare/"
+        f"{sha}...{fork.owner}:{fork.name}:{fork_sha}",
+        cache_dir, offline,
+    )
+    base = payload.get("merge_base_commit") if isinstance(payload, dict) else None
+    return base.get("sha") if isinstance(base, dict) else None
+
+
 def ancestry(
     repo: Repo, base: str, head: str, cache_dir: str, offline: bool = False
 ) -> tuple[int, int] | None:

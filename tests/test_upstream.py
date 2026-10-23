@@ -957,5 +957,32 @@ class TestNamedTagCommit(unittest.TestCase):
         self.assertEqual(upstream.tag_commit(repo, "1.2.35", self.tmp.name), "c74fc36")
         self.assertTrue(asked[0].endswith("/repository/tags/1.2.35"))
 
+
+class TestForkBase(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.saved = upstream._http_json
+
+    def tearDown(self):
+        upstream._http_json = self.saved
+        self.tmp.cleanup()
+
+    def test_the_merge_base_github_names(self):
+        asked = []
+
+        def answer(url):
+            asked.append(url)
+            return {"merge_base_commit": {"sha": "base"}, "status": "diverged"}
+
+        upstream._http_json = answer
+        up, fork = make_repo("github.com", "o", "up"), make_repo("github.com", "f", "port")
+        self.assertEqual(upstream.fork_base(up, "tip", fork, "head", self.tmp.name), "base")
+        self.assertTrue(asked[0].endswith("/repos/o/up/compare/tip...f:port:head"))
+
+    def test_no_network_is_none(self):
+        upstream._http_json = lambda url: None
+        up, fork = make_repo("github.com", "o", "up"), make_repo("github.com", "f", "port")
+        self.assertIsNone(upstream.fork_base(up, "tip", fork, "head", self.tmp.name))
+
 if __name__ == "__main__":
     unittest.main()

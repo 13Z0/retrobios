@@ -1181,6 +1181,12 @@ class TestBuildReport(unittest.TestCase):
             profile_sync.upstream._http_text,
             profile_sync.upstream.list_gitlinks,
             profile_sync.upstream.current_slug,
+            profile_sync.upstream.fork_base,
+        )
+        self.fork_bases: dict[str, str] = {}
+        profile_sync.upstream.fork_base = (
+            lambda repo, sha, fork, fork_sha, cache_dir, offline=False:
+            self.fork_bases.get(fork_sha)
         )
         self.current_slugs: dict[str, str] = {}
         profile_sync.upstream.current_slug = (
@@ -1243,6 +1249,7 @@ class TestBuildReport(unittest.TestCase):
             profile_sync.upstream._http_text,
             profile_sync.upstream.list_gitlinks,
             profile_sync.upstream.current_slug,
+            profile_sync.upstream.fork_base,
         ) = self._orig
         self.tmp.cleanup()
 
@@ -4787,6 +4794,39 @@ class UpstreamVendoredAsASubmodule(unittest.TestCase):
     def test_an_upstream_the_port_does_not_vendor_keeps_its_tip(self):
         views = self._views({"src-pin": {"deps/zlib": "other"}, "src-head": {}})
         self.assertEqual(views[1].head, "nesbox-tip")
+
+
+class UpstreamForkedByThePort(unittest.TestCase):
+    """snes9x, kronos and np2kai pinned upstream_commit on the merge base of
+    upstream with the fork. Compared to upstream's own HEAD, a bump moved it
+    past anything the port carries."""
+
+    def _views(self, base):
+        from unittest import mock  # noqa: PLC0415
+
+        fork = profile_sync.upstream.make_repo("github.com", "f", "port")
+        self.up = profile_sync.upstream.make_repo("github.com", "o", "up")
+        self.fork = fork
+        views = [
+            profile_sync.RepoView(fork, "src-pin", "src-head", "source_commit", "source"),
+            profile_sync.RepoView(self.up, "old-base", "up-tip", "upstream_commit", "upstream"),
+        ]
+        with mock.patch.object(
+            profile_sync.upstream, "fork_base", return_value=base
+        ) as asked:
+            followed = profile_sync._follow_fork_base(views, "cache", True)
+        return followed, asked
+
+    def test_the_upstream_head_is_the_fork_base(self):
+        views, asked = self._views("new-base")
+        self.assertEqual(views[1].head, "new-base")
+        self.assertEqual(
+            asked.call_args.args[:4], (self.up, "up-tip", self.fork, "src-head")
+        )
+
+    def test_a_port_outside_the_network_keeps_the_tip(self):
+        views, _ = self._views(None)
+        self.assertEqual(views[1].head, "up-tip")
 
 
 class OfflineCacheMissIsNotGone(TestBuildReport):

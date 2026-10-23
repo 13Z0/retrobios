@@ -1104,7 +1104,7 @@ def select_views(
             continue
         seen.add((repo.host, repo.slug))
         views.append(RepoView(repo, pin, head, origin, field))
-    return _follow_submodule(views, cache_dir, offline)
+    return _follow_fork_base(_follow_submodule(views, cache_dir, offline), cache_dir, offline)
 
 
 def _follow_submodule(
@@ -1140,6 +1140,34 @@ def _follow_submodule(
         followed.append(
             replace(view, head=head, origin=f"{view.origin} via {path}")
             if head else view
+        )
+    return followed
+
+
+def _follow_fork_base(
+    views: list[RepoView], cache_dir: str, offline: bool
+) -> list[RepoView]:
+    """An upstream the port is a fork of moves with what the port merged.
+
+    snes9x, kronos, np2kai and six others pinned upstream_commit on the merge
+    base of upstream with the fork, the upstream code the port carries. Read
+    against upstream's own HEAD, the bump moved it past anything the port
+    built from. Outside one fork network the HEAD stays the reference.
+    """
+    source = next((v for v in views if v.field == "source"), None)
+    if source is None:
+        return views
+    followed: list[RepoView] = []
+    for view in views:
+        if view.field != "upstream" or view.pin == view.head or " via " in view.origin:
+            followed.append(view)
+            continue
+        base = upstream.fork_base(
+            view.repo, view.head, source.repo, source.head, cache_dir, offline
+        )
+        followed.append(
+            replace(view, head=base, origin=f"{view.origin}, fork base of {source.repo.slug}")
+            if base else view
         )
     return followed
 
