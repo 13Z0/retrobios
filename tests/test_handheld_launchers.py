@@ -98,8 +98,13 @@ class EveryScriptParses(unittest.TestCase):
                                       text=True, check=False)
                 self.assertEqual(proc.returncode, 0, proc.stderr)
 
-    @unittest.skipUnless(shutil.which("shellcheck"), "shellcheck is not installed")
     def test_shellcheck(self):
+        """CI provides shellcheck (validate.yml checks it), so there it may
+        not skip."""
+        if shutil.which("shellcheck") is None:
+            if os.environ.get("CI"):
+                self.fail("CI must provide shellcheck for the handheld launchers")
+            self.skipTest("shellcheck is not installed")
         proc = subprocess.run(
             ["shellcheck", "--shell=bash", "--severity=style", "--external-sources",
              "--source-path=SCRIPTDIR", *map(str, SCRIPTS)],
@@ -385,8 +390,11 @@ class Device:
             found.write_text(FAKE_INSTALL)
         return into
 
-    def run(self, argv: list[str], stdio_tty: bool = False, **env: str):
-        """Run a launcher; its console output is read from the pty."""
+    def run(self, argv: list[str], stdio_tty: bool = False, keys: str = "", **env: str):
+        """Run a launcher with *keys* waiting on the console as buttons
+        pressed. Its console output is read from the pty."""
+        if keys:
+            os.write(self.master, keys.encode())
         stdin = self.slave if stdio_tty else subprocess.DEVNULL
         stdout = self.slave if stdio_tty else subprocess.PIPE
         proc = subprocess.run(argv, env={**self.env, **env}, stdin=stdin, stdout=stdout,
@@ -584,6 +592,24 @@ class ThePortMasterPort(unittest.TestCase):
         self.assertEqual(self.dialog(device)[0], "INIT no-check")
         self.assertEqual(device.mapper_args(), [])
 
+    def test_arkos_offers_the_card_portmaster_does_not_run_from(self):
+        device = self.device(FAKE_CURL="7")
+        marker = device.root / "text.plymouth"
+        marker.write_text("")
+        roms = device.root / "roms" / "bios"
+        other = device.root / "roms2" / "bios"
+        roms.mkdir(parents=True)
+        other.mkdir(parents=True)
+        (roms / "a.bin").write_bytes(b"x")
+        (other / "b.bin").write_bytes(b"y")
+        pack = self.gamedir / "RetroArch_Lakka_v1.22.2_BIOS_Pack.zip"
+        pack.write_bytes(b"")
+        device.run(["bash", self.script], keys="\r", RB_ARK_MARKER=str(marker),
+                   RB_OTHER_CARDS=f"{roms}:{other}")
+        [call] = device.tui_calls()
+        # The port's games card is roms here: its bios is the destination.
+        self.assertEqual(call["args"][:3], ["--tui", "--from", str(other)])
+
     def test_under_a_compositor_foot_shows_the_interface(self):
         device = self.device(WAYLAND_DISPLAY="wayland-1")
         device.tool("foot", FAKE_TERMAPP)
@@ -638,7 +664,10 @@ class TheMuosApp(unittest.TestCase):
         (muos / "script" / "var").mkdir(parents=True)
         (muos / "script" / "var" / "retro.sh").write_text(
             'SETUP_APP() { printf "SETUP_APP %s\\n" "$1" >> "$FAKE_STATE/tools.log"; }\n'
-            f'GET_VAR() {{ echo "{device.root / "mmc"}"; }}\n')
+            'GET_VAR() { case "$2" in\n'
+            f'  storage/rom/mount) echo "{device.root / "mmc"}" ;;\n'
+            f'  storage/sdcard/mount) echo "{device.root / "sdcard"}" ;;\n'
+            '  *) echo "" ;;\nesac; }\n')
         if muxterm:
             (muos / "frontend").mkdir()
             shutil.copy(device.tool("muxterm", FAKE_TERMAPP), muos / "frontend" / "muxterm")
@@ -678,6 +707,58 @@ class TheMuosApp(unittest.TestCase):
         [call] = device.tui_calls()
         self.assertEqual(call["args"][:3], ["--tui", "--from-pack", str(pack)])
 
+    def two_cards(self, device: Device) -> tuple[Path, Path, Path]:
+        """SD1 and SD2 both hold MUOS/bios, SD2's is the one muOS binds."""
+        sd1 = device.root / "mmc" / "MUOS" / "bios"
+        sd2 = device.root / "sdcard" / "MUOS" / "bios"
+        sd1.mkdir(parents=True)
+        sd2.mkdir(parents=True)
+        (sd1 / "scph5501.bin").write_bytes(b"x")
+        (sd2 / "gba_bios.bin").write_bytes(b"y")
+        pack = device.root / "mmc" / "RetroArch_Lakka_v1.22.2_BIOS_Pack.zip"
+        pack.write_bytes(b"")
+        return sd1, sd2, pack
+
+    def test_offline_offers_the_other_card(self):
+        device, app = self.device(muxterm=False)
+        sd1, sd2, pack = self.two_cards(device)
+        proc = device.run([str(app / "mux_launch.sh"), str(app)], keys="\r", FAKE_CURL="7",
+                          RB_CONSOLE=device.console, RB_BIOS_DEST=str(sd2))
+        self.assertEqual(proc.returncode, 0, proc.stderr.decode())
+        self.assertIn("Copy the BIOS files from your other card?", device.screen)
+        self.assertIn(str(sd1), device.screen)
+        [call] = device.tui_calls()
+        self.assertEqual(call["args"], ["--tui", "--from", str(sd1), "--from-pack", str(pack),
+                                        "--platform", "retroarch"])
+
+    def test_b_declines_the_other_card(self):
+        device, app = self.device(muxterm=False)
+        _sd1, sd2, pack = self.two_cards(device)
+        device.run([str(app / "mux_launch.sh"), str(app)], keys="\x1b", FAKE_CURL="7",
+                   RB_CONSOLE=device.console, RB_BIOS_DEST=str(sd2))
+        [call] = device.tui_calls()
+        self.assertEqual(call["args"], ["--tui", "--from-pack", str(pack),
+                                        "--platform", "retroarch"])
+
+    def test_the_card_the_system_reads_is_never_offered(self):
+        device, app = self.device(muxterm=False)
+        sd1, _sd2, _pack = self.two_cards(device)
+        shutil.rmtree(device.root / "sdcard")
+        device.run([str(app / "mux_launch.sh"), str(app)], FAKE_CURL="7",
+                   RB_CONSOLE=device.console, RB_BIOS_DEST=str(sd1))
+        self.assertNotIn("other card", device.screen)
+        [call] = device.tui_calls()
+        self.assertNotIn("--from", call["args"])
+
+    def test_online_asks_nothing(self):
+        device, app = self.device(muxterm=False)
+        _sd1, sd2, _pack = self.two_cards(device)
+        device.run([str(app / "mux_launch.sh"), str(app)],
+                   RB_CONSOLE=device.console, RB_BIOS_DEST=str(sd2))
+        self.assertNotIn("other card", device.screen)
+        [call] = device.tui_calls()
+        self.assertEqual(call["args"], ["--tui"])
+
 
 class TheToolsEntry(unittest.TestCase):
     def device(self, **env: str) -> tuple[Device, Path]:
@@ -701,6 +782,28 @@ class TheToolsEntry(unittest.TestCase):
                          ["-1", installer, "-c", str(tools / "retrobios" / "retrobios.gptk")])
         device.assert_mapper_stopped()
         device.assert_console_restored()
+
+    def test_arkos_other_card_without_a_pack_needs_one(self):
+        """--from needs the list of files, which an offline run takes from a
+        pack: the message says so."""
+        device, tools = self.device(FAKE_CURL="7")
+        fs = device.root / "fs"
+        (fs / "opt" / "system").mkdir(parents=True)
+        (fs / "opt" / "inttools").mkdir(parents=True)
+        roms, roms2 = device.root / "roms" / "bios", device.root / "roms2" / "bios"
+        roms.mkdir(parents=True)
+        roms2.mkdir(parents=True)
+        (roms / "bios.bin").write_bytes(b"x")
+        cfg = fs / "home" / "ark" / ".config" / "retroarch"
+        cfg.mkdir(parents=True)
+        (cfg / "retroarch.cfg").write_text(f'system_directory = "{roms2}"\n')
+        proc = device.run(["bash", str(tools / "RetroBIOS.sh")], keys="\r",
+                          RB_CONSOLE=device.console, RB_OTHER_CARDS=f"{roms}:{roms2}")
+        self.assertEqual(proc.returncode, 1)
+        screen = " ".join(device.screen.split())
+        self.assertIn(f"Copy the BIOS files from your other card? {roms} holds files", screen)
+        self.assertIn("with it, the files on your other card are copied too", screen)
+        self.assertEqual(device.tui_calls(), [])
 
     def test_amberelec_console(self):
         device, tools = self.device()

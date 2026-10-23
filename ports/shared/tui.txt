@@ -20,6 +20,10 @@
 #   RB_GPTK        its mapping (default retrobios.gptk next to this file)
 #   RB_PACK_PATH   folders searched for a pack when there is no network,
 #                  separated by ":", the first one named to the player
+#   RB_OTHER_CARDS BIOS folders the firmware keeps on each of its cards,
+#                  separated by ":", as its own code names them
+#   RB_BIOS_DEST   the one of them the firmware reads, never offered as the
+#                  other card
 #   RB_FALLBACK    1 when the launcher has screens of its own to fall back to
 #   ESUDO          sudo where the launcher needs it, as PortMaster sets it
 
@@ -33,6 +37,8 @@ RB_LOG="${RB_LOG:-$RB_DIR/log.txt}"
 RB_ROUTES="${RB_ROUTES:-app vt}"
 RB_CONSOLE="${RB_CONSOLE:-/dev/tty0}"
 RB_PACK_PATH="${RB_PACK_PATH:-$RB_DIR}"
+RB_OTHER_CARDS="${RB_OTHER_CARDS:-}"
+RB_BIOS_DEST="${RB_BIOS_DEST:-}"
 RB_FONTS="${RB_FONTS:-/usr/share/consolefonts}"
 RB_FB="${RB_FB:-/sys/class/graphics/fb0/virtual_size}"
 RB_ROUTE_TABLE="${RB_ROUTE_TABLE:-/proc/net/route}"
@@ -201,6 +207,30 @@ rb_find_pack() {
     done
   done
   [ -n "$first" ] && printf '%s\n' "$first"
+  return 0
+}
+
+rb_same_dir() {
+  [ -n "$1" ] && [ -n "$2" ] || return 1
+  [ "$(stat -L -c '%d:%i' "$1" 2>/dev/null)" = "$(stat -L -c '%d:%i' "$2" 2>/dev/null)" ]
+}
+
+# The BIOS folder on the firmware's other card, when it holds a file: a
+# two-card device reads one card (muOS binds MUOS/bios from SD2 when it has
+# one, else from SD1), and the files bought for it often sit on the other.
+rb_other_card() {
+  local dir
+  local IFS=":"
+  for dir in ${RB_OTHER_CARDS:-}; do
+    [ -d "$dir" ] || continue
+    if rb_same_dir "$dir" "${RB_BIOS_DEST:-}" || rb_same_dir "$dir" "${RB_BIOS_DIR:-}"; then
+      continue
+    fi
+    if [ -n "$(find "$dir" -type f -print 2>/dev/null | head -n 1)" ]; then
+      printf '%s\n' "$dir"
+      return 0
+    fi
+  done
   return 0
 }
 
@@ -401,6 +431,29 @@ rb_message() {
   printf '\033[2J\033[H'
 }
 
+# A question on the current terminal: true for A or Enter, false for B, Esc,
+# any other button or no answer.
+rb_ask() {
+  local cols key
+  cols=$(stty size 2>/dev/null | awk '{print $2}')
+  case "$cols" in
+    ''|*[!0-9]*) cols=40 ;;
+  esac
+  [ "$cols" -ge 20 ] || cols=40
+  printf '\033[2J\033[H'
+  printf 'RetroBIOS\n\n'
+  printf '%s\n' "$1" | fold -s -w $((cols - 1))
+  printf '\n%s\n' "A or Enter: yes. B or Esc: no."
+  if ! IFS= read -r -s -n 1 -t "${RB_MESSAGE_WAIT:-300}" key; then
+    printf '\033[2J\033[H'
+    return 1
+  fi
+  # The rest of an escape sequence (an arrow) is not a second answer.
+  read -r -s -t 0.05 -n 8 _ 2>/dev/null
+  printf '\033[2J\033[H'
+  [ -z "$key" ] || [ "$key" = " " ]
+}
+
 # --- The run --------------------------------------------------------------
 
 # The interface on the current terminal: install.py --tui, from a pack on the
@@ -418,15 +471,26 @@ rb_here() {
     printf '1\n' > "$RB_STATE/status"
     return 1
   fi
+  local other
   if ! rb_online; then
+    # Detection also names the BIOS folder the other card must not be.
     rb_detect
+    other=$(rb_other_card)
+    if [ -n "$other" ] && rb_ask "Copy the BIOS files from your other card? $other holds files. RetroBIOS copies the ones this system needs, each checked by its hash, and leaves that card as it is."; then
+      args=(--from "$other")
+    fi
     pack=$(rb_find_pack)
     if [ -z "$pack" ]; then
-      rb_message "$(rb_pack_text)"
+      if [ "${#args[@]}" -gt 0 ]; then
+        # --from needs the list of files, which comes from the network or a pack.
+        rb_message "$(rb_pack_text) The pack carries the list of files: with it, the files on your other card are copied too."
+      else
+        rb_message "$(rb_pack_text)"
+      fi
       printf '1\n' > "$RB_STATE/status"
       return 1
     fi
-    args=(--from-pack "$pack")
+    args+=(--from-pack "$pack")
     if [ -n "$RB_PLATFORM" ]; then
       args+=(--platform "$RB_PLATFORM")
     fi
@@ -462,6 +526,7 @@ rb_launch() {
     return 125
   fi
   export RB_DIR RB_INSTALL RB_EVENTS RB_STATE RB_LOG RB_PACK_PATH RB_FALLBACK
+  export RB_OTHER_CARDS RB_BIOS_DEST
   export RB_PYTHON RB_PYTHONHOME RB_PYTHON_PROBLEM RB_MESSAGE_WAIT RB_ROUTE_TABLE
   trap 'rb_cleanup; exit 143' TERM HUP
   rb_mapper_start

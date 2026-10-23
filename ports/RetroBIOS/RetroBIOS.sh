@@ -48,6 +48,13 @@ RB_CONSOLE="${CUR_TTY:-/dev/tty0}"
 RB_MAPPER="$GPTOKEYB"
 RB_FALLBACK=1
 RB_PACK_PATH="$GAMEDIR:/$directory/ports:/$directory"
+# ArkOS and dArkOS, as control.txt tells them apart (its plymouth theme): the
+# games card is /$directory, roms2 when fstab mounts a second card, and its
+# bios folder is the one RetroArch reads. The other card's is offered.
+if [ -e "${RB_ARK_MARKER:-/usr/share/plymouth/themes/text.plymouth}" ]; then
+  RB_OTHER_CARDS="${RB_OTHER_CARDS:-/roms/bios:/roms2/bios}"
+  RB_BIOS_DEST="/$directory/bios"
+fi
 # shellcheck source=../shared/tui.txt
 source "$GAMEDIR/tui.txt"
 # shellcheck source=retrobios/screens.txt

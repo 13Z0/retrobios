@@ -39,6 +39,12 @@ if [ -d "$ROOT/opt/system" ] && [ -d "$ROOT/opt/inttools" ]; then
   RB_ROUTES="vt"
   RB_CONSOLE="${RB_CONSOLE:-/dev/tty1}"
   RB_PACK_PATH="$RB_DIR:$HERE:/roms:/roms2"
+  # The second card is /roms2, and "Switch to SD2 for Roms" moves RetroArch's
+  # system folder there (dArkOS scripts/Switch to SD2 for Roms.sh:91-92): the
+  # folder RetroArch reads is the destination, the other card's is offered.
+  RB_OTHER_CARDS="${RB_OTHER_CARDS:-/roms/bios:/roms2/bios}"
+  RB_BIOS_DEST=$(awk -F'"' '/^system_directory *=/ { print $2; exit }' \
+    "$ROOT/home/ark/.config/retroarch/retroarch.cfg" 2>/dev/null)
   controlfolder="$ROOT/opt/system/Tools/PortMaster"
   mapper=$(rb_gptokeyb "$ROOT/opt/inttools/gptokeyb" "$controlfolder/gptokeyb")
   [ -f "$ROOT/opt/inttools/gamecontrollerdb.txt" ] \

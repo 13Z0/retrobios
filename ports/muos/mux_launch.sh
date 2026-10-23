@@ -21,6 +21,12 @@ MUXTERM="$MUOS/frontend/muxterm"
 RB_DIR="$APP_DIR"
 RB_PACK_PATH="$APP_DIR:$ROM_MOUNT"
 RB_LOG="$APP_DIR/log.txt"
+# muOS binds MUOS/bios from SD2 when that card has one, else from SD1, onto
+# /run/muos/storage/bios (script/device/bind.sh:10-11,30-52): the other card's
+# MUOS/bios is the one offered to copy from.
+SD2_MOUNT="$(GET_VAR "device" "storage/sdcard/mount")"
+RB_OTHER_CARDS="$ROM_MOUNT/MUOS/bios:$SD2_MOUNT/MUOS/bios"
+RB_BIOS_DEST="${RB_BIOS_DEST:-/run/muos/storage/bios}"
 # PortMaster keeps its runtimes here: the Python runtime is used when
 # PortMaster has downloaded it.
 controlfolder="$PM_DIR"

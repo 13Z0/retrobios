@@ -979,6 +979,12 @@ connection, RetroBIOS installs from it, as
 [`--from-pack`](#without-a-network-offline-install) does. With no pack there,
 it names the pack and the folder.
 
+On a two-card device, RetroBIOS without Wi-Fi first asks to **copy the BIOS
+files from your other card**: muOS's `MUOS/bios` on the card the system does
+not read, or the other of `/roms/bios` and `/roms2/bios` on ArkOS and dArkOS.
+A says yes, as [`--from`](#copy-from-an-old-card) does. The list of files
+still comes from the pack, so the pack is needed too.
+
 **What it needs.** Python 3.8 or newer: the system's, else PortMaster's
 `python_3.11` runtime on aarch64, which the PortMaster port downloads on
 first use and the Tools entry then reuses. That runtime uses the system's
