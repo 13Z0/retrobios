@@ -1151,7 +1151,7 @@ class ThePortMasterPort(unittest.TestCase):
         [hint] = device.lines("termapp.sdl")
         assert_muxterm_hides_every_pad(self, hint)
         assert_muxterm_mapping(self, device.mapper_args(), self.gamedir / "retrobios.gptk")
-        self.assertEqual(call["pad"], "gptokeyb")
+        self.assertEqual(call["pad"], "gptokeyb_muxterm")
         self.assertEqual(call["idle_exit"], "300")
         self.assertEqual(self.dialog(device), ["FINISH"])
 
@@ -1483,7 +1483,7 @@ class TheMuosApp(unittest.TestCase):
         self.assertRegex(args[1], r"^retrobios-stop-\d+x$")
         assert_muxterm_mapping(self, args, app / "retrobios.gptk")
         self.assertEqual(read_gptk(Path(args[-1]))["y"], ["tab"])
-        self.assertEqual(call["pad"], "gptokeyb")
+        self.assertEqual(call["pad"], "gptokeyb_muxterm")
         self.assertEqual(call["idle_exit"], "300")
         device.assert_mapper_stopped()
 

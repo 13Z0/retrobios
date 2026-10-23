@@ -60,7 +60,7 @@ except ImportError:
 GOLDEN = REPO_ROOT / "tests" / "fixtures" / "tui"
 SIZES = ((40, 12), (40, 15), (80, 24), (120, 40))
 # RETROBIOS_PAD's values, and "keys" for a desktop that sets none.
-ROUTES = ("keys", "gptokeyb", "evmapy", "muxterm", "miyoo")
+ROUTES = ("keys", "gptokeyb", "gptokeyb_muxterm", "evmapy", "muxterm", "miyoo")
 UP, DOWN, RIGHT, LEFT = "\x1b[A", "\x1b[B", "\x1b[C", "\x1b[D"
 Key = install.TuiKey
 
@@ -994,6 +994,7 @@ def _bar_keys(line: str) -> set:
 ROUTE_KEYS = {
     "keys": {"Enter", "Esc", "Space", "o", "?", "/", "Ctrl-C", "Ctrl-U"},
     "gptokeyb": {"A", "B", "X", "Y", "Start+Select"},
+    "gptokeyb_muxterm": {"A", "B", "X", "Y", "Start+Select"},
     "evmapy": {"A", "B", "X", "Y"},
     "muxterm": {"Start", "B", "Y", "Menu", "Select"},
     "miyoo": {"A", "Start", "R2", "L2"},
@@ -1098,6 +1099,13 @@ class PadRoutes(unittest.TestCase):
                       "Close the terminal"):
             self.assertIn(words, muxterm)
         self.assertNotIn("Start+Select", muxterm)
+        # gptokeyb2 owns the pad inside muxterm, which keeps PgUp and PgDn
+        # for its scrollback: the gptokeyb buttons, and no page key.
+        in_muxterm = help_text("gptokeyb_muxterm", "preview")
+        for words in ("A, Start, Enter", "Select, then Start"):
+            self.assertIn(words, in_muxterm)
+        self.assertNotIn("L1/R1", in_muxterm)
+        self.assertIn("L1/R1", help_text("gptokeyb", "preview"))
         # muxterm keeps PgUp and PgDn for its scrollback, and L1 and R1
         # send nothing: no paging is offered there, on a list or a pager.
         for screen in ("systems", "result", "plan"):

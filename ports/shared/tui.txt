@@ -437,6 +437,7 @@ rb_muxterm() {
     return 0
   fi
   RB_TERMAPP=(env "SDL_GAMECONTROLLER_IGNORE_DEVICES_EXCEPT=$RB_SDL_NO_PAD" "$1" --gl --)
+  RB_PAD="gptokeyb_muxterm"
   if awk '$1 == "l1" || $1 == "r1" { print $1 " = \\\""; next } { print }' \
       "$RB_GPTK" > "$RB_STATE/muxterm.gptk" 2>> "$RB_LOG"; then
     RB_GPTK="$RB_STATE/muxterm.gptk"
