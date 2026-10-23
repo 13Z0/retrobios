@@ -76,8 +76,13 @@ It shows your setup and its BIOS folder:
 ```
 
 - **Right folder?** Go on.
-- **Wrong folder?** Press Ctrl+C. Run the command again with `--dest` and your
-  folder.
+- **Wrong folder?** Press Ctrl+C. Run the command again with your folder
+  after `--dest`:
+
+<!-- os-tabs windows: --dest D:\path\to\bios -->
+```sh
+curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh -s -- --dest ~/path/to/bios
+```
 
 ## 3. Choose what to install
 
@@ -115,7 +120,13 @@ Add `--check` to the same command. It changes nothing.
 curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh -s -- --check
 ```
 
-All good when you see `0 wrong hash`.
+All good when every file is present and none is wrong:
+
+```
+  109/109 present (109 verified, 0 wrong hash)
+```
+
+An empty folder also shows `0 wrong hash`, with `0/109 present`.
 
 ## Undo
 
@@ -127,7 +138,8 @@ BIOS folder. The end of the run prints the line that puts them back.
 ### No supported platform detected.
 
 At a terminal, a menu follows. Pick your setup by its number, then type its
-BIOS folder.
+BIOS folder, or press Enter for the usual one. A folder pasted with quotes
+around it is fine.
 
 With `--no-input`, or without a terminal, it stops and prints the command to
 use.

@@ -826,9 +826,10 @@ are PortMaster's own, so the port carries no graphics code.
 
 - From PortMaster's catalog, once the port is accepted there: open PortMaster,
   find RetroBIOS under the Other genre, install.
-- `RetroBIOS.zip`, attached to each [release](https://github.com/Abdess/retrobios/releases/latest)
-  cut since the port was added, copied into PortMaster's
-  autoinstall folder. Starting PortMaster then installs it, with or without a
+- `RetroBIOS.zip`, copied into PortMaster's autoinstall folder. The release
+  process attaches it to each [release](https://github.com/Abdess/retrobios/releases/latest)
+  cut after the port was added. Releases cut before carry none: when the
+  latest one lists no `RetroBIOS.zip`, build it from a clone (below). Starting PortMaster then installs it, with or without a
   network connection. PortMaster's FAQ names the folder: `/roms/ports/PortMaster/autoinstall/`
   on AmberELEC and ROCKNIX, `/roms/tools/PortMaster/autoinstall/` on ArkOS,
   `/mmc/MUOS/PortMaster/autoinstall/` on muOS,
