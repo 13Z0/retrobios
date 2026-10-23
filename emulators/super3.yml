@@ -18,6 +18,12 @@ systems:
   - sega-model3
 mode: standalone
 
+data_root:
+  android:
+    path: "Android/data/com.izzy2lost.super3/files/super3"
+    source_ref: "android/app/src/main/java/com/izzy2lost/super3/MainActivity.kt:501-503,1155-1161,1209-1222, android/app/src/main/java/com/izzy2lost/super3/UserDataSync.kt:10-20"
+    note: "when the user picks a folder through the storage framework, its NVRAM, Saves, Config and Flyers are copied into this root before each launch"
+
 notes: |
   Sega Model 3 emulator for Android, package com.izzy2lost.super3, versionName 1.2.1
   versionCode 22, arm64-v8a alone, minSdk 26 and targetSdk 36, GPL-3.0 with the tree in
