@@ -66,6 +66,25 @@ const packs = Object.fromEntries(
 
 	const INSTALL = 'curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh -s --';
 	const MAX_ROWS = 500;
+	// A word that holds a hyphen (--platform, nintendo-64dd) never breaks
+	// inside: the same rule as the command blocks (ec-unbroken-tokens.mjs).
+	// Only spans are added, the text copied is the command itself.
+	const UNBROKEN = /(?<!\S)(?=\S*-)\S{1,48}(?!\S)/g;
+
+	const showCommand = (target: HTMLElement, command: string) => {
+		const nodes: (Node | string)[] = [];
+		let last = 0;
+		for (const match of command.matchAll(UNBROKEN)) {
+			nodes.push(command.slice(last, match.index));
+			const word = document.createElement('span');
+			word.className = 'rb-nb';
+			word.textContent = match[0];
+			nodes.push(word);
+			last = match.index! + match[0].length;
+		}
+		nodes.push(command.slice(last));
+		target.replaceChildren(...nodes);
+	};
 
 	const size = (bytes: number) =>
 		bytes >= 1024 ** 3 ? `${(bytes / 1024 ** 3).toFixed(1)} GB`
@@ -107,7 +126,7 @@ const packs = Object.fromEntries(
 				? `${count(files.length)} files, ${size(total)}, for ${count(picked.length)} of ${count(data.systems.length + (data.other ? 1 : 0))} choices. Folder: ${data.folder || 'the setup BIOS folder'}.`
 				: 'Choose at least one system.';
 			output.hidden = !picked.length;
-			cmd.textContent = `${INSTALL} --platform ${data.platform}${all ? '' : ` --system ${picked.join(',')}`}`;
+			showCommand(cmd, `${INSTALL} --platform ${data.platform}${all ? '' : ` --system ${picked.join(',')}`}`);
 			tbody.replaceChildren(...files.slice(0, MAX_ROWS).map(([dest, bytes]) => {
 				const row = document.createElement('tr');
 				const where = document.createElement('td');
@@ -221,7 +240,8 @@ const packs = Object.fromEntries(
 	.rb-picker .rb-pick-systems-head { display: flex; gap: 0.5rem; align-items: center; }
 	.rb-picker .rb-pick-systems-head > * { margin: 0; }
 	.rb-picker .rb-pick-filter { width: 100%; margin: 0.5rem 0; }
-	.rb-picker .rb-pick-cmd code { white-space: pre-wrap; overflow-wrap: anywhere; }
+	.rb-picker .rb-pick-cmd code { white-space: pre-wrap; overflow-wrap: break-word; }
+	.rb-picker .rb-pick-cmd .rb-nb { white-space: nowrap; }
 	.rb-picker .rb-pick-result { margin-top: 1rem; font-weight: 600; }
 	.rb-picker fieldset {
 		flex-direction: column;

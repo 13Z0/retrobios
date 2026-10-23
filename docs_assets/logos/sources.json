@@ -2,7 +2,7 @@
   "note": "Each platform's own logo, owned by its project and shown only to name that platform. Copied once by scripts/fetch_site_images.py.",
   "images": [
     {
-      "file": "amberelec.png",
+      "file": "amberelec.webp",
       "platform": "amberelec",
       "source": "https://avatars.githubusercontent.com/u/102820909",
       "owner": "AmberELEC",
@@ -16,28 +16,28 @@
       "licence": "repository licence MIT"
     },
     {
-      "file": "bizhawk.png",
+      "file": "bizhawk.webp",
       "platform": "bizhawk",
       "source": "https://avatars.githubusercontent.com/u/11743303",
       "owner": "TASVideos",
       "licence": "GitHub organisation avatar of TASEmulators"
     },
     {
-      "file": "emudeck.png",
+      "file": "emudeck.webp",
       "platform": "emudeck",
       "source": "https://raw.githubusercontent.com/dragoonDorise/EmuDeck/main/icons/EmuDeck.png",
       "owner": "EmuDeck",
       "licence": "repository licence GPL-3.0"
     },
     {
-      "file": "emuelec.png",
+      "file": "emuelec.webp",
       "platform": "emuelec",
       "source": "https://avatars.githubusercontent.com/u/57574835",
       "owner": "EmuELEC",
       "licence": "GitHub organisation avatar of EmuELEC"
     },
     {
-      "file": "knulli.png",
+      "file": "knulli.webp",
       "platform": "knulli",
       "source": "https://avatars.githubusercontent.com/u/166268572",
       "owner": "KNULLI",
@@ -51,21 +51,21 @@
       "licence": "file from libretro/retroarch-assets, CC-BY-4.0"
     },
     {
-      "file": "minui.png",
+      "file": "minui.webp",
       "platform": "minui",
       "source": "https://avatars.githubusercontent.com/u/225589",
       "owner": "Shaun Inman",
       "licence": "GitHub avatar of shauninman, the author of MinUI"
     },
     {
-      "file": "misterfpga.png",
+      "file": "misterfpga.webp",
       "platform": "misterfpga",
       "source": "https://avatars.githubusercontent.com/u/29345272",
       "owner": "MiSTer FPGA",
       "licence": "GitHub organisation avatar of MiSTer-devel"
     },
     {
-      "file": "nextui.png",
+      "file": "nextui.webp",
       "platform": "nextui",
       "source": "https://avatars.githubusercontent.com/u/202386615",
       "owner": "LoveRetro",
@@ -86,7 +86,7 @@
       "licence": "repository licence GPL-3.0"
     },
     {
-      "file": "retrobat.png",
+      "file": "retrobat.webp",
       "platform": "retrobat",
       "source": "https://raw.githubusercontent.com/RetroBat-Official/retrobat/main/system/resources/retrobat_logo_notext.png",
       "owner": "RetroBat",
@@ -100,21 +100,21 @@
       "licence": "repository licence GPL-3.0"
     },
     {
-      "file": "retropie.png",
+      "file": "retropie.webp",
       "platform": "retropie",
       "source": "https://avatars.githubusercontent.com/u/11378204",
       "owner": "RetroPie",
       "licence": "GitHub organisation avatar of RetroPie"
     },
     {
-      "file": "rocknix.png",
+      "file": "rocknix.webp",
       "platform": "rocknix",
       "source": "https://avatars.githubusercontent.com/u/163176886",
       "owner": "ROCKNIX",
       "licence": "GitHub organisation avatar of ROCKNIX"
     },
     {
-      "file": "romm.png",
+      "file": "romm.webp",
       "platform": "romm",
       "source": "https://avatars.githubusercontent.com/u/164058018",
       "owner": "RomM",

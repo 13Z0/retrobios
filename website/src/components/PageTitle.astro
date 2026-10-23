@@ -1,9 +1,16 @@
 ---
 // Breadcrumbs, the level label and the title. The trail says which tab a
-// deep page belongs to; the label says who the page is written for, and is
-// left out where the first crumb already names that tab. A page with a
-// `logo` (a path under the site root) shows it beside its title.
+// deep page belongs to, and the label says who the page is written for. The
+// label is left out where the header tab already says it: on a tab's own
+// page, and where the first crumb names that tab. A page with a `logo` (a
+// path under the site root) shows it beside its title, on a white square so
+// a dark mark stays visible in the dark theme. A setup page with no logo file
+// gets its initials in the same square, as its tile does (sitemarkup.py
+// platform_tiles).
+import setups from '../../public/data/picker/index.json';
+
 const PAGE_TITLE_ID = '_top';
+const MARK = 40;
 
 const LABELS = {
 	start: 'Start here',
@@ -22,11 +29,19 @@ const TABS = {
 	contribute: 'Contribute',
 } as const;
 
-const { title, level, logo } = Astro.locals.starlightRoute.entry.data;
+// Up to two capitals of a name: MyMinUI is MM (sitemarkup.initials).
+const initials = (name: string): string => {
+	const capitals = [...name].filter((c) => c !== c.toLowerCase());
+	return capitals.slice(0, 2).join('') || name.slice(0, 2).toUpperCase();
+};
+
+const { id, data } = Astro.locals.starlightRoute.entry;
+const { title, level, logo } = data;
 const crumbs = Astro.locals.rbBreadcrumbs ?? [];
-const badge = level && crumbs[0]?.label !== TABS[level] && crumbs[0]?.label !== LABELS[level];
+const badge = level && crumbs.length > 0 && crumbs[0].label !== TABS[level] && crumbs[0].label !== LABELS[level];
 const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 const logoSrc = logo && (/^(https?:)?\//.test(logo) ? logo : base + logo);
+const setup = !logoSrc && setups.find((entry) => id === `platforms/${entry.platform}`);
 ---
 
 {
@@ -42,9 +57,17 @@ const logoSrc = logo && (/^(https?:)?\//.test(logo) ? logo : base + logo);
 }
 {badge && <span class={`rb-level rb-level-${level}`}>{LABELS[level]}</span>}
 {
-	logoSrc ? (
+	logoSrc || setup ? (
 		<div class="rb-title-logo">
-			<img src={logoSrc} alt="" height="40" />
+			{logoSrc ? (
+				<img class="rb-title-mark" src={logoSrc} alt="" width={MARK} height={MARK} />
+			) : (
+				<svg class="rb-title-mark" viewBox="0 0 40 40" width={MARK} height={MARK} aria-hidden="true">
+					<text x="20" y="25" text-anchor="middle" font-size="14" font-weight="700" fill="#2b2e5c">
+						{initials(setup.name)}
+					</text>
+				</svg>
+			)}
 			<h1 id={PAGE_TITLE_ID}>{title}</h1>
 		</div>
 	) : (
@@ -67,11 +90,16 @@ const logoSrc = logo && (/^(https?:)?\//.test(logo) ? logo : base + logo);
 		margin-top: 0.25rem;
 	}
 	.rb-title-logo h1 { margin-top: 0; }
-	.rb-title-logo img {
+	/* The tiles' square: white in both themes, a hairline, the mark inside. */
+	.rb-title-mark {
 		flex: none;
-		width: auto;
+		box-sizing: border-box;
+		width: 40px;
 		height: 40px;
-		max-width: 8rem;
+		padding: 3px;
+		border: 1px solid var(--rb-border);
+		border-radius: 6px;
+		background: #fff;
 		object-fit: contain;
 	}
 </style>
