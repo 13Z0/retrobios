@@ -8,7 +8,12 @@
 // - a pruned sidebar: in the tabs listing every system and emulator, a
 //   group that does not hold the page becomes one link to its overview, so
 //   an emulator page does not carry the links of every other emulator. The
-//   groups of the other tabs stay groups.
+//   groups of the other tabs stay groups;
+// - a part page (one console of a setup's list) names the page it belongs
+//   to in its `parent:` front matter: that page is its last crumb, and its
+//   sidebar entry is marked when the part page has none of its own;
+// - a page's "Next steps" link is its next only when it reads forward: one
+//   pointing back to an earlier page of the run made Start here loop.
 import { defineRouteMiddleware, type StarlightRouteData } from '@astrojs/starlight/route-data';
 import sidebar from './generated/sidebar.json' with { type: 'json' };
 
@@ -69,6 +74,18 @@ const folderTrail = (entries: Entry[], labels: string[], folder: string): Crumb[
 	return [];
 };
 
+// The parent's entry marked current, for a page the sidebar does not list.
+const markCurrent = (entries: Entry[], href: string): Entry[] =>
+	entries.map((entry) =>
+		entry.type === 'link'
+			? entry.href === href
+				? { ...entry, isCurrent: true }
+				: entry
+			: { ...entry, entries: markCurrent(entry.entries, href) },
+	);
+
+const bare = (link: string) => withBase(link).replace(/[?#].*$/, '');
+
 const asLink = (entry: { label: string; link: string }): Link => ({
 	type: 'link',
 	label: entry.label,
@@ -84,6 +101,8 @@ export const onRequest = defineRouteMiddleware(async (context, next) => {
 	const path = context.url.pathname;
 
 	const topic = context.locals.starlightSidebarTopics?.topics.find((t) => t.isCurrent);
+	const parent = route.entry.data.parent;
+	if (parent && !route.sidebar.some(holdsCurrent)) route.sidebar = markCurrent(route.sidebar, bare(parent.link));
 	const crumbs: Crumb[] = [];
 	if (topic && withBase(topic.link) !== path && route.id !== '404') {
 		crumbs.push({ label: topic.label, href: withBase(topic.link) });
@@ -98,6 +117,10 @@ export const onRequest = defineRouteMiddleware(async (context, next) => {
 			if (crumb.href && crumb.href === crumbs.at(-1)?.href) continue;
 			crumbs.push(crumb);
 		}
+		const parentHref = parent ? withBase(parent.link) : undefined;
+		if (parent && parentHref !== path && parentHref !== crumbs.at(-1)?.href) {
+			crumbs.push({ label: parent.label, href: parentHref });
+		}
 	}
 	context.locals.rbBreadcrumbs = crumbs;
 
@@ -105,7 +128,12 @@ export const onRequest = defineRouteMiddleware(async (context, next) => {
 	const run = RUNS.find((pages) => pages.some((entry) => withBase(entry.link) === path));
 	const position = run ? run.findIndex((entry) => withBase(entry.link) === path) : -1;
 	if (prev === undefined) route.pagination.prev = run && position > 0 ? asLink(run[position - 1]) : undefined;
-	if (following === undefined) route.pagination.next = run && position < run.length - 1 ? asLink(run[position + 1]) : undefined;
+	const inOrder = run && position < run.length - 1 ? asLink(run[position + 1]) : undefined;
+	if (following === undefined) route.pagination.next = inOrder;
+	else if (run && typeof following === 'object' && following.link) {
+		const target = run.findIndex((entry) => bare(entry.link) === bare(following.link));
+		if (target !== -1 && target <= position) route.pagination.next = inOrder;
+	}
 
 	route.sidebar = prune(route.sidebar, [topic?.label ?? '']);
 });

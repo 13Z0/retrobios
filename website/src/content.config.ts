@@ -19,6 +19,9 @@ export const collections = {
 				// A mark drawn beside the title (a platform's logo), a path under
 				// the site root such as assets/logos/batocera.svg.
 				logo: z.string().optional(),
+				// The page a part page belongs to (a console of a setup's list),
+				// read by routeData.ts: the last crumb, marked in the sidebar.
+				parent: z.object({ label: z.string(), link: z.string() }).optional(),
 			}),
 		}),
 	}),
