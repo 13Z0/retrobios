@@ -526,6 +526,11 @@ EVENT_KEYS: dict[str, tuple[str, ...]] = {
     "checking": ("files_done", "files_total"),
     "check": ("platform", "name", "bios_dir", "files", "present", "missing",
               "wrong_hash", "bytes_needed", "data_missing", "not_installable"),
+    # Right after check: the same counts over the files the platform's own
+    # list declares (cores: null), and their dests in file-event order. A
+    # kind of its own, since schema 1 never adds a key to the file event.
+    "declared": ("platform", "files", "present", "missing", "wrong_hash",
+                 "bytes_needed", "dests"),
     # A file to install that this machine already holds: misplaced in the
     # BIOS folder (folder is its bios_dir, reason says why in words) or in
     # a folder named with --from (reason empty). member names the ZIP member
@@ -616,7 +621,8 @@ def _emit_check(
     mismatched: list[dict], data_missing: int, not_installable: int,
     chosen: list[str] | None = None,
 ) -> None:
-    """One event per file, per system and per platform after a check.
+    """One event per file, per system and per platform after a check, then
+    one for the files of the platform's own list.
 
     With systems chosen, only those are described: a file of SkyEmu's
     carries four systems, and --system nintendo-gba described gb, gbc and
@@ -654,6 +660,15 @@ def _emit_check(
         bytes_needed=sum(entry.get("size", 0) for entry in needed),
         data_missing=data_missing, not_installable=not_installable,
     )
+    own = [entry for entry in files if entry.get("cores") is None]
+    own_needed = [entry for entry in own if id(entry) not in present]
+    own_wrong = sum(1 for entry in own if id(entry) in wrong)
+    EVENTS.emit(
+        "declared", platform=plat, files=len(own), present=len(own) - len(own_needed),
+        missing=len(own_needed) - own_wrong, wrong_hash=own_wrong,
+        bytes_needed=sum(entry.get("size", 0) for entry in own_needed),
+        dests=[entry["dest"] for entry in own],
+    )
 
 
 def leave_out_game_data(
@@ -670,6 +685,22 @@ def leave_out_game_data(
         [e for e in omitted if e.get("category") != GAME_DATA],
         left_out,
     )
+
+
+def keep_declared(files: list[dict], omitted: list[dict]) -> tuple[list[dict], list[dict]]:
+    """The files and omissions the platform's own list declares (cores: null).
+
+    A slot a core contradicts gets the platform's copy, and no core copy
+    stays behind as an alternative: narrowing by cores afterwards would
+    otherwise put a core's file back where a dropped system's was.
+    """
+    def own(entries: list[dict]) -> list[dict]:
+        return [
+            {k: v for k, v in _settle_slot(entry, set()).items() if k != "alternatives"}
+            for entry in entries if entry.get("cores") is None
+        ]
+
+    return own(files), own(omitted)
 
 
 def _left_out_lines(left_out: list[dict], every: bool) -> list[str]:
@@ -2340,7 +2371,7 @@ SYSTEM_SHORT_NAMES = {
                      "supergrafx"), "nec-pc-engine"),
     **dict.fromkeys(("pcecd", "tgcd", "turbografxcd"), "nec-pc-engine-cd"),
     "pcfx": "nec-pc-fx",
-    **dict.fromkeys(("mvs", "aes"), "snk-neogeo"),
+    **dict.fromkeys(("neogeo", "mvs", "aes"), "snk-neogeo"),
     **dict.fromkeys(("neocd", "neogeocd"), "snk-neogeo-cd"),
     **dict.fromkeys(("msx", "msx2"), "microsoft-msx"),
     "c64": "commodore-c64", "c128": "commodore-c128",
@@ -2354,17 +2385,44 @@ SYSTEM_SHORT_NAMES = {
     "cpc": "amstrad-cpc", "bbc": "acorn-bbc-micro", "apple2": "apple-ii",
 }
 
+# A system some lists file under another id, by the file that stands for it.
+# The Neo Geo card offers --system snk-neogeo, and RetroArch's list keeps
+# neogeo.zip under arcade: the run suggests arcade, never takes it.
+SYSTEM_KEY_FILES = {"snk-neogeo": "neogeo.zip"}
+
+
+def key_file_holders(files: list[dict], omitted: list[dict]) -> dict[str, list[str]]:
+    """The systems a list files each SYSTEM_KEY_FILES file under, for the
+    systems the list does not name itself."""
+    entries = files + omitted
+    known = {system for entry in entries for system in entry_systems(entry)}
+    holders: dict[str, list[str]] = {}
+    for system, name in SYSTEM_KEY_FILES.items():
+        if system in known:
+            continue
+        held = sorted({
+            holder for entry in entries
+            if PurePosixPath(str(entry.get("dest", ""))).name.lower() == name
+            for holder in entry_systems(entry)
+        })
+        if held:
+            holders[system] = held
+    return holders
+
 
 def did_you_mean(
     typed: list[str], known: list[str], listing: str,
     aliases: dict[str, str] | None = None, inside_from: int = 4,
+    meant: dict[str, list[str]] | None = None,
 ) -> str:
     """The closest known names to what was typed, and the option listing them all.
 
     A typo was answered with every name the platform has, up to 400 on one
     line, with no hint that playstation is sony-playstation. An alias close
     to what was typed suggests the name it stands for. A name holding what
-    was typed, inside_from letters or more, is suggested too.
+    was typed, inside_from letters or more, is suggested too. meant gives,
+    by the letters and digits of a typed name, the names it stands for
+    here, suggested instead of the close ones.
     """
     import difflib  # noqa: PLC0415
 
@@ -2377,6 +2435,9 @@ def did_you_mean(
     for word in typed:
         key = _name_key(word)
         if not key:
+            continue
+        if meant and key in meant:
+            close += [name for name in meant[key] if name not in close]
             continue
         matches = difflib.get_close_matches(key, list(by_key), n=3, cutoff=0.6)
         if len(key) >= inside_from:
@@ -3617,6 +3678,7 @@ def available_choices(files: list[dict], omitted: list[dict]) -> dict[str, list[
 def resolve_choices(
     values: list[str], known: list[str], label: str,
     aliases: dict[str, str] | None = None,
+    holders: dict[str, list[str]] | None = None,
 ) -> list[str]:
     """Names given on the command line, matched without regard to case.
 
@@ -3626,6 +3688,8 @@ def resolve_choices(
     carrying on would install something other than what was asked.
     aliases maps another name of a known one to it, as Batocera's `psx`
     stands for sony-playstation. A known name always wins over an alias.
+    holders maps a system the list files under other ids to those ids
+    (key_file_holders): an unknown name for it is answered with them.
     """
     aliases = {alias: name for alias, name in (aliases or {}).items() if name in known}
     by_lower = {name.lower(): name for name in known}
@@ -3658,14 +3722,28 @@ def resolve_choices(
         listing = {"system": "--list-systems", "emulator": "--list-emulators"}.get(
             label, "--list-cores")
         hints, inside_from = aliases, 4
+        held = holders or {}
+        stands_for: dict[str, str] = {}
+        notes = ""
         if label == "system":
             # gba is the end of nintendo-gba: three letters are enough here.
             hints = {**{short: name for short, name in SYSTEM_SHORT_NAMES.items()
                         if name in known}, **aliases}
             inside_from = 3
+            stands_for = {_name_key(system): system for system in held}
+            for short, name in SYSTEM_SHORT_NAMES.items():
+                if name in held:
+                    stands_for.setdefault(_name_key(short), name)
+            named = dict.fromkeys(
+                stands_for[_name_key(token)] for token in unknown
+                if _name_key(token) in stands_for)
+            notes = "".join(
+                f"This list files {SYSTEM_KEY_FILES[system]} under "
+                f"{', '.join(held[system])}. " for system in named)
+        meant = {key: held[system] for key, system in stands_for.items()}
         raise ValueError(
-            f"unknown {label}: {', '.join(unknown)}. "
-            f"{did_you_mean(unknown, known, listing, hints, inside_from)}"
+            f"unknown {label}: {', '.join(unknown)}. {notes}"
+            f"{did_you_mean(unknown, known, listing, hints, inside_from, meant)}"
         )
     if values and not chosen:
         raise ValueError(f"--{label} needs at least one name")
@@ -4696,6 +4774,7 @@ class Invocation:
             ("--every-board", args.every_board),
             ("--installed-cores", args.installed_cores and not args.cores_dir),
             ("--no-game-data", args.no_game_data),
+            ("--declared-only", args.declared_only),
             ("--standalone-copies", args.standalone_copies),
             ("--check", args.check),
             ("--dry-run", args.dry_run),
@@ -5972,12 +6051,27 @@ def _same_choice_hint(plat: str, systems: list[str], cores: list[str], regions: 
 
 
 def system_aliases(manifest: dict | None) -> dict[str, str]:
-    """The platform's own names for its systems, each with the system id."""
-    return {
+    """The platform's own names for its systems, then the titles the site
+    and the installer print (SNK Neo Geo CD), each with the system id.
+
+    A title two systems share names neither, and the platform's own name
+    wins over a title spelled the same.
+    """
+    aliases = {
         alias: system
         for system, names in ((manifest or {}).get("system_names") or {}).items()
         for alias in names
     }
+    taken = {_name_key(alias) for alias in aliases}
+    titles = (manifest or {}).get("system_titles") or {}
+    counts: dict[str, int] = {}
+    for title in titles.values():
+        counts[_name_key(title)] = counts.get(_name_key(title), 0) + 1
+    for system, title in titles.items():
+        key = _name_key(title)
+        if key and counts[key] == 1 and key not in taken:
+            aliases[title] = system
+    return aliases
 
 
 def _system_label(name: str, manifest: dict | None) -> str:
@@ -6214,7 +6308,8 @@ def _requested_narrowing(
     choices = available_choices(files, omitted)
     try:
         systems = resolve_choices(
-            args.system or [], choices["systems"], "system", system_aliases(manifest)
+            args.system or [], choices["systems"], "system", system_aliases(manifest),
+            key_file_holders(files, omitted),
         )
         cores = resolve_choices(args.core or [], choices["cores"], "core")
         regions = resolve_regions(args.region or [])
@@ -7816,6 +7911,12 @@ def main() -> None:
              "install the firmware only",
     )
     parser.add_argument(
+        "--declared-only",
+        action="store_true",
+        help="keep only the files the platform's own list names, not the extra "
+             "files cores load: --check then answers for the list the platform checks",
+    )
+    parser.add_argument(
         "--list-systems",
         action="store_true",
         help="list a platform's systems with their file counts and exit",
@@ -7941,6 +8042,23 @@ def main() -> None:
         parser.error("--quiet applies to an install, not to --check, --dry-run or a listing")
     if args.tui and args.plain:
         parser.error("--tui and --plain ask for two different interfaces")
+    if args.declared_only:
+        # Applied or refused, never ignored.
+        for given, reason in (
+            (args.tui, "the full-screen interface has no choice for --declared-only"),
+            (args.list_platforms or args.list_targets,
+             "--declared-only narrows a file list, not --list-platforms or --list-targets"),
+            (args.core or args.list_cores,
+             "--declared-only leaves out the files cores load, which --core and "
+             "--list-cores choose among"),
+            (args.list_emulators,
+             "--list-emulators names emulators, and --declared-only narrows files"),
+            (args.standalone_copies,
+             "--standalone-copies copies into standalone emulators' folders, outside "
+             "the platform's own list that --declared-only keeps"),
+        ):
+            if given:
+                parser.error(reason)
     if args.tui:
         reason = tui_blocker(args)
         if reason:
@@ -7953,7 +8071,7 @@ def main() -> None:
         alone = ("platform", "dest", "target", "every_board", "check", "list_platforms",
                  "list_targets", "standalone_copies", "emulator", "installed_cores",
                  "cores_dir", "save_dir", "system", "core", "region", "no_game_data",
-                 "list_systems",
+                 "declared_only", "list_systems",
                  "list_cores", "romm_firmware", "list_emulators", "events", "quiet",
                  "yes", "verbose", "from_pack", "manifest", "from")
         given = [name for name in alone if getattr(args, name)]
@@ -7980,7 +8098,9 @@ def main() -> None:
     if args.no_game_data and (args.list_platforms or args.list_targets):
         parser.error("--no-game-data narrows a file list, not --list-platforms "
                      "or --list-targets")
-    if args.tui or not (plain_requested(args) or tui_blocker(args)):
+    # The screens have no choice for --declared-only: the questions ask the
+    # rest, and the run keeps the platform's own list.
+    if args.tui or not (plain_requested(args) or args.declared_only or tui_blocker(args)):
         sys.exit(run_tui(args))
     if args.events:
         # The events own stdout. The text a person reads goes to stderr, so a
@@ -8361,7 +8481,7 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
             # which the file lists name: an ES-DE user with DuckStation and
             # PCSX2 was sent to RetroArch's folder, which nothing here reads.
             narrowing = (args.system or args.core or args.emulator or args.region
-                         or args.target or args.installed_cores)
+                         or args.target or args.installed_cores or args.declared_only)
             if not listing and not narrowing and _install_standalone_folders(
                 args, os_type, term, interactive
             ):
@@ -8522,6 +8642,12 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                 for line in _left_out_lines(left_out, args.verbose):
                     print(line)
 
+        if args.declared_only:
+            before = len(files)
+            files, omitted_files = keep_declared(files, omitted_files)
+            print(f"  The platform's own list: {before} -> {len(files)} files "
+                  "(--declared-only)")
+
         if args.list_targets:
             targets = fetch_targets(plat_name)
             if targets is None:
@@ -8640,13 +8766,15 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                 files, omitted_files = installed
                 print("\n  Same choice without questions: "
                       f"--platform {plat_name} --installed-cores"
-                      + (" --no-game-data" if args.no_game_data else ""))
+                      + (" --no-game-data" if args.no_game_data else "")
+                      + (" --declared-only" if args.declared_only else ""))
                 _INVOCATION.chosen[plat_name] = [("--installed-cores", None)]
                 selection = None
             elif selection is not None:
                 print("\n  Same choice without questions: "
                       + _same_choice_hint(plat_name, *selection)
-                      + (" --no-game-data" if args.no_game_data else ""))
+                      + (" --no-game-data" if args.no_game_data else "")
+                      + (" --declared-only" if args.declared_only else ""))
                 systems, cores, regions = selection
                 _INVOCATION.chosen[plat_name] = [
                     *(("--system", name) for name in systems),
@@ -8746,7 +8874,7 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
 
         narrowed = bool(
             target or args.system or args.core or args.region or args.installed_cores
-            or len(files) + game_data_cut + len(unplaced)
+            or args.declared_only or len(files) + game_data_cut + len(unplaced)
             != len(manifest.get("files", [])) + len(variants if case_kept else [])
         )
         data_dirs = select_data_directories(manifest, files, narrowed)

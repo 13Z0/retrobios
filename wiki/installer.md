@@ -630,11 +630,12 @@ what the options name, everything by default.
 | `--installed-cores` | Keep only what the cores already installed read (RetroArch, Lakka, RetroPie). See [Installed cores](#installed-cores) |
 | `--cores-dir PATH` | The folder RetroArch loads its cores from, for `--installed-cores` when it is not found. Implies `--installed-cores` |
 | `--save-dir PATH` | The frontend's save directory (RetroArch's `savefile_directory`), for the files some cores read there, when the run cannot find it. The core's own folder is still added below it when the frontend sorts saves by core |
-| `--system NAMES` | Install only these systems. Comma-separated or repeated. `--list-systems` prints the names, `other` included. A short name the platform does not use (`gba`, `psx`) is refused with the ids it may stand for, never taken in their place |
+| `--system NAMES` | Install only these systems. Comma-separated or repeated. `--list-systems` prints the names, `other` included, and the title a system is printed with is taken too. A short name the platform does not use (`gba`, `psx`) is refused with the ids it may stand for, never taken in their place. So is an id the list files under another one: RetroArch keeps `neogeo.zip` under `arcade`, which `--system snk-neogeo` suggests |
 | `--core NAMES` | Keep the platform's own list and only the extra files these cores load. `--list-cores` prints the names |
 | `--emulator NAMES` | Install what these emulators read on the detected platform, and nothing else: their own files and the platform's files of the systems they run. Each emulator page on the site gives this command. `--list-emulators` prints the names, buildbot names such as `mednafen_psx` included |
 | `--region LIST` | Preferred regions, best first (`us,eu,jp`): keep one BIOS per region where a system has several. Accepts the names and aliases of `generate_pack.py --region` |
 | `--no-game-data` | Leave out game data (a game's own files, not firmware) and install the firmware only. What it leaves out is named. See [Firmware without game data](#firmware-without-game-data) |
+| `--declared-only` | Keep only the files the platform's own list names (`cores: null` in the manifest), not the extra files cores load. With `--check`, the answer is about the list the platform itself checks. Refused with `--core`, the listings it does not change, `--standalone-copies` and `--tui` |
 | `--list-systems` | Print a platform's systems with the files and size each holds, the files other systems share too counted apart |
 | `--list-cores` | Print the cores whose extra files a platform installs |
 | `--list-emulators` | Print every name `--emulator` accepts, each buildbot name beside the emulator it stands for |
@@ -1186,7 +1187,10 @@ the text a person reads goes to standard error. A program driving the installer
 (the [handheld port](#on-a-handheld-the-retrobios-port) is one) reads the
 objects and never parses the text. Every object has an `event` key naming its
 kind, and each kind has exactly the keys below, in this order. The schema is
-`EVENT_KEYS` in `install.py`, and a test holds this table to it.
+`EVENT_KEYS` in `install.py`, and a test holds this table to it. The same
+keys, with their types, are in `schemas/install-events.schema.json`, written
+from `EVENT_KEYS` by `scripts/generate_event_schema.py` and published with the
+other schemas under `api/v1/schemas/`.
 
 | Kind | Keys | When |
 |------|------|------|
@@ -1198,6 +1202,7 @@ kind, and each kind has exactly the keys below, in this order. The schema is
 | `file` | `platform`, `dest`, `systems`, `size`, `state` | Each file of the list after the check. `state` is `present` (hash verified), `wrong_hash` or `missing` |
 | `system` | `platform`, `system`, `name`, `files`, `present`, `missing`, `wrong_hash`, `bytes_needed` | Each system, sorted by id, and with `--system` only the systems named. Files with no system count under `other`. `name` is the platform's own name for it |
 | `check` | `platform`, `name`, `bios_dir`, `files`, `present`, `missing`, `wrong_hash`, `bytes_needed`, `data_missing`, `not_installable` | The platform's totals. `data_missing` counts data-tree files to fetch, `not_installable` the files the collection cannot supply |
+| `declared` | `platform`, `files`, `present`, `missing`, `wrong_hash`, `bytes_needed`, `dests` | Right after `check`, the same counts over the files the platform's own list names (`cores: null`), and their `dests` in the order of the `file` events. A setup that checks its own list reads its answer here, with or without `--declared-only` |
 | `found` | `platform`, `dest`, `folder`, `path`, `member`, `reason` | Each file to install that this machine already holds, after `check` and before anything is written, in `--check` and `--dry-run` too. `folder` is the `--from` folder as given, or the `bios_dir` of the check when the BIOS folder holds the file at another place, and then `reason` says where in words (`nested folder: ...` for a misplaced file, `the same file is at ...` for one the list installs there too). `path` is the file, and `member` the ZIP member holding the bytes when `path` is an archive, an empty string otherwise. Its copy is reported by a `downloaded` event |
 | `unreadable` | `platform`, `folder`, `path`, `member`, `reason` | Each file in a `--from` folder that could not be read and may be one the run still needs, right after the `found` events: its size is that of a file no copy was found for, or unknown (a folder that could not be listed, a ZIP that would not open). `member` names the ZIP member, or is empty. `reason` says why in words (`Permission denied`, `it is encrypted, a password is needed`) |
 | `download` | `platform`, `files`, `bytes` | Before the downloads start. Counts the files copied from this machine too |
@@ -1207,7 +1212,7 @@ kind, and each kind has exactly the keys below, in this order. The schema is
 | `summary` | `mode`, `installed`, `up_to_date`, `pending`, `failed`, `skipped`, `left_out`, `kept`, `interrupted` | The outcome. `pending` counts what a next run would still fetch, `failed` lists `{dest, reason}`, `skipped` lists `{reason, label, files, required}` for the files the collection cannot supply, `left_out` lists `{category, label, files, dests}` for what `--no-game-data` left out, and is empty without it. `kept` lists `{folder, files, bytes}`, one per backup folder, for the files in place the run moved aside before replacing them (with `--dry-run`, would move), and is empty when none. Not written for a listing |
 | `end` | `code` | Last line, with the exit status the process returns (see [Exit status](#exit-status)) |
 
-Schema 1 can gain a kind (`found` came with `--from`), never a key of an
+Schema 1 can gain a kind (`found` came with `--from`, `declared` with `--declared-only`), never a key of an
 existing kind: a reader skips a kind it does not know. An option refused
 before the run starts (`install.py: error:`, code 2) writes
 no event at all. A program reads a missing `end` as that case.

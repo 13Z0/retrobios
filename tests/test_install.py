@@ -3864,6 +3864,7 @@ class HintsGiveTheUsersOwnCommandBack(unittest.TestCase):
             system=None, core=None, emulator=None, region=None, target=None,
             cores_dir=None, every_board=False, installed_cores=False,
             standalone_copies=False, check=False, dry_run=False, no_game_data=False,
+            declared_only=False,
         )
         flags = list(argv)
         while flags:
@@ -3907,6 +3908,13 @@ class HintsGiveTheUsersOwnCommandBack(unittest.TestCase):
             advice = install._write_advice(Path("/media/ro"), False, "retroarch")
         self.assertIn("| sudo sh -s -- --platform retroarch --dest /media/ro "
                       "--system atari-lynx --region us", advice)
+
+    def test_the_platforms_own_list_is_kept_in_the_hint(self):
+        self._record("--declared-only", "--system", "atari-lynx")
+        install._INVOCATION.os_type = "linux"
+        with unittest.mock.patch.dict(os.environ, {"RETROBIOS_BOOTSTRAP": ""}):
+            command = install._INVOCATION.command("retroarch", None)
+        self.assertIn("--system atari-lynx --declared-only", command)
 
     def test_windows_has_no_sudo(self):
         self._record("--system", "atari-lynx")
@@ -5070,6 +5078,10 @@ class EventsDescribeTheRun(unittest.TestCase, _SyntheticTree):
              "bios_dir": str(self.bios), "files": 4, "present": 1, "missing": 2,
              "wrong_hash": 1, "bytes_needed": 245, "data_missing": 0,
              "not_installable": 1},
+            # Every file of this list is the platform's own (cores: null).
+            {"event": "declared", "platform": "retroarch", "files": 4, "present": 1,
+             "missing": 2, "wrong_hash": 1, "bytes_needed": 245,
+             "dests": ["a.bin", "b.bin", "c.bin", "d.bin"]},
         ]
 
     SKIPPED = [{"reason": "not_found", "label": "not found", "files": 1, "required": 1}]
@@ -5152,6 +5164,70 @@ class EventsDescribeTheRun(unittest.TestCase, _SyntheticTree):
             self.assertIsNotNone(row, kind)
             for key in keys:
                 self.assertIn(f"`{key}`", row, f"{kind}.{key}")
+
+    def test_a_run_is_valid_against_the_published_schema(self):
+        try:
+            from jsonschema import Draft202012Validator  # noqa: PLC0415
+        except ImportError:
+            self.skipTest("jsonschema is not installed")
+        schema = json.loads(EVENT_SCHEMA_PATH.read_text(encoding="utf-8"))
+        validator = Draft202012Validator(schema)
+        for argv in (("--check",), ()):
+            _proc, events = self._run(*argv)
+            for event in events:
+                errors = [error.message for error in validator.iter_errors(event)]
+                self.assertEqual(errors, [], event)
+        self.assertTrue(list(validator.iter_errors({"event": "file", "platform": "x"})))
+        self.assertTrue(list(validator.iter_errors(
+            {"event": "end", "code": 0, "extra": 1})))
+
+
+EVENT_SCHEMA_PATH = REPO_ROOT / "schemas" / "install-events.schema.json"
+
+
+class TheEventSchemaFileIsEventKeys(unittest.TestCase):
+    """The table in the wiki was the only description of --events a reader
+    outside Python could check a stream against."""
+
+    def _generator(self):
+        sys.path.insert(0, str(REPO_ROOT / "scripts"))
+        import generate_event_schema  # noqa: PLC0415
+
+        return generate_event_schema
+
+    def test_the_committed_file_is_the_generated_one(self):
+        generator = self._generator()
+        self.assertEqual(EVENT_SCHEMA_PATH.read_text(encoding="utf-8"),
+                         generator.render(generator.build_schema()),
+                         "run python scripts/generate_event_schema.py")
+
+    def test_each_kind_has_exactly_its_keys(self):
+        schema = json.loads(EVENT_SCHEMA_PATH.read_text(encoding="utf-8"))
+        self.assertEqual(schema["properties"]["event"]["enum"], list(install.EVENT_KEYS))
+        for kind, keys in install.EVENT_KEYS.items():
+            shape = schema["$defs"][kind]
+            self.assertEqual(shape["required"], ["event", *keys], kind)
+            self.assertEqual(list(shape["properties"]), ["event", *keys], kind)
+            self.assertIs(shape["additionalProperties"], False, kind)
+        start = schema["$defs"]["start"]["properties"]["schema"]
+        self.assertEqual(start, {"const": install.EVENT_SCHEMA})
+
+    def test_a_key_without_a_type_stops_the_generator(self):
+        generator = self._generator()
+        with unittest.mock.patch.dict(install.EVENT_KEYS, {"new": ("untyped_key",)}), \
+                unittest.mock.patch.object(generator, "EVENT_KEYS", install.EVENT_KEYS), \
+                self.assertRaises(KeyError):
+            generator.build_schema()
+
+    def test_the_check_command_fails_on_a_stale_file(self):
+        generator = self._generator()
+        scratch = Path(_tempdir(self)) / "events.schema.json"
+        scratch.write_text("{}\n", encoding="utf-8")
+        with contextlib.redirect_stdout(io.StringIO()), \
+                contextlib.redirect_stderr(io.StringIO()):
+            self.assertEqual(generator.main(["--check", "--output", str(scratch)]), 1)
+            self.assertEqual(generator.main(["--output", str(scratch)]), 0)
+            self.assertEqual(generator.main(["--check", "--output", str(scratch)]), 0)
 
 
 class NetworkFailuresInPlainWords(unittest.TestCase):

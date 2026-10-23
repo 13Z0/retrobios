@@ -1296,5 +1296,197 @@ class AnUnknownNativeNameIsRefusedBeforeAnyWork(unittest.TestCase):
         self.assertEqual(json.loads(proc.stdout)["batocera"]["systems"], ["sony-playstation"])
 
 
+class ThePlatformsOwnListAlone(unittest.TestCase):
+    """A setup that checks its own list asked --check about 14,508 files on
+    Batocera, 353 of them its own, and had no option to ask about those:
+    --declared-only keeps the entries the platform declares (cores: null)."""
+
+    FILES = [
+        {"dest": "a.bin", "size": 1, "cores": None, "systems": ["sys-a"],
+         "alternatives": [{"sha1": "2" * 40, "size": 2, "cores": ["core-b"]}]},
+        {"dest": "b.bin", "size": 1, "cores": None, "systems": ["sys-a"],
+         "sha1": "1" * 40,
+         "slot_choices": [{"sha1": "3" * 40, "size": 3, "cores": ["core-b"]}],
+         "declared_choices": [{"sha1": "1" * 40, "size": 1, "systems": ["sys-a"]}]},
+        {"dest": "core/c.bin", "size": 1, "cores": ["core-b"], "systems": ["sys-a"]},
+    ]
+    OMITTED = [
+        {"dest": "d.bin", "name": "d.bin", "system": "sys-a", "systems": ["sys-a"],
+         "required": True, "reason": "not_found", "cores": None},
+        {"dest": "core/e.bin", "name": "e.bin", "system": "sys-a", "systems": ["sys-a"],
+         "required": True, "reason": "not_found", "cores": ["core-b"]},
+    ]
+
+    def test_the_cut(self):
+        files, omitted = install.keep_declared(list(self.FILES), list(self.OMITTED))
+        self.assertEqual([f["dest"] for f in files], ["a.bin", "b.bin"])
+        self.assertEqual([o["dest"] for o in omitted], ["d.bin"])
+        # The platform answers its own slot, and no core copy is left to
+        # stand in for it when a later narrowing drops the system.
+        self.assertEqual(files[1]["sha1"], "1" * 40)
+        for entry in files:
+            self.assertIsNone(entry["cores"])
+            self.assertFalse({"alternatives", "slot_choices", "declared_choices"} & set(entry))
+        self.assertEqual(install.available_choices(files, omitted)["cores"], [])
+
+    def test_install_check_and_dry_run_apply_it(self):
+        with FakeRepository() as repo:
+            proc = repo.run("--declared-only")
+            self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+            self.assertIn("5 -> 3 files", proc.stdout)
+            self.assertEqual(repo.installed(),
+                             ["gba_bios.bin", "scph5500.bin", "scph5501.bin"])
+        for mode in ("--check", "--dry-run"):
+            with self.subTest(mode=mode), FakeRepository() as repo:
+                proc = repo.run("--declared-only", mode)
+                self.assertIn("5 -> 3 files", proc.stdout, proc.stderr)
+                self.assertIn("0/3 present", proc.stdout)
+                self.assertEqual(repo.installed(), [])
+
+    def test_it_composes_with_the_other_narrowings(self):
+        with FakeRepository() as repo:
+            proc = repo.run("--declared-only", "--system", "sony-playstation",
+                            "--region", "us")
+            self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+            self.assertEqual(repo.installed(), ["scph5501.bin"])
+        with FakeRepository() as repo:
+            listing = repo.run("--declared-only", "--list-systems")
+            self.assertEqual(listing.returncode, 0, listing.stderr)
+            row = next(line for line in listing.stdout.splitlines()
+                       if "sony-playstation" in line)
+            self.assertIn("2 files", row)
+
+    def test_a_local_file_list_applies_it(self):
+        with FakeRepository() as repo:
+            proc = repo.run("--declared-only", "--dry-run", "--manifest",
+                            str(repo.root / "install" / "retroarch.json"))
+            self.assertEqual(proc.returncode, 0, proc.stdout + proc.stderr)
+            self.assertIn("5 -> 3 files", proc.stdout)
+
+    def test_every_mode_that_cannot_apply_it_refuses_it(self):
+        """Applied or refused, never ignored: each of these would have run
+        as if the option was not there."""
+        refused = [
+            ["--list-platforms"],
+            ["--list-targets"],
+            ["--list-cores"],
+            ["--list-emulators"],
+            ["--core", "mgba"],
+            ["--standalone-copies"],
+            ["--tui"],
+        ]
+        with FakeRepository() as repo:
+            for extra in refused:
+                with self.subTest(extra=extra):
+                    proc = repo.run("--declared-only", *extra)
+                    self.assertEqual(proc.returncode, 2, proc.stdout + proc.stderr)
+                    self.assertIn("--declared-only", proc.stderr)
+                    self.assertEqual(repo.installed(), [])
+        proc = subprocess.run(
+            [sys.executable, str(REPO_ROOT / "install.py"), "--restore",
+             str(REPO_ROOT / "tmp"), "--declared-only"],
+            capture_output=True, text=True, timeout=60, check=False,
+            stdin=subprocess.DEVNULL)
+        self.assertEqual(proc.returncode, 2)
+        self.assertIn("takes no --declared-only", proc.stderr)
+
+    def test_events_count_the_platforms_own_files(self):
+        with FakeRepository() as repo:
+            proc = repo.run("--check", "--events")
+            events = [json.loads(line) for line in proc.stdout.splitlines()]
+            declared = [e for e in events if e["event"] == "declared"]
+            self.assertEqual(declared, [{
+                "event": "declared", "platform": "retroarch", "files": 3, "present": 0,
+                "missing": 3, "wrong_hash": 0, "bytes_needed": 22,
+                "dests": ["scph5500.bin", "scph5501.bin", "gba_bios.bin"],
+            }])
+            kinds = [e["event"] for e in events]
+            self.assertEqual(kinds.index("declared"), kinds.index("check") + 1)
+            narrowed = [json.loads(line) for line in
+                        repo.run("--check", "--events", "--declared-only").stdout.splitlines()]
+            check = next(e for e in narrowed if e["event"] == "check")
+            self.assertEqual(check["files"], 3)
+
+
+class AnIdAnotherSetupUses(unittest.TestCase):
+    """The Neo Geo card offers `--system snk-neogeo`, and RetroArch, which
+    files neogeo.zip under arcade, answered "Did you mean: snk-neogeo-cd?"."""
+
+    KNOWN = ["arcade", "snk-neogeo-cd", "sony-playstation"]
+    HOLDERS = {"snk-neogeo": ["arcade"]}
+
+    def _refusal(self, typed: str, holders=None) -> str:
+        with self.assertRaises(ValueError) as ctx:
+            install.resolve_choices([typed], self.KNOWN, "system",
+                                    holders=self.HOLDERS if holders is None else holders)
+        return str(ctx.exception)
+
+    def test_the_system_holding_its_file_is_suggested_never_taken(self):
+        for typed in ("snk-neogeo", "SNK-NeoGeo", "neogeo", "mvs", "aes"):
+            with self.subTest(typed=typed):
+                text = self._refusal(typed)
+                self.assertIn("Did you mean: arcade?", text)
+                self.assertIn("neogeo.zip", text)
+                self.assertNotIn("snk-neogeo-cd", text)
+
+    def test_a_typo_still_gets_the_closest_names(self):
+        self.assertIn("Did you mean: snk-neogeo-cd", self._refusal("snk-neogeo-dc", {}))
+
+    def test_holders_are_read_from_the_file_list(self):
+        files = [
+            {"dest": "neogeo.zip", "systems": ["arcade"]},
+            {"dest": "fbneo/neogeo.zip", "systems": ["arcade"]},
+            {"dest": "neocd/neocd.bin", "systems": ["snk-neogeo-cd"]},
+            {"dest": "Other/neogeo.zip", "systems": []},
+        ]
+        self.assertEqual(install.key_file_holders(files, []), {"snk-neogeo": ["arcade"]})
+        own = [{"dest": "neogeo.zip", "systems": ["snk-neogeo"]}]
+        self.assertEqual(install.key_file_holders(own, []), {})
+
+    def test_retroarch_suggests_arcade(self):
+        never = REPO_ROOT / "tmp" / "never"
+        proc = subprocess.run(
+            [sys.executable, str(REPO_ROOT / "install.py"), "--platform", "retroarch",
+             "--manifest", str(REPO_ROOT / "install" / "retroarch.json"),
+             "--dest", str(never), "--system", "snk-neogeo", "--dry-run", "--no-input"],
+            capture_output=True, text=True, timeout=120, check=False,
+            stdin=subprocess.DEVNULL)
+        self.assertEqual(proc.returncode, 1, proc.stdout + proc.stderr)
+        self.assertIn("Did you mean: arcade?", proc.stderr)
+        self.assertNotIn("snk-neogeo-cd", proc.stderr)
+        self.assertFalse(never.exists())
+
+
+class TheTitleASetupPrints(unittest.TestCase):
+    """The installer and the site print "SNK Neo Geo CD": typed back, the
+    title was refused."""
+
+    MANIFEST = {
+        "system_names": {"sony-playstation": ["psx"]},
+        "system_titles": {"snk-neogeo-cd": "SNK Neo Geo CD", "arcade": "Arcade games",
+                          "sony-playstation": "Sony PlayStation",
+                          "twin-a": "Twin", "twin-b": "Twin"},
+    }
+    KNOWN = ["arcade", "snk-neogeo-cd", "sony-playstation", "twin-a", "twin-b"]
+
+    def _resolve(self, typed: str) -> list[str]:
+        return install.resolve_choices([typed], self.KNOWN, "system",
+                                       install.system_aliases(self.MANIFEST))
+
+    def test_a_title_is_taken_for_its_id(self):
+        self.assertEqual(self._resolve("SNK Neo Geo CD"), ["snk-neogeo-cd"])
+        self.assertEqual(self._resolve("arcade games"), ["arcade"])
+        self.assertEqual(self._resolve("psx"), ["sony-playstation"])
+
+    def test_a_title_two_systems_share_is_not_taken(self):
+        with self.assertRaises(ValueError):
+            self._resolve("Twin")
+
+    def test_the_platforms_own_name_wins_over_a_title(self):
+        manifest = {"system_names": {"arcade": ["Sony PlayStation"]},
+                    "system_titles": {"sony-playstation": "Sony PlayStation"}}
+        self.assertEqual(install.system_aliases(manifest)["Sony PlayStation"], "arcade")
+
+
 if __name__ == "__main__":
     unittest.main()

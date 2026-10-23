@@ -1,0 +1,704 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://abdess.github.io/retrobios/api/v1/schemas/install-events.schema.json",
+  "title": "RetroBIOS installer event",
+  "description": "One line of install.py --events, event schema 1. Written from EVENT_KEYS in install.py by scripts/generate_event_schema.py. The schema gains kinds, never keys on an existing kind: a reader skips a kind it does not know.",
+  "type": "object",
+  "required": [
+    "event"
+  ],
+  "properties": {
+    "event": {
+      "enum": [
+        "start",
+        "detect",
+        "error",
+        "scanned",
+        "file",
+        "system",
+        "checking",
+        "check",
+        "declared",
+        "found",
+        "unreadable",
+        "download",
+        "progress",
+        "transfer",
+        "downloaded",
+        "summary",
+        "end"
+      ]
+    }
+  },
+  "oneOf": [
+    {
+      "$ref": "#/$defs/start"
+    },
+    {
+      "$ref": "#/$defs/detect"
+    },
+    {
+      "$ref": "#/$defs/error"
+    },
+    {
+      "$ref": "#/$defs/scanned"
+    },
+    {
+      "$ref": "#/$defs/file"
+    },
+    {
+      "$ref": "#/$defs/system"
+    },
+    {
+      "$ref": "#/$defs/checking"
+    },
+    {
+      "$ref": "#/$defs/check"
+    },
+    {
+      "$ref": "#/$defs/declared"
+    },
+    {
+      "$ref": "#/$defs/found"
+    },
+    {
+      "$ref": "#/$defs/unreadable"
+    },
+    {
+      "$ref": "#/$defs/download"
+    },
+    {
+      "$ref": "#/$defs/progress"
+    },
+    {
+      "$ref": "#/$defs/transfer"
+    },
+    {
+      "$ref": "#/$defs/downloaded"
+    },
+    {
+      "$ref": "#/$defs/summary"
+    },
+    {
+      "$ref": "#/$defs/end"
+    }
+  ],
+  "$defs": {
+    "start": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "event",
+        "schema",
+        "installer",
+        "mode"
+      ],
+      "properties": {
+        "event": {
+          "const": "start"
+        },
+        "schema": {
+          "const": 1
+        },
+        "installer": {
+          "type": "string"
+        },
+        "mode": {
+          "enum": [
+            "install",
+            "check",
+            "dry-run",
+            "list"
+          ]
+        }
+      }
+    },
+    "detect": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "event",
+        "os",
+        "os_name",
+        "platforms"
+      ],
+      "properties": {
+        "event": {
+          "const": "detect"
+        },
+        "os": {
+          "type": "string"
+        },
+        "os_name": {
+          "type": "string"
+        },
+        "platforms": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        }
+      }
+    },
+    "error": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "event",
+        "stage",
+        "reason",
+        "platform",
+        "message"
+      ],
+      "properties": {
+        "event": {
+          "const": "error"
+        },
+        "stage": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        },
+        "platform": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    },
+    "scanned": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "event",
+        "folder",
+        "files",
+        "truncated",
+        "other_drives"
+      ],
+      "properties": {
+        "event": {
+          "const": "scanned"
+        },
+        "folder": {
+          "type": "string"
+        },
+        "files": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "truncated": {
+          "type": "boolean"
+        },
+        "other_drives": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "file": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "event",
+        "platform",
+        "dest",
+        "systems",
+        "size",
+        "state"
+      ],
+      "properties": {
+        "event": {
+          "const": "file"
+        },
+        "platform": {
+          "type": "string"
+        },
+        "dest": {
+          "type": "string"
+        },
+        "systems": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "size": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "state": {
+          "enum": [
+            "present",
+            "wrong_hash",
+            "missing"
+          ]
+        }
+      }
+    },
+    "system": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "event",
+        "platform",
+        "system",
+        "name",
+        "files",
+        "present",
+        "missing",
+        "wrong_hash",
+        "bytes_needed"
+      ],
+      "properties": {
+        "event": {
+          "const": "system"
+        },
+        "platform": {
+          "type": "string"
+        },
+        "system": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "files": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "present": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "missing": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "wrong_hash": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "bytes_needed": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "checking": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "event",
+        "files_done",
+        "files_total"
+      ],
+      "properties": {
+        "event": {
+          "const": "checking"
+        },
+        "files_done": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "files_total": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "check": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "event",
+        "platform",
+        "name",
+        "bios_dir",
+        "files",
+        "present",
+        "missing",
+        "wrong_hash",
+        "bytes_needed",
+        "data_missing",
+        "not_installable"
+      ],
+      "properties": {
+        "event": {
+          "const": "check"
+        },
+        "platform": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "bios_dir": {
+          "type": "string"
+        },
+        "files": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "present": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "missing": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "wrong_hash": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "bytes_needed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "data_missing": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "not_installable": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "declared": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "event",
+        "platform",
+        "files",
+        "present",
+        "missing",
+        "wrong_hash",
+        "bytes_needed",
+        "dests"
+      ],
+      "properties": {
+        "event": {
+          "const": "declared"
+        },
+        "platform": {
+          "type": "string"
+        },
+        "files": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "present": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "missing": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "wrong_hash": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "bytes_needed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "dests": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "found": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "event",
+        "platform",
+        "dest",
+        "folder",
+        "path",
+        "member",
+        "reason"
+      ],
+      "properties": {
+        "event": {
+          "const": "found"
+        },
+        "platform": {
+          "type": "string"
+        },
+        "dest": {
+          "type": "string"
+        },
+        "folder": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "member": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        }
+      }
+    },
+    "unreadable": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "event",
+        "platform",
+        "folder",
+        "path",
+        "member",
+        "reason"
+      ],
+      "properties": {
+        "event": {
+          "const": "unreadable"
+        },
+        "platform": {
+          "type": "string"
+        },
+        "folder": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "member": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        }
+      }
+    },
+    "download": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "event",
+        "platform",
+        "files",
+        "bytes"
+      ],
+      "properties": {
+        "event": {
+          "const": "download"
+        },
+        "platform": {
+          "type": "string"
+        },
+        "files": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "progress": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "event",
+        "files_done",
+        "files_total",
+        "bytes_done",
+        "bytes_total"
+      ],
+      "properties": {
+        "event": {
+          "const": "progress"
+        },
+        "files_done": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "files_total": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "bytes_done": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "bytes_total": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "transfer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "event",
+        "bytes_local",
+        "bytes_network"
+      ],
+      "properties": {
+        "event": {
+          "const": "transfer"
+        },
+        "bytes_local": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "bytes_network": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "downloaded": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "event",
+        "dest",
+        "ok",
+        "reason",
+        "size",
+        "files_done",
+        "files_total",
+        "bytes_done",
+        "bytes_total"
+      ],
+      "properties": {
+        "event": {
+          "const": "downloaded"
+        },
+        "dest": {
+          "type": "string"
+        },
+        "ok": {
+          "type": "boolean"
+        },
+        "reason": {
+          "type": "string"
+        },
+        "size": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "files_done": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "files_total": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "bytes_done": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "bytes_total": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "event",
+        "mode",
+        "installed",
+        "up_to_date",
+        "pending",
+        "failed",
+        "skipped",
+        "left_out",
+        "kept",
+        "interrupted"
+      ],
+      "properties": {
+        "event": {
+          "const": "summary"
+        },
+        "mode": {
+          "enum": [
+            "install",
+            "check",
+            "dry-run",
+            "list"
+          ]
+        },
+        "installed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "up_to_date": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "pending": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "failed": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "skipped": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "left_out": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "kept": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "interrupted": {
+          "type": "boolean"
+        }
+      }
+    },
+    "end": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "event",
+        "code"
+      ],
+      "properties": {
+        "event": {
+          "const": "end"
+        },
+        "code": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    }
+  }
+}
