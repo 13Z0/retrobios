@@ -23,6 +23,12 @@ systems:
   - commodore-pet
   - commodore-cbm-ii
 
+data_root:
+  linux:
+    path: "~/.local/share/C64.emu"
+    source_ref: "C64.emu/src/main/Main.cc:91-95"
+    note: "Searched after the System File Path set in the app, then /usr/share/games/vice. On Android only the folder or archive the user picks is read."
+
 notes: |
   Android and Linux member of the EX Emulator series by Robert Broglia,
   published as com.explusalpha.C64Emu (C64.emu/metadata/conf.mk:2,6,7) and
