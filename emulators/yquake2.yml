@@ -4,7 +4,7 @@ core_classification: game_engine
 source: "https://github.com/yquake2/yquake2"
 upstream: "https://github.com/yquake2/yquake2"
 profiled_date: "2026-10-04"
-source_commit: "f190ac496d00ef9238a5f16dd012c6dc81a997c9"
+source_commit: "9dbf699273e2546f3ad14cff3dee6a51a518cd2a"
 core_version: "8.51+git"
 display_name: "Yamagi Quake II"
 cores: [yquake2]
