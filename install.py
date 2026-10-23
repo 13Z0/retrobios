@@ -6295,6 +6295,10 @@ class FolderIndex:
                 if seen >= MAX_SCANNED_FILES:
                     return
 
+    def seed(self, path: Path, sha1: str) -> None:
+        """A SHA-1 already known, so the file is not read again."""
+        self._sha1[path] = sha1
+
     def sha1(self, path: Path) -> str:
         if path not in self._sha1:
             try:
@@ -6466,15 +6470,23 @@ class Diagnosis(NamedTuple):
 
 def diagnose(
     missing: list[dict], mismatched: list[dict], files: list[dict], bios_path: Path,
+    verified: list[dict] | None = None,
 ) -> Diagnosis:
     """The reason --check gives for each file it flags, from what the folder
     holds and what the list records: id(entry) -> reason, and the folders
-    holding files one level too deep with how many."""
+    holding files too deep with how many. The files the check verified are
+    not read again: their SHA-1 is the one the list records."""
     reasons: dict[int, str] = {}
     deep: dict[str, int] = {}
     if not bios_path.is_dir() or not (missing or mismatched):
         return Diagnosis(reasons, deep)
     index = FolderIndex(bios_path)
+    for entry in verified or []:
+        if entry.get("sha1"):
+            try:
+                index.seed(_entry_path(bios_path, entry), entry["sha1"].lower())
+            except ValueError:
+                continue
     known = _known_destinations(files)
     for entry in missing:
         reason, extra = _found_elsewhere(entry, index, bios_path, files, known)
@@ -6495,7 +6507,7 @@ def diagnose(
 
 def check_lines(
     missing: list[dict], mismatched: list[dict], files: list[dict], manifest: dict,
-    bios_path: Path, every: bool,
+    bios_path: Path, every: bool, verified: list[dict] | None = None,
 ) -> list[str]:
     """The files --check flags, each with why and where its cores read it.
 
@@ -6503,7 +6515,7 @@ def check_lines(
     or still in its ZIP, to guess. A flagged file with a reason is always
     listed. Plain missing ones stop at ten unless every is set.
     """
-    found = diagnose(missing, mismatched, files, bios_path)
+    found = diagnose(missing, mismatched, files, bios_path, verified)
     lines = []
     for extra, count in sorted(found.deep.items(), key=lambda item: -item[1]):
         if count >= 3:
@@ -7540,7 +7552,7 @@ def _install(args: argparse.Namespace, real_stdout: TextIO) -> None:
                     print(line)
                 print(f"\n  {_plural(len(to_download), 'file')} to download:")
                 for line in check_lines(missing, mismatched, files, manifest, bios_path,
-                                        args.verbose):
+                                        args.verbose, up_to_date):
                     print(line)
                 print("  Run the same command without --check to fetch them; "
                       "a file with a wrong hash is replaced, and the one in place "
