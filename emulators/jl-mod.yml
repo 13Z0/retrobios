@@ -175,7 +175,7 @@ files:
     category: game_data
     description: "Third party licence text of the about screen"
     note: "Read when the licences dialog is opened and shown as HTML. Emulation never touches it."
-    source_ref: "upstream app/src/main/java/ru/playsoftware/j2meloader/info/LicensesDialogFragment.java:35"
+    source_ref: "source app/src/main/java/ru/playsoftware/j2meloader/info/LicensesDialogFragment.java:35"
 
   - name: appcenter.cer
     system: j2me
