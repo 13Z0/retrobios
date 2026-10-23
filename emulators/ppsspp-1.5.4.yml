@@ -12,6 +12,12 @@ cores:
 systems:
   - sony-psp
 
+data_root:
+  linux:
+    path: "$XDG_CONFIG_HOME/ppsspp"
+    source_ref: "UI/NativeApp.cpp:354-362"
+    note: "~/.config/ppsspp when XDG_CONFIG_HOME is unset. The memory stick root, where a Sony font placed under PSP/flash0/font/ overrides the replacement. The assets below sit beside the binary."
+
 notes: |
   PPSSPP at the v1.5.4 tag, offered by RetroPie on VideoCore Raspberry Pi
   systems only. The package reuses the ppsspp build steps: cmake
