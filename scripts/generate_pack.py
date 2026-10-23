@@ -80,7 +80,7 @@ import slot as slot_mod
 import slots
 import split_pack
 from gamedata import GAME_DATA, GameDataCut, is_game_data, platform_game_data, without_game_data
-from deterministic_zip import _FIXED_DATE_TIME, rebuild_zip_deterministic
+from deterministic_zip import _FIXED_DATE_TIME
 from largefiles import asset_name, load_registered_paths, published_asset_name
 from nativemode import (
     digest_algorithm,
@@ -1259,62 +1259,43 @@ def _add_zip_to_pack(
     target_zf: zipfile.ZipFile,
     file_entry: dict | None = None,
 ) -> None:
-    """Write a source ZIP into the pack.
+    """Write a source ZIP into the pack, byte for byte.
 
-    A declared outer hash (md5/sha1/crc32) means the platform or profile
-    verifies the ZIP bytes themselves (Batocera md5sum, System.dat), so
-    the resolved file is copied unchanged: a rebuild would change the
-    outer hash and fail the native check. Entries with zipped_file
-    declare the hash of a ROM inside the ZIP (checkInsideZip), which a
-    content-preserving rebuild does not affect.
+    The pack carries the collection's own bytes, so every member hashes to
+    the sha1 the install list and the site publish. Rebuilt ZIPs gave about
+    1,500 archives another hash than the list: an extracted pack then failed
+    `install.py --check`. The collection's bytes are fixed in git, which keeps
+    the pack reproducible without a rebuild.
     """
     if isinstance(target_zf, PackRecord):
         target_zf.members.append(dest_path)
         return
-    if (
-        file_entry
-        and not file_entry.get("zipped_file")
-        and (
-            file_entry.get("md5")
-            or file_entry.get("sha1")
-            or file_entry.get("crc32")
+    _check_zip_members(source_zip)
+    _add_pack_member(target_zf, source_zip, dest_path)
+
+
+def _check_zip_members(source_zip: str) -> None:
+    """Refuse an archive whose members fail their own CRC.
+
+    Copied as-is "for verify to flag", a damaged archive went into the pack
+    and nothing flagged it.
+    """
+    try:
+        with zipfile.ZipFile(source_zip) as zf:
+            bad = zf.testzip()
+    except zipfile.BadZipFile as exc:
+        raise DamagedArchiveError(
+            f"{source_zip}: {exc}; restore it from git or the release before packing"
+        ) from exc
+    if bad is not None:
+        raise DamagedArchiveError(
+            f"{source_zip}: member {bad} fails its CRC; "
+            "restore it from git or the release before packing"
         )
-    ):
-        _add_pack_member(target_zf, source_zip, dest_path)
-        return
-    _normalize_zip_for_pack(source_zip, dest_path, target_zf)
 
 
 class DamagedArchiveError(OSError):
     """An archive of the collection whose members fail their own CRC."""
-
-
-def _normalize_zip_for_pack(
-    source_zip: str, dest_path: str, target_zf: zipfile.ZipFile
-) -> None:
-    """Add a MAME BIOS ZIP to the pack, rebuilt from its ROMs.
-
-    The same ROMs give the same archive bytes in every build, whatever
-    metadata the source ZIP carried.
-    """
-    import tempfile as _tmp
-
-    # tmp/ is gitignored, so a fresh clone does not carry it. WSL keeps /tmp
-    # on a 4 GB tmpfs that MAME sets overflow, hence the repo-local scratch.
-    os.makedirs("tmp", exist_ok=True)
-    tmp_fd, tmp_path = _tmp.mkstemp(suffix=".zip", dir="tmp")
-    os.close(tmp_fd)
-    try:
-        rebuild_zip_deterministic(source_zip, tmp_path)
-        _add_pack_member(target_zf, tmp_path, dest_path)
-    except zipfile.BadZipFile as exc:
-        # The rebuild checks every member's CRC. Copied as-is "for verify to
-        # flag", a damaged archive went into the pack and nothing flagged it.
-        raise DamagedArchiveError(
-            f"{source_zip}: {exc}; restore it from git or the release before packing"
-        ) from exc
-    finally:
-        os.unlink(tmp_path)
 
 
 # Emulator/system mode pack generation

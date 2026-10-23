@@ -626,14 +626,14 @@ class StandaloneCopiesNameTheirSource(unittest.TestCase):
 
 
 class ADamagedArchiveIsNotPacked(unittest.TestCase):
-    """The deterministic rebuild raises on a member whose bytes fail their
-    CRC. The builder caught it and copied the damaged archive into the pack
-    "for verify to flag", which nothing did."""
+    """A member whose bytes fail their CRC stops the build. The builder once
+    copied the damaged archive into the pack "for verify to flag", which
+    nothing did."""
 
     def test_the_rebuild_refusal_reaches_the_run(self):
         import zipfile
 
-        from generate_pack import DamagedArchiveError, _normalize_zip_for_pack
+        from generate_pack import DamagedArchiveError, _add_zip_to_pack
 
         with tempfile.TemporaryDirectory(dir=TMP_ROOT) as directory:
             source = Path(directory) / "set.zip"
@@ -645,10 +645,33 @@ class ADamagedArchiveIsNotPacked(unittest.TestCase):
             pack = Path(directory) / "pack.zip"
             with zipfile.ZipFile(pack, "w") as target:
                 with self.assertRaises(DamagedArchiveError) as caught:
-                    _normalize_zip_for_pack(str(source), "set.zip", target)
+                    _add_zip_to_pack(str(source), "set.zip", target)
                 self.assertNotIn("set.zip", target.namelist())
             self.assertIsInstance(caught.exception, OSError)
             self.assertIn("set.zip", str(caught.exception))
+
+
+class APackedArchiveKeepsItsBytes(unittest.TestCase):
+    """Packs rebuilt about 1,500 ZIPs in a fixed byte order while the install
+    list kept the collection's hash: an extracted pack failed --check on each."""
+
+    def test_the_member_is_the_source_byte_for_byte(self):
+        import hashlib
+        import zipfile
+
+        from generate_pack import _add_zip_to_pack
+
+        with tempfile.TemporaryDirectory(dir=TMP_ROOT) as directory:
+            source = Path(directory) / "set.zip"
+            with zipfile.ZipFile(source, "w", zipfile.ZIP_DEFLATED) as zf:
+                zf.writestr(zipfile.ZipInfo("rom.bin", (1999, 1, 2, 3, 4, 5)), b"rom" * 40)
+            pack = Path(directory) / "pack.zip"
+            with zipfile.ZipFile(pack, "w") as target:
+                _add_zip_to_pack(str(source), "set.zip", target)
+            with zipfile.ZipFile(pack) as packed:
+                inner = packed.read("set.zip")
+            self.assertEqual(hashlib.sha1(inner).hexdigest(),
+                             hashlib.sha1(source.read_bytes()).hexdigest())
 
 
 class PackReadmesSayWhatTheInstallerDoes(unittest.TestCase):
