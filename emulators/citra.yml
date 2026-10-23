@@ -10,6 +10,22 @@ display_name: "Nintendo - 3DS (Citra)"
 library_name: "Citra"
 cores: [citra]
 systems: [nintendo-3ds]
+data_root:
+  android:
+    path: "<folder picked at first launch>"
+    source_ref: "src/android/app/src/main/java/org/citra/citra_emu/utils/PermissionsHandler.kt:42-46, src/android/app/src/main/java/org/citra/citra_emu/utils/DirectoryInitialization.kt:93-101, src/common/file_util.cpp:819-822"
+  windows:
+    path: "%APPDATA%/Citra"
+    source_ref: "src/common/file_util.cpp:719-725, 809-815, src/common/common_paths.h:16-17, 21-22"
+    note: "user beside the executable when that folder exists"
+  macos:
+    path: "~/Library/Application Support/Citra"
+    source_ref: "src/common/file_util.cpp:824-846, src/common/common_paths.h:16-17, 23-31"
+    note: "$XDG_DATA_HOME/citra-emu or ~/.local/share/citra-emu when an XDG folder from an earlier setup exists. user in the working directory when that folder exists"
+  linux:
+    path: "$XDG_DATA_HOME/citra-emu, else ~/.local/share/citra-emu"
+    source_ref: "src/common/file_util.cpp:753-776, 824-846, src/common/common_paths.h:16-17, 32-33"
+    note: "user in the working directory when that folder exists"
 
 notes: |
   Citra 3DS emulator. Upstream taken down March 2024 (Nintendo lawsuit).
