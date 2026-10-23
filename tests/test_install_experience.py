@@ -633,6 +633,39 @@ class ADetectedFolderUnderAClosedOne(unittest.TestCase):
         self.assertEqual(len(kinds), 2)
 
 
+class AHomeThisUserCannotOpen(unittest.TestCase):
+    """HOME kept across `su` without `-`: detection stat'ed files under it
+    and ended the run on a PermissionError traceback before any line."""
+
+    @unittest.skipIf(os.name == "nt" or os.geteuid() == 0,
+                     "a folder without search permission is POSIX")
+    def test_detection_says_so_and_the_run_goes_on(self):
+        with FakeRepository() as repo:
+            home = repo.root / "home"
+            home.mkdir()
+            env = {**repo.env(), "HOME": str(home), "RETROBIOS_OS": "linux"}
+            runs = {}
+            os.chmod(home, 0o000)
+            try:
+                for name, extra in (("named", ["--platform", "retroarch", "--dest",
+                                               str(repo.dest)]),
+                                    ("detected", [])):
+                    runs[name] = subprocess.run(
+                        [sys.executable, str(REPO_ROOT / "install.py"), "--check",
+                         "--no-input", *extra],
+                        env=env, capture_output=True, text=True, timeout=60,
+                        stdin=subprocess.DEVNULL)
+            finally:
+                os.chmod(home, 0o755)
+        for name, proc in runs.items():
+            with self.subTest(run=name):
+                self.assertNotIn("Traceback", proc.stderr)
+        # A named folder needs no detection and is checked.
+        self.assertIn("0/5 present", runs["named"].stdout)
+        self.assertIn(f"Could not look for setups: this user cannot open {home}",
+                      runs["detected"].stderr)
+
+
 class OutputToAFileAsksNothing(unittest.TestCase):
     """`install.py > log.txt` at a terminal: the menu went into the file
     and the run waited on an answer to a prompt nobody could see."""

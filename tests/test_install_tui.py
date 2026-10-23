@@ -2930,6 +2930,20 @@ class AFolderThisUserCannotOpen(unittest.TestCase):
         self.assertIn(f"This user cannot open {install._short_path(self.lock, state.home)} "
                       "(Permission denied)", self.said(state))
 
+    def test_a_home_it_cannot_open_is_said_on_the_first_screen(self):
+        """HOME kept across su without -: detection raised PermissionError
+        before the first screen."""
+        home = self.lock.parent / "home"
+        home.mkdir()
+        os.chmod(home, 0o000)
+        self.addCleanup(os.chmod, home, 0o755)
+        install._DETECTION_REFUSED.clear()
+        self.addCleanup(install._DETECTION_REFUSED.clear)
+        with mock.patch.dict(os.environ, {"HOME": str(home)}), \
+                mock.patch.object(install, "_mounted_cards", return_value=[]):
+            state, _effects = install.tui_start(_args(), "linux")
+        self.assertIn("Could not look for setups: this user cannot open", self.said(state))
+
     def test_the_nearest_folder_stops_above_it(self):
         self.assertEqual(install._nearest_folder(self.dest / "deeper"), self.lock)
 

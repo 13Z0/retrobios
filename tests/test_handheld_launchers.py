@@ -1218,7 +1218,9 @@ class ThePortMasterPort(unittest.TestCase):
         """The launcher keyed on the words without install.py's prefix, and
         its fake printed them the same way: the test passed, the device
         still waited 300 s."""
-        line = f"RetroBIOS: {install.TUI_IDLE_WORDS}"
+        state = install.TuiState(os_type="linux", home=Path.home())
+        state.idle_closed = True
+        line = install._farewell_lines(state)[0]
         tui = (REPO_ROOT / "ports" / "shared" / "tui.txt").read_text(encoding="utf-8")
         self.assertIn(f'= "{line}" ]', tui)
         self.assertIn(f'print("{line}", file=sys.stderr)', FAKE_INSTALL)

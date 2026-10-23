@@ -1922,6 +1922,36 @@ def launchbox_bios_dirs(root: Path) -> dict[str, Path]:
     return dirs
 
 
+_DETECTION_REFUSED: list[str] = []
+
+
+def _detection_guarded(detect: Callable[..., list]) -> Callable[..., list]:
+    """Detection that finds nothing, and says why once, where this user
+    cannot look.
+
+    HOME kept across `su` without `-`: every probe of a config under it
+    raised PermissionError, and the run ended on a traceback before its
+    first line. A named --dest still installs.
+    """
+    def guarded(*args: object, **kwargs: object) -> list:
+        try:
+            return detect(*args, **kwargs)
+        except PermissionError as exc:
+            closed = closed_folder(Path(exc.filename)) if exc.filename else None
+            folder, why = closed or (Path(str(exc.filename or "")), exc.strerror or str(exc))
+            words = (f"Could not look for setups: this user cannot open {folder} ({why}). "
+                     "Run as its owner (su - or sudo -H), or name the BIOS folder "
+                     "with --dest.")
+            if words not in _DETECTION_REFUSED:
+                _DETECTION_REFUSED.append(words)
+                print(f"  {screen_text(words)}", file=sys.stderr)
+            return []
+    guarded.__doc__ = detect.__doc__
+    guarded.__name__ = detect.__name__
+    return guarded
+
+
+@_detection_guarded
 def detect_frontends(os_type: str, home: Path | None = None) -> list[str]:
     """Detect frontends that reference emulators without owning a BIOS dir.
 
@@ -2072,6 +2102,7 @@ def _detect_by_path(os_type: str, found: list[tuple[str, Path]]) -> None:
             found.append((platform_name, _rule_path(bios or path)))
 
 
+@_detection_guarded
 def detect_platforms(os_type: str) -> list[tuple[str, Path]]:
     """Detect installed emulator platforms and their BIOS directories."""
     found: list[tuple[str, Path]] = []
@@ -11838,8 +11869,9 @@ def _view_setup(state: TuiState, width: int, height: int) -> tuple:
     after = ([f"BIOS folder: {state.setups[focus.value][1]}"]
              if focus.action == "setup" else [])
     before = ["Found on this machine:" if state.setups else "Nothing was found here."]
+    status = [state.status] if state.status else []
     return ("Where do you play?",
-            _compose(state, width, height, before, rows, after + state.notes),
+            _compose(state, width, height, before, rows, after + status + state.notes),
             ("A/Enter Continue", "B/Esc Quit", "? Help"))
 
 
@@ -11853,6 +11885,7 @@ def _view_platforms(state: TuiState, width: int, height: int) -> tuple:
         before = ["Choose the setup that will use the BIOS files."]
     needle = state.filters.get("platforms", "")
     after = [f"No setup matches '{needle}'."] if len(rows) == 1 and needle else []
+    after += [state.status] if state.status else []
     return (title, _compose(state, width, height, before, rows, after),
             ("A/Enter Choose", "B/Esc Back", "/ Filter", "? Help"))
 
@@ -12576,6 +12609,9 @@ def tui_start(
             found = detect_platforms(os_type)
             frontends = detect_frontends(os_type)
             cards = [(card_system(mount), mount) for mount in _mounted_cards()]
+        if _DETECTION_REFUSED:
+            # Said on the normal screen before this one covered it.
+            state.status = _DETECTION_REFUSED[0]
         state.setups = [(name, path, _setup_label(name, path)) for name, path in found]
         # On the device itself its own card is the system found, by its
         # own path (muOS reads /run/muos/storage/bios, a bind of MUOS/bios).

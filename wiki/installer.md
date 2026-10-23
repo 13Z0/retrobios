@@ -1086,7 +1086,7 @@ Each launcher tells the interface which buttons reach it, in
 A launcher with no mapper at all (a keyboard) leaves it unset.
 A launcher can also set `RETROBIOS_IDLE_EXIT` to a number of seconds: when
 no button has reached the interface since it opened, and nothing has run for
-that long, it closes with `No button pressed, closing.` and exit status 0.
+that long, it closes with `RetroBIOS: No button pressed, closing.` and exit status 0.
 Closed on an error or a result screen, it prints that screen's words after
 the line and exits with its code (1 for `No internet: offline mode`), so
 the launcher can tell an error from a close with nothing to report.
