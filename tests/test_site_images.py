@@ -96,8 +96,7 @@ class PlaceholdersResolve(unittest.TestCase):
 
 class DiagramsMatchTheData(unittest.TestCase):
     def test_every_platform_appears_under_its_mode(self):
-        boxes = sitediagrams._mode_boxes()
-        text = " ".join(" ".join(box.lines) for box in boxes)
+        text = sitediagrams.figures()["verification-modes"].caption
         for display, mode, _ in sitediagrams.platform_modes().values():
             with self.subTest(platform=display):
                 self.assertIn(mode, sitediagrams.MODE_TEXT)
