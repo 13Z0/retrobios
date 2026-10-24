@@ -43,7 +43,20 @@ def extra_full_destination(fe: dict, prefix: str) -> str:
     """
     if fe.get("root") == "save":
         return str(fe.get("pack_path") or "")
-    dest = sanitize_pack_path(fe.get("destination", fe.get("name", "")))
+    return prefixed_destination(
+        sanitize_pack_path(fe.get("destination", fe.get("name", ""))), prefix
+    )
+
+
+def prefixed_destination(dest: str, prefix: str) -> str:
+    """A core extra's destination from the pack root.
+
+    The one rule the collector, the builder and the manifest place a file
+    by. DuckStation's standalone `bios/<name>` on Recalbox lands in the
+    `bios` folder itself: deduplicated at `bios/bios/<name>` but written at
+    `bios/<name>`, it let PCSX2's scan claim the same path under another
+    key, and `--region` withdrew one claim while the other kept the file.
+    """
     if not dest or not prefix or dest.startswith(f"{prefix}/"):
         return dest
     return f"{prefix}/{dest}"
@@ -544,7 +557,7 @@ def _agnostic_scan_extras(
                         seed = system_dir_path(f, seed or fname)
                     folder = seed.rsplit("/", 1)[0] if "/" in seed else ""
                     dest = f"{folder}/{scan_name}" if folder else scan_name
-                    full_dest = f"{extras_prefix}/{dest}" if extras_prefix else dest
+                    full_dest = prefixed_destination(dest, extras_prefix)
                     if full_dest in seen_dests and (taken is None or full_dest not in taken):
                         continue
                     extra = {
@@ -705,7 +718,7 @@ def _companion_extras(
     extras: list[dict] = []
     for companion_sha1, companion in companions:
         companion_dest = f"{folder}/{companion['name']}" if folder else companion["name"]
-        companion_full = f"{extras_prefix}/{companion_dest}" if extras_prefix else companion_dest
+        companion_full = prefixed_destination(companion_dest, extras_prefix)
         if companion_full in seen_dests and (taken is None or companion_full not in taken):
             continue
         extra = {
@@ -848,7 +861,7 @@ def _archive_prefix_copies(
         if archive_name not in covered_names:
             continue
         dest = f"{prefix}/{archive_name}"
-        full_dest = f"{extras_prefix}/{dest}" if extras_prefix else dest
+        full_dest = prefixed_destination(dest, extras_prefix)
         if full_dest in seen_dests and (taken is None or full_dest not in taken):
             continue
         if not by_name.get(archive_name):
@@ -927,7 +940,7 @@ class ExtraPlacement:
             if not slug or self.nested(dest):
                 return None
             dest = f"{slug}/{dest}"
-        return dest, (f"{self.prefix}/{dest}" if self.prefix else dest)
+        return dest, prefixed_destination(dest, self.prefix)
 
     def places(self, entry: dict, dest: str) -> list[tuple[str, str]]:
         """Every (pack-relative, full) destination the pack gives an entry.
@@ -1164,7 +1177,8 @@ def _collect_emulator_extras(
 
     # Build set of filenames already covered (platform baseline + first pass extras)
     # Enriched with canonical names from DB via MD5 (handles platform renaming)
-    covered_names = expand_platform_declared_names(config, db)
+    platform_names = expand_platform_declared_names(config, db)
+    covered_names = set(platform_names)
     for e in extras:
         covered_names.add(e["name"])
 
@@ -1211,8 +1225,16 @@ def _collect_emulator_extras(
                 # of the directory core files go to, which the platform may not
                 # declare (Recalbox has its System Cards under pcenginecd/ only,
                 # geargrafx reads them from the root).
-                full_dest = f"{extras_prefix}/{dest}" if extras_prefix else dest
+                full_dest = prefixed_destination(dest, extras_prefix)
                 if full_dest in seen_dests and full_dest not in taken:
+                    continue
+                if full_dest in taken and full_dest not in seen and fname not in platform_names:
+                    # Another core's extra holds this path and only that
+                    # extra covers the name: a pack without that core never
+                    # reaches this copy, so this core claims nothing here.
+                    # Batocera's launcher hands DuckStation one named BIOS;
+                    # recorded on duckstation-legacy's scph100.bin, its claim
+                    # kept the file for a target without legacy.
                     continue
                 # Only files the database indexes: members of a data
                 # directory are not in it and are not duplicated here.

@@ -1058,6 +1058,90 @@ class AHeldFileTheInstallerCannotFetch(unittest.TestCase):
         )
 
 
+class AStandaloneLayoutBelowTheBiosFolder(unittest.TestCase):
+    """DuckStation reads `bios/<name>` standalone, which a platform whose
+    base destination is `bios` places in that folder itself. The collector
+    deduplicated the path at `bios/bios/<name>` while the builder wrote it
+    at `bios/<name>`, so another core's claim on the same file took the
+    path under a second key: `--region north-america` withdrew one key and
+    the pack kept the European BIOS the installer drops."""
+
+    def setUp(self):
+        import common
+        import generate_db
+        import generate_pack
+
+        self.gp = generate_pack
+        tmp = tempfile.TemporaryDirectory(dir=REPO_ROOT / "tmp")
+        self.addCleanup(tmp.cleanup)
+        previous = os.getcwd()
+        os.chdir(tmp.name)
+        self.addCleanup(os.chdir, previous)
+        Path("bios/Sys").mkdir(parents=True)
+        files = {}
+        for name in ("us.bin", "eu.bin", "jp.bin"):
+            payload = name.encode()
+            Path(f"bios/Sys/{name}").write_bytes(payload)
+            sha1 = hashlib.sha1(payload).hexdigest()
+            files[sha1] = {"path": f"bios/Sys/{name}", "name": name,
+                           "size": len(payload), "sha1": sha1,
+                           "md5": hashlib.md5(payload).hexdigest(),
+                           "sha256": hashlib.sha256(payload).hexdigest(),
+                           "crc32": "00000001"}
+        self.db = {"files": files, "indexes": generate_db.build_indexes(files, {})}
+        Path("platforms").mkdir()
+        Path("platforms/p.yml").write_text(json.dumps({
+            "platform": "P", "verification_mode": "existence",
+            "base_destination": "bios", "cores": ["dsa", "other"],
+            "standalone_cores": ["dsa"], "systems": {"sys": {"files": []}},
+        }))
+        Path("platforms/_registry.yml").write_text(
+            json.dumps({"platforms": {"p": {"status": "active"}}})
+        )
+        Path("emulators").mkdir()
+        Path("emulators/dsa.yml").write_text(json.dumps({
+            "emulator": "dsa", "type": "standalone + libretro", "systems": ["sys"],
+            "files": [
+                {"name": name, "standalone_path": f"bios/{name}", "system": "sys",
+                 "region": [region_name], "required": False}
+                for name, region_name in (
+                    ("us.bin", "north-america"), ("eu.bin", "europe"),
+                    ("jp.bin", "japan"),
+                )
+            ]}))
+        Path("emulators/other.yml").write_text(json.dumps({
+            "emulator": "other", "type": "libretro", "systems": ["sys"], "files": [
+                {"name": name, "system": "sys", "required": False}
+                for name in ("eu.bin", "jp.bin")
+            ]}))
+        common._platform_config_cache.clear()
+        common._emulator_profiles_cache.clear()
+        self.addCleanup(common._platform_config_cache.clear)
+        self.addCleanup(common._emulator_profiles_cache.clear)
+        self.profiles = common.load_emulator_profiles("emulators")
+
+    def _manifest(self, regions):
+        return self.gp.generate_manifest(
+            "p", "platforms", self.db, "bios", "platforms/_registry.yml",
+            emulators_dir="emulators", emu_profiles=self.profiles,
+            regions=regions, offline=True,
+        )
+
+    def test_one_path_one_entry(self):
+        full = self._manifest(None)
+        dests = [f["dest"] for f in full["files"]]
+        self.assertEqual(sorted(dests), ["eu.bin", "jp.bin", "us.bin"])
+
+    def test_the_installer_keeps_what_the_pack_keeps(self):
+        full = self._manifest(None)
+        built = self._manifest(["north-america"])
+        self.assertEqual({f["dest"] for f in built["files"]}, {"us.bin"})
+        files, _omitted = install.narrow(
+            full["files"], full["omitted_files"], [], [], ["north-america"]
+        )
+        self.assertEqual({f["dest"] for f in files}, {f["dest"] for f in built["files"]})
+
+
 class ACoreWithNothingHeldIsAnOmission(unittest.TestCase):
     """DOSBox serves SC-55/WAVEROM3.BIN, DOSBox Pure wants it and nothing is
     held for it. A pack built for a target without DOSBox lists it as left
