@@ -562,7 +562,8 @@ def generate_readme(db: dict, platforms_dir: str, db_path: str = "database.json"
         "# Android (Termux, after pkg install python and termux-setup-storage)",
         "curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh",
         "",
-        "# SD card mounted on a PC: --dest is the BIOS folder on the card",
+        "# SD card mounted on a PC: a muOS, KNULLI, ROCKNIX, Onion, spruceOS or MinUI card",
+        "# is found by itself. For another card, --dest is its BIOS folder",
         "# (RetroArch on Switch: retroarch/cores/system, on Android: RetroArch/system)",
         "curl -fsSL https://raw.githubusercontent.com/Abdess/retrobios/main/install.sh | sh -s -- --platform retroarch --dest /path/to/sdcard/retroarch/cores/system",
         "",
@@ -570,12 +571,14 @@ def generate_readme(db: dict, platforms_dir: str, db_path: str = "database.json"
         "&([scriptblock]::Create((irm https://raw.githubusercontent.com/Abdess/retrobios/main/install.ps1))) --check",
         "```",
         "",
-        "The script auto-detects your platform, downloads only missing files, and verifies checksums.",
+        "The script opens a full-screen installer, driven with the arrow keys and Enter, or with a"
+        " controller on a handheld. It finds your setup and its BIOS folder, downloads only the missing"
+        " files and checks each one. It can also copy the BIOS files from your old SD card.",
         f"Every option, and what the installer detects and writes, is on the [installer page]({SITE_URL}wiki/installer/#passing-options).",
         "",
         "## Download BIOS packs",
         "",
-        "A pack holds everything its platform runs: its own BIOS list plus every file its emulator cores load. Pick your platform, download the ZIP, extract to the BIOS path. Each Download link is a page that keeps its address from one release to the next. The installer above does the same file by file. At a terminal it asks whether to install everything or to choose systems, cores and regions, and `--system`, `--core`, `--region` and `--target` make the same choice without questions. For a bare minimum, build your own pack below.",
+        "A pack holds everything its platform runs: its own BIOS list plus every file its emulator cores load. Pick your platform, download the ZIP, extract to the BIOS path. Each Download link is a page that keeps its address from one release to the next. The installer above does the same file by file. At a terminal it offers to install everything or to choose systems, cores and regions, and `--system`, `--core`, `--region` and `--target` make the same choice without questions. For a bare minimum, build your own pack below.",
         "",
         "A pack over 2 GB comes in several parts (`Pack.part1of2.zip`,"
         " `Pack.part2of2.zip`), and every part is needed. Each part is an"
