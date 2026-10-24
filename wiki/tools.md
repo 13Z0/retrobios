@@ -350,6 +350,14 @@ profile (`common.unresolved_platform_cores`) or when the entry is a ROM set
 and a core of the system opens sets its profile does not list. BizHawk and
 MiSTer resolve no core, so nothing is examined and nothing is listed.
 
+A destination the platform's own list declares twice, for two different
+files, is written under `doubled` (`slots.find_collisions` finds it). One
+path holds one file, so one of the two checks fails on every install.
+Each declaration carries its system, component, hashes and the file it
+resolves to, with the emulators the platform runs whose profile reads
+that file: a member list it holds, a hash it matches, or a name and a
+size it fits. Both entries stay in the updated file.
+
 MAME and FBNeo entries are `.zip` ROM sets: their meaningful hashes belong
 to the files inside the archive, so the exported DAT lists those entries
 without a container sha1. Anyone submitting the DAT upstream should mention

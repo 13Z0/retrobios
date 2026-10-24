@@ -675,6 +675,8 @@ class Collision:
 
     destination: str
     resolved: list[str]
+    # Each declaration with the file it resolved to, in the platform's order.
+    declarations: list[tuple[dict, str | None]] = field(default_factory=list)
 
 
 def _collision_json(collision: Collision) -> dict:
@@ -714,6 +716,7 @@ def find_collisions(
         if len(entries) < 2:
             continue
         resolved = []
+        declarations = []
         for entry in entries:
             local, _ = resolve_local_file(
                 entry,
@@ -722,6 +725,7 @@ def find_collisions(
                 dest_hint=entry.get("destination", ""),
                 data_dir_registry=data_dir_registry,
             )
+            declarations.append((entry, local))
             if local and local not in resolved:
                 resolved.append(local)
         if len(resolved) > 1 and not _same_file_family(resolved):
@@ -730,7 +734,9 @@ def find_collisions(
             # also names the first one's file.
             if any(_accepted_by_all(path, entries, db) for path in resolved):
                 continue
-            collisions.append(Collision(destination=key, resolved=resolved))
+            collisions.append(
+                Collision(destination=key, resolved=resolved, declarations=declarations)
+            )
     return collisions
 
 
