@@ -156,6 +156,49 @@ def candidate_lines(candidates: list[dict]) -> list[str]:
     return lines
 
 
+def _declaration(declaration: dict) -> str:
+    """One declaration of a doubled destination: who declares it, its hash,
+    and the emulators that read the file it names."""
+    where = f"`{declaration['system']}`"
+    if declaration.get("component"):
+        where += f" (`{declaration['component']}`)"
+    parts = [where] + [
+        f"{field} {_value(values[0] if len(values) == 1 else values)}"
+        for field, values in (declaration.get("hashes") or {}).items()
+    ]
+    readers = declaration.get("readers") or []
+    read = (
+        "read by " + ", ".join(
+            r["emulator"] + (f" (`{r['source_ref']}`)" if r.get("source_ref") else "")
+            for r in readers
+        )
+        if readers else "no emulator this platform runs is known to read this file"
+    )
+    return " ".join(parts) + f": {read}"
+
+
+def doubled_lines(doubled: list[dict]) -> list[str]:
+    """The destinations the original declares twice, for two files.
+
+    One path holds one file, so one of the two checks fails on every
+    install. Both entries stay in the updated file.
+    """
+    if not doubled:
+        return []
+    count = _plural(len(doubled), "destination")
+    lines = [
+        f"{count} of the original {'is' if len(doubled) == 1 else 'are'} declared "
+        "twice, for two different files. One path holds one file, so one of the "
+        "two checks fails on every install. Both entries stay in the updated file.",
+        "",
+    ]
+    for item in doubled:
+        lines.append(f"- `{item['destination']}`")
+        lines.extend(f"  - {_declaration(d)}" for d in item["declarations"])
+    lines.append("")
+    return lines
+
+
 def load_export_reports(directory: str = EXPORTS_DIR) -> list[dict]:
     """Every platform report the export wrote, by platform name."""
     root = Path(directory)
@@ -266,6 +309,7 @@ def generate_exports_page(reports: list[dict], names: dict[str, str]) -> str:
                 "",
             ])
         lines.extend(candidate_lines(report.get("removal_candidates") or []))
+        lines.extend(doubled_lines(report.get("doubled") or []))
         if report.get("invalid"):
             lines.extend(markup.aside(
                 "warning", "The updated file does not pass the platform's own checks",

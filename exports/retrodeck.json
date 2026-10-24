@@ -2369,7 +2369,7 @@
   "hashes_cleared": [],
   "requirements_corrected": 52,
   "withheld": [],
-  "found_by_content": 97,
+  "found_by_content": 279,
   "removal_candidates": [
     {
       "system": "mame",
@@ -9327,7 +9327,6 @@
       "cores_examined": [
         "81",
         "eightyone",
-        "ep128emu",
         "ep128emu_core",
         "fuse"
       ],
@@ -9342,7 +9341,6 @@
       "cores_examined": [
         "81",
         "eightyone",
-        "ep128emu",
         "ep128emu_core",
         "fuse"
       ],
@@ -9357,7 +9355,6 @@
       "cores_examined": [
         "81",
         "eightyone",
-        "ep128emu",
         "ep128emu_core",
         "fuse"
       ],
@@ -9372,7 +9369,6 @@
       "cores_examined": [
         "81",
         "eightyone",
-        "ep128emu",
         "ep128emu_core",
         "fuse"
       ],
@@ -9387,7 +9383,6 @@
       "cores_examined": [
         "81",
         "eightyone",
-        "ep128emu",
         "ep128emu_core",
         "fuse"
       ],
@@ -9402,7 +9397,6 @@
       "cores_examined": [
         "81",
         "eightyone",
-        "ep128emu",
         "ep128emu_core",
         "fuse"
       ],
@@ -9417,7 +9411,6 @@
       "cores_examined": [
         "81",
         "eightyone",
-        "ep128emu",
         "ep128emu_core",
         "fuse"
       ],
@@ -9432,7 +9425,6 @@
       "cores_examined": [
         "81",
         "eightyone",
-        "ep128emu",
         "ep128emu_core",
         "fuse"
       ],
@@ -9447,7 +9439,6 @@
       "cores_examined": [
         "81",
         "eightyone",
-        "ep128emu",
         "ep128emu_core",
         "fuse"
       ],
@@ -9462,7 +9453,6 @@
       "cores_examined": [
         "81",
         "eightyone",
-        "ep128emu",
         "ep128emu_core",
         "fuse"
       ],
@@ -9477,7 +9467,6 @@
       "cores_examined": [
         "81",
         "eightyone",
-        "ep128emu",
         "ep128emu_core",
         "fuse"
       ],
@@ -9492,7 +9481,6 @@
       "cores_examined": [
         "81",
         "eightyone",
-        "ep128emu",
         "ep128emu_core",
         "fuse"
       ],
@@ -9507,7 +9495,6 @@
       "cores_examined": [
         "81",
         "eightyone",
-        "ep128emu",
         "ep128emu_core",
         "fuse"
       ],
@@ -9522,7 +9509,6 @@
       "cores_examined": [
         "81",
         "eightyone",
-        "ep128emu",
         "ep128emu_core",
         "fuse"
       ],
@@ -9537,7 +9523,6 @@
       "cores_examined": [
         "81",
         "eightyone",
-        "ep128emu",
         "ep128emu_core",
         "fuse"
       ],
@@ -9552,7 +9537,6 @@
       "cores_examined": [
         "81",
         "eightyone",
-        "ep128emu",
         "ep128emu_core",
         "fuse"
       ],
@@ -9567,7 +9551,6 @@
       "cores_examined": [
         "81",
         "eightyone",
-        "ep128emu",
         "ep128emu_core",
         "fuse"
       ],
@@ -9582,7 +9565,6 @@
       "cores_examined": [
         "81",
         "eightyone",
-        "ep128emu",
         "ep128emu_core",
         "fuse"
       ],
@@ -9597,7 +9579,6 @@
       "cores_examined": [
         "81",
         "eightyone",
-        "ep128emu",
         "ep128emu_core",
         "fuse"
       ],
@@ -9612,7 +9593,6 @@
       "cores_examined": [
         "81",
         "eightyone",
-        "ep128emu",
         "ep128emu_core",
         "fuse"
       ],
@@ -9627,7 +9607,6 @@
       "cores_examined": [
         "81",
         "eightyone",
-        "ep128emu",
         "ep128emu_core",
         "fuse"
       ],
@@ -9642,7 +9621,6 @@
       "cores_examined": [
         "81",
         "eightyone",
-        "ep128emu",
         "ep128emu_core",
         "fuse"
       ],
@@ -9657,7 +9635,6 @@
       "cores_examined": [
         "81",
         "eightyone",
-        "ep128emu",
         "ep128emu_core",
         "fuse"
       ],
@@ -9672,7 +9649,6 @@
       "cores_examined": [
         "81",
         "eightyone",
-        "ep128emu",
         "ep128emu_core",
         "fuse"
       ],
@@ -9687,7 +9663,6 @@
       "cores_examined": [
         "81",
         "eightyone",
-        "ep128emu",
         "ep128emu_core",
         "fuse"
       ],
@@ -9702,7 +9677,6 @@
       "cores_examined": [
         "81",
         "eightyone",
-        "ep128emu",
         "ep128emu_core",
         "fuse"
       ],
@@ -9717,7 +9691,6 @@
       "cores_examined": [
         "81",
         "eightyone",
-        "ep128emu",
         "ep128emu_core",
         "fuse"
       ],
@@ -9732,7 +9705,6 @@
       "cores_examined": [
         "81",
         "eightyone",
-        "ep128emu",
         "ep128emu_core",
         "fuse"
       ],
@@ -9747,7 +9719,6 @@
       "cores_examined": [
         "81",
         "eightyone",
-        "ep128emu",
         "ep128emu_core",
         "fuse"
       ],
@@ -10071,7 +10042,8 @@
       "reason": "no profile of a core the platform runs names it",
       "cores_examined": [
         "directxbox",
-        "xemu"
+        "xemu",
+        "xenia-edge"
       ],
       "unresolved_cores": []
     },
@@ -10254,6 +10226,123 @@
         "xroar"
       ],
       "unresolved_cores": []
+    }
+  ],
+  "doubled": [
+    {
+      "destination": "bios/cdibios.zip",
+      "declarations": [
+        {
+          "system": "mame",
+          "component": "mame",
+          "name": "cdibios.zip",
+          "hashes": {
+            "md5": [
+              "849f709632ad9bdfb9af1b5a2acf8308"
+            ]
+          },
+          "file": "bios/Arcade/Arcade/.variants/cdibios.zip.e7d2a0da",
+          "readers": [
+            {
+              "emulator": "MAME 2015",
+              "profile": "mame2015",
+              "entry": "cdibios.zip",
+              "source_ref": "upstream src/mame/drivers/cdi.c:611"
+            },
+            {
+              "emulator": "MAME 2016",
+              "profile": "mame2016",
+              "entry": "cdibios.zip",
+              "source_ref": "upstream src/mame/drivers/cdi.cpp:1294"
+            },
+            {
+              "emulator": "UME 2015",
+              "profile": "ume2015",
+              "entry": "cdibios.zip",
+              "source_ref": "upstream src/mame/drivers/cdi.c:611"
+            }
+          ]
+        },
+        {
+          "system": "cdimono1",
+          "component": "retroarch",
+          "name": "cdibios.zip",
+          "hashes": {
+            "md5": [
+              "709acce6e9c4043b851ea7429b8e7eff"
+            ]
+          },
+          "file": "bios/Philips/CD-i/cdibios.zip",
+          "readers": [
+            {
+              "emulator": "MAME",
+              "profile": "mame",
+              "entry": "cdibios.zip",
+              "source_ref": "upstream src/mame/philips/cdi.cpp:922"
+            },
+            {
+              "emulator": "MAME 2015",
+              "profile": "mame2015",
+              "entry": "cdibios.zip",
+              "source_ref": "upstream src/mame/drivers/cdi.c:611"
+            },
+            {
+              "emulator": "MAME 2016",
+              "profile": "mame2016",
+              "entry": "cdibios.zip",
+              "source_ref": "upstream src/mame/drivers/cdi.cpp:1294"
+            },
+            {
+              "emulator": "MAME Arcade",
+              "profile": "mamearcade",
+              "entry": "cdibios.zip",
+              "source_ref": "upstream src/mame/philips/cdi.cpp:922"
+            },
+            {
+              "emulator": "UME 2015",
+              "profile": "ume2015",
+              "entry": "cdibios.zip",
+              "source_ref": "upstream src/mame/drivers/cdi.c:611"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "destination": "bios/disk.rom",
+      "declarations": [
+        {
+          "system": "pc88",
+          "component": "retroarch",
+          "name": "disk.rom",
+          "hashes": {
+            "md5": [
+              "793f86784e5608352a5d7f03f03e0858"
+            ]
+          },
+          "file": "bios/NEC/PC-88/N88SUB.ROM",
+          "readers": [
+            {
+              "emulator": "QUASI88",
+              "profile": "quasi88",
+              "entry": "n88sub.rom",
+              "source_ref": "src/LIBRETRO/libretro.c:120, 1085-1086"
+            }
+          ]
+        },
+        {
+          "system": "coco",
+          "component": "xroar",
+          "name": "disk.rom",
+          "hashes": {
+            "md5": [
+              "5bfcb1ae090159c8dea542b5a7c0840f"
+            ]
+          },
+          "file": "bios/Tandy/CoCo/disk.rom",
+          "readers": []
+        }
+      ]
     }
   ],
   "invalid": []

@@ -36,6 +36,7 @@ from artifacts import file_lock, write_bytes_atomic, write_if_changed, write_tex
 import yaml
 
 from common import (
+    build_zip_contents_index,
     platform_arg,
     list_registered_platforms,
     load_data_dir_registry,
@@ -50,6 +51,7 @@ from common import (
 from exporter import discover_exporters
 from exporter.baseline import HASH_FIELDS, _hash_values, _single_size, build_native_model
 from exporter.candidates import removal_candidates
+from exporter.doubled import doubled_destinations
 from truth import generate_platform_truth
 
 DEFAULT_CACHE = ".cache/upstream-native"
@@ -436,6 +438,24 @@ def refresh_cache(
     return True, [f"{len(wanted)} file(s) fetched"]
 
 
+@functools.cache
+def _collection(db_path: str) -> tuple[dict, dict]:
+    """The database and its archive index, read once for every platform."""
+    db = load_database(db_path)
+    return db, build_zip_contents_index(db)
+
+
+def doubled_in(scraped: dict | None, platforms_dir: str) -> list[dict]:
+    """The destinations the platform's own list declares for two files."""
+    if not scraped:
+        return []
+    db, zip_contents = _collection(TRUTH_DB)
+    return doubled_destinations(
+        scraped, load_emulator_profiles("emulators"), db, zip_contents,
+        load_data_dir_registry(platforms_dir),
+    )
+
+
 def _count(number: int, noun: str, plural: str = "") -> str:
     """"1 hash", "2 hashes": a count with its noun in the right number."""
     plural = plural or noun + ("es" if noun.endswith(("sh", "ch", "s", "x")) else "s")
@@ -764,6 +784,8 @@ def export_platform(
         systems, scraped, load_emulator_profiles("emulators"),
         load_data_dir_registry(platforms_dir),
     )
+    # Reported, never rewritten: both declarations stay as the platform wrote them.
+    doubled = doubled_in(scraped, platforms_dir)
     messages.append(summary)
     if unwritten:
         messages.append("not in the file: " + ", ".join(unwritten))
@@ -773,6 +795,11 @@ def export_platform(
             f"{_count(len(candidates), 'entry', 'entries')} no examined core is known to open"
             + (f" ({open_question} undetermined)" if open_question else "")
             + ", listed in the report"
+        )
+    if doubled:
+        messages.append(
+            f"{_count(len(doubled), 'destination')} declared twice for two files"
+            ", listed in the report"
         )
     messages.extend(f"withheld: {reason}" for reason in withheld)
     for heading, labels in (
@@ -807,6 +834,7 @@ def export_platform(
         "withheld": list(withheld),
         "found_by_content": report.labels,
         "removal_candidates": candidates,
+        "doubled": doubled,
         "invalid": issues,
     })
     return True, messages

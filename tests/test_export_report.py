@@ -202,17 +202,23 @@ class TheRunReportStatesWhatTheFileCarries(unittest.TestCase):
             {"name": "a.bin", "destination": "a.bin", "native_system": "psx",
              "md5": "a" * 32},
         ]}}}
+        doubled = {"destination": "a.bin", "declarations": []}
         with tempfile.TemporaryDirectory(dir=ROOT / "tmp") as scratch, \
                 mock.patch.object(export_native, "load_inputs",
                                   return_value=(truth, scraped)), \
                 mock.patch.object(export_native, "unpinned", return_value=[]), \
-                mock.patch.object(export_native, "removal_candidates", return_value=[]):
+                mock.patch.object(export_native, "removal_candidates", return_value=[]), \
+                mock.patch.object(export_native, "doubled_in", return_value=[doubled]):
             ok, messages = export_native.export_platform(
                 "plat", Plain, Path(scratch), Path(scratch) / "out",
                 str(ROOT / "platforms"), Path(scratch) / "cache", False,
             )
             self.assertTrue(ok, messages)
             report = json.loads((Path(scratch) / "out" / "plat.json").read_text())
+        self.assertEqual(report["doubled"], [doubled])
+        self.assertIn(
+            "1 destination declared twice for two files, listed in the report", messages
+        )
         self.assertEqual(
             report["summary"],
             "1 kept, 1 file added, 1 hash updated to the emulator source",
@@ -540,6 +546,116 @@ class RemovalCandidatesNeedAReadingNoCoreAnswers(unittest.TestCase):
         source = (ROOT / "scripts" / "export_native.py").read_text(encoding="utf-8")
         body = source[source.index("def export_platform("):source.index("def write_report(")]
         self.assertIn('"removal_candidates": candidates,', body)
+
+
+class ADestinationDeclaredTwiceIsNamed(unittest.TestCase):
+    """RetroDECK aims a PC-88 disk ROM and a CoCo disk ROM at one
+    bios/disk.rom, each with its own md5. One path holds one file, so one
+    check fails on every install. The export keeps both entries and names
+    the contradiction, with the emulators that read each file."""
+
+    PC88 = b"\x01" * 2048
+    COCO = b"\x02" * 8194
+
+    def setUp(self):
+        import hashlib  # noqa: PLC0415
+
+        self._tmp = tempfile.TemporaryDirectory(dir=ROOT / "tmp")
+        root = Path(self._tmp.name)
+        files, by_md5, by_name = {}, {}, {}
+        self.md5 = {}
+        for label, data, rel in (
+            ("pc88", self.PC88, "bios/NEC/PC-88/N88SUB.ROM"),
+            ("coco", self.COCO, "bios/Tandy/CoCo/disk.rom"),
+        ):
+            path = root / rel
+            path.parent.mkdir(parents=True)
+            path.write_bytes(data)
+            sha1 = hashlib.sha1(data).hexdigest()
+            md5 = hashlib.md5(data).hexdigest()
+            self.md5[label] = md5
+            files[sha1] = {"path": str(path), "name": path.name, "md5": md5,
+                           "sha1": sha1, "crc32": "", "size": len(data)}
+            by_md5[md5] = sha1
+            by_name.setdefault(path.name, []).append(sha1)
+        self.db = {"files": files, "indexes": {
+            "by_md5": by_md5, "by_name": by_name, "by_crc32": {}, "by_path_suffix": {},
+        }}
+        self.scraped = {"cores": ["pcemu", "cocoemu"], "systems": {
+            "nec-pc-88": {"files": [
+                {"name": "disk.rom", "destination": "bios/disk.rom",
+                 "md5": self.md5["pc88"], "native_system": "pc88",
+                 "component": "retroarch"},
+            ]},
+            "coco": {"files": [
+                {"name": "disk.rom", "destination": "bios/disk.rom",
+                 "md5": self.md5["coco"], "native_system": "coco",
+                 "component": "xroar"},
+            ]},
+        }}
+        self.profiles = {
+            "pcemu": {"emulator": "PC Emu", "type": "libretro", "systems": ["nec-pc-88"],
+                      "files": [{"name": "n88sub.rom", "aliases": ["disk.rom"],
+                                 "size": 2048, "source_ref": "libretro.c:120"}]},
+            "cocoemu": {"emulator": "CoCo Emu", "type": "libretro", "systems": ["coco"],
+                        "files": [{"name": "disk11.rom", "source_ref": "xroar.c:714"}]},
+        }
+
+    def tearDown(self):
+        self._tmp.cleanup()
+
+    def _doubled(self) -> list[dict]:
+        from exporter.doubled import doubled_destinations  # noqa: PLC0415
+
+        return doubled_destinations(self.scraped, self.profiles, self.db)
+
+    def test_each_declaration_is_named_with_its_reader(self):
+        doubled = self._doubled()
+        self.assertEqual([d["destination"] for d in doubled], ["bios/disk.rom"])
+        pc88, coco = doubled[0]["declarations"]
+        self.assertEqual((pc88["system"], pc88["component"]), ("pc88", "retroarch"))
+        self.assertEqual(pc88["hashes"], {"md5": [self.md5["pc88"]]})
+        self.assertTrue(pc88["file"].endswith("bios/NEC/PC-88/N88SUB.ROM"))
+        self.assertEqual(pc88["readers"], [{
+            "emulator": "PC Emu", "profile": "pcemu", "entry": "n88sub.rom",
+            "source_ref": "libretro.c:120",
+        }])
+        # A size the profile states rules out the CoCo ROM, and XRoar's own
+        # profile never opens disk.rom.
+        self.assertEqual((coco["system"], coco["component"]), ("coco", "xroar"))
+        self.assertEqual(coco["hashes"], {"md5": [self.md5["coco"]]})
+        self.assertEqual(coco["readers"], [])
+
+    def test_the_platform_entries_are_left_as_written(self):
+        import copy  # noqa: PLC0415
+
+        before = copy.deepcopy(self.scraped)
+        self._doubled()
+        self.assertEqual(self.scraped, before)
+
+    def test_a_destination_both_hashes_accept_is_not_doubled(self):
+        self.scraped["systems"]["coco"]["files"][0]["md5"] = (
+            f"{self.md5['coco']},{self.md5['pc88']}"
+        )
+        self.assertEqual(self._doubled(), [])
+
+    def test_the_run_counts_it_and_the_report_carries_it(self):
+        source = (ROOT / "scripts" / "export_native.py").read_text(encoding="utf-8")
+        body = source[source.index("def export_platform("):source.index("def write_report(")]
+        self.assertIn('"doubled": doubled,', body)
+        self.assertIn("declared twice for two files", body)
+
+    def test_the_page_names_each_declaration(self):
+        page = generate_exports_page(
+            [_report("retrodeck", ["a.json"], doubled=self._doubled())], {})
+        self.assertIn("1 destination of the original is declared twice", page)
+        self.assertIn("- `bios/disk.rom`", page)
+        self.assertIn(
+            f"  - `pc88` (`retroarch`) md5 `{self.md5['pc88']}`: read by PC Emu "
+            "(`libretro.c:120`)", page)
+        self.assertIn(
+            f"  - `coco` (`xroar`) md5 `{self.md5['coco']}`: no emulator this "
+            "platform runs is known to read this file", page)
 
 
 if __name__ == "__main__":
