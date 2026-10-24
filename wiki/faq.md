@@ -58,10 +58,10 @@ Game sets must match the emulator's version:
 - It stops if the installer does not match its expected fingerprint, and
   checks each file.
 - It writes in your BIOS folder, and some emulators' save folder.
-- It never touches a game or save.
+- It never touches games or saves.
 - It keeps each file it replaces in `retrobios-backup`, for `--restore`.
 
-Read them first: [install.sh](https://github.com/Abdess/retrobios/blob/main/install.sh),
+Read them: [install.sh](https://github.com/Abdess/retrobios/blob/main/install.sh),
 [install.ps1](https://github.com/Abdess/retrobios/blob/main/install.ps1),
 [install.py](https://github.com/Abdess/retrobios/blob/main/install.py).
 
@@ -77,8 +77,8 @@ setup's files and checks each one. `--dry-run` shows the list first.
 
 ## Fill an SD card from a computer?
 
-The interface finds a muOS, Onion, spruceOS, MinUI, KNULLI or ROCKNIX card.
-Name your setup and the card's BIOS folder. For RetroArch on a Switch,
+The interface finds a muOS, Onion, spruceOS, MinUI, KNULLI or ROCKNIX card by
+itself. Name your setup and the card's BIOS folder. For RetroArch on a Switch,
 with the card in drive `E:`, run:
 
 <!-- os-tabs windows: --platform retroarch --dest E:\retroarch\cores\system -->
