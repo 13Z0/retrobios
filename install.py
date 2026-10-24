@@ -3447,6 +3447,9 @@ def _fetch_json(
     _network_allowed(label)
     timeout = LIST_TIMEOUT if timeout is None else timeout
     for attempt in range(1, attempts + 1):
+        # The tries this failure gets: "(2/3)" then "after 2 attempts" for
+        # a server gone silent, asked once more only.
+        tries = attempts
         try:
             with urllib.request.urlopen(url, timeout=timeout) as resp:
                 return _read_limited_json(resp, limit, label)
@@ -3466,9 +3469,11 @@ def _fetch_json(
                 exc.attempts = attempt  # type: ignore[union-attr]
                 raise
             delay = _retry_delay(attempt, None)
+            if _stalled(exc):
+                tries = min(attempts, STALLED_ATTEMPTS)
         # Said, or three 30-second attempts read as a frozen program.
         print(f"  The {label} did not arrive ({problem}), trying again "
-              f"({attempt + 1}/{attempts}) in {delay:.0f} s.", file=sys.stderr)
+              f"({attempt + 1}/{tries}) in {delay:.0f} s.", file=sys.stderr)
         time.sleep(delay)
     raise AssertionError("unreachable")
 
