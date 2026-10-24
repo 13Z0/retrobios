@@ -11,6 +11,8 @@ import unittest
 from unittest import mock
 from pathlib import Path
 
+import yaml
+
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "scripts"))
 
@@ -896,7 +898,8 @@ class AnEmulatorPageOffersItsInstall(unittest.TestCase):
     def test_the_command_names_the_emulator(self):
         from generate_site import _install_block
 
-        text = "\n".join(_install_block("pcem", {"type": "libretro"}))
+        profile = yaml.safe_load((ROOT / "emulators" / "pcem.yml").read_text(encoding="utf-8"))
+        text = "\n".join(_install_block("pcem", profile))
         self.assertIn("install.sh | sh -s -- --emulator pcem", text)
         self.assertIn("install.ps1))) --emulator pcem", text)
         self.assertEqual(_install_block("x", {"type": "alias"}), [])
