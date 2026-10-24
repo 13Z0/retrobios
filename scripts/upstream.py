@@ -527,16 +527,18 @@ def current_slug(repo: Repo, cache_dir: str, offline: bool = False) -> str | Non
 
 
 def resolve_head(
-    repo: Repo, cache_dir: str, offline: bool = False, branch: str | None = None
+    repo: Repo, cache_dir: str, offline: bool = False, branch: str | None = None,
+    fresh: bool = False,
 ) -> str | None:
     """Sha of a branch tip, the default branch unless one is named.
 
     A libretro port often lives on a branch of a fork rather than on the
     default branch, so the code a profile documents can be absent from the
-    tip the forge serves by default.
+    tip the forge serves by default. ``fresh`` asks the forge again whatever
+    the cache holds.
     """
     return _first_sha(
-        _api(_commits_url(repo, None, branch), cache_dir, offline, MOVING_TTL)
+        _api(_commits_url(repo, None, branch), cache_dir, offline, 0 if fresh else MOVING_TTL)
     )
 
 

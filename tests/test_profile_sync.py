@@ -1182,7 +1182,10 @@ class TestBuildReport(unittest.TestCase):
             profile_sync.upstream.list_gitlinks,
             profile_sync.upstream.current_slug,
             profile_sync.upstream.fork_base,
+            profile_sync.upstream.ancestry,
         )
+        # Pin and tip are unrelated shas in these fixtures: no ancestry.
+        profile_sync.upstream.ancestry = lambda *a, **k: None
         self.fork_bases: dict[str, str] = {}
         profile_sync.upstream.fork_base = (
             lambda repo, sha, fork, fork_sha, cache_dir, offline=False:
@@ -1226,7 +1229,7 @@ class TestBuildReport(unittest.TestCase):
             )
         )
         profile_sync.upstream.resolve_head = (
-            lambda repo, cache_dir, offline=False, branch=None: "headsha"
+            lambda repo, cache_dir, offline=False, branch=None, fresh=False: "headsha"
         )
         profile_sync.upstream.resolve_commit_at = (
             lambda repo, date, cache_dir, offline=False, branch=None: "pinsha"
@@ -1250,6 +1253,7 @@ class TestBuildReport(unittest.TestCase):
             profile_sync.upstream.list_gitlinks,
             profile_sync.upstream.current_slug,
             profile_sync.upstream.fork_base,
+            profile_sync.upstream.ancestry,
         ) = self._orig
         self.tmp.cleanup()
 
@@ -5032,6 +5036,22 @@ class UpstreamForkedByThePort(unittest.TestCase):
     def test_a_port_outside_the_network_keeps_the_tip(self):
         views, _ = self._views(None)
         self.assertEqual(views[1].head, "up-tip")
+
+
+class ACachedTipOlderThanThePin(TestBuildReport):
+    """scummvm-standalone was pinned on 6f7b060d while the cached tip was
+    77d80d7, its ancestor: a bump would have moved the pin backwards."""
+
+    def test_the_tip_is_asked_again(self):
+        profile_sync.upstream.ancestry = lambda *a, **k: (0, 3)
+        profile_sync.upstream.resolve_head = (
+            lambda repo, cache_dir, offline=False, branch=None, fresh=False:
+            "newtip" if fresh else "staletip"
+        )
+        self.files[("pinsha", "a.c")] = ["x", "hit"]
+        self.files[("newtip", "a.c")] = ["x", "hit"]
+        report = build_report("test", self._profile(["a.c:2"]), self.dir)
+        self.assertEqual(report.head, "newtip")
 
 
 class OfflineCacheMissIsNotGone(TestBuildReport):

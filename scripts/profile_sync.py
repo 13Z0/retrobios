@@ -1141,6 +1141,13 @@ def select_views(
             continue
         if not head:
             continue
+        if head != pin and not offline:
+            # A tip cached before the pin was written is older than the pin:
+            # scummvm-standalone pinned 6f7b060d while the cache still held
+            # 77d80d7, and a bump would have moved the pin backwards.
+            relation = upstream.ancestry(repo, pin, head, cache_dir, offline)
+            if relation and relation[0] == 0 and relation[1] > 0:
+                head = upstream.resolve_head(repo, cache_dir, offline, branch, fresh=True) or head
         seen.add((repo.host, repo.slug))
         views.append(RepoView(repo, pin, head, origin, field))
     if gone and not views:
