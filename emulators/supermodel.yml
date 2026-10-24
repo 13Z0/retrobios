@@ -7,9 +7,9 @@ source:
 upstream: "https://github.com/trzy/Supermodel"
 profiled_date: "2026-09-17"
 source_commit:
-  standalone: "32c29b036fc18310e2e6b63370d89c7ee6d790d1"
+  standalone: "58d4b87470455fd942edea06f3268fe18815619b"
   libretro: "84bc106b45b279bf868a53b9232897c8dc10ca17"
-upstream_commit: "32c29b036fc18310e2e6b63370d89c7ee6d790d1"
+upstream_commit: "58d4b87470455fd942edea06f3268fe18815619b"
 core_version:
   standalone: "0.3a-WIP"
   libretro: "v0.3a-libretro"
@@ -61,11 +61,13 @@ notes: |
   the same relative directories are used when Config/ exists in the working
   directory, otherwise ~/.supermodel/ when present, otherwise the XDG data and
   config homes. Supermodel.ini is written from a compiled-in default when it is
-  absent and rewritten after interactive input configuration. NVRAM/<game>.nv
-  and Saves/<game>.st<slot> are written by the emulator itself.
+  absent and rewritten after interactive input configuration and when the
+  GUI saves its settings. NVRAM/<game>.nv and Saves/<game>.st<slot> are
+  written by the emulator itself.
   ref: Src/OSD/Windows/FileSystemPath.cpp:28-51, Src/OSD/OSX/FileSystemPath.cpp:28-50,
        Src/OSD/Unix/FileSystemPath.cpp:51-160, Src/OSD/SDL/Main.cpp:1407-1426,
-       Src/OSD/SDL/Main.cpp:1458, Src/OSD/SDL/Main.cpp:2274
+       Src/OSD/SDL/Main.cpp:1458, Src/OSD/SDL/Gui.cpp:1492,
+       Src/OSD/SDL/Main.cpp:2274
 
   The standalone also emulates the Real3D Pro-1000. Games.xml declares it as
   the set pro1000 with platform Real3D Pro-1000, and its firmware (p1_p4.bin,
