@@ -10304,6 +10304,11 @@ class TuiState:
         # A --dest given without --platform: the list asks whose files go there.
         self.dest_given: Path | None = None
         self.folder_default: Path | None = None
+        # What folder_default is, for the words above it: "usual" (the
+        # platform's built-in folder), "found" (the one detected here),
+        # "chosen" (the run's folder, from Change folder) or "closed" (the
+        # one chosen could not be opened, none is offered).
+        self.folder_kind: str = "usual"
         self.path_text: str = ""
         self.browse_dir: Path | None = None
         self.browse_rows: list = []
@@ -10954,7 +10959,7 @@ def _choose(state: TuiState, plat: str, dest: Path) -> list[tuple]:
         # The folder found here is the one the frontend reads: the built-in
         # default beside it is one it does not, offered as "reads its BIOS
         # files from" and filled with Enter.
-        state.folder_default = None
+        state.folder_default, state.folder_kind = None, "closed"
         return _push(state, "folder")
     card = card_system(dest)
     if card and card[0] == plat and card[1] != dest:
@@ -10979,9 +10984,14 @@ def _choose(state: TuiState, plat: str, dest: Path) -> list[tuple]:
     return _start_check(state)
 
 
-def _open_folder_screen(state: TuiState, default: Path | None) -> list[tuple]:
-    state.folder_default = default
-    return _push(state, "folder")
+def _open_folder_screen(state: TuiState, default: Path | None,
+                        kind: str = "usual") -> list[tuple]:
+    state.folder_default, state.folder_kind = default, kind
+    refused = kind == "chosen" and (state.facts.get("writable") is False
+                                    or _short_of_space(state, state.check or {}))
+    # A folder just refused as full or read-only: Browse, not Use this
+    # folder, is under A, or A, A came back to the same warning.
+    return _push(state, "folder", 1 if refused and default is not None else 0)
 
 
 def _mount_name(mount: Path) -> str:
@@ -11115,8 +11125,15 @@ def _activate(state: TuiState, row: TuiRow) -> list[tuple]:
         if state.dest_given is not None:
             return _choose(state, row.value, state.dest_given)
         state.platform = row.value
-        default = None if row.value in CARD_PLATFORMS else _default_dest(state.os_type, row.value)
-        return _open_folder_screen(state, default)
+        if row.value in CARD_PLATFORMS:
+            return _open_folder_screen(state, None)
+        # The folder detected here before the built-in one: the built-in
+        # default was offered as where RetroArch reads, when the
+        # retroarch.cfg found here names another.
+        found = next((path for plat, path, _label in state.setups if plat == row.value), None)
+        if found is not None:
+            return _open_folder_screen(state, found, "found")
+        return _open_folder_screen(state, _default_dest(state.os_type, row.value))
     if screen == "folder":
         if action == "default":
             return _choose(state, state.platform, state.folder_default)
@@ -11165,7 +11182,7 @@ def _activate(state: TuiState, row: TuiRow) -> list[tuple]:
         if action == "quit":
             return tui_quit(state)
         if action == "folder":
-            return _open_folder_screen(state, state.dest)
+            return _open_folder_screen(state, state.dest, "chosen")
         if action == "fromcard":
             return _open_from_browser(state)
         if action in ("misplaced", "unreadable"):
@@ -11236,7 +11253,7 @@ def _option(state: TuiState, action: str, step: int) -> list[tuple]:
     elif action in ("regions", "command"):
         return _push(state, action)
     elif action == "folder":
-        return _open_folder_screen(state, state.dest)
+        return _open_folder_screen(state, state.dest, "chosen")
     elif action == "from" and step < 0:
         # Said, and the screen stays: Back to the plan counts again.
         if state.from_folders:
@@ -12052,7 +12069,13 @@ def _view_folder(state: TuiState, width: int, height: int) -> tuple:
                   "root folder, the one holding .system."]
     elif state.folder_default is not None:
         title = "Which folder?"
-        before = [f"{name} usually reads its BIOS files from:", str(state.folder_default)]
+        lead = {"found": f"{name} reads its BIOS files from:",
+                "chosen": f"The BIOS folder chosen for {name}:"}.get(
+                    state.folder_kind, f"{name} usually reads its BIOS files from:")
+        before = [lead, str(state.folder_default)]
+    elif state.folder_kind == "closed":
+        title = "Which folder?"
+        before = [f"Choose another folder for {name}: browse for it or type it."]
     else:
         title = "Which folder?"
         before = [f"No usual {name} folder here: browse for it or type it."]

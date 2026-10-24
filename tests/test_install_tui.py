@@ -3783,5 +3783,65 @@ class EndToEnd(unittest.TestCase):
         self.assertNotIn(b"\x1b", term.raw)
 
 
+class TheFolderScreenSaysWhatItOffers(unittest.TestCase):
+    """The folder screen said "usually reads its BIOS files from" for any
+    folder it offered: the folder named with --dest, reached by Change
+    folder, and the built-in default while the retroarch.cfg found here
+    names another. A closed folder found here opened on "No usual
+    RetroArch folder here" under the setup that listed it."""
+
+    def said(self, state: install.TuiState) -> str:
+        return " ".join(" ".join(install.tui_view(state, 200, 40)).split())
+
+    def test_change_folder_names_the_chosen_folder(self):
+        state = checked_state()
+        state.stack = ["setup", "plan"]
+        mine = Path("/home/user/typed/mybios")
+        state.dest = mine
+        install._activate(state, install.TuiRow("folder", "Change folder"))
+        self.assertEqual(state.screen, "folder")
+        screen = self.said(state)
+        self.assertNotIn("usually reads", screen)
+        self.assertIn(f"The BIOS folder chosen for RetroArch: {mine}", screen)
+
+    def test_another_setup_offers_the_folder_found_here(self):
+        state = fresh_state()
+        found = Path("/home/user/Games/bios")
+        state.setups = [("retroarch", found, "RetroArch")]
+        state.stack = ["setup", "platforms"]
+        install._activate(state, install.TuiRow("platform", "RetroArch", value="retroarch"))
+        self.assertEqual(state.folder_default, found)
+        self.assertIn(f"RetroArch reads its BIOS files from: {found}", self.said(state))
+
+    def test_with_none_found_the_usual_folder_is_offered(self):
+        state = fresh_state()
+        state.setups = []
+        state.stack = ["setup", "platforms"]
+        install._activate(state, install.TuiRow("platform", "RetroArch", value="retroarch"))
+        self.assertIn("RetroArch usually reads its BIOS files from:", self.said(state))
+
+    def test_a_closed_folder_found_here_asks_for_another(self):
+        state = fresh_state()
+        state.stack = ["setup"]
+        with mock.patch.object(install, "closed_folder",
+                               return_value=(Path("/home/user/lock"), "Permission denied")):
+            install.tui_update(state, Key("enter"))
+        self.assertEqual(state.screen, "folder")
+        screen = self.said(state)
+        self.assertNotIn("No usual RetroArch folder here", screen)
+        self.assertIn("Choose another folder for RetroArch", screen)
+
+    def test_a_refused_folder_puts_browse_under_a(self):
+        for facts in ({"free": 10, "writable": True, "cores": []},
+                      {"free": 50 * 1024 ** 3, "writable": False, "cores": []}):
+            with self.subTest(facts=facts):
+                state = checked_state(facts)
+                self.assertEqual(install.tui_rows(state)[0].action, "folder")
+                install.tui_update(state, Key("enter"))
+                self.assertEqual(state.screen, "folder")
+                rows = install.tui_rows(state)
+                self.assertEqual(rows[state.focus["folder"]].action, "browse")
+
+
 if __name__ == "__main__":
     unittest.main()
