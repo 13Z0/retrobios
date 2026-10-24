@@ -6,8 +6,8 @@ upstream: "https://problemkaputt.de/gba.htm"
 version_source:
   url: "https://problemkaputt.de/gba.htm"
   pattern: 'no\$gba v(\d+(?:\.\d+)+)'
-profiled_date: "2026-10-20"
-core_version: "3.04"
+profiled_date: "2026-10-24"
+core_version: "3.06"
 display_name: "Nintendo - GBA/DS/DSi (no$gba)"
 cores:
   - nosgba
@@ -21,19 +21,24 @@ mode: standalone
 notes: |
   Freeware gaming build of Martin Korth's Game Boy Advance, Nintendo DS and
   DSi emulator for Windows, closed source. RetroBat installs it as nosgba and
-  starts NO$GBA.EXE with the ROM. Its NO$GBA.EXE (220079 bytes, sha1
-  935b857bc1249479124247612755eeb2a247f23c) is the one in no$gba-w.zip of
-  v3.04, 23 Mar 2021, byte for byte. The official zip also carries
-  DSI-SD.ZIP, which RetroBat leaves out. Everything below is read from that
-  executable after removing its UPX layer. Addresses are virtual addresses of
-  the unpacked image (base 0x400000).
+  starts NO$GBA.EXE with the ROM. Everything below is read from the
+  NO$GBA.EXE of no$gba-w.zip v3.06, 14 Apr 2025 (224175 bytes, sha1
+  a167242d3800ccc0ac7e5b42e8d6f3f150ed6283), after removing its UPX layer.
+  Addresses are virtual addresses of the unpacked image (base 0x400000). The
+  nosgba package RetroBat installs, stable and beta alike, still carries the
+  v3.04 executable of 23 Mar 2021 (220079 bytes, sha1
+  935b857bc1249479124247612755eeb2a247f23c). Its boot ROM table, loader,
+  checksum pairs, firmware and wifi reads, DSi image naming and Atheros ROM
+  reads are the same instructions at other addresses, and its 236-byte GBA
+  stub is the same bytes. The official zip also carries DSI-SD.ZIP, which
+  RetroBat leaves out.
 
   Every file is opened by bare name. Before each open the program builds its
   own folder from the module path and makes it the current directory
-  (0x431741, 0x4316ea), so all of them sit next to NO$GBA.EXE.
+  (0x432515, 0x4324be), so all of them sit next to NO$GBA.EXE.
 
-  The boot ROMs come from one table of six slots (0x471a81-0x471b80), loaded
-  by one routine (0x4357c6-0x4358a1). For each slot it clears the buffer, then
+  The boot ROMs come from one table of six slots (0x472ff5-0x4730f4), loaded
+  by one routine (0x436604-0x4366df). For each slot it clears the buffer, then
   tries a list of (file, offset) pairs in order. The first file that opens and
   is longer than its offset gives the bytes, read at that offset for the slot
   size. No size is checked beyond that. The lists:
@@ -51,23 +56,23 @@ notes: |
   count of dwords left, XORs it in and rotates right by one. The GBA, NDS ARM7,
   NDS ARM9 and PocketStation slots carry the expected pair, the DSi slots carry
   none. A mismatch only raises "Incorrect GBA/NDS BIOS version!" and the image
-  stays in use (0x43586a-0x43589a, 0x4358f0-0x43591e). The md5 and sha1 given
+  stays in use (0x4366a8-0x4366d8, 0x43672e-0x43675c). The md5 and sha1 given
   below are those of the dumps that produce the expected pair.
 
   Without a GBA image the slot receives a 236-byte stub held in the executable
-  (0x43578c-0x4357c5) and the BIOS calls run as x86 code, the default of the
+  (0x4365ca-0x436603) and the BIOS calls run as x86 code, the default of the
   "Emulate BIOS Functions" option. Only the BIOS sound functions then stop with
   "Sorry, no$gba needs a copy of the original GBA BIOS". The NDS slots stay
   zero and the calls are emulated the same way. The ARM7 image is what
   decrypts the secure area of an encrypted cartridge dump and CodeBreaker
   codes ("Encrypted Cartridge, requires files BiosNds7.rom and BiosNds9.rom").
   Without a PocketStation image a built-in clone named pockclon is expanded in
-  its place (0x435750-0x435771). DSi mode needs the DSi images for their RSA
+  its place (0x43658e-0x4365af). DSi mode needs the DSi images for their RSA
   keys and stops with "Missing DSi BIOS dump (need RSA keys)" without them.
 
   The DSi eMMC and SD card are files named from the emulated unit number, 1 for
   the first machine: the name is written over a template as "DSi-", the digit,
-  then "mmc" or "sd" (0x43acea-0x43ad2d). The eMMC image must carry the
+  then "mmc" or "sd" (0x439a47-0x439a8a). The eMMC image must carry the
   nocash footer with the CID and console ID ("Missing footer in .mmc file").
   The template string itself reads New3DS-#.mmc, from the 3DS mode.
 
@@ -92,7 +97,7 @@ files:
       Tried after NO$GBA.ROM and before GBA.ROM. Expected checksum pair
       0xbaae187f, 0xc98cfa1d, which the retail GBA BIOS gives. Needed for the
       BIOS sound functions and the Nintendo logo boot.
-    source_ref: "NO$GBA.EXE v3.04 0x471a81-0x471aac (slot), 0x4357c6-0x43589a (load and checksum), 0x43578c-0x4357c5 (stub when absent)"
+    source_ref: "NO$GBA.EXE v3.06 0x472ff5-0x473020 (slot), 0x436604-0x4366d8 (load and checksum), 0x4365ca-0x436603 (stub when absent)"
 
   - name: BIOSNDS7.ROM
     system: nintendo-ds
@@ -107,7 +112,7 @@ files:
       Tried after NO$GBA.ROM at 0x4000 and BIOSNDS.ROM at 0. Expected checksum
       pair 0xbc180972, 0x36b3e1b2. Carries the key that decrypts encrypted
       cartridge secure areas and CodeBreaker codes.
-    source_ref: "NO$GBA.EXE v3.04 0x471ab1-0x471adc (slot), 0x4357c6-0x43589a (load and checksum)"
+    source_ref: "NO$GBA.EXE v3.06 0x473025-0x473050 (slot), 0x436604-0x4366d8 (load and checksum)"
 
   - name: BIOSNDS9.ROM
     system: nintendo-ds
@@ -121,7 +126,7 @@ files:
     note: >
       Tried after NO$GBA.ROM at 0x8000 and BIOSNDS.ROM at 0x4000. Expected
       checksum pair 0xbb212bf7, 0x1bec1d77.
-    source_ref: "NO$GBA.EXE v3.04 0x471ae1-0x471b0c (slot), 0x4357c6-0x43589a (load and checksum)"
+    source_ref: "NO$GBA.EXE v3.06 0x473055-0x473080 (slot), 0x436604-0x4366d8 (load and checksum)"
 
   - name: FIRMWARE.BIN
     system: nintendo-ds
@@ -133,7 +138,7 @@ files:
       Read whole into a buffer of 256 KiB, or 512 KiB when the file is larger.
       A file over 512 KiB stops the program with "Unexpected Error". Absent, a
       256 KiB buffer stands in. No hash is checked.
-    source_ref: "NO$GBA.EXE v3.04 0x4356a8-0x4356e8 (load), 0x4358a2-0x4358d3 (buffer size), 0x4348fa (error)"
+    source_ref: "NO$GBA.EXE v3.06 0x4364e6-0x436526 (load), 0x4366e0-0x436711 (buffer size), 0x435777 (error)"
 
   - name: BIOSDSI7.ROM
     system: nintendo-dsi
@@ -143,7 +148,7 @@ files:
     note: >
       Tried after BIOSDSI.ROM at 0. No checksum. DSi mode stops without it
       since it holds the RSA keys.
-    source_ref: "NO$GBA.EXE v3.04 0x471b11-0x471b38 (slot), 0x4357c6-0x435802 (load)"
+    source_ref: "NO$GBA.EXE v3.06 0x473085-0x4730ac (slot), 0x436604-0x436640 (load)"
 
   - name: BIOSDSI9.ROM
     system: nintendo-dsi
@@ -151,7 +156,7 @@ files:
     size: 65536
     description: "Nintendo DSi ARM9 BIOS"
     note: "Tried after BIOSDSI.ROM at 0x10000. No checksum."
-    source_ref: "NO$GBA.EXE v3.04 0x471b39-0x471b60 (slot), 0x4357c6-0x435802 (load)"
+    source_ref: "NO$GBA.EXE v3.06 0x4730ad-0x4730d4 (slot), 0x436604-0x436640 (load)"
 
   - name: WIFI-DSI.BIN
     system: nintendo-dsi
@@ -160,7 +165,7 @@ files:
     description: "DSi wifi firmware flash"
     note: >
       Read whole. Absent, a 128 KiB buffer stands in. No hash is checked.
-    source_ref: "NO$GBA.EXE v3.04 0x435701-0x435741 (load), 0x4358d4-0x4358ef (buffer)"
+    source_ref: "NO$GBA.EXE v3.06 0x43653f-0x43657f (load), 0x436712-0x43672d (buffer)"
 
   - name: AR6002G.ROM
     system: nintendo-dsi
@@ -169,14 +174,14 @@ files:
     note: >
       Read for a DSi when the byte at firmware offset 0x1fd is not 2. Absent,
       the ROM area is filled with 0x55.
-    source_ref: "NO$GBA.EXE v3.04 0x46014c-0x4601bd"
+    source_ref: "NO$GBA.EXE v3.06 0x460d54-0x460dc5"
 
   - name: AR6013G.ROM
     system: nintendo-dsi
     required: false
     description: "Atheros AR6013 wifi chip ROM"
     note: "Read for a DSi when the byte at firmware offset 0x1fd is 2. Absent, the ROM area is filled with 0x55."
-    source_ref: "NO$GBA.EXE v3.04 0x46014c-0x4601bd"
+    source_ref: "NO$GBA.EXE v3.06 0x460d54-0x460dc5"
 
   - name: DSi-1.mmc
     system: nintendo-dsi
@@ -185,7 +190,7 @@ files:
     note: >
       eMMC of the first emulated DSi. The footer has to carry the CID and the
       console ID. No hash or size is checked.
-    source_ref: "NO$GBA.EXE v3.04 0x43acea-0x43ad65"
+    source_ref: "NO$GBA.EXE v3.06 0x439a47-0x439ac2"
 
   - name: DSi-1.sd
     system: nintendo-dsi
@@ -198,7 +203,7 @@ files:
       SD card of the first emulated DSi. The official zip ships a blank
       FAT16 one as DSI-1.SD inside DSI-SD.ZIP. The hashes are those of that
       file, the code checks none.
-    source_ref: "NO$GBA.EXE v3.04 0x43acea-0x43ad65"
+    source_ref: "NO$GBA.EXE v3.06 0x439a47-0x439ac2"
 
   - name: POCKSTAT.ROM
     system: sony-pocketstation
@@ -214,4 +219,4 @@ files:
       in J061. An image ending in J110 is checked against 0xb16ce96c,
       0xbedf0d0f instead, and one with POCKBIOS at 0x40 is not checked.
       Absent, a built-in clone is used.
-    source_ref: "NO$GBA.EXE v3.04 0x471b61-0x471b80 (slot), 0x43582b-0x435863 (variant tests), 0x435750-0x435771 (clone)"
+    source_ref: "NO$GBA.EXE v3.06 0x4730d5-0x4730f4 (slot), 0x436669-0x4366a1 (variant tests), 0x43658e-0x4365af (clone)"
