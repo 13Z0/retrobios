@@ -150,5 +150,15 @@ export default function shortCode() {
 				},
 			},
 		],
+		// In an MDX page (one with tabs) inline HTML is JSX: a `<code title>`
+		// hash in a table cell reaches neither raw() nor element. Long JSX code
+		// gets its breaks from site.ts.
+		mdxJsxTextElement: {
+			filter: ['code'],
+			visit(code, ctx) {
+				const named = (code.attributes ?? []).some((attribute) => ['class', 'className'].includes(attribute.name));
+				if (!named && isShort(ctx.textContent(code), false)) ctx.setProperty(code, 'class', 'rb-short');
+			},
+		},
 	};
 }
