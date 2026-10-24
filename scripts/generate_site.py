@@ -8966,7 +8966,9 @@ def emulator_pages(
             ref = dd.get("ref", "")
             dest = dd.get("destination", "")
             entry = (data_registry or {}).get(ref, {})
-            line = f"- `{ref}` > `{dest}`"
+            # An empty destination wrote "``", which opened a code span
+            # running to the next one and hid a link from the MDX pass.
+            line = f"- `{ref}` > `{dest}`" if dest else f"- `{ref}`"
             if entry.get("description"):
                 line += f": {entry['description']}"
             lines.append(line)
